@@ -138,6 +138,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
@@ -159,7 +161,7 @@ jobs:
 
       # Migrations run first, and on their own step, so a schema change that
       # fails to apply stops the deploy rather than shipping code whose columns
-      # are not there yet. `scripts/migrate-d1.ts` records what it has already
+      # are not there yet. `.github/scripts/migrate-d1.ts` records what it has already
       # applied, so a steady-state deploy is a single read. Leaving this out is
       # how production drifts: the runner has existed since the last drift, but
       # only `bun run deploy` called it — this workflow went straight to

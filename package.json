@@ -6,12 +6,15 @@
   "workspaces": [
     "packages/*",
     "!packages/debate-tournament-tabroom",
+    "!packages/debate-tournaments-tabroom",
+    "!packages/debate-editor-cm",
+    "!packages/debate-rankings",
     "apps/debate-ai.com",
     "apps/debate-browser-ext"
   ],
   "scripts": {
     "dev": "turbo dev",
-    "build": "turbo build --filter='!debate-help-docs'",
+    "build": "turbo build --filter='!debate-help-docs' --filter='!debate-flow' --filter='!debate-flow-ebb'",
     "dev:web": "turbo dev --filter=debate-ai-web",
     "build:web": "turbo build --filter=debate-ai-web",
     "dev:editor": "turbo dev --filter=reason-editor",

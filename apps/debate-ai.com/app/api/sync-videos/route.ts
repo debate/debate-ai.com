@@ -18,14 +18,28 @@ import { resyncVideoViewCounts } from "@/lib/videos/resync-view-counts"
  *
  * Admin-only, because it costs real YouTube API quota.
  */
-export async function POST() {
+export async function POST(req: Request) {
   const { isAdmin, email } = await getAdminAccess()
   if (!isAdmin) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 
+  let publishedAfter: string | undefined
   try {
-    const rounds = await resyncYouTubeRounds(email)
+    const body = await req.json().catch(() => null)
+    if (body?.publishedAfter) {
+      const parsed = new Date(body.publishedAfter)
+      if (Number.isNaN(parsed.getTime())) {
+        return NextResponse.json({ error: "Invalid publishedAfter date" }, { status: 400 })
+      }
+      publishedAfter = body.publishedAfter
+    }
+  } catch {
+    // No body or invalid JSON — proceed without a custom cutoff
+  }
+
+  try {
+    const rounds = await resyncYouTubeRounds(email, publishedAfter)
     // Only after the queue is refreshed: the view-count pass reads both
     // tables, so running it second lets it cover anything just ingested.
     const db = await getDBFromContext()

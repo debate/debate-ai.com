@@ -21,6 +21,7 @@
  */
 
 import { settings } from './settings.js';
+import type { NumberingExportMode } from './numbering-bake.js';
 import { setIcon } from './icons';
 import { pushOverlay, popOverlay } from './overlay-stack.js';
 import { installModalKeys, captureFocusForDialog } from './text-prompt.js';
@@ -53,6 +54,10 @@ export interface SaveAsResult {
   /** Keep ONLY the cards that contain a reading marker, flat (no headings, no
    *  analytics). Mutually exclusive with the include-* / readMode options. */
   markedCardsOnly: boolean;
+  /** Card numbers: `keep` the live skeleton (As-Is, or Custom with neither
+   *  box ticked), `freeze` them as heading text, or `remove` them. The
+   *  presets read the `*DocNumbering` settings. */
+  numbering: NumberingExportMode;
 }
 
 export interface OpenSaveAsOptions {
@@ -89,6 +94,8 @@ class SaveAsModal {
   private analyticsBox!: HTMLInputElement;
   private undertagsBox!: HTMLInputElement;
   private notesBox!: HTMLInputElement;
+  private freezeNumbersBox!: HTMLInputElement;
+  private removeNumbersBox!: HTMLInputElement;
   private aiThreadsBox!: HTMLInputElement;
   /** Radio inputs keyed by format id. */
   private formatRadios!: Record<SaveAsFormat, HTMLInputElement>;
@@ -176,6 +183,7 @@ class SaveAsModal {
         includeNotes: this.notesBox.checked,
         includeAiThreads: this.aiThreadsBox.checked,
         markedCardsOnly: false,
+        numbering: this.freezeNumbersBox.checked ? 'freeze' : this.removeNumbersBox.checked ? 'remove' : 'keep',
       });
     });
 
@@ -207,6 +215,7 @@ class SaveAsModal {
           includeNotes: false,
           includeAiThreads: false,
           markedCardsOnly: false,
+          numbering: 'keep',
         },
       ),
     );
@@ -222,6 +231,7 @@ class SaveAsModal {
           includeNotes: false,
           includeAiThreads: false,
           markedCardsOnly: false,
+          numbering: settings.get('sendDocNumbering'),
         },
         settings.get('sendDocPrefix'),
       ),
@@ -238,6 +248,8 @@ class SaveAsModal {
           includeNotes: false,
           includeAiThreads: false,
           markedCardsOnly: false,
+          // Read mode keeps every heading, so nothing renumbers: live numbering.
+          numbering: 'keep',
         },
         settings.get('readDocPrefix'),
       ),
@@ -254,6 +266,7 @@ class SaveAsModal {
           includeNotes: false,
           includeAiThreads: false,
           markedCardsOnly: true,
+          numbering: settings.get('markedDocNumbering'),
         },
         settings.get('markedDocPrefix'),
       ),
@@ -273,9 +286,21 @@ class SaveAsModal {
     // the saved file as real Word-style comments.
     this.notesBox = this.buildCheckbox('Include private notes (as comments)', false);
     this.aiThreadsBox = this.buildCheckbox('Include AI comments (as comments)', false);
+    // Card numbers: freeze as heading text, or remove — one or the other,
+    // never both; neither ticked keeps the live numbering (an As-Is copy).
+    this.freezeNumbersBox = this.buildCheckbox('Freeze card numbers as text', false);
+    this.removeNumbersBox = this.buildCheckbox('Remove card numbers', false);
+    this.freezeNumbersBox.addEventListener('change', () => {
+      if (this.freezeNumbersBox.checked) this.removeNumbersBox.checked = false;
+    });
+    this.removeNumbersBox.addEventListener('change', () => {
+      if (this.removeNumbersBox.checked) this.freezeNumbersBox.checked = false;
+    });
     options.appendChild(this.commentsBox.parentElement!);
     options.appendChild(this.analyticsBox.parentElement!);
     options.appendChild(this.undertagsBox.parentElement!);
+    options.appendChild(this.freezeNumbersBox.parentElement!);
+    options.appendChild(this.removeNumbersBox.parentElement!);
     options.appendChild(this.notesBox.parentElement!);
     options.appendChild(this.aiThreadsBox.parentElement!);
 
@@ -317,6 +342,7 @@ class SaveAsModal {
       includeNotes: boolean;
       includeAiThreads: boolean;
       markedCardsOnly: boolean;
+      numbering: NumberingExportMode;
     },
     prefix = '',
   ): HTMLElement {
@@ -433,6 +459,7 @@ class SaveAsModal {
       includeNotes: boolean;
       includeAiThreads: boolean;
       markedCardsOnly: boolean;
+      numbering: NumberingExportMode;
     },
     prefix = '',
   ): void {

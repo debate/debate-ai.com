@@ -34,6 +34,7 @@ const drizzleDir = path.join(import.meta.dirname, "../../../drizzle");
 const migrationPaths = [
   path.join(drizzleDir, "0004_certain_microchip.sql"),
   path.join(drizzleDir, "0035_debate_cards.sql"),
+  path.join(drizzleDir, "0054_debate_card_source_url.sql"),
 ];
 
 /** A fresh in-memory database with the card tables migrated in. */

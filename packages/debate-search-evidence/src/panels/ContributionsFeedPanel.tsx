@@ -109,6 +109,17 @@
  * own contribution's id is still blocked, just with an inline error instead
  * of a disabled button.
  *
+ * Each entry now has a "Comments" toggle that mounts `debate-comments`'
+ * `<CommentSection resourceType="contribution" resourceId={entry.id} />` —
+ * closing a gap `types.ts`'s own `COMMENT_RESOURCE_TYPES` had named since the
+ * comment feature shipped ("a video, an uploaded file, a lecture, a card
+ * contribution") but never wired up: `"contribution"` was accepted by the
+ * API/DB and completely unreachable from any UI. Collapsed by default and
+ * mounted only once expanded — the feed can list many entries at once, and
+ * `CommentSection` fetches its thread on mount, so mounting one per entry
+ * unconditionally would fire a request per visible row for threads nobody
+ * asked to read.
+ *
  * @module panels/ContributionsFeedPanel
  */
 
@@ -116,6 +127,7 @@
 
 import { useEffect, useState } from "react"
 import { Info } from "lucide-react"
+import { CommentSection } from "debate-comments"
 import { Badge } from "../ui/primitives/badge"
 import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"
@@ -212,6 +224,16 @@ export function ContributionsFeedPanel({ signedInContributorId }: ContributionsF
   const [endorseError, setEndorseError] = useState<string | null>(null)
   const [knownTags, setKnownTags] = useState<string[]>([])
   const [showFlaggedOnly, setShowFlaggedOnly] = useState(false)
+  const [expandedCommentIds, setExpandedCommentIds] = useState<Set<string>>(new Set())
+
+  const toggleComments = (id: string) => {
+    setExpandedCommentIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
 
   useEffect(() => {
     setFeed(buildPersistedContributionFeed())
@@ -314,10 +336,12 @@ export function ContributionsFeedPanel({ signedInContributorId }: ContributionsF
   const visibleFeed = showFlaggedOnly ? filterFlaggedFeedEntries(feed) : feed
 
   return (
-    <PanelShell title="Contributions Feed">
+    <PanelShell
+      title="Contributions Feed"
+      description="Submit, like, save, and endorse the community's cards, summaries, highlights, and annotations."
+    >
       <p className="-mt-2 flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
-        Submit a contribution, then like, save, or endorse the community's cards, summaries,
-        highlights, and annotations — ranked by blended
+        Ranked by blended
         <Tooltip delayDuration={200}>
           <TooltipTrigger asChild>
             <span className="cursor-help inline-flex items-center gap-1 underline decoration-dotted">
@@ -525,11 +549,19 @@ export function ContributionsFeedPanel({ signedInContributorId }: ContributionsF
                     >
                       Endorse
                     </Button>
+                    <Button size="sm" variant="outline" onClick={() => toggleComments(entry.id)}>
+                      {expandedCommentIds.has(entry.id) ? "Hide comments" : "Comments"}
+                    </Button>
                   </div>
                   {isOwnEntry && (
                     <p className="text-xs text-muted-foreground">
                       You can't endorse your own contribution.
                     </p>
+                  )}
+                  {expandedCommentIds.has(entry.id) && (
+                    <div className="border-t border-border pt-3">
+                      <CommentSection resourceType="contribution" resourceId={entry.id} />
+                    </div>
                   )}
                 </div>
               )

@@ -33,6 +33,15 @@ import type { JudgmentDataUserBot } from "./JudgmentPopup"
 import { JudgmentPopup, type CoachSkill } from "./JudgmentPopup"
 import { getSpeechRecognition, type SpeechRecognitionLike } from "./speech-recognition"
 
+/**
+ * Award Debater Level XP. Dispatched by name so this package needn't depend
+ * on `debate-community`; the app shell's listener records it.
+ */
+function dispatchDebaterActivity(kind: "speech_delivered" | "practice_round" | "practice_win") {
+  if (typeof window === "undefined") return
+  window.dispatchEvent(new CustomEvent("debate-ai:debater-activity", { detail: { kind } }))
+}
+
 /** Which side speaks at each step of each phase. Ported verbatim. */
 const PHASE_SEQUENCES: string[][] = [
   ["For", "Against"],
@@ -276,6 +285,10 @@ export function DebateRoom(props: DebateRoomProps) {
         }
         setJudgmentData(judgment)
         setGamification(award ?? null)
+        dispatchDebaterActivity("practice_round")
+        if (award?.action === "debate_win" || /^user$/i.test(judgment.verdict.winner.trim())) {
+          dispatchDebaterActivity("practice_win")
+        }
         setPopup({ show: false, message: "" })
       } catch (error) {
         console.error("Judging error:", error)
@@ -457,6 +470,7 @@ export function DebateRoom(props: DebateRoomProps) {
     }
     setState(updated)
     advanceTurn(updated)
+    dispatchDebaterActivity("speech_delivered")
 
     setFinalInput("")
     setInterimInput("")

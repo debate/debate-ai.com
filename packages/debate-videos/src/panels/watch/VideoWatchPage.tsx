@@ -53,6 +53,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { AlertCircle, ArrowLeft, Calendar, Eye } from "lucide-react"
+import { CommentSection } from "debate-comments"
 
 import { WatchToolbar } from "../../components/watch/WatchToolbar"
 import { WatchSidePanel } from "../../components/watch/WatchSidePanel"
@@ -757,6 +758,7 @@ export function VideoWatchPage({
                     <div className="flex flex-col items-center gap-0.5">
                       <button
                         onClick={() => handleBadgeClick(affTeam)}
+                        title={`Affirmative: ${affTeam}`}
                         className={cn(
                           "text-sm font-bold backdrop-blur-md px-2 py-1 rounded",
                           affWin === true
@@ -764,7 +766,7 @@ export function VideoWatchPage({
                             : "border border-blue-400/90 shadow-lg text-blue-300 bg-blue-900/80",
                         )}
                       >
-                        AFF {affTeam}
+                        {affTeam}
                       </button>
                       {arg1AC && (
                         <span className="text-xs font-medium text-blue-100 backdrop-blur-md bg-blue-950/90 px-2 py-0.5 rounded border border-blue-800/50 shadow-sm text-center max-w-[120px] leading-tight">
@@ -777,6 +779,7 @@ export function VideoWatchPage({
                     <div className="flex flex-col items-center gap-0.5">
                       <button
                         onClick={() => handleBadgeClick(negTeam)}
+                        title={`Negative: ${negTeam}`}
                         className={cn(
                           "text-sm font-bold backdrop-blur-md px-2 py-1 rounded",
                           affWin === false
@@ -784,7 +787,7 @@ export function VideoWatchPage({
                             : "border border-red-400/90 shadow-lg text-red-300 bg-red-900/80",
                         )}
                       >
-                        NEG {negTeam}
+                        {negTeam}
                       </button>
                       {arg2NR && (
                         <span className="text-xs font-medium text-red-100 backdrop-blur-md bg-red-950/90 px-2 py-0.5 rounded border border-red-800/50 shadow-sm text-center max-w-[120px] leading-tight">
@@ -801,6 +804,17 @@ export function VideoWatchPage({
                   {description}
                 </p>
               )}
+            </div>
+
+            {/* The discussion, under the video's own metadata and above
+                everything else on the page. YouTube puts it here for a reason:
+                a viewer has just finished (or scrubbed past) the round, and
+                the questions that round raised are what they want to say
+                something about. A comment thread higher up would compete with
+                the player; below "Related videos" it would compete with the
+                next video, and nobody scrolls that far. */}
+            <div className="border-t border-border pt-5">
+              <CommentSection resourceType="video" resourceId={videoId} />
             </div>
           </div>
 

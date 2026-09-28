@@ -58,6 +58,18 @@ export function showToast(message: string, opts: ToastOptions = {}): void {
   toast.style.top = `${lastMouseY + 14}px`;
   toast.style.transitionDuration = `${fadeMs}ms`;
   document.body.appendChild(toast);
+  // Clamp inside the viewport: toasts spawn at the cursor, so even a
+  // width-capped toast can overflow when the cursor sits near the
+  // right or bottom edge. Measured after insertion (wrapping decides
+  // the final box), nudged back with a small margin.
+  const margin = 8;
+  const rect = toast.getBoundingClientRect();
+  if (rect.right > window.innerWidth - margin) {
+    toast.style.left = `${Math.max(margin, window.innerWidth - margin - rect.width)}px`;
+  }
+  if (rect.bottom > window.innerHeight - margin) {
+    toast.style.top = `${Math.max(margin, window.innerHeight - margin - rect.height)}px`;
+  }
 
   // Trigger fade after duration - fade time so the toast finishes
   // dismissing right around the duration mark.

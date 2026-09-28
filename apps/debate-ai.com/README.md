@@ -21,10 +21,10 @@ owning package before editing anything under `app/`. The map is in the
 | The card editor, `.docx` interop | `/reason-editor`, `/doc` | `debate-editor`, `debate-card-parser` |
 | The live round workspace (FIAT), flow grid | `/debate`, `/practice-round` | `debate-round`, `debate-flow` |
 | Practice drills, AI coach, AI judge | `/drills`, `/coach`, `/judge-decision` | `debate-practice-drills` |
-| A full timed round against an AI opponent | `/versus-ai`, `/practice-opponent`, `/opponents` | `debate-round-practice-ai` |
+| A full timed round against an AI opponent | `/versus-ai`, `/opponents` | `debate-round-practice-ai` |
 | Speech and prep timers, the in-round recorder | `/speech-documents`, `/word-count` | `debate-timer` |
 | The video library (LEARN) | `/videos` | `debate-videos` |
-| Team prep, task inbox, prep room | `/community-hub`, `/prep-notes`, `/contacts` | `debate-team-collaboration` |
+| Team prep, task inbox, prep room | `/prep-notes`, `/contacts` | `debate-team-collaboration` |
 | Leaderboards, quests, contributor awards | `/rank`, `/outcomes` | `debate-contributor-progress` |
 | AI prompts for speeches and flows | `/summaries`, `/strategy`, `/outline` | `debate-speech-writer` |
 | Documentation | `/docs` | `debate-help-docs` |
@@ -143,7 +143,7 @@ RSC fetches are never challenged.
 | Script | What it does |
 | --- | --- |
 | `dev` | `vinext dev` on port 3000. |
-| `build` | `build:docs` → `vinext build` → `build:sw`. All three stages matter. |
+| `build` | `vinext build` → `build:sw`. Both stages matter. |
 | `build:sw` | Generates and webpack-bundles the offline service worker into `dist/client`. |
 | `preview` | Builds, then `wrangler dev` — the real Worker locally. |
 | `deploy` / `deploy:staging` | Migrates D1, builds, then `vinext deploy`. |
@@ -185,9 +185,8 @@ Three things to know before a deploy surprises you:
 - **`keep_vars: true` is load-bearing.** This config defines no `vars`, so
   without it every deploy would delete the plaintext variables set in the
   dashboard.
-- **Use `bun run build`, not `vinext build` alone.** Skipping `build:docs`
-  ships a stale `/docs`, and skipping `build:sw` ships no service worker, so
-  offline mode silently stops working.
+- **Use `bun run build`, not `vinext build` alone.** Skipping `build:sw`
+  ships no service worker, so offline mode silently stops working.
 
 A weekly cron (`0 8 * * 1` — Mondays 08:00 UTC) runs the YouTube channel scan
 and view-count refresh from the `scheduled` export in

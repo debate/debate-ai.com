@@ -227,6 +227,17 @@ pinned by id in
 `moz-extension://` origin is a fresh UUID per install, so there is no id to
 pin — add it to `BETTER_AUTH_TRUSTED_ORIGINS` on the deployment.
 
+### Saving an article to your account
+
+The bookmark button in the toolbar (**Alt+D** / **⌥D**) saves the article to
+your debate-ai.com account as one of your **REASON Docs** — the documents
+listed at `/reason-editor` on the site — via `POST /api/doc/documents`, with
+the session as a bearer token. The saved document holds the title, the
+citation, a link back to the page, any Q&A you had with the panel so far, and
+the reading-mode body (`src/article/document.ts` builds it; everything but the
+already-sanitized body is escaped). If you are not signed in, the button runs
+the sign-in handoff below first and saves once it completes.
+
 ### Why a side panel, not an overlay
 
 Same reason the timer is its own window: a panel that is part of the browser

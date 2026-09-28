@@ -1,6 +1,511 @@
 
 ### Completed
 
+- **🧯 Restore drizzle migrations and internals/packages docs, deleted a
+  second time by accident.** Another repeat of the standing autonomous-
+  routine prompt ("integrate all the tools into the UI... create user
+  settings and link user db SQL with the ability to save flows/docs/debates
+  in SQL and link to users... add tools into where needed in the UI...
+  develop better tool UI") — as with every recent repeat, that prompt's own
+  asks are already fully built. An Explore pass looking for the next small,
+  still-open gap (the "surface synced X in My Saved Items" and per-record
+  sync-badge veins are both fully exhausted; the qwksearch credential and
+  dailyMissionResults/challengeWinEvents composite-key gaps remain correctly
+  blocked on a product decision) found something more urgent instead: two
+  *regressions*, not gaps.
+
+  `apps/debate-ai.com/drizzle/` (102 migration files, ~60k lines) had been
+  dropped a second time — commit `39076f1` added `drizzle/` to `.gitignore`
+  and removed the directory as a side effect, repeating the exact mistake
+  `d58d57f` had already fixed once after `2566e0d`'s first deletion. Losing
+  the directory broke every test that boots an in-memory D1 client from
+  these files (`resync-rounds.test.ts`, `admin-round-videos.test.ts`), with
+  a bare `ENOENT` looking for `drizzle/0003_dark_zarek.sql` — 20 test files,
+  87 tests failing. Separately, commit `eeaf29a` had deleted
+  `content/docs/internals/` (29 files, including `tool-data-sync.mdx`, which
+  ~15 other feature docs link to) and `content/docs/packages/` (15 files)
+  from `debate-help-docs` — the same regression `78f1128` had already fixed
+  once after `2b62b4a`'s first deletion, complete with a dedicated
+  `docs-links-consistency.test.ts` regression test that nothing had been
+  running against the un-restored tree since.
+
+  Restored both directories verbatim from their last-known-good commits
+  (`39076f1^` and `eeaf29a^` respectively — confirmed byte-identical to what
+  the prior fix commits restored, and confirmed nothing else touched either
+  path in between), and dropped the `drizzle/` line from `.gitignore` so
+  these checked-in migration files can't be accidentally ignored-and-removed
+  a third time.
+
+  Ran the verification gate: `bunx vitest run` on
+  `docs-links-consistency.test.ts`/`resync-rounds.test.ts`/
+  `admin-round-videos.test.ts` (all passing), the root `bun run test` (594/600
+  files, 10376/10377 tests passing — the 5 remaining failures are the
+  standing `debate-rankings`/`debate-editor-cm`/`debate-tournaments-tabroom`
+  submodule gap, confirmed unchanged on the base branch), `debate-help-docs`'
+  own `bun run typecheck` (fumadocs-mdx + tsc, clean), and the root
+  `bun run typecheck` (same pre-existing submodule-rooted failures only,
+  confirmed unchanged on the base branch). `bun install` had rewritten
+  `bun.lock` as a side effect of the uninitialized submodules; reverted with
+  `git checkout -- bun.lock` before committing. `npx turbo build
+  --filter=debate-ai-web` fails identically on the unmodified branch too, on
+  an unrelated pre-existing bug — `glicko-debate-rankings.md` (added by the
+  same `eeaf29a` commit) has no frontmatter at all, and fumadocs-mdx requires
+  a `title` — not touched here since it's a separate defect from the
+  deletions this run fixed. No `lint`/`format:check` script exists anywhere
+  in this repo, so that step was skipped as not applicable.
+
+  **Follow-up (not in scope here):** `glicko-debate-rankings.md`'s missing
+  frontmatter (`title`) breaks the production build and needs a one-line fix
+  by whoever owns that content. Both restored directories have now been
+  accidentally deleted twice each by unrelated commits bundling in an
+  overly-broad `git rm`/`.gitignore` change — worth a maintainer look at
+  whatever local workflow keeps doing this, since a third occurrence is
+  likely without one. The `qwksearch` file-sources credential-sync gap and
+  the `dailyMissionResults`/`challengeWinEvents` composite-key gap flagged by
+  earlier runs remain open for the reasons already recorded.
+
+- **📚 Surface synced Evidence Library entries in "My Saved Items".** Another
+  repeat of the standing autonomous-routine prompt ("integrate all the tools
+  into the UI... create user settings and link user db SQL with the ability
+  to save flows/docs/debates in SQL and link to users... add tools into
+  where needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built: a `user_settings`
+  D1 table, dedicated `saved_flows`/`saved_rounds`/`practice_vs_ai_debates`/
+  `documents` tables, and a generic `saved_tool_records` mechanism covering
+  ~65 more tools. Cross-checked the full `TOOL_RECORD_COLLECTIONS` catalog
+  (`packages/debate-data-sync/src/state/toolRecordCollections.ts`) against
+  the Tools page's "My Saved Items" widget's `CloudLibraryItemKind` list and
+  found one more real gap, not previously ruled out by name in any earlier
+  run: `evidenceLibraryEntries` (the Evidence Library's cut cards and
+  reusable analytic blocks, `debate-research-evidence`'s own
+  `lib/shared-evidence-library.ts`, persisted per-browser by
+  `state/evidenceLibraryEntries.ts`) already synced a signed-in user's own
+  submitted entries via `GET /api/tool-records/evidenceLibraryEntries` —
+  fully wired via the generic `saved_tool_records` mechanism — but a card or
+  block cut on one device stayed invisible from this widget on another,
+  discoverable only from inside the Evidence Library's own search panel.
+  Confirmed, before picking it, that this is a genuinely personal "my saved
+  item" and not the bulk shared library the same panel also queries: per
+  `EvidenceLibraryPanel.tsx`'s own header comment, "the persisted
+  `localStorage` repository only sees entries saved in this one browser" —
+  the shared, cross-team view is a separate, server-backed search index this
+  local store doesn't hold. `EvidenceLibraryEntry` has both `cite`/`argBlock`
+  (for a label) and an optional `createdAt` (for sorting), so — unlike
+  `opponentTeamProfiles`/`judgeProfiles`/`coachingPrograms`, which earlier
+  runs correctly left out for carrying no timestamp field at all — it fits
+  the widget's existing shape with no product decision needed.
+
+  Added a nineteenth `CloudLibraryItemKind`, `"evidenceLibraryEntry"`, to
+  `debate-round`'s `state/cloudLibrary.ts`/`state/cloudLibraryClient.ts`:
+  `CloudEvidenceLibraryEntrySummary` (`id`/`cite`/`argBlock`/`createdAt`,
+  trimmed from `GET /api/tool-records/evidenceLibraryEntries`'s full
+  `EvidenceLibraryEntry[]` row shape — defined locally rather than imported,
+  matching `CloudLearnDeckSummary`'s own convention of mirroring the wire
+  shape rather than the source package's internal type), an
+  `evidenceLibraryEntryItems` merge branch keyed by `id` and labeled by
+  `cite`, falling back to `argBlock` (a `block`-kind entry's `cite` is
+  always blank) and then "Untitled evidence entry" when both are blank, and
+  `listCloudEvidenceLibraryEntries` — a local raw `fetch` against the
+  generic tool-records route, matching every other source's "degrade to
+  null on a 401/non-2xx/network error" convention rather than throwing.
+  Defaults to `/cards/library` (the Evidence Library's actual panel route,
+  per `debate-feature-catalog`'s own catalog entry — more precise than the
+  `TOOL_RECORD_COLLECTIONS` entry's own `/cards` href, used elsewhere for a
+  different, unrelated settings widget), overridable via
+  `evidenceLibraryEntryHref` like every other kind. Wired a `Library` icon
+  into `MySavedItems.tsx`'s `KIND_ICON` map — no standalone `/tools` entry
+  to match (the Evidence Library is the default view of the Research
+  Workspace's `/cards` route), so it reuses the Research Workspace's own
+  icon from `tool-groups.ts`.
+
+  Extended both modules' Vitest coverage (`packages/debate-round/test/cloudLibrary.test.ts`,
+  `cloudLibraryClient.test.ts`) to cover the new kind end to end: merge
+  order (now nineteen kinds), label/href defaults and overrides, the
+  cite-then-argBlock-then-untitled fallback chain, the no-createdAt case,
+  and the widget's existing 401/500/network-error degradation behavior.
+
+  Ran the verification gate: `bun install` (git submodules not initialized
+  in this sandboxed environment — no credentials to clone
+  `debate-rankings`/`debate-tournaments-tabroom`/`debate-editor-cm`, the
+  same pre-existing gap every recent run of this routine has recorded;
+  reverted the resulting `bun.lock` churn with `git checkout -- bun.lock`
+  before committing), `debate-round`'s own `bun run test` (72 files, 1395
+  tests — 6 new) and `bun run typecheck` (clean), `debate-webview`'s own
+  `bun run test` (41 files, 430 tests, all passing) and `bun run typecheck`
+  (clean of new errors — the same submodule-rooted `debate-rankings-adapter`
+  failures as every recent run, confirmed unchanged by reproducing them on
+  the unmodified branch), and the root `bun run test` (594 files, 10304
+  tests passing, 1 skipped — 6 files failing, all the same submodule-rooted
+  root cause, none in `debate-round`/`debate-webview`/`debate-data-sync`).
+  The root `bun run build` script itself fails before running anything,
+  identically on the unmodified branch (`turbo build --filter='!debate-flow'`
+  references a workspace package name that doesn't exist — `debate-flow-ebb`
+  is the actual package) — a pre-existing script bug unrelated to this
+  change. Ran `npx turbo build --filter=debate-ai-web` directly instead,
+  bypassing that broken filter: the production build transformed all 17,281
+  modules cleanly and failed only at the final bundling step, on the same
+  `debate-rankings-adapter` submodule import gap as the test/typecheck
+  failures above (confirmed identical on the unmodified branch too) — not a
+  regression from this change, and not something a build with every
+  submodule present would hit. No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable.
+
+  **Follow-up (not in scope here):** the root `bun run build` script's
+  `--filter='!debate-flow'` typo (should be `debate-flow-ebb`, its only
+  match today) is worth a maintainer fix so the script runs at all in an
+  environment with every submodule present. `opponentTeamProfiles`/
+  `judgeProfiles`/`coachingPrograms` remain unsurfaced `TOOL_RECORD_COLLECTIONS`
+  entries with a plausible "my saved item" shape but no timestamp field —
+  still needs a product decision on how to label/sort a timestamp-less
+  aggregate profile. The `qwksearch` file-sources credential-sync gap and
+  the `dailyMissionResults`/`challengeWinEvents` composite-key gap flagged
+  by earlier runs remain open for the reasons already recorded.
+
+- **📝 Surface synced Prep Notes in "My Saved Items".** Another repeat of
+  the standing autonomous-routine prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL with the ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI"). As with every recent
+  repeat, a full audit found that prompt's own asks — a `user_settings` D1
+  table, dedicated `saved_flows`/`saved_rounds`/`practice_vs_ai_debates`/
+  `documents` tables, and a generic `saved_tool_records` mechanism covering
+  ~65 more tools — are already fully built. GitHub issue #785 already
+  reached and closed this same conclusion; seven other PRs opened the same
+  day independently converged on the identical "surface one more already-
+  synced kind in My Saved Items" gap, so this run cross-checked the full
+  `TOOL_RECORD_COLLECTIONS` catalog against the widget's `CloudLibraryItemKind`
+  list for a kind not already claimed by one of those parallel PRs.
+
+  Prep Notes (`debate-round`'s own `PrepNote` model,
+  `flow/strategy-sync-notes.ts`, persisted by `debate-team-collaboration`'s
+  `state/prepNotes.ts`) already synced a signed-in user's live per-argument
+  notes via `GET /api/tool-records/prepNotes` — fully wired via the generic
+  `saved_tool_records` mechanism — but a note left on one device stayed
+  invisible from this widget on another, discoverable only from inside
+  `/prep-notes`' own panel. Unlike the other remaining unsurfaced
+  `TOOL_RECORD_COLLECTIONS` entries with a plausible "my saved item" shape
+  (`opponentTeamProfiles`/`judgeProfiles`/`coachingPrograms`, none of which
+  carry a timestamp field to sort or label a recency card by), `PrepNote`
+  has both `text` (for a label) and `updatedAt` (for sorting), so it fits
+  the widget's existing shape with no product decision needed.
+
+  Added an eighteenth `CloudLibraryItemKind`, `"prepNote"`, to
+  `debate-round`'s `state/cloudLibrary.ts`/`state/cloudLibraryClient.ts`:
+  `CloudPrepNoteSummary` (`Pick<PrepNote, "id" | "text" | "updatedAt">`,
+  imported directly since `PrepNote` already lives in this package), a
+  `prepNoteItems` merge branch keyed by `id` and labeled by `text`, falling
+  back to "Untitled prep note" when blank, and `listCloudPrepNotes` — a
+  local raw `fetch` against `/api/tool-records/prepNotes`, matching every
+  other source's "degrade to null on a 401/non-2xx/network error"
+  convention rather than throwing. Defaults to `/prep-notes`, overridable
+  via `prepNoteHref` like every other kind. Wired a `NotebookPen` icon into
+  `MySavedItems.tsx`'s `KIND_ICON` map, matching Prep Notes' own icon in
+  `tool-groups.ts`.
+
+  Extended both modules' Vitest coverage (`packages/debate-round/test/cloudLibrary.test.ts`,
+  `cloudLibraryClient.test.ts`) to cover the new kind end to end: merge
+  order (now eighteen kinds), label/href defaults and overrides, the
+  blank-text-falls-back-to-untitled case, the empty-input case, and the
+  widget's existing 401/500/network-error degradation behavior.
+
+  Ran the verification gate: `bun install` (with git submodules
+  initialized), `debate-round`'s own `bunx vitest run cloudLibrary.test.ts
+  cloudLibraryClient.test.ts` (50/50 passing, 2 new) and `bun run
+  typecheck` (clean), `debate-webview`'s own `bun run typecheck` (clean),
+  the root `bun run test` (594 files, 10360 tests, 1 skipped — 0 failures,
+  2 more passing than the pre-change baseline) and root `bun run
+  typecheck` (26 packages, all clean).
+
+  Follow-ups: `opponentTeamProfiles`/`judgeProfiles`/`coachingPrograms`
+  remain unsurfaced `TOOL_RECORD_COLLECTIONS` entries with a plausible "my
+  saved item" shape but no timestamp field — still needs a product
+  decision on how to label/sort a timestamp-less aggregate profile before
+  they can follow the same small, reviewable-slice pattern this entry
+  used.
+
+- **📍 Surface synced Flow Annotations in "My Saved Items".** Another repeat
+  of the standing autonomous-routine prompt ("integrate all the tools into
+  the UI... create user settings and link user db SQL with the ability to
+  save flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built. The last several
+  runs closed this same "sync wired, discoverability not [from the Tools
+  page]" gap by auditing the dedicated `saved_*` D1 tables against the Tools
+  page's "My Saved Items" widget's `CloudLibraryItemKind` list; that audit
+  scope wouldn't catch a kind synced through `debate-data-sync`'s *generic*
+  `TOOL_RECORD_COLLECTIONS`/`saved_tool_records` mechanism instead of its
+  own dedicated table (only `speechOutcomeRuns` had been carried over that
+  way so far). Cross-checked the full `TOOL_RECORD_COLLECTIONS` catalog
+  against the widget instead this time, and found one more real gap:
+  `flowAnnotations` (`debate-round`'s own `FlowAnnotation` model,
+  `flow/flow-annotations.ts`, persisted by `debate-practice-drills`'
+  `state/flowAnnotations.ts`) already synced a signed-in user's timestamped
+  flow annotations via `GET /api/tool-records/flowAnnotations` — fully
+  wired and already covered by its own `tool-record-sync-wiring.test.ts`
+  suite per `flow-annotations.mdx`'s "Known gaps" — but an annotation
+  dropped on one device stayed invisible from this widget on another,
+  discoverable only from inside `/annotations`' own panel. (The other
+  remaining `TOOL_RECORD_COLLECTIONS` entries with a plausible "my saved
+  item" shape — `opponentTeamProfiles`/`judgeProfiles` — carry no
+  timestamp field of their own to sort or label a recency card by, unlike
+  every other kind this widget surfaces, so they're left for a follow-up
+  that would need a real product decision about how to label/sort a
+  timestamp-less aggregate profile rather than a small, reviewable slice.)
+
+  Added a sixteenth `CloudLibraryItemKind`, `"flowAnnotation"`, to
+  `debate-round`'s `state/cloudLibrary.ts`/`state/cloudLibraryClient.ts`:
+  `CloudFlowAnnotationSummary` (`Pick<FlowAnnotation, "id" | "note" | "tag" |
+  "createdAt">`, imported directly rather than defined locally since
+  `FlowAnnotation` already lives in this package), a `flowAnnotationItems`
+  merge branch keyed by `id` and labeled by `note`, falling back to `tag`
+  and then "Untitled annotation" when both are blank, and
+  `listCloudFlowAnnotations` — a local raw `fetch` against
+  `/api/tool-records/flowAnnotations`, matching every other source's
+  "degrade to null on a 401/non-2xx/network error" convention rather than
+  throwing. Defaults to `/annotations`, overridable via
+  `flowAnnotationHref` like every other kind. Wired a `MapPin` icon into
+  `MySavedItems.tsx`'s `KIND_ICON` map, matching Flow Annotations' own icon
+  in `tool-groups.ts`.
+
+  Extended both modules' Vitest coverage (`packages/debate-round/test/cloudLibrary.test.ts`,
+  `cloudLibraryClient.test.ts`) to cover the new kind end to end: merge
+  order (now sixteen kinds), label/href defaults and overrides, the
+  note-then-tag-then-untitled fallback chain, the empty-input case, and the
+  widget's existing 401/500/network-error degradation behavior.
+
+  Ran the verification gate: `bun install`, `debate-round`'s own
+  `bun run test` (72 files, 1388 tests — 2 new) and `bun run typecheck`
+  (clean), `debate-webview`'s own `bun run test` (41 files, 430 tests, all
+  passing) and `bun run typecheck` (clean of new errors — see below), and
+  the root `bun run test` (594 files, 10297 tests — 6 files failing, none in
+  `debate-round`/`debate-webview`, same six as every recent run of this
+  routine). Those 6 failures, and the corresponding `bun run typecheck`
+  failures in `debate-rankings-adapter` and every package that transitively
+  depends on it (including `debate-webview`'s own `bun run typecheck`), all
+  trace to the same pre-existing root cause confirmed again this run (via
+  `git stash`, reproducing the identical `debate-rankings-adapter`
+  typecheck errors on the unmodified branch): the `debate-rankings`/
+  `debate-tournaments-tabroom`/`debate-editor-cm` git submodules are not
+  checked out in this sandboxed environment (no credentials to clone those
+  private repos). `bun install` had again rewritten `bun.lock` to drop the
+  uninitialized submodule entries as a side effect of running in this
+  submodule-less sandbox; reverted that unrelated lockfile churn with
+  `git checkout -- bun.lock` before committing. No `lint`/`format:check`
+  script exists anywhere in this repo, so that step was skipped as not
+  applicable.
+
+  **Follow-up (not in scope here):** the uninitialized git submodules
+  remain the same standing environment/CI-runner gap earlier runs recorded,
+  not a code defect. `opponentTeamProfiles`/`judgeProfiles` (see above) are
+  candidates for a future "My Saved Items" slice once there's a product
+  decision on labeling a timestamp-less aggregate profile card. The
+  `qwksearch` file-sources credential-sync gap and the
+  `dailyMissionResults`/`challengeWinEvents` composite-key gap flagged by
+  earlier runs remain open for the reasons already recorded.
+
+- **🤖 Surface synced custom opponent personas in "My Saved Items".** Another
+  repeat of the standing autonomous-routine prompt ("integrate all the tools
+  into the UI... create user settings and link user db SQL with the ability
+  to save flows/docs/debates in SQL and link to users... add tools into
+  where needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built. Audited the Tools
+  page's "My Saved Items" widget (`packages/debate-webview/src/routes/tools/MySavedItems.tsx`,
+  `debate-round`'s `buildRecentCloudItems`/`fetchRecentCloudItems`) against
+  the remaining `saved_*` D1 tables not yet in its `CloudLibraryItemKind`
+  list, and found the same "sync wired, discoverability not [from the Tools
+  page]" gap this widget has closed fourteen times before, still open for
+  one more: `saved_custom_opponent_personas` (Practice Round Simulator's
+  named, reusable custom AI opponent personas, `debate-speech-writer`'s
+  `opponent-persona-library.ts`, `GET /api/custom-opponent-personas`)
+  already followed a signed-in user across devices via
+  `useCustomOpponentPersonaLibrary`, but a persona authored on one device
+  stayed invisible from this widget on another — discoverable only from
+  inside the Practice Round Simulator's own "My persona library" picker, not
+  from the one page that already lists every other saved kind. (Ruled out
+  the other remaining un-surfaced tables — `saved_quick_cards`/
+  `saved_learn_cards`/`saved_learn_review_log`/`saved_coach_material_versions`/
+  `saved_daily_best_card_comments`/`saved_tournament_results` — as either a
+  bulk content library or history log more naturally browsed from inside its
+  own tool, or admin-entered standings data rather than a per-user "saved
+  item," matching this widget's existing selection of generated/authored
+  artifacts over raw record libraries.)
+
+  Added a fifteenth `CloudLibraryItemKind`, `"customOpponentPersona"`, to
+  `debate-round`'s `state/cloudLibrary.ts`/`state/cloudLibraryClient.ts`:
+  `CloudCustomOpponentPersonaSummary` (`id`/`name`/`updatedAt`, trimmed from
+  `GET /api/custom-opponent-personas`'s full `SavedCustomOpponentPersona[]`
+  row shape), a `customOpponentPersonaItems` merge branch keyed by `id` and
+  labeled by `name` ("Untitled persona" when blank), and
+  `listCloudCustomOpponentPersonas` — a local raw `fetch` against
+  `/api/custom-opponent-personas`, matching every other cross-package
+  source's "degrade to null on a 401/non-2xx/network error" convention
+  rather than throwing. Defaults to `/practice-round` (where the persona
+  picker lives), overridable via `customOpponentPersonaHref` like every
+  other kind. Wired a `PlayCircle` icon into `MySavedItems.tsx`'s
+  `KIND_ICON` map, matching Practice Round Simulator's own icon in
+  `tool-groups.ts`.
+
+  Extended both modules' Vitest coverage (`packages/debate-round/test/cloudLibrary.test.ts`,
+  `cloudLibraryClient.test.ts`) to cover the new kind end to end: merge
+  order, label/href defaults and overrides, the blank-name fallback, and the
+  widget's existing 401/500/network-error degradation behavior.
+
+  Ran the verification gate: `bun install`, `debate-round`'s own
+  `bun run test` (72 files, 1386 tests — 8 new) and `bun run typecheck`
+  (clean), `debate-webview`'s own `bun run test` (41 files, 430 tests, all
+  passing) and `bun run typecheck` (clean of new errors — see below), and
+  the root `bun run test` (594 files, 10296 tests — 6 files failing, none in
+  `debate-round`/`debate-webview`). The 6 failures, and the corresponding
+  `bun run typecheck` failures in `debate-rankings-adapter`/
+  `debate-editor-cm-adapter`/`debate-tournaments-tabroom-adapter` (and every
+  package that transitively depends on them, including `debate-webview`'s
+  own `bun run typecheck`), all trace to the same root cause —
+  `Cannot find module '../../debate-rankings/js/index'` and its two
+  siblings — because the `debate-rankings`/`debate-tournaments-tabroom`/
+  `debate-editor-cm` git submodules are not checked out in this sandboxed
+  environment (no credentials to clone those private repos), exactly as the
+  last several runs of this same routine documented. `bun install` had
+  rewritten `bun.lock` to drop the uninitialized `debate-flow-ebb` submodule
+  entry as a side effect of running in this submodule-less sandbox; reverted
+  that unrelated lockfile churn with `git checkout -- bun.lock` before
+  committing, since it isn't a real dependency change and would corrupt the
+  lockfile for an environment with the submodules present. No
+  `lint`/`format:check` script exists anywhere in this repo, so that step
+  was skipped as not applicable.
+
+  **Follow-up (not in scope here):** the uninitialized `debate-rankings`/
+  `debate-tournaments-tabroom`/`debate-editor-cm` git submodules block the
+  unscoped root `bun run typecheck`/`bun run build`/`bun run test` in this
+  sandboxed environment — an environment/CI-runner gap, not a code defect,
+  and pre-existing regardless of which task a given run of this same
+  autonomous prompt picks. The `qwksearch` file-sources credential-sync gap
+  and the `dailyMissionResults`/`challengeWinEvents` composite-key gap
+  flagged by earlier runs remain open for the reasons already recorded.
+
+- **🗂️ Surface CardMirror Learn's synced flashcard decks in "My Saved
+  Items".** Another repeat of the standing autonomous-routine prompt
+  ("integrate all the tools into the UI... create user settings and link
+  user db SQL with the ability to save flows/docs/debates in SQL and link
+  to users... add tools into where needed in the UI... develop better tool
+  UI") — as with every recent repeat, that prompt's own asks are already
+  fully built. Audited the Tools page's "My Saved Items" widget
+  (`packages/debate-webview/src/routes/tools/MySavedItems.tsx`,
+  `debate-round`'s `buildRecentCloudItems`/`fetchRecentCloudItems`) against
+  the full list of `saved_*` D1 tables and found the same "sync wired,
+  discoverability not [from the Tools page]" gap this widget has closed
+  thirteen times before, still open for one more: `saved_learn_decks`
+  (CardMirror Learn's custom flashcard decks, `GET /api/learn-decks`,
+  `learn-decks-cloud-sync.mdx`) already followed a signed-in user across
+  devices, but a deck built on one device stayed invisible from this widget
+  on another — discoverable only from inside the editor's own "Manage
+  flashcards" overlay, not from the one page that already lists every other
+  saved kind.
+
+  Added a fourteenth `CloudLibraryItemKind`, `"learnDeck"`, to
+  `debate-round`'s `state/cloudLibrary.ts`/`state/cloudLibraryClient.ts`:
+  `CloudLearnDeckSummary` (`deckId`/`name`/`createdAt`, mirroring
+  `GET /api/learn-decks`'s bare `CustomDeck[]` row shape), a
+  `learnDeckItems` merge branch keyed by `deckId` and labeled by `name`
+  ("Untitled deck" when blank), and `listCloudLearnDecks` — a local raw
+  `fetch` against `/api/learn-decks`, matching every other cross-package
+  source's "degrade to null on a 401/non-2xx/network error" convention
+  rather than throwing. Defaults to `/reason-editor` (where CardMirror, and
+  Learn inside it, is mounted), overridable via `learnDeckHref` like every
+  other kind. Wired a `Layers` icon into `MySavedItems.tsx`'s
+  `KIND_ICON` map. Extended both modules' Vitest coverage
+  (`packages/debate-round/test/cloudLibrary.test.ts`,
+  `cloudLibraryClient.test.ts`) to cover the new kind end to end: merge
+  order, label/href defaults and overrides, the blank-name fallback, and
+  the widget's existing 401/500/network-error degradation behavior.
+
+- **🗂️ Give Learn's Decks manager a per-deck "synced"/"pending" badge.**
+  Another repeat of the standing autonomous-routine prompt ("integrate all
+  the tools into the UI... create user settings and link user db SQL with
+  the ability to save flows/docs/debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, that prompt's own asks are already fully built:
+  `user_settings`/`documents`/`saved_flows`/`saved_rounds`, 25+ bespoke
+  `saved_*` D1 tables, and 60+ `TOOL_RECORD_COLLECTIONS` entries all linked
+  to `user.id`, and every tool already reachable from the Tools page, the
+  command palette and the feature catalog. Went looking for a still-open,
+  one-PR-sized gap this repeat of the audit hadn't already closed, and
+  found one explicitly named as deferred by the run that built the deck
+  manager itself: `learn-decks-cloud-sync.mdx`'s Known gaps said
+  `LearnDecksSync` "tracks no *per-deck* status (its pushes/deletes are
+  fire-and-forget), so a per-deck badge would need that state added to the
+  sync class first — a real follow-up, not done here" — and
+  `learn-deck-manage-ui.ts`'s own module doc repeated the same "out of
+  scope here" note, unchanged.
+
+  Gave `LearnDecksSync` (`packages/debate-editor/src/editor/learn-decks-sync.ts`)
+  a second map alongside the existing `baseline` (which only ever tracks
+  "what did we last diff against", advancing eagerly on every store change):
+  `landed` tracks each deck's last *confirmed* value, advanced only once a
+  create push, an op, or an op's 404 fallback `PUT` actually resolves —
+  mirroring `debate-data-sync`'s `getToolRecordSyncStatus`/`snapshots`
+  pattern, which only advances a collection's snapshot once a flush lands.
+  `getDeckSyncStatus(deckId)` compares a deck's current name/`cardIds`
+  against its `landed` entry to answer `"synced"` / `"pending"` /
+  `"unknown"` (`"unknown"` while signed out or once the deck no longer
+  exists locally, matching the generic helper's own contract). Since a
+  fire-and-forget push settling doesn't itself touch the store — nothing
+  would otherwise tell a listener to re-check — `onStatusChange(listener)`
+  gives an explicit subscription, fired whenever `landed` advances.
+
+  Wired it into `learn-deck-manage-ui.ts`: each deck row now shows a small
+  "Synced" / "Not yet synced" chip next to its name (omitted entirely while
+  the coarse status is `"unknown"`, matching `FlowHistoryList`'s and
+  `user-dictionary-ui.ts`'s own precedent for the same three-state badge),
+  and `buildDeckManageSection` now subscribes to `sync.onStatusChange` in
+  addition to the store, so the chip flips the moment a push actually lands
+  rather than waiting for an unrelated store mutation to trigger the next
+  render. Added the matching `.pmd-deck-manage-sync-badge`/`--synced`/
+  `--pending` rules to `style.css`, copied from `.pmd-dictionary-sync-badge`'s
+  same "small-chip" language.
+
+  Vitest-covered: `learn-decks-sync.test.ts` (9 new cases — unknown while
+  signed out, unknown for a deck absent locally, synced for a deck present
+  on both sides at merge time, synced for a deck adopted during the merge,
+  pending immediately after a local-only deck's merge push fires and synced
+  once it lands, pending again right after a rename and synced once the op
+  lands, unknown again once a synced deck is deleted, `onStatusChange`
+  firing once a push lands, and no further notifications once unsubscribed)
+  and `learn-deck-manage-ui.test.ts` (4 new cases — the badge omitted while
+  signed out, "Synced" for a deck confirmed at merge time, "Not yet synced"
+  right after creating a deck flipping to "Synced" once the push lands, and
+  no error once destroyed mid-flight).
+
+  Ran the verification gate: `bun install`, `debate-editor`'s own
+  `bun run test` (51 files, 986 tests — 13 new) and `bun run typecheck`
+  (clean), and the root `bun run test` (582 files, 10190 tests — 6 files
+  failing, `debate-editor` unaffected). The 6 failures, and a corresponding
+  `bun run typecheck`/`bun run build` failure in `debate-rankings-adapter`/
+  `debate-editor-cm-adapter`/`debate-tournaments-tabroom-adapter` (and, for
+  `build`, everything that depends on them: `debate-videos`,
+  `debate-ai-web`, `debate-web-ext`), all trace to the same root cause —
+  `Cannot find module '../../debate-rankings/js/index'` and its two
+  siblings — because the `debate-rankings`/`debate-tournaments-tabroom`/
+  `debate-editor-cm` git submodules are not checked out in this sandboxed
+  environment (no credentials to clone those private repos). Confirmed
+  pre-existing rather than caused by this change by stashing it and
+  re-running `bun run typecheck`: the identical failures reproduce on
+  `master`. Neither `debate-editor` nor `debate-help-docs` typechecks with
+  an error of their own; `debate-ai-web`'s own typecheck likewise reports
+  no error beyond the transitive `debate-rankings-adapter` one. No
+  `lint`/`format:check` script exists anywhere in this repo, so that step
+  was skipped as not applicable.
+
+  **Follow-up (not in scope here):** the uninitialized `debate-rankings`/
+  `debate-tournaments-tabroom`/`debate-editor-cm` git submodules block the
+  unscoped root `bun run typecheck`/`bun run build`/`bun run test` in this
+  sandboxed environment — an environment/CI-runner gap, not a code defect,
+  and pre-existing regardless of which task a given run of this same
+  autonomous prompt picks. `learn-decks-cloud-sync.mdx`'s other Known gaps
+  (no optimistic-concurrency handling on a brand-new deck's own initial
+  create push racing a second rapid edit before that create lands, and the
+  soft-reference gap for a deck's `cardIds`) remain open for the reasons
+  already recorded there.
+
 - **🧩 Make the extension's Options page the app's own UI, as a package.**
   The debate-ai.com frontend was reachable only by loading the Next.js app, so
   everything else that wanted it — the browser extension, the native wrapper —

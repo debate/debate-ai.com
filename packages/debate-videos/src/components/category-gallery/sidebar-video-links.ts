@@ -22,6 +22,13 @@ export interface SidebarVideoLink {
   id: string;
   href: string;
   title: string;
+  /**
+   * Show this destination's total unabbreviated. Thousands are shortened to
+   * `1.4k` elsewhere to keep a count from crowding out its title; the
+   * College Debates total is the round archive's headline number and reads
+   * as `1400`, not `1.4k`.
+   */
+  exactCount?: boolean;
 }
 
 /** The College Debates node — the round archive's flagship link, and the
@@ -30,6 +37,7 @@ export const VIDEO_COLLEGE_LINK: SidebarVideoLink = {
   id: "college",
   href: "/videos/college",
   title: "College Debates",
+  exactCount: true,
 };
 
 /** The debate formats, peers of {@link VIDEO_COLLEGE_LINK} in the tree

@@ -72,7 +72,7 @@ export function openPluginSettingsModal(pluginId: string, pluginName: string): v
   document.addEventListener('keydown', onKey);
   document.body.appendChild(overlay);
   setTimeout(() => {
-    const first = rows.querySelector<HTMLElement>('input, select');
+    const first = rows.querySelector<HTMLElement>('input, select, textarea');
     (first ?? done).focus();
   }, 0);
 }
@@ -85,6 +85,9 @@ function buildRow(pluginId: string, def: PluginSettingDef): HTMLElement {
   const title = document.createElement('span');
   title.className = 'pmd-plugin-settings-title';
   title.textContent = def.label;
+  // A textarea beside the title would be a cramped sliver — the stacked
+  // class lays multiline rows out full-width underneath instead.
+  if (def.type === 'multiline') label.classList.add('pmd-plugin-settings-label-stacked');
   label.append(title, buildControl(pluginId, def));
   row.appendChild(label);
   if (def.description) {
@@ -115,6 +118,17 @@ function buildControl(pluginId: string, def: PluginSettingDef): HTMLElement {
       input.className = 'pmd-settings-text';
       input.autocomplete = 'off';
       input.spellcheck = false;
+      input.value = String(current);
+      input.addEventListener('change', () => {
+        setPluginSettingValue(pluginId, def.key, input.value);
+      });
+      return input;
+    }
+    case 'multiline': {
+      const input = document.createElement('textarea');
+      input.className = 'pmd-settings-text pmd-plugin-settings-multiline';
+      input.spellcheck = false;
+      input.rows = 6;
       input.value = String(current);
       input.addEventListener('change', () => {
         setPluginSettingValue(pluginId, def.key, input.value);

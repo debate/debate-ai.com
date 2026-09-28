@@ -7,7 +7,9 @@
  * settings store immediately.
  */
 
-import { confirmDialog } from './text-prompt.js';
+import { WORD_COUNT_ORDERS, type WordCountOrder } from './word-count-order.js';
+import { confirmDialog, promptForRouteChoice } from './text-prompt.js';
+import { requestVoiceCalibration } from './voice/hooks.js';
 import { isLiteBuild } from './lite.js';
 import { entryConflictWarnings } from './custom-autocorrect-plugin.js';
 import {
@@ -47,6 +49,7 @@ import {
   ZOOM_MAX_PCT,
   type StyleAlignments,
   type StyleAlignment,
+  applyNumberingSeparator,
 } from './settings.js';
 import { CATEGORY_TABS, visibleCategoryTabs, type SettingsTarget } from './settings-categories.js';
 import { buildUserDictionarySection } from './user-dictionary-ui.js';
@@ -77,7 +80,7 @@ import { applyTimerProfile } from './timer-profile.js';
 import { showToast } from './toast.js';
 import { icon, setIcon, CUSTOM_BUTTON_ICONS, type IconName } from './icons';
 import { availableRibbonCommandIds } from './ribbon-availability.js';
-import { commandLabelFor, RIBBON_COMMAND_LABELS, type RibbonCommandId } from './ribbon-commands.js';
+import { commandLabelFor, RIBBON_COMMAND_LABELS, type RibbonCommandId, ribbonKeyStringFor, formatKeyForDisplay } from './ribbon-commands.js';
 import { settingCommandOptions } from './setting-commands.js';
 import {
   FILE_OBJECT_KINDS,
@@ -88,6 +91,63 @@ import {
   DEFAULT_SPEECH_FILENAME_TEMPLATE,
   renderSpeechFilename,
 } from './speech-filename.js';
+
+interface SeatCandidateUi {
+  routingCode: string;
+  boundAt: string;
+  lastSeenAt?: string;
+  label?: string;
+}
+
+/** Seat-limit prompt. With a candidate list (relay ≥ 2026-09-02) the
+ *  user picks WHICH machine to unlink — route-style buttons with 1/2/3
+ *  keys, one per seat, labelled with the machine name that build
+ *  reported plus its link and last-active dates. Without one (older
+ *  relay) it is the legacy "unlink the oldest?" confirm. Resolves to the
+ *  routing code to evict, `undefined` for the legacy confirm, or
+ *  'cancel'. The relay used to evict the OLDEST link unconditionally,
+ *  which was a member's long-used primary machine whenever a stale
+ *  seat (a wiped laptop, a VM) had been linked later (identity audit
+ *  2026-09-02). */
+async function pickSeatToUnlink(
+  candidates: SeatCandidateUi[],
+  limit: number,
+  legacyBoundAt: string | undefined,
+  thisKind: 'machine' | 'browser',
+): Promise<string | undefined | 'cancel'> {
+  const fmt = (iso?: string): string => {
+    if (!iso) return '';
+    const d = new Date(iso);
+    return Number.isNaN(d.getTime()) ? '' : d.toLocaleDateString();
+  };
+  if (candidates.length > 0) {
+    const choices = candidates.map((c) => {
+      const linked = fmt(c.boundAt);
+      const seen = fmt(c.lastSeenAt);
+      return {
+        value: c.routingCode,
+        label: `Unlink ${c.label?.trim() || `the machine linked ${linked || 'earlier'}`}`,
+        description: [linked ? `Linked ${linked}` : '', seen ? `last active ${seen}` : '']
+          .filter(Boolean)
+          .join(' · '),
+      };
+    });
+    const picked = await promptForRouteChoice({
+      message:
+        `Your membership covers ${limit} machines and every seat is taken. ` +
+        `Choose a machine to unlink so this ${thisKind} can be linked:`,
+      choices,
+      cancelLabel: 'Keep my current machines',
+    });
+    return picked ?? 'cancel';
+  }
+  const go = await confirmDialog(
+    `Your membership covers ${limit} machines and both seats are taken. ` +
+      `Link this ${thisKind} anyway and unlink the machine added ${fmt(legacyBoundAt) || 'earlier'}?`,
+    { okLabel: thisKind === 'browser' ? 'Link This Browser' : 'Link This Machine' },
+  );
+  return go ? undefined : 'cancel';
+}
 
 /**
  * Body fonts for the font dropdowns, grouped into `<optgroup>`s.
@@ -123,7 +183,7 @@ const FONT_GROUPS: FontGroup[] = [
   },
   {
     label: 'Microsoft Office defaults',
-    fonts: ['Calibri', 'Cambria', 'Times New Roman', 'Arial', 'Georgia'],
+    fonts: ['Calibri', 'Cambria', 'Times New Roman', 'Arial', 'Arial Narrow', 'Georgia'],
   },
   {
     label: 'Apple defaults',
@@ -785,9 +845,17 @@ function renderEntry(meta: SettingMeta): HTMLElement {
       row.appendChild(text);
       row.appendChild(buildVoiceDashStyleEditor());
       return row;
-    } else if (meta.kind === 'voiceDictationModel') {
+    } else if (meta.kind === 'voiceModel') {
       row.appendChild(text);
-      row.appendChild(buildVoiceDictationModelEditor());
+      row.appendChild(buildVoiceModelEditor());
+      return row;
+    } else if (meta.kind === 'voiceHoldKey') {
+      row.appendChild(text);
+      row.appendChild(buildVoiceHoldKeyEditor());
+      return row;
+    } else if (meta.kind === 'voiceCalibrate') {
+      row.appendChild(text);
+      row.appendChild(buildVoiceCalibrateEditor());
       return row;
     } else if (meta.kind === 'speechDocFormat') {
       row.appendChild(text);
@@ -800,6 +868,14 @@ function renderEntry(meta: SettingMeta): HTMLElement {
     } else if (meta.kind === 'saveFormat') {
       row.appendChild(text);
       row.appendChild(buildSaveFormatEditor());
+      return row;
+    } else if (meta.kind === 'docTypeFormat') {
+      row.appendChild(text);
+      row.appendChild(buildDocTypeFormatEditor(meta.key as 'sendDocFormat' | 'readDocFormat' | 'markedDocFormat'));
+      return row;
+    } else if (meta.kind === 'numberingExport') {
+      row.appendChild(text);
+      row.appendChild(buildNumberingExportEditor(meta.key as 'sendDocNumbering' | 'markedDocNumbering'));
       return row;
     } else if (meta.kind === 'aiProvider') {
       row.appendChild(text);
@@ -816,6 +892,10 @@ function renderEntry(meta: SettingMeta): HTMLElement {
     } else if (meta.kind === 'sendDocDestination') {
       row.appendChild(text);
       row.appendChild(buildSendDocDestinationEditor());
+      return row;
+    } else if (meta.kind === 'readDocDestination') {
+      row.appendChild(text);
+      row.appendChild(buildDestinationEditor('readDocDestination', 'pmd-read-doc-dest'));
       return row;
     } else if (meta.kind === 'markedCardsDestination') {
       row.appendChild(text);
@@ -843,11 +923,19 @@ function renderEntry(meta: SettingMeta): HTMLElement {
       return row;
     } else if (meta.kind === 'standardizeHighlightException') {
       row.appendChild(text);
-      row.appendChild(buildHighlightExceptionEditor());
+      row.appendChild(buildHighlightNameEditor('standardizeHighlightException'));
       return row;
     } else if (meta.kind === 'standardizeShadingException') {
       row.appendChild(text);
-      row.appendChild(buildShadingExceptionEditor());
+      row.appendChild(buildShadingHexEditor('standardizeShadingException'));
+      return row;
+    } else if (meta.kind === 'defaultHighlightColor') {
+      row.appendChild(text);
+      row.appendChild(buildHighlightNameEditor('defaultHighlightColor'));
+      return row;
+    } else if (meta.kind === 'defaultShadingColor') {
+      row.appendChild(text);
+      row.appendChild(buildShadingHexEditor('defaultShadingColor'));
       return row;
     } else if (meta.kind === 'colorSlots') {
       row.appendChild(text);
@@ -893,6 +981,14 @@ function renderEntry(meta: SettingMeta): HTMLElement {
       row.appendChild(text);
       row.appendChild(buildEnterAfterStyleEditor());
       return row;
+    } else if (meta.kind === 'wordCountOrder') {
+      row.appendChild(text);
+      row.appendChild(buildWordCountOrderEditor());
+      return row;
+    } else if (meta.kind === 'arrangeSpeechSide') {
+      row.appendChild(text);
+      row.appendChild(buildArrangeSpeechSideEditor());
+      return row;
     } else if (meta.kind === 'colorOverrides') {
       row.appendChild(text);
       row.appendChild(buildColorOverridesEditor());
@@ -900,6 +996,14 @@ function renderEntry(meta: SettingMeta): HTMLElement {
     } else if (meta.kind === 'headingMode') {
       row.appendChild(text);
       row.appendChild(buildHeadingModeEditor());
+      return row;
+    } else if (meta.kind === 'pasteCursor') {
+      row.appendChild(text);
+      row.appendChild(buildPasteCursorEditor());
+      return row;
+    } else if (meta.kind === 'versionHistory') {
+      row.appendChild(text);
+      row.appendChild(buildVersionHistoryEditor());
       return row;
     } else if (meta.kind === 'condenseWarningDelimiter') {
       row.appendChild(text);
@@ -2692,13 +2796,17 @@ function buildPairingAccountEditor(row: HTMLElement): HTMLElement {
     disabled: 'Account linking isn\u2019t enabled in this build.',
   };
 
-  async function connect(code: string, confirmEvict: boolean): Promise<void> {
+  async function connect(code: string, confirmEvict: boolean, evict?: string): Promise<void> {
     const electron = getElectronHost();
     if (!electron?.pairingConnectAccount) return;
     connectBtn.disabled = true;
     message.textContent = 'Connecting\u2026';
     try {
-      const res = await electron.pairingConnectAccount({ connectCode: code, confirmEvict });
+      const res = await electron.pairingConnectAccount({
+        connectCode: code,
+        confirmEvict,
+        ...(evict ? { evict } : {}),
+      });
       if (res.ok) {
         message.textContent = '';
         input.value = '';
@@ -2708,19 +2816,17 @@ function buildPairingAccountEditor(row: HTMLElement): HTMLElement {
         return;
       }
       if (res.error === 'seatLimit' && res.retryCode) {
-        const when = res.wouldEvict?.boundAt
-          ? new Date(res.wouldEvict.boundAt).toLocaleDateString()
-          : 'earlier';
-        const go = await confirmDialog(
-          `Your membership covers ${res.limit ?? 2} machines and both seats are taken. ` +
-            `Link this machine anyway and unlink the machine added ${when}?`,
-          { okLabel: 'Link This Machine' },
+        const pick = await pickSeatToUnlink(
+          res.candidates ?? [],
+          res.limit ?? 2,
+          res.wouldEvict?.boundAt,
+          'machine',
         );
-        if (go) {
-          await connect(res.retryCode, true);
-        } else {
+        if (pick === 'cancel') {
           message.textContent = 'Not linked — your existing machines keep their seats.';
+          return;
         }
+        await connect(res.retryCode, true, pick);
         return;
       }
       message.textContent = ERROR_TEXT[res.error ?? ''] ?? `Couldn\u2019t connect (${res.error}).`;
@@ -2762,12 +2868,13 @@ function buildPairingAccountEditor(row: HTMLElement): HTMLElement {
       const st = account.webAccountStatus();
       renderStatus({ connected: st.connected, expiresAt: st.expiresAt ?? 0, email: st.email });
 
-      const webConnect = async (code: string, confirmEvict: boolean): Promise<void> => {
+      const webConnect = async (code: string, confirmEvict: boolean, evict?: string): Promise<void> => {
         connectBtn.disabled = true;
         message.textContent = 'Connecting…';
         try {
           const got = await account.webAccountConnect(relay.relayBaseUrl(), code, {
             confirmEvict,
+            ...(evict ? { evict } : {}),
           });
           message.textContent = '';
           input.value = '';
@@ -2782,19 +2889,21 @@ function buildPairingAccountEditor(row: HTMLElement): HTMLElement {
           const d = e.detailObj ?? {};
           if (e.status === 409 && d['error'] === 'seatLimit' && typeof d['retryCode'] === 'string') {
             const wouldEvict = d['wouldEvict'] as { boundAt?: string } | undefined;
-            const when = wouldEvict?.boundAt
-              ? new Date(wouldEvict.boundAt).toLocaleDateString()
-              : 'earlier';
-            const go = await confirmDialog(
-              `Your membership covers ${String(d['limit'] ?? 2)} machines and both seats are taken. ` +
-                `Link this browser anyway and unlink the machine added ${when}?`,
-              { okLabel: 'Link This Browser' },
+            const pick = await pickSeatToUnlink(
+              Array.isArray(d['candidates']) ? (d['candidates'] as SeatCandidateUi[]) : [],
+              Number(d['limit'] ?? 2) || 2,
+              wouldEvict?.boundAt,
+              'browser',
             );
-            if (go) {
-              await webConnect(d['retryCode'], false);
-            } else {
+            if (pick === 'cancel') {
               message.textContent = 'Not linked — your existing machines keep their seats.';
+              return;
             }
+            // confirmEvict MUST ride the retry — retrying with false
+            // just consumes the fresh retryCode, 409s again, and
+            // re-shows this dialog forever (field report 2026-08-27).
+            // The picked machine rides as `evict` (relay ≥ 2026-09-02).
+            await webConnect(d['retryCode'], true, pick);
             return;
           }
           if (e.status === 409 && d['error'] === 'youWereEvicted') {
@@ -2823,7 +2932,9 @@ function buildPairingAccountEditor(row: HTMLElement): HTMLElement {
         if (e.key === 'Enter' && input.value.trim()) void webConnect(input.value.trim(), false);
       });
       disconnectBtn.addEventListener('click', () => {
-        account.webAccountDisconnect();
+        // Unlink (not bare disconnect): also releases this browser's
+        // seat server-side, best-effort, so it frees immediately.
+        account.webAccountUnlink(relay.relayBaseUrl());
         renderStatus({ connected: false, expiresAt: 0 });
         message.textContent = '';
       });
@@ -3691,17 +3802,6 @@ function buildPairingReceiveFlashEditor(): HTMLElement {
 
 /** The trailing glyph each separator renders — mirrors `FORMAT_SEP` in the
  *  numbering plugin, so the dropdown labels read exactly as the numbers will. */
-const NUMBERING_SEP_GLYPH: Record<NumberingSeparator, string> = {
-  period: '.',
-  paren: ')',
-  dash: ' -',
-  colon: ':',
-  emdash: '—',
-  endash: '–',
-  doublehyphen: '--',
-  triplehyphen: '---',
-};
-
 /** A separator picker for one numbering level. `sample` is the leading glyph the
  *  options preview against ("1" for numbers, "a" for substructure). */
 function buildSeparatorSelect(
@@ -3713,7 +3813,7 @@ function buildSeparatorSelect(
   for (const sep of NUMBERING_SEPARATORS) {
     const opt = document.createElement('option');
     opt.value = sep;
-    opt.textContent = `${sample}${NUMBERING_SEP_GLYPH[sep]}`;
+    opt.textContent = applyNumberingSeparator(sample, sep);
     if (sep === settings.get(key)) opt.selected = true;
     select.appendChild(opt);
   }
@@ -4314,104 +4414,17 @@ function buildCreateReferenceDelimiterEditor(): HTMLElement {
   return select;
 }
 
-function buildVoiceDictationModelEditor(): HTMLElement {
+function buildVoiceModelEditor(): HTMLElement {
   const wrap = document.createElement('div');
   wrap.className = 'pmd-multi-doc-layout-mode-editor';
   const api = (window as unknown as {
     electronAPI?: {
-      voiceBaseModelInfo(): Promise<{ present: boolean; downloading: boolean }>;
-      voiceDownloadBaseModel(): Promise<{ ok: boolean; error?: string }>;
-      voiceDeleteBaseModel(): Promise<{ ok: boolean; error?: string }>;
-      voiceDictationModelInfo(): Promise<{ present: boolean; downloading: boolean }>;
-      voiceDownloadDictationModel(): Promise<{ ok: boolean; error?: string }>;
-      voiceDeleteDictationModel(): Promise<{ ok: boolean; error?: string }>;
-      onVoiceDownloadProgress(
-        h: (p: { model?: string; pct: number; extracting?: boolean }) => void,
-      ): () => void;
+      voiceModelInfo(): Promise<{ present: boolean; downloading: boolean; sizeMB: number }>;
+      voiceDownloadModel(): Promise<{ ok: boolean; error?: string }>;
+      voiceDeleteModel(): Promise<{ ok: boolean; error?: string }>;
+      onVoiceDownloadProgress(h: (p: { model?: string; pct: number; receivedMB?: number; extracting?: boolean }) => void): () => void;
     };
   }).electronAPI;
-
-  // Radio choice first (which model voice uses), then the download
-  // controls for each below.
-  const groupName = `pmd-voice-dict-model-${Math.random().toString(36).slice(2, 8)}`;
-  for (const o of [
-    { value: 'standard' as const, label: 'Standard' },
-    { value: 'large' as const, label: 'Large — better general-English dictation' },
-  ]) {
-    const row = document.createElement('label');
-    row.className = 'pmd-multi-doc-layout-mode-row';
-    const input = document.createElement('input');
-    input.type = 'radio';
-    input.name = groupName;
-    input.checked = o.value === settings.get('voiceDictationModel');
-    input.addEventListener('change', () => {
-      if (input.checked) settings.set('voiceDictationModel', o.value);
-    });
-    const labelText = document.createElement('span');
-    labelText.textContent = o.label;
-    row.append(input, labelText);
-    wrap.appendChild(row);
-  }
-
-  // Base (standard) model: the one voice needs to run at all. First-use
-  // download, pre-fetchable here (useful before going somewhere with no
-  // wifi).
-  if (api?.voiceBaseModelInfo) {
-    const baseStatus = document.createElement('div');
-    baseStatus.className = 'pmd-voice-model-status';
-    const baseButton = document.createElement('button');
-    baseButton.type = 'button';
-    baseButton.className = 'pmd-voice-model-download';
-    const baseDeleteBtn = document.createElement('button');
-    baseDeleteBtn.type = 'button';
-    baseDeleteBtn.className = 'pmd-voice-model-delete';
-    baseDeleteBtn.textContent = 'Delete standard model';
-    baseDeleteBtn.style.display = 'none';
-    wrap.append(baseStatus, baseButton, baseDeleteBtn);
-    const refreshBase = async (): Promise<void> => {
-      const info = await api.voiceBaseModelInfo();
-      if (info.present) {
-        baseStatus.textContent = 'Standard model downloaded ✓';
-        baseButton.style.display = 'none';
-        baseDeleteBtn.style.display = '';
-      } else {
-        baseStatus.textContent = info.downloading
-          ? 'Downloading standard model…'
-          : 'Standard model not downloaded.';
-        baseButton.style.display = info.downloading ? 'none' : '';
-        baseButton.textContent = 'Download standard model (~130 MB)';
-        baseDeleteBtn.style.display = 'none';
-      }
-    };
-    void refreshBase();
-    baseDeleteBtn.addEventListener('click', () => {
-      void confirmDialog(
-        "Delete the standard voice model? Voice control won't work until you download it again.",
-        { okLabel: 'Delete' },
-      ).then((go) => {
-        if (!go) return;
-        baseDeleteBtn.style.display = 'none';
-        baseStatus.textContent = 'Deleting…';
-        void api.voiceDeleteBaseModel().then((res) => {
-          if (!res.ok) baseStatus.textContent = `Delete failed: ${res.error ?? 'unknown'}`;
-          void refreshBase();
-        });
-      });
-    });
-    baseButton.addEventListener('click', () => {
-      baseButton.style.display = 'none';
-      const unsub = api.onVoiceDownloadProgress((p) => {
-        if (p.model && p.model !== 'base-model') return;
-        baseStatus.textContent = p.extracting ? 'Extracting…' : `Downloading… ${p.pct}%`;
-      });
-      void api.voiceDownloadBaseModel().then((res) => {
-        unsub();
-        if (!res.ok) baseStatus.textContent = `Download failed: ${res.error ?? 'unknown'}`;
-        void refreshBase();
-      });
-    });
-  }
-
   const status = document.createElement('div');
   status.className = 'pmd-voice-model-status';
   const button = document.createElement('button');
@@ -4420,64 +4433,113 @@ function buildVoiceDictationModelEditor(): HTMLElement {
   const deleteButton = document.createElement('button');
   deleteButton.type = 'button';
   deleteButton.className = 'pmd-voice-model-delete';
-  deleteButton.textContent = 'Delete large model';
+  deleteButton.textContent = 'Delete model';
   deleteButton.style.display = 'none';
   wrap.append(status, button, deleteButton);
-
   const refresh = async (): Promise<void> => {
-    if (!api) {
+    if (!api?.voiceModelInfo) {
       status.textContent = 'Desktop only.';
       button.style.display = 'none';
-      deleteButton.style.display = 'none';
       return;
     }
-    const info = await api.voiceDictationModelInfo();
+    const info = await api.voiceModelInfo();
     if (info.present) {
-      status.textContent = 'Large model downloaded ✓';
+      status.textContent = 'Recognition model downloaded ✓';
       button.style.display = 'none';
       deleteButton.style.display = '';
     } else {
-      status.textContent = info.downloading ? 'Downloading…' : 'Large model not downloaded.';
+      status.textContent = info.downloading ? 'Downloading…' : 'Recognition model not downloaded.';
       button.style.display = info.downloading ? 'none' : '';
-      button.textContent = 'Download large model (1.8 GB)';
+      button.textContent = `Download speech engine and model (~${info.sizeMB} MB)`;
       deleteButton.style.display = 'none';
     }
   };
   void refresh();
-
-  deleteButton.addEventListener('click', () => {
-    if (!api) return;
-    void confirmDialog(
-      'Delete the large dictation model (1.8 GB)? Voice will fall back to the standard model.',
-      { okLabel: 'Delete' },
-    ).then((go) => {
-      if (!go) return;
-      deleteButton.style.display = 'none';
-      status.textContent = 'Deleting…';
-      void api.voiceDeleteDictationModel().then((res) => {
-        if (!res.ok) status.textContent = `Delete failed: ${res.error ?? 'unknown'}`;
-        void refresh();
-      });
-    });
-  });
-
   button.addEventListener('click', () => {
     if (!api) return;
     button.style.display = 'none';
     const unsub = api.onVoiceDownloadProgress((p) => {
-      // Shared progress channel — ignore base-model / node-runtime ticks.
-      if (p.model && p.model !== 'large-model') {
-        if (p.model === 'node-runtime') status.textContent = 'Downloading runtime…';
-        return;
-      }
-      status.textContent = p.extracting ? 'Extracting…' : `Downloading… ${p.pct}%`;
+      status.textContent = p.extracting ? 'Extracting…' : `Downloading ${p.model === 'engine' ? 'speech engine' : p.model === 'vad' ? 'voice detector' : 'model'}… ${p.pct}%`;
     });
-    void api.voiceDownloadDictationModel().then((res) => {
+    void api.voiceDownloadModel().then((res) => {
       unsub();
       if (!res.ok) status.textContent = `Download failed: ${res.error ?? 'unknown'}`;
       void refresh();
     });
   });
+  deleteButton.addEventListener('click', () => {
+    if (!api) return;
+    void confirmDialog("Delete the voice recognition model? Voice control won't work until you download it again.", { okLabel: 'Delete' }).then((go) => {
+      if (!go) return;
+      deleteButton.style.display = 'none';
+      status.textContent = 'Deleting…';
+      void api.voiceDeleteModel().then((res) => {
+        if (!res.ok) status.textContent = `Delete failed: ${res.error ?? 'unknown'}`;
+        void refresh();
+      });
+    });
+  });
+  return wrap;
+}
+
+/** Hold-to-dictate chord: a capture pill like the keybindings editor's. */
+function buildVoiceHoldKeyEditor(): HTMLElement {
+  const wrap = document.createElement('div');
+  wrap.className = 'pmd-voice-holdkey-editor';
+  const current = document.createElement('code');
+  current.className = 'pmd-voice-holdkey-current';
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'pmd-settings-btn';
+  btn.textContent = 'Change…';
+  const render = (): void => {
+    current.textContent = formatKeyForDisplay(settings.get('voiceDictateKey')) || '(none)';
+  };
+  render();
+  btn.addEventListener('click', () => {
+    btn.textContent = 'Press a key… (Esc cancels)';
+    const onKey = (e: KeyboardEvent): void => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        done();
+        return;
+      }
+      if (e.key === 'Control' || e.key === 'Shift' || e.key === 'Alt' || e.key === 'Meta') return;
+      e.preventDefault();
+      e.stopPropagation();
+      settings.set('voiceDictateKey', ribbonKeyStringFor(e));
+      done();
+    };
+    const done = (): void => {
+      document.removeEventListener('keydown', onKey, true);
+      btn.textContent = 'Change…';
+      render();
+    };
+    document.addEventListener('keydown', onKey, true);
+  });
+  wrap.append(current, btn);
+  return wrap;
+}
+
+function buildVoiceCalibrateEditor(): HTMLElement {
+  const wrap = document.createElement('div');
+  wrap.className = 'pmd-voice-calibrate-editor';
+  const status = document.createElement('div');
+  status.className = 'pmd-voice-model-status';
+  const device = settings.get('voiceInputDeviceId') || '';
+  const prof = settings.get('voiceProfiles')[device];
+  const learned = prof ? Object.values(prof.aliases).reduce((n, l) => n + l.length, 0) : 0;
+  status.textContent = prof?.updatedAt
+    ? `Calibrated ${new Date(prof.updatedAt).toLocaleDateString()} · ${learned} learned spelling${learned === 1 ? '' : 's'} for this microphone`
+    : 'Not calibrated for this microphone yet.';
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'pmd-settings-btn';
+  btn.textContent = 'Calibrate…';
+  btn.addEventListener('click', () => {
+    if (!requestVoiceCalibration()) showToast('Open a document first, then calibrate from the voice pill or here.', { durationMs: 2600 });
+  });
+  wrap.append(status, btn);
   return wrap;
 }
 
@@ -4676,10 +4738,11 @@ function buildColorEditor(key: string): HTMLElement {
   return wrap;
 }
 
-/** Highlighting-exception editor: a swatch row of Word's 15 named
- *  highlight colors (highlight marks can only be one of these) plus
- *  a label naming the current pick. Stores the OOXML color name. */
-function buildHighlightExceptionEditor(): HTMLElement {
+/** Word-highlight-name editor (the highlighting exception, the default
+ *  highlight color): a swatch row of Word's 15 named highlight colors
+ *  (highlight marks can only be one of these) plus a label naming the
+ *  current pick. Stores the OOXML color name under `key`. */
+function buildHighlightNameEditor(key: 'standardizeHighlightException' | 'defaultHighlightColor'): HTMLElement {
   const wrap = document.createElement('div');
   wrap.className = 'pmd-color-editor';
 
@@ -4701,7 +4764,7 @@ function buildHighlightExceptionEditor(): HTMLElement {
     sw.title = c.label;
     sw.setAttribute('aria-label', c.label);
     sw.addEventListener('click', () => {
-      settings.set('standardizeHighlightException', c.name);
+      settings.set(key, c.name);
       refresh();
     });
     presets.appendChild(sw);
@@ -4710,7 +4773,7 @@ function buildHighlightExceptionEditor(): HTMLElement {
   wrap.appendChild(presets);
 
   function refresh(): void {
-    const current = settings.get('standardizeHighlightException');
+    const current = settings.get(key);
     label.textContent = highlightColorLabel(current);
     for (const { btn, name } of swatchButtons) {
       btn.classList.toggle('pmd-color-editor-swatch-active', name === current);
@@ -4725,12 +4788,11 @@ function buildHighlightExceptionEditor(): HTMLElement {
  *  editor (picker + preset swatches) but stores a bare uppercase hex
  *  (matching the shading mark's attr) and adds a Protected Grey
  *  swatch after the shading palette. */
-function buildShadingExceptionEditor(): HTMLElement {
+function buildShadingHexEditor(key: 'standardizeShadingException' | 'defaultShadingColor'): HTMLElement {
   const wrap = document.createElement('div');
   wrap.className = 'pmd-color-editor';
-  const get = () => settings.get('standardizeShadingException');
-  const set = (v: string) =>
-    settings.set('standardizeShadingException', v.replace(/^#/, '').toUpperCase());
+  const get = () => settings.get(key);
+  const set = (v: string) => settings.set(key, v.replace(/^#/, '').toUpperCase());
 
   const top = document.createElement('div');
   top.className = 'pmd-color-editor-row';
@@ -4969,6 +5031,46 @@ type EnterAfterStyleKey =
   | 'enterAfterTag'
   | 'enterAfterAnalytic'
   | 'enterAfterUndertag';
+/** Two selects under one row — the order while editing and the order
+ *  in read mode — over the same six permutations. */
+function buildWordCountOrderEditor(): HTMLElement {
+  const wrap = document.createElement('div');
+  wrap.className = 'pmd-display-sizes-editor pmd-word-count-order-editor';
+  const fields: { key: 'wordCountOrder' | 'wordCountOrderReadMode'; label: string }[] = [
+    { key: 'wordCountOrder', label: 'While editing' },
+    { key: 'wordCountOrderReadMode', label: 'In read mode' },
+  ];
+  const selects: [typeof fields[number]['key'], HTMLSelectElement][] = [];
+  for (const f of fields) {
+    const row = document.createElement('div');
+    row.className = 'pmd-display-size-row';
+    const label = document.createElement('label');
+    label.className = 'pmd-display-size-label';
+    label.textContent = f.label;
+    row.appendChild(label);
+    const select = document.createElement('select');
+    select.className = 'pmd-body-font-select';
+    for (const o of WORD_COUNT_ORDERS) {
+      const opt = document.createElement('option');
+      opt.value = o.value;
+      opt.textContent = o.label;
+      select.appendChild(opt);
+    }
+    select.value = settings.get(f.key);
+    select.addEventListener('change', () => {
+      settings.set(f.key, select.value as WordCountOrder);
+    });
+    row.appendChild(select);
+    wrap.appendChild(row);
+    selects.push([f.key, select]);
+  }
+  const unsub = settings.subscribe(() => {
+    for (const [key, select] of selects) select.value = settings.get(key);
+  });
+  registerRowCleanup(wrap, () => unsub());
+  return wrap;
+}
+
 function buildEnterAfterStyleEditor(): HTMLElement {
   const wrap = document.createElement('div');
   wrap.className = 'pmd-display-sizes-editor pmd-enter-style-editor';
@@ -5022,6 +5124,37 @@ function buildEnterAfterStyleEditor(): HTMLElement {
 
 /** Two-button segmented control for which ribbon edge the timer
  *  panel occupies. Same visual language as the prep-label control. */
+/** Two-button segmented control: which side of the screen Arrange
+ *  Windows gives the speech doc. Same visual language as the timer
+ *  position control. */
+function buildArrangeSpeechSideEditor(): HTMLElement {
+  const wrap = document.createElement('div');
+  wrap.className = 'pmd-theme-editor';
+  const options: { value: Settings['arrangeSpeechSide']; label: string }[] = [
+    { value: 'left', label: 'Speech doc on the left' },
+    { value: 'right', label: 'Speech doc on the right' },
+  ];
+  for (const o of options) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'pmd-theme-editor-btn';
+    btn.textContent = o.label;
+    btn.dataset['value'] = o.value;
+    btn.addEventListener('click', () => settings.set('arrangeSpeechSide', o.value));
+    wrap.appendChild(btn);
+  }
+  function refresh(): void {
+    const cur = settings.get('arrangeSpeechSide');
+    for (const btn of wrap.querySelectorAll<HTMLButtonElement>('.pmd-theme-editor-btn')) {
+      btn.setAttribute('aria-pressed', btn.dataset['value'] === cur ? 'true' : 'false');
+    }
+  }
+  refresh();
+  const unsub = settings.subscribe(refresh);
+  registerRowCleanup(wrap, () => unsub());
+  return wrap;
+}
+
 function buildTimerPositionEditor(): HTMLElement {
   const wrap = document.createElement('div');
   wrap.className = 'pmd-theme-editor';
@@ -5684,6 +5817,69 @@ function buildSaveFormatEditor(): HTMLElement {
   return wrap;
 }
 
+/** Per-type format for the silent Send / Read / Marked saves: .docx
+ *  (default), .cmir, or follow the new-document format. Same chrome as the
+ *  default-format editor above. */
+function buildDocTypeFormatEditor(key: 'sendDocFormat' | 'readDocFormat' | 'markedDocFormat'): HTMLElement {
+  const wrap = document.createElement('div');
+  wrap.className = 'pmd-multi-doc-layout-mode-editor pmd-doc-type-format-editor';
+  const options: { value: 'default' | 'docx' | 'cmir'; label: string }[] = [
+    { value: 'docx', label: '.docx — Word / Verbatim-compatible (default)' },
+    { value: 'cmir', label: '.cmir — CardMirror native' },
+    { value: 'default', label: 'Same as new documents' },
+  ];
+  const groupName = `pmd-doc-type-format-${key}-${Math.random().toString(36).slice(2, 8)}`;
+  for (const o of options) {
+    const row = document.createElement('label');
+    row.className = 'pmd-multi-doc-layout-mode-row';
+    const input = document.createElement('input');
+    input.type = 'radio';
+    input.name = groupName;
+    input.value = o.value;
+    input.checked = o.value === settings.get(key);
+    input.addEventListener('change', () => {
+      if (input.checked) settings.set(key, o.value);
+    });
+    row.appendChild(input);
+    const labelText = document.createElement('span');
+    labelText.className = 'pmd-multi-doc-layout-mode-row-label';
+    labelText.textContent = o.label;
+    row.appendChild(labelText);
+    wrap.appendChild(row);
+  }
+  return wrap;
+}
+
+/** Freeze-or-remove radio pair for the two `*DocNumbering` settings. */
+function buildNumberingExportEditor(key: 'sendDocNumbering' | 'markedDocNumbering'): HTMLElement {
+  const wrap = document.createElement('div');
+  wrap.className = 'pmd-multi-doc-layout-mode-editor pmd-numbering-export-editor';
+  const options: { value: 'freeze' | 'remove'; label: string }[] = [
+    { value: 'freeze', label: 'Freeze numbers as heading text (default)' },
+    { value: 'remove', label: 'Remove numbers' },
+  ];
+  const groupName = `pmd-numbering-export-${key}-${Math.random().toString(36).slice(2, 8)}`;
+  for (const o of options) {
+    const row = document.createElement('label');
+    row.className = 'pmd-multi-doc-layout-mode-row';
+    const input = document.createElement('input');
+    input.type = 'radio';
+    input.name = groupName;
+    input.value = o.value;
+    input.checked = o.value === settings.get(key);
+    input.addEventListener('change', () => {
+      if (input.checked) settings.set(key, o.value);
+    });
+    row.appendChild(input);
+    const labelText = document.createElement('span');
+    labelText.className = 'pmd-multi-doc-layout-mode-row-label';
+    labelText.textContent = o.label;
+    row.appendChild(labelText);
+    wrap.appendChild(row);
+  }
+  return wrap;
+}
+
 function buildAiProviderEditor(): HTMLElement {
   const wrap = document.createElement('div');
   wrap.className = 'pmd-multi-doc-layout-mode-editor';
@@ -5900,10 +6096,10 @@ function buildMarkedCardsDestinationEditor(): HTMLElement {
   return buildDestinationEditor('markedCardsDestination', 'pmd-marked-cards-dest');
 }
 
-/** Same/fixed-folder radio for a save destination setting (Send Doc, Marked
- *  Cards). `key` is the setting; `idPrefix` keeps the radio group distinct. */
+/** Same/fixed-folder radio for a save destination setting (Send Doc, Read
+ *  Doc, Marked Cards). `key` is the setting; `idPrefix` keeps the radio group distinct. */
 function buildDestinationEditor(
-  key: 'sendDocDestination' | 'markedCardsDestination',
+  key: 'sendDocDestination' | 'readDocDestination' | 'markedCardsDestination',
   idPrefix: string,
 ): HTMLElement {
   const wrap = document.createElement('div');
@@ -6063,6 +6259,156 @@ function buildMobileLayoutEditor(): HTMLElement {
     labelText.className = 'pmd-heading-mode-row-label';
     labelText.textContent = o.label;
     row.appendChild(labelText);
+    wrap.appendChild(row);
+  }
+  return wrap;
+}
+
+function buildVersionHistoryEditor(): HTMLElement {
+  const wrap = document.createElement('div');
+  wrap.className = 'pmd-heading-mode-editor';
+  const options: { value: 'off' | 'standard' | 'extended' | 'custom'; label: string }[] = [
+    { value: 'off', label: 'Off \u2014 keep no version snapshots' },
+    { value: 'standard', label: 'Standard \u2014 up to 30 days, capped at 500 MB (default)' },
+    { value: 'extended', label: 'Extended \u2014 up to 90 days, capped at 2 GB' },
+    { value: 'custom', label: 'Custom \u2014 up to 90 days, caps of your choosing' },
+  ];
+  // Custom's cap fields — built up front so the radio handler can
+  // toggle them; wired after the loop.
+  const customRow = document.createElement('div');
+  customRow.className = 'pmd-version-history-custom';
+  const syncCustomVisibility = (): void => {
+    customRow.style.display = settings.get('versionHistory') === 'custom' ? '' : 'none';
+  };
+  const groupName = `pmd-version-history-${Math.random().toString(36).slice(2, 8)}`;
+  for (const o of options) {
+    const row = document.createElement('label');
+    row.className = 'pmd-heading-mode-row';
+    const input = document.createElement('input');
+    input.type = 'radio';
+    input.name = groupName;
+    input.value = o.value;
+    input.checked = o.value === settings.get('versionHistory');
+    input.addEventListener('change', () => {
+      if (input.checked) settings.set('versionHistory', o.value);
+      syncCustomVisibility();
+    });
+    row.appendChild(input);
+    const text = document.createElement('span');
+    text.className = 'pmd-heading-mode-row-label';
+    text.textContent = o.label;
+    row.appendChild(text);
+    wrap.appendChild(row);
+  }
+
+  const capField = (
+    label: string,
+    key: 'versionHistoryDocCapMb' | 'versionHistoryTotalCapMb',
+  ): HTMLElement => {
+    const holder = document.createElement('label');
+    holder.className = 'pmd-version-history-cap';
+    const caption = document.createElement('span');
+    caption.textContent = label;
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.className = 'pmd-settings-text';
+    input.min = '0';
+    input.style.width = '6.5rem';
+    input.style.flex = '0 0 auto';
+    input.value = String(settings.get(key));
+    input.addEventListener('change', () => {
+      const n = Number.parseFloat(input.value);
+      if (Number.isFinite(n) && n >= 0) {
+        settings.set(key, Math.round(n));
+      }
+      // Snap the field to the stored (clamped) value either way.
+      input.value = String(settings.get(key));
+    });
+    const unit = document.createElement('span');
+    unit.textContent = 'MB';
+    holder.append(caption, input, unit);
+    return holder;
+  };
+  const zeroHint = document.createElement('span');
+  zeroHint.className = 'pmd-settings-row-desc';
+  zeroHint.style.margin = '0';
+  zeroHint.textContent = '0 = no cap';
+  customRow.append(
+    capField('Per-document cap', 'versionHistoryDocCapMb'),
+    capField('Total cap', 'versionHistoryTotalCapMb'),
+    zeroHint,
+  );
+  syncCustomVisibility();
+  wrap.appendChild(customRow);
+
+  // Usage readout + clear — the snapshots live in app data where the
+  // user can't see them, so the disk cost must be visible HERE.
+  const host = getElectronHost();
+  if (host) {
+    const usageRow = document.createElement('div');
+    usageRow.className = 'pmd-settings-row-desc';
+    usageRow.textContent = 'Checking disk usage\u2026';
+    const refreshUsage = (): void => {
+      void host
+        .historyUsage()
+        .then(({ totalBytes, snapshots }) => {
+          const mb = totalBytes / (1024 * 1024);
+          usageRow.textContent =
+            snapshots === 0
+              ? 'No version snapshots stored yet.'
+              : `Currently using ${mb >= 100 ? Math.round(mb) : mb.toFixed(1)} MB across ${snapshots} snapshot${snapshots === 1 ? '' : 's'}.`;
+        })
+        .catch(() => {
+          usageRow.textContent = '';
+        });
+    };
+    refreshUsage();
+    const clearBtn = document.createElement('button');
+    clearBtn.type = 'button';
+    clearBtn.className = 'pmd-install-info-btn';
+    clearBtn.textContent = 'Clear version history';
+    clearBtn.addEventListener('click', () => {
+      void (async () => {
+        if (!(await confirmDialog('Delete every stored version snapshot? Documents themselves are not affected.'))) {
+          return;
+        }
+        await host.historyClear();
+        showToast('Version history cleared.');
+        refreshUsage();
+      })();
+    });
+    const actions = document.createElement('div');
+    actions.style.marginTop = '0.4rem';
+    actions.appendChild(clearBtn);
+    wrap.append(usageRow, actions);
+  }
+  return wrap;
+}
+
+function buildPasteCursorEditor(): HTMLElement {
+  const wrap = document.createElement('div');
+  wrap.className = 'pmd-heading-mode-editor';
+  const options: { value: 'after' | 'tag'; label: string }[] = [
+    { value: 'after', label: 'End of the pasted content (default)' },
+    { value: 'tag', label: 'End of the pasted tag \u2014 ready to rename it' },
+  ];
+  const groupName = `pmd-paste-cursor-${Math.random().toString(36).slice(2, 8)}`;
+  for (const o of options) {
+    const row = document.createElement('label');
+    row.className = 'pmd-heading-mode-row';
+    const input = document.createElement('input');
+    input.type = 'radio';
+    input.name = groupName;
+    input.value = o.value;
+    input.checked = o.value === settings.get('pasteCursor');
+    input.addEventListener('change', () => {
+      if (input.checked) settings.set('pasteCursor', o.value);
+    });
+    row.appendChild(input);
+    const text = document.createElement('span');
+    text.className = 'pmd-heading-mode-row-label';
+    text.textContent = o.label;
+    row.appendChild(text);
     wrap.appendChild(row);
   }
   return wrap;

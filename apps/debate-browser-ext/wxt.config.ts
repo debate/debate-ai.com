@@ -1,5 +1,5 @@
 import { fileURLToPath } from 'node:url';
-import { defineConfig } from 'wxt';
+import { defineConfig, type WxtUnimportOptions } from 'wxt';
 
 /** A file inside the `debate-webview` package. */
 const webui = (path: string) =>
@@ -25,6 +25,17 @@ const AI_PROVIDER_HOSTS = [
 // See https://wxt.dev/api/config.html
 export default defineConfig({
   modules: ['@wxt-dev/module-react'],
+  // WXT auto-imports its globals (`defineBackground`, `browser`, `storage`, …)
+  // into any module that uses one of those names unbound — including the
+  // workspace packages the Options page bundles. debate-round's flow history
+  // takes a parameter called `storage`, which got an injected
+  // `import { storage } from 'wxt/storage'` that can't resolve from
+  // packages/, failing the build. Auto-imports are for this extension's own
+  // code only. (`exclude` is passed straight to unimport's Vite plugin; WXT's
+  // type just doesn't list the plugin's filter options.)
+  imports: {
+    exclude: [/[\\/]node_modules[\\/]/, /[\\/]\.git[\\/]/, /[\\/]packages[\\/]/],
+  } as WxtUnimportOptions,
   // The Options page is the whole debate-ai.com app (`debate-webview`),
   // which — like the feature packages it mounts — imports `next/link`,
   // `next/navigation` and `next/image`. There is no Next here: those resolve
@@ -76,7 +87,7 @@ export default defineConfig({
   manifest: ({ browser, manifestVersion }) => ({
     name: 'Debate AI — Reader, Timer & Card Reuse Check',
     description:
-      'Critical times call for critical thinking! Read any page in an AI article panel, time a round, and check whether a card has already been cut from the page.',
+      'Read any page in an AI article panel, time a round, and check whether a card has already been cut from the page.',
     // Kept from the original timer manifest so the extension ID (and therefore
     // the user's existing chrome.storage data) stays stable across both the
     // WXT migration and the merge with the card-reuse extension. debate-ai.com

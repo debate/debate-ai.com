@@ -31,7 +31,7 @@
 import type { Node as PMNode } from 'prosemirror-model';
 import { schema } from '../schema/index.js';
 import { salvageDoc, type DroppedNode } from '../schema/salvage.js';
-import { stampMissingHeadingIds } from '../schema/ids.js';
+import { stampMissingHeadingIds, dedupeHeadingIds } from '../schema/ids.js';
 import {
   splitInCardAnalytics,
   flattenNestedZones,
@@ -295,7 +295,7 @@ function parseNativeImpl(
           healCards(
             healAnalyticUnits(
               flattenNestedZones(
-                splitInCardAnalytics(stampMissingHeadingIds(schema.nodeFromJSON(file.doc))),
+                splitInCardAnalytics(dedupeHeadingIds(stampMissingHeadingIds(schema.nodeFromJSON(file.doc)))),
               ),
             ),
           ),

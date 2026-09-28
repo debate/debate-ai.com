@@ -2,8 +2,9 @@
  * Showing and hiding the article panel.
  *
  * The panel is an overlay on the page itself: `reader.html`, framed in an
- * `<iframe>` pinned to the right edge of the tab and stacked above everything
- * the site draws. Each toolbar click (or popup button, or context-menu item)
+ * `<iframe>` stacked above everything the site draws — covering the whole tab
+ * with the article centered in it, or pinned to the right edge as a narrow
+ * side panel, whichever the reader picked (see {@link ReaderLayout}). Each toolbar click (or popup button, or context-menu item)
  * toggles it — shown, hidden, shown again — and hiding keeps the frame alive,
  * so the article and the Q&A are still there when it comes back.
  *
@@ -27,6 +28,19 @@ export const READER_TAB_CHANGED_MESSAGE = 'debate-reader-tab-changed';
 /** `postMessage` the framed panel sends its host page to hide itself. */
 export const READER_CLOSE_MESSAGE = 'debate-ai-reader-close';
 
+/**
+ * `postMessage` the framed panel sends its host page to resize itself:
+ * `{ type, layout }`, where `layout` is one of {@link ReaderLayout}.
+ */
+export const READER_LAYOUT_MESSAGE = 'debate-ai-reader-layout';
+
+/**
+ * How the panel sits over the page: `full` covers the whole tab (the article
+ * is centered in it, at the reader's chosen width), `side` is the narrow
+ * panel pinned to the right edge.
+ */
+export type ReaderLayout = 'full' | 'side';
+
 /** The panel page, as framed into the tab. */
 export const READER_PAGE = 'reader.html';
 
@@ -36,7 +50,7 @@ export const READER_PAGE = 'reader.html';
  *
  * Returns whether the panel is now showing.
  */
-function toggleOverlayInPage(src: string, closeMessage: string): boolean {
+function toggleOverlayInPage(src: string, closeMessage: string, layoutMessage: string): boolean {
   const FRAME_ID = 'debate-ai-reader-overlay';
   const existing = document.getElementById(FRAME_ID) as HTMLIFrameElement | null;
   if (existing) {
@@ -53,27 +67,41 @@ function toggleOverlayInPage(src: string, closeMessage: string): boolean {
   frame.setAttribute('allow', 'clipboard-write');
   // Every property is `!important` so a site's own `iframe { … }` rules can't
   // resize, hide or restyle the panel.
-  const style: Record<string, string> = {
+  const applyStyle = (style: Record<string, string>) => {
+    for (const [name, value] of Object.entries(style)) {
+      frame.style.setProperty(name, value, 'important');
+    }
+  };
+  // The panel opens full-page (its default layout) and tells us straight away
+  // if the reader chose the side panel instead.
+  const layouts: Record<string, Record<string, string>> = {
+    full: {
+      width: '100vw',
+      'border-left': '0',
+      'box-shadow': 'none',
+    },
+    side: {
+      width: 'min(460px, 100vw)',
+      'border-left': '1px solid rgba(0, 0, 0, 0.15)',
+      'box-shadow': '-8px 0 24px rgba(0, 0, 0, 0.18)',
+    },
+  };
+  applyStyle({
     all: 'initial',
     display: 'block',
     position: 'fixed',
     top: '0',
     right: '0',
     bottom: '0',
-    width: 'min(460px, 100vw)',
     height: '100vh',
     margin: '0',
     padding: '0',
     border: '0',
-    'border-left': '1px solid rgba(0, 0, 0, 0.15)',
-    'box-shadow': '-8px 0 24px rgba(0, 0, 0, 0.18)',
     background: 'transparent',
     'color-scheme': 'normal',
     'z-index': '2147483647',
-  };
-  for (const [name, value] of Object.entries(style)) {
-    frame.style.setProperty(name, value, 'important');
-  }
+    ...layouts.full,
+  });
   (document.body || document.documentElement).appendChild(frame);
 
   // The panel's own close button and Escape key ask to be hidden. Only the
@@ -81,8 +109,12 @@ function toggleOverlayInPage(src: string, closeMessage: string): boolean {
   // all it could do anyway).
   window.addEventListener('message', (event) => {
     if (event.source !== frame.contentWindow) return;
-    if ((event.data as { type?: string } | null)?.type !== closeMessage) return;
-    frame.style.setProperty('display', 'none', 'important');
+    const data = event.data as { type?: string; layout?: string } | null;
+    if (data?.type === closeMessage) {
+      frame.style.setProperty('display', 'none', 'important');
+    } else if (data?.type === layoutMessage && data.layout && layouts[data.layout]) {
+      applyStyle(layouts[data.layout]);
+    }
   });
   return true;
 }
@@ -104,16 +136,26 @@ export async function toggleReaderPanel(tabId: number): Promise<boolean> {
     const frames = await browser.scripting.executeScript({
       target: { tabId },
       func: toggleOverlayInPage,
-      args: [src, READER_CLOSE_MESSAGE],
+      args: [src, READER_CLOSE_MESSAGE, READER_LAYOUT_MESSAGE],
     });
     return Boolean(frames?.[0]?.result);
   }
   // MV2 (the Firefox build) has no scripting API and takes code, not a function.
-  const code = `(${toggleOverlayInPage.toString()})(${JSON.stringify(src)}, ${JSON.stringify(
+  const code = `(${toggleOverlayInPage.toString()})(${[
+    src,
     READER_CLOSE_MESSAGE,
-  )})`;
+    READER_LAYOUT_MESSAGE,
+  ]
+    .map((arg) => JSON.stringify(arg))
+    .join(', ')})`;
   const frames = await browser.tabs.executeScript(tabId, { code });
   return Boolean(frames?.[0]);
+}
+
+/** Asks the page framing this panel to take `layout`. Called from inside the panel. */
+export function requestReaderPanelLayout(layout: ReaderLayout): void {
+  if (window.parent === window) return;
+  window.parent.postMessage({ type: READER_LAYOUT_MESSAGE, layout }, '*');
 }
 
 /** Asks the page framing this panel to hide it. Called from inside the panel. */

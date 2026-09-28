@@ -27,13 +27,21 @@
  */
 
 import { EditorState, Selection, TextSelection } from 'prosemirror-state';
+import { isFileChangedOnDiskError } from './error-surface.js';
+import {
+  noteSavedInPlace,
+  noteKeptCopy,
+  noteReloaded,
+  conflictedCopyUserName,
+} from './disk-conflict.js';
 import { EditorView } from 'prosemirror-view';
 import { setViewDocPath } from './transclusion-doc-path.js';
 import { Node as PMNode } from 'prosemirror-model';
 import { schema, newHeadingId } from '../schema/index.js';
-import { fromDocxFull, parseNative, serializeNativeAsync, NATIVE_FILE_EXTENSION } from '../index.js';
+import { fromDocxFull, parseNative, serializeNativeAsync, NativeDamagedError, NATIVE_FILE_EXTENSION } from '../index.js';
 import { settings } from './settings.js';
 import { MARK_UNREAD_TOGGLE } from './mark-unread-plugin.js';
+import { PMD_READ_MODE_TOGGLE } from './read-mode-plugin.js';
 import { NUMBERING_REFRESH, numberingDisplaySig } from './numbering-plugin.js';
 import { getHost, getElectronHost, isSameOpenHandle, type OpenedFile } from './host/index.js';
 import { isFileOpenInAnotherWindow } from './window-coordination.js';
@@ -57,6 +65,7 @@ function formatFromFilename(name: string): DocFormat | null {
 import { NavigationPanel, installNavResizeHandle } from './nav-panel.js';
 import { HeadingBreadcrumbBar } from './heading-breadcrumb-bar.js';
 import { EditorDragSurface } from './drag-editor-surface.js';
+import { applyReaderViewToTarget } from './reader-view.js';
 import { dragController, rewriteHeadingIds } from './drag-controller.js';
 import { isBenchmarkActive } from './benchmark-state.js';
 import {
@@ -66,14 +75,15 @@ import {
   formatNumber,
   type ReadAloudCounts,
 } from './word-count.js';
-import { liveContainerSegment, remainingReadSegment } from './live-read-time.js';
+import { liveContainerSegment, orderWordCountSegments, primaryReadSegment, remainingReadSegment } from './live-read-time.js';
 import { openWordCount } from './word-count-ui.js';
 import { isAutosaveOnForPath, setAutosaveForPath } from './autosave-prefs-store.js';
 import {
   autosaveBlockedForRecoveredDraft,
   recoveredDraftJournalSavedAt,
 } from './journal-staleness.js';
-import { makeBlankDoc } from './blank-doc.js';
+import { isUntouchedBlank, makeBlankDoc } from './blank-doc.js';
+import { opensAsBlank, blankDocumentBytes } from './empty-open.js';
 import { homeScreen } from './home-screen.js';
 import { captureCleanToken } from './save-clean-token.js';
 import { scheduleIdle, cancelIdle, type IdleHandle } from './idle-scheduler.js';
@@ -90,6 +100,8 @@ import {
 } from './text-prompt.js';
 import { showToast } from './toast.js';
 import { recordRecent } from './recents-store.js';
+import { reportWindowWorkspace, type WorkspaceDoc } from './workspace-store.js';
+import { slotPlanForSpeech } from './arrange-plan.js';
 import { maybeDecryptForOpen, OpenCancelledError } from './open-encrypted.js';
 import {
   checkSessionRejoinForOpenedDoc,
@@ -99,6 +111,8 @@ import {
   getActiveView,
   applyReadModeToTarget,
   setReadModeStateResolver,
+  refreshReaderViewBtn,
+  setReaderViewStateResolver,
   applyZoomToTarget,
   setZoomStateResolver,
   refreshZoomStatus,
@@ -110,6 +124,9 @@ import {
   resolveCoEditedClose,
   runSaveFlow,
   runSaveAsFlow,
+  registerDocPath,
+  releaseDocPath,
+  setMultiDocReloadFromDisk,
   reportAutosaveFailure,
   reportAutosaveSuccess,
   refreshWindowTitle,
@@ -117,8 +134,10 @@ import {
   getCommentsColumnEl,
   notifyCommentsForActiveTransaction,
   sendViewToDropzone,
+  offerDamagedSalvage,
 } from './index.js';
 import { sendViewToStarred } from './pairing/send-to-starred.js';
+import { sendViewToRecipient } from './pairing/send-to-recipient.js';
 import { isSyncOrigin } from './sync-origin.js';
 import { editorNodeViews } from './image-resize-nodeview.js';
 import { coordinatorBlocks, flashLockedLeases } from './ai/edit-coordinator.js';
@@ -149,10 +168,26 @@ function newDocUid(): string {
  *  missed release won't permanently block re-opening. */
 function syncDocPathClaim(prev: unknown, next: unknown): void {
   if (prev === next) return;
-  const electron = getElectronHost();
-  if (!electron) return;
-  if (typeof prev === 'string' && prev) void electron.openPathRelease(prev);
-  if (typeof next === 'string' && next) void electron.openPathRegister(next);
+  if (!getElectronHost()) return;
+  if (typeof prev === 'string' && prev) releaseDocPath(prev);
+  if (typeof next === 'string' && next) void registerDocPath(next);
+}
+
+/** Point `record` at a different on-disk file (a Save As, or the
+ *  conflicted copy a keep-both save wrote) — the per-record half of
+ *  `setFocusedFile`, usable for a record that is not focused (autosave). */
+function adoptFileForRecord(
+  record: DocRecord,
+  file: { filename: string; handle: unknown | null; format: DocFormat | null },
+): void {
+  record.filename = file.filename;
+  syncDocPathClaim(record.handle, file.handle);
+  record.handle = file.handle;
+  setViewDocPath(record.view, typeof file.handle === 'string' ? file.handle : null);
+  record.format = file.format;
+  record.owner.refreshChipFilename();
+  pushPaneDocInfo(record.uid, record.filename);
+  refreshWindowTitle();
 }
 
 /** Push a pane's current filename to main so the Select-Speech-Doc
@@ -277,7 +312,21 @@ async function runAutosaveForRecord(record: DocRecord): Promise<void> {
       ...(threads.length ? { threads } : {}),
       ...(record.docId ? { docId: record.docId } : {}),
     });
-    await host.saveExisting(record.handle, bytes);
+    try {
+      await host.saveExisting(record.handle, bytes);
+      if (typeof record.handle === 'string') noteSavedInPlace(record.handle);
+    } catch (err) {
+      // Changed on disk under us (or no baseline for this window): keep
+      // both — a conflicted copy beside the original, this record now
+      // editing the copy, the chip saying so. Never a pause or a dialog.
+      const electron = getElectronHost();
+      if (!isFileChangedOnDiskError(err) || !electron || typeof record.handle !== 'string') throw err;
+      const original = record.handle;
+      const copy = await electron.saveConflictedCopy(original, bytes, conflictedCopyUserName());
+      noteKeptCopy(copy.handle, original);
+      adoptFileForRecord(record, { filename: copy.name, handle: copy.handle, format: 'cmir' });
+      // No chip or toast: the pill's "Conflicted copy" state is the announcement.
+    }
     commitClean();
     reportAutosaveSuccess();
   } catch (err) {
@@ -368,6 +417,9 @@ interface DocRecord {
    *  property of an individual open doc — the ribbon toggle flips
    *  this for the focused pane only, leaving other panes untouched. */
   readMode: boolean;
+  /** Reading view (paginated columns) — same per-doc story as
+   *  `readMode`; session-only, never persisted. */
+  readerView: boolean;
   /** Per-pane body-text zoom (50–300%). Same per-doc story as `readMode`: the
    *  zoom controls affect the FOCUSED pane only; other panes stay at theirs.
    *  Opens at `defaultZoomPct`, transient (resets on reload). */
@@ -538,6 +590,10 @@ class Slot {
    *  full editor + nav-rail surface while the others stay loaded
    *  but hidden, and back. */
   private chipExpandBtn: HTMLButtonElement;
+  /** Chip hide button — hides this slot's pane (the docs stay open).
+   *  Only shown when the "Show a Hide button on each slot" setting is on;
+   *  the Hide Slot command works either way. */
+  private chipHideBtn: HTMLButtonElement;
   /** Title chip × close button. */
   private chipCloseBtn: HTMLButtonElement;
   /** Editor body — DocRecord.editorEl mounts here. */
@@ -571,6 +627,11 @@ class Slot {
    *  the doc itself stays open — until the user reopens it. Per-slot, so
    *  closing one document's outline leaves the others' untouched. */
   navHidden = false;
+  /** True when the user has hidden this slot (Hide Slot). Its pane and
+   *  outline leave the layout and the other slots share the width; the
+   *  docs stay open. Cleared by Reveal All Slots, by focusing the slot
+   *  (Mod-1/2/3), by a doc landing in it, and when it empties. */
+  paneHidden = false;
   /** Vertical flex weight of this slot's nav section within the rail.
    *  All start at 1 (equal share); dragging a section's resize handle
    *  shifts weight between it and its neighbour. Reset to 1 whenever the
@@ -637,6 +698,18 @@ class Slot {
       this.shell.toggleExpanded(this);
     });
     chip.appendChild(this.chipExpandBtn);
+    this.chipHideBtn = document.createElement('button');
+    this.chipHideBtn.type = 'button';
+    this.chipHideBtn.className = 'pmd-pane-chip-hide';
+    this.chipHideBtn.title = 'Hide this slot (Reveal All Slots brings it back)';
+    setIcon(this.chipHideBtn, 'minus');
+    this.chipHideBtn.hidden = !settings.get('showHideSlotButton');
+    this.chipHideBtn.addEventListener('mousedown', (e) => e.preventDefault());
+    this.chipHideBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.shell.hideSlot(this);
+    });
+    chip.appendChild(this.chipHideBtn);
     // Outline-toggle — shows / hides this slot's nav section. Pressed
     // = outline visible. Doubles as the reopen affordance after the
     // user closes the section with its own × button.
@@ -764,6 +837,10 @@ class Slot {
 
   /** Sync the chip's expand button to the shell's current expand
    *  state. Driven by `MultiPaneShell.applyExpandedState`. */
+  setHideButtonVisible(visible: boolean): void {
+    this.chipHideBtn.hidden = !visible;
+  }
+
   setExpandButtonPressed(pressed: boolean): void {
     this.chipExpandBtn.setAttribute('aria-pressed', pressed ? 'true' : 'false');
     this.chipExpandBtn.title = pressed
@@ -910,6 +987,7 @@ class Slot {
       // Reset the per-slot outline-closed flag so a doc opened into
       // this slot later starts with its outline shown.
       this.navHidden = false;
+      this.paneHidden = false;
       this.shell.notifySlotEmptied(this);
       this.shell.reconcileNavRail();
       this.shell.refreshLayout();
@@ -1010,6 +1088,7 @@ class Slot {
       // Reset the per-slot outline-closed flag so a doc opened into
       // this slot later starts with its outline shown.
       this.navHidden = false;
+      this.paneHidden = false;
       // If this empty slot was the expanded one, exit expand mode —
       // no doc to expand any more.
       this.shell.notifySlotEmptied(this);
@@ -1191,35 +1270,32 @@ class Slot {
     // regardless of any selection (the Σ button covers selection counts
     // on demand).
     const hasSel = settings.get('liveSelectionWordCount') && !sel.empty;
-    let counts: ReadAloudCounts;
+    let primary: string | null = null;
     if (hasSel) {
-      counts = countReadAloudSplit(rec.view.state.doc, sel.from, sel.to);
-    } else if (this.wcDocCache && this.wcDocCache.doc === rec.view.state.doc) {
-      counts = this.wcDocCache.counts;
-    } else {
-      counts = countReadAloudSplit(rec.view.state.doc);
-      this.wcDocCache = { doc: rec.view.state.doc, counts };
+      primary = primaryReadSegment(countReadAloudSplit(rec.view.state.doc, sel.from, sel.to), {
+        selection: true,
+        selectionLabel: 'Sel',
+      });
+    } else if (settings.get('liveDocWordCount')) {
+      let counts: ReadAloudCounts;
+      if (this.wcDocCache && this.wcDocCache.doc === rec.view.state.doc) {
+        counts = this.wcDocCache.counts;
+      } else {
+        counts = countReadAloudSplit(rec.view.state.doc);
+        this.wcDocCache = { doc: rec.view.state.doc, counts };
+      }
+      primary = primaryReadSegment(counts, { selection: false, selectionLabel: 'Sel' });
     }
-    const words = totalWords(counts);
-    const readers = settings.get('readers').slice(0, 2);
-    // "Doc:" label while the container segment is enabled, mirroring
-    // single-pane; bare number when off (the pre-feature look).
-    const head = hasSel
-      ? `Sel: ${formatNumber(words)}`
-      : settings.get('liveContainerReadTime')
-        ? `Doc: ${formatNumber(words)}`
-        : formatNumber(words);
-    const parts = [head];
-    for (const r of readers) {
-      parts.push(`${r.name}: ${formatReadTimeFor(counts, r)}`);
-    }
-    // Pipe-joined in scope order — whole doc, enclosing container,
-    // what's left — each independently optional, mirroring single-pane.
-    const segments = [
-      parts.join(' · '),
-      liveContainerSegment(rec.view.state),
-      remainingReadSegment(rec.view.state),
-    ].filter((s): s is string => s !== null);
+    // Whole-doc readout off and nothing selected: no doc walk, the
+    // footer belongs to the other segments (mirroring single-pane).
+    // Pipe-joined in the user's order (this pane's read mode picks
+    // which), each independently optional, mirroring single-pane.
+    const order = settings.get(rec.readMode ? 'wordCountOrderReadMode' : 'wordCountOrder');
+    const segments = orderWordCountSegments(order, {
+      doc: primary,
+      container: liveContainerSegment(rec.view.state),
+      remaining: remainingReadSegment(rec.view.state),
+    });
     this.wcEl.textContent = segments.join(' | ');
   }
 
@@ -1322,6 +1398,17 @@ class Slot {
   }
 }
 
+/** Whether opening a file into this record's slot should close the
+ *  record: never saved, no unsaved changes, still the blank doc New
+ *  made with no undo history, and not the speech doc or a co-edited
+ *  doc (both carry meaning beyond their content). */
+function isReplaceableUntitled(rec: DocRecord): boolean {
+  if (rec.handle != null || rec.format != null || rec.dirty) return false;
+  if (getSpeechDocResolver().isSpeechByUid(rec.uid)) return false;
+  if (collabCopresenceFor(rec.uid) != null) return false;
+  return isUntouchedBlank(rec.view.state);
+}
+
 /** Run a record's debounced heavy-update work NOW (nav rebuild +
  *  word-count refresh), cancelling the pending timer. Callers that
  *  need an immediate nav update must flush, not just cancel — the
@@ -1351,6 +1438,9 @@ function closeOpenStackDropdown(): void {
 /** Last-applied value of the global `markUnreadAfterMarker` toggle, so the
  *  shell only rebuilds pane decorations when it actually flips. */
 let shellLastMarkUnread = settings.get('markUnreadAfterMarker');
+let shellLastKeepEntireCite = settings.get('readModeKeepEntireCite');
+let shellLastShowUndertags = settings.get('readModeShowUndertags');
+let shellLastShowBackground = settings.get('readModeShowBackground');
 let shellLastNumberingSig = numberingDisplaySig();
 
 class MultiPaneShell {
@@ -1369,6 +1459,13 @@ class MultiPaneShell {
     rafId: number | null;
   } | null = null;
   private layoutMode: 'compact' | 'wide';
+  /** Arrange Windows split in force (speech slot's share of the width),
+   *  applied as inline flex on the two panes; cleared by refreshLayout
+   *  the moment the layout stops being "two active panes". */
+  private arrangedSplit: { speechSlot: SlotId; docsSlot: SlotId; speechPct: number } | null = null;
+  /** Set while arrangeForSpeech shuffles records between slots, so the
+   *  momentary "every slot empty" state never shows the home screen. */
+  private arranging = false;
   /** When non-null, the named slot is "expanded" — visible on its
    *  own with every other pane + nav-section hidden, regardless of
    *  whether those slots have docs loaded. Click the chip's expand
@@ -1464,6 +1561,9 @@ class MultiPaneShell {
       // Same setting single-doc's own breadcrumb bar is gated behind —
       // parity across both surfaces.
       for (const id of SLOT_IDS) this.slots[id].breadcrumbBar.setEnabled(s.showHeadingBreadcrumb);
+      for (const id of SLOT_IDS) this.slots[id].setHideButtonVisible(s.showHideSlotButton);
+      // Last workspace turned on mid-session: publish the open set now.
+      if (s.lastWorkspaceEnabled) this.reportWorkspace();
       // Editor spellcheck is served by the viewport-spellcheck plugin
       // (in buildEditorPlugins), which subscribes to `editorSpellcheck`
       // itself — nothing to push to the views here.
@@ -1479,6 +1579,7 @@ class MultiPaneShell {
       // currently-read-mode'd pane to match.
       const hideEmphasisBorders = s.hideEmphasisBordersInReadMode;
       const readParagraphIntegrity = s.readModeParagraphIntegrity;
+      const showUndertags = s.readModeShowUndertags;
       for (const id of SLOT_IDS) {
         for (const rec of this.slots[id].stack) {
           if (rec.readMode) {
@@ -1490,6 +1591,7 @@ class MultiPaneShell {
               'pmd-rm-para-integrity',
               readParagraphIntegrity,
             );
+            rec.editorEl.classList.toggle('pmd-rm-show-undertags', showUndertags);
           }
         }
       }
@@ -1501,6 +1603,25 @@ class MultiPaneShell {
         for (const id of SLOT_IDS) {
           for (const rec of this.slots[id].stack) {
             rec.view.dispatch(rec.view.state.tr.setMeta(MARK_UNREAD_TOGGLE, true));
+          }
+        }
+      }
+      // "Keep entire cite" changes WHICH text read mode keeps, not just
+      // how it's laid out, so every pane currently in read mode rebuilds
+      // its decoration set (re-sending the on-toggle is the rebuild; the
+      // single-doc path does the same through applyReadMode). Diff-gated
+      // like the mark-unread nudge: the rebuild is O(doc).
+      if (
+        s.readModeKeepEntireCite !== shellLastKeepEntireCite ||
+        s.readModeShowUndertags !== shellLastShowUndertags ||
+        s.readModeShowBackground !== shellLastShowBackground
+      ) {
+        shellLastKeepEntireCite = s.readModeKeepEntireCite;
+        shellLastShowUndertags = s.readModeShowUndertags;
+        shellLastShowBackground = s.readModeShowBackground;
+        for (const id of SLOT_IDS) {
+          for (const rec of this.slots[id].stack) {
+            if (rec.readMode) rec.view.dispatch(rec.view.state.tr.setMeta(PMD_READ_MODE_TOGGLE, true));
           }
         }
       }
@@ -1527,6 +1648,7 @@ class MultiPaneShell {
     // read-mode button show?" — in multi-doc that's the focused
     // pane's per-doc state, not the global setting.
     setReadModeStateResolver(() => this.focusedSlot?.visible?.readMode ?? false);
+    setReaderViewStateResolver(() => this.focusedSlot?.visible?.readerView ?? false);
     // Same story for the status-bar zoom readout — it reflects the focused
     // pane's per-pane zoom (the shell refreshes it on focus change).
     setZoomStateResolver(
@@ -1655,11 +1777,39 @@ class MultiPaneShell {
     // back to the normal layout with the same docs intact.
     const active = this.expandedSlot
       ? 1
-      : SLOT_IDS.filter((id) => this.slots[id].stack.length > 0).length;
+      : SLOT_IDS.filter((id) => this.slotShown(this.slots[id])).length;
     this.rowEl.dataset['active'] = String(active);
+    // An arranged split only means something while exactly its two
+    // slots are the active ones; a third doc, an expand, or an emptied
+    // slot hands the widths back to the layout CSS.
+    if (this.arrangedSplit) {
+      const { speechSlot, docsSlot } = this.arrangedSplit;
+      const stillTwo =
+        active === 2 &&
+        this.slots[speechSlot].stack.length > 0 &&
+        this.slots[docsSlot].stack.length > 0;
+      if (!stillTwo) this.clearArrangedSplit();
+    }
     this.navRailEl.dataset['active'] = String(active);
     // Active-count change → pane widths change → re-sync.
     this.scheduleSyncAllCardIntrinsicWidths();
+    // Every open / close / send-to-slot lands here, so this is the one
+    // place the workspace snapshot needs refreshing (Save As renames go
+    // through `setFocusedFile`, which reports separately).
+    this.reportWorkspace();
+  }
+
+  /** Publish this window's open set to the workspace store, so
+   *  "Reopen last workspace" can rebuild it — including which slot
+   *  each doc sat in. Unsaved docs (no path) drop out in the store. */
+  reportWorkspace(): void {
+    const docs: Array<Pick<WorkspaceDoc, 'filename' | 'format' | 'slot'> & { path: unknown }> = [];
+    for (const id of SLOT_IDS) {
+      for (const rec of this.slots[id].stack) {
+        docs.push({ path: rec.handle, filename: rec.filename, format: rec.format, slot: id });
+      }
+    }
+    reportWindowWorkspace('panes', docs);
   }
 
   /** Toggle expand mode on `slot`. If the same slot is already
@@ -1668,6 +1818,58 @@ class MultiPaneShell {
   toggleExpanded(slot: Slot): void {
     if (this.expandedSlot === slot) this.setExpandedSlot(null);
     else this.setExpandedSlot(slot);
+  }
+
+  /** Whether `slot`'s pane is part of the layout: in expand mode only
+   *  the expanded slot; otherwise any slot with a doc that the user
+   *  hasn't hidden. */
+  private slotShown(slot: Slot): boolean {
+    if (this.expandedSlot) return slot === this.expandedSlot;
+    return slot.stack.length > 0 && !slot.paneHidden;
+  }
+
+  /** Hide Slot: take `slot`'s pane (and outline) out of the layout so
+   *  the other slots share the width. Its docs stay open. Ends expand
+   *  mode first. Refused for the last slot still showing, so the
+   *  workspace never goes blank. Focus moves to a slot still showing. */
+  hideSlot(slot: Slot): void {
+    if (slot.stack.length === 0 || slot.paneHidden) return;
+    if (this.expandedSlot) this.setExpandedSlot(null);
+    const othersShown = SLOT_IDS.some(
+      (id) => this.slots[id] !== slot && this.slotShown(this.slots[id]),
+    );
+    if (!othersShown) {
+      showToast("Can't hide the only slot that's showing.");
+      return;
+    }
+    slot.paneHidden = true;
+    slot.paneEl.classList.remove('pmd-pane-focused');
+    this.applyExpandedState();
+    if (this.focusedSlot === slot) {
+      this.focusedSlot = null;
+      const next = SLOT_IDS.map((id) => this.slots[id]).find((s) => this.slotShown(s));
+      if (next) {
+        this.focusSlot(next);
+        next.visible?.view.focus();
+      }
+    }
+  }
+
+  /** Reveal All Slots: bring back every hidden slot that has docs. */
+  revealAllSlots(): void {
+    let any = false;
+    for (const id of SLOT_IDS) {
+      if (this.slots[id].paneHidden) {
+        this.slots[id].paneHidden = false;
+        any = true;
+      }
+    }
+    if (any) this.applyExpandedState();
+  }
+
+  /** Hide the focused slot. Used by the `hideSlot` ribbon command. */
+  hideFocusedSlot(): void {
+    if (this.focusedSlot) this.hideSlot(this.focusedSlot);
   }
 
   /** Set (or clear) the expanded slot and re-apply hidden states
@@ -1683,7 +1885,8 @@ class MultiPaneShell {
   /** Reconcile per-slot pane / nav-section visibility with the
    *  current expand state. When `expandedSlot` is set, only that
    *  slot's pane + nav section are shown; otherwise visibility
-   *  reverts to "has a doc loaded → shown". Also keeps every
+   *  reverts to "has a doc loaded and isn't hidden → shown" (see
+   *  `slotShown`). Also keeps every
    *  chip's expand-button aria-pressed flag in sync, and writes a
    *  `data-expanded` attribute on the row + nav rail so CSS can
    *  hook on it. Refreshes the layout count afterwards. */
@@ -1691,10 +1894,7 @@ class MultiPaneShell {
     const expanded = this.expandedSlot;
     for (const id of SLOT_IDS) {
       const slot = this.slots[id];
-      const show = expanded
-        ? slot === expanded
-        : slot.stack.length > 0;
-      slot.paneEl.hidden = !show;
+      slot.paneEl.hidden = !this.slotShown(slot);
       slot.setExpandButtonPressed(slot === expanded);
     }
     if (expanded) {
@@ -1719,15 +1919,14 @@ class MultiPaneShell {
   /** Single source of truth for which nav sections show in the rail,
    *  their vertical split, their resize handles, and whether the rail
    *  itself is shown at all. Derives visibility from: expand mode →
-   *  only the expanded slot; otherwise every slot with a loaded doc —
-   *  minus any the user has individually closed (`navHidden`). */
+   *  only the expanded slot; otherwise every slot with a loaded doc that
+   *  isn't hidden (`slotShown`) — minus any outline the user has
+   *  individually closed (`navHidden`). */
   reconcileNavRail(): void {
-    const expanded = this.expandedSlot;
     const visible: Slot[] = [];
     for (const id of SLOT_IDS) {
       const slot = this.slots[id];
-      const showByLayout = expanded ? slot === expanded : slot.stack.length > 0;
-      const show = showByLayout && !slot.navHidden;
+      const show = this.slotShown(slot) && !slot.navHidden;
       slot.navSectionEl.hidden = !show;
       if (show) visible.push(slot);
     }
@@ -1921,6 +2120,7 @@ class MultiPaneShell {
   focusSlotByIndex(idx: 0 | 1 | 2): void {
     const slot = this.slots[SLOT_IDS[idx]!];
     if (slot.stack.length === 0) return;
+    // A hidden slot comes back on focus (see focusSlot).
     if (this.expandedSlot && this.expandedSlot !== slot) {
       this.setExpandedSlot(slot);
     } else {
@@ -2026,6 +2226,17 @@ class MultiPaneShell {
     // doc splits chord routing (view keymaps need DOM focus) from
     // command routing (active view), which reads as "styling does
     // nothing". The slot takes focus normally when it becomes visible.
+    // A slot the user hid (Hide Slot) comes back when something focuses
+    // it. Every surface-before-prompt path lands here — closeRecord /
+    // closeAllExcept on a dirty doc, the quit prompt, a duplicate open,
+    // show-in-context — and a save prompt for a doc you can't see, with
+    // Save routed to the doc you CAN see, is what hiding must never
+    // cause. Under expand mode the guard below still holds: only the
+    // expanded pane is visible, exactly as before.
+    if (slot.paneHidden && slot.stack.length > 0) {
+      slot.paneHidden = false;
+      this.applyExpandedState();
+    }
     if (slot.paneEl.hidden) return;
     const wasSame = this.focusedSlot === slot && getActiveView() === slot.visible?.view;
     // The focused highlight is DERIVED: stamped across all panes on
@@ -2060,7 +2271,7 @@ class MultiPaneShell {
       commentsColumn?.refreshFlashcardAnchors();
       this.attachFocusedScrollSync(slot);
     }
-    const activeCount = SLOT_IDS.filter((id) => this.slots[id].stack.length > 0).length;
+    const activeCount = SLOT_IDS.filter((id) => this.slotShown(this.slots[id])).length;
     if (this.layoutMode === 'wide' && activeCount === 3) {
       // Compare the pane's box against the row's viewport. If any
       // part of the pane is clipped (off-screen), scroll it into
@@ -2136,6 +2347,17 @@ class MultiPaneShell {
    *  Called by the ribbon's `toggleReadMode` command (the global
    *  command dispatches into the shell via `enableMultiDocMode`'s
    *  `toggleReadMode` hook). No-op if no pane is focused. */
+  /** Flip the READING VIEW of the focused pane's visible doc — same
+   *  per-doc story as toggleFocusedReadMode below. */
+  toggleFocusedReaderView(): void {
+    const rec = this.focusedSlot?.visible;
+    if (!rec) return;
+    rec.readerView = !rec.readerView;
+    applyReaderViewToTarget(rec.editorEl, rec.view, rec.readerView);
+    setActiveView(rec.view);
+    refreshReaderViewBtn();
+  }
+
   toggleFocusedReadMode(): void {
     const rec = this.focusedSlot?.visible;
     if (!rec) return;
@@ -2146,10 +2368,13 @@ class MultiPaneShell {
       rec.readMode,
       settings.get('hideEmphasisBordersInReadMode'),
       settings.get('readModeParagraphIntegrity'),
+      settings.get('readModeShowUndertags'),
     );
     // setActiveView is the path that drives `refreshReadModeBtn`,
     // so we route through it to keep the ribbon button in sync.
     setActiveView(rec.view);
+    // The footer's readout order depends on this pane's read mode.
+    this.focusedSlot?.refreshWordCount();
   }
 
   /** Zoom the focused pane's body by a delta (per-pane). The zoom commands /
@@ -2223,10 +2448,11 @@ class MultiPaneShell {
     format: DocFormat | null;
     docId: string | null;
     uid: string;
+    dirty: boolean;
   } | null {
     const rec = this.focusedSlot?.visible;
     if (!rec) return null;
-    return { filename: rec.filename, handle: rec.handle, format: rec.format, docId: rec.docId, uid: rec.uid };
+    return { filename: rec.filename, handle: rec.handle, format: rec.format, docId: rec.docId, uid: rec.uid, dirty: rec.dirty };
   }
 
   /** Set the focused doc's Learn id (minted lazily on first save /
@@ -2339,6 +2565,9 @@ class MultiPaneShell {
     rec.format = file.format;
     slot.refreshChipFilename();
     pushPaneDocInfo(rec.uid, rec.filename);
+    // Save As moved the doc (or gave a never-saved doc its first
+    // path) — the snapshot's paths are now out of date.
+    this.reportWorkspace();
   }
 
   /** Journal every DocRecord across every slot's stack. Called by
@@ -2372,6 +2601,53 @@ class MultiPaneShell {
    *  recovered doc into the focused (or first) slot. Reuses the
    *  journal's uid so the recovered doc continues to crash-recover
    *  under the same slot. */
+  private findRecordByHandle(handle: string): { slot: Slot; record: DocRecord } | null {
+    for (const id of SLOT_IDS) {
+      const slot = this.slots[id];
+      const record = slot.stack.find((r) => r.handle === handle);
+      if (record) return { slot, record };
+    }
+    return null;
+  }
+
+  /** Pill action "Keep their changes" for the pane holding `handle`:
+   *  replace the record with a fresh read of the file, discarding unsaved
+   *  edits (the option's caption says so; no separate confirmation). The
+   *  old record is closed clean (releasing its path claim); the new one
+   *  registers the path and so adopts the fresh read as its baseline. */
+  async reloadFromDisk(handle: string): Promise<void> {
+    const found = this.findRecordByHandle(handle);
+    if (!found) return;
+    const { slot, record } = found;
+    const electron = getElectronHost();
+    if (!electron) return;
+    const file = await electron.readFileAtPath(handle);
+    if (!file) {
+      showToast("Couldn't reload — the file is no longer readable at its location.");
+      return;
+    }
+    let parsed: { doc: PMNode; threads: import('./comments-plugin.js').Thread[]; docId: string | null };
+    try {
+      const bytes = await maybeDecryptForOpen(file.bytes, file.name);
+      parsed = file.format === 'docx' ? await fromDocxFull(bytes) : parseNative(bytes);
+    } catch (err) {
+      if (err instanceof OpenCancelledError) return;
+      showToast(`Reload failed: ${err instanceof Error ? err.message : String(err)}`);
+      return;
+    }
+    record.dirty = false; // discarding is the option's stated effect: close without prompting
+    await slot.closeRecord(record);
+    const fresh = buildDocRecord(file.name, parsed.doc, slot, {
+      handle: file.handle,
+      format: file.format,
+      docId: parsed.docId,
+      threads: parsed.threads,
+    });
+    slot.push(fresh);
+    this.focusSlot(slot);
+    noteReloaded(file.handle);
+  }
+
   async onRecoveredDoc(entry: {
     uid: string;
     filename: string;
@@ -2435,11 +2711,10 @@ class MultiPaneShell {
     // home screen (shown at empty boot / after the last close) yields
     // to the workspace. No-op when home isn't up.
     homeScreen.hide();
-    if (this.expandedSlot && this.expandedSlot !== slot) {
-      slot.paneEl.hidden = true;
-    } else {
-      slot.paneEl.hidden = false;
-    }
+    // A doc sent or opened into a hidden slot brings the slot back —
+    // the user just asked to put something there.
+    slot.paneHidden = false;
+    slot.paneEl.hidden = !this.slotShown(slot);
     // Section visibility (honouring navHidden + expand mode) is owned
     // by reconcileNavRail.
     this.reconcileNavRail();
@@ -2454,9 +2729,17 @@ class MultiPaneShell {
     // BEFORE the focus bookkeeping: that path early-returns when the
     // emptied slot wasn't the focused one, and the last doc can close
     // from an unfocused slot (clean-doc ✕ needs no focus first).
-    if (!SLOT_IDS.some((id) => this.slots[id].stack.length > 0)) {
+    if (!this.arranging && !SLOT_IDS.some((id) => this.slots[id].stack.length > 0)) {
       homeScreen.show();
     }
+    // While any slot holds docs, at least one slot is shown. hideSlot
+    // refuses the last shown slot, but closing the docs in the shown
+    // slots can empty every one of them and leave only hidden slots —
+    // a workspace with docs and nothing on screen, and nothing focused
+    // for Mod-W to act on (field bug 2026-09-25). Bring the hidden
+    // slots back, as Reveal All Slots would, before the focus hand-off
+    // below looks for a pane.
+    if (!SLOT_IDS.some((id) => this.slotShown(this.slots[id]))) this.revealAllSlots();
     if (this.focusedSlot !== slot) return;
     this.focusedSlot = null;
     // Clear the emptied pane's highlight NOW: focusSlot's stamp-all
@@ -2466,7 +2749,7 @@ class MultiPaneShell {
     // focused" field bug (2026-07-28).
     slot.paneEl.classList.remove('pmd-pane-focused');
     for (const id of SLOT_IDS) {
-      if (this.slots[id].stack.length > 0) {
+      if (this.slotShown(this.slots[id])) {
         this.focusSlot(this.slots[id]);
         return;
       }
@@ -2483,25 +2766,43 @@ class MultiPaneShell {
    *  slot — no slot picker, since the user explicitly clicked that
    *  slot's Open button. */
   async openFileIntoSlot(target: SlotId): Promise<void> {
-    let opened: OpenedFile | null;
+    const host = getHost();
+    let opened: OpenedFile[];
     try {
-      opened = await getHost().openFile();
+      if (settings.get('openMultipleFiles') && host.openFiles) {
+        opened = await host.openFiles();
+      } else {
+        const one = await host.openFile();
+        opened = one ? [one] : [];
+      }
     } catch (err) {
       console.error('Open failed:', err);
       void alertDialog(`Failed to open: ${err instanceof Error ? err.message : err}`);
       return;
     }
-    if (!opened) return;
-    // Cross-window duplicate-open guard. Runs BEFORE the within-window
-    // check so a duplicate held by another window jumps focus there
-    // (Electron) or is refused (web) rather than landing on this
-    // window's existing copy if any.
-    if (opened.handle != null && (await isFileOpenInAnotherWindow(opened.handle))) {
-      showToast(`"${opened.name}" is already open in another window.`);
+    if (opened.length === 1) {
+      const file = opened[0]!;
+      // Cross-window duplicate-open guard. Runs BEFORE the within-window
+      // check so a duplicate held by another window jumps focus there
+      // (Electron) or is refused (web) rather than landing on this
+      // window's existing copy if any.
+      if (file.handle != null && (await isFileOpenInAnotherWindow(file.handle))) {
+        showToast(`"${file.name}" is already open in another window.`);
+        return;
+      }
+      if (await this.surfaceDuplicateIfOpen(file)) return;
+      await this.loadOpenedIntoSlot(file, target);
       return;
     }
-    if (await this.surfaceDuplicateIfOpen(opened)) return;
-    await this.loadOpenedIntoSlot(opened, target);
+    const fresh: OpenedFile[] = [];
+    for (const file of opened) {
+      if (file.handle != null && (await isFileOpenInAnotherWindow(file.handle))) {
+        showToast(`"${file.name}" is already open in another window.`);
+        continue;
+      }
+      fresh.push(file);
+    }
+    await this.loadBatchIntoSlot(fresh, target);
   }
 
   /** Called from the ribbon's Open button via `enableMultiDocMode`'s
@@ -2512,6 +2813,47 @@ class MultiPaneShell {
     const choice = await this.promptForSlot(opened.name);
     if (!choice) return;
     await this.loadOpenedIntoSlot(opened, choice);
+  }
+
+  /** Several files from one Open dialog (the caller has already run the
+   *  cross-window guard). One slot picker for the whole batch; every
+   *  file lands in that slot's stack, so Ctrl-Tab cycles them. */
+  async onFilesOpen(files: OpenedFile[]): Promise<void> {
+    if (files.length === 1) {
+      await this.onFileOpen(files[0]!);
+      return;
+    }
+    const choice = await this.promptForSlot(`${files.length} files`);
+    if (!choice) return;
+    await this.loadBatchIntoSlot(files, choice);
+  }
+
+  /** Load a batch into one slot, in dialog order. A file already open in
+   *  this window is skipped with a toast, and one that fails to load is
+   *  reported without stopping the rest. A damaged .cmir gets the same
+   *  repair offer a single open gives it, once the rest are in. */
+  private async loadBatchIntoSlot(files: OpenedFile[], target: SlotId): Promise<void> {
+    const damaged: OpenedFile[] = [];
+    for (const file of files) {
+      if (await this.findOpenRecordByHandle(file.handle ?? null)) {
+        showToast(`"${file.name}" is already open.`);
+        continue;
+      }
+      try {
+        await this.loadOpenedIntoSlot(file, target);
+      } catch (err) {
+        if (err instanceof NativeDamagedError) {
+          damaged.push(file);
+          continue;
+        }
+        console.error('Open failed for', file.name, err);
+        showToast(`Couldn't open "${file.name}": ${err instanceof Error ? err.message : err}`);
+      }
+    }
+    // Consent-first repair offer (repaired copy, no file handle), the
+    // same one the single-file path gives — after the batch, so one bad
+    // file never holds up the others.
+    for (const file of damaged) await offerDamagedSalvage(file.name, file.bytes);
   }
 
   /** Flashcard review's "Show in context": reveal the card's source in a
@@ -2551,6 +2893,57 @@ class MultiPaneShell {
     if (record) {
       requestAnimationFrame(() => scrollRecordToDescriptor(record, req.descriptor, req.name));
     }
+  }
+
+  /** Reopen a saved workspace into this window's slots. Each doc is
+   *  read straight from its recorded path — no picker — and lands in
+   *  the slot it was saved from; docs saved in single-doc mode (no
+   *  slot) fill slot1 → slot2 → slot3 in turn. Docs already open here
+   *  or held by another window are skipped rather than duplicated,
+   *  and a file that moved or was deleted is skipped with a toast.
+   *  Resolves with the number of docs actually opened. */
+  async restoreWorkspaceDocs(
+    docs: Array<{ path: string; filename: string; slot: SlotId | null }>,
+  ): Promise<number> {
+    const electron = getElectronHost();
+    if (!electron) return 0;
+    let opened = 0;
+    let missing = 0;
+    let nextSlot = 0;
+    for (const doc of docs) {
+      if (await this.findOpenRecordByHandle(doc.path)) continue;
+      if (await isFileOpenInAnotherWindow(doc.path)) continue;
+      let file: Awaited<ReturnType<typeof electron.readFileAtPath>>;
+      try {
+        file = await electron.readFileAtPath(doc.path);
+      } catch {
+        file = null;
+      }
+      if (!file) {
+        missing += 1;
+        continue;
+      }
+      const target = doc.slot ?? SLOT_IDS[nextSlot % SLOT_IDS.length]!;
+      nextSlot += 1;
+      try {
+        await this.loadOpenedIntoSlot(
+          { name: file.name, bytes: file.bytes, handle: file.handle },
+          target,
+        );
+        opened += 1;
+      } catch (err) {
+        console.error(`Reopening "${doc.filename}" failed:`, err);
+        missing += 1;
+      }
+    }
+    if (missing > 0) {
+      showToast(
+        missing === 1
+          ? "1 document couldn't be reopened — it may have moved or been deleted."
+          : `${missing} documents couldn't be reopened — they may have moved or been deleted.`,
+      );
+    }
+    return opened;
   }
 
   /** Duplicate-open guard: if `opened` is already loaded in the
@@ -2665,6 +3058,17 @@ class MultiPaneShell {
     // shows, so we don't pester the user with a slot prompt for a
     // doc they already have open.
     const format = formatFromFilename(opened.name) ?? 'docx';
+    // Genuinely-empty file (stat size 0): load as a blank document —
+    // same substitution the single-pane funnel does in resolveOpenedFile
+    // (the slot-Open button reaches here without passing through it).
+    if (opensAsBlank(opened)) {
+      opened = {
+        ...opened,
+        bytes: await blankDocumentBytes(format, makeBlankDoc(), {
+          defaultFont: settings.get('bodyFont'),
+        }),
+      };
+    }
     // Password-protected .docx (a compound file, not a zip) → prompt +
     // decrypt to real .docx bytes before parsing; passes through
     // otherwise. Cancel aborts silently; an unsupported scheme shows
@@ -2692,6 +3096,13 @@ class MultiPaneShell {
       ({ doc, threads, docId } = await fromDocxFull(openBytes));
     }
     const slot = this.slots[target];
+    // With the setting on, an Untitled doc nobody has touched gives up its
+    // place to the file (VS Code / Sublime behavior), rather than staying
+    // stacked under it.
+    const replaced =
+      settings.get('openReplacesUntitled') && slot.visible && isReplaceableUntitled(slot.visible)
+        ? slot.visible
+        : null;
     const record = buildDocRecord(opened.name, doc, slot, {
       handle: opened.handle ?? null,
       format,
@@ -2699,6 +3110,9 @@ class MultiPaneShell {
       threads,
     });
     slot.push(record);
+    this.maybeAutoMarkSpeech(record, target);
+    // Now hidden and clean, so this closes without a prompt.
+    if (replaced) await slot.closeRecord(replaced);
     // Open-from-disk rejoin gate (same as the single-doc open path):
     // a file with a resumable session offers rejoin-or-leave instead
     // of silently diverging.
@@ -2742,6 +3156,19 @@ class MultiPaneShell {
     return null;
   }
 
+  /** Opt-in (off by default): the first doc to land in the speech-side
+   *  slot while no speech doc is marked becomes the speech doc. Called
+   *  from the open and New paths only, so Arrange Windows and moving a
+   *  doc between slots never mark anything. */
+  private maybeAutoMarkSpeech(record: DocRecord, target: SlotId): void {
+    if (!settings.get('autoMarkSpeechSlotDoc')) return;
+    if (target !== slotPlanForSpeech(settings.get('arrangeSpeechSide')).speechSlot) return;
+    const resolver = getSpeechDocResolver();
+    if (resolver.getSpeechView()) return;
+    resolver.setSpeech(record.view);
+    this.refreshSpeechChips();
+  }
+
   /** Create an empty doc; prompt for slot. Used by the ribbon's
    *  "New doc" button. */
   async createNewDoc(): Promise<void> {
@@ -2754,6 +3181,7 @@ class MultiPaneShell {
       format: null,
     });
     slot.push(record);
+    this.maybeAutoMarkSpeech(record, target);
     // Caret into the empty paragraph + focus, so typing (or arming a
     // style for typing) works immediately with no extra click. Every
     // other slot-populating path focuses too — UNLESS the target pane
@@ -2827,7 +3255,11 @@ class MultiPaneShell {
     });
     if (!speechName) return;
     const trimmed = speechName;
-    const target = await this.promptForSlot(`Speech ${trimmed}`);
+    // Optionally skip the picker: the speech-side slot is where Arrange
+    // Windows would put this doc anyway.
+    const target = settings.get('newSpeechDocInSpeechSlot')
+      ? slotPlanForSpeech(settings.get('arrangeSpeechSide')).speechSlot
+      : await this.promptForSlot(`Speech ${trimmed}`);
     if (!target) return;
     const format = settings.get('defaultSpeechDocFormat');
     const filename = formatSpeechFilename(trimmed, format);
@@ -2877,6 +3309,70 @@ class MultiPaneShell {
    *  focused doc IS already the speech doc, clear the designation.
    *  Otherwise mark it (replacing any previous). No-op if no pane
    *  is focused. */
+  /** Arrange Windows, three-pane edition: the speech doc into the slot
+   *  on `side`, every other document stacked into the middle slot (the
+   *  one that was showing stays on top), the far slot emptied, and the
+   *  width divided by `speechPct`. Returns false when there is nothing
+   *  to arrange. Without a marked speech doc everything stacks into the
+   *  docs slot and the split still applies (the speech slot stays
+   *  empty), mirroring the single-doc command's "no speech doc" case. */
+  arrangeForSpeech(side: 'left' | 'right', speechPct: number): boolean {
+    const plan = slotPlanForSpeech(side);
+    const all: DocRecord[] = SLOT_IDS.flatMap((id) => this.slots[id].stack);
+    if (all.length === 0) return false;
+    if (this.expandedSlot) this.toggleExpanded(this.expandedSlot);
+    // Arranging lays out every doc; a hidden slot would strand its docs
+    // off screen.
+    this.revealAllSlots();
+    const speechView = getSpeechDocResolver().getSpeechView();
+    const speechRec = all.find((r) => r.view === speechView) ?? null;
+    const onTop = this.focusedSlot?.visible ?? null;
+    this.arranging = true;
+    try {
+      // Docs first, the one that was showing last so it ends up visible.
+      const docs = all.filter((r) => r !== speechRec);
+      docs.sort((a, b) => (a === onTop ? 1 : b === onTop ? -1 : 0));
+      for (const rec of docs) this.moveRecordToSlot(rec, this.slots[plan.docsSlot]);
+      if (speechRec) this.moveRecordToSlot(speechRec, this.slots[plan.speechSlot]);
+    } finally {
+      this.arranging = false;
+    }
+    this.arrangedSplit = { speechSlot: plan.speechSlot, docsSlot: plan.docsSlot, speechPct };
+    this.applyArrangedSplit();
+    this.refreshLayout();
+    const focusRec = onTop && onTop !== speechRec ? onTop : (this.slots[plan.docsSlot].visible ?? speechRec);
+    if (focusRec) {
+      focusRec.owner.showRecord(focusRec);
+      this.focusSlot(focusRec.owner);
+      focusRec.view.focus();
+    }
+    return true;
+  }
+
+  /** Hand `rec` from wherever it lives to `target` (no-op if already
+   *  there). Goes through the same release/push pair send-to-slot uses. */
+  private moveRecordToSlot(rec: DocRecord, target: Slot): void {
+    const from = rec.owner;
+    if (from === target) return;
+    from.showRecord(rec);
+    const released = from.releaseVisible();
+    if (released) target.push(released);
+  }
+
+  private applyArrangedSplit(): void {
+    if (!this.arrangedSplit) return;
+    const { speechSlot, docsSlot, speechPct } = this.arrangedSplit;
+    const pct = Math.min(90, Math.max(10, Math.round(speechPct)));
+    for (const id of SLOT_IDS) this.slots[id].paneEl.style.flex = '';
+    this.slots[speechSlot].paneEl.style.flex = `0 0 ${pct}%`;
+    this.slots[docsSlot].paneEl.style.flex = `0 0 ${100 - pct}%`;
+  }
+
+  private clearArrangedSplit(): void {
+    this.arrangedSplit = null;
+    for (const id of SLOT_IDS) this.slots[id].paneEl.style.flex = '';
+  }
+
   markFocusedAsSpeech(): void {
     const rec = this.focusedSlot?.visible;
     if (!rec) return;
@@ -2902,6 +3398,14 @@ class MultiPaneShell {
     const sourceRec = this.focusedSlot?.visible;
     if (!sourceRec) return;
     void sendViewToStarred(sourceRec.view);
+  }
+
+  /** Send to Recipient for the focused pane (picker, then the same
+   *  source as sendToStarred). */
+  sendToRecipient(): void {
+    const sourceRec = this.focusedSlot?.visible;
+    if (!sourceRec) return;
+    void sendViewToRecipient(sourceRec.view);
   }
 
   /** Send the focused pane's selection (or its enclosing heading-
@@ -2985,11 +3489,37 @@ export function sendVisibleToSlotByIndex(idx: 0 | 1 | 2): void {
   shell.sendVisibleToSlotByIndex(idx);
 }
 
+/** Re-publish the shell's open set to the workspace store. Called at
+ *  boot right after the roll-over (which empties the live map) so this
+ *  window's docs are represented again straight away. */
+export function reportShellWorkspace(): void {
+  shell?.reportWorkspace();
+}
+
+/** Reopen a saved workspace into the three-pane shell. No-op (0) in
+ *  single-doc mode, where `index.ts` restores by spawning a window
+ *  per doc instead. */
+export async function restoreWorkspaceIntoSlots(
+  docs: Array<{ path: string; filename: string; slot: SlotId | null }>,
+): Promise<number> {
+  if (!shell) return 0;
+  return shell.restoreWorkspaceDocs(docs);
+}
+
 /** Toggle expand-mode on the focused slot. No-op when no slot is
  *  focused. Used by the `toggleSlotExpand` ribbon command. */
 export function toggleFocusedSlotExpand(): void {
   if (!shell) return;
   shell.toggleFocusedSlotExpand();
+}
+
+/** Hide the focused slot / reveal every hidden slot. No-ops when the
+ *  shell isn't active. Used by the `hideSlot` / `revealAllSlots` commands. */
+export function hideFocusedSlot(): void {
+  shell?.hideFocusedSlot();
+}
+export function revealAllSlots(): void {
+  shell?.revealAllSlots();
 }
 
 /** Cycle the focused slot's visible doc forward (+1) / back (-1). No-op when
@@ -3296,6 +3826,7 @@ function buildDocRecord(
     // New docs always start with read mode OFF. The user toggles
     // it per-pane via the ribbon command after opening.
     readMode: false,
+    readerView: false,
     zoomPct: settings.get('defaultZoomPct'),
     // Autosave is per-pane in multi-doc — same intent as read mode.
     // Off by default, but a file the user previously turned autosave
@@ -3362,11 +3893,15 @@ function buildDocRecord(
 export function mountMultiPaneShell(): void {
   if (shell) return;
   shell = new MultiPaneShell();
+  setMultiDocReloadFromDisk((handle) => shell!.reloadFromDisk(handle));
   enableMultiDocMode({
     onFileOpen: (file) => shell!.onFileOpen(file),
+    onFilesOpen: (files) => shell!.onFilesOpen(files),
     showInContext: (req) => shell!.showInContext(req),
     onNewDoc: () => shell!.createNewDoc(),
     toggleReadMode: () => shell!.toggleFocusedReadMode(),
+    arrangeForSpeech: (side, pct) => shell!.arrangeForSpeech(side, pct),
+    toggleReaderView: () => shell!.toggleFocusedReaderView(),
     toggleAutosave: () => shell!.toggleFocusedAutosave(),
     zoomFocusedBy: (delta) => shell!.zoomFocusedBy(delta),
     zoomFocusedReset: () => shell!.zoomFocusedReset(),
@@ -3377,6 +3912,7 @@ export function mountMultiPaneShell(): void {
     sendToSpeechAtEnd: () => shell!.sendToSpeech(true),
     sendToDropzone: () => shell!.sendToDropzone(),
     sendToStarred: () => shell!.sendToStarred(),
+    sendToRecipient: () => shell!.sendToRecipient(),
     getFocusedFilename: () => shell!.getFocusedFilename(),
     setFocusedFilename: (name) => shell!.setFocusedFilename(name),
     getFocusedFile: () => shell!.getFocusedFile(),

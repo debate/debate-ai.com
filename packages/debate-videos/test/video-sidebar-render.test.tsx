@@ -232,11 +232,20 @@ describe("the sidebar's heading structure", () => {
     // mounted on arrival.
     const html = renderSidebar();
     expect(html).toContain("Coaching Programs");
-    expect(html).toContain("Evidence Library");
-    expect(html).toContain("Judge Paradigm Picker");
+    expect(html).toContain("Topic Coverage");
+    expect(html).toContain("AI Judge Decision");
     // ...alongside the Videos node's own links, which were never in doubt.
     expect(html).toContain("PF Debates");
     expect(html).toContain("My Favorites");
+  });
+
+  it("prints the College Debates total in full in the tree", () => {
+    // The sidebar row sits next to the title, where an abbreviated count
+    // fits — but the number is the round archive's headline figure, so the
+    // tree abbreviates every total except this one.
+    const html = renderSidebar({ counts: { college: 1400, policy: 1346 } });
+    expect(html).toContain(">1400<");
+    expect(html).toContain(">1.3k<");
   });
 
   it("keeps the glossary and rankings pair inside the Practice section", () => {
@@ -266,6 +275,22 @@ describe("QuickLinksGrid", () => {
       for (const [, src] of html.matchAll(/<img[^>]*\ssrc="([^"]*)"/g)) {
         expect(src.length).toBeGreaterThan(0);
       }
+    }
+  });
+
+  it("prints the College Debates total in full on every layout", () => {
+    // Rounded to `1.4k`, the round archive's flagship number both lost its
+    // digits and read lower than it is. Every other tile still abbreviates.
+    for (const layout of ["grid", "list"] as const) {
+      const html = renderToStaticMarkup(
+        createElement(QuickLinksGrid, {
+          counts: { college: 1400, policy: 1346 },
+          layout,
+        }),
+      );
+      expect(html).toContain(">1400<");
+      expect(html).toContain(">1.3k<");
+      expect(html).not.toContain("1.4k");
     }
   });
 });

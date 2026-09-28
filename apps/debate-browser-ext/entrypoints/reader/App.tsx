@@ -30,21 +30,29 @@ import {
   describeActiveProvider,
   suggestFollowups,
 } from '@/src/ai/article-ai';
+import { saveArticleToAccount } from '@/src/article/save';
+import { isSignedIn } from '@/src/auth/session';
 import { useAccount } from '@/src/auth/useAccount';
 import AccountBar from '@/src/components/article/AccountBar';
 import ArticleAIResponse from '@/src/components/article/ArticleAIResponse';
 import ArticleActionButtons, {
   ARTICLE_TOOLBAR_SHORTCUTS,
+  READING_WIDTHS,
+  type ReadingWidth,
 } from '@/src/components/article/ArticleActionButtons';
 import ArticleContent from '@/src/components/article/ArticleContent';
 import ArticleFollowupQuestions from '@/src/components/article/ArticleFollowupQuestions';
 import ArticlePromptInput from '@/src/components/article/ArticlePromptInput';
+import { clearHighlights } from '@/src/reader/highlights';
 import {
   READER_SNAPSHOT_MESSAGE,
   READER_TAB_CHANGED_MESSAGE,
   requestReaderPanelClose,
+  requestReaderPanelLayout,
+  type ReaderLayout,
 } from '@/src/reader/panel';
 import { checkPageForExistingCards } from '@/src/reuse/api';
+import { detectPageUrl } from '@/src/url-detection/api';
 import {
   DEFAULT_SUMMARIZE_PROMPT,
   getSettings,
@@ -55,6 +63,26 @@ const MIN_FONT_SCALE = 0.5;
 const MAX_FONT_SCALE = 1.8;
 const FONT_SCALE_STEP = 0.1;
 const FONT_SCALE_KEY = 'articleFontScale';
+const LAYOUT_KEY = 'readerLayout';
+const READING_WIDTH_KEY = 'readerWidth';
+
+/** A value kept in this extension's own `localStorage`, or `fallback`. */
+function readStored<T extends string>(key: string, allowed: readonly T[], fallback: T): T {
+  try {
+    const value = localStorage.getItem(key);
+    return allowed.includes(value as T) ? (value as T) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function writeStored(key: string, value: string): void {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    // Storage blocked — the choice just won't be remembered.
+  }
+}
 
 /** How much of the article body is sent to a model. */
 const MAX_ARTICLE_CHARS = 15000;
@@ -63,6 +91,8 @@ const MAX_ARTICLE_CHARS = 15000;
 interface Notice {
   tone: 'info' | 'warn';
   text: string;
+  /** An optional link shown after the text, e.g. to the saved document. */
+  link?: { href: string; label: string };
 }
 
 /** Hides the panel; the page it overlays keeps it, ready to toggle back. */
@@ -91,9 +121,39 @@ export default function App() {
   const [isLoadingFollowups, setIsLoadingFollowups] = useState(false);
 
   const [isCheckingCards, setIsCheckingCards] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [notice, setNotice] = useState<Notice | null>(null);
   const [isHighlightMode, setIsHighlightMode] = useState(false);
+  const [highlights, setHighlights] = useState<string[]>([]);
   const [fontScale, setFontScale] = useState(1);
+  const [layout, setLayout] = useState<ReaderLayout>(() =>
+    readStored<ReaderLayout>(LAYOUT_KEY, ['full', 'side'], 'full'),
+  );
+  const [readingWidth, setReadingWidth] = useState<ReadingWidth>(() =>
+    readStored(READING_WIDTH_KEY, Object.keys(READING_WIDTHS) as ReadingWidth[], 'medium'),
+  );
+
+  // The frame opens full-page; tell the page which layout to actually use,
+  // now and whenever the reader switches.
+  useEffect(() => {
+    requestReaderPanelLayout(layout);
+    writeStored(LAYOUT_KEY, layout);
+  }, [layout]);
+
+  useEffect(() => writeStored(READING_WIDTH_KEY, readingWidth), [readingWidth]);
+
+  const toggleLayout = () => setLayout((current) => (current === 'full' ? 'side' : 'full'));
+  const cycleReadingWidth = () =>
+    setReadingWidth((current) => {
+      const widths = Object.keys(READING_WIDTHS) as ReadingWidth[];
+      return widths[(widths.indexOf(current) + 1) % widths.length];
+    });
+
+  const clearAllHighlights = () => {
+    const body = document.getElementById('article-content');
+    if (body) clearHighlights(body);
+    setHighlights([]);
+  };
 
   // Holds the latest toolbar handlers so the global keydown listener, which is
   // registered once, always calls current closures rather than stale ones.
@@ -102,7 +162,9 @@ export default function App() {
   /** Shows a note for a few seconds, replacing whatever was there. */
   const flashNotice = useCallback((next: Notice) => {
     setNotice(next);
-    window.setTimeout(() => setNotice((current) => (current === next ? null : current)), 4000);
+    // A notice with a link stays long enough to be clicked.
+    const duration = next.link ? 10000 : 4000;
+    window.setTimeout(() => setNotice((current) => (current === next ? null : current)), duration);
   }, []);
 
   // Settings decide the prompt, the provider strip and how many follow-ups to
@@ -179,6 +241,13 @@ export default function App() {
       setAiError('');
       setFollowupQuestions([]);
       setFollowupError('');
+
+      // Report the visited URL to the server for URL detection (non-blocking)
+      if (extracted.url) {
+        const pageTitle = document.title || extracted.title;
+        const favicon = document.querySelector('link[rel="icon"]')?.getAttribute('href') || undefined;
+        detectPageUrl(extracted.url, pageTitle, favicon).catch(() => {});
+      }
     } catch (error) {
       setArticle(null);
       setExtractError(
@@ -224,9 +293,15 @@ export default function App() {
     async (question: string) => {
       if (!article) return;
       const body = articleToPlainText(article, MAX_ARTICLE_CHARS);
-      // A reader who highlighted something before opening the panel almost
-      // always means "about this part", so it is asked alongside the question.
-      const fullQuestion = [selectionText, question].filter(Boolean).join('\n');
+      // A reader who selected something before opening the panel, or has
+      // highlighted passages in it, almost always means "about this part", so
+      // that text is asked alongside the question.
+      const focus = [selectionText, ...highlights].filter(Boolean);
+      const fullQuestion = focus.length
+        ? `Focus on these passages from the article:\n${focus
+            .map((passage) => `"${passage}"`)
+            .join('\n')}\n\n${question}`
+        : question;
 
       setIsLoadingAI(true);
       setAiError('');
@@ -251,7 +326,7 @@ export default function App() {
         setIsLoadingAI(false);
       }
     },
-    [article, chatHistory, selectionText],
+    [article, chatHistory, highlights, selectionText],
   );
 
   const generateFollowups = useCallback(async () => {
@@ -333,13 +408,50 @@ export default function App() {
     }
   }, [article?.url, flashNotice, settings]);
 
+  /**
+   * Saves the article — with the panel's Q&A so far — to the reader's
+   * debate-ai.com account, signing them in first if they are not.
+   */
+  const saveToAccount = useCallback(async () => {
+    if (!article || isSaving) return;
+    setIsSaving(true);
+    try {
+      if (!(await isSignedIn())) {
+        flashNotice({ tone: 'info', text: 'Sign in to Debate AI to save this article…' });
+        await account.signIn();
+        if (!(await isSignedIn())) {
+          flashNotice({ tone: 'warn', text: 'Sign in to Debate AI to save articles to your account.' });
+          return;
+        }
+      }
+      const saved = await saveArticleToAccount(article, chatHistory);
+      flashNotice({
+        tone: 'info',
+        text: `Saved “${saved.title}” to your Debate AI documents.`,
+        link: { href: saved.openUrl, label: 'Open' },
+      });
+    } catch (error) {
+      flashNotice({
+        tone: 'warn',
+        text: error instanceof Error ? error.message : 'Could not save this article.',
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  }, [account, article, chatHistory, flashNotice, isSaving]);
+
   // Keep the shortcut map pointing at the freshest closures every render.
   shortcutActionsRef.current = {
     ask: () => void askQuestion(userPrompt),
     suggest: () => void generateFollowups(),
     copy: () => void copyArticle(),
     highlight: () => setIsHighlightMode((previous) => !previous),
+    layout: toggleLayout,
+    width: () => {
+      if (layout === 'full') cycleReadingWidth();
+    },
     cards: () => void checkForExistingCards(),
+    save: () => void saveToAccount(),
     open: () => {
       if (article?.url) window.open(article.url, '_blank', 'noopener,noreferrer');
     },
@@ -398,10 +510,16 @@ export default function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  // Full page centers everything in one column at the chosen width; the side
+  // panel is already narrow, so it just fills the frame.
+  const columnStyle: React.CSSProperties | undefined =
+    layout === 'full' ? { maxWidth: READING_WIDTHS[readingWidth].maxWidth } : undefined;
+
   return (
     <TooltipProvider delayDuration={0}>
       <div className="flex h-screen flex-col bg-background text-foreground">
-        <div className="shrink-0 space-y-2 border-b border-border bg-background/95 px-3 py-2.5">
+        <div className="shrink-0 border-b border-border bg-background/95 px-3 py-2.5">
+          <div className="mx-auto w-full space-y-2" style={columnStyle}>
           <AccountBar
             user={account.user}
             isBusy={account.isLoading}
@@ -414,7 +532,12 @@ export default function App() {
             isLoadingAI={isLoadingAI}
             isLoadingFollowups={isLoadingFollowups}
             isCheckingCards={isCheckingCards}
+            isSaving={isSaving}
+            isSignedIn={Boolean(account.user)}
             isHighlightMode={isHighlightMode}
+            highlightCount={highlights.length}
+            layout={layout}
+            readingWidth={readingWidth}
             articleUrl={article?.url}
             fontScale={fontScale}
             onAskClick={() => void askQuestion(userPrompt)}
@@ -422,16 +545,24 @@ export default function App() {
             onCopyClick={() => void copyArticle()}
             onShareClick={() => void shareArticle()}
             onCheckCardsClick={() => void checkForExistingCards()}
+            onSaveClick={() => void saveToAccount()}
             onHighlightToggle={() => setIsHighlightMode((previous) => !previous)}
+            onClearHighlights={clearAllHighlights}
+            onLayoutToggle={toggleLayout}
+            onReadingWidthChange={setReadingWidth}
             onZoomIn={() => persistFontScale(fontScale + FONT_SCALE_STEP)}
             onZoomOut={() => persistFontScale(fontScale - FONT_SCALE_STEP)}
             onZoomReset={() => persistFontScale(1)}
             onClose={closePanel}
           />
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto">
-          <div className="space-y-4 p-3">
+          <div
+            className={`mx-auto w-full space-y-4 ${layout === 'full' ? 'px-6 py-6' : 'p-3'}`}
+            style={columnStyle}
+          >
             {pageChanged && (
               <div className="flex items-center justify-between gap-2 rounded-md border border-primary/30 bg-accent/40 p-2 text-xs">
                 <span>You&apos;ve moved to another page.</span>
@@ -450,6 +581,19 @@ export default function App() {
                 }`}
               >
                 {notice.text}
+                {notice.link && (
+                  <>
+                    {' '}
+                    <a
+                      href={notice.link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold underline"
+                    >
+                      {notice.link.label}
+                    </a>
+                  </>
+                )}
               </div>
             )}
 
@@ -468,11 +612,26 @@ export default function App() {
 
             {article && (
               <>
-                {selectionText && (
-                  <div className="rounded-md border border-dashed border-border p-2 text-xs text-muted-foreground">
-                    <span className="font-semibold text-foreground">Asking about:</span>{' '}
-                    {selectionText.slice(0, 280)}
-                    {selectionText.length > 280 ? '…' : ''}
+                {(selectionText || highlights.length > 0) && (
+                  <div className="space-y-1 rounded-md border border-dashed border-border p-2 text-xs text-muted-foreground">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-semibold text-foreground">Asking about:</span>
+                      {highlights.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={clearAllHighlights}
+                          className="underline underline-offset-2 hover:text-foreground"
+                        >
+                          Clear highlights
+                        </button>
+                      )}
+                    </div>
+                    {[selectionText, ...highlights].filter(Boolean).map((passage, index) => (
+                      <p key={index} className="border-l-2 border-yellow-300 pl-2">
+                        {passage.slice(0, 280)}
+                        {passage.length > 280 ? '…' : ''}
+                      </p>
+                    ))}
                   </div>
                 )}
 
@@ -527,6 +686,7 @@ export default function App() {
                   article={article}
                   isHighlightMode={isHighlightMode}
                   fontScale={fontScale}
+                  onHighlightsChange={setHighlights}
                 />
               </>
             )}

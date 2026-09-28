@@ -1,60 +1,56 @@
 
-improve the ui's and have demo mock data samples for t4sting these out with ui's 
+improve the ui's and have demo mock data samples for t4sting these out with ui's
 
-Research & Evidence
-Evidence Library — Search shared cut cards and reusable analytics by keyword, citation, argument, topic, or tag.
-Argument Library — Browse shared research through topic folders, case areas, and tag-based collections.
-Contributions Feed — Submit, like, save, and endorse community cards, summaries, highlights, and annotations.
-LLM Card Scoring — Score cards for relevance, clarity, uniqueness, evidence quality, and usability.
-Revision Incentives — Reward and rank improvements to weak cards, citations, and stale evidence.
-Review Queue — Move cards through draft, review, requested changes, approval, and publication.
-Topic Coverage Dashboard — Identify missing, thin, covered, and untracked arguments by card and word count.
-Speech Documents — View evidence sent from Reason Editor into designated speech documents.
-Team Prep & Collaboration
-Task Inbox — Review research tasks routed to contributors and organized by topic.
-Collaboration Prep Room — Share a topic-specific prep space for evidence, draft blocks, tasks, and active teammates.
-Team Collaboration Mode — Leave, assign, and track live prep notes during shared topic sprints.
-Prep Notes — Maintain live prep notes grouped into needs-follow-up, open, and covered status.
-Contacts — Keep an account-linked contacts list (requests, blocking, who's online) and share the document you're editing as a live co-editing card straight to a contact's account.
-Notifications — See and mark read notifications for prep-note assignments and activity.
-Team Brainstorm Assist — Submit, seed, organize, and upvote ideas for arguments, impacts, frontlines, and turns.
-Group Challenges — Create squad challenges based on contributions or recorded rebuttal wins.
-Research Progress — Review contribution history, task-completion rates, and per-topic work progress.
-Community & Contributor Progress
-Leaderboard — Rank contributors by helpfulness score, tier, badges, and quest streak.
-News Stream — View product updates, community announcements, Daily Best Card winners, and Contributor Award standings.
-Contributor Awards — See helpfulness-ranked category winners, such as best evidence finder and best explainer.
-Daily Best Card — View the current highest-helpfulness card and prior daily winners.
-Progress — Track contributor tiers, badges, unlocked task levels, and daily-quest streaks.
-Quest Streaks — View current and longest daily-quest streaks plus milestone badges.
-Daily Quests — Track team goals, such as finding solvency cards, against live same-day contributions.
-Practice & AI Rounds
-Practice Drills — Run flow-derived overview, frontline, cross-examination, and collapse drills.
-AI Coach Mode — Generate extension, refutation, collapse, and weighing prompts from a round’s flow.
-Judge Paradigm Picker — Select a built-in or custom AI judge paradigm for practice rounds.
-AI Judge Decision — Generate an AI decision grounded in the selected judge paradigm and flow summary.
-Opponent Persona Picker — Choose or define an AI practice opponent’s debating style.
-Word-Count Speeches — Practice speeches under a maximum word count instead of a time limit.
-Online Debate Versus AI — Debate an AI opponent in real turn order using a chosen format and side.
-Practice Round Simulator — Simulate a tournament round with a timer, AI judge paradigm, and AI opponent persona.
-Speech Transcript Summaries — Create per-argument flow summaries with cross-examination questions and extension ideas.
-Argument Tree Outline — Browse and filter a structured outline of every argument in a round’s flow.
-Flow Annotations — Add timestamped annotations to individual flowed arguments while reviewing recordings.
-AI Response-Outcome Charts — Analyze side exposure, vulnerable arguments, and hypothetical response paths in a flow.
-Scouting & Round Strategy
-Judge Profiles — Review saved judges’ side-vote bias, speaker points, speed tolerance, and theory receptiveness.
-Opponent Team Profiles — Scout teams using records, side tendencies, common cases, and frequently used arguments.
-Pre-Round Briefings — Combine judge and opponent scouting, head-to-head records, and team prep notes for an upcoming round.
-Scout-to-Strategy — Convert scouting and judge tendencies into ranked case options and matchup-risk assessments.
-Standings & Coaching
-CX NDCA Standings — View cumulative season standings based on recorded tournament results.
-Team Rankings — Browse debate-team rankings, leaderboards, and Elo ratings.
-Coaching Programs — Run roster-scoped group coaching spaces with topic sprints, challenges, and drills.
-Coach Materials — Upload or dictate grounding material for the team coach AI and preview relevant sources.
+Done (first slice): `/tools`' "My Saved Items" widget rendered nothing at
+all for a signed-in user with no cloud-saved data yet — indistinguishable
+from broken, and no demo of what the widget (or the tools it links) does.
+It now shows a small "Try These Tools" preview of sample cards, each
+badged "Sample" and linking to a real tool page, in that case. See
+`getSampleCloudLibraryItems` in `packages/debate-round/src/state/cloudLibrary.ts`
+and its use in `packages/debate-webview/src/routes/tools/MySavedItems.tsx`.
+Only this one widget got sample data — every other tool page that shows an
+empty state for a new user (the editor's file tree, Practice Drills history,
+the Evidence Library, etc.) is the same gap and a good follow-up, one PR per
+tool rather than a single sweeping change.
 
+Done (second slice, Evidence Library): `/cards/library`'s Shared Evidence
+Library showed a bare "No entries match this search." for a brand-new user
+with zero submitted cards/blocks, indistinguishable from the same message a
+real search-with-no-matches produces. It now shows a sample card and a
+sample block, each badged "Sample", whenever the persisted repository is
+genuinely empty (`hasEntries === false`) — a real "no matches" search on a
+non-empty repository still gets the plain message. See
+`getSampleEvidenceLibraryEntries` in
+`packages/debate-search-evidence/src/lib/shared-evidence-library.ts` and its
+use in `packages/debate-search-evidence/src/panels/EvidenceLibraryPanel.tsx`.
+Practice Drills history and the REASON editor's file tree remain open
+follow-ups, one PR each.
 
+Done (third slice, Practice Drills history): `/drills`' Practice Drills
+panel showed a bare "No practice drills yet." for a user with no persisted
+drill sets, with no demo of what a generated drill set looks like. It now
+shows a read-only sample drill set — one drill per kind (overview,
+frontline, cross-ex, collapse), badged "Sample" — under that message
+whenever `drillSets.length === 0` (past the loading state), never mixed
+into a real, possibly-empty result. See `getSampleDrillSets` in
+`packages/debate-practice-drills/src/state/drillSets.ts` and its use in
+`packages/debate-practice-drills/src/panels/DrillSetsPanel.tsx`. The REASON
+editor's file tree remains the last open follow-up from this ask.
 
-on each one have a descirotion of what it does in the panel itself -- like a mninguide
+Known blocker (unrelated to the above): a full monorepo `bun run test` run
+currently fails ~89 tests across 22 files, all with
+`ENOENT: .../apps/debate-ai.com/drizzle/0003_dark_zarek.sql` or similar —
+commit `39076f1` (".") added `drizzle/` to `.gitignore` and removed every
+tracked migration file under `apps/debate-ai.com/drizzle/`, which every
+test that spins up an in-memory D1/libSQL db by replaying those migrations
+depends on. This same directory was accidentally deleted and restored once
+already (`2566e0d` / `d58d57f`), so this looks like a repeat of that
+accident rather than an intentional change — worth a maintainer decision
+(restore the tracked migrations, or migrate every affected test to a
+different fixture strategy) rather than a silent restore from an
+autonomous run. Unrelated to `debate-search-evidence`, whose own suite
+(1298 tests) and typecheck are unaffected and pass in full.
+
 
 
 # Ideas for New Contributors

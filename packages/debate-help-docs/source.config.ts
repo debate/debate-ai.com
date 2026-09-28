@@ -5,9 +5,13 @@ import {
   metaSchema,
 } from 'fumadocs-mdx/config';
 import { remarkMdxFiles } from 'fumadocs-core/mdx-plugins/remark-mdx-files';
+import { fileURLToPath } from 'node:url';
 
 export const docs = defineDocs({
-  dir: './content/docs',
+  // Absolute, because fumadocs-mdx resolves `dir` against the root of whatever
+  // build loads this config — the web app's, whose Vite plugin compiles these
+  // docs (apps/debate-ai.com/vite.config.ts), not this package's.
+  dir: fileURLToPath(new URL('./content/docs', import.meta.url)),
   docs: {
     schema: frontmatterSchema,
     postprocess: {

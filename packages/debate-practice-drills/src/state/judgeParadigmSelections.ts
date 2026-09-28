@@ -76,25 +76,21 @@ export function deleteJudgeParadigmSelection(roundId: string): void {
  * Every persisted judge-paradigm selection, sorted by `roundId` for a
  * stable display order — the "(b) a paradigm-picker UI ... that
  * reads/writes through the persistence store" follow-up named under idea #5
- * ("AI Judge Decision Modes") in TODO.md's Product Feature Ideas list. Used
- * by `panels/JudgeParadigmPickerPanel.tsx`.
+ * ("AI Judge Decision Modes") in TODO.md's Product Feature Ideas list.
  */
 export function buildJudgeParadigmSelectionsPanelView(): JudgeParadigmSelection[] {
   return [...listJudgeParadigmSelections()].sort((a, b) => a.roundId.localeCompare(b.roundId));
 }
 
 /**
- * Builds the `debate-round` AI Judge Decision page's deep link for a round
- * that already has a saved paradigm here — closes the
- * `packages/debate-help-docs/content/docs/internals/judge-paradigm-selections.mdx` Known gap that this panel
- * "doesn't itself invoke a judge decision": `JudgeParadigmPickerPanel.tsx`
- * renders this as a link next to each saved selection, and
- * `JudgeDecisionPanel.tsx` (`debate-round`) reads the same `roundId` query
- * param via `next/navigation`'s `useSearchParams` to pre-fill its form,
- * mirroring `debate-card-search`'s `buildReuseCheckDeepLink`/`?checkUrl=`
- * convention. Kept here (rather than in `debate-round`, which already
- * depends on this package for `getJudgeParadigmSelection`) so the link
- * shape lives beside the data it points at.
+ * Builds the AI Judge Decision page's deep link for a round that already has
+ * a saved paradigm here, so a saved paradigm can be deep-linked straight into
+ * a decision. `JudgeDecisionPanel.tsx` reads the same `roundId` query param
+ * via `next/navigation`'s `useSearchParams` to pre-fill its form, mirroring
+ * `debate-card-search`'s `buildReuseCheckDeepLink`/`?checkUrl=` convention.
+ * Kept here (rather than in `debate-round`, which already depends on this
+ * package for `getJudgeParadigmSelection`) so the link shape lives beside the
+ * data it points at.
  */
 export function buildJudgeDecisionDeepLink(roundId: string): string {
   return `/judge-decision?roundId=${encodeURIComponent(roundId)}`;

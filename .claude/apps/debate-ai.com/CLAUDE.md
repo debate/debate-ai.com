@@ -12,8 +12,13 @@ scoring or editor behaviour inside `app/`, it is in the wrong package.
 
 ## Things that bite
 
-- **`bun run build` has three stages** — `build:docs` → `vinext build` →
-  `build:sw`. A bare `vinext build` ships **stale docs and no service worker**.
+- **`bun run build` has two stages** — `vinext build` → `build:sw`. A bare
+  `vinext build` ships **no service worker**.
+- **`app/docs` is the help docs** (`packages/debate-help-docs`), mounted like
+  any other package. `AppShell` renders it without the dock or sidebar, and it
+  loads its own stylesheet, so links between `/docs` and the app must stay
+  full page loads. See
+  [`../../architecture/documentation.md`](../../architecture/documentation.md).
 - **`keep_vars` in `wrangler.jsonc` is load-bearing.** Without it every
   `wrangler deploy` deletes the plaintext Variables. Don't remove it.
 - **`bun run deploy` migrates production first** (`db:migrate:d1`, then build,
@@ -47,9 +52,9 @@ worker have no test coverage at all — verify those with `bun run preview`.
 ## Shape
 
 `app/` · `components/` (shadcn) · `lib/` · `data/` · `drizzle/` (migrations +
-seed) · `worker/index.ts` · `wrangler.jsonc` · `public/debate-openapi.yml` (the
-spec `debate-api-client` is generated from) · `scripts/` (build-docs,
-migrate-d1, seed-videos, deploy-upload) · `setup-secrets.sh`
+seed) · `worker/index.ts` · `wrangler.jsonc` · `app/debate-openapi.yml/route.ts`
+(serves `packages/debate-api-client/debate-openapi.yml` to `/api`) · `scripts/` (migrate-d1,
+seed-videos, deploy-upload) · `setup-secrets.sh`
 
 ```bash
 bun run dev

@@ -360,6 +360,10 @@ export interface RouteChoiceOptions<T extends string> {
   choices: RouteChoiceOption<T>[];
   /** Label on the trailing cancel button. Defaults to 'Cancel'. */
   cancelLabel?: string;
+  /** Abort → the dialog closes itself and resolves null, exactly like
+   *  a cancel — for prompts whose question can become moot while open
+   *  (the save watchdog's still-saving dialog when the write lands). */
+  signal?: AbortSignal;
 }
 
 /** Modal choice dialog in the SAME visual vocabulary as the unsaved-changes
@@ -396,14 +400,31 @@ export function promptForRouteChoice<T extends string>(
 
     let settled = false;
     let removeKeys = (): void => {};
+    let detachAbort = (): void => {};
     const cleanup = (): void => {
       if (settled) return;
       settled = true;
       popOverlay(overlayToken);
       overlay.remove();
       removeKeys();
+      detachAbort();
       restoreFocus();
     };
+
+    if (opts.signal) {
+      const sig = opts.signal;
+      const onAbort = (): void => {
+        cleanup();
+        resolve(null);
+      };
+      if (sig.aborted) {
+        // Moot before it ever rendered — resolve like an instant cancel.
+        onAbort();
+        return;
+      }
+      sig.addEventListener('abort', onAbort, { once: true });
+      detachAbort = () => sig.removeEventListener('abort', onAbort);
+    }
 
     const pick = (value: T): void => {
       cleanup();

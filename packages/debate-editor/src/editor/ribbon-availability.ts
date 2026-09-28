@@ -9,8 +9,8 @@
  *   - Verbatim Flow commands work only on the Windows desktop (the COM
  *     bridge is Windows-only); off Windows they'd toast "Windows-only".
  *   - Voice control is desktop-only.
- *   - The opt-in card-cutter command stays invisible until the experiment
- *     is enabled.
+ *   - The opt-in card-cutter commands (all three: cut, context, guidance)
+ *     stay invisible until the experiment is enabled.
  *
  * This gates *visibility* only. The keymap still binds every command — the
  * commands themselves self-guard (Flow toasts, the cutter command falls
@@ -47,6 +47,16 @@ const COLLAB_COMMANDS = new Set<RibbonCommandId>([
   'collabEndSession',
 ]);
 
+/** The card-cutter experiment's commands — every one of them, not just the
+ *  launcher: the context / guidance commands were listed (and rebindable)
+ *  while the experiment was off, a no-op with a visible name. Keep this in
+ *  step with the 'Card cutter' ribbon group (a test pins it). */
+const CUTTER_COMMANDS = new Set<RibbonCommandId>([
+  'openCardCutter',
+  'addCutterContext',
+  'openCutterGuidance',
+]);
+
 /** Commands that exist to talk to an AI provider — absent in Lite.
  *  (repairParagraphIntegrity is LOCAL doc repair and stays.) */
 const AI_COMMANDS = new Set<RibbonCommandId>([
@@ -61,7 +71,7 @@ const AI_COMMANDS = new Set<RibbonCommandId>([
 export function isRibbonCommandAvailable(id: RibbonCommandId): boolean {
   if (isLiteBuild() && AI_COMMANDS.has(id)) return false;
   if (FLOW_COMMANDS.has(id)) return isWindowsHost();
-  if (id === 'toggleVoice') return getElectronHost() !== null;
+  if (id === 'toggleVoice' || id === 'calibrateVoice') return getElectronHost() !== null;
   // The dev console is Chromium DevTools via the Electron host; on the
   // web the browser's own DevTools exist and we can't open them anyway.
   if (id === 'openDevConsole') return getElectronHost() !== null;
@@ -74,12 +84,14 @@ export function isRibbonCommandAvailable(id: RibbonCommandId): boolean {
       (typeof navigator !== 'undefined' && !!navigator.clipboard?.readText)
     );
   }
-  if (id === 'openCardCutter') return settings.get('cardCutterEnabled') === true;
+  if (CUTTER_COMMANDS.has(id)) return settings.get('cardCutterEnabled') === true;
   // Retired early-alpha migration tool, dormant behind the same console
   // gate the old Home-screen tile checked (localStorage['pmd-compress']).
   if (id === 'bulkCompressDocs') return bulkCompressEnabled();
   // Browsers can't minimize their own window — desktop only.
   if (id === 'minimizeWindow') return getElectronHost() !== null;
+  // Placing windows (or slots by screen share) is a desktop thing.
+  if (id === 'arrangeWindows') return getElectronHost() !== null;
   if (id === 'openJournalsFolder') return getElectronHost() !== null;
   // Creating/refreshing a live zone reads other files from disk — desktop only.
   // Detach works on an already-cached zone, so it stays available everywhere.

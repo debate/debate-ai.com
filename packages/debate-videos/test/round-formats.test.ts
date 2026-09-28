@@ -16,7 +16,7 @@ const doc = (kind: VideoDocument["kind"], body: string): VideoDocument => ({ vid
 describe("standardRoundSpeeches", () => {
   it("lays out LD with keys that match a written summary's", () => {
     const speeches = standardRoundSpeeches(3);
-    expect(speeches.map((speech) => speech.label)).toEqual(["1AC", "CX · 1AC", "1NC", "CX · 1NC", "1AR", "NR", "2AR"]);
+    expect(speeches.map((speech) => speech.label)).toEqual(["1AC", "2AX", "1NC", "2NX", "1AR", "NR", "2AR"]);
     expect(speeches.map((speech) => speech.key)).toEqual(["1AC#1", "CX#1", "1NC#1", "CX#2", "1AR#1", "NR#1", "2AR#1"]);
     expect(speeches.map((speech) => speech.side)).toEqual(["aff", "cx", "neg", "cx", "aff", "neg", "aff"]);
     expect(speeches.every((speech) => speech.startSeconds === null && speech.isSpeech)).toBe(true);

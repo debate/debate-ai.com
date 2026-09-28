@@ -13,6 +13,7 @@ import React from "react"
 import { Hash, Trophy } from "lucide-react"
 import type { VideoSuggestion, VideoSuggestions } from "../../types/videos"
 import { cn } from "../../ui/lib/utils"
+import { formatCount } from "../category-gallery/format-count"
 
 /** Props for the {@link VideoSearchSuggestions} component. */
 interface VideoSearchSuggestionsProps {
@@ -24,12 +25,6 @@ interface VideoSearchSuggestionsProps {
   onSelect: (term: string) => void
   /** Extra classes for the wrapper. */
   className?: string
-}
-
-/** Formats a chip's match count the same way the quick-link cards do. */
-function formatCount(n: number): string {
-  if (n >= 1000) return `${(n / 1000).toFixed(n >= 10000 ? 0 : 1)}k`
-  return String(n)
 }
 
 /** One row of chips with its heading; renders nothing when the row is empty. */

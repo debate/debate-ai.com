@@ -118,11 +118,36 @@ body {
   margin: 2em 0;
 }
 
-/* Highlight mode: the browser's own selection highlight, made unmissable, so
- * a debater can mark the passage they are about to cut without any editor. */
+/* Highlight mode: selecting text marks it (src/reader/highlights.ts), so the
+ * selection itself is tinted the same colour the mark will be. */
+.article-prose.is-highlighting {
+  cursor: text;
+}
+
 .article-prose.is-highlighting ::selection {
   background: #fde68a;
   color: #111827;
+}
+
+/* A highlighted passage. Stays visible outside highlight mode too; only in
+ * highlight mode is clicking one a way to remove it. */
+.article-prose mark.reader-highlight {
+  background: #fde68a;
+  color: #111827;
+  border-radius: 0.15em;
+  padding: 0.05em 0;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.article-prose.is-highlighting mark.reader-highlight {
+  cursor: pointer;
+}
+
+.article-prose.is-highlighting mark.reader-highlight:hover {
+  background: #fcd34d;
+  text-decoration: line-through;
+  text-decoration-color: rgba(17, 24, 39, 0.45);
 }
 
 /* An AI answer. Sans-serif and tighter than the article, so the two never read

@@ -17,8 +17,8 @@
  * fourth parallel threshold field to `UnlockTierRequirement` — which every
  * existing caller across `debate-card-search`
  * (`unlock-celebration.ts`/`reviewer-permissions.ts`/`tiered-task-routing.ts`/
- * `community-research-hub.ts`/`unlock-streak-status.ts`/
- * `state/researchProgress.ts`/`state/peerReviews.ts`) would then need to
+ * `unlock-streak-status.ts`/`state/researchProgress.ts`/`state/peerReviews.ts`)
+ * would then need to
  * thread through — this reuses that same `completedTaskCount` path directly:
  * a synthetic, otherwise-all-zero `ContributorStats` whose only non-zero
  * field is `completedTaskCount`, set to the number of drills marked

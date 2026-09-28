@@ -100,10 +100,36 @@ class CoalescingCursorStore extends CursorEphemeralStore {
   private readonly originals = new Set<(by: 'local' | 'import' | 'timeout') => void>();
   private suppress = false;
   private pending: 'import' | 'timeout' | null = null;
+  /** getAll() memo: the vendored plugin calls getAll() once per rebuild
+   *  PLUS once per peer from the default createCursor, and each call
+   *  Cursor.decode()s every peer's anchor and focus (wasm) — (1+P)×2P
+   *  decodes per rebuild, on every remote doc transaction (2026-09-01
+   *  review, PH-A3). One decode pass per store mutation instead. */
+  private allMemo: ReturnType<CursorEphemeralStore['getAll']> | null = null;
+
+  private invalidate(): void {
+    this.allMemo = null;
+  }
+
+  override getAll(): ReturnType<CursorEphemeralStore['getAll']> {
+    if (this.allMemo === null) this.allMemo = super.getAll();
+    return this.allMemo;
+  }
+
+  override setLocal(...args: Parameters<CursorEphemeralStore['setLocal']>): ReturnType<CursorEphemeralStore['setLocal']> {
+    this.invalidate();
+    return super.setLocal(...args);
+  }
+
+  override apply(...args: Parameters<CursorEphemeralStore['apply']>): ReturnType<CursorEphemeralStore['apply']> {
+    this.invalidate();
+    return super.apply(...args);
+  }
 
   override subscribeBy(listener: (by: 'local' | 'import' | 'timeout') => void): () => void {
     this.originals.add(listener);
     const unsub = super.subscribeBy((by: 'local' | 'import' | 'timeout') => {
+      this.invalidate(); // covers 'timeout' expiry (a removal we never see as apply/setLocal)
       if (this.suppress && by !== 'local') {
         // 'timeout' beats 'import' for the replay: expiry removes
         // peers, and a rebuild must not resurrect them under a
@@ -161,6 +187,11 @@ interface LeaseAd {
 const leaseAdsKey = new PluginKey<DecorationSet>('collab-lease-ads');
 
 export interface CursorsHandle {
+  /** Announce departure to partners now (call before dispose/stop).
+   *  `keepalive`: the page is unloading — let the browser finish the post. */
+  farewell(opts?: { keepalive?: boolean }): void;
+  /** Re-announce presence (after a stream reconnect). */
+  rebroadcast(): void;
   /** Session plugins: the stock cursor plugin + the lease-ad renderer. */
   plugins(): Plugin[];
   /** Feed an incoming (decrypted) presence frame. */
@@ -194,6 +225,13 @@ export function installCursorPresence(
    *  store produces identical bytes, and resending them buys nothing.
    *  Cleared by the keepalive so idle-expiry refresh still goes out. */
   let lastSentBytes: Uint8Array | null = null;
+  /** Local state at the moment of farewell(). The departure frame is a
+   *  store DELETE, and the store's local state is our own entry — so an
+   *  aborted departure (host End that failed to tombstone, keep-resumable
+   *  close whose flush failed → session.start()) had nothing to
+   *  re-announce until the next editor transaction. rebroadcast() restores
+   *  it (knock-on audit 2026-09-02). */
+  let partingLocal: ReturnType<typeof store.getLocal> = undefined;
   const sameBytes = (a: Uint8Array, b: Uint8Array): boolean => {
     if (a.length !== b.length) return false;
     for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
@@ -290,6 +328,31 @@ export function installCursorPresence(
     },
   });
 
+  const cursorEls = new Map<string, { sig: string; el: HTMLElement }>();
+  const cursorElementFor = (peer: string): HTMLElement => {
+    let name = 'Partner';
+    let color = peerColor(peer);
+    try {
+      const st = (store.getAllStates() as Record<string, { user?: { name?: string; color?: string } }>)[peer];
+      if (typeof st?.user?.name === 'string' && st.user.name.trim()) name = st.user.name;
+      if (typeof st?.user?.color === 'string' && st.user.color) color = st.user.color;
+    } catch {
+      /* store shape/timing — defaults are fine */
+    }
+    const sig = `${name}\u0000${color}`;
+    const hit = cursorEls.get(peer);
+    if (hit && hit.sig === sig) return hit.el;
+    const el = document.createElement('span');
+    el.classList.add('ProseMirror-loro-cursor');
+    el.setAttribute('style', `border-color: ${color}`);
+    const label = document.createElement('div');
+    label.setAttribute('style', `background-color: ${color}`);
+    label.textContent = name;
+    el.append(document.createTextNode('\u2060'), label, document.createTextNode('\u2060'));
+    cursorEls.set(peer, { sig, el });
+    return el;
+  };
+
   return {
     plugins(): Plugin[] {
       if (!cursorsEnabled()) return [leaseAdsPlugin];
@@ -302,6 +365,13 @@ export function installCursorPresence(
             class: 'loro-selection',
             style: `background-color: ${peerColor(peer).replace(')', ', 0.22)').replace('hsl', 'hsla')}`,
           }),
+          // Memoized caret widgets: the stock createCursor built a fresh
+          // <span>+<div> per peer per rebuild, so WidgetType.eq failed
+          // and ProseMirror re-inserted every remote caret on every
+          // remote transaction — layout churn at up to ~8Hz on a big
+          // doc (2026-09-01 review, PH-A3). Same element while the
+          // peer's name/color are unchanged → PM leaves it alone.
+          createCursor: (peer) => cursorElementFor(peer),
         }),
         leaseAdsPlugin,
       ];
@@ -353,6 +423,41 @@ export function installCursorPresence(
         } catch {
           /* malformed — drop */
         }
+      }
+    },
+    farewell(opts: { keepalive?: boolean } = {}): void {
+      // Departure frame, sent SYNCHRONOUSLY and before dispose/stop: the
+      // ephemeral store's only expiry is its 45s timeout, and dispose()
+      // set `disposed` before unhooking, so a leaving peer's caret and
+      // presence dot lingered on every partner for up to 45s — during
+      // exactly the "did they leave?" moment (2026-09-01 review, PH-A10).
+      // An ephemeral delete is a payload shape old clients already apply.
+      if (disposed || !cursorsEnabled()) return;
+      try {
+        partingLocal = store.getLocal() ?? partingLocal;
+        let bytes: Uint8Array | null = null;
+        const off = store.subscribeLocalUpdates((b: Uint8Array) => {
+          bytes = b;
+        });
+        try {
+          store.delete(peerId as never);
+        } finally {
+          off();
+        }
+        if (bytes) void session.sendPresence(frame(FRAME_CURSOR, bytes), opts);
+      } catch {
+        /* best-effort — the 45s expiry remains the backstop */
+      }
+    },
+    rebroadcast(): void {
+      // After a stream reconnect nothing re-announced presence until the
+      // 15s keepalive; partners saw us absent for up to that long.
+      if (disposed || !cursorsEnabled()) return;
+      const local = store.getLocal() ?? partingLocal;
+      partingLocal = undefined;
+      if (local) {
+        lastSentBytes = null;
+        store.setLocal(local);
       }
     },
     dispose(): void {

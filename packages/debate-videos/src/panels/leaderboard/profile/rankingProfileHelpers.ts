@@ -6,7 +6,7 @@
  * @module panels/leaderboard/profile/rankingProfileHelpers
  */
 
-import type { RankingDataset, RankingDatasetId, RankingEntry } from "debate-rankings";
+import type { RankingDataset, RankingDatasetId, RankingEntry } from "debate-rankings-adapter";
 
 /**
  * Lowercase, dash-separated URL segment for a school or team name. Accents are
@@ -45,6 +45,8 @@ export interface ProfileEntry {
   datasetLabel: string;
   /** Number of entries ranked in that dataset. */
   fieldSize: number;
+  /** Most rated matches any entry in that dataset played. */
+  maxMatches: number;
   entry: RankingEntry;
 }
 
@@ -55,12 +57,15 @@ function collect(
 ): ProfileEntry[] {
   const out: ProfileEntry[] = [];
   for (const dataset of datasets) {
+    let maxMatches: number | null = null;
     for (const entry of dataset.entries) {
       if (predicate(entry)) {
+        maxMatches ??= dataset.entries.reduce((max, e) => Math.max(max, e.matches), 0);
         out.push({
           datasetId: dataset.id,
           datasetLabel: dataset.label,
           fieldSize: dataset.entries.length,
+          maxMatches,
           entry,
         });
       }
@@ -173,4 +178,136 @@ export function teamVideoQuery(entry: Pick<RankingEntry, "name">): string {
 /** Video search for a school: its name. */
 export function schoolVideoQuery(school: string): string {
   return searchWords(school);
+}
+
+/** One spoke of a team's radar chart. */
+export interface TeamRadarPoint {
+  /** Axis label. */
+  metric: string;
+  /** Position on the spoke, 0 (center) to 100 (edge); higher is better. */
+  score: number;
+  /** The real value, as shown in the tooltip. */
+  display: string;
+}
+
+const radarPercent = (n: number | null) =>
+  n === null ? "no rounds" : `${Number.isInteger(n) ? n : n.toFixed(1)}%`;
+
+/**
+ * The six spokes of a team's radar chart, each scaled to 0–100 so they share
+ * one axis: the four win rates as-is (a side with no rounds sits at 0), rank as
+ * a field percentile (1st is 100, last is 0), and matches relative to the
+ * busiest entry in the same division.
+ *
+ * @param item - One of the team's rows, from {@link findTeamEntries}.
+ */
+export function teamRadarData(item: ProfileEntry): TeamRadarPoint[] {
+  const { entry, fieldSize, maxMatches } = item;
+  const clamp = (n: number) => Math.min(100, Math.max(0, n));
+  const rankScore = fieldSize <= 1 ? 100 : ((fieldSize - entry.rank) / (fieldSize - 1)) * 100;
+  return [
+    { metric: "Aff win", score: clamp(entry.affWinRate ?? 0), display: radarPercent(entry.affWinRate) },
+    { metric: "Neg win", score: clamp(entry.negWinRate ?? 0), display: radarPercent(entry.negWinRate) },
+    {
+      metric: "Elim neg",
+      score: clamp(entry.negElimWinRate ?? 0),
+      display: radarPercent(entry.negElimWinRate),
+    },
+    {
+      metric: "Elim aff",
+      score: clamp(entry.affElimWinRate ?? 0),
+      display: radarPercent(entry.affElimWinRate),
+    },
+    { metric: "Ranking", score: clamp(rankScore), display: `#${entry.rank} of ${fieldSize}` },
+    {
+      metric: "Matches",
+      score: clamp(maxMatches > 0 ? (entry.matches / maxMatches) * 100 : 0),
+      display: `${entry.matches} of ${maxMatches} max`,
+    },
+  ];
+}
+
+const WIN_RATE_KEYS = ["affWinRate", "negWinRate", "affElimWinRate", "negElimWinRate"] as const;
+
+/**
+ * Averages the four win-rate spokes across every entry in the group. A spoke
+ * where every team recorded no rounds (null) collapses to "no rounds";
+ * otherwise null is treated as 0, matching {@link teamRadarData}.
+ */
+function averagedWinRate(
+  items: ProfileEntry[],
+  key: (typeof WIN_RATE_KEYS)[number],
+): { score: number; display: string } {
+  const clamp = (n: number) => Math.min(100, Math.max(0, n));
+  const raw = items.map((i) => i.entry[key]);
+  const allNull = raw.every((v) => v === null);
+  const avg = raw.reduce<number>((sum, v) => sum + (v ?? 0), 0) / items.length;
+  return {
+    score: clamp(avg),
+    display: allNull ? "no rounds" : `${Number.isInteger(avg) ? avg : avg.toFixed(1)}%`,
+  };
+}
+
+/**
+ * Mean of each team's rank-score spoke across the group — i.e. the average
+ * field percentile of the school's entries in this division.
+ */
+function averagedRankScore(items: ProfileEntry[], fieldSize: number): number {
+  const clamp = (n: number) => Math.min(100, Math.max(0, n));
+  const total = items.reduce((sum, item) => {
+    const rankScore = fieldSize <= 1 ? 100 : ((fieldSize - item.entry.rank) / (fieldSize - 1)) * 100;
+    return sum + clamp(rankScore);
+  }, 0);
+  return total / items.length;
+}
+
+/**
+ * Mean of each team's matches-score spoke, expressed as a share of the
+ * division's busiest entry.
+ */
+function averagedMatchesScore(items: ProfileEntry[], maxMatches: number): number {
+  const clamp = (n: number) => Math.min(100, Math.max(0, n));
+  const total = items.reduce(
+    (sum, item) => sum + clamp(maxMatches > 0 ? (item.entry.matches / maxMatches) * 100 : 0),
+    0,
+  );
+  return total / items.length;
+}
+
+/**
+ * Six-spoke radar for a whole school in one division: the mean of every team's
+ * individual {@link teamRadarData} scores, so the polygon shows the school's
+ * collective profile rather than any single roster.
+ *
+ * @param items - All of the school's ranked rows in that division (from
+ *   {@link findSchoolEntries}, filtered to one `datasetId`).
+ */
+export function schoolDivisionRadarData(items: ProfileEntry[]): TeamRadarPoint[] {
+  const n = items.length;
+  if (n === 0) return [];
+
+  const fieldSize = items[0].fieldSize;
+  const maxMatches = items[0].maxMatches;
+  const bestRank = Math.min(...items.map((i) => i.entry.rank));
+  const avgMatches = items.reduce((sum, i) => sum + i.entry.matches, 0) / n;
+
+  const aff = averagedWinRate(items, "affWinRate");
+  const neg = averagedWinRate(items, "negWinRate");
+  const elimAff = averagedWinRate(items, "affElimWinRate");
+  const elimNeg = averagedWinRate(items, "negElimWinRate");
+
+  const clamp = (x: number) => Math.min(100, Math.max(0, x));
+
+  return [
+    { metric: "Aff win", score: aff.score, display: aff.display },
+    { metric: "Neg win", score: neg.score, display: neg.display },
+    { metric: "Elim neg", score: elimNeg.score, display: elimNeg.display },
+    { metric: "Elim aff", score: elimAff.score, display: elimAff.display },
+    { metric: "Ranking", score: clamp(averagedRankScore(items, fieldSize)), display: `#${bestRank} of ${fieldSize}` },
+    {
+      metric: "Matches",
+      score: clamp(averagedMatchesScore(items, maxMatches)),
+      display: `${Number.isInteger(avgMatches) ? avgMatches : avgMatches.toFixed(1)} of ${maxMatches} max`,
+    },
+  ];
 }

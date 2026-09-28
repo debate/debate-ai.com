@@ -18,10 +18,10 @@ import { handleCanonicalHostRedirect } from "../lib/redirects";
 import { youtubeWatchRedirect } from "../lib/youtube/video-redirect";
 import { getAuth } from "../lib/auth";
 import { normalizeRoomId } from "debate-round/src/webcam/room-protocol";
-import { handleRoomSocket } from "./debate-room";
+import { handleRoomSocket } from "../lib/webcam/debate-room";
 
 // Durable Object classes must be exported from the Worker's main module.
-export { DebateRoomSignal } from "./debate-room";
+export { DebateRoomSignal } from "../lib/webcam/debate-room";
 
 interface Env extends TurnstileEnv {
   ASSETS: Fetcher;
@@ -33,7 +33,7 @@ interface Env extends TurnstileEnv {
     };
   };
   debate_db: D1Database;
-  // Webcam-room signalling (worker/debate-room.ts), bound in wrangler.jsonc.
+  // Webcam-room signalling (lib/webcam/debate-room.ts), bound in wrangler.jsonc.
   DEBATE_ROOMS?: Parameters<typeof handleRoomSocket>[1];
   // See lib/database/d1-session.ts — "auto" (default), "primary",
   // "unconstrained" or "off". Settable as a plain Variable in the dashboard.

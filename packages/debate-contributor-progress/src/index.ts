@@ -53,3 +53,46 @@ export {
   type QuestStreakSyncPatchResult,
   type QuestStreakSyncPayload,
 } from "./lib/quest-streak-sync";
+export {
+  ACTIVITY_XP,
+  applyDebaterActivity,
+  computeLevelProgress,
+  DEBATER_ACTIVITY_KINDS,
+  DEBATER_ACTIVITY_LABELS,
+  DEBATER_CHALLENGES,
+  getChallengeProgress,
+  MAX_DEBATER_LEVEL,
+  type DebaterActivityKind,
+  type DebaterActivityResult,
+  type DebaterChallenge,
+  type DebaterLevelProgress,
+  type DebaterLevelState,
+} from "./lib/debater-levels";
+export {
+  DEBATER_ACTIVITY_EVENT,
+  DEBATER_XP_AWARDED_EVENT,
+  dispatchDebaterActivity,
+  installDebaterActivityListener,
+  loadDebaterLevelState,
+  recordDebaterActivity,
+} from "./state/debaterLevel";
+export {
+  isJudgeAwardKind,
+  JUDGE_AWARD_BY_KIND,
+  JUDGE_AWARD_KINDS,
+  JUDGE_AWARDS,
+  validateJudgeAward,
+  type JudgeAward,
+  type JudgeAwardDefinition,
+  type JudgeAwardInput,
+  type JudgeAwardKind,
+  type JudgeAwardRejection,
+} from "./lib/judge-awards";
+export {
+  deleteJudgeAward,
+  giveJudgeAward,
+  JudgeAwardError,
+  JUDGE_AWARDS_CHANGED_EVENT,
+  listAllJudgeAwards,
+  listJudgeAwardsForDebater,
+} from "./state/judgeAwards";

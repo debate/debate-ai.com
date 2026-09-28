@@ -18,31 +18,14 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,
-    "paths": {
-      "@/*": [
-        "./*"
-      ],
-      "fumadocs-mdx:collections/*": [
-        "./.source/*"
-      ]
-    },
-    "plugins": [
-      {
-        "name": "next"
-      }
+    "types": [
+      "node",
+      "vite/client"
     ]
   },
   "include": [
     "**/*.ts",
-    "**/*.tsx",
-    "../docs/types/**/*.ts",
-    "./docs/types/**/*.ts",
-    ".next/types/**/*.ts",
-    "next-env.d.ts",
-    "./dist/types/**/*.ts",
-    "dist/types/**/*.ts",
-    "dist/dev/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
+    "**/*.tsx"
   ],
   "exclude": [
     "node_modules"

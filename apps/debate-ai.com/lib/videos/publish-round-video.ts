@@ -66,8 +66,9 @@ export function roundVideoToVideoRow(row: YoutubeRoundVideo): VideoTableInsert {
  * partway. See `lib/database/query-budget.ts`.
  *
  * The weekly/manual resync (`lib/youtube/resync-rounds.ts`) re-walks every
- * subscribed channel's uploads since a fixed `2023-05-01` floor on every
- * run, with no check against `videos` — only an explicit admin removal
+ * subscribed channel's uploads since a cutoff floor on every run (default
+ * `2023-05-01`, overridable per-run from the admin page's date chooser) — with
+ * no check against `videos` — only an explicit admin removal
  * (`youtube_video_exclusions`) keeps a video out of the queue. So a round
  * published (and possibly corrected via the admin library, which sets
  * `admin_edited`) days or months ago can resurface in

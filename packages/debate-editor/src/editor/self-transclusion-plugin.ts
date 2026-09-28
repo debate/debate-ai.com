@@ -13,9 +13,17 @@
  *    loro-prosemirror patch makes `self_ref` sync childless), so every peer runs
  *    this LOCALLY against the shared source: the projection is never a CRDT value,
  *    so there is no concurrent-re-projection conflict to reconcile.
- *  - READ-ONLY (filterTransaction): reject any edit landing INSIDE a view (except
- *    the re-derive). The view is still selectable-across, deletable, and movable
- *    as a whole unit.
+ *  - READ-ONLY (filterTransaction): reject a transaction whose edits ALL land
+ *    INSIDE views (typing into one, a single find/replace match inside one)
+ *    — except the re-derive. A transaction that ALSO edits outside a view
+ *    (a bulk operation: condense, repair paragraph integrity, replace-all, a
+ *    formatting sweep whose scope spans a view) is let through: the
+ *    re-derive that follows restores every view from its source in the same
+ *    dispatch, so the in-view steps can do no harm, while the rest of the
+ *    document gets the operation. Rejecting those whole used to make every
+ *    bulk operation a silent no-op in any document holding a view (design
+ *    call 2026-09-09). The view is still selectable-across, deletable, and
+ *    movable as a whole unit.
  */
 
 import { Plugin, PluginKey } from 'prosemirror-state';
@@ -57,15 +65,20 @@ function enclosingSelfRefContent(doc: PMNode, pos: number): { from: number; to: 
  *  shifted down by the delete, read as an interior edit), and the undo of
  *  moving a view by less than its own size (the re-insert read as inside
  *  the not-yet-restored span), which silently killed the undo chain. */
+/** True when every ranged step of `tr` lands inside a view's content (and
+ *  there is at least one) — an edit made THROUGH a view. A transaction with
+ *  any step outside a view is a document-wide operation and passes. */
 function editsInsideView(tr: Transaction): boolean {
+  let inside = 0;
   for (let i = 0; i < tr.steps.length; i++) {
     const s = tr.steps[i] as unknown as { from?: number; to?: number };
     if (typeof s.from !== 'number' || typeof s.to !== 'number') continue;
     const doc = tr.docs[i]!;
     const range = enclosingSelfRefContent(doc, s.from);
-    if (range && s.from >= range.from && s.to <= range.to) return true;
+    if (range && s.from >= range.from && s.to <= range.to) inside++;
+    else return false;
   }
-  return false;
+  return inside > 0;
 }
 
 /** A transaction re-deriving every stale view's children, or null when all views

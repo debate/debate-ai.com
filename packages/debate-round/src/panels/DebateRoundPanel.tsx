@@ -12,7 +12,7 @@ import { EbbFlowEmbed, type EbbFlowToolAction } from "debate-flow-ebb"
 import { useFlowStore } from "../state/store"
 import { newFlow } from "../utils/flow-utils"
 import { settings } from "../state/settings"
-import type { Flow } from "../types/flow"
+import type { Flow, Round } from "../types/flow"
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "../ui/primitives/resizable"
 import { Sheet, SheetContent } from "../ui/primitives/sheet"
 
@@ -21,6 +21,7 @@ import { FlowPageSidebar } from "../layout/FlowPageSidebar"
 import { FlowMainContent } from "../layout/FlowMainContent"
 import { SpeechDocPanel } from "../layout/SpeechDocPanel"
 import { SpeechControlsTopBar } from "../layout/SpeechControlsTopBar"
+import { DebateStartPanel } from "./DebateStartPanel"
 
 // Dialogs
 import { FlowHistoryDialog } from "../dialogs/FlowHistoryDialog"
@@ -43,7 +44,12 @@ import { useSpeechRecordingStatus } from "../hooks/useSpeechRecordingStatus"
 import { useRoundFromSlug } from "../hooks/useRoundFromSlug"
 import { useSyncUrlWithRound } from "../hooks/useSyncUrlWithRound"
 import { useJumpToPrepNoteBox } from "../hooks/useJumpToPrepNoteBox"
+import { useSpeechDocHeadings } from "../hooks/useSpeechDocHeadings"
+import { useTimerSync } from "../hooks/useTimerSync"
 import { getRoundRecordingShareEmails } from "../round/round-recording-share"
+import { readPinnedDebateIds, togglePinnedDebate } from "../state/pinnedDebates"
+import { readFlowHistory } from "../state/flowHistoryEntries"
+import { selectSidebarRound } from "../utils/sidebar-round"
 
 /**
  * Manages the entire debate flow experience with a modular, maintainable architecture:
@@ -57,7 +63,8 @@ export function DebateFlowPage() {
   // ============================================================================
   // Global State (Zustand)
   // ============================================================================
-  const { flows, selected, setFlows, setSelected, setRounds, getRounds } = useFlowStore()
+  const { flows, selected, setFlows, setSelected, setRounds, getRounds, getFlowHistory, loadFromHistory } =
+    useFlowStore()
   const rounds = getRounds()
 
   // ============================================================================
@@ -88,6 +95,63 @@ export function DebateFlowPage() {
   const [micDeviceId, setMicDeviceId] = useState<string | undefined>()
   const [recordingEnabled, setRecordingEnabled] = useState(true)
 
+  // ============================================================================
+  // Start Screen Data (pinned + recent debates, read once the page mounts)
+  // ============================================================================
+  const [pinnedIds, setPinnedIds] = useState<number[]>([])
+  const [recentHistory, setRecentHistory] = useState<ReturnType<typeof readFlowHistory>>([])
+
+  /**
+   * Load the pinned round ids and the auto-saved flow history that the start
+   * screen renders. Read after mount rather than during the first render so
+   * this stays client-only (both keys are localStorage) and so a second visit
+   * picks up whatever was pinned or worked on in the meantime.
+   */
+  useEffect(() => {
+    setPinnedIds(readPinnedDebateIds())
+    setRecentHistory(readFlowHistory())
+  }, [])
+
+  /**
+   * Pin or unpin a round from the start screen's featured section.
+   *
+   * @param roundId - The round's local id.
+   */
+  const handleTogglePin = (roundId: number) => {
+    setPinnedIds(togglePinnedDebate(roundId))
+  }
+
+  /**
+   * Open a round from the start screen: bring that round's flows to the front
+   * (archiving every other flow) and select its first one — the same action as
+   * clicking a round in the history dialog, minus the dialog.
+   *
+   * @param round - The round to open.
+   */
+  const handleOpenRound = (round: Round) => {
+    const newFlows = flows.map((f) => ({ ...f, archived: !round.flowIds.includes(f.id) }))
+    const firstFlowIndex = newFlows.findIndex((f) => round.flowIds.includes(f.id))
+    if (firstFlowIndex === -1) return
+    setFlows(newFlows)
+    setSelected(firstFlowIndex)
+    setEbbActive(false)
+  }
+
+  /**
+   * Restore one of the start screen's recent flows from the history log and
+   * open it, leaving the pinned ebb Flow tab.
+   *
+   * @param historyId - The history entry's id.
+   */
+  const handleOpenRecentFlow = (historyId: string) => {
+    if (loadFromHistory(historyId) == null) {
+      // The entry was trimmed since the screen rendered — refresh the list.
+      setRecentHistory(getFlowHistory())
+      return
+    }
+    setEbbActive(false)
+  }
+
   /**
    * Switch to the pinned ebb Flow tab and queue an "ebb Flow tools" action
    * for it to run once mounted — how every item in that dropdown is wired,
@@ -95,7 +159,7 @@ export function DebateFlowPage() {
    *
    * @param action - The tool action to run once the ebb tab is mounted.
    */
-  const handleEbbToolAction = (action: EbbFlowToolAction) => {
+const handleEbbToolAction = (action: EbbFlowToolAction) => {
     setEbbActive(true)
     setEbbPendingAction(action)
   }
@@ -154,7 +218,69 @@ export function DebateFlowPage() {
     setFlows(newFlows)
   }
 
+  // ============================================================================
+  // Room Sync State (for speech doc headings and timer sync)
+  // ============================================================================
+  const currentFlowForRoom = flows[selected] || null
+  const roomId = currentFlowForRoom?.roundId ? `round-${currentFlowForRoom.roundId}` : null
+  const { receivedHeadings, broadcastSpeechDocHeadings } = useSpeechDocHeadings(roomId ?? "", "speaker")
+  const { remoteTimers, broadcastTimerState } = useTimerSync(roomId ?? "", "speaker")
+
+  // Broadcast timer state changes to the room
+  useEffect(() => {
+    if (!roomId) return
+    // Broadcast speech timer state
+    for (const [speechName, entry] of Object.entries(timerState.perSpeechTimerStates)) {
+      broadcastTimerState(speechName, {
+        speechName,
+        time: entry.time,
+        resetTime: entry.resetTime,
+        state: entry.state,
+        timestamp: Date.now(),
+      })
+    }
+    // Broadcast prep timers
+    if (timerState.prepState) {
+      broadcastTimerState("Prep (Aff)", {
+        speechName: "Prep (Aff)",
+        time: timerState.prepState.time,
+        resetTime: timerState.prepState.resetTime,
+        state: timerState.prepState.state,
+        timestamp: Date.now(),
+      })
+    }
+    if (timerState.prepSecondaryState) {
+      broadcastTimerState("Prep (Neg)", {
+        speechName: "Prep (Neg)",
+        time: timerState.prepSecondaryState.time,
+        resetTime: timerState.prepSecondaryState.resetTime,
+        state: timerState.prepSecondaryState.state,
+        timestamp: Date.now(),
+      })
+    }
+  }, [timerState.perSpeechTimerStates, timerState.prepState, timerState.prepSecondaryState, roomId, broadcastTimerState])
+
   const speechHandlers = useSpeechHandlers(flows, selected, state.selectedSpeech, updateFlow, rounds)
+
+  // Wrap handleShareSpeech to also broadcast speech doc headings to the room
+  const handleShareSpeechWithHeadings = async () => {
+    const currentFlow = flows[selected]
+    if (!currentFlow) return
+
+    const speechContent = currentFlow.speechDocs?.[state.selectedSpeech] || ""
+    if (!speechContent.trim()) {
+      alert("Cannot share empty speech document")
+      return
+    }
+
+    // Call the original handler
+    await speechHandlers.handleShareSpeech()
+
+    // Broadcast headings to the room if we're in a room
+    if (roomId && speechContent.trim()) {
+      broadcastSpeechDocHeadings(state.selectedSpeech, speechContent)
+    }
+  }
 
   const splitHandlers = useSplitModeHandlers(flows, selected, updateFlow)
 
@@ -305,6 +431,9 @@ export function DebateFlowPage() {
   const { hasRecording: selectedSpeechHasRecording, deleteRecording: deleteSelectedSpeechRecording } =
     useSpeechRecordingStatus(selectedSpeech)
 
+  /** Round the sidebar shows a timer for — when set, the recording menu lives under its speech there. */
+  const sidebarRound = selectSidebarRound(rounds, currentFlow)
+
   /** Emails the global topbar's recording menu's "Share with Opponents" notifies. */
   const selectedSpeechShareEmails = getRoundRecordingShareEmails(currentRound)
 
@@ -402,6 +531,13 @@ export function DebateFlowPage() {
   const onNavigateNext = state.isMobile || state.singlePaneMode ? splitHandlers.handleNextSingle : splitHandlers.handleNextSpeeches
 
   /**
+   * Whether the start screen replaces the flow grid. Shown whenever the page
+   * has no flow open — the first visit (nothing loaded from `flows` yet), and
+   * any later landing where every flow was deleted.
+   */
+  const showStartScreen = !ebbActive && !currentFlow
+
+  /**
    * The main content area containing the resizable flow and speech panels.
    * Rendered for both desktop and mobile layouts. When the pinned ebb Flow
    * tab is active, this area hosts ebb's own self-contained editor instead
@@ -417,6 +553,20 @@ export function DebateFlowPage() {
           onPendingActionHandled={() => setEbbPendingAction(null)}
         />
       </div>
+    </div>
+  ) : showStartScreen ? (
+    <div className="h-full p-2">
+      <DebateStartPanel
+        rounds={rounds}
+        history={recentHistory}
+        pinnedIds={pinnedIds}
+        onOpenRound={handleOpenRound}
+        onOpenHistoryEntry={handleOpenRecentFlow}
+        onTogglePin={handleTogglePin}
+        onCreateFlow={handleAddFlow}
+        onCreateRound={() => handleEditRound()}
+        onOpenHistory={handleOpenHistory}
+      />
     </div>
   ) : (
     <div className="h-full flex flex-col overflow-hidden p-2">
@@ -476,7 +626,7 @@ export function DebateFlowPage() {
                 onUpdateContent={speechHandlers.handleUpdateSpeechDoc}
                 onViewModeChange={state.setSpeechPanelViewMode}
                 onQuoteViewToggle={() => state.setSpeechPanelQuoteView(!state.speechPanelQuoteView)}
-                onShareSpeech={speechHandlers.handleShareSpeech}
+                onShareSpeech={handleShareSpeechWithHeadings}
               />
             </ResizablePanel>
           </>
@@ -513,6 +663,7 @@ export function DebateFlowPage() {
         onDeleteRecording={deleteSelectedSpeechRecording}
         recordingKey={selectedSpeechHasRecording ? `debate-recording-${selectedSpeech}` : undefined}
         participantEmails={selectedSpeechShareEmails}
+        showRecordingMenu={state.isMobile || !sidebarRound}
       />
       {/* Main Layout */}
       <div className="flex-1 overflow-hidden">
@@ -546,6 +697,8 @@ export function DebateFlowPage() {
                 onMicDeviceChange={setMicDeviceId}
                 recordingEnabled={recordingEnabled}
                 onRecordingEnabledChange={setRecordingEnabled}
+                receivedHeadings={receivedHeadings}
+                remoteTimers={remoteTimers}
               />
             </ResizablePanel>
             <ResizableHandle withHandle />
@@ -586,6 +739,8 @@ export function DebateFlowPage() {
                   onMicDeviceChange={setMicDeviceId}
                   recordingEnabled={recordingEnabled}
                   onRecordingEnabledChange={setRecordingEnabled}
+                  receivedHeadings={receivedHeadings}
+                  remoteTimers={remoteTimers}
                 />
               </SheetContent>
             </Sheet>
@@ -600,6 +755,7 @@ export function DebateFlowPage() {
         onOpenChange={state.setHistoryDialogOpen}
         onEditRound={handleEditRound}
         onCreateRound={() => handleEditRound()}
+        onFlowOpened={() => setEbbActive(false)}
       />
 
       <RoundEditorDialog

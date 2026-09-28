@@ -151,6 +151,10 @@ export function useWebcamRoom(roomId: string, { apiBase = "/api/rooms", role = "
             break
           case "peer-left":
             drop(msg.id)
+            // Emit custom event for other hooks to listen
+            window.dispatchEvent(
+              new CustomEvent("room-peer-left", { detail: { from: msg.id } })
+            )
             break
           case "signal":
             connect(msg.from, false).signal(msg.payload as SimplePeer.SignalData)
@@ -158,6 +162,14 @@ export function useWebcamRoom(roomId: string, { apiBase = "/api/rooms", role = "
           case "room-event":
             if (msg.event === "mute-state") upsert(msg.from, { micOn: !(msg.payload as { muted?: boolean })?.muted })
             if (msg.event === "camera-state") upsert(msg.from, { camOn: !(msg.payload as { off?: boolean })?.off })
+            // Emit custom event for speech-doc-headings and timer-sync so other hooks can listen
+            if (msg.event === "speech-doc-headings" || msg.event === "timer-sync") {
+              window.dispatchEvent(
+                new CustomEvent(`room-${msg.event}`, {
+                  detail: { from: msg.from, event: msg.event, payload: msg.payload },
+                })
+              )
+            }
             break
           case "error":
             setError(msg.message)
@@ -223,5 +235,6 @@ export function useWebcamRoom(roomId: string, { apiBase = "/api/rooms", role = "
     leave,
     toggleMic,
     toggleCam,
+    broadcast,
   }
 }

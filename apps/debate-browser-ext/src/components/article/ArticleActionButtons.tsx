@@ -1,6 +1,7 @@
 /**
  * The article panel's toolbar: Ask AI, Suggest, Copy, Share, Highlight, the
- * card-reuse check, open-in-tab, zoom and close.
+ * card-reuse check, open-in-tab, full-page/side layout, reading width, zoom
+ * and close.
  *
  * Ported from research-agent-ui's `ArticleActionButtons`
  * (qwksearch-research-agent/packages/research-agent-ui/src/components/ArticleReader),
@@ -11,15 +12,21 @@
  * account feature debate-ai.com does not have, this has the card-reuse check —
  * has anyone on my team already cut a card from this page? That is the
  * question a debater reading a page actually has, and the extension already
- * answers it in its popup.
+ * answers it in its popup. Save stores the article in the reader's
+ * debate-ai.com account (src/article/save.ts).
  */
 import {
+  BookmarkPlus,
   Bot,
   Clipboard,
+  Eraser,
   ExternalLink,
   Highlighter,
   Layers,
+  Maximize2,
   MessageCircleQuestion,
+  MoveHorizontal,
+  PanelRight,
   Share2,
   X,
   ZoomIn,
@@ -30,6 +37,16 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
+import type { ReaderLayout } from '@/src/reader/panel';
+
+/** How wide the article column is in the full-page layout. */
+export type ReadingWidth = 'narrow' | 'medium' | 'wide';
+
+export const READING_WIDTHS: Record<ReadingWidth, { label: string; maxWidth: string }> = {
+  narrow: { label: 'Narrow', maxWidth: '38rem' },
+  medium: { label: 'Medium', maxWidth: '48rem' },
+  wide: { label: 'Wide', maxWidth: '64rem' },
+};
 
 /**
  * Keyboard shortcut definitions for the toolbar actions. `alt` means the
@@ -40,7 +57,10 @@ export const ARTICLE_TOOLBAR_SHORTCUTS = {
   suggest: { alt: true, key: 's' },
   copy: { alt: true, key: 'c' },
   highlight: { alt: true, key: 'h' },
+  layout: { alt: true, key: 'l' },
+  width: { alt: true, key: 'w' },
   cards: { alt: true, key: 'k' },
+  save: { alt: true, key: 'd' },
   open: { alt: true, key: 'o' },
   zoomOut: { alt: true, key: '-' },
   zoomReset: { alt: true, key: '0' },
@@ -66,7 +86,14 @@ interface ArticleActionButtonsProps {
   isLoadingAI: boolean;
   isLoadingFollowups: boolean;
   isCheckingCards: boolean;
+  isSaving: boolean;
+  /** Whether the reader is signed in, which decides the Save button's label. */
+  isSignedIn: boolean;
   isHighlightMode: boolean;
+  /** How many passages are highlighted; shows the clear button when any are. */
+  highlightCount?: number;
+  layout: ReaderLayout;
+  readingWidth: ReadingWidth;
   articleUrl?: string;
   fontScale?: number;
   onAskClick: () => void;
@@ -74,7 +101,11 @@ interface ArticleActionButtonsProps {
   onCopyClick: () => void;
   onShareClick: () => void;
   onCheckCardsClick: () => void;
+  onSaveClick: () => void;
   onHighlightToggle: () => void;
+  onClearHighlights?: () => void;
+  onLayoutToggle: () => void;
+  onReadingWidthChange: (width: ReadingWidth) => void;
   onZoomIn: () => void;
   onZoomOut: () => void;
   onZoomReset: () => void;
@@ -111,7 +142,12 @@ const ArticleActionButtons: React.FC<ArticleActionButtonsProps> = ({
   isLoadingAI,
   isLoadingFollowups,
   isCheckingCards,
+  isSaving,
+  isSignedIn,
   isHighlightMode,
+  highlightCount = 0,
+  layout,
+  readingWidth,
   articleUrl,
   fontScale = 1,
   onAskClick,
@@ -119,7 +155,11 @@ const ArticleActionButtons: React.FC<ArticleActionButtonsProps> = ({
   onCopyClick,
   onShareClick,
   onCheckCardsClick,
+  onSaveClick,
   onHighlightToggle,
+  onClearHighlights,
+  onLayoutToggle,
+  onReadingWidthChange,
   onZoomIn,
   onZoomOut,
   onZoomReset,
@@ -186,6 +226,14 @@ const ArticleActionButtons: React.FC<ArticleActionButtonsProps> = ({
         </Button>
       </ToolbarTip>
 
+      {highlightCount > 0 && onClearHighlights && (
+        <ToolbarTip label={`Clear ${highlightCount} highlight${highlightCount === 1 ? '' : 's'}`}>
+          <Button onClick={onClearHighlights} variant="ghost" size="icon" className={iconButtonClass}>
+            <Eraser className="size-4" />
+          </Button>
+        </ToolbarTip>
+      )}
+
       <ToolbarTip label="Has a card already been cut from this page?" action="cards">
         <Button
           onClick={onCheckCardsClick}
@@ -195,6 +243,25 @@ const ArticleActionButtons: React.FC<ArticleActionButtonsProps> = ({
           className={iconButtonClass}
         >
           <Layers className="size-4" />
+        </Button>
+      </ToolbarTip>
+
+      <ToolbarTip
+        label={
+          isSignedIn
+            ? 'Save to your Debate AI account'
+            : 'Sign in and save to your Debate AI account'
+        }
+        action="save"
+      >
+        <Button
+          onClick={onSaveClick}
+          disabled={isSaving}
+          variant="ghost"
+          size="icon"
+          className={iconButtonClass}
+        >
+          <BookmarkPlus className="size-4" />
         </Button>
       </ToolbarTip>
 
@@ -208,7 +275,47 @@ const ArticleActionButtons: React.FC<ArticleActionButtonsProps> = ({
         </ToolbarTip>
       )}
 
-      <div className="ml-auto flex items-center gap-0.5 rounded-xl border border-muted/60 bg-muted/20 px-1">
+      <div className="ml-auto flex items-center gap-0.5">
+        {layout === 'full' && (
+          <div
+            role="radiogroup"
+            aria-label="Reading width"
+            className="flex items-center gap-0.5 rounded-xl border border-muted/60 bg-muted/20 px-1"
+          >
+            <ToolbarTip label="Reading width" action="width">
+              <MoveHorizontal className="mx-1 size-4 text-muted-foreground" aria-hidden />
+            </ToolbarTip>
+            {(Object.keys(READING_WIDTHS) as ReadingWidth[]).map((width) => (
+              <button
+                key={width}
+                type="button"
+                role="radio"
+                aria-checked={readingWidth === width}
+                onClick={() => onReadingWidthChange(width)}
+                className={cn(
+                  'rounded-md px-1.5 py-0.5 text-xs font-medium transition-colors',
+                  readingWidth === width
+                    ? 'bg-background text-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground',
+                )}
+              >
+                {READING_WIDTHS[width].label}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <ToolbarTip
+          label={layout === 'full' ? 'Switch to side panel' : 'Switch to full page'}
+          action="layout"
+        >
+          <Button onClick={onLayoutToggle} variant="ghost" size="icon" className={iconButtonClass}>
+            {layout === 'full' ? <PanelRight className="size-4" /> : <Maximize2 className="size-4" />}
+          </Button>
+        </ToolbarTip>
+      </div>
+
+      <div className="flex items-center gap-0.5 rounded-xl border border-muted/60 bg-muted/20 px-1">
         <ToolbarTip label="Zoom out" action="zoomOut">
           <Button
             onClick={onZoomOut}

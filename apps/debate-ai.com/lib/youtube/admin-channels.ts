@@ -106,7 +106,9 @@ function toRow(row: YoutubeChannel): YoutubeChannelRow {
     name: row.name,
     enabled: Boolean(row.enabled),
     addedBy: row.addedBy,
-    createdAt: row.createdAt.getTime(),
-    updatedAt: row.updatedAt.getTime(),
+    // Serialized as ISO strings in the JSON response, which the admin panel
+    // (YoutubeChannelsPanel) formats directly.
+    createdAt: row.createdAt,
+    updatedAt: row.updatedAt,
   };
 }

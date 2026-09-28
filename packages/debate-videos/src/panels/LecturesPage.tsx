@@ -26,8 +26,8 @@ import type { CategoryType, DebateStyle } from "../types/videos"
 import { Footer } from "../ui/layout/footer"
 import { LeaderboardPanel } from "./leaderboard/RankingsLeaderboardPanel"
 import { LeaderboardFilterBar } from "./leaderboard/LeaderboardFilterBar"
-import type { Division } from "./leaderboard/leaderboardUtils"
-import { currentSeasonYear, seasonYears } from "./leaderboard/leaderboardUtils"
+import type { LeaderboardTab } from "./leaderboard/leaderboardUtils"
+import { VALID_LEADERBOARD_TABS, currentSeasonYear, seasonYears } from "./leaderboard/leaderboardUtils"
 import { setStateInURL } from "../ui/lib/utils"
 import { StickyHeader } from "../components/layout/StickyHeader"
 import { SLUG_MAP } from "./lectureRouteConfig"
@@ -115,15 +115,15 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
   const router = useRouter()
   const initialDivision = useMemo(() => {
     const f = searchParams.get("format")
-    return f && ["VPF", "VLD", "VCX", "NDT"].includes(f) ? (f as Division) : "VPF"
+    return f && VALID_LEADERBOARD_TABS.has(f) ? (f as LeaderboardTab) : "VPF"
   }, [searchParams])
 
-  const [leaderboardDivision, setLeaderboardDivision] = useState<Division>(initialDivision)
+  const [leaderboardDivision, setLeaderboardDivision] = useState<LeaderboardTab>(initialDivision)
   const [leaderboardYear, setLeaderboardYear] = useState(() => String(currentSeasonYear()))
 
   const leaderboardYears = useMemo(() => seasonYears(), [])
 
-  const handleDivisionChange = useCallback((val: Division) => {
+  const handleDivisionChange = useCallback((val: LeaderboardTab) => {
     setLeaderboardDivision(val)
     const params = new URLSearchParams(searchParams.toString())
     params.set("format", val)

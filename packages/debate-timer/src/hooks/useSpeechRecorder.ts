@@ -4,6 +4,20 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import grab from "grab-url"
 import type { SpeechTimerState } from "../types"
 import { getUserMedia } from "../recorder/media-devices"
+import { appendSpokenSegment } from "../recorder/spoken-words-store"
+import { getSpeechRecognitionConstructor } from "../timers/microphone-transcription"
+
+/** Minimal Web Speech API shape (not in `lib.dom.d.ts`). */
+interface LiveRecognition {
+  continuous: boolean
+  interimResults: boolean
+  lang: string
+  start: () => void
+  stop: () => void
+  onresult: ((event: { resultIndex: number; results: ArrayLike<{ 0: { transcript: string }; isFinal: boolean }> }) => void) | null
+  onerror: ((event: { error: string }) => void) | null
+  onend: (() => void) | null
+}
 
 interface UseSpeechRecorderOptions {
   /** Timer state — recording starts/stops in sync with this */
@@ -20,6 +34,13 @@ interface UseSpeechRecorderOptions {
   recordingEnabled?: boolean
   /** Callback when recording-enabled changes */
   onRecordingEnabledChange?: (enabled: boolean) => void
+  /**
+   * Transcribe the speech with the browser's speech recognition while it
+   * records, so the words actually spoken can be counted
+   * (`recorder/spoken-words-store.ts`). Default true; a no-op in browsers
+   * without `SpeechRecognition`.
+   */
+  transcribe?: boolean
 }
 
 /**
@@ -85,9 +106,11 @@ export function useSpeechRecorder({
   onMicDeviceIdChange,
   recordingEnabled: controlledRecordingEnabled,
   onRecordingEnabledChange,
+  transcribe = true,
 }: UseSpeechRecorderOptions) {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const recordedChunksRef = useRef<Blob[]>([])
+  const recognitionRef = useRef<LiveRecognition | null>(null)
 
   // Internal state (used when not controlled externally)
   const [internalRecordingEnabled, setInternalRecordingEnabled] = useState(false)
@@ -164,6 +187,52 @@ export function useSpeechRecorder({
   }, [])
 
   /**
+   * Start counting spoken words for `speechName`. Chrome ends continuous
+   * recognition after a stretch of silence, so it is restarted until
+   * {@link stopTranscription} clears the ref.
+   */
+  const startTranscription = useCallback((speechName: string) => {
+    if (!transcribe || typeof window === "undefined") return
+    const Constructor = getSpeechRecognitionConstructor(window) as (new () => LiveRecognition) | undefined
+    if (typeof Constructor !== "function") return
+    const recognition = new Constructor()
+    recognition.continuous = true
+    recognition.interimResults = false
+    recognition.lang = "en-US"
+    recognition.onresult = (event) => {
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const result = event.results[i]
+        if (result.isFinal) appendSpokenSegment(speechName, result[0].transcript)
+      }
+    }
+    recognition.onerror = (event) => {
+      // "no-speech"/"aborted" are routine; anything else (e.g. permission)
+      // stops transcription for this segment without touching the recording.
+      if (event.error !== "no-speech" && event.error !== "aborted") recognitionRef.current = null
+    }
+    recognition.onend = () => {
+      if (recognitionRef.current !== recognition) return
+      try {
+        recognition.start()
+      } catch {
+        recognitionRef.current = null
+      }
+    }
+    recognitionRef.current = recognition
+    try {
+      recognition.start()
+    } catch {
+      recognitionRef.current = null
+    }
+  }, [transcribe])
+
+  const stopTranscription = useCallback(() => {
+    const recognition = recognitionRef.current
+    recognitionRef.current = null
+    recognition?.stop()
+  }, [])
+
+  /**
    * Start microphone recording.
    */
   const startRecording = useCallback(async () => {
@@ -188,23 +257,25 @@ export function useSpeechRecorder({
       mr.start()
       mediaRecorderRef.current = mr
       setIsActivelyRecording(true)
+      startTranscription(currentSpeechName)
       window.dispatchEvent(
         new CustomEvent("debate-recording-started", { detail: { speechName: currentSpeechName } })
       )
     } catch (err) {
       console.warn("Microphone access denied or unavailable:", err)
     }
-  }, [currentSpeechName, speechLabel, selectedMicDeviceId, saveRecordingToLocalStorage])
+  }, [currentSpeechName, speechLabel, selectedMicDeviceId, saveRecordingToLocalStorage, startTranscription])
 
   /**
    * Stop microphone recording.
    */
   const stopRecording = useCallback(() => {
+    stopTranscription()
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
       mediaRecorderRef.current.stop()
       mediaRecorderRef.current = null
     }
-  }, [])
+  }, [stopTranscription])
 
   /** Sync recording with timer state */
   useEffect(() => {
@@ -218,6 +289,9 @@ export function useSpeechRecorder({
       stopRecording()
     }
   }, [timerState.name, isRecordingEnabled, startRecording, stopRecording])
+
+  // Don't leave recognition listening after the timer unmounts.
+  useEffect(() => stopTranscription, [stopTranscription])
 
   return {
     isRecordingEnabled,

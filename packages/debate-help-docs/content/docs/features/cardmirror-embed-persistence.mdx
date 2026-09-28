@@ -11,7 +11,7 @@ was never only a display bug: the blank was reported as the document's new
 content and saved over the file.
 
 - **Routes:** `/reason-editor`, and Flow's speech-doc panels (same embed)
-- **Packages:** [`debate-editor`](/packages/debate-editor)
+- **Packages:** [`debate-editor`](/docs/packages/debate-editor)
   (`src/react/change-reporter.ts`, `src/react/singleton.ts`,
   `src/react/html-bridge.ts`), `apps/debate-ai.com`
   (`lib/reason-docs/save-queue.ts`, `components/reason-docs/ReasonDocsProvider.tsx`)
@@ -28,6 +28,16 @@ document's content — `onChange(html)` in, `PUT /api/doc/documents/:id` out.
 Everything below follows from those two facts meeting: the engine replaces
 its editor state on its own initiative, and whatever is in the view when it
 does gets saved as the user's file.
+
+The engine itself is upstream CardMirror (the `packages/debate-editor-cm`
+submodule), rebased into `packages/debate-editor/src/`. The two seams the
+embed leans on — `adoptEmbeddedDoc` (tells the engine which document the host
+mounted) and the `hostPlugins()` slot in `buildEditorPlugins` (keeps the
+change reporter across every plugin rebuild) — are debate-ai.com edits to
+upstream's `editor/index.ts`, recorded in `packages/debate-editor/patches/debate-ai.patch`
+and carried forward by `scripts/sync-upstream.mjs` on each upstream bump. An
+upstream sync that moved or dropped either one breaks this page's guarantees,
+so check both after resolving a conflict in `index.ts`.
 
 ## An edit is a transaction, nothing else
 
@@ -138,6 +148,11 @@ inside the debounce dropped the edits to the one you left.
   survives a coalesced repeat, Blob/anchor download fires on click)
 - `packages/debate-editor/test/singleton.test.ts` — `sanitizeForFilename`'s
   handling of path separators and other filename-unsafe characters
+- `packages/debate-editor/test/engine-boot.test.ts` — boots the real engine
+  inside `RIBBON_HTML` the way the singleton does, so an upstream sync that
+  needs a new element the embed markup lacks fails in CI instead of at load
+- `packages/debate-editor/test/upstream-sync.test.ts` — every edit to an
+  upstream file under `src/` is recorded in `patches/debate-ai.patch`
 
 ## Known gaps
 

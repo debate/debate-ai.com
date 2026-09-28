@@ -25,6 +25,8 @@ const nextConfig = {
     "debate-editor",
     "debate-flow-ebb",
     "debate-rankings",
+    "debate-rankings-adapter",
+    "debate-editor-cm-adapter",
     "debate-round",
     "debate-timer",
     "debate-videos",

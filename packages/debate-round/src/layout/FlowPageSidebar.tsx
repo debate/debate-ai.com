@@ -4,19 +4,24 @@
  */
 
 import type React from "react"
-import { Plus, Clock, Users, Workflow } from "lucide-react"
+import { Plus, Clock, Users, Workflow, FileText, Timer } from "lucide-react"
 import { Button } from "../ui/primitives/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/primitives/tooltip"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/primitives/collapsible"
 import type { EbbFlowToolAction } from "debate-flow-ebb"
 import { EbbFlowToolsMenu } from "./EbbFlowToolsMenu"
 import { FlowToolsMenu } from "./FlowToolsMenu"
 import { LiveRoundGroup } from "./LiveRoundGroup"
 import { WebcamRoomPanel } from "../webcam/WebcamRoomPanel"
 import { OpenTabsGroup } from "./OpenTabsGroup"
+import { RemoteSpeechDocHeadings } from "./RemoteSpeechDocHeadings"
+import { RemoteTimerDisplay } from "./RemoteTimerDisplay"
 import { selectSidebarRound } from "../utils/sidebar-round"
 import type { Flow, Round } from "../types/flow"
 import type { SpeechTimerEntry } from "../hooks/useTimerState"
 import type { TimerState, SpeechTimerState, DebateStyle } from "debate-timer/src/types"
+import type { RemoteSpeechDocHeadings as RemoteSpeechDocHeadingsType } from "../hooks/useSpeechDocHeadings"
+import type { RemoteTimerState } from "../hooks/useTimerSync"
 
 /** Props for the FlowPageSidebar component. */
 interface FlowPageSidebarProps {
@@ -88,6 +93,10 @@ interface FlowPageSidebarProps {
   recordingEnabled?: boolean
   /** Callback when the recording-enabled flag changes. */
   onRecordingEnabledChange?: (enabled: boolean) => void
+  /** Remote speech document headings received from other room participants. */
+  receivedHeadings?: RemoteSpeechDocHeadingsType[]
+  /** Remote timer states received from other room participants. */
+  remoteTimers?: RemoteTimerState[]
 }
 
 /**
@@ -140,6 +149,8 @@ export function FlowPageSidebar({
   onMicDeviceChange,
   recordingEnabled,
   onRecordingEnabledChange,
+  receivedHeadings = [],
+  remoteTimers = [],
 }: FlowPageSidebarProps) {
   /**
    * Select a flow tab and close the mobile menu when applicable.
@@ -232,6 +243,41 @@ export function FlowPageSidebar({
 
       {/* Webcams for the round's speeches — a small P2P video room. */}
       {selectedRound && <WebcamRoomPanel round={selectedRound} />}
+
+      {/* Remote Speech Document Headings */}
+      {(receivedHeadings.length > 0 || remoteTimers.length > 0) && (
+        <div className="border-t border-border pt-3 mt-3 space-y-3">
+          {receivedHeadings.length > 0 && (
+            <Collapsible className="w-full">
+              <CollapsibleTrigger className="w-full justify-start gap-2 px-2 py-1.5 text-sm font-medium hover:bg-accent rounded transition-colors">
+                <FileText className="h-4 w-4" />
+                <span>Shared Speech Doc Headings</span>
+                <span className="ml-auto text-xs px-1.5 py-0.5 bg-muted rounded">
+                  {receivedHeadings.length}
+                </span>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="pt-2">
+                <RemoteSpeechDocHeadings headings={receivedHeadings} />
+              </CollapsibleContent>
+            </Collapsible>
+          )}
+
+          {remoteTimers.length > 0 && (
+            <Collapsible className="w-full">
+              <CollapsibleTrigger className="w-full justify-start gap-2 px-2 py-1.5 text-sm font-medium hover:bg-accent rounded transition-colors">
+                <Timer className="h-4 w-4" />
+                <span>Remote Timers</span>
+                <span className="ml-auto text-xs px-1.5 py-0.5 bg-muted rounded">
+                  {remoteTimers.length}
+                </span>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="pt-2">
+                <RemoteTimerDisplay timers={remoteTimers} currentSpeechName={selectedSpeech} />
+              </CollapsibleContent>
+            </Collapsible>
+          )}
+        </div>
+      )}
 
       <OpenTabsGroup
         flows={flows}

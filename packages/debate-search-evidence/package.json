@@ -25,13 +25,18 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "debate-card-parser": "workspace:*",
+    "debate-comments": "workspace:*",
+    "dompurify": "^3.4.9",
     "fuse.js": "^7.5.0",
     "grab-url": "^1.6.22",
     "hyparquet": "^1.30.0",
     "hyparquet-compressors": "^1.1.1",
     "lucide-react": "^1.43.0",
+    "prismjs": "^1.30.0",
+    "qwksearch-api-client": "^1.0.24",
     "react-native-app-buttons": "^0.1.4",
     "react-resizable-panels": "^4.12.4",
+    "research-agent-ui": "^0.1.152",
     "tailwind-merge": "^3.6.0"
   },
   "peerDependencies": {

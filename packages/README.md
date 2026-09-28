@@ -11,7 +11,7 @@ one scoped stylesheet rather than depending on the host's design system.
 ## debate-api-client
 
 Typed SDK for the [Debate AI API](https://debate-ai.com/api), generated from
-`apps/debate-ai.com/public/debate-openapi.yml` with Hey API. Calls run through `grab-url`
+`packages/debate-api-client/debate-openapi.yml` with Hey API. Calls run through `grab-url`
 instead of fetch/axios, so every operation gets caching, retries, rate limiting, and
 request dedupe. Each `operationId` has a matching function that resolves to
 `{ data?, error? }` and never throws on an HTTP error.
@@ -44,6 +44,22 @@ ProseMirror engine, Verbatim `.docx` interop (lossless round-trip, encrypted-fil
 decryption, the native `.cmir` format, the `cardmirror-read` headless CLI/MCP server), and
 a React editor shell sized for the site's speech-doc and `/reason-editor` surfaces.
 
+Its engine is upstream CardMirror from the `debate-editor-cm` submodule, rebased with
+debate-ai.com's changes: `upstream.json` pins the upstream commit, `patches/debate-ai.patch`
+records every edit to an upstream file (the tabbed ribbon, the embed hooks, the settings
+sidebar, account sync), and files upstream doesn't have — the React shell with its dropdown
+`MenuBar`, the ribbon tabs, the sync clients — sit beside them in `src/`. `bun run
+sync-upstream` rebases onto a newer submodule commit.
+
+## debate-editor-cm (git submodule) and debate-editor-cm-adapter
+
+`debate-editor-cm` is a git submodule of upstream CardMirror,
+[debate/debate-editor](https://github.com/debate/debate-editor), kept as upstream ships it
+and outside the bun workspace (it is a Vite app with its own toolchain).
+`debate-editor-cm-adapter` is what the web UI imports: CardMirror's schema, `.docx`
+import/export and native `.cmir` format re-exported by path, plus `importDocx(file)`,
+`exportDocxBlob(doc)`, `outlineOf(doc)` and `cardsOf(doc)`.
+
 ## debate-feature-catalog
 
 Canonical `APP_FEATURES` catalog for the `/features` page — data plus
@@ -64,10 +80,9 @@ bridge, palette, and scoped styles here.
 
 Package name `debate-help-docs`. The Debate AI documentation site, built on the Fumadocs
 starter template. Publishes the product's feature pages (`content/docs/features/`), the engineering
-notes behind them (`content/docs/internals/`) and package READMEs as a searchable docs site. Statically exported under `basePath: '/docs'` and
-copied into the web app's `public/docs` by `apps/debate-ai.com/scripts/build-docs.mjs`,
-so it is served at [debate-ai.com/docs](https://debate-ai.com/docs) rather than deployed
-on its own.
+notes behind them (`content/docs/internals/`) and package READMEs as a searchable docs site. The web
+app mounts its route modules at `app/docs` and compiles its MDX in the app's own Vite build, so it is
+served at [debate-ai.com/docs](https://debate-ai.com/docs) rather than deployed on its own.
 
 ## debate-practice-drills
 
@@ -80,11 +95,19 @@ outline, flow annotations, and AI response-outcome charts. Composes `debate-roun
 
 ## debate-rankings
 
-Glicko-2 rankings for HS PF, LD, Policy and college policy, cloned from
-[debate/debate-rankings](https://github.com/debate/debate-rankings). A Python pipeline
-(`src/main.py`) replays tournament results into CSVs under `output/`; a TypeScript entry
-(`js/index.ts`) exposes the dataset list and a lazy, typed loader for them. Read by the
-`/rank` panel in `debate-videos`.
+Glicko-2 rankings for HS PF, LD, Policy and college policy — a git submodule of
+[debate/debate-rankings](https://github.com/debate/debate-rankings), kept as upstream ships it. It has its own
+Python toolchain (`src/main.py` replays tournament results into CSVs under `output/`), so it stays out of the
+bun workspace and is imported by path rather than by package name — see `debate-rankings-adapter`. A TypeScript
+entry (`js/index.ts`) exposes the dataset list and a lazy, typed loader for them. Read by the `/rank` panel in
+`debate-videos`, through `debate-rankings-adapter`.
+
+## debate-rankings-adapter
+
+What the web UI imports for rankings: everything `debate-rankings` exports, plus the
+site-only team-label lookup (`findTeamRanking("Harker LL")` and friends) that matches a round
+video's team to its rankings row. Site additions live here so the submodule never diverges
+from upstream.
 
 ## debate-round
 
@@ -105,7 +128,8 @@ plain `fetch`, no Go/Mongo/Gin, runs under Next.js or a Cloudflare Worker.
 ## debate-search-evidence
 
 Package name `debate-research-evidence`. The evidence card research interface (search bar,
-result list, card content viewer, research and AI-analysis sidebars) plus the shared
+result list, card content viewer with a source-article reader that pulls a card's full
+article through qwksearch, research and AI-analysis sidebars) plus the shared
 evidence/argument library, LLM card scoring, revision incentives, review queue, and topic
 coverage dashboard. The foundation that `debate-contributor-progress` and
 `debate-team-collaboration` split off from and still build on.
@@ -133,8 +157,22 @@ includes an in-round speech recorder with mic selection, live waveform, and play
 Upstream [Tabroom](https://github.com/debate/debate-tournament-tabroom) vendored and adapted
 to Cloudflare Workers + D1: its public API as a fetch handler (`debate-tournaments/server`,
 mounted at `/api/tabroom`), a React port of its invite/pairings/results pages (mounted at
-`/tournaments`), the route table, and the D1 schema. `scripts/sync-upstream.mjs` re-clones
-upstream and re-applies this package's patches and overlays, so upstream changes keep flowing in.
+`/tournaments`), the route table, its `@tabroom/types` Zod schemas and inferred types
+(`debate-tournaments/types`, with `tabroomSchemas` — every schema keyed by record name — and
+a non-throwing `parseTabroom(schema, data)`), and the D1 schema.
+`scripts/sync-upstream.mjs` re-clones upstream and re-applies this package's patches and
+overlays, so upstream changes keep flowing in.
+
+## debate-tournaments-tabroom (git submodule)
+
+`debate-tournaments-tabroom` is a git submodule of upstream Tabroom,
+[debate/debate-tournaments](https://github.com/debate/debate-tournaments), outside the bun
+workspace. It is only the source `debate-tournaments` vendors from; nothing imports it at
+runtime. Clone with `git clone --recurse-submodules`, or run `git submodule update --init` in
+an existing checkout, before running the sync script.
+
+The adapters that reach into a submodule by path link `<submodule>/node_modules` to their own
+on `postinstall`, so the submodule's bare imports resolve under bun's isolated linker.
 
 ## debate-videos
 

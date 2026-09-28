@@ -11,11 +11,13 @@
  */
 
 import type { EditorView } from 'prosemirror-view';
-import { type Node as PMNode, DOMSerializer } from 'prosemirror-model';
+import { serializeRangesForClipboard } from './clipboard-slice.js';
+import { type Node as PMNode } from 'prosemirror-model';
 import { NodeSelection, TextSelection } from 'prosemirror-state';
 import { type Mappable } from 'prosemirror-transform';
 import { settings, SETTINGS_DEFAULTS } from './settings.js';
 import { CLIPBOARD_BUSY_MESSAGE, writeClipboardHtml } from './clipboard-write.js';
+import { isCutInPlaceDoc, markCutInPlace } from './cut-in-place.js';
 import { showToast } from './toast.js';
 import { setManualShadowSelection } from './similar-selection-plugin.js';
 import {
@@ -78,6 +80,7 @@ import { setIcon } from './icons';
 import { isMobileShellActive } from './mobile-plugin.js';
 import { createNumberGlyph, numberingDisplaySig } from './numbering-plugin.js';
 import { computeNumbering } from './numbering.js';
+import { isRightClickContextMenu } from './context-menu-gate.js';
 
 /** Minimum nav-pane width — must fit the 4 level buttons + the
  *  close (×) button + row padding; anything narrower clips the ×. */
@@ -196,6 +199,7 @@ export function installNavResizeHandle(host: HTMLElement): HTMLElement {
 export class NavigationPanel {
   private root: HTMLElement;
   private view: EditorView | null = null;
+  private readonly readOnly: boolean = false;
   private listEl: HTMLOListElement;
   private emptyEl: HTMLElement;
   private currentDoc: PMNode | null = null;
@@ -330,9 +334,16 @@ export class NavigationPanel {
     parent: HTMLElement,
     opts?: {
       onClose?: () => void;
+      /** Outline-only mode (the recover dialogs' version previews):
+       *  navigation, level buttons, and expand/collapse work, but the
+       *  panel never starts drags and never registers as a drop
+       *  surface — its view is a read-only preview, not a document
+       *  anyone may reorder. */
+      readOnly?: boolean;
     },
   ) {
     this.onClose = opts?.onClose ?? null;
+    this.readOnly = opts?.readOnly === true;
     this.root = document.createElement('aside');
     this.root.className = 'pmd-nav-panel';
 
@@ -456,6 +467,7 @@ export class NavigationPanel {
     // editor pickup-mode drag → both surfaces show indicators too).
     if (this.unregisterSurface) this.unregisterSurface();
     if (this.unsubscribeDrag) this.unsubscribeDrag();
+    if (this.readOnly) return;
     this.unregisterSurface = dragController.registerSurface(this.dragSurfaceImpl);
     this.unsubscribeDrag = dragController.subscribe((event) => {
       if (event === 'begin') {
@@ -916,7 +928,12 @@ export class NavigationPanel {
 
       const label = document.createElement('span');
       label.className = 'pmd-nav-label';
-      label.textContent = entry.text;
+      // Whitespace-only headings must render exactly like empty ones: a
+      // space-filled text node defeats the `:empty::before` NBSP rule
+      // that holds an empty row at full height, yet still collapses to
+      // zero width — yielding a squashed row. Normalize to truly empty
+      // so the CSS fallback applies.
+      label.textContent = entry.text.trim() === '' ? '' : entry.text;
       li.appendChild(label);
 
       if (entry.cite && settings.get('showCitePreview')) {
@@ -941,6 +958,7 @@ export class NavigationPanel {
         li.addEventListener('pointerdown', (e) => this.onLiPointerDown(e, entry, li));
         li.addEventListener('contextmenu', (e) => {
           e.preventDefault();
+          if (!isRightClickContextMenu(e)) return; // Ctrl+click is not a right-click
           // On mobile the browser synthesizes contextmenu from the same
           // long-press that arms row pickup — suppress the menu there.
           if (isMobileShellActive()) return;
@@ -1102,7 +1120,13 @@ export class NavigationPanel {
     // Mobile: arm the drag by long-press, never by movement (movement
     // is a scroll). Destination mode is tap-only — no pickup at all —
     // and read mode disables mobile pickup entirely.
-    if (isMobileShellActive() && !this.destinationCb && !settings.get('readMode')) {
+    if (
+      isMobileShellActive() &&
+      !this.readOnly &&
+      !this.destinationCb &&
+      !settings.get('readMode') &&
+      settings.get('dragInteractions')
+    ) {
       this.cancelLongPress();
       this.longPressLi = li;
       this.longPressTimer = window.setTimeout(() => {
@@ -1425,6 +1449,10 @@ export class NavigationPanel {
       }
       // 5px threshold — below this, count as a click, not a drag.
       if (dx * dx + dy * dy < 25) return;
+      // Drag-to-rearrange disabled (touch devices where a scrolling
+      // finger reads as a drag): the movement stays inert; releasing
+      // still counts as a click below the threshold path.
+      if (this.readOnly || !settings.get('dragInteractions')) return;
       // Drag-reorder is allowed even in read mode: the drop is position-
       // validated and the resulting transaction is read-mode-permitted (see
       // READ_MODE_DRAG_META). A click below the threshold still just navigates.
@@ -1974,8 +2002,9 @@ export class NavigationPanel {
   /** Level buttons: a TRANSIENT, per-panel view change — never written
    *  to settings. The "Default navigation depth" setting (General tab)
    *  governs what NEW documents open at; clicking the already-active
-   *  level re-collapses any manual chevron expansions. */
-  private setMaxLevel(level: number): void {
+   *  level re-collapses any manual chevron expansions. Public so the
+   *  `setNavDepth1`–`4` commands can drive it from a keybinding. */
+  setMaxLevel(level: number): void {
     if (level < 1 || level > 4) return;
     this.applyMaxLevelToCollapseState(level);
     this.localMaxLevel = level;
@@ -2353,15 +2382,10 @@ export class NavigationPanel {
     html: string;
     text: string;
   } {
-    const serializer = DOMSerializer.fromSchema(this.view!.state.schema);
-    const tmp = document.createElement('div');
-    const texts: string[] = [];
-    for (const range of ranges) {
-      const slice = this.view!.state.doc.slice(range.from, range.to);
-      tmp.appendChild(serializer.serializeFragment(slice.content));
-      texts.push(slice.content.textBetween(0, slice.content.size, '\n', '\n'));
-    }
-    return { html: tmp.innerHTML, text: texts.join('\n') };
+    // The shared clipboard path: live views materialize (a bare serializer
+    // pasted them as dangling views into the speech doc — field reports
+    // 2026-09-09), same-doc pastes keep their links.
+    return serializeRangesForClipboard(this.view!, ranges);
   }
 
   /**
@@ -2393,6 +2417,12 @@ export class NavigationPanel {
     if (!this.view) return;
     const ranges = this.headingRanges(this.contextTargets(entry));
     if (ranges.length === 0) return;
+    // A shared document: whole units are cut IN PLACE — marked and copied,
+    // moved by the paste (cut-in-place.ts). Nothing is deleted here.
+    if (isCutInPlaceDoc(this.view)) {
+      await markCutInPlace(this.view, ranges);
+      return;
+    }
     const docAtCopy = this.view.state.doc;
     const { html, text } = this.rangeClipboardPayload(...ranges);
 

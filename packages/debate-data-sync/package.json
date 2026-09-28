@@ -19,6 +19,7 @@
     "youtube-update-views": "bun run src/youtube/youtube-sync-cli.ts --update-views"
   },
   "dependencies": {
+    "@libsql/client": "^0.14.0",
     "debate-card-parser": "workspace:*",
     "extract-youtube": "^1.0.266",
     "grab-url": "^1.6.22",

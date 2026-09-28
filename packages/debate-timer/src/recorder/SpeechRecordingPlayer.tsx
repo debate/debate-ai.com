@@ -32,6 +32,7 @@ import { cn } from "../ui/lib/utils"
 import { useAudioDevices } from "./mic-selector"
 import { getUserMedia } from "./media-devices"
 import { LiveWaveform } from "./live-waveform"
+import { clearSpokenTranscript } from "./spoken-words-store"
 
 interface StoredRecording {
     key: string
@@ -217,6 +218,12 @@ interface SpeechRecordingMenuProps {
      * `Round` type. Defaults to `[]` for a caller with no round context.
      */
     participantEmails?: string[]
+    /**
+     * Visible text beside a mic icon on the trigger (e.g. "Mic & recording")
+     * instead of the bare ellipsis — used where the menu sits on its own row
+     * under a speech in the round sidebar.
+     */
+    triggerLabel?: string
 }
 
 interface SpeechRecordingPlayerProps {
@@ -285,6 +292,7 @@ export function SpeechRecordingMenu({
     playbackRate = 1,
     onPlaybackRateChange,
     participantEmails = [],
+    triggerLabel,
 }: SpeechRecordingMenuProps) {
     const fileInputRef = useRef<HTMLInputElement>(null)
     const { devices, loading: loadingDevices, loadDevices } = useAudioDevices()
@@ -399,16 +407,27 @@ export function SpeechRecordingMenu({
         <>
             <DropdownMenu open={menuOpen} onOpenChange={handleMenuOpenChange}>
                 <DropdownMenuTrigger asChild>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className={cn(
-                            inHeader ? "h-6 w-6 shrink-0" : "h-5 w-5 flex-shrink-0 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity",
-                            buttonClassName
-                        )}
-                    >
-                        <MoreVertical className={inHeader ? "h-3.5 w-3.5" : "h-3 w-3"} />
-                    </Button>
+                    {triggerLabel ? (
+                        <Button
+                            variant="ghost"
+                            className={cn("h-6 shrink-0 gap-1 px-1.5 text-[11px] text-muted-foreground", buttonClassName)}
+                        >
+                            {recordingEnabled ? <Mic className="h-3 w-3" /> : <MicOff className="h-3 w-3" />}
+                            <span className="truncate">{triggerLabel}</span>
+                            <MoreVertical className="h-3 w-3" />
+                        </Button>
+                    ) : (
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className={cn(
+                                inHeader ? "h-6 w-6 shrink-0" : "h-5 w-5 flex-shrink-0 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity",
+                                buttonClassName
+                            )}
+                        >
+                            <MoreVertical className={inHeader ? "h-3.5 w-3.5" : "h-3 w-3"} />
+                        </Button>
+                    )}
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
                     {/* Share with Opponents & Judge - First menu item */}
@@ -612,6 +631,7 @@ export function SpeechRecordingPlayer({
     const handleDelete = (key: string) => {
         if (!window.confirm("Delete this recording? This cannot be undone.")) return
         localStorage.removeItem(key)
+        clearSpokenTranscript(speechName)
         setRecordings((prev) => prev.filter((r) => r.key !== key))
     }
 

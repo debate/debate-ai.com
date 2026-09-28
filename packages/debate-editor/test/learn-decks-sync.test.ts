@@ -278,7 +278,144 @@ describe('LearnDecksSync ongoing mirror', () => {
     await sync.init();
 
     store.createDeck('Still local', 'still-local', NOW);
+    await new Promise((resolve) => setTimeout(resolve, 0));
 
     expect(store.listDecks().find((d) => d.deckId === 'still-local')).toBeDefined();
+    expect(sync.getDeckSyncStatus('still-local')).toBe('pending');
+  });
+});
+
+describe('LearnDecksSync per-deck status', () => {
+  it('is "unknown" while signed out', async () => {
+    stubFetch({ get: 'signed-out' });
+    const store = new LearnStore();
+    store.createDeck('Impacts', 'd1', NOW);
+    const sync = new LearnDecksSync(store);
+    await sync.init();
+
+    expect(sync.getDeckSyncStatus('d1')).toBe('unknown');
+  });
+
+  it('is "unknown" for a deck that does not exist locally', async () => {
+    stubFetch({ get: [] });
+    const store = new LearnStore();
+    const sync = new LearnDecksSync(store);
+    await sync.init();
+
+    expect(sync.getDeckSyncStatus('missing')).toBe('unknown');
+  });
+
+  it('is "synced" for a deck present on both sides at merge time — no reconciliation is attempted for it', async () => {
+    stubFetch({ get: [deck('shared-1')] });
+    const store = new LearnStore();
+    store.createDeck('Local name', 'shared-1', NOW);
+    const sync = new LearnDecksSync(store);
+    await sync.init();
+
+    expect(sync.getDeckSyncStatus('shared-1')).toBe('synced');
+  });
+
+  it('is "synced" for a deck adopted from the account during the merge', async () => {
+    stubFetch({ get: [deck('remote-1')] });
+    const store = new LearnStore();
+    const sync = new LearnDecksSync(store);
+    await sync.init();
+
+    expect(sync.getDeckSyncStatus('remote-1')).toBe('synced');
+  });
+
+  it('is "pending" right after a local-only deck\'s merge push fires, "synced" once it lands', async () => {
+    const pending: Array<() => void> = [];
+    const fetchMock = vi.fn(async (_url: string, init?: RequestInit) => {
+      const method = init?.method ?? 'GET';
+      if (method === 'GET') return { ok: true, status: 200, json: async () => [] };
+      if (method === 'PUT') {
+        await new Promise<void>((resolve) => pending.push(resolve));
+        return { ok: true, status: 200 };
+      }
+      throw new Error(`unexpected method ${method}`);
+    }) as unknown as typeof fetch;
+    vi.stubGlobal('fetch', fetchMock);
+    const store = new LearnStore();
+    store.createDeck('Impacts', 'd1', NOW);
+    const sync = new LearnDecksSync(store);
+
+    await sync.init();
+    expect(sync.getDeckSyncStatus('d1')).toBe('pending');
+
+    pending[0]!();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(sync.getDeckSyncStatus('d1')).toBe('synced');
+  });
+
+  it('goes "pending" again after a rename, "synced" once the op lands', async () => {
+    const pending: Array<() => void> = [];
+    const fetchMock = vi.fn(async (_url: string, init?: RequestInit) => {
+      const method = init?.method ?? 'GET';
+      if (method === 'GET') return { ok: true, status: 200, json: async () => [] };
+      if (method === 'PUT') return { ok: true, status: 200 };
+      if (method === 'PATCH') {
+        await new Promise<void>((resolve) => pending.push(resolve));
+        return { ok: true, status: 200 };
+      }
+      throw new Error(`unexpected method ${method}`);
+    }) as unknown as typeof fetch;
+    vi.stubGlobal('fetch', fetchMock);
+    const store = new LearnStore();
+    store.createDeck('Impacts', 'd1', NOW);
+    const sync = new LearnDecksSync(store);
+    await sync.init();
+    await new Promise((resolve) => setTimeout(resolve, 0)); // merge push lands
+    expect(sync.getDeckSyncStatus('d1')).toBe('synced');
+
+    store.renameDeck('d1', 'Impact framing');
+    expect(sync.getDeckSyncStatus('d1')).toBe('pending');
+
+    pending[0]!();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(sync.getDeckSyncStatus('d1')).toBe('synced');
+  });
+
+  it('is "unknown" once a synced deck is deleted', async () => {
+    stubFetch({ get: [] });
+    const store = new LearnStore();
+    store.createDeck('Impacts', 'd1', NOW);
+    const sync = new LearnDecksSync(store);
+    await sync.init();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(sync.getDeckSyncStatus('d1')).toBe('synced');
+
+    store.deleteDeck('d1');
+    expect(sync.getDeckSyncStatus('d1')).toBe('unknown');
+  });
+
+  it('notifies onStatusChange listeners once a fire-and-forget push lands', async () => {
+    stubFetch({ get: [] });
+    const store = new LearnStore();
+    const sync = new LearnDecksSync(store);
+    await sync.init();
+    let notified = 0;
+    sync.onStatusChange(() => notified++);
+
+    store.createDeck('Impacts', 'd1', NOW);
+    expect(notified).toBe(0); // push hasn't landed yet
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(notified).toBeGreaterThan(0);
+  });
+
+  it('stops notifying once unsubscribed', async () => {
+    stubFetch({ get: [] });
+    const store = new LearnStore();
+    const sync = new LearnDecksSync(store);
+    await sync.init();
+    let notified = 0;
+    const unsubscribe = sync.onStatusChange(() => notified++);
+    unsubscribe();
+
+    store.createDeck('Impacts', 'd1', NOW);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(notified).toBe(0);
   });
 });

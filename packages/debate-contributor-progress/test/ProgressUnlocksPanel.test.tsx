@@ -103,6 +103,11 @@ describe("ProgressUnlocksPanel empty state", () => {
   it("shows the empty state when no contributor has any persisted activity", async () => {
     view = await mount(createElement(ProgressUnlocksPanel));
     expect(view.container.textContent).toContain("No contributors yet.");
+    // The panel's mini-guide description previously only rendered once a
+    // roster existed — a returning-but-empty user saw a bare title instead.
+    expect(view.container.textContent).toContain(
+      "Every contributor's unlock tier, badges, and streak",
+    );
   });
 });
 

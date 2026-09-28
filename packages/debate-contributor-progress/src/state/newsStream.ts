@@ -274,6 +274,16 @@ const VIEWER_STATE_KEY = "newsStreamViewerState";
 interface ViewerState {
   read: Record<string, true>;
   liked: Record<string, true>;
+  /**
+   * The `liked` id list the account row reported as of the last successful
+   * {@link mergeRemoteViewerState} call — not shown in the UI, kept only so
+   * that call can tell "another device unliked this since we last synced"
+   * (present here, absent from the new remote fetch — safe to clear locally
+   * too) apart from "this browser liked it and hasn't pushed yet" (never
+   * part of a synced snapshot — must survive the merge). See
+   * `mergeRemoteViewerState`'s docstring.
+   */
+  lastSyncedRemoteLiked?: string[];
 }
 
 function readViewerState(): ViewerState {
@@ -285,6 +295,10 @@ function readViewerState(): ViewerState {
     return {
       read: parsed && typeof parsed === "object" && parsed.read ? parsed.read : {},
       liked: parsed && typeof parsed === "object" && parsed.liked ? parsed.liked : {},
+      lastSyncedRemoteLiked:
+        parsed && typeof parsed === "object" && Array.isArray(parsed.lastSyncedRemoteLiked)
+          ? parsed.lastSyncedRemoteLiked
+          : undefined,
     };
   } catch {
     return { read: {}, liked: {} };
@@ -344,34 +358,67 @@ export function listLikedIds(): string[] {
 
 /**
  * Merges a signed-in user's account-synced read/liked ids into this
- * browser's local viewer state — a one-time hydration step run on sign-in
- * (see `NewsStreamPanel`'s optional `syncRemote.hydrate`), not a
- * replacement: a union of local and remote ids, so an item already read or
- * liked in this browser stays that way even if the account row hasn't
- * caught up yet, and vice versa. Unliking on one device therefore doesn't
- * clear a like already merged onto another until that other device's own
- * next toggle pushes the new state — an accepted, documented limitation
- * (see `packages/debate-help-docs/content/docs/internals/news-stream.mdx`'s Known gaps), matching every other
- * best-effort sync in this repo.
+ * browser's local viewer state — run on every hydrate (see
+ * `NewsStreamPanel`'s optional `syncRemote.hydrate`, called once per mount,
+ * i.e. once per page load/reload), not a full replacement: `read` ids are
+ * still a pure union with local state, so an item already read in this
+ * browser stays read even if the account row hasn't caught up yet.
  *
- * @returns Whether anything actually changed (so a caller can skip a
- *   redundant re-render/write when the merge was a no-op).
+ * `liked` ids used to be union-only too, which meant unliking on one device
+ * never cleared a like already merged onto another until that other
+ * device's own next toggle overwrote the account row — the Known gap
+ * `packages/debate-help-docs/content/docs/features/news-stream.mdx` used to
+ * document. Fixed by tracking `lastSyncedRemoteLiked` (this browser's own
+ * account row as of its last successful hydrate) alongside the local liked
+ * set: an id that was part of that last-known-synced snapshot but is
+ * missing from this fetch was confirmed liked before and confirmed unliked
+ * since — safe to clear locally, since it can only mean another device's
+ * unlike has landed server-side. An id liked locally that was *never* part
+ * of a synced snapshot is a like this browser hasn't pushed yet (or whose
+ * push failed) — reconciliation leaves it untouched, so it still survives a
+ * merge exactly like an unconfirmed local `read` does.
+ *
+ * @returns Whether the *visible* read/liked state actually changed (so a
+ *   caller can skip a redundant re-render when the merge only updated the
+ *   internal sync snapshot, or was a no-op altogether).
  */
 export function mergeRemoteViewerState(remote: { read?: string[]; liked?: string[] }): boolean {
   const state = readViewerState();
-  let changed = false;
+  let uiChanged = false;
+  let needsWrite = false;
+
   for (const id of remote.read ?? []) {
     if (!state.read[id]) {
       state.read[id] = true;
-      changed = true;
+      uiChanged = true;
+      needsWrite = true;
     }
   }
-  for (const id of remote.liked ?? []) {
-    if (!state.liked[id]) {
-      state.liked[id] = true;
-      changed = true;
+
+  if (remote.liked !== undefined) {
+    const remoteLiked = new Set(remote.liked);
+    const previouslySynced = state.lastSyncedRemoteLiked ?? [];
+
+    for (const id of remoteLiked) {
+      if (!state.liked[id]) {
+        state.liked[id] = true;
+        uiChanged = true;
+      }
+    }
+    for (const id of previouslySynced) {
+      if (!remoteLiked.has(id) && state.liked[id]) {
+        delete state.liked[id];
+        uiChanged = true;
+      }
+    }
+
+    const nextSynced = [...remoteLiked].sort();
+    if (nextSynced.join("\u0000") !== [...previouslySynced].sort().join("\u0000")) {
+      state.lastSyncedRemoteLiked = nextSynced;
+      needsWrite = true;
     }
   }
-  if (changed) writeViewerState(state);
-  return changed;
+
+  if (uiChanged || needsWrite) writeViewerState(state);
+  return uiChanged;
 }

@@ -105,12 +105,18 @@ async function generateWithAccount(request: GenerateRequest): Promise<string> {
 /** OpenRouter and OpenAI share the chat-completions request and response shape. */
 async function generateWithOpenAiCompatible(
   request: GenerateRequest,
-  { endpoint, apiKey, model, label, extraHeaders = {} }: {
+  { endpoint, apiKey, model, label, extraHeaders = {}, tokenLimitField = 'max_tokens' }: {
     endpoint: string;
     apiKey: string;
     model: string;
     label: string;
     extraHeaders?: Record<string, string>;
+    /**
+     * OpenAI deprecated `max_tokens` for `max_completion_tokens`, and its
+     * reasoning models (o-series, GPT-5) reject the old name with a 400.
+     * OpenRouter still takes `max_tokens` and translates it per model.
+     */
+    tokenLimitField?: 'max_tokens' | 'max_completion_tokens';
   },
 ): Promise<string> {
   const response = await fetch(endpoint, {
@@ -122,7 +128,7 @@ async function generateWithOpenAiCompatible(
     },
     body: JSON.stringify({
       model,
-      max_tokens: request.maxTokens,
+      [tokenLimitField]: request.maxTokens,
       messages: [
         { role: 'system', content: request.system },
         { role: 'user', content: request.prompt },
@@ -132,9 +138,11 @@ async function generateWithOpenAiCompatible(
   });
   if (!response.ok) throw await providerError(response, label);
   const payload = (await response.json()) as {
-    choices?: Array<{ message?: { content?: string } }>;
+    choices?: Array<{ message?: { content?: string | null; refusal?: string | null } }>;
   };
-  return payload.choices?.[0]?.message?.content ?? '';
+  const message = payload.choices?.[0]?.message;
+  if (message?.refusal) throw new Error(message.refusal);
+  return message?.content ?? '';
 }
 
 async function generateWithAnthropic(
@@ -230,6 +238,7 @@ async function generate(request: GenerateRequest): Promise<string> {
         apiKey,
         model,
         label: 'OpenAI',
+        tokenLimitField: 'max_completion_tokens',
       });
     case 'anthropic':
       return generateWithAnthropic(request, { apiKey, model });

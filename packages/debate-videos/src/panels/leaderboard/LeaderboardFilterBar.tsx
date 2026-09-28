@@ -14,25 +14,25 @@ import {
   SelectValue,
 } from "../../ui/primitives/select"
 import { Tabs, TabsList, TabsTrigger } from "../../ui/primitives/tabs"
-import { DIVISION_CONFIG, seasonLabel } from "./leaderboardUtils"
-import type { Division } from "./leaderboardTypes"
+import { LEADERBOARD_TABS, seasonLabel } from "./leaderboardUtils"
+import type { LeaderboardTab } from "./leaderboardTypes"
 
 /** Props for the {@link LeaderboardFilterBar} component. */
 interface LeaderboardFilterBarProps {
   /** Currently active division. */
-  division: Division
+  division: LeaderboardTab
   /** Currently selected season year string (e.g. `"2026"`). */
   year: string
   /** Ordered list of selectable year strings, newest first. */
   years: string[]
   /** Called when the user switches division tabs. */
-  onChangeDivision: (val: Division) => void
+  onChangeDivision: (val: LeaderboardTab) => void
   /** Called when the user picks a new year. */
   onChangeYear: (val: string) => void
 }
 
 /**
- * Renders a responsive row with a division tab strip and a year `<Select>`.
+ * Renders a responsive row with a division tab strip (plus the Schools tab) and a year `<Select>`.
  *
  * @param props - See {@link LeaderboardFilterBarProps}.
  */
@@ -47,11 +47,11 @@ export function LeaderboardFilterBar({
     <div className="flex flex-wrap items-center gap-3">
       <Tabs
         value={division}
-        onValueChange={(val) => onChangeDivision(val as Division)}
+        onValueChange={(val) => onChangeDivision(val as LeaderboardTab)}
         className="w-auto"
       >
         <TabsList className="h-9">
-          {DIVISION_CONFIG.map((d) => (
+          {LEADERBOARD_TABS.map((d) => (
             <TabsTrigger key={d.value} value={d.value} className="px-3 text-xs">
               {d.label}
             </TabsTrigger>

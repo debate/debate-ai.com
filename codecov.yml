@@ -1,8 +1,9 @@
 # Codecov configuration — https://docs.codecov.com/docs/codecov-yaml
 #
 # Coverage is produced by `bun run coverage` at the repo root, which runs every
-# `packages/*/test` suite through Vitest and writes a single merged
-# `coverage/lcov.info`.
+# `packages/*/test` suite plus the apps' suites (`apps/debate-ai.com/lib/**/__tests__`
+# and `apps/debate-browser-ext/test`) through Vitest and writes a single merged
+# `coverage/lcov.info` covering both `packages/` and `apps/`.
 
 codecov:
   require_ci_to_pass: true
@@ -85,6 +86,19 @@ flags:
   debate-videos:
     paths:
       - packages/debate-videos/src
+  # The two apps with Vitest suites. The native wrapper is Rust (Tauri) and
+  # has no JS/TS coverage to report, so it's ignored below.
+  debate-ai.com:
+    paths:
+      - apps/debate-ai.com/app
+      - apps/debate-ai.com/lib
+      - apps/debate-ai.com/worker
+  debate-browser-ext:
+    paths:
+      - apps/debate-browser-ext/src
+      - apps/debate-browser-ext/lib
+      - apps/debate-browser-ext/entrypoints
+      - apps/debate-browser-ext/components
 
 # Components mirror the flags above so the "components" section of the PR
 # comment (below) actually has something to render, and so each package gets
@@ -148,6 +162,17 @@ component_management:
     - component_id: debate-videos
       paths:
         - packages/debate-videos/src
+    - component_id: debate-ai.com
+      paths:
+        - apps/debate-ai.com/app
+        - apps/debate-ai.com/lib
+        - apps/debate-ai.com/worker
+    - component_id: debate-browser-ext
+      paths:
+        - apps/debate-browser-ext/src
+        - apps/debate-browser-ext/lib
+        - apps/debate-browser-ext/entrypoints
+        - apps/debate-browser-ext/components
 
 comment:
   layout: "header, diff, flags, components, files, footer"
@@ -155,9 +180,11 @@ comment:
   require_changes: false
 
 ignore:
-  - "apps/**"
   - "**/*.d.ts"
   - "**/test/**"
+  - "**/__tests__/**"
+  - "apps/debate-ai.com/lib/stubs/**"
+  - "apps/debate-native-wrapper/**"
   - "packages/debate-data-sync/data/**"
   - "packages/debate-data-sync/schemas/**"
   - "**/node_modules/**"

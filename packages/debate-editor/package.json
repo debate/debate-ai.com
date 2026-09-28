@@ -1,7 +1,7 @@
 {
   "name": "debate-editor",
   "version": "0.1.0",
-  "description": "CardMirror-based debate-card editor, embedded in debate-ai.com — a ProseMirror engine (Verbatim .docx interop) plus a React shell sized for small embedded panels (Flow speech docs, the /reason-editor route).",
+  "description": "CardMirror debate-card editor, embedded in debate-ai.com — upstream CardMirror (the packages/debate-editor-cm submodule) rebased with debate-ai.com's changes (tabbed ribbon + dropdown menu bar, embed hooks, account sync) and a React shell sized for small embedded panels (Flow speech docs, the /reason-editor route).",
   "private": true,
   "type": "module",
   "license": "SEE LICENSE IN LICENSE",
@@ -17,11 +17,16 @@
     "./collab-bridge": "./src/react/collab-bridge.ts"
   },
   "files": [
-    "src"
+    "src",
+    "patches",
+    "upstream.json"
   ],
   "scripts": {
     "build": "tsc --noEmit",
     "dev": "tsc --noEmit --watch --preserveWatchOutput",
+    "sync-upstream": "node scripts/sync-upstream.mjs",
+    "sync-upstream:save": "node scripts/sync-upstream.mjs --save-patch",
+    "sync-upstream:check": "node scripts/sync-upstream.mjs --check",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",

@@ -38,6 +38,9 @@ const CRAWLER_UA_PATTERN =
 /** Path prefixes the gate never touches. */
 const EXEMPT_PREFIXES = [
   "/api/",
+  // The help docs are public reading. They were once static assets the gate
+  // never saw; they are app routes now, and stay ungated.
+  "/docs/",
   "/_next/",
   "/_vinext/",
   "/__vinext/",
@@ -53,6 +56,7 @@ const EXEMPT_PREFIXES = [
 
 /** Exact paths the gate never touches. */
 const EXEMPT_PATHS = new Set([
+  "/docs",
   "/favicon.ico",
   "/favicon.svg",
   "/apple-touch-icon.png",

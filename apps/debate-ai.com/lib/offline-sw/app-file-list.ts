@@ -23,8 +23,6 @@ export const APP_FILE_LIST = [
   '/_next/static/chunks/CoachingProgramsPanel-CFjwBwOT.js',
   '/_next/static/chunks/CoachingSessionsPanel-DDtQ0VBo.js',
   '/_next/static/chunks/Combination-Do9rR7Kh.js',
-  '/_next/static/chunks/CommunityHubPageContent-DYDt-fkW.js',
-  '/_next/static/chunks/CommunityResearchHubPanel-DSkbuEa-.js',
   '/_next/static/chunks/ContactsHub-BNHUngr2.js',
   '/_next/static/chunks/ContactsPanel-B4l1p0ZF.js',
   '/_next/static/chunks/ContributionLeaderboardPanel-ObSoC3Mq.js',

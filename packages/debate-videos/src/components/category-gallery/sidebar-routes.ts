@@ -25,8 +25,33 @@ import {
  * full-page panel with a "Back" pill of its own, which read as leaving the
  * app — so it is wrapped in the same sidebar as everything else it links to,
  * and the sidebar is how you leave it.
+ *
+ * `/teams/<team>` and `/schools/<school>` are the profile pages opened from
+ * the Team Rankings table (`/rank`, itself a tree destination). They used to
+ * render bare, with only a "← Team Rankings" text link back — landing on one
+ * from anywhere else in the app dropped the nav entirely.
+ *
+ * `/legal` is the Terms of Service and Privacy Policy page (`/legal/privacy`
+ * today). Same reasoning: a page reachable from the footer on every other
+ * route otherwise loses the nav the moment you open it.
+ *
+ * `/reason-editor` is the CardMirror editor. It used to reach this set as a
+ * Research row ("Reason Editor"), but the editor is a top-level workspace
+ * reached from the app itself, not a research tool, and the row in the column
+ * duplicated the dock above it. It is listed here instead so the route keeps
+ * what the row was really there for: the generic sidebar, whose REASON docs
+ * panels (`showsReasonDocsPanels`, in the app) *are* the editor's desktop file
+ * navigation. `/doc`, the sibling "Debate Docs" row, needs no entry here — it is
+ * a dock destination, so {@link APP_DOCK_LINKS} already covers it, and
+ * {@link OWN_SIDEBAR_DOCK_HREFS} is what actually hosts its sidebar.
  */
-export const EXTRA_SIDEBAR_HREFS: readonly string[] = ["/features"];
+export const EXTRA_SIDEBAR_HREFS: readonly string[] = [
+  "/features",
+  "/teams",
+  "/schools",
+  "/legal",
+  "/reason-editor",
+];
 
 /** Every destination the tool sidebar links to, deduplicated. */
 export const TOOL_SIDEBAR_HREFS: ReadonlySet<string> = new Set<string>([

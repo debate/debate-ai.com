@@ -6,6 +6,7 @@
  */
 
 export { DebateFlowPage } from "./DebateRoundPanel";
+export { DebateStartPanel, MAX_RECENT_DEBATES } from "./DebateStartPanel";
 export { FlowEditLogPanel } from "./FlowEditLogPanel";
 export { OpponentTeamProfilesPanel } from "./OpponentTeamProfilesPanel";
 export { PreRoundBriefingsPanel } from "./PreRoundBriefingsPanel";

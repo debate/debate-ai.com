@@ -21,10 +21,13 @@
  *
  * Shows the same coarse "Synced to your account" / "Not synced — sign in
  * to sync" line `learn-manage-ui.ts`'s card list and `learn-review-log-ui.ts`
- * already do, via `sync.isSynced()` — `LearnDecksSync` tracks no per-deck
- * status (see its own module doc: pushes/deletes are fire-and-forget), so a
- * per-deck sync badge isn't possible without adding that state to the sync
- * class itself, which is out of scope here.
+ * already do, via `sync.isSynced()`, plus a per-deck "Synced" / "Not yet
+ * synced" badge (via `sync.getDeckSyncStatus`, omitted while the coarse
+ * status is `"unknown"`) — the same small-chip language
+ * `user-dictionary-ui.ts` uses for `getToolRecordSyncStatus`. The badge
+ * refreshes on `sync.onStatusChange`, since a deck push settling doesn't
+ * itself mutate the store (which is the only thing `render` otherwise
+ * listens for).
  */
 
 import { learnStore } from './learn-store-host.js';
@@ -124,6 +127,16 @@ export function buildDeckManageSection(opts: DeckManageSectionOptions = {}): Dec
     count.textContent = deck.cardIds.length === 1 ? '1 card' : `${deck.cardIds.length} cards`;
     head.appendChild(count);
 
+    const syncBadgeStatus = sync.getDeckSyncStatus(deck.deckId);
+    if (syncBadgeStatus !== 'unknown') {
+      const badge = document.createElement('span');
+      badge.className = `pmd-deck-manage-sync-badge pmd-deck-manage-sync-badge--${syncBadgeStatus}`;
+      badge.textContent = syncBadgeStatus === 'synced' ? 'Synced' : 'Not yet synced';
+      badge.title =
+        syncBadgeStatus === 'synced' ? 'This deck has reached your account' : 'Not yet synced to your account';
+      head.appendChild(badge);
+    }
+
     const toggleCards = mkAction(expanded === deck.deckId ? 'Hide cards' : 'Cards', () => {
       expanded = expanded === deck.deckId ? null : deck.deckId;
       render();
@@ -218,7 +231,10 @@ export function buildDeckManageSection(opts: DeckManageSectionOptions = {}): Dec
   }
 
   render();
-  const unsubscribe = store.subscribe(render);
+  const unsubscribeStore = store.subscribe(render);
+  // A push settling doesn't itself mutate the store, so the per-deck sync
+  // badge needs its own refresh signal independent of `unsubscribeStore`.
+  const unsubscribeSync = sync.onStatusChange(render);
   // `sync.init()` is idempotent — a no-op if something else already called
   // it (the normal boot path). Re-renders once the merge resolves so the
   // sync-status line and any adopted decks show up without a store
@@ -232,7 +248,8 @@ export function buildDeckManageSection(opts: DeckManageSectionOptions = {}): Dec
     element: section,
     destroy: () => {
       destroyed = true;
-      unsubscribe();
+      unsubscribeStore();
+      unsubscribeSync();
     },
   };
 }

@@ -31,6 +31,7 @@
  */
 
 import { DOMSerializer, Fragment, type Mark, type Node as PMNode } from 'prosemirror-model';
+import { withFrozenStyles } from './clipboard-styles.js';
 import { writeClipboardHtml } from './clipboard-write.js';
 import type { Command, EditorState } from 'prosemirror-state';
 import { schema } from '../schema/index.js';
@@ -280,8 +281,9 @@ export async function createReference(
 
   // 4. Serialize to HTML via PM's DOMSerializer so the marks
   // round-trip via the same data-* attribute spans we parse on
-  // import.
-  const serializer = DOMSerializer.fromSchema(schema);
+  // import — with the copier's appearance frozen in as inline styles
+  // for other apps (clipboard-styles.ts), as every copy does.
+  const serializer = withFrozenStyles(DOMSerializer.fromSchema(schema));
   const container = document.createElement('div');
   container.appendChild(serializer.serializeFragment(outputFragment));
   const html = container.innerHTML;

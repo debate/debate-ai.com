@@ -38,6 +38,10 @@ import { LoroSyncPlugin, updateLoroToPmState } from 'loro-prosemirror';
 import { appVersion } from '../install-info.js';
 import { compareAppVersions, MOVABLE_ROOMS_MIN_VERSION } from '../relay-protocol.js';
 import { schema } from '../../schema/index.js';
+
+/** Browsers cap the bytes a page may have in flight on keepalive requests
+ *  (Chromium: 64 KB); the unload path only sends blobs under this. */
+const UNLOAD_KEEPALIVE_MAX_BYTES = 60_000;
 import {
   bytesToBase64,
   decryptBlob,
@@ -46,7 +50,14 @@ import {
   generateRoomKeyBytes,
   importRoomKey,
 } from './collab-crypto.js';
-import { RoomsClient, RoomsError, RoomStream, type RoomUpdate } from './room-client.js';
+import {
+  RoomsClient,
+  RoomsError,
+  RoomStream,
+  type RoomUpdate,
+  type StreamStats,
+  type TransportStats,
+} from './room-client.js';
 
 type SyncDoc = Parameters<typeof LoroSyncPlugin>[0]['doc'];
 
@@ -91,10 +102,26 @@ export interface CollabSessionCallbacks {
    *  indistinguishable from being offline). Retrying continues at the
    *  backoff ceiling in case the entitlement returns. */
   onAuthRejected?: () => void;
+  /** A GUEST-PASS session's pass was refused by the relay (twice,
+   *  portal-checked — see RoomStream.onAuthDead). Terminal cause
+   *  notice: the pass is immutable and guests cannot re-mint, so the
+   *  session is about to end (onEnded follows immediately). Lets the
+   *  UI say WHY — "invite expired" — where onEnded's toast only says
+   *  what. */
+  onGuestAuthExpired?: () => void;
   /** The session ended (host ended it, or the room was GC'd). Terminal. */
   onEnded?: () => void;
   /** The room is at participant capacity. Terminal for this attempt. */
   onFull?: () => void;
+  /** An established session's reconnects keep 409ing (seat taken past
+   *  the relay's reap window). Retrying continues; the UI should explain. */
+  onCrowdedOut?: () => void;
+  /** The queue head has failed `sendStuckAfter` times in a row (a
+   *  poison entry, or a relay that keeps refusing): fired once with the
+   *  count when the threshold is crossed, and with 0 when a later send
+   *  succeeds. Retrying continues either way — this is the signal that
+   *  "edits aren't reaching the room" was previously silent. */
+  onSendStuck?: (consecutive: number) => void;
   /** Encrypted presence blob from a peer (cursor layer decodes). */
   onPresence?: (blob: Uint8Array) => void;
   /** A catch-up just imported a LARGE offline backlog (`count` update
@@ -123,8 +150,15 @@ export interface CollabSessionOptions {
    *  study 2026-08-06: ~10 cycles/sec with five typists). Remote-edit
    *  display latency grows by at most this much. Injectable for tests. */
   receiveBatchMs?: number;
+  inboundBatchBytes?: number;
+  resyncSliceBytes?: number;
+  sendStuckAfter?: number;
+  tailBucketRows?: number;
+  tailMetasCap?: number;
   /** Stream backoff bounds, injectable for tests. */
   minBackoffMs?: number;
+  resetAfterMs?: number;
+  stallMs?: number;
   maxBackoffMs?: number;
   /** Host compaction cadence: upload an encrypted snapshot every N
    *  posted updates. */
@@ -200,6 +234,9 @@ export class CollabSession {
      *  intermediate chunks ack to it so a crash mid-sequence re-sends
      *  the whole span instead of losing the tail. */
     from: ReturnType<LoroDoc['version']>;
+    /** The drain's encryption of `blob`, kept so a retry and — the point
+     *  — the unload path can post it without waiting on WebCrypto. */
+    encrypted?: Uint8Array;
   }[] = [];
   private sending = false;
   private flushTimer: ReturnType<typeof setInterval> | null = null;
@@ -251,6 +288,36 @@ export class CollabSession {
    *  restarts, because a host compaction ate their causal ancestors).
    *  Cleared only when a full-resync import integrates cleanly. */
   private pendingImports = false;
+  /** Ops parked for missing causal deps, per peer (counter spans). The
+   *  boolean above is DERIVED from this map after every import: a span
+   *  is dropped once the doc's version vector covers its end. The old
+   *  bare boolean was only ever cleared inside the full-resync block,
+   *  so the common heal (an ordinary catch-up fetching the deps) left
+   *  it latched and the host never compacted again (2026-09-01
+   *  review, SC1). */
+  private pendingSpans = new Map<string, { start: number; end: number }>();
+
+  /** Fold one import's status into the parked-span ledger and re-derive
+   *  pendingImports. Call after EVERY importBatch. */
+  private notePending(status: { pending: Map<string, { start: number; end: number }> | null }): void {
+    if (status.pending) {
+      for (const [peer, span] of status.pending) {
+        const cur = this.pendingSpans.get(peer);
+        this.pendingSpans.set(
+          peer,
+          cur ? { start: Math.min(cur.start, span.start), end: Math.max(cur.end, span.end) } : { ...span },
+        );
+      }
+    }
+    if (this.pendingSpans.size > 0) {
+      const vv = this.loroDoc.version();
+      for (const [peer, span] of this.pendingSpans) {
+        const have = vv.get(peer as `${number}`) ?? 0;
+        if (have >= span.end) this.pendingSpans.delete(peer);
+      }
+    }
+    this.pendingImports = this.pendingSpans.size > 0;
+  }
 
   private constructor(opts: CollabSessionOptions & { loroDoc: LoroDoc }) {
     this.loroDoc = opts.loroDoc;
@@ -266,16 +333,28 @@ export class CollabSession {
     this.snapshotEvery = opts.snapshotEvery ?? 50;
     this.echoTimeoutMs = opts.echoTimeoutMs ?? 8000;
     this.auditDelayMs = opts.auditDelayMs ?? 15_000;
+    this.inboundBatchBytes = opts.inboundBatchBytes ?? 8 * 1024 * 1024;
+    this.resyncSliceBytes = opts.resyncSliceBytes ?? 8 * 1024 * 1024;
+    this.sendStuckAfter = opts.sendStuckAfter ?? 6;
+    this.tailBucketRows = opts.tailBucketRows ?? 64;
+    this.tailMetasCap = opts.tailMetasCap ?? CollabSession.TAIL_METAS_CAP;
     this.updateByteLimitBase = opts.updateByteLimit ?? 4_500_000;
     this.lastSentVersion = this.loroDoc.version();
     this.ackedVersion = this.lastSentVersion;
     this.streamOpts = {
       minBackoffMs: opts.minBackoffMs,
       maxBackoffMs: opts.maxBackoffMs,
+      resetAfterMs: opts.resetAfterMs,
+      stallMs: opts.stallMs,
     };
   }
 
-  private streamOpts: { minBackoffMs?: number; maxBackoffMs?: number };
+  private streamOpts: {
+    minBackoffMs?: number;
+    maxBackoffMs?: number;
+    resetAfterMs?: number;
+    stallMs?: number;
+  };
 
   /** Start a session on the current document. Uploads the seed state as
    *  update #1 and returns the share code alongside the session. */
@@ -285,9 +364,17 @@ export class CollabSession {
     callbacks?: CollabSessionCallbacks;
     flushMs?: number;
     catchUpMs?: number;
+    auditDelayMs?: number;
     backlogNoticeMinBlindMs?: number;
     receiveBatchMs?: number;
+    inboundBatchBytes?: number;
+    resyncSliceBytes?: number;
+    sendStuckAfter?: number;
+    tailBucketRows?: number;
+    tailMetasCap?: number;
     minBackoffMs?: number;
+    resetAfterMs?: number;
+    stallMs?: number;
     maxBackoffMs?: number;
     snapshotEvery?: number;
     updateByteLimit?: number;
@@ -340,9 +427,17 @@ export class CollabSession {
     callbacks?: CollabSessionCallbacks;
     flushMs?: number;
     catchUpMs?: number;
+    auditDelayMs?: number;
     backlogNoticeMinBlindMs?: number;
     receiveBatchMs?: number;
+    inboundBatchBytes?: number;
+    resyncSliceBytes?: number;
+    sendStuckAfter?: number;
+    tailBucketRows?: number;
+    tailMetasCap?: number;
     minBackoffMs?: number;
+    resetAfterMs?: number;
+    stallMs?: number;
     maxBackoffMs?: number;
     updateByteLimit?: number;
   }): Promise<CollabSession> {
@@ -359,7 +454,26 @@ export class CollabSession {
     // errors by design (resilience), but a join that can't reach the
     // relay must FAIL — otherwise the caller mounts an empty doc and
     // the invite-prefetch offline fallback never gets a chance.
-    await session.catchUp(false, true);
+    //
+    // ...after a few jittered retries for the TRANSIENT shapes (a relay
+    // deploy's 502/503, one refused connection): the steady-state stream
+    // backs off and retries, but the join had no equivalent, so a
+    // short blip either failed the join outright or silently chose a
+    // stale prefetched seed (2026-09-01 review). Three retries at
+    // base×(1,2,4) — ~7s at the production base, long enough to ride
+    // out a deploy switchover. 4xx stays terminal.
+    const base = opts.minBackoffMs ?? 1000;
+    for (let attempt = 0; ; attempt++) {
+      try {
+        await session.catchUp(false, true);
+        break;
+      } catch (err) {
+        const transient = err instanceof RoomsError && (err.status === 0 || err.status >= 500);
+        if (!transient || attempt >= 3) throw err;
+        const delay = base * 2 ** attempt * (0.7 + Math.random() * 0.6);
+        await new Promise((r) => setTimeout(r, delay));
+      }
+    }
     return session;
   }
 
@@ -384,9 +498,17 @@ export class CollabSession {
     callbacks?: CollabSessionCallbacks;
     flushMs?: number;
     catchUpMs?: number;
+    auditDelayMs?: number;
     backlogNoticeMinBlindMs?: number;
     receiveBatchMs?: number;
+    inboundBatchBytes?: number;
+    resyncSliceBytes?: number;
+    sendStuckAfter?: number;
+    tailBucketRows?: number;
+    tailMetasCap?: number;
     minBackoffMs?: number;
+    resetAfterMs?: number;
+    stallMs?: number;
     maxBackoffMs?: number;
     snapshotEvery?: number;
   }): Promise<CollabSession> {
@@ -425,10 +547,23 @@ export class CollabSession {
     return 'list';
   }
 
+  /** Full snapshot export, memoized on the doc version for a few
+   *  seconds: collab-persist (every 40th increment) and collab-history
+   *  (every 20-60s) each exported their own byte-identical snapshot —
+   *  a synchronous wasm call measured at 0.3-0.8s on a 20 MB master —
+   *  and paid it twice whenever their ticks coincided (2026-09-01
+   *  review, SC7/A14). The TTL bounds the extra doc-sized buffer. */
   exportSnapshot(): Uint8Array {
     this.loroDoc.commit();
-    return this.loroDoc.export({ mode: 'snapshot' });
+    const version = this.loroDoc.version().encode();
+    const memo = this.snapshotMemo;
+    if (memo && Date.now() - memo.at < 10_000 && bytesEq(memo.version, version)) return memo.bytes;
+    const bytes = this.loroDoc.export({ mode: 'snapshot' });
+    this.snapshotMemo = { version, bytes, at: Date.now() };
+    return bytes;
   }
+
+  private snapshotMemo: { version: Uint8Array; bytes: Uint8Array; at: number } | null = null;
 
   /** Incremental export since `from` (VersionVector.encode() bytes) —
    *  the persistence layer's cheap steady-state write. */
@@ -454,16 +589,30 @@ export class CollabSession {
   }
 
   start(): void {
+    this.stopping = false;
+    // Flush on tab-hide: persist and history both hook it, the outbound
+    // path did not — the unsent window on a lid-close was the whole
+    // flush tick (2026-09-01 review, SC15).
+    if (this.offVisibility === null && typeof document !== 'undefined') {
+      const onVis = (): void => {
+        if (document.visibilityState === 'hidden') this.flush();
+      };
+      document.addEventListener('visibilitychange', onVis);
+      this.offVisibility = () => document.removeEventListener('visibilitychange', onVis);
+    }
     if (this.ended || this.stream) return;
     this.stream = new RoomStream({
       baseUrl: this.client.opts.baseUrl,
       token: this.client.opts.token,
       routingCode: this.client.opts.routingCode,
+      credentials: this.client.opts.credentials,
       fetchImpl: this.client.opts.fetchImpl,
       roomId: this.roomId,
       sid: this.streamSid,
       minBackoffMs: this.streamOpts.minBackoffMs,
       maxBackoffMs: this.streamOpts.maxBackoffMs,
+      resetAfterMs: this.streamOpts.resetAfterMs,
+      stallMs: this.streamOpts.stallMs,
       callbacks: {
         onHello: () => {
           this.connected = true;
@@ -492,8 +641,12 @@ export class CollabSession {
           })();
         },
         onEnded: () => this.handleEnded(),
+        onAuthDead: () => this.handleAuthDead(),
         onFull: () => {
           this.callbacks.onFull?.();
+        },
+        onCrowdedOut: () => {
+          this.callbacks.onCrowdedOut?.();
         },
         onDown: () => {
           this.connected = false;
@@ -509,8 +662,15 @@ export class CollabSession {
       this.checkEcho();
     }, this.flushMs);
     this.catchUpTimer = setInterval(() => void this.catchUp(), this.catchUpMs);
-    this.auditKickoff = setTimeout(() => void this.auditRoomHistory(), this.auditDelayMs);
-    this.auditTimer = setInterval(() => void this.auditRoomHistory(), 30 * 60_000);
+    // Every audit runs BEHIND a catch-up so its probe starts from a
+    // current cursor: with its own unaligned timer the "~100B probe"
+    // fetched and decrypted every row since a cursor that was ~2.5
+    // minutes stale on average (2026-09-01 review, T7). The extra tail
+    // fetch is the cheap half; the decrypts it avoids are the expensive
+    // half.
+    const audit = (): void => void this.catchUp().then(() => this.auditRoomHistory());
+    this.auditKickoff = setTimeout(audit, this.auditDelayMs);
+    this.auditTimer = setInterval(audit, 30 * 60_000);
   }
 
   /** Leave the session (participant) or just stop syncing: final flush
@@ -525,6 +685,12 @@ export class CollabSession {
       this.inboundTimer = null;
     }
     this.drainInbound();
+    // A REAL final drain: await the send already in flight (bounded by
+    // its request deadline) rather than returning past it, and stop the
+    // failure path from re-arming a retry timer after we clear it
+    // (2026-09-01 review, SC10). What can't be sent stays in the queue
+    // — the persisted record captures it for resume.
+    this.stopping = true;
     this.flush();
     await this.drainQueue().catch(() => {});
     if (this.flushTimer) clearInterval(this.flushTimer);
@@ -538,6 +704,8 @@ export class CollabSession {
     this.stream?.stop();
     this.stream = null;
     this.connected = false;
+    this.offVisibility?.();
+    this.offVisibility = null;
   }
 
   /** End the session for everyone (host action): tombstones the room. */
@@ -556,32 +724,116 @@ export class CollabSession {
     this.stream?.restart();
   }
 
+  /** Tab-return hook: a reconnect only if the stream is actually stale
+   *  (see RoomStream.restartIfStale). */
+  restartIfStale(): void {
+    this.stream?.restartIfStale();
+  }
+
+  /** The page is going away (web tab close or reload; a desktop reload).
+   *  The handler cannot wait — WebCrypto is asynchronous — so only a blob
+   *  the drain has ALREADY encrypted can go out, as a keepalive request the
+   *  browser finishes after the page is gone. The newest edits are queued
+   *  so the drain encrypts them if it gets a turn (with keepalive, since
+   *  the document is hidden by now); whatever stays unsent rides the
+   *  persist record to the next resume. Re-posting is idempotent for the
+   *  CRDT, so a duplicate row costs nothing. */
+  flushForUnload(): void {
+    if (this.ended) return;
+    this.flush();
+    const head = this.outQueue[0];
+    if (head?.encrypted && head.encrypted.length <= UNLOAD_KEEPALIVE_MAX_BYTES) {
+      void this.client.postUpdate(this.roomId, head.encrypted, { keepalive: true }).catch(() => {});
+    }
+  }
+
   get queuedUpdates(): number {
     return this.outQueue.length;
   }
 
-  /** Introspection for diagnostics and the sync-status UI. */
+  /** Introspection for diagnostics and the sync-status UI. The
+   *  transport/stream counters and failure tallies exist so a field
+   *  report of "it says synced but nothing moves" leaves evidence —
+   *  every failure path here used to be a silent catch (2026-09-01
+   *  review). */
   debugState(): {
     connected: boolean;
     streamRunning: boolean;
     streamConnected: boolean;
     queued: number;
+    sending: boolean;
     lastSeq: number;
     awaitingEchoSeq: number | null;
     pendingImports: boolean;
+    tailOverflow: boolean;
     ended: boolean;
+    consecutiveSendFailures: number;
+    consecutiveSnapshotFailures: number;
+    lastCatchUpError: string | null;
+    catchUpRowsSkipped: number;
+    inboundDrains: number;
+    resyncSlices: number;
+    tailBuckets: number;
+    transport: TransportStats;
+    stream: StreamStats | null;
   } {
     return {
       connected: this.connected,
       streamRunning: this.stream?.running ?? false,
       streamConnected: this.stream?.connected ?? false,
       queued: this.outQueue.length,
+      sending: this.sending,
       lastSeq: this.lastSeq,
       awaitingEchoSeq: this.awaitingEcho?.seq ?? null,
       pendingImports: this.pendingImports,
+      tailOverflow: this.tailOverflow,
       ended: this.ended,
+      consecutiveSendFailures: this.consecutiveSendFailures,
+      consecutiveSnapshotFailures: this.consecutiveSnapshotFailures,
+      lastCatchUpError: this.lastCatchUpError,
+      catchUpRowsSkipped: this.catchUpRowsSkipped,
+      inboundDrains: this.inboundDrains,
+      resyncSlices: this.resyncSlices,
+      tailBuckets: this.tailMetas.length,
+      transport: this.client.stats,
+      stream: this.stream?.stats ?? null,
     };
   }
+
+  /** A catch-up requested while one was running (see catchUp). */
+  private catchUpRerun: { expectMissingDeps: boolean } | null = null;
+  /** Relay seqs above the cursor whose frames the STREAM already
+   *  delivered (decrypted + buffered for import). Catch-up still
+   *  fetches those rows — the cursor advances only from pages, never
+   *  from frames — but skips decrypting and re-importing them. Pruned
+   *  as the cursor passes them; cleared outright past the cap (a
+   *  re-import is merely redundant, never wrong). */
+  private importedSeqs = new Set<number>();
+  /** Relay seqs of the frames in inboundBuf, index-aligned. */
+  private inboundSeqs: number[] = [];
+  private static readonly IMPORTED_SEQS_CAP = 5000;
+  private catchUpRowsSkipped = 0;
+  /** Byte bound on one inbound importBatch: a push burst (a reconnect
+   *  repost, the audit's full-history chunks) used to land as ONE
+   *  synchronous import of everything the 120ms window collected
+   *  (2026-09-01 review, SC13). The buffer is drop-safe by design
+   *  (the cursor never advanced past it), so slicing it is too. */
+  private readonly inboundBatchBytes: number;
+  private inboundDrains = 0;
+  /** Byte bound on one full-resync importBatch: the escalation path
+   *  buffered every decrypted blob of the whole room, then blocked the
+   *  main thread on one giant import (SC12). pendingLeft semantics are
+   *  preserved by folding every slice's status into the span ledger. */
+  private readonly resyncSliceBytes: number;
+  private resyncSlices = 0;
+  /** Consecutive send failures that count as "stuck" (default 6 ≈ one
+   *  minute at the escalating retry cadence). */
+  private readonly sendStuckAfter: number;
+  private sendStuckSignaled = false;
+  private offVisibility: (() => void) | null = null;
+  private consecutiveSendFailures = 0;
+  private consecutiveSnapshotFailures = 0;
+  private lastCatchUpError: string | null = null;
 
   /** Self-echo watchdog (see field docs on `awaitingEcho`). */
   private checkEcho(): void {
@@ -634,10 +886,45 @@ export class CollabSession {
     void this.drainQueue();
   }
 
-  private async drainQueue(): Promise<void> {
-    if (this.sending || this.ended) return;
+  /** The in-flight drain, so stop() can await it instead of no-oping
+   *  past it (drainQueue returns at once while `sending` is set). */
+  private drainPromise: Promise<void> | null = null;
+  /** Set by stop(): suppresses retry timers that would outlive the
+   *  session; cleared by start(). */
+  private stopping = false;
+
+  private drainQueue(): Promise<void> {
+    if (this.sending || this.ended) return this.drainPromise ?? Promise.resolve();
+    const p = this.drainQueueInner().finally(() => {
+      if (this.drainPromise === p) this.drainPromise = null;
+    });
+    this.drainPromise = p;
+    return p;
+  }
+
+  /** Collapse a queued run into one entry: every entry carries `from`,
+   *  so one export from the head's `from` covers the whole run (plus any
+   *  remote ops imported since — harmless, idempotent). Ack bookkeeping
+   *  keeps working because `version` stays the run's last version. Ten
+   *  offline minutes used to be ~1200 sequential POSTs and 1200 relay
+   *  rows for every peer to fetch (2026-09-01 review, SC2). */
+  private coalesceQueue(): void {
+    if (this.outQueue.length < 2) return;
+    const head = this.outQueue[0]!;
+    const last = this.outQueue[this.outQueue.length - 1]!;
+    this.loroDoc.commit();
+    const blob = this.loroDoc.export({ mode: 'update', from: head.from });
+    this.outQueue = [{ blob, version: last.version, from: head.from }];
+  }
+
+  private async drainQueueInner(): Promise<void> {
     this.sending = true;
     try {
+      // ONCE per drain, before the loop — never per iteration: the loop
+      // may split an oversized head into chunk entries, and re-coalescing
+      // those merges them back into the oversized blob (chunk → merge →
+      // chunk, forever).
+      this.coalesceQueue();
       while (this.outQueue.length > 0) {
         const entry = this.outQueue[0]!;
         try {
@@ -648,16 +935,25 @@ export class CollabSession {
             this.chunkQueueHead();
             continue;
           }
-          const seq = await this.client.postUpdate(
-            this.roomId,
-            await encryptBlob(this.key, entry.blob),
-          );
+          const encrypted = (entry.encrypted ??= await encryptBlob(this.key, entry.blob));
+          // A hidden document is one the browser may be about to unload:
+          // a keepalive post survives that, a plain one is cancelled.
+          const keepalive =
+            typeof document !== 'undefined' &&
+            document.visibilityState === 'hidden' &&
+            encrypted.length <= UNLOAD_KEEPALIVE_MAX_BYTES;
+          const seq = await this.client.postUpdate(this.roomId, encrypted, { keepalive });
           this.foldTailMeta(seq, entry.blob);
           this.outQueue.shift();
           this.ackedVersion =
             this.outQueue.length === 0 ? this.lastSentVersion : entry.version;
           this.postedCount++;
           this.sendRetryMs = 1000;
+          this.consecutiveSendFailures = 0;
+          if (this.sendStuckSignaled) {
+            this.sendStuckSignaled = false;
+            this.callbacks.onSendStuck?.(0);
+          }
           if (this.stream?.connected) this.awaitingEcho = { seq, at: Date.now() };
           // Deliberately NOT advancing lastSeq to our own posted seq:
           // the cursor means "I have imported everything ≤ this", and a
@@ -703,6 +999,19 @@ export class CollabSession {
             this.updateByteLimitOverride = null;
             continue;
           }
+          this.consecutiveSendFailures++;
+          if (!this.sendStuckSignaled && this.consecutiveSendFailures >= this.sendStuckAfter) {
+            this.sendStuckSignaled = true;
+            this.callbacks.onSendStuck?.(this.consecutiveSendFailures);
+          }
+          // Log the first failure and then every 5th, so a stuck queue
+          // leaves evidence without flooding the console.
+          if (this.consecutiveSendFailures === 1 || this.consecutiveSendFailures % 5 === 0) {
+            console.warn(
+              `[collab] update post failed (${this.consecutiveSendFailures} in a row):`,
+              (err as Error)?.message ?? err,
+            );
+          }
           this.connected = false;
           this.emitStatus();
           this.scheduleSendRetry();
@@ -717,7 +1026,7 @@ export class CollabSession {
   private sendRetryMs = 1000;
 
   private scheduleSendRetry(): void {
-    if (this.sendRetryTimer || this.ended) return;
+    if (this.sendRetryTimer || this.ended || this.stopping) return;
     const jitter = 0.7 + Math.random() * 0.6;
     const delay = this.sendRetryMs * jitter;
     this.sendRetryMs = Math.min(this.sendRetryMs * 2, 30_000);
@@ -730,21 +1039,46 @@ export class CollabSession {
   // --- room-holdings bookkeeping (incremental audit) ---
 
   private static readonly TAIL_METAS_CAP = 4000;
+  /** Ledger granularity: rows are folded into BUCKETS of this many rows
+   *  ({maxSeq, merged vv}); a bucket is pruned only once the verified
+   *  snapshot covers its maxSeq — the same non-transitive trust, ~64×
+   *  the headroom. Per-row entries hit the cap in under ten minutes of
+   *  a busy five-typist room, and an overflowed ledger made the
+   *  30-minute audit re-download the whole room every cycle (a partial
+   *  return of the egress problem the incremental audit killed;
+   *  2026-09-01 review, SC9). */
+  private readonly tailBucketRows: number;
+  private readonly tailMetasCap: number;
+  private tailBucketRowsInHead = 0;
 
   /** Fold one update row's meta into the tail ledger. `plain` is the
    *  DECRYPTED blob (imports) or the pre-encryption bytes (our posts). */
   private foldTailMeta(seq: number, plain: Uint8Array): void {
     if (seq <= this.verifiedSnapCovers) return; // already inside the verified snapshot
-    if (this.tailMetas.length >= CollabSession.TAIL_METAS_CAP) {
+    let meta: ReturnType<typeof decodeImportBlobMeta>;
+    try {
+      meta = decodeImportBlobMeta(plain, false);
+    } catch {
+      return; /* undecodable — the audit's escalation full-scan remains the backstop */
+    }
+    const head = this.tailMetas[this.tailMetas.length - 1];
+    if (head && this.tailBucketRowsInHead < this.tailBucketRows) {
+      // Merge into the open bucket (vv maxima; bucket maxSeq advances).
+      const merged = new Map(head.vv);
+      for (const [peer, counter] of meta.partialEndVersionVector.toJSON()) {
+        if ((merged.get(peer) ?? 0) < counter) merged.set(peer, counter);
+      }
+      head.vv = [...merged];
+      if (seq > head.seq) head.seq = seq;
+      this.tailBucketRowsInHead++;
+      return;
+    }
+    if (this.tailMetas.length >= this.tailMetasCap) {
       this.tailOverflow = true;
       return;
     }
-    try {
-      const meta = decodeImportBlobMeta(plain, false);
-      this.tailMetas.push({ seq, vv: [...meta.partialEndVersionVector.toJSON()] });
-    } catch {
-      /* undecodable — the audit's escalation full-scan remains the backstop */
-    }
+    this.tailMetas.push({ seq, vv: [...meta.partialEndVersionVector.toJSON()] });
+    this.tailBucketRowsInHead = 1;
   }
 
   /** A snapshot whose CONTENT we have actually decoded (downloaded and
@@ -759,8 +1093,12 @@ export class CollabSession {
       this.roomSnapVv = vv;
       this.verifiedSnapCovers = covers;
       if (covers > this.knownSnapCovers) this.knownSnapCovers = covers;
+      // Buckets are keyed by their MAX seq: one survives until the
+      // verified snapshot covers every row in it (conservative).
+      const before = this.tailMetas.length;
       this.tailMetas = this.tailMetas.filter((t) => t.seq > covers);
-      this.tailOverflow = this.tailMetas.length >= CollabSession.TAIL_METAS_CAP;
+      if (this.tailMetas.length !== before && this.tailMetas.length === 0) this.tailBucketRowsInHead = 0;
+      this.tailOverflow = this.tailMetas.length >= this.tailMetasCap;
     } catch {
       /* undecodable snapshot — keep the previous verified state */
     }
@@ -810,7 +1148,11 @@ export class CollabSession {
     // binding transaction → one plugin-pipeline pass, instead of a
     // full cycle per frame (perf study 2026-08-06).
     this.foldTailMeta(u.seq, plain);
+    // NOTE: the decrypt above is awaited, so buffer order is arrival-of-
+    // plaintext order, not seq order. Harmless for a CRDT import batch —
+    // never assume seq ordering here.
     this.inboundBuf.push(plain);
+    this.inboundSeqs.push(u.seq);
     this.inboundTimer ??= setTimeout(() => {
       this.inboundTimer = null;
       this.drainInbound();
@@ -820,11 +1162,41 @@ export class CollabSession {
   /** Import everything the micro-batch window collected, as one batch. */
   private drainInbound(): void {
     if (this.ended || this.inboundBuf.length === 0) return;
-    const batch = this.inboundBuf;
-    this.inboundBuf = [];
+    // Take at most inboundBatchBytes (always ≥1 frame); the remainder
+    // drains on the next tick.
+    let bytes = 0;
+    let n = 0;
+    while (n < this.inboundBuf.length && (n === 0 || bytes + this.inboundBuf[n]!.length <= this.inboundBatchBytes)) {
+      bytes += this.inboundBuf[n]!.length;
+      n++;
+    }
+    const batch = this.inboundBuf.slice(0, n);
+    const batchSeqs = this.inboundSeqs.slice(0, n);
+    this.inboundBuf = this.inboundBuf.slice(n);
+    this.inboundSeqs = this.inboundSeqs.slice(n);
+    if (this.inboundBuf.length > 0 && this.inboundTimer === null) {
+      this.inboundTimer = setTimeout(() => {
+        this.inboundTimer = null;
+        this.drainInbound();
+      }, 0);
+    }
+    this.inboundDrains++;
     this.flush(); // capture local diff before import (see module doc)
-    const status = this.loroDoc.importBatch(batch);
-    if (status.pending && status.pending.size > 0) this.pendingImports = true;
+    let status: ReturnType<LoroDoc['importBatch']>;
+    try {
+      status = this.loroDoc.importBatch(batch);
+    } catch (err) {
+      // A corrupt frame fails the whole batch. NOT marking these seqs as
+      // imported is what lets the next catch-up re-fetch them (knock-on
+      // audit 2026-09-02: recording them before the import would have
+      // skipped a failed batch's rows forever).
+      console.warn('[collab] inbound import batch failed — catch-up will re-fetch:', (err as Error)?.message ?? err);
+      return;
+    }
+    // Only now are these rows "already imported" for catch-up's skip list.
+    if (this.importedSeqs.size + batchSeqs.length > CollabSession.IMPORTED_SEQS_CAP) this.importedSeqs.clear();
+    for (const seq of batchSeqs) this.importedSeqs.add(seq);
+    this.notePending(status);
     this.markImportedSent();
     // The cursor does NOT advance from stream frames — ONLY from
     // catch-up pages. A pushed frame proves nothing about the rows
@@ -853,7 +1225,16 @@ export class CollabSession {
    *  those deps live BELOW the cursor, so if the tail fetch yields
    *  nothing the full resync must still run. */
   async catchUp(expectMissingDeps = false, rethrow = false): Promise<void> {
-    if (this.ended || this.catchUpRunning) return;
+    if (this.ended) return;
+    if (this.catchUpRunning) {
+      // Don't DROP a concurrent request — latch it for one re-run after
+      // the current pass, ORing the expectMissingDeps escalation. The
+      // old early return discarded drainInbound's shed-frame healer when
+      // it raced onHello's catch-up, leaving recovery to the 5-minute
+      // timer (2026-09-01 review, SC8).
+      this.catchUpRerun = { expectMissingDeps: (this.catchUpRerun?.expectMissingDeps ?? false) || expectMissingDeps };
+      return;
+    }
     this.catchUpRunning = true;
     try {
       let pendingLeft = false;
@@ -889,15 +1270,26 @@ export class CollabSession {
             console.warn('[collab] undecryptable room snapshot — skipped');
           }
         }
-        for (const u of page.updates) {
-          if (u.seq <= this.lastSeq) continue;
-          try {
-            const plain = await decryptBlob(this.key, u.blob);
-            this.foldTailMeta(u.seq, plain);
-            blobs.push(plain);
-          } catch {
-            /* skip undecryptable frame (see applyRemote) */
+        // Rows the stream already delivered are skipped (their metadata
+        // was folded at arrival); the rest decrypt in PARALLEL — the old
+        // one-await-per-row loop serialized up to 200 WebCrypto round
+        // trips on the join path (2026-09-01 review, T8).
+        const fresh = page.updates.filter((u) => {
+          if (u.seq <= this.lastSeq) return false;
+          if (this.importedSeqs.has(u.seq)) {
+            this.catchUpRowsSkipped++;
+            return false;
           }
+          return true;
+        });
+        const plains = await Promise.all(
+          fresh.map((u) => decryptBlob(this.key, u.blob).catch(() => null)),
+        );
+        for (let i = 0; i < fresh.length; i++) {
+          const plain = plains[i];
+          if (!plain) continue; // undecryptable frame (see applyRemote)
+          this.foldTailMeta(fresh[i]!.seq, plain);
+          blobs.push(plain);
         }
         if (blobs.length > 0) {
           importedAny = true;
@@ -909,10 +1301,21 @@ export class CollabSession {
           // the full resync a dirty earlier page requested (audit find,
           // 2026-07-10).
           pendingLeft = pendingLeft || (!!status.pending && status.pending.size > 0);
-          if (pendingLeft) this.pendingImports = true;
+          this.notePending(status);
         }
-        if (page.lastSeq > this.lastSeq) this.lastSeq = page.lastSeq;
+        const advanced = page.lastSeq > this.lastSeq;
+        if (advanced) {
+          this.lastSeq = page.lastSeq;
+          for (const seq of this.importedSeqs) if (seq <= this.lastSeq) this.importedSeqs.delete(seq);
+        }
         if (!page.more) break;
+        // Progress guard: a `more` page whose cursor did not advance (a
+        // proxy-mangled body, a half-deployed relay) would otherwise loop
+        // forever with no delay, pinning the relay (2026-09-01 review).
+        if (!advanced) {
+          console.warn('[collab] catch-up page reported more without advancing — stopping');
+          break;
+        }
       }
       if (expectMissingDeps && !importedAny) pendingLeft = true;
       if (pendingLeft) {
@@ -923,7 +1326,20 @@ export class CollabSession {
         // desync recurred because the healer read 200 rows of a bigger
         // log and parked forever).
         let after = 0;
-        const blobs: Uint8Array[] = [];
+        let blobs: Uint8Array[] = [];
+        let sliceBytes = 0;
+        let importedAnySlice = false;
+        const importSlice = (): void => {
+          if (blobs.length === 0) return;
+          this.flush();
+          const status = this.loroDoc.importBatch(blobs);
+          this.markImportedSent();
+          this.notePending(status);
+          this.resyncSlices++;
+          importedAnySlice = true;
+          blobs = [];
+          sliceBytes = 0;
+        };
         for (;;) {
           const page = await this.client.fetchUpdates(this.roomId, after);
           this.noteSnapCovers(page.snapCovers);
@@ -932,29 +1348,37 @@ export class CollabSession {
               const plainSnap = await decryptBlob(this.key, page.snapshot.blob);
               this.foldSnapshotMeta(plainSnap, page.snapshot.coversThroughSeq);
               blobs.push(plainSnap);
+              sliceBytes += plainSnap.length;
+              if (sliceBytes >= this.resyncSliceBytes) importSlice();
             } catch {
               console.warn('[collab] undecryptable room snapshot in resync — skipped');
             }
           }
-          for (const u of page.updates) {
-            try {
-              const plain = await decryptBlob(this.key, u.blob);
-              this.foldTailMeta(u.seq, plain);
-              blobs.push(plain);
-            } catch {
-              /* skip undecryptable frame */
-            }
+          const plains = await Promise.all(
+            page.updates.map((u) => decryptBlob(this.key, u.blob).catch(() => null)),
+          );
+          for (let i = 0; i < page.updates.length; i++) {
+            const plain = plains[i];
+            if (!plain) continue; // undecryptable frame
+            this.foldTailMeta(page.updates[i]!.seq, plain);
+            blobs.push(plain);
+            sliceBytes += plain.length;
+            // Within a page too — a page can hold 200 multi-MB rows.
+            if (sliceBytes >= this.resyncSliceBytes) importSlice();
           }
-          after = page.lastSeq;
+          const next = page.lastSeq;
+          if (page.more && next <= after) {
+            console.warn('[collab] resync page reported more without advancing — stopping');
+            break;
+          }
+          after = next;
           if (!page.more) break;
         }
-        if (blobs.length > 0) {
-          this.flush();
-          const status = this.loroDoc.importBatch(blobs);
-          this.markImportedSent();
-          // A clean full-resync proves every known op integrated.
-          this.pendingImports = !!status.pending && status.pending.size > 0;
-        }
+        // Final slice. A clean full-resync proves every known op
+        // integrated; spans still parked after it are genuinely absent
+        // from the room (the ledger folded every slice).
+        importSlice();
+        void importedAnySlice;
         if (after > this.lastSeq) this.lastSeq = after;
       }
       // Backlog notice (M3), gated three ways: enough frames to matter,
@@ -990,11 +1414,16 @@ export class CollabSession {
       if (err instanceof RoomsError && (err.status === 401 || err.status === 403)) {
         this.notifyAuthRejected();
       }
+      this.lastCatchUpError = (err as Error)?.message ?? String(err);
+      console.warn('[collab] catch-up failed:', this.lastCatchUpError);
       this.connected = false;
       this.emitStatus();
       if (rethrow) throw err;
     } finally {
       this.catchUpRunning = false;
+      const rerun = this.catchUpRerun;
+      this.catchUpRerun = null;
+      if (rerun && !this.ended) void this.catchUp(rerun.expectMissingDeps);
     }
   }
 
@@ -1085,8 +1514,9 @@ export class CollabSession {
         this.foldTailMeta(seq, chunk);
         if (this.stream?.connected) this.awaitingEcho = { seq, at: Date.now() };
       }
-    } catch {
-      /* advisory — the next scheduled audit retries */
+    } catch (err) {
+      // Advisory — the next scheduled audit retries — but never silent.
+      console.warn('[collab] history audit failed:', (err as Error)?.message ?? err);
     }
   }
 
@@ -1110,13 +1540,10 @@ export class CollabSession {
           /* undecryptable snapshot — audit what we can */
         }
       }
-      for (const u of page.updates) {
-        try {
-          blobs.push(await decryptBlob(this.key, u.blob));
-        } catch {
-          /* skip */
-        }
-      }
+      const plains = await Promise.all(
+        page.updates.map((u) => decryptBlob(this.key, u.blob).catch(() => null)),
+      );
+      for (const plain of plains) if (plain) blobs.push(plain);
       for (const b of blobs) {
         try {
           const meta = decodeImportBlobMeta(b, false);
@@ -1127,7 +1554,12 @@ export class CollabSession {
           /* undecodable blob */
         }
       }
-      after = page.lastSeq;
+      const next = page.lastSeq;
+      if (page.more && next <= after) {
+        console.warn('[collab] audit scan page reported more without advancing — stopping');
+        break;
+      }
+      after = next;
       if (!page.more) break;
     }
     return roomMax;
@@ -1135,10 +1567,16 @@ export class CollabSession {
 
   // --- presence ---
 
-  async sendPresence(blob: Uint8Array): Promise<void> {
+  async sendPresence(blob: Uint8Array, opts: { keepalive?: boolean } = {}): Promise<void> {
     if (this.ended) return;
+    // Presence frames are DELIVERED over the stream, so while it isn't
+    // connected nobody can see ours (and we can't see theirs) — posting
+    // is pure waste, and on a dead credential it was the bulk of an
+    // all-night 401 churn (field observation 2026-08-28). The keepalive
+    // cadence resumes on the next post after the stream re-hellos.
+    if (!this.stream?.connected) return;
     try {
-      await this.client.postPresence(this.roomId, await encryptBlob(this.key, blob), this.streamSid);
+      await this.client.postPresence(this.roomId, await encryptBlob(this.key, blob), this.streamSid, opts);
     } catch {
       /* presence is fire-and-forget */
     }
@@ -1159,8 +1597,18 @@ export class CollabSession {
       await this.client.postSnapshot(this.roomId, bytesToBase64(sealed), covers);
       // We exported it — its content is known without a download.
       this.foldSnapshotMeta(snapshot, covers);
-    } catch {
-      /* compaction is best-effort; the log just stays longer */
+      this.consecutiveSnapshotFailures = 0;
+    } catch (err) {
+      // Compaction is best-effort (the log just stays longer) — but a host
+      // whose snapshot POST always fails must leave evidence: that room
+      // never compacts again.
+      this.consecutiveSnapshotFailures++;
+      if (this.consecutiveSnapshotFailures === 1 || this.consecutiveSnapshotFailures % 5 === 0) {
+        console.warn(
+          `[collab] snapshot upload failed (${this.consecutiveSnapshotFailures} in a row):`,
+          (err as Error)?.message ?? err,
+        );
+      }
     }
   }
 
@@ -1172,9 +1620,14 @@ export class CollabSession {
    *  log truncation, no data-loss surface. */
   private exportChunks(
     from: ReturnType<LoroDoc['version']>,
+    toVersion?: ReturnType<LoroDoc['version']>,
   ): Uint8Array[] {
     this.loroDoc.commit();
-    const to = this.loroDoc.version();
+    // `to` defaults to the live version (the audit's full-history
+    // repost); chunkQueueHead passes the entry's own end version so
+    // remote ops imported since the entry was queued are not re-posted
+    // on exactly the largest payloads (2026-09-01 review, SC15).
+    const to = toVersion ?? this.loroDoc.version();
     const spans: { id: { peer: `${number}`; counter: number }; len: number }[] = [];
     for (const [peer, end] of to.toJSON()) {
       const start = from.get(peer) ?? 0;
@@ -1211,7 +1664,7 @@ export class CollabSession {
    *  version. */
   private chunkQueueHead(): void {
     const entry = this.outQueue[0]!;
-    const chunks = this.exportChunks(entry.from);
+    const chunks = this.exportChunks(entry.from, entry.version);
     const replacements = chunks.map((blob, i) => ({
       blob,
       version: i === chunks.length - 1 ? entry.version : entry.from,
@@ -1229,6 +1682,24 @@ export class CollabSession {
     this.callbacks.onAuthRejected?.();
   }
 
+  /** The stream saw two consecutive relay-confirmed 401/403s. For a
+   *  GUEST-PASS session that's terminal: the pass is immutable, guests
+   *  cannot re-mint one (host-only endpoint), and auth runs before the
+   *  room lookup server-side — so the client can never even learn
+   *  whether the room still exists. Retrying forever just churned
+   *  presence/stream against week-expired passes all night (field
+   *  observation 2026-08-28). Members keep today's behavior: notify
+   *  once and let the stream retry at its ceiling, because an expired
+   *  entitlement can quietly renew and heal the session. */
+  private handleAuthDead(): void {
+    if (this.client.opts.guestAuth === true) {
+      this.callbacks.onGuestAuthExpired?.();
+      this.handleEnded();
+      return;
+    }
+    this.notifyAuthRejected();
+  }
+
   private emitStatus(): void {
     this.callbacks.onStatus?.({ connected: this.connected, queuedUpdates: this.outQueue.length });
   }
@@ -1239,6 +1710,7 @@ export class CollabSession {
     if (this.inboundTimer) clearTimeout(this.inboundTimer);
     this.inboundTimer = null;
     this.inboundBuf = [];
+    this.inboundSeqs = [];
     if (this.flushTimer) clearInterval(this.flushTimer);
     if (this.catchUpTimer) clearInterval(this.catchUpTimer);
     if (this.auditTimer) clearInterval(this.auditTimer);

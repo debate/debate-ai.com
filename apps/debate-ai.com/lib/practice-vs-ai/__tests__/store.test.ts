@@ -51,6 +51,7 @@ async function freshDb() {
       practice_vs_ai_badges TEXT,
       practice_vs_ai_last_played_day_key TEXT,
       practice_vs_ai_current_streak INTEGER,
+      my_team_profile TEXT,
       created_at INTEGER NOT NULL DEFAULT (unixepoch()),
       updated_at INTEGER NOT NULL DEFAULT (unixepoch())
     )

@@ -1,4 +1,12 @@
-import { sqliteTable, text, integer, index, uniqueIndex, primaryKey } from "drizzle-orm/sqlite-core";
+import {
+  sqliteTable,
+  text,
+  integer,
+  index,
+  uniqueIndex,
+  primaryKey,
+  type AnySQLiteColumn,
+} from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
 
 export const user = sqliteTable("user", {
@@ -334,6 +342,17 @@ export const userSettings = sqliteTable("user_settings", {
   // here.
   practiceVsAiLastPlayedDayKey: text("practice_vs_ai_last_played_day_key"),
   practiceVsAiCurrentStreak: integer("practice_vs_ai_current_streak"),
+  // JSON-serialized `MyTeamProfile` (`{ school, email1, email2 }`) — the
+  // Create Round dialog's "My Team" quick-fill profile (see
+  // packages/debate-round/src/state/myTeamProfile.ts and
+  // dialogs/CreateRoundDialog/TeamSection.tsx), previously localStorage-only
+  // per that file's own header comment. A whole-value replace on every
+  // profile save, like `researchProgressGoal` above, rather than op-based —
+  // one visitor edits their own profile at a time. Null/absent means "no
+  // synced profile yet", same semantics as every other nullable column here;
+  // the local `myTeamProfile.ts` localStorage value stays the source of
+  // truth for a signed-out browser.
+  myTeamProfile: text("my_team_profile"),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(unixepoch())`),
@@ -1101,10 +1120,45 @@ export const reuseCheckLog = sqliteTable(
 
 export type ReuseCheckLogRow = typeof reuseCheckLog.$inferSelect;
 
+// URL Detection — stores URLs detected by the browser extension from pages
+// users visit. The extension calls POST /api/url-detection with the page URL,
+// title, and metadata. This lets admins see what content users are reading
+// and potentially turn it into evidence. One row per unique URL per user
+// (upserted on re-visit), with visit count and last visited timestamp.
+export const detectedUrls = sqliteTable(
+  "detected_urls",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    url: text("url").notNull(),
+    normalizedUrl: text("normalized_url").notNull(),
+    title: text("title"),
+    favicon: text("favicon"),
+    visitCount: integer("visit_count").notNull().default(1),
+    lastVisitedAt: integer("last_visited_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdIdx: index("idx_detected_urls_user_id").on(table.userId),
+    normalizedUrlIdx: index("idx_detected_urls_normalized_url").on(table.normalizedUrl),
+    userUrlIdx: uniqueIndex("idx_detected_urls_user_url").on(table.userId, table.normalizedUrl),
+    lastVisitedIdx: index("idx_detected_urls_last_visited").on(table.lastVisitedAt),
+  }),
+);
+
+export type DetectedUrlRow = typeof detectedUrls.$inferSelect;
+export type DetectedUrlInsert = typeof detectedUrls.$inferInsert;
+
 // Video library — the queryable projection of the `data/videos/*.json` assets
 // (rounds-policy/pf/ld/college, debate-lectures, debate-top-picks) that the
 // YouTube sync writes. `/api/videos` pages over this table instead of shipping
-// the whole ~1.1 MB JSON blob on first paint; `scripts/seed-videos.ts` loads
+// the whole ~1.1 MB JSON blob on first paint; `.github/scripts/seed-videos.ts` loads
 // the JSON into it (local SQLite and Cloudflare D1 share this schema).
 //
 // `style` is the numeric debate format (1 Policy, 2 PF, 3 LD, 4 College) and is
@@ -1696,6 +1750,13 @@ export const debateCards = sqliteTable(
     level: text("level").notNull().default(""),
     /** Shard the row came from, so one file's import can be audited or replaced. */
     sourceFile: text("source_file").notNull().default(""),
+    /**
+     * Source URL `debate-card-parser` extracted from the citation, or "" when
+     * it names none. Written at import and backfilled by the admin panel's
+     * "Extract source URLs" run; the URL recheck reads it instead of
+     * re-parsing every cite.
+     */
+    sourceUrl: text("source_url").notNull().default(""),
     importedAt: integer("imported_at")
       .notNull()
       .default(sql`(unixepoch())`),
@@ -1708,10 +1769,57 @@ export const debateCards = sqliteTable(
     caselistIdx: index("idx_debate_cards_caselist").on(table.caselistDisplayName),
     bucketIdx: index("idx_debate_cards_bucket").on(table.bucketId),
     sourceFileIdx: index("idx_debate_cards_source_file").on(table.sourceFile),
+    sourceUrlIdx: index("idx_debate_cards_source_url").on(table.sourceUrl),
   }),
 );
 
 export type DebateCardRow = typeof debateCards.$inferSelect;
+
+// Caselist documents — full DOCX files unpacked from openCaselist bulk archives.
+// Each document retains its school/team provenance from the archive path and its
+// converted HTML content. This enables showing "files shared by this school/team"
+// on profile pages. The id is a stable hash of the archive path so re-importing
+// the same archive upserts rather than duplicates.
+export const caselistDocuments = sqliteTable(
+  "caselist_documents",
+  {
+    id: integer("id").primaryKey(),
+    /** Stable hash of the archive path (caselist slug + entry path). */
+    pathHash: text("path_hash").notNull().unique(),
+    /** Caselist slug, e.g. `hspolicy26`. */
+    caselistSlug: text("caselist_slug").notNull(),
+    /** Caselist display label, e.g. "HS Policy 2025-26". */
+    caselistLabel: text("caselist_label").notNull(),
+    /** School folder from the archive path. */
+    school: text("school").notNull(),
+    /** Team folder under the school, nullable. */
+    team: text("team"),
+    /** Side from file name or path: "Aff" | "Neg" | null. */
+    side: text("side"),
+    /** Original file name with extension. */
+    fileName: text("file_name").notNull(),
+    /** Full archive path, e.g. `hspolicy26/Glenbrook North/Chen-Patel/1AC.docx`. */
+    archivePath: text("archive_path").notNull(),
+    /** Converted HTML content from the DOCX. */
+    html: text("html").notNull(),
+    /** Parsed cards count, when available. */
+    cardCount: integer("card_count").notNull().default(0),
+    /** ISO timestamp when this document was ingested. */
+    ingestedAt: integer("ingested_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    /** ISO timestamp of the archive this document came from. */
+    archiveDate: text("archive_date"),
+  },
+  (table) => ({
+    schoolIdx: index("idx_caselist_documents_school").on(table.school),
+    teamIdx: index("idx_caselist_documents_team").on(table.team),
+    caselistSlugIdx: index("idx_caselist_documents_caselist_slug").on(table.caselistSlug),
+    pathHashIdx: uniqueIndex("idx_caselist_documents_path_hash").on(table.pathHash),
+  }),
+);
+
+export type CaselistDocumentRow = typeof caselistDocuments.$inferSelect;
 
 // One row per Parquet shard an admin has imported, so the admin panel can show
 // what the library is made of and the operator can tell a re-import from a
@@ -1874,3 +1982,227 @@ export const cardAiAnalyses = sqliteTable(
 );
 
 export type CardAiAnalysisRow = typeof cardAiAnalyses.$inferSelect;
+
+// Threaded comments, one table for every kind of thing that can be discussed —
+// a video, an uploaded file, a lecture, a card contribution. `resourceType` +
+// `resourceId` name the thing (see `lib/comments/queries.ts`), so a second
+// surface is a mount of the same `debate-comments` UI rather than a second
+// schema and a second set of routes.
+//
+// The tree is an adjacency list: `parentId` points at the comment a reply
+// answers, and is null for a top-level one. Storing the shape as a column per
+// level (the flat `parent_id` of `documents`/`topic_starter_items` above) would
+// cap replies at whatever the widest column was, and a thread that cannot grow
+// is a thread that gets abandoned halfway. A self-referencing row is one more
+// lookup per level, and reads are already served whole and cached in the page.
+//
+// `ON DELETE CASCADE` on both references is what makes deletion clean: drop
+// the account, and its comments and its likes go with them. Comments themselves
+// are never hard-deleted — `deletedAt` hides the body and leaves the replies
+// standing, so removing one post does not take a sub-conversation with it. A
+// real moderation story (`moderationStatus`, `reportCount`, an audit log) would
+// layer on top of that rather than replace it.
+export const comments = sqliteTable(
+  "comments",
+  {
+    /**
+     * A UUID minted by the API, not an autoincrement rowid. An id that counts
+     * up tells a reader how much discussion exists on a resource before they
+     * have read any of it, and it makes a comment's URL guessable by anyone
+     * who has seen one.
+     */
+    id: text("id").primaryKey(),
+    /** One of `debate-comments`' `COMMENT_RESOURCE_TYPES`; see `lib/comments/validation.ts`. */
+    resourceType: text("resource_type").notNull(),
+    /** The resource's own id — a YouTube video id here, a `debate_cards` id there. */
+    resourceId: text("resource_id").notNull(),
+    /** Null for a top-level comment; otherwise the comment this one answers. */
+    parentId: text("parent_id").references((): AnySQLiteColumn => comments.id, {
+      onDelete: "cascade",
+    }),
+    authorId: text("author_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    body: text("body").notNull(),
+    /** Set when the author (or a moderator) removes the comment; see above. */
+    deletedAt: integer("deleted_at", { mode: "timestamp" }),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    // A thread read: every comment on one resource, oldest first. The leading
+    // `resourceType` is what keeps a `resourceId` reused across kinds (a short
+    // slug, say) from pulling in another kind's thread.
+    resourceIdx: index("idx_comments_resource").on(
+      table.resourceType,
+      table.resourceId,
+      table.createdAt,
+    ),
+    // The per-parent read, when replies are fetched on their own.
+    parentIdx: index("idx_comments_parent").on(table.parentId, table.createdAt),
+  }),
+);
+
+export type CommentRow = typeof comments.$inferSelect;
+
+// One like per person per comment. The composite primary key *is* the
+// "already liked?" check: unlike a counter column, a duplicate insert is
+// impossible, so the toggle endpoint can never double-count a rapid second
+// click, and unlike a JSON array on `user_settings` (how the news stream's
+// `newsLiked` works) the count is a single indexed COUNT rather than a read,
+// a parse and a rewrite of every id that user has ever liked.
+export const commentLikes = sqliteTable(
+  "comment_likes",
+  {
+    commentId: text("comment_id")
+      .notNull()
+      .references(() => comments.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.commentId, table.userId] }),
+    commentIdx: index("idx_comment_likes_comment").on(table.commentId),
+  }),
+);
+
+export type CommentLikeRow = typeof commentLikes.$inferSelect;
+
+// A forum thread: the title and opening post a member writes, with the replies
+// underneath it stored as ordinary comments keyed on this row's id
+// (`resource_type = 'thread'`). Deliberately not a second comment table — a
+// forum reply is the same object as a reply under a video, so it inherits the
+// nesting, the like toggle and the soft delete above rather than growing a
+// parallel implementation that would drift from it.
+//
+// `lastActivityAt` is the feed's sort key, and it is written on every reply
+// (see `lib/forums/queries.ts#touchThreadActivity`) rather than computed as
+// `max(comments.created_at)` at read time: the forum's front page is ordered by
+// it on every request, and a column an index can carry costs one write per
+// reply to save a sort over the whole table per read. It is seeded with the
+// row's own `created_at`, so a thread nobody has replied to sorts exactly where
+// a thread created at that moment should — newest — rather than at whichever
+// end of the index a NULL lands on.
+export const forumThreads = sqliteTable(
+  "forum_threads",
+  {
+    /** A UUID minted by the API, like every other id a reader could type. */
+    id: text("id").primaryKey(),
+    /** The one line that names the thread; capped at `MAX_THREAD_TITLE_LENGTH`. */
+    title: text("title").notNull(),
+    /** The opening post. */
+    body: text("body").notNull(),
+    authorId: text("author_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    /** Set when the author removes the thread; the row stays, the feed skips it. */
+    deletedAt: integer("deleted_at", { mode: "timestamp" }),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    /**
+     * When the thread was last posted to, which is the order the feed reads in.
+     * Seeded with the row's own creation time rather than left to the column
+     * default, so the two can never disagree about when a thread was opened.
+     */
+    lastActivityAt: integer("last_activity_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    // The feed: one page of threads, most recently posted to first, and the
+    // cursor walk that pages through it. `id` is in the index for the tie-break
+    // — two threads posted in the same second have no other order between them.
+    activityIdx: index("idx_forum_threads_activity").on(table.lastActivityAt, table.id),
+    authorIdx: index("idx_forum_threads_author").on(table.authorId, table.createdAt),
+  }),
+);
+
+export type ForumThreadRow = typeof forumThreads.$inferSelect;
+
+// Practice Partners — debaters volunteering to be challenged to a virtual
+// practice round, or to judge one, and the challenges between them. The wire
+// format and the option lists live in `debate-webview/lib/practice-partners`;
+// the queries are `lib/practice-partners/queries.ts`.
+//
+// One profile per account, keyed on the user. The two roles are real columns
+// because the board's read filters on them; the preferences are a JSON payload
+// (`PracticePreferences`) because nothing queries inside them and the option
+// lists will grow. A profile with both roles off stays, hidden, so switching
+// back on does not cost the debater their preferences.
+export const practiceProfiles = sqliteTable(
+  "practice_profiles",
+  {
+    userId: text("user_id")
+      .primaryKey()
+      .references(() => user.id, { onDelete: "cascade" }),
+    asCompetitor: integer("as_competitor", { mode: "boolean" }).notNull().default(false),
+    asJudge: integer("as_judge", { mode: "boolean" }).notNull().default(false),
+    /** `PracticePreferences` as JSON — formats, styles, speed, level, availability, note. */
+    preferences: text("preferences").notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    updatedIdx: index("idx_practice_profiles_updated").on(table.updatedAt),
+  }),
+);
+
+export type PracticeProfileRow = typeof practiceProfiles.$inferSelect;
+
+// A challenge from one debater to another, with an optional judge seat. Rows
+// are never deleted by the feature — a declined or cancelled challenge is a
+// status — so the history of who asked whom survives for moderation. The judge
+// is `set null` on account deletion rather than cascading: losing a judge
+// should empty the seat, not delete the round the two debaters agreed to.
+export const practiceChallenges = sqliteTable(
+  "practice_challenges",
+  {
+    /** A UUID minted by the API. */
+    id: text("id").primaryKey(),
+    challengerId: text("challenger_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    opponentId: text("opponent_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    judgeId: text("judge_id").references(() => user.id, { onDelete: "set null" }),
+    /** `invited` | `confirmed`, or null with no judge. */
+    judgeStatus: text("judge_status"),
+    /** `pending` | `accepted` | `declined` | `cancelled`. */
+    status: text("status").notNull().default("pending"),
+    format: text("format").notNull(),
+    topic: text("topic").notNull(),
+    message: text("message").notNull().default(""),
+    proposedAt: integer("proposed_at", { mode: "timestamp" }),
+    /** The webcam room code everyone in the round joins. */
+    roomId: text("room_id").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    challengerIdx: index("idx_practice_challenges_challenger").on(table.challengerId, table.status),
+    opponentIdx: index("idx_practice_challenges_opponent").on(table.opponentId, table.status),
+    judgeIdx: index("idx_practice_challenges_judge").on(table.judgeId),
+    // "Rounds needing a judge": accepted, no judge, newest first.
+    openIdx: index("idx_practice_challenges_open").on(table.status, table.judgeId, table.createdAt),
+  }),
+);
+
+export type PracticeChallengeRow = typeof practiceChallenges.$inferSelect;

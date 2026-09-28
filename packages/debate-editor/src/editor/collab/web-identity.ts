@@ -110,7 +110,9 @@ export interface WebKeyProof {
 /** Sign the server's canonical payload for `purpose` ('connect' |
  *  'renew'). Fresh timestamp each call; the server enforces the skew
  *  window and that the spki hash matches the routing code. */
-export async function signWebProof(purpose: 'connect' | 'renew'): Promise<WebKeyProof> {
+export async function signWebProof(
+  purpose: 'connect' | 'renew' | 'disconnect',
+): Promise<WebKeyProof> {
   const { keyPair, spki } = await loadOrCreate();
   const rc = await webRoutingCode();
   const ts = Math.floor(Date.now() / 1000);
