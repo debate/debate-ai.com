@@ -17,6 +17,7 @@ import {
   findEntriesBySourceUrl,
   getEvidenceStaleness,
   getReuseCheckLogPurgeCutoff,
+  getSampleEvidenceLibraryEntries,
   getStaleEvidenceEntries,
   normalizeSourceUrl,
   REUSE_CHECK_LOG_RETENTION_DAYS,
@@ -673,5 +674,35 @@ describe("getReuseCheckLogPurgeCutoff", () => {
     const freshRecord = logRecord({ checkedAt: cutoff + 1 });
     expect(expiredRecord.checkedAt < cutoff).toBe(true);
     expect(freshRecord.checkedAt < cutoff).toBe(false);
+  });
+});
+
+describe("getSampleEvidenceLibraryEntries", () => {
+  it("returns one card and one block sample", () => {
+    const samples = getSampleEvidenceLibraryEntries();
+    expect(samples).toHaveLength(2);
+    expect(samples.filter((entry) => entry.kind === "card")).toHaveLength(1);
+    expect(samples.filter((entry) => entry.kind === "block")).toHaveLength(1);
+  });
+
+  it("every sample has a non-blank argBlock, text, topic, and caseArea", () => {
+    for (const entry of getSampleEvidenceLibraryEntries()) {
+      expect(entry.argBlock.trim()).not.toBe("");
+      expect(entry.text.trim()).not.toBe("");
+      expect(entry.topic.trim()).not.toBe("");
+      expect(entry.caseArea.trim()).not.toBe("");
+    }
+  });
+
+  it("the block sample has a blank cite, matching a real block entry's convention", () => {
+    const block = getSampleEvidenceLibraryEntries().find((entry) => entry.kind === "block");
+    expect(block?.cite).toBe("");
+  });
+
+  it("returns a fresh array each call rather than a shared mutable reference", () => {
+    const first = getSampleEvidenceLibraryEntries();
+    const second = getSampleEvidenceLibraryEntries();
+    expect(first).not.toBe(second);
+    expect(first).toEqual(second);
   });
 });
