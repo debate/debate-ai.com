@@ -3862,7 +3862,7 @@ index cbf4cb0..8f733a0 100644
      copyBtn.type = 'button';
      copyBtn.className = 'pmd-settings-btn';
 diff --git a/src/editor/style.css b/src/editor/style.css
-index 19ab630..2131f7e 100644
+index 19ab630..1e0b990 100644
 --- a/src/editor/style.css
 +++ b/src/editor/style.css
 @@ -585,7 +585,15 @@ button {
@@ -4625,11 +4625,12 @@ index 19ab630..2131f7e 100644
    margin-top: 0.3rem;
    padding-top: 0;
    border-top: none;
-@@ -6948,10 +7227,111 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+@@ -6948,8 +7227,109 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
    cursor: pointer;
  }
  
 -.pmd-readers-add:hover {
+-  background: var(--pmd-c-hover);
 +.pmd-readers-add:hover {
 +  background: var(--pmd-c-hover);
 +}
@@ -4727,17 +4728,15 @@ index 19ab630..2131f7e 100644
 +}
 +
 +.pmd-dictionary-delete:hover {
-   background: var(--pmd-c-hover);
- }
- 
++  background: var(--pmd-c-hover);
++}
++
 +.pmd-dictionary-empty {
 +  font-size: 0.85rem;
 +  opacity: 0.7;
-+}
-+
+ }
+ 
  /* Word Count modal */
- .pmd-wc-scope {
-   margin: 0 0 0.75rem 0;
 @@ -10430,6 +10810,7 @@ body.pmd-recovery-active.pmd-multi-doc #app {
     Diverge by pulling a selector out, not by re-copying. */
  .pmd-qcs-badge-settings,
@@ -5133,10 +5132,11 @@ index 19ab630..2131f7e 100644
  /* Small corner chip shown while the benchmark drives the (visible) editor. */
  .pmd-bench-chip {
    position: fixed;
-@@ -16300,4 +17025,71 @@ body.pmd-multi-doc #collab-chip {
-   border-radius: 0.6rem;
+@@ -16301,3 +17026,72 @@ body.pmd-multi-doc #collab-chip {
    pointer-events: none;
    z-index: 4;
+ }
++
 +/* ═══════════════════════════════════════════════ Narrow chrome ═══
 +
 +   The desktop chrome's two left sidebars are FIXED-WIDTH, and `#app`
@@ -5204,7 +5204,7 @@ index 19ab630..2131f7e 100644
 +body.pmd-narrow-chrome:not(.pmd-mobile) .pmd-recovery-sidebar {
 +  left: 0;
 +  width: min(var(--pmd-recovery-width), 85%);
- }
++}
 diff --git a/src/editor/ui-tour.ts b/src/editor/ui-tour.ts
 index 2c0055a..f3cc250 100644
 --- a/src/editor/ui-tour.ts
