@@ -37,19 +37,44 @@ into a real, possibly-empty result. See `getSampleDrillSets` in
 `packages/debate-practice-drills/src/panels/DrillSetsPanel.tsx`. The REASON
 editor's file tree remains the last open follow-up from this ask.
 
-Known blocker (unrelated to the above): a full monorepo `bun run test` run
-currently fails ~89 tests across 22 files, all with
-`ENOENT: .../apps/debate-ai.com/drizzle/0003_dark_zarek.sql` or similar —
-commit `39076f1` (".") added `drizzle/` to `.gitignore` and removed every
-tracked migration file under `apps/debate-ai.com/drizzle/`, which every
-test that spins up an in-memory D1/libSQL db by replaying those migrations
-depends on. This same directory was accidentally deleted and restored once
-already (`2566e0d` / `d58d57f`), so this looks like a repeat of that
-accident rather than an intentional change — worth a maintainer decision
-(restore the tracked migrations, or migrate every affected test to a
-different fixture strategy) rather than a silent restore from an
-autonomous run. Unrelated to `debate-search-evidence`, whose own suite
-(1298 tests) and typecheck are unaffected and pass in full.
+Fixed (infra, unrelated to the sample-data slices above): `apps/debate-ai.com/drizzle/`
+had been deleted from the tracked tree a third time (commit `d6d1bb8`,
+"Delete apps/debate-ai.com/drizzle directory" — the same accident as
+`2566e0d`/`d58d57f` and `39076f1`/`53656dd` before it, always an
+unreviewed direct-to-mainline commit with no explanation), so every test
+that boots an in-memory D1/libSQL db by replaying those migrations failed
+with `ENOENT`. Restored all 68 migration files + `meta/` snapshots from the
+last known-good restore (`53656dd`), then ran `bun run db:generate` to add
+migration `0037_daffy_prowler.sql` for schema drift that had accumulated
+since that restore without a matching migration (`detected_urls`,
+`forum_threads`, `practice_profiles`, `practice_challenges` — the last two
+are the Practice Partners feature's tables). `bun run db:generate` now
+reports "No schema changes, nothing to migrate", confirming `schema.ts` and
+`drizzle/` are back in sync. Also fixed, found while verifying this: a
+missing `}` on `.pmd-reader-page-indicator` in
+`packages/debate-editor/src/editor/style.css` (line 17016) broke postcss
+and failed `bun run build` outright for both `debate-ai-web` and
+`debate-web-ext` — unrelated to the migrations but a hard build blocker,
+so fixed in the same PR rather than filed separately.
+
+With both fixes: `bun run typecheck` (25/25 packages), `bun run test`
+(10574 passed, 2 pre-existing unrelated failures, see below), and
+`bun run build` all pass (submodules must be initialized —
+`git submodule update --init` — for `debate-rankings-adapter` and
+`debate-editor-cm-adapter`'s own suites/typecheck; CI already does this via
+`checkout@v4`'s `submodules: true`).
+
+Two pre-existing, unrelated test failures remain (confirmed present before
+this PR's changes; not migration- or CSS-related) and are good small
+follow-ups:
+- `test/host/routes.test.ts` ("has an entry for every page the web app
+  serves") — the Practice Partners feature (schema in `b099ae9`) added
+  `app/practice-partners/page.tsx` but never registered `/practice-partners`
+  in `packages/debate-webview`'s route table.
+- `apps/debate-ai.com/lib/__tests__/docs-links-consistency.test.ts` — 26
+  dead links in `packages/debate-help-docs/content/docs/**` to
+  `internals/tool-data-sync.mdx` and a handful of other not-yet-written
+  internals pages, plus two `/docs/packages` index links.
 
 
 
