@@ -114,6 +114,15 @@ bun run build:firefox && bun run zip   # Firefox equivalents
 Bump `version` in `package.json` first — a store rejects an upload whose version
 is not higher than the last.
 
+Chrome rejects MV3 code that can load a script from the network ("remotely
+hosted code"), and several libraries `debate-webview` bundles do (mermaid,
+KaTeX, jsPDF from CDNs; video-host SDKs from react-player). The build's
+`vite/no-remote-code.ts` plugin rewrites every such URL: npm CDN scripts are
+copied out of the installed package into `vendor/` and loaded from the
+extension, and anything with no local copy is pointed at a path that is never
+shipped, so it fails to load instead of fetching. The build prints a warning
+for each one it disables.
+
 | Store | Upload | What you need |
 | --- | --- | --- |
 | Chrome Web Store | [Developer Dashboard](https://chrome.google.com/webstore/devconsole) | A developer account (one-time $5 registration fee) and the `chrome-mv3` zip. |

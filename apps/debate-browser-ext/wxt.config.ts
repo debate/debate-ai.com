@@ -1,9 +1,24 @@
 import { fileURLToPath } from 'node:url';
 import { defineConfig, type WxtUnimportOptions } from 'wxt';
+import { createPackageFileResolver, noRemoteCode } from './vite/no-remote-code';
 
 /** A file inside the `debate-webview` package. */
 const webui = (path: string) =>
-  fileURLToPath(new URL(`../../packages/debate-ai-webui/${path}`, import.meta.url));
+  fileURLToPath(new URL(`../../packages/debate-webview/${path}`, import.meta.url));
+
+/**
+ * Where the CDN scripts that `debate-webview`'s libraries would fetch are
+ * found locally instead (see vite/no-remote-code.ts): this app, the webview
+ * package, the feature package that owns the editor, and the repo root.
+ */
+const resolveLocalPackageFile = createPackageFileResolver(
+  fileURLToPath(new URL('../../', import.meta.url)),
+  [
+    fileURLToPath(new URL('./', import.meta.url)),
+    webui(''),
+    fileURLToPath(new URL('../../packages/debate-editor/', import.meta.url)),
+  ]
+);
 
 /**
  * The AI provider APIs the article panel calls directly when the reader has
@@ -46,6 +61,9 @@ export default defineConfig({
   // bundle is "invalid hook call", so `react`/`react-dom` resolve once, from
   // this app.
   vite: () => ({
+    // Chrome Web Store: no remotely hosted code. Every CDN script URL the
+    // bundled libraries carry is pointed at a copy shipped in the extension.
+    plugins: [noRemoteCode(resolveLocalPackageFile)],
     define: {
       // The app reads a few `NEXT_PUBLIC_*` values that Next inlines at build
       // time; everything else in `process.env` is simply absent here.
