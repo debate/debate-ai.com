@@ -28,6 +28,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "debate-webview": "workspace:*",
+    "jspdf": "2.5.2",
     "lucide-react": "^0.454.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
