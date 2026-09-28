@@ -176,6 +176,83 @@ follow-ups:
   `internals/tool-data-sync.mdx` and a handful of other not-yet-written
   internals pages, plus two `/docs/packages` index links.
 
+Both of the above are now fixed on `master` (`/practice-partners` was
+registered in `482c7cd`; the dead-link count dropped to zero once the linked
+pages were restored) — confirmed by re-running both test files in this PR
+before picking a new slice. The REASON editor's file-tree empty state
+(`a1e8549`) is also already done; its own TODO.md paragraph got dropped by a
+merge-conflict resolution in `66ddc1d` that kept only the concurrent Coach
+Materials paragraph, but the code (`getSampleReasonDocuments`,
+`FileTree.tsx`'s sample-tree branch) is intact on `master` — noted here only
+so a future run doesn't re-implement it from a stale-looking tracker.
+
+Done (fifth slice, `/settings` → `/tools` link): of the two intentionally
+deferred items above, took the smaller, unambiguous option for the first one
+rather than waiting on a product decision. `/settings` (CardMirror-editor
+settings only, see that page's own doc comment) had nothing pointing a
+visitor to `/tools`, where favourite tools and `ToolSyncStatusPanel`'s
+account sync status actually live now — a real gap, not a re-litigation of
+the intentional redesign. Added `SettingsToolsLink`
+(`packages/debate-webview/src/components/settings/SettingsToolsLink.tsx`), a
+small bordered link card rendered at the top of `/settings`, above
+`CardMirrorSettingsPanel`, saying tool preferences/sync status live on the
+Tools page and linking there. Duplicates no state — it only links across.
+Also updated `internals/tool-data-sync.mdx`'s own note about this, which
+still said the sync was "unobservable from inside the app" despite its own
+**Known gaps** entry below marking that ~~Fixed~~ once `ToolSyncStatusPanel`
+landed on `/tools`. The second deferred item (per-item delete/manage in "My
+Saved Items") is still open and still UI-design-sized — not touched here.
+
+Fixed (infra, unrelated to the slice above, found while running the full
+verification gate): `apps/debate-ai.com/drizzle/` had been deleted from the
+tracked tree a *fourth* time (commit `1a2cbbf`, "Delete
+apps/debate-ai.com/drizzle directory" — same pattern as `2566e0d`/`d58d57f`,
+`39076f1`/`53656dd`, and most recently `1fb937a`'s restore before `de88ca2`
+fixed it a third time — always an unreviewed direct-to-mainline commit),
+breaking every test that boots an in-memory D1/libSQL db by replaying those
+migrations (87 tests across 15 files, all `ENOENT`). Restored all 58
+migration files + `meta/` snapshots from the last known-good restore
+(`de88ca2`), then ran `bun run db:generate` to add migration
+`0038_redundant_darkhawk.sql` for schema drift accumulated since then
+without a matching migration (`team_assignments`, `team_students`,
+`usage_counters` — all new, additive tables). `bun run db:generate` now
+reports "No schema changes, nothing to migrate". With this fix: `bun run
+typecheck` (25/25 packages) and `bun run test` (10617 passed, 1 skipped, 0
+failed) both pass clean.
+
+Two more pre-existing, unrelated failures found while running `bun run
+build` for this PR's verification (confirmed present on `master` before this
+PR's changes, by stashing this PR's diff and re-running); both are
+too large to fix as part of this slice and are good candidates for their own
+PRs:
+- **`debate-web-ext` (`apps/debate-browser-ext`) fails to build entirely.**
+  Root cause: `packages/debate-ai-webui` — the `next/link`, `next/navigation`
+  and `next/image` shim package `apps/debate-browser-ext/wxt.config.ts`
+  aliases those imports to when bundling the Options page outside Next.js —
+  was deleted wholesale from the tracked tree (commit `3811cc9`, hundreds of
+  files: the shims plus a full admin-dashboard component set,
+  `src/components/admin/*`). Unlike the drizzle directory, restoring this
+  package is a large, separate change (hundreds of files, real application
+  code that may have drifted from what depends on it since deletion) and
+  deserves its own PR and review, not a drive-by fix bundled with unrelated
+  work. `bun run build` (which excludes `debate-flow`/`debate-flow-ebb`/
+  `debate-help-docs` but not this) fails on this; CI's `test.yml` doesn't run
+  `bun run build` at all, so this hasn't been blocking merges.
+- **`debate-ai-web`'s own production build fails too, separately**: `vinext
+  build` crashes with `RangeError: Maximum call stack size exceeded` inside
+  `fumadocs-mdx`'s markdown stringifier while processing several
+  `packages/debate-help-docs/content/docs/features/*.mdx` pages
+  (`argument-library-collections.mdx`, `app-nav-dock.mdx`,
+  `argument-tree-outline.mdx` seen so far in the log — there may be more).
+  The stack trace is recursive through `mdast-util-to-markdown`'s `strong`
+  (bold) handler, suggesting one of those pages has a malformed or
+  deeply/self-nested `**bold**` construct fumadocs' MDX pipeline can't
+  stringify. Needs someone to bisect which page and construct triggers it
+  (a `git bisect` over `packages/debate-help-docs/content/docs/features/`
+  edits, or trimming each flagged page until the crash stops) and fix the
+  markdown, not the pipeline. Also not caught by CI today for the same
+  reason as the item above.
+
 
 
 # Ideas for New Contributors
