@@ -48,9 +48,12 @@
  * via the generic `saved_tool_records` mechanism, the same gap again.
  * CardMirror's Quick Cards reusable-snippet library (`/reason-editor`)
  * joined next — already saved per-user in `saved_quick_cards`, the same gap
- * again. Prep Notes' live per-argument notes (`/prep-notes`) joined last —
+ * again. Prep Notes' live per-argument notes (`/prep-notes`) joined next —
  * already synced per-user via the generic `saved_tool_records` mechanism,
- * the same gap again.
+ * the same gap again. The Evidence Library's cut cards and reusable
+ * analytic blocks (`/cards/library`) joined last — already synced per-user
+ * (per-browser submissions only, not the shared search index) via the same
+ * generic mechanism, the same gap again.
  *
  * Previously also fetched all three endpoints itself via a bare
  * `Promise.all(...).then(r => r.json())` with no error handling. `/api/flows`
@@ -66,7 +69,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { BarChart3, Bot, CalendarClock, ClipboardList, Crosshair, Dumbbell, FileText, Flag, Landmark, Layers, ListTree, MapPin, NotebookPen, PlayCircle, Scissors, Send, Sparkles, Type } from "lucide-react"
+import { BarChart3, Bot, CalendarClock, ClipboardList, Crosshair, Dumbbell, FileText, Flag, Landmark, Layers, Library, ListTree, MapPin, NotebookPen, PlayCircle, Scissors, Send, Sparkles, Type } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardDescription } from "../../lib/ui/primitives/card"
 import { useSession } from "../../lib/hooks/useSession"
 import { fetchRecentCloudItems, formatRelativeCloudTime, type CloudLibraryItem, type CloudLibraryItemKind } from "debate-round"
@@ -113,6 +116,10 @@ const KIND_ICON: Record<CloudLibraryItemKind, typeof FileText> = {
   quickCard: Scissors,
   // Matches Prep Notes' own icon in `app/tools/tool-groups.ts`.
   prepNote: NotebookPen,
+  // No standalone /tools entry to match — the Evidence Library is the
+  // default view of the Research Workspace's `/cards` route. Matches the
+  // Research Workspace's own icon in `app/tools/tool-groups.ts`.
+  evidenceLibraryEntry: Library,
 }
 
 export function MySavedItems() {

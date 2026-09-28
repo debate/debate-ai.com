@@ -134,6 +134,25 @@
  * discoverability not" gap applied here too — a note left on one device
  * stayed invisible from this widget on another.
  *
+ * A nineteenth kind, the Evidence Library's cut cards and reusable analytic
+ * blocks (`/cards/library`), joined last: an `EvidenceLibraryEntry`
+ * (`debate-research-evidence`'s own `lib/shared-evidence-library.ts`,
+ * persisted per-browser by `state/evidenceLibraryEntries.ts`, since — per
+ * that module's own header comment — "the persisted `localStorage`
+ * repository only sees entries saved in this one browser") already synced a
+ * signed-in user's own submitted entries via `debate-data-sync`'s generic
+ * `TOOL_RECORD_COLLECTIONS` mechanism (the `evidenceLibraryEntries`
+ * collection, backed by `saved_tool_records` like
+ * {@link CloudPrepNoteSummary}), but the same "sync wired, discoverability
+ * not" gap applied here too — a card or block cut on one device stayed
+ * invisible from this widget on another, discoverable only from inside the
+ * Evidence Library's own search panel. Unlike the shared, server-backed
+ * search index the same panel also queries, this is what one signed-in
+ * user has personally submitted, so it fits this widget's existing "things
+ * you saved" shape rather than the "bulk content library" shape earlier
+ * entries below correctly excluded (e.g. `saved_tournament_results`,
+ * admin-entered standings with no per-user submitter).
+ *
  * Kept framework/fetch-free, matching `state/savedFlows.ts`/
  * `state/savedRounds.ts`'s split — `apps/debate-ai.com` has no vitest
  * project of its own (see `vitest.config.ts`'s `projects` list), so any
@@ -393,6 +412,26 @@ export type CloudQuickCardSummary = {
  */
 export type CloudPrepNoteSummary = Pick<PrepNote, "id" | "text" | "updatedAt">;
 
+/**
+ * The subset of an `EvidenceLibraryEntry` (`debate-research-evidence`) a
+ * caller needs to list one in the merged view — mirrors
+ * `GET /api/tool-records/evidenceLibraryEntries`'s row shape (full records,
+ * like {@link CloudFlowAnnotationSummary}; the generic tool-records route has
+ * no label-only summary mode). Defined locally rather than importing
+ * `EvidenceLibraryEntry` itself, matching {@link CloudLearnDeckSummary}'s own
+ * local-type convention: this type mirrors the wire shape rather than that
+ * package's own internal type. `cite` is blank for a `block`-kind entry (see
+ * that type's own doc comment), so `argBlock` is this type's fallback label
+ * field, and `createdAt` is optional since an entry persisted before that
+ * field existed still parses.
+ */
+export type CloudEvidenceLibraryEntrySummary = {
+  id: string;
+  cite: string;
+  argBlock: string;
+  createdAt?: number;
+};
+
 export type CloudLibraryItemKind =
   | "document"
   | "flow"
@@ -411,7 +450,8 @@ export type CloudLibraryItemKind =
   | "customOpponentPersona"
   | "flowAnnotation"
   | "quickCard"
-  | "prepNote";
+  | "prepNote"
+  | "evidenceLibraryEntry";
 
 export interface CloudLibraryItem {
   kind: CloudLibraryItemKind;
@@ -464,6 +504,7 @@ export interface BuildRecentCloudItemsInput {
   flowAnnotations?: CloudFlowAnnotationSummary[];
   quickCards?: CloudQuickCardSummary[];
   prepNotes?: CloudPrepNoteSummary[];
+  evidenceLibraryEntries?: CloudEvidenceLibraryEntrySummary[];
 }
 
 export interface BuildRecentCloudItemsOptions {
@@ -489,6 +530,7 @@ export interface BuildRecentCloudItemsOptions {
   flowAnnotationHref?: string;
   quickCardHref?: string;
   prepNoteHref?: string;
+  evidenceLibraryEntryHref?: string;
 }
 
 /**
@@ -523,6 +565,7 @@ export function buildRecentCloudItems(
     flowAnnotationHref = "/annotations",
     quickCardHref = "/reason-editor",
     prepNoteHref = "/prep-notes",
+    evidenceLibraryEntryHref = "/cards/library",
   } = opts;
 
   const documentItems: CloudLibraryItem[] = (input.documents ?? []).slice(0, perKindLimit).map((doc) => ({
@@ -704,6 +747,16 @@ export function buildRecentCloudItems(
       updatedAtMs: parseCloudTimestamp(note.updatedAt),
     }));
 
+  const evidenceLibraryEntryItems: CloudLibraryItem[] = (input.evidenceLibraryEntries ?? [])
+    .slice(0, perKindLimit)
+    .map((entry) => ({
+      kind: "evidenceLibraryEntry" as const,
+      key: `evidenceLibraryEntry-${entry.id}`,
+      href: evidenceLibraryEntryHref,
+      label: entry.cite?.trim() || entry.argBlock?.trim() || "Untitled evidence entry",
+      updatedAtMs: parseCloudTimestamp(entry.createdAt ?? 0),
+    }));
+
   return [
     ...documentItems,
     ...flowItems,
@@ -723,6 +776,7 @@ export function buildRecentCloudItems(
     ...flowAnnotationItems,
     ...quickCardItems,
     ...prepNoteItems,
+    ...evidenceLibraryEntryItems,
   ]
     .sort((a, b) => b.updatedAtMs - a.updatedAtMs)
     .slice(0, limit);
