@@ -88,6 +88,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   dailyMissionResults: "id",
   questTeams: "id",
   contributorAwardNominations: "id",
+  judgeAwards: "id",
   unlockCelebrations: "id",
   dailyBestCardAnnouncements: "dayKey",
   contributorAwardAnnouncements: "dayKey",

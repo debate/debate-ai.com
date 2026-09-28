@@ -81,7 +81,7 @@ export const DEBATER_CHALLENGES: DebaterChallenge[] = [
   {
     id: "daily-cut-5-cards",
     title: "Cut 5 cards",
-    description: "Cut and save five cards today.",
+    description: "Cut and save five cards today — five more warrants ready to read in round.",
     activity: "card_cut",
     target: 5,
     xpReward: 100,
@@ -90,7 +90,7 @@ export const DEBATER_CHALLENGES: DebaterChallenge[] = [
   {
     id: "daily-redo-rebuttal",
     title: "Redo a rebuttal",
-    description: "Re-deliver a rebuttal you've already given, tighter this time.",
+    description: "Give a rebuttal you've already delivered one more time — fewer words, cleaner extensions, better weighing.",
     activity: "rebuttal_redo",
     target: 1,
     xpReward: 75,
@@ -99,7 +99,7 @@ export const DEBATER_CHALLENGES: DebaterChallenge[] = [
   {
     id: "daily-drills-3",
     title: "Practice 3 drills",
-    description: "Mark three drills practiced today.",
+    description: "Run three drills today. Reps now are speed and polish when the round counts.",
     activity: "drill_practiced",
     target: 3,
     xpReward: 75,
@@ -108,7 +108,7 @@ export const DEBATER_CHALLENGES: DebaterChallenge[] = [
   {
     id: "daily-practice-round",
     title: "Finish a practice round",
-    description: "Debate a full round against the AI today.",
+    description: "Debate a full round against the AI today, from the first constructive to the last rebuttal.",
     activity: "practice_round",
     target: 1,
     xpReward: 100,

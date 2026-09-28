@@ -570,6 +570,17 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     section: "Team",
   },
   {
+    key: "judgeAwards",
+    storageKey: "judgeAwards",
+    idField: "id",
+    // Judge-given awards (Most Improved, Best Speaker, …) —
+    // `debate-contributor-progress/src/state/judgeAwards.ts`. They show on the
+    // debater's `/cards/leaderboard/{id}` page, so this points there.
+    label: "Judge Awards",
+    href: "/cards/leaderboard",
+    section: "Team",
+  },
+  {
     key: "unlockCelebrations",
     storageKey: "unlockCelebrationSeenBadges",
     idField: "id",

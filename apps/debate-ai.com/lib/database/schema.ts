@@ -2130,3 +2130,79 @@ export const forumThreads = sqliteTable(
 );
 
 export type ForumThreadRow = typeof forumThreads.$inferSelect;
+
+// Practice Partners — debaters volunteering to be challenged to a virtual
+// practice round, or to judge one, and the challenges between them. The wire
+// format and the option lists live in `debate-webview/lib/practice-partners`;
+// the queries are `lib/practice-partners/queries.ts`.
+//
+// One profile per account, keyed on the user. The two roles are real columns
+// because the board's read filters on them; the preferences are a JSON payload
+// (`PracticePreferences`) because nothing queries inside them and the option
+// lists will grow. A profile with both roles off stays, hidden, so switching
+// back on does not cost the debater their preferences.
+export const practiceProfiles = sqliteTable(
+  "practice_profiles",
+  {
+    userId: text("user_id")
+      .primaryKey()
+      .references(() => user.id, { onDelete: "cascade" }),
+    asCompetitor: integer("as_competitor", { mode: "boolean" }).notNull().default(false),
+    asJudge: integer("as_judge", { mode: "boolean" }).notNull().default(false),
+    /** `PracticePreferences` as JSON — formats, styles, speed, level, availability, note. */
+    preferences: text("preferences").notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    updatedIdx: index("idx_practice_profiles_updated").on(table.updatedAt),
+  }),
+);
+
+export type PracticeProfileRow = typeof practiceProfiles.$inferSelect;
+
+// A challenge from one debater to another, with an optional judge seat. Rows
+// are never deleted by the feature — a declined or cancelled challenge is a
+// status — so the history of who asked whom survives for moderation. The judge
+// is `set null` on account deletion rather than cascading: losing a judge
+// should empty the seat, not delete the round the two debaters agreed to.
+export const practiceChallenges = sqliteTable(
+  "practice_challenges",
+  {
+    /** A UUID minted by the API. */
+    id: text("id").primaryKey(),
+    challengerId: text("challenger_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    opponentId: text("opponent_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    judgeId: text("judge_id").references(() => user.id, { onDelete: "set null" }),
+    /** `invited` | `confirmed`, or null with no judge. */
+    judgeStatus: text("judge_status"),
+    /** `pending` | `accepted` | `declined` | `cancelled`. */
+    status: text("status").notNull().default("pending"),
+    format: text("format").notNull(),
+    topic: text("topic").notNull(),
+    message: text("message").notNull().default(""),
+    proposedAt: integer("proposed_at", { mode: "timestamp" }),
+    /** The webcam room code everyone in the round joins. */
+    roomId: text("room_id").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    challengerIdx: index("idx_practice_challenges_challenger").on(table.challengerId, table.status),
+    opponentIdx: index("idx_practice_challenges_opponent").on(table.opponentId, table.status),
+    judgeIdx: index("idx_practice_challenges_judge").on(table.judgeId),
+    // "Rounds needing a judge": accepted, no judge, newest first.
+    openIdx: index("idx_practice_challenges_open").on(table.status, table.judgeId, table.createdAt),
+  }),
+);
+
+export type PracticeChallengeRow = typeof practiceChallenges.$inferSelect;
