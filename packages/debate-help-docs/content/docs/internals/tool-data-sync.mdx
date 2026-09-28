@@ -510,6 +510,10 @@ each invisible until something renders them again — see **Known gaps**.
   surfaces with its tool's label and link, a signed-out-shaped
   `synced: false` with no `error` is not mistaken for one, a stale collection
   key is dropped, and multiple failures sort by label.
+- `packages/debate-webview/test/lib/tools/tool-sync-summary.test.ts` —
+  `ToolSyncSection`'s `summarizeToolSyncStatus`: the "syncing" sentence while
+  unreconciled regardless of a stale failure count, "all N tools" once
+  reconciled with none, and singular vs. plural failure wording.
 - `packages/debate-videos/test/video-library.test.ts` — favourites, hidden
   videos and reports, with the legacy bare-id format cases: a store written in
   the old format still reads, keeps its order, de-duplicates against the new
@@ -572,6 +576,11 @@ each invisible until something renders them again — see **Known gaps**.
   calling `setSignInPromptOptedOut(false)`. Both controls, and the state
   behind them, already existed — this is `/settings`' old **Tool data** list
   re-mounted at `/tools` instead, per this entry's own prior suggestion.
+  `/settings`' Preferences tab now also has a compact link back:
+  `components/settings/ToolSyncSection.tsx` renders the same `results` as one
+  status sentence (`lib/tools/tool-sync-summary.ts`'s `summarizeToolSyncStatus`)
+  and a link to `/tools`, so the sync is discoverable from Preferences without
+  duplicating the failure list or the **Sync now** button there.
 - ~~The 30-minute per-feature cooldown is per-browser-session, not
   per-account. It lives in `sessionStorage`, so a user who dismisses a
   prompt without opting out entirely is asked again about that feature in a
