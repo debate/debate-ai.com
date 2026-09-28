@@ -18,20 +18,19 @@ import {
   BookOpen,
   BookMarked,
   Calendar,
-  Code2,
   FileText,
   LayoutGrid,
   MessageCircle,
-  MessageSquare,
   Scale,
   Shield,
   type LucideIcon,
 } from "lucide-react";
+import { SiDiscord, SiGithub, SiReddit, type IconType } from "@icons-pack/react-simple-icons";
 
 export interface FooterLink {
   url: string;
   text: string;
-  icon: LucideIcon;
+  icon: LucideIcon | IconType;
   /** Which Settings-menu submenu this link belongs to: the site's own
    *  meta/legal links, or the outside debate community. */
   group: "site" | "debate";
@@ -59,8 +58,8 @@ export const FOOTER_LINKS: FooterLink[] = [
   // sidebar's own destinations — see `sidebar-routes.ts`) rather than
   // reloading into a bare page.
   // { url: "/features", text: "Features", icon: LayoutGrid, group: "site" },
-  { url: "https://github.com/debate", text: "Github", icon: Code2, group: "site" },
-  { url: "https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/", text: "Reddit", icon: MessageSquare, group: "debate" },
+  { url: "https://github.com/debate", text: "Github", icon: SiGithub, group: "site" },
+  { url: "https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/", text: "Reddit", icon: SiReddit, group: "debate" },
   // { url: "https://www.tabroom.com/index/index.mhtml", text: "Tournaments", icon: Calendar, group: "debate" },
   // { url: "https://opencaselist.com", text: "Research", icon: BookMarked, group: "debate" },
   { url: "https://discord.gg/wMxeKZ3c9e", text: "Support", icon: MessageCircle, group: "site" },
