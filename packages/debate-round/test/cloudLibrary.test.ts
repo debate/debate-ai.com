@@ -12,6 +12,7 @@ import {
   type CloudFlowAnnotationSummary,
   type CloudJudgeDecisionSummary,
   type CloudLearnDeckSummary,
+  type CloudPracticeRoundSummary,
   type CloudPrepNoteSummary,
   type CloudQuickCardSummary,
   type CloudRoundPairingSummary,
@@ -110,8 +111,11 @@ describe("buildRecentCloudItems", () => {
   const evidenceLibraryEntries: CloudEvidenceLibraryEntrySummary[] = [
     { id: "entry-1", cite: "Smith 24", argBlock: "Warming DA", createdAt: Date.parse("2026-09-12T00:00:00.000Z") },
   ];
+  const practiceRounds: CloudPracticeRoundSummary[] = [
+    { roundId: "round-13", createdAt: Date.parse("2026-09-13T00:00:00.000Z") },
+  ];
 
-  it("merges all nineteen kinds and sorts newest first", () => {
+  it("merges all twenty kinds and sorts newest first", () => {
     const items = buildRecentCloudItems(
       {
         documents,
@@ -133,10 +137,12 @@ describe("buildRecentCloudItems", () => {
         quickCards,
         prepNotes,
         evidenceLibraryEntries,
+        practiceRounds,
       },
-      { limit: 19 },
+      { limit: 20 },
     );
     expect(items.map((i) => i.kind)).toEqual([
+      "practiceRound",
       "evidenceLibraryEntry",
       "prepNote",
       "quickCard",
@@ -454,6 +460,23 @@ describe("buildRecentCloudItems", () => {
     expect(items[0]?.updatedAtMs).toBe(0);
   });
 
+  it("includes practice rounds, keyed and labeled by roundId", () => {
+    const items = buildRecentCloudItems({ practiceRounds });
+    expect(items).toEqual([
+      expect.objectContaining({
+        kind: "practiceRound",
+        key: "practiceRound-round-13",
+        label: "round-13",
+        updatedAtMs: Date.parse("2026-09-13T00:00:00.000Z"),
+      }),
+    ]);
+  });
+
+  it("treats a practice round with no createdAt as timestamp 0 rather than throwing", () => {
+    const items = buildRecentCloudItems({ practiceRounds: [{ roundId: "round-1" }] });
+    expect(items[0]?.updatedAtMs).toBe(0);
+  });
+
   it("includes flows — the gap this module closes: the widget previously omitted them entirely", () => {
     const items = buildRecentCloudItems({ documents: [], flows, rounds: [] });
     expect(items).toHaveLength(1);
@@ -482,8 +505,9 @@ describe("buildRecentCloudItems", () => {
         quickCards,
         prepNotes,
         evidenceLibraryEntries,
+        practiceRounds,
       },
-      { limit: 19 },
+      { limit: 20 },
     );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.href]));
     expect(byKind.document).toBe("/reason-editor");
@@ -505,6 +529,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.quickCard).toBe("/reason-editor");
     expect(byKind.prepNote).toBe("/prep-notes");
     expect(byKind.evidenceLibraryEntry).toBe("/cards/library");
+    expect(byKind.practiceRound).toBe("/practice-round");
 
     const overridden = buildRecentCloudItems({ flows }, { flowHref: "/custom-flow-route" });
     expect(overridden[0]?.href).toBe("/custom-flow-route");
@@ -586,6 +611,12 @@ describe("buildRecentCloudItems", () => {
       { evidenceLibraryEntryHref: "/custom-cards-library-route" },
     );
     expect(overriddenEvidenceLibraryEntry[0]?.href).toBe("/custom-cards-library-route");
+
+    const overriddenPracticeRound = buildRecentCloudItems(
+      { practiceRounds },
+      { practiceRoundHref: "/custom-practice-round-route-2" },
+    );
+    expect(overriddenPracticeRound[0]?.href).toBe("/custom-practice-round-route-2");
   });
 
   it("falls back to an untitled label per kind when the title/label/roundId/topic/speechKey is blank", () => {
@@ -626,8 +657,9 @@ describe("buildRecentCloudItems", () => {
         evidenceLibraryEntries: [
           { id: "entry-1", cite: "   ", argBlock: "   ", createdAt: Date.parse("2026-08-30T00:00:00.000Z") },
         ],
+        practiceRounds: [{ roundId: "   ", createdAt: Date.parse("2026-08-30T00:00:00.000Z") }],
       },
-      { limit: 19 },
+      { limit: 20 },
     );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.label]));
     expect(byKind.document).toBe("Untitled");
@@ -649,6 +681,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.quickCard).toBe("Untitled quick card");
     expect(byKind.prepNote).toBe("Untitled prep note");
     expect(byKind.evidenceLibraryEntry).toBe("Untitled evidence entry");
+    expect(byKind.practiceRound).toBe("Untitled practice round");
   });
 
   it("caps each kind to perKindLimit before merging", () => {
@@ -690,6 +723,7 @@ describe("buildRecentCloudItems", () => {
         quickCards: [],
         prepNotes: [],
         evidenceLibraryEntries: [],
+        practiceRounds: [],
       }),
     ).toEqual([]);
   });

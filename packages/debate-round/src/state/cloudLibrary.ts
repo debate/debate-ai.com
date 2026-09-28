@@ -153,6 +153,24 @@
  * entries below correctly excluded (e.g. `saved_tournament_results`,
  * admin-entered standings with no per-user submitter).
  *
+ * A twentieth kind, Practice Round Simulator's own saved rounds
+ * (`/practice-round`, distinct from `debates`'s Practice vs AI history and
+ * `drillSets`'s generated drill sets), joined next: `PracticeRoundRecord`s
+ * (`debate-round`'s own `state/practiceRounds.ts`, one row per simulated
+ * round keyed by `roundId`) already synced a signed-in user's round setup,
+ * feedback and judge decision via `debate-data-sync`'s generic
+ * `TOOL_RECORD_COLLECTIONS` mechanism (the `practiceRounds` collection,
+ * backed by `saved_tool_records` like {@link CloudEvidenceLibraryEntrySummary}),
+ * but the same "sync wired, discoverability not" gap applied here too — a
+ * round simulated on one device stayed invisible from this widget on
+ * another. Like a drill set or counsel-panel assessment, a practice round
+ * carries no separate display name of its own — it's keyed and shown by its
+ * own `roundId` everywhere else in the app (`PracticeRoundSimulatorPanel`),
+ * so this type is labeled by `roundId` like {@link CloudDrillSetSummary}
+ * rather than by a name field, and `createdAt` is optional for the same
+ * reason as that type's `updatedAt` — a round saved before that field
+ * existed still parses.
+ *
  * Kept framework/fetch-free, matching `state/savedFlows.ts`/
  * `state/savedRounds.ts`'s split — `apps/debate-ai.com` has no vitest
  * project of its own (see `vitest.config.ts`'s `projects` list), so any
@@ -167,6 +185,7 @@ import type { RoundPairingRecord } from "./roundPairings";
 import type { StrategyRecommendationRecord } from "./strategyRecommendations";
 import type { FlowAnnotation } from "../flow/flow-annotations";
 import type { PrepNote } from "../flow/strategy-sync-notes";
+import type { PracticeRoundRecord } from "./practiceRounds";
 
 /** The subset of `documents` a caller needs to list one in the merged view — mirrors `GET /api/doc/documents`'s row shape. */
 export type CloudDocumentSummary = {
@@ -432,6 +451,18 @@ export type CloudEvidenceLibraryEntrySummary = {
   createdAt?: number;
 };
 
+/**
+ * The subset of a `PracticeRoundRecord` (`debate-round`'s own
+ * `state/practiceRounds.ts`) a caller needs to list one in the merged
+ * view — mirrors `GET /api/tool-records/practiceRounds`'s row shape (full
+ * records, like {@link CloudEvidenceLibraryEntrySummary}; the generic
+ * tool-records route has no label-only summary mode). Imported directly
+ * rather than defined locally like the cross-package summary types above:
+ * `PracticeRoundRecord` already lives in this package, so there's no
+ * dependency edge to avoid.
+ */
+export type CloudPracticeRoundSummary = Pick<PracticeRoundRecord, "roundId" | "createdAt">;
+
 export type CloudLibraryItemKind =
   | "document"
   | "flow"
@@ -451,7 +482,8 @@ export type CloudLibraryItemKind =
   | "flowAnnotation"
   | "quickCard"
   | "prepNote"
-  | "evidenceLibraryEntry";
+  | "evidenceLibraryEntry"
+  | "practiceRound";
 
 export interface CloudLibraryItem {
   kind: CloudLibraryItemKind;
@@ -505,6 +537,7 @@ export interface BuildRecentCloudItemsInput {
   quickCards?: CloudQuickCardSummary[];
   prepNotes?: CloudPrepNoteSummary[];
   evidenceLibraryEntries?: CloudEvidenceLibraryEntrySummary[];
+  practiceRounds?: CloudPracticeRoundSummary[];
 }
 
 export interface BuildRecentCloudItemsOptions {
@@ -531,6 +564,7 @@ export interface BuildRecentCloudItemsOptions {
   quickCardHref?: string;
   prepNoteHref?: string;
   evidenceLibraryEntryHref?: string;
+  practiceRoundHref?: string;
 }
 
 /**
@@ -566,6 +600,7 @@ export function buildRecentCloudItems(
     quickCardHref = "/reason-editor",
     prepNoteHref = "/prep-notes",
     evidenceLibraryEntryHref = "/cards/library",
+    practiceRoundHref = "/practice-round",
   } = opts;
 
   const documentItems: CloudLibraryItem[] = (input.documents ?? []).slice(0, perKindLimit).map((doc) => ({
@@ -757,6 +792,16 @@ export function buildRecentCloudItems(
       updatedAtMs: parseCloudTimestamp(entry.createdAt ?? 0),
     }));
 
+  const practiceRoundItems: CloudLibraryItem[] = (input.practiceRounds ?? [])
+    .slice(0, perKindLimit)
+    .map((round) => ({
+      kind: "practiceRound" as const,
+      key: `practiceRound-${round.roundId}`,
+      href: practiceRoundHref,
+      label: round.roundId.trim() || "Untitled practice round",
+      updatedAtMs: parseCloudTimestamp(round.createdAt ?? 0),
+    }));
+
   return [
     ...documentItems,
     ...flowItems,
@@ -777,6 +822,7 @@ export function buildRecentCloudItems(
     ...quickCardItems,
     ...prepNoteItems,
     ...evidenceLibraryEntryItems,
+    ...practiceRoundItems,
   ]
     .sort((a, b) => b.updatedAtMs - a.updatedAtMs)
     .slice(0, limit);
