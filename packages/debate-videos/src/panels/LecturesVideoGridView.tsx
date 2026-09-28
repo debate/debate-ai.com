@@ -14,7 +14,6 @@ import type { CategoryType, TopicType, VideoFacets, VideoSuggestions } from "../
 import type { LectureCategoryFacet, VideoType } from "../types/videos"
 import { Footer } from "../ui/layout/footer"
 import { ResizableSidebarLayout } from "../ui/layout/ResizableSidebarLayout"
-import { FloatingVideoSearch } from "../components/video-search/FloatingVideoSearch"
 import { VideoSearchBar } from "../components/video-search/VideoSearchBar"
 import { VideoSearchSuggestions } from "../components/video-search/VideoSearchSuggestions"
 import { getSearchPhrases } from "../components/video-search/searchPhrases"
@@ -321,8 +320,8 @@ export function LecturesVideoGridView({
     // Persistent left sidebar (md+): app dock, video categories, lecture
     // categories, footer — in the shared drag-resizable column
     // (`ResizableSidebarLayout`), so its width matches the rest of the app's.
-    // The search and filter controls are deliberately not here — they float
-    // over the results panel instead (`FloatingVideoSearch`), which is what
+    // The search and filter controls are deliberately not here — they sit at
+    // the top of the results panel instead, which is what
     // lets this column be the same column on the glossary and rankings pages,
     // where there is nothing to search. The dock arrives in `dockSlot` already
     // sized to the column rather than to its own contents, so it can't reach
@@ -352,13 +351,6 @@ export function LecturesVideoGridView({
         </>
       }
     >
-        {/* The one instance of the search and filter controls, on every
-            breakpoint: an icon in the top-right corner of this panel that
-            opens on hover, on tap and on focus. It is `sticky` with no height,
-            so it follows the scroll without moving the grid down. */}
-        <FloatingVideoSearch keepOpen={!!searchTerm || isSearchFocused}>
-          {searchBarNode}
-        </FloatingVideoSearch>
 
         {/* Mobile-only nav (sidebar above is md+ only) */}
         <div className="md:hidden">
@@ -394,14 +386,19 @@ export function LecturesVideoGridView({
 
         <div ref={videosSectionRef} className="scroll-mt-20" />
 
-        {/* One-click searches drawn from the library: popular debate terms and
-            the tournaments with the most rounds. */}
-        <VideoSearchSuggestions
-          suggestions={searchSuggestions}
-          searchTerm={searchTerm}
-          onSelect={onSearchChange}
-          className="mb-6"
-        />
+        {/* The search and filter controls, always visible on every
+            breakpoint, with the one-click searches drawn from the library
+            (popular debate terms and the tournaments with the most rounds)
+            to their right. Stacked on narrow screens. */}
+        <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-start">
+          <div className="w-full shrink-0 lg:w-[26rem]">{searchBarNode}</div>
+          <VideoSearchSuggestions
+            suggestions={searchSuggestions}
+            searchTerm={searchTerm}
+            onSelect={onSearchChange}
+            className="min-w-0 flex-1"
+          />
+        </div>
 
         {isLoading ? (
           <div className="text-center py-12">
