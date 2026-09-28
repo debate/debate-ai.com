@@ -1,0 +1,43 @@
+---
+title: "debate-data-sync"
+---
+
+# debate-data-sync
+
+Bundled debate data assets and the sync scripts that maintain them.
+
+## Layout
+
+```
+debate-data-sync/
+├── data/          # JSON assets consumed at runtime by the app
+│   ├── metadata/  # champions, dictionary, school names, topics, tournaments, youtube-stats
+│   └── videos/    # rounds-{policy,pf,ld,college}.json, lectures, top picks
+├── schemas/       # JSON Schemas validating the files under data/
+└── src/
+    ├── rankings/  # Scrapers for debate ranking leaderboards
+    ├── state/     # localStorage-backed persistence for team/judge/standings records
+    ├── types/     # Ambient declarations for untyped dependencies
+    ├── videos/    # tuple<->row conversion + the filter/sort/facet semantics the
+    │              #   videos SQL table and its JSON fallback share
+    └── youtube/   # YouTube channel ingestion + stats + view-count updates
+```
+
+## Scripts
+
+Run from the repo root:
+
+| Command | Description |
+| --- | --- |
+| `npm run sync-youtube` | Pull new videos from configured YouTube channels and classify them as rounds vs. lectures. |
+| `npm run youtube-stats` | Recalculate aggregate view stats and write `data/metadata/youtube-stats.json`. |
+| `npm run youtube-update-views` | Refresh view counts for previously synced videos in batches. |
+
+Set `YOUTUBE_API_KEY` in the environment before running any of these.
+
+## Tests
+
+```bash
+bun run test        # or: npx vitest run
+bun run coverage    # writes ./coverage for this package alone
+```

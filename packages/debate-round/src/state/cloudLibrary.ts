@@ -493,6 +493,13 @@ export interface CloudLibraryItem {
   label: string;
   /** Milliseconds since epoch, normalized from whatever timestamp shape the source row used. */
   updatedAtMs: number;
+  /**
+   * True for one of {@link getSampleCloudLibraryItems}' placeholder rows,
+   * never present (or `false`) on a real, account-synced item. Lets a caller
+   * badge a sample visually and keeps `buildRecentCloudItems`' output
+   * unambiguous — a sample is never mixed into that merge.
+   */
+  isSample?: boolean;
 }
 
 /**
@@ -826,6 +833,60 @@ export function buildRecentCloudItems(
   ]
     .sort((a, b) => b.updatedAtMs - a.updatedAtMs)
     .slice(0, limit);
+}
+
+/**
+ * A small, fixed set of placeholder items for `MySavedItems` to show in place
+ * of an empty `buildRecentCloudItems` result — TODO.md's "improve the ui's
+ * and have demo mock data samples for testing these out with ui's" ask,
+ * applied to the one widget on `/tools` whose entire job is "show what's in
+ * your account": a brand-new signed-in user has nothing there yet, so the
+ * widget previously rendered nothing (see `MySavedItems.tsx`'s
+ * `items.length === 0` check), which is indistinguishable from the widget
+ * being broken and teaches a new user nothing about what it's for.
+ *
+ * Each sample names a real tool a user hasn't tried yet and links to its
+ * real, working page — the same `href` a genuine item of that kind would
+ * use — rather than a fabricated project a click would dead-end on. Every
+ * entry carries `isSample: true` so a caller can badge it distinctly, and
+ * `updatedAtMs: 0` so a sample can never sort ahead of (or be confused with)
+ * a real item if a caller ever merges the two lists rather than switching
+ * between them. This list never touches the network — unlike every other
+ * export in this module, it takes no account-linked input at all.
+ */
+export function getSampleCloudLibraryItems(
+  opts: BuildRecentCloudItemsOptions = {},
+): CloudLibraryItem[] {
+  const {
+    documentHref = "/reason-editor",
+    flowHref = "/debate",
+    roundHref = "/debate",
+    debateHref = "/versus-ai",
+    drillSetHref = "/drills",
+    judgeDecisionHref = "/judge-decision",
+  } = opts;
+
+  const sample = (
+    kind: CloudLibraryItemKind,
+    href: string,
+    label: string,
+  ): CloudLibraryItem => ({
+    kind,
+    key: `sample-${kind}`,
+    href,
+    label,
+    updatedAtMs: 0,
+    isSample: true,
+  });
+
+  return [
+    sample("document", documentHref, "Sample case outline"),
+    sample("flow", flowHref, "Sample debate flow"),
+    sample("round", roundHref, "Sample saved round"),
+    sample("debate", debateHref, "Sample Practice vs AI debate"),
+    sample("drillSet", drillSetHref, "Sample drill set"),
+    sample("judgeDecision", judgeDecisionHref, "Sample AI judge decision"),
+  ];
 }
 
 /**

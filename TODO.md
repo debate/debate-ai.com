@@ -1,6 +1,17 @@
 
-improve the ui's and have demo mock data samples for t4sting these out with ui's 
+improve the ui's and have demo mock data samples for t4sting these out with ui's
 
+Done (first slice): `/tools`' "My Saved Items" widget rendered nothing at
+all for a signed-in user with no cloud-saved data yet — indistinguishable
+from broken, and no demo of what the widget (or the tools it links) does.
+It now shows a small "Try These Tools" preview of sample cards, each
+badged "Sample" and linking to a real tool page, in that case. See
+`getSampleCloudLibraryItems` in `packages/debate-round/src/state/cloudLibrary.ts`
+and its use in `packages/debate-webview/src/routes/tools/MySavedItems.tsx`.
+Only this one widget got sample data — every other tool page that shows an
+empty state for a new user (the editor's file tree, Practice Drills history,
+the Evidence Library, etc.) is the same gap and a good follow-up, one PR per
+tool rather than a single sweeping change.
 
 
 
