@@ -11,6 +11,7 @@ import type { SettingsCategory } from "debate-editor/settings"
 import { UserSettingsPanel } from "debate-round"
 import { PlanUpgradeSection } from "./PlanUpgradeSection"
 import { TeamCoachingSection } from "./TeamCoachingSection"
+import { ToolsDataSection } from "./ToolsDataSection"
 import { EDITOR_PREFERENCE_KEYS, EDITOR_SETTINGS_TABS } from "../../lib/editor-preferences"
 
 // The app's own account-linked preferences (debate style, font size, font
@@ -267,6 +268,7 @@ export function EditorSettingsPanel() {
             <>
               <PlanUpgradeSection />
               <TeamCoachingSection />
+              <ToolsDataSection />
               <UserSettingsPanel embedded />
             </>
           ) : (
