@@ -193,9 +193,50 @@ Logic lives under `src/`, grouped by role; tests live under `test/`.
 
 ```
 debate-editor/
-├── src/              # ProseMirror/CardMirror editor engine and React shell
+├── upstream.json     # the upstream CardMirror commit src/ is synced to
+├── patches/          # debate-ai.patch — every debate-ai.com edit to an upstream file
+├── scripts/          # sync-upstream.mjs — rebase src/ onto the submodule, rewrite the patch
+├── src/              # upstream CardMirror + the patch, plus our own files (React shell, ribbon tabs, …)
 └── test/             # Vitest suites for editor data-model helpers
 ```
+
+## Upstream CardMirror
+
+This package is an adapter over upstream CardMirror, the
+[`debate-editor-cm`](../debate-editor-cm) git submodule
+([debate/debate-editor](https://github.com/debate/debate-editor)). `src/` holds upstream's
+`src/` at the commit in `upstream.json`, with two kinds of debate-ai.com changes on top:
+
+- **Edits to upstream files**, recorded in `patches/debate-ai.patch`: the Word-style tabbed
+  ribbon (`editor/index.ts`, `style.css`), the embed hooks the React shell needs
+  (`adoptEmbeddedDoc`, `hostPlugins()`, `chromeHost()`, narrow chrome), the settings
+  sidebar, the File-menu commands that replaced the Home screen, and the account-sync
+  wiring.
+- **Files upstream doesn't have**, which live in `src/` directly: the React shell
+  (`react/` — `CardMirrorEditor`, the dropdown `MenuBar`, `ribbon-template.ts`), its UI
+  primitives (`ui/`), and our engine modules (`editor/ribbon-tabs*.ts`,
+  `editor/chrome-host.ts`, `editor/host-plugins.ts`, the learn / quick-card sync clients, …).
+
+Edit `src/` as usual. When the change touches an upstream file, record it (CI fails
+otherwise, via `test/upstream-sync.test.ts`):
+
+```bash
+bun run sync-upstream:save    # rewrite patches/debate-ai.patch from src/
+```
+
+To take new upstream releases, move the submodule and rebase:
+
+```bash
+git -C ../debate-editor-cm pull origin main
+bun run sync-upstream         # three-way merge src/ onto the submodule's HEAD
+```
+
+Conflicts are left in `src/` with `<<<<<<< src` markers and listed; resolve them, run
+`sync-upstream:save`, then run the tests. `test/engine-boot.test.ts` boots the real engine
+inside `ribbon-template.ts`'s markup, so a new element upstream's `index.html` added (and
+the engine binds at load) fails there — copy it into the template. A new `RIBBON_GROUPS`
+group must be placed on a tab in `editor/ribbon-tabs.ts`, which is also where the React
+`MenuBar` dropdowns get their categories.
 
 ## Tests
 
