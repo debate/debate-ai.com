@@ -19,9 +19,10 @@ import {
 import { useRouteLoading } from "../../lib/ui/use-route-loading"
 
 export function LoadingProvider() {
-  // Arms the orb on first load and on every client-side transition to a
-  // non-dock route. Dock destinations are framed and own their own loading
-  // state, so they are skipped here.
+  // Arms the orb the moment any page transition starts — a link click,
+  // back/forward, a framed page handing a navigation up — and drops it once
+  // the new route has painted. It only shows if that takes longer than the
+  // show delay.
   useRouteLoading()
 
   const isActive = useLoadingStore((s) => s.isActive)

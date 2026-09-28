@@ -19,8 +19,12 @@ import { create } from "zustand"
 /** Default fade-out duration, in ms, kept in sync with LoadingOverlay. */
 export const DEFAULT_LOADING_FADE_OUT_MS = 400
 
-/** How long, in ms, a load must run before the overlay appears at all. */
-export const DEFAULT_LOADING_SHOW_DELAY_MS = 1000
+/**
+ * How long, in ms, a load must run before the overlay appears at all. Most
+ * page transitions land well inside it, so they never flash the orb; only a
+ * genuinely slow one shows it.
+ */
+export const DEFAULT_LOADING_SHOW_DELAY_MS = 500
 
 interface LoadingState {
   isActive: boolean
