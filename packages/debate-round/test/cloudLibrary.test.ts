@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildRecentCloudItems,
   formatRelativeCloudTime,
+  getSampleCloudLibraryItems,
   parseCloudTimestamp,
   type CloudCounselPanelAssessmentSummary,
   type CloudCustomOpponentPersonaSummary,
@@ -726,6 +727,47 @@ describe("buildRecentCloudItems", () => {
         practiceRounds: [],
       }),
     ).toEqual([]);
+  });
+});
+
+describe("getSampleCloudLibraryItems", () => {
+  it("returns a non-empty, fixed list every time it's called", () => {
+    const items = getSampleCloudLibraryItems();
+    expect(items.length).toBeGreaterThan(0);
+    expect(getSampleCloudLibraryItems()).toEqual(items);
+  });
+
+  it("marks every item as a sample with a zeroed timestamp", () => {
+    for (const item of getSampleCloudLibraryItems()) {
+      expect(item.isSample).toBe(true);
+      expect(item.updatedAtMs).toBe(0);
+    }
+  });
+
+  it("gives every item a distinct key and a non-empty label", () => {
+    const items = getSampleCloudLibraryItems();
+    const keys = new Set(items.map((item) => item.key));
+    expect(keys.size).toBe(items.length);
+    for (const item of items) {
+      expect(item.label.trim().length).toBeGreaterThan(0);
+    }
+  });
+
+  it("points each sample at the same href a real item of that kind would use", () => {
+    const items = getSampleCloudLibraryItems({
+      documentHref: "/custom-doc",
+      flowHref: "/custom-flow",
+    });
+    const byKind = new Map(items.map((item) => [item.kind, item]));
+    expect(byKind.get("document")?.href).toBe("/custom-doc");
+    expect(byKind.get("flow")?.href).toBe("/custom-flow");
+  });
+
+  it("never produces an item flagged as a sample from buildRecentCloudItems", () => {
+    const built = buildRecentCloudItems({
+      documents: [{ id: 1, title: "Real doc", updatedAt: "2026-08-30T12:00:00.000Z" }],
+    });
+    expect(built.every((item) => !item.isSample)).toBe(true);
   });
 });
 
