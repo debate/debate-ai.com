@@ -148,6 +148,9 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/practice-round", title: "Practice Round Simulator", icon: Timer },
       { href: "/rules", title: "Formats & Rules", icon: Scale },
       { href: "/practice-partners", title: "Practice Partners", icon: Handshake },
+      // Same page, landing on the open judge seats (or the profile, for
+      // someone who has not volunteered to judge yet).
+      { href: "/practice-partners#judge", title: "Judge Practice Rounds", icon: Gavel },
       { href: "/versus-ai", title: "Debate Versus AI", icon: Swords },
       { href: "/drills", title: "Practice Drills", icon: Repeat },
       { href: "/cards/level", title: "Debater Level", icon: Star },

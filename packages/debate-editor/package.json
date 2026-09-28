@@ -1,7 +1,7 @@
 {
   "name": "debate-editor",
   "version": "0.1.0",
-  "description": "CardMirror debate-card editor, embedded in debate-ai.com — upstream CardMirror (the packages/debate-editor-cm submodule) rebased with debate-ai.com's changes (tabbed ribbon + dropdown menu bar, embed hooks, account sync) and a React shell sized for small embedded panels (Flow speech docs, the /reason-editor route).",
+  "description": "debate-ai.com's layer over upstream CardMirror (the packages/debate-editor-cm submodule): the React shell sized for small embedded panels (Flow speech docs, the /reason-editor route), our own engine modules (tabbed ribbon + dropdown menu bar, embed hooks, account sync) and the upstream files we override. The rest of the engine is copied in from the submodule at install time.",
   "private": true,
   "type": "module",
   "license": "SEE LICENSE IN LICENSE",
@@ -18,19 +18,20 @@
   },
   "files": [
     "src",
-    "patches",
+    "scripts",
     "upstream.json"
   ],
   "scripts": {
-    "build": "tsc --noEmit",
-    "dev": "tsc --noEmit --watch --preserveWatchOutput",
-    "sync-upstream": "node scripts/sync-upstream.mjs",
-    "sync-upstream:save": "node scripts/sync-upstream.mjs --save-patch",
+    "postinstall": "node scripts/sync-upstream.mjs",
+    "build": "node scripts/sync-upstream.mjs && tsc --noEmit",
+    "dev": "node scripts/sync-upstream.mjs && tsc --noEmit --watch --preserveWatchOutput",
+    "sync-upstream": "node scripts/sync-upstream.mjs --sync",
     "sync-upstream:check": "node scripts/sync-upstream.mjs --check",
-    "typecheck": "tsc --noEmit",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "coverage": "vitest run --coverage"
+    "override": "node scripts/sync-upstream.mjs --override",
+    "typecheck": "node scripts/sync-upstream.mjs && tsc --noEmit",
+    "test": "node scripts/sync-upstream.mjs && vitest run",
+    "test:watch": "node scripts/sync-upstream.mjs && vitest",
+    "coverage": "node scripts/sync-upstream.mjs && vitest run --coverage"
   },
   "dependencies": {
     "@radix-ui/react-dropdown-menu": "2.1.24",

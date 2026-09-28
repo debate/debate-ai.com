@@ -1953,6 +1953,70 @@ export const stripeSubscriptions = sqliteTable(
 
 export type StripeSubscriptionRow = typeof stripeSubscriptions.$inferSelect;
 
+// Per-day usage counts behind the plan tiers in `lib/stripe/limits.ts` (see
+// `lib/stripe/usage.ts`). `subject` is a user id, or `ip:<address>` for a
+// signed-out caller, so it has no foreign key. `day` is the UTC date
+// (`YYYY-MM-DD`) the count is for.
+export const usageCounters = sqliteTable(
+  "usage_counters",
+  {
+    subject: text("subject").notNull(),
+    metric: text("metric").notNull(),
+    day: text("day").notNull(),
+    count: integer("count").notNull().default(0),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.subject, table.metric, table.day] }),
+  }),
+);
+
+// A Research Team coach's roster: up to `teamStudents` students (see
+// `lib/stripe/limits.ts`), matched to their accounts by lowercased email so a
+// coach can add a student before the student signs up.
+export const teamStudents = sqliteTable(
+  "team_students",
+  {
+    ownerUserId: text("owner_user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    studentEmail: text("student_email").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.ownerUserId, table.studentEmail] }),
+    studentIdx: index("idx_team_students_email").on(table.studentEmail),
+  }),
+);
+
+// Lesson plans and practice drills a Research Team coach assigns to their
+// roster. `studentEmails` is a JSON array of the students it targets, or null
+// for every student on the roster.
+export const teamAssignments = sqliteTable(
+  "team_assignments",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    ownerUserId: text("owner_user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    /** `lesson-plan` or `practice-drill`. */
+    kind: text("kind").notNull(),
+    title: text("title").notNull(),
+    body: text("body").notNull().default(""),
+    studentEmails: text("student_emails"),
+    dueAt: integer("due_at", { mode: "timestamp" }),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    ownerIdx: index("idx_team_assignments_owner").on(table.ownerUserId),
+  }),
+);
+
+export type TeamAssignmentRow = typeof teamAssignments.$inferSelect;
+
 // Card AI analyses — the evidence search's "AI Analysis" sidebar
 // (packages/debate-search-evidence, `useAiAnalysis`). One row per card text
 // and prompt, both identified by SHA-256 hex digests computed client- and

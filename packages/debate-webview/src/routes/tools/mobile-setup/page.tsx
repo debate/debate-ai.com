@@ -3,14 +3,17 @@ import Link from "next/link"
 import { ArrowLeft, Bluetooth, ExternalLink, FileText, Mic, Send, Smartphone, Timer, Type } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../../lib/ui/primitives/card"
 
-/** The recommended laptop-less gear. Amazon affiliate short links — images
- *  are the products' own Amazon catalog images (m.media-amazon.com). */
+/** The recommended laptop-less gear. Links are affiliate/referral links
+ *  (Amazon, Visible, eBay); product images come from each store's catalog or
+ *  a supplied image URL. */
 const GEAR: {
   name: string
   role: string
   href: string
   image: string
   blurb: string
+  usedHref?: string
+  buyLabel?: string
 }[] = [
   {
     name: "LenTok Magnetic Neck Phone Holder",
@@ -29,12 +32,47 @@ const GEAR: {
       "Pairs over Bluetooth with up to three devices at once and hot-switches between them, with a big multi-touch trackpad. This is the piece that turns a phone into a real laptop replacement: type speeches and flow at full speed, no dongle needed.",
   },
   {
-    name: "Anker Power Bank 20,000mAh (Built-in USB-C Cable)",
-    role: "All-day power for phone + keyboard",
-    href: "https://amzn.to/3T95PA1",
-    image: "https://m.media-amazon.com/images/I/71Vqv7qJXhL._AC_SL500_.jpg",
+    name: "LISEN 60W USB-C to USB-C Cable (5-Pack)",
+    role: "Fast-charging cables for phone & keyboard",
+    href: "https://amzn.to/4d4CMEu",
+    image: "https://i.imgur.com/NloJILx.jpeg",
     blurb:
-      "20,000mAh with a built-in USB-C cable and 87W max output — charges a phone, Bluetooth keyboard, and even a MacBook from one brick. Essential for tournament days when outlets are scarce.",
+      "Sixty-watt Power Delivery cables that top up a phone or the Bluetooth keyboard in well under an hour — five cables in lengths from 3.3 ft to 10 ft so you can always reach an outlet or your phone while mounted. Braided 48-strand cotton, 480 Mbps data, and metal-reinforced ports so a tangle or yank won't kill them mid-round.",
+  },
+  {
+    name: "VITURE Beast XR/AR Glasses (174\" Virtual Display)",
+    role: "Giant floating screen, no laptop",
+    href: "https://amzn.to/4rA4rmp",
+    image: "https://i.imgur.com/I4h4WFC.jpeg",
+    blurb:
+      "The premium move: a 174″ virtual monitor that hovers in space, driven by your phone over USB-C. At 88 g it's lighter than most headphones, with 1250-nit Sony Micro-OLED, 120 Hz, and 9-level dimming so you can flow or review evidence in daylight. If you want one screen larger than any laptop but still pocket the phone between rounds, these are it.",
+  },
+  {
+    name: "Samsung Galaxy S20",
+    role: "The phone that runs it all",
+    href: "https://amzn.to/4xLQhQA",
+    usedHref:
+      "https://www.ebay.com/sch/i.html?_oaa=1&_dcat=9355&_udlo=70&_fsrp=1&rt=nc&_from=R40&_nkw=Samsung+s20&_sacat=0&Model=Samsung%2520Galaxy%2520S20%252B%7CSamsung%2520Galaxy%2520S20%252B%25205G%7CSamsung%2520Galaxy%2520S21%252B%7CSamsung%2520Galaxy%2520S21%2520FE%25205G%7CSamsung%2520Galaxy%2520S21%2520Ultra&_udhi=130",
+    image: "https://i.imgur.com/lHC64M8.jpeg",
+    blurb:
+      "Everything on this page runs in the phone browser, so the only real hardware decision is which Samsung to carry. The S20+ gives you a 120 Hz AMOLED display and a battery that lasts a full tournament day, and it folds into the same flow you'd use on a laptop. Buy a fresh unit on Amazon, or save substantially on a checked-returns S20 on eBay — either one is plenty of horsepower for prep, flow, and practice rounds on the road.",
+  },
+  {
+    name: "Visible Unlimited Phone Plan",
+    role: "Phone service & data",
+    href: "https://www.visible.com/get/?69PFJG2",
+    buyLabel: "View on Visible",
+    image: "https://s7d1.scene7.com/is/content/tracfone/New-Save6-Desktop-672x448",
+    blurb:
+      "Unlimited 5G data, talk, and text on Verizon's network — $25/month with taxes included ($35/month for Visible+ on Ultra Wideband, with global coverage). eSIM activation ships overnight, and friend code 69PFJG2 knocks $20 off a service payment, so the phone above can be live before you leave the airport.",
+  },
+  {
+    name: "MATEIN 15.6\" Travel Laptop Backpack (Personal-Item Size)",
+    role: "Carry all your gear",
+    href: "https://amzn.to/4yiIpal",
+    image: "https://i.imgur.com/YEH7Dkv.jpeg",
+    blurb:
+      "A 15.6\" daypack that counts as a personal item — slides under the seat in front, holds the phone, keyboard, cables, and AR glasses with room left over. Water-resistant shell, a hidden anti-theft pocket for cards, and a ventilated back panel so it doesn't sweat through a round. At ~$20 it's the kind of bag you stop noticing you're carrying.",
   },
 ]
 
@@ -158,11 +196,8 @@ export default function MobileSetupPage() {
           </h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             {GEAR.map((item) => (
-              <a
+              <div
                 key={item.href}
-                href={item.href}
-                target="_blank"
-                rel="sponsored noopener noreferrer"
                 className="block h-full"
               >
                 <Card className="h-full py-4 transition-colors hover:bg-accent hover:border-accent-foreground/20">
@@ -180,19 +215,32 @@ export default function MobileSetupPage() {
                     <CardTitle className="text-base leading-snug">{item.name}</CardTitle>
                     <CardDescription>{item.blurb}</CardDescription>
                   </CardHeader>
-                  <CardContent className="px-4 pt-2">
-                    <span className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground">
-                      View on Amazon
+                  <CardContent className="px-4 pt-2 space-y-1">
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="sponsored noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground"
+                    >
+                      {item.buyLabel ?? "View on Amazon"}
                       <ExternalLink className="h-3.5 w-3.5" />
-                    </span>
+                    </a>
+                    {item.usedHref && (
+                      <a
+                        href={item.usedHref}
+                        target="_blank"
+                        rel="sponsored noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground"
+                      >
+                        View used on eBay
+                        <ExternalLink className="h-3.5 w-3.5" />
+                      </a>
+                    )}
                   </CardContent>
                 </Card>
-              </a>
+              </div>
             ))}
           </div>
-          <p className="mt-2 text-xs text-muted-foreground">
-            As an Amazon Associate, this site earns from qualifying purchases made through these links.
-          </p>
         </section>
 
         <section className="mb-10">

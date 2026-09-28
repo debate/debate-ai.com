@@ -111,6 +111,14 @@ async function boot(): Promise<void> {
   el.style.top = '0';
   el.style.width = '1024px';
   el.style.height = '768px';
+  // The engine's chrome (#ribbon, #app, the status bar, …) is
+  // `position: fixed`, and embed-containment.css only re-pins it once the
+  // container sits inside `.dec-cardmirror-embed`. Parked here, fixed
+  // children would ignore the -99999px offset and paint across the top of
+  // the host page — over its sidebar — for as long as "Loading editor…"
+  // shows. Paint containment makes this box their containing block, so
+  // they stay parked off-screen with it; attachTo() lifts it.
+  el.style.contain = 'layout paint';
   document.body.appendChild(el);
   container = el;
 
@@ -340,6 +348,7 @@ export function isLiveKey(key: string): boolean {
 export function attachTo(host: HTMLElement): void {
   const el = getContainer();
   el.style.position = '';
+  el.style.contain = '';
   el.style.left = '';
   el.style.top = '';
   el.style.width = '100%';

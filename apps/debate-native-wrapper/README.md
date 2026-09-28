@@ -116,9 +116,11 @@ Store submission itself — Microsoft Store, Mac App Store, iOS App Store, Googl
 
 ## Why a window, not a bundled frontend
 
-`tauri.conf.json`'s main window points its `url` straight at the profile's site over HTTPS —
-there's no local copy of the app's UI to keep in sync with the real site (`build.frontendDist`
-still points at `dist/`, an unused placeholder Tauri's bundler requires to exist). The tradeoff:
+`tauri.conf.json`'s main window opens `dist/index.html`, a bundled launch splash that plays
+`dist/splash.mp4` (shipped inside the app, so it shows instantly and offline) while prefetching
+the profile's site, then navigates to that site over HTTPS when the video ends. There's no local
+copy of the app's UI to keep in sync with the real site — `dist/` holds only the splash, and
+`dist/splash-config.js` (written by `npm run configure`) tells it where to go. The tradeoff:
 the app needs network access to be useful, same as opening the site in a browser tab would. If a
 future use of this package needs an offline mode, that's an addition to `dist/`'s placeholder
 page and the window-creation logic in `src-tauri/src/lib.rs`, not a redesign of this package.

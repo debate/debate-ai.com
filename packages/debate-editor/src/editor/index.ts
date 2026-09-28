@@ -4560,7 +4560,7 @@ const VIEWLESS_RIBBON_COMMANDS = new Set<AnyCommandId>([
   // setting + body class; works without an active doc.
   'toggleNavPane',
   // Quick-card search palette — opens browse-only without a doc, so
-  // its Mod-Shift-Space binding must work view-less too.
+  // its Mod-p binding must work view-less too.
   'openQuickCardSearch',
   'insertLiveZone',
   'insertSelfLiveZone',

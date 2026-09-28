@@ -9,10 +9,17 @@
  * so the SQL this issues is unit tested against a real SQLite database — the
  * route's catch-all turns a malformed query into an empty result list rather
  * than an error, which is exactly how a broken `where` clause hid here before.
+ *
+ * Metered by plan tier (`lib/stripe/limits.ts`): each search counts toward
+ * the caller's `cardSearchesPerDay` (per IP when signed out) and returns at
+ * most the tier's `cardSearchResults` cards.
  */
 import { type NextRequest, NextResponse } from "next/server";
 import { getDBFromContext } from "@/lib/database/context";
 import { debateCards } from "@/lib/database/schema";
+import { getUserId } from "@/lib/auth/session";
+import { limitsFor } from "@/lib/stripe/limits";
+import { consumeDailyUsage, getUserTier, limitMessage, usageSubject } from "@/lib/stripe/usage";
 import {
   buildCardSearchOrderBy,
   buildCardSearchWhere,
@@ -20,9 +27,6 @@ import {
   readSearchScope,
   sortSearchResults,
 } from "@/lib/search/debate-card-search";
-
-/** Most cards one search returns; the UI pages through what it is given. */
-const SEARCH_LIMIT = 200;
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -40,12 +44,22 @@ export async function GET(request: NextRequest) {
 
   try {
     const db = await getDBFromContext();
+    const userId = await getUserId();
+    const tier = await getUserTier(db, userId);
+    const limits = limitsFor(tier);
+    const usage = await consumeDailyUsage(db, usageSubject(userId, request), "cardSearches", limits);
+    if (!usage.allowed) {
+      return NextResponse.json(
+        { results: [], total: 0, error: limitMessage("cardSearches", usage, tier), limit: usage.limit, tier },
+        { status: 429 },
+      );
+    }
     const cards = await db
       .select()
       .from(debateCards)
       .where(where)
       .orderBy(...buildCardSearchOrderBy(sortBy))
-      .limit(SEARCH_LIMIT);
+      .limit(limits.cardSearchResults);
     const results = sortSearchResults(cards.map(mapDebateCardToSearchResult), sortBy);
 
     return NextResponse.json({ results, total: results.length });

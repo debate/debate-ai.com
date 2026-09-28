@@ -46,7 +46,7 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         description: "Draft and organize debate cards and outlines in the native REASON document editor, saved to your own account.",
         highlights: [
           "Google-Docs-style menu bar (File/Edit/Card/Format/Insert/AI/View/Tools/Workspace) above the ribbon",
-          "Ctrl/Cmd-Shift-Space opens Search Everything — cards, commands, settings, files, and now other tools, all from one bar",
+          "Ctrl/Cmd-P opens Search Everything — cards, commands, settings, files, and now other tools, all from one bar",
           "Verbatim/Cardmirror-compatible shortcuts: short cites, condense, emphasis, move-heading, send-to-speech-doc",
         ],
       },

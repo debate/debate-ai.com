@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server"
 import { getAuth } from "@/lib/auth"
 import { getEnv } from "@/lib/env"
+import { getDBFromContext } from "@/lib/database/context"
+import { limitsFor } from "@/lib/stripe/limits"
+import { consumeDailyUsage, getUserTier, limitMessage } from "@/lib/stripe/usage"
 
 /**
  * General-purpose server-side proxy for this app's Anthropic-backed AI
@@ -15,6 +18,10 @@ import { getEnv } from "@/lib/env"
  * directly from the browser with a user-pasted API key. debate-ai.com is a
  * shared multi-tenant app, so instead callers hit this route and the
  * server holds the one Anthropic key (ANTHROPIC_API_KEY).
+ *
+ * Metered by plan tier (`lib/stripe/limits.ts`): each request counts toward
+ * the caller's `llmRequestsPerDay`, and `maxTokens` is capped at the tier's
+ * `llmMaxTokens`.
  */
 
 const ANTHROPIC_MODEL = "claude-sonnet-4-6"
@@ -98,7 +105,18 @@ const apiKey = getEnv("ANTHROPIC_API_KEY")
     return NextResponse.json({ error: "Request is too large." }, { status: 413 })
   }
 
-  const maxTokens = Math.min(body.maxTokens ?? 1024, MAX_TOKENS_CAP)
+  const db = await getDBFromContext()
+  const tier = await getUserTier(db, session.user.id)
+  const limits = limitsFor(tier)
+  const usage = await consumeDailyUsage(db, session.user.id, "llmRequests", limits)
+  if (!usage.allowed) {
+    return NextResponse.json(
+      { error: limitMessage("llmRequests", usage, tier), limit: usage.limit, tier },
+      { status: 429 },
+    )
+  }
+
+  const maxTokens = Math.min(body.maxTokens ?? 1024, MAX_TOKENS_CAP, limits.llmMaxTokens)
 
   const useOpenRouter = Boolean(openrouterKey)
   const endpoint = useOpenRouter
