@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
+  CLOUD_LIBRARY_KIND_LABELS,
   buildRecentCloudItems,
+  countCloudItemsByKind,
+  filterCloudItemsByKind,
   formatRelativeCloudTime,
   getSampleCloudLibraryItems,
   parseCloudTimestamp,
@@ -13,6 +16,8 @@ import {
   type CloudEvidenceLibraryEntrySummary,
   type CloudFlowAnnotationSummary,
   type CloudJudgeDecisionSummary,
+  type CloudLibraryItem,
+  type CloudLibraryItemKind,
   type CloudLearnDeckSummary,
   type CloudPracticeRoundSummary,
   type CloudPrepNoteSummary,
@@ -822,5 +827,38 @@ describe("formatRelativeCloudTime", () => {
 
   it("returns an empty string for a non-finite timestamp", () => {
     expect(formatRelativeCloudTime(Number.NaN, now)).toBe("");
+  });
+});
+
+describe("countCloudItemsByKind / filterCloudItemsByKind", () => {
+  const item = (kind: CloudLibraryItemKind, id: string): CloudLibraryItem => ({
+    kind,
+    key: `${kind}-${id}`,
+    href: "/x",
+    label: id,
+    updatedAtMs: 1,
+  });
+  const items = [item("flow", "a"), item("document", "b"), item("flow", "c"), item("round", "d")];
+
+  it("counts per kind, most common first, ties by label, omitting empty kinds", () => {
+    expect(countCloudItemsByKind(items)).toEqual([
+      ["flow", 2],
+      ["document", 1],
+      ["round", 1],
+    ]);
+    expect(countCloudItemsByKind([])).toEqual([]);
+  });
+
+  it("filters to one kind preserving order, or returns a copy for null", () => {
+    expect(filterCloudItemsByKind(items, "flow").map((i) => i.label)).toEqual(["a", "c"]);
+    expect(filterCloudItemsByKind(items, "coachMaterial")).toEqual([]);
+    const all = filterCloudItemsByKind(items, null);
+    expect(all).toEqual(items);
+    expect(all).not.toBe(items);
+  });
+
+  it("has a label for every kind", () => {
+    for (const label of Object.values(CLOUD_LIBRARY_KIND_LABELS)) expect(label.length).toBeGreaterThan(0);
+    expect(Object.keys(CLOUD_LIBRARY_KIND_LABELS)).toHaveLength(21);
   });
 });

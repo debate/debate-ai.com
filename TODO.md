@@ -60,6 +60,20 @@ product decision noted above and remains a follow-up. The per-item
 delete/manage gap in "My Saved Items" also remains open, unchanged from the
 note above.
 
+Done (sixth slice, My Saved Items browse/filter): "My Saved Items" was hard
+capped at the 6 newest items with no way to see the rest or narrow ~21 kinds.
+It now fetches a wider window (500 total / 100 per kind), shows per-kind filter
+chips with counts (`countCloudItemsByKind`, `filterCloudItemsByKind`,
+`CLOUD_LIBRARY_KIND_LABELS` in `debate-round`'s `state/cloudLibrary.ts`, unit
+tested in `test/cloudLibrary.test.ts`) and a "Show all N" / "Show fewer"
+toggle. Still open: per-item delete/manage in that widget. Verified:
+`vitest --project debate-webview --project debate-round` 1860/1860 pass.
+`bun run typecheck` reports 625 errors in `debate-webview` with or without this
+change (submodules not initialized in this env), none in touched files.
+Not run: `bun run build`. Also found: `bun.lock` on this branch contains
+unresolved merge-conflict markers (from `4ded2f6`), so `bun install
+--frozen-lockfile` fails — needs a maintainer to regenerate it.
+
 Also confirmed still-fixed (no longer follow-ups): both previously-tracked
 test failures — `packages/debate-webview/test/host/routes.test.ts`'s missing
 `/practice-partners` route registration, and

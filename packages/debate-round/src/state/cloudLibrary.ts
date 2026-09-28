@@ -879,6 +879,56 @@ export function buildRecentCloudItems(
     .slice(0, limit);
 }
 
+/** Human-readable label for each saved-item kind, used by the "My Saved Items" filter chips. */
+export const CLOUD_LIBRARY_KIND_LABELS: Record<CloudLibraryItemKind, string> = {
+  document: "Documents",
+  flow: "Flows",
+  round: "Rounds",
+  wordCountRound: "Word-count rounds",
+  debate: "Practice vs AI",
+  speechOutcome: "Speech outcomes",
+  drillSet: "Drill sets",
+  judgeDecision: "Judge decisions",
+  counselPanelAssessment: "Outcome charts",
+  roundPairing: "Briefings",
+  strategyRecommendation: "Strategies",
+  sprintSession: "Topic sprints",
+  speechSendLogEntry: "Speech sends",
+  learnDeck: "Flashcard decks",
+  customOpponentPersona: "Opponent personas",
+  flowAnnotation: "Annotations",
+  quickCard: "Quick cards",
+  prepNote: "Prep notes",
+  evidenceLibraryEntry: "Evidence",
+  practiceRound: "Practice rounds",
+  coachMaterial: "Coach materials",
+};
+
+/**
+ * Counts items per kind, returned as `[kind, count]` pairs sorted by count
+ * (descending), ties broken by label so the order is stable. Kinds with no
+ * items are omitted.
+ */
+export function countCloudItemsByKind(
+  items: readonly CloudLibraryItem[],
+): Array<[CloudLibraryItemKind, number]> {
+  const counts = new Map<CloudLibraryItemKind, number>();
+  for (const item of items) counts.set(item.kind, (counts.get(item.kind) ?? 0) + 1);
+  return [...counts.entries()].sort(
+    (a, b) =>
+      b[1] - a[1] ||
+      CLOUD_LIBRARY_KIND_LABELS[a[0]].localeCompare(CLOUD_LIBRARY_KIND_LABELS[b[0]]),
+  );
+}
+
+/** Returns `items` restricted to `kind`, or all of them when `kind` is `null`. Order is preserved. */
+export function filterCloudItemsByKind(
+  items: readonly CloudLibraryItem[],
+  kind: CloudLibraryItemKind | null,
+): CloudLibraryItem[] {
+  return kind === null ? [...items] : items.filter((item) => item.kind === kind);
+}
+
 /**
  * A small, fixed set of placeholder items for `MySavedItems` to show in place
  * of an empty `buildRecentCloudItems` result — TODO.md's "improve the ui's
