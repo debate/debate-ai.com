@@ -17,20 +17,22 @@ import {
   Book,
   BookOpen,
   BookMarked,
+  CircleHelp,
   Calendar,
   FileText,
   LayoutGrid,
   LockKeyhole,
-  MessageCircle,
   Scale,
   type LucideIcon,
 } from "lucide-react";
 import { SiDiscord, SiGithub, SiReddit, type IconType } from "@icons-pack/react-simple-icons";
+import { FaDiscord } from "react-icons/fa";
+import type { IconType as ReactIconType } from "react-icons";
 
 export interface FooterLink {
   url: string;
   text: string;
-  icon: LucideIcon | IconType;
+  icon: LucideIcon | IconType | ReactIconType;
   /** Which Settings-menu submenu this link belongs to: the site's own
    *  meta/legal links, or the outside debate community. */
   group: "site" | "debate";
@@ -50,7 +52,7 @@ export const FOOTER_LINKS: FooterLink[] = [
   // `/docs` is the help site (`packages/debate-help-docs`, mounted at the
   // app's `app/docs`), reached by a plain navigation like the external
   // entries here.
-  { url: "/docs", text: "Docs", icon: BookOpen, group: "site", hardNavigate: true },
+  { url: "/docs", text: "Docs", icon: CircleHelp, group: "site", hardNavigate: true },
   // `/features` is the whole catalog. It is listed here because the app
   // dock's Settings menu no longer carries an "Apps" submenu spelling that
   // catalog out, so this row is how the menu reaches it. An ordinary in-app
@@ -62,7 +64,7 @@ export const FOOTER_LINKS: FooterLink[] = [
   { url: "https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/", text: "Reddit", icon: SiReddit, group: "debate" },
   // { url: "https://www.tabroom.com/index/index.mhtml", text: "Tournaments", icon: Calendar, group: "debate" },
   // { url: "https://opencaselist.com", text: "Research", icon: BookMarked, group: "debate" },
-  { url: "https://discord.gg/wMxeKZ3c9e", text: "Support", icon: MessageCircle, group: "site" },
+  { url: "https://discord.gg/wMxeKZ3c9e", text: "Support", icon: FaDiscord, group: "site" },
   { url: "https://status.debate-ai.com", text: "Status", icon: Activity, group: "site" },
   { url: "/legal/privacy", text: "Privacy", icon: LockKeyhole, group: "site" },
 ];
