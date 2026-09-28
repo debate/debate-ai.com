@@ -13,7 +13,7 @@
         "./node_modules/write-language/dist/*.d.ts"
       ],
       "debate-webview/*": [
-        "../../packages/debate-webview/src/*"
+        "../../packages/debate-ai-webui/src/*"
       ]
     }
   }

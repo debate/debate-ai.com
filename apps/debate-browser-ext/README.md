@@ -17,7 +17,7 @@ One extension with three tools for a debater's browser:
 3. **The app itself, on the Options page** — the video archive, card search,
    the reuse check over *any* URL you can paste, season standings and the
    catalog of every tool in the app, from
-   [`debate-webview`](../../packages/debate-webview). The extension's own
+   [`debate-webview`](../../packages/debate-ai-webui). The extension's own
    settings are the last screen in its nav.
 
 [qwksearch-research-agent]: https://github.com/OpenSourceAGI/qwksearch-research-agent
@@ -405,7 +405,7 @@ public/
   `.output/chrome-mv3` unpacked. Joining the workspace did get the root CI to
   type-check this app (`bun run typecheck` at the root now includes it), and
   the UI the Options page mounts is covered by
-  `packages/debate-webview/test/` — but the root test run does not reach
+  `packages/debate-ai-webui/test/` — but the root test run does not reach
   `apps/`, so these tests are run by hand from this directory.
 - The article panel has only been exercised against the pages used to write the
   extractor's tests. A scoring extractor is never right on every site; a page

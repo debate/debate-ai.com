@@ -36,7 +36,7 @@ flag_management:
 flags:
   debate-webview:
     paths:
-      - packages/debate-webview/src
+      - packages/debate-ai-webui/src
   debate-api-client:
     paths:
       - packages/debate-api-client/src
@@ -99,7 +99,7 @@ component_management:
   individual_components:
     - component_id: debate-webview
       paths:
-        - packages/debate-webview/src
+        - packages/debate-ai-webui/src
     - component_id: debate-api-client
       paths:
         - packages/debate-api-client/src

@@ -27,7 +27,7 @@
         "./*"
       ],
       "debate-webview/*": [
-        "../../packages/debate-webview/src/*"
+        "../../packages/debate-ai-webui/src/*"
       ]
     }
   },
@@ -37,7 +37,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
-    "../../packages/debate-webview/src/types/*.d.ts"
+    "../../packages/debate-ai-webui/src/types/*.d.ts"
   ],
   "exclude": [
     "node_modules",
