@@ -9,6 +9,7 @@ import {
   getDrillSet,
   getDrillSetCompletionStats,
   getDueDrillIndexes,
+  getSampleDrillSets,
   isDrillReviewDue,
   listDrillSets,
   planDrillSetMerge,
@@ -19,6 +20,7 @@ import {
   toggleDrillCompletion,
   type DrillSetRecord,
 } from "../src/state/drillSets";
+import type { DrillKind } from "debate-round/src/flow/drill-generator";
 import type { Box } from "debate-round/src/types/flow";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment has no DOM by default here. */
@@ -707,5 +709,41 @@ describe("planDrillSetMerge", () => {
 
     expect(plan.adopt.map((r) => r.roundId).sort()).toEqual(["remote-only", "shared"]);
     expect(plan.pushLocal.map((r) => r.roundId)).toEqual(["local-only"]);
+  });
+});
+
+describe("getSampleDrillSets", () => {
+  it("returns one drill set with one drill per DrillKind", () => {
+    const [sample] = getSampleDrillSets();
+    const kinds = sample.drills.map((drill) => drill.kind).sort();
+    const expectedKinds: DrillKind[] = ["collapse", "cross_ex", "frontline", "overview"];
+    expect(kinds).toEqual(expectedKinds);
+  });
+
+  it("every sample drill has a non-blank prompt", () => {
+    for (const set of getSampleDrillSets()) {
+      for (const drill of set.drills) {
+        expect(drill.prompt.trim()).not.toBe("");
+      }
+    }
+  });
+
+  it("carries no completion/AI-script/review-reminder state", () => {
+    const [sample] = getSampleDrillSets();
+    expect(sample.completedDrillIndexes).toBeUndefined();
+    expect(sample.aiScripts).toBeUndefined();
+    expect(sample.scheduledReviewAt).toBeUndefined();
+    expect(sample.updatedAt).toBeUndefined();
+  });
+
+  it("is never mixed into listDrillSets when storage is empty", () => {
+    expect(listDrillSets()).toEqual([]);
+  });
+
+  it("returns a fresh array each call rather than a shared mutable reference", () => {
+    const first = getSampleDrillSets();
+    const second = getSampleDrillSets();
+    expect(first).not.toBe(second);
+    expect(first).toEqual(second);
   });
 });
