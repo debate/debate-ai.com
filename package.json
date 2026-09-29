@@ -2,7 +2,7 @@
   "name": "debate-ai",
   "private": true,
   "version": "2.2.0",
-  "packageManager": "bun@1.3.11",
+  "packageManager": "bun@1.4.2",
   "workspaces": [
     "packages/*",
     "!packages/debate-tournaments-tabroom",
@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "dev": "turbo dev",
-    "build": "turbo build --filter='!debate-help-docs' --filter='!debate-flow-ebb'",
+    "build": "turbo build --filter='!debate-help-docs' --filter='!debate-flow-ebb' --filter='!debate-flow'",
     "dev:web": "turbo dev --filter=debate-ai-web",
     "build:web": "turbo build --filter=debate-ai-web",
     "dev:editor": "turbo dev --filter=reason-editor",
