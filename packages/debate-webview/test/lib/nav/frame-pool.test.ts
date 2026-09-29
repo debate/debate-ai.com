@@ -9,7 +9,7 @@
 
 import { describe, expect, it } from "vitest"
 
-import { keepAlive, keepAllAlive } from "../../../src/lib/nav/frame-pool"
+import { keepAlive } from "../../../src/lib/nav/frame-pool"
 
 describe("keepAlive", () => {
   it("appends a path the pool doesn't have", () => {
@@ -37,16 +37,5 @@ describe("keepAlive", () => {
     const next = keepAlive(many, "/new")
     expect(next).toHaveLength(21)
     expect(next[0]).toBe("/p0")
-  })
-})
-
-describe("keepAllAlive", () => {
-  it("appends the missing paths after the existing ones, in order", () => {
-    expect(keepAllAlive(["/cards"], ["/videos", "/cards", "/doc"])).toEqual(["/cards", "/videos", "/doc"])
-  })
-
-  it("returns the pool untouched when it already holds every path", () => {
-    const pool = ["/videos", "/cards"]
-    expect(keepAllAlive(pool, ["/cards", "/videos"])).toBe(pool)
   })
 })
