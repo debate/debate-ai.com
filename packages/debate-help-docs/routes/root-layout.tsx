@@ -5,9 +5,10 @@
  *
  * The app's root layout owns `<html>` and `<body>` (and the theme provider),
  * so this only adds what the docs need on top: Fumadocs' provider (search
- * dialog, sidebar state) and the docs stylesheet. The app shell renders
- * `/docs` bare — no dock, no tool sidebar — so the Fumadocs layouts below are
- * the whole page.
+ * dialog, sidebar state) and the docs stylesheet. The app shell puts only its
+ * tool sidebar (dock and tool tree) to the left of `/docs` — see
+ * `DocsAppChrome` in debate-webview — so the Fumadocs layouts below fill the
+ * rest of the page.
  */
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';

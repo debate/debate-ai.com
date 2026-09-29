@@ -153,3 +153,68 @@ export function topNavigationTarget(
   if (root != null && root === dockRootFor(currentPath)) return null
   return path
 }
+
+/**
+ * A framed document telling the shell where it now is.
+ *
+ * A dock destination navigates *within* its own frame — `/videos` to
+ * `/videos/lectures`, `/doc` to `/doc/<name>`, `/cards` to `/cards/library`,
+ * a `?view=` or `?chat=` written by `history.replaceState`. None of that
+ * touches the top document, so without this the address bar stayed on the
+ * bare dock path: the page changed on screen but the URL didn't, and a
+ * reload, bookmark or shared link lost the page. The frame reports every
+ * location change and the shell mirrors it into its own URL.
+ */
+export const FRAME_LOCATION = "debate-frame-location"
+
+export interface FrameLocation {
+  type: typeof FRAME_LOCATION
+  /** Root-relative path, including any query and hash, `embed` marker removed. */
+  path: string
+}
+
+export function isFrameLocation(data: unknown): data is FrameLocation {
+  const message = data as FrameLocation | null
+  return (
+    message != null &&
+    typeof message === "object" &&
+    message.type === FRAME_LOCATION &&
+    typeof message.path === "string"
+  )
+}
+
+/**
+ * The address the shell should show for a framed document at `url`: its path,
+ * query and hash, minus the frame's own `?embed=1` marker (see `toFrameSrc`),
+ * which means nothing outside the frame.
+ *
+ * @param url - The framed document's location (absolute or root-relative).
+ * @param embedParam - The marker's query key, injected so this stays pure.
+ */
+export function shellPathForFrameLocation(url: string, embedParam: string): string {
+  const parsed = new URL(url, "http://frame.invalid")
+  parsed.searchParams.delete(embedParam)
+  const query = parsed.searchParams.toString()
+  return `${parsed.pathname}${query ? `?${query}` : ""}${parsed.hash}`
+}
+
+/**
+ * Whether a location a frame reported is one the shell should put in its
+ * address bar: root-relative on this origin, and under the same dock
+ * destination as the frame showing it. A frame that has wandered to another
+ * destination's page — or anywhere the dock doesn't own — is handed up with
+ * {@link FRAME_NAV_REQUEST} instead, never mirrored.
+ *
+ * @param path - The reported location.
+ * @param framedRoot - The dock destination the reporting frame belongs to.
+ * @param dockRootFor - `dockNavRootFor`, injected so this module stays pure.
+ */
+export function isMirrorableFrameLocation(
+  path: string,
+  framedRoot: string,
+  dockRootFor: (path: string) => string | null,
+): boolean {
+  if (!path.startsWith("/") || path.startsWith("//")) return false
+  if (!isRouterPath(path.split(/[?#]/)[0] ?? "")) return false
+  return dockRootFor(path) === framedRoot
+}

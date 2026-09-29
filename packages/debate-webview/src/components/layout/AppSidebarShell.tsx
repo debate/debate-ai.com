@@ -55,11 +55,18 @@ import { showsCardsOnlySidebar, showsReasonDocsPanels } from "../../lib/reason-d
  * `/cards` and `/reason-editor`, which read documents out of this app's own
  * store rather than the editor's.
  */
-export function AppSidebarShell({ children }: { children: React.ReactNode }) {
+export function AppSidebarShell({
+  children,
+  always = false,
+}: {
+  children: React.ReactNode
+  /** Wrap whatever the route — for /docs, which is no tool-tree destination (`DocsAppChrome`). */
+  always?: boolean
+}) {
   const pathname = usePathname()
   const cardsOnly = showsCardsOnlySidebar(pathname)
 
-  if (!isGenericToolSidebarRoute(pathname)) return <>{children}</>
+  if (!always && !isGenericToolSidebarRoute(pathname)) return <>{children}</>
 
   return (
     // The shared drag-resizable column (`ResizableSidebarLayout`, from

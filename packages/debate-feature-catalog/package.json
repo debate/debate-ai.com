@@ -7,6 +7,7 @@
   "author": "vtempest",
   "license": "rights.institute/prosper",
   "main": "./src/feature-catalog.ts",
+  "sideEffects": ["**/*.css"],
   "types": "./src/feature-catalog.ts",
   "exports": {
     ".": "./src/feature-catalog.ts",

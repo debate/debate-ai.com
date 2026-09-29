@@ -32,39 +32,24 @@ import {
 } from "debate-editor/engine";
 import { STORED_FORMATS, type StoredContent } from "./format";
 import { isCmirContent } from "./content-format";
+import { CardMirrorImportError, fileExtension, IMPORTABLE_EXTENSIONS } from "./import-files";
+import { registerStoredCmir } from "./lazy-stored-cmir";
 
 /** Written into each file's `createdBy` field, so a `.cmir` downloaded from
  *  the app says where it came from. */
 const APP_VERSION = "debate-ai.com CardMirror import";
 
-/** Extensions the upload path knows how to turn into a `.cmir`. Anything
- *  else is refused by name rather than failing deep inside a parser. */
-export const IMPORTABLE_EXTENSIONS = [
-  ".docx",
-  ".cmir",
-  ".html",
-  ".htm",
-  ".md",
-  ".txt",
-] as const;
-
-/** The `accept` attribute for a file picker that feeds {@link fileToStoredCmir}. */
-export const IMPORT_ACCEPT = IMPORTABLE_EXTENSIONS.join(",");
-
-/** A file the app refused to import, with a reason worth showing. */
-export class CardMirrorImportError extends Error {
-  override name = "CardMirrorImportError";
-}
+export {
+  CardMirrorImportError,
+  docxDownloadFilename,
+  fileExtension,
+  IMPORT_ACCEPT,
+  IMPORTABLE_EXTENSIONS,
+} from "./import-files";
 
 /** Escapes text for interpolation into HTML. */
 function escapeHtml(value: string): string {
   return value.replace(/[&<>]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[char]!);
-}
-
-/** `"1AC Warming.docx"` → `".docx"`, lowercased; `""` when there is none. */
-export function fileExtension(name: string): string {
-  const dot = name.lastIndexOf(".");
-  return dot === -1 ? "" : name.slice(dot).toLowerCase();
 }
 
 /**
@@ -104,26 +89,6 @@ export function storedContentToHtml(item: StoredContent): string {
  */
 export async function htmlToDocxBytes(html: string): Promise<Uint8Array> {
   return toDocx(htmlToDoc(html));
-}
-
-/**
- * The filename a downloaded `.docx` gets, from a row's title.
- *
- * A title carrying one of {@link IMPORTABLE_EXTENSIONS} (an uploaded `.cmir`
- * or `.docx`, kept verbatim in the tree per `FileTree`'s `sourceLabel`) has
- * that extension stripped first, so converting it back to `.docx` doesn't
- * double up (`"Brief.cmir"` → `"Brief.docx"`, not `"Brief.cmir.docx"`). A
- * title with no recognized extension is used as-is (`"Notes"` →
- * `"Notes.docx"`). Path separators are replaced so the title can't be read as
- * a directory by whatever the browser hands it to.
- */
-export function docxDownloadFilename(title: string): string {
-  const extension = fileExtension(title);
-  const base = (IMPORTABLE_EXTENSIONS as readonly string[]).includes(extension)
-    ? title.slice(0, -extension.length)
-    : title;
-  const safe = base.trim().replace(/[\\/]/g, "-");
-  return `${safe || "Untitled"}.docx`;
 }
 
 /**
@@ -235,3 +200,12 @@ export async function fileToStoredCmir(file: File): Promise<ImportedFile> {
   const html = extension === ".html" || extension === ".htm" ? text : textToHtml(text);
   return { ...base, content: await htmlToStoredCmir(html) };
 }
+
+// Lets `./lazy-stored-cmir` answer synchronously once this chunk has run.
+registerStoredCmir({
+  storedContentToHtml,
+  htmlToDocxBytes,
+  htmlToStoredCmir,
+  htmlToStoredCmirSync,
+  fileToStoredCmir,
+});

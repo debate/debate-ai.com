@@ -4,7 +4,7 @@
  */
 
 import type React from "react"
-import { LexicalEditorWrapper } from "debate-editor"
+import { LexicalEditorWrapper } from "./LazyCardMirrorEditor"
 import type { Flow } from "../types/flow"
 
 /** Props for the FlowMainContent component. */
