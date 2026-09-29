@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
+  CLOUD_LIBRARY_KIND_LABELS,
   buildRecentCloudItems,
+  countCloudItemsByKind,
+  filterCloudItemsByKind,
   formatRelativeCloudTime,
   getSampleCloudLibraryItems,
   parseCloudTimestamp,
@@ -13,6 +16,8 @@ import {
   type CloudEvidenceLibraryEntrySummary,
   type CloudFlowAnnotationSummary,
   type CloudJudgeDecisionSummary,
+  type CloudLibraryItem,
+  type CloudLibraryItemKind,
   type CloudLearnDeckSummary,
   type CloudPracticeRoundSummary,
   type CloudPrepNoteSummary,

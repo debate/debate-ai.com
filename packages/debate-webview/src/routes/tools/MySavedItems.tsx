@@ -91,11 +91,16 @@ import { useSession } from "../../lib/hooks/useSession"
 import {
   deleteCloudLibraryItem,
   fetchRecentCloudItems,
+  filterCloudItemsByKind,
   formatRelativeCloudTime,
   getSampleCloudLibraryItems,
   type CloudLibraryItem,
   type CloudLibraryItemKind,
 } from "debate-round"
+
+/** Items shown before "Show all"; the fetch itself is widened so filters/show-all have data to work with. */
+const COLLAPSED_COUNT = 6
+const FETCH_OPTS = { limit: 500, perKindLimit: 100 }
 
 const KIND_ICON: Record<CloudLibraryItemKind, typeof FileText> = {
   document: FileText,
@@ -153,11 +158,13 @@ const KIND_ICON: Record<CloudLibraryItemKind, typeof FileText> = {
 export function MySavedItems() {
   const { isAuthenticated } = useSession()
   const [items, setItems] = useState<CloudLibraryItem[] | null>(null)
+  const [kindFilter, setKindFilter] = useState<CloudLibraryItemKind | null>(null)
+  const [expanded, setExpanded] = useState(false)
 
   useEffect(() => {
     if (!isAuthenticated) return
     let cancelled = false
-    void fetchRecentCloudItems().then((result) => {
+    void fetchRecentCloudItems(FETCH_OPTS).then((result) => {
       if (!cancelled) setItems(result)
     })
     return () => {
@@ -180,8 +187,16 @@ export function MySavedItems() {
   // clearly-labeled preview of what this section looks like once they save
   // something, instead of rendering nothing (indistinguishable from broken).
   const isPreview = items.length === 0
-  const displayItems = isPreview ? getSampleCloudLibraryItems() : items
+  const kindCounts = isPreview ? [] : countCloudItemsByKind(items)
+  const filtered = isPreview ? getSampleCloudLibraryItems() : filterCloudItemsByKind(items, kindFilter)
+  const canExpand = !isPreview && filtered.length > COLLAPSED_COUNT
+  const displayItems = canExpand && !expanded ? filtered.slice(0, COLLAPSED_COUNT) : filtered
   if (displayItems.length === 0) return null
+
+  const chipClass = (active: boolean) =>
+    `rounded-full border px-3 py-1 text-xs transition-colors ${
+      active ? "bg-accent text-accent-foreground border-accent-foreground/30" : "text-muted-foreground hover:bg-accent"
+    }`
 
   return (
     <section className="mb-10">
@@ -192,6 +207,29 @@ export function MySavedItems() {
         <p className="mb-3 text-sm text-muted-foreground">
           Nothing saved yet — here's a preview of what shows up here once you do.
         </p>
+      )}
+      {kindCounts.length > 1 && (
+        <div className="mb-3 flex flex-wrap gap-2" role="group" aria-label="Filter saved items by type">
+          <button
+            type="button"
+            aria-pressed={kindFilter === null}
+            className={chipClass(kindFilter === null)}
+            onClick={() => setKindFilter(null)}
+          >
+            All ({items.length})
+          </button>
+          {kindCounts.map(([kind, count]) => (
+            <button
+              key={kind}
+              type="button"
+              aria-pressed={kindFilter === kind}
+              className={chipClass(kindFilter === kind)}
+              onClick={() => setKindFilter(kind)}
+            >
+              {CLOUD_LIBRARY_KIND_LABELS[kind]} ({count})
+            </button>
+          ))}
+        </div>
       )}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {displayItems.map((item) => {
@@ -230,6 +268,15 @@ export function MySavedItems() {
           )
         })}
       </div>
+      {canExpand && (
+        <button
+          type="button"
+          className="mt-3 text-sm text-muted-foreground underline-offset-4 hover:underline"
+          onClick={() => setExpanded((v) => !v)}
+        >
+          {expanded ? "Show fewer" : `Show all ${filtered.length}`}
+        </button>
+      )}
     </section>
   )
 }
