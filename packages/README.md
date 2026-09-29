@@ -44,15 +44,14 @@ ProseMirror engine, Verbatim `.docx` interop (lossless round-trip, encrypted-fil
 decryption, the native `.cmir` format, the `cardmirror-read` headless CLI/MCP server), and
 a React editor shell sized for the site's speech-doc and `/reason-editor` surfaces.
 
-Its engine is upstream CardMirror from the `debate-editor-cm` submodule; this package keeps
-only debate-ai.com's layer over it. Git tracks just our files in `src/` — the React shell
-with its dropdown `MenuBar`, the ribbon tabs, the sync clients, and whole copies of the
-upstream files we change (the tabbed ribbon, the embed hooks, the settings sidebar, account
-sync). Every other upstream file is copied in from the submodule, at the commit
-`upstream.json` pins, by `scripts/sync-upstream.mjs` on install and before
-build/typecheck/test; those copies are gitignored. `bun run override src/<path>` starts
-changing an upstream file, and `bun run sync-upstream` rebases our overrides onto a newer
-submodule commit.
+Its engine is upstream CardMirror from the `debate-editor-cm` submodule; this package is an
+adapter that holds no copy of it. `upstream.json` pins the upstream commit,
+`patches/debate-ai.patch` records every edit to an upstream file (the tabbed ribbon, the
+embed hooks, the settings sidebar, account sync), and `overlay/` holds the files upstream
+doesn't have — the React shell with its dropdown `MenuBar`, the ribbon tabs, the sync
+clients. `scripts/sync-upstream.mjs` assembles the three into a git-ignored `src/` on
+install and before build/typecheck/test; `bun run sync-upstream:save` records edits made in
+`src/`, and `bun run sync-upstream` rebases onto a newer submodule commit.
 
 ## debate-editor-cm (git submodule) and debate-editor-cm-adapter
 
