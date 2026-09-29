@@ -101,6 +101,56 @@ processing several `packages/debate-help-docs/content/docs/**` MDX files
 `/tools` and a good follow-up for a maintainer familiar with that docs
 pipeline.
 
+Done (this run — drizzle-deletion regression guard): `apps/debate-ai.com/drizzle/`
+had been deleted from mainline a 4th time (commit `1a2cbbf`, "Delete
+apps/debate-ai.com/drizzle directory" — the same unreviewed direct-to-mainline
+accident as `2566e0d`/`d58d57f`, `39076f1`/`53656dd`, and `d6d1bb8`/`de88ca2`
+before it), so `apps/debate-ai.com/lib/database/__tests__/migration-sql.test.ts`
+(and anything else that replays migrations against an in-memory DB) failed
+with `ENOENT` on this branch before this change. Restored all 68 migration
+files + `meta/` snapshots from the last known-good commit (`de88ca2`), then
+ran `bun run db:generate` to pick up real schema drift accumulated since that
+restore (`team_assignments`, `team_students`, `usage_counters` — the team
+roster / tiered-limits feature's tables, added to `schema.ts` without a
+matching migration) as a new migration, `0038_aromatic_wolf_cub.sql`.
+`db:generate` now reports "No schema changes, nothing to migrate".
+
+Restoring the directory a 4th time without also guarding it felt pointless —
+the actual ask here (see the deferred per-item-delete/manage note above,
+whose sibling PR #1005 separately named this same directory-deletion pattern
+as a good follow-up) is a regression test that fails immediately and
+specifically the next time this happens, rather than surfacing later as a
+missing-table 500 in production or an `ENOENT` in an unrelated test. Added
+`apps/debate-ai.com/lib/database/__tests__/schema-migrations-sync.test.ts`:
+it asserts the migrations directory is non-empty, and — the actual drift
+guard — that every `sqliteTable(...)` declared in `schema.ts` has a matching
+`CREATE TABLE` somewhere in the concatenated migration SQL, so a table added
+to the schema without a generated migration (this exact 0038 gap) or the
+whole directory going missing again both fail this one test immediately
+instead of silently.
+
+Verified for this slice: `bun run typecheck` (25/25 packages), `bun run test`
+(10620 passed, 1 skipped, 0 failed — run against a clean `bun install`;
+earlier runs against a churned `node_modules`, left over from investigating
+an unrelated broken lockfile below, produced spurious multiple-prosemirror-version
+and sort-order failures that do not reproduce on a clean install and are not
+tracked here), `bun run db:generate` (clean, "No schema changes, nothing to
+migrate"). `bun run build` fails on `debate-web-ext` alone — confirmed
+pre-existing and unrelated (reproduces identically with this slice's changes
+reverted): `apps/debate-browser-ext/wxt.config.ts`'s `next/link`/
+`next/navigation`/`next/image` aliases still point at `packages/debate-ai-webui`,
+that package's name before its rename to `debate-webview` (`3811cc9`). Also
+pre-existing and unrelated: `bun.lock` has 3 unresolved git merge-conflict
+marker blocks left over from merge commit `4ded2f6`, so `bun install
+--frozen-lockfile` fails outright (plain `bun install`, what CI's `bun install
+--ignore-scripts` step also uses, tolerates it by silently re-resolving
+instead). Both of these already have an open, active fix — PR #1005 restores
+this same drizzle directory and fixes both the `wxt.config.ts` alias and the
+`bun.lock` conflict markers — so neither is re-fixed here to avoid a
+duplicate, hard-to-review diff across two open PRs; this PR's own `drizzle/`
+restore and new migration will need a trivial (identical-text) merge against
+that PR's, whichever lands first.
+
 Done (first slice): `/tools`' "My Saved Items" widget rendered nothing at
 all for a signed-in user with no cloud-saved data yet — indistinguishable
 from broken, and no demo of what the widget (or the tools it links) does.
