@@ -16,7 +16,7 @@
 
 "use client"
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import React, { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import Link from "next/link"
 import { useSearchParams, useParams, useRouter } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
@@ -34,7 +34,6 @@ import { SLUG_MAP } from "./lectureRouteConfig"
 import { LecturesDictionaryView } from "./dictionary/LecturesDictionaryView"
 import { LecturesSidebarShell } from "./LecturesSidebarShell"
 import { LecturesVideoGridView } from "./LecturesVideoGridView"
-import { StatisticsPage } from "./statistics/StatisticsPage"
 
 // Hooks
 import { useVideoState } from "../hooks/useVideoState"
@@ -43,6 +42,11 @@ import { useInfiniteScroll } from "../hooks/useInfiniteScroll"
 import { useYouTubeStats } from "../hooks/useYouTubeStats"
 import { useVideoPlayerStore } from "../state/videoPlayerStore"
 import { useWatchHistory } from "../hooks/useWatchHistory"
+
+// The statistics view's charts (recharts, ~270 kB) load only when it opens.
+const StatisticsPage = lazy(() =>
+  import("./statistics/StatisticsPage").then((m) => ({ default: m.StatisticsPage })),
+)
 
 /** Number of entries in the debate dictionary, shown on its quick-link card. */
 const DICTIONARY_ENTRY_COUNT = 203
@@ -473,7 +477,9 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
   if (state.currentCategory === "statistics") {
     return (
       <LecturesSidebarShell {...sidebarShellProps} activeId="statistics">
-        <StatisticsPage topics={meta?.topics} youtubeStats={youtubeStats} />
+        <Suspense fallback={null}>
+          <StatisticsPage topics={meta?.topics} youtubeStats={youtubeStats} />
+        </Suspense>
       </LecturesSidebarShell>
     )
   }

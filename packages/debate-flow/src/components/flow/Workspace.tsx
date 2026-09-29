@@ -10,13 +10,15 @@ import { useFlowStore } from "../../lib/store/useFlowStore";
 
 import InfoPanel from "./InfoPanel";
 import PrintView from "./PrintView";
-import RfdDrawer from "./RfdDrawer";
 import RoundHeader from "./RoundHeader";
 import SheetTitleBar from "./SheetTitleBar";
 import Sidebar from "./Sidebar";
 
 // Handsontable touches window at import time; keep it out of prerendering.
 const HotGrid = lazy(() => import("./HotGrid"));
+// The RFD drawer is a CodeMirror editor (with vim mode and the markdown
+// grammar, ~600 kB); it loads the first time the drawer opens.
+const RfdDrawer = lazy(() => import("./RfdDrawer"));
 
 export default function Workspace() {
     useKeymap();
@@ -101,7 +103,11 @@ export default function Workspace() {
                     )}
                 </main>
             </div>
-            {rfdOpen && roundId && <RfdDrawer key={roundId} />}
+            {rfdOpen && roundId && (
+                <Suspense fallback={null}>
+                    <RfdDrawer key={roundId} />
+                </Suspense>
+            )}
             <SearchPalette />
             <InfoPanel />
             <KeybindingsCheatsheet />
