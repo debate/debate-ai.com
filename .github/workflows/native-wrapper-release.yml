@@ -103,6 +103,18 @@ jobs:
         working-directory: apps/debate-native-wrapper
         run: bun install --ignore-scripts
 
+      # The "Offline" source (profiles/debate-ai.json's `sources`): the whole
+      # debate-ai.com app bundled into dist/offline/ by
+      # scripts/build-offline.mjs. It needs the monorepo installed (plus the
+      # two submodules debate-webview imports from). Best-effort: if it
+      # fails, the app ships without it and the splash opens the site instead.
+      - name: Build the offline source
+        continue-on-error: true
+        run: |
+          git submodule update --init --depth 1 packages/debate-rankings packages/debate-editor-cm
+          bun install
+          cd apps/debate-native-wrapper && bun scripts/build-offline.mjs
+
       # tauri.conf.json and the icon set are already checked in for the
       # active profile (native-wrapper-ci.yml's verify-configuration job
       # guarantees they're in sync) — no configure/icons step needed here.
@@ -176,6 +188,18 @@ jobs:
         # jobs all need @tauri-apps/cli resolvable from inside it.
         working-directory: apps/debate-native-wrapper
         run: bun install --ignore-scripts
+
+      # The "Offline" source (profiles/debate-ai.json's `sources`): the whole
+      # debate-ai.com app bundled into dist/offline/ by
+      # scripts/build-offline.mjs. It needs the monorepo installed (plus the
+      # two submodules debate-webview imports from). Best-effort: if it
+      # fails, the app ships without it and the splash opens the site instead.
+      - name: Build the offline source
+        continue-on-error: true
+        run: |
+          git submodule update --init --depth 1 packages/debate-rankings packages/debate-editor-cm
+          bun install
+          cd apps/debate-native-wrapper && bun scripts/build-offline.mjs
 
       - name: Generate the gen/android project
         working-directory: apps/debate-native-wrapper
@@ -260,6 +284,18 @@ jobs:
         # jobs all need @tauri-apps/cli resolvable from inside it.
         working-directory: apps/debate-native-wrapper
         run: bun install --ignore-scripts
+
+      # The "Offline" source (profiles/debate-ai.json's `sources`): the whole
+      # debate-ai.com app bundled into dist/offline/ by
+      # scripts/build-offline.mjs. It needs the monorepo installed (plus the
+      # two submodules debate-webview imports from). Best-effort: if it
+      # fails, the app ships without it and the splash opens the site instead.
+      - name: Build the offline source
+        continue-on-error: true
+        run: |
+          git submodule update --init --depth 1 packages/debate-rankings packages/debate-editor-cm
+          bun install
+          cd apps/debate-native-wrapper && bun scripts/build-offline.mjs
 
       - name: Generate the gen/apple project
         working-directory: apps/debate-native-wrapper

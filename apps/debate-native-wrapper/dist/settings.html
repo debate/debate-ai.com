@@ -1,0 +1,121 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Settings</title>
+    <style>
+      :root { color-scheme: dark; }
+      html, body { margin: 0; min-height: 100%; background: #000; color: #f4f4f5; }
+      body { font: 15px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+      main { max-width: 480px; margin: 0 auto; padding: 48px 16px; }
+      h1 { font-size: 22px; margin: 0 0 4px; }
+      p { margin: 0 0 24px; color: #a1a1aa; }
+      label {
+        display: flex; gap: 12px; align-items: flex-start;
+        padding: 14px 16px; margin-bottom: 10px; cursor: pointer;
+        border: 1px solid #3f3f46; border-radius: 10px;
+      }
+      label:has(input:checked) { border-color: #f4f4f5; background: #18181b; }
+      input { margin: 3px 0 0; accent-color: #f4f4f5; }
+      .name { font-weight: 600; }
+      .where { display: block; color: #a1a1aa; font-size: 13px; word-break: break-all; }
+      .actions { display: flex; gap: 10px; margin-top: 24px; }
+      button {
+        flex: 1; padding: 11px 16px; border-radius: 10px; font: inherit; font-weight: 600;
+        cursor: pointer; border: 1px solid #3f3f46; background: transparent; color: inherit;
+      }
+      button.primary { background: #f4f4f5; color: #000; border-color: #f4f4f5; }
+      #error { color: #f87171; min-height: 1.45em; margin: 12px 0 0; }
+    </style>
+    <!-- Written by scripts/configure.mjs: the profile's sources and default. -->
+    <script src="splash-config.js"></script>
+  </head>
+  <body>
+    <!--
+      The wrapper's own settings page, shipped inside the app so it opens with
+      no network. Reached from the gear on the launch splash (index.html) and
+      from the tray's "Load From" menu. It picks which of the profile's
+      sources the window loads; the choice is saved on the Rust side
+      (src-tauri/src/app_source.rs) and outlives the app being closed.
+    -->
+    <main>
+      <h1>Load the app from</h1>
+      <p>Where this window gets Debate AI from. Your choice is remembered.</p>
+      <form id="sources"></form>
+      <div class="actions">
+        <button type="button" id="back">Back</button>
+        <button type="button" class="primary" id="apply">Open</button>
+      </div>
+      <p id="error" role="alert"></p>
+    </main>
+    <script>
+      (function () {
+        var invoke = window.__TAURI__ && window.__TAURI__.core && window.__TAURI__.core.invoke;
+        var form = document.getElementById("sources");
+        var error = document.getElementById("error");
+
+        function describe(option) {
+          if (option.bundled) return "Built into the app. Works without internet; signing in and online features still need it.";
+          return option.url.replace(/^https?:\/\//, "");
+        }
+
+        function render(info) {
+          form.textContent = "";
+          info.options.forEach(function (option) {
+            var label = document.createElement("label");
+            var input = document.createElement("input");
+            input.type = "radio";
+            input.name = "source";
+            input.value = option.id;
+            input.checked = option.id === info.current;
+            var text = document.createElement("span");
+            var name = document.createElement("span");
+            name.className = "name";
+            name.textContent = option.label + (option.id === info.default ? " (default)" : "");
+            var where = document.createElement("span");
+            where.className = "where";
+            where.textContent = describe(option);
+            text.appendChild(name);
+            text.appendChild(where);
+            label.appendChild(input);
+            label.appendChild(text);
+            form.appendChild(label);
+          });
+        }
+
+        function fromProfile() {
+          var sources = window.__WRAPPER_SOURCES__ || [];
+          return {
+            current: window.__WRAPPER_DEFAULT_SOURCE__,
+            default: window.__WRAPPER_DEFAULT_SOURCE__,
+            options: sources.map(function (s) {
+              return { id: s.id, label: s.label, url: s.url, bundled: s.url.indexOf("://") === -1 };
+            }),
+          };
+        }
+
+        if (invoke) invoke("get_app_source").then(render, function () { render(fromProfile()); });
+        else render(fromProfile());
+
+        document.getElementById("apply").addEventListener("click", function () {
+          var picked = form.querySelector("input:checked");
+          if (!picked) return;
+          error.textContent = "";
+          // Saves the choice and reloads the window onto it (via the splash).
+          if (invoke) {
+            invoke("set_app_source", { source: picked.value }).catch(function (e) {
+              error.textContent = "Couldn't save that: " + e;
+            });
+          } else {
+            window.location.replace("index.html#skip-splash");
+          }
+        });
+
+        document.getElementById("back").addEventListener("click", function () {
+          window.location.replace("index.html#skip-splash");
+        });
+      })();
+    </script>
+  </body>
+</html>

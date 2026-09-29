@@ -17,6 +17,7 @@
     "deep-link:default",
     "autostart:default",
     "allow-system-info",
-    "allow-quick-launch"
+    "allow-quick-launch",
+    "allow-app-source"
   ]
 }

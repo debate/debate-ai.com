@@ -118,9 +118,29 @@ Store submission itself — Microsoft Store, Mac App Store, iOS App Store, Googl
 
 `tauri.conf.json`'s main window opens `dist/index.html`, a bundled launch splash that plays
 `dist/splash.mp4` (shipped inside the app, so it shows instantly and offline) while prefetching
-the profile's site, then navigates to that site over HTTPS when the video ends. There's no local
-copy of the app's UI to keep in sync with the real site — `dist/` holds only the splash, and
-`dist/splash-config.js` (written by `npm run configure`) tells it where to go. The tradeoff:
-the app needs network access to be useful, same as opening the site in a browser tab would. If a
-future use of this package needs an offline mode, that's an addition to `dist/`'s placeholder
-page and the window-creation logic in `src-tauri/src/lib.rs`, not a redesign of this package.
+the chosen site, then navigates to it when the video ends. By default that is the profile's site
+over HTTPS, so there's no local copy of the app's UI to keep in sync with the real site.
+
+## Choosing where the app loads from
+
+A profile can list several `sources`, and the user picks one in the wrapper's own settings page
+(`dist/settings.html`, bundled so it opens with no network). The debate-ai profile has three:
+
+| Source | Loads |
+| --- | --- |
+| `live` (default) | `https://debate-ai.com` |
+| `beta` | `https://d.ebate.app` |
+| `offline` | `dist/offline/`, the whole app (`packages/debate-webview`) built into the bundle |
+
+The settings page opens from the gear on the launch splash, from the tray's **Load From** menu
+on desktop (which also switches directly), and from the "Offline · Change" link in the offline
+build. The choice is saved to `app-source.json` in the app's config directory
+(`src-tauri/src/app_source.rs`) and used on every launch until changed. The site can offer the
+same choice through the `get_app_source` / `set_app_source` commands.
+
+The offline build is made by `npm run build:offline` (`scripts/build-offline.mjs`, host code in
+`offline/`). It needs the monorepo installed (`bun install` at the root, plus the
+`packages/debate-rankings` and `packages/debate-editor-cm` submodules) and is git-ignored; the
+release workflow builds it best-effort. An app bundled without it falls back to the site when
+"Offline" is picked. Offline, everything that runs in the page (timer, flow, editor) works;
+anything that reads from the server needs the network, and `/api` requests go to debate-ai.com.

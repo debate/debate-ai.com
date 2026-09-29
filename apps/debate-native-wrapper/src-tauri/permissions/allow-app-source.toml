@@ -1,0 +1,7 @@
+# Grants reading and changing where the window loads the app from (see
+# src/app_source.rs): the bundled splash and settings pages use it, and the
+# wrapped site may too, to offer the same choice in its own settings.
+[[permission]]
+identifier = "allow-app-source"
+description = "Read and change which of the profile's sources (the live site, the beta site, the bundled offline build) the window loads, and reload onto it."
+commands.allow = ["get_app_source", "set_app_source"]
