@@ -37,7 +37,7 @@ import type { ChallengeState } from "debate-webview/lib/practice-partners/challe
 
 import type { getDBFromContext } from "@/lib/database/context";
 import { notifications, practiceChallenges, practiceProfiles, user, userBlocks } from "@/lib/database/schema";
-import { readStoredPreferences, roomIdForChallenge, storedPreferences, type ParsedChallenge } from "./validation";
+import { readStoredPreferences, roomIdForChallenge, storedPreferences, type ParsedChallenge } from "debate-webview/lib/practice-partners/validation";
 
 type Db = Awaited<ReturnType<typeof getDBFromContext>>;
 

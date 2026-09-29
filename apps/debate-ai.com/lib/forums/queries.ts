@@ -41,7 +41,7 @@ import {
 
 import type { getDBFromContext } from "@/lib/database/context";
 import { comments, forumThreads, user } from "@/lib/database/schema";
-import { isThreadId, type Parsed } from "./validation";
+import { isThreadId, type Parsed } from "debate-webview/lib/forums/validation";
 
 type Db = Awaited<ReturnType<typeof getDBFromContext>>;
 

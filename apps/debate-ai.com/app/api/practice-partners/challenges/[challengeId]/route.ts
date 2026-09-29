@@ -12,7 +12,7 @@ import {
   rowState,
   updateChallengeState,
 } from "@/lib/practice-partners/queries";
-import { parseChallengeId } from "@/lib/practice-partners/validation";
+import { parseChallengeId } from "debate-webview/lib/practice-partners/validation";
 import {
   applyChallengeAction,
   challengeNotificationTitle,

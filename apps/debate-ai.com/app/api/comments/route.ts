@@ -10,7 +10,7 @@ import {
   parseResourceType,
   type CommentResourceType,
   type Parsed,
-} from "@/lib/comments/validation"
+} from "debate-webview/lib/comments/validation"
 
 /**
  * The one comment surface, for every kind of thing that can be discussed.

@@ -1,6 +1,6 @@
 import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
 import { teamAssignments, teamStudents, user } from "@/lib/database/schema";
-import { limitsFor, type TierId } from "./limits";
+import { limitsFor, type TierId } from "debate-webview/lib/stripe/limits";
 import { getUserTier } from "./usage";
 
 /**

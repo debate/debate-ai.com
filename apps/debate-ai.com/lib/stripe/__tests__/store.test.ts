@@ -10,7 +10,7 @@ import { createClient } from "@libsql/client"
 import { drizzle } from "drizzle-orm/libsql"
 import { beforeEach, describe, expect, it } from "vitest"
 import * as schema from "../../database/schema"
-import { PLANS } from "../plans"
+import { PLANS } from "debate-webview/lib/stripe/plans"
 import { getActiveSubscription, saveSubscriptionUpdate } from "../store"
 import { subscriptionUpdateForEvent } from "../webhook"
 

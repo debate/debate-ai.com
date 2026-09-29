@@ -16,7 +16,7 @@ import {
   clearCachedVisitorLocation,
   getVisitorLocation,
   readCachedVisitorLocation,
-} from "../client";
+} from "../../../src/lib/location/client";
 
 /** A minimal localStorage, since these tests run in the node environment. */
 function installLocalStorage(): Map<string, string> {
