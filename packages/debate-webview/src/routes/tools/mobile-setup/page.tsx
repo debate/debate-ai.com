@@ -11,6 +11,8 @@ const GEAR: {
   role: string
   href: string
   image: string
+  /** Optional looping video shown in place of `image`. */
+  video?: string
   blurb: string
   usedHref?: string
   buyLabel?: string
@@ -71,6 +73,7 @@ const GEAR: {
     href: "https://www.visible.com/get/?69PFJG2",
     buyLabel: "View on Visible",
     image: "https://s7d1.scene7.com/is/content/tracfone/New-Save6-Desktop-672x448",
+    video: "https://i.imgur.com/xNqdj3r.mp4",
     blurb:
       "Unlimited 5G data, talk, and text on Verizon's network — $25/month with taxes included ($35/month for Visible+ on Ultra Wideband, with global coverage). eSIM activation ships overnight, and friend code 69PFJG2 knocks $20 off a service payment, so the phone above can be live before you leave the airport.",
   },
@@ -211,13 +214,29 @@ export default function MobileSetupPage() {
                 <Card className="h-full py-4 transition-colors hover:bg-accent hover:border-accent-foreground/20">
                   <CardHeader className="px-4">
                     <div className="mb-2 flex h-36 items-center justify-center overflow-hidden rounded-md bg-white">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        loading="lazy"
-                        className="max-h-full max-w-full object-contain"
-                      />
+                      {item.video ? (
+                        <video
+                          src={item.video}
+                          poster={item.image}
+                          aria-label={item.name}
+                          autoPlay
+                          muted
+                          loop
+                          playsInline
+                          preload="metadata"
+                          className="max-h-full max-w-full object-contain"
+                        />
+                      ) : (
+                        <>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            loading="lazy"
+                            className="max-h-full max-w-full object-contain"
+                          />
+                        </>
+                      )}
                     </div>
                     <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{item.role}</p>
                     <CardTitle className="text-base leading-snug">{item.name}</CardTitle>
