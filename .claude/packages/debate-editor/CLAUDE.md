@@ -16,19 +16,23 @@ Entry: `src/react/index.tsx` — consumed as source, no build step. Tests in
 
 Never reach past these into `src/`.
 
-## It is upstream CardMirror plus a patch
+## It is an adapter — `src/` is generated
 
-`src/` = upstream CardMirror (the `packages/debate-editor-cm` submodule, at the
-commit in `upstream.json`) + `patches/debate-ai.patch` + files upstream doesn't
-have (the React shell, ribbon tabs, sync clients). See the README's "Upstream
-CardMirror" section.
+`src/` is git-ignored and assembled by `scripts/sync-upstream.mjs` from
+upstream CardMirror (the `packages/debate-editor-cm` submodule, at the commit
+in `upstream.json`) + `patches/debate-ai.patch` + `overlay/` (files upstream
+doesn't have: the React shell, ribbon tabs, sync clients). See the README's
+"Upstream CardMirror" section.
 
-- **Edited an upstream file?** Run `bun run sync-upstream:save` in this
-  package and commit the patch with it. `test/upstream-sync.test.ts` fails CI
-  otherwise. Never hand-edit the patch.
+- **Edited anything in `src/`?** Run `bun run sync-upstream:save` in this
+  package — upstream files go into the patch, ours into `overlay/`. Otherwise
+  the edit is never committed, and `test/upstream-sync.test.ts` fails CI.
+  Never hand-edit the patch. Files of our own can also be edited in `overlay/`
+  directly (then `bun run assemble`).
+- Never put a file upstream also has in `overlay/`; the assemble refuses it.
 - **Taking upstream changes:** move the submodule, `bun run sync-upstream`,
   resolve `<<<<<<< src` conflicts, `sync-upstream:save`, then run the tests.
-  Commit the submodule bump, `upstream.json`, `patches/` and `src/` together.
+  Commit the submodule bump, `upstream.json`, `patches/` and `overlay/` together.
 - Prefer putting new debate-ai.com logic in a file of our own over growing
   the patch. Every patched line is a future merge conflict.
 - After a sync: a new `RIBBON_GROUPS` group must go on a tab in
