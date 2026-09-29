@@ -9,6 +9,7 @@ import {
   README_BANNER,
   README_SHOWCASE,
 } from "../../../src/lib/ui/features/readme-media";
+import { CARDS_DOIS, CARDS_VISION } from "../../../src/lib/ui/features/cards-vision";
 
 describe("FeaturesPanel", () => {
   const html = renderToStaticMarkup(<FeaturesPanel />);
@@ -40,6 +41,18 @@ describe("FeaturesPanel", () => {
     for (const workspace of README_SHOWCASE) {
       expect(html).toContain(`src="${workspace.image}"`);
       expect(html).toContain(`href="${workspace.href}"`);
+    }
+  });
+
+  it("renders the CARDS overview and every point of its vision", () => {
+    expect(html).toContain('id="cards-vision"');
+    expect(html).toContain("Crowdsourced Annotated Research for Debating Solutions (CARDS)");
+    expect(html).toContain("war of warrants");
+    for (const point of CARDS_VISION) {
+      expect(html).toContain(point.title);
+    }
+    for (const doi of CARDS_DOIS) {
+      expect(html).toContain(`href="${doi.href}"`);
     }
   });
 
