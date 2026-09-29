@@ -1,6 +1,6 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import type { Plugin } from 'vite';
+import type { Plugin } from './plugin-type';
 
 /**
  * Chrome Web Store rejects a Manifest V3 item whose code can load a script
