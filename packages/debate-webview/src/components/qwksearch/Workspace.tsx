@@ -25,6 +25,7 @@ import {
 } from "../../lib/qwksearch/doc-paths"
 
 import "katex/dist/katex.min.css"
+import "../../styles/reason-editor.css"
 import "easydrawer/styles.css"
 import "katex/contrib/mhchem"
 

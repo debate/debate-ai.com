@@ -20,7 +20,7 @@ import {
 } from "../../lib/ui/primitives/dialog"
 import { Button } from "../../lib/ui/primitives/button"
 import { useSession } from "../../lib/hooks/useSession"
-import { APP_NAME } from "../../lib/config/site"
+import { APP_LOGO, APP_LOGO_HEIGHT, APP_LOGO_WIDTH, APP_NAME } from "../../lib/config/site"
 
 // The dock and the guest sign-in prompt mount this dialog on every page, but
 // the form (auth providers, brand icons) is only needed once it opens.
@@ -69,6 +69,14 @@ export function LoginDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={APP_LOGO}
+            alt={APP_NAME}
+            width={APP_LOGO_WIDTH}
+            height={APP_LOGO_HEIGHT}
+            className="mx-auto mb-2 h-auto w-full max-w-[200px]"
+          />
           <DialogTitle>{title ?? `Sign in to ${APP_NAME}`}</DialogTitle>
           <DialogDescription>
             {description ?? "Save your rounds, flows and research across devices."}

@@ -22,10 +22,12 @@ import { AppShell } from "../components/layout/AppShell"
 import { LoadingProvider } from "../components/layout/LoadingProvider"
 import { APP_ROUTES, type AppRoute } from "../routes"
 import { AppRouter } from "./AppRouter"
+import { loadWebFonts } from "../styles/web-fonts"
 
 /**
  * What the root layout's pre-paint scripts do on the web: the stored colour
- * theme's `theme-<name>` class and the stored font on `<html>`.
+ * theme's `theme-<name>` class and the stored font on `<html>`, plus the
+ * webfont stylesheets.
  */
 export function applyStoredAppearance(root: HTMLElement = document.documentElement): void {
   let theme = "modern-minimal"
@@ -41,6 +43,7 @@ export function applyStoredAppearance(root: HTMLElement = document.documentEleme
   root.classList.add(`theme-${theme}`)
   root.style.fontFamily = font
   document.body?.classList.add("theme-root")
+  loadWebFonts(document)
 }
 
 export interface DebateAppProps {
