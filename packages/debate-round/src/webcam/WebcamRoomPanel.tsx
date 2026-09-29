@@ -8,6 +8,9 @@
  * setup (see room-protocol.ts). A camera picker chooses which of the
  * browser's cameras to send, before joining or mid-round.
  *
+ * The camera and microphone stay off — not even opened — until their toggle
+ * buttons next to the camera picker are switched on.
+ *
  * Everyone picks how they join — debater, judge or observer — so a judge can
  * sit in the round virtually. Each tile is labeled with its participant's
  * role, and remote participants are marked "Virtual".
@@ -38,6 +41,7 @@ function VideoTile({
   muted = false,
   micOff,
   camOff,
+  pending = false,
 }: {
   stream?: MediaStream | null
   /** Shown in the caption. */
@@ -49,6 +53,8 @@ function VideoTile({
   muted?: boolean
   micOff?: boolean
   camOff?: boolean
+  /** A remote camera reported on but not yet received. */
+  pending?: boolean
 }) {
   const ref = useRef<HTMLVideoElement>(null)
   useEffect(() => {
@@ -60,7 +66,7 @@ function VideoTile({
         <video ref={ref} autoPlay playsInline muted={muted} className="h-full w-full object-cover" />
       ) : (
         <div className="flex h-full items-center justify-center text-[10px] text-white/60">
-          {stream ? "Camera off" : "Connecting…"}
+          {pending ? "Connecting…" : "Camera off"}
         </div>
       )}
       <div className="absolute left-1 top-1 flex gap-0.5">
@@ -84,7 +90,10 @@ function VideoTile({
   )
 }
 
-/** Which of the browser's cameras to send. Hidden until one is known. */
+/**
+ * Which of the browser's cameras to send. Until camera permission is granted
+ * the browser hides device names, so the list may only offer the default.
+ */
 function CameraPicker({
   cameras,
   cameraId,
@@ -94,9 +103,8 @@ function CameraPicker({
   cameraId: string | null
   onSelect: (id: string) => void
 }) {
-  if (cameras.length === 0) return null
   return (
-    <label className="flex items-center gap-1" title="Choose camera">
+    <label className="flex min-w-0 flex-1 items-center gap-1" title="Choose camera">
       <SwitchCamera className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden />
       <span className="sr-only">Camera</span>
       <select
@@ -104,7 +112,7 @@ function CameraPicker({
         onChange={(e) => onSelect(e.target.value)}
         className="h-7 min-w-0 flex-1 rounded-[var(--border-radius)] border border-border bg-transparent px-1 text-xs"
       >
-        {cameraId === null && <option value="">Default camera</option>}
+        {(cameraId === null || cameras.length === 0) && <option value="">Default camera</option>}
         {cameras.map((c, i) => (
           <option key={c.deviceId} value={c.deviceId}>
             {c.label || `Camera ${i + 1}`}
@@ -124,6 +132,19 @@ export function WebcamRoomPanel({ round, apiBase }: { round: Round; apiBase?: st
   const joined = room.status === "joined" || room.status === "connecting"
   const btn =
     "inline-flex h-7 items-center justify-center gap-1 rounded-[var(--border-radius)] border border-border px-2 text-xs hover:bg-[var(--background-indent)] disabled:opacity-50"
+  const toggleOn = "border-green-600 bg-green-600/15 text-green-700 dark:text-green-400"
+
+  const selfTile = (
+    <VideoTile
+      stream={room.localStream}
+      name={`${room.self?.name ?? "You"} (you)`}
+      label={roomTileLabel(room.self?.name ?? "You", room.self?.role ?? joinRole, { self: true })}
+      role={room.self?.role ?? joinRole}
+      muted
+      micOff={!room.micOn}
+      camOff={!room.camOn}
+    />
+  )
 
   return (
     <div className="pb-[var(--padding)]">
@@ -143,20 +164,34 @@ export function WebcamRoomPanel({ round, apiBase }: { round: Round; apiBase?: st
 
       {open && (
         <div className="flex flex-col gap-2 pl-2">
-          <CameraPicker cameras={room.cameras} cameraId={room.cameraId} onSelect={(id) => void room.selectCamera(id)} />
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              className={cn(btn, room.camOn && toggleOn)}
+              onClick={room.toggleCam}
+              aria-pressed={room.camOn}
+              title={room.camOn ? "Turn camera off" : "Turn camera on"}
+            >
+              {room.camOn ? <Camera className="h-3 w-3" /> : <CameraOff className="h-3 w-3" />}
+              <span className="sr-only">Camera</span>
+            </button>
+            <button
+              type="button"
+              className={cn(btn, room.micOn && toggleOn)}
+              onClick={room.toggleMic}
+              aria-pressed={room.micOn}
+              title={room.micOn ? "Turn microphone off" : "Turn microphone on"}
+            >
+              {room.micOn ? <Mic className="h-3 w-3" /> : <MicOff className="h-3 w-3" />}
+              <span className="sr-only">Microphone</span>
+            </button>
+            <CameraPicker cameras={room.cameras} cameraId={room.cameraId} onSelect={(id) => void room.selectCamera(id)} />
+          </div>
 
           {joined ? (
             <>
               <div className="grid grid-cols-2 gap-1">
-                <VideoTile
-                  stream={room.localStream}
-                  name={`${room.self?.name ?? "You"} (you)`}
-                  label={roomTileLabel(room.self?.name ?? "You", room.self?.role ?? joinRole, { self: true })}
-                  role={room.self?.role ?? joinRole}
-                  muted
-                  micOff={!room.micOn}
-                  camOff={!room.camOn}
-                />
+                {selfTile}
                 {room.participants.map((p) => (
                   <VideoTile
                     key={p.id}
@@ -165,25 +200,19 @@ export function WebcamRoomPanel({ round, apiBase }: { round: Round; apiBase?: st
                     label={roomTileLabel(p.name, p.role)}
                     role={p.role}
                     virtual
-                    micOff={p.micOn === false}
-                    camOff={p.camOn === false}
+                    micOff={p.micOn !== true}
+                    camOff={p.camOn !== true || !p.stream}
+                    pending={p.camOn === true && !p.stream}
                   />
                 ))}
               </div>
-              <div className="flex gap-1">
-                <button type="button" className={btn} onClick={room.toggleMic} aria-pressed={!room.micOn} title={room.micOn ? "Mute" : "Unmute"}>
-                  {room.micOn ? <Mic className="h-3 w-3" /> : <MicOff className="h-3 w-3" />}
-                </button>
-                <button type="button" className={btn} onClick={room.toggleCam} aria-pressed={!room.camOn} title={room.camOn ? "Camera off" : "Camera on"}>
-                  {room.camOn ? <Camera className="h-3 w-3" /> : <CameraOff className="h-3 w-3" />}
-                </button>
-                <button type="button" className={cn(btn, "flex-1 text-red-600")} onClick={room.leave}>
-                  <PhoneOff className="h-3 w-3" /> Leave
-                </button>
-              </div>
+              <button type="button" className={cn(btn, "w-full text-red-600")} onClick={room.leave}>
+                <PhoneOff className="h-3 w-3" /> Leave
+              </button>
             </>
           ) : (
             <>
+              {room.localStream && <div className="grid grid-cols-2 gap-1">{selfTile}</div>}
               <div className="flex items-center gap-1" role="radiogroup" aria-label="Join as">
                 <span className="text-[10px] text-muted-foreground">Join as</span>
                 {(Object.keys(ROOM_ROLE_LABELS) as RoomRole[]).map((role) => (
@@ -200,7 +229,7 @@ export function WebcamRoomPanel({ round, apiBase }: { round: Round; apiBase?: st
                 ))}
               </div>
               <button type="button" className={cn(btn, "w-full")} onClick={() => void room.join()}>
-                <Video className="h-3 w-3" /> Join with camera as {ROOM_ROLE_LABELS[joinRole].toLowerCase()}
+                <Video className="h-3 w-3" /> Join as {ROOM_ROLE_LABELS[joinRole].toLowerCase()}
               </button>
             </>
           )}
@@ -209,6 +238,7 @@ export function WebcamRoomPanel({ round, apiBase }: { round: Round; apiBase?: st
           {!joined && (
             <p className="text-[10px] leading-snug text-muted-foreground">
               Everyone in this round joins the same room — a judge who can't be there joins as a virtual judge.
+              Your camera and mic stay off until you switch them on above.
               Video goes directly between browsers; up to{" "}
               {MAX_ROOM_CAMERAS} cameras per room.
             </p>
