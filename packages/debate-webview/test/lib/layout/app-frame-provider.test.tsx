@@ -6,10 +6,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import {
   AppFrameProvider,
   AppFrameSurface,
-  PRELOAD_ALL_FRAMES_DELAY_MS,
   useAppFrame,
 } from "../../../src/components/layout/AppFrameProvider"
-import { DOCK_NAV_HREFS } from "../../../src/lib/nav/dock-nav-paths"
 import { configureHost } from "../../../src/host/config"
 
 let mockPathname = "/debate"
@@ -192,7 +190,7 @@ describe("AppFrameProvider and AppFrameSurface", () => {
     })
   })
 
-  it("preloads every dock destination hidden once the browser is idle", async () => {
+  it("mounts only the frame that is needed, never every dock destination up front", async () => {
     vi.useFakeTimers()
     try {
       mockPathname = "/debate"
@@ -206,21 +204,15 @@ describe("AppFrameProvider and AppFrameSurface", () => {
           </AppFrameProvider>,
         )
       })
-      expect(container.querySelectorAll("iframe").length).toBe(1)
 
+      // Long past any idle-time preload: still just the page on screen.
       await act(async () => {
-        vi.advanceTimersByTime(PRELOAD_ALL_FRAMES_DELAY_MS)
+        vi.advanceTimersByTime(10_000)
       })
 
-      const iframes = Array.from(container.querySelectorAll("iframe"))
-      expect(iframes.length).toBe(DOCK_NAV_HREFS.length)
-      // The page already on screen keeps its slot at the front.
+      const iframes = container.querySelectorAll("iframe")
+      expect(iframes.length).toBe(1)
       expect(iframes[0].getAttribute("src")).toBe("/debate?embed=1")
-      for (const href of DOCK_NAV_HREFS) {
-        const iframe = iframes.find((el) => el.getAttribute("src") === `${href}?embed=1`)
-        expect(iframe).toBeDefined()
-        expect(iframe!.style.visibility).toBe(href === "/debate" ? "visible" : "hidden")
-      }
 
       await act(async () => {
         root.unmount()

@@ -17,10 +17,12 @@
  * which Next's app router tracks without refetching), so deep links, the
  * back button and `usePathname()`-driven UI all keep working.
  *
- * Every dock destination is preloaded into its own hidden frame shortly
- * after the shell mounts, and no frame is ever unmounted after that (see
- * `lib/nav/frame-pool.ts`) — not when switching between destinations, and not
- * while a non-dock route is on screen. Switching is just toggling which frame
+ * A destination's frame is mounted only when it is first needed — opened,
+ * landed on, or hovered in the dock — never all up front, so a page load
+ * fetches the one page on screen rather than every dock destination at once.
+ * Once mounted, no frame is ever unmounted (see `lib/nav/frame-pool.ts`) —
+ * not when switching between destinations, and not while a non-dock route is
+ * on screen. Switching is just toggling which frame
  * is visible, so it is instant and each page's scroll position, editor buffer
  * and in-flight state survive the trip.
  */
@@ -37,8 +39,8 @@ import {
 } from "react"
 import { usePathname } from "next/navigation"
 
-import { DOCK_NAV_HREFS, dockNavLabel, isDockNavPath, toFrameSrc } from "../../lib/nav/dock-nav-paths"
-import { keepAlive, keepAllAlive } from "../../lib/nav/frame-pool"
+import { dockNavLabel, isDockNavPath, toFrameSrc } from "../../lib/nav/dock-nav-paths"
+import { keepAlive } from "../../lib/nav/frame-pool"
 import { getHostConfig } from "../../host/config"
 import { beginLoading, finishLoading } from "../../lib/ui/loading-store"
 import { ROUTE_LOADING_TIMEOUT_MS } from "../../lib/ui/use-route-loading"
@@ -52,20 +54,13 @@ interface AppFrameContextValue {
   openInFrame: (href: string) => boolean
   /**
    * Warms a destination before it is asked for — called when the pointer
-   * lands on its dock icon. Mounts its frame hidden right away, ahead of the
-   * idle-time preload of the whole dock.
+   * lands on its dock icon. Mounts its frame hidden right away, so the click
+   * that usually follows finds it already loading.
    */
   preloadFrame: (href: string) => void
 }
 
 const AppFrameContext = createContext<AppFrameContextValue | null>(null)
-
-/**
- * How long after mount the rest of the dock is preloaded. The page on screen
- * gets the network and main thread first; the hidden frames follow once the
- * browser is idle, or after this long at the latest.
- */
-export const PRELOAD_ALL_FRAMES_DELAY_MS = 1500
 
 /** The keep-alive pool, oldest first — read only by {@link AppFrameSurface}. */
 const AppFrameSurfaceContext = createContext<string[]>([])
@@ -101,20 +96,6 @@ export function AppFrameProvider({ children }: { children: ReactNode }) {
   const preloadFrame = useCallback((href: string) => {
     if (!getHostConfig().framing || !isDockNavPath(href)) return
     setMountedPaths((paths) => keepAlive(paths, href))
-  }, [])
-
-  // Preload every dock destination into the hidden frame stack once the
-  // browser is idle, so the first click on any dock icon is already instant.
-  useEffect(() => {
-    if (!getHostConfig().framing || typeof window === "undefined") return
-    const preloadAll = () => setMountedPaths((paths) => keepAllAlive(paths, DOCK_NAV_HREFS))
-
-    if (typeof window.requestIdleCallback === "function") {
-      const handle = window.requestIdleCallback(preloadAll, { timeout: PRELOAD_ALL_FRAMES_DELAY_MS })
-      return () => window.cancelIdleCallback(handle)
-    }
-    const timer = window.setTimeout(preloadAll, PRELOAD_ALL_FRAMES_DELAY_MS)
-    return () => window.clearTimeout(timer)
   }, [])
 
   // On mount and whenever pathname changes, frame dock destinations (/debate,
