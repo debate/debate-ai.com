@@ -65,7 +65,7 @@ packages/debate-api-client/dist/
 
 # macOS Finder metadata
 .DS_Store
-
+bunfig.toml
 # debate-help-docs: fumadocs-mdx generated collections
 packages/debate-help-docs/.source/
 

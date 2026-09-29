@@ -1,7 +1,7 @@
 /**
  * @fileoverview The weekly YouTube job behind the Worker's cron trigger.
  *
- * `wrangler.jsonc` declares one schedule (`0 8 * * 1` — Mondays 08:00 UTC) and
+ * `wrangler.jsonc` declares one schedule (`0 8 * * MON` — Mondays 08:00 UTC) and
  * the `scheduled` export in `worker/index.ts` hands the tick to this module.
  * Two things have to happen on that tick, and they are separate passes:
  *

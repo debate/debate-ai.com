@@ -188,7 +188,7 @@ Three things to know before a deploy surprises you:
 - **Use `bun run build`, not `vinext build` alone.** Skipping `build:sw`
   ships no service worker, so offline mode silently stops working.
 
-A weekly cron (`0 8 * * 1` — Mondays 08:00 UTC) runs the YouTube channel scan
+A weekly cron (`0 8 * * MON` — Mondays 08:00 UTC) runs the YouTube channel scan
 and view-count refresh from the `scheduled` export in
 [`worker/index.ts`](./worker/index.ts). It needs `YOUTUBE_API_KEY` set, or it
 logs and returns.

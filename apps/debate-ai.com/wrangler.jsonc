@@ -31,17 +31,7 @@
 	"images": {
 		"binding": "IMAGES"
 	},
-	// Weekly YouTube maintenance — Mondays at 08:00 UTC: scan the subscribed
-	// channels for new videos, then refresh every stored video's view count.
-	// Weekly content backup to R2 — Sundays at 07:00 UTC (DB_BACKUP_CRON in
-	// lib/admin/weekly-db-backup.ts; keep the two in sync).
-	// Both handled by the `scheduled` export in worker/index.ts.
-	"triggers": {
-		"crons": [
-			"0 8 * * 1",
-			"0 7 * * 0"
-		]
-	},
+	
 	// SQL backups of the content tables (videos, cards, history — no user
 	// data), written by /admin and the weekly cron. Private bucket; the admin
 	// panel downloads through /api/admin/db-backup/file. Create it once with
@@ -90,8 +80,8 @@
 			},
 			"triggers": {
 				"crons": [
-					"0 8 * * 1",
-					"0 7 * * 0"
+					"0 8 * * MON",
+					"0 7 * * SUN"
 				]
 			},
 			"r2_buckets": [

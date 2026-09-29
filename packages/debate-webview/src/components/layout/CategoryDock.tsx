@@ -146,7 +146,31 @@ function AccountSection({ onSignIn }: { onSignIn: () => void }) {
 const SUBMENU_WIDTH = "w-[min(14rem,calc(100vw-1.5rem))]"
 
 /**
- * The site-nav menu: Command Palette plus one submenu per sidebar section
+ * Width for the dock's own menus (site nav, settings).
+ *
+ * Narrower on a phone than on a desktop (`w-40` under `sm`, `w-48` above): the
+ * dock sits against the screen edge there, so every pixel the panel gives back
+ * is a pixel of gap left for Radix to open the section submenus into. Capped
+ * at the viewport as well, for the same reason {@link SUBMENU_WIDTH} is.
+ */
+const MENU_WIDTH = "w-40 sm:w-48 max-w-[calc(100vw-1rem)]"
+
+/**
+ * The palette's opening chord, as the platform writes it — `⌘K` on Apple
+ * hardware, `Ctrl K` elsewhere. Read after mount rather than during render, so
+ * the server's markup and the first client render agree.
+ */
+function usePaletteChord(): string {
+  const [chord, setChord] = useState("⌘K")
+  useEffect(() => {
+    const p = navigator.platform || navigator.userAgent || ""
+    if (!/Mac|iPhone|iPad|iPod/i.test(p)) setChord("Ctrl K")
+  }, [])
+  return chord
+}
+
+/**
+ * The site-nav menu: the search palette plus one submenu per sidebar section
  * (Videos, Coaching, Research, Practice). Used to live at the top of
  * {@link SettingsMenu}, opened from the same gear icon as Settings/Theme/
  * Links/Account — which put "where do I go" and "how do I configure this"
@@ -156,19 +180,20 @@ const SUBMENU_WIDTH = "w-[min(14rem,calc(100vw-1.5rem))]"
  */
 function NavMenu({ side }: { side: "bottom" | "top" }) {
   const router = useRouter()
+  const chord = usePaletteChord()
 
   return (
     <DropdownMenuContent
       side={side}
       align="end"
-      className="w-48 max-w-[calc(100vw-1rem)] max-h-[min(560px,80vh)] overflow-y-auto"
+      className={cn(MENU_WIDTH, "max-h-[min(560px,80vh)] overflow-y-auto")}
       collisionPadding={8}
       avoidCollisions
     >
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); openGlobalCommandPalette() }}>
-        <Search className="mr-2 h-4 w-4" />
-        Command Palette
-        <span className="ml-auto text-xs text-muted-foreground">⌘/Ctrl⇧Space</span>
+        <Search className="mr-2 h-4 w-4 shrink-0" />
+        <span className="min-w-0 flex-1 truncate">Search</span>
+        <span className="ml-2 shrink-0 text-xs text-muted-foreground">{chord}</span>
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       {/* The desktop sidebar's own sections, one submenu each. The sidebar is
@@ -214,7 +239,7 @@ function SettingsMenu({
       // Tall enough (the theme/links block above the account rows) to run
       // past a phone viewport, which would otherwise cut them off with no
       // way to reach them.
-      className="w-48 max-w-[calc(100vw-1rem)] max-h-[min(560px,80vh)] overflow-y-auto"
+      className={cn(MENU_WIDTH, "max-h-[min(560px,80vh)] overflow-y-auto")}
       collisionPadding={8}
       avoidCollisions
     >
