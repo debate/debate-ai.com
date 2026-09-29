@@ -13,6 +13,7 @@ import { describe, it, expect } from "vitest"
 import { dockNavRootFor } from "../../../src/lib/nav/dock-nav-paths"
 import {
   FRAME_NAV_ACK,
+  docsExitTarget,
   FRAME_NAV_REQUEST,
   isFrameNavAck,
   isDocsPath,
@@ -151,5 +152,31 @@ describe("message guards", () => {
     expect(isFrameNavRequest(null)).toBe(false)
     expect(isFrameNavRequest("debate-frame-navigate")).toBe(false)
     expect(isFrameNavAck({ type: FRAME_NAV_REQUEST, path: "/coach" })).toBe(false)
+  })
+})
+
+describe("docsExitTarget", () => {
+  it("hard-loads an app page linked from the docs", () => {
+    expect(docsExitTarget(anchor("/videos"), ORIGIN)).toBe(`${ORIGIN}/videos`)
+    expect(docsExitTarget(anchor("/cards/library?q=1#top"), ORIGIN)).toBe(
+      `${ORIGIN}/cards/library?q=1#top`,
+    )
+    expect(docsExitTarget(anchor("/"), ORIGIN)).toBe(`${ORIGIN}/`)
+  })
+
+  it("leaves links within /docs to Fumadocs' router", () => {
+    expect(docsExitTarget(anchor("/docs"), ORIGIN)).toBeNull()
+    expect(docsExitTarget(anchor("/docs/guides/practice-tools"), ORIGIN)).toBeNull()
+  })
+
+  it("does not treat a path that merely starts with the letters as docs", () => {
+    expect(docsExitTarget(anchor("/docsearch"), ORIGIN)).toBe(`${ORIGIN}/docsearch`)
+  })
+
+  it("leaves new tabs, downloads, other origins and bare anchors to the browser", () => {
+    expect(docsExitTarget(anchor("/videos", { target: "_blank" }), ORIGIN)).toBeNull()
+    expect(docsExitTarget(anchor("/videos", { download: true }), ORIGIN)).toBeNull()
+    expect(docsExitTarget({ href: "https://example.com/videos" }, ORIGIN)).toBeNull()
+    expect(docsExitTarget({ href: null }, ORIGIN)).toBeNull()
   })
 })
