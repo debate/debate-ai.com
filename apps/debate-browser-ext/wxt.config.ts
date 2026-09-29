@@ -1,6 +1,7 @@
 import { fileURLToPath } from 'node:url';
 import { defineConfig, type WxtUnimportOptions } from 'wxt';
 import { createPackageFileResolver, noRemoteCode } from './vite/no-remote-code';
+import { stubNodeBuiltins } from './vite/stub-node-builtins';
 
 /** A file inside the `debate-webview` package. */
 const webui = (path: string) =>
@@ -64,7 +65,8 @@ export default defineConfig({
   vite: () => ({
     // Chrome Web Store: no remotely hosted code. Every CDN script URL the
     // bundled libraries carry is pointed at a copy shipped in the extension.
-    plugins: [noRemoteCode(resolveFile)],
+    // api2client's Node-only codegen is stubbed out (vite/stub-node-builtins.ts).
+    plugins: [stubNodeBuiltins(), noRemoteCode(resolveFile)],
     define: {
       // The app reads a few `NEXT_PUBLIC_*` values that Next inlines at build
       // time; everything else in `process.env` is simply absent here.
