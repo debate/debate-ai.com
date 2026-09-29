@@ -25,11 +25,14 @@ interface StoredBackup {
   trigger: "manual" | "weekly" | "unknown";
   groups: string | null;
   url: string;
+  sevenZip: { key: string; size: number; url: string } | null;
 }
 
 interface BackupStatus {
   groups: BackupGroupInfo[];
   r2Configured: boolean;
+  kvConfigured: boolean;
+  sevenZipMaxBytes: number;
   weeklyBackupsKept: number;
   backups: StoredBackup[];
   listError: string | null;
@@ -46,7 +49,8 @@ function formatBytes(bytes: number): string {
  * SQL backups of the content tables — videos, debate cards and the
  * sync/import history, with account data left out and "who did this" columns
  * blanked (apps/debate-ai.com/lib/admin/db-backup.ts). Download a dump
- * directly, or save one to the private R2 bucket and get a link to it. A
+ * directly, or save one to the private R2 bucket and get a link to it; a
+ * `.sql.7z` copy of each saved dump goes to the DB_BACKUPS_KV namespace. A
  * weekly cron saves one to R2 on its own.
  */
 export function DbBackupPanel() {
@@ -55,7 +59,7 @@ export function DbBackupPanel() {
   const [isSaving, setIsSaving] = useState(false);
   const [pending, setPending] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [notice, setNotice] = useState<{ text: string; url?: string } | null>(null);
+  const [notice, setNotice] = useState<{ text: string; url?: string; sevenZipUrl?: string } | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -100,8 +104,14 @@ export function DbBackupPanel() {
       setNotice({
         text:
           `Saved ${body.backup.fileName} (${formatBytes(body.backup.size)}, ${body.stats.totalRows.toLocaleString()} rows)` +
-          (missing.length ? ` — tables not in this database: ${missing.join(", ")}` : ""),
+          (missing.length ? ` — tables not in this database: ${missing.join(", ")}` : "") +
+          (body.backup.sevenZip
+            ? `; 7z copy in KV (${formatBytes(body.backup.sevenZip.size)})`
+            : body.sevenZipSkipped
+              ? `; no 7z copy: ${body.sevenZipSkipped}`
+              : ""),
         url: body.backup.url,
+        sevenZipUrl: body.backup.sevenZip?.url,
       });
       await load();
     } catch (err) {
@@ -112,7 +122,7 @@ export function DbBackupPanel() {
   };
 
   const handleDelete = async (backup: StoredBackup) => {
-    if (!window.confirm(`Delete ${backup.fileName} from R2? This cannot be undone.`)) return;
+    if (!window.confirm(`Delete ${backup.fileName} from R2${backup.sevenZip ? " and its .7z copy from KV" : ""}? This cannot be undone.`)) return;
     setPending(backup.key);
     setError(null);
     setNotice(null);
@@ -206,6 +216,14 @@ export function DbBackupPanel() {
                 </a>
               </>
             )}
+            {notice.sevenZipUrl && (
+              <>
+                {" · "}
+                <a className="underline" href={notice.sevenZipUrl}>
+                  .7z
+                </a>
+              </>
+            )}
           </p>
         )}
 
@@ -213,7 +231,10 @@ export function DbBackupPanel() {
           <div className="flex flex-col gap-2">
             <p className="text-muted-foreground text-xs">
               Stored in R2. A weekly backup runs every Sunday at 07:00 UTC; the newest{" "}
-              {status.weeklyBackupsKept} weekly backups are kept. Links need an admin sign-in.
+              {status.weeklyBackupsKept} weekly backups are kept. Links need an admin sign-in.{" "}
+              {status.kvConfigured
+                ? `Each also gets a .7z copy in KV when it compresses to ${formatBytes(status.sevenZipMaxBytes)} or less.`
+                : "Bind a KV namespace as DB_BACKUPS_KV to keep .7z copies too."}
             </p>
             {status.listError && <p className="text-destructive text-sm">{status.listError}</p>}
             <ul className="flex flex-col divide-y rounded-md border text-sm">
@@ -226,6 +247,15 @@ export function DbBackupPanel() {
                     <span className="text-muted-foreground text-xs">
                       {new Date(backup.uploaded).toLocaleString()} · {formatBytes(backup.size)}
                       {backup.groups ? ` · ${backup.groups.replace(/,/g, ", ")}` : ""}
+                      {backup.sevenZip && (
+                        <>
+                          {" · "}
+                          <a className="underline" href={backup.sevenZip.url}>
+                            .7z
+                          </a>{" "}
+                          ({formatBytes(backup.sevenZip.size)}, KV)
+                        </>
+                      )}
                     </span>
                   </div>
                   <div className="flex shrink-0 items-center gap-2">

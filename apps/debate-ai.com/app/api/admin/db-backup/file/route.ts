@@ -1,14 +1,15 @@
 import { NextResponse } from "next/server";
 import { getAdminAccess } from "@/lib/auth/admin";
 import { describeError } from "@/lib/database/errors";
-import { getBackupBucket, isBackupKey } from "@/lib/admin/db-backup-r2";
+import { deleteBackups, getBackupBucket, getBackupKv, isBackupKey } from "@/lib/admin/db-backup-r2";
 
 /**
- * A backup stored in R2. The bucket is private; this admin-only route is the
- * link the admin panel hands out.
+ * A stored backup. Both stores are private; this admin-only route is the link
+ * the admin panel hands out.
  *
- * GET    ?key=db-backups/… — download the `.sql.gz`
- * DELETE ?key=db-backups/… — remove it
+ * GET    ?key=db-backups/….sql.gz — download the gzip from R2
+ * GET    ?key=db-backups/….sql.7z — download the 7z copy from KV
+ * DELETE ?key=db-backups/….sql.gz — remove it and its 7z copy
  */
 async function resolve(request: Request) {
   const { isAdmin } = await getAdminAccess();
@@ -26,11 +27,25 @@ async function resolve(request: Request) {
 export async function GET(request: Request) {
   const resolved = await resolve(request);
   if ("error" in resolved) return resolved.error;
+  const fileName = resolved.key.split("/").pop() ?? "backup.sql.gz";
+
+  if (resolved.key.endsWith(".7z")) {
+    const kv = getBackupKv();
+    if (!kv) return NextResponse.json({ error: "KV is not configured" }, { status: 503 });
+    const body = await kv.get(resolved.key, "stream");
+    if (!body) return NextResponse.json({ error: "Backup not found" }, { status: 404 });
+    return new Response(body, {
+      headers: {
+        "Content-Type": "application/x-7z-compressed",
+        "Content-Disposition": `attachment; filename="${fileName}"`,
+        "Cache-Control": "no-store",
+      },
+    });
+  }
 
   const object = await resolved.bucket.get(resolved.key);
   if (!object) return NextResponse.json({ error: "Backup not found" }, { status: 404 });
 
-  const fileName = resolved.key.split("/").pop() ?? "backup.sql.gz";
   return new Response(object.body, {
     headers: {
       "Content-Type": object.httpMetadata?.contentType ?? "application/gzip",
@@ -46,7 +61,7 @@ export async function DELETE(request: Request) {
   if ("error" in resolved) return resolved.error;
 
   try {
-    await resolved.bucket.delete(resolved.key);
+    await deleteBackups(resolved.bucket, [resolved.key], getBackupKv());
     return NextResponse.json({ ok: true, key: resolved.key });
   } catch (error) {
     console.error("Error deleting R2 backup:", error);

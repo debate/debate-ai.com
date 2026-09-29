@@ -36,6 +36,8 @@ interface Env extends TurnstileEnv {
   debate_db: D1Database;
   // Content-table SQL backups (lib/admin/db-backup-r2.ts), bound in wrangler.jsonc.
   DB_BACKUPS?: unknown;
+  // `.sql.7z` copies of those backups (lib/admin/db-backup-r2.ts).
+  DB_BACKUPS_KV?: unknown;
   // Webcam-room signalling (lib/webcam/debate-room.ts), bound in wrangler.jsonc.
   DEBATE_ROOMS?: Parameters<typeof handleRoomSocket>[1];
   // See lib/database/d1-session.ts — "auto" (default), "primary",

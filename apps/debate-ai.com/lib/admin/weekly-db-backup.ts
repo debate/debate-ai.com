@@ -9,13 +9,14 @@
  *
  * The dump covers every group in lib/admin/db-backup.ts (videos, cards,
  * history) and lands under `db-backups/weekly/` in the `DB_BACKUPS` bucket,
- * which is then pruned to the newest few — see lib/admin/db-backup-r2.ts.
+ * which is then pruned to the newest few — see lib/admin/db-backup-r2.ts. A
+ * `.sql.7z` copy goes to the `DB_BACKUPS_KV` namespace when it is bound.
  * @module lib/admin/weekly-db-backup
  */
 
 import { getDBFromContext } from "../database/context";
 import { BACKUP_GROUPS, type BackupDb } from "./db-backup";
-import { createR2Backup, getBackupBucket, type BackupResult } from "./db-backup-r2";
+import { createR2Backup, getBackupBucket, getBackupKv, type BackupResult } from "./db-backup-r2";
 
 /** Sundays at 07:00 UTC. Must match the entry in wrangler.jsonc's `triggers.crons`. */
 export const DB_BACKUP_CRON = "0 7 * * 0";
@@ -28,11 +29,12 @@ export async function runWeeklyDbBackup(now: Date = new Date()): Promise<BackupR
     return null;
   }
   const db = (await getDBFromContext()) as unknown as BackupDb;
-  const result = await createR2Backup(db, bucket, BACKUP_GROUPS, "weekly", now);
+  const result = await createR2Backup(db, bucket, BACKUP_GROUPS, "weekly", now, getBackupKv());
   console.log(
     `Weekly DB backup stored ${result.backup.key} (${result.backup.size} bytes, ${result.stats.totalRows} rows` +
       `${result.stats.missing.length ? `, missing tables: ${result.stats.missing.join(", ")}` : ""}` +
-      `${result.pruned.length ? `, pruned ${result.pruned.length} old backups` : ""}).`,
+      `${result.pruned.length ? `, pruned ${result.pruned.length} old backups` : ""}` +
+      `${result.backup.sevenZip ? `; 7z copy ${result.backup.sevenZip.key} (${result.backup.sevenZip.size} bytes) in KV` : `; no 7z copy: ${result.sevenZipSkipped}`}).`,
   );
   return result;
 }
