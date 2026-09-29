@@ -36,6 +36,7 @@ import {
   Library,
   Radar,
   Search,
+  Sparkles,
   Table2,
   Trophy,
   Users,
@@ -63,6 +64,13 @@ import {
   type FeatureEntry,
 } from "debate-feature-catalog/src/feature-catalog";
 import { README_BADGE_ROWS, README_BANNER, README_SHOWCASE } from "./readme-media";
+import {
+  CARDS_CAPABILITIES,
+  CARDS_DOIS,
+  CARDS_OVERVIEW,
+  CARDS_TITLE,
+  CARDS_VISION,
+} from "./cards-vision";
 
 /**
  * A glyph per category, so a section is identifiable before its heading is
@@ -317,6 +325,81 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
             </Reveal>
           ))}
         </div>
+      </section>
+
+      {/* The CARDS overview and vision, moved here from `/cards`'s empty state. */}
+      <section
+        id="cards-vision"
+        aria-label="CARDS vision"
+        className="mx-auto max-w-6xl scroll-mt-20 px-4 pb-16 sm:px-6 lg:px-8"
+      >
+        <Reveal className="mx-auto mb-8 max-w-2xl text-center">
+          <span className="da-accent-fill mb-4 inline-flex size-10 items-center justify-center rounded-xl">
+            <Sparkles className="size-5" />
+          </span>
+          <h2 className="text-2xl font-semibold tracking-tight text-balance text-foreground">
+            {CARDS_TITLE}
+          </h2>
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+            {CARDS_DOIS.map((doi) => (
+              <a
+                key={doi.href}
+                href={doi.href}
+                target="_blank"
+                rel="noreferrer"
+                className="transition-opacity hover:opacity-80"
+              >
+                <img src={doi.badge} alt="DOI" loading="lazy" decoding="async" className="h-5 w-auto" />
+              </a>
+            ))}
+          </div>
+        </Reveal>
+
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <Reveal>
+            <SpotlightCard className="h-full">
+              <div className="h-full p-6">
+                <h3 className="mb-3 text-base font-semibold text-foreground">Overview</h3>
+                <p className="text-sm leading-relaxed text-muted-foreground">{CARDS_OVERVIEW}</p>
+              </div>
+            </SpotlightCard>
+          </Reveal>
+          <Reveal delay={70}>
+            <SpotlightCard className="h-full">
+              <div className="h-full p-6">
+                <h3 className="mb-3 text-base font-semibold text-foreground">Features &amp; Capabilities</h3>
+                <ul className="list-disc space-y-2 pl-4 text-sm leading-relaxed text-muted-foreground">
+                  {CARDS_CAPABILITIES.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            </SpotlightCard>
+          </Reveal>
+        </div>
+
+        <ol className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+          {CARDS_VISION.map((point, index) => (
+            <Reveal key={point.title} as="li" delay={(index % 2) * 70}>
+              <SpotlightCard className="h-full" hueShift={cardHueShift(index, hueOffset)}>
+                <div className="h-full p-6">
+                  <h3 className="mb-2 text-base font-semibold text-foreground">
+                    <span className="mr-2 tabular-nums text-muted-foreground">{index + 1}.</span>
+                    {point.title}
+                  </h3>
+                  {point.paragraphs.map((paragraph) => (
+                    <p
+                      key={paragraph}
+                      className="mt-2 text-sm leading-relaxed text-muted-foreground first:mt-0"
+                    >
+                      {paragraph}
+                    </p>
+                  ))}
+                </div>
+              </SpotlightCard>
+            </Reveal>
+          ))}
+        </ol>
       </section>
 
       <div className="mx-auto max-w-6xl px-4 pb-20 sm:px-6 lg:px-8">
