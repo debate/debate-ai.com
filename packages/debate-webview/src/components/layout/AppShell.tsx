@@ -5,10 +5,10 @@
  * is the app shell or a page running inside it.
  *
  * The shell owns the chrome — the dock, the tool sidebar, the persistent
- * video player, toasts — and hands the content column to
- * {@link AppFrameSurface}, which runs each dock destination in a same-origin
- * frame. A framed document renders its page and nothing else: no second dock,
- * no nested sidebar, and no nested frame surface.
+ * video player, toasts — and renders the routed page as an ordinary React
+ * child in the content column. If some other page frames this app, the
+ * framed document renders its page and nothing else: no second dock and no
+ * nested sidebar.
  */
 
 import type React from "react"
@@ -129,21 +129,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           this document — /reason-editor is not a dock destination and so is
           never framed away from its sidebar. */}
       <ReasonDocsProvider>
-        <AppFrameProvider>
-          <div className="w-screen h-screen overflow-auto pb-[70px] md:pb-0">
-            <ChromeErrorBoundary label="CategoryDock">
-              <CategoryDock />
-            </ChromeErrorBoundary>
-            <AppSidebarShell>
-              <AppFrameSurface>{children}</AppFrameSurface>
-            </AppSidebarShell>
-            {/* Routes what a framed page's own links hand up, so the sidebar
-                around them is never torn down to follow one. */}
-            <ChromeErrorBoundary label="FrameNavigationHost">
-              <FrameNavigationHost />
-            </ChromeErrorBoundary>
-          </div>
-        </AppFrameProvider>
+        <div className="w-screen h-screen overflow-auto pb-[70px] md:pb-0">
+          <ChromeErrorBoundary label="CategoryDock">
+            <CategoryDock />
+          </ChromeErrorBoundary>
+          <AppSidebarShell>{children}</AppSidebarShell>
+        </div>
       </ReasonDocsProvider>
       {/* None of the chrome below is what the reader came for, so each piece
           is bounded on its own: a crash in the player, the sign-in prompt or

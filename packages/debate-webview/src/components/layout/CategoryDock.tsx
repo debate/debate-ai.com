@@ -35,7 +35,6 @@ import { hasEmbeddedDock, hostsOwnSidebarDock, isGenericToolSidebarRoute } from 
 import { SIDEBAR_MENU_SECTIONS, SITE_LINKS, DEBATE_LINKS } from "../../lib/nav/dock-menu-sections"
 import { NAV_ITEMS } from "../../lib/nav/dock-nav-items"
 import { accountLabel } from "../../lib/nav/account-label"
-import { useAppFrame } from "./AppFrameProvider"
 import { useIsFramedDocument } from "../../lib/layout/use-framed-document"
 import { openGlobalCommandPalette } from "./GlobalCommandPalette"
 import { IconSettings } from "../../lib/ui/icons"
@@ -495,11 +494,9 @@ function DockInstance({
 export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) {
   const pathname = usePathname()
   const router = useRouter()
-  const frame = useAppFrame()
-  // A page rendered inside the app frame never draws a dock of its own: the
-  // shell's dock sits above the frame, in the top document, and stays put
-  // while this page loads and reloads underneath it. That includes the
-  // sidebar-hosted instance /videos mounts from its own `<aside>`.
+  // A page rendered inside someone else's frame never draws a dock of its
+  // own. That includes the sidebar-hosted instance /videos mounts from its
+  // own `<aside>`.
   const framedDocument = useIsFramedDocument()
   const categoryState = useCategoryDockState()
   const { activeVideoId, activeVideoTitle, isMinimized, isPlaying, setMinimized, setIsPlaying } = useVideoPlayerStore()
@@ -517,22 +514,7 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
   useAccountNotifications(isAuthenticated)
   useContacts(isAuthenticated)
 
-  /**
-   * Hands the destination to the app frame when there is one, so the click
-   * swaps a frame instead of tearing down and rebuilding the whole app —
-   * which is what used to leave the dock unresponsive while the next page
-   * hydrated. `AppFrameProvider` pushes the URL either way, so the address
-   * bar, deep links and the back button behave as before. Falls back to a
-   * plain route change wherever the frame isn't mounted (a framed document,
-   * or a path the dock doesn't own).
-   */
-  const navigate = useCallback(
-    (href: string) => {
-      if (frame?.openInFrame(href)) return
-      router.push(href)
-    },
-    [frame, router],
-  )
+  const navigate = useCallback((href: string) => router.push(href), [router])
 
   const handleNavClick = useCallback(
     (href: string) => (event: ReactMouseEvent<HTMLElement>) => {
@@ -546,10 +528,7 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
     [navigate],
   )
 
-  // The active item comes from the frame when one is open: `usePathname()`
-  // agrees, but the frame knows first, so the icon lights up on the click
-  // rather than a paint later.
-  const activePath = frame?.activePath ?? pathname
+  const activePath = pathname
 
   const allItems: DockNavRenderItem[] = [
     ...NAV_ITEMS.map(({ href, label, icon }) => ({
@@ -559,7 +538,8 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
       active: activePath === href,
       href,
       onClick: handleNavClick(href),
-      onPreload: frame ? () => frame.preloadFrame(href) : undefined,
+      // Warm the route's code and data on hover/focus so the click is quick.
+      onPreload: () => router.prefetch(href),
     })),
     ...(categoryState
       ? VIDEO_CATEGORY_ITEMS.map(({ category, label, icon }) => ({

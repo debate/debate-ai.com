@@ -22,9 +22,7 @@ async function start() {
   installApiProxy(apiBase);
 
   configureHost({
-    // There is no server behind this page's origin to frame, and Google's
-    // One Tap script is refused by the extension page CSP.
-    framing: false,
+    // Google's One Tap script is refused by the extension page CSP.
     oneTap: false,
     serviceWorker: false,
     // The same handoff the popup and panel use: a tab on the site that passes

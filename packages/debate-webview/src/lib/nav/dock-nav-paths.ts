@@ -80,22 +80,3 @@ export function dockNavRootFor(path: string): string | null {
     DOCK_NAV_HREFS.find((href) => normalized === href || normalized.startsWith(`${href}/`)) ?? null
   )
 }
-
-/** Query marker on a frame's URL, so the framed document is identifiable. */
-export const EMBED_PARAM = "embed"
-export const EMBED_VALUE = "1"
-
-/**
- * The URL the app frame loads for `path`.
- *
- * The marker is not how the framed document decides to drop its chrome — it
- * checks whether it is framed, which survives navigating within the frame.
- * It is here so a framed document is distinguishable in logs and in the
- * network panel, and so the frame's URL is never byte-identical to the top
- * document's.
- */
-export function toFrameSrc(path: string): string {
-  const url = new URL(path, "http://frame.invalid")
-  url.searchParams.set(EMBED_PARAM, EMBED_VALUE)
-  return `${url.pathname}${url.search}${url.hash}`
-}
