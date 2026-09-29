@@ -19,7 +19,7 @@ import { BACKUP_GROUPS, type BackupDb } from "./db-backup";
 import { createR2Backup, getBackupBucket, getBackupKv, type BackupResult } from "./db-backup-r2";
 
 /** Sundays at 07:00 UTC. Must match the entry in wrangler.jsonc's `triggers.crons`. */
-export const DB_BACKUP_CRON = "0 7 * * 0";
+export const DB_BACKUP_CRON = "0 7 * * SUN";
 
 /** Runs one weekly backup. Returns null (and logs) when no bucket is bound. */
 export async function runWeeklyDbBackup(now: Date = new Date()): Promise<BackupResult | null> {
