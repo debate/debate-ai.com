@@ -35,11 +35,13 @@
 	// channels for new videos, then refresh every stored video's view count.
 	// Weekly content backup to R2 — Sundays at 07:00 UTC (DB_BACKUP_CRON in
 	// lib/admin/weekly-db-backup.ts; keep the two in sync).
-	// Both handled by the `scheduled` export in worker/index.ts.
+	// Both handled by the `scheduled` export in worker/index.ts. Use day names:
+	// Cloudflare numbers weekdays 1-7 with 1 = Sunday, so `0` is rejected and
+	// `1` is Sunday, not Monday.
 	"triggers": {
 		"crons": [
-			"0 8 * * 1",
-			"0 7 * * 0"
+			"0 8 * * MON",
+			"0 7 * * SUN"
 		]
 	},
 	// SQL backups of the content tables (videos, cards, history — no user
@@ -90,8 +92,8 @@
 			},
 			"triggers": {
 				"crons": [
-					"0 8 * * 1",
-					"0 7 * * 0"
+					"0 8 * * MON",
+					"0 7 * * SUN"
 				]
 			},
 			"r2_buckets": [
