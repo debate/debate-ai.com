@@ -12,14 +12,13 @@
  */
 
 import type React from "react"
-import { Suspense, useEffect, useRef } from "react"
+import { useEffect, useRef } from "react"
 import { usePathname } from "next/navigation"
 
 import { CategoryDockProvider, PersistentVideoPlayer, SlowSpreadButton, VideoIndexPrefetcher, VideoPlayerFrameBridge } from "debate-videos"
 import { CategoryDock } from "./CategoryDock"
 import { AppSidebarShell } from "./AppSidebarShell"
 import { DocsAppChrome } from "./DocsAppChrome"
-import { AppFrameProvider, AppFrameSurface } from "./AppFrameProvider"
 import { ReasonDocsProvider } from "../reason-docs/ReasonDocsProvider"
 import { OneTap } from "./OneTap"
 import { ToolRecordSyncProvider } from "./ToolRecordSyncProvider"
@@ -29,11 +28,6 @@ import { GlobalCommandPalette } from "./GlobalCommandPalette"
 import { ServiceWorkerRegistrar } from "./ServiceWorkerRegistrar"
 import { useIsFramedDocument } from "../../lib/layout/use-framed-document"
 import { isDocsPath } from "../../lib/layout/frame-navigation"
-import {
-  FrameLocationReporter,
-  FrameNavigationHost,
-  useFrameNavigationHandoff,
-} from "./FrameNavigationBridge"
 import { MixpanelProvider } from "../analytics/MixpanelProvider"
 import { ChromeErrorBoundary } from "../../lib/ui/layout/chrome-error-boundary"
 import { Toaster } from "sonner"
@@ -41,20 +35,6 @@ import { Toaster } from "sonner"
 export function AppShell({ children }: { children: React.ReactNode }) {
   const embedded = useIsFramedDocument()
   const pathname = usePathname()
-
-  // A framed dock destination (e.g. /videos) can navigate itself somewhere
-  // the dock never framed — a tool-tree link to /coach, /drills, etc. That
-  // page is still "embedded" by every check here (same iframe, same origin),
-  // so left alone it renders bare below with no dock, no sidebar, and no way
-  // back, while the top document's address bar and history stay on whatever
-  // the dock last pushed.
-  //
-  // The shell is asked to route there instead of the tab being thrown at a
-  // fresh top-level load, which is what this used to do: the shell document —
-  // and so the sidebar you clicked the link in — survives the hop. See
-  // `FrameNavigationBridge`; a hard load is still the fallback when no shell
-  // answers.
-  useFrameNavigationHandoff(embedded, pathname)
 
   // Leaving /docs is always a real page load (see `NON_ROUTER_PREFIXES` in
   // `frame-navigation.ts`). `DocsAppChrome` turns link clicks out of the docs
@@ -78,14 +58,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <ReasonDocsProvider>
           {/* The frame is the viewport here, so the page scrolls itself. */}
           <div className="min-h-screen w-full overflow-x-hidden">{children}</div>
-          {/* Keeps the shell's address bar on the page this frame is showing
-              (`/videos/lectures`, `/doc/<name>`, `?view=`), not the bare dock
-              path it was opened at. */}
-          <ChromeErrorBoundary label="FrameLocationReporter">
-            <Suspense fallback={null}>
-              <FrameLocationReporter />
-            </Suspense>
-          </ChromeErrorBoundary>
           {/* Mirrors picks made in this frame (a video card, the queue) back
               to the player mounted in the shell. */}
           <ChromeErrorBoundary label="VideoPlayerFrameBridge">
