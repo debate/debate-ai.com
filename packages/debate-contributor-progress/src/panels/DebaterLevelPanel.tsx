@@ -51,6 +51,7 @@ import {
 } from "../state/debaterLevel"
 import { DebaterLevelUpOverlay } from "./DebaterLevelUpOverlay"
 import { JudgeAwardShowcase } from "./JudgeAwardsSection"
+import { TiltBadge } from "./TiltBadge"
 
 const CHALLENGE_BADGES: Record<string, string> = {
   "daily-cut-5-cards": "https://i.imgur.com/7zCVpav.png",
@@ -73,7 +74,7 @@ function ChallengeRow({ progress }: { progress: DebaterChallengeProgress }) {
     <li className="flex flex-col gap-1 rounded-lg border p-3">
       {badgeUrl && (
         <div className="flex justify-center">
-          <img src={badgeUrl} alt={challenge.title} className="w-32 h-32 object-contain" />
+          <TiltBadge src={badgeUrl} alt={challenge.title} />
         </div>
       )}
       <div className="flex items-center justify-between gap-2">
