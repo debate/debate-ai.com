@@ -1,0 +1,51 @@
+import { describe, expect, it } from "vitest"
+import { renderToStaticMarkup } from "react-dom/server"
+
+import MobileSetupPage from "../../../src/routes/tools/mobile-setup/page"
+
+describe("MobileSetupPage", () => {
+  it("recommends the Arteck Bluetooth keyboard, not the Bnnwa model", () => {
+    const html = renderToStaticMarkup(<MobileSetupPage />)
+
+    expect(html).toContain("Arteck Universal Backlit Bluetooth Keyboard with Touchpad")
+    expect(html).not.toContain("Bnnwa")
+  })
+
+  it("links the keyboard to the correct affiliate URL", () => {
+    const html = renderToStaticMarkup(<MobileSetupPage />)
+
+    expect(html).toContain("https://amzn.to/4z1Isay")
+  })
+
+  it("does not leak the old affiliate link from the replaced keyboard", () => {
+    const html = renderToStaticMarkup(<MobileSetupPage />)
+
+    expect(html).not.toContain("https://amzn.to/4hgaLLt")
+  })
+
+  it("uses the provided image URL for the keyboard", () => {
+    const html = renderToStaticMarkup(<MobileSetupPage />)
+
+    expect(html).toContain("https://i.imgur.com/EKNFuEf.jpeg")
+  })
+
+  it("references the Arteck keyboard in the pairing step, not Bnnwa", () => {
+    const html = renderToStaticMarkup(<MobileSetupPage />)
+
+    expect(html).toContain("Arteck")
+    expect(html).not.toContain("Bnnwa")
+  })
+
+  it("lists every recommended gear item with its role", () => {
+    const html = renderToStaticMarkup(<MobileSetupPage />)
+
+    expect(html).toContain("Hands-free phone mount")
+    expect(html).toContain("Bluetooth keyboard for the phone")
+    expect(html).toContain("Fast-charging cables for phone &amp; keyboard")
+    expect(html).toContain("Keep the phone alive all day")
+    expect(html).toContain("Giant floating screen, no laptop")
+    expect(html).toContain("The phone that runs it all")
+    expect(html).toContain("Phone service &amp; data")
+    expect(html).toContain("Carry all your gear")
+  })
+})
