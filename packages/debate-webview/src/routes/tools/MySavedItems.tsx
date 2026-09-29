@@ -89,6 +89,8 @@ import { Card, CardHeader, CardTitle, CardDescription } from "../../lib/ui/primi
 import { Badge } from "../../lib/ui/primitives/badge"
 import { useSession } from "../../lib/hooks/useSession"
 import {
+  CLOUD_LIBRARY_KIND_LABELS,
+  countCloudItemsByKind,
   deleteCloudLibraryItem,
   fetchRecentCloudItems,
   filterCloudItemsByKind,

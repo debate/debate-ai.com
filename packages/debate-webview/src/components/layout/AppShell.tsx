@@ -5,10 +5,10 @@
  * is the app shell or a page running inside it.
  *
  * The shell owns the chrome — the dock, the tool sidebar, the persistent
- * video player, toasts — and hands the content column to
- * {@link AppFrameSurface}, which runs each dock destination in a same-origin
- * frame. A framed document renders its page and nothing else: no second dock,
- * no nested sidebar, and no nested frame surface.
+ * video player, toasts — and renders the routed page as an ordinary React
+ * child in the content column. If some other page frames this app, the
+ * framed document renders its page and nothing else: no second dock and no
+ * nested sidebar.
  */
 
 import type React from "react"
@@ -17,7 +17,6 @@ import { usePathname } from "next/navigation"
 import { CategoryDockProvider, PersistentVideoPlayer, SlowSpreadButton, VideoIndexPrefetcher, VideoPlayerFrameBridge } from "debate-videos"
 import { CategoryDock } from "./CategoryDock"
 import { AppSidebarShell } from "./AppSidebarShell"
-import { AppFrameProvider, AppFrameSurface } from "./AppFrameProvider"
 import { ReasonDocsProvider } from "../reason-docs/ReasonDocsProvider"
 import { OneTap } from "./OneTap"
 import { ToolRecordSyncProvider } from "./ToolRecordSyncProvider"
@@ -27,10 +26,6 @@ import { GlobalCommandPalette } from "./GlobalCommandPalette"
 import { ServiceWorkerRegistrar } from "./ServiceWorkerRegistrar"
 import { useIsFramedDocument } from "../../lib/layout/use-framed-document"
 import { isDocsPath } from "../../lib/layout/frame-navigation"
-import {
-  FrameNavigationHost,
-  useFrameNavigationHandoff,
-} from "./FrameNavigationBridge"
 import { MixpanelProvider } from "../analytics/MixpanelProvider"
 import { ChromeErrorBoundary } from "../../lib/ui/layout/chrome-error-boundary"
 import { Toaster } from "sonner"
@@ -38,20 +33,6 @@ import { Toaster } from "sonner"
 export function AppShell({ children }: { children: React.ReactNode }) {
   const embedded = useIsFramedDocument()
   const pathname = usePathname()
-
-  // A framed dock destination (e.g. /videos) can navigate itself somewhere
-  // the dock never framed — a tool-tree link to /coach, /drills, etc. That
-  // page is still "embedded" by every check here (same iframe, same origin),
-  // so left alone it renders bare below with no dock, no sidebar, and no way
-  // back, while the top document's address bar and history stay on whatever
-  // the dock last pushed.
-  //
-  // The shell is asked to route there instead of the tab being thrown at a
-  // fresh top-level load, which is what this used to do: the shell document —
-  // and so the sidebar you clicked the link in — survives the hop. See
-  // `FrameNavigationBridge`; a hard load is still the fallback when no shell
-  // answers.
-  useFrameNavigationHandoff(embedded, pathname)
 
   // The help docs (`app/docs`, from `debate-help-docs`) bring their own
   // navigation — Fumadocs' header, sidebar and search — and their own
@@ -109,21 +90,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           this document — /reason-editor is not a dock destination and so is
           never framed away from its sidebar. */}
       <ReasonDocsProvider>
-        <AppFrameProvider>
-          <div className="w-screen h-screen overflow-auto pb-[70px] md:pb-0">
-            <ChromeErrorBoundary label="CategoryDock">
-              <CategoryDock />
-            </ChromeErrorBoundary>
-            <AppSidebarShell>
-              <AppFrameSurface>{children}</AppFrameSurface>
-            </AppSidebarShell>
-            {/* Routes what a framed page's own links hand up, so the sidebar
-                around them is never torn down to follow one. */}
-            <ChromeErrorBoundary label="FrameNavigationHost">
-              <FrameNavigationHost />
-            </ChromeErrorBoundary>
-          </div>
-        </AppFrameProvider>
+        <div className="w-screen h-screen overflow-auto pb-[70px] md:pb-0">
+          <ChromeErrorBoundary label="CategoryDock">
+            <CategoryDock />
+          </ChromeErrorBoundary>
+          <AppSidebarShell>{children}</AppSidebarShell>
+        </div>
       </ReasonDocsProvider>
       {/* None of the chrome below is what the reader came for, so each piece
           is bounded on its own: a crash in the player, the sign-in prompt or

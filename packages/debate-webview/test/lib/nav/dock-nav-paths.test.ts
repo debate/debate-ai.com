@@ -11,7 +11,7 @@
 
 import { describe, expect, it } from "vitest"
 
-import { DOCK_NAV_HREFS, dockNavLabel, isDockNavPath, isDockOwnedPath, toFrameSrc } from "../../../src/lib/nav/dock-nav-paths"
+import { DOCK_NAV_HREFS, dockNavLabel, isDockNavPath, isDockOwnedPath } from "../../../src/lib/nav/dock-nav-paths"
 
 describe("isDockNavPath", () => {
   it("accepts every dock destination", () => {
@@ -81,30 +81,6 @@ describe("isDockOwnedPath", () => {
   it("does not match a path that merely starts with a destination's name", () => {
     expect(isDockOwnedPath("/cards-archive")).toBe(false)
     expect(isDockOwnedPath("/documentation")).toBe(false)
-  })
-})
-
-describe("toFrameSrc", () => {
-  it("marks the frame's URL without changing where it points", () => {
-    expect(toFrameSrc("/videos")).toBe("/videos?embed=1")
-  })
-
-  it("keeps the destination's own query and hash", () => {
-    expect(toFrameSrc("/cards?q=nuclear")).toBe("/cards?q=nuclear&embed=1")
-    expect(toFrameSrc("/doc#outline")).toBe("/doc?embed=1#outline")
-  })
-
-  it("is idempotent, so re-framing a path reuses the same document", () => {
-    // The frame pool is keyed by path; a src that drifted on each pass would
-    // reload the document every time the dock came back to it.
-    expect(toFrameSrc(toFrameSrc("/videos"))).toBe("/videos?embed=1")
-  })
-
-  it("never leaves the site, whatever it is handed", () => {
-    // The pool only ever holds dock paths, but a src that could be talked
-    // into an absolute URL would frame someone else's page inside the shell.
-    expect(toFrameSrc("//evil.example.com/x")).toBe("/x?embed=1")
-    expect(toFrameSrc("https://evil.example.com/x")).toBe("/x?embed=1")
   })
 })
 
