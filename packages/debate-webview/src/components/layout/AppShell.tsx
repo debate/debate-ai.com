@@ -12,7 +12,7 @@
  */
 
 import type React from "react"
-import { Suspense } from "react"
+import { Suspense, useEffect, useRef } from "react"
 import { usePathname } from "next/navigation"
 
 import { CategoryDockProvider, PersistentVideoPlayer, SlowSpreadButton, VideoIndexPrefetcher, VideoPlayerFrameBridge } from "debate-videos"

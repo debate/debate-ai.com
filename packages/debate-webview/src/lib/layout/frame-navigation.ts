@@ -80,7 +80,7 @@ export function opensElsewhere(event: {
 /**
  * Paths never handed to the client router. `/api` is not a page at all.
  * `/docs` is the help site (`debate-help-docs`, mounted at `app/docs`): a
- * route of this app, but one `AppShell` renders without the app's chrome and
+ * route of this app, but one `AppShell` renders with only the site sidebar and
  * that loads its own Fumadocs stylesheet, so moving between it and the rest of
  * the app is always a real page load — never the docs' CSS left applied to an
  * app page, or the shell half-torn-down around a docs page.
@@ -89,7 +89,7 @@ const NON_ROUTER_PREFIXES = ["/docs", "/api"]
 
 /**
  * Whether `pathname` is the help docs site at /docs, which `AppShell` renders
- * bare.
+ * with only the site sidebar around it.
  *
  * @param pathname - The current path, as `usePathname` reports it.
  */
@@ -217,4 +217,33 @@ export function isMirrorableFrameLocation(
   if (!path.startsWith("/") || path.startsWith("//")) return false
   if (!isRouterPath(path.split(/[?#]/)[0] ?? "")) return false
   return dockRootFor(path) === framedRoot
+}
+
+/**
+ * The URL a click on `anchor` in a /docs page has to load for real, or `null`
+ * when the link is not one to intercept.
+ *
+ * The docs pages carry the app's sidebar beside Fumadocs' own (see
+ * `DocsAppChrome`), and its links — the tool tree, the dock — are client-router
+ * links. Followed as such from /docs they would land on an app page with the
+ * docs' stylesheet still applied and none of the shell mounted, so anything
+ * off /docs on this origin is handed to a full page load instead. Links within
+ * /docs, other origins, new tabs and downloads are left alone.
+ */
+export function docsExitTarget(
+  anchor: AnchorNavigation,
+  origin: string,
+): string | null {
+  if (!anchor.href || anchor.download) return null
+  if (anchor.target && anchor.target !== "_self") return null
+
+  let url: URL
+  try {
+    url = new URL(anchor.href, origin)
+  } catch {
+    return null
+  }
+  if (url.origin !== origin) return null
+  if (isDocsPath(url.pathname)) return null
+  return url.href
 }
