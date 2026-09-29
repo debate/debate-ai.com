@@ -23,7 +23,6 @@ import { LectureCategoryGridGallery } from "../components/category-gallery/Lectu
 import { QuickLinksGrid } from "../components/category-gallery/QuickLinksGrid"
 import { VideoSidebarTree } from "../components/category-gallery/VideoSidebarTree"
 import { ToolNavTree } from "../components/category-gallery/ToolNavTree"
-import { YouTubeStatsModal } from "../components/youtube-stats-modal/YouTubeStatsModal"
 import type { DebateStyle } from "../types/videos"
 import type { VideoViewMode } from "../hooks/useVideoState"
 import { useVideoStacks } from "../hooks/useVideoStacks"
@@ -191,8 +190,6 @@ export function LecturesVideoGridView({
   quickLinkCounts,
   showLectureCategories,
   selectedCategory,
-  youtubeStats,
-  statsModalOpen,
   onSearchChange,
   onSearchFocus,
   onSearchBlur,
@@ -202,12 +199,10 @@ export function LecturesVideoGridView({
   onToggleThumbnails,
   onViewModeChange,
   onToggleFavoritesOnly,
-  onToggleStackedPlaylists,
   onToggleLectureCategories,
   onToggleFavorite,
   onHideVideo,
   onUnhideVideo,
-  onStatsModalOpenChange,
   selectedStyle,
   onStyleChange,
   dockSlot,
@@ -262,8 +257,8 @@ export function LecturesVideoGridView({
     [currentCategory, selectedStyle, selectedCategory],
   )
 
-  // Always stacked: the floating panel it opens in is a narrow column, not
-  // the full-width row the old sticky header gave it.
+  // One row: the season dropdown and sort/layout buttons sit to the right of
+  // the search input.
   const searchBarNode = (
     <VideoSearchBar
       searchTerm={searchTerm}
@@ -274,7 +269,6 @@ export function LecturesVideoGridView({
       onViewModeChange={onViewModeChange}
       showFavoritesOnly={showFavoritesOnly}
       stackedPlaylists={stackedPlaylists}
-      onToggleStackedPlaylists={onToggleStackedPlaylists}
       selectedYear={selectedYear}
       onYearChange={onYearChange}
       facets={facets}
@@ -287,16 +281,6 @@ export function LecturesVideoGridView({
       onToggleFavoritesOnly={onToggleFavoritesOnly}
       totalVideos={totalVideos}
       suggestedPhrases={searchPhrases}
-      stacked
-      extraButtons={
-        youtubeStats ? (
-          <YouTubeStatsModal
-            stats={youtubeStats}
-            open={statsModalOpen}
-            onOpenChange={onStatsModalOpenChange}
-          />
-        ) : null
-      }
     />
   )
 
@@ -389,14 +373,14 @@ export function LecturesVideoGridView({
         {/* The search and filter controls, always visible on every
             breakpoint, with the one-click searches drawn from the library
             (popular debate terms and the tournaments with the most rounds)
-            to their right. Stacked on narrow screens. */}
-        <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-start">
-          <div className="w-full shrink-0 lg:w-[26rem]">{searchBarNode}</div>
+            underneath. */}
+        <div className="mb-6 flex flex-col gap-4">
+          <div className="w-full max-w-2xl">{searchBarNode}</div>
           <VideoSearchSuggestions
             suggestions={searchSuggestions}
             searchTerm={searchTerm}
             onSelect={onSearchChange}
-            className="min-w-0 flex-1"
+            className="min-w-0"
           />
         </div>
 
