@@ -35,7 +35,7 @@ state/flowAnnotations.ts (localStorage: flowAnnotations)
 ## Known gaps
 
 ~~No collaborative/live sync — annotations are local `localStorage` only.~~
-**Fixed:** `flowAnnotations` is one of [Tool Data Sync](../internals/tool-data-sync.mdx)'s
+**Fixed:** `flowAnnotations` is one of Tool Data Sync's
 catalog entries, and `saveFlowAnnotation`/`deleteFlowAnnotation`
 (`state/flowAnnotations.ts`) additionally call
 `mirrorToolRecordSave`/`mirrorToolRecordDelete` directly rather than relying
@@ -47,4 +47,4 @@ requests, still-writes-locally-on-a-500, and no request while signed out).
 The gaps this leaves are the same ones every synced tool-record collection
 has — still per-user rather than a shared team resource, and a record saved
 on another device shows up on next reload rather than live — see
-[Tool Data Sync](../internals/tool-data-sync.mdx)'s own Known gaps.
+Tool Data Sync's own Known gaps.
