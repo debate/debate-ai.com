@@ -7,6 +7,20 @@ const webui = (path: string) =>
   fileURLToPath(new URL(`../../packages/debate-webview/${path}`, import.meta.url));
 
 /**
+ * Where the CDN scripts that `debate-webview`'s libraries would fetch are
+ * found locally instead (see vite/no-remote-code.ts): this app, the webview
+ * package, the feature package that owns the editor, and the repo root.
+ */
+const resolveLocalPackageFile = createPackageFileResolver(
+  fileURLToPath(new URL('../../', import.meta.url)),
+  [
+    fileURLToPath(new URL('./', import.meta.url)),
+    webui(''),
+    fileURLToPath(new URL('../../packages/debate-editor/', import.meta.url)),
+  ]
+);
+
+/**
  * The AI provider APIs the article panel calls directly when the reader has
  * pasted their own key (src/ai/providers.ts). An extension page may call these
  * without a CORS preflight only if their origins are granted here.
