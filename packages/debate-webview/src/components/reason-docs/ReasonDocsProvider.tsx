@@ -36,16 +36,11 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { DocumentSaveQueue, type SaveQueueState } from "../../lib/reason-docs/save-queue"
 import { STORED_FORMATS } from "../../lib/cardmirror/format"
 import { isCmirContent } from "../../lib/cardmirror/content-format"
-import {
-  CardMirrorImportError,
-  docxDownloadFilename,
-  fileToStoredCmir,
-  htmlToDocxBytes,
-  htmlToStoredCmir,
-  htmlToStoredCmirSync,
-  storedContentToHtml,
-} from "../../lib/cardmirror/stored-cmir"
-import { topicStarterHtml } from "../../lib/topic-starters/content"
+// CardMirror's engine is loaded on demand (`lazy-stored-cmir`), not imported:
+// this provider wraps every page, and only opening, saving, importing or
+// downloading a `.cmir` needs it.
+import { CardMirrorImportError, docxDownloadFilename } from "../../lib/cardmirror/import-files"
+import { loadStoredCmir, storedCmirIfLoaded, type StoredCmir } from "../../lib/cardmirror/lazy-stored-cmir"
 import type { ReasonDocument } from "./types"
 import type { TopicStarterItem } from "./TopicStarterTree"
 
@@ -313,7 +308,12 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
       if (timer) clearTimeout(timer)
       encodeTimersRef.current.delete(id)
       try {
-        saveQueue.queue(id, { content: htmlToStoredCmirSync(html) })
+        // A `.cmir` only gets a pending encode after the editor reported an
+        // edit, so the engine is loaded by now; if it somehow is not, the
+        // stored file is left alone, as for a failed encode.
+        const engine = storedCmirIfLoaded()
+        if (!engine) throw new Error("CardMirror is not loaded")
+        saveQueue.queue(id, { content: engine.htmlToStoredCmirSync(html) })
       } catch (error) {
         console.error("[reason-docs] could not re-encode document as .cmir", error)
       }
@@ -358,17 +358,34 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
     [saveDocument],
   )
 
-  const documentHtml = useCallback((doc: ReasonDocument) => {
-    // An edit made this session wins over the stored copy: switching tabs and
-    // back must not hand the editor the version from before you typed.
-    return openHtmlRef.current.get(doc.id) ?? storedContentToHtml(doc)
-  }, [])
+  // Set once the engine arrives, so `documentHtml` changes identity and a
+  // `.cmir` asked for before then is rendered again with it.
+  const [storedCmir, setStoredCmir] = useState<StoredCmir | null>(storedCmirIfLoaded)
+
+  const documentHtml = useCallback(
+    (doc: ReasonDocument) => {
+      // An edit made this session wins over the stored copy: switching tabs and
+      // back must not hand the editor the version from before you typed.
+      const open = openHtmlRef.current.get(doc.id)
+      if (open !== undefined) return open
+      const converter = storedCmir ?? storedCmirIfLoaded()
+      if (converter) return converter.storedContentToHtml(doc)
+      // An HTML row needs no conversion. A `.cmir` does: the editor screen
+      // imports the engine itself, so this is only reached if it has not run
+      // yet, and it renders again once the engine is in.
+      if (!isCmirContent(doc)) return doc.content ?? ""
+      void loadStoredCmir().then(setStoredCmir)
+      return ""
+    },
+    [storedCmir],
+  )
 
   const downloadDocument = useCallback(
     async (id: number): Promise<DownloadOutcome> => {
       const doc = documents.find((d) => d.id === id)
       if (!doc || doc.isFolder) return { ok: false, error: "That file could not be found." }
       try {
+        const { htmlToDocxBytes } = await loadStoredCmir()
         const bytes = await htmlToDocxBytes(documentHtml(doc))
         triggerDocxDownload(bytes, docxDownloadFilename(doc.title))
         return { ok: true }
@@ -391,7 +408,9 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
   const downloadTopicDocument = useCallback(async (item: TopicStarterItem): Promise<DownloadOutcome> => {
     if (item.isFolder) return { ok: false, error: "That file could not be found." }
     try {
-      const bytes = await htmlToDocxBytes(topicStarterHtml(item))
+      // `topicStarterHtml` is `storedContentToHtml` under another name.
+      const { htmlToDocxBytes, storedContentToHtml } = await loadStoredCmir()
+      const bytes = await htmlToDocxBytes(storedContentToHtml(item))
       triggerDocxDownload(bytes, docxDownloadFilename(item.title))
       return { ok: true }
     } catch (error) {
@@ -430,7 +449,8 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
           const latest = pendingCmirRef.current.get(id)
           if (latest === undefined) return
           pendingCmirRef.current.delete(id)
-          void htmlToStoredCmir(latest)
+          void loadStoredCmir()
+            .then(({ htmlToStoredCmir }) => htmlToStoredCmir(latest))
             .then((content) => {
               setDocuments((prev) => prev.map((d) => (d.id === id ? { ...d, content } : d)))
               saveDocument(id, { content })
@@ -463,6 +483,7 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
           try {
             // Convert before the request so a file that cannot be read leaves
             // no empty row behind.
+            const { fileToStoredCmir } = await loadStoredCmir()
             const imported = await fileToStoredCmir(file)
             const res = await fetch("/api/doc/documents", {
               method: "POST",

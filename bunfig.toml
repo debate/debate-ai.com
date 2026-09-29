@@ -1,0 +1,6 @@
+[install]
+# Do not write bun.lock; dependencies resolve fresh from package.json.
+saveTextLockfile = false
+
+[install.lockfile]
+save = false

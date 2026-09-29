@@ -8,13 +8,15 @@
   "remote": {
     "urls": [
       "https://debate-ai.com/*",
-      "https://*.debate-ai.com/*"
+      "https://*.debate-ai.com/*",
+      "https://d.ebate.app/*"
     ]
   },
   "permissions": [
     "opener:allow-open-url",
     "allow-system-info",
     "allow-quick-launch",
-    "autostart:default"
+    "autostart:default",
+    "allow-app-source"
   ]
 }

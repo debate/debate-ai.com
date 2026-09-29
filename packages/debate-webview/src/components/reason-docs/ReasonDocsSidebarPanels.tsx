@@ -40,7 +40,7 @@ import { Group, Panel, Separator } from "react-resizable-panels"
 import { BookOpen, ChevronDown, ChevronRight, FilePlus2, FolderPlus, Loader2, PanelLeft, PanelsTopLeft, Upload } from "lucide-react"
 import { AnimatedLoader } from "../ui/AnimatedLoader"
 import { cn } from "../../lib/ui/lib/utils"
-import { IMPORT_ACCEPT } from "../../lib/cardmirror/stored-cmir"
+import { IMPORT_ACCEPT } from "../../lib/cardmirror/import-files"
 import {
   REASON_EDITOR_ROUTE,
   editorHrefForSelection,

@@ -4,7 +4,7 @@
  */
 import { X, UserPlus } from "lucide-react"
 import { Button } from "../ui/primitives/button"
-import { LexicalEditorWrapper } from "debate-editor"
+import { LexicalEditorWrapper } from "./LazyCardMirrorEditor"
 import type { Flow } from "../types/flow"
 import type { ViewMode } from "../types/debate-flow"
 import { SpeechHeaderBar } from "./SpeechHeaderBar"

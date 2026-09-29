@@ -60,12 +60,7 @@ export function AppSidebarShell({
   always = false,
 }: {
   children: React.ReactNode
-  /**
-   * Wrap the page even though its path is not a tool-tree destination. The
-   * help docs at `/docs` pass this: they keep the site's sidebar beside their
-   * own Fumadocs one without `/docs` joining the tree's route list, where it
-   * would also change which routes hide the floating dock.
-   */
+  /** Wrap whatever the route — for /docs, which is no tool-tree destination (`DocsAppChrome`). */
   always?: boolean
 }) {
   const pathname = usePathname()

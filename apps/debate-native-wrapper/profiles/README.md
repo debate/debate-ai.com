@@ -15,6 +15,7 @@ Copy `example.json` to `<your-app>.json` and fill in these fields:
 | `deepLinkScheme` | Custom URL scheme (e.g. `debateai` → `debateai://...`) registered with the OS so the site's OAuth login page can hand a session back to the app window. See `docs/OAUTH.md`. |
 | `iconSource` | Path (relative to the profile file) to a single square PNG, at least 1024x1024, used to generate every platform's icon set via `npm run icons`. |
 | `copyright` / `category` / `shortDescription` | Metadata surfaced in installers and store listings. `category` should match the target store's taxonomy (e.g. Apple's `public.app-category.*`, Microsoft Store, Google Play categories — see `docs/APP_STORES.md`). |
+| `sources` / `defaultSource` | Optional. The places the user can choose to load the app from, in the wrapper's settings page and the tray's "Load From" menu: a list of `{ "id", "label", "url" }`, where a `url` without a scheme is a page bundled in `dist/` (an offline build). `defaultSource` is the `id` used until the user picks. Without `sources`, the only source is `url`. |
 | `trustedOrigins` | Origins allowed to use the scoped Tauri IPC bridge (`capabilities/remote.json`) — keep this to exactly the domains you control. |
 | `window` | Initial window size/behavior. `fullscreen: true` opens the app in true OS fullscreen (no window chrome); users can leave it with the in-app fullscreen toggle (F11 / Ctrl+Cmd+F). Set `false` for a normal maximized window instead. |
 | `android` / `ios` | Mobile-specific overrides (package name, minimum OS version). |

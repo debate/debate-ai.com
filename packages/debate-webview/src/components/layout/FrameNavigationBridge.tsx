@@ -15,16 +15,19 @@
  */
 
 import { useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 
-import { dockNavRootFor, isDockOwnedPath } from "../../lib/nav/dock-nav-paths"
+import { EMBED_PARAM, dockNavRootFor, isDockOwnedPath } from "../../lib/nav/dock-nav-paths"
 import { useAppFrame } from "./AppFrameProvider"
 import {
+  FRAME_LOCATION,
   FRAME_NAV_ACK,
   FRAME_NAV_REQUEST,
+  isFrameLocation,
   isFrameNavAck,
   isFrameNavRequest,
   opensElsewhere,
+  shellPathForFrameLocation,
   topNavigationTarget,
 } from "../../lib/layout/frame-navigation"
 import { startRouteLoading } from "../../lib/ui/use-route-loading"
@@ -145,9 +148,59 @@ export function useFrameNavigationHandoff(embedded: boolean, pathname: string) {
 }
 
 /**
- * Mounted once in the shell document. Routes to whatever a framed document
- * hands up, with the client router — so the shell, its dock and its sidebar
- * stay mounted across the hop. `AppFrameProvider` sees the pathname change
+ * Mounted in a framed document. Reports every location change the frame makes
+ * within its own dock destination — a client-side route (`/videos` to
+ * `/videos/lectures`), a query written with the router (`?view=`), or one
+ * written straight to `history` (`/doc/<name>`, `?chat=`) — so the shell can
+ * put it in the address bar. Without it the top document's URL stayed on the
+ * bare dock path whatever the frame showed.
+ *
+ * `usePathname`/`useSearchParams` re-render on router navigations and on
+ * direct `history` writes alike (the router patches both); `popstate` and
+ * `hashchange` cover the frame's own back button and in-page anchors. Render
+ * it under a `<Suspense>`: `useSearchParams` suspends during static rendering.
+ */
+export function FrameLocationReporter() {
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const search = searchParams?.toString() ?? ""
+
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    const top = window.top
+    if (!top || top === window) return
+
+    let last: string | null = null
+    const report = () => {
+      const path = shellPathForFrameLocation(window.location.href, EMBED_PARAM)
+      // Anything outside this dock destination is handed up as a navigation
+      // by `useFrameNavigationHandoff`, not mirrored.
+      if (path === last || !isDockOwnedPath(path)) return
+      last = path
+      try {
+        top.postMessage({ type: FRAME_LOCATION, path }, window.location.origin)
+      } catch {
+        // A shell that has gone away. Nothing to keep in sync.
+      }
+    }
+
+    report()
+    window.addEventListener("popstate", report)
+    window.addEventListener("hashchange", report)
+    return () => {
+      window.removeEventListener("popstate", report)
+      window.removeEventListener("hashchange", report)
+    }
+  }, [pathname, search])
+
+  return null
+}
+
+/**
+ * Mounted once in the shell document. Mirrors a framed document's location
+ * into the address bar (see {@link FrameLocationReporter}), and routes to
+ * whatever a framed document hands up, with the client router — so the
+ * shell, its dock and its sidebar stay mounted across the hop. `AppFrameProvider` sees the pathname change
  * and takes the frame stack down on its own.
  */
 export function FrameNavigationHost() {
@@ -159,6 +212,16 @@ export function FrameNavigationHost() {
 
     const onMessage = (event: MessageEvent) => {
       if (event.origin !== window.location.origin) return
+      if (isFrameLocation(event.data)) {
+        // Which frame is talking decides which destination the location
+        // belongs to — never the path it claims.
+        const source = Array.from(
+          document.querySelectorAll<HTMLIFrameElement>("iframe[data-frame-path]"),
+        ).find((iframe) => iframe.contentWindow === event.source)
+        const root = source?.dataset.framePath
+        if (root) frame?.syncFrameLocation(root, event.data.path)
+        return
+      }
       if (!isFrameNavRequest(event.data)) return
 
       const { path } = event.data

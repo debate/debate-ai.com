@@ -12,12 +12,13 @@
  */
 
 import type React from "react"
-import { useEffect, useRef } from "react"
+import { Suspense } from "react"
 import { usePathname } from "next/navigation"
 
 import { CategoryDockProvider, PersistentVideoPlayer, SlowSpreadButton, VideoIndexPrefetcher, VideoPlayerFrameBridge } from "debate-videos"
 import { CategoryDock } from "./CategoryDock"
 import { AppSidebarShell } from "./AppSidebarShell"
+import { DocsAppChrome } from "./DocsAppChrome"
 import { AppFrameProvider, AppFrameSurface } from "./AppFrameProvider"
 import { ReasonDocsProvider } from "../reason-docs/ReasonDocsProvider"
 import { OneTap } from "./OneTap"
@@ -29,6 +30,7 @@ import { ServiceWorkerRegistrar } from "./ServiceWorkerRegistrar"
 import { useIsFramedDocument } from "../../lib/layout/use-framed-document"
 import { isDocsPath } from "../../lib/layout/frame-navigation"
 import {
+  FrameLocationReporter,
   FrameNavigationHost,
   useFrameNavigationHandoff,
 } from "./FrameNavigationBridge"
@@ -54,39 +56,21 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   // answers.
   useFrameNavigationHandoff(embedded, pathname)
 
-  // A document is either the help docs or the app, never both: the docs load
-  // their own Fumadocs stylesheet, and the app shell's frames and player are
-  // not mounted under them. Links in and out of /docs are meant to be real
-  // page loads (see `NON_ROUTER_PREFIXES` in `frame-navigation.ts`), but the
-  // site sidebar on /docs routes through the client router like it does
-  // everywhere else — so when the path crosses that line, reload into it.
-  const startedOnDocs = useRef(isDocsPath(pathname)).current
-  const crossedDocsBoundary = isDocsPath(pathname) !== startedOnDocs
+  // Leaving /docs is always a real page load (see `NON_ROUTER_PREFIXES` in
+  // `frame-navigation.ts`). `DocsAppChrome` turns link clicks out of the docs
+  // into one; this catches the client-router navigations that are not link
+  // clicks (the dock's menus, its Alt+<n> shortcuts), so a document that
+  // started as a docs page never renders an app page under the docs' CSS.
+  const docsDocument = useRef(isDocsPath(pathname))
   useEffect(() => {
-    if (crossedDocsBoundary) window.location.reload()
-  }, [crossedDocsBoundary])
-  if (crossedDocsBoundary) return null
+    if (docsDocument.current && !isDocsPath(pathname)) window.location.reload()
+  }, [pathname])
 
   // The help docs (`app/docs`, from `debate-help-docs`) bring their own
-  // navigation — Fumadocs' header, sidebar and search — which sits in the
-  // content column beside the site's own sidebar (dock + tool tree), so the
-  // rest of the app stays one click away. No frame surface or player: the
-  // sidebar's links leave /docs with the reload above.
-  if (isDocsPath(pathname)) {
-    // Framed, the shell around the frame already shows the sidebar.
-    if (embedded) return <>{children}</>
-    return (
-      <CategoryDockProvider>
-        <ReasonDocsProvider>
-          <AppSidebarShell always>{children}</AppSidebarShell>
-          <ChromeErrorBoundary label="SignInPromptProvider">
-            <SignInPromptProvider />
-          </ChromeErrorBoundary>
-          <Toaster position="top-center" richColors closeButton />
-        </ReasonDocsProvider>
-      </CategoryDockProvider>
-    )
-  }
+  // navigation — Fumadocs' header, sidebar and search — and their own
+  // stylesheet. They get the app's sidebar beside that (`DocsAppChrome`), but
+  // none of the rest of the shell: no frame surface, no player, no floating dock.
+  if (isDocsPath(pathname)) return <DocsAppChrome>{children}</DocsAppChrome>
 
   if (embedded) {
     return (
@@ -94,6 +78,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <ReasonDocsProvider>
           {/* The frame is the viewport here, so the page scrolls itself. */}
           <div className="min-h-screen w-full overflow-x-hidden">{children}</div>
+          {/* Keeps the shell's address bar on the page this frame is showing
+              (`/videos/lectures`, `/doc/<name>`, `?view=`), not the bare dock
+              path it was opened at. */}
+          <ChromeErrorBoundary label="FrameLocationReporter">
+            <Suspense fallback={null}>
+              <FrameLocationReporter />
+            </Suspense>
+          </ChromeErrorBoundary>
           {/* Mirrors picks made in this frame (a video card, the queue) back
               to the player mounted in the shell. */}
           <ChromeErrorBoundary label="VideoPlayerFrameBridge">

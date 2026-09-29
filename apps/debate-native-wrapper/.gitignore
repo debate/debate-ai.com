@@ -12,3 +12,6 @@ gen/
 
 # OS junk
 .DS_Store
+
+# Offline source, built by `npm run build:offline` (scripts/build-offline.mjs)
+dist/offline/
