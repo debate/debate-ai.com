@@ -5,16 +5,16 @@
   "packageManager": "bun@1.4.2",
   "workspaces": [
     "packages/*",
-    "!packages/debate-tournament-tabroom",
     "!packages/debate-tournaments-tabroom",
     "!packages/debate-editor-cm",
     "!packages/debate-rankings",
+    "!packages/debate-flow-ebb",
     "apps/debate-ai.com",
     "apps/debate-browser-ext"
   ],
   "scripts": {
     "dev": "turbo dev",
-    "build": "turbo build --filter='!debate-help-docs' --filter='!debate-flow' --filter='!debate-flow-ebb'",
+    "build": "turbo build --filter='!debate-help-docs' --filter='!debate-flow-ebb'",
     "dev:web": "turbo dev --filter=debate-ai-web",
     "build:web": "turbo build --filter=debate-ai-web",
     "dev:editor": "turbo dev --filter=reason-editor",
@@ -44,6 +44,7 @@
   "overrides": {
     "@ricky0123/vad-web": "^0.0.30",
     "@ai-sdk/provider": "^4.0.0",
-    "balanced-match": "^4.0.2"
+    "balanced-match": "^4.0.2",
+    "mdast-util-to-markdown": "2.1.2"
   }
 }

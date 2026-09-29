@@ -12,11 +12,15 @@ import { describe, it, expect } from "vitest"
 
 import { dockNavRootFor } from "../../../src/lib/nav/dock-nav-paths"
 import {
+  FRAME_LOCATION,
   FRAME_NAV_ACK,
   FRAME_NAV_REQUEST,
+  isFrameLocation,
   isFrameNavAck,
   isDocsPath,
   isFrameNavRequest,
+  isMirrorableFrameLocation,
+  shellPathForFrameLocation,
   opensElsewhere,
   topNavigationTarget,
 } from "../../../src/lib/layout/frame-navigation"
@@ -151,5 +155,35 @@ describe("message guards", () => {
     expect(isFrameNavRequest(null)).toBe(false)
     expect(isFrameNavRequest("debate-frame-navigate")).toBe(false)
     expect(isFrameNavAck({ type: FRAME_NAV_REQUEST, path: "/coach" })).toBe(false)
+  })
+})
+
+describe("frame location mirroring", () => {
+  it("recognizes only well-formed location reports", () => {
+    expect(isFrameLocation({ type: FRAME_LOCATION, path: "/videos/lectures" })).toBe(true)
+    expect(isFrameLocation({ type: FRAME_NAV_REQUEST, path: "/videos" })).toBe(false)
+    expect(isFrameLocation({ type: FRAME_LOCATION })).toBe(false)
+    expect(isFrameLocation(null)).toBe(false)
+  })
+
+  it("drops the frame's embed marker and keeps everything else", () => {
+    expect(shellPathForFrameLocation(`${ORIGIN}/videos?embed=1`, "embed")).toBe("/videos")
+    expect(shellPathForFrameLocation(`${ORIGIN}/videos?embed=1&view=lectures#top`, "embed")).toBe(
+      "/videos?view=lectures#top",
+    )
+    expect(shellPathForFrameLocation("/doc/my-case?chat=abc", "embed")).toBe("/doc/my-case?chat=abc")
+  })
+
+  it("mirrors only pages under the reporting frame's own destination", () => {
+    expect(isMirrorableFrameLocation("/videos/lectures", "/videos", dockNavRootFor)).toBe(true)
+    expect(isMirrorableFrameLocation("/videos?view=lectures", "/videos", dockNavRootFor)).toBe(true)
+    expect(isMirrorableFrameLocation("/doc/my-case", "/doc", dockNavRootFor)).toBe(true)
+    // Another destination's page, a tool the dock never frames, off-origin
+    // forms, and the help docs all stay out of the address bar.
+    expect(isMirrorableFrameLocation("/cards/library", "/videos", dockNavRootFor)).toBe(false)
+    expect(isMirrorableFrameLocation("/coach", "/videos", dockNavRootFor)).toBe(false)
+    expect(isMirrorableFrameLocation("//evil.example/videos", "/videos", dockNavRootFor)).toBe(false)
+    expect(isMirrorableFrameLocation("https://evil.example/videos", "/videos", dockNavRootFor)).toBe(false)
+    expect(isMirrorableFrameLocation("/docs/videos", "/videos", dockNavRootFor)).toBe(false)
   })
 })

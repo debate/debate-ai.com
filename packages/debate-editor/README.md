@@ -189,14 +189,15 @@ The list below groups the same command set into feature highlights — 50+ in to
 
 ## Package layout
 
-Logic lives under `src/`, grouped by role; tests live under `test/`.
+This package holds no copy of the editor; `src/` is generated. Tests live under `test/`.
 
 ```
 debate-editor/
-├── upstream.json     # the upstream CardMirror commit src/ is synced to
+├── upstream.json     # the upstream CardMirror commit the patch applies to
 ├── patches/          # debate-ai.patch — every debate-ai.com edit to an upstream file
-├── scripts/          # sync-upstream.mjs — rebase src/ onto the submodule, rewrite the patch
-├── src/              # upstream CardMirror + the patch, plus our own files (React shell, ribbon tabs, …)
+├── overlay/          # files upstream doesn't have (React shell, ribbon tabs, sync clients, …)
+├── scripts/          # sync-upstream.mjs — assemble src/, record edits, rebase onto the submodule
+├── src/              # generated, git-ignored: upstream src/ + the patch + overlay/
 └── test/             # Vitest suites for editor data-model helpers
 ```
 
@@ -204,24 +205,30 @@ debate-editor/
 
 This package is an adapter over upstream CardMirror, the
 [`debate-editor-cm`](../debate-editor-cm) git submodule
-([debate/debate-editor](https://github.com/debate/debate-editor)). `src/` holds upstream's
-`src/` at the commit in `upstream.json`, with two kinds of debate-ai.com changes on top:
+([debate/debate-editor](https://github.com/debate/debate-editor)). Git tracks only
+debate-ai.com's changes to it, in two forms:
 
 - **Edits to upstream files**, recorded in `patches/debate-ai.patch`: the Word-style tabbed
   ribbon (`editor/index.ts`, `style.css`), the embed hooks the React shell needs
   (`adoptEmbeddedDoc`, `hostPlugins()`, `chromeHost()`, narrow chrome), the settings
   sidebar, the File-menu commands that replaced the Home screen, and the account-sync
   wiring.
-- **Files upstream doesn't have**, which live in `src/` directly: the React shell
-  (`react/` — `CardMirrorEditor`, the dropdown `MenuBar`, `ribbon-template.ts`), its UI
-  primitives (`ui/`), and our engine modules (`editor/ribbon-tabs*.ts`,
-  `editor/chrome-host.ts`, `editor/host-plugins.ts`, the learn / quick-card sync clients, …).
+- **Files upstream doesn't have**, in `overlay/`: the React shell (`react/` —
+  `CardMirrorEditor`, the dropdown `MenuBar`, `ribbon-template.ts`), its UI primitives
+  (`ui/`), and our engine modules (`editor/ribbon-tabs*.ts`, `editor/chrome-host.ts`,
+  `editor/host-plugins.ts`, the learn / quick-card sync clients, …).
 
-Edit `src/` as usual. When the change touches an upstream file, record it (CI fails
-otherwise, via `test/upstream-sync.test.ts`):
+`scripts/sync-upstream.mjs` assembles upstream's `src/` at the commit in `upstream.json`,
+the patch and the overlay into `src/`, which the package exports point at. It runs on
+`bun install` and before `build`, `typecheck` and `test`, so check out the submodule first
+(`git submodule update --init packages/debate-editor-cm`).
+
+Edit `src/` as usual, then record the change (CI fails otherwise, via
+`test/upstream-sync.test.ts`, and an assemble refuses to overwrite unrecorded edits):
 
 ```bash
-bun run sync-upstream:save    # rewrite patches/debate-ai.patch from src/
+bun run sync-upstream:save    # upstream files → patches/debate-ai.patch, ours → overlay/
+bun run assemble              # rebuild src/ (a no-op when current; --force discards edits)
 ```
 
 To take new upstream releases, move the submodule and rebase:

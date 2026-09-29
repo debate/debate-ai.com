@@ -1,8 +1,10 @@
 {
-  "$comment": "Upstream CardMirror for scripts/sync-upstream.mjs. `commit` is the upstream commit whose files are copied into src/ (everything under src/ that git tracks is ours and wins over upstream's copy). Move the submodule, then run the script with --sync to rebase our overrides onto it.",
+  "$comment": "Upstream CardMirror for scripts/sync-upstream.mjs, which assembles the git-ignored src/ from the submodule at `commit` + `patch` + `overlayDir`. Move the submodule, then run the script with --rebase to take it.",
   "repository": "https://github.com/debate/debate-editor.git",
   "submodule": "../debate-editor-cm",
   "upstreamSrcDir": "src",
   "srcDir": "src",
+  "overlayDir": "overlay",
+  "patch": "patches/debate-ai.patch",
   "commit": "caf5a5b08e75f3775959a9c7d7c102f4083ac267"
 }

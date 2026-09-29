@@ -37,12 +37,13 @@ import {
   JUDGE_AWARDS_STORAGE_KEY,
   listJudgeAwardsForDebater,
 } from "../state/judgeAwards"
+import { TiltBadge } from "./TiltBadge"
 
 function EarnedJudgeAward({ award, onRemove }: { award: JudgeAward; onRemove: () => void }) {
   const definition = JUDGE_AWARD_BY_KIND[award.kind]
   return (
     <li className="flex flex-col items-center gap-1 rounded-lg border p-3 text-center">
-      <img src={definition.badgeUrl} alt={definition.title} className="h-32 w-32 object-contain" />
+      <TiltBadge src={definition.badgeUrl} alt={definition.title} />
       <span className="font-medium">{definition.title}</span>
       <span className="text-sm">Awarded by {award.judgeName}</span>
       <span className="text-muted-foreground text-xs">
@@ -174,7 +175,7 @@ export function JudgeAwardShowcase() {
       <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {JUDGE_AWARDS.map((award) => (
           <li key={award.kind} className="flex flex-col items-center gap-1 rounded-lg border p-3 text-center">
-            <img src={award.badgeUrl} alt={award.title} className="h-32 w-32 object-contain" />
+            <TiltBadge src={award.badgeUrl} alt={award.title} />
             <span className="font-medium">{award.title}</span>
             <p className="text-muted-foreground text-xs">{award.description}</p>
           </li>

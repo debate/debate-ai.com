@@ -3,7 +3,7 @@
 /**
  * @fileoverview The full-screen loading overlay shown on the app's first load
  * and on major page transitions — but only once a load has run past
- * `showDelayMs` (0.5 s by default), so quick loads never flash it.
+ * `showDelayMs` (1 s by default), so quick loads never flash it.
  *
  * It renders on top of everything — the dock, the sidebar, the framed
  * destinations — so the user sees one animated loader rather than a half-
@@ -40,7 +40,7 @@ interface LoadingOverlayProps {
   fadeOutMs?: number
   /**
    * How long `active` has to stay true before the overlay appears, so fast
-   * loads finish without ever flashing it. Defaults to 500 ms.
+   * loads finish without ever flashing it. Defaults to 1000 ms.
    */
   showDelayMs?: number
   /**
@@ -55,7 +55,7 @@ export function LoadingOverlay({
   active,
   label,
   fadeOutMs = 400,
-  showDelayMs = 500,
+  showDelayMs = 1000,
   passthrough = false,
 }: LoadingOverlayProps) {
   // Render the DOM node as soon as it is needed for the fade-in, but keep it
@@ -86,7 +86,7 @@ export function LoadingOverlay({
       aria-live="polite"
       aria-label={typeof label === "string" ? label : "Loading"}
       className={cn(
-        "fixed inset-0 z-[200] flex items-center justify-center bg-background/80 backdrop-blur-sm transition-opacity duration-300",
+        "fixed inset-0 z-[200] flex items-center justify-center bg-background/80 transition-opacity duration-300",
         visible ? "opacity-100" : "pointer-events-none opacity-0",
         passthrough && "pointer-events-auto",
       )}

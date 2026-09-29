@@ -3,15 +3,34 @@
  * that its output restores into an empty database, and that the R2 upload
  * reassembles into the same dump.
  */
-import { gunzipSync } from "node:zlib";
+import { gunzipSync, inflateRawSync } from "node:zlib";
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 import { generateSQLiteDrizzleJson, generateSQLiteMigration } from "drizzle-kit/api";
 import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { cardAiAnalyses, debateCards, user, videoIssues, videos } from "../../database/schema";
-import { BACKUP_TABLES, emptyBackupStats, generateBackupSql, parseBackupGroups, sqlLiteral, type BackupDb } from "../db-backup";
-import { createR2Backup, isBackupKey, type R2BucketLike, type R2ObjectLike } from "../db-backup-r2";
+import {
+  BACKUP_TABLES,
+  emptyBackupStats,
+  generateBackupSql,
+  pageEnd,
+  PAGE_BYTE_BUDGET,
+  parseBackupGroups,
+  sqlLiteral,
+  type BackupDb,
+} from "../db-backup";
+import {
+  createR2Backup,
+  deleteBackups,
+  isBackupKey,
+  listBackups,
+  sevenZipKey,
+  type KVNamespaceLike,
+  type R2BucketLike,
+  type R2ObjectLike,
+} from "../db-backup-r2";
+import { crc32 } from "../seven-zip";
 
 let ddl: string[] | undefined;
 
@@ -162,6 +181,64 @@ function fakeBucket() {
   return { bucket, objects, partSizes };
 }
 
+function fakeKv() {
+  const values = new Map<string, { data: Uint8Array; metadata?: unknown }>();
+  const kv: KVNamespaceLike = {
+    async put(key, value, options) {
+      values.set(key, { data: new Uint8Array(value as ArrayBuffer), metadata: options?.metadata });
+    },
+    async get(key) {
+      const value = values.get(key);
+      return value ? new Blob([value.data as Uint8Array<ArrayBuffer>]).stream() : null;
+    },
+    async delete(key) {
+      values.delete(key);
+    },
+    async list(options) {
+      const keys = [...values.entries()]
+        .filter(([key]) => key.startsWith(options?.prefix ?? ""))
+        .map(([name, value]) => ({ name, metadata: value.metadata }));
+      return { keys, list_complete: true };
+    },
+  };
+  return { kv, values };
+}
+
+/** Reads a single-file Deflate `.7z` back, checking both header CRCs and the data CRC. */
+function unpack7z(archive: Uint8Array): string {
+  const view = new DataView(archive.buffer, archive.byteOffset, archive.byteLength);
+  expect([...archive.subarray(0, 6)]).toEqual([0x37, 0x7a, 0xbc, 0xaf, 0x27, 0x1c]);
+  expect(view.getUint32(8, true)).toBe(crc32(archive.subarray(12, 32)));
+  const nextOffset = Number(view.getBigUint64(12, true));
+  const nextSize = Number(view.getBigUint64(20, true));
+  const header = archive.subarray(32 + nextOffset, 32 + nextOffset + nextSize);
+  expect(32 + nextOffset + nextSize).toBe(archive.byteLength);
+  expect(view.getUint32(28, true)).toBe(crc32(header));
+  // The Deflate method id sits in the folder's coder record.
+  expect(Buffer.from(header).includes(Buffer.from([0x03, 0x04, 0x01, 0x08]))).toBe(true);
+  const data = inflateRawSync(archive.subarray(32, 32 + nextOffset));
+  const crcAt = Buffer.from(header).indexOf(Buffer.from([0x0a, 0x01])) + 2;
+  expect(new DataView(header.buffer, header.byteOffset).getUint32(crcAt, true)).toBe(crc32(data));
+  return data.toString("utf8");
+}
+
+describe("pageEnd", () => {
+  it("takes rows up to the byte budget, and always the first", () => {
+    expect(pageEnd([10, 10, 10], 25)).toBe(1);
+    expect(pageEnd([100, 1], 25)).toBe(0);
+    expect(pageEnd([1, 2, 3], 100)).toBe(2);
+  });
+
+  it("splits a page of large rows and still dumps every row", async () => {
+    const source = await freshDb();
+    const big = "x".repeat(Math.ceil(PAGE_BYTE_BUDGET / 3));
+    await source.db.insert(debateCards).values(Array.from({ length: 7 }, (_, i) => ({ id: i + 1, tag: `T${i}`, fulltext: big })));
+    const { sql, stats } = await dump(source.db as unknown as BackupDb, ["cards"]);
+    expect(stats.tables.debate_cards).toBe(7);
+    expect(sql.match(/INSERT OR REPLACE INTO "debate_cards"/g)).toHaveLength(7);
+  });
+});
+
 describe("createR2Backup", () => {
   it("stores a gzipped dump that matches the plain one", async () => {
     const source = await freshDb();
@@ -181,6 +258,43 @@ describe("createR2Backup", () => {
     expect(gunzipSync(stored).toString("utf8")).toBe(sql);
   });
 
+  it("stores a 7z copy of the same dump in KV", async () => {
+    const source = await freshDb();
+    await seed(source.db);
+    const db = source.db as unknown as BackupDb;
+    const { bucket } = fakeBucket();
+    const { kv, values } = fakeKv();
+    const now = new Date("2026-09-28T07:00:00Z");
+
+    const result = await createR2Backup(db, bucket, ["cards"], "manual", now, kv);
+    const key = "db-backups/manual/debate-ai-backup-2026-09-28T07-00-00Z.sql.7z";
+    expect(result.sevenZipSkipped).toBeNull();
+    expect(result.backup.sevenZip).toMatchObject({ key, size: values.get(key)?.data.byteLength });
+    expect(isBackupKey(key)).toBe(true);
+
+    const { sql } = await dump(db, ["cards"]);
+    expect(unpack7z(values.get(key)!.data)).toBe(sql);
+
+    const listed = await listBackups(bucket, undefined, kv);
+    expect(listed[0].sevenZip?.key).toBe(key);
+
+    await deleteBackups(bucket, [result.backup.key], kv);
+    expect(values.has(key)).toBe(false);
+  });
+
+  it("skips the 7z copy when it would pass the KV limit", async () => {
+    const source = await freshDb();
+    await seed(source.db);
+    const { bucket, objects } = fakeBucket();
+    const { kv, values } = fakeKv();
+
+    const result = await createR2Backup(source.db as unknown as BackupDb, bucket, ["cards"], "manual", new Date(), kv, 2048);
+    expect(objects.has(result.backup.key)).toBe(true);
+    expect(result.backup.sevenZip).toBeNull();
+    expect(result.sevenZipSkipped).toMatch(/KV value limit/);
+    expect(values.size).toBe(0);
+  });
+
   it("prunes old weekly backups", async () => {
     const source = await freshDb();
     const db = source.db as unknown as BackupDb;
@@ -190,11 +304,24 @@ describe("createR2Backup", () => {
     }
     expect([...objects.keys()].filter((key) => key.includes("/weekly/")).length).toBeLessThanOrEqual(12);
   });
+
+  it("prunes the 7z copies with their weekly backups", async () => {
+    const source = await freshDb();
+    const db = source.db as unknown as BackupDb;
+    const { bucket, objects } = fakeBucket();
+    const { kv, values } = fakeKv();
+    for (let week = 0; week < 14; week++) {
+      await createR2Backup(db, bucket, ["history"], "weekly", new Date(Date.UTC(2026, 0, 1 + week * 7)), kv);
+    }
+    const r2Keys = [...objects.keys()].filter((key) => key.includes("/weekly/")).map(sevenZipKey).sort();
+    expect([...values.keys()].sort()).toEqual(r2Keys);
+  });
 });
 
 describe("isBackupKey", () => {
   it("rejects keys outside the backup prefix", () => {
     expect(isBackupKey("db-backups/manual/x.sql.gz")).toBe(true);
+    expect(isBackupKey("db-backups/manual/x.sql.7z")).toBe(true);
     expect(isBackupKey("other/x.sql.gz")).toBe(false);
     expect(isBackupKey("db-backups/../secret.sql")).toBe(false);
   });

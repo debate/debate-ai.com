@@ -46,10 +46,9 @@ jobs:
         working-directory: .
         run: bun install --ignore-scripts
 
-      # debate-editor tracks only its own files; the rest of CardMirror is
-      # copied in from the submodule by its postinstall, which
-      # --ignore-scripts skips.
-      - name: Generate debate-editor's upstream sources
+      # debate-editor tracks only its patch and overlay; its src/ is assembled
+      # from the submodule by its postinstall, which --ignore-scripts skips.
+      - name: Assemble debate-editor's sources
         working-directory: .
         run: node packages/debate-editor/scripts/sync-upstream.mjs
 

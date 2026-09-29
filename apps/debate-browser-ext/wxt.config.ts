@@ -1,10 +1,40 @@
 import { fileURLToPath } from 'node:url';
 import { defineConfig, type WxtUnimportOptions } from 'wxt';
 import { createPackageFileResolver, noRemoteCode } from './vite/no-remote-code';
+import { stubNodeBuiltins } from './vite/stub-node-builtins';
 
 /** A file inside the `debate-webview` package. */
 const webui = (path: string) =>
   fileURLToPath(new URL(`../../packages/debate-webview/${path}`, import.meta.url));
+
+const repoRoot = fileURLToPath(new URL('../../../', import.meta.url));
+const workspaceDirs = [
+  fileURLToPath(new URL('../../packages/debate-webview', import.meta.url)),
+  fileURLToPath(new URL('../../packages/debate-editor', import.meta.url)),
+  fileURLToPath(new URL('../../packages/debate-round', import.meta.url)),
+  fileURLToPath(new URL('../../packages/debate-videos', import.meta.url)),
+  fileURLToPath(new URL('../../packages/debate-speech-writer', import.meta.url)),
+  fileURLToPath(new URL('../../packages/debate-timer', import.meta.url)),
+  fileURLToPath(new URL('../../packages/debate-tournaments', import.meta.url)),
+  fileURLToPath(new URL('../../packages/debate-flow', import.meta.url)),
+  fileURLToPath(new URL('../../packages/debate-data-sync', import.meta.url)),
+];
+
+const resolveFile = createPackageFileResolver(repoRoot, workspaceDirs);
+
+/**
+ * Where the CDN scripts that `debate-webview`'s libraries would fetch are
+ * found locally instead (see vite/no-remote-code.ts): this app, the webview
+ * package, the feature package that owns the editor, and the repo root.
+ */
+const resolveLocalPackageFile = createPackageFileResolver(
+  fileURLToPath(new URL('../../', import.meta.url)),
+  [
+    fileURLToPath(new URL('./', import.meta.url)),
+    webui(''),
+    fileURLToPath(new URL('../../packages/debate-editor/', import.meta.url)),
+  ]
+);
 
 /**
  * The AI provider APIs the article panel calls directly when the reader has
@@ -49,7 +79,8 @@ export default defineConfig({
   vite: () => ({
     // Chrome Web Store: no remotely hosted code. Every CDN script URL the
     // bundled libraries carry is pointed at a copy shipped in the extension.
-    plugins: [noRemoteCode(resolveLocalPackageFile)],
+    // api2client's Node-only codegen is stubbed out (vite/stub-node-builtins.ts).
+    plugins: [stubNodeBuiltins(), noRemoteCode(resolveFile)],
     define: {
       // The app reads a few `NEXT_PUBLIC_*` values that Next inlines at build
       // time; everything else in `process.env` is simply absent here.

@@ -11,6 +11,8 @@ const GEAR: {
   role: string
   href: string
   image: string
+  /** Optional looping video shown in place of `image`. */
+  video?: string
   blurb: string
   usedHref?: string
   buyLabel?: string
@@ -24,12 +26,12 @@ const GEAR: {
       "A MagSafe-compatible gooseneck mount that hangs around your neck and holds the phone at eye level. Speak off your speech doc with both hands free for gestures and pen-and-paper flowing, or turn it around to record practice speeches from your own point of view.",
   },
   {
-    name: "Bnnwa Multi-Device Bluetooth Keyboard with Touchpad",
+    name: "Arteck Universal Backlit Bluetooth Keyboard with Touchpad",
     role: "Bluetooth keyboard for the phone",
-    href: "https://amzn.to/4hgaLLt",
-    image: "https://m.media-amazon.com/images/I/61hkDb6ZWPL._AC_SL500_.jpg",
+    href: "https://amzn.to/4z1Isay",
+    image: "https://i.imgur.com/EKNFuEf.jpeg",
     blurb:
-      "Pairs over Bluetooth with up to three devices at once and hot-switches between them, with a big multi-touch trackpad. This is the piece that turns a phone into a real laptop replacement: type speeches and flow at full speed, no dongle needed.",
+      "7-color backlit Bluetooth keyboard with a built-in multi-touch trackpad and USB-C charging. Pairs straight to your phone over Bluetooth — no dongle needed — and the per-key backlight keeps every key visible in any lighting. The trackpad means you can navigate the round workspace without ever touching the screen.",
   },
   {
     name: "LISEN 60W USB-C to USB-C Cable (5-Pack)",
@@ -71,6 +73,7 @@ const GEAR: {
     href: "https://www.visible.com/get/?69PFJG2",
     buyLabel: "View on Visible",
     image: "https://s7d1.scene7.com/is/content/tracfone/New-Save6-Desktop-672x448",
+    video: "https://i.imgur.com/xNqdj3r.mp4",
     blurb:
       "Unlimited 5G data, talk, and text on Verizon's network — $25/month with taxes included ($35/month for Visible+ on Ultra Wideband, with global coverage). eSIM activation ships overnight, and friend code 69PFJG2 knocks $20 off a service payment, so the phone above can be live before you leave the airport.",
   },
@@ -101,8 +104,8 @@ const STEPS: { icon: typeof Smartphone; title: string; body: ReactNode }[] = [
     title: "Pair a keyboard",
     body: (
       <>
-        Typing speed is the only thing a phone actually lacks. A Bluetooth keyboard with a trackpad (like the Bnnwa
-        below) pairs straight to the phone from Settings → Bluetooth; a 2.4G-receiver keyboard (like the Arteck)
+        Typing speed is the only thing a phone actually lacks. A Bluetooth keyboard with a trackpad (like the Arteck
+        below) pairs straight to the phone from Settings → Bluetooth; a 2.4G-receiver keyboard (like the Jelly Comb)
         plugs in through a USB-C OTG adapter. Prop the phone up, and you have a laptop that fits in a pencil pouch.
       </>
     ),
@@ -211,13 +214,29 @@ export default function MobileSetupPage() {
                 <Card className="h-full py-4 transition-colors hover:bg-accent hover:border-accent-foreground/20">
                   <CardHeader className="px-4">
                     <div className="mb-2 flex h-36 items-center justify-center overflow-hidden rounded-md bg-white">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        loading="lazy"
-                        className="max-h-full max-w-full object-contain"
-                      />
+                      {item.video ? (
+                        <video
+                          src={item.video}
+                          poster={item.image}
+                          aria-label={item.name}
+                          autoPlay
+                          muted
+                          loop
+                          playsInline
+                          preload="metadata"
+                          className="max-h-full max-w-full object-contain"
+                        />
+                      ) : (
+                        <>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            loading="lazy"
+                            className="max-h-full max-w-full object-contain"
+                          />
+                        </>
+                      )}
                     </div>
                     <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{item.role}</p>
                     <CardTitle className="text-base leading-snug">{item.name}</CardTitle>

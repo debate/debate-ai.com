@@ -24,7 +24,7 @@ export const DEFAULT_LOADING_FADE_OUT_MS = 400
  * page transitions land well inside it, so they never flash the orb; only a
  * genuinely slow one shows it.
  */
-export const DEFAULT_LOADING_SHOW_DELAY_MS = 500
+export const DEFAULT_LOADING_SHOW_DELAY_MS = 1000
 
 interface LoadingState {
   isActive: boolean

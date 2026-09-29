@@ -40,6 +40,7 @@ import { requestJudgeDecision } from "../round/judge-decision-client"
 import { buildJudgeDecisionInputForParadigm, buildJudgeDecisionInputFromStores } from "../round/judge-decision-store-wiring"
 import { generateJudgeDecisionBatchId, type JudgeDecisionRecord } from "../state/judgeDecisions"
 import { useJudgeDecisions } from "../hooks/useJudgeDecisions"
+import { SpeechJudgeSection } from "./SpeechJudgeSection"
 
 type FormState = {
   roundId: string
@@ -172,8 +173,10 @@ export function JudgeDecisionPanel() {
   return (
     <PanelShell
       title="AI Judge Decision"
-      description="Get an AI-generated decision for a round, judged under its saved paradigm and its saved flow from Speech Transcript Summaries. Every decision requested for a round is kept as history, newest first."
+      description="Paste a round's speeches for the Standard Judge's decision and critique, or get a decision for a saved round under its saved paradigm and its saved flow from Speech Transcript Summaries. Every saved-round decision is kept as history, newest first."
     >
+      <SpeechJudgeSection />
+
       <p className="-mt-3 text-xs text-muted-foreground">
         {synced ? "Decision history is synced to your account." : "Sign in to sync your decision history."}
       </p>
