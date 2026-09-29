@@ -49,7 +49,7 @@ gone:
 - **Favorite tools** — a tool is still starred from `/tools`, which is also
   where a renamed or removed tool now gets pruned from the saved list
 - **Tool data** — see
-  [Tool Data Sync](/docs/internals/tool-data-sync)'s Known gaps for what went
+  Tool Data Sync's Known gaps for what went
   with it (the sync itself is untouched and still runs app-wide)
 - **Word limit presets** (`debate-round`'s `WordLimitPresetsPanel`) — now
   editable directly on `/word-count`, in a collapsible "Manage word limit
@@ -104,7 +104,7 @@ client-computed whole-list replace, so two tabs adding, removing or pruning
 different entries at once can no longer drop each other's change. A plain
 whole-list `favoriteTools` replace is still accepted by the route for a
 caller that genuinely needs one, but nothing in the app sends one anymore.
-`recentTools` (see [Command Palette](/docs/internals/command-palette)'s
+`recentTools` (see Command Palette's
 "Recent" section) joins it as an op-based field — each tool visit sends a
 single `recordRecentTool` op, resolved the same read-then-write way — since
 it writes far more often than any picker-style field here (every tool open,
@@ -134,7 +134,7 @@ accepted by the route for a caller that genuinely needs one, but
 `useWordLimitPresets.ts` no longer sends one.
 
 `outlineFilterPresets` (`debate-practice-drills`'s named Outline filter
-presets bar — see [Argument Tree Outline](/docs/internals/argument-tree-outline))
+presets bar — see Argument Tree Outline)
 is op-based the same way: `addPreset`/`removePreset` each send a single
 `addOutlineFilterPreset`/`removeOutlineFilterPreset` op, resolved against
 the account's current list at write time instead of a client-computed
