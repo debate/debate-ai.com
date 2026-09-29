@@ -12,6 +12,7 @@
  */
 
 import type React from "react"
+import { useEffect, useRef } from "react"
 import { usePathname } from "next/navigation"
 
 import { CategoryDockProvider, PersistentVideoPlayer, SlowSpreadButton, VideoIndexPrefetcher, VideoPlayerFrameBridge } from "debate-videos"
@@ -53,12 +54,39 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   // answers.
   useFrameNavigationHandoff(embedded, pathname)
 
+  // A document is either the help docs or the app, never both: the docs load
+  // their own Fumadocs stylesheet, and the app shell's frames and player are
+  // not mounted under them. Links in and out of /docs are meant to be real
+  // page loads (see `NON_ROUTER_PREFIXES` in `frame-navigation.ts`), but the
+  // site sidebar on /docs routes through the client router like it does
+  // everywhere else — so when the path crosses that line, reload into it.
+  const startedOnDocs = useRef(isDocsPath(pathname)).current
+  const crossedDocsBoundary = isDocsPath(pathname) !== startedOnDocs
+  useEffect(() => {
+    if (crossedDocsBoundary) window.location.reload()
+  }, [crossedDocsBoundary])
+  if (crossedDocsBoundary) return null
+
   // The help docs (`app/docs`, from `debate-help-docs`) bring their own
-  // navigation — Fumadocs' header, sidebar and search — and their own
-  // stylesheet, so they get none of the app's chrome. Links in and out of
-  // /docs are real page loads (see `NON_ROUTER_PREFIXES` in
-  // `frame-navigation.ts`), so this document never switches between the two.
-  if (isDocsPath(pathname)) return <>{children}</>
+  // navigation — Fumadocs' header, sidebar and search — which sits in the
+  // content column beside the site's own sidebar (dock + tool tree), so the
+  // rest of the app stays one click away. No frame surface or player: the
+  // sidebar's links leave /docs with the reload above.
+  if (isDocsPath(pathname)) {
+    // Framed, the shell around the frame already shows the sidebar.
+    if (embedded) return <>{children}</>
+    return (
+      <CategoryDockProvider>
+        <ReasonDocsProvider>
+          <AppSidebarShell always>{children}</AppSidebarShell>
+          <ChromeErrorBoundary label="SignInPromptProvider">
+            <SignInPromptProvider />
+          </ChromeErrorBoundary>
+          <Toaster position="top-center" richColors closeButton />
+        </ReasonDocsProvider>
+      </CategoryDockProvider>
+    )
+  }
 
   if (embedded) {
     return (

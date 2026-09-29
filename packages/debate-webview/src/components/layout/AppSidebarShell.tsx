@@ -55,11 +55,23 @@ import { showsCardsOnlySidebar, showsReasonDocsPanels } from "../../lib/reason-d
  * `/cards` and `/reason-editor`, which read documents out of this app's own
  * store rather than the editor's.
  */
-export function AppSidebarShell({ children }: { children: React.ReactNode }) {
+export function AppSidebarShell({
+  children,
+  always = false,
+}: {
+  children: React.ReactNode
+  /**
+   * Wrap the page even though its path is not a tool-tree destination. The
+   * help docs at `/docs` pass this: they keep the site's sidebar beside their
+   * own Fumadocs one without `/docs` joining the tree's route list, where it
+   * would also change which routes hide the floating dock.
+   */
+  always?: boolean
+}) {
   const pathname = usePathname()
   const cardsOnly = showsCardsOnlySidebar(pathname)
 
-  if (!isGenericToolSidebarRoute(pathname)) return <>{children}</>
+  if (!always && !isGenericToolSidebarRoute(pathname)) return <>{children}</>
 
   return (
     // The shared drag-resizable column (`ResizableSidebarLayout`, from

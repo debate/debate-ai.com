@@ -35,8 +35,8 @@ export const baseOptions: BaseLayoutProps = {
     },
     {
       // `external` makes this a plain `<a>` rather than a client-side route
-      // change: the app shell and its stylesheet are not mounted under /docs,
-      // so the app has to be entered with a real page load.
+      // change: the app shell's frames and player are not mounted under
+      // /docs, so the app has to be entered with a real page load.
       label: 'Open the app',
       icon: <ExternalLink />,
       text: 'App',

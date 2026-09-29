@@ -80,7 +80,7 @@ export function opensElsewhere(event: {
 /**
  * Paths never handed to the client router. `/api` is not a page at all.
  * `/docs` is the help site (`debate-help-docs`, mounted at `app/docs`): a
- * route of this app, but one `AppShell` renders without the app's chrome and
+ * route of this app, but one `AppShell` renders with only the site sidebar and
  * that loads its own Fumadocs stylesheet, so moving between it and the rest of
  * the app is always a real page load — never the docs' CSS left applied to an
  * app page, or the shell half-torn-down around a docs page.
@@ -89,7 +89,7 @@ const NON_ROUTER_PREFIXES = ["/docs", "/api"]
 
 /**
  * Whether `pathname` is the help docs site at /docs, which `AppShell` renders
- * bare.
+ * with only the site sidebar around it.
  *
  * @param pathname - The current path, as `usePathname` reports it.
  */

@@ -5,9 +5,9 @@
  *
  * The app's root layout owns `<html>` and `<body>` (and the theme provider),
  * so this only adds what the docs need on top: Fumadocs' provider (search
- * dialog, sidebar state) and the docs stylesheet. The app shell renders
- * `/docs` bare — no dock, no tool sidebar — so the Fumadocs layouts below are
- * the whole page.
+ * dialog, sidebar state) and the docs stylesheet. The app shell puts the
+ * site's sidebar (dock and tool tree) beside `/docs`, and the Fumadocs layouts
+ * below fill the content column next to it.
  */
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
