@@ -20,8 +20,9 @@
  *    for an AI analysis. Those are written as `NULL` (or `''` where the column
  *    is `NOT NULL`) instead of their value.
  *
- * Rows are read in `rowid` pages and yielded as SQL text chunks, so neither
- * the download route nor the R2 upload ever holds the whole dump in memory.
+ * Rows are read in `rowid` pages capped by {@link PAGE_BYTE_BUDGET} bytes and
+ * yielded one `INSERT` at a time, so neither the download route nor the R2
+ * upload ever holds more than a page of the dump in memory.
  * @module lib/admin/db-backup
  */
 
@@ -79,6 +80,23 @@ export const BACKUP_TABLES: readonly BackupTable[] = [
 ];
 
 const DEFAULT_PAGE_SIZE = 500;
+/** Rough cap on the column bytes one page reads (a single larger row still goes alone). */
+export const PAGE_BYTE_BUDGET = 4 * 1024 * 1024;
+/** Small rows are batched into chunks of about this many characters. */
+const CHUNK_CHARS = 1024 * 1024;
+
+/**
+ * Index of the last row that fits in one page: rows are taken while their
+ * running byte total stays within `budget`, and the first row always is.
+ */
+export function pageEnd(rowBytes: readonly number[], budget: number): number {
+  let total = 0;
+  for (let i = 0; i < rowBytes.length; i++) {
+    total += rowBytes[i];
+    if (i > 0 && total > budget) return i - 1;
+  }
+  return rowBytes.length - 1;
+}
 
 /** Parses `?groups=videos,cards` (or an array) into known groups; empty means all. */
 export function parseBackupGroups(raw: string | string[] | null | undefined): BackupGroup[] {
@@ -220,31 +238,49 @@ export async function* generateBackupSql(
 
     const insertPrefix = `INSERT OR REPLACE INTO ${quoteIdent(table.name)} (${columns.map(quoteIdent).join(", ")}) VALUES (`;
     const selectList = columns.map(quoteIdent).join(", ");
+    const byteExpr = columns.map((column) => `ifnull(length(${quoteIdent(column)}), 0)`).join(" + ");
     const pageSize = table.pageSize ?? DEFAULT_PAGE_SIZE;
     let lastRowid: number | null = null;
     let count = 0;
 
     for (;;) {
-      const where = lastRowid === null ? "" : `WHERE rowid > ${lastRowid} `;
-      const rows = (await db.all(
+      const after = lastRowid === null ? "" : `WHERE rowid > ${lastRowid} `;
+      // Size the page first: a few caselist documents' HTML alone can pass
+      // the Worker's 128 MB memory limit, so a fixed row count is not enough.
+      const sizes = (await db.all(
         sql.raw(
-          `SELECT rowid AS "__backup_rowid", ${selectList} FROM ${quoteIdent(table.name)} ${where}ORDER BY rowid LIMIT ${pageSize}`,
+          `SELECT rowid AS "__backup_rowid", ${byteExpr} AS "__backup_bytes" FROM ${quoteIdent(table.name)} ${after}ORDER BY rowid LIMIT ${pageSize}`,
         ),
-      )) as Array<Record<string, unknown>>;
-      if (rows.length === 0) break;
+      )) as Array<{ __backup_rowid: unknown; __backup_bytes: unknown }>;
+      if (sizes.length === 0) break;
+      const lastInPage = pageEnd(sizes.map((row) => Number(row.__backup_bytes) || 0), PAGE_BYTE_BUDGET);
+      const upTo = Number(sizes[lastInPage].__backup_rowid);
 
+      const range = lastRowid === null ? `WHERE rowid <= ${upTo} ` : `WHERE rowid > ${lastRowid} AND rowid <= ${upTo} `;
+      const rows = (await db.all(
+        sql.raw(`SELECT rowid AS "__backup_rowid", ${selectList} FROM ${quoteIdent(table.name)} ${range}ORDER BY rowid`),
+      )) as Array<Record<string, unknown>>;
+
+      // Flush every CHUNK_CHARS and drop each row once written, so a page of
+      // large rows is never held twice (rows + SQL text).
       let chunk = "";
-      for (const row of rows) {
+      for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
         const values = columns.map((column) =>
           table.scrub && column in table.scrub ? sqlLiteral(table.scrub[column]) : sqlLiteral(row[column]),
         );
+        rows[i] = undefined as unknown as Record<string, unknown>;
         chunk += `${insertPrefix}${values.join(", ")});\n`;
+        if (chunk.length >= CHUNK_CHARS) {
+          yield chunk;
+          chunk = "";
+        }
       }
+      if (chunk) yield chunk;
       count += rows.length;
-      yield chunk;
 
-      lastRowid = Number(rows[rows.length - 1].__backup_rowid);
-      if (rows.length < pageSize) break;
+      lastRowid = upTo;
+      if (sizes.length < pageSize && lastInPage === sizes.length - 1) break;
     }
 
     stats.tables[table.name] = count;

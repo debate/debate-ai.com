@@ -54,6 +54,14 @@
 			"bucket_name": "debate-ai-db-backups"
 		}
 	],
+	// `.sql.7z` copies of those backups (one KV value each, 25 MiB max).
+	// No `id`: wrangler provisions the namespace on the first deploy. Not
+	// inherited by named environments either, so env.production repeats it.
+	"kv_namespaces": [
+		{
+			"binding": "DB_BACKUPS_KV"
+		}
+	],
 	// Webcam-room signalling (lib/webcam/debate-room.ts): one hibernating Durable
 	// Object per room relays WebRTC offers/answers/ICE; media never touches it.
 	// Like `vars`, `durable_objects` is not inherited by named environments,
@@ -90,6 +98,11 @@
 				{
 					"binding": "DB_BACKUPS",
 					"bucket_name": "debate-ai-db-backups"
+				}
+			],
+			"kv_namespaces": [
+				{
+					"binding": "DB_BACKUPS_KV"
 				}
 			],
 			"durable_objects": {
