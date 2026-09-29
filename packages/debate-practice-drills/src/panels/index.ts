@@ -12,6 +12,7 @@ export { DrillSetsPanel } from "./DrillSetsPanel";
 export { FlowAnnotationsPanel } from "./FlowAnnotationsPanel";
 export { FlowSummariesPanel } from "./FlowSummariesPanel";
 export { JudgeDecisionPanel } from "./JudgeDecisionPanel";
+export { SpeechJudgeSection } from "./SpeechJudgeSection";
 export { PracticeRoundSimulatorPanel } from "./PracticeRoundSimulatorPanel";
 export { VulnerabilityChartsPanel } from "./VulnerabilityChartsPanel";
 export { WordCountRoundsPanel } from "./WordCountRoundsPanel";

@@ -12,12 +12,16 @@ import { describe, it, expect } from "vitest"
 
 import { dockNavRootFor } from "../../../src/lib/nav/dock-nav-paths"
 import {
+  FRAME_LOCATION,
   FRAME_NAV_ACK,
   docsExitTarget,
   FRAME_NAV_REQUEST,
+  isFrameLocation,
   isFrameNavAck,
   isDocsPath,
   isFrameNavRequest,
+  isMirrorableFrameLocation,
+  shellPathForFrameLocation,
   opensElsewhere,
   topNavigationTarget,
 } from "../../../src/lib/layout/frame-navigation"
@@ -155,28 +159,32 @@ describe("message guards", () => {
   })
 })
 
-describe("docsExitTarget", () => {
-  it("hard-loads an app page linked from the docs", () => {
-    expect(docsExitTarget(anchor("/videos"), ORIGIN)).toBe(`${ORIGIN}/videos`)
-    expect(docsExitTarget(anchor("/cards/library?q=1#top"), ORIGIN)).toBe(
-      `${ORIGIN}/cards/library?q=1#top`,
+describe("frame location mirroring", () => {
+  it("recognizes only well-formed location reports", () => {
+    expect(isFrameLocation({ type: FRAME_LOCATION, path: "/videos/lectures" })).toBe(true)
+    expect(isFrameLocation({ type: FRAME_NAV_REQUEST, path: "/videos" })).toBe(false)
+    expect(isFrameLocation({ type: FRAME_LOCATION })).toBe(false)
+    expect(isFrameLocation(null)).toBe(false)
+  })
+
+  it("drops the frame's embed marker and keeps everything else", () => {
+    expect(shellPathForFrameLocation(`${ORIGIN}/videos?embed=1`, "embed")).toBe("/videos")
+    expect(shellPathForFrameLocation(`${ORIGIN}/videos?embed=1&view=lectures#top`, "embed")).toBe(
+      "/videos?view=lectures#top",
     )
-    expect(docsExitTarget(anchor("/"), ORIGIN)).toBe(`${ORIGIN}/`)
+    expect(shellPathForFrameLocation("/doc/my-case?chat=abc", "embed")).toBe("/doc/my-case?chat=abc")
   })
 
-  it("leaves links within /docs to Fumadocs' router", () => {
-    expect(docsExitTarget(anchor("/docs"), ORIGIN)).toBeNull()
-    expect(docsExitTarget(anchor("/docs/guides/practice-tools"), ORIGIN)).toBeNull()
-  })
-
-  it("does not treat a path that merely starts with the letters as docs", () => {
-    expect(docsExitTarget(anchor("/docsearch"), ORIGIN)).toBe(`${ORIGIN}/docsearch`)
-  })
-
-  it("leaves new tabs, downloads, other origins and bare anchors to the browser", () => {
-    expect(docsExitTarget(anchor("/videos", { target: "_blank" }), ORIGIN)).toBeNull()
-    expect(docsExitTarget(anchor("/videos", { download: true }), ORIGIN)).toBeNull()
-    expect(docsExitTarget({ href: "https://example.com/videos" }, ORIGIN)).toBeNull()
-    expect(docsExitTarget({ href: null }, ORIGIN)).toBeNull()
+  it("mirrors only pages under the reporting frame's own destination", () => {
+    expect(isMirrorableFrameLocation("/videos/lectures", "/videos", dockNavRootFor)).toBe(true)
+    expect(isMirrorableFrameLocation("/videos?view=lectures", "/videos", dockNavRootFor)).toBe(true)
+    expect(isMirrorableFrameLocation("/doc/my-case", "/doc", dockNavRootFor)).toBe(true)
+    // Another destination's page, a tool the dock never frames, off-origin
+    // forms, and the help docs all stay out of the address bar.
+    expect(isMirrorableFrameLocation("/cards/library", "/videos", dockNavRootFor)).toBe(false)
+    expect(isMirrorableFrameLocation("/coach", "/videos", dockNavRootFor)).toBe(false)
+    expect(isMirrorableFrameLocation("//evil.example/videos", "/videos", dockNavRootFor)).toBe(false)
+    expect(isMirrorableFrameLocation("https://evil.example/videos", "/videos", dockNavRootFor)).toBe(false)
+    expect(isMirrorableFrameLocation("/docs/videos", "/videos", dockNavRootFor)).toBe(false)
   })
 })

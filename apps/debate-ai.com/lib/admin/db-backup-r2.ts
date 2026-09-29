@@ -15,6 +15,12 @@
  * the gzip output is cut into {@link PART_SIZE} parts (R2 requires every part
  * but the last to be the same size) and nothing larger than one part is held
  * in memory.
+ *
+ * The same dump is also packed into a `.sql.7z` (lib/admin/seven-zip.ts) as it
+ * streams past, and stored in the `DB_BACKUPS_KV` namespace under the R2 key
+ * with `.gz` swapped for `.7z`. A KV value is capped at
+ * {@link SEVEN_ZIP_MAX_BYTES}; a dump that compresses past that keeps only its
+ * R2 copy. The 7z copy is best effort — the R2 backup never fails because of it.
  * @module lib/admin/db-backup-r2
  */
 
@@ -27,11 +33,14 @@ import {
   type BackupGroup,
   type BackupStats,
 } from "./db-backup";
+import { SevenZipWriter } from "./seven-zip";
 
 export const BACKUP_PREFIX = "db-backups/";
 export const WEEKLY_BACKUPS_TO_KEEP = 12;
 /** 10 MiB — above R2's 5 MiB minimum part size. */
 export const PART_SIZE = 10 * 1024 * 1024;
+/** Workers KV's largest value, 25 MiB. */
+export const SEVEN_ZIP_MAX_BYTES = 25 * 1024 * 1024;
 
 export type BackupTrigger = "manual" | "weekly";
 
@@ -70,6 +79,33 @@ export interface R2BucketLike {
   }>;
 }
 
+/** The slice of the KV binding this module uses. */
+export interface SevenZipMetadata {
+  size: number;
+  uploaded: string;
+}
+export interface KVNamespaceLike {
+  put(key: string, value: ArrayBuffer | Uint8Array, options?: { metadata?: SevenZipMetadata }): Promise<void>;
+  get(key: string, type: "stream"): Promise<ReadableStream<Uint8Array> | null>;
+  delete(key: string): Promise<void>;
+  list(options?: { prefix?: string; cursor?: string }): Promise<{
+    keys: Array<{ name: string; metadata?: unknown }>;
+    list_complete: boolean;
+    cursor?: string;
+  }>;
+}
+
+/** The `DB_BACKUPS_KV` binding that holds the `.sql.7z` copies, or null when it is not bound. */
+export function getBackupKv(): KVNamespaceLike | null {
+  const kv = getCloudflareContext()?.env?.DB_BACKUPS_KV as KVNamespaceLike | undefined;
+  return kv && typeof kv.put === "function" && typeof kv.list === "function" ? kv : null;
+}
+
+/** The KV key of the 7z copy of an R2 backup (`….sql.gz` → `….sql.7z`). */
+export function sevenZipKey(r2Key: string): string {
+  return r2Key.replace(/\.sql(\.gz)?$/, ".sql.7z");
+}
+
 /** The `DB_BACKUPS` binding of the current request/cron, or null when it is not bound. */
 export function getBackupBucket(): R2BucketLike | null {
   const bucket = getCloudflareContext()?.env?.DB_BACKUPS as R2BucketLike | undefined;
@@ -78,7 +114,7 @@ export function getBackupBucket(): R2BucketLike | null {
 
 /** True for a key this feature wrote — the file route serves nothing else. */
 export function isBackupKey(key: string): boolean {
-  return key.startsWith(BACKUP_PREFIX) && !key.includes("..") && /\.sql(\.gz)?$/.test(key);
+  return key.startsWith(BACKUP_PREFIX) && !key.includes("..") && /\.sql(\.gz|\.7z)?$/.test(key);
 }
 
 /** The admin-only link that downloads a stored backup. */
@@ -133,7 +169,7 @@ class PartBuffer {
 export async function uploadGzippedText(
   bucket: R2BucketLike,
   key: string,
-  chunks: AsyncIterable<string>,
+  chunks: AsyncIterable<string | Uint8Array<ArrayBuffer>>,
   customMetadata: Record<string, string> = {},
   partSize: number = PART_SIZE,
 ): Promise<R2ObjectLike> {
@@ -149,7 +185,7 @@ export async function uploadGzippedText(
   // backpressure would stall both sides.
   const feeding = (async () => {
     try {
-      for await (const chunk of chunks) await writer.write(encoder.encode(chunk));
+      for await (const chunk of chunks) await writer.write(typeof chunk === "string" ? encoder.encode(chunk) : chunk);
       await writer.close();
     } catch (error) {
       await writer.abort(error).catch(() => {});
@@ -186,6 +222,8 @@ export interface StoredBackup {
   trigger: BackupTrigger | "unknown";
   groups: string | null;
   url: string;
+  /** The `.sql.7z` copy in KV, when there is one. */
+  sevenZip: { key: string; size: number; url: string } | null;
 }
 
 function toStoredBackup(object: R2ObjectLike): StoredBackup {
@@ -199,11 +237,28 @@ function toStoredBackup(object: R2ObjectLike): StoredBackup {
     trigger,
     groups: meta.groups ?? null,
     url: backupFileUrl(object.key),
+    sevenZip: null,
   };
 }
 
-/** Every stored backup, newest first. */
-export async function listBackups(bucket: R2BucketLike, prefix: string = BACKUP_PREFIX): Promise<StoredBackup[]> {
+/** Every 7z copy in KV under `prefix`, by key. */
+async function listSevenZips(kv: KVNamespaceLike, prefix: string): Promise<Map<string, number>> {
+  const sizes = new Map<string, number>();
+  let cursor: string | undefined;
+  do {
+    const page = await kv.list({ prefix, cursor });
+    for (const key of page.keys) sizes.set(key.name, Number((key.metadata as SevenZipMetadata | undefined)?.size) || 0);
+    cursor = page.list_complete ? undefined : page.cursor;
+  } while (cursor);
+  return sizes;
+}
+
+/** Every stored backup, newest first, each with its 7z copy when `kv` has one. */
+export async function listBackups(
+  bucket: R2BucketLike,
+  prefix: string = BACKUP_PREFIX,
+  kv: KVNamespaceLike | null = null,
+): Promise<StoredBackup[]> {
   const objects: R2ObjectLike[] = [];
   let cursor: string | undefined;
   do {
@@ -211,17 +266,46 @@ export async function listBackups(bucket: R2BucketLike, prefix: string = BACKUP_
     objects.push(...page.objects);
     cursor = page.truncated ? page.cursor : undefined;
   } while (cursor);
-  return objects.map(toStoredBackup).sort((a, b) => b.uploaded.localeCompare(a.uploaded));
+  const sevenZips = kv ? await listSevenZips(kv, prefix) : new Map<string, number>();
+  return objects
+    .map((object) => {
+      const backup = toStoredBackup(object);
+      const key = sevenZipKey(object.key);
+      const size = sevenZips.get(key);
+      return size === undefined ? backup : { ...backup, sevenZip: { key, size, url: backupFileUrl(key) } };
+    })
+    .sort((a, b) => b.uploaded.localeCompare(a.uploaded));
+}
+
+/** Deletes R2 backups and their 7z copies in KV. */
+export async function deleteBackups(bucket: R2BucketLike, keys: string[], kv: KVNamespaceLike | null = null): Promise<void> {
+  if (keys.length === 0) return;
+  await bucket.delete(keys);
+  if (kv) await Promise.all(keys.map((key) => kv.delete(sevenZipKey(key))));
+}
+
+/** Feeds every chunk of the dump to `archive` on its way to the gzip upload. */
+async function* teeInto(chunks: AsyncIterable<string>, archive: SevenZipWriter | null): AsyncGenerator<Uint8Array<ArrayBuffer>> {
+  const encoder = new TextEncoder();
+  for await (const chunk of chunks) {
+    const bytes = encoder.encode(chunk);
+    // Past the KV limit the archive is discarded anyway; stop spending CPU on it.
+    if (archive && !archive.tooLarge) await archive.write(bytes);
+    yield bytes;
+  }
 }
 
 export interface BackupResult {
   backup: StoredBackup;
   stats: BackupStats;
   pruned: string[];
+  /** Why no 7z copy was stored in KV, when none was. */
+  sevenZipSkipped: string | null;
 }
 
 /**
- * Dumps the chosen groups into a new R2 object. A weekly run then prunes the
+ * Dumps the chosen groups into a new R2 object — and, when `kv` is given, a
+ * `.sql.7z` copy of the same dump into KV. A weekly run then prunes the
  * weekly prefix to the newest {@link WEEKLY_BACKUPS_TO_KEEP}.
  */
 export async function createR2Backup(
@@ -230,25 +314,52 @@ export async function createR2Backup(
   groups: readonly BackupGroup[],
   trigger: BackupTrigger,
   now: Date = new Date(),
+  kv: KVNamespaceLike | null = null,
+  sevenZipMaxBytes: number = SEVEN_ZIP_MAX_BYTES,
 ): Promise<BackupResult> {
   const stats = emptyBackupStats();
   const key = `${BACKUP_PREFIX}${trigger}/${backupFileName(now, "sql.gz")}`;
+  const archive = kv ? new SevenZipWriter(backupFileName(now, "sql"), sevenZipMaxBytes) : null;
+
   // customMetadata is fixed when the upload starts, before the rows are
   // counted, so row counts come back in `stats` rather than on the object.
-  const object = await uploadGzippedText(bucket, key, generateBackupSql(db, groups, stats, now), {
-    trigger,
-    groups: groups.join(","),
-  });
+  let object: R2ObjectLike;
+  try {
+    object = await uploadGzippedText(bucket, key, teeInto(generateBackupSql(db, groups, stats, now), archive), {
+      trigger,
+      groups: groups.join(","),
+    });
+  } catch (error) {
+    await archive?.abort(error);
+    throw error;
+  }
 
-  const backup = { ...toStoredBackup(object), trigger, groups: groups.join(",") };
+  const backup: StoredBackup = { ...toStoredBackup(object), trigger, groups: groups.join(",") };
+
+  let sevenZipSkipped: string | null = kv ? null : "No KV namespace bound as DB_BACKUPS_KV.";
+  if (kv && archive) {
+    try {
+      const bytes = await archive.finish(now);
+      if (!bytes) {
+        sevenZipSkipped = `The 7z archive is larger than the ${Math.round(sevenZipMaxBytes / 1024 / 1024)} MiB KV value limit.`;
+      } else {
+        const sevenKey = sevenZipKey(key);
+        await kv.put(sevenKey, bytes, { metadata: { size: bytes.byteLength, uploaded: now.toISOString() } });
+        backup.sevenZip = { key: sevenKey, size: bytes.byteLength, url: backupFileUrl(sevenKey) };
+      }
+    } catch (error) {
+      console.error("Storing the 7z backup in KV failed:", error);
+      sevenZipSkipped = `Storing the 7z copy in KV failed: ${error instanceof Error ? error.message : String(error)}`;
+    }
+  }
 
   let pruned: string[] = [];
   if (trigger === "weekly") {
     // Keys carry an ISO timestamp, so sorting them newest-first is exact.
     const weekly = (await listBackups(bucket, `${BACKUP_PREFIX}weekly/`)).map((item) => item.key).sort().reverse();
     pruned = weekly.slice(WEEKLY_BACKUPS_TO_KEEP);
-    if (pruned.length > 0) await bucket.delete(pruned);
+    await deleteBackups(bucket, pruned, kv);
   }
 
-  return { backup, stats, pruned };
+  return { backup, stats, pruned, sevenZipSkipped };
 }

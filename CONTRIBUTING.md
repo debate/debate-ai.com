@@ -62,7 +62,7 @@ bun run dev          # starts the full dev pipeline via turbo
 bun run test         # runs the Vitest suite
 ```
 
-Requires [Bun](https://bun.sh) 1.3.11 or newer (`packageManager` pins the exact version).
+Requires [Bun](https://bun.sh) 1.4.2 or newer (`packageManager` pins the exact version).
 
 Useful filtered targets:
 
@@ -80,7 +80,7 @@ bun run dev:editor   # just the reason-editor package
 - Keep package boundaries clean — import from a package's public entry point rather than reaching into its internals.
 - Add or update tests for behavior changes and bug fixes.
 - Update documentation, examples, and types when applicable.
-- Do not commit secrets, credentials, API keys, private keys, generated build output, or unrelated `bun.lock` changes.
+- Do not commit secrets, credentials, API keys, private keys, generated build output, or a `bun.lock` (lockfiles are not committed).
 - Write clear commit messages that describe the change.
 
 

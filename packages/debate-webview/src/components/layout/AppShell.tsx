@@ -12,7 +12,7 @@
  */
 
 import type React from "react"
-import { useEffect, useRef } from "react"
+import { Suspense } from "react"
 import { usePathname } from "next/navigation"
 
 import { CategoryDockProvider, PersistentVideoPlayer, SlowSpreadButton, VideoIndexPrefetcher, VideoPlayerFrameBridge } from "debate-videos"
@@ -30,6 +30,7 @@ import { ServiceWorkerRegistrar } from "./ServiceWorkerRegistrar"
 import { useIsFramedDocument } from "../../lib/layout/use-framed-document"
 import { isDocsPath } from "../../lib/layout/frame-navigation"
 import {
+  FrameLocationReporter,
   FrameNavigationHost,
   useFrameNavigationHandoff,
 } from "./FrameNavigationBridge"
@@ -77,6 +78,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <ReasonDocsProvider>
           {/* The frame is the viewport here, so the page scrolls itself. */}
           <div className="min-h-screen w-full overflow-x-hidden">{children}</div>
+          {/* Keeps the shell's address bar on the page this frame is showing
+              (`/videos/lectures`, `/doc/<name>`, `?view=`), not the bare dock
+              path it was opened at. */}
+          <ChromeErrorBoundary label="FrameLocationReporter">
+            <Suspense fallback={null}>
+              <FrameLocationReporter />
+            </Suspense>
+          </ChromeErrorBoundary>
           {/* Mirrors picks made in this frame (a video card, the queue) back
               to the player mounted in the shell. */}
           <ChromeErrorBoundary label="VideoPlayerFrameBridge">

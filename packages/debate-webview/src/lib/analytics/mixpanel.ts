@@ -1,59 +1,69 @@
-import mixpanel from "mixpanel-browser"
+/**
+ * Mixpanel is ~400 kB and runs on every page, but nothing it does is needed
+ * to paint one, so the SDK is fetched with `import()` the first time an event
+ * is sent (and never, when no token is configured). Calls made before it
+ * arrives queue on the same promise, so they still run in the order made.
+ */
+type Mixpanel = (typeof import("mixpanel-browser"))["default"]
 
 const MIXPANEL_TOKEN = process.env.NEXT_PUBLIC_MIXPANEL_TOKEN || ""
 
-let isInitialized = false
+let client: Promise<Mixpanel | null> | null = null
+
+function loadMixpanel(): Promise<Mixpanel | null> {
+  client ??= import("mixpanel-browser")
+    .then(({ default: mixpanel }) => {
+      mixpanel.init(MIXPANEL_TOKEN, {
+        track_pageview: false,
+        persistence: "localStorage",
+        autotrack: false,
+      })
+      return mixpanel
+    })
+    .catch((err) => {
+      console.error("[mixpanel] init failed:", err)
+      return null
+    })
+  return client
+}
+
+/** Runs `fn` against the SDK once it has loaded; a no-op without a token. */
+function withMixpanel(action: string, fn: (mixpanel: Mixpanel) => void) {
+  if (typeof window === "undefined") return
+  if (!MIXPANEL_TOKEN) return
+  void loadMixpanel().then((mixpanel) => {
+    if (!mixpanel) return
+    try {
+      fn(mixpanel)
+    } catch (err) {
+      console.error(`[mixpanel] ${action} failed:`, err)
+    }
+  })
+}
 
 export function initMixpanel() {
   if (typeof window === "undefined") return
-  if (isInitialized) return
   if (!MIXPANEL_TOKEN) return
-
-  try {
-    mixpanel.init(MIXPANEL_TOKEN, {
-      track_pageview: false,
-      persistence: "localStorage",
-      autotrack: false,
-    })
-    isInitialized = true
-  } catch (err) {
-    console.error("[mixpanel] init failed:", err)
-  }
+  void loadMixpanel()
 }
 
 export function identifyUser(userId: string, traits?: Record<string, any>) {
-  if (typeof window === "undefined") return
-  initMixpanel()
-  if (!MIXPANEL_TOKEN || !isInitialized) return
-  try {
+  withMixpanel("identify", (mixpanel) => {
     mixpanel.identify(userId)
     if (traits) {
       mixpanel.people.set(traits)
     }
-  } catch (err) {
-    console.error("[mixpanel] identify failed:", err)
-  }
+  })
 }
 
 export function resetUser() {
-  if (typeof window === "undefined") return
-  if (!MIXPANEL_TOKEN || !isInitialized) return
-  try {
-    mixpanel.reset()
-  } catch (err) {
-    console.error("[mixpanel] reset failed:", err)
-  }
+  // Nothing to reset if the SDK was never started this session.
+  if (!client) return
+  withMixpanel("reset", (mixpanel) => mixpanel.reset())
 }
 
 export function trackEvent(eventName: string, props?: Record<string, any>) {
-  if (typeof window === "undefined") return
-  initMixpanel()
-  if (!MIXPANEL_TOKEN || !isInitialized) return
-  try {
-    mixpanel.track(eventName, props)
-  } catch (err) {
-    console.error("[mixpanel] track failed:", err)
-  }
+  withMixpanel("track", (mixpanel) => mixpanel.track(eventName, props))
 }
 
 export interface SignUpCompletedProps {
