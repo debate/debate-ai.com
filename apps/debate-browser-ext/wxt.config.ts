@@ -6,6 +6,21 @@ import { createPackageFileResolver, noRemoteCode } from './vite/no-remote-code';
 const webui = (path: string) =>
   fileURLToPath(new URL(`../../packages/debate-webview/${path}`, import.meta.url));
 
+const repoRoot = fileURLToPath(new URL('../../../', import.meta.url));
+const workspaceDirs = [
+  fileURLToPath(new URL('../../packages/debate-webview', import.meta.url)),
+  fileURLToPath(new URL('../../packages/debate-editor', import.meta.url)),
+  fileURLToPath(new URL('../../packages/debate-round', import.meta.url)),
+  fileURLToPath(new URL('../../packages/debate-videos', import.meta.url)),
+  fileURLToPath(new URL('../../packages/debate-speech-writer', import.meta.url)),
+  fileURLToPath(new URL('../../packages/debate-timer', import.meta.url)),
+  fileURLToPath(new URL('../../packages/debate-tournaments', import.meta.url)),
+  fileURLToPath(new URL('../../packages/debate-flow', import.meta.url)),
+  fileURLToPath(new URL('../../packages/debate-data-sync', import.meta.url)),
+];
+
+const resolveFile = createPackageFileResolver(repoRoot, workspaceDirs);
+
 /**
  * The AI provider APIs the article panel calls directly when the reader has
  * pasted their own key (src/ai/providers.ts). An extension page may call these
@@ -49,7 +64,7 @@ export default defineConfig({
   vite: () => ({
     // Chrome Web Store: no remotely hosted code. Every CDN script URL the
     // bundled libraries carry is pointed at a copy shipped in the extension.
-    plugins: [noRemoteCode(resolveLocalPackageFile)],
+    plugins: [noRemoteCode(resolveFile)],
     define: {
       // The app reads a few `NEXT_PUBLIC_*` values that Next inlines at build
       // time; everything else in `process.env` is simply absent here.
