@@ -98,6 +98,12 @@ function hasCommit(ref) {
 
 function requirePinnedCommit() {
   if (!hasCommit(config.commit)) {
+    // A shallow submodule checkout (CI's `submodules: true`) has only the
+    // gitlink's commit; fetch the pinned one on its own when they differ.
+    log(`fetching the pinned upstream commit ${config.commit.slice(0, 8)} into ${relative(PKG, SUBMODULE)}`);
+    git(["-C", SUBMODULE, "fetch", "--quiet", "--depth=1", "--no-tags", "origin", config.commit], { allowFail: true });
+  }
+  if (!hasCommit(config.commit)) {
     fail(
       `the pinned upstream commit ${config.commit} is missing from ${relative(PKG, SUBMODULE)} — ` +
         `run \`git submodule update --init packages/debate-editor-cm\` (or fetch its history).`,
