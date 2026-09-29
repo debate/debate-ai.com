@@ -14,6 +14,12 @@ export const docs = defineDocs({
   dir: fileURLToPath(new URL('./content/docs', import.meta.url)),
   docs: {
     schema: frontmatterSchema,
+    // Only frontmatter is bundled eagerly; each page's compiled MDX, TOC and
+    // Markdown load when that page is rendered (`page.data.load()`). Eager,
+    // every /docs request pulled all ~9 MB of compiled pages into the
+    // Worker isolate, which is shared with the rest of the site and capped at
+    // 128 MB.
+    async: true,
     postprocess: {
       includeProcessedMarkdown: true,
     },
