@@ -81,7 +81,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <SignInPromptProvider />
           </ChromeErrorBoundary>
           {/* Same reason: a framed document owns its own keyboard focus, so
-              the Ctrl/Cmd-P listener has to live here too, not
+              the Ctrl/Cmd-K listener has to live here too, not
               just in the top-level shell below. */}
           <ChromeErrorBoundary label="GlobalCommandPalette">
             <GlobalCommandPalette />
