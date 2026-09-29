@@ -144,7 +144,7 @@ jobs:
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.3.11
+          bun-version: 1.4.2
 
       # Workspace deps hoist to the repo root, so the install has to run
       # there rather than in apps/<app>; the root bun.lock is the only

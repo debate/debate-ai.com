@@ -62,7 +62,7 @@ bun run dev          # starts the full dev pipeline via turbo
 bun run test         # runs the Vitest suite
 ```
 
-Requires [Bun](https://bun.sh) 1.3.11 or newer (`packageManager` pins the exact version).
+Requires [Bun](https://bun.sh) 1.4.2 or newer (`packageManager` pins the exact version).
 
 Useful filtered targets:
 
