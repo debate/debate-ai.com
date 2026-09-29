@@ -262,4 +262,89 @@ describe("AppFrameProvider and AppFrameSurface", () => {
       root.unmount()
     })
   })
+  it("mirrors the visible frame's own navigation into the address bar and restores it on return", async () => {
+    mockPathname = "/videos"
+    window.history.replaceState(null, "", "/videos")
+    let frameContext: ReturnType<typeof useAppFrame> = null
+
+    function Controller() {
+      frameContext = useAppFrame()
+      return null
+    }
+
+    const root = createRoot(container)
+    const tree = () => (
+      <AppFrameProvider>
+        <Controller />
+        <AppFrameSurface>
+          <div data-testid="regular-content">Unframed</div>
+        </AppFrameSurface>
+      </AppFrameProvider>
+    )
+    await act(async () => {
+      root.render(tree())
+    })
+
+    // The /videos frame navigates itself to a lecture page.
+    await act(async () => {
+      frameContext?.syncFrameLocation("/videos", "/videos/lectures?q=aff")
+    })
+    expect(`${window.location.pathname}${window.location.search}`).toBe("/videos/lectures?q=aff")
+
+    // The shell's router now reports that path; it still belongs to the frame.
+    mockPathname = "/videos/lectures"
+    await act(async () => {
+      root.render(tree())
+    })
+    expect((frameContext as ReturnType<typeof useAppFrame>)?.framedPath).toBe("/videos")
+    expect(container.querySelector("[data-testid='regular-content']")).toBeNull()
+
+    // A report from another destination's (hidden) frame never takes the URL.
+    await act(async () => {
+      frameContext?.syncFrameLocation("/cards", "/cards/library")
+    })
+    expect(window.location.pathname).toBe("/videos/lectures")
+
+    // Nor does a location outside the reporting frame's destination.
+    await act(async () => {
+      frameContext?.syncFrameLocation("/videos", "/coach")
+    })
+    expect(window.location.pathname).toBe("/videos/lectures")
+
+    // Hop to /cards and back: the address bar returns to the lecture page the
+    // frame kept, not the bare dock path.
+    await act(async () => {
+      frameContext?.openInFrame("/cards")
+    })
+    expect(window.location.pathname).toBe("/cards/library")
+    await act(async () => {
+      frameContext?.openInFrame("/videos")
+    })
+    expect(`${window.location.pathname}${window.location.search}`).toBe("/videos/lectures?q=aff")
+
+    await act(async () => {
+      root.unmount()
+    })
+  })
+  it("loads a cold-loaded dock URL's query into its frame", async () => {
+    mockPathname = "/videos"
+    window.history.replaceState(null, "", "/videos?view=lectures")
+    const root = createRoot(container)
+    await act(async () => {
+      root.render(
+        <AppFrameProvider>
+          <AppFrameSurface>
+            <div data-testid="regular-content">Unframed</div>
+          </AppFrameSurface>
+        </AppFrameProvider>,
+      )
+    })
+
+    const iframe = container.querySelector("iframe")
+    expect(iframe?.getAttribute("src")).toBe("/videos?view=lectures&embed=1")
+
+    await act(async () => {
+      root.unmount()
+    })
+  })
 })

@@ -9,14 +9,22 @@ import {
   parseBackupGroups,
   type BackupDb,
 } from "@/lib/admin/db-backup";
-import { createR2Backup, getBackupBucket, listBackups, WEEKLY_BACKUPS_TO_KEEP } from "@/lib/admin/db-backup-r2";
+import {
+  createR2Backup,
+  getBackupBucket,
+  getBackupKv,
+  listBackups,
+  SEVEN_ZIP_MAX_BYTES,
+  WEEKLY_BACKUPS_TO_KEEP,
+} from "@/lib/admin/db-backup-r2";
 
 /**
  * Content-table SQL backups (lib/admin/db-backup.ts).
  *
  * GET  — what a backup contains, whether R2 is bound, and the backups stored there.
- * POST — `{ groups?: string[] }`: dump those groups into a new R2 object and
- *        return its download link.
+ * POST — `{ groups?: string[] }`: dump those groups into a new R2 object (and
+ *        a `.sql.7z` copy into the DB_BACKUPS_KV namespace, when bound) and
+ *        return their download links.
  *
  * The plain download lives at ./download, the stored files at ./file.
  */
@@ -27,11 +35,12 @@ export async function GET() {
   }
 
   const bucket = getBackupBucket();
+  const kv = getBackupKv();
   let backups: Awaited<ReturnType<typeof listBackups>> = [];
   let listError: string | null = null;
   if (bucket) {
     try {
-      backups = await listBackups(bucket);
+      backups = await listBackups(bucket, undefined, kv);
     } catch (error) {
       console.error("Error listing R2 backups:", error);
       listError = describeError(error);
@@ -48,6 +57,8 @@ export async function GET() {
       })),
     })),
     r2Configured: Boolean(bucket),
+    kvConfigured: Boolean(kv),
+    sevenZipMaxBytes: SEVEN_ZIP_MAX_BYTES,
     weeklyBackupsKept: WEEKLY_BACKUPS_TO_KEEP,
     backups,
     listError,
@@ -73,7 +84,7 @@ export async function POST(request: Request) {
 
   try {
     const db = (await getDBFromContext()) as unknown as BackupDb;
-    const result = await createR2Backup(db, bucket, groups, "manual");
+    const result = await createR2Backup(db, bucket, groups, "manual", new Date(), getBackupKv());
     return NextResponse.json({ ok: true, ...result });
   } catch (error) {
     console.error("Error creating R2 backup:", error);
