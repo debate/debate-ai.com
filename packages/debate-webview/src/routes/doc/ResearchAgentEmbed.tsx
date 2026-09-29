@@ -5,7 +5,7 @@
 // components/qwksearch/base-url.ts).
 import "../../components/qwksearch/base-url"
 
-import { lazy } from "react"
+import { lazy, useSyncExternalStore } from "react"
 
 /**
  * The full qwksearch research workspace embedded at /doc: research chat,
@@ -45,6 +45,19 @@ const Workspace = lazy(async () => {
   }
 })
 
+const subscribeNever = () => () => {}
+
+/**
+ * Renders the workspace in the browser only. It is browser-only UI whose
+ * server render came out empty anyway, but rendering it on the server still
+ * made the Worker import the whole ~7 MB workspace chunk, about 45 MB of
+ * isolate memory against Cloudflare's 128 MB cap.
+ */
 export default function ResearchAgentEmbed() {
-  return <Workspace />
+  const inBrowser = useSyncExternalStore(
+    subscribeNever,
+    () => true,
+    () => false,
+  )
+  return inBrowser ? <Workspace /> : null
 }

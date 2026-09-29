@@ -61,12 +61,15 @@ export default async function Page(props: {
   }
 
   const data = page.data as any;
-  const MDX = data.body;
-  const lastUpdate = await lastEditFor(page.path);
+  // The collection is `async` (source.config.ts): the body loads per page.
+  const [{ body: MDX, toc }, lastUpdate] = await Promise.all([
+    page.data.load(),
+    lastEditFor(page.path),
+  ]);
   const markdownUrl = pageMarkdownUrl(page);
 
   return (
-    <DocsPage toc={data.toc} full={data.full} lastUpdate={lastUpdate}>
+    <DocsPage toc={toc} full={data.full} lastUpdate={lastUpdate}>
       <Breadcrumb tree={source.pageTree} />
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription>{page.data.description}</DocsDescription>
