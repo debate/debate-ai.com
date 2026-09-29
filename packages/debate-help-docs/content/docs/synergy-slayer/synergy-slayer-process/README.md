@@ -1,3 +1,8 @@
+---
+title: "Paper structure"
+description: "File listing and structure of The Synergy Slayer of Politics & Federalism in Debate."
+---
+
 # The Synergy Slayer of Politics & Federalism in Debate
 
 This ZIP contains the original paper split into Fumadocs-compatible Markdown files. Image references and figure captions have been removed.
