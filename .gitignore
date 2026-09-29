@@ -89,3 +89,7 @@ CLAUDE.local.md
 
 # local clone, not a submodule (breaks CI submodule checkout)
 /debate-editor/
+
+# bun lockfiles are intentionally not committed
+bun.lock
+bun.lockb
