@@ -54,7 +54,7 @@ import { JudgeAwardShowcase } from "./JudgeAwardsSection"
 import { TiltBadge } from "./TiltBadge"
 
 const CHALLENGE_BADGES: Record<string, string> = {
-  "daily-cut-5-cards": "https://i.imgur.com/7zCVpav.png",
+  "daily-cut-5-cards": "https://i.imgur.com/g3IYcph.png",
   "daily-redo-rebuttal": "https://i.imgur.com/d3YazEe.png",
   "daily-drills-3": "https://i.imgur.com/mRbAE4b.png",
   "daily-practice-round": "https://i.imgur.com/TkYzW2l.png",
