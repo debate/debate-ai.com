@@ -12,7 +12,7 @@ import {
   readStoredPreferences,
   roomIdForChallenge,
   storedPreferences,
-} from "../validation";
+} from "../../../src/lib/practice-partners/validation";
 
 const profile = {
   asCompetitor: true,

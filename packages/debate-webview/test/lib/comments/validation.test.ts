@@ -18,7 +18,7 @@ import {
   parseResourceType,
   MAX_COMMENT_BODY_LENGTH,
   MAX_RESOURCE_ID_LENGTH,
-} from "@/lib/comments/validation";
+} from "../../../src/lib/comments/validation";
 
 describe("parseResourceType", () => {
   it("accepts a type the UI can ask for", () => {

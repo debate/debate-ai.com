@@ -26,8 +26,8 @@ import {
   type PracticeProfileInput,
   type PracticeSpeed,
   type PracticeStyle,
-} from "debate-webview/lib/practice-partners/types";
-import type { Parsed } from "@/lib/comments/validation";
+} from "./types";
+import type { Parsed } from "../comments/validation";
 
 export type { Parsed };
 

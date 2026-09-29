@@ -3,7 +3,7 @@ import { getDBFromContext } from "@/lib/database/context";
 import { getUserId } from "@/lib/auth/session";
 import { withRouteErrors } from "@/lib/api/route-errors";
 import { decodeCursor, insertForumThread, listForumThreads } from "@/lib/forums/queries";
-import { parseFeedLimit, parseThreadBody, parseThreadTitle } from "@/lib/forums/validation";
+import { parseFeedLimit, parseThreadBody, parseThreadTitle } from "debate-webview/lib/forums/validation";
 
 /**
  * The forum feed, and the one way a thread is opened.

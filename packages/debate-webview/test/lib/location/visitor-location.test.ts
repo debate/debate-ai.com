@@ -13,7 +13,7 @@ import {
   EMPTY_VISITOR_LOCATION,
   hasCoordinates,
   readVisitorLocation,
-} from "../visitor-location";
+} from "../../../src/lib/location/visitor-location";
 
 /** A request carrying Cloudflare's `cf` object, as the Worker runtime provides it. */
 function requestWithCf(cf: Record<string, unknown>): Request {

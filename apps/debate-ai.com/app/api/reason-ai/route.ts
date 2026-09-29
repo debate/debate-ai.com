@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { getAuth } from "@/lib/auth"
 import { getEnv } from "@/lib/env"
 import { getDBFromContext } from "@/lib/database/context"
-import { limitsFor } from "@/lib/stripe/limits"
+import { limitsFor } from "debate-webview/lib/stripe/limits"
 import { consumeDailyUsage, getUserTier, limitMessage } from "@/lib/stripe/usage"
 
 /**
@@ -19,7 +19,7 @@ import { consumeDailyUsage, getUserTier, limitMessage } from "@/lib/stripe/usage
  * shared multi-tenant app, so instead callers hit this route and the
  * server holds the one Anthropic key (ANTHROPIC_API_KEY).
  *
- * Metered by plan tier (`lib/stripe/limits.ts`): each request counts toward
+ * Metered by plan tier (`debate-webview/src/lib/stripe/limits.ts`): each request counts toward
  * the caller's `llmRequestsPerDay`, and `maxTokens` is capped at the tier's
  * `llmMaxTokens`.
  */
