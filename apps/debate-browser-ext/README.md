@@ -17,7 +17,7 @@ One extension with three tools for a debater's browser:
 3. **The app itself, on the Options page** — the video archive, card search,
    the reuse check over *any* URL you can paste, season standings and the
    catalog of every tool in the app, from
-   [`debate-webview`](../../packages/debate-ai-webui). The extension's own
+   [`debate-webview`](../../packages/debate-webview). The extension's own
    settings are the last screen in its nav.
 
 [qwksearch-research-agent]: https://github.com/OpenSourceAGI/qwksearch-research-agent
@@ -113,6 +113,15 @@ bun run build:firefox && bun run zip   # Firefox equivalents
 
 Bump `version` in `package.json` first — a store rejects an upload whose version
 is not higher than the last.
+
+Chrome rejects MV3 code that can load a script from the network ("remotely
+hosted code"), and several libraries `debate-webview` bundles do (mermaid,
+KaTeX, jsPDF from CDNs; video-host SDKs from react-player). The build's
+`vite/no-remote-code.ts` plugin rewrites every such URL: npm CDN scripts are
+copied out of the installed package into `vendor/` and loaded from the
+extension, and anything with no local copy is pointed at a path that is never
+shipped, so it fails to load instead of fetching. The build prints a warning
+for each one it disables.
 
 | Store | Upload | What you need |
 | --- | --- | --- |
@@ -416,7 +425,7 @@ public/
   `.output/chrome-mv3` unpacked. Joining the workspace did get the root CI to
   type-check this app (`bun run typecheck` at the root now includes it), and
   the UI the Options page mounts is covered by
-  `packages/debate-ai-webui/test/` — but the root test run does not reach
+  `packages/debate-webview/test/` — but the root test run does not reach
   `apps/`, so these tests are run by hand from this directory.
 - The article panel has only been exercised against the pages used to write the
   extractor's tests. A scoring extractor is never right on every site; a page

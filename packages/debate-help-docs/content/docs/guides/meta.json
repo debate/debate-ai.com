@@ -2,5 +2,5 @@
   "title": "Guides",
   "description": "Task-oriented walkthroughs of the app's tool groups",
   "icon": "Compass",
-  "pages": ["index", "training-tools", "practice-tools", "research-collaboration"]
+  "pages": ["index", "formats-and-rules", "training-tools", "practice-tools", "research-collaboration"]
 }

@@ -78,6 +78,13 @@ const CATEGORY_ICONS: Record<FeatureCategory, ComponentType<{ className?: string
   recognition: Trophy,
 };
 
+/**
+ * Google Drive folder of PDF guides embedded at the foot of the page. Drive's
+ * `embeddedfolderview` renders the folder's contents only while its General
+ * access is "Anyone with the link".
+ */
+const DOCUMENTS_DRIVE_FOLDER_ID = "1inxyWjAkPiyJ9BdspbhV20_-xRIc8RJn";
+
 /** Props for {@link FeaturesPanel}. */
 export interface FeaturesPanelProps {
   /** Catalog to render; defaults to every feature in the app. */
@@ -425,6 +432,32 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
             })}
           </div>
         )}
+
+        <section id="documents" className="mt-16 scroll-mt-20">
+          <Reveal className="mx-auto mb-8 max-w-2xl text-center">
+            <span className="da-accent-fill mb-4 inline-flex size-10 items-center justify-center rounded-xl">
+              <FileText className="size-5" />
+            </span>
+            <h2 className="text-2xl font-semibold tracking-tight text-balance text-foreground">
+              Documents
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed text-pretty text-muted-foreground">
+              PDF guides and handouts, straight from the shared Drive folder.
+            </p>
+          </Reveal>
+          <Reveal>
+            <div className="overflow-hidden rounded-xl border border-border bg-card">
+              <iframe
+                src={`https://drive.google.com/embeddedfolderview?id=${DOCUMENTS_DRIVE_FOLDER_ID}#grid`}
+                title="PDF documents"
+                width="100%"
+                height="800"
+                loading="lazy"
+                style={{ border: 0 }}
+              />
+            </div>
+          </Reveal>
+        </section>
       </div>
     </div>
   );

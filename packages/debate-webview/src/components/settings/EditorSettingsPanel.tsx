@@ -11,6 +11,7 @@ import type { SettingsCategory } from "debate-editor/settings"
 import { UserSettingsPanel } from "debate-round"
 import { PlanUpgradeSection } from "./PlanUpgradeSection"
 import { TeamCoachingSection } from "./TeamCoachingSection"
+import { ToolSyncSection } from "./ToolSyncSection"
 import { EDITOR_PREFERENCE_KEYS, EDITOR_SETTINGS_TABS } from "../../lib/editor-preferences"
 
 // The app's own account-linked preferences (debate style, font size, font
@@ -31,7 +32,10 @@ const CATEGORIES: readonly { id: TabId; label: string }[] = [
 // Sidebar icon and header subtitle per category, in the style of the
 // research workspace's settings (components/qwksearch/Settings).
 const CATEGORY_DETAILS: Record<string, { icon: ComponentType<{ size?: number }>; description: string }> = {
-  preferences: { icon: SlidersHorizontal, description: "Your plan, debate style, font, color theme and light/dark mode." },
+  preferences: {
+    icon: SlidersHorizontal,
+    description: "Your plan, debate style, font, color theme, light/dark mode and tool data sync.",
+  },
   general: { icon: Settings, description: "Startup, language and general editor behavior." },
   files: { icon: FolderOpen, description: "Opening, saving, autosave and file handling." },
   appearance: { icon: Palette, description: "Colors, fonts, sizing and layout." },
@@ -267,6 +271,7 @@ export function EditorSettingsPanel() {
             <>
               <PlanUpgradeSection />
               <TeamCoachingSection />
+              <ToolSyncSection />
               <UserSettingsPanel embedded />
             </>
           ) : (

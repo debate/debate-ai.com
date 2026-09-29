@@ -84,17 +84,23 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { BarChart3, BookOpen, Bot, CalendarClock, ClipboardList, Crosshair, Dumbbell, FileText, Flag, Landmark, Layers, Library, ListTree, MapPin, NotebookPen, PlayCircle, Scissors, Send, Sparkles, Type } from "lucide-react"
+import { BarChart3, BookOpen, Bot, CalendarClock, ClipboardList, Crosshair, Dumbbell, FileText, Flag, Landmark, Layers, Library, ListTree, MapPin, NotebookPen, PlayCircle, Scissors, Send, Sparkles, Trash2, Type } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardDescription } from "../../lib/ui/primitives/card"
 import { Badge } from "../../lib/ui/primitives/badge"
 import { useSession } from "../../lib/hooks/useSession"
 import {
+  deleteCloudLibraryItem,
   fetchRecentCloudItems,
+  filterCloudItemsByKind,
   formatRelativeCloudTime,
   getSampleCloudLibraryItems,
   type CloudLibraryItem,
   type CloudLibraryItemKind,
 } from "debate-round"
+
+/** Items shown before "Show all"; the fetch itself is widened so filters/show-all have data to work with. */
+const COLLAPSED_COUNT = 6
+const FETCH_OPTS = { limit: 500, perKindLimit: 100 }
 
 const KIND_ICON: Record<CloudLibraryItemKind, typeof FileText> = {
   document: FileText,
@@ -152,11 +158,13 @@ const KIND_ICON: Record<CloudLibraryItemKind, typeof FileText> = {
 export function MySavedItems() {
   const { isAuthenticated } = useSession()
   const [items, setItems] = useState<CloudLibraryItem[] | null>(null)
+  const [kindFilter, setKindFilter] = useState<CloudLibraryItemKind | null>(null)
+  const [expanded, setExpanded] = useState(false)
 
   useEffect(() => {
     if (!isAuthenticated) return
     let cancelled = false
-    void fetchRecentCloudItems().then((result) => {
+    void fetchRecentCloudItems(FETCH_OPTS).then((result) => {
       if (!cancelled) setItems(result)
     })
     return () => {
@@ -164,14 +172,31 @@ export function MySavedItems() {
     }
   }, [isAuthenticated])
 
+  const handleDelete = async (item: CloudLibraryItem) => {
+    if (!window.confirm(`Delete "${item.label}"? This removes it from your account.`)) return
+    if (await deleteCloudLibraryItem(item)) {
+      setItems((prev) => prev && prev.filter((i) => i.key !== item.key))
+    } else {
+      window.alert("Couldn't delete that item. Please try again.")
+    }
+  }
+
   if (!isAuthenticated || !items) return null
 
   // A brand-new signed-in user has no real saved items yet — show a small,
   // clearly-labeled preview of what this section looks like once they save
   // something, instead of rendering nothing (indistinguishable from broken).
   const isPreview = items.length === 0
-  const displayItems = isPreview ? getSampleCloudLibraryItems() : items
+  const kindCounts = isPreview ? [] : countCloudItemsByKind(items)
+  const filtered = isPreview ? getSampleCloudLibraryItems() : filterCloudItemsByKind(items, kindFilter)
+  const canExpand = !isPreview && filtered.length > COLLAPSED_COUNT
+  const displayItems = canExpand && !expanded ? filtered.slice(0, COLLAPSED_COUNT) : filtered
   if (displayItems.length === 0) return null
+
+  const chipClass = (active: boolean) =>
+    `rounded-full border px-3 py-1 text-xs transition-colors ${
+      active ? "bg-accent text-accent-foreground border-accent-foreground/30" : "text-muted-foreground hover:bg-accent"
+    }`
 
   return (
     <section className="mb-10">
@@ -183,11 +208,35 @@ export function MySavedItems() {
           Nothing saved yet — here's a preview of what shows up here once you do.
         </p>
       )}
+      {kindCounts.length > 1 && (
+        <div className="mb-3 flex flex-wrap gap-2" role="group" aria-label="Filter saved items by type">
+          <button
+            type="button"
+            aria-pressed={kindFilter === null}
+            className={chipClass(kindFilter === null)}
+            onClick={() => setKindFilter(null)}
+          >
+            All ({items.length})
+          </button>
+          {kindCounts.map(([kind, count]) => (
+            <button
+              key={kind}
+              type="button"
+              aria-pressed={kindFilter === kind}
+              className={chipClass(kindFilter === kind)}
+              onClick={() => setKindFilter(kind)}
+            >
+              {CLOUD_LIBRARY_KIND_LABELS[kind]} ({count})
+            </button>
+          ))}
+        </div>
+      )}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {displayItems.map((item) => {
           const Icon = KIND_ICON[item.kind]
           return (
-            <Link key={item.key} href={item.href} className="block">
+            <div key={item.key} className="group relative">
+            <Link href={item.href} className="block">
               <Card className="h-full py-4 transition-colors hover:bg-accent hover:border-accent-foreground/20">
                 <CardHeader className="px-4">
                   <div className="flex items-center gap-2">
@@ -205,9 +254,29 @@ export function MySavedItems() {
                 </CardHeader>
               </Card>
             </Link>
+            {item.deletePath && !item.isSample && (
+              <button
+                type="button"
+                aria-label={`Delete ${item.label}`}
+                onClick={() => void handleDelete(item)}
+                className="absolute bottom-3 right-3 rounded p-1 text-muted-foreground opacity-0 transition-opacity hover:text-destructive focus:opacity-100 group-hover:opacity-100"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            )}
+            </div>
           )
         })}
       </div>
+      {canExpand && (
+        <button
+          type="button"
+          className="mt-3 text-sm text-muted-foreground underline-offset-4 hover:underline"
+          onClick={() => setExpanded((v) => !v)}
+        >
+          {expanded ? "Show fewer" : `Show all ${filtered.length}`}
+        </button>
+      )}
     </section>
   )
 }

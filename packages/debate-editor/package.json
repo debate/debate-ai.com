@@ -1,7 +1,7 @@
 {
   "name": "debate-editor",
   "version": "0.1.0",
-  "description": "debate-ai.com's layer over upstream CardMirror (the packages/debate-editor-cm submodule): the React shell sized for small embedded panels (Flow speech docs, the /reason-editor route), our own engine modules (tabbed ribbon + dropdown menu bar, embed hooks, account sync) and the upstream files we override. The rest of the engine is copied in from the submodule at install time.",
+  "description": "Adapter over upstream CardMirror (the packages/debate-editor-cm submodule) for debate-ai.com. Tracks only patches/debate-ai.patch (edits to upstream files: tabbed ribbon + dropdown menu bar, embed hooks, account sync) and overlay/ (the React shell sized for small embedded panels — Flow speech docs, the /reason-editor route — plus site-only engine modules); scripts/sync-upstream.mjs assembles them with the submodule into a git-ignored src/.",
   "private": true,
   "type": "module",
   "license": "SEE LICENSE IN LICENSE",
@@ -17,17 +17,19 @@
     "./collab-bridge": "./src/react/collab-bridge.ts"
   },
   "files": [
-    "src",
+    "overlay",
+    "patches",
     "scripts",
     "upstream.json"
   ],
   "scripts": {
-    "postinstall": "node scripts/sync-upstream.mjs",
+    "postinstall": "node scripts/sync-upstream.mjs --if-available",
     "build": "node scripts/sync-upstream.mjs && tsc --noEmit",
     "dev": "node scripts/sync-upstream.mjs && tsc --noEmit --watch --preserveWatchOutput",
-    "sync-upstream": "node scripts/sync-upstream.mjs --sync",
+    "assemble": "node scripts/sync-upstream.mjs",
+    "sync-upstream": "node scripts/sync-upstream.mjs --rebase",
+    "sync-upstream:save": "node scripts/sync-upstream.mjs --save",
     "sync-upstream:check": "node scripts/sync-upstream.mjs --check",
-    "override": "node scripts/sync-upstream.mjs --override",
     "typecheck": "node scripts/sync-upstream.mjs && tsc --noEmit",
     "test": "node scripts/sync-upstream.mjs && vitest run",
     "test:watch": "node scripts/sync-upstream.mjs && vitest",

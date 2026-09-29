@@ -583,3 +583,19 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
     opts,
   );
 }
+
+/**
+ * Deletes one saved item from the signed-in user's account via its
+ * `deletePath`. Resolves `true` on success, `false` for a sample, an item
+ * with no `deletePath`, a non-2xx response, or a network error — never
+ * rejects, matching this module's "degrade, never throw" convention.
+ */
+export async function deleteCloudLibraryItem(item: Pick<CloudLibraryItem, "deletePath" | "isSample">): Promise<boolean> {
+  if (item.isSample || !item.deletePath) return false;
+  try {
+    const res = await fetch(item.deletePath, { method: "DELETE" });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}

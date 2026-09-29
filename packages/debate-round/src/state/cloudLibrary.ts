@@ -524,6 +524,13 @@ export interface CloudLibraryItem {
   /** Milliseconds since epoch, normalized from whatever timestamp shape the source row used. */
   updatedAtMs: number;
   /**
+   * API path a `DELETE` removes this item from the signed-in user's account
+   * (e.g. `/api/flows/2`). Only set for kinds whose delete route is wired
+   * into "My Saved Items" (currently flows and rounds); absent means the
+   * item can only be managed inside its own tool's panel.
+   */
+  deletePath?: string;
+  /**
    * True for one of {@link getSampleCloudLibraryItems}' placeholder rows,
    * never present (or `false`) on a real, account-synced item. Lets a caller
    * badge a sample visually and keeps `buildRecentCloudItems`' output
@@ -657,6 +664,7 @@ export function buildRecentCloudItems(
     href: flowHref,
     label: flow.label.trim() || "Untitled flow",
     updatedAtMs: parseCloudTimestamp(flow.updatedAt),
+    deletePath: `/api/flows/${flow.clientId}`,
   }));
 
   const roundItems: CloudLibraryItem[] = (input.rounds ?? []).slice(0, perKindLimit).map((round) => ({
@@ -665,6 +673,7 @@ export function buildRecentCloudItems(
     href: roundHref,
     label: round.label.trim() || "Untitled round",
     updatedAtMs: parseCloudTimestamp(round.updatedAt),
+    deletePath: `/api/rounds/${round.clientId}`,
   }));
 
   const wordCountRoundItems: CloudLibraryItem[] = (input.wordCountRounds ?? [])
@@ -877,6 +886,56 @@ export function buildRecentCloudItems(
   ]
     .sort((a, b) => b.updatedAtMs - a.updatedAtMs)
     .slice(0, limit);
+}
+
+/** Human-readable label for each saved-item kind, used by the "My Saved Items" filter chips. */
+export const CLOUD_LIBRARY_KIND_LABELS: Record<CloudLibraryItemKind, string> = {
+  document: "Documents",
+  flow: "Flows",
+  round: "Rounds",
+  wordCountRound: "Word-count rounds",
+  debate: "Practice vs AI",
+  speechOutcome: "Speech outcomes",
+  drillSet: "Drill sets",
+  judgeDecision: "Judge decisions",
+  counselPanelAssessment: "Outcome charts",
+  roundPairing: "Briefings",
+  strategyRecommendation: "Strategies",
+  sprintSession: "Topic sprints",
+  speechSendLogEntry: "Speech sends",
+  learnDeck: "Flashcard decks",
+  customOpponentPersona: "Opponent personas",
+  flowAnnotation: "Annotations",
+  quickCard: "Quick cards",
+  prepNote: "Prep notes",
+  evidenceLibraryEntry: "Evidence",
+  practiceRound: "Practice rounds",
+  coachMaterial: "Coach materials",
+};
+
+/**
+ * Counts items per kind, returned as `[kind, count]` pairs sorted by count
+ * (descending), ties broken by label so the order is stable. Kinds with no
+ * items are omitted.
+ */
+export function countCloudItemsByKind(
+  items: readonly CloudLibraryItem[],
+): Array<[CloudLibraryItemKind, number]> {
+  const counts = new Map<CloudLibraryItemKind, number>();
+  for (const item of items) counts.set(item.kind, (counts.get(item.kind) ?? 0) + 1);
+  return [...counts.entries()].sort(
+    (a, b) =>
+      b[1] - a[1] ||
+      CLOUD_LIBRARY_KIND_LABELS[a[0]].localeCompare(CLOUD_LIBRARY_KIND_LABELS[b[0]]),
+  );
+}
+
+/** Returns `items` restricted to `kind`, or all of them when `kind` is `null`. Order is preserved. */
+export function filterCloudItemsByKind(
+  items: readonly CloudLibraryItem[],
+  kind: CloudLibraryItemKind | null,
+): CloudLibraryItem[] {
+  return kind === null ? [...items] : items.filter((item) => item.kind === kind);
 }
 
 /**
