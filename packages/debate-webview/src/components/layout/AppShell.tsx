@@ -18,6 +18,7 @@ import { usePathname } from "next/navigation"
 import { CategoryDockProvider, PersistentVideoPlayer, SlowSpreadButton, VideoIndexPrefetcher, VideoPlayerFrameBridge } from "debate-videos"
 import { CategoryDock } from "./CategoryDock"
 import { AppSidebarShell } from "./AppSidebarShell"
+import { DocsAppChrome } from "./DocsAppChrome"
 import { AppFrameProvider, AppFrameSurface } from "./AppFrameProvider"
 import { ReasonDocsProvider } from "../reason-docs/ReasonDocsProvider"
 import { OneTap } from "./OneTap"
@@ -55,12 +56,21 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   // answers.
   useFrameNavigationHandoff(embedded, pathname)
 
+  // Leaving /docs is always a real page load (see `NON_ROUTER_PREFIXES` in
+  // `frame-navigation.ts`). `DocsAppChrome` turns link clicks out of the docs
+  // into one; this catches the client-router navigations that are not link
+  // clicks (the dock's menus, its Alt+<n> shortcuts), so a document that
+  // started as a docs page never renders an app page under the docs' CSS.
+  const docsDocument = useRef(isDocsPath(pathname))
+  useEffect(() => {
+    if (docsDocument.current && !isDocsPath(pathname)) window.location.reload()
+  }, [pathname])
+
   // The help docs (`app/docs`, from `debate-help-docs`) bring their own
   // navigation — Fumadocs' header, sidebar and search — and their own
-  // stylesheet, so they get none of the app's chrome. Links in and out of
-  // /docs are real page loads (see `NON_ROUTER_PREFIXES` in
-  // `frame-navigation.ts`), so this document never switches between the two.
-  if (isDocsPath(pathname)) return <>{children}</>
+  // stylesheet. They get the app's sidebar beside that (`DocsAppChrome`), but
+  // none of the rest of the shell: no frame surface, no player, no floating dock.
+  if (isDocsPath(pathname)) return <DocsAppChrome>{children}</DocsAppChrome>
 
   if (embedded) {
     return (

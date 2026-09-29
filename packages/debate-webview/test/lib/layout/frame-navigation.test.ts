@@ -14,6 +14,7 @@ import { dockNavRootFor } from "../../../src/lib/nav/dock-nav-paths"
 import {
   FRAME_LOCATION,
   FRAME_NAV_ACK,
+  docsExitTarget,
   FRAME_NAV_REQUEST,
   isFrameLocation,
   isFrameNavAck,
