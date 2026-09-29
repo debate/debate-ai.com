@@ -18,8 +18,8 @@ import {
   MAX_FEED_LIMIT,
   MAX_THREAD_BODY_LENGTH,
   MAX_THREAD_TITLE_LENGTH,
-} from "debate-webview/lib/forums/types";
-import type { Parsed } from "@/lib/comments/validation";
+} from "./types";
+import type { Parsed } from "../comments/validation";
 
 export type { Parsed };
 

@@ -30,7 +30,7 @@ import {
   toggleCommentLike,
 } from "@/lib/comments/queries";
 import { commentLikes, comments } from "@/lib/database/schema";
-import { parseParentId } from "@/lib/comments/validation";
+import { parseParentId } from "debate-webview/lib/comments/validation";
 
 const APP_ROOT = join(import.meta.dirname, "..", "..", "..");
 

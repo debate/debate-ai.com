@@ -11,7 +11,7 @@ import {
   loadBlockedIds,
   notifyPracticePartners,
 } from "@/lib/practice-partners/queries";
-import { parseNewChallenge } from "@/lib/practice-partners/validation";
+import { parseNewChallenge } from "debate-webview/lib/practice-partners/validation";
 import {
   MAX_PENDING_OUTGOING,
   PRACTICE_FORMATS,

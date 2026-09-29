@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server"
 import { getDBFromContext } from "@/lib/database/context"
 import { getSession } from "@/lib/auth/session"
-import { describeLimits, limitsFor, tierForPlan } from "@/lib/stripe/limits"
-import { checkoutUrl, PLANS } from "@/lib/stripe/plans"
+import { describeLimits, limitsFor, tierForPlan } from "debate-webview/lib/stripe/limits"
+import { checkoutUrl, PLANS } from "debate-webview/lib/stripe/plans"
 import { getActiveSubscription } from "@/lib/stripe/store"
 import { getDailyUsage } from "@/lib/stripe/usage"
 
@@ -12,7 +12,7 @@ import { getDailyUsage } from "@/lib/stripe/usage"
  * webhook can attribute the purchase. Signed-out callers get the plans with
  * untagged links.
  *
- * Every plan carries its tiered limits (`lib/stripe/limits.ts`) as both raw
+ * Every plan carries its tiered limits (`debate-webview/src/lib/stripe/limits.ts`) as both raw
  * numbers and display lines, `free` describes the free tier, and a signed-in
  * caller also gets their `tier` and today's `usage` against it.
  */

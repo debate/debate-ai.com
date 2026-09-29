@@ -19,7 +19,7 @@ import {
   parseThreadBody,
   parseThreadId,
   parseThreadTitle,
-} from "../validation";
+} from "../../../src/lib/forums/validation";
 
 const UUID = "3f2504e0-4f89-41d3-9a0c-0305e82c3301";
 
