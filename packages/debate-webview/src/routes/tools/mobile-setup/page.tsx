@@ -26,12 +26,12 @@ const GEAR: {
       "A MagSafe-compatible gooseneck mount that hangs around your neck and holds the phone at eye level. Speak off your speech doc with both hands free for gestures and pen-and-paper flowing, or turn it around to record practice speeches from your own point of view.",
   },
   {
-    name: "Bnnwa Multi-Device Bluetooth Keyboard with Touchpad",
+    name: "Arteck Universal Backlit Bluetooth Keyboard with Touchpad",
     role: "Bluetooth keyboard for the phone",
-    href: "https://amzn.to/4hgaLLt",
-    image: "https://m.media-amazon.com/images/I/61hkDb6ZWPL._AC_SL500_.jpg",
+    href: "https://amzn.to/4z1Isay",
+    image: "https://i.imgur.com/EKNFuEf.jpeg",
     blurb:
-      "Pairs over Bluetooth with up to three devices at once and hot-switches between them, with a big multi-touch trackpad. This is the piece that turns a phone into a real laptop replacement: type speeches and flow at full speed, no dongle needed.",
+      "7-color backlit Bluetooth keyboard with a built-in multi-touch trackpad and USB-C charging. Pairs straight to your phone over Bluetooth — no dongle needed — and the per-key backlight keeps every key visible in any lighting. The trackpad means you can navigate the round workspace without ever touching the screen.",
   },
   {
     name: "LISEN 60W USB-C to USB-C Cable (5-Pack)",
@@ -104,8 +104,8 @@ const STEPS: { icon: typeof Smartphone; title: string; body: ReactNode }[] = [
     title: "Pair a keyboard",
     body: (
       <>
-        Typing speed is the only thing a phone actually lacks. A Bluetooth keyboard with a trackpad (like the Bnnwa
-        below) pairs straight to the phone from Settings → Bluetooth; a 2.4G-receiver keyboard (like the Arteck)
+        Typing speed is the only thing a phone actually lacks. A Bluetooth keyboard with a trackpad (like the Arteck
+        below) pairs straight to the phone from Settings → Bluetooth; a 2.4G-receiver keyboard (like the Jelly Comb)
         plugs in through a USB-C OTG adapter. Prop the phone up, and you have a laptop that fits in a pencil pouch.
       </>
     ),

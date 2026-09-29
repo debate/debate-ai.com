@@ -1,15 +1,14 @@
 # Ideas for New Contributors
 
-*The list below predates this file's numbered-idea tracking convention and is generic starter material, not audited against the current codebase — treat entries here as inspiration to investigate, not confirmed gaps. See "Tracker Status" above for the actual, current state of similarly-themed work in this repo.*
 
-### 1\. **Real-time Debate Rooms with WebSockets**
+###  **Real-time Debate Rooms with WebSockets**
 
 - **Description**: Implement live debate rooms where multiple users can join and debate in real-time with typing indicators, presence, and instant message delivery
 - **Tech Stack**: WebSockets (Socket.io or native WS), Redis for pub/sub, React/Vue frontend
 - **Difficulty**: Medium-High
 - **Good First Issue**: Start with basic room creation/joining, then add real-time messaging
 
-### 2\. **AI-Powered Argument Analysis & Feedback**
+### **AI-Powered Argument Analysis & Feedback**
 
 - **Description**: Build a feature that analyzes debate arguments for logical fallacies, evidence quality, and rhetorical strength, providing constructive feedback
 - **use the llm in debate-speech-writer**
