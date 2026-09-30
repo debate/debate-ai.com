@@ -18,15 +18,15 @@ import {
   staticSitemapEntries,
   videoSitemapEntries,
 } from "../sitemap";
-import { absoluteUrl, SITE_ORIGIN } from "../site-url";
+import { absoluteUrl, DEFAULT_SITE_ORIGIN } from "../site-url";
 
 /** No database here, so the video half is exercised through the pure builder. */
 const VIDEO_INPUT = { videos: [], lectureCategories: [], docsPages: [] };
 
 describe("absoluteUrl", () => {
   it("prefixes a site-relative path with the canonical origin", () => {
-    expect(absoluteUrl("/videos")).toBe(`${SITE_ORIGIN}/videos`);
-    expect(absoluteUrl("videos")).toBe(`${SITE_ORIGIN}/videos`);
+    expect(absoluteUrl("/videos")).toBe(`${DEFAULT_SITE_ORIGIN}/videos`);
+    expect(absoluteUrl("videos")).toBe(`${DEFAULT_SITE_ORIGIN}/videos`);
   });
 
   it("leaves an already-absolute URL alone", () => {
@@ -42,7 +42,7 @@ describe("staticSitemapEntries", () => {
 
   it("emits only absolute URLs on the canonical host", () => {
     for (const entry of entries) {
-      expect(entry.url.startsWith(`${SITE_ORIGIN}/`)).toBe(true);
+      expect(entry.url.startsWith(`${DEFAULT_SITE_ORIGIN}/`)).toBe(true);
     }
   });
 
@@ -98,7 +98,7 @@ describe("lectureCategorySitemapEntries", () => {
 describe("docsSitemapEntries", () => {
   it("absolutises the URLs the Fumadocs source reports", () => {
     const [entry] = docsSitemapEntries(["/docs/guides/practice-tools"]);
-    expect(entry.url).toBe(`${SITE_ORIGIN}/docs/guides/practice-tools`);
+    expect(entry.url).toBe(`${DEFAULT_SITE_ORIGIN}/docs/guides/practice-tools`);
   });
 
   it("ignores anything that is not a site-relative path", () => {
@@ -112,7 +112,7 @@ describe("videoSitemapEntries", () => {
     const [entry] = videoSitemapEntries([
       { path: "/videos/2022/ndt/finals/dartmouth-sv-michigan-pr", lastModified },
     ]);
-    expect(entry.url).toBe(`${SITE_ORIGIN}/videos/2022/ndt/finals/dartmouth-sv-michigan-pr`);
+    expect(entry.url).toBe(`${DEFAULT_SITE_ORIGIN}/videos/2022/ndt/finals/dartmouth-sv-michigan-pr`);
     expect(entry.lastModified).toBe(lastModified);
   });
 

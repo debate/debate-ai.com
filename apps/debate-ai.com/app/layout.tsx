@@ -5,7 +5,7 @@ import { ThemeProvider } from "debate-webview/components/theme-provider"
 import { AppShell } from "debate-webview/components/layout/AppShell"
 import { LoadingProvider } from "debate-webview/components/layout/LoadingProvider"
 import { webFontsBootstrapScript } from "debate-webview/styles/web-fonts"
-import { SITE_ORIGIN } from "@/lib/seo/site-url"
+import { siteOrigin } from "@/lib/seo/site-url"
 
 export const metadata: Metadata = {
   // Every relative `alternates.canonical` and Open Graph URL in the app
@@ -13,7 +13,12 @@ export const metadata: Metadata = {
   // Next's `http://localhost:3000` fallback — which is what the video pages
   // were publishing, telling Google the canonical of every round and lecture
   // lives on a development URL.
-  metadataBase: new URL(SITE_ORIGIN),
+  //
+  // Read through `siteOrigin()` rather than a constant so it follows
+  // CANONICAL_SITE_URL when a deployment sets one; the Worker entry publishes
+  // the bindings before any request work, so the value is resolved by the time
+  // this module is first imported.
+  metadataBase: new URL(siteOrigin()),
   title: "Debate AI",
   description: "Debate round and research management",
   manifest: "/site.webmanifest",

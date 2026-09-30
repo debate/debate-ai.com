@@ -17,8 +17,16 @@
 	// added via ADMIN_EMAILS in the dashboard — lib/auth/admin.ts merges both.
 	// `vars` are not inherited by named environments, so env.production
 	// repeats it.
+	//
+	// CANONICAL_SITE_URL is left empty on purpose: it is the canonical origin
+	// for SEO metadata (/sitemap.xml's <loc>, the robots.txt `Sitemap:` line,
+	// and every page's metadataBase), and an empty value falls through to
+	// CANONICAL_HOST — d.ebate.app, the host the canonical-host redirect
+	// consolidates to. Set it (full origin or bare host) to point a preview or
+	// staging deployment at its own domain instead. See lib/seo/site-url.ts.
 	"vars": {
-		"ADMIN_EMAIL": "grokthiscontact@gmail.com"
+		"ADMIN_EMAIL": "grokthiscontact@gmail.com",
+		"CANONICAL_SITE_URL": ""
 	},
 	// Ship source maps with the Worker so runtime exceptions in Workers Logs
 	// resolve to real files/lines instead of minified bundle offsets. Source
