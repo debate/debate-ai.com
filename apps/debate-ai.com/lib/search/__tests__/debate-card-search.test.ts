@@ -1,13 +1,10 @@
-import { readFileSync } from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 import { beforeEach, describe, expect, it } from "vitest";
 
 import * as schema from "@/lib/database/schema";
 import { debateCards } from "@/lib/database/schema";
+import { applySchema } from "@/lib/database/__tests__/schema-sql";
 import {
   buildCardSearchOrderBy,
   buildCardSearchWhere,
@@ -17,19 +14,11 @@ import {
   sortSearchResults,
 } from "../debate-card-search";
 
-const migrationPaths = ["0035_debate_cards.sql", "0054_debate_card_source_url.sql"].map((file) =>
-  path.join(path.dirname(fileURLToPath(import.meta.url)), "../../../drizzle", file),
-);
 
 /** A fresh in-memory database with the card table migrated in. */
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
-  for (const statement of migrationPaths.flatMap((migrationPath) =>
-    readFileSync(migrationPath, "utf8").split("--> statement-breakpoint"),
-  )) {
-    const sql = statement.trim();
-    if (sql) await client.execute(sql);
-  }
+  await applySchema(client);
   return drizzle(client, { schema });
 }
 

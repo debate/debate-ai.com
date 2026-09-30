@@ -10,14 +10,14 @@
  * against a database that answers.
  *
  * So this drives the same drizzle the app uses, over a throwaway libSQL file
- * built from the real migrations.
+ * built from the app schema.
  */
 
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 import { eq } from "drizzle-orm";
-import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -30,32 +30,8 @@ import {
   toggleCommentLike,
 } from "@/lib/comments/queries";
 import { commentLikes, comments } from "@/lib/database/schema";
+import { applySchema } from "@/lib/database/__tests__/schema-sql";
 import { parseParentId } from "debate-webview/lib/comments/validation";
-
-const APP_ROOT = join(import.meta.dirname, "..", "..", "..");
-
-/** The `user` table as migration 0000 created it, plus the later `is_anonymous`. */
-const USER_TABLE = `
-CREATE TABLE \`user\` (
-  \`id\` text PRIMARY KEY NOT NULL,
-  \`name\` text NOT NULL,
-  \`email\` text NOT NULL,
-  \`email_verified\` integer DEFAULT false NOT NULL,
-  \`image\` text,
-  \`is_anonymous\` integer DEFAULT false NOT NULL,
-  \`created_at\` integer NOT NULL,
-  \`updated_at\` integer NOT NULL
-);
-`;
-
-/** Migration 0055, split on the marker drizzle-kit writes between statements. */
-const COMMENTS_MIGRATION = readFileSync(
-  join(APP_ROOT, "drizzle", "0055_comments.sql"),
-  "utf8",
-)
-  .split("--> statement-breakpoint")
-  .map((statement) => statement.trim())
-  .filter(Boolean);
 
 let directory: string;
 let client: ReturnType<typeof createClient>;
@@ -120,10 +96,7 @@ beforeAll(async () => {
   client = createClient({ url: `file:${join(directory, "db.sqlite")}` });
   db = drizzle(client, { schema: {} });
 
-  await client.execute(USER_TABLE);
-  for (const statement of COMMENTS_MIGRATION) {
-    await client.execute(statement);
-  }
+  await applySchema(client);
 });
 
 afterAll(() => {

@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
+import { COMMON_HUMAN_NAMES } from "debate-card-parser/src/human-name/common-names";
 
-// The bundled human-names dataset (debate-card-parser's human-names-92k.json)
-// was removed, so there is no name list to serve. Clients treat an empty list
-// as "no suggestions" and keep working.
-const ALL_NAMES: string[] = [];
+// Pre-sorted capitalized name list, built once at module load
+const ALL_NAMES: string[] = [...COMMON_HUMAN_NAMES]
+  .map((n) => n.charAt(0).toUpperCase() + n.slice(1))
+  .sort();
 
 export async function GET() {
   return NextResponse.json({ names: ALL_NAMES });

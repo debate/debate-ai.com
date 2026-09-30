@@ -1,15 +1,12 @@
 import { TERMS_ORG, TERMS_QUALIFICATIONS, ORG_PATTERNS } from "./constants";
-// import dataHumanNames from "./human-names-92k.json";
-  const dataHumanNames = {};
-const HUMAN_NAMES = dataHumanNames as Record<string, number>;
+import { COMMON_HUMAN_NAMES } from "./common-names";
 
 /**
- * Whether a single lower-cased word appears in the 92k given-name/surname
- * dataset. The dataset is keyed in lower case, so callers must pass a
- * lower-cased word.
+ * Whether a single lower-cased word is a common given name or surname. The
+ * list is keyed in lower case, so callers must pass a lower-cased word.
  */
 function isKnownHumanNameWord(word: string): boolean {
-  return HUMAN_NAMES[word] === 1 || HUMAN_NAMES[word] === 2;
+  return COMMON_HUMAN_NAMES.has(word);
 }
 
 /**
@@ -58,8 +55,8 @@ export function isOrganization(nameString: string): boolean {
   // Arbitrary length fail-over. Most humans lack > 4 distinct name elements.
   if (words.length > 4 && !nameString.includes(",")) return true;
 
-  // Cross-reference against our standard known human-names dataset. The dataset
-  // is keyed in lower case, and `words` is already lower-cased above, so the two
+  // Cross-reference against the common human-names list. The list is keyed in
+  // lower case, and `words` is already lower-cased above, so the two
   // line up without any re-casing.
   return !words.some(isKnownHumanNameWord) && words.length > 2;
 }
