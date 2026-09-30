@@ -22,7 +22,7 @@ is what matters.
 | `/doc` | 10.68 MB | 9.21 MB | `Workspace` chunk, 6.2 MB |
 | `/debate` | 2.39 MB | 2.38 MB | `DebateRoundPanel` chunk, 525 kB |
 | `/docs` | 1.95 MB | 1.83 MB | Fumadocs + parse5 (`lib` chunk), 212 kB |
-| `/videos` | 1.81 MB | 1.81 MB | video index fetch, 928 kB (data, not JS) |
+| `/videos` | 1.81 MB | 1.81 MB | `DebateRoundPanel` chunk, 525 kB |
 | `/timer`, `/search`, `/practice` | 1.39 MB | 1.27 MB | framework + vinext runtime |
 
 "Before" is `master` at the start of this work. "After" includes the three
@@ -89,10 +89,14 @@ In rough order of how much they cost a real visitor:
    this repo. Splitting it means changing `react-reason-editor` to load its
    emoji picker, drawing canvas, and export tools with dynamic `import()`.
    The `Workspace.css` stylesheet adds 646 kB.
-2. **The video index, 928 kB, now only on video pages.** It used to be
-   fetched on every page by `VideoIndexPrefetcher` in `AppShell`. The video
-   feed (`useVideoFeed`) schedules it itself, so it now loads only where the
-   grid uses it.
+2. **The video index, 928 kB, is no longer loaded by any web page.** It
+   used to be fetched on every page by `VideoIndexPrefetcher` in `AppShell`,
+   and then by the video grid itself (`useVideoFeed`), which filtered it in
+   the browser. The grid now pages `/api/videos`, and takes its counts and
+   stacks from `/api/videos/meta` and `/api/videos/stacks`. A copy an
+   earlier visit stored in `localStorage` is deleted on the first video page.
+   Only the watch route for hosts without the Worker still fetches it.
+   Everything `/videos` downloads went from 4.79 MB to 3.84 MB.
 3. **`DebateRoundPanel`, 525 kB** on `/debate`, plus `simplepeer` (97 kB),
    which is only needed once a peer connection starts.
 4. **Large chunks that already load on demand.** These are not on any
