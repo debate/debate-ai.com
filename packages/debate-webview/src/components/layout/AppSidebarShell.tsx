@@ -15,7 +15,7 @@ import { showsCardsOnlySidebar, showsReasonDocsPanels } from "../../lib/reason-d
  * page that sidebar's Apps/Coaching/Research/Practice tree links to.
  *
  * Without this, following one of those links off `/videos` (e.g. into
- * `/coach` or `/practice-round`) landed on a page with no sidebar at all —
+ * `/coaching` or `/practice`) landed on a page with no sidebar at all —
  * the nav just disappeared instead of staying available for the next hop.
  * Mounted once in the root layout, it wraps every page whose path matches a
  * tree entry in the same sidebar so the nav — and the embedded dock at its
@@ -25,13 +25,13 @@ import { showsCardsOnlySidebar, showsReasonDocsPanels } from "../../lib/reason-d
  * quick search's REASON editor sidebar — the folder/file tree, topic starters
  * and the "Open Tabs" list. They live here rather than in `/reason-editor`'s
  * own `<aside>` — which this shell already wrapped, so that page rendered two
- * sidebars side by side. Only `/cards` and `/reason-editor` get them
+ * sidebars side by side. Only `/research/cards` and `/reason-editor` get them
  * (`showsReasonDocsPanels`): everywhere else the sidebar is that page's own
  * nav, and on `/videos` — which keeps its own sidebar and so is not wrapped by
  * this shell at all — it is the video library
  * (see `packages/debate-help-docs/content/docs/internals/reason-docs-sidebar.mdx`).
  *
- * `/cards` is the docs panels alone (`showsCardsOnlySidebar`): no nav tree, no
+ * `/research/cards` is the docs panels alone (`showsCardsOnlySidebar`): no nav tree, no
  * glossary or rankings links, no site footer. Those are all about somewhere
  * else, and stacking them under a file tree made the column a scroll rather
  * than a place. With nothing below them the panels take the column's own height
@@ -52,7 +52,7 @@ import { showsCardsOnlySidebar, showsReasonDocsPanels } from "../../lib/reason-d
  * host the dock, at the top of its own column
  * (`components/qwksearch/SidebarWithAppDock`), so the floating instance stays
  * suppressed there (`hostsOwnSidebarDock`). The docs panels below are for
- * `/cards` and `/reason-editor`, which read documents out of this app's own
+ * `/research/cards` and `/reason-editor`, which read documents out of this app's own
  * store rather than the editor's.
  */
 export function AppSidebarShell({
@@ -78,7 +78,7 @@ export function AppSidebarShell({
     // a CardMirror editor, on `/reason-editor` and `/doc`.
     <ResizableSidebarLayout
       appChrome
-      // On `/cards` the panels own the column's leftover height and scroll
+      // On `/research/cards` the panels own the column's leftover height and scroll
       // inside their own shares, so the column itself must not scroll: a
       // scrolling parent has no height to hand a `flex-1` child. Same
       // `overflow-y` utility as the `<aside>`'s own, so `cn`'s tailwind-merge

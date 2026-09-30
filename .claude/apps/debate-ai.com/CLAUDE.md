@@ -10,6 +10,16 @@ Nearly every feature lives in a `packages/debate-*` library; this app routes to
 it and wires up auth, data and layout. If you are writing round logic, evidence
 scoring or editor behaviour inside `app/`, it is in the wrong package.
 
+## Routes start with their sidebar category
+
+Pages live under the sidebar heading that lists them: `/videos` (round
+videos), `/lectures`, `/research` (card search is `/research/cards`),
+`/practice` and `/coaching`. The old flat paths (`/cards`, `/drills`, `/coach`,
+`/videos/<lecture category>`, …) answer with a 308 from the Worker, and stored
+starred/recent tool lists are read back at the new paths. The one table for
+both is `packages/debate-data-sync/src/routes/category-paths.ts` — add a row
+there when a page moves.
+
 ## Things that bite
 
 - **`bun run build` has two stages** — `vinext build` → `build:sw`. A bare

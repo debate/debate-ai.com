@@ -5,7 +5,7 @@ import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
 export default function PracticeRoundPage() {
   return (
     <ToolPage>
-      <ToolPageHeader href="/practice-round" backHref="/debate" backLabel="round workspace" guide="practice-tools" />
+      <ToolPageHeader href="/practice" backHref="/debate" backLabel="round workspace" guide="practice-tools" />
       <Suspense>
         <PracticeRoundSimulatorPanel />
       </Suspense>

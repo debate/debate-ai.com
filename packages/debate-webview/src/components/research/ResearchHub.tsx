@@ -8,7 +8,7 @@
  * Each panel already reads (and writes) its own localStorage store, so this
  * is purely navigation: it groups the panels that describe the same stage of
  * a squad's research cycle and renders one group at a time. The individual
- * `/cards/*` routes still mount the same panels one at a time; this is the
+ * `/research/cards/*` routes still mount the same panels one at a time; this is the
  * view for working across them.
  *
  * Navigation chrome (the sticky tab strip, the per-section intro card with
@@ -103,7 +103,7 @@ export const RESEARCH_SECTIONS: readonly HubSection<SectionId>[] = [
     icon: PieChart,
     description: "Start here: which arguments are well-covered, thin, or missing, so the squad knows where to work.",
     guide: "research-collaboration",
-    panels: [panel("Topic Coverage Dashboard", "/cards/coverage")],
+    panels: [panel("Topic Coverage Dashboard", "/research/cards/coverage")],
   },
   {
     id: "library",
@@ -111,7 +111,7 @@ export const RESEARCH_SECTIONS: readonly HubSection<SectionId>[] = [
     icon: FolderTree,
     description: "Browse shared research by topic folder, case area, and tag-based collection.",
     guide: "research-collaboration",
-    panels: [panel("Argument Library", "/cards/argument-library")],
+    panels: [panel("Argument Library", "/research/cards/argument-library")],
   },
   {
     id: "evidence",
@@ -119,7 +119,7 @@ export const RESEARCH_SECTIONS: readonly HubSection<SectionId>[] = [
     icon: Library,
     description: "Search every shared cut card and reusable analytic block by keyword, citation, or argument.",
     guide: "research-collaboration",
-    panels: [panel("Evidence Library", "/cards/library")],
+    panels: [panel("Evidence Library", "/research/cards/library")],
   },
   {
     id: "sprint",
@@ -128,10 +128,10 @@ export const RESEARCH_SECTIONS: readonly HubSection<SectionId>[] = [
     description: "Work a topic together: the prep room, the sprint composition, live prep notes, and the brainstorm board.",
     guide: "research-collaboration",
     panels: [
-      panel("Collaboration Prep Room", "/cards/prep-room"),
+      panel("Collaboration Prep Room", "/research/cards/prep-room"),
       panel("Topic Sprint"),
-      panel("Team Collaboration Mode", "/cards/collaboration"),
-      panel("Team Brainstorm Assist", "/cards/brainstorm"),
+      panel("Team Collaboration Mode", "/research/cards/collaboration"),
+      panel("Team Brainstorm Assist", "/research/cards/brainstorm"),
     ],
   },
   {
@@ -140,7 +140,7 @@ export const RESEARCH_SECTIONS: readonly HubSection<SectionId>[] = [
     icon: Inbox,
     description: "Research tasks routed to contributors by skill level, grouped by topic, with peer verification.",
     guide: "research-collaboration",
-    panels: [panel("Task Inbox", "/cards/inbox")],
+    panels: [panel("Task Inbox", "/research/cards/inbox")],
   },
   {
     id: "progress",
@@ -148,7 +148,7 @@ export const RESEARCH_SECTIONS: readonly HubSection<SectionId>[] = [
     icon: Award,
     description: "Each contributor's history, task completion rate, and unlock tier.",
     guide: "research-collaboration",
-    panels: [panel("Research Progress", "/cards/progress-tracking"), panel("Progress", "/cards/progress")],
+    panels: [panel("Research Progress", "/coaching/progress"), panel("Progress", "/research/cards/progress")],
   },
   {
     id: "quests",
@@ -157,9 +157,9 @@ export const RESEARCH_SECTIONS: readonly HubSection<SectionId>[] = [
     description: "Daily team goals, quest streaks, and squad challenges that keep the sprint moving.",
     guide: "research-collaboration",
     panels: [
-      panel("Daily Quests", "/cards/quests"),
-      panel("Quest Streaks", "/cards/streaks"),
-      panel("Group Challenges", "/cards/group-challenges"),
+      panel("Daily Quests", "/research/cards/quests"),
+      panel("Quest Streaks", "/research/cards/streaks"),
+      panel("Group Challenges", "/research/cards/group-challenges"),
     ],
   },
   {
@@ -169,11 +169,11 @@ export const RESEARCH_SECTIONS: readonly HubSection<SectionId>[] = [
     description: "Recognition for the work: the leaderboard, awards, the contributions feed, and revision rewards.",
     guide: "research-collaboration",
     panels: [
-      panel("Leaderboard", "/cards/leaderboard"),
-      panel("Contributor Awards", "/cards/awards"),
-      panel("Contributions Feed", "/cards/contributions"),
-      panel("Daily Best Card", "/cards/best-card"),
-      panel("Revision Incentives", "/cards/revisions"),
+      panel("Leaderboard", "/coaching/leaderboard"),
+      panel("Contributor Awards", "/research/cards/awards"),
+      panel("Contributions Feed", "/research/cards/contributions"),
+      panel("Daily Best Card", "/research/cards/best-card"),
+      panel("Revision Incentives", "/research/cards/revisions"),
     ],
   },
   {
@@ -182,7 +182,7 @@ export const RESEARCH_SECTIONS: readonly HubSection<SectionId>[] = [
     icon: MessageSquareText,
     description: "Move submitted cards through peer review: comment, request changes, approve, publish.",
     guide: "research-collaboration",
-    panels: [panel("Review Queue", "/cards/reviews")],
+    panels: [panel("Review Queue", "/research/cards/reviews")],
   },
   {
     id: "scoring",
@@ -190,7 +190,7 @@ export const RESEARCH_SECTIONS: readonly HubSection<SectionId>[] = [
     icon: Gauge,
     description: "Score cards for relevance, clarity, uniqueness, evidence quality, and usability.",
     guide: "research-collaboration",
-    panels: [panel("LLM Card Scoring", "/cards/scoring")],
+    panels: [panel("LLM Card Scoring", "/research/cards/scoring")],
   },
 ]
 

@@ -10,7 +10,7 @@
  * rather than introducing any new scoring/ranking logic here.
  *
  * `ContributionLeaderboardPanel`'s Contributor cell links each row to
- * `/cards/leaderboard/{contributorId}`, this panel's intended app route.
+ * `/coaching/leaderboard/{contributorId}`, this panel's intended app route.
  *
  * Also subscribes to the browser's `storage` event via `state/live-update.ts`'s
  * `isContributionLeaderboardLiveUpdateStorageEvent`, mirroring

@@ -10,7 +10,7 @@
  *
  * They also pin what the menu deliberately does *not* carry: no "Apps"
  * section restating the dock's icons and the whole feature catalog, with
- * `/features` and `/docs` reached as single rows instead.
+ * `/practice/features` and `/docs` reached as single rows instead.
  */
 
 import { describe, it, expect } from "vitest"
@@ -62,7 +62,7 @@ describe("SIDEBAR_MENU_SECTIONS", () => {
   it("leaves the feature catalog out of Site Links", () => {
     // The footer's "Features" row was retired; the catalog is reached from
     // the command palette's "All Features" entry instead.
-    expect(SITE_LINKS.map((link) => link.url)).not.toContain("/features")
+    expect(SITE_LINKS.map((link) => link.url)).not.toContain("/practice/features")
   })
 
   it("reaches the help docs", () => {

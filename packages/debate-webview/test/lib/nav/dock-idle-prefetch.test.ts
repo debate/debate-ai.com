@@ -6,19 +6,19 @@ import {
   scheduleDockIdlePrefetch,
 } from "../../../src/lib/nav/dock-idle-prefetch"
 
-const HREFS = ["/videos", "/cards", "/debate", "/versus-ai", "/doc"]
+const HREFS = ["/videos", "/research/cards", "/debate", "/practice/versus-ai", "/doc"]
 
 describe("dockIdlePrefetchTargets", () => {
   it("skips the page on screen and the heavy /doc workspace", () => {
-    expect(dockIdlePrefetchTargets(HREFS, "/debate")).toEqual(["/videos", "/cards", "/versus-ai"])
+    expect(dockIdlePrefetchTargets(HREFS, "/debate")).toEqual(["/videos", "/research/cards", "/practice/versus-ai"])
   })
 
   it("treats a page under a destination as that destination", () => {
-    expect(dockIdlePrefetchTargets(HREFS, "/videos/lectures")).toEqual(["/cards", "/debate", "/versus-ai"])
+    expect(dockIdlePrefetchTargets(HREFS, "/videos/pf")).toEqual(["/research/cards", "/debate", "/practice/versus-ai"])
   })
 
   it("does not confuse a sibling path with a destination's subtree", () => {
-    expect(dockIdlePrefetchTargets(HREFS, "/cardsets")).toContain("/cards")
+    expect(dockIdlePrefetchTargets(HREFS, "/cardsets")).toContain("/research/cards")
   })
 })
 
@@ -51,9 +51,9 @@ describe("scheduleDockIdlePrefetch", () => {
   it("prefetches each target once, in order, then stops", async () => {
     vi.useFakeTimers()
     const prefetch = vi.fn()
-    const cancel = scheduleDockIdlePrefetch(prefetch, ["/videos", "/cards"], fakeWindow())
+    const cancel = scheduleDockIdlePrefetch(prefetch, ["/videos", "/research/cards"], fakeWindow())
     await vi.runAllTimersAsync()
-    expect(prefetch.mock.calls.map(([href]) => href)).toEqual(["/videos", "/cards"])
+    expect(prefetch.mock.calls.map(([href]) => href)).toEqual(["/videos", "/research/cards"])
     cancel()
     vi.useRealTimers()
   })
@@ -83,7 +83,7 @@ describe("scheduleDockIdlePrefetch", () => {
   it("stops the pending steps when cancelled", async () => {
     vi.useFakeTimers()
     const prefetch = vi.fn()
-    const cancel = scheduleDockIdlePrefetch(prefetch, ["/videos", "/cards"], fakeWindow())
+    const cancel = scheduleDockIdlePrefetch(prefetch, ["/videos", "/research/cards"], fakeWindow())
     cancel()
     await vi.runAllTimersAsync()
     expect(prefetch).not.toHaveBeenCalled()

@@ -1,7 +1,7 @@
 /**
  * @fileoverview Browsable, searchable timeline of every season's debate
  * resolutions (Policy, College/NDT, LD, PF) alongside that year's video
- * numbers, for the Topic & Video Statistics page (`/videos/statistics`).
+ * numbers, for the Topic & Video Statistics page (`/practice/statistics`).
  * @module components/topic-explorer/DebateTopicsExplorer
  */
 
@@ -34,7 +34,7 @@ const STYLE_SEARCH_EVENT: Record<DebateStyle, string> = {
   4: "NDT",
 };
 
-/** The `/cards` search for one resolution: its short title (or, untitled, its
+/** The `/research/cards` search for one resolution: its short title (or, untitled, its
  *  full text) as the term, narrowed to that season and format. Every card,
  *  outline and round in that slice of the corpus comes back. Exported for its
  *  own unit test. */

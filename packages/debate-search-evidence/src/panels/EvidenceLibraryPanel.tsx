@@ -6,7 +6,7 @@
  * repository a real source of `argBlock`/`wordCount`-carrying entries,
  * follow-up (a) under the "📊 Topic Coverage Dashboard" bullet ("an
  * `argBlock`/word-count field wired into a real card-submission flow beyond
- * the existing `/cards/library` evidence-library form"). Edit/Delete actions
+ * the existing `/research/cards/library` evidence-library form"). Edit/Delete actions
  * close `packages/debate-help-docs/content/docs/features/evidence-library.mdx`'s "No edit/delete affordance"
  * gap, and editing an entry closes follow-up (a) under the "🔁 Revision
  * Incentives" bullet ("wiring an actual card-edit/save flow to call
@@ -90,7 +90,7 @@
  * Every local check is now also recorded to a small history log
  * (`state/reuseCheckHistory.ts`) instead of only showing the latest
  * lookup's result — closes idea #7's next named follow-up, "Surface each
- * check's result inline in a small history list on `/cards/library` instead
+ * check's result inline in a small history list on `/research/cards/library` instead
  * of a one-shot lookup." A "Recent checks" list under the box shows the last
  * `MAX_REUSE_CHECK_HISTORY` lookups (URL, already-cut/new badge, match
  * count, relative time); clicking an entry re-runs that same check. A

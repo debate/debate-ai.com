@@ -5,7 +5,7 @@ import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
 export default function CoachPage() {
   return (
     <ToolPage>
-      <ToolPageHeader href="/coach" backHref="/debate" backLabel="round workspace" guide="training-tools" />
+      <ToolPageHeader href="/coaching" backHref="/debate" backLabel="round workspace" guide="training-tools" />
       <Suspense>
         <CoachHub />
       </Suspense>

@@ -102,6 +102,7 @@ const QUICK_LINK_STYLES: Record<string, QuickLinkStyle> = {
  * link added to `SIDEBAR_VIDEO_LINKS` shows up on this grid too.
  */
 const QUICK_LINK_ORDER = [
+  "allVideos",
   "college",
   "policy",
   "pf",

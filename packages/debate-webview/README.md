@@ -44,10 +44,10 @@ The SDK never rejects on an HTTP error — each operation resolves to
 | Screen | Route it mirrors | API |
 | --- | --- | --- |
 | Videos | `/videos` | `listVideos` |
-| Cards | `/cards` | `searchCards` |
+| Cards | `/research/cards` | `searchCards` |
 | Reuse check | — (the extension popup's check, over any URL) | `checkEvidenceReuse` |
-| Rankings | `/rank` | `getLeaderboard` |
-| All tools | `/features` | none — `debate-feature-catalog` |
+| Rankings | `/coaching/rankings` | `getLeaderboard` |
+| All tools | `/practice/features` | none — `debate-feature-catalog` |
 
 A host adds its own with `extraScreens`; the extension appends its settings
 that way rather than forking the shell.

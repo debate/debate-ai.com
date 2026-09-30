@@ -54,7 +54,7 @@ describe("buildAutoFeatureNews", () => {
 
   it("spotlights a feature no hand-curated item covers", () => {
     const items = buildAutoFeatureNews(
-      [{ id: "drills", title: "Practice Drills", description: "Quick practice drills.", href: "/drills", category: "practice" }],
+      [{ id: "drills", title: "Practice Drills", description: "Quick practice drills.", href: "/practice/drills", category: "practice" }],
       [{ id: "p1", category: "product", title: "Ship", body: "...", timestamp: 1000, href: "/reason-editor" }],
     );
     expect(items).toEqual([
@@ -64,7 +64,7 @@ describe("buildAutoFeatureNews", () => {
         title: "Tool spotlight: Practice Drills",
         body: "Quick practice drills.",
         timestamp: 999,
-        href: "/drills",
+        href: "/practice/drills",
       },
     ]);
   });
@@ -75,7 +75,7 @@ describe("buildAutoFeatureNews", () => {
       { id: "p2", category: "product" as const, title: "Ship 2", body: "...", timestamp: 1000, href: "/b" },
     ];
     const [spotlight] = buildAutoFeatureNews(
-      [{ id: "drills", title: "Practice Drills", description: "...", href: "/drills", category: "practice" }],
+      [{ id: "drills", title: "Practice Drills", description: "...", href: "/practice/drills", category: "practice" }],
       announced,
     );
     expect(spotlight.timestamp).toBeLessThan(1000);
@@ -106,7 +106,7 @@ describe("buildNewsFeed", () => {
     expect(item).toMatchObject({
       category: "community",
       title: 'alice earned "3-Day Streak"',
-      href: "/cards/streaks",
+      href: "/research/cards/streaks",
     });
   });
 
@@ -118,7 +118,7 @@ describe("buildNewsFeed", () => {
       category: "community",
       title: "frank completed the Daily Quests board for 2026-08-11",
       timestamp: Date.parse("2026-08-11T00:00:00Z"),
-      href: "/cards/quests",
+      href: "/research/cards/quests",
     });
     expect(item?.body).toBe("frank completed every quest on the Daily Quests board for 2026-08-11!");
   });
@@ -159,7 +159,7 @@ describe("buildNewsFeed", () => {
       category: "community",
       title: '"Win 2 rebuttal exercises" complete!',
       timestamp: 200,
-      href: "/cards/group-challenges",
+      href: "/research/cards/group-challenges",
     });
   });
 
@@ -175,7 +175,7 @@ describe("buildNewsFeed", () => {
     saveRevisionRecord(revision);
 
     const item = buildNewsFeed().find((entry) => entry.id === "revision-incentives-2026-08-10");
-    expect(item).toMatchObject({ category: "community", href: "/cards/revisions" });
+    expect(item).toMatchObject({ category: "community", href: "/research/cards/revisions" });
     expect(item?.body).toContain("dana led Revision Incentives on 2026-08-10");
   });
 
@@ -196,7 +196,7 @@ describe("buildNewsFeed", () => {
       category: "community",
       title: 'erin added a "Immigration" prep note',
       timestamp: 500,
-      href: "/cards/collaboration",
+      href: "/research/cards/collaboration",
     });
     expect(item?.body).toBe(
       'erin logged a "Immigration" prep note: Need a 2026 solvency card for the affirmative',
@@ -223,7 +223,7 @@ describe("buildNewsFeed", () => {
       category: "community",
       title: 'New card added to the Argument Library: "Warming DA"',
       timestamp: 700,
-      href: "/cards/argument-library",
+      href: "/research/cards/argument-library",
     });
     expect(item?.body).toBe(
       'New card for "Warming DA" citing Smith 24: Rising emissions accelerate catastrophic warming impacts.',

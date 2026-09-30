@@ -152,13 +152,13 @@ describe("the synced collection catalog", () => {
   });
 
   it("syncs the Flow Edit Log now that its panel has a route", () => {
-    // `SharedFlowSyncPanel`/`FlowEditLogPanel` mount at `/coach` via
+    // `SharedFlowSyncPanel`/`FlowEditLogPanel` mount at `/coaching` via
     // `CoachHub`, closing the gap `tool-data-sync.mdx` used to note under
     // "What deliberately does not sync".
     expect(findToolRecordCollection("flowEdits")).toMatchObject({
       storageKey: "flowEdits",
       idField: "id",
-      href: "/coach",
+      href: "/coaching",
     });
   });
 
@@ -171,12 +171,12 @@ describe("the synced collection catalog", () => {
     expect(findToolRecordCollection("dailyBestCardAnnouncements")).toMatchObject({
       storageKey: "dailyBestCardAnnouncements",
       idField: "dayKey",
-      href: "/cards/leaderboard",
+      href: "/coaching/leaderboard",
     });
     expect(findToolRecordCollection("contributorAwardAnnouncements")).toMatchObject({
       storageKey: "contributorAwardAnnouncements",
       idField: "dayKey",
-      href: "/cards/leaderboard",
+      href: "/coaching/leaderboard",
     });
   });
 
@@ -193,12 +193,12 @@ describe("the synced collection catalog", () => {
     expect(findToolRecordCollection("prepNoteNotifications")).toMatchObject({
       storageKey: "prepNoteNotifications",
       idField: "id",
-      href: "/prep-notes",
+      href: "/practice/prep-notes",
     });
     expect(findToolRecordCollection("questTeams")).toMatchObject({
       storageKey: "questTeams",
       idField: "id",
-      href: "/cards/leaderboard",
+      href: "/coaching/leaderboard",
     });
     expect(findToolRecordCollection("argumentTreeFilters")).toMatchObject({
       storageKey: "argumentTreeFilters",
@@ -209,12 +209,12 @@ describe("the synced collection catalog", () => {
 
   it("syncs completed research-task history now that its records carry a stable id", () => {
     // `state/researchProgress.ts`'s `CompletedTaskRecord` had no per-record id
-    // until now, so `/cards/progress-tracking`'s completed-task history stayed
+    // until now, so `/coaching/progress`'s completed-task history stayed
     // per-browser even though every sibling store on that page already synced.
     expect(findToolRecordCollection("completedResearchTasks")).toMatchObject({
       storageKey: "completedResearchTasks",
       idField: "id",
-      href: "/cards/progress-tracking",
+      href: "/coaching/progress",
     });
   });
 
@@ -227,7 +227,7 @@ describe("the synced collection catalog", () => {
     expect(findToolRecordCollection("pendingTaskVerifications")).toMatchObject({
       storageKey: "pendingTaskVerifications",
       idField: "id",
-      href: "/cards/inbox",
+      href: "/research/cards/inbox",
     });
   });
 
@@ -306,14 +306,14 @@ describe("the synced collection catalog", () => {
     expect(findToolRecordCollection("challengeWinEvents")).toMatchObject({
       storageKey: "challengeWinEvents",
       idField: "id",
-      href: "/cards/leaderboard",
+      href: "/coaching/leaderboard",
     });
   });
 
   it("syncs a contributor's daily-mission-result history now that it carries a stable id", () => {
     // `state/dailyMissionResults.ts`'s `DailyMissionResultRecord` was keyed
     // by the pair `(contributorId, dayKey)` alone — the same shape problem
-    // `coachingSessions` had — so `/cards/streaks`' quest-streak roster,
+    // `coachingSessions` had — so `/research/cards/streaks`' quest-streak roster,
     // built entirely from this history, never followed a contributor to a
     // second device even though the account already synced their
     // `streakFreezes`/`streakLapseReminders` preferences via the bespoke
@@ -324,7 +324,7 @@ describe("the synced collection catalog", () => {
     expect(findToolRecordCollection("dailyMissionResults")).toMatchObject({
       storageKey: "dailyMissionResults",
       idField: "id",
-      href: "/cards/leaderboard",
+      href: "/coaching/leaderboard",
     });
   });
 
@@ -337,7 +337,7 @@ describe("the synced collection catalog", () => {
     expect(findToolRecordCollection("unlockCelebrations")).toMatchObject({
       storageKey: "unlockCelebrationSeenBadges",
       idField: "id",
-      href: "/cards/leaderboard",
+      href: "/coaching/leaderboard",
     });
   });
 

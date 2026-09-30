@@ -8,8 +8,8 @@ Five badges a debater can't earn with XP — only a judge can give them at a
 tournament. They appear on the debater's page with the judge's name under
 each badge.
 
-- **Routes:** `/cards/leaderboard/{debaterId}` (earned awards and the
-  **Give an award** form), `/cards/level` (all five awards and what they
+- **Routes:** `/coaching/leaderboard/{debaterId}` (earned awards and the
+  **Give an award** form), `/practice/level` (all five awards and what they
   recognize)
 - **Package:** `debate-community` (`packages/debate-contributor-progress`)
 
@@ -38,7 +38,7 @@ lib/judge-awards.ts        — award definitions, validateJudgeAward()
 state/judgeAwards.ts       — localStorage "judgeAwards", giveJudgeAward()
   → panels/JudgeAwardsSection.tsx
       JudgeAwardsSection   → ContributorProfilePanel (debater page)
-      JudgeAwardShowcase   → DebaterLevelPanel (/cards/level)
+      JudgeAwardShowcase   → DebaterLevelPanel (/practice/level)
 ```
 
 Awards sync to the signed-in user's account as the `judgeAwards` collection.

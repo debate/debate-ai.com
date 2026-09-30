@@ -1,8 +1,9 @@
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "AI Coach Mode",
-  description: "Extension, refutation, collapse, and weighing prompts generated from each round's flow",
+  title: "Coach",
+  description:
+    "Round coaching workspace: argument tree, flow summary, coaching prompts, drills, scouting, briefings and practice rounds",
 }
 
-export { default } from "debate-webview/routes/coaching/page"
+export { default } from "debate-webview/routes/coach/page"

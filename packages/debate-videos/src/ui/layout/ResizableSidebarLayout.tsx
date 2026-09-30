@@ -8,7 +8,7 @@
  * (`AppSidebarShell` in debate-webview), the video grid and the videos
  * sidebar shell — renders it through this one component, so they share the
  * same width, the same handle and the same saved size. Crossing from `/videos`
- * to `/coach` does not change the column's shape.
+ * to `/coaching` does not change the column's shape.
  *
  * - **Width is in pixels, and persisted.** The panel keeps its pixel width
  *   when the window resizes (`preserve-pixel-size`), and the last width the

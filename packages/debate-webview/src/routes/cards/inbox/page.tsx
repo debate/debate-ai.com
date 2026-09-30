@@ -5,7 +5,7 @@ import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHead
 export default function CardsInboxPage() {
   return (
     <ToolPage>
-      <ToolPageHeader href="/cards/inbox" backHref="/cards" backLabel="shared cards" guide="research-collaboration" />
+      <ToolPageHeader href="/research/cards/inbox" backHref="/research/cards" backLabel="shared cards" guide="research-collaboration" />
       <Suspense>
         <TaskInboxWithIdentity />
       </Suspense>

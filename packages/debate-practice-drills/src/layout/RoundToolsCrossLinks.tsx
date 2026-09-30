@@ -1,8 +1,8 @@
 /**
  * @fileoverview "Other round tools" cross-link row — closes
  * `packages/debate-help-docs/content/docs/features/flow-tools-menu.mdx`'s Known gap that none of the four
- * flow-driven analysis pages (`/outline`, `/outcomes`, `/drills`,
- * `/coaching`) linked to each other, only back to the round workspace via
+ * flow-driven analysis pages (`/outline`, `/coaching/outcomes`, `/practice/drills`,
+ * `/coaching/ai-coach`) linked to each other, only back to the round workspace via
  * each page's own "Back" button. Rendered on each of those four pages
  * alongside that Back button, so a debater who followed the round
  * workspace's "Tools for this round" menu (`FlowToolsMenu.tsx`) to one tool

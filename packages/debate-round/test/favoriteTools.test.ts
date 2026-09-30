@@ -13,7 +13,7 @@ import {
 } from "../src/state/favoriteTools";
 
 describe("isValidToolHref", () => {
-  it.each(["/tools", "/reason-editor", "/cards/leaderboard", "/a/b/c-d"])(
+  it.each(["/tools", "/reason-editor", "/coaching/leaderboard", "/a/b/c-d"])(
     "accepts a well-formed in-app path %p",
     (href) => {
       expect(isValidToolHref(href)).toBe(true);
@@ -46,7 +46,7 @@ describe("isValidFavoriteToolsList", () => {
   });
 
   it("accepts a list of valid, unique hrefs", () => {
-    expect(isValidFavoriteToolsList(["/tools", "/drills", "/cards/leaderboard"])).toBe(true);
+    expect(isValidFavoriteToolsList(["/tools", "/practice/drills", "/coaching/leaderboard"])).toBe(true);
   });
 
   it("rejects a list containing an invalid href", () => {
@@ -74,8 +74,8 @@ describe("isValidFavoriteToolsList", () => {
 
 describe("normalizeFavoriteToolsPatch", () => {
   it("accepts a valid patch", () => {
-    const result = normalizeFavoriteToolsPatch({ favoriteTools: ["/tools", "/drills"] });
-    expect(result).toEqual({ valid: { favoriteTools: ["/tools", "/drills"] }, errors: [] });
+    const result = normalizeFavoriteToolsPatch({ favoriteTools: ["/tools", "/practice/drills"] });
+    expect(result).toEqual({ valid: { favoriteTools: ["/tools", "/practice/drills"] }, errors: [] });
   });
 
   it("ignores unknown fields", () => {
@@ -113,7 +113,7 @@ describe("serializeFavoriteTools / parseFavoriteTools", () => {
   });
 
   it("round-trips a non-empty list through serialize/parse", () => {
-    const list = ["/tools", "/drills", "/cards/leaderboard"];
+    const list = ["/tools", "/practice/drills", "/coaching/leaderboard"];
     expect(parseFavoriteTools(serializeFavoriteTools(list))).toEqual(list);
   });
 
@@ -133,14 +133,14 @@ describe("serializeFavoriteTools / parseFavoriteTools", () => {
 
 describe("filterKnownFavoriteTools", () => {
   it("keeps every favorite that's still in validHrefs", () => {
-    const favorites = ["/tools", "/drills"];
-    expect(filterKnownFavoriteTools(favorites, ["/tools", "/drills", "/rank"])).toEqual(favorites);
+    const favorites = ["/tools", "/practice/drills"];
+    expect(filterKnownFavoriteTools(favorites, ["/tools", "/practice/drills", "/coaching/rankings"])).toEqual(favorites);
   });
 
   it("drops a favorite no longer present in validHrefs", () => {
-    expect(filterKnownFavoriteTools(["/tools", "/renamed-tool", "/drills"], ["/tools", "/drills"])).toEqual([
+    expect(filterKnownFavoriteTools(["/tools", "/renamed-tool", "/practice/drills"], ["/tools", "/practice/drills"])).toEqual([
       "/tools",
-      "/drills",
+      "/practice/drills",
     ]);
   });
 
@@ -157,8 +157,8 @@ describe("filterKnownFavoriteTools", () => {
   });
 
   it("returns the same array reference when nothing is pruned", () => {
-    const favorites = ["/tools", "/drills"];
-    expect(filterKnownFavoriteTools(favorites, ["/tools", "/drills"])).toBe(favorites);
+    const favorites = ["/tools", "/practice/drills"];
+    expect(filterKnownFavoriteTools(favorites, ["/tools", "/practice/drills"])).toBe(favorites);
   });
 });
 
@@ -205,7 +205,7 @@ describe("normalizeFavoriteToolOpPatch", () => {
   });
 
   it("rejects a request carrying both addFavoriteTool and removeFavoriteTool", () => {
-    const result = normalizeFavoriteToolOpPatch({ addFavoriteTool: "/tools", removeFavoriteTool: "/drills" });
+    const result = normalizeFavoriteToolOpPatch({ addFavoriteTool: "/tools", removeFavoriteTool: "/practice/drills" });
     expect(result.valid).toEqual({});
     expect(result.errors).toHaveLength(1);
   });
@@ -217,8 +217,8 @@ describe("normalizeFavoriteToolOpPatch", () => {
   });
 
   it("accepts a valid removeFavoriteTools batch", () => {
-    expect(normalizeFavoriteToolOpPatch({ removeFavoriteTools: ["/tools", "/drills"] })).toEqual({
-      valid: { removeFavoriteTools: ["/tools", "/drills"] },
+    expect(normalizeFavoriteToolOpPatch({ removeFavoriteTools: ["/tools", "/practice/drills"] })).toEqual({
+      valid: { removeFavoriteTools: ["/tools", "/practice/drills"] },
       errors: [],
     });
   });
@@ -250,13 +250,13 @@ describe("normalizeFavoriteToolOpPatch", () => {
   });
 
   it("rejects a request carrying both removeFavoriteTool and removeFavoriteTools", () => {
-    const result = normalizeFavoriteToolOpPatch({ removeFavoriteTool: "/tools", removeFavoriteTools: ["/drills"] });
+    const result = normalizeFavoriteToolOpPatch({ removeFavoriteTool: "/tools", removeFavoriteTools: ["/practice/drills"] });
     expect(result.valid).toEqual({});
     expect(result.errors).toHaveLength(1);
   });
 
   it("rejects a request carrying both addFavoriteTool and removeFavoriteTools", () => {
-    const result = normalizeFavoriteToolOpPatch({ addFavoriteTool: "/tools", removeFavoriteTools: ["/drills"] });
+    const result = normalizeFavoriteToolOpPatch({ addFavoriteTool: "/tools", removeFavoriteTools: ["/practice/drills"] });
     expect(result.valid).toEqual({});
     expect(result.errors).toHaveLength(1);
   });
@@ -264,11 +264,11 @@ describe("normalizeFavoriteToolOpPatch", () => {
 
 describe("applyFavoriteToolOp", () => {
   it("appends a new href on addFavoriteTool", () => {
-    expect(applyFavoriteToolOp(["/tools"], { addFavoriteTool: "/drills" })).toEqual(["/tools", "/drills"]);
+    expect(applyFavoriteToolOp(["/tools"], { addFavoriteTool: "/practice/drills" })).toEqual(["/tools", "/practice/drills"]);
   });
 
   it("is idempotent when adding an already-favorited href", () => {
-    const current = ["/tools", "/drills"];
+    const current = ["/tools", "/practice/drills"];
     expect(applyFavoriteToolOp(current, { addFavoriteTool: "/tools" })).toBe(current);
   });
 
@@ -278,12 +278,12 @@ describe("applyFavoriteToolOp", () => {
   });
 
   it("removes a matching href on removeFavoriteTool", () => {
-    expect(applyFavoriteToolOp(["/tools", "/drills"], { removeFavoriteTool: "/tools" })).toEqual(["/drills"]);
+    expect(applyFavoriteToolOp(["/tools", "/practice/drills"], { removeFavoriteTool: "/tools" })).toEqual(["/practice/drills"]);
   });
 
   it("is idempotent when removing an absent href", () => {
-    const current = ["/tools", "/drills"];
-    expect(applyFavoriteToolOp(current, { removeFavoriteTool: "/rank" })).toBe(current);
+    const current = ["/tools", "/practice/drills"];
+    expect(applyFavoriteToolOp(current, { removeFavoriteTool: "/coaching/rankings" })).toBe(current);
   });
 
   it("returns the current list unchanged for an empty op", () => {
@@ -297,24 +297,24 @@ describe("applyFavoriteToolOp", () => {
     // *server's* current value one at a time (rather than each tab PUTting
     // its own whole-list copy), both additions survive.
     const starting = ["/tools"];
-    const afterTabA = applyFavoriteToolOp(starting, { addFavoriteTool: "/drills" });
-    const afterTabB = applyFavoriteToolOp(afterTabA, { addFavoriteTool: "/rank" });
-    expect(afterTabB).toEqual(["/tools", "/drills", "/rank"]);
+    const afterTabA = applyFavoriteToolOp(starting, { addFavoriteTool: "/practice/drills" });
+    const afterTabB = applyFavoriteToolOp(afterTabA, { addFavoriteTool: "/coaching/rankings" });
+    expect(afterTabB).toEqual(["/tools", "/practice/drills", "/coaching/rankings"]);
   });
 
   it("removes every matching href on removeFavoriteTools", () => {
-    expect(applyFavoriteToolOp(["/tools", "/drills", "/rank"], { removeFavoriteTools: ["/tools", "/rank"] })).toEqual(
-      ["/drills"],
+    expect(applyFavoriteToolOp(["/tools", "/practice/drills", "/coaching/rankings"], { removeFavoriteTools: ["/tools", "/coaching/rankings"] })).toEqual(
+      ["/practice/drills"],
     );
   });
 
   it("is idempotent when removeFavoriteTools names only absent hrefs", () => {
-    const current = ["/tools", "/drills"];
+    const current = ["/tools", "/practice/drills"];
     expect(applyFavoriteToolOp(current, { removeFavoriteTools: ["/gone", "/also-gone"] })).toBe(current);
   });
 
   it("returns the current list unchanged for an empty removeFavoriteTools batch", () => {
-    const current = ["/tools", "/drills"];
+    const current = ["/tools", "/practice/drills"];
     expect(applyFavoriteToolOp(current, { removeFavoriteTools: [] })).toBe(current);
   });
 
@@ -330,8 +330,8 @@ describe("applyFavoriteToolOp", () => {
     // server's current value one at a time, the addition survives the prune
     // (since the newly-added href isn't one of the ones being pruned).
     const starting = ["/tools", "/stale-tool"];
-    const afterAdd = applyFavoriteToolOp(starting, { addFavoriteTool: "/drills" });
+    const afterAdd = applyFavoriteToolOp(starting, { addFavoriteTool: "/practice/drills" });
     const afterPrune = applyFavoriteToolOp(afterAdd, { removeFavoriteTools: ["/stale-tool"] });
-    expect(afterPrune).toEqual(["/tools", "/drills"]);
+    expect(afterPrune).toEqual(["/tools", "/practice/drills"]);
   });
 });

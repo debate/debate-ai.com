@@ -13,9 +13,9 @@
  */
 export const DOCK_NAV_LABELS: Record<string, string> = {
   "/videos": "Videos",
-  "/cards": "Shared",
+  "/research/cards": "Shared",
   "/debate": "Debate",
-  "/versus-ai": "Practice vs AI",
+  "/practice/versus-ai": "Practice vs AI",
   "/doc": "Docs",
 }
 
@@ -31,7 +31,7 @@ export function dockNavLabel(path: string): string {
  *
  * Exact match, not a prefix: `/videos/some-lecture` is a page under a
  * destination, not a destination. A query string and a trailing slash are
- * ignored, so `/cards/` and `/cards?q=x` are both `/cards`.
+ * ignored, so `/research/cards/` and `/research/cards?q=x` are both `/research/cards`.
  */
 export function isDockNavPath(path: string): boolean {
   const withoutQuery = path.split("?")[0]?.split("#")[0] ?? ""

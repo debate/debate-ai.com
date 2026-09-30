@@ -5,7 +5,7 @@ import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHead
 export default function CardsArgumentLibraryPage() {
   return (
     <ToolPage>
-      <ToolPageHeader href="/cards/argument-library" backHref="/cards" backLabel="shared cards" guide="research-collaboration" />
+      <ToolPageHeader href="/research/cards/argument-library" backHref="/research/cards" backLabel="shared cards" guide="research-collaboration" />
       <Suspense>
         <ArgumentLibraryPanel />
       </Suspense>

@@ -82,7 +82,7 @@ export function guideDocsUrl(guide: DocsGuide): string {
  * URL of the feature doc for an in-app route, if the feature catalog
  * (`debate-feature-catalog`) records one for it.
  *
- * @param href - In-app route, e.g. `"/drills"`.
+ * @param href - In-app route, e.g. `"/practice/drills"`.
  */
 export function featureDocsUrlForRoute(href: string): string | undefined {
   const entry = APP_FEATURES.find((feature) => feature.href === href)

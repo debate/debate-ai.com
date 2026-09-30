@@ -5,7 +5,7 @@ import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHead
 export default function CardsScoringPage() {
   return (
     <ToolPage>
-      <ToolPageHeader href="/cards/scoring" backHref="/cards" backLabel="shared cards" guide="research-collaboration" />
+      <ToolPageHeader href="/research/cards/scoring" backHref="/research/cards" backLabel="shared cards" guide="research-collaboration" />
       <Suspense>
         <CardScoringPanel />
       </Suspense>

@@ -13,20 +13,20 @@ with a timer and an AI judge, or as a single speech under a word count. They're 
 
 ## Two ways to run a round
 
-**[Practice vs AI](https://debate-ai.com/versus-ai)** (`/versus-ai`, [feature spec](/docs/features/practice-vs-ai)) is a full,
+**[Practice vs AI](https://debate-ai.com/versus-ai)** (`/practice/versus-ai`, [feature spec](/docs/features/practice-vs-ai)) is a full,
 timed round against an AI opponent in real turn order. Pick a format and side, a topic, and one of thirteen
 opponent personas across five difficulty tiers, then debate through timed opening, cross-examination, and
 closing phases. At the end an AI judge scores the round and explains its decision. It's also on the dock as
 **Practice vs AI**, and a round in progress can be resumed on the same account.
 
-**[Practice Round Simulator](https://debate-ai.com/practice-round)** (`/practice-round`, [feature spec](/docs/features/practice-round-simulator))
+**[Practice Round Simulator](https://debate-ai.com/practice-round)** (`/practice`, [feature spec](/docs/features/practice-round-simulator))
 recreates a tournament round's *conditions* — format, side, a timer, an AI judge paradigm, and an AI opponent
 persona — and keeps your past attempts so you can compare them. Use it when you want to rehearse a specific
 matchup or judge rather than play the AI's game.
 
 ## Practice against real people
 
-**[Practice Partners](https://debate-ai.com/practice-partners)** (`/practice-partners`, [feature spec](/docs/features/practice-partners))
+**[Practice Partners](https://debate-ai.com/practice-partners)** (`/practice/partners`, [feature spec](/docs/features/practice-partners))
 is the board for finding a human opponent or judge. Set up a practice profile — switch on **Open to
 challenges**, **Volunteer to judge**, or both, and pick the formats, styles, speed, and level you're
 comfortable with — and you're listed for other members to find, best matches first. Hit **Challenge** on
@@ -42,7 +42,7 @@ AI judge paradigms and four built-in opponent styles, or from one you describe y
 
 | Tool | Route | What it does |
 | --- | --- | --- |
-| AI Judge Decision | `/judge-decision` | Generate an AI decision for a round under its saved paradigm, grounded in the same flow summary the Argument Tree Outline shows. |
+| AI Judge Decision | `/practice/judge-decision` | Generate an AI decision for a round under its saved paradigm, grounded in the same flow summary the Argument Tree Outline shows. |
 
 ## Word-count speeches
 
@@ -64,7 +64,7 @@ are saved to your account when signed in.
 
 ## Tips
 
-- **Sharing a section:** `/coach?section=practice` opens the Coach Workspace on the practice tools.
+- **Sharing a section:** `/coaching?section=practice` opens the Coach Workspace on the practice tools.
 - **Signed out?** Every practice tool except Practice Partners works without an account; signing in is what
   makes rounds, attempts, and word-count speeches follow you across devices. Practice Partners lists real
   people, so it needs a (non-guest) account to see or join the board.

@@ -24,7 +24,7 @@ export default async function VersusAiPage() {
 
   return (
     <ToolPage>
-      <ToolPageHeader href="/versus-ai" backHref="/debate" backLabel="round workspace" guide="practice-tools" />
+      <ToolPageHeader href="/practice/versus-ai" backHref="/debate" backLabel="round workspace" guide="practice-tools" />
       <Suspense>
         <DebatePracticeVsAi
           userId={session?.user?.id}

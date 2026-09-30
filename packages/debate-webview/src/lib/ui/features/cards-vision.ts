@@ -1,9 +1,9 @@
 /**
  * @fileoverview The CARDS overview — the mission statement, capabilities and
- * seven-point vision that used to fill `/cards`'s empty state — as data the
+ * seven-point vision that used to fill `/research/cards`'s empty state — as data the
  * features page renders in its "CARDS vision" section.
  *
- * `/cards` now opens on a short prompt that links here, so this copy has one
+ * `/research/cards` now opens on a short prompt that links here, so this copy has one
  * home in the app. The long-form docs page
  * (`debate-help-docs` `content/docs/features/cards.mdx`) carries the same text.
  *

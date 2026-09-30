@@ -11,11 +11,13 @@
  */
 
 import { describe, it, expect, vi } from "vitest";
+import { isVideoLibraryPath } from "../src/components/category-gallery/sidebar-routes";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createElement } from "react";
 import {
   SIDEBAR_VIDEO_LINKS,
   SIDEBAR_VIDEO_LINKS_BY_ID,
+  VIDEO_ALL_LINK,
   VIDEO_COLLEGE_LINK,
   VIDEO_FORMAT_LINKS,
   VIDEO_LIBRARY_LINKS,
@@ -69,13 +71,18 @@ function htmlEscaped(title: string): string {
 }
 
 describe("SIDEBAR_VIDEO_LINKS", () => {
-  it("is the concatenation of the tree's four groups", () => {
+  it("is the concatenation of the tree's five groups", () => {
     expect(SIDEBAR_VIDEO_LINKS).toEqual([
+      VIDEO_ALL_LINK,
       VIDEO_COLLEGE_LINK,
       ...VIDEO_FORMAT_LINKS,
       ...VIDEO_LIBRARY_LINKS,
       ...VIDEO_REFERENCE_LINKS,
     ]);
+  });
+
+  it("puts All Videos, the home page, at /videos first", () => {
+    expect(SIDEBAR_VIDEO_LINKS[0]).toMatchObject({ href: "/videos", title: "All Videos" });
   });
 
   it("carries no duplicate id or destination", () => {
@@ -85,9 +92,9 @@ describe("SIDEBAR_VIDEO_LINKS", () => {
     expect(new Set(hrefs).size).toBe(hrefs.length);
   });
 
-  it("points every link at a /videos route", () => {
+  it("points every link at a video library route", () => {
     for (const link of SIDEBAR_VIDEO_LINKS) {
-      expect(link.href.startsWith("/videos/")).toBe(true);
+      expect(isVideoLibraryPath(link.href)).toBe(true);
       expect(link.title.length).toBeGreaterThan(0);
     }
   });

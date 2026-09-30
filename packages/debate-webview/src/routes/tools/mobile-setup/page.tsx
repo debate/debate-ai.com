@@ -134,11 +134,11 @@ const STEPS: { icon: typeof Smartphone; title: string; body: ReactNode }[] = [
       <>
         The round workspace&apos;s mobile layout keeps the speech timer and flow in reach while a speech is up.
         For timed solo reps, the{" "}
-        <Link href="/practice-round" className="text-foreground underline underline-offset-2">
+        <Link href="/practice" className="text-foreground underline underline-offset-2">
           Practice Round Simulator
         </Link>{" "}
         and{" "}
-        <Link href="/versus-ai" className="text-foreground underline underline-offset-2">
+        <Link href="/practice/versus-ai" className="text-foreground underline underline-offset-2">
           Practice vs AI
         </Link>{" "}
         run fully timed rounds on the phone.
@@ -166,7 +166,7 @@ const STEPS: { icon: typeof Smartphone; title: string; body: ReactNode }[] = [
           Word-Count Speeches
         </Link>{" "}
         for redos on the bus, the mic Record button in the round workspace for transcribing speeches, and{" "}
-        <Link href="/drills" className="text-foreground underline underline-offset-2">
+        <Link href="/practice/drills" className="text-foreground underline underline-offset-2">
           Practice Drills
         </Link>{" "}
         between rounds.

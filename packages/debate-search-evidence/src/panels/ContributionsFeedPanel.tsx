@@ -53,7 +53,7 @@
  * `computeWordCount` — the same helper `EvidenceLibraryPanel` uses — closing
  * follow-up (a) named under the "📊 Topic Coverage Dashboard" bullet in
  * TODO.md ("an `argBlock`/word-count field wired into a real
- * card-submission flow beyond the existing `/cards/library` evidence-library
+ * card-submission flow beyond the existing `/research/cards/library` evidence-library
  * form"). A contribution that fills in both `topic` and `argBlock` alongside
  * this content field is now picked up by
  * `state/trackedArguments.ts`'s `buildPersistedTopicCoverageReport` as a

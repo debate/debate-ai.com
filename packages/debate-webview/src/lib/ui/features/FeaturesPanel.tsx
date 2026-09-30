@@ -3,7 +3,7 @@
  * user-facing surface in the app.
  *
  * The dock's Settings menu already links to most of these, but as a flat,
- * unexplained list of forty-odd items; `/research` and `/coach` each tab
+ * unexplained list of forty-odd items; `/research` and `/coaching` each tab
  * across one package's panels. This panel is the whole map:
  * `feature-catalog.ts`'s `APP_FEATURES` grouped into categories, filtered by
  * one free-text box (which also matches each entry's route and hidden
@@ -338,7 +338,7 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
         </div>
       </section>
 
-      {/* The CARDS overview and vision, moved here from `/cards`'s empty state. */}
+      {/* The CARDS overview and vision, moved here from `/research/cards`'s empty state. */}
       <section
         id="cards-vision"
         aria-label="CARDS vision"

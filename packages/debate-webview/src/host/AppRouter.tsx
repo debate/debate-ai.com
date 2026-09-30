@@ -92,7 +92,7 @@ class RouteBoundary extends Component<{ children: ReactNode; resetKey: string },
 }
 
 /**
- * Keeps plain `<a href="/cards">` links inside the app. `next/link` is
+ * Keeps plain `<a href="/research/cards">` links inside the app. `next/link` is
  * shimmed, but some markup writes anchors by hand; on an extension page such
  * a link would load `chrome-extension://<id>/cards`, a file that isn't there.
  */

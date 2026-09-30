@@ -5,7 +5,7 @@ import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHead
 export default function CardsContributionsPage() {
   return (
     <ToolPage>
-      <ToolPageHeader href="/cards/contributions" backHref="/cards" backLabel="shared cards" guide="research-collaboration" />
+      <ToolPageHeader href="/research/cards/contributions" backHref="/research/cards" backLabel="shared cards" guide="research-collaboration" />
       <Suspense>
         <ContributionsFeedWithIdentity />
       </Suspense>

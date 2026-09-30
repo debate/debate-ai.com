@@ -2,7 +2,7 @@
  * Public search endpoint for the imported debate-card corpus.
  *
  * The admin Parquet importer writes normalized rows to `debate_cards`.  This
- * route is deliberately the other half of that feature: `/cards` reads those
+ * route is deliberately the other half of that feature: `/research/cards` reads those
  * rows directly instead of falling back to a separate in-memory demo corpus.
  *
  * The query building and row mapping live in `@/lib/search/debate-card-search`

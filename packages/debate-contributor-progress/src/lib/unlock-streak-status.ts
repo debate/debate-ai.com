@@ -158,7 +158,7 @@ function buildEmptyContributorStats(contributorId: string): ContributorStats {
  * gets an all-zero, `novice` status rather than a thrown error. Persisted
  * streak freezes are applied to the mission-result history
  * (`applyStreakFreezes`), so this roster's Streak column agrees with
- * `/cards/streaks`' own freeze-bridged view of the same contributor instead
+ * `/research/cards/streaks`' own freeze-bridged view of the same contributor instead
  * of showing a shorter, unfrozen streak.
  */
 export function buildContributorUnlockStatusWithStreakFromStore(

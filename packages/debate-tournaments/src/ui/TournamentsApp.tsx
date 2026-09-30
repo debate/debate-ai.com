@@ -6,7 +6,7 @@
  *
  * ```tsx
  * // app/tournaments/[[...slug]]/page.tsx
- * <TournamentsApp segments={slug} basePath="/tournaments" apiBase="/api/tournaments" Link={Link} />
+ * <TournamentsApp segments={slug} basePath="/practice/tournaments" apiBase="/api/tournaments" Link={Link} />
  * ```
  *
  * It resolves `segments` with `matchTournamentRoute` and renders that page;
@@ -28,7 +28,7 @@ import { ResultSetPage } from "./pages/ResultSetPage";
 export interface TournamentsAppProps {
   /** Path segments after `basePath` (a catch-all route's params). */
   segments?: readonly string[];
-  /** Where the UI is mounted (default `/tournaments`). */
+  /** Where the UI is mounted (default `/practice/tournaments`). */
   basePath?: string;
   /** Where the API handler is mounted (default `/api/tournaments`). */
   apiBase?: string;
@@ -36,7 +36,7 @@ export interface TournamentsAppProps {
   Link?: LinkLike;
 }
 
-export function TournamentsApp({ segments = [], basePath = "/tournaments", apiBase = "/api/tournaments", Link = defaultLink }: TournamentsAppProps) {
+export function TournamentsApp({ segments = [], basePath = "/practice/tournaments", apiBase = "/api/tournaments", Link = defaultLink }: TournamentsAppProps) {
   const value = useMemo(
     () => ({ client: createTournamentsClient(apiBase), hrefs: tournamentHrefs(basePath), Link }),
     [apiBase, basePath, Link],

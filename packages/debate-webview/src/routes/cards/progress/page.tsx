@@ -5,7 +5,7 @@ import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHead
 export default function CardsProgressPage() {
   return (
     <ToolPage>
-      <ToolPageHeader href="/cards/progress" backHref="/cards" backLabel="shared cards" guide="research-collaboration" />
+      <ToolPageHeader href="/research/cards/progress" backHref="/research/cards" backLabel="shared cards" guide="research-collaboration" />
       <Suspense>
         <ProgressUnlocksWithIdentity />
       </Suspense>

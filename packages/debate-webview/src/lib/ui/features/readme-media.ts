@@ -208,7 +208,7 @@ export const README_SHOWCASE: ReadmeShowcase[] = [
     emoji: "📚",
     expansion: "Crowdsourced Annotated Research for Debating Solutions",
     image: "https://i.imgur.com/VbJF0Bx.png",
-    href: "/cards",
+    href: "/research/cards",
   },
   {
     name: "FIAT",

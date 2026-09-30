@@ -1,7 +1,7 @@
 /**
  * @fileoverview The glossary and rankings pages keep the sidebar.
  *
- * `/videos/dictionary` and `/videos/rankings` are two rows in the sidebar's
+ * `/practice/glossary` and `/practice/rankings` are two rows in the sidebar's
  * own tree, and both used to answer with a bare page: `LecturesPage` returned
  * their branch without the column, and because `hasEmbeddedDock` reports every
  * `/videos` path as already carrying a sidebar-hosted dock, the app's
@@ -34,7 +34,7 @@ vi.mock("next/link", () => ({
 }));
 
 vi.mock("next/navigation", () => ({
-  usePathname: () => "/videos/dictionary",
+  usePathname: () => "/practice/glossary",
 }));
 
 const { LecturesSidebarShell } = await import("../src/panels/LecturesSidebarShell");
@@ -61,10 +61,10 @@ describe("LecturesSidebarShell", () => {
     const html = render("rankings");
     // A video destination, a tool destination, and the two reference rows
     // themselves — i.e. the whole tree, not a stub.
-    expect(html).toContain('href="/videos/lectures"');
-    expect(html).toContain('href="/coach"');
-    expect(html).toContain('href="/videos/dictionary"');
-    expect(html).toContain('href="/videos/rankings"');
+    expect(html).toContain('href="/lectures"');
+    expect(html).toContain('href="/coaching"');
+    expect(html).toContain('href="/practice/glossary"');
+    expect(html).toContain('href="/practice/rankings"');
   });
 
   it("renders the site footer links", () => {
@@ -94,8 +94,8 @@ describe("the md:hidden block, which is what a phone sees", () => {
   it("carries the video quick links, the pair included", () => {
     const mobile = mobileMarkup();
     expect(mobile).toContain('href="/videos/college"');
-    expect(mobile).toContain('href="/videos/dictionary"');
-    expect(mobile).toContain('href="/videos/rankings"');
+    expect(mobile).toContain('href="/practice/glossary"');
+    expect(mobile).toContain('href="/practice/rankings"');
   });
 
   it("carries the tool sections, collapsed so the page stays in view", () => {

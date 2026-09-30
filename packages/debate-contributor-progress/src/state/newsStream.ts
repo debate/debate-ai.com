@@ -98,7 +98,7 @@ function dailyBestCardNews(): NewsItem[] {
     title: `Daily Best Card — ${announcement.dayKey}`,
     body: buildDailyBestCardHighlight(announcement),
     timestamp: Date.parse(`${announcement.dayKey}T00:00:00Z`),
-    href: "/cards/best-card",
+    href: "/research/cards/best-card",
   }));
 }
 
@@ -110,7 +110,7 @@ function contributorAwardsNews(): NewsItem[] {
     title: `Contributor Awards — ${announcement.dayKey}`,
     body: buildAwardsAnnouncementText(announcement.awards),
     timestamp: Date.parse(`${announcement.dayKey}T00:00:00Z`),
-    href: "/cards/awards",
+    href: "/research/cards/awards",
   }));
 }
 
@@ -122,7 +122,7 @@ function questStreakMilestoneNews(): NewsItem[] {
     title: `${event.contributorId} earned "${event.badge}"`,
     body: buildStreakMilestoneAnnouncementText(event.contributorId, event),
     timestamp: Date.parse(`${event.dayKey}T00:00:00Z`),
-    href: "/cards/streaks",
+    href: "/research/cards/streaks",
   }));
 }
 
@@ -134,7 +134,7 @@ function groupChallengeNews(): NewsItem[] {
     title: `"${event.title}" complete!`,
     body: buildChallengeCompletionAnnouncementText(event),
     timestamp: event.completedAt,
-    href: "/cards/group-challenges",
+    href: "/research/cards/group-challenges",
   }));
 }
 
@@ -146,7 +146,7 @@ function revisionIncentiveNews(): NewsItem[] {
     title: `Revision Incentives — ${announcement.dayKey}`,
     body: buildTopReviserAnnouncementText(announcement.dayKey, announcement.topContributor),
     timestamp: Date.parse(`${announcement.dayKey}T00:00:00Z`),
-    href: "/cards/revisions",
+    href: "/research/cards/revisions",
   }));
 }
 
@@ -171,7 +171,7 @@ function sprintNoteNews(): NewsItem[] {
     title: `${note.authorId} added a "${note.topic}" prep note`,
     body: buildSprintNoteAnnouncementText(note),
     timestamp: note.createdAt,
-    href: "/cards/collaboration",
+    href: "/research/cards/collaboration",
   }));
 }
 
@@ -197,7 +197,7 @@ function argumentLibraryNews(): NewsItem[] {
         : `New analytic block added to the Argument Library: "${entry.argBlock}"`,
     body: buildEvidenceEntryAnnouncementText(entry),
     timestamp: entry.createdAt,
-    href: "/cards/argument-library",
+    href: "/research/cards/argument-library",
   }));
 }
 
@@ -222,7 +222,7 @@ function dailyQuestCompletionNews(): NewsItem[] {
     title: `${event.contributorId} completed the Daily Quests board for ${event.dayKey}`,
     body: buildDailyQuestCompletionAnnouncementText(event.contributorId, event.dayKey),
     timestamp: Date.parse(`${event.dayKey}T00:00:00Z`),
-    href: "/cards/quests",
+    href: "/research/cards/quests",
   }));
 }
 

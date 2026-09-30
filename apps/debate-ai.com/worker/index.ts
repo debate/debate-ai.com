@@ -15,7 +15,7 @@ import { runWeeklyYouTubeSync } from "../lib/youtube/weekly-sync";
 import { purgeOldReuseCheckLogRows } from "../lib/evidence-reuse-check/purge-reuse-check-log";
 import { DB_BACKUP_CRON, runWeeklyDbBackup } from "../lib/admin/weekly-db-backup";
 import { handleTurnstileGate, type TurnstileEnv } from "../lib/turnstile";
-import { handleCanonicalHostRedirect } from "../lib/redirects";
+import { handleCanonicalHostRedirect, handleCategoryPathRedirect } from "../lib/redirects";
 import { youtubeWatchRedirect } from "../lib/youtube/video-redirect";
 import { getAuth } from "../lib/auth";
 import { normalizeRoomId } from "debate-round/src/webcam/room-protocol";
@@ -82,6 +82,12 @@ export default {
     // See lib/redirects/canonical-host.ts.
     const redirect = handleCanonicalHostRedirect(request);
     if (redirect) return redirect;
+
+    // Pages moved under their sidebar category (`/cards` → `/research/cards`,
+    // `/drills` → `/practice/drills`, …): an old URL gets a permanent redirect
+    // to the new one, query intact. See lib/redirects/category-paths.ts.
+    const moved = handleCategoryPathRedirect(request);
+    if (moved) return moved;
 
     // App-owned `/youtube` links are convenience links only: send the viewer
     // to YouTube's normal watch page. Do not proxy YouTube content, user

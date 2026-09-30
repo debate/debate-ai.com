@@ -7,7 +7,7 @@ title: "Shared Evidence Library"
 A submission form plus a free-text/kind search panel over the team-wide
 evidence repository — cut cards and reusable analytic blocks.
 
-- **Route:** `/cards/library`
+- **Route:** `/research/cards/library`
 - **Package:** `debate-card-search`
 
 ## What it shows
@@ -21,7 +21,7 @@ page" box checks whether a pasted URL has already been cut, both locally
 and against a shared, server-backed reuse index consumed by a browser
 extension (`apps/debate-web-ext`).
 
-The Argument Library browser (`/cards/argument-library`) composes this
+The Argument Library browser (`/research/cards/argument-library`) composes this
 repository with tagged Contributions Feed submissions into topic/case-area
 folders and cross-cutting tag collections, with rename/merge and bulk
 tag-editing tools.
@@ -34,12 +34,12 @@ incrementally rather than rebuilt on every write.
 
 ## Opening a pre-filled search
 
-`/cards` reads its starting search from the URL: `?q=` (term), `?year=`,
+`/research/cards` reads its starting search from the URL: `?q=` (term), `?year=`,
 `?event=` (`CX`, `PF`, `LD`, `NDT`, `NFA`) and `?school=` / `?team=` /
 `?tournament=`. Other pages build these links with `buildCardsSearchHref()`
 and `useSearchState` reads them once on mount via `readCardsSearchParams()`
 (both in `lib/search-query.ts`). The topics explorer on
-`/videos/statistics` uses this to link every resolution to its cards.
+`/practice/statistics` uses this to link every resolution to its cards.
 The URL isn't kept in sync as you edit the search afterwards.
 
 ## Data flow

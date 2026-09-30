@@ -198,7 +198,7 @@ async function putInCache(request: Request, response: Response): Promise<void> {
  * error — and the browser treats it as one: it is a valid response, so it can
  * be stored for a speculative request and replayed into the real navigation
  * that follows. That is how a single dropped prefetch turned into the hard
- * "502 (Network Error)" on `/versus-ai` in the console, and why
+ * "502 (Network Error)" on `/practice/versus-ai` in the console, and why
  * `isSpeculativeRequest` alone was not enough to stop it: any request this
  * worker answers but the browser classifies as speculative (a `<link
  * rel="prefetch">` that sends no `Sec-Purpose` header and reports an empty

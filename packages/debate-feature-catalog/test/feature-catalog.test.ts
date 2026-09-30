@@ -60,7 +60,7 @@ describe("APP_FEATURES", () => {
 
   // A feature with a real doc under `packages/debate-help-docs/content/docs/features`
   // silently rendered no "Learn more" link anywhere `feature-catalog.ts` is read
-  // (`/features`, `FeaturesPanel`, News Stream's "Tool spotlight" posts) — the
+  // (`/practice/features`, `FeaturesPanel`, News Stream's "Tool spotlight" posts) — the
   // check above only validates a `doc` that's already present, so a missing one
   // was invisible to CI. These three entries had matching doc files with no
   // `doc` field wired up; pinned individually (rather than a filename-derived
@@ -117,7 +117,7 @@ describe("searchFeatures", () => {
   });
 
   it("matches a route", () => {
-    const matches = searchFeatures(APP_FEATURES, "/cards/streaks");
+    const matches = searchFeatures(APP_FEATURES, "/research/cards/streaks");
     expect(matches.map((feature) => feature.id)).toEqual(["quest-streaks"]);
   });
 

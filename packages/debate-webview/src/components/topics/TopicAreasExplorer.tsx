@@ -1,7 +1,7 @@
 "use client"
 
 /**
- * @fileoverview The `/topics` page body: every resolution since 2000, split
+ * @fileoverview The `/research/topics` page body: every resolution since 2000, split
  * into 44 focused research areas and ranked by how often each area has been
  * debated — overall and within each format. Picking an area lists its
  * resolutions newest first and draws its year-by-year trend.

@@ -112,13 +112,13 @@ describe("search constants", () => {
 
 describe("buildCardsSearchHref", () => {
   it("links to the bare search page when nothing is pre-filled", () => {
-    expect(buildCardsSearchHref({})).toBe("/cards");
-    expect(buildCardsSearchHref({ q: "  ", event: "all" })).toBe("/cards");
+    expect(buildCardsSearchHref({})).toBe("/research/cards");
+    expect(buildCardsSearchHref({ q: "  ", event: "all" })).toBe("/research/cards");
   });
 
   it("carries the term, year and format", () => {
     expect(buildCardsSearchHref({ q: "Arctic", year: 2024, event: "CX" })).toBe(
-      "/cards?q=Arctic&year=2024&event=CX",
+      "/research/cards?q=Arctic&year=2024&event=CX",
     );
   });
 

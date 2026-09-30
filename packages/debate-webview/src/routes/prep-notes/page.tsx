@@ -5,7 +5,7 @@ import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
 export default function PrepNotesPage() {
   return (
     <ToolPage>
-      <ToolPageHeader href="/prep-notes" backHref="/debate" backLabel="round workspace" guide="training-tools" />
+      <ToolPageHeader href="/practice/prep-notes" backHref="/debate" backLabel="round workspace" guide="training-tools" />
       <Suspense>
         <PrepNotesWithIdentity />
       </Suspense>

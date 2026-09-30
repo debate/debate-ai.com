@@ -53,13 +53,13 @@ export const FOOTER_LINKS: FooterLink[] = [
   // app's `app/docs`), reached by a plain navigation like the external
   // entries here.
   { url: "/docs", text: "Docs", icon: CircleHelp, group: "site", hardNavigate: true },
-  // `/features` is the whole catalog. It is listed here because the app
+  // `/practice/features` is the whole catalog. It is listed here because the app
   // dock's Settings menu no longer carries an "Apps" submenu spelling that
   // catalog out, so this row is how the menu reaches it. An ordinary in-app
-  // route: following it keeps the sidebar (`/features` is one of the
+  // route: following it keeps the sidebar (`/practice/features` is one of the
   // sidebar's own destinations — see `sidebar-routes.ts`) rather than
   // reloading into a bare page.
-  // { url: "/features", text: "Features", icon: LayoutGrid, group: "site" },
+  // { url: "/practice/features", text: "Features", icon: LayoutGrid, group: "site" },
   { url: "https://github.com/debate", text: "Github", icon: SiGithub, group: "site" },
   { url: "https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/", text: "Reddit", icon: SiReddit, group: "debate" },
   // { url: "https://www.tabroom.com/index/index.mhtml", text: "Tournaments", icon: Calendar, group: "debate" },

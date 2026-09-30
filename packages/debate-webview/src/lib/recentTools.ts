@@ -19,6 +19,7 @@
  * @module lib/recentTools
  */
 import { isValidToolHref } from "debate-round"
+import { canonicalCategoryHref } from "debate-data-sync/src/routes/category-paths"
 import type { Tool } from "../routes/tools/tool-groups"
 
 /** Short enough that the group stays a quick glance, not a second favorites list. */
@@ -46,7 +47,10 @@ export function parseRecentTools(raw: string | null): string[] {
   try {
     const parsed = JSON.parse(raw)
     if (!Array.isArray(parsed)) return []
-    return parsed.filter(isValidToolHref).slice(0, MAX_RECENT_TOOLS)
+    // Entries recorded before the routes moved under their sidebar category
+    // are stored at their old paths; read them back at the new ones.
+    const hrefs = parsed.filter(isValidToolHref).map(canonicalCategoryHref)
+    return [...new Set(hrefs)].slice(0, MAX_RECENT_TOOLS)
   } catch {
     return []
   }

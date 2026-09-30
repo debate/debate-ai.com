@@ -23,11 +23,11 @@ export interface DockNavItem {
 
 export const NAV_ITEMS: DockNavItem[] = [
   { href: "/videos", label: dockNavLabel("/videos"), icon: IconRoundsYoutube },
-  { href: "/cards", label: dockNavLabel("/cards"), icon: IconCollectiveMind },
+  { href: "/research/cards", label: dockNavLabel("/research/cards"), icon: IconCollectiveMind },
   { href: "/debate", label: dockNavLabel("/debate"), icon: IconFlowFlower },
   // Practice vs AI — a full timed round against an AI opponent, from the
   // `debate-practice-vs-ai` package.
-  { href: "/versus-ai", label: dockNavLabel("/versus-ai"), icon: IconVsAi },
+  { href: "/practice/versus-ai", label: dockNavLabel("/practice/versus-ai"), icon: IconVsAi },
   { href: "/doc", label: dockNavLabel("/doc"), icon: IconRead },
   // No "Tools" icon here on purpose: the tools catalog is reached from the
   // sidebar nav tree (its "Apps" heading and the Coaching/Research/Practice

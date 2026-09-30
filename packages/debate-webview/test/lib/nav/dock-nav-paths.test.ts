@@ -14,10 +14,10 @@ describe("isDockNavPath", () => {
   })
 
   it("ignores a trailing slash, query string and hash", () => {
-    expect(isDockNavPath("/cards/")).toBe(true)
-    expect(isDockNavPath("/cards?q=nuclear")).toBe(true)
-    expect(isDockNavPath("/cards#top")).toBe(true)
-    expect(isDockNavPath("/cards/?q=nuclear#top")).toBe(true)
+    expect(isDockNavPath("/research/cards/")).toBe(true)
+    expect(isDockNavPath("/research/cards?q=nuclear")).toBe(true)
+    expect(isDockNavPath("/research/cards#top")).toBe(true)
+    expect(isDockNavPath("/research/cards/?q=nuclear#top")).toBe(true)
   })
 
   it("rejects a page below a destination", () => {

@@ -20,7 +20,7 @@ gear-icon Settings menu, each with a hover label and `Alt+1`…`Alt+5`
 shortcuts in dock order.
 
 **Practice vs AI opens a menu instead of navigating.** A plain click on that
-icon does not go to `/versus-ai` — it opens the site-nav menu described below
+icon does not go to `/practice/versus-ai` — it opens the site-nav menu described below
 (`NavMenu`, in `CategoryDock.tsx`). The page itself is still one tap away, as
 the first tool listed under that menu's Practice section, and the `Alt+4`
 shortcut still jumps straight there.
@@ -57,7 +57,7 @@ root — opening one does not affect the other, and either can be open at once:
 
 **There is no "Apps" submenu.** The site-nav menu used to restate the dock's
 own five icons as text and then hang the whole feature catalog underneath,
-one nested submenu per category — a second, deeper copy of `/features`
+one nested submenu per category — a second, deeper copy of `/practice/features`
 hanging off the dock that was already showing those five icons. One
 **Features** row reaches the catalog instead, and a **Docs** row the help
 site; both are footer links, so the sidebar footer carries them too.
@@ -109,7 +109,7 @@ renders there. `hasEmbeddedDock` stays true for the route, so the fixed
 fallback does not appear on top of it; below `md` the sidebar is a slide-over
 sheet and the dock is left to its own mobile bottom bar.
 
-That now includes `/videos/rankings` and `/videos/dictionary`. Both are rows
+That now includes `/practice/rankings` and `/practice/glossary`. Both are rows
 in the sidebar's own tree, and both used to answer with a bare page — no
 sidebar, and no fixed dock either, since every `/videos` path counts as
 already carrying a sidebar-hosted one. `LecturesSidebarShell` wraps them in
@@ -127,7 +127,7 @@ it renders fixed in the top-left corner on desktop and as a bottom bar on
 mobile. The two never show at once.
 
 Route matching is by path *prefix*, so a nested route under a tree entry
-(`/cards/awards` under `/cards`, a document route under `/doc`) keeps the
+(`/research/cards/awards` under `/research/cards`, a document route under `/doc`) keeps the
 sidebar rather than dropping to the fixed dock. The trailing `/` in the
 comparison keeps `/docs` from matching `/doc`.
 
@@ -145,8 +145,8 @@ the results. It stays open while you are typing in it or while a search is
 active, and closes on Escape or a click outside. Whatever you typed is still
 there the next time you open it.
 
-That is also what lets the sidebar stay the same on `/videos/dictionary` and
-`/videos/rankings`, which have nothing to search: the column is now the same
+That is also what lets the sidebar stay the same on `/practice/glossary` and
+`/practice/rankings`, which have nothing to search: the column is now the same
 column everywhere in the library.
 
 ## Results open as rows
@@ -206,7 +206,7 @@ Two rules hold for every h1:
 
 - **It is not a link.** The row renders without an `href`, so clicking it
   does nothing but toggle the section. Each section's flagship tool is the
-  first link *inside* it (`/coach` under Coaching), so nothing became
+  first link *inside* it (`/coaching` under Coaching), so nothing became
   unreachable — a click on the heading no longer navigates away from the page
   you are on just because you wanted to see what else is in the group.
 - **One section is open at a time, and it follows the route.** The tree is an
@@ -224,9 +224,9 @@ Two rules hold for every h1:
   *are* rendered are fetched on click rather than on sight.
 
   Resolution is longest-match over the links the tree actually renders:
-  `/cards/library` opens Research, which lists it, and `/versus-ai` opens
+  `/research/cards/library` opens Research, which lists it, and `/practice/versus-ai` opens
   Practice ("Debate Versus AI"). A dock destination in no tool section —
-  `/cards`, `/debate`, `/doc`, `/reason-editor` — matches nothing and opens
+  `/research/cards`, `/debate`, `/doc`, `/reason-editor` — matches nothing and opens
   nothing. `/doc` and `/reason-editor` used to sit in Research as "Debate
   Docs" and "Reason Editor"; they are the dock's own Docs button and a
   top-level editor, so the rows only restated what the icons above them
@@ -283,12 +283,19 @@ full-color artwork sitting among the grey glyphs — and now match the rest.
 - `apps/debate-ai.com/lib/nav/__tests__/dock-menu-sections.test.ts` — that
   every sidebar destination (videos, tool sections, footer links) is
   reachable from the Settings menu, which is the whole nav below `md`, that
-  there is no Apps section, and that `/features` and `/docs` are reachable.
+  there is no Apps section, and that `/practice/features` and `/docs` are reachable.
 - `packages/debate-webview/test/lib/layout/frame-navigation.test.ts` — which
   clicks are left to the browser, and which links out of `/docs` become a
   full page load.
 - `packages/debate-webview/test/lib/nav/dock-idle-prefetch.test.ts` — which
   destinations are warmed in idle time, and that data saver turns it off.
+
+## All Videos is the home page
+
+**All Videos** (`/videos`) sits at the top of the sidebar, above Round Videos,
+and lists every round and lecture in the library. It is where `/` lands. The
+lecture library on its own is **Lectures** (`/lectures`), whose **All
+Lectures** row lists lectures only.
 
 ## One collection highlighted at a time
 
@@ -302,7 +309,7 @@ leave them alone. `packages/debate-videos/test/sidebar-single-highlight.test.tsx
 pins it.
 
 **Team Rankings stays highlighted on a team or school page.** `/teams/<team>`
-and `/schools/<school>` are opened from the **Team Rankings** row (`/rank`)
+and `/schools/<school>` are opened from the **Team Rankings** row (`/coaching/rankings`)
 rather than nested under it, so a plain path match never lit that row while
 reading a profile — `ToolNavTree`'s `isToolActive` treats both prefixes as
 still-on-Team-Rankings, the same relationship `EXTRA_SIDEBAR_HREFS` already
@@ -320,7 +327,7 @@ a long section (Practice runs to fifteen-plus rows) never jumps the column.
 
 ## The feature catalog opens inside the app
 
-`/features` — the catalog of every surface in the app — is reached from the
+`/practice/features` — the catalog of every surface in the app — is reached from the
 footer under the sidebar and from the dock's **Site Links** menu. Following
 either used to reload the whole tab into a bare page: the sidebar and the dock
 were gone, the persistent player stopped mid-lecture, and the page's only way

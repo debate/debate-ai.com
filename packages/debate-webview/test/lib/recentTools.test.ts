@@ -21,8 +21,8 @@ describe("pushRecentTool", () => {
   })
 
   it("moves an already-present href to the front instead of duplicating it", () => {
-    expect(pushRecentTool(["/tools", "/reason-editor", "/drills"], "/drills")).toEqual([
-      "/drills",
+    expect(pushRecentTool(["/tools", "/reason-editor", "/practice/drills"], "/practice/drills")).toEqual([
+      "/practice/drills",
       "/tools",
       "/reason-editor",
     ])
@@ -63,9 +63,9 @@ describe("parseRecentTools", () => {
   })
 
   it("filters out invalid hrefs while keeping valid ones", () => {
-    expect(parseRecentTools(JSON.stringify(["/tools", "javascript:alert(1)", "/drills"]))).toEqual([
+    expect(parseRecentTools(JSON.stringify(["/tools", "javascript:alert(1)", "/practice/drills"]))).toEqual([
       "/tools",
-      "/drills",
+      "/practice/drills",
     ])
   })
 
@@ -77,7 +77,7 @@ describe("parseRecentTools", () => {
 
 describe("serializeRecentTools", () => {
   it("serializes a non-empty list as JSON", () => {
-    expect(serializeRecentTools(["/tools", "/drills"])).toBe(JSON.stringify(["/tools", "/drills"]))
+    expect(serializeRecentTools(["/tools", "/practice/drills"])).toBe(JSON.stringify(["/tools", "/practice/drills"]))
   })
 
   it("serializes an empty list as null", () => {
@@ -88,8 +88,8 @@ describe("serializeRecentTools", () => {
 describe("applyRecentToolOp", () => {
   it("behaves identically to pushRecentTool", () => {
     const current = ["/tools", "/reason-editor"]
-    expect(applyRecentToolOp(current, { recordRecentTool: "/drills" })).toEqual(
-      pushRecentTool(current, "/drills"),
+    expect(applyRecentToolOp(current, { recordRecentTool: "/practice/drills" })).toEqual(
+      pushRecentTool(current, "/practice/drills"),
     )
   })
 
@@ -126,11 +126,11 @@ describe("normalizeRecentToolOpPatch", () => {
 
 describe("resolveRecentTools", () => {
   const reasonEditor = stubTool("/reason-editor", "Reason Editor")
-  const drills = stubTool("/drills", "Practice Drills")
+  const drills = stubTool("/practice/drills", "Practice Drills")
   const catalog = [reasonEditor, drills]
 
   it("resolves hrefs to their catalog tools, preserving recency order", () => {
-    expect(resolveRecentTools(["/drills", "/reason-editor"], catalog)).toEqual([drills, reasonEditor])
+    expect(resolveRecentTools(["/practice/drills", "/reason-editor"], catalog)).toEqual([drills, reasonEditor])
   })
 
   it("drops an href whose tool was renamed or removed from the catalog", () => {

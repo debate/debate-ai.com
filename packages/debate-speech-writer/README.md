@@ -49,7 +49,7 @@ non-trivial string with no unreplaced template placeholders, so an accidental tr
 during editing fails CI rather than silently degrading model output.
 
 `JudgeProfilesPanel` renders every persisted judge profile (built with `buildJudgeProfile`,
-saved with `saveJudgeProfile`) as a roster, mounted at `/judges` in the web app:
+saved with `saveJudgeProfile`) as a roster, mounted at `/practice/judges` in the web app:
 
 ```tsx
 import { JudgeProfilesPanel } from "debate-speech-writer"
@@ -62,7 +62,7 @@ materials, instructional documents, practice-round recordings) through `saveCoac
 lists every persisted material grouped by kind, and lets a coach ask the team coach AI a
 question — previewing which materials + grounded prompt it draws on via
 `findRelevantMaterialsFromStore`/`buildGroundedCoachPrompt`, then calling `requestTeamCoachAnswer`
-for a real, grounded answer — mounted at `/coach-materials` in the web app:
+for a real, grounded answer — mounted at `/coaching/materials` in the web app:
 
 ```tsx
 import { CoachMaterialsPanel } from "debate-speech-writer"

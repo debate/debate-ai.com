@@ -34,7 +34,7 @@ interface SectionHref {
  * happens to sit at `/videos`.
  *
  * The app dock's destinations used to be listed here too, for an "Apps" node
- * the tree no longer renders. Dropping them is what lets `/versus-ai` open the
+ * the tree no longer renders. Dropping them is what lets `/practice/versus-ai` open the
  * Practice section that actually lists it ("Debate Versus AI") instead of a
  * section with no links left to show. Two more lost their rows with them:
  * `/doc` ("Debate Docs") and `/reason-editor`, which no section lists now, so
@@ -42,6 +42,7 @@ interface SectionHref {
  */
 const SECTION_HREFS: SectionHref[] = [
   { sectionId: VIDEOS_SECTION_ID, href: "/videos" },
+  { sectionId: VIDEOS_SECTION_ID, href: "/lectures" },
   ...SIDEBAR_TOOL_SECTIONS.flatMap((section) =>
     section.tools.map((tool) => ({ sectionId: section.id, href: tool.href })),
   ),
@@ -49,11 +50,11 @@ const SECTION_HREFS: SectionHref[] = [
 
 /**
  * Returns the id of the sidebar section a route belongs to, or `null` when it
- * belongs to none — a dock destination in no tool section (`/cards`,
+ * belongs to none — a dock destination in no tool section (`/research/cards`,
  * `/debate`) lands there, and the tree simply opens nothing.
  *
  * The longest matching link wins, so a tool nested under another entry
- * (`/practice-round/setup` under `/practice-round`) opens the section that
+ * (`/practice/setup` under `/practice`) opens the section that
  * actually lists it.
  *
  * @param pathname - The current route.

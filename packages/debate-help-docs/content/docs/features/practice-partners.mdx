@@ -9,8 +9,8 @@ Volunteer to be challenged, volunteer to judge, or both, and say which
 formats, styles, speed, and level you're comfortable with. Then challenge
 anyone on the board to a virtual round.
 
-- **Route:** `/practice-partners`. Also the first panel in the Coach
-  Workspace's Practice section (`/coach?section=practice`).
+- **Route:** `/practice/partners`. Also the first panel in the Coach
+  Workspace's Practice section (`/coaching?section=practice`).
 - **Package:** `debate-webview` (UI, wire types, action rules) and
   `apps/debate-ai.com` (API, queries).
 - **API:** `GET /api/practice-partners`; `PUT /api/practice-partners/profile`;
@@ -59,7 +59,7 @@ was computed from. So if two judges pick up the same round at the same time,
 the second gets a 409 instead of overwriting the first.
 
 Each change creates a `practice_challenge` row in the existing notifications
-feed for everyone else in the round, linking back to `/practice-partners`.
+feed for everyone else in the round, linking back to `/practice/partners`.
 
 **Safety rules.** The board requires an account, and guest (anonymous)
 accounts can't volunteer or send challenges. A block from Contacts in either

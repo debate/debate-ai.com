@@ -133,7 +133,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "practiceRounds",
     idField: "roundId",
     label: "Practice Round Simulator",
-    href: "/practice-round",
+    href: "/practice",
     section: "Practice",
   },
   {
@@ -141,7 +141,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "preRoundBriefings",
     idField: "roundId",
     label: "Pre-Round Briefings",
-    href: "/briefings",
+    href: "/practice/briefings",
     section: "Practice",
   },
   {
@@ -149,7 +149,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "opponentTeamProfiles",
     idField: "teamId",
     label: "Opponent Team Profiles",
-    href: "/opponents",
+    href: "/practice/opponents",
     section: "Scouting and judging",
   },
   {
@@ -157,7 +157,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "opponentRoundRecords",
     idField: "id",
     label: "Opponent round records",
-    href: "/opponents",
+    href: "/practice/opponents",
     section: "Scouting and judging",
   },
   {
@@ -165,7 +165,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "judgeProfiles",
     idField: "judgeId",
     label: "Judge Profiles",
-    href: "/judges",
+    href: "/practice/judges",
     section: "Scouting and judging",
   },
   {
@@ -173,7 +173,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "judgeRoundRecords",
     idField: "id",
     label: "Judge round records",
-    href: "/judges",
+    href: "/practice/judges",
     section: "Scouting and judging",
   },
   {
@@ -181,7 +181,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "judgeParadigmSelections",
     idField: "roundId",
     label: "Judge Paradigms",
-    href: "/judge-decision",
+    href: "/practice/judge-decision",
     section: "Scouting and judging",
   },
   {
@@ -213,7 +213,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "prepNotes",
     idField: "id",
     label: "Prep Notes",
-    href: "/prep-notes",
+    href: "/practice/prep-notes",
     section: "Flowing and writing",
   },
   {
@@ -276,7 +276,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "coachConversation",
     idField: "id",
     label: "AI Coach Mode",
-    href: "/coaching",
+    href: "/coaching/ai-coach",
     section: "Coaching",
   },
   {
@@ -284,7 +284,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "coachingPrograms",
     idField: "id",
     label: "Coaching Programs",
-    href: "/coaching-programs",
+    href: "/coaching/programs",
     section: "Coaching",
   },
   {
@@ -292,7 +292,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "coachingSessionHistory",
     idField: "id",
     label: "Coach Workspace History",
-    href: "/coach",
+    href: "/coaching",
     section: "Coaching",
   },
   {
@@ -300,7 +300,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "coachingSessions",
     idField: "id",
     label: "AI Coach Mode",
-    href: "/coaching",
+    href: "/coaching/ai-coach",
     section: "Coaching",
   },
   {
@@ -308,7 +308,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "flowEdits",
     idField: "id",
     label: "Flow Edit Log",
-    href: "/coach",
+    href: "/coaching",
     section: "Coaching",
   },
   // — Practice —
@@ -317,7 +317,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "aiVersusRounds",
     idField: "roundId",
     label: "Debate Versus AI",
-    href: "/versus-ai",
+    href: "/practice/versus-ai",
     section: "Practice",
   },
   {
@@ -325,7 +325,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "vulnerabilityReports",
     idField: "roundId",
     label: "Vulnerability Reports",
-    href: "/outcomes",
+    href: "/coaching/outcomes",
     section: "Scouting and judging",
   },
   {
@@ -333,7 +333,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "opponentPersonaSelections",
     idField: "sessionId",
     label: "Opponent Personas",
-    href: "/versus-ai",
+    href: "/practice/versus-ai",
     section: "Scouting and judging",
   },
   {
@@ -341,7 +341,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "ownRoundHistory",
     idField: "id",
     label: "Your Round History",
-    href: "/practice-round",
+    href: "/practice",
     section: "Practice",
   },
   // — Research —
@@ -350,7 +350,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "evidenceLibraryEntries",
     idField: "id",
     label: "Evidence Library",
-    href: "/cards",
+    href: "/research/cards",
     section: "Research",
   },
   {
@@ -358,7 +358,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "cardScores",
     idField: "id",
     label: "Card Scores",
-    href: "/cards/reviews",
+    href: "/research/cards/reviews",
     section: "Research",
   },
   {
@@ -366,7 +366,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "cardScoreHistory",
     idField: "id",
     label: "Card Score History",
-    href: "/cards/reviews",
+    href: "/research/cards/reviews",
     section: "Research",
   },
   {
@@ -374,7 +374,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "aiCardAssessments",
     idField: "cardId",
     label: "AI Card Assessments",
-    href: "/cards/reviews",
+    href: "/research/cards/reviews",
     section: "Research",
   },
   {
@@ -382,7 +382,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "peerReviews",
     idField: "cardId",
     label: "Review Queue",
-    href: "/cards/reviews",
+    href: "/research/cards/reviews",
     section: "Research",
   },
   {
@@ -390,7 +390,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "contributions",
     idField: "id",
     label: "Contributions Feed",
-    href: "/cards/contributions",
+    href: "/research/cards/contributions",
     section: "Research",
   },
   {
@@ -398,7 +398,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "trackedArguments",
     idField: "id",
     label: "Argument Library",
-    href: "/cards",
+    href: "/research/cards",
     section: "Research",
   },
   {
@@ -406,7 +406,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "revisionHistory",
     idField: "id",
     label: "Card Revision History",
-    href: "/cards",
+    href: "/research/cards",
     section: "Research",
   },
   {
@@ -414,7 +414,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "reuseCheckHistory",
     idField: "id",
     label: "Card Reuse Checks",
-    href: "/cards",
+    href: "/research/cards",
     section: "Research",
   },
   {
@@ -422,7 +422,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "topicCoverageSnapshots",
     idField: "id",
     label: "Topic Coverage",
-    href: "/cards/coverage",
+    href: "/research/cards/coverage",
     section: "Research",
   },
   // — Team —
@@ -431,7 +431,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "brainstormIdeas",
     idField: "id",
     label: "Team Brainstorm Assist",
-    href: "/cards/brainstorm",
+    href: "/research/cards/brainstorm",
     section: "Team",
   },
   {
@@ -439,7 +439,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "prepNoteReplies",
     idField: "id",
     label: "Prep Note Replies",
-    href: "/prep-notes",
+    href: "/practice/prep-notes",
     section: "Flowing and writing",
   },
   {
@@ -447,7 +447,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "prepNoteNotifications",
     idField: "id",
     label: "Prep Note Notifications",
-    href: "/prep-notes",
+    href: "/practice/prep-notes",
     section: "Flowing and writing",
   },
   {
@@ -455,7 +455,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "prepRoomChecklist",
     idField: "id",
     label: "Collaboration Prep Room",
-    href: "/cards/prep-room",
+    href: "/research/cards/prep-room",
     section: "Team",
   },
   {
@@ -463,7 +463,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "sprintNotes",
     idField: "id",
     label: "Sprint Notes",
-    href: "/cards/prep-room",
+    href: "/research/cards/prep-room",
     section: "Team",
   },
   {
@@ -471,7 +471,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "sprintWhiteboardNotes",
     idField: "id",
     label: "Sprint Whiteboard",
-    href: "/cards/prep-room",
+    href: "/research/cards/prep-room",
     section: "Team",
   },
   {
@@ -479,7 +479,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "routedTaskQueues",
     idField: "topicId",
     label: "Task Inbox",
-    href: "/cards/inbox",
+    href: "/research/cards/inbox",
     section: "Team",
   },
   {
@@ -487,7 +487,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "pendingTaskVerifications",
     idField: "id",
     label: "Task Verification Queue",
-    href: "/cards/inbox",
+    href: "/research/cards/inbox",
     section: "Team",
   },
   {
@@ -495,7 +495,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "roundContributorFlows",
     idField: "contributorId",
     label: "Contributor Flows",
-    href: "/cards/progress-tracking",
+    href: "/coaching/progress",
     section: "Team",
   },
   {
@@ -503,7 +503,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "contributorAvailability",
     idField: "contributorId",
     label: "Contributor Availability",
-    href: "/cards/progress-tracking",
+    href: "/coaching/progress",
     section: "Team",
   },
   {
@@ -511,7 +511,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "completedResearchTasks",
     idField: "id",
     label: "Completed Research Tasks",
-    href: "/cards/progress-tracking",
+    href: "/coaching/progress",
     section: "Team",
   },
   {
@@ -519,7 +519,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "groupChallenges",
     idField: "id",
     label: "Group Challenges",
-    href: "/cards/leaderboard",
+    href: "/coaching/leaderboard",
     section: "Team",
   },
   {
@@ -527,7 +527,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "challengeWinEvents",
     idField: "id",
     label: "Group Challenge Win Events",
-    href: "/cards/leaderboard",
+    href: "/coaching/leaderboard",
     section: "Team",
   },
   {
@@ -535,22 +535,22 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "dailyQuestTemplates",
     idField: "id",
     label: "Daily Quests",
-    href: "/cards/leaderboard",
+    href: "/coaching/leaderboard",
     section: "Team",
   },
   {
     key: "dailyMissionResults",
     storageKey: "dailyMissionResults",
     idField: "id",
-    // The day-by-day mission-result history `/cards/streaks`' quest-streak
+    // The day-by-day mission-result history `/research/cards/streaks`' quest-streak
     // roster is computed from — `state/dailyMissionResults.ts`'s
     // `saveDailyMissionResult` now stamps a deterministic
-    // `${contributorId}::${dayKey}` id onto every record. `/cards/streaks`
+    // `${contributorId}::${dayKey}` id onto every record. `/research/cards/streaks`
     // isn't itself a registered sidebar destination (see
-    // `tool-record-sync-catalog.test.ts`), so this points at `/cards/leaderboard`
+    // `tool-record-sync-catalog.test.ts`), so this points at `/coaching/leaderboard`
     // like its `dailyQuestTemplates`/`groupChallenges` siblings.
     label: "Quest Streak History",
-    href: "/cards/leaderboard",
+    href: "/coaching/leaderboard",
     section: "Team",
   },
   {
@@ -558,7 +558,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "questTeams",
     idField: "id",
     label: "Quest Teams",
-    href: "/cards/leaderboard",
+    href: "/coaching/leaderboard",
     section: "Team",
   },
   {
@@ -566,7 +566,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "contributorAwardNominations",
     idField: "id",
     label: "Contributor Award Nominations",
-    href: "/cards/leaderboard",
+    href: "/coaching/leaderboard",
     section: "Team",
   },
   {
@@ -575,9 +575,9 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     idField: "id",
     // Judge-given awards (Most Improved, Best Speaker, …) —
     // `debate-contributor-progress/src/state/judgeAwards.ts`. They show on the
-    // debater's `/cards/leaderboard/{id}` page, so this points there.
+    // debater's `/coaching/leaderboard/{id}` page, so this points there.
     label: "Judge Awards",
-    href: "/cards/leaderboard",
+    href: "/coaching/leaderboard",
     section: "Team",
   },
   {
@@ -590,12 +590,12 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     // Without this, a contributor who has already been shown a badge's
     // celebration toast on one device sees it celebrated again as "new" on a
     // second device, since the baseline it's diffed against never followed
-    // them. `/cards/progress` (Progress Unlocks) isn't itself a registered
+    // them. `/research/cards/progress` (Progress Unlocks) isn't itself a registered
     // sidebar destination (see `tool-record-sync-catalog.test.ts`), so this
-    // points at `/cards/leaderboard` like its `dailyQuestTemplates`/
+    // points at `/coaching/leaderboard` like its `dailyQuestTemplates`/
     // `dailyMissionResults` siblings.
     label: "Progress Unlocks",
-    href: "/cards/leaderboard",
+    href: "/coaching/leaderboard",
     section: "Team",
   },
   {
@@ -603,7 +603,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "dailyBestCardAnnouncements",
     idField: "dayKey",
     label: "Daily Best Card Announcements",
-    href: "/cards/leaderboard",
+    href: "/coaching/leaderboard",
     section: "Team",
   },
   {
@@ -611,7 +611,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "contributorAwardAnnouncements",
     idField: "dayKey",
     label: "Contributor Award Announcements",
-    href: "/cards/leaderboard",
+    href: "/coaching/leaderboard",
     section: "Team",
   },
   // — Videos —
