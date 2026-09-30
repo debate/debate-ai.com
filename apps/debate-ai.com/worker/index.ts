@@ -16,6 +16,7 @@ import { purgeOldReuseCheckLogRows } from "../lib/evidence-reuse-check/purge-reu
 import { DB_BACKUP_CRON, runWeeklyDbBackup } from "../lib/admin/weekly-db-backup";
 import { handleTurnstileGate, type TurnstileEnv } from "../lib/turnstile";
 import { handleCanonicalHostRedirect, handleCategoryPathRedirect } from "../lib/redirects";
+import { setSiteOriginReader } from "../lib/seo/site-url";
 import { youtubeWatchRedirect } from "../lib/youtube/video-redirect";
 import { getAuth } from "../lib/auth";
 import { normalizeRoomId } from "debate-round/src/webcam/room-protocol";
@@ -55,6 +56,13 @@ interface Env extends TurnstileEnv {
   AUTH_LINKEDIN_SECRET?: string;
   RESEND_API_KEY?: string;
   NEXT_PUBLIC_BASE_URL?: string;
+  // Canonical origin for SEO metadata — /sitemap.xml's `<loc>`, the
+  // `robots.txt` `Sitemap:` line, and every page's `metadataBase`. Unset in
+  // production, where lib/seo/site-url.ts falls back to CANONICAL_HOST. Set it
+  // (full origin or bare host) to point a preview or staging deployment at its
+  // own domain instead. Consulted in the order listed in
+  // lib/seo/site-url.ts's SITE_ORIGIN_VARS.
+  CANONICAL_SITE_URL?: string;
 }
 
 interface ExecutionContext {
@@ -75,6 +83,15 @@ interface ScheduledEvent {
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    // Publish the bindings to the SEO origin lookup before anything else
+    // reads it. `/sitemap.xml`, `/robots.txt` and every page's
+    // `metadataBase` resolve the canonical domain through
+    // `lib/seo/site-url.ts`, and this is the only place `env` is in scope
+    // before `runWithContext` below publishes the request context.
+    setSiteOriginReader(
+      (name) => (env as unknown as Record<string, string | undefined>)[name],
+    );
+
     // Canonical host, ahead of everything else: a request that arrived on the
     // `ebate.app` apex (or its `www.` form) is sent to `d.ebate.app` with its
     // path and query intact, before any work is done for it. Returns null for
@@ -162,6 +179,14 @@ export default {
   // A second cron (DB_BACKUP_CRON, Sundays) runs only the weekly content
   // backup to R2 — see lib/admin/weekly-db-backup.ts.
   async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
+    // The jobs below never render a page, so nothing here needs the canonical
+    // origin today — but a cron that logs a URL, or one that grows into sending
+    // a notification, would otherwise silently fall back to the production
+    // default. Publishing the bindings costs one call and keeps that impossible.
+    setSiteOriginReader(
+      (name) => (env as unknown as Record<string, string | undefined>)[name],
+    );
+
     if (event.cron === DB_BACKUP_CRON) {
       ctx.waitUntil(
         runWithPrimaryD1Session(() => runWithContext(env, () => runWeeklyDbBackup())).catch((error) => {

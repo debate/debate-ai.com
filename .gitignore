@@ -56,8 +56,14 @@ open-when-ready.log
 # `file:./data/db.sqlite` (drizzle.config.ts, lib/database/libsql.ts). Generated
 # locally by `bun run db:migrate:d1`; D1 is the real database.
 apps/debate-ai.com/data/
-# Generated video seed SQL (regenerate with `bun run db:seed:videos`)
-apps/debate-ai.com/drizzle/seed/
+# Database migrations (apps/debate-ai.com/drizzle). NOTE: `db:migrate:d1`, which
+# `npm run deploy` runs before every build, applies `drizzle/*.sql` to
+# production D1 from this folder, and `drizzle/seed/videos-seed.sql` is read by
+# `db:seed:videos:d1`. Ignoring it does not stop those scripts reading local
+# files, but nothing in the repo will carry the migration history that rebuilds
+# a D1 database from scratch. Re-track with:
+#   git add -f apps/debate-ai.com/drizzle
+apps/debate-ai.com/drizzle/
 
 # debate-api-client: types generated from debate-openapi.yml (regenerate with `bun run generate`)
 packages/debate-api-client/src/generated/

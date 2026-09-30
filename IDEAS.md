@@ -48,6 +48,7 @@
 
 1. ability to challenge legends - and speculators bet
 2. random pair webcam debate matching on mutual pref topics
+3. human feedback on redos and badges and practicle drills against 
 
 ---
 

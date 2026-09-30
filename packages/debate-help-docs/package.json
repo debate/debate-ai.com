@@ -16,6 +16,7 @@
     "./routes/llms-full-route": "./routes/llms-full-route.ts",
     "./routes/llms-mdx-route": "./routes/llms-mdx-route.ts",
     "./vite": "./vite.mjs",
+    "./lib/fumadocs/sitemap-helper": "./lib/fumadocs/sitemap-helper.ts",
     "./package.json": "./package.json"
   },
   "scripts": {

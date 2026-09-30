@@ -19,7 +19,6 @@ import { useMemo } from "react"
 
 import { ThemeProvider } from "../components/theme-provider"
 import { AppShell } from "../components/layout/AppShell"
-import { LoadingProvider } from "../components/layout/LoadingProvider"
 import { APP_ROUTES, type AppRoute } from "../routes"
 import { AppRouter } from "./AppRouter"
 import { loadWebFonts } from "../styles/web-fonts"
@@ -58,7 +57,6 @@ export function DebateApp({ extraRoutes = [] }: DebateAppProps) {
   const routes = useMemo(() => [...extraRoutes, ...APP_ROUTES], [extraRoutes])
   return (
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
-      <LoadingProvider />
       <AppShell>
         <AppRouter routes={routes} />
       </AppShell>

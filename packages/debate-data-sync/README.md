@@ -1,4 +1,3 @@
-<!-- template-git-repo:badges:start -->
 <p align="center">
     <a href="https://debate-ai.com/docs"><img src="https://img.shields.io/badge/Docs-blue?logo=ReadTheDocs&logoColor=white" alt="Documentation" /></a>
     <br />
