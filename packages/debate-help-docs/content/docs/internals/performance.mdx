@@ -1,0 +1,156 @@
+---
+title: "Performance: what is big"
+description: "Measured page weight and Worker memory per route, what was lazy-loaded, and what is still heavy."
+---
+
+# Performance: what is big
+
+A measured inventory of what makes debate-ai.com slow to load: the JavaScript,
+CSS and data each page downloads, and the memory each route costs the Worker.
+It records what has already been cut, and lists what is still heavy so the
+next person knows where the bytes are.
+
+Measured on 2026-09-30 against a production build (`vinext build`, then
+`vinext start`) of `master`. Sizes are uncompressed bytes as the browser
+received them, from a cold cache. The absolute numbers will drift; the ranking
+is what matters.
+
+## Page weight
+
+| Page | JS before | JS after | Biggest single item |
+| --- | --- | --- | --- |
+| `/doc` | 10.68 MB | 9.21 MB | `Workspace` chunk, 6.2 MB |
+| `/debate` | 2.39 MB | 2.38 MB | `DebateRoundPanel` chunk, 525 kB |
+| `/docs` | 1.95 MB | 1.83 MB | Fumadocs + parse5 (`lib` chunk), 212 kB |
+| `/videos` | 1.81 MB | 1.81 MB | video index fetch, 928 kB (data, not JS) |
+| `/timer`, `/search`, `/practice` | 1.39 MB | 1.27 MB | framework + vinext runtime |
+
+"Before" is `master` at the start of this work. "After" includes the three
+changes below.
+
+### What every page pays
+
+These load on every app route, before any feature code:
+
+| Item | Size | What it is |
+| --- | --- | --- |
+| `layout.css` | 329 kB | Tailwind build for the whole app. Was 3.85 MB before KaTeX fonts and the reason-editor CSS were moved to `/doc` only. |
+| `index` chunk | 285 kB | vinext's client router (211 kB) plus the RSC runtime. |
+| `framework` chunk | 219 kB | React and React DOM. |
+| `vinext` chunk | 146 kB | vinext's navigation and link runtime. |
+| HTML document | 50–180 kB | Server-rendered markup plus the inlined RSC payload. |
+| `/api/videos/index` | 928 kB | The whole video library, fetched once the page is idle and cached in `localStorage` (`VideoIndexPrefetcher` in `AppShell`). It does not block first paint, but it competes for bandwidth on a slow connection and is written to `localStorage` on the main thread. |
+
+About 140 to 200 script requests per page are normal here: the app is split
+into many small shared chunks.
+
+### What was lazy-loaded in this pass
+
+- **The qwksearch settings panes** (`components/qwksearch/Settings/SettingsModal.tsx`
+  in `debate-webview`). They were bundled into the `/doc` `Providers` chunk,
+  about 670 kB, 532 kB of it the MCP section, which imports the whole
+  OpenConnector provider index as JSON. Nobody sees them until they open
+  settings, so `SettingsContent` is now `React.lazy` and loads on first open.
+- **Highlight.js grammars in the reason editor.** `react-reason-editor`
+  registers every grammar (`import { all } from "lowlight"`), about 190
+  languages and ~870 kB. A Vite plugin in `apps/debate-ai.com/vite.config.ts`
+  (`reasonEditorCommonGrammars`) rewrites that one import to lowlight's
+  `common` set of ~37 languages. Code blocks in other languages still render,
+  auto-highlighted. `/doc`'s `Workspace` chunk went from 6.96 MB to 6.21 MB.
+- **framer-motion on every page.** The app dock (`lib/ui/layout/dock.tsx` in
+  `debate-webview`) was the only thing on every page that used framer-motion,
+  and it pulled the library's 124 kB runtime into every load for the hover
+  magnification. The magnification is now a small observable plus a CSS
+  transition, with no framer-motion import. Pages whose own features still
+  animate with framer-motion (`/videos`, `/debate`, the flow editor) load it
+  with those features.
+
+- **Dock switches.** Every dock destination renders as React in the one
+  app document; nothing is framed. Hovering an icon already prefetched its
+  route; now the dock also prefetches the other destinations (except `/doc`)
+  one at a time in idle time after load, so a first switch on a touch screen
+  or a quick click is a render from cache. It is off on data-saver and 2G
+  connections. See `lib/nav/dock-idle-prefetch.ts` in `debate-webview`.
+
+Earlier passes (PR #1040 and commit `ca35d41`) already lazy-load the
+Recharts statistics views, the flow editor's RFD drawer (CodeMirror), and the
+`/doc` workspace itself, and moved the reason-editor CSS and web fonts off the
+render path.
+
+### Still heavy on the client
+
+In rough order of how much they cost a real visitor:
+
+1. **`/doc` Workspace chunk, 6.2 MB.** Almost all of it is
+   `react-reason-editor` (4.8 MB of its prebuilt `dist`, including a copy of
+   Slate/Plate, what looks like two copies of the acorn parser, and 513 kB of
+   emoji data),
+   its sidebar (452 kB) and `easydrawer` (369 kB). `ReasonDocs` is the frame
+   for both the docs view and the chat view, so it cannot be deferred from
+   this repo. Splitting it means changing `react-reason-editor` to load its
+   emoji picker, drawing canvas, and export tools with dynamic `import()`.
+   The `Workspace.css` stylesheet adds 646 kB.
+2. **The video index, 928 kB on every page.** It makes the video grid
+   instant, but a visitor who never opens `/videos` still downloads it. Moving
+   `VideoIndexPrefetcher` from `AppShell` to the video routes would remove it
+   from every other page, at the cost of the first `/videos` visit fetching it
+   then.
+3. **`DebateRoundPanel`, 525 kB** on `/debate`, plus `simplepeer` (97 kB),
+   which is only needed once a peer connection starts.
+4. **Large chunks that already load on demand.** These are not on any
+   first load, but they are what a user waits for when they click into the
+   feature: Moonshine speech-to-text (2.2 MB), Kokoro text-to-speech (2.2 MB),
+   `html-to-docx` (1.57 MB), `HotGrid` (1.5 MB), the admin dashboard
+   (1.0 MB), `exceljs` (929 kB), the dash.js video player (816 kB), `tinyld`
+   language detection (590 kB), HLS (503 kB), Cytoscape (435 kB),
+   `docx-to-html` (426 kB), Mixpanel (425 kB) and KaTeX (259 kB).
+
+## Worker memory
+
+Cloudflare Workers cap an isolate at 128 MB, and the site has run out. These
+are the node process's resident memory before and after one cold request to
+each route, on a server that had just started (about 227 MB at rest locally;
+the Worker's own baseline is smaller, so compare deltas, not totals).
+
+| Route | Added by one request |
+| --- | --- |
+| `/docs/api/docs-search` | +76 MB |
+| `/docs/llms-full.txt` | +64 MB |
+| `/docs`, `/docs/features` | +18 to +19 MB |
+| `/api/videos/index` | +6 MB |
+| `/videos` | +1 MB |
+| `/doc`, `/debate`, `/` | 0 MB |
+
+- **Docs search and `llms-full.txt` are the two expensive routes.** Each
+  loads and processes every docs page's MDX on the first request an isolate
+  sees (`routes/search-route.ts` builds the whole Orama index;
+  `routes/llms-full-route.ts` renders every page to text). Either one alone is
+  over half the isolate's budget. Prebuilding both at build time into static
+  files would take them to near zero. The search dialog only calls
+  `docs-search` when it is opened, so this is not paid on a normal page view.
+- **A docs page costs about +18 MB**, down from +87 MB since the docs
+  collection became `async: true` in `source.config.ts` and a page's MDX
+  loads only when that page is rendered.
+- **`/doc` renders only on the client** (`routes/doc/ResearchAgentEmbed.tsx`),
+  so it costs the server nothing.
+- **What the Worker loads at startup.** The server bundle's startup set is
+  about 3 MB of code. The largest single piece is the auth chunk (908 kB).
+  Two data modules are also large: the human-names list (900 kB) and the
+  college rounds data (352 kB).
+
+## How to measure again
+
+1. `git submodule update --init --recursive`. Without it the build fails to
+   resolve `debate-editor/engine`.
+2. `bun install`, then in `apps/debate-ai.com`: `bunx vinext build` and
+   `bunx vinext start --port 4300`.
+3. **Page weight.** Load each page in Playwright with a fresh context, wait
+   for network idle, and sum the response bodies by resource type. Chromium is
+   at `/opt/pw-browsers/chromium` in the cloud containers.
+4. **What is inside a chunk.** Add `sourcemap: true` next to
+   `assetsInlineLimit` in `apps/debate-ai.com/vite.config.ts`, rebuild, and
+   attribute each chunk's bytes to its source files through the `.map`.
+   Do not commit that line.
+5. **Worker memory.** Start a fresh server per route, read the node
+   process's RSS, make one request, wait a few seconds, and read it again.
+   Restarting between routes keeps one route's caches from hiding another's.

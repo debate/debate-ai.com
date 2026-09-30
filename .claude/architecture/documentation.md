@@ -33,7 +33,7 @@ build, no static export and no `public/docs` copy.
   bare there (`isDocsPath`), and the docs load their own Tailwind build
   (`styles/docs.css`, imported by the docs root layout, so only on `/docs`).
   Moving between `/docs` and the rest of the app is always a full page load —
-  `/docs` stays in `NON_ROUTER_PREFIXES` — so that stylesheet never lingers on
+  `docsExitTarget` and `AppShell` force one — so that stylesheet never lingers on
   an app page.
 - **It is not behind the Turnstile gate** — `/docs` is on the exempt list in
   `lib/turnstile/request-filter.ts`, as it was when it was static assets.

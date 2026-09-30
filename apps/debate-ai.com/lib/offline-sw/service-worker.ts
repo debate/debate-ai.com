@@ -140,23 +140,6 @@ function isSpeculativeRequest(request: Request): boolean {
   return request.destination === "document" && request.mode !== "navigate";
 }
 
-/**
- * A dock destination loading into the app frame (`AppFrameSurface` sets
- * `?embed=1` on every frame's `src`).
- *
- * These are served stale-while-revalidate: a frame that has been loaded
- * before comes straight out of this build's cache — so a reload, or a frame
- * mounted again after one, paints at once instead of waiting on the server —
- * and the network copy refreshes the entry in the background for next time.
- * Reads are scoped to `CACHE_NAME` (see `matchInCache`), so a cached frame is
- * always from the build that is running and can never name chunks a deploy
- * has since removed; a new build starts with an empty cache and goes to the
- * network first.
- */
-function isFramedDocumentRequest(request: Request, url: URL): boolean {
-  return request.mode === "navigate" && url.searchParams.get("embed") === "1";
-}
-
 function isNavigationRequest(request: Request): boolean {
   return request.mode === "navigate" ||
          (request.method === 'GET' && request.headers.get("accept")?.includes("text/html") === true);
@@ -236,27 +219,6 @@ async function onFetch(event: FetchEvent): Promise<Response> {
   // the worker swaps mid-load (Chrome warns: "resource mismatch").
   if (isSpeculativeRequest(event.request)) {
     return fetch(event.request);
-  }
-
-  // Stale-while-revalidate for framed dock destinations — see
-  // `isFramedDocumentRequest`.
-  if (isFramedDocumentRequest(event.request, url)) {
-    const cachedResponse = await matchInCache(event.request);
-    const refresh = fetch(event.request).then(async (networkResponse) => {
-      if (networkResponse.ok) await putInCache(event.request, networkResponse.clone());
-      return networkResponse;
-    });
-    if (cachedResponse) {
-      // Keep the worker alive for the refresh; a failed one just leaves the
-      // cached copy in place.
-      event.waitUntil(refresh.catch(() => undefined));
-      return cachedResponse;
-    }
-    try {
-      return await refresh;
-    } catch (error) {
-      return networkError(event.request, error);
-    }
   }
 
   // Network-first for documents, RSC payloads and API routes (fresh data when

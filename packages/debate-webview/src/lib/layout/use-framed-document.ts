@@ -1,19 +1,14 @@
 "use client"
 
 /**
- * @fileoverview "Is this document running inside the app shell's frame?"
+ * @fileoverview "Is this document running inside someone else's frame?"
  *
- * The shell keeps the dock, the tool sidebar and the persistent player in the
- * top document and loads each dock destination into a same-origin frame
- * beneath them (see `components/layout/AppFrameProvider.tsx`). Anything that
- * belongs to the shell has to know not to render a second copy of itself
- * inside that frame.
- *
- * Deliberately not read from the `?embed=1` marker on the frame's URL:
- * `useSearchParams` this high in the tree would opt the whole app out of
- * static rendering, and the marker is lost the moment the framed page
- * navigates within itself. The frame relationship survives both. A
- * cross-origin parent throws on access, which can only mean we are framed.
+ * The app renders every page, dock destinations included, as React in one
+ * document; it never frames itself. But another page can frame it (an embed
+ * on a partner site, a browser extension panel), and then the app should
+ * render only the page: no dock, sidebar or player of its own inside that
+ * frame. A cross-origin parent throws on access, which can only mean we are
+ * framed.
  *
  * Returns `false` on the server and for the first client render, so markup
  * matches on hydration; the pre-paint script in the root layout sets

@@ -3,6 +3,7 @@
   "description": "Engineering notes for debate-ai.com tool pages.",
   "icon": "Cog",
   "pages": [
+    "performance",
     "tool-data-sync",
     "quest-streaks",
     "on-page-card-reuse-search",

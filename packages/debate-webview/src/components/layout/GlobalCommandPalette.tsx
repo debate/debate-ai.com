@@ -17,9 +17,9 @@
  * system already share (`app/tools/tool-groups.ts`'s `ALL_TOOLS`), so a
  * tool typed here, starred on `/tools`, or linked from the editor's
  * Workspace menu all resolve to the one list. Mounted once per document by
- * {@link AppShell} (both the top-level shell and each framed dock
- * destination, matching {@link ToolRecordSyncProvider}'s reach), so the
- * shortcut works whichever document currently has focus — except on
+ * {@link AppShell} (in both its branches, matching
+ * {@link ToolRecordSyncProvider}'s reach), so the shortcut works whether or
+ * not another site has framed the app — except on
  * `/reason-editor`, where the CardMirror engine's own richer palette already
  * owns it.
  *
