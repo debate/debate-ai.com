@@ -8,7 +8,7 @@ Recognizes the top contributor in each contribution category by total
 helpfulness score within that category, and lets a day's standings be
 frozen as an official "announced" result.
 
-- **Route:** `/cards/awards`
+- **Route:** `/research/cards/awards`
 - **Package:** `debate-card-search`
 
 ## What it shows
@@ -36,5 +36,5 @@ state/contributorAwardAnnouncements.ts
 - Frozen award announcements sync to a signed-in user's account as the
   `contributorAwardAnnouncements` collection, alongside nominations
   (`contributorAwardNominations`) — see
-  [Tool Data Sync](../internals/tool-data-sync.mdx) — but still per-user,
+  Tool Data Sync — but still per-user,
   not a shared team resource.

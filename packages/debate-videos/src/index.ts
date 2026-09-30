@@ -163,6 +163,7 @@ export {
 export {
   SIDEBAR_VIDEO_LINKS,
   SIDEBAR_VIDEO_LINKS_BY_ID,
+  VIDEO_ALL_LINK,
   VIDEO_COLLEGE_LINK,
   VIDEO_FORMAT_LINKS,
   VIDEO_LIBRARY_LINKS,
@@ -184,6 +185,8 @@ export {
   hostsOwnSidebarDock,
   hasEmbeddedDock,
   isGenericToolSidebarRoute,
+  isVideoLibraryPath,
+  VIDEO_LIBRARY_HREFS,
 } from "./components/category-gallery/sidebar-routes";
 export { Footer as ToolSidebarFooter } from "./ui/layout/footer";
 export {
@@ -192,7 +195,6 @@ export {
   useCategoryDockState,
 } from "./context/category-dock-context";
 export { useVideoPlayerStore, sendYouTubeCommand, videoPlayerIframeRef } from "./state/videoPlayerStore";
-export { VideoPlayerFrameBridge } from "./state/videoPlayerFrameBridge";
 export { TopPickBadge, type TopPickBadgeProps } from "./components/video-card/TopPickBadge";
 export {
   TOP_PICK_BADGES,

@@ -4,7 +4,7 @@ import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHead
 export default function CardsLevelPage() {
   return (
     <ToolPage>
-      <ToolPageHeader href="/cards/level" backHref="/cards" backLabel="shared cards" guide="research-collaboration" />
+      <ToolPageHeader href="/practice/level" backHref="/research/cards" backLabel="shared cards" guide="research-collaboration" />
       <DebaterLevelPanel />
     </ToolPage>
   )

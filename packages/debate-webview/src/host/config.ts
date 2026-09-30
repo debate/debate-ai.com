@@ -5,9 +5,6 @@
  * and inside other hosts such as the browser extension's Options page. A few
  * things the website does are only possible on its own origin:
  *
- * - **Frames.** The dock loads each destination into a same-origin `<iframe>`
- *   of the site's own URL (`AppFrameProvider`). An extension page has no
- *   server behind its origin to frame.
  * - **Google One Tap** loads Google's script into the page, which an MV3
  *   extension page's CSP refuses.
  * - **The offline service worker** is served from the site's root.
@@ -24,8 +21,6 @@
  */
 
 export interface HostConfig {
-  /** Load dock destinations into same-origin frames. Web only. */
-  framing: boolean
   /** Show Google One Tap. Needs Google's script, so web only. */
   oneTap: boolean
   /** Register the offline service worker. Web only. */
@@ -44,7 +39,6 @@ export interface HostConfig {
 }
 
 const WEB_DEFAULTS: HostConfig = {
-  framing: true,
   oneTap: true,
   serviceWorker: true,
 }

@@ -6,11 +6,11 @@ import { ALL_TOOLS } from "../../../src/routes/tools/tool-groups";
 
 describe("ToolPageHeader", () => {
   it("renders a collapsed 'What this tool does' disclosure from the catalog's highlights", () => {
-    const drills = ALL_TOOLS.find((tool) => tool.href === "/drills")!;
+    const drills = ALL_TOOLS.find((tool) => tool.href === "/practice/drills")!;
     expect(drills.highlights && drills.highlights.length > 0).toBe(true);
 
     const html = renderToStaticMarkup(
-      <ToolPageHeader href="/drills" backHref="/debate" backLabel="round workspace" />,
+      <ToolPageHeader href="/practice/drills" backHref="/debate" backLabel="round workspace" />,
     );
 
     expect(html).toContain("What this tool does");
@@ -36,7 +36,7 @@ describe("ToolPageHeader", () => {
   it("lets a caller override the resolved highlights", () => {
     const html = renderToStaticMarkup(
       <ToolPageHeader
-        href="/drills"
+        href="/practice/drills"
         backHref="/debate"
         backLabel="round workspace"
         highlights={["Custom highlight one", "Custom highlight two"]}
@@ -49,7 +49,7 @@ describe("ToolPageHeader", () => {
 
   it("lets a caller suppress the disclosure by passing an empty highlights array", () => {
     const html = renderToStaticMarkup(
-      <ToolPageHeader href="/drills" backHref="/debate" backLabel="round workspace" highlights={[]} />,
+      <ToolPageHeader href="/practice/drills" backHref="/debate" backLabel="round workspace" highlights={[]} />,
     );
 
     expect(html).not.toContain("What this tool does");

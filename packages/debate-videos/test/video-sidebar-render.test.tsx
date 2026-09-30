@@ -256,7 +256,7 @@ describe("the sidebar's heading structure", () => {
     // `tool-nav-tree-sections.test.tsx` pins which section they belong to.
     const html = renderSidebar();
     expect(html).toContain("Glossary of Terms");
-    expect(html).toContain("/videos/dictionary");
+    expect(html).toContain("/practice/glossary");
   });
 });
 

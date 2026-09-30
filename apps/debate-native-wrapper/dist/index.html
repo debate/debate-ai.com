@@ -7,10 +7,19 @@
     <style>
       html, body { height: 100%; margin: 0; background: #000; overflow: hidden; }
       video { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; }
+      #settings {
+        position: fixed; right: 16px; bottom: 16px; z-index: 1;
+        width: 40px; height: 40px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        color: #fff; background: rgba(255, 255, 255, 0.12); font: 22px/1 sans-serif;
+        text-decoration: none; opacity: 0.6;
+      }
+      #settings:hover, #settings:focus-visible { opacity: 1; }
     </style>
     <!--
       Written by scripts/configure.mjs from the active profile: sets
-      window.__WRAPPER_APP_URL__ to the site this splash hands off to.
+      window.__WRAPPER_APP_URL__ and the profile's sources this splash
+      chooses between.
     -->
     <script src="splash-config.js"></script>
   </head>
@@ -20,30 +29,80 @@
       so this page and splash.mp4 ship inside the app bundle and play
       instantly (and offline) while the site warms up in the background.
       When the video ends — or fails, or is clicked, or runs long — the
-      window navigates to the configured site.
+      window navigates to the source chosen in settings.html.
     -->
     <video id="splash" src="splash.mp4" autoplay muted playsinline preload="auto"></video>
+    <!-- Where to load from (live site, beta site, offline build): see settings.html. -->
+    <a id="settings" href="settings.html" title="Choose where the app loads from" aria-label="Settings">&#9881;</a>
     <script>
       (function () {
-        var appUrl = window.__WRAPPER_APP_URL__ || "https://debate-ai.com";
+        var fallbackUrl = window.__WRAPPER_APP_URL__ || "https://debate-ai.com";
+        var sources = window.__WRAPPER_SOURCES__ || [];
+        var invoke = window.__TAURI__ && window.__TAURI__.core && window.__TAURI__.core.invoke;
+        // Coming back from settings.html or the tray's "Load From" menu:
+        // the video has already been seen, go straight to the source.
+        var skipSplash = window.location.hash === "#skip-splash";
+
+        function isBundled(url) {
+          return url.indexOf("://") === -1;
+        }
+
+        // The chosen source's URL, from the Rust side's saved setting
+        // (src-tauri/src/app_source.rs), or the profile default without it.
+        function chosenUrl() {
+          function pick(id, options) {
+            for (var i = 0; i < options.length; i++) {
+              if (options[i].id === id) return options[i].url;
+            }
+            return fallbackUrl;
+          }
+          if (!invoke) return Promise.resolve(pick(window.__WRAPPER_DEFAULT_SOURCE__, sources));
+          return invoke("get_app_source").then(
+            function (info) { return pick(info.current, info.options); },
+            function () { return fallbackUrl; }
+          );
+        }
+
+        // The offline build is optional (`npm run build:offline`); an app
+        // bundled without it opens the site instead of a missing page.
+        var target = chosenUrl().then(function (url) {
+          if (!isBundled(url)) return url;
+          return fetch(url, { method: "HEAD" }).then(
+            function (res) { return res.ok ? url : fallbackUrl; },
+            function () { return fallbackUrl; }
+          );
+        });
 
         // Warm the webview's HTTP cache for the site while the video plays.
-        var prefetch = document.createElement("link");
-        prefetch.rel = "prefetch";
-        prefetch.href = appUrl;
-        document.head.appendChild(prefetch);
+        target.then(function (url) {
+          if (isBundled(url)) return;
+          var prefetch = document.createElement("link");
+          prefetch.rel = "prefetch";
+          prefetch.href = url;
+          document.head.appendChild(prefetch);
+        });
 
         var done = false;
         function launch() {
           if (done) return;
           done = true;
-          window.location.replace(appUrl);
+          target.then(function (url) { window.location.replace(url); });
         }
 
         var video = document.getElementById("splash");
+        if (skipSplash) {
+          video.remove();
+          launch();
+          return;
+        }
         video.addEventListener("ended", launch);
         video.addEventListener("error", launch);
         document.addEventListener("click", launch);
+        document.getElementById("settings").addEventListener("click", function (event) {
+          // Opening settings is not "skip the video, go to the app".
+          event.stopPropagation();
+          done = true;
+        });
         // The clip is ~5s; never hold the user on the splash much longer.
         setTimeout(launch, 7000);
         var played = video.play();

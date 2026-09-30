@@ -5,7 +5,7 @@ import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHead
 export default function CardsQuestsPage() {
   return (
     <ToolPage>
-      <ToolPageHeader href="/cards/quests" backHref="/cards" backLabel="shared cards" guide="research-collaboration" />
+      <ToolPageHeader href="/research/cards/quests" backHref="/research/cards" backLabel="shared cards" guide="research-collaboration" />
       <Suspense>
         <DailyQuestsWithIdentity />
       </Suspense>

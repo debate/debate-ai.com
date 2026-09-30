@@ -29,11 +29,11 @@ describe('recordWorkspaceVisit', () => {
 
   it('moves a repeat visit to the front instead of duplicating it', () => {
     stubFetchOk();
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(['/coach', '/research', '/drills']));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(['/coaching', '/research', '/practice/drills']));
 
     recordWorkspaceVisit('/research');
 
-    expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!)).toEqual(['/research', '/coach', '/drills']);
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!)).toEqual(['/research', '/coaching', '/practice/drills']);
   });
 
   it('caps the stored list at 5 entries', () => {
@@ -50,7 +50,7 @@ describe('recordWorkspaceVisit', () => {
 
   it('is a no-op write when the href is already most recent', () => {
     stubFetchOk();
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(['/research', '/coach']));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(['/research', '/coaching']));
     const setItemSpy = vi.spyOn(Storage.prototype, 'setItem');
 
     recordWorkspaceVisit('/research');

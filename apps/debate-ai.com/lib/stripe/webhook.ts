@@ -5,7 +5,7 @@
  * locally. See https://docs.stripe.com/webhooks#verify-manually.
  */
 
-import { planForPrice, type PlanId } from "./plans";
+import { planForPrice, type PlanId } from "debate-webview/lib/stripe/plans";
 
 /** Stripe's own default: reject signatures older than five minutes (replays). */
 export const DEFAULT_TOLERANCE_SECONDS = 300;

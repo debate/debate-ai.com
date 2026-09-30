@@ -1,6 +1,6 @@
 /**
  * @fileoverview Shared visual primitives for the marketing-grade surfaces
- * (currently `/features`).
+ * (currently `/practice/features`).
  *
  * Ported from qwksearch-research-agent's `components/features/effects.tsx`:
  * the same scroll-reveal, cursor spotlight, aurora backdrop, marquee, and

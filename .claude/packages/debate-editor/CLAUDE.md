@@ -54,7 +54,7 @@ doesn't have: the React shell, ribbon tabs, sync clients). See the README's
 ## Where it is mounted
 
 The site's speech-doc surfaces and `/reason-editor`. Recent history shows
-`/cards` and `/reason-editor` are the two routes that break together when this
+`/research/cards` and `/reason-editor` are the two routes that break together when this
 package regresses — check both.
 
 Document input arrives from `debate-card-parser`; treat it as untrusted.

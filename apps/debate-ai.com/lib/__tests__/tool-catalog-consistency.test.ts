@@ -8,9 +8,9 @@
  * still can't import it and so are kept in sync by hand instead:
  *
  * - `debate-feature-catalog`'s `APP_FEATURES` — a different page
- *   (`/features`) with its own curated, differently-voiced copy per entry,
+ *   (`/practice/features`) with its own curated, differently-voiced copy per entry,
  *   grouped into a different category scheme. Recombining the two into one
- *   data source would mean either forcing `/features`'s marketing copy to
+ *   data source would mean either forcing `/practice/features`'s marketing copy to
  *   read like `/tools`'s functional grid or vice versa — out of scope for a
  *   de-duplication fix (see the GitHub issue this closes). What *can* be
  *   shared without a copy rewrite is the route list itself.
@@ -20,7 +20,7 @@
  *   file's own header comment.
  *
  * Before this test, a tool added to `ALL_TOOLS` and nowhere else silently
- * reached `/tools`, favorites, and the command palette but not `/features`
+ * reached `/tools`, favorites, and the command palette but not `/practice/features`
  * or the editor's Workspace menu, with no error anywhere (the exact gap
  * `command-palette.mdx`'s Known gaps calls "a fourth hand-maintained tool
  * list"). This file is a test-only relative import into `debate-editor`'s
@@ -48,14 +48,14 @@ import { APP_FEATURES } from "debate-feature-catalog/src/feature-catalog"
 import { WORKSPACE_LINKS } from "../../../../packages/debate-editor/src/editor/workspace-links"
 
 /**
- * `/tools` entries that intentionally have no `/features` counterpart — a
+ * `/tools` entries that intentionally have no `/practice/features` counterpart — a
  * companion guide page bundled under the Mobile Setup group, not a distinct
  * user-facing surface.
  */
 const FEATURES_EXCLUDE_FROM_TOOLS = new Set(["/tools/mobile-setup"])
 
 /**
- * `/features` entries that intentionally have no `/tools` counterpart — core
+ * `/practice/features` entries that intentionally have no `/tools` counterpart — core
  * nav destinations reachable from the app dock rather than tools listed on
  * the `/tools` grid, and the two library pages taken off the tools grid when
  * card search gained its own "Submit card" popup (their routes stay for deep
@@ -63,10 +63,10 @@ const FEATURES_EXCLUDE_FROM_TOOLS = new Set(["/tools/mobile-setup"])
  */
 const TOOLS_EXCLUDE_FROM_FEATURES = new Set([
   "/videos",
-  "/cards",
+  "/research/cards",
   "/debate",
-  "/cards/library",
-  "/cards/argument-library",
+  "/research/cards/library",
+  "/research/cards/argument-library",
 ])
 
 /**
@@ -86,7 +86,7 @@ const APP_DIR = join(APP_ROOT, "app")
 /**
  * Every route under `app/` with its own `page.tsx`, found by walking the
  * directory tree (skipping `api/`, which has no `page.tsx` files at all).
- * A dynamic segment's route (e.g. `/cards/leaderboard/[contributorId]`)
+ * A dynamic segment's route (e.g. `/coaching/leaderboard/[contributorId]`)
  * is a detail page under an already-covered static parent, not a distinct
  * catalog entry, so callers filter those out rather than this function.
  * A route group (`(home)`) is a folder that is not a URL segment, so it adds
@@ -115,19 +115,24 @@ const STATIC_APP_ROUTES = findAppPageRoutes(APP_DIR, "").filter((route) => !rout
  * as "a step on the way to a feature rather than a feature"), the editor's
  * own settings pages plus the app's debate-style/font-size/font-family
  * preferences page (same reasoning as `/login` — configuration, not a
- * tool), and `/features` itself. (`/tools` needs no entry here — it's
+ * tool), and `/practice/features` itself. (`/tools` needs no entry here — it's
  * already covered by `WORKSPACE_LINKS`'s own trailing "All Tools" link.)
  *
- * `/forums` is here for the reason `/tournaments` never needed an entry: both
+ * `/practice/forums` is here for the reason `/practice/tournaments` never needed an entry: both
  * are destinations in the sidebar's tool tree and the dock's Settings menu
  * rather than tools. A forum is a place members talk to each other, not
  * something the app does for them, and listing it on the `/tools` grid — whose
  * entries each describe a capability with a docs page behind it — would claim a
  * feature guide that does not exist.
  *
- * `/rules` and `/topics` are here for the same reason: they are reference
+ * `/practice/rules` and `/research/topics` are here for the same reason: they are reference
  * pages in the sidebar tree (the formats-and-rules guide and the resolution
  * topic-area explorer) — reading material, not tools.
+ *
+ * `/lectures`, `/practice/glossary`, `/practice/rankings` and
+ * `/practice/statistics` are views of the video library page (the same page
+ * `/videos` renders), given their own routes under their sidebar category.
+ * `/videos` is listed through its dock entry; these are its sidebar rows.
  *
  * `/docs/welcome` is the help docs' landing page (`debate-help-docs`) — the
  * documentation the catalog entries link to, not a tool itself.
@@ -139,15 +144,19 @@ const ROUTES_WITHOUT_A_CATALOG_ENTRY = new Set([
   "/auth/native-callback",
   "/auth/native-complete",
   "/docs/welcome",
-  "/features",
-  "/forums",
+  "/practice/features",
+  "/practice/forums",
   "/legal/privacy",
   "/login",
-  "/rules",
+  "/practice/rules",
   "/settings",
   "/settings/editor-panel",
   "/settings/preferences",
-  "/topics",
+  "/research/topics",
+  "/lectures",
+  "/practice/glossary",
+  "/practice/rankings",
+  "/practice/statistics",
 ])
 
 describe("tool catalog route coverage", () => {

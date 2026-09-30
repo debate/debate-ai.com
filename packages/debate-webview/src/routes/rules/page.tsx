@@ -7,7 +7,7 @@ import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
  * Formats & Rules: a reference page for the common high-school formats and
  * the research, evidence, device/AI and per-format rules behind them.
  *
- * Like `/forums`, this is a destination in the sidebar tree rather than an
+ * Like `/practice/forums`, this is a destination in the sidebar tree rather than an
  * entry in the `/tools` catalog — it is reading material, not a tool — so the
  * header's title, description and icon are passed explicitly.
  */
@@ -15,7 +15,7 @@ export default function RulesPage() {
   return (
     <ToolPage className="max-w-5xl">
       <ToolPageHeader
-        href="/rules"
+        href="/practice/rules"
         backHref="/tools"
         backLabel="tools"
         title="Debate Formats, Research & Rules"

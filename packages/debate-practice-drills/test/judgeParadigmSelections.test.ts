@@ -129,12 +129,12 @@ describe("buildJudgeParadigmSelectionsPanelView", () => {
 
 describe("buildJudgeDecisionDeepLink", () => {
   it("builds a /judge-decision link carrying the roundId as a query param", () => {
-    expect(buildJudgeDecisionDeepLink("round-1")).toBe("/judge-decision?roundId=round-1");
+    expect(buildJudgeDecisionDeepLink("round-1")).toBe("/practice/judge-decision?roundId=round-1");
   });
 
   it("percent-encodes a roundId containing reserved characters", () => {
     expect(buildJudgeDecisionDeepLink("round #2/finals")).toBe(
-      "/judge-decision?roundId=round%20%232%2Ffinals",
+      "/practice/judge-decision?roundId=round%20%232%2Ffinals",
     );
   });
 });

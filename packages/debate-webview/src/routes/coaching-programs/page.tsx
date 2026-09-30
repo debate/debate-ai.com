@@ -6,7 +6,7 @@ import { CoachingProgramRosterAnalyticsWithDrills } from "./CoachingProgramRoste
 export default function CoachingProgramsPage() {
   return (
     <ToolPage>
-      <ToolPageHeader href="/coaching-programs" backHref="/debate" backLabel="round workspace" guide="training-tools" />
+      <ToolPageHeader href="/coaching/programs" backHref="/debate" backLabel="round workspace" guide="training-tools" />
       <Suspense>
         <CoachingProgramsPanel />
       </Suspense>

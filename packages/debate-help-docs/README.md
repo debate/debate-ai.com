@@ -81,7 +81,7 @@ field), or re-sync it from its source file in the monorepo. Section order is set
 ## Linking from the app
 
 `apps/debate-ai.com/lib/docs-links.ts` builds every Docs/Guide link the app shows, and
-`lib/ui/features/feature-catalog.ts` builds the per-feature links on `/features`. Both point at
+`lib/ui/features/feature-catalog.ts` builds the per-feature links on `/practice/features`. Both point at
 `/docs/...` on the app's own origin, which needs no configuration since the docs are app routes. `NEXT_PUBLIC_DOCS_URL` overrides just the origin, for a separate deployment of this site (for
 example `https://docs.debate-ai.com`), which serves the docs under `/docs` as well.
 

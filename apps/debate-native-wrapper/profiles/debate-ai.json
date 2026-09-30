@@ -4,12 +4,34 @@
   "identifier": "com.debateai.app",
   "version": "1.0.0",
   "url": "https://debate-ai.com",
+  "sources": [
+    {
+      "id": "live",
+      "label": "debate-ai.com",
+      "url": "https://debate-ai.com"
+    },
+    {
+      "id": "beta",
+      "label": "Beta (d.ebate.app)",
+      "url": "https://d.ebate.app"
+    },
+    {
+      "id": "offline",
+      "label": "Offline (built into the app)",
+      "url": "offline/index.html"
+    }
+  ],
+  "defaultSource": "live",
   "deepLinkScheme": "debateai",
   "iconSource": "../../../apps/debate-ai.com/public/favicon-512.png",
   "copyright": "Debate AI",
   "category": "Education",
   "shortDescription": "CARDS evidence search, FIAT round flowing, REASON writing, and LEARN video library, in one native app.",
-  "trustedOrigins": ["https://debate-ai.com", "https://*.debate-ai.com"],
+  "trustedOrigins": [
+    "https://debate-ai.com",
+    "https://*.debate-ai.com",
+    "https://d.ebate.app"
+  ],
   "window": {
     "title": "Debate AI",
     "width": 1360,

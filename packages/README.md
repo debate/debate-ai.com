@@ -64,9 +64,9 @@ import/export and native `.cmir` format re-exported by path, plus `importDocx(fi
 
 ## debate-feature-catalog
 
-Canonical `APP_FEATURES` catalog for the `/features` page — data plus
+Canonical `APP_FEATURES` catalog for the `/practice/features` page — data plus
 section/search/doc-url helpers, with no dependencies of its own (a leaf
-package, like `debate-data-sync`). Depended on by the app's live `/features`
+package, like `debate-data-sync`). Depended on by the app's live `/practice/features`
 page (`apps/debate-ai.com/lib/ui/features/FeaturesPanel`) and
 `debate-contributor-progress`'s News Stream "Tool spotlight" posts, so a feature
 only needs to be registered once instead of hand-synced across forks.
@@ -101,7 +101,7 @@ Glicko-2 rankings for HS PF, LD, Policy and college policy — a git submodule o
 [debate/debate-rankings](https://github.com/debate/debate-rankings), kept as upstream ships it. It has its own
 Python toolchain (`src/main.py` replays tournament results into CSVs under `output/`), so it stays out of the
 bun workspace and is imported by path rather than by package name — see `debate-rankings-adapter`. A TypeScript
-entry (`js/index.ts`) exposes the dataset list and a lazy, typed loader for them. Read by the `/rank` panel in
+entry (`js/index.ts`) exposes the dataset list and a lazy, typed loader for them. Read by the `/coaching/rankings` panel in
 `debate-videos`, through `debate-rankings-adapter`.
 
 ## debate-rankings-adapter
@@ -123,7 +123,7 @@ practice tools.
 ## debate-round-practice-ai
 
 Package name `debate-practice-vs-ai`. A full timed debate round against an AI opponent,
-mounted at `/versus-ai`. Node/TypeScript port of the Go `arguehub` vs-bot backend (13 bot
+mounted at `/practice/versus-ai`. Node/TypeScript port of the Go `arguehub` vs-bot backend (13 bot
 personalities, prompt construction, AI judging, gamification) plus the React round UI;
 plain `fetch`, no Go/Mongo/Gin, runs under Next.js or a Cloudflare Worker.
 
@@ -159,7 +159,7 @@ includes an in-round speech recorder with mic selection, live waveform, and play
 Upstream [Tabroom](https://github.com/debate/debate-tournament-tabroom) vendored and adapted
 to Cloudflare Workers + D1: its public API as a fetch handler (`debate-tournaments/server`,
 mounted at `/api/tabroom`), a React port of its invite/pairings/results pages (mounted at
-`/tournaments`), the route table, its `@tabroom/types` Zod schemas and inferred types
+`/practice/tournaments`), the route table, its `@tabroom/types` Zod schemas and inferred types
 (`debate-tournaments/types`, with `tabroomSchemas` — every schema keyed by record name — and
 a non-throwing `parseTabroom(schema, data)`), and the D1 schema.
 `scripts/sync-upstream.mjs` re-clones upstream and re-applies this package's patches and

@@ -1,16 +1,15 @@
 "use client"
 
 /**
- * @fileoverview App-wide `Ctrl`/`Cmd`-P command palette.
+ * @fileoverview App-wide `Ctrl`/`Cmd`-K search palette.
  *
- * The Reason Editor already has its own Search Everything palette on this
- * shortcut (`packages/debate-editor`'s `quick-card-search-ui.ts`), whose `t`
- * prefix jumps to any of the app's other tools — but that palette only
- * exists inside the CardMirror engine, so every feature doc's "Nav: … in
- * Ctrl/Cmd-P's command palette" line was only true while the
- * Reason Editor happened to be open. Everywhere else in the app — `/tools`,
- * `/settings`, `/judges`, the community and coaching hubs — the same
- * shortcut did nothing.
+ * The Reason Editor already has its own Search Everything palette
+ * (`packages/debate-editor`'s `quick-card-search-ui.ts`), whose `t` prefix
+ * jumps to any of the app's other tools — but that palette only exists inside
+ * the CardMirror engine, so every feature doc's "Nav: … in Ctrl/Cmd-K's
+ * search palette" line was only true while the Reason Editor happened to be
+ * open. Everywhere else in the app — `/tools`, `/settings`, `/practice/judges`, the
+ * community and coaching hubs — the same shortcut did nothing.
  *
  * This is that shortcut's app-wide counterpart: a lighter, navigation-only
  * palette (no quick cards, no ribbon commands, no file search — those stay
@@ -18,9 +17,9 @@
  * system already share (`app/tools/tool-groups.ts`'s `ALL_TOOLS`), so a
  * tool typed here, starred on `/tools`, or linked from the editor's
  * Workspace menu all resolve to the one list. Mounted once per document by
- * {@link AppShell} (both the top-level shell and each framed dock
- * destination, matching {@link ToolRecordSyncProvider}'s reach), so the
- * shortcut works whichever document currently has focus — except on
+ * {@link AppShell} (in both its branches, matching
+ * {@link ToolRecordSyncProvider}'s reach), so the shortcut works whether or
+ * not another site has framed the app — except on
  * `/reason-editor`, where the CardMirror engine's own richer palette already
  * owns it.
  *
@@ -48,7 +47,7 @@ import { onQuickLaunchText } from "../../lib/native/tauri"
 /** Meta destinations that aren't themselves a `/tools` catalog entry. */
 const QUICK_ACTIONS: Tool[] = [
   { href: "/tools", label: "All Tools", description: "Every workspace, research, and practice tool", icon: LayoutGrid },
-  { href: "/features", label: "All Features", description: "Every user-facing surface in the app, with docs", icon: LayoutGrid },
+  { href: "/practice/features", label: "All Features", description: "Every user-facing surface in the app, with docs", icon: LayoutGrid },
   { href: "/news", label: "News Stream", description: "Product updates and community announcements", icon: Rss },
   { href: "/settings", label: "Settings", description: "Card editor settings — files, editing, appearance, shortcuts, AI", icon: SettingsIcon },
 ]
@@ -72,11 +71,18 @@ export function openGlobalCommandPalette(): void {
   window.dispatchEvent(new Event(OPEN_EVENT))
 }
 
-/** True for the palette-opening chord: Cmd-P on a Mac, Ctrl-P elsewhere —
- *  the browser's Print shortcut, which the palette takes over (the
- *  handler preventDefaults it). Shift/Alt variants are left alone. */
+/** True for the palette-opening chord: Cmd-K on a Mac, Ctrl-K elsewhere.
+ *
+ *  K, not P: the palette is a search box first (every entry is a destination,
+ *  and `CommandInput` has focus the moment it opens), and Cmd-K is the chord
+ *  readers already reach for from Raycast/Slack/Linear and most browser
+ *  extensions. Cmd-P is still accepted as an alias so the chord the docs used
+ *  to advertise keeps working. Shift/Alt variants are left alone. */
 export function isPaletteShortcut(e: Pick<KeyboardEvent, "metaKey" | "ctrlKey" | "shiftKey" | "altKey" | "code" | "key">): boolean {
-  return (e.metaKey || e.ctrlKey) && !e.shiftKey && !e.altKey && (e.code === "KeyP" || e.key.toLowerCase() === "p")
+  if (!(e.metaKey || e.ctrlKey) || e.shiftKey || e.altKey) return false
+  const code = e.code
+  const key = e.key.toLowerCase()
+  return code === "KeyK" || key === "k" || code === "KeyP" || key === "p"
 }
 
 function toolHaystack(tool: Tool): string {
@@ -158,14 +164,14 @@ export function GlobalCommandPalette() {
     <CommandDialog
       open={open}
       onOpenChange={setOpen}
-      title="Command palette"
+      title="Search"
       description="Jump to any tool, workspace, or settings page"
       className="top-[12%] translate-y-0 sm:max-w-xl"
     >
       <CommandInput
         value={search}
         onValueChange={setSearch}
-        placeholder="Jump to a tool… (Ctrl/Cmd-P)"
+        placeholder="Search tools… (Ctrl/Cmd-K)"
       />
       <CommandList>
         <CommandEmpty>No matching tool.</CommandEmpty>

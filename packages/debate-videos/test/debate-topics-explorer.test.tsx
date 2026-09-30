@@ -1,5 +1,5 @@
 /**
- * @fileoverview Guards the `/videos/statistics` topics grid: it must sort
+ * @fileoverview Guards the `/practice/statistics` topics grid: it must sort
  * newest-year-first, show every style's resolution as its own badged line,
  * skip a style with no resolution for that year, and tell a genuinely empty
  * catalog apart from a search with no matches. `entryMatches` (the filter
@@ -163,18 +163,18 @@ describe("matchesStyleFilter", () => {
 describe("topicSearchHref", () => {
   it("searches a titled topic by its title, narrowed to that season and format", () => {
     expect(topicSearchHref(2023, 3, { title: "Civil Disobedience", text: "Resolved: civil disobedience is justified." }))
-      .toBe("/cards?q=Civil+Disobedience&year=2023&event=LD");
-    expect(topicSearchHref(2024, 1, { title: "Healthcare", text: "…" })).toBe("/cards?q=Healthcare&year=2024&event=CX");
-    expect(topicSearchHref(2023, 4, { title: "Water", text: "…" })).toBe("/cards?q=Water&year=2023&event=NDT");
+      .toBe("/research/cards?q=Civil+Disobedience&year=2023&event=LD");
+    expect(topicSearchHref(2024, 1, { title: "Healthcare", text: "…" })).toBe("/research/cards?q=Healthcare&year=2024&event=CX");
+    expect(topicSearchHref(2023, 4, { title: "Water", text: "…" })).toBe("/research/cards?q=Water&year=2023&event=NDT");
   });
 
   it("falls back to the resolution text for an untitled topic", () => {
     expect(topicSearchHref(2023, 2, { text: "Climate change policy." })).toBe(
-      "/cards?q=Climate+change+policy.&year=2023&event=PF",
+      "/research/cards?q=Climate+change+policy.&year=2023&event=PF",
     );
   });
 
   it("renders every resolution as a link into the cards search", () => {
-    expect(render()).toContain('href="/cards?q=Healthcare&amp;year=2024&amp;event=CX"');
+    expect(render()).toContain('href="/research/cards?q=Healthcare&amp;year=2024&amp;event=CX"');
   });
 });

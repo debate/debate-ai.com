@@ -9,7 +9,7 @@ relevance, clarity, uniqueness, evidence quality, usability — with a
 deterministic heuristic, ranks every card, flags likely duplicates, and
 optionally requests a real Anthropic-backed qualitative assessment.
 
-- **Route:** `/cards/scoring`
+- **Route:** `/research/cards/scoring`
 - **Package:** `debate-card-search`
 
 ## What it shows
@@ -35,6 +35,6 @@ state/cardScores.ts (localStorage)
 ## Known gaps
 
 Bulk import is pasted plain text, not a real file upload. AI assessments sync
-to your account like card scores do (see [Tool Data Sync](../internals/tool-data-sync.mdx))
+to your account like card scores do (see Tool Data Sync)
 but are still not a shared team resource — a squad member scoring the same
 card sees their own assessment, not a teammate's.

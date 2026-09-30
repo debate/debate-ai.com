@@ -2,7 +2,7 @@
  * @fileoverview Persistent storage for a small history log of "Check this
  * page" lookups — closes idea #7's ("On Page Card Reuse Search") first
  * still-open follow-up in TODO.md's Product Feature Ideas list: "Surface
- * each check's result inline in a small history list on `/cards/library`
+ * each check's result inline in a small history list on `/research/cards/library`
  * instead of a one-shot lookup." Before this, `EvidenceLibraryPanel`'s
  * `reuseCheckResult`/`remoteReuseCheckResult` state held only the *latest*
  * check, overwritten on every new lookup. Stores records in localStorage,

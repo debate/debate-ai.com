@@ -16,9 +16,9 @@
 
 "use client"
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import React, { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import Link from "next/link"
-import { useSearchParams, useParams, useRouter } from "next/navigation"
+import { useSearchParams, useParams, usePathname, useRouter } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
 import { normalizeCategoryKey } from "debate-data-sync/src/videos/video-rows"
 import { MAX_VIDEO_PAGE_SIZE } from "debate-data-sync/src/videos/video-query"
@@ -30,11 +30,10 @@ import type { LeaderboardTab } from "./leaderboard/leaderboardUtils"
 import { VALID_LEADERBOARD_TABS, currentSeasonYear, seasonYears } from "./leaderboard/leaderboardUtils"
 import { setStateInURL } from "../ui/lib/utils"
 import { StickyHeader } from "../components/layout/StickyHeader"
-import { SLUG_MAP } from "./lectureRouteConfig"
+import { SLUG_MAP, librarySlug } from "./lectureRouteConfig"
 import { LecturesDictionaryView } from "./dictionary/LecturesDictionaryView"
 import { LecturesSidebarShell } from "./LecturesSidebarShell"
 import { LecturesVideoGridView } from "./LecturesVideoGridView"
-import { StatisticsPage } from "./statistics/StatisticsPage"
 
 // Hooks
 import { useVideoState } from "../hooks/useVideoState"
@@ -43,6 +42,11 @@ import { useInfiniteScroll } from "../hooks/useInfiniteScroll"
 import { useYouTubeStats } from "../hooks/useYouTubeStats"
 import { useVideoPlayerStore } from "../state/videoPlayerStore"
 import { useWatchHistory } from "../hooks/useWatchHistory"
+
+// The statistics view's charts (recharts, ~270 kB) load only when it opens.
+const StatisticsPage = lazy(() =>
+  import("./statistics/StatisticsPage").then((m) => ({ default: m.StatisticsPage })),
+)
 
 /** Number of entries in the debate dictionary, shown on its quick-link card. */
 const DICTIONARY_ENTRY_COUNT = 203
@@ -74,12 +78,11 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
   // Slug / route state
   // ---------------------------------------------------------------------------
 
-  const slug = useMemo(() => {
-    const raw = routeParams?.category
-    if (typeof raw === "string") return raw.toLowerCase()
-    if (Array.isArray(raw) && raw.length > 0) return String(raw[0]).toLowerCase()
-    return undefined
-  }, [routeParams])
+  const pathname = usePathname()
+  const slug = useMemo(
+    () => librarySlug(routeParams?.category, pathname),
+    [routeParams, pathname],
+  )
 
   const slugState = useMemo(() => (slug ? SLUG_MAP[slug] : undefined), [slug])
 
@@ -246,9 +249,11 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
 
   const filters: VideoFeedFilters = {
     source: "all",
-    // "All Lectures" means everything without a numeric debate style — rounds
-    // surface through the style filter and the category tabs instead.
+    // "All Lectures" (`/lectures`) means everything without a numeric debate
+    // style — rounds surface through the style filter and the category tabs
+    // instead. Bare `/videos` (no slug) is "All Videos": rounds and lectures.
     lecturesOnly:
+      slug !== undefined &&
       state.currentCategory === "lectures" &&
       selectedCategory === "all" &&
       !state.selectedStyle,
@@ -286,6 +291,7 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
   const quickLinkCounts = useMemo(
     () =>
       ({
+        allVideos: counts.total,
         lectures: counts.lectures,
         policy: counts.byStyle[1] ?? 0,
         ld: counts.byStyle[3] ?? 0,
@@ -473,7 +479,9 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
   if (state.currentCategory === "statistics") {
     return (
       <LecturesSidebarShell {...sidebarShellProps} activeId="statistics">
-        <StatisticsPage topics={meta?.topics} youtubeStats={youtubeStats} />
+        <Suspense fallback={null}>
+          <StatisticsPage topics={meta?.topics} youtubeStats={youtubeStats} />
+        </Suspense>
       </LecturesSidebarShell>
     )
   }

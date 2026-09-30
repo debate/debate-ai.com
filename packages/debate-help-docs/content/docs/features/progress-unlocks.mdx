@@ -8,7 +8,7 @@ Shows every contributor's unlock tier, the research-task skill level that
 tier grants, every badge earned, their current streak, and how far they
 are from the next tier.
 
-- **Route:** `/cards/progress`
+- **Route:** `/research/cards/progress`
 - **Package:** `debate-card-search`
 
 ## What it shows
@@ -30,7 +30,7 @@ state/researchProgress.ts (localStorage: completedResearchTasks)
 The signed-in visitor's own celebration-toast baseline —
 `state/unlockCelebrations.ts`'s `unlockCelebrationSeenBadges` — syncs to the
 account via `debate-data-sync`'s `TOOL_RECORD_COLLECTIONS` (see
-[Tool Data Sync](../internals/tool-data-sync.mdx)), so a badge already
+Tool Data Sync), so a badge already
 celebrated on one device isn't celebrated again as "new" on a second one.
 
 ## Known gaps

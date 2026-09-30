@@ -30,7 +30,7 @@ import {
   Trash2,
 } from "lucide-react"
 import { cn } from "../../lib/ui/lib/utils"
-import { IMPORTABLE_EXTENSIONS, fileExtension } from "../../lib/cardmirror/stored-cmir"
+import { IMPORTABLE_EXTENSIONS, fileExtension } from "../../lib/cardmirror/import-files"
 import {
   DropdownMenu,
   DropdownMenuContent,

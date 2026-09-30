@@ -8,7 +8,7 @@ Lets a contributor log a proposed edit to a specific flow argument and
 previews how every logged edit merges into the round's flow, flagging
 genuinely concurrent, diverging edits for a human to resolve.
 
-- **Where:** the Coach hub's Flow section (`/coach`)
+- **Where:** the Coach hub's Flow section (`/coaching`)
 - **Package:** `debate-round`
 
 ## What it shows
@@ -37,7 +37,7 @@ Live sync is opt-in, per-Flow-ID, off by default, and polls on a ~4s
 interval rather than pushing instantly.
 
 Logged edits themselves follow the account-wide
-[Tool Data Sync](../internals/tool-data-sync.mdx): they sync to your account
+Tool Data Sync: they sync to your account
 like any other tool's saved work, so signing in on another device carries
 your flow edit log with you — separate from the live sync toggle above, which
 is about sharing *in-progress* edits with teammates in real time.

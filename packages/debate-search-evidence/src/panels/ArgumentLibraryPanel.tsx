@@ -13,7 +13,7 @@
  * introducing new logic here. Closes follow-up (a) named under the "📚
  * Common Argument Library" bullet in TODO.md — a Contributions Feed
  * submission tagged with topic/case-area now appears here too, not just a
- * dedicated `/cards/library` evidence-library entry.
+ * dedicated `/research/cards/library` evidence-library entry.
  *
  * A "Rename/merge tag" form closes `packages/debate-help-docs/content/docs/features/evidence-library.mdx`'s
  * "No tag rename/merge tool" Known gap: picking an existing tag and typing a

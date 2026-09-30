@@ -1,9 +1,9 @@
 /**
- * @fileoverview Pure data for the app-wide features page (`/features`).
+ * @fileoverview Pure data for the app-wide features page (`/practice/features`).
  *
  * The app ships roughly fifty distinct surfaces, but nothing lists them all:
  * the global dock exposes four destinations plus a long, flat Settings menu;
- * `/research` and `/coach` tab across the panels of one package each, but
+ * `/research` and `/coaching` tab across the panels of one package each, but
  * none of them mention the core workspaces (card search, the flow
  * spreadsheet, the video archive, the Reason editor) or the rankings and
  * standings surfaces at all, so a new debater has no single page that
@@ -16,7 +16,7 @@
  * so this catalog reads the same as the page a reader lands on after
  * clicking through.
  *
- * This is the single canonical copy: `apps/debate-ai.com`'s live `/features`
+ * This is the single canonical copy: `apps/debate-ai.com`'s live `/practice/features`
  * page (`lib/ui/features/FeaturesPanel`) and
  * `packages/debate-contributor-progress`'s News Stream "Tool spotlight" posts
  * both import from here (a leaf package with no dependency of its own, the
@@ -31,7 +31,7 @@
 
 /**
  * Where the feature docs are served from by default: same origin as the app
- * (`/docs/features/<name>`, extension stripped) — the live `/features` page's
+ * (`/docs/features/<name>`, extension stripped) — the live `/practice/features` page's
  * own docs site (the app mounts `debate-help-docs` at `app/docs`, which
  * renders `packages/debate-help-docs/content/docs/features/<name>.mdx`
  * there). Renderers with no docs site of their own to link into
@@ -123,7 +123,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     title: "Card Search",
     description:
       "Full-text search across tagged, annotated evidence cards, with highlight, underline, and plain reading modes",
-    href: "/cards",
+    href: "/research/cards",
     category: "workspaces",
     tags: ["cards", "evidence", "highlight", "cut", "debate-card-search"],
   },
@@ -168,7 +168,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     title: "Coach Workspace",
     description:
       "Round coaching hub tabbed across the argument tree, flow summaries, coaching prompts, drills, scouting, briefings, and practice rounds",
-    href: "/coach",
+    href: "/coaching",
     category: "workspaces",
     tags: ["hub", "coach", "flow sync"],
   },
@@ -177,7 +177,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "shared-evidence-library",
     title: "Shared Evidence Library",
     description: "Search cut cards and reusable analytic blocks by keyword, citation, or argument",
-    href: "/cards/library",
+    href: "/research/cards/library",
     category: "evidence",
     doc: "evidence-library.md",
     tags: ["repository", "submit", "tf-idf", "search index"],
@@ -186,7 +186,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "common-argument-library",
     title: "Common Argument Library",
     description: "Browse shared research organized into topic folders, case areas, and tag-based collections",
-    href: "/cards/argument-library",
+    href: "/research/cards/argument-library",
     category: "evidence",
     tags: ["folders", "case areas", "tags", "blocks"],
     doc: "argument-library-collections.md",
@@ -195,7 +195,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "contributions-feed",
     title: "Contributions Feed",
     description: "Submit, like, save, and endorse the community's cards, summaries, highlights, and annotations",
-    href: "/cards/contributions",
+    href: "/research/cards/contributions",
     category: "evidence",
     tags: ["feed", "endorse", "upvote", "helpfulness"],
     doc: "contributions-feed.md",
@@ -204,7 +204,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "llm-card-scoring",
     title: "LLM Card Scoring",
     description: "Score cards for relevance, clarity, uniqueness, evidence quality, and usability",
-    href: "/cards/scoring",
+    href: "/research/cards/scoring",
     category: "evidence",
     doc: "llm-card-scoring.md",
     tags: ["ai", "duplicate", "ranking", "quality"],
@@ -213,7 +213,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "review-queue",
     title: "Review Queue",
     description: "Move a submitted card through peer review — comment, request changes, approve, and publish",
-    href: "/cards/reviews",
+    href: "/research/cards/reviews",
     category: "evidence",
     doc: "review-queue.md",
     tags: ["peer review", "approve", "publish", "reviewer tier"],
@@ -223,7 +223,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     title: "Revision Incentives",
     description:
       "Contributors ranked by reward points earned improving weak cards, strengthening citations, and refreshing stale evidence",
-    href: "/cards/revisions",
+    href: "/research/cards/revisions",
     category: "evidence",
     doc: "revision-incentives.md",
     tags: ["rewards", "stale", "citations"],
@@ -232,7 +232,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "topic-coverage-dashboard",
     title: "Topic Coverage Dashboard",
     description: "See which arguments are well-covered, which are missing, and where the team needs more work",
-    href: "/cards/coverage",
+    href: "/research/cards/coverage",
     category: "evidence",
     doc: "topic-coverage-dashboard.md",
     tags: ["gaps", "checklist", "thin", "missing"],
@@ -241,7 +241,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "research-progress",
     title: "Research Progress",
     description: "Each contributor's contribution history and per-topic task completion",
-    href: "/cards/progress-tracking",
+    href: "/coaching/progress",
     category: "evidence",
     doc: "research-progress-tracking.md",
     tags: ["tracking", "completion"],
@@ -250,7 +250,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "task-inbox",
     title: "Task Inbox",
     description: "Research tasks routed to contributors, grouped by topic",
-    href: "/cards/inbox",
+    href: "/research/cards/inbox",
     category: "evidence",
     doc: "task-inbox.md",
     tags: ["assignments", "routing", "my tasks"],
@@ -261,7 +261,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "team-brainstorm-assist",
     title: "Team Brainstorm Assist",
     description: "Submit and upvote squad ideas for an argument block, grouped into boards by category",
-    href: "/cards/brainstorm",
+    href: "/research/cards/brainstorm",
     category: "collaboration",
     doc: "brainstorm-board.md",
     tags: ["ai", "ideas", "impact framing", "frontlines", "turns"],
@@ -270,7 +270,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "team-collaboration-mode",
     title: "Team Collaboration Mode",
     description: "Leave live prep notes on a shared topic sprint, grouped by topic",
-    href: "/cards/collaboration",
+    href: "/research/cards/collaboration",
     category: "collaboration",
     doc: "team-collaboration-mode.md",
     tags: ["sprint notes", "assign"],
@@ -279,7 +279,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "collaboration-prep-room",
     title: "Collaboration Prep Room",
     description: "A topic's shared prep space: evidence, draft blocks, and routed research tasks",
-    href: "/cards/prep-room",
+    href: "/research/cards/prep-room",
     category: "collaboration",
     doc: "collaboration-prep-room.md",
     tags: ["prep", "drafts", "search"],
@@ -288,7 +288,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "prep-notes",
     title: "Prep Notes",
     description: "Live prep notes across every flow, grouped by status, with handoff to a teammate",
-    href: "/prep-notes",
+    href: "/practice/prep-notes",
     category: "collaboration",
     doc: "prep-notes.md",
     tags: ["strategy sync", "follow-up", "assign"],
@@ -316,7 +316,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     title: "Coaching Programs",
     description:
       "Group coaching spaces scoped to a squad roster, each with its topic sprint, challenge standings, and generated drills",
-    href: "/coaching-programs",
+    href: "/coaching/programs",
     category: "collaboration",
     doc: "coaching-programs.md",
     tags: ["squad", "roster", "program", "board"],
@@ -325,7 +325,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "coach-materials",
     title: "Coach Materials",
     description: "Upload grounding materials for the team coach AI and preview which ones answer a question",
-    href: "/coach-materials",
+    href: "/coaching/materials",
     category: "collaboration",
     doc: "coach-materials.md",
     tags: ["lectures", "camp", "docx", "rag", "q&a"],
@@ -365,7 +365,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "response-outcome-charts",
     title: "AI Response-Outcome Charts",
     description: "Per-side exposure and the most vulnerable arguments in each round's flow",
-    href: "/outcomes",
+    href: "/coaching/outcomes",
     category: "round",
     doc: "response-outcome-charts.md",
     tags: ["vulnerability", "what if", "counsel panel", "chart"],
@@ -395,7 +395,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     title: "Opponent Team Profiles",
     description:
       "Records, side-record tendencies, and common arguments/cases for every saved opponent scouting profile",
-    href: "/opponents",
+    href: "/practice/opponents",
     category: "intelligence",
     doc: "opponent-team-profiles.md",
     tags: ["scouting", "aff", "neg", "record"],
@@ -404,7 +404,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "judge-profiles",
     title: "Judge Profiles",
     description: "Side-vote bias, average speaker points, and tendencies for every saved judge profile",
-    href: "/judges",
+    href: "/practice/judges",
     category: "intelligence",
     doc: "judge-profiles.md",
     tags: ["speaks", "theory", "speed", "paradigm"],
@@ -413,7 +413,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "pre-round-briefings",
     title: "Pre-Round Briefings",
     description: "Opponent scouting, judge tendencies, head-to-head record, and prep notes per round",
-    href: "/briefings",
+    href: "/practice/briefings",
     category: "intelligence",
     doc: "pre-round-briefings.md",
     tags: ["matchup", "intelligence panel"],
@@ -423,7 +423,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     title: "Scout-to-Strategy",
     description:
       "Case-choice rankings, judge-adaptation notes, and matchup risk level from scouted opponent and judge data",
-    href: "/strategy",
+    href: "/practice/strategy",
     category: "intelligence",
     doc: "scout-to-strategy.md",
     tags: ["risk", "case choice", "adaptation", "ai panel"],
@@ -432,7 +432,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "ai-judge-decision",
     title: "AI Judge Decision",
     description: "AI-generated round decisions under a round's saved judge paradigm and flow summary",
-    href: "/judge-decision",
+    href: "/practice/judge-decision",
     category: "intelligence",
     tags: ["rfd", "ballot", "decision"],
   },
@@ -442,7 +442,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "practice-round-simulator",
     title: "Practice Round Simulator",
     description: "Recreate a tournament round with a timer, judge paradigm, and AI opponent persona",
-    href: "/practice-round",
+    href: "/practice",
     category: "practice",
     doc: "practice-round-simulator.md",
     tags: ["simulation", "format", "side"],
@@ -451,7 +451,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "practice-partners",
     title: "Practice Partners",
     description: "Challenge other debaters to a virtual practice round, or volunteer to debate or judge in the styles you're comfortable with",
-    href: "/practice-partners",
+    href: "/practice/partners",
     category: "practice",
     doc: "practice-partners.md",
     tags: ["challenge", "volunteer", "judge", "matchmaking"],
@@ -460,7 +460,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "practice-vs-ai",
     title: "Practice vs AI",
     description: "Debate a full timed round against an AI opponent, then get a judged scorecard",
-    href: "/versus-ai",
+    href: "/practice/versus-ai",
     category: "practice",
     doc: "practice-vs-ai.md",
     tags: ["speeches", "bot", "persona", "judge"],
@@ -469,7 +469,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "ai-coach-mode",
     title: "AI Coach Mode",
     description: "Extension, refutation, collapse, and weighing prompts generated from each round's flow",
-    href: "/coaching",
+    href: "/coaching/ai-coach",
     category: "practice",
     doc: "coaching-sessions.md",
     tags: ["feedback", "prompts", "weighing"],
@@ -478,7 +478,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "practice-drills",
     title: "Practice Drills",
     description: "Quick practice drills generated from each round's flow",
-    href: "/drills",
+    href: "/practice/drills",
     category: "practice",
     doc: "drill-sets.md",
     tags: ["overview", "frontline", "cross-ex", "collapse"],
@@ -489,7 +489,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "contribution-leaderboard",
     title: "Contribution Leaderboard",
     description: "Ranked contributors by helpfulness score, tier, badges, and quest streak",
-    href: "/cards/leaderboard",
+    href: "/coaching/leaderboard",
     category: "recognition",
     doc: "contribution-leaderboard.md",
     tags: ["ranking", "score"],
@@ -498,7 +498,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "contributor-awards",
     title: "Top Contributor Awards",
     description: "Category winners for best evidence finder, best explainer, and more, by helpfulness score",
-    href: "/cards/awards",
+    href: "/research/cards/awards",
     category: "recognition",
     doc: "contributor-awards.md",
     tags: ["announce", "freeze", "categories"],
@@ -507,7 +507,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "daily-best-card",
     title: "Daily Best Card Challenge",
     description: "Today's highest-helpfulness card, plus every past day's winner",
-    href: "/cards/best-card",
+    href: "/research/cards/best-card",
     category: "recognition",
     doc: "daily-best-card.md",
     tags: ["winner", "vote", "daily"],
@@ -525,7 +525,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "daily-quests",
     title: "Daily Quests",
     description: 'Team goals like "find 5 solvency cards" — today\'s live progress against real contributions',
-    href: "/cards/quests",
+    href: "/research/cards/quests",
     category: "recognition",
     doc: "daily-quests.md",
     tags: ["goals", "targets", "missions"],
@@ -534,7 +534,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "quest-streaks",
     title: "Quest Streaks",
     description: "Every contributor's daily-quest streak and the milestone badges it has earned",
-    href: "/cards/streaks",
+    href: "/research/cards/streaks",
     category: "recognition",
     doc: "quest-streaks.md",
     tags: ["gamified", "badges", "streak"],
@@ -543,7 +543,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "debater-level",
     title: "Debater Level",
     description: "Earn XP and level up by completing challenges like cutting 5 cards or redoing a rebuttal",
-    href: "/cards/level",
+    href: "/practice/level",
     category: "recognition",
     tags: ["gamified", "xp", "levels", "challenges"],
   },
@@ -551,7 +551,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "progress-unlocks",
     title: "Progress Unlocks",
     description: "Every contributor's unlock tier, badges, and the research-task skill level each tier grants",
-    href: "/cards/progress",
+    href: "/research/cards/progress",
     category: "recognition",
     doc: "progress-unlocks.md",
     tags: ["tiers", "levels", "unlock"],
@@ -561,7 +561,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     title: "Group Challenges",
     description:
       "Create squad-scoped friendly challenges like completing a set of blocks or winning a rebuttal exercise",
-    href: "/cards/group-challenges",
+    href: "/research/cards/group-challenges",
     category: "recognition",
     doc: "group-challenges.md",
     tags: ["standings", "wins", "roster"],
@@ -570,7 +570,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "team-rankings",
     title: "Team Rankings",
     description: "Debate team rankings, leaderboard, and Elo ratings",
-    href: "/rank",
+    href: "/coaching/rankings",
     category: "recognition",
     doc: "team-rankings.md",
     tags: ["elo", "toc", "bid list", "debatedrills"],

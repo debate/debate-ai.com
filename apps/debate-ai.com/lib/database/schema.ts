@@ -211,7 +211,7 @@ export type FlowPresenceHeartbeatRow = typeof flowPresenceHeartbeats.$inferSelec
 //
 // `favoriteTools` (idea #17, follow-up "integrate tools into user
 // settings") stores a signed-in user's starred `/tools` entries as a JSON
-// array of route paths (e.g. `["/reason-editor","/drills"]`), or null when
+// array of route paths (e.g. `["/reason-editor","/practice/drills"]`), or null when
 // empty — same "no saved value yet" semantics as every other column here.
 // Validated by `debate-round`'s `normalizeFavoriteToolsPatch`, which (unlike
 // `debateStyle`/`colorTheme`) can only check shape, not membership in the
@@ -1932,7 +1932,7 @@ export const stripeSubscriptions = sqliteTable(
     customerId: text("customer_id"),
     email: text("email"),
     priceId: text("price_id"),
-    /** A `PlanId` from `lib/stripe/plans.ts`, or `unknown` for an unlisted price. */
+    /** A `PlanId` from `debate-webview/src/lib/stripe/plans.ts`, or `unknown` for an unlisted price. */
     plan: text("plan"),
     /** Stripe's subscription status — `active`, `trialing`, `past_due`, `canceled`, … */
     status: text("status"),
@@ -1953,7 +1953,7 @@ export const stripeSubscriptions = sqliteTable(
 
 export type StripeSubscriptionRow = typeof stripeSubscriptions.$inferSelect;
 
-// Per-day usage counts behind the plan tiers in `lib/stripe/limits.ts` (see
+// Per-day usage counts behind the plan tiers in `debate-webview/src/lib/stripe/limits.ts` (see
 // `lib/stripe/usage.ts`). `subject` is a user id, or `ip:<address>` for a
 // signed-out caller, so it has no foreign key. `day` is the UTC date
 // (`YYYY-MM-DD`) the count is for.
@@ -1971,7 +1971,7 @@ export const usageCounters = sqliteTable(
 );
 
 // A Research Team coach's roster: up to `teamStudents` students (see
-// `lib/stripe/limits.ts`), matched to their accounts by lowercased email so a
+// `debate-webview/src/lib/stripe/limits.ts`), matched to their accounts by lowercased email so a
 // coach can add a student before the student signs up.
 export const teamStudents = sqliteTable(
   "team_students",
@@ -2076,7 +2076,7 @@ export const comments = sqliteTable(
      * who has seen one.
      */
     id: text("id").primaryKey(),
-    /** One of `debate-comments`' `COMMENT_RESOURCE_TYPES`; see `lib/comments/validation.ts`. */
+    /** One of `debate-comments`' `COMMENT_RESOURCE_TYPES`; see `debate-webview/src/lib/comments/validation.ts`. */
     resourceType: text("resource_type").notNull(),
     /** The resource's own id — a YouTube video id here, a `debate_cards` id there. */
     resourceId: text("resource_id").notNull(),

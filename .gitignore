@@ -65,7 +65,7 @@ packages/debate-api-client/dist/
 
 # macOS Finder metadata
 .DS_Store
-
+bunfig.toml
 # debate-help-docs: fumadocs-mdx generated collections
 packages/debate-help-docs/.source/
 
@@ -79,7 +79,7 @@ apps/*/.wxt/
 !.claude/architecture
 !.claude/settings.json
 .claude/settings.local.json
-CLAUDE.local.md
+!.claude/CLAUDE.md
 
 # Local clone of upstream Tabroom (its own git repo). Not vendored as a
 # submodule: packages/debate-tournaments syncs it into .upstream/ itself.
@@ -88,3 +88,7 @@ CLAUDE.local.md
 
 # local clone, not a submodule (breaks CI submodule checkout)
 /debate-editor/
+
+# bun lockfiles are intentionally not committed
+bun.lock
+bun.lockb

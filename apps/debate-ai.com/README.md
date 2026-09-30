@@ -17,16 +17,16 @@ owning package before editing anything under `app/`. The map is in the
 
 | Area | Route | Owning package |
 | --- | --- | --- |
-| Evidence research, card scoring, review queue | `/research`, `/cards` | `debate-search-evidence` |
+| Evidence research, card scoring, review queue | `/research`, `/research/cards` | `debate-search-evidence` |
 | The card editor, `.docx` interop | `/reason-editor`, `/doc` | `debate-editor`, `debate-card-parser` |
-| The live round workspace (FIAT), flow grid | `/debate`, `/practice-round` | `debate-round`, `debate-flow` |
-| Practice drills, AI coach, AI judge | `/drills`, `/coach`, `/judge-decision` | `debate-practice-drills` |
-| A full timed round against an AI opponent | `/versus-ai`, `/opponents` | `debate-round-practice-ai` |
+| The live round workspace (FIAT), flow grid | `/debate`, `/practice` | `debate-round`, `debate-flow` |
+| Practice drills, AI coach, AI judge | `/practice/drills`, `/coaching`, `/practice/judge-decision` | `debate-practice-drills` |
+| A full timed round against an AI opponent | `/practice/versus-ai`, `/practice/opponents` | `debate-round-practice-ai` |
 | Speech and prep timers, the in-round recorder | `/speech-documents`, `/word-count` | `debate-timer` |
 | The video library (LEARN) | `/videos` | `debate-videos` |
-| Team prep, task inbox, prep room | `/prep-notes`, `/contacts` | `debate-team-collaboration` |
-| Leaderboards, quests, contributor awards | `/rank`, `/outcomes` | `debate-contributor-progress` |
-| AI prompts for speeches and flows | `/summaries`, `/strategy`, `/outline` | `debate-speech-writer` |
+| Team prep, task inbox, prep room | `/practice/prep-notes`, `/contacts` | `debate-team-collaboration` |
+| Leaderboards, quests, contributor awards | `/coaching/rankings`, `/coaching/outcomes` | `debate-contributor-progress` |
+| AI prompts for speeches and flows | `/summaries`, `/practice/strategy`, `/outline` | `debate-speech-writer` |
 | Documentation | `/docs` | `debate-help-docs` |
 | Accounts | `/login`, `/settings` | better-auth |
 | Admin | `/admin` | gated on `ADMIN_EMAIL` / `ADMIN_EMAILS`; invited moderators see the video sections |
@@ -188,7 +188,7 @@ Three things to know before a deploy surprises you:
 - **Use `bun run build`, not `vinext build` alone.** Skipping `build:sw`
   ships no service worker, so offline mode silently stops working.
 
-A weekly cron (`0 8 * * 1` — Mondays 08:00 UTC) runs the YouTube channel scan
+A weekly cron (`0 8 * * MON` — Mondays 08:00 UTC) runs the YouTube channel scan
 and view-count refresh from the `scheduled` export in
 [`worker/index.ts`](./worker/index.ts). It needs `YOUTUBE_API_KEY` set, or it
 logs and returns.

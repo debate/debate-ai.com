@@ -5,7 +5,7 @@
  * `lib/judge-awards.ts` and `state/judgeAwards.ts`.
  *
  * `JudgeAwardsSection` sits on the contributor profile
- * (`/cards/leaderboard/{debaterId}`): every award the debater has received,
+ * (`/coaching/leaderboard/{debaterId}`): every award the debater has received,
  * each a large badge with the giving judge's name underneath, plus a
  * **Give an award** form for judges. The form enforces the
  * once-per-judge-per-tournament rule and shows the store's error when a

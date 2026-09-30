@@ -13,6 +13,6 @@ describe("Judge Practice Rounds link", () => {
 
   it("is in the sidebar's Practice section, pointing at that anchor", () => {
     const practice = SIDEBAR_TOOL_SECTIONS.find((section) => section.id === "practice")
-    expect(practice?.tools.map((tool) => tool.href)).toContain(`/practice-partners#${JUDGE_ANCHOR}`)
+    expect(practice?.tools.map((tool) => tool.href)).toContain(`/practice/partners#${JUDGE_ANCHOR}`)
   })
 })

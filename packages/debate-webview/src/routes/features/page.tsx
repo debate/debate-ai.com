@@ -6,7 +6,7 @@ export default function FeaturesPage() {
     // No page padding: the panel's hero is full-bleed, so its aurora backdrop
     // and grid have to reach the edges of the column it is given.
     //
-    // The page carries no chrome of its own. `/features` is one of the
+    // The page carries no chrome of its own. `/practice/features` is one of the
     // sidebar's routes (`EXTRA_SIDEBAR_HREFS`), so `AppSidebarShell` wraps it
     // in the same dock and nav tree as every surface it catalogues — which is
     // also what replaced the "Back to lectures" pill this page used to float

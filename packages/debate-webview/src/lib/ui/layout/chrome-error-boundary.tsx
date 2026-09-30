@@ -13,7 +13,7 @@
  *
  * That is not hypothetical. `ReferenceError: useMemo is not defined` in
  * `ReasonDocsSidebarPanels` (a bad conflict resolution in 7e33704, repaired in
- * #753) took down every route the panels mount on — all of `/cards/*` and
+ * #753) took down every route the panels mount on — all of `/research/cards/*` and
  * `/reason-editor` — while the rest of the app stayed up, because that is
  * exactly the set of routes whose sidebar rendered the broken component.
  *

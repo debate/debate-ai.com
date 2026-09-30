@@ -2,8 +2,8 @@
  * @fileoverview The "Coaching / Research / Practice" portion of the videos
  * sidebar — the h1 sections that follow "Round Videos" and "Lectures" in the
  * tree — factored out of `VideoSidebarTree` so it can also render on the
- * non-video tool pages those sections link to (`/coach`, `/research`,
- * `/practice-round`, etc.) — those pages otherwise render no sidebar at all
+ * non-video tool pages those sections link to (`/coaching`, `/research`,
+ * `/practice`, etc.) — those pages otherwise render no sidebar at all
  * once you navigate off `/videos`, which reads as the sidebar disappearing.
  * `AppSidebarShell` (app-local) mounts this on every page whose path matches
  * one of the links below so the nav stays visible everywhere it points to,
@@ -30,7 +30,7 @@
  * disappearing in between. Collapsing is still per-section and sticky for the
  * session, so anyone who wants a short column can still have one.
  *
- * `sectionIds` narrows the tree to named sections: the `/cards` sidebar is
+ * `sectionIds` narrows the tree to named sections: the `/research/cards` sidebar is
  * the document panels plus the Research tools, so it asks for that one
  * section rather than the whole nav (see the app's `AppSidebarShell`).
  *
@@ -77,14 +77,14 @@ const REFERENCE_ICONS: Record<string, TreeItemIcon> = {
 /**
  * Team and school profile pages (`/teams/<team>`, `/schools/<school>`) are
  * opened from the Team Rankings table rather than nested under its own
- * `/rank` route, so a plain `pathname === tool.href` match never lights that
+ * `/coaching/rankings` route, so a plain `pathname === tool.href` match never lights that
  * row up while you are reading one — the tree looked like it had lost track
  * of where you were the moment you followed a rankings link. Both prefixes
  * count as "still on Team Rankings" for highlighting, same as
  * `EXTRA_SIDEBAR_HREFS` already treats them for keeping the sidebar itself
  * mounted (`sidebar-routes.ts`).
  */
-const TEAM_RANKINGS_HREF = "/rank";
+const TEAM_RANKINGS_HREF = "/coaching/rankings";
 const TEAM_RANKINGS_PROFILE_PREFIXES = ["/teams", "/schools"];
 
 function isToolActive(href: string, pathname: string | null): boolean {
@@ -114,7 +114,7 @@ export interface ToolNavTreeProps {
   onToggleSection?: (sectionId: string) => void;
   /**
    * Render only these tool sections, in this order, instead of all of
-   * {@link SIDEBAR_TOOL_SECTIONS} — the `/cards` sidebar passes
+   * {@link SIDEBAR_TOOL_SECTIONS} — the `/research/cards` sidebar passes
    * `[RESEARCH_SECTION_ID]` to be exactly the research tools next to its
    * document panels. Omit for the whole tree.
    */
@@ -142,7 +142,7 @@ export function ToolNavTree({
   const showsWholeTree = sectionIds == null;
 
   // On a filtered tree the route often sits in a section that isn't rendered
-  // — `/cards` is a dock destination, in no tool section at all — which would
+  // — `/research/cards` is a dock destination, in no tool section at all — which would
   // leave the column with a heading and no links. Fall back to the first
   // section shown, so the research list is open on arrival.
   const matchedSectionId = sidebarSectionForPath(pathname);

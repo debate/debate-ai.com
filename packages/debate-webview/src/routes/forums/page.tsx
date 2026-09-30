@@ -9,12 +9,12 @@ import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
  *
  * The feed is the news — a new post is an event, and ordering by last activity
  * puts the live argument at the top, which is the only ordering that makes a
- * "latest" list correct as the day goes on. The route is still `/forums`:
+ * "latest" list correct as the day goes on. The route is still `/practice/forums`:
  * threads and their replies are a discussion, and renaming the URL would break
  * every link already out there for no gain in meaning.
  *
  * `ToolPageHeader` takes the title, description and icon explicitly because
- * `/forums` is not in the `/tools` catalog — it is a destination in the sidebar
+ * `/practice/forums` is not in the `/tools` catalog — it is a destination in the sidebar
  * tree and the dock's Settings menu, not one of the catalogued tools, and the
  * header's fallbacks all come from that catalog.
  */
@@ -22,7 +22,7 @@ export default function ForumsPage() {
   return (
     <ToolPage>
       <ToolPageHeader
-        href="/forums"
+        href="/practice/forums"
         backHref="/tools"
         backLabel="tools"
         title="Latest News"

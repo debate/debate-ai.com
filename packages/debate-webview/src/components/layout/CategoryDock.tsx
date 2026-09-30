@@ -34,8 +34,8 @@ import { useSession } from "../../lib/hooks/useSession"
 import { hasEmbeddedDock, hostsOwnSidebarDock, isGenericToolSidebarRoute } from "../../lib/sidebar-routes"
 import { SIDEBAR_MENU_SECTIONS, SITE_LINKS, DEBATE_LINKS } from "../../lib/nav/dock-menu-sections"
 import { NAV_ITEMS } from "../../lib/nav/dock-nav-items"
+import { dockIdlePrefetchTargets, scheduleDockIdlePrefetch } from "../../lib/nav/dock-idle-prefetch"
 import { accountLabel } from "../../lib/nav/account-label"
-import { useAppFrame } from "./AppFrameProvider"
 import { useIsFramedDocument } from "../../lib/layout/use-framed-document"
 import { openGlobalCommandPalette } from "./GlobalCommandPalette"
 import { IconSettings } from "../../lib/ui/icons"
@@ -147,7 +147,31 @@ function AccountSection({ onSignIn }: { onSignIn: () => void }) {
 const SUBMENU_WIDTH = "w-[min(14rem,calc(100vw-1.5rem))]"
 
 /**
- * The site-nav menu: Command Palette plus one submenu per sidebar section
+ * Width for the dock's own menus (site nav, settings).
+ *
+ * Narrower on a phone than on a desktop (`w-40` under `sm`, `w-48` above): the
+ * dock sits against the screen edge there, so every pixel the panel gives back
+ * is a pixel of gap left for Radix to open the section submenus into. Capped
+ * at the viewport as well, for the same reason {@link SUBMENU_WIDTH} is.
+ */
+const MENU_WIDTH = "w-40 sm:w-48 max-w-[calc(100vw-1rem)]"
+
+/**
+ * The palette's opening chord, as the platform writes it — `⌘K` on Apple
+ * hardware, `Ctrl K` elsewhere. Read after mount rather than during render, so
+ * the server's markup and the first client render agree.
+ */
+function usePaletteChord(): string {
+  const [chord, setChord] = useState("⌘K")
+  useEffect(() => {
+    const p = navigator.platform || navigator.userAgent || ""
+    if (!/Mac|iPhone|iPad|iPod/i.test(p)) setChord("Ctrl K")
+  }, [])
+  return chord
+}
+
+/**
+ * The site-nav menu: the search palette plus one submenu per sidebar section
  * (Videos, Coaching, Research, Practice). Used to live at the top of
  * {@link SettingsMenu}, opened from the same gear icon as Settings/Theme/
  * Links/Account — which put "where do I go" and "how do I configure this"
@@ -157,19 +181,20 @@ const SUBMENU_WIDTH = "w-[min(14rem,calc(100vw-1.5rem))]"
  */
 function NavMenu({ side }: { side: "bottom" | "top" }) {
   const router = useRouter()
+  const chord = usePaletteChord()
 
   return (
     <DropdownMenuContent
       side={side}
       align="end"
-      className="w-48 max-w-[calc(100vw-1rem)] max-h-[min(560px,80vh)] overflow-y-auto"
+      className={cn(MENU_WIDTH, "max-h-[min(560px,80vh)] overflow-y-auto")}
       collisionPadding={8}
       avoidCollisions
     >
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); openGlobalCommandPalette() }}>
-        <Search className="mr-2 h-4 w-4" />
-        Command Palette
-        <span className="ml-auto text-xs text-muted-foreground">⌘/Ctrl⇧Space</span>
+        <Search className="mr-2 h-4 w-4 shrink-0" />
+        <span className="min-w-0 flex-1 truncate">Search</span>
+        <span className="ml-2 shrink-0 text-xs text-muted-foreground">{chord}</span>
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       {/* The desktop sidebar's own sections, one submenu each. The sidebar is
@@ -177,7 +202,7 @@ function NavMenu({ side }: { side: "bottom" | "top" }) {
           the glossary/rankings pair below its tree can be reached — see
           `lib/nav/dock-menu-sections.ts`, which derives these from the same
           data the sidebar renders. The feature catalog is *not* restated
-          here: it is the `/features` row in the Settings menu's Site Links. */}
+          here: it is the `/practice/features` row in the Settings menu's Site Links. */}
       {SIDEBAR_MENU_SECTIONS.map((section) => (
         <DropdownMenuSub key={section.id}>
           <DropdownMenuSubTrigger>
@@ -215,7 +240,7 @@ function SettingsMenu({
       // Tall enough (the theme/links block above the account rows) to run
       // past a phone viewport, which would otherwise cut them off with no
       // way to reach them.
-      className="w-48 max-w-[calc(100vw-1rem)] max-h-[min(560px,80vh)] overflow-y-auto"
+      className={cn(MENU_WIDTH, "max-h-[min(560px,80vh)] overflow-y-auto")}
       collisionPadding={8}
       avoidCollisions
     >
@@ -285,7 +310,7 @@ function SettingsMenu({
         </DropdownMenuSubTrigger>
         <DropdownMenuSubContent className={cn(SUBMENU_WIDTH, "max-h-[min(500px,70vh)] overflow-y-auto")} collisionPadding={8} avoidCollisions>
           <DropdownMenuLabel>Site Links</DropdownMenuLabel>
-          {/* An app route (`/features`, `/legal/privacy`) is pushed through
+          {/* An app route (`/practice/features`, `/legal/privacy`) is pushed through
               the router so it opens inside the app — sidebar, dock and the
               persistent player all still there. Only an outside site or the
               help docs at `/docs` (no app shell there) get a real page load; see
@@ -348,11 +373,11 @@ const EMBEDDED_ICON_SIZE = 34
 const EMBEDDED_MAGNIFICATION = 46
 
 /** The dock item that opens {@link NavMenu} instead of navigating. */
-const NAV_MENU_TRIGGER_HREF = "/versus-ai"
+const NAV_MENU_TRIGGER_HREF = "/practice/versus-ai"
 
 /**
  * The Practice vs AI dock item, wired to open {@link NavMenu} rather than
- * navigate to `/versus-ai` directly — that page is still one tap away, as
+ * navigate to `/practice/versus-ai` directly — that page is still one tap away, as
  * the first tool listed under the menu's Practice section.
  *
  * Carries its own `DropdownMenu` root rather than sharing the Settings
@@ -495,11 +520,9 @@ function DockInstance({
 export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) {
   const pathname = usePathname()
   const router = useRouter()
-  const frame = useAppFrame()
-  // A page rendered inside the app frame never draws a dock of its own: the
-  // shell's dock sits above the frame, in the top document, and stays put
-  // while this page loads and reloads underneath it. That includes the
-  // sidebar-hosted instance /videos mounts from its own `<aside>`.
+  // A page rendered inside someone else's frame never draws a dock of its
+  // own. That includes the sidebar-hosted instance /videos mounts from its
+  // own `<aside>`.
   const framedDocument = useIsFramedDocument()
   const categoryState = useCategoryDockState()
   const { activeVideoId, activeVideoTitle, isMinimized, isPlaying, setMinimized, setIsPlaying } = useVideoPlayerStore()
@@ -517,22 +540,7 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
   useAccountNotifications(isAuthenticated)
   useContacts(isAuthenticated)
 
-  /**
-   * Hands the destination to the app frame when there is one, so the click
-   * swaps a frame instead of tearing down and rebuilding the whole app —
-   * which is what used to leave the dock unresponsive while the next page
-   * hydrated. `AppFrameProvider` pushes the URL either way, so the address
-   * bar, deep links and the back button behave as before. Falls back to a
-   * plain route change wherever the frame isn't mounted (a framed document,
-   * or a path the dock doesn't own).
-   */
-  const navigate = useCallback(
-    (href: string) => {
-      if (frame?.openInFrame(href)) return
-      router.push(href)
-    },
-    [frame, router],
-  )
+  const navigate = useCallback((href: string) => router.push(href), [router])
 
   const handleNavClick = useCallback(
     (href: string) => (event: ReactMouseEvent<HTMLElement>) => {
@@ -546,10 +554,19 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
     [navigate],
   )
 
-  // The active item comes from the frame when one is open: `usePathname()`
-  // agrees, but the frame knows first, so the icon lights up on the click
-  // rather than a paint later.
-  const activePath = frame?.activePath ?? pathname
+  const activePath = pathname
+
+  // Warm the other destinations in idle time, so switching is a render from
+  // cache even without a hover first (touch screens, quick clicks).
+  useEffect(() => {
+    if (framedDocument) return
+    return scheduleDockIdlePrefetch(
+      (href) => router.prefetch(href),
+      dockIdlePrefetchTargets(NAV_ITEMS.map((item) => item.href), pathname),
+    )
+    // Once per page load: the scheduler ignores later calls anyway.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const allItems: DockNavRenderItem[] = [
     ...NAV_ITEMS.map(({ href, label, icon }) => ({
@@ -559,7 +576,8 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
       active: activePath === href,
       href,
       onClick: handleNavClick(href),
-      onPreload: frame ? () => frame.preloadFrame(href) : undefined,
+      // Warm the route's code and data on hover/focus so the click is quick.
+      onPreload: () => router.prefetch(href),
     })),
     ...(categoryState
       ? VIDEO_CATEGORY_ITEMS.map(({ category, label, icon }) => ({

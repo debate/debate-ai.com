@@ -57,8 +57,8 @@ describe("matchesToolSidebarHref", () => {
     // These are why matching is prefix-based: exact-match-only left each of
     // them with the fixed top-left dock floating over the page instead of a
     // dock inside a sidebar.
-    expect(matchesToolSidebarHref("/cards/awards")).toBe(true);
-    expect(matchesToolSidebarHref("/cards/leaderboard/alice")).toBe(true);
+    expect(matchesToolSidebarHref("/research/cards/awards")).toBe(true);
+    expect(matchesToolSidebarHref("/coaching/leaderboard/alice")).toBe(true);
     expect(matchesToolSidebarHref("/doc/some-document")).toBe(true);
     expect(matchesToolSidebarHref("/reason-editor/42")).toBe(true);
     expect(matchesToolSidebarHref("/teams/greenhill-ab")).toBe(true);
@@ -78,11 +78,11 @@ describe("matchesToolSidebarHref", () => {
 describe("hasEmbeddedDock / isGenericToolSidebarRoute", () => {
   it("treats every /videos route as already having its own sidebar dock", () => {
     expect(hasEmbeddedDock("/videos")).toBe(true);
-    expect(hasEmbeddedDock("/videos/lectures")).toBe(true);
+    expect(hasEmbeddedDock("/lectures")).toBe(true);
     // `/videos` renders its own sidebar, so the generic shell must not add a
     // second one.
     expect(isGenericToolSidebarRoute("/videos")).toBe(false);
-    expect(isGenericToolSidebarRoute("/videos/lectures")).toBe(false);
+    expect(isGenericToolSidebarRoute("/lectures")).toBe(false);
   });
 
   it("reports a sidebar-hosted dock on the CardMirror editor route", () => {
@@ -93,7 +93,7 @@ describe("hasEmbeddedDock / isGenericToolSidebarRoute", () => {
   });
 
   it("falls back to the fixed dock only off the sidebar routes", () => {
-    // `/features` and `/legal/privacy` used to be in this list. They are
+    // `/practice/features` and `/legal/privacy` used to be in this list. They are
     // sidebar routes now — see "the features catalog" and "the terms of
     // service page" below.
     for (const route of ["/", "/login", "/contacts"]) {
@@ -112,11 +112,11 @@ describe("hasEmbeddedDock / isGenericToolSidebarRoute", () => {
 
 describe("the features catalog", () => {
   it("is a sidebar route, so it opens inside the app rather than as a bare page", () => {
-    expect(TOOL_SIDEBAR_HREFS.has("/features")).toBe(true);
-    expect(isGenericToolSidebarRoute("/features")).toBe(true);
+    expect(TOOL_SIDEBAR_HREFS.has("/practice/features")).toBe(true);
+    expect(isGenericToolSidebarRoute("/practice/features")).toBe(true);
     // …and the dock's own floating instance stays hidden, since the sidebar
     // it is wrapped in already hosts one.
-    expect(hasEmbeddedDock("/features")).toBe(true);
+    expect(hasEmbeddedDock("/practice/features")).toBe(true);
   });
 });
 
@@ -142,12 +142,12 @@ describe("the terms of service page", () => {
 
 describe("Latest News", () => {
   it("is a sidebar route, so opening a thread from the feed keeps the nav", () => {
-    expect(TOOL_SIDEBAR_HREFS.has("/forums")).toBe(true);
-    expect(isGenericToolSidebarRoute("/forums")).toBe(true);
+    expect(TOOL_SIDEBAR_HREFS.has("/practice/forums")).toBe(true);
+    expect(isGenericToolSidebarRoute("/practice/forums")).toBe(true);
     // A thread page is a detail route under an already-listed parent, matched
     // by prefix — the same way `/doc/<document>` and `/teams/<team>` are.
-    expect(isGenericToolSidebarRoute("/forums/3f2504e0-4f89-41d3-9a0c-0305e82c3301")).toBe(true);
-    expect(hasEmbeddedDock("/forums")).toBe(true);
+    expect(isGenericToolSidebarRoute("/practice/forums/3f2504e0-4f89-41d3-9a0c-0305e82c3301")).toBe(true);
+    expect(hasEmbeddedDock("/practice/forums")).toBe(true);
   });
 
   it("sit directly above the Tabroom tournaments entry in the Practice section", () => {
@@ -157,8 +157,8 @@ describe("Latest News", () => {
     const practice = SIDEBAR_TOOL_SECTIONS.find((section) => section.id === "practice");
     const hrefs = practice?.tools.map((tool) => tool.href) ?? [];
 
-    expect(hrefs.indexOf("/forums")).toBeGreaterThan(-1);
-    expect(hrefs.indexOf("/forums")).toBeLessThan(hrefs.indexOf("/tournaments"));
+    expect(hrefs.indexOf("/practice/forums")).toBeGreaterThan(-1);
+    expect(hrefs.indexOf("/practice/forums")).toBeLessThan(hrefs.indexOf("/practice/tournaments"));
   });
 });
 
@@ -208,7 +208,7 @@ describe("the flow workspace", () => {
     expect(ownsItsLayout("/debate/glenbrooks")).toBe(true);
     // A sibling that merely shares the prefix is not the workspace.
     expect(ownsItsLayout("/debates")).toBe(false);
-    expect(ownsItsLayout("/cards")).toBe(false);
+    expect(ownsItsLayout("/research/cards")).toBe(false);
     expect(ownsItsLayout(null)).toBe(false);
   });
 
@@ -220,5 +220,19 @@ describe("the flow workspace", () => {
   it("keeps the dock as the floating instance, since it hosts no sidebar one", () => {
     expect(hasEmbeddedDock("/debate")).toBe(false);
     expect(hasEmbeddedDock("/debate/glenbrooks")).toBe(false);
+  });
+});
+
+describe("video library routes and the category-path redirects", () => {
+  it("never redirects a round-video slug the page still serves under /videos", async () => {
+    const { SLUG_MAP } = await import("../src/panels/lectureRouteConfig");
+    const { canonicalCategoryPathname } = await import(
+      "debate-data-sync/src/routes/category-paths"
+    );
+    const moved = new Set(["dictionary", "rankings", "statistics", "stats", "lectures"]);
+    for (const slug of Object.keys(SLUG_MAP)) {
+      if (moved.has(slug)) continue;
+      expect(canonicalCategoryPathname(`/videos/${slug}`), slug).toBeNull();
+    }
   });
 });

@@ -1,4 +1,4 @@
-import type { Plugin } from 'vite';
+import type { Plugin } from './plugin-type';
 
 /**
  * `api2client` (pulled in by `qwksearch-api-client`) ships its Node-only

@@ -80,14 +80,50 @@ bun run dev:editor   # just the reason-editor package
 - Keep package boundaries clean — import from a package's public entry point rather than reaching into its internals.
 - Add or update tests for behavior changes and bug fixes.
 - Update documentation, examples, and types when applicable.
-- Do not commit secrets, credentials, API keys, private keys, generated build output, or unrelated `bun.lock` changes.
+- Do not commit secrets, credentials, API keys, private keys, generated build output, or a `bun.lock` (lockfiles are not committed).
 - Write clear commit messages that describe the change.
 
 
 
-## Testing
+## Debate Extensions
 
-Before opening a pull request, run the relevant checks locally — these are the same commands CI runs:
+Debate extensions are structured argument additions that follow a consistent format. When contributing an extension, use this template:
+
+```md
+## Extension Title
+
+**Type:** [Extension / Rebuttal / Evidence / Impact]
+
+**Debate:** [Debate topic or ID]
+
+**Position:** [Affirmative / Negative]
+
+### Argument
+
+[The core claim and reasoning]
+
+### Evidence
+
+- Source 1
+- Source 2
+
+### Impact
+
+[Why this argument matters in the debate]
+
+### Extensions to Consider
+
+- [Related extension or argument]
+```
+
+### Guidelines
+
+- Keep arguments focused and well-sourced.
+- Cite evidence with links or references where possible.
+- Label the type of contribution clearly (extension, rebuttal, evidence, impact).
+- Include the debate context so the extension can be placed correctly.
+
+## Testing
 
 ```bash
 bun run typecheck    # turbo typecheck across the workspace

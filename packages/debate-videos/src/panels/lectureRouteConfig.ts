@@ -44,3 +44,39 @@ export const SLUG_MAP: Record<string, SlugState> = {
   watchhistory: { view: "history" },
 }
 
+
+/**
+ * Routes outside `/videos/[category]` that render the same page, and the slug
+ * each one stands for. The lecture library and the three reference views live
+ * under their sidebar category (`/lectures`, `/practice/...`) rather than as
+ * `/videos/<slug>`, so there is no `category` param to read the view from.
+ */
+export const PATH_SLUGS: Record<string, string> = {
+  "/lectures": "lectures",
+  "/practice/glossary": "dictionary",
+  "/practice/rankings": "rankings",
+  "/practice/statistics": "statistics",
+}
+
+/**
+ * The lower-cased slug the page is showing: the route's `category` param when
+ * it has one (`/videos/pf`, `/lectures/topic_lectures`), otherwise the slug the
+ * path itself stands for ({@link PATH_SLUGS}), otherwise `undefined` (`/videos`).
+ */
+export function librarySlug(
+  category: string | string[] | undefined,
+  pathname: string | null | undefined,
+): string | undefined {
+  if (typeof category === "string") return category.toLowerCase()
+  if (Array.isArray(category) && category.length > 0) return String(category[0]).toLowerCase()
+  const path = pathname?.replace(/\/+$/, "") ?? ""
+  return PATH_SLUGS[path]
+}
+
+/**
+ * Where a lecture category lives: `/lectures` for all of them,
+ * `/lectures/<id>` for one.
+ */
+export function lectureCategoryHref(categoryId: string): string {
+  return categoryId === "all" ? "/lectures" : `/lectures/${encodeURIComponent(categoryId)}`
+}

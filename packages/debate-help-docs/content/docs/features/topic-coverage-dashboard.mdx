@@ -8,7 +8,7 @@ Tracks a topic's argument checklist and shows which arguments are
 well-covered, thin, or missing entirely, based on cards already submitted
 to the shared evidence library.
 
-- **Route:** `/cards/coverage`
+- **Route:** `/research/cards/coverage`
 - **Package:** `debate-card-search`
 
 ## What it shows
@@ -30,6 +30,6 @@ state/trackedArguments.ts (localStorage — topic checklist)
 ## Known gaps
 
 The checklist (`trackedArguments`) syncs to a signed-in user's account —
-see [Tool Data Sync](../internals/tool-data-sync.mdx) — but still per-user,
+see Tool Data Sync — but still per-user,
 not a shared team resource: two contributors tracking the same topic each
 keep their own checklist rather than editing one shared list.

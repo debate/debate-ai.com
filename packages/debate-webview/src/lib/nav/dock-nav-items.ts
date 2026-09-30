@@ -1,11 +1,9 @@
 /**
  * @fileoverview The app dock's navigation destinations, in dock order.
  *
- * Lifted out of `CategoryDock` because two other places need the same list:
- * `AppFrameProvider` (to decide which paths are opened in the app frame
- * rather than by a full route change) and the Alt+<n> keyboard shortcuts.
- * Keeping one array means the shortcut numbering, the dock order and the
- * framed-route set can never drift apart.
+ * Lifted out of `CategoryDock` so the dock icons, the Alt+<n> keyboard
+ * shortcuts and the idle prefetch (`dock-idle-prefetch.ts`) read one array
+ * and can never drift apart.
  */
 
 import { dockNavLabel } from "./dock-nav-paths"
@@ -25,11 +23,11 @@ export interface DockNavItem {
 
 export const NAV_ITEMS: DockNavItem[] = [
   { href: "/videos", label: dockNavLabel("/videos"), icon: IconRoundsYoutube },
-  { href: "/cards", label: dockNavLabel("/cards"), icon: IconCollectiveMind },
+  { href: "/research/cards", label: dockNavLabel("/research/cards"), icon: IconCollectiveMind },
   { href: "/debate", label: dockNavLabel("/debate"), icon: IconFlowFlower },
   // Practice vs AI — a full timed round against an AI opponent, from the
   // `debate-practice-vs-ai` package.
-  { href: "/versus-ai", label: dockNavLabel("/versus-ai"), icon: IconVsAi },
+  { href: "/practice/versus-ai", label: dockNavLabel("/practice/versus-ai"), icon: IconVsAi },
   { href: "/doc", label: dockNavLabel("/doc"), icon: IconRead },
   // No "Tools" icon here on purpose: the tools catalog is reached from the
   // sidebar nav tree (its "Apps" heading and the Coaching/Research/Practice

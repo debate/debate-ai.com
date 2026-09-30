@@ -14,7 +14,7 @@
  * There is no "Apps" section any more. It was the menu's one catalog — the
  * dock's own five destinations as plain rows, then every surface in
  * `feature-catalog.ts` as a nested submenu per category — which made the
- * Settings menu a second, deeper copy of `/features`. The catalog is reached
+ * Settings menu a second, deeper copy of `/practice/features`. The catalog is reached
  * from the command palette's "All Features" entry instead, and the dock's
  * five destinations are the dock's five icons, sitting directly beside the
  * menu that listed them.

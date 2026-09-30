@@ -7,7 +7,7 @@
  * the same idea's word-count-round history sync, TODO.md idea #2's
  * account-sync follow-up) `saved_word_count_rounds`, and — the third and
  * last of idea #17's three named data types, "debates" — `practice_vs_ai_debates`
- * (Practice vs AI, `/versus-ai`), already saved per-user but never listed
+ * (Practice vs AI, `/practice/versus-ai`), already saved per-user but never listed
  * anywhere a returning user could browse it before `GET /api/vsbot/history`
  * was added for exactly that purpose.
  *
@@ -33,7 +33,7 @@
  * despite being exactly the same "SQL-backed round history, discoverable
  * from the tools page" shape as `saved_rounds`.
  *
- * A seventh kind, Practice Drills' generated drill sets (`/drills`), joined
+ * A seventh kind, Practice Drills' generated drill sets (`/practice/drills`), joined
  * next: `saved_drill_sets` already synced a signed-in user's `DrillSetRecord`s
  * (`debate-practice-drills`, keyed by `roundId`, same "no separate display
  * label" shape as {@link CloudWordCountRoundSummary}) per-user across
@@ -41,7 +41,7 @@
  * wired, discoverability not" gap {@link CloudSpeechOutcomeSummary} closed for
  * video speech-outcome runs.
  *
- * An eighth kind, AI Judge Decisions (`/judge-decision`), joined next:
+ * An eighth kind, AI Judge Decisions (`/practice/judge-decision`), joined next:
  * `saved_judge_decisions` already synced a signed-in user's
  * `JudgeDecisionRecord`s (`debate-practice-drills`, one row per generated
  * decision, keyed by its own `id` rather than `roundId` since a round can
@@ -49,21 +49,21 @@
  * "sync wired, discoverability not" gap applied here too.
  *
  * A ninth kind, AI Response-Outcome Charts' counsel-panel assessments
- * (`/outcomes`), joined next: `saved_counsel_panel_assessments` already
+ * (`/coaching/outcomes`), joined next: `saved_counsel_panel_assessments` already
  * synced a signed-in user's `CounselPanelAssessmentRecord`s
  * (`debate-practice-drills`, one row per generated assessment, keyed by its
  * own `id` rather than `roundId` for the same reason as judge decisions —
  * a round can accumulate many) via `GET /api/counsel-panel-assessments`, but
  * the same "sync wired, discoverability not" gap applied here too.
  *
- * A tenth kind, Pre-Round Briefings' saved round pairings (`/briefings`),
+ * A tenth kind, Pre-Round Briefings' saved round pairings (`/practice/briefings`),
  * joined next: `saved_round_pairings` already synced a signed-in user's
  * `RoundPairingRecord`s (`debate-round` itself this time, one row per
  * pairing keyed by `roundId`) via `GET /api/round-pairings`, but the same
  * "sync wired, discoverability not" gap applied here too.
  *
  * An eleventh kind, Scout-to-Strategy's saved strategy recommendations
- * (`/strategy`), joined next: `saved_strategy_recommendations` already
+ * (`/practice/strategy`), joined next: `saved_strategy_recommendations` already
  * synced a signed-in user's `StrategyRecommendationRecord`s (`debate-round`
  * itself, one row per built recommendation, many rows can share a
  * `matchupId`) via `GET /api/strategy-recommendations`, but the same "sync
@@ -94,7 +94,7 @@
  * flashcards" overlay.
  *
  * A fifteenth kind, Practice Round Simulator's saved custom opponent
- * personas (`/practice-round`), joined next: `saved_custom_opponent_personas`
+ * personas (`/practice`), joined next: `saved_custom_opponent_personas`
  * (`apps/debate-ai.com`) already synced a signed-in user's
  * `SavedCustomOpponentPersona`s (`debate-speech-writer`'s
  * `opponent-persona-library.ts`, one row per saved persona) via
@@ -124,7 +124,7 @@
  * card clipped on one device stayed invisible from this widget on another,
  * discoverable only from inside the editor's own quick-card search/manage UI.
  *
- * An eighteenth kind, Prep Notes' live per-argument notes (`/prep-notes`),
+ * An eighteenth kind, Prep Notes' live per-argument notes (`/practice/prep-notes`),
  * joined next: `PrepNote`s (`debate-round`'s own
  * `flow/strategy-sync-notes.ts`, persisted by `debate-team-collaboration`'s
  * `state/prepNotes.ts`) already synced a signed-in user's notes via
@@ -135,7 +135,7 @@
  * stayed invisible from this widget on another.
  *
  * A nineteenth kind, the Evidence Library's cut cards and reusable analytic
- * blocks (`/cards/library`), joined last: an `EvidenceLibraryEntry`
+ * blocks (`/research/cards/library`), joined last: an `EvidenceLibraryEntry`
  * (`debate-research-evidence`'s own `lib/shared-evidence-library.ts`,
  * persisted per-browser by `state/evidenceLibraryEntries.ts`, since — per
  * that module's own header comment — "the persisted `localStorage`
@@ -154,7 +154,7 @@
  * admin-entered standings with no per-user submitter).
  *
  * A twentieth kind, Practice Round Simulator's own saved rounds
- * (`/practice-round`, distinct from `debates`'s Practice vs AI history and
+ * (`/practice`, distinct from `debates`'s Practice vs AI history and
  * `drillSets`'s generated drill sets), joined next: `PracticeRoundRecord`s
  * (`debate-round`'s own `state/practiceRounds.ts`, one row per simulated
  * round keyed by `roundId`) already synced a signed-in user's round setup,
@@ -172,7 +172,7 @@
  * existed still parses.
  *
  * A twenty-first kind, Coach Materials' uploaded grounding documents
- * (`/coach-materials`), joined next: `saved_coach_materials` already synced a
+ * (`/coaching/materials`), joined next: `saved_coach_materials` already synced a
  * signed-in user's `CoachMaterial`s (`debate-speech-writer`, one row per
  * material keyed by its own `id`) via `GET /api/coach-materials`, but the
  * same "sync wired, discoverability not" gap applied here too — a material
@@ -631,23 +631,23 @@ export function buildRecentCloudItems(
     flowHref = "/debate",
     roundHref = "/debate",
     wordCountRoundHref = "/word-count",
-    debateHref = "/versus-ai",
+    debateHref = "/practice/versus-ai",
     speechOutcomeHref = "/videos",
-    drillSetHref = "/drills",
-    judgeDecisionHref = "/judge-decision",
-    counselPanelAssessmentHref = "/outcomes",
-    roundPairingHref = "/briefings",
-    strategyRecommendationHref = "/strategy",
+    drillSetHref = "/practice/drills",
+    judgeDecisionHref = "/practice/judge-decision",
+    counselPanelAssessmentHref = "/coaching/outcomes",
+    roundPairingHref = "/practice/briefings",
+    strategyRecommendationHref = "/practice/strategy",
     sprintSessionHref = "/research",
     speechSendLogEntryHref = "/speech-documents",
     learnDeckHref = "/reason-editor",
-    customOpponentPersonaHref = "/practice-round",
+    customOpponentPersonaHref = "/practice",
     flowAnnotationHref = "/annotations",
     quickCardHref = "/reason-editor",
-    prepNoteHref = "/prep-notes",
-    evidenceLibraryEntryHref = "/cards/library",
-    practiceRoundHref = "/practice-round",
-    coachMaterialHref = "/coach-materials",
+    prepNoteHref = "/practice/prep-notes",
+    evidenceLibraryEntryHref = "/research/cards/library",
+    practiceRoundHref = "/practice",
+    coachMaterialHref = "/coaching/materials",
   } = opts;
 
   const documentItems: CloudLibraryItem[] = (input.documents ?? []).slice(0, perKindLimit).map((doc) => ({
@@ -964,9 +964,9 @@ export function getSampleCloudLibraryItems(
     documentHref = "/reason-editor",
     flowHref = "/debate",
     roundHref = "/debate",
-    debateHref = "/versus-ai",
-    drillSetHref = "/drills",
-    judgeDecisionHref = "/judge-decision",
+    debateHref = "/practice/versus-ai",
+    drillSetHref = "/practice/drills",
+    judgeDecisionHref = "/practice/judge-decision",
   } = opts;
 
   const sample = (

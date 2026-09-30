@@ -1,5 +1,5 @@
 /**
- * @fileoverview The Topic & Video Statistics page (`/videos/statistics`) —
+ * @fileoverview The Topic & Video Statistics page (`/practice/statistics`) —
  * combines the debate topics explorer with the YouTube channel statistics
  * charts, replacing the previously-modal-only stats display.
  * @module panels/statistics/StatisticsPage

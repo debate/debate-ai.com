@@ -61,7 +61,7 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         highlights: ["Topic coverage dashboard", "Evidence library search", "Task routing, quests, and peer review in one place"],
       },
       {
-        href: "/coach", label: "Coach Workspace", icon: GraduationCap,
+        href: "/coaching", label: "Coach Workspace", icon: GraduationCap,
         description: "Coach a round from the argument tree and flow summary through coaching prompts, drills, scouting, briefings, and practice rounds.",
         highlights: ["Argument tree + flow summary in one view", "AI coaching prompts and drills", "Opponent scouting and pre-round briefings"],
       },
@@ -71,7 +71,7 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
     heading: "Community & Progress",
     tools: [
       {
-        href: "/cards/leaderboard", label: "Leaderboard", icon: Trophy,
+        href: "/coaching/leaderboard", label: "Leaderboard", icon: Trophy,
         description: "Rank contributors by helpfulness score, tier, badges, and quest streak.",
         highlights: ["Ranked by total helpfulness score across every contribution kind", "Tier, streak, and merged tier/streak-milestone badges per row", "Your own row highlighted with a \"You\" badge when signed in"],
       },
@@ -81,87 +81,87 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         highlights: ["Hand-picked product-update posts", "Auto-posts Daily Best Card and Contributor Award announcements", "Filter by category, like, and mark read"],
       },
       {
-        href: "/cards/contributions", label: "Contributions Feed", icon: ThumbsUp,
+        href: "/research/cards/contributions", label: "Contributions Feed", icon: ThumbsUp,
         description: "Submit, like, save, and endorse the community's cards, summaries, highlights, and annotations.",
         highlights: ["Every contribution kind in one scored feed", "Like, save, and endorse signals feed the Leaderboard"],
       },
       {
-        href: "/cards/awards", label: "Contributor Awards", icon: Medal,
+        href: "/research/cards/awards", label: "Contributor Awards", icon: Medal,
         description: "See category winners for best evidence finder, best explainer, and more, ranked by helpfulness score.",
         highlights: ["One card per contribution kind — evidence, summaries, highlights, annotations, arguments, refutations", "Freeze a day's standings as an official announced result"],
       },
       {
-        href: "/cards/best-card", label: "Daily Best Card", icon: Sparkles,
+        href: "/research/cards/best-card", label: "Daily Best Card", icon: Sparkles,
         description: "Check today's highest-helpfulness card along with every past day's winner.",
         highlights: ["Live leader computed from the Contributions Feed", "Announce a day's winner to freeze it against later submissions"],
       },
       {
-        href: "/cards/inbox", label: "Task Inbox", icon: Inbox,
+        href: "/research/cards/inbox", label: "Task Inbox", icon: Inbox,
         description: "See research tasks routed to contributors, grouped by topic.",
         highlights: ["Coverage-gap tasks routed by skill level, grouped by topic", "Mark done, then a different contributor verifies before it counts"],
       },
       {
-        href: "/cards/progress", label: "Progress", icon: Award,
+        href: "/research/cards/progress", label: "Progress", icon: Award,
         description: "Track every contributor's unlock tier, badges, and daily-quest streak.",
         highlights: ["Tier, unlocked task skill level, streak, and badges per row", "Shows exactly how far each contributor is from the next tier"],
       },
       {
-        href: "/cards/scoring", label: "LLM Card Scoring", icon: Gauge,
+        href: "/research/cards/scoring", label: "LLM Card Scoring", icon: Gauge,
         description: "Score cards for relevance, clarity, uniqueness, evidence quality, and usability.",
         highlights: ["Deterministic five-dimension heuristic score, ranked across every submitted card", "Likely-duplicate flag checked against the real Shared Evidence Library corpus", "Optional real Anthropic-backed qualitative verdict per card"],
       },
       {
-        href: "/cards/revisions", label: "Revision Incentives", icon: History,
+        href: "/research/cards/revisions", label: "Revision Incentives", icon: History,
         description: "See contributors ranked by reward points earned improving weak cards, strengthening citations, and refreshing stale evidence.",
         highlights: ["Points for quality gains, citation completeness, and fresher evidence", "Weak-card improvements score double"],
       },
       {
-        href: "/cards/reviews", label: "Review Queue", icon: MessageSquareText,
+        href: "/research/cards/reviews", label: "Review Queue", icon: MessageSquareText,
         description: "Move a submitted card through peer review by commenting, requesting changes, approving, and publishing it.",
         highlights: ["Full lifecycle: draft → in review → changes requested → approved → published", "Blocking comments must be resolved before approval"],
       },
       {
-        href: "/cards/group-challenges", label: "Group Challenges", icon: Target,
+        href: "/research/cards/group-challenges", label: "Group Challenges", icon: Target,
         description: "Create squad-scoped friendly challenges, like completing a set of blocks or winning a rebuttal exercise.",
         highlights: ["Contribution-count or recorded-win challenge goals", "Live per-member standings with an MVP badge for the leader"],
       },
       {
-        href: "/cards/coverage", label: "Topic Coverage Dashboard", icon: PieChart,
+        href: "/research/cards/coverage", label: "Topic Coverage Dashboard", icon: PieChart,
         description: "See which arguments are well-covered, which are missing, and where the team needs more work.",
         highlights: ["Missing / thin / covered, by card count and word count", "Untracked section for submitted cards nobody added to the checklist"],
       },
       {
-        href: "/cards/prep-room", label: "Collaboration Prep Room", icon: Presentation,
+        href: "/research/cards/prep-room", label: "Collaboration Prep Room", icon: Presentation,
         description: "Share a topic's prep space, covering evidence, draft blocks, and routed research tasks.",
         highlights: ["Keyword search scoped to just this topic's evidence and drafts", "Active-now roster of teammates currently working the topic", "Room activity timeline of dated evidence/draft-block submissions"],
       },
       {
-        href: "/cards/progress-tracking", label: "Research Progress", icon: ListChecks,
+        href: "/coaching/progress", label: "Research Progress", icon: ListChecks,
         description: "Review each contributor's contribution history and per-topic task completion.",
         highlights: ["Contributions, task completion rate, and per-topic breakdown per row"],
       },
       {
-        href: "/cards/level", label: "Debater Level", icon: Star,
+        href: "/practice/level", label: "Debater Level", icon: Star,
         description: "Level up like a video game: earn XP for cutting cards, redoing rebuttals, and practice rounds.",
         highlights: ["Daily challenges like \"Cut 5 cards\" and \"Redo a rebuttal\"", "Level, rank title, XP bar, and lifetime milestones"],
       },
       {
-        href: "/cards/streaks", label: "Quest Streaks", icon: Flame,
+        href: "/research/cards/streaks", label: "Quest Streaks", icon: Flame,
         description: "See every contributor's daily-quest streak and the milestone badges it has earned.",
         highlights: ["Current and longest streak, plus 3/7/14/30-day milestone badges", "Run today's mission check on demand"],
       },
       {
-        href: "/cards/quests", label: "Daily Quests", icon: CheckSquare,
+        href: "/research/cards/quests", label: "Daily Quests", icon: CheckSquare,
         description: "Track team goals like \"find 5 solvency cards\" against today's live progress from real contributions.",
         highlights: ["Progress tracked live against same-day contribution submissions", "Bulk-seed quests from a topic's under-covered arguments"],
       },
       {
-        href: "/cards/brainstorm", label: "Team Brainstorm Assist", icon: Lightbulb,
+        href: "/research/cards/brainstorm", label: "Team Brainstorm Assist", icon: Lightbulb,
         description: "Submit and upvote squad ideas for an argument block, grouped into boards by category.",
         highlights: ["Boards for new arguments, impact framing, frontlines, and turns", "Near-duplicate badge, plus AI-generated idea seeding"],
       },
       {
-        href: "/cards/collaboration", label: "Team Collaboration Mode", icon: Users2,
+        href: "/research/cards/collaboration", label: "Team Collaboration Mode", icon: Users2,
         description: "Leave live prep notes on a shared topic sprint, grouped by topic.",
         highlights: ["Open / covered / needs-follow-up cycle per note", "Assign a note to a teammate directly from the board"],
       },
@@ -171,7 +171,7 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
     heading: "Prep & Practice",
     tools: [
       {
-        href: "/prep-notes", label: "Prep Notes", icon: NotebookPen,
+        href: "/practice/prep-notes", label: "Prep Notes", icon: NotebookPen,
         description: "Keep live prep notes across every flow, grouped by status.",
         highlights: ["Needs-follow-up notes surfaced first, then open, then covered", "Assign a note to a teammate — they get a real Notifications entry"],
       },
@@ -186,37 +186,37 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         highlights: ["Fires automatically the moment a Prep Note is assigned to you", "Mark individual notifications read, newest first"],
       },
       {
-        href: "/judges", label: "Judge Profiles", icon: Gavel,
+        href: "/practice/judges", label: "Judge Profiles", icon: Gavel,
         description: "Check side-vote bias, average speaker points, and tendencies for every saved judge profile.",
         highlights: ["Side-vote bias, speed tolerance, and theory receptiveness per judge", "Sorted by rounds judged — most experienced first"],
       },
       {
-        href: "/opponents", label: "Opponent Team Profiles", icon: Users,
+        href: "/practice/opponents", label: "Opponent Team Profiles", icon: Users,
         description: "Review records, side-record tendencies, and common arguments or cases for every saved opponent scouting profile.",
         highlights: ["Overall and Aff/Neg side record, with a \"notably stronger side\" flag", "Most commonly run argument tags and cases per team"],
       },
       {
-        href: "/drills", label: "Practice Drills", icon: Dumbbell,
+        href: "/practice/drills", label: "Practice Drills", icon: Dumbbell,
         description: "Run quick practice drills generated from each round's flow.",
         highlights: ["Overview, frontline, cross-ex, and collapse-scenario prompts", "Generated straight from a round's already-flowed arguments"],
       },
       {
-        href: "/briefings", label: "Pre-Round Briefings", icon: ClipboardList,
+        href: "/practice/briefings", label: "Pre-Round Briefings", icon: ClipboardList,
         description: "Pull opponent scouting, judge tendencies, head-to-head record, and prep notes together for a round.",
         highlights: ["Pulls straight from saved Opponent and Judge Profiles", "One briefing per round, with free-text team prep notes attached"],
       },
       {
-        href: "/strategy", label: "Scout-to-Strategy", icon: Crosshair,
+        href: "/practice/strategy", label: "Scout-to-Strategy", icon: Crosshair,
         description: "Turn opponent scouting and judge tendencies into a case-choice ranking and matchup risk level.",
         highlights: ["Reads straight from saved Opponent Team and Judge Profiles", "Ranks case options with a judge-adaptation note per option", "Also mounted in the Coach Workspace's Scouting section"],
       },
       {
-        href: "/coaching", label: "AI Coach Mode", icon: GraduationCap,
+        href: "/coaching/ai-coach", label: "AI Coach Mode", icon: GraduationCap,
         description: "Get extension, refutation, collapse, and weighing prompts generated from each round's flow.",
         highlights: ["Template prompts per round + side, generated from the flow", "\"Get AI feedback\" expands any prompt into open-ended coaching"],
       },
       {
-        href: "/judge-decision", label: "AI Judge Decision", icon: Landmark,
+        href: "/practice/judge-decision", label: "AI Judge Decision", icon: Landmark,
         description: "Generate an AI round decision under a round's saved judge paradigm and flow summary.",
         highlights: ["Decision reasoning grounded in the round's saved paradigm", "Reads the same flow summary the Argument Tree Outline shows"],
       },
@@ -236,17 +236,17 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         highlights: ["Filter by kind, side, speech, argument type, contributor, and evidence status", "\"Unanswered only\" toggle to spot open arguments fast"],
       },
       {
-        href: "/practice-partners", label: "Practice Partners", icon: Handshake,
+        href: "/practice/partners", label: "Practice Partners", icon: Handshake,
         description: "Challenge other debaters to a virtual practice round, or volunteer to debate or judge in the styles you're comfortable with.",
         highlights: ["Volunteer as a debater, a judge, or both — with your formats, styles, speed, and level", "Challenges notify the other side; accepted rounds get a shared webcam room code", "Judge volunteers can pick up any accepted round that still needs a judge"],
       },
       {
-        href: "/versus-ai", label: "Practice vs AI", icon: Bot,
+        href: "/practice/versus-ai", label: "Practice vs AI", icon: Bot,
         description: "Debate a full timed round against an AI opponent, then get a judged scorecard.",
         highlights: ["Thirteen opponent personas across five difficulty tiers", "Timed opening, cross-examination and closing phases with an AI verdict"],
       },
       {
-        href: "/practice-round", label: "Practice Round Simulator", icon: PlayCircle,
+        href: "/practice", label: "Practice Round Simulator", icon: PlayCircle,
         description: "Recreate a tournament round with a timer, judge paradigm, and AI opponent persona.",
         highlights: ["Format, side, AI judge paradigm, and AI opponent persona in one setup", "Built-in or custom paradigms and personas, same as the standalone pickers"],
       },
@@ -280,12 +280,12 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
     heading: "Coaching & Analytics",
     tools: [
       {
-        href: "/outcomes", label: "AI Response-Outcome Charts", icon: BarChart3,
+        href: "/coaching/outcomes", label: "AI Response-Outcome Charts", icon: BarChart3,
         description: "See per-side exposure and the most vulnerable arguments in each round's flow.",
         highlights: ["\"What if\" picker recomputes exposure under a hypothetical extend/answer/concede", "AI counsel panel assesses likely response paths for exposed arguments"],
       },
       {
-        href: "/rank", label: "Team Rankings", icon: Crown,
+        href: "/coaching/rankings", label: "Team Rankings", icon: Crown,
         description: "Debate team rankings, leaderboard, and Elo ratings.",
         highlights: [
           "Elo-based team leaderboard",
@@ -293,12 +293,12 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         ],
       },
       {
-        href: "/coaching-programs", label: "Coaching Programs", icon: School,
+        href: "/coaching/programs", label: "Coaching Programs", icon: School,
         description: "Run group coaching spaces scoped to a squad roster.",
         highlights: ["A shared topic sprint, group-challenge standings, and drills in one board", "Scoped to a named squad roster you control"],
       },
       {
-        href: "/coach-materials", label: "Coach Materials", icon: BookOpen,
+        href: "/coaching/materials", label: "Coach Materials", icon: BookOpen,
         description: "Upload grounding materials for the team coach AI and preview which ones answer a question.",
         highlights: ["Upload a .docx/.txt/.md file or dictate by voice instead of pasting text", "Preview which materials a question would draw on before asking"],
       },

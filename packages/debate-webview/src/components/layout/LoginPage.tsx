@@ -13,7 +13,7 @@ import { useSearchParams } from "next/navigation"
 
 import { Card, CardContent, CardHeader } from "../../lib/ui/primitives/card"
 import { LoginForm } from "./LoginForm"
-import { APP_NAME } from "../../lib/config/site"
+import { APP_LOGO, APP_LOGO_HEIGHT, APP_LOGO_WIDTH, APP_NAME } from "../../lib/config/site"
 import { describeSignInError } from "../../lib/auth/sign-in-errors"
 
 export default function LoginPage() {
@@ -35,19 +35,15 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="flex flex-col items-center gap-4">
-          <div className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg overflow-hidden">
-              <Image
-                src="/apple-touch-icon.png"
-                alt=""
-                width={40}
-                height={40}
-                className="h-full w-full object-cover"
-                unoptimized
-              />
-            </div>
-            <span className="text-2xl font-bold">{APP_NAME}</span>
-          </div>
+          <Image
+            src={APP_LOGO}
+            alt={APP_NAME}
+            width={APP_LOGO_WIDTH}
+            height={APP_LOGO_HEIGHT}
+            className="h-auto w-full max-w-[260px]"
+            priority
+            unoptimized
+          />
           <p className="text-sm text-muted-foreground">Sign in to continue</p>
         </CardHeader>
         <CardContent>

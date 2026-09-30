@@ -106,9 +106,9 @@ export function buildSearchUrl(input: SearchQueryInput): string {
 }
 
 /** Path of the CARDS search page, which reads its starting state from the URL. */
-export const CARDS_SEARCH_PATH = "/cards";
+export const CARDS_SEARCH_PATH = "/research/cards";
 
-/** The part of a `/cards` link other pages can pre-fill. */
+/** The part of a `/research/cards` link other pages can pre-fill. */
 export interface CardsSearchLink {
   /** Search term, matched against every indexed field of a card. */
   q?: string;
@@ -124,7 +124,7 @@ export interface CardsSearchLink {
  * that season". Blank values are left out of the URL.
  *
  * @param link - Term and filters to open the search with.
- * @returns A `/cards?…` href.
+ * @returns A `/research/cards?…` href.
  */
 export function buildCardsSearchHref({ q, year, event }: CardsSearchLink): string {
   const params = new URLSearchParams();
@@ -136,7 +136,7 @@ export function buildCardsSearchHref({ q, year, event }: CardsSearchLink): strin
 }
 
 /**
- * Reads the search term and text filters a `/cards` URL was opened with — the
+ * Reads the search term and text filters a `/research/cards` URL was opened with — the
  * inverse of {@link buildCardsSearchHref}.
  *
  * @param params - The page's query string.

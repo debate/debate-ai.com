@@ -9,7 +9,8 @@
 "use client"
 
 import React, { useMemo } from "react"
-import { useParams } from "next/navigation"
+import { useParams, usePathname } from "next/navigation"
+import { librarySlug } from "./lectureRouteConfig"
 import type { CategoryType, TopicType, VideoFacets, VideoSuggestions } from "../types/videos"
 import type { LectureCategoryFacet, VideoType } from "../types/videos"
 import { Footer } from "../ui/layout/footer"
@@ -208,12 +209,11 @@ export function LecturesVideoGridView({
   dockSlot,
 }: LecturesVideoGridViewProps) {
   const params = useParams()
-  const slug = useMemo(() => {
-    const raw = params?.category
-    if (typeof raw === "string") return raw.toLowerCase()
-    if (Array.isArray(raw) && raw.length > 0) return String(raw[0]).toLowerCase()
-    return undefined
-  }, [params])
+  const pathname = usePathname()
+  const slug = useMemo(
+    () => librarySlug(params?.category, pathname),
+    [params, pathname],
+  )
 
   /** Derive the active quick-link card ID from filter state and active slug. */
   const activeQuickLinkId = useMemo(() => {
@@ -227,6 +227,8 @@ export function LecturesVideoGridView({
     if (selectedStyle === 3) return "ld"
     if (selectedStyle === 4) return "college"
     
+    if (slug === undefined && currentCategory === "lectures") return "allVideos"
+
     // Highlight "lectures" only when the slug is explicitly "lectures"
     if (slug === "lectures") {
       return "lectures"
@@ -245,8 +247,12 @@ export function LecturesVideoGridView({
   // lecture-category rows highlight only then: `selectedCategory` stays at
   // "all" while a round collection is open, which used to light up "All
   // Lectures" alongside College Debates.
-  const browsingLectures =
+  const browsingLibrary =
     currentCategory === "lectures" && !selectedStyle && !showFavoritesOnly
+  // Bare `/videos` is "All Videos" — every round and lecture — not the
+  // lecture library, which lives at `/lectures`.
+  const browsingAllVideos = browsingLibrary && slug === undefined
+  const browsingLectures = browsingLibrary && !browsingAllVideos
 
   /** The watch-history listing, which is neither a category nor a filter. */
   const isHistory = currentCategory === "history"
@@ -285,7 +291,7 @@ export function LecturesVideoGridView({
   )
 
   const showLectureGallery =
-    showLectureCategories && currentCategory === "lectures" && !selectedStyle && lectureCategories.length > 0
+    showLectureCategories && browsingLectures && lectureCategories.length > 0
 
   /** Favorite round videos, for the separate tables on the favorites page. */
   const favoriteRounds = useMemo(

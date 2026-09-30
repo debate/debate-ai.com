@@ -24,7 +24,7 @@
  * `vitest.config.ts`'s `projects` list). Account-synced word-count rounds
  * (`/word-count`) joined the merge alongside those three — the same
  * SQL-backed, per-user round history as `saved_rounds`, just never
- * surfaced here. Practice vs AI debates (`/versus-ai`) joined next — the
+ * surfaced here. Practice vs AI debates (`/practice/versus-ai`) joined next — the
  * third and last of the "save flows docs and debates" idea's named data
  * types, already saved per-user in `practice_vs_ai_debates` but likewise
  * never listed anywhere a returning user could browse it. Video
@@ -32,16 +32,16 @@
  * synced per-user via `debate-data-sync`'s generic `saved_tool_records`
  * mechanism once `CachedSpeechOutcome` gained a stable id, but that only
  * wired the sync, not discoverability, so a run stayed invisible here too.
- * Practice Drills' generated drill sets (`/drills`) joined next — already
+ * Practice Drills' generated drill sets (`/practice/drills`) joined next — already
  * saved per-user in `saved_drill_sets`, same "sync wired, discoverability
- * not" gap. AI Judge Decisions (`/judge-decision`) joined next — already
+ * not" gap. AI Judge Decisions (`/practice/judge-decision`) joined next — already
  * saved per-user in `saved_judge_decisions`, the same gap again. AI
- * Response-Outcome Charts' counsel-panel assessments (`/outcomes`) joined
+ * Response-Outcome Charts' counsel-panel assessments (`/coaching/outcomes`) joined
  * next — already saved per-user in `saved_counsel_panel_assessments`, the
- * same gap again. Pre-Round Briefings' saved round pairings (`/briefings`)
+ * same gap again. Pre-Round Briefings' saved round pairings (`/practice/briefings`)
  * joined next — already saved per-user in `saved_round_pairings`, the same
  * gap again. Scout-to-Strategy's saved strategy recommendations
- * (`/strategy`) joined next — already saved per-user in
+ * (`/practice/strategy`) joined next — already saved per-user in
  * `saved_strategy_recommendations`, the same gap again. Team Collaboration
  * Mode's scheduled Topic Sprint sessions (`/research`) joined next —
  * already saved per-user in `saved_sprint_sessions`, the same gap again.
@@ -50,21 +50,21 @@
  * CardMirror Learn's custom flashcard decks (`/reason-editor`) joined next —
  * already saved per-user in `saved_learn_decks`, the same gap again.
  * Practice Round Simulator's saved custom opponent personas
- * (`/practice-round`) joined next — already saved per-user in
+ * (`/practice`) joined next — already saved per-user in
  * `saved_custom_opponent_personas`, the same gap again. Flow Annotations'
  * timestamped notes (`/annotations`) joined next — already synced per-user
  * via the generic `saved_tool_records` mechanism, the same gap again.
  * CardMirror's Quick Cards reusable-snippet library (`/reason-editor`)
  * joined next — already saved per-user in `saved_quick_cards`, the same gap
- * again. Prep Notes' live per-argument notes (`/prep-notes`) joined next —
+ * again. Prep Notes' live per-argument notes (`/practice/prep-notes`) joined next —
  * already synced per-user via the generic `saved_tool_records` mechanism,
  * the same gap again. The Evidence Library's cut cards and reusable
- * analytic blocks (`/cards/library`) joined next — already synced per-user
+ * analytic blocks (`/research/cards/library`) joined next — already synced per-user
  * (per-browser submissions only, not the shared search index) via the same
  * generic mechanism, the same gap again. Practice Round Simulator's saved
- * rounds (`/practice-round`) joined next — already synced per-user via the
+ * rounds (`/practice`) joined next — already synced per-user via the
  * same generic `saved_tool_records` mechanism, the same gap again. Coach
- * Materials' uploaded grounding documents (`/coach-materials`) joined last —
+ * Materials' uploaded grounding documents (`/coaching/materials`) joined last —
  * already saved per-user in `saved_coach_materials`, the same gap again;
  * unlike every kind above, `GET /api/coach-materials` didn't even return a
  * timestamp to sort by until now, since `CoachMaterial` itself carries no
@@ -147,7 +147,7 @@ const KIND_ICON: Record<CloudLibraryItemKind, typeof FileText> = {
   // Matches Prep Notes' own icon in `app/tools/tool-groups.ts`.
   prepNote: NotebookPen,
   // No standalone /tools entry to match — the Evidence Library is the
-  // default view of the Research Workspace's `/cards` route. Matches the
+  // default view of the Research Workspace's `/research/cards` route. Matches the
   // Research Workspace's own icon in `app/tools/tool-groups.ts`.
   evidenceLibraryEntry: Library,
   // Matches Practice Round Simulator's own icon in `app/tools/tool-groups.ts`,

@@ -2,7 +2,7 @@
  * Public search endpoint for the imported debate-card corpus.
  *
  * The admin Parquet importer writes normalized rows to `debate_cards`.  This
- * route is deliberately the other half of that feature: `/cards` reads those
+ * route is deliberately the other half of that feature: `/research/cards` reads those
  * rows directly instead of falling back to a separate in-memory demo corpus.
  *
  * The query building and row mapping live in `@/lib/search/debate-card-search`
@@ -10,7 +10,7 @@
  * route's catch-all turns a malformed query into an empty result list rather
  * than an error, which is exactly how a broken `where` clause hid here before.
  *
- * Metered by plan tier (`lib/stripe/limits.ts`): each search counts toward
+ * Metered by plan tier (`debate-webview/src/lib/stripe/limits.ts`): each search counts toward
  * the caller's `cardSearchesPerDay` (per IP when signed out) and returns at
  * most the tier's `cardSearchResults` cards.
  */
@@ -18,7 +18,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { getDBFromContext } from "@/lib/database/context";
 import { debateCards } from "@/lib/database/schema";
 import { getUserId } from "@/lib/auth/session";
-import { limitsFor } from "@/lib/stripe/limits";
+import { limitsFor } from "debate-webview/lib/stripe/limits";
 import { consumeDailyUsage, getUserTier, limitMessage, usageSubject } from "@/lib/stripe/usage";
 import {
   buildCardSearchOrderBy,

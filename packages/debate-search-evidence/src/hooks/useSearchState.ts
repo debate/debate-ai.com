@@ -53,7 +53,7 @@ export function useSearchState() {
   const requestId = useRef(0);
 
   /**
-   * Starts the search from the URL (`/cards?q=…&year=…&event=…`), so other
+   * Starts the search from the URL (`/research/cards?q=…&year=…&event=…`), so other
    * pages — the topics explorer's links, for one — can open a pre-filled
    * search. Read once on mount; the debounced fetch below picks it up before
    * its first request fires.

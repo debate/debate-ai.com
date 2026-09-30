@@ -44,7 +44,7 @@
  * string field, and this one didn't have one. `completedResearchTasks` is
  * now registered in `debate-data-sync`'s `TOOL_RECORD_COLLECTIONS`, so a
  * signed-in contributor's completed-task history follows them across
- * devices like the rest of `/cards/progress-tracking`'s data already does.
+ * devices like the rest of `/coaching/progress`'s data already does.
  *
  * @module state/researchProgress
  */

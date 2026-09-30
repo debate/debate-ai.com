@@ -21,6 +21,8 @@
  * @module state/favoriteTools
  */
 
+import { canonicalCategoryHref } from "debate-data-sync/src/routes/category-paths";
+
 export type FavoriteToolsPayload = {
   favoriteTools: string[];
 };
@@ -193,7 +195,10 @@ export function parseFavoriteTools(raw: string | null | undefined): string[] {
   if (!raw) return [];
   try {
     const parsed = JSON.parse(raw);
-    return isValidFavoriteToolsList(parsed) ? parsed : [];
+    if (!isValidFavoriteToolsList(parsed)) return [];
+    // Tools starred before the routes moved under their sidebar category are
+    // stored at their old paths; read them back at the new ones.
+    return [...new Set(parsed.map(canonicalCategoryHref))];
   } catch {
     return [];
   }

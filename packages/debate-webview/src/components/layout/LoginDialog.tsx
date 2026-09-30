@@ -7,8 +7,9 @@
  * mid-round should not be navigated away from a flow to sign in.
  */
 
-import { useEffect } from "react"
+import { lazy, Suspense, useEffect } from "react"
 import { usePathname } from "next/navigation"
+import { Loader2 } from "lucide-react"
 
 import {
   Dialog,
@@ -18,9 +19,12 @@ import {
   DialogTitle,
 } from "../../lib/ui/primitives/dialog"
 import { Button } from "../../lib/ui/primitives/button"
-import { LoginForm } from "./LoginForm"
 import { useSession } from "../../lib/hooks/useSession"
-import { APP_NAME } from "../../lib/config/site"
+import { APP_LOGO, APP_LOGO_HEIGHT, APP_LOGO_WIDTH, APP_NAME } from "../../lib/config/site"
+
+// The dock and the guest sign-in prompt mount this dialog on every page, but
+// the form (auth providers, brand icons) is only needed once it opens.
+const LoginForm = lazy(() => import("./LoginForm").then((m) => ({ default: m.LoginForm })))
 
 export interface LoginDialogProps {
   open: boolean
@@ -65,6 +69,14 @@ export function LoginDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={APP_LOGO}
+            alt={APP_NAME}
+            width={APP_LOGO_WIDTH}
+            height={APP_LOGO_HEIGHT}
+            className="mx-auto mb-2 h-auto w-full max-w-[200px]"
+          />
           <DialogTitle>{title ?? `Sign in to ${APP_NAME}`}</DialogTitle>
           <DialogDescription>
             {description ?? "Save your rounds, flows and research across devices."}
@@ -72,7 +84,15 @@ export function LoginDialog({
         </DialogHeader>
         {/* Returning to the current page keeps the sign-in from doubling as
             navigation the user did not ask for. */}
-        <LoginForm callbackURL={returnTo || pathname || "/"} />
+        <Suspense
+          fallback={
+            <div className="flex justify-center py-8">
+              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+            </div>
+          }
+        >
+          <LoginForm callbackURL={returnTo || pathname || "/"} />
+        </Suspense>
         {secondaryAction && (
           <Button
             type="button"

@@ -5,12 +5,12 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { setStateInURL } from "../../../src/lib/ui/lib/utils";
 
 beforeEach(() => {
-  window.history.replaceState({}, "", "/cards");
+  window.history.replaceState({}, "", "/research/cards");
 });
 
 describe("setStateInURL", () => {
   it("reads the current query string when called with no arguments", () => {
-    window.history.replaceState({}, "", "/cards?view=search&q=warming");
+    window.history.replaceState({}, "", "/research/cards?view=search&q=warming");
     expect(setStateInURL()).toEqual({ view: "search", q: "warming" });
   });
 
@@ -20,7 +20,7 @@ describe("setStateInURL", () => {
   });
 
   it("removes a parameter when the value is null or empty", () => {
-    window.history.replaceState({}, "", "/cards?view=search&q=warming");
+    window.history.replaceState({}, "", "/research/cards?view=search&q=warming");
     setStateInURL({ q: null });
     expect(window.location.search).toBe("?view=search");
 
@@ -29,7 +29,7 @@ describe("setStateInURL", () => {
   });
 
   it("keeps nullish values when removeNullish is disabled", () => {
-    window.history.replaceState({}, "", "/cards?q=warming");
+    window.history.replaceState({}, "", "/research/cards?q=warming");
     setStateInURL({ q: null }, { removeNullish: false });
     expect(window.location.search).toBe("?q=warming");
   });

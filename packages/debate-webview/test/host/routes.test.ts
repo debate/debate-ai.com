@@ -35,13 +35,13 @@ describe("route table", () => {
   it("resolves the pages a reader actually visits", () => {
     expect(resolveRoute(APP_ROUTES, "/videos")?.route.pattern).toBe("/videos")
     expect(resolveRoute(APP_ROUTES, "/videos/2022")?.route.pattern).toBe("/videos/[category]")
-    expect(resolveRoute(APP_ROUTES, "/cards/leaderboard")?.route.pattern).toBe("/cards/leaderboard")
-    expect(resolveRoute(APP_ROUTES, "/tournaments/x/y")?.params).toEqual({ slug: ["x", "y"] })
+    expect(resolveRoute(APP_ROUTES, "/coaching/leaderboard")?.route.pattern).toBe("/coaching/leaderboard")
+    expect(resolveRoute(APP_ROUTES, "/practice/tournaments/x/y")?.params).toEqual({ slug: ["x", "y"] })
     expect(resolveRoute(APP_ROUTES, "/no-such-page")).toBeNull()
   })
 
   it("wraps /cards pages in the cards layout", () => {
-    expect(resolveRoute(APP_ROUTES, "/cards/quests")?.route.layout).toBeTypeOf("function")
+    expect(resolveRoute(APP_ROUTES, "/research/cards/quests")?.route.layout).toBeTypeOf("function")
     expect(resolveRoute(APP_ROUTES, "/videos")?.route.layout).toBeUndefined()
   })
 })

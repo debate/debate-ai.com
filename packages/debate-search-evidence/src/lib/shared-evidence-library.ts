@@ -21,7 +21,7 @@
  * ext") — the reuse-check logic a browser extension calls against the
  * current tab's URL, kept a plain, testable function here rather than
  * inside the extension itself. `buildReuseCheckDeepLink` is the second
- * slice — a generic `?checkUrl=` deep-link into `/cards/library` that
+ * slice — a generic `?checkUrl=` deep-link into `/research/cards/library` that
  * pre-fills and auto-runs the "Check this page" box, closing that idea's
  * remaining follow-up. The current `apps/debate-web-ext` browser extension
  * (see its README) doesn't use this deep-link — it calls
@@ -232,7 +232,7 @@ export function buildPageReuseCheckSummaryText(result: PageReuseCheckResult): st
  * The evidence repository is persisted in this app's own localStorage — an
  * extension runs in a different origin and can't read it directly — so
  * rather than reimplementing the check against data it has no access to,
- * the extension deep-links into `/cards/library` with the active tab's URL
+ * the extension deep-links into `/research/cards/library` with the active tab's URL
  * pre-filled via a `checkUrl` query param, which `EvidenceLibraryPanel`
  * reads on mount and runs through the same `checkPersistedPageForExistingCards`
  * the manual "Check this page" box already calls. `appOrigin` is trimmed and

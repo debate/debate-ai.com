@@ -9,6 +9,7 @@
   "scripts": {
     "configure": "node scripts/configure.mjs",
     "icons": "node scripts/generate-icons.mjs",
+    "build:offline": "bun scripts/build-offline.mjs",
     "predev": "node scripts/configure.mjs",
     "dev": "tauri dev",
     "prebuild:desktop": "node scripts/configure.mjs",

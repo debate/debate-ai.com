@@ -17,7 +17,7 @@
  * `AiVersusRoundPanel` on the Coach hub), and post-round feedback once one
  * has been generated.
  *
- * Once a round has been started in `AiVersusRoundPanel` on `/coach` (so an
+ * Once a round has been started in `AiVersusRoundPanel` on `/coaching` (so an
  * `aiVersusRounds.ts` record exists for the same `roundId`) and it's the AI's
  * turn, a "Generate AI opponent speech" action builds the request via the
  * existing `buildAiResponseRequest` and calls `requestAiVersusSpeech` — or, when the
@@ -808,7 +808,7 @@ export function PracticeRoundSimulatorPanel() {
                 <p className="text-sm text-muted-foreground">
                   {submitted.length} / {record.setup.speechOrder.length} speeches submitted — submit
                   speeches at{" "}
-                  <Link href="/coach" className="underline">
+                  <Link href="/coaching" className="underline">
                     Online Debate Versus AI
                   </Link>
                   .

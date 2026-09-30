@@ -18,7 +18,7 @@ named surfaces:
 - **LEARN** — the video library: search, grids, a persistent YouTube player with
   picture-in-picture, lecture pages, rankings.
 - **Practice** — drills, AI coach mode, AI judging, and a full timed round
-  against an AI opponent at `/versus-ai`.
+  against an AI opponent at `/practice/versus-ai`.
 
 ## Shells
 
@@ -47,7 +47,7 @@ Everything is private except `debate-api-client`.
 | `debate-help-docs` | *(same)* | The documentation site. See [documentation.md](documentation.md). |
 | `debate-practice-drills` | `debate-practice-rounds` | Drill generator, AI coach, AI judge decision, practice round simulator, transcript summaries, argument-tree outline, flow annotations, response-outcome charts |
 | `debate-round` | *(same)* | FIAT: ag-Grid flow spreadsheet, column nav and split view, round setup dialogs, speech doc panels, export/history, flow and settings stores, plus the roster panels that render persisted practice records |
-| `debate-round-practice-ai` | `debate-practice-vs-ai` | `/versus-ai`: a Node/TS port of the Go `arguehub` vs-bot backend (13 bot personalities, prompt construction, AI judging, gamification) + the React round UI. Plain `fetch`; no Go/Mongo/Gin. |
+| `debate-round-practice-ai` | `debate-practice-vs-ai` | `/practice/versus-ai`: a Node/TS port of the Go `arguehub` vs-bot backend (13 bot personalities, prompt construction, AI judging, gamification) + the React round UI. Plain `fetch`; no Go/Mongo/Gin. |
 | `debate-search-evidence` | `debate-research-evidence` | Search bar, result list, card viewer, research and AI-analysis sidebars, the shared evidence/argument library, LLM card scoring, revision incentives, review queue, topic coverage dashboard |
 | `debate-speech-writer` | *(same)* | The AI prompt library: flow extraction, judge decisions, flaw finding, research outlines, batch quote analysis |
 | `debate-team-collaboration` | *(same)* | Task inbox, prep room, topic sprints, brainstorm assist, group challenges, research-progress tracking, sprint notes, prep notes and notifications |

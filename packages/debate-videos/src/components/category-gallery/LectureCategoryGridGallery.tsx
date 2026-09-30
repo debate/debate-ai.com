@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { GlowingEffect } from "../../ui/effects/glowing-effect";
 import { cn } from "../../ui/lib/utils";
+import { lectureCategoryHref } from "../../panels/lectureRouteConfig";
 import type { LectureCategoryFacet } from "../../types/videos";
 import categoryDescriptions from "../../data/category-descriptions.json";
 
@@ -105,9 +106,8 @@ export function LectureCategoryGridGallery({
   }, [categories]);
 
   const buildHref = (categoryId: string) => {
-    if (categoryId === "all") return "/videos";
-    const isSame = selectedCategory === categoryId;
-    return isSame ? "/videos" : `/videos/${encodeURIComponent(categoryId)}`;
+    // Clicking the open category again goes back to all lectures.
+    return lectureCategoryHref(selectedCategory === categoryId ? "all" : categoryId);
   };
 
   return (

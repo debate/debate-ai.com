@@ -93,5 +93,5 @@ export function buildJudgeParadigmSelectionsPanelView(): JudgeParadigmSelection[
  * data it points at.
  */
 export function buildJudgeDecisionDeepLink(roundId: string): string {
-  return `/judge-decision?roundId=${encodeURIComponent(roundId)}`;
+  return `/practice/judge-decision?roundId=${encodeURIComponent(roundId)}`;
 }

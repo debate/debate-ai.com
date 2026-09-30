@@ -5,7 +5,7 @@ import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHead
 export default function CardsBrainstormPage() {
   return (
     <ToolPage>
-      <ToolPageHeader href="/cards/brainstorm" backHref="/cards" backLabel="shared cards" guide="research-collaboration" />
+      <ToolPageHeader href="/research/cards/brainstorm" backHref="/research/cards" backLabel="shared cards" guide="research-collaboration" />
       <Suspense>
         <BrainstormBoardWithIdentity />
       </Suspense>

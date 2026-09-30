@@ -48,8 +48,8 @@ export function matchTournamentRoute(segments: readonly string[] = []): Tourname
   return { page: "notFound" };
 }
 
-/** Builds hrefs under `basePath` (default `/tournaments`). */
-export function tournamentHrefs(basePath = "/tournaments") {
+/** Builds hrefs under `basePath` (default `/practice/tournaments`). */
+export function tournamentHrefs(basePath = "/practice/tournaments") {
   const base = basePath.replace(/\/+$/, "");
   const enc = encodeURIComponent;
   return {

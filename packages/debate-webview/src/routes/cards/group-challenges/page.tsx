@@ -5,7 +5,7 @@ import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHead
 export default function CardsGroupChallengesPage() {
   return (
     <ToolPage>
-      <ToolPageHeader href="/cards/group-challenges" backHref="/cards" backLabel="shared cards" guide="research-collaboration" />
+      <ToolPageHeader href="/research/cards/group-challenges" backHref="/research/cards" backLabel="shared cards" guide="research-collaboration" />
       <Suspense>
         <GroupChallengesWithIdentity />
       </Suspense>

@@ -8,7 +8,10 @@
 //    and brings the window into focus with the selected text as input
 // 5. Fullscreen toggle shortcut (F11 / CmdOrCtrl+Shift+F)
 // 6. Native machine diagnostics (`system_info`)
+// 7. A choice of where the app loads from (`app_source`): for debate-ai, the
+//    live site, the beta site, or the offline build bundled in dist/
 
+mod app_source;
 mod commands;
 mod generated_scheme;
 mod system_info;
@@ -52,6 +55,8 @@ pub fn run() {
     builder
         .invoke_handler(tauri::generate_handler![
             system_info::system_info,
+            app_source::get_app_source,
+            app_source::set_app_source,
             commands::get_last_selected_text,
             commands::show_main_window,
             commands::hide_to_tray,
@@ -59,6 +64,9 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_deep_link::init())
         .setup(|app| {
+            let saved_source = app_source::load(app.handle());
+            app.manage(app_source::AppSourceState(std::sync::Mutex::new(saved_source)));
+
             let handle = app.handle().clone();
             app.deep_link().on_open_url(move |event| {
                 for url in event.urls() {
@@ -84,7 +92,7 @@ pub fn run() {
 /// on close instead of exiting.
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
 fn setup_tray_and_background(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
-    use tauri::menu::{MenuBuilder, MenuItemBuilder};
+    use tauri::menu::{CheckMenuItemBuilder, MenuBuilder, MenuItemBuilder, SubmenuBuilder};
     use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
     use tauri_plugin_autostart::ManagerExt;
 
@@ -95,8 +103,31 @@ fn setup_tray_and_background(app: &mut tauri::App) -> Result<(), Box<dyn std::er
     let show_item = MenuItemBuilder::with_id("show", "Show Debate AI").build(app)?;
     let hide_item = MenuItemBuilder::with_id("hide", "Hide to Background").build(app)?;
     let quit_item = MenuItemBuilder::with_id("quit", "Quit Debate AI").build(app)?;
+
+    // "Load From": one checkable entry per profile source; the checked one is
+    // where the window loads the app from (see app_source.rs).
+    let current_source = app_source::current(app.handle());
+    let mut source_items = Vec::new();
+    let mut source_menu = SubmenuBuilder::new(app, "Load From");
+    for (id, label, _) in generated_scheme::SOURCES {
+        let item = CheckMenuItemBuilder::with_id(format!("{SOURCE_MENU_PREFIX}{id}"), *label)
+            .checked(*id == current_source)
+            .build(app)?;
+        source_menu = source_menu.item(&item);
+        source_items.push((id.to_string(), item));
+    }
+    let source_menu = source_menu
+        .separator()
+        .item(&MenuItemBuilder::with_id("source-settings", "Settings…").build(app)?)
+        .build()?;
+    app.manage(TraySourceItems(std::sync::Mutex::new(source_items)));
+
     let menu = MenuBuilder::new(app)
-        .items(&[&show_item, &hide_item, &quit_item])
+        .items(&[&show_item, &hide_item])
+        .separator()
+        .item(&source_menu)
+        .separator()
+        .item(&quit_item)
         .build()?;
 
     let _tray = TrayIconBuilder::new()
@@ -120,7 +151,19 @@ fn setup_tray_and_background(app: &mut tauri::App) -> Result<(), Box<dyn std::er
             "quit" => {
                 app.exit(0);
             }
-            _ => {}
+            "source-settings" => open_source_settings(app),
+            other => {
+                if let Some(id) = other.strip_prefix(SOURCE_MENU_PREFIX) {
+                    if app_source::select(app, id).is_err() {
+                        // Unknown id: put the checks back as they were.
+                        sync_tray_source_checks(app, &app_source::current(app));
+                    }
+                    if let Some(window) = app.get_webview_window("main") {
+                        let _ = window.show();
+                        let _ = window.set_focus();
+                    }
+                }
+            }
         })
         .on_tray_icon_event(|tray, event| {
             if let TrayIconEvent::Click {
@@ -162,6 +205,41 @@ fn setup_tray_and_background(app: &mut tauri::App) -> Result<(), Box<dyn std::er
     }
 
     Ok(())
+}
+
+#[cfg(not(any(target_os = "android", target_os = "ios")))]
+const SOURCE_MENU_PREFIX: &str = "source:";
+
+/// The tray's "Load From" entries, kept so a change made elsewhere (the
+/// settings page, the site) moves the check mark too.
+#[cfg(not(any(target_os = "android", target_os = "ios")))]
+struct TraySourceItems(std::sync::Mutex<Vec<(String, tauri::menu::CheckMenuItem<tauri::Wry>)>>);
+
+/// Checks the tray entry for `selected` and unchecks the rest.
+#[cfg(not(any(target_os = "android", target_os = "ios")))]
+pub(crate) fn sync_tray_source_checks<R: tauri::Runtime>(app: &tauri::AppHandle<R>, selected: &str) {
+    let Some(items) = app.try_state::<TraySourceItems>() else {
+        return;
+    };
+    if let Ok(items) = items.0.lock() {
+        for (id, item) in items.iter() {
+            let _ = item.set_checked(id == selected);
+        }
+    };
+}
+
+/// Shows the bundled settings page (dist/settings.html) in the main window.
+#[cfg(not(any(target_os = "android", target_os = "ios")))]
+fn open_source_settings<R: tauri::Runtime>(app: &tauri::AppHandle<R>) {
+    let Some(window) = app.get_webview_window("main") else {
+        return;
+    };
+    if let Ok(url) = Url::parse(&format!("{}settings.html", app_source::bundled_origin())) {
+        let _ = window.navigate(url);
+    }
+    let _ = window.show();
+    let _ = window.unminimize();
+    let _ = window.set_focus();
 }
 
 /// Global shortcuts:
@@ -345,9 +423,11 @@ fn handle_deep_link(app: &tauri::AppHandle, raw_url: &str) {
     let Some(window) = app.get_webview_window("main") else {
         return;
     };
+    // Sign-in completes on the site the window is using — the beta site when
+    // that is the chosen source, the live site for the offline build.
     let callback_url = format!(
         "{}/auth/native-callback?token={}",
-        generated_scheme::APP_URL,
+        app_source::site_url(&app_source::current(app)),
         urlencoding::encode(&token),
     );
     if let Ok(url) = Url::parse(&callback_url) {

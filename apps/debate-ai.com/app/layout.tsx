@@ -4,6 +4,7 @@ import "debate-webview/styles/app.css"
 import { ThemeProvider } from "debate-webview/components/theme-provider"
 import { AppShell } from "debate-webview/components/layout/AppShell"
 import { LoadingProvider } from "debate-webview/components/layout/LoadingProvider"
+import { webFontsBootstrapScript } from "debate-webview/styles/web-fonts"
 
 export const metadata: Metadata = {
   title: "Debate AI",
@@ -55,6 +56,11 @@ export default function RootLayout({
             __html: `(function(){function apply(){try{var f=localStorage.getItem('fontFamily');var v=f&&f!=='system-default'?f:'';document.documentElement.style.fontFamily=v;if(document.body)document.body.style.fontFamily=v;}catch(e){}}apply();window.addEventListener('client-config-changed',apply);window.addEventListener('storage',apply);})();`,
           }}
         />
+        {/* The font picker's and colour themes' Google webfonts, attached so
+            they don't hold up first paint (see styles/web-fonts.ts). */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <script dangerouslySetInnerHTML={{ __html: webFontsBootstrapScript() }} />
         {/* Marks a document that the app shell is running inside a frame,
             before first paint. The shell's dock, sidebar and player stay in
             the top document; without this the framed page would render its

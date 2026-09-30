@@ -8,7 +8,7 @@ Shows every persisted opponent scouting profile as a roster — overall and
 Aff/Neg side record, a "notably stronger" side badge, and the team's most
 commonly run argument tags and cases.
 
-- **Route:** `/opponents`
+- **Route:** `/practice/opponents`
 - **Package:** `debate-round`
 
 ## What it shows
@@ -35,5 +35,5 @@ state/opponentTeamProfiles.ts (localStorage: opponentTeamProfiles)
 No real round-history data source — every round is entered by hand or via
 CSV import. Profiles (`opponentTeamProfiles`) and their logged rounds
 (`opponentRoundRecords`) sync to a signed-in user's account — see
-[Tool Data Sync](../internals/tool-data-sync.mdx) — but still per-user, not
+Tool Data Sync — but still per-user, not
 a shared team resource.

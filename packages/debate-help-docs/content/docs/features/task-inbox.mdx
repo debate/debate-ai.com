@@ -8,7 +8,7 @@ Shows every research task routed to a contributor, grouped by topic, so a
 contributor or coach can see what's assigned, mark tasks done, and have a
 different contributor verify them before they count as complete.
 
-- **Route:** `/cards/inbox`
+- **Route:** `/research/cards/inbox`
 - **Package:** `debate-card-search`
 
 ## What it shows
@@ -28,7 +28,7 @@ state/pendingTaskVerifications.ts (localStorage: pendingTaskVerifications)
   → panels/TaskInboxPanel.tsx
 ```
 
-Both stores account-sync via [Tool Data Sync](../internals/tool-data-sync.mdx)
+Both stores account-sync via Tool Data Sync
 (`routedTaskQueues` by `topicId`, `pendingTaskVerifications` by a derived
 `${topicId}::${argBlock}` id), so a task marked done on one device still
 shows up "Awaiting verification" for a teammate checking from another.

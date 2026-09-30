@@ -8,7 +8,7 @@ The Files / Topic Starters / Open Tabs panels that sit above the tool nav
 tree, and the URL round trip that turns a click on one of them into "that
 file, loaded in CardMirror, in the main column."
 
-- **Routes:** `/cards` (and below it) and `/reason-editor` — the routes the
+- **Routes:** `/research/cards` (and below it) and `/reason-editor` — the routes the
   documents are the subject of, per
   `apps/debate-ai.com/lib/reason-docs/sidebar-routes.ts`
 - **Panels:** `apps/debate-ai.com/components/reason-docs/`
@@ -23,7 +23,7 @@ file, loaded in CardMirror, in the main column."
 `ReasonDocsSidebarPanels` is one component mounted in two places:
 
 1. `AppSidebarShell`'s `<aside>`, on the routes `showsReasonDocsPanels`
-   admits — `/cards` (the dock's "Shared" destination, and any page below
+   admits — `/research/cards` (the dock's "Shared" destination, and any page below
    it) and `/reason-editor`, whose desktop file navigation *is* this
    sidebar, the editor route having no `<aside>` of its own.
 2. `/reason-editor` itself, as a collapsible strip below `md`, since that
@@ -36,7 +36,7 @@ than the shell. That put a document tree above the video library's own nav
 on a page that is not about documents; the slot is gone and the videos
 sidebar is the dock plus the video nav
 (`packages/debate-videos/test/lectures-sidebar.test.tsx`). The trade is that
-a file opened from `/cards` is no longer one click away after hopping to the
+a file opened from `/research/cards` is no longer one click away after hopping to the
 video library — the dock hop back is.
 
 In the sidebar the panels sit under the dock and above the nav tree: the
@@ -44,7 +44,7 @@ tree is long enough (a section auto-expands to show where you are) that
 anything below it starts under the fold.
 
 The section is expanded by default on `/reason-editor`, where the docs are
-the page's subject, and collapsed on `/cards` until the reader says
+the page's subject, and collapsed on `/research/cards` until the reader says
 otherwise — which sticks, per-device, in `localStorage`. Nothing is fetched
 until it is actually open, so a page that leaves it collapsed makes no
 document request at all.
@@ -156,7 +156,7 @@ document.
 
 ## Known gaps
 
-- The docs section starts collapsed on `/cards`, so the files are one click
+- The docs section starts collapsed on `/research/cards`, so the files are one click
   away there rather than on screen. A reader who opens it has that choice
   remembered per-device.
 - `showsReasonDocsPanels` is a hard-coded route list, not something derived
