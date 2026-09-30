@@ -1,6 +1,12 @@
 /**
  * @fileoverview macOS-style Dock component with magnification effects.
- * Uses framer-motion for smooth animations and scaling.
+ *
+ * The magnification is hand-rolled rather than done with framer-motion: the
+ * dock is on every page, and it was the only thing pulling framer-motion's
+ * ~124 kB runtime into every page load. The cursor position lives in a tiny
+ * observable ({@link PointerX}); each icon subscribes to it and writes its
+ * `scale` straight to the DOM, so pointer movement never re-renders React,
+ * and a short CSS transition stands in for the old spring.
  *
  * Two things here exist to keep the dock *clickable*, which is easy to lose
  * in a magnifying dock:
@@ -24,7 +30,6 @@
 
 import React, { type PropsWithChildren, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { cva, type VariantProps } from "class-variance-authority"
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion"
 
 import { cn } from "../lib/utils"
 
@@ -36,6 +41,52 @@ export interface DockProps extends VariantProps<typeof dockVariants> {
   iconSize?: number
   direction?: "top" | "middle" | "bottom"
   children: React.ReactNode
+}
+
+/**
+ * The cursor's viewport x, shared by a dock with its icons. `Infinity` means
+ * "not over the dock", which puts every icon at rest.
+ */
+export interface PointerX {
+  get(): number
+  set(value: number): void
+  subscribe(listener: (value: number) => void): () => void
+}
+
+function createPointerX(): PointerX {
+  let value = Number.POSITIVE_INFINITY
+  const listeners = new Set<(value: number) => void>()
+  return {
+    get: () => value,
+    set(next) {
+      if (next === value) return
+      value = next
+      for (const listener of listeners) listener(next)
+    },
+    subscribe(listener) {
+      listeners.add(listener)
+      return () => {
+        listeners.delete(listener)
+      }
+    },
+  }
+}
+
+/** One stable {@link PointerX} for the lifetime of a component. */
+function usePointerX(): PointerX {
+  const ref = useRef<PointerX | null>(null)
+  if (!ref.current) ref.current = createPointerX()
+  return ref.current
+}
+
+/**
+ * Scale for an icon whose centre is `offset` px from the cursor: `peak` at
+ * zero, falling linearly to 1 at `distance` either side.
+ */
+function scaleAt(offset: number, distance: number, peak: number): number {
+  if (!Number.isFinite(offset) || distance <= 0) return 1
+  const falloff = 1 - Math.min(Math.abs(offset), distance) / distance
+  return 1 + (peak - 1) * falloff
 }
 
 const DEFAULT_MAGNIFICATION = 60
@@ -155,7 +206,7 @@ const Dock = React.forwardRef<HTMLDivElement, DockProps>(
     },
     ref,
   ) => {
-    const mousex = useMotionValue(Number.POSITIVE_INFINITY)
+    const mousex = usePointerX()
     const finePointer = useFinePointer()
     const [measureTick, setMeasureTick] = useState(0)
 
@@ -194,7 +245,7 @@ const Dock = React.forwardRef<HTMLDivElement, DockProps>(
 
     return (
       <DockMeasureContext.Provider value={measureTick}>
-        <motion.div
+        <div
           ref={ref}
           onMouseMove={handleMouseMove}
           onMouseEnter={handleMouseEnter}
@@ -206,7 +257,7 @@ const Dock = React.forwardRef<HTMLDivElement, DockProps>(
           })}
         >
           {renderChildren()}
-        </motion.div>
+        </div>
       </DockMeasureContext.Provider>
     )
   },
@@ -217,7 +268,7 @@ export interface DockIconProps {
   magnification?: number
   distance?: number
   iconSize?: number
-  mousex?: any
+  mousex?: PointerX
   className?: string
   children?: React.ReactNode
   props?: PropsWithChildren
@@ -234,8 +285,7 @@ const DockIcon = ({
   ...props
 }: DockIconProps) => {
   const ref = useRef<HTMLDivElement>(null)
-  const motionValue = useMotionValue(Number.POSITIVE_INFINITY)
-  const pointerx = mousex || motionValue
+  const visualRef = useRef<HTMLDivElement>(null)
   const measureTick = useContext(DockMeasureContext)
 
   // Resting centre of this slot, in viewport coordinates. Because the slot's
@@ -257,17 +307,23 @@ const DockIcon = ({
     return subscribeToLayoutChanges(measure)
   }, [measure])
 
-  const distanceCalc = useTransform(pointerx, (val: number) => val - centerRef.current)
-
   // Magnification never shrinks an icon below its resting size, and it is
   // capped so a hovered icon cannot balloon over its neighbours.
   const scaleTarget = Math.max(1, Math.min(magnification, iconSize * 1.6) / iconSize)
-  const scaleSync = useTransform(distanceCalc, [-distance, 0, distance], [1, scaleTarget, 1])
-  const scale = useSpring(scaleSync, {
-    mass: 0.1,
-    stiffness: 150,
-    damping: 12,
-  })
+
+  // Written straight to the visual layer's style, so following the cursor
+  // costs no React render; the CSS transition on that layer smooths it.
+  useEffect(() => {
+    if (!mousex) return
+    const apply = (x: number) => {
+      const node = visualRef.current
+      if (!node) return
+      const scale = scaleAt(x - centerRef.current, distance, scaleTarget)
+      node.style.transform = scale === 1 ? "none" : `scale(${scale})`
+    }
+    apply(mousex.get())
+    return mousex.subscribe(apply)
+  }, [mousex, distance, scaleTarget])
 
   return (
     <div
@@ -278,14 +334,15 @@ const DockIcon = ({
       className={cn("relative flex aspect-square shrink-0 cursor-pointer items-center justify-center rounded-full", className)}
       {...props}
     >
-      <motion.div
+      <div
+        ref={visualRef}
         // Visual only. `pointer-events-none` so a magnified icon overlapping
         // its neighbour cannot swallow that neighbour's click.
-        style={{ scale, width: iconSize, height: iconSize }}
-        className="pointer-events-none flex items-center justify-center rounded-full will-change-transform"
+        style={{ transform: "none", width: iconSize, height: iconSize }}
+        className="pointer-events-none flex items-center justify-center rounded-full will-change-transform transition-transform duration-150 ease-out"
       >
         {children}
-      </motion.div>
+      </div>
     </div>
   )
 }
@@ -303,7 +360,7 @@ export interface DockItemProps
   magnification?: number
   distance?: number
   iconSize?: number
-  mousex?: any
+  mousex?: PointerX
   onClick?: (event: React.MouseEvent<HTMLElement>) => void
   /**
    * Destination for a navigating item. Rendering a real anchor is what gives

@@ -2,6 +2,8 @@
 
 import {
   createContext,
+  lazy,
+  Suspense,
   useCallback,
   useContext,
   useEffect,
@@ -9,7 +11,12 @@ import {
 } from 'react';
 import { configureResearchAgentUI } from 'research-agent-ui';
 import { Dialog, DialogContent, DialogTitle } from '../ui/dialog';
-import SettingsContent from './SettingsContent';
+import { AnimatedLoader } from '../../ui/AnimatedLoader';
+
+// The settings panes are ~670 kB minified (the MCP section alone bundles the
+// whole OpenConnector provider index), and nobody sees them until they open
+// the modal, so they load on first open instead of with the /doc workspace.
+const SettingsContent = lazy(() => import('./SettingsContent'));
 
 interface SettingsModalContextValue {
   /**
@@ -63,12 +70,20 @@ export function SettingsModalProvider({ children }: { children: React.ReactNode 
           <DialogTitle className="sr-only">Settings</DialogTitle>
           {open && (
             <div className="flex h-full w-full flex-col overflow-hidden">
-              {/* Re-mount per section so deep links pick the right initial tab */}
-              <SettingsContent
-                key={section ?? 'default'}
-                onClose={closeSettings}
-                initialSection={section}
-              />
+              <Suspense
+                fallback={
+                  <div className="flex h-full w-full items-center justify-center">
+                    <AnimatedLoader />
+                  </div>
+                }
+              >
+                {/* Re-mount per section so deep links pick the right initial tab */}
+                <SettingsContent
+                  key={section ?? 'default'}
+                  onClose={closeSettings}
+                  initialSection={section}
+                />
+              </Suspense>
             </div>
           )}
         </DialogContent>

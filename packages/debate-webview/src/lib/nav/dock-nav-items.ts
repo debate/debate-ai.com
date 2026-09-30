@@ -1,11 +1,9 @@
 /**
  * @fileoverview The app dock's navigation destinations, in dock order.
  *
- * Lifted out of `CategoryDock` because two other places need the same list:
- * `AppFrameProvider` (to decide which paths are opened in the app frame
- * rather than by a full route change) and the Alt+<n> keyboard shortcuts.
- * Keeping one array means the shortcut numbering, the dock order and the
- * framed-route set can never drift apart.
+ * Lifted out of `CategoryDock` so the dock icons, the Alt+<n> keyboard
+ * shortcuts and the idle prefetch (`dock-idle-prefetch.ts`) read one array
+ * and can never drift apart.
  */
 
 import { dockNavLabel } from "./dock-nav-paths"

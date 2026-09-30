@@ -34,6 +34,7 @@ import { useSession } from "../../lib/hooks/useSession"
 import { hasEmbeddedDock, hostsOwnSidebarDock, isGenericToolSidebarRoute } from "../../lib/sidebar-routes"
 import { SIDEBAR_MENU_SECTIONS, SITE_LINKS, DEBATE_LINKS } from "../../lib/nav/dock-menu-sections"
 import { NAV_ITEMS } from "../../lib/nav/dock-nav-items"
+import { dockIdlePrefetchTargets, scheduleDockIdlePrefetch } from "../../lib/nav/dock-idle-prefetch"
 import { accountLabel } from "../../lib/nav/account-label"
 import { useIsFramedDocument } from "../../lib/layout/use-framed-document"
 import { openGlobalCommandPalette } from "./GlobalCommandPalette"
@@ -554,6 +555,18 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
   )
 
   const activePath = pathname
+
+  // Warm the other destinations in idle time, so switching is a render from
+  // cache even without a hover first (touch screens, quick clicks).
+  useEffect(() => {
+    if (framedDocument) return
+    return scheduleDockIdlePrefetch(
+      (href) => router.prefetch(href),
+      dockIdlePrefetchTargets(NAV_ITEMS.map((item) => item.href), pathname),
+    )
+    // Once per page load: the scheduler ignores later calls anyway.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const allItems: DockNavRenderItem[] = [
     ...NAV_ITEMS.map(({ href, label, icon }) => ({

@@ -176,37 +176,3 @@ describe("fetch", () => {
   });
 });
 
-describe("framed documents", () => {
-  // An iframe load is a navigation, but `Request` refuses to be built with
-  // `mode: "navigate"`, so the property is overridden instead.
-  const frameRequest = () =>
-    Object.defineProperty(new Request(`${ORIGIN}/debate?embed=1`), "mode", { value: "navigate" });
-
-  it("serves a framed page from this build's cache and refreshes it in the background", async () => {
-    const { dispatch, cacheStorage } = await loadWorker(0);
-    await dispatch("install");
-    const [current] = [...cacheStorage.caches.values()];
-    await current.put(frameRequest(), new Response("cached frame"));
-
-    const fetchMock = vi.fn(async () => new Response("fresh frame"));
-    vi.stubGlobal("fetch", fetchMock);
-
-    const responded = await dispatch("fetch", { request: frameRequest() });
-    expect(await responded!.text()).toBe("cached frame");
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-    // Let the background refresh write its entry.
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(await (await current.match(frameRequest()))!.text()).toBe("fresh frame");
-  });
-
-  it("goes to the network when this build has no copy yet", async () => {
-    const { dispatch, cacheStorage } = await loadWorker(0);
-    const stale = await cacheStorage.open("debate-ai-0.0.0-previousbuild");
-    await stale.put(frameRequest(), new Response("previous build"));
-
-    vi.stubGlobal("fetch", vi.fn(async () => new Response("fresh frame")));
-
-    const responded = await dispatch("fetch", { request: frameRequest() });
-    expect(await responded!.text()).toBe("fresh frame");
-  });
-});

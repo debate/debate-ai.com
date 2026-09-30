@@ -284,8 +284,11 @@ full-color artwork sitting among the grey glyphs — and now match the rest.
   every sidebar destination (videos, tool sections, footer links) is
   reachable from the Settings menu, which is the whole nav below `md`, that
   there is no Apps section, and that `/practice/features` and `/docs` are reachable.
-- `apps/debate-ai.com/lib/layout/__tests__/frame-navigation.test.ts` — which
-  links a framed page hands up to the shell and which it leaves alone.
+- `packages/debate-webview/test/lib/layout/frame-navigation.test.ts` — which
+  clicks are left to the browser, and which links out of `/docs` become a
+  full page load.
+- `packages/debate-webview/test/lib/nav/dock-idle-prefetch.test.ts` — which
+  destinations are warmed in idle time, and that data saver turns it off.
 
 ## One collection highlighted at a time
 
@@ -332,16 +335,17 @@ One link is deliberately still a full page load: `/docs` is a separately built
 help site served as static files, not a route this app knows, so it is
 followed the old way. Outside sites still open in a new tab.
 
-## Following a sidebar link never costs you the sidebar
+## Switching pages is a React render, not a frame load
 
-The shell runs each dock destination in a same-origin frame, which puts
-`/videos`' sidebar inside that frame. Its tool rows point at pages the dock
-never frames, and following one used to load that tool inside the frame with
-no sidebar and no dock, then reload the whole tab to recover — the nav
-vanished, then everything flashed.
+Every dock destination is an ordinary route rendered as React in the one app
+document. Nothing loads in an `<iframe>`: the dock, the sidebar and the
+player stay mounted, and a sidebar link on `/videos` routes the same document
+like any other link.
 
-The click is handed to the shell instead (`FrameNavigationBridge`), which
-routes there itself. The shell document, its dock and its sidebar stay
-mounted, so the column you clicked in is the column you land with. Links that
-are genuinely somewhere else — another origin, a ⌘/ctrl-click opening a new
-tab, `/docs` — are left to the browser as before.
+To make a switch a render from cache, the dock fetches each destination's
+code ahead of the click. Hovering or focusing an icon prefetches that route,
+and once the current page has loaded the dock prefetches the others one at a
+time in idle time (`lib/nav/dock-idle-prefetch.ts`), so touch screens and
+quick clicks get the same head start. The idle pass skips `/doc`, whose
+workspace is several megabytes; hovering its icon still warms it. It also
+does nothing on a data-saver or 2G connection.

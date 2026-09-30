@@ -15,7 +15,7 @@
  * Fumadocs' own drawer is the navigation; the app's floating mobile dock is
  * left out because it would sit over the docs' content.
  *
- * Leaving /docs is always a full page load (see `NON_ROUTER_PREFIXES` in
+ * Leaving /docs is always a full page load (see `docsExitTarget` in
  * `frame-navigation.ts`): the docs' stylesheet is not something an app page
  * can have applied. The dock and tree navigate with the client router, so
  * clicks on links out of /docs are taken here, in the capture phase before

@@ -25,6 +25,29 @@ const isVendoredDashPlayerNoise = (log: Rolldown.RolldownLog) =>
   );
 
 /**
+ * react-reason-editor's code blocks register every highlight.js grammar
+ * (`import { all } from "lowlight"`) — about 190 languages and ~870 kB of
+ * the /doc Workspace chunk, most of it grammars like Mathematica, ISBL and
+ * 1C that a debate doc never contains. This swaps that one import for
+ * lowlight's `common` set (~37 languages: JS/TS, Python, Java, C/C++, Go,
+ * Rust, SQL, shell, JSON, Markdown, …). A block in a language outside it is
+ * still shown, just auto-highlighted: tiptap's lowlight plugin falls back to
+ * `highlightAuto` for a language that is not registered.
+ */
+function reasonEditorCommonGrammars(): Plugin {
+  const allImport = /import\{([^}]*?)\ball as (\w+)([^}]*)\}from"lowlight"/;
+  return {
+    name: "debate:reason-editor-common-grammars",
+    enforce: "pre",
+    transform(code, id) {
+      if (!id.includes("react-reason-editor/dist/") || !code.includes('from"lowlight"')) return null;
+      const next = code.replace(allImport, 'import{$1common as $2$3}from"lowlight"');
+      return next === code ? null : { code: next, map: null };
+    },
+  };
+}
+
+/**
  * The site's static files (favicons, apple-touch-icon.png, site.webmanifest,
  * …) live at the top of `app/` rather than in a `public/` folder, but Vite
  * only serves `publicDir` verbatim — so anything in `app/` that is not a
@@ -105,7 +128,8 @@ export default defineConfig({
     // chat/search/reader plus react-reason-editor's ProseMirror/Tiptap editor,
     // its sidebar and KaTeX. Both halves render on the same screen, so
     // splitting them further changes how many requests fetch that payload but
-    // not how much of it /doc needs — and the route is already behind `lazy()`
+    // not how much of it /doc needs (its highlight.js grammars are already cut
+    // to the common set by `reasonEditorCommonGrammars` above) — and the route is already behind `lazy()`
     // (see app/doc/ResearchAgentEmbed.tsx), which is the one thing the default
     // warning has to suggest. The speech models that *can* load later already
     // do, as their own chunks (moonshine, kokoro, ~2.1 MB each).
@@ -126,6 +150,7 @@ export default defineConfig({
   },
   plugins: [
     appStaticFiles(),
+    reasonEditorCommonGrammars(),
     // Compiles packages/debate-help-docs/content into the modules the /docs
     // routes (app/docs) render.
     helpDocsMdx(),
