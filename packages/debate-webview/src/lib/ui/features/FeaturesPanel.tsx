@@ -34,6 +34,7 @@ import {
   FileText,
   LayoutGrid,
   Library,
+  Play,
   Radar,
   Search,
   Sparkles,
@@ -64,7 +65,7 @@ import {
   type FeatureEntry,
 } from "debate-feature-catalog/src/feature-catalog";
 import { APP_LOGO, APP_LOGO_HEIGHT, APP_LOGO_WIDTH, APP_NAME } from "../../config/site";
-import { README_BADGE_ROWS, README_BANNER, README_SHOWCASE } from "./readme-media";
+import { README_BADGE_ROWS, README_BANNER, README_SHOWCASE, README_VIDEO } from "./readme-media";
 import {
   CARDS_CAPABILITIES,
   CARDS_DOIS,
@@ -88,11 +89,141 @@ const CATEGORY_ICONS: Record<FeatureCategory, ComponentType<{ className?: string
 };
 
 /**
- * Google Drive folder of PDF guides embedded at the foot of the page. Drive's
- * `embeddedfolderview` renders the folder's contents only while its General
- * access is "Anyone with the link".
+ * Google Drive folder of PDF guides linked at the foot of the page. Nothing
+ * from Drive is loaded up front — Drive's `embeddedfolderview` pulls in the
+ * whole Drive viewer (several MB of script) for a folder most readers never
+ * open, which was the heaviest third-party payload on the page. The viewer is
+ * mounted on click instead, and the folder stays reachable either way.
  */
 const DOCUMENTS_DRIVE_FOLDER_ID = "1inxyWjAkPiyJ9BdspbhV20_-xRIc8RJn";
+const DOCUMENTS_DRIVE_FOLDER_URL = `https://drive.google.com/drive/folders/${DOCUMENTS_DRIVE_FOLDER_ID}`;
+
+/**
+ * The documents section: a link out to the Drive folder, plus a button that
+ * mounts Drive's own viewer in place for readers who would rather stay here.
+ * Both paths cost nothing until asked for.
+ */
+function DocumentsFolder() {
+  const [showViewer, setShowViewer] = useState(false);
+
+  return (
+    <div className="overflow-hidden rounded-xl border border-border bg-card">
+      {showViewer ? (
+        <iframe
+          src={`https://drive.google.com/embeddedfolderview?id=${DOCUMENTS_DRIVE_FOLDER_ID}#grid`}
+          title="PDF documents"
+          width="100%"
+          height="800"
+          loading="lazy"
+          style={{ border: 0 }}
+        />
+      ) : (
+        <div className="flex flex-col items-center gap-3 px-6 py-12 text-center">
+          <span className="da-accent-fill inline-flex size-10 items-center justify-center rounded-xl">
+            <FileText className="size-5" />
+          </span>
+          <div>
+            <p className="text-sm font-semibold text-foreground">PDF guides and handouts</p>
+            <p className="mx-auto mt-1 max-w-md text-sm leading-relaxed text-pretty text-muted-foreground">
+              The guides live in a shared Google Drive folder. Open it on Drive, or load the
+              folder viewer here without leaving the page.
+            </p>
+          </div>
+          <div className="mt-1 flex flex-wrap items-center justify-center gap-2">
+            <a
+              href={DOCUMENTS_DRIVE_FOLDER_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+            >
+              Open in Google Drive
+            </a>
+            <button
+              type="button"
+              onClick={() => setShowViewer(true)}
+              className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+            >
+              Load folder viewer here
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * The project's YouTube video, embedded behind a click.
+ *
+ * Mounted on click for the same reason the Drive viewer above is: an embed
+ * pulls the whole third-party player — script, fonts and tracking — down the
+ * moment it is in the document, and this page is a marketing surface most
+ * visitors reach after already passing the Turnstile gate. A poster frame and a
+ * play button cost one image, and nothing from YouTube is requested until
+ * someone asks for it.
+ *
+ * `rel="0"` on the embed keeps YouTube from offering "more from this channel"
+ * beneath the player, which would pull the reader out of the page they came
+ * for. The `youtube-nocookie` host (see `readme-media.ts`) is the privacy half
+ * of the same decision: no tracking cookies until playback actually starts.
+ */
+function FeatureVideo() {
+  const [play, setPlay] = useState(false);
+
+  return (
+    <div className="mx-auto w-full max-w-3xl">
+      <div className="overflow-hidden rounded-2xl border border-border bg-card">
+        {play ? (
+          <div className="aspect-video">
+            <iframe
+              src={`https://www.youtube-nocookie.com/embed/${README_VIDEO.id}?rel=0`}
+              title={README_VIDEO.title}
+              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="size-full border-0"
+            />
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setPlay(true)}
+            className="group relative block aspect-video w-full cursor-pointer"
+            aria-label={`Play video: ${README_VIDEO.title}`}
+          >
+            <img
+              src={README_VIDEO.thumbnail}
+              alt=""
+              loading="lazy"
+              decoding="async"
+              className="size-full object-cover"
+            />
+            <span className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent transition-opacity group-hover:opacity-90" />
+            <span className="absolute inset-0 flex items-center justify-center">
+              <span className="flex size-16 items-center justify-center rounded-full bg-black/55 backdrop-blur-sm transition-transform group-hover:scale-110">
+                <Play className="size-7 translate-x-0.5 text-white" fill="currentColor" />
+              </span>
+            </span>
+            <span className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 px-4 pb-3 text-left">
+              <span className="text-sm font-semibold text-white">{README_VIDEO.title}</span>
+              <a
+                href={README_VIDEO.watchUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="shrink-0 text-xs text-white/80 underline underline-offset-2 hover:text-white"
+                // The play button is a <button>, so this link sits inside it.
+                // Without stopping the click, following the link would mount the
+                // embed and then navigate away from the page that mounted it.
+                onClick={(event) => event.stopPropagation()}
+              >
+                Watch on YouTube
+              </a>
+            </span>
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
 
 /** Props for {@link FeaturesPanel}. */
 export interface FeaturesPanelProps {
@@ -338,6 +469,14 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
         </div>
       </section>
 
+      {/* The tour video, between the workspace screenshots it walks through and
+          the long-form sections below. */}
+      <section aria-label="Tour video" className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 lg:px-8">
+        <Reveal>
+          <FeatureVideo />
+        </Reveal>
+      </section>
+
       {/* The CARDS overview and vision, moved here from `/research/cards`'s empty state. */}
       <section
         id="cards-vision"
@@ -540,16 +679,7 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
             </p>
           </Reveal>
           <Reveal>
-            <div className="overflow-hidden rounded-xl border border-border bg-card">
-              <iframe
-                src={`https://drive.google.com/embeddedfolderview?id=${DOCUMENTS_DRIVE_FOLDER_ID}#grid`}
-                title="PDF documents"
-                width="100%"
-                height="800"
-                loading="lazy"
-                style={{ border: 0 }}
-              />
-            </div>
+            <DocumentsFolder />
           </Reveal>
         </section>
       </div>

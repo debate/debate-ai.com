@@ -1,5 +1,4 @@
 {
-  "$schema": "../../schemas/debate-dictionary.schema.json",
   "data": [
     {
       "term": "Ad hominem",

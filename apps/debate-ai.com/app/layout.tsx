@@ -3,10 +3,16 @@ import type { Metadata, Viewport } from "next"
 import "debate-webview/styles/app.css"
 import { ThemeProvider } from "debate-webview/components/theme-provider"
 import { AppShell } from "debate-webview/components/layout/AppShell"
-import { LoadingProvider } from "debate-webview/components/layout/LoadingProvider"
 import { webFontsBootstrapScript } from "debate-webview/styles/web-fonts"
+import { SITE_ORIGIN } from "@/lib/seo/site-url"
 
 export const metadata: Metadata = {
+  // Every relative `alternates.canonical` and Open Graph URL in the app
+  // resolves against this. Without it, a page's canonical is built from
+  // Next's `http://localhost:3000` fallback — which is what the video pages
+  // were publishing, telling Google the canonical of every round and lecture
+  // lives on a development URL.
+  metadataBase: new URL(SITE_ORIGIN),
   title: "Debate AI",
   description: "Debate round and research management",
   manifest: "/site.webmanifest",
@@ -79,11 +85,6 @@ export default function RootLayout({
       </head>
       <body className="theme-root">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
-          {/* The loading overlay sits above the whole app shell — dock, sidebar
-              and framed destinations alike — so every page transition that
-              runs past the show delay (0.5 s) shows one orb instead of a page
-              that looks stuck. Quicker transitions never show it. */}
-          <LoadingProvider />
           <AppShell>{children}</AppShell>
         </ThemeProvider>
       </body>

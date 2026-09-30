@@ -86,8 +86,6 @@ Wichita State
 Wyoming
 `;
 export const teamsVLD = `
-0-Yamily (TX)
-Able2Shine (CA)
 Accipiter Independent (NY)
 Acclive Academy (NE)
 Acton-Boxborough (MA)
@@ -786,12 +784,10 @@ Western Kentucky
 export const teamsVPF = `
 AAAMPED CASE DROPS (MA)
 Aayush Cademy (AZ)
-Able2Shine (CA)
 Abraham Lincoln (IA)
 Academies Of Loudon (VA)
 Accipiter Independent (NY)
 Acton-Boxborough (MA)
-ADL (TW)
 Adlai E Stevenson (IL)
 AE5 Independent (TX)
 Albuquerque Academy (NM)
@@ -1483,7 +1479,6 @@ ZAAMPED CASE DROPS (XX)
 export const teamsVCX = `
 Abilene (KS)
 Abilene TX (TX)
-Able2Shine (CA)
 Acellus Academy (CA)
 Ada (OK)
 ADL (TW)

@@ -1,8 +1,8 @@
 "use client"
 
 /**
- * @fileoverview The clip {@link LoadingOverlay} draws in the middle of the
- * screen while a page loads.
+ * @fileoverview The clip a panel draws in the middle of itself while its
+ * own content loads.
  *
  * Three things it has to get right:
  *

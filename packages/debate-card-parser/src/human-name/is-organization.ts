@@ -1,6 +1,6 @@
 import { TERMS_ORG, TERMS_QUALIFICATIONS, ORG_PATTERNS } from "./constants";
-import dataHumanNames from "./human-names-92k.json";
-
+// import dataHumanNames from "./human-names-92k.json";
+  const dataHumanNames = {};
 const HUMAN_NAMES = dataHumanNames as Record<string, number>;
 
 /**

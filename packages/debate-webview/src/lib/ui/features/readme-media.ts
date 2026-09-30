@@ -40,6 +40,26 @@ export interface ReadmeShowcase {
 /** The README's full-width banner. */
 export const README_BANNER = "https://i.imgur.com/mVdcP7Y.png";
 
+/**
+ * The project's YouTube video, embedded on the features page.
+ *
+ * The same video the README's YouTube badge links to, promoted to an embed so a
+ * reader gets the tour without leaving the page.
+ *
+ * `youtube-nocookie.com` rather than `youtube.com/embed`: the embeddable host
+ * does not drop tracking cookies until the reader actually presses play, which
+ * is what makes the click-to-load poster in `FeaturesPanel` worth having.
+ */
+export const README_VIDEO = {
+  /** YouTube video id — the one the README's YouTube badge points at. */
+  id: "XB0tzpBUEKQ",
+  title: "Debate AI in two minutes",
+  /** Poster frame, so the embed has something to show before it is played. */
+  thumbnail: "https://i.ytimg.com/vi/XB0tzpBUEKQ/maxresdefault.jpg",
+  /** Canonical watch page, for readers who would rather watch it there. */
+  watchUrl: "https://www.youtube.com/watch?v=XB0tzpBUEKQ",
+} as const;
+
 /** The README's badges, one array per `<br />`-separated row. */
 export const README_BADGE_ROWS: ReadmeBadge[][] = [
   [
