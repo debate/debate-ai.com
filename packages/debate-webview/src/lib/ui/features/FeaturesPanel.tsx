@@ -31,6 +31,7 @@
 import { useEffect, useMemo, useState, type ComponentType } from "react";
 import {
   Dumbbell,
+  ExternalLink,
   FileText,
   LayoutGrid,
   Library,
@@ -540,16 +541,17 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
             </p>
           </Reveal>
           <Reveal>
-            <div className="overflow-hidden rounded-xl border border-border bg-card">
-              <iframe
-                src={`https://drive.google.com/embeddedfolderview?id=${DOCUMENTS_DRIVE_FOLDER_ID}#grid`}
-                title="PDF documents"
-                width="100%"
-                height="800"
-                loading="lazy"
-                style={{ border: 0 }}
-              />
-            </div>
+            {/* A link rather than an embedded Drive folder view: the embed
+                pulled in Google's whole Drive UI as an iframe on this page. */}
+            <a
+              href={`https://drive.google.com/drive/folders/${DOCUMENTS_DRIVE_FOLDER_ID}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mx-auto flex max-w-md items-center justify-center gap-2 rounded-xl border border-border bg-card px-5 py-4 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+            >
+              Open the documents folder
+              <ExternalLink className="size-4" aria-hidden />
+            </a>
           </Reveal>
         </section>
       </div>

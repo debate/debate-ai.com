@@ -1,6 +1,6 @@
 "use client";
 
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, type ComponentType } from "react";
 
 import KeybindingsCheatsheet from "../palette/KeybindingsCheatsheet";
 import SearchPalette from "../palette/SearchPalette";
@@ -14,11 +14,24 @@ import RoundHeader from "./RoundHeader";
 import SheetTitleBar from "./SheetTitleBar";
 import Sidebar from "./Sidebar";
 
+// Stands in for a browser-only piece in the server build. The flow grid is
+// never rendered on the server, so its code (Handsontable, CodeMirror, ~2 MB)
+// only costs the Worker memory there: workerd holds every bundled module's
+// source whether it runs or not. `import.meta.env.SSR` is a literal `true` in
+// the server build, which drops the `import()` behind it.
+function serverStub<T extends ComponentType<never>>(): () => Promise<{ default: T }> {
+    return async () => ({ default: (() => null) as unknown as T });
+}
+
 // Handsontable touches window at import time; keep it out of prerendering.
-const HotGrid = lazy(() => import("./HotGrid"));
+const HotGrid = lazy(
+    import.meta.env.SSR ? serverStub<typeof import("./HotGrid").default>() : () => import("./HotGrid"),
+);
 // The RFD drawer is a CodeMirror editor (with vim mode and the markdown
 // grammar, ~600 kB); it loads the first time the drawer opens.
-const RfdDrawer = lazy(() => import("./RfdDrawer"));
+const RfdDrawer = lazy(
+    import.meta.env.SSR ? serverStub<typeof import("./RfdDrawer").default>() : () => import("./RfdDrawer"),
+);
 
 export default function Workspace() {
     useKeymap();
