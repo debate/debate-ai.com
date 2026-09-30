@@ -5,8 +5,8 @@ import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
 export default function DrillsPage() {
   return (
     <ToolPage>
-      <ToolPageHeader href="/drills" backHref="/debate" backLabel="round workspace" guide="training-tools">
-        <RoundToolsCrossLinks currentHref="/drills" />
+      <ToolPageHeader href="/practice/drills" backHref="/debate" backLabel="round workspace" guide="training-tools">
+        <RoundToolsCrossLinks currentHref="/practice/drills" />
       </ToolPageHeader>
       <Suspense>
         <DrillSetsPanel />

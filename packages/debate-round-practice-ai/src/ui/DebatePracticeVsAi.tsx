@@ -1,6 +1,6 @@
 /**
  * @fileoverview The Practice vs AI feature, whole — the screen the
- * `/versus-ai` route renders.
+ * `/practice/versus-ai` route renders.
  *
  * Upstream split this across three react-router routes (`/game` for the
  * picker, `/debate/:id` for the round, and the scorecard inside it), passing

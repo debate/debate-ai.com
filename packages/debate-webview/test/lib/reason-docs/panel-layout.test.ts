@@ -1,7 +1,7 @@
 /**
  * @fileoverview How the docs sidebar panels divide the height they share.
  *
- * What these pin: the panels' sizes used to be fixed in CSS, so on `/cards` —
+ * What these pin: the panels' sizes used to be fixed in CSS, so on `/research/cards` —
  * where they are the whole sidebar — a long file tree and the open tabs
  * scrolled past each other in a 380px box. They are now a resizable stack, and
  * the numbers that stack opens at come from here.

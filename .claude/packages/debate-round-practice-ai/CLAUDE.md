@@ -1,7 +1,7 @@
 # CLAUDE.md — `debate-practice-vs-ai` (`packages/debate-round-practice-ai`)
 
 **Package name:** `debate-practice-vs-ai` — filter on that, not the directory.
-Private. Mounted at `/versus-ai`. Tests in `test/`.
+Private. Mounted at `/practice/versus-ai`. Tests in `test/`.
 
 A full timed debate round against an AI opponent: a Node/TypeScript port of the
 Go `arguehub` vs-bot backend — 13 bot personalities, prompt construction, AI

@@ -1,5 +1,5 @@
 /**
- * @fileoverview The `/rules` page body: a one-page reference for the common
+ * @fileoverview The `/practice/rules` page body: a one-page reference for the common
  * high-school debate formats, their key round sections, and the research,
  * evidence, device/AI and format-specific rules students need to know.
  *

@@ -11,6 +11,7 @@
  */
 
 import { describe, it, expect, vi } from "vitest";
+import { isVideoLibraryPath } from "../src/components/category-gallery/sidebar-routes";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createElement } from "react";
 import {
@@ -85,9 +86,9 @@ describe("SIDEBAR_VIDEO_LINKS", () => {
     expect(new Set(hrefs).size).toBe(hrefs.length);
   });
 
-  it("points every link at a /videos route", () => {
+  it("points every link at a video library route", () => {
     for (const link of SIDEBAR_VIDEO_LINKS) {
-      expect(link.href.startsWith("/videos/")).toBe(true);
+      expect(isVideoLibraryPath(link.href)).toBe(true);
       expect(link.title.length).toBeGreaterThan(0);
     }
   });

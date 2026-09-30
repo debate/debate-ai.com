@@ -9,7 +9,8 @@
 "use client"
 
 import React, { useMemo } from "react"
-import { useParams } from "next/navigation"
+import { useParams, usePathname } from "next/navigation"
+import { librarySlug } from "./lectureRouteConfig"
 import type { CategoryType, TopicType, VideoFacets, VideoSuggestions } from "../types/videos"
 import type { LectureCategoryFacet, VideoType } from "../types/videos"
 import { Footer } from "../ui/layout/footer"
@@ -208,12 +209,11 @@ export function LecturesVideoGridView({
   dockSlot,
 }: LecturesVideoGridViewProps) {
   const params = useParams()
-  const slug = useMemo(() => {
-    const raw = params?.category
-    if (typeof raw === "string") return raw.toLowerCase()
-    if (Array.isArray(raw) && raw.length > 0) return String(raw[0]).toLowerCase()
-    return undefined
-  }, [params])
+  const pathname = usePathname()
+  const slug = useMemo(
+    () => librarySlug(params?.category, pathname),
+    [params, pathname],
+  )
 
   /** Derive the active quick-link card ID from filter state and active slug. */
   const activeQuickLinkId = useMemo(() => {

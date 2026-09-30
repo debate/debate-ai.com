@@ -5,7 +5,7 @@ import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHead
 export default function CardsPrepRoomPage() {
   return (
     <ToolPage>
-      <ToolPageHeader href="/cards/prep-room" backHref="/cards" backLabel="shared cards" guide="research-collaboration" />
+      <ToolPageHeader href="/research/cards/prep-room" backHref="/research/cards" backLabel="shared cards" guide="research-collaboration" />
       <Suspense>
         <PrepRoomPanel />
       </Suspense>

@@ -5,7 +5,7 @@ import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHead
 export default function CardsReviewsPage() {
   return (
     <ToolPage>
-      <ToolPageHeader href="/cards/reviews" backHref="/cards" backLabel="shared cards" guide="research-collaboration" />
+      <ToolPageHeader href="/research/cards/reviews" backHref="/research/cards" backLabel="shared cards" guide="research-collaboration" />
       <Suspense>
         <ReviewQueueWithIdentity />
       </Suspense>

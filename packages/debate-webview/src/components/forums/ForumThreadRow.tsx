@@ -24,7 +24,7 @@ export function ForumThreadRow({ thread }: ForumThreadRowProps) {
   return (
     <li className="border-b border-border last:border-b-0">
       <Link
-        href={`/forums/${thread.id}`}
+        href={`/practice/forums/${thread.id}`}
         prefetch={false}
         className="flex gap-3 px-3 py-3 transition-colors hover:bg-muted/50"
       >

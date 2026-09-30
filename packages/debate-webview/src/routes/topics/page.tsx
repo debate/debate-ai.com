@@ -8,13 +8,13 @@ import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
  * into research areas and ranked by how often each has been debated.
  *
  * A sidebar destination rather than a `/tools` catalog entry, for the same
- * reason as `/rules` — so the header copy is passed explicitly.
+ * reason as `/practice/rules` — so the header copy is passed explicitly.
  */
 export default function TopicsPage() {
   return (
     <ToolPage className="max-w-5xl">
       <ToolPageHeader
-        href="/topics"
+        href="/research/topics"
         backHref="/tools"
         backLabel="tools"
         title="Debate Topics Explorer"

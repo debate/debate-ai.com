@@ -94,7 +94,7 @@ export const COACH_SECTIONS: readonly HubSection<SectionId>[] = [
     panels: [
       panel("Argument Tree Outline", "/outline"),
       panel("Speech Transcript Summaries", "/summaries"),
-      panel("AI Response-Outcome Charts", "/outcomes"),
+      panel("AI Response-Outcome Charts", "/coaching/outcomes"),
       panel("Shared Flow Sync"),
       panel("Flow Edit Log"),
     ],
@@ -106,10 +106,10 @@ export const COACH_SECTIONS: readonly HubSection<SectionId>[] = [
     description: "Turn that flow into training: AI coaching prompts, drills, squad programs, and the coach AI's grounding materials.",
     guide: "training-tools",
     panels: [
-      panel("AI Coach Mode", "/coaching"),
-      panel("Coaching Programs", "/coaching-programs"),
-      panel("Practice Drills", "/drills"),
-      panel("Coach Materials", "/coach-materials"),
+      panel("AI Coach Mode", "/coaching/ai-coach"),
+      panel("Coaching Programs", "/coaching/programs"),
+      panel("Practice Drills", "/practice/drills"),
+      panel("Coach Materials", "/coaching/materials"),
     ],
   },
   {
@@ -119,8 +119,8 @@ export const COACH_SECTIONS: readonly HubSection<SectionId>[] = [
     description: "Get ready for the next round: briefings, prep notes handed off to teammates, and annotations on recorded rounds.",
     guide: "training-tools",
     panels: [
-      panel("Pre-Round Briefings", "/briefings"),
-      panel("Prep Notes", "/prep-notes"),
+      panel("Pre-Round Briefings", "/practice/briefings"),
+      panel("Prep Notes", "/practice/prep-notes"),
       panel("Flow Annotations", "/annotations"),
     ],
   },
@@ -131,9 +131,9 @@ export const COACH_SECTIONS: readonly HubSection<SectionId>[] = [
     description: "What you know about the other side: opponent profiles, judge profiles, and the case ranking they imply.",
     guide: "training-tools",
     panels: [
-      panel("Opponent Team Profiles", "/opponents"),
-      panel("Judge Profiles", "/judges"),
-      panel("Scout-to-Strategy", "/strategy"),
+      panel("Opponent Team Profiles", "/practice/opponents"),
+      panel("Judge Profiles", "/practice/judges"),
+      panel("Scout-to-Strategy", "/practice/strategy"),
     ],
   },
   {
@@ -143,11 +143,11 @@ export const COACH_SECTIONS: readonly HubSection<SectionId>[] = [
     description: "Run practice rounds between tournaments: challenge other debaters or volunteer to judge, simulated rounds, rounds against the AI, and word-count speeches.",
     guide: "practice-tools",
     panels: [
-      panel("Practice Partners", "/practice-partners"),
-      panel("Practice Round Simulator", "/practice-round"),
-      panel("Practice vs AI", "/versus-ai"),
+      panel("Practice Partners", "/practice/partners"),
+      panel("Practice Round Simulator", "/practice"),
+      panel("Practice vs AI", "/practice/versus-ai"),
       panel("Word-Count Speeches", "/word-count"),
-      panel("AI Judge Decision", "/judge-decision"),
+      panel("AI Judge Decision", "/practice/judge-decision"),
     ],
   },
 ]

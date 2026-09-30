@@ -3,7 +3,7 @@
  *
  * The route table (`routes/index.ts`) is written in the same shapes as the
  * web app's `app/` directory — `/videos/[category]`,
- * `/tournaments/[[...slug]]` — so the two stay easy to compare and the params
+ * `/practice/tournaments/[[...slug]]` — so the two stay easy to compare and the params
  * a page reads through `useParams()` have the same names in both hosts.
  */
 

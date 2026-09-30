@@ -6,11 +6,11 @@
  * included. That put a document tree above the video library's own nav, where
  * it has nothing to do with the page: on `/videos` the sidebar should be the
  * videos. The panels now show only where the documents are the point —
- * `/cards`, the dock's "Shared" destination, and `/reason-editor`, whose
+ * `/research/cards`, the dock's "Shared" destination, and `/reason-editor`, whose
  * desktop file navigation *is* this sidebar (the editor route has no `<aside>`
  * of its own; see `AppSidebarShell`).
  *
- * Prefix-matched, so a page one level down (`/cards/library`) is the same
+ * Prefix-matched, so a page one level down (`/research/cards/library`) is the same
  * destination and keeps the panels. Kept next to `route-selection.ts` — the
  * other pure module the docs sidebar is built on — so it can be unit-tested
  * without rendering the sidebar.
@@ -21,15 +21,15 @@
 import { REASON_EDITOR_ROUTE } from "./route-selection"
 
 /** The dock's "Shared" destination — the cards subtree. */
-export const CARDS_ROUTE = "/cards"
+export const CARDS_ROUTE = "/research/cards"
 
 /** The route subtrees whose sidebar shows the docs panels, in sidebar order. */
 export const REASON_DOCS_SIDEBAR_ROOTS: readonly string[] = [CARDS_ROUTE, REASON_EDITOR_ROUTE]
 
 /**
  * Normalizes a pathname for prefix matching: a query string, a hash and a
- * trailing slash are ignored, so the dock's own `/cards?...` and `/cards/`
- * forms resolve the same as `/cards` — the dock hops by `history.pushState`,
+ * trailing slash are ignored, so the dock's own `/research/cards?...` and `/research/cards/`
+ * forms resolve the same as `/research/cards` — the dock hops by `history.pushState`,
  * so this reads whatever it last wrote.
  */
 function normalize(pathname: string): string {
@@ -50,7 +50,7 @@ export function showsReasonDocsPanels(pathname: string | null | undefined): bool
 }
 
 /**
- * True in the `/cards` subtree, where the sidebar is *only* the document
+ * True in the `/research/cards` subtree, where the sidebar is *only* the document
  * panels.
  *
  * Clicking Cards in the dock otherwise lands you on a column carrying four

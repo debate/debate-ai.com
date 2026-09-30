@@ -319,7 +319,7 @@ export function ContributionLeaderboardPanel({ signedInContributorId }: Contribu
               <TableCell className="font-medium">
                 <div className="flex items-center gap-1.5">
                   <a
-                    href={`/cards/leaderboard/${encodeURIComponent(row.contributorId)}`}
+                    href={`/coaching/leaderboard/${encodeURIComponent(row.contributorId)}`}
                     className="hover:underline"
                   >
                     {row.contributorId}

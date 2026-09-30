@@ -48,6 +48,7 @@ import { Clapperboard, History } from "lucide-react";
 import { IconTrophy, IconLectures } from "../../ui/icons";
 import type { LectureCategoryFacet } from "../../types/videos";
 import { TreeItem } from "./TreeItem";
+import { lectureCategoryHref } from "../../panels/lectureRouteConfig";
 import { ToolNavTree } from "./ToolNavTree";
 import {
   VIDEO_COLLEGE_LINK,
@@ -130,9 +131,8 @@ export function VideoSidebarTree({
   }, [lectureCategories]);
 
   const buildLectureCategoryHref = (categoryId: string) => {
-    if (categoryId === "all") return "/videos";
-    const isSame = selectedCategory === categoryId;
-    return isSame ? "/videos" : `/videos/${encodeURIComponent(categoryId)}`;
+    // Clicking the open category again goes back to all lectures.
+    return lectureCategoryHref(selectedCategory === categoryId ? "all" : categoryId);
   };
 
   const lecturesLink = SIDEBAR_VIDEO_LINKS_BY_ID.lectures;

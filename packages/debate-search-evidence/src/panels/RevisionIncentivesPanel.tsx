@@ -205,7 +205,7 @@ export function RevisionIncentivesPanel() {
             <p className="mb-2 text-sm text-muted-foreground">
               {staleDigest.length} card{staleDigest.length === 1 ? "" : "s"} could use a fresher
               citation, most urgent first.{" "}
-              <a href="/cards/library" className="underline underline-offset-2">
+              <a href="/research/cards/library" className="underline underline-offset-2">
                 Open the Evidence Library
               </a>{" "}
               to revise one and earn reward points.
@@ -237,7 +237,7 @@ export function RevisionIncentivesPanel() {
                     </TableCell>
                     <TableCell className="text-right">
                       <a
-                        href={`/cards/library?q=${encodeURIComponent(entry.argBlock)}`}
+                        href={`/research/cards/library?q=${encodeURIComponent(entry.argBlock)}`}
                         className="whitespace-nowrap text-xs underline underline-offset-2"
                         aria-label={`Revise "${entry.argBlock}" in the Evidence Library`}
                       >

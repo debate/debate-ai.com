@@ -2,11 +2,11 @@
  * @fileoverview Pins what `ToolNavTree` renders when a caller narrows it to a
  * subset of sections.
  *
- * The regression this covers: `/cards` used to get the whole nav — every tool
+ * The regression this covers: `/research/cards` used to get the whole nav — every tool
  * section and the glossary/rankings pair — stacked under its document panels.
  * The app's `AppSidebarShell` now asks for the Research section alone, and
  * the two things that have to hold for that column to be usable are that
- * nothing else renders, and that the one section shown is *open*: `/cards` is
+ * nothing else renders, and that the one section shown is *open*: `/research/cards` is
  * a dock destination that no tool section lists, so following the route
  * blindly would leave a heading with no links under it.
  *
@@ -17,7 +17,7 @@ import { describe, it, expect, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createElement, type ReactNode } from "react";
 
-const pathname = vi.hoisted(() => ({ current: "/cards" }));
+const pathname = vi.hoisted(() => ({ current: "/research/cards" }));
 
 vi.mock("next/navigation", () => ({
   useParams: () => ({}),
@@ -58,7 +58,7 @@ describe("ToolNavTree sectionIds", () => {
     const html = render({ sectionIds: [RESEARCH_SECTION_ID] });
 
     expect(html).not.toContain("/dictionary");
-    expect(html).not.toContain("/videos/rankings");
+    expect(html).not.toContain("/practice/rankings");
   });
 
   it("renders no Apps node in any shape", () => {
@@ -72,14 +72,14 @@ describe("ToolNavTree sectionIds", () => {
   });
 
   it("opens the one section shown even though the route matches another", () => {
-    // `/cards` is an app-dock destination that no tool section lists, so
+    // `/research/cards` is an app-dock destination that no tool section lists, so
     // `sidebarSectionForPath` returns null for it. Without the fallback the
     // column would be a single collapsed heading.
     const html = render({ sectionIds: [RESEARCH_SECTION_ID] });
 
-    expect(html).toContain("/cards/coverage");
+    expect(html).toContain("/research/cards/coverage");
     // Last row in Research: "Team Brainstorm Assist".
-    expect(html).toContain("/cards/brainstorm");
+    expect(html).toContain("/research/cards/brainstorm");
   });
 
   it("no longer lists the two dock destinations under Research", () => {
@@ -103,16 +103,16 @@ describe("ToolNavTree sectionIds", () => {
 
   it("closes Practice with the glossary and rankings links", () => {
     // They used to hang below the whole tree, in no section at all.
-    pathname.current = "/prep-notes";
+    pathname.current = "/practice/prep-notes";
     try {
       const html = render({ sectionIds: [PRACTICE_SECTION_ID] });
 
-      expect(html).toContain("/videos/dictionary");
-      expect(html).toContain("/videos/rankings");
+      expect(html).toContain("/practice/glossary");
+      expect(html).toContain("/practice/rankings");
       // Last in the section: reference material after the tools themselves.
-      expect(html.indexOf("/prep-notes")).toBeLessThan(html.indexOf("/videos/dictionary"));
+      expect(html.indexOf("/practice/prep-notes")).toBeLessThan(html.indexOf("/practice/glossary"));
     } finally {
-      pathname.current = "/cards";
+      pathname.current = "/research/cards";
     }
   });
 

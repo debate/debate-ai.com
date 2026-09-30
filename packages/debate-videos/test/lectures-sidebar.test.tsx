@@ -94,7 +94,7 @@ describe("the videos sidebar", () => {
 
   it("renders the video nav with no app document panels above it", () => {
     // The dock is the only app-owned slot left: the REASON file tree / topic
-    // starters / open tabs belong to `/cards` and `/reason-editor` now, and a
+    // starters / open tabs belong to `/research/cards` and `/reason-editor` now, and a
     // page with no `docsSlot` to pass is what keeps them off this sidebar.
     const markup = render({});
     expect(markup).toContain('href="/videos/college"');
@@ -145,7 +145,7 @@ describe("the mobile block below md", () => {
     // They ride at the end of the (collapsed) Practice section in the tree
     // now, so on a phone the quick-link tiles are what carries them.
     const mobile = mobileMarkup();
-    expect(mobile).toContain('href="/videos/dictionary"');
-    expect(mobile).toContain('href="/videos/rankings"');
+    expect(mobile).toContain('href="/practice/glossary"');
+    expect(mobile).toContain('href="/practice/rankings"');
   });
 });

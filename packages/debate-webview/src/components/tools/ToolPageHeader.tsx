@@ -68,7 +68,7 @@ export function ToolPage({ children, className }: ToolPageProps) {
 
 /** Props for {@link ToolPageHeader}. */
 export interface ToolPageHeaderProps {
-  /** The page's own route (e.g. `"/drills"`); used to look up catalog copy, the feature doc, and favorite state. */
+  /** The page's own route (e.g. `"/practice/drills"`); used to look up catalog copy, the feature doc, and favorite state. */
   href: string
   /** Where the back link goes. */
   backHref: string

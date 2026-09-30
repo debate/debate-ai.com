@@ -3,7 +3,7 @@
  * and how the height they share is divided between them.
  *
  * The panels (Files, Topic Starters, Open Tabs) used to hold sizes fixed in
- * CSS — the lower one capped at 40% of a 380px box. On `/cards`, where they
+ * CSS — the lower one capped at 40% of a 380px box. On `/research/cards`, where they
  * are the whole sidebar, they instead divide the column's own height and the
  * reader drags the seams, so a tree of forty files can have most of the column
  * and Open Tabs a couple of rows.

@@ -56,14 +56,14 @@ export const VIDEO_FORMAT_LINKS: SidebarVideoLink[] = [
 export const VIDEO_LIBRARY_LINKS: SidebarVideoLink[] = [
   { id: "favorites", href: "/videos/favorites", title: "My Favorites" },
   { id: "history", href: "/videos/history", title: "Watch History" },
-  { id: "lectures", href: "/videos/lectures", title: "Lectures" },
+  { id: "lectures", href: "/lectures", title: "Lectures" },
 ];
 
 /** The pair pinned below the tree, under its own divider. */
 export const VIDEO_REFERENCE_LINKS: SidebarVideoLink[] = [
-  { id: "dictionary", href: "/videos/dictionary", title: "Glossary of Terms" },
-  { id: "rankings", href: "/videos/rankings", title: "Rankings" },
-  { id: "statistics", href: "/videos/statistics", title: "Topic & Video Statistics" },
+  { id: "dictionary", href: "/practice/glossary", title: "Glossary of Terms" },
+  { id: "rankings", href: "/practice/rankings", title: "Rankings" },
+  { id: "statistics", href: "/practice/statistics", title: "Topic & Video Statistics" },
 ];
 
 /** Every videos destination the sidebar links to, in tree order. */

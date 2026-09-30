@@ -21,7 +21,7 @@ describe("summarizeToolSyncFailures", () => {
       result({ collection: "judgeProfiles", synced: false, error: "network error" }),
     ])
     expect(failures).toEqual([
-      { key: "judgeProfiles", label: "Judge Profiles", href: "/judges", error: "network error" },
+      { key: "judgeProfiles", label: "Judge Profiles", href: "/practice/judges", error: "network error" },
     ])
   })
 

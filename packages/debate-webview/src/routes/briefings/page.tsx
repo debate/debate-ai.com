@@ -5,7 +5,7 @@ import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
 export default function BriefingsPage() {
   return (
     <ToolPage>
-      <ToolPageHeader href="/briefings" backHref="/debate" backLabel="round workspace" guide="training-tools" />
+      <ToolPageHeader href="/practice/briefings" backHref="/debate" backLabel="round workspace" guide="training-tools" />
       <Suspense>
         <PreRoundBriefingsPanel />
       </Suspense>

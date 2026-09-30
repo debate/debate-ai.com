@@ -21,10 +21,10 @@ describe("isDockNavPath", () => {
   })
 
   it("ignores a trailing slash, query string and hash", () => {
-    expect(isDockNavPath("/cards/")).toBe(true)
-    expect(isDockNavPath("/cards?q=nuclear")).toBe(true)
-    expect(isDockNavPath("/cards#top")).toBe(true)
-    expect(isDockNavPath("/cards/?q=nuclear#top")).toBe(true)
+    expect(isDockNavPath("/research/cards/")).toBe(true)
+    expect(isDockNavPath("/research/cards?q=nuclear")).toBe(true)
+    expect(isDockNavPath("/research/cards#top")).toBe(true)
+    expect(isDockNavPath("/research/cards/?q=nuclear#top")).toBe(true)
   })
 
   it("rejects a page below a destination", () => {
@@ -63,15 +63,15 @@ describe("isDockOwnedPath", () => {
   })
 
   it("ignores a trailing slash, query string and hash", () => {
-    expect(isDockOwnedPath("/cards/")).toBe(true)
-    expect(isDockOwnedPath("/cards?q=nuclear")).toBe(true)
-    expect(isDockOwnedPath("/cards#top")).toBe(true)
+    expect(isDockOwnedPath("/research/cards/")).toBe(true)
+    expect(isDockOwnedPath("/research/cards?q=nuclear")).toBe(true)
+    expect(isDockOwnedPath("/research/cards#top")).toBe(true)
   })
 
   it("rejects a tool the dock does not own", () => {
     // A framed /videos document's tool-tree link to /coach — the case
     // AppShell breaks out of the frame for.
-    expect(isDockOwnedPath("/coach")).toBe(false)
+    expect(isDockOwnedPath("/coaching")).toBe(false)
     expect(isDockOwnedPath("/reason-editor")).toBe(false)
     expect(isDockOwnedPath("/settings")).toBe(false)
     expect(isDockOwnedPath("/")).toBe(false)

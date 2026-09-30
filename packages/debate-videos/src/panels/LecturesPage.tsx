@@ -18,7 +18,7 @@
 
 import React, { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import Link from "next/link"
-import { useSearchParams, useParams, useRouter } from "next/navigation"
+import { useSearchParams, useParams, usePathname, useRouter } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
 import { normalizeCategoryKey } from "debate-data-sync/src/videos/video-rows"
 import { MAX_VIDEO_PAGE_SIZE } from "debate-data-sync/src/videos/video-query"
@@ -30,7 +30,7 @@ import type { LeaderboardTab } from "./leaderboard/leaderboardUtils"
 import { VALID_LEADERBOARD_TABS, currentSeasonYear, seasonYears } from "./leaderboard/leaderboardUtils"
 import { setStateInURL } from "../ui/lib/utils"
 import { StickyHeader } from "../components/layout/StickyHeader"
-import { SLUG_MAP } from "./lectureRouteConfig"
+import { SLUG_MAP, librarySlug } from "./lectureRouteConfig"
 import { LecturesDictionaryView } from "./dictionary/LecturesDictionaryView"
 import { LecturesSidebarShell } from "./LecturesSidebarShell"
 import { LecturesVideoGridView } from "./LecturesVideoGridView"
@@ -78,12 +78,11 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
   // Slug / route state
   // ---------------------------------------------------------------------------
 
-  const slug = useMemo(() => {
-    const raw = routeParams?.category
-    if (typeof raw === "string") return raw.toLowerCase()
-    if (Array.isArray(raw) && raw.length > 0) return String(raw[0]).toLowerCase()
-    return undefined
-  }, [routeParams])
+  const pathname = usePathname()
+  const slug = useMemo(
+    () => librarySlug(routeParams?.category, pathname),
+    [routeParams, pathname],
+  )
 
   const slugState = useMemo(() => (slug ? SLUG_MAP[slug] : undefined), [slug])
 

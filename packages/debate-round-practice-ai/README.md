@@ -18,7 +18,7 @@
 # debate-practice-vs-ai
 
 **Practice vs AI** — a full timed debate round against an AI opponent, mounted
-in debate-ai.com at [`/versus-ai`](../../apps/debate-ai.com/app/versus-ai/page.tsx)
+in debate-ai.com at [`/practice/versus-ai`](../../apps/debate-ai.com/app/versus-ai/page.tsx)
 and reachable from the app dock.
 
 This package is the Node/TypeScript port of the Go `arguehub` vs-bot server and

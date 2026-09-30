@@ -86,7 +86,7 @@ export function isJudgeAwardKind(value: unknown): value is JudgeAwardKind {
 export interface JudgeAward {
   id: string;
   kind: JudgeAwardKind;
-  /** The debater's contributor id — the `/cards/leaderboard/{id}` page it shows on. */
+  /** The debater's contributor id — the `/coaching/leaderboard/{id}` page it shows on. */
   debaterId: string;
   judgeName: string;
   tournament: string;

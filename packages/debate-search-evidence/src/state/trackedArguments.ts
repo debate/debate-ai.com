@@ -20,7 +20,7 @@
  * field) as a second `CoverageCardSummary` source — closes follow-up (a)
  * named under the "📊 Topic Coverage Dashboard" bullet in TODO.md ("an
  * `argBlock`/word-count field wired into a real card-submission flow beyond
- * the existing `/cards/library` evidence-library form"). A contribution
+ * the existing `/research/cards/library` evidence-library form"). A contribution
  * missing either field (the common case — both are optional there) is
  * silently excluded rather than counted with a fabricated word count.
  *

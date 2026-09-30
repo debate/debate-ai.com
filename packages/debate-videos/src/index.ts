@@ -184,6 +184,8 @@ export {
   hostsOwnSidebarDock,
   hasEmbeddedDock,
   isGenericToolSidebarRoute,
+  isVideoLibraryPath,
+  VIDEO_LIBRARY_HREFS,
 } from "./components/category-gallery/sidebar-routes";
 export { Footer as ToolSidebarFooter } from "./ui/layout/footer";
 export {

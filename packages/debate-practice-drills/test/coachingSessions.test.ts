@@ -350,7 +350,7 @@ describe("coachingSessionNews", () => {
       category: "community",
       title: "New coaching session generated for round round-3 (A)",
       timestamp: record.createdAt,
-      href: "/coaching",
+      href: "/coaching/ai-coach",
     });
     expect(items[0].body).toContain("Round round-3 (A)");
   });

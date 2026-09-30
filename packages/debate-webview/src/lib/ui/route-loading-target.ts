@@ -19,7 +19,7 @@ import type { AnchorNavigation } from "../layout/frame-navigation"
  */
 const NON_PAGE_PREFIXES = ["/api"]
 
-/** `/cards/` and `/cards` are the same page. */
+/** `/research/cards/` and `/research/cards` are the same page. */
 function normalizePath(pathname: string): string {
   return pathname.replace(/\/+$/, "") || "/"
 }

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Pure data shapes for the tabbed workspace hubs (`/research`
- * and `/coach`).
+ * and `/coaching`).
  *
  * A hub is a list of {@link HubSection}s; each section names the panels it
  * mounts and, where a panel also has its own standalone route, links to it.

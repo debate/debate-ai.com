@@ -5,8 +5,8 @@
  * footer — wrapped around a `/videos` page that is not the video grid.
  *
  * `LecturesVideoGridView` renders that column itself, with the search
- * controls in it. The glossary (`/videos/dictionary`) and the rankings
- * (`/videos/rankings`) are separate branches of {@link LecturesPage} that
+ * controls in it. The glossary (`/practice/glossary`) and the rankings
+ * (`/practice/rankings`) are separate branches of {@link LecturesPage} that
  * returned their content on its own, so following either link *out of* the
  * sidebar left a page with no sidebar to follow the next one from — and no
  * dock either, because `hasEmbeddedDock` reports every `/videos` path as

@@ -5,7 +5,7 @@ import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
 export default function JudgeDecisionPage() {
   return (
     <ToolPage>
-      <ToolPageHeader href="/judge-decision" backHref="/debate" backLabel="round workspace" guide="practice-tools" />
+      <ToolPageHeader href="/practice/judge-decision" backHref="/debate" backLabel="round workspace" guide="practice-tools" />
       <Suspense>
         <JudgeDecisionPanel />
       </Suspense>

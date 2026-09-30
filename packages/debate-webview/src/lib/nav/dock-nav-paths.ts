@@ -14,9 +14,9 @@
  */
 export const DOCK_NAV_LABELS: Record<string, string> = {
   "/videos": "Videos",
-  "/cards": "Shared",
+  "/research/cards": "Shared",
   "/debate": "Debate",
-  "/versus-ai": "Practice vs AI",
+  "/practice/versus-ai": "Practice vs AI",
   "/doc": "Docs",
 }
 
@@ -33,8 +33,8 @@ export function dockNavLabel(path: string): string {
  *
  * Exact match, not a prefix: `/videos/some-lecture` is somewhere the framed
  * `/videos` document navigates itself, not a separate frame the dock opens.
- * A query string and a trailing slash are ignored so `/cards/` and
- * `/cards?q=x` still resolve to the frame already holding `/cards`.
+ * A query string and a trailing slash are ignored so `/research/cards/` and
+ * `/research/cards?q=x` still resolve to the frame already holding `/research/cards`.
  */
 export function isDockNavPath(path: string): boolean {
   const withoutQuery = path.split("?")[0]?.split("#")[0] ?? ""
@@ -64,12 +64,12 @@ export function isDockOwnedPath(path: string): boolean {
 
 /**
  * The dock destination `path` belongs to — itself, or the one it hangs under
- * (`/videos/lectures` → `/videos`) — or `null` for a path no dock icon owns.
+ * (`/lectures` → `/videos`) — or `null` for a path no dock icon owns.
  *
  * The finer-grained half of {@link isDockOwnedPath}, and what a framed
  * document compares against to tell its *own* pages apart from another
- * destination's: a framed `/videos` linking to `/videos/lectures` is
- * navigating within itself, but linking to `/cards/library` is not — that is
+ * destination's: a framed `/videos` linking to `/lectures` is
+ * navigating within itself, but linking to `/research/cards/library` is not — that is
  * a different frame's subtree, and letting it load inside this one leaves the
  * page with no sidebar while the top document's URL still says `/videos`.
  */

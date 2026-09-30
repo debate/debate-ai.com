@@ -8,7 +8,7 @@
  * jumps to any of the app's other tools — but that palette only exists inside
  * the CardMirror engine, so every feature doc's "Nav: … in Ctrl/Cmd-K's
  * search palette" line was only true while the Reason Editor happened to be
- * open. Everywhere else in the app — `/tools`, `/settings`, `/judges`, the
+ * open. Everywhere else in the app — `/tools`, `/settings`, `/practice/judges`, the
  * community and coaching hubs — the same shortcut did nothing.
  *
  * This is that shortcut's app-wide counterpart: a lighter, navigation-only
@@ -47,7 +47,7 @@ import { onQuickLaunchText } from "../../lib/native/tauri"
 /** Meta destinations that aren't themselves a `/tools` catalog entry. */
 const QUICK_ACTIONS: Tool[] = [
   { href: "/tools", label: "All Tools", description: "Every workspace, research, and practice tool", icon: LayoutGrid },
-  { href: "/features", label: "All Features", description: "Every user-facing surface in the app, with docs", icon: LayoutGrid },
+  { href: "/practice/features", label: "All Features", description: "Every user-facing surface in the app, with docs", icon: LayoutGrid },
   { href: "/news", label: "News Stream", description: "Product updates and community announcements", icon: Rss },
   { href: "/settings", label: "Settings", description: "Card editor settings — files, editing, appearance, shortcuts, AI", icon: SettingsIcon },
 ]

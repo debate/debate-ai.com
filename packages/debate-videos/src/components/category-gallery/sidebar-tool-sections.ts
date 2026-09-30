@@ -100,9 +100,9 @@ export const TOOLS_ROOT_HREF = "/tools";
  */
 export const APP_DOCK_LINKS: SidebarToolLink[] = [
   { href: "/videos", title: "Videos", icon: Clapperboard },
-  { href: "/cards", title: "Shared", icon: Share2 },
+  { href: "/research/cards", title: "Shared", icon: Share2 },
   { href: "/debate", title: "Debate", icon: MessageSquare },
-  { href: "/versus-ai", title: "Practice vs AI", icon: Swords },
+  { href: "/practice/versus-ai", title: "Practice vs AI", icon: Swords },
   { href: "/doc", title: "Docs", icon: FileText },
 ];
 
@@ -114,7 +114,7 @@ export const APP_DOCK_LINKS: SidebarToolLink[] = [
 export const PRACTICE_SECTION_ID = "practice";
 
 /**
- * Id of the Research section — the one section the `/cards` sidebar keeps
+ * Id of the Research section — the one section the `/research/cards` sidebar keeps
  * (`AppSidebarShell`), where the column is the document tree plus the research
  * tools and nothing else. Named rather than spelled inline at the call site so
  * renaming the section below can't silently empty that sidebar.
@@ -129,56 +129,56 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
     icon: Library,
     tools: [
       { href: "/research", title: "Research Workspace", icon: Search },
-      { href: "/cards", title: "Card Search", icon: Search },
-      { href: "/cards/coverage", title: "Topic Coverage", icon: ChartPie },
-      { href: "/topics", title: "Topics Explorer", icon: ChartBar },
-      { href: "/cards/prep-room", title: "Collaboration Prep Room", icon: DoorOpen },
-      { href: "/cards/reviews", title: "Review Queue", icon: ClipboardCheck },
-      { href: "/cards/inbox", title: "Task Inbox", icon: Inbox },
-      { href: "/cards/contributions", title: "Contributions Feed", icon: Rss },
-      { href: "/cards/brainstorm", title: "Team Brainstorm Assist", icon: Lightbulb },
+      { href: "/research/cards", title: "Card Search", icon: Search },
+      { href: "/research/cards/coverage", title: "Topic Coverage", icon: ChartPie },
+      { href: "/research/topics", title: "Topics Explorer", icon: ChartBar },
+      { href: "/research/cards/prep-room", title: "Collaboration Prep Room", icon: DoorOpen },
+      { href: "/research/cards/reviews", title: "Review Queue", icon: ClipboardCheck },
+      { href: "/research/cards/inbox", title: "Task Inbox", icon: Inbox },
+      { href: "/research/cards/contributions", title: "Contributions Feed", icon: Rss },
+      { href: "/research/cards/brainstorm", title: "Team Brainstorm Assist", icon: Lightbulb },
     ],
   },
   {
     id: "practice",
     title: "Practice",
-    href: "/practice-round",
+    href: "/practice",
     icon: Dumbbell,
     tools: [
-      { href: "/practice-round", title: "Practice Round Simulator", icon: Timer },
-      { href: "/rules", title: "Formats & Rules", icon: Scale },
-      { href: "/practice-partners", title: "Practice Partners", icon: Handshake },
+      { href: "/practice", title: "Practice Round Simulator", icon: Timer },
+      { href: "/practice/rules", title: "Formats & Rules", icon: Scale },
+      { href: "/practice/partners", title: "Practice Partners", icon: Handshake },
       // Same page, landing on the open judge seats (or the profile, for
       // someone who has not volunteered to judge yet).
-      { href: "/practice-partners#judge", title: "Judge Practice Rounds", icon: Gavel },
-      { href: "/versus-ai", title: "Debate Versus AI", icon: Swords },
-      { href: "/drills", title: "Practice Drills", icon: Repeat },
-      { href: "/cards/level", title: "Debater Level", icon: Star },
-      { href: "/briefings", title: "Pre-Round Briefings", icon: ClipboardList },
-      { href: "/strategy", title: "Scout-to-Strategy", icon: MapIcon },
-      { href: "/opponents", title: "Opponent Team Profiles", icon: Users },
-      { href: "/forums", title: "Latest News", icon: Rss },
-      { href: "/tournaments", title: "Tournaments (Tabroom)", icon: CalendarDays },
-      { href: "/judges", title: "Judge Profiles", icon: Gavel },
-      { href: "/judge-decision", title: "AI Judge Decision", icon: BadgeCheck },
-      { href: "/prep-notes", title: "Prep Notes", icon: StickyNote },
-      { href: "/features", title: "All Features", icon: Sparkles },
+      { href: "/practice/partners#judge", title: "Judge Practice Rounds", icon: Gavel },
+      { href: "/practice/versus-ai", title: "Debate Versus AI", icon: Swords },
+      { href: "/practice/drills", title: "Practice Drills", icon: Repeat },
+      { href: "/practice/level", title: "Debater Level", icon: Star },
+      { href: "/practice/briefings", title: "Pre-Round Briefings", icon: ClipboardList },
+      { href: "/practice/strategy", title: "Scout-to-Strategy", icon: MapIcon },
+      { href: "/practice/opponents", title: "Opponent Team Profiles", icon: Users },
+      { href: "/practice/forums", title: "Latest News", icon: Rss },
+      { href: "/practice/tournaments", title: "Tournaments (Tabroom)", icon: CalendarDays },
+      { href: "/practice/judges", title: "Judge Profiles", icon: Gavel },
+      { href: "/practice/judge-decision", title: "AI Judge Decision", icon: BadgeCheck },
+      { href: "/practice/prep-notes", title: "Prep Notes", icon: StickyNote },
+      { href: "/practice/features", title: "All Features", icon: Sparkles },
     ],
   },
   {
     id: "coaching",
     title: "Coaching",
-    href: "/coach",
+    href: "/coaching",
     icon: GraduationCap,
     tools: [
-      { href: "/coach", title: "Coach Workspace", icon: Presentation },
-      { href: "/coaching", title: "AI Coach Mode", icon: Bot },
-      { href: "/coaching-programs", title: "Coaching Programs", icon: CalendarCheck },
-      { href: "/coach-materials", title: "Coach Materials", icon: FolderOpen },
-      { href: "/outcomes", title: "Response-Outcome Charts", icon: ChartLine },
-      { href: "/rank", title: "Team Rankings", icon: Medal },
-      { href: "/cards/leaderboard", title: "Leaderboard", icon: Trophy },
-      { href: "/cards/progress-tracking", title: "Research Progress", icon: TrendingUp },
+      { href: "/coaching", title: "Coach Workspace", icon: Presentation },
+      { href: "/coaching/ai-coach", title: "AI Coach Mode", icon: Bot },
+      { href: "/coaching/programs", title: "Coaching Programs", icon: CalendarCheck },
+      { href: "/coaching/materials", title: "Coach Materials", icon: FolderOpen },
+      { href: "/coaching/outcomes", title: "Response-Outcome Charts", icon: ChartLine },
+      { href: "/coaching/rankings", title: "Team Rankings", icon: Medal },
+      { href: "/coaching/leaderboard", title: "Leaderboard", icon: Trophy },
+      { href: "/coaching/progress", title: "Research Progress", icon: TrendingUp },
     ],
   },
 ];

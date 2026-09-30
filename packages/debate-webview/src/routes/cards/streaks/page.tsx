@@ -5,7 +5,7 @@ import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHead
 export default function CardsStreaksPage() {
   return (
     <ToolPage>
-      <ToolPageHeader href="/cards/streaks" backHref="/cards" backLabel="shared cards" guide="research-collaboration" />
+      <ToolPageHeader href="/research/cards/streaks" backHref="/research/cards" backLabel="shared cards" guide="research-collaboration" />
       <Suspense>
         <QuestStreaksWithIdentity />
       </Suspense>

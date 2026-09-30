@@ -88,7 +88,7 @@ describe("editorSlugFromPathname", () => {
   })
 
   it("reads no name off the bare route or another page", () => {
-    for (const path of ["/reason-editor", "/reason-editor/", "/cards", "/doc/x", "", null]) {
+    for (const path of ["/reason-editor", "/reason-editor/", "/research/cards", "/doc/x", "", null]) {
       expect(editorSlugFromPathname(path)).toBeNull()
     }
   })
@@ -99,7 +99,7 @@ describe("isEditorPathname", () => {
     expect(isEditorPathname("/reason-editor")).toBe(true)
     expect(isEditorPathname("/reason-editor/impact-turns")).toBe(true)
     expect(isEditorPathname("/reason-editor-other")).toBe(false)
-    expect(isEditorPathname("/cards")).toBe(false)
+    expect(isEditorPathname("/research/cards")).toBe(false)
   })
 })
 
@@ -255,7 +255,7 @@ describe("canonicalEditorUrl", () => {
   })
 
   it("does nothing off the editor route", () => {
-    expect(canonicalEditorUrl({ kind: "document", id: 34 }, catalog, loc("?doc=34", "/cards"))).toBeNull()
+    expect(canonicalEditorUrl({ kind: "document", id: 34 }, catalog, loc("?doc=34", "/research/cards"))).toBeNull()
   })
 
   it("returns null without a selection", () => {

@@ -4,11 +4,11 @@ title: "Topic & Video Statistics"
 
 # Topic & Video Statistics
 
-`/videos/statistics` — a standalone page combining a searchable list of every
+`/practice/statistics` — a standalone page combining a searchable list of every
 season's debate resolutions with the YouTube channel view/upload charts that
 used to live only in a modal.
 
-- **Route:** `/videos/statistics` (also `/videos/stats`)
+- **Route:** `/practice/statistics` (also `/practice/statistics`)
 - **Package:** `debate-videos`
 
 ## What it shows
@@ -28,7 +28,7 @@ Two sections, stacked:
   is the same `topics` field `/api/videos/meta` already returns for the video
   cards' topic tooltips (`lib/debate-topics.ts`'s formatters), passed down
   from `LecturesPage` rather than fetched again here. Every resolution is a
-  link: clicking one opens the CARDS search (`/cards`) for that topic's short
+  link: clicking one opens the CARDS search (`/research/cards`) for that topic's short
   name, filtered to that season's year and that format (Policy → CX,
   College → NDT, LD, PF), listing every card, outline and round that matches.
 - **YouTube Channel Statistics** (`YouTubeStatsCharts`) — the top-channels

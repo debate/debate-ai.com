@@ -28,6 +28,8 @@
  * @module editor/recent-tools
  */
 
+import { canonicalCategoryHref } from 'debate-data-sync/src/routes/category-paths';
+
 const STORAGE_KEY = 'recent-tools';
 const CHANGE_EVENT = 'recent-tools-changed';
 /** Mirrors `apps/debate-ai.com`'s `lib/recentTools.ts#MAX_RECENT_TOOLS`. */
@@ -40,7 +42,15 @@ function readRecentTools(): string[] {
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
-    return parsed.filter((entry): entry is string => typeof entry === 'string');
+    // Entries recorded before the routes moved under their sidebar category
+    // are stored at their old paths; read them back at the new ones.
+    return [
+      ...new Set(
+        parsed
+          .filter((entry): entry is string => typeof entry === 'string')
+          .map(canonicalCategoryHref),
+      ),
+    ];
   } catch {
     return [];
   }

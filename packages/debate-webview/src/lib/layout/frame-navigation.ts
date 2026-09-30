@@ -5,7 +5,7 @@
  * the dock and the tool sidebar in the top document
  * (`components/layout/AppFrameProvider.tsx`). The sidebar rendered *inside*
  * a framed page — `/videos`' own column — links to tools the dock never
- * frames (`/coach`, `/drills`, `/judges`, …). Left alone, clicking one
+ * frames (`/coaching`, `/practice/drills`, `/practice/judges`, …). Left alone, clicking one
  * navigates the frame: the tool renders inside it with no sidebar and no
  * dock, and `AppShell` then throws the whole tab at a fresh top-level load
  * to recover. Both halves of that are visible — the nav vanishes, then
@@ -120,9 +120,9 @@ export interface AnchorNavigation {
  * anything off this origin, and anything the client router cannot serve.
  *
  * Left to the frame: a path under the *same* dock destination this document
- * is already showing — `/videos/lectures` clicked inside a framed `/videos`
+ * is already showing — `/videos/pf` clicked inside a framed `/videos`
  * is the frame navigating within itself, which is what the frame is for.
- * Another destination's subtree is not: `/cards/library` loaded inside the
+ * Another destination's subtree is not: `/research/cards/library` loaded inside the
  * `/videos` frame renders with no sidebar while the top document's URL still
  * says `/videos`, so it goes up like any tool link.
  *
@@ -158,7 +158,7 @@ export function topNavigationTarget(
  * A framed document telling the shell where it now is.
  *
  * A dock destination navigates *within* its own frame — `/videos` to
- * `/videos/lectures`, `/doc` to `/doc/<name>`, `/cards` to `/cards/library`,
+ * `/lectures`, `/doc` to `/doc/<name>`, `/research/cards` to `/research/cards/library`,
  * a `?view=` or `?chat=` written by `history.replaceState`. None of that
  * touches the top document, so without this the address bar stayed on the
  * bare dock path: the page changed on screen but the URL didn't, and a

@@ -3,7 +3,7 @@
  * from 500-ing a route.
  *
  * The regression this encodes is real: `ReferenceError: useMemo is not
- * defined` in `ReasonDocsSidebarPanels` took every `/cards/*` route and
+ * defined` in `ReasonDocsSidebarPanels` took every `/research/cards/*` route and
  * `/reason-editor` down to a 500 with no shell, no sidebar and no page,
  * because the sidebar renders from the root layout and the app had no error
  * boundary anywhere. The assertions that matter are therefore about the

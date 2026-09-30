@@ -5,7 +5,7 @@ import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHead
 export default function CardsCollaborationPage() {
   return (
     <ToolPage>
-      <ToolPageHeader href="/cards/collaboration" backHref="/cards" backLabel="shared cards" guide="research-collaboration" />
+      <ToolPageHeader href="/research/cards/collaboration" backHref="/research/cards" backLabel="shared cards" guide="research-collaboration" />
       <Suspense>
         <SprintNotesWithIdentity />
       </Suspense>

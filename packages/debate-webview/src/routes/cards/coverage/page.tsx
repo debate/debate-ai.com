@@ -5,7 +5,7 @@ import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHead
 export default function CardsCoveragePage() {
   return (
     <ToolPage>
-      <ToolPageHeader href="/cards/coverage" backHref="/cards" backLabel="shared cards" guide="research-collaboration" />
+      <ToolPageHeader href="/research/cards/coverage" backHref="/research/cards" backLabel="shared cards" guide="research-collaboration" />
       <Suspense>
         <TopicCoverageDashboardPanel />
       </Suspense>

@@ -294,7 +294,7 @@ export function coachingSessionNews(): NewsItem[] {
       title: `New coaching session generated for round ${session.roundId} (${session.sideKey})`,
       body: buildCoachingSessionAnnouncementText(session),
       timestamp: session.createdAt,
-      href: "/coaching",
+      href: "/coaching/ai-coach",
     }));
 }
 

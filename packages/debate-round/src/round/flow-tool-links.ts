@@ -53,17 +53,17 @@ export const FLOW_TOOL_LINKS: FlowToolLink[] = [
     description: "Generate a filterable outline of this round's flow, grouped by heading.",
   },
   {
-    href: "/outcomes",
+    href: "/coaching/outcomes",
     label: "AI Response-Outcome Charts",
     description: "See per-side exposure and the most vulnerable arguments in this round's flow.",
   },
   {
-    href: "/drills",
+    href: "/practice/drills",
     label: "Practice Drills",
     description: "Generate quick practice drills from this round's flowed arguments.",
   },
   {
-    href: "/coaching",
+    href: "/coaching/ai-coach",
     label: "AI Coach Mode",
     description: "Get extension, refutation, collapse, and weighing prompts for this round.",
   },
@@ -91,8 +91,8 @@ export function buildFlowToolsMenuItems(currentFlow: Flow | null | undefined): F
 
 /**
  * Builds the "other round tools" cross-link list for one of
- * {@link FLOW_TOOL_LINKS}'s own standalone pages (`/outline`, `/outcomes`,
- * `/drills`, `/coaching`) — every entry except the one the caller is
+ * {@link FLOW_TOOL_LINKS}'s own standalone pages (`/outline`, `/coaching/outcomes`,
+ * `/practice/drills`, `/coaching/ai-coach`) — every entry except the one the caller is
  * currently on, so a debater who followed the round workspace's "Tools for
  * this round" menu to one tool can jump straight to a sibling tool instead
  * of first going back to the round workspace. Preserves `FLOW_TOOL_LINKS`'s

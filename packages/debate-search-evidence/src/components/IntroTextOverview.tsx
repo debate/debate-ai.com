@@ -30,9 +30,9 @@ export function IntroTextOverview() {
           <p className="text-muted-foreground">
             Search for evidence and select a card to read it here.
           </p>
-          {/* `/cards` runs inside the app shell's frame, so break out of it. */}
+          {/* `/research/cards` runs inside the app shell's frame, so break out of it. */}
           <a
-            href="/features#cards-vision"
+            href="/practice/features#cards-vision"
             target="_top"
             className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium transition-colors"
           >

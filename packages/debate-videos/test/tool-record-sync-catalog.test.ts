@@ -51,14 +51,14 @@ describe("synced tool collections", () => {
     const synced = new Set(TOOL_RECORD_COLLECTIONS.map((collection) => collection.href));
 
     for (const href of [
-      "/practice-round",
-      "/briefings",
-      "/opponents",
-      "/judges",
-      "/judge-decision",
+      "/practice",
+      "/practice/briefings",
+      "/practice/opponents",
+      "/practice/judges",
+      "/practice/judge-decision",
       "/summaries",
       "/outline",
-      "/prep-notes",
+      "/practice/prep-notes",
       "/annotations",
     ]) {
       expect(synced, href).toContain(href);
@@ -68,7 +68,7 @@ describe("synced tool collections", () => {
   it("covers the Coaching section's saved-work tools", () => {
     const synced = new Set(TOOL_RECORD_COLLECTIONS.map((collection) => collection.href));
 
-    for (const href of ["/coaching", "/coaching-programs"]) {
+    for (const href of ["/coaching/ai-coach", "/coaching/programs"]) {
       expect(synced, href).toContain(href);
     }
   });

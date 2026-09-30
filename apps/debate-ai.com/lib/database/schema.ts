@@ -211,7 +211,7 @@ export type FlowPresenceHeartbeatRow = typeof flowPresenceHeartbeats.$inferSelec
 //
 // `favoriteTools` (idea #17, follow-up "integrate tools into user
 // settings") stores a signed-in user's starred `/tools` entries as a JSON
-// array of route paths (e.g. `["/reason-editor","/drills"]`), or null when
+// array of route paths (e.g. `["/reason-editor","/practice/drills"]`), or null when
 // empty — same "no saved value yet" semantics as every other column here.
 // Validated by `debate-round`'s `normalizeFavoriteToolsPatch`, which (unlike
 // `debateStyle`/`colorTheme`) can only check shape, not membership in the

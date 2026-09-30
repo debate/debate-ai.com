@@ -20,14 +20,14 @@ import {
 /**
  * Routes that get the sidebar without being one of the tree's own links.
  *
- * `/features` is the catalog of every surface in the app, reached from the
+ * `/practice/features` is the catalog of every surface in the app, reached from the
  * footer and from the dock's Site Links menu. It used to render as a bare
  * full-page panel with a "Back" pill of its own, which read as leaving the
  * app — so it is wrapped in the same sidebar as everything else it links to,
  * and the sidebar is how you leave it.
  *
  * `/teams/<team>` and `/schools/<school>` are the profile pages opened from
- * the Team Rankings table (`/rank`, itself a tree destination). They used to
+ * the Team Rankings table (`/coaching/rankings`, itself a tree destination). They used to
  * render bare, with only a "← Team Rankings" text link back — landing on one
  * from anywhere else in the app dropped the nav entirely.
  *
@@ -46,7 +46,7 @@ import {
  * {@link OWN_SIDEBAR_DOCK_HREFS} is what actually hosts its sidebar.
  */
 export const EXTRA_SIDEBAR_HREFS: readonly string[] = [
-  "/features",
+  "/practice/features",
   "/teams",
   "/schools",
   "/legal",
@@ -91,6 +91,26 @@ export const OWN_LAYOUT_SIDEBAR_HREFS: readonly string[] = ["/debate"];
  */
 export const OWN_SIDEBAR_DOCK_HREFS: readonly string[] = ["/doc"];
 
+/**
+ * Routes that render the video library page (`LecturesPage`), which draws
+ * its own full sidebar, dock included: the round archive under `/videos`,
+ * the lecture library under `/lectures`, and the three reference views the
+ * Practice category lists — the glossary, the rankings and the statistics.
+ */
+export const VIDEO_LIBRARY_HREFS: readonly string[] = [
+  "/videos",
+  "/lectures",
+  "/practice/glossary",
+  "/practice/rankings",
+  "/practice/statistics",
+];
+
+/** True on any {@link VIDEO_LIBRARY_HREFS} route or a page below one. */
+export function isVideoLibraryPath(pathname: string | null | undefined): boolean {
+  if (!pathname) return false;
+  return VIDEO_LIBRARY_HREFS.some((href) => isAtOrUnder(pathname, href));
+}
+
 /** True when `pathname` is `href` or a page below it. */
 function isAtOrUnder(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
@@ -123,8 +143,8 @@ export function ownsItsLayout(pathname: string | null | undefined): boolean {
  * True when `pathname` is one of the sidebar's destinations or sits beneath
  * one.
  *
- * The prefix half matters: a nested route under a tree entry (`/cards/awards`
- * under `/cards`, a document route under `/doc`) is the same destination one
+ * The prefix half matters: a nested route under a tree entry (`/research/cards/awards`
+ * under `/research/cards`, a document route under `/doc`) is the same destination one
  * level down, and matching exact paths only left those pages with the app
  * dock's fixed top-left instance floating over their content instead of a
  * dock inside a sidebar — over a CardMirror editor, in the `/doc` and
@@ -140,7 +160,8 @@ export function matchesToolSidebarHref(pathname: string): boolean {
 }
 
 /**
- * True on `/videos` (which renders its own full sidebar, dock included) and
+ * True on the video library routes ({@link VIDEO_LIBRARY_HREFS}, which render
+ * their own full sidebar, dock included) and
  * on every page the tool-nav tree links to (which the app's
  * `AppSidebarShell` wraps in the generic sidebar) — i.e. every route with a
  * sidebar-hosted dock already on screen, so `CategoryDock`'s fixed top-left/
@@ -155,16 +176,16 @@ export function hasEmbeddedDock(pathname: string | null | undefined): boolean {
   // dock, so the floating one is the only dock it gets — suppressing it there
   // would leave the page with no way back into the app.
   if (ownsItsLayout(pathname)) return false;
-  return pathname.startsWith("/videos") || matchesToolSidebarHref(pathname);
+  return isVideoLibraryPath(pathname) || matchesToolSidebarHref(pathname);
 }
 
 /**
- * True only for the generic tool pages — not `/videos` itself, which already
+ * True only for the generic tool pages — not the video library routes, which already
  * renders its own sidebar and would otherwise get two.
  */
 export function isGenericToolSidebarRoute(pathname: string | null | undefined): boolean {
   if (!pathname) return false;
-  if (pathname.startsWith("/videos")) return false;
+  if (isVideoLibraryPath(pathname)) return false;
   if (ownsItsLayout(pathname)) return false;
   return matchesToolSidebarHref(pathname);
 }

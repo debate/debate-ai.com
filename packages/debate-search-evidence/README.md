@@ -35,7 +35,7 @@ and `debate-community` reach specific modules that aren't re-exported from the p
 
 ## Card library import (`debate-cards-upload`)
 
-The evidence corpus behind `/cards` is loaded from the published Parquet
+The evidence corpus behind `/research/cards` is loaded from the published Parquet
 shards. Shards are hundreds of megabytes of card HTML, so the file itself is
 never uploaded: the CLI reads it in row windows, normalizes each window, and
 posts batches of rows to `POST /api/admin/debate-cards`, which upserts them by

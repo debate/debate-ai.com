@@ -12,7 +12,7 @@
  * The thread itself is fetched here rather than passed in: the same
  * fetch-for-itself reasoning as `debate-comments`' `CommentSection` — the
  * thread id arrives from the route, and reading it on the client keeps this
- * page mountable by any host that routes `/forums/<id>`.
+ * page mountable by any host that routes `/practice/forums/<id>`.
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -104,7 +104,7 @@ export function ForumThreadView({ threadId }: ForumThreadViewProps) {
           >
             Try again
           </button>
-          <Link href="/forums" className="text-muted-foreground underline">
+          <Link href="/practice/forums" className="text-muted-foreground underline">
             Back to Latest News
           </Link>
         </div>
@@ -115,7 +115,7 @@ export function ForumThreadView({ threadId }: ForumThreadViewProps) {
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
       <Link
-        href="/forums"
+        href="/practice/forums"
         className="inline-flex h-9 w-fit items-center gap-1.5 self-start rounded-md border border-border bg-background px-3 text-sm font-medium text-foreground transition-colors hover:bg-accent"
       >
         <ArrowLeft className="h-4 w-4" aria-hidden="true" />

@@ -5,7 +5,7 @@ import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
 export default function ResearchPage() {
   return (
     <ToolPage>
-      <ToolPageHeader href="/research" backHref="/cards" backLabel="shared cards" guide="research-collaboration" />
+      <ToolPageHeader href="/research" backHref="/research/cards" backLabel="shared cards" guide="research-collaboration" />
       <Suspense>
         <ResearchHub />
       </Suspense>

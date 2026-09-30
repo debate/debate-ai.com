@@ -18,7 +18,7 @@
  * `feature-catalog.ts` entry and drafts a post for it" Known gap: rather than
  * requiring a hand-written `PRODUCT_NEWS` entry before a tool can appear in
  * the feed at all, it walks the `APP_FEATURES` catalog (the same
- * ~50-surface list the `/features` and `/tools` pages render from) and
+ * ~50-surface list the `/practice/features` and `/tools` pages render from) and
  * synthesizes a generic "Tool spotlight" post for every entry whose `href`
  * no hand-curated `PRODUCT_NEWS` item already covers — so a debater browsing
  * the feed always finds every tool mentioned somewhere, even ones nobody
@@ -68,7 +68,7 @@ export const PRODUCT_NEWS: NewsItem[] = [
     title: "News Stream now posts completed Daily Quests boards",
     body: "The Community side of the feed now posts the day a contributor completes every quest on the Daily Quests board at /cards/quests — same as prep notes, streak milestones, challenge completions, Argument Library submissions, and Revision Incentives standings.",
     timestamp: Date.parse("2026-09-02T00:00:00Z"),
-    href: "/cards/quests",
+    href: "/research/cards/quests",
   },
   {
     id: "product-news-stream-volume-cap",

@@ -201,7 +201,7 @@ function NavMenu({ side }: { side: "bottom" | "top" }) {
           the glossary/rankings pair below its tree can be reached — see
           `lib/nav/dock-menu-sections.ts`, which derives these from the same
           data the sidebar renders. The feature catalog is *not* restated
-          here: it is the `/features` row in the Settings menu's Site Links. */}
+          here: it is the `/practice/features` row in the Settings menu's Site Links. */}
       {SIDEBAR_MENU_SECTIONS.map((section) => (
         <DropdownMenuSub key={section.id}>
           <DropdownMenuSubTrigger>
@@ -309,7 +309,7 @@ function SettingsMenu({
         </DropdownMenuSubTrigger>
         <DropdownMenuSubContent className={cn(SUBMENU_WIDTH, "max-h-[min(500px,70vh)] overflow-y-auto")} collisionPadding={8} avoidCollisions>
           <DropdownMenuLabel>Site Links</DropdownMenuLabel>
-          {/* An app route (`/features`, `/legal/privacy`) is pushed through
+          {/* An app route (`/practice/features`, `/legal/privacy`) is pushed through
               the router so it opens inside the app — sidebar, dock and the
               persistent player all still there. Only an outside site or the
               help docs at `/docs` (no app shell there) get a real page load; see
@@ -372,11 +372,11 @@ const EMBEDDED_ICON_SIZE = 34
 const EMBEDDED_MAGNIFICATION = 46
 
 /** The dock item that opens {@link NavMenu} instead of navigating. */
-const NAV_MENU_TRIGGER_HREF = "/versus-ai"
+const NAV_MENU_TRIGGER_HREF = "/practice/versus-ai"
 
 /**
  * The Practice vs AI dock item, wired to open {@link NavMenu} rather than
- * navigate to `/versus-ai` directly — that page is still one tap away, as
+ * navigate to `/practice/versus-ai` directly — that page is still one tap away, as
  * the first tool listed under the menu's Practice section.
  *
  * Carries its own `DropdownMenu` root rather than sharing the Settings

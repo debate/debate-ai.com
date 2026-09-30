@@ -77,13 +77,13 @@ export const DEFAULT_COACH_SKILLS: CoachSkill[] = [
     title: "Strengthen Argument",
     description:
       "Master the art of crafting compelling, persuasive arguments that win debates.",
-    url: "/coach",
+    url: "/coaching",
   },
   {
     title: "Pros and Cons Challenge",
     description:
       "Test your critical thinking by crafting up to 5 pros and cons for engaging debate topics.",
-    url: "/drills",
+    url: "/practice/drills",
   },
 ]
 

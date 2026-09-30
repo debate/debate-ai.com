@@ -209,7 +209,7 @@ const CATEGORY_MAP: Record<string, string> = {
  * Projects a stored card row into the shape the search UI renders.
  *
  * @param card - A `debate_cards` row.
- * @returns The search result the `/cards` interface expects.
+ * @returns The search result the `/research/cards` interface expects.
  */
 export function mapDebateCardToSearchResult(card: any): any {
   const pocket = card.pocket || "";
