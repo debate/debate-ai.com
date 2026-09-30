@@ -106,7 +106,7 @@ export const README_BADGE_ROWS: ReadmeBadge[][] = [
     },
     {
       href: "https://codecov.io/gh/debate/debate-ai.com",
-      src: "https://img.shields.io/badge/%EB%AA%A8%20lines-100k-yellow",
+      src: "https://img.shields.io/badge/%EB%AA%A8%20lines-64k-yellow",
       alt: "Lines of code",
     },
   ],
