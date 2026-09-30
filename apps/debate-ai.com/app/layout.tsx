@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next"
 import "debate-webview/styles/app.css"
 import { ThemeProvider } from "debate-webview/components/theme-provider"
 import { AppShell } from "debate-webview/components/layout/AppShell"
+import { LoadingProvider } from "debate-webview/components/layout/LoadingProvider"
 import { webFontsBootstrapScript } from "debate-webview/styles/web-fonts"
 import { SITE_ORIGIN } from "@/lib/seo/site-url"
 
@@ -85,6 +86,11 @@ export default function RootLayout({
       </head>
       <body className="theme-root">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+          {/* The navigation progress bar sits above the whole app shell, so
+              every page transition that runs past its show delay (150 ms)
+              shows a slim bar across the top instead of a page that looks
+              stuck. Quicker transitions never show it. */}
+          <LoadingProvider />
           <AppShell>{children}</AppShell>
         </ThemeProvider>
       </body>
