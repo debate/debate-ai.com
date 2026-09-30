@@ -15,6 +15,12 @@
  * Fumadocs' own drawer is the navigation; the app's floating mobile dock is
  * left out because it would sit over the docs' content.
  *
+ * The app's stylesheet sets `overflow: hidden` on `<body>`, so the window
+ * never scrolls: every app page scrolls inside `AppShell`'s viewport-high
+ * `overflow-auto` wrapper. The docs get the same wrapper here, or their
+ * content could not scroll at all (only Fumadocs' sidebar, which scrolls
+ * itself). The sticky sidebars and header stick within it.
+ *
  * Leaving /docs is always a full page load (see `docsExitTarget` in
  * `frame-navigation.ts`): the docs' stylesheet is not something an app page
  * can have applied. The dock and tree navigate with the client router, so
@@ -51,7 +57,7 @@ export function DocsAppChrome({ children }: { children: React.ReactNode }) {
 
   return (
     <CategoryDockProvider>
-      <div onClickCapture={handleClickCapture}>
+      <div className="h-screen w-full overflow-y-auto" onClickCapture={handleClickCapture}>
         <AppSidebarShell always>{children}</AppSidebarShell>
       </div>
     </CategoryDockProvider>
