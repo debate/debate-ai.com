@@ -7,6 +7,7 @@ export { default as IconAffBubble } from "./icon-aff-bubble.png";
 export { default as IconSettings } from "./icon-settings.svg";
 export { default as IconBook } from "./icon-book.svg";
 export { default as IconCollectiveMind } from "./icon-collective-mind.png";
+export { default as IconDoc } from "./icon-doc.png";
 export { default as IconLeaderboard } from "./icon-leaderboard.png";
 export { default as IconLectures } from "./icon-lectures.svg";
 export { default as IconNegBubble } from "./icon-neg-bubble.png";

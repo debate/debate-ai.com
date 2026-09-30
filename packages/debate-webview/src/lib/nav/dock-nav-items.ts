@@ -9,8 +9,8 @@
 import { dockNavLabel } from "./dock-nav-paths"
 import {
   IconCollectiveMind,
+  IconDoc,
   IconFlowFlower,
-  IconRead,
   IconRoundsYoutube,
   IconVsAi,
 } from "../ui/icons"
@@ -27,8 +27,11 @@ export const NAV_ITEMS: DockNavItem[] = [
   { href: "/debate", label: dockNavLabel("/debate"), icon: IconFlowFlower },
   // Practice vs AI — a full timed round against an AI opponent, from the
   // `debate-practice-vs-ai` package.
-  { href: "/practice/versus-ai", label: dockNavLabel("/practice/versus-ai"), icon: IconVsAi },
-  { href: "/doc", label: dockNavLabel("/doc"), icon: IconRead },
+{ href: "/practice/versus-ai", label: dockNavLabel("/practice/versus-ai"), icon: IconVsAi },
+  // The qwksearch/REASON workspace, marked with its own looking-glass app
+  // icon (`icon-doc.png`, the site's favicon) rather than a generic page: the
+  // dock's one document destination reads as a different tool from the rest.
+  { href: "/doc", label: dockNavLabel("/doc"), icon: IconDoc },
   // No "Tools" icon here on purpose: the tools catalog is reached from the
   // sidebar nav tree (its "Apps" heading and the Coaching/Research/Practice
   // sections) and from the Settings menu's "All Tools" entry and Tools
