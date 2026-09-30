@@ -31,6 +31,15 @@ export interface SidebarVideoLink {
   exactCount?: boolean;
 }
 
+/** The All Videos node — every round and lecture in the library, and the
+ *  app's home page (`/` redirects here). Sits above "Round Videos". */
+export const VIDEO_ALL_LINK: SidebarVideoLink = {
+  id: "allVideos",
+  href: "/videos",
+  title: "All Videos",
+  exactCount: true,
+};
+
 /** The College Debates node — the round archive's flagship link, and the
  *  first of the peer collections it heads in the tree. */
 export const VIDEO_COLLEGE_LINK: SidebarVideoLink = {
@@ -68,6 +77,7 @@ export const VIDEO_REFERENCE_LINKS: SidebarVideoLink[] = [
 
 /** Every videos destination the sidebar links to, in tree order. */
 export const SIDEBAR_VIDEO_LINKS: SidebarVideoLink[] = [
+  VIDEO_ALL_LINK,
   VIDEO_COLLEGE_LINK,
   ...VIDEO_FORMAT_LINKS,
   ...VIDEO_LIBRARY_LINKS,

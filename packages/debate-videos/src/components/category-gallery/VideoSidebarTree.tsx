@@ -51,6 +51,7 @@ import { TreeItem } from "./TreeItem";
 import { lectureCategoryHref } from "../../panels/lectureRouteConfig";
 import { ToolNavTree } from "./ToolNavTree";
 import {
+  VIDEO_ALL_LINK,
   VIDEO_COLLEGE_LINK,
   VIDEO_FORMAT_LINKS,
   SIDEBAR_VIDEO_LINKS_BY_ID,
@@ -149,12 +150,22 @@ export function VideoSidebarTree({
     <nav className="flex flex-col gap-3 text-sm" aria-label="Videos">
       <TreeItem
         level={1}
+        href={VIDEO_ALL_LINK.href}
+        title={VIDEO_ALL_LINK.title}
+        icon={Clapperboard}
+        count={counts?.[VIDEO_ALL_LINK.id]}
+        exactCount={VIDEO_ALL_LINK.exactCount}
+        isActive={activeId === VIDEO_ALL_LINK.id}
+      />
+
+      <TreeItem
+        level={1}
         title="Round Videos"
         icon={Clapperboard}
         // The heading toggles on a plain click; ctrl/shift/middle-click opens
         // the library itself, so every row in the tree can be opened in a new
-        // tab rather than only the leaves. `/videos` is the lectures view, so
-        // the round archive's own flagship is College Debates.
+        // tab rather than only the leaves. `/videos` is All Videos (the row
+        // above), so the round archive's own flagship is College Debates.
         sectionHref={VIDEO_COLLEGE_LINK.href}
         expanded={videosExpanded}
         onToggleExpand={() => toggleSection(VIDEOS_SECTION_ID)}

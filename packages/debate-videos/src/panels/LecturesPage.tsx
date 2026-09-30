@@ -249,9 +249,11 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
 
   const filters: VideoFeedFilters = {
     source: "all",
-    // "All Lectures" means everything without a numeric debate style — rounds
-    // surface through the style filter and the category tabs instead.
+    // "All Lectures" (`/lectures`) means everything without a numeric debate
+    // style — rounds surface through the style filter and the category tabs
+    // instead. Bare `/videos` (no slug) is "All Videos": rounds and lectures.
     lecturesOnly:
+      slug !== undefined &&
       state.currentCategory === "lectures" &&
       selectedCategory === "all" &&
       !state.selectedStyle,
@@ -289,6 +291,7 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
   const quickLinkCounts = useMemo(
     () =>
       ({
+        allVideos: counts.total,
         lectures: counts.lectures,
         policy: counts.byStyle[1] ?? 0,
         ld: counts.byStyle[3] ?? 0,
