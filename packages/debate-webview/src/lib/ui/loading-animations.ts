@@ -1,7 +1,7 @@
 /**
- * @fileoverview The loading clips shown in the middle of {@link LoadingOverlay},
- * and the pieces of the choice worth testing on their own: which clip to draw,
- * and what to colour it with.
+ * @fileoverview The loading clips drawn in the middle of a panel's own
+ * loader, and the pieces of the choice worth testing on their own: which clip
+ * to draw, and what to colour it with.
  *
  * The clips come from `grab-url/animations` — seventeen SVG loaders, each a
  * function returning markup. That subpath is safe to import from a component

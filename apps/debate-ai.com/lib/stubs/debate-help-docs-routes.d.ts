@@ -20,3 +20,11 @@ export const metadata: Metadata
 export function generateMetadata(props: { params: Promise<any> }): Promise<Metadata>
 export function generateStaticParams(): unknown[] | Promise<unknown[]>
 export function GET(request: Request, context: { params: Promise<any> }): Response | Promise<Response>
+
+/**
+ * `debate-help-docs/lib/fumadocs/sitemap-helper` (see
+ * `packages/debate-help-docs/lib/fumadocs/sitemap-helper.ts`), declared here
+ * for the same reason as the route modules above and mapped in by
+ * `tsconfig.typecheck.json`.
+ */
+export function docsPageUrls(): string[]

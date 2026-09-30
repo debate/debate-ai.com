@@ -8,6 +8,7 @@ import {
   README_BADGE_ROWS,
   README_BANNER,
   README_SHOWCASE,
+  README_VIDEO,
 } from "../../../src/lib/ui/features/readme-media";
 import { CARDS_DOIS, CARDS_VISION } from "../../../src/lib/ui/features/cards-vision";
 
@@ -42,6 +43,19 @@ describe("FeaturesPanel", () => {
       expect(html).toContain(`src="${workspace.image}"`);
       expect(html).toContain(`href="${workspace.href}"`);
     }
+  });
+
+  it("embeds the tour video behind a click, not on page load", () => {
+    // The whole point of the poster is that nothing is requested from YouTube
+    // until a reader asks for it, so the server-rendered page carries the
+    // thumbnail and no iframe at all.
+    expect(html).toContain(`src="${README_VIDEO.thumbnail}"`);
+    expect(html).not.toContain("<iframe");
+    expect(html).not.toContain("youtube-nocookie.com/embed");
+  });
+
+  it("offers the video on YouTube as well as embedded", () => {
+    expect(html).toContain(`href="${README_VIDEO.watchUrl}"`);
   });
 
   it("renders the CARDS overview and every point of its vision", () => {

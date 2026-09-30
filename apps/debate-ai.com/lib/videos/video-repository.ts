@@ -54,6 +54,84 @@ import {
 /** Which backend answered a request — surfaced for debugging. */
 export type VideoBackend = "sql" | "json";
 
+/** One video's address and last change, as a sitemap needs it. */
+export interface VideoSitemapEntry {
+  /** The video's canonical path, e.g. `/videos/2022/ndt/finals/dartmouth-sv-michigan-pr`. */
+  path: string;
+  /** When the row last changed, for `<lastmod>`; `null` when it cannot be read. */
+  lastModified: Date | null;
+}
+
+/**
+ * Every video's canonical path and last-modified date, for the sitemap.
+ *
+ * A dedicated read rather than a walk over {@link getVideoPage}, for two
+ * reasons. It selects only the columns a URL and a date are built from — the
+ * full row carries the description and the lowercased `search_text` of every
+ * one of ~3,000 videos, which is megabytes of text the sitemap never renders.
+ * And it filters on `availability`: a video YouTube no longer serves is not
+ * indexable, and listing it invites Google to crawl a page whose embed is dead.
+ *
+ * `updated_at` is the right `<lastmod>`: it moves when the row is seeded,
+ * republished or edited, and — unlike the view-count resync, which writes only
+ * the rows whose count actually changed — it does not move every week for every
+ * video, which would tell Google the whole library is new every week.
+ *
+ * @returns One entry per indexable video, unsorted. `lastModified` is `null`
+ *   on the JSON fallback, whose assets carry no per-row timestamp.
+ */
+export async function getVideoSitemapEntries(): Promise<VideoSitemapEntry[]> {
+  const db = await tryGetDb();
+  if (db && (await isTableSeeded(db))) {
+    try {
+      const rows = await db
+        .select({
+          videoId: videos.videoId,
+          title: videos.title,
+          publishedAt: videos.publishedAt,
+          seasonYear: videos.seasonYear,
+          style: videos.style,
+          category: videos.category,
+          tournament: videos.tournament,
+          roundLevel: videos.roundLevel,
+          affTeam: videos.affTeam,
+          negTeam: videos.negTeam,
+          arg1ac: videos.arg1ac,
+          arg2nr: videos.arg2nr,
+          updatedAt: videos.updatedAt,
+        })
+        .from(videos)
+        .where(eq(videos.availability, "available"));
+      return (rows as Array<Record<string, unknown>>).map((row) => ({
+        path: videoRouteHref({
+          videoId: String(row.videoId),
+          title: String(row.title ?? ""),
+          date: (row.publishedAt as string | null) ?? null,
+          seasonYear: (row.seasonYear as number | null) ?? null,
+          style: (row.style as number | string | null) ?? (row.category as string | null) ?? null,
+          tournament: (row.tournament as string | null) ?? null,
+          roundLevel: (row.roundLevel as string | null) ?? null,
+          affTeam: (row.affTeam as string | null) ?? null,
+          negTeam: (row.negTeam as string | null) ?? null,
+          arg1ac: (row.arg1ac as string | null) ?? null,
+          arg2nr: (row.arg2nr as string | null) ?? null,
+        }),
+        lastModified: (row.updatedAt as Date | null) ?? null,
+      }));
+    } catch (error) {
+      console.error("videos: SQL sitemap query failed, falling back to JSON", error);
+      backendProbe = { ready: false, checkedAt: Date.now() };
+    }
+  }
+
+  // The assets carry no `updated_at` and no availability, so every row is
+  // offered and none claims a `<lastmod>`.
+  return (await getVideoRowsFromJson()).map((row) => ({
+    path: videoRouteHref(videoRowToTuple(row) as unknown as VideoType),
+    lastModified: null,
+  }));
+}
+
 /** One page of the video feed. */
 export interface VideoPage {
   /** Videos in UI tuple form. */

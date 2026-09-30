@@ -1,4 +1,4 @@
-name: Update pnpm packages
+name: Update Bun packages
 
 on:
   workflow_dispatch:
@@ -10,7 +10,7 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: pnpm-package-updates
+  group: bun-package-updates
   cancel-in-progress: false
 
 jobs:
@@ -24,16 +24,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      # The repo is a Bun workspace (packageManager: bun@1.4.2) with no pnpm
+      # lockfile, so setup-node's `cache: pnpm` failed with "Unable to locate
+      # executable file: pnpm" before any update ran.
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: 22
-          cache: pnpm
-
-      - name: Set up pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
+          bun-version: 1.4.2
 
       - name: Find package manifests and update dependencies
         shell: bash
@@ -41,7 +38,7 @@ jobs:
           set -euo pipefail
 
           # Exclude dependency/vendor/generated directories. Each remaining package.json
-          # is treated as an independent pnpm project unless it belongs to a root workspace.
+          # is treated as an independent Bun project unless it belongs to the root workspace.
           mapfile -d '' manifests < <(
             find . \
               -type d \( -name node_modules -o -name .git -o -name vendor -o -name dist -o -name build -o -name .next \) -prune -o \
@@ -56,54 +53,52 @@ jobs:
           printf 'Found package manifests:\n'
           printf ' - %s\n' "${manifests[@]}"
 
-          # First update the root project. If it is a pnpm workspace, --recursive
-          # updates every workspace package and keeps the shared lockfile consistent.
-          if [ -f package.json ]; then
-            if [ -f pnpm-workspace.yaml ] || [ -f pnpm-workspace.yml ]; then
-              pnpm update --latest --recursive
-            else
-              pnpm update --latest
-            fi
-          fi
+          # First update the root workspace. --recursive updates every workspace package.
+          bun update --latest --recursive
 
-          # Update package directories outside the root workspace. Directories that
-          # already have a pnpm-lock.yaml in an ancestor are skipped because the root
-          # workspace update above already covers them.
-          declare -A visited
+          # Workspace member directories, resolved from the root "workspaces" globs
+          # (single-level "*" and "!" exclusions, which is all the root uses).
+          mapfile -t members < <(node -e '
+            const fs = require("fs"), path = require("path");
+            const globs = require("./package.json").workspaces ?? [];
+            const expand = (g) => g.endsWith("/*")
+              ? (fs.existsSync(g.slice(0, -2)) ? fs.readdirSync(g.slice(0, -2)).map((d) => path.join(g.slice(0, -2), d)) : [])
+              : [g];
+            const excluded = new Set(globs.filter((g) => g.startsWith("!")).flatMap((g) => expand(g.slice(1))));
+            for (const g of globs.filter((g) => !g.startsWith("!")))
+              for (const d of expand(g))
+                if (!excluded.has(d) && fs.existsSync(path.join(d, "package.json"))) console.log("./" + d);
+          ')
+          declare -A skip
+          for m in "${members[@]}"; do skip[$m]=1; done
+
+          # Update package directories outside the root workspace.
           for manifest in "${manifests[@]}"; do
             dir="$(dirname "$manifest")"
             [ "$dir" = "." ] && continue
-
-            # Avoid running twice for duplicate paths and skip nested workspace members.
-            if [ -n "${visited[$dir]:-}" ]; then
+            if [ -n "${skip[$dir]:-}" ]; then
+              echo "Skipping workspace package: $dir"
               continue
             fi
-            visited[$dir]=1
-
-            if [ -f pnpm-workspace.yaml ] || [ -f pnpm-workspace.yml ]; then
-              if pnpm --dir . list -r --depth -1 --json 2>/dev/null | grep -Fq "\"path\": \"$(cd "$dir" && pwd)\""; then
-                echo "Skipping workspace package: $dir"
-                continue
-              fi
-            fi
+            skip[$dir]=1
 
             echo "Updating standalone package: $dir"
-            pnpm --dir "$dir" update --latest
+            (cd "$dir" && bun update --latest) || echo "::warning::bun update failed in $dir"
           done
 
       - name: Create or update dependency-update pull request
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "chore(deps): update pnpm dependencies"
-          branch: "automation/pnpm-dependency-updates"
+          commit-message: "chore(deps): update Bun dependencies"
+          branch: "automation/bun-dependency-updates"
           delete-branch: true
-          title: "chore(deps): update pnpm dependencies"
+          title: "chore(deps): update Bun dependencies"
           body: |
-            Automated dependency update using `pnpm update --latest`.
+            Automated dependency update using `bun update --latest`.
 
             This workflow scans the repository for `package.json` files, updates the
-            root pnpm workspace recursively when present, and updates standalone pnpm
-            projects found in subdirectories.
+            root Bun workspace recursively, and updates standalone projects found in
+            subdirectories outside the workspace.
           labels: dependencies, automated
           draft: false
