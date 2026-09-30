@@ -16,6 +16,8 @@ const GEAR: {
   blurb: string
   usedHref?: string
   buyLabel?: string
+  /** Extra links listed under the card's main buy link. */
+  extras?: { label: string; href: string }[]
 }[] = [
   {
     name: "LenTok Magnetic Neck Phone Holder",
@@ -56,6 +58,12 @@ const GEAR: {
     image: "https://i.imgur.com/I4h4WFC.jpeg",
     blurb:
       "The premium move: a 174″ virtual monitor that hovers in space, driven by your phone over USB-C. At 88 g it's lighter than most headphones, with 1250-nit Sony Micro-OLED, 120 Hz, and 9-level dimming so you can flow or review evidence in daylight. If you want one screen larger than any laptop but still pocket the phone between rounds, these are it.",
+    extras: [
+      {
+        label: "Browse all XR glasses on Amazon",
+        href: "https://www.amazon.com/s?k=Video+Display+Glasses&i=electronics&rh=n%3A3213034011&s=exact-aware-popularity-rank&c=ts&qid=1790735819&ts_id=3213034011&ref=sr_st_exact-aware-popularity-rank&ds=v1%3AlCFOPezF1nWO4bmdtubKjczvznu3kKHMKuAK7dduffg",
+      },
+    ],
   },
   {
     name: "Samsung Galaxy S20",
@@ -209,9 +217,16 @@ export default function MobileSetupPage() {
             {GEAR.map((item) => (
               <div
                 key={item.href}
-                className="block h-full"
+                className="relative block h-full"
               >
-                <Card className="h-full py-4 transition-colors hover:bg-accent hover:border-accent-foreground/20">
+                <Card className="relative h-full py-4 transition-colors hover:bg-accent hover:border-accent-foreground/20">
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="sponsored noopener noreferrer"
+                    className="absolute inset-0 z-10 rounded-[inherit]"
+                    aria-label={`${item.name} — ${item.buyLabel ?? "View on Amazon"}`}
+                  />
                   <CardHeader className="px-4">
                     <div className="mb-2 flex h-36 items-center justify-center overflow-hidden rounded-md bg-white">
                       {item.video ? (
@@ -224,7 +239,7 @@ export default function MobileSetupPage() {
                           loop
                           playsInline
                           preload="metadata"
-                          className="max-h-full max-w-full object-contain"
+                          className="pointer-events-none max-h-full max-w-full object-contain"
                         />
                       ) : (
                         <>
@@ -233,7 +248,7 @@ export default function MobileSetupPage() {
                             src={item.image}
                             alt={item.name}
                             loading="lazy"
-                            className="max-h-full max-w-full object-contain"
+                            className="pointer-events-none max-h-full max-w-full object-contain"
                           />
                         </>
                       )}
@@ -242,16 +257,28 @@ export default function MobileSetupPage() {
                     <CardTitle className="text-base leading-snug">{item.name}</CardTitle>
                     <CardDescription>{item.blurb}</CardDescription>
                   </CardHeader>
-                  <CardContent className="px-4 pt-2 space-y-1">
+                  <CardContent className="relative z-20 px-4 pt-2 space-y-1">
                     <a
                       href={item.href}
                       target="_blank"
                       rel="sponsored noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground"
+                      className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground hover:underline underline-offset-2"
                     >
                       {item.buyLabel ?? "View on Amazon"}
                       <ExternalLink className="h-3.5 w-3.5" />
                     </a>
+                    {item.extras?.map((extra) => (
+                      <a
+                        key={extra.href}
+                        href={extra.href}
+                        target="_blank"
+                        rel="sponsored noopener noreferrer"
+                        className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:underline underline-offset-2"
+                      >
+                        {extra.label}
+                        <ExternalLink className="h-3.5 w-3.5" />
+                      </a>
+                    ))}
                     {item.usedHref && (
                       <a
                         href={item.usedHref}
