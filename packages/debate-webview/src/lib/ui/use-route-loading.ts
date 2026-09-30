@@ -16,18 +16,12 @@
  *   navigations count — for a hard one the orb covers the wait until the
  *   document unloads.
  * - **Back / forward** landing on another pathname.
- * - **A framed document handing a navigation up** to the shell
- *   (`FrameNavigationHost` calls {@link startRouteLoading}).
  *
  * What ends it: `pathname` changing, two animation frames later — one full
  * paint cycle, so the DOM behind the overlay is the new route, not a
  * placeholder. A transition that never lands (a handler that cancels the
  * click, a failed fetch) is dropped by a safety timeout rather than leaving
  * the overlay up for good.
- *
- * Dock destinations change `pathname` the instant they are clicked, so the
- * hop itself clears straight away; the frame that is still loading behind it
- * holds the overlay on its own (see `AppFrameSurface`).
  */
 
 import { useEffect, useRef } from "react"
@@ -37,7 +31,7 @@ import { beginLoading, finishLoading } from "./loading-store"
 import { isSamePage, routeLoadingTarget } from "./route-loading-target"
 
 /** Longest a transition may hold the overlay before it is dropped regardless,
- *  in ms. Also used by `AppFrameSurface` for a frame that never loads. */
+ *  in ms. */
 export const ROUTE_LOADING_TIMEOUT_MS = 8000
 
 /** Whether a transition currently holds one level of the overlay's depth. */
@@ -82,10 +76,7 @@ export function useRouteLoading() {
   const lastPathRef = useRef(pathname)
 
   useEffect(() => {
-    // Bubble phase, after the page's own handlers: a framed document's
-    // hand-off (`useFrameNavigationHandoff`) stops the click in the capture
-    // phase, so it never reaches here and the frame does not arm an overlay
-    // for a navigation the shell is about to run. `defaultPrevented` is not
+    // Bubble phase, after the page's own handlers. `defaultPrevented` is not
     // checked — `<Link>` prevents every click it routes.
     const onClick = (event: MouseEvent) => {
       if (opensElsewhere(event)) return

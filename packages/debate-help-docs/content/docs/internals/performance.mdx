@@ -65,6 +65,13 @@ into many small shared chunks.
   animate with framer-motion (`/videos`, `/debate`, the flow editor) load it
   with those features.
 
+- **Dock switches.** Every dock destination renders as React in the one
+  app document; nothing is framed. Hovering an icon already prefetched its
+  route; now the dock also prefetches the other destinations (except `/doc`)
+  one at a time in idle time after load, so a first switch on a touch screen
+  or a quick click is a render from cache. It is off on data-saver and 2G
+  connections. See `lib/nav/dock-idle-prefetch.ts` in `debate-webview`.
+
 Earlier passes (PR #1040 and commit `ca35d41`) already lazy-load the
 Recharts statistics views, the flow editor's RFD drawer (CodeMirror), and the
 `/doc` workspace itself, and moved the reason-editor CSS and web fonts off the

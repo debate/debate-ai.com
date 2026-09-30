@@ -15,7 +15,7 @@ import type React from "react"
 import { useEffect, useRef } from "react"
 import { usePathname } from "next/navigation"
 
-import { CategoryDockProvider, PersistentVideoPlayer, SlowSpreadButton, VideoIndexPrefetcher, VideoPlayerFrameBridge } from "debate-videos"
+import { CategoryDockProvider, PersistentVideoPlayer, SlowSpreadButton, VideoIndexPrefetcher } from "debate-videos"
 import { CategoryDock } from "./CategoryDock"
 import { AppSidebarShell } from "./AppSidebarShell"
 import { DocsAppChrome } from "./DocsAppChrome"
@@ -36,7 +36,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const embedded = useIsFramedDocument()
   const pathname = usePathname()
 
-  // Leaving /docs is always a real page load (see `NON_ROUTER_PREFIXES` in
+  // Leaving /docs is always a real page load (see `docsExitTarget` in
   // `frame-navigation.ts`). `DocsAppChrome` turns link clicks out of the docs
   // into one; this catches the client-router navigations that are not link
   // clicks (the dock's menus, its Alt+<n> shortcuts), so a document that
@@ -49,7 +49,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   // The help docs (`app/docs`, from `debate-help-docs`) bring their own
   // navigation — Fumadocs' header, sidebar and search — and their own
   // stylesheet. They get the app's sidebar beside that (`DocsAppChrome`), but
-  // none of the rest of the shell: no frame surface, no player, no floating dock.
+  // none of the rest of the shell: no player, no floating dock.
   if (isDocsPath(pathname)) return <DocsAppChrome>{children}</DocsAppChrome>
 
   if (embedded) {
@@ -58,11 +58,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <ReasonDocsProvider>
           {/* The frame is the viewport here, so the page scrolls itself. */}
           <div className="min-h-screen w-full overflow-x-hidden">{children}</div>
-          {/* Mirrors picks made in this frame (a video card, the queue) back
-              to the player mounted in the shell. */}
-          <ChromeErrorBoundary label="VideoPlayerFrameBridge">
-            <VideoPlayerFrameBridge />
-          </ChromeErrorBoundary>
           {/* The tool panels run in this document, so the account mirror for
               their localStorage stores has to be switched on here too. */}
           <ChromeErrorBoundary label="ToolRecordSyncProvider">
@@ -74,15 +69,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <DebaterActivityListener />
           </ChromeErrorBoundary>
           {/* And the tool that tells a guest their save is browser-only has to
-              be able to open a dialog in the document the click happened in —
-              a dialog mounted only in the shell would render behind this
-              frame, or not at all. */}
+              be able to open its dialog in this document. */}
           <ChromeErrorBoundary label="SignInPromptProvider">
             <SignInPromptProvider />
           </ChromeErrorBoundary>
-          {/* Same reason: a framed document owns its own keyboard focus, so
-              the Ctrl/Cmd-K listener has to live here too, not
-              just in the top-level shell below. */}
+          {/* A framed document owns its own keyboard focus, so the Ctrl/Cmd-K
+              listener has to live here too. */}
           <ChromeErrorBoundary label="GlobalCommandPalette">
             <GlobalCommandPalette />
           </ChromeErrorBoundary>
@@ -97,9 +89,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <CategoryDockProvider>
       {/* The REASON docs tree/tabs live in the sidebar (rendered by
           AppSidebarShell) while the editor that opens them is a page below
-          it, so their shared state has to be owned above both. Both stay in
-          this document — /reason-editor is not a dock destination and so is
-          never framed away from its sidebar. */}
+          it, so their shared state has to be owned above both. */}
       <ReasonDocsProvider>
         <div className="w-screen h-screen overflow-auto pb-[70px] md:pb-0">
           <ChromeErrorBoundary label="CategoryDock">
@@ -121,9 +111,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <OneTap />
         </ChromeErrorBoundary>
       </div>
-      <ChromeErrorBoundary label="VideoPlayerFrameBridge">
-        <VideoPlayerFrameBridge />
-      </ChromeErrorBoundary>
       {/* Pulls the video library into `localStorage` once the page has loaded,
           so the video pages filter, search and page without a request. It is
           idle-scheduled and failure-tolerant — see `videoIndexCache.ts`. */}
