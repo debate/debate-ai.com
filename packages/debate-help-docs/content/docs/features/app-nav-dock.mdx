@@ -356,3 +356,19 @@ time in idle time (`lib/nav/dock-idle-prefetch.ts`), so touch screens and
 quick clicks get the same head start. The idle pass skips `/doc`, whose
 workspace is several megabytes; hovering its icon still warms it. It also
 does nothing on a data-saver or 2G connection.
+
+## A bar across the top shows a page switch in progress
+
+Every page transition, from a dock icon, any in-app link, or back and
+forward, shows a slim bar across the top of the window in the theme's primary
+colour, like YouTube's. It creeps forward while the next page loads, fills
+when the new page has painted, and fades out. Switches that land within
+150 ms never show it, and with reduced motion turned on it moves without
+animating.
+
+- **Bar:** `packages/debate-webview/src/components/ui/RouteProgressBar.tsx`
+- **Pacing and state:** `packages/debate-webview/src/lib/ui/route-progress.ts`
+- **Start and finish signals:** `packages/debate-webview/src/lib/ui/use-route-loading.ts`
+
+The full-screen loading orb no longer shows for page transitions; it is left
+for code that asks for it with `beginLoading`.

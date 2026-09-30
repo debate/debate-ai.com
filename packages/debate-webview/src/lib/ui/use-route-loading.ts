@@ -1,40 +1,41 @@
 "use client"
 
 /**
- * @fileoverview Drives the global loading overlay off the router.
+ * @fileoverview Drives the navigation progress bar (`RouteProgressBar`) off
+ * the router.
  *
- * The overlay is armed the moment a page transition *starts* and dropped once
- * the new route has painted. `LoadingOverlay` only appears after the load has
- * run past its show delay (`DEFAULT_LOADING_SHOW_DELAY_MS`), so a quick hop
- * finishes without it ever showing, and a slow one gets the orb instead of a
+ * The bar is armed the moment a page transition *starts* and finished once
+ * the new route has painted. It only appears after the transition has run
+ * past its show delay (`ROUTE_PROGRESS_SHOW_DELAY_MS`), so a cached hop
+ * finishes without it ever showing, and a slow one gets the bar instead of a
  * page that looks stuck on the old route.
  *
  * What starts a transition:
  *
  * - **A link click** to another page of this app (see
- *   `route-loading-target`). Both client-side `<Link>` hops and hard
- *   navigations count — for a hard one the orb covers the wait until the
+ *   `route-loading-target`), dock items included. Both client-side `<Link>`
+ *   hops and hard navigations count — for a hard one the bar covers the wait until the
  *   document unloads.
  * - **Back / forward** landing on another pathname.
  *
  * What ends it: `pathname` changing, two animation frames later — one full
- * paint cycle, so the DOM behind the overlay is the new route, not a
+ * paint cycle, so the page under the bar is the new route, not a
  * placeholder. A transition that never lands (a handler that cancels the
  * click, a failed fetch) is dropped by a safety timeout rather than leaving
- * the overlay up for good.
+ * the bar up for good.
  */
 
 import { useEffect, useRef } from "react"
 import { usePathname } from "next/navigation"
 import { opensElsewhere } from "../layout/frame-navigation"
-import { beginLoading, finishLoading } from "./loading-store"
+import { setRouteProgressPending } from "./route-progress"
 import { isSamePage, routeLoadingTarget } from "./route-loading-target"
 
-/** Longest a transition may hold the overlay before it is dropped regardless,
+/** Longest a transition may hold the bar before it is dropped regardless,
  *  in ms. */
 export const ROUTE_LOADING_TIMEOUT_MS = 8000
 
-/** Whether a transition currently holds one level of the overlay's depth. */
+/** Whether a transition is in flight. */
 let pending = false
 /** Bumped by every start, so a settle scheduled for an earlier transition
  *  cannot drop one that began after it. */
@@ -42,7 +43,7 @@ let generation = 0
 let safetyTimer: number | undefined
 
 /**
- * Arms the overlay for a transition that is starting now. Idempotent while one
+ * Arms the bar for a transition that is starting now. Idempotent while one
  * is already pending — a second click just restarts the safety timeout.
  */
 export function startRouteLoading() {
@@ -50,7 +51,7 @@ export function startRouteLoading() {
   generation += 1
   if (!pending) {
     pending = true
-    beginLoading()
+    setRouteProgressPending(true)
   }
   window.clearTimeout(safetyTimer)
   const gen = generation
@@ -61,7 +62,7 @@ function endRouteLoading(gen: number) {
   if (!pending || gen !== generation) return
   pending = false
   window.clearTimeout(safetyTimer)
-  finishLoading()
+  setRouteProgressPending(false)
 }
 
 /** Drops the pending transition after the new route has painted once. */
@@ -100,7 +101,7 @@ export function useRouteLoading() {
     }
 
     // A page restored from the back/forward cache comes back exactly as it
-    // was left — including an overlay armed for the navigation that left it.
+    // was left — including a bar armed for the navigation that left it.
     const onPageShow = (event: PageTransitionEvent) => {
       if (event.persisted) endRouteLoading(generation)
     }
