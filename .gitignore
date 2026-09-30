@@ -73,7 +73,6 @@ packages/debate-help-docs/.source/
 apps/*/.output/
 apps/*/.wxt/
 
-.claude/*
 # Agent docs for Claude Code — checked in on purpose (see CLAUDE.md)
 !.claude/apps
 !.claude/packages
