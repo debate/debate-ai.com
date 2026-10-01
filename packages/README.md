@@ -102,7 +102,7 @@ Glicko-2 rankings for HS PF, LD, Policy and college policy — a git submodule o
 Python toolchain (`src/main.py` replays tournament results into CSVs under `output/`), so it stays out of the
 bun workspace and is imported by path rather than by package name — see `debate-rankings-adapter`. A TypeScript
 entry (`js/index.ts`) exposes the dataset list and a lazy, typed loader for them. Read by the `/coaching/rankings` panel in
-`debate-videos`, through `debate-rankings-adapter`.
+`debate-videos` and by `debate-round`'s Create New Round team picker, through `debate-rankings-adapter`.
 
 ## debate-rankings-adapter
 

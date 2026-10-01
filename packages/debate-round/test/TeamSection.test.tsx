@@ -17,10 +17,22 @@ import { createRoot, type Root } from "react-dom/client"
 import { TeamSection } from "../src/dialogs/CreateRoundDialog/TeamSection"
 import { getMyTeamProfile } from "../src/state/myTeamProfile"
 
+vi.mock("../src/round/school-teams", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../src/round/school-teams")>()
+  return {
+    ...actual,
+    lookupSchoolTeams: vi.fn(async (_style: string, school: string) =>
+      school === "Harker"
+        ? [{ rank: 2, school: "Harker", name: "Ahuja & Miduthuri", hash: "h1" }]
+        : [],
+    ),
+  }
+})
+
 let container: HTMLDivElement
 let root: Root
 
-function baseProps() {
+function baseProps(overrides: Record<string, unknown> = {}) {
   return {
     affDebater1: "",
     setAffDebater1: () => {},
@@ -35,6 +47,7 @@ function baseProps() {
     negSchool: "",
     setNegSchool: () => {},
     debateStyleIndex: 0,
+    ...overrides,
   }
 }
 
@@ -111,5 +124,31 @@ describe("TeamSection My Team profile sync", () => {
     const html = await renderSection()
 
     expect(html).toContain("My Team")
+  })
+})
+
+describe("TeamSection school team picker", () => {
+  it("lists a school's teams under its field and fills the debaters on click", async () => {
+    vi.useFakeTimers()
+    stubFetchSignedOut()
+    const setNegDebater1 = vi.fn()
+    const setNegDebater2 = vi.fn()
+    await act(async () => {
+      root.render(createElement(TeamSection, baseProps({ negSchool: "Harker", setNegDebater1, setNegDebater2 })))
+    })
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(400)
+    })
+    vi.useRealTimers()
+
+    const pickers = container.querySelectorAll("[data-testid=school-teams-picker]")
+    expect(pickers).toHaveLength(1)
+    expect(pickers[0].textContent).toContain("Teams at Harker")
+
+    const team = [...pickers[0].querySelectorAll("button")].find((b) => b.textContent?.includes("Ahuja"))
+    await act(async () => team!.click())
+
+    expect(setNegDebater1).toHaveBeenCalledWith("Ahuja")
+    expect(setNegDebater2).toHaveBeenCalledWith("Miduthuri")
   })
 })

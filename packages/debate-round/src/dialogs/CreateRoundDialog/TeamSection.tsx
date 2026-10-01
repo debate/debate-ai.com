@@ -14,6 +14,7 @@ import { getMyTeamProfile, saveMyTeamProfile, type MyTeamProfile } from "../../s
 import { fetchUserSettings, saveUserSettings } from "../../round/user-settings-client"
 import { searchSchools } from "../../cache/client-cache"
 import { UserAutocomplete } from "./UserAutocomplete"
+import { SchoolTeamsPicker } from "./SchoolTeamsPicker"
 
 const SCHOOL_SUGGESTION_LIMIT = 10
 const SCHOOL_DROPDOWN_CLASS = "right-auto w-[14rem]"
@@ -290,6 +291,20 @@ export function TeamSection({
     return capitalize(rawName)
   }
 
+  /** Fills a side's debater fields from a team picked under its school. */
+  function fillDebaters(
+    setDebater1: (v: string) => void,
+    setDebater2: (v: string) => void,
+    debaters: string[],
+  ) {
+    if (isOnePerson || debaters.length < 2) {
+      setDebater1(debaters.join(" & "))
+      return
+    }
+    setDebater1(debaters[0])
+    setDebater2(debaters[1])
+  }
+
   const affName = getTeamName(affNameRaw)
   const negName = getTeamName(negNameRaw)
 
@@ -359,6 +374,11 @@ export function TeamSection({
             dropdownClassName={SCHOOL_DROPDOWN_CLASS}
             optionClassName={SCHOOL_OPTION_CLASS}
           />
+          <SchoolTeamsPicker
+            school={affSchool}
+            styleKey={styleKey}
+            onPick={(debaters) => fillDebaters(setAffDebater1, setAffDebater2, debaters)}
+          />
           <UserAutocomplete
             id="aff-debater-1"
             placeholder="1A name or email"
@@ -405,6 +425,11 @@ export function TeamSection({
             fetchOptions={(q) => searchSchools(q, SCHOOL_SUGGESTION_LIMIT)}
             dropdownClassName={SCHOOL_DROPDOWN_CLASS}
             optionClassName={SCHOOL_OPTION_CLASS}
+          />
+          <SchoolTeamsPicker
+            school={negSchool}
+            styleKey={styleKey}
+            onPick={(debaters) => fillDebaters(setNegDebater1, setNegDebater2, debaters)}
           />
           <UserAutocomplete
             id="neg-debater-1"
