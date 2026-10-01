@@ -2,15 +2,16 @@
 
 /**
  * Small building blocks shared by the tournament pages: the data hook, the
- * host-supplied link component, and loading/error/empty states. Styled with
- * the host's Tailwind tokens (`bg-card`, `text-muted-foreground`, …) so the
- * pages pick up its theme.
+ * host-supplied link component, and loading/error/empty states. Built from the
+ * shadcn primitives in `./primitives`, on the host's theme tokens (`bg-card`,
+ * `text-muted-foreground`, …), so the pages pick up whichever theme is active.
  */
 
 import { createContext, useContext, useEffect, useState, type ComponentType, type ReactNode } from "react";
-import { Loader2 } from "lucide-react";
+import { ChevronLeft, Loader2 } from "lucide-react";
 import type { TournamentHrefs } from "../routes";
 import type { TournamentsClient } from "./client";
+import { Card, CardHeader, CardTitle, buttonVariants } from "./primitives";
 
 export type LinkLike = ComponentType<{ href: string; className?: string; children?: ReactNode }>;
 
@@ -66,7 +67,7 @@ export function Loading({ label = "Loading…" }: { label?: string }) {
 
 export function ErrorNote({ error }: { error: Error }) {
   return (
-    <div className="m-4 rounded-md border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive" role="alert">
+    <div className="m-4 rounded-lg border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive" role="alert">
       {error.message}
     </div>
   );
@@ -85,13 +86,24 @@ export function Loaded<T>({ state, children }: { state: State<T>; children: (dat
 
 export function Section({ title, children, actions }: { title: string; children: ReactNode; actions?: ReactNode }) {
   return (
-    <section className="rounded-lg border bg-card text-card-foreground">
-      <header className="flex items-center justify-between gap-2 border-b px-4 py-3">
-        <h2 className="text-sm font-semibold">{title}</h2>
+    <Card className="overflow-hidden">
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
         {actions}
-      </header>
+      </CardHeader>
       <div>{children}</div>
-    </section>
+    </Card>
+  );
+}
+
+/** The "← All …" link at the top of a nested page, as a ghost button. */
+export function BackLink({ href, children }: { href: string; children: ReactNode }) {
+  const { Link } = useTournaments();
+  return (
+    <Link href={href} className={buttonVariants({ variant: "ghost", size: "sm", className: "-ml-2 text-muted-foreground" })}>
+      <ChevronLeft aria-hidden />
+      {children}
+    </Link>
   );
 }
 
