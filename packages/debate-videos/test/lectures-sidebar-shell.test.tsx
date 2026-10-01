@@ -64,7 +64,7 @@ describe("LecturesSidebarShell", () => {
     expect(html).toContain('href="/lectures"');
     expect(html).toContain('href="/coaching"');
     expect(html).toContain('href="/practice/glossary"');
-    expect(html).toContain('href="/practice/rankings"');
+    expect(html).toContain('href="/practice/statistics"');
   });
 
   it("renders the site footer links", () => {
@@ -95,7 +95,7 @@ describe("the md:hidden block, which is what a phone sees", () => {
     const mobile = mobileMarkup();
     expect(mobile).toContain('href="/videos/college"');
     expect(mobile).toContain('href="/practice/glossary"');
-    expect(mobile).toContain('href="/practice/rankings"');
+    expect(mobile).toContain('href="/practice/statistics"');
   });
 
   it("carries the tool sections, collapsed so the page stays in view", () => {
