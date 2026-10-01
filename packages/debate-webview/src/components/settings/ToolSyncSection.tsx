@@ -2,7 +2,7 @@
 
 /**
  * @fileoverview A one-line summary of the account tool-data sync in
- * Preferences, next to `PlanUpgradeSection` and `TeamCoachingSection`: whether
+ * Preferences, next to `TeamCoachingSection`: whether
  * every tool's local data is synced, and a link to `/tools`'s
  * `ToolSyncStatusPanel` for the per-collection failure list and a manual
  * retry. Deliberately stays this compact rather than re-duplicating that
@@ -27,7 +27,7 @@ const boxStyle = {
   border: "1px solid var(--pmd-border, rgba(127, 127, 127, 0.25))",
 } as const
 
-/** Renders nothing signed out, matching `PlanUpgradeSection`/`TeamCoachingSection`. */
+/** Renders nothing signed out, matching `TeamCoachingSection`. */
 export function ToolSyncSection() {
   const { enabled, reconciled, results } = useToolRecordSync()
   if (!enabled) return null

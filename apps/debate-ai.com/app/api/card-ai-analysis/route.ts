@@ -12,7 +12,7 @@ import { getSession } from "@/lib/auth/session"
 import { getEnv } from "@/lib/env"
 import { isMissingTableError } from "@/lib/contacts/server"
 import { limitsFor } from "debate-webview/lib/stripe/limits"
-import { consumeDailyUsage, getUserTier, limitMessage, usageSubject } from "@/lib/stripe/usage"
+import { consumeDailyUsage, getUserTier, limitMessage, planLimitHeaders, usageSubject } from "@/lib/stripe/usage"
 
 /**
  * Saved AI analyses for the evidence search's "AI Analysis" sidebar
@@ -88,7 +88,12 @@ export async function POST(request: Request) {
 
   const tier = await getUserTier(db, session?.user.id)
   const usage = await consumeDailyUsage(db, usageSubject(session?.user.id, request), "cardAiAnalyses", limitsFor(tier))
-  if (!usage.allowed) return error(limitMessage("cardAiAnalyses", usage, tier), 429)
+  if (!usage.allowed) {
+    return NextResponse.json(
+      { error: limitMessage("cardAiAnalyses", usage, tier) },
+      { status: 429, headers: planLimitHeaders("cardAiAnalyses") },
+    )
+  }
 
   let res: Response
   try {

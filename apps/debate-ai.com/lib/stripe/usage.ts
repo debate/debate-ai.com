@@ -1,6 +1,6 @@
 import { and, eq, sql } from "drizzle-orm";
 import { usageCounters } from "@/lib/database/schema";
-import { DAILY_LIMIT_KEY, limitsFor, tierForPlan, type DailyMetric, type TierId, type TierLimits } from "debate-webview/lib/stripe/limits";
+import { DAILY_LIMIT_KEY, PLAN_LIMIT_HEADER, limitsFor, tierForPlan, type DailyMetric, type TierId, type TierLimits } from "debate-webview/lib/stripe/limits";
 import { getActiveSubscription } from "./store";
 
 /**
@@ -50,7 +50,7 @@ export interface UsageCheck {
 /**
  * Counts one use of `metric` for `subject` today and reports whether it fit
  * under `limits`. An unlimited metric is still counted, so the settings page
- * can show usage. A refused use is not counted.
+ * can report usage. A refused use is not counted.
  */
 export async function consumeDailyUsage(
   db: any,
@@ -114,6 +114,11 @@ const METRIC_NAMES: Record<DailyMetric, string> = {
 
 /** The 429 message for a refused use, pointing at the upgrade. */
 export function limitMessage(metric: DailyMetric, check: UsageCheck, tier: TierId): string {
-  const upgrade = tier === "research-team" ? "" : " Upgrade your plan in Settings for a higher limit.";
+  const upgrade = tier === "research-team" ? "" : " Upgrade your plan for a higher limit.";
   return `You've used all ${check.limit} of today's ${METRIC_NAMES[metric]} on your plan.${upgrade}`;
+}
+
+/** Headers for a refused use's `429`, so the client opens the pricing dialog. */
+export function planLimitHeaders(metric: DailyMetric): Record<string, string> {
+  return { [PLAN_LIMIT_HEADER]: metric };
 }

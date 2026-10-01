@@ -9,7 +9,6 @@ import { Accessibility, FolderOpen, Keyboard, MessageSquareText, Palette, PenLin
 import "debate-editor/styles.css"
 import type { SettingsCategory } from "debate-editor/settings"
 import { UserSettingsPanel } from "debate-round"
-import { PlanUpgradeSection } from "./PlanUpgradeSection"
 import { TeamCoachingSection } from "./TeamCoachingSection"
 import { ToolSyncSection } from "./ToolSyncSection"
 import { EDITOR_PREFERENCE_KEYS, EDITOR_SETTINGS_TABS } from "../../lib/editor-preferences"
@@ -269,7 +268,6 @@ export function EditorSettingsPanel() {
           </div>
           {active === PREFERENCES_TAB ? (
             <>
-              <PlanUpgradeSection />
               <TeamCoachingSection />
               <ToolSyncSection />
               <UserSettingsPanel embedded />
