@@ -4,6 +4,7 @@
  * reassembles into the same dump.
  */
 import { gunzipSync, inflateRawSync } from "node:zlib";
+import JSZip from "jszip";
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 import { generateSQLiteDrizzleJson, generateSQLiteMigration } from "drizzle-kit/api";
@@ -12,6 +13,7 @@ import * as schema from "../../database/schema";
 import { cardAiAnalyses, debateCards, user, videoIssues, videos } from "../../database/schema";
 import {
   BACKUP_TABLES,
+  backupSqlStream,
   emptyBackupStats,
   generateBackupSql,
   pageEnd,
@@ -31,6 +33,7 @@ import {
   type R2ObjectLike,
 } from "../db-backup-r2";
 import { crc32 } from "../seven-zip";
+import { zipSingleFileStream } from "../zip";
 
 let ddl: string[] | undefined;
 
@@ -131,6 +134,37 @@ describe("generateBackupSql", () => {
     expect(sql).toContain('"videos"');
     expect(sql).not.toContain('"debate_cards"');
     expect(stats.missing).toEqual(["video_relations"]);
+  });
+});
+
+describe("zipSingleFileStream", () => {
+  it("wraps the dump in a zip a real unzip reads back", async () => {
+    const source = await freshDb();
+    await seed(source.db);
+    const db = source.db as unknown as BackupDb;
+    const fileName = "debate-ai-backup-2026-09-28T07-00-00Z.sql";
+
+    const stats = emptyBackupStats();
+    const stream = zipSingleFileStream(fileName, backupSqlStream(db, ["cards"], stats));
+    const archive = new Uint8Array(await new Response(stream).arrayBuffer());
+    expect(stats.tables.debate_cards).toBe(450);
+
+    const zip = await JSZip.loadAsync(archive);
+    expect(Object.keys(zip.files)).toEqual([fileName]);
+    const entry = await zip.file(fileName)!.async("string");
+
+    const { sql } = await dump(db, ["cards"]);
+    // The two dumps are a moment apart, so only the header's stamp may differ.
+    const withoutStamp = (text: string) => text.replace(/^-- Generated: .*$/m, "");
+    expect(withoutStamp(entry)).toBe(withoutStamp(sql));
+    expect(archive.byteLength).toBeLessThan(entry.length);
+  });
+
+  it("keeps a file that does not compress", async () => {
+    const bytes = new TextEncoder().encode("no repetition here, just a short dump\n");
+    const stream = zipSingleFileStream("backup.sql", new Response(bytes).body!);
+    const zip = await JSZip.loadAsync(await new Response(stream).arrayBuffer());
+    expect(await zip.file("backup.sql")!.async("string")).toBe(new TextDecoder().decode(bytes));
   });
 });
 
@@ -293,6 +327,33 @@ describe("createR2Backup", () => {
     expect(result.backup.sevenZip).toBeNull();
     expect(result.sevenZipSkipped).toMatch(/KV value limit/);
     expect(values.size).toBe(0);
+  });
+
+  it("compresses once, sharing the DEFLATE stream between the gzip and the 7z", async () => {
+    const source = await freshDb();
+    await seed(source.db);
+    const db = source.db as unknown as BackupDb;
+    const { bucket, objects } = fakeBucket();
+    const { kv, values } = fakeKv();
+    const now = new Date("2026-09-28T07:00:00Z");
+
+    const result = await createR2Backup(db, bucket, ["cards"], "manual", now, kv);
+    const gz = objects.get(result.backup.key)!.data;
+    const seven = values.get(result.backup.sevenZip!.key)!.data;
+
+    // Both containers hold the identical Deflate stream, so the dump is
+    // compressed once rather than once per store. Compressing twice is what
+    // exhausted the Worker's CPU budget.
+    const view = new DataView(seven.buffer, seven.byteOffset, seven.byteLength);
+    const sevenPacked = seven.subarray(32, 32 + Number(view.getBigUint64(12, true)));
+    const gzipPacked = gz.subarray(10, gz.length - 8);
+    expect(gzipPacked.length).toBe(sevenPacked.length);
+    expect(Buffer.from(gzipPacked).equals(Buffer.from(sevenPacked))).toBe(true);
+
+    // gunzipSync checks the gzip trailer's CRC-32 as it decompresses.
+    const { sql } = await dump(db, ["cards"]);
+    expect(gunzipSync(gz).toString("utf8")).toBe(sql);
+    expect(unpack7z(seven)).toBe(sql);
   });
 
   it("prunes old weekly backups", async () => {

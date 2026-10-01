@@ -49,9 +49,9 @@ function formatBytes(bytes: number): string {
  * SQL backups of the content tables — videos, debate cards and the
  * sync/import history, with account data left out and "who did this" columns
  * blanked (apps/debate-ai.com/lib/admin/db-backup.ts). Download a dump
- * directly, or save one to the private R2 bucket and get a link to it; a
- * `.sql.7z` copy of each saved dump goes to the DB_BACKUPS_KV namespace. A
- * weekly cron saves one to R2 on its own.
+ * directly as a zip (or the plain `.sql` beside it), or save one to the private
+ * R2 bucket and get a link to it; a `.sql.7z` copy of each saved dump goes to
+ * the DB_BACKUPS_KV namespace. A weekly cron saves one to R2 on its own.
  */
 export function DbBackupPanel() {
   const [status, setStatus] = useState<BackupStatus | null>(null);
@@ -148,7 +148,8 @@ export function DbBackupPanel() {
         <CardDescription>
           A SQLite dump of the shared content tables — no accounts, sessions or anything a user
           saved. Columns that name a person (reporter, editor or contributor) are written as blank.
-          Restore with <code>sqlite3 local.db &lt; backup.sql</code> or{" "}
+          The download is a zip the worker builds on the fly, holding one <code>.sql</code> file.
+          Restore by unzipping it first, then <code>sqlite3 local.db &lt; backup.sql</code> or{" "}
           <code>wrangler d1 execute debate-ai-db --remote --file=backup.sql</code>.
         </CardDescription>
       </CardHeader>
@@ -183,6 +184,16 @@ export function DbBackupPanel() {
           <Button asChild>
             <a
               href={groups.length ? downloadHref : undefined}
+              aria-disabled={groups.length === 0}
+              className={groups.length ? undefined : "pointer-events-none opacity-50"}
+              download
+            >
+              Download .zip
+            </a>
+          </Button>
+          <Button asChild variant="outline">
+            <a
+              href={groups.length ? `${downloadHref}&format=sql` : undefined}
               aria-disabled={groups.length === 0}
               className={groups.length ? undefined : "pointer-events-none opacity-50"}
               download
