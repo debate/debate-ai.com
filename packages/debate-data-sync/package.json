@@ -5,6 +5,12 @@
   "private": true,
   "author": "vtempest",
   "license": "rights.institute/prosper",
+  "exports": {
+    ".": "./package.json",
+    "./data/metadata/*": "./data/*",
+    "./package.json": "./package.json",
+    "./*": "./*"
+  },
   "scripts": {
     "coverage": "vitest run --coverage",
     "download-caselist": "bun run src/caselist/caselist-download-cli.ts",
