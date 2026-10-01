@@ -95,6 +95,8 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
   const [resyncError, setResyncError] = useState<string | null>(null);
   const [isPublishingAll, setIsPublishingAll] = useState(false);
   const [publishAllError, setPublishAllError] = useState<string | null>(null);
+  const [isDeduping, setIsDeduping] = useState(false);
+  const [queueNotice, setQueueNotice] = useState<string | null>(null);
   const [pendingIds, setPendingIds] = useState<Set<string>>(new Set());
   const [rowErrors, setRowErrors] = useState<Record<string, string>>({});
   const [isResyncingViews, setIsResyncingViews] = useState(false);
@@ -524,11 +526,41 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Publish all failed");
+      setQueueNotice(
+        data?.skipped
+          ? `Published ${data.published}; skipped ${data.skipped} already in the library (kept the existing versions).`
+          : `Published ${data?.published ?? 0}.`,
+      );
       await loadFirstPage(style);
     } catch (error) {
       setPublishAllError((error as Error).message);
     } finally {
       setIsPublishingAll(false);
+    }
+  };
+
+  /** Drops queued rounds that are already published, keeping the published copy. */
+  const handleDedupe = async () => {
+    setIsDeduping(true);
+    setPublishAllError(null);
+    try {
+      const params = new URLSearchParams();
+      if (style !== "all") params.set("style", style);
+      const res = await fetch(`/api/admin/youtube/videos/dedupe?${params.toString()}`, {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "Deduplicate failed");
+      setQueueNotice(
+        data.removed
+          ? `Removed ${data.removed} queued ${data.removed === 1 ? "video" : "videos"} already in the library.`
+          : "No duplicates — none of the queued videos are already in the library.",
+      );
+      await loadFirstPage(style);
+    } catch (error) {
+      setPublishAllError((error as Error).message);
+    } finally {
+      setIsDeduping(false);
     }
   };
 
@@ -658,8 +690,16 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
             <div className="flex items-center gap-3">
               <Button
                 variant="outline"
+                onClick={handleDedupe}
+                disabled={isDeduping || isPublishingAll || videos.length === 0}
+                title="Remove queued videos that are already in the video library, keeping the existing versions"
+              >
+                {isDeduping ? "Deduplicating…" : "Deduplicate"}
+              </Button>
+              <Button
+                variant="outline"
                 onClick={handlePublishAll}
-                disabled={isPublishingAll || videos.length === 0}
+                disabled={isPublishingAll || isDeduping || videos.length === 0}
               >
                 {isPublishingAll ? "Publishing…" : "Publish all"}
               </Button>
@@ -678,6 +718,9 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
             </div>
           </div>
           {publishAllError && <p className="text-destructive text-sm">{publishAllError}</p>}
+          {!publishAllError && queueNotice && (
+            <p className="text-muted-foreground text-sm">{queueNotice}</p>
+          )}
 
           <div className="flex flex-col gap-3">
             {isLoading && videos.length === 0 && (
