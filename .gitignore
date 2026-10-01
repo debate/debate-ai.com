@@ -86,6 +86,7 @@ apps/*/.wxt/
 !.claude/settings.json
 .claude/settings.local.json
 !.claude/CLAUDE.md
+!.claude/AGENTS.md
 
 # Local clone of upstream Tabroom (its own git repo). Not vendored as a
 # submodule: packages/debate-tournaments syncs it into .upstream/ itself.
