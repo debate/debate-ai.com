@@ -10,6 +10,7 @@
   "exports": {
     ".": "./src/react/index.tsx",
     "./engine": "./src/index.ts",
+    "./html-bridge": "./src/react/html-bridge.ts",
     "./styles.css": "./src/editor/style.css",
     "./settings": "./src/editor/settings.ts",
     "./settings-ui": "./src/editor/settings-ui.ts",

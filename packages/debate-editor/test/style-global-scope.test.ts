@@ -91,9 +91,40 @@ describe("style.css global scope", () => {
     // the reset block has to reach the container AND the transient floaters
     // the engine mounts on <body> (tooltips, dialogs, the pill tray), which
     // sit outside the container by design.
-    expect(CSS).toMatch(/^\.dec-cardmirror-root,$/m);
-    expect(CSS).toMatch(/body > \[class\^="pmd-"\],$/m);
-    expect(CSS).toMatch(/body > \[class\*=" pmd-"\],$/m);
+    expect(CSS).toContain(':where(.dec-cardmirror-root, body > [class^="pmd-"], body > [class*=" pmd-"]) {');
     expect(CSS).toMatch(/font-family: var\(--pmd-ui-font\)/);
+  });
+
+  it("keeps the scoped resets at zero specificity", () => {
+    // Scoped with plain selectors, the resets outranked the engine's own
+    // single-class rules: `body > [class^="pmd-"]` is 0-1-1, so the opaque
+    // background landed on every engine element (the see-through, full-window
+    // `.pmd-tour` layer painted the whole host page white) and the document
+    // lost its body font. `:where()` keeps them as weak as the bare `*` /
+    // `body` rules they replaced.
+    const noComments = CSS.replace(/\/\*[\s\S]*?\*\//g, "");
+    const SCOPE = ':where(.dec-cardmirror-root, body > [class^="pmd-"], body > [class*=" pmd-"])';
+    for (const tail of [" *", " :focus", " :focus-visible", " button", " code", " [data-shading]"]) {
+      expect(noComments).toContain(SCOPE + tail);
+    }
+    expect(noComments).not.toMatch(/^:is\(\.dec-cardmirror-root, body > \[class\^="pmd-"\], body > \[class\*=" pmd-"\]\) \*/m);
+    for (const plain of [
+      ".dec-cardmirror-root :focus",
+      ".dec-cardmirror-root button",
+      ".dec-cardmirror-root code",
+      ".dec-cardmirror-root [data-shading]",
+    ]) {
+      expect(noComments).not.toContain(plain);
+    }
+  });
+
+  it("paints the background on the container alone", () => {
+    const noComments = CSS.replace(/\/\*[\s\S]*?\*\//g, "");
+    const reset = noComments.match(
+      /:where\(\.dec-cardmirror-root, body > \[class\^="pmd-"\], body > \[class\*=" pmd-"\]\) \{([^}]*)\}/,
+    );
+    expect(reset?.[1]).toMatch(/color: var\(--pmd-c-text\)/);
+    expect(reset?.[1]).not.toMatch(/background/);
+    expect(noComments).toMatch(/:where\(\.dec-cardmirror-root\) \{\s*background: var\(--pmd-c-bg\);/);
   });
 });
