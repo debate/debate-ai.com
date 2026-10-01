@@ -40,8 +40,8 @@ class MemoryStorage {
 const INPUT_A: Omit<StrategyRecommendationRecord, "id"> = {
   matchupId: "round-1",
   recommendation: {
-    recommendedCase: { name: "Kritik case", argumentTags: ["kritik"], overlapScore: 1 },
-    caseRankings: [{ name: "Kritik case", argumentTags: ["kritik"], overlapScore: 1 }],
+    recommendedCase: { name: "Critique case", argumentTags: ["critique"], overlapScore: 1 },
+    caseRankings: [{ name: "Critique case", argumentTags: ["critique"], overlapScore: 1 }],
     judgeAdaptationNotes: ["No judge tendency data on file — adapt to a generic flow judge by default."],
     riskLevel: "low",
     riskFactors: [],
@@ -62,9 +62,9 @@ const INPUT_B: Omit<StrategyRecommendationRecord, "id"> = {
 };
 
 const AI_CASE_CHOICE: CaseChoiceAiResult = {
-  recommendedCase: "Kritik case",
+  recommendedCase: "Critique case",
   reasoning: "Lowest overlap and fits the judge's tendencies.",
-  caseAssessments: [{ name: "Kritik case", assessment: "Safest available option." }],
+  caseAssessments: [{ name: "Critique case", assessment: "Safest available option." }],
 };
 
 beforeEach(() => {

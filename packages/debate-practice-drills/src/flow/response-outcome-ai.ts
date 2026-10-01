@@ -7,7 +7,7 @@
  * deterministic vulnerability-scoring heuristic — and this module adds a
  * second, genuinely AI-backed assessment alongside it: a system prompt
  * that asks Claude to role-play a panel of three specialized debate
- * "counsel" (Policy Counsel, Kritik Counsel, Weighing Counsel), assign
+ * "counsel" (Policy Counsel, Critique Counsel, Weighing Counsel), assign
  * whichever counsel role best fits each already-scored vulnerable
  * argument, and estimate that argument's likely response path and where
  * clash will concentrate, plus one overall round-level clash summary.
@@ -23,7 +23,7 @@
 import type { ArgumentVulnerability } from "debate-round/src/flow/response-outcome";
 
 /** The three specialized counsel roles the model is asked to role-play. */
-export const COUNSEL_ROLES = ["Policy Counsel", "Kritik Counsel", "Weighing Counsel"] as const;
+export const COUNSEL_ROLES = ["Policy Counsel", "Critique Counsel", "Weighing Counsel"] as const;
 
 export type CounselRole = (typeof COUNSEL_ROLES)[number];
 
@@ -64,7 +64,7 @@ export const COUNSEL_PANEL_AI_SYSTEM_PROMPT =
   "You are a panel of three specialized AI debate \"counsel\" roles, convened to evaluate a round's " +
   "most exposed arguments beyond a simple heuristic score:\n" +
   '- "Policy Counsel" — evaluates plan/counterplan mechanics, solvency, and net-benefits framing.\n' +
-  '- "Kritik Counsel" — evaluates framework, discourse-level, and representational vulnerabilities.\n' +
+  '- "Critique Counsel" — evaluates framework, discourse-level, and representational vulnerabilities.\n' +
   '- "Weighing Counsel" — evaluates impact calculus and which side is favored on magnitude, ' +
   "probability, and timeframe.\n\n" +
   "You will be given a list of already-scored vulnerable arguments (each with the speech that " +
@@ -76,7 +76,7 @@ export const COUNSEL_PANEL_AI_SYSTEM_PROMPT =
   "Respond with STRICT JSON ONLY — no prose before or after it, no markdown code fences, no " +
   "trailing commentary. The JSON must have exactly this shape:\n" +
   '{"argumentAssessments": [{"rowIndex": <number>, ' +
-  '"counselRole": "Policy Counsel" | "Kritik Counsel" | "Weighing Counsel", ' +
+  '"counselRole": "Policy Counsel" | "Critique Counsel" | "Weighing Counsel", ' +
   '"likelyResponsePath": "<short estimate>", "clashEstimate": "<short estimate>"}, ...], ' +
   '"overallClashSummary": "<short paragraph>"}\n\n' +
   "Include exactly one assessment per argument given, in any order. Every field is required and " +
@@ -102,7 +102,7 @@ export function buildCounselPanelAiUserPrompt(input: CounselPanelAiInput): strin
     `${argumentLines}\n\n` +
     "Reply with JSON only, matching this shape:\n" +
     '{"argumentAssessments": [{"rowIndex": number, ' +
-    '"counselRole": "Policy Counsel" | "Kritik Counsel" | "Weighing Counsel", ' +
+    '"counselRole": "Policy Counsel" | "Critique Counsel" | "Weighing Counsel", ' +
     '"likelyResponsePath": string, "clashEstimate": string}, ...] (one per argument given), ' +
     '"overallClashSummary": string}'
   );

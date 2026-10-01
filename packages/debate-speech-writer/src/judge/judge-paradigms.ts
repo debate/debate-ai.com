@@ -80,7 +80,7 @@ export const judgeParadigms: Record<BuiltinJudgeParadigmId, JudgeParadigm> = {
   },
   critic: {
     id: "critic",
-    name: "Kritikal Judge",
+    name: "Critical Judge",
     description:
       "Evaluates the round through a critical lens, prioritizing the framework and representations debaters establish over traditional policy impact calculus.",
     votingPriorities: [

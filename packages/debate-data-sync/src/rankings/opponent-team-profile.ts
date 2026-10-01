@@ -22,7 +22,7 @@ export interface OpponentRoundRecord {
   division: string;
   side: DebateSide;
   won: boolean;
-  /** Argument/case-type tags the team ran this round, e.g. ["kritik", "topicality"]. */
+  /** Argument/case-type tags the team ran this round, e.g. ["critique", "topicality"]. */
   argumentTags?: string[];
   /** Free-text case/plan name run this round, if tracked. */
   caseName?: string;

@@ -2280,7 +2280,7 @@ components:
           type: integer
         category:
           type: string
-          description: "Argument category: DA (Disadvantage), CP (Counterplan), K (Kritik), T (Topicality), I (Impact)."
+          description: "Argument category: DA (Disadvantage), CP (Counterplan), K (Critique), T (Topicality), I (Impact)."
           enum: [DA, CP, K, T, I]
         researchField:
           type: string

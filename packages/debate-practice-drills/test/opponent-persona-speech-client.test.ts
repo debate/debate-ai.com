@@ -9,7 +9,7 @@ const REQUEST: AiSpeechRequest = {
   isCrossExamination: false,
 };
 
-const PERSONA = opponentPersonas.kritik;
+const PERSONA = opponentPersonas.critique;
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -31,7 +31,7 @@ describe("requestAiVersusSpeechWithPersona", () => {
     const [endpoint, init] = (fetchMock as ReturnType<typeof vi.fn>).mock.calls[0];
     expect(endpoint).toBe("/api/reason-ai");
     const body = JSON.parse((init as RequestInit).body as string);
-    expect(body.system).toContain("Opponent Persona: Kritik");
+    expect(body.system).toContain("Opponent Persona: Critique");
     expect(body.messages[0].content).toContain('"1AC"');
     expect(body.maxTokens).toBe(2048);
   });

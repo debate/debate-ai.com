@@ -18,20 +18,20 @@ afterEach(() => {
 describe('parseUserDictionary', () => {
   it('reads the current { id, word }[] shape', () => {
     const raw = JSON.stringify([
-      { id: 'kritik', word: 'kritik' },
+      { id: 'critique', word: 'critique' },
       { id: 'counterplan', word: 'counterplan' },
     ]);
-    expect(parseUserDictionary(raw)).toEqual(new Set(['kritik', 'counterplan']));
+    expect(parseUserDictionary(raw)).toEqual(new Set(['critique', 'counterplan']));
   });
 
   it('reads the legacy bare string[] shape', () => {
-    const raw = JSON.stringify(['kritik', 'counterplan']);
-    expect(parseUserDictionary(raw)).toEqual(new Set(['kritik', 'counterplan']));
+    const raw = JSON.stringify(['critique', 'counterplan']);
+    expect(parseUserDictionary(raw)).toEqual(new Set(['critique', 'counterplan']));
   });
 
   it('drops malformed entries instead of throwing', () => {
-    const raw = JSON.stringify(['kritik', 42, null, {}, { word: '' }, { id: 'x' }, { word: 'topicality' }]);
-    expect(parseUserDictionary(raw)).toEqual(new Set(['kritik', 'topicality']));
+    const raw = JSON.stringify(['critique', 42, null, {}, { word: '' }, { id: 'x' }, { word: 'topicality' }]);
+    expect(parseUserDictionary(raw)).toEqual(new Set(['critique', 'topicality']));
   });
 
   it('reads null, empty, non-array, and corrupt JSON as an empty dictionary', () => {
@@ -42,22 +42,22 @@ describe('parseUserDictionary', () => {
   });
 
   it('deduplicates repeated words', () => {
-    const raw = JSON.stringify(['kritik', 'kritik', { id: 'kritik', word: 'kritik' }]);
-    expect(parseUserDictionary(raw)).toEqual(new Set(['kritik']));
+    const raw = JSON.stringify(['critique', 'critique', { id: 'critique', word: 'critique' }]);
+    expect(parseUserDictionary(raw)).toEqual(new Set(['critique']));
   });
 });
 
 describe('serializeUserDictionary', () => {
   it('writes each word as its own { id, word } record with id === word', () => {
-    const json = serializeUserDictionary(['kritik', 'counterplan']);
+    const json = serializeUserDictionary(['critique', 'counterplan']);
     expect(JSON.parse(json)).toEqual([
-      { id: 'kritik', word: 'kritik' },
+      { id: 'critique', word: 'critique' },
       { id: 'counterplan', word: 'counterplan' },
     ]);
   });
 
   it('round-trips through parseUserDictionary', () => {
-    const words = new Set(['kritik', 'counterplan', "O'Brien"]);
+    const words = new Set(['critique', 'counterplan', "O'Brien"]);
     expect(parseUserDictionary(serializeUserDictionary(words))).toEqual(words);
   });
 });
@@ -69,18 +69,18 @@ describe('loadUserDictionary', () => {
   });
 
   it('reads an already-current-shape dictionary without rewriting it', () => {
-    const current = serializeUserDictionary(['kritik']);
+    const current = serializeUserDictionary(['critique']);
     localStorage.setItem(USER_DICTIONARY_STORAGE_KEY, current);
-    expect(loadUserDictionary()).toEqual(new Set(['kritik']));
+    expect(loadUserDictionary()).toEqual(new Set(['critique']));
     expect(localStorage.getItem(USER_DICTIONARY_STORAGE_KEY)).toBe(current);
   });
 
   it('migrates a legacy bare string[] dictionary to { id, word }[] in place', () => {
-    localStorage.setItem(USER_DICTIONARY_STORAGE_KEY, JSON.stringify(['kritik', 'counterplan']));
-    expect(loadUserDictionary()).toEqual(new Set(['kritik', 'counterplan']));
+    localStorage.setItem(USER_DICTIONARY_STORAGE_KEY, JSON.stringify(['critique', 'counterplan']));
+    expect(loadUserDictionary()).toEqual(new Set(['critique', 'counterplan']));
     const stored = JSON.parse(localStorage.getItem(USER_DICTIONARY_STORAGE_KEY)!);
     expect(stored).toEqual([
-      { id: 'kritik', word: 'kritik' },
+      { id: 'critique', word: 'critique' },
       { id: 'counterplan', word: 'counterplan' },
     ]);
   });
@@ -94,8 +94,8 @@ describe('loadUserDictionary', () => {
 
 describe('saveUserDictionary', () => {
   it('writes the current shape, readable back by loadUserDictionary', () => {
-    saveUserDictionary(new Set(['kritik', 'counterplan']));
-    expect(loadUserDictionary()).toEqual(new Set(['kritik', 'counterplan']));
+    saveUserDictionary(new Set(['critique', 'counterplan']));
+    expect(loadUserDictionary()).toEqual(new Set(['critique', 'counterplan']));
   });
 
   it('overwrites whatever was stored before, legacy shape included', () => {

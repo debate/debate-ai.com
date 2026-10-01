@@ -23,7 +23,6 @@ import { ArrowLeft } from "lucide-react"
 import { normalizeCategoryKey } from "debate-data-sync/src/videos/video-rows"
 import { MAX_VIDEO_PAGE_SIZE } from "debate-data-sync/src/videos/video-query"
 import type { CategoryType, DebateStyle } from "../types/videos"
-import { Footer } from "../ui/layout/footer"
 import { LeaderboardPanel } from "./leaderboard/RankingsLeaderboardPanel"
 import { LeaderboardFilterBar } from "./leaderboard/LeaderboardFilterBar"
 import type { LeaderboardTab } from "./leaderboard/leaderboardUtils"
@@ -423,6 +422,9 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
   // Both branches below are wrapped in the same sidebar the grid renders, so
   // a tree link into either one lands on a page you can navigate out of.
   // `sidebarShellProps` is shared between them rather than spelled twice.
+  //
+  // Neither branch renders a content-area footer: that column already has one,
+  // so a second row under the content repeated the same links on one screen.
   const sidebarShellProps = {
     dockSlot,
     counts: quickLinkCounts,
@@ -435,7 +437,7 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
   if (state.currentCategory === "leaderboard") {
     return (
       <LecturesSidebarShell {...sidebarShellProps} activeId="rankings">
-        <div className="min-h-screen bg-background p-3 sm:p-6 flex flex-col justify-between">
+        <div className="min-h-screen bg-background p-3 sm:p-6">
           <div>
             <StickyHeader
               controls={
@@ -459,7 +461,6 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
               history={meta?.history}
             />
           </div>
-          <Footer />
         </div>
       </LecturesSidebarShell>
     )

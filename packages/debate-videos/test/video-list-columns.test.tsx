@@ -256,12 +256,12 @@ describe("the lecture list's columns", () => {
   /** A lecture: no tournament and no teams, so the table reads lecture mode. */
   const lecture: VideoType = [
     "vid-lecture",
-    "Kritik Basics",
+    "Critique Basics",
     "2025-03-01",
     "Lecture Channel",
     500,
     "",
-    "Kritik / Critical Theory",
+    "Critique / Critical Theory",
     null,
     null,
     null,
@@ -279,7 +279,7 @@ describe("the lecture list's columns", () => {
     const html = renderList([lecture]);
     const columnHeaders = headers(html);
     expect(columnHeaders).toEqual(["Library", "Date", "Views"]);
-    expect(cellCount(html, "Kritik Basics")).toBe(columnHeaders.length);
+    expect(cellCount(html, "Critique Basics")).toBe(columnHeaders.length);
   });
 
   it("names the channel and the category on every row, at every width", () => {
@@ -288,7 +288,7 @@ describe("the lecture list's columns", () => {
     // dropped at a narrow width — the table scrolls sideways instead.
     const html = renderList([lecture]);
     expect(html).toContain("Lecture Channel");
-    expect(html).toContain("Kritik / Critical Theory");
+    expect(html).toContain("Critique / Critical Theory");
 
     const headerRow = html.slice(html.indexOf("<thead"), html.indexOf("</thead>"));
     expect(headerRow).not.toContain("hidden");

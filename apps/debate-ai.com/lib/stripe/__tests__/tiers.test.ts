@@ -149,7 +149,7 @@ describe("research team", () => {
   it("assigns lesson plans and drills to all students or to chosen ones", async () => {
     await addStudent(db, "coach", "research-team", "a@example.com")
     await addStudent(db, "coach", "research-team", "b@example.com")
-    await createAssignment(db, "coach", "research-team", { kind: "lesson-plan", title: "Kritik basics" })
+    await createAssignment(db, "coach", "research-team", { kind: "lesson-plan", title: "Critique basics" })
     await createAssignment(db, "coach", "research-team", {
       kind: "practice-drill",
       title: "Speed drill",
@@ -160,9 +160,9 @@ describe("research team", () => {
       createAssignment(db, "coach", "research-team", { kind: "practice-drill", title: "x", studentEmails: ["c@example.com"] }),
     ).rejects.toMatchObject({ status: 400 })
 
-    expect((await assignmentsForStudent(db, "a@example.com")).map((a) => a.title)).toEqual(["Kritik basics"])
+    expect((await assignmentsForStudent(db, "a@example.com")).map((a) => a.title)).toEqual(["Critique basics"])
     const forB = await assignmentsForStudent(db, "b@example.com")
-    expect(forB.map((a) => a.title).sort()).toEqual(["Kritik basics", "Speed drill"])
+    expect(forB.map((a) => a.title).sort()).toEqual(["Critique basics", "Speed drill"])
     expect(forB[0].coachName).toBe("Coach Kim")
   })
 

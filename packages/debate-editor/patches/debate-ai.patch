@@ -3896,10 +3896,105 @@ index cbf4cb0..8f733a0 100644
      copyBtn.type = 'button';
      copyBtn.className = 'pmd-settings-btn';
 diff --git a/src/editor/style.css b/src/editor/style.css
-index 19ab630..1e0b990 100644
+index 19ab630..b49deb6 100644
 --- a/src/editor/style.css
 +++ b/src/editor/style.css
-@@ -585,7 +585,15 @@ button {
+@@ -527,15 +527,54 @@
+   src: local("Noto Serif Bold Italic"), local("Noto Serif Bold Oblique"), url("./fonts/noto-serif-700-italic.woff2") format("woff2");
+ }
+ 
+-* {
++/* ── Page-level defaults, scoped to what this engine actually owns ──
++ *
++ * These used to be bare `*` / `body` / `:focus` / `button` / `code` rules.
++ * That is correct for a page-owning deployment and wrong for every host in
++ * this app: the React shell mounts the engine inside one column of a larger
++ * page (Flow's speech-doc panel, the split-mode editors, the
++ * /reason-editor route), and the host has its own typography, colors and
++ * theme tokens. A bare `body { background; color; font-family }` repaints
++ * the WHOLE host page in the engine's palette, `:focus { outline: none }`
++ * strips focus rings off every control the host owns, and a bare `code` rule
++ * restyles every inline code span in the host app. It is not a
++ * specificity contest either: the engine's sheet is unlayered, and unlayered
++ * CSS outranks the host's `@layer base` rules no matter how specific they are.
++ *
++ * So they are scoped to the two things the engine genuinely owns:
++ *
++ *   1. `.dec-cardmirror-root` — the persistent container `singleton.ts`
++ *      creates and re-parents into whichever `<CardMirrorEditor>` holds the
++ *      live claim. Every piece of engine chrome lives inside it, and because
++ *      the whole subtree is matched, the resets cascade to descendants the
++ *      same way inheriting off `body` used to.
++ *   2. `body > .pmd-*` — the transient floaters the engine mounts directly on
++ *      `<body>` on purpose (tooltips, context menus, the pill tray, the find
++ *      bar, the settings/confirm dialogs — see the header of
++ *      `embed-containment.css` for why they are not re-parented). They sit
++ *      outside `.dec-cardmirror-root`, so they need their own entry in the
++ *      scope. Every one of them carries a `pmd-` class; the handful of
++ *      classless body children (the hidden file input, the clipboard
++ *      textarea, the font-metrics probe, the settings color probe, the
++ *      synthetic download anchor) are all invisible or unstyled by
++ *      construction, so they need nothing from this block.
++ *
++ * The color tokens this block reads stay on `:root` — JS resolves several of
++ * them off `document.documentElement` (see `benchmark-ui.ts` and
++ * `settings-ui.ts`), and the floaters resolve them from wherever they sit.
++ * Only the *application* of the resets is scoped, never the palette. */
++.dec-cardmirror-root,
++body > [class^="pmd-"],
++body > [class*=" pmd-"],
++:is(.dec-cardmirror-root, body > [class^="pmd-"], body > [class*=" pmd-"]) * {
+   box-sizing: border-box;
++  font-family: var(--pmd-ui-font);
++  background: var(--pmd-c-bg);
++  color: var(--pmd-c-text);
+ }
+ 
+ body {
+-  font-family: var(--pmd-ui-font);
+   margin: 0;
+-  background: var(--pmd-c-bg);
+-  color: var(--pmd-c-text);
+ }
+ 
+ /* Switch text rendering to grayscale antialiasing on high-DPI
+@@ -550,7 +589,9 @@ body {
+    of the OS chrome. Applied to body so it cascades to both UI
+    surfaces and the editor content. */
+ @media (min-resolution: 1.5dppx) {
+-  body {
++  .dec-cardmirror-root,
++  body > [class^="pmd-"],
++  body > [class*=" pmd-"] {
+     -webkit-font-smoothing: antialiased;
+     -moz-osx-font-smoothing: grayscale;
+   }
+@@ -571,11 +612,21 @@ body {
+    a default button, the editor is the caret. Those deliberate
+    `:focus-visible` / `:focus` outlines are more specific than this reset
+    and still apply. */
+-:focus,
+-:focus-visible {
++/* Scoped for the same reason as the resets above: a bare `:focus` reset
++   erases the focus ring from every control in the host app, not just the
++   engine's own. The deliberate `:focus-visible` / `:focus` outlines further
++   down this file are scoped to engine elements and still outrank this. */
++.dec-cardmirror-root :focus,
++.dec-cardmirror-root :focus-visible,
++body > [class^="pmd-"] :focus,
++body > [class^="pmd-"] :focus-visible,
++body > [class*=" pmd-"] :focus,
++body > [class*=" pmd-"] :focus-visible {
+   outline: none;
+ }
+-button {
++.dec-cardmirror-root button,
++body > [class^="pmd-"] button,
++body > [class*=" pmd-"] button {
+   color: inherit;
+ }
+ 
+@@ -585,7 +636,15 @@ button {
     the rest of the layout reads from them. */
  :root {
    --nav-width: 300px;
@@ -3916,7 +4011,7 @@ index 19ab630..1e0b990 100644
    --status-bar-height: 1.8rem;
    /* Per-pane footer (word count + Σ + open button) in multi-doc mode.
       A shared var so the footer's min-height and anything that has to
-@@ -620,27 +628,28 @@ button {
+@@ -620,27 +679,28 @@ button {
       Per-style document colors (analytic, undertag) live on `#editor`,
       not here, because they're settings-driven (per-user display config). */
  
@@ -3962,7 +4057,7 @@ index 19ab630..1e0b990 100644
    /* Card numbering glyphs. Defaults to muted text (theme-aware via the var),
       but is its OWN token so it's user-overridable — see CUSTOMIZABLE_COLOR_TOKENS
       ('pmd-c-card-number') and the Card numbering settings color control. */
-@@ -866,35 +875,34 @@ button {
+@@ -866,35 +926,34 @@ button {
       ProseMirror editor itself. */
    color-scheme: dark;
  
@@ -4020,7 +4115,7 @@ index 19ab630..1e0b990 100644
    --pmd-c-button-hover: rgba(255, 255, 255, 0.08);
    --pmd-c-button-press: rgba(255, 255, 255, 0.15);
    --pmd-c-button-press-border: rgba(255, 255, 255, 0.3);
-@@ -1167,29 +1175,30 @@ button {
+@@ -1167,29 +1226,30 @@ button {
       win. */
    background: var(--pmd-c-bg);
  
@@ -4071,7 +4166,7 @@ index 19ab630..1e0b990 100644
    /* Re-assert the user's document colors inside the editor. The dark
       chrome above lightened `--pmd-color-*` to the built-in blue/green
       for readability on dark surfaces (nav pane etc.); but with
-@@ -1201,9 +1210,9 @@ button {
+@@ -1201,9 +1261,9 @@ button {
       above. */
    --pmd-color-analytic: var(--pmd-user-color-analytic, #1F3864);
    --pmd-color-undertag: var(--pmd-user-color-undertag, #385623);
@@ -4084,7 +4179,24 @@ index 19ab630..1e0b990 100644
    --pmd-c-table-selected-cell: rgba(200, 200, 255, 0.4);
    /* The sky-blue hyperlink color lives at :root[data-theme="dark"]
       so it covers the document when apply-to-doc is ON. With it OFF
-@@ -1251,9 +1260,13 @@ html:has(body.pmd-speech-banner-visible) {
+@@ -1235,11 +1295,14 @@ button {
+    when navigating up. `:has()` covers the speech-banner case
+    where an extra strip is pinned below the ribbon — the effective
+    top occlusion grows by the banner's height. */
+-html {
++/* Only the page-owning deployment scrolls the document, so only it needs
++   scroll padding; in an embed the scroller is the engine's own box (see
++   `body:not(.pmd-multi-doc) #app` below) and the host owns `html`. */
++html:not(:has(.dec-cardmirror-embed)) {
+   scroll-padding-top: var(--ribbon-height);
+   scroll-padding-bottom: var(--status-bar-height);
+ }
+-html:has(body.pmd-speech-banner-visible) {
++html:not(:has(.dec-cardmirror-embed)):has(body.pmd-speech-banner-visible) {
+   scroll-padding-top: calc(var(--ribbon-height) + var(--speech-banner-height));
+ }
+ 
+@@ -1251,9 +1314,13 @@ html:has(body.pmd-speech-banner-visible) {
    height: var(--ribbon-height);
    background: var(--pmd-c-surface);
    border-bottom: 1px solid var(--pmd-c-border-soft);
@@ -4100,7 +4212,7 @@ index 19ab630..1e0b990 100644
    /* Above editor-surface decorations (.pmd-editor-pickup-highlight z=90
       and .pmd-editor-drop-indicator z=100) so they don't bleed over the
       ribbon when scrolled into the chrome's bounds. */
-@@ -1261,16 +1274,227 @@ html:has(body.pmd-speech-banner-visible) {
+@@ -1261,16 +1328,227 @@ html:has(body.pmd-speech-banner-visible) {
    font-size: 0.85rem;
  }
  
@@ -4329,7 +4441,7 @@ index 19ab630..1e0b990 100644
  /* All ribbon buttons share the same icon-button look: square, centered
     glyph, no padding-driven asymmetry. Flexbox centering avoids
     line-height alignment quirks that leave glyphs sitting off-center. */
-@@ -1304,11 +1528,12 @@ html:has(body.pmd-speech-banner-visible) {
+@@ -1304,11 +1582,12 @@ html:has(body.pmd-speech-banner-visible) {
    background: var(--pmd-c-hover);
  }
  
@@ -4347,7 +4459,7 @@ index 19ab630..1e0b990 100644
  .ribbon-right-grid {
    display: grid;
    grid-template-columns: repeat(2, auto);
-@@ -1480,13 +1705,14 @@ body:not(.pmd-multi-doc):not(.pmd-multi-window) #speech-stack { display: none; }
+@@ -1480,13 +1759,14 @@ body:not(.pmd-multi-doc):not(.pmd-multi-window) #speech-stack { display: none; }
    margin-left: 0.2rem;
  }
  
@@ -4369,7 +4481,7 @@ index 19ab630..1e0b990 100644
  .pmd-doc-name-chip {
    display: inline-flex;
    align-items: center;
-@@ -1507,9 +1733,8 @@ body:not(.pmd-multi-doc):not(.pmd-multi-window) #speech-stack { display: none; }
+@@ -1507,9 +1787,8 @@ body:not(.pmd-multi-doc):not(.pmd-multi-window) #speech-stack { display: none; }
  }
  /* Visibility cascade:
     - Off by default — the setting class on <html> is absent, so this
@@ -4381,7 +4493,7 @@ index 19ab630..1e0b990 100644
     - On + no filename (untitled / fresh doc) — JS sets [hidden].
     - On + filename + multi-pane — the body class hides it because
       each per-pane chip already shows the slot's filename.
-@@ -2204,6 +2429,50 @@ html.pmd-numbering-hidden #numbering-panel {
+@@ -2204,6 +2483,50 @@ html.pmd-numbering-hidden #numbering-panel {
    flex-direction: column;
  }
  
@@ -4432,7 +4544,31 @@ index 19ab630..1e0b990 100644
  /* Single-doc layout: `#app` is a bounded scroller pinned to the
     chrome-clipped viewport rectangle, with the editor scrolling
     *inside* it. Scrolling `#app` rather than `body` keeps the
-@@ -5881,10 +6150,6 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+@@ -2416,7 +2739,11 @@ body:not(.pmd-multi-doc) #app {
+   zoom: var(--editor-zoom, 1);
+ }
+ 
+-code {
++/* Scoped to the editor's own content: a bare `code` rule restyles every
++   inline code span anywhere in the host app. */
++.dec-cardmirror-root code,
++body > [class^="pmd-"] code,
++body > [class*=" pmd-"] code {
+   background: var(--pmd-c-surface-alt);
+   padding: 0.1rem 0.3rem;
+   border-radius: 3px;
+@@ -3425,7 +3752,9 @@ code {
+    change the glyph. A ligature wholly inside one uniform decoration also
+    un-ligates, since CSS targets the whole span, not just its edges.) */
+ .pmd-highlight,
+-[data-shading],
++.dec-cardmirror-root [data-shading],
++body > [class^="pmd-"] [data-shading],
++body > [class*=" pmd-"] [data-shading],
+ .pmd-underline,
+ .pmd-emphasis {
+   font-variant-ligatures: none;
+@@ -5881,10 +6210,6 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
    border-radius: 8px;
    box-shadow: 0 8px 32px var(--pmd-c-shadow-deep);
    width: 90%;
@@ -4443,7 +4579,7 @@ index 19ab630..1e0b990 100644
    max-width: 720px;
    max-height: 80vh;
    display: flex;
-@@ -5892,18 +6157,37 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+@@ -5892,18 +6217,37 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
    font-family: var(--pmd-ui-font);
  }
  
@@ -4483,7 +4619,7 @@ index 19ab630..1e0b990 100644
    font-weight: 600;
  }
  
-@@ -5921,105 +6205,97 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+@@ -5921,105 +6265,97 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
    color: var(--pmd-c-text-strong);
  }
  
@@ -4647,7 +4783,7 @@ index 19ab630..1e0b990 100644
  /* Section headers inside a settings tab (SettingMeta.section).
   * Sized to match .pmd-install-info-heading ("About this install").
   * All settings dividers — between rows and between sections — use the
-@@ -6038,7 +6314,10 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+@@ -6038,7 +6374,10 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
    text-transform: uppercase;
    color: var(--pmd-c-text-muted);
  }
@@ -4659,12 +4795,11 @@ index 19ab630..1e0b990 100644
    margin-top: 0.3rem;
    padding-top: 0;
    border-top: none;
-@@ -6948,8 +7227,109 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+@@ -6948,10 +7287,111 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
    cursor: pointer;
  }
  
 -.pmd-readers-add:hover {
--  background: var(--pmd-c-hover);
 +.pmd-readers-add:hover {
 +  background: var(--pmd-c-hover);
 +}
@@ -4762,16 +4897,18 @@ index 19ab630..1e0b990 100644
 +}
 +
 +.pmd-dictionary-delete:hover {
-+  background: var(--pmd-c-hover);
-+}
-+
+   background: var(--pmd-c-hover);
+ }
+ 
 +.pmd-dictionary-empty {
 +  font-size: 0.85rem;
 +  opacity: 0.7;
- }
- 
++}
++
  /* Word Count modal */
-@@ -10430,6 +10810,7 @@ body.pmd-recovery-active.pmd-multi-doc #app {
+ .pmd-wc-scope {
+   margin: 0 0 0.75rem 0;
+@@ -10430,6 +10870,7 @@ body.pmd-recovery-active.pmd-multi-doc #app {
     Diverge by pulling a selector out, not by re-copying. */
  .pmd-qcs-badge-settings,
  .pmd-qcs-badge-file,
@@ -4779,7 +4916,7 @@ index 19ab630..1e0b990 100644
  .pmd-learn-session-remembered:hover,
  .pmd-learn-session-context:hover,
  .pmd-learn-manage-link:hover,
-@@ -10870,6 +11251,8 @@ body.pmd-recovery-active.pmd-multi-doc #app {
+@@ -10870,6 +11311,8 @@ body.pmd-recovery-active.pmd-multi-doc #app {
    display: flex;
    align-items: center;
    justify-content: space-between;
@@ -4788,7 +4925,7 @@ index 19ab630..1e0b990 100644
    padding: 1rem 1.25rem;
    border-bottom: 1px solid var(--pmd-c-divider);
    flex: 0 0 auto;
-@@ -10881,7 +11264,26 @@ body.pmd-recovery-active.pmd-multi-doc #app {
+@@ -10881,7 +11324,26 @@ body.pmd-recovery-active.pmd-multi-doc #app {
    font-weight: 600;
  }
  
@@ -4815,7 +4952,7 @@ index 19ab630..1e0b990 100644
  
  .pmd-reference-close:hover {
    color: var(--pmd-c-text);
-@@ -10956,6 +11358,63 @@ body.pmd-recovery-active.pmd-multi-doc #app {
+@@ -10956,6 +11418,68 @@ body.pmd-recovery-active.pmd-multi-doc #app {
    color: var(--pmd-c-text);
  }
  
@@ -4833,7 +4970,12 @@ index 19ab630..1e0b990 100644
 +}
 +
 +@media print {
-+  body * {
++  /* Gated on the print root actually being in the document. Ungated
++     `body * { visibility: hidden }` blanks every host route the moment the
++     user prints from one the engine has been mounted on — the print root
++     only exists inside the `reference-ui.ts` print() window, and outside
++     that window printing must leave the host alone. */
++  body:has(.pmd-reference-print-root) * {
 +    visibility: hidden;
 +  }
 +  .pmd-reference-print-root,
@@ -4879,7 +5021,7 @@ index 19ab630..1e0b990 100644
  /* ---------------------------------------------- Tables */
  
  /* columnResizing()'s TableView nodeView replaces our schema toDOM at
-@@ -12393,6 +12852,10 @@ textarea.pmd-text-prompt-input {
+@@ -12393,6 +12917,10 @@ textarea.pmd-text-prompt-input {
    font-size: 0.8rem;
    color: var(--pmd-c-text-muted);
  }
@@ -4890,7 +5032,7 @@ index 19ab630..1e0b990 100644
  .pmd-learn-manage-new {
    margin-left: auto;
    background: transparent;
-@@ -12582,6 +13045,257 @@ textarea.pmd-text-prompt-input {
+@@ -12582,6 +13110,257 @@ textarea.pmd-text-prompt-input {
    border-color: var(--pmd-c-error);
  }
  
@@ -5148,7 +5290,35 @@ index 19ab630..1e0b990 100644
  /* ---- Multi-pane: typography parity ----
   *
   * The single-doc editor scopes typography-flag rules to `#editor.X`.
-@@ -15275,6 +15989,17 @@ body.pmd-multi-doc .pmd-cardcutter-trim {
+@@ -13215,9 +13994,10 @@ body.pmd-timer-popout-page .pmd-timer-display {
+  * skip animation events entirely. Properties listed cover all the
+  * motion the editor ships: CSS `transition` / `animation`, plus
+  * `scroll-behavior` (so smooth scroll snaps instead of animating). */
+-:root[data-motion="reduce"] *,
+-:root[data-motion="reduce"] *::before,
+-:root[data-motion="reduce"] *::after {
++:root[data-motion="reduce"] :is(.dec-cardmirror-root, body > [class^="pmd-"], body > [class*=" pmd-"]),
++:root[data-motion="reduce"] :is(.dec-cardmirror-root, body > [class^="pmd-"], body > [class*=" pmd-"]) *,
++:root[data-motion="reduce"] :is(.dec-cardmirror-root, body > [class^="pmd-"], body > [class*=" pmd-"]) *::before,
++:root[data-motion="reduce"] :is(.dec-cardmirror-root, body > [class^="pmd-"], body > [class*=" pmd-"]) *::after {
+   animation-duration: 0.01ms !important;
+   animation-iteration-count: 1 !important;
+   transition-duration: 0.01ms !important;
+@@ -13225,9 +14005,10 @@ body.pmd-timer-popout-page .pmd-timer-display {
+ }
+ 
+ @media (prefers-reduced-motion: reduce) {
+-  :root:not([data-motion="normal"]) *,
+-  :root:not([data-motion="normal"]) *::before,
+-  :root:not([data-motion="normal"]) *::after {
++  :root:not([data-motion="normal"]) :is(.dec-cardmirror-root, body > [class^="pmd-"], body > [class*=" pmd-"]),
++  :root:not([data-motion="normal"]) :is(.dec-cardmirror-root, body > [class^="pmd-"], body > [class*=" pmd-"]) *,
++  :root:not([data-motion="normal"]) :is(.dec-cardmirror-root, body > [class^="pmd-"], body > [class*=" pmd-"]) *::before,
++  :root:not([data-motion="normal"]) :is(.dec-cardmirror-root, body > [class^="pmd-"], body > [class*=" pmd-"]) *::after {
+     animation-duration: 0.01ms !important;
+     animation-iteration-count: 1 !important;
+     transition-duration: 0.01ms !important;
+@@ -15275,6 +16056,17 @@ body.pmd-multi-doc .pmd-cardcutter-trim {
    user-select: none;
  }
  
@@ -5166,7 +5336,7 @@ index 19ab630..1e0b990 100644
  /* Small corner chip shown while the benchmark drives the (visible) editor. */
  .pmd-bench-chip {
    position: fixed;
-@@ -16301,3 +17026,72 @@ body.pmd-multi-doc #collab-chip {
+@@ -16301,3 +17093,72 @@ body.pmd-multi-doc #collab-chip {
    pointer-events: none;
    z-index: 4;
  }

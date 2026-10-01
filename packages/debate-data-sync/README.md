@@ -206,7 +206,7 @@ Categorizes lectures into 17 topics:
 - Novice & Introductory
 - Affirmative Strategy
 - Negative Strategy
-- Kritik / Critical Theory
+- Critique / Critical Theory
 - Counterplans & Theory
 - Topicality & Framework
 - Disadvantages

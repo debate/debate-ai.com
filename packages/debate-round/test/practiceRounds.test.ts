@@ -58,7 +58,7 @@ const MIXED_FLOW = {
 };
 
 const SETUP_A = buildPracticeRoundSetup({ styleKey: "lincolnDouglas", judgeParadigm: "lay" });
-const SETUP_B = buildPracticeRoundSetup({ styleKey: "policy", opponentPersona: "kritik" });
+const SETUP_B = buildPracticeRoundSetup({ styleKey: "policy", opponentPersona: "critique" });
 
 const ROUND_A: PracticeRoundRecord = { roundId: "round-1", setup: SETUP_A };
 const ROUND_B: PracticeRoundRecord = { roundId: "round-2", setup: SETUP_B };
@@ -236,7 +236,7 @@ describe("buildAndSavePracticeRoundFeedback", () => {
     const updated = buildAndSavePracticeRoundFeedback(MIXED_FLOW, "round-2", "AFF");
 
     const sections = updated!.feedback!.sections;
-    expect(sections.at(-1)!.title).toBe("Facing the Kritik persona again");
+    expect(sections.at(-1)!.title).toBe("Facing the Critique persona again");
   });
 
   it("omits the persona-tips section when the round's setup had no AI opponent persona", () => {

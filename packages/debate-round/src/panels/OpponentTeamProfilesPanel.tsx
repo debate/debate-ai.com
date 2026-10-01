@@ -465,7 +465,7 @@ export function OpponentTeamProfilesPanel() {
               id="opponent-round-tags"
               value={draft.argumentTags}
               onChange={(e) => setDraft((prev) => ({ ...prev, argumentTags: e.target.value }))}
-              placeholder="kritik, topicality"
+              placeholder="critique, topicality"
             />
           </div>
           <div className="space-y-1.5">

@@ -28,7 +28,7 @@ describe("isValidCounselPanelAssessmentRecord", () => {
   });
 
   it("accepts every counsel role", () => {
-    for (const counselRole of ["Policy Counsel", "Kritik Counsel", "Weighing Counsel"] as const) {
+    for (const counselRole of ["Policy Counsel", "Critique Counsel", "Weighing Counsel"] as const) {
       const record = makeRecord({
         result: {
           argumentAssessments: [{ rowIndex: 0, counselRole, likelyResponsePath: "x", clashEstimate: "y" }],

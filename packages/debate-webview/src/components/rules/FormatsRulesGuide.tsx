@@ -31,7 +31,7 @@ const FORMATS: { eyebrow: string; title: string; summary: string; parts: [string
       "A policy-resolution event built around detailed research, comparative consequences, and technical argument interaction.",
     parts: [
       ["1AC", "plan, advantages, and evidence"],
-      ["Negative", "disadvantages, counterplans, topicality, kritik, and case debate"],
+      ["Negative", "disadvantages, counterplans, topicality, critique, and case debate"],
       ["Rebuttals", "collapse to decisive voting issues"],
     ],
   },
@@ -174,7 +174,7 @@ const FORMAT_RULES: { title: string; badge: string; summary: string; cards: { ti
         title: "Key round sections",
         items: [
           "Affirmative presents a plan, advantages, and evidence in the 1AC.",
-          "Negative answers with case arguments, disadvantages, counterplans, topicality, and/or kritiks.",
+          "Negative answers with case arguments, disadvantages, counterplans, topicality, and/or critiques.",
           "Cross-examination clarifies evidence and commits opponents to positions.",
           "Rebuttals must prioritize the arguments that decide the ballot.",
         ],

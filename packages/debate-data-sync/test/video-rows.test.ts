@@ -33,12 +33,12 @@ const ROUND_TUPLE = [
 
 const LECTURE_TUPLE = [
   "vid-lecture",
-  "Kritik basics",
+  "Critique basics",
   "2019-11-02",
   "Coach Channel",
   1200,
   "Intro to the K",
-  "Kritik / Critical Theory",
+  "Critique / Critical Theory",
 ];
 
 describe("seasonYearForDate", () => {
@@ -102,7 +102,7 @@ describe("publishedMsForDate", () => {
 
 describe("normalizeCategoryKey", () => {
   it("slugifies a category label", () => {
-    expect(normalizeCategoryKey("Kritik / Critical Theory")).toBe("kritik___critical_theory");
+    expect(normalizeCategoryKey("Critique / Critical Theory")).toBe("critique___critical_theory");
     expect(normalizeCategoryKey("Demo Debates")).toBe("demo_debates");
   });
 
@@ -136,8 +136,8 @@ describe("tupleToVideoRow", () => {
   it("maps a lecture tuple's category and leaves the style unset", () => {
     const row = tupleToVideoRow(LECTURE_TUPLE, "lecture")!;
     expect(row.style).toBeNull();
-    expect(row.category).toBe("Kritik / Critical Theory");
-    expect(row.categoryKey).toBe("kritik___critical_theory");
+    expect(row.category).toBe("Critique / Critical Theory");
+    expect(row.categoryKey).toBe("critique___critical_theory");
     expect(row.isTopPick).toBe(false);
   });
 
@@ -167,7 +167,7 @@ describe("videoRowToTuple", () => {
     const row = tupleToVideoRow(LECTURE_TUPLE, "lecture")!;
     const tuple = videoRowToTuple(row);
     expect(tuple).toHaveLength(18);
-    expect(tuple[6]).toBe("Kritik / Critical Theory");
+    expect(tuple[6]).toBe("Critique / Critical Theory");
     expect(tuple[17]).toBe(2020);
   });
 });

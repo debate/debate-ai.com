@@ -47,7 +47,7 @@ export const PRACTICE_STYLES = [
   { id: "traditional", label: "Traditional / lay" },
   { id: "progressive", label: "Progressive / tech" },
   { id: "policy-args", label: "Plans, CPs & DAs" },
-  { id: "kritiks", label: "Kritiks" },
+  { id: "critiques", label: "Critiques" },
   { id: "theory", label: "Theory & T" },
   { id: "phil", label: "Philosophy / framework" },
   { id: "truth-testing", label: "Truth-testing" },

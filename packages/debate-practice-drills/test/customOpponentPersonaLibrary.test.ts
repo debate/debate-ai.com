@@ -28,9 +28,9 @@ class MemoryStorage {
   }
 }
 
-const KRITIK_BOT: SavedCustomOpponentPersona = {
-  id: "kritik-bot",
-  name: "Kritik Bot",
+const CRITIQUE_BOT: SavedCustomOpponentPersona = {
+  id: "critique-bot",
+  name: "Critique Bot",
   notes: "Opens on framework.",
   shared: false,
   createdAt: 100,
@@ -66,16 +66,16 @@ describe("listCustomOpponentPersonaLibrary", () => {
   });
 
   it("lists every saved entry", () => {
-    saveCustomOpponentPersonaLibraryEntry(KRITIK_BOT);
+    saveCustomOpponentPersonaLibraryEntry(CRITIQUE_BOT);
     saveCustomOpponentPersonaLibraryEntry(LAY_BOT);
-    expect(listCustomOpponentPersonaLibrary()).toEqual([KRITIK_BOT, LAY_BOT]);
+    expect(listCustomOpponentPersonaLibrary()).toEqual([CRITIQUE_BOT, LAY_BOT]);
   });
 });
 
 describe("getCustomOpponentPersonaLibraryEntry", () => {
   it("finds a saved entry by id", () => {
-    saveCustomOpponentPersonaLibraryEntry(KRITIK_BOT);
-    expect(getCustomOpponentPersonaLibraryEntry("kritik-bot")).toEqual(KRITIK_BOT);
+    saveCustomOpponentPersonaLibraryEntry(CRITIQUE_BOT);
+    expect(getCustomOpponentPersonaLibraryEntry("critique-bot")).toEqual(CRITIQUE_BOT);
   });
 
   it("returns undefined for an id that isn't stored", () => {
@@ -85,8 +85,8 @@ describe("getCustomOpponentPersonaLibraryEntry", () => {
 
 describe("saveCustomOpponentPersonaLibraryEntry", () => {
   it("upserts — saving an existing id overwrites rather than duplicating it", () => {
-    saveCustomOpponentPersonaLibraryEntry(KRITIK_BOT);
-    const revised: SavedCustomOpponentPersona = { ...KRITIK_BOT, name: "Renamed Bot" };
+    saveCustomOpponentPersonaLibraryEntry(CRITIQUE_BOT);
+    const revised: SavedCustomOpponentPersona = { ...CRITIQUE_BOT, name: "Renamed Bot" };
     saveCustomOpponentPersonaLibraryEntry(revised);
 
     expect(listCustomOpponentPersonaLibrary()).toEqual([revised]);
@@ -122,9 +122,9 @@ describe("createOrUpdateCustomOpponentPersonaLibraryEntry", () => {
 
 describe("deleteCustomOpponentPersonaLibraryEntry", () => {
   it("removes a stored entry by id", () => {
-    saveCustomOpponentPersonaLibraryEntry(KRITIK_BOT);
+    saveCustomOpponentPersonaLibraryEntry(CRITIQUE_BOT);
     saveCustomOpponentPersonaLibraryEntry(LAY_BOT);
-    deleteCustomOpponentPersonaLibraryEntry("kritik-bot");
+    deleteCustomOpponentPersonaLibraryEntry("critique-bot");
 
     expect(listCustomOpponentPersonaLibrary()).toEqual([LAY_BOT]);
   });
@@ -139,61 +139,61 @@ describe("deleteCustomOpponentPersonaLibraryEntry", () => {
 describe("buildCustomOpponentPersonaLibraryPanelView", () => {
   it("sorts every persisted entry alphabetically by name", () => {
     saveCustomOpponentPersonaLibraryEntry(LAY_BOT);
-    saveCustomOpponentPersonaLibraryEntry(KRITIK_BOT);
+    saveCustomOpponentPersonaLibraryEntry(CRITIQUE_BOT);
 
-    expect(buildCustomOpponentPersonaLibraryPanelView()).toEqual([KRITIK_BOT, LAY_BOT]);
+    expect(buildCustomOpponentPersonaLibraryPanelView()).toEqual([CRITIQUE_BOT, LAY_BOT]);
   });
 });
 
 describe("resolveCustomOpponentPersonaLibraryConflict", () => {
   it("picks the newer remote copy", () => {
-    const local = { ...KRITIK_BOT, updatedAt: 100 };
-    const remote = { ...KRITIK_BOT, updatedAt: 200 };
+    const local = { ...CRITIQUE_BOT, updatedAt: 100 };
+    const remote = { ...CRITIQUE_BOT, updatedAt: 200 };
     expect(resolveCustomOpponentPersonaLibraryConflict(local, remote)).toBe("remote");
   });
 
   it("picks the newer local copy", () => {
-    const local = { ...KRITIK_BOT, updatedAt: 300 };
-    const remote = { ...KRITIK_BOT, updatedAt: 200 };
+    const local = { ...CRITIQUE_BOT, updatedAt: 300 };
+    const remote = { ...CRITIQUE_BOT, updatedAt: 200 };
     expect(resolveCustomOpponentPersonaLibraryConflict(local, remote)).toBe("local");
   });
 
   it("returns none when timestamps are equal", () => {
-    expect(resolveCustomOpponentPersonaLibraryConflict(KRITIK_BOT, KRITIK_BOT)).toBe("none");
+    expect(resolveCustomOpponentPersonaLibraryConflict(CRITIQUE_BOT, CRITIQUE_BOT)).toBe("none");
   });
 });
 
 describe("planCustomOpponentPersonaLibraryMerge", () => {
   it("adopts a remote-only entry", () => {
-    const plan = planCustomOpponentPersonaLibraryMerge([], [KRITIK_BOT]);
-    expect(plan.adopt).toEqual([KRITIK_BOT]);
+    const plan = planCustomOpponentPersonaLibraryMerge([], [CRITIQUE_BOT]);
+    expect(plan.adopt).toEqual([CRITIQUE_BOT]);
     expect(plan.pushLocal).toEqual([]);
   });
 
   it("pushes a local-only entry", () => {
-    const plan = planCustomOpponentPersonaLibraryMerge([KRITIK_BOT], []);
+    const plan = planCustomOpponentPersonaLibraryMerge([CRITIQUE_BOT], []);
     expect(plan.adopt).toEqual([]);
-    expect(plan.pushLocal).toEqual([KRITIK_BOT]);
+    expect(plan.pushLocal).toEqual([CRITIQUE_BOT]);
   });
 
   it("adopts the remote copy when it's newer for a shared id", () => {
-    const local = { ...KRITIK_BOT, updatedAt: 100 };
-    const remote = { ...KRITIK_BOT, name: "Updated", updatedAt: 200 };
+    const local = { ...CRITIQUE_BOT, updatedAt: 100 };
+    const remote = { ...CRITIQUE_BOT, name: "Updated", updatedAt: 200 };
     const plan = planCustomOpponentPersonaLibraryMerge([local], [remote]);
     expect(plan.adopt).toEqual([remote]);
     expect(plan.pushLocal).toEqual([]);
   });
 
   it("pushes the local copy when it's newer for a shared id", () => {
-    const local = { ...KRITIK_BOT, name: "Updated locally", updatedAt: 300 };
-    const remote = { ...KRITIK_BOT, updatedAt: 200 };
+    const local = { ...CRITIQUE_BOT, name: "Updated locally", updatedAt: 300 };
+    const remote = { ...CRITIQUE_BOT, updatedAt: 200 };
     const plan = planCustomOpponentPersonaLibraryMerge([local], [remote]);
     expect(plan.adopt).toEqual([]);
     expect(plan.pushLocal).toEqual([local]);
   });
 
   it("does nothing for an identical shared id", () => {
-    const plan = planCustomOpponentPersonaLibraryMerge([KRITIK_BOT], [KRITIK_BOT]);
+    const plan = planCustomOpponentPersonaLibraryMerge([CRITIQUE_BOT], [CRITIQUE_BOT]);
     expect(plan.adopt).toEqual([]);
     expect(plan.pushLocal).toEqual([]);
   });

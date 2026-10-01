@@ -226,5 +226,5 @@ export function parseOpponentRoundRecordsCsv(rawCsv: string): OpponentRoundCsvPa
 /** A minimal example CSV, shown in the panel as the expected format. */
 export const OPPONENT_ROUND_CSV_TEMPLATE = [
   "teamId,tournamentName,date,division,side,won,argumentTags,caseName,opponentTeamId",
-  "Westlake AB,Berkeley,2026-01-10,PF,aff,true,kritik;topicality,Housing Case,Lincoln CD",
+  "Westlake AB,Berkeley,2026-01-10,PF,aff,true,critique;topicality,Housing Case,Lincoln CD",
 ].join("\n");

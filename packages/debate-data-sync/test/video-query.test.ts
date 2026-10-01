@@ -59,7 +59,7 @@ const ROWS: VideoRow[] = [
   row({ id: "pf-new", date: "2025-10-02", style: 2, views: 500, title: "PF octas" }),
   row({ id: "pf-old", date: "2013-02-02", style: 2, views: 50, title: "PF classic" }),
   row({ id: "legacy", date: "2008-01-01", style: 1, views: 5, title: "Ancient round" }),
-  row({ id: "lecture-k", date: "2025-08-08", category: "Kritik / Critical Theory", views: 200, title: "Kritik lecture" }),
+  row({ id: "lecture-k", date: "2025-08-08", category: "Critique / Critical Theory", views: 200, title: "Critique lecture" }),
   row({ id: "lecture-demo", date: "2024-08-08", category: "Demo Debates", views: 900, title: "Demo debate" }),
   row({ id: "lecture-award", date: "2024-08-09", category: "Awards", views: 3, title: "Award ceremony" }),
   row({ id: "lecture-round", date: "2025-01-05", style: 4, source: "lecture", views: 7, title: "College round in lectures" }),
@@ -287,7 +287,7 @@ describe("computeVideoFacets", () => {
 describe("computeLectureCategories", () => {
   it("returns one card per category, most popular first", () => {
     const categories = computeLectureCategories(ROWS);
-    expect(categories.map((c) => c.key)).toEqual(["demo_debates", "kritik___critical_theory"]);
+    expect(categories.map((c) => c.key)).toEqual(["demo_debates", "critique___critical_theory"]);
     expect(categories[0]).toMatchObject({ label: "Demo Debates", count: 1, maxViews: 900 });
   });
 
@@ -343,21 +343,21 @@ describe("rankTournamentSuggestions", () => {
 
 describe("rankKeywordSuggestions", () => {
   it("drops keywords the library has no videos for, keeping the curated order", () => {
-    const ranked = rankKeywordSuggestions({ Finals: 4, Kritik: 9, Novice: 0 });
+    const ranked = rankKeywordSuggestions({ Finals: 4, Critique: 9, Novice: 0 });
     expect(ranked).toEqual([
       { label: "Finals", count: 4, kind: "keyword" },
-      { label: "Kritik", count: 9, kind: "keyword" },
+      { label: "Critique", count: 9, kind: "keyword" },
     ]);
   });
 
   it("keeps at most the requested number of chips", () => {
-    expect(rankKeywordSuggestions({ Finals: 1, Kritik: 1, Topicality: 1 }, 2)).toHaveLength(2);
+    expect(rankKeywordSuggestions({ Finals: 1, Critique: 1, Topicality: 1 }, 2)).toHaveLength(2);
   });
 });
 
 describe("computeVideoSuggestions", () => {
   const SUGGESTION_ROWS: VideoRow[] = [
-    tournamentRow("a", "2019 NDT", "NDT Finals — Kritik on the flow"),
+    tournamentRow("a", "2019 NDT", "NDT Finals — Critique on the flow"),
     tournamentRow("b", "NDT 2020", "NDT Semis"),
     tournamentRow("c", "TOC", "TOC Finals"),
     tournamentRow("d", null, "Lecture on flowing"),
@@ -367,7 +367,7 @@ describe("computeVideoSuggestions", () => {
     const { keywords } = computeVideoSuggestions(SUGGESTION_ROWS);
     const byLabel = Object.fromEntries(keywords.map((k) => [k.label, k.count]));
     expect(byLabel.Finals).toBe(2);
-    expect(byLabel.Kritik).toBe(1);
+    expect(byLabel.Critique).toBe(1);
     expect(byLabel.Semis).toBe(1);
     expect(keywords.every((k) => k.count > 0)).toBe(true);
     expect(byLabel.Topicality).toBeUndefined();
