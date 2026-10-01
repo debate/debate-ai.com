@@ -171,26 +171,17 @@ describe("the REASON research workspace", () => {
     expect(matchesToolSidebarHref("/doc/cp-answer-to-states")).toBe(true);
   });
 
-  it("hosts the dock in its own sidebar, itself and every document beneath it", () => {
-    expect(hostsOwnSidebarDock("/doc")).toBe(true);
-    expect(hostsOwnSidebarDock("/doc/cp-answer-to-states")).toBe(true);
-    // The trailing `/` in the match keeps the help docs off this list.
+  it("no longer hosts a dock of its own, now that it is quick search in an iframe", () => {
+    expect(hostsOwnSidebarDock("/doc")).toBe(false);
+    expect(hostsOwnSidebarDock("/doc/cp-answer-to-states")).toBe(false);
     expect(hostsOwnSidebarDock("/docs")).toBe(false);
-    expect(hostsOwnSidebarDock("/reason-editor")).toBe(false);
     expect(hostsOwnSidebarDock(null)).toBe(false);
-    // And hosting its own dock is one way of owning the layout.
-    expect(ownsItsLayout("/doc")).toBe(true);
-    expect(ownsItsLayout("/doc/cp-answer-to-states")).toBe(true);
+    expect(ownsItsLayout("/doc")).toBe(false);
   });
 
-  it("is not wrapped in the generic sidebar, which stood beside its own", () => {
-    expect(isGenericToolSidebarRoute("/doc")).toBe(false);
-    expect(isGenericToolSidebarRoute("/doc/cp-answer-to-states")).toBe(false);
-  });
-
-  it("keeps the floating dock suppressed, its own sidebar carrying one", () => {
-    // This is what separates it from `/debate` below: both skip the generic
-    // sidebar, but only this one puts a dock in the column it renders itself.
+  it("is wrapped in the generic sidebar, which carries the dock beside the frame", () => {
+    expect(isGenericToolSidebarRoute("/doc")).toBe(true);
+    expect(isGenericToolSidebarRoute("/doc/cp-answer-to-states")).toBe(true);
     expect(hasEmbeddedDock("/doc")).toBe(true);
     expect(hasEmbeddedDock("/doc/cp-answer-to-states")).toBe(true);
   });

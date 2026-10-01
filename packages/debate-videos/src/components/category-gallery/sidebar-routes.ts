@@ -79,17 +79,15 @@ export const OWN_LAYOUT_SIDEBAR_HREFS: readonly string[] = ["/debate"];
 
 /**
  * The same opt-out, for a workspace that hosts the app dock *inside* its own
- * sidebar rather than leaving it to float.
- *
- * `/doc` is the REASON research workspace: its own sidebar is the files tree
- * and the "Open Tabs" list, and the generic tool tree stood beside that as a
- * second, taller column — the tree's dock at the top of one, the documents at
- * the top of the other. The workspace's sidebar carries the dock now (the
- * app's `SidebarWithAppDock`, injected as `ReasonDocs`' `SidebarComponent`),
- * so this route wants what `/videos` gets: no generic sidebar, and no
+ * sidebar rather than leaving it to float: no generic sidebar, and no
  * floating dock either, since a dock is already on screen.
+ *
+ * Empty for now. `/doc` used to be here, when it rendered the REASON research
+ * workspace with its own files/tabs column carrying the dock. It is quick
+ * search in an iframe now, with no sidebar of its own, so it takes the
+ * generic sidebar like any other tool page.
  */
-export const OWN_SIDEBAR_DOCK_HREFS: readonly string[] = ["/doc"];
+export const OWN_SIDEBAR_DOCK_HREFS: readonly string[] = [];
 
 /**
  * Routes that render the video library page (`LecturesPage`), which draws
@@ -117,8 +115,8 @@ function isAtOrUnder(pathname: string, href: string): boolean {
 }
 
 /**
- * True on {@link OWN_SIDEBAR_DOCK_HREFS} and anything nested under one
- * (`/doc/<document name>`) — the routes whose own sidebar hosts the dock.
+ * True on {@link OWN_SIDEBAR_DOCK_HREFS} and anything nested under one — the
+ * routes whose own sidebar hosts the dock.
  */
 export function hostsOwnSidebarDock(pathname: string | null | undefined): boolean {
   if (!pathname) return false;
@@ -128,7 +126,7 @@ export function hostsOwnSidebarDock(pathname: string | null | undefined): boolea
 /**
  * True on {@link OWN_LAYOUT_SIDEBAR_HREFS} and
  * {@link OWN_SIDEBAR_DOCK_HREFS}, and on anything nested under one
- * (`/debate/<tournament>`, `/doc/<document name>`), matched the same prefix
+ * (`/debate/<tournament>`), matched the same prefix
  * way as {@link matchesToolSidebarHref}. Whether the floating dock stands in
  * for the column that is skipped is the one thing the two lists differ on —
  * see {@link hasEmbeddedDock}.
