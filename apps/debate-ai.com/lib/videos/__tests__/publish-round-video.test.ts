@@ -338,4 +338,20 @@ describe("roundVideoToVideoRow", () => {
     const row = roundVideoToVideoRow(roundRow("a", { title: "Big Debate", channel: "Channel X" }));
     expect(row.searchText).toBe("big debate channel x description a");
   });
+
+  it("copies the description's 1AC / 2NR argument lines into arg_1ac / arg_2nr", () => {
+    const row = roundVideoToVideoRow(
+      roundRow("a", {
+        description: "Topic: Resolved: X.\nArguments: K v T-Framework, Setcol, Fast\nAff 1AC args: Setcol\nNeg 2NR args: T-Framework",
+      }),
+    );
+    expect(row.arg1ac).toBe("Setcol");
+    expect(row.arg2nr).toBe("T-Framework");
+  });
+
+  it("leaves the arguments empty for a resynced round without those lines", () => {
+    const row = roundVideoToVideoRow(roundRow("a"));
+    expect(row.arg1ac).toBeNull();
+    expect(row.arg2nr).toBeNull();
+  });
 });
