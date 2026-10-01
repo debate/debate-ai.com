@@ -1,8 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CalendarDays, MapPin, Search } from "lucide-react";
-import { Badge, Card, Input } from "../primitives";
+import { CalendarDays, MapPin, Plus, Search } from "lucide-react";
+import { Badge, Card, Input, buttonVariants } from "../primitives";
 import { Empty, Loaded, useApi, useTournaments } from "../shared";
 
 /** Upcoming tournaments, as on tabroom.com's front page (`/pages/invite/upcoming`). */
@@ -18,16 +18,22 @@ export function UpcomingTournamentsPage() {
           <h1 className="text-2xl font-bold tracking-tight">Tournaments</h1>
           <p className="text-sm text-muted-foreground">Invitations, pairings and results, powered by Tabroom.</p>
         </div>
-        <label className="relative w-full max-w-xs">
-          <Search className="pointer-events-none absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" aria-hidden />
-          <Input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search tournaments, states, circuits…"
-            aria-label="Search tournaments"
-            className="pl-8"
-          />
-        </label>
+        <div className="flex items-center gap-3">
+          <label className="relative w-full max-w-xs">
+            <Search className="pointer-events-none absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" aria-hidden />
+            <Input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search tournaments, states, circuits…"
+              aria-label="Search tournaments"
+              className="pl-8"
+            />
+          </label>
+          <Link href={hrefs.host()} className={buttonVariants({ size: "sm" })}>
+            <Plus className="mr-1.5 h-4 w-4" />
+            Host Tournament
+          </Link>
+        </div>
       </div>
       <Loaded state={state}>
         {(tourns) => <UpcomingList tourns={tourns} query={query} hrefs={hrefs} Link={Link} />}

@@ -1,8 +1,9 @@
 "use client";
 
-import { CalendarDays, CalendarRange, Computer, Globe, MapPin } from "lucide-react";
-import { Badge, Button, Card, CardContent, CardHeader, CardTitle, Input } from "../primitives";
-import { BackLink, Empty, Section, useTournaments } from "../shared";
+import { type ComponentType } from "react";
+import { CalendarRange, Computer, MapPin, ExternalLink } from "lucide-react";
+import { Badge, Card, CardContent, CardHeader, CardTitle, buttonVariants } from "../primitives";
+import { BackLink, Section, useTournaments } from "../shared";
 
 export type ScheduledType = "virtual" | "in-person" | "long-term-online";
 
@@ -10,7 +11,7 @@ interface TournamentTypeOption {
   type: ScheduledType;
   title: string;
   description: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: ComponentType<{ className?: string }>;
   details: string;
 };
 
@@ -34,7 +35,7 @@ const TOURNAMENT_TYPES: TournamentTypeOption[] = [
     title: "Long-Term Online",
     description: "Online tournament spread across multiple days or weeks.",
     icon: CalendarRange,
-    details: "Schedule rounds over a extended period — ideal for online leagues and mail-in style rounds.",
+    details: "Schedule rounds over an extended period — ideal for online leagues and mail-in style rounds.",
   },
 ];
 
@@ -43,7 +44,7 @@ const TOURNAMENT_TYPES: TournamentTypeOption[] = [
  * Tabroom's creation flow. Read-only — the actual tournament is hosted on
  * Tabroom. */
 export function HostTournamentPage() {
-  const { hrefs, Link } = useTournaments();
+  const { hrefs } = useTournaments();
   return (
     <div className="mx-auto max-w-5xl space-y-4 p-4 md:p-6">
       <BackLink href={hrefs.upcoming()}>All tournaments</BackLink>
@@ -67,7 +68,7 @@ export function HostTournamentPage() {
               1
             </Badge>
             <span>
-              <strong className="font-medium">Choose a format.</strong> Virtual, in-person, or long-term online — whatever works for your schedule.
+              <strong className="font-medium">Choose a format.</strong> Virtual, in-person, or long-term online — whichever works for your schedule.
             </span>
           </li>
           <li className="flex items-start gap-3 px-4 py-3">
@@ -105,20 +106,15 @@ function TournamentTypeCard({ option }: { option: TournamentTypeOption }) {
       <CardContent className="space-y-3">
         <p className="text-sm text-muted-foreground">{option.description}</p>
         <p className="text-xs text-muted-foreground">{option.details}</p>
-        <Button
-          asChild
-          variant="outline"
-          size="sm"
-          onClick={() => {}}
+        <a
+          href="https://beta.tabroom.com/user/home"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={buttonVariants({ variant: "outline", size: "sm" })}
         >
-          <a
-            href={`https://beta.tabroom.com/user/home`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Create on Tabroom
-          </a>
-        </Button>
+          Create on Tabroom
+          <ExternalLink className="ml-1.5 h-3.5 w-3.5" />
+        </a>
       </CardContent>
     </Card>
   );

@@ -4,14 +4,17 @@ import { matchTournamentRoute, tournamentHrefs } from "../src/routes";
 describe("matchTournamentRoute", () => {
   it.each([
     [[], { page: "upcoming" }],
+    [["host"], { page: "host" }],
     [["12"], { page: "tournament", tournId: 12 }],
     [["12", "rounds"], { page: "rounds", tournId: 12 }],
     [["12", "rounds", "LD", "3"], { page: "round", tournId: 12, eventAbbr: "LD", roundName: "3" }],
     [["12", "results"], { page: "results", tournId: 12 }],
     [["12", "results", "99"], { page: "resultSet", tournId: 12, resultSetId: 99 }],
+    [["12", "tabroom"], { page: "tabroom", tournId: 12 }],
     [["abc"], { page: "notFound" }],
     [["12", "results", "x"], { page: "notFound" }],
     [["12", "nope"], { page: "notFound" }],
+    [["12", "tabroom", "extra"], { page: "notFound" }],
   ])("%j", (segments, route) => {
     expect(matchTournamentRoute(segments)).toEqual(route);
   });
