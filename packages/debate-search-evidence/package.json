@@ -27,18 +27,18 @@
     "clsx": "^2.1.1",
     "debate-card-parser": "workspace:*",
     "debate-comments": "workspace:*",
-    "dompurify": "^3.4.9",
+    "dompurify": "^3.4.16",
     "fuse.js": "^7.5.0",
     "grab-url": "^1.6.22",
-    "hyparquet": "^1.30.0",
-    "hyparquet-compressors": "^1.1.1",
-    "lucide-react": "^1.43.0",
+    "hyparquet": "^1.31.2",
+    "hyparquet-compressors": "^1.1.2",
+    "lucide-react": "^1.49.0",
     "prismjs": "^1.30.0",
-    "qwksearch-api-client": "^1.0.24",
+    "qwksearch-api-client": "^1.0.109",
     "react-native-app-buttons": "^0.1.4",
-    "react-resizable-panels": "^4.12.4",
-    "research-agent-ui": "^0.1.152",
-    "tailwind-merge": "^3.6.0"
+    "react-resizable-panels": "^4.14.1",
+    "research-agent-ui": "^0.1.293",
+    "tailwind-merge": "^3.7.0"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
@@ -46,14 +46,14 @@
     "next": ">=15"
   },
   "devDependencies": {
-    "@types/node": "^26.5.0",
-    "@types/react": "^19.2.18",
-    "@types/react-dom": "^19.2.7",
-    "@vitest/coverage-v8": "^5.0.0",
-    "hyparquet-writer": "^0.16.9",
-    "next": "16.3.4",
+    "@types/node": "^26.6.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitest/coverage-v8": "^5.0.3",
+    "hyparquet-writer": "^0.16.10",
+    "next": "16.3.8",
     "typescript": "^7.0.2",
-    "vitest": "^5.0.0"
+    "vitest": "^5.0.3"
   },
   "bin": {
     "debate-cards-upload": "./src/cli/upload-parquet.ts"

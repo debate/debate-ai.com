@@ -26,25 +26,25 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "kysely": "^0.29.5",
-    "lucide-react": "^1.43.0",
+    "kysely": "^0.29.6",
+    "lucide-react": "^1.49.0",
     "luxon": "^3.7.2",
     "router": "^2.2.0",
-    "sanitize-html": "^2.17.4",
-    "zod": "^4.5.4"
+    "sanitize-html": "^2.18.0",
+    "zod": "^4.6.5"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0"
   },
   "devDependencies": {
-    "@types/node": "^26.5.0",
-    "@types/react": "^19.2.18",
-    "@types/react-dom": "^19.2.7",
-    "@vitest/coverage-v8": "^5.0.0",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8",
+    "@types/node": "^26.6.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitest/coverage-v8": "^5.0.3",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
     "typescript": "^7.0.2",
-    "vitest": "^5.0.0"
+    "vitest": "^5.0.3"
   }
 }
