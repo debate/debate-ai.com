@@ -1,20 +1,29 @@
 ---
-title: "Topic & Video Statistics"
+title: "Topics & Video Statistics"
 ---
 
-# Topic & Video Statistics
+# Topics & Video Statistics
 
-`/practice/statistics` — a standalone page combining a searchable list of every
-season's debate resolutions with the YouTube channel view/upload charts that
-used to live only in a modal.
+`/practice/statistics` — a standalone page combining the research-area topic
+explorer, a searchable list of every season's debate resolutions, and the
+YouTube channel view/upload charts that used to live only in a modal.
 
 - **Route:** `/practice/statistics` (also `/practice/statistics`)
-- **Package:** `debate-videos`
+- **Package:** `debate-videos` (the areas explorer comes from `debate-webview`)
 
 ## What it shows
 
-Two sections, stacked:
+Three sections, stacked:
 
+- **Research Areas** (`TopicAreasExplorer`) — every NDT, Policy, LD and PF
+  resolution since 2000, split into 44 focused research areas. Each format is
+  its own collapsible panel with its own selection, so comparing an area's
+  Policy history against its PF history is two clicks rather than a filter
+  toggle that throws the first answer away. Within a panel the areas are
+  ranked by resolution count as a bar chart; selecting one lists its
+  resolutions newest first and draws its year-by-year trend line. The area
+  assignments are heuristic research categories, not official NSDA or NDT
+  classifications — the section says so in its footer.
 - **Debate Topics by Year** (`DebateTopicsExplorer`) — a timeline
   (`components/timeline/Timeline.tsx`, adapted from the shadcn-space
   "timeline-02" block): a scrollable rail of every season, newest first,
@@ -38,15 +47,35 @@ Two sections, stacked:
   itself optional furniture — a deployment with no YouTube API key just
   leaves this section off rather than erroring).
 
-Reachable from the sidebar tree's Practice section ("Topic & Video
+Reachable from the sidebar tree's Practice section ("Topics & Video
 Statistics", alongside Glossary and Rankings) and from the `/videos` quick-link
 tile grid.
+
+## Merged from two pages
+
+This page absorbed the standalone **Debate Topics Explorer**, which lived at
+`/research/topics`. That address now permanently redirects here. The two were
+drawing on the same underlying resolutions — every entry in the areas
+explorer's `resolutions.json` is the same resolution text as
+`debate-topics.json`, filed under an added area tag — so one page now answers
+"what has been debated, and in which research domain" and "how much of it is on
+the channel" without crossing two routes to join the halves. The areas
+explorer's sidebar row was removed from the Research section, where it would
+otherwise have been a second entry for the same page.
+
+The 44 area definitions stay in `debate-webview`
+(`lib/topic-areas/topic-areas.ts`) rather than moving to `debate-videos`,
+where this page renders: `debate-videos` depends on `debate-webview`, not the
+reverse, so it cannot import the data. The host page mounts the explorer and
+hands it down as a `topicAreasSlot` element, the same way `dockSlot` carries
+the app dock into the video library.
 
 ## Data flow
 
 ```
 panels/LecturesPage.tsx — currentCategory === "statistics" branch
   → panels/statistics/StatisticsPage.tsx
+    → topicAreasSlot  (TopicAreasExplorer, mounted by debate-webview)
     → components/topic-explorer/DebateTopicsExplorer.tsx   (topics, youtubeStats.byYear)
       → components/timeline/Timeline.tsx
     → components/youtube-stats-modal/YouTubeStatsCharts.tsx (youtubeStats prop)
