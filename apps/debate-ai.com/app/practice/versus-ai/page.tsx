@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Image from "next/image"
 import { Suspense } from "react"
 import { DebatePracticeVsAi } from "debate-practice-vs-ai"
 import { getSession } from "@/lib/auth/session"
@@ -8,6 +9,11 @@ export const metadata: Metadata = {
   title: "Practice vs AI",
   description: "Practice a full round against an AI opponent, format and side of your choice",
 }
+
+/** Screenshot of the tool, shown as the page banner (700x263). */
+const BANNER_SRC = "https://i.imgur.com/2awjrUp.png"
+const BANNER_ALT =
+  "Practice vs AI: pick an opponent, set the topic and clocks, debate a timed round, and get an AI scorecard"
 
 /**
  * Practice vs AI — pick an opponent persona, set the topic, stance and phase
@@ -25,6 +31,14 @@ export default async function VersusAiPage() {
   return (
     <ToolPage>
       <ToolPageHeader href="/practice/versus-ai" backHref="/debate" backLabel="round workspace" guide="practice-tools" />
+      <Image
+        src={BANNER_SRC}
+        alt={BANNER_ALT}
+        width={700}
+        height={263}
+        sizes="(max-width: 768px) 100vw, 700px"
+        className="w-full max-w-3xl rounded-lg border border-border"
+      />
       <Suspense>
         <DebatePracticeVsAi
           userId={session?.user?.id}
