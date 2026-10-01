@@ -76,6 +76,69 @@ import {
 } from "./cards-vision";
 
 /**
+ * The page's standard header: a name + one-line intro, followed by a section
+ * index that jumps to every part of the page below. The features page is the
+ * app's homepage, so it gets the same header treatment as every other surface
+ * rather than opening straight into the hero — a reader landing here should
+ * know what the page is and be able to pick a section without scrolling.
+ *
+ * The section list is static (it does not depend on the search query), so it
+ * stays a stable map of the whole page while someone filters the catalog.
+ */
+const HEADER_SECTIONS = [
+  { id: "overview", label: "Overview" },
+  { id: "showcase", label: "Workspaces" },
+  { id: "tour", label: "Tour" },
+  { id: "cards-vision", label: "CARDS" },
+  { id: "catalog", label: "Catalog" },
+  { id: "documents", label: "Documents" },
+];
+
+/**
+ * The standard page header for `/` (the homepage that redirects here):
+ * a name, an intro line, and a jump-to-section strip.
+ */
+function FeaturesHeader() {
+  return (
+    <header className="mx-auto max-w-4xl text-center">
+      <Reveal>
+        <p className="text-sm font-semibold uppercase tracking-wider text-primary">
+          {APP_NAME}
+        </p>
+      </Reveal>
+      <Reveal delay={60}>
+        <h1 className="mt-2 text-3xl font-bold leading-tight tracking-tight text-balance text-foreground sm:text-4xl">
+          Every tool, in one place.
+        </h1>
+      </Reveal>
+      <Reveal delay={120}>
+        <p className="mx-auto mt-3 max-w-2xl text-base leading-relaxed text-pretty text-muted-foreground">
+          Cut and tag evidence, flow a live round, time every speech, scout
+          judges and opponents, and take a full round against an AI — grouped
+          by category, searchable by name, route, or keyword.
+        </p>
+      </Reveal>
+      <Reveal delay={180}>
+        <nav
+          aria-label="Jump to a section"
+          className="mt-6 flex flex-wrap items-center justify-center gap-1.5"
+        >
+          {HEADER_SECTIONS.map((section, index) => (
+            <a
+              key={section.id}
+              href={`#${section.id}`}
+              className="da-chip inline-flex items-center rounded-full border border-border bg-card/70 px-3 py-1.5 text-xs font-medium text-muted-foreground backdrop-blur-sm transition-colors hover:bg-accent hover:text-foreground"
+            >
+              {section.label}
+            </a>
+          ))}
+        </nav>
+      </Reveal>
+    </header>
+  );
+}
+
+/**
  * A glyph per category, so a section is identifiable before its heading is
  * read. Keyed by the same slugs `FEATURE_CATEGORY_LABELS` uses.
  */
@@ -295,6 +358,10 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
         <style>{`[data-da-reveal="hidden"]{opacity:1;transform:none}`}</style>
       </noscript>
 
+      <section id="overview" className="relative px-4 pt-10 pb-8 sm:px-6 sm:pt-12 lg:px-8">
+        <FeaturesHeader />
+      </section>
+
       <section className="relative overflow-hidden px-4 pt-14 pb-10 sm:px-6 sm:pt-20 lg:px-8">
         <AuroraBackdrop />
 
@@ -439,6 +506,7 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
       ) : null}
 
       <section
+        id="showcase"
         aria-label="Workspaces"
         className="mx-auto max-w-6xl px-4 pt-6 pb-16 sm:px-6 lg:px-8"
       >
@@ -472,7 +540,11 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
 
       {/* The tour video, between the workspace screenshots it walks through and
           the long-form sections below. */}
-      <section aria-label="Tour video" className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 lg:px-8">
+      <section
+        id="tour"
+        aria-label="Tour video"
+        className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 lg:px-8"
+      >
         <Reveal>
           <FeatureVideo />
         </Reveal>
@@ -553,7 +625,7 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
         </ol>
       </section>
 
-      <div className="mx-auto max-w-6xl px-4 pb-20 sm:px-6 lg:px-8">
+      <section id="catalog" className="mx-auto max-w-6xl px-4 pb-20 sm:px-6 lg:px-8">
         {sections.length > 1 ? (
           <Reveal>
             <nav
@@ -683,7 +755,7 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
             <DocumentsFolder />
           </Reveal>
         </section>
-      </div>
+      </section>
     </div>
   );
 }
