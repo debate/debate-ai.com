@@ -129,6 +129,21 @@ describe("seedVideosIntoDb", () => {
     expect(batchSpy).toHaveBeenCalledTimes(1);
     expect(batchSpy.mock.calls[0]?.[0]).toHaveLength(2);
   });
+
+  it("refuses to seed from no rows rather than pruning every video", async () => {
+    const db = await freshDb();
+    await seedVideosIntoDb(db);
+
+    const source = vi.mocked((await import("../video-json-source")).getVideoRowsFromJson);
+    source.mockResolvedValue([]);
+    try {
+      await expect(seedVideosIntoDb(db)).rejects.toThrow(/refusing to prune/);
+    } finally {
+      source.mockResolvedValue(fixtureRows);
+    }
+
+    expect(await db.select().from(videos)).toHaveLength(fixtureRows.length);
+  });
 });
 
 describe("db.batch atomicity (the guarantee the fix above relies on)", () => {

@@ -44,6 +44,12 @@ const SEED_BATCH = { maxRows: 100, maxBytes: 50_000 };
 export async function seedVideosIntoDb(db: any): Promise<VideoSeedResult> {
   const startedAt = Date.now();
   const rows = await getVideoRowsFromJson();
+  // The statements end in a prune of every row this run did not upsert, so
+  // seeding from no rows would empty the table. That is what happens once the
+  // JSON assets are gone, so refuse instead.
+  if (rows.length === 0) {
+    throw new Error("videos: no JSON assets to seed from; refusing to prune the videos table");
+  }
   const statements = buildVideoSeedStatements(rows, Math.floor(startedAt / 1000), SEED_BATCH);
 
   // Run every upsert/prune statement as one atomic batch rather than
