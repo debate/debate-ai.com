@@ -369,7 +369,7 @@ index 33d941f..ca5bb8f 100644
    return (
      getElectronHost() !== null &&
 diff --git a/src/editor/index.ts b/src/editor/index.ts
-index 927a931..1332644 100644
+index 927a931..65fa832 100644
 --- a/src/editor/index.ts
 +++ b/src/editor/index.ts
 @@ -23,6 +23,7 @@ import { transformForExport, countMarkedCards } from '../export/transform-for-ex
@@ -1022,7 +1022,7 @@ index 927a931..1332644 100644
      // Re-apply the caret highlight now that `update()` has rebuilt
      // `liEntries` with fresh positions. The synchronous `setCaretHeading`
      // in `dispatchTransaction` ran against stale positions (it fires
-@@ -9774,11 +9825,12 @@ const BOOT_MOBILE_ENV = {
+@@ -9774,15 +9825,24 @@ const BOOT_MOBILE_ENV = {
      typeof window.matchMedia === 'function' &&
      window.matchMedia('(pointer: coarse)').matches,
    viewportWidth: window.innerWidth,
@@ -1036,7 +1036,20 @@ index 927a931..1332644 100644
    );
  }
  if (BOOT_MOBILE) setMobileShellActive(true);
-@@ -9925,6 +9977,12 @@ async function initPlugins(): Promise<void> {
+-const BOOT_MULTI_DOC_WORKSPACE = !BOOT_MOBILE && settings.get('multiDocWorkspace');
++// Embedded in the site's React shell (`.dec-cardmirror-embed`, see
++// `detectEmbedded`): the host mounts exactly ONE document into the engine and
++// waits for the single-doc `mountView` to land. The three-pane shell boots
++// its panes hidden with no active view, so a synced `multiDocWorkspace: true`
++// left the embed on "Loading editor…" forever. Like the mobile shell, the
++// embed forces single-doc for this load without writing the synced setting.
++const BOOT_EMBEDDED = BOOT_MOBILE_ENV.embedded;
++const BOOT_MULTI_DOC_WORKSPACE =
++  !BOOT_MOBILE && !BOOT_EMBEDDED && settings.get('multiDocWorkspace');
+ // Set when this window bounced itself as a redundant three-pane duplicate
+ // (singleton enforcement). A bounced window that lingers (couldn't self-close)
+ // must stop claiming to be a workspace, so it never blocks a future window.
+@@ -9925,6 +9985,12 @@ async function initPlugins(): Promise<void> {
      // of the just-registered plugin materializes now (boot rendered before
      // the async plugin load), and an uninstalled plugin's button vanishes.
      renderCustomRibbonButtons();
@@ -1049,7 +1062,7 @@ index 927a931..1332644 100644
    };
    installPluginRegistry((pluginId) =>
      createPluginApi(pluginId, {
-@@ -10137,7 +10195,14 @@ function positionRightTray(): void {
+@@ -10137,7 +10203,14 @@ function positionRightTray(): void {
  
  // Load the per-user Learn annotation store (flashcards / schedules /
  // anchors) so review counts + the comments column have it available.
@@ -1065,7 +1078,7 @@ index 927a931..1332644 100644
  
  // Drag-and-drop file opening works in both single-doc and multi-pane modes.
  installDragToOpen();
-@@ -10207,7 +10272,13 @@ if (BOOT_MULTI_DOC_WORKSPACE) {
+@@ -10207,7 +10280,13 @@ if (BOOT_MULTI_DOC_WORKSPACE) {
      // and the shell re-shows it when the last doc closes) — an empty
      // workspace would otherwise land on a bare window with no
      // affordances. Any doc entering a slot hides it.
@@ -1080,7 +1093,7 @@ index 927a931..1332644 100644
      // Tell main this window can take OS-opened files into its slot
      // picker (so "Open with…" reuses it instead of spawning a blank
      // window), and wire the forward channel.
-@@ -10242,7 +10313,13 @@ if (BOOT_MULTI_DOC_WORKSPACE) {
+@@ -10242,7 +10321,13 @@ if (BOOT_MULTI_DOC_WORKSPACE) {
    // Home screen is a single-doc-mode feature (multi-pane has its
    // own workspace layout). Mount it before boot so the overlay is
    // ready when initSingleDocBoot decides whether to show it.
@@ -1095,7 +1108,19 @@ index 927a931..1332644 100644
    // Single-pane windows don't take OS-opened files in place — main
    // keeps spawning a fresh window per file. Report the mode so a
    // stale multi-pane registration (from before a mode-toggle reload)
-@@ -10786,12 +10863,25 @@ async function runStartupRecovery(): Promise<void> {
+@@ -10573,8 +10658,9 @@ settings.subscribe((s, meta) => {
+   if (modeSwitchInFlight) return;
+   // The mobile shell forces single-doc rendering without writing the
+   // synced `multiDocWorkspace` setting, so the boot constant can
+-  // disagree with the stored value here by design — never a switch.
+-  if (BOOT_MOBILE) return;
++  // disagree with the stored value here by design — never a switch. The
++  // embed does the same (see BOOT_EMBEDDED).
++  if (BOOT_MOBILE || BOOT_EMBEDDED) return;
+   // A `multiDocWorkspace` toggle in ANOTHER window reaches us through
+   // the cross-window storage-event sync. Only the window the user
+   // actually toggled in may drive the switch (close the other windows
+@@ -10786,12 +10872,25 @@ async function runStartupRecovery(): Promise<void> {
  }
  
  async function runStartupRecoveryInner(): Promise<void> {
