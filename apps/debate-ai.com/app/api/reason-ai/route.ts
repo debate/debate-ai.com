@@ -3,7 +3,7 @@ import { getAuth } from "@/lib/auth"
 import { getEnv } from "@/lib/env"
 import { getDBFromContext } from "@/lib/database/context"
 import { limitsFor } from "debate-webview/lib/stripe/limits"
-import { consumeDailyUsage, getUserTier, limitMessage } from "@/lib/stripe/usage"
+import { consumeDailyUsage, getUserTier, limitMessage, planLimitHeaders } from "@/lib/stripe/usage"
 
 /**
  * General-purpose server-side proxy for this app's Anthropic-backed AI
@@ -112,7 +112,7 @@ const apiKey = getEnv("ANTHROPIC_API_KEY")
   if (!usage.allowed) {
     return NextResponse.json(
       { error: limitMessage("llmRequests", usage, tier), limit: usage.limit, tier },
-      { status: 429 },
+      { status: 429, headers: planLimitHeaders("llmRequests") },
     )
   }
 
