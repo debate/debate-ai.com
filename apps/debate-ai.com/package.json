@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "vinext dev",
     "build": "vinext build && npm run build:sw",
-    "build:sw": "node lib/offline-sw/generate.cjs && webpack --config webpack.config.cjs && cp public/service-worker.js dist/client/service-worker.js",
+    "build:sw": "node lib/offline-sw/generate.cjs && bun build lib/offline-sw/service-worker.ts --outfile public/service-worker.js --target browser --minify && cp public/service-worker.js dist/client/service-worker.js",
     "start": "vinext start",
     "deploy": "npm run db:migrate:d1 && npm run build && vinext deploy --skip-build",
     "deploy:upload": "node ../../.github/scripts/deploy-upload.mjs",

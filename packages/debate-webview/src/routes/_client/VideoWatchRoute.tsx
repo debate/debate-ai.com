@@ -22,8 +22,8 @@ import { VideoStaffControls } from "../../components/videos/VideoStaffControls"
  *
  * The web app resolves the video on the server, straight from D1
  * (`app/videos/_watch/video-route-page.tsx`). A host without the Worker
- * resolves it from the library the shell already keeps in this browser
- * (`VideoIndexPrefetcher` → `/api/videos/index`), matching the path the same
+ * resolves it from the video library cached in this browser (fetched from
+ * `/api/videos/index` if it isn't cached yet), matching the path the same
  * way: a video's canonical `videoRouteHref`. The related-videos row and the
  * side panel's documents are server lookups and are left out here.
  */

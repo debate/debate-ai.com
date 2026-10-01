@@ -57,5 +57,15 @@ describe("engine boot inside the embed markup", () => {
     // "Navigate" group is reachable from it.
     const tabs = [...root.querySelectorAll("#ribbon-tabs [role='tab']")].map((t) => t.textContent?.trim());
     expect(tabs).toEqual(expect.arrayContaining(["File", "Card", "Edit", "Format", "View"]));
+
+    // The dropzone shelf finishes loading (IndexedDB plus a peer-tab probe)
+    // after the view mounts, then renders into the DOM. Wait for that render
+    // so it can't land after jsdom is torn down and fail the run with
+    // "document is not defined".
+    const shelfStart = Date.now();
+    while (!document.querySelector(".pmd-dropzone-list li") && Date.now() - shelfStart < 10_000) {
+      await new Promise((resolve) => setTimeout(resolve, 30));
+    }
+    expect(document.querySelector(".pmd-dropzone-list li")).not.toBeNull();
   }, 30_000);
 });
