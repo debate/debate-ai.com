@@ -1,5 +1,1 @@
-import { redirect } from "next/navigation"
-
-export default function HomePage() {
-  redirect("/practice/features")
-}
+export { default } from "debate-webview/routes/features/page"

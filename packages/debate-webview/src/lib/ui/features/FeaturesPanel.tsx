@@ -50,7 +50,6 @@ import { EmptyState } from "../panels/panel-shell";
 import {
   AuroraBackdrop,
   cardHueShift,
-  CountUp,
   Marquee,
   Pill,
   Reveal,
@@ -58,7 +57,6 @@ import {
 } from "./effects";
 import {
   APP_FEATURES,
-  buildFeatureCatalogSummaryText,
   buildFeatureSections,
   featureDocUrl,
   searchFeatures,
@@ -74,69 +72,6 @@ import {
   CARDS_TITLE,
   CARDS_VISION,
 } from "./cards-vision";
-
-/**
- * The page's standard header: a name + one-line intro, followed by a section
- * index that jumps to every part of the page below. The features page is the
- * app's homepage, so it gets the same header treatment as every other surface
- * rather than opening straight into the hero — a reader landing here should
- * know what the page is and be able to pick a section without scrolling.
- *
- * The section list is static (it does not depend on the search query), so it
- * stays a stable map of the whole page while someone filters the catalog.
- */
-const HEADER_SECTIONS = [
-  { id: "overview", label: "Overview" },
-  { id: "showcase", label: "Workspaces" },
-  { id: "tour", label: "Tour" },
-  { id: "cards-vision", label: "CARDS" },
-  { id: "catalog", label: "Catalog" },
-  { id: "documents", label: "Documents" },
-];
-
-/**
- * The standard page header for `/` (the homepage that redirects here):
- * a name, an intro line, and a jump-to-section strip.
- */
-function FeaturesHeader() {
-  return (
-    <header className="mx-auto max-w-4xl text-center">
-      <Reveal>
-        <p className="text-sm font-semibold uppercase tracking-wider text-primary">
-          {APP_NAME}
-        </p>
-      </Reveal>
-      <Reveal delay={60}>
-        <h1 className="mt-2 text-3xl font-bold leading-tight tracking-tight text-balance text-foreground sm:text-4xl">
-          Every tool, in one place.
-        </h1>
-      </Reveal>
-      <Reveal delay={120}>
-        <p className="mx-auto mt-3 max-w-2xl text-base leading-relaxed text-pretty text-muted-foreground">
-          Cut and tag evidence, flow a live round, time every speech, scout
-          judges and opponents, and take a full round against an AI — grouped
-          by category, searchable by name, route, or keyword.
-        </p>
-      </Reveal>
-      <Reveal delay={180}>
-        <nav
-          aria-label="Jump to a section"
-          className="mt-6 flex flex-wrap items-center justify-center gap-1.5"
-        >
-          {HEADER_SECTIONS.map((section, index) => (
-            <a
-              key={section.id}
-              href={`#${section.id}`}
-              className="da-chip inline-flex items-center rounded-full border border-border bg-card/70 px-3 py-1.5 text-xs font-medium text-muted-foreground backdrop-blur-sm transition-colors hover:bg-accent hover:text-foreground"
-            >
-              {section.label}
-            </a>
-          ))}
-        </nav>
-      </Reveal>
-    </header>
-  );
-}
 
 /**
  * A glyph per category, so a section is identifiable before its heading is
@@ -320,18 +255,6 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
 
   const allSections = useMemo(() => buildFeatureSections(entries), [entries]);
 
-  // The header count describes the catalog, not the current filter, so it
-  // stays a stable "how big is this app" answer while someone types.
-  const summaryText = useMemo(
-    () => buildFeatureCatalogSummaryText(allSections),
-    [allSections],
-  );
-
-  const documentedCount = useMemo(
-    () => entries.filter((entry) => entry.doc).length,
-    [entries],
-  );
-
   // A card's hover colour comes from its place in the whole catalog plus the
   // randomized page-load offset, not in the filtered grid, so a feature keeps
   // the same colour while someone types rather than every card changing hue on
@@ -357,10 +280,6 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
       <noscript>
         <style>{`[data-da-reveal="hidden"]{opacity:1;transform:none}`}</style>
       </noscript>
-
-      <section id="overview" className="relative px-4 pt-10 pb-8 sm:px-6 sm:pt-12 lg:px-8">
-        <FeaturesHeader />
-      </section>
 
       <section className="relative overflow-hidden px-4 pt-14 pb-10 sm:px-6 sm:pt-20 lg:px-8">
         <AuroraBackdrop />
@@ -425,31 +344,9 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
                 className="h-11 rounded-full border-border bg-card/80 pl-10 backdrop-blur-sm"
               />
             </div>
-          </Reveal>
+        </Reveal>
 
-          <Reveal delay={280}>
-            <dl className="mx-auto mt-10 grid max-w-2xl grid-cols-3 gap-px overflow-hidden rounded-2xl border border-border bg-border">
-              {[
-                { label: "Features", value: entries.length },
-                { label: "Categories", value: allSections.length },
-                { label: "With full docs", value: documentedCount },
-              ].map((stat) => (
-                <div
-                  key={stat.label}
-                  className="bg-card/60 px-4 py-5 backdrop-blur-sm transition-colors hover:bg-card"
-                >
-                  <dt className="text-3xl font-bold tracking-tight tabular-nums text-foreground">
-                    <CountUp value={stat.value} />
-                  </dt>
-                  <dd className="mt-1 text-[11px] tracking-wide text-muted-foreground uppercase">
-                    {stat.label}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </Reveal>
-
-          <Reveal delay={340}>
+        <Reveal delay={340}>
             {/* The root README's badge block, row for row. */}
             <div className="mt-8 flex flex-col items-center gap-2" data-testid="readme-badges">
               {README_BADGE_ROWS.map((row, rowIndex) => (
