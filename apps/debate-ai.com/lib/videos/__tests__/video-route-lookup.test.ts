@@ -1,18 +1,40 @@
 /**
  * @fileoverview Resolving a video from the addresses people actually share.
  *
- * Runs against the JSON library (no database is reachable here), so these
- * are the real videos: an old `/videos/watch/<title>-<id>` link, and a
- * round's current and older paths under `/videos`.
+ * Runs against the JSON fallback (no database is reachable here), fed a few
+ * real videos copied from the library's former `data/videos` assets: an old
+ * `/videos/watch/<title>-<id>` link, and a round's current and older paths
+ * under `/videos`.
  */
 
 import { describe, expect, it, vi } from "vitest";
+import { buildVideoRows, type VideoTuple } from "debate-data-sync/src/videos/video-rows";
 import { legacyVideoRouteHref, videoRouteHref, type VideoType } from "debate-videos";
 
 vi.mock("@/lib/database/context", () => ({
   getDBFromContext: () => {
     throw new Error("no database in tests");
   },
+}));
+
+/** Copied from `rounds-college.json` (descriptions shortened). */
+const COLLEGE_ROUNDS = [
+  ["uQ1-3BOv_6E", "NDT 2026 - Octas - AFF Kansas LS v NEG Michigan SS", "2026-04-02", "Kansas Debate", 1840, "", 4, "NDT", "Octas", "Kansas LS", "Michigan SS", null, null, null, null, false, null],
+  ["qx7Xx_6exzk", "NDT 2022 - Finals - Dartmouth SV (Aff) vs Michigan PR (Neg)", "2022-04-05", "Jacob Wilkus", 23533, "NDT 2022 - Finals", 4, "NDT 2022", "Finals", "Dartmouth SV", "Michigan PR", null, null, null, null, true],
+] as unknown as VideoTuple[];
+
+/** Copied from `debate-lectures.json` (description shortened). */
+const LECTURES = [
+  ["Afl7_hl-H0c", "2022 NDT Finals - Dartmouth SV vs Michigan PR  - Round Analysis Infographic for Classrooms", "2026-08-03", "d3v", 1, "Full Round: https://www.youtube.com/watch?v=qx7Xx_6exzk", "Round Analysis"],
+] as unknown as VideoTuple[];
+
+vi.mock("../video-json-source", () => ({
+  getVideoRowsFromJson: async () =>
+    buildVideoRows({
+      rounds: [{ data: COLLEGE_ROUNDS }],
+      lectures: { data: LECTURES },
+      topPicks: { data: [] },
+    }),
 }));
 
 const { getVideoBySlug, getVideoByRouteSegments, getVideoPage } = await import(

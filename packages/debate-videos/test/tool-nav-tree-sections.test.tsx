@@ -101,14 +101,14 @@ describe("ToolNavTree sectionIds", () => {
     expect(html).toContain("Practice");
   });
 
-  it("closes Practice with the glossary and rankings links", () => {
+  it("closes Practice with the glossary and statistics links", () => {
     // They used to hang below the whole tree, in no section at all.
     pathname.current = "/practice/prep-notes";
     try {
       const html = render({ sectionIds: [PRACTICE_SECTION_ID] });
 
       expect(html).toContain("/practice/glossary");
-      expect(html).toContain("/practice/rankings");
+      expect(html).toContain("/practice/statistics");
       // Last in the section: reference material after the tools themselves.
       expect(html.indexOf("/practice/prep-notes")).toBeLessThan(html.indexOf("/practice/glossary"));
     } finally {
