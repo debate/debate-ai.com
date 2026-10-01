@@ -12,6 +12,9 @@ import { lazy, useSyncExternalStore, type ReactElement } from "react"
  * the REASON docs editor with its files/outline sidebar, and the settings
  * modal — all talking to qwksearch.com's public API as a guest.
  *
+ * Not mounted at the moment: `/doc` shows qwksearch.com in an iframe instead
+ * (see `WorkspaceScreen`). Kept so the bundled workspace can come back.
+ *
  * The workspace is pulled in with `import()` rather than a static import so
  * that `Prism` is on the global object before any of it evaluates. Deep
  * inside research-agent-ui, `extract-webpage` registers syntax-highlighting
