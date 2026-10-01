@@ -175,8 +175,10 @@ the Worker's own baseline is smaller, so compare deltas, not totals).
 - **A docs page costs about +18 MB**, down from +87 MB since the docs
   collection became `async: true` in `source.config.ts` and a page's MDX
   loads only when that page is rendered.
-- **`/doc` renders only on the client** (`routes/doc/ResearchAgentEmbed.tsx`),
-  so it costs the server nothing.
+- **`/doc` is an iframe of qwksearch.com** (`routes/doc/WorkspaceScreen.tsx`),
+  so it costs neither the server nor the page bundle anything. The bundled
+  workspace it replaced (`routes/doc/ResearchAgentEmbed.tsx`) still exists but
+  is no longer mounted.
 - **What the Worker loads at startup.** The server bundle's startup set is
   about 3 MB of code. The largest single piece is the auth chunk (908 kB).
   Two data modules are also large: the human-names list (900 kB) and the
