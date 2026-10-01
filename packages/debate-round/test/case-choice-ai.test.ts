@@ -7,7 +7,7 @@ import {
 
 const INPUT: CaseChoiceAiInput = {
   caseRankings: [
-    { name: "Kritik case", argumentTags: ["kritik"], overlapScore: 1 },
+    { name: "Critique case", argumentTags: ["critique"], overlapScore: 1 },
     { name: "Topicality case", argumentTags: ["topicality", "framework"], overlapScore: 4 },
   ],
   judgeAdaptationNotes: ["Slow down delivery — this judge has a low tracked speed tolerance."],
@@ -19,7 +19,7 @@ describe("buildCaseChoiceAiUserPrompt", () => {
   it("includes every case's tags and overlap score", () => {
     const prompt = buildCaseChoiceAiUserPrompt(INPUT);
 
-    expect(prompt).toContain("Kritik case (tags: kritik; opponent-tag overlap score: 1)");
+    expect(prompt).toContain("Critique case (tags: critique; opponent-tag overlap score: 1)");
     expect(prompt).toContain("Topicality case (tags: topicality, framework; opponent-tag overlap score: 4)");
   });
 
@@ -57,19 +57,19 @@ describe("buildCaseChoiceAiUserPrompt", () => {
 describe("parseCaseChoiceAiResponse", () => {
   it("parses a well-formed JSON reply", () => {
     const raw = JSON.stringify({
-      recommendedCase: "Kritik case",
+      recommendedCase: "Critique case",
       reasoning: "Lowest overlap and fits the judge's low theory receptiveness.",
       caseAssessments: [
-        { name: "Kritik case", assessment: "Safest option against this opponent's prep." },
+        { name: "Critique case", assessment: "Safest option against this opponent's prep." },
         { name: "Topicality case", assessment: "Higher overlap risk — opponent has answers prepped." },
       ],
     });
 
     expect(parseCaseChoiceAiResponse(raw)).toEqual({
-      recommendedCase: "Kritik case",
+      recommendedCase: "Critique case",
       reasoning: "Lowest overlap and fits the judge's low theory receptiveness.",
       caseAssessments: [
-        { name: "Kritik case", assessment: "Safest option against this opponent's prep." },
+        { name: "Critique case", assessment: "Safest option against this opponent's prep." },
         { name: "Topicality case", assessment: "Higher overlap risk — opponent has answers prepped." },
       ],
     });
@@ -93,15 +93,15 @@ describe("parseCaseChoiceAiResponse", () => {
     const raw =
       "Here is my evaluation:\n" +
       JSON.stringify({
-        recommendedCase: "Kritik case",
+        recommendedCase: "Critique case",
         reasoning: "Safer overall.",
-        caseAssessments: [{ name: "Kritik case", assessment: "Safer overall." }],
+        caseAssessments: [{ name: "Critique case", assessment: "Safer overall." }],
       }) +
       "\nHope that helps!";
 
     const result = parseCaseChoiceAiResponse(raw);
-    expect(result?.recommendedCase).toBe("Kritik case");
-    expect(result?.caseAssessments).toEqual([{ name: "Kritik case", assessment: "Safer overall." }]);
+    expect(result?.recommendedCase).toBe("Critique case");
+    expect(result?.caseAssessments).toEqual([{ name: "Critique case", assessment: "Safer overall." }]);
   });
 
   it("returns null for an empty string", () => {

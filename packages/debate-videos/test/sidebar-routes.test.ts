@@ -71,7 +71,14 @@ describe("matchesToolSidebarHref", () => {
     expect(matchesToolSidebarHref("/cardsy")).toBe(false);
     expect(matchesToolSidebarHref("/teamsy")).toBe(false);
     expect(matchesToolSidebarHref("/login")).toBe(false);
-    expect(matchesToolSidebarHref("/")).toBe(false);
+  });
+
+  it("matches the homepage, but nothing below it through that entry", () => {
+    // `/` is an exact-match entry, not a prefix one: the nested-route check
+    // compares against `${href}/`, which for `/` would be `//`. So the homepage
+    // is covered and every other route still has to be named by a longer entry.
+    expect(matchesToolSidebarHref("/")).toBe(true);
+    expect(TOOL_SIDEBAR_HREFS.has("/")).toBe(true);
   });
 });
 
@@ -95,8 +102,8 @@ describe("hasEmbeddedDock / isGenericToolSidebarRoute", () => {
   it("falls back to the fixed dock only off the sidebar routes", () => {
     // `/practice/features` and `/legal/privacy` used to be in this list. They are
     // sidebar routes now — see "the features catalog" and "the terms of
-    // service page" below.
-    for (const route of ["/", "/login", "/contacts"]) {
+    // service page" below, and "the homepage" for `/`.
+    for (const route of ["/login", "/contacts"]) {
       expect(hasEmbeddedDock(route)).toBe(false);
       expect(isGenericToolSidebarRoute(route)).toBe(false);
     }
@@ -117,6 +124,12 @@ describe("the features catalog", () => {
     // …and the dock's own floating instance stays hidden, since the sidebar
     // it is wrapped in already hosts one.
     expect(hasEmbeddedDock("/practice/features")).toBe(true);
+  });
+
+  it("is the homepage too, so the site's front door is not its one bare page", () => {
+    // `app/page.tsx` re-exports this same page, so `/` renders the catalog.
+    expect(isGenericToolSidebarRoute("/")).toBe(true);
+    expect(hasEmbeddedDock("/")).toBe(true);
   });
 });
 
@@ -162,6 +175,24 @@ describe("Latest News", () => {
   });
 });
 
+describe("Tournaments and Tabroom", () => {
+  it("are one sidebar entry, not two", () => {
+    // Tabroom is framed from a button at the top of the tournaments page, so
+    // a row of its own would only be a second way to the same thing.
+    const practice = SIDEBAR_TOOL_SECTIONS.find((section) => section.id === "practice");
+    const hrefs = practice?.tools.map((tool) => tool.href) ?? [];
+
+    expect(hrefs).toContain("/practice/tournaments");
+    expect(hrefs).not.toContain("/practice/tabroom");
+  });
+
+  it("still recognise /practice/tabroom as a sidebar route, so it keeps its dock", () => {
+    // The page itself stays reachable — from the tournaments page's button and
+    // from a tournament's Tabroom tab — it just is not listed in the tree.
+    expect(matchesToolSidebarHref("/practice/tabroom")).toBe(true);
+  });
+});
+
 describe("the REASON research workspace", () => {
   it("is still a sidebar destination, though no longer a Research row", () => {
     // It lost its "Debate Docs" row in favour of the dock's own Docs button,
@@ -171,26 +202,17 @@ describe("the REASON research workspace", () => {
     expect(matchesToolSidebarHref("/doc/cp-answer-to-states")).toBe(true);
   });
 
-  it("hosts the dock in its own sidebar, itself and every document beneath it", () => {
-    expect(hostsOwnSidebarDock("/doc")).toBe(true);
-    expect(hostsOwnSidebarDock("/doc/cp-answer-to-states")).toBe(true);
-    // The trailing `/` in the match keeps the help docs off this list.
+  it("no longer hosts a dock of its own, now that it is quick search in an iframe", () => {
+    expect(hostsOwnSidebarDock("/doc")).toBe(false);
+    expect(hostsOwnSidebarDock("/doc/cp-answer-to-states")).toBe(false);
     expect(hostsOwnSidebarDock("/docs")).toBe(false);
-    expect(hostsOwnSidebarDock("/reason-editor")).toBe(false);
     expect(hostsOwnSidebarDock(null)).toBe(false);
-    // And hosting its own dock is one way of owning the layout.
-    expect(ownsItsLayout("/doc")).toBe(true);
-    expect(ownsItsLayout("/doc/cp-answer-to-states")).toBe(true);
+    expect(ownsItsLayout("/doc")).toBe(false);
   });
 
-  it("is not wrapped in the generic sidebar, which stood beside its own", () => {
-    expect(isGenericToolSidebarRoute("/doc")).toBe(false);
-    expect(isGenericToolSidebarRoute("/doc/cp-answer-to-states")).toBe(false);
-  });
-
-  it("keeps the floating dock suppressed, its own sidebar carrying one", () => {
-    // This is what separates it from `/debate` below: both skip the generic
-    // sidebar, but only this one puts a dock in the column it renders itself.
+  it("is wrapped in the generic sidebar, which carries the dock beside the frame", () => {
+    expect(isGenericToolSidebarRoute("/doc")).toBe(true);
+    expect(isGenericToolSidebarRoute("/doc/cp-answer-to-states")).toBe(true);
     expect(hasEmbeddedDock("/doc")).toBe(true);
     expect(hasEmbeddedDock("/doc/cp-answer-to-states")).toBe(true);
   });

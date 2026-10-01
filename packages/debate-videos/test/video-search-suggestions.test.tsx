@@ -17,7 +17,7 @@ import type { VideoSuggestions } from "../src/types/videos";
 const SUGGESTIONS: VideoSuggestions = {
   keywords: [
     { label: "Finals", count: 206, kind: "keyword" },
-    { label: "Kritik", count: 43, kind: "keyword" },
+    { label: "Critique", count: 43, kind: "keyword" },
   ],
   tournaments: [
     { label: "NDT", count: 1346, kind: "tournament" },
@@ -44,7 +44,7 @@ describe("VideoSearchSuggestions", () => {
 
   it("renders one chip per suggestion, with its match count", () => {
     const html = render();
-    for (const label of ["Finals", "Kritik", "NDT", "TOC"]) {
+    for (const label of ["Finals", "Critique", "NDT", "TOC"]) {
       expect(html).toContain(`>${label}</span>`);
     }
     expect(html).toContain(">206<");

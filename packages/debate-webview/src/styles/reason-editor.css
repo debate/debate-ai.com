@@ -2,8 +2,7 @@
    (`components/qwksearch/Workspace.tsx`) rather than with every page.
    `app.css` declares the `vendor` layer up front, so these land in the same
    place in the cascade as when they were imported there. */
-
-/* The editor's own component styles (toolbar, tables, code blocks…). */
 @import "react-reason-editor/style.css" layer(vendor);
-/* The files/outline sidebar ships its styles separately. */
 @import "react-reason-editor-sidebar/style.css" layer(vendor);
+/* The editor's own component styles (toolbar, tables, code blocks…).
+   The files/outline sidebar ships its styles separately. */

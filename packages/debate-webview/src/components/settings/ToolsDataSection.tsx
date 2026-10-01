@@ -7,8 +7,7 @@ import { summarizeToolSyncFailures } from "../../lib/tools/tool-sync-status"
 
 /**
  * A compact link into `/tools`' full account-sync status and "My Saved
- * Items", at the top of the Preferences tab, next to `PlanUpgradeSection`
- * and `TeamCoachingSection`.
+ * Items", at the top of the Preferences tab, next to `TeamCoachingSection`.
  *
  * Deliberately not a second copy of `ToolSyncStatusPanel` — same
  * `useToolRecordSync` state, but just a status line and a link, so `/tools`

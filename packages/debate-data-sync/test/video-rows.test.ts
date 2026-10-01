@@ -33,28 +33,30 @@ const ROUND_TUPLE = [
 
 const LECTURE_TUPLE = [
   "vid-lecture",
-  "Kritik basics",
+  "Critique basics",
   "2019-11-02",
   "Coach Channel",
   1200,
   "Intro to the K",
-  "Kritik / Critical Theory",
+  "Critique / Critical Theory",
 ];
 
 describe("seasonYearForDate", () => {
-  it("puts a post-June date in the next season", () => {
+  it("puts a July-onward date in the next season", () => {
     expect(seasonYearForDate("2025-09-14")).toBe(2026);
-    expect(seasonYearForDate("2025-06-01")).toBe(2026);
+    expect(seasonYearForDate("2025-07-01")).toBe(2026);
+    expect(seasonYearForDate("2026-07-01")).toBe(2027);
+    expect(seasonYearForDate("2026-08-03")).toBe(2027);
   });
 
-  it("puts a pre-June date in the current season", () => {
+  it("puts a pre-July date in the current season", () => {
     expect(seasonYearForDate("2026-04-14")).toBe(2026);
-    expect(seasonYearForDate("2026-05-31")).toBe(2026);
+    expect(seasonYearForDate("2026-06-30")).toBe(2026);
   });
 
   it("marks pre-2010 content as legacy", () => {
     expect(seasonYearForDate("2009-12-31")).toBe(LEGACY_SEASON);
-    expect(seasonYearForDate("2010-05-31")).toBe(LEGACY_SEASON);
+    expect(seasonYearForDate("2010-06-30")).toBe(LEGACY_SEASON);
   });
 
   it("falls back to legacy for unparseable dates", () => {
@@ -102,7 +104,7 @@ describe("publishedMsForDate", () => {
 
 describe("normalizeCategoryKey", () => {
   it("slugifies a category label", () => {
-    expect(normalizeCategoryKey("Kritik / Critical Theory")).toBe("kritik___critical_theory");
+    expect(normalizeCategoryKey("Critique / Critical Theory")).toBe("critique___critical_theory");
     expect(normalizeCategoryKey("Demo Debates")).toBe("demo_debates");
   });
 
@@ -136,8 +138,8 @@ describe("tupleToVideoRow", () => {
   it("maps a lecture tuple's category and leaves the style unset", () => {
     const row = tupleToVideoRow(LECTURE_TUPLE, "lecture")!;
     expect(row.style).toBeNull();
-    expect(row.category).toBe("Kritik / Critical Theory");
-    expect(row.categoryKey).toBe("kritik___critical_theory");
+    expect(row.category).toBe("Critique / Critical Theory");
+    expect(row.categoryKey).toBe("critique___critical_theory");
     expect(row.isTopPick).toBe(false);
   });
 
@@ -167,7 +169,7 @@ describe("videoRowToTuple", () => {
     const row = tupleToVideoRow(LECTURE_TUPLE, "lecture")!;
     const tuple = videoRowToTuple(row);
     expect(tuple).toHaveLength(18);
-    expect(tuple[6]).toBe("Kritik / Critical Theory");
+    expect(tuple[6]).toBe("Critique / Critical Theory");
     expect(tuple[17]).toBe(2020);
   });
 });

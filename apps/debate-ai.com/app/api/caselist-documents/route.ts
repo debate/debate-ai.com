@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getDBFromContext } from "@/lib/database/context";
 import { caselistDocuments } from "@/lib/database/schema";
-import { eq, and, ilike, desc, sql } from "drizzle-orm";
+import { eq, and, desc, sql } from "drizzle-orm";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -18,9 +18,12 @@ export async function GET(request: Request) {
     );
   }
 
+  // Case-insensitive exact match. Not drizzle's `ilike`: it compiles to
+  // Postgres' `ILIKE`, which D1/SQLite rejects as a syntax error, so every
+  // request to this route returned a 500.
   const conditions = [];
-  if (school) conditions.push(ilike(caselistDocuments.school, school));
-  if (team) conditions.push(ilike(caselistDocuments.team, team));
+  if (school) conditions.push(sql`${caselistDocuments.school} = ${school} COLLATE NOCASE`);
+  if (team) conditions.push(sql`${caselistDocuments.team} = ${team} COLLATE NOCASE`);
   if (caselistSlug) conditions.push(eq(caselistDocuments.caselistSlug, caselistSlug));
 
   const whereClause = conditions.length === 1 ? conditions[0] : and(...conditions);

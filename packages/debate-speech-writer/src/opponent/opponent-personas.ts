@@ -1,7 +1,7 @@
 /**
  * @fileoverview Configurable AI practice-opponent personas for idea
  * "AI Practice Opponent" in TODO.md ("Let debaters spar against an AI that
- * simulates common styles like policy heavy, kritik, lay, or fast-flowing
+ * simulates common styles like policy heavy, critique, lay, or fast-flowing
  * opponents."). Mirrors `../judge/judge-paradigms`'s structure: each persona
  * is an independently selectable, structured definition rather than a single
  * AI call rotating through styles. This is the first slice only — it doesn't
@@ -29,7 +29,7 @@
  * whenever an AI opponent persona was set on that round's setup.
  */
 
-export type BuiltinOpponentPersonaId = "policy-heavy" | "kritik" | "lay" | "fast-flow";
+export type BuiltinOpponentPersonaId = "policy-heavy" | "critique" | "lay" | "fast-flow";
 
 export type OpponentPersonaId = BuiltinOpponentPersonaId | "custom";
 
@@ -62,9 +62,9 @@ export const opponentPersonas: Record<BuiltinOpponentPersonaId, OpponentPersona>
     instructions:
       "Argue like a traditional policy debater. Favor counterplans and disadvantages with a specific link chain over critical or theory arguments, and frame every impact in terms of magnitude, probability, and timeframe. Speak at competitive tournament speed.",
   },
-  kritik: {
-    id: "kritik",
-    name: "Kritik",
+  critique: {
+    id: "critique",
+    name: "Critique",
     description:
       "A critical debater who challenges the assumptions, representations, and framing of the opposing case before engaging its literal claims.",
     pace: "moderate",
@@ -256,7 +256,7 @@ export const OPPONENT_PERSONA_FEEDBACK_TIPS: Record<BuiltinOpponentPersonaId, st
     "Pre-write solvency deficits and net-benefit takeouts against the counterplans this persona favors.",
     "Have impact calculus (magnitude, probability, timeframe) ready to out-weigh — this persona frames every impact that way.",
   ],
-  kritik: [
+  critique: [
     "Pre-write a framework defense — this persona opens on framework before engaging your case's literal claims.",
     "Have a permutation or link turn ready against an alternative or praxis argument, not just a traditional counterplan answer.",
   ],

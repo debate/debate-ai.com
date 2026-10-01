@@ -1,0 +1,61 @@
+---
+title: "Tournaments"
+---
+
+# Tournaments
+
+Tournament invitations, pairings and results, without leaving the app. There is
+one entry for all of it under **Practice** in the sidebar: **Tournaments**
+(`/practice/tournaments`), with Tabroom's own site available from a button at
+the top of that page.
+
+## What you can see
+
+- **Upcoming tournaments**, searchable by name, state, circuit or event. A
+  **Host Tournament** button opens the creation form, and a **Tabroom** button
+  frames beta.tabroom.com over the list.
+- **Invite**: dates, location, registration deadline, events with entry counts
+  and fees, posted documents, contacts and the tournament's info pages.
+- **Pairings**: every published round, grouped by event. Opening a round shows
+  each room's entries (sides or speaker order) and judges.
+- **Results**: every published result set, with places, entries and schools.
+- **Tabroom**: when viewing a tournament, a tab in the nav opens Tabroom's own
+  page for that tournament in a frame, so you can register or enter ballots
+  without leaving the app.
+
+## Hosting your own tournament
+
+**Host Tournament** on the upcoming page (or `/practice/tournaments/host`)
+creates the tournament in this site's own API — the vendored Tabroom tables in
+the app's database — rather than sending you to Tabroom first. Give it a name,
+dates, where it is held, and pick the formats it runs:
+
+- **Virtual** — fully remote, rounds run online via video.
+- **In-Person** — at a single physical venue.
+- **Long-Term Online** — online, scheduled across multiple days or weeks.
+
+### The three styles
+
+A tournament runs any combination of **Policy**, **LD** and **Public Forum**,
+each of which becomes its own division you can customize:
+
+- **Policy** — 1AC/2AC/1AR/2AR against 1NC/2NC/1NR/2NR, four cross-examination
+  periods.
+- **LD** — 1AC/1AR against 1NC/2NR, no speaker points.
+- **Public Forum** — CON/AFF/NS/AS/NAF/NEG with a shared grand
+  cross-examination, where the flip decides who speaks first.
+
+Per style you choose the division it runs in (Open, Novice or JV), how entries
+are written in pairings, a cap on entries per school, an entry fee, and a note
+that appears on the public invite.
+
+## Good to know
+
+- Pairings and results are refreshed at most once a minute, so reload during a
+  tournament to see the latest round.
+- You are recorded as the tournament's owner, and registered in every format it
+  runs, so the first pairing has somebody in it. Everything after creation —
+  schools, rooms, rounds and ballots — is still done in Tabroom, from the framed
+  view.
+- Signing in to Tabroom happens on Tabroom, inside the framed view; the
+  **Tournaments** view shows public information only.

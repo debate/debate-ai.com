@@ -77,7 +77,7 @@ describe("buildCoachMaterialLibrary", () => {
   });
 
   it("keeps multiple materials of the same kind together, in input order", () => {
-    const secondLecture: CoachMaterial = { ...lecture, id: "m5", title: "Kritik Basics" };
+    const secondLecture: CoachMaterial = { ...lecture, id: "m5", title: "Critique Basics" };
     const library = buildCoachMaterialLibrary([lecture, secondLecture]);
     expect(library.groups).toEqual([
       { kind: "lecture_transcript", materials: [lecture, secondLecture] },

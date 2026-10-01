@@ -58,7 +58,7 @@ describe("highlightHtml", () => {
 const summary: VideoDocument = {
   videoId: "vid1",
   kind: "summary",
-  body: "The **neg** won on the *kritik*.",
+  body: "The **neg** won on the *critique*.",
   author: "editor",
 };
 
@@ -106,7 +106,7 @@ describe("WatchSidePanel documents", () => {
     render([summary]);
     expect(tabLabels()).toEqual(["Summary"]);
     expect(container.querySelector("strong")?.textContent).toBe("neg");
-    expect(container.querySelector("em")?.textContent).toBe("kritik");
+    expect(container.querySelector("em")?.textContent).toBe("critique");
   });
 
   it("puts speeches and summary side by side as tabs", () => {

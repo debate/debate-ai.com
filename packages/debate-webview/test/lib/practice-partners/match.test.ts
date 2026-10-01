@@ -10,7 +10,7 @@ import type { PracticePreferences, PracticeVolunteer } from "../../../src/lib/pr
 
 const me: PracticePreferences = {
   formats: ["pf", "ld"],
-  styles: ["traditional", "kritiks"],
+  styles: ["traditional", "critiques"],
   speed: "moderate",
   level: "jv",
   availability: "",

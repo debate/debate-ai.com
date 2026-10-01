@@ -287,7 +287,7 @@ export function StrategyPanel() {
             id="strategy-case-options"
             value={draft.caseOptionsText}
             onChange={(e) => setDraft({ ...draft, caseOptionsText: e.target.value })}
-            placeholder={"Topicality case: topicality, framework\nKritik case: kritik"}
+            placeholder={"Topicality case: topicality, framework\nCritique case: critique"}
             rows={3}
           />
         </div>

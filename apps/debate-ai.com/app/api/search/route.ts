@@ -19,7 +19,7 @@ import { getDBFromContext } from "@/lib/database/context";
 import { debateCards } from "@/lib/database/schema";
 import { getUserId } from "@/lib/auth/session";
 import { limitsFor } from "debate-webview/lib/stripe/limits";
-import { consumeDailyUsage, getUserTier, limitMessage, usageSubject } from "@/lib/stripe/usage";
+import { consumeDailyUsage, getUserTier, limitMessage, planLimitHeaders, usageSubject } from "@/lib/stripe/usage";
 import {
   buildCardSearchOrderBy,
   buildCardSearchWhere,
@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
     if (!usage.allowed) {
       return NextResponse.json(
         { results: [], total: 0, error: limitMessage("cardSearches", usage, tier), limit: usage.limit, tier },
-        { status: 429 },
+        { status: 429, headers: planLimitHeaders("cardSearches") },
       );
     }
     const cards = await db

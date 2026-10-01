@@ -37,6 +37,7 @@ import {
   Scale,
   Search,
   Share2,
+  Smartphone,
   Sparkles,
   Star,
   StickyNote,
@@ -135,6 +136,8 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/research/cards/inbox", title: "Task Inbox", icon: Inbox },
       { href: "/research/cards/contributions", title: "Contributions Feed", icon: Rss },
       { href: "/research/cards/brainstorm", title: "Team Brainstorm Assist", icon: Lightbulb },
+      { href: "/coaching/rankings", title: "Team Rankings", icon: Medal },
+      { href: "/coaching/progress", title: "Research Progress", icon: TrendingUp },
     ],
   },
   {
@@ -144,7 +147,6 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
     icon: Dumbbell,
     tools: [
       { href: "/practice", title: "Practice Round Simulator", icon: Timer },
-      { href: "/practice/rules", title: "Formats & Rules", icon: Scale },
       { href: "/practice/partners", title: "Practice Partners", icon: Handshake },
       // Same page, landing on the open judge seats (or the profile, for
       // someone who has not volunteered to judge yet).
@@ -156,11 +158,15 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/practice/strategy", title: "Scout-to-Strategy", icon: MapIcon },
       { href: "/practice/opponents", title: "Opponent Team Profiles", icon: Users },
       { href: "/practice/forums", title: "Latest News", icon: Rss },
-      { href: "/practice/tournaments", title: "Tournaments (Tabroom)", icon: CalendarDays },
+      // Tabroom itself is not a row of its own: the tournaments page frames
+      // beta.tabroom.com from a button at the top of the list, so one entry
+      // covers both.
+      { href: "/practice/tournaments", title: "Tournaments", icon: Trophy },
       { href: "/practice/judges", title: "Judge Profiles", icon: Gavel },
       { href: "/practice/judge-decision", title: "AI Judge Decision", icon: BadgeCheck },
       { href: "/practice/prep-notes", title: "Prep Notes", icon: StickyNote },
       { href: "/practice/features", title: "All Features", icon: Sparkles },
+      { href: "/coaching/leaderboard", title: "Leaderboard", icon: Trophy },
     ],
   },
   {
@@ -174,9 +180,14 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/coaching/programs", title: "Coaching Programs", icon: CalendarCheck },
       { href: "/coaching/materials", title: "Coach Materials", icon: FolderOpen },
       { href: "/coaching/outcomes", title: "Response-Outcome Charts", icon: ChartLine },
-      { href: "/coaching/rankings", title: "Team Rankings", icon: Medal },
-      { href: "/coaching/leaderboard", title: "Leaderboard", icon: Trophy },
-      { href: "/coaching/progress", title: "Research Progress", icon: TrendingUp },
+      // Reference material, not a coaching tool, but it is what a coach
+      // explains to a novice before the round — so it rides here rather than
+      // in Practice.
+      { href: "/practice/rules", title: "Formats & Rules", icon: Scale },
+      // Companion guide page (not a coaching tool) — round-day setup for
+      // debating off just a phone, so it rides with the coaching tools here
+      // rather than only being reachable from the `/tools` catalog.
+      { href: "/coaching/laptopless", title: "Laptop-less Debating", icon: Smartphone },
     ],
   },
 ];

@@ -1,6 +1,7 @@
 "use client";
 
 import type { PublishedRound } from "../client";
+import { buttonVariants } from "../primitives";
 import { Empty, Loaded, Section, useApi, useTournaments } from "../shared";
 
 /** Published rounds (pairings), grouped by event. */
@@ -30,10 +31,7 @@ function RoundsByEvent({ tournId, rounds }: { tournId: number; rounds: Published
                 .sort((a, b) => a.name - b.name)
                 .map((round) => (
                   <li key={round.id}>
-                    <Link
-                      href={hrefs.round(tournId, event.abbr, round.name)}
-                      className="inline-block rounded-md border px-3 py-1.5 text-sm hover:bg-muted"
-                    >
+                    <Link href={hrefs.round(tournId, event.abbr, round.name)} className={buttonVariants({ variant: "outline", size: "sm" })}>
                       {round.label || `Round ${round.name}`}
                     </Link>
                   </li>

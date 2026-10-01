@@ -54,6 +54,8 @@ import { CoachingProgramsPanel } from "debate-team-collaboration"
 import { CoachMaterialsPanel, JudgeProfilesPanel } from "debate-speech-writer"
 import { PrepNotesWithIdentity } from "../research/PrepNotesWithIdentity"
 import { PracticePartnersPanel } from "../practice-partners/PracticePartnersPanel"
+import { NewsStreamPanel } from "debate-community"
+import { coachingSessionNews } from "debate-practice-rounds/src/state/coachingSessions"
 import { useStoreSnapshot } from "../../lib/ui/panels/use-store-snapshot"
 import type { FlowEdit } from "debate-round/src/flow/shared-flow-sync"
 import { panel, type HubSection } from "../hubs/hub-sections"
@@ -110,6 +112,7 @@ export const COACH_SECTIONS: readonly HubSection<SectionId>[] = [
       panel("Coaching Programs", "/coaching/programs"),
       panel("Practice Drills", "/practice/drills"),
       panel("Coach Materials", "/coaching/materials"),
+      panel("Latest News"),
     ],
   },
   {
@@ -277,6 +280,9 @@ export function CoachHub() {
             </HubPanelAnchor>
             <HubPanelAnchor anchor={ANCHORS["Coach Materials"]}>
               <CoachMaterialsPanel />
+            </HubPanelAnchor>
+            <HubPanelAnchor anchor={ANCHORS["Latest News"]}>
+              <NewsStreamPanel extraItems={coachingSessionNews()} />
             </HubPanelAnchor>
           </>
         ) : null}

@@ -125,7 +125,7 @@ describe("WatchSidePanel by speech", () => {
       actual: { assessment: "Reads five off.", ballot: { winner: "neg", affWinProbability: 40, rfd: "Spec." } },
       alternatives: [
         { title: "Two-off strategy", approach: "collapse", outline: ["Spec", "DA"], tradeoff: "Less spread.", ballot: { winner: "neg", affWinProbability: 20, rfd: "Deeper DA." } },
-        { title: "Kritik only", approach: "kritik", outline: ["Cap K"], tradeoff: "Risky.", ballot: { winner: "aff", affWinProbability: 55, rfd: "Perm." } },
+        { title: "Critique only", approach: "critique", outline: ["Cap K"], tradeoff: "Risky.", ballot: { winner: "aff", affWinProbability: 55, rfd: "Perm." } },
       ],
       keyClash: ["Spec"],
     };

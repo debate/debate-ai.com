@@ -12,11 +12,16 @@ run on **Cloudflare Workers + D1**. The package exports three things:
 | `debate-tournaments/routes` | `matchTournamentRoute()` / `tournamentHrefs()` — the UI's route table |
 | `debate-tournaments/migrations/*` | the D1 schema (110 upstream tables) |
 
-In `apps/debate-ai.com` the API is mounted at `/api/tabroom/*`
-(`app/api/tabroom/[...path]/route.ts`, `lib/tournaments/handler.ts`) and the UI
-at `/practice/tournaments/*` (`app/tournaments/[[...slug]]/page.tsx`). The schema is
-applied by `.github/scripts/migrate-d1.ts`, which picks up this package's
-`migrations/` after the app's own.
+In `apps/debate-ai.com` the D1 API is mounted at `/api/tabroom/*`
+(`app/api/tabroom/[...path]/route.ts`, `lib/tournaments/handler.ts`). The UI is
+mounted at `/practice/tournaments/*`, where it reads live Tabroom through
+`/api/tabroom-beta/*`, a read-only proxy to `https://api.tabroom.com/v1`
+(`lib/tournaments/tabroom-beta-proxy.ts`); `/practice/tabroom` frames
+beta.tabroom.com itself. The schema is applied by `.github/scripts/migrate-d1.ts`,
+which picks up this package's `migrations/` after the app's own.
+
+The pages are built from shadcn primitives copied into `src/ui/primitives.tsx`
+and use only shadcn theme tokens, so they follow the host's theme.
 
 ```ts
 import { createTournamentsHandler } from "debate-tournaments/server"

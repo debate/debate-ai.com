@@ -1,8 +1,10 @@
 /**
  * Typed fetches against the tournaments API (`createTournamentsHandler`),
  * for the React UI. Shapes are upstream Tabroom's public responses, narrowed
- * to the fields the UI reads.
+ * to the fields the UI reads, plus this app's own `/host` create endpoints.
  */
+
+import type { TournamentFormatId } from "../host/formats";
 
 export interface UpcomingTournament {
   id: string;
@@ -90,11 +92,21 @@ export interface ResultsIndexEvent {
   ResultSets: Array<{ id: number; tag: string | null; label: string | null; createdAt: string | null }>;
 }
 
+/**
+ * `results` and `rounds` are both optional: upstream only populates `results`
+ * for score/rank-style sets (and only when a cache produces them), while
+ * `bracket` sets carry `rounds` instead and never set `results` at all. See
+ * `createBracketCache` in the vendored `resultSetRepo`.
+ */
 export interface ResultSet {
   id: number;
+  tag?: string | null;
   label: string | null;
+  createdAt?: string | null;
+  noPlacement?: boolean;
   Event?: { id: number; name: string; abbr: string } | null;
-  results: Array<{
+  rounds?: Record<string, unknown>;
+  results?: Array<{
     rank?: number | null;
     place?: string | null;
     Entry?: { id: number; code: string | null; name: string | null } | null;
@@ -112,10 +124,77 @@ export class TournamentsApiError extends Error {
   }
 }
 
+/** How one format is run for a tournament this app creates. */
+export interface CreateEventInput {
+  format: TournamentFormatId;
+  /** `event.level` — the division, e.g. Open, Novice, JV. */
+  level?: "open" | "novice" | "jv";
+  /** `event.code_style` — how entries are written in pairings. */
+  codeStyle?: string;
+  /** Entries per school, or null for no cap. */
+  schoolCap?: number | null;
+  /** Extra text for the public invite. */
+  description?: string;
+  /** Entry fee, in `currency`. */
+  fee?: number | null;
+}
+
+/** The body `POST {apiBase}/host/tourns` accepts. */
+export interface CreateTournamentInput {
+  name: string;
+  webname?: string;
+  scheduledType?: "virtual" | "in-person" | "long-term-online";
+  venue?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  tz?: string;
+  /** ISO-8601 with an offset. */
+  start: string;
+  /** ISO-8601 with an offset. */
+  end: string;
+  regStart?: string;
+  regEnd?: string;
+  currency?: string;
+  events: CreateEventInput[];
+}
+
+export interface CreatedTournament {
+  id: number;
+  name: string;
+  webname: string;
+  start: string | null;
+  end: string | null;
+  tz: string | null;
+  events: Array<{
+    id: number;
+    format: TournamentFormatId;
+    abbr: string;
+    name: string;
+    level: string;
+    codeStyle: string;
+    schoolCap: number | null;
+    description: string;
+  }>;
+  summaries: Record<string, string>;
+}
+
+/** A tournament the signed-in user owns. */
+export interface OwnedTournament {
+  id: number;
+  name: string;
+  webname: string | null;
+  start: string | null;
+  end: string | null;
+  tz: string | null;
+  hidden: boolean;
+  eventCount: number;
+}
+
 export function createTournamentsClient(apiBase = "/api/tournaments", fetchImpl: typeof fetch = (...a) => fetch(...a)) {
   const base = apiBase.replace(/\/+$/, "");
-  async function get<T>(path: string, signal?: AbortSignal): Promise<T> {
-    const res = await fetchImpl(`${base}${path}`, { signal, headers: { accept: "application/json" } });
+  async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
+    const res = await fetchImpl(`${base}${path}`, { signal: init.signal, ...init });
     if (!res.ok) {
       let detail = `Request failed (${res.status})`;
       try {
@@ -127,6 +206,9 @@ export function createTournamentsClient(apiBase = "/api/tournaments", fetchImpl:
       throw new TournamentsApiError(res.status, detail);
     }
     return (await res.json()) as T;
+  }
+  async function get<T>(path: string, signal?: AbortSignal): Promise<T> {
+    return request<T>(path, { signal, headers: { accept: "application/json" } });
   }
   return {
     upcoming: (signal?: AbortSignal) => get<UpcomingTournament[]>("/pages/invite/upcoming", signal),
@@ -141,6 +223,16 @@ export function createTournamentsClient(apiBase = "/api/tournaments", fetchImpl:
       get<Record<string, ResultsIndexEvent>>(`/rest/tourns/${tournId}/results`, signal),
     resultSet: (tournId: number, resultSetId: number, signal?: AbortSignal) =>
       get<ResultSet[]>(`/rest/tourns/${tournId}/results/${resultSetId}`, signal),
+    /** Creates a tournament owned by the signed-in user. */
+    createTournament: (input: CreateTournamentInput, signal?: AbortSignal) =>
+      request<{ tournament: CreatedTournament }>("/host/tourns", {
+        method: "POST",
+        signal,
+        headers: { "content-type": "application/json", accept: "application/json" },
+        body: JSON.stringify(input),
+      }).then((body) => body.tournament),
+    /** The tournaments the signed-in user owns, newest first. */
+    myTournaments: (signal?: AbortSignal) => get<{ tournaments: OwnedTournament[] }>("/host/tourns", signal),
   };
 }
 

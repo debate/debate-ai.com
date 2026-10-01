@@ -1,6 +1,6 @@
 /**
  * @fileoverview The Videos portion of the sidebar tree — the destinations
- * under its "Round Videos" and "Lectures" headings plus the glossary/rankings
+ * under its "Round Videos" and "Lectures" headings plus the glossary/statistics
  * pair pinned below the tree — as plain data.
  *
  * Three surfaces render these links and used to each restate them: the
@@ -32,7 +32,7 @@ export interface SidebarVideoLink {
 }
 
 /** The All Videos node — every round and lecture in the library, and the
- *  app's home page (`/` redirects here). Sits above "Round Videos". */
+ *  app's home page (`/` renders it directly). First child under "Round Videos". */
 export const VIDEO_ALL_LINK: SidebarVideoLink = {
   id: "allVideos",
   href: "/videos",
@@ -68,11 +68,11 @@ export const VIDEO_LIBRARY_LINKS: SidebarVideoLink[] = [
   { id: "lectures", href: "/lectures", title: "Lectures" },
 ];
 
-/** The pair pinned below the tree, under its own divider. */
+/** The pair pinned below the tree, under its own divider. Team Rankings lives
+ *  in the Research tool section instead, so rankings appear only once. */
 export const VIDEO_REFERENCE_LINKS: SidebarVideoLink[] = [
   { id: "dictionary", href: "/practice/glossary", title: "Glossary of Terms" },
-  { id: "rankings", href: "/practice/rankings", title: "Rankings" },
-  { id: "statistics", href: "/practice/statistics", title: "Topic & Video Statistics" },
+  { id: "statistics", href: "/practice/statistics", title: "Topics & Video Statistics" },
 ];
 
 /** Every videos destination the sidebar links to, in tree order. */

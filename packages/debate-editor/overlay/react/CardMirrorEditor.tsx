@@ -31,9 +31,10 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "re
 import { ReadOnlyPreview } from "./ReadOnlyPreview.js";
 import { MenuBar } from "./MenuBar.js";
 import * as singleton from "./singleton.js";
-import "../editor/style.css";
-import "../editor/icons.css";
-import "../editor/embed-containment.css";
+// No stylesheet imports here on purpose: the engine's CSS is loaded by
+// `singleton.ensureBooted()` together with the engine itself, so importing
+// this module (or anything re-exported from the package root) never puts
+// CardMirror's stylesheet on a page that doesn't actually mount the editor.
 
 export interface LexicalEditorHandle {
   getHTML(): string;
@@ -105,6 +106,7 @@ export const CardMirrorEditor = forwardRef<LexicalEditorHandle, ReasonEditorProp
     const hostRef = useRef<HTMLDivElement>(null);
     const key = contentKey ?? title ?? "default";
     const [claimed, setClaimed] = useState(false);
+    const [bootError, setBootError] = useState<string | null>(null);
     const onChangeRef = useRef(onChange);
     onChangeRef.current = onChange;
 
@@ -112,13 +114,23 @@ export const CardMirrorEditor = forwardRef<LexicalEditorHandle, ReasonEditorProp
       if (!live) return;
       let cancelled = false;
       setClaimed(false);
+      setBootError(null);
       void singleton
         .claim({ key, onChange: (html) => onChangeRef.current?.(html) }, content)
-        .then(() => {
-          if (cancelled) return;
-          if (hostRef.current) singleton.attachTo(hostRef.current);
-          setClaimed(true);
-        });
+        .then(
+          () => {
+            if (cancelled) return;
+            if (hostRef.current) singleton.attachTo(hostRef.current);
+            setClaimed(true);
+          },
+          // A failed boot used to leave "Loading editor…" up forever with
+          // nothing but an unhandled rejection in the console. Say so instead.
+          (err: unknown) => {
+            if (cancelled) return;
+            console.error("[debate-editor] CardMirror failed to load:", err);
+            setBootError(err instanceof Error ? err.message : String(err));
+          },
+        );
       return () => {
         cancelled = true;
         // `release` flushes whatever edit is still inside the change
@@ -256,7 +268,7 @@ export const CardMirrorEditor = forwardRef<LexicalEditorHandle, ReasonEditorProp
           <div ref={hostRef} className="dec-cardmirror-viewport h-full w-full" />
           {!claimed && (
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center text-xs text-muted-foreground">
-              Loading editor…
+              {bootError ? `Couldn't load the editor: ${bootError}. Reload the page to try again.` : "Loading editor…"}
             </div>
           )}
         </div>

@@ -4,29 +4,23 @@
  * including Stripe's out-of-order delivery (subscription event before the
  * checkout that names the user).
  */
-import { readFileSync } from "node:fs"
-import { join } from "node:path"
 import { createClient } from "@libsql/client"
 import { drizzle } from "drizzle-orm/libsql"
 import { beforeEach, describe, expect, it } from "vitest"
 import * as schema from "../../database/schema"
+import { applySchema } from "../../database/__tests__/schema-sql"
 import { PLANS } from "debate-webview/lib/stripe/plans"
 import { getActiveSubscription, saveSubscriptionUpdate } from "../store"
 import { subscriptionUpdateForEvent } from "../webhook"
 
-const MIGRATION = readFileSync(
-  join(import.meta.dirname, "../../../drizzle/0052_stripe_subscriptions.sql"),
-  "utf8",
-)
 const TEAM = PLANS.find((p) => p.id === "research-team")!
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" })
-  await client.execute(`CREATE TABLE user (id TEXT PRIMARY KEY, email TEXT NOT NULL UNIQUE)`)
-  await client.execute(`INSERT INTO user (id, email) VALUES ('user_1', 'coach@example.com')`)
-  for (const statement of MIGRATION.split("--> statement-breakpoint")) {
-    await client.execute(statement)
-  }
+  await applySchema(client)
+  await client.execute(
+    `INSERT INTO user (id, name, email, created_at, updated_at) VALUES ('user_1', 'Coach', 'coach@example.com', 0, 0)`,
+  )
   return drizzle(client, { schema })
 }
 

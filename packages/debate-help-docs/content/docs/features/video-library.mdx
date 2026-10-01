@@ -115,9 +115,21 @@ published — paste its YouTube link or id into the box at the top of the card.
 
 The **Round videos** queue further down the page is separate — those are
 rounds still waiting to be published, not videos already on the site.
+Publishing never overwrites a video that is already in the library: the older
+version is kept and the queued copy is skipped. **Deduplicate**, next to
+**Publish all**, clears every queued round that is already in the library
+(within the selected format) without publishing anything.
 
 ## Known gaps
 
 Stacks only exist where a description links the videos, so a round-analysis
 video that names its round in the title alone is not paired with it. Search
 is `LIKE`-based token matching, not fuzzy.
+
+Curated rounds added to the queue from the `test/` records (see
+`.github/scripts/queue-test-videos.ts`) carry their topic and argument tags in
+the description, with `Aff 1AC args:` and `Neg 2NR args:` lines that become the
+round's 1AC and 2NR arguments when it is published. The queue has no editor,
+so a wrong split is corrected in the library after publishing. The records
+have no upload date, so these rounds are dated January 1st of their event's
+year.

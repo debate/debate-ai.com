@@ -46,7 +46,7 @@ export function getLikelyOpponentSide(ourSide: DebateSide): DebateSide {
 /** A case the team could choose to run this round. */
 export interface CaseOption {
   name: string;
-  /** Argument/case-type tags this case runs, e.g. ["kritik", "topicality"]. */
+  /** Argument/case-type tags this case runs, e.g. ["critique", "topicality"]. */
   argumentTags: string[];
 }
 

@@ -1,16 +1,17 @@
 /**
  * @fileoverview A streaming writer for single-file `.7z` archives.
  *
- * The file is compressed with the 7z format's Deflate coder (method
- * `04 01 08`, which 7-Zip, p7zip and `7zz` all extract) through the runtime's
- * native `CompressionStream("deflate-raw")`. A pure-JS LZMA encoder would
- * need the whole input in memory and far more CPU than a Worker invocation
- * gets, so it is not an option for a multi-hundred-MB dump; Deflate streams
- * with a fixed-size window.
+ * The file is stored with the 7z format's Deflate coder (method `04 01 08`,
+ * which 7-Zip, p7zip and `7zz` all extract). A pure-JS LZMA encoder would need
+ * the whole input in memory and far more CPU than a Worker invocation gets, so
+ * it is not an option for a multi-hundred-MB dump; Deflate streams with a
+ * fixed-size window. The Deflate stream itself comes from the caller
+ * ({@link module:lib/admin/deflate}), which shares it with the gzip member R2
+ * stores, so nothing here compresses.
  *
- * Only the compressed bytes are kept — the input is fed through {@link write}
- * a chunk at a time while its CRC32 and length are tallied — and
- * {@link SevenZipWriter.finish} lays out the archive:
+ * Only the compressed bytes are kept — the caller feeds {@link writePacked} the
+ * Deflate stream a chunk at a time — and {@link SevenZipWriter.finish} lays
+ * out the archive:
  *
  *     signature header (32 bytes) | packed stream | header
  *
@@ -18,6 +19,8 @@
  * writer gives up, drops what it has and `finish()` returns null.
  * @module lib/admin/seven-zip
  */
+
+import type { DeflateSizes } from "./deflate";
 
 const SIGNATURE = [0x37, 0x7a, 0xbc, 0xaf, 0x27, 0x1c];
 const FORMAT_VERSION = [0x00, 0x04];
@@ -189,72 +192,60 @@ export function buildSignatureHeader(nextHeaderOffset: number, nextHeader: Uint8
 }
 
 /**
- * Compresses one file into a `.7z` while its bytes are written. Await each
- * {@link write} (it applies the compressor's backpressure), then
- * {@link finish} for the archive, or null if it passed `maxBytes`.
+ * Collects one already-compressed file into a `.7z` archive. Await each
+ * {@link writePacked}, then {@link finish} for the archive, or null if it
+ * passed `maxBytes`.
+ *
+ * The Deflate stream comes from the caller ({@link module:lib/admin/deflate})
+ * rather than a compressor of its own: the same packed bytes are also what the
+ * R2 object stores inside its gzip member, so compressing here as well would
+ * do every byte of the dump's compression twice.
  */
 export class SevenZipWriter {
-  private readonly writer: WritableStreamDefaultWriter<BufferSource>;
-  private readonly draining: Promise<void>;
   private packed: Uint8Array[] = [];
   private packedSize = 0;
-  private unpackedSize = 0;
-  private crc = 0;
   private overflowed = false;
 
   constructor(
     private readonly fileName: string,
     private readonly maxBytes: number = Number.POSITIVE_INFINITY,
-  ) {
-    const deflate = new CompressionStream("deflate-raw");
-    this.writer = deflate.writable.getWriter();
-    const reader = deflate.readable.getReader();
-    this.draining = (async () => {
-      for (;;) {
-        const { done, value } = await reader.read();
-        if (done) return;
-        if (this.overflowed) continue;
-        this.packedSize += value.byteLength;
-        // Leave room for the signature header and the archive header.
-        if (this.packedSize + 32 + 1024 > this.maxBytes) {
-          this.overflowed = true;
-          this.packed = [];
-          continue;
-        }
-        this.packed.push(value);
-      }
-    })();
-    // Surfaced through finish(); avoid an unhandled rejection meanwhile.
-    this.draining.catch(() => {});
-  }
+  ) {}
 
   /** True once the archive has outgrown `maxBytes`; further input is only counted. */
   get tooLarge(): boolean {
     return this.overflowed;
   }
 
-  async write(bytes: Uint8Array<ArrayBuffer>): Promise<void> {
-    this.crc = crc32(bytes, this.crc);
-    this.unpackedSize += bytes.byteLength;
-    await this.writer.write(bytes);
+  /**
+   * Adds one chunk of the Deflate stream. Past `maxBytes` the archive is given
+   * up on and the chunk only advances the size count, so a dump that cannot fit
+   * a KV value stops costing CPU to package.
+   */
+  writePacked(bytes: Uint8Array): void {
+    if (this.overflowed) return;
+    this.packedSize += bytes.byteLength;
+    // Leave room for the signature header and the archive header.
+    if (this.packedSize + 32 + 1024 > this.maxBytes) {
+      this.overflowed = true;
+      this.packed = [];
+      return;
+    }
+    this.packed.push(bytes);
   }
 
-  async abort(reason?: unknown): Promise<void> {
-    await this.writer.abort(reason).catch(() => {});
-    await this.draining.catch(() => {});
-    this.packed = [];
-  }
-
-  async finish(modified: Date = new Date()): Promise<Uint8Array | null> {
-    await this.writer.close();
-    await this.draining;
+  /**
+   * Lays out the archive around the packed bytes written so far.
+   * `sizes` carries the CRC and the uncompressed length, which the shared
+   * compressor tallied while reading the original dump.
+   */
+  finish(sizes: DeflateSizes, modified: Date = new Date()): Uint8Array | null {
     if (this.overflowed) return null;
 
     const header = buildHeader({
       fileName: this.fileName,
       packedSize: this.packedSize,
-      unpackedSize: this.unpackedSize,
-      crc: this.crc,
+      unpackedSize: sizes.uncompressedSize,
+      crc: sizes.crc,
       modified,
     });
     const signature = buildSignatureHeader(this.packedSize, header);

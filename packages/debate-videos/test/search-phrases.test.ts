@@ -20,9 +20,9 @@ describe("getSearchPhrases", () => {
   });
 
   it("resolves a lecture category by label or slug", () => {
-    const byLabel = getSearchPhrases({ currentCategory: "lectures", selectedCategory: "Kritik / Critical Theory" });
-    const bySlug = getSearchPhrases({ currentCategory: "lectures", selectedCategory: "kritik___critical_theory" });
-    expect(byLabel).toContain("capitalism kritik");
+    const byLabel = getSearchPhrases({ currentCategory: "lectures", selectedCategory: "Critique / Critical Theory" });
+    const bySlug = getSearchPhrases({ currentCategory: "lectures", selectedCategory: "critique___critical_theory" });
+    expect(byLabel).toContain("capitalism critique");
     expect(bySlug).toEqual(byLabel);
   });
 

@@ -21,7 +21,7 @@ describe("isRound", () => {
   it("rejects instructional videos even when they name two teams", () => {
     expect(isRound("Lecture: Michigan KM vs Northwestern BC", "")).toBe(false);
     expect(isRound("Demo round: Michigan KM vs Northwestern BC", "")).toBe(false);
-    expect(isRound("Kritik Analysis: Michigan KM vs Northwestern BC", "")).toBe(
+    expect(isRound("Critique Analysis: Michigan KM vs Northwestern BC", "")).toBe(
       false,
     );
   });

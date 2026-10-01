@@ -95,19 +95,14 @@ route the tool-nav tree links to (where `AppSidebarShell` wraps the page in
 the generic sidebar), the dock sits at the top of that column (300px wide until you
 drag it — see [Resizing the sidebar](#resizing-the-sidebar)).
 
-`/doc` hosts it in a column of its own instead. The REASON research
-workspace already renders a sidebar — the files tree and the "Open Tabs"
-list — and the generic one stood beside it as a second, taller nav column, so
-that route is skipped by `AppSidebarShell` (`hostsOwnSidebarDock`, in
-`packages/debate-videos/src/components/category-gallery/sidebar-routes.ts`).
-The dock moves into the sidebar that remains:
-`apps/debate-ai.com/components/qwksearch/SidebarWithAppDock.tsx` is the
-`SidebarComponent` the workspace injects into `ReasonDocs`, and it puts
-`<CategoryDock embedded />` above the editor's own toolbar — in the band the
-published `<aside>` reserves (`pt-14`) for the header qwksearch's own app
-renders there. `hasEmbeddedDock` stays true for the route, so the fixed
-fallback does not appear on top of it; below `md` the sidebar is a slide-over
-sheet and the dock is left to its own mobile bottom bar.
+`/doc` is one of those routes now. The Docs button opens quick search
+([qwksearch.com](https://qwksearch.com)) in a frame beside the generic
+sidebar, so the dock sits at the top of that column as it does on any other
+tool page. It used to render the REASON research workspace inside the app,
+whose own files/tabs sidebar hosted the dock (`OWN_SIDEBAR_DOCK_HREFS`, in
+`packages/debate-videos/src/components/category-gallery/sidebar-routes.ts`,
+is empty since). Quick search keeps its own sign-in and documents inside the
+frame; nothing is shared with your debate-ai.com account.
 
 That now includes `/practice/rankings` and `/practice/glossary`. Both are rows
 in the sidebar's own tree, and both used to answer with a bare page — no
@@ -353,8 +348,7 @@ To make a switch a render from cache, the dock fetches each destination's
 code ahead of the click. Hovering or focusing an icon prefetches that route,
 and once the current page has loaded the dock prefetches the others one at a
 time in idle time (`lib/nav/dock-idle-prefetch.ts`), so touch screens and
-quick clicks get the same head start. The idle pass skips `/doc`, whose
-workspace is several megabytes; hovering its icon still warms it. It also
+quick clicks get the same head start. The idle pass skips `/doc`; hovering its icon still warms it. It also
 does nothing on a data-saver or 2G connection.
 
 ## A bar across the top shows a page switch in progress

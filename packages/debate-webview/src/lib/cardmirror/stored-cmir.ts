@@ -19,7 +19,10 @@
  *
  * @module lib/cardmirror/stored-cmir
  */
-import { docToHtml, htmlToDoc } from "debate-editor";
+// The narrow bridge entry, not the package root: the root re-exports the
+// React editor shell, and pulling it in here would ship the editor into every
+// page that only renders a stored document.
+import { docToHtml, htmlToDoc } from "debate-editor/html-bridge";
 import {
   base64ToCmir,
   cmirToBase64,

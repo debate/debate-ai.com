@@ -22,7 +22,7 @@ describe("sqlLiteral", () => {
   });
 
   it("doubles single quotes so a title with an apostrophe survives", () => {
-    expect(sqlLiteral("Kritik's finest")).toBe("'Kritik''s finest'");
+    expect(sqlLiteral("Critique's finest")).toBe("'Critique''s finest'");
     expect(sqlLiteral("'; DROP TABLE videos; --")).toBe("'''; DROP TABLE videos; --'");
   });
 

@@ -68,7 +68,7 @@ export interface VideoRouteSegments {
   season: string;
   /**
    * The tournament for a round (`"ndt"`), else format and tournament or a
-   * lecture category (`"college-ndt"`, `"kritik-critical-theory"`).
+   * lecture category (`"college-ndt"`, `"critique-critical-theory"`).
    */
   event: string;
   /**
@@ -387,7 +387,7 @@ function hrefFromSegments({ season, event, matchup, teams, variant }: VideoRoute
  *
  * @param video - The video, as a tuple or as named parts.
  * @returns e.g. `/videos/2022/ndt/finals/dartmouth-sv-michigan-pr`, or
- *   `/videos/2019/kritik-critical-theory/how-to-give-a-2nr` for a lecture.
+ *   `/videos/2019/critique-critical-theory/how-to-give-a-2nr` for a lecture.
  */
 export function videoRouteHref(video: VideoType | VideoRouteParts): string {
   const parts = Array.isArray(video) ? videoRouteParts(video) : video;

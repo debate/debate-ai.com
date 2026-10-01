@@ -6,6 +6,7 @@
 
 import { useMemo } from "react"
 import type { VideoFacets } from "../../types/videos"
+import { currentSeasonYear } from "../../panels/leaderboard/leaderboardUtils"
 
 /** Parameters accepted by the {@link useVideoSearchCounts} hook. */
 interface UseVideoSearchCountsParams {
@@ -47,7 +48,10 @@ interface VideoSearchCounts {
 export function useVideoSearchCounts({
   facets,
 }: UseVideoSearchCountsParams): VideoSearchCounts {
-  const maxYear = Math.max(new Date().getFullYear(), 2026)
+  // The season that is under way, not the calendar year: from July onward the
+  // current season is the one that ends next June, so the dropdown has to
+  // reach one year past today or the newest rounds are unfilterable.
+  const maxYear = Math.max(currentSeasonYear(), 2026)
 
   const years = useMemo(
     () => Array.from({ length: maxYear - 2011 + 1 }, (_, i) => String(maxYear - i)),

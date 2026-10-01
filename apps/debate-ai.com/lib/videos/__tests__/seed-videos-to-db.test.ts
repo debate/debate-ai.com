@@ -18,38 +18,16 @@
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 import { sql } from "drizzle-orm";
-import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
-import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { tupleToVideoRow, type VideoRow } from "debate-data-sync/src/videos/video-rows";
 import * as schema from "../../database/schema";
+import { applySchema } from "../../database/__tests__/schema-sql";
 import { videos } from "../../database/schema";
-
-const drizzleDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "../../../drizzle");
-
-/**
- * Every migration that creates or alters the `videos` table, in application
- * order. Keep this in sync with `drizzle/` — add a migration here whenever
- * one touches `videos`, or `freshDb()` drifts from the real schema again.
- */
-const VIDEOS_TABLE_MIGRATIONS = [
-  "0005_green_redwing.sql",
-  "0041_video_stacks.sql",
-  "0045_video_documents_relations_issues.sql",
-  "0047_video_admin_edited.sql",
-];
 
 /** A fresh in-memory database with just the `videos` table migrated in. */
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
-  for (const migration of VIDEOS_TABLE_MIGRATIONS) {
-    const contents = readFileSync(path.join(drizzleDir, migration), "utf8");
-    for (const statement of contents.split("--> statement-breakpoint")) {
-      const trimmed = statement.trim();
-      if (trimmed) await client.execute(trimmed);
-    }
-  }
+  await applySchema(client);
   return drizzle(client, { schema });
 }
 
@@ -150,6 +128,21 @@ describe("seedVideosIntoDb", () => {
     expect(runSpy).toHaveBeenCalledTimes(2);
     expect(batchSpy).toHaveBeenCalledTimes(1);
     expect(batchSpy.mock.calls[0]?.[0]).toHaveLength(2);
+  });
+
+  it("refuses to seed from no rows rather than pruning every video", async () => {
+    const db = await freshDb();
+    await seedVideosIntoDb(db);
+
+    const source = vi.mocked((await import("../video-json-source")).getVideoRowsFromJson);
+    source.mockResolvedValue([]);
+    try {
+      await expect(seedVideosIntoDb(db)).rejects.toThrow(/refusing to prune/);
+    } finally {
+      source.mockResolvedValue(fixtureRows);
+    }
+
+    expect(await db.select().from(videos)).toHaveLength(fixtureRows.length);
   });
 });
 

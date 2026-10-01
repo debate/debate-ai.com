@@ -36,6 +36,14 @@
  * are their own account-synced stores. This is a cache of public library data
  * and is treated as disposable at every point.
  *
+ * ## Who still loads it
+ *
+ * The video grid no longer does: `useVideoFeed` pages `/api/videos` so no
+ * page downloads the whole library up front. Only the watch page on a host
+ * without the Worker (`VideoWatchRoute` in `debate-webview`) fetches it, to
+ * resolve a video from its path. While it is in memory the grid still
+ * answers from it.
+ *
  * @module state/videoIndexCache
  */
 

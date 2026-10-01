@@ -31,6 +31,7 @@
 import { useEffect, useMemo, useState, type ComponentType } from "react";
 import {
   Dumbbell,
+  ExternalLink,
   FileText,
   LayoutGrid,
   Library,
@@ -49,7 +50,6 @@ import { EmptyState } from "../panels/panel-shell";
 import {
   AuroraBackdrop,
   cardHueShift,
-  CountUp,
   Marquee,
   Pill,
   Reveal,
@@ -57,7 +57,6 @@ import {
 } from "./effects";
 import {
   APP_FEATURES,
-  buildFeatureCatalogSummaryText,
   buildFeatureSections,
   featureDocUrl,
   searchFeatures,
@@ -256,18 +255,6 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
 
   const allSections = useMemo(() => buildFeatureSections(entries), [entries]);
 
-  // The header count describes the catalog, not the current filter, so it
-  // stays a stable "how big is this app" answer while someone types.
-  const summaryText = useMemo(
-    () => buildFeatureCatalogSummaryText(allSections),
-    [allSections],
-  );
-
-  const documentedCount = useMemo(
-    () => entries.filter((entry) => entry.doc).length,
-    [entries],
-  );
-
   // A card's hover colour comes from its place in the whole catalog plus the
   // randomized page-load offset, not in the filtered grid, so a feature keeps
   // the same colour while someone types rather than every card changing hue on
@@ -357,31 +344,9 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
                 className="h-11 rounded-full border-border bg-card/80 pl-10 backdrop-blur-sm"
               />
             </div>
-          </Reveal>
+        </Reveal>
 
-          <Reveal delay={280}>
-            <dl className="mx-auto mt-10 grid max-w-2xl grid-cols-3 gap-px overflow-hidden rounded-2xl border border-border bg-border">
-              {[
-                { label: "Features", value: entries.length },
-                { label: "Categories", value: allSections.length },
-                { label: "With full docs", value: documentedCount },
-              ].map((stat) => (
-                <div
-                  key={stat.label}
-                  className="bg-card/60 px-4 py-5 backdrop-blur-sm transition-colors hover:bg-card"
-                >
-                  <dt className="text-3xl font-bold tracking-tight tabular-nums text-foreground">
-                    <CountUp value={stat.value} />
-                  </dt>
-                  <dd className="mt-1 text-[11px] tracking-wide text-muted-foreground uppercase">
-                    {stat.label}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </Reveal>
-
-          <Reveal delay={340}>
+        <Reveal delay={340}>
             {/* The root README's badge block, row for row. */}
             <div className="mt-8 flex flex-col items-center gap-2" data-testid="readme-badges">
               {README_BADGE_ROWS.map((row, rowIndex) => (
@@ -438,6 +403,7 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
       ) : null}
 
       <section
+        id="showcase"
         aria-label="Workspaces"
         className="mx-auto max-w-6xl px-4 pt-6 pb-16 sm:px-6 lg:px-8"
       >
@@ -471,7 +437,11 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
 
       {/* The tour video, between the workspace screenshots it walks through and
           the long-form sections below. */}
-      <section aria-label="Tour video" className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 lg:px-8">
+      <section
+        id="tour"
+        aria-label="Tour video"
+        className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 lg:px-8"
+      >
         <Reveal>
           <FeatureVideo />
         </Reveal>
@@ -552,7 +522,7 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
         </ol>
       </section>
 
-      <div className="mx-auto max-w-6xl px-4 pb-20 sm:px-6 lg:px-8">
+      <section id="catalog" className="mx-auto max-w-6xl px-4 pb-20 sm:px-6 lg:px-8">
         {sections.length > 1 ? (
           <Reveal>
             <nav
@@ -682,7 +652,7 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
             <DocumentsFolder />
           </Reveal>
         </section>
-      </div>
+      </section>
     </div>
   );
 }

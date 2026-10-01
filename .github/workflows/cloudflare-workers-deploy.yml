@@ -10,6 +10,10 @@ on:
       - master
     paths:
       - 'apps/**'
+      # The app bundles every workspace package, so a package-only change
+      # (the CardMirror editor, a debate-* library) is a deploy too. Without
+      # this, merging one never reached production.
+      - 'packages/**'
       - '.github/workflows/cloudflare-workers-deploy.yml'
 
   workflow_dispatch:

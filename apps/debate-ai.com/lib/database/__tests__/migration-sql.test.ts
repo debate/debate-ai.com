@@ -1,8 +1,8 @@
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { DatabaseSync } from "node:sqlite";
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import {
   BENIGN_ALTER_ERROR,
   isAlterAdd,
@@ -10,13 +10,36 @@ import {
   planMigration,
   splitStatements,
 } from "../migration-sql";
+import { schemaStatements } from "./schema-sql";
 
 const APP_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
 const MIGRATIONS_DIR = join(APP_ROOT, "drizzle");
+const PACKAGE_MIGRATIONS_DIR = resolve(APP_ROOT, "../../packages/debate-tournaments/migrations");
 
-const migrationFiles = readdirSync(MIGRATIONS_DIR)
-  .filter((name) => name.endsWith(".sql"))
-  .sort();
+/**
+ * `drizzle/` is no longer tracked in git, so it exists only in a local checkout
+ * that still has it on disk. Where it is missing, the whole app schema as
+ * drizzle-kit would write it for an empty database stands in for it, so the
+ * runner is still exercised on real drizzle-kit output.
+ */
+const hasAppMigrations = existsSync(MIGRATIONS_DIR);
+
+const sqlFilesIn = (dir: string) =>
+  existsSync(dir)
+    ? readdirSync(dir)
+        .filter((name) => name.endsWith(".sql"))
+        .sort()
+        .map((name) => ({ name, sql: readFileSync(join(dir, name), "utf8") }))
+    : [];
+
+let migrationFiles: { name: string; sql: string }[] = [];
+
+beforeAll(async () => {
+  const appMigrations = hasAppMigrations
+    ? sqlFilesIn(MIGRATIONS_DIR)
+    : [{ name: "schema.ts", sql: (await schemaStatements()).join("\n--> statement-breakpoint\n") }];
+  migrationFiles = [...appMigrations, ...sqlFilesIn(PACKAGE_MIGRATIONS_DIR)];
+});
 
 describe("splitStatements", () => {
   it("splits on drizzle's statement-breakpoint marker", () => {
@@ -48,8 +71,8 @@ describe("splitStatements", () => {
   });
 
   it("splits every real migration into at least one statement", () => {
-    for (const name of migrationFiles) {
-      const statements = splitStatements(readFileSync(join(MIGRATIONS_DIR, name), "utf8"));
+    for (const { name, sql } of migrationFiles) {
+      const statements = splitStatements(sql);
       expect(statements.length, name).toBeGreaterThan(0);
       // A file that came back as one blob is the failure mode above.
       const creates = statements.filter((s) => /^\s*CREATE\s+TABLE/i.test(s)).length;
@@ -152,8 +175,8 @@ describe("replaying every migration onto a partially-migrated database", () => {
   // instead of through wrangler.
   const applyAll = (db: DatabaseSync) => {
     let benign = 0;
-    for (const name of migrationFiles) {
-      for (const step of planMigration(readFileSync(join(MIGRATIONS_DIR, name), "utf8"))) {
+    for (const { name, sql } of migrationFiles) {
+      for (const step of planMigration(sql)) {
         try {
           db.exec(step.sql);
         } catch (error) {
@@ -192,8 +215,10 @@ describe("replaying every migration onto a partially-migrated database", () => {
   });
 
   // Production's shape when the drift was found: the auth/base tables from the
-  // 2024 lineage present, everything from migration 0008 on missing.
-  it("brings a database that stopped at the base tables fully forward", () => {
+  // 2024 lineage present, everything from migration 0008 on missing. The
+  // column adds it checks only exist in the migration history, so it needs
+  // the local drizzle/ folder.
+  it.runIf(hasAppMigrations)("brings a database that stopped at the base tables fully forward", () => {
     const db = new DatabaseSync(":memory:");
     db.exec("PRAGMA foreign_keys = OFF;");
     db.exec(`

@@ -2,7 +2,7 @@
  * @fileoverview Suggested search phrases for the video search dropdown.
  *
  * Each library category gets its own hand-picked set of phrases, so opening
- * the search box on the Kritik lectures offers different starting points than
+ * the search box on the Critique lectures offers different starting points than
  * opening it on PF rounds. No phrase appears in more than one set.
  * @module components/debate/DebateVideos/components/video-search/searchPhrases
  */
@@ -27,7 +27,7 @@ const LECTURE_PHRASES: Record<string, string[]> = {
   [normalizeCategoryKey("Topic Lectures")]: ["topic analysis", "resolution breakdown", "aff ground on the topic", "topic literature", "camp topic lecture"],
   [normalizeCategoryKey("Affirmative Strategy")]: ["writing a 1AC", "2AC blocks", "aff case construction", "answering counterplans", "solvency advocate"],
   [normalizeCategoryKey("Negative Strategy")]: ["neg block strategy", "2NR collapse", "case turns", "neg strategy lecture", "picking a 2NR"],
-  [normalizeCategoryKey("Kritik / Critical Theory")]: ["capitalism kritik", "afropessimism", "security K", "alternative explained", "K framework"],
+  [normalizeCategoryKey("Critique / Critical Theory")]: ["capitalism critique", "afropessimism", "security K", "alternative explained", "K framework"],
   [normalizeCategoryKey("Counterplans & Theory")]: ["conditionality bad", "PIC theory", "process counterplans", "perm do both", "advantage counterplan"],
   [normalizeCategoryKey("Topicality & Framework")]: ["topicality violation", "competing interpretations", "limits and ground", "fairness vs education", "reasonability"],
   [normalizeCategoryKey("Disadvantages")]: ["uniqueness and link", "link turns", "elections DA", "internal link chain", "DA vs case"],

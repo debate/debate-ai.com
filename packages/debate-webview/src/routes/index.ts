@@ -97,10 +97,14 @@ export const PAGE_ROUTES: AppRoute[] = [
   { pattern: "/practice/statistics", load: () => import("./videos/page") },
   { pattern: "/practice/strategy", load: () => import("./strategy/page") },
   { pattern: "/summaries", load: () => import("./summaries/page") },
+  { pattern: "/practice/tabroom/[[...slug]]", load: () => import("./tabroom/[[...slug]]/page") },
   { pattern: "/teams/[team]", load: () => import("./teams/[team]/page") },
   { pattern: "/tools", load: () => import("./tools/page") },
-  { pattern: "/tools/mobile-setup", load: () => import("./tools/mobile-setup/page") },
-  { pattern: "/research/topics", load: () => import("./topics/page") },
+  { pattern: "/coaching/laptopless", load: () => import("./coaching/laptopless/page") },
+  // `/research/topics` was the standalone Topics Explorer. Its research-area
+  // explorer is now the first section of `/practice/statistics`, so this old
+  // address loads the same merged page rather than a second copy of it.
+  { pattern: "/research/topics", load: () => import("./videos/page") },
   { pattern: "/practice/tournaments/[[...slug]]", load: () => import("./tournaments/[[...slug]]/page") },
   { pattern: "/videos", load: () => import("./videos/page") },
   { pattern: "/videos/[category]", load: () => import("./videos/[category]/page") },

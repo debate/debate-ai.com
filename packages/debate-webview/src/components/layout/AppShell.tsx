@@ -15,7 +15,7 @@ import type React from "react"
 import { useEffect, useRef } from "react"
 import { usePathname } from "next/navigation"
 
-import { CategoryDockProvider, PersistentVideoPlayer, SlowSpreadButton, VideoIndexPrefetcher } from "debate-videos"
+import { CategoryDockProvider, PersistentVideoPlayer, SlowSpreadButton } from "debate-videos"
 import { CategoryDock } from "./CategoryDock"
 import { AppSidebarShell } from "./AppSidebarShell"
 import { DocsAppChrome } from "./DocsAppChrome"
@@ -25,6 +25,7 @@ import { ToolRecordSyncProvider } from "./ToolRecordSyncProvider"
 import { DebaterActivityListener } from "./DebaterActivityListener"
 import { SignInPromptProvider } from "./SignInPromptProvider"
 import { GlobalCommandPalette } from "./GlobalCommandPalette"
+import { PlanLimitDialog } from "../pricing/PlanLimitDialog"
 import { ServiceWorkerRegistrar } from "./ServiceWorkerRegistrar"
 import { useIsFramedDocument } from "../../lib/layout/use-framed-document"
 import { isDocsPath } from "../../lib/layout/frame-navigation"
@@ -78,6 +79,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <ChromeErrorBoundary label="GlobalCommandPalette">
             <GlobalCommandPalette />
           </ChromeErrorBoundary>
+          {/* The tools that hit a plan limit fetch from this document. */}
+          <ChromeErrorBoundary label="PlanLimitDialog">
+            <PlanLimitDialog />
+          </ChromeErrorBoundary>
           <MixpanelProvider />
           <Toaster position="top-center" richColors closeButton />
         </ReasonDocsProvider>
@@ -111,12 +116,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <OneTap />
         </ChromeErrorBoundary>
       </div>
-      {/* Pulls the video library into `localStorage` once the page has loaded,
-          so the video pages filter, search and page without a request. It is
-          idle-scheduled and failure-tolerant — see `videoIndexCache.ts`. */}
-      <ChromeErrorBoundary label="VideoIndexPrefetcher">
-        <VideoIndexPrefetcher />
-      </ChromeErrorBoundary>
       <ChromeErrorBoundary label="ToolRecordSyncProvider">
         <ToolRecordSyncProvider />
       </ChromeErrorBoundary>
@@ -128,6 +127,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </ChromeErrorBoundary>
       <ChromeErrorBoundary label="GlobalCommandPalette">
         <GlobalCommandPalette />
+      </ChromeErrorBoundary>
+      {/* The pricing plans, shown only when a daily plan limit is hit. */}
+      <ChromeErrorBoundary label="PlanLimitDialog">
+        <PlanLimitDialog />
       </ChromeErrorBoundary>
       <ChromeErrorBoundary label="ServiceWorkerRegistrar">
         <ServiceWorkerRegistrar />

@@ -9,15 +9,26 @@
  * @module lib/videos/publish-round-video
  */
 
-import { and, eq, inArray } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { publishedMsForDate, seasonYearForDate } from "debate-data-sync/src/videos/video-rows";
+import { parseQueuedRoundArgs } from "debate-data-sync/src/youtube/parsers/round-arguments";
 import { chunkBoundParams } from "@/lib/database/bound-params";
 import { chunkStatements } from "@/lib/database/query-budget";
-import { videos, type VideoTableInsert, type YoutubeRoundVideo } from "@/lib/database/schema";
+import {
+  videos,
+  youtubeRoundVideos,
+  type VideoTableInsert,
+  type YoutubeRoundVideo,
+} from "@/lib/database/schema";
 import { recomputeVideoStacks } from "./recompute-video-stacks";
 
-/** Converts one queued round video into a `videos` table insert row. */
+/**
+ * Converts one queued round video into a `videos` table insert row. The 1AC /
+ * 2NR arguments come from the description's `Aff 1AC args:` / `Neg 2NR args:`
+ * lines, which only curated imports carry (see `round-arguments.ts`).
+ */
 export function roundVideoToVideoRow(row: YoutubeRoundVideo): VideoTableInsert {
+  const { arg1ac, arg2nr } = parseQueuedRoundArgs(row.description);
   return {
     videoId: row.id,
     source: "round",
@@ -36,8 +47,8 @@ export function roundVideoToVideoRow(row: YoutubeRoundVideo): VideoTableInsert {
     negTeam: row.neg,
     affWin: row.winner,
     judgeDecision: row.judgeDecision,
-    arg1ac: null,
-    arg2nr: null,
+    arg1ac,
+    arg2nr,
     isTopPick: false,
     speechDocsUrl: null,
     seasonYear: seasonYearForDate(row.publishedAt),
@@ -70,16 +81,16 @@ export function roundVideoToVideoRow(row: YoutubeRoundVideo): VideoTableInsert {
  * `2023-05-01`, overridable per-run from the admin page's date chooser) — with
  * no check against `videos` — only an explicit admin removal
  * (`youtube_video_exclusions`) keeps a video out of the queue. So a round
- * published (and possibly corrected via the admin library, which sets
- * `admin_edited`) days or months ago can resurface in
- * `youtube_round_videos` and reach this function again, computed fresh from
- * the (unedited) YouTube listing. Re-reads which of `rows`' ids are already
- * published *and* admin-edited immediately before writing, and leaves those
- * rows alone entirely instead of letting the recomputed round data silently
- * overwrite an admin's title/category/tournament/speech-doc correction —
- * the same "an admin's edit is this row's source of truth once made" rule
- * `video-seed-sql.ts#buildVideoSeedStatements` already guards for the
- * JSON-seed path, applied here to the resync/publish path.
+ * published days or months ago can resurface in `youtube_round_videos` and
+ * reach this function again, computed fresh from the YouTube listing. The
+ * already-published row always wins: {@link findPublishedVideoIds} re-reads
+ * which of `rows`' ids are already in `videos` immediately before writing,
+ * those rows are skipped, and the insert itself is `ON CONFLICT DO NOTHING`
+ * as a backstop. An older published row may carry an admin's correction
+ * (`admin_edited`), a hand-cut stack placement, or round data parsed when the
+ * listing was cleaner — none of which a recomputed resync row should replace.
+ * The admin page's "Deduplicate" button ({@link dedupeRoundQueue}) clears
+ * those already-published rounds out of the queue without publishing.
  *
  * Newly published rows carry no stack placement of their own — the resync
  * queue's rows are never run through `assignVideoStacks` — so once every row
@@ -91,51 +102,80 @@ export function roundVideoToVideoRow(row: YoutubeRoundVideo): VideoTableInsert {
  *
  * @param db - Drizzle handle bound to D1 (or local SQLite in development).
  * @param rows - Queued round videos to publish.
- * @returns Number of rows actually upserted — excludes any left untouched
- *   because they were already published and admin-edited.
+ * @returns Number of rows actually inserted — excludes any left untouched
+ *   because they were already published.
  */
 export async function publishRoundVideos(db: any, rows: YoutubeRoundVideo[]): Promise<number> {
-  const ids = rows.map((row) => row.id);
-  // One statement per 99 ids: `videoId IN (...)` binds a parameter per id and
-  // the `admin_edited` comparison binds the hundredth, and D1 rejects the
-  // statement outright past that. "Publish all" over a queue holding more
-  // than 99 rounds used to fail right here, before a single row was written.
-  const adminEditedIds = new Set<string>();
-  const lookups = chunkBoundParams(ids, 1).map((idChunk) =>
-    db
-      .select({ videoId: videos.videoId })
-      .from(videos)
-      .where(and(inArray(videos.videoId, idChunk), eq(videos.adminEdited, true))),
+  const alreadyPublished = await findPublishedVideoIds(
+    db,
+    rows.map((row) => row.id),
   );
-  for (const batch of chunkStatements(lookups)) {
-    // One result array per statement, in the order the statements were given.
-    for (const alreadyEdited of (await db.batch(batch)) as { videoId: string }[][]) {
-      for (const row of alreadyEdited) adminEditedIds.add(row.videoId);
-    }
-  }
 
   let published = 0;
-  const upserts = [];
+  const inserts = [];
+  // A queue id is a primary key, but guard anyway so one batch can never
+  // insert the same video twice.
+  const seen = new Set<string>();
   for (const row of rows) {
-    if (adminEditedIds.has(row.id)) continue;
-    const values = roundVideoToVideoRow(row);
+    if (alreadyPublished.has(row.id) || seen.has(row.id)) continue;
+    seen.add(row.id);
     // Unexecuted — a drizzle query builder only runs when it is awaited, which
     // is what lets `db.batch()` take it. Both the D1 driver and the local
     // libSQL driver `getDB()` can return support `.batch()`.
-    upserts.push(
-      db
-        .insert(videos)
-        .values(values)
-        .onConflictDoUpdate({
-          target: videos.videoId,
-          set: { ...values, updatedAt: new Date() },
-        }),
-    );
+    inserts.push(db.insert(videos).values(roundVideoToVideoRow(row)).onConflictDoNothing());
     published++;
   }
-  for (const batch of chunkStatements(upserts)) await db.batch(batch);
+  for (const batch of chunkStatements(inserts)) await db.batch(batch);
 
   if (published > 0) await recomputeVideoStacks(db);
 
   return published;
+}
+
+/**
+ * Returns which of `ids` already have a row in the public `videos` table.
+ *
+ * One statement per 100 ids: `videoId IN (...)` binds a parameter per id and
+ * D1 rejects a statement past that. "Publish all" over a queue holding more
+ * than 100 rounds used to fail right here, before a single row was written.
+ * The statements go out in batches so the lookup costs a handful of D1
+ * queries rather than one per chunk; see `lib/database/query-budget.ts`.
+ */
+export async function findPublishedVideoIds(db: any, ids: string[]): Promise<Set<string>> {
+  const found = new Set<string>();
+  if (ids.length === 0) return found;
+  const lookups = chunkBoundParams(ids).map((idChunk) =>
+    db.select({ videoId: videos.videoId }).from(videos).where(inArray(videos.videoId, idChunk)),
+  );
+  for (const batch of chunkStatements(lookups)) {
+    // One result array per statement, in the order the statements were given.
+    for (const existing of (await db.batch(batch)) as { videoId: string }[][]) {
+      for (const row of existing) found.add(row.videoId);
+    }
+  }
+  return found;
+}
+
+/**
+ * Removes every queued round whose video is already published, leaving the
+ * published row untouched — the admin page's "Deduplicate" action. Optionally
+ * narrowed to one style, matching the queue filter the admin is looking at.
+ *
+ * @returns The ids removed from the queue.
+ */
+export async function dedupeRoundQueue(db: any, style?: number | null): Promise<string[]> {
+  const queued: { id: string }[] = await db
+    .select({ id: youtubeRoundVideos.id })
+    .from(youtubeRoundVideos)
+    .where(style == null ? undefined : eq(youtubeRoundVideos.style, style));
+  const published = await findPublishedVideoIds(
+    db,
+    queued.map((row) => row.id),
+  );
+  const duplicates = queued.map((row) => row.id).filter((id) => published.has(id));
+  const clears = chunkBoundParams<string>(duplicates).map((idChunk) =>
+    db.delete(youtubeRoundVideos).where(inArray(youtubeRoundVideos.id, idChunk)),
+  );
+  for (const batch of chunkStatements(clears)) await db.batch(batch);
+  return duplicates;
 }

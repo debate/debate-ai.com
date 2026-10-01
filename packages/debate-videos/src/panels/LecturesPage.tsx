@@ -23,7 +23,6 @@ import { ArrowLeft } from "lucide-react"
 import { normalizeCategoryKey } from "debate-data-sync/src/videos/video-rows"
 import { MAX_VIDEO_PAGE_SIZE } from "debate-data-sync/src/videos/video-query"
 import type { CategoryType, DebateStyle } from "../types/videos"
-import { Footer } from "../ui/layout/footer"
 import { LeaderboardPanel } from "./leaderboard/RankingsLeaderboardPanel"
 import { LeaderboardFilterBar } from "./leaderboard/LeaderboardFilterBar"
 import type { LeaderboardTab } from "./leaderboard/leaderboardUtils"
@@ -61,6 +60,13 @@ interface LecturesPageProps {
    * it, which left both with no dock and no nav tree at all.
    */
   dockSlot?: React.ReactNode
+  /**
+   * Research-area topic explorer, mounted by the host page and shown as the
+   * first section of the statistics branch. It lives in `debate-webview`,
+   * which this package must not import from, so it arrives as an element
+   * rather than as a dependency. See {@link StatisticsPageProps.topicAreasSlot}.
+   */
+  topicAreasSlot?: React.ReactNode
 }
 
 /**
@@ -70,7 +76,7 @@ interface LecturesPageProps {
  * API, and rendering is delegated to the three branch view components
  * depending on `state.currentCategory`.
  */
-export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
+export function LecturesPage({ dockSlot, topicAreasSlot }: LecturesPageProps = {}) {
   const searchParams = useSearchParams()
   const routeParams = useParams()
 
@@ -423,6 +429,9 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
   // Both branches below are wrapped in the same sidebar the grid renders, so
   // a tree link into either one lands on a page you can navigate out of.
   // `sidebarShellProps` is shared between them rather than spelled twice.
+  //
+  // Neither branch renders a content-area footer: that column already has one,
+  // so a second row under the content repeated the same links on one screen.
   const sidebarShellProps = {
     dockSlot,
     counts: quickLinkCounts,
@@ -435,7 +444,7 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
   if (state.currentCategory === "leaderboard") {
     return (
       <LecturesSidebarShell {...sidebarShellProps} activeId="rankings">
-        <div className="min-h-screen bg-background p-3 sm:p-6 flex flex-col justify-between">
+        <div className="min-h-screen bg-background p-3 sm:p-6">
           <div>
             <StickyHeader
               controls={
@@ -459,7 +468,6 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
               history={meta?.history}
             />
           </div>
-          <Footer />
         </div>
       </LecturesSidebarShell>
     )
@@ -480,7 +488,7 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
     return (
       <LecturesSidebarShell {...sidebarShellProps} activeId="statistics">
         <Suspense fallback={null}>
-          <StatisticsPage topics={meta?.topics} youtubeStats={youtubeStats} />
+          <StatisticsPage topics={meta?.topics} youtubeStats={youtubeStats} topicAreasSlot={topicAreasSlot} />
         </Suspense>
       </LecturesSidebarShell>
     )

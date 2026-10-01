@@ -266,7 +266,7 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
     heading: "Mobile Setup",
     tools: [
       {
-        href: "/tools/mobile-setup", label: "Laptop-less Debating", icon: Smartphone,
+        href: "/coaching/laptopless", label: "Laptop-less Debating", icon: Smartphone,
         description: "Gear picks and a step-by-step guide to prepping, flowing, and speaking off just a mobile phone — no laptop.",
         highlights: [
           "Recommended phone mount and keyboard gear, with Amazon links",

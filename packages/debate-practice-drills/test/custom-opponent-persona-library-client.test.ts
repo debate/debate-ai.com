@@ -8,8 +8,8 @@ import {
 import type { SavedCustomOpponentPersona } from "debate-speech-writer/src/opponent/opponent-persona-library";
 
 const ENTRY: SavedCustomOpponentPersona = {
-  id: "kritik-bot",
-  name: "Kritik Bot",
+  id: "critique-bot",
+  name: "Critique Bot",
   notes: "Opens on framework.",
   shared: false,
   createdAt: 1700000000000,
@@ -62,7 +62,7 @@ describe("saveCustomOpponentPersonaToAccount", () => {
     await saveCustomOpponentPersonaToAccount(ENTRY);
 
     const [endpoint, init] = (fetchMock as ReturnType<typeof vi.fn>).mock.calls[0];
-    expect(endpoint).toBe("/api/custom-opponent-personas/kritik-bot");
+    expect(endpoint).toBe("/api/custom-opponent-personas/critique-bot");
     expect((init as RequestInit).method).toBe("PUT");
     expect(JSON.parse((init as RequestInit).body as string)).toEqual({ entry: ENTRY });
   });
@@ -99,7 +99,7 @@ describe("deleteCustomOpponentPersonaFromAccount", () => {
     })) as unknown as typeof fetch;
     vi.stubGlobal("fetch", fetchMock);
 
-    await expect(deleteCustomOpponentPersonaFromAccount("kritik-bot")).rejects.toThrow("Delete failed.");
+    await expect(deleteCustomOpponentPersonaFromAccount("critique-bot")).rejects.toThrow("Delete failed.");
   });
 });
 

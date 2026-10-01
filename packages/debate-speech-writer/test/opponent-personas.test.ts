@@ -38,7 +38,7 @@ describe("opponentPersonas registry", () => {
 
   it("includes the styles named in the AI Practice Opponent idea", () => {
     const ids = new Set(opponentPersonaIds);
-    for (const id of ["policy-heavy", "kritik", "lay", "fast-flow"]) {
+    for (const id of ["policy-heavy", "critique", "lay", "fast-flow"]) {
       expect(ids.has(id as (typeof opponentPersonaIds)[number])).toBe(true);
     }
   });
@@ -118,23 +118,23 @@ describe("isOpponentDifficulty / getOpponentDifficulty", () => {
 
 describe("buildOpponentPersonaPrompt", () => {
   it("includes the persona name, description, priorities, pace, and instructions", () => {
-    const prompt = buildOpponentPersonaPrompt(opponentPersonas.kritik);
+    const prompt = buildOpponentPersonaPrompt(opponentPersonas.critique);
 
-    expect(prompt).toContain("Opponent Persona: Kritik");
-    expect(prompt).toContain(opponentPersonas.kritik.description);
+    expect(prompt).toContain("Opponent Persona: Critique");
+    expect(prompt).toContain(opponentPersonas.critique.description);
     expect(prompt).toContain("1. Framework arguments over how the round should be evaluated");
     expect(prompt).toContain("Pace: moderate.");
-    expect(prompt).toContain(opponentPersonas.kritik.instructions);
+    expect(prompt).toContain(opponentPersonas.critique.instructions);
   });
 
   it("defaults to the intermediate difficulty when none is given", () => {
-    const prompt = buildOpponentPersonaPrompt(opponentPersonas.kritik);
+    const prompt = buildOpponentPersonaPrompt(opponentPersonas.critique);
     expect(prompt).toContain("Difficulty: Intermediate.");
     expect(prompt).toContain(opponentDifficulties.intermediate.instructions);
   });
 
   it("layers the given difficulty's instructions on top of the persona", () => {
-    const prompt = buildOpponentPersonaPrompt(opponentPersonas.kritik, "elite");
+    const prompt = buildOpponentPersonaPrompt(opponentPersonas.critique, "elite");
     expect(prompt).toContain("Difficulty: Elite.");
     expect(prompt).toContain(opponentDifficulties.elite.instructions);
   });
@@ -234,8 +234,8 @@ describe("buildOpponentPersonaFeedbackTips", () => {
   });
 
   it("returns exactly the registered tips for a built-in persona", () => {
-    expect(buildOpponentPersonaFeedbackTips(opponentPersonas.kritik)).toBe(
-      OPPONENT_PERSONA_FEEDBACK_TIPS.kritik,
+    expect(buildOpponentPersonaFeedbackTips(opponentPersonas.critique)).toBe(
+      OPPONENT_PERSONA_FEEDBACK_TIPS.critique,
     );
   });
 
@@ -243,7 +243,7 @@ describe("buildOpponentPersonaFeedbackTips", () => {
     const custom = buildCustomOpponentPersona({ name: "Speedster", notes: "Spreads everything." });
     const tips = buildOpponentPersonaFeedbackTips(custom);
     expect(tips.length).toBeGreaterThan(0);
-    expect(tips).not.toEqual(OPPONENT_PERSONA_FEEDBACK_TIPS.kritik);
+    expect(tips).not.toEqual(OPPONENT_PERSONA_FEEDBACK_TIPS.critique);
   });
 
   it("falls back to the generic tip for a persona object labeled 'custom' even if it copies a built-in's other fields", () => {

@@ -4,13 +4,13 @@
    render (the root layout's head script, `applyStoredAppearance` elsewhere). */
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "./themes.css";
+@import "../../../debate-flow/src/styles/ebb-scope.css";
 /* Fixes where the REASON editor's `vendor` layer sits in the cascade (after
    Tailwind's own layers). Its styles themselves are in `reason-editor.css`,
    which only the /doc workspace chunk imports: at 3.4 MB they used to make
    up nearly all of this render-blocking stylesheet on every page. */
 @layer vendor;
-@import "./themes.css";
-@import "../../../debate-flow/src/styles/ebb-scope.css";
 
 /* The debate component packages are symlinked in through node_modules, which
    Tailwind's automatic source detection skips — register them explicitly so

@@ -11,7 +11,6 @@ import Link from "next/link"
 import { ArrowLeft, Search, X } from "lucide-react"
 import { Input } from "../../ui/primitives/input"
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "../../ui/primitives/tooltip"
-import { Footer } from "../../ui/layout/footer"
 import { StickyHeader } from "../../components/layout/StickyHeader"
 import { DictionaryPanel } from "./DictionaryPanel"
 
@@ -25,7 +24,11 @@ interface LecturesDictionaryViewProps {
 
 /**
  * Renders the full dictionary page layout: sticky header with back button
- * and search input, the {@link DictionaryPanel}, and footer.
+ * and search input, then the {@link DictionaryPanel}.
+ *
+ * No content-area footer here: the sidebar column this view is wrapped in
+ * (`LecturesSidebarShell`) already carries one, so a second row below the
+ * term list was the same links twice on one screen.
  *
  * @param props - See {@link LecturesDictionaryViewProps}.
  */
@@ -45,7 +48,7 @@ export function LecturesDictionaryView({
   )
 
   return (
-    <div className="min-h-screen bg-background p-3 sm:p-6 flex flex-col justify-between">
+    <div className="min-h-screen bg-background p-3 sm:p-6">
       <div>
         <StickyHeader
           controls={
@@ -84,7 +87,6 @@ export function LecturesDictionaryView({
           onControlledSearchChange={onDictSearchTermChange}
         />
       </div>
-      <Footer />
     </div>
   )
 }

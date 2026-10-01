@@ -20,30 +20,41 @@
  * @module .github/scripts/seed-videos
  */
 
+import { existsSync, readFileSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildVideoRows, type VideoRow } from "debate-data-sync/src/videos/video-rows";
 import { buildVideoSeedStatements } from "debate-data-sync/src/videos/video-seed-sql";
-import roundsPolicy from "debate-data-sync/data/videos/rounds-policy.json" with { type: "json" };
-import roundsPf from "debate-data-sync/data/videos/rounds-pf.json" with { type: "json" };
-import roundsLd from "debate-data-sync/data/videos/rounds-ld.json" with { type: "json" };
-import roundsCollege from "debate-data-sync/data/videos/rounds-college.json" with { type: "json" };
-import lectures from "debate-data-sync/data/videos/debate-lectures.json" with { type: "json" };
-import topPicks from "debate-data-sync/data/videos/debate-top-picks.json" with { type: "json" };
 
 // This script lives in `.github/scripts`, not in the app whose database it
 // seeds, so the app root is named explicitly rather than derived from its own
 // folder.
-const APP_DIR = join(resolve(dirname(fileURLToPath(import.meta.url)), "..", ".."), "apps", "debate-ai.com");
+const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..");
+const APP_DIR = join(REPO_ROOT, "apps", "debate-ai.com");
 const SEED_FILE = join(APP_DIR, "drizzle", "seed", "videos-seed.sql");
+const ASSETS_DIR = join(REPO_ROOT, "packages", "debate-data-sync", "data", "videos");
 
-/** Reads the JSON assets and converts them into table rows. */
+const ROUND_ASSETS = ["rounds-policy.json", "rounds-pf.json", "rounds-ld.json", "rounds-college.json"];
+
+/**
+ * Reads the JSON assets and converts them into table rows.
+ *
+ * The assets are no longer committed, so they are read from disk at run time
+ * and the script stops when any is missing: the seed prunes every row it does
+ * not upsert, so seeding from nothing would empty the table.
+ */
 function loadRowsFromAssets(): VideoRow[] {
+  const files = [...ROUND_ASSETS, "debate-lectures.json", "debate-top-picks.json"];
+  const missing = files.filter((file) => !existsSync(join(ASSETS_DIR, file)));
+  if (missing.length > 0) {
+    throw new Error(`videos: missing ${missing.join(", ")} in ${ASSETS_DIR}; not seeding`);
+  }
+  const read = (file: string) => JSON.parse(readFileSync(join(ASSETS_DIR, file), "utf8"));
   return buildVideoRows({
-    rounds: [roundsPolicy, roundsPf, roundsLd, roundsCollege] as any,
-    lectures: lectures as any,
-    topPicks: topPicks as any,
+    rounds: ROUND_ASSETS.map(read),
+    lectures: read("debate-lectures.json"),
+    topPicks: read("debate-top-picks.json"),
   });
 }
 

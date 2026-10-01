@@ -30,7 +30,7 @@
     },
     {
       "term": "Alternative",
-      "definition": "The component of a kritik (critique) that presents the negative's proposed solution or framework for addressing the philosophical or systemic issue raised in the kritik's link and impact. Alternatives can range from concrete policy actions to more abstract positions such as 'reject the affirmative' or 'embrace a new epistemological framework.' The viability and clarity of the alternative is often a central point of clash, as affirmatives will argue the alternative is vague, unworkable, or can be accomplished through a permutation."
+      "definition": "The component of a critique that presents the negative's proposed solution or framework for addressing the philosophical or systemic issue raised in the critique's link and impact. Alternatives can range from concrete policy actions to more abstract positions such as 'reject the affirmative' or 'enchant a new epistemological framework.' The viability and clarity of the alternative is often a central point of clash, as affirmatives will argue the alternative is vague, unworkable, or can be accomplished through a permutation."
     },
     {
       "term": "Anti-topical",
@@ -38,7 +38,7 @@
     },
     {
       "term": "Apriori",
-      "definition": "An argument framed as logically prior to — and therefore more important than — all other arguments in the debate. A team advancing an apriori claim contends the judge must evaluate and resolve this issue before considering anything else. Common examples include certain theory arguments (like conditionality) or kritiks that challenge the fundamental assumptions of the debate itself. Apriori arguments are controversial; opponents argue they short-circuit fair deliberation, while proponents contend some issues are genuinely prerequisite to evaluating the rest of the round."
+      "definition": "An argument framed as logically prior to — and therefore more important than — all other arguments in the debate. A team advancing an apriori claim contends the judge must evaluate and resolve this issue before considering anything else. Common examples include certain theory arguments (like conditionality) or critiques that challenge the fundamental assumptions of the debate itself. Apriori arguments are controversial; opponents argue they short-circuit fair deliberation, while proponents contend some issues are genuinely prerequisite to evaluating the rest of the round."
     },
     {
       "term": "Argument",
@@ -50,7 +50,7 @@
     },
     {
       "term": "Assumptions",
-      "definition": "Implicit premises or beliefs that underlie an argument but are not explicitly stated or defended. Every argument rests on certain assumptions — for example, a disadvantage assumes the status quo is stable, or a solvency claim assumes the plan will be implemented effectively. Kritiks frequently target the underlying assumptions of the affirmative's framework, such as assumptions about state action, capitalism, or epistemology. Identifying and challenging hidden assumptions is a key critical thinking skill in debate."
+      "definition": "Implicit premises or beliefs that underlie an argument but are not explicitly stated or defended. Every argument rests on certain assumptions — for example, a disadvantage assumes the status quo is stable, or a solvency claim assumes the plan will be implemented effectively. Critiques frequently target the underlying assumptions of the affirmative's framework, such as assumptions about state action, capitalism, or epistemology. Identifying and challenging hidden assumptions is a key critical thinking skill in debate."
     },
     {
       "term": "Attitudinal inherency",
@@ -90,7 +90,7 @@
     },
     {
       "term": "Case attacks",
-      "definition": "Negative arguments that directly target and refute specific claims made in the affirmative's 1AC, as opposed to off-case arguments like disadvantages, counterplans, or kritiks. Case attacks can include solvency press (arguing the plan won't work), impact defense (arguing the harms are overstated), inherency takeouts (arguing the problem is already being solved), and case turns (arguing the plan makes things worse). A strong negative strategy typically combines case attacks with off-case positions to create multiple paths to a negative ballot."
+      "definition": "Negative arguments that directly target and refute specific claims made in the affirmative's 1AC, as opposed to off-case arguments like disadvantages, counterplans, or critiques. Case attacks can include solvency press (arguing the plan won't work), impact defense (arguing the harms are overstated), inherency takeouts (arguing the problem is already being solved), and case turns (arguing the plan makes things worse). A strong negative strategy typically combines case attacks with off-case positions to create multiple paths to a negative ballot."
     },
     {
       "term": "Case list",
@@ -118,7 +118,7 @@
     },
     {
       "term": "Conditionality",
-      "definition": "A theoretical status for negative arguments (typically counterplans and kritiks) in which the negative reserves the right to abandon ('kick') the argument at any point during the debate if it proves strategically disadvantageous. This is the most permissive argument status and is one of the most hotly debated theory issues in policy debate. Affirmatives argue that conditionality is abusive because it allows the negative to advocate contradictory positions, forces the affirmative to spend time on arguments the negative may drop, and creates a moving target. Negatives defend conditionality as necessary for thorough testing of the affirmative."
+      "definition": "A theoretical status for negative arguments (typically counterplans and critiques) in which the negative reserves the right to abandon ('kick') the argument at any point during the debate if it proves strategically disadvantageous. This is the most permissive argument status and is one of the most hotly debated theory issues in policy debate. Affirmatives argue that conditionality is abusive because it allows the negative to advocate contradictory positions, forces the affirmative to spend time on arguments the negative may drop, and creates a moving target. Negatives defend conditionality as necessary for thorough testing of the affirmative."
     },
     {
       "term": "Constructive",
@@ -154,7 +154,7 @@
     },
     {
       "term": "Decision-rule",
-      "definition": "A framing argument that one team advances as the single most important criterion the judge should use to evaluate the round, often claiming it must be resolved before any other arguments are considered. Decision-rules function similarly to apriori arguments and are frequently deployed alongside kritiks (e.g., 'reject any argument rooted in oppressive frameworks') or theory positions (e.g., 'conditionality is a voting issue — reject the team'). The team advancing a decision-rule argues it should serve as the lens through which all other arguments in the debate are filtered and weighed."
+      "definition": "A framing argument that one team advances as the single most important criterion the judge should use to evaluate the round, often claiming it must be resolved before any other arguments are considered. Decision-rules function similarly to apriori arguments and are frequently deployed alongside critiques (e.g., 'reject any argument rooted in oppressive frameworks') or theory positions (e.g., 'conditionality is a voting issue — reject the team'). The team advancing a decision-rule argues it should serve as the lens through which all other arguments in the debate are filtered and weighed."
     },
     {
       "term": "Defensive arguments",
@@ -174,7 +174,7 @@
     },
     {
       "term": "Dirty word critique",
-      "definition": "A type of kritik that targets a specific word or phrase used by the opposing team, arguing that the language itself is harmful, exclusionary, or perpetuates oppressive ideologies regardless of the speaker's intent. For example, a dirty word critique might challenge the use of gendered language, militaristic metaphors, or racially coded terminology. Critics of this strategy argue that it can be superficial and fails to engage with the substance of the debate, while proponents maintain that language shapes thought and that challenging harmful discursive practices is a legitimate and important function of debate."
+      "definition": "A type of critique that targets a specific word or phrase used by the opposing team, arguing that the language itself is harmful, exclusionary, or perpetuates oppressive ideologies regardless of the speaker's intent. For example, a dirty word critique might challenge the use of gendered language, militaristic metaphors, or racially coded terminology. Critics of this strategy argue that it can be superficial and fails to engage with the substance of the debate, while proponents maintain that language shapes thought and that challenging harmful discursive practices is a legitimate and important function of debate."
     },
     {
       "term": "Disclose",
@@ -182,7 +182,7 @@
     },
     {
       "term": "Discursive",
-      "definition": "Relating to the language, rhetoric, and communicative choices a team makes in a debate. Discursive arguments focus on how teams frame, discuss, and talk about issues rather than the policy substance of their positions. For example, a discursive argument might challenge the way a team discusses poverty, gender, or race, contending that their language reinforces harmful stereotypes or power structures. Discursive kritiks argue that the way we talk about problems is as important — or more important — than the specific policies we propose to address them."
+      "definition": "Relating to the language, rhetoric, and communicative choices a team makes in a debate. Discursive arguments focus on how teams frame, discuss, and talk about issues rather than the policy substance of their positions. For example, a discursive argument might challenge the way a team discusses poverty, gender, or race, contending that their language reinforces harmful stereotypes or power structures. Discursive critiques argue that the way we talk about problems is as important — or more important — than the specific policies we propose to address them."
     },
     {
       "term": "Dispositionality",
@@ -250,7 +250,7 @@
     },
     {
       "term": "Floating PIC",
-      "definition": "A Plan Inclusive Counterplan (PIC) disguised within the alternative of a kritik, which endorses everything the affirmative does except some minor element (such as a particular rhetorical framing or justification). The 'floating' aspect refers to the fact that the PIC is not explicitly presented as a counterplan in the 1NC but instead emerges when the negative argues in later speeches that the kritik alternative can incorporate the affirmative's plan mechanism while rejecting its problematic assumptions. Floating PICs are highly controversial; affirmatives argue they are theoretically illegitimate because they are unpredictable and bypass the normal counterplan competition framework."
+      "definition": "A Plan Inclusive Counterplan (PIC) disguised within the alternative of a critique, which endorses everything the affirmative does except some minor element (such as a particular rhetorical framing or justification). The 'floating' aspect refers to the fact that the PIC is not explicitly presented as a counterplan in the 1NC but instead emerges when the negative argues in later speeches that the critique alternative can incorporate the affirmative's plan mechanism while rejecting its problematic assumptions. Floating PICs are highly controversial; affirmatives argue they are theoretically illegitimate because they are unpredictable and bypass the normal counterplan competition framework."
     },
     {
       "term": "Flow",
@@ -274,7 +274,7 @@
     },
     {
       "term": "Generic",
-      "definition": "An argument (disadvantage, kritik, counterplan, or set of case arguments) that is broadly applicable to a wide range of affirmative cases on the topic rather than being specifically tailored to one particular plan. Generics are the backbone of negative preparation because they allow teams to have arguments ready against any affirmative they might face. Examples include the politics disadvantage (which links to any plan requiring political capital), the states counterplan (which can be applied to any federal action), and capitalism kritiks (which can challenge any plan operating within market-based frameworks). While generics provide breadth, they can be vulnerable to affirmative arguments about specificity and link quality."
+      "definition": "An argument (disadvantage, critique, counterplan, or set of case arguments) that is broadly applicable to a wide range of affirmative cases on the topic rather than being specifically tailored to one particular plan. Generics are the backbone of negative preparation because they allow teams to have arguments ready against any affirmative they might face. Examples include the politics disadvantage (which links to any plan requiring political capital), the states counterplan (which can be applied to any federal action), and capitalism critiques (which can challenge any plan operating within market-based frameworks). While generics provide breadth, they can be vulnerable to affirmative arguments about specificity and link quality."
     },
     {
       "term": "Generic disadvantage",
@@ -350,7 +350,7 @@
     },
     {
       "term": "Judge philosophy",
-      "definition": "A written statement (also called a 'judge paradigm' or 'judging philosophy') published on platforms like Tabroom.com or the NDCA wiki, in which a judge describes their preferences, biases, and approach to evaluating debates. Philosophies typically address the judge's views on speed/spreading, theory arguments, kritiks, counterplan legitimacy, evidence quality, speaker point ranges, and what they consider voting issues. Savvy debaters research their judge's philosophy before each round and adapt their strategy accordingly — for example, avoiding dense theory arguments in front of a judge who prefers substantive policy debates."
+      "definition": "A written statement (also called a 'judge paradigm' or 'judging philosophy') published on platforms like Tabroom.com or the NDCA wiki, in which a judge describes their preferences, biases, and approach to evaluating debates. Philosophies typically address the judge's views on speed/spreading, theory arguments, critiques, counterplan legitimacy, evidence quality, speaker point ranges, and what they consider voting issues. Savvy debaters research their judge's philosophy before each round and adapt their strategy accordingly — for example, avoiding dense theory arguments in front of a judge who prefers substantive policy debates."
     },
     {
       "term": "Judge paradigm",
@@ -358,15 +358,15 @@
     },
     {
       "term": "Kick",
-      "definition": "The strategic decision by a team to abandon or stop advocating an argument they previously introduced, typically done by the negative in the 2NR when they choose not to extend a counterplan, kritik, or disadvantage from the block. Kicking an argument allows the team to focus their limited rebuttal time on their strongest positions. Whether the negative is allowed to kick arguments depends on their status — conditional arguments can be freely kicked, while unconditional arguments cannot. The affirmative may also argue that the negative should not be permitted to kick arguments if doing so shifts the strategic landscape unfairly (see conditionality)."
+      "definition": "The strategic decision by a team to abandon or stop advocating an argument they previously introduced, typically done by the negative in the 2NR when they choose not to extend a counterplan, critique, or disadvantage from the block. Kicking an argument allows the team to focus their limited rebuttal time on their strongest positions. Whether the negative is allowed to kick arguments depends on their status — conditional arguments can be freely kicked, while unconditional arguments cannot. The affirmative may also argue that the negative should not be permitted to kick arguments if doing so shifts the strategic landscape unfairly (see conditionality)."
     },
     {
-      "term": "Kritik",
-      "definition": "A philosophical or critical argument (from the German word for 'critique') that challenges the underlying assumptions, methodology, epistemology, or ideology of the opposing team's position rather than engaging with it on purely policy grounds. A kritik typically has three components: a link (identifying the problematic assumption in the opponent's advocacy), an impact (explaining why that assumption is harmful at a systemic or philosophical level), and an alternative (proposing a different framework, methodology, or action). Common kritiks draw from critical theory traditions including Marxism, feminism, postcolonialism, Heidegger, Foucault, Baudrillard, and Afropessimism. Kritiks have become one of the most influential and debated developments in modern policy debate."
+      "term": "Critique",
+      "definition": "A philosophical or critical argument (from the German word for 'critique') that challenges the underlying assumptions, methodology, epistemology, or ideology of the opposing team's position rather than engaging with it on purely policy grounds. A critique typically has three components: a link (identifying the problematic assumption in the opponent's advocacy), an impact (explaining why that assumption is harmful at a systemic or philosophical level), and an alternative (proposing a different framework, methodology, or action). Common critiques draw from critical theory traditions including Marxism, feminism, postcolonialism, Heidegger, Foucault, Baudrillard, and Afropessimism. Critiques have become one of the most influential and debated developments in modern policy debate."
     },
     {
-      "term": "Language Kritik",
-      "definition": "A specific type of kritik that targets the rhetorical choices, terminology, or discourse used by the opposing team, arguing that their language perpetuates harmful ideologies, stereotypes, or power dynamics regardless of intent. Language kritiks can challenge gendered pronouns, ableist metaphors, militaristic rhetoric, or racially coded terms. The argument typically contends that language shapes thought and reality, so using harmful language in the debate space causes tangible harm to marginalized communities and reinforces oppressive structures. Opponents often argue that language kritiks are superficial, focus on form over substance, and create a chilling effect on free expression in debate."
+      "term": "Language Critique",
+      "definition": "A specific type of critique that targets the rhetorical choices, terminology, or discourse used by the opposing team, arguing that their language perpetuates harmful ideologies, stereotypes, or power dynamics regardless of intent. Language critiques can challenge gendered pronouns, ableist metaphors, militaristic rhetoric, or racially coded terms. The argument typically contends that language shapes thought and reality, so using harmful language in the debate space causes tangible harm to marginalized communities and reinforces oppressive structures. Opponents often argue that language critiques are superficial, focus on form over substance, and create a chilling effect on free expression in debate."
     },
     {
       "term": "Legislative intent",
@@ -386,11 +386,11 @@
     },
     {
       "term": "Link",
-      "definition": "The component of a disadvantage, kritik, or other argument that establishes the causal connection between the affirmative plan and the negative consequence. The link answers the question: 'Why does the affirmative plan trigger this problem?' For example, in a politics disadvantage, the link might be 'the plan is politically controversial and will cost the president political capital.' Links can be generic (applying broadly to many plans) or specific (tailored to a particular affirmative). The strength and specificity of the link is often the most contested element of a disadvantage, and the quality of link evidence frequently determines the outcome of the argument."
+      "definition": "The component of a disadvantage, critique, or other argument that establishes the causal connection between the affirmative plan and the negative consequence. The link answers the question: 'Why does the affirmative plan trigger this problem?' For example, in a politics disadvantage, the link might be 'the plan is politically controversial and will cost the president political capital.' Links can be generic (applying broadly to many plans) or specific (tailored to a particular affirmative). The strength and specificity of the link is often the most contested element of a disadvantage, and the quality of link evidence frequently determines the outcome of the argument."
     },
     {
       "term": "Link defense",
-      "definition": "A category of defensive arguments aimed at weakening or denying the causal connection between the affirmative plan and the opposing team's argument. Link defense does not turn the argument — it simply argues that the link is weak, implausible, or unsupported. For example, responding to a spending DA by arguing the plan costs very little, or answering a kritik by arguing the affirmative does not actually embody the assumptions the negative claims. While link defense reduces the risk of the opponent's argument, it is defensive and does not generate independent offense. It is most effective when combined with offensive arguments like link turns."
+      "definition": "A category of defensive arguments aimed at weakening or denying the causal connection between the affirmative plan and the opposing team's argument. Link defense does not turn the argument — it simply argues that the link is weak, implausible, or unsupported. For example, responding to a spending DA by arguing the plan costs very little, or answering a critique by arguing the affirmative does not actually embody the assumptions the negative claims. While link defense reduces the risk of the opponent's argument, it is defensive and does not generate independent offense. It is most effective when combined with offensive arguments like link turns."
     },
     {
       "term": "Link expander",
@@ -402,7 +402,7 @@
     },
     {
       "term": "Link take-out",
-      "definition": "A defensive argument that directly denies the existence of a causal connection between the affirmative plan and the opposing team's disadvantage or kritik. A link takeout argues that the plan simply does not do what the negative claims it does — the link is factually false. For example, if the negative argues the plan increases federal spending, a link takeout might present evidence that the plan is revenue-neutral. Link takeouts are purely defensive — they eliminate the opponent's offense but don't generate any independent reason to vote for the team making the argument."
+      "definition": "A defensive argument that directly denies the existence of a causal connection between the affirmative plan and the opposing team's disadvantage or critique. A link takeout argues that the plan simply does not do what the negative claims it does — the link is factually false. For example, if the negative argues the plan increases federal spending, a link takeout might present evidence that the plan is revenue-neutral. Link takeouts are purely defensive — they eliminate the opponent's offense but don't generate any independent reason to vote for the team making the argument."
     },
     {
       "term": "Link turn",
@@ -426,7 +426,7 @@
     },
     {
       "term": "Multiple perms",
-      "definition": "A strategy where the affirmative advances several different permutations against a single counterplan or kritik alternative, each combining the plan with all or part of the counterplan/alternative in different ways. For example: 'Perm: do both,' 'Perm: do the plan then the counterplan,' 'Perm: do the counterplan then the plan.' Multiple perms increase the affirmative's chances of demonstrating that the counterplan is not competitive, but the negative may argue on theory that excessive permutations are abusive because they require substantial time to answer and can serve as moving targets. Some judges limit the number of permutations they will consider."
+      "definition": "A strategy where the affirmative advances several different permutations against a single counterplan or critique alternative, each combining the plan with all or part of the counterplan/alternative in different ways. For example: 'Perm: do both,' 'Perm: do the plan then the counterplan,' 'Perm: do the counterplan then the plan.' Multiple perms increase the affirmative's chances of demonstrating that the counterplan is not competitive, but the negative may argue on theory that excessive permutations are abusive because they require substantial time to answer and can serve as moving targets. Some judges limit the number of permutations they will consider."
     },
     {
       "term": "Mutually exclusive",
@@ -438,7 +438,7 @@
     },
     {
       "term": "Negative",
-      "definition": "The team (also called 'Neg') that argues against the resolution and opposes the affirmative plan. The negative team does not bear the burden of proof — they benefit from presumption, meaning the status quo is assumed adequate unless the affirmative proves otherwise. The negative team consists of two speakers: the First Negative (1N) and the Second Negative (2N), each delivering a constructive and rebuttal speech. The negative has significant strategic flexibility, able to deploy a wide range of arguments including disadvantages, counterplans, kritiks, topicality, and case attacks."
+      "definition": "The team (also called 'Neg') that argues against the resolution and opposes the affirmative plan. The negative team does not bear the burden of proof — they benefit from presumption, meaning the status quo is assumed adequate unless the affirmative proves otherwise. The negative team consists of two speakers: the First Negative (1N) and the Second Negative (2N), each delivering a constructive and rebuttal speech. The negative has significant strategic flexibility, able to deploy a wide range of arguments including disadvantages, counterplans, critiques, topicality, and case attacks."
     },
     {
       "term": "Negative block",
@@ -446,7 +446,7 @@
     },
     {
       "term": "Negation theory",
-      "definition": "A meta-theoretical argument contending that any argument the negative advances is legitimate as long as it negates or opposes the affirmative position, regardless of whether it conforms to traditional argument types. Negation theory is often invoked to justify unconventional negative strategies — for example, running a kritik that doesn't offer a traditional alternative, or presenting a performance that challenges the affirmative's framework. Proponents argue that the negative's only obligation is to demonstrate the affirmative should lose. Critics contend that negation theory is too permissive and allows the negative to evade its own argumentative responsibilities."
+      "definition": "A meta-theoretical argument contending that any argument the negative advances is legitimate as long as it negates or opposes the affirmative position, regardless of whether it conforms to traditional argument types. Negation theory is often invoked to justify unconventional negative strategies — for example, running a critique that doesn't offer a traditional alternative, or presenting a performance that challenges the affirmative's framework. Proponents argue that the negative's only obligation is to demonstrate the affirmative should lose. Critics contend that negation theory is too permissive and allows the negative to evade its own argumentative responsibilities."
     },
     {
       "term": "Net-beneficial",
@@ -474,7 +474,7 @@
     },
     {
       "term": "Off-case",
-      "definition": "Negative arguments that exist independently of the affirmative's case structure and are presented on separate flows rather than applied directly to the 1AC's contentions. The major categories of off-case arguments include topicality (challenging whether the plan meets the resolution), disadvantages (arguing the plan causes net harms), counterplans (proposing alternative solutions), and kritiks (philosophically challenging the affirmative's assumptions). Off-case arguments are typically introduced in the 1NC and form the core of most negative strategies. A balanced negative approach combines off-case positions with on-case attacks to create multiple paths to a ballot."
+      "definition": "Negative arguments that exist independently of the affirmative's case structure and are presented on separate flows rather than applied directly to the 1AC's contentions. The major categories of off-case arguments include topicality (challenging whether the plan meets the resolution), disadvantages (arguing the plan causes net harms), counterplans (proposing alternative solutions), and critiques (philosophically challenging the affirmative's assumptions). Off-case arguments are typically introduced in the 1NC and form the core of most negative strategies. A balanced negative approach combines off-case positions with on-case attacks to create multiple paths to a ballot."
     },
     {
       "term": "Offensive arguments",
@@ -514,7 +514,7 @@
     },
     {
       "term": "Permutation",
-      "definition": "An affirmative test of a counterplan's or kritik alternative's competition, arguing that the judge should consider a world in which the plan and all or part of the counterplan/alternative are implemented together. If the permutation is desirable (or at least as good as the counterplan alone), it demonstrates the counterplan does not compete and should be rejected. The most common permutation is 'do both' — implement the plan and the counterplan simultaneously. Other permutations include 'do the plan then the counterplan,' 'do the counterplan then the plan,' and 'do all of the plan and all non-mutually-exclusive parts of the counterplan.' Permutations are not advocacies — they are merely tests of competition."
+      "definition": "An affirmative test of a counterplan's or critique alternative's competition, arguing that the judge should consider a world in which the plan and all or part of the counterplan/alternative are implemented together. If the permutation is desirable (or at least as good as the counterplan alone), it demonstrates the counterplan does not compete and should be rejected. The most common permutation is 'do both' — implement the plan and the counterplan simultaneously. Other permutations include 'do the plan then the counterplan,' 'do the counterplan then the plan,' and 'do all of the plan and all non-mutually-exclusive parts of the counterplan.' Permutations are not advocacies — they are merely tests of competition."
     },
     {
       "term": "Persuasive",
@@ -554,7 +554,7 @@
     },
     {
       "term": "Positions",
-      "definition": "The major off-case arguments that the negative advances in the 1NC, each typically presented as a separate flow sheet. A negative strategy might include multiple positions — for example, Position 1: Topicality, Position 2: Politics Disadvantage, Position 3: States Counterplan, Position 4: Capitalism Kritik. The selection and combination of positions reflects the negative's overall strategic approach to the debate. Teams typically prepare a 'negative strategy' or 'neg strat' consisting of positions specifically chosen to work together against a particular affirmative case."
+      "definition": "The major off-case arguments that the negative advances in the 1NC, each typically presented as a separate flow sheet. A negative strategy might include multiple positions — for example, Position 1: Topicality, Position 2: Politics Disadvantage, Position 3: States Counterplan, Position 4: Capitalism Critique. The selection and combination of positions reflects the negative's overall strategic approach to the debate. Teams typically prepare a 'negative strategy' or 'neg strat' consisting of positions specifically chosen to work together against a particular affirmative case."
     },
     {
       "term": "Power-match",
@@ -566,7 +566,7 @@
     },
     {
       "term": "Pre-fiat",
-      "definition": "Arguments that the judge should evaluate and resolve before considering the post-fiat policy consequences of the affirmative plan. Pre-fiat arguments contend that certain issues — such as the ethics of the debate process itself, the implications of the language used, or the team's methodology — are logically prior to questions about whether the plan would be effective policy. Many kritiks and performance arguments operate in the pre-fiat space, arguing that how we debate matters more than the hypothetical policy outcomes we discuss. The pre-fiat/post-fiat distinction is one of the central philosophical divides in modern policy debate."
+      "definition": "Arguments that the judge should evaluate and resolve before considering the post-fiat policy consequences of the affirmative plan. Pre-fiat arguments contend that certain issues — such as the ethics of the debate process itself, the implications of the language used, or the team's methodology — are logically prior to questions about whether the plan would be effective policy. Many critiques and performance arguments operate in the pre-fiat space, arguing that how we debate matters more than the hypothetical policy outcomes we discuss. The pre-fiat/post-fiat distinction is one of the central philosophical divides in modern policy debate."
     },
     {
       "term": "Pre-round prep",
@@ -790,7 +790,7 @@
     },
     {
       "term": "Utilitarianism",
-      "definition": "An ethical and philosophical framework holding that the morally right action is the one that produces the greatest good for the greatest number of people — maximizing overall happiness, welfare, or utility. In debate, utilitarianism is the default ethical framework for most policymaking-paradigm judges, as it aligns naturally with cost-benefit analysis of competing policy proposals. Under a utilitarian framework, the team whose plan or counterplan produces the greatest net benefits wins. Kritiks often challenge utilitarian thinking, arguing that it can justify horrific means (such as sacrificing a minority's rights) to achieve aggregate benefits, and propose alternative ethical frameworks like deontology, virtue ethics, or care ethics."
+      "definition": "An ethical and philosophical framework holding that the morally right action is the one that produces the greatest good for the greatest number of people — maximizing overall happiness, welfare, or utility. In debate, utilitarianism is the default ethical framework for most policymaking-paradigm judges, as it aligns naturally with cost-benefit analysis of competing policy proposals. Under a utilitarian framework, the team whose plan or counterplan produces the greatest net benefits wins. Critiques often challenge utilitarian thinking, arguing that it can justify horrific means (such as sacrificing a minority's rights) to achieve aggregate benefits, and propose alternative ethical frameworks like deontology, virtue ethics, or care ethics."
     },
     {
       "term": "Violation",

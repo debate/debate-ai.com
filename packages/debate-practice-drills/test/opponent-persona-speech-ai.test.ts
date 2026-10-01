@@ -10,10 +10,10 @@ describe("buildPersonaAiVersusSystemPrompt", () => {
   });
 
   it("includes the persona's name, description, and instructions", () => {
-    const prompt = buildPersonaAiVersusSystemPrompt(opponentPersonas.kritik);
-    expect(prompt).toContain("Opponent Persona: Kritik");
-    expect(prompt).toContain(opponentPersonas.kritik.description);
-    expect(prompt).toContain(opponentPersonas.kritik.instructions);
+    const prompt = buildPersonaAiVersusSystemPrompt(opponentPersonas.critique);
+    expect(prompt).toContain("Opponent Persona: Critique");
+    expect(prompt).toContain(opponentPersonas.critique.description);
+    expect(prompt).toContain(opponentPersonas.critique.instructions);
   });
 
   it("includes the persona's preferred arguments, in priority order", () => {
@@ -33,18 +33,18 @@ describe("buildPersonaAiVersusSystemPrompt", () => {
   });
 
   it("defaults to the intermediate difficulty when none is given", () => {
-    const prompt = buildPersonaAiVersusSystemPrompt(opponentPersonas.kritik);
+    const prompt = buildPersonaAiVersusSystemPrompt(opponentPersonas.critique);
     expect(prompt).toContain("Difficulty: Intermediate.");
   });
 
   it("includes a caller-supplied difficulty's instructions", () => {
-    const prompt = buildPersonaAiVersusSystemPrompt(opponentPersonas.kritik, "beginner");
+    const prompt = buildPersonaAiVersusSystemPrompt(opponentPersonas.critique, "beginner");
     expect(prompt).toContain("Difficulty: Beginner.");
   });
 
   it("produces a different prompt for a different difficulty, same persona", () => {
-    const beginner = buildPersonaAiVersusSystemPrompt(opponentPersonas.kritik, "beginner");
-    const elite = buildPersonaAiVersusSystemPrompt(opponentPersonas.kritik, "elite");
+    const beginner = buildPersonaAiVersusSystemPrompt(opponentPersonas.critique, "beginner");
+    const elite = buildPersonaAiVersusSystemPrompt(opponentPersonas.critique, "elite");
     expect(beginner).not.toBe(elite);
   });
 });

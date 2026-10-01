@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../ui/primitives/select"
+import { formatSeasonLabel } from "debate-data-sync/src/videos/video-rows"
 
 /** Props for the {@link SeasonDropdown} component. */
 interface SeasonDropdownProps {
@@ -32,8 +33,9 @@ interface SeasonDropdownProps {
 
 /**
  * Dropdown that lets the user filter the video grid by debate season year.
- * Seasons span June–June, so the label reads `"{year-1}-{year}"` (e.g. "2025-2026").
- * A "Pre-2010" option is included at the bottom for legacy content.
+ * Seasons span July–June, so the label reads the same `"24-25"` the season
+ * group rows in the grid use. A "Pre-2010" option is included at the bottom
+ * for legacy content.
  *
  * @param props - See {@link SeasonDropdownProps}.
  */
@@ -56,7 +58,7 @@ export function SeasonDropdown({
           <SelectItem value="all">All Seasons</SelectItem>
           {years.map((y) => (
             <SelectItem key={y} value={y}>
-              {Number(y) - 1}-{y} {yearCounts[y] ? `(${yearCounts[y]})` : ""}
+              {formatSeasonLabel(Number(y))} {yearCounts[y] ? `(${yearCounts[y]})` : ""}
             </SelectItem>
           ))}
           <SelectItem value="legacy">

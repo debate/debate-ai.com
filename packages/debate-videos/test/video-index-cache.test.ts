@@ -53,7 +53,7 @@ const LIBRARY = buildVideoRows({
       ],
     },
   ],
-  lectures: { data: [["l1", "Kritik basics", "2025-09-02", "Camp", 90, "lecture", "Theory"]] },
+  lectures: { data: [["l1", "Critique basics", "2025-09-02", "Camp", 90, "lecture", "Theory"]] },
 } as any);
 
 const index = (
@@ -242,7 +242,7 @@ describe("serving the grid locally", () => {
   });
 
   it("searches the same text the API searches", () => {
-    expect(queryVideoIndex({ q: "kritik" })?.videos.map((video) => video[0])).toEqual(["l1"]);
+    expect(queryVideoIndex({ q: "critique" })?.videos.map((video) => video[0])).toEqual(["l1"]);
   });
 
   it("pages, and reports whether more remain", () => {

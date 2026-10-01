@@ -10,7 +10,7 @@ import Link from "next/link";
 import Image, { StaticImageData } from "next/image";
 import { GlowingEffect } from "../../ui/effects/glowing-effect";
 import { cn } from "../../ui/lib/utils";
-import { History, type LucideIcon } from "lucide-react";
+import { History, Clapperboard, type LucideIcon } from "lucide-react";
 import { IconBook, IconTrophyGoat, IconLeaderboard, IconTrophy, IconRoundsYoutube, IconLectures } from "../../ui/icons";
 import { isImageIcon } from "./tree-item-icon";
 import { formatCount } from "./format-count";
@@ -38,6 +38,11 @@ type QuickLink = SidebarVideoLink & QuickLinkStyle;
  * cannot exist on one surface and be missing from another.
  */
 const QUICK_LINK_STYLES: Record<string, QuickLinkStyle> = {
+  allVideos: {
+    glyph: Clapperboard,
+    gradient: "from-blue-500/20 via-cyan-500/10 to-transparent",
+    iconBg: "bg-blue-500/15 ring-1 ring-blue-500/30",
+  },
   college: {
     logo: "https://i.imgur.com/cFmTAdJ.png",
     gradient: "from-purple-500/20 via-violet-500/10 to-transparent",
@@ -83,11 +88,6 @@ const QUICK_LINK_STYLES: Record<string, QuickLinkStyle> = {
     gradient: "from-indigo-500/20 via-blue-500/10 to-transparent",
     iconBg: "bg-indigo-500/15 ring-1 ring-indigo-500/30",
   },
-  rankings: {
-    logo: IconLeaderboard,
-    gradient: "from-yellow-500/20 via-amber-500/10 to-transparent",
-    iconBg: "bg-yellow-500/15 ring-1 ring-yellow-500/30",
-  },
   statistics: {
     logo: IconRoundsYoutube,
     gradient: "from-rose-500/20 via-pink-500/10 to-transparent",
@@ -112,7 +112,6 @@ const QUICK_LINK_ORDER = [
   "topPicks",
   "favorites",
   "dictionary",
-  "rankings",
   "statistics",
 ];
 

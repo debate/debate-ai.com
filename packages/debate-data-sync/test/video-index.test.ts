@@ -61,7 +61,7 @@ const ASSETS = {
     data: [
       // A lecture with a numeric style: the case that makes "source" a
       // separate question from "has a style".
-      ["lecture-1", "Kritik basics", "2025-09-02", "Debate Camp", 120, "Lecture", 3],
+      ["lecture-1", "Critique basics", "2025-09-02", "Debate Camp", 120, "Lecture", 3],
       ["lecture-2", "Flowing drills", "2025-09-03", "Debate Camp", 90, "Lecture", "Drills"],
     ],
   },

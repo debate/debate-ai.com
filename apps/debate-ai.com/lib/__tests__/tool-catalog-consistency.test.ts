@@ -52,7 +52,7 @@ import { WORKSPACE_LINKS } from "../../../../packages/debate-editor/src/editor/w
  * companion guide page bundled under the Mobile Setup group, not a distinct
  * user-facing surface.
  */
-const FEATURES_EXCLUDE_FROM_TOOLS = new Set(["/tools/mobile-setup"])
+const FEATURES_EXCLUDE_FROM_TOOLS = new Set(["/coaching/laptopless"])
 
 /**
  * `/practice/features` entries that intentionally have no `/tools` counterpart — core
@@ -72,10 +72,10 @@ const TOOLS_EXCLUDE_FROM_FEATURES = new Set([
 /**
  * `/tools` entries that intentionally have no Workspace-menu counterpart.
  * `/reason-editor` can't link to itself from inside its own Workspace menu,
- * and `/tools/mobile-setup` is a companion guide, not a "major tool" per
+ * and `/coaching/laptopless` is a companion guide, not a "major tool" per
  * `workspace-links.ts`'s own header comment.
  */
-const WORKSPACE_EXCLUDE_FROM_TOOLS = new Set(["/reason-editor", "/tools/mobile-setup"])
+const WORKSPACE_EXCLUDE_FROM_TOOLS = new Set(["/reason-editor", "/coaching/laptopless"])
 
 /** The Workspace menu's own trailing "All Tools" link back to `/tools`. */
 const TOOLS_EXCLUDE_FROM_WORKSPACE = new Set(["/tools"])
@@ -125,9 +125,13 @@ const STATIC_APP_ROUTES = findAppPageRoutes(APP_DIR, "").filter((route) => !rout
  * entries each describe a capability with a docs page behind it — would claim a
  * feature guide that does not exist.
  *
- * `/practice/rules` and `/research/topics` are here for the same reason: they are reference
- * pages in the sidebar tree (the formats-and-rules guide and the resolution
- * topic-area explorer) — reading material, not tools.
+ * `/practice/rules` is here for that reason: it is a reference
+ * page in the sidebar tree (the formats-and-rules guide) — reading material,
+ * not a tool.
+ *
+ * `/research/topics` is the one route that no longer renders a page of its
+ * own: the Topics Explorer's research-area explorer is now the first section
+ * of `/practice/statistics`, so `/research/topics` only redirects there.
  *
  * `/lectures`, `/practice/glossary`, `/practice/rankings` and
  * `/practice/statistics` are views of the video library page (the same page

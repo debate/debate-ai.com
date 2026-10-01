@@ -58,17 +58,17 @@ describe("buildPracticeRoundSetup", () => {
   });
 
   it("resolves a built-in opponent persona id, layering the default (intermediate) difficulty", () => {
-    const setup = buildPracticeRoundSetup({ styleKey: STYLE_KEY, opponentPersona: "kritik" });
-    expect(setup.opponentPersona?.id).toBe("kritik");
+    const setup = buildPracticeRoundSetup({ styleKey: STYLE_KEY, opponentPersona: "critique" });
+    expect(setup.opponentPersona?.id).toBe("critique");
     expect(setup.opponentDifficulty).toBe("intermediate");
-    expect(setup.sections[2].body).toContain("Opponent Persona: Kritik");
+    expect(setup.sections[2].body).toContain("Opponent Persona: Critique");
     expect(setup.sections[2].body).toContain("Difficulty: Intermediate.");
   });
 
   it("layers an explicit opponent difficulty onto the persona's own prompt section", () => {
     const setup = buildPracticeRoundSetup({
       styleKey: STYLE_KEY,
-      opponentPersona: "kritik",
+      opponentPersona: "critique",
       opponentDifficulty: "elite",
     });
     expect(setup.opponentDifficulty).toBe("elite");
@@ -108,7 +108,7 @@ describe("resolvePracticeRoundOpponentPersonaChoice", () => {
   });
 
   it("resolves a built-in choice to its id, unresolved", () => {
-    expect(resolvePracticeRoundOpponentPersonaChoice({ kind: "builtin", id: "kritik" })).toBe("kritik");
+    expect(resolvePracticeRoundOpponentPersonaChoice({ kind: "builtin", id: "critique" })).toBe("critique");
   });
 
   it("resolves a custom choice into a built OpponentPersona, usable directly by buildPracticeRoundSetup", () => {
@@ -118,7 +118,7 @@ describe("resolvePracticeRoundOpponentPersonaChoice", () => {
       notes: "Spreads everything.",
     });
     expect(persona).not.toBeUndefined();
-    expect(persona).not.toBe("kritik");
+    expect(persona).not.toBe("critique");
     const setup = buildPracticeRoundSetup({ styleKey: STYLE_KEY, opponentPersona: persona });
     expect(setup.opponentPersona?.name).toBe("Custom: Speedster");
   });
@@ -223,11 +223,11 @@ describe("buildPracticeRoundFeedback", () => {
   it("adds a persona-specific prep-tips section when opponentPersona is given", () => {
     const custom = buildCustomJudgeParadigm({ name: "Judge Smith", notes: "Votes on framing." });
     const feedback = buildPracticeRoundFeedback(FLOW, "A", custom, {
-      opponentPersona: opponentPersonas.kritik,
+      opponentPersona: opponentPersonas.critique,
     });
 
     expect(feedback.sections).toHaveLength(3);
-    expect(feedback.sections[2].title).toBe("Facing the Kritik persona again");
+    expect(feedback.sections[2].title).toBe("Facing the Critique persona again");
     expect(feedback.sections[2].body).toContain("1. Pre-write a framework defense");
   });
 
@@ -235,7 +235,7 @@ describe("buildPracticeRoundFeedback", () => {
     const custom = buildCustomJudgeParadigm({ name: "Judge Smith", notes: "Votes on framing." });
     const feedback = buildPracticeRoundFeedback(FLOW, "A", custom, {
       collapseLimit: 0,
-      opponentPersona: opponentPersonas.kritik,
+      opponentPersona: opponentPersonas.critique,
     });
     expect(feedback.coachingPrompts.some((p) => p.kind === "collapse")).toBe(false);
     expect(feedback.sections).toHaveLength(3);

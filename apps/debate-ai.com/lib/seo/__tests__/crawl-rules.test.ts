@@ -62,9 +62,10 @@ describe("DISALLOWED_PATHS", () => {
   });
 
   it("leaves the reference pages that moved under /practice crawlable", () => {
-    // These three are public content that a blanket `Disallow: /practice/`
-    // would have blocked along with the tools above.
-    for (const path of ["/practice/glossary", "/practice/rankings", "/practice/statistics"]) {
+    // These are public content that a blanket `Disallow: /practice/` would
+    // have blocked along with the tools above. (Rankings moved to the
+    // Coaching tools as `/coaching/rankings`.)
+    for (const path of ["/practice/glossary", "/practice/statistics"]) {
       expect(isDisallowed(path), `expected ${path} to stay crawlable`).toBe(false);
     }
   });

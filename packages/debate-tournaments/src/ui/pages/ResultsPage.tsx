@@ -20,7 +20,7 @@ export function ResultsPage({ tournId }: { tournId: number }) {
                   <ul className="divide-y text-sm">
                     {event.ResultSets.map((rs) => (
                       <li key={rs.id}>
-                        <Link href={hrefs.resultSet(tournId, rs.id)} className="flex justify-between gap-2 px-4 py-2 hover:bg-muted/50">
+                        <Link href={hrefs.resultSet(tournId, rs.id)} className="flex justify-between gap-2 px-4 py-2 transition-colors hover:bg-accent hover:text-accent-foreground">
                           <span>{rs.label || rs.tag}</span>
                           <span className="text-xs text-muted-foreground">{formatDate(rs.createdAt)}</span>
                         </Link>
