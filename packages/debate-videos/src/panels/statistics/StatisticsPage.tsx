@@ -42,16 +42,18 @@ export function StatisticsPage({ topics, youtubeStats }: StatisticsPageProps) {
           </div>
         </div>
 
-        <DebateTopicsExplorer topics={topics} videoStatsByYear={videoStatsByYear} />
-
         {youtubeStats ? (
-          <div className="mt-10">
+          <div>
             {/* `useYouTubeStats`'s shape is only known to the modal/charts
                 pair today (see YouTubeStatsCharts.tsx) — cast at this one
                 boundary rather than duplicating that interface here. */}
             <YouTubeStatsCharts stats={youtubeStats as Parameters<typeof YouTubeStatsCharts>[0]["stats"]} />
           </div>
         ) : null}
+
+        <div className="mt-10">
+          <DebateTopicsExplorer topics={topics} videoStatsByYear={videoStatsByYear} />
+        </div>
       </div>
     </div>
   );

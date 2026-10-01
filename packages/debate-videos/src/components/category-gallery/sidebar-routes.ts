@@ -26,6 +26,17 @@ import {
  * app — so it is wrapped in the same sidebar as everything else it links to,
  * and the sidebar is how you leave it.
  *
+ * `/` is that same catalog page: the app's homepage (`app/page.tsx`) re-exports
+ * `debate-webview`'s features page, so opening the site landed on the one page
+ * with no sidebar at all — the nav disappeared on the reader's very first
+ * click, on the page whose whole job is to link to everything the nav reaches.
+ * It is listed here for the same reason as `/practice/features`, and the two
+ * hrefs match exactly rather than by prefix: `matchesToolSidebarHref` compares
+ * `pathname` against `` `${href}/` `` for nested routes, so an `href` of `/`
+ * would ask whether every path starts with `//` and match nothing beyond the
+ * root itself. That is what we want — every other route is already covered by
+ * a longer entry in this set or the tree sections above.
+ *
  * `/teams/<team>` and `/schools/<school>` are the profile pages opened from
  * the Team Rankings table (`/coaching/rankings`, itself a tree destination). They used to
  * render bare, with only a "← Team Rankings" text link back — landing on one
@@ -46,6 +57,7 @@ import {
  * {@link OWN_SIDEBAR_DOCK_HREFS} is what actually hosts its sidebar.
  */
 export const EXTRA_SIDEBAR_HREFS: readonly string[] = [
+  "/",
   "/practice/features",
   "/teams",
   "/schools",

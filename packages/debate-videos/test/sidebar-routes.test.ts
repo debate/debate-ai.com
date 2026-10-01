@@ -71,7 +71,14 @@ describe("matchesToolSidebarHref", () => {
     expect(matchesToolSidebarHref("/cardsy")).toBe(false);
     expect(matchesToolSidebarHref("/teamsy")).toBe(false);
     expect(matchesToolSidebarHref("/login")).toBe(false);
-    expect(matchesToolSidebarHref("/")).toBe(false);
+  });
+
+  it("matches the homepage, but nothing below it through that entry", () => {
+    // `/` is an exact-match entry, not a prefix one: the nested-route check
+    // compares against `${href}/`, which for `/` would be `//`. So the homepage
+    // is covered and every other route still has to be named by a longer entry.
+    expect(matchesToolSidebarHref("/")).toBe(true);
+    expect(TOOL_SIDEBAR_HREFS.has("/")).toBe(true);
   });
 });
 
@@ -95,8 +102,8 @@ describe("hasEmbeddedDock / isGenericToolSidebarRoute", () => {
   it("falls back to the fixed dock only off the sidebar routes", () => {
     // `/practice/features` and `/legal/privacy` used to be in this list. They are
     // sidebar routes now — see "the features catalog" and "the terms of
-    // service page" below.
-    for (const route of ["/", "/login", "/contacts"]) {
+    // service page" below, and "the homepage" for `/`.
+    for (const route of ["/login", "/contacts"]) {
       expect(hasEmbeddedDock(route)).toBe(false);
       expect(isGenericToolSidebarRoute(route)).toBe(false);
     }
@@ -117,6 +124,12 @@ describe("the features catalog", () => {
     // …and the dock's own floating instance stays hidden, since the sidebar
     // it is wrapped in already hosts one.
     expect(hasEmbeddedDock("/practice/features")).toBe(true);
+  });
+
+  it("is the homepage too, so the site's front door is not its one bare page", () => {
+    // `app/page.tsx` re-exports this same page, so `/` renders the catalog.
+    expect(isGenericToolSidebarRoute("/")).toBe(true);
+    expect(hasEmbeddedDock("/")).toBe(true);
   });
 });
 
