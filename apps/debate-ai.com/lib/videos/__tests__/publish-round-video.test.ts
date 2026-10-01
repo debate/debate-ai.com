@@ -27,7 +27,7 @@ import {
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
 import { videos, youtubeRoundVideos, type YoutubeRoundVideo } from "../../database/schema";
-import { publishRoundVideos, roundVideoToVideoRow } from "../publish-round-video";
+import { dedupeRoundQueue, publishRoundVideos, roundVideoToVideoRow } from "../publish-round-video";
 
 async function freshClient() {
   const client = createClient({ url: ":memory:" });
@@ -116,15 +116,16 @@ describe("publishRoundVideos", () => {
     expect(row?.adminEdited).toBe(false);
   });
 
-  it("republishes an already-published round that was never admin-edited", async () => {
+  it("keeps the older published row when an already-published round is published again", async () => {
     const db = await freshDb();
     await publishRoundVideos(db, [roundRow("a", { title: "First sync title" })]);
 
     const published = await publishRoundVideos(db, [roundRow("a", { title: "Resynced title" })]);
 
-    expect(published).toBe(1);
-    const [row] = await db.select().from(videos).where(eq(videos.videoId, "a"));
-    expect(row?.title).toBe("Resynced title");
+    expect(published).toBe(0);
+    const rows = await db.select().from(videos).where(eq(videos.videoId, "a"));
+    expect(rows).toHaveLength(1);
+    expect(rows[0]?.title).toBe("First sync title");
   });
 
   it("keeps an admin's correction through a round resurfacing in the resync queue (the lost-update race this closes)", async () => {
@@ -224,16 +225,17 @@ describe("publishRoundVideos over a large queue (D1 bound-parameter ceiling)", (
     expect(trips()).toBeLessThanOrEqual(2 * Math.ceil(1200 / DEFAULT_STATEMENTS_PER_BATCH) + 20);
   });
 
-  it("still skips the admin-edited rounds spread across the chunk boundary", async () => {
+  it("still skips the already-published rounds spread across the chunk boundary", async () => {
     // Chunking must not lose a hit: the lookup now runs as several
     // statements, and a round whose id lands in the second one is just as
-    // admin-edited as one in the first.
+    // published as one in the first.
     const db = await freshDb();
     const queue = Array.from({ length: 250 }, (_, index) => roundRow(`round${index}`));
-    await publishRoundVideos(db, queue);
-    for (const id of ["round0", "round98", "round99", "round100", "round198", "round249"]) {
-      await db.update(videos).set({ adminEdited: true, title: `Kept ${id}` }).where(eq(videos.videoId, id));
-    }
+    const kept = ["round0", "round98", "round99", "round100", "round198", "round249"];
+    await publishRoundVideos(
+      db,
+      queue.filter((row) => kept.includes(row.id)).map((row) => ({ ...row, title: `Kept ${row.id}` })),
+    );
 
     const published = await publishRoundVideos(
       db,
@@ -241,7 +243,7 @@ describe("publishRoundVideos over a large queue (D1 bound-parameter ceiling)", (
     );
 
     expect(published).toBe(250 - 6);
-    for (const id of ["round0", "round98", "round99", "round100", "round198", "round249"]) {
+    for (const id of kept) {
       const [row] = await db.select().from(videos).where(eq(videos.videoId, id));
       expect(row?.title).toBe(`Kept ${id}`);
     }
@@ -283,6 +285,51 @@ describe("publishRoundVideos stacking", () => {
     const published = await publishRoundVideos(db, [roundRow("a", { title: "Should not land" })]);
 
     expect(published).toBe(0);
+  });
+});
+
+describe("dedupeRoundQueue", () => {
+  it("removes only queued rounds already in the library and leaves the published rows untouched", async () => {
+    const db = await freshDb();
+    await publishRoundVideos(db, [roundRow("old", { title: "Original" })]);
+    await db.insert(youtubeRoundVideos).values([
+      roundRow("old", { title: "Resynced" }),
+      roundRow("new"),
+    ]);
+
+    const removed = await dedupeRoundQueue(db);
+
+    expect(removed).toEqual(["old"]);
+    const queue = await db.select().from(youtubeRoundVideos);
+    expect(queue.map((row) => row.id)).toEqual(["new"]);
+    const [published] = await db.select().from(videos).where(eq(videos.videoId, "old"));
+    expect(published?.title).toBe("Original");
+  });
+
+  it("narrows to one style when given", async () => {
+    const db = await freshDb();
+    await publishRoundVideos(db, [roundRow("a"), roundRow("b")]);
+    await db.insert(youtubeRoundVideos).values([roundRow("a", { style: 1 }), roundRow("b", { style: 2 })]);
+
+    const removed = await dedupeRoundQueue(db, 2);
+
+    expect(removed).toEqual(["b"]);
+    const queue = await db.select().from(youtubeRoundVideos);
+    expect(queue.map((row) => row.id)).toEqual(["a"]);
+  });
+
+  it("handles a queue past D1's bound-parameter ceiling", async () => {
+    const { db, boundParamCounts } = await recordingDb();
+    const queue = Array.from({ length: 250 }, (_, index) => roundRow(`round${index}`));
+    await publishRoundVideos(db, queue.slice(0, 150));
+    for (const row of queue) await db.insert(youtubeRoundVideos).values(row);
+    boundParamCounts.length = 0;
+
+    const removed = await dedupeRoundQueue(db);
+
+    expect(removed).toHaveLength(150);
+    expect(await db.select().from(youtubeRoundVideos)).toHaveLength(100);
+    expect(Math.max(...boundParamCounts)).toBeLessThanOrEqual(100);
   });
 });
 

@@ -60,6 +60,13 @@ interface LecturesPageProps {
    * it, which left both with no dock and no nav tree at all.
    */
   dockSlot?: React.ReactNode
+  /**
+   * Research-area topic explorer, mounted by the host page and shown as the
+   * first section of the statistics branch. It lives in `debate-webview`,
+   * which this package must not import from, so it arrives as an element
+   * rather than as a dependency. See {@link StatisticsPageProps.topicAreasSlot}.
+   */
+  topicAreasSlot?: React.ReactNode
 }
 
 /**
@@ -69,7 +76,7 @@ interface LecturesPageProps {
  * API, and rendering is delegated to the three branch view components
  * depending on `state.currentCategory`.
  */
-export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
+export function LecturesPage({ dockSlot, topicAreasSlot }: LecturesPageProps = {}) {
   const searchParams = useSearchParams()
   const routeParams = useParams()
 
@@ -481,7 +488,7 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
     return (
       <LecturesSidebarShell {...sidebarShellProps} activeId="statistics">
         <Suspense fallback={null}>
-          <StatisticsPage topics={meta?.topics} youtubeStats={youtubeStats} />
+          <StatisticsPage topics={meta?.topics} youtubeStats={youtubeStats} topicAreasSlot={topicAreasSlot} />
         </Suspense>
       </LecturesSidebarShell>
     )

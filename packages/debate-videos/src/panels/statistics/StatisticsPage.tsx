@@ -7,6 +7,7 @@
 
 "use client";
 
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { YouTubeStatsCharts } from "../../components/youtube-stats-modal/YouTubeStatsCharts";
@@ -20,9 +21,19 @@ export interface StatisticsPageProps {
   /** `/api/youtube-stats` response, or `null` while loading/unavailable —
    *  see {@link useYouTubeStats}. Also passed down from `LecturesPage`. */
   youtubeStats: unknown | null;
+  /**
+   * The research-area topic explorer, rendered as the first stacked section.
+   *
+   * A slot rather than a direct import: the 44 research-area definitions and
+   * their resolutions live in `debate-webview`, which depends on this package,
+   * not the reverse — so `debate-videos` cannot import the explorer itself.
+   * The host page mounts it and hands the element down, the same way `dockSlot`
+   * carries the app dock into the video library.
+   */
+  topicAreasSlot?: ReactNode;
 }
 
-export function StatisticsPage({ topics, youtubeStats }: StatisticsPageProps) {
+export function StatisticsPage({ topics, youtubeStats, topicAreasSlot }: StatisticsPageProps) {
   // Same one-boundary cast as the charts below: the timeline only reads `byYear`.
   const videoStatsByYear = (youtubeStats as { byYear?: YearVideoStats[] } | null)?.byYear;
 
@@ -41,6 +52,10 @@ export function StatisticsPage({ topics, youtubeStats }: StatisticsPageProps) {
             </Link>
           </div>
         </div>
+
+        {topicAreasSlot ? (
+          <div className="mb-10">{topicAreasSlot}</div>
+        ) : null}
 
         {youtubeStats ? (
           <div>

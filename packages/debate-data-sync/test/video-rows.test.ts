@@ -42,19 +42,21 @@ const LECTURE_TUPLE = [
 ];
 
 describe("seasonYearForDate", () => {
-  it("puts a post-June date in the next season", () => {
+  it("puts a July-onward date in the next season", () => {
     expect(seasonYearForDate("2025-09-14")).toBe(2026);
-    expect(seasonYearForDate("2025-06-01")).toBe(2026);
+    expect(seasonYearForDate("2025-07-01")).toBe(2026);
+    expect(seasonYearForDate("2026-07-01")).toBe(2027);
+    expect(seasonYearForDate("2026-08-03")).toBe(2027);
   });
 
-  it("puts a pre-June date in the current season", () => {
+  it("puts a pre-July date in the current season", () => {
     expect(seasonYearForDate("2026-04-14")).toBe(2026);
-    expect(seasonYearForDate("2026-05-31")).toBe(2026);
+    expect(seasonYearForDate("2026-06-30")).toBe(2026);
   });
 
   it("marks pre-2010 content as legacy", () => {
     expect(seasonYearForDate("2009-12-31")).toBe(LEGACY_SEASON);
-    expect(seasonYearForDate("2010-05-31")).toBe(LEGACY_SEASON);
+    expect(seasonYearForDate("2010-06-30")).toBe(LEGACY_SEASON);
   });
 
   it("falls back to legacy for unparseable dates", () => {

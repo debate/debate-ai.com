@@ -56,6 +56,10 @@ export const PATH_SLUGS: Record<string, string> = {
   "/practice/glossary": "dictionary",
   "/practice/rankings": "rankings",
   "/practice/statistics": "statistics",
+  // The Topics Explorer's old address, kept rendering the statistics view —
+  // its research-area explorer is that page's first section now. See
+  // `app/research/topics/page.tsx`, which redirects here under Next.
+  "/research/topics": "statistics",
 }
 
 /**

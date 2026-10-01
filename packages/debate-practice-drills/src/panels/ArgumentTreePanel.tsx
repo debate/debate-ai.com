@@ -97,6 +97,12 @@
  * this repo still has no cross-tab live-update mechanism" Known gap noted in
  * `shared-flow-sync.md`, for this panel.
  *
+ * A "Delete all saved outlines" action (mirroring
+ * `WordCountRoundsPanel.tsx`'s "Delete all synced history") clears every
+ * persisted outline in one shot, plus the per-round filter selections left
+ * orphaned by the rounds it removed, behind a `window.confirm` since it is a
+ * hard delete in both the local store and the account copy with no undo.
+ *
  * @module panels/ArgumentTreePanel
  */
 
@@ -139,10 +145,12 @@ import { argumentTreeOutlineFilename, buildArgumentTreeOutlineText } from "../fl
 import {
   buildAndSaveArgumentTreeFromCurrentFlow,
   buildArgumentTreesPanelView,
+  clearArgumentTrees,
   deleteArgumentTree,
   type ArgumentTreeRecord,
 } from "debate-round/src/state/argumentTrees"
 import {
+  clearArgumentTreeFilterSelections,
   getArgumentTreeFilterSelection,
   saveArgumentTreeFilterSelection,
 } from "../state/argumentTreeFilters"
@@ -314,7 +322,28 @@ export function ArgumentTreePanel() {
 
   const handleClear = (roundId: string) => {
     deleteArgumentTree(roundId)
+    clearSelection(roundId)
     refresh()
+  }
+
+  /**
+   * Deletes every persisted outline at once, plus any per-round filter
+   * selection left orphaned by the round it belonged to. Confirmed first:
+   * this is a hard delete in both the local store and the account copy, with
+   * no undo and no per-round recovery.
+   */
+  const handleClearAll = () => {
+    const total = records?.length ?? 0
+    if (total === 0) return
+    if (!window.confirm(`Delete all ${total} saved outline${total === 1 ? "" : "s"}? This can't be undone.`)) return
+    const removedRoundIds = clearArgumentTrees()
+    const remainingRoundIds = (records ?? [])
+      .map((record) => record.roundId)
+      .filter((roundId) => !removedRoundIds.includes(roundId))
+    clearArgumentTreeFilterSelections(remainingRoundIds)
+    roundCardRefs.current = {}
+    setSelectedRows({})
+    refreshAll()
   }
 
   /** Mirrors `PreRoundBriefingsPanel.tsx`'s anchor+Blob download pattern. */
@@ -471,6 +500,14 @@ export function ArgumentTreePanel() {
               )
             })}
           </div>
+        </div>
+      )}
+
+      {records.length > 0 && (
+        <div className="flex justify-end">
+          <Button size="sm" variant="ghost" onClick={handleClearAll}>
+            Delete all saved outlines
+          </Button>
         </div>
       )}
 

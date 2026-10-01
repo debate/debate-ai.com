@@ -4,6 +4,7 @@ import {
   buildAndSaveArgumentTreeFromCurrentFlow,
   buildAndSaveArgumentTreeIfChanged,
   buildArgumentTreesPanelView,
+  clearArgumentTrees,
   deleteArgumentTree,
   getArgumentTree,
   listArgumentTrees,
@@ -245,6 +246,21 @@ describe("buildAndSaveArgumentTreeIfChanged", () => {
     expect(result).toBeDefined();
     expect(result?.tree[0]).toMatchObject({ content: "Disad link, extended" });
     expect(getArgumentTree("round-6")).toEqual(result);
+  });
+});
+
+describe("clearArgumentTrees", () => {
+  it("removes every stored tree and returns the roundIds it cleared", () => {
+    saveArgumentTree(ROUND_1);
+    saveArgumentTree(ROUND_2);
+
+    expect(clearArgumentTrees()).toEqual(["round-1", "round-2"]);
+    expect(listArgumentTrees()).toEqual([]);
+  });
+
+  it("clears nothing and returns an empty list when nothing is stored", () => {
+    expect(clearArgumentTrees()).toEqual([]);
+    expect(localStorage.getItem("argumentTrees")).toBeNull();
   });
 });
 
