@@ -11,13 +11,19 @@
 
 import { and, eq, inArray } from "drizzle-orm";
 import { publishedMsForDate, seasonYearForDate } from "debate-data-sync/src/videos/video-rows";
+import { parseQueuedRoundArgs } from "debate-data-sync/src/youtube/parsers/round-arguments";
 import { chunkBoundParams } from "@/lib/database/bound-params";
 import { chunkStatements } from "@/lib/database/query-budget";
 import { videos, type VideoTableInsert, type YoutubeRoundVideo } from "@/lib/database/schema";
 import { recomputeVideoStacks } from "./recompute-video-stacks";
 
-/** Converts one queued round video into a `videos` table insert row. */
+/**
+ * Converts one queued round video into a `videos` table insert row. The 1AC /
+ * 2NR arguments come from the description's `Aff 1AC args:` / `Neg 2NR args:`
+ * lines, which only curated imports carry (see `round-arguments.ts`).
+ */
 export function roundVideoToVideoRow(row: YoutubeRoundVideo): VideoTableInsert {
+  const { arg1ac, arg2nr } = parseQueuedRoundArgs(row.description);
   return {
     videoId: row.id,
     source: "round",
@@ -36,8 +42,8 @@ export function roundVideoToVideoRow(row: YoutubeRoundVideo): VideoTableInsert {
     negTeam: row.neg,
     affWin: row.winner,
     judgeDecision: row.judgeDecision,
-    arg1ac: null,
-    arg2nr: null,
+    arg1ac,
+    arg2nr,
     isTopPick: false,
     speechDocsUrl: null,
     seasonYear: seasonYearForDate(row.publishedAt),

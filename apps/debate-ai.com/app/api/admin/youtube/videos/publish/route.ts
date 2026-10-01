@@ -4,6 +4,7 @@ import { getStaffAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
 import { videos, youtubeRoundVideos } from "@/lib/database/schema";
 import { publishedMsForDate, seasonYearForDate } from "debate-data-sync/src/videos/video-rows";
+import { parseQueuedRoundArgs } from "debate-data-sync/src/youtube/parsers/round-arguments";
 import { recomputeVideoStacks } from "@/lib/videos/recompute-video-stacks";
 
 /** Adds every staged round to the public video grid. Video IDs are primary
@@ -22,7 +23,7 @@ export async function POST() {
       viewCount: round.views, description: round.description, style: round.style,
       category: null, categoryKey: null, tournament: round.tournament, roundLevel: round.roundLevel,
       affTeam: round.aff, negTeam: round.neg, affWin: round.winner, judgeDecision: round.judgeDecision,
-      arg1ac: null, arg2nr: null, isTopPick: false, speechDocsUrl: null,
+      ...parseQueuedRoundArgs(round.description), isTopPick: false, speechDocsUrl: null,
       seasonYear: seasonYearForDate(round.publishedAt),
       searchText: `${round.title} ${round.channel} ${round.description}`.toLowerCase(), updatedAt: new Date(),
     };
