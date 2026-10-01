@@ -19,6 +19,35 @@ seven filter controls — **Kind**, **Side**, **Speech**, **Argument type**,
 Changing a control re-filters the tree in place and saves the chosen
 filter through `saveArgumentTreeFilterSelection`.
 
+## Map views
+
+A switcher at the top of each round card picks how the (filtered) tree is
+shown: **Outline** (the plain row list, where tagging and bulk selection
+live) or one of five map views. The panel remembers the last view per
+browser and opens on **Tiered tree** the first time.
+
+| View | What it draws |
+| --- | --- |
+| Tiered tree | Kialo-style minimap: one small box per claim, in tiers |
+| Sunburst | The round in the center, each ring one level deeper, wedges sized by how many claims sit under them |
+| Mind map | The round in the middle, pros branching right and cons branching left, with labels |
+| Bubble map | Nested circles: each claim's bubble holds its responses |
+| Sankey | The round flowing into contentions, arguments and responses, widths by claim count |
+
+The map is a claim hierarchy: the round at the root, each flow heading as
+a contention, each argument row under its heading, and each later speech's
+entry on that row as a response to the entry before it. Every claim is
+colored **green (pro)** or **red (con)** relative to its parent, the way
+Kialo does it: an aff/pro row supports the round, a response from the same
+side extends its parent, and a response from the other side answers it.
+A heading takes the side of most of its rows.
+
+Under the chart, the focused claim sits in a large card with its parent
+above it (the arrow walks back up) and its responses split into **Pros**
+and **Cons** columns. Clicking any claim, in the chart or in a column,
+focuses it; hovering a chart mark shows its full text. The d3 chart code
+loads only when a map view is first shown.
+
 ## Filter presets
 
 Each round card has a "Filter presets" row: apply a saved preset, or save
@@ -55,6 +84,9 @@ flow/argument-tree.ts
 state/argumentTrees.ts (localStorage: argumentTrees)
   → buildAndSaveArgumentTree(flow, roundId)
   → panels/ArgumentTreePanel.tsx
+      → flow/argument-map.ts buildArgumentMap(filteredTree)   (pro/con claim hierarchy)
+      → panels/argument-map/ArgumentMapView.tsx               (focus view + Pros/Cons)
+      → panels/argument-map/ArgumentMapChart.tsx              (d3 layouts, React.lazy)
   → apps/debate-ai.com/app/outline/page.tsx
 ```
 
@@ -62,3 +94,7 @@ state/argumentTrees.ts (localStorage: argumentTrees)
 
 - Tagging is row-level, not per-speech.
 - The contributor field is a free-form typed id, not an authenticated user.
+- The map's root is labelled "Round …" because outlines don't store the
+  resolution, and a claim's pro/con stance comes only from which side's
+  speech made it (there is no per-claim stance override).
+- Tagging and bulk selection are only in the Outline view.
