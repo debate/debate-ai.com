@@ -8,18 +8,13 @@
  * from the directory the build runs in — the web app's — and would otherwise
  * compile every utility the app uses a second time. Fumadocs' own classes
  * come in through preset.css.
- */
-@import "tailwindcss" source(none);
-/*
+ *
  * `shadcn.css` points Fumadocs' `--color-fd-*` tokens at the plain shadcn
  * variables, which the app's colour themes (`.theme-<name>` on <html>) set —
  * so the docs follow whichever theme the reader picked in the app.
  * (Every @import has to come before the @source lines: CSS drops an @import
  * that follows any other rule.)
- */
-@import 'fumadocs-ui/css/shadcn.css';
-@import "fumadocs-ui/css/preset.css";
-/*
+ *
  * preset.css pulls in these files — each only an `@source inline(...)` list of
  * the classes Fumadocs' layouts use — *after* an `@plugin` rule. Vite's CSS
  * pipeline follows the CSS rule and drops an @import that comes after another
@@ -28,6 +23,9 @@
  * docs sidebar collapsed to nothing. Importing them here, ahead of any rule,
  * keeps them in.
  */
+@import "tailwindcss" source(none);
+@import 'fumadocs-ui/css/shadcn.css';
+@import "fumadocs-ui/css/preset.css";
 @import "fumadocs-ui/css/generated/docs.css";
 @import "fumadocs-ui/css/generated/home.css";
 @import "fumadocs-ui/css/generated/notebook.css";

@@ -62,3 +62,17 @@ export function saveArgumentTreeFilterSelection(selection: ArgumentTreeFilterSel
 export function deleteArgumentTreeFilterSelection(roundId: string): void {
   writeAll(readAll().filter((selection) => selection.roundId !== roundId));
 }
+
+/**
+ * Deletes every persisted filter selection, or just those whose `roundId`
+ * isn't in `keepRoundIds` — used to drop the orphaned selections left behind
+ * when rounds are cleared from the outline panel. Returns how many were
+ * removed.
+ */
+export function clearArgumentTreeFilterSelections(keepRoundIds?: Iterable<string>): number {
+  const keep = keepRoundIds ? new Set(keepRoundIds) : null;
+  const remaining = readAll().filter((selection) => (keep ? keep.has(selection.roundId) : false));
+  const removed = readAll().length - remaining.length;
+  if (removed > 0) writeAll(remaining);
+  return removed;
+}

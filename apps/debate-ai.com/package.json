@@ -31,6 +31,7 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@amplitude/unified": "^1.1.38",
     "@emotion/is-prop-valid": "^1.4.0",
     "@icons-pack/react-simple-icons": "^13.15.1",
     "@langchain/core": "^1.2.14",
@@ -75,7 +76,6 @@
     "cmdk": "1.1.1",
     "compute-cosine-similarity": "^1.1.0",
     "debate-api-client": "workspace:*",
-    "debate-webview": "workspace:*",
     "debate-card-parser": "workspace:*",
     "debate-comments": "workspace:*",
     "debate-community": "workspace:*",
@@ -93,6 +93,7 @@
     "debate-timer": "workspace:*",
     "debate-tournaments": "workspace:*",
     "debate-videos": "workspace:*",
+    "debate-webview": "workspace:*",
     "docx-preview": "^0.4.1",
     "dompurify": "^3.4.16",
     "drizzle-orm": "^0.45.3",

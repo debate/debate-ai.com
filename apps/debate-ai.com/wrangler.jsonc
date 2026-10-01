@@ -28,6 +28,15 @@
 		"ADMIN_EMAIL": "grokthiscontact@gmail.com",
 		"CANONICAL_SITE_URL": ""
 	},
+	// A content-table backup is the one genuinely CPU-heavy thing this Worker
+	// does: it reads every row of ~15 tables and DEFLATE-compresses the dump in
+	// a single invocation, which outgrew the 30s default and failed with
+	// `outcome: "exceededCpu"` (see lib/admin/deflate.ts for why the dump is
+	// only compressed once). 120s leaves room for the dump to keep growing.
+	// Standard usage model only; `env.production` repeats it.
+	"limits": {
+		"cpu_ms": 120000
+	},
 	// Ship source maps with the Worker so runtime exceptions in Workers Logs
 	// resolve to real files/lines instead of minified bundle offsets. Source
 	// maps are stored separately and do not count against the Worker size limit.
@@ -82,7 +91,9 @@
 	],
 	"env": {
 		"production": {
-			
+			"limits": {
+				"cpu_ms": 120000
+			},
 			"images": {
 				"binding": "IMAGES"
 			},

@@ -16,9 +16,13 @@
  * but the last to be the same size) and nothing larger than one part is held
  * in memory.
  *
- * The same dump is also packed into a `.sql.7z` (lib/admin/seven-zip.ts) as it
- * streams past, and stored in the `DB_BACKUPS_KV` namespace under the R2 key
- * with `.gz` swapped for `.7z`. A KV value is capped at
+ * The dump is DEFLATE-compressed exactly once, by
+ * {@link module:lib/admin/deflate}, and that one packed stream is what both
+ * stores hold: the R2 object wraps it in a gzip member, and the `.sql.7z` copy
+ * in the `DB_BACKUPS_KV` namespace uses the 7z format's Deflate coder
+ * (lib/admin/seven-zip.ts) over the same bytes, keyed like the R2 object with
+ * `.gz` swapped for `.7z`. Compressing it separately for each store is what
+ * used to exhaust a Worker's CPU budget. A KV value is capped at
  * {@link SEVEN_ZIP_MAX_BYTES}; a dump that compresses past that keeps only its
  * R2 copy. The 7z copy is best effort — the R2 backup never fails because of it.
  * @module lib/admin/db-backup-r2
@@ -33,6 +37,7 @@ import {
   type BackupGroup,
   type BackupStats,
 } from "./db-backup";
+import { GZIP_HEADER, gzipTrailer, SharedDeflate, type DeflateSizes } from "./deflate";
 import { SevenZipWriter } from "./seven-zip";
 
 export const BACKUP_PREFIX = "db-backups/";
@@ -163,13 +168,20 @@ class PartBuffer {
 }
 
 /**
- * Gzips a stream of text chunks into one R2 object via multipart upload.
- * Aborts the upload on any failure so no half-written object is left behind.
+ * Uploads one gzip member: a {@link GZIP_HEADER}, the DEFLATE stream in `packed`,
+ * and the trailer R2's readers expect. Aborts the upload on any failure so no
+ * half-written object is left behind.
+ *
+ * The Deflate stream is compressed by the caller and shared with the 7z copy,
+ * so a backup is compressed once no matter how many copies of it are stored.
+ * `sizes` is a function rather than a value because the CRC and the
+ * uncompressed length are only final once `packed` has been read to its end.
  */
-export async function uploadGzippedText(
+export async function uploadGzippedStream(
   bucket: R2BucketLike,
   key: string,
-  chunks: AsyncIterable<string | Uint8Array<ArrayBuffer>>,
+  packed: AsyncIterable<Uint8Array>,
+  sizes: () => DeflateSizes,
   customMetadata: Record<string, string> = {},
   partSize: number = PART_SIZE,
 ): Promise<R2ObjectLike> {
@@ -178,37 +190,22 @@ export async function uploadGzippedText(
     customMetadata,
   });
 
-  const gzip = new CompressionStream("gzip");
-  const writer = gzip.writable.getWriter();
-  const encoder = new TextEncoder();
-  // Feed the compressor concurrently with reading its output, or its
-  // backpressure would stall both sides.
-  const feeding = (async () => {
-    try {
-      for await (const chunk of chunks) await writer.write(typeof chunk === "string" ? encoder.encode(chunk) : chunk);
-      await writer.close();
-    } catch (error) {
-      await writer.abort(error).catch(() => {});
-      throw error;
-    }
-  })();
-
   try {
     const parts: R2UploadedPartLike[] = [];
     const buffer = new PartBuffer(partSize);
-    const reader = gzip.readable.getReader();
-    for (;;) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      for (const part of buffer.push(value)) parts.push(await upload.uploadPart(parts.length + 1, part));
+    for (const part of buffer.push(GZIP_HEADER)) parts.push(await upload.uploadPart(parts.length + 1, part));
+    for await (const chunk of packed) {
+      for (const part of buffer.push(chunk)) parts.push(await upload.uploadPart(parts.length + 1, part));
     }
-    await feeding;
+    const { crc, uncompressedSize } = sizes();
+    for (const part of buffer.push(gzipTrailer(crc, uncompressedSize))) {
+      parts.push(await upload.uploadPart(parts.length + 1, part));
+    }
     const last = buffer.rest();
     // An empty object still needs one part to complete.
     if (last || parts.length === 0) parts.push(await upload.uploadPart(parts.length + 1, last ?? new Uint8Array(0)));
     return await upload.complete(parts);
   } catch (error) {
-    await feeding.catch(() => {});
     await upload.abort().catch(() => {});
     throw error;
   }
@@ -284,14 +281,21 @@ export async function deleteBackups(bucket: R2BucketLike, keys: string[], kv: KV
   if (kv) await Promise.all(keys.map((key) => kv.delete(sevenZipKey(key))));
 }
 
-/** Feeds every chunk of the dump to `archive` on its way to the gzip upload. */
-async function* teeInto(chunks: AsyncIterable<string>, archive: SevenZipWriter | null): AsyncGenerator<Uint8Array<ArrayBuffer>> {
+/** Feeds every chunk of the dump to `archive` on its way into the compressor. */
+async function* encodeChunks(chunks: AsyncIterable<string>): AsyncGenerator<Uint8Array<ArrayBuffer>> {
   const encoder = new TextEncoder();
-  for await (const chunk of chunks) {
-    const bytes = encoder.encode(chunk);
-    // Past the KV limit the archive is discarded anyway; stop spending CPU on it.
-    if (archive && !archive.tooLarge) await archive.write(bytes);
-    yield bytes;
+  for await (const chunk of chunks) yield encoder.encode(chunk);
+}
+
+/** Copies the packed stream into the 7z archive on its way to the R2 upload. */
+async function* teePacked(
+  packed: AsyncIterable<Uint8Array>,
+  archive: SevenZipWriter | null,
+): AsyncGenerator<Uint8Array> {
+  for await (const chunk of packed) {
+    // Past the KV limit the archive drops what it has and only counts.
+    archive?.writePacked(chunk);
+    yield chunk;
   }
 }
 
@@ -307,6 +311,11 @@ export interface BackupResult {
  * Dumps the chosen groups into a new R2 object — and, when `kv` is given, a
  * `.sql.7z` copy of the same dump into KV. A weekly run then prunes the
  * weekly prefix to the newest {@link WEEKLY_BACKUPS_TO_KEEP}.
+ *
+ * The dump is DEFLATE-compressed once ({@link module:lib/admin/deflate}) and the
+ * packed stream feeds both stores: gzip for R2, the 7z coder for KV. Compressing
+ * once and wrapping twice is what keeps a large dump inside the Worker's CPU
+ * budget.
  */
 export async function createR2Backup(
   db: BackupDb,
@@ -321,25 +330,22 @@ export async function createR2Backup(
   const key = `${BACKUP_PREFIX}${trigger}/${backupFileName(now, "sql.gz")}`;
   const archive = kv ? new SevenZipWriter(backupFileName(now, "sql"), sevenZipMaxBytes) : null;
 
+  const deflate = new SharedDeflate();
+  const packed = deflate.deflate(encodeChunks(generateBackupSql(db, groups, stats, now)));
+
   // customMetadata is fixed when the upload starts, before the rows are
   // counted, so row counts come back in `stats` rather than on the object.
-  let object: R2ObjectLike;
-  try {
-    object = await uploadGzippedText(bucket, key, teeInto(generateBackupSql(db, groups, stats, now), archive), {
-      trigger,
-      groups: groups.join(","),
-    });
-  } catch (error) {
-    await archive?.abort(error);
-    throw error;
-  }
+  const object = await uploadGzippedStream(bucket, key, teePacked(packed, archive), () => deflate.sizes, {
+    trigger,
+    groups: groups.join(","),
+  });
 
   const backup: StoredBackup = { ...toStoredBackup(object), trigger, groups: groups.join(",") };
 
   let sevenZipSkipped: string | null = kv ? null : "No KV namespace bound as DB_BACKUPS_KV.";
   if (kv && archive) {
     try {
-      const bytes = await archive.finish(now);
+      const bytes = archive.finish(deflate.sizes, now);
       if (!bytes) {
         sevenZipSkipped = `The 7z archive is larger than the ${Math.round(sevenZipMaxBytes / 1024 / 1024)} MiB KV value limit.`;
       } else {

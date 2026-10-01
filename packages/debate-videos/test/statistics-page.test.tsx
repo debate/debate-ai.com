@@ -1,7 +1,8 @@
 /**
- * @fileoverview Guards `StatisticsPage`'s composition: it always shows the
- * topics explorer, and only shows the YouTube stats charts once that fetch
- * has actually resolved — the same "furniture, not a hard dependency" rule
+ * @fileoverview Guards `StatisticsPage`'s composition: it shows the
+ * research-area topic explorer passed in from the host page, always shows the
+ * year timeline, and only shows the YouTube stats charts once that fetch has
+ * actually resolved — the same "furniture, not a hard dependency" rule
  * `useYouTubeStats` already documents for the modal this page replaces.
  */
 
@@ -38,5 +39,37 @@ describe("StatisticsPage", () => {
     expect(html).toContain("Healthcare");
     expect(html).toContain("YouTube Channel Statistics");
     expect(html).toContain("Test Channel");
+  });
+
+  it("leaves out the topic areas section when the host passes no slot", () => {
+    // `debate-videos` cannot import the explorer (it lives in `debate-webview`,
+    // which depends on this package), so the section is the host's to mount.
+    const html = renderToStaticMarkup(
+      createElement(StatisticsPage, { topics: TOPICS, youtubeStats: null }),
+    );
+    expect(html).not.toContain("Detailed topic-area distribution");
+  });
+
+  it("renders the host's topic areas section, above the year timeline", () => {
+    const html = renderToStaticMarkup(
+      createElement(StatisticsPage, {
+        topics: TOPICS,
+        youtubeStats: null,
+        topicAreasSlot: createElement("div", null, "Areas slot here"),
+      }),
+    );
+    expect(html).toContain("Areas slot here");
+    // Stacked order: the areas explorer, then the per-season topics and
+    // video numbers, then the channel charts.
+    expect(html.indexOf("Areas slot here")).toBeLessThan(html.indexOf("Debate Topics by Year"));
+  });
+
+  it("keeps the charts above the year timeline", () => {
+    const html = renderToStaticMarkup(
+      createElement(StatisticsPage, { topics: TOPICS, youtubeStats: YOUTUBE_STATS }),
+    );
+    expect(html.indexOf("YouTube Channel Statistics")).toBeLessThan(
+      html.indexOf("Debate Topics by Year"),
+    );
   });
 });

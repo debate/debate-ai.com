@@ -72,7 +72,7 @@ export const VIDEO_LIBRARY_LINKS: SidebarVideoLink[] = [
  *  in the Research tool section instead, so rankings appear only once. */
 export const VIDEO_REFERENCE_LINKS: SidebarVideoLink[] = [
   { id: "dictionary", href: "/practice/glossary", title: "Glossary of Terms" },
-  { id: "statistics", href: "/practice/statistics", title: "Topic & Video Statistics" },
+  { id: "statistics", href: "/practice/statistics", title: "Topics & Video Statistics" },
 ];
 
 /** Every videos destination the sidebar links to, in tree order. */

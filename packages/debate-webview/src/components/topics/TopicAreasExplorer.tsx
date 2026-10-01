@@ -1,10 +1,16 @@
 "use client"
 
 /**
- * @fileoverview The `/research/topics` page body: every resolution since 2000, split
- * into 44 focused research areas and ranked by how often each area has been
- * debated — overall and within each format. Picking an area lists its
+ * @fileoverview The research-area topic explorer: every resolution since 2000,
+ * split into 44 focused research areas and ranked by how often each area has
+ * been debated — overall and within each format. Picking an area lists its
  * resolutions newest first and draws its year-by-year trend.
+ *
+ * Shown as the first section of the Topics & Video Statistics page
+ * (`/practice/statistics`), which this used to be a standalone page at
+ * (`/research/topics`, now a redirect). It is mounted by the host page and
+ * handed to the video library as an element, because the video library cannot
+ * import from this package — the dependency runs the other way.
  *
  * Each format is its own collapsible panel with its own selection, so
  * comparing an area's Policy history against its PF history is two clicks

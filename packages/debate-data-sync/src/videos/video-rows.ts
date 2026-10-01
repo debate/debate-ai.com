@@ -60,8 +60,8 @@ export interface VideoRow {
   speechDocsUrl: string | null;
   /**
    * Competition season the publish date falls in — the season runs from
-   * June 1st of `year - 1` to June 1st of `year`. `0` marks legacy content
-   * published before June 1st 2010 (and unparseable dates).
+   * July 1st of `year - 1` to July 1st of `year`. `0` marks legacy content
+   * published before July 1st 2010 (and unparseable dates).
    */
   seasonYear: number;
   /**
@@ -77,7 +77,7 @@ export interface VideoRow {
 }
 
 /** Season boundary: everything published before this date is "legacy". */
-export const LEGACY_CUTOFF = "2010-06-01";
+export const LEGACY_CUTOFF = "2010-07-01";
 
 /** Sentinel {@link VideoRow.seasonYear} value for pre-2010 (legacy) videos. */
 export const LEGACY_SEASON = 0;
@@ -118,8 +118,10 @@ export function seasonYearForDate(date: string): number {
   const time = parsed.getTime();
   if (Number.isNaN(time)) return LEGACY_SEASON;
   if (time < new Date(LEGACY_CUTOFF).getTime()) return LEGACY_SEASON;
-  // Months are 0-indexed: June (5) starts the next season.
-  return parsed.getUTCFullYear() + (parsed.getUTCMonth() >= 5 ? 1 : 0);
+  // Months are 0-indexed: July (6) starts the next season, matching the
+  // leaderboard's `currentSeasonYear`, so a July 2026 round reads as 26-27
+  // rather than joining the season that closed in June.
+  return parsed.getUTCFullYear() + (parsed.getUTCMonth() >= 6 ? 1 : 0);
 }
 
 /** Coerces a tuple slot into a trimmed string, or `null` when absent/blank. */
