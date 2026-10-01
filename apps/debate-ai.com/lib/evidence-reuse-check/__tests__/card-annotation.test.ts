@@ -6,30 +6,18 @@
  */
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
-import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
-import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import * as schema from "../../database/schema";
 import { cardAiAnalyses } from "../../database/schema";
+import { applySchema } from "../../database/__tests__/schema-sql";
 
 vi.mock("@/lib/env", () => ({ getEnv: (key: string) => (key === "ANTHROPIC_API_KEY" ? "test-key" : undefined) }));
 
 import { annotateCard, annotationCardHash, readSavedAnnotations } from "../card-annotation";
 
-const migrationPath = path.join(
-  path.dirname(fileURLToPath(import.meta.url)),
-  "../../../drizzle/0053_card_ai_analyses.sql",
-);
-
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
-  // `card_ai_analyses.user_id` references `user`; only its key matters here.
-  await client.execute("CREATE TABLE `user` (`id` text PRIMARY KEY NOT NULL)");
-  for (const statement of readFileSync(migrationPath, "utf8").split("--> statement-breakpoint")) {
-    const sql = statement.trim();
-    if (sql) await client.execute(sql);
-  }
+  await applySchema(client);
   return drizzle(client, { schema });
 }
 

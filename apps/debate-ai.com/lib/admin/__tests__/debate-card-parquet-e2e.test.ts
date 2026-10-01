@@ -12,8 +12,8 @@
  */
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
-import { readFileSync } from "node:fs";
 import path from "node:path";
+import { applySchema } from "../../database/__tests__/schema-sql";
 import { describe, expect, it } from "vitest";
 import {
   createCardBatchSender,
@@ -28,24 +28,10 @@ import {
   writeDebateCardBatch,
 } from "../debate-card-import";
 
-const drizzleDir = path.join(import.meta.dirname, "../../../drizzle");
-
-/** The card tables, plus the reuse index every card batch also writes to. */
-const migrationPaths = [
-  path.join(drizzleDir, "0004_certain_microchip.sql"),
-  path.join(drizzleDir, "0035_debate_cards.sql"),
-  path.join(drizzleDir, "0054_debate_card_source_url.sql"),
-];
-
 /** A fresh in-memory database with the card tables migrated in. */
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
-  for (const migrationPath of migrationPaths) {
-    for (const statement of readFileSync(migrationPath, "utf8").split("--> statement-breakpoint")) {
-      const sql = statement.trim();
-      if (sql) await client.execute(sql);
-    }
-  }
+  await applySchema(client);
   return drizzle(client);
 }
 

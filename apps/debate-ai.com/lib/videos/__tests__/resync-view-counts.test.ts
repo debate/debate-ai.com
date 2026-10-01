@@ -7,35 +7,17 @@
 
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
-import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
-import path from "node:path";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { eq } from "drizzle-orm";
 import type { YouTubeVideoStatus, YouTubeStatusReport } from "debate-data-sync/src/youtube/youtube-api";
 import * as schema from "../../database/schema";
+import { applySchema } from "../../database/__tests__/schema-sql";
 import { videos, youtubeRoundVideos } from "../../database/schema";
 import { resyncVideoViewCounts, type ViewCountResyncResult } from "../resync-view-counts";
 
-const drizzleDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "../../../drizzle");
-
-const VIDEOS_TABLE_MIGRATIONS = [
-  "0003_dark_zarek.sql",
-  "0005_green_redwing.sql",
-  "0041_video_stacks.sql",
-  "0045_video_documents_relations_issues.sql",
-  "0047_video_admin_edited.sql",
-];
-
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
-  for (const migration of VIDEOS_TABLE_MIGRATIONS) {
-    const contents = readFileSync(path.join(drizzleDir, migration), "utf8");
-    for (const statement of contents.split("--> statement-breakpoint")) {
-      const trimmed = statement.trim();
-      if (trimmed) await client.execute(trimmed);
-    }
-  }
+  await applySchema(client);
   return drizzle(client, { schema });
 }
 
