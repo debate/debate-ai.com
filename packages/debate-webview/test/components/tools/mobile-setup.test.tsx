@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { renderToStaticMarkup } from "react-dom/server"
 
-import MobileSetupPage from "../../../src/routes/tools/mobile-setup/page"
+import MobileSetupPage from "../../../src/routes/coaching/laptopless/page"
 
 describe("MobileSetupPage", () => {
   it("recommends the Arteck Bluetooth keyboard, not the Bnnwa model", () => {

@@ -52,7 +52,7 @@ import { WORKSPACE_LINKS } from "../../../../packages/debate-editor/src/editor/w
  * companion guide page bundled under the Mobile Setup group, not a distinct
  * user-facing surface.
  */
-const FEATURES_EXCLUDE_FROM_TOOLS = new Set(["/tools/mobile-setup"])
+const FEATURES_EXCLUDE_FROM_TOOLS = new Set(["/coaching/laptopless"])
 
 /**
  * `/practice/features` entries that intentionally have no `/tools` counterpart — core
@@ -72,10 +72,10 @@ const TOOLS_EXCLUDE_FROM_FEATURES = new Set([
 /**
  * `/tools` entries that intentionally have no Workspace-menu counterpart.
  * `/reason-editor` can't link to itself from inside its own Workspace menu,
- * and `/tools/mobile-setup` is a companion guide, not a "major tool" per
+ * and `/coaching/laptopless` is a companion guide, not a "major tool" per
  * `workspace-links.ts`'s own header comment.
  */
-const WORKSPACE_EXCLUDE_FROM_TOOLS = new Set(["/reason-editor", "/tools/mobile-setup"])
+const WORKSPACE_EXCLUDE_FROM_TOOLS = new Set(["/reason-editor", "/coaching/laptopless"])
 
 /** The Workspace menu's own trailing "All Tools" link back to `/tools`. */
 const TOOLS_EXCLUDE_FROM_WORKSPACE = new Set(["/tools"])

@@ -100,7 +100,7 @@ export const PAGE_ROUTES: AppRoute[] = [
   { pattern: "/practice/tabroom/[[...slug]]", load: () => import("./tabroom/[[...slug]]/page") },
   { pattern: "/teams/[team]", load: () => import("./teams/[team]/page") },
   { pattern: "/tools", load: () => import("./tools/page") },
-  { pattern: "/tools/mobile-setup", load: () => import("./tools/mobile-setup/page") },
+  { pattern: "/coaching/laptopless", load: () => import("./coaching/laptopless/page") },
   // `/research/topics` was the standalone Topics Explorer. Its research-area
   // explorer is now the first section of `/practice/statistics`, so this old
   // address loads the same merged page rather than a second copy of it.
