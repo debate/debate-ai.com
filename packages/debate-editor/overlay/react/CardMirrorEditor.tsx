@@ -31,9 +31,10 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "re
 import { ReadOnlyPreview } from "./ReadOnlyPreview.js";
 import { MenuBar } from "./MenuBar.js";
 import * as singleton from "./singleton.js";
-import "../editor/style.css";
-import "../editor/icons.css";
-import "../editor/embed-containment.css";
+// No stylesheet imports here on purpose: the engine's CSS is loaded by
+// `singleton.ensureBooted()` together with the engine itself, so importing
+// this module (or anything re-exported from the package root) never puts
+// CardMirror's stylesheet on a page that doesn't actually mount the editor.
 
 export interface LexicalEditorHandle {
   getHTML(): string;

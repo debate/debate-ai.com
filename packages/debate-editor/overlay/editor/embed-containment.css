@@ -84,3 +84,14 @@ body.pmd-multi-doc .dec-cardmirror-embed #app {
 .dec-cardmirror-embed #ribbon .ribbon-center {
   flex-shrink: 0;
 }
+
+/* With no editor mounted, the engine's body-level floaters (the Send /
+ * Receive pill tray, tooltips, menus, dialogs, the tour) have nothing to
+ * belong to. The engine is a page singleton that outlives the route that
+ * booted it, so without this they stayed pinned over whatever page the user
+ * navigated to next. Everything the engine mounts on <body> carries a `pmd-`
+ * class (see the scoping note at the top of style.css). */
+html:not(:has(.dec-cardmirror-embed)) body > [class^="pmd-"],
+html:not(:has(.dec-cardmirror-embed)) body > [class*=" pmd-"] {
+  display: none !important;
+}

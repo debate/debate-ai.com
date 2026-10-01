@@ -33,3 +33,24 @@ describe("embedded CardMirror boots single-doc", () => {
     expect(SHELL).toMatch(/Couldn't load the editor/);
   });
 });
+
+const SINGLETON = readFileSync(join(import.meta.dirname, "..", "src", "react", "singleton.ts"), "utf8");
+const CONTAINMENT = readFileSync(join(import.meta.dirname, "..", "src", "editor", "embed-containment.css"), "utf8");
+
+describe("CardMirror stays inside its own component", () => {
+  it("loads the engine stylesheets with the engine, not with the React shell", () => {
+    // A static stylesheet import in the shell put the whole engine sheet on
+    // every page whose bundle merely imported the package.
+    expect(SHELL).not.toMatch(/^import\s+["'][^"']+\.css["'];?$/m);
+    for (const sheet of ["style.css", "icons.css", "embed-containment.css"]) {
+      expect(SINGLETON).toContain(`import('../editor/${sheet}')`);
+    }
+    expect(SINGLETON).toMatch(/async function boot\(\): Promise<void> \{\s*await loadEngineStyles\(\);/);
+  });
+
+  it("hides the engine's body-level floaters while no editor is mounted", () => {
+    expect(CONTAINMENT).toMatch(
+      /html:not\(:has\(\.dec-cardmirror-embed\)\) body > \[class\^="pmd-"\],\s*html:not\(:has\(\.dec-cardmirror-embed\)\) body > \[class\*=" pmd-"\] \{\s*display: none !important;/,
+    );
+  });
+});
