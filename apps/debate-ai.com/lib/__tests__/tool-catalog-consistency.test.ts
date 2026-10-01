@@ -125,9 +125,13 @@ const STATIC_APP_ROUTES = findAppPageRoutes(APP_DIR, "").filter((route) => !rout
  * entries each describe a capability with a docs page behind it — would claim a
  * feature guide that does not exist.
  *
- * `/practice/rules` and `/research/topics` are here for the same reason: they are reference
- * pages in the sidebar tree (the formats-and-rules guide and the resolution
- * topic-area explorer) — reading material, not tools.
+ * `/practice/rules` is here for that reason: it is a reference
+ * page in the sidebar tree (the formats-and-rules guide) — reading material,
+ * not a tool.
+ *
+ * `/research/topics` is the one route that no longer renders a page of its
+ * own: the Topics Explorer's research-area explorer is now the first section
+ * of `/practice/statistics`, so `/research/topics` only redirects there.
  *
  * `/lectures`, `/practice/glossary`, `/practice/rankings` and
  * `/practice/statistics` are views of the video library page (the same page

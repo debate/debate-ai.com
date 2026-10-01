@@ -1,8 +1,16 @@
 /**
- * @fileoverview The resolutions behind the Topic Areas explorer (`/research/topics`):
+ * @fileoverview The resolutions behind the research-area topic explorer, the
+ * first section of the Topics & Video Statistics page (`/practice/statistics`):
  * every NDT, Policy, LD and PF resolution since 2000, each filed under one of
  * 44 research-domain "topic areas", plus the counting the explorer's bar
  * chart and year-by-year trend line need.
+ *
+ * The explorer used to be a standalone page at `/research/topics`, which is now
+ * a redirect. It stays in `debate-webview` rather than moving to
+ * `debate-videos`, where the statistics page renders: `debate-videos` depends
+ * on this package, not the reverse, so the data cannot be imported from here
+ * by the page that shows it. The host mounts the explorer and passes it down
+ * as an element instead.
  *
  * The area assignments are heuristic research categories, not official NSDA
  * or NDT classifications — the page says so in its footer. The data lives in

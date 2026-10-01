@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  clearArgumentTreeFilterSelections,
   deleteArgumentTreeFilterSelection,
   getArgumentTreeFilterSelection,
   listArgumentTreeFilterSelections,
@@ -79,6 +80,31 @@ describe("saveArgumentTreeFilterSelection", () => {
 
     expect(listArgumentTreeFilterSelections()).toEqual([revised]);
     expect(getArgumentTreeFilterSelection("round-1")).toEqual(revised);
+  });
+});
+
+describe("clearArgumentTreeFilterSelections", () => {
+  it("removes every selection when no keep-list is given", () => {
+    saveArgumentTreeFilterSelection(ROUND_1_UNANSWERED);
+    saveArgumentTreeFilterSelection(ROUND_2_HEADINGS);
+
+    expect(clearArgumentTreeFilterSelections()).toBe(2);
+    expect(listArgumentTreeFilterSelections()).toEqual([]);
+  });
+
+  it("keeps only the selections whose round survives, dropping the orphans left by a cleared round", () => {
+    saveArgumentTreeFilterSelection(ROUND_1_UNANSWERED);
+    saveArgumentTreeFilterSelection(ROUND_2_HEADINGS);
+
+    expect(clearArgumentTreeFilterSelections(["round-2"])).toBe(1);
+    expect(listArgumentTreeFilterSelections()).toEqual([ROUND_2_HEADINGS]);
+  });
+
+  it("leaves storage untouched when nothing would be removed", () => {
+    saveArgumentTreeFilterSelection(ROUND_2_HEADINGS);
+
+    expect(clearArgumentTreeFilterSelections(["round-2"])).toBe(0);
+    expect(listArgumentTreeFilterSelections()).toEqual([ROUND_2_HEADINGS]);
   });
 });
 

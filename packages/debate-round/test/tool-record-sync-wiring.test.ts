@@ -10,7 +10,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { setToolRecordSyncEnabled } from "debate-data-sync/src/state/tool-record-mirror";
 import { deletePracticeRound, savePracticeRound } from "../src/state/practiceRounds";
 import { deletePreRoundBriefing, savePreRoundBriefing } from "../src/state/preRoundBriefings";
-import { deleteArgumentTree, saveArgumentTree } from "../src/state/argumentTrees";
+import { clearArgumentTrees, deleteArgumentTree, saveArgumentTree } from "../src/state/argumentTrees";
 import { buildPracticeRoundSetup } from "../src/round/practice-round-simulator";
 import type { PreRoundBriefing } from "../src/round/pre-round-briefing";
 
@@ -123,5 +123,28 @@ describe("argument trees", () => {
       ["PUT", "/api/tool-records/argumentTrees/round-3"],
       ["DELETE", "/api/tool-records/argumentTrees/round-3"],
     ]);
+  });
+
+  it("mirrors a bulk clear as one collection-wide delete, not one per record", async () => {
+    saveArgumentTree({ roundId: "round-3", tree: [] });
+    saveArgumentTree({ roundId: "round-4", tree: [] });
+    clearArgumentTrees();
+    await settle();
+
+    // Only the collection-wide DELETE matters — a per-record mirror here would
+    // leave records in the account that `hydrateToolRecords` merges straight
+    // back into the local store on the next load.
+    expect(calls.map((call) => [call.method, call.url])).toEqual([
+      ["PUT", "/api/tool-records/argumentTrees/round-3"],
+      ["PUT", "/api/tool-records/argumentTrees/round-4"],
+      ["DELETE", "/api/tool-records/argumentTrees"],
+    ]);
+  });
+
+  it("mirrors nothing when there was no record to clear", async () => {
+    clearArgumentTrees();
+    await settle();
+
+    expect(calls).toEqual([]);
   });
 });

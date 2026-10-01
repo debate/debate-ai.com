@@ -21,7 +21,7 @@ function withClient(client: ReturnType<typeof createTournamentsClient>, node: Re
   return renderToString(<TournamentsContext.Provider value={value}>{node}</TournamentsContext.Provider>);
 }
 
-const noFetch = () => new Response("{}", { status: 200 });
+const noFetch = () => Promise.resolve(new Response("{}", { status: 200 }));
 
 describe("HostTournamentPage", () => {
   it("offers all three styles, each with its speech order explained", () => {

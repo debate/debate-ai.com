@@ -19,6 +19,7 @@ import { buildArgumentTree, type ArgumentTreeNode } from "../flow/argument-tree"
 import {
   mirrorToolRecordDelete,
   mirrorToolRecordSave,
+  mirrorToolRecordsClear,
 } from "debate-data-sync/src/state/tool-record-mirror";
 
 export type ArgumentTreeRecord = {
@@ -72,6 +73,23 @@ export function saveArgumentTree(record: ArgumentTreeRecord): void {
 export function deleteArgumentTree(roundId: string): void {
   writeAll(readAll().filter((record) => record.roundId !== roundId));
   mirrorToolRecordDelete("argumentTrees", roundId);
+}
+
+/**
+ * Deletes every persisted argument tree across all rounds, returning the
+ * `roundId`s that were removed (empty when there was nothing to clear).
+ *
+ * Mirrors the account copy with a single collection-wide clear rather than one
+ * delete per record, and — unlike `hydrateToolRecords`, which merges unions —
+ * this is what makes a bulk delete stick: a record only still in the account
+ * would otherwise be pulled back on the next hydrate.
+ */
+export function clearArgumentTrees(): string[] {
+  const existing = readAll();
+  if (existing.length === 0) return [];
+  writeAll([]);
+  mirrorToolRecordsClear("argumentTrees");
+  return existing.map((record) => record.roundId);
 }
 
 /**
