@@ -48,6 +48,7 @@ export const LEGACY_PATH_PREFIXES: ReadonlyArray<readonly [from: string, to: str
   ["/opponents", "/practice/opponents"],
   ["/forums", "/practice/forums"],
   ["/tournaments", "/practice/tournaments"],
+  ["/practice/tournaments-beta", "/practice/tournaments"],
   ["/judge-decision", "/practice/judge-decision"],
   ["/judges", "/practice/judges"],
   ["/prep-notes", "/practice/prep-notes"],

@@ -1,9 +1,9 @@
 /**
- * Tabroom's own beta site, framed. `/practice/tournaments-beta` renders the
+ * Tabroom's own beta site, framed. `/practice/tournaments` renders the
  * same tournaments natively, from the `debate-tournaments` UI over this app's
  * Tabroom proxy.
  */
-export function TournamentsPage() {
+export function TabroomPage() {
   return (
     <iframe
       src="https://beta.tabroom.com"

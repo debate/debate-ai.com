@@ -14,9 +14,9 @@ run on **Cloudflare Workers + D1**. The package exports three things:
 
 In `apps/debate-ai.com` the D1 API is mounted at `/api/tabroom/*`
 (`app/api/tabroom/[...path]/route.ts`, `lib/tournaments/handler.ts`). The UI is
-mounted at `/practice/tournaments-beta/*`, where it reads live Tabroom through
+mounted at `/practice/tournaments/*`, where it reads live Tabroom through
 `/api/tabroom-beta/*`, a read-only proxy to `https://api.tabroom.com/v1`
-(`lib/tournaments/tabroom-beta-proxy.ts`); `/practice/tournaments` frames
+(`lib/tournaments/tabroom-beta-proxy.ts`); `/practice/tabroom` frames
 beta.tabroom.com itself. The schema is applied by `.github/scripts/migrate-d1.ts`,
 which picks up this package's `migrations/` after the app's own.
 

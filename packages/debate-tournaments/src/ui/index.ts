@@ -1,6 +1,8 @@
 export { TournamentsApp, type TournamentsAppProps } from "./TournamentsApp";
 export { TournamentNav, type TournamentTab } from "./TournamentNav";
 export { UpcomingTournamentsPage } from "./pages/UpcomingTournamentsPage";
+export { HostTournamentPage } from "./pages/HostTournamentPage";
+export { TabroomTournamentPage } from "./pages/TabroomTournamentPage";
 export { TournamentInvitePage } from "./pages/TournamentInvitePage";
 export { RoundsPage } from "./pages/RoundsPage";
 export { RoundPage } from "./pages/RoundPage";

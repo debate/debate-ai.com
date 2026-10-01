@@ -36,8 +36,8 @@ describe("route table", () => {
     expect(resolveRoute(APP_ROUTES, "/videos")?.route.pattern).toBe("/videos")
     expect(resolveRoute(APP_ROUTES, "/videos/2022")?.route.pattern).toBe("/videos/[category]")
     expect(resolveRoute(APP_ROUTES, "/coaching/leaderboard")?.route.pattern).toBe("/coaching/leaderboard")
-    expect(resolveRoute(APP_ROUTES, "/practice/tournaments/x/y")?.params).toEqual({ slug: ["x", "y"] })
-    expect(resolveRoute(APP_ROUTES, "/practice/tournaments-beta/38436/rounds")?.params).toEqual({ slug: ["38436", "rounds"] })
+    expect(resolveRoute(APP_ROUTES, "/practice/tournaments/38436/rounds")?.params).toEqual({ slug: ["38436", "rounds"] })
+    expect(resolveRoute(APP_ROUTES, "/practice/tabroom")?.route.pattern).toBe("/practice/tabroom/[[...slug]]")
     expect(resolveRoute(APP_ROUTES, "/no-such-page")).toBeNull()
   })
 

@@ -3,7 +3,7 @@
 import { tabsListClass, tabsTriggerClass } from "./primitives";
 import { BackLink, useTournaments } from "./shared";
 
-export type TournamentTab = "invite" | "rounds" | "results";
+export type TournamentTab = "invite" | "rounds" | "results" | "tabroom";
 
 /** Tab strip for one tournament's pages. */
 export function TournamentNav({
@@ -22,6 +22,7 @@ export function TournamentNav({
     ["invite", "Invite", hrefs.tournament(tournId)],
     ["rounds", "Pairings", hrefs.rounds(tournId)],
     ["results", "Results", hrefs.results(tournId)],
+    ["tabroom", "Tabroom", hrefs.tabroom(tournId)],
   ];
   const logoSrc = webname ? `/tournament-logos/${webname}.png` : null;
   return (

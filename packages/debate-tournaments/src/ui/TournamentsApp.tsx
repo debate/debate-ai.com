@@ -19,6 +19,8 @@ import { createTournamentsClient } from "./client";
 import { Empty, Loaded, TournamentsContext, defaultLink, useApi, useTournaments, type LinkLike } from "./shared";
 import { TournamentNav, type TournamentTab } from "./TournamentNav";
 import { UpcomingTournamentsPage } from "./pages/UpcomingTournamentsPage";
+import { HostTournamentPage } from "./pages/HostTournamentPage";
+import { TabroomTournamentPage } from "./pages/TabroomTournamentPage";
 import { TournamentInvitePage } from "./pages/TournamentInvitePage";
 import { RoundsPage } from "./pages/RoundsPage";
 import { RoundPage } from "./pages/RoundPage";
@@ -55,12 +57,15 @@ const TAB_FOR: Partial<Record<TournamentRoute["page"], TournamentTab>> = {
   round: "rounds",
   results: "results",
   resultSet: "results",
+  tabroom: "tabroom",
 };
 
 function RouteView({ route }: { route: TournamentRoute }) {
   switch (route.page) {
     case "upcoming":
       return <UpcomingTournamentsPage />;
+    case "host":
+      return <HostTournamentPage />;
     case "notFound":
       return <Empty>That tournament page does not exist.</Empty>;
     default:
@@ -78,6 +83,8 @@ function RouteView({ route }: { route: TournamentRoute }) {
                 return <ResultsPage tournId={route.tournId} />;
               case "resultSet":
                 return <ResultSetPage tournId={route.tournId} resultSetId={route.resultSetId} />;
+              case "tabroom":
+                return <TabroomTournamentPage tournId={route.tournId} name={invite.name} />;
             }
           }}
         </TournamentShell>
