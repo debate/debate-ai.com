@@ -89,7 +89,7 @@ const GEAR: {
     name: "MATEIN 15.6\" Travel Laptop Backpack (Personal-Item Size)",
     role: "Carry all your gear",
     href: "https://amzn.to/4yiIpal",
-    image: "https://i.imgur.com/YEH7Dkv.jpeg",
+    image: "https://i.imgur.com/hzPqSQL.jpeg",
     blurb:
       "A 15.6\" daypack that counts as a personal item — slides under the seat in front, holds the phone, keyboard, cables, and AR glasses with room left over. Water-resistant shell, a hidden anti-theft pocket for cards, and a ventilated back panel so it doesn't sweat through a round. At ~$20 it's the kind of bag you stop noticing you're carrying.",
   },

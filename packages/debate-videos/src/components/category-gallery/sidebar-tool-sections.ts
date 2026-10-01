@@ -38,6 +38,7 @@ import {
   Scale,
   Search,
   Share2,
+  Smartphone,
   Sparkles,
   Star,
   StickyNote,
@@ -180,6 +181,10 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/coaching/rankings", title: "Team Rankings", icon: Medal },
       { href: "/coaching/leaderboard", title: "Leaderboard", icon: Trophy },
       { href: "/coaching/progress", title: "Research Progress", icon: TrendingUp },
+      // Companion guide page (not a coaching tool) — round-day setup for
+      // debating off just a phone, so it rides with the coaching tools here
+      // rather than only being reachable from the `/tools` catalog.
+      { href: "/tools/mobile-setup", title: "Laptop-less Debating", icon: Smartphone },
     ],
   },
 ];
