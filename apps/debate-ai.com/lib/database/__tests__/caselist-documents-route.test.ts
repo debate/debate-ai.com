@@ -70,6 +70,11 @@ describe("GET /api/caselist-documents", () => {
     expect(body.total).toBe(1);
   });
 
+  it("filters by team alone", async () => {
+    const { body } = await get("team=other+team");
+    expect(body.documents.map((d: { id: number }) => d.id)).toEqual([2]);
+  });
+
   it("does not treat the value as a LIKE pattern", async () => {
     const { body } = await get("school=Monte%25");
     expect(body.total).toBe(0);
