@@ -73,6 +73,14 @@ export const DAILY_LIMIT_KEY: Readonly<Record<DailyMetric, keyof TierLimits>> = 
 };
 
 /**
+ * Response header a metered API route sets on its `429` when a daily plan
+ * limit refuses a use; its value is the `DailyMetric`. The client watches for
+ * it (`plan-limit.ts`) to open the pricing dialog, since the plans are only
+ * shown when a limit is hit.
+ */
+export const PLAN_LIMIT_HEADER = "x-plan-limit";
+
+/**
  * The tier a stored subscription `plan` grants. A paying subscriber on a
  * price missing from `PLANS` (`unknown`) still gets Pro rather than being
  * dropped to free.

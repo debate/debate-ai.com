@@ -141,11 +141,11 @@ describe("the mobile block below md", () => {
     }
   });
 
-  it("still reaches the glossary and rankings pair", () => {
+  it("still reaches the glossary and statistics pair", () => {
     // They ride at the end of the (collapsed) Practice section in the tree
     // now, so on a phone the quick-link tiles are what carries them.
     const mobile = mobileMarkup();
     expect(mobile).toContain('href="/practice/glossary"');
-    expect(mobile).toContain('href="/practice/rankings"');
+    expect(mobile).toContain('href="/practice/statistics"');
   });
 });

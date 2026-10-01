@@ -25,6 +25,7 @@ import { ToolRecordSyncProvider } from "./ToolRecordSyncProvider"
 import { DebaterActivityListener } from "./DebaterActivityListener"
 import { SignInPromptProvider } from "./SignInPromptProvider"
 import { GlobalCommandPalette } from "./GlobalCommandPalette"
+import { PlanLimitDialog } from "../pricing/PlanLimitDialog"
 import { ServiceWorkerRegistrar } from "./ServiceWorkerRegistrar"
 import { useIsFramedDocument } from "../../lib/layout/use-framed-document"
 import { isDocsPath } from "../../lib/layout/frame-navigation"
@@ -78,6 +79,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <ChromeErrorBoundary label="GlobalCommandPalette">
             <GlobalCommandPalette />
           </ChromeErrorBoundary>
+          {/* The tools that hit a plan limit fetch from this document. */}
+          <ChromeErrorBoundary label="PlanLimitDialog">
+            <PlanLimitDialog />
+          </ChromeErrorBoundary>
           <MixpanelProvider />
           <Toaster position="top-center" richColors closeButton />
         </ReasonDocsProvider>
@@ -122,6 +127,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </ChromeErrorBoundary>
       <ChromeErrorBoundary label="GlobalCommandPalette">
         <GlobalCommandPalette />
+      </ChromeErrorBoundary>
+      {/* The pricing plans, shown only when a daily plan limit is hit. */}
+      <ChromeErrorBoundary label="PlanLimitDialog">
+        <PlanLimitDialog />
       </ChromeErrorBoundary>
       <ChromeErrorBoundary label="ServiceWorkerRegistrar">
         <ServiceWorkerRegistrar />
