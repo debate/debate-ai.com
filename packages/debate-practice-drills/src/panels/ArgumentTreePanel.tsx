@@ -159,11 +159,24 @@ import { resolvePresetJumpRoundId } from "../state/outlineFilterPresetJump"
 import type { OutlineFilterPreset } from "debate-round/src/state/outlineFilterPresets"
 import { isArgumentTreePanelLiveUpdateStorageEvent } from "../state/live-update"
 import { useFlowStore } from "debate-round/src/state/store"
+import { parseArgumentTreeViewMode, type ArgumentTreeViewMode } from "../flow/argument-map"
+import { ArgumentMapView, ArgumentTreeViewSwitcher } from "./argument-map/ArgumentMapView"
 import type { Flow } from "debate-round/src/types/flow"
 
 const NONE_VALUE = "__none__"
 
 const ANY_VALUE = "__any__"
+
+/** Per-viewer convenience: which view (outline list or a map view) the panel last showed. */
+const VIEW_MODE_STORAGE_KEY = "argumentTreeViewMode"
+
+function readStoredViewMode(): ArgumentTreeViewMode {
+  try {
+    return parseArgumentTreeViewMode(localStorage.getItem(VIEW_MODE_STORAGE_KEY))
+  } catch {
+    return parseArgumentTreeViewMode(null)
+  }
+}
 
 /** Every distinct `originSpeech`/`lastSpeech` present in a tree's argument rows, in first-seen order. */
 function collectSpeeches(record: ArgumentTreeRecord): string[] {
@@ -228,6 +241,20 @@ export function ArgumentTreePanel() {
   const [tagDraft, setTagDraft] = useState<ArgumentTags>({})
   const [selectedRows, setSelectedRows] = useState<Record<string, number[]>>({})
   const roundCardRefs = useRef<Record<string, HTMLDivElement | null>>({})
+  const [viewMode, setViewMode] = useState<ArgumentTreeViewMode>("tree")
+
+  useEffect(() => {
+    setViewMode(readStoredViewMode())
+  }, [])
+
+  const changeViewMode = (mode: ArgumentTreeViewMode) => {
+    setViewMode(mode)
+    try {
+      localStorage.setItem(VIEW_MODE_STORAGE_KEY, mode)
+    } catch {
+      // Storage unavailable (private window, blocked site data) — the choice just isn't remembered.
+    }
+  }
 
   const flows = useFlowStore((state) => state.flows)
   const selected = useFlowStore((state) => state.selected)
@@ -777,7 +804,13 @@ export function ArgumentTreePanel() {
               </label>
             </div>
 
-            {filtered.length === 0 ? (
+            <div className="flex justify-center">
+              <ArgumentTreeViewSwitcher mode={viewMode} onChange={changeViewMode} />
+            </div>
+
+            {viewMode !== "outline" ? (
+              <ArgumentMapView tree={filteredTree} rootLabel={`Round ${record.roundId}`} mode={viewMode} />
+            ) : filtered.length === 0 ? (
               <p className="text-sm text-muted-foreground">No rows match the current filter.</p>
             ) : (
               <div className="space-y-1">
