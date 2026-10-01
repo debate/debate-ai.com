@@ -29,7 +29,7 @@
  */
 
 import Link from "next/link";
-import { Clapperboard, LayoutGrid, Sparkles } from "lucide-react";
+import { BookOpen, LayoutGrid, Sparkles } from "lucide-react";
 
 import {
   APP_DOCK_LINKS,
@@ -68,7 +68,7 @@ const TOOLS_LINKS: FooterSectionLink[] = [
     label: section.title,
     icon: section.icon,
   })),
-  { href: "/lectures", label: "Lectures", icon: Clapperboard },
+  { href: "/lectures", label: "Lectures", icon: BookOpen },
   { href: TOOLS_ROOT_HREF, label: "All Tools", icon: LayoutGrid },
   { href: "/practice/features", label: "All Features", icon: Sparkles },
 ];
