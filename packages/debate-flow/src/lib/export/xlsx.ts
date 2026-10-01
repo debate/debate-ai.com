@@ -131,6 +131,9 @@ export function fillWorkbook(
 
 /** Contacts name the authors of any peer notes on the RFD worksheet. */
 export async function downloadXlsx(round: FlowRound, contacts: Contacts = {}): Promise<void> {
+    // Browser-only (it ends in a download). The guard keeps exceljs (~700 kB)
+    // out of the Worker, which holds every bundled module in memory.
+    if (import.meta.env.SSR) throw new Error("xlsx export runs in the browser");
     const { default: ExcelJS } = await import("exceljs");
     const workbook = new ExcelJS.Workbook();
     fillWorkbook(workbook, round, contacts);

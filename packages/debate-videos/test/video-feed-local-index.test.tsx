@@ -1,13 +1,12 @@
 // @vitest-environment jsdom
 /**
- * @fileoverview Pins the payoff of caching the library in the browser: the
- * grid pages, filters and searches without asking the network anything.
+ * @fileoverview Pins that the video grid never downloads the whole library.
  *
- * This is the property the whole cache exists for, and the one most easily
- * lost — a refactor that reorders the feed's effects, or drops the hydrate
- * before the first fetch, leaves everything *working* while quietly going
- * back to a request per interaction. So the assertions here are about the
- * requests that are **not** made, as much as the rows that come back.
+ * The grid used to fetch `/api/videos/index` (about 900 kB) into
+ * `localStorage` and filter it in the browser. It now pages `/api/videos`
+ * instead, so the assertions here are about the request that is **not**
+ * made, and about the stored copy an earlier visit left behind being freed
+ * rather than parsed.
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -93,61 +92,25 @@ afterEach(async () => {
   resetVideoIndexForTests();
 });
 
-describe("a feed with the library cached", () => {
-  it("renders the first page without a request", async () => {
-    storeLibrary();
-
+describe("a feed never loads the whole library", () => {
+  it("pages the API instead of fetching the index", async () => {
     await mountFeed({ source: "all" });
+    await act(async () => {
+      window.dispatchEvent(new Event("load"));
+      await new Promise((resolve) => setTimeout(resolve, 1_500));
+    });
 
-    expect(requests).toEqual([]);
-    expect(feed.videos.map((video) => video[0]).sort()).toEqual(["l1", "r1", "r2"]);
-    expect(feed.total).toBe(3);
-    expect(feed.isLoading).toBe(false);
+    expect(requests).toContain("videos");
+    expect(requests).not.toContain("videos/index");
   });
 
-  it("applies a source filter locally", async () => {
-    storeLibrary();
-
-    await mountFeed({ source: "round" });
-
-    expect(requests).toEqual([]);
-    expect(feed.videos.map((video) => video[0]).sort()).toEqual(["r1", "r2"]);
-  });
-
-  it("searches locally", async () => {
-    storeLibrary();
-
-    await mountFeed({ source: "all", q: "kritik" });
-
-    expect(requests).toEqual([]);
-    expect(feed.videos.map((video) => video[0])).toEqual(["l1"]);
-  });
-
-  it("answers the season and style dropdowns locally", async () => {
+  it("frees a library an earlier visit stored instead of reading it", async () => {
     storeLibrary();
 
     await mountFeed({ source: "round", withFacets: true });
 
-    expect(requests).toEqual([]);
-    expect(feed.facets?.styleCounts?.[1]).toBe(2);
-  });
-});
-
-describe("a feed with nothing cached", () => {
-  it("falls back to the paginated API", async () => {
-    await mountFeed({ source: "all" });
-
-    expect(requests).toContain("videos");
-  });
-
-  it("ignores a cache written in a format it cannot read", async () => {
-    localStorage.setItem(
-      VIDEO_INDEX_STORAGE_KEY,
-      JSON.stringify({ version: 0, syncedAt: Date.now(), rows: [["r1"]] }),
-    );
-
-    await mountFeed({ source: "all" });
-
-    expect(requests).toContain("videos");
+    expect(localStorage.getItem(VIDEO_INDEX_STORAGE_KEY)).toBeNull();
+    expect(requests).toEqual(["videos"]);
+    expect(requests).not.toContain("videos/index");
   });
 });
