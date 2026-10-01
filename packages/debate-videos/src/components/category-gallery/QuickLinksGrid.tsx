@@ -88,11 +88,6 @@ const QUICK_LINK_STYLES: Record<string, QuickLinkStyle> = {
     gradient: "from-indigo-500/20 via-blue-500/10 to-transparent",
     iconBg: "bg-indigo-500/15 ring-1 ring-indigo-500/30",
   },
-  rankings: {
-    logo: IconLeaderboard,
-    gradient: "from-yellow-500/20 via-amber-500/10 to-transparent",
-    iconBg: "bg-yellow-500/15 ring-1 ring-yellow-500/30",
-  },
   statistics: {
     logo: IconRoundsYoutube,
     gradient: "from-rose-500/20 via-pink-500/10 to-transparent",
@@ -117,7 +112,6 @@ const QUICK_LINK_ORDER = [
   "topPicks",
   "favorites",
   "dictionary",
-  "rankings",
   "statistics",
 ];
 
