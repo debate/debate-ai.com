@@ -31,6 +31,7 @@
 import { useEffect, useMemo, useState, type ComponentType } from "react";
 import {
   Dumbbell,
+  ExternalLink,
   FileText,
   LayoutGrid,
   Library,

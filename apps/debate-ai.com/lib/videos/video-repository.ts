@@ -48,7 +48,7 @@ import {
   previousVideoRouteHref,
   slugifyVideoTitle,
   videoRouteHref,
-  type DebateStyle,
+  type VideoRouteParts,
   type VideoType,
 } from "debate-videos";
 
@@ -109,7 +109,7 @@ export async function getVideoSitemapEntries(): Promise<VideoSitemapEntry[]> {
           title: String(row.title ?? ""),
           date: (row.publishedAt as string | null) ?? null,
           seasonYear: (row.seasonYear as number | null) ?? null,
-          style: (row.style as DebateStyle | string | null) ?? (row.category as string | null) ?? null,
+          style: (row.style as VideoRouteParts["style"]) ?? (row.category as string | null) ?? null,
           tournament: (row.tournament as string | null) ?? null,
           roundLevel: (row.roundLevel as string | null) ?? null,
           affTeam: (row.affTeam as string | null) ?? null,

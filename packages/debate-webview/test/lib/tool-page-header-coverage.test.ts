@@ -14,7 +14,7 @@
  * an entry here fails immediately instead of silently missing the favorite
  * toggle and docs links every other tool page has.
  */
-import { readFileSync } from "node:fs"
+import { existsSync, readFileSync } from "node:fs"
 import { dirname, join, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 import { describe, expect, it } from "vitest"
@@ -40,10 +40,15 @@ const APP_DIR = join(PACKAGE_ROOT, "..", "..", "apps", "debate-ai.com", "app")
 
 /**
  * The app's `page.tsx` for `href` — or, when that page only re-exports a
- * `debate-webview/routes/…` module, as most do, that module's source.
+ * `debate-webview/routes/…` module, as most do, that module's source. A route
+ * with no `app/` page (served from the `routes/index.ts` registry instead)
+ * reads its `routes/<href>/page.tsx` directly.
  */
 function pageSource(href: string): string {
-  const source = readFileSync(join(APP_DIR, ...href.split("/").filter(Boolean), "page.tsx"), "utf8")
+  const segments = href.split("/").filter(Boolean)
+  const appPage = join(APP_DIR, ...segments, "page.tsx")
+  if (!existsSync(appPage)) return readFileSync(join(ROUTES_DIR, ...segments, "page.tsx"), "utf8")
+  const source = readFileSync(appPage, "utf8")
   const reexport = source.match(/from\s+["']debate-webview\/routes\/([^"']+)["']/)
   return reexport ? readFileSync(join(ROUTES_DIR, `${reexport[1]}.tsx`), "utf8") : source
 }

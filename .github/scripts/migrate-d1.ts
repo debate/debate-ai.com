@@ -30,7 +30,7 @@
  */
 
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -129,7 +129,16 @@ function migrationPath(name: string): string {
   return join(PACKAGE_MIGRATION_DIRS[name.slice(0, slash)], name.slice(slash + 1));
 }
 
-const sqlFiles = (dir: string) => readdirSync(dir).filter((name) => name.endsWith(".sql")).sort();
+// `apps/debate-ai.com/drizzle/` is no longer tracked in git (it is kept on disk
+// locally), so a fresh checkout such as a CI or Workers build has none: skip
+// those migrations there rather than fail the deploy on ENOENT.
+const sqlFiles = (dir: string) => {
+  if (!existsSync(dir)) {
+    console.warn(`! ${dir} does not exist; skipping its migrations.`);
+    return [];
+  }
+  return readdirSync(dir).filter((name) => name.endsWith(".sql")).sort();
+};
 
 // App migrations first, then each package's, each in file order.
 const migrations = [

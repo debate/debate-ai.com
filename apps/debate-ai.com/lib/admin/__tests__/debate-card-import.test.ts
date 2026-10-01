@@ -10,11 +10,10 @@
  */
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
-import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { beforeEach, describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
+import { applySchema } from "../../database/__tests__/schema-sql";
 import { debateCardImports, debateCards, evidenceReuseIndex } from "../../database/schema";
 import {
   CARD_ROWS_PER_STATEMENT,
@@ -23,15 +22,6 @@ import {
   recordCardImportBatch,
   writeDebateCardBatch,
 } from "../debate-card-import";
-
-const drizzleDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "../../../drizzle");
-
-/** The card tables, plus the reuse index every card batch also writes to. */
-const migrationPaths = [
-  path.join(drizzleDir, "0004_certain_microchip.sql"),
-  path.join(drizzleDir, "0035_debate_cards.sql"),
-  path.join(drizzleDir, "0054_debate_card_source_url.sql"),
-];
 
 /** A row shaped like the published dump, with int64 columns as BigInt. */
 function dumpRow(overrides: Record<string, unknown> = {}) {
@@ -62,12 +52,7 @@ function dumpRow(overrides: Record<string, unknown> = {}) {
 /** A fresh in-memory database with the card tables migrated in. */
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
-  for (const migrationPath of migrationPaths) {
-    for (const statement of readFileSync(migrationPath, "utf8").split("--> statement-breakpoint")) {
-      const sql = statement.trim();
-      if (sql) await client.execute(sql);
-    }
-  }
+  await applySchema(client);
   return drizzle(client, { schema });
 }
 

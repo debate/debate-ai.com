@@ -22,7 +22,7 @@ is what matters.
 | `/doc` | 10.68 MB | 9.21 MB | `Workspace` chunk, 6.2 MB |
 | `/debate` | 2.39 MB | 2.38 MB | `DebateRoundPanel` chunk, 525 kB |
 | `/docs` | 1.95 MB | 1.83 MB | Fumadocs + parse5 (`lib` chunk), 212 kB |
-| `/videos` | 1.81 MB | 1.81 MB | video index fetch, 928 kB (data, not JS) |
+| `/videos` | 1.81 MB | 1.81 MB | `DebateRoundPanel` chunk, 525 kB |
 | `/timer`, `/search`, `/practice` | 1.39 MB | 1.27 MB | framework + vinext runtime |
 
 "Before" is `master` at the start of this work. "After" includes the three
@@ -39,7 +39,6 @@ These load on every app route, before any feature code:
 | `framework` chunk | 219 kB | React and React DOM. |
 | `vinext` chunk | 146 kB | vinext's navigation and link runtime. |
 | HTML document | 50–180 kB | Server-rendered markup plus the inlined RSC payload. |
-| `/api/videos/index` | 928 kB | The whole video library, fetched once the page is idle and cached in `localStorage` (`VideoIndexPrefetcher` in `AppShell`). It does not block first paint, but it competes for bandwidth on a slow connection and is written to `localStorage` on the main thread. |
 
 About 140 to 200 script requests per page are normal here: the app is split
 into many small shared chunks.
@@ -90,11 +89,14 @@ In rough order of how much they cost a real visitor:
    this repo. Splitting it means changing `react-reason-editor` to load its
    emoji picker, drawing canvas, and export tools with dynamic `import()`.
    The `Workspace.css` stylesheet adds 646 kB.
-2. **The video index, 928 kB on every page.** It makes the video grid
-   instant, but a visitor who never opens `/videos` still downloads it. Moving
-   `VideoIndexPrefetcher` from `AppShell` to the video routes would remove it
-   from every other page, at the cost of the first `/videos` visit fetching it
-   then.
+2. **The video index, 928 kB, is no longer loaded by any web page.** It
+   used to be fetched on every page by `VideoIndexPrefetcher` in `AppShell`,
+   and then by the video grid itself (`useVideoFeed`), which filtered it in
+   the browser. The grid now pages `/api/videos`, and takes its counts and
+   stacks from `/api/videos/meta` and `/api/videos/stacks`. A copy an
+   earlier visit stored in `localStorage` is deleted on the first video page.
+   Only the watch route for hosts without the Worker still fetches it.
+   Everything `/videos` downloads went from 4.79 MB to 3.84 MB.
 3. **`DebateRoundPanel`, 525 kB** on `/debate`, plus `simplepeer` (97 kB),
    which is only needed once a peer connection starts.
 4. **Large chunks that already load on demand.** These are not on any
@@ -106,6 +108,48 @@ In rough order of how much they cost a real visitor:
    `docx-to-html` (426 kB), Mixpanel (425 kB) and KaTeX (259 kB).
 
 ## Worker memory
+
+### Why every response took 2.5 to 5.8 seconds
+
+On 2026-09-30 every request the live Worker served took 2.5 to 5.8 s,
+including a 308 redirect that `worker/index.ts` returns before doing any
+work. Static files from the same origin came back in 0.2 s. A warm isolate
+running the same build locally (`wrangler dev`) answers in 7 to 60 ms. The
+time was isolate start-up, paid on every request.
+
+The cause was memory. workerd keeps the **source text of every module in
+the upload** in the isolate's heap, whether or not a request imports it.
+Before this fix the V8 heap sat at **141 MB before the first request**,
+against the 128 MB Workers cap, so isolates did not survive to serve a
+second request. Two things filled it:
+
+- **Two-byte strings.** V8 stores a string at one byte per character only
+  while every character fits in Latin-1. One CJK word, emoji or math symbol
+  anywhere in a minified module doubles the whole module. 360 of about 1,370
+  server modules were stored that way, 78 MB of an estimated 87 MB.
+  `serverMinify` in `apps/debate-ai.com/vite.config.ts` now sets rolldown's
+  `codegen.asciiOnly` for the rsc and ssr builds, so those characters are
+  written as escapes.
+- **Browser-only code in the server build.** The `/doc` workspace
+  (react-reason-editor, its docx and video players, Mermaid), the speech
+  models behind it (Moonshine and Kokoro) and the flow grid (Handsontable,
+  CodeMirror, exceljs) were bundled for the server although the server never
+  renders them. Their `import()`s now sit behind `import.meta.env.SSR`, which
+  is a literal `true` in the server build, so the bundler drops them:
+  `routes/doc/ResearchAgentEmbed.tsx` in `debate-webview`, and
+  `components/flow/Workspace.tsx` and `lib/export/xlsx.ts` in `debate-flow`.
+
+| Measured with `wrangler dev` | Before | After |
+| --- | --- | --- |
+| Server module source held in memory (estimate) | 87 MB | 27 MB |
+| Heap before the first request | 141 MB | 67 MB |
+| Heap peak across a run of 10 to 15 pages | 173 MB | 105 MB |
+
+The biggest server module left is the 6 MB docs page
+`synergy-slayer/synergy-slayer-process/references.md`, compiled into the
+docs collection.
+
+### Per-route cost
 
 Cloudflare Workers cap an isolate at 128 MB, and the site has run out. These
 are the node process's resident memory before and after one cold request to
@@ -154,3 +198,8 @@ the Worker's own baseline is smaller, so compare deltas, not totals).
 5. **Worker memory.** Start a fresh server per route, read the node
    process's RSS, make one request, wait a few seconds, and read it again.
    Restarting between routes keeps one route's caches from hiding another's.
+6. **The isolate's own heap.** Run the built Worker in workerd with
+   `bunx wrangler dev -c dist/server/wrangler.json`, then connect to its
+   inspector on port 9229 and call `Runtime.getHeapUsage`, or take a heap
+   snapshot. The inspector rejects a WebSocket that sends no `Origin`
+   header. This number is the one that has to stay under 128 MB.

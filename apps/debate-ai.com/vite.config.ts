@@ -48,6 +48,28 @@ function reasonEditorCommonGrammars(): Plugin {
 }
 
 /**
+ * Minifier settings for the two server environments (rsc and ssr), which make
+ * up the Worker.
+ *
+ * workerd keeps the source text of every module in the Worker's upload in the
+ * isolate's heap, whether or not a request ever imports it. V8 stores a string
+ * in one byte per character only while every character fits in Latin-1; one
+ * CJK word, emoji or math symbol anywhere in a module makes it two bytes per
+ * character. Measured with `wrangler dev` before this: 360 of the ~1,370
+ * server modules were two-byte, 78 MB of an estimated 87 MB, and the isolate
+ * sat at 141 MB of heap before its first request. That is over the Workers
+ * 128 MB limit, so production isolates were being thrown away and every
+ * request paid a cold start (2.5 to 5.8 s, even for a redirect).
+ *
+ * `asciiOnly` makes the minifier write those characters as `\u` escapes, which
+ * keeps each module one-byte. Tagged template text is left as written (its
+ * raw form is observable), so a module can still end up two-byte through one.
+ * The browser bundles keep their literal characters: over the network the
+ * UTF-8 form is smaller than the escapes.
+ */
+const serverMinify = { compress: true, mangle: true, codegen: { asciiOnly: true } } as const;
+
+/**
  * The site's static files (favicons, apple-touch-icon.png, site.webmanifest,
  * …) live at the top of `app/` rather than in a `public/` folder, but Vite
  * only serves `publicDir` verbatim — so anything in `app/` that is not a
@@ -208,7 +230,11 @@ export default defineConfig({
     include: ["@emotion/is-prop-valid"],
   },
   environments: {
+    ssr: {
+      build: { rolldownOptions: { output: { minify: serverMinify } } },
+    },
     rsc: {
+      build: { rolldownOptions: { output: { minify: serverMinify } } },
       optimizeDeps: {
         // react-reason-editor → novel → react-tweet, whose `react-server`
         // entry does `import swr from "swr"`; swr's react-server build has no

@@ -8,33 +8,16 @@
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 import { eq } from "drizzle-orm";
-import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
+import { applySchema } from "../../database/__tests__/schema-sql";
 import { videos } from "../../database/schema";
 import { recomputeVideoStacks } from "../recompute-video-stacks";
 
-const drizzleDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "../../../drizzle");
-
-const MIGRATIONS = [
-  "0003_dark_zarek.sql", // youtube_round_videos
-  "0005_green_redwing.sql", // videos
-  "0041_video_stacks.sql", // videos.stack_key / stack_position
-  "0045_video_documents_relations_issues.sql", // videos.availability
-  "0047_video_admin_edited.sql", // videos.admin_edited
-];
-
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
-  for (const migration of MIGRATIONS) {
-    const contents = readFileSync(path.join(drizzleDir, migration), "utf8");
-    for (const statement of contents.split("--> statement-breakpoint")) {
-      const trimmed = statement.trim();
-      if (trimmed) await client.execute(trimmed);
-    }
-  }
+  await applySchema(client);
   return drizzle(client, { schema });
 }
 
