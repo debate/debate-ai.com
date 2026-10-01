@@ -148,7 +148,6 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
     icon: Dumbbell,
     tools: [
       { href: "/practice", title: "Practice Round Simulator", icon: Timer },
-      { href: "/practice/rules", title: "Formats & Rules", icon: Scale },
       { href: "/practice/partners", title: "Practice Partners", icon: Handshake },
       // Same page, landing on the open judge seats (or the profile, for
       // someone who has not volunteered to judge yet).
@@ -182,6 +181,10 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/coaching/programs", title: "Coaching Programs", icon: CalendarCheck },
       { href: "/coaching/materials", title: "Coach Materials", icon: FolderOpen },
       { href: "/coaching/outcomes", title: "Response-Outcome Charts", icon: ChartLine },
+      // Reference material, not a coaching tool, but it is what a coach
+      // explains to a novice before the round — so it rides here rather than
+      // in Practice.
+      { href: "/practice/rules", title: "Formats & Rules", icon: Scale },
       // Companion guide page (not a coaching tool) — round-day setup for
       // debating off just a phone, so it rides with the coaching tools here
       // rather than only being reachable from the `/tools` catalog.

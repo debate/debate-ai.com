@@ -156,12 +156,6 @@ export function SiteFooter() {
           </nav>
         ))}
       </div>
-
-      <div className="border-t border-border">
-        <div className="mx-auto max-w-6xl px-4 py-6 text-xs">
-          {APP_NAME}. Built for debaters.
-        </div>
-      </div>
     </footer>
   );
 }
