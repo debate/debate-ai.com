@@ -9,6 +9,8 @@
     ".": "./package.json",
     "./data/metadata/*": "./data/*",
     "./package.json": "./package.json",
+    "./src/*.ts": "./src/*.ts",
+    "./src/*": "./src/*.ts",
     "./*": "./*"
   },
   "scripts": {
