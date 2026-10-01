@@ -102,6 +102,7 @@ export const PAGE_ROUTES: AppRoute[] = [
   { pattern: "/tools/mobile-setup", load: () => import("./tools/mobile-setup/page") },
   { pattern: "/research/topics", load: () => import("./topics/page") },
   { pattern: "/practice/tournaments/[[...slug]]", load: () => import("./tournaments/[[...slug]]/page") },
+  { pattern: "/practice/tournaments-beta/[[...slug]]", load: () => import("./tournaments-beta/[[...slug]]/page") },
   { pattern: "/videos", load: () => import("./videos/page") },
   { pattern: "/videos/[category]", load: () => import("./videos/[category]/page") },
   { pattern: "/word-count", load: () => import("./word-count/page") },

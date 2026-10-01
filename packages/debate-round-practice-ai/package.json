@@ -27,8 +27,8 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "debate-speech-writer": "workspace:*",
-    "lucide-react": "^1.43.0",
-    "tailwind-merge": "^3.6.0"
+    "lucide-react": "^1.49.0",
+    "tailwind-merge": "^3.7.0"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
@@ -36,12 +36,12 @@
     "next": ">=15"
   },
   "devDependencies": {
-    "@types/node": "^26.5.0",
-    "@types/react": "^19.2.18",
-    "@types/react-dom": "^19.2.7",
-    "@vitest/coverage-v8": "^5.0.0",
-    "next": "16.3.4",
+    "@types/node": "^26.6.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitest/coverage-v8": "^5.0.3",
+    "next": "16.3.8",
     "typescript": "^7.0.2",
-    "vitest": "^5.0.0"
+    "vitest": "^5.0.3"
   }
 }

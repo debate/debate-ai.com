@@ -5,12 +5,15 @@
 // components/qwksearch/base-url.ts).
 import "../../components/qwksearch/base-url"
 
-import { lazy, useSyncExternalStore } from "react"
+import { lazy, useSyncExternalStore, type ReactElement } from "react"
 
 /**
  * The full qwksearch research workspace embedded at /doc: research chat,
  * the REASON docs editor with its files/outline sidebar, and the settings
  * modal — all talking to qwksearch.com's public API as a guest.
+ *
+ * Not mounted at the moment: `/doc` shows qwksearch.com in an iframe instead
+ * (see `WorkspaceScreen`). Kept so the bundled workspace can come back.
  *
  * The workspace is pulled in with `import()` rather than a static import so
  * that `Prism` is on the global object before any of it evaluates. Deep
@@ -25,7 +28,7 @@ import { lazy, useSyncExternalStore } from "react"
  * makes the order a fact rather than something the bundler happens to get
  * right.
  */
-const Workspace = lazy(async () => {
+const loadWorkspace = async () => {
   const { default: Prism } = await import("prismjs")
   ;(globalThis as typeof globalThis & { Prism?: unknown }).Prism ??= Prism
 
@@ -43,7 +46,19 @@ const Workspace = lazy(async () => {
       )
     },
   }
-})
+}
+
+/**
+ * The server never renders the workspace (see below), so the server build
+ * swaps the loader for a stub. `import.meta.env.SSR` is a literal `true`
+ * there, which drops the `import()`s above from the Worker entirely: the
+ * workspace, react-reason-editor and everything they pull in (~15 MB of
+ * modules). The Worker holds every module's source in memory whether it runs
+ * or not, so leaving them in cost that much of the 128 MB isolate cap.
+ */
+const Workspace = lazy<() => ReactElement | null>(
+  import.meta.env.SSR ? async () => ({ default: () => null }) : loadWorkspace,
+)
 
 const subscribeNever = () => () => {}
 

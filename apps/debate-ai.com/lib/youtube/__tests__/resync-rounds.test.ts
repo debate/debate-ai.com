@@ -16,8 +16,6 @@
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 import { eq } from "drizzle-orm";
-import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 
@@ -29,6 +27,7 @@ import {
 } from "debate-data-sync/src/youtube/youtube-api";
 import { getDBFromContext } from "../../database/context";
 import * as schema from "../../database/schema";
+import { applySchema } from "../../database/__tests__/schema-sql";
 import {
   youtubeChannels,
   youtubeRoundVideos,
@@ -51,23 +50,9 @@ vi.mock("../../database/context", () => ({
   runWithContext: vi.fn(),
 }));
 
-const MIGRATIONS = [
-  "0003_dark_zarek.sql", // youtube_round_videos + youtube_sync_runs
-  "0026_admin_youtube_management.sql", // youtube_video_exclusions
-  "0035_youtube_channels.sql", // youtube_channels
-];
-
-const drizzleDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "../../../drizzle");
-
 async function freshClient() {
   const client = createClient({ url: ":memory:" });
-  for (const migration of MIGRATIONS) {
-    const contents = readFileSync(path.join(drizzleDir, migration), "utf8");
-    for (const statement of contents.split("--> statement-breakpoint")) {
-      const trimmed = statement.trim();
-      if (trimmed) await client.execute(trimmed);
-    }
-  }
+  await applySchema(client);
   return client;
 }
 

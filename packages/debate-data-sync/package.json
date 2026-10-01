@@ -8,7 +8,11 @@
   "exports": {
     ".": "./package.json",
     "./data/metadata/*": "./data/*",
+    "./data/debate-school-names": "./data/debate-school-names.ts",
     "./package.json": "./package.json",
+    "./src/*.ts": "./src/*.ts",
+    "./src/*.tsx": "./src/*.tsx",
+    "./src/*": "./src/*.ts",
     "./*": "./*"
   },
   "scripts": {
@@ -27,15 +31,15 @@
   "dependencies": {
     "@libsql/client": "^0.14.0",
     "debate-card-parser": "workspace:*",
-    "extract-youtube": "^1.0.266",
+    "extract-youtube": "^1.0.425",
     "grab-url": "^1.6.22",
     "jszip": "^3.10.2",
     "linkedom": "^0.18.13"
   },
   "devDependencies": {
-    "@types/node": "^26.5.0",
-    "@vitest/coverage-v8": "^5.0.0",
+    "@types/node": "^26.6.3",
+    "@vitest/coverage-v8": "^5.0.3",
     "typescript": "^7.0.2",
-    "vitest": "^5.0.0"
+    "vitest": "^5.0.3"
   }
 }

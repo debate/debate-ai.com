@@ -2,6 +2,7 @@
 
 import { FileText, Mail } from "lucide-react";
 import type { TournamentInvite } from "../client";
+import { Badge, Card, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, buttonVariants } from "../primitives";
 import { Empty, Section, formatDate } from "../shared";
 
 /** A tournament's public invitation: dates, events, documents and contacts. */
@@ -22,33 +23,33 @@ export function TournamentInvitePage({ invite }: { invite: TournamentInvite }) {
         {invite.Events.length === 0 ? (
           <Empty>No events posted yet.</Empty>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="text-left text-xs text-muted-foreground">
-                <tr>
-                  <th className="px-4 py-2 font-medium">Event</th>
-                  <th className="px-4 py-2 font-medium">Type</th>
-                  <th className="px-4 py-2 text-right font-medium">Entries</th>
-                  <th className="px-4 py-2 text-right font-medium">Fee</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y">
-                {invite.Events.map((event) => (
-                  <tr key={event.id}>
-                    <td className="px-4 py-2">
-                      <span className="font-medium">{event.name}</span>{" "}
-                      <span className="text-xs text-muted-foreground">{event.abbr}</span>
-                    </td>
-                    <td className="px-4 py-2 capitalize">{event.type}</td>
-                    <td className="px-4 py-2 text-right tabular-nums">{event.metadata?.entryCount ?? "—"}</td>
-                    <td className="px-4 py-2 text-right tabular-nums">
-                      {event.fee != null ? `${event.settings?.currency ?? "$"}${event.fee}` : "—"}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="px-4">Event</TableHead>
+                <TableHead className="px-4">Type</TableHead>
+                <TableHead className="px-4 text-right">Entries</TableHead>
+                <TableHead className="px-4 text-right">Fee</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {invite.Events.map((event) => (
+                <TableRow key={event.id}>
+                  <TableCell className="px-4">
+                    <span className="font-medium">{event.name}</span>{" "}
+                    <Badge variant="outline" className="ml-1">
+                      {event.abbr}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="px-4 capitalize">{event.type}</TableCell>
+                  <TableCell className="px-4 text-right tabular-nums">{event.metadata?.entryCount ?? "—"}</TableCell>
+                  <TableCell className="px-4 text-right tabular-nums">
+                    {event.fee != null ? `${event.settings?.currency ?? "$"}${event.fee}` : "—"}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         )}
       </Section>
 
@@ -76,8 +77,8 @@ export function TournamentInvitePage({ invite }: { invite: TournamentInvite }) {
                 <li key={c.id} className="flex items-center justify-between gap-2 px-4 py-2">
                   <span>{[c.first, c.last].filter(Boolean).join(" ")}</span>
                   {c.email && (
-                    <a href={`mailto:${c.email}`} className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
-                      <Mail className="h-3.5 w-3.5" aria-hidden />
+                    <a href={`mailto:${c.email}`} className={buttonVariants({ variant: "ghost", size: "sm" })}>
+                      <Mail aria-hidden />
                       Email
                     </a>
                   )}
@@ -114,9 +115,9 @@ function htmlToText(html: string | null): string {
 
 function Fact({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border bg-card p-3">
+    <Card className="p-4">
       <dt className="text-xs text-muted-foreground">{label}</dt>
-      <dd className="mt-0.5 font-medium">{value}</dd>
-    </div>
+      <dd className="mt-1 font-medium">{value}</dd>
+    </Card>
   );
 }

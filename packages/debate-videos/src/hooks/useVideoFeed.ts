@@ -13,10 +13,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import grab from "grab-url";
 import type { VideoQueryParams } from "debate-data-sync/src/videos/video-query";
 import {
-  hydrateVideoIndex,
+  VIDEO_INDEX_STORAGE_KEY,
   queryVideoIndex,
   queryVideoIndexMeta,
-  scheduleVideoIndexRefresh,
 } from "../state/videoIndexCache";
 import { useVideoIndexReady } from "./useVideoIndex";
 import type {
@@ -355,12 +354,12 @@ export function useVideoFeed(filters: VideoFeedFilters): VideoFeed {
       setIsLoading(false);
       return;
     }
-    // Read the stored library before the first page is asked for, so a repeat
-    // visit is served locally from the very first request rather than making
-    // one round trip and then going quiet. It parses once per page load.
-    hydrateVideoIndex();
-    // And bring it up to date once the page has finished loading.
-    scheduleVideoIndexRefresh();
+    // The feed no longer downloads the whole library (`/api/videos/index`,
+    // about 900 kB) to filter it locally: each page, facet count and stack
+    // comes from `/api/videos`, `/api/videos/meta` and `/api/videos/stacks`,
+    // a page at a time. A copy an earlier visit left in `localStorage` is
+    // dropped rather than parsed, which also frees the quota it held.
+    discardStoredVideoIndex();
     loadedRef.current = 0;
     nextOffsetRef.current = 0;
     seenIdsRef.current = new Set();
@@ -407,6 +406,16 @@ export function useVideoFeed(filters: VideoFeedFilters): VideoFeed {
     loadMore,
     reload,
   };
+}
+
+/** Removes the whole-library copy older versions kept in `localStorage`. */
+function discardStoredVideoIndex(): void {
+  if (typeof localStorage === "undefined") return;
+  try {
+    localStorage.removeItem(VIDEO_INDEX_STORAGE_KEY);
+  } catch {
+    // Storage is unavailable; there is nothing stored to free either.
+  }
 }
 
 /** Empty suggestion lists used until `/api/videos/meta` resolves. */
