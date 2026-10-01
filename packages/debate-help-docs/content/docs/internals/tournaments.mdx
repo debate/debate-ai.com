@@ -8,8 +8,12 @@ Two sidebar entries in the Practice section reach Tabroom.
 
 | Sidebar row | Route | What renders |
 | --- | --- | --- |
-| Tournaments | `/practice/tournaments-beta/[[...slug]]` | `TournamentsApp` from `debate-tournaments/ui`, fed by `/api/tabroom-beta` |
-| Tournaments (Tabroom) | `/practice/tournaments/[[...slug]]` | an `<iframe>` of `https://beta.tabroom.com` |
+| Tournaments | `/practice/tournaments/[[...slug]]` | `TournamentsApp` from `debate-tournaments/ui`, fed by `/api/tabroom-beta` |
+| Tabroom | `/practice/tabroom/[[...slug]]` | an `<iframe>` of `https://beta.tabroom.com` |
+
+`/practice/tournaments-beta` was the native route's first name; the table in
+`debate-data-sync`'s `routes/category-paths.ts` redirects it (and everything
+under it) to `/practice/tournaments`.
 
 Both rows live in `packages/debate-videos/src/components/category-gallery/sidebar-tool-sections.ts`;
 both routes are in `packages/debate-webview/src/routes/index.ts` and have a
@@ -17,8 +21,8 @@ one-line `page.tsx` under `apps/debate-ai.com/app/practice/`.
 
 ## The imported UI
 
-`packages/debate-webview/src/routes/tournaments-beta/[[...slug]]/page.tsx`
-mounts ``<TournamentsApp segments={slug} basePath="/practice/tournaments-beta" apiBase="/api/tabroom-beta" Link={Link} />``.
+`packages/debate-webview/src/routes/tournaments/[[...slug]]/page.tsx`
+mounts ``<TournamentsApp segments={slug} basePath="/practice/tournaments" apiBase="/api/tabroom-beta" Link={Link} />``.
 `TournamentsApp` resolves the slug with `matchTournamentRoute()`
 (`debate-tournaments/routes`) and renders one of six pages: upcoming, invite,
 pairings, one round, results, one result set. Every request goes to
@@ -56,7 +60,7 @@ the SvelteKit site.
 `/api/tabroom` (`lib/tournaments/handler.ts`) still serves the vendored
 Tabroom API from the app's own D1 database, seeded by
 `bun run db:seed:tournaments`. The `debate-tournaments` UI works against
-either base; only `/practice/tournaments-beta` is mounted, and it reads live
+either base; only `/practice/tournaments` is mounted, and it reads live
 Tabroom.
 
 ## Known gaps

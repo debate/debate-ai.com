@@ -1,8 +1,8 @@
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Tournaments: Invitations, Pairings & Results",
-  description: "Upcoming speech and debate tournaments from Tabroom, with their invitations, published pairings and results.",
+  title: "Tabroom",
+  description: "Tabroom's own site, framed: invitations, pairings, results and registration.",
 }
 
-export { default } from "debate-webview/routes/tournaments-beta/[[...slug]]/page"
+export { default } from "debate-webview/routes/tabroom/[[...slug]]/page"

@@ -1,5 +1,5 @@
-import { TournamentsPage } from "./TournamentsPage"
+import { TabroomPage } from "./TabroomPage"
 
-export default function Tournaments() {
-  return <TournamentsPage />
+export default function Tabroom() {
+  return <TabroomPage />
 }

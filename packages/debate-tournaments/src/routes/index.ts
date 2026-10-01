@@ -9,21 +9,25 @@
 
 export type TournamentRoute =
   | { page: "upcoming" }
+  | { page: "host" }
   | { page: "tournament"; tournId: number }
   | { page: "rounds"; tournId: number }
   | { page: "round"; tournId: number; eventAbbr: string; roundName: string }
   | { page: "results"; tournId: number }
   | { page: "resultSet"; tournId: number; resultSetId: number }
+  | { page: "tabroom"; tournId: number }
   | { page: "notFound" };
 
 /** Route patterns, relative to the mount path, for docs and sitemaps. */
 export const TOURNAMENT_ROUTE_PATTERNS = {
   upcoming: "/",
+  host: "/host",
   tournament: "/:tournId",
   rounds: "/:tournId/rounds",
   round: "/:tournId/rounds/:eventAbbr/:roundName",
   results: "/:tournId/results",
   resultSet: "/:tournId/results/:resultSetId",
+  tabroom: "/:tournId/tabroom",
 } as const;
 
 const id = (s: string | undefined) => (s && /^\d+$/.test(s) ? Number(s) : null);
@@ -32,6 +36,7 @@ const id = (s: string | undefined) => (s && /^\d+$/.test(s) ? Number(s) : null);
 export function matchTournamentRoute(segments: readonly string[] = []): TournamentRoute {
   const parts = segments.filter(Boolean).map((s) => decodeURIComponent(s));
   if (parts.length === 0) return { page: "upcoming" };
+  if (parts[0] === "host") return { page: "host" };
   const tournId = id(parts[0]);
   if (tournId === null) return { page: "notFound" };
   const [, section, a, b] = parts;
@@ -45,6 +50,7 @@ export function matchTournamentRoute(segments: readonly string[] = []): Tourname
     const resultSetId = id(a);
     if (parts.length === 3 && resultSetId !== null) return { page: "resultSet", tournId, resultSetId };
   }
+  if (section === "tabroom" && parts.length === 2) return { page: "tabroom", tournId };
   return { page: "notFound" };
 }
 
@@ -54,12 +60,14 @@ export function tournamentHrefs(basePath = "/practice/tournaments") {
   const enc = encodeURIComponent;
   return {
     upcoming: () => base || "/",
+    host: () => `${base}/host`,
     tournament: (tournId: number) => `${base}/${tournId}`,
     rounds: (tournId: number) => `${base}/${tournId}/rounds`,
     round: (tournId: number, eventAbbr: string, roundName: string | number) =>
       `${base}/${tournId}/rounds/${enc(eventAbbr)}/${enc(String(roundName))}`,
     results: (tournId: number) => `${base}/${tournId}/results`,
     resultSet: (tournId: number, resultSetId: number) => `${base}/${tournId}/results/${resultSetId}`,
+    tabroom: (tournId: number) => `${base}/${tournId}/tabroom`,
   };
 }
 
