@@ -99,7 +99,23 @@ async function waitForView(getActiveView: () => EditorView | null): Promise<Edit
   }
 }
 
+/** The engine's stylesheets, loaded with the engine rather than with the
+ *  React shell. A static `import "../editor/style.css"` in
+ *  `CardMirrorEditor.tsx` put the whole ~16k-line sheet on every page whose
+ *  bundle merely imported `debate-editor` — including pages that only use
+ *  the HTML bridge and never mount an editor. Loading it here keeps the sheet
+ *  off those pages, and lands it before the engine builds any chrome, so
+ *  nothing paints unstyled. */
+function loadEngineStyles(): Promise<unknown> {
+  return Promise.all([
+    import('../editor/style.css'),
+    import('../editor/icons.css'),
+    import('../editor/embed-containment.css'),
+  ]);
+}
+
 async function boot(): Promise<void> {
+  await loadEngineStyles();
   const el = document.createElement('div');
   el.className = 'dec-cardmirror-root';
   el.innerHTML = RIBBON_HTML;
