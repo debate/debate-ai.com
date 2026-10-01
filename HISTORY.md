@@ -1,8 +1,27 @@
 # Changelog
 
+## Commit totals by month
+
+| Month | Commits |
+|-------|---------|
+| September 2023 | 4 |
+| October 2023 | 12 |
+| July 2024 | 2 |
+| June 2025 | 4 |
+| December 2025 | 5 |
+| February 2026 | 14 |
+| March 2026 | 128 |
+| April 2026 | 9 |
+| May 2026 | 57 |
+| June 2026 | 18 |
+| July 2026 | 9 |
+| August 2026 | 363 |
+| September 2026 | 1,024 |
+| **Total** | **1,648** |
+
 # AI Debate Era (MVP, 2026+)
 
-## September 2026 — 395 commits
+## September 2026 — 1,024 commits
 
 Practice, collaboration, and a wave of "second draft" polish across research tools, followed by a tool-page UI pass and a working docs site.
 
@@ -80,7 +99,7 @@ Practice, collaboration, and a wave of "second draft" polish across research too
 - Stood up a `debate-ai-docs` package and fixed an EventEmitter memory leak.
 - Fixed **bun.lock**, which bun refused to parse because of a duplicated `exceljs/uuid` entry.
 
-## August 2026 — 418 commits
+## August 2026 — 363 commits
 
 Identity, live sync, and a real content feed.
 
@@ -138,7 +157,7 @@ Identity, live sync, and a real content feed.
 - A docs pass fixing a stale "global dock's Settings menu" claim across 34 feature docs, plus a revised README features section.
 - New unit test coverage for CardMirror schema-id helpers, footnote helpers, and timer sound effects.
 
-## June 2026 — 23 commits
+## June 2026 — 18 commits
 
 CardMirror release milestone month.
 
@@ -156,7 +175,7 @@ CardMirror release milestone month.
 - Rebuilt the **PWA service worker** precache for the Vite build (fixing React #130 errors).
 - Declared missing workspace dependencies and pinned loose dependency specifiers with an emotion alias fix.
 
-## May 2026 — 60 commits
+## May 2026 — 57 commits
 
 Research platform and rebranding push.
 
@@ -176,7 +195,7 @@ Research platform and rebranding push.
 - Initialized **Lexical editor** integration with advanced plugins, custom nodes, and collaborative **Image, Poll, and Sticky** components backed by **yjs**.
 - Extracted sync and data modules into a new **debate-data-sync** workspace package, and moved the offline service worker to `lib/offline-sw`.
 
-## April 2026 — 11 commits
+## April 2026 — 9 commits
 
 Flow tooling and archive maintenance.
 
@@ -190,7 +209,7 @@ Flow tooling and archive maintenance.
 - Refreshed the tournament video archive with **NDT/TOC** rounds.
 - Updated README branding and demo images, removed legacy build scripts, and cleaned up obsolete test suites.
 
-## March 2026 — 159 commits
+## March 2026 — 128 commits
 
 The biggest month of development.
 
@@ -222,7 +241,7 @@ The biggest month of development.
 - Extensive mobile UX polish (dock navigation, speech toolbar, timers) and new visual components (**GlowingEffect**, **CardSpotlight**, **CanvasRevealEffect**).
 - Added service worker **offline caching** and an auto-merge CI workflow.
 
-## February 2026 — 17 commits
+## February 2026 — 14 commits
 
 **Beta V2 major release**: core debate application with flow editor, video integration, card parsing, and comprehensive UI components.
 
