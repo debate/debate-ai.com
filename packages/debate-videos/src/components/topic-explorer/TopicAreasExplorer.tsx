@@ -1,8 +1,9 @@
 "use client"
 
 /**
- * @fileoverview The `/research/topics` page body: every resolution since 2000, split
- * into 44 focused research areas and ranked by how often each area has been
+ * @fileoverview The topic-areas section of the Topic & Video Statistics page
+ * (`/practice/statistics`): every resolution since 2000, split into 44
+ * focused research areas and ranked by how often each area has been
  * debated — overall and within each format. Picking an area lists its
  * resolutions newest first and draws its year-by-year trend.
  *
@@ -16,7 +17,7 @@
 import { useMemo, useRef, useState } from "react"
 import { ChevronDown } from "lucide-react"
 
-import { cn } from "../../lib/ui/lib/utils"
+import { cn } from "../../ui/lib/utils"
 import {
   TOPIC_AREAS,
   TOPIC_FIRST_YEAR,

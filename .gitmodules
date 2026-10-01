@@ -9,13 +9,10 @@
 	url = https://github.com/debate/debate-rankings.git
 	branch = main
 
-[submodule "debate-flow"]
-	path = packages/debate-flow-ebb
-	url = https://github.com/debate/debate-flow.git
-	branch = main
 
-[submodule "debate-tournaments"]
-	path = packages/debate-tournaments-tabroom
-	url = https://github.com/debate/debate-tournaments.git
-	branch = main
-ignore = untracked
+# `debate-flow-ebb` and `debate-tournaments-tabroom` used to be pinned here.
+# Both were emptied out ("submodule being replaced") and those commits were
+# never pushed, so a fresh `git submodule update --init` in CI died with
+# `upload-pack: not our ref`. They are also redundant: the `debate-flow-ebb`
+# package name now resolves to the in-tree `packages/debate-flow`, and Tabroom
+# is vendored under `packages/debate-tournaments/vendor/tabroom`.

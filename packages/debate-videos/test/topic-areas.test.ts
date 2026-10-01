@@ -9,7 +9,7 @@ import {
   countByYear,
   resolutionsForFormat,
   resolutionsInArea,
-} from "../../src/lib/topic-areas/topic-areas"
+} from "../src/lib/topic-areas/topic-areas"
 
 describe("topic-areas data", () => {
   it("files every resolution under a known area, within the charted years", () => {

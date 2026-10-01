@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import tournaments from "debate-data-sync/data/metadata/debate-tournaments.json";
+import tournaments from "debate-data-sync/data/debate-tournaments.json";
 
 export async function GET() {
     return NextResponse.json({

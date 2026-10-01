@@ -1,7 +1,9 @@
 /**
  * @fileoverview The Topic & Video Statistics page (`/practice/statistics`) —
- * combines the debate topics explorer with the YouTube channel statistics
- * charts, replacing the previously-modal-only stats display.
+ * three stacked sections over the same subject: the debate topics explorer,
+ * the topic-area research breakdown (both from `topics`), and the YouTube
+ * channel statistics charts, replacing the previously-modal-only stats
+ * display.
  * @module panels/statistics/StatisticsPage
  */
 
@@ -11,6 +13,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { YouTubeStatsCharts } from "../../components/youtube-stats-modal/YouTubeStatsCharts";
 import { DebateTopicsExplorer, type YearVideoStats } from "../../components/topic-explorer/DebateTopicsExplorer";
+import { TopicAreasExplorer } from "../../components/topic-explorer/TopicAreasExplorer";
 import type { DebateTopicYear } from "../../lib/debate-topics";
 
 export interface StatisticsPageProps {
@@ -43,6 +46,11 @@ export function StatisticsPage({ topics, youtubeStats }: StatisticsPageProps) {
         </div>
 
         <DebateTopicsExplorer topics={topics} videoStatsByYear={videoStatsByYear} />
+
+        <section className="mt-10">
+          <h2 className="mb-4 text-lg font-semibold">Topic Areas by Research Domain</h2>
+          <TopicAreasExplorer />
+        </section>
 
         {youtubeStats ? (
           <div className="mt-10">

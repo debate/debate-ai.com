@@ -36,7 +36,9 @@ export const LEGACY_PATH_PREFIXES: ReadonlyArray<readonly [from: string, to: str
   ["/cards/leaderboard", "/coaching/leaderboard"],
   ["/cards/level", "/practice/level"],
   ["/cards", "/research/cards"],
-  ["/topics", "/research/topics"],
+  // The topics explorer is a section of the Topic & Video Statistics page now.
+  ["/topics", "/practice/statistics"],
+  ["/research/topics", "/practice/statistics"],
   // Practice
   ["/practice-round", "/practice"],
   ["/practice-partners", "/practice/partners"],

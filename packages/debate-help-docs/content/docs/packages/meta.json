@@ -1,6 +1,0 @@
-{
-  "title": "Packages",
-  "description": "READMEs for every workspace package in packages/.",
-  "icon": "Package",
-  "pages": ["index", "debate-team-collaboration"]
-}

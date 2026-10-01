@@ -36,17 +36,6 @@ export default defineConfig({
       // debate-editor (and re-exported by debate-editor-cm-adapter), Tabroom is
       // vendored into debate-tournaments, and those test the parts the app uses.
       "!packages/debate-editor-cm",
-      "!packages/debate-tournaments-tabroom",
-      // A git submodule vendoring the upstream debate-flow repo, same shape
-      // as the two above: its own toolchain, not imported by package name
-      // anywhere in this repo (the real "debate-flow-ebb" workspace
-      // dependency `debate-round`/the web app use resolves to the
-      // `packages/debate-flow` package below, which — mid-rename — still
-      // declares its own Vitest project as "debate-flow"). Left in this
-      // glob, the submodule's unrenamed `package.json` ("debate-flow")
-      // collides with that project name and fails every `vitest run`
-      // outright at startup, monorepo-wide.
-      "!packages/debate-flow-ebb",
       // The browser extension carries its own config (jsdom, its own `@`
       // alias), so it's registered by path and runs under that config.
       "apps/debate-browser-ext",

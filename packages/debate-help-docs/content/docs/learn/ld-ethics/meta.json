@@ -1,0 +1,30 @@
+{
+  "title": "Philosophy",
+  "description": "Philosophical frameworks, metaethics, and common moral theories.",
+  "pages": [
+    "contractarianism",
+    "determinism",
+    "existentialism",
+    "hegel",
+    "hobbes",
+    "induction",
+    "kant",
+    "levinas",
+    "longtermism",
+    "metaethic",
+    "mills",
+    "moral-skepticism",
+    "necessary-but-insufficient-burden-nib",
+    "particularism",
+    "permissibility-and-presumption",
+    "permissibility-triggers",
+    "pettit",
+    "plato",
+    "pragmatism",
+    "presumption-triggers",
+    "rawls",
+    "truth-testing",
+    "utilitarianism",
+    "virtue-ethics"
+  ]
+}

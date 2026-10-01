@@ -1,28 +1,12 @@
-import { ChartBar } from "lucide-react"
-
-import { TopicAreasExplorer } from "../../components/topics/TopicAreasExplorer"
-import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
+import { redirect } from "next/navigation"
 
 /**
- * Topic Areas: every NDT, Policy, LD and PF resolution since 2000, grouped
- * into research areas and ranked by how often each has been debated.
- *
- * A sidebar destination rather than a `/tools` catalog entry, for the same
- * reason as `/practice/rules` — so the header copy is passed explicitly.
+ * `/research/topics` — the Debate Topics Explorer used to be its own page
+ * under Research. Its topic-area breakdown is now the middle section of the
+ * Topic & Video Statistics page, so this route only redirects there, keeping
+ * old links and bookmarks working (the same treatment
+ * `/settings/preferences` gets).
  */
-export default function TopicsPage() {
-  return (
-    <ToolPage className="max-w-5xl">
-      <ToolPageHeader
-        href="/research/topics"
-        backHref="/tools"
-        backLabel="tools"
-        title="Debate Topics Explorer"
-        description="Every resolution since 2000, split into focused research areas and ranked by how often each area has been debated — overall and within each format."
-        icon={ChartBar}
-        guide="research-collaboration"
-      />
-      <TopicAreasExplorer />
-    </ToolPage>
-  )
+export default function TopicsPage(): never {
+  redirect("/practice/statistics")
 }

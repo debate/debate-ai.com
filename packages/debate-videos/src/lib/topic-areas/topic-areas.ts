@@ -1,8 +1,9 @@
 /**
- * @fileoverview The resolutions behind the Topic Areas explorer (`/research/topics`):
- * every NDT, Policy, LD and PF resolution since 2000, each filed under one of
- * 44 research-domain "topic areas", plus the counting the explorer's bar
- * chart and year-by-year trend line need.
+ * @fileoverview The resolutions behind the Topic Areas explorer, the middle
+ * section of the Topic & Video Statistics page (`/practice/statistics`): every
+ * NDT, Policy, LD and PF resolution since 2000, each filed under one of 44
+ * research-domain "topic areas", plus the counting the explorer's bar chart
+ * and year-by-year trend line need.
  *
  * The area assignments are heuristic research categories, not official NSDA
  * or NDT classifications — the page says so in its footer. The data lives in

@@ -5,10 +5,8 @@
   "packageManager": "bun@1.4.2",
   "workspaces": [
     "packages/*",
-    "!packages/debate-tournaments-tabroom",
     "!packages/debate-editor-cm",
     "!packages/debate-rankings",
-    "!packages/debate-flow-ebb",
     "apps/debate-ai.com",
     "apps/debate-browser-ext"
   ],

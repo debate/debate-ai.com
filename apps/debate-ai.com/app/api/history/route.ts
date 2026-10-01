@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
-import debateTopics from "debate-data-sync/data/metadata/debate-topics.json"
-import debateChampions from "debate-data-sync/data/metadata/debate-champions.json"
+import debateTopics from "debate-data-sync/data/debate-topics.json"
+import debateChampions from "debate-data-sync/data/debate-champions.json"
 import type { DebateHistory } from "debate-videos"
 
 function getDebateHistory(): DebateHistory {
