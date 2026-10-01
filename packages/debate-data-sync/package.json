@@ -8,7 +8,11 @@
   "exports": {
     ".": "./package.json",
     "./data/metadata/*": "./data/*",
+    "./data/debate-school-names": "./data/debate-school-names.ts",
     "./package.json": "./package.json",
+    "./src/*.ts": "./src/*.ts",
+    "./src/*.tsx": "./src/*.tsx",
+    "./src/*": "./src/*.ts",
     "./*": "./*"
   },
   "scripts": {

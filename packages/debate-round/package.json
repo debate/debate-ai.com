@@ -31,6 +31,7 @@
     "debate-data-sync": "workspace:*",
     "debate-editor": "workspace:*",
     "debate-flow-ebb": "workspace:*",
+    "debate-rankings-adapter": "workspace:*",
     "debate-research-evidence": "workspace:*",
     "debate-speech-writer": "workspace:*",
     "debate-timer": "workspace:*",
