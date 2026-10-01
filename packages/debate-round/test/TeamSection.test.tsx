@@ -128,7 +128,7 @@ describe("TeamSection My Team profile sync", () => {
 })
 
 describe("TeamSection school team picker", () => {
-  it("lists a school's teams under its field and fills the debaters on click", async () => {
+  it("pops out a school's teams beside its field, fills the debaters on click, then closes", async () => {
     vi.useFakeTimers()
     stubFetchSignedOut()
     const setNegDebater1 = vi.fn()
@@ -150,5 +150,6 @@ describe("TeamSection school team picker", () => {
 
     expect(setNegDebater1).toHaveBeenCalledWith("Ahuja")
     expect(setNegDebater2).toHaveBeenCalledWith("Miduthuri")
+    expect(container.querySelector("[data-testid=school-teams-picker]")).toBeNull()
   })
 })

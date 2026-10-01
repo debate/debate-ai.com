@@ -366,19 +366,22 @@ export function TeamSection({
           />
         )}
         <div className="space-y-2">
-          <Autocomplete
-            placeholder="School (Optional)"
-            value={affSchool}
-            onChange={setAffSchool}
-            fetchOptions={(q) => searchSchools(q, SCHOOL_SUGGESTION_LIMIT)}
-            dropdownClassName={SCHOOL_DROPDOWN_CLASS}
-            optionClassName={SCHOOL_OPTION_CLASS}
-          />
-          <SchoolTeamsPicker
-            school={affSchool}
-            styleKey={styleKey}
-            onPick={(debaters) => fillDebaters(setAffDebater1, setAffDebater2, debaters)}
-          />
+          <div className="relative">
+            <Autocomplete
+              placeholder="School (Optional)"
+              value={affSchool}
+              onChange={setAffSchool}
+              fetchOptions={(q) => searchSchools(q, SCHOOL_SUGGESTION_LIMIT)}
+              dropdownClassName={SCHOOL_DROPDOWN_CLASS}
+              optionClassName={SCHOOL_OPTION_CLASS}
+            />
+            <SchoolTeamsPicker
+              school={affSchool}
+              styleKey={styleKey}
+              side="right"
+              onPick={(debaters) => fillDebaters(setAffDebater1, setAffDebater2, debaters)}
+            />
+          </div>
           <UserAutocomplete
             id="aff-debater-1"
             placeholder="1A name or email"
@@ -418,19 +421,22 @@ export function TeamSection({
           />
         )}
         <div className="space-y-2">
-          <Autocomplete
-            placeholder="School (Optional)"
-            value={negSchool}
-            onChange={setNegSchool}
-            fetchOptions={(q) => searchSchools(q, SCHOOL_SUGGESTION_LIMIT)}
-            dropdownClassName={SCHOOL_DROPDOWN_CLASS}
-            optionClassName={SCHOOL_OPTION_CLASS}
-          />
-          <SchoolTeamsPicker
-            school={negSchool}
-            styleKey={styleKey}
-            onPick={(debaters) => fillDebaters(setNegDebater1, setNegDebater2, debaters)}
-          />
+          <div className="relative">
+            <Autocomplete
+              placeholder="School (Optional)"
+              value={negSchool}
+              onChange={setNegSchool}
+              fetchOptions={(q) => searchSchools(q, SCHOOL_SUGGESTION_LIMIT)}
+              dropdownClassName={SCHOOL_DROPDOWN_CLASS}
+              optionClassName={SCHOOL_OPTION_CLASS}
+            />
+            <SchoolTeamsPicker
+              school={negSchool}
+              styleKey={styleKey}
+              side="left"
+              onPick={(debaters) => fillDebaters(setNegDebater1, setNegDebater2, debaters)}
+            />
+          </div>
           <UserAutocomplete
             id="neg-debater-1"
             placeholder="1N name or email"
