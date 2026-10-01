@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next"
 import "debate-webview/styles/app.css"
 import { ThemeProvider } from "debate-webview/components/theme-provider"
 import { AppShell } from "debate-webview/components/layout/AppShell"
+import { Amplitude } from "@/app/amplitude"
 import { LoadingProvider } from "debate-webview/components/layout/LoadingProvider"
 import { webFontsBootstrapScript } from "debate-webview/styles/web-fonts"
 import { siteOrigin } from "@/lib/seo/site-url"
@@ -96,6 +97,7 @@ export default function RootLayout({
               shows a slim bar across the top instead of a page that looks
               stuck. Quicker transitions never show it. */}
           <LoadingProvider />
+          <Amplitude />
           <AppShell>{children}</AppShell>
         </ThemeProvider>
       </body>
