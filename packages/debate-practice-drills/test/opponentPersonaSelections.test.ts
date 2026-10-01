@@ -31,9 +31,9 @@ const SESSION_1_POLICY_HEAVY: OpponentPersonaSelection = {
   persona: opponentPersonas["policy-heavy"],
 };
 
-const SESSION_2_KRITIK: OpponentPersonaSelection = {
+const SESSION_2_CRITIQUE: OpponentPersonaSelection = {
   sessionId: "session-2",
-  persona: opponentPersonas.kritik,
+  persona: opponentPersonas.critique,
 };
 
 beforeEach(() => {
@@ -57,8 +57,8 @@ describe("listOpponentPersonaSelections", () => {
 
   it("lists every saved selection", () => {
     saveOpponentPersonaSelection(SESSION_1_POLICY_HEAVY);
-    saveOpponentPersonaSelection(SESSION_2_KRITIK);
-    expect(listOpponentPersonaSelections()).toEqual([SESSION_1_POLICY_HEAVY, SESSION_2_KRITIK]);
+    saveOpponentPersonaSelection(SESSION_2_CRITIQUE);
+    expect(listOpponentPersonaSelections()).toEqual([SESSION_1_POLICY_HEAVY, SESSION_2_CRITIQUE]);
   });
 });
 
@@ -103,17 +103,17 @@ describe("saveOpponentPersonaSelection", () => {
 describe("deleteOpponentPersonaSelection", () => {
   it("removes a stored selection by sessionId", () => {
     saveOpponentPersonaSelection(SESSION_1_POLICY_HEAVY);
-    saveOpponentPersonaSelection(SESSION_2_KRITIK);
+    saveOpponentPersonaSelection(SESSION_2_CRITIQUE);
     deleteOpponentPersonaSelection("session-1");
 
-    expect(listOpponentPersonaSelections()).toEqual([SESSION_2_KRITIK]);
+    expect(listOpponentPersonaSelections()).toEqual([SESSION_2_CRITIQUE]);
     expect(getOpponentPersonaSelection("session-1")).toBeUndefined();
   });
 
   it("is a no-op when the sessionId isn't stored", () => {
-    saveOpponentPersonaSelection(SESSION_2_KRITIK);
+    saveOpponentPersonaSelection(SESSION_2_CRITIQUE);
     deleteOpponentPersonaSelection("missing");
-    expect(listOpponentPersonaSelections()).toEqual([SESSION_2_KRITIK]);
+    expect(listOpponentPersonaSelections()).toEqual([SESSION_2_CRITIQUE]);
   });
 });
 
@@ -123,18 +123,18 @@ describe("buildOpponentPersonaSelectionsPanelView", () => {
   });
 
   it("sorts every persisted selection by sessionId", () => {
-    saveOpponentPersonaSelection(SESSION_2_KRITIK);
+    saveOpponentPersonaSelection(SESSION_2_CRITIQUE);
     saveOpponentPersonaSelection(SESSION_1_POLICY_HEAVY);
 
-    expect(buildOpponentPersonaSelectionsPanelView()).toEqual([SESSION_1_POLICY_HEAVY, SESSION_2_KRITIK]);
+    expect(buildOpponentPersonaSelectionsPanelView()).toEqual([SESSION_1_POLICY_HEAVY, SESSION_2_CRITIQUE]);
   });
 
   it("does not mutate the underlying stored order", () => {
-    saveOpponentPersonaSelection(SESSION_2_KRITIK);
+    saveOpponentPersonaSelection(SESSION_2_CRITIQUE);
     saveOpponentPersonaSelection(SESSION_1_POLICY_HEAVY);
 
     buildOpponentPersonaSelectionsPanelView();
 
-    expect(listOpponentPersonaSelections()).toEqual([SESSION_2_KRITIK, SESSION_1_POLICY_HEAVY]);
+    expect(listOpponentPersonaSelections()).toEqual([SESSION_2_CRITIQUE, SESSION_1_POLICY_HEAVY]);
   });
 });

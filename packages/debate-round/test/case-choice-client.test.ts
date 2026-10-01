@@ -3,16 +3,16 @@ import { requestCaseChoiceEvaluation } from "../src/round/case-choice-client";
 import type { CaseChoiceAiInput } from "../src/round/case-choice-ai";
 
 const INPUT: CaseChoiceAiInput = {
-  caseRankings: [{ name: "Kritik case", argumentTags: ["kritik"], overlapScore: 1 }],
+  caseRankings: [{ name: "Critique case", argumentTags: ["critique"], overlapScore: 1 }],
   judgeAdaptationNotes: ["No strong tendencies detected — adapt based on in-round reads."],
   riskLevel: "low",
   riskFactors: [],
 };
 
 const VALID_REPLY_TEXT = JSON.stringify({
-  recommendedCase: "Kritik case",
+  recommendedCase: "Critique case",
   reasoning: "Lowest overlap and no notable risk factors.",
-  caseAssessments: [{ name: "Kritik case", assessment: "Safest available option." }],
+  caseAssessments: [{ name: "Critique case", assessment: "Safest available option." }],
 });
 
 afterEach(() => {
@@ -30,13 +30,13 @@ describe("requestCaseChoiceEvaluation", () => {
 
     const result = await requestCaseChoiceEvaluation(INPUT);
 
-    expect(result.recommendedCase).toBe("Kritik case");
-    expect(result.caseAssessments).toEqual([{ name: "Kritik case", assessment: "Safest available option." }]);
+    expect(result.recommendedCase).toBe("Critique case");
+    expect(result.caseAssessments).toEqual([{ name: "Critique case", assessment: "Safest available option." }]);
     expect(fetchMock).toHaveBeenCalledTimes(1);
     const [endpoint, init] = (fetchMock as ReturnType<typeof vi.fn>).mock.calls[0];
     expect(endpoint).toBe("/api/reason-ai");
     const body = JSON.parse((init as RequestInit).body as string);
-    expect(body.messages[0].content).toContain("Kritik case");
+    expect(body.messages[0].content).toContain("Critique case");
     expect(body.maxTokens).toBe(1024);
   });
 

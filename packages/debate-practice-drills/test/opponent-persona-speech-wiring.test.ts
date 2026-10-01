@@ -46,9 +46,9 @@ describe("getOpponentPersonaForRound", () => {
 
   it("reflects the most recently saved persona for a round", () => {
     saveOpponentPersonaSelection({ sessionId: "round-1", persona: opponentPersonas["policy-heavy"] });
-    saveOpponentPersonaSelection({ sessionId: "round-1", persona: opponentPersonas.kritik });
+    saveOpponentPersonaSelection({ sessionId: "round-1", persona: opponentPersonas.critique });
 
-    expect(getOpponentPersonaForRound("round-1")).toEqual(opponentPersonas.kritik);
+    expect(getOpponentPersonaForRound("round-1")).toEqual(opponentPersonas.critique);
   });
 });
 

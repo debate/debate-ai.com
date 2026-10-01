@@ -8,7 +8,7 @@ describe("parseOpponentRoundRecordsCsv", () => {
   it("parses a well-formed multi-row CSV", () => {
     const csv = [
       "teamId,tournamentName,date,division,side,won,argumentTags,caseName,opponentTeamId",
-      "Westlake AB,Berkeley,2026-01-10,PF,aff,true,kritik;topicality,Housing Case,Lincoln CD",
+      "Westlake AB,Berkeley,2026-01-10,PF,aff,true,critique;topicality,Housing Case,Lincoln CD",
       "Westlake AB,Glenbrooks,2026-02-01,PF,neg,false,,,",
     ].join("\n");
 
@@ -24,7 +24,7 @@ describe("parseOpponentRoundRecordsCsv", () => {
         division: "PF",
         side: "aff",
         won: true,
-        argumentTags: ["kritik", "topicality"],
+        argumentTags: ["critique", "topicality"],
         caseName: "Housing Case",
         opponentTeamId: "Lincoln CD",
       },

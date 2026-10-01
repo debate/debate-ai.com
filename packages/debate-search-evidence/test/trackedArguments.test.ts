@@ -96,7 +96,7 @@ describe("listTrackedTopics", () => {
 describe("saveTrackedArgument", () => {
   it("upserts — saving an existing id overwrites rather than duplicating it", () => {
     saveTrackedArgument(WARMING_DA);
-    const revised: TrackedArgumentRecord = { ...WARMING_DA, category: "Kritik" };
+    const revised: TrackedArgumentRecord = { ...WARMING_DA, category: "Critique" };
     saveTrackedArgument(revised);
 
     expect(listTrackedArguments()).toEqual([revised]);

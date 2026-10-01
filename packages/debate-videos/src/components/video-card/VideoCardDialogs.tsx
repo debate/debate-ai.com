@@ -3,7 +3,7 @@
  *
  * The report dialog used to be a single free-text box, and by far the most
  * common thing typed into it was that a video is filed in the wrong place —
- * a college round shelved as high school, a kritik lecture under novice. As
+ * a college round shelved as high school, a critique lecture under novice. As
  * prose that is a research task for whoever reads it: find the video, work
  * out which category the reporter meant, then apply it. So "miscategorized"
  * is now a reason of its own that collects the correction itself — the

@@ -17,7 +17,7 @@ export const LECTURE_CATEGORIES = [
   "Topic Lectures",
   "Affirmative Strategy",
   "Negative Strategy",
-  "Kritik / Critical Theory",
+  "Critique / Critical Theory",
   "Counterplans & Theory",
   "Topicality & Framework",
   "Disadvantages",
@@ -78,13 +78,13 @@ export function classifyLecture(title: string, description: string): string {
   )
     return "Negative Strategy";
 
-  // Kritik / Critical Theory
+  // Critique / Critical Theory
   if (
-    /\b(kritik|k\b|critical theory|afropessimism|cap k|settler colonial|baudrillard|security k|queer theory|deleuze|foucault)\b/i.test(
+    /\b(kritik|critique|k\b|critical theory|afropessimism|cap k|settler colonial|baudrillard|security k|queer theory|deleuze|foucault)\b/i.test(
       both,
     )
   )
-    return "Kritik / Critical Theory";
+    return "Critique / Critical Theory";
 
   // Counterplans & Theory
   if (

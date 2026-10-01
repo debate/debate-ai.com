@@ -51,7 +51,7 @@ describe("resolveRoundSpeeches", () => {
 
   it("falls back to the format's order for a round with nothing written", () => {
     expect(resolveRoundSpeeches([], 3)).toHaveLength(7);
-    expect(resolveRoundSpeeches([], "Kritiks")).toEqual([]);
+    expect(resolveRoundSpeeches([], "Critiques")).toEqual([]);
   });
 });
 

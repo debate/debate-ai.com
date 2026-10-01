@@ -48,17 +48,17 @@ describe('buildUserDictionarySection', () => {
   });
 
   it('lists existing words alphabetically', () => {
-    saveUserDictionary(new Set(['kritik', 'affirmative', 'counterplan']));
+    saveUserDictionary(new Set(['critique', 'affirmative', 'counterplan']));
     const { element, destroy } = buildUserDictionarySection();
-    expect(words(element)).toEqual(['affirmative', 'counterplan', 'kritik']);
+    expect(words(element)).toEqual(['affirmative', 'counterplan', 'critique']);
     expect(element.querySelector('.pmd-dictionary-empty')).toBeNull();
     destroy();
   });
 
   it('removes a word on delete and persists the change', () => {
-    saveUserDictionary(new Set(['kritik', 'counterplan']));
+    saveUserDictionary(new Set(['critique', 'counterplan']));
     const { element, destroy } = buildUserDictionarySection();
-    rowFor(element, 'kritik').querySelector<HTMLButtonElement>('.pmd-dictionary-delete')!.click();
+    rowFor(element, 'critique').querySelector<HTMLButtonElement>('.pmd-dictionary-delete')!.click();
 
     expect(words(element)).toEqual(['counterplan']);
     expect(loadUserDictionary()).toEqual(new Set(['counterplan']));
@@ -66,7 +66,7 @@ describe('buildUserDictionarySection', () => {
   });
 
   it('shows the empty state again once the last word is removed', () => {
-    saveUserDictionary(new Set(['kritik']));
+    saveUserDictionary(new Set(['critique']));
     const { element, destroy } = buildUserDictionarySection();
     element.querySelector<HTMLButtonElement>('.pmd-dictionary-delete')!.click();
     expect(element.querySelector('.pmd-dictionary-empty')?.textContent).toBe('No words added yet.');
@@ -121,18 +121,18 @@ describe('buildUserDictionarySection', () => {
 
 describe('buildUserDictionarySection sync status badge', () => {
   it('shows no badge before this collection has ever been baselined', () => {
-    saveUserDictionary(new Set(['kritik']));
+    saveUserDictionary(new Set(['critique']));
     const { element, destroy } = buildUserDictionarySection();
-    expect(rowFor(element, 'kritik').querySelector('.pmd-dictionary-sync-badge')).toBeNull();
+    expect(rowFor(element, 'critique').querySelector('.pmd-dictionary-sync-badge')).toBeNull();
     destroy();
   });
 
   it('badges a word "Synced" once its exact value has reached the account', () => {
-    saveUserDictionary(new Set(['kritik']));
+    saveUserDictionary(new Set(['critique']));
     markToolRecordsSynced('spellcheckDictionary');
     const { element, destroy } = buildUserDictionarySection();
 
-    const badge = rowFor(element, 'kritik').querySelector('.pmd-dictionary-sync-badge');
+    const badge = rowFor(element, 'critique').querySelector('.pmd-dictionary-sync-badge');
     expect(badge?.textContent).toBe('Synced');
     expect(badge?.className).toContain('pmd-dictionary-sync-badge--synced');
     destroy();
@@ -142,10 +142,10 @@ describe('buildUserDictionarySection sync status badge', () => {
     // Baselined with nothing in it yet — e.g. right after sign-in, before
     // this word's first flush.
     markToolRecordsSynced('spellcheckDictionary');
-    saveUserDictionary(new Set(['kritik']));
+    saveUserDictionary(new Set(['critique']));
     const { element, destroy } = buildUserDictionarySection();
 
-    const badge = rowFor(element, 'kritik').querySelector('.pmd-dictionary-sync-badge');
+    const badge = rowFor(element, 'critique').querySelector('.pmd-dictionary-sync-badge');
     expect(badge?.textContent).toBe('Not yet synced');
     expect(badge?.className).toContain('pmd-dictionary-sync-badge--pending');
     destroy();
@@ -167,9 +167,9 @@ describe('buildUserDictionarySection sync status badge', () => {
     vi.useFakeTimers();
     try {
       markToolRecordsSynced('spellcheckDictionary');
-      saveUserDictionary(new Set(['kritik']));
+      saveUserDictionary(new Set(['critique']));
       const { element, destroy } = buildUserDictionarySection();
-      expect(rowFor(element, 'kritik').querySelector('.pmd-dictionary-sync-badge')?.textContent).toBe(
+      expect(rowFor(element, 'critique').querySelector('.pmd-dictionary-sync-badge')?.textContent).toBe(
         'Not yet synced',
       );
 
@@ -178,7 +178,7 @@ describe('buildUserDictionarySection sync status badge', () => {
       markToolRecordsSynced('spellcheckDictionary');
       vi.advanceTimersByTime(TOOL_RECORD_AUTO_SYNC_INTERVAL_MS);
 
-      expect(rowFor(element, 'kritik').querySelector('.pmd-dictionary-sync-badge')?.textContent).toBe('Synced');
+      expect(rowFor(element, 'critique').querySelector('.pmd-dictionary-sync-badge')?.textContent).toBe('Synced');
       destroy();
     } finally {
       vi.useRealTimers();
@@ -189,7 +189,7 @@ describe('buildUserDictionarySection sync status badge', () => {
     vi.useFakeTimers();
     try {
       markToolRecordsSynced('spellcheckDictionary');
-      saveUserDictionary(new Set(['kritik']));
+      saveUserDictionary(new Set(['critique']));
       const { element, destroy } = buildUserDictionarySection();
       destroy();
 
@@ -198,7 +198,7 @@ describe('buildUserDictionarySection sync status badge', () => {
 
       // No live refresh after destroy — the badge stays whatever it was
       // (querying the pre-existing detached DOM must not throw).
-      expect(rowFor(element, 'kritik').querySelector('.pmd-dictionary-sync-badge')?.textContent).toBe(
+      expect(rowFor(element, 'critique').querySelector('.pmd-dictionary-sync-badge')?.textContent).toBe(
         'Not yet synced',
       );
     } finally {

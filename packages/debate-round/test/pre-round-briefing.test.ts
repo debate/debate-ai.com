@@ -54,7 +54,7 @@ function opponentRecords(): OpponentRoundRecord[] {
       division: "LD",
       side: "neg",
       won: false,
-      argumentTags: ["kritik"],
+      argumentTags: ["critique"],
       opponentTeamId: "MyTeam",
     },
   ];
@@ -193,10 +193,10 @@ describe("buildPreRoundBriefing", () => {
   it("renders prep notes as a bullet list", () => {
     const briefing = buildPreRoundBriefing({
       event: EVENT,
-      teamPrepNotes: ["Watch for the kritik on neg.", "They read fast — flow carefully."],
+      teamPrepNotes: ["Watch for the critique on neg.", "They read fast — flow carefully."],
     });
     const body = briefing.sections.find((s) => s.title === "Team prep notes")!.body;
-    expect(body).toBe("- Watch for the kritik on neg.\n- They read fast — flow carefully.");
+    expect(body).toBe("- Watch for the critique on neg.\n- They read fast — flow carefully.");
   });
 });
 

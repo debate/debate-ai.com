@@ -129,7 +129,7 @@ describe("entryMatches", () => {
   });
 
   it("does not match unrelated text", () => {
-    expect(entryMatches(entry, "kritik")).toBe(false);
+    expect(entryMatches(entry, "critique")).toBe(false);
   });
 
   it("scopes matching to the given styles when a style list is passed", () => {

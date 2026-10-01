@@ -22,7 +22,7 @@ const typedCategoryDescriptions = categoryDescriptions as CategoryDescriptions;
 const CATEGORY_GRADIENTS: Record<string, string> = {
   "Affirmative Strategy": "from-blue-500 via-cyan-500 to-teal-500",
   "Negative Strategy": "from-red-500 via-rose-500 to-pink-500",
-  "Kritik / Critical Theory": "from-purple-500 via-violet-500 to-fuchsia-500",
+  "Critique / Critical Theory": "from-purple-500 via-violet-500 to-fuchsia-500",
   "Counterplans & Theory": "from-orange-500 via-amber-500 to-yellow-500",
   "Topicality & Framework": "from-indigo-500 via-purple-500 to-pink-500",
   "Disadvantages": "from-cyan-500 via-blue-500 to-indigo-500",

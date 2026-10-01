@@ -7,8 +7,8 @@ function makeRecord(overrides: Partial<StrategyRecommendationRecord> = {}): Stra
     id: "strategy-1700000000000-ab12cd",
     matchupId: "round-1",
     recommendation: {
-      recommendedCase: { name: "Kritik case", argumentTags: ["kritik"], overlapScore: 1 },
-      caseRankings: [{ name: "Kritik case", argumentTags: ["kritik"], overlapScore: 1 }],
+      recommendedCase: { name: "Critique case", argumentTags: ["critique"], overlapScore: 1 },
+      caseRankings: [{ name: "Critique case", argumentTags: ["critique"], overlapScore: 1 }],
       judgeAdaptationNotes: ["No judge tendency data on file — adapt to a generic flow judge by default."],
       riskLevel: "low",
       riskFactors: [],
@@ -44,9 +44,9 @@ describe("isValidStrategyRecommendationRecord", () => {
       isValidStrategyRecommendationRecord(
         makeRecord({
           aiCaseChoice: {
-            recommendedCase: "Kritik case",
+            recommendedCase: "Critique case",
             reasoning: "Lowest overlap and fits the judge's tendencies.",
-            caseAssessments: [{ name: "Kritik case", assessment: "Safest available option." }],
+            caseAssessments: [{ name: "Critique case", assessment: "Safest available option." }],
           },
         }),
       ),
@@ -80,7 +80,7 @@ describe("isValidStrategyRecommendationRecord", () => {
       isValidStrategyRecommendationRecord(
         makeRecord({
           recommendation: {
-            recommendedCase: { name: "Kritik case" } as never,
+            recommendedCase: { name: "Critique case" } as never,
             caseRankings: [],
             judgeAdaptationNotes: [],
             riskLevel: "low",
@@ -97,7 +97,7 @@ describe("isValidStrategyRecommendationRecord", () => {
         makeRecord({
           recommendation: {
             recommendedCase: null,
-            caseRankings: [{ name: "Kritik case", argumentTags: [], overlapScore: "high" as never }],
+            caseRankings: [{ name: "Critique case", argumentTags: [], overlapScore: "high" as never }],
             judgeAdaptationNotes: [],
             riskLevel: "low",
             riskFactors: [],
@@ -142,7 +142,7 @@ describe("isValidStrategyRecommendationRecord", () => {
   it("rejects an aiCaseChoice missing a required field", () => {
     expect(
       isValidStrategyRecommendationRecord(
-        makeRecord({ aiCaseChoice: { recommendedCase: "Kritik case", caseAssessments: [] } as never }),
+        makeRecord({ aiCaseChoice: { recommendedCase: "Critique case", caseAssessments: [] } as never }),
       ),
     ).toBe(false);
   });
@@ -152,9 +152,9 @@ describe("isValidStrategyRecommendationRecord", () => {
       isValidStrategyRecommendationRecord(
         makeRecord({
           aiCaseChoice: {
-            recommendedCase: "Kritik case",
+            recommendedCase: "Critique case",
             reasoning: "Reasoning.",
-            caseAssessments: [{ name: "Kritik case" } as never],
+            caseAssessments: [{ name: "Critique case" } as never],
           },
         }),
       ),

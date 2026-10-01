@@ -2,10 +2,9 @@
  * @fileoverview Collapsible navigation tree shown in the persistent left
  * sidebar on the videos pages. Structure:
  *   Round Videos (h1, expandable, heading-only)
- *     -> College Debates / Policy / PF / LD / Greatest of All-Time /
- *        My Favorites (h2, plain links, all peers)
+ *     -> All Videos / College Debates / Policy / PF / LD / Greatest of All-Time /
+ *        My Favorites / Watch History (h2, plain links, all peers)
  *   Lectures (h1, expandable, heading-only) -> lecture categories (h2)
- *   Watch History (h1, plain link) — a sibling row directly under Lectures
  *   Apps / Coaching / Research / Practice (h1, expandable) -> tool links
  *     — this trailing portion is `ToolNavTree`, shared with the non-video
  *       tool pages those links point to (see `ToolNavTree`'s file comment).
@@ -44,12 +43,14 @@
 
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Clapperboard, History } from "lucide-react";
+import { Clapperboard, History, GraduationCap, FileText, MessageSquare, Scale, Star } from "lucide-react";
 import { IconTrophy, IconLectures } from "../../ui/icons";
+import type { LucideIcon } from "lucide-react";
 import type { LectureCategoryFacet } from "../../types/videos";
 import { TreeItem } from "./TreeItem";
 import { lectureCategoryHref } from "../../panels/lectureRouteConfig";
 import { ToolNavTree } from "./ToolNavTree";
+import { LECTURE_CATEGORY_ICONS } from "./lecture-category-icons";
 import {
   VIDEO_ALL_LINK,
   VIDEO_COLLEGE_LINK,
@@ -62,6 +63,15 @@ import {
   toggleExpandedSection,
   withSectionExpanded,
 } from "./sidebar-section-expansion";
+
+const VIDEO_LINK_ICONS: Record<string, LucideIcon> = {
+  allVideos: Clapperboard,
+  college: GraduationCap,
+  policy: FileText,
+  pf: MessageSquare,
+  ld: Scale,
+  topPicks: Star,
+};
 
 interface VideoSidebarTreeProps {
   /** Per-category video counts, keyed by quick-link id. */
@@ -150,56 +160,54 @@ export function VideoSidebarTree({
     <nav className="flex flex-col gap-3 text-sm" aria-label="Videos">
       <TreeItem
         level={1}
-        href={VIDEO_ALL_LINK.href}
-        title={VIDEO_ALL_LINK.title}
-        icon={Clapperboard}
-        count={counts?.[VIDEO_ALL_LINK.id]}
-        exactCount={VIDEO_ALL_LINK.exactCount}
-        isActive={activeId === VIDEO_ALL_LINK.id}
-      />
-
-      <TreeItem
-        level={1}
         title="Round Videos"
         icon={Clapperboard}
-        // The heading toggles on a plain click; ctrl/shift/middle-click opens
-        // the library itself, so every row in the tree can be opened in a new
-        // tab rather than only the leaves. `/videos` is All Videos (the row
-        // above), so the round archive's own flagship is College Debates.
         sectionHref={VIDEO_COLLEGE_LINK.href}
         expanded={videosExpanded}
         onToggleExpand={() => toggleSection(VIDEOS_SECTION_ID)}
       >
+        <TreeItem
+          key={VIDEO_ALL_LINK.id}
+          level={2}
+          href={VIDEO_ALL_LINK.href}
+          title={VIDEO_ALL_LINK.title}
+          icon={VIDEO_LINK_ICONS[VIDEO_ALL_LINK.id]}
+          count={counts?.[VIDEO_ALL_LINK.id]}
+          exactCount={VIDEO_ALL_LINK.exactCount}
+          isActive={activeId === VIDEO_ALL_LINK.id}
+        />
+
         {[VIDEO_COLLEGE_LINK, ...VIDEO_FORMAT_LINKS].map((link) => (
           <TreeItem
             key={link.id}
             level={2}
             href={link.href}
             title={link.title}
+            icon={VIDEO_LINK_ICONS[link.id]}
             count={counts?.[link.id]}
             exactCount={link.exactCount}
             isActive={activeId === link.id}
           />
         ))}
 
-      <TreeItem
-        level={2}
-        href={SIDEBAR_VIDEO_LINKS_BY_ID.favorites.href}
-        title={SIDEBAR_VIDEO_LINKS_BY_ID.favorites.title}
-        count={counts?.favorites}
-        isActive={activeId === "favorites"}
-        icon={IconTrophy}
-      />
+        <TreeItem
+          level={2}
+          href={SIDEBAR_VIDEO_LINKS_BY_ID.favorites.href}
+          title={SIDEBAR_VIDEO_LINKS_BY_ID.favorites.title}
+          count={counts?.favorites}
+          isActive={activeId === "favorites"}
+          icon={IconTrophy}
+        />
 
-      <TreeItem
-        level={2}
-        href={SIDEBAR_VIDEO_LINKS_BY_ID.history.href}
-        title={SIDEBAR_VIDEO_LINKS_BY_ID.history.title}
-        count={counts?.history}
-        isActive={activeId === "history"}
-        icon={History}
-      />
-    </TreeItem>
+        <TreeItem
+          level={2}
+          href={SIDEBAR_VIDEO_LINKS_BY_ID.history.href}
+          title={SIDEBAR_VIDEO_LINKS_BY_ID.history.title}
+          count={counts?.history}
+          isActive={activeId === "history"}
+          icon={History}
+        />
+      </TreeItem>
 
       {lectureCategoryItems.length > 0 ? (
         <TreeItem
@@ -220,6 +228,7 @@ export function VideoSidebarTree({
               level={2}
               href={buildLectureCategoryHref(item.id)}
               title={item.title}
+              icon={LECTURE_CATEGORY_ICONS[item.title]}
               count={item.count}
               // A style/round route resets the lecture filter to "all" as an
               // implementation detail. Do not therefore leave All Lectures

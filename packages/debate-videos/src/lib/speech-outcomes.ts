@@ -48,9 +48,9 @@ export const JUDGE_LENSES: Array<{ id: JudgeLens; label: string; description: st
   },
   {
     id: "critical",
-    label: "Kritik-friendly",
+    label: "Critique-friendly",
     description:
-      "A judge open to framework, kritiks and performance, who weighs the debaters' representations and the role of the ballot before the policy consequences.",
+      "A judge open to framework, critiques and performance, who weighs the debaters' representations and the role of the ballot before the policy consequences.",
   },
   {
     id: "theory",
@@ -233,7 +233,7 @@ export const SPEECH_OUTCOME_SYSTEM_PROMPT =
   '"ballots": BALLOTS}, ...], ' +
   '"keyClash": [string, ...]}\n' +
   "approach is a one- or two-word strategy tag such as collapse, turn, weighing, line-by-line, framework, " +
-  "kritik, concession or questioning. outline has 3-6 short bullets in speaking order. rfd is two sentences. " +
+  "critique, concession or questioning. outline has 3-6 short bullets in speaking order. rfd is two sentences. " +
   "decisive is the single argument that decided the ballot, a short phrase. keyClash has 2-4 short items. " +
   "Every string must be non-empty.";
 

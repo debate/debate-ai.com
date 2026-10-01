@@ -81,13 +81,13 @@ describe("recordOpponentRound", () => {
   });
 
   it("re-ranks argument tags and cases across every logged round", () => {
-    recordOpponentRound(entry({ id: "r1", argumentTags: ["kritik"], caseName: "Warming" }));
+    recordOpponentRound(entry({ id: "r1", argumentTags: ["critique"], caseName: "Warming" }));
     const profile = recordOpponentRound(
-      entry({ id: "r2", argumentTags: ["kritik", "topicality"], caseName: "Warming" }),
+      entry({ id: "r2", argumentTags: ["critique", "topicality"], caseName: "Warming" }),
     );
 
     expect(profile.topArgumentTags).toEqual([
-      { value: "kritik", count: 2 },
+      { value: "critique", count: 2 },
       { value: "topicality", count: 1 },
     ]);
     expect(profile.topCases).toEqual([{ value: "Warming", count: 2 }]);
@@ -106,7 +106,7 @@ describe("recordOpponentRound", () => {
 describe("rebuildOpponentTeamProfileFromRecords", () => {
   it("matches building the profile straight from the logged records", () => {
     const first = entry({ id: "r1" });
-    const second = entry({ id: "r2", side: "neg", won: false, argumentTags: ["kritik"] });
+    const second = entry({ id: "r2", side: "neg", won: false, argumentTags: ["critique"] });
     recordOpponentRound(first);
     recordOpponentRound(second);
 
@@ -467,7 +467,7 @@ describe("bulkImportOpponentRoundRecords", () => {
   it("persists every well-formed CSV row and aggregates each affected team once", () => {
     const csv = [
       "teamId,tournamentName,date,division,side,won,argumentTags,caseName,opponentTeamId",
-      "wxyz,Berkeley,2026-01-10,PF,aff,true,kritik,Housing Case,",
+      "wxyz,Berkeley,2026-01-10,PF,aff,true,critique,Housing Case,",
       "wxyz,Glenbrooks,2026-02-01,PF,neg,false,,,",
       "abcd,Berkeley,2026-01-10,PF,aff,true,,,",
     ].join("\n");

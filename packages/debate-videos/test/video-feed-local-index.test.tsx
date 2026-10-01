@@ -45,7 +45,7 @@ const LIBRARY = buildVideoRows({
       ],
     },
   ],
-  lectures: { data: [["l1", "Kritik basics", "2025-09-02", "Camp", 90, "lecture", "Theory"]] },
+  lectures: { data: [["l1", "Critique basics", "2025-09-02", "Camp", 90, "lecture", "Theory"]] },
 } as any);
 
 /** Leaves a synced library in `localStorage`, as a previous visit would. */

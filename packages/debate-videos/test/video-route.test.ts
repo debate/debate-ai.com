@@ -83,9 +83,9 @@ describe("videoRouteSegments", () => {
         videoId: "abcdefghijk",
         title: "How to give a 2NR",
         seasonYear: 2019,
-        style: "Kritik / Critical Theory",
+        style: "Critique / Critical Theory",
       }),
-    ).toBe("/videos/2019/kritik-critical-theory/how-to-give-a-2nr");
+    ).toBe("/videos/2019/critique-critical-theory/how-to-give-a-2nr");
     expect(
       videoRouteHref({
         videoId: "abcdefghijk",
@@ -205,7 +205,7 @@ describe("previousVideoRouteHref", () => {
       }),
     ).toBe("/videos/2022/ndt/finals/dartmouth-sv-vs-michigan-pr-round-analysis");
     expect(
-      previousVideoRouteHref({ videoId: "x", title: "How to give a 2NR", style: "Kritik" }),
+      previousVideoRouteHref({ videoId: "x", title: "How to give a 2NR", style: "Critique" }),
     ).toBeNull();
   });
 });
@@ -251,8 +251,8 @@ describe("eventSegment", () => {
   });
 
   it("files a lecture under its category", () => {
-    expect(eventSegment({ videoId: "x", title: "t", style: "Kritik / Critical Theory" })).toBe(
-      "kritik-critical-theory",
+    expect(eventSegment({ videoId: "x", title: "t", style: "Critique / Critical Theory" })).toBe(
+      "critique-critical-theory",
     );
   });
 

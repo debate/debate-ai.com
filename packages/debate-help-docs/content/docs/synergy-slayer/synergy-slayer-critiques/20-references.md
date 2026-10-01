@@ -27,7 +27,7 @@ sidebar_position: 21
 19. Debate AI Institute. 2026\. Debate AI Collective Consciousness: Reimagining the Web as Argument Mind Map is Key to Crowdsourced AI Decision-Making. https://doi.org/10.5281/zenodo.22739244  
 20. Derrida, Jacques, and Elisabeth Roudinesco. 2004\. *For What Tomorrow . . . A Dialogue*. Translated by Jeff Fort. Stanford University Press.  
 21. Eberle, Edward J. 2004\. “Cross Burning, Hate Speech, and Free Speech in America.” *Arizona State Law Journal* 36: 953  
-22. Edwards, Rich. 2013\. *Kritik Killer: Winning Answers to the Critique*. Latin America ed. Edited by Ryan Galloway. [https://www.scribd.com/doc/293560476/Kritik-Master-Answer-File-pdf](https://www.scribd.com/doc/293560476/Kritik-Master-Answer-File-pdf)  
+22. Edwards, Rich. 2013\. *Critique Killer: Winning Answers to the Critique*. Latin America ed. Edited by Ryan Galloway. [https://www.scribd.com/doc/293560476/Critique-Master-Answer-File-pdf](https://www.scribd.com/doc/293560476/Critique-Master-Answer-File-pdf)  
 23. Eisenberg, Melvin A. 2009\. “The Role of Fault in Contract Law.” *Michigan Law Review* 107 (8): 1413–94. [https://repository.law.umich.edu/cgi/viewcontent.cgi?article=1316\&context=mlr](https://repository.law.umich.edu/cgi/viewcontent.cgi?article=1316&context=mlr)  
 24. Erdogan, Emre, Bernadette Nadya Jaworsky, Cláudia Álvares, Bojana Bodroža, Eglė Butkevičienė, Erlis Cela, Jérémy Dodeigne, Shahira S.   
 25. Fahmy, Sarah Helena Schäfer, Graham Scott, Gonzalo Velasco Arias, and Rocio Zamora Medina. 2026\. “The Evolving Study of Political Polarization.” *Open Research Europe* 6: Article 93\. [https://doi.org/10.12688/openreseurope.23252.1](https://doi.org/10.12688/openreseurope.23252.1)  
@@ -77,7 +77,7 @@ sidebar_position: 21
 69. Ross, Kelley L. 2000\. “Against the Theory of Sexist Language.” *The Proceedings of the Friesian School*. [http://www.friesian.com/language.htm](http://www.friesian.com/language.htm)  
 70. Sandmann, František Xaver. Napoléon in Sainte-Hélène. Circa 1820\. Watercolor. Musée national des châteaux de Malmaison et de Bois-Préau, Rueil-Malmaison, France.  
 71. Schwitzgebel, Eric, and Joshua Rust. 2010\. “Do Ethicists and Political Philosophers Vote More Often Than Other Professors?” *Review of Philosophy and Psychology* 1 (2): 189–99. [https://doi.org/10.1007/s13164-009-0011-6](https://doi.org/10.1007/s13164-009-0011-6)  
-72. Shanahan, William. 1993\. “Kritik of Thinking.” In *Health Care Policy: Debating Coverage Cures*, Wake Forest University Debater’s Research Guide, A3–A8. [https://debate-decoded.ghost.io/author/lincoln/](https://debate-decoded.ghost.io/author/lincoln/)  
+72. Shanahan, William. 1993\. “Critique of Thinking.” In *Health Care Policy: Debating Coverage Cures*, Wake Forest University Debater’s Research Guide, A3–A8. [https://debate-decoded.ghost.io/author/lincoln/](https://debate-decoded.ghost.io/author/lincoln/)  
 73. Smith, Steve. 1997\. “Power and Truth: A Reply to William Wallace.” *Review of International Studies* 23 (4): 507–16  
 74. Speice, Patrick, and Jim Lyle. 2003\. “Traditional Policy Debate.” Wake Forest University Debate. [http://groups.wfu.edu/debate/MiscSites/DRGArticles/SpeiceLyle2003htm.htm](http://groups.wfu.edu/debate/MiscSites/DRGArticles/SpeiceLyle2003htm.htm)  
 75. Tetlock, Philip E. 2017\. *Expert Political Judgment: How Good Is It? How Can We Know?* 2nd ed. Princeton, NJ: Princeton University Press.  

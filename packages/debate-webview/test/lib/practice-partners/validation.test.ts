@@ -18,7 +18,7 @@ const profile = {
   asCompetitor: true,
   asJudge: false,
   formats: ["pf", "pf", "ld"],
-  styles: ["kritiks"],
+  styles: ["critiques"],
   speed: "fast",
   level: "varsity",
   availability: "  weeknights  ",

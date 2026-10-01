@@ -138,6 +138,8 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/research/cards/inbox", title: "Task Inbox", icon: Inbox },
       { href: "/research/cards/contributions", title: "Contributions Feed", icon: Rss },
       { href: "/research/cards/brainstorm", title: "Team Brainstorm Assist", icon: Lightbulb },
+      { href: "/coaching/rankings", title: "Team Rankings", icon: Medal },
+      { href: "/coaching/progress", title: "Research Progress", icon: TrendingUp },
     ],
   },
   {
@@ -165,6 +167,7 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/practice/judge-decision", title: "AI Judge Decision", icon: BadgeCheck },
       { href: "/practice/prep-notes", title: "Prep Notes", icon: StickyNote },
       { href: "/practice/features", title: "All Features", icon: Sparkles },
+      { href: "/coaching/leaderboard", title: "Leaderboard", icon: Trophy },
     ],
   },
   {
@@ -178,9 +181,6 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/coaching/programs", title: "Coaching Programs", icon: CalendarCheck },
       { href: "/coaching/materials", title: "Coach Materials", icon: FolderOpen },
       { href: "/coaching/outcomes", title: "Response-Outcome Charts", icon: ChartLine },
-      { href: "/coaching/rankings", title: "Team Rankings", icon: Medal },
-      { href: "/coaching/leaderboard", title: "Leaderboard", icon: Trophy },
-      { href: "/coaching/progress", title: "Research Progress", icon: TrendingUp },
       // Companion guide page (not a coaching tool) — round-day setup for
       // debating off just a phone, so it rides with the coaching tools here
       // rather than only being reachable from the `/tools` catalog.

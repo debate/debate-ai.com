@@ -130,7 +130,7 @@ describe("searchFeatures", () => {
   it("preserves order and returns nothing for a miss", () => {
     const entries = [entry({ id: "a", title: "Flow" }), entry({ id: "b", title: "Flow log" })];
     expect(searchFeatures(entries, "flow").map((feature) => feature.id)).toEqual(["a", "b"]);
-    expect(searchFeatures(entries, "kritik")).toEqual([]);
+    expect(searchFeatures(entries, "critique")).toEqual([]);
   });
 });
 

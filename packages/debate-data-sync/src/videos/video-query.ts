@@ -290,7 +290,7 @@ export interface VideoSuggestions {
  */
 export const SUGGESTED_KEYWORDS: readonly string[] = [
   "Finals",
-  "Kritik",
+  "Critique",
   "Topicality",
   "Semis",
   "Framework",

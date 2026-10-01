@@ -103,12 +103,12 @@ describe("buildOpponentTeamProfile", () => {
 
   it("ranks argument tags by frequency, tie-broken alphabetically", () => {
     const profile = buildOpponentTeamProfile("wxyz", [
-      record({ argumentTags: ["kritik", "topicality"] }),
-      record({ argumentTags: ["kritik"] }),
+      record({ argumentTags: ["critique", "topicality"] }),
+      record({ argumentTags: ["critique"] }),
       record({ argumentTags: ["counterplan"] }),
     ]);
     expect(profile.topArgumentTags).toEqual([
-      { value: "kritik", count: 2 },
+      { value: "critique", count: 2 },
       { value: "counterplan", count: 1 },
       { value: "topicality", count: 1 },
     ]);
@@ -167,14 +167,14 @@ describe("buildOpponentScoutingSummary", () => {
 
   it("includes record, side record, and tag/case lines", () => {
     const profile = buildOpponentTeamProfile("wxyz", [
-      record({ side: "aff", won: true, argumentTags: ["kritik"], caseName: "Warming Aff" }),
+      record({ side: "aff", won: true, argumentTags: ["critique"], caseName: "Warming Aff" }),
       record({ side: "neg", won: false }),
     ]);
     const summary = buildOpponentScoutingSummary(profile);
     expect(summary).toContain("wxyz: 2 round(s) recorded across 1 tournament(s).");
     expect(summary).toContain("Record: 1-1");
     expect(summary).toContain("Side record: Aff 1-0, Neg 0-1");
-    expect(summary).toContain("Common arguments: kritik (1)");
+    expect(summary).toContain("Common arguments: critique (1)");
     expect(summary).toContain("Common cases: Warming Aff (1)");
   });
 
@@ -226,18 +226,18 @@ describe("opponentScoutingReportFilename", () => {
 describe("buildOpponentTeamComparison", () => {
   it("splits argument tags into shared, a-only, and b-only, ranked by frequency", () => {
     const a = buildOpponentTeamProfile("us", [
-      record({ teamId: "us", argumentTags: ["kritik"] }),
-      record({ teamId: "us", argumentTags: ["kritik"] }),
+      record({ teamId: "us", argumentTags: ["critique"] }),
+      record({ teamId: "us", argumentTags: ["critique"] }),
       record({ teamId: "us", argumentTags: ["topicality"] }),
     ]);
     const b = buildOpponentTeamProfile("rival", [
-      record({ teamId: "rival", argumentTags: ["kritik"] }),
+      record({ teamId: "rival", argumentTags: ["critique"] }),
       record({ teamId: "rival", argumentTags: ["counterplan"] }),
     ]);
     const comparison = buildOpponentTeamComparison(a, b);
     expect(comparison.a.teamId).toBe("us");
     expect(comparison.b.teamId).toBe("rival");
-    expect(comparison.sharedArgumentTags).toEqual([{ value: "kritik", count: 3 }]);
+    expect(comparison.sharedArgumentTags).toEqual([{ value: "critique", count: 3 }]);
     expect(comparison.aOnlyArgumentTags).toEqual([{ value: "topicality", count: 1 }]);
     expect(comparison.bOnlyArgumentTags).toEqual([{ value: "counterplan", count: 1 }]);
   });
@@ -268,10 +268,10 @@ describe("buildOpponentTeamComparison", () => {
 describe("buildOpponentTeamComparisonText", () => {
   it("renders both teams' records, side records, and tag breakdown", () => {
     const a = buildOpponentTeamProfile("us", [
-      record({ teamId: "us", side: "aff", won: true, argumentTags: ["kritik"] }),
+      record({ teamId: "us", side: "aff", won: true, argumentTags: ["critique"] }),
     ]);
     const b = buildOpponentTeamProfile("rival", [
-      record({ teamId: "rival", side: "neg", won: false, argumentTags: ["kritik"] }),
+      record({ teamId: "rival", side: "neg", won: false, argumentTags: ["critique"] }),
     ]);
     const text = buildOpponentTeamComparisonText(buildOpponentTeamComparison(a, b));
     expect(text).toContain("Opponent Comparison — us vs. rival");
@@ -279,7 +279,7 @@ describe("buildOpponentTeamComparisonText", () => {
     expect(text).toContain("Record: us 1-0 (100%), rival 0-1 (0%)");
     expect(text).toContain("Aff record: us 1-0 (100%), rival —");
     expect(text).toContain("Neg record: us —, rival 0-1 (0%)");
-    expect(text).toContain("Shared arguments: kritik (2)");
+    expect(text).toContain("Shared arguments: critique (2)");
     expect(text).toContain("us-only arguments: none");
     expect(text).toContain("rival-only arguments: none");
   });
