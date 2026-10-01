@@ -93,6 +93,50 @@ export function Input({ className, ...props }: ComponentProps<"input">) {
   );
 }
 
+const FIELD_CLASS =
+  "w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:bg-input/30";
+
+/** A native `<select>`, styled like {@link Input} — no listbox dependency. */
+export function Select({ className, ...props }: ComponentProps<"select">) {
+  return <select data-slot="select" className={cn("h-9", FIELD_CLASS, className)} {...props} />;
+}
+
+export function Textarea({ className, ...props }: ComponentProps<"textarea">) {
+  return (
+    <textarea
+      data-slot="textarea"
+      className={cn(FIELD_CLASS, "min-h-16 py-2", className)}
+      {...props}
+    />
+  );
+}
+
+export function Label({ className, ...props }: ComponentProps<"label">) {
+  return (
+    <label
+      data-slot="label"
+      className={cn("text-xs font-medium text-muted-foreground", className)}
+      {...props}
+    />
+  );
+}
+
+export function Button({ className, variant = "default", ...props }: ComponentProps<"button"> & { variant?: keyof typeof BUTTON_VARIANTS }) {
+  return (
+    <button
+      data-slot="button"
+      type="button"
+      className={cn(
+        "inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        BUTTON_VARIANTS[variant],
+        BUTTON_SIZES.default,
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
 export function Table({ className, ...props }: ComponentProps<"table">) {
   return (
     <div data-slot="table-container" className="relative w-full overflow-x-auto">

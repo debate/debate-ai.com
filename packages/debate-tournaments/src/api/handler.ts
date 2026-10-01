@@ -16,6 +16,10 @@
  * Paths mirror upstream's `/v1` API with that prefix optional:
  * `/api/tournaments/rest/tourns`, `/api/tournaments/v1/rest/tourns/123/invite`,
  * `/api/tournaments/pages/invite/upcoming`, …
+ *
+ * Those two trees are upstream's public read API and answer GET only. This
+ * app's own write routes live under `/api/tournaments/host` (see
+ * `../host/router`), which is what the "Host a Tournament" page posts to.
  */
 
 import Router from "router";
@@ -27,6 +31,7 @@ import legacyDb from "../../vendor/tabroom/indexcards/api/data/db.js";
 import { tabroomConfig } from "../config";
 import { actorForHostUser, anonymousActor, type HostUser, type TabroomActor } from "./actor";
 import { runExpressRouter, type ExpressLikeRouter } from "./express-adapter";
+import { getHostRouter, hostPathAllowsMethod } from "../host/router";
 
 export interface TournamentsHandlerOptions {
   /** URL prefix the handler is mounted under, e.g. `/api/tournaments`. */
@@ -44,6 +49,9 @@ function createRootRouter(): ExpressLikeRouter {
   const root = Router({ mergeParams: true });
   root.use("/rest", restRouter);
   root.use("/pages", pagesRouter);
+  // This app's own write routes (creating a tournament), kept off the vendored
+  // read trees so a write can never land in them by accident.
+  root.use("/host", getHostRouter());
   return root as unknown as ExpressLikeRouter;
 }
 
@@ -62,7 +70,10 @@ export function createTournamentsHandler(options: TournamentsHandlerOptions) {
   const { basePath = "", getDb, getUser, cacheControl = "public, max-age=60, s-maxage=60" } = options;
 
   return async function handleTournamentsRequest(request: Request): Promise<Response> {
-    if (request.method !== "GET" && request.method !== "HEAD" && request.method !== "OPTIONS") {
+    const path = routedPath(new URL(request.url).pathname, basePath);
+    // `/rest` and `/pages` mirror upstream's public read API and stay read-only;
+    // only this app's `/host` mount accepts writes.
+    if (!hostPathAllowsMethod(path, request.method)) {
       return new Response(JSON.stringify({ title: "Method Not Allowed", status: 405 }), {
         status: 405,
         headers: { "content-type": "application/problem+json", allow: "GET, HEAD" },
@@ -72,7 +83,6 @@ export function createTournamentsHandler(options: TournamentsHandlerOptions) {
     const router = rootRouter;
     const d1 = await getDb(request);
     const user = getUser ? await getUser(request) : null;
-    const path = routedPath(new URL(request.url).pathname, basePath);
 
     const response = await runWithTabroomDb(d1, async () => {
       const actor: TabroomActor = user ? await actorForHostUser(user) : anonymousActor;
@@ -87,6 +97,10 @@ export function createTournamentsHandler(options: TournamentsHandlerOptions) {
           valid: {},
           actor,
           person,
+          // The signed-in host-app user, for this package's own routes; upstream
+          // reads `req.actor` and `req.person` only.
+          hostUser: user ?? undefined,
+          user: user ?? undefined,
           session: person ? { id: null, person: person.id, su: null, Person: person, Su: null } : undefined,
         },
       });

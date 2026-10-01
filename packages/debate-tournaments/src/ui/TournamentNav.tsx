@@ -10,12 +10,10 @@ export function TournamentNav({
   tournId,
   active,
   name,
-  webname,
 }: {
   tournId: number;
   active: TournamentTab;
   name?: string;
-  webname?: string | null;
 }) {
   const { hrefs, Link } = useTournaments();
   const tabs: Array<[TournamentTab, string, string]> = [
@@ -24,23 +22,10 @@ export function TournamentNav({
     ["results", "Results", hrefs.results(tournId)],
     ["tabroom", "Tabroom", hrefs.tabroom(tournId)],
   ];
-  const logoSrc = webname ? `/tournament-logos/${webname}.png` : null;
   return (
     <div className="space-y-3">
       <BackLink href={hrefs.upcoming()}>All tournaments</BackLink>
-      <div className="flex items-center gap-3">
-        {logoSrc && (
-          <img
-            src={logoSrc}
-            alt={`${name || "Tournament"} logo`}
-            className="h-12 w-auto max-w-[200px] object-contain"
-            onError={(e) => {
-              e.currentTarget.style.display = "none";
-            }}
-          />
-        )}
-        {name && <h1 className="text-2xl font-bold tracking-tight">{name}</h1>}
-      </div>
+      {name && <h1 className="text-2xl font-bold tracking-tight">{name}</h1>}
       <nav className={tabsListClass} aria-label="Tournament sections">
         {tabs.map(([key, label, href]) => (
           <Link key={key} href={href} className={tabsTriggerClass(key === active)} aria-current={key === active ? "page" : undefined}>

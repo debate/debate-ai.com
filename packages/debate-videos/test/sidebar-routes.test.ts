@@ -175,6 +175,24 @@ describe("Latest News", () => {
   });
 });
 
+describe("Tournaments and Tabroom", () => {
+  it("are one sidebar entry, not two", () => {
+    // Tabroom is framed from a button at the top of the tournaments page, so
+    // a row of its own would only be a second way to the same thing.
+    const practice = SIDEBAR_TOOL_SECTIONS.find((section) => section.id === "practice");
+    const hrefs = practice?.tools.map((tool) => tool.href) ?? [];
+
+    expect(hrefs).toContain("/practice/tournaments");
+    expect(hrefs).not.toContain("/practice/tabroom");
+  });
+
+  it("still recognise /practice/tabroom as a sidebar route, so it keeps its dock", () => {
+    // The page itself stays reachable — from the tournaments page's button and
+    // from a tournament's Tabroom tab — it just is not listed in the tree.
+    expect(matchesToolSidebarHref("/practice/tabroom")).toBe(true);
+  });
+});
+
 describe("the REASON research workspace", () => {
   it("is still a sidebar destination, though no longer a Research row", () => {
     // It lost its "Debate Docs" row in favour of the dock's own Docs button,

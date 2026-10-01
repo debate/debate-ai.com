@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { CalendarDays, MapPin, Plus, Search } from "lucide-react";
 import { Badge, Card, Input, buttonVariants } from "../primitives";
+import { TabroomOverlay } from "../TabroomOverlay";
 import { Empty, Loaded, useApi, useTournaments } from "../shared";
 
 /** Upcoming tournaments, as on tabroom.com's front page (`/pages/invite/upcoming`). */
@@ -10,6 +11,7 @@ export function UpcomingTournamentsPage() {
   const { client, hrefs, Link } = useTournaments();
   const state = useApi("upcoming", (signal) => client.upcoming(signal));
   const [query, setQuery] = useState("");
+  const [tabroomOpen, setTabroomOpen] = useState(false);
 
   return (
     <div className="mx-auto max-w-5xl space-y-4 p-4 md:p-6">
@@ -29,6 +31,11 @@ export function UpcomingTournamentsPage() {
               className="pl-8"
             />
           </label>
+          {/* Tabroom is framed here rather than given a sidebar row of its own. */}
+          <button type="button" onClick={() => setTabroomOpen(true)} className={buttonVariants({ variant: "outline", size: "sm" })}>
+            <CalendarDays aria-hidden />
+            Tabroom
+          </button>
           <Link href={hrefs.host()} className={buttonVariants({ size: "sm" })}>
             <Plus className="mr-1.5 h-4 w-4" />
             Host Tournament
@@ -38,6 +45,7 @@ export function UpcomingTournamentsPage() {
       <Loaded state={state}>
         {(tourns) => <UpcomingList tourns={tourns} query={query} hrefs={hrefs} Link={Link} />}
       </Loaded>
+      <TabroomOverlay open={tabroomOpen} onClose={() => setTabroomOpen(false)} />
     </div>
   );
 }
@@ -99,16 +107,6 @@ function UpcomingList({
                 )}
                 {t.events && <p className="max-w-[16rem] truncate">{t.events}</p>}
                 {t.schoolCount ? <p>{t.schoolCount} schools</p> : null}
-                {t.webname && (
-                  <img
-                    src={`/tournament-logos/${t.webname}.png`}
-                    alt=""
-                    className="mt-2 h-8 w-auto max-w-[120px] object-contain opacity-60"
-                    onError={(e) => {
-                      e.currentTarget.style.display = "none";
-                    }}
-                  />
-                )}
               </div>
             </Link>
           </li>

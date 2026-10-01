@@ -13,7 +13,6 @@ import {
   BadgeCheck,
   Bot,
   CalendarCheck,
-  CalendarDays,
   ChartBar,
   ChartLine,
   ChartPie,
@@ -161,8 +160,10 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/practice/strategy", title: "Scout-to-Strategy", icon: MapIcon },
       { href: "/practice/opponents", title: "Opponent Team Profiles", icon: Users },
       { href: "/practice/forums", title: "Latest News", icon: Rss },
+      // Tabroom itself is not a row of its own: the tournaments page frames
+      // beta.tabroom.com from a button at the top of the list, so one entry
+      // covers both.
       { href: "/practice/tournaments", title: "Tournaments", icon: Trophy },
-      { href: "/practice/tabroom", title: "Tabroom", icon: CalendarDays },
       { href: "/practice/judges", title: "Judge Profiles", icon: Gavel },
       { href: "/practice/judge-decision", title: "AI Judge Decision", icon: BadgeCheck },
       { href: "/practice/prep-notes", title: "Prep Notes", icon: StickyNote },
