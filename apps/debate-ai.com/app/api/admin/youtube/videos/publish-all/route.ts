@@ -11,7 +11,9 @@ import { publishRoundVideos } from "@/lib/videos/publish-round-video";
  * Publishes every currently queued round video (optionally narrowed to the
  * style the admin page has filtered to) into the public `videos` table, then
  * clears the published rows out of the queue — the "publish all" bulk
- * counterpart to the per-video publish action.
+ * counterpart to the per-video publish action. Rounds already in `videos`
+ * are skipped, not overwritten (see `publishRoundVideos`), and are cleared
+ * from the queue along with the rest.
  */
 export async function POST(req: NextRequest) {
   const { canEditContent } = await getStaffAccess();
@@ -35,7 +37,7 @@ export async function POST(req: NextRequest) {
     .where(conditions.length ? and(...conditions) : undefined);
 
   if (rows.length === 0) {
-    return NextResponse.json({ ok: true, published: 0 });
+    return NextResponse.json({ ok: true, published: 0, skipped: 0 });
   }
 
   const published = await publishRoundVideos(db, rows);
@@ -51,5 +53,5 @@ export async function POST(req: NextRequest) {
   );
   for (const batch of chunkStatements(clears)) await db.batch(batch);
 
-  return NextResponse.json({ ok: true, published });
+  return NextResponse.json({ ok: true, published, skipped: rows.length - published });
 }
