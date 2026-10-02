@@ -91,7 +91,8 @@ served at [debate-ai.com/docs](https://debate-ai.com/docs) rather than deployed 
 Package name `debate-practice-rounds`. Practice and AI round tooling: AI drill generator,
 AI coach mode, judge paradigm picker, AI judge decision, opponent persona picker,
 word-count speeches, practice round simulator, speech transcript summaries, argument-tree
-outline, flow annotations, and AI response-outcome charts. Composes `debate-round`,
+outline with Kialo-style pro/con map views (d3: tiered tree, sunburst, mind map, bubble
+map, sankey), flow annotations, and AI response-outcome charts. Composes `debate-round`,
 `debate-speech-writer`, `debate-timer`, `debate-search-evidence`, and
 `debate-contributor-progress`.
 
