@@ -1252,6 +1252,22 @@ export const videos = sqliteTable(
 export type VideoTableRow = typeof videos.$inferSelect;
 export type VideoTableInsert = typeof videos.$inferInsert;
 
+// Video lengths, one row per YouTube id, filled by the admin "Fetch video
+// durations" action (lib/videos/backfill-video-durations.ts). Kept in its own
+// table rather than as a column on `videos` / `youtube_round_videos` so a
+// deploy that has not migrated yet cannot break every existing select on those
+// tables: the backfill creates this table itself (`IF NOT EXISTS`) before it
+// writes, and an id covers a video whether it is published, queued, or both.
+export const videoDurations = sqliteTable("video_durations", {
+  videoId: text("video_id").primaryKey(),
+  durationSeconds: integer("duration_seconds").notNull(),
+  fetchedAt: integer("fetched_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
+});
+
+export type VideoDurationRow = typeof videoDurations.$inferSelect;
+
 // Transcript cache, one row per video+language. YouTube bot-checks server IPs
 // at random and rate-limits them in bursts, so a transcript that was fetched
 // once is worth keeping: later viewers of the same video are served from here
