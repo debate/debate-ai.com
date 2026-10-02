@@ -5,7 +5,7 @@ import { getStaffAccess } from "@/lib/auth/admin";
 import { withRouteErrors } from "@/lib/api/route-errors";
 import { ensureWallet, getViewer, listLeaders, listMarkets, resolveDueMarkets } from "@/lib/predictions/queries";
 import { currentRating } from "@/lib/predictions/ratings";
-import type { PredictionBoardResponse } from "debate-predictions";
+import type { PredictionBoardResponse } from "@debate/predictions";
 
 /**
  * The prediction-markets board — everything the markets page draws, in one read.
