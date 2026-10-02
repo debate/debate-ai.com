@@ -45,6 +45,26 @@ interface SyncRun { id: number; status: "running" | "success" | "error"; trigger
 // here as a literal so this client component does not import that server module.
 const CRON_TRIGGERED_BY = "cron";
 interface ViewCountStatus { publishedVideos: number; queuedVideos: number; }
+interface DurationStatus {
+  videos: number;
+  withDuration: number;
+  withoutDuration: number;
+  publishedSeconds: number;
+  queuedSeconds: number;
+  totalSeconds: number;
+}
+
+/** Seconds as "1,234h 5m", the unit a library's running time reads in. */
+function formatHours(seconds: number): string {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  return `${hours.toLocaleString()}h ${minutes}m`;
+}
+
+function formatDurationStatus(status: DurationStatus): string {
+  const coverage = `${status.withDuration.toLocaleString()} of ${status.videos.toLocaleString()} videos have a duration`;
+  return `${coverage} · ${formatHours(status.totalSeconds)} total (${formatHours(status.publishedSeconds)} published, ${formatHours(status.queuedSeconds)} queued)`;
+}
 interface Overview { stats: { users: number; sessions: number; files: number; publishedVideos: number; stagedVideos: number }; recentUsers: Array<{ id: string; name: string; email: string; image: string | null; createdAt: string; isAnonymous: boolean }>; }
 const STYLE_NAMES: Record<number, string> = { 1: "Policy", 2: "PF", 3: "LD", 4: "College" };
 const STYLE_OPTIONS = [{ value: "all", label: "All styles" }, { value: "1", label: "Policy" }, { value: "2", label: "PF" }, { value: "3", label: "LD" }, { value: "4", label: "College" }];
@@ -103,6 +123,10 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
   const [viewResyncResult, setViewResyncResult] = useState<string | null>(null);
   const [viewResyncError, setViewResyncError] = useState<string | null>(null);
   const [viewCountStatus, setViewCountStatus] = useState<ViewCountStatus | null>(null);
+  const [durationStatus, setDurationStatus] = useState<DurationStatus | null>(null);
+  const [isFetchingDurations, setIsFetchingDurations] = useState(false);
+  const [durationProgress, setDurationProgress] = useState<string | null>(null);
+  const [durationError, setDurationError] = useState<string | null>(null);
   const [isPurgingReuseLog, setIsPurgingReuseLog] = useState(false);
   const [reuseLogPurgeResult, setReuseLogPurgeResult] = useState<string | null>(null);
   const [reuseLogPurgeError, setReuseLogPurgeError] = useState<string | null>(null);
@@ -232,6 +256,20 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
     if (isAdmin) loadViewCountStatus();
   }, [isAdmin, loadViewCountStatus]);
 
+  const loadDurationStatus = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/videos/durations");
+      if (!res.ok) return;
+      setDurationStatus(await res.json());
+    } catch {
+      // The card still works without the totals.
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isAdmin) loadDurationStatus();
+  }, [isAdmin, loadDurationStatus]);
+
   const loadSeedStatus = useCallback(async () => {
     try {
       const res = await fetch("/api/admin/videos/seed");
@@ -322,6 +360,42 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
       setViewResyncError((error as Error).message);
     } finally {
       setIsResyncingViews(false);
+    }
+  };
+
+  // Pages through every stored id, one request per page, until the server
+  // says the walk is done; each page writes as it goes, so stopping midway
+  // (a closed tab, a quota error) keeps what was fetched.
+  const handleFetchDurations = async (refresh: boolean) => {
+    setIsFetchingDurations(true);
+    setDurationError(null);
+    setDurationProgress(null);
+    let after: string | null = null;
+    let checked = 0;
+    let stored = 0;
+    let missing = 0;
+    try {
+      do {
+        const res: Response = await fetch("/api/admin/videos/durations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ after, refresh }),
+        });
+        const data: any = await res.json();
+        if (!res.ok) throw new Error(data?.details || data?.error || "Fetching durations failed");
+        checked += data.checked;
+        stored += data.stored;
+        missing += data.missing;
+        after = data.nextCursor;
+        setDurationStatus(data.status);
+        setDurationProgress(
+          `${after ? "Fetching… " : ""}Stored ${stored.toLocaleString()} of ${checked.toLocaleString()} checked${missing > 0 ? `, ${missing.toLocaleString()} unavailable on YouTube` : ""}.`,
+        );
+      } while (after);
+    } catch (error) {
+      setDurationError((error as Error).message);
+    } finally {
+      setIsFetchingDurations(false);
     }
   };
 
@@ -869,6 +943,43 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
                   )}
                 </div>
                 {viewResyncError && <p className="text-destructive text-sm">{viewResyncError}</p>}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Fetch video durations</CardTitle>
+                <CardDescription>
+                  Looks up the length of every stored video on YouTube — rounds, lectures and the
+                  queue below — and stores it, so the library's total running time can be read off
+                  here. By default only videos without a duration are fetched, so it is cheap to
+                  re-run after new videos land; "Refetch all" looks every video up again.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-3">
+                <div className="flex flex-wrap items-center gap-3">
+                  <Button
+                    onClick={() => handleFetchDurations(false)}
+                    disabled={isFetchingDurations}
+                    variant="outline"
+                  >
+                    {isFetchingDurations ? "Fetching durations…" : "Fetch missing durations"}
+                  </Button>
+                  <Button
+                    onClick={() => handleFetchDurations(true)}
+                    disabled={isFetchingDurations}
+                    variant="ghost"
+                  >
+                    Refetch all
+                  </Button>
+                  {durationProgress && (
+                    <span className="text-muted-foreground text-sm">{durationProgress}</span>
+                  )}
+                </div>
+                {durationStatus && (
+                  <p className="text-muted-foreground text-sm">{formatDurationStatus(durationStatus)}</p>
+                )}
+                {durationError && <p className="text-destructive text-sm">{durationError}</p>}
               </CardContent>
             </Card>
 

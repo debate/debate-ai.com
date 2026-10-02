@@ -280,6 +280,76 @@ export async function fetchVideoStatuses(videoIds: string[]): Promise<YouTubeSta
   return { statuses, missing };
 }
 
+/**
+ * Converts a YouTube `contentDetails.duration` (ISO 8601, e.g. `PT1H2M3S`,
+ * `P1DT2H`) to whole seconds.
+ *
+ * Live streams that have not ended report `P0D`, which comes back as `0`;
+ * anything that is not an ISO duration at all comes back as `null` so a
+ * caller can tell "zero length" from "unknown".
+ *
+ * @param iso - The duration string the API returned.
+ * @returns Seconds, or `null` when the string is not a duration.
+ */
+export function parseIsoDuration(iso: string | null | undefined): number | null {
+  const match = /^P(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?)?$/.exec(
+    iso?.trim() ?? "",
+  );
+  if (!match) return null;
+  const [, weeks, days, hours, minutes, seconds] = match;
+  const total =
+    Number(weeks ?? 0) * 604800 +
+    Number(days ?? 0) * 86400 +
+    Number(hours ?? 0) * 3600 +
+    Number(minutes ?? 0) * 60 +
+    Number(seconds ?? 0);
+  return Math.round(total);
+}
+
+/** One duration pass over a set of stored ids. */
+export interface YouTubeDurationReport {
+  /** Length in seconds, keyed by video id. */
+  durations: Record<string, number>;
+  /** Ids the API did not return — deleted or private videos. */
+  missing: string[];
+}
+
+/**
+ * Fetches each video's length from `contentDetails`.
+ *
+ * @param videoIds - YouTube video ids, in any quantity; batched by 50.
+ * @returns Durations and the ids that came back empty. See
+ *   {@link YouTubeDurationReport}.
+ * @throws {YouTubeApiError} When the API declines the request.
+ */
+export async function fetchVideoDurations(videoIds: string[]): Promise<YouTubeDurationReport> {
+  const durations: Record<string, number> = {};
+  const missing: string[] = [];
+
+  // YouTube API allows max 50 IDs per request
+  for (let i = 0; i < videoIds.length; i += 50) {
+    const batch = videoIds.slice(i, i + 50);
+
+    const data = await youtubeRequest("/videos", {
+      part: "contentDetails",
+      id: batch.join(","),
+    });
+
+    for (const item of data?.items ?? []) {
+      const seconds = parseIsoDuration(item.contentDetails?.duration);
+      if (seconds !== null) durations[item.id] = seconds;
+    }
+
+    for (const videoId of batch) {
+      if (durations[videoId] === undefined) missing.push(videoId);
+    }
+
+    console.log(`Fetched durations ${Math.min(i + 50, videoIds.length)}/${videoIds.length}`);
+  }
+
+  return { durations, missing };
+}
+
 export async function fetchFullDescriptions(videoIds: string[]): Promise<Record<string, string>> {
   const descriptions: Record<string, string> = {};
 
