@@ -20,6 +20,11 @@ export interface SlugState {
   favorites?: boolean
   /** When `true`, auto-opens the YouTube stats modal. */
   stats?: boolean
+  /**
+   * When `true`, the listing is limited to lectures even though the route is a
+   * favorites one. Favorites routes otherwise list rounds and lectures alike.
+   */
+  lecturesOnly?: boolean
 }
 
 /**
@@ -33,7 +38,7 @@ export const SLUG_MAP: Record<string, SlugState> = {
   college: { style: 4 },
   toppicks: { view: "topPicks" },
   favoritedebates: { favorites: true },
-  favoritelectures: { favorites: true, view: "lectures" },
+  favoritelectures: { favorites: true, view: "lectures", lecturesOnly: true },
   favorites: { favorites: true },
   dictionary: { view: "dictionary" },
   rankings: { view: "leaderboard" },
@@ -83,4 +88,26 @@ export function librarySlug(
  */
 export function lectureCategoryHref(categoryId: string): string {
   return categoryId === "all" ? "/lectures" : `/lectures/${encodeURIComponent(categoryId)}`
+}
+
+/**
+ * Whether the listing is limited to lectures (videos without a numeric debate
+ * style). "All Lectures" (`/lectures`) is: rounds surface through the style
+ * filter and the category tabs instead. Bare `/videos` (no slug) is "All
+ * Videos", rounds and lectures.
+ *
+ * The favorites routes share the lectures view internally but list both
+ * libraries — My Favorites has a Lectures and a Rounds table — unless the slug
+ * itself asks for lectures only (`/videos/favoritelectures`).
+ */
+export function isLecturesOnlyListing(
+  slug: string | undefined,
+  view: CategoryType,
+  selectedCategory: string,
+  style: DebateStyle | "" | null | undefined,
+): boolean {
+  if (slug === undefined || view !== "lectures" || selectedCategory !== "all" || style) return false
+  const slugState = SLUG_MAP[slug]
+  if (slugState?.favorites) return slugState.lecturesOnly === true
+  return true
 }

@@ -29,7 +29,7 @@ import type { LeaderboardTab } from "./leaderboard/leaderboardUtils"
 import { VALID_LEADERBOARD_TABS, currentSeasonYear, seasonYears } from "./leaderboard/leaderboardUtils"
 import { setStateInURL } from "../ui/lib/utils"
 import { StickyHeader } from "../components/layout/StickyHeader"
-import { SLUG_MAP, librarySlug } from "./lectureRouteConfig"
+import { SLUG_MAP, isLecturesOnlyListing, librarySlug } from "./lectureRouteConfig"
 import { LecturesDictionaryView } from "./dictionary/LecturesDictionaryView"
 import { LecturesSidebarShell } from "./LecturesSidebarShell"
 import { LecturesVideoGridView } from "./LecturesVideoGridView"
@@ -255,14 +255,7 @@ export function LecturesPage({ dockSlot, topicAreasSlot }: LecturesPageProps = {
 
   const filters: VideoFeedFilters = {
     source: "all",
-    // "All Lectures" (`/lectures`) means everything without a numeric debate
-    // style — rounds surface through the style filter and the category tabs
-    // instead. Bare `/videos` (no slug) is "All Videos": rounds and lectures.
-    lecturesOnly:
-      slug !== undefined &&
-      state.currentCategory === "lectures" &&
-      selectedCategory === "all" &&
-      !state.selectedStyle,
+    lecturesOnly: isLecturesOnlyListing(slug, state.currentCategory, selectedCategory, state.selectedStyle),
     topPicksOnly: state.currentCategory === "topPicks",
     categoryKey: selectedCategory === "all" ? null : normalizeCategoryKey(selectedCategory),
     style: state.selectedStyle,
