@@ -4,7 +4,7 @@ import {
   ListTree, Bot, Lightbulb, PlayCircle, BarChart3, Users2, School,
   ThumbsUp, Medal, Target, BookOpen, PieChart, Presentation,
   ListChecks, Flame, CheckSquare, Landmark, MapPin, Sparkles, Bell, Contact,
-  Rss, Gauge, Crosshair, Crown, Send, Smartphone, Star, Handshake,
+  Rss, Gauge, Crosshair, Crown, Send, Smartphone, Star, Handshake, Coins,
   type LucideIcon,
 } from "lucide-react"
 
@@ -239,6 +239,11 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         href: "/practice/partners", label: "Practice Partners", icon: Handshake,
         description: "Challenge other debaters to a virtual practice round, or volunteer to debate or judge in the styles you're comfortable with.",
         highlights: ["Volunteer as a debater, a judge, or both — with your formats, styles, speed, and level", "Challenges notify the other side; accepted rounds get a shared webcam room code", "Judge volunteers can pick up any accepted round that still needs a judge"],
+      },
+      {
+        href: "/practice/predictions", label: "Prediction Markets", icon: Coins,
+        description: "Bet play-money points on who wins a debate, who wins a tournament, and whose Glicko rating goes up.",
+        highlights: ["Everyone starts with 1,000 points — play money, no cash value", "Prices come from an automated market maker and move with every bet", "Markets tied to hosted rounds, events or the rankings settle themselves"],
       },
       {
         href: "/practice/versus-ai", label: "Practice vs AI", icon: Bot,

@@ -63,6 +63,7 @@ export const WORKSPACE_LINKS: WorkspaceLink[] = [
   { href: '/word-count', label: 'Word-Count Speeches', description: 'A live word-count readout instead of a timer', category: 'Prep & Practice' },
   { href: '/outline', label: 'Argument Tree Outline', description: 'Filterable, heading-grouped outline of a flow', category: 'Prep & Practice' },
   { href: '/practice/partners', label: 'Practice Partners', description: 'Challenge other debaters, or volunteer to debate or judge', category: 'Prep & Practice' },
+  { href: '/practice/predictions', label: 'Prediction Markets', description: 'Bet play-money points on debates, tournament winners and rating moves', category: 'Prep & Practice' },
   { href: '/practice/versus-ai', label: 'Online Debate Versus AI', description: 'A full practice round against an AI opponent', category: 'Prep & Practice' },
   { href: '/practice', label: 'Practice Round Simulator', description: 'Timer, judge paradigm, AI opponent', category: 'Prep & Practice' },
   { href: '/annotations', label: 'Flow Annotations', description: 'Timestamped notes on a streamed or recorded round', category: 'Prep & Practice' },

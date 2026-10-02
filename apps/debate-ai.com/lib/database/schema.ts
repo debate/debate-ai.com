@@ -5,6 +5,7 @@ import {
   index,
   uniqueIndex,
   primaryKey,
+  real,
   type AnySQLiteColumn,
 } from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
@@ -2270,3 +2271,102 @@ export const practiceChallenges = sqliteTable(
 );
 
 export type PracticeChallengeRow = typeof practiceChallenges.$inferSelect;
+
+// Prediction markets — play-money betting on debates, tournament winners and
+// Glicko rating moves. The pricing and settlement rules are the
+// `debate-predictions` package; the queries are `lib/predictions/queries.ts`.
+// These tables also ship as `packages/debate-predictions/migrations/`, which
+// the deploy's `migrate-d1.ts` applies, so they reach D1 from a fresh checkout.
+//
+// One wallet per account, created with the starting grant on first visit.
+// Points are never bought or cashed out; `balance` only moves by a bet, a
+// payout or a refund.
+export const predictionWallets = sqliteTable(
+  "prediction_wallets",
+  {
+    userId: text("user_id")
+      .primaryKey()
+      .references(() => user.id, { onDelete: "cascade" }),
+    balance: integer("balance").notNull(),
+    grantedAt: integer("granted_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    balanceIdx: index("idx_prediction_wallets_balance").on(table.balance),
+  }),
+);
+
+export type PredictionWalletRow = typeof predictionWallets.$inferSelect;
+
+// One market. `outcomes` is the `MarketOutcome[]` list and `shares` the LMSR
+// share vector in the same order, both JSON; `version` is bumped by every bet
+// so two bets priced off the same share vector cannot both land. `source`
+// says where the result comes from (`MarketSource`, JSON).
+export const predictionMarkets = sqliteTable(
+  "prediction_markets",
+  {
+    /** A UUID minted by the API. */
+    id: text("id").primaryKey(),
+    /** `debate` | `tournament` | `rating`. */
+    kind: text("kind").notNull(),
+    title: text("title").notNull(),
+    description: text("description").notNull().default(""),
+    creatorId: text("creator_id").references(() => user.id, { onDelete: "set null" }),
+    /** `open` | `resolved` | `void`. */
+    status: text("status").notNull().default("open"),
+    outcomes: text("outcomes").notNull(),
+    shares: text("shares").notNull(),
+    liquidity: real("liquidity").notNull(),
+    version: integer("version").notNull().default(0),
+    /** Total points staked. */
+    volume: integer("volume").notNull().default(0),
+    source: text("source").notNull(),
+    closesAt: integer("closes_at", { mode: "timestamp" }).notNull(),
+    resolvedOutcome: text("resolved_outcome"),
+    resolvedAt: integer("resolved_at", { mode: "timestamp" }),
+    resolutionNote: text("resolution_note"),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    statusIdx: index("idx_prediction_markets_status").on(table.status, table.closesAt),
+    creatorIdx: index("idx_prediction_markets_creator").on(table.creatorId, table.status),
+  }),
+);
+
+export type PredictionMarketRow = typeof predictionMarkets.$inferSelect;
+
+// One bet: `stake` points bought `shares` shares of `outcome_id`. `payout` is
+// filled when the market settles (0 for a losing bet). Bets are never deleted
+// by the feature, so a settled market keeps its history.
+export const predictionBets = sqliteTable(
+  "prediction_bets",
+  {
+    /** A UUID minted by the API. */
+    id: text("id").primaryKey(),
+    marketId: text("market_id")
+      .notNull()
+      .references(() => predictionMarkets.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    outcomeId: text("outcome_id").notNull(),
+    stake: integer("stake").notNull(),
+    shares: real("shares").notNull(),
+    payout: integer("payout"),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    marketIdx: index("idx_prediction_bets_market").on(table.marketId, table.userId),
+    userIdx: index("idx_prediction_bets_user").on(table.userId, table.createdAt),
+  }),
+);
+
+export type PredictionBetRow = typeof predictionBets.$inferSelect;
