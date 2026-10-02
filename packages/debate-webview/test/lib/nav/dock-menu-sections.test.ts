@@ -24,7 +24,6 @@ import {
   DOCK_MENU_HREFS,
   SIDEBAR_MENU_SECTIONS,
   SITE_LINKS,
-  DEBATE_LINKS,
 } from "../../../src/lib/nav/dock-menu-sections"
 
 describe("SIDEBAR_MENU_SECTIONS", () => {
@@ -79,14 +78,12 @@ describe("SIDEBAR_MENU_SECTIONS", () => {
     expect(DOCK_MENU_HREFS.has(TOOLS_ROOT_HREF)).toBe(false)
   })
 
-  it("carries every footer link across its two external submenus", () => {
-    const external = [...SITE_LINKS, ...DEBATE_LINKS]
-    expect(external).toHaveLength(FOOTER_LINKS.length)
+  it("carries every footer link in one Site Links category", () => {
+    // Site and debate-community links are not split into two submenus.
+    expect(SITE_LINKS).toEqual(FOOTER_LINKS)
     for (const link of FOOTER_LINKS) {
       expect(DOCK_MENU_HREFS.has(link.url)).toBe(true)
     }
-    // Each link belongs to exactly one submenu.
-    expect(SITE_LINKS.some((link) => DEBATE_LINKS.includes(link))).toBe(false)
   })
 
   it("gives every section a title, an icon, and at least one link", () => {

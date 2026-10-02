@@ -24,6 +24,7 @@ import {
   Users,
   GraduationCap,
   LayoutGrid,
+  Presentation,
 } from "lucide-react";
 import { GlowingEffect } from "../../ui/effects/glowing-effect";
 import { cn } from "../../ui/lib/utils";
@@ -59,6 +60,7 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   Disadvantages: <AlertTriangle className="h-4 w-4" />,
   "Speaking & Delivery": <Mic className="h-4 w-4" />,
   "Research & Flowing": <BookOpen className="h-4 w-4" />,
+  "Topic Lectures": <Presentation className="h-4 w-4" />,
   "PF & LD Topic Analysis": <Target className="h-4 w-4" />,
   "Policy Topic Lectures": <MessageSquare className="h-4 w-4" />,
   "Demo Debates": <Trophy className="h-4 w-4" />,

@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * @fileoverview The standard site footer: brand block plus three columns of
+ * @fileoverview The standard site footer: brand block plus two columns of
  * links, for the pages that are marketing surfaces rather than app chrome.
  *
  * The sidebar already carries a link row of its own (`ToolSidebarFooter`, the
@@ -13,8 +13,8 @@
  *
  * Every section is derived from the link data the rest of the chrome already
  * renders rather than restated, so the footer cannot drift from the app:
- * `SITE_FOOTER_LINKS`/`DEBATE_FOOTER_LINKS` are the same two groups the app
- * dock's Settings menu shows (split by `FooterLink.group`), and
+ * `FOOTER_LINKS` is the same one list the app dock's Settings menu shows under
+ * Site Links, and
  * `APP_DOCK_LINKS`/`SIDEBAR_TOOL_SECTIONS` are the dock's icons and the nav
  * tree's headings. Adding a link in `debate-videos` puts it in the sidebar
  * footer, the dock menu and here at once.
@@ -33,7 +33,6 @@ import { BookOpen, LayoutGrid, Sparkles } from "lucide-react";
 
 import {
   APP_DOCK_LINKS,
-  DEBATE_FOOTER_LINKS,
   FOOTER_LINKS,
   SIDEBAR_TOOL_SECTIONS,
   TOOLS_ROOT_HREF,
@@ -84,8 +83,7 @@ const toLinks = (links: FooterLink[]): FooterSectionLink[] =>
 
 const SECTIONS: { title: string; links: FooterSectionLink[] }[] = [
   { title: "Tools", links: TOOLS_LINKS },
-  { title: "Site", links: toLinks(FOOTER_LINKS.filter((link) => link.group === "site")) },
-  { title: "Debate", links: toLinks(DEBATE_FOOTER_LINKS) },
+  { title: "Site", links: toLinks(FOOTER_LINKS) },
 ];
 
 /** A single row, rendering as a router link, an in-place page load or a new tab. */
@@ -129,7 +127,7 @@ function FooterRow({ href, label, icon: Icon, hardNavigate }: FooterSectionLink)
 export function SiteFooter() {
   return (
     <footer className="border-t border-border bg-background text-muted-foreground">
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:grid-cols-2 lg:grid-cols-3">
         <div>
           {/* The mark, not the wordmark alone: it is the one place the footer
               repeats the app's own identity, and `APP_LOGO` is what the hero

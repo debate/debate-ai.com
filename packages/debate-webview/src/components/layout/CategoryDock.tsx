@@ -32,7 +32,7 @@ import { authClient } from "../../lib/auth/client"
 import { resetUser } from "../../lib/analytics/mixpanel"
 import { useSession } from "../../lib/hooks/useSession"
 import { hasEmbeddedDock, hostsOwnSidebarDock, isGenericToolSidebarRoute } from "../../lib/sidebar-routes"
-import { SIDEBAR_MENU_SECTIONS, SITE_LINKS, DEBATE_LINKS } from "../../lib/nav/dock-menu-sections"
+import { SIDEBAR_MENU_SECTIONS, SITE_LINKS } from "../../lib/nav/dock-menu-sections"
 import { NAV_ITEMS } from "../../lib/nav/dock-nav-items"
 import { dockIdlePrefetchTargets, scheduleDockIdlePrefetch } from "../../lib/nav/dock-idle-prefetch"
 import { accountLabel } from "../../lib/nav/account-label"
@@ -340,16 +340,6 @@ function SettingsMenu({
               </DropdownMenuItem>
             )
           })}
-          <DropdownMenuSeparator />
-          <DropdownMenuLabel>Debate Links</DropdownMenuLabel>
-          {DEBATE_LINKS.map((link) => (
-            <DropdownMenuItem key={link.text} asChild>
-              <a href={link.url} target="_blank" rel="noopener noreferrer" className="cursor-pointer">
-                <link.icon className="mr-2 h-4 w-4" />
-                {link.text}
-              </a>
-            </DropdownMenuItem>
-          ))}
         </DropdownMenuSubContent>
       </DropdownMenuSub>
       <DropdownMenuSeparator />

@@ -32,8 +32,7 @@ import { Clapperboard, type LucideIcon } from "lucide-react"
 import { SIDEBAR_TOOL_SECTIONS } from "@debate/videos/src/components/category-gallery/sidebar-tool-sections"
 import { SIDEBAR_VIDEO_LINKS } from "@debate/videos/src/components/category-gallery/sidebar-video-links"
 import {
-  SITE_FOOTER_LINKS,
-  DEBATE_FOOTER_LINKS,
+  FOOTER_LINKS,
   type FooterLink,
 } from "@debate/videos/src/ui/layout/footer-links"
 
@@ -72,13 +71,11 @@ export const SIDEBAR_MENU_SECTIONS: DockMenuSection[] = [
   })),
 ]
 
-/** The footer's own links, split into the menu's two external submenus. */
-export const SITE_LINKS: FooterLink[] = SITE_FOOTER_LINKS
-export const DEBATE_LINKS: FooterLink[] = DEBATE_FOOTER_LINKS
+/** The footer's own links, all in the menu's one Site Links submenu. */
+export const SITE_LINKS: FooterLink[] = FOOTER_LINKS
 
 /** Every destination the Settings menu's sidebar submenus reach. */
 export const DOCK_MENU_HREFS: ReadonlySet<string> = new Set<string>([
   ...SIDEBAR_MENU_SECTIONS.flatMap((section) => section.links.map((link) => link.href)),
   ...SITE_LINKS.map((link) => link.url),
-  ...DEBATE_LINKS.map((link) => link.url),
 ])

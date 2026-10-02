@@ -9,7 +9,6 @@ import { describe, expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import {
   APP_DOCK_LINKS,
-  DEBATE_FOOTER_LINKS,
   FOOTER_LINKS,
   SIDEBAR_TOOL_SECTIONS,
 } from "@debate/videos";
@@ -22,7 +21,8 @@ describe("SiteFooter", () => {
   it("prints its link sections", () => {
     expect(html).toContain("Tools");
     expect(html).toContain("Site");
-    expect(html).toContain("Debate");
+    // Debate-community links share the Site section, not a column of their own.
+    expect(html).not.toContain(`aria-label="Debate"`);
     expect(html).toContain("<footer");
   });
 
@@ -37,7 +37,7 @@ describe("SiteFooter", () => {
   });
 
   it("reaches every external/legal footer link the dock menu does", () => {
-    for (const link of DEBATE_FOOTER_LINKS) {
+    for (const link of FOOTER_LINKS) {
       expect(html).toContain(`href="${link.url}"`);
     }
   });
@@ -50,7 +50,7 @@ describe("SiteFooter", () => {
 
   it("sends outside sites to a new tab", () => {
     // `APP_DOCK_LINKS` are in-app routes; the external rows live in
-    // `FOOTER_LINKS`, split by group between the Site and Debate sections.
+    // `FOOTER_LINKS`, all in the one Site section.
     const outside = FOOTER_LINKS.filter((link) => link.url.startsWith("http"));
     expect(outside.length).toBeGreaterThan(0);
     for (const link of outside) {

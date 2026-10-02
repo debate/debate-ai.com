@@ -52,6 +52,12 @@ jobs:
         working-directory: .
         run: node packages/debate-editor/scripts/sync-upstream.mjs
 
+      # Generation is its own step (and its own turbo task) rather than part of
+      # `build`/`typecheck`: openapi-ts wipes src/generated/ before writing, so
+      # two concurrent runs delete types.gen.ts out from under each other's tsc.
+      - name: Generate types
+        run: bun run generate
+
       - name: Type-check
         run: bun run typecheck
 

@@ -152,6 +152,11 @@ export const README_BADGE_ROWS: ReadmeBadge[][] = [
       alt: "Contributors",
     },
     {
+      href: "https://github.com/debate/debate-ai.com/branches",
+      src: "https://img.shields.io/github/branches/debate/debate-ai.com.svg",
+      alt: "Branches",
+    },
+    {
       href: "https://github.com/debate/debate-ai.com/pulls",
       src: "https://img.shields.io/github/issues-pr/debate/debate-ai.com?logo=github&label=PRs",
       alt: "Open Pull Requests",

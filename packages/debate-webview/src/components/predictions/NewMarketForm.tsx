@@ -13,9 +13,9 @@
 
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Loader2, Plus } from "lucide-react";
-import { RANKING_DATASETS, loadRankingDataset, type RankingEntry, type RankingDatasetId } from "debate-rankings-adapter";
-import { KIND_LABELS, MARKET_KINDS, type MarketKind, type NewMarket, type PredictionSourcesResponse } from "debate-predictions";
-import { createMarket, fetchPredictionSources } from "debate-predictions/client";
+import { RANKING_DATASETS, loadRankingDataset, type RankingEntry, type RankingDatasetId } from "@debate/rankings-adapter";
+import { KIND_LABELS, MARKET_KINDS, type MarketKind, type NewMarket, type PredictionSourcesResponse } from "@debate/predictions";
+import { createMarket, fetchPredictionSources } from "@debate/predictions/client";
 
 import { cn } from "../../lib/ui/lib/utils";
 import { inputClass } from "./MarketCard";

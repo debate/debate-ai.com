@@ -172,8 +172,6 @@ export {
 } from "./components/category-gallery/sidebar-video-links";
 export {
   FOOTER_LINKS,
-  SITE_FOOTER_LINKS,
-  DEBATE_FOOTER_LINKS,
   type FooterLink,
 } from "./ui/layout/footer-links";
 export {
