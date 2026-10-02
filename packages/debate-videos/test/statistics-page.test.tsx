@@ -41,16 +41,16 @@ describe("StatisticsPage", () => {
     expect(html).toContain("Test Channel");
   });
 
-  it("leaves out the topic areas section when the host passes no slot", () => {
-    // `debate-videos` cannot import the explorer (it lives in `debate-webview`,
-    // which depends on this package), so the section is the host's to mount.
+  it("always shows its own topic areas section, even with no host slot", () => {
+    // The explorer now lives in this package and renders directly, so the
+    // section no longer depends on the host passing `topicAreasSlot`.
     const html = renderToStaticMarkup(
       createElement(StatisticsPage, { topics: TOPICS, youtubeStats: null }),
     );
-    expect(html).not.toContain("Detailed topic-area distribution");
+    expect(html).toContain("Topic Areas by Research Domain");
   });
 
-  it("renders the host's topic areas section, above the year timeline", () => {
+  it("renders the host's topic areas section, below the year timeline", () => {
     const html = renderToStaticMarkup(
       createElement(StatisticsPage, {
         topics: TOPICS,
@@ -59,17 +59,24 @@ describe("StatisticsPage", () => {
       }),
     );
     expect(html).toContain("Areas slot here");
-    // Stacked order: the areas explorer, then the per-season topics and
-    // video numbers, then the channel charts.
-    expect(html.indexOf("Areas slot here")).toBeLessThan(html.indexOf("Debate Topics by Year"));
+    // Stacked order: the per-season topics and video numbers first, then the
+    // areas explorer, then the channel charts.
+    expect(html.indexOf("Debate Topics by Year")).toBeLessThan(html.indexOf("Areas slot here"));
   });
 
-  it("keeps the charts above the year timeline", () => {
+  it("puts the year timeline at the top, above the charts", () => {
     const html = renderToStaticMarkup(
       createElement(StatisticsPage, { topics: TOPICS, youtubeStats: YOUTUBE_STATS }),
     );
-    expect(html.indexOf("YouTube Channel Statistics")).toBeLessThan(
-      html.indexOf("Debate Topics by Year"),
+    expect(html.indexOf("Debate Topics by Year")).toBeLessThan(
+      html.indexOf("YouTube Channel Statistics"),
     );
+  });
+
+  it("lays the four totals charts out in a four-column grid", () => {
+    const html = renderToStaticMarkup(
+      createElement(StatisticsPage, { topics: TOPICS, youtubeStats: YOUTUBE_STATS }),
+    );
+    expect(html).toContain("xl:grid-cols-4");
   });
 });
