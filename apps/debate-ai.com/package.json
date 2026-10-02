@@ -86,6 +86,8 @@
     "@debate/help-docs": "workspace:*",
     "@debate/practice-rounds": "workspace:*",
     "@debate/practice-vs-ai": "workspace:*",
+    "@debate/predictions": "workspace:*",
+    "@debate/rankings-adapter": "workspace:*",
     "@debate/research-evidence": "workspace:*",
     "@debate/round": "workspace:*",
     "@debate/speech-writer": "workspace:*",
