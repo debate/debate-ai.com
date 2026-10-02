@@ -160,6 +160,9 @@ export function useWebcamRoom(roomId: string, { apiBase = "/api/rooms", role = "
 
   const join = useCallback(async () => {
     if (socketRef.current) return
+    // Callers sync hooks from a round that may not be loaded yet and pass "".
+    // Joining anyway would dial `/api/rooms//ws`, which always fails.
+    if (!roomId) return
     setError(null)
     setStatus("connecting")
     try {

@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { permanentRedirect } from "next/navigation"
 
 /**
  * The Topics Explorer's old address, now folded into the Topic & Video
@@ -26,5 +27,7 @@ export const metadata: Metadata = {
 }
 
 /** The explorer lives on `/practice/statistics` now; this route only redirects
- *  there — see `debate-webview/routes/topics/page`. */
-export { default } from "debate-webview/routes/topics/page"
+ *  there — see `debate-videos`' `StatisticsPage`. */
+export default function LegacyResearchTopicsPage() {
+  permanentRedirect("/practice/statistics")
+}
