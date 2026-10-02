@@ -46,6 +46,7 @@ import {
   entryOutcomeId,
   lmsrPrices,
   lmsrSharesForStake,
+  parsePresetId,
   positionsFromBets,
   readStoredArray,
   readStoredSource,
@@ -80,7 +81,7 @@ type Db = Awaited<ReturnType<typeof getDBFromContext>>;
 export const PREDICTIONS_LINK = "/practice/predictions";
 
 /** The most open markets one board read lists. */
-const OPEN_LIMIT = 100;
+const OPEN_LIMIT = 200;
 /** The most settled markets one board read lists. */
 const SETTLED_LIMIT = 30;
 /** How many wallets the leaderboard shows. */
@@ -226,6 +227,7 @@ function toMarket(
           holdsPosition: positions.length > 0,
         })
       : false,
+    preset: parsePresetId(row.id),
   };
 }
 
@@ -295,7 +297,8 @@ export async function insertMarket(
   db: Db,
   input: {
     id: string;
-    creatorId: string;
+    /** Null for the markets the site opens itself (see `presets.ts`). */
+    creatorId: string | null;
     kind: PredictionMarket["kind"];
     title: string;
     description: string;

@@ -5,6 +5,7 @@ import { getStaffAccess } from "@/lib/auth/admin";
 import { withRouteErrors } from "@/lib/api/route-errors";
 import { ensureWallet, getViewer, listLeaders, listMarkets, resolveDueMarkets } from "@/lib/predictions/queries";
 import { currentRating } from "@/lib/predictions/ratings";
+import { seedPresetMarkets } from "@/lib/predictions/presets";
 import type { PredictionBoardResponse } from "@debate/predictions";
 
 /**
@@ -19,7 +20,9 @@ import type { PredictionBoardResponse } from "@debate/predictions";
  * Before reading, settles any market whose result is in (hosted Tabroom
  * rounds and events, and rating markets past their close) — see
  * `resolveDueMarkets` in `lib/predictions/queries.ts`. A failure there is
- * logged and does not stop the board.
+ * logged and does not stop the board. Then opens any of the site's own
+ * markets (each division's top five, the season's major tournaments) that
+ * aren't open yet — see `lib/predictions/presets.ts`.
  *
  * Writes go to `./markets` (POST), `./markets/[marketId]/bets` (POST) and
  * `./markets/[marketId]/resolve` (POST); `./sources` lists hosted rounds and
@@ -34,6 +37,11 @@ export const GET = withRouteErrors("GET /api/predictions", async () => {
     await resolveDueMarkets(db, now, currentRating);
   } catch (error) {
     console.error("Prediction market auto-resolution failed:", error);
+  }
+  try {
+    await seedPresetMarkets(db, now);
+  } catch (error) {
+    console.error("Opening the preset prediction markets failed:", error);
   }
 
   const userId = await getUserId();

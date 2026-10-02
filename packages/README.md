@@ -101,7 +101,8 @@ map, sankey), flow annotations, and AI response-outcome charts. Composes `debate
 Play-money prediction markets on debates, tournament winners and Glicko rating moves, mounted at
 `/practice/predictions`. The framework-free core: the LMSR pricing engine (`lmsr.ts`), payouts and the rules
 that settle a market from hosted Tabroom ballots, hosted event results or a `debate-rankings` rating
-(`settle.ts`), request validation and wire types, a browser client (`debate-predictions/client`), and the D1
+(`settle.ts`), the markets the site opens itself — each division's top five and the season's major tournaments
+(`presets.ts`) — request validation and wire types, a browser client (`debate-predictions/client`), and the D1
 migration for its three tables (`migrations/`, applied by `.github/scripts/migrate-d1.ts`). No dependencies;
 the page is in `debate-webview` and the routes and queries in `apps/debate-ai.com`.
 

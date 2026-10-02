@@ -12,6 +12,8 @@
  * @module debate-predictions/types
  */
 
+import type { PresetInfo } from "./presets";
+
 /** Points granted to every account, once, on its first visit. */
 export const STARTING_BALANCE = 1000;
 
@@ -131,6 +133,8 @@ export interface PredictionMarket {
   payout: number | null;
   /** Whether the viewer may resolve or void it by hand. */
   canResolve: boolean;
+  /** Set when the site opened it (see `presets.ts`): which featured section it belongs to. */
+  preset: PresetInfo | null;
 }
 
 export interface PredictionWallet {
