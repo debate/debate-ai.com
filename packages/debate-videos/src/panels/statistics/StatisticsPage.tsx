@@ -1,9 +1,9 @@
 /**
  * @fileoverview The Topic & Video Statistics page (`/practice/statistics`) —
- * three stacked sections over the same subject: the per-season debate topics
- * explorer first, then the topic-area research breakdown (both from `topics`),
- * then the YouTube channel statistics charts, replacing the previously-modal-
- * only stats display.
+ * stacked sections over the same subject: the debate topics by year (first,
+ * from `topics`), the topic-area research breakdown, and the YouTube channel
+ * statistics charts (the totals charts four to a row), replacing the
+ * previously-modal-only stats display.
  * @module panels/statistics/StatisticsPage
  */
 
@@ -25,7 +25,7 @@ export interface StatisticsPageProps {
    *  see {@link useYouTubeStats}. Also passed down from `LecturesPage`. */
   youtubeStats: unknown | null;
   /**
-   * The research-area topic explorer, rendered as the second stacked section.
+   * The research-area topic explorer, rendered right after the topics by year.
    *
    * A slot rather than a direct import: the 44 research-area definitions and
    * their resolutions live in `debate-webview`, which depends on this package,

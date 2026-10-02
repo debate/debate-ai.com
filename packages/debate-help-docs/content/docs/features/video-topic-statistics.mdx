@@ -13,8 +13,7 @@ YouTube channel view/upload charts that used to live only in a modal.
 
 ## What it shows
 
-Three sections, stacked — the per-season timeline first, then the research
-areas, then the channel charts:
+Three sections, stacked, with Debate Topics by Year at the top:
 
 - **Debate Topics by Year** (`DebateTopicsExplorer`) — a timeline
   (`components/timeline/Timeline.tsx`, adapted from the shadcn-space
@@ -44,10 +43,9 @@ areas, then the channel charts:
 - **YouTube Channel Statistics** (`YouTubeStatsCharts`) — the top-channels
   table and the views/videos/avg-views-over-time charts `YouTubeStatsModal`
   already drew in its dialog, extracted so they can render inline on a full
-  page instead. The four charts sit in one grid (one column on narrow screens,
-  two at `sm`, four at `xl`) at a reduced 180px height — each answers one
-  total, so they read side by side rather than a scroll apart. Backed by
-  `useYouTubeStats()` (`GET /api/youtube-stats`,
+  page instead. The four totals charts (views, videos and average views over
+  time, and average views by elim round) are compact and sit four to a row on
+  wide screens, two on tablets and one on phones. Backed by `useYouTubeStats()` (`GET /api/youtube-stats`,
   itself optional furniture — a deployment with no YouTube API key just
   leaves this section off rather than erroring).
 
@@ -81,7 +79,7 @@ panels/LecturesPage.tsx — currentCategory === "statistics" branch
   → panels/statistics/StatisticsPage.tsx
     → components/topic-explorer/DebateTopicsExplorer.tsx   (topics, youtubeStats.byYear)
       → components/timeline/Timeline.tsx
-    → topicAreasSlot  (TopicAreasExplorer, mounted by debate-webview)
+    → components/topic-explorer/TopicAreasExplorer.tsx
     → components/youtube-stats-modal/YouTubeStatsCharts.tsx (youtubeStats prop)
 ```
 

@@ -134,6 +134,16 @@ version is kept and the queued copy is skipped. **Deduplicate**, next to
 **Publish all**, clears every queued round that is already in the library
 (within the selected format) without publishing anything.
 
+### Video durations
+
+**Fetch video durations** looks up how long every stored video is — published
+rounds and lectures plus the queue — and shows the library's total running time
+in hours, split into published and queued. **Fetch missing durations** only
+looks up videos that don't have a length yet, so it is quick to run again after
+new videos arrive; **Refetch all** looks every video up again. Videos YouTube
+no longer serves (deleted or private) are counted as unavailable and stay
+without a duration.
+
 ## Known gaps
 
 Stacks only exist where a description links the videos, so a round-analysis
@@ -147,3 +157,6 @@ round's 1AC and 2NR arguments when it is published. The queue has no editor,
 so a wrong split is corrected in the library after publishing. The records
 have no upload date, so these rounds are dated January 1st of their event's
 year.
+
+Video durations are only shown as totals on `/admin`; the library cards and
+watch page don't display a video's length yet.
