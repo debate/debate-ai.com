@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
   buildVideoRows,
+  canonicalCategoryLabel,
+  categoryKeyAliases,
   formatSeasonLabel,
   normalizeCategoryKey,
   publishedMsForDate,
@@ -195,5 +197,26 @@ describe("buildVideoRows", () => {
   it("applies the top-picks list", () => {
     const rows = buildVideoRows(assets);
     expect(rows.find((r) => r.videoId === "vid-lecture")?.isTopPick).toBe(true);
+  });
+});
+
+describe("merged lecture categories", () => {
+  it("folds Topic Analysis into Topic Lectures", () => {
+    expect(normalizeCategoryKey("Topic Analysis")).toBe("topic_lectures");
+    expect(normalizeCategoryKey("topic_analysis")).toBe("topic_lectures");
+    expect(canonicalCategoryLabel("Topic Analysis")).toBe("Topic Lectures");
+    expect(canonicalCategoryLabel("Demo Debates")).toBe("Demo Debates");
+  });
+
+  it("matches old stored keys when filtering on the merged key", () => {
+    expect(categoryKeyAliases("topic_lectures")).toEqual(["topic_lectures", "topic_analysis"]);
+    expect(categoryKeyAliases("topic_analysis")).toEqual(["topic_lectures", "topic_analysis"]);
+    expect(categoryKeyAliases("demo_debates")).toEqual(["demo_debates"]);
+  });
+
+  it("builds rows for old Topic Analysis tuples under the merged category", () => {
+    const row = tupleToVideoRow(["vid-topic", "2024 Topic Analysis", "2024-08-01", "Champion Briefs", 10, "", "Topic Analysis"], "lecture");
+    expect(row?.category).toBe("Topic Lectures");
+    expect(row?.categoryKey).toBe("topic_lectures");
   });
 });
