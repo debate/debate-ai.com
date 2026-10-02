@@ -37,7 +37,7 @@ vi.mock("next/image", () => ({
 import type { ToolNavTreeProps } from "../src/components/category-gallery/ToolNavTree";
 
 const { ToolNavTree } = await import("../src/components/category-gallery/ToolNavTree");
-const { PRACTICE_SECTION_ID, RESEARCH_SECTION_ID } = await import(
+const { INSIGHTS_SECTION_ID, RESEARCH_SECTION_ID } = await import(
   "../src/components/category-gallery/sidebar-tool-sections"
 );
 
@@ -54,7 +54,7 @@ describe("ToolNavTree sectionIds", () => {
     expect(html).not.toContain("Practice");
   });
 
-  it("leaves out the glossary/rankings pair, which rides with Practice", () => {
+  it("leaves out the glossary/rankings pair, which rides with Insights", () => {
     const html = render({ sectionIds: [RESEARCH_SECTION_ID] });
 
     expect(html).not.toContain("/dictionary");
@@ -101,16 +101,21 @@ describe("ToolNavTree sectionIds", () => {
     expect(html).toContain("Practice");
   });
 
-  it("closes Practice with the glossary and statistics links", () => {
-    // They used to hang below the whole tree, in no section at all.
-    pathname.current = "/practice/prep-notes";
+  it("splits Insights into its Performance and Data & Reference subgroups", () => {
+    pathname.current = "/practice/glossary";
     try {
-      const html = render({ sectionIds: [PRACTICE_SECTION_ID] });
+      const html = render({ sectionIds: [INSIGHTS_SECTION_ID] });
 
+      const performance = html.indexOf(">Performance<");
+      const reference = html.indexOf(">Data &amp; Reference<");
+      expect(performance).toBeGreaterThan(-1);
+      expect(reference).toBeGreaterThan(performance);
+      // Each label heads its own links.
+      // lastIndexOf: the section heading also carries this href, as its flagship.
+      expect(html.lastIndexOf("/coaching/rankings")).toBeGreaterThan(performance);
+      expect(html.indexOf("/practice/level")).toBeLessThan(reference);
+      expect(html.indexOf("/practice/statistics")).toBeGreaterThan(reference);
       expect(html).toContain("/practice/glossary");
-      expect(html).toContain("/practice/statistics");
-      // Last in the section: reference material after the tools themselves.
-      expect(html.indexOf("/practice/prep-notes")).toBeLessThan(html.indexOf("/practice/glossary"));
     } finally {
       pathname.current = "/research/cards";
     }
@@ -121,5 +126,23 @@ describe("ToolNavTree sectionIds", () => {
 
     expect(html).toContain("Research");
     expect(html).not.toContain("Coaching");
+  });
+});
+
+describe("SIDEBAR_TOOL_SECTIONS", () => {
+  it("is the five requested sections, in order", async () => {
+    const { SIDEBAR_TOOL_SECTIONS } = await import(
+      "../src/components/category-gallery/sidebar-tool-sections"
+    );
+    expect(SIDEBAR_TOOL_SECTIONS.map((section) => section.title)).toEqual([
+      "Research",
+      "Prep & Scout",
+      "Practice",
+      "Coaching",
+      "Insights",
+    ]);
+    // Every link appears in exactly one section.
+    const hrefs = SIDEBAR_TOOL_SECTIONS.flatMap((section) => section.tools.map((tool) => tool.href));
+    expect(new Set(hrefs).size).toBe(hrefs.length);
   });
 });
