@@ -19,11 +19,12 @@ export type FontOption = {
   value: string;
 };
 
-/** "System Default" clears the inline style so the OS/browser default (and Tailwind's `font-sans`) takes over. Every other value is loaded via a Google Fonts `@import` in `app/globals.css`, except the handful of universally pre-installed system fonts (Arial, Courier New, Georgia, Times New Roman, Trebuchet MS, Verdana). */
+/** "System Default" clears the inline style so the OS/browser default (and Tailwind's `font-sans`) takes over. Every other value is loaded from Google Fonts by `styles/web-fonts.ts` (Garamond carries its own Georgia/serif fallback stack), except the handful of universally pre-installed system fonts (Arial, Courier New, Georgia, Times New Roman, Trebuchet MS, Verdana). */
 export const FONT_OPTIONS: readonly FontOption[] = [
   { name: "System Default", value: "system-default" },
   { name: "Arial", value: "Arial" },
   { name: "Courier New", value: "Courier New" },
+  { name: "Garamond", value: '"EB Garamond", Georgia, serif' },
   { name: "Georgia", value: "Georgia" },
   { name: "Inter", value: "Inter" },
   { name: "Lato", value: "Lato" },
