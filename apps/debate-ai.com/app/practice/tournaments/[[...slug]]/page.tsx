@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Upcoming speech and debate tournaments from Tabroom, with their invitations, published pairings and results.",
 }
 
-export { default } from "debate-webview/routes/tournaments/[[...slug]]/page"
+export { default } from "@debate/webview/routes/tournaments/[[...slug]]/page"

@@ -20,7 +20,7 @@ import {
   sortCustomOpponentPersonaLibrary,
   type CustomOpponentPersonaLibraryEntryInput,
   type SavedCustomOpponentPersona,
-} from "debate-speech-writer/src/opponent/opponent-persona-library";
+} from "@debate/speech-writer/src/opponent/opponent-persona-library";
 
 export type { CustomOpponentPersonaLibraryEntryInput, SavedCustomOpponentPersona };
 

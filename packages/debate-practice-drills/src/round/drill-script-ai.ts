@@ -18,7 +18,7 @@
  * @module round/drill-script-ai
  */
 
-import type { Drill, DrillKind } from "debate-round/src/flow/drill-generator";
+import type { Drill, DrillKind } from "@debate/round/src/flow/drill-generator";
 
 export type DrillScriptAiInput = {
   /** The side the drill was generated for, e.g. `"AFF"`. */

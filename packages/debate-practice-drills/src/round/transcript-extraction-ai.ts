@@ -25,7 +25,7 @@
  * @module round/transcript-extraction-ai
  */
 
-import type { FlowRowSummary } from "debate-round/src/flow/flow-transcript-summary";
+import type { FlowRowSummary } from "@debate/round/src/flow/flow-transcript-summary";
 
 export type TranscriptExtractionAiInput = {
   /** The speech (column) this transcript belongs to, e.g. `"1AC"`. */

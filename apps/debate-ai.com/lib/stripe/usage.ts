@@ -1,6 +1,6 @@
 import { and, eq, sql } from "drizzle-orm";
 import { usageCounters } from "@/lib/database/schema";
-import { DAILY_LIMIT_KEY, PLAN_LIMIT_HEADER, limitsFor, tierForPlan, type DailyMetric, type TierId, type TierLimits } from "debate-webview/lib/stripe/limits";
+import { DAILY_LIMIT_KEY, PLAN_LIMIT_HEADER, limitsFor, tierForPlan, type DailyMetric, type TierId, type TierLimits } from "@debate/webview/lib/stripe/limits";
 import { getActiveSubscription } from "./store";
 
 /**

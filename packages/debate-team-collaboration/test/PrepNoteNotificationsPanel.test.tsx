@@ -12,8 +12,8 @@
  *
  * Uses the same jsdom + `react-dom/client` + `act` pattern
  * `debate-search-evidence/test/ArgumentLibraryPanel.test.tsx`,
- * `debate-round/test/FlowEditLogPanel.test.tsx` and
- * `debate-videos/test/glowing-effect-listeners.test.tsx` established for a
+ * `@debate/round/test/FlowEditLogPanel.test.tsx` and
+ * `@debate/videos/test/glowing-effect-listeners.test.tsx` established for a
  * component that loads its own data inside a `useEffect` (a `node`-environment
  * `renderToStaticMarkup` snapshot never runs effects, so it can't see this
  * panel's notifications at all) — this package's first use of that pattern,

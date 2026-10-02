@@ -9,7 +9,7 @@
  */
 
 import { useEffect } from "react"
-import { installDebaterActivityListener } from "debate-community"
+import { installDebaterActivityListener } from "@debate/community"
 
 export function DebaterActivityListener() {
   useEffect(() => installDebaterActivityListener(), [])

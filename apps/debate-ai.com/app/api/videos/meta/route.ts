@@ -1,9 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
-import topics from "debate-data-sync/data/debate-topics.json";
-import champions from "debate-data-sync/data/debate-champions.json";
+import topics from "@debate/data-sync/data/debate-topics.json";
+import champions from "@debate/data-sync/data/debate-champions.json";
 import { getVideoMeta, getVideoSuggestions } from "@/lib/videos/video-repository";
-import type { VideoQueryParams } from "debate-data-sync/src/videos/video-query";
-import type { DebateHistory } from "debate-videos";
+import type { VideoQueryParams } from "@debate/data-sync/src/videos/video-query";
+import type { DebateHistory } from "@debate/videos";
 
 /**
  * Page-level video metadata: library counts for the quick-link cards, the

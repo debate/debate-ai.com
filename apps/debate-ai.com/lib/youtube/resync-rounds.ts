@@ -4,8 +4,8 @@ import {
   getVideosForChannel,
   fetchFullDescriptions,
   setYouTubeApiKey,
-} from "debate-data-sync/src/youtube/youtube-api";
-import { publishedAfter } from "debate-data-sync/src/youtube/channel-config";
+} from "@debate/data-sync/src/youtube/youtube-api";
+import { publishedAfter } from "@debate/data-sync/src/youtube/channel-config";
 import {
   parseDebateStyle,
   parseRoundLevel,
@@ -13,8 +13,8 @@ import {
   parseTeams,
   parseWinner,
   parseJudgeDecision,
-} from "debate-data-sync/src/youtube/parsers/round-parsers";
-import { isRound } from "debate-data-sync/src/youtube/parsers/video-classifier";
+} from "@debate/data-sync/src/youtube/parsers/round-parsers";
+import { isRound } from "@debate/data-sync/src/youtube/parsers/video-classifier";
 import { getDBFromContext } from "../database/context";
 import { describeError } from "../database/errors";
 import { youtubeChannels, youtubeRoundVideos, youtubeSyncRuns, youtubeVideoExclusions } from "../database/schema";

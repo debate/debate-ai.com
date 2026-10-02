@@ -2,7 +2,7 @@
  * @fileoverview Request validation for the Practice Partners API.
  *
  * Every option a profile or challenge can carry is checked against the lists
- * in `debate-webview/lib/practice-partners/types.ts` — the same lists the form
+ * in `@debate/webview/lib/practice-partners/types.ts` — the same lists the form
  * draws its chips from — so the board can never be handed a style it has no
  * label for. Nothing here talks to the database: whether the named opponent is
  * actually open to challenges is the route's question, since it needs a query.

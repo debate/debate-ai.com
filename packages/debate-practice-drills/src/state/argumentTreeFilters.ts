@@ -10,7 +10,7 @@
  * @module state/argumentTreeFilters
  */
 
-import type { ArgumentTreeFilter } from "debate-round/src/flow/argument-tree";
+import type { ArgumentTreeFilter } from "@debate/round/src/flow/argument-tree";
 
 export type ArgumentTreeFilterSelection = {
   roundId: string;

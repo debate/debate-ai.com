@@ -8,7 +8,7 @@
  * dependency would make `bun install` fail outright whenever the submodule
  * has not been checked out. Keeping the path import here means an upstream
  * reorganization is a one-file fix.
- * @module debate-rankings-adapter/upstream
+ * @module @debate/rankings-adapter/upstream
  */
 
 export * from "../../debate-rankings/js/index";

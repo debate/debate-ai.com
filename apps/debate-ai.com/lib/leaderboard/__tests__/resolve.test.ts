@@ -6,12 +6,12 @@ const scrapeVCX = vi.fn();
 const scrapeVPF = vi.fn();
 const scrapeVLD = vi.fn();
 
-vi.mock("debate-data-sync/src/rankings/sync-rankings-debatedrills", () => ({
+vi.mock("@debate/data-sync/src/rankings/sync-rankings-debatedrills", () => ({
   scrapeDivision: (...args: unknown[]) => scrapeDivision(...args),
   getDatasets: (...args: unknown[]) => getDatasets(...args),
 }));
 
-vi.mock("debate-data-sync/src/rankings/sync-rankings-tocbidlist", () => ({
+vi.mock("@debate/data-sync/src/rankings/sync-rankings-tocbidlist", () => ({
   scrapeVCX: () => scrapeVCX(),
   scrapeVPF: () => scrapeVPF(),
   scrapeVLD: () => scrapeVLD(),

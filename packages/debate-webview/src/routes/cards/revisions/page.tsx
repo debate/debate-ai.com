@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { RevisionIncentivesPanel } from "debate-research-evidence"
+import { RevisionIncentivesPanel } from "@debate/research-evidence"
 import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHeader"
 
 export default function CardsRevisionsPage() {

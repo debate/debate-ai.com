@@ -21,8 +21,8 @@
  * @module round/coach-feedback-ai
  */
 
-import type { CoachingPrompt } from "debate-round/src/flow/coach-mode";
-import { buildCoachingSummaryText } from "debate-round/src/flow/coach-mode";
+import type { CoachingPrompt } from "@debate/round/src/flow/coach-mode";
+import { buildCoachingSummaryText } from "@debate/round/src/flow/coach-mode";
 
 export type CoachFeedbackAiInput = {
   /** The side the coaching session was generated for, e.g. `"AFF"`. */

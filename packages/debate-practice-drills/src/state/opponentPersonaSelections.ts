@@ -19,7 +19,7 @@
  * @module state/opponentPersonaSelections
  */
 
-import type { OpponentDifficulty, OpponentPersona } from "debate-speech-writer/src/opponent/opponent-personas";
+import type { OpponentDifficulty, OpponentPersona } from "@debate/speech-writer/src/opponent/opponent-personas";
 
 export type OpponentPersonaSelection = {
   sessionId: string;

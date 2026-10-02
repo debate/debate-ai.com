@@ -3,7 +3,7 @@ import { and, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { savedRoundPairings } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
-import { isValidRoundPairingRecord, MAX_SAVED_ROUND_PAIRING_BYTES } from "debate-round"
+import { isValidRoundPairingRecord, MAX_SAVED_ROUND_PAIRING_BYTES } from "@debate/round"
 import { withRouteErrors } from "@/lib/api/route-errors"
 
 /**

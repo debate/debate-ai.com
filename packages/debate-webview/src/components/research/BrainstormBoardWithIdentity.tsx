@@ -9,8 +9,8 @@
  * place that knows about `better-auth`. Mirrors `TaskInboxWithIdentity.tsx`.
  */
 
-import { BrainstormBoardPanel } from "debate-team-collaboration"
-import { deriveContributorIdFromSessionIdentity } from "debate-research-evidence"
+import { BrainstormBoardPanel } from "@debate/team-collaboration"
+import { deriveContributorIdFromSessionIdentity } from "@debate/research-evidence"
 import { useSession } from "../../lib/hooks/useSession"
 
 export function BrainstormBoardWithIdentity() {

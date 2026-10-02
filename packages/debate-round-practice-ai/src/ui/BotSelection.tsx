@@ -14,15 +14,15 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { Button } from "debate-speech-writer/src/ui/primitives/button"
-import { Input } from "debate-speech-writer/src/ui/primitives/input"
+import { Button } from "@debate/speech-writer/src/ui/primitives/button"
+import { Input } from "@debate/speech-writer/src/ui/primitives/input"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "debate-speech-writer/src/ui/primitives/select"
+} from "@debate/speech-writer/src/ui/primitives/select"
 import { createDebate } from "../client"
 import {
   ALL_BOTS,

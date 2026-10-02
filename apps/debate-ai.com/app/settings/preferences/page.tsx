@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Redirects to the Preferences tab of Settings",
 }
 
-export { default } from "debate-webview/routes/settings/preferences/page"
+export { default } from "@debate/webview/routes/settings/preferences/page"

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { DebateApp, type AppRoute } from 'debate-webview';
+import { DebateApp, type AppRoute } from '@debate/webview';
 import { Settings } from 'lucide-react';
 
 import { setProxiedApiBase } from '@/src/app-host/api-proxy';

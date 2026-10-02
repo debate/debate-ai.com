@@ -44,7 +44,7 @@ import {
   listSharedCustomOpponentPersonas,
   saveCustomOpponentPersonaToAccount,
 } from "../round/custom-opponent-persona-library-client";
-import type { CustomOpponentPersonaLibraryEntryInput } from "debate-speech-writer/src/opponent/opponent-persona-library";
+import type { CustomOpponentPersonaLibraryEntryInput } from "@debate/speech-writer/src/opponent/opponent-persona-library";
 
 // Module-level (not per-hook-instance) so multiple mounts of this hook in
 // one page load share one account fetch and one "is this browser signed

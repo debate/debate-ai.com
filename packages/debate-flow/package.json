@@ -1,7 +1,7 @@
 {
-  "name": "debate-flow-ebb",
+  "name": "@debate/flow-ebb",
   "version": "0.1.0",
-  "description": "ebb, the local-first keyboard-first flow editor, ported in as a workspace package. EbbFlowEmbed mounts it as one column of a host page (debate-round's live round editor) rather than the page-owning app it is standalone.",
+  "description": "ebb, the local-first keyboard-first flow editor, ported in as a workspace package. EbbFlowEmbed mounts it as one column of a host page (@debate/round's live round editor) rather than the page-owning app it is standalone.",
   "private": true,
   "type": "module",
   "license": "MPL-2.0",

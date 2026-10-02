@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 import type { Box } from "../src/types/flow";
-import { buildCustomJudgeParadigm } from "debate-speech-writer/src/judge/judge-paradigms";
+import { buildCustomJudgeParadigm } from "@debate/speech-writer/src/judge/judge-paradigms";
 import {
   buildCustomOpponentPersona,
   opponentPersonas,
-} from "debate-speech-writer/src/opponent/opponent-personas";
+} from "@debate/speech-writer/src/opponent/opponent-personas";
 import { buildAiVersusSpeechOrder } from "../src/round/ai-versus-speech-order";
 import type { PriorSpeechRecord } from "../src/round/ai-versus-speech-order";
 import {

@@ -1,5 +1,5 @@
 {
-  "name": "debate-rankings-adapter",
+  "name": "@debate/rankings-adapter",
   "version": "0.1.0",
   "description": "Adapter over the debate-rankings git submodule (github.com/debate/debate-rankings) for the web UI: re-exports its datasets and CSV loader and adds the site's team-label lookup",
   "private": true,

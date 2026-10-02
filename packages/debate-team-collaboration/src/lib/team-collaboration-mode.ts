@@ -40,8 +40,8 @@ import {
   buildRoutingSummaryText,
   type ContributorAvailability,
   type RoutingResult,
-} from "debate-research-evidence/src/lib/research-task-routing";
-import type { TopicCoverageReport } from "debate-research-evidence/src/lib/topic-coverage";
+} from "@debate/research-evidence/src/lib/research-task-routing";
+import type { TopicCoverageReport } from "@debate/research-evidence/src/lib/topic-coverage";
 
 /** Where a sprint note's underlying topic currently stands — mirrors `debate-round`'s `PrepNoteStatus`. */
 export type SprintNoteStatus = "open" | "covered" | "needs-follow-up";

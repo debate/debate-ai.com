@@ -15,7 +15,7 @@
  * @module round/judge-decision-panel
  */
 
-import type { JudgeParadigm } from "debate-speech-writer/src/judge/judge-paradigms";
+import type { JudgeParadigm } from "@debate/speech-writer/src/judge/judge-paradigms";
 import { buildJudgeDecisionRubric, type JudgeDecisionAiResult, type JudgeDecisionRubricRow, type JudgeDecisionWinner } from "./judge-decision-ai";
 
 /** One paradigm's result within a panel run, identified by that paradigm's display name. */

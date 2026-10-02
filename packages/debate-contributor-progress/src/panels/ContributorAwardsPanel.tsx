@@ -56,19 +56,19 @@
 
 import { useEffect, useState } from "react"
 import { Award } from "lucide-react"
-import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
-import { Button } from "debate-research-evidence/src/ui/primitives/button"
-import { Input } from "debate-research-evidence/src/ui/primitives/input"
-import { Label } from "debate-research-evidence/src/ui/primitives/label"
-import { EmptyState, PanelShell } from "debate-research-evidence/src/ui/panels/panel-shell"
+import { Badge } from "@debate/research-evidence/src/ui/primitives/badge"
+import { Button } from "@debate/research-evidence/src/ui/primitives/button"
+import { Input } from "@debate/research-evidence/src/ui/primitives/input"
+import { Label } from "@debate/research-evidence/src/ui/primitives/label"
+import { EmptyState, PanelShell } from "@debate/research-evidence/src/ui/panels/panel-shell"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "debate-research-evidence/src/ui/primitives/select"
-import { Textarea } from "debate-research-evidence/src/ui/primitives/textarea"
+} from "@debate/research-evidence/src/ui/primitives/select"
+import { Textarea } from "@debate/research-evidence/src/ui/primitives/textarea"
 import {
   announceContributorAwards,
   buildPersistedTopContributorAwards,
@@ -76,7 +76,7 @@ import {
   listAnnouncedContributorAwards,
   type AnnouncedContributorAwards,
 } from "../state/contributorAwardAnnouncements"
-import { isContributorAwardsLiveUpdateStorageEvent } from "debate-research-evidence/src/state/live-update"
+import { isContributorAwardsLiveUpdateStorageEvent } from "@debate/research-evidence/src/state/live-update"
 import {
   AWARD_KIND_ORDER,
   DEFAULT_AWARD_CATEGORY_LABELS,
@@ -87,7 +87,7 @@ import {
   type ContributorAward,
   type HallOfFameEntry,
   type PeerNomination,
-} from "debate-research-evidence/src/lib/contributor-awards"
+} from "@debate/research-evidence/src/lib/contributor-awards"
 import {
   MAX_NOMINATION_NOTE_LENGTH,
   deletePeerNomination,
@@ -95,7 +95,7 @@ import {
   secondPeerNomination,
   submitPeerNomination,
 } from "../state/contributorAwardNominations"
-import type { ContributionKind } from "debate-research-evidence/src/lib/community-rating"
+import type { ContributionKind } from "@debate/research-evidence/src/lib/community-rating"
 
 /** Renders one category winner card, plus that category's top peer nominee(s) if any exist. */
 function AwardCard({

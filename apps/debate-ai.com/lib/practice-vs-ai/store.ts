@@ -25,14 +25,14 @@ import type {
   DebateStore,
   DebateVsBotRecord,
   GamificationProfile,
-} from "debate-practice-vs-ai"
+} from "@debate/practice-vs-ai"
 import {
   advanceDailyStreak,
   computeGamificationAward,
   currentDisplayStreak,
   resolveResultStatus,
   utcDayKey,
-} from "debate-practice-vs-ai"
+} from "@debate/practice-vs-ai"
 import { getDBFromContext } from "@/lib/database/context"
 import { practiceVsAiDebates, userSettings } from "@/lib/database/schema"
 

@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { isVideoDocumentKind } from "debate-videos";
+import { isVideoDocumentKind } from "@debate/videos";
 import { getStaffAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
 import { describeError } from "@/lib/database/errors";

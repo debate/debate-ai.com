@@ -28,7 +28,7 @@
  * @module editor/recent-tools
  */
 
-import { canonicalCategoryHref } from 'debate-data-sync/src/routes/category-paths';
+import { canonicalCategoryHref } from '@debate/data-sync/src/routes/category-paths';
 
 const STORAGE_KEY = 'recent-tools';
 const CHANGE_EVENT = 'recent-tools-changed';

@@ -4,7 +4,7 @@
  * Account-linked live sharing for /reason-editor — the contacts-list front
  * door to the CardMirror engine's real-time collaboration (see
  * packages/debate-help-docs/content/docs/features/contacts.mdx). Two components, both talking to the engine
- * through `debate-editor/collab-bridge`:
+ * through `@debate/editor/collab-bridge`:
  *
  * `ShareWithContacts` (trigger + dialog): pick contacts and an optional note;
  * the control starts a co-editing session on the open document if it has none
@@ -36,7 +36,7 @@ import {
   useCardShares,
   useContacts,
   type CardShareEntry,
-} from "debate-team-collaboration"
+} from "@debate/team-collaboration"
 import { Button } from "../../lib/ui/primitives/button"
 import { Input } from "../../lib/ui/primitives/input"
 import {
@@ -51,13 +51,13 @@ import { useSession } from "../../lib/hooks/useSession"
 import { useReasonDocs } from "../reason-docs/ReasonDocsProvider"
 import { urlWithoutParam } from "../../lib/reason-docs/route-selection"
 
-type Bridge = typeof import("debate-editor/collab-bridge")
+type Bridge = typeof import("@debate/editor/collab-bridge")
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
 /** The engine registers its collab seams at boot; wait (briefly) for that before a programmatic join/start. */
 async function bridgeWhenReady(timeoutMs: number): Promise<Bridge | null> {
-  const bridge = await import("debate-editor/collab-bridge")
+  const bridge = await import("@debate/editor/collab-bridge")
   const deadline = Date.now() + timeoutMs
   while (!bridge.collabSeamsReady()) {
     if (Date.now() > deadline) return null
@@ -142,7 +142,7 @@ export function SharedCardOpener() {
 
   useEffect(() => {
     if (!user?.name) return
-    void import("debate-editor/collab-bridge").then((b) => b.seedCollabDisplayName(user.name))
+    void import("@debate/editor/collab-bridge").then((b) => b.seedCollabDisplayName(user.name))
   }, [user?.name])
 
   const shareParam = searchParams.get("share")

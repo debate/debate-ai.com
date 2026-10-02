@@ -37,15 +37,15 @@
  */
 
 import { useCallback, useEffect, useState } from "react";
-import { fetchUserSettings, saveOutlineFilterPresetOp } from "debate-round/src/round/user-settings-client";
+import { fetchUserSettings, saveOutlineFilterPresetOp } from "@debate/round/src/round/user-settings-client";
 import {
   isValidOutlineFilterPresetsList,
   MAX_OUTLINE_FILTER_PRESETS,
   normalizeOutlineFilterPresetName,
   type OutlineFilterPreset,
   type OutlineFilterPresetOp,
-} from "debate-round/src/state/outlineFilterPresets";
-import type { ArgumentTreeFilter } from "debate-round/src/flow/argument-tree";
+} from "@debate/round/src/state/outlineFilterPresets";
+import type { ArgumentTreeFilter } from "@debate/round/src/flow/argument-tree";
 
 const STORAGE_KEY = "outline-filter-presets";
 const CHANGE_EVENT = "outline-filter-presets-changed";

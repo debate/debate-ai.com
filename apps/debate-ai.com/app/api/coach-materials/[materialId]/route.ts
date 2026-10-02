@@ -3,7 +3,7 @@ import { and, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { savedCoachMaterials, savedCoachMaterialVersions } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
-import { isValidCoachMaterialRecord, MAX_SAVED_COACH_MATERIAL_BYTES } from "debate-speech-writer"
+import { isValidCoachMaterialRecord, MAX_SAVED_COACH_MATERIAL_BYTES } from "@debate/speech-writer"
 import { withRouteErrors } from "@/lib/api/route-errors"
 
 /**

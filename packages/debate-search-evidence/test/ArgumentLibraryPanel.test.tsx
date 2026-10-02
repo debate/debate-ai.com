@@ -9,8 +9,8 @@
  * and this panel's "Rename"/"Update" buttons already existed and were fully
  * wired together, just never exercised by a test, so the doc's gaps had gone
  * stale without anyone noticing. Uses the same jsdom + `react-dom/client` +
- * `act` pattern `debate-videos/test/glowing-effect-listeners.test.tsx` and
- * `debate-round/test/FlowEditLogPanel.test.tsx` established for a component
+ * `act` pattern `@debate/videos/test/glowing-effect-listeners.test.tsx` and
+ * `@debate/round/test/FlowEditLogPanel.test.tsx` established for a component
  * that loads its own data inside a `useEffect` (a `node`-environment
  * `renderToStaticMarkup` snapshot never runs effects, so it can't see this
  * panel's library or saved collections at all).

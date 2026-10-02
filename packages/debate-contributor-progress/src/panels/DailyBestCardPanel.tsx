@@ -34,13 +34,13 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { CalendarRange, ChevronLeft, ChevronRight, MessageSquare, Sparkles, Trophy } from "lucide-react"
-import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
-import { Button } from "debate-research-evidence/src/ui/primitives/button"
-import { Input } from "debate-research-evidence/src/ui/primitives/input"
-import { Label } from "debate-research-evidence/src/ui/primitives/label"
-import { PanelShell } from "debate-research-evidence/src/ui/panels/panel-shell"
-import { Textarea } from "debate-research-evidence/src/ui/primitives/textarea"
-import { cn } from "debate-research-evidence/src/ui/lib/utils"
+import { Badge } from "@debate/research-evidence/src/ui/primitives/badge"
+import { Button } from "@debate/research-evidence/src/ui/primitives/button"
+import { Input } from "@debate/research-evidence/src/ui/primitives/input"
+import { Label } from "@debate/research-evidence/src/ui/primitives/label"
+import { PanelShell } from "@debate/research-evidence/src/ui/panels/panel-shell"
+import { Textarea } from "@debate/research-evidence/src/ui/primitives/textarea"
+import { cn } from "@debate/research-evidence/src/ui/lib/utils"
 import {
   announceDailyBestCard,
   buildAnnouncedWeeklyBestCardRollups,
@@ -49,15 +49,15 @@ import {
   listAnnouncedDailyBestCards,
   type AttributedWeeklyBestCardRollup,
 } from "../state/dailyBestCardAnnouncements"
-import type { AttributedDailyBestCard } from "debate-research-evidence/src/state/contributions"
+import type { AttributedDailyBestCard } from "@debate/research-evidence/src/state/contributions"
 import {
   buildDailyBestCardCalendarMonth,
   buildDailyBestCardHighlight,
   buildWeeklyBestCardRollupHighlight,
   getUtcMonthKey,
   shiftUtcMonthKey,
-} from "debate-research-evidence/src/lib/daily-best-card"
-import { isDailyBestCardLiveUpdateStorageEvent } from "debate-research-evidence/src/state/live-update"
+} from "@debate/research-evidence/src/lib/daily-best-card"
+import { isDailyBestCardLiveUpdateStorageEvent } from "@debate/research-evidence/src/state/live-update"
 import {
   useDailyBestCardComments,
   type UseDailyBestCardCommentsResult,

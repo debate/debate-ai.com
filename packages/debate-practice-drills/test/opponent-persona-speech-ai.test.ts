@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { opponentPersonas } from "debate-speech-writer/src/opponent/opponent-personas";
+import { opponentPersonas } from "@debate/speech-writer/src/opponent/opponent-personas";
 import { AI_VERSUS_SPEECH_SYSTEM_PROMPT } from "../src/round/ai-versus-speech-ai";
 import { buildPersonaAiVersusSystemPrompt } from "../src/round/opponent-persona-speech-ai";
 

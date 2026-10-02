@@ -9,12 +9,12 @@
  * @module state/flowSummaries
  */
 
-import type { FlowRowSummary } from "debate-round/src/flow/flow-transcript-summary";
+import type { FlowRowSummary } from "@debate/round/src/flow/flow-transcript-summary";
 
 import {
   mirrorToolRecordDelete,
   mirrorToolRecordSave,
-} from "debate-data-sync/src/state/tool-record-mirror";
+} from "@debate/data-sync/src/state/tool-record-mirror";
 
 export type FlowSummaryRecord = {
   roundId: string;

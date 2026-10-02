@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { buildPersistedCoachingProgramCalendar } from "../src/state/coachingProgramCalendar";
-import { saveCoachingProgram } from "debate-team-collaboration/src/state/coachingPrograms";
-import { saveGroupChallenge } from "debate-team-collaboration/src/state/groupChallenges";
-import { saveSprintNote } from "debate-team-collaboration/src/state/sprintNotes";
-import type { CoachingProgramConfig } from "debate-team-collaboration/src/round/coaching-program";
-import type { GroupChallenge } from "debate-team-collaboration/src/lib/group-challenges";
-import type { SprintNote } from "debate-team-collaboration/src/lib/team-collaboration-mode";
+import { saveCoachingProgram } from "@debate/team-collaboration/src/state/coachingPrograms";
+import { saveGroupChallenge } from "@debate/team-collaboration/src/state/groupChallenges";
+import { saveSprintNote } from "@debate/team-collaboration/src/state/sprintNotes";
+import type { CoachingProgramConfig } from "@debate/team-collaboration/src/round/coaching-program";
+import type { GroupChallenge } from "@debate/team-collaboration/src/lib/group-challenges";
+import type { SprintNote } from "@debate/team-collaboration/src/lib/team-collaboration-mode";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {

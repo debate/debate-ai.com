@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../../lib/ui/primitives/card";
-import { VIDEO_DOCUMENT_LABELS } from "debate-videos";
+import { VIDEO_DOCUMENT_LABELS } from "@debate/videos";
 import { VideoContentDialog, type ContentDialogVideo } from "./VideoContentDialog";
 
 /**

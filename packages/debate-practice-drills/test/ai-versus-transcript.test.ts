@@ -6,7 +6,7 @@ import {
   buildAiVersusTranscriptComparisonText,
   buildAiVersusTranscriptText,
 } from "../src/round/ai-versus-transcript";
-import type { AiVersusRoundRecord } from "debate-round/src/state/aiVersusRounds";
+import type { AiVersusRoundRecord } from "@debate/round/src/state/aiVersusRounds";
 
 const ROUND: AiVersusRoundRecord = {
   roundId: "round-1",

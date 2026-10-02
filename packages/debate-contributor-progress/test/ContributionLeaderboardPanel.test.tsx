@@ -13,8 +13,8 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { createElement } from "react";
 
 import { ContributionLeaderboardPanel } from "../src/panels/ContributionLeaderboardPanel";
-import { saveContribution } from "debate-research-evidence/src/state/contributions";
-import type { AttributedContribution } from "debate-research-evidence/src/lib/contribution-leaderboard";
+import { saveContribution } from "@debate/research-evidence/src/state/contributions";
+import type { AttributedContribution } from "@debate/research-evidence/src/lib/contribution-leaderboard";
 import { mount } from "./helpers/mount";
 import type { Mounted } from "./helpers/mount";
 

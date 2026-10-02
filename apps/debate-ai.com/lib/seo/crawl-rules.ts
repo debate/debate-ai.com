@@ -22,7 +22,7 @@
  * @module lib/seo/crawl-rules
  */
 
-import { SIDEBAR_TOOL_SECTIONS, VIDEO_REFERENCE_LINKS } from "debate-videos";
+import { SIDEBAR_TOOL_SECTIONS, VIDEO_REFERENCE_LINKS } from "@debate/videos";
 
 /**
  * The per-user surfaces: the REASON document workspace, the round workspace,

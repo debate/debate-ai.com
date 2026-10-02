@@ -42,9 +42,9 @@
  */
 
 import { buildBrainstormBoard, buildBrainstormBoardsForCoverageGaps, buildEvidenceEntryFromBrainstormIdea, groupIdeasByBoard, mergeBrainstormIdeas, type BrainstormBoard, type BrainstormIdea } from "../lib/team-brainstorm-assist";
-import type { EvidenceLibraryEntry } from "debate-research-evidence/src/lib/shared-evidence-library";
-import { buildPersistedTopicCoverageReport } from "debate-research-evidence/src/state/trackedArguments";
-import { getEvidenceLibraryEntry, saveEvidenceLibraryEntry } from "debate-research-evidence/src/state/evidenceLibraryEntries";
+import type { EvidenceLibraryEntry } from "@debate/research-evidence/src/lib/shared-evidence-library";
+import { buildPersistedTopicCoverageReport } from "@debate/research-evidence/src/state/trackedArguments";
+import { getEvidenceLibraryEntry, saveEvidenceLibraryEntry } from "@debate/research-evidence/src/state/evidenceLibraryEntries";
 
 const STORAGE_KEY = "brainstormIdeas";
 

@@ -26,8 +26,8 @@
  * @module round/judge-decision-ai
  */
 
-import type { JudgeParadigm } from "debate-speech-writer/src/judge/judge-paradigms";
-import { buildJudgeParadigmPrompt } from "debate-speech-writer/src/judge/judge-paradigms";
+import type { JudgeParadigm } from "@debate/speech-writer/src/judge/judge-paradigms";
+import { buildJudgeParadigmPrompt } from "@debate/speech-writer/src/judge/judge-paradigms";
 
 /** One row of a paradigm's scoring rubric, checked against a rendered decision. */
 export type JudgeDecisionRubricRow = {

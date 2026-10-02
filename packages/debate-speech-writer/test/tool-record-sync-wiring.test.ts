@@ -11,7 +11,7 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { setToolRecordSyncEnabled } from "debate-data-sync/src/state/tool-record-mirror";
+import { setToolRecordSyncEnabled } from "@debate/data-sync/src/state/tool-record-mirror";
 import { deleteJudgeProfile, saveJudgeProfile } from "../src/state/judgeProfiles";
 import {
   deleteJudgeRoundRecord,

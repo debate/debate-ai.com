@@ -25,12 +25,12 @@ import {
   type BuildTopicSprintInput,
   type TopicSprint,
 } from "../lib/team-collaboration-mode";
-import type { AttributedContribution } from "debate-research-evidence/src/lib/contribution-leaderboard";
+import type { AttributedContribution } from "@debate/research-evidence/src/lib/contribution-leaderboard";
 import type { QuestContribution } from "../lib/daily-quests";
-import type { CoverageThresholds } from "debate-research-evidence/src/lib/topic-coverage";
+import type { CoverageThresholds } from "@debate/research-evidence/src/lib/topic-coverage";
 import { listQuestTemplates } from "./dailyQuests";
-import { listContributions } from "debate-research-evidence/src/state/contributions";
-import { buildPersistedTopicCoverageReport } from "debate-research-evidence/src/state/trackedArguments";
+import { listContributions } from "@debate/research-evidence/src/state/contributions";
+import { buildPersistedTopicCoverageReport } from "@debate/research-evidence/src/state/trackedArguments";
 import { listContributorAvailability } from "./contributorAvailability";
 import { listTrackedAssignmentsForTopic } from "./researchProgress";
 import { listSprintNotes } from "./sprintNotes";

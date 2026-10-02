@@ -70,7 +70,7 @@ if (import.meta.main || require.main === module) {
         console.log("\n" + "=".repeat(80) + "\n");
 
         const statsJson = JSON.stringify(stats, null, 2);
-        const debateDataPath = path.join(process.cwd(), "packages", "debate-data-sync", "data", "metadata", "youtube-stats.json");
+        const debateDataPath = path.join(process.cwd(), "packages", "@debate/data-sync", "data", "metadata", "youtube-stats.json");
 
         return fs.writeFile(debateDataPath, statsJson).then(() => {
           console.log(`💾 Full statistics saved to:`);

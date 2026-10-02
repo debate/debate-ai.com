@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import type { AttributedContribution } from "debate-research-evidence/src/lib/contribution-leaderboard";
-import { recordPersistedEndorsement, saveContribution } from "debate-research-evidence/src/state/contributions";
+import type { AttributedContribution } from "@debate/research-evidence/src/lib/contribution-leaderboard";
+import { recordPersistedEndorsement, saveContribution } from "@debate/research-evidence/src/state/contributions";
 import { announceContributorAwards } from "../src/state/contributorAwardAnnouncements";
 import { buildContributorProfileFromStore } from "../src/lib/contributor-profile";
 

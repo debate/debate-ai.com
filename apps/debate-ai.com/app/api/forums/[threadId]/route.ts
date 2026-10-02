@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDBFromContext } from "@/lib/database/context";
 import { withRouteErrors } from "@/lib/api/route-errors";
 import { getForumThread } from "@/lib/forums/queries";
-import { parseThreadId } from "debate-webview/lib/forums/validation";
+import { parseThreadId } from "@debate/webview/lib/forums/validation";
 
 /**
  * One forum thread: its title, its opening post whole (the feed sends only an

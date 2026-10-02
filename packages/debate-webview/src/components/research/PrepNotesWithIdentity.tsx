@@ -9,8 +9,8 @@
  * `PrepRoomWithIdentity.tsx`/`ReviewQueueWithIdentity.tsx`.
  */
 
-import { PrepNotesPanel } from "debate-team-collaboration"
-import { deriveContributorIdFromSessionIdentity } from "debate-research-evidence"
+import { PrepNotesPanel } from "@debate/team-collaboration"
+import { deriveContributorIdFromSessionIdentity } from "@debate/research-evidence"
 import { useSession } from "../../lib/hooks/useSession"
 
 export function PrepNotesWithIdentity() {

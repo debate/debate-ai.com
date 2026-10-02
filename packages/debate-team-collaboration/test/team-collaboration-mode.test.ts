@@ -30,9 +30,9 @@ import {
   type WhiteboardNote,
 } from "../src/lib/team-collaboration-mode";
 import type { QuestContribution, QuestTemplate } from "../src/lib/daily-quests";
-import type { ContributorAvailability } from "debate-research-evidence/src/lib/research-task-routing";
+import type { ContributorAvailability } from "@debate/research-evidence/src/lib/research-task-routing";
 import type { TrackedTopicAssignment } from "../src/lib/research-progress";
-import { buildTopicCoverageReport, type CoverageCardSummary, type TrackedArgument } from "debate-research-evidence/src/lib/topic-coverage";
+import { buildTopicCoverageReport, type CoverageCardSummary, type TrackedArgument } from "@debate/research-evidence/src/lib/topic-coverage";
 
 const NOW = Date.parse("2026-08-10T00:00:00Z");
 

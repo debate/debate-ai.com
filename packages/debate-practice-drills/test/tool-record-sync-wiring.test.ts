@@ -15,14 +15,14 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { setToolRecordSyncEnabled } from "debate-data-sync/src/state/tool-record-mirror";
+import { setToolRecordSyncEnabled } from "@debate/data-sync/src/state/tool-record-mirror";
 import { deleteFlowAnnotation, saveFlowAnnotation } from "../src/state/flowAnnotations";
 import { deleteFlowSummary, saveFlowSummary } from "../src/state/flowSummaries";
 import {
   deleteJudgeParadigmSelection,
   saveJudgeParadigmSelection,
 } from "../src/state/judgeParadigmSelections";
-import { judgeParadigms } from "debate-speech-writer/src/judge/judge-paradigms";
+import { judgeParadigms } from "@debate/speech-writer/src/judge/judge-paradigms";
 
 /** Minimal in-memory `localStorage` mock — this package's environment is `node`. */
 class MemoryStorage {

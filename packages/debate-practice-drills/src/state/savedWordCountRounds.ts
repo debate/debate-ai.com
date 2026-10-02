@@ -20,8 +20,8 @@
  * @module state/savedWordCountRounds
  */
 
-import { wordCountStyles, type WordCountStyleKey } from "debate-timer/src/formats/word-count-format";
-import type { WordCountRoundRecord, WordCountSpeechSubmission } from "debate-round/src/state/wordCountRounds";
+import { wordCountStyles, type WordCountStyleKey } from "@debate/timer/src/formats/word-count-format";
+import type { WordCountRoundRecord, WordCountSpeechSubmission } from "@debate/round/src/state/wordCountRounds";
 
 /** Hard cap on a single round's JSON size — generous for even a round with every speech maxed out, well short of D1's row-size limits. */
 export const MAX_SAVED_WORD_COUNT_ROUND_BYTES = 200_000;

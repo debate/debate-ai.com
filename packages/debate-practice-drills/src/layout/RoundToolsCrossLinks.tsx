@@ -13,7 +13,7 @@
  */
 
 import Link from "next/link"
-import { buildCrossLinks } from "debate-round/src/round/flow-tool-links"
+import { buildCrossLinks } from "@debate/round/src/round/flow-tool-links"
 
 /** Props for the RoundToolsCrossLinks component. */
 interface RoundToolsCrossLinksProps {

@@ -4,7 +4,7 @@ import { defineConfig, type Plugin, type Rolldown } from "vite";
 import fs from "fs";
 import path from "path";
 import { createRequire } from "module";
-import { helpDocsMdx } from "debate-help-docs/vite";
+import { helpDocsMdx } from "@debate/help-docs/vite";
 
 const appDir = path.resolve(import.meta.dirname);
 const require = createRequire(import.meta.url);
@@ -192,7 +192,7 @@ export default defineConfig({
       // outright trying to parse the binary, so always resolve it to our own
       // copy of that shim.
       canvas: path.resolve(appDir, "lib/stubs/canvas.ts"),
-      // debate-editor's card-cutter-port.ts dynamically imports
+      // @debate/editor's card-cutter-port.ts dynamically imports
       // `@cardcutter/browser` — the separately-versioned, NOT-shipped
       // card-cutter engine, present only when checked out as a sibling of
       // the CardMirror repo it was ported from. It never is here, so this
@@ -204,7 +204,7 @@ export default defineConfig({
         appDir,
         "../../packages/debate-editor/src/editor/card-cutter-stub.ts",
       ),
-      "debate-feature-catalog/src": path.resolve(appDir, "../../packages/debate-feature-catalog/src"),
+      "@debate/feature-catalog/src": path.resolve(appDir, "../../packages/debate-feature-catalog/src"),
     },
     dedupe: [
       "react",
@@ -221,7 +221,7 @@ export default defineConfig({
       "prosemirror-transform",
       "prosemirror-keymap",
       // The /docs routes run Fumadocs inside this app's root layout, whose
-      // ThemeProvider comes from debate-webview's copy of next-themes. One
+      // ThemeProvider comes from @debate/webview's copy of next-themes. One
       // copy means Fumadocs' theme toggle reads and writes that same context.
       "next-themes",
     ],
@@ -253,19 +253,19 @@ export default defineConfig({
       // Workspace packages ship TypeScript sources, so they always have to be
       // bundled rather than externalized to the Cloudflare runtime.
       "reason-editor",
-      "debate-webview",
-      "debate-card-parser",
+      "@debate/webview",
+      "@debate/card-parser",
       "debate-card-search",
-      "debate-data-sync",
-      "debate-editor",
-      "debate-flow-ebb",
-      "debate-round",
-      "debate-timer",
-      "debate-tournaments",
-      "debate-rankings-adapter",
-      "debate-editor-cm-adapter",
-      "debate-videos",
-      "debate-help-docs",
+      "@debate/data-sync",
+      "@debate/editor",
+      "@debate/flow-ebb",
+      "@debate/round",
+      "@debate/timer",
+      "@debate/tournaments",
+      "@debate/rankings-adapter",
+      "@debate/editor-cm-adapter",
+      "@debate/videos",
+      "@debate/help-docs",
     ],
   },
 });

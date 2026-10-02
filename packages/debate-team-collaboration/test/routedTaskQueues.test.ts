@@ -16,10 +16,10 @@ import {
   type RoutedTaskQueueRecord,
 } from "../src/state/routedTaskQueues";
 import { getContributorAvailability, saveContributorAvailability } from "../src/state/contributorAvailability";
-import { saveEvidenceLibraryEntry } from "debate-research-evidence/src/state/evidenceLibraryEntries";
-import { saveTrackedArgument } from "debate-research-evidence/src/state/trackedArguments";
-import type { ContributorAvailability, ResearchTask, RoutingResult } from "debate-research-evidence/src/lib/research-task-routing";
-import { buildTopicCoverageReport, type CoverageCardSummary, type TrackedArgument } from "debate-research-evidence/src/lib/topic-coverage";
+import { saveEvidenceLibraryEntry } from "@debate/research-evidence/src/state/evidenceLibraryEntries";
+import { saveTrackedArgument } from "@debate/research-evidence/src/state/trackedArguments";
+import type { ContributorAvailability, ResearchTask, RoutingResult } from "@debate/research-evidence/src/lib/research-task-routing";
+import { buildTopicCoverageReport, type CoverageCardSummary, type TrackedArgument } from "@debate/research-evidence/src/lib/topic-coverage";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {

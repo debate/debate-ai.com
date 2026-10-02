@@ -7,7 +7,7 @@ import {
 } from "../src/state/pendingTaskVerifications";
 import { getContributorAvailability, saveContributorAvailability } from "../src/state/contributorAvailability";
 import { getRoutedTaskQueue, saveRoutedTaskQueue, type RoutedTaskQueueRecord } from "../src/state/routedTaskQueues";
-import type { ContributorAvailability, ResearchTask, RoutingResult } from "debate-research-evidence/src/lib/research-task-routing";
+import type { ContributorAvailability, ResearchTask, RoutingResult } from "@debate/research-evidence/src/lib/research-task-routing";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {

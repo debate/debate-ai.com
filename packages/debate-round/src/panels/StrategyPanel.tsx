@@ -68,7 +68,7 @@ import {
   type RiskLevel,
 } from "../round/scout-to-strategy"
 import { requestCaseChoiceEvaluation } from "../round/case-choice-client"
-import type { DebateSide } from "debate-data-sync/src/rankings/opponent-team-profile"
+import type { DebateSide } from "@debate/data-sync/src/rankings/opponent-team-profile"
 import { useStrategyRecommendations } from "../hooks/useStrategyRecommendations"
 import type { StrategyRecommendationRecord } from "../state/strategyRecommendations"
 import { appendPrepNoteToPreRoundBriefing, listPreRoundBriefings } from "../state/preRoundBriefings"

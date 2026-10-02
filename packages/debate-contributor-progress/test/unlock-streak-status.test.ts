@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import type { AttributedContribution, ContributorStats } from "debate-research-evidence/src/lib/contribution-leaderboard";
+import type { AttributedContribution, ContributorStats } from "@debate/research-evidence/src/lib/contribution-leaderboard";
 import type { DailyMissionResult } from "../src/lib/gamified-quests";
 import {
   buildContributorUnlockStatusWithStreak,
@@ -7,12 +7,12 @@ import {
   buildUnlockStatusRoster,
   buildUnlockStatusWithStreakText,
 } from "../src/lib/unlock-streak-status";
-import { saveContribution } from "debate-research-evidence/src/state/contributions";
+import { saveContribution } from "@debate/research-evidence/src/state/contributions";
 import { saveDailyMissionResult } from "../src/state/dailyMissionResults";
 import { applyPersistedStreakFreeze } from "../src/state/streakFreezes";
-import { completeAndRecordResearchTask } from "debate-team-collaboration/src/state/researchProgress";
-import { saveRoutedTaskQueue, type RoutedTaskQueueRecord } from "debate-team-collaboration/src/state/routedTaskQueues";
-import type { ResearchTask, RoutingResult } from "debate-research-evidence/src/lib/research-task-routing";
+import { completeAndRecordResearchTask } from "@debate/team-collaboration/src/state/researchProgress";
+import { saveRoutedTaskQueue, type RoutedTaskQueueRecord } from "@debate/team-collaboration/src/state/routedTaskQueues";
+import type { ResearchTask, RoutingResult } from "@debate/research-evidence/src/lib/research-task-routing";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {

@@ -62,7 +62,7 @@ import {
   searchFeatures,
   type FeatureCategory,
   type FeatureEntry,
-} from "debate-feature-catalog/src/feature-catalog";
+} from "@debate/feature-catalog/src/feature-catalog";
 import { APP_LOGO, APP_LOGO_HEIGHT, APP_LOGO_WIDTH, APP_NAME } from "../../config/site";
 import { README_BADGE_ROWS, README_BANNER, README_SHOWCASE, README_VIDEO } from "./readme-media";
 import {

@@ -13,7 +13,7 @@
  * @module lib/card-reuse-annotation
  */
 
-import { parseCardRecord } from "debate-card-parser";
+import { parseCardRecord } from "@debate/card-parser";
 
 import { MAX_ANALYSIS_CONTENT_CHARS, htmlToPlainText } from "./card-ai-analysis";
 import type { DebateCardRecord } from "./parquet-card-import";

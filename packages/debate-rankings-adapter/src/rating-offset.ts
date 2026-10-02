@@ -4,7 +4,7 @@
  * site subtracts {@link RATING_OFFSET} and then divides by {@link RATING_DIVISOR}.
  * Both steps preserve order (they're a shift and a positive scale), so ranks
  * are unchanged — only the displayed magnitude moves.
- * @module debate-rankings-adapter/rating-offset
+ * @module @debate/rankings-adapter/rating-offset
  */
 
 import { loadRankingDataset as loadUpstreamDataset } from "./upstream";

@@ -12,13 +12,13 @@ import {
   rowState,
   updateChallengeState,
 } from "@/lib/practice-partners/queries";
-import { parseChallengeId } from "debate-webview/lib/practice-partners/validation";
+import { parseChallengeId } from "@debate/webview/lib/practice-partners/validation";
 import {
   applyChallengeAction,
   challengeNotificationTitle,
   isChallengeAction,
-} from "debate-webview/lib/practice-partners/challenge-actions";
-import { PRACTICE_FORMATS, optionLabel } from "debate-webview/lib/practice-partners/types";
+} from "@debate/webview/lib/practice-partners/challenge-actions";
+import { PRACTICE_FORMATS, optionLabel } from "@debate/webview/lib/practice-partners/types";
 
 /**
  * One practice challenge, moved along by the people in it.
@@ -27,7 +27,7 @@ import { PRACTICE_FORMATS, optionLabel } from "debate-webview/lib/practice-partn
  *   debater), `confirm-judge` | `decline-judge` | `withdraw-judge` (the judge),
  *   or `volunteer-judge` (any judge volunteer, on an accepted round with an
  *   empty seat). Who may do what is `applyChallengeAction` in
- *   `debate-webview/lib/practice-partners/challenge-actions.ts` — the same rules
+ *   `@debate/webview/lib/practice-partners/challenge-actions.ts` — the same rules
  *   the board uses to decide which buttons to draw. Returns the challenge as it
  *   now stands, and notifies everyone else in it.
  *

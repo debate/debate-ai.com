@@ -6,7 +6,7 @@ import {
   type JudgeDecisionAiInput,
   type JudgeDecisionAiResult,
 } from "../src/round/judge-decision-ai";
-import { judgeParadigms } from "debate-speech-writer/src/judge/judge-paradigms";
+import { judgeParadigms } from "@debate/speech-writer/src/judge/judge-paradigms";
 
 const INPUT: JudgeDecisionAiInput = {
   paradigm: judgeParadigms.flow,

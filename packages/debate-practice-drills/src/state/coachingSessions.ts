@@ -55,14 +55,14 @@
  * @module state/coachingSessions
  */
 
-import type { Flow } from "debate-round/src/types/flow";
-import type { NewsItem } from "debate-community/src/lib/news-stream";
+import type { Flow } from "@debate/round/src/types/flow";
+import type { NewsItem } from "@debate/community/src/lib/news-stream";
 import {
   buildCoachingSession,
   buildCoachingSummaryText,
   type CoachingPrompt,
   type CoachingPromptKind,
-} from "debate-round/src/flow/coach-mode";
+} from "@debate/round/src/flow/coach-mode";
 import {
   appendCoachingSessionVersion,
   deleteVersionsForCoachingSession,

@@ -38,7 +38,7 @@ import type { PracticeRoundFeedback, PracticeRoundSetup } from "../round/practic
 import {
   mirrorToolRecordDelete,
   mirrorToolRecordSave,
-} from "debate-data-sync/src/state/tool-record-mirror";
+} from "@debate/data-sync/src/state/tool-record-mirror";
 
 export type PracticeRoundRecord = {
   roundId: string;

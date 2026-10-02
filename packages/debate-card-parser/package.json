@@ -1,5 +1,5 @@
 {
-  "name": "debate-card-parser",
+  "name": "@debate/card-parser",
   "version": "0.1.0",
   "description": "Parser for debate evidence cards — Verbatim .docx and HTML in, structured cards with citations and highlighting out",
   "private": true,

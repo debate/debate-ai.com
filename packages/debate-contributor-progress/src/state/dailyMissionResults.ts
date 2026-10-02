@@ -53,9 +53,9 @@
  * @module state/dailyMissionResults
  */
 
-import type { AttributedContribution } from "debate-research-evidence/src/lib/contribution-leaderboard";
-import { buildDailyQuestBoard, type QuestContribution, type QuestTemplate } from "debate-team-collaboration/src/lib/daily-quests";
-import { getUtcDayKey } from "debate-research-evidence/src/lib/daily-best-card";
+import type { AttributedContribution } from "@debate/research-evidence/src/lib/contribution-leaderboard";
+import { buildDailyQuestBoard, type QuestContribution, type QuestTemplate } from "@debate/team-collaboration/src/lib/daily-quests";
+import { getUtcDayKey } from "@debate/research-evidence/src/lib/daily-best-card";
 import {
   buildContributorQuestStreak,
   computeDailyMissionResult,
@@ -66,7 +66,7 @@ import {
   type StreakMilestone,
   type StreakMilestoneEvent,
 } from "../lib/gamified-quests";
-import { listContributionsByContributor } from "debate-research-evidence/src/state/contributions";
+import { listContributionsByContributor } from "@debate/research-evidence/src/state/contributions";
 
 /** A contributor's mission result for one UTC calendar day. */
 export type DailyMissionResultRecord = DailyMissionResult & {

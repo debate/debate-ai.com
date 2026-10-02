@@ -17,7 +17,7 @@
 
 "use client"
 
-import { Button } from "debate-speech-writer/src/ui/primitives/button"
+import { Button } from "@debate/speech-writer/src/ui/primitives/button"
 import type { GamificationAward } from "../backend/gamification"
 import type { JudgedScore, JudgmentData } from "../backend/types"
 

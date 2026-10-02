@@ -18,7 +18,7 @@ const alias = Object.keys(dependencies).flatMap((name) => {
 export default defineConfig({
   resolve: { alias },
   test: {
-    name: "debate-editor-cm-adapter",
+    name: "@debate/editor-cm-adapter",
     root: import.meta.dirname,
     environment: "node",
     include: ["test/**/*.test.ts", "test/**/*.test.tsx"],

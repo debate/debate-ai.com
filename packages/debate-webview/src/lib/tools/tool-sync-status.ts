@@ -12,8 +12,8 @@
  * @module lib/tools/tool-sync-status
  */
 
-import { findToolRecordCollection } from "debate-data-sync/src/state/toolRecordCollections"
-import type { ToolRecordHydrationResult } from "debate-data-sync/src/state/tool-record-mirror"
+import { findToolRecordCollection } from "@debate/data-sync/src/state/toolRecordCollections"
+import type { ToolRecordHydrationResult } from "@debate/data-sync/src/state/tool-record-mirror"
 
 export interface ToolSyncFailure {
   /** The collection's stable key, e.g. `"judgeProfiles"`. */

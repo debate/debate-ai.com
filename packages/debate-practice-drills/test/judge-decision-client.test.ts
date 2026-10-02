@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { requestJudgeDecision } from "../src/round/judge-decision-client";
-import type { JudgeDecisionAiInput } from "debate-round/src/round/judge-decision-ai";
-import { judgeParadigms } from "debate-speech-writer/src/judge/judge-paradigms";
+import type { JudgeDecisionAiInput } from "@debate/round/src/round/judge-decision-ai";
+import { judgeParadigms } from "@debate/speech-writer/src/judge/judge-paradigms";
 
 const INPUT: JudgeDecisionAiInput = {
   paradigm: judgeParadigms.policymaker,

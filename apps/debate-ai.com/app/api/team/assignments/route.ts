@@ -1,5 +1,5 @@
 import { withRouteErrors } from "@/lib/api/route-errors"
-import { limitsFor } from "debate-webview/lib/stripe/limits"
+import { limitsFor } from "@debate/webview/lib/stripe/limits"
 import { createAssignment, deleteAssignment, listAssignments, requireTeamTier } from "@/lib/stripe/team"
 import { readJson, teamRoute } from "@/lib/stripe/team-route"
 

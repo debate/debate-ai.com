@@ -12,12 +12,12 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { buildVideoRows } from "debate-data-sync/src/videos/video-rows";
+import { buildVideoRows } from "@debate/data-sync/src/videos/video-rows";
 import {
   VIDEO_INDEX_FORMAT_VERSION,
   videoRowToIndexTuple,
   type VideoIndexResponse,
-} from "debate-data-sync/src/videos/video-index";
+} from "@debate/data-sync/src/videos/video-index";
 
 /** Requests `grab` was asked to make, newest last. */
 let requests: Array<{ path: string; params: Record<string, string> }> = [];

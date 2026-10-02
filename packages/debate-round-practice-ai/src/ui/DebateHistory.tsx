@@ -17,7 +17,7 @@
 
 import { useEffect, useState } from "react"
 import { resolveResultStatus, type DebateVsBotRecord } from "../backend"
-import { Button } from "debate-speech-writer/src/ui/primitives/button"
+import { Button } from "@debate/speech-writer/src/ui/primitives/button"
 import { listDebateHistory } from "../client"
 
 export interface DebateHistoryProps {

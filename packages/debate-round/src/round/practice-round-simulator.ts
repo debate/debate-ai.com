@@ -53,25 +53,25 @@ import type { Flow } from "../types/flow";
 import type {
   BuiltinJudgeParadigmId,
   JudgeParadigm,
-} from "debate-speech-writer/src/judge/judge-paradigms";
+} from "@debate/speech-writer/src/judge/judge-paradigms";
 import {
   buildJudgeParadigmPrompt,
   getJudgeParadigm,
   judgeParadigms,
-} from "debate-speech-writer/src/judge/judge-paradigms";
+} from "@debate/speech-writer/src/judge/judge-paradigms";
 import type {
   BuiltinOpponentPersonaId,
   OpponentDifficulty,
   OpponentPersona,
-} from "debate-speech-writer/src/opponent/opponent-personas";
+} from "@debate/speech-writer/src/opponent/opponent-personas";
 import {
   buildCustomOpponentPersona,
   buildOpponentPersonaFeedbackTips,
   buildOpponentPersonaPrompt,
   DEFAULT_OPPONENT_DIFFICULTY,
   getOpponentPersona,
-} from "debate-speech-writer/src/opponent/opponent-personas";
-import type { DebateStyleKey } from "debate-timer/src/formats/debate-format-times";
+} from "@debate/speech-writer/src/opponent/opponent-personas";
+import type { DebateStyleKey } from "@debate/timer/src/formats/debate-format-times";
 import type { CoachingPrompt } from "../flow/coach-mode";
 import { buildCoachingSession, buildCoachingSummaryText } from "../flow/coach-mode";
 import type {

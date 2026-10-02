@@ -8,8 +8,8 @@
  * place that knows about `better-auth`. Mirrors `TaskInboxWithIdentity.tsx`.
  */
 
-import { ContributionLeaderboardPanel } from "debate-community"
-import { deriveContributorIdFromSessionIdentity } from "debate-research-evidence"
+import { ContributionLeaderboardPanel } from "@debate/community"
+import { deriveContributorIdFromSessionIdentity } from "@debate/research-evidence"
 import { useSession } from "../../lib/hooks/useSession"
 
 export function ContributionLeaderboardWithIdentity() {

@@ -31,7 +31,7 @@
  */
 
 import { useCallback, useEffect, useState } from "react"
-import { speechSendLogStore, type SpeechSendLogEntry } from "debate-editor/engine"
+import { speechSendLogStore, type SpeechSendLogEntry } from "@debate/editor/engine"
 import {
   deleteSavedSpeechSendLogEntryFromAccount,
   listSavedSpeechSendLog,

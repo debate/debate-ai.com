@@ -20,7 +20,7 @@
  * Pure and unit-testable on its own (feature detection takes an explicit
  * window-like object rather than reading a global), unlike the hook itself —
  * mirroring every other browser-API hook in this repo (e.g.
- * `debate-timer/src/hooks/useSpeechRecorder.ts`), none of which are directly
+ * `@debate/timer/src/hooks/useSpeechRecorder.ts`), none of which are directly
  * unit-tested since there is no jsdom environment in this repo's Vitest setup.
  *
  * @module round/microphone-transcription

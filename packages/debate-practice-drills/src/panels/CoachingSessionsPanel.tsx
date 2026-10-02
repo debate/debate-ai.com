@@ -68,18 +68,18 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Badge } from "debate-round/src/ui/primitives/badge"
-import { Button } from "debate-round/src/ui/primitives/button"
-import { Input } from "debate-round/src/ui/primitives/input"
-import { Label } from "debate-round/src/ui/primitives/label"
-import { EmptyState, PanelShell } from "debate-round/src/ui/panels/panel-shell"
+import { Badge } from "@debate/round/src/ui/primitives/badge"
+import { Button } from "@debate/round/src/ui/primitives/button"
+import { Input } from "@debate/round/src/ui/primitives/input"
+import { Label } from "@debate/round/src/ui/primitives/label"
+import { EmptyState, PanelShell } from "@debate/round/src/ui/panels/panel-shell"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "debate-round/src/ui/primitives/select"
+} from "@debate/round/src/ui/primitives/select"
 import {
   buildAndSaveCoachingSession,
   buildCoachingNotesText,
@@ -100,9 +100,9 @@ import {
   type CoachingSessionHistoryEntry,
 } from "../state/coachingSessionHistory"
 import { isCoachingSessionsPanelLiveUpdateStorageEvent } from "../state/live-update"
-import type { CoachingPromptKind } from "debate-round/src/flow/coach-mode"
+import type { CoachingPromptKind } from "@debate/round/src/flow/coach-mode"
 import { requestCoachFeedback } from "../round/coach-feedback-client"
-import { useFlowStore } from "debate-round/src/state/store"
+import { useFlowStore } from "@debate/round/src/state/store"
 
 const COACHING_PROMPT_KIND_LABELS: Record<CoachingPromptKind, string> = {
   extension: "Extension",

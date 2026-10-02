@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
-import type { Box } from "debate-round/src/types/flow";
+import type { Box } from "@debate/round/src/types/flow";
 import type { QuestContribution, QuestTemplate } from "../src/lib/daily-quests";
-import type { ContributorAvailability } from "debate-research-evidence/src/lib/research-task-routing";
+import type { ContributorAvailability } from "@debate/research-evidence/src/lib/research-task-routing";
 import type { TrackedTopicAssignment } from "../src/lib/research-progress";
 import {
   buildTopicCoverageReport,
   type CoverageCardSummary,
   type TrackedArgument,
-} from "debate-research-evidence/src/lib/topic-coverage";
+} from "@debate/research-evidence/src/lib/topic-coverage";
 import type { ChallengeWinEvent, GroupChallenge } from "../src/lib/group-challenges";
 import {
   buildCoachingProgramBoard,
@@ -18,7 +18,7 @@ import {
   type CoachingProgramMemberFlow,
   type CoachingProgramMemberPracticeRound,
 } from "../src/round/coaching-program";
-import { buildPracticeRoundSetup } from "debate-round/src/round/practice-round-simulator";
+import { buildPracticeRoundSetup } from "@debate/round/src/round/practice-round-simulator";
 
 const NOW = Date.parse("2026-08-10T00:00:00Z");
 const WEEK_END = Date.parse("2026-08-17T00:00:00Z");

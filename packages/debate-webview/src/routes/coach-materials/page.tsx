@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { CoachMaterialsPanel } from "debate-speech-writer"
+import { CoachMaterialsPanel } from "@debate/speech-writer"
 import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
 
 export default function CoachMaterialsPage() {

@@ -5,7 +5,7 @@
  *
  * Instantiates the browser's real `SpeechRecognition`/`webkitSpeechRecognition`
  * API. Like every other browser-API hook in this repo (e.g.
- * `debate-timer/src/hooks/useSpeechRecorder.ts`), this file is untested
+ * `@debate/timer/src/hooks/useSpeechRecorder.ts`), this file is untested
  * wiring — the feature-detection, text-joining, and error-message logic it
  * calls into lives in `round/microphone-transcription.ts` and is Vitest
  * covered there instead.

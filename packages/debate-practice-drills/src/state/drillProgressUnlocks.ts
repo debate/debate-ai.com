@@ -42,8 +42,8 @@ import {
   DEFAULT_UNLOCK_TIER_REQUIREMENTS,
   type ContributorUnlockStatus,
   type UnlockTierRequirement,
-} from "debate-research-evidence/src/lib/progress-unlocks";
-import type { ContributorStats } from "debate-research-evidence/src/lib/contribution-leaderboard";
+} from "@debate/research-evidence/src/lib/progress-unlocks";
+import type { ContributorStats } from "@debate/research-evidence/src/lib/contribution-leaderboard";
 import { getDrillSetCompletionStats, listDrillSets, type DrillSetRecord } from "./drillSets";
 
 /**

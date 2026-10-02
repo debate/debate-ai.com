@@ -1,9 +1,9 @@
 import type { Metadata } from "next"
 import Image from "next/image"
 import { Suspense } from "react"
-import { DebatePracticeVsAi } from "debate-practice-vs-ai"
+import { DebatePracticeVsAi } from "@debate/practice-vs-ai"
 import { getSession } from "@/lib/auth/session"
-import { ToolPage, ToolPageHeader } from "debate-webview/components/tools/ToolPageHeader"
+import { ToolPage, ToolPageHeader } from "@debate/webview/components/tools/ToolPageHeader"
 
 export const metadata: Metadata = {
   title: "Practice vs AI",

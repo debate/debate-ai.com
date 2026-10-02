@@ -16,8 +16,8 @@
  * `panels/argument-map/ArgumentMapChart.tsx`.
  */
 
-import type { ArgumentTreeNode } from "debate-round/src/flow/argument-tree"
-import { getSpeechSideKey } from "debate-round/src/flow/argument-tree"
+import type { ArgumentTreeNode } from "@debate/round/src/flow/argument-tree"
+import { getSpeechSideKey } from "@debate/round/src/flow/argument-tree"
 
 export type ArgumentStance = "root" | "pro" | "con"
 

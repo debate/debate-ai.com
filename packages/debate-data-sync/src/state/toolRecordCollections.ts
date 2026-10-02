@@ -239,7 +239,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     // Distinct from `saved_flows` (the explicit, user-triggered cloud save on
     // each flow chip): this is the auto-saved undo/version log the same
     // dialog's "History" tab reads, kept in its own `flow-history` key by
-    // `debate-round/src/state/store.ts`'s `saveToHistory`/`getFlowHistory`.
+    // `@debate/round/src/state/store.ts`'s `saveToHistory`/`getFlowHistory`.
     label: "Flow History",
     href: "/debate",
     section: "Flowing and writing",
@@ -652,7 +652,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "debate-videos:speech-outcomes",
     idField: "id",
     // The watch page's cached AI outcome-simulation runs
-    // (`debate-videos/src/state/speechOutcomeCache.ts`), keyed by a derived
+    // (`@debate/videos/src/state/speechOutcomeCache.ts`), keyed by a derived
     // `${videoId}::${speechKey}::${lens}` id — see that module's own header
     // comment for why it needed one before it could join this catalog.
     label: "Speech Outcome Runs",

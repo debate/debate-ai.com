@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { ContributorAwardsPanel } from "debate-community"
+import { ContributorAwardsPanel } from "@debate/community"
 import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHeader"
 
 export default function CardsAwardsPage() {

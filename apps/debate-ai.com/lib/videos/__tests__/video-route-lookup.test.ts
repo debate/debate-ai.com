@@ -8,8 +8,8 @@
  */
 
 import { describe, expect, it, vi } from "vitest";
-import { buildVideoRows, type VideoTuple } from "debate-data-sync/src/videos/video-rows";
-import { legacyVideoRouteHref, videoRouteHref, type VideoType } from "debate-videos";
+import { buildVideoRows, type VideoTuple } from "@debate/data-sync/src/videos/video-rows";
+import { legacyVideoRouteHref, videoRouteHref, type VideoType } from "@debate/videos";
 
 vi.mock("@/lib/database/context", () => ({
   getDBFromContext: () => {
@@ -55,7 +55,7 @@ describe("getVideoBySlug", () => {
   it("resolves a bare title slug", async () => {
     const page = await getVideoPage({ source: "all", limit: 1, offset: 0 });
     const [first] = page.videos;
-    const { slugifyVideoTitle } = await import("debate-videos");
+    const { slugifyVideoTitle } = await import("@debate/videos");
     const video = await getVideoBySlug(slugifyVideoTitle(first[1] as string));
     expect(video && slugifyVideoTitle(video[1] as string)).toBe(
       slugifyVideoTitle(first[1] as string),

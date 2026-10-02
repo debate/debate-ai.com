@@ -27,7 +27,7 @@ import {
   watchPercent,
   watchStatus,
 } from "../src/state/videoWatchHistory";
-import { setToolRecordSyncEnabled } from "debate-data-sync/src/state/tool-record-mirror";
+import { setToolRecordSyncEnabled } from "@debate/data-sync/src/state/tool-record-mirror";
 
 /** A clock the tests advance by hand, so the write throttle is deterministic. */
 let clockMs = new Date("2026-03-01T12:00:00.000Z").getTime();

@@ -20,8 +20,8 @@ import {
   isVideoDocumentKind,
   type VideoDocument,
   type VideoDocumentKind,
-} from "debate-videos";
-import type { VideoTuple } from "debate-data-sync/src/videos/video-rows";
+} from "@debate/videos";
+import type { VideoTuple } from "@debate/data-sync/src/videos/video-rows";
 import { videoDocuments, videoRelations } from "@/lib/database/schema";
 import { getDBFromContext } from "@/lib/database/context";
 import { getVideoPage } from "./video-repository";

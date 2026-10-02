@@ -28,7 +28,7 @@ import { plainText } from "../lib/card-content"
  * bundle for a panel most visits never open.
  *
  * Two globals must exist before that import evaluates, for the same reasons
- * debate-webview's /doc embed sets them (`routes/doc/ResearchAgentEmbed.tsx`,
+ * @debate/webview's /doc embed sets them (`routes/doc/ResearchAgentEmbed.tsx`,
  * `components/qwksearch/base-url.ts`):
  * - `Prism` — `extract-webpage`, bundled inside, registers grammars from
  *   `prismjs/components/*`, which read `Prism` off the global object.

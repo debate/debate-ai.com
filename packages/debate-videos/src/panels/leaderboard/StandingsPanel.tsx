@@ -39,7 +39,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { EmptyState, PanelSection } from "debate-research-evidence/src/ui/panels/panel-shell"
+import { EmptyState, PanelSection } from "@debate/research-evidence/src/ui/panels/panel-shell"
 import { Badge } from "../../ui/primitives/badge"
 import { Button } from "../../ui/primitives/button"
 import { Input } from "../../ui/primitives/input"
@@ -62,21 +62,21 @@ import {
 import {
   buildStandingsFromStore,
   type TournamentResultRecord,
-} from "debate-data-sync/src/state/tournamentResults"
-import { getEffectiveQualificationPointsTable } from "debate-data-sync/src/state/qualificationPointsTable"
+} from "@debate/data-sync/src/state/tournamentResults"
+import { getEffectiveQualificationPointsTable } from "@debate/data-sync/src/state/qualificationPointsTable"
 import {
   getEffectiveQualificationCutoff,
   isQualificationCutoffConfigured,
   toQualificationOptions,
   type QualificationCutoffSettings,
-} from "debate-data-sync/src/state/qualificationCutoff"
-import { TOURNAMENT_RESULT_CSV_TEMPLATE } from "debate-data-sync/src/rankings/tournament-results-csv-import"
+} from "@debate/data-sync/src/state/qualificationCutoff"
+import { TOURNAMENT_RESULT_CSV_TEMPLATE } from "@debate/data-sync/src/rankings/tournament-results-csv-import"
 import {
   getQualifiedTeams,
   type OutroundFinish,
   type QualificationPointsTable,
   type RankedTeamStanding,
-} from "debate-data-sync/src/rankings/ndca-standings"
+} from "@debate/data-sync/src/rankings/ndca-standings"
 import { useStandingsAccountSync } from "../../hooks/useStandingsAccountSync"
 
 const FINISH_OPTIONS: { value: OutroundFinish; label: string }[] = [

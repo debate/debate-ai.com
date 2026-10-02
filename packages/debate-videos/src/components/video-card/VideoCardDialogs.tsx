@@ -16,7 +16,7 @@
 
 import React, { useState } from "react"
 import { Flag } from "lucide-react"
-import { LECTURE_CATEGORIES } from "debate-data-sync/src/youtube/parsers/lecture-classifier"
+import { LECTURE_CATEGORIES } from "@debate/data-sync/src/youtube/parsers/lecture-classifier"
 import {
   Dialog,
   DialogContent,

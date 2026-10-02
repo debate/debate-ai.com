@@ -18,14 +18,14 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 import { like } from "drizzle-orm";
-import { caselistsForSeason, parseCaselistSlug } from "debate-data-sync/src/caselist/caselist-config";
-import { fetchCaselistDownloads } from "debate-data-sync/src/caselist/caselist-sync";
+import { caselistsForSeason, parseCaselistSlug } from "@debate/data-sync/src/caselist/caselist-config";
+import { fetchCaselistDownloads } from "@debate/data-sync/src/caselist/caselist-sync";
 import {
   describeArchiveLink,
   planCaselistSync,
   selectLatestByFamily,
-} from "debate-data-sync/src/caselist/caselist-discovery";
-import { listArchives } from "debate-data-sync/src/caselist/downloads-page-parser";
+} from "@debate/data-sync/src/caselist/caselist-discovery";
+import { listArchives } from "@debate/data-sync/src/caselist/downloads-page-parser";
 import { authorizeCardImport } from "@/lib/admin/debate-card-import";
 import { getDBFromContext } from "@/lib/database/context";
 import { debateCardImports } from "@/lib/database/schema";

@@ -22,7 +22,7 @@
 // The narrow bridge entry, not the package root: the root re-exports the
 // React editor shell, and pulling it in here would ship the editor into every
 // page that only renders a stored document.
-import { docToHtml, htmlToDoc } from "debate-editor/html-bridge";
+import { docToHtml, htmlToDoc } from "@debate/editor/html-bridge";
 import {
   base64ToCmir,
   cmirToBase64,
@@ -32,7 +32,7 @@ import {
   serializeNative,
   serializeNativeAsync,
   toDocx,
-} from "debate-editor/engine";
+} from "@debate/editor/engine";
 import { STORED_FORMATS, type StoredContent } from "./format";
 import { isCmirContent } from "./content-format";
 import { CardMirrorImportError, fileExtension, IMPORTABLE_EXTENSIONS } from "./import-files";

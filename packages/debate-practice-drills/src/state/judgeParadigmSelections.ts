@@ -12,12 +12,12 @@
  * @module state/judgeParadigmSelections
  */
 
-import type { JudgeParadigm } from "debate-speech-writer/src/judge/judge-paradigms";
+import type { JudgeParadigm } from "@debate/speech-writer/src/judge/judge-paradigms";
 
 import {
   mirrorToolRecordDelete,
   mirrorToolRecordSave,
-} from "debate-data-sync/src/state/tool-record-mirror";
+} from "@debate/data-sync/src/state/tool-record-mirror";
 
 export type JudgeParadigmSelection = {
   roundId: string;

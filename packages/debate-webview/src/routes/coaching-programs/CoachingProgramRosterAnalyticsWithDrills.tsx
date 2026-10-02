@@ -34,13 +34,13 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { CoachingProgramRosterAnalyticsPanel, type MemberDrillPracticeStatus } from "debate-community"
-import { useDrillSets } from "debate-practice-rounds"
-import { buildContributorDrillCompletionStats, buildDrillReviewCalendarEvents } from "debate-practice-rounds/src/state/drillSets"
+import { CoachingProgramRosterAnalyticsPanel, type MemberDrillPracticeStatus } from "@debate/community"
+import { useDrillSets } from "@debate/practice-rounds"
+import { buildContributorDrillCompletionStats, buildDrillReviewCalendarEvents } from "@debate/practice-rounds/src/state/drillSets"
 import {
   buildCoachingProgramMemberPracticeRounds,
   listRoundContributorFlows,
-} from "debate-team-collaboration/src/state/roundContributorFlows"
+} from "@debate/team-collaboration/src/state/roundContributorFlows"
 
 export function CoachingProgramRosterAnalyticsWithDrills() {
   const { drillSets } = useDrillSets()

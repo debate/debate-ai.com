@@ -10,7 +10,7 @@ import {
   listVolunteers,
   loadBlockedIds,
 } from "@/lib/practice-partners/queries";
-import type { PracticeBoardResponse } from "debate-webview/lib/practice-partners/types";
+import type { PracticeBoardResponse } from "@debate/webview/lib/practice-partners/types";
 
 /**
  * The practice board — everything the Practice Partners panel draws, in one read.

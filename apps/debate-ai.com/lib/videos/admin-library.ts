@@ -17,7 +17,7 @@ import { and, asc, count, desc, eq, getTableColumns, isNull, not, or, sql, type 
 import {
   publishedMsForDate,
   seasonYearForDate,
-} from "debate-data-sync/src/videos/video-rows";
+} from "@debate/data-sync/src/videos/video-rows";
 import {
   videoDocuments,
   videos,

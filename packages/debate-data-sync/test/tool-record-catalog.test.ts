@@ -244,7 +244,7 @@ describe("the synced collection catalog", () => {
   });
 
   it("syncs the Debate Flow workspace's auto-saved history now that its entries carry a stable id", () => {
-    // `debate-round/src/state/store.ts`'s `saveToHistory` already keyed each
+    // `@debate/round/src/state/store.ts`'s `saveToHistory` already keyed each
     // entry by a stable `id` (`${flow.id}-${Date.now()}`, assigned once and
     // never mutated) — the same JSON-array-under-one-key shape as every other
     // collection here — but the `flow-history` store itself had never been
@@ -357,7 +357,7 @@ describe("the synced collection catalog", () => {
   });
 
   it("syncs the watch page's cached speech-outcome runs now that they carry a stable id", () => {
-    // `debate-videos/src/state/speechOutcomeCache.ts`'s `CachedSpeechOutcome`
+    // `@debate/videos/src/state/speechOutcomeCache.ts`'s `CachedSpeechOutcome`
     // was keyed only by the `(videoId, speechKey, lens)` triple — the same
     // shape problem `coachingSessions` had — so a cached AI outcome
     // simulation never followed a signed-in user to a second device; it just

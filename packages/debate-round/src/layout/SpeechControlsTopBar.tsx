@@ -18,7 +18,7 @@ import type { ViewMode } from "../types/debate-flow"
 import { ViewModeSelector } from "../controls/ViewModeSelector"
 import { Button } from "../ui/primitives/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/primitives/tooltip"
-import { SpeechRecordingMenu } from "debate-timer/src/recorder/SpeechRecordingPlayer"
+import { SpeechRecordingMenu } from "@debate/timer/src/recorder/SpeechRecordingPlayer"
 
 export interface SpeechControlsTopBarProps {
   /** The speech these controls apply to, e.g. "1AR". */

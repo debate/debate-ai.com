@@ -1,6 +1,6 @@
 /**
  * @fileoverview Ambient declarations for dependencies that ship broken or no
- * typings. Mirrors debate-webview's `src/types/{assets,qwksearch-api-client}.d.ts`.
+ * typings. Mirrors @debate/webview's `src/types/{assets,qwksearch-api-client}.d.ts`.
  */
 
 /**

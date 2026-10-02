@@ -40,22 +40,22 @@
  * @module lib/prep-room
  */
 
-import { buildLibrarySummaryText, type ArgumentLibrary } from "debate-research-evidence/src/lib/argument-library";
+import { buildLibrarySummaryText, type ArgumentLibrary } from "@debate/research-evidence/src/lib/argument-library";
 import {
   buildEvidenceLibraryIndex,
   searchEvidenceLibrary,
   type EvidenceLibraryEntry,
   type EvidenceSearchQuery,
   type EvidenceSearchResult,
-} from "debate-research-evidence/src/lib/shared-evidence-library";
+} from "@debate/research-evidence/src/lib/shared-evidence-library";
 import {
   buildRoutingResult,
   buildRoutingSummaryText,
   type ContributorAvailability,
   type RoutingResult,
-} from "debate-research-evidence/src/lib/research-task-routing";
-import type { TopicCoverageReport } from "debate-research-evidence/src/lib/topic-coverage";
-import { listEvidenceLibraryEntries } from "debate-research-evidence/src/state/evidenceLibraryEntries";
+} from "@debate/research-evidence/src/lib/research-task-routing";
+import type { TopicCoverageReport } from "@debate/research-evidence/src/lib/topic-coverage";
+import { listEvidenceLibraryEntries } from "@debate/research-evidence/src/state/evidenceLibraryEntries";
 
 /**
  * One topic's shared prep space: its evidence (organized into topic

@@ -19,14 +19,14 @@
  * `debate-timer` has no dependency on `debate-round` (the reverse is true —
  * `debate-round`'s `SpeechHeaderBar` imports `SpeechWordCounter` from this
  * package), so this is a local copy rather than a shared import, mirroring
- * `debate-round/src/round/microphone-transcription.ts` and
- * `debate-speech-writer/src/coach/microphone-transcription.ts`, the same
+ * `@debate/round/src/round/microphone-transcription.ts` and
+ * `@debate/speech-writer/src/coach/microphone-transcription.ts`, the same
  * pattern's other two per-package copies.
  *
  * Pure and unit-testable on its own (feature detection takes an explicit
  * window-like object rather than reading a global), unlike the hook itself —
  * mirroring every other browser-API hook in this repo (e.g.
- * `debate-timer/src/hooks/useSpeechRecorder.ts`), none of which are directly
+ * `@debate/timer/src/hooks/useSpeechRecorder.ts`), none of which are directly
  * unit-tested since there is no jsdom environment in this repo's Vitest setup.
  *
  * @module timers/microphone-transcription

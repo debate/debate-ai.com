@@ -21,7 +21,7 @@ import {
   parseJudgeDecisionAiResponse,
   type JudgeDecisionAiInput,
   type JudgeDecisionAiResult,
-} from "debate-round/src/round/judge-decision-ai";
+} from "@debate/round/src/round/judge-decision-ai";
 
 /** The reply is a short JSON verdict, not free-form prose. */
 const MAX_TOKENS = 1024;

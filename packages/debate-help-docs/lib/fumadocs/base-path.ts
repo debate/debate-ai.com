@@ -11,7 +11,7 @@
  * assignment, carries the prefix itself, built from this constant.
  *
  * Keep it in sync with the route folder in the web app (`app/docs`) and with
- * `DOCS_BASE_PATH` in `debate-webview/lib/docs-links.ts`.
+ * `DOCS_BASE_PATH` in `@debate/webview/lib/docs-links.ts`.
  *
  * @module lib/fumadocs/base-path
  */

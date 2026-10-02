@@ -15,7 +15,7 @@
  *
  * @module caselist/caselist-cards
  */
-import type { Card, OutlineNode } from "debate-card-parser";
+import type { Card, OutlineNode } from "@debate/card-parser";
 import type { Caselist, CaselistEvent } from "./caselist-config";
 import type { CaselistDocument } from "./caselist-archive";
 

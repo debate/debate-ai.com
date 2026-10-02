@@ -11,8 +11,8 @@ import {
   stackKeyOf,
   videoRouteHref,
   type VideoType,
-} from "debate-videos"
-import { videoRowToTuple } from "debate-data-sync/src/videos/video-rows"
+} from "@debate/videos"
+import { videoRowToTuple } from "@debate/data-sync/src/videos/video-rows"
 
 import { CategoryDock } from "../../components/layout/CategoryDock"
 import { VideoStaffControls } from "../../components/videos/VideoStaffControls"

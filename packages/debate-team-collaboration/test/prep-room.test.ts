@@ -7,10 +7,10 @@ import {
   buildPrepRoomSummaryText,
   searchPrepRoomEvidence,
 } from "../src/lib/prep-room";
-import type { EvidenceLibraryEntry } from "debate-research-evidence/src/lib/shared-evidence-library";
-import { buildRoutingResult, type ContributorAvailability } from "debate-research-evidence/src/lib/research-task-routing";
-import { buildTopicCoverageReport, type TrackedArgument } from "debate-research-evidence/src/lib/topic-coverage";
-import { saveEvidenceLibraryEntry } from "debate-research-evidence/src/state/evidenceLibraryEntries";
+import type { EvidenceLibraryEntry } from "@debate/research-evidence/src/lib/shared-evidence-library";
+import { buildRoutingResult, type ContributorAvailability } from "@debate/research-evidence/src/lib/research-task-routing";
+import { buildTopicCoverageReport, type TrackedArgument } from "@debate/research-evidence/src/lib/topic-coverage";
+import { saveEvidenceLibraryEntry } from "@debate/research-evidence/src/state/evidenceLibraryEntries";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {

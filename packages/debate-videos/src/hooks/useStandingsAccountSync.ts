@@ -46,32 +46,32 @@ import {
   bulkImportTournamentResults as bulkImportTournamentResultsLocal,
   type TournamentResultRecord,
   type TournamentResultCsvImportResult,
-} from "debate-data-sync/src/state/tournamentResults";
+} from "@debate/data-sync/src/state/tournamentResults";
 import {
   listSavedTournamentResults,
   saveTournamentResultToAccount,
   deleteSavedTournamentResultFromAccount,
-} from "debate-data-sync/src/state/tournament-results-client";
+} from "@debate/data-sync/src/state/tournament-results-client";
 import {
   getPersistedQualificationPointsTable,
   savePersistedQualificationPointsTable,
   resetPersistedQualificationPointsTable,
   getEffectiveQualificationPointsTable,
-} from "debate-data-sync/src/state/qualificationPointsTable";
-import type { QualificationPointsTable } from "debate-data-sync/src/rankings/ndca-standings";
+} from "@debate/data-sync/src/state/qualificationPointsTable";
+import type { QualificationPointsTable } from "@debate/data-sync/src/rankings/ndca-standings";
 import {
   getPersistedQualificationCutoff,
   savePersistedQualificationCutoff,
   resetPersistedQualificationCutoff,
   getEffectiveQualificationCutoff,
   type QualificationCutoffSettings,
-} from "debate-data-sync/src/state/qualificationCutoff";
+} from "@debate/data-sync/src/state/qualificationCutoff";
 import {
   fetchQualificationPointsTable,
   saveQualificationPointsTable as saveQualificationPointsTableRemote,
   fetchQualificationCutoff,
   saveQualificationCutoff as saveQualificationCutoffRemote,
-} from "debate-data-sync/src/state/qualification-settings-sync-client";
+} from "@debate/data-sync/src/state/qualification-settings-sync-client";
 
 // Module-level (not per-hook-instance) so multiple mounts of this hook in
 // one page load share one account fetch and one "is this browser signed

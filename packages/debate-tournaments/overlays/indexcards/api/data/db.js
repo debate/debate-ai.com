@@ -1,5 +1,5 @@
 /**
- * debate-tournaments overlay — replaces upstream's `api/data/db.js`.
+ * @debate/tournaments overlay — replaces upstream's `api/data/db.js`.
  *
  * Upstream's Sequelize handle, reduced to the calls the vendored routes make
  * (`db.sequelize.query`, `db.Sequelize.QueryTypes`, `db.<table>.findOne/All`,

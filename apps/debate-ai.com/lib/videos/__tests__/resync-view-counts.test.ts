@@ -9,7 +9,7 @@ import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { eq } from "drizzle-orm";
-import type { YouTubeVideoStatus, YouTubeStatusReport } from "debate-data-sync/src/youtube/youtube-api";
+import type { YouTubeVideoStatus, YouTubeStatusReport } from "@debate/data-sync/src/youtube/youtube-api";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
 import { videos, youtubeRoundVideos } from "../../database/schema";
@@ -77,7 +77,7 @@ function makeStatus(
 const mockFetchVideoStatuses = vi.fn();
 const mockSetYouTubeApiKey = vi.fn();
 
-vi.mock("debate-data-sync/src/youtube/youtube-api", () => ({
+vi.mock("@debate/data-sync/src/youtube/youtube-api", () => ({
   fetchVideoStatuses: (...args: Parameters<typeof mockFetchVideoStatuses>) =>
     mockFetchVideoStatuses(...args),
   setYouTubeApiKey: (...args: Parameters<typeof mockSetYouTubeApiKey>) =>

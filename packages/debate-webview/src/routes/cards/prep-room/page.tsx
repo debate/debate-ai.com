@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { PrepRoomPanel } from "debate-team-collaboration"
+import { PrepRoomPanel } from "@debate/team-collaboration"
 import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHeader"
 
 export default function CardsPrepRoomPage() {

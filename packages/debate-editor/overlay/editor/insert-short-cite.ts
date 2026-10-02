@@ -15,8 +15,8 @@
  */
 import type { EditorState, Transaction } from 'prosemirror-state';
 import type { EditorView } from 'prosemirror-view';
-import type { CardYear } from 'debate-card-parser/src/types/types';
-import { formatShortCiteTag } from 'debate-card-parser/src/utils/verbatim-shortcuts';
+import type { CardYear } from '@debate/card-parser/src/types/types';
+import { formatShortCiteTag } from '@debate/card-parser/src/utils/verbatim-shortcuts';
 import { schema } from '../schema/index.js';
 import { promptForText } from './text-prompt.js';
 

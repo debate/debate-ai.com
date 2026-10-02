@@ -1,5 +1,5 @@
 {
-  "name": "debate-comments",
+  "name": "@debate/comments",
   "version": "0.1.0",
   "description": "Threaded comments \u2014 the YouTube/Instagram-style discussion UI (replies, nested reply trees, likes) for any commentable resource in debate-ai",
   "private": true,

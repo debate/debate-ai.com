@@ -24,7 +24,7 @@
  * @module lib/docs-links
  */
 
-import { APP_FEATURES } from "debate-feature-catalog/src/feature-catalog"
+import { APP_FEATURES } from "@debate/feature-catalog/src/feature-catalog"
 
 /**
  * Origin of a separately-deployed Fumadocs site, without a trailing slash.

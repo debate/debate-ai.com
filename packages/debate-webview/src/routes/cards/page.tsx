@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { SearchInterface } from "debate-research-evidence"
+import { SearchInterface } from "@debate/research-evidence"
 
 /**
  * The CARDS search screen.

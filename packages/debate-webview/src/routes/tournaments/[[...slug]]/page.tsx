@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useParams } from "next/navigation"
-import { TournamentsApp } from "debate-tournaments/ui"
+import { TournamentsApp } from "@debate/tournaments/ui"
 
 /**
  * The tournaments UI from `debate-tournaments`, mounted directly rather than

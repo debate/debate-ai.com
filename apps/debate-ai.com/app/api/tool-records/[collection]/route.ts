@@ -11,7 +11,7 @@ import {
   toolRecordId,
   MAX_TOOL_RECORD_BYTES,
   MAX_TOOL_RECORDS_PER_PUSH,
-} from "debate-data-sync/src/state/toolRecordCollections"
+} from "@debate/data-sync/src/state/toolRecordCollections"
 
 /**
  * Account-linked sync for the sidebar's localStorage-backed tools — the

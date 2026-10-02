@@ -1,11 +1,11 @@
 import { withRouteErrors } from "@/lib/api/route-errors"
-import { limitsFor } from "debate-webview/lib/stripe/limits"
+import { limitsFor } from "@debate/webview/lib/stripe/limits"
 import { addStudent, listStudents, removeStudent, requireTeamTier } from "@/lib/stripe/team"
 import { readJson, teamRoute } from "@/lib/stripe/team-route"
 
 /**
  * A Research Team coach's student roster (up to the plan's `teamStudents`,
- * 10 today — see `debate-webview/src/lib/stripe/limits.ts`).
+ * 10 today — see `@debate/webview/src/lib/stripe/limits.ts`).
  *
  * GET → `{ students: string[], max }`
  * POST `{ email }` → adds a student, returns the updated roster.

@@ -16,7 +16,7 @@
  * @module round/ai-versus-speech-ai
  */
 
-import type { AiSpeechRequest, PriorSpeechRecord } from "debate-round/src/round/ai-versus-speech-order";
+import type { AiSpeechRequest, PriorSpeechRecord } from "@debate/round/src/round/ai-versus-speech-order";
 
 /**
  * System prompt instructing the model to act as the AI side of a practice

@@ -58,7 +58,7 @@ export default defineConfig({
   modules: ['@wxt-dev/module-react'],
   // WXT auto-imports its globals (`defineBackground`, `browser`, `storage`, …)
   // into any module that uses one of those names unbound — including the
-  // workspace packages the Options page bundles. debate-round's flow history
+  // workspace packages the Options page bundles. @debate/round's flow history
   // takes a parameter called `storage`, which got an injected
   // `import { storage } from 'wxt/storage'` that can't resolve from
   // packages/, failing the build. Auto-imports are for this extension's own

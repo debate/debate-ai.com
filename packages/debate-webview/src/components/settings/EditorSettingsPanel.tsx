@@ -6,9 +6,9 @@ import { useSearchParams } from "next/navigation"
 import { Accessibility, FolderOpen, Keyboard, MessageSquareText, Palette, PenLine, Search, Settings, SlidersHorizontal, Users } from "lucide-react"
 // Static import so bundling confines this ~15k-line global stylesheet to
 // the settings routes' own chunk — never loaded by the host app's main bundle.
-import "debate-editor/styles.css"
-import type { SettingsCategory } from "debate-editor/settings"
-import { UserSettingsPanel } from "debate-round"
+import "@debate/editor/styles.css"
+import type { SettingsCategory } from "@debate/editor/settings"
+import { UserSettingsPanel } from "@debate/round"
 import { TeamCoachingSection } from "./TeamCoachingSection"
 import { EDITOR_PREFERENCE_KEYS, EDITOR_SETTINGS_TABS } from "../../lib/editor-preferences"
 
@@ -78,8 +78,8 @@ export function EditorSettingsPanel() {
   const [signedIn, setSignedIn] = useState(false)
   const [query, setQuery] = useState("")
   const containerRef = useRef<HTMLDivElement | null>(null)
-  const moduleRef = useRef<typeof import("debate-editor/settings-ui") | null>(null)
-  const settingsRef = useRef<typeof import("debate-editor/settings") | null>(null)
+  const moduleRef = useRef<typeof import("@debate/editor/settings-ui") | null>(null)
+  const settingsRef = useRef<typeof import("@debate/editor/settings") | null>(null)
   // Every mirrored key whose row has rendered in this session — see the push
   // effect below for why the DOM, and not `SETTING_METADATA`, decides.
   const mirroredKeysRef = useRef<Set<string>>(new Set())
@@ -94,8 +94,8 @@ export function EditorSettingsPanel() {
 
     void (async () => {
       const [settingsModule, uiModule] = await Promise.all([
-        import("debate-editor/settings"),
-        import("debate-editor/settings-ui"),
+        import("@debate/editor/settings"),
+        import("@debate/editor/settings-ui"),
       ])
       if (cancelled) return
       settingsRef.current = settingsModule

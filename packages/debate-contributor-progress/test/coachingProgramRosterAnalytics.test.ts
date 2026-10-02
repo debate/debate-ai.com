@@ -4,11 +4,11 @@ import {
   buildPersistedCoachingProgramRosterAnalytics,
 } from "../src/state/coachingProgramRosterAnalytics";
 import { saveDailyMissionResult } from "../src/state/dailyMissionResults";
-import { saveCoachingProgram } from "debate-team-collaboration/src/state/coachingPrograms";
-import { saveGroupChallenge } from "debate-team-collaboration/src/state/groupChallenges";
-import { recordChallengeWinEvent } from "debate-team-collaboration/src/state/challengeWinEvents";
-import type { CoachingProgramConfig } from "debate-team-collaboration/src/round/coaching-program";
-import type { GroupChallenge } from "debate-team-collaboration/src/lib/group-challenges";
+import { saveCoachingProgram } from "@debate/team-collaboration/src/state/coachingPrograms";
+import { saveGroupChallenge } from "@debate/team-collaboration/src/state/groupChallenges";
+import { recordChallengeWinEvent } from "@debate/team-collaboration/src/state/challengeWinEvents";
+import type { CoachingProgramConfig } from "@debate/team-collaboration/src/round/coaching-program";
+import type { GroupChallenge } from "@debate/team-collaboration/src/lib/group-challenges";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {

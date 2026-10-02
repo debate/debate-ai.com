@@ -19,17 +19,17 @@
 
 import { useCallback, useRef, useState } from "react";
 import { AlertTriangle, CheckCircle2, FolderSync, StopCircle } from "lucide-react";
-import type { Caselist } from "debate-data-sync/src/caselist/caselist-config";
-import type { CaselistArchive } from "debate-data-sync/src/caselist/downloads-page-parser";
-import { loadCaselistArchive } from "debate-data-sync/src/caselist/caselist-archive";
-import { caselistDocumentToCardRows } from "debate-data-sync/src/caselist/caselist-cards";
+import type { Caselist } from "@debate/data-sync/src/caselist/caselist-config";
+import type { CaselistArchive } from "@debate/data-sync/src/caselist/downloads-page-parser";
+import { loadCaselistArchive } from "@debate/data-sync/src/caselist/caselist-archive";
+import { caselistDocumentToCardRows } from "@debate/data-sync/src/caselist/caselist-cards";
 import {
   CARD_UPLOAD_BATCH_ROWS,
   createCardBatchSender,
   dedupeCardsById,
   normalizeDebateCardRows,
   type DebateCardRecord,
-} from "debate-research-evidence";
+} from "@debate/research-evidence";
 import { Button } from "../../lib/ui/primitives/button";
 import {
   Card,

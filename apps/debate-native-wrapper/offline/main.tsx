@@ -18,7 +18,7 @@ import { SITE } from "./api-proxy"
 
 import React from "react"
 import ReactDOM from "react-dom/client"
-import { DebateApp, applyStoredAppearance, configureHost } from "debate-webview"
+import { DebateApp, applyStoredAppearance, configureHost } from "@debate/webview"
 
 type Invoke = (cmd: string, args?: Record<string, unknown>) => Promise<unknown>
 const invoke = (window as unknown as { __TAURI__?: { core?: { invoke?: Invoke } } }).__TAURI__?.core?.invoke

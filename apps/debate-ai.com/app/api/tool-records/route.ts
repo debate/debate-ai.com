@@ -4,7 +4,7 @@ import { getDBFromContext } from "@/lib/database/context"
 import { savedToolRecords } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
 import { withRouteErrors } from "@/lib/api/route-errors"
-import { TOOL_RECORD_COLLECTIONS } from "debate-data-sync/src/state/toolRecordCollections"
+import { TOOL_RECORD_COLLECTIONS } from "@debate/data-sync/src/state/toolRecordCollections"
 
 /**
  * Every synced collection for the current user, in one request.

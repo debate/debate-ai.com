@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { requestAiVersusSpeech } from "../src/round/ai-versus-speech-client";
-import type { AiSpeechRequest } from "debate-round/src/round/ai-versus-speech-order";
+import type { AiSpeechRequest } from "@debate/round/src/round/ai-versus-speech-order";
 
 const REQUEST: AiSpeechRequest = {
   slot: { index: 0, name: "1AC", secondary: false, time: 360, speaker: "ai" },

@@ -1,6 +1,6 @@
 // @ts-nocheck
 /**
- * debate-tournaments overlay — replaces upstream's `api/data/database.ts`.
+ * @debate/tournaments overlay — replaces upstream's `api/data/database.ts`.
  *
  * Upstream builds one Kysely instance over a MariaDB pool at import time. On
  * Cloudflare the database is the request's D1 binding, so `db` here is a proxy

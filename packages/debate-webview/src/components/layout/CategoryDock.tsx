@@ -7,13 +7,13 @@ import { Globe, LogIn, LogOut, Monitor, Moon, Palette, Pause, Play, Search, Sett
 import { toast } from "sonner"
 import { cn } from "../../lib/ui/lib/utils"
 import { Dock, DockIcon, DockItem, DockLabel } from "../../lib/ui/layout/dock"
-import { useAccountNotifications, useContacts } from "debate-team-collaboration"
+import { useAccountNotifications, useContacts } from "@debate/team-collaboration"
 import {
   useVideoPlayerStore,
   sendYouTubeCommand,
   useCategoryDockState,
   type CategoryType,
-} from "debate-videos"
+} from "@debate/videos"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,7 +41,7 @@ import { openGlobalCommandPalette } from "./GlobalCommandPalette"
 import { IconSettings } from "../../lib/ui/icons"
 
 // No Timer button here on purpose: the round timers live in the rounds
-// sidebar, on the selected round (`LiveRoundGroup`, in debate-round's
+// sidebar, on the selected round (`LiveRoundGroup`, in @debate/round's
 // `FlowPageSidebar`), where the speech they are timing is in view. A dock
 // shortcut to a standalone timer page duplicated that surface without the
 // round context, so it was removed.

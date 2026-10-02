@@ -9,7 +9,7 @@ import {
   MAX_SAVED_LEARN_DECK_BYTES,
   normalizeLearnDeckOpPatch,
   type CustomDeck,
-} from "debate-editor/engine"
+} from "@debate/editor/engine"
 import { withRouteErrors } from "@/lib/api/route-errors"
 
 /**

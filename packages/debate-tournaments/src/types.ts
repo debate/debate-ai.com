@@ -12,7 +12,7 @@
  * vendored copy makes the adapter's extra package, its `postinstall` link
  * script and its dependency-resolution aliases unnecessary.
  *
- * @module debate-tournaments/types
+ * @module @debate/tournaments/types
  */
 
 import type { z } from "zod";

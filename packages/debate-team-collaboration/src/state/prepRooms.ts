@@ -25,10 +25,10 @@
 
 import type { PrepRoom } from "../lib/prep-room";
 import { buildPrepRoomFromStore } from "../lib/prep-room";
-import type { CoverageThresholds } from "debate-research-evidence/src/lib/topic-coverage";
-import { buildPersistedTopicCoverageReport, listTrackedTopics } from "debate-research-evidence/src/state/trackedArguments";
+import type { CoverageThresholds } from "@debate/research-evidence/src/lib/topic-coverage";
+import { buildPersistedTopicCoverageReport, listTrackedTopics } from "@debate/research-evidence/src/state/trackedArguments";
 import { listContributorAvailability } from "./contributorAvailability";
-import { listEvidenceLibraryEntries } from "debate-research-evidence/src/state/evidenceLibraryEntries";
+import { listEvidenceLibraryEntries } from "@debate/research-evidence/src/state/evidenceLibraryEntries";
 
 /**
  * Builds a topic's prep room entirely from persisted stores: its coverage

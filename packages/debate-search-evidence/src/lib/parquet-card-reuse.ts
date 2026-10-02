@@ -19,7 +19,7 @@
  * @module lib/parquet-card-reuse
  */
 
-import { parseCardRecord, type ParsedCardRecord } from "debate-card-parser";
+import { parseCardRecord, type ParsedCardRecord } from "@debate/card-parser";
 
 import type { DebateCardRecord } from "./parquet-card-import";
 import { normalizeSourceUrl } from "./shared-evidence-library";

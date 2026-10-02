@@ -13,10 +13,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Badge } from "debate-round/src/ui/primitives/badge";
-import { Button } from "debate-round/src/ui/primitives/button";
-import { Input } from "debate-round/src/ui/primitives/input";
-import { EmptyState, PanelSection, PanelShell, Pill } from "debate-round/src/ui/panels/panel-shell";
+import { Badge } from "@debate/round/src/ui/primitives/badge";
+import { Button } from "@debate/round/src/ui/primitives/button";
+import { Input } from "@debate/round/src/ui/primitives/input";
+import { EmptyState, PanelSection, PanelShell, Pill } from "@debate/round/src/ui/panels/panel-shell";
 import { sortContacts, type ContactUser } from "../lib/contacts";
 import { searchUsers, type ContactEntry } from "../state/contacts";
 import { useContacts, type UseContactsResult } from "../hooks/useContacts";

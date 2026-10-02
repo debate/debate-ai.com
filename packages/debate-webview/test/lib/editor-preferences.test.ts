@@ -12,8 +12,8 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { CATEGORY_TABS } from "debate-editor/settings-categories";
-import { SETTING_METADATA } from "debate-editor/settings";
+import { CATEGORY_TABS } from "@debate/editor/settings-categories";
+import { SETTING_METADATA } from "@debate/editor/settings";
 
 import {
   EDITOR_PREFERENCE_KEYS,

@@ -29,7 +29,7 @@ import {
   type CardImportProgress,
   type DebateCardRowFailure,
   type ParquetSource,
-} from "debate-research-evidence";
+} from "@debate/research-evidence";
 import { Button } from "../../lib/ui/primitives/button";
 import {
   Card,

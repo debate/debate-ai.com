@@ -38,7 +38,7 @@ import {
   SIDEBAR_TOOL_SECTIONS,
   TOOLS_ROOT_HREF,
   type FooterLink,
-} from "debate-videos";
+} from "@debate/videos";
 
 import { APP_LOGO, APP_NAME } from "../../lib/config/site";
 

@@ -4,7 +4,7 @@
  *
  * Standalone, ebb owns the whole page and every keydown is its own - no
  * scope is registered, and `withinEbbKeyScope` is a no-op true. Embedded in
- * a host page (a debate-round panel, an editor sidebar) that is no longer
+ * a host page (a @debate/round panel, an editor sidebar) that is no longer
  * true: ebb is one column among others, and its capture-phase interceptor
  * would otherwise steal keystrokes typed into the host's own grid or editor
  * anywhere on the page. `EbbFlowEmbed` registers its root element here on

@@ -8,7 +8,7 @@ import {
   isValidLearnCardRecord,
   MAX_SAVED_LEARN_CARD_BYTES,
   type CardDef,
-} from "debate-editor/engine"
+} from "@debate/editor/engine"
 import { withRouteErrors } from "@/lib/api/route-errors"
 
 /**

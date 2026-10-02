@@ -80,19 +80,19 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { Badge } from "debate-round/src/ui/primitives/badge"
-import { Button } from "debate-round/src/ui/primitives/button"
-import { Input } from "debate-round/src/ui/primitives/input"
-import { Label } from "debate-round/src/ui/primitives/label"
-import { Textarea } from "debate-round/src/ui/primitives/textarea"
+import { Badge } from "@debate/round/src/ui/primitives/badge"
+import { Button } from "@debate/round/src/ui/primitives/button"
+import { Input } from "@debate/round/src/ui/primitives/input"
+import { Label } from "@debate/round/src/ui/primitives/label"
+import { Textarea } from "@debate/round/src/ui/primitives/textarea"
 import {
   EmptyState,
   PanelRow,
   PanelSection,
   PanelShell,
   toneSurfaceClass,
-} from "debate-round/src/ui/panels/panel-shell"
-import { cn } from "debate-round/src/ui/lib/utils"
+} from "@debate/round/src/ui/panels/panel-shell"
+import { cn } from "@debate/round/src/ui/lib/utils"
 import { Download } from "lucide-react"
 import {
   Select,
@@ -100,23 +100,23 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "debate-round/src/ui/primitives/select"
+} from "@debate/round/src/ui/primitives/select"
 import {
   debateStyleMap,
   debateStyleNames,
   debateStyles,
   type DebateStyleKey,
-} from "debate-timer/src/formats/debate-format-times"
+} from "@debate/timer/src/formats/debate-format-times"
 import {
   buildAiResponseRequest,
   validateSpeechSubmission,
   type AiVersusSide,
-} from "debate-round/src/round/ai-versus-speech-order"
-import type { DiffSegment } from "debate-round/src/flow/flow-edit-diff"
+} from "@debate/round/src/round/ai-versus-speech-order"
+import type { DiffSegment } from "@debate/round/src/flow/flow-edit-diff"
 import { requestAiVersusSpeech } from "../round/ai-versus-speech-client"
 import { requestAiVersusSpeechWithPersona } from "../round/opponent-persona-speech-client"
 import { getOpponentDifficultyForRound, getOpponentPersonaForRound } from "../round/opponent-persona-speech-wiring"
-import { opponentDifficulties } from "debate-speech-writer/src/opponent/opponent-personas"
+import { opponentDifficulties } from "@debate/speech-writer/src/opponent/opponent-personas"
 import { appendDictatedSegment } from "../round/microphone-transcription"
 import { useMicrophoneTranscription } from "../hooks/useMicrophoneTranscription"
 import {
@@ -135,7 +135,7 @@ import {
   replaceAiSpeechAt,
   saveAiVersusRound,
   type AiVersusRoundRecord,
-} from "debate-round/src/state/aiVersusRounds"
+} from "@debate/round/src/state/aiVersusRounds"
 import { isAiVersusRoundPanelLiveUpdateStorageEvent } from "../state/live-update"
 
 const STYLE_LABELS: Record<DebateStyleKey, string> = debateStyleMap.reduce(

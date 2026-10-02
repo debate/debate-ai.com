@@ -1,1 +1,1 @@
-export { default } from "debate-help-docs/routes/home-layout"
+export { default } from "@debate/help-docs/routes/home-layout"

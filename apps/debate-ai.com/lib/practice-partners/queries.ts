@@ -32,12 +32,12 @@ import type {
   PracticePerson,
   PracticeProfileInput,
   PracticeVolunteer,
-} from "debate-webview/lib/practice-partners/types";
-import type { ChallengeState } from "debate-webview/lib/practice-partners/challenge-actions";
+} from "@debate/webview/lib/practice-partners/types";
+import type { ChallengeState } from "@debate/webview/lib/practice-partners/challenge-actions";
 
 import type { getDBFromContext } from "@/lib/database/context";
 import { notifications, practiceChallenges, practiceProfiles, user, userBlocks } from "@/lib/database/schema";
-import { readStoredPreferences, roomIdForChallenge, storedPreferences, type ParsedChallenge } from "debate-webview/lib/practice-partners/validation";
+import { readStoredPreferences, roomIdForChallenge, storedPreferences, type ParsedChallenge } from "@debate/webview/lib/practice-partners/validation";
 
 type Db = Awaited<ReturnType<typeof getDBFromContext>>;
 

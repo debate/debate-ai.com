@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getVideoPage } from "@/lib/videos/video-repository";
-import type { VideoQueryParams } from "debate-data-sync/src/videos/video-query";
+import type { VideoQueryParams } from "@debate/data-sync/src/videos/video-query";
 
 /**
  * Paginated video feed.

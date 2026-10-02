@@ -4,7 +4,7 @@
  */
 
 import { describe, expect, it } from "vitest"
-import type { RankingEntry } from "debate-rankings-adapter"
+import type { RankingEntry } from "@debate/rankings-adapter"
 import {
   findSchoolTeams,
   rankingDatasetForStyle,

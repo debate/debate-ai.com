@@ -18,7 +18,7 @@
  * @module round/custom-opponent-persona-library-client
  */
 
-import type { SavedCustomOpponentPersona } from "debate-speech-writer/src/opponent/opponent-persona-library";
+import type { SavedCustomOpponentPersona } from "@debate/speech-writer/src/opponent/opponent-persona-library";
 
 async function readErrorMessage(res: Response, fallback: string): Promise<string> {
   try {

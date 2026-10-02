@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { buildPersistedPrepRoom, listPrepRoomTopics } from "../src/state/prepRooms";
-import { saveEvidenceLibraryEntry } from "debate-research-evidence/src/state/evidenceLibraryEntries";
-import { saveTrackedArgument } from "debate-research-evidence/src/state/trackedArguments";
+import { saveEvidenceLibraryEntry } from "@debate/research-evidence/src/state/evidenceLibraryEntries";
+import { saveTrackedArgument } from "@debate/research-evidence/src/state/trackedArguments";
 import { saveContributorAvailability } from "../src/state/contributorAvailability";
-import type { EvidenceLibraryEntry } from "debate-research-evidence/src/lib/shared-evidence-library";
+import type { EvidenceLibraryEntry } from "@debate/research-evidence/src/lib/shared-evidence-library";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {

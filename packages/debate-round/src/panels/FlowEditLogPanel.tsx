@@ -43,8 +43,8 @@
 import { useEffect, useMemo, useState } from "react"
 import { GitCommitHorizontal } from "lucide-react"
 
-import { listCombinedPersistedLibraryCards } from "debate-research-evidence/src/state/evidenceLibraryEntries"
-import type { LibraryCard } from "debate-research-evidence/src/lib/argument-library"
+import { listCombinedPersistedLibraryCards } from "@debate/research-evidence/src/state/evidenceLibraryEntries"
+import type { LibraryCard } from "@debate/research-evidence/src/lib/argument-library"
 
 import {
   EmptyState,
@@ -66,7 +66,7 @@ import { isFlowEditLogPanelLiveUpdateStorageEvent } from "../flow/live-update"
 import { useFlowSyncPolling } from "../hooks/useFlowSyncPolling"
 import { useFlowPresencePolling } from "../hooks/useFlowPresencePolling"
 import { buildFlowPresenceSummaryText } from "../flow/flow-presence"
-import { getToolRecordSyncStatus } from "debate-data-sync/src/state/tool-record-auto-sync"
+import { getToolRecordSyncStatus } from "@debate/data-sync/src/state/tool-record-auto-sync"
 
 /** The `key` this store is registered under in `TOOL_RECORD_COLLECTIONS`. */
 const FLOW_EDITS_COLLECTION_KEY = "flowEdits"

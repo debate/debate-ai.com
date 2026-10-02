@@ -8,7 +8,7 @@ import {
   saveContributorAvailability,
   upsertContributorAvailabilityProfile,
 } from "../src/state/contributorAvailability";
-import type { ContributorAvailability } from "debate-research-evidence/src/lib/research-task-routing";
+import type { ContributorAvailability } from "@debate/research-evidence/src/lib/research-task-routing";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {

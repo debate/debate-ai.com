@@ -1,7 +1,7 @@
 import { ReasonEditorScreen } from "../../components/reason-editor/ReasonEditorScreen"
 
 /**
- * Native REASON editor route — the debate-editor (TipTap/CardMirror) shell
+ * Native REASON editor route — the @debate/editor (TipTap/CardMirror) shell
  * wired to per-user document persistence (/api/doc/documents). Reachable
  * from the Settings menu alongside the existing /doc iframe.
  *

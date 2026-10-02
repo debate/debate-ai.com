@@ -16,8 +16,8 @@
  * @module flow/annotation-density
  */
 
-import { sortAnnotationsByTimestamp } from "debate-round/src/flow/flow-annotations";
-import type { FlowAnnotation } from "debate-round/src/flow/flow-annotations";
+import { sortAnnotationsByTimestamp } from "@debate/round/src/flow/flow-annotations";
+import type { FlowAnnotation } from "@debate/round/src/flow/flow-annotations";
 
 export type AnnotationDensityBucket = {
   startMs: number;

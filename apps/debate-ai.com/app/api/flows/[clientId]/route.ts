@@ -3,7 +3,7 @@ import { and, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { savedFlows } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
-import { deriveFlowLabel, hasFlowSaveConflict, isValidFlow, MAX_SAVED_FLOW_BYTES } from "debate-round"
+import { deriveFlowLabel, hasFlowSaveConflict, isValidFlow, MAX_SAVED_FLOW_BYTES } from "@debate/round"
 
 /**
  * Account-linked flow cloud save — TODO.md idea #17, follow-up (3), "flows"

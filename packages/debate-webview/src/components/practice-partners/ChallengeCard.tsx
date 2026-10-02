@@ -14,7 +14,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight, CalendarClock, Check, Copy, Gavel, Loader2, Video } from "lucide-react";
-import { CommentAvatar } from "debate-comments";
+import { CommentAvatar } from "@debate/comments";
 
 import { cn } from "../../lib/ui/lib/utils";
 import { availableChallengeActions } from "../../lib/practice-partners/challenge-actions";

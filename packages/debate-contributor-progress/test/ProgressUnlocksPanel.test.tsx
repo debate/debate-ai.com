@@ -8,7 +8,7 @@
  * roster table with a "You" highlight, a dismissible unlock-celebration
  * banner, and a cross-tab live-update refresh. Same "real logic, zero
  * component coverage" gap `debate-search-evidence/test/ArgumentLibraryPanel.test.tsx`
- * and `debate-team-collaboration/test/PrepNoteNotificationsPanel.test.tsx`
+ * and `@debate/team-collaboration/test/PrepNoteNotificationsPanel.test.tsx`
  * closed for their own panels.
  *
  * Uses the same jsdom + `react-dom/client` + `act` pattern those two files
@@ -16,7 +16,7 @@
  * (a `node`-environment `renderToStaticMarkup` snapshot never runs effects,
  * so it can't see this panel's roster at all) — this package's first use of
  * that pattern, so it also adds `test/helpers/mount.tsx`, mirroring
- * `debate-team-collaboration/test/helpers/mount.tsx`'s `mount`/`click`/
+ * `@debate/team-collaboration/test/helpers/mount.tsx`'s `mount`/`click`/
  * `flush` API exactly rather than inventing a new one.
  */
 
@@ -24,13 +24,13 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { createElement } from "react";
 
 import { ProgressUnlocksPanel } from "../src/panels/ProgressUnlocksPanel";
-import { saveContribution } from "debate-research-evidence/src/state/contributions";
+import { saveContribution } from "@debate/research-evidence/src/state/contributions";
 import { saveDailyMissionResult } from "../src/state/dailyMissionResults";
-import { completeAndRecordResearchTask } from "debate-team-collaboration/src/state/researchProgress";
-import { saveRoutedTaskQueue, type RoutedTaskQueueRecord } from "debate-team-collaboration/src/state/routedTaskQueues";
+import { completeAndRecordResearchTask } from "@debate/team-collaboration/src/state/researchProgress";
+import { saveRoutedTaskQueue, type RoutedTaskQueueRecord } from "@debate/team-collaboration/src/state/routedTaskQueues";
 import { markBadgesSeen } from "../src/state/unlockCelebrations";
-import type { AttributedContribution } from "debate-research-evidence/src/lib/contribution-leaderboard";
-import type { ResearchTask, RoutingResult } from "debate-research-evidence/src/lib/research-task-routing";
+import type { AttributedContribution } from "@debate/research-evidence/src/lib/contribution-leaderboard";
+import type { ResearchTask, RoutingResult } from "@debate/research-evidence/src/lib/research-task-routing";
 import { click, flush, mount } from "./helpers/mount";
 import type { Mounted } from "./helpers/mount";
 

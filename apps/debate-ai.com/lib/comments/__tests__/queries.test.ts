@@ -31,7 +31,7 @@ import {
 } from "@/lib/comments/queries";
 import { commentLikes, comments } from "@/lib/database/schema";
 import { applySchema } from "@/lib/database/__tests__/schema-sql";
-import { parseParentId } from "debate-webview/lib/comments/validation";
+import { parseParentId } from "@debate/webview/lib/comments/validation";
 
 let directory: string;
 let client: ReturnType<typeof createClient>;

@@ -33,9 +33,9 @@
  * @module lib/coaching-program-calendar
  */
 
-import { getUtcDayKey } from "debate-research-evidence/src/lib/daily-best-card";
-import type { GroupChallenge } from "debate-team-collaboration/src/lib/group-challenges";
-import type { SprintNote } from "debate-team-collaboration/src/lib/team-collaboration-mode";
+import { getUtcDayKey } from "@debate/research-evidence/src/lib/daily-best-card";
+import type { GroupChallenge } from "@debate/team-collaboration/src/lib/group-challenges";
+import type { SprintNote } from "@debate/team-collaboration/src/lib/team-collaboration-mode";
 
 /** How a `CoachingProgramCalendarEvent` came about. */
 export type CoachingProgramCalendarEventKind = "challenge-start" | "challenge-end" | "sprint-note" | "drill-review";

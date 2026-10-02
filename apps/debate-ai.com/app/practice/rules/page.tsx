@@ -6,4 +6,4 @@ export const metadata: Metadata = {
     "A practical high-school debate guide with format summaries, research rules, evidence standards, and format-specific rules for Policy, LD, PF, Congress, Big Questions and World Schools.",
 }
 
-export { default } from "debate-webview/routes/rules/page"
+export { default } from "@debate/webview/routes/rules/page"

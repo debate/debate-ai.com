@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { parseYouTubeVideoId } from "debate-videos";
+import { parseYouTubeVideoId } from "@debate/videos";
 import { Button } from "../../lib/ui/primitives/button";
 import { Badge } from "../../lib/ui/primitives/badge";
 import { Input } from "../../lib/ui/primitives/input";

@@ -33,10 +33,10 @@
  * total. `StrategyPanel`'s "Case comparison" table renders it.
  */
 
-import type { DebateSide, OpponentTeamProfile } from "debate-data-sync/src/rankings/opponent-team-profile";
-import { getOpponentTeamProfile } from "debate-data-sync/src/state/opponentTeamProfiles";
-import type { JudgeProfile } from "debate-speech-writer/src/judge/judge-profile";
-import { getJudgeProfile } from "debate-speech-writer/src/state/judgeProfiles";
+import type { DebateSide, OpponentTeamProfile } from "@debate/data-sync/src/rankings/opponent-team-profile";
+import { getOpponentTeamProfile } from "@debate/data-sync/src/state/opponentTeamProfiles";
+import type { JudgeProfile } from "@debate/speech-writer/src/judge/judge-profile";
+import { getJudgeProfile } from "@debate/speech-writer/src/state/judgeProfiles";
 
 /** The side the opponent will run this round, given the side we're running — debate is two-sided, so it's always the other one. */
 export function getLikelyOpponentSide(ourSide: DebateSide): DebateSide {

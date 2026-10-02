@@ -20,7 +20,7 @@ import {
   type DebateCardRecord,
   type DebateCardRowFailure,
   type ParquetCardReuseEntry,
-} from "debate-research-evidence";
+} from "@debate/research-evidence";
 import { debateCardImports, debateCards, evidenceReuseIndex } from "@/lib/database/schema";
 import { getEnv } from "@/lib/env";
 import { getAdminAccess } from "@/lib/auth/admin";

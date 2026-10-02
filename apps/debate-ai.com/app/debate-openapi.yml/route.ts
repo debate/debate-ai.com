@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-// The spec lives in debate-api-client (its SDK is generated from it); the
+// The spec lives in @debate/api-client (its SDK is generated from it); the
 // /api Scalar reference loads it from this URL.
-import spec from "debate-api-client/debate-openapi.yml?raw";
+import spec from "@debate/api-client/debate-openapi.yml?raw";
 
 export async function GET() {
   return new NextResponse(spec, {

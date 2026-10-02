@@ -1,7 +1,7 @@
 "use client"
 
 import { Suspense } from "react"
-import { DebateFlowPage } from "debate-round"
+import { DebateFlowPage } from "@debate/round"
 import { notFound, useParams } from "next/navigation"
 
 export default function DebateRoundPage() {

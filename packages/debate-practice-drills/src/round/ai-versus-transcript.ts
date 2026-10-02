@@ -27,13 +27,13 @@ import {
   debateStyleNames,
   debateStyles,
   type DebateStyleKey,
-} from "debate-timer/src/formats/debate-format-times";
-import type { AiVersusRoundRecord } from "debate-round/src/state/aiVersusRounds";
+} from "@debate/timer/src/formats/debate-format-times";
+import type { AiVersusRoundRecord } from "@debate/round/src/state/aiVersusRounds";
 import type {
   AiVersusSide,
   PriorSpeechRecord,
-} from "debate-round/src/round/ai-versus-speech-order";
-import { diffFlowEditContent, type DiffSegment } from "debate-round/src/flow/flow-edit-diff";
+} from "@debate/round/src/round/ai-versus-speech-order";
+import { diffFlowEditContent, type DiffSegment } from "@debate/round/src/flow/flow-edit-diff";
 
 function styleDisplayName(styleKey: DebateStyleKey): string {
   const index = debateStyleMap.indexOf(styleKey);

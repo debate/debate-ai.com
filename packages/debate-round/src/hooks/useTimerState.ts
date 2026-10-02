@@ -10,8 +10,8 @@ import { settings } from "../state/settings";
 import {
   debateStyles,
   debateStyleMap,
-} from "debate-timer/src/formats/debate-format-times";
-import type { DebateStyle, SpeechTimerState, TimerState } from "debate-timer/src/types";
+} from "@debate/timer/src/formats/debate-format-times";
+import type { DebateStyle, SpeechTimerState, TimerState } from "@debate/timer/src/types";
 
 /** Describes the currently running timer (if any) for the header display. */
 export type ActiveTimerInfo = {

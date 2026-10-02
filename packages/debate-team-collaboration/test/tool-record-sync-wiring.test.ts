@@ -7,14 +7,14 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { setToolRecordSyncEnabled } from "debate-data-sync/src/state/tool-record-mirror";
+import { setToolRecordSyncEnabled } from "@debate/data-sync/src/state/tool-record-mirror";
 import {
   deletePrepNote,
   savePrepNote,
   updatePersistedPrepNoteStatus,
 } from "../src/state/prepNotes";
 import { deleteCoachingProgram, saveCoachingProgram } from "../src/state/coachingPrograms";
-import type { PrepNote } from "debate-round/src/flow/strategy-sync-notes";
+import type { PrepNote } from "@debate/round/src/flow/strategy-sync-notes";
 
 /** Minimal in-memory `localStorage` mock — this package's environment is `node`. */
 class MemoryStorage {

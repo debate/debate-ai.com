@@ -13,12 +13,12 @@ import {
   saveQuestTemplate,
   seedQuestTemplatesFromTopicCoverage,
 } from "../src/state/dailyQuests";
-import { saveContribution } from "debate-research-evidence/src/state/contributions";
-import { saveTrackedArgument } from "debate-research-evidence/src/state/trackedArguments";
-import { saveEvidenceLibraryEntry } from "debate-research-evidence/src/state/evidenceLibraryEntries";
-import type { AttributedContribution } from "debate-research-evidence/src/lib/contribution-leaderboard";
+import { saveContribution } from "@debate/research-evidence/src/state/contributions";
+import { saveTrackedArgument } from "@debate/research-evidence/src/state/trackedArguments";
+import { saveEvidenceLibraryEntry } from "@debate/research-evidence/src/state/evidenceLibraryEntries";
+import type { AttributedContribution } from "@debate/research-evidence/src/lib/contribution-leaderboard";
 import type { QuestTeam, QuestTemplate } from "../src/lib/daily-quests";
-import type { EvidenceLibraryEntry } from "debate-research-evidence/src/lib/shared-evidence-library";
+import type { EvidenceLibraryEntry } from "@debate/research-evidence/src/lib/shared-evidence-library";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {

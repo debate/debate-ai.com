@@ -13,7 +13,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { FlowHistoryList } from "../src/dialogs/FlowHistoryList";
 import type { FlowHistory } from "../src/state/store";
 import type { Flow } from "../src/types/flow";
-import { markToolRecordsSynced, resetToolRecordAutoSync } from "debate-data-sync/src/state/tool-record-auto-sync";
+import { markToolRecordsSynced, resetToolRecordAutoSync } from "@debate/data-sync/src/state/tool-record-auto-sync";
 
 const flow: Flow = {
   content: "1AC",

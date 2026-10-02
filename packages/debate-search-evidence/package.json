@@ -1,5 +1,5 @@
 {
-  "name": "debate-research-evidence",
+  "name": "@debate/research-evidence",
   "version": "0.1.0",
   "description": "Evidence card search UI and the community research-and-evidence layer — search interface, evidence/argument libraries, LLM card scoring, revision incentives, review queue and topic coverage",
   "private": true,
@@ -25,8 +25,8 @@
     "@radix-ui/react-tooltip": "^1.2.16",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "debate-card-parser": "workspace:*",
-    "debate-comments": "workspace:*",
+    "@debate/card-parser": "workspace:*",
+    "@debate/comments": "workspace:*",
     "dompurify": "^3.4.16",
     "fuse.js": "^7.5.0",
     "grab-url": "^1.6.22",

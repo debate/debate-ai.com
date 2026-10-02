@@ -127,7 +127,7 @@
 
 import { useEffect, useState } from "react"
 import { Info } from "lucide-react"
-import { CommentSection } from "debate-comments"
+import { CommentSection } from "@debate/comments"
 import { Badge } from "../ui/primitives/badge"
 import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"

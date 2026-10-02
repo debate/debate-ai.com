@@ -1,1 +1,1 @@
-export { default } from "debate-webview/routes/settings/editor-panel/page"
+export { default } from "@debate/webview/routes/settings/editor-panel/page"

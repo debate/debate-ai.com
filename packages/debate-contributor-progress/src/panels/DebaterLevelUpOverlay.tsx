@@ -37,8 +37,8 @@
 import { Fragment, useEffect, useRef } from "react"
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
 import { Sparkles, Star } from "lucide-react"
-import { Button } from "debate-research-evidence/src/ui/primitives/button"
-import { cn } from "debate-research-evidence/src/ui/lib/utils"
+import { Button } from "@debate/research-evidence/src/ui/primitives/button"
+import { cn } from "@debate/research-evidence/src/ui/lib/utils"
 import type { DebaterLevelProgress } from "../lib/debater-levels"
 
 /** How long the cutscene plays before it dismisses itself. */

@@ -1,7 +1,7 @@
 "use client"
 
 import { useParams } from "next/navigation"
-import { TeamProfilePage } from "debate-videos"
+import { TeamProfilePage } from "@debate/videos"
 import { ToolPage } from "../../../components/tools/ToolPageHeader"
 
 /** Team profile opened from a Team Rankings row: ranking stats plus matching videos. */

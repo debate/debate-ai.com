@@ -15,7 +15,7 @@ import type React from "react"
 import { useEffect, useRef } from "react"
 import { usePathname } from "next/navigation"
 
-import { CategoryDockProvider, PersistentVideoPlayer, SlowSpreadButton } from "debate-videos"
+import { CategoryDockProvider, PersistentVideoPlayer, SlowSpreadButton } from "@debate/videos"
 import { CategoryDock } from "./CategoryDock"
 import { AppSidebarShell } from "./AppSidebarShell"
 import { DocsAppChrome } from "./DocsAppChrome"

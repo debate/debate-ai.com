@@ -49,7 +49,7 @@
  * @module lib/unlock-streak-status
  */
 
-import type { ContributorStats } from "debate-research-evidence/src/lib/contribution-leaderboard";
+import type { ContributorStats } from "@debate/research-evidence/src/lib/contribution-leaderboard";
 import {
   applyStreakFreezes,
   buildContributorQuestStreak,
@@ -65,10 +65,10 @@ import {
   DEFAULT_UNLOCK_TIER_REQUIREMENTS,
   type ContributorUnlockStatus,
   type UnlockTierRequirement,
-} from "debate-research-evidence/src/lib/progress-unlocks";
+} from "@debate/research-evidence/src/lib/progress-unlocks";
 import { listDailyMissionResultsForContributor } from "../state/dailyMissionResults";
 import { listStreakFreezeDayKeysForContributor } from "../state/streakFreezes";
-import { buildPersistedLeaderboardWithCompletedTasks } from "debate-team-collaboration/src/state/researchProgress";
+import { buildPersistedLeaderboardWithCompletedTasks } from "@debate/team-collaboration/src/state/researchProgress";
 
 /**
  * A contributor's unlock status extended with their streak standing.

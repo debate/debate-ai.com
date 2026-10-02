@@ -9,12 +9,12 @@
  * @module lib/videos/video-json-source
  */
 
-import type { VideoRow } from "debate-data-sync/src/videos/video-rows";
+import type { VideoRow } from "@debate/data-sync/src/videos/video-rows";
 
 /**
  * Loads every video row from the JSON assets.
  *
- * The `debate-data-sync/data/videos/*.json` assets were removed from the repo,
+ * The `@debate/data-sync/data/videos/*.json` assets were removed from the repo,
  * so the `videos` table is now the only source and this fallback has nothing
  * to serve: an unseeded table shows an empty library rather than failing the
  * build on the missing files.

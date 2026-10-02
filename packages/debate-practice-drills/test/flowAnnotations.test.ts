@@ -10,7 +10,7 @@ import {
   listFlowAnnotationsForVideo,
   saveFlowAnnotation,
 } from "../src/state/flowAnnotations";
-import type { FlowAnnotation } from "debate-round/src/flow/flow-annotations";
+import type { FlowAnnotation } from "@debate/round/src/flow/flow-annotations";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {

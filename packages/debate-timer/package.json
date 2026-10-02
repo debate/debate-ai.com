@@ -1,5 +1,5 @@
 {
-  "name": "debate-timer",
+  "name": "@debate/timer",
   "version": "0.1.0",
   "description": "Speech and prep timers with the in-round speech recorder and per-format speech times",
   "private": true,

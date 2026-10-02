@@ -17,9 +17,9 @@ import { describe, it, expect } from "vitest"
 import {
   SIDEBAR_TOOL_SECTIONS,
   TOOLS_ROOT_HREF,
-} from "debate-videos/src/components/category-gallery/sidebar-tool-sections"
-import { SIDEBAR_VIDEO_LINKS } from "debate-videos/src/components/category-gallery/sidebar-video-links"
-import { FOOTER_LINKS } from "debate-videos/src/ui/layout/footer-links"
+} from "@debate/videos/src/components/category-gallery/sidebar-tool-sections"
+import { SIDEBAR_VIDEO_LINKS } from "@debate/videos/src/components/category-gallery/sidebar-video-links"
+import { FOOTER_LINKS } from "@debate/videos/src/ui/layout/footer-links"
 import {
   DOCK_MENU_HREFS,
   SIDEBAR_MENU_SECTIONS,

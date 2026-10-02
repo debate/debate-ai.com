@@ -52,15 +52,15 @@
  * @module lib/daily-quests
  */
 
-import type { ContributionKind } from "debate-research-evidence/src/lib/community-rating";
-import type { AttributedContribution } from "debate-research-evidence/src/lib/contribution-leaderboard";
-import { getUtcDayKey } from "debate-research-evidence/src/lib/daily-best-card";
+import type { ContributionKind } from "@debate/research-evidence/src/lib/community-rating";
+import type { AttributedContribution } from "@debate/research-evidence/src/lib/contribution-leaderboard";
+import { getUtcDayKey } from "@debate/research-evidence/src/lib/daily-best-card";
 import {
   DEFAULT_COVERAGE_THRESHOLDS,
   getUnderCoveredArguments,
   type CoverageThresholds,
   type TopicCoverageReport,
-} from "debate-research-evidence/src/lib/topic-coverage";
+} from "@debate/research-evidence/src/lib/topic-coverage";
 
 /** A contribution counted toward daily quest progress. */
 export interface QuestContribution extends AttributedContribution {

@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { CoachingProgramsPanel } from "debate-team-collaboration"
+import { CoachingProgramsPanel } from "@debate/team-collaboration"
 import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
 import { CoachingProgramRosterAnalyticsWithDrills } from "./CoachingProgramRosterAnalyticsWithDrills"
 

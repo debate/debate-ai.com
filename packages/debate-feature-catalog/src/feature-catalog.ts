@@ -115,7 +115,7 @@ export const APP_FEATURES: FeatureEntry[] = [
       "Thousands of recorded rounds and instructional videos, searchable by title, channel, year, or view count, with inline playback",
     href: "/videos",
     category: "workspaces",
-    tags: ["learn", "lectures", "rounds", "youtube", "archive", "debate-videos"],
+    tags: ["learn", "lectures", "rounds", "youtube", "archive", "@debate/videos"],
     doc: "video-library.md",
   },
   {
@@ -134,7 +134,7 @@ export const APP_FEATURES: FeatureEntry[] = [
       "The multi-column flow spreadsheet: format-specific speech columns, inline editing, timers, and a shareable round URL",
     href: "/debate",
     category: "workspaces",
-    tags: ["fiat", "flow", "spreadsheet", "timer", "round", "debate-round"],
+    tags: ["fiat", "flow", "spreadsheet", "timer", "round", "@debate/round"],
   },
   {
     id: "reason-docs",

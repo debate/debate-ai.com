@@ -10,7 +10,7 @@
  * route's catch-all turns a malformed query into an empty result list rather
  * than an error, which is exactly how a broken `where` clause hid here before.
  *
- * Metered by plan tier (`debate-webview/src/lib/stripe/limits.ts`): each search counts toward
+ * Metered by plan tier (`@debate/webview/src/lib/stripe/limits.ts`): each search counts toward
  * the caller's `cardSearchesPerDay` (per IP when signed out) and returns at
  * most the tier's `cardSearchResults` cards.
  */
@@ -18,7 +18,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { getDBFromContext } from "@/lib/database/context";
 import { debateCards } from "@/lib/database/schema";
 import { getUserId } from "@/lib/auth/session";
-import { limitsFor } from "debate-webview/lib/stripe/limits";
+import { limitsFor } from "@debate/webview/lib/stripe/limits";
 import { consumeDailyUsage, getUserTier, limitMessage, planLimitHeaders, usageSubject } from "@/lib/stripe/usage";
 import {
   buildCardSearchOrderBy,

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { opponentPersonas } from "debate-speech-writer/src/opponent/opponent-personas";
+import { opponentPersonas } from "@debate/speech-writer/src/opponent/opponent-personas";
 import { saveOpponentPersonaSelection } from "../src/state/opponentPersonaSelections";
 import {
   getOpponentDifficultyForRound,

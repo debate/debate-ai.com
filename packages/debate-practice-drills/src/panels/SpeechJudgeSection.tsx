@@ -15,11 +15,11 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Badge } from "debate-round/src/ui/primitives/badge"
-import { Button } from "debate-round/src/ui/primitives/button"
-import { Input } from "debate-round/src/ui/primitives/input"
-import { Textarea } from "debate-round/src/ui/primitives/textarea"
-import { PanelSection } from "debate-round/src/ui/panels/panel-shell"
+import { Badge } from "@debate/round/src/ui/primitives/badge"
+import { Button } from "@debate/round/src/ui/primitives/button"
+import { Input } from "@debate/round/src/ui/primitives/input"
+import { Textarea } from "@debate/round/src/ui/primitives/textarea"
+import { PanelSection } from "@debate/round/src/ui/panels/panel-shell"
 import {
   SPEECH_SIDE_LABEL,
   createPresetSpeeches,

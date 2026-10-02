@@ -15,7 +15,7 @@
  *
  * @example Wiring the backend into a Next.js route handler
  * ```ts
- * import { createPracticeVsAiBackend, createAnthropicModelClient } from "debate-practice-vs-ai"
+ * import { createPracticeVsAiBackend, createAnthropicModelClient } from "@debate/practice-vs-ai"
  *
  * const backend = createPracticeVsAiBackend({
  *   store: myStore,

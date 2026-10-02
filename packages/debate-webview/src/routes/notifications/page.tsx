@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { AccountNotificationsPanel, PrepNoteNotificationsPanel } from "debate-team-collaboration"
+import { AccountNotificationsPanel, PrepNoteNotificationsPanel } from "@debate/team-collaboration"
 import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
 
 export default function NotificationsPage() {

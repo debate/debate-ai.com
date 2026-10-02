@@ -1,5 +1,5 @@
 {
-  "name": "debate-help-docs",
+  "name": "@debate/help-docs",
   "description": "Debate AI documentation (Fumadocs), mounted by the web app at /docs",
   "version": "0.1.0",
   "private": true,

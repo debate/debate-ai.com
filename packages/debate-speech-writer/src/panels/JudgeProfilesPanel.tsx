@@ -57,7 +57,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { EmptyState, PanelSection, PanelShell } from "debate-research-evidence/src/ui/panels/panel-shell"
+import { EmptyState, PanelSection, PanelShell } from "@debate/research-evidence/src/ui/panels/panel-shell"
 import { Badge } from "../ui/primitives/badge"
 import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"

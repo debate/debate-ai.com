@@ -16,7 +16,7 @@
 
 import { Suspense, lazy, useEffect, useMemo, useState } from "react"
 import { ArrowUp, MessageSquare } from "lucide-react"
-import type { ArgumentTreeNode } from "debate-round/src/flow/argument-tree"
+import type { ArgumentTreeNode } from "@debate/round/src/flow/argument-tree"
 import {
   ARGUMENT_MAP_VIEW_MODES,
   argumentMapPath,

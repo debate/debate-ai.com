@@ -27,4 +27,4 @@ export {
   hostsOwnSidebarDock,
   isGenericToolSidebarRoute,
   ownsItsLayout,
-} from "debate-videos"
+} from "@debate/videos"

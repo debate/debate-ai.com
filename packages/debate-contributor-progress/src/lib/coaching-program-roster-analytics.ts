@@ -27,8 +27,8 @@
  * @module lib/coaching-program-roster-analytics
  */
 
-import type { GroupChallengeProgress } from "debate-team-collaboration/src/lib/group-challenges";
-import type { CompletedGroupChallengeEvent } from "debate-team-collaboration/src/state/challengeWinEvents";
+import type { GroupChallengeProgress } from "@debate/team-collaboration/src/lib/group-challenges";
+import type { CompletedGroupChallengeEvent } from "@debate/team-collaboration/src/state/challengeWinEvents";
 import {
   buildContributorQuestStreak,
   buildStreakSummaryText,

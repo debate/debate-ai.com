@@ -7,7 +7,7 @@
 
 import { afterEach, describe, expect, it } from "vitest";
 
-import type { ArgumentTreeNode } from "debate-round/src/flow/argument-tree";
+import type { ArgumentTreeNode } from "@debate/round/src/flow/argument-tree";
 import { buildArgumentMap, ARGUMENT_MAP_VIEW_MODES } from "../src/flow/argument-map";
 import ArgumentMapChart from "../src/panels/argument-map/ArgumentMapChart";
 import { ArgumentMapView } from "../src/panels/argument-map/ArgumentMapView";

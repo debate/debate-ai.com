@@ -11,7 +11,7 @@
  * shared with the starred and recent tool lists that store these paths.
  */
 
-import { canonicalCategoryPathname } from "debate-data-sync/src/routes/category-paths";
+import { canonicalCategoryPathname } from "@debate/data-sync/src/routes/category-paths";
 
 /** Permanent, and method-preserving — see `canonical-host.ts`. */
 const REDIRECT_STATUS = 308;

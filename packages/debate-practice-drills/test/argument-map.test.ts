@@ -6,7 +6,7 @@
 
 import { describe, expect, it } from "vitest";
 
-import type { ArgumentTreeNode } from "debate-round/src/flow/argument-tree";
+import type { ArgumentTreeNode } from "@debate/round/src/flow/argument-tree";
 import {
   argumentMapPath,
   buildArgumentMap,

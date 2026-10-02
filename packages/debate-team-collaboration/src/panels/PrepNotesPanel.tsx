@@ -43,12 +43,12 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { ArrowUpRight, MessageSquare } from "lucide-react"
-import { Badge } from "debate-round/src/ui/primitives/badge"
-import { Button } from "debate-round/src/ui/primitives/button"
-import { Input } from "debate-round/src/ui/primitives/input"
-import { Label } from "debate-round/src/ui/primitives/label"
-import { Textarea } from "debate-round/src/ui/primitives/textarea"
-import { EmptyState, PanelRow, PanelShell } from "debate-round/src/ui/panels/panel-shell"
+import { Badge } from "@debate/round/src/ui/primitives/badge"
+import { Button } from "@debate/round/src/ui/primitives/button"
+import { Input } from "@debate/round/src/ui/primitives/input"
+import { Label } from "@debate/round/src/ui/primitives/label"
+import { Textarea } from "@debate/round/src/ui/primitives/textarea"
+import { EmptyState, PanelRow, PanelShell } from "@debate/round/src/ui/panels/panel-shell"
 import {
   assignPersistedPrepNote,
   buildPrepNotesPanelView,
@@ -61,8 +61,8 @@ import {
   buildPrepNoteJumpHref,
   isBoxAnchoredPrepNote,
   type PrepNoteStatus,
-} from "debate-round/src/flow/strategy-sync-notes"
-import { isPrepNotesPanelLiveUpdateStorageEvent } from "debate-round/src/flow/live-update"
+} from "@debate/round/src/flow/strategy-sync-notes"
+import { isPrepNotesPanelLiveUpdateStorageEvent } from "@debate/round/src/flow/live-update"
 import {
   deletePrepNoteReply,
   listRepliesForNote,

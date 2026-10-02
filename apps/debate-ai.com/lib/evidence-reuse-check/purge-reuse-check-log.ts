@@ -1,5 +1,5 @@
 import { inArray, lt } from "drizzle-orm";
-import { getReuseCheckLogPurgeCutoff } from "debate-research-evidence";
+import { getReuseCheckLogPurgeCutoff } from "@debate/research-evidence";
 import { getDBFromContext } from "../database/context";
 import { reuseCheckLog } from "../database/schema";
 

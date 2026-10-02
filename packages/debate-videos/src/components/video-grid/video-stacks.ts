@@ -5,7 +5,7 @@
  * A stacked playlist is a small group of videos the library knows belong
  * together: a round and the round-analysis video made from it, a debate split
  * across two uploads, the parts of a lecture series. The server marks each row
- * with its stack key (`debate-data-sync/src/videos/video-stacks.ts` says how a
+ * with its stack key (`@debate/data-sync/src/videos/video-stacks.ts` says how a
  * stack is formed) and `/api/videos/stacks` resolves those keys to their full
  * membership; this module does the last step, which is purely positional: the
  * *first* row of a stack to appear in the feed keeps its place in the results

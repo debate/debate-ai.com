@@ -53,7 +53,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { AlertCircle, ArrowLeft, Calendar, Eye } from "lucide-react"
-import { CommentSection } from "debate-comments"
+import { CommentSection } from "@debate/comments"
 
 import { WatchToolbar } from "../../components/watch/WatchToolbar"
 import { WatchSidePanel } from "../../components/watch/WatchSidePanel"

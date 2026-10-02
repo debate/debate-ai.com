@@ -12,7 +12,7 @@
  *
  * So the client fetches it once into `localStorage`, and {@link queryVideoIndex}
  * answers the grid's filter/sort/search locally with the very same functions
- * the server runs (`debate-data-sync/src/videos/video-query`), which is what
+ * the server runs (`@debate/data-sync/src/videos/video-query`), which is what
  * keeps a locally-served page identical to the one the API would have sent.
  * After the first visit the only request the video pages make is "what
  * changed since `syncedAt`?", which normally answers with an empty list.
@@ -53,7 +53,7 @@ import {
   indexTupleToVideoRow,
   type VideoIndexResponse,
   type VideoIndexTuple,
-} from "debate-data-sync/src/videos/video-index";
+} from "@debate/data-sync/src/videos/video-index";
 import {
   computeVideoFacets,
   computeLectureCategories,
@@ -64,8 +64,8 @@ import {
   type VideoFacets,
   type VideoQueryParams,
   type VideoSuggestions,
-} from "debate-data-sync/src/videos/video-query";
-import { videoRowToTuple, type VideoRow } from "debate-data-sync/src/videos/video-rows";
+} from "@debate/data-sync/src/videos/video-query";
+import { videoRowToTuple, type VideoRow } from "@debate/data-sync/src/videos/video-rows";
 import type { VideoType } from "../types/videos";
 
 /** Where the cached index lives in `localStorage`. */

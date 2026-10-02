@@ -1,5 +1,5 @@
 /**
- * debate-tournaments shim for `express` in vendored upstream code.
+ * @debate/tournaments shim for `express` in vendored upstream code.
  *
  * The vendored routers only take `Router` (and types) from express. Express's
  * router is the standalone `router` package, which runs on Workers; the rest

@@ -3,7 +3,7 @@ import {
   argumentTreeOutlineFilename,
   buildArgumentTreeOutlineText,
 } from "../src/flow/argument-tree-export";
-import type { ArgumentTreeNode } from "debate-round/src/flow/argument-tree";
+import type { ArgumentTreeNode } from "@debate/round/src/flow/argument-tree";
 
 function heading(content: string): ArgumentTreeNode {
   return {

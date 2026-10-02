@@ -11,7 +11,7 @@ import {
   sortNotificationsByCreatedAt,
   type PrepNoteNotification,
 } from "../src/flow/prep-note-notifications";
-import type { BoxAnchoredPrepNote, PrepNote } from "debate-round/src/flow/strategy-sync-notes";
+import type { BoxAnchoredPrepNote, PrepNote } from "@debate/round/src/flow/strategy-sync-notes";
 
 function prepNote(overrides: Partial<BoxAnchoredPrepNote> = {}): PrepNote {
   return {

@@ -7,7 +7,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { loadRankingDataset, type RankingDataset } from "debate-rankings-adapter"
+import { loadRankingDataset, type RankingDataset } from "@debate/rankings-adapter"
 import { SCHOOL_DATASETS } from "../panels/leaderboard/leaderboardUtils"
 import type { Division } from "../panels/leaderboard/leaderboardTypes"
 

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { createPracticeVsAiBackend, type DebateActor } from "debate-practice-vs-ai"
+import { createPracticeVsAiBackend, type DebateActor } from "@debate/practice-vs-ai"
 import { getSession } from "@/lib/auth/session"
 import { createPracticeVsAiStore } from "@/lib/practice-vs-ai/store"
 

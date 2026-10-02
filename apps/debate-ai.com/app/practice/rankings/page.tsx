@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Debater and team rankings by format and season",
 }
 
-export { default } from "debate-webview/routes/videos/page"
+export { default } from "@debate/webview/routes/videos/page"

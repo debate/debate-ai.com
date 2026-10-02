@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Lectures from educators on every debate format, skill and topic",
 }
 
-export { default } from "debate-webview/routes/videos/[category]/page"
+export { default } from "@debate/webview/routes/videos/[category]/page"

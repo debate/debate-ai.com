@@ -40,7 +40,7 @@ const APP_DIR = join(PACKAGE_ROOT, "..", "..", "apps", "debate-ai.com", "app")
 
 /**
  * The app's `page.tsx` for `href` — or, when that page only re-exports a
- * `debate-webview/routes/…` module, as most do, that module's source. A route
+ * `@debate/webview/routes/…` module, as most do, that module's source. A route
  * with no `app/` page (served from the `routes/index.ts` registry instead)
  * reads its `routes/<href>/page.tsx` directly.
  */

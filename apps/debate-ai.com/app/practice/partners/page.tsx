@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Challenge other debaters to a virtual practice round, or volunteer to debate or judge in the styles you're comfortable with",
 }
 
-export { default } from "debate-webview/routes/practice-partners/page"
+export { default } from "@debate/webview/routes/practice-partners/page"

@@ -31,7 +31,7 @@
 import type { MetadataRoute } from "next"
 import { buildSitemap } from "@/lib/seo/sitemap"
 import { getVideoMeta, getVideoSitemapEntries } from "@/lib/videos/video-repository"
-import { docsPageUrls } from "debate-help-docs/lib/fumadocs/sitemap-helper"
+import { docsPageUrls } from "@debate/help-docs/lib/fumadocs/sitemap-helper"
 
 /** Read the library on each request rather than freezing it at build time. */
 export const dynamic = "force-dynamic"

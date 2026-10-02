@@ -48,10 +48,10 @@
 
 import { useEffect, useMemo, useRef, useState } from "react"
 import { Bell, Heart, Megaphone, Sparkles, Trophy } from "lucide-react"
-import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
-import { Button } from "debate-research-evidence/src/ui/primitives/button"
-import { Card, CardContent } from "debate-research-evidence/src/ui/primitives/card"
-import { cn } from "debate-research-evidence/src/ui/lib/utils"
+import { Badge } from "@debate/research-evidence/src/ui/primitives/badge"
+import { Button } from "@debate/research-evidence/src/ui/primitives/button"
+import { Card, CardContent } from "@debate/research-evidence/src/ui/primitives/card"
+import { cn } from "@debate/research-evidence/src/ui/lib/utils"
 import {
   buildNewsFeed,
   isNewsItemLiked,
@@ -61,7 +61,7 @@ import {
   toggleNewsItemLiked,
 } from "../state/newsStream"
 import { NEWS_CATEGORY_LABELS, type NewsCategory, type NewsItem } from "../lib/news-stream"
-import { isNewsStreamLiveUpdateStorageEvent } from "debate-research-evidence/src/state/live-update"
+import { isNewsStreamLiveUpdateStorageEvent } from "@debate/research-evidence/src/state/live-update"
 
 const CATEGORY_ICON: Record<NewsCategory, typeof Bell> = {
   product: Sparkles,

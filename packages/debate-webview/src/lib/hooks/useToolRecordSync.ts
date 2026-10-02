@@ -30,22 +30,22 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from "react"
-import { TOOL_RECORD_COLLECTIONS } from "debate-data-sync/src/state/toolRecordCollections"
+import { TOOL_RECORD_COLLECTIONS } from "@debate/data-sync/src/state/toolRecordCollections"
 import {
   beginToolRecordPrefetch,
   endToolRecordPrefetch,
   hydrateToolRecords,
   setToolRecordSyncEnabled,
   type ToolRecordHydrationResult,
-} from "debate-data-sync/src/state/tool-record-mirror"
+} from "@debate/data-sync/src/state/tool-record-mirror"
 import {
   markToolRecordsSynced,
   resetToolRecordAutoSync,
   startToolRecordAutoSync,
   stopToolRecordAutoSync,
   type ToolRecordFlushResult,
-} from "debate-data-sync/src/state/tool-record-auto-sync"
-import { setSignedIn } from "debate-data-sync/src/state/sign-in-prompt"
+} from "@debate/data-sync/src/state/tool-record-auto-sync"
+import { setSignedIn } from "@debate/data-sync/src/state/sign-in-prompt"
 import { useSession } from "./useSession"
 
 /**

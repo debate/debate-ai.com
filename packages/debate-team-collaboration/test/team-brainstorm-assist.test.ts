@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildTopicCoverageReport, type TrackedArgument } from "debate-research-evidence/src/lib/topic-coverage";
+import { buildTopicCoverageReport, type TrackedArgument } from "@debate/research-evidence/src/lib/topic-coverage";
 import {
   buildBrainstormBoard,
   buildBrainstormBoardsForCoverageGaps,

@@ -33,13 +33,13 @@ import {
   StatTile,
   SummaryText,
   type PanelTone,
-} from "debate-research-evidence/src/ui/panels/panel-shell";
+} from "@debate/research-evidence/src/ui/panels/panel-shell";
 import { useStoreSnapshot } from "../ui/panels/use-store-snapshot";
-import { Button } from "debate-research-evidence/src/ui/primitives/button";
-import { Input } from "debate-research-evidence/src/ui/primitives/input";
-import { Label } from "debate-research-evidence/src/ui/primitives/label";
-import { RadioGroup, RadioGroupItem } from "debate-research-evidence/src/ui/primitives/radio-group";
-import { Textarea } from "debate-research-evidence/src/ui/primitives/textarea";
+import { Button } from "@debate/research-evidence/src/ui/primitives/button";
+import { Input } from "@debate/research-evidence/src/ui/primitives/input";
+import { Label } from "@debate/research-evidence/src/ui/primitives/label";
+import { RadioGroup, RadioGroupItem } from "@debate/research-evidence/src/ui/primitives/radio-group";
+import { Textarea } from "@debate/research-evidence/src/ui/primitives/textarea";
 
 import {
   buildTopicSprint,
@@ -67,9 +67,9 @@ import {
   type WhiteboardNoteColor,
 } from "../lib/team-collaboration-mode";
 import type { QuestContribution, QuestTemplate } from "../lib/daily-quests";
-import type { ContributorAvailability } from "debate-research-evidence/src/lib/research-task-routing";
+import type { ContributorAvailability } from "@debate/research-evidence/src/lib/research-task-routing";
 import type { TrackedTopicAssignment } from "../lib/research-progress";
-import type { TopicCoverageReport } from "debate-research-evidence/src/lib/topic-coverage";
+import type { TopicCoverageReport } from "@debate/research-evidence/src/lib/topic-coverage";
 import { deleteSprintNote, listSprintNotes, saveSprintNote } from "../state/sprintNotes";
 import { useSprintSessionsSync } from "../hooks/useSprintSessionsSync";
 import {
@@ -82,8 +82,8 @@ import {
   readPersistedTopicSprintInputs,
   type PersistedTopicSprintInputs,
 } from "../state/topicSprints";
-import { getUtcDayKey } from "debate-research-evidence/src/lib/daily-best-card";
-import { isTopicSprintLiveUpdateStorageEvent } from "debate-research-evidence/src/state/live-update";
+import { getUtcDayKey } from "@debate/research-evidence/src/lib/daily-best-card";
+import { isTopicSprintLiveUpdateStorageEvent } from "@debate/research-evidence/src/state/live-update";
 
 /** Everything a topic sprint needs before any persisted store has been read (first render/SSR). */
 const EMPTY_SPRINT_INPUTS: PersistedTopicSprintInputs = {

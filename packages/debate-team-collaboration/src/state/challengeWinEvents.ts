@@ -37,11 +37,11 @@
  * @module state/challengeWinEvents
  */
 
-import type { AttributedContribution } from "debate-research-evidence/src/lib/contribution-leaderboard";
+import type { AttributedContribution } from "@debate/research-evidence/src/lib/contribution-leaderboard";
 import type { ChallengeWinEvent, GroupChallengeProgress } from "../lib/group-challenges";
 import { buildGroupChallengeBoard, computeChallengeCompletionTimestamp, computeGroupChallengeProgress } from "../lib/group-challenges";
 import type { QuestContribution } from "../lib/daily-quests";
-import { listContributions } from "debate-research-evidence/src/state/contributions";
+import { listContributions } from "@debate/research-evidence/src/state/contributions";
 import { listGroupChallenges } from "./groupChallenges";
 
 const STORAGE_KEY = "challengeWinEvents";

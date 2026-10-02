@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { notFound, permanentRedirect } from "next/navigation"
-import { videoRouteHref, type VideoType } from "debate-videos"
+import { videoRouteHref, type VideoType } from "@debate/videos"
 import { getVideoBySlug } from "@/lib/videos/video-repository"
 
 /**

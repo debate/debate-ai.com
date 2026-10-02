@@ -23,8 +23,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react"
 import { Mic, MicOff } from "lucide-react"
-import { Button } from "debate-speech-writer/src/ui/primitives/button"
-import { Textarea } from "debate-speech-writer/src/ui/primitives/textarea"
+import { Button } from "@debate/speech-writer/src/ui/primitives/button"
+import { Textarea } from "@debate/speech-writer/src/ui/primitives/textarea"
 import { concedeDebate, judgeDebate, sendDebateMessage } from "../client"
 import type { GamificationAward } from "../backend/gamification"
 import type { DebateMessage } from "../backend/types"

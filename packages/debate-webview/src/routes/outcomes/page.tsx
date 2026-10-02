@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { VulnerabilityChartsPanel, RoundToolsCrossLinks } from "debate-practice-rounds"
+import { VulnerabilityChartsPanel, RoundToolsCrossLinks } from "@debate/practice-rounds"
 import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
 
 export default function OutcomesPage() {

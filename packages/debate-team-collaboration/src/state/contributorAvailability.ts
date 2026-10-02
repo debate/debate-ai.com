@@ -36,7 +36,7 @@ import {
   buildContributorAvailabilityProfile,
   type ContributorAvailability,
   type ContributorAvailabilityProfileInput,
-} from "debate-research-evidence/src/lib/research-task-routing";
+} from "@debate/research-evidence/src/lib/research-task-routing";
 
 const STORAGE_KEY = "contributorAvailability";
 

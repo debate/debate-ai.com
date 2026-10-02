@@ -4,7 +4,7 @@
  * @module components/debate/DebateVideos/panels/RankingsFieldSummary
  */
 
-import type { RankingDataset } from "debate-rankings-adapter";
+import type { RankingDataset } from "@debate/rankings-adapter";
 import { SPEECH_SIDE_STYLES } from "../../components/watch/speech-side-styles";
 
 /** Turns a tournament folder slug (`greenhill-rr`) into a label (`Greenhill RR`). */

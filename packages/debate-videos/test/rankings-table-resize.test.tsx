@@ -7,7 +7,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { act, createElement, type ReactNode } from "react";
 import { createRoot, type Root } from "react-dom/client";
-import type { RankingEntry } from "debate-rankings-adapter";
+import type { RankingEntry } from "@debate/rankings-adapter";
 
 vi.mock("next/link", () => ({
   default: ({ href, children }: { href: string; children: ReactNode }) => createElement("a", { href }, children),

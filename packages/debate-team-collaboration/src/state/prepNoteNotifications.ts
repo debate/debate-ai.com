@@ -17,7 +17,7 @@
  * @module state/prepNoteNotifications
  */
 
-import type { PrepNote } from "debate-round/src/flow/strategy-sync-notes";
+import type { PrepNote } from "@debate/round/src/flow/strategy-sync-notes";
 import {
   createPrepNoteAssignedNotification,
   getNotificationsForRecipient,

@@ -98,7 +98,7 @@ import {
   getSampleCloudLibraryItems,
   type CloudLibraryItem,
   type CloudLibraryItemKind,
-} from "debate-round"
+} from "@debate/round"
 
 /** Items shown before "Show all"; the fetch itself is widened so filters/show-all have data to work with. */
 const COLLAPSED_COUNT = 6

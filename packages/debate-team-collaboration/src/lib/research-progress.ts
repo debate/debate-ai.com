@@ -21,14 +21,14 @@
 import {
   DEFAULT_HELPFULNESS_WEIGHTS,
   type HelpfulnessWeights,
-} from "debate-research-evidence/src/lib/community-rating";
+} from "@debate/research-evidence/src/lib/community-rating";
 import {
   buildContributorStats,
   groupContributionsByContributor,
   type AttributedContribution,
   type ContributorStats,
-} from "debate-research-evidence/src/lib/contribution-leaderboard";
-import type { RoutedAssignment } from "debate-research-evidence/src/lib/research-task-routing";
+} from "@debate/research-evidence/src/lib/contribution-leaderboard";
+import type { RoutedAssignment } from "@debate/research-evidence/src/lib/research-task-routing";
 
 /**
  * A research task assignment tagged with the topic it belongs to and,

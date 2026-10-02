@@ -32,7 +32,7 @@
 import type React from "react"
 import { useCallback } from "react"
 
-import { CategoryDockProvider } from "debate-videos"
+import { CategoryDockProvider } from "@debate/videos"
 import { AppSidebarShell } from "./AppSidebarShell"
 import { docsExitTarget, opensElsewhere } from "../../lib/layout/frame-navigation"
 

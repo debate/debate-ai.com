@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Tabroom's own site, framed: invitations, pairings, results and registration.",
 }
 
-export { default } from "debate-webview/routes/tabroom/[[...slug]]/page"
+export { default } from "@debate/webview/routes/tabroom/[[...slug]]/page"

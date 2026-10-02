@@ -21,8 +21,8 @@
  * @module flow/flow-annotations-export
  */
 
-import { formatAnnotationTimestamp, sortAnnotationsByTimestamp } from "debate-round/src/flow/flow-annotations";
-import type { FlowAnnotation } from "debate-round/src/flow/flow-annotations";
+import { formatAnnotationTimestamp, sortAnnotationsByTimestamp } from "@debate/round/src/flow/flow-annotations";
+import type { FlowAnnotation } from "@debate/round/src/flow/flow-annotations";
 
 /**
  * Renders every annotation on one flow (`flowId`), oldest first, as a

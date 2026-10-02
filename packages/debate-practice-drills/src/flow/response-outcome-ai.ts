@@ -20,7 +20,7 @@
  * @module flow/response-outcome-ai
  */
 
-import type { ArgumentVulnerability } from "debate-round/src/flow/response-outcome";
+import type { ArgumentVulnerability } from "@debate/round/src/flow/response-outcome";
 
 /** The three specialized counsel roles the model is asked to role-play. */
 export const COUNSEL_ROLES = ["Policy Counsel", "Critique Counsel", "Weighing Counsel"] as const;

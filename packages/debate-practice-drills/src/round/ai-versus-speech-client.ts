@@ -19,7 +19,7 @@ import {
   buildAiVersusSpeechUserPrompt,
   parseAiVersusSpeechResponse,
 } from "./ai-versus-speech-ai";
-import type { AiSpeechRequest } from "debate-round/src/round/ai-versus-speech-order";
+import type { AiSpeechRequest } from "@debate/round/src/round/ai-versus-speech-order";
 
 /** A full speech can run several paragraphs, well beyond a short JSON verdict. */
 const MAX_TOKENS = 2048;

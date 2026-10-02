@@ -1,5 +1,5 @@
 /**
- * Typecheck-only surface of `debate-help-docs/routes/*`, mapped in by
+ * Typecheck-only surface of `@debate/help-docs/routes/*`, mapped in by
  * `tsconfig.typecheck.json`.
  *
  * The app's `app/docs` files only re-export these route modules. Letting `tsc`
@@ -22,7 +22,7 @@ export function generateStaticParams(): unknown[] | Promise<unknown[]>
 export function GET(request: Request, context: { params: Promise<any> }): Response | Promise<Response>
 
 /**
- * `debate-help-docs/lib/fumadocs/sitemap-helper` (see
+ * `@debate/help-docs/lib/fumadocs/sitemap-helper` (see
  * `packages/debate-help-docs/lib/fumadocs/sitemap-helper.ts`), declared here
  * for the same reason as the route modules above and mapped in by
  * `tsconfig.typecheck.json`.
