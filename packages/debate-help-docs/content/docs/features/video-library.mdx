@@ -41,6 +41,12 @@ stops inflating the season/style dropdown counts) — but they are no longer
 *stored* only client-side: both are kept on your account and follow you to
 another device. See Tool Data Sync.
 
+My Favorites (`/videos/favorites`) lists starred rounds and lectures together,
+in separate Rounds and Lectures tables. It shares the lectures view internally,
+so `isLecturesOnlyListing()` in `lectureRouteConfig.ts` is what keeps the
+"All Lectures" lectures-only filter off it; only `/videos/favoritelectures`
+narrows favourites to lectures.
+
 Signed out, they save in that browser alone, and favouriting a video says so
 once — with an offer to sign in and keep the collection. Declining is fine: the
 favourite is still saved, and signing in later pushes everything that browser
