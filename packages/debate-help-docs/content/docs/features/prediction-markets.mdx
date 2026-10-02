@@ -1,0 +1,110 @@
+---
+title: "Prediction Markets"
+---
+
+# Prediction Markets
+
+Bet play-money points on who wins a debate, who wins a tournament, and whose
+Glicko rating goes up. Every account starts with **1,000 points**. Points
+are play money: they can't be bought, sold or cashed out, and they have no
+value outside the site.
+
+- **Route:** `/practice/predictions`.
+- **Package:** `debate-predictions` (pricing engine, settlement rules,
+  validation, wire types, browser client, D1 migration), `debate-webview`
+  (the page), and `apps/debate-ai.com` (API, queries).
+- **API:** `GET /api/predictions`; `GET /api/predictions/sources`;
+  `POST /api/predictions/markets`;
+  `POST /api/predictions/markets/[marketId]/bets`;
+  `POST /api/predictions/markets/[marketId]/resolve`
+
+## What it shows
+
+- **Your points.** Your balance. The 1,000 starting points land the first
+  time you open the page while signed in. Guest accounts can watch but get no
+  points.
+- **Open markets**, closing soonest first, filterable by type. Each market
+  lists its outcomes with the current price as a percentage (the market's
+  implied odds), how many points are staked, how it settles, and your
+  position. The bet form quotes how many shares a stake buys, what it pays if
+  that outcome wins, and where it moves the price.
+- **Open a market.** Three kinds:
+  - **Debate**: who wins one round. Type the two sides in, or pick an
+    undecided round from a tournament hosted on the site.
+  - **Tournament winner**: type the field in (up to 32 entries), or pick an
+    event hosted on the site and every entry becomes an outcome.
+  - **Rating move**: pick a team from the Glicko rankings. The market asks
+    whether its rating is higher at close than it is now.
+- **Settled**: recent results, with what you got back.
+- **Top forecasters**: the ten biggest balances.
+
+## How it works
+
+**Pricing.** Each market has an automated market maker using the
+logarithmic market scoring rule (LMSR), so a bet never waits for someone to
+take the other side. You stake whole points and receive shares; each share of
+the winning outcome pays 1 point. Buying an outcome raises its price. The
+engine is `debate-predictions/src/lmsr.ts`, which solves for the shares a
+stake buys in closed form and works in log space so large balances never
+overflow. The liquidity is `DEFAULT_LIQUIDITY` (150). The most a market can
+pay out beyond what was staked is `b · ln(n)` for `n` outcomes, which bounds
+how many points any one market can create.
+
+**Settling.** Payouts are rounded down once per person, not per bet.
+Voiding a market refunds every stake. A market settles one of three ways:
+
+- **Hosted round** (`tabroom-panel`): every judge on the round casts one
+  vote, the entry their ballot's `winloss` score marks. Once all judges have
+  voted, the majority wins. A bye, a forfeit or an even split voids it.
+  Checked whether or not betting has closed, so a result that is in stops
+  the betting.
+- **Hosted event** (`tabroom-event`): the first-ranked entry in a published
+  final result set (a bracket set, or one labelled final, champion, places or
+  elim). Prelim seeds don't count.
+- **Rating** (`rating`): once betting closes, the team's current rating is
+  compared to the rating recorded when the market opened. Higher resolves
+  "rises"; equal or lower resolves "doesn't rise". A team that has left the
+  rankings voids it.
+- **Typed-in markets** (`manual`) are settled by hand: by a moderator or
+  admin, or by the creator while they hold no position in that market.
+  Moderators can also settle or void any linked market whose data never
+  arrives.
+
+Hosted rounds and events are the `debate-tournaments` Tabroom tables in the
+same D1 database. Ratings come from the `debate-rankings` CSVs bundled with
+the build, read through `debate-rankings-adapter` on the site's scale.
+
+Auto-settlement runs on every board read (`resolveDueMarkets` in
+`apps/debate-ai.com/lib/predictions/queries.ts`), up to 20 markets at a
+time. Every bettor gets a `prediction_market` notification when a market
+settles or is voided.
+
+**Guarded writes.** D1 has no interactive transactions, so a bet is three
+guarded statements. First the wallet is debited only if it holds the stake.
+Then the market's share vector is written only if its `version` is still the
+one the price was computed from. If another bet got there first, the stake is
+refunded and the bettor is asked to retry at the new price. Finally the bet is
+recorded. Settling claims the market (`status = 'open'`) before paying, so a
+market pays out once even if a moderator and the auto-resolver race.
+
+**Limits.** Accounts need a real (non-guest) login to bet or open a market.
+Each account can have ten markets open at once. Betting closes between five
+minutes and a year after a market opens.
+
+**Tables.** `prediction_wallets` has one row per account (balance and when
+the grant landed). `prediction_markets` has one row per market, with outcomes,
+share vector and source stored as JSON. `prediction_bets` has one row per bet,
+and its `payout` is filled in at settlement. They are declared in the app's
+`schema.ts` and shipped as `packages/debate-predictions/migrations/`, which
+the deploy's `migrate-d1.ts` applies.
+
+## Known gaps
+
+- You can't sell a position back before the market settles.
+- Markets on rounds and tournaments that aren't hosted on the site (live
+  Tabroom, round videos) must be typed in and settled by hand.
+- Rankings only change when a deploy ships refreshed CSVs, so a rating market
+  can only move when the site is redeployed with new rankings.
+- Auto-settlement waits for someone to open the markets page; there's no
+  scheduled job.
+- A wallet never refills. Someone who loses every point can't bet again.

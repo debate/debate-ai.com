@@ -57,6 +57,7 @@ extension and a native wrapper.
 | The live round workspace (FIAT), flow grid, round setup | `packages/debate-round` |
 | The `ebb` flow editor embedded in a round | `packages/debate-flow` |
 | Practice drills, AI coach, AI judge | `packages/debate-practice-drills` |
+| Prediction markets: pricing, payouts, settlement rules | `packages/debate-predictions` |
 | A full timed round vs. an AI opponent | `packages/debate-round-practice-ai` |
 | Speech/prep timers and the in-round recorder | `packages/debate-timer` |
 | The video library (LEARN) | `packages/debate-videos` |
@@ -122,6 +123,7 @@ one tree rather than beside the source.
 | `packages/debate-flow` | [.claude/packages/debate-flow/CLAUDE.md](.claude/packages/debate-flow/CLAUDE.md) |
 | `packages/debate-help-docs` | [.claude/packages/debate-help-docs/CLAUDE.md](.claude/packages/debate-help-docs/CLAUDE.md) |
 | `packages/debate-practice-drills` | [.claude/packages/debate-practice-drills/CLAUDE.md](.claude/packages/debate-practice-drills/CLAUDE.md) |
+| `packages/debate-predictions` | [.claude/packages/debate-predictions/CLAUDE.md](.claude/packages/debate-predictions/CLAUDE.md) |
 | `packages/debate-round-practice-ai` | [.claude/packages/debate-round-practice-ai/CLAUDE.md](.claude/packages/debate-round-practice-ai/CLAUDE.md) |
 | `packages/debate-round` | [.claude/packages/debate-round/CLAUDE.md](.claude/packages/debate-round/CLAUDE.md) |
 | `packages/debate-search-evidence` | [.claude/packages/debate-search-evidence/CLAUDE.md](.claude/packages/debate-search-evidence/CLAUDE.md) |

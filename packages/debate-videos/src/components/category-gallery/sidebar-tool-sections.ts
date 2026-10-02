@@ -43,6 +43,7 @@ import {
   StickyNote,
   Swords,
   Handshake,
+  Coins,
   Timer,
   TrendingUp,
   Trophy,
@@ -151,6 +152,7 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       // Same page, landing on the open judge seats (or the profile, for
       // someone who has not volunteered to judge yet).
       { href: "/practice/partners#judge", title: "Judge Practice Rounds", icon: Gavel },
+      { href: "/practice/predictions", title: "Prediction Markets", icon: Coins },
       { href: "/practice/versus-ai", title: "Debate Versus AI", icon: Swords },
       { href: "/practice/drills", title: "Practice Drills", icon: Repeat },
       { href: "/practice/level", title: "Debater Level", icon: Star },
