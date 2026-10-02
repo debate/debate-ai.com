@@ -3,7 +3,7 @@ import { getDBFromContext } from "@/lib/database/context";
 import { getUserId } from "@/lib/auth/session";
 import { withRouteErrors } from "@/lib/api/route-errors";
 import { listEventEntries, listOpenPanels, listTabroomEvents } from "@/lib/predictions/queries";
-import type { PredictionSourcesResponse } from "debate-predictions";
+import type { PredictionSourcesResponse } from "@debate/predictions";
 
 /**
  * Hosted Tabroom data a market can be tied to, so it settles itself.

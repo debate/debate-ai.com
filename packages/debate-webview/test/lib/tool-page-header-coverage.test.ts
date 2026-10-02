@@ -49,7 +49,7 @@ function pageSource(href: string): string {
   const appPage = join(APP_DIR, ...segments, "page.tsx")
   if (!existsSync(appPage)) return readFileSync(join(ROUTES_DIR, ...segments, "page.tsx"), "utf8")
   const source = readFileSync(appPage, "utf8")
-  const reexport = source.match(/from\s+["']debate-webview\/routes\/([^"']+)["']/)
+  const reexport = source.match(/from\s+["']@debate\/webview\/routes\/([^"']+)["']/)
   return reexport ? readFileSync(join(ROUTES_DIR, `${reexport[1]}.tsx`), "utf8") : source
 }
 
