@@ -23,12 +23,17 @@
  * `/reason-editor`, where the CardMirror engine's own richer palette already
  * owns it.
  *
+ * Two views: with an empty query it browses (Favorites, Recent, Go to, then
+ * the catalog by group); once something is typed it switches to one flat
+ * list ranked by fuse.js with the matched characters marked, and starred
+ * tools rank like any other rather than being pinned or re-listed.
+ *
  * @module components/layout/GlobalCommandPalette
  */
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react"
 import { useRouter, usePathname } from "next/navigation"
-import { Clock, LayoutGrid, Rss, Settings as SettingsIcon, Star } from "lucide-react"
+import { Clock, CornerDownLeft, LayoutGrid, Rss, SearchX, Settings as SettingsIcon, Star } from "lucide-react"
 
 import {
   CommandDialog,
@@ -37,12 +42,19 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator,
 } from "../../lib/ui/primitives/command"
+import { cn } from "../../lib/ui/lib/utils"
 import { TOOL_GROUPS, ALL_TOOLS, type Tool } from "../../routes/tools/tool-groups"
 import { useFavoriteTools } from "../../lib/hooks/useFavoriteTools"
 import { useRecentTools } from "../../lib/hooks/useRecentTools"
 import { onQuickLaunchText } from "../../lib/native/tauri"
+import {
+  createPaletteIndex,
+  searchPalette,
+  splitByRanges,
+  type MatchRange,
+  type PaletteEntry,
+} from "./command-palette-search"
 
 /** Meta destinations that aren't themselves a `/tools` catalog entry. */
 const QUICK_ACTIONS: Tool[] = [
@@ -85,13 +97,76 @@ export function isPaletteShortcut(e: Pick<KeyboardEvent, "metaKey" | "ctrlKey" |
   return code === "KeyK" || key === "k" || code === "KeyP" || key === "p"
 }
 
-function toolHaystack(tool: Tool): string {
-  return [tool.label, tool.description, tool.href, ...(tool.highlights ?? [])].join(" ").toLowerCase()
+/** Heading for {@link QUICK_ACTIONS} — both as a browse-view group and as
+ *  the group badge on a search result. */
+const QUICK_ACTIONS_GROUP = "Go to"
+
+/** Renders `text` with its matched ranges as `<mark>`s. */
+function Highlighted({ text, ranges }: { text: string; ranges: MatchRange[] }) {
+  if (ranges.length === 0) return <>{text}</>
+  return (
+    <>
+      {splitByRanges(text, ranges).map((seg, i) =>
+        seg.match ? (
+          <mark key={i} className="rounded-[3px] bg-amber-200/70 px-px text-foreground dark:bg-amber-400/25 dark:text-amber-100">
+            {seg.text}
+          </mark>
+        ) : (
+          <span key={i}>{seg.text}</span>
+        ),
+      )}
+    </>
+  )
+}
+
+/** One palette row: icon tile, label + description, an optional trailing
+ *  badge, and an Enter hint that appears on the selected row. */
+function PaletteRow({
+  value,
+  icon,
+  label,
+  description,
+  trailing,
+  onSelect,
+}: {
+  value: string
+  icon: ReactNode
+  label: ReactNode
+  description: ReactNode
+  trailing?: ReactNode
+  onSelect: () => void
+}) {
+  return (
+    <CommandItem
+      value={value}
+      onSelect={onSelect}
+      className="group/row gap-3 rounded-lg !px-2.5 !py-2 data-[selected=true]:bg-accent/70"
+    >
+      <span className="flex size-9 shrink-0 items-center justify-center rounded-md border bg-background shadow-xs group-data-[selected=true]/row:border-primary/30 group-data-[selected=true]/row:text-primary [&_svg]:!size-[18px]">
+        {icon}
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-sm font-medium leading-tight">{label}</span>
+        <span className="mt-0.5 block truncate text-xs leading-tight text-muted-foreground">{description}</span>
+      </span>
+      {trailing}
+      <CornerDownLeft className="hidden !size-3.5 shrink-0 text-muted-foreground group-data-[selected=true]/row:block" />
+    </CommandItem>
+  )
+}
+
+function Kbd({ children, className }: { children: ReactNode; className?: string }) {
+  return (
+    <kbd className={cn("inline-flex h-5 min-w-5 items-center justify-center rounded border bg-muted px-1 font-sans text-[10px] font-medium text-muted-foreground", className)}>
+      {children}
+    </kbd>
+  )
 }
 
 export function GlobalCommandPalette() {
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState("")
+  const [selected, setSelected] = useState("")
   const router = useRouter()
   const pathname = usePathname()
   const { favorites } = useFavoriteTools()
@@ -124,6 +199,11 @@ export function GlobalCommandPalette() {
     return () => window.removeEventListener(OPEN_EVENT, onOpenEvent)
   }, [pathname])
 
+  // Each opening starts from the browse view, not the last query.
+  useEffect(() => {
+    if (!open) setSearch("")
+  }, [open])
+
   const go = useCallback(
     (href: string) => {
       setOpen(false)
@@ -141,24 +221,56 @@ export function GlobalCommandPalette() {
   )
 
   const recentTools = useMemo(
-    () => recent.map((href) => ALL_TOOLS.find((t) => t.href === href)).filter((t): t is Tool => t !== undefined),
-    [recent],
+    () =>
+      recent
+        .filter((href) => !favorites.includes(href))
+        .map((href) => ALL_TOOLS.find((t) => t.href === href))
+        .filter((t): t is Tool => t !== undefined)
+        .slice(0, 5),
+    [recent, favorites],
   )
 
-  // Rendered as-typed by cmdk's own fuzzy filter for label/value, but tool
-  // descriptions and highlights carry search terms (a paradigm name, a
-  // package word) the visible label doesn't — cmdk only filters on the
-  // item's `value`, so this builds that value from the whole haystack.
-  const groupsWithHaystack = useMemo(
-    () =>
-      TOOL_GROUPS.map((group) => ({
-        heading: group.heading,
-        tools: group.tools.map((tool) => ({ tool, value: toolHaystack(tool) })),
-      })),
-    [],
-  )
+  // One entry per destination (a tool listed under two headings is still
+  // one result), searched by fuse.js — see `command-palette-search.ts`.
+  const index = useMemo(() => {
+    const seen = new Set<string>()
+    const entries: PaletteEntry<Tool>[] = []
+    const add = (tool: Tool, group: string) => {
+      if (seen.has(tool.href)) return
+      seen.add(tool.href)
+      entries.push({ href: tool.href, label: tool.label, description: tool.description, highlights: tool.highlights, group, data: tool })
+    }
+    QUICK_ACTIONS.forEach((tool) => add(tool, QUICK_ACTIONS_GROUP))
+    TOOL_GROUPS.forEach((group) => group.tools.forEach((tool) => add(tool, group.heading)))
+    return createPaletteIndex(entries)
+  }, [])
+
+  const query = search.trim()
+  const results = useMemo(() => searchPalette(index, query), [index, query])
+
+  // cmdk's own filter is off (we rank), so keep its selection on the best
+  // hit as results change rather than on a row that may have moved.
+  const firstBrowseValue = favoriteTools[0]
+    ? `fav-${favoriteTools[0].href}`
+    : recentTools[0]
+      ? `recent-${recentTools[0].href}`
+      : `go-${QUICK_ACTIONS[0].href}`
+  useEffect(() => {
+    setSelected(query ? (results[0]?.entry.href ?? "") : firstBrowseValue)
+  }, [query, results, firstBrowseValue])
 
   if (ownedByEditor(pathname)) return null
+
+  const browseRow = (tool: Tool, prefix: string, icon: ReactNode) => (
+    <PaletteRow
+      key={`${prefix}-${tool.href}`}
+      value={`${prefix}-${tool.href}`}
+      icon={icon}
+      label={tool.label}
+      description={tool.description}
+      onSelect={() => go(tool.href)}
+    />
+  )
 
   return (
     <CommandDialog
@@ -166,92 +278,87 @@ export function GlobalCommandPalette() {
       onOpenChange={setOpen}
       title="Search"
       description="Jump to any tool, workspace, or settings page"
-      className="top-[12%] translate-y-0 sm:max-w-xl"
+      showCloseButton={false}
+      className="top-[12%] translate-y-0 gap-0 rounded-xl border shadow-2xl sm:max-w-2xl"
+      commandProps={{ shouldFilter: false, loop: true, value: selected, onValueChange: setSelected }}
     >
-      <CommandInput
-        value={search}
-        onValueChange={setSearch}
-        placeholder="Search tools… (Ctrl/Cmd-K)"
-      />
-      <CommandList>
-        <CommandEmpty>No matching tool.</CommandEmpty>
-        {favoriteTools.length > 0 && (
+      <div className="relative">
+        <CommandInput
+          value={search}
+          onValueChange={setSearch}
+          placeholder="Search tools, workspaces, and settings…"
+          className="h-12 pr-12 text-base"
+        />
+        <Kbd className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2">Esc</Kbd>
+      </div>
+      <CommandList className="max-h-[min(60vh,480px)] px-1 py-1.5">
+        {query ? (
           <>
-            <CommandGroup heading="Favorites">
-              {favoriteTools.map((tool) => (
-                <CommandItem
-                  key={`fav-${tool.href}`}
-                  value={`favorite ${toolHaystack(tool)}`}
-                  onSelect={() => go(tool.href)}
-                  className="items-start gap-2"
-                >
-                  <Star className="fill-current text-amber-500 mt-0.5" />
-                  <div className="min-w-0 flex-1">
-                    <div className="font-medium leading-snug break-words">{tool.label}</div>
-                    <div className="mt-0.5 text-xs leading-snug text-muted-foreground break-words">{tool.description}</div>
-                  </div>
-                </CommandItem>
-              ))}
-            </CommandGroup>
-            <CommandSeparator />
+            <CommandEmpty className="flex flex-col items-center gap-2 py-12 text-sm text-muted-foreground">
+              <SearchX className="size-8 opacity-40" />
+              <span>
+                No results for <span className="font-medium text-foreground">“{query}”</span>
+              </span>
+            </CommandEmpty>
+            {results.length > 0 && (
+              <CommandGroup heading={`${results.length} result${results.length === 1 ? "" : "s"}`}>
+                {results.map(({ entry, labelRanges, descriptionRanges }) => {
+                  const Icon = entry.data.icon
+                  return (
+                    <PaletteRow
+                      key={entry.href}
+                      value={entry.href}
+                      icon={<Icon />}
+                      label={<Highlighted text={entry.label} ranges={labelRanges} />}
+                      description={<Highlighted text={entry.description} ranges={descriptionRanges} />}
+                      trailing={
+                        <span className="hidden shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-medium text-muted-foreground sm:inline">
+                          {entry.group}
+                        </span>
+                      }
+                      onSelect={() => go(entry.href)}
+                    />
+                  )
+                })}
+              </CommandGroup>
+            )}
           </>
-        )}
-        {recentTools.length > 0 && (
+        ) : (
           <>
-            <CommandGroup heading="Recent">
-              {recentTools.map((tool) => (
-                <CommandItem
-                  key={`recent-${tool.href}`}
-                  value={`recent ${toolHaystack(tool)}`}
-                  onSelect={() => go(tool.href)}
-                  className="items-start gap-2"
-                >
-                  <Clock className="text-muted-foreground mt-0.5" />
-                  <div className="min-w-0 flex-1">
-                    <div className="font-medium leading-snug break-words">{tool.label}</div>
-                    <div className="mt-0.5 text-xs leading-snug text-muted-foreground break-words">{tool.description}</div>
-                  </div>
-                </CommandItem>
-              ))}
+            {favoriteTools.length > 0 && (
+              <CommandGroup heading="Favorites">
+                {favoriteTools.map((tool) => browseRow(tool, "fav", <Star className="fill-amber-400 text-amber-500" />))}
+              </CommandGroup>
+            )}
+            {recentTools.length > 0 && (
+              <CommandGroup heading="Recent">
+                {recentTools.map((tool) => browseRow(tool, "recent", <Clock />))}
+              </CommandGroup>
+            )}
+            <CommandGroup heading={QUICK_ACTIONS_GROUP}>
+              {QUICK_ACTIONS.map((tool) => browseRow(tool, "go", <tool.icon />))}
             </CommandGroup>
-            <CommandSeparator />
-          </>
-        )}
-        <CommandGroup heading="Go to">
-          {QUICK_ACTIONS.map((tool) => (
-            <CommandItem
-              key={tool.href}
-              value={toolHaystack(tool)}
-              onSelect={() => go(tool.href)}
-              className="items-start gap-2"
-            >
-              <tool.icon className="mt-0.5" />
-              <div className="min-w-0 flex-1">
-                <div className="font-medium leading-snug break-words">{tool.label}</div>
-                <div className="mt-0.5 text-xs leading-snug text-muted-foreground break-words">{tool.description}</div>
-              </div>
-            </CommandItem>
-          ))}
-        </CommandGroup>
-        {groupsWithHaystack.map((group) => (
-          <CommandGroup key={group.heading} heading={group.heading}>
-            {group.tools.map(({ tool, value }) => (
-              <CommandItem
-                key={tool.href}
-                value={value}
-                onSelect={() => go(tool.href)}
-                className="items-start gap-2"
-              >
-                <tool.icon className="mt-0.5" />
-                <div className="min-w-0 flex-1">
-                  <div className="font-medium leading-snug break-words">{tool.label}</div>
-                  <div className="mt-0.5 text-xs leading-snug text-muted-foreground break-words">{tool.description}</div>
-                </div>
-              </CommandItem>
+            {TOOL_GROUPS.map((group) => (
+              <CommandGroup key={group.heading} heading={group.heading}>
+                {group.tools.map((tool) => browseRow(tool, group.heading, <tool.icon />))}
+              </CommandGroup>
             ))}
-          </CommandGroup>
-        ))}
+          </>
+        )}
       </CommandList>
+      <div className="flex items-center gap-4 border-t bg-muted/40 px-3 py-2 text-[11px] text-muted-foreground">
+        <span className="flex items-center gap-1">
+          <Kbd>↑</Kbd>
+          <Kbd>↓</Kbd> navigate
+        </span>
+        <span className="flex items-center gap-1">
+          <Kbd>↵</Kbd> open
+        </span>
+        <span className="ml-auto hidden items-center gap-1 sm:flex">
+          <Kbd>Ctrl</Kbd>
+          <Kbd>K</Kbd> toggle
+        </span>
+      </div>
     </CommandDialog>
   )
 }
