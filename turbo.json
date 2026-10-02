@@ -11,6 +11,31 @@
         "!.next/cache/**"
       ]
     },
+    "generate": {
+      "inputs": [
+        "debate-openapi.yml",
+        "openapi-ts.config.ts",
+        "package.json"
+      ],
+      "outputs": [
+        "src/generated/**"
+      ]
+    },
+    "@debate/api-client#build": {
+      "dependsOn": [
+        "^build",
+        "generate"
+      ],
+      "outputs": [
+        "dist/**"
+      ]
+    },
+    "@debate/editor#build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "cache": false
+    },
     "dev": {
       "cache": false,
       "persistent": true
@@ -19,6 +44,13 @@
       "dependsOn": [
         "^typecheck",
         "^build"
+      ]
+    },
+    "@debate/api-client#typecheck": {
+      "dependsOn": [
+        "^typecheck",
+        "^build",
+        "generate"
       ]
     },
     "test": {

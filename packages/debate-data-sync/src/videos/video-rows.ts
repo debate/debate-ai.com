@@ -90,10 +90,52 @@ export const LEGACY_SEASON = 0;
  * @returns Lowercased key with whitespace, `&` and `/` collapsed to underscores.
  */
 export function normalizeCategoryKey(label: string): string {
-  return label
+  const key = label
     .toLowerCase()
     .replace(/\s+/g, "_")
     .replace(/[&/]/g, "_");
+  return CATEGORY_KEY_ALIASES[key] ?? key;
+}
+
+/**
+ * Lecture category labels folded into another category. The library used to
+ * show "Topic Analysis" and "Topic Lectures" as two shelves of the same kind
+ * of video; both now read as "Topic Lectures". Rows already stored under an
+ * old label keep it in the table, so readers map it on the way out.
+ */
+export const CATEGORY_LABEL_ALIASES: Readonly<Record<string, string>> = {
+  "Topic Analysis": "Topic Lectures",
+};
+
+/** {@link CATEGORY_LABEL_ALIASES} in slug form, e.g. `topic_analysis` -> `topic_lectures`. */
+const CATEGORY_KEY_ALIASES: Readonly<Record<string, string>> = {
+  topic_analysis: "topic_lectures",
+};
+
+/**
+ * Maps a lecture category label onto the category it was merged into.
+ *
+ * @param label - Stored category label.
+ * @returns The merged label, or `label` itself when it was never merged.
+ */
+export function canonicalCategoryLabel(label: string): string {
+  return CATEGORY_LABEL_ALIASES[label] ?? label;
+}
+
+/**
+ * Every stored `category_key` that belongs to a (canonical) category key —
+ * the key itself plus any old keys merged into it — so a filter on
+ * `topic_lectures` still finds rows stored as `topic_analysis`.
+ *
+ * @param key - Category key; old keys are canonicalized first.
+ * @returns The canonical key followed by its aliases.
+ */
+export function categoryKeyAliases(key: string): string[] {
+  const canonical = normalizeCategoryKey(key);
+  const aliases = Object.keys(CATEGORY_KEY_ALIASES).filter(
+    (alias) => CATEGORY_KEY_ALIASES[alias] === canonical,
+  );
+  return [canonical, ...aliases];
 }
 
 /**
@@ -172,7 +214,8 @@ export function tupleToVideoRow(
 
   const styleOrCategory = tuple[6];
   const style = typeof styleOrCategory === "number" ? styleOrCategory : null;
-  const category = typeof styleOrCategory === "string" ? str(styleOrCategory) : null;
+  const rawCategory = typeof styleOrCategory === "string" ? str(styleOrCategory) : null;
+  const category = rawCategory ? canonicalCategoryLabel(rawCategory) : null;
   const title = typeof tuple[1] === "string" ? tuple[1] : "";
   const channel = typeof tuple[3] === "string" ? tuple[3] : "";
   const description = typeof tuple[5] === "string" ? tuple[5] : "";
@@ -232,7 +275,7 @@ export function videoRowToTuple(row: VideoRow): VideoTuple {
     row.channel,
     row.viewCount,
     row.description,
-    row.style ?? row.category ?? null,
+    row.style ?? (row.category ? canonicalCategoryLabel(row.category) : null),
     // Defensively re-stripped here (not just in `tupleToVideoRow`) so rows
     // seeded before `stripTournamentYear` existed still render clean.
     stripTournamentYear(row.tournament),

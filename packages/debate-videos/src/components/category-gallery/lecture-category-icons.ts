@@ -25,6 +25,7 @@ import {
   Users,
   GraduationCap,
   LayoutGrid,
+  Presentation,
 } from "lucide-react";
 
 export const LECTURE_CATEGORY_ICONS: Record<string, LucideIcon> = {
@@ -36,6 +37,7 @@ export const LECTURE_CATEGORY_ICONS: Record<string, LucideIcon> = {
   Disadvantages: AlertTriangle,
   "Speaking & Delivery": Mic,
   "Research & Flowing": BookOpen,
+  "Topic Lectures": Presentation,
   "PF & LD Topic Analysis": Target,
   "Policy Topic Lectures": MessageSquare,
   "Demo Debates": Trophy,

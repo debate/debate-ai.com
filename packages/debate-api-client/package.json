@@ -44,8 +44,8 @@
   },
   "scripts": {
     "generate": "openapi-ts",
-    "build": "npm run generate && tsc -p tsconfig.build.json",
-    "typecheck": "npm run generate && tsc --noEmit",
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "coverage": "vitest run --coverage"
