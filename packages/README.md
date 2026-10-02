@@ -96,6 +96,15 @@ map, sankey), flow annotations, and AI response-outcome charts. Composes `debate
 `debate-speech-writer`, `debate-timer`, `debate-search-evidence`, and
 `debate-contributor-progress`.
 
+## debate-predictions
+
+Play-money prediction markets on debates, tournament winners and Glicko rating moves, mounted at
+`/practice/predictions`. The framework-free core: the LMSR pricing engine (`lmsr.ts`), payouts and the rules
+that settle a market from hosted Tabroom ballots, hosted event results or a `debate-rankings` rating
+(`settle.ts`), request validation and wire types, a browser client (`debate-predictions/client`), and the D1
+migration for its three tables (`migrations/`, applied by `.github/scripts/migrate-d1.ts`). No dependencies;
+the page is in `debate-webview` and the routes and queries in `apps/debate-ai.com`.
+
 ## debate-rankings
 
 Glicko-2 rankings for HS PF, LD, Policy and college policy — a git submodule of

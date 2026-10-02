@@ -457,6 +457,15 @@ export const APP_FEATURES: FeatureEntry[] = [
     tags: ["challenge", "volunteer", "judge", "matchmaking"],
   },
   {
+    id: "prediction-markets",
+    title: "Prediction Markets",
+    description: "Bet play-money points on who wins a debate, who wins a tournament, and whose Glicko rating goes up",
+    href: "/practice/predictions",
+    category: "practice",
+    doc: "prediction-markets.md",
+    tags: ["betting", "forecast", "points", "rankings", "tournaments"],
+  },
+  {
     id: "practice-vs-ai",
     title: "Practice vs AI",
     description: "Debate a full timed round against an AI opponent, then get a judged scorecard",

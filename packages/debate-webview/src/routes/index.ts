@@ -81,6 +81,7 @@ export const PAGE_ROUTES: AppRoute[] = [
   { pattern: "/coaching/outcomes", load: () => import("./outcomes/page") },
   { pattern: "/outline", load: () => import("./outline/page") },
   { pattern: "/practice/partners", load: () => import("./practice-partners/page") },
+  { pattern: "/practice/predictions", load: () => import("./predictions/page") },
   { pattern: "/practice", load: () => import("./practice-round/page") },
   { pattern: "/practice/prep-notes", load: () => import("./prep-notes/page") },
   { pattern: "/practice/rankings", load: () => import("./videos/page") },
