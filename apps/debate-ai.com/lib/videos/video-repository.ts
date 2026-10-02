@@ -13,6 +13,8 @@ import { and, asc, count, desc, eq, gt, inArray, isNotNull, isNull, notInArray, 
 import { videos } from "@/lib/database/schema";
 import { getDBFromContext } from "@/lib/database/context";
 import {
+  canonicalCategoryLabel,
+  categoryKeyAliases,
   normalizeCategoryKey,
   stripTournamentYear,
   videoRowToTuple,
@@ -235,7 +237,8 @@ function buildConditions(
   }
   if (params.lecturesOnly) conditions.push(isNull(videos.style));
   if (params.topPicksOnly) conditions.push(eq(videos.isTopPick, true));
-  if (params.categoryKey) conditions.push(eq(videos.categoryKey, params.categoryKey));
+  // Old merged keys stay in stored rows, so a category matches all of them.
+  if (params.categoryKey) conditions.push(inArray(videos.categoryKey, categoryKeyAliases(params.categoryKey)));
   if (params.tournament) {
     conditions.push(sql`${videos.tournament} LIKE ${likePattern(params.tournament)} ESCAPE '\\'`);
   }
@@ -483,15 +486,25 @@ export async function getVideoMeta(): Promise<VideoMeta> {
       const bySource: Record<string, number> = {};
       for (const row of sourceRows) bySource[row.source] = row.value;
 
-      const lectureCategories: LectureCategoryFacet[] = categoryRows
-        .filter((row: any) => row.key && row.label && row.label !== "Awards")
-        .map((row: any) => ({
-          key: row.key as string,
-          label: row.label as string,
-          count: row.value as number,
-          maxViews: (row.maxViews as number) ?? 0,
-        }))
-        .sort((a: LectureCategoryFacet, b: LectureCategoryFacet) => b.maxViews - a.maxViews);
+      // Rows stored under a merged category (e.g. "Topic Analysis") fold into
+      // the category that replaced it, so it shows as one card.
+      const byKey = new Map<string, LectureCategoryFacet>();
+      for (const row of categoryRows as any[]) {
+        if (!row.key || !row.label || row.label === "Awards") continue;
+        const key = normalizeCategoryKey(row.key as string);
+        const count = row.value as number;
+        const maxViews = (row.maxViews as number) ?? 0;
+        const existing = byKey.get(key);
+        if (existing) {
+          existing.count += count;
+          existing.maxViews = Math.max(existing.maxViews, maxViews);
+        } else {
+          byKey.set(key, { key, label: canonicalCategoryLabel(row.label as string), count, maxViews });
+        }
+      }
+      const lectureCategories: LectureCategoryFacet[] = [...byKey.values()].sort(
+        (a, b) => b.maxViews - a.maxViews,
+      );
 
       return {
         counts: {

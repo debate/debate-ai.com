@@ -8,7 +8,7 @@
  */
 
 import type { VideoRow } from "./video-rows";
-import { LEGACY_SEASON } from "./video-rows";
+import { LEGACY_SEASON, normalizeCategoryKey } from "./video-rows";
 
 /** Sort modes accepted by the feed; anything else falls back to recency. */
 export type VideoSortOrder = "Views" | "Recency";
@@ -111,6 +111,9 @@ export function parseSeasonFilter(year?: string | null): number | null {
 export function filterVideoRows(rows: VideoRow[], params: VideoQueryParams): VideoRow[] {
   const tokens = searchTokens(params.q);
   const season = parseSeasonFilter(params.year);
+  // Rows carry canonical keys, so an old merged key (`topic_analysis`) is
+  // mapped onto the shelf it was folded into.
+  const categoryKey = params.categoryKey ? normalizeCategoryKey(params.categoryKey) : null;
   const idSet = params.ids && params.ids.length ? new Set(params.ids) : null;
   const excludeSet = params.excludeIds && params.excludeIds.length
     ? new Set(params.excludeIds)
@@ -120,7 +123,7 @@ export function filterVideoRows(rows: VideoRow[], params: VideoQueryParams): Vid
     if (params.source && params.source !== "all" && row.source !== params.source) return false;
     if (params.lecturesOnly && row.style !== null) return false;
     if (params.topPicksOnly && !row.isTopPick) return false;
-    if (params.categoryKey && row.categoryKey !== params.categoryKey) return false;
+    if (categoryKey && row.categoryKey !== categoryKey) return false;
     if (params.style != null && row.style !== params.style) return false;
     if (season !== null && row.seasonYear !== season) return false;
     if (idSet && !idSet.has(row.videoId)) return false;

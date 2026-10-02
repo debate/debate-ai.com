@@ -20,6 +20,14 @@ is a small fetch-once companion for counts/topics/champions. If the table
 is missing or unseeded, both endpoints fall back to rebuilding from the
 JSON assets in memory with identical semantics.
 
+## Merged lecture categories
+
+Topic analysis and topic lectures share one shelf, **Topic Lectures**. Videos
+still stored under the old "Topic Analysis" label are folded into it when the
+feed and its category cards are read (`CATEGORY_LABEL_ALIASES` in
+`debate-data-sync/src/videos/video-rows.ts`), and old `/lectures/topic_analysis`
+links open the merged shelf.
+
 ## Category search suggestions
 
 The search chips beneath the grid are specific to the category, debate format,

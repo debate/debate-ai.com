@@ -28,6 +28,7 @@ const CATEGORY_GRADIENTS: Record<string, string> = {
   "Disadvantages": "from-cyan-500 via-blue-500 to-indigo-500",
   "Speaking & Delivery": "from-green-400 via-emerald-500 to-teal-500",
   "Research & Flowing": "from-amber-500 via-orange-500 to-red-500",
+  "Topic Lectures": "from-lime-500 via-green-500 to-emerald-500",
   "Policy Topic Lectures": "from-purple-500 via-violet-500 to-fuchsia-500",
   "Demo Debates": "from-indigo-500 via-blue-500 to-cyan-500",
   "Judge & Tournament Skills": "from-pink-500 via-rose-500 to-red-500",
