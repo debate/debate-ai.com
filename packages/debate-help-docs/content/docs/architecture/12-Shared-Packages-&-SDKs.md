@@ -1,3 +1,7 @@
+---
+title: "Shared Packages & SDKs"
+---
+
 # Shared Packages & SDKs
 Relevant source files
 - [packages/README.md](https://github.com/debate/debate-ai.com/blob/34937310/packages/README.md?plain=1)

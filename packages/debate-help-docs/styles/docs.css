@@ -1,3 +1,13 @@
+@import "tailwindcss" source(none);
+@import 'fumadocs-ui/css/shadcn.css';
+@import "fumadocs-ui/css/preset.css";
+@import "fumadocs-ui/css/generated/docs.css";
+@import "fumadocs-ui/css/generated/home.css";
+@import "fumadocs-ui/css/generated/notebook.css";
+@import "fumadocs-ui/css/generated/flux.css";
+@import "fumadocs-ui/css/generated/shared.css";
+@import 'fumadocs-openapi/css/preset.css';
+
 /*
  * The docs' own Tailwind build, imported by routes/root-layout.tsx and so
  * loaded only on /docs pages (the web app lazy-loads each layout with its
@@ -12,26 +22,19 @@
  * `shadcn.css` points Fumadocs' `--color-fd-*` tokens at the plain shadcn
  * variables, which the app's colour themes (`.theme-<name>` on <html>) set —
  * so the docs follow whichever theme the reader picked in the app.
- * (Every @import has to come before the @source lines: CSS drops an @import
- * that follows any other rule.)
  *
- * preset.css pulls in these files — each only an `@source inline(...)` list of
- * the classes Fumadocs' layouts use — *after* an `@plugin` rule. Vite's CSS
- * pipeline follows the CSS rule and drops an @import that comes after another
- * rule, so in the app build none of the layout grid (the docs sidebar's
- * `[grid-area:sidebar]`, its `--fd-sidebar-width`, …) was generated and the
- * docs sidebar collapsed to nothing. Importing them here, ahead of any rule,
- * keeps them in.
+ * The @imports above come first, ahead of this comment and every @source and
+ * rule below: CSS drops an @import that follows any other statement, and
+ * Vite's CSS pipeline warns about it.
+ *
+ * preset.css pulls in the generated/*.css files above — each only an
+ * `@source inline(...)` list of the classes Fumadocs' layouts use — *after*
+ * an `@plugin` rule. Vite's CSS pipeline follows the CSS rule and drops an
+ * @import that comes after another rule, so in the app build none of the
+ * layout grid (the docs sidebar's `[grid-area:sidebar]`, its
+ * `--fd-sidebar-width`, …) was generated and the docs sidebar collapsed to
+ * nothing. Importing them here, ahead of any rule, keeps them in.
  */
-@import "tailwindcss" source(none);
-@import 'fumadocs-ui/css/shadcn.css';
-@import "fumadocs-ui/css/preset.css";
-@import "fumadocs-ui/css/generated/docs.css";
-@import "fumadocs-ui/css/generated/home.css";
-@import "fumadocs-ui/css/generated/notebook.css";
-@import "fumadocs-ui/css/generated/flux.css";
-@import "fumadocs-ui/css/generated/shared.css";
-@import 'fumadocs-openapi/css/preset.css';
 
 @source "../components";
 @source "../routes";

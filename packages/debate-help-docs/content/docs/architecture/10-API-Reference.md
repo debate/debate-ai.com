@@ -1,3 +1,7 @@
+---
+title: "API Reference"
+---
+
 # API Reference
 Relevant source files
 - [apps/debate-ai.com/app/api/admin/videos/seed/route.ts](https://github.com/debate/debate-ai.com/blob/34937310/apps/debate-ai.com/app/api/admin/videos/seed/route.ts)

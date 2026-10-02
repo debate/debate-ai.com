@@ -1,3 +1,7 @@
+---
+title: "Application Architecture"
+---
+
 # Application Architecture
 Relevant source files
 - [.gitignore](https://github.com/debate/debate-ai.com/blob/34937310/.gitignore)

@@ -1,3 +1,7 @@
+---
+title: "debate-data-sync Package"
+---
+
 # debate-data-sync Package
 Relevant source files
 - [packages/debate-card-parser/README.md](https://github.com/debate/debate-ai.com/blob/34937310/packages/debate-card-parser/README.md?plain=1)

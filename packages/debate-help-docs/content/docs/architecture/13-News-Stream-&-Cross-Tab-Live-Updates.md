@@ -1,3 +1,7 @@
+---
+title: "News Stream & Cross-Tab Live Updates"
+---
+
 # News Stream & Cross-Tab Live Updates
 Relevant source files
 - [apps/debate-ai.com/app/news/NewsPageContent.tsx](https://github.com/debate/debate-ai.com/blob/34937310/apps/debate-ai.com/app/news/NewsPageContent.tsx)

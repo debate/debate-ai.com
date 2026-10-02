@@ -1,3 +1,7 @@
+---
+title: "CARDS Module — Evidence Search & Research Crowdsourcing"
+---
+
 # CARDS Module — Evidence Search & Research Crowdsourcing
 Relevant source files
 - [apps/debate-ai.com/app/cards/contributions/page.tsx](https://github.com/debate/debate-ai.com/blob/34937310/apps/debate-ai.com/app/cards/contributions/page.tsx)

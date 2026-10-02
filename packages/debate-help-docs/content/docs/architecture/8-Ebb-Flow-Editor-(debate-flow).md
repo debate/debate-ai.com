@@ -1,3 +1,7 @@
+---
+title: "Ebb Flow Editor (debate-flow)"
+---
+
 # Ebb Flow Editor (debate-flow)
 Relevant source files
 - [codecov.yml](https://github.com/debate/debate-ai.com/blob/34937310/codecov.yml)

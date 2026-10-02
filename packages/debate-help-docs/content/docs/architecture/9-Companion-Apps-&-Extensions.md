@@ -1,3 +1,7 @@
+---
+title: "9. Companion Apps & Extensions"
+---
+
 # 9. Companion Apps & Extensions
 Relevant source files
 - [apps/debate-web-ext/.gitignore](https://github.com/debate/debate-ai.com/blob/34937310/apps/debate-web-ext/.gitignore)

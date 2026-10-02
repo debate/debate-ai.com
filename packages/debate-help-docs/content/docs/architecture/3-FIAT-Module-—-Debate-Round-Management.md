@@ -1,3 +1,7 @@
+---
+title: "FIAT Module — Debate Round Management"
+---
+
 # FIAT Module — Debate Round Management
 Relevant source files
 - [TODO.md](https://github.com/debate/debate-ai.com/blob/34937310/TODO.md?plain=1)

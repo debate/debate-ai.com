@@ -1,3 +1,7 @@
+---
+title: "Infrastructure, Testing & Docs Tooling"
+---
+
 # Infrastructure, Testing & Docs Tooling
 Relevant source files
 - [.github/workflows/auto-merge-claude.yml](https://github.com/debate/debate-ai.com/blob/34937310/.github/workflows/auto-merge-claude.yml)

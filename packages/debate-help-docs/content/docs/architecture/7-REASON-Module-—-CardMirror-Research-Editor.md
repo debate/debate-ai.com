@@ -1,3 +1,7 @@
+---
+title: "REASON Module — CardMirror Research Editor"
+---
+
 # REASON Module — CardMirror Research Editor
 Relevant source files
 - [packages/debate-editor/package.json](https://github.com/debate/debate-ai.com/blob/34937310/packages/debate-editor/package.json)
