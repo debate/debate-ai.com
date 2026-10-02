@@ -21,7 +21,7 @@ import {
   parseNewMarket,
   type MarketOutcome,
   type MarketSource,
-} from "debate-predictions";
+} from "@debate/predictions";
 
 /**
  * Opens a prediction market.

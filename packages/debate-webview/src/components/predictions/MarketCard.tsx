@@ -17,8 +17,8 @@ import {
   quoteBet,
   type PredictionMarket,
   type PredictionWallet,
-} from "debate-predictions";
-import { placeBet, resolveMarket } from "debate-predictions/client";
+} from "@debate/predictions";
+import { placeBet, resolveMarket } from "@debate/predictions/client";
 
 import { cn } from "../../lib/ui/lib/utils";
 

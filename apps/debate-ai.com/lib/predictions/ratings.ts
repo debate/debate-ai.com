@@ -8,7 +8,7 @@
  * @module lib/predictions/ratings
  */
 
-import { getRankingDatasetInfo, loadRankingDataset, type RankingDataset, type RankingDatasetId } from "debate-rankings-adapter";
+import { getRankingDatasetInfo, loadRankingDataset, type RankingDataset, type RankingDatasetId } from "@debate/rankings-adapter";
 
 const datasets = new Map<string, Promise<RankingDataset>>();
 

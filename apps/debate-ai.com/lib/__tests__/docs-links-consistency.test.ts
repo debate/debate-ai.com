@@ -28,7 +28,7 @@ import { describe, expect, it } from "vitest"
 
 const APP_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..")
 const REPO_ROOT = resolve(APP_ROOT, "..", "..")
-const DOCS_ROOT = join(REPO_ROOT, "packages", "@debate/help-docs", "content", "docs")
+const DOCS_ROOT = join(REPO_ROOT, "packages", "debate-help-docs", "content", "docs")
 
 /** Every `.mdx`/`.md` file under `dir`, found by walking the directory tree. */
 function findDocFiles(dir: string): string[] {

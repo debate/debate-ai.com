@@ -4,7 +4,7 @@ import { getUserId } from "@/lib/auth/session";
 import { getStaffAccess } from "@/lib/auth/admin";
 import { withRouteErrors } from "@/lib/api/route-errors";
 import { getMarket, getMarketRow, settleMarket } from "@/lib/predictions/queries";
-import { parseResolve, readStoredArray, type MarketOutcome } from "debate-predictions";
+import { parseResolve, readStoredArray, type MarketOutcome } from "@debate/predictions";
 
 /**
  * Settles a market by hand.
