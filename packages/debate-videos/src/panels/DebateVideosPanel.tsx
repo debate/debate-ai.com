@@ -17,7 +17,7 @@ import { setStateInURL } from "../ui/lib/utils"
 
 // Hooks
 import { useVideoState } from "../hooks/useVideoState"
-import { useVideoFeed, useVideoMeta, type VideoFeedFilters } from "../hooks/useVideoFeed"
+import { favoritesFeedFilters, useVideoFeed, useVideoMeta, type VideoFeedFilters } from "../hooks/useVideoFeed"
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll"
 import { useYouTubeStats } from "../hooks/useYouTubeStats"
 
@@ -113,7 +113,8 @@ export function DebateVideosPage() {
     enabled: state.currentCategory !== "leaderboard",
   }
 
-  const feed = useVideoFeed(filters)
+  // My Favorites lists every starred video: no library filter narrows it.
+  const feed = useVideoFeed(favoriteIds ? favoritesFeedFilters(filters) : filters)
 
   const currentVideos = feed.videos
 

@@ -8,6 +8,7 @@
 
 import { describe, expect, it } from "vitest";
 import { isLecturesOnlyListing } from "../src/panels/lectureRouteConfig";
+import { favoritesFeedFilters } from "../src/hooks/useVideoFeed";
 
 describe("isLecturesOnlyListing", () => {
   it("lists rounds and lectures on My Favorites", () => {
@@ -28,5 +29,37 @@ describe("isLecturesOnlyListing", () => {
     expect(isLecturesOnlyListing("pf", "lectures", "all", 2)).toBe(false);
     expect(isLecturesOnlyListing("topic_lectures", "lectures", "topic_lectures", "")).toBe(false);
     expect(isLecturesOnlyListing("history", "history", "all", "")).toBe(false);
+  });
+});
+
+describe("favoritesFeedFilters", () => {
+  it("drops every library filter but keeps the favourites, order and paging", () => {
+    const filters = favoritesFeedFilters({
+      source: "round",
+      topPicksOnly: true,
+      categoryKey: "topic_lectures",
+      style: 2,
+      year: "2024",
+      q: "nuclear",
+      ids: ["a", "b"],
+      excludeIds: ["b"],
+      sort: "Views",
+      pageSize: 50,
+      withFacets: true,
+      enabled: true,
+    });
+    expect(filters).toEqual({
+      source: "all",
+      lecturesOnly: undefined,
+      ids: ["a", "b"],
+      sort: "Views",
+      pageSize: 50,
+      withFacets: true,
+      enabled: true,
+    });
+  });
+
+  it("keeps the lectures-only favorites route to lectures", () => {
+    expect(favoritesFeedFilters({ lecturesOnly: true, ids: ["a"] }).lecturesOnly).toBe(true);
   });
 });
