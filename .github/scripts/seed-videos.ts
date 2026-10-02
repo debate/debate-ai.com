@@ -24,8 +24,8 @@ import { existsSync, readFileSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { buildVideoRows, type VideoRow } from "debate-data-sync/src/videos/video-rows";
-import { buildVideoSeedStatements } from "debate-data-sync/src/videos/video-seed-sql";
+import { buildVideoRows, type VideoRow } from "@debate/data-sync/src/videos/video-rows";
+import { buildVideoSeedStatements } from "@debate/data-sync/src/videos/video-seed-sql";
 
 // This script lives in `.github/scripts`, not in the app whose database it
 // seeds, so the app root is named explicitly rather than derived from its own

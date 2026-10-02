@@ -17,7 +17,7 @@ import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { RATING_OUTCOMES, STARTING_BALANCE, manualOutcomes } from "debate-predictions";
+import { RATING_OUTCOMES, STARTING_BALANCE, manualOutcomes } from "@debate/predictions";
 
 import {
   BetRefused,

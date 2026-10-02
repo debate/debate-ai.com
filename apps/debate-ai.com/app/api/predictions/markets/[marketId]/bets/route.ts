@@ -4,7 +4,7 @@ import { getUserId } from "@/lib/auth/session";
 import { getStaffAccess } from "@/lib/auth/admin";
 import { withRouteErrors } from "@/lib/api/route-errors";
 import { BetRefused, ensureWallet, getMarket, getMarketRow, getViewer, placeBet } from "@/lib/predictions/queries";
-import { parseNewBet, readStoredArray, type BetResult, type MarketOutcome } from "debate-predictions";
+import { parseNewBet, readStoredArray, type BetResult, type MarketOutcome } from "@debate/predictions";
 
 /**
  * Places a bet.

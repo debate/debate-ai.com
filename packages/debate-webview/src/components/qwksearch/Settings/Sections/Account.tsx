@@ -59,6 +59,7 @@ const fontOptions = [
   { name: "System Default", value: "system-default" },
   { name: "Arial", value: "Arial" },
   { name: "Courier New", value: "Courier New" },
+  { name: "Garamond", value: '"EB Garamond", Georgia, serif' },
   { name: "Georgia", value: "Georgia" },
   { name: "Inter", value: "Inter" },
   { name: "Lato", value: "Lato" },
