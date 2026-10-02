@@ -1,9 +1,10 @@
 /**
  * @fileoverview Guards `StatisticsPage`'s composition: it shows the
- * research-area topic explorer passed in from the host page, always shows the
- * year timeline, and only shows the YouTube stats charts once that fetch has
- * actually resolved — the same "furniture, not a hard dependency" rule
- * `useYouTubeStats` already documents for the modal this page replaces.
+ * research-area topic explorer passed in from the host page, puts the per-
+ * season topics timeline first, and only shows the YouTube stats charts once
+ * that fetch has actually resolved — the same "furniture, not a hard
+ * dependency" rule `useYouTubeStats` already documents for the modal this
+ * page replaces.
  */
 
 import { describe, it, expect } from "vitest";
@@ -50,7 +51,7 @@ describe("StatisticsPage", () => {
     expect(html).not.toContain("Detailed topic-area distribution");
   });
 
-  it("renders the host's topic areas section, above the year timeline", () => {
+  it("renders the host's topic areas section, below the year timeline", () => {
     const html = renderToStaticMarkup(
       createElement(StatisticsPage, {
         topics: TOPICS,
@@ -59,17 +60,17 @@ describe("StatisticsPage", () => {
       }),
     );
     expect(html).toContain("Areas slot here");
-    // Stacked order: the areas explorer, then the per-season topics and
-    // video numbers, then the channel charts.
-    expect(html.indexOf("Areas slot here")).toBeLessThan(html.indexOf("Debate Topics by Year"));
+    // Stacked order: the per-season topics and video numbers, then the areas
+    // explorer, then the channel charts.
+    expect(html.indexOf("Debate Topics by Year")).toBeLessThan(html.indexOf("Areas slot here"));
   });
 
-  it("keeps the charts above the year timeline", () => {
+  it("puts the year timeline first and the charts last", () => {
     const html = renderToStaticMarkup(
       createElement(StatisticsPage, { topics: TOPICS, youtubeStats: YOUTUBE_STATS }),
     );
-    expect(html.indexOf("YouTube Channel Statistics")).toBeLessThan(
-      html.indexOf("Debate Topics by Year"),
+    expect(html.indexOf("Debate Topics by Year")).toBeLessThan(
+      html.indexOf("YouTube Channel Statistics"),
     );
   });
 });

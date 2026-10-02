@@ -1,9 +1,9 @@
 /**
  * @fileoverview The Topic & Video Statistics page (`/practice/statistics`) —
- * three stacked sections over the same subject: the debate topics explorer,
- * the topic-area research breakdown (both from `topics`), and the YouTube
- * channel statistics charts, replacing the previously-modal-only stats
- * display.
+ * three stacked sections over the same subject: the per-season debate topics
+ * explorer first, then the topic-area research breakdown (both from `topics`),
+ * then the YouTube channel statistics charts, replacing the previously-modal-
+ * only stats display.
  * @module panels/statistics/StatisticsPage
  */
 
@@ -25,7 +25,7 @@ export interface StatisticsPageProps {
    *  see {@link useYouTubeStats}. Also passed down from `LecturesPage`. */
   youtubeStats: unknown | null;
   /**
-   * The research-area topic explorer, rendered as the first stacked section.
+   * The research-area topic explorer, rendered as the second stacked section.
    *
    * A slot rather than a direct import: the 44 research-area definitions and
    * their resolutions live in `debate-webview`, which depends on this package,
@@ -56,27 +56,27 @@ export function StatisticsPage({ topics, youtubeStats, topicAreasSlot }: Statist
           </div>
         </div>
 
+        <div className="mb-10">
+          <DebateTopicsExplorer topics={topics} videoStatsByYear={videoStatsByYear} />
+        </div>
+
         {topicAreasSlot ? (
           <div className="mb-10">{topicAreasSlot}</div>
         ) : null}
 
-        <section className="mt-10">
+        <section>
           <h2 className="mb-4 text-lg font-semibold">Topic Areas by Research Domain</h2>
           <TopicAreasExplorer />
         </section>
 
         {youtubeStats ? (
-          <div>
+          <div className="mt-10">
             {/* `useYouTubeStats`'s shape is only known to the modal/charts
                 pair today (see YouTubeStatsCharts.tsx) — cast at this one
                 boundary rather than duplicating that interface here. */}
             <YouTubeStatsCharts stats={youtubeStats as Parameters<typeof YouTubeStatsCharts>[0]["stats"]} />
           </div>
         ) : null}
-
-        <div className="mt-10">
-          <DebateTopicsExplorer topics={topics} videoStatsByYear={videoStatsByYear} />
-        </div>
       </div>
     </div>
   );

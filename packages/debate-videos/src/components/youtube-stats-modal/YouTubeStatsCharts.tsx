@@ -133,77 +133,82 @@ export function YouTubeStatsCharts({ stats }: { stats: YouTubeStats }) {
         </div>
       </div>
 
-      <div>
-        <h2 className="text-xl font-semibold mb-4">Views Over Time (2013-2025)</h2>
-        <ChartContainer config={chartConfig} className="h-[300px] w-full">
-          <LineChart data={recentYears} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="year" tick={{ fontSize: 9 }} />
-            <YAxis tick={{ fontSize: 9 }} width={60} />
-            <ChartTooltip content={<ChartTooltipContent />} />
-            <Line
-              type="monotone"
-              dataKey="views"
-              stroke="var(--color-views)"
-              strokeWidth={2}
-              dot={{ r: 3 }}
-              activeDot={{ r: 5 }}
-            />
-          </LineChart>
-        </ChartContainer>
-      </div>
+      {/* Four small summary charts in one grid, rather than four stacked
+          full-width panels: each answers one total at a glance, so they read
+          side by side instead of one scroll-stop apart. */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div>
+          <h3 className="mb-2 text-sm font-medium">Views Over Time (2013-2025)</h3>
+          <ChartContainer config={chartConfig} className="h-[180px] w-full">
+            <LineChart data={recentYears} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="year" tick={{ fontSize: 9 }} />
+              <YAxis tick={{ fontSize: 9 }} width={60} />
+              <ChartTooltip content={<ChartTooltipContent />} />
+              <Line
+                type="monotone"
+                dataKey="views"
+                stroke="var(--color-views)"
+                strokeWidth={2}
+                dot={{ r: 3 }}
+                activeDot={{ r: 5 }}
+              />
+            </LineChart>
+          </ChartContainer>
+        </div>
 
-      <div>
-        <h2 className="text-xl font-semibold mb-4">Videos Over Time (2013-2025)</h2>
-        <ChartContainer config={chartConfig} className="h-[300px] w-full">
-          <LineChart data={recentYears} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="year" tick={{ fontSize: 9 }} />
-            <YAxis tick={{ fontSize: 9 }} width={40} />
-            <ChartTooltip content={<ChartTooltipContent />} />
-            <Line
-              type="monotone"
-              dataKey="videos"
-              stroke="var(--color-videos)"
-              strokeWidth={2}
-              dot={{ r: 3 }}
-              activeDot={{ r: 5 }}
-            />
-          </LineChart>
-        </ChartContainer>
-      </div>
+        <div>
+          <h3 className="mb-2 text-sm font-medium">Videos Over Time (2013-2025)</h3>
+          <ChartContainer config={chartConfig} className="h-[180px] w-full">
+            <LineChart data={recentYears} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="year" tick={{ fontSize: 9 }} />
+              <YAxis tick={{ fontSize: 9 }} width={40} />
+              <ChartTooltip content={<ChartTooltipContent />} />
+              <Line
+                type="monotone"
+                dataKey="videos"
+                stroke="var(--color-videos)"
+                strokeWidth={2}
+                dot={{ r: 3 }}
+                activeDot={{ r: 5 }}
+              />
+            </LineChart>
+          </ChartContainer>
+        </div>
 
-      <div>
-        <h2 className="text-xl font-semibold mb-4">Average Views per Video Over Time (2013-2025)</h2>
-        <ChartContainer config={chartConfig} className="h-[300px] w-full">
-          <LineChart data={recentYears} margin={{ top: 5, right: 30, left: 10, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="year" tick={{ fontSize: 9 }} />
-            <YAxis tick={{ fontSize: 9 }} width={60} />
-            <ChartTooltip content={<ChartTooltipContent />} />
-            <Line
-              type="monotone"
-              dataKey="avgViews"
-              stroke="var(--color-avgViews)"
-              strokeWidth={2}
-              dot={{ r: 3 }}
-              activeDot={{ r: 5 }}
-            />
-          </LineChart>
-        </ChartContainer>
-      </div>
+        <div>
+          <h3 className="mb-2 text-sm font-medium">Avg Views per Video Over Time (2013-2025)</h3>
+          <ChartContainer config={chartConfig} className="h-[180px] w-full">
+            <LineChart data={recentYears} margin={{ top: 5, right: 30, left: 10, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="year" tick={{ fontSize: 9 }} />
+              <YAxis tick={{ fontSize: 9 }} width={60} />
+              <ChartTooltip content={<ChartTooltipContent />} />
+              <Line
+                type="monotone"
+                dataKey="avgViews"
+                stroke="var(--color-avgViews)"
+                strokeWidth={2}
+                dot={{ r: 3 }}
+                activeDot={{ r: 5 }}
+              />
+            </LineChart>
+          </ChartContainer>
+        </div>
 
-      <div>
-        <h2 className="text-xl font-semibold mb-4">Avg Views per Video by Elim Round</h2>
-        <ChartContainer config={chartConfig} className="h-[300px] w-full">
-          <BarChart data={elimRoundData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" tick={{ fontSize: 10 }} />
-            <YAxis tick={{ fontSize: 9 }} width={60} />
-            <ChartTooltip content={<ChartTooltipContent />} />
-            <Bar dataKey="avgViews" fill="var(--color-avgViews)" radius={[4, 4, 0, 0]} />
-          </BarChart>
-        </ChartContainer>
+        <div>
+          <h3 className="mb-2 text-sm font-medium">Avg Views per Video by Elim Round</h3>
+          <ChartContainer config={chartConfig} className="h-[180px] w-full">
+            <BarChart data={elimRoundData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" tick={{ fontSize: 10 }} />
+              <YAxis tick={{ fontSize: 9 }} width={60} />
+              <ChartTooltip content={<ChartTooltipContent />} />
+              <Bar dataKey="avgViews" fill="var(--color-avgViews)" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ChartContainer>
+        </div>
       </div>
     </div>
   );
