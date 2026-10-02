@@ -64,7 +64,7 @@ export function StatisticsPage({ topics, youtubeStats, topicAreasSlot }: Statist
           <div className="mb-10">{topicAreasSlot}</div>
         ) : null}
 
-        <section className="mt-10">
+        <section>
           <h2 className="mb-4 text-lg font-semibold">Topic Areas by Research Domain</h2>
           <TopicAreasExplorer />
         </section>

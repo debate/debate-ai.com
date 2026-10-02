@@ -1,9 +1,10 @@
 /**
  * @fileoverview Guards `StatisticsPage`'s composition: it shows the
- * research-area topic explorer passed in from the host page, always shows the
- * year timeline, and only shows the YouTube stats charts once that fetch has
- * actually resolved — the same "furniture, not a hard dependency" rule
- * `useYouTubeStats` already documents for the modal this page replaces.
+ * research-area topic explorer passed in from the host page, puts the per-
+ * season topics timeline first, and only shows the YouTube stats charts once
+ * that fetch has actually resolved — the same "furniture, not a hard
+ * dependency" rule `useYouTubeStats` already documents for the modal this
+ * page replaces.
  */
 
 import { describe, it, expect } from "vitest";

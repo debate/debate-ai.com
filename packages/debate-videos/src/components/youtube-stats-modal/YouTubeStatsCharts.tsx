@@ -133,11 +133,12 @@ export function YouTubeStatsCharts({ stats }: { stats: YouTubeStats }) {
         </div>
       </div>
 
-      {/* The four totals charts sit four to a row on wide screens, two on
-          tablets, one on phones, so they read as a compact strip. */}
+      {/* Four small summary charts in one grid, rather than four stacked
+          full-width panels: each answers one total at a glance, so they read
+          side by side instead of one scroll-stop apart. */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div className="min-w-0">
-          <h3 className="text-sm font-semibold mb-2">Views Over Time (2013-2025)</h3>
+        <div>
+          <h3 className="mb-2 text-sm font-medium">Views Over Time (2013-2025)</h3>
           <ChartContainer config={chartConfig} className="h-[180px] w-full">
             <LineChart data={recentYears} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -156,8 +157,8 @@ export function YouTubeStatsCharts({ stats }: { stats: YouTubeStats }) {
           </ChartContainer>
         </div>
 
-        <div className="min-w-0">
-          <h3 className="text-sm font-semibold mb-2">Videos Over Time (2013-2025)</h3>
+        <div>
+          <h3 className="mb-2 text-sm font-medium">Videos Over Time (2013-2025)</h3>
           <ChartContainer config={chartConfig} className="h-[180px] w-full">
             <LineChart data={recentYears} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -176,8 +177,8 @@ export function YouTubeStatsCharts({ stats }: { stats: YouTubeStats }) {
           </ChartContainer>
         </div>
 
-        <div className="min-w-0">
-          <h3 className="text-sm font-semibold mb-2">Avg Views per Video (2013-2025)</h3>
+        <div>
+          <h3 className="mb-2 text-sm font-medium">Avg Views per Video Over Time (2013-2025)</h3>
           <ChartContainer config={chartConfig} className="h-[180px] w-full">
             <LineChart data={recentYears} margin={{ top: 5, right: 30, left: 10, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -196,8 +197,8 @@ export function YouTubeStatsCharts({ stats }: { stats: YouTubeStats }) {
           </ChartContainer>
         </div>
 
-        <div className="min-w-0">
-          <h3 className="text-sm font-semibold mb-2">Avg Views per Video by Elim Round</h3>
+        <div>
+          <h3 className="mb-2 text-sm font-medium">Avg Views per Video by Elim Round</h3>
           <ChartContainer config={chartConfig} className="h-[180px] w-full">
             <BarChart data={elimRoundData}>
               <CartesianGrid strokeDasharray="3 3" />
