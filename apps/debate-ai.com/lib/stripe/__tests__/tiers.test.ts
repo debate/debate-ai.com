@@ -7,7 +7,7 @@ import { createClient } from "@libsql/client"
 import { drizzle } from "drizzle-orm/libsql"
 import { beforeEach, describe, expect, it } from "vitest"
 import * as schema from "../../database/schema"
-import { describeLimits, limitsFor, tierForPlan, TIER_LIMITS } from "debate-webview/lib/stripe/limits"
+import { describeLimits, limitsFor, tierForPlan, TIER_LIMITS } from "@debate/webview/lib/stripe/limits"
 import { addStudent, assignmentsForStudent, createAssignment, listStudents, requireTeamTier, TeamError } from "../team"
 import { consumeDailyUsage, getDailyUsage, getUserTier } from "../usage"
 

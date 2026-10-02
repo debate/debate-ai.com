@@ -5,7 +5,7 @@ import {
   listSharedCustomOpponentPersonas,
   saveCustomOpponentPersonaToAccount,
 } from "../src/round/custom-opponent-persona-library-client";
-import type { SavedCustomOpponentPersona } from "debate-speech-writer/src/opponent/opponent-persona-library";
+import type { SavedCustomOpponentPersona } from "@debate/speech-writer/src/opponent/opponent-persona-library";
 
 const ENTRY: SavedCustomOpponentPersona = {
   id: "critique-bot",

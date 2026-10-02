@@ -34,7 +34,7 @@
  */
 
 import { useCallback, useEffect, useState } from "react";
-import { recordDebaterActivity } from "debate-community";
+import { recordDebaterActivity } from "@debate/community";
 import {
   adoptDrillSet,
   buildAndSaveDrillSet as buildAndSaveDrillSetLocal,
@@ -55,7 +55,7 @@ import {
   saveDrillSetToAccount,
 } from "../round/drill-sets-client";
 import { isDrillSetsPanelLiveUpdateStorageEvent } from "../state/live-update";
-import type { Flow } from "debate-round/src/types/flow";
+import type { Flow } from "@debate/round/src/types/flow";
 
 // Module-level (not per-hook-instance) so multiple mounts of this hook in
 // one page load share one account fetch and one "is this browser signed

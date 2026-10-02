@@ -6,9 +6,9 @@ import {
   recordChallengeWinEvent,
 } from "../src/state/challengeWinEvents";
 import { saveGroupChallenge } from "../src/state/groupChallenges";
-import { saveContribution } from "debate-research-evidence/src/state/contributions";
+import { saveContribution } from "@debate/research-evidence/src/state/contributions";
 import type { GroupChallenge } from "../src/lib/group-challenges";
-import type { AttributedContribution } from "debate-research-evidence/src/lib/contribution-leaderboard";
+import type { AttributedContribution } from "@debate/research-evidence/src/lib/contribution-leaderboard";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {

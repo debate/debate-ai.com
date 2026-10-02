@@ -25,9 +25,9 @@
  * @module state/roundContributorFlows
  */
 
-import type { Flow } from "debate-round/src/types/flow";
+import type { Flow } from "@debate/round/src/types/flow";
 import type { CoachingProgramMemberFlow, CoachingProgramMemberPracticeRound } from "../round/coaching-program";
-import { getPracticeRound } from "debate-round/src/state/practiceRounds";
+import { getPracticeRound } from "@debate/round/src/state/practiceRounds";
 
 /** A contributor's currently recorded, already-flowed practice round. */
 export type RoundContributorFlowRecord = {

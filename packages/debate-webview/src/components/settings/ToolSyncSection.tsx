@@ -15,7 +15,7 @@
 
 import Link from "next/link"
 import { Wrench } from "lucide-react"
-import { TOOL_RECORD_COLLECTIONS } from "debate-data-sync/src/state/toolRecordCollections"
+import { TOOL_RECORD_COLLECTIONS } from "@debate/data-sync/src/state/toolRecordCollections"
 import { useToolRecordSync } from "../../lib/hooks/useToolRecordSync"
 import { summarizeToolSyncFailures } from "../../lib/tools/tool-sync-status"
 import { summarizeToolSyncStatus } from "../../lib/tools/tool-sync-summary"

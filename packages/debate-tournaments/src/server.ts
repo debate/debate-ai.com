@@ -1,6 +1,6 @@
 /**
  * Server-side entry: the API handler, the D1 plumbing and the migration.
- * Import from `debate-tournaments/server` in route handlers and Workers only —
+ * Import from `@debate/tournaments/server` in route handlers and Workers only —
  * it pulls in the vendored upstream API.
  */
 export { createTournamentsHandler, routedPath, type TournamentsHandlerOptions } from "./api/handler";

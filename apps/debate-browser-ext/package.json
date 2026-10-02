@@ -1,5 +1,5 @@
 {
-  "name": "debate-web-ext",
+  "name": "@debate/web-ext",
   "description": "Read any page in an AI article panel, time a round, and check whether a card has already been cut from the page.",
   "version": "6.1.0",
   "type": "module",
@@ -27,7 +27,7 @@
     "@radix-ui/react-tooltip": "^1.2.16",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "debate-webview": "workspace:*",
+    "@debate/webview": "workspace:*",
     "jspdf": "2.5.2",
     "lucide-react": "^0.454.0",
     "react": "^19.3.0",

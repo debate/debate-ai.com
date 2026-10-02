@@ -12,7 +12,7 @@ import {
   DEBATE_FOOTER_LINKS,
   FOOTER_LINKS,
   SIDEBAR_TOOL_SECTIONS,
-} from "debate-videos";
+} from "@debate/videos";
 
 import { SiteFooter } from "../../../src/components/layout/SiteFooter";
 

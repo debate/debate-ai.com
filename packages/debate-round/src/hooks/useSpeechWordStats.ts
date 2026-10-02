@@ -18,8 +18,8 @@ import { useEffect, useMemo, useState } from "react"
 import {
   computeSpeechDocWordStats,
   type SpeechDocWordStats,
-} from "debate-timer/src/formats/speech-doc-word-stats"
-import { loadSpokenWordCount, SPOKEN_WORDS_EVENT } from "debate-timer/src/recorder/spoken-words-store"
+} from "@debate/timer/src/formats/speech-doc-word-stats"
+import { loadSpokenWordCount, SPOKEN_WORDS_EVENT } from "@debate/timer/src/recorder/spoken-words-store"
 import type { Flow } from "../types/flow"
 import {
   getSpeechDocLink,
@@ -37,10 +37,10 @@ type StoredDocument = { title?: string; content?: string | null; format?: string
 async function storedDocumentHtml(doc: StoredDocument): Promise<string> {
   const content = doc.content ?? ""
   if (!content) return ""
-  const engine = await import("debate-editor/engine")
+  const engine = await import("@debate/editor/engine")
   const isCmir = doc.format === "cmir" || (doc.format !== "html" && engine.looksLikeCmirBase64(content))
   if (!isCmir) return content
-  const { docToHtml } = await import("debate-editor")
+  const { docToHtml } = await import("@debate/editor")
   return docToHtml(engine.parseNative(engine.base64ToCmir(content)).doc)
 }
 

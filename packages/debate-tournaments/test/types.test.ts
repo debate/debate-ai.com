@@ -16,7 +16,7 @@ const tourn = {
   regEnd: "2026-09-10T00:00:00Z",
 };
 
-describe("debate-tournaments/types", () => {
+describe("@debate/tournaments/types", () => {
   it("validates a tournament with upstream Tabroom's own schema", () => {
     const result = parseTabroom(TournSchema, tourn);
     expect(result.ok).toBe(true);

@@ -20,19 +20,19 @@
  * @module lib/tiered-task-routing
  */
 
-import type { ContributorStats } from "debate-research-evidence/src/lib/contribution-leaderboard";
+import type { ContributorStats } from "@debate/research-evidence/src/lib/contribution-leaderboard";
 import {
   buildContributorUnlockStatus,
   DEFAULT_UNLOCK_TIER_REQUIREMENTS,
   type UnlockTierRequirement,
-} from "debate-research-evidence/src/lib/progress-unlocks";
+} from "@debate/research-evidence/src/lib/progress-unlocks";
 import {
   buildTaskQueue,
   routeTasks,
   type ContributorAvailability,
   type RoutingResult,
-} from "debate-research-evidence/src/lib/research-task-routing";
-import type { TopicCoverageReport } from "debate-research-evidence/src/lib/topic-coverage";
+} from "@debate/research-evidence/src/lib/research-task-routing";
+import type { TopicCoverageReport } from "@debate/research-evidence/src/lib/topic-coverage";
 
 /**
  * The task-load side of `ContributorAvailability` that this repo has no

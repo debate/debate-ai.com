@@ -33,20 +33,20 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Badge } from "debate-round/src/ui/primitives/badge"
-import { Button } from "debate-round/src/ui/primitives/button"
-import { Input } from "debate-round/src/ui/primitives/input"
-import { Label } from "debate-round/src/ui/primitives/label"
+import { Badge } from "@debate/round/src/ui/primitives/badge"
+import { Button } from "@debate/round/src/ui/primitives/button"
+import { Input } from "@debate/round/src/ui/primitives/input"
+import { Label } from "@debate/round/src/ui/primitives/label"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "debate-round/src/ui/primitives/select"
-import { Textarea } from "debate-round/src/ui/primitives/textarea"
-import { EmptyState, PanelShell } from "debate-round/src/ui/panels/panel-shell"
-import { sendYouTubeCommand, useVideoPlayerStore } from "debate-videos"
+} from "@debate/round/src/ui/primitives/select"
+import { Textarea } from "@debate/round/src/ui/primitives/textarea"
+import { EmptyState, PanelShell } from "@debate/round/src/ui/panels/panel-shell"
+import { sendYouTubeCommand, useVideoPlayerStore } from "@debate/videos"
 import {
   createFlowAnnotation,
   filterFlowAnnotations,
@@ -54,16 +54,16 @@ import {
   jumpToAnnotation,
   parseAnnotationTimestamp,
   parseBoxPathInput,
-} from "debate-round/src/flow/flow-annotations"
+} from "@debate/round/src/flow/flow-annotations"
 import { buildFlowAnnotationsExportText, flowAnnotationsExportFilename } from "../flow/flow-annotations-export"
 import { AnnotationDensityScrubber } from "../flow/AnnotationDensityScrubber"
-import { isFlowAnnotationsPanelLiveUpdateStorageEvent } from "debate-round/src/flow/live-update"
+import { isFlowAnnotationsPanelLiveUpdateStorageEvent } from "@debate/round/src/flow/live-update"
 import {
   buildFlowAnnotationsPanelView,
   deleteFlowAnnotation,
   saveFlowAnnotation,
 } from "../state/flowAnnotations"
-import type { AnnotationFilter, FlowAnnotation } from "debate-round/src/flow/flow-annotations"
+import type { AnnotationFilter, FlowAnnotation } from "@debate/round/src/flow/flow-annotations"
 
 const ANY_VALUE = "__any__"
 

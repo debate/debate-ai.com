@@ -1,6 +1,6 @@
 // @ts-nocheck
 /**
- * debate-tournaments overlay — replaces upstream's `api/config.ts`.
+ * @debate/tournaments overlay — replaces upstream's `api/config.ts`.
  *
  * Upstream reads `config.json` from disk and validates it with zod at import
  * time; a Worker has no filesystem. This is the same shape with the values the

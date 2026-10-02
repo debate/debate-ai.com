@@ -7,8 +7,8 @@ import {
   getPersistedBestCardForDay,
   listAnnouncedDailyBestCards,
 } from "../src/state/dailyBestCardAnnouncements";
-import { saveContribution } from "debate-research-evidence/src/state/contributions";
-import type { AttributedContribution } from "debate-research-evidence/src/lib/contribution-leaderboard";
+import { saveContribution } from "@debate/research-evidence/src/state/contributions";
+import type { AttributedContribution } from "@debate/research-evidence/src/lib/contribution-leaderboard";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {

@@ -28,12 +28,12 @@ export default defineConfig({
       "!packages/README.md",
       "!packages/debate-help-docs",
       // A local, git-ignored clone of upstream Tabroom (the source for
-      // debate-tournaments' sync script); its tests need upstream's own
-      // toolchain and MariaDB. debate-tournaments tests the vendored code.
+      // @debate/tournaments' sync script); its tests need upstream's own
+      // toolchain and MariaDB. @debate/tournaments tests the vendored code.
       "!packages/debate-tournament-tabroom",
       // Git submodules of upstream CardMirror and Tabroom. Each is its own
       // app with its own toolchain and test setup; CardMirror is rebased into
-      // debate-editor (and re-exported by debate-editor-cm-adapter), Tabroom is
+      // @debate/editor (and re-exported by debate-editor-cm-adapter), Tabroom is
       // vendored into debate-tournaments, and those test the parts the app uses.
       "!packages/debate-editor-cm",
       // The browser extension carries its own config (jsdom, its own `@`
@@ -52,7 +52,7 @@ export default defineConfig({
           },
         },
         test: {
-          name: "debate-ai-web",
+          name: "@debate/ai-web",
           environment: "node",
           // `.tsx` too: the shell's error boundary is only meaningful as a
           // rendered tree, and its regression (a throw failing the *server*

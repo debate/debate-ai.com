@@ -57,7 +57,7 @@ import {
   planWordCountRoundMerge,
   saveWordCountRound,
   type WordCountRoundRecord,
-} from "debate-round/src/state/wordCountRounds";
+} from "@debate/round/src/state/wordCountRounds";
 import {
   deleteAllSavedWordCountRoundsFromAccount,
   deleteSavedWordCountRoundFromAccount,

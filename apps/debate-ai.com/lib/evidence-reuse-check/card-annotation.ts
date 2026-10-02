@@ -20,7 +20,7 @@ import {
   parseCardReuseAnnotation,
   sha256Hex,
   type CardReuseAnnotation,
-} from "debate-research-evidence";
+} from "@debate/research-evidence";
 import { isMissingTableError } from "@/lib/contacts/server";
 import { cardAiAnalyses, type DebateCardRow } from "@/lib/database/schema";
 import { getEnv } from "@/lib/env";

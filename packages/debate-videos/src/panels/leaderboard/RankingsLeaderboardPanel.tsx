@@ -15,7 +15,7 @@
 import { useState, useMemo } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { Search } from "lucide-react"
-import { getRankingDatasetInfo } from "debate-rankings-adapter"
+import { getRankingDatasetInfo } from "@debate/rankings-adapter"
 import { TooltipProvider } from "../../ui/primitives/tooltip"
 import { Tabs, TabsList, TabsTrigger } from "../../ui/primitives/tabs"
 import { Input } from "../../ui/primitives/input"

@@ -7,7 +7,7 @@ import {
   listJudgeParadigmSelections,
   saveJudgeParadigmSelection,
 } from "../src/state/judgeParadigmSelections";
-import { buildCustomJudgeParadigm, judgeParadigms } from "debate-speech-writer/src/judge/judge-paradigms";
+import { buildCustomJudgeParadigm, judgeParadigms } from "@debate/speech-writer/src/judge/judge-paradigms";
 import type { JudgeParadigmSelection } from "../src/state/judgeParadigmSelections";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */

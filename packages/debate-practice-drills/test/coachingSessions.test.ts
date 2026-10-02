@@ -17,7 +17,7 @@ import {
   type CoachingSessionRecord,
 } from "../src/state/coachingSessions";
 import { listVersionsForCoachingSession } from "../src/state/coachingSessionHistory";
-import type { Box } from "debate-round/src/types/flow";
+import type { Box } from "@debate/round/src/types/flow";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment has no DOM by default here. */
 class MemoryStorage {

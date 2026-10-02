@@ -28,7 +28,7 @@
  * @module round/coaching-program
  */
 
-import type { Flow } from "debate-round/src/types/flow";
+import type { Flow } from "@debate/round/src/types/flow";
 import {
   buildGroupChallengeBoard,
   buildGroupChallengeSummaryText,
@@ -42,13 +42,13 @@ import {
   type BuildTopicSprintInput,
   type TopicSprint,
 } from "../lib/team-collaboration-mode";
-import { buildDrillSet, buildDrillSummaryText, type Drill } from "debate-round/src/flow/drill-generator";
+import { buildDrillSet, buildDrillSummaryText, type Drill } from "@debate/round/src/flow/drill-generator";
 import {
   buildPracticeRoundFeedbackText,
   buildPracticeRoundSetupText,
   type PracticeRoundFeedback,
   type PracticeRoundSetup,
-} from "debate-round/src/round/practice-round-simulator";
+} from "@debate/round/src/round/practice-round-simulator";
 
 /** A coach-created group coaching space, scoped to a squad roster. */
 export interface CoachingProgramConfig {

@@ -16,7 +16,7 @@
  * @module state/coachingSessionHistory
  */
 
-import type { CoachingPrompt } from "debate-round/src/flow/coach-mode";
+import type { CoachingPrompt } from "@debate/round/src/flow/coach-mode";
 
 /** The fields of a `CoachingSessionRecord` a snapshot needs — kept independent of that module's own type to avoid a circular import. */
 export type CoachingSessionSnapshotInput = {

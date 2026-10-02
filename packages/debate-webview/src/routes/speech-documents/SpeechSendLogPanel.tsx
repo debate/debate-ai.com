@@ -24,7 +24,7 @@ import { Send, Trash2 } from "lucide-react"
 import {
   speechSendLogStore,
   type SpeechSendLogEntry,
-} from "debate-editor/engine"
+} from "@debate/editor/engine"
 import { Button } from "../../lib/ui/primitives/button"
 import { EmptyState } from "../../lib/ui/panels/panel-shell"
 import { AnimatedLoader } from "../../components/ui/AnimatedLoader"

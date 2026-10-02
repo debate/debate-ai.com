@@ -3,7 +3,7 @@ import { and, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { savedRounds } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
-import { deriveRoundLabel, hasRoundSaveConflict, isValidRound, MAX_SAVED_ROUND_BYTES } from "debate-round"
+import { deriveRoundLabel, hasRoundSaveConflict, isValidRound, MAX_SAVED_ROUND_BYTES } from "@debate/round"
 
 /**
  * Account-linked round cloud save — TODO.md idea #17, follow-up (3)/(b),

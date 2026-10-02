@@ -24,12 +24,12 @@
  * @module components/video-grid/video-tree
  */
 
-import { formatSeasonLabel } from "debate-data-sync/src/videos/video-rows";
+import { formatSeasonLabel } from "@debate/data-sync/src/videos/video-rows";
 import {
   formatRoundLevel,
   getRoundSortKey,
   parseRoundLevel,
-} from "debate-data-sync/src/youtube/parsers/round-level";
+} from "@debate/data-sync/src/youtube/parsers/round-level";
 import { DEBATE_STYLE_LABELS, type VideoType } from "../../types/videos";
 import type { VideoSlot } from "./video-stacks";
 

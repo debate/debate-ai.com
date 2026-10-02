@@ -61,12 +61,12 @@ import type {
   DebateSide,
   OpponentRoundRecord,
   OpponentTeamProfile,
-} from "debate-data-sync/src/rankings/opponent-team-profile";
-import { buildOpponentScoutingSummary } from "debate-data-sync/src/rankings/opponent-team-profile";
-import { getOpponentTeamProfile } from "debate-data-sync/src/state/opponentTeamProfiles";
-import type { JudgeProfile } from "debate-speech-writer/src/judge/judge-profile";
-import { buildJudgeTendencySummary } from "debate-speech-writer/src/judge/judge-profile";
-import { getJudgeProfile } from "debate-speech-writer/src/state/judgeProfiles";
+} from "@debate/data-sync/src/rankings/opponent-team-profile";
+import { buildOpponentScoutingSummary } from "@debate/data-sync/src/rankings/opponent-team-profile";
+import { getOpponentTeamProfile } from "@debate/data-sync/src/state/opponentTeamProfiles";
+import type { JudgeProfile } from "@debate/speech-writer/src/judge/judge-profile";
+import { buildJudgeTendencySummary } from "@debate/speech-writer/src/judge/judge-profile";
+import { getJudgeProfile } from "@debate/speech-writer/src/state/judgeProfiles";
 import { getOwnRoundHistoryAgainst } from "../state/ownRoundHistory";
 
 /** Basic details about the upcoming round, as the caller already knows them. */

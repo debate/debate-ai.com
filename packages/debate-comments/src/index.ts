@@ -6,7 +6,7 @@
  * what it is:
  *
  * ```tsx
- * import { CommentSection } from "debate-comments";
+ * import { CommentSection } from "@debate/comments";
  *
  * <CommentSection resourceType="video" resourceId={videoId} />
  * ```

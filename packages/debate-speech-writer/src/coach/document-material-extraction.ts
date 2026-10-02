@@ -21,7 +21,7 @@
  * @module coach/document-material-extraction
  */
 
-import { convertDocxToHTML } from "debate-card-parser/src/parsers/docx-to-html";
+import { convertDocxToHTML } from "@debate/card-parser/src/parsers/docx-to-html";
 
 /** File extensions this module knows how to turn into plain text. */
 export type SupportedDocumentKind = "text" | "docx";

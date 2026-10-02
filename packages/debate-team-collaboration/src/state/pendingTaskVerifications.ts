@@ -38,7 +38,7 @@
  * @module state/pendingTaskVerifications
  */
 
-import type { RoutedAssignment } from "debate-research-evidence/src/lib/research-task-routing";
+import type { RoutedAssignment } from "@debate/research-evidence/src/lib/research-task-routing";
 import { completePersistedRoutedTask } from "./routedTaskQueues";
 
 /** One routed task marked done, awaiting a different contributor's verification. */

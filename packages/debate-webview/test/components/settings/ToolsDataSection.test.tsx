@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
-import type { ToolRecordHydrationResult } from "debate-data-sync/src/state/tool-record-mirror";
+import type { ToolRecordHydrationResult } from "@debate/data-sync/src/state/tool-record-mirror";
 
 let mockState: {
   enabled: boolean;

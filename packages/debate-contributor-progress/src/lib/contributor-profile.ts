@@ -22,17 +22,17 @@
  * @module lib/contributor-profile
  */
 
-import type { ContributorStats } from "debate-research-evidence/src/lib/contribution-leaderboard";
+import type { ContributorStats } from "@debate/research-evidence/src/lib/contribution-leaderboard";
 import {
   buildContributorAwardsHallOfFame,
   type ContributorAward,
   type HallOfFameEntry,
-} from "debate-research-evidence/src/lib/contributor-awards";
+} from "@debate/research-evidence/src/lib/contributor-awards";
 import {
   listEndorsementsByContributor,
   type ContributorEndorsementHistoryEntry,
-} from "debate-research-evidence/src/state/contributions";
-import { buildPersistedLeaderboardWithCompletedTasks } from "debate-team-collaboration/src/state/researchProgress";
+} from "@debate/research-evidence/src/state/contributions";
+import { buildPersistedLeaderboardWithCompletedTasks } from "@debate/team-collaboration/src/state/researchProgress";
 import {
   buildPersistedTopContributorAwards,
   listAnnouncedContributorAwards,

@@ -1,5 +1,5 @@
 {
-  "//": "Typecheck-only config. write-language points its `exports.types` at its own TypeScript sources, so `tsc` compiles that package and reports errors from its @ai-sdk version skew instead of just checking this app. Its dist/*.d.ts are correct, so map the package there for typechecking; the mapping is kept out of tsconfig.json because Next resolves bundler imports through `paths` too, and a .d.ts is not a runtime module. `.github/scripts/**` is also typechecked from here but sits outside this app, so its bare imports can't walk up into this app's node_modules; `debate-data-sync/*` and `@libsql/client` are mapped explicitly so they resolve the same way they do for app files. `debate-help-docs/routes/*` and `debate-help-docs/lib/fumadocs/sitemap-helper` are mapped to `lib/stubs/debate-help-docs-routes.d.ts`: following them into that package drags Fumadocs' type graph in and runs `tsc` out of memory, and the package typechecks itself.",
+  "//": "Typecheck-only config. write-language points its `exports.types` at its own TypeScript sources, so `tsc` compiles that package and reports errors from its @ai-sdk version skew instead of just checking this app. Its dist/*.d.ts are correct, so map the package there for typechecking; the mapping is kept out of tsconfig.json because Next resolves bundler imports through `paths` too, and a .d.ts is not a runtime module. `.github/scripts/**` is also typechecked from here but sits outside this app, so its bare imports can't walk up into this app's node_modules; `@debate/data-sync/*` and `@libsql/client` are mapped explicitly so they resolve the same way they do for app files. `@debate/help-docs/routes/*` and `@debate/help-docs/lib/fumadocs/sitemap-helper` are mapped to `lib/stubs/debate-help-docs-routes.d.ts`: following them into that package drags Fumadocs' type graph in and runs `tsc` out of memory, and the package typechecks itself.",
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "paths": {
@@ -12,19 +12,19 @@
       "write-language/*": [
         "./node_modules/write-language/dist/*.d.ts"
       ],
-      "debate-webview/*": [
+      "@debate/webview/*": [
         "../../packages/debate-webview/src/*"
       ],
-      "debate-data-sync/*": [
+      "@debate/data-sync/*": [
         "../../packages/debate-data-sync/*"
       ],
       "@libsql/client": [
         "./node_modules/@libsql/client"
       ],
-      "debate-help-docs/routes/*": [
+      "@debate/help-docs/routes/*": [
         "./lib/stubs/debate-help-docs-routes.d.ts"
       ],
-      "debate-help-docs/lib/fumadocs/sitemap-helper": [
+      "@debate/help-docs/lib/fumadocs/sitemap-helper": [
         "./lib/stubs/debate-help-docs-routes.d.ts"
       ]
     }

@@ -16,7 +16,7 @@
  * @module lib/gamified-quests
  */
 
-import type { QuestProgress } from "debate-team-collaboration/src/lib/daily-quests";
+import type { QuestProgress } from "@debate/team-collaboration/src/lib/daily-quests";
 
 /** One day's outcome for a contributor's daily-quest mission. */
 export interface DailyMissionResult {

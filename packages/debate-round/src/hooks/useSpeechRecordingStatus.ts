@@ -10,7 +10,7 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
-import { clearSpokenTranscript } from "debate-timer/src/recorder/spoken-words-store"
+import { clearSpokenTranscript } from "@debate/timer/src/recorder/spoken-words-store"
 
 const RECORDING_KEY_PREFIX = "debate-recording-"
 

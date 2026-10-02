@@ -30,7 +30,7 @@ import {
   DEFAULT_OPPONENT_DIFFICULTY,
   type OpponentDifficulty,
   type OpponentPersona,
-} from "debate-speech-writer/src/opponent/opponent-personas";
+} from "@debate/speech-writer/src/opponent/opponent-personas";
 
 /**
  * Looks up the persisted `OpponentPersona` saved for `roundId` under that

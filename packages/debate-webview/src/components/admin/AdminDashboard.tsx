@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../lib/ui/primitives/select";
-import { REUSE_CHECK_LOG_RETENTION_DAYS } from "debate-research-evidence";
+import { REUSE_CHECK_LOG_RETENTION_DAYS } from "@debate/research-evidence";
 import { formatRecomputeStacksResult } from "../../lib/videos/format-recompute-stacks-result";
 import {
   formatSeedVideosResult,

@@ -56,8 +56,8 @@
  * @module state/dailyQuests
  */
 
-import type { AttributedContribution } from "debate-research-evidence/src/lib/contribution-leaderboard";
-import { getUtcDayKey } from "debate-research-evidence/src/lib/daily-best-card";
+import type { AttributedContribution } from "@debate/research-evidence/src/lib/contribution-leaderboard";
+import { getUtcDayKey } from "@debate/research-evidence/src/lib/daily-best-card";
 import {
   buildDailyQuestBoard,
   buildTeamQuestCompetitionStandings,
@@ -70,9 +70,9 @@ import {
   type QuestTemplate,
   type TeamQuestStanding,
 } from "../lib/daily-quests";
-import type { CoverageThresholds } from "debate-research-evidence/src/lib/topic-coverage";
-import { listContributions } from "debate-research-evidence/src/state/contributions";
-import { buildPersistedTopicCoverageReport } from "debate-research-evidence/src/state/trackedArguments";
+import type { CoverageThresholds } from "@debate/research-evidence/src/lib/topic-coverage";
+import { listContributions } from "@debate/research-evidence/src/state/contributions";
+import { buildPersistedTopicCoverageReport } from "@debate/research-evidence/src/state/trackedArguments";
 
 const STORAGE_KEY = "dailyQuestTemplates";
 

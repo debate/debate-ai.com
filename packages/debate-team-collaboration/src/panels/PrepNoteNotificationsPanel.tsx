@@ -19,16 +19,16 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Badge } from "debate-round/src/ui/primitives/badge"
-import { Button } from "debate-round/src/ui/primitives/button"
-import { Input } from "debate-round/src/ui/primitives/input"
-import { EmptyState, PanelRow, PanelShell } from "debate-round/src/ui/panels/panel-shell"
+import { Badge } from "@debate/round/src/ui/primitives/badge"
+import { Button } from "@debate/round/src/ui/primitives/button"
+import { Input } from "@debate/round/src/ui/primitives/input"
+import { EmptyState, PanelRow, PanelShell } from "@debate/round/src/ui/panels/panel-shell"
 import {
   buildNotificationDigestView,
   markManyPersistedNotificationsRead,
   markPersistedNotificationRead,
 } from "../state/prepNoteNotifications"
-import { isPrepNoteNotificationsLiveUpdateStorageEvent } from "debate-round/src/flow/live-update"
+import { isPrepNoteNotificationsLiveUpdateStorageEvent } from "@debate/round/src/flow/live-update"
 import { buildDigestGroupHeading, type NotificationDigestGroup } from "../flow/prep-note-notifications"
 
 const RECIPIENT_STORAGE_KEY = "prepNoteNotifications:lastRecipientId"

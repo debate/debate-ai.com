@@ -26,9 +26,9 @@
  * @module state/contributorAwardAnnouncements
  */
 
-import { buildTopContributorAwardsFromStore } from "debate-research-evidence/src/state/contributions";
-import { getUtcDayKey } from "debate-research-evidence/src/lib/daily-best-card";
-import type { ContributorAward } from "debate-research-evidence/src/lib/contributor-awards";
+import { buildTopContributorAwardsFromStore } from "@debate/research-evidence/src/state/contributions";
+import { getUtcDayKey } from "@debate/research-evidence/src/lib/daily-best-card";
+import type { ContributorAward } from "@debate/research-evidence/src/lib/contributor-awards";
 
 const ANNOUNCEMENTS_STORAGE_KEY = "contributorAwardAnnouncements";
 

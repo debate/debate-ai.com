@@ -18,8 +18,8 @@
  */
 
 import { useCallback, useRef } from "react"
-import { fetchUserSettings, saveNewsLikedOp, saveNewsReadOp, type FullUserSettingsPayload } from "debate-round"
-import type { NewsStreamSyncAdapter, NewsSyncPayload } from "debate-community"
+import { fetchUserSettings, saveNewsLikedOp, saveNewsReadOp, type FullUserSettingsPayload } from "@debate/round"
+import type { NewsStreamSyncAdapter, NewsSyncPayload } from "@debate/community"
 
 // `FullUserSettingsPayload` (in `debate-round`) no longer carries the News
 // Stream fields itself — `debate-community` (which owns `NewsSyncPayload`)

@@ -13,7 +13,7 @@ import {
   buildCuratedQueueStatement,
   curatedRecordToQueueRow,
   type CuratedRoundRecord,
-} from "debate-data-sync/src/videos/curated-round-queue";
+} from "@debate/data-sync/src/videos/curated-round-queue";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
 import { videos, youtubeRoundVideos, youtubeVideoExclusions } from "../../database/schema";

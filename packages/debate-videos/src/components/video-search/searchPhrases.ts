@@ -7,7 +7,7 @@
  * @module components/debate/DebateVideos/components/video-search/searchPhrases
  */
 
-import { normalizeCategoryKey } from "debate-data-sync/src/videos/video-rows"
+import { normalizeCategoryKey } from "@debate/data-sync/src/videos/video-rows"
 import type { CategoryType, DebateStyle } from "../../types/videos"
 
 /** Phrases per debate style, used whenever a style filter is active. */

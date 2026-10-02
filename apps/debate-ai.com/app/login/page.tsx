@@ -1,1 +1,1 @@
-export { default } from "debate-webview/routes/login/page"
+export { default } from "@debate/webview/routes/login/page"

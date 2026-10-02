@@ -110,19 +110,19 @@
 
 import { useEffect, useRef, useState } from "react"
 import { X } from "lucide-react"
-import { Badge } from "debate-round/src/ui/primitives/badge"
-import { Button } from "debate-round/src/ui/primitives/button"
-import { Input } from "debate-round/src/ui/primitives/input"
-import { Label } from "debate-round/src/ui/primitives/label"
-import { EmptyState, PanelShell } from "debate-round/src/ui/panels/panel-shell"
-import { Switch } from "debate-round/src/ui/primitives/switch"
+import { Badge } from "@debate/round/src/ui/primitives/badge"
+import { Button } from "@debate/round/src/ui/primitives/button"
+import { Input } from "@debate/round/src/ui/primitives/input"
+import { Label } from "@debate/round/src/ui/primitives/label"
+import { EmptyState, PanelShell } from "@debate/round/src/ui/panels/panel-shell"
+import { Switch } from "@debate/round/src/ui/primitives/switch"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "debate-round/src/ui/primitives/select"
+} from "@debate/round/src/ui/primitives/select"
 import {
   Dialog,
   DialogContent,
@@ -130,8 +130,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "debate-round/src/ui/primitives/dialog"
-import { filterArgumentTree, flattenArgumentTree, type ArgumentTreeFilter, type ArgumentTreeNode } from "debate-round/src/flow/argument-tree"
+} from "@debate/round/src/ui/primitives/dialog"
+import { filterArgumentTree, flattenArgumentTree, type ArgumentTreeFilter, type ArgumentTreeNode } from "@debate/round/src/flow/argument-tree"
 import {
   formatArgumentTags,
   getRowArgumentTags,
@@ -140,7 +140,7 @@ import {
   setRowsArgumentTags,
   toggleSectionRowSelection,
   type ArgumentTags,
-} from "debate-round/src/flow/argument-tagging"
+} from "@debate/round/src/flow/argument-tagging"
 import { argumentTreeOutlineFilename, buildArgumentTreeOutlineText } from "../flow/argument-tree-export"
 import {
   buildAndSaveArgumentTreeFromCurrentFlow,
@@ -148,7 +148,7 @@ import {
   clearArgumentTrees,
   deleteArgumentTree,
   type ArgumentTreeRecord,
-} from "debate-round/src/state/argumentTrees"
+} from "@debate/round/src/state/argumentTrees"
 import {
   clearArgumentTreeFilterSelections,
   getArgumentTreeFilterSelection,
@@ -156,12 +156,12 @@ import {
 } from "../state/argumentTreeFilters"
 import { useOutlineFilterPresets } from "../hooks/useOutlineFilterPresets"
 import { resolvePresetJumpRoundId } from "../state/outlineFilterPresetJump"
-import type { OutlineFilterPreset } from "debate-round/src/state/outlineFilterPresets"
+import type { OutlineFilterPreset } from "@debate/round/src/state/outlineFilterPresets"
 import { isArgumentTreePanelLiveUpdateStorageEvent } from "../state/live-update"
-import { useFlowStore } from "debate-round/src/state/store"
+import { useFlowStore } from "@debate/round/src/state/store"
 import { parseArgumentTreeViewMode, type ArgumentTreeViewMode } from "../flow/argument-map"
 import { ArgumentMapView, ArgumentTreeViewSwitcher } from "./argument-map/ArgumentMapView"
-import type { Flow } from "debate-round/src/types/flow"
+import type { Flow } from "@debate/round/src/types/flow"
 
 const NONE_VALUE = "__none__"
 

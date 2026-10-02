@@ -15,10 +15,10 @@
  */
 
 import { getJudgeParadigmSelection } from "../state/judgeParadigmSelections";
-import { buildFlowSummaryTextFromRows } from "debate-round/src/flow/flow-transcript-summary";
+import { buildFlowSummaryTextFromRows } from "@debate/round/src/flow/flow-transcript-summary";
 import { getFlowSummary } from "../state/flowSummaries";
-import type { JudgeDecisionAiInput, JudgeDecisionSideNames } from "debate-round/src/round/judge-decision-ai";
-import type { JudgeParadigm } from "debate-speech-writer/src/judge/judge-paradigms";
+import type { JudgeDecisionAiInput, JudgeDecisionSideNames } from "@debate/round/src/round/judge-decision-ai";
+import type { JudgeParadigm } from "@debate/speech-writer/src/judge/judge-paradigms";
 
 /** Which of the two required sources (if any) is missing for a round. */
 export type JudgeDecisionSource = "flowSummary" | "judgeParadigm";

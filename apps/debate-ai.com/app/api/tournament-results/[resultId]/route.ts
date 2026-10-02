@@ -3,7 +3,7 @@ import { and, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { savedTournamentResults } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
-import { isValidTournamentResultRecord, MAX_SAVED_TOURNAMENT_RESULT_BYTES } from "debate-data-sync/src/state/savedTournamentResults"
+import { isValidTournamentResultRecord, MAX_SAVED_TOURNAMENT_RESULT_BYTES } from "@debate/data-sync/src/state/savedTournamentResults"
 import { withRouteErrors } from "@/lib/api/route-errors"
 
 /**

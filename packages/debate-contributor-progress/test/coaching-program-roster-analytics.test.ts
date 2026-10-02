@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { GroupChallengeProgress } from "debate-team-collaboration/src/lib/group-challenges";
-import type { CompletedGroupChallengeEvent } from "debate-team-collaboration/src/state/challengeWinEvents";
+import type { GroupChallengeProgress } from "@debate/team-collaboration/src/lib/group-challenges";
+import type { CompletedGroupChallengeEvent } from "@debate/team-collaboration/src/state/challengeWinEvents";
 import {
   buildCoachingProgramChallengeDigest,
   buildCoachingProgramRosterAnalytics,

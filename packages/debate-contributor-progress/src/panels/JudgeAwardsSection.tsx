@@ -18,17 +18,17 @@
  */
 
 import { useEffect, useState } from "react"
-import { Button } from "debate-research-evidence/src/ui/primitives/button"
-import { Input } from "debate-research-evidence/src/ui/primitives/input"
-import { Label } from "debate-research-evidence/src/ui/primitives/label"
-import { PanelSection } from "debate-research-evidence/src/ui/panels/panel-shell"
+import { Button } from "@debate/research-evidence/src/ui/primitives/button"
+import { Input } from "@debate/research-evidence/src/ui/primitives/input"
+import { Label } from "@debate/research-evidence/src/ui/primitives/label"
+import { PanelSection } from "@debate/research-evidence/src/ui/panels/panel-shell"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "debate-research-evidence/src/ui/primitives/select"
+} from "@debate/research-evidence/src/ui/primitives/select"
 import { JUDGE_AWARD_BY_KIND, JUDGE_AWARDS, type JudgeAward, type JudgeAwardKind } from "../lib/judge-awards"
 import {
   deleteJudgeAward,

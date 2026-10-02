@@ -34,11 +34,11 @@
 
 import { readPersistedTopicSprintInputs } from "./topicSprints";
 import { listGroupChallenges } from "./groupChallenges";
-import { listContributions } from "debate-research-evidence/src/state/contributions";
+import { listContributions } from "@debate/research-evidence/src/state/contributions";
 import { listChallengeWinEvents } from "./challengeWinEvents";
-import type { AttributedContribution } from "debate-research-evidence/src/lib/contribution-leaderboard";
+import type { AttributedContribution } from "@debate/research-evidence/src/lib/contribution-leaderboard";
 import type { QuestContribution } from "../lib/daily-quests";
-import type { CoverageThresholds } from "debate-research-evidence/src/lib/topic-coverage";
+import type { CoverageThresholds } from "@debate/research-evidence/src/lib/topic-coverage";
 import {
   buildCoachingProgramBoard,
   type CoachingProgramBoard,

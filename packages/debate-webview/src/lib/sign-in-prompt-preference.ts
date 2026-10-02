@@ -13,7 +13,7 @@
  *
  * Kept separate from `lib/sign-in-prompt-cooldown.ts`: that module is the
  * passive rate limit applied whether or not a guest has made this explicit
- * choice, and from `debate-data-sync/src/state/sign-in-prompt.ts`: that
+ * choice, and from `@debate/data-sync/src/state/sign-in-prompt.ts`: that
  * module is the framework-free bus a tool raises a prompt on, and it has no
  * opinion on whether the app should actually show one — the cooldown and this
  * opt-out are both display policy the provider applies, not the bus.

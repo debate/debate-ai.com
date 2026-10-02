@@ -19,7 +19,7 @@
  * @module round/word-count-rounds-client
  */
 
-import type { WordCountRoundRecord } from "debate-round/src/state/wordCountRounds";
+import type { WordCountRoundRecord } from "@debate/round/src/state/wordCountRounds";
 
 async function readErrorMessage(res: Response, fallback: string): Promise<string> {
   try {

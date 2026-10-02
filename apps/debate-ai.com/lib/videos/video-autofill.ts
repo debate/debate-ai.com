@@ -21,8 +21,8 @@
 import {
   getVideosByIds,
   setYouTubeApiKey,
-} from "debate-data-sync/src/youtube/youtube-api";
-import { LECTURE_CATEGORIES } from "debate-data-sync/src/youtube/parsers/lecture-classifier";
+} from "@debate/data-sync/src/youtube/youtube-api";
+import { LECTURE_CATEGORIES } from "@debate/data-sync/src/youtube/parsers/lecture-classifier";
 import { getEnv } from "@/lib/env";
 
 const ANTHROPIC_MODEL = "claude-opus-5";

@@ -19,7 +19,7 @@ import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 import { sql } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { tupleToVideoRow, type VideoRow } from "debate-data-sync/src/videos/video-rows";
+import { tupleToVideoRow, type VideoRow } from "@debate/data-sync/src/videos/video-rows";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
 import { videos } from "../../database/schema";

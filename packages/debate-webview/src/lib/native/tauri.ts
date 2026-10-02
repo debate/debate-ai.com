@@ -1,5 +1,5 @@
 /**
- * @fileoverview Detects the native-wrapper Tauri shell (packages/native-wrapper)
+ * @fileoverview Detects the @debate/native-wrapper Tauri shell (packages/native-wrapper)
  * and exposes native host capabilities:
  *
  * 1. Opening URLs in the system's default browser (Google OAuth login handoff)
@@ -23,7 +23,7 @@ declare global {
   }
 }
 
-/** True when this page is rendered inside the native-wrapper shell. */
+/** True when this page is rendered inside the @debate/native-wrapper shell. */
 export function isNativeWrapper(): boolean {
   return typeof window !== "undefined" && Boolean(window.__TAURI__?.core);
 }

@@ -29,7 +29,7 @@
  * `settings.replaceAll()` already takes for its Import Settings action.
  */
 
-import { SECRET_SETTING_KEYS, SETTING_METADATA, type SettingsCategory } from "debate-editor/settings"
+import { SECRET_SETTING_KEYS, SETTING_METADATA, type SettingsCategory } from "@debate/editor/settings"
 
 /**
  * The settings categories `/settings` hosts, in the order it shows them,

@@ -42,37 +42,37 @@
 "use client"
 
 import { useRef, useState } from "react"
-import { Badge } from "debate-round/src/ui/primitives/badge"
-import { Button } from "debate-round/src/ui/primitives/button"
-import { Input } from "debate-round/src/ui/primitives/input"
-import { Label } from "debate-round/src/ui/primitives/label"
-import { Textarea } from "debate-round/src/ui/primitives/textarea"
+import { Badge } from "@debate/round/src/ui/primitives/badge"
+import { Button } from "@debate/round/src/ui/primitives/button"
+import { Input } from "@debate/round/src/ui/primitives/input"
+import { Label } from "@debate/round/src/ui/primitives/label"
+import { Textarea } from "@debate/round/src/ui/primitives/textarea"
 import {
   EmptyState,
   MeterBar,
   PanelRow,
   PanelSection,
   PanelShell,
-} from "debate-round/src/ui/panels/panel-shell"
+} from "@debate/round/src/ui/panels/panel-shell"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "debate-round/src/ui/primitives/select"
+} from "@debate/round/src/ui/primitives/select"
 import {
   wordCountStyleMap,
   wordCountStyleNames,
   wordCountStyles,
   getWordCountStatus,
   type WordCountStyleKey,
-} from "debate-timer/src/formats/word-count-format"
-import { buildWordCountSyncNoticeMessage, buildWordCountTrendData, getWordCountRoundStatuses } from "debate-round/src/state/wordCountRounds"
-import { findPresetWordLimit } from "debate-round/src/state/wordLimitPresets"
+} from "@debate/timer/src/formats/word-count-format"
+import { buildWordCountSyncNoticeMessage, buildWordCountTrendData, getWordCountRoundStatuses } from "@debate/round/src/state/wordCountRounds"
+import { findPresetWordLimit } from "@debate/round/src/state/wordLimitPresets"
 import { appendDictatedSegment } from "../round/microphone-transcription"
 import { useMicrophoneTranscription } from "../hooks/useMicrophoneTranscription"
-import { useWordLimitPresets } from "debate-round/src/hooks/useWordLimitPresets"
+import { useWordLimitPresets } from "@debate/round/src/hooks/useWordLimitPresets"
 import { useWordCountRounds } from "../hooks/useWordCountRounds"
 
 const STYLE_LABELS: Record<WordCountStyleKey, string> = wordCountStyleMap.reduce(

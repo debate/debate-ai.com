@@ -17,8 +17,8 @@ import {
   maxAnnotationDensityCount,
   pickBucketJumpAnnotation,
 } from "./annotation-density"
-import { formatAnnotationTimestamp } from "debate-round/src/flow/flow-annotations"
-import type { FlowAnnotation } from "debate-round/src/flow/flow-annotations"
+import { formatAnnotationTimestamp } from "@debate/round/src/flow/flow-annotations"
+import type { FlowAnnotation } from "@debate/round/src/flow/flow-annotations"
 
 export interface AnnotationDensityScrubberProps {
   annotations: FlowAnnotation[]

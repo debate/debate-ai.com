@@ -4,12 +4,12 @@
  * `signedInContributorId` prefill on the "Send to Prep Notes" form — the fix
  * for `prep-notes.mdx`'s Known gaps entry noting that form's "Your name"
  * field was free-form with no link to a real identity. Uses the jsdom +
- * `react-dom/client` + `act` pattern `debate-team-collaboration/test/PrepNoteNotificationsPanel.test.tsx`
+ * `react-dom/client` + `act` pattern `@debate/team-collaboration/test/PrepNoteNotificationsPanel.test.tsx`
  * established (a `node`-environment `renderToStaticMarkup` snapshot never
  * runs this panel's mount-time `useEffect`, so it can't see its persisted
  * records at all) — this package's first use of that pattern, so it also
  * adds `test/helpers/mount.tsx`, mirroring
- * `debate-team-collaboration/test/helpers/mount.tsx`'s `mount`/`click`/
+ * `@debate/team-collaboration/test/helpers/mount.tsx`'s `mount`/`click`/
  * `type` API exactly rather than inventing a new one.
  */
 

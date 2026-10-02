@@ -9,9 +9,9 @@
  * @module state/coachingProgramCalendar
  */
 
-import { getCoachingProgram } from "debate-team-collaboration/src/state/coachingPrograms";
-import { listGroupChallenges } from "debate-team-collaboration/src/state/groupChallenges";
-import { listSprintNotesForTopic } from "debate-team-collaboration/src/state/sprintNotes";
+import { getCoachingProgram } from "@debate/team-collaboration/src/state/coachingPrograms";
+import { listGroupChallenges } from "@debate/team-collaboration/src/state/groupChallenges";
+import { listSprintNotesForTopic } from "@debate/team-collaboration/src/state/sprintNotes";
 import {
   buildCoachingProgramCalendarEvents,
   type CoachingProgramCalendarEvent,

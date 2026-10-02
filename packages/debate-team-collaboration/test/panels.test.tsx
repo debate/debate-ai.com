@@ -18,10 +18,10 @@ import {
   buildTopicCoverageReport,
   type CoverageCardSummary,
   type TrackedArgument,
-} from "debate-research-evidence/src/lib/topic-coverage";
-import type { AttributedContribution } from "debate-research-evidence/src/lib/contribution-leaderboard";
+} from "@debate/research-evidence/src/lib/topic-coverage";
+import type { AttributedContribution } from "@debate/research-evidence/src/lib/contribution-leaderboard";
 import type { QuestContribution, QuestTemplate } from "../src/lib/daily-quests";
-import type { ContributorAvailability } from "debate-research-evidence/src/lib/research-task-routing";
+import type { ContributorAvailability } from "@debate/research-evidence/src/lib/research-task-routing";
 import type { TrackedTopicAssignment } from "../src/lib/research-progress";
 import type { SprintNote } from "../src/lib/team-collaboration-mode";
 

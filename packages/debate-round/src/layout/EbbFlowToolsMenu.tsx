@@ -26,8 +26,8 @@ import {
   DropdownMenuTrigger,
 } from "../ui/primitives/dropdown-menu"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/primitives/tooltip"
-import { isDesktop, useRecentFlows } from "debate-flow-ebb/tools"
-import type { EbbFlowToolAction } from "debate-flow-ebb"
+import { isDesktop, useRecentFlows } from "@debate/flow-ebb/tools"
+import type { EbbFlowToolAction } from "@debate/flow-ebb"
 
 /** Props for the EbbFlowToolsMenu component. */
 interface EbbFlowToolsMenuProps {

@@ -25,7 +25,7 @@
  * @module lib/seo/sitemap
  */
 
-import { SIDEBAR_VIDEO_LINKS } from "debate-videos";
+import { SIDEBAR_VIDEO_LINKS } from "@debate/videos";
 import { absoluteUrl } from "./site-url";
 import type { VideoSitemapEntry } from "@/lib/videos/video-repository";
 

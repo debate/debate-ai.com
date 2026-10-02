@@ -20,7 +20,7 @@ import {
   fetchUserSettings,
   saveUserSettings,
   type ThemeMode,
-} from "debate-round"
+} from "@debate/round"
 
 /** Registry of all available colour theme names — re-exported from `debate-round`'s `THEME_NAMES`, the same list `/api/settings` validates against. */
 export const themeNames: readonly string[] = THEME_NAMES

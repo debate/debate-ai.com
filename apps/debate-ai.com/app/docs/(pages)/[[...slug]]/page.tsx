@@ -1,1 +1,1 @@
-export { default, generateMetadata, generateStaticParams } from "debate-help-docs/routes/docs-page"
+export { default, generateMetadata, generateStaticParams } from "@debate/help-docs/routes/docs-page"

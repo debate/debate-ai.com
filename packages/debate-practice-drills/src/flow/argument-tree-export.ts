@@ -20,7 +20,7 @@
  * @module flow/argument-tree-export
  */
 
-import type { ArgumentTreeNode } from "debate-round/src/flow/argument-tree";
+import type { ArgumentTreeNode } from "@debate/round/src/flow/argument-tree";
 
 /**
  * Renders a flattened (already filtered, via `filterArgumentTree` +

@@ -11,16 +11,16 @@ import {
   toggleNewsItemLiked,
 } from "../src/state/newsStream";
 import { PRODUCT_NEWS, buildAutoFeatureNews, sortNewsFeed } from "../src/lib/news-stream";
-import { APP_FEATURES } from "debate-feature-catalog/src/feature-catalog";
+import { APP_FEATURES } from "@debate/feature-catalog/src/feature-catalog";
 import { saveDailyMissionResult } from "../src/state/dailyMissionResults";
-import { saveGroupChallenge } from "debate-team-collaboration/src/state/groupChallenges";
-import { recordChallengeWinEvent } from "debate-team-collaboration/src/state/challengeWinEvents";
-import { saveRevisionRecord, type CardRevisionRecord } from "debate-research-evidence/src/state/revisionHistory";
-import { saveSprintNote } from "debate-team-collaboration/src/state/sprintNotes";
-import { saveEvidenceLibraryEntry } from "debate-research-evidence/src/state/evidenceLibraryEntries";
-import type { GroupChallenge } from "debate-team-collaboration/src/lib/group-challenges";
-import type { SprintNote } from "debate-team-collaboration/src/lib/team-collaboration-mode";
-import type { EvidenceLibraryEntry } from "debate-research-evidence/src/lib/shared-evidence-library";
+import { saveGroupChallenge } from "@debate/team-collaboration/src/state/groupChallenges";
+import { recordChallengeWinEvent } from "@debate/team-collaboration/src/state/challengeWinEvents";
+import { saveRevisionRecord, type CardRevisionRecord } from "@debate/research-evidence/src/state/revisionHistory";
+import { saveSprintNote } from "@debate/team-collaboration/src/state/sprintNotes";
+import { saveEvidenceLibraryEntry } from "@debate/research-evidence/src/state/evidenceLibraryEntries";
+import type { GroupChallenge } from "@debate/team-collaboration/src/lib/group-challenges";
+import type { SprintNote } from "@debate/team-collaboration/src/lib/team-collaboration-mode";
+import type { EvidenceLibraryEntry } from "@debate/research-evidence/src/lib/shared-evidence-library";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {

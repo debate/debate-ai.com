@@ -5,7 +5,7 @@
  *
  * Instantiates the browser's real `SpeechRecognition`/`webkitSpeechRecognition`
  * API. Like every other browser-API hook in this repo (e.g.
- * `debate-round/src/hooks/useMicrophoneTranscription.ts`, which this mirrors),
+ * `@debate/round/src/hooks/useMicrophoneTranscription.ts`, which this mirrors),
  * this file is untested wiring — the feature-detection, text-joining, and
  * error-message logic it calls into lives in `coach/microphone-transcription.ts`
  * and is Vitest covered there instead.

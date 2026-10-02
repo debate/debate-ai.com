@@ -3,7 +3,7 @@ import { and, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { savedSprintSessions } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
-import { isValidSprintSession, MAX_SAVED_SPRINT_SESSION_BYTES } from "debate-team-collaboration"
+import { isValidSprintSession, MAX_SAVED_SPRINT_SESSION_BYTES } from "@debate/team-collaboration"
 
 /**
  * Account-linked scheduled-sprint-session sync — the "🤝 Team Collaboration

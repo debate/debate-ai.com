@@ -9,14 +9,14 @@
  * @module state/preRoundBriefings
  */
 
-import type { DebateSide } from "debate-data-sync/src/rankings/opponent-team-profile";
+import type { DebateSide } from "@debate/data-sync/src/rankings/opponent-team-profile";
 import { appendNoteToPreRoundBriefing, buildPreRoundBriefingFromStores } from "../round/pre-round-briefing";
 import type { PreRoundBriefing } from "../round/pre-round-briefing";
 
 import {
   mirrorToolRecordDelete,
   mirrorToolRecordSave,
-} from "debate-data-sync/src/state/tool-record-mirror";
+} from "@debate/data-sync/src/state/tool-record-mirror";
 
 export type PreRoundBriefingRecord = {
   roundId: string;

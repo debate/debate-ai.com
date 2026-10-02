@@ -14,7 +14,7 @@ import {
   normalizeCardShareMessage,
   normalizeCardShareTitle,
   parseShareCode,
-} from "debate-team-collaboration"
+} from "@debate/team-collaboration"
 
 /**
  * Collab-card shares — a CardMirror co-editing session's share code (and

@@ -42,7 +42,7 @@ import {
   filterKnownFavoriteTools,
   isValidToolHref,
   MAX_FAVORITE_TOOLS,
-} from "debate-round"
+} from "@debate/round"
 
 const STORAGE_KEY = "favorite-tools"
 const CHANGE_EVENT = "favorite-tools-changed"

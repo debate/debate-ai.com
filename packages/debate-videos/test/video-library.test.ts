@@ -30,8 +30,8 @@ import {
   setSignedIn,
   subscribeToSignInPrompts,
   type SignInPrompt,
-} from "debate-data-sync/src/state/sign-in-prompt";
-import { setToolRecordSyncEnabled } from "debate-data-sync/src/state/tool-record-mirror";
+} from "@debate/data-sync/src/state/sign-in-prompt";
+import { setToolRecordSyncEnabled } from "@debate/data-sync/src/state/tool-record-mirror";
 
 const AT = () => new Date("2026-03-01T12:00:00.000Z");
 

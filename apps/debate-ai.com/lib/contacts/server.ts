@@ -7,7 +7,7 @@ import {
   type ContactPair,
   type ContactRelationship,
   type ContactUser,
-} from "debate-team-collaboration"
+} from "@debate/team-collaboration"
 
 /**
  * Server-side helpers shared by `/api/contacts`, `/api/contacts/block`, and

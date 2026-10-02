@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { OpponentTeamProfilesPanel } from "debate-round"
+import { OpponentTeamProfilesPanel } from "@debate/round"
 import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
 
 export default function OpponentsPage() {

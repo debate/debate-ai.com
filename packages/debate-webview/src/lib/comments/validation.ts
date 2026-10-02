@@ -19,7 +19,7 @@ import {
   MAX_COMMENT_BODY_LENGTH,
   isCommentResourceType,
   type CommentResourceType,
-} from "debate-comments";
+} from "@debate/comments";
 
 export { MAX_COMMENT_BODY_LENGTH, isCommentResourceType };
 export type { CommentResourceType };

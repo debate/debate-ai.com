@@ -12,8 +12,8 @@ import {
   type ResearchProgressGoal,
   type TrackedTopicAssignment,
 } from "../src/lib/research-progress";
-import type { AttributedContribution } from "debate-research-evidence/src/lib/contribution-leaderboard";
-import type { ResearchTask } from "debate-research-evidence/src/lib/research-task-routing";
+import type { AttributedContribution } from "@debate/research-evidence/src/lib/contribution-leaderboard";
+import type { ResearchTask } from "@debate/research-evidence/src/lib/research-task-routing";
 
 const warmingTask: ResearchTask = { argBlock: "Warming DA", category: "DA", level: "missing", requiredSkill: "intermediate" };
 const statesTask: ResearchTask = { argBlock: "States CP", category: "CP", level: "thin", requiredSkill: "novice" };

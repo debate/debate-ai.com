@@ -66,11 +66,11 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
-import { Button } from "debate-research-evidence/src/ui/primitives/button"
-import { Input } from "debate-research-evidence/src/ui/primitives/input"
-import { Label } from "debate-research-evidence/src/ui/primitives/label"
-import { EmptyState, PanelShell } from "debate-research-evidence/src/ui/panels/panel-shell"
+import { Badge } from "@debate/research-evidence/src/ui/primitives/badge"
+import { Button } from "@debate/research-evidence/src/ui/primitives/button"
+import { Input } from "@debate/research-evidence/src/ui/primitives/input"
+import { Label } from "@debate/research-evidence/src/ui/primitives/label"
+import { EmptyState, PanelShell } from "@debate/research-evidence/src/ui/panels/panel-shell"
 import {
   Table,
   TableBody,
@@ -78,14 +78,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "debate-research-evidence/src/ui/primitives/table"
+} from "@debate/research-evidence/src/ui/primitives/table"
 import {
   computeAndSavePersistedDailyMissionResult,
   listDailyMissionResultsForContributor,
 } from "../state/dailyMissionResults"
-import { listQuestTemplates } from "debate-team-collaboration/src/state/dailyQuests"
-import { isQuestStreaksLiveUpdateStorageEvent } from "debate-research-evidence/src/state/live-update"
-import { isOwnContributorRow } from "debate-research-evidence/src/lib/session-identity"
+import { listQuestTemplates } from "@debate/team-collaboration/src/state/dailyQuests"
+import { isQuestStreaksLiveUpdateStorageEvent } from "@debate/research-evidence/src/state/live-update"
+import { isOwnContributorRow } from "@debate/research-evidence/src/lib/session-identity"
 import {
   applyPersistedStreakFreeze,
   buildQuestStreakRosterWithFreezes,

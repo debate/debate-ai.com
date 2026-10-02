@@ -62,11 +62,11 @@ import {
   type ContributionCategoryFilter,
   type ContributorStats,
   type LeaderboardRange,
-} from "debate-research-evidence/src/lib/contribution-leaderboard";
-import { DEFAULT_HELPFULNESS_WEIGHTS, type HelpfulnessWeights } from "debate-research-evidence/src/lib/community-rating";
-import type { RoutedAssignment } from "debate-research-evidence/src/lib/research-task-routing";
+} from "@debate/research-evidence/src/lib/contribution-leaderboard";
+import { DEFAULT_HELPFULNESS_WEIGHTS, type HelpfulnessWeights } from "@debate/research-evidence/src/lib/community-rating";
+import type { RoutedAssignment } from "@debate/research-evidence/src/lib/research-task-routing";
 import { assertVerifierAllowed } from "../lib/task-verification";
-import { listContributions } from "debate-research-evidence/src/state/contributions";
+import { listContributions } from "@debate/research-evidence/src/state/contributions";
 import { completePersistedRoutedTask, getRoutedTaskQueue, listRoutedTaskQueues } from "./routedTaskQueues";
 import { getPendingTaskVerification, removePendingTaskVerification } from "./pendingTaskVerifications";
 

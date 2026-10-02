@@ -239,7 +239,7 @@ export function buildCustomOpponentPersona(input: CustomOpponentPersonaInput): O
  * Composes a self-contained prompt section describing how the AI opponent
  * should argue under the given persona and difficulty, suitable for
  * inserting into a future AI speech-generation prompt (see idea #3's
- * `buildAiResponseRequest` in `debate-round/src/round/ai-versus-speech-order.ts`).
+ * `buildAiResponseRequest` in `@debate/round/src/round/ai-versus-speech-order.ts`).
  *
  * `difficulty` defaults to `DEFAULT_OPPONENT_DIFFICULTY` ("intermediate") so
  * every existing caller that doesn't pass one keeps arguing at the

@@ -14,7 +14,7 @@
  * @module state/outlineFilterPresetJump
  */
 
-import type { OutlineFilterPreset } from "debate-round/src/state/outlineFilterPresets";
+import type { OutlineFilterPreset } from "@debate/round/src/state/outlineFilterPresets";
 
 /**
  * The round a preset should jump to when applied from the panel's global

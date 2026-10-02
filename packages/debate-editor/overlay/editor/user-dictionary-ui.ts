@@ -29,7 +29,7 @@ import { loadUserDictionary, saveUserDictionary, type UserDictionaryEntry } from
 import {
   getToolRecordSyncStatus,
   TOOL_RECORD_AUTO_SYNC_INTERVAL_MS,
-} from 'debate-data-sync/src/state/tool-record-auto-sync';
+} from '@debate/data-sync/src/state/tool-record-auto-sync';
 
 /** The `key` this store is registered under in `TOOL_RECORD_COLLECTIONS`. */
 const SPELLCHECK_DICTIONARY_COLLECTION_KEY = 'spellcheckDictionary';

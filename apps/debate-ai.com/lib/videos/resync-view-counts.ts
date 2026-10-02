@@ -20,19 +20,19 @@
  */
 
 import { desc, eq, sql } from "drizzle-orm";
-import { sqlLiteral } from "debate-data-sync/src/videos/video-seed-sql";
+import { sqlLiteral } from "@debate/data-sync/src/videos/video-seed-sql";
 import {
   fetchVideoStatuses,
   setYouTubeApiKey,
   type YouTubeVideoStatus,
-} from "debate-data-sync/src/youtube/youtube-api";
+} from "@debate/data-sync/src/youtube/youtube-api";
 import {
   buildViewCountUpdateStatements,
   ROUND_QUEUE_VIEW_COUNT_TARGET,
   VIDEOS_VIEW_COUNT_TARGET,
   type ViewCountTarget,
   type ViewCountUpdate,
-} from "debate-data-sync/src/videos/view-count-sql";
+} from "@debate/data-sync/src/videos/view-count-sql";
 import { videos, youtubeRoundVideos } from "@/lib/database/schema";
 import { getEnv } from "@/lib/env";
 

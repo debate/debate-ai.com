@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Earn XP and level up by completing challenges like cutting 5 cards or redoing a rebuttal",
 }
 
-export { default } from "debate-webview/routes/cards/level/page"
+export { default } from "@debate/webview/routes/cards/level/page"

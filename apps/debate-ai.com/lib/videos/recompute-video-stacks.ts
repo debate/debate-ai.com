@@ -23,11 +23,11 @@
  */
 
 import { sql } from "drizzle-orm";
-import { assignVideoStacks } from "debate-data-sync/src/videos/video-stacks";
+import { assignVideoStacks } from "@debate/data-sync/src/videos/video-stacks";
 import {
   buildVideoStackUpdateStatements,
   type VideoStackUpdate,
-} from "debate-data-sync/src/videos/video-stack-sql";
+} from "@debate/data-sync/src/videos/video-stack-sql";
 import { chunkStatements } from "@/lib/database/query-budget";
 import { videos } from "@/lib/database/schema";
 

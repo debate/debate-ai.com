@@ -6,7 +6,7 @@ import {
   listOpponentPersonaSelections,
   saveOpponentPersonaSelection,
 } from "../src/state/opponentPersonaSelections";
-import { opponentPersonas } from "debate-speech-writer/src/opponent/opponent-personas";
+import { opponentPersonas } from "@debate/speech-writer/src/opponent/opponent-personas";
 import type { OpponentPersonaSelection } from "../src/state/opponentPersonaSelections";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */

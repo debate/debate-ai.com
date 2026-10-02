@@ -4,17 +4,17 @@ import {
   readPersistedTopicSprintInputs,
 } from "../src/state/topicSprints";
 import { saveQuestTemplate } from "../src/state/dailyQuests";
-import { saveContribution } from "debate-research-evidence/src/state/contributions";
-import { saveTrackedArgument, type TrackedArgumentRecord } from "debate-research-evidence/src/state/trackedArguments";
-import { saveEvidenceLibraryEntry } from "debate-research-evidence/src/state/evidenceLibraryEntries";
+import { saveContribution } from "@debate/research-evidence/src/state/contributions";
+import { saveTrackedArgument, type TrackedArgumentRecord } from "@debate/research-evidence/src/state/trackedArguments";
+import { saveEvidenceLibraryEntry } from "@debate/research-evidence/src/state/evidenceLibraryEntries";
 import { saveContributorAvailability } from "../src/state/contributorAvailability";
 import { saveRoutedTaskQueue, type RoutedTaskQueueRecord } from "../src/state/routedTaskQueues";
 import { completeAndRecordResearchTask } from "../src/state/researchProgress";
 import { saveSprintNote } from "../src/state/sprintNotes";
-import type { AttributedContribution } from "debate-research-evidence/src/lib/contribution-leaderboard";
+import type { AttributedContribution } from "@debate/research-evidence/src/lib/contribution-leaderboard";
 import type { QuestTemplate } from "../src/lib/daily-quests";
-import type { ContributorAvailability, ResearchTask, RoutingResult } from "debate-research-evidence/src/lib/research-task-routing";
-import type { EvidenceLibraryEntry } from "debate-research-evidence/src/lib/shared-evidence-library";
+import type { ContributorAvailability, ResearchTask, RoutingResult } from "@debate/research-evidence/src/lib/research-task-routing";
+import type { EvidenceLibraryEntry } from "@debate/research-evidence/src/lib/shared-evidence-library";
 import type { SprintNote } from "../src/lib/team-collaboration-mode";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */

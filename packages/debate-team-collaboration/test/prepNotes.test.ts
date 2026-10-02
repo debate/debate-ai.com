@@ -16,7 +16,7 @@ import {
 } from "../src/state/prepNotes";
 import { listNotificationsForRecipient } from "../src/state/prepNoteNotifications";
 import { listRepliesForNote, postPrepNoteReply } from "../src/state/prepNoteReplies";
-import type { PrepNote } from "debate-round/src/flow/strategy-sync-notes";
+import type { PrepNote } from "@debate/round/src/flow/strategy-sync-notes";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {

@@ -7,7 +7,7 @@ import {
   isValidReviewLogEntry,
   MAX_SAVED_REVIEW_LOG_ENTRY_BYTES,
   reviewLogEntryId,
-} from "debate-editor/engine"
+} from "@debate/editor/engine"
 import { withRouteErrors } from "@/lib/api/route-errors"
 
 /**

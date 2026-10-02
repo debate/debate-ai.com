@@ -36,7 +36,7 @@ import {
   type OutlineFilterPreset,
   type ThemeMode,
   type UserSettingsPayload,
-} from "debate-round"
+} from "@debate/round"
 import {
   applyNewsLikedOp,
   applyNewsReadOp,
@@ -57,7 +57,7 @@ import {
   serializeNewsIdList,
   serializeQuestStreakSync,
   type QuestStreakSyncPayload,
-} from "debate-community"
+} from "@debate/community"
 import {
   DEFAULT_BRAINSTORM_SESSION_TIMER_SYNC,
   DEFAULT_RESEARCH_PROGRESS_GOAL_SYNC,
@@ -69,7 +69,7 @@ import {
   serializeResearchProgressGoal,
   type BrainstormSessionTimerSyncPayload,
   type ResearchProgressGoalSyncPayload,
-} from "debate-team-collaboration"
+} from "@debate/team-collaboration"
 import {
   applySavedArgumentCollectionOp,
   buildSavedArgumentCollectionFailureMessage,
@@ -79,29 +79,29 @@ import {
   parseSavedArgumentCollections,
   serializeSavedArgumentCollections,
   type SavedArgumentCollection,
-} from "debate-research-evidence"
+} from "@debate/research-evidence"
 import {
   mergeEditorPreferences,
   normalizeEditorPreferencesPatch,
   parseEditorPreferences,
   serializeEditorPreferences,
   type EditorPreferencesPayload,
-} from "debate-webview/lib/editor-preferences"
-import { applyRecentToolOp, normalizeRecentToolOpPatch, parseRecentTools, serializeRecentTools } from "debate-webview/lib/recentTools"
+} from "@debate/webview/lib/editor-preferences"
+import { applyRecentToolOp, normalizeRecentToolOpPatch, parseRecentTools, serializeRecentTools } from "@debate/webview/lib/recentTools"
 import {
   DEFAULT_QUALIFICATION_POINTS_TABLE_SYNC,
   normalizeQualificationPointsTablePatch,
   parseQualificationPointsTable,
   serializeQualificationPointsTable,
-} from "debate-data-sync/src/state/qualificationPointsTable"
+} from "@debate/data-sync/src/state/qualificationPointsTable"
 import {
   DEFAULT_QUALIFICATION_CUTOFF_SYNC,
   normalizeQualificationCutoffPatch,
   parseQualificationCutoff,
   serializeQualificationCutoff,
   type QualificationCutoffSettings,
-} from "debate-data-sync/src/state/qualificationCutoff"
-import type { QualificationPointsTable } from "debate-data-sync/src/rankings/ndca-standings"
+} from "@debate/data-sync/src/state/qualificationCutoff"
+import type { QualificationPointsTable } from "@debate/data-sync/src/rankings/ndca-standings"
 
 /**
  * Account-linked app preferences — TODO.md idea #17 ("User Settings —

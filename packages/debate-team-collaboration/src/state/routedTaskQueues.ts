@@ -92,10 +92,10 @@ import {
   type RoutingResult,
   type SkillLevel,
   type TaskPriority,
-} from "debate-research-evidence/src/lib/research-task-routing";
-import type { CoverageThresholds, TopicCoverageReport } from "debate-research-evidence/src/lib/topic-coverage";
+} from "@debate/research-evidence/src/lib/research-task-routing";
+import type { CoverageThresholds, TopicCoverageReport } from "@debate/research-evidence/src/lib/topic-coverage";
 import { listContributorAvailability, recordPersistedTaskAssigned, recordPersistedTaskCompleted } from "./contributorAvailability";
-import { buildPersistedTopicCoverageReport } from "debate-research-evidence/src/state/trackedArguments";
+import { buildPersistedTopicCoverageReport } from "@debate/research-evidence/src/state/trackedArguments";
 
 export type RoutedTaskQueueRecord = {
   topicId: string;

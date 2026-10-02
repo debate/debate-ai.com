@@ -8,7 +8,7 @@ import {
   isValidQuickCardRecord,
   MAX_SAVED_QUICK_CARD_BYTES,
   type QuickCard,
-} from "debate-editor/engine"
+} from "@debate/editor/engine"
 import { withRouteErrors } from "@/lib/api/route-errors"
 
 /**

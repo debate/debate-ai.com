@@ -13,7 +13,7 @@ import {
   touchPresence,
   userSummaryColumns,
 } from "@/lib/contacts/server"
-import { isPresenceOnline, resolveContactRequest } from "debate-team-collaboration"
+import { isPresenceOnline, resolveContactRequest } from "@debate/team-collaboration"
 
 /**
  * Account-linked contacts list — the friends-list half of the CardMirror

@@ -32,7 +32,7 @@ import {
   htmlToCards,
   isImportableDocxEntry,
   normalizeImportPath,
-} from "debate-card-parser";
+} from "@debate/card-parser";
 
 /** Which side of the resolution a file is evidence for. */
 export type CaselistSide = "Aff" | "Neg" | null;

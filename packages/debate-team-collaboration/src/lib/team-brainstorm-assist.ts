@@ -16,10 +16,10 @@
  * @module lib/team-brainstorm-assist
  */
 
-import { getUnderCoveredArguments, type TopicCoverageReport } from "debate-research-evidence/src/lib/topic-coverage";
-import { scorePopularitySignal } from "debate-research-evidence/src/lib/community-rating";
-import { scoreUniqueness } from "debate-research-evidence/src/lib/llm-card-scoring";
-import { computeWordCount, type EvidenceLibraryEntry } from "debate-research-evidence/src/lib/shared-evidence-library";
+import { getUnderCoveredArguments, type TopicCoverageReport } from "@debate/research-evidence/src/lib/topic-coverage";
+import { scorePopularitySignal } from "@debate/research-evidence/src/lib/community-rating";
+import { scoreUniqueness } from "@debate/research-evidence/src/lib/llm-card-scoring";
+import { computeWordCount, type EvidenceLibraryEntry } from "@debate/research-evidence/src/lib/shared-evidence-library";
 
 /** The kind of prep-session brainstorming being requested. */
 export type BrainstormCategory = "argument" | "impact_framing" | "frontline" | "response";

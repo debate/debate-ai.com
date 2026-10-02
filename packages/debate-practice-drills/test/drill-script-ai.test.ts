@@ -5,7 +5,7 @@ import {
   parseDrillScriptAiResponse,
   type DrillScriptAiInput,
 } from "../src/round/drill-script-ai";
-import type { Drill } from "debate-round/src/flow/drill-generator";
+import type { Drill } from "@debate/round/src/flow/drill-generator";
 
 const FRONTLINE_DRILL: Drill = {
   kind: "frontline",

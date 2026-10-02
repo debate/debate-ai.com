@@ -8,18 +8,18 @@
  * @module state/flowAnnotations
  */
 
-import type { FlowAnnotation } from "debate-round/src/flow/flow-annotations";
+import type { FlowAnnotation } from "@debate/round/src/flow/flow-annotations";
 import {
   getAnnotationsForBox,
   getAnnotationsForSpeech,
   getAnnotationsForVideo,
   sortAnnotationsByTimestamp,
-} from "debate-round/src/flow/flow-annotations";
+} from "@debate/round/src/flow/flow-annotations";
 
 import {
   mirrorToolRecordDelete,
   mirrorToolRecordSave,
-} from "debate-data-sync/src/state/tool-record-mirror";
+} from "@debate/data-sync/src/state/tool-record-mirror";
 
 const STORAGE_KEY = "flowAnnotations";
 

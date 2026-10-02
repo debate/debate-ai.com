@@ -8,7 +8,7 @@
  */
 
 import { useEffect, useState } from "react"
-import { EbbFlowEmbed, type EbbFlowToolAction } from "debate-flow-ebb"
+import { EbbFlowEmbed, type EbbFlowToolAction } from "@debate/flow-ebb"
 import { useFlowStore } from "../state/store"
 import { newFlow } from "../utils/flow-utils"
 import { settings } from "../state/settings"

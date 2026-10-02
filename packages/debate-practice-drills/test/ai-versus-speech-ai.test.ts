@@ -4,7 +4,7 @@ import {
   buildAiVersusSpeechUserPrompt,
   parseAiVersusSpeechResponse,
 } from "../src/round/ai-versus-speech-ai";
-import type { AiSpeechRequest } from "debate-round/src/round/ai-versus-speech-order";
+import type { AiSpeechRequest } from "@debate/round/src/round/ai-versus-speech-order";
 
 const FIRST_SPEECH_REQUEST: AiSpeechRequest = {
   slot: { index: 0, name: "1AC", secondary: false, time: 360, speaker: "ai" },

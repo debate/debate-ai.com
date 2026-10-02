@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { GroupChallenge } from "debate-team-collaboration/src/lib/group-challenges";
-import type { SprintNote } from "debate-team-collaboration/src/lib/team-collaboration-mode";
+import type { GroupChallenge } from "@debate/team-collaboration/src/lib/group-challenges";
+import type { SprintNote } from "@debate/team-collaboration/src/lib/team-collaboration-mode";
 import {
   buildCoachingProgramCalendarEvents,
   groupCoachingProgramCalendarEventsByDay,

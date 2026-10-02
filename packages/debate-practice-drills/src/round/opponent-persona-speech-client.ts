@@ -20,9 +20,9 @@ import {
   DEFAULT_OPPONENT_DIFFICULTY,
   type OpponentDifficulty,
   type OpponentPersona,
-} from "debate-speech-writer/src/opponent/opponent-personas";
+} from "@debate/speech-writer/src/opponent/opponent-personas";
 import { buildAiVersusSpeechUserPrompt, parseAiVersusSpeechResponse } from "./ai-versus-speech-ai";
-import type { AiSpeechRequest } from "debate-round/src/round/ai-versus-speech-order";
+import type { AiSpeechRequest } from "@debate/round/src/round/ai-versus-speech-order";
 import { buildPersonaAiVersusSystemPrompt } from "./opponent-persona-speech-ai";
 
 /** A full speech can run several paragraphs, well beyond a short JSON verdict. */

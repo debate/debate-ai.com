@@ -22,8 +22,8 @@
  * @module state/ownRoundHistory
  */
 
-import type { OpponentRoundRecord } from "debate-data-sync/src/rankings/opponent-team-profile";
-import { getHeadToHeadRecords } from "debate-data-sync/src/rankings/opponent-team-profile";
+import type { OpponentRoundRecord } from "@debate/data-sync/src/rankings/opponent-team-profile";
+import { getHeadToHeadRecords } from "@debate/data-sync/src/rankings/opponent-team-profile";
 
 /** An `OpponentRoundRecord` as persisted: a unique id, since a team logs many rounds. */
 export interface OwnRoundHistoryRecord extends OpponentRoundRecord {

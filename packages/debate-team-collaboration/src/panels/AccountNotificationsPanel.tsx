@@ -11,9 +11,9 @@
 "use client";
 
 import Link from "next/link";
-import { Badge } from "debate-round/src/ui/primitives/badge";
-import { Button } from "debate-round/src/ui/primitives/button";
-import { EmptyState, PanelShell } from "debate-round/src/ui/panels/panel-shell";
+import { Badge } from "@debate/round/src/ui/primitives/badge";
+import { Button } from "@debate/round/src/ui/primitives/button";
+import { EmptyState, PanelShell } from "@debate/round/src/ui/panels/panel-shell";
 import { useAccountNotifications } from "../hooks/useAccountNotifications";
 
 /** Renders the current user's account notifications (round invites, etc.), newest first, with per-item and mark-all-read actions. */

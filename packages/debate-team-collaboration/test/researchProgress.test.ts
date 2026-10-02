@@ -10,10 +10,10 @@ import {
 } from "../src/state/researchProgress";
 import { getRoutedTaskQueue, saveRoutedTaskQueue, type RoutedTaskQueueRecord } from "../src/state/routedTaskQueues";
 import { listPendingTaskVerifications, markRoutedTaskAwaitingVerification } from "../src/state/pendingTaskVerifications";
-import { saveContribution } from "debate-research-evidence/src/state/contributions";
+import { saveContribution } from "@debate/research-evidence/src/state/contributions";
 import { SelfVerificationNotAllowedError, VerifierIdRequiredError } from "../src/lib/task-verification";
-import type { AttributedContribution } from "debate-research-evidence/src/lib/contribution-leaderboard";
-import type { ResearchTask, RoutingResult } from "debate-research-evidence/src/lib/research-task-routing";
+import type { AttributedContribution } from "@debate/research-evidence/src/lib/contribution-leaderboard";
+import type { ResearchTask, RoutingResult } from "@debate/research-evidence/src/lib/research-task-routing";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {

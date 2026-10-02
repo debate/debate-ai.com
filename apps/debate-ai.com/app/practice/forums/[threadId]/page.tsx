@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "A community thread and its replies.",
 }
 
-export { default } from "debate-webview/routes/forums/[threadId]/page"
+export { default } from "@debate/webview/routes/forums/[threadId]/page"

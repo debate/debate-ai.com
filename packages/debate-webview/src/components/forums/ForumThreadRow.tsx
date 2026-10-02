@@ -9,7 +9,7 @@
 
 import Link from "next/link";
 import { MessageSquare } from "lucide-react";
-import { CommentAvatar } from "debate-comments";
+import { CommentAvatar } from "@debate/comments";
 
 import { formatAbsoluteTime, formatRelativeTime, replyCountLabel } from "../../lib/forums/format";
 import type { ForumThreadSummary } from "../../lib/forums/types";

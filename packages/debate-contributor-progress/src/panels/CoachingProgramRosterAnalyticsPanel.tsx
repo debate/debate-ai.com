@@ -61,9 +61,9 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
-import { Input } from "debate-research-evidence/src/ui/primitives/input"
-import { EmptyState, PanelSection, PanelShell } from "debate-research-evidence/src/ui/panels/panel-shell"
+import { Badge } from "@debate/research-evidence/src/ui/primitives/badge"
+import { Input } from "@debate/research-evidence/src/ui/primitives/input"
+import { EmptyState, PanelSection, PanelShell } from "@debate/research-evidence/src/ui/panels/panel-shell"
 import {
   Table,
   TableBody,
@@ -71,12 +71,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "debate-research-evidence/src/ui/primitives/table"
-import { isCoachingProgramRosterAnalyticsLiveUpdateStorageEvent } from "debate-research-evidence/src/state/live-update"
-import { buildCoachingProgramsPanelView } from "debate-team-collaboration/src/state/coachingPrograms"
-import type { CoachingProgramConfig } from "debate-team-collaboration/src/round/coaching-program"
-import { buildChallengeCompletionAnnouncementText } from "debate-team-collaboration/src/lib/group-challenges"
-import type { CompletedGroupChallengeEvent } from "debate-team-collaboration/src/state/challengeWinEvents"
+} from "@debate/research-evidence/src/ui/primitives/table"
+import { isCoachingProgramRosterAnalyticsLiveUpdateStorageEvent } from "@debate/research-evidence/src/state/live-update"
+import { buildCoachingProgramsPanelView } from "@debate/team-collaboration/src/state/coachingPrograms"
+import type { CoachingProgramConfig } from "@debate/team-collaboration/src/round/coaching-program"
+import { buildChallengeCompletionAnnouncementText } from "@debate/team-collaboration/src/lib/group-challenges"
+import type { CompletedGroupChallengeEvent } from "@debate/team-collaboration/src/state/challengeWinEvents"
 import {
   buildPersistedCoachingProgramChallengeDigest,
   buildPersistedCoachingProgramRosterAnalytics,

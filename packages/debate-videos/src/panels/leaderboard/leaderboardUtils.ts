@@ -5,8 +5,8 @@
  * @module components/debate/DebateVideos/panels/leaderboardUtils
  */
 
-import { normalizeSchool } from "debate-rankings-adapter";
-import type { RankingDataset, RankingDatasetId, RankingEntry } from "debate-rankings-adapter";
+import { normalizeSchool } from "@debate/rankings-adapter";
+import type { RankingDataset, RankingDatasetId, RankingEntry } from "@debate/rankings-adapter";
 import type { SeasonalTopic } from "../../lib/debate-topics";
 import type {
   Division,

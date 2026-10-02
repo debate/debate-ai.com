@@ -12,7 +12,7 @@ import {
   type CaptionCue,
   type VideoDocument,
   type VideoDocumentKind,
-} from "debate-videos";
+} from "@debate/videos";
 import { Button } from "../../lib/ui/primitives/button";
 import { Badge } from "../../lib/ui/primitives/badge";
 import { Input } from "../../lib/ui/primitives/input";

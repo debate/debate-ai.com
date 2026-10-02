@@ -12,9 +12,9 @@
  * UI could build on. See the follow-ups noted in TODO.md.
  */
 
-import type { DebateStyleKey } from "debate-timer/src/formats/debate-format-times";
-import { debateStyles } from "debate-timer/src/formats/debate-format-times";
-import type { TimerSpeech } from "debate-timer/src/types";
+import type { DebateStyleKey } from "@debate/timer/src/formats/debate-format-times";
+import { debateStyles } from "@debate/timer/src/formats/debate-format-times";
+import type { TimerSpeech } from "@debate/timer/src/types";
 
 export type AiVersusSide = "primary" | "secondary";
 export type AiVersusSpeaker = "user" | "ai";

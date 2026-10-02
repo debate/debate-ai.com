@@ -77,18 +77,18 @@
 import { PRODUCT_NEWS, buildAutoFeatureNews, sortNewsFeed, type NewsItem } from "../lib/news-stream";
 import { listAnnouncedDailyBestCards } from "./dailyBestCardAnnouncements";
 import { listAnnouncedContributorAwards } from "./contributorAwardAnnouncements";
-import { buildDailyBestCardHighlight } from "debate-research-evidence/src/lib/daily-best-card";
-import { buildAwardsAnnouncementText } from "debate-research-evidence/src/lib/contributor-awards";
+import { buildDailyBestCardHighlight } from "@debate/research-evidence/src/lib/daily-best-card";
+import { buildAwardsAnnouncementText } from "@debate/research-evidence/src/lib/contributor-awards";
 import { buildDailyQuestCompletionEvents, buildQuestStreakMilestoneEvents } from "./dailyMissionResults";
 import { buildDailyQuestCompletionAnnouncementText, buildStreakMilestoneAnnouncementText } from "../lib/gamified-quests";
-import { buildCompletedGroupChallengeEvents } from "debate-team-collaboration/src/state/challengeWinEvents";
-import { buildChallengeCompletionAnnouncementText } from "debate-team-collaboration/src/lib/group-challenges";
-import { buildDailyTopReviserAnnouncements } from "debate-research-evidence/src/state/revisionHistory";
-import { buildTopReviserAnnouncementText } from "debate-research-evidence/src/lib/revision-incentives";
-import { listSprintNotes } from "debate-team-collaboration/src/state/sprintNotes";
-import { buildSprintNoteAnnouncementText } from "debate-team-collaboration/src/lib/team-collaboration-mode";
-import { isEntryLive, listEvidenceLibraryEntries } from "debate-research-evidence/src/state/evidenceLibraryEntries";
-import { buildEvidenceEntryAnnouncementText, type EvidenceLibraryEntry } from "debate-research-evidence/src/lib/shared-evidence-library";
+import { buildCompletedGroupChallengeEvents } from "@debate/team-collaboration/src/state/challengeWinEvents";
+import { buildChallengeCompletionAnnouncementText } from "@debate/team-collaboration/src/lib/group-challenges";
+import { buildDailyTopReviserAnnouncements } from "@debate/research-evidence/src/state/revisionHistory";
+import { buildTopReviserAnnouncementText } from "@debate/research-evidence/src/lib/revision-incentives";
+import { listSprintNotes } from "@debate/team-collaboration/src/state/sprintNotes";
+import { buildSprintNoteAnnouncementText } from "@debate/team-collaboration/src/lib/team-collaboration-mode";
+import { isEntryLive, listEvidenceLibraryEntries } from "@debate/research-evidence/src/state/evidenceLibraryEntries";
+import { buildEvidenceEntryAnnouncementText, type EvidenceLibraryEntry } from "@debate/research-evidence/src/lib/shared-evidence-library";
 
 /** Turns every announced Daily Best Card winner into a `NewsItem`. */
 function dailyBestCardNews(): NewsItem[] {

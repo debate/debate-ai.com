@@ -23,7 +23,7 @@ import { Button } from "../ui/primitives/button"
 import { Badge } from "../ui/primitives/badge"
 import type { FlowHistory } from "../state/store"
 import { groupFlowHistoryByDate } from "../state/flowHistoryGrouping"
-import { getToolRecordSyncStatus } from "debate-data-sync/src/state/tool-record-auto-sync"
+import { getToolRecordSyncStatus } from "@debate/data-sync/src/state/tool-record-auto-sync"
 
 /** The `key` this store is registered under in `TOOL_RECORD_COLLECTIONS`. */
 const FLOW_HISTORY_COLLECTION_KEY = "flowHistory"

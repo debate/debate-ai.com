@@ -1,7 +1,7 @@
 {
-  "name": "debate-editor-cm-adapter",
+  "name": "@debate/editor-cm-adapter",
   "version": "0.1.0",
-  "description": "Adapter over the debate-editor git submodule (github.com/debate/debate-editor, CardMirror) for the web UI: its ProseMirror schema and lossless Verbatim .docx / .cmir interop, plus outline and card helpers",
+  "description": "Adapter over the @debate/editor git submodule (github.com/debate/debate-editor, CardMirror) for the web UI: its ProseMirror schema and lossless Verbatim .docx / .cmir interop, plus outline and card helpers",
   "private": true,
   "type": "module",
   "author": "vtempest",

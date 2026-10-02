@@ -11,7 +11,7 @@ import {
   looksLikeCmirBase64 as engineLooksLikeCmirBase64,
   schema,
   serializeNative,
-} from "debate-editor/engine"
+} from "@debate/editor/engine"
 import { isCmirContent, looksLikeCmirBase64 } from "../../../src/lib/cardmirror/content-format"
 
 /** A real one-paragraph `.cmir`, base64-encoded the way a row stores it. */

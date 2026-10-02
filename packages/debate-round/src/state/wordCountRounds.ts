@@ -18,7 +18,7 @@
  * @module state/wordCountRounds
  */
 
-import { getWordCountStatus, wordCountStyles, type WordCountStyleKey } from "debate-timer/src/formats/word-count-format";
+import { getWordCountStatus, wordCountStyles, type WordCountStyleKey } from "@debate/timer/src/formats/word-count-format";
 import { findPresetWordLimit, type WordLimitPreset } from "./wordLimitPresets";
 
 export type WordCountSpeechSubmission = {

@@ -3,7 +3,7 @@ import { getDBFromContext } from "@/lib/database/context";
 import { getUserId } from "@/lib/auth/session";
 import { withRouteErrors } from "@/lib/api/route-errors";
 import { getViewer, upsertProfile } from "@/lib/practice-partners/queries";
-import { parseProfile } from "debate-webview/lib/practice-partners/validation";
+import { parseProfile } from "@debate/webview/lib/practice-partners/validation";
 
 /**
  * The viewer's practice profile — whether they are open to being challenged,

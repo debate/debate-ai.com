@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { ContributorStats } from "debate-research-evidence/src/lib/contribution-leaderboard";
-import { buildTopicCoverageReport, type CoverageCardSummary, type TrackedArgument } from "debate-research-evidence/src/lib/topic-coverage";
+import type { ContributorStats } from "@debate/research-evidence/src/lib/contribution-leaderboard";
+import { buildTopicCoverageReport, type CoverageCardSummary, type TrackedArgument } from "@debate/research-evidence/src/lib/topic-coverage";
 import {
   buildRoutingResultFromContributorStats,
   deriveContributorAvailability,

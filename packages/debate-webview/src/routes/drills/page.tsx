@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { DrillSetsPanel, RoundToolsCrossLinks } from "debate-practice-rounds"
+import { DrillSetsPanel, RoundToolsCrossLinks } from "@debate/practice-rounds"
 import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
 
 export default function DrillsPage() {

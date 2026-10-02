@@ -24,7 +24,7 @@ import { useEffect, useRef, useState } from "react"
 import {
   subscribeToSignInPrompts,
   type SignInPrompt,
-} from "debate-data-sync/src/state/sign-in-prompt"
+} from "@debate/data-sync/src/state/sign-in-prompt"
 import { LoginDialog } from "./LoginDialog"
 import { useSession } from "../../lib/hooks/useSession"
 import { isSignInPromptOptedOut, setSignInPromptOptedOut } from "../../lib/sign-in-prompt-preference"

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Speech Transcript Summaries panel — the UI follow-up named
- * "(b) a summary/cross-ex panel UI in debate-round that renders
+ * "(b) a summary/cross-ex panel UI in @debate/round that renders
  * buildFlowSummaryText/suggestCrossExamQuestions/suggestExtensionIdeas ...
  * and reads/writes through the persistence store" under idea #6 ("Speech
  * Transcript Summaries and Answers") in TODO.md.
@@ -75,17 +75,17 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Badge } from "debate-round/src/ui/primitives/badge"
-import { Button } from "debate-round/src/ui/primitives/button"
-import { Input } from "debate-round/src/ui/primitives/input"
-import { Label } from "debate-round/src/ui/primitives/label"
-import { Textarea } from "debate-round/src/ui/primitives/textarea"
+import { Badge } from "@debate/round/src/ui/primitives/badge"
+import { Button } from "@debate/round/src/ui/primitives/button"
+import { Input } from "@debate/round/src/ui/primitives/input"
+import { Label } from "@debate/round/src/ui/primitives/label"
+import { Textarea } from "@debate/round/src/ui/primitives/textarea"
 import {
   EmptyState,
   PanelSection,
   PanelShell,
   SummaryText,
-} from "debate-round/src/ui/panels/panel-shell"
+} from "@debate/round/src/ui/panels/panel-shell"
 import {
   buildFlowSummariesPanelView,
   deleteFlowSummary,
@@ -98,7 +98,7 @@ import {
   rankUnansweredRowsByStrength,
   suggestCrossExamQuestions,
   suggestExtensionIdeas,
-} from "debate-round/src/flow/flow-transcript-summary"
+} from "@debate/round/src/flow/flow-transcript-summary"
 import { extractTranscriptsBulk, summarizeBulkTranscriptOutcomes } from "../round/bulk-transcript-extraction"
 import { requestTranscriptExtraction } from "../round/transcript-extraction-client"
 import { appendDictatedSegment } from "../round/microphone-transcription"

@@ -45,7 +45,7 @@ import {
   mirrorToolRecordDelete,
   mirrorToolRecordSave,
   mirrorToolRecordsSave,
-} from "debate-data-sync/src/state/tool-record-mirror";
+} from "@debate/data-sync/src/state/tool-record-mirror";
 /** A `JudgeRoundRecord` as persisted: a unique id, since a judge decides many rounds. */
 export interface JudgeRoundRecordEntry extends JudgeRoundRecord {
   id: string;

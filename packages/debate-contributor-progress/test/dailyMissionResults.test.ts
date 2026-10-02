@@ -13,9 +13,9 @@ import {
   saveDailyMissionResult,
   type DailyMissionResultRecord,
 } from "../src/state/dailyMissionResults";
-import { saveContribution } from "debate-research-evidence/src/state/contributions";
-import type { AttributedContribution } from "debate-research-evidence/src/lib/contribution-leaderboard";
-import type { QuestTemplate } from "debate-team-collaboration/src/lib/daily-quests";
+import { saveContribution } from "@debate/research-evidence/src/state/contributions";
+import type { AttributedContribution } from "@debate/research-evidence/src/lib/contribution-leaderboard";
+import type { QuestTemplate } from "@debate/team-collaboration/src/lib/daily-quests";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {

@@ -3,7 +3,7 @@ import { boxFromPath, newBox, newFlow } from "../src/utils/flow-utils";
 import {
   debateStyleMap,
   debateStyles,
-} from "debate-timer/src/formats/debate-format-times";
+} from "@debate/timer/src/formats/debate-format-times";
 import type { Box } from "../src/types/flow";
 
 const POLICY_INDEX = debateStyleMap.indexOf("policy");

@@ -9,7 +9,7 @@
  * development the libSQL file database stands in for D1.
  */
 
-import { createTournamentsHandler, d1FromLibsql, type D1DatabaseLike } from "debate-tournaments/server"
+import { createTournamentsHandler, d1FromLibsql, type D1DatabaseLike } from "@debate/tournaments/server"
 import { getCloudflareContext } from "@/lib/database/context"
 import { sessionedD1 } from "@/lib/database/d1-session"
 import { getSession } from "@/lib/auth/session"

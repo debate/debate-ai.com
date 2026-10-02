@@ -23,8 +23,8 @@
 
 "use client"
 
-import { NewsStreamPanel } from "debate-community"
-import { coachingSessionNews } from "debate-practice-rounds/src/state/coachingSessions"
+import { NewsStreamPanel } from "@debate/community"
+import { coachingSessionNews } from "@debate/practice-rounds/src/state/coachingSessions"
 import { useNewsStreamSync } from "../../lib/hooks/useNewsStreamSync"
 
 export function NewsPageContent() {

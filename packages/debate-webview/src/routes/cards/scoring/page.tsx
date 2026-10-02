@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { CardScoringPanel } from "debate-research-evidence"
+import { CardScoringPanel } from "@debate/research-evidence"
 import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHeader"
 
 export default function CardsScoringPage() {

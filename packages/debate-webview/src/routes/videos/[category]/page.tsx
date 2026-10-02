@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { LecturesPage } from "debate-videos"
+import { LecturesPage } from "@debate/videos"
 import { CategoryDock } from "../../../components/layout/CategoryDock"
 
 export default function VideosCategory() {

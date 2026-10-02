@@ -105,32 +105,32 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { Badge } from "debate-round/src/ui/primitives/badge"
-import { Button } from "debate-round/src/ui/primitives/button"
-import { Input } from "debate-round/src/ui/primitives/input"
-import { Label } from "debate-round/src/ui/primitives/label"
+import { Badge } from "@debate/round/src/ui/primitives/badge"
+import { Button } from "@debate/round/src/ui/primitives/button"
+import { Input } from "@debate/round/src/ui/primitives/input"
+import { Label } from "@debate/round/src/ui/primitives/label"
 import { RadioGroup, RadioGroupItem } from "../ui/primitives/radio-group"
-import { Textarea } from "debate-round/src/ui/primitives/textarea"
-import { EmptyState, PanelSection, PanelShell } from "debate-round/src/ui/panels/panel-shell"
+import { Textarea } from "@debate/round/src/ui/primitives/textarea"
+import { EmptyState, PanelSection, PanelShell } from "@debate/round/src/ui/panels/panel-shell"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "debate-round/src/ui/primitives/select"
+} from "@debate/round/src/ui/primitives/select"
 import {
   debateStyleMap,
   debateStyleNames,
   debateStyles,
   type DebateStyleKey,
-} from "debate-timer/src/formats/debate-format-times"
+} from "@debate/timer/src/formats/debate-format-times"
 import {
   buildCustomJudgeParadigm,
   listJudgeParadigms,
   type BuiltinJudgeParadigmId,
   type JudgeParadigm,
-} from "debate-speech-writer/src/judge/judge-paradigms"
+} from "@debate/speech-writer/src/judge/judge-paradigms"
 import {
   DEFAULT_OPPONENT_DIFFICULTY,
   listOpponentDifficulties,
@@ -138,21 +138,21 @@ import {
   opponentDifficulties,
   type OpponentDifficulty,
   type OpponentPersonaId,
-} from "debate-speech-writer/src/opponent/opponent-personas"
-import type { SavedCustomOpponentPersona } from "debate-speech-writer/src/opponent/opponent-persona-library"
-import { buildAiResponseRequest, type AiVersusSide } from "debate-round/src/round/ai-versus-speech-order"
+} from "@debate/speech-writer/src/opponent/opponent-personas"
+import type { SavedCustomOpponentPersona } from "@debate/speech-writer/src/opponent/opponent-persona-library"
+import { buildAiResponseRequest, type AiVersusSide } from "@debate/round/src/round/ai-versus-speech-order"
 import { requestAiVersusSpeech } from "../round/ai-versus-speech-client"
 import { requestAiVersusSpeechWithPersona } from "../round/opponent-persona-speech-client"
 import { requestJudgeDecision } from "../round/judge-decision-client"
-import { buildJudgeDecisionRubric } from "debate-round/src/round/judge-decision-ai"
+import { buildJudgeDecisionRubric } from "@debate/round/src/round/judge-decision-ai"
 import { buildPracticeRoundJudgeDecisionInput } from "../round/practice-round-judge-decision-wiring"
 import {
   buildPracticeRoundReplaySteps,
   buildPracticeRoundSetup,
   resolvePracticeRoundOpponentPersonaChoice,
-} from "debate-round/src/round/practice-round-simulator"
+} from "@debate/round/src/round/practice-round-simulator"
 import { useCustomOpponentPersonaLibrary } from "../hooks/useCustomOpponentPersonaLibrary"
-import { getAiVersusRound, saveAiVersusRound } from "debate-round/src/state/aiVersusRounds"
+import { getAiVersusRound, saveAiVersusRound } from "@debate/round/src/state/aiVersusRounds"
 import {
   buildAndSavePracticeRoundFeedback,
   buildPracticeRoundAttemptsComparison,
@@ -164,8 +164,8 @@ import {
   practiceRoundAttemptsComparisonFilename,
   savePracticeRound,
   type PracticeRoundRecord,
-} from "debate-round/src/state/practiceRounds"
-import { useFlowStore } from "debate-round/src/state/store"
+} from "@debate/round/src/state/practiceRounds"
+import { useFlowStore } from "@debate/round/src/state/store"
 import { isPracticeRoundSimulatorPanelLiveUpdateStorageEvent } from "../state/live-update"
 
 const JUDGE_DECISION_SIDE_NAMES = { primary: "Primary", secondary: "Secondary" }

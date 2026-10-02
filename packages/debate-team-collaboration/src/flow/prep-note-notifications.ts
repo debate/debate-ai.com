@@ -17,7 +17,7 @@
  * `panels/PrepNoteNotificationsPanel.tsx`.
  */
 
-import type { PrepNote } from "debate-round/src/flow/strategy-sync-notes";
+import type { PrepNote } from "@debate/round/src/flow/strategy-sync-notes";
 
 export type PrepNoteNotification = {
   id: string;

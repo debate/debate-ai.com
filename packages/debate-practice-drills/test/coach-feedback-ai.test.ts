@@ -5,7 +5,7 @@ import {
   parseCoachFeedbackAiResponse,
   type CoachFeedbackAiInput,
 } from "../src/round/coach-feedback-ai";
-import type { CoachingPrompt } from "debate-round/src/flow/coach-mode";
+import type { CoachingPrompt } from "@debate/round/src/flow/coach-mode";
 
 const PROMPTS: CoachingPrompt[] = [
   {

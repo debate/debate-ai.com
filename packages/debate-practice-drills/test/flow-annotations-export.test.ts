@@ -3,7 +3,7 @@ import {
   buildFlowAnnotationsExportText,
   flowAnnotationsExportFilename,
 } from "../src/flow/flow-annotations-export";
-import type { FlowAnnotation } from "debate-round/src/flow/flow-annotations";
+import type { FlowAnnotation } from "@debate/round/src/flow/flow-annotations";
 
 function annotation(overrides: Partial<FlowAnnotation> = {}): FlowAnnotation {
   return {

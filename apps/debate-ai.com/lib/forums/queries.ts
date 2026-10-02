@@ -37,11 +37,11 @@ import {
   type ForumThreadDetail,
   type ForumThreadSummary,
   type ForumViewer,
-} from "debate-webview/lib/forums/types";
+} from "@debate/webview/lib/forums/types";
 
 import type { getDBFromContext } from "@/lib/database/context";
 import { comments, forumThreads, user } from "@/lib/database/schema";
-import { isThreadId, type Parsed } from "debate-webview/lib/forums/validation";
+import { isThreadId, type Parsed } from "@debate/webview/lib/forums/validation";
 
 type Db = Awaited<ReturnType<typeof getDBFromContext>>;
 

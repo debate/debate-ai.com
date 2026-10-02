@@ -7,9 +7,9 @@ import {
   stackKeyOf,
   videoRouteHref,
   type VideoType,
-} from "debate-videos"
-import { CategoryDock } from "debate-webview/components/layout/CategoryDock"
-import { VideoStaffControls } from "debate-webview/components/videos/VideoStaffControls"
+} from "@debate/videos"
+import { CategoryDock } from "@debate/webview/components/layout/CategoryDock"
+import { VideoStaffControls } from "@debate/webview/components/videos/VideoStaffControls"
 import {
   getRelatedVideos,
   getVideoByRouteSegments,

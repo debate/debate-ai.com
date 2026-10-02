@@ -13,11 +13,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createElement } from "react";
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
-import { buildVideoRows } from "debate-data-sync/src/videos/video-rows";
+import { buildVideoRows } from "@debate/data-sync/src/videos/video-rows";
 import {
   VIDEO_INDEX_FORMAT_VERSION,
   videoRowToIndexTuple,
-} from "debate-data-sync/src/videos/video-index";
+} from "@debate/data-sync/src/videos/video-index";
 
 /** Paths `grab` has been handed, newest last. */
 let requests: string[] = [];

@@ -24,7 +24,7 @@ import {
   type DailyMissionResult,
   type StreakMilestone,
 } from "../src/lib/gamified-quests";
-import type { QuestProgress } from "debate-team-collaboration/src/lib/daily-quests";
+import type { QuestProgress } from "@debate/team-collaboration/src/lib/daily-quests";
 
 function quest(questId: string, isComplete: boolean): QuestProgress {
   return {

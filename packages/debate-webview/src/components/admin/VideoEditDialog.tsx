@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { parseYouTubeVideoId } from "debate-videos";
+import { parseYouTubeVideoId } from "@debate/videos";
 import { Button } from "../../lib/ui/primitives/button";
 import { Input } from "../../lib/ui/primitives/input";
 import { Label } from "../../lib/ui/primitives/label";

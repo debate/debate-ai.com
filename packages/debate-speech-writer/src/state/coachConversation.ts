@@ -16,7 +16,7 @@ import type { CoachConversationTurn } from "../coach/team-coach-materials";
 import {
   mirrorToolRecordSave,
   mirrorToolRecordsClear,
-} from "debate-data-sync/src/state/tool-record-mirror";
+} from "@debate/data-sync/src/state/tool-record-mirror";
 const STORAGE_KEY = "coachConversation";
 
 /**

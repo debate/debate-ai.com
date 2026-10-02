@@ -13,7 +13,7 @@
  * @module lib/task-verification
  */
 
-import type { RoutedAssignment } from "debate-research-evidence/src/lib/research-task-routing";
+import type { RoutedAssignment } from "@debate/research-evidence/src/lib/research-task-routing";
 
 /** Thrown when a verification action is attempted without a verifier id. */
 export class VerifierIdRequiredError extends Error {

@@ -3,7 +3,7 @@ import { and, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { savedStrategyRecommendations } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
-import { isValidStrategyRecommendationRecord, MAX_SAVED_STRATEGY_RECOMMENDATION_BYTES } from "debate-round"
+import { isValidStrategyRecommendationRecord, MAX_SAVED_STRATEGY_RECOMMENDATION_BYTES } from "@debate/round"
 import { withRouteErrors } from "@/lib/api/route-errors"
 
 /**

@@ -8,7 +8,7 @@
  * the queued description, and the tags are split into the 1AC / 2NR
  * arguments (see `round-arguments.ts`) that publishing copies into the
  * public `videos` row.
- * @module debate-data-sync/videos/curated-round-queue
+ * @module @debate/data-sync/videos/curated-round-queue
  */
 
 import { formatRoundArgumentLines, splitRoundArguments } from "../youtube/parsers/round-arguments";

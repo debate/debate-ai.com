@@ -1,5 +1,5 @@
 {
-  "name": "native-wrapper",
+  "name": "@debate/native-wrapper",
   "version": "0.1.0",
   "description": "Generic Tauri wrapper that packages any website as a native desktop + mobile app, pre-configured to ship Debate AI",
   "private": true,

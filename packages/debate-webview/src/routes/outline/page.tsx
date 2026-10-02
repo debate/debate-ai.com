@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { ArgumentTreePanel, RoundToolsCrossLinks } from "debate-practice-rounds"
+import { ArgumentTreePanel, RoundToolsCrossLinks } from "@debate/practice-rounds"
 import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
 
 export default function OutlinePage() {

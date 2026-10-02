@@ -9,8 +9,8 @@
  * `ContributionLeaderboardWithIdentity.tsx`.
  */
 
-import { ContributorProfilePanel } from "debate-community"
-import { deriveContributorIdFromSessionIdentity } from "debate-research-evidence"
+import { ContributorProfilePanel } from "@debate/community"
+import { deriveContributorIdFromSessionIdentity } from "@debate/research-evidence"
 import { useSession } from "../../lib/hooks/useSession"
 
 export function ContributorProfileWithIdentity({ contributorId }: { contributorId: string }) {

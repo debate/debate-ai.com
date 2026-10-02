@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { LeaderboardPanel } from "debate-videos"
+import { LeaderboardPanel } from "@debate/videos"
 import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
 
 export default function RankPage() {

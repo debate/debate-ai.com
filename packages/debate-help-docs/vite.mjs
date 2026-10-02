@@ -13,7 +13,7 @@
  * Plain JavaScript because Vite loads its config's workspace imports with no
  * TypeScript step of their own.
  *
- * @module debate-help-docs/vite
+ * @module @debate/help-docs/vite
  */
 import mdx from 'fumadocs-mdx/vite';
 import { fileURLToPath } from 'node:url';

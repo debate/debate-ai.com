@@ -7,7 +7,7 @@ import {
   type ResponseOutcomeReportInput,
 } from "../src/flow/response-outcome-report";
 import type { CounselPanelAssessmentRecord } from "../src/state/counselPanelAssessments";
-import type { HypotheticalScenarioComparison } from "debate-round/src/flow/response-outcome";
+import type { HypotheticalScenarioComparison } from "@debate/round/src/flow/response-outcome";
 
 const BASE_INPUT: ResponseOutcomeReportInput = {
   roundId: "round-1",

@@ -5,7 +5,7 @@ import {
   parseParquetCardReuseId,
   type CardReuseAnnotation,
   type ReuseCardDetails,
-} from "debate-research-evidence"
+} from "@debate/research-evidence"
 import { getDBFromContext } from "@/lib/database/context"
 import { debateCards, evidenceReuseIndex, reuseCheckLog } from "@/lib/database/schema"
 import { annotationCardHash, readSavedAnnotations } from "@/lib/evidence-reuse-check/card-annotation"

@@ -14,9 +14,9 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { act, createElement } from "react";
 
 import { ContributorProfilePanel } from "../src/panels/ContributorProfilePanel";
-import { saveContribution } from "debate-research-evidence/src/state/contributions";
+import { saveContribution } from "@debate/research-evidence/src/state/contributions";
 import { giveJudgeAward } from "../src/state/judgeAwards";
-import type { AttributedContribution } from "debate-research-evidence/src/lib/contribution-leaderboard";
+import type { AttributedContribution } from "@debate/research-evidence/src/lib/contribution-leaderboard";
 import { mount } from "./helpers/mount";
 import type { Mounted } from "./helpers/mount";
 

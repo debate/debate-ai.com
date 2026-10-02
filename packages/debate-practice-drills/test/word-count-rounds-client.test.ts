@@ -5,7 +5,7 @@ import {
   listSavedWordCountRounds,
   saveWordCountRoundToAccount,
 } from "../src/round/word-count-rounds-client";
-import type { WordCountRoundRecord } from "debate-round/src/state/wordCountRounds";
+import type { WordCountRoundRecord } from "@debate/round/src/state/wordCountRounds";
 
 const RECORD: WordCountRoundRecord = {
   roundId: "round-1",

@@ -1,7 +1,7 @@
 "use client"
 
 import { Suspense } from "react"
-import { DebatePracticeVsAi } from "debate-practice-vs-ai"
+import { DebatePracticeVsAi } from "@debate/practice-vs-ai"
 
 import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
 import { useSession } from "../../lib/hooks/useSession"

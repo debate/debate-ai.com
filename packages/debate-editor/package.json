@@ -1,5 +1,5 @@
 {
-  "name": "debate-editor",
+  "name": "@debate/editor",
   "version": "0.1.0",
   "description": "Adapter over upstream CardMirror (the packages/debate-editor-cm submodule) for debate-ai.com. Tracks only patches/debate-ai.patch (edits to upstream files: tabbed ribbon + dropdown menu bar, embed hooks, account sync) and overlay/ (the React shell sized for small embedded panels — Flow speech docs, the /reason-editor route — plus site-only engine modules); scripts/sync-upstream.mjs assembles them with the submodule into a git-ignored src/.",
   "private": true,
@@ -41,8 +41,8 @@
     "@radix-ui/react-slot": "1.3.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "debate-card-parser": "workspace:*",
-    "debate-data-sync": "workspace:*",
+    "@debate/card-parser": "workspace:*",
+    "@debate/data-sync": "workspace:*",
     "fast-xml-parser": "^5.11.2",
     "fflate": "^0.8.3",
     "loro-crdt": "1.16.4",

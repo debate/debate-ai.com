@@ -64,17 +64,17 @@
 
 import { Fragment, useEffect, useState } from "react"
 import { Info } from "lucide-react"
-import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
-import { Button } from "debate-research-evidence/src/ui/primitives/button"
-import { Label } from "debate-research-evidence/src/ui/primitives/label"
-import { EmptyState, PanelShell } from "debate-research-evidence/src/ui/panels/panel-shell"
+import { Badge } from "@debate/research-evidence/src/ui/primitives/badge"
+import { Button } from "@debate/research-evidence/src/ui/primitives/button"
+import { Label } from "@debate/research-evidence/src/ui/primitives/label"
+import { EmptyState, PanelShell } from "@debate/research-evidence/src/ui/panels/panel-shell"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "debate-research-evidence/src/ui/primitives/select"
+} from "@debate/research-evidence/src/ui/primitives/select"
 import {
   Table,
   TableBody,
@@ -82,19 +82,19 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "debate-research-evidence/src/ui/primitives/table"
-import { Tooltip, TooltipContent, TooltipTrigger } from "debate-research-evidence/src/ui/primitives/tooltip"
-import { buildPersistedLeaderboardWithCompletedTasks } from "debate-team-collaboration/src/state/researchProgress"
+} from "@debate/research-evidence/src/ui/primitives/table"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@debate/research-evidence/src/ui/primitives/tooltip"
+import { buildPersistedLeaderboardWithCompletedTasks } from "@debate/team-collaboration/src/state/researchProgress"
 import { buildContributorUnlockStatusWithStreakFromStore } from "../lib/unlock-streak-status"
-import { isOwnContributorRow } from "debate-research-evidence/src/lib/session-identity"
-import { isContributionLeaderboardLiveUpdateStorageEvent } from "debate-research-evidence/src/state/live-update"
-import { buildHelpfulnessScoreExplanation } from "debate-research-evidence/src/lib/community-rating"
+import { isOwnContributorRow } from "@debate/research-evidence/src/lib/session-identity"
+import { isContributionLeaderboardLiveUpdateStorageEvent } from "@debate/research-evidence/src/state/live-update"
+import { buildHelpfulnessScoreExplanation } from "@debate/research-evidence/src/lib/community-rating"
 import {
   endorsementHistoryCounterpartId,
   listEndorsementsByContributor,
   type EndorsementHistoryDirection,
-} from "debate-research-evidence/src/state/contributions"
-import type { ContributionCategoryFilter, ContributorStats, LeaderboardRange } from "debate-research-evidence/src/lib/contribution-leaderboard"
+} from "@debate/research-evidence/src/state/contributions"
+import type { ContributionCategoryFilter, ContributorStats, LeaderboardRange } from "@debate/research-evidence/src/lib/contribution-leaderboard"
 
 const RANGE_LABELS: Record<LeaderboardRange, string> = {
   "all-time": "All time",

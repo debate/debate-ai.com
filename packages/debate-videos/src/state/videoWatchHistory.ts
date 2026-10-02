@@ -32,7 +32,7 @@ import {
   mirrorToolRecordSave,
   mirrorToolRecordDelete,
   mirrorToolRecordsClear,
-} from "debate-data-sync/src/state/tool-record-mirror";
+} from "@debate/data-sync/src/state/tool-record-mirror";
 import { readLocalRecords, writeLocalRecords } from "./localRecordStore";
 
 /** The `localStorage` key and sync collection for the watch history. */

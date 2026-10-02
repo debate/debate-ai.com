@@ -14,7 +14,7 @@
  */
 
 import { describe, expect, it } from "vitest"
-import { schema, serializeNative, cmirToBase64 } from "debate-editor/engine"
+import { schema, serializeNative, cmirToBase64 } from "@debate/editor/engine"
 import { storedContentToHtml } from "../../../src/lib/cardmirror/stored-cmir"
 import { topicStarterHtml } from "../../../src/lib/topic-starters/content"
 

@@ -35,7 +35,7 @@ import {
   DEFAULT_OPPONENT_DIFFICULTY,
   type OpponentDifficulty,
   type OpponentPersona,
-} from "debate-speech-writer/src/opponent/opponent-personas";
+} from "@debate/speech-writer/src/opponent/opponent-personas";
 import { AI_VERSUS_SPEECH_SYSTEM_PROMPT } from "./ai-versus-speech-ai";
 
 /**

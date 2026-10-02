@@ -26,8 +26,8 @@
  * @module state/contributorAwardNominations
  */
 
-import type { ContributionKind } from "debate-research-evidence/src/lib/community-rating";
-import { canNominatePeer, canSecondNomination, type PeerNomination } from "debate-research-evidence/src/lib/contributor-awards";
+import type { ContributionKind } from "@debate/research-evidence/src/lib/community-rating";
+import { canNominatePeer, canSecondNomination, type PeerNomination } from "@debate/research-evidence/src/lib/contributor-awards";
 
 const STORAGE_KEY = "contributorAwardNominations";
 

@@ -1,7 +1,7 @@
 "use client"
 
 /**
- * The native REASON editor screen — the debate-editor (TipTap/CardMirror) shell
+ * The native REASON editor screen — the @debate/editor (TipTap/CardMirror) shell
  * wired to per-user document persistence (/api/doc/documents). Reachable
  * from the Settings menu alongside the existing /doc iframe.
  *
@@ -31,7 +31,7 @@
 import { Suspense, useEffect, useMemo } from "react"
 import { Loader2 } from "lucide-react"
 import { AnimatedLoader } from "../ui/AnimatedLoader"
-import { EditorWithToolbar } from "debate-editor"
+import { EditorWithToolbar } from "@debate/editor"
 import { topicStarterHtml } from "../../lib/topic-starters/content"
 import { cn } from "../../lib/ui/lib/utils"
 import { ReasonDocsSidebarPanels } from "../reason-docs/ReasonDocsSidebarPanels"

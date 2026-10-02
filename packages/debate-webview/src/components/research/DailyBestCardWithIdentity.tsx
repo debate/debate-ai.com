@@ -9,8 +9,8 @@
  * `ProgressUnlocksWithIdentity.tsx`.
  */
 
-import { DailyBestCardPanel } from "debate-community"
-import { deriveContributorIdFromSessionIdentity } from "debate-research-evidence"
+import { DailyBestCardPanel } from "@debate/community"
+import { deriveContributorIdFromSessionIdentity } from "@debate/research-evidence"
 import { useSession } from "../../lib/hooks/useSession"
 
 export function DailyBestCardWithIdentity() {

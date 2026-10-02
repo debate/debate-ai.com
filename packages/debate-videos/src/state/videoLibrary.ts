@@ -40,8 +40,8 @@ import {
   mirrorToolRecordDelete,
   mirrorToolRecordSave,
   mirrorToolRecordsClear,
-} from "debate-data-sync/src/state/tool-record-mirror";
-import { requireSignIn } from "debate-data-sync/src/state/sign-in-prompt";
+} from "@debate/data-sync/src/state/tool-record-mirror";
+import { requireSignIn } from "@debate/data-sync/src/state/sign-in-prompt";
 import { readLocalRecords, writeLocalRecords } from "./localRecordStore";
 
 /** The `localStorage` key and sync collection for favourited videos. */

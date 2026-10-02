@@ -10,7 +10,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Search, X } from "lucide-react";
-import { buildCardsSearchHref } from "debate-research-evidence/src/lib/search-query";
+import { buildCardsSearchHref } from "@debate/research-evidence/src/lib/search-query";
 import { Input } from "../../ui/primitives/input";
 import { Button } from "../../ui/primitives/button";
 import { Badge } from "../../ui/primitives/badge";

@@ -205,7 +205,7 @@ export function LoginForm({ callbackURL = "/" }: LoginFormProps) {
   }
 
   // Google (and most OAuth providers) refuse to run their login flow inside
-  // an embedded webview, so inside the native-wrapper shell every sign-in
+  // an embedded webview, so inside the @debate/native-wrapper shell every sign-in
   // method routes through the system browser instead of the buttons below.
   // The browser tab lands on this same page (without the native handoff) and
   // completes normally there; /auth/native-complete then hands the resulting

@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { and, desc, eq, type SQL } from "drizzle-orm";
-import { isLectureCategory } from "debate-data-sync/src/youtube/parsers/lecture-classifier";
+import { isLectureCategory } from "@debate/data-sync/src/youtube/parsers/lecture-classifier";
 import { getStaffAccess } from "@/lib/auth/admin";
 import { getSession } from "@/lib/auth/session";
 import { getDBFromContext } from "@/lib/database/context";

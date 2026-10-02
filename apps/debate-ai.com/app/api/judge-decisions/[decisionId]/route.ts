@@ -3,7 +3,7 @@ import { and, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { savedJudgeDecisions } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
-import { isValidJudgeDecisionRecord, MAX_SAVED_JUDGE_DECISION_BYTES } from "debate-practice-rounds"
+import { isValidJudgeDecisionRecord, MAX_SAVED_JUDGE_DECISION_BYTES } from "@debate/practice-rounds"
 import { withRouteErrors } from "@/lib/api/route-errors"
 
 /**

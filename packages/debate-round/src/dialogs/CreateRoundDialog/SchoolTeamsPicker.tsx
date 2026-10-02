@@ -7,7 +7,7 @@
 
 import { useEffect, useState } from "react"
 import { Users, X } from "lucide-react"
-import type { RankingEntry } from "debate-rankings-adapter"
+import type { RankingEntry } from "@debate/rankings-adapter"
 import { lookupSchoolTeams, splitEntryDebaters } from "../../round/school-teams"
 
 /** Wait this long after the last keystroke before searching the rankings. */

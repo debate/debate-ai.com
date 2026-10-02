@@ -12,15 +12,15 @@
  * @module state/judgeDecisions
  */
 
-import type { JudgeDecisionAiResult, JudgeDecisionSideNames } from "debate-round/src/round/judge-decision-ai";
+import type { JudgeDecisionAiResult, JudgeDecisionSideNames } from "@debate/round/src/round/judge-decision-ai";
 import {
   buildJudgePanelRubricAgreement,
   combineJudgePanelDecisions,
   type JudgePanelCombinedDecision,
   type JudgePanelParadigmDecision,
   type JudgePanelRubricAgreement,
-} from "debate-round/src/round/judge-decision-panel";
-import { getJudgeParadigmByName } from "debate-speech-writer/src/judge/judge-paradigms";
+} from "@debate/round/src/round/judge-decision-panel";
+import { getJudgeParadigmByName } from "@debate/speech-writer/src/judge/judge-paradigms";
 
 export type JudgeDecisionRecord = {
   /** Generated once when the decision is first requested; the record's stable cross-device identity. */

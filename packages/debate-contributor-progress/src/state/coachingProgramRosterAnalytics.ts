@@ -12,13 +12,13 @@
  * @module state/coachingProgramRosterAnalytics
  */
 
-import { getCoachingProgram } from "debate-team-collaboration/src/state/coachingPrograms";
+import { getCoachingProgram } from "@debate/team-collaboration/src/state/coachingPrograms";
 import {
   buildCompletedGroupChallengeEvents,
   buildPersistedGroupChallengeBoard,
   type CompletedGroupChallengeEvent,
-} from "debate-team-collaboration/src/state/challengeWinEvents";
-import { getUtcDayKey } from "debate-research-evidence/src/lib/daily-best-card";
+} from "@debate/team-collaboration/src/state/challengeWinEvents";
+import { getUtcDayKey } from "@debate/research-evidence/src/lib/daily-best-card";
 import {
   buildCoachingProgramChallengeDigest,
   buildCoachingProgramRosterAnalytics,

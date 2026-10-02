@@ -4,7 +4,7 @@ import {
   VerifierIdRequiredError,
   assertVerifierAllowed,
 } from "../src/lib/task-verification";
-import type { RoutedAssignment } from "debate-research-evidence/src/lib/research-task-routing";
+import type { RoutedAssignment } from "@debate/research-evidence/src/lib/research-task-routing";
 
 const ASSIGNMENT: RoutedAssignment = {
   task: { argBlock: "Solvency", level: "missing", requiredSkill: "intermediate" },

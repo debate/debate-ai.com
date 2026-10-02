@@ -38,20 +38,20 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
-import { Button } from "debate-research-evidence/src/ui/primitives/button"
-import { Input } from "debate-research-evidence/src/ui/primitives/input"
-import { Label } from "debate-research-evidence/src/ui/primitives/label"
-import { EmptyState, PanelShell } from "debate-research-evidence/src/ui/panels/panel-shell"
+import { Badge } from "@debate/research-evidence/src/ui/primitives/badge"
+import { Button } from "@debate/research-evidence/src/ui/primitives/button"
+import { Input } from "@debate/research-evidence/src/ui/primitives/input"
+import { Label } from "@debate/research-evidence/src/ui/primitives/label"
+import { EmptyState, PanelShell } from "@debate/research-evidence/src/ui/panels/panel-shell"
 import {
   buildGroupChallengesPanelView,
   deleteGroupChallenge,
   saveGroupChallenge,
 } from "../state/groupChallenges"
 import { buildPersistedGroupChallengeBoard, recordChallengeWinEvent } from "../state/challengeWinEvents"
-import { isGroupChallengesLiveUpdateStorageEvent } from "debate-research-evidence/src/state/live-update"
+import { isGroupChallengesLiveUpdateStorageEvent } from "@debate/research-evidence/src/state/live-update"
 import { buildGroupChallengeSummaryText, type ChallengeGoal, type GroupChallenge, type GroupChallengeProgress } from "../lib/group-challenges"
-import type { ContributionKind } from "debate-research-evidence/src/lib/community-rating"
+import type { ContributionKind } from "@debate/research-evidence/src/lib/community-rating"
 
 type GoalKind = ChallengeGoal["kind"]
 

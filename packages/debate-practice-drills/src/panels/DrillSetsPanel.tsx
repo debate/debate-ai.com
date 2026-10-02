@@ -79,24 +79,24 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Badge } from "debate-round/src/ui/primitives/badge"
-import { Button } from "debate-round/src/ui/primitives/button"
-import { Input } from "debate-round/src/ui/primitives/input"
-import { Label } from "debate-round/src/ui/primitives/label"
+import { Badge } from "@debate/round/src/ui/primitives/badge"
+import { Button } from "@debate/round/src/ui/primitives/button"
+import { Input } from "@debate/round/src/ui/primitives/input"
+import { Label } from "@debate/round/src/ui/primitives/label"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "debate-round/src/ui/primitives/select"
+} from "@debate/round/src/ui/primitives/select"
 import {
   EmptyState,
   MeterBar,
   PanelRow,
   PanelSection,
   PanelShell,
-} from "debate-round/src/ui/panels/panel-shell"
+} from "@debate/round/src/ui/panels/panel-shell"
 import {
   getDrillSetCompletionStats,
   getDueDrillIndexes,
@@ -104,9 +104,9 @@ import {
   type DrillSetRecord,
 } from "../state/drillSets"
 import { buildDrillPracticeUnlockStatus, getTotalCompletedDrillCount } from "../state/drillProgressUnlocks"
-import { filterDrillsByDifficulty, type DrillDifficulty, type DrillKind } from "debate-round/src/flow/drill-generator"
+import { filterDrillsByDifficulty, type DrillDifficulty, type DrillKind } from "@debate/round/src/flow/drill-generator"
 import { requestDrillScript } from "../round/drill-script-client"
-import { useFlowStore } from "debate-round/src/state/store"
+import { useFlowStore } from "@debate/round/src/state/store"
 import { useDrillSets } from "../hooks/useDrillSets"
 
 const DRILL_KIND_LABELS: Record<DrillKind, string> = {

@@ -9,7 +9,7 @@
  * `Aff 1AC args: …` and `Neg 2NR args: …` — which {@link parseQueuedRoundArgs}
  * reads back at publish time to fill the public `videos` row's `arg_1ac` /
  * `arg_2nr`.
- * @module debate-data-sync/youtube/parsers/round-arguments
+ * @module @debate/data-sync/youtube/parsers/round-arguments
  */
 
 /** Round-style tags: they describe how the round was debated, not an argument. */

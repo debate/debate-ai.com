@@ -12,7 +12,7 @@
 
 import { useMemo, useState, type ReactNode } from "react";
 import { Gavel, Search, Sparkles, Swords } from "lucide-react";
-import { CommentAvatar } from "debate-comments";
+import { CommentAvatar } from "@debate/comments";
 
 import { cn } from "../../lib/ui/lib/utils";
 import { rankVolunteers } from "../../lib/practice-partners/match";

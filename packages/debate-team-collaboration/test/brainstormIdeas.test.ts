@@ -11,8 +11,8 @@ import {
   sendBrainstormIdeaToArgumentLibrary,
   upvotePersistedBrainstormIdea,
 } from "../src/state/brainstormIdeas";
-import { saveTrackedArgument } from "debate-research-evidence/src/state/trackedArguments";
-import { getEvidenceLibraryEntry } from "debate-research-evidence/src/state/evidenceLibraryEntries";
+import { saveTrackedArgument } from "@debate/research-evidence/src/state/trackedArguments";
+import { getEvidenceLibraryEntry } from "@debate/research-evidence/src/state/evidenceLibraryEntries";
 import type { BrainstormIdea } from "../src/lib/team-brainstorm-assist";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */

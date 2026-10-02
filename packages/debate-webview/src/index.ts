@@ -7,8 +7,8 @@
  * Next metadata — and mounts these pages from its `app/` directory.
  *
  * Hosts that aren't Next mount {@link DebateApp}, which routes through the URL
- * fragment. Deep imports (`debate-webview/components/…`,
- * `debate-webview/lib/…`, `debate-webview/routes/…`) are how the web app
+ * fragment. Deep imports (`@debate/webview/components/…`,
+ * `@debate/webview/lib/…`, `@debate/webview/routes/…`) are how the web app
  * reaches individual modules.
  *
  * @module debate-webview

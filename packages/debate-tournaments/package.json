@@ -1,5 +1,5 @@
 {
-  "name": "debate-tournaments",
+  "name": "@debate/tournaments",
   "version": "0.1.0",
   "description": "Tournament tabulation, invites, pairings, results and judge paradigms — upstream Tabroom (debate/debate-tournament-tabroom) vendored and adapted to Cloudflare Workers + D1, exporting its API handler, React UI and route table",
   "private": true,

@@ -16,7 +16,7 @@ import {
   type DebateActor,
   type ModelClient,
   type PracticeVsAiBackend,
-} from "debate-practice-vs-ai"
+} from "@debate/practice-vs-ai"
 import { getEnv } from "@/lib/env"
 import { getSession } from "@/lib/auth/session"
 import { createPracticeVsAiStore } from "./store"

@@ -21,7 +21,7 @@
  * @module state/favoriteTools
  */
 
-import { canonicalCategoryHref } from "debate-data-sync/src/routes/category-paths";
+import { canonicalCategoryHref } from "@debate/data-sync/src/routes/category-paths";
 
 export type FavoriteToolsPayload = {
   favoriteTools: string[];

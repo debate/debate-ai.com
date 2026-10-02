@@ -22,7 +22,7 @@ import {
   useContacts,
   type CardShareEntry,
   type ContactEntry,
-} from "debate-team-collaboration"
+} from "@debate/team-collaboration"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../lib/ui/primitives/tabs"
 import { useSession } from "../../lib/hooks/useSession"
 

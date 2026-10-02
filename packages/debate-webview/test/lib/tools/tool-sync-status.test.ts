@@ -9,7 +9,7 @@
 import { describe, expect, it } from "vitest"
 
 import { summarizeToolSyncFailures } from "../../../src/lib/tools/tool-sync-status"
-import type { ToolRecordHydrationResult } from "debate-data-sync/src/state/tool-record-mirror"
+import type { ToolRecordHydrationResult } from "@debate/data-sync/src/state/tool-record-mirror"
 
 function result(overrides: Partial<ToolRecordHydrationResult>): ToolRecordHydrationResult {
   return { collection: "judgeProfiles", adopted: 0, pushed: 0, synced: true, ...overrides }

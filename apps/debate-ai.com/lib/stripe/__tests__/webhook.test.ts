@@ -1,6 +1,6 @@
 import { createHmac } from "node:crypto";
 import { describe, expect, it, vi } from "vitest";
-import { checkoutUrl, planForPrice, PLANS } from "debate-webview/lib/stripe/plans";
+import { checkoutUrl, planForPrice, PLANS } from "@debate/webview/lib/stripe/plans";
 import { fetchSubscription } from "../store";
 import {
   constructEvent,

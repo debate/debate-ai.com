@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import type { OpponentRoundRecord } from "debate-data-sync/src/rankings/opponent-team-profile";
-import { buildOpponentTeamProfile } from "debate-data-sync/src/rankings/opponent-team-profile";
-import { saveOpponentTeamProfile } from "debate-data-sync/src/state/opponentTeamProfiles";
-import type { JudgeRoundRecord } from "debate-speech-writer/src/judge/judge-profile";
-import { buildJudgeProfile } from "debate-speech-writer/src/judge/judge-profile";
-import { saveJudgeProfile } from "debate-speech-writer/src/state/judgeProfiles";
+import type { OpponentRoundRecord } from "@debate/data-sync/src/rankings/opponent-team-profile";
+import { buildOpponentTeamProfile } from "@debate/data-sync/src/rankings/opponent-team-profile";
+import { saveOpponentTeamProfile } from "@debate/data-sync/src/state/opponentTeamProfiles";
+import type { JudgeRoundRecord } from "@debate/speech-writer/src/judge/judge-profile";
+import { buildJudgeProfile } from "@debate/speech-writer/src/judge/judge-profile";
+import { saveJudgeProfile } from "@debate/speech-writer/src/state/judgeProfiles";
 import {
   appendPrepNoteToPreRoundBriefing,
   buildPreRoundBriefingRecordFromDraft,

@@ -12,7 +12,7 @@
  * @module round/bulk-transcript-extraction
  */
 
-import type { FlowRowSummary } from "debate-round/src/flow/flow-transcript-summary";
+import type { FlowRowSummary } from "@debate/round/src/flow/flow-transcript-summary";
 import {
   buildFlowRowSummariesFromExtraction,
   type ExtractedArgument,

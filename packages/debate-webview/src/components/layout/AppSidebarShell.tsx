@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { usePathname } from "next/navigation"
-import { ResizableSidebarLayout, ToolNavTree, ToolSidebarFooter } from "debate-videos"
+import { ResizableSidebarLayout, ToolNavTree, ToolSidebarFooter } from "@debate/videos"
 import { CategoryDock } from "./CategoryDock"
 import { ReasonDocsSidebarPanels } from "../reason-docs/ReasonDocsSidebarPanels"
 import { ChromeErrorBoundary } from "../../lib/ui/layout/chrome-error-boundary"
@@ -41,7 +41,7 @@ import { showsCardsOnlySidebar, showsReasonDocsPanels } from "../../lib/reason-d
  * it is the control you clicked "Shared" in, and the way back to videos.
  *
  * `/debate` and `/doc` are the two tree destinations this shell deliberately
- * skips (`ownsItsLayout`, in debate-videos' `sidebar-routes`), both because
+ * skips (`ownsItsLayout`, in @debate/videos' `sidebar-routes`), both because
  * they already fill the viewport with a sidebar of their own and wrapping
  * them here put two sidebars side by side.
  *

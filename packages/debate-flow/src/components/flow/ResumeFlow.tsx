@@ -21,7 +21,7 @@ import { EditorLoadingSkeleton } from "./EditorLoadingSkeleton";
  * other flow tab — so ebb no longer needs a page of its own to pick one
  * from. This resumes the flow last worked on, or opens a fresh one when
  * there isn't one, and the round workspace's "ebb Flow tools" dropdown
- * (`EbbFlowToolsMenu`, in debate-round's `FlowPageSidebar`) covers
+ * (`EbbFlowToolsMenu`, in @debate/round's `FlowPageSidebar`) covers
  * everything else the start screen used to offer — reachable in one click
  * whether or not the ebb tab is even the one selected.
  */

@@ -16,7 +16,7 @@ import { sendRoundInvites, computeAddedInviteEmails } from "../../round/round-in
 import {
   debateStyles,
   debateStyleMap,
-} from "debate-timer/src/formats/debate-format-times";
+} from "@debate/timer/src/formats/debate-format-times";
 
 /** Return type of the {@link useRoundEditorForm} hook. */
 export interface RoundEditorFormState {

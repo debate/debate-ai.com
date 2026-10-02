@@ -1,5 +1,5 @@
 {
-  "name": "debate-api-client",
+  "name": "@debate/api-client",
   "version": "0.1.0",
   "description": "Typed SDK for the Debate AI API, generated from debate-openapi.yml with Hey API and powered by grab-url (caching, retries, rate limiting, and dedupe on every call).",
   "private": false,

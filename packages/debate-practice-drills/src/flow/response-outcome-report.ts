@@ -25,7 +25,7 @@ import type {
   HypotheticalScenarioComparison,
   SideOutcomeSummary,
   VulnerabilityChartPoint,
-} from "debate-round/src/flow/response-outcome";
+} from "@debate/round/src/flow/response-outcome";
 
 export type ResponseOutcomeReportInput = {
   roundId: string;

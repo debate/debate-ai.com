@@ -17,7 +17,7 @@ import {
   formatAbsoluteTime as formatAbsoluteMs,
   formatRelativeTime as formatRelativeMs,
   getInitials,
-} from "debate-comments";
+} from "@debate/comments";
 
 export { getInitials };
 

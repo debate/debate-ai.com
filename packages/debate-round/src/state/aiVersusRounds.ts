@@ -31,7 +31,7 @@
  * @module state/aiVersusRounds
  */
 
-import type { DebateStyleKey } from "debate-timer/src/formats/debate-format-times";
+import type { DebateStyleKey } from "@debate/timer/src/formats/debate-format-times";
 import {
   buildAiVersusSpeechOrder,
   getNextSpeechSlot,

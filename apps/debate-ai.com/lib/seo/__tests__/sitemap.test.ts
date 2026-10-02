@@ -9,7 +9,7 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { SIDEBAR_VIDEO_LINKS } from "debate-videos";
+import { SIDEBAR_VIDEO_LINKS } from "@debate/videos";
 
 import {
   buildSitemap,

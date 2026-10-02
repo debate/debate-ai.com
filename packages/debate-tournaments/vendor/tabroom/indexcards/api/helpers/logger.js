@@ -1,5 +1,5 @@
 /**
- * debate-tournaments overlay — replaces upstream's `api/helpers/logger.js`.
+ * @debate/tournaments overlay — replaces upstream's `api/helpers/logger.js`.
  *
  * Upstream logs through winston (file + console transports, `os.hostname()`),
  * none of which exist on Workers. Same exports over `console`, which Workers

@@ -17,7 +17,7 @@ import { lazy, Suspense, type ComponentProps } from "react"
 import { Loader2 } from "lucide-react"
 
 const LexicalEditorWrapperImpl = lazy(() =>
-  import("debate-editor").then((m) => ({ default: m.LexicalEditorWrapper })),
+  import("@debate/editor").then((m) => ({ default: m.LexicalEditorWrapper })),
 )
 
 /** Spinner shown in an editor pane while CardMirror loads. */

@@ -28,7 +28,7 @@
  * @module state/prepNotes
  */
 
-import type { PrepNote, PrepNotePriority, PrepNoteStatus } from "debate-round/src/flow/strategy-sync-notes";
+import type { PrepNote, PrepNotePriority, PrepNoteStatus } from "@debate/round/src/flow/strategy-sync-notes";
 import {
   assignNote,
   createRoundPrepNote,
@@ -38,7 +38,7 @@ import {
   setNotePriority,
   sortNotesByPriorityThenCreatedAt,
   updateNoteStatus,
-} from "debate-round/src/flow/strategy-sync-notes";
+} from "@debate/round/src/flow/strategy-sync-notes";
 import { recordPrepNoteAssignedNotification } from "./prepNoteNotifications";
 import { deleteRepliesForNote } from "./prepNoteReplies";
 
@@ -46,7 +46,7 @@ import { deleteRepliesForNote } from "./prepNoteReplies";
 import {
   mirrorToolRecordDelete,
   mirrorToolRecordSave,
-} from "debate-data-sync/src/state/tool-record-mirror";
+} from "@debate/data-sync/src/state/tool-record-mirror";
 const STORAGE_KEY = "prepNotes";
 
 function readAll(): PrepNote[] {

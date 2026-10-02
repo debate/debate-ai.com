@@ -49,11 +49,11 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Badge } from "debate-round/src/ui/primitives/badge"
-import { Button } from "debate-round/src/ui/primitives/button"
-import { Input } from "debate-round/src/ui/primitives/input"
-import { Label } from "debate-round/src/ui/primitives/label"
-import { EmptyState, PanelShell } from "debate-round/src/ui/panels/panel-shell"
+import { Badge } from "@debate/round/src/ui/primitives/badge"
+import { Button } from "@debate/round/src/ui/primitives/button"
+import { Input } from "@debate/round/src/ui/primitives/input"
+import { Label } from "@debate/round/src/ui/primitives/label"
+import { EmptyState, PanelShell } from "@debate/round/src/ui/panels/panel-shell"
 import {
   buildCoachingProgramsPanelView,
   deleteCoachingProgram,
@@ -66,7 +66,7 @@ import {
   listRoundContributorFlows,
 } from "../state/roundContributorFlows"
 import { buildCoachingProgramSummaryText, type CoachingProgramBoard, type CoachingProgramConfig } from "../round/coaching-program"
-import { useFlowStore } from "debate-round/src/state/store"
+import { useFlowStore } from "@debate/round/src/state/store"
 import { isCoachingProgramsPanelLiveUpdateStorageEvent } from "../state/live-update"
 
 type ProgramDraft = { name: string; memberIds: string }

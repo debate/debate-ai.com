@@ -39,12 +39,12 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
-import { Button } from "debate-research-evidence/src/ui/primitives/button"
-import { Input } from "debate-research-evidence/src/ui/primitives/input"
-import { Label } from "debate-research-evidence/src/ui/primitives/label"
-import { Textarea } from "debate-research-evidence/src/ui/primitives/textarea"
-import { EmptyState, PanelShell } from "debate-research-evidence/src/ui/panels/panel-shell"
+import { Badge } from "@debate/research-evidence/src/ui/primitives/badge"
+import { Button } from "@debate/research-evidence/src/ui/primitives/button"
+import { Input } from "@debate/research-evidence/src/ui/primitives/input"
+import { Label } from "@debate/research-evidence/src/ui/primitives/label"
+import { Textarea } from "@debate/research-evidence/src/ui/primitives/textarea"
+import { EmptyState, PanelShell } from "@debate/research-evidence/src/ui/panels/panel-shell"
 import {
   assignPersistedSprintNote,
   buildSprintNotesPanelView,
@@ -54,7 +54,7 @@ import {
   type SprintNotesPanelGroup,
 } from "../state/sprintNotes"
 import { listPersistedActiveContributors, recordPersistedPresenceHeartbeat } from "../state/topicPresence"
-import { isSprintNotesLiveUpdateStorageEvent } from "debate-research-evidence/src/state/live-update"
+import { isSprintNotesLiveUpdateStorageEvent } from "@debate/research-evidence/src/state/live-update"
 import { buildPresenceSummaryText, type ActiveContributor } from "../lib/topic-presence"
 import type { SprintNoteStatus } from "../lib/team-collaboration-mode"
 

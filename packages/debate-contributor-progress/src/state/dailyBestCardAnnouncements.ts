@@ -28,10 +28,10 @@ import {
   buildDailyBestCardsFromStore,
   getTodaysBestCardFromStore,
   type AttributedDailyBestCard,
-} from "debate-research-evidence/src/state/contributions";
-import { buildWeeklyBestCardRollups, getUtcDayKey, type WeeklyBestCardRollup } from "debate-research-evidence/src/lib/daily-best-card";
-import type { HelpfulnessWeights } from "debate-research-evidence/src/lib/community-rating";
-import { DEFAULT_HELPFULNESS_WEIGHTS } from "debate-research-evidence/src/lib/community-rating";
+} from "@debate/research-evidence/src/state/contributions";
+import { buildWeeklyBestCardRollups, getUtcDayKey, type WeeklyBestCardRollup } from "@debate/research-evidence/src/lib/daily-best-card";
+import type { HelpfulnessWeights } from "@debate/research-evidence/src/lib/community-rating";
+import { DEFAULT_HELPFULNESS_WEIGHTS } from "@debate/research-evidence/src/lib/community-rating";
 
 const ANNOUNCEMENTS_STORAGE_KEY = "dailyBestCardAnnouncements";
 

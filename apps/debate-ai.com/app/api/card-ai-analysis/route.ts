@@ -5,13 +5,13 @@ import {
   MAX_ANALYSIS_CONTENT_CHARS,
   normalizeForHash,
   sha256Hex,
-} from "debate-research-evidence"
+} from "@debate/research-evidence"
 import { getDBFromContext } from "@/lib/database/context"
 import { cardAiAnalyses } from "@/lib/database/schema"
 import { getSession } from "@/lib/auth/session"
 import { getEnv } from "@/lib/env"
 import { isMissingTableError } from "@/lib/contacts/server"
-import { limitsFor } from "debate-webview/lib/stripe/limits"
+import { limitsFor } from "@debate/webview/lib/stripe/limits"
 import { consumeDailyUsage, getUserTier, limitMessage, planLimitHeaders, usageSubject } from "@/lib/stripe/usage"
 
 /**
@@ -29,7 +29,7 @@ import { consumeDailyUsage, getUserTier, limitMessage, planLimitHeaders, usageSu
  * prompt, so generating one requires a session.
  *
  * Only new generations are metered: each counts toward the caller's
- * `cardAiAnalysesPerDay` plan limit (`debate-webview/src/lib/stripe/limits.ts`, per IP when
+ * `cardAiAnalysesPerDay` plan limit (`@debate/webview/src/lib/stripe/limits.ts`, per IP when
  * signed out); reading a saved analysis is free.
  */
 

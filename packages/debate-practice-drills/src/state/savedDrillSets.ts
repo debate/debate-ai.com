@@ -17,7 +17,7 @@
  * @module state/savedDrillSets
  */
 
-import type { Drill, DrillDifficulty, DrillKind } from "debate-round/src/flow/drill-generator";
+import type { Drill, DrillDifficulty, DrillKind } from "@debate/round/src/flow/drill-generator";
 import type { DrillSetRecord } from "./drillSets";
 
 /** Hard cap on a single drill set's JSON size — generous for even a large round, well short of D1's row-size limits. */

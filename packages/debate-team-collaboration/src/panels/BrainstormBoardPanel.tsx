@@ -125,14 +125,14 @@ import {
   isBrainstormSessionTimerExpired,
 } from "../lib/brainstorm-session-timer"
 import { useBrainstormSessionTimerSync } from "../hooks/useBrainstormSessionTimerSync"
-import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
-import { Button } from "debate-research-evidence/src/ui/primitives/button"
-import { Input } from "debate-research-evidence/src/ui/primitives/input"
-import { Label } from "debate-research-evidence/src/ui/primitives/label"
-import { RadioGroup, RadioGroupItem } from "debate-research-evidence/src/ui/primitives/radio-group"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "debate-research-evidence/src/ui/primitives/select"
-import { Textarea } from "debate-research-evidence/src/ui/primitives/textarea"
-import { EmptyState, PanelSection, PanelShell } from "debate-research-evidence/src/ui/panels/panel-shell"
+import { Badge } from "@debate/research-evidence/src/ui/primitives/badge"
+import { Button } from "@debate/research-evidence/src/ui/primitives/button"
+import { Input } from "@debate/research-evidence/src/ui/primitives/input"
+import { Label } from "@debate/research-evidence/src/ui/primitives/label"
+import { RadioGroup, RadioGroupItem } from "@debate/research-evidence/src/ui/primitives/radio-group"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@debate/research-evidence/src/ui/primitives/select"
+import { Textarea } from "@debate/research-evidence/src/ui/primitives/textarea"
+import { EmptyState, PanelSection, PanelShell } from "@debate/research-evidence/src/ui/panels/panel-shell"
 import {
   buildBrainstormBoardsPanelView,
   buildBrainstormBoardsPanelViewForTopic,
@@ -142,10 +142,10 @@ import {
   sendBrainstormIdeaToArgumentLibrary,
   upvotePersistedBrainstormIdea,
 } from "../state/brainstormIdeas"
-import { listTrackedTopics } from "debate-research-evidence/src/state/trackedArguments"
+import { listTrackedTopics } from "@debate/research-evidence/src/state/trackedArguments"
 import { requestTeamBrainstormAiIdeas } from "../lib/team-brainstorm-client"
 import { buildBrainstormPrompt } from "../lib/team-brainstorm-assist"
-import { isBrainstormBoardLiveUpdateStorageEvent } from "debate-research-evidence/src/state/live-update"
+import { isBrainstormBoardLiveUpdateStorageEvent } from "@debate/research-evidence/src/state/live-update"
 import { buildBrainstormIdeaRankBadge, type BrainstormBoard, type BrainstormCategory } from "../lib/team-brainstorm-assist"
 
 /** How long the upvote button's click "bump" animation stays applied before clearing. */

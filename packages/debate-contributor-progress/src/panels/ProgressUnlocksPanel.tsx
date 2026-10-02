@@ -39,9 +39,9 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
-import { Button } from "debate-research-evidence/src/ui/primitives/button"
-import { EmptyState, MeterBar, PanelShell } from "debate-research-evidence/src/ui/panels/panel-shell"
+import { Badge } from "@debate/research-evidence/src/ui/primitives/badge"
+import { Button } from "@debate/research-evidence/src/ui/primitives/button"
+import { EmptyState, MeterBar, PanelShell } from "@debate/research-evidence/src/ui/panels/panel-shell"
 import {
   Table,
   TableBody,
@@ -49,11 +49,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "debate-research-evidence/src/ui/primitives/table"
+} from "@debate/research-evidence/src/ui/primitives/table"
 import { buildUnlockStatusRoster } from "../lib/unlock-streak-status"
-import { isOwnContributorRow } from "debate-research-evidence/src/lib/session-identity"
+import { isOwnContributorRow } from "@debate/research-evidence/src/lib/session-identity"
 import { buildUnlockCelebrationMessage } from "../lib/unlock-celebration"
-import { isProgressUnlocksLiveUpdateStorageEvent } from "debate-research-evidence/src/state/live-update"
+import { isProgressUnlocksLiveUpdateStorageEvent } from "@debate/research-evidence/src/state/live-update"
 import { recordAndGetNewlyEarnedBadges } from "../state/unlockCelebrations"
 import type { ContributorUnlockStatusWithStreak } from "../lib/unlock-streak-status"
 

@@ -71,8 +71,8 @@
  * @module state/drillSets
  */
 
-import type { Flow } from "debate-round/src/types/flow";
-import { buildDrillSet, type Drill, type DrillKind } from "debate-round/src/flow/drill-generator";
+import type { Flow } from "@debate/round/src/types/flow";
+import { buildDrillSet, type Drill, type DrillKind } from "@debate/round/src/flow/drill-generator";
 
 export type DrillSetRecord = {
   roundId: string;

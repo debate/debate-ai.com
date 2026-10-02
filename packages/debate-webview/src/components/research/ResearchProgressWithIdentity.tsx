@@ -8,8 +8,8 @@
  * place that knows about `better-auth`. Mirrors `TaskInboxWithIdentity.tsx`.
  */
 
-import { ResearchProgressPanel } from "debate-team-collaboration"
-import { deriveContributorIdFromSessionIdentity } from "debate-research-evidence"
+import { ResearchProgressPanel } from "@debate/team-collaboration"
+import { deriveContributorIdFromSessionIdentity } from "@debate/research-evidence"
 import { useSession } from "../../lib/hooks/useSession"
 
 export function ResearchProgressWithIdentity() {

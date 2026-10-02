@@ -16,7 +16,7 @@
  * @module lib/speech-send-log-client
  */
 
-import type { SpeechSendLogEntry } from "debate-editor/engine"
+import type { SpeechSendLogEntry } from "@debate/editor/engine"
 
 async function readErrorMessage(res: Response, fallback: string): Promise<string> {
   try {

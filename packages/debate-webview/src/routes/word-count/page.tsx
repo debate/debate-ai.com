@@ -1,6 +1,6 @@
 import { Suspense } from "react"
-import { WordCountRoundsPanel } from "debate-practice-rounds"
-import { WordLimitPresetsPanel } from "debate-round"
+import { WordCountRoundsPanel } from "@debate/practice-rounds"
+import { WordLimitPresetsPanel } from "@debate/round"
 import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
 
 export default function WordCountPage() {

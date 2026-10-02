@@ -7,7 +7,7 @@
  * debaters by name (`"Falk & Sabnani"`, or `"Siddhartha Daswani"` in LD).
  * This module bridges the two: it matches the school loosely and the
  * initials exactly, so a hit is the same entry and not merely the same school.
- * @module debate-rankings-adapter/team-lookup
+ * @module @debate/rankings-adapter/team-lookup
  */
 
 import type { RankingEntry } from "./upstream";

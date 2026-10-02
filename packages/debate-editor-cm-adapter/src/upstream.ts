@@ -8,7 +8,7 @@
  * `.cmir` format), which needs nothing beyond ProseMirror, fflate and
  * fast-xml-parser. Keeping every path import here means an upstream
  * reorganization is a one-file fix.
- * @module debate-editor-cm-adapter/upstream
+ * @module @debate/editor-cm-adapter/upstream
  */
 
 export * from "../../debate-editor-cm/src/index";

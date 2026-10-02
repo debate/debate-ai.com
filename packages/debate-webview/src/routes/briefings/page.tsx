@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { PreRoundBriefingsPanel } from "debate-round"
+import { PreRoundBriefingsPanel } from "@debate/round"
 import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
 
 export default function BriefingsPage() {

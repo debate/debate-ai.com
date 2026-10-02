@@ -18,7 +18,7 @@ import type { JudgeProfile } from "../judge/judge-profile";
 import {
   mirrorToolRecordDelete,
   mirrorToolRecordSave,
-} from "debate-data-sync/src/state/tool-record-mirror";
+} from "@debate/data-sync/src/state/tool-record-mirror";
 
 const STORAGE_KEY = "judgeProfiles";
 

@@ -9,7 +9,7 @@ import {
 } from "../src/state/researchProgressGoals";
 import { completeAndRecordResearchTask } from "../src/state/researchProgress";
 import { saveRoutedTaskQueue, type RoutedTaskQueueRecord } from "../src/state/routedTaskQueues";
-import type { ResearchTask, RoutingResult } from "debate-research-evidence/src/lib/research-task-routing";
+import type { ResearchTask, RoutingResult } from "@debate/research-evidence/src/lib/research-task-routing";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {

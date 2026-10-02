@@ -17,7 +17,7 @@
  * @module lib/group-challenges
  */
 
-import { buildLeaderboard, type AttributedContribution } from "debate-research-evidence/src/lib/contribution-leaderboard";
+import { buildLeaderboard, type AttributedContribution } from "@debate/research-evidence/src/lib/contribution-leaderboard";
 import { matchesQuestTarget, type QuestContribution, type QuestTarget } from "./daily-quests";
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;

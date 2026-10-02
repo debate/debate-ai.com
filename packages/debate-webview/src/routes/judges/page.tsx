@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { JudgeProfilesPanel } from "debate-speech-writer"
+import { JudgeProfilesPanel } from "@debate/speech-writer"
 import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
 
 export default function JudgesPage() {

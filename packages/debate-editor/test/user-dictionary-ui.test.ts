@@ -17,7 +17,7 @@ import {
   TOOL_RECORD_AUTO_SYNC_INTERVAL_MS,
   markToolRecordsSynced,
   resetToolRecordAutoSync,
-} from 'debate-data-sync/src/state/tool-record-auto-sync';
+} from '@debate/data-sync/src/state/tool-record-auto-sync';
 
 beforeEach(() => {
   localStorage.clear();

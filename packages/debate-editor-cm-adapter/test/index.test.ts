@@ -16,7 +16,7 @@ function sampleDoc() {
   ]);
 }
 
-describe("debate-editor-cm-adapter", () => {
+describe("@debate/editor-cm-adapter", () => {
   it("reads the outline and cards of a document", () => {
     const doc = sampleDoc();
     expect(outlineOf(doc).map((item) => [item.kind, item.level, item.text])).toEqual([

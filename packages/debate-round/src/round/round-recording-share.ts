@@ -1,7 +1,7 @@
 /**
  * @fileoverview Pure helper for collecting a round's participant emails, for
  * "Share with Opponents" on a speech's audio recording
- * (`debate-timer/src/recorder/SpeechRecordingPlayer.tsx`'s
+ * (`@debate/timer/src/recorder/SpeechRecordingPlayer.tsx`'s
  * `SpeechRecordingMenu#participantEmails`, wired from
  * `layout/SpeechControlsTopBar.tsx` → `panels/DebateRoundPanel.tsx`). That
  * menu item used to be a no-op — clicking it did nothing at all.

@@ -18,7 +18,7 @@ export type LeaderboardTab = Division | "SCHOOLS";
 /** Set of valid tab strings used for `?format=` URL query-param validation. */
 export const VALID_LEADERBOARD_TABS = new Set<string>([...VALID_DIVISIONS, "SCHOOLS"]);
 
-import type { RankingEntry } from "debate-rankings-adapter";
+import type { RankingEntry } from "@debate/rankings-adapter";
 
 /** Column keys available for sorting the rankings grid — every CSV field. */
 export type SortKey = keyof RankingEntry;

@@ -20,7 +20,7 @@ import {
   type QuestTeam,
   type QuestTemplate,
 } from "../src/lib/daily-quests";
-import { buildTopicCoverageReport, type CoverageCardSummary, type TrackedArgument } from "debate-research-evidence/src/lib/topic-coverage";
+import { buildTopicCoverageReport, type CoverageCardSummary, type TrackedArgument } from "@debate/research-evidence/src/lib/topic-coverage";
 
 const DAY_ONE = Date.parse("2026-08-10T12:00:00.000Z");
 const DAY_ONE_LATER = Date.parse("2026-08-10T23:00:00.000Z");

@@ -73,11 +73,11 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
-import { Button } from "debate-research-evidence/src/ui/primitives/button"
-import { Input } from "debate-research-evidence/src/ui/primitives/input"
-import { Label } from "debate-research-evidence/src/ui/primitives/label"
-import { EmptyState, PanelSection, PanelShell } from "debate-research-evidence/src/ui/panels/panel-shell"
+import { Badge } from "@debate/research-evidence/src/ui/primitives/badge"
+import { Button } from "@debate/research-evidence/src/ui/primitives/button"
+import { Input } from "@debate/research-evidence/src/ui/primitives/input"
+import { Label } from "@debate/research-evidence/src/ui/primitives/label"
+import { EmptyState, PanelSection, PanelShell } from "@debate/research-evidence/src/ui/panels/panel-shell"
 import {
   buildPersistedDailyQuestBoard,
   buildPersistedTeamQuestCompetition,
@@ -90,19 +90,19 @@ import {
   saveQuestTeam,
   saveQuestTemplate,
   seedQuestTemplatesFromTopicCoverage,
-} from "debate-team-collaboration/src/state/dailyQuests"
-import type { QuestSeedPreviewEntry } from "debate-team-collaboration/src/state/dailyQuests"
+} from "@debate/team-collaboration/src/state/dailyQuests"
+import type { QuestSeedPreviewEntry } from "@debate/team-collaboration/src/state/dailyQuests"
 import {
   buildPersistedContributorQuestStreak,
   computeAndSavePersistedDailyMissionResult,
 } from "../state/dailyMissionResults"
-import { isDailyQuestsLiveUpdateStorageEvent } from "debate-research-evidence/src/state/live-update"
+import { isDailyQuestsLiveUpdateStorageEvent } from "@debate/research-evidence/src/state/live-update"
 import {
   buildQuestBoardPointsSummaryText,
   buildQuestBoardSummaryText,
   DEFAULT_QUEST_DIFFICULTY,
   filterQuestBoardByDifficulty,
-} from "debate-team-collaboration/src/lib/daily-quests"
+} from "@debate/team-collaboration/src/lib/daily-quests"
 import type {
   QuestDifficulty,
   QuestProgress,
@@ -110,10 +110,10 @@ import type {
   QuestTeam,
   QuestTemplate,
   TeamQuestStanding,
-} from "debate-team-collaboration/src/lib/daily-quests"
+} from "@debate/team-collaboration/src/lib/daily-quests"
 import { buildStreakRewardText, getFreshStreakBadge } from "../lib/gamified-quests"
 import type { ContributorQuestStreak } from "../lib/gamified-quests"
-import type { ContributionKind } from "debate-research-evidence/src/lib/community-rating"
+import type { ContributionKind } from "@debate/research-evidence/src/lib/community-rating"
 
 const KIND_OPTIONS: { value: ContributionKind; label: string }[] = [
   { value: "card", label: "Card" },

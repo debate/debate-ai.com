@@ -20,7 +20,7 @@ import { createRoot, type Root } from "react-dom/client"
 
 import { FlowEditLogPanel } from "../src/panels/FlowEditLogPanel"
 import type { FlowEdit } from "../src/flow/shared-flow-sync"
-import { markToolRecordsSynced, resetToolRecordAutoSync } from "debate-data-sync/src/state/tool-record-auto-sync"
+import { markToolRecordsSynced, resetToolRecordAutoSync } from "@debate/data-sync/src/state/tool-record-auto-sync"
 
 const STORAGE_KEY = "flowEdits"
 

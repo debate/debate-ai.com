@@ -249,7 +249,7 @@ describe("video library routes and the category-path redirects", () => {
   it("never redirects a round-video slug the page still serves under /videos", async () => {
     const { SLUG_MAP } = await import("../src/panels/lectureRouteConfig");
     const { canonicalCategoryPathname } = await import(
-      "debate-data-sync/src/routes/category-paths"
+      "@debate/data-sync/src/routes/category-paths"
     );
     const moved = new Set(["dictionary", "rankings", "statistics", "stats", "lectures"]);
     for (const slug of Object.keys(SLUG_MAP)) {

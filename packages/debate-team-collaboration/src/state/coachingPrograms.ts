@@ -15,7 +15,7 @@ import type { CoachingProgramConfig } from "../round/coaching-program";
 import {
   mirrorToolRecordDelete,
   mirrorToolRecordSave,
-} from "debate-data-sync/src/state/tool-record-mirror";
+} from "@debate/data-sync/src/state/tool-record-mirror";
 
 const STORAGE_KEY = "coachingPrograms";
 

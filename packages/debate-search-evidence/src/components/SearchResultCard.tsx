@@ -7,7 +7,7 @@
 import { useEffect, useRef } from "react"
 import { Badge } from "../ui/primitives/badge"
 import { BookOpen, Highlighter, Users } from "lucide-react"
-import { getBlueShade, getGreenShade } from "debate-card-parser/src/utils/card-utils"
+import { getBlueShade, getGreenShade } from "@debate/card-parser/src/utils/card-utils"
 import {
   cardAriaLabel,
   cardPreview,

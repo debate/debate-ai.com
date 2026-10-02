@@ -10,7 +10,7 @@ import {
   secondPeerNomination,
   submitPeerNomination,
 } from "../src/state/contributorAwardNominations";
-import type { PeerNomination } from "debate-research-evidence/src/lib/contributor-awards";
+import type { PeerNomination } from "@debate/research-evidence/src/lib/contributor-awards";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment has no DOM by default. */
 class MemoryStorage {

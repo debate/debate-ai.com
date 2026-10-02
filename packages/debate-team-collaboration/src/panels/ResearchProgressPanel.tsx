@@ -59,18 +59,18 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
-import { Button } from "debate-research-evidence/src/ui/primitives/button"
-import { Input } from "debate-research-evidence/src/ui/primitives/input"
-import { Label } from "debate-research-evidence/src/ui/primitives/label"
-import { EmptyState, MeterBar, PanelSection, PanelShell } from "debate-research-evidence/src/ui/panels/panel-shell"
+import { Badge } from "@debate/research-evidence/src/ui/primitives/badge"
+import { Button } from "@debate/research-evidence/src/ui/primitives/button"
+import { Input } from "@debate/research-evidence/src/ui/primitives/input"
+import { Label } from "@debate/research-evidence/src/ui/primitives/label"
+import { EmptyState, MeterBar, PanelSection, PanelShell } from "@debate/research-evidence/src/ui/panels/panel-shell"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "debate-research-evidence/src/ui/primitives/select"
+} from "@debate/research-evidence/src/ui/primitives/select"
 import {
   Table,
   TableBody,
@@ -78,15 +78,15 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "debate-research-evidence/src/ui/primitives/table"
+} from "@debate/research-evidence/src/ui/primitives/table"
 import {
   buildPersistedResearchProgressBoard,
   deleteCompletedTaskHistoryForTopic,
 } from "../state/researchProgress"
-import { listTrackedTopics } from "debate-research-evidence/src/state/trackedArguments"
+import { listTrackedTopics } from "@debate/research-evidence/src/state/trackedArguments"
 import { useResearchProgressGoalSync } from "../hooks/useResearchProgressGoalSync"
-import { isOwnContributorRow } from "debate-research-evidence/src/lib/session-identity"
-import { isResearchProgressLiveUpdateStorageEvent } from "debate-research-evidence/src/state/live-update"
+import { isOwnContributorRow } from "@debate/research-evidence/src/lib/session-identity"
+import { isResearchProgressLiveUpdateStorageEvent } from "@debate/research-evidence/src/state/live-update"
 import {
   buildResearchProgressReportText,
   buildTeamTopicComparison,

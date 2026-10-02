@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { desc, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { reuseCheckLog } from "@/lib/database/schema"
-import { buildReuseCheckDashboard, type ReuseCheckLogRecord } from "debate-research-evidence"
+import { buildReuseCheckDashboard, type ReuseCheckLogRecord } from "@debate/research-evidence"
 
 /**
  * Idea #7's ("On Page Card Reuse Search") "team dashboard of pages flagged

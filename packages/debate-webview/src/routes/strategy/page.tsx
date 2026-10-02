@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { StrategyPanel } from "debate-round"
+import { StrategyPanel } from "@debate/round"
 import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
 
 export default function StrategyPage() {

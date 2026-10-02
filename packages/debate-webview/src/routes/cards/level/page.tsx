@@ -1,4 +1,4 @@
-import { DebaterLevelPanel } from "debate-community"
+import { DebaterLevelPanel } from "@debate/community"
 import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHeader"
 
 export default function CardsLevelPage() {

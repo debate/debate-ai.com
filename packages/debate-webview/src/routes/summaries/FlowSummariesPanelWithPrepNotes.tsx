@@ -21,9 +21,9 @@
 
 "use client"
 
-import { FlowSummariesPanel } from "debate-practice-rounds"
-import { addRoundPrepNote } from "debate-team-collaboration/src/state/prepNotes"
-import { deriveContributorIdFromSessionIdentity } from "debate-research-evidence"
+import { FlowSummariesPanel } from "@debate/practice-rounds"
+import { addRoundPrepNote } from "@debate/team-collaboration/src/state/prepNotes"
+import { deriveContributorIdFromSessionIdentity } from "@debate/research-evidence"
 import { useSession } from "../../lib/hooks/useSession"
 
 export function FlowSummariesPanelWithPrepNotes() {

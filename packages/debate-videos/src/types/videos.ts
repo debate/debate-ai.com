@@ -3,7 +3,7 @@ import type {
   VideoFacets,
   VideoSuggestion,
   VideoSuggestions,
-} from "debate-data-sync/src/videos/video-query";
+} from "@debate/data-sync/src/videos/video-query";
 import type { DebateTopicYear, SeasonalTopic } from "../lib/debate-topics";
 
 export type { DebateTopicYear, SeasonalTopic };

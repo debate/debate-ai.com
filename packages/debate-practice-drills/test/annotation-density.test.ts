@@ -4,7 +4,7 @@ import {
   maxAnnotationDensityCount,
   pickBucketJumpAnnotation,
 } from "../src/flow/annotation-density";
-import type { FlowAnnotation } from "debate-round/src/flow/flow-annotations";
+import type { FlowAnnotation } from "@debate/round/src/flow/flow-annotations";
 
 function annotation(overrides: Partial<FlowAnnotation> = {}): FlowAnnotation {
   return {

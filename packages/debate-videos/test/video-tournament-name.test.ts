@@ -2,7 +2,7 @@
  * @fileoverview `cleanTournamentName` (`video-tree.ts`) is a second,
  * independent cleanup pass on a tournament's name — the label its group row
  * carries in the list layout's tree — distinct from
- * `stripTournamentYear` (`debate-data-sync/src/videos/video-rows.ts`), which
+ * `stripTournamentYear` (`@debate/data-sync/src/videos/video-rows.ts`), which
  * only drops a *leading* year before a tuple ever becomes a `VideoRow`. This
  * file feeds it values as they actually arrive here: already passed through
  * that upstream strip.
@@ -19,7 +19,7 @@ describe("cleanTournamentName", () => {
   });
 
   // Regression: "TOC21"/"Nats18"/"Nats16" are real `tournament` values in
-  // `debate-data-sync/data/videos/rounds-pf.json`. The abbreviation+2-digit-year
+  // `@debate/data-sync/data/videos/rounds-pf.json`. The abbreviation+2-digit-year
   // regex used a non-capturing group with a `"$1"` replacement — since there
   // was no group 1, JS replaced the match with the literal text "$1" instead
   // of the intended abbreviation, so these rendered as "$1" in the video

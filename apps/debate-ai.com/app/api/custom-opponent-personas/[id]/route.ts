@@ -6,7 +6,7 @@ import { getUserId } from "@/lib/auth/session"
 import {
   isValidSavedCustomOpponentPersona,
   MAX_SAVED_CUSTOM_OPPONENT_PERSONA_BYTES,
-} from "debate-speech-writer"
+} from "@debate/speech-writer"
 
 /**
  * Account-linked custom-opponent-persona-library sync — the "🤖 AI Practice

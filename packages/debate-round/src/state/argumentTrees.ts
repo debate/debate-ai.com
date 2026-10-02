@@ -1,7 +1,7 @@
 /**
  * @fileoverview Persistent storage for `flow/argument-tree.ts`'s derived
  * `ArgumentTreeNode[]` outline, keyed by `roundId` — the data half of the
- * "(a) a React tree/outline panel in debate-round that renders the filtered
+ * "(a) a React tree/outline panel in @debate/round that renders the filtered
  * tree next to (or instead of) FlowSpreadsheet and reads/writes through the
  * persistence store" follow-up named under idea #10 ("Outline Filters and
  * Argument Tree View") in TODO.md. Stores a round's computed tree in
@@ -20,7 +20,7 @@ import {
   mirrorToolRecordDelete,
   mirrorToolRecordSave,
   mirrorToolRecordsClear,
-} from "debate-data-sync/src/state/tool-record-mirror";
+} from "@debate/data-sync/src/state/tool-record-mirror";
 
 export type ArgumentTreeRecord = {
   roundId: string;

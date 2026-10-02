@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { PracticeRoundSimulatorPanel } from "debate-practice-rounds"
+import { PracticeRoundSimulatorPanel } from "@debate/practice-rounds"
 import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
 
 export default function PracticeRoundPage() {

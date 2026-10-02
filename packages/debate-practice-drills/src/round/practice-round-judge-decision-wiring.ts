@@ -19,10 +19,10 @@
  * @module round/practice-round-judge-decision-wiring
  */
 
-import type { JudgeParadigm } from "debate-speech-writer/src/judge/judge-paradigms";
-import { buildFlowSummaryTextFromRows } from "debate-round/src/flow/flow-transcript-summary";
+import type { JudgeParadigm } from "@debate/speech-writer/src/judge/judge-paradigms";
+import { buildFlowSummaryTextFromRows } from "@debate/round/src/flow/flow-transcript-summary";
 import { getFlowSummary } from "../state/flowSummaries";
-import type { JudgeDecisionAiInput, JudgeDecisionSideNames } from "debate-round/src/round/judge-decision-ai";
+import type { JudgeDecisionAiInput, JudgeDecisionSideNames } from "@debate/round/src/round/judge-decision-ai";
 
 export type PracticeRoundJudgeDecisionSourcesResult =
   | { ok: true; input: JudgeDecisionAiInput }

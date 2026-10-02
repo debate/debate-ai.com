@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { isValidWordCountRoundRecord } from "../src/state/savedWordCountRounds";
-import type { WordCountRoundRecord } from "debate-round/src/state/wordCountRounds";
+import type { WordCountRoundRecord } from "@debate/round/src/state/wordCountRounds";
 
 function makeRecord(overrides: Partial<WordCountRoundRecord> = {}): WordCountRoundRecord {
   return {
@@ -40,7 +40,7 @@ describe("isValidWordCountRoundRecord", () => {
     expect(isValidWordCountRoundRecord(makeRecord({ roundId: "   " }))).toBe(false);
   });
 
-  it("rejects a record whose styleKey isn't a known debate-timer word-count style", () => {
+  it("rejects a record whose styleKey isn't a known @debate/timer word-count style", () => {
     expect(
       isValidWordCountRoundRecord(makeRecord({ styleKey: "notARealStyle" as unknown as WordCountRoundRecord["styleKey"] })),
     ).toBe(false);

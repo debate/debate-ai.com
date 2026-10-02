@@ -11,7 +11,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { TOOL_RECORD_COLLECTIONS } from "debate-data-sync/src/state/toolRecordCollections";
+import { TOOL_RECORD_COLLECTIONS } from "@debate/data-sync/src/state/toolRecordCollections";
 import {
   APP_DOCK_LINKS,
   SIDEBAR_TOOL_SECTIONS,
