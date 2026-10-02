@@ -10,7 +10,7 @@ export default function VideosHome() {
           now show only where the documents are the subject — see
           `lib/reason-docs/sidebar-routes.ts`. */}
       {/* The research-area explorer and its 44 area definitions moved into
-          `debate-videos`, which renders it itself as the first section of the
+          `debate-videos`, which renders it itself right after the topics by year on the
           statistics branch. It used to arrive here as `topicAreasSlot`
           because the definitions lived in this package; the slot stays
           supported on `LecturesPage`, but nothing passes it now. */}

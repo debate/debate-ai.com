@@ -13,17 +13,8 @@ YouTube channel view/upload charts that used to live only in a modal.
 
 ## What it shows
 
-Three sections, stacked:
+Three sections, stacked, with Debate Topics by Year at the top:
 
-- **Research Areas** (`TopicAreasExplorer`) — every NDT, Policy, LD and PF
-  resolution since 2000, split into 44 focused research areas. Each format is
-  its own collapsible panel with its own selection, so comparing an area's
-  Policy history against its PF history is two clicks rather than a filter
-  toggle that throws the first answer away. Within a panel the areas are
-  ranked by resolution count as a bar chart; selecting one lists its
-  resolutions newest first and draws its year-by-year trend line. The area
-  assignments are heuristic research categories, not official NSDA or NDT
-  classifications — the section says so in its footer.
 - **Debate Topics by Year** (`DebateTopicsExplorer`) — a timeline
   (`components/timeline/Timeline.tsx`, adapted from the shadcn-space
   "timeline-02" block): a scrollable rail of every season, newest first,
@@ -40,10 +31,21 @@ Three sections, stacked:
   link: clicking one opens the CARDS search (`/research/cards`) for that topic's short
   name, filtered to that season's year and that format (Policy → CX,
   College → NDT, LD, PF), listing every card, outline and round that matches.
+- **Research Areas** (`TopicAreasExplorer`) — every NDT, Policy, LD and PF
+  resolution since 2000, split into 44 focused research areas. Each format is
+  its own collapsible panel with its own selection, so comparing an area's
+  Policy history against its PF history is two clicks rather than a filter
+  toggle that throws the first answer away. Within a panel the areas are
+  ranked by resolution count as a bar chart; selecting one lists its
+  resolutions newest first and draws its year-by-year trend line. The area
+  assignments are heuristic research categories, not official NSDA or NDT
+  classifications — the section says so in its footer.
 - **YouTube Channel Statistics** (`YouTubeStatsCharts`) — the top-channels
   table and the views/videos/avg-views-over-time charts `YouTubeStatsModal`
   already drew in its dialog, extracted so they can render inline on a full
-  page instead. Backed by `useYouTubeStats()` (`GET /api/youtube-stats`,
+  page instead. The four totals charts (views, videos and average views over
+  time, and average views by elim round) are compact and sit four to a row on
+  wide screens, two on tablets and one on phones. Backed by `useYouTubeStats()` (`GET /api/youtube-stats`,
   itself optional furniture — a deployment with no YouTube API key just
   leaves this section off rather than erroring).
 
@@ -75,9 +77,9 @@ the app dock into the video library.
 ```
 panels/LecturesPage.tsx — currentCategory === "statistics" branch
   → panels/statistics/StatisticsPage.tsx
-    → topicAreasSlot  (TopicAreasExplorer, mounted by debate-webview)
     → components/topic-explorer/DebateTopicsExplorer.tsx   (topics, youtubeStats.byYear)
       → components/timeline/Timeline.tsx
+    → components/topic-explorer/TopicAreasExplorer.tsx
     → components/youtube-stats-modal/YouTubeStatsCharts.tsx (youtubeStats prop)
 ```
 
