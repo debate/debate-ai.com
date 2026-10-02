@@ -120,28 +120,29 @@ describe("the surfaces that render them", () => {
     }
   });
 
-  it("gives the mobile quick-link tiles one per entry", () => {
-    // The tiles are the sidebar's stand-in on `/videos` below `md`, so a
-    // destination missing here is a destination a phone cannot reach there.
+  it("gives the mobile quick-link tiles one per entry but the reference pair", () => {
+    // The tiles are the sidebar's stand-in on `/videos` below `md`. The
+    // reference pair has no tile; it stays reachable from Practice.
     const html = renderToStaticMarkup(createElement(QuickLinksGrid, {}));
     const hrefs = hrefsIn(html);
-    expect(hrefs).toHaveLength(SIDEBAR_VIDEO_LINKS.length);
-    for (const link of SIDEBAR_VIDEO_LINKS) {
+    const referenceHrefs = new Set(VIDEO_REFERENCE_LINKS.map((link) => link.href));
+    const tiled = SIDEBAR_VIDEO_LINKS.filter((link) => !referenceHrefs.has(link.href));
+    expect(hrefs).toHaveLength(tiled.length);
+    for (const link of tiled) {
       expect(hrefs).toContain(link.href);
       expect(html).toContain(htmlEscaped(link.title));
     }
   });
 
-  it("keeps the glossary, rankings and statistics trio in both", () => {
-    // The pair that used to go missing, now a trio: at the end of the tool
-    // tree's Practice section in the sidebar, and a tile on mobile.
+  it("keeps the glossary and statistics in Practice, not as tiles", () => {
+    // Reachable from the tool tree's Practice section; no longer tiles.
     const practice = hrefsIn(
       renderToStaticMarkup(<ToolNavTree sectionIds={[PRACTICE_SECTION_ID]} />),
     );
     const tiles = hrefsIn(renderToStaticMarkup(createElement(QuickLinksGrid, {})));
     for (const link of VIDEO_REFERENCE_LINKS) {
       expect(practice).toContain(link.href);
-      expect(tiles).toContain(link.href);
+      expect(tiles).not.toContain(link.href);
     }
   });
 });

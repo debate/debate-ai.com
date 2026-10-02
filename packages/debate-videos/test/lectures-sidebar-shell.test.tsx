@@ -91,11 +91,11 @@ describe("the md:hidden block, which is what a phone sees", () => {
     return html.slice(start, end === -1 ? undefined : end);
   }
 
-  it("carries the video quick links, the pair included", () => {
+  it("carries the video quick links, minus the glossary/statistics tiles", () => {
     const mobile = mobileMarkup();
     expect(mobile).toContain('href="/videos/college"');
-    expect(mobile).toContain('href="/practice/glossary"');
-    expect(mobile).toContain('href="/practice/statistics"');
+    expect(mobile).not.toContain('href="/practice/glossary"');
+    expect(mobile).not.toContain('href="/practice/statistics"');
   });
 
   it("carries the tool sections, collapsed so the page stays in view", () => {
