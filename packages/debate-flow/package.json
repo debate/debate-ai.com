@@ -26,7 +26,6 @@
     "@codemirror/autocomplete": "^6.20.3",
     "@codemirror/commands": "^6.11.1",
     "@codemirror/lang-markdown": "^6.5.2",
-    "@codemirror/language": "^6.12.4",
     "@codemirror/state": "^6.7.6",
     "@codemirror/view": "^6.43.13",
     "@fsegurai/codemirror-theme-github-dark": "^6.2.7",
