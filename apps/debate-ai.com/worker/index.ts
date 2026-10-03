@@ -11,10 +11,11 @@
 import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } from "vinext/server/image-optimization";
 import type { ImageConfig } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
-import { runWithContext } from "../lib/database/context";
+import { getDBFromContext, runWithContext } from "../lib/database/context";
 import { describeError } from "../lib/database/errors";
 import { applyD1Bookmark, runWithD1Session, runWithPrimaryD1Session } from "../lib/database/d1-session";
 import { runWeeklyYouTubeSync } from "../lib/youtube/weekly-sync";
+import { openAutoMarkets } from "../lib/predictions/auto-markets";
 import { purgeOldReuseCheckLogRows } from "../lib/evidence-reuse-check/purge-reuse-check-log";
 import { DB_BACKUP_CRON, runWeeklyDbBackup } from "../lib/admin/weekly-db-backup";
 import { handleTurnstileGate, type TurnstileEnv } from "../lib/turnstile";
@@ -211,6 +212,13 @@ export default {
     ctx.waitUntil(
       runWithPrimaryD1Session(() => runWithContext(env, () => purgeOldReuseCheckLogRows())).catch((error) => {
         console.error("Scheduled reuse-check log purge failed:", describeError(error), error);
+      }),
+    );
+    ctx.waitUntil(
+      runWithPrimaryD1Session(() =>
+        runWithContext(env, async () => openAutoMarkets(await getDBFromContext())),
+      ).catch((error) => {
+        console.error("Scheduled auto-markets failed:", describeError(error), error);
       }),
     );
   },
