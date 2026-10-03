@@ -10,9 +10,12 @@ doc: `packages/debate-help-docs/content/docs/features/prediction-markets.mdx`.
 - **Here**: pure code only. `lmsr.ts` (pricing), `settle.ts` (payouts and
   the settlement rules for hosted Tabroom rounds/events and rating markets),
   `validation.ts` (request parsing, `canResolveMarket`), `format.ts`,
+  `presets.ts` (the site's own markets: each division's top five and the
+  season's `MAJOR_TOURNAMENTS` calendar),
   `types.ts`, `client.ts`, and `migrations/` (the D1 tables).
 - **`apps/debate-ai.com`**: `app/api/predictions/**` (routes) and
-  `lib/predictions/` (queries, the rankings lookup). Raw SQL over the
+  `lib/predictions/` (queries, the rankings lookup, `presets.ts` which
+  opens the missing preset markets on board reads). Raw SQL over the
   `debate-tournaments` Tabroom tables lives there too.
 - **`debate-webview`**: `components/predictions/` and
   `routes/predictions/page.tsx` (`/practice/predictions`).
@@ -34,3 +37,7 @@ doc: `packages/debate-help-docs/content/docs/features/prediction-markets.mdx`.
 - **Ratings are on the site scale** (`debate-rankings-adapter`'s offset and
   divisor), both when a rating market records its baseline and when it
   settles. Mixing in raw upstream ratings would settle every market wrong.
+- **Preset market ids are the dedupe key.** `planPresetMarkets` is pure and
+  the app inserts only ids that don't exist, so changing an id format
+  reopens every preset. The tournament calendar is per season: replace
+  `MAJOR_TOURNAMENTS` when the next one is announced.

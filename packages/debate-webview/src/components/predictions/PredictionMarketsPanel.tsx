@@ -10,16 +10,21 @@
  * settlement refreshes the whole board, since one bet moves every price in
  * its market.
  *
+ * The site's own markets come first — each division's top five teams on a
+ * monthly rating market, then the season's major tournaments — and the open
+ * list below them holds the markets people opened.
+ *
  * Pricing and settlement are the `debate-predictions` package; the routes are
  * `apps/debate-ai.com/app/api/predictions`.
  */
 
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { Coins, History, Loader2, Plus, TrendingUp, Trophy } from "lucide-react";
-import { KIND_LABELS, formatPoints, type MarketKind, type PredictionBoardResponse } from "@debate/predictions";
+import { KIND_LABELS, PRESET_DIVISIONS, formatPoints, type MarketKind, type PredictionBoardResponse } from "@debate/predictions";
 import { fetchPredictionBoard } from "@debate/predictions/client";
 
 import { cn } from "../../lib/ui/lib/utils";
+import { FeaturedMarkets } from "./FeaturedMarkets";
 import { MarketCard } from "./MarketCard";
 import { NewMarketForm } from "./NewMarketForm";
 
@@ -62,6 +67,7 @@ export function PredictionMarketsPanel({ className }: { className?: string }) {
   const [error, setError] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [filter, setFilter] = useState<Filter>("all");
+  const [division, setDivision] = useState(PRESET_DIVISIONS[0].dataset);
   const [now, setNow] = useState(() => Math.floor(Date.now() / 1000));
 
   const load = useCallback(async () => {
@@ -78,10 +84,12 @@ export function PredictionMarketsPanel({ className }: { className?: string }) {
     void load();
   }, [load]);
 
-  const { open, settled } = useMemo(() => {
-    const markets = (board?.markets ?? []).filter((market) => filter === "all" || market.kind === filter);
+  const { featured, open, settled } = useMemo(() => {
+    const all = board?.markets ?? [];
+    const markets = all.filter((market) => filter === "all" || market.kind === filter);
     return {
-      open: markets.filter((market) => market.status === "open"),
+      featured: all.filter((market) => market.status === "open" && market.preset),
+      open: markets.filter((market) => market.status === "open" && !market.preset),
       settled: markets.filter((market) => market.status !== "open"),
     };
   }, [board?.markets, filter]);
@@ -136,8 +144,22 @@ export function PredictionMarketsPanel({ className }: { className?: string }) {
         )}
       </Block>
 
+      <FeaturedMarkets
+        markets={featured}
+        wallet={wallet}
+        now={now}
+        division={division}
+        onDivisionChange={setDivision}
+        onChanged={() => void load()}
+        section={({ title, icon, description, action, children }) => (
+          <Block key={title} title={title} icon={icon} description={description} action={action}>
+            {children}
+          </Block>
+        )}
+      />
+
       <Block
-        title="Open markets"
+        title="More open markets"
         icon={<TrendingUp className="h-4 w-4" />}
         action={
           wallet && !creating ? (
@@ -186,7 +208,7 @@ export function PredictionMarketsPanel({ className }: { className?: string }) {
         ) : null}
 
         {open.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No open markets here yet.{wallet ? " Open the first one." : ""}</p>
+          <p className="text-sm text-muted-foreground">No markets opened by members here yet.{wallet ? " Open the first one." : ""}</p>
         ) : (
           <div className="grid gap-3 lg:grid-cols-2">
             {open.map((market) => (

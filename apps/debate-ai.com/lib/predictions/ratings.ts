@@ -9,6 +9,7 @@
  */
 
 import { getRankingDatasetInfo, loadRankingDataset, type RankingDataset, type RankingDatasetId } from "@debate/rankings-adapter";
+import type { PresetTeam } from "@debate/predictions";
 
 const datasets = new Map<string, Promise<RankingDataset>>();
 
@@ -54,4 +55,18 @@ export async function findRatedTeam(datasetId: string, hash: string): Promise<Ra
 /** The current rating for a rating market's resolver; `null` when the team has left the rankings. */
 export async function currentRating(datasetId: string, hash: string): Promise<number | null> {
   return (await findRatedTeam(datasetId, hash))?.rating ?? null;
+}
+
+/** Every team in a dataset, as the preset markets need them; empty for an unknown dataset. */
+export async function rankedTeams(datasetId: string): Promise<PresetTeam[]> {
+  const info = getRankingDatasetInfo(datasetId);
+  if (!info) return [];
+  const loaded = await dataset(info.id);
+  return loaded.entries.map((entry) => ({
+    hash: entry.hash.toLowerCase(),
+    name: entry.name,
+    school: entry.school,
+    rating: entry.rating,
+    rank: entry.rank,
+  }));
 }

@@ -23,7 +23,20 @@ value outside the site.
 - **Your points.** Your balance. The 1,000 starting points land the first
   time you open the page while signed in. Guest accounts can watch but get no
   points.
-- **Open markets**, closing soonest first, filterable by type. Each market
+- **Top 5 teams.** Pick a division (Public Forum, Lincoln-Douglas, Policy,
+  College Policy) and bet on whether each of its five highest-rated teams
+  gains Glicko rating by the end of the month. The site opens these itself,
+  a fresh set each month, and they settle themselves at month end.
+- **Major tournaments.** For the same division, a winner market for each of
+  the season's fifteen biggest tournaments still ahead, in date order:
+  Heart of Texas, Florida Blue Key, Apple Valley, Glenbrooks, Princeton,
+  Blake, Harvard-Westlake, Emory, Stanford, Harvard, Cal, the NDT (College
+  Policy only), NDCA, the TOC and NSDA Nationals. Each lists the division's
+  eight top-rated teams plus "Anyone else". Betting closes when the
+  tournament starts, and a moderator settles it from the published results.
+  Dates not yet published are the tournament's usual weekend, marked
+  "expected dates".
+- **More open markets**: the ones members opened, closing soonest first, filterable by type. Each market
   lists its outcomes with the current price as a percentage (the market's
   implied odds), how many points are staked, how it settles, and your
   position. The bet form quotes how many shares a stake buys, what it pays if
@@ -73,6 +86,17 @@ Voiding a market refunds every stake. A market settles one of three ways:
 Hosted rounds and events are the `debate-tournaments` Tabroom tables in the
 same D1 database. Ratings come from the `debate-rankings` CSVs bundled with
 the build, read through `debate-rankings-adapter` on the site's scale.
+
+**Preset markets.** `debate-predictions/src/presets.ts` holds the
+tournament calendar (`MAJOR_TOURNAMENTS`) and `planPresetMarkets`, which
+turns the rankings and the date into the markets that should be open. Their
+ids are stable (`preset:rating:<dataset>:<hash>:<YYYY-MM>`,
+`preset:major:<slug>:<dataset>`), so the board read
+(`apps/debate-ai.com/lib/predictions/presets.ts`) inserts only the missing
+ones and never reopens one that settled. They have no creator, so only
+moderators settle the tournament ones. A rating market settles "doesn't
+rise" when no rankings refresh ships during its month. Next season's
+calendar is a new `MAJOR_TOURNAMENTS` list.
 
 Auto-settlement runs on every board read (`resolveDueMarkets` in
 `apps/debate-ai.com/lib/predictions/queries.ts`), up to 20 markets at a

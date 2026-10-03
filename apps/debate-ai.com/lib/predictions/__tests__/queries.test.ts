@@ -36,6 +36,7 @@ import {
   resolveDueMarkets,
   settleMarket,
 } from "@/lib/predictions/queries";
+import { resetPresetSeeding, seedPresetMarkets } from "@/lib/predictions/presets";
 import * as schema from "@/lib/database/schema";
 import { notifications, predictionBets, predictionMarkets, predictionWallets } from "@/lib/database/schema";
 import { applySchema, schemaStatements } from "@/lib/database/__tests__/schema-sql";
@@ -313,5 +314,34 @@ describe("resolveDueMarkets", () => {
   it("never touches manual markets", async () => {
     await openManual("m1", "ana", ["A", "B"], NOW + 600);
     expect(await resolveDueMarkets(q(), NOW + 2 * DAY, noRatings)).toBe(0);
+  });
+});
+
+describe("seedPresetMarkets", () => {
+  const OCT_2_2026 = Date.UTC(2026, 9, 2) / 1000;
+  const team = (n: number) => ({ hash: `${n}`.padStart(16, "a"), name: `Team ${n}`, school: `School ${n}`, rating: 100 - n, rank: n });
+  const rankings = async () => [{ dataset: "hspf", teams: [1, 2, 3, 4, 5, 6, 7].map(team) }];
+
+  beforeEach(() => resetPresetSeeding());
+
+  it("opens the top five and the majors once, with no creator, and the board tags them", async () => {
+    const opened = await seedPresetMarkets(q(), OCT_2_2026, rankings);
+    // 5 rating markets + 13 PF majors: all fifteen but Heart of Texas (no PF) and the NDT (college).
+    expect(opened).toBe(5 + 13);
+
+    resetPresetSeeding();
+    expect(await seedPresetMarkets(q(), OCT_2_2026, rankings)).toBe(0);
+
+    const board = await listMarkets(q(), { id: "ana", isStaff: false });
+    expect(board.filter((m) => m.preset?.group === "top-teams")).toHaveLength(5);
+    expect(board.filter((m) => m.preset?.group === "majors").every((m) => m.creator === null && m.preset?.dataset === "hspf")).toBe(true);
+    // Settled only by staff: no creator to settle it.
+    expect(board.every((m) => !m.canResolve)).toBe(true);
+  });
+
+  it("skips the check again for a while once it has seeded", async () => {
+    await seedPresetMarkets(q(), OCT_2_2026, rankings);
+    await db.delete(predictionMarkets);
+    expect(await seedPresetMarkets(q(), OCT_2_2026 + 60, rankings)).toBe(0);
   });
 });
