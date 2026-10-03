@@ -36,7 +36,7 @@ import { LecturesVideoGridView } from "./LecturesVideoGridView"
 
 // Hooks
 import { useVideoState } from "../hooks/useVideoState"
-import { useVideoFeed, useVideoMeta, type VideoFeedFilters } from "../hooks/useVideoFeed"
+import { favoritesFeedFilters, useVideoFeed, useVideoMeta, type VideoFeedFilters } from "../hooks/useVideoFeed"
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll"
 import { useYouTubeStats } from "../hooks/useYouTubeStats"
 import { useVideoPlayerStore } from "../state/videoPlayerStore"
@@ -281,7 +281,8 @@ export function LecturesPage({ dockSlot, topicAreasSlot }: LecturesPageProps = {
   // Search chips must describe the active library category rather than the
   // whole archive. The hook deliberately ignores the typed search term.
   const { meta, counts, lectureCategories, suggestions } = useVideoMeta(filters)
-  const feed = useVideoFeed(filters)
+  // My Favorites lists every starred video: no library filter narrows it.
+  const feed = useVideoFeed(!isHistory && favoriteIds ? favoritesFeedFilters(filters) : filters)
 
   // ---------------------------------------------------------------------------
   // Quick-link counts (per-category video tallies for navigation cards)

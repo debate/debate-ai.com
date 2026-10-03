@@ -421,7 +421,7 @@ export function LecturesVideoGridView({
               </>
             ) : showFavoritesOnly ? (
               <p className="text-muted-foreground">
-                None of My Favorites match your filters.
+                None of your starred videos are in the library right now.
               </p>
             ) : (
               <p className="text-muted-foreground">

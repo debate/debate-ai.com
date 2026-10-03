@@ -9,7 +9,7 @@
  */
 
 import { MARKET_KINDS, MAX_OUTCOMES, MIN_STAKE } from "./types";
-import type { MarketKind, MarketOutcome, MarketSource, MarketStatus, NewBet, NewMarket, ResolveRequest } from "./types";
+import type { ArgumentSettlement, ArgumentWager, MarketKind, MarketOutcome, MarketSource, MarketStatus, NewBet, NewMarket, ResolveRequest } from "./types";
 
 export type Parsed<T> = { ok: true; value: T } | { ok: false; error: string };
 
@@ -191,4 +191,54 @@ export function readStoredArray<T>(raw: string | null | undefined, fallback: T[]
   } catch {
     return fallback;
   }
+}
+
+const ROUND_ID = /^[\w.-]{1,80}$/;
+
+function parseArgumentRef(input: Record<string, unknown>): Parsed<{ roundId: string; rowIndex: number; speech: string }> {
+  const roundId = typeof input.roundId === "string" ? input.roundId : "";
+  if (!ROUND_ID.test(roundId)) return fail("Save the round first so the argument has a round to belong to.");
+  const rowIndex = Number(input.rowIndex);
+  if (!Number.isInteger(rowIndex) || rowIndex < 0 || rowIndex > 10_000) return fail("That argument isn't on the flow.");
+  const speech = typeof input.speech === "string" ? input.speech.trim() : "";
+  if (!speech || speech.length > 20) return fail("Say which speech the argument was made in.");
+  return { ok: true, value: { roundId, rowIndex, speech } };
+}
+
+function parseArgumentOutcome(value: unknown): "extended" | "dropped" | null {
+  return value === "extended" || value === "dropped" ? value : null;
+}
+
+/** Validates a wager on a flowed argument. */
+export function parseArgumentWager(payload: unknown): Parsed<ArgumentWager> {
+  if (!isRecord(payload)) return fail("Send the wager as a JSON object.");
+  const ref = parseArgumentRef(payload);
+  if (!ref.ok) return ref;
+  const outcomeId = parseArgumentOutcome(payload.outcomeId);
+  if (!outcomeId) return fail("Pick extended or not extended.");
+  const stake = Number(payload.stake);
+  if (!Number.isInteger(stake) || stake < MIN_STAKE) return fail("Stake a whole number of points, at least 1.");
+  const text = typeof payload.text === "string" ? payload.text.trim().replace(/\s+/g, " ").slice(0, 120) : "";
+  if (!text) return fail("That argument is empty.");
+  return { ok: true, value: { ...ref.value, text, outcomeId, stake } };
+}
+
+/** Validates a settlement of an argument market. */
+export function parseArgumentSettlement(payload: unknown): Parsed<ArgumentSettlement> {
+  if (!isRecord(payload)) return fail("Send the result as a JSON object.");
+  const ref = parseArgumentRef(payload);
+  if (!ref.ok) return ref;
+  const outcomeId = parseArgumentOutcome(payload.outcomeId);
+  if (!outcomeId) return fail("Pick extended or not extended.");
+  return { ok: true, value: { ...ref.value, outcomeId } };
+}
+
+/**
+ * Who may settle an argument market from the flow: a moderator, or anyone who
+ * holds no position in it — the players have points riding on the answer.
+ * The server cannot tell who was in the round, so this is a guard against the
+ * wagerers calling their own bets, not against an outsider.
+ */
+export function canSettleArgument(input: { status: MarketStatus; isStaff: boolean; holdsPosition: boolean }): boolean {
+  return input.status === "open" && (input.isStaff || !input.holdsPosition);
 }

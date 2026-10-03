@@ -53,7 +53,7 @@ function RowThumbnail({
         // 160×90 at full width, the native size of YouTube's `mqdefault`, and
         // a step down on a phone rather than gone: a row without its
         // thumbnail is the hardest kind to pick a video out of.
-        "relative block aspect-video w-28 shrink-0 overflow-hidden rounded border border-border bg-muted sm:w-40",
+        "relative block aspect-video w-24 shrink-0 overflow-hidden rounded border border-border bg-muted sm:w-40",
         isPlaying && "border-primary",
       )}
     >
@@ -98,7 +98,7 @@ function TeamCell({
   onSearch?: (text: string) => void
 }) {
   return (
-    <td className="px-3 py-3 align-top text-sm">
+    <td className="hidden px-3 py-3 align-top text-sm sm:table-cell">
       <div className="truncate">
         {!team ? (
           <span className="text-muted-foreground">—</span>
@@ -219,12 +219,12 @@ export function VideoListRow({
           isHidden && "opacity-50",
         )}
       >
-        <td className="py-3 pr-3 align-top" style={treeIndentStyle(depth)}>
-          <div className="flex items-start gap-3">
+        <td className="py-2 pr-2 align-top sm:py-3 sm:pr-3" style={treeIndentStyle(depth)}>
+          <div className="flex items-start gap-2 sm:gap-3">
             {/* Stands in for a group row's chevron, so titles line up under
                 the round they belong to rather than under its arrow. Lectures
                 are listed flat, with no group rows to line up under. */}
-            {isRoundMode && <span className="w-4 shrink-0" aria-hidden="true" />}
+            {isRoundMode && <span className="hidden w-4 shrink-0 sm:block" aria-hidden="true" />}
             {showThumbnails && (
               <RowThumbnail videoId={videoId} title={title} isPlaying={isPlaying} />
             )}
@@ -285,11 +285,16 @@ export function VideoListRow({
                   </>
                 )}
               </div>
+              {isRoundMode && (affTeam || negTeam) && (
+                <div className="mt-0.5 truncate text-xs text-muted-foreground sm:hidden">
+                  {[affTeam, negTeam].filter(Boolean).join(" vs ")}
+                </div>
+              )}
               {/* The row's controls sit under the title and details rather than
                   in a column of their own, so they never crowd the Date and
                   Views cells and the table stays narrow. */}
               <div
-                className="mt-1.5 flex flex-wrap items-center gap-1"
+                className="mt-1 flex flex-wrap items-center gap-0.5 sm:mt-1.5 sm:gap-1"
                 onClick={(e) => e.stopPropagation()}
               >
                 {stackVideos.length > 1 && (
@@ -407,7 +412,7 @@ export function VideoListRow({
                   uploader's own blurb, clamped to two lines. It is often the
                   only place a lecture says what it actually covers. */}
               {description && (
-                <p className="mt-1 line-clamp-2 text-xs leading-snug text-muted-foreground/90">
+                <p className="mt-0.5 line-clamp-1 text-xs sm:mt-1 sm:line-clamp-2 leading-snug text-muted-foreground/90">
                   {description}
                 </p>
               )}
@@ -422,10 +427,10 @@ export function VideoListRow({
           </>
         )}
 
-        <td className="px-3 py-3 align-top text-sm text-muted-foreground whitespace-nowrap">
+        <td className="hidden px-3 py-3 align-top text-sm text-muted-foreground whitespace-nowrap sm:table-cell">
           {formatVideoDate(date, "full", "—")}
         </td>
-        <td className="px-3 py-3 align-top text-sm text-muted-foreground text-right tabular-nums whitespace-nowrap">
+        <td className="hidden px-3 py-3 align-top text-sm text-muted-foreground text-right tabular-nums whitespace-nowrap sm:table-cell">
           {viewCount.toLocaleString()}
         </td>
 

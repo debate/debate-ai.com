@@ -163,12 +163,12 @@ describe("Latest News", () => {
     expect(hasEmbeddedDock("/practice/forums")).toBe(true);
   });
 
-  it("sit directly above the Tabroom tournaments entry in the Practice section", () => {
+  it("sit directly above the Tabroom tournaments entry in the Prep & Scout section", () => {
     // The order is the requirement, not an accident of how the list was
     // edited: reading the section top to bottom, the community surfaces come
     // before the external tournament tool.
-    const practice = SIDEBAR_TOOL_SECTIONS.find((section) => section.id === "practice");
-    const hrefs = practice?.tools.map((tool) => tool.href) ?? [];
+    const prepScout = SIDEBAR_TOOL_SECTIONS.find((section) => section.id === "prep-scout");
+    const hrefs = prepScout?.tools.map((tool) => tool.href) ?? [];
 
     expect(hrefs.indexOf("/practice/forums")).toBeGreaterThan(-1);
     expect(hrefs.indexOf("/practice/forums")).toBeLessThan(hrefs.indexOf("/practice/tournaments"));
@@ -179,8 +179,8 @@ describe("Tournaments and Tabroom", () => {
   it("are one sidebar entry, not two", () => {
     // Tabroom is framed from a button at the top of the tournaments page, so
     // a row of its own would only be a second way to the same thing.
-    const practice = SIDEBAR_TOOL_SECTIONS.find((section) => section.id === "practice");
-    const hrefs = practice?.tools.map((tool) => tool.href) ?? [];
+    const prepScout = SIDEBAR_TOOL_SECTIONS.find((section) => section.id === "prep-scout");
+    const hrefs = prepScout?.tools.map((tool) => tool.href) ?? [];
 
     expect(hrefs).toContain("/practice/tournaments");
     expect(hrefs).not.toContain("/practice/tabroom");

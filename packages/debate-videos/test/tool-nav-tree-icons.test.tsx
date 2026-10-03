@@ -40,9 +40,6 @@ const { isImageIconSource } = await import("../src/components/category-gallery/i
 const { APP_DOCK_LINKS, SIDEBAR_TOOL_SECTIONS } = await import(
   "../src/components/category-gallery/sidebar-tool-sections"
 );
-const { VIDEO_REFERENCE_LINKS } = await import(
-  "../src/components/category-gallery/sidebar-video-links"
-);
 
 const html = renderToStaticMarkup(<ToolNavTree />);
 
@@ -80,8 +77,7 @@ describe("the rendered tool tree", () => {
     const glyphs = html.match(new RegExp(TREE_ITEM_ICON_CLASS, "g")) ?? [];
     const rows =
       SIDEBAR_TOOL_SECTIONS.length +
-      SIDEBAR_TOOL_SECTIONS.reduce((sum, section) => sum + section.tools.length, 0) +
-      VIDEO_REFERENCE_LINKS.length;
+      SIDEBAR_TOOL_SECTIONS.reduce((sum, section) => sum + section.tools.length, 0);
 
     expect(glyphs).toHaveLength(rows);
     expect(TREE_ITEM_ICON_CLASS).toContain("text-muted-foreground");

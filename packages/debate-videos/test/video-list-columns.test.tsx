@@ -137,8 +137,9 @@ describe("the round list's columns", () => {
   it("shows each side's argument under its team name", () => {
     const html = renderList([identifiableRound]);
     const cells = [...html.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/g)].map(([, cell]) => cell);
-    const aff = cells.find((cell) => cell.includes("Team Aff"));
-    const neg = cells.find((cell) => cell.includes("Team Neg"));
+    // The round cell carries a one-line "Aff vs Neg" for phones; the side cells are the ones that also hold the argument.
+    const aff = cells.find((cell) => cell.includes("Team Aff") && cell.includes("Warming Advantage"));
+    const neg = cells.find((cell) => cell.includes("Team Neg") && cell.includes("Cap K"));
     expect(aff).toContain("Warming Advantage");
     expect(aff!.indexOf("Team Aff")).toBeLessThan(aff!.indexOf("Warming Advantage"));
     expect(neg).toContain("Cap K");
@@ -198,7 +199,7 @@ describe("the round list's tree", () => {
 
   it("sizes the table to its columns rather than the page", () => {
     const html = renderList([identifiableRound]);
-    expect(html).toMatch(/<table[^>]*style="width:\d+px"/);
+    expect(html).toMatch(/<table[^>]*style="--table-width:\d+px"/);
   });
 
   it("slots a round with no tournament among the tournaments by date", () => {
@@ -284,14 +285,16 @@ describe("the lecture list's columns", () => {
 
   it("names the channel and the category on every row, at every width", () => {
     // The two things a lecture listing is scanned by. They head the groups a
-    // lecture sits in and ride on the row's own second tier, and neither is
-    // dropped at a narrow width — the table scrolls sideways instead.
+    // lecture sits in and ride on the row's own second tier, so neither is
+    // dropped at a narrow width — only the Date and Views columns are.
     const html = renderList([lecture]);
     expect(html).toContain("Lecture Channel");
     expect(html).toContain("Critique / Critical Theory");
 
     const headerRow = html.slice(html.indexOf("<thead"), html.indexOf("</thead>"));
-    expect(headerRow).not.toContain("hidden");
+    // Below `sm` only the Library column remains, so the row fits a phone.
+    expect(headerRow).toContain("hidden sm:table-cell");
+    expect(headerRow.slice(0, headerRow.indexOf("Date"))).not.toMatch(/<th[^>]*hidden[^>]*>[^<]*<span[^>]*><button[^>]*>Library/);
   });
 
   it("gives the video row its thumbnail, at every width", () => {
