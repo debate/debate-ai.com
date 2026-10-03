@@ -58,3 +58,17 @@
 3. **Write tests** - aim for &gt;80% coverage on new code
 4. **Follow code style** - run linting/formatting before submitting
 5. **Update docs** - README, API docs, and in-code comments
+
+---
+
+## In Progress
+
+### Account sync for tools — slice 1: pinned debates
+
+- Branch: `claude/gifted-babbage-nao519`
+- [x] Audit which tool stores still live only in `localStorage` (most already sync via `saved_tool_records`, `/api/settings` or dedicated tables)
+- [x] Add `pinnedDebates` to the `TOOL_RECORD_COLLECTIONS` catalog; store pins as `{ id, pinnedAt }` records (legacy `number[]` still read)
+- [x] Vitest: `debate-round/test/pinnedDebates.test.ts`, catalog id-field pin
+- [ ] Follow-up: upgrade legacy pins on read so they sync without a toggle
+- [ ] Follow-up: `speech-doc-links` (`SPEECH_DOC_LINKS_KEY`) is a map, not an array — needs a record-shaped store to join the catalog
+- [ ] Follow-up: tool UI pass (surface favorites/sync status inside tool panels) — needs browser verification and a product decision

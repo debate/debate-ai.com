@@ -1,7 +1,8 @@
 /**
  * @fileoverview The user's pinned ("featured") debates.
  *
- * A pin is a local-only marker on a round id, kept in its own localStorage
+ * A pin is a marker on a round id (synced to the account as the
+ * `pinnedDebates` tool-record collection), kept in its own localStorage
  * key rather than on the `Round` itself: rounds are written wholesale to
  * `rounds` by `useFlowStore().setRounds`, so a `pinned` field on the round
  * object would need re-merging on every write, and a round loaded from the
@@ -22,13 +23,43 @@ export const PINNED_DEBATES_KEY = "pinned-debates"
 /** How many rounds the start screen's featured section shows at most. */
 export const MAX_PINNED_DEBATES = 12
 
-/** The pinned round ids, oldest pin first, ignoring anything unparseable. */
+/**
+ * One pin as stored. The account sync (`debate-data-sync`'s
+ * `pinnedDebates` collection) needs an array of objects keyed by a string
+ * id, so a pin is `{ id: "<round id>", pinnedAt }` rather than a bare
+ * number. `pinnedAt` carries the pin order, because the sync's merge
+ * appends records pulled from another device after the local ones.
+ */
+export interface PinnedDebateRecord {
+  id: string
+  pinnedAt: number
+}
+
+/**
+ * The pinned round ids, oldest pin first, ignoring anything unparseable.
+ * Also reads the legacy `number[]` format (oldest first, array order), which
+ * the next write upgrades in place.
+ */
 export function readPinnedDebateIds(storage: Pick<Storage, "getItem"> = localStorage): number[] {
   try {
     const raw = storage.getItem(PINNED_DEBATES_KEY)
-    const parsed = raw ? JSON.parse(raw) : []
+    const parsed: unknown = raw ? JSON.parse(raw) : []
     if (!Array.isArray(parsed)) return []
-    return parsed.filter((id): id is number => typeof id === "number" && Number.isFinite(id))
+    const pins: { id: number; pinnedAt: number }[] = []
+    parsed.forEach((entry, index) => {
+      if (typeof entry === "number" && Number.isFinite(entry)) {
+        pins.push({ id: entry, pinnedAt: index })
+      } else if (entry && typeof entry === "object") {
+        const { id, pinnedAt } = entry as Partial<PinnedDebateRecord>
+        const numericId = typeof id === "string" && id.trim() !== "" ? Number(id) : NaN
+        if (Number.isFinite(numericId)) {
+          pins.push({ id: numericId, pinnedAt: typeof pinnedAt === "number" ? pinnedAt : index })
+        }
+      }
+    })
+    // Stable sort: ties (e.g. all-legacy entries) keep their array order.
+    pins.sort((a, b) => a.pinnedAt - b.pinnedAt)
+    return pins.map((pin) => pin.id).filter((id, i, all) => all.indexOf(id) === i)
   } catch {
     return []
   }
@@ -37,11 +68,33 @@ export function readPinnedDebateIds(storage: Pick<Storage, "getItem"> = localSto
 /** Persists `ids` (deduplicated, oldest first) and returns what was stored. */
 export function writePinnedDebateIds(
   ids: number[],
-  storage: Pick<Storage, "setItem"> = localStorage,
+  storage: Pick<Storage, "setItem"> & Partial<Pick<Storage, "getItem">> = localStorage,
 ): number[] {
   const unique = ids.filter((id, index) => ids.indexOf(id) === index).slice(-MAX_PINNED_DEBATES)
+  // Keep the original pin time of rounds that stay pinned, so a toggle on
+  // one round doesn't rewrite every other record (and re-sync them all).
+  const existing = new Map<number, number>()
   try {
-    storage.setItem(PINNED_DEBATES_KEY, JSON.stringify(unique))
+    const raw = storage.getItem?.(PINNED_DEBATES_KEY)
+    const parsed: unknown = raw ? JSON.parse(raw) : []
+    if (Array.isArray(parsed)) {
+      for (const entry of parsed) {
+        if (entry && typeof entry === "object") {
+          const { id, pinnedAt } = entry as Partial<PinnedDebateRecord>
+          if (typeof id === "string" && typeof pinnedAt === "number") existing.set(Number(id), pinnedAt)
+        }
+      }
+    }
+  } catch {
+    // Unreadable previous value: every pin is stamped fresh below.
+  }
+  const now = Date.now()
+  const records: PinnedDebateRecord[] = unique.map((id, index) => ({
+    id: String(id),
+    pinnedAt: existing.get(id) ?? now + index,
+  }))
+  try {
+    storage.setItem(PINNED_DEBATES_KEY, JSON.stringify(records))
   } catch (error) {
     console.error("Failed to save pinned debates:", error)
   }

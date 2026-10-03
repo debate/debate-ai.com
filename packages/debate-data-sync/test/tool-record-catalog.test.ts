@@ -43,6 +43,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   judgeProfiles: "judgeId",
   judgeRoundRecords: "id",
   judgeParadigmSelections: "roundId",
+  pinnedDebates: "id",
   flowSummaries: "roundId",
   argumentTrees: "roundId",
   argumentTreeFilters: "roundId",
