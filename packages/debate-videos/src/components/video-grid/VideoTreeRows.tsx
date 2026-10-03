@@ -123,12 +123,12 @@ function GroupRows({
         {/* The matchup columns stay empty on a group row: a tournament has no
             Aff and no Neg. Spanned rather than split so every row in the
             table still has exactly as many cells as there are headers. */}
-        {context.isRoundMode && <td colSpan={2} />}
+        {context.isRoundMode && <td colSpan={2} className="hidden sm:table-cell" />}
 
-        <td className="px-3 py-2 align-middle text-xs text-muted-foreground whitespace-nowrap">
+        <td className="hidden px-3 py-2 align-middle text-xs text-muted-foreground whitespace-nowrap sm:table-cell">
           {group.latestDate ? formatVideoDate(group.latestDate, "full", "—") : "—"}
         </td>
-        <td className="px-3 py-2 align-middle text-xs text-muted-foreground text-right tabular-nums whitespace-nowrap">
+        <td className="hidden px-3 py-2 align-middle text-xs text-muted-foreground text-right tabular-nums whitespace-nowrap sm:table-cell">
           {group.viewCount.toLocaleString()}
         </td>
       </tr>
