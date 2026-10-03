@@ -122,7 +122,7 @@ describe("the surfaces that render them", () => {
 
   it("gives the mobile quick-link tiles one per entry but the reference pair", () => {
     // The tiles are the sidebar's stand-in on `/videos` below `md`. The
-    // reference pair has no tile; it stays reachable from Practice.
+    // reference pair has no tile; it stays reachable from Insights.
     const html = renderToStaticMarkup(createElement(QuickLinksGrid, {}));
     const hrefs = hrefsIn(html);
     const referenceHrefs = new Set(VIDEO_REFERENCE_LINKS.map((link) => link.href));
@@ -134,14 +134,14 @@ describe("the surfaces that render them", () => {
     }
   });
 
-  it("keeps the glossary and statistics in Practice, not as tiles", () => {
-    // Reachable from the tool tree's Practice section; no longer tiles.
-    const practice = hrefsIn(
-      renderToStaticMarkup(<ToolNavTree sectionIds={[PRACTICE_SECTION_ID]} />),
+  it("keeps the glossary and statistics in Insights, not as tiles", () => {
+    // Reachable from the tool tree's Insights section; no longer tiles.
+    const insights = hrefsIn(
+      renderToStaticMarkup(<ToolNavTree sectionIds={[INSIGHTS_SECTION_ID]} />),
     );
     const tiles = hrefsIn(renderToStaticMarkup(createElement(QuickLinksGrid, {})));
     for (const link of VIDEO_REFERENCE_LINKS) {
-      expect(practice).toContain(link.href);
+      expect(insights).toContain(link.href);
       expect(tiles).not.toContain(link.href);
     }
   });
