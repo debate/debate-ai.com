@@ -35,6 +35,7 @@ export const KIND_LABELS: Record<MarketKind, string> = {
   debate: "Debate",
   tournament: "Tournament winner",
   rating: "Rating move",
+  argument: "Argument",
 };
 
 /** One line on how a market settles. */
@@ -46,6 +47,8 @@ export function describeSource(source: MarketSource): string {
       return "Settles itself from the hosted event's final results.";
     case "rating":
       return `Settles itself at close against ${source.name} (${source.school})'s rating of ${source.baseline.toFixed(1)} when it opened.`;
+    case "argument":
+      return "Settled after the later speech by someone in the round who holds no wager on it, or a moderator.";
     default:
       return "Settled by its creator or a moderator.";
   }
