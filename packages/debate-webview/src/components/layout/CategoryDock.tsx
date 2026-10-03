@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState, type MouseEvent as ReactMouseEvent, type ReactNode } from "react"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { Globe, LogIn, LogOut, Monitor, Moon, Palette, Pause, Play, Search, Settings as SettingsIcon, Sun, UserCircle2 } from "lucide-react"
+import { Globe, LogIn, PanelLeft, LogOut, Monitor, Moon, Palette, Pause, Play, Search, Settings as SettingsIcon, Sun, UserCircle2 } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "../../lib/ui/lib/utils"
 import { Dock, DockIcon, DockItem, DockLabel } from "../../lib/ui/layout/dock"
@@ -37,6 +37,8 @@ import { NAV_ITEMS } from "../../lib/nav/dock-nav-items"
 import { dockIdlePrefetchTargets, scheduleDockIdlePrefetch } from "../../lib/nav/dock-idle-prefetch"
 import { accountLabel } from "../../lib/nav/account-label"
 import { useIsFramedDocument } from "../../lib/layout/use-framed-document"
+import { MobileSidebarDrawer } from "./MobileSidebarDrawer"
+import { mobileSidebarKind, OPEN_OWN_SIDEBAR_EVENT } from "../../lib/mobile-sidebar"
 import { openGlobalCommandPalette } from "./GlobalCommandPalette"
 import { IconSettings } from "../../lib/ui/icons"
 
@@ -519,6 +521,7 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
   // Owned here rather than inside the menu: the dropdown unmounts its content
   // when it closes, which would tear the dialog down with it.
   const [loginOpen, setLoginOpen] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const { isAuthenticated } = useSession()
   // Called for their app-wide side effects, not for anything this component
   // renders: `useAccountNotifications` is what toasts a notification that
@@ -601,6 +604,17 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [navigate])
 
+  // The mobile dock's first button. A view that draws its own sidebar
+  // (`/debate`) is asked to open it; every other view gets the drawer, whose
+  // content follows the route.
+  const handleSidebarToggle = () => {
+    if (mobileSidebarKind(pathname) === "own") {
+      window.dispatchEvent(new Event(OPEN_OWN_SIDEBAR_EVENT))
+      return
+    }
+    setSidebarOpen((open) => !open)
+  }
+
   const handleDockPlayPause = () => {
     sendYouTubeCommand(isPlaying ? "pauseVideo" : "playVideo")
     setIsPlaying(!isPlaying)
@@ -665,6 +679,17 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
       <div data-app-chrome className="md:hidden fixed bottom-0 left-0 right-0 z-50 pb-safe">
         <DropdownMenu>
           <Dock direction="middle" className="h-[52px] shrink-0 !mt-0 mx-auto w-max mb-2 !gap-1 !p-1">
+            <DockItem
+              onClick={handleSidebarToggle}
+              aria-label="Sidebar"
+              aria-expanded={sidebarOpen}
+              className="flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer bg-gray-200 dark:bg-neutral-800"
+            >
+              <DockLabel>Sidebar</DockLabel>
+              <DockIcon>
+                <PanelLeft className="w-5 h-5" />
+              </DockIcon>
+            </DockItem>
             {mobileItems.map((item) => {
               if (item.href === NAV_MENU_TRIGGER_HREF) {
                 return <PracticeVsAiTrigger key={item.key} item={item} side="top" />
@@ -717,6 +742,8 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
           <SettingsMenu side="top" onSignIn={() => setLoginOpen(true)} />
         </DropdownMenu>
       </div>
+
+      <MobileSidebarDrawer open={sidebarOpen} onOpenChange={setSidebarOpen} />
 
       {/* One dialog for both docks — only one is visible at a time. */}
       <LoginDialog open={loginOpen} onOpenChange={setLoginOpen} />

@@ -412,6 +412,16 @@ const handleEbbToolAction = (action: EbbFlowToolAction) => {
   /** Content of the right split pane's speech document. */
   const rightContent = currentFlow?.speechDocs?.[rightSpeech] || ""
 
+  // The app dock's sidebar button (mobile) asks whichever route owns its
+  // sidebar to open it; this workspace's is the Sheet below.
+  const { isMobile, setMobileMenuOpen } = state
+  useEffect(() => {
+    if (!isMobile) return
+    const open = () => setMobileMenuOpen(true)
+    window.addEventListener("debate:open-sidebar", open)
+    return () => window.removeEventListener("debate:open-sidebar", open)
+  }, [isMobile, setMobileMenuOpen])
+
   // Both panes are only shown side-by-side on desktop, outside single-pane
   // mode — every other layout collapses to just the left speech, so that's
   // the one whose timer/controls bar belongs in the sidebar.

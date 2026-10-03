@@ -11,7 +11,7 @@
  */
 
 import { useMemo, useState, type ReactNode } from "react";
-import { Gavel, Search, Sparkles, Swords } from "lucide-react";
+import { Gavel, Sparkles, Swords } from "lucide-react";
 import { CommentAvatar } from "@debate/comments";
 
 import { cn } from "../../lib/ui/lib/utils";
@@ -56,7 +56,6 @@ function Tag({ children, strong = false }: { children: ReactNode; strong?: boole
 export function VolunteerBoard({ volunteers, viewerPreferences, pendingOpponentIds, onChallenge }: VolunteerBoardProps) {
   const [role, setRole] = useState<RoleFilter>("debaters");
   const [format, setFormat] = useState<PracticeFormat | "any">("any");
-  const [query, setQuery] = useState("");
   const [challenging, setChallenging] = useState<string | null>(null);
   const [sentTo, setSentTo] = useState<string | null>(null);
 
@@ -64,14 +63,12 @@ export function VolunteerBoard({ volunteers, viewerPreferences, pendingOpponentI
   const debaterCount = volunteers.filter((volunteer) => volunteer.asCompetitor).length;
 
   const ranked = useMemo(() => {
-    const needle = query.trim().toLowerCase();
     return rankVolunteers(viewerPreferences, volunteers).filter(({ volunteer }) => {
       if (role === "debaters" ? !volunteer.asCompetitor : !volunteer.asJudge) return false;
       if (format !== "any" && volunteer.formats.length > 0 && !volunteer.formats.includes(format)) return false;
-      if (needle && !volunteer.person.name.toLowerCase().includes(needle)) return false;
       return true;
     });
-  }, [viewerPreferences, volunteers, role, format, query]);
+  }, [viewerPreferences, volunteers, role, format]);
 
   return (
     <div className="flex flex-col gap-3">
@@ -117,19 +114,6 @@ export function VolunteerBoard({ volunteers, viewerPreferences, pendingOpponentI
           ))}
         </select>
 
-        <div className="relative ml-auto min-w-[10rem] flex-1 sm:max-w-xs">
-          <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
-          <label className="sr-only" htmlFor="practice-board-search">
-            Search by name
-          </label>
-          <input
-            id="practice-board-search"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search by name"
-            className="h-8 w-full rounded-full border border-border bg-background pl-8 pr-3 text-xs text-foreground outline-none placeholder:text-muted-foreground focus-visible:border-ring"
-          />
-        </div>
       </div>
 
       {ranked.length === 0 ? (

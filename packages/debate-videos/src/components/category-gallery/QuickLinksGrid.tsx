@@ -11,10 +11,10 @@ import Image, { StaticImageData } from "next/image";
 import { GlowingEffect } from "../../ui/effects/glowing-effect";
 import { cn } from "../../ui/lib/utils";
 import { History, Clapperboard, type LucideIcon } from "lucide-react";
-import { IconBook, IconTrophyGoat, IconLeaderboard, IconTrophy, IconRoundsYoutube, IconLectures } from "../../ui/icons";
+import { IconTrophyGoat, IconLeaderboard, IconTrophy, IconLectures } from "../../ui/icons";
 import { isImageIcon } from "./tree-item-icon";
 import { formatCount } from "./format-count";
-import { SIDEBAR_VIDEO_LINKS, type SidebarVideoLink } from "./sidebar-video-links";
+import { SIDEBAR_VIDEO_LINKS, VIDEO_REFERENCE_LINKS, type SidebarVideoLink } from "./sidebar-video-links";
 
 interface QuickLinkStyle {
   icon?: React.ReactNode;
@@ -83,16 +83,6 @@ const QUICK_LINK_STYLES: Record<string, QuickLinkStyle> = {
     gradient: "from-cyan-500/20 via-sky-500/10 to-transparent",
     iconBg: "bg-cyan-500/15 ring-1 ring-cyan-500/30",
   },
-  dictionary: {
-    logo: IconBook,
-    gradient: "from-indigo-500/20 via-blue-500/10 to-transparent",
-    iconBg: "bg-indigo-500/15 ring-1 ring-indigo-500/30",
-  },
-  statistics: {
-    logo: IconRoundsYoutube,
-    gradient: "from-rose-500/20 via-pink-500/10 to-transparent",
-    iconBg: "bg-rose-500/15 ring-1 ring-rose-500/30",
-  },
 };
 
 /**
@@ -111,11 +101,13 @@ const QUICK_LINK_ORDER = [
   "history",
   "topPicks",
   "favorites",
-  "dictionary",
-  "statistics",
 ];
 
-const QUICK_LINKS: QuickLink[] = [...SIDEBAR_VIDEO_LINKS]
+/** The glossary/statistics pair is reached from the tool tree's Practice
+ *  section, so it gets no tile. */
+const REFERENCE_IDS = new Set(VIDEO_REFERENCE_LINKS.map((link) => link.id));
+
+const QUICK_LINKS: QuickLink[] = SIDEBAR_VIDEO_LINKS.filter((link) => !REFERENCE_IDS.has(link.id))
   .sort((a, b) => {
     const rank = (id: string) => {
       const index = QUICK_LINK_ORDER.indexOf(id);

@@ -295,7 +295,8 @@ export async function insertMarket(
   db: Db,
   input: {
     id: string;
-    creatorId: string;
+    /** `null` for a market the site opens itself. */
+    creatorId: string | null;
     kind: PredictionMarket["kind"];
     title: string;
     description: string;

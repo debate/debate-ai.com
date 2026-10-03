@@ -39,8 +39,11 @@ export const MAX_OPEN_MARKETS_PER_CREATOR = 10;
  * - `tournament` — who wins a tournament (an event's champion).
  * - `rating` — whether a team's Glicko rating is higher at close than when
  *   the market opened.
+ * - `argument` — whether one flowed argument gets extended by its own side in
+ *   a later speech. Opened by the round workspace, never by the new-market
+ *   form, so it is not in {@link MARKET_KINDS}.
  */
-export type MarketKind = "debate" | "tournament" | "rating";
+export type MarketKind = "debate" | "tournament" | "rating" | "argument";
 
 export const MARKET_KINDS: readonly MarketKind[] = ["debate", "tournament", "rating"];
 
@@ -72,7 +75,41 @@ export type MarketSource =
       school: string;
       /** The site-scale rating when the market opened. */
       baseline: number;
+    }
+  | {
+      type: "argument";
+      /** The round's id on the flow (the same id `savedRounds` use). */
+      roundId: string;
+      /** The flow row the argument sits on. */
+      rowIndex: number;
+      /** The speech it was introduced in, e.g. `1NC`. */
+      speech: string;
     };
+
+/** The two outcomes of an argument market. */
+export const ARGUMENT_OUTCOMES: readonly MarketOutcome[] = [
+  { id: "extended", label: "Extended" },
+  { id: "dropped", label: "Not extended" },
+];
+
+/** A wager on one flowed argument: `POST /api/predictions/arguments`. */
+export interface ArgumentWager {
+  roundId: string;
+  rowIndex: number;
+  speech: string;
+  /** The argument as flowed, for the market's title. */
+  text: string;
+  outcomeId: "extended" | "dropped";
+  stake: number;
+}
+
+/** Settling an argument market from the flow: `POST /api/predictions/arguments/settle`. */
+export interface ArgumentSettlement {
+  roundId: string;
+  rowIndex: number;
+  speech: string;
+  outcomeId: "extended" | "dropped";
+}
 
 /** One way a market can resolve. */
 export interface MarketOutcome {

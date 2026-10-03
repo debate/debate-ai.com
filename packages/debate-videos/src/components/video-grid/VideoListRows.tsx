@@ -301,16 +301,26 @@ export function VideoListRows({
             wide screen does not pull a row's date and views far from its
             title. */}
         <table
-          className="table-fixed border-collapse text-sm"
-          style={{ width: columns.reduce((total, column) => total + widths[column.key], 0) }}
+          // On a phone the table is the screen's width with only the tree
+          // column; from `sm` up it is sized to its columns as before.
+          className="w-full table-fixed border-collapse text-sm sm:w-[var(--table-width)]"
+          style={
+            {
+              "--table-width": `${columns.reduce((total, column) => total + widths[column.key], 0)}px`,
+            } as React.CSSProperties
+          }
         >
           <thead>
             <tr className="border-b border-border bg-muted/50 text-left text-xs font-medium text-muted-foreground">
               {columns.map((column) => (
                 <th
                   key={column.key}
-                  style={{ width: widths[column.key], minWidth: widths[column.key] }}
-                  className={cn("relative px-3 py-2 select-none", column.headerClassName)}
+                  style={{ "--col-width": `${widths[column.key]}px` } as React.CSSProperties}
+                  className={cn(
+                    "relative px-3 py-2 select-none sm:w-[var(--col-width)] sm:min-w-[var(--col-width)]",
+                    column.key !== "tree" && "hidden sm:table-cell",
+                    column.headerClassName,
+                  )}
                 >
                   <span className="flex items-center gap-1">
                     {column.sortValue ? (

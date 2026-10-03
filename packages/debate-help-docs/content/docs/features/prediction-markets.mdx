@@ -36,7 +36,7 @@ value outside the site.
   - **Rating move**: pick a team from the Glicko rankings. The market asks
     whether its rating is higher at close than it is now.
 - **Settled**: recent results, with what you got back.
-- **Top forecasters**: the ten biggest balances.
+- **Top forecasters**: the ten biggest balances, shown as ranks and points only (no names; your own row reads "You").
 
 ## How it works
 
@@ -108,3 +108,7 @@ the deploy's `migrate-d1.ts` applies.
 - Auto-settlement waits for someone to open the markets page; there's no
   scheduled job.
 - A wallet never refills. Someone who loses every point can't bet again.
+
+## Markets the site opens
+
+Every Monday the site opens a rating market ("Will … gain rating?") on the top five teams in the Lincoln-Douglas and Public Forum rankings, each settling after 28 days. It also opens "Who wins …?" markets for the season's biggest tournaments (Florida Blue Key, Glenbrooks, Barkley Forum, Harvard and Cal), listing the current top eight plus "Someone else". Betting closes when the tournament starts and a moderator settles it from the final results. A team or tournament that already has an open market isn't opened twice.

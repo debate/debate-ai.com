@@ -221,7 +221,7 @@ export function PredictionMarketsPanel({ className }: { className?: string }) {
                 >
                   <span className="truncate">
                     <span className="mr-2 tabular-nums text-muted-foreground">{index + 1}.</span>
-                    {leader.name}
+                    {leader.id === viewer?.id ? "You" : null}
                   </span>
                   <span className="shrink-0 tabular-nums">{formatPoints(leader.balance)}</span>
                 </li>

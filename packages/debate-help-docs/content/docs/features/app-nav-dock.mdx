@@ -33,6 +33,22 @@ next to a **Docs** row for the help site. Holding the dock to five
 destinations is what lets it fit inside the sidebar column it is hosted in —
 see below.
 
+## The sidebar button (mobile)
+
+The sidebar is `md+` only, so the mobile bottom dock starts with a **Sidebar**
+button. It opens a left drawer (`MobileSidebarDrawer`) whose content follows
+the view in the centre (`mobileSidebarKind`, `lib/mobile-sidebar.ts`):
+
+| View | Drawer |
+| --- | --- |
+| Video library (`/videos`, `/lectures`, glossary, rankings, statistics) | Video links above the tool tree |
+| `/research/cards` | The document panels alone |
+| `/reason-editor` | Document panels above the tool tree |
+| `/debate` | Its own flows/rounds sidebar — the button dispatches `debate:open-sidebar` and the workspace opens its own sheet |
+| Everything else | The tool tree and footer |
+
+The drawer closes on navigation.
+
 ## Two menus, not one
 
 The dock carries two independent dropdowns, each with its own `DropdownMenu`
@@ -266,16 +282,14 @@ full-color artwork sitting among the grey glyphs — and now match the rest.
   longer a dock destination but is still a sidebar one, and the prefix
   matching (including `/docs` not matching `/doc`).
 - `packages/debate-videos/test/sidebar-video-links.test.tsx` — that the tree
-  and the mobile quick-link tiles both render every `SIDEBAR_VIDEO_LINKS`
-  entry, glossary and rankings included.
+  renders every `SIDEBAR_VIDEO_LINKS` entry and the mobile quick-link tiles
+  render all but the glossary/statistics pair, which has no tile and is
+  reached from the Practice section.
 - `packages/debate-videos/test/lectures-sidebar-docs-slot.test.tsx` — that
   `/videos`' `md:hidden` block carries the tool sections, collapsed.
 - `packages/debate-videos/test/lectures-sidebar-shell.test.tsx` — that the
   rankings and glossary branches render the dock, the nav tree and the
   footer rather than a bare page, on a phone as well as a desktop.
-- `packages/debate-videos/test/videos-search-and-layout.test.tsx` — that the
-  search controls render once, over the results rather than in the sidebar,
-  and that results open as rows.
 - `apps/debate-ai.com/lib/nav/__tests__/dock-menu-sections.test.ts` — that
   every sidebar destination (videos, tool sections, footer links) is
   reachable from the Settings menu, which is the whole nav below `md`, that

@@ -53,7 +53,10 @@ My Favorites (`/videos/favorites`) lists starred rounds and lectures together,
 in separate Rounds and Lectures tables. It shares the lectures view internally,
 so `isLecturesOnlyListing()` in `lectureRouteConfig.ts` is what keeps the
 "All Lectures" lectures-only filter off it; only `/videos/favoritelectures`
-narrows favourites to lectures.
+narrows favourites to lectures. No other library filter applies there either:
+`favoritesFeedFilters()` in `useVideoFeed.ts` drops the style, season,
+category, top-picks, search and hidden-video filters, so every starred video
+is listed.
 
 Signed out, they save in that browser alone, and favouriting a video says so
 once — with an offer to sign in and keep the collection. Declining is fine: the
