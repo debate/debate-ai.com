@@ -81,6 +81,27 @@ export interface VideoFeedFilters {
   enabled?: boolean;
 }
 
+/**
+ * The feed My Favorites lists: every starred video, whatever the library's
+ * style, season, category, top-picks, search or hidden-video filters are set
+ * to. Only the order and the paging options carry over, and `lecturesOnly`,
+ * which is set solely by the explicit lectures-only favorites route.
+ *
+ * @param filters - The page's ordinary filters, with `ids` set to the favourites.
+ * @returns Filters that narrow to the favourites alone.
+ */
+export function favoritesFeedFilters(filters: VideoFeedFilters): VideoFeedFilters {
+  return {
+    source: "all",
+    lecturesOnly: filters.lecturesOnly,
+    ids: filters.ids,
+    sort: filters.sort,
+    pageSize: filters.pageSize,
+    withFacets: filters.withFacets,
+    enabled: filters.enabled,
+  };
+}
+
 /** Everything a video grid needs to render and page through a feed. */
 export interface VideoFeed {
   /** Videos loaded so far, in server order. */
