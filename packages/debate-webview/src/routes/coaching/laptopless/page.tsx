@@ -25,7 +25,7 @@ const GEAR: {
     href: "https://amzn.to/4gTPozg",
     image: "https://m.media-amazon.com/images/I/71IfCIjQxtL._AC_SL500_.jpg",
     blurb:
-      "A MagSafe-compatible gooseneck mount that hangs around your neck and holds the phone at eye level. Speak off your speech doc with both hands free for gestures and pen-and-paper flowing, or turn it around to record practice speeches from your own point of view.",
+      "A MagSafe-compatible gooseneck mount that hangs around your neck and holds the phone at eye level. It leaves both hands free for gestures or flowing on paper, and you can turn it around to record practice speeches.",
   },
   {
     name: "Arteck Universal Backlit Bluetooth Keyboard with Touchpad",
@@ -33,7 +33,7 @@ const GEAR: {
     href: "https://amzn.to/4z1Isay",
     image: "https://i.imgur.com/EKNFuEf.jpeg",
     blurb:
-      "7-color backlit Bluetooth keyboard with a built-in multi-touch trackpad and USB-C charging. Pairs straight to your phone over Bluetooth — no dongle needed — and the per-key backlight keeps every key visible in any lighting. The trackpad means you can navigate the round workspace without ever touching the screen.",
+      "A backlit Bluetooth keyboard with a built-in trackpad and USB-C charging. It pairs directly with your phone, no dongle needed, and the trackpad lets you move around the round workspace without touching the screen.",
   },
   {
     name: "LISEN 60W USB-C to USB-C Cable (5-Pack)",
@@ -41,7 +41,7 @@ const GEAR: {
     href: "https://amzn.to/4d4CMEu",
     image: "https://i.imgur.com/NloJILx.jpeg",
     blurb:
-      "Sixty-watt Power Delivery cables that top up a phone or the Bluetooth keyboard in well under an hour — five cables in lengths from 3.3 ft to 10 ft so you can always reach an outlet or your phone while mounted. Braided 48-strand cotton, 480 Mbps data, and metal-reinforced ports so a tangle or yank won't kill them mid-round.",
+      "A five-pack of 60W USB-C cables in lengths from 3.3 ft to 10 ft, enough to charge a phone and keyboard and still reach an outlet while the phone is mounted. The braided design holds up to being packed and unpacked.",
   },
   {
     name: "Anker 20,000mAh Power Bank",
@@ -49,7 +49,7 @@ const GEAR: {
     href: "https://amzn.to/4ryVFW3",
     image: "https://i.imgur.com/0H58u2z.jpeg",
     blurb:
-      "A 20,000 mAh USB-C power bank that recharges a phone two or three times over and still fits in a pocket. With PowerIQ and a USB-C port it tops up the phone and the Bluetooth keyboard from one brick, so a dead battery mid-tournament is never the reason you lose a round.",
+      "A 20,000 mAh USB-C power bank that can recharge a phone two or three times and still fits in a bag pocket. It can charge both the phone and the keyboard, which helps on long tournament days.",
   },
   {
     name: "VITURE Beast XR/AR Glasses (174\" Virtual Display)",
@@ -57,7 +57,7 @@ const GEAR: {
     href: "https://amzn.to/4rA4rmp",
     image: "https://i.imgur.com/I4h4WFC.jpeg",
     blurb:
-      "The premium move: a 174″ virtual monitor that hovers in space, driven by your phone over USB-C. At 88 g it's lighter than most headphones, with 1250-nit Sony Micro-OLED, 120 Hz, and 9-level dimming so you can flow or review evidence in daylight. If you want one screen larger than any laptop but still pocket the phone between rounds, these are it.",
+      "An optional upgrade: AR glasses that show a large virtual screen driven by your phone over USB-C. They weigh 88 g and have a bright 120 Hz display, so you can flow or review evidence on a bigger screen and still pocket the phone between rounds.",
     extras: [
       {
         label: "Browse all XR glasses on Amazon",
@@ -73,7 +73,7 @@ const GEAR: {
       "https://www.ebay.com/sch/i.html?_oaa=1&_dcat=9355&_udlo=70&_fsrp=1&rt=nc&_from=R40&_nkw=Samsung+s20&_sacat=0&Model=Samsung%2520Galaxy%2520S20%252B%7CSamsung%2520Galaxy%2520S20%252B%25205G%7CSamsung%2520Galaxy%2520S21%252B%7CSamsung%2520Galaxy%2520S21%2520FE%25205G%7CSamsung%2520Galaxy%2520S21%2520Ultra&_udhi=130",
     image: "https://i.imgur.com/lHC64M8.jpeg",
     blurb:
-      "Everything on this page runs in the phone browser, so the only real hardware decision is which Samsung to carry. The S20+ gives you a 120 Hz AMOLED display and a battery that lasts a full tournament day, and it folds into the same flow you'd use on a laptop. Buy a fresh unit on Amazon, or save substantially on a checked-returns S20 on eBay — either one is plenty of horsepower for prep, flow, and practice rounds on the road.",
+      "Everything on this page runs in a phone browser, so any recent phone will do. The Galaxy S20 has a 120 Hz AMOLED display and enough battery for a tournament day. You can buy one new on Amazon or look for a used one on eBay to save money.",
   },
   {
     name: "Visible Unlimited Phone Plan",
@@ -83,15 +83,7 @@ const GEAR: {
     image: "https://s7d1.scene7.com/is/content/tracfone/New-Save6-Desktop-672x448",
     video: "https://i.imgur.com/xNqdj3r.mp4",
     blurb:
-      "Unlimited 5G data, talk, and text on Verizon's network — $25/month with taxes included ($35/month for Visible+ on Ultra Wideband, with global coverage). eSIM activation ships overnight, and friend code 69PFJG2 knocks $20 off a service payment, so the phone above can be live before you leave the airport.",
-  },
-  {
-    name: "MATEIN 15.6\" Travel Laptop Backpack (Personal-Item Size)",
-    role: "Carry all your gear",
-    href: "https://amzn.to/4yiIpal",
-    image: "https://i.imgur.com/hzPqSQL.jpeg",
-    blurb:
-      "A 15.6\" daypack that counts as a personal item — slides under the seat in front, holds the phone, keyboard, cables, and AR glasses with room left over. Water-resistant shell, a hidden anti-theft pocket for cards, and a ventilated back panel so it doesn't sweat through a round. At ~$20 it's the kind of bag you stop noticing you're carrying.",
+      "Unlimited data, talk, and text on Verizon's network, starting at $25/month with taxes included. If you're setting up a phone just for debate, this is one option for service. Our referral code 69PFJG2 takes $20 off a service payment.",
   },
 ]
 
