@@ -55,3 +55,17 @@ icon is unaffected and always saves, since that's an explicit user action.
 This closes the "no dirty tracking" half of the gap this section used to
 record (#810); the hash cache only lives for the current page session, so a
 fresh page load re-saves everything once, same as before.
+
+## Pinned debates follow your account
+
+The debate start screen's "Featured" section (rounds pinned from the history
+dialog) is no longer per-browser. Pins are stored as `{ id, roundId, pinnedAt }`
+records under `pinned-debates` and sync through the generic tool-record sync
+(`pinnedDebates` in `debate-data-sync`'s `TOOL_RECORD_COLLECTIONS`, rows in
+`saved_tool_records`). A pin names a round by `Round.id`, which is also the
+round's `saved_rounds` client id, so it points at the same round on every
+device — but the round itself still has to be saved to the account (or exist
+locally) to show up in "Featured"; a pin whose round isn't on this device is
+skipped until it is. Browsers that pinned before this change stored a bare
+`number[]`; that is still read, and rewritten as records on the next pin or
+unpin. Pins are capped at 12, oldest dropped first, ordered by `pinnedAt`.

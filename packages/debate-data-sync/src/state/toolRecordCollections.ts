@@ -209,6 +209,19 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     section: "Flowing and writing",
   },
   {
+    key: "pinnedDebates",
+    storageKey: "pinned-debates",
+    idField: "id",
+    // The debate start screen's "Featured" rounds
+    // (`@debate/round/src/state/pinnedDebates.ts`): one `{ id, roundId,
+    // pinnedAt }` record per pin, `id` being `String(roundId)`. `Round.id` is
+    // also the `saved_rounds` client id, so a pin names the same round on
+    // every device.
+    label: "Pinned Debates",
+    href: "/debate",
+    section: "Flowing and writing",
+  },
+  {
     key: "prepNotes",
     storageKey: "prepNotes",
     idField: "id",
