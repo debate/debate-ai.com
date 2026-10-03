@@ -58,3 +58,17 @@
 3. **Write tests** - aim for &gt;80% coverage on new code
 4. **Follow code style** - run linting/formatting before submitting
 5. **Update docs** - README, API docs, and in-code comments
+---
+
+## In Progress
+
+### Account-linked pinned debates (slice of "integrate tools + user settings + SQL-linked flows/docs/debates")
+
+- **Branch**: `claude/gifted-babbage-a28l34`
+- **Status**: Settings (`user_settings`), flows (`saved_flows`), rounds (`saved_rounds`), documents (`documents`), AI debates (`practice_vs_ai_debates`) and ~60 tool stores (`saved_tool_records`) already persist to D1 per user. The audit found the **pinned debates** list was still browser-only.
+- [x] Store pins as `{ roundId, pinnedAt }` records (legacy `number[]` upgraded on read)
+- [x] Add `pinnedDebates` to the tool-record sync catalog
+- [x] Vitest coverage (`debate-round/test/pinnedDebates.test.ts`, catalog test)
+- [x] Document in `features/user-settings.mdx`
+- [ ] Follow-up: `speech-doc-links`, `ebb-dev-*` and `REASON-*` stores are still browser-only
+- [ ] Follow-up: surface a "Saved to account" indicator on the flow tabs / start screen
