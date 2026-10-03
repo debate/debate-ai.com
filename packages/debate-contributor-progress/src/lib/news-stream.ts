@@ -17,7 +17,7 @@
  * manually curated — nothing detects a newly added route or
  * `feature-catalog.ts` entry and drafts a post for it" Known gap: rather than
  * requiring a hand-written `PRODUCT_NEWS` entry before a tool can appear in
- * the feed at all, it walks the `APP_FEATURES` catalog (the same
+ * the feed at all, it walks the `APP_FEATURES` catalog it is handed (the same
  * ~50-surface list the `/practice/features` and `/tools` pages render from) and
  * synthesizes a generic "Tool spotlight" post for every entry whose `href`
  * no hand-curated `PRODUCT_NEWS` item already covers — so a debater browsing
@@ -27,7 +27,18 @@
  * @module lib/news-stream
  */
 
-import { APP_FEATURES, type FeatureEntry } from "@debate/feature-catalog/src/feature-catalog";
+/**
+ * The slice of a feature-catalog entry (`@debate/webview`'s `APP_FEATURES`)
+ * that `buildAutoFeatureNews` reads. Declared structurally so this package
+ * needn't import the catalog — `@debate/webview` depends on this package, so
+ * the catalog's host reaches it through `NewsStreamPanel`'s `extraItems`.
+ */
+export interface AutoFeatureSource {
+  id: string;
+  title: string;
+  description: string;
+  href: string;
+}
 
 /** Which of the feed's sources a `NewsItem` came from. */
 export type NewsCategory = "product" | "daily-best-card" | "awards" | "community";
@@ -164,12 +175,12 @@ export function sortNewsFeed(items: NewsItem[]): NewsItem[] {
  * ships, its auto-generated spotlight stops being generated (there is
  * nothing to "clear" — it was never persisted).
  *
- * @param features - Catalog entries to check; defaults to the full `APP_FEATURES` list.
+ * @param features - Catalog entries to check — the host passes `@debate/webview`'s `APP_FEATURES`.
  * @param announced - Already hand-curated news items; defaults to `PRODUCT_NEWS`.
  * @returns One `"product"`-category `NewsItem` per uncovered entry.
  */
 export function buildAutoFeatureNews(
-  features: FeatureEntry[] = APP_FEATURES,
+  features: AutoFeatureSource[],
   announced: NewsItem[] = PRODUCT_NEWS,
 ): NewsItem[] {
   const announcedHrefs = new Set(

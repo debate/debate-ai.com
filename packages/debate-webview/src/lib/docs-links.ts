@@ -24,7 +24,7 @@
  * @module lib/docs-links
  */
 
-import { APP_FEATURES } from "@debate/feature-catalog/src/feature-catalog"
+import { APP_FEATURES } from "./feature-catalog"
 
 /**
  * Origin of a separately-deployed Fumadocs site, without a trailing slash.
@@ -80,7 +80,7 @@ export function guideDocsUrl(guide: DocsGuide): string {
 
 /**
  * URL of the feature doc for an in-app route, if the feature catalog
- * (`debate-feature-catalog`) records one for it.
+ * (`lib/feature-catalog.ts`) records one for it.
  *
  * @param href - In-app route, e.g. `"/practice/drills"`.
  */

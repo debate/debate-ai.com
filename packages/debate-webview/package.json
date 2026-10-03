@@ -45,7 +45,6 @@
     "@debate/community": "workspace:*",
     "@debate/data-sync": "workspace:*",
     "@debate/editor": "workspace:*",
-    "@debate/feature-catalog": "workspace:*",
     "@debate/practice-rounds": "workspace:*",
     "@debate/practice-vs-ai": "workspace:*",
     "@debate/predictions": "workspace:*",

@@ -204,7 +204,6 @@ export default defineConfig({
         appDir,
         "../../packages/debate-editor/src/editor/card-cutter-stub.ts",
       ),
-      "@debate/feature-catalog/src": path.resolve(appDir, "../../packages/debate-feature-catalog/src"),
     },
     dedupe: [
       "react",

@@ -7,7 +7,7 @@
  * palette (`GlobalCommandPalette.tsx` imports it directly). Two catalogs
  * still can't import it and so are kept in sync by hand instead:
  *
- * - `debate-feature-catalog`'s `APP_FEATURES` — a different page
+ * - `debate-webview`'s `APP_FEATURES` — a different page
  *   (`/practice/features`) with its own curated, differently-voiced copy per entry,
  *   grouped into a different category scheme. Recombining the two into one
  *   data source would mean either forcing `/practice/features`'s marketing copy to
@@ -44,7 +44,7 @@ import { fileURLToPath } from "node:url"
 import { describe, expect, it } from "vitest"
 
 import { ALL_TOOLS } from "@debate/webview/routes/tools/tool-groups"
-import { APP_FEATURES } from "@debate/feature-catalog/src/feature-catalog"
+import { APP_FEATURES } from "@debate/webview/lib/feature-catalog"
 import { WORKSPACE_LINKS } from "../../../../packages/debate-editor/src/editor/workspace-links"
 
 /**

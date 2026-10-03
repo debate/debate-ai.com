@@ -62,15 +62,6 @@ and outside the bun workspace (it is a Vite app with its own toolchain).
 import/export and native `.cmir` format re-exported by path, plus `importDocx(file)`,
 `exportDocxBlob(doc)`, `outlineOf(doc)` and `cardsOf(doc)`.
 
-## debate-feature-catalog
-
-Canonical `APP_FEATURES` catalog for the `/practice/features` page — data plus
-section/search/doc-url helpers, with no dependencies of its own (a leaf
-package, like `debate-data-sync`). Depended on by the app's live `/practice/features`
-page (`apps/debate-ai.com/lib/ui/features/FeaturesPanel`) and
-`debate-contributor-progress`'s News Stream "Tool spotlight" posts, so a feature
-only needs to be registered once instead of hand-synced across forks.
-
 ## debate-flow
 
 Package name `debate-flow-ebb`. The `ebb` local-first, keyboard-first flow editor, ported

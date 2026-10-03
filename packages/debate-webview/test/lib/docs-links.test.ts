@@ -16,7 +16,7 @@ import {
   featureDocsUrlForRoute,
   guideDocsUrl,
 } from "../../src/lib/docs-links"
-import { APP_FEATURES, featureDocUrl } from "@debate/feature-catalog/src/feature-catalog"
+import { APP_FEATURES, featureDocUrl } from "../../src/lib/feature-catalog"
 
 describe("docsPageUrl", () => {
   it("resolves a page to a same-origin path under /docs", () => {

@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 
 import { FeaturesPanel } from "../../../src/lib/ui/features/FeaturesPanel";
 import { SpotlightCard, cardHueShift } from "../../../src/lib/ui/features/effects";
-import { APP_FEATURES } from "@debate/feature-catalog/src/feature-catalog";
+import { APP_FEATURES } from "../../../src/lib/feature-catalog";
 import {
   README_BADGE_ROWS,
   README_BANNER,

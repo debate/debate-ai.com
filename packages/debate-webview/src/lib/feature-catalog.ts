@@ -16,12 +16,11 @@
  * so this catalog reads the same as the page a reader lands on after
  * clicking through.
  *
- * This is the single canonical copy: `apps/debate-ai.com`'s live `/practice/features`
- * page (`lib/ui/features/FeaturesPanel`) and
- * `packages/debate-contributor-progress`'s News Stream "Tool spotlight" posts
- * both import from here (a leaf package with no dependency of its own, the
- * same shape as `debate-data-sync`) instead of each keeping a hand-synced
- * fork — see `features-page.mdx`'s "One shared catalog" section.
+ * This is the single canonical copy: the live `/practice/features` page
+ * (`lib/ui/features/FeaturesPanel`) and the News Stream's "Tool spotlight"
+ * posts (`routes/news/NewsPageContent`, via `debate-contributor-progress`'s
+ * `buildAutoFeatureNews`) both read from here instead of each keeping a
+ * hand-synced fork.
  *
  * Like other pure catalog/directory modules in the app, this module is pure: it has no store of its own, because every entry links to a
  * surface that already persists (or doesn't need to persist) its own state.

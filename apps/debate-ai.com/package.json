@@ -69,7 +69,6 @@
     "@debate/community": "workspace:*",
     "@debate/data-sync": "workspace:*",
     "@debate/editor": "workspace:*",
-    "@debate/feature-catalog": "workspace:*",
     "@debate/flow-ebb": "workspace:*",
     "@debate/help-docs": "workspace:*",
     "@debate/practice-rounds": "workspace:*",

@@ -13,6 +13,10 @@
  * see `NewsStreamPanel.tsx`'s fileoverview for how it threads the value
  * through a ref rather than an effect dependency.
  *
+ * Also folds in `buildAutoFeatureNews(APP_FEATURES)` — the "Tool spotlight"
+ * posts. The catalog lives in this package, which depends on
+ * `@debate/community`, so the feed can't import it and takes it as `extraItems`.
+ *
  * Also wires `useNewsStreamSync` into the panel's `syncRemote` prop, so a
  * signed-in user's read/liked state follows them across devices instead of
  * staying stuck in one browser (`packages/debate-help-docs/content/docs/internals/news-stream.mdx`'s "Read/like
@@ -24,10 +28,15 @@
 "use client"
 
 import { NewsStreamPanel } from "@debate/community"
+import { buildAutoFeatureNews } from "@debate/community/src/lib/news-stream"
 import { coachingSessionNews } from "@debate/practice-rounds/src/state/coachingSessions"
+import { APP_FEATURES } from "../../lib/feature-catalog"
 import { useNewsStreamSync } from "../../lib/hooks/useNewsStreamSync"
+
+// Module-level: the catalog is static, so the spotlights never change.
+const FEATURE_SPOTLIGHTS = buildAutoFeatureNews(APP_FEATURES)
 
 export function NewsPageContent() {
   const syncRemote = useNewsStreamSync()
-  return <NewsStreamPanel extraItems={coachingSessionNews()} syncRemote={syncRemote} />
+  return <NewsStreamPanel extraItems={[...FEATURE_SPOTLIGHTS, ...coachingSessionNews()]} syncRemote={syncRemote} />
 }

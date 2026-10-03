@@ -74,7 +74,7 @@
  * @module state/newsStream
  */
 
-import { PRODUCT_NEWS, buildAutoFeatureNews, sortNewsFeed, type NewsItem } from "../lib/news-stream";
+import { PRODUCT_NEWS, sortNewsFeed, type NewsItem } from "../lib/news-stream";
 import { listAnnouncedDailyBestCards } from "./dailyBestCardAnnouncements";
 import { listAnnouncedContributorAwards } from "./contributorAwardAnnouncements";
 import { buildDailyBestCardHighlight } from "@debate/research-evidence/src/lib/daily-best-card";
@@ -247,16 +247,16 @@ function dailyQuestCompletionNews(): NewsItem[] {
  * packages) passes it in here rather than this module reaching back into
  * `debate-round`.
  *
- * Also folds in `lib/news-stream.ts`'s `buildAutoFeatureNews()` — a
- * generic "Tool spotlight" post for every `APP_FEATURES` catalog entry
- * `PRODUCT_NEWS` doesn't already cover by `href` — so every tool has some
- * presence in the feed even before anyone hand-writes a real announcement
- * for it.
+ * The "Tool spotlight" posts from `lib/news-stream.ts`'s
+ * `buildAutoFeatureNews(APP_FEATURES)` — one per catalog entry `PRODUCT_NEWS`
+ * doesn't already cover by `href` — arrive the same way: the catalog lives in
+ * `@debate/webview`, which depends on this package, so
+ * `routes/news/NewsPageContent.tsx` builds them and passes them in
+ * `extraItems`.
  */
 export function buildNewsFeed(extraItems: NewsItem[] = []): NewsItem[] {
   return sortNewsFeed([
     ...PRODUCT_NEWS,
-    ...buildAutoFeatureNews(),
     ...extraItems,
     ...dailyBestCardNews(),
     ...contributorAwardsNews(),

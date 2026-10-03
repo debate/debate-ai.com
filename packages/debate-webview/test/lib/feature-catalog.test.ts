@@ -11,7 +11,7 @@ import {
   searchFeatures,
   type FeatureCategory,
   type FeatureEntry,
-} from "../src/feature-catalog";
+} from "../../src/lib/feature-catalog";
 
 const entry = (over: Partial<FeatureEntry> = {}): FeatureEntry => ({
   id: "a",

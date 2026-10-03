@@ -53,9 +53,6 @@ flags:
   debate-editor:
     paths:
       - packages/debate-editor/src
-  debate-feature-catalog:
-    paths:
-      - packages/debate-feature-catalog/src
   debate-flow:
     paths:
       - packages/debate-flow/src
@@ -129,9 +126,6 @@ component_management:
     - component_id: debate-editor
       paths:
         - packages/debate-editor/src
-    - component_id: debate-feature-catalog
-      paths:
-        - packages/debate-feature-catalog/src
     - component_id: debate-flow
       paths:
         - packages/debate-flow/src

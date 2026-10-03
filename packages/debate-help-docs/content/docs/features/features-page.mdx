@@ -10,7 +10,7 @@ long-form doc, grouped into seven categories and filtered by a search box.
 
 - **Route:** `/practice/features`
 - **Panel:** `apps/debate-ai.com/lib/ui/features/FeaturesPanel.tsx`
-  (catalog data lives in `debate-feature-catalog`)
+  (catalog data lives in `debate-webview`'s `src/lib/feature-catalog.ts`)
 
 ## Why this exists
 
@@ -38,7 +38,7 @@ cards never come up the same colour.
 
 ## How it works
 
-`debate-feature-catalog`'s `src/feature-catalog.ts` holds the pure data
+`debate-webview`'s `src/lib/feature-catalog.ts` holds the pure data
 (`APP_FEATURES`, `buildFeatureSections`, `searchFeatures`); `FeaturesPanel.tsx`
 renders it. Titles/descriptions are copied from each route's own metadata.
 The README's banner, badges and imgur screenshots are mirrored in
