@@ -25,6 +25,7 @@ import {
   getSpeechDocLink,
   speechDocLinkScope,
   SPEECH_DOC_LINKS_EVENT,
+  SPEECH_DOC_LINKS_KEY,
   type SpeechDocLink,
 } from "../state/speechDocLinks"
 
@@ -81,8 +82,18 @@ export function useSpeechWordStats(
   useEffect(() => {
     const refresh = () => setLink(getSpeechDocLink(scope, speechName))
     refresh()
+    // The account sync writes `speech-doc-links` and announces it with a
+    // `storage` event (never the same-tab custom event), so a link adopted
+    // from another device refreshes the open speech too.
+    const onStorage = (event: StorageEvent) => {
+      if (event.key === null || event.key === SPEECH_DOC_LINKS_KEY) refresh()
+    }
     window.addEventListener(SPEECH_DOC_LINKS_EVENT, refresh)
-    return () => window.removeEventListener(SPEECH_DOC_LINKS_EVENT, refresh)
+    window.addEventListener("storage", onStorage)
+    return () => {
+      window.removeEventListener(SPEECH_DOC_LINKS_EVENT, refresh)
+      window.removeEventListener("storage", onStorage)
+    }
   }, [scope, speechName])
 
   useEffect(() => {

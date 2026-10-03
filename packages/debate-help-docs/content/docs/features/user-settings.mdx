@@ -144,3 +144,18 @@ rather than silently corrupting the stored list. A plain whole-list
 `outlineFilterPresets` replace is still accepted by the route for a caller
 that genuinely needs one, but `useOutlineFilterPresets.ts` no longer sends
 one.
+
+## Speech document links follow your account
+
+When you point a speech at one of your editor documents (the speech header's
+link menu in the Flow workspace), that link is now part of the signed-in
+account's tool data: it is stored one row per speech in `saved_tool_records`
+under the `speechDocLinks` collection, so the same speech shows the same
+document's word counts on your other devices. `speech-doc-links` is a map in
+`localStorage`, so the collection carries a `codec`
+(`debate-data-sync`'s `speech-doc-links-codec.ts`) that flattens it to records
+for the sync and rebuilds the map when the account's copy is merged in.
+
+Known gap: pinned debates (`pinned-debates`) are still per-browser. They are an
+ordered list of numeric round ids rather than keyed records, so they need a
+position-stable record shape before they can join the same collection.
