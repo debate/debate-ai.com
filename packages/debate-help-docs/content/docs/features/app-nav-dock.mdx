@@ -26,7 +26,8 @@ the first tool listed under that menu's Practice section, and the `Alt+4`
 shortcut still jumps straight there.
 
 **Tools are not dock icons.** The tools catalog is reached from the sidebar
-nav tree's Coaching / Research / Practice sections, and the whole feature
+nav tree's Research / Prep & Scout / Practice / Coaching / Insights
+sections, and the whole feature
 catalog from the **Features** row in the Settings menu's Site Links submenu —
 next to a **Docs** row for the help site. Holding the dock to five
 destinations is what lets it fit inside the sidebar column it is hosted in —
@@ -55,13 +56,13 @@ root — opening one does not affect the other, and either can be open at once:
 
 - **The Practice vs AI icon opens the site-nav menu (`NavMenu`).** Command
   Palette at the top, then a submenu per sidebar section — **Videos,
-  Coaching, Research, Practice** — derived from the data the sidebar itself
+  Research, Prep & Scout, Practice, Coaching, Insights** — derived from the data the sidebar itself
   renders rather than restated:
 
   | Menu submenu | Comes from |
   | --- | --- |
   | Videos | `SIDEBAR_VIDEO_LINKS` (`components/category-gallery/sidebar-video-links.ts`) |
-  | Coaching / Research / Practice | `SIDEBAR_TOOL_SECTIONS` |
+  | Research / Prep & Scout / Practice / Coaching / Insights | `SIDEBAR_TOOL_SECTIONS` |
 
   On a phone, where the sidebar column below is `md+` only, this menu is the
   only way to reach those links at all.

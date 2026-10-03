@@ -45,7 +45,7 @@ vi.mock("next/navigation", () => ({
 const { VideoSidebarTree } = await import("../src/components/category-gallery/VideoSidebarTree");
 const { QuickLinksGrid } = await import("../src/components/category-gallery/QuickLinksGrid");
 const { ToolNavTree } = await import("../src/components/category-gallery/ToolNavTree");
-const { PRACTICE_SECTION_ID } = await import(
+const { INSIGHTS_SECTION_ID } = await import(
   "../src/components/category-gallery/sidebar-tool-sections"
 );
 
@@ -109,7 +109,7 @@ describe("SIDEBAR_VIDEO_LINKS", () => {
 describe("the surfaces that render them", () => {
   it("gives the sidebar tree a link for every video destination", () => {
     // Every entry but the reference pair, which moved into the tool tree's
-    // Practice section — see the test below.
+    // Insights section — see the test below.
     const html = sidebarHtml();
     const hrefs = hrefsIn(html);
     const referenceHrefs = new Set(VIDEO_REFERENCE_LINKS.map((link) => link.href));

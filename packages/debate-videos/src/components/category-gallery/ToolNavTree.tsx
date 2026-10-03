@@ -1,5 +1,6 @@
 /**
- * @fileoverview The "Coaching / Research / Practice" portion of the videos
+ * @fileoverview The Research / Prep & Scout / Practice / Coaching / Insights
+ * portion of the videos
  * sidebar — the h1 sections that follow "Round Videos" and "Lectures" in the
  * tree — factored out of `VideoSidebarTree` so it can also render on the
  * non-video tool pages those sections link to (`/coaching`, `/research`,
@@ -14,9 +15,9 @@
  * column said everything twice. The dock is still right there, and its
  * Settings menu still carries the same list for phones.
  *
- * The glossary/rankings/statistics trio used to hang below the tree, outside
- * every section. It now sits at the end of Practice, which is where the rest
- * of the round-day reference material lives.
+ * The glossary and statistics pages used to hang off the end of Practice as
+ * `VIDEO_REFERENCE_LINKS`. They are ordinary Insights tools now, under its
+ * "Data & Reference" subgroup label (see `SidebarToolLink.group`).
  *
  * Each section heading is a grouping rather than a destination: it renders
  * without an `href`, so clicking it does nothing but toggle the section. Its
@@ -41,11 +42,8 @@
 
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { BarChart3, BookOpen, ChartColumn } from "lucide-react";
 import { TreeItem } from "./TreeItem";
-import type { TreeItemIcon } from "./tree-item-icon";
 import {
-  PRACTICE_SECTION_ID,
   SIDEBAR_TOOL_SECTIONS,
   type SidebarToolSection,
 } from "./sidebar-tool-sections";
@@ -55,24 +53,6 @@ import {
   toggleExpandedSection,
   withSectionExpanded,
 } from "./sidebar-section-expansion";
-import { VIDEO_REFERENCE_LINKS } from "./sidebar-video-links";
-
-/**
- * Per-id glyph for the reference trio at the end of Practice; the hrefs and
- * titles come from `VIDEO_REFERENCE_LINKS`.
- *
- * Lucide components, not the `ui/icons` images the first two used to draw
- * (`IconBook`, `IconLeaderboard`). They hang inside the Practice section
- * alongside 15 tool rows, and an image renders at its own baked-in colors
- * while a Lucide glyph inherits the one color `TreeItem` sets — so those two
- * were the only rows in the tool tree whose icons did not match. See
- * `TREE_ITEM_ICON_CLASS`.
- */
-const REFERENCE_ICONS: Record<string, TreeItemIcon> = {
-  dictionary: BookOpen,
-  rankings: ChartColumn,
-  statistics: BarChart3,
-};
 
 /**
  * Team and school profile pages (`/teams/<team>`, `/schools/<school>`) are
@@ -188,35 +168,34 @@ export function ToolNavTree({
           expanded={isExpanded(section.id)}
           onToggleExpand={() => toggleSection(section.id)}
         >
-          {section.tools.map((tool) => (
-            <TreeItem
-              key={tool.href}
-              level={3}
-              href={tool.href}
-              title={tool.title}
-              icon={tool.icon}
-              isActive={isToolActive(tool.href, pathname)}
-            />
-          ))}
-          {/* The glossary, rankings and statistics pages are round-day
-              reference material, so they close out Practice rather than
-              floating below the tree in a section of their own. They stay
-              `VIDEO_REFERENCE_LINKS` rather than becoming Practice tools:
-              `sidebar-tool-sections` feeds `sidebar-routes` and
-              `sidebar-active-section`, and folding `/videos/*` paths into a
-              tool section would hand the video library's own pages the
-              generic tool sidebar. */}
-          {section.id === PRACTICE_SECTION_ID &&
-            VIDEO_REFERENCE_LINKS.map((link) => (
+          {section.tools.flatMap((tool, index) => {
+            const row = (
               <TreeItem
-                key={link.id}
+                key={tool.href}
                 level={3}
-                href={link.href}
-                title={link.title}
-                icon={REFERENCE_ICONS[link.id]}
-                isActive={pathname === link.href}
+                href={tool.href}
+                title={tool.title}
+                icon={tool.icon}
+                isActive={isToolActive(tool.href, pathname)}
               />
-            ))}
+            );
+            // A subgroup label ("Performance", "Data & Reference") heads the
+            // first link of each run that carries one. It is a plain label,
+            // not a TreeItem: it neither links nor toggles anything.
+            const startsGroup =
+              tool.group != null && tool.group !== section.tools[index - 1]?.group;
+            return startsGroup
+              ? [
+                  <p
+                    key={`group:${tool.group}`}
+                    className="px-2 pt-2 pb-0.5 text-xs font-medium uppercase tracking-wide text-muted-foreground"
+                  >
+                    {tool.group}
+                  </p>,
+                  row,
+                ]
+              : [row];
+          })}
         </TreeItem>
       ))}
     </>

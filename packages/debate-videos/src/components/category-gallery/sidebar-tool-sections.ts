@@ -1,8 +1,9 @@
 /**
- * @fileoverview The Research / Practice / Coaching tool sections rendered in
+ * @fileoverview The Research / Prep & Scout / Practice / Coaching / Insights
+ * tool sections rendered in
  * the videos sidebar underneath the "Round Videos" and "Lectures" nodes. Mirrors the entries of
  * the app's `/tools` catalog (`app/tools/tool-groups.ts`), regrouped into the
- * three headings the sidebar shows and trimmed to the label, href and icon
+ * five headings the sidebar shows and trimmed to the label, href and icon
  * the tree needs — the sidebar lives in this package, which cannot import
  * app-local modules, so the links are restated here rather than derived.
  *
@@ -11,9 +12,13 @@
 
 import {
   BadgeCheck,
+  BarChart3,
+  Binoculars,
+  BookOpen,
   Bot,
   CalendarCheck,
   CalendarDays,
+  ChartColumn,
   ChartLine,
   ChartPie,
   Clapperboard,
@@ -63,6 +68,12 @@ export interface SidebarToolLink {
    * baked-in colors next to them; see `TreeItem`'s `TREE_ITEM_ICON_CLASS`.
    */
   icon: LucideIcon;
+  /**
+   * Subgroup heading this link sits under inside its section ("Performance",
+   * "Data & Reference"). `ToolNavTree` prints the label above the first link
+   * of each run; links without one render straight under the section.
+   */
+  group?: string;
 }
 
 export interface SidebarToolSection {
@@ -108,8 +119,7 @@ export const APP_DOCK_LINKS: SidebarToolLink[] = [
 ];
 
 /**
- * Id of the Practice section, which also carries the video library's
- * glossary/rankings pair (see `ToolNavTree`). Named for the same reason as
+ * Id of the Practice section. Named for the same reason as
  * {@link RESEARCH_SECTION_ID} below.
  */
 export const PRACTICE_SECTION_ID = "practice";
@@ -122,8 +132,16 @@ export const PRACTICE_SECTION_ID = "practice";
  */
 export const RESEARCH_SECTION_ID = "research";
 
+/** Id of the Prep & Scout section (opponent, judge and tournament scouting). */
+export const PREP_SCOUT_SECTION_ID = "prep-scout";
+
+/** Id of the Insights section, whose links split into labelled subgroups. */
+export const INSIGHTS_SECTION_ID = "insights";
+
 export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
   {
+    // Build evidence, manage cards, coordinate research work, and prepare
+    // files with a team.
     id: "research",
     title: "Research",
     href: "/research",
@@ -137,11 +155,31 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/research/cards/inbox", title: "Task Inbox", icon: Inbox },
       { href: "/research/cards/contributions", title: "Contributions Feed", icon: Rss },
       { href: "/research/cards/brainstorm", title: "Team Brainstorm Assist", icon: Lightbulb },
-      { href: "/coaching/rankings", title: "Team Rankings", icon: Medal },
-      { href: "/coaching/progress", title: "Research Progress", icon: TrendingUp },
     ],
   },
   {
+    // Turn research into round-specific strategy by studying opponents,
+    // judges, tournaments, news, and likely arguments.
+    id: PREP_SCOUT_SECTION_ID,
+    title: "Prep & Scout",
+    href: "/practice/briefings",
+    icon: Binoculars,
+    tools: [
+      { href: "/practice/briefings", title: "Pre-Round Briefings", icon: ClipboardList },
+      { href: "/practice/strategy", title: "Scout-to-Strategy", icon: MapIcon },
+      { href: "/practice/opponents", title: "Opponent Team Profiles", icon: Users },
+      { href: "/practice/judges", title: "Judge Profiles", icon: Gavel },
+      { href: "/practice/prep-notes", title: "Prep Notes", icon: StickyNote },
+      { href: "/practice/forums", title: "Latest News", icon: Rss },
+      // Tabroom itself is not a row of its own: the tournaments page frames
+      // beta.tabroom.com from a button at the top of the list, so one entry
+      // covers both.
+      { href: "/practice/tournaments", title: "Tournaments", icon: Trophy },
+    ],
+  },
+  {
+    // Simulate rounds, rehearse individual skills, compete with other users
+    // or AI, and test predictions.
     id: "practice",
     title: "Practice",
     href: "/practice",
@@ -155,23 +193,12 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/practice/predictions", title: "Prediction Markets", icon: Coins },
       { href: "/practice/versus-ai", title: "Debate Versus AI", icon: Swords },
       { href: "/practice/drills", title: "Practice Drills", icon: Repeat },
-      { href: "/practice/level", title: "Debater Level", icon: Star },
-      { href: "/practice/briefings", title: "Pre-Round Briefings", icon: ClipboardList },
-      { href: "/practice/strategy", title: "Scout-to-Strategy", icon: MapIcon },
-      { href: "/practice/opponents", title: "Opponent Team Profiles", icon: Users },
-      { href: "/practice/forums", title: "Latest News", icon: Rss },
-      // Tabroom itself is not a row of its own: the tournaments page frames
-      // beta.tabroom.com from a button at the top of the list, so one entry
-      // covers both.
-      { href: "/practice/tournaments", title: "Tournaments", icon: Trophy },
-      { href: "/practice/judges", title: "Judge Profiles", icon: Gavel },
       { href: "/practice/judge-decision", title: "AI Judge Decision", icon: BadgeCheck },
-      { href: "/practice/prep-notes", title: "Prep Notes", icon: StickyNote },
-      { href: "/practice/features", title: "All Features", icon: Sparkles },
-      { href: "/coaching/leaderboard", title: "Leaderboard", icon: Trophy },
     ],
   },
   {
+    // Instruction, feedback, structured development plans, and longitudinal
+    // improvement analysis.
     id: "coaching",
     title: "Coaching",
     href: "/coaching",
@@ -182,14 +209,25 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/coaching/programs", title: "Coaching Programs", icon: CalendarCheck },
       { href: "/coaching/materials", title: "Coach Materials", icon: FolderOpen },
       { href: "/coaching/outcomes", title: "Response-Outcome Charts", icon: ChartLine },
-      // Reference material, not a coaching tool, but it is what a coach
-      // explains to a novice before the round — so it rides here rather than
-      // in Practice.
-      { href: "/practice/rules", title: "Formats & Rules", icon: Scale },
-      // Companion guide page (not a coaching tool) — round-day setup for
-      // debating off just a phone, so it rides with the coaching tools here
-      // rather than only being reachable from the `/tools` catalog.
+      { href: "/coaching/progress", title: "Research Progress", icon: TrendingUp },
       { href: "/coaching/laptopless", title: "Laptop-less Debating", icon: Smartphone },
+    ],
+  },
+  {
+    // Individual and team standing, debate-wide data, rules, terminology,
+    // and product reference information — in two labelled subgroups.
+    id: INSIGHTS_SECTION_ID,
+    title: "Insights",
+    href: "/coaching/rankings",
+    icon: ChartColumn,
+    tools: [
+      { href: "/coaching/rankings", title: "Team Rankings", icon: Medal, group: "Performance" },
+      { href: "/coaching/leaderboard", title: "Leaderboard", icon: Trophy, group: "Performance" },
+      { href: "/practice/level", title: "Debater Level", icon: Star, group: "Performance" },
+      { href: "/practice/statistics", title: "Topics & Video Statistics", icon: BarChart3, group: "Data & Reference" },
+      { href: "/practice/rules", title: "Formats & Rules", icon: Scale, group: "Data & Reference" },
+      { href: "/practice/glossary", title: "Glossary of Terms", icon: BookOpen, group: "Data & Reference" },
+      { href: "/practice/features", title: "All Features", icon: Sparkles, group: "Data & Reference" },
     ],
   },
 ];
