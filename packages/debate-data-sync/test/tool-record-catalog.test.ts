@@ -50,6 +50,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   flowAnnotations: "id",
   spellcheckDictionary: "id",
   flowHistory: "id",
+  pinnedDebates: "id",
   docsChatTabs: "id",
   fileSources: "id",
   coachConversation: "id",

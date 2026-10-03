@@ -51,6 +51,19 @@
 
 ---
 
+## In Progress
+
+### Account-synced user data across all tools (user settings + SQL)
+
+- Branch: `claude/gifted-babbage-cg2iak`
+- [x] Audit local-only tool stores vs. the `saved_tool_records` catalog (SQL layer for settings, flows, rounds and 64+ tool collections already exists)
+- [x] Sync pinned debates to the account (`pinnedDebates` catalog entry, legacy `pinned-debates` migration, tests, docs in `round-cloud-save.mdx`)
+- [ ] Sync speech-doc links (`speech-doc-links`; keyed by scope + speech, points at `documents.id`)
+- [ ] Sync flow-editor display/keymap settings (`ebb-display-settings`, `ebb-keymap-settings`) through `user_settings`
+- [ ] Tool UI pass: surface sync status and pin/save controls in each tool's header
+
+---
+
 ## Contribution Guidelines
 
 1. **Pick an issue** or propose your own - comment on the issue to claim it
