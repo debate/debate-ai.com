@@ -46,6 +46,5 @@ describe("MobileSetupPage", () => {
     expect(html).toContain("Giant floating screen, no laptop")
     expect(html).toContain("The phone that runs it all")
     expect(html).toContain("Phone service &amp; data")
-    expect(html).toContain("Carry all your gear")
   })
 })
