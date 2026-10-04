@@ -20,6 +20,18 @@ the store directly and diffs every fired entry list against a known-synced
 set, pushing anything new — so a send made in any tab gets synced, not
 just the panel's own tab.
 
+## Linked speech documents
+
+Separate from the send log: the speech header's link picker (which Reason
+Editor document a speech reads its word counts from) is stored as id-keyed
+records under `speech-doc-links` and syncs through the `speechDocLinks`
+tool-record collection, so a link follows a signed-in user to a second
+device. The link is keyed by the round's or flow's client id, and resolves
+once that round and the linked document have synced as well; until then the
+speech falls back to the flow's own speech doc. Links saved before this
+change (a `{ key: link }` map) are still read and rewritten as records on
+the next change.
+
 ## Known gaps
 
 No optimistic-concurrency handling (not reachable in practice — an entry

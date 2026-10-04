@@ -108,6 +108,9 @@ const DEFAULT_COLUMN_WIDTHS: Record<ColumnKey, number> = {
   views: 90,
 }
 
+/** Widest the tree column gets on a phone, so the next column shows beside it. */
+const TREE_COLUMN_PHONE_MAX = "75vw"
+
 const DATE_COLUMN: ColumnDef = { key: "date", label: "Date", sortValue: (v) => new Date(v[2]).getTime() || 0 }
 const VIEWS_COLUMN: ColumnDef = {
   key: "views",
@@ -212,6 +215,7 @@ export function VideoListRows({
 
   const columns = isRoundMode ? ROUND_COLUMNS : LECTURE_COLUMNS
   const { widths, startResize } = useResizableColumns(DEFAULT_COLUMN_WIDTHS)
+  const tableWidth = columns.reduce((total, column) => total + widths[column.key], 0)
 
   const [sortColumn, setSortColumn] = useState<ColumnKey | null>(defaultSort?.column ?? null)
   const [sortDirection, setSortDirection] = useState<SortDirection>(defaultSort?.direction ?? "asc")
@@ -299,14 +303,17 @@ export function VideoListRows({
       <div ref={videoContainerRef} className="w-full overflow-x-auto rounded-md border border-border">
         {/* Sized to its columns rather than stretched across the page, so a
             wide screen does not pull a row's date and views far from its
-            title. */}
+            title, and a phone scrolls sideways to reach them. */}
         <table
-          // On a phone the table is the screen's width with only the tree
-          // column; from `sm` up it is sized to its columns as before.
-          className="w-full table-fixed border-collapse text-sm sm:w-[var(--table-width)]"
+          // Every column shows at every width; on a phone the wrapper scrolls
+          // sideways to reach them. There the tree column is capped at
+          // `TREE_COLUMN_PHONE_MAX` so the Aff column peeks in beside it —
+          // the hint that there is more to the right.
+          className="w-[var(--table-width-phone)] table-fixed border-collapse text-sm sm:w-[var(--table-width)]"
           style={
             {
-              "--table-width": `${columns.reduce((total, column) => total + widths[column.key], 0)}px`,
+              "--table-width": `${tableWidth}px`,
+              "--table-width-phone": `calc(${tableWidth - widths.tree}px + min(${widths.tree}px, ${TREE_COLUMN_PHONE_MAX}))`,
             } as React.CSSProperties
           }
         >
@@ -318,7 +325,9 @@ export function VideoListRows({
                   style={{ "--col-width": `${widths[column.key]}px` } as React.CSSProperties}
                   className={cn(
                     "relative px-3 py-2 select-none sm:w-[var(--col-width)] sm:min-w-[var(--col-width)]",
-                    column.key !== "tree" && "hidden sm:table-cell",
+                    column.key === "tree"
+                      ? "w-[min(var(--col-width),75vw)]"
+                      : "w-[var(--col-width)] min-w-[var(--col-width)]",
                     column.headerClassName,
                   )}
                 >

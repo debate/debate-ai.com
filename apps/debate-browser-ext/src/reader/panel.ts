@@ -4,9 +4,10 @@
  * The panel is an overlay on the page itself: `reader.html`, framed in an
  * `<iframe>` stacked above everything the site draws — covering the whole tab
  * with the article centered in it, or pinned to the right edge as a narrow
- * side panel, whichever the reader picked (see {@link ReaderLayout}). Each toolbar click (or popup button, or context-menu item)
- * toggles it — shown, hidden, shown again — and hiding keeps the frame alive,
- * so the article and the Q&A are still there when it comes back.
+ * side panel, whichever the reader picked (see {@link ReaderLayout}). Each
+ * toolbar click (or popup button, or context-menu item) toggles it — shown,
+ * hidden, shown again — and hiding keeps the frame alive, so the article and
+ * the Q&A are still there when it comes back.
  *
  * It is still an extension page, only framed: it renders with the extension's
  * own styles rather than fighting whatever CSS the site ships, and it talks to
@@ -35,9 +36,10 @@ export const READER_CLOSE_MESSAGE = 'debate-ai-reader-close';
 export const READER_LAYOUT_MESSAGE = 'debate-ai-reader-layout';
 
 /**
- * How the panel sits over the page: `full` covers the whole tab (the article
- * is centered in it, at the reader's chosen width), `side` is the narrow
- * panel pinned to the right edge.
+ * How the panel sits over the page: `full` covers the whole tab — the page is
+ * dimmed and blurred, the article sits centered on it at the reader's chosen
+ * width, and the AI is a column beside it — and `side` is the narrow panel
+ * pinned to the right edge.
  */
 export type ReaderLayout = 'full' | 'side';
 
@@ -52,10 +54,30 @@ export const READER_PAGE = 'reader.html';
  */
 function toggleOverlayInPage(src: string, closeMessage: string, layoutMessage: string): boolean {
   const FRAME_ID = 'debate-ai-reader-overlay';
+  const SCROLL_LOCK_ID = 'debate-ai-reader-scroll-lock';
+
+  // While the full-page overlay is up, the page under it must not scroll: a
+  // wheel over the backdrop, or past the end of the article, would otherwise
+  // move the site behind the reader. A stylesheet rather than inline styles,
+  // so unlocking leaves whatever overflow the site set for itself untouched.
+  const setScrollLock = (locked: boolean) => {
+    const lock = document.getElementById(SCROLL_LOCK_ID);
+    if (!locked) {
+      lock?.remove();
+      return;
+    }
+    if (lock) return;
+    const style = document.createElement('style');
+    style.id = SCROLL_LOCK_ID;
+    style.textContent = 'html, body { overflow: hidden !important; }';
+    (document.head || document.documentElement).appendChild(style);
+  };
+
   const existing = document.getElementById(FRAME_ID) as HTMLIFrameElement | null;
   if (existing) {
     const show = existing.style.getPropertyValue('display') === 'none';
     existing.style.setProperty('display', show ? 'block' : 'none', 'important');
+    setScrollLock(show && existing.dataset.layout === 'full');
     if (show) existing.focus();
     return show;
   }
@@ -74,17 +96,32 @@ function toggleOverlayInPage(src: string, closeMessage: string, layoutMessage: s
   };
   // The panel opens full-page (its default layout) and tells us straight away
   // if the reader chose the side panel instead.
+  //
+  // Full page covers the whole tab; the panel page draws its own dimmed
+  // backdrop with the article centered on it, and the page behind is blurred
+  // so the article is the only thing that reads.
   const layouts: Record<string, Record<string, string>> = {
     full: {
+      left: '0',
       width: '100vw',
       'border-left': '0',
       'box-shadow': 'none',
+      'backdrop-filter': 'blur(3px)',
+      '-webkit-backdrop-filter': 'blur(3px)',
     },
     side: {
+      left: 'auto',
       width: 'min(460px, 100vw)',
       'border-left': '1px solid rgba(0, 0, 0, 0.15)',
       'box-shadow': '-8px 0 24px rgba(0, 0, 0, 0.18)',
+      'backdrop-filter': 'none',
+      '-webkit-backdrop-filter': 'none',
     },
+  };
+  const applyLayout = (layout: string) => {
+    applyStyle(layouts[layout]);
+    frame.dataset.layout = layout;
+    setScrollLock(layout === 'full' && frame.style.getPropertyValue('display') !== 'none');
   };
   applyStyle({
     all: 'initial',
@@ -100,8 +137,8 @@ function toggleOverlayInPage(src: string, closeMessage: string, layoutMessage: s
     background: 'transparent',
     'color-scheme': 'normal',
     'z-index': '2147483647',
-    ...layouts.full,
   });
+  applyLayout('full');
   (document.body || document.documentElement).appendChild(frame);
 
   // The panel's own close button and Escape key ask to be hidden. Only the
@@ -112,8 +149,9 @@ function toggleOverlayInPage(src: string, closeMessage: string, layoutMessage: s
     const data = event.data as { type?: string; layout?: string } | null;
     if (data?.type === closeMessage) {
       frame.style.setProperty('display', 'none', 'important');
+      setScrollLock(false);
     } else if (data?.type === layoutMessage && data.layout && layouts[data.layout]) {
-      applyStyle(layouts[data.layout]);
+      applyLayout(data.layout);
     }
   });
   return true;
