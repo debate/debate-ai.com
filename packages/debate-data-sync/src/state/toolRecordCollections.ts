@@ -45,7 +45,6 @@
  */
 
 import { redactFileSource } from "./redact-file-source";
-import { decodeSpeechDocLinks, encodeSpeechDocLinks } from "./speech-doc-links-codec";
 
 /**
  * The groupings `/settings` → Account → **Tool data** renders as section
@@ -210,14 +209,6 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     section: "Scouting and judging",
   },
   {
-    key: "pinnedDebates",
-    storageKey: "pinned-debates",
-    idField: "id",
-    label: "Pinned debates",
-    href: "/debate",
-    section: "Flowing and writing",
-  },
-  {
     key: "flowSummaries",
     storageKey: "flowSummaries",
     idField: "roundId",
@@ -239,19 +230,6 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     idField: "roundId",
     label: "Argument Tree Filters",
     href: "/outline",
-    section: "Flowing and writing",
-  },
-  {
-    key: "pinnedDebates",
-    storageKey: "pinned-debates",
-    idField: "id",
-    // The debate start screen's "Featured" rounds
-    // (`@debate/round/src/state/pinnedDebates.ts`): one `{ id, roundId,
-    // pinnedAt }` record per pin, `id` being `String(roundId)`. `Round.id` is
-    // also the `saved_rounds` client id, so a pin names the same round on
-    // every device.
-    label: "Pinned Debates",
-    href: "/debate",
     section: "Flowing and writing",
   },
   {
@@ -281,12 +259,11 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
   {
     key: "pinnedDebates",
     storageKey: "pinnedDebates",
-    idField: "id",
+    idField: "roundId",
     // The rounds starred into the debate page's "Featured" section
-    // (`@debate/round/src/state/pinnedDebates.ts`): `{ id: "round-<roundId>",
-    // roundId, pinnedAt }`. The round id is also the round's
-    // `saved_rounds.client_id`, so a pin resolves to the same round on
-    // another device.
+    // (`@debate/round/src/state/pinnedDebates.ts`): `{ roundId, pinnedAt }`. The round id is
+    // also the round's `saved_rounds.client_id`, so a pin resolves to the same
+    // round on another device.
     label: "Pinned Debates",
     href: "/debate",
     section: "Flowing and writing",
@@ -300,17 +277,6 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     // dialog's "History" tab reads, kept in its own `flow-history` key by
     // `@debate/round/src/state/store.ts`'s `saveToHistory`/`getFlowHistory`.
     label: "Flow History",
-    href: "/debate",
-    section: "Flowing and writing",
-  },
-  {
-    key: "pinnedDebates",
-    storageKey: "pinned-debates",
-    // Records are `{ roundId, pinnedAt }`; the id is a string because the
-    // sync keys by a string field. The round id itself is the round's
-    // `saved_rounds.client_id`, so it names the same round on every device.
-    idField: "roundId",
-    label: "Pinned Debates",
     href: "/debate",
     section: "Flowing and writing",
   },
@@ -339,18 +305,6 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     href: "/doc",
     section: "Flowing and writing",
     redact: redactFileSource,
-  },
-  {
-    key: "speechDocLinks",
-    storageKey: "speech-doc-links",
-    idField: "id",
-    // Which REASON editor document each speech's word counts are read from
-    // (`debate-round`'s `speechDocLinks.ts`). The store is a map, so it joins
-    // through `codec` — one record per `<round|flow scope>:<SPEECH>` link.
-    label: "Speech document links",
-    href: "/debate",
-    section: "Flowing and writing",
-    codec: { decode: decodeSpeechDocLinks, encode: encodeSpeechDocLinks },
   },
   // — Coaching —
   {

@@ -52,6 +52,12 @@ describe("TOOL_RECORD_COLLECTIONS", () => {
     expect(new Set(keys).size).toBe(keys.length);
   });
 
+  it("gives every collection a unique storage key", () => {
+    // Two entries over one localStorage key would each flush the other's rows.
+    const keys = TOOL_RECORD_COLLECTIONS.map((collection) => collection.storageKey);
+    expect(new Set(keys).size).toBe(keys.length);
+  });
+
   it("fills in every field each side of the sync reads", () => {
     for (const collection of TOOL_RECORD_COLLECTIONS) {
       expect(collection.key, JSON.stringify(collection)).toBeTruthy();

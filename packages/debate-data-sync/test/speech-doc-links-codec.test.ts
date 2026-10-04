@@ -13,7 +13,15 @@ import {
   type ToolRecordCollection,
 } from "../src/state/toolRecordCollections";
 
-const speechDocLinks = findToolRecordCollection("speechDocLinks") as ToolRecordCollection;
+// The live `speechDocLinks` catalog entry stores id-keyed record arrays and needs
+// no codec; this fixture keeps the legacy map codec covered for any collection
+// that still stores a map.
+const speechDocLinks: ToolRecordCollection = {
+  ...(findToolRecordCollection("speechDocLinks") as ToolRecordCollection),
+  key: "legacySpeechDocLinks",
+  storageKey: "speech-doc-links",
+  codec: { decode: decodeSpeechDocLinks, encode: encodeSpeechDocLinks },
+};
 
 const stored = {
   "round-1:1AC": { docId: 7, title: "Aff case", linkedAt: 100 },
@@ -67,7 +75,7 @@ describe("speech doc link codec", () => {
   });
 });
 
-describe("the speechDocLinks collection", () => {
+describe("a collection using the speech-doc-links codec", () => {
   const backing = new Map<string, string>();
 
   beforeEach(() => {
