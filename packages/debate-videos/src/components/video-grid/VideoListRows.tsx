@@ -28,6 +28,7 @@ import React, { useCallback, useMemo, useState } from "react"
 import { ChevronUp, ChevronDown } from "lucide-react"
 import { cn } from "../../ui/lib/utils"
 import { TooltipProvider } from "../../ui/primitives/tooltip"
+import { useWatchHistory } from "../../hooks/useWatchHistory"
 import { ColumnResizeHandle } from "./ColumnResizeHandle"
 import { useResizableColumns } from "./useResizableColumns"
 import { buildVideoSlots, type VideoSlot, type VideoStackMap } from "./video-stacks"
@@ -85,9 +86,14 @@ interface VideoListRowsProps {
   /** Searches the library for a team when its name is clicked in the Aff or
    *  Neg column; without it the names are plain text. */
   onSearch?: (text: string) => void
+  /**
+   * Adds a sortable "Last watched" column (how long ago each video was
+   * played), for the watch-history listing.
+   */
+  showWatched?: boolean
 }
 
-type ColumnKey = "tree" | "aff" | "neg" | "date" | "views"
+type ColumnKey = "tree" | "aff" | "neg" | "date" | "views" | "watched"
 
 interface ColumnDef {
   key: ColumnKey
@@ -106,6 +112,7 @@ const DEFAULT_COLUMN_WIDTHS: Record<ColumnKey, number> = {
   neg: 150,
   date: 110,
   views: 90,
+  watched: 120,
 }
 
 /** Widest the tree column gets on a phone, so the next column shows beside it. */
@@ -118,6 +125,9 @@ const VIEWS_COLUMN: ColumnDef = {
   headerClassName: "text-right",
   sortValue: (v) => v[4] ?? 0,
 }
+
+/** Added to either layout on the watch-history listing; sorted by recency. */
+const WATCHED_COLUMN_LABEL = "Last watched"
 
 /**
  * Round columns. Tournament, Level and Season are not among them: they head
@@ -204,7 +214,9 @@ export function VideoListRows({
   grouped = true,
   defaultSort,
   onSearch,
+  showWatched = false,
 }: VideoListRowsProps) {
+  const watchHistory = useWatchHistory()
   // Without an explicit `layout`, round (debate) videos carry tournament/aff/
   // neg data that lectures rarely populate, so that presence tells the two
   // layouts apart.
@@ -213,7 +225,21 @@ export function VideoListRows({
     [videos, layout],
   )
 
-  const columns = isRoundMode ? ROUND_COLUMNS : LECTURE_COLUMNS
+  const baseColumns = isRoundMode ? ROUND_COLUMNS : LECTURE_COLUMNS
+  const columns = useMemo<ColumnDef[]>(
+    () =>
+      showWatched
+        ? [
+            ...baseColumns,
+            {
+              key: "watched",
+              label: WATCHED_COLUMN_LABEL,
+              sortValue: (v) => Date.parse(watchHistory.get(v[0])?.watchedAt ?? "") || 0,
+            },
+          ]
+        : baseColumns,
+    [baseColumns, showWatched, watchHistory],
+  )
   const { widths, startResize } = useResizableColumns(DEFAULT_COLUMN_WIDTHS)
   const tableWidth = columns.reduce((total, column) => total + widths[column.key], 0)
 
@@ -226,7 +252,8 @@ export function VideoListRows({
       setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"))
     } else {
       setSortColumn(column.key)
-      setSortDirection("asc")
+      // Recency reads newest-first; everything else starts A→Z / low→high.
+      setSortDirection(column.key === "watched" ? "desc" : "asc")
     }
   }
 
@@ -285,6 +312,7 @@ export function VideoListRows({
 
   const context: VideoTreeRowContext = {
     isRoundMode,
+    showWatched,
     showThumbnails,
     favorites,
     hiddenVideos,

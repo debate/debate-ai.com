@@ -24,6 +24,7 @@ import { useFlowStore, type FlowHistory } from "../state/store"
 import type { Flow, Round } from "../types/flow"
 import { Clock, FileText, Users, Edit, Gavel, Search, Cloud, UploadCloud, Download, Trash2, Loader2, CloudUpload, AlertTriangle, History as HistoryIcon } from "lucide-react"
 import { FlowHistoryList } from "./FlowHistoryList"
+import { recordFlowSavedToAccount } from "../state/flowAccountStatus"
 import { deleteSavedFlow, fetchSavedFlow, listSavedFlows, saveFlowToAccount } from "../round/saved-flows-client"
 import type { SavedFlowSummary } from "../state/savedFlows"
 import { deleteSavedRound, fetchSavedRound, listSavedRounds, saveRoundToAccount } from "../round/saved-rounds-client"
@@ -277,6 +278,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
         return { kind: "loaded", flows: [...others, result.summary] }
       })
       setLastSavedFlowHashes((prev) => ({ ...prev, [flow.id]: hashFlowContent(flow) }))
+      recordFlowSavedToAccount(flow)
     } catch {
       setCloudActions((prev) => ({ ...prev, [flow.id]: "error" }))
     }
@@ -468,6 +470,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
             return { kind: "loaded", flows: [...others, result.summary] }
           })
           setLastSavedFlowHashes((prev) => ({ ...prev, [flow.id]: hashFlowContent(flow) }))
+          recordFlowSavedToAccount(flow)
           outcomes[flow.id] = "saved"
         } catch {
           setCloudActions((prev) => ({ ...prev, [flow.id]: "error" }))
