@@ -83,6 +83,8 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   roundContributorFlows: "contributorId",
   contributorAvailability: "contributorId",
   speechDocLinks: "id",
+  ebbDisplaySettings: "id",
+  ebbKeymapSettings: "id",
   completedResearchTasks: "id",
   groupChallenges: "id",
   challengeWinEvents: "id",
