@@ -27,6 +27,7 @@ import { STYLE_COLORS, getRoundBadgeColor, formatVideoDate } from "../video-card
 import { TopPickBadge } from "../video-card/TopPickBadge"
 import { WatchProgressBadge } from "../video-card/WatchProgressBadge"
 import { useWatchHistoryEntry } from "../../hooks/useWatchHistory"
+import { formatWatchedAgo } from "../../state/videoWatchHistory"
 import { HideConfirmDialog } from "../video-card/VideoCardDialogs"
 import { WatchPageLink } from "../watch/WatchPageLink"
 import { StackNav, stackMemberLabel } from "../video-card/StackNav"
@@ -137,6 +138,7 @@ export function VideoListRow({
   isHidden,
   isTopPick,
   isRoundMode,
+  showWatched,
   showThumbnails,
   onToggleFavorite,
   onHideVideo,
@@ -156,6 +158,8 @@ export function VideoListRow({
   isHidden: boolean
   isTopPick: boolean
   isRoundMode: boolean
+  /** Draws the "Last watched" cell, for the watch-history listing. */
+  showWatched?: boolean
   showThumbnails: boolean
   onToggleFavorite: (videoId: string) => void
   onHideVideo: (videoId: string) => void
@@ -428,6 +432,14 @@ export function VideoListRow({
         <td className="px-3 py-3 align-top text-sm text-muted-foreground text-right tabular-nums whitespace-nowrap">
           {viewCount.toLocaleString()}
         </td>
+        {showWatched && (
+          <td
+            className="px-3 py-3 align-top text-sm text-muted-foreground whitespace-nowrap"
+            title={watched?.watchedAt ? new Date(watched.watchedAt).toLocaleString() : undefined}
+          >
+            {watched ? formatWatchedAgo(watched.watchedAt) : "—"}
+          </td>
+        )}
 
       </tr>
 

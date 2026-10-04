@@ -228,6 +228,7 @@ export function readLocalToolRecords(collection: ToolRecordCollection): unknown[
     const raw = localStorage.getItem(collection.storageKey);
     if (!raw) return [];
     const parsed: unknown = JSON.parse(raw);
+    if (collection.codec) return collection.codec.decode(parsed);
     return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
@@ -252,7 +253,7 @@ export function writeLocalToolRecords(
   records: readonly unknown[],
 ): void {
   if (typeof localStorage === "undefined") return;
-  const newValue = JSON.stringify(records);
+  const newValue = JSON.stringify(collection.codec ? collection.codec.encode(records) : records);
   localStorage.setItem(collection.storageKey, newValue);
 
   if (typeof window === "undefined" || typeof StorageEvent === "undefined") return;

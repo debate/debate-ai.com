@@ -21,7 +21,7 @@
  * - an eyebrow naming the guide the tool belongs to (training / practice /
  *   research collaboration),
  * - "Docs" and "Guide" links into the Fumadocs site (`lib/docs-links.ts`),
- * - an account-sync badge (`ToolSyncBadge`) for tools whose data syncs,
+ * - a "Saved to your account" badge for tools whose data syncs (`ToolSyncBadge`),
  * - the same favorite-star toggle as the `/tools` grid, and
  * - an optional row of related-tool links (`RoundToolsCrossLinks`).
  *
@@ -130,6 +130,7 @@ export function ToolPageHeader({
         </Link>
 
         <div className="flex flex-wrap items-center gap-1.5">
+          <ToolSyncBadge href={href} />
           {actions}
           <ToolSyncBadge href={href} />
           {docsUrl ? (

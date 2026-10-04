@@ -57,6 +57,19 @@
 
 ---
 
+## In Progress
+
+### Account-synced user data across all tools (user settings + SQL)
+
+- Branch: `claude/gifted-babbage-cg2iak`
+- [x] Audit local-only tool stores vs. the `saved_tool_records` catalog (SQL layer for settings, flows, rounds and 64+ tool collections already exists)
+- [x] Sync pinned debates to the account (`pinnedDebates` catalog entry, legacy `pinned-debates` migration, tests, docs in `round-cloud-save.mdx`)
+- [ ] Sync speech-doc links (`speech-doc-links`; keyed by scope + speech, points at `documents.id`)
+- [ ] Sync flow-editor display/keymap settings (`ebb-display-settings`, `ebb-keymap-settings`) through `user_settings`
+- [ ] Tool UI pass: surface sync status and pin/save controls in each tool's header
+
+---
+
 ## Contribution Guidelines
 
 1. **Pick an issue** or propose your own - comment on the issue to claim it
@@ -68,14 +81,21 @@
 
 ## In Progress
 
-### Account-linked pinned debates (slice of "integrate tools + user settings + SQL-linked flows/docs/debates")
+### Saved-to-account indicator on flow tabs (slice of "integrate tools + user settings + SQL-linked flows/docs/debates")
 
-- **Branch**: `claude/gifted-babbage-a28l34`
-- **Status**: Settings (`user_settings`), flows (`saved_flows`), rounds (`saved_rounds`), documents (`documents`), AI debates (`practice_vs_ai_debates`) and ~60 tool stores (`saved_tool_records`) already persist to D1 per user. The audit found the **pinned debates** list was still browser-only.
-- [x] Store pins as `{ roundId, pinnedAt }` records (legacy `number[]` upgraded on read)
-- [x] Add `pinnedDebates` to the tool-record sync catalog
-- [x] Vitest coverage (`debate-round/test/pinnedDebates.test.ts`, catalog test)
+- **Branch**: `claude/gifted-babbage-4ax563`
+- **Status**: Settings, flows (`saved_flows`), rounds, documents, AI debates, ~60 tool stores and pinned debates already persist to D1 per user. Flow tabs now show whether each flow's current content has reached the account.
+- [x] `state/flowAccountStatus.ts` — in-memory per-flow baseline (`hashFlowContent`) with a subscribe API
+- [x] `FlowHistoryDialog` records successful single and bulk saves
+- [x] `FlowTab` shows saved / changed-since-save icons
+- [x] Vitest coverage (`flowAccountStatus.test.ts`, `FlowTab.test.tsx`)
 - [x] Document in `features/user-settings.mdx`
-- [ ] Follow-up: `speech-doc-links`, `ebb-dev-*` and `REASON-*` stores are still browser-only
-- [x] Per-tool "Saved to account" badge in `ToolPageHeader` (`ToolSyncBadge`, fed by `lib/tools/tool-sync-store` from `useToolRecordSync`); Vitest in `debate-webview/test/lib/tools`
-- [ ] Follow-up: the same indicator on the flow tabs / round start screen (they don't use `ToolPageHeader`)
+- [ ] Follow-up: same marker on the round start screen and for whole rounds (`hashRoundContent`)
+- [ ] Follow-up: persist baselines / auto-save flows so the marker survives a reload
+- [ ] Follow-up: `ebb-dev-*` and `REASON-*` stores are still browser-only
+
+## Completed
+
+### Account-linked pinned debates
+
+- PR #1095 (merged) — pins stored as `{ roundId, pinnedAt }` and added to the tool-record sync catalog; documented in `features/user-settings.mdx`.

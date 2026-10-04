@@ -26,7 +26,11 @@
 
 import type { Round } from "../types/flow"
 
-export const PINNED_DEBATES_KEY = "pinned-debates"
+/** Key of the synced pin records. Matches the `pinnedDebates` catalog entry's `storageKey`. */
+export const PINNED_DEBATES_KEY = "pinnedDebates"
+
+/** The pre-sync key, a bare `number[]` of round ids. Read-only fallback. */
+export const LEGACY_PINNED_DEBATES_KEY = "pinned-debates"
 
 /** How many rounds the start screen's featured section shows at most. */
 export const MAX_PINNED_DEBATES = 12
@@ -66,7 +70,7 @@ function readRecords(
 ): PinnedDebateRecord[] {
   try {
     const raw = storage.getItem(PINNED_DEBATES_KEY)
-    const parsed = raw ? JSON.parse(raw) : []
+    const parsed: unknown = raw ? JSON.parse(raw) : []
     if (!Array.isArray(parsed)) return []
     // Legacy entries carry no pin time; one shared value keeps array order.
     const now = Date.now()
@@ -117,20 +121,24 @@ export function writePinnedDebateIds(
  * returning the new id list. Pinning a round that's already at the cap drops
  * the oldest pin so the newest one always fits.
  */
-export function togglePinnedDebate(id: number, storage?: Pick<Storage, "getItem" | "setItem">): number[] {
+export function togglePinnedDebate(
+  id: number,
+  storage?: Pick<Storage, "getItem" | "setItem">,
+): number[] {
   const current = readPinnedDebateIds(storage)
   const next = current.includes(id) ? current.filter((pinned) => pinned !== id) : [...current, id]
-  return writePinnedDebateIds(next, storage)
+  return writePinnedDebateIds(next, storage, now)
 }
 
 /**
  * The pinned rounds, in pin order (oldest pin first), skipping ids whose
- * round no longer exists locally. Capped at {@link MAX_PINNED_DEBATES}.
+ * round no longer exists locally. Capped at the {@link MAX_PINNED_DEBATES}
+ * newest pins, since pins merged in from another device can exceed the cap.
  */
 export function orderPinnedRounds(rounds: Round[], pinnedIds: number[]): Round[] {
   const byId = new Map(rounds.map((round) => [round.id, round]))
   return pinnedIds
     .map((id) => byId.get(id))
     .filter((round): round is Round => round !== undefined)
-    .slice(0, MAX_PINNED_DEBATES)
+    .slice(-MAX_PINNED_DEBATES)
 }

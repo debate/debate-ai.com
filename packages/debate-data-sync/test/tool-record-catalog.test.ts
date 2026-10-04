@@ -43,9 +43,11 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   judgeProfiles: "judgeId",
   judgeRoundRecords: "id",
   judgeParadigmSelections: "roundId",
+  pinnedDebates: "id",
   flowSummaries: "roundId",
   argumentTrees: "roundId",
   argumentTreeFilters: "roundId",
+  pinnedDebates: "id",
   prepNotes: "id",
   flowAnnotations: "id",
   spellcheckDictionary: "id",
@@ -99,7 +101,6 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   debateVideoReports: "id",
   debateVideoWatchHistory: "videoId",
   speechOutcomeRuns: "id",
-  speechDocLinks: "id",
 };
 
 describe("the synced collection catalog", () => {

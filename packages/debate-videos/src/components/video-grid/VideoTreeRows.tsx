@@ -43,6 +43,8 @@ const GROUP_KIND_LABELS: Record<VideoGroupKind, string> = {
 /** Everything the leaves need that the tree itself does not carry. */
 export interface VideoTreeRowContext {
   isRoundMode: boolean
+  /** Adds the history listing's "Last watched" cell to every row. */
+  showWatched?: boolean
   showThumbnails: boolean
   favorites: Set<string>
   hiddenVideos: Set<string>
@@ -131,6 +133,7 @@ function GroupRows({
         <td className="px-3 py-2 align-middle text-xs text-muted-foreground text-right tabular-nums whitespace-nowrap">
           {group.viewCount.toLocaleString()}
         </td>
+        {context.showWatched && <td />}
       </tr>
 
       {isOpen &&
@@ -184,6 +187,7 @@ export function VideoTreeRows({
       isHidden={context.hiddenVideos.has(video[0])}
       isTopPick={context.topPicks?.has(video[0]) || false}
       isRoundMode={context.isRoundMode}
+      showWatched={context.showWatched}
       showThumbnails={context.showThumbnails}
       onToggleFavorite={context.onToggleFavorite}
       onHideVideo={context.onHideVideo}
