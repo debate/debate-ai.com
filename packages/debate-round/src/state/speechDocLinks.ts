@@ -20,7 +20,9 @@
 
 import type { Flow } from "../types/flow"
 
-export const SPEECH_DOC_LINKS_KEY = "speech-doc-links"
+export const SPEECH_DOC_LINKS_KEY = "speechDocLinks"
+/** The pre-sync storage key: a `{ "scope:SPEECH": link }` map, read once and then retired. */
+export const LEGACY_SPEECH_DOC_LINKS_KEY = "speech-doc-links"
 export const SPEECH_DOC_LINKS_EVENT = "speech-doc-links-changed"
 
 export interface SpeechDocLink {
@@ -82,6 +84,7 @@ function readLinks(): StoredSpeechDocLink[] {
 function writeLinks(links: StoredSpeechDocLink[]) {
   try {
     localStorage.setItem(SPEECH_DOC_LINKS_KEY, JSON.stringify(links))
+    localStorage.removeItem(LEGACY_SPEECH_DOC_LINKS_KEY)
   } catch (e) {
     console.warn("Could not save speech doc links:", e)
   }

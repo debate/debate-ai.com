@@ -127,6 +127,19 @@ export const MAX_TOOL_RECORDS_PER_PUSH = 500;
  * per-user blob store by a caller inventing collection names.
  */
 export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
+  // — Flowing and writing —
+  {
+    key: "speechDocLinks",
+    storageKey: "speechDocLinks",
+    idField: "id",
+    // Which editor document each speech of a round/flow reads its word counts
+    // from (`@debate/round/src/state/speechDocLinks.ts`). `id` is
+    // `scope:SPEECH`, and `docId` is a server `documents.id`, so a link
+    // resolves on any device once the round and document themselves sync.
+    label: "Speech Document Links",
+    href: "/debate",
+    section: "Flowing and writing",
+  },
   // — Practice —
   {
     key: "practiceRounds",

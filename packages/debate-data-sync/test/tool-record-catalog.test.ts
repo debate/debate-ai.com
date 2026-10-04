@@ -82,6 +82,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   pendingTaskVerifications: "id",
   roundContributorFlows: "contributorId",
   contributorAvailability: "contributorId",
+  speechDocLinks: "id",
   completedResearchTasks: "id",
   groupChallenges: "id",
   challengeWinEvents: "id",
@@ -309,6 +310,15 @@ describe("the synced collection catalog", () => {
       storageKey: "challengeWinEvents",
       idField: "id",
       href: "/coaching/leaderboard",
+    });
+  });
+
+  it("syncs which editor document each speech reads its word counts from", () => {
+    expect(findToolRecordCollection("speechDocLinks")).toMatchObject({
+      storageKey: "speechDocLinks",
+      idField: "id",
+      href: "/debate",
+      section: "Flowing and writing",
     });
   });
 

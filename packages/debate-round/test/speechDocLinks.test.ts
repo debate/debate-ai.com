@@ -43,6 +43,7 @@ describe("speech doc links", () => {
   })
 
   it("tolerates corrupt storage", () => {
+    store.set("speechDocLinks", "[1,2]")
     store.set("speech-doc-links", "[1,2]")
     expect(getSpeechDocLink("round-1", "1AC")).toBeNull()
     store.set("speech-doc-links", "not json")
@@ -68,6 +69,30 @@ describe("speech doc links", () => {
     const stored = JSON.parse(store.get("speech-doc-links")!)
     expect(Array.isArray(stored)).toBe(true)
     expect(stored.map((r: { id: string }) => r.id).sort()).toEqual(["round-1:1AC", "round-1:1NC"])
+  })
+
+  it("stores links as id-carrying records so they can sync to the account", () => {
+    setSpeechDocLink("round-1", "1ac", { id: 12, title: "Aff case.docx" })
+    expect(JSON.parse(store.get("speechDocLinks")!)).toEqual([
+      expect.objectContaining({ id: "round-1:1AC", docId: 12, title: "Aff case.docx" }),
+    ])
+  })
+
+  it("replaces an existing link for the same speech instead of duplicating it", () => {
+    setSpeechDocLink("round-1", "1AC", { id: 12, title: "Old" })
+    setSpeechDocLink("round-1", "1AC", { id: 13, title: "New" })
+    expect(JSON.parse(store.get("speechDocLinks")!)).toHaveLength(1)
+    expect(getSpeechDocLink("round-1", "1AC")).toMatchObject({ docId: 13 })
+  })
+
+  it("reads links from the legacy map and retires it on the next write", () => {
+    store.set("speech-doc-links", JSON.stringify({ "round-1:1AC": { docId: 5, title: "Legacy", linkedAt: 1 } }))
+    expect(getSpeechDocLink("round-1", "1AC")).toMatchObject({ docId: 5, title: "Legacy" })
+
+    setSpeechDocLink("round-1", "2AC", { id: 6, title: "Fresh" })
+    expect(store.has("speech-doc-links")).toBe(false)
+    expect(getSpeechDocLink("round-1", "1AC")).toMatchObject({ docId: 5 })
+    expect(getSpeechDocLink("round-1", "2AC")).toMatchObject({ docId: 6 })
   })
 })
 
