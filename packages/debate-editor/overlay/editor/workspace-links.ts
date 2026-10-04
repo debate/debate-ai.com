@@ -75,6 +75,4 @@ export const WORKSPACE_LINKS: WorkspaceLink[] = [
   { href: '/coaching/programs', label: 'Coaching Programs', description: "A coach's squad-scoped coaching space and boards", category: 'Coaching & Analytics' },
   { href: '/coaching/materials', label: 'Coach Materials', description: 'Grounding materials for the team coach AI', category: 'Coaching & Analytics' },
 
-  // ── Trailing, unlabeled ─────────────────────────────────────────────────
-  { href: '/tools', label: 'All Tools', description: 'Every workspace, research, and practice tool' },
 ];

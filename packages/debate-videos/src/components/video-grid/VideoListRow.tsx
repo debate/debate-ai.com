@@ -98,7 +98,7 @@ function TeamCell({
   onSearch?: (text: string) => void
 }) {
   return (
-    <td className="hidden px-3 py-3 align-top text-sm sm:table-cell">
+    <td className="px-3 py-3 align-top text-sm">
       <div className="truncate">
         {!team ? (
           <span className="text-muted-foreground">—</span>
@@ -285,11 +285,6 @@ export function VideoListRow({
                   </>
                 )}
               </div>
-              {isRoundMode && (affTeam || negTeam) && (
-                <div className="mt-0.5 truncate text-xs text-muted-foreground sm:hidden">
-                  {[affTeam, negTeam].filter(Boolean).join(" vs ")}
-                </div>
-              )}
               {/* The row's controls sit under the title and details rather than
                   in a column of their own, so they never crowd the Date and
                   Views cells and the table stays narrow. */}
@@ -427,10 +422,10 @@ export function VideoListRow({
           </>
         )}
 
-        <td className="hidden px-3 py-3 align-top text-sm text-muted-foreground whitespace-nowrap sm:table-cell">
+        <td className="px-3 py-3 align-top text-sm text-muted-foreground whitespace-nowrap">
           {formatVideoDate(date, "full", "—")}
         </td>
-        <td className="hidden px-3 py-3 align-top text-sm text-muted-foreground text-right tabular-nums whitespace-nowrap sm:table-cell">
+        <td className="px-3 py-3 align-top text-sm text-muted-foreground text-right tabular-nums whitespace-nowrap">
           {viewCount.toLocaleString()}
         </td>
 

@@ -2,22 +2,20 @@
  * @fileoverview The user's pinned ("featured") debates.
  *
  * A pin is a marker on a round id, kept in its own localStorage key rather
- * than on the `Round` itself: rounds are written wholesale to `rounds` by
- * `useFlowStore().setRounds`, so a `pinned` field on the round object would
- * need re-merging on every write, and a round loaded from the account would
- * silently drop it. Storing ids keeps pinning independent of where the round
- * came from.
+ * than on the `Round` itself: rounds are written wholesale to
+ * `rounds` by `useFlowStore().setRounds`, so a `pinned` field on the round
+ * object would need re-merging on every write, and a round loaded from the
+ * account would silently drop it. Storing ids keeps pinning independent of
+ * where the round came from.
  *
- * Pins sync to the signed-in user's account through the `pinnedDebates`
- * collection in `debate-data-sync`'s tool-record catalog. That catalog needs
- * each record to carry a string id, so a pin is stored as
- * `{ id: "<roundId>", roundId, pinnedAt }` rather than a bare number.
- * `Round.id` is also the `saved_rounds.client_id`, so a pin means the same
- * round on every device. `pinnedAt` is what keeps "oldest pin first" true
- * after a merge, where array position no longer is.
- *
- * Browsers that pinned before the sync stored a bare `number[]`; that shape is
- * still read (in array order) and is rewritten as records on the next write.
+ * Each pin is stored as a `{ roundId, pinnedAt }` record (the `roundId` is a
+ * string because the account sync keys records by a string field) under the
+ * `pinnedDebates` collection in `debate-data-sync`'s tool-record catalog, so a
+ * signed-in user's pins follow them across devices. A round's local id is its
+ * `saved_rounds.client_id`, which survives a cloud save, so the same id names
+ * the same round on every device. Browsers written before the sync stored a
+ * bare `number[]`; {@link readPinnedDebateIds} still reads that and rewrites it
+ * in the record shape.
  *
  * The debate page's start screen reads this to build its "Featured"
  * section, and the round history dialog writes it from each round's pin
@@ -33,87 +31,85 @@ export const PINNED_DEBATES_KEY = "pinned-debates"
 /** How many rounds the start screen's featured section shows at most. */
 export const MAX_PINNED_DEBATES = 12
 
-/** One pin as stored (and synced): the catalog's `idField` is `id`. */
+/** One pin as stored (and synced) — see the file header for why `roundId` is a string. */
 export interface PinnedDebateRecord {
-  /** `String(roundId)` — the string id the tool-record sync keys by. */
-  id: string
-  roundId: number
-  /** Epoch ms the round was pinned; orders the pins oldest first. */
+  roundId: string
   pinnedAt: number
 }
 
-/**
- * Parses the stored value into pins, oldest first. Accepts the legacy bare
- * `number[]` (given synthetic `pinnedAt`s that preserve its order and sort
- * before any real timestamp) and ignores anything unparseable or duplicated.
- */
-function parsePins(raw: unknown): PinnedDebateRecord[] {
-  if (!Array.isArray(raw)) return []
-  const seen = new Set<number>()
-  const pins: PinnedDebateRecord[] = []
-  raw.forEach((entry, index) => {
-    let roundId: number | undefined
-    let pinnedAt = index
-    if (typeof entry === "number") {
-      roundId = entry
-    } else if (entry && typeof entry === "object") {
-      const candidate = entry as Partial<PinnedDebateRecord>
-      roundId = candidate.roundId
-      if (typeof candidate.pinnedAt === "number" && Number.isFinite(candidate.pinnedAt)) {
-        pinnedAt = candidate.pinnedAt
-      }
-    }
-    if (typeof roundId !== "number" || !Number.isFinite(roundId) || seen.has(roundId)) return
-    seen.add(roundId)
-    pins.push({ id: String(roundId), roundId, pinnedAt })
-  })
-  // Array.prototype.sort is stable, so equal timestamps keep stored order.
-  return pins.sort((a, b) => a.pinnedAt - b.pinnedAt).slice(-MAX_PINNED_DEBATES)
+/** A stored entry as a pin record, or null when it isn't a usable pin. */
+function toPinRecord(entry: unknown, fallbackPinnedAt: number): PinnedDebateRecord | null {
+  const isObject = entry !== null && typeof entry === "object"
+  const rawId = isObject ? (entry as { roundId?: unknown }).roundId : entry
+  const id = typeof rawId === "string" && rawId.trim() !== "" ? Number(rawId) : rawId
+  if (typeof id !== "number" || !Number.isFinite(id)) return null
+  const rawAt = isObject ? (entry as { pinnedAt?: unknown }).pinnedAt : undefined
+  const pinnedAt = typeof rawAt === "number" && Number.isFinite(rawAt) ? rawAt : fallbackPinnedAt
+  return { roundId: String(id), pinnedAt }
 }
 
-function readPins(storage: Pick<Storage, "getItem">): PinnedDebateRecord[] {
+function writeRecords(records: PinnedDebateRecord[], storage: Pick<Storage, "setItem">) {
+  try {
+    storage.setItem(PINNED_DEBATES_KEY, JSON.stringify(records))
+  } catch (error) {
+    console.error("Failed to save pinned debates:", error)
+  }
+}
+
+/**
+ * The stored pins, oldest first, deduplicated and without anything
+ * unparseable. Accepts both stored shapes and rewrites a legacy `number[]` as
+ * records so the account sync (which can only key object records) picks it up.
+ */
+function readRecords(
+  storage: Pick<Storage, "getItem"> & Partial<Pick<Storage, "setItem">>,
+): PinnedDebateRecord[] {
   try {
     const raw = storage.getItem(PINNED_DEBATES_KEY)
-    return parsePins(raw ? JSON.parse(raw) : [])
+    const parsed = raw ? JSON.parse(raw) : []
+    if (!Array.isArray(parsed)) return []
+    // Legacy entries carry no pin time; one shared value keeps array order.
+    const now = Date.now()
+    const records = parsed
+      .map((entry) => toPinRecord(entry, now))
+      .filter((record): record is PinnedDebateRecord => record !== null)
+      .filter((record, index, all) => all.findIndex((r) => r.roundId === record.roundId) === index)
+    if (storage.setItem && parsed.some((entry) => entry === null || typeof entry !== "object")) {
+      writeRecords(records, storage as Pick<Storage, "setItem">)
+    }
+    return records
   } catch {
     return []
   }
 }
 
-function writePins(pins: PinnedDebateRecord[], storage: Pick<Storage, "setItem">): PinnedDebateRecord[] {
-  const kept = pins.slice(-MAX_PINNED_DEBATES)
-  try {
-    storage.setItem(PINNED_DEBATES_KEY, JSON.stringify(kept))
-  } catch (error) {
-    console.error("Failed to save pinned debates:", error)
-  }
-  return kept
-}
-
 /** The pinned round ids, oldest pin first, ignoring anything unparseable. */
-export function readPinnedDebateIds(storage: Pick<Storage, "getItem"> = localStorage): number[] {
-  return readPins(storage).map((pin) => pin.roundId)
+export function readPinnedDebateIds(
+  storage: Pick<Storage, "getItem"> & Partial<Pick<Storage, "setItem">> = localStorage,
+): number[] {
+  return readRecords(storage).map((record) => Number(record.roundId))
 }
 
-/**
- * Persists `ids` (deduplicated, oldest first) and returns what was stored. An
- * id that was already pinned keeps its original `pinnedAt`; new ids are stamped
- * `now`, in order, so they sort after every existing pin.
- */
+/** Persists `ids` (deduplicated, oldest first) and returns what was stored. */
 export function writePinnedDebateIds(
   ids: number[],
-  storage: Pick<Storage, "getItem" | "setItem"> = localStorage,
-  now: number = Date.now(),
+  storage: Pick<Storage, "setItem"> & Partial<Pick<Storage, "getItem">> = localStorage,
 ): number[] {
-  const existing = new Map(readPins(storage).map((pin) => [pin.roundId, pin]))
-  const unique = ids.filter((id, index) => ids.indexOf(id) === index)
-  let fresh = 0
-  const pins = unique.map((roundId): PinnedDebateRecord => {
-    const known = existing.get(roundId)
-    if (known) return known
-    return { id: String(roundId), roundId, pinnedAt: now + fresh++ }
-  })
-  return writePins(pins, storage).map((pin) => pin.roundId)
+  const unique = ids.filter((id, index) => ids.indexOf(id) === index).slice(-MAX_PINNED_DEBATES)
+  // Keep the pin time of a round that stays pinned: a fresh stamp on every
+  // write would make the sync re-send every pin each time one changes.
+  const existing = new Map(
+    (storage.getItem ? readRecords(storage as Pick<Storage, "getItem">) : []).map((r) => [
+      r.roundId,
+      r.pinnedAt,
+    ]),
+  )
+  const now = Date.now()
+  writeRecords(
+    unique.map((id) => ({ roundId: String(id), pinnedAt: existing.get(String(id)) ?? now })),
+    storage,
+  )
+  return unique
 }
 
 /**

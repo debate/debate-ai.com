@@ -46,7 +46,7 @@ gone:
   back as the first tab of `/settings`, **Preferences** (still
   `UserSettingsPanel`), ahead of the editor's own tabs;
   `/settings/preferences` now redirects to it
-- **Favorite tools** — a tool is still starred from `/tools`, which is also
+- **Favorite tools** — a tool is starred from its own page or the command palette (the `/tools` page was removed), which is also
   where a renamed or removed tool now gets pruned from the saved list
 - **Tool data** — see
   Tool Data Sync's Known gaps for what went
@@ -144,3 +144,20 @@ rather than silently corrupting the stored list. A plain whole-list
 `outlineFilterPresets` replace is still accepted by the route for a caller
 that genuinely needs one, but `useOutlineFilterPresets.ts` no longer sends
 one.
+
+## Pinned debates
+
+The debates you pin to the start screen's **Featured** section follow your
+account. Each pin is a `{ roundId, pinnedAt }` record in the `pinnedDebates`
+collection of the tool-record sync (`debate-data-sync`'s
+`TOOL_RECORD_COLLECTIONS`, stored in `saved_tool_records`), so it syncs like
+every other tool store and appears under **Settings → Account → Tool data**
+as "Pinned Debates". A round's id is its `saved_rounds.client_id`, which a
+cloud save keeps, so the pin names the same round on every device; a pin whose
+round isn't on this device yet is skipped until the round arrives. Browsers
+that stored pins as a bare list of ids are upgraded to records the first time
+the list is read.
+
+Known gap: pins are capped at 12 per browser, and the merge on sign-in is a
+union, so a pin removed on one device while another is offline can reappear
+until that device syncs.

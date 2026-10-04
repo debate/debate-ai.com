@@ -38,3 +38,18 @@ apps/debate-ai.com/app/speech-documents/SpeechSendLogPanel.tsx
 ## Known gaps
 
 Today's log is one global history, not grouped per speech-doc identity.
+
+## Linking a speech to an editor document
+
+A speech's header can point at one of your recent editor documents, so its
+word counts come from that file instead of the flow's own speech text. Links
+are scoped to the round (or the flow, when it has no round) and are stored as
+`speechDocLinks` records (`id` is `ROUND-SCOPE:SPEECH`, `docId` is the
+document's account id). The store is in the account's synced tool records, so
+a signed-in user's links follow them to other devices; a signed-out browser
+keeps them in `localStorage`. Links saved under the old `speech-doc-links`
+map are read once and folded into the new store on the next change.
+
+A link only resolves on another device once both the round and the document
+it names have synced there too — until then the speech falls back to its own
+text.
