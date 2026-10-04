@@ -70,7 +70,7 @@ function readRecords(
 ): PinnedDebateRecord[] {
   try {
     const raw = storage.getItem(PINNED_DEBATES_KEY)
-    const parsed = raw ? JSON.parse(raw) : []
+    const parsed: unknown = raw ? JSON.parse(raw) : []
     if (!Array.isArray(parsed)) return []
     // Legacy entries carry no pin time; one shared value keeps array order.
     const now = Date.now()

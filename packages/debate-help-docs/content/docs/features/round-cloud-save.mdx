@@ -31,6 +31,13 @@ warning that a second click (an explicit "save anyway") resolves. This
 covers the round row itself; each referenced flow's own save still goes
 through flow cloud save's own conflict check independently.
 
+Pinned ("Featured") debates follow the account too: pinning a round is stored
+as a `pinnedDebates` tool record (`{ id: "<round id>", pinnedAt }`, via
+`/api/tool-records/pinnedDebates`), so the Featured section on the start screen
+matches across devices. Pins from before this change are plain numbers in
+`localStorage`; they are still read, and are upgraded (and start syncing) the
+next time any pin is toggled on that browser.
+
 ## Data flow
 
 ```

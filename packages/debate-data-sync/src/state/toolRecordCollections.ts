@@ -210,6 +210,14 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     section: "Scouting and judging",
   },
   {
+    key: "pinnedDebates",
+    storageKey: "pinned-debates",
+    idField: "id",
+    label: "Pinned debates",
+    href: "/debate",
+    section: "Flowing and writing",
+  },
+  {
     key: "flowSummaries",
     storageKey: "flowSummaries",
     idField: "roundId",
