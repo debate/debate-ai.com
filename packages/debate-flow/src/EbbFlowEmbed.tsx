@@ -52,7 +52,8 @@ import { executeCommand } from "./lib/commands/commands";
 import { openFlowFromPicker } from "./lib/commands/fileCommands";
 import { navigateToFlow, type FlowNavigator } from "./lib/commands/flowNav";
 import { setEbbKeyScope } from "./lib/keymap/scope";
-import { useFlowStore } from "./lib/store/useFlowStore";
+import { startFlowSettingsAccountSync } from "./lib/store/flow-editor-settings-account-sync";
+import { applyAccountFlowSettings, useFlowStore } from "./lib/store/useFlowStore";
 import { setEbbThemeScope } from "./lib/theme/themeScope";
 
 // Tokens and Handsontable theming for `.ebb-scope` live in
@@ -105,6 +106,17 @@ export function EbbFlowEmbed({
             setEbbThemeScope(null);
         };
     }, []);
+
+    // Signed-in users' display/keymap settings follow the account; signed out
+    // this is a no-op and localStorage stays the only store.
+    useEffect(
+        () =>
+            startFlowSettingsAccountSync(useFlowStore, {
+                applyRemote: applyAccountFlowSettings,
+                onError: (error) => console.warn("Flow settings account sync failed", error),
+            }),
+        [],
+    );
 
     // React flushes effects bottom-up, so on the mount that first brings this
     // embed on screen, `NavigatorHost`'s own effect (registering the live

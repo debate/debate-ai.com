@@ -323,6 +323,10 @@ export const userSettings = sqliteTable("user_settings", {
   // op-based fields exist for doesn't apply here. Null/absent means "no
   // synced timer yet", same semantics as every other nullable column here.
   brainstormSessionTimer: text("brainstorm_session_timer"),
+  // JSON-serialized synced subset of the ebb flow editor's display + keymap
+  // settings (see packages/debate-flow/src/lib/store/flow-editor-settings-sync.ts).
+  // Whole-value replace; null means "nothing synced yet".
+  flowEditorSettings: text("flow_editor_settings"),
   // Practice vs AI's gamification score and JSON-serialized array of earned
   // badge ids (see packages/debate-round-practice-ai/src/backend/gamification.ts
   // and packages/debate-help-docs/content/docs/internals/practice-vs-ai.mdx).

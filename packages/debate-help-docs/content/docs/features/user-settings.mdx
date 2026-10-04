@@ -57,7 +57,15 @@ gone:
   editable directly on `/word-count`, in a collapsible "Manage word limit
   presets" section below the word-count form, rather than from here
 - **Ebb Flow preferences** — reachable with `Cmd/Ctrl+,` inside a flow, where
-  they apply
+  they apply. When signed in, the display preferences (font, zoom, theme,
+  Aff/Neg colours, editor toggles, your collab display name) and your keymap
+  overrides follow your account: the account copy is adopted when a flow opens,
+  an empty account is seeded from this browser, and later changes are saved
+  after a one-second pause. Device-specific values — the flows folder, collab
+  contacts, relay/listen toggles and update-channel settings — stay on the
+  device. Signed out, nothing changes; they live in this browser only. Stored as
+  the `flow_editor_settings` column on `user_settings`, written through
+  `PUT /api/settings`.
 
 Their `/api/settings` fields (`debateStyle`, `fontSize`, `wordLimitPresets`, …)
 are all still stored and served; what changed is that nothing writes them from

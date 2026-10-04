@@ -28,6 +28,7 @@ import {
     type FlowSheet,
 } from "../model/flow";
 import type { Scouting, Side } from "../model/types";
+import type { FlowEditorSettingsSyncPayload } from "./flow-editor-settings-sync";
 import { resolveThemeMode, type ThemeMode } from "../theme/mode";
 import { loadUpdateConfig, saveUpdateConfig } from "../update/settings";
 import type { UpdateConfig } from "../update/types";
@@ -923,3 +924,19 @@ export const useFlowStore = create<FlowStore>()((set, get) => ({
         set({ renamingSheetId: id });
     },
 }));
+
+/**
+ * Adopts the account's synced flow-editor settings: merges the synced display
+ * fields over the current ones (device-bound fields such as `flowsDir` stay),
+ * and replaces the keymap overrides, writing both to localStorage and the store.
+ */
+export function applyAccountFlowSettings(payload: FlowEditorSettingsSyncPayload): void {
+    const state = useFlowStore.getState();
+    useFlowStore.getState().applyExternalConfig({
+        ...displaySettingsOf(state),
+        // Validated by `isValidFlowEditorSettingsPayload` at the route and on parse.
+        ...(payload.display as Partial<DisplaySettings>),
+        keymapOverrides: payload.keymapOverrides,
+        updateConfig: state.updateConfig,
+    });
+}

@@ -47,6 +47,7 @@ async function freshDb() {
       qualification_points_table TEXT,
       qualification_cutoff TEXT,
       brainstorm_session_timer TEXT,
+      flow_editor_settings TEXT,
       practice_vs_ai_score INTEGER,
       practice_vs_ai_badges TEXT,
       practice_vs_ai_last_played_day_key TEXT,
