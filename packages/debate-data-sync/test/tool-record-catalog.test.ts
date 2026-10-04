@@ -99,7 +99,6 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   debateVideoReports: "id",
   debateVideoWatchHistory: "videoId",
   speechOutcomeRuns: "id",
-  speechDocLinks: "id",
 };
 
 describe("the synced collection catalog", () => {

@@ -8,10 +8,15 @@
 import type React from "react"
 import type { Flow, Round } from "../types/flow"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useSyncExternalStore } from "react"
 import { cn } from "../ui/lib/utils"
-import { Edit2, Archive, Trash2 } from "lucide-react"
+import { Edit2, Archive, Trash2, Cloud, CloudOff } from "lucide-react"
 import { Button } from "../ui/primitives/button"
+import {
+  getFlowAccountStatus,
+  getFlowAccountStatusVersion,
+  subscribeFlowAccountStatus,
+} from "../state/flowAccountStatus"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -69,6 +74,10 @@ export function FlowTab({ flow, selected, onClick, onRename, onArchive, onDelete
   const [isEditing, setIsEditing] = useState(false)
   const [editValue, setEditValue] = useState(flow.content || "Untitled Flow")
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  // Re-render when any flow's account-save baseline changes; the status itself
+  // is derived from the flow's current content on each render.
+  useSyncExternalStore(subscribeFlowAccountStatus, getFlowAccountStatusVersion, getFlowAccountStatusVersion)
+  const accountStatus = getFlowAccountStatus(flow)
 
   /**
    * Enter edit mode for renaming
@@ -157,6 +166,26 @@ export function FlowTab({ flow, selected, onClick, onRename, onArchive, onDelete
             {flow.content || "Untitled Flow"}
             {flow.archived && " (Archived)"}
           </span>
+        )}
+
+        {/* Account-save marker: only once this session has a baseline to compare against */}
+        {!isEditing && accountStatus === "saved" && (
+          <Cloud
+            className="ml-1 h-3 w-3 shrink-0 text-muted-foreground"
+            aria-label="Saved to your account"
+            role="img"
+          >
+            <title>Saved to your account</title>
+          </Cloud>
+        )}
+        {!isEditing && accountStatus === "unsaved" && (
+          <CloudOff
+            className="ml-1 h-3 w-3 shrink-0 text-amber-500"
+            aria-label="Changed since last account save"
+            role="img"
+          >
+            <title>Changed since last account save</title>
+          </CloudOff>
         )}
 
         {/* Action buttons (visible on hover) */}

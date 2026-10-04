@@ -53,7 +53,7 @@ describe("speech doc links", () => {
   it("stores id-keyed records, the shape the account sync collection requires", () => {
     setSpeechDocLink("round-1", "1ac", { id: 12, title: "Aff case.docx" })
     setSpeechDocLink("round-1", "1AC", { id: 13, title: "Aff v2.docx" })
-    const stored = JSON.parse(store.get("speech-doc-links")!)
+    const stored = JSON.parse(store.get("speechDocLinks")!)
     expect(stored).toHaveLength(1)
     expect(stored[0]).toMatchObject({ id: "round-1:1AC", docId: 13, title: "Aff v2.docx" })
   })
@@ -66,7 +66,8 @@ describe("speech doc links", () => {
     expect(getSpeechDocLink("round-1", "1AC")).toMatchObject({ docId: 5, title: "Old" })
     expect(getSpeechDocLink("round-1", "2AC")).toBeNull()
     setSpeechDocLink("round-1", "1NC", { id: 6, title: "Neg" })
-    const stored = JSON.parse(store.get("speech-doc-links")!)
+    const stored = JSON.parse(store.get("speechDocLinks")!)
+    expect(store.has("speech-doc-links")).toBe(false)
     expect(Array.isArray(stored)).toBe(true)
     expect(stored.map((r: { id: string }) => r.id).sort()).toEqual(["round-1:1AC", "round-1:1NC"])
   })
