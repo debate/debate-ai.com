@@ -61,6 +61,16 @@ Their `/api/settings` fields (`debateStyle`, `fontSize`, `wordLimitPresets`, …
 are all still stored and served; what changed is that nothing writes them from
 here any more.
 
+## Saved-to-account marker on flow tabs
+
+Each flow tab in the sidebar's **Open Tabs** group shows a small cloud icon
+once that flow has been saved to your account from the Flow History dialog
+(including bulk saves): a plain cloud means the account copy matches what you
+see, a crossed-out amber cloud means you've edited it since. A tab with no icon
+has no baseline this session — the marker is held in memory, not persisted, so
+it reappears after your next save. Engineering notes: `debate-round`'s
+`state/flowAccountStatus.ts`.
+
 ## Data flow
 
 ```
