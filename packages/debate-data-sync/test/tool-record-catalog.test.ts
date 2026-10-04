@@ -50,6 +50,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   flowAnnotations: "id",
   spellcheckDictionary: "id",
   flowHistory: "id",
+  pinnedDebates: "roundId",
   docsChatTabs: "id",
   fileSources: "id",
   coachConversation: "id",
@@ -98,6 +99,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   debateVideoReports: "id",
   debateVideoWatchHistory: "videoId",
   speechOutcomeRuns: "id",
+  speechDocLinks: "id",
 };
 
 describe("the synced collection catalog", () => {

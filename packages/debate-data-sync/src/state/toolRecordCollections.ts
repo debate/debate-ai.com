@@ -258,6 +258,17 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     section: "Flowing and writing",
   },
   {
+    key: "pinnedDebates",
+    storageKey: "pinned-debates",
+    // Records are `{ roundId, pinnedAt }`; the id is a string because the
+    // sync keys by a string field. The round id itself is the round's
+    // `saved_rounds.client_id`, so it names the same round on every device.
+    idField: "roundId",
+    label: "Pinned Debates",
+    href: "/debate",
+    section: "Flowing and writing",
+  },
+  {
     key: "docsChatTabs",
     storageKey: "qwksearch-open-chat-tabs",
     idField: "id",

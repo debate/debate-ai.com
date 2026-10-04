@@ -46,6 +46,29 @@ describe("speech doc links", () => {
     store.set("speechDocLinks", "[1,2]")
     store.set("speech-doc-links", "[1,2]")
     expect(getSpeechDocLink("round-1", "1AC")).toBeNull()
+    store.set("speech-doc-links", "not json")
+    expect(getSpeechDocLink("round-1", "1AC")).toBeNull()
+  })
+
+  it("stores id-keyed records, the shape the account sync collection requires", () => {
+    setSpeechDocLink("round-1", "1ac", { id: 12, title: "Aff case.docx" })
+    setSpeechDocLink("round-1", "1AC", { id: 13, title: "Aff v2.docx" })
+    const stored = JSON.parse(store.get("speech-doc-links")!)
+    expect(stored).toHaveLength(1)
+    expect(stored[0]).toMatchObject({ id: "round-1:1AC", docId: 13, title: "Aff v2.docx" })
+  })
+
+  it("still reads the legacy map shape and rewrites it as records", () => {
+    store.set(
+      "speech-doc-links",
+      JSON.stringify({ "round-1:1AC": { docId: 5, title: "Old", linkedAt: 1 }, "round-1:2AC": { title: "bad" } }),
+    )
+    expect(getSpeechDocLink("round-1", "1AC")).toMatchObject({ docId: 5, title: "Old" })
+    expect(getSpeechDocLink("round-1", "2AC")).toBeNull()
+    setSpeechDocLink("round-1", "1NC", { id: 6, title: "Neg" })
+    const stored = JSON.parse(store.get("speech-doc-links")!)
+    expect(Array.isArray(stored)).toBe(true)
+    expect(stored.map((r: { id: string }) => r.id).sort()).toEqual(["round-1:1AC", "round-1:1NC"])
   })
 
   it("stores links as id-carrying records so they can sync to the account", () => {
