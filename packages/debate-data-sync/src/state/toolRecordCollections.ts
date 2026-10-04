@@ -45,6 +45,7 @@
  */
 
 import { redactFileSource } from "./redact-file-source";
+import { decodeSingleObject, encodeSingleObject, redactFlowDisplaySettings } from "./single-object-codec";
 
 /**
  * The groupings `/settings` → Account → **Tool data** renders as section
@@ -267,6 +268,32 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     label: "Pinned Debates",
     href: "/debate",
     section: "Flowing and writing",
+  },
+  {
+    key: "flowDisplaySettings",
+    storageKey: "ebb-display-settings",
+    idField: "id",
+    // The flow editor's display preferences (font, zoom, theme, side colors,
+    // collab name, ...) kept by `@debate/flow-ebb`'s `useFlowStore`. One object
+    // synced as a single `settings` record; `flowsDir` (a desktop-only disk
+    // path) never leaves the browser. A change reaches another device on its
+    // next load of the flow editor.
+    label: "Flow Editor Display Settings",
+    href: "/debate",
+    section: "Flowing and writing",
+    redact: redactFlowDisplaySettings,
+    codec: { decode: decodeSingleObject, encode: encodeSingleObject },
+  },
+  {
+    key: "flowKeymapSettings",
+    storageKey: "ebb-keymap-settings",
+    idField: "id",
+    // The flow editor's custom keybindings (`{ keymapOverrides }`), synced as
+    // a single `settings` record so a remapped key follows the user.
+    label: "Flow Editor Keymap",
+    href: "/debate",
+    section: "Flowing and writing",
+    codec: { decode: decodeSingleObject, encode: encodeSingleObject },
   },
   {
     key: "flowHistory",
