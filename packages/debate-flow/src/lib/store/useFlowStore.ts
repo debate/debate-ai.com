@@ -923,3 +923,37 @@ export const useFlowStore = create<FlowStore>()((set, get) => ({
         set({ renamingSheetId: id });
     },
 }));
+
+/**
+ * Adopts settings written to localStorage from outside the store — another tab,
+ * or the account sync landing a value from a different device (it dispatches a
+ * `storage` event for the key it wrote). Only the synced preferences are
+ * applied, so a device-local field like the flows folder is never touched.
+ */
+export function applyStoredSettingsChange(key: string | null): void {
+    if (key === KEYMAP_SETTINGS_KEY) {
+        useFlowStore.setState({ keymapOverrides: loadKeymapOverrides() });
+    } else if (key === DISPLAY_SETTINGS_KEY) {
+        const d = loadDisplaySettings();
+        useFlowStore.setState((s) => ({
+            flowFont: d.flowFont,
+            theme: d.theme,
+            affColor: d.affColor,
+            negColor: d.negColor,
+            rfdVim: d.rfdVim,
+            insertPaste: d.insertPaste,
+            appendEdit: d.appendEdit,
+            scrollZoom: d.scrollZoom,
+            alignSpeeches: d.alignSpeeches,
+            tooltips: d.tooltips,
+            cardmirrorEnabled: d.cardmirrorEnabled,
+            cardmirrorTextType: d.cardmirrorTextType,
+            defaultGridZoom: d.defaultGridZoom,
+            gridZoom: s.gridZoom === s.defaultGridZoom ? d.defaultGridZoom : s.gridZoom,
+        }));
+    }
+}
+
+if (typeof window !== "undefined") {
+    window.addEventListener("storage", (e) => applyStoredSettingsChange(e.key));
+}

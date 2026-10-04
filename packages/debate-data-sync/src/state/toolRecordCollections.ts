@@ -45,6 +45,12 @@
  */
 
 import { redactFileSource } from "./redact-file-source";
+import {
+  decodeFlowDisplaySettings,
+  decodeFlowKeymapSettings,
+  encodeFlowDisplaySettings,
+  encodeFlowKeymapSettings,
+} from "./flow-settings-codec";
 
 /**
  * The groupings `/settings` → Account → **Tool data** renders as section
@@ -111,12 +117,14 @@ export interface ToolRecordCollection {
    * Adapts a store that is not itself "a JSON array of records" — a map keyed
    * by string, say — to the array the sync diffs and merges. `decode` turns
    * the parsed `localStorage` value into records (each carrying `idField`);
-   * `encode` turns the merged records back into the value to store. Absent
-   * for every collection whose store already is an array.
+   * `encode` turns the merged records back into the value to store, and is
+   * given the value currently in storage as `current` so a store that mixes
+   * synced and device-local fields can keep the latter. Absent for every
+   * collection whose store already is an array.
    */
   codec?: {
     decode: (stored: unknown) => unknown[];
-    encode: (records: readonly unknown[]) => unknown;
+    encode: (records: readonly unknown[], current?: unknown) => unknown;
   };
 }
 
@@ -148,6 +156,28 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     // `scope:SPEECH`, and `docId` is a server `documents.id`, so a link
     // resolves on any device once the round and document themselves sync.
     label: "Speech Document Links",
+    href: "/debate",
+    section: "Flowing and writing",
+  },
+  {
+    key: "flowDisplaySettings",
+    storageKey: "ebb-display-settings",
+    idField: "id",
+    // One record (`id: "settings"`) of the flow editor's font, zoom, theme,
+    // side colours and editing toggles (`@debate/flow`'s `useFlowStore.ts`).
+    // Device-local fields (flows folder, collaboration, contacts) stay put.
+    codec: { decode: decodeFlowDisplaySettings, encode: encodeFlowDisplaySettings },
+    label: "Flow Editor Display Settings",
+    href: "/debate",
+    section: "Flowing and writing",
+  },
+  {
+    key: "flowKeymapSettings",
+    storageKey: "ebb-keymap-settings",
+    idField: "id",
+    // One record (`id: "settings"`) holding the flow editor's custom key bindings.
+    codec: { decode: decodeFlowKeymapSettings, encode: encodeFlowKeymapSettings },
+    label: "Flow Editor Key Bindings",
     href: "/debate",
     section: "Flowing and writing",
   },

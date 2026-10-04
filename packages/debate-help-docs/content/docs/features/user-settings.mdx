@@ -186,3 +186,21 @@ second sync, and it refreshes every few seconds rather than instantly.
 
 Known gap: the badge is only in the shared tool-page header, so tools with their
 own custom header (the flow tabs and start screen) don't show it yet.
+
+## Flow editor settings
+
+Your flow editor preferences follow your account: font, default zoom, theme,
+Aff/Neg colours, the editing toggles (insert-paste, append-edit, scroll-zoom,
+align speeches, tooltips, Vim in the RFD, CardMirror) and any custom key
+bindings. They sync as one record each in the `flowDisplaySettings` and
+`flowKeymapSettings` collections of the tool-record sync and show under
+**Settings → Account → Tool data** as "Flow Editor Display Settings" and "Flow
+Editor Key Bindings". Settings that describe a device rather than you — the
+desktop flows folder, collaboration relay/listen switches, contacts and which
+panels are open — stay on that device, and an incoming sync never overwrites
+them. A setting that arrives from another device is applied to an open editor
+immediately.
+
+Known gap: each store is one record, so the merge is account-wins per store —
+settings changed offline on a second device are replaced by the account's copy
+the next time that device syncs, rather than merged field by field.
