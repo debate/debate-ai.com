@@ -46,6 +46,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   flowSummaries: "roundId",
   argumentTrees: "roundId",
   argumentTreeFilters: "roundId",
+  pinnedDebates: "id",
   prepNotes: "id",
   flowAnnotations: "id",
   spellcheckDictionary: "id",
