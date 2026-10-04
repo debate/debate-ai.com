@@ -70,11 +70,12 @@
 
 ### Account-linked pinned debates (slice of "integrate tools + user settings + SQL-linked flows/docs/debates")
 
-- **Branch**: `claude/gifted-babbage-a28l34`
+- **Branch**: `claude/gifted-babbage-mym8il` (pinned-debates slice merged in #1095)
 - **Status**: Settings (`user_settings`), flows (`saved_flows`), rounds (`saved_rounds`), documents (`documents`), AI debates (`practice_vs_ai_debates`) and ~60 tool stores (`saved_tool_records`) already persist to D1 per user. The audit found the **pinned debates** list was still browser-only.
 - [x] Store pins as `{ roundId, pinnedAt }` records (legacy `number[]` upgraded on read)
 - [x] Add `pinnedDebates` to the tool-record sync catalog
 - [x] Vitest coverage (`debate-round/test/pinnedDebates.test.ts`, catalog test)
 - [x] Document in `features/user-settings.mdx`
 - [ ] Follow-up: `speech-doc-links`, `ebb-dev-*` and `REASON-*` stores are still browser-only
-- [ ] Follow-up: surface a "Saved to account" indicator on the flow tabs / start screen
+- [x] Per-tool "Saved to your account" badge in `ToolPageHeader` (`getToolRecordCollectionSyncStatus`, `ToolSyncBadge`, Vitest coverage)
+- [ ] Follow-up: show the badge on the flow tabs / start screen, which have their own headers

@@ -21,6 +21,7 @@
  * - an eyebrow naming the guide the tool belongs to (training / practice /
  *   research collaboration),
  * - "Docs" and "Guide" links into the Fumadocs site (`lib/docs-links.ts`),
+ * - a "Saved to your account" badge for tools whose data syncs (`ToolSyncBadge`),
  * - the same favorite-star toggle as the `/tools` grid, and
  * - an optional row of related-tool links (`RoundToolsCrossLinks`).
  *
@@ -43,6 +44,7 @@ import {
 } from "../../lib/docs-links"
 import { cn } from "../../lib/ui/lib/utils"
 import { FavoriteToolButton } from "./FavoriteToolButton"
+import { ToolSyncBadge } from "./ToolSyncBadge"
 
 /** Props for {@link ToolPage}. */
 export interface ToolPageProps {
@@ -128,6 +130,7 @@ export function ToolPageHeader({
         </Link>
 
         <div className="flex flex-wrap items-center gap-1.5">
+          <ToolSyncBadge href={href} />
           {actions}
           {docsUrl ? (
             <HeaderLink href={docsUrl} icon={BookOpen} label="Docs" title={`Read the ${resolvedTitle} documentation`} />
