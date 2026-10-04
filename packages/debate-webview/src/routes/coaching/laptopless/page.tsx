@@ -181,11 +181,11 @@ export default function MobileSetupPage() {
       <div className="mx-auto max-w-4xl">
         <div className="mb-4">
           <Link
-            href="/tools"
+            href="/debate"
             className="inline-flex items-center gap-1.5 h-9 px-3 rounded-md border border-border bg-background hover:bg-accent text-sm font-medium text-foreground transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
-            All tools
+            Back
           </Link>
         </div>
 

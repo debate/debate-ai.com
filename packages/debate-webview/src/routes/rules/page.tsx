@@ -19,8 +19,8 @@ export default function RulesPage() {
     <ToolPage className="max-w-5xl">
       <ToolPageHeader
         href="/practice/rules"
-        backHref="/tools"
-        backLabel="tools"
+        backHref="/debate"
+        backLabel="round workspace"
         title="Debate Formats, Research & Rules"
         description="A one-page reference for the most common high-school debate formats, their key round sections, and the research, evidence, conduct, and format-specific rules students need to know."
         icon={Scale}

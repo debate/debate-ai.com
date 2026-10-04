@@ -56,7 +56,7 @@ describe("DISALLOWED_PATHS", () => {
   });
 
   it("leaves the public content crawlable", () => {
-    for (const path of ["/videos", "/lectures", "/docs", "/tools", "/legal/privacy"]) {
+    for (const path of ["/videos", "/lectures", "/docs", "/legal/privacy"]) {
       expect(isDisallowed(path), `expected ${path} to stay crawlable`).toBe(false);
     }
   });

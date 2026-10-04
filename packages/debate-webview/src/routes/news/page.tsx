@@ -5,7 +5,7 @@ import { NewsPageContent } from "./NewsPageContent"
 export default function NewsPage() {
   return (
     <ToolPage>
-      <ToolPageHeader href="/news" backHref="/tools" backLabel="tools" guide="research-collaboration" />
+      <ToolPageHeader href="/news" backHref="/debate" backLabel="round workspace" guide="research-collaboration" />
       <div className="mx-auto max-w-2xl">
         <Suspense>
           <NewsPageContent />
