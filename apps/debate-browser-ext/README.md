@@ -2,8 +2,9 @@
 
 One extension with three tools for a debater's browser:
 
-1. **Article panel** — any page you're on, in reading mode, in the browser's
-   side panel, with an AI you can ask about it. Ported from the article reader
+1. **Article panel** — any page you're on, in reading mode, as a full-page
+   overlay with the article centered and an AI you can ask about it beside
+   it (or as a narrow panel on the right, if you prefer). Ported from the article reader
    in [qwksearch-research-agent]'s `research-agent-ui` package; see
    [The article panel](#the-article-panel) for what changed and why.
 2. **Round timer** — Constructive / Rebuttal / Cross-x plus per-side prep
@@ -137,7 +138,7 @@ secret in this repository; nothing here automates them.
 
 | Page | Built as | What it is |
 | --- | --- | --- |
-| `sidepanel.html` | `entrypoints/sidepanel` | The article panel, opened as the browser's side panel (Chrome) or sidebar (Firefox). |
+| `reader.html` | `entrypoints/reader` | The article panel, framed over the page you're on — full-page by default, or as a side panel. |
 | `popup.html` | `entrypoints/popup` | Toolbar dropdown: the reuse check for the active tab + **Read this page** and **Open round timer** buttons. |
 | `timer.html` | `entrypoints/timer` | The timer + timeline, opened as its own `popup`-type window. |
 | `options.html` | `entrypoints/options` | `debate-webview`'s app UI, with every setting for the other three tools as its last screen. |
@@ -154,6 +155,15 @@ page in Debate AI**, or by setting the toolbar icon to open it directly. It
 shows the page you're on in reading mode, with the toolbar, prompt box,
 suggested follow-up questions, chat history, reading zoom and Alt-key shortcuts
 ported from `research-agent-ui`'s `ArticleExtractPanel`.
+
+It opens **full page**: the site behind is dimmed and blurred and stops
+scrolling, the extracted article sits on a sheet in the center at the reading
+width you pick (Narrow / Medium / Wide, `Alt+W`), and the AI — prompt,
+suggested questions and the conversation — has its own column beside it, so an
+answer and the passage it is about are on screen together. On a window
+narrower than 1024px the AI column stacks above the article instead. Click the
+dimmed backdrop or press `Esc` to close it; `Alt+L` switches to the narrow side
+panel on the right edge and back, and the choice is remembered.
 
 Three things work differently here than they do in the web app it came from,
 and each difference is why the port was worth doing.
@@ -247,19 +257,21 @@ the reading-mode body (`src/article/document.ts` builds it; everything but the
 already-sanitized body is escaped). If you are not signed in, the button runs
 the sign-in handoff below first and saves once it completes.
 
-### Why a side panel, not an overlay
+### Why an overlay frame
 
-Same reason the timer is its own window: a panel that is part of the browser
-stays open while you click around the page it came from. It's also an extension
-page, so it renders with the extension's own styles instead of fighting
-whatever CSS the site ships — no shadow DOM, no specificity war. Chrome gets
-`sidePanel`, Firefox `sidebar_action`, both from the one `entrypoints/sidepanel`
-entrypoint.
+The panel is `reader.html` in an `<iframe>` that `src/reader/panel.ts` puts
+over the page under `activeTab`. It is still an extension page, so it renders
+with the extension's own styles instead of fighting whatever CSS the site
+ships — no shadow DOM, no specificity war — and it works the same in Chrome and
+Firefox, where the browser side-panel APIs differ. Framing it requires
+`reader.html` to be in `web_accessible_resources`.
 
-Both APIs only open a panel while handling a user action, and they check the
-call stack — so `openReaderPanel` awaits nothing before opening, and its
-callers resolve what they need beforehand. That's why the background worker
-caches the toolbar mode instead of reading it from storage on click.
+The page side of it is a tiny injected function that creates the frame,
+resizes it when the panel asks for the other layout, and hides it on close.
+In the full-page layout it also adds a one-rule stylesheet that stops the site
+from scrolling under the overlay, removed again on close or on switching to the
+side panel. Hiding keeps the frame alive, so the article and the Q&A are still
+there when it is toggled back.
 
 ### Why the timer is a window, not a dropdown
 
@@ -339,7 +351,7 @@ nav:
 entrypoints/
   background.ts          MV3 service worker: toolbar mode, context menus, panel,
                          timer window, sign-in, session-refresh alarm
-  sidepanel/             the article panel (ported ArticleExtractPanel)
+  reader/                the article panel (ported ArticleExtractPanel)
   popup/                 reuse check + "Read this page" + "Open round timer"
   timer/                 Tabs (Timer | Timeline) + format Select
   options/               App.tsx mounts debate-webview; SettingsPanel.tsx is the
@@ -353,7 +365,7 @@ src/
     types.ts             Article, ChatMessage, PageSnapshot
   reader/
     snapshot.ts          reads the tab's HTML under `activeTab`
-    panel.ts             open the side panel / sidebar; panel message names
+    panel.ts             the overlay frame over the page; panel message names
   ai/
     providers.ts         the provider registry and their origins
     keys.ts              API keys in storage.local (never storage.sync)
