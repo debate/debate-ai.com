@@ -12,7 +12,10 @@
  * @module lib/tools/tool-sync-status
  */
 
-import { findToolRecordCollection } from "@debate/data-sync/src/state/toolRecordCollections"
+import {
+  TOOL_RECORD_COLLECTIONS,
+  findToolRecordCollection,
+} from "@debate/data-sync/src/state/toolRecordCollections"
 import type { ToolRecordHydrationResult } from "@debate/data-sync/src/state/tool-record-mirror"
 
 export interface ToolSyncFailure {
@@ -51,4 +54,41 @@ export function summarizeToolSyncFailures(
     })
   }
   return failures.sort((a, b) => a.label.localeCompare(b.label))
+}
+
+export type ToolSyncBadgeState =
+  /** The tool has no account-synced collection; show nothing. */
+  | { kind: "none" }
+  /** Signed out: data stays in this browser. */
+  | { kind: "local" }
+  | { kind: "syncing" }
+  | { kind: "synced" }
+  | { kind: "failed"; error: string }
+
+/**
+ * What the per-tool "Saved to account" badge should say for the tool at
+ * `href`. A tool can own several collections (e.g. `/practice/judges`); it
+ * counts as failed if any of them failed.
+ */
+export function toolSyncBadgeState(
+  href: string,
+  sync: {
+    enabled: boolean
+    reconciled: boolean
+    results: readonly ToolRecordHydrationResult[]
+  },
+): ToolSyncBadgeState {
+  const keys = new Set(
+    TOOL_RECORD_COLLECTIONS.filter((collection) => collection.href === href).map(
+      (collection) => collection.key,
+    ),
+  )
+  if (keys.size === 0) return { kind: "none" }
+  if (!sync.enabled) return { kind: "local" }
+  if (!sync.reconciled) return { kind: "syncing" }
+  const failed = sync.results.find(
+    (result) => keys.has(result.collection) && !result.synced && result.error,
+  )
+  if (failed) return { kind: "failed", error: failed.error ?? "" }
+  return { kind: "synced" }
 }

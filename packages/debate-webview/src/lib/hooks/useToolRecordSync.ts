@@ -47,6 +47,7 @@ import {
 } from "@debate/data-sync/src/state/tool-record-auto-sync"
 import { setSignedIn } from "@debate/data-sync/src/state/sign-in-prompt"
 import { useSession } from "./useSession"
+import { publishToolSyncSnapshot, resetToolSyncSnapshot } from "../tools/tool-sync-store"
 
 /**
  * Marks a tab as having already reconciled, so the shell document and each
@@ -237,6 +238,13 @@ export function useToolRecordSync(): ToolRecordSyncState {
     setReconciled(false)
     setResyncNonce((nonce) => nonce + 1)
   }, [])
+
+  // Mirror the state into the shared store so each tool page's badge can read
+  // it without calling this hook (whose cleanups stop the global watcher).
+  useEffect(() => {
+    publishToolSyncSnapshot({ enabled: isAuthenticated, reconciled, results, resync })
+  }, [isAuthenticated, reconciled, results, resync])
+  useEffect(() => resetToolSyncSnapshot, [])
 
   return { enabled: isAuthenticated, reconciled, results, resync }
 }

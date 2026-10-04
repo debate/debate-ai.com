@@ -53,7 +53,7 @@
 
 - [x] Speech-doc links (editor document <-> round/flow speech) sync via the `speechDocLinks` tool-record collection
 - [ ] Pinned debates (`pinned-debates`, numeric round ids) - needs a `user_settings` op or an id-carrying record shape; blocked on a schema migration path since `drizzle/` was removed on purpose
-- [ ] Surface the Tool data sync status where each tool is used, not only in settings
+- [x] Surface the Tool data sync status where each tool is used (tool page header badge)
 
 ---
 
@@ -77,4 +77,5 @@
 - [x] Vitest coverage (`debate-round/test/pinnedDebates.test.ts`, catalog test)
 - [x] Document in `features/user-settings.mdx`
 - [ ] Follow-up: `speech-doc-links`, `ebb-dev-*` and `REASON-*` stores are still browser-only
-- [ ] Follow-up: surface a "Saved to account" indicator on the flow tabs / start screen
+- [x] Per-tool "Saved to account" badge in `ToolPageHeader` (`ToolSyncBadge`, fed by `lib/tools/tool-sync-store` from `useToolRecordSync`); Vitest in `debate-webview/test/lib/tools`
+- [ ] Follow-up: the same indicator on the flow tabs / round start screen (they don't use `ToolPageHeader`)
