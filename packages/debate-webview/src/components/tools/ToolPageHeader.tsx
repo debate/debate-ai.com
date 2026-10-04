@@ -25,8 +25,8 @@
  * - the same favorite-star toggle as the `/tools` grid, and
  * - an optional row of related-tool links (`RoundToolsCrossLinks`).
  *
- * Both components are server-renderable; the only client piece is
- * `FavoriteToolButton`, which already marks itself `"use client"`.
+ * Both components are server-renderable; the only client pieces are
+ * `FavoriteToolButton` and `ToolSyncBadge`, which already mark themselves `"use client"`.
  *
  * @module components/tools/ToolPageHeader
  */
@@ -132,6 +132,7 @@ export function ToolPageHeader({
         <div className="flex flex-wrap items-center gap-1.5">
           <ToolSyncBadge href={href} />
           {actions}
+          <ToolSyncBadge href={href} />
           {docsUrl ? (
             <HeaderLink href={docsUrl} icon={BookOpen} label="Docs" title={`Read the ${resolvedTitle} documentation`} />
           ) : null}

@@ -53,7 +53,7 @@
 
 - [x] Speech-doc links (editor document <-> round/flow speech) sync via the `speechDocLinks` tool-record collection
 - [ ] Pinned debates (`pinned-debates`, numeric round ids) - needs a `user_settings` op or an id-carrying record shape; blocked on a schema migration path since `drizzle/` was removed on purpose
-- [ ] Surface the Tool data sync status where each tool is used, not only in settings
+- [x] Surface the Tool data sync status where each tool is used (tool page header badge)
 
 ---
 

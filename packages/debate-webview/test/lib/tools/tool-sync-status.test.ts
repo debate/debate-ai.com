@@ -8,7 +8,7 @@
 
 import { describe, expect, it } from "vitest"
 
-import { summarizeToolSyncFailures } from "../../../src/lib/tools/tool-sync-status"
+import { summarizeToolSyncFailures, toolSyncBadgeState } from "../../../src/lib/tools/tool-sync-status"
 import type { ToolRecordHydrationResult } from "@debate/data-sync/src/state/tool-record-mirror"
 
 function result(overrides: Partial<ToolRecordHydrationResult>): ToolRecordHydrationResult {
@@ -55,5 +55,39 @@ describe("summarizeToolSyncFailures", () => {
 
   it("returns an empty list for no results", () => {
     expect(summarizeToolSyncFailures([])).toEqual([])
+  })
+})
+
+describe("toolSyncBadgeState", () => {
+  const base = { enabled: true, reconciled: true, results: [] as ToolRecordHydrationResult[] }
+
+  it("shows nothing for a tool with no synced collection", () => {
+    expect(toolSyncBadgeState("/not-a-synced-tool", base)).toEqual({ kind: "none" })
+  })
+
+  it("says the data is local when signed out", () => {
+    expect(toolSyncBadgeState("/practice/judges", { ...base, enabled: false })).toEqual({ kind: "local" })
+  })
+
+  it("says syncing until the tab's merge finishes", () => {
+    expect(toolSyncBadgeState("/practice/judges", { ...base, reconciled: false })).toEqual({ kind: "syncing" })
+  })
+
+  it("reports synced when no owned collection failed", () => {
+    expect(
+      toolSyncBadgeState("/practice/judges", {
+        ...base,
+        results: [result({ collection: "judgeProfiles" }), result({ collection: "flowSummaries", synced: false, error: "x" })],
+      }),
+    ).toEqual({ kind: "synced" })
+  })
+
+  it("fails if any collection owned by the tool failed", () => {
+    expect(
+      toolSyncBadgeState("/practice/judges", {
+        ...base,
+        results: [result({ collection: "judgeRoundRecords", synced: false, error: "too large" })],
+      }),
+    ).toEqual({ kind: "failed", error: "too large" })
   })
 })
