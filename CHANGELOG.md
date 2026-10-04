@@ -1,6 +1,18 @@
 
 ### Completed
 
+- **🔗 Sync speech-document links to the account.** The speech header's
+  link picker (which Reason Editor document a speech takes its word counts
+  from) lived only in one browser's `localStorage`. It now stores id-keyed
+  records and joins `TOOL_RECORD_COLLECTIONS` as `speechDocLinks`, so the
+  existing auto-sync watcher carries it to `saved_tool_records` with no new
+  table or route; the legacy map shape is still read and rewritten, and
+  `useSpeechWordStats` also refreshes on the hydration `storage` event.
+  Tests: `speechDocLinks.test.ts` (record shape, legacy map, corrupt
+  storage) and the catalog's id-field expectation. Full-suite failures
+  (86 files, unresolved workspace imports in this environment) are
+  identical before and after the change.
+
 - **🧯 Restore drizzle migrations and internals/packages docs, deleted a
   second time by accident.** Another repeat of the standing autonomous-
   routine prompt ("integrate all the tools into the UI... create user

@@ -245,6 +245,19 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     section: "Flowing and writing",
   },
   {
+    key: "speechDocLinks",
+    storageKey: "speech-doc-links",
+    idField: "id",
+    // Which REASON editor document a speech reads its word counts from
+    // (`@debate/round/src/state/speechDocLinks.ts`), keyed `${scope}:${SPEECH}`
+    // where scope is the round's or flow's client id — those ids are the
+    // `clientId` of the synced `saved_rounds`/`saved_flows`, so a link resolves
+    // on another device once the round and the document have synced too.
+    label: "Speech Document Links",
+    href: "/debate",
+    section: "Flowing and writing",
+  },
+  {
     key: "docsChatTabs",
     storageKey: "qwksearch-open-chat-tabs",
     idField: "id",

@@ -10,7 +10,10 @@
  *
  * Links are scoped to the round when the flow belongs to one (both of a
  * round's flows share the same speeches), else to the flow, and persisted to
- * localStorage. Pure helpers; each write fires {@link SPEECH_DOC_LINKS_EVENT}.
+ * localStorage, and synced to the signed-in account through `debate-data-sync`'s
+ * `speechDocLinks` collection. Pure helpers; each write fires
+ * {@link SPEECH_DOC_LINKS_EVENT}, and a sync hydration fires a `storage` event
+ * for {@link SPEECH_DOC_LINKS_KEY} instead.
  *
  * @module state/speechDocLinks
  */
@@ -28,7 +31,14 @@ export interface SpeechDocLink {
   linkedAt: number
 }
 
-type LinkMap = Record<string, SpeechDocLink>
+/**
+ * One stored link. Kept as an array of id-keyed records (not a map) because
+ * that is the shape `debate-data-sync`'s `speechDocLinks` collection syncs to
+ * the account: `id` is `${scope}:${SPEECH}`, the same key the old map used.
+ */
+interface StoredSpeechDocLink extends SpeechDocLink {
+  id: string
+}
 
 /** Scope a speech's link lives under: its round, else its flow. */
 export function speechDocLinkScope(flow: Pick<Flow, "id" | "roundId"> | null | undefined): string | null {
@@ -40,17 +50,36 @@ function linkKey(scope: string, speechName: string): string {
   return `${scope}:${speechName.toUpperCase()}`
 }
 
-function readLinks(): LinkMap {
+function isLink(value: unknown): value is SpeechDocLink {
+  return !!value && typeof value === "object" && typeof (value as SpeechDocLink).docId === "number"
+}
+
+/**
+ * Reads the stored links. Accepts the pre-sync `{ [key]: link }` map as well,
+ * so links saved before the collection existed are still honored and get
+ * rewritten as records on the next write.
+ */
+function readLinks(): StoredSpeechDocLink[] {
   try {
     const raw = localStorage.getItem(SPEECH_DOC_LINKS_KEY)
-    const parsed = raw ? JSON.parse(raw) : {}
-    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? (parsed as LinkMap) : {}
+    const parsed = raw ? JSON.parse(raw) : []
+    if (Array.isArray(parsed)) {
+      return parsed.filter(
+        (row): row is StoredSpeechDocLink => isLink(row) && typeof (row as StoredSpeechDocLink).id === "string",
+      )
+    }
+    if (parsed && typeof parsed === "object") {
+      return Object.entries(parsed as Record<string, unknown>)
+        .filter((entry): entry is [string, SpeechDocLink] => isLink(entry[1]))
+        .map(([id, link]) => ({ ...link, id }))
+    }
+    return []
   } catch {
-    return {}
+    return []
   }
 }
 
-function writeLinks(links: LinkMap) {
+function writeLinks(links: StoredSpeechDocLink[]) {
   try {
     localStorage.setItem(SPEECH_DOC_LINKS_KEY, JSON.stringify(links))
   } catch (e) {
@@ -61,21 +90,22 @@ function writeLinks(links: LinkMap) {
 
 export function getSpeechDocLink(scope: string | null, speechName: string): SpeechDocLink | null {
   if (!scope) return null
-  const link = readLinks()[linkKey(scope, speechName)]
-  return link && typeof link.docId === "number" ? link : null
+  const id = linkKey(scope, speechName)
+  const found = readLinks().find((link) => link.id === id)
+  return found ? { docId: found.docId, title: found.title, linkedAt: found.linkedAt } : null
 }
 
 export function setSpeechDocLink(scope: string, speechName: string, doc: { id: number; title: string }): void {
-  writeLinks({
-    ...readLinks(),
-    [linkKey(scope, speechName)]: { docId: doc.id, title: doc.title, linkedAt: Date.now() },
-  })
+  const id = linkKey(scope, speechName)
+  writeLinks([
+    ...readLinks().filter((link) => link.id !== id),
+    { id, docId: doc.id, title: doc.title, linkedAt: Date.now() },
+  ])
 }
 
 export function clearSpeechDocLink(scope: string, speechName: string): void {
-  const links = readLinks()
-  delete links[linkKey(scope, speechName)]
-  writeLinks(links)
+  const id = linkKey(scope, speechName)
+  writeLinks(readLinks().filter((link) => link.id !== id))
 }
 
 /** A row of `GET /api/doc/documents`, narrowed to what the picker needs. */
