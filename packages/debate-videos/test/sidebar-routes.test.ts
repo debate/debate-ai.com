@@ -153,6 +153,14 @@ describe("the terms of service page", () => {
   });
 });
 
+describe("the admin dashboard", () => {
+  it("is a sidebar route, so it gets the app dock and scrolls like the rest of the app", () => {
+    expect(TOOL_SIDEBAR_HREFS.has("/admin")).toBe(true);
+    expect(isGenericToolSidebarRoute("/admin")).toBe(true);
+    expect(hasEmbeddedDock("/admin")).toBe(true);
+  });
+});
+
 describe("Latest News", () => {
   it("is a sidebar route, so opening a thread from the feed keeps the nav", () => {
     expect(TOOL_SIDEBAR_HREFS.has("/practice/forums")).toBe(true);

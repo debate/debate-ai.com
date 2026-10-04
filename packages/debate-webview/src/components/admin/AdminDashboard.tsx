@@ -685,8 +685,8 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
   const currentTab = visibleTabs.find((tab) => tab.key === activeTab) ?? visibleTabs[0];
 
   return (
-    <main className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-10 lg:flex-row lg:gap-8">
-      <aside className="flex flex-col gap-3 lg:sticky lg:top-6 lg:w-[220px] lg:shrink-0 lg:self-start">
+    <main className="mx-auto flex w-full min-w-0 max-w-7xl flex-col gap-6 px-4 py-10 lg:flex-row lg:gap-8">
+      <aside className="flex min-w-0 flex-col gap-3 lg:sticky lg:top-6 lg:w-[220px] lg:shrink-0 lg:self-start">
         <div>
           <h1 className="text-2xl font-semibold">{isAdmin ? "Admin" : "Moderation"}</h1>
           <p className="text-muted-foreground text-sm">
