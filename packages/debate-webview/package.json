@@ -75,7 +75,8 @@
     "sonner": "^2.0.8",
     "tailwind-merge": "^3.7.0",
     "write-language": "^0.1.296",
-    "zustand": "^5.0.15"
+    "zustand": "^5.0.15",
+    "@types/debate": "workspace:*"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",

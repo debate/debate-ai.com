@@ -156,6 +156,16 @@ assist, group challenges, research-progress tracking, sprint notes, and (moved f
 Speech and prep timers for live rounds, with per-format speech times built in. Also
 includes an in-round speech recorder with mic selection, live waveform, and playback.
 
+## debate-types
+
+Package name `@types/debate`. Every shared type — rounds and flows, scouting and
+collaboration state, parsed cards, the video feed, prediction markets, the Practice vs AI
+wire types — declared once, with a description on each object and field so editors show it
+on hover. Declarations only; the packages that owned these types re-export them. Import
+with `import type { … } from "debate"`. Depended on by `debate-timer`, `debate-card-parser`,
+`debate-round`, `debate-flow`, `debate-tournaments`, `debate-webview`,
+`debate-round-practice-ai`, `debate-videos`, `debate-data-sync` and `debate-predictions`.
+
 ## debate-tournaments
 
 Upstream [Tabroom](https://github.com/debate/debate-tournament-tabroom) vendored and adapted

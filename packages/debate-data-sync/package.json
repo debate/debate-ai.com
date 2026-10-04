@@ -34,7 +34,8 @@
     "extract-youtube": "^1.0.425",
     "grab-url": "^1.6.22",
     "jszip": "^3.10.2",
-    "linkedom": "^0.18.13"
+    "linkedom": "^0.18.13",
+    "@types/debate": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^26.6.3",

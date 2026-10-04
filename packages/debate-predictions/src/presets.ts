@@ -19,6 +19,7 @@
  */
 
 import { RATING_OUTCOMES } from "./settle";
+import type { PresetInfo } from "debate";
 import type { MarketKind, MarketOutcome, MarketSource } from "./types";
 
 /** A division the presets cover: a `debate-rankings` dataset. */
@@ -118,13 +119,7 @@ export interface PlannedMarket {
   closesAt: number;
 }
 
-/** Which preset section a market belongs to, read back from its id. */
-export interface PresetInfo {
-  group: "top-teams" | "majors";
-  dataset: string;
-  /** The tournament's slug, for `majors`. */
-  tournament: string | null;
-}
+export type { PresetInfo } from "debate";
 
 const RATING_PREFIX = "preset:rating:";
 const MAJOR_PREFIX = "preset:major:";

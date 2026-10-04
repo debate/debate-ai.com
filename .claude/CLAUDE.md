@@ -65,6 +65,7 @@ extension and a native wrapper.
 | Leaderboards, quests, contributor awards | `packages/debate-contributor-progress` |
 | AI prompts for speeches and flows | `packages/debate-speech-writer` |
 | Shared UI primitives, icons, `cn` | `packages/debate-ui` |
+| A shared data type and its field docs | `packages/debate-types` |
 | Routes, `/api`, auth, D1 schema, the Worker | `apps/debate-ai.com` |
 | User-facing documentation | `packages/debate-help-docs` |
 
@@ -130,5 +131,6 @@ one tree rather than beside the source.
 | `packages/debate-speech-writer` | [.claude/packages/debate-speech-writer/CLAUDE.md](.claude/packages/debate-speech-writer/CLAUDE.md) |
 | `packages/debate-team-collaboration` | [.claude/packages/debate-team-collaboration/CLAUDE.md](.claude/packages/debate-team-collaboration/CLAUDE.md) |
 | `packages/debate-timer` | [.claude/packages/debate-timer/CLAUDE.md](.claude/packages/debate-timer/CLAUDE.md) |
+| `packages/debate-types` | [.claude/packages/debate-types/CLAUDE.md](.claude/packages/debate-types/CLAUDE.md) |
 | `packages/debate-ui` | [.claude/packages/debate-ui/CLAUDE.md](.claude/packages/debate-ui/CLAUDE.md) |
 | `packages/debate-videos` | [.claude/packages/debate-videos/CLAUDE.md](.claude/packages/debate-videos/CLAUDE.md) |

@@ -3,28 +3,10 @@
  * month-stamped LD/PF lists.
  */
 
-export type SeasonalTopic = {
-  start_month?: string;
-  topic_name?: string;
-  /** Icon shown beside `topic_name` (e.g. "🧊"). */
-  emoji?: string;
-  topic: string;
-};
+import type { DebateTopicYear, SeasonalTopic } from "debate";
 
-export type DebateTopicYear = {
-  year: number | string;
-  ndt_topic_name?: string;
-  ndt_topic_emoji?: string;
-  ndt_topic?: string;
-  policy_topic_name?: string;
-  policy_topic_emoji?: string;
-  policy_topic?: string;
-  ld_topics?: SeasonalTopic[];
-  pf_topics?: SeasonalTopic[];
-  /** Legacy single HTML string from older debate-topics.json. */
-  ld_topic?: string;
-  pf_topic?: string;
-};
+// The definitions (and their field docs) live in `@types/debate`.
+export type { DebateTopicYear, SeasonalTopic };
 
 /** Joins monthly topics for tooltips and banners that still want one string. */
 export function formatSeasonalTopics(

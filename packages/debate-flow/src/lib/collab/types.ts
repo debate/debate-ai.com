@@ -1,74 +1,15 @@
 /**
- * The replicated shape of a round.
- *
- * Every value is a last-writer-wins register, and every container is a plain
- * record keyed by a stable identity, so merging two replicas is a union with a
- * comparison and never a diff. Both the round and a sheet store their scalars
- * as dotted leaf paths rather than named fields: a path a newer build writes
- * survives a merge through an older one for free, which is the one property
- * that cannot be retrofitted once the protocol ships.
+ * The replicated shape of a round. The type definitions (and their field docs)
+ * live in `@types/debate`; the helpers that work on them stay here.
  */
 
-import type { Stamp } from "./stamp";
+import type { CollabCell, Json, Role } from "debate";
 
-/** Everything that crosses the wire or lands in a register. */
-export type Json = string | number | boolean | null | Json[] | { [key: string]: Json };
-
-/** One value and the stamp that wrote it. */
-export interface Register {
-    value: Json;
-    stamp: Stamp;
-}
-
-/**
- * What a peer may do to one round. A viewer reads it and writes nothing.
- *
- * Per round and never per peer: the same partner is an editor on the case a
- * pair is building together and a viewer on the one they are only being shown,
- * so the grant belongs to the round that made it and not to a row in the
- * contact table.
- */
-export type Role = "editor" | "viewer";
+export type { Json, Register, Role, CollabCell, CollabSheet, CollabDoc } from "debate";
 
 /** A role off the wire, a ticket, or a sidecar, none of them trusted. */
 export function isRole(value: unknown): value is Role {
     return value === "editor" || value === "viewer";
-}
-
-export interface CollabCell {
-    /** Stored column index, the index `sheet.data` rows already use. */
-    col: number;
-    /** Immutable fractional index inside the column. */
-    rank: string;
-    /** Creator. "" marks a cell seeded from the file. Breaks a rank tie. */
-    actor: string;
-    text: string | null;
-    textStamp: Stamp;
-    /**
-     * `CellMeta` as a bag, so a key a newer build writes survives. Text and
-     * meta carry separate stamps: one stamp would let a bold toggle revert a
-     * partner's concurrent text.
-     */
-    meta: Record<string, Json>;
-    metaStamp: Stamp;
-    /** Set once. A delete is never undone by a later write. */
-    deleted: Stamp | null;
-}
-
-export interface CollabSheet {
-    id: string;
-    /** Leaf path to register: `title`, `group`, `order`, `kind`, `startSpeechId`. */
-    fields: Record<string, Register>;
-    deleted: Stamp | null;
-    /** cellKey to cell, across every column of the sheet. */
-    cells: Record<string, CollabCell>;
-}
-
-export interface CollabDoc {
-    roundId: string;
-    /** Leaf path to register: `event`, `firstSide`, and every scouting leaf. */
-    round: Record<string, Register>;
-    sheets: Record<string, CollabSheet>;
 }
 
 /**

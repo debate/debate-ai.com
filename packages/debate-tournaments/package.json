@@ -26,6 +26,7 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@types/debate": "workspace:*",
     "kysely": "^0.29.6",
     "lucide-react": "^1.49.0",
     "luxon": "^3.7.2",
