@@ -57,7 +57,13 @@ gone:
   editable directly on `/word-count`, in a collapsible "Manage word limit
   presets" section below the word-count form, rather than from here
 - **Ebb Flow preferences** — reachable with `Cmd/Ctrl+,` inside a flow, where
-  they apply
+  they apply. Your look-and-feel choices (font, zoom, theme, side colors,
+  editor toggles) and rebound keys now follow your account as the
+  "Flow Editor Display Settings" and "Flow Editor Keybindings" entries under
+  **Settings → Account → Tool data**. The flows folder, live-collaboration
+  settings and contacts are specific to one device and never sync.
+  Known gap: an editor that is already open picks up preferences from your
+  account the next time it loads, not instantly.
 
 Their `/api/settings` fields (`debateStyle`, `fontSize`, `wordLimitPresets`, …)
 are all still stored and served; what changed is that nothing writes them from

@@ -44,6 +44,12 @@
  * @module state/toolRecordCollections
  */
 
+import {
+  decodeDisplaySettings,
+  decodeKeymapSettings,
+  encodeDisplaySettings,
+  encodeKeymapSettings,
+} from "./flow-settings-codec";
 import { redactFileSource } from "./redact-file-source";
 
 /**
@@ -112,11 +118,13 @@ export interface ToolRecordCollection {
    * by string, say — to the array the sync diffs and merges. `decode` turns
    * the parsed `localStorage` value into records (each carrying `idField`);
    * `encode` turns the merged records back into the value to store. Absent
-   * for every collection whose store already is an array.
+   * for every collection whose store already is an array. `encode` also gets
+   * the value currently stored, for a store holding fields that never sync and
+   * must survive a write-back.
    */
   codec?: {
     decode: (stored: unknown) => unknown[];
-    encode: (records: readonly unknown[]) => unknown;
+    encode: (records: readonly unknown[], existing?: unknown) => unknown;
   };
 }
 
@@ -150,6 +158,27 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     label: "Speech Document Links",
     href: "/debate",
     section: "Flowing and writing",
+  },
+  {
+    key: "flowDisplaySettings",
+    storageKey: "ebb-display-settings",
+    idField: "id",
+    // One record (`id: "display"`) of the Flow editor's look-and-feel
+    // preferences. `flowsDir`, `collab*` and `contacts` never leave the
+    // browser; see `flow-settings-codec.ts`.
+    label: "Flow Editor Display Settings",
+    href: "/debate",
+    section: "Flowing and writing",
+    codec: { decode: decodeDisplaySettings, encode: encodeDisplaySettings },
+  },
+  {
+    key: "flowKeymapSettings",
+    storageKey: "ebb-keymap-settings",
+    idField: "id",
+    label: "Flow Editor Keybindings",
+    href: "/debate",
+    section: "Flowing and writing",
+    codec: { decode: decodeKeymapSettings, encode: encodeKeymapSettings },
   },
   // — Practice —
   {
