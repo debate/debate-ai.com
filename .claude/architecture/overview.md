@@ -53,6 +53,7 @@ Everything is private except `debate-api-client`.
 | `debate-speech-writer` | *(same)* | The AI prompt library: flow extraction, judge decisions, flaw finding, research outlines, batch quote analysis |
 | `debate-team-collaboration` | *(same)* | Task inbox, prep room, topic sprints, brainstorm assist, group challenges, research-progress tracking, sprint notes, prep notes and notifications |
 | `debate-timer` | *(same)* | Speech and prep timers with per-format speech times; in-round recorder with mic selection, live waveform, playback |
+| `debate-types` | `@types/debate` | Shared type declarations (`.d.ts` only) with a doc comment on every object and field; imported as `"debate"`. Owning packages re-export from it. |
 | `debate-videos` | *(same)* | LEARN: video search and filtering, grids and cards, the persistent YouTube player with PiP, lecture pages, rankings |
 
 ## The dependency edges
@@ -72,6 +73,10 @@ debate-practice-drills ──► debate-round, debate-speech-writer, debate-time
                            debate-search-evidence, debate-contributor-progress
 
 debate-flow ─────────────► embedded by debate-round (EbbFlowEmbed)
+
+debate-timer, debate-card-parser, debate-round, debate-flow, debate-tournaments,
+debate-webview, debate-round-practice-ai, debate-videos, debate-data-sync,
+debate-predictions ───────► debate-types (type-only; leaf, depends on nothing)
 
 debate-webview ──────────► debate-predictions, debate-rankings-adapter
                            (the /practice/predictions page; the app's routes

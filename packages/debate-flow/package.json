@@ -33,6 +33,7 @@
     "@handsontable/react-wrapper": "^18.1.1",
     "@phosphor-icons/react": "^2.1.10",
     "@replit/codemirror-vim": "^6.4.0",
+    "@types/debate": "workspace:*",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dompurify": "^3.4.16",

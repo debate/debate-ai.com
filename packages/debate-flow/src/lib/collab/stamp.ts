@@ -1,21 +1,6 @@
-/**
- * The clock every replicated value is stamped by.
- *
- * A stamp is a hybrid logical clock: wall time, a counter that breaks ties
- * inside one millisecond, and the writing peer. Wall time is what makes "last
- * typed wins" match what the two debaters saw happen; the counter and the
- * actor make the order total, so last-writer-wins resolves identically on
- * every peer.
- */
+import type { Stamp } from "debate";
 
-export interface Stamp {
-    /** Epoch ms, raised to the highest wall time any peer has reported. */
-    ms: number;
-    /** Distinguishes writes inside one millisecond. */
-    counter: number;
-    /** The writing peer's EndpointId. "" marks a value seeded from the file. */
-    actor: string;
-}
+export type { Stamp } from "debate";
 
 /**
  * Below every real write. Seeding uses it so two peers that open one file

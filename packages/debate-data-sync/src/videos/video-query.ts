@@ -7,69 +7,24 @@
  * @module videos/video-query
  */
 
+import type {
+  LectureCategoryFacet,
+  VideoFacets,
+  VideoQueryParams,
+  VideoSuggestion,
+  VideoSuggestionKind,
+  VideoSuggestions,
+} from "debate";
 import type { VideoRow } from "./video-rows";
 import { LEGACY_SEASON, normalizeCategoryKey } from "./video-rows";
 
-/** Sort modes accepted by the feed; anything else falls back to recency. */
-export type VideoSortOrder = "Views" | "Recency";
-
-/** Filter/pagination parameters accepted by `GET /api/videos`. */
-export interface VideoQueryParams {
-  /** Restrict to one asset family; `"all"` (default) spans both. */
-  source?: "round" | "lecture" | "all";
-  /**
-   * Keep only rows without a numeric debate style — the "All Lectures" rule
-   * the lectures page applies when no style filter is active.
-   */
-  lecturesOnly?: boolean;
-  /** Keep only top-pick videos. */
-  topPicksOnly?: boolean;
-  /** Lecture category slug (see `normalizeCategoryKey`). */
-  categoryKey?: string | null;
-  /** Numeric debate style filter (1–4). */
-  style?: number | null;
-  /** Season filter: a four-digit year string, `"legacy"`, or empty for all. */
-  year?: string | null;
-  /** Free-text search over title, channel and description. */
-  q?: string | null;
-  /**
-   * Restrict to rows whose `tournament` field contains this substring
-   * (case-insensitive) — a narrower match than {@link q}, which also scans
-   * the title, channel and description and so can pull in videos that merely
-   * mention the tournament rather than belonging to it.
-   */
-  tournament?: string | null;
-  /** Restrict to an explicit id list — used by the favourites-only filter. */
-  ids?: string[] | null;
-  /**
-   * Drop an explicit id list — used to keep hidden videos out of both the
-   * grid and the season/style facet counts, without affecting search (which
-   * still needs to surface a hidden video so it can be unhidden).
-   */
-  excludeIds?: string[] | null;
-  /** Sort order; defaults to recency. */
-  sort?: string | null;
-  /** Page size. */
-  limit?: number;
-  /** Zero-based offset of the page. */
-  offset?: number;
-}
-
-/** Per-dimension counts backing the season and style dropdowns. */
-export interface VideoFacets {
-  /** Count per season key (`"2026"`, …, plus `"legacy"`). */
-  yearCounts: Record<string, number>;
-  /** Count per numeric debate style. */
-  styleCounts: Record<number, number>;
-}
-
-/** One lecture-category card: label, slug, size and popularity. */
-export interface LectureCategoryFacet {
-  key: string;
-  label: string;
-  count: number;
-  maxViews: number;
-}
+// The definitions (and their field docs) live in `@types/debate`.
+export type {
+  VideoSortOrder,
+  VideoQueryParams,
+  VideoFacets,
+  LectureCategoryFacet,
+} from "debate";
 
 /** Maximum page size a client may request. */
 export const MAX_VIDEO_PAGE_SIZE = 200;
@@ -266,25 +221,7 @@ export function computeLectureCategories(rows: VideoRow[]): LectureCategoryFacet
   return [...byLabel.values()].sort((a, b) => b.maxViews - a.maxViews);
 }
 
-/** Which family a search suggestion chip came from. */
-export type VideoSuggestionKind = "keyword" | "tournament";
-
-/** One search-suggestion chip: the term to search for and how many videos it hits. */
-export interface VideoSuggestion {
-  /** Text placed into the search box when the chip is clicked. */
-  label: string;
-  /** Number of videos in the library the term matches. */
-  count: number;
-  kind: VideoSuggestionKind;
-}
-
-/** Popular search terms offered under the video grid. */
-export interface VideoSuggestions {
-  /** Curated debate terms, only those the library actually has videos for. */
-  keywords: VideoSuggestion[];
-  /** Tournament names taken from the library itself, biggest first. */
-  tournaments: VideoSuggestion[];
-}
+export type { VideoSuggestionKind, VideoSuggestion, VideoSuggestions } from "debate";
 
 /**
  * Search terms offered as keyword chips, in the order they are shown. The list

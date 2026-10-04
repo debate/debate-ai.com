@@ -11,6 +11,7 @@
  * @module backend/gamification
  */
 
+import type { GamificationAward } from "debate"
 import type { DebateResultStatus } from "./types"
 
 /** A user's gamification state, as the Go code read it off `models.User`. */
@@ -20,17 +21,7 @@ export interface GamificationProfile {
   currentStreak: number
 }
 
-/** What a finished round earns. Fed to the store as one atomic update. */
-export interface GamificationAward {
-  /** Points to add to the user's score. */
-  points: number
-  /** The score-update action label the Go code wrote to `score_updates`. */
-  action: string
-  /** Badges to grant that the user does not already hold. */
-  badgesAwarded: string[]
-  /** The score the user ends the round on. */
-  newScore: number
-}
+export type { GamificationAward } from "debate"
 
 /**
  * Points and action label per result. Ported from the Go `switch

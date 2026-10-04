@@ -1,16 +1,16 @@
 {
-  "name": "@debate/predictions",
+  "name": "@types/debate",
   "version": "0.1.0",
-  "description": "Play-money prediction markets on debates, tournament winners and Glicko rating moves — the LMSR pricing engine, wallet and payout rules, auto-resolution rules and the D1 migration",
+  "description": "Every shared Debate AI type in one place, with a description on every object and field so editors show it on hover",
   "private": true,
   "type": "module",
   "author": "vtempest",
   "license": "rights.institute/prosper",
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "types": "./src/index.d.ts",
   "exports": {
-    ".": "./src/index.ts",
-    "./client": "./src/client.ts",
+    ".": {
+      "types": "./src/index.d.ts"
+    },
     "./package.json": "./package.json"
   },
   "scripts": {
@@ -19,13 +19,14 @@
     "test:watch": "vitest",
     "coverage": "vitest run --coverage"
   },
-  "dependencies": {
-    "@types/debate": "workspace:*"
-  },
   "devDependencies": {
     "@types/node": "^26.6.3",
     "@vitest/coverage-v8": "^5.0.3",
     "typescript": "^7.0.2",
     "vitest": "^5.0.3"
-  }
+  },
+  "files": [
+    "src",
+    "README.md"
+  ]
 }
