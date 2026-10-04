@@ -45,6 +45,7 @@
  */
 
 import { redactFileSource } from "./redact-file-source";
+import { decodeFlowKeymap, encodeFlowKeymap } from "./flow-keymap-codec";
 
 /**
  * The groupings `/settings` → Account → **Tool data** renders as section
@@ -139,6 +140,19 @@ export const MAX_TOOL_RECORDS_PER_PUSH = 500;
  */
 export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
   // — Flowing and writing —
+  {
+    key: "flowKeymap",
+    storageKey: "ebb-keymap-settings",
+    idField: "id",
+    // The flow editor's rebound shortcuts (`@debate/flow`'s `useFlowStore`),
+    // stored as `{ keymapOverrides }`; one record per rebound action id. The
+    // flow editor reads it at startup, so a rebinding from another device
+    // applies on the next load.
+    label: "Flow Editor Shortcuts",
+    href: "/debate",
+    section: "Flowing and writing",
+    codec: { decode: decodeFlowKeymap, encode: encodeFlowKeymap },
+  },
   {
     key: "speechDocLinks",
     storageKey: "speechDocLinks",

@@ -174,6 +174,18 @@ Known gap: pins are capped at 12 per browser, and the merge on sign-in is a
 union, so a pin removed on one device while another is offline can reappear
 until that device syncs.
 
+## Flow editor shortcuts
+
+Shortcuts you rebind in the flow editor sync to your account as the
+`flowKeymap` collection (listed in **Tool data** as "Flow Editor Shortcuts"),
+one record per rebound action. They are stored under `ebb-keymap-settings` and
+adapted by `flow-keymap-codec.ts` in `debate-data-sync`.
+
+Known gap: the flow editor reads shortcuts once at startup, so a rebinding made
+on another device applies the next time the editor loads. Display preferences
+(`ebb-display-settings`) are not synced: they include device-local values such
+as the flows folder path.
+
 ## Save status on each tool
 
 A tool page whose data syncs shows a small badge in its header: **Saved to your
