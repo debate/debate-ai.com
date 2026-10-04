@@ -12,14 +12,14 @@
 
 "use client"
 
-import { Suspense, lazy, useCallback, useEffect, useRef, useState, type ReactNode } from "react"
+import { Suspense, lazy, useCallback, useEffect, useRef, useState, type MouseEvent, type ReactNode } from "react"
 import DOMPurify from "dompurify"
 import { Check, Copy, Eraser, ExternalLink, Highlighter, Loader2, RotateCw, X } from "lucide-react"
 
 import { Button } from "../ui/primitives/button"
 import { cn } from "../ui/lib/utils"
 import { ArticleNotReadableError, fetchSourceArticle, type SourceArticle } from "../lib/source-article"
-import { clearHighlights, highlightSelection } from "../lib/article-highlight"
+import { clearHighlights, collectHighlights, highlightSelection, removeHighlightAt } from "../lib/article-highlight"
 import { plainText } from "../lib/card-content"
 
 /**
@@ -118,11 +118,26 @@ export function SourceArticlePanel({ url, onClose }: SourceArticlePanelProps) {
     return () => controller.abort()
   }, [url, attempt])
 
+  const lastHighlightAt = useRef(0)
+
   const onMouseUp = useCallback(() => {
     if (!isHighlightMode || !bodyRef.current) return
-    const text = highlightSelection(bodyRef.current)
-    if (text) setHighlights((current) => [...current, text])
+    if (highlightSelection(bodyRef.current)) {
+      lastHighlightAt.current = Date.now()
+      setHighlights(collectHighlights(bodyRef.current))
+    }
   }, [isHighlightMode])
+
+  // Tapping an existing highlight toggles it off. The click that ends the
+  // drag which just made a highlight must not undo it, hence the short guard.
+  const onBodyClick = useCallback(
+    (event: MouseEvent<HTMLDivElement>) => {
+      if (!isHighlightMode || !bodyRef.current || Date.now() - lastHighlightAt.current < 500) return
+      if (window.getSelection()?.isCollapsed === false) return
+      if (removeHighlightAt(bodyRef.current, event.target)) setHighlights(collectHighlights(bodyRef.current))
+    },
+    [isHighlightMode],
+  )
 
   const onClearHighlights = () => {
     if (bodyRef.current) clearHighlights(bodyRef.current)
@@ -156,7 +171,7 @@ export function SourceArticlePanel({ url, onClose }: SourceArticlePanelProps) {
               variant={isHighlightMode ? "secondary" : "ghost"}
               size="icon-sm"
               aria-pressed={isHighlightMode}
-              title={isHighlightMode ? "Highlighter on — select text to mark it" : "Turn on the highlighter"}
+              title={isHighlightMode ? "Highlighter on — select text to mark it, tap a highlight to remove it" : "Turn on the highlighter"}
               onClick={() => setIsHighlightMode((on) => !on)}
             >
               <Highlighter />
@@ -210,6 +225,7 @@ export function SourceArticlePanel({ url, onClose }: SourceArticlePanelProps) {
             ref={bodyRef}
             onMouseUp={onMouseUp}
             onTouchEnd={onMouseUp}
+            onClick={onBodyClick}
             className={cn(ARTICLE_BODY_CLASSES, isHighlightMode && "cursor-text")}
           >
             <Suspense fallback={<PanelMessage icon={<Loader2 className="size-4 animate-spin" />}>Loading article view…</PanelMessage>}>
