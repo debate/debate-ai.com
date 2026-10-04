@@ -127,7 +127,7 @@ export function togglePinnedDebate(
 ): number[] {
   const current = readPinnedDebateIds(storage)
   const next = current.includes(id) ? current.filter((pinned) => pinned !== id) : [...current, id]
-  return writePinnedDebateIds(next, storage, now)
+  return writePinnedDebateIds(next, storage)
 }
 
 /**

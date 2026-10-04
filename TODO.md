@@ -96,6 +96,14 @@
 
 ## Completed
 
+### Fix duplicated tool-record catalog entries (merge damage)
+
+- Branch: `claude/gifted-babbage-rvmkc4`
+- `pinnedDebates` (4 entries) and `speechDocLinks` (2 entries) were each registered more than once in `TOOL_RECORD_COLLECTIONS`, failing "gives every collection a unique key" on master. Each now has one entry matching what the tools write (`pinnedDebates` -> `{ roundId, pinnedAt }`, `speechDocLinks` -> id-keyed record array).
+- `togglePinnedDebate` passed an undefined `now` to `writePinnedDebateIds` (ReferenceError on every toggle); fixed.
+- Added a unique-`storageKey` regression test; the speech-doc-links codec test now uses its own fixture collection.
+- Known unrelated env failures: suites needing `debate-rankings` / `@debate/editor/engine` sources do not load in this checkout.
+
 ### Account-linked pinned debates
 
 - PR #1095 (merged) — pins stored as `{ roundId, pinnedAt }` and added to the tool-record sync catalog; documented in `features/user-settings.mdx`.
