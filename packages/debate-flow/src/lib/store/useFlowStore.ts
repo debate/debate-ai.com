@@ -242,6 +242,13 @@ export interface FlowActions {
      * does not bounce straight back out to disk.
      */
     applyExternalConfig(config: AppConfig): void;
+    /**
+     * Applies the account-synced subset (`lib/sync/accountSettings.ts`) pulled
+     * from `/api/settings`: each present key is validated like a hand-edited
+     * config value, persisted to localStorage and set on the store. Keys the
+     * patch omits are left alone.
+     */
+    applyAccountSettings(patch: Record<string, unknown>): void;
     /** Opens/closes the palette; `seed` sets the initial query (">" = command mode). */
     setQuickSwitcherOpen(open: boolean, seed?: string): void;
     /** Follow the open round to a new file after Save As. */
@@ -883,6 +890,38 @@ export const useFlowStore = create<FlowStore>()((set, get) => ({
         const updateConfig = { ...get().updateConfig, ...patch };
         saveUpdateConfig(updateConfig);
         set({ updateConfig });
+    },
+
+    applyAccountSettings(patch) {
+        const display: Partial<DisplaySettings> = {};
+        const pick = <K extends keyof DisplaySettings>(key: K, value: DisplaySettings[K]) => {
+            if (key in patch) display[key] = value;
+        };
+        pick("flowFont", resolveFontId(patch.flowFont));
+        pick("defaultGridZoom", resolveZoom(patch.defaultGridZoom));
+        pick("rfdVim", bool(patch.rfdVim, get().rfdVim));
+        pick("insertPaste", bool(patch.insertPaste, get().insertPaste));
+        pick("appendEdit", bool(patch.appendEdit, get().appendEdit));
+        pick("scrollZoom", bool(patch.scrollZoom, get().scrollZoom));
+        pick("alignSpeeches", bool(patch.alignSpeeches, get().alignSpeeches));
+        pick("tooltips", bool(patch.tooltips, get().tooltips));
+        pick("cardmirrorEnabled", bool(patch.cardmirrorEnabled, get().cardmirrorEnabled));
+        pick("cardmirrorTextType", resolveCardMirrorTextType(patch.cardmirrorTextType));
+        pick("theme", resolveThemeMode(patch.theme));
+        pick("affColor", resolveColor(patch.affColor));
+        pick("negColor", resolveColor(patch.negColor));
+        saveDisplaySettings({ ...displaySettingsOf(get()), ...display });
+        const next: Partial<FlowState> = { ...display };
+        if (display.defaultGridZoom !== undefined) next.gridZoom = display.defaultGridZoom;
+        const raw = patch.keymapOverrides;
+        if (raw && typeof raw === "object" && !Array.isArray(raw)) {
+            const keymapOverrides = Object.fromEntries(
+                Object.entries(raw).filter(([, chord]) => typeof chord === "string"),
+            ) as Record<string, string>;
+            saveKeymapOverrides(keymapOverrides);
+            next.keymapOverrides = keymapOverrides;
+        }
+        set(next);
     },
 
     applyExternalConfig(config) {

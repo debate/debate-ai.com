@@ -63,6 +63,21 @@ Their `/api/settings` fields (`debateStyle`, `fontSize`, `wordLimitPresets`, …
 are all still stored and served; what changed is that nothing writes them from
 here any more.
 
+## Flow editor preferences follow your account
+
+Ebb's display preferences (font, default zoom, Vim mode, paste/append/scroll-zoom
+toggles, tooltips, CardMirror, theme, side colors) and your custom keyboard
+shortcuts sync through the `flowEditorSettings` field of `/api/settings`
+(`user_settings.flow_editor_settings`). On opening a flow, your account's saved
+values are applied; an account with nothing saved is seeded from the current
+browser. Changes are pushed after a one-second pause. Signed out or offline, the
+editor keeps working from localStorage exactly as before.
+
+Not synced, because they only make sense on one device or involve other people:
+the flows folder, sidebar/RFD layout, and collaboration name, contacts and
+relay toggles. The allow-list and validation live in
+`debate-flow`'s `lib/sync/accountSettings.ts`.
+
 ## Saved-to-account marker on flow tabs
 
 Each flow tab in the sidebar's **Open Tabs** group shows a small cloud icon

@@ -52,7 +52,7 @@
 ## Account sync of tools (In Progress)
 
 - [x] Speech-doc links (editor document <-> round/flow speech) sync via the `speechDocLinks` tool-record collection
-- [ ] Pinned debates (`pinned-debates`, numeric round ids) - needs a `user_settings` op or an id-carrying record shape; blocked on a schema migration path since `drizzle/` was removed on purpose
+- [x] Pinned debates - synced via the `pinnedDebates` tool-record collection
 - [x] Surface the Tool data sync status where each tool is used (tool page header badge)
 
 ---
@@ -61,12 +61,12 @@
 
 ### Account-synced user data across all tools (user settings + SQL)
 
-- Branch: `claude/gifted-babbage-cg2iak`
+- Branch: `claude/gifted-babbage-c11oc8`
 - [x] Audit local-only tool stores vs. the `saved_tool_records` catalog (SQL layer for settings, flows, rounds and 64+ tool collections already exists)
 - [x] Sync pinned debates to the account (`pinnedDebates` catalog entry, legacy `pinned-debates` migration, tests, docs in `round-cloud-save.mdx`)
-- [ ] Sync speech-doc links (`speech-doc-links`; keyed by scope + speech, points at `documents.id`)
-- [ ] Sync flow-editor display/keymap settings (`ebb-display-settings`, `ebb-keymap-settings`) through `user_settings`
-- [ ] Tool UI pass: surface sync status and pin/save controls in each tool's header
+- [x] Sync speech-doc links (`speech-doc-links`; keyed by scope + speech, points at `documents.id`)
+- [x] Sync flow-editor display/keymap settings (`ebb-display-settings`, `ebb-keymap-settings`) through `user_settings` (`flowEditorSettings` column; `debate-flow/src/lib/sync`)
+- [ ] Tool UI pass: surface pin/save controls in each tool's header (sync badge already shipped; remaining: per-tool pin control) - kept In Progress
 
 ---
 
