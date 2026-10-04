@@ -1,5 +1,9 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
+
+vi.mock("../../../src/components/tools/ToolSyncBadge", () => ({
+  ToolSyncBadge: ({ href }: { href: string }) => <span data-testid="sync-badge" data-href={href} />,
+}));
 
 import { ToolPageHeader } from "../../../src/components/tools/ToolPageHeader";
 import { ALL_TOOLS } from "../../../src/routes/tools/tool-groups";
@@ -53,5 +57,14 @@ describe("ToolPageHeader", () => {
     );
 
     expect(html).not.toContain("What this tool does");
+  });
+
+  it("renders the sync badge exactly once, for the page's own route", () => {
+    const html = renderToStaticMarkup(
+      <ToolPageHeader href="/practice/drills" backHref="/debate" backLabel="round workspace" />,
+    );
+
+    expect(html.match(/data-testid="sync-badge"/g)).toHaveLength(1);
+    expect(html).toContain('data-href="/practice/drills"');
   });
 });
