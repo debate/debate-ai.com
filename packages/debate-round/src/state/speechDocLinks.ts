@@ -17,7 +17,9 @@
 
 import type { Flow } from "../types/flow"
 
-export const SPEECH_DOC_LINKS_KEY = "speech-doc-links"
+export const SPEECH_DOC_LINKS_KEY = "speechDocLinks"
+/** The pre-sync storage key: a `{ "scope:SPEECH": link }` map, read once and then retired. */
+export const LEGACY_SPEECH_DOC_LINKS_KEY = "speech-doc-links"
 export const SPEECH_DOC_LINKS_EVENT = "speech-doc-links-changed"
 
 export interface SpeechDocLink {
@@ -28,7 +30,15 @@ export interface SpeechDocLink {
   linkedAt: number
 }
 
-type LinkMap = Record<string, SpeechDocLink>
+/**
+ * One stored link. Kept as an array of id-carrying records (`id` is
+ * `scope:SPEECH`) rather than a map so the store joins
+ * `debate-data-sync`'s `speechDocLinks` tool-record collection and follows
+ * the signed-in user to other devices.
+ */
+export interface SpeechDocLinkRecord extends SpeechDocLink {
+  id: string
+}
 
 /** Scope a speech's link lives under: its round, else its flow. */
 export function speechDocLinkScope(flow: Pick<Flow, "id" | "roundId"> | null | undefined): string | null {
@@ -40,19 +50,40 @@ function linkKey(scope: string, speechName: string): string {
   return `${scope}:${speechName.toUpperCase()}`
 }
 
-function readLinks(): LinkMap {
+function isRecord(value: unknown): value is SpeechDocLinkRecord {
+  if (!value || typeof value !== "object") return false
+  const v = value as Partial<SpeechDocLinkRecord>
+  return typeof v.id === "string" && v.id.length > 0 && typeof v.docId === "number"
+}
+
+function readJson(key: string): unknown {
   try {
-    const raw = localStorage.getItem(SPEECH_DOC_LINKS_KEY)
-    const parsed = raw ? JSON.parse(raw) : {}
-    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? (parsed as LinkMap) : {}
+    const raw = localStorage.getItem(key)
+    return raw ? JSON.parse(raw) : null
   } catch {
-    return {}
+    return null
   }
 }
 
-function writeLinks(links: LinkMap) {
+/** Current links; entries only present in the legacy map are folded in until the next write retires it. */
+function readLinks(): SpeechDocLinkRecord[] {
+  const current = readJson(SPEECH_DOC_LINKS_KEY)
+  const records = Array.isArray(current) ? current.filter(isRecord) : []
+  const legacy = readJson(LEGACY_SPEECH_DOC_LINKS_KEY)
+  if (legacy && typeof legacy === "object" && !Array.isArray(legacy)) {
+    const seen = new Set(records.map((r) => r.id))
+    for (const [id, link] of Object.entries(legacy as Record<string, SpeechDocLink>)) {
+      if (seen.has(id) || !link || typeof link.docId !== "number") continue
+      records.push({ id, docId: link.docId, title: link.title, linkedAt: link.linkedAt })
+    }
+  }
+  return records
+}
+
+function writeLinks(links: SpeechDocLinkRecord[]) {
   try {
     localStorage.setItem(SPEECH_DOC_LINKS_KEY, JSON.stringify(links))
+    localStorage.removeItem(LEGACY_SPEECH_DOC_LINKS_KEY)
   } catch (e) {
     console.warn("Could not save speech doc links:", e)
   }
@@ -61,21 +92,22 @@ function writeLinks(links: LinkMap) {
 
 export function getSpeechDocLink(scope: string | null, speechName: string): SpeechDocLink | null {
   if (!scope) return null
-  const link = readLinks()[linkKey(scope, speechName)]
-  return link && typeof link.docId === "number" ? link : null
+  const id = linkKey(scope, speechName)
+  const link = readLinks().find((r) => r.id === id)
+  return link ? { docId: link.docId, title: link.title, linkedAt: link.linkedAt } : null
 }
 
 export function setSpeechDocLink(scope: string, speechName: string, doc: { id: number; title: string }): void {
-  writeLinks({
-    ...readLinks(),
-    [linkKey(scope, speechName)]: { docId: doc.id, title: doc.title, linkedAt: Date.now() },
-  })
+  const id = linkKey(scope, speechName)
+  writeLinks([
+    ...readLinks().filter((r) => r.id !== id),
+    { id, docId: doc.id, title: doc.title, linkedAt: Date.now() },
+  ])
 }
 
 export function clearSpeechDocLink(scope: string, speechName: string): void {
-  const links = readLinks()
-  delete links[linkKey(scope, speechName)]
-  writeLinks(links)
+  const id = linkKey(scope, speechName)
+  writeLinks(readLinks().filter((r) => r.id !== id))
 }
 
 /** A row of `GET /api/doc/documents`, narrowed to what the picker needs. */
