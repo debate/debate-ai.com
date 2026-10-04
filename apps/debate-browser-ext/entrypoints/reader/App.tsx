@@ -84,6 +84,25 @@ function writeStored(key: string, value: string): void {
   }
 }
 
+/**
+ * The AI column beside the article in the full-page layout. Below Tailwind's
+ * `lg` breakpoint there is no room beside it, so it stacks above the article.
+ */
+const ASSISTANT_COLUMN_WIDTH = '24rem';
+const WIDE_WINDOW_QUERY = '(min-width: 1024px)';
+
+/** Whether the window is at least Tailwind's `lg` wide, kept current on resize. */
+function useIsWideWindow(): boolean {
+  const [isWide, setIsWide] = useState(() => window.matchMedia(WIDE_WINDOW_QUERY).matches);
+  useEffect(() => {
+    const query = window.matchMedia(WIDE_WINDOW_QUERY);
+    const onChange = () => setIsWide(query.matches);
+    query.addEventListener('change', onChange);
+    return () => query.removeEventListener('change', onChange);
+  }, []);
+  return isWide;
+}
+
 /** How much of the article body is sent to a model. */
 const MAX_ARTICLE_CHARS = 15000;
 
@@ -133,11 +152,18 @@ export default function App() {
     readStored(READING_WIDTH_KEY, Object.keys(READING_WIDTHS) as ReadingWidth[], 'medium'),
   );
 
+  const isWideWindow = useIsWideWindow();
+  const assistantScrollRef = useRef<HTMLDivElement>(null);
+  const backdropPressRef = useRef(false);
+
   // The frame opens full-page; tell the page which layout to actually use,
-  // now and whenever the reader switches.
+  // now and whenever the reader switches. The full-page layout draws its own
+  // translucent backdrop, so the document under it must not paint one
+  // (src/styles/sidepanel.css).
   useEffect(() => {
     requestReaderPanelLayout(layout);
     writeStored(LAYOUT_KEY, layout);
+    document.documentElement.dataset.layout = layout;
   }, [layout]);
 
   useEffect(() => writeStored(READING_WIDTH_KEY, readingWidth), [readingWidth]);
@@ -510,185 +536,268 @@ export default function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // Full page centers everything in one column at the chosen width; the side
-  // panel is already narrow, so it just fills the frame.
-  const columnStyle: React.CSSProperties | undefined =
-    layout === 'full' ? { maxWidth: READING_WIDTHS[readingWidth].maxWidth } : undefined;
+  // In the full-page layout the conversation has a column of its own; keep the
+  // newest question and answer in view there as they arrive.
+  useEffect(() => {
+    const column = assistantScrollRef.current;
+    if (column) column.scrollTo({ top: column.scrollHeight, behavior: 'smooth' });
+  }, [chatHistory.length, isLoadingAI, aiError]);
 
-  return (
-    <TooltipProvider delayDuration={0}>
-      <div className="flex h-screen flex-col bg-background text-foreground">
-        <div className="shrink-0 border-b border-border bg-background/95 px-3 py-2.5">
-          <div className="mx-auto w-full space-y-2" style={columnStyle}>
-          <AccountBar
-            user={account.user}
-            isBusy={account.isLoading}
-            error={account.error}
-            provider={provider}
-            onSignIn={() => void account.signIn()}
-            onSignOut={() => void account.signOut()}
-          />
-          <ArticleActionButtons
-            isLoadingAI={isLoadingAI}
-            isLoadingFollowups={isLoadingFollowups}
-            isCheckingCards={isCheckingCards}
-            isSaving={isSaving}
-            isSignedIn={Boolean(account.user)}
-            isHighlightMode={isHighlightMode}
-            highlightCount={highlights.length}
-            layout={layout}
-            readingWidth={readingWidth}
-            articleUrl={article?.url}
-            fontScale={fontScale}
-            onAskClick={() => void askQuestion(userPrompt)}
-            onSuggestClick={() => void generateFollowups()}
-            onCopyClick={() => void copyArticle()}
-            onShareClick={() => void shareArticle()}
-            onCheckCardsClick={() => void checkForExistingCards()}
-            onSaveClick={() => void saveToAccount()}
-            onHighlightToggle={() => setIsHighlightMode((previous) => !previous)}
-            onClearHighlights={clearAllHighlights}
-            onLayoutToggle={toggleLayout}
-            onReadingWidthChange={setReadingWidth}
-            onZoomIn={() => persistFontScale(fontScale + FONT_SCALE_STEP)}
-            onZoomOut={() => persistFontScale(fontScale - FONT_SCALE_STEP)}
-            onZoomReset={() => persistFontScale(1)}
-            onClose={closePanel}
-          />
+  // The article column sits at the reader's chosen width in the full-page
+  // layout; the side panel is already narrow, so there it just fills the frame.
+  const readingMaxWidth = READING_WIDTHS[readingWidth].maxWidth;
+  const columnStyle: React.CSSProperties | undefined =
+    layout === 'full' ? { maxWidth: readingMaxWidth } : undefined;
+
+  const toolbar = (
+    <>
+      <AccountBar
+        user={account.user}
+        isBusy={account.isLoading}
+        error={account.error}
+        provider={provider}
+        onSignIn={() => void account.signIn()}
+        onSignOut={() => void account.signOut()}
+      />
+      <ArticleActionButtons
+        isLoadingAI={isLoadingAI}
+        isLoadingFollowups={isLoadingFollowups}
+        isCheckingCards={isCheckingCards}
+        isSaving={isSaving}
+        isSignedIn={Boolean(account.user)}
+        isHighlightMode={isHighlightMode}
+        highlightCount={highlights.length}
+        layout={layout}
+        readingWidth={readingWidth}
+        articleUrl={article?.url}
+        fontScale={fontScale}
+        onAskClick={() => void askQuestion(userPrompt)}
+        onSuggestClick={() => void generateFollowups()}
+        onCopyClick={() => void copyArticle()}
+        onShareClick={() => void shareArticle()}
+        onCheckCardsClick={() => void checkForExistingCards()}
+        onSaveClick={() => void saveToAccount()}
+        onHighlightToggle={() => setIsHighlightMode((previous) => !previous)}
+        onClearHighlights={clearAllHighlights}
+        onLayoutToggle={toggleLayout}
+        onReadingWidthChange={setReadingWidth}
+        onZoomIn={() => persistFontScale(fontScale + FONT_SCALE_STEP)}
+        onZoomOut={() => persistFontScale(fontScale - FONT_SCALE_STEP)}
+        onZoomReset={() => persistFontScale(1)}
+        onClose={closePanel}
+      />
+    </>
+  );
+
+  /** Page-moved prompt, transient notices, and the reading/failed states. */
+  const status = (
+    <>
+      {pageChanged && (
+        <div className="flex items-center justify-between gap-2 rounded-md border border-primary/30 bg-accent/40 p-2 text-xs">
+          <span>You&apos;ve moved to another page.</span>
+          <Button size="sm" className="h-7 text-xs" onClick={() => void readCurrentPage()}>
+            Read this one
+          </Button>
+        </div>
+      )}
+
+      {notice && (
+        <div
+          className={`rounded-md p-2 text-[13px] ${
+            notice.tone === 'warn'
+              ? 'bg-yellow-50 text-yellow-900 dark:bg-yellow-950/40 dark:text-yellow-100'
+              : 'bg-muted text-foreground'
+          }`}
+        >
+          {notice.text}
+          {notice.link && (
+            <>
+              {' '}
+              <a
+                href={notice.link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold underline"
+              >
+                {notice.link.label}
+              </a>
+            </>
+          )}
+        </div>
+      )}
+
+      {isExtracting && (
+        <p className="animate-pulse text-sm text-muted-foreground">Reading this page…</p>
+      )}
+
+      {!isExtracting && extractError && (
+        <div className="space-y-2 rounded-md bg-muted p-3 text-sm">
+          <p>{extractError}</p>
+          <Button variant="outline" size="sm" onClick={() => void readCurrentPage()}>
+            Try again
+          </Button>
+        </div>
+      )}
+    </>
+  );
+
+  /** Everything about asking the AI: focus passages, prompt, suggestions, answers. */
+  const assistant = article && (
+    <>
+      {(selectionText || highlights.length > 0) && (
+        <div className="space-y-1 rounded-md border border-dashed border-border p-2 text-xs text-muted-foreground">
+          <div className="flex items-center justify-between gap-2">
+            <span className="font-semibold text-foreground">Asking about:</span>
+            {highlights.length > 0 && (
+              <button
+                type="button"
+                onClick={clearAllHighlights}
+                className="underline underline-offset-2 hover:text-foreground"
+              >
+                Clear highlights
+              </button>
+            )}
+          </div>
+          {[selectionText, ...highlights].filter(Boolean).map((passage, index) => (
+            <p key={index} className="border-l-2 border-yellow-300 pl-2">
+              {passage.slice(0, 280)}
+              {passage.length > 280 ? '…' : ''}
+            </p>
+          ))}
+        </div>
+      )}
+
+      <ArticlePromptInput
+        value={userPrompt}
+        onChange={setUserPrompt}
+        onSubmit={() => void askQuestion(userPrompt)}
+        disabled={isLoadingAI}
+      />
+
+      <ArticleFollowupQuestions
+        questions={followupQuestions}
+        summarizePrompt={settings?.summarizePrompt ?? DEFAULT_SUMMARIZE_PROMPT}
+        isLoading={isLoadingFollowups}
+        error={followupError}
+        onQuestionClick={(question) => {
+          setUserPrompt(question);
+          void askQuestion(question);
+        }}
+      />
+
+      {chatHistory.length > 0 && (
+        <div className="space-y-3">
+          {chatHistory.map((message, index) => (
+            <div key={`${message.time}-${index}`}>
+              {message.role === 'user' ? (
+                <div className="rounded-lg border border-primary/20 bg-primary/10 p-2.5">
+                  <div className="mb-1 text-xs font-semibold text-foreground">Your question</div>
+                  <div className="text-sm">{message.content}</div>
+                </div>
+              ) : (
+                <ArticleAIResponse response={message.content} isLoading={false} />
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {(isLoadingAI || (aiResponse && chatHistory.length === 0)) && (
+        <ArticleAIResponse response={aiResponse} isLoading={isLoadingAI} />
+      )}
+
+      {aiError && !isLoadingAI && (
+        <div className="rounded-md bg-destructive p-2 text-sm text-destructive-foreground">
+          {aiError}
+        </div>
+      )}
+    </>
+  );
+
+  const articleBody = article && (
+    <ArticleContent
+      article={article}
+      isHighlightMode={isHighlightMode}
+      fontScale={fontScale}
+      onHighlightsChange={setHighlights}
+    />
+  );
+
+  if (layout === 'side') {
+    return (
+      <TooltipProvider delayDuration={0}>
+        <div className="flex h-screen flex-col bg-background text-foreground">
+          <div className="shrink-0 space-y-2 border-b border-border bg-background/95 px-3 py-2.5">
+            {toolbar}
+          </div>
+          <div className="flex-1 overflow-y-auto overscroll-contain">
+            <div className="w-full space-y-4 p-3">
+              {status}
+              {assistant}
+              {articleBody}
+            </div>
           </div>
         </div>
+      </TooltipProvider>
+    );
+  }
 
-        <div className="flex-1 overflow-y-auto">
-          <div
-            className={`mx-auto w-full space-y-4 ${layout === 'full' ? 'px-6 py-6' : 'p-3'}`}
-            style={columnStyle}
-          >
-            {pageChanged && (
-              <div className="flex items-center justify-between gap-2 rounded-md border border-primary/30 bg-accent/40 p-2 text-xs">
-                <span>You&apos;ve moved to another page.</span>
-                <Button size="sm" className="h-7 text-xs" onClick={() => void readCurrentPage()}>
-                  Read this one
-                </Button>
+  // Full page: the site behind is dimmed (and blurred by the frame itself, see
+  // src/reader/panel.ts), the article is a sheet centered on it, and the AI is
+  // a column beside the article — or a strip above it on a narrow window — so
+  // answers and the passage they are about are on screen together. Clicking
+  // the backdrop closes the reader, like any modal.
+  return (
+    <TooltipProvider delayDuration={0}>
+      <div
+        className="flex h-screen justify-center bg-black/50 sm:p-4 lg:p-6"
+        onMouseDown={(event) => {
+          backdropPressRef.current = event.target === event.currentTarget;
+        }}
+        onClick={(event) => {
+          // Only a press that both started and ended on the backdrop — a
+          // highlight dragged out past the sheet's edge is not a close.
+          if (backdropPressRef.current && event.target === event.currentTarget) closePanel();
+          backdropPressRef.current = false;
+        }}
+      >
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label={article?.title || 'Article reader'}
+          className="flex h-full w-full flex-col overflow-hidden bg-background text-foreground shadow-2xl sm:rounded-xl sm:border sm:border-border"
+          // Wide enough for the article column at the chosen width plus the
+          // AI column; on anything narrower it is simply the whole window.
+          style={{ maxWidth: `calc(${readingMaxWidth} + 3rem + ${ASSISTANT_COLUMN_WIDTH})` }}
+        >
+          <header className="shrink-0 space-y-2 border-b border-border bg-background/95 px-4 py-2.5">
+            {toolbar}
+          </header>
+
+          <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
+            <main className="order-2 min-h-0 flex-1 overflow-y-auto overscroll-contain lg:order-1">
+              <div className="mx-auto w-full space-y-4 px-6 py-8" style={columnStyle}>
+                {status}
+                {articleBody}
               </div>
-            )}
-
-            {notice && (
-              <div
-                className={`rounded-md p-2 text-[13px] ${
-                  notice.tone === 'warn'
-                    ? 'bg-yellow-50 text-yellow-900 dark:bg-yellow-950/40 dark:text-yellow-100'
-                    : 'bg-muted text-foreground'
-                }`}
-              >
-                {notice.text}
-                {notice.link && (
-                  <>
-                    {' '}
-                    <a
-                      href={notice.link.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-semibold underline"
-                    >
-                      {notice.link.label}
-                    </a>
-                  </>
-                )}
-              </div>
-            )}
-
-            {isExtracting && (
-              <p className="animate-pulse text-sm text-muted-foreground">Reading this page…</p>
-            )}
-
-            {!isExtracting && extractError && (
-              <div className="space-y-2 rounded-md bg-muted p-3 text-sm">
-                <p>{extractError}</p>
-                <Button variant="outline" size="sm" onClick={() => void readCurrentPage()}>
-                  Try again
-                </Button>
-              </div>
-            )}
+            </main>
 
             {article && (
-              <>
-                {(selectionText || highlights.length > 0) && (
-                  <div className="space-y-1 rounded-md border border-dashed border-border p-2 text-xs text-muted-foreground">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="font-semibold text-foreground">Asking about:</span>
-                      {highlights.length > 0 && (
-                        <button
-                          type="button"
-                          onClick={clearAllHighlights}
-                          className="underline underline-offset-2 hover:text-foreground"
-                        >
-                          Clear highlights
-                        </button>
-                      )}
-                    </div>
-                    {[selectionText, ...highlights].filter(Boolean).map((passage, index) => (
-                      <p key={index} className="border-l-2 border-yellow-300 pl-2">
-                        {passage.slice(0, 280)}
-                        {passage.length > 280 ? '…' : ''}
-                      </p>
-                    ))}
-                  </div>
-                )}
-
-                <ArticlePromptInput
-                  value={userPrompt}
-                  onChange={setUserPrompt}
-                  onSubmit={() => void askQuestion(userPrompt)}
-                  disabled={isLoadingAI}
-                />
-
-                <ArticleFollowupQuestions
-                  questions={followupQuestions}
-                  summarizePrompt={settings?.summarizePrompt ?? DEFAULT_SUMMARIZE_PROMPT}
-                  isLoading={isLoadingFollowups}
-                  error={followupError}
-                  onQuestionClick={(question) => {
-                    setUserPrompt(question);
-                    void askQuestion(question);
-                  }}
-                />
-
-                {chatHistory.length > 0 && (
-                  <div className="space-y-3">
-                    {chatHistory.map((message, index) => (
-                      <div key={`${message.time}-${index}`}>
-                        {message.role === 'user' ? (
-                          <div className="rounded-lg border border-primary/20 bg-primary/10 p-2.5">
-                            <div className="mb-1 text-xs font-semibold text-foreground">
-                              Your question
-                            </div>
-                            <div className="text-sm">{message.content}</div>
-                          </div>
-                        ) : (
-                          <ArticleAIResponse response={message.content} isLoading={false} />
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {(isLoadingAI || (aiResponse && chatHistory.length === 0)) && (
-                  <ArticleAIResponse response={aiResponse} isLoading={isLoadingAI} />
-                )}
-
-                {aiError && !isLoadingAI && (
-                  <div className="rounded-md bg-destructive p-2 text-sm text-destructive-foreground">
-                    {aiError}
-                  </div>
-                )}
-
-                <ArticleContent
-                  article={article}
-                  isHighlightMode={isHighlightMode}
-                  fontScale={fontScale}
-                  onHighlightsChange={setHighlights}
-                />
-              </>
+              <aside
+                aria-label="Ask AI about this article"
+                className="order-1 flex max-h-[45%] shrink-0 flex-col border-b border-border bg-muted/30 lg:order-2 lg:max-h-none lg:border-b-0 lg:border-l"
+                style={{ width: isWideWindow ? ASSISTANT_COLUMN_WIDTH : undefined }}
+              >
+                <div className="flex shrink-0 items-center gap-2 border-b border-border px-4 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Ask AI about this article
+                </div>
+                <div
+                  ref={assistantScrollRef}
+                  className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain p-4"
+                >
+                  {assistant}
+                </div>
+              </aside>
             )}
           </div>
         </div>
