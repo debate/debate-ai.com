@@ -56,29 +56,40 @@ function isLink(value: unknown): value is SpeechDocLink {
   return !!value && typeof value === "object" && typeof (value as SpeechDocLink).docId === "number"
 }
 
-/**
- * Reads the stored links. Accepts the pre-sync `{ [key]: link }` map as well,
- * so links saved before the collection existed are still honored and get
- * rewritten as records on the next write.
- */
-function readLinks(): StoredSpeechDocLink[] {
+/** Parses one storage value as records, or as the pre-sync `{ [id]: link }` map. */
+function parseStored(raw: string | null): StoredSpeechDocLink[] {
+  if (!raw) return []
+  const parsed: unknown = JSON.parse(raw)
+  if (Array.isArray(parsed)) {
+    return parsed.filter(
+      (row): row is StoredSpeechDocLink => isLink(row) && typeof (row as StoredSpeechDocLink).id === "string",
+    )
+  }
+  if (parsed && typeof parsed === "object") {
+    return Object.entries(parsed as Record<string, unknown>)
+      .filter((entry): entry is [string, SpeechDocLink] => isLink(entry[1]))
+      .map(([id, link]) => ({ ...link, id }))
+  }
+  return []
+}
+
+function readKey(key: string): StoredSpeechDocLink[] {
   try {
-    const raw = localStorage.getItem(SPEECH_DOC_LINKS_KEY)
-    const parsed = raw ? JSON.parse(raw) : []
-    if (Array.isArray(parsed)) {
-      return parsed.filter(
-        (row): row is StoredSpeechDocLink => isLink(row) && typeof (row as StoredSpeechDocLink).id === "string",
-      )
-    }
-    if (parsed && typeof parsed === "object") {
-      return Object.entries(parsed as Record<string, unknown>)
-        .filter((entry): entry is [string, SpeechDocLink] => isLink(entry[1]))
-        .map(([id, link]) => ({ ...link, id }))
-    }
-    return []
+    return parseStored(localStorage.getItem(key))
   } catch {
     return []
   }
+}
+
+/**
+ * Reads the stored links: the synced records, plus any still sitting in the
+ * pre-sync map under {@link LEGACY_SPEECH_DOC_LINKS_KEY}. A record wins over a
+ * legacy entry with the same id; the legacy key is retired by the next write.
+ */
+function readLinks(): StoredSpeechDocLink[] {
+  const records = readKey(SPEECH_DOC_LINKS_KEY)
+  const ids = new Set(records.map((link) => link.id))
+  return [...records, ...readKey(LEGACY_SPEECH_DOC_LINKS_KEY).filter((link) => !ids.has(link.id))]
 }
 
 function writeLinks(links: StoredSpeechDocLink[]) {

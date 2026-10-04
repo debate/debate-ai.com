@@ -281,8 +281,9 @@ export function LecturesPage({ dockSlot, topicAreasSlot }: LecturesPageProps = {
   // Search chips must describe the active library category rather than the
   // whole archive. The hook deliberately ignores the typed search term.
   const { meta, counts, lectureCategories, suggestions } = useVideoMeta(filters)
-  // My Favorites lists every starred video: no library filter narrows it.
-  const feed = useVideoFeed(!isHistory && favoriteIds ? favoritesFeedFilters(filters) : filters)
+  // My Favorites and the watch history list every video on their allow-list:
+  // no library filter (style, season, search, hidden videos) narrows them.
+  const feed = useVideoFeed(isHistory || favoriteIds ? favoritesFeedFilters(filters) : filters)
 
   // ---------------------------------------------------------------------------
   // Quick-link counts (per-category video tallies for navigation cards)

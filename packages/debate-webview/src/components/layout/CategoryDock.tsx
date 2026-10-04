@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState, type MouseEvent as ReactMouseEvent, type ReactNode } from "react"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { Globe, LogIn, PanelLeft, LogOut, Monitor, Moon, Palette, Pause, Play, Search, Settings as SettingsIcon, Sun, UserCircle2 } from "lucide-react"
+import { Globe, LogIn, PanelLeft, LogOut, Monitor, Moon, Palette, Pause, Play, Search, Settings as SettingsIcon, ShieldCheck, Sun, UserCircle2 } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "../../lib/ui/lib/utils"
 import { Dock, DockIcon, DockItem, DockLabel } from "../../lib/ui/layout/dock"
@@ -225,6 +225,37 @@ function NavMenu({ side }: { side: "bottom" | "top" }) {
   )
 }
 
+/**
+ * Whether the signed-in viewer is staff (admin or moderator), asked of
+ * `/api/admin/me` so the dock stays cacheable and only shows the Admin row to
+ * people who can open `/admin`. Every admin API re-checks the role itself.
+ */
+function useCanEditContent(): boolean {
+  const { user, isAuthenticated } = useSession()
+  const [canEdit, setCanEdit] = useState(false)
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setCanEdit(false)
+      return
+    }
+    let cancelled = false
+    fetch("/api/admin/me", { credentials: "include" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((body: { canEditContent?: boolean } | null) => {
+        if (!cancelled) setCanEdit(!!body?.canEditContent)
+      })
+      .catch(() => {
+        if (!cancelled) setCanEdit(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [isAuthenticated, user?.id])
+
+  return canEdit
+}
+
 function SettingsMenu({
   side,
   onSignIn,
@@ -234,6 +265,7 @@ function SettingsMenu({
 }) {
   const themeState = useThemeState()
   const router = useRouter()
+  const canEditContent = useCanEditContent()
 
   return (
     <DropdownMenuContent
@@ -250,6 +282,12 @@ function SettingsMenu({
         <SettingsIcon className="mr-2 h-4 w-4" />
         Settings
       </DropdownMenuItem>
+      {canEditContent && (
+        <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/admin") }}>
+          <ShieldCheck className="mr-2 h-4 w-4" />
+          Admin
+        </DropdownMenuItem>
+      )}
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); themeState.toggleLightDark() }}>
         {themeState.isDark ? <Moon className="mr-2 h-4 w-4" /> : <Sun className="mr-2 h-4 w-4" />}
         {themeState.isDark ? "Dark Mode" : "Light Mode"}

@@ -280,6 +280,32 @@ export function describeWatchProgress(entry: WatchHistoryEntry): string {
   )})`;
 }
 
+/**
+ * How long ago a video was last watched, in the coarsest unit that still
+ * says something — what the history listing's "Last watched" column shows.
+ *
+ * @param watchedAt - The record's ISO-8601 `watchedAt`.
+ * @param now - Injectable clock, for tests.
+ * @returns E.g. `"Just now"`, `"5 min ago"`, `"3 hr ago"`, `"2 days ago"`,
+ *   `"4 mo ago"`; `"—"` when the timestamp is missing or unparseable.
+ */
+export function formatWatchedAgo(watchedAt: string, now: () => Date = () => new Date()): string {
+  const then = Date.parse(watchedAt);
+  if (!Number.isFinite(then) || then <= 0) return "—";
+  const seconds = Math.max(0, Math.floor((now().getTime() - then) / 1000));
+  if (seconds < 60) return "Just now";
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes} min ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} hr ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return days === 1 ? "1 day ago" : `${days} days ago`;
+  const months = Math.floor(days / 30);
+  if (months < 12) return `${months} mo ago`;
+  const years = Math.floor(days / 365);
+  return years === 1 ? "1 yr ago" : `${years} yr ago`;
+}
+
 /** When each video was last written, so playback can be throttled per video. */
 const lastWriteAt = new Map<string, number>();
 

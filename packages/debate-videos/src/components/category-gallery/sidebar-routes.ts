@@ -55,6 +55,11 @@ import {
  * navigation. `/doc`, the sibling "Debate Docs" row, needs no entry here — it is
  * a dock destination, so {@link APP_DOCK_LINKS} already covers it, and
  * {@link OWN_SIDEBAR_DOCK_HREFS} is what actually hosts its sidebar.
+ *
+ * `/admin` is the staff dashboard, reached from the Settings menu's Admin row
+ * (shown only to admins and moderators). It rendered bare — no dock, no
+ * sidebar, and a page that scrolled differently from everything else — so it
+ * gets the generic sidebar like the other destinations.
  */
 export const EXTRA_SIDEBAR_HREFS: readonly string[] = [
   "/",
@@ -63,6 +68,7 @@ export const EXTRA_SIDEBAR_HREFS: readonly string[] = [
   "/schools",
   "/legal",
   "/reason-editor",
+  "/admin",
 ];
 
 /** Every destination the tool sidebar links to, deduplicated. */
