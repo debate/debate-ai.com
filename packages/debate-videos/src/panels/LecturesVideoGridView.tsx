@@ -522,6 +522,12 @@ export function LecturesVideoGridView({
               <VideoListRows
                 videos={currentVideos}
                 layout={browsingLectures ? "lecture" : selectedStyle ? "round" : undefined}
+                // History reads most recently watched first, with a column to
+                // say how long ago and to re-sort by; the round tree would
+                // scatter that order across seasons and tournaments.
+                grouped={isHistory ? false : undefined}
+                showWatched={isHistory}
+                defaultSort={isHistory ? { column: "watched", direction: "desc" } : undefined}
                 videoContainerRef={videoContainerRef}
                 favorites={favorites}
                 onToggleFavorite={onToggleFavorite}

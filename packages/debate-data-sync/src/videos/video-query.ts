@@ -114,7 +114,9 @@ export function filterVideoRows(rows: VideoRow[], params: VideoQueryParams): Vid
   // Rows carry canonical keys, so an old merged key (`topic_analysis`) is
   // mapped onto the shelf it was folded into.
   const categoryKey = params.categoryKey ? normalizeCategoryKey(params.categoryKey) : null;
-  const idSet = params.ids && params.ids.length ? new Set(params.ids) : null;
+  // An empty allow-list matches nothing (an empty history or favourites list),
+  // exactly as the API answers it; only `null` means "no id filter".
+  const idSet = params.ids ? new Set(params.ids) : null;
   const excludeSet = params.excludeIds && params.excludeIds.length
     ? new Set(params.excludeIds)
     : null;

@@ -250,10 +250,10 @@ function buildConditions(
     if (season !== null) conditions.push(eq(videos.seasonYear, season));
   }
   if (params.ids && params.ids.length) {
-    conditions.push(inArray(videos.videoId, params.ids));
+    conditions.push(videoIdMembership(params.ids, false));
   }
   if (params.excludeIds && params.excludeIds.length) {
-    conditions.push(notInArray(videos.videoId, params.excludeIds));
+    conditions.push(videoIdMembership(params.excludeIds, true));
   }
   if (!options.skipSearch) {
     for (const token of searchTokens(params.q)) {
@@ -262,6 +262,22 @@ function buildConditions(
   }
 
   return conditions;
+}
+
+/**
+ * Above this many ids a membership test is bound as one JSON parameter.
+ * D1 allows 100 bound parameters per statement and `IN (...)` spends one per
+ * id, so a watch history or favourites list past that failed the whole query.
+ */
+const MAX_BOUND_VIDEO_IDS = 50;
+
+/** `videoId IN (ids)` / `NOT IN (ids)`, safe for lists longer than D1's bind limit. */
+function videoIdMembership(ids: string[], negate: boolean): SQL {
+  if (ids.length <= MAX_BOUND_VIDEO_IDS) {
+    return negate ? notInArray(videos.videoId, ids) : inArray(videos.videoId, ids);
+  }
+  const list = sql`(SELECT value FROM json_each(${JSON.stringify(ids)}))`;
+  return negate ? sql`${videos.videoId} NOT IN ${list}` : sql`${videos.videoId} IN ${list}`;
 }
 
 /** Combines predicates into a single `WHERE` clause, or `undefined` for none. */
