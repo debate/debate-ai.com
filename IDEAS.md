@@ -50,6 +50,12 @@
 2. random pair webcam debate matching on mutual pref topics
 3. human feedback on redos and badges and practicle drills against 
 
+## Account sync of tools (In Progress)
+
+- [x] Speech-doc links (editor document <-> round/flow speech) sync via the `speechDocLinks` tool-record collection
+- [ ] Pinned debates (`pinned-debates`, numeric round ids) - needs a `user_settings` op or an id-carrying record shape; blocked on a schema migration path since `drizzle/` was removed on purpose
+- [ ] Surface the Tool data sync status where each tool is used, not only in settings
+
 ---
 
 ## Contribution Guidelines

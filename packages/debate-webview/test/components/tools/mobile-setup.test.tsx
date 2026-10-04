@@ -44,7 +44,7 @@ describe("MobileSetupPage", () => {
     expect(html).toContain("Fast-charging cables for phone &amp; keyboard")
     expect(html).toContain("Keep the phone alive all day")
     expect(html).toContain("Giant floating screen, no laptop")
-    expect(html).toContain("The phone that runs it all")
+    expect(html).toContain("A phone to run it on")
     expect(html).toContain("Phone service &amp; data")
   })
 })

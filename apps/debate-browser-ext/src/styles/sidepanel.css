@@ -14,6 +14,13 @@ body {
   overflow: hidden;
 }
 
+/* The full-page layout covers the whole tab and draws its own dimmed backdrop
+ * around the centered article, so the page behind shows through. */
+html[data-layout='full'],
+html[data-layout='full'] body {
+  background: transparent;
+}
+
 /* The reading-mode article body. */
 .article-prose {
   font-family: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;

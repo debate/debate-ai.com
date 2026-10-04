@@ -122,7 +122,7 @@ describe("the surfaces that render them", () => {
 
   it("gives the mobile quick-link tiles one per entry but the reference pair", () => {
     // The tiles are the sidebar's stand-in on `/videos` below `md`. The
-    // reference pair has no tile; it stays reachable from Practice.
+    // reference pair has no tile; it stays reachable from Insights.
     const html = renderToStaticMarkup(createElement(QuickLinksGrid, {}));
     const hrefs = hrefsIn(html);
     const referenceHrefs = new Set(VIDEO_REFERENCE_LINKS.map((link) => link.href));
