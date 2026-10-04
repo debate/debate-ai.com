@@ -67,13 +67,13 @@ const GEAR: {
   },
   {
     name: "Samsung Galaxy phone",
-    role: "The phone that runs it all",
+    role: "A phone to run it on",
     href: "https://amzn.to/4xLQhQA",
     usedHref:
       "https://www.ebay.com/sch/i.html?_oaa=1&_dcat=9355&_udlo=70&_fsrp=1&rt=nc&_from=R40&_nkw=Samsung+s20&_sacat=0&Model=Samsung%2520Galaxy%2520S20%252B%7CSamsung%2520Galaxy%2520S20%252B%25205G%7CSamsung%2520Galaxy%2520S21%252B%7CSamsung%2520Galaxy%2520S21%2520FE%25205G%7CSamsung%2520Galaxy%2520S21%2520Ultra&_udhi=130",
     image: "https://i.imgur.com/lHC64M8.jpeg",
     blurb:
-      "Everything on this page runs in a phone browser, so any recent phone will do. Samsung Galaxy phones pair a bright AMOLED display with all-day battery life and a browser that handles prep, flowing and practice rounds with ease. Buy one new on Amazon, or look for a used or refurbished Galaxy on eBay to save money.",
+      "Everything on this page runs in a phone browser, so any recent phone will work. A Samsung Galaxy is one option; used or refurbished models are often much cheaper and are available on Amazon and eBay.",
   },
   {
     name: "Visible Unlimited Phone Plan",
