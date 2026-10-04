@@ -9,7 +9,7 @@
       "ld_topics": [
         {
           "start_month": "September",
-          "topic_name": "Colleges And",
+          "topic_name": "Hate Speech",
           "topic": "That colleges and universities have a moral obligation to prohibit the public expression of hate speech on their campuses."
         }
       ]
@@ -28,22 +28,22 @@
         },
         {
           "start_month": "November",
-          "topic_name": "Providing For",
+          "topic_name": "Human Needs",
           "topic": "providing for basic human needs of citizens in a society ought to be valued above individual property rights."
         },
         {
           "start_month": "January",
-          "topic_name": "The Public'S",
+          "topic_name": "Right To Know",
           "topic": "the public's right to know ought to be valued above the right to privacy of candidates for public office."
         },
         {
           "start_month": "March",
-          "topic_name": "The Possession",
+          "topic_name": "Nuclear Weapons",
           "topic": "the possession of nuclear weapons is immoral."
         },
         {
           "start_month": "June",
-          "topic_name": "Establishing A",
+          "topic_name": "School Safety",
           "topic": "establishing a safe educational environment in grades K-12 justifies infringement of students' civil liberties."
         }
       ]
@@ -57,17 +57,17 @@
       "ld_topics": [
         {
           "start_month": "September",
-          "topic_name": "Laws Which",
+          "topic_name": "Paternalism",
           "topic": "laws which protect citizens from themselves are justified."
         },
         {
           "start_month": "November",
-          "topic_name": "The People'S",
+          "topic_name": "Right To Know",
           "topic": "the people's right to know outweighs the government's need for confidentiality."
         },
         {
           "start_month": "January",
-          "topic_name": "Limiting The",
+          "topic_name": "Protecting Children",
           "topic": "limiting the freedom of expression of adults is justified by society's interest in protecting children."
         },
         {
@@ -77,12 +77,12 @@
         },
         {
           "start_month": "June",
-          "topic_name": "A Lesser",
+          "topic_name": "Right To Develop",
           "topic": "a lesser developed nation's right to develop ought to take priority over its obligation to protect the environment."
         },
         {
           "start_month": "June",
-          "topic_name": "Decentralized Governmental",
+          "topic_name": "Decentralization",
           "topic": "decentralized governmental power ought to be a fundamental goal of democratic society."
         }
       ],
@@ -108,32 +108,32 @@
       "ld_topics": [
         {
           "start_month": "September",
-          "topic_name": "Rehabilitation Ought",
+          "topic_name": "Rehabilitation",
           "topic": "rehabilitation ought to be valued above punishment in the U.S. criminal justice system."
         },
         {
           "start_month": "November",
-          "topic_name": "Capitalism Is",
+          "topic_name": "Capitalism",
           "topic": "capitalism is the most just economic system."
         },
         {
           "start_month": "January",
-          "topic_name": "When In",
+          "topic_name": "Letter Of The Law",
           "topic": "when in conflict, the letter of the law ought to take priority over the spirit of the law."
         },
         {
           "start_month": "March",
-          "topic_name": "When In",
+          "topic_name": "Globalization",
           "topic": "when in conflict, globalization ought to be valued above national sovereignty."
         },
         {
           "start_month": "June",
-          "topic_name": "When In",
+          "topic_name": "Academic Freedom",
           "topic": "when in conflict, academic freedom in U.S. high schools ought to be valued above community standards."
         },
         {
           "start_month": "June",
-          "topic_name": "When The",
+          "topic_name": "National Security",
           "topic": "when the United States is engaged in military conflict, the demands of national security ought to supersede conflicting claims of individual rights."
         }
       ],
@@ -179,27 +179,27 @@
         },
         {
           "start_month": "November",
-          "topic_name": "A Nation'S",
+          "topic_name": "Citizens' Rights",
           "topic": "a nation's citizens' rights ought to take precedence over its security."
         },
         {
           "start_month": "January",
-          "topic_name": "As A",
+          "topic_name": "Common Good",
           "topic": "as a general principle, individuals have an obligation to value the common good above their own interests."
         },
         {
           "start_month": "March",
-          "topic_name": "A Government'S",
+          "topic_name": "Environment",
           "topic": "a government's obligation to protect the environment ought to take precedence over its obligation to promote economic development."
         },
         {
           "start_month": "June",
-          "topic_name": "The U.S.",
+          "topic_name": "Mitigating Conflict",
           "topic": "the U.S. has a moral obligation to mitigate international conflicts."
         },
         {
           "start_month": "June",
-          "topic_name": "In The",
+          "topic_name": "Privileged Communication",
           "topic": "in the U.S. judicial system, truth seeking ought to take precedence over privileged communication."
         }
       ],
@@ -240,32 +240,32 @@
       "ld_topics": [
         {
           "start_month": "September",
-          "topic_name": "The Pursuit",
+          "topic_name": "Scientific Knowledge",
           "topic": "the pursuit of scientific knowledge ought to be constrained by concern for societal good."
         },
         {
           "start_month": "November",
-          "topic_name": "The Primary",
+          "topic_name": "Purpose Of Education",
           "topic": "the primary purpose of formal education ought to be to impart knowledge."
         },
         {
           "start_month": "January",
-          "topic_name": "To Better",
+          "topic_name": "Community Standards",
           "topic": "to better protect civil liberties, community standards ought to take precedence over conflicting national standards."
         },
         {
           "start_month": "March",
-          "topic_name": "Democracy Is",
+          "topic_name": "Church And State",
           "topic": "democracy is best served by strict separation of church and state."
         },
         {
           "start_month": "June",
-          "topic_name": "The United",
+          "topic_name": "Promoting Democracy",
           "topic": "the United States has a moral obligation to promote democratic ideals in other nations."
         },
         {
           "start_month": "June",
-          "topic_name": "Individual Claims",
+          "topic_name": "Privacy",
           "topic": "individual claims of privacy ought to be valued above competing claims of societal welfare."
         }
       ],
@@ -306,22 +306,22 @@
       "ld_topics": [
         {
           "start_month": "September",
-          "topic_name": "In Matters",
+          "topic_name": "Military Intelligence",
           "topic": "In matters of collecting military intelligence, the ends justify the means."
         },
         {
           "start_month": "November",
-          "topic_name": "When In",
+          "topic_name": "Free Speech",
           "topic": "When in conflict, an individual's freedom of speech should be valued above a community's moral standards."
         },
         {
           "start_month": "January",
-          "topic_name": "Juveniles Charged",
+          "topic_name": "Juvenile Justice",
           "topic": "Juveniles charged with violent crimes should be tried and punished as adults."
         },
         {
           "start_month": "March",
-          "topic_name": "The Use",
+          "topic_name": "Eminent Domain",
           "topic": "The use of the state's power of eminent domain to promote private enterprise is unjust."
         },
         {
@@ -331,7 +331,7 @@
         },
         {
           "start_month": "June",
-          "topic_name": "In Matters",
+          "topic_name": "Immigration",
           "topic": "In matters of U.S. immigration policy, restrictions on the rights of non-citizens are consistent with democratic ideals."
         }
       ],
@@ -382,22 +382,22 @@
         },
         {
           "start_month": "January",
-          "topic_name": "The United",
+          "topic_name": "UN Human Rights",
           "topic": "The United Nations' obligation to protect global human rights ought to be valued above its obligation to respect national sovereignty."
         },
         {
           "start_month": "March",
-          "topic_name": "The Actions",
+          "topic_name": "Corporate Ethics",
           "topic": "The actions of corporations ought to be held to the same moral standards as the actions of individuals."
         },
         {
           "start_month": "June",
-          "topic_name": "A Victim'S",
+          "topic_name": "Domestic Violence",
           "topic": "A victim's deliberate use of deadly force is a just response to repeated domestic violence."
         },
         {
           "start_month": "June",
-          "topic_name": "A Just",
+          "topic_name": "Health Care",
           "topic": "A just government should provide health care to its citizens."
         }
       ],
@@ -443,7 +443,7 @@
       "ld_topics": [
         {
           "start_month": "September",
-          "topic_name": "Limiting Economic",
+          "topic_name": "Economic Inequality",
           "topic": "Limiting economic inequality ought to be a more important social goal than maximizing economic freedom."
         },
         {
@@ -458,17 +458,17 @@
         },
         {
           "start_month": "March",
-          "topic_name": "It Is",
+          "topic_name": "Nuclear Nonproliferation",
           "topic": "It is just for the United States to use military force to prevent the acquisition of nuclear weapons by nations that pose a military threat."
         },
         {
           "start_month": "June",
-          "topic_name": "Plea-Bargaining In",
+          "topic_name": "Plea Bargaining",
           "topic": "In the United States, plea-bargaining in exchange for testimony is unjust."
         },
         {
           "start_month": "June",
-          "topic_name": "A Just",
+          "topic_name": "Death Penalty",
           "topic": "A just society ought not use the death penalty as a form of punishment."
         }
       ],
@@ -519,27 +519,27 @@
         },
         {
           "start_month": "November",
-          "topic_name": "When In",
+          "topic_name": "Minority Cultures",
           "topic": "When in conflict, the preservation of minority cultural values ought to be valued above the preservation of a unified national culture."
         },
         {
           "start_month": "January",
-          "topic_name": "Vigilantism Is",
+          "topic_name": "Vigilantism",
           "topic": "Vigilantism is justified when the government has failed to enforce the law."
         },
         {
           "start_month": "March",
-          "topic_name": "Submit To",
+          "topic_name": "International Court",
           "topic": "The United States ought to submit to the jurisdiction of an international court designed to prosecute crimes against humanity."
         },
         {
           "start_month": "June",
-          "topic_name": "In A",
+          "topic_name": "Felon Voting",
           "topic": "In a democratic society, felons ought to retain the right to vote."
         },
         {
           "start_month": "June",
-          "topic_name": "It Is",
+          "topic_name": "Killing One To Save Many",
           "topic": "It is morally permissible to kill one innocent person to save the lives of more innocent people."
         }
       ],
