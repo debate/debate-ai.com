@@ -269,6 +269,18 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     section: "Flowing and writing",
   },
   {
+    key: "ebbSyncedSettings",
+    storageKey: "ebbSyncedSettings",
+    idField: "id",
+    // The flow editor's display and keymap preferences
+    // (`@debate/flow-ebb/src/lib/store/syncedSettings.ts`): two records,
+    // `display` and `keymap`. Device-only values (flows folder, panel layout,
+    // live-collab toggles) are deliberately not in them.
+    label: "Flow Editor Settings",
+    href: "/debate",
+    section: "Flowing and writing",
+  },
+  {
     key: "flowHistory",
     storageKey: "flow-history",
     idField: "id",
