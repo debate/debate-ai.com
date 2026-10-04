@@ -51,6 +51,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   flowAnnotations: "id",
   spellcheckDictionary: "id",
   flowHistory: "id",
+  pinnedDebates: "roundId",
   docsChatTabs: "id",
   fileSources: "id",
   coachConversation: "id",
@@ -82,6 +83,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   pendingTaskVerifications: "id",
   roundContributorFlows: "contributorId",
   contributorAvailability: "contributorId",
+  speechDocLinks: "id",
   completedResearchTasks: "id",
   groupChallenges: "id",
   challengeWinEvents: "id",
@@ -98,6 +100,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   debateVideoReports: "id",
   debateVideoWatchHistory: "videoId",
   speechOutcomeRuns: "id",
+  speechDocLinks: "id",
 };
 
 describe("the synced collection catalog", () => {
@@ -308,6 +311,15 @@ describe("the synced collection catalog", () => {
       storageKey: "challengeWinEvents",
       idField: "id",
       href: "/coaching/leaderboard",
+    });
+  });
+
+  it("syncs which editor document each speech reads its word counts from", () => {
+    expect(findToolRecordCollection("speechDocLinks")).toMatchObject({
+      storageKey: "speechDocLinks",
+      idField: "id",
+      href: "/debate",
+      section: "Flowing and writing",
     });
   });
 

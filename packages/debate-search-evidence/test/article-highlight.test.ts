@@ -1,7 +1,14 @@
 // @vitest-environment jsdom
 import { beforeEach, describe, expect, it } from "vitest"
 
-import { HIGHLIGHT_ATTRIBUTE, clearHighlights, highlightRange, highlightSelection } from "../src/lib/article-highlight"
+import {
+  HIGHLIGHT_ATTRIBUTE,
+  clearHighlights,
+  collectHighlights,
+  highlightRange,
+  highlightSelection,
+  removeHighlightAt,
+} from "../src/lib/article-highlight"
 
 let container: HTMLElement
 
@@ -23,9 +30,10 @@ describe("highlightRange", () => {
     range.setEnd(textOf("one"), 19)
 
     expect(highlightRange(container, range)).toBe("held")
-    expect(document.getElementById("one")!.innerHTML).toBe(
-      `Deterrence has <mark ${HIGHLIGHT_ATTRIBUTE}="">held</mark> for decades.`,
-    )
+    const marks = document.getElementById("one")!.querySelectorAll(`mark[${HIGHLIGHT_ATTRIBUTE}]`)
+    expect(marks).toHaveLength(1)
+    expect(marks[0].textContent).toBe("held")
+    expect(document.getElementById("one")!.textContent).toBe("Deterrence has held for decades.")
   })
 
   it("marks each text run of a selection across paragraphs, keeping the blocks", () => {
@@ -79,5 +87,50 @@ describe("clearHighlights", () => {
     container.innerHTML = `<p>An <mark>original</mark> mark.</p>`
     clearHighlights(container)
     expect(container.querySelectorAll("mark")).toHaveLength(1)
+  })
+})
+
+describe("toggling highlights off", () => {
+  /** Highlights `[start, end)` of paragraph one's text. */
+  function mark(start: number, end: number) {
+    const range = document.createRange()
+    range.setStart(textOf("one"), start)
+    range.setEnd(textOf("one"), end)
+    return highlightRange(container, range)
+  }
+
+  it("removes just the tapped passage, leaving the others", () => {
+    mark(0, 10) // "Deterrence"
+    const second = document.getElementById("one")!.querySelectorAll("mark")
+    expect(second).toHaveLength(1)
+    const tail = document.createTreeWalker(document.getElementById("one")!, NodeFilter.SHOW_TEXT)
+    tail.nextNode()
+    tail.nextNode() // " has held for decades." after the first mark
+    const range = document.createRange()
+    range.setStart(tail.currentNode, 5)
+    range.setEnd(tail.currentNode, 9) // "held"
+    highlightRange(container, range)
+
+    expect(collectHighlights(container)).toEqual(["Deterrence", "held"])
+    expect(removeHighlightAt(container, container.querySelector("mark"))).toBe(true)
+    expect(collectHighlights(container)).toEqual(["held"])
+    expect(document.getElementById("one")!.textContent).toBe("Deterrence has held for decades.")
+  })
+
+  it("removes every run of a multi-paragraph passage at once", () => {
+    const range = document.createRange()
+    range.setStart(textOf("one"), 24)
+    range.setEnd(document.getElementById("two")!.querySelector("em")!.firstChild!, 5)
+    highlightRange(container, range)
+
+    expect(removeHighlightAt(container, container.querySelectorAll("mark")[1])).toBe(true)
+    expect(container.querySelectorAll(`mark[${HIGHLIGHT_ATTRIBUTE}]`)).toHaveLength(0)
+    expect(collectHighlights(container)).toEqual([])
+  })
+
+  it("ignores taps outside a highlight", () => {
+    mark(0, 10)
+    expect(removeHighlightAt(container, document.getElementById("two"))).toBe(false)
+    expect(collectHighlights(container)).toEqual(["Deterrence"])
   })
 })

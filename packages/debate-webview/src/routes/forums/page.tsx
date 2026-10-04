@@ -23,8 +23,8 @@ export default function ForumsPage() {
     <ToolPage>
       <ToolPageHeader
         href="/practice/forums"
-        backHref="/tools"
-        backLabel="tools"
+        backHref="/debate"
+        backLabel="round workspace"
         title="Latest News"
         description="What the people who argue about this for a living are saying right now — newest activity first. Post a thread, and the replies live under it."
         icon={Rss}

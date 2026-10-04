@@ -100,7 +100,6 @@ export const PAGE_ROUTES: AppRoute[] = [
   { pattern: "/summaries", load: () => import("./summaries/page") },
   { pattern: "/practice/tabroom/[[...slug]]", load: () => import("./tabroom/[[...slug]]/page") },
   { pattern: "/teams/[team]", load: () => import("./teams/[team]/page") },
-  { pattern: "/tools", load: () => import("./tools/page") },
   { pattern: "/coaching/laptopless", load: () => import("./coaching/laptopless/page") },
   // `/research/topics` was the standalone Topics Explorer. Its research-area
   // explorer is now the first section of `/practice/statistics`, so this old

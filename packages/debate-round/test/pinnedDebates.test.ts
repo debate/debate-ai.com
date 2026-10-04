@@ -2,12 +2,10 @@ import { describe, expect, it } from "vitest"
 import {
   MAX_PINNED_DEBATES,
   PINNED_DEBATES_KEY,
-  orderPinnedRounds,
   readPinnedDebateIds,
   togglePinnedDebate,
   writePinnedDebateIds,
 } from "../src/state/pinnedDebates"
-import type { Round } from "../src/types/flow"
 
 function memoryStorage(initial?: string) {
   const data = new Map<string, string>()
@@ -15,63 +13,61 @@ function memoryStorage(initial?: string) {
   return {
     getItem: (key: string) => data.get(key) ?? null,
     setItem: (key: string, value: string) => void data.set(key, value),
+    stored: () => JSON.parse(data.get(PINNED_DEBATES_KEY) ?? "null"),
   }
 }
 
 describe("pinnedDebates", () => {
-  it("reads nothing from an empty, malformed or non-array store", () => {
-    expect(readPinnedDebateIds(memoryStorage())).toEqual([])
+  it("stores pins as { roundId, pinnedAt } records with a string id", () => {
+    const storage = memoryStorage()
+    writePinnedDebateIds([5, 7], storage)
+
+    expect(storage.stored()).toEqual([
+      { roundId: "5", pinnedAt: expect.any(Number) },
+      { roundId: "7", pinnedAt: expect.any(Number) },
+    ])
+    expect(readPinnedDebateIds(storage)).toEqual([5, 7])
+  })
+
+  it("reads a legacy number[] and rewrites it as records", () => {
+    const storage = memoryStorage(JSON.stringify([3, 4, 3]))
+
+    expect(readPinnedDebateIds(storage)).toEqual([3, 4])
+    expect(storage.stored().map((r: { roundId: string }) => r.roundId)).toEqual(["3", "4"])
+  })
+
+  it("accepts records pulled from the account, including numeric-looking strings", () => {
+    const storage = memoryStorage(
+      JSON.stringify([{ roundId: "12", pinnedAt: 1 }, { roundId: "", pinnedAt: 2 }, { roundId: "abc" }, null]),
+    )
+
+    expect(readPinnedDebateIds(storage)).toEqual([12])
+  })
+
+  it("keeps an existing pin's time when another pin changes", () => {
+    const storage = memoryStorage(JSON.stringify([{ roundId: "1", pinnedAt: 111 }]))
+    togglePinnedDebate(2, storage)
+
+    expect(storage.stored()[0]).toEqual({ roundId: "1", pinnedAt: 111 })
+    expect(readPinnedDebateIds(storage)).toEqual([1, 2])
+  })
+
+  it("unpins a pinned round on toggle", () => {
+    const storage = memoryStorage(JSON.stringify([{ roundId: "1", pinnedAt: 1 }]))
+
+    expect(togglePinnedDebate(1, storage)).toEqual([])
+    expect(storage.stored()).toEqual([])
+  })
+
+  it("caps the list, dropping the oldest pin", () => {
+    const storage = memoryStorage()
+    const ids = Array.from({ length: MAX_PINNED_DEBATES + 1 }, (_, i) => i + 1)
+
+    expect(writePinnedDebateIds(ids, storage)).toEqual(ids.slice(1))
+  })
+
+  it("returns [] for malformed storage", () => {
     expect(readPinnedDebateIds(memoryStorage("{not json"))).toEqual([])
     expect(readPinnedDebateIds(memoryStorage('{"a":1}'))).toEqual([])
-  })
-
-  it("reads the legacy number[] format in array order", () => {
-    expect(readPinnedDebateIds(memoryStorage("[5,3,5,\"x\"]"))).toEqual([5, 3])
-  })
-
-  it("writes syncable records keyed by a string id", () => {
-    const storage = memoryStorage()
-    writePinnedDebateIds([7, 9], storage)
-    const stored = JSON.parse(storage.getItem(PINNED_DEBATES_KEY)!)
-    expect(stored).toEqual([
-      { id: "7", pinnedAt: expect.any(Number) },
-      { id: "9", pinnedAt: expect.any(Number) },
-    ])
-    expect(readPinnedDebateIds(storage)).toEqual([7, 9])
-  })
-
-  it("orders by pinnedAt even when records arrive out of order (account merge)", () => {
-    const storage = memoryStorage(
-      JSON.stringify([
-        { id: "2", pinnedAt: 200 },
-        { id: "1", pinnedAt: 100 },
-        { id: "bad", pinnedAt: 1 },
-      ]),
-    )
-    expect(readPinnedDebateIds(storage)).toEqual([1, 2])
-  })
-
-  it("keeps existing pin times when another round is toggled", () => {
-    const storage = memoryStorage(JSON.stringify([{ id: "1", pinnedAt: 100 }]))
-    togglePinnedDebate(2, storage)
-    const stored = JSON.parse(storage.getItem(PINNED_DEBATES_KEY)!)
-    expect(stored[0]).toEqual({ id: "1", pinnedAt: 100 })
-    expect(readPinnedDebateIds(storage)).toEqual([1, 2])
-  })
-
-  it("unpins on a second toggle and upgrades legacy data", () => {
-    const storage = memoryStorage("[1,2]")
-    expect(togglePinnedDebate(1, storage)).toEqual([2])
-    expect(JSON.parse(storage.getItem(PINNED_DEBATES_KEY)!)).toEqual([{ id: "2", pinnedAt: expect.any(Number) }])
-  })
-
-  it("drops the oldest pin past the cap", () => {
-    const ids = Array.from({ length: MAX_PINNED_DEBATES + 1 }, (_, i) => i + 1)
-    expect(writePinnedDebateIds(ids, memoryStorage())).toEqual(ids.slice(1))
-  })
-
-  it("orders rounds by pin order and skips rounds that no longer exist", () => {
-    const rounds = [{ id: 1 }, { id: 2 }] as Round[]
-    expect(orderPinnedRounds(rounds, [2, 99, 1]).map((r) => r.id)).toEqual([2, 1])
   })
 })

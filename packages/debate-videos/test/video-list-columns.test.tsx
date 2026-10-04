@@ -137,7 +137,7 @@ describe("the round list's columns", () => {
   it("shows each side's argument under its team name", () => {
     const html = renderList([identifiableRound]);
     const cells = [...html.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/g)].map(([, cell]) => cell);
-    // The round cell carries a one-line "Aff vs Neg" for phones; the side cells are the ones that also hold the argument.
+    // The side cells are the ones that hold the argument.
     const aff = cells.find((cell) => cell.includes("Team Aff") && cell.includes("Warming Advantage"));
     const neg = cells.find((cell) => cell.includes("Team Neg") && cell.includes("Cap K"));
     expect(aff).toContain("Warming Advantage");
@@ -199,7 +199,7 @@ describe("the round list's tree", () => {
 
   it("sizes the table to its columns rather than the page", () => {
     const html = renderList([identifiableRound]);
-    expect(html).toMatch(/<table[^>]*style="--table-width:\d+px"/);
+    expect(html).toMatch(/<table[^>]*style="--table-width:\d+px;--table-width-phone:calc\(\d+px \+ min\(\d+px, 75vw\)\)"/);
   });
 
   it("slots a round with no tournament among the tournaments by date", () => {
@@ -286,15 +286,19 @@ describe("the lecture list's columns", () => {
   it("names the channel and the category on every row, at every width", () => {
     // The two things a lecture listing is scanned by. They head the groups a
     // lecture sits in and ride on the row's own second tier, so neither is
-    // dropped at a narrow width — only the Date and Views columns are.
+    // dropped at a narrow width.
     const html = renderList([lecture]);
     expect(html).toContain("Lecture Channel");
     expect(html).toContain("Critique / Critical Theory");
+  });
 
-    const headerRow = html.slice(html.indexOf("<thead"), html.indexOf("</thead>"));
-    // Below `sm` only the Library column remains, so the row fits a phone.
-    expect(headerRow).toContain("hidden sm:table-cell");
-    expect(headerRow.slice(0, headerRow.indexOf("Date"))).not.toMatch(/<th[^>]*hidden[^>]*>[^<]*<span[^>]*><button[^>]*>Library/);
+  it("keeps every column at every width, scrolling sideways on a phone", () => {
+    // Below `sm` the columns used to be `hidden … sm:table-cell`, which left a
+    // phone with no way to see a round's Aff, Neg, Date or Views.
+    for (const html of [renderList([lecture]), renderList([identifiableRound])]) {
+      expect(html).not.toContain("sm:table-cell");
+      expect(html).toContain("overflow-x-auto");
+    }
   });
 
   it("gives the video row its thumbnail, at every width", () => {
