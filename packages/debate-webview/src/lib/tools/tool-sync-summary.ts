@@ -1,6 +1,6 @@
 /**
  * @fileoverview Pure formatter for the compact tool-sync status line shown in
- * Preferences (`components/settings/ToolSyncSection.tsx`) — the same signal
+ * Preferences (the former Preferences tool-sync section) — the same signal
  * `/tools`' full `ToolSyncStatusPanel` shows, condensed to one sentence with
  * no per-failure retry list, since that still lives only on `/tools`.
  *

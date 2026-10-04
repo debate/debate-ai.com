@@ -77,8 +77,8 @@ const TOOLS_EXCLUDE_FROM_FEATURES = new Set([
  */
 const WORKSPACE_EXCLUDE_FROM_TOOLS = new Set(["/reason-editor", "/coaching/laptopless"])
 
-/** The Workspace menu's own trailing "All Tools" link back to `/tools`. */
-const TOOLS_EXCLUDE_FROM_WORKSPACE = new Set(["/tools"])
+/** Workspace-menu entries that intentionally have no `ALL_TOOLS` counterpart. None today. */
+const TOOLS_EXCLUDE_FROM_WORKSPACE = new Set<string>()
 
 const APP_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..")
 const APP_DIR = join(APP_ROOT, "app")
@@ -115,8 +115,7 @@ const STATIC_APP_ROUTES = findAppPageRoutes(APP_DIR, "").filter((route) => !rout
  * as "a step on the way to a feature rather than a feature"), the editor's
  * own settings pages plus the app's debate-style/font-size/font-family
  * preferences page (same reasoning as `/login` — configuration, not a
- * tool), and `/practice/features` itself. (`/tools` needs no entry here — it's
- * already covered by `WORKSPACE_LINKS`'s own trailing "All Tools" link.)
+ * tool), and `/practice/features` itself.
  *
  * `/practice/forums` is here for the reason `/practice/tournaments` never needed an entry: both
  * are destinations in the sidebar's tool tree and the dock's Settings menu
@@ -201,7 +200,7 @@ describe("tool catalog route coverage", () => {
     expect(missing, "add these to WORKSPACE_LINKS, or to WORKSPACE_EXCLUDE_FROM_TOOLS with a reason").toEqual([])
   })
 
-  it("covers every Workspace-menu entry on /tools, except the trailing All Tools link", () => {
+  it("covers every Workspace-menu entry on /tools, except the documented exceptions", () => {
     const toolHrefs = new Set(ALL_TOOLS.map((t) => t.href))
     const missing = WORKSPACE_LINKS.map((l) => l.href).filter(
       (href) => !toolHrefs.has(href) && !TOOLS_EXCLUDE_FROM_WORKSPACE.has(href),

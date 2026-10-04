@@ -55,7 +55,6 @@ export interface SitemapEntry {
 const STATIC_PAGES: ReadonlyArray<{ path: string; priority: number; changeFrequency: SitemapEntry["changeFrequency"] }> = [
   { path: "/videos", priority: 1.0, changeFrequency: "daily" },
   { path: "/lectures", priority: 0.9, changeFrequency: "weekly" },
-  { path: "/tools", priority: 0.8, changeFrequency: "monthly" },
   { path: "/docs", priority: 0.8, changeFrequency: "weekly" },
   { path: "/legal/privacy", priority: 0.3, changeFrequency: "yearly" },
 ];

@@ -29,13 +29,12 @@
  */
 
 import Link from "next/link";
-import { BookOpen, LayoutGrid, Sparkles } from "lucide-react";
+import { BookOpen, Sparkles } from "lucide-react";
 
 import {
   APP_DOCK_LINKS,
   FOOTER_LINKS,
   SIDEBAR_TOOL_SECTIONS,
-  TOOLS_ROOT_HREF,
   type FooterLink,
 } from "@debate/videos";
 
@@ -68,7 +67,6 @@ const TOOLS_LINKS: FooterSectionLink[] = [
     icon: section.icon,
   })),
   { href: "/lectures", label: "Lectures", icon: BookOpen },
-  { href: TOOLS_ROOT_HREF, label: "All Tools", icon: LayoutGrid },
   { href: "/practice/features", label: "All Features", icon: Sparkles },
 ];
 
