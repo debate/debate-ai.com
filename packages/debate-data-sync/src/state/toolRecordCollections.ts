@@ -44,6 +44,12 @@
  * @module state/toolRecordCollections
  */
 
+import {
+  decodeFlowDisplaySettings,
+  decodeFlowKeymapSettings,
+  encodeFlowDisplaySettings,
+  encodeFlowKeymapSettings,
+} from "./flow-editor-settings-codec";
 import { redactFileSource } from "./redact-file-source";
 
 /**
@@ -113,10 +119,14 @@ export interface ToolRecordCollection {
    * the parsed `localStorage` value into records (each carrying `idField`);
    * `encode` turns the merged records back into the value to store. Absent
    * for every collection whose store already is an array.
+   *
+   * `encode` also receives the value currently stored (`undefined` when
+   * there is none), so a codec that syncs only part of a store can write the
+   * synced fields back without erasing the ones that stay on this device.
    */
   codec?: {
     decode: (stored: unknown) => unknown[];
-    encode: (records: readonly unknown[]) => unknown;
+    encode: (records: readonly unknown[], current?: unknown) => unknown;
   };
 }
 
@@ -150,6 +160,28 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     label: "Speech Document Links",
     href: "/debate",
     section: "Flowing and writing",
+  },
+  {
+    key: "flowDisplaySettings",
+    storageKey: "ebb-display-settings",
+    idField: "id",
+    // One record (`id: "display"`) of the flow editor's appearance and
+    // editing preferences; device-local fields (folder, collab, layout) stay
+    // out — see `flow-editor-settings-codec.ts`.
+    label: "Flow Editor Settings",
+    href: "/debate",
+    section: "Flowing and writing",
+    codec: { decode: decodeFlowDisplaySettings, encode: encodeFlowDisplaySettings },
+  },
+  {
+    key: "flowKeymapSettings",
+    storageKey: "ebb-keymap-settings",
+    idField: "id",
+    // One record (`id: "keymap"`) holding the flow editor's shortcut overrides.
+    label: "Flow Editor Keymap",
+    href: "/debate",
+    section: "Flowing and writing",
+    codec: { decode: decodeFlowKeymapSettings, encode: encodeFlowKeymapSettings },
   },
   // — Practice —
   {

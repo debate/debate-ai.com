@@ -174,6 +174,25 @@ Known gap: pins are capped at 12 per browser, and the merge on sign-in is a
 union, so a pin removed on one device while another is offline can reappear
 until that device syncs.
 
+## Flow editor settings
+
+Your flow editor preferences follow your account: font, default zoom, theme,
+Aff/Neg colors, the editing toggles (Vim mode, insert-paste, append-edit,
+scroll zoom, align speeches, tooltips, CardMirror options) and any custom
+keyboard shortcuts. They sync through two collections of the tool-record sync,
+`flowDisplaySettings` (one `{ id: "display", … }` record) and
+`flowKeymapSettings` (one `{ id: "keymap", keymapOverrides }` record), listed
+under **Settings → Account → Tool data** as "Flow Editor Settings" and "Flow
+Editor Keymap". The codec in `debate-data-sync`'s
+`flow-editor-settings-codec.ts` deliberately leaves out anything tied to one
+machine — the desktop flows folder, live-collaboration name and relay
+switches, contacts, and sidebar layout — and keeps those values when the
+account's copy is written back.
+
+Known gaps: the flow editor reads its settings when it loads, so settings
+pulled from the account on sign-in apply after the next reload; and the merge
+replaces the whole record, so the last device to save wins.
+
 ## Save status on each tool
 
 A tool page whose data syncs shows a small badge in its header: **Saved to your
