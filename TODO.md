@@ -90,7 +90,7 @@
 - [x] `FlowTab` shows saved / changed-since-save icons
 - [x] Vitest coverage (`flowAccountStatus.test.ts`, `FlowTab.test.tsx`)
 - [x] Document in `features/user-settings.mdx`
-- [ ] Follow-up: same marker on the round start screen and for whole rounds (`hashRoundContent`)
+- [x] Same marker for whole rounds on the `/debate` start screen cards (`recordRoundSavedToAccount`, `RoundAccountMarker`; branch `claude/gifted-babbage-a9pbpd`)
 - [ ] Follow-up: persist baselines / auto-save flows so the marker survives a reload
 - [ ] Follow-up: `ebb-dev-*` and `REASON-*` stores are still browser-only
 

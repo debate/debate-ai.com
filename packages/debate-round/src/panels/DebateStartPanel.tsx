@@ -27,6 +27,7 @@ import { orderPinnedRounds } from "../state/pinnedDebates"
 import { formatRelativeCloudTime } from "../state/cloudLibrary"
 import type { FlowHistoryEntry } from "../state/flowHistoryEntries"
 import type { Round } from "../types/flow"
+import { RoundAccountMarker } from "../navigation/RoundAccountMarker"
 
 /** How many recent-history entries the start screen offers. */
 export const MAX_RECENT_DEBATES = 8
@@ -168,6 +169,7 @@ export function DebateStartPanel({
                       {round.status}
                     </Badge>
                     <span>{formatRelativeCloudTime(round.timestamp)}</span>
+                    <RoundAccountMarker round={round} />
                     <span className="truncate">
                       {round.flowIds.length} flow{round.flowIds.length === 1 ? "" : "s"}
                     </span>
@@ -220,9 +222,10 @@ export function DebateStartPanel({
                         </div>
                       </div>
                     </div>
-                    {round && pinnedSet.has(round.id) && (
-                      <Pin className="h-3.5 w-3.5 flex-shrink-0 text-muted-foreground" />
-                    )}
+                    <div className="flex flex-shrink-0 items-center gap-1.5">
+                      {round && <RoundAccountMarker round={round} />}
+                      {round && pinnedSet.has(round.id) && <Pin className="h-3.5 w-3.5 text-muted-foreground" />}
+                    </div>
                   </div>
                 )
               })}
