@@ -246,6 +246,19 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     section: "Flowing and writing",
   },
   {
+    key: "pinnedDebates",
+    storageKey: "pinnedDebates",
+    idField: "id",
+    // The rounds starred into the debate page's "Featured" section
+    // (`@debate/round/src/state/pinnedDebates.ts`): `{ id: "round-<roundId>",
+    // roundId, pinnedAt }`. The round id is also the round's
+    // `saved_rounds.client_id`, so a pin resolves to the same round on
+    // another device.
+    label: "Pinned Debates",
+    href: "/debate",
+    section: "Flowing and writing",
+  },
+  {
     key: "flowHistory",
     storageKey: "flow-history",
     idField: "id",
