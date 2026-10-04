@@ -20,6 +20,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import {
   flushToolRecordCollection,
   flushToolRecords,
+  getToolRecordCollectionSyncStatus,
   getToolRecordSyncStatus,
   isToolRecordAutoSyncRunning,
   markToolRecordsSynced,
@@ -547,5 +548,42 @@ describe("what wakes the watcher", () => {
     await dom.fire("storage", { key: favorites.storageKey });
 
     expect(onFlush).not.toHaveBeenCalled();
+  });
+});
+
+describe("getToolRecordCollectionSyncStatus", () => {
+  const record = { videoId: "abc", savedAt: "2026-01-01T00:00:00.000Z" };
+
+  it("is 'unknown' without a baseline and for an unrecognized collection", () => {
+    expect(getToolRecordCollectionSyncStatus(favorites.key)).toBe("unknown");
+    expect(getToolRecordCollectionSyncStatus("notATool")).toBe("unknown");
+  });
+
+  it("is 'synced' right after baselining and after a flush lands a change", async () => {
+    markToolRecordsSynced(favorites.key);
+    expect(getToolRecordCollectionSyncStatus(favorites.key)).toBe("synced");
+
+    writeLocalToolRecords(favorites, [record]);
+    expect(getToolRecordCollectionSyncStatus(favorites.key)).toBe("pending");
+    await flushToolRecordCollection(favorites.key);
+    expect(getToolRecordCollectionSyncStatus(favorites.key)).toBe("synced");
+  });
+
+  it("is 'pending' when a synced record is edited or deleted locally", async () => {
+    markToolRecordsSynced(favorites.key);
+    writeLocalToolRecords(favorites, [record]);
+    await flushToolRecordCollection(favorites.key);
+
+    writeLocalToolRecords(favorites, [{ ...record, savedAt: "2026-06-06T00:00:00.000Z" }]);
+    expect(getToolRecordCollectionSyncStatus(favorites.key)).toBe("pending");
+
+    writeLocalToolRecords(favorites, []);
+    expect(getToolRecordCollectionSyncStatus(favorites.key)).toBe("pending");
+  });
+
+  it("goes back to 'unknown' after a reset, as at sign-out", () => {
+    markToolRecordsSynced(favorites.key);
+    resetToolRecordAutoSync();
+    expect(getToolRecordCollectionSyncStatus(favorites.key)).toBe("unknown");
   });
 });

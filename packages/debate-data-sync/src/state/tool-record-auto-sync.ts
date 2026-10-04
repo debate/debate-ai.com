@@ -181,6 +181,31 @@ export function getToolRecordSyncStatus(
   }
 }
 
+/**
+ * Whether a whole collection's local store matches the account — the
+ * tool-level companion to {@link getToolRecordSyncStatus}, for a "Saved to
+ * your account" badge on a tool's page.
+ *
+ * `"synced"` only when every syncable record's current value is what last
+ * landed *and* nothing the account holds has been deleted locally since;
+ * `"pending"` otherwise. `"unknown"` without a baseline, for the same reason
+ * as the per-record check. An unchanged raw store short-circuits to
+ * `"synced"` without parsing, so polling this is cheap.
+ */
+export function getToolRecordCollectionSyncStatus(collectionKey: string): ToolRecordSyncStatus {
+  const collection = findToolRecordCollection(collectionKey);
+  if (!collection) return "unknown";
+  const snapshot = snapshots.get(collectionKey);
+  if (!snapshot) return "unknown";
+  if (rawSnapshots.get(collectionKey) === rawOf(collection)) return "synced";
+  const current = snapshotOf(collection);
+  if (current.size !== snapshot.size) return "pending";
+  for (const [id, json] of current) {
+    if (snapshot.get(id) !== json) return "pending";
+  }
+  return "synced";
+}
+
 /** What one collection's flush sent. */
 export interface ToolRecordFlushResult {
   collection: string;

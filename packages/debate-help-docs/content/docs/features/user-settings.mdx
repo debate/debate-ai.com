@@ -171,3 +171,16 @@ the list is read.
 Known gap: pins are capped at 12 per browser, and the merge on sign-in is a
 union, so a pin removed on one device while another is offline can reappear
 until that device syncs.
+
+## Save status on each tool
+
+A tool page whose data syncs shows a small badge in its header: **Saved to your
+account** once everything the tool stores has reached your account, **Saving to
+your account…** while recent changes are on their way, **Syncing…** during the
+first merge after you sign in, and **Saved on this device** when you're signed
+out. It is read from the same auto-sync that powers **Tool data** (see
+`getToolRecordCollectionSyncStatus` in `debate-data-sync`), so it never starts a
+second sync, and it refreshes every few seconds rather than instantly.
+
+Known gap: the badge is only in the shared tool-page header, so tools with their
+own custom header (the flow tabs and start screen) don't show it yet.
