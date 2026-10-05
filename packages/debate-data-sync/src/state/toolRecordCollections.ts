@@ -44,6 +44,12 @@
  * @module state/toolRecordCollections
  */
 
+import {
+  decodeFlowDisplaySettings,
+  decodeFlowKeymap,
+  encodeFlowDisplaySettings,
+  encodeFlowKeymap,
+} from "./flow-editor-settings-codec";
 import { redactFileSource } from "./redact-file-source";
 
 /**
@@ -267,6 +273,28 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     label: "Pinned Debates",
     href: "/debate",
     section: "Flowing and writing",
+  },
+  {
+    key: "flowEditorDisplay",
+    storageKey: "ebb-display-settings",
+    idField: "id",
+    // The ebb flow editor's display/behaviour preferences (font, zoom, colours,
+    // paste/edit toggles). One record per field; device-local fields such as
+    // `flowsDir` stay out (`state/flow-editor-settings-codec.ts`).
+    label: "Flow Editor Display Settings",
+    href: "/debate",
+    section: "Flowing and writing",
+    codec: { decode: decodeFlowDisplaySettings, encode: encodeFlowDisplaySettings },
+  },
+  {
+    key: "flowEditorKeymap",
+    storageKey: "ebb-keymap-settings",
+    idField: "id",
+    // The ebb flow editor's keybinding overrides, one record per rebound action.
+    label: "Flow Editor Keybindings",
+    href: "/debate",
+    section: "Flowing and writing",
+    codec: { decode: decodeFlowKeymap, encode: encodeFlowKeymap },
   },
   {
     key: "flowHistory",

@@ -63,6 +63,18 @@ Their `/api/settings` fields (`debateStyle`, `fontSize`, `wordLimitPresets`, …
 are all still stored and served; what changed is that nothing writes them from
 here any more.
 
+## Flow editor preferences follow your account
+
+The Ebb flow editor's display preferences (font, default zoom, team colours,
+paste/edit toggles, tooltips, CardMirror options, theme) and keybinding
+overrides sync through the Tool Data catalog as two collections,
+`flowEditorDisplay` and `flowEditorKeymap` (one record per setting, so a font
+change on one device and a rebound key on another both survive). Device-local
+fields — `flowsDir`, `sidebarCollapsed`, `rfdOpen` and the collaboration
+fields — stay in the browser. The editor reads these stores when it starts, so
+a setting adopted from your account shows up the next time the editor loads.
+Nothing changes for signed-out users.
+
 ## Saved-to-account marker on flow tabs
 
 Each flow tab in the sidebar's **Open Tabs** group shows a small cloud icon
