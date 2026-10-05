@@ -10,6 +10,10 @@ localStorage.
 
 - **Route:** `/settings` (the panel itself renders in an isolated iframe at
   `/settings/editor-panel`)
+- **Research agent settings:** `/settings/research` and `/settings/research/<section>`
+  — one full page with a tab per section (models, search, MCP servers, skills and
+  memory, voice…), linked from the top of `/settings`. The section list is
+  `research-agent-ui`'s own (`research-agent-ui/settings`).
 - **Package:** `debate-editor` (the settings store, `SETTING_METADATA`, and
   the embedded panel builder), `apps/debate-ai.com`
   (`lib/editor-preferences.ts`, `/api/settings`, `user_settings` D1 table)

@@ -12,6 +12,7 @@ import { SidebarContent } from "react-reason-editor-sidebar"
 import { themeActions } from "react-reason-editor/theme"
 import { localeActions } from "react-reason-editor/locale-bundle"
 import { SidebarWithAppDock } from "./SidebarWithAppDock"
+import { OPEN_OWN_SIDEBAR_EVENT } from "../../lib/mobile-sidebar"
 import { useMainView } from "./MainViewProvider"
 import { useChatTabs } from "./useChatTabs"
 import { getPageTips, htmlToPlainText } from "./reason-docs/page-tips"
@@ -36,7 +37,8 @@ import "katex/contrib/mhchem"
  * API by the surrounding `QwksearchProviders`/`base-url` wiring.
  */
 export function QwksearchWorkspace() {
-  const { activeView, toggleToDocs, toggleToResearch, filesSidebarRequestId } = useMainView()
+  const { activeView, toggleToDocs, toggleToResearch, filesSidebarRequestId, requestFilesSidebar } =
+    useMainView()
   const { chatTabs, activeChatId, openChat, newChat, closeChat } = useChatTabs()
   const { sendMessage } = useChat()
   const searchParams = useSearchParams()
@@ -45,6 +47,14 @@ export function QwksearchWorkspace() {
   const [initialDocId, setInitialDocId] = useState<string | null>(null)
   const [hasRestoredFromUrl, setHasRestoredFromUrl] = useState(false)
   const [pendingTopicQuery, setPendingTopicQuery] = useState<string | null>(null)
+
+  // The dock's sidebar button lives outside this tree. On this route it opens
+  // the research agent's own sidebar (files tree and open tabs) rather than
+  // the app's generic tool drawer, which is never mounted here.
+  useEffect(() => {
+    window.addEventListener(OPEN_OWN_SIDEBAR_EVENT, requestFilesSidebar)
+    return () => window.removeEventListener(OPEN_OWN_SIDEBAR_EVENT, requestFilesSidebar)
+  }, [requestFilesSidebar])
 
   useEffect(() => {
     localeActions.setLang("en")
