@@ -61,6 +61,13 @@ interface LecturesPageProps {
    */
   dockSlot?: React.ReactNode
   /**
+   * Host-owned controls rendered beside the search bar on the video grid —
+   * the app passes its "Saved to your account" badge / Save now here, since
+   * the account-sync state lives in `debate-webview`, which this package
+   * must not import from.
+   */
+  headerActionsSlot?: React.ReactNode
+  /**
    * Research-area topic explorer, mounted by the host page and shown as the
    * first section of the statistics branch. It lives in `debate-webview`,
    * which this package must not import from, so it arrives as an element
@@ -76,7 +83,7 @@ interface LecturesPageProps {
  * API, and rendering is delegated to the three branch view components
  * depending on `state.currentCategory`.
  */
-export function LecturesPage({ dockSlot, topicAreasSlot }: LecturesPageProps = {}) {
+export function LecturesPage({ dockSlot, headerActionsSlot, topicAreasSlot }: LecturesPageProps = {}) {
   const searchParams = useSearchParams()
   const routeParams = useParams()
 
@@ -543,6 +550,7 @@ export function LecturesPage({ dockSlot, topicAreasSlot }: LecturesPageProps = {
         setStateInURL({ style: style ? String(style) : null })
       }}
       dockSlot={dockSlot}
+      headerActionsSlot={headerActionsSlot}
     />
   )
 }
