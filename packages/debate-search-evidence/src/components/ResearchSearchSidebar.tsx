@@ -64,9 +64,9 @@ const MULTISELECT_SEARCH_KEYS = [
 ] as const
 
 const TOGGLE_BAR_ITEMS = [
-  { key: "searchRoundSpeeches" as const, label: "Debates", tooltip: "Show recent rounds", icon: Scale },
-  { key: "searchOutlines" as const, label: "Outlines", tooltip: "Show recent outlines", icon: ListTree },
-  { key: "searchQuotes" as const, label: "Quotes", tooltip: "Show recent quotes", icon: Quote },
+  { key: "searchRoundSpeeches" as const, label: "Debates", tooltip: "Show recently uploaded debates", icon: Scale },
+  { key: "searchOutlines" as const, label: "Outlines", tooltip: "Show recently uploaded outlines", icon: ListTree },
+  { key: "searchQuotes" as const, label: "Quotes", tooltip: "Show recently uploaded quotes", icon: Quote },
 ]
 
 const RECENT_CHIPS = [
@@ -99,12 +99,23 @@ export function ResearchSearchSidebar({
   const maxYear = Math.max(currentYear, 2026)
   const years = Array.from({ length: maxYear - 2012 }, (_, i) => String(maxYear - i))
 
-  const activeFilterCount = Object.values(filters).filter((v) => v && v !== "all").length
+  // The Quotes / Outlines / Debates toggle picks *what* is listed, not a
+  // narrowing, so it is not a "filter" the Clear button should offer to undo.
+  const KIND_KEYS: string[] = TOGGLE_BAR_ITEMS.map((item) => item.key)
+  const activeFilterCount = Object.entries(filters).filter(
+    ([key, v]) => v && v !== "all" && !KIND_KEYS.includes(key),
+  ).length
   const hasActiveFilters = activeFilterCount > 0
   const countLabel = resultCountLabel(searchResults?.length ?? 0, totalResults)
 
-  /** Resets every filter to its empty value, leaving the search term alone. */
-  const clearFilters = () => setFilters({ ...EMPTY_FILTERS })
+  /** Resets every filter to its empty value, leaving the search term and the chosen kind alone. */
+  const clearFilters = () =>
+    setFilters({
+      ...EMPTY_FILTERS,
+      searchQuotes: filters.searchQuotes,
+      searchOutlines: filters.searchOutlines,
+      searchRoundSpeeches: filters.searchRoundSpeeches,
+    })
 
   return (
     /* No top margin: this fills its panel, so a margin pushed the same height

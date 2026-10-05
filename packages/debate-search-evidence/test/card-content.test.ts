@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   citationDetail,
+  countHighlightedWords,
   extractAuthor,
   extractYear,
   normalizeText,
@@ -138,3 +139,13 @@ describe("stripDuplicateHeader", () => {
     expect(stripDuplicateHeader("", [tag])).toBe("");
   });
 });
+
+describe("countHighlightedWords", () => {
+  it("counts words across every mark, ignoring nested tags", () => {
+    expect(countHighlightedWords("<p><mark>two <b>words</b></mark> and <mark>one</mark></p>")).toBe(3)
+  })
+
+  it("is zero when nothing is highlighted", () => {
+    expect(countHighlightedWords("<p><u>underlined</u> only</p>")).toBe(0)
+  })
+})

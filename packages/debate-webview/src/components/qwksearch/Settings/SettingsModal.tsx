@@ -1,32 +1,18 @@
 'use client';
 
-import {
-  createContext,
-  lazy,
-  Suspense,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { configureResearchAgentUI } from 'research-agent-ui';
-import { Dialog, DialogContent, DialogTitle } from '../ui/dialog';
-import { AnimatedLoader } from '../../ui/AnimatedLoader';
-
-// The settings panes are ~670 kB minified (the MCP section alone bundles the
-// whole OpenConnector provider index), and nobody sees them until they open
-// the modal, so they load on first open instead of with the /doc workspace.
-const SettingsContent = lazy(() => import('./SettingsContent'));
+import { researchSettingsHref } from '../../../lib/qwksearch/settings-paths';
 
 interface SettingsModalContextValue {
   /**
-   * Opens settings in the modal. Always returns `true`: unlike qwksearch-web
-   * (which navigates small screens to its /settings route), debate-ai has no
-   * qwksearch settings route to fall back to — /settings here is the host
-   * app's own, unrelated settings page — so the modal handles every screen
-   * size and callers must never route-navigate.
+   * Opens the research agent's settings, as a full page (`/settings/research`),
+   * optionally on one section. Always returns `true`: debate-ai serves these
+   * pages itself, so callers must never route-navigate on their own.
    */
   openSettings: (section?: string) => boolean;
+  /** Leaves the settings page for the research workspace. */
   closeSettings: () => void;
 }
 
@@ -40,54 +26,33 @@ export function useSettingsModal(): SettingsModalContextValue {
   return ctx;
 }
 
+/**
+ * Routes the research agent's "open settings" requests to its full settings
+ * page. (It was a modal; settings are a full page by default now, with the
+ * sections as tabs down the side — see `SettingsContent`.)
+ */
 export function SettingsModalProvider({ children }: { children: React.ReactNode }) {
-  const [open, setOpen] = useState(false);
-  const [section, setSection] = useState<string | undefined>(undefined);
+  const router = useRouter();
 
-  const openSettings = useCallback((next?: string) => {
-    setSection(next);
-    setOpen(true);
-    return true;
-  }, []);
+  const openSettings = useCallback(
+    (section?: string) => {
+      router.push(researchSettingsHref(section));
+      return true;
+    },
+    [router],
+  );
 
-  const closeSettings = useCallback(() => setOpen(false), []);
+  const closeSettings = useCallback(() => router.push('/doc'), [router]);
 
   // Let the shared research-agent-ui package (e.g. the input box's settings
-  // menu item) route through the modal on desktop instead of navigating.
+  // menu item) open the settings page instead of navigating to a /settings
+  // route this app uses for something else.
   useEffect(() => {
     configureResearchAgentUI({ onOpenSettings: openSettings });
     return () => configureResearchAgentUI({ onOpenSettings: undefined });
   }, [openSettings]);
 
-  return (
-    <SettingsModalContext.Provider value={{ openSettings, closeSettings }}>
-      {children}
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent
-          hideCloseButton
-          className="p-0 gap-0 max-w-4xl w-[calc(100%-2rem)] h-[85vh] overflow-hidden"
-        >
-          <DialogTitle className="sr-only">Settings</DialogTitle>
-          {open && (
-            <div className="flex h-full w-full flex-col overflow-hidden">
-              <Suspense
-                fallback={
-                  <div className="flex h-full w-full items-center justify-center">
-                    <AnimatedLoader />
-                  </div>
-                }
-              >
-                {/* Re-mount per section so deep links pick the right initial tab */}
-                <SettingsContent
-                  key={section ?? 'default'}
-                  onClose={closeSettings}
-                  initialSection={section}
-                />
-              </Suspense>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-    </SettingsModalContext.Provider>
-  );
+  const value = useMemo(() => ({ openSettings, closeSettings }), [openSettings, closeSettings]);
+
+  return <SettingsModalContext.Provider value={value}>{children}</SettingsModalContext.Provider>;
 }

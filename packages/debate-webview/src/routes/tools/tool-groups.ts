@@ -51,7 +51,7 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         ],
       },
       {
-        href: "/doc", label: "Debate Docs", icon: BookOpen,
+        href: "/research/docs", label: "Debate Docs", icon: BookOpen,
         description: "Write annotated summaries and case outlines in the REASON Docs research editor.",
         highlights: ["Nested document tree", "Outline Notation for case structure"],
       },

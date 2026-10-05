@@ -2,6 +2,7 @@ export { TournamentsApp, type TournamentsAppProps } from "./TournamentsApp";
 export { TournamentNav, type TournamentTab } from "./TournamentNav";
 export { UpcomingTournamentsPage } from "./pages/UpcomingTournamentsPage";
 export { HostTournamentPage } from "./pages/HostTournamentPage";
+export { TournamentAdminPage } from "./pages/TournamentAdminPage";
 export { TabroomTournamentPage } from "./pages/TabroomTournamentPage";
 export { TournamentInvitePage } from "./pages/TournamentInvitePage";
 export { RoundsPage } from "./pages/RoundsPage";
@@ -25,3 +26,4 @@ export {
   type EventCodeStyle,
 } from "../host/formats";
 export * from "./client";
+export { DEMO_ADMIN, DEMO_TOURN_ID } from "../host/demo-account";

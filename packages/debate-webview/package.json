@@ -67,6 +67,7 @@
     "prismjs": "^1.30.0",
     "qwksearch-api-client": "^1.0.109",
     "react-icons": "^5.7.0",
+    "react-native-app-buttons": "^0.1.4",
     "react-resizable-panels": "^4.14.1",
     "react-reason-editor": "^1.0.228",
     "react-reason-editor-sidebar": "^0.1.156",

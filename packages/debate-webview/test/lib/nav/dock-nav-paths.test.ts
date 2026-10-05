@@ -23,7 +23,7 @@ describe("isDockNavPath", () => {
   it("rejects a page below a destination", () => {
     // A page under a destination, not a destination.
     expect(isDockNavPath("/videos/some-lecture")).toBe(false)
-    expect(isDockNavPath("/doc/42")).toBe(false)
+    expect(isDockNavPath("/research/docs/42")).toBe(false)
   })
 
   it("rejects paths the dock does not own", () => {

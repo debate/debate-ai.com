@@ -8,7 +8,7 @@
  * This prefetches the rest of the dock's routes one at a time, in idle time
  * after the page has loaded, so a switch is a render from cache.
  *
- * Skipped on a data-saver or 2G connection, and never for `/doc`: its
+ * Skipped on a data-saver or 2G connection, and never for `/research/docs`: its
  * workspace is several megabytes (see the docs page `internals/performance`),
  * which only someone heading there should pay for. Hover still warms it.
  *
@@ -16,7 +16,7 @@
  */
 
 /** Dock routes too heavy to fetch for someone who may never open them. */
-export const IDLE_PREFETCH_EXCLUDED: ReadonlySet<string> = new Set(["/doc"])
+export const IDLE_PREFETCH_EXCLUDED: ReadonlySet<string> = new Set(["/research/docs"])
 
 /** Wait after `load` before the first prefetch, so it never competes with it. */
 const START_DELAY_MS = 1_500

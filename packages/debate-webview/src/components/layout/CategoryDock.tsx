@@ -39,6 +39,7 @@ import { accountLabel } from "../../lib/nav/account-label"
 import { useIsFramedDocument } from "../../lib/layout/use-framed-document"
 import { MobileSidebarDrawer } from "./MobileSidebarDrawer"
 import { mobileSidebarKind, OPEN_OWN_SIDEBAR_EVENT } from "../../lib/mobile-sidebar"
+import { settingsHrefForPath } from "../../lib/qwksearch/settings-paths"
 import { openGlobalCommandPalette } from "./GlobalCommandPalette"
 import { IconSettings } from "../../lib/ui/icons"
 
@@ -265,6 +266,7 @@ function SettingsMenu({
 }) {
   const themeState = useThemeState()
   const router = useRouter()
+  const pathname = usePathname()
   const canEditContent = useCanEditContent()
 
   return (
@@ -278,7 +280,7 @@ function SettingsMenu({
       collisionPadding={8}
       avoidCollisions
     >
-      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/settings") }}>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push(settingsHrefForPath(pathname)) }}>
         <SettingsIcon className="mr-2 h-4 w-4" />
         Settings
       </DropdownMenuItem>

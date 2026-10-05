@@ -59,7 +59,7 @@ describe("matchesToolSidebarHref", () => {
     // dock inside a sidebar.
     expect(matchesToolSidebarHref("/research/cards/awards")).toBe(true);
     expect(matchesToolSidebarHref("/coaching/leaderboard/alice")).toBe(true);
-    expect(matchesToolSidebarHref("/doc/some-document")).toBe(true);
+    expect(matchesToolSidebarHref("/research/docs/some-document")).toBe(true);
     expect(matchesToolSidebarHref("/reason-editor/42")).toBe(true);
     expect(matchesToolSidebarHref("/teams/greenhill-ab")).toBe(true);
     expect(matchesToolSidebarHref("/schools/greenhill")).toBe(true);
@@ -184,43 +184,41 @@ describe("Latest News", () => {
 });
 
 describe("Tournaments and Tabroom", () => {
-  it("are one sidebar entry, not two", () => {
-    // Tabroom is framed from a button at the top of the tournaments page, so
-    // a row of its own would only be a second way to the same thing.
+  it("are two sidebar rows: the app's own Tournaments page, then Tabroom framed", () => {
     const prepScout = SIDEBAR_TOOL_SECTIONS.find((section) => section.id === "prep-scout");
     const hrefs = prepScout?.tools.map((tool) => tool.href) ?? [];
 
     expect(hrefs).toContain("/practice/tournaments");
-    expect(hrefs).not.toContain("/practice/tabroom");
+    expect(hrefs.indexOf("/practice/tabroom")).toBe(hrefs.indexOf("/practice/tournaments") + 1);
   });
 
-  it("still recognise /practice/tabroom as a sidebar route, so it keeps its dock", () => {
-    // The page itself stays reachable — from the tournaments page's button and
-    // from a tournament's Tabroom tab — it just is not listed in the tree.
+  it("recognise /practice/tabroom as a sidebar route, so it keeps its dock", () => {
     expect(matchesToolSidebarHref("/practice/tabroom")).toBe(true);
   });
 });
 
 describe("the REASON research workspace", () => {
   it("is still a sidebar destination, though no longer a Research row", () => {
-    // It lost its "Debate Docs" row in favour of the dock's own Docs button,
+    // It lost its "Debate Docs" row in favour of the dock's own Research button,
     // which is the same route — so the sidebar still has to know about it.
-    expect(TOOL_SIDEBAR_HREFS.has("/doc")).toBe(true);
-    expect(matchesToolSidebarHref("/doc")).toBe(true);
-    expect(matchesToolSidebarHref("/doc/cp-answer-to-states")).toBe(true);
+    expect(TOOL_SIDEBAR_HREFS.has("/research/docs")).toBe(true);
+    expect(matchesToolSidebarHref("/research/docs")).toBe(true);
+    expect(matchesToolSidebarHref("/research/docs/cp-answer-to-states")).toBe(true);
   });
 
-  it("no longer hosts a dock of its own, now that it is quick search in an iframe", () => {
-    expect(hostsOwnSidebarDock("/doc")).toBe(false);
-    expect(hostsOwnSidebarDock("/doc/cp-answer-to-states")).toBe(false);
+  it("hosts the app dock in its own sidebar, itself and every document beneath it", () => {
+    expect(hostsOwnSidebarDock("/doc")).toBe(true);
+    expect(hostsOwnSidebarDock("/doc/cp-answer-to-states")).toBe(true);
+    // `/docs` is the help site, not the workspace.
     expect(hostsOwnSidebarDock("/docs")).toBe(false);
     expect(hostsOwnSidebarDock(null)).toBe(false);
-    expect(ownsItsLayout("/doc")).toBe(false);
+    expect(ownsItsLayout("/doc")).toBe(true);
   });
 
-  it("is wrapped in the generic sidebar, which carries the dock beside the frame", () => {
-    expect(isGenericToolSidebarRoute("/doc")).toBe(true);
-    expect(isGenericToolSidebarRoute("/doc/cp-answer-to-states")).toBe(true);
+  it("is not wrapped in the generic sidebar: its own sidebar is the only one", () => {
+    expect(isGenericToolSidebarRoute("/doc")).toBe(false);
+    expect(isGenericToolSidebarRoute("/doc/cp-answer-to-states")).toBe(false);
+    // The dock is on screen inside that sidebar, so the floating one stays hidden.
     expect(hasEmbeddedDock("/doc")).toBe(true);
     expect(hasEmbeddedDock("/doc/cp-answer-to-states")).toBe(true);
   });

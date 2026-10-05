@@ -119,4 +119,35 @@ describe("CardContentViewer", () => {
     expect(markup).not.toContain("Open page")
     expect(markup).not.toContain("Full article")
   })
+
+  describe("Embiggen toggle", () => {
+    const marked = '<p>Intro <u>underlined only</u> text.</p><p><mark>highlighted words here</mark></p>'
+    const renderMode = (viewMode: "read" | "highlight", html: string) =>
+      renderToStaticMarkup(
+        <CardContentViewer selectedResult={result({ html })} viewMode={viewMode} setViewMode={() => {}} wordCount={80} />,
+      )
+
+    it("shows only the highlighting when embiggen is on and the card has highlighting", () => {
+      const markup = renderMode("highlight", marked)
+
+      expect(markup).toContain("editor highlighted")
+      expect(markup).toContain("Embiggen on")
+      expect(markup).toContain('aria-checked="true"')
+    })
+
+    it("falls back to underlining when fewer than two words are highlighted", () => {
+      const markup = renderMode("highlight", "<p>Some <u>underlined</u> text <mark>one</mark></p>")
+
+      expect(markup).toContain("editor underlined")
+      expect(markup).not.toContain("editor highlighted")
+    })
+
+    it("shows everything, with underlining and highlighting, when embiggen is off", () => {
+      const markup = renderMode("read", marked)
+
+      expect(markup).toContain("show-all")
+      expect(markup).toContain("Embiggen off")
+      expect(markup).toContain('aria-checked="false"')
+    })
+  })
 })

@@ -10,6 +10,10 @@ localStorage.
 
 - **Route:** `/settings` (the panel itself renders in an isolated iframe at
   `/settings/editor-panel`)
+- **Research agent settings:** `/settings/research` and `/settings/research/<section>`
+  — one full page with a tab per section (models, search, MCP servers, skills and
+  memory, voice…), linked from the top of `/settings`. The section list is
+  `research-agent-ui`'s own (`research-agent-ui/settings`).
 - **Package:** `debate-editor` (the settings store, `SETTING_METADATA`, and
   the embedded panel builder), `apps/debate-ai.com`
   (`lib/editor-preferences.ts`, `/api/settings`, `user_settings` D1 table)
@@ -234,10 +238,10 @@ for the next automatic save. If the save fails the button turns into **Retry
 save** and its tooltip says why. Starring a tool as a favorite uses the star at
 the end of the same header row.
 
-The REASON editor (`/reason-editor`) has no shared tool-page header, so the same
-badge and **Save now** button sit in the status row above the open document
-(`ReasonEditorStatusLine`).
+The `/debate` start screen has its own header, so it shows the same badge (and
+**Save now**) beside its **New flow** button; `DebateFlowPage` takes it as a
+`startScreenActions` prop because `debate-round` can't import the webview's
+component.
 
-Known gap: the other tools with their own custom layout (the flow tabs and
-start screen, the document workspace at `/doc`, and the video library) don't
-show the badge yet.
+Known gap: the open-flow tabs and the `/videos` and `/doc` headers are custom
+too and don't show the badge yet.

@@ -521,12 +521,6 @@
   letter-spacing: -1px;
 }
 
-.editor.highlighted p:not(:has(mark)) u {
-  font-size: initial;
-  letter-spacing: normal;
-  line-height: 150%;
-}
-
 /* Underlined mode - shows only underlined/marked text at normal size */
 .editor.underlined *:is(strong, b, u, mark, h1, h2, h3, h4) {
   font-size: initial;
@@ -540,7 +534,7 @@
   letter-spacing: -1px;
 }
 
-/* Show all mode - readable size for everything */
+/* Show all mode (Embiggen off) - everything at 8pt, with underlining and highlighting still marked up */
 .editor.show-all {
   font-size: 8pt !important;
 }

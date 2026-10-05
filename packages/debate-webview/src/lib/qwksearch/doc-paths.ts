@@ -1,13 +1,13 @@
 /**
- * @fileoverview `/doc/<the file's name>` — the qwksearch research
+ * @fileoverview `/research/docs/<the file's name>` — the qwksearch research
  * workspace's document URLs.
  *
- * The workspace at `/doc` is one route with tabs in it (research chats and
+ * The workspace at `/research/docs` is one route with tabs in it (research chats and
  * REASON documents), so its URL is a record of which tab is open rather than
  * a navigation target. That record used to be `?docs=<id>&chat=<id>`, which
  * named a document by an id generated from `Date.now()` — meaningless in a
  * shared link and unreadable in a browser history. The open document is now
- * the path: `/doc/cp-answer-to-states`.
+ * the path: `/research/docs/cp-answer-to-states`.
  *
  * The names come from the documents themselves, which the embedded editor
  * keeps in `localStorage` (its `REASON-documents` array — the same key its
@@ -23,7 +23,7 @@
 import { type DocSlugEntry, docSlugForId, findDocIdBySlug } from "../reason-docs/doc-slug"
 
 /** The workspace route itself, with no document named. */
-export const QWKSEARCH_DOCS_ROUTE = "/doc"
+export const QWKSEARCH_DOCS_ROUTE = "/research/docs"
 
 /** Where the embedded editor keeps its documents. Declared here rather than
  *  imported from `react-reason-editor` so reading a title costs nothing at
@@ -67,7 +67,7 @@ export function readStoredDocs(): DocSlugEntry[] {
   }
 }
 
-/** The `<segment>` in `/doc/<segment>`, or `null` on the bare route (and on
+/** The `<segment>` in `/research/docs/<segment>`, or `null` on the bare route (and on
  *  any other page). */
 export function docSlugFromPathname(pathname: string | null | undefined): string | null {
   if (!pathname) return null
@@ -77,7 +77,7 @@ export function docSlugFromPathname(pathname: string | null | undefined): string
   return segment || null
 }
 
-/** The document a `/doc/<segment>` URL opens, or `null` when it names none —
+/** The document a `/research/docs/<segment>` URL opens, or `null` when it names none —
  *  a file that has since been deleted or renamed, or someone else's link
  *  (documents are per-browser). */
 export function docIdFromSlug(

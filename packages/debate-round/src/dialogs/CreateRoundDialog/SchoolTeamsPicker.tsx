@@ -1,94 +1,93 @@
 /**
- * @fileoverview The small "Teams at <school>" pop-out beside a school field
- * in the Round Editor dialog. Lists the school's ranked teams in the round's
- * format; clicking one fills that side's debater names.
+ * @fileoverview The row of team badges under a school field in the Round
+ * Editor dialog. Lists up to five of the school's teams in the round's
+ * format, taken from the picked tournament's field when it has the school,
+ * otherwise from the rankings; clicking one fills that side's debaters.
  */
 "use client"
 
 import { useEffect, useState } from "react"
-import { Users, X } from "lucide-react"
-import type { RankingEntry } from "@debate/rankings-adapter"
+import type { FieldEntry } from "@debate/tournaments/client"
 import { lookupSchoolTeams, splitEntryDebaters } from "../../round/school-teams"
+import { findFieldTeams } from "../../round/tournament-field"
 
 /** Wait this long after the last keystroke before searching the rankings. */
 const LOOKUP_DEBOUNCE_MS = 300
+
+/** At most this many badges per school. */
+export const MAX_TEAM_BADGES = 5
+
+const NO_ENTRIES: readonly FieldEntry[] = []
+
+/** One clickable team. */
+interface TeamBadge {
+  key: string
+  name: string
+  /** Rankings place, when the team came from the rankings. */
+  rank?: number
+}
 
 /** Props for {@link SchoolTeamsPicker}. */
 interface SchoolTeamsPickerProps {
   school: string
   /** Key into `debateStyles`, e.g. `"publicForum"`. */
   styleKey: string
-  /**
-   * Which side of the field the pop-out opens on. The parent must be
-   * `relative`; the pop-out opens toward the dialog's middle so it stays
-   * inside the dialog.
-   */
-  side: "left" | "right"
+  /** Entries of the picked tournament in this format; searched before the rankings. */
+  tournamentEntries?: readonly FieldEntry[]
+  /** Hides the badges, e.g. once this side's debaters are filled in. */
+  hidden?: boolean
   /** Called with the picked team's debater names, first speaker first. */
   onPick: (debaters: string[]) => void
 }
 
 /**
- * Previews the teams at `school` and lets the user pick the one they face.
- * Renders nothing until the lookup finds at least one team, and closes once
- * a team is picked (the × closes it without picking).
+ * Badges for the teams at `school`. Renders nothing until a lookup finds a
+ * team, while `hidden`, or once a team has been picked for this school.
  */
-export function SchoolTeamsPicker({ school, styleKey, side, onPick }: SchoolTeamsPickerProps) {
-  const [teams, setTeams] = useState<RankingEntry[]>([])
-  const [dismissedFor, setDismissedFor] = useState<string | null>(null)
+export function SchoolTeamsPicker({ school, styleKey, tournamentEntries = NO_ENTRIES, hidden = false, onPick }: SchoolTeamsPickerProps) {
+  const [teams, setTeams] = useState<TeamBadge[]>([])
+  const [pickedFor, setPickedFor] = useState<string | null>(null)
 
   useEffect(() => {
     let cancelled = false
     const timer = setTimeout(() => {
+      const fromField = findFieldTeams(tournamentEntries, school, MAX_TEAM_BADGES)
+      if (fromField.length > 0) {
+        setTeams(fromField.map((e) => ({ key: `field-${e.id}`, name: e.name })))
+        return
+      }
       lookupSchoolTeams(styleKey, school).then((found) => {
-        if (!cancelled) setTeams(found)
+        if (cancelled) return
+        setTeams(found.slice(0, MAX_TEAM_BADGES).map((e) => ({ key: e.hash, name: e.name, rank: e.rank })))
       })
     }, LOOKUP_DEBOUNCE_MS)
     return () => {
       cancelled = true
       clearTimeout(timer)
     }
-  }, [school, styleKey])
+  }, [school, styleKey, tournamentEntries])
 
-  if (teams.length === 0 || dismissedFor === school) return null
+  if (hidden || teams.length === 0 || pickedFor === school) return null
 
-  function pick(entry: RankingEntry) {
-    onPick(splitEntryDebaters(entry.name))
-    setDismissedFor(school)
+  function pick(team: TeamBadge) {
+    onPick(splitEntryDebaters(team.name))
+    setPickedFor(school)
   }
 
   return (
-    <div
-      className={`absolute top-0 z-40 w-56 rounded-md border border-border bg-popover p-2 space-y-1.5 shadow-md ${
-        side === "right" ? "left-full ml-2" : "right-full mr-2"
-      }`}
-      data-testid="school-teams-picker"
-    >
-      <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-        <Users className="h-3.5 w-3.5 shrink-0" />
-        <span className="flex-1 truncate">Teams at {teams[0].school}</span>
+    <div className="flex flex-wrap gap-1.5" data-testid="school-teams-picker">
+      {teams.map((team) => (
         <button
+          key={team.key}
           type="button"
-          onClick={() => setDismissedFor(school)}
-          className="hover:text-foreground transition-colors"
-          title="Hide teams"
+          onClick={() => pick(team)}
+          title={team.rank ? `Ranked #${team.rank}` : undefined}
+          className="inline-flex max-w-full items-center gap-1 rounded-full border border-border bg-muted/50 px-2.5 py-0.5 text-xs hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors"
         >
-          <X className="h-3.5 w-3.5" />
+          <span className="truncate">{team.name}</span>
+          {team.rank ? <span className="opacity-70 tabular-nums">#{team.rank}</span> : null}
         </button>
-      </div>
-      <div className="flex flex-col gap-0.5 max-h-40 overflow-y-auto">
-        {teams.map((entry) => (
-          <button
-            key={entry.hash}
-            type="button"
-            onClick={() => pick(entry)}
-            className="flex items-center gap-2 px-2 py-1 rounded text-xs text-left hover:bg-muted transition-colors"
-          >
-            <span className="flex-1 truncate">{entry.name}</span>
-            <span className="text-muted-foreground tabular-nums">#{entry.rank}</span>
-          </button>
-        ))}
-      </div>
+      ))}
     </div>
   )
 }

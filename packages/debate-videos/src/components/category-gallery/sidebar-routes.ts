@@ -100,12 +100,13 @@ export const OWN_LAYOUT_SIDEBAR_HREFS: readonly string[] = ["/debate"];
  * sidebar rather than leaving it to float: no generic sidebar, and no
  * floating dock either, since a dock is already on screen.
  *
- * Empty for now. `/doc` used to be here, when it rendered the REASON research
- * workspace with its own files/tabs column carrying the dock. It is quick
- * search in an iframe now, with no sidebar of its own, so it takes the
- * generic sidebar like any other tool page.
+ * `/doc` is the research agent (quick search's REASON workspace). Its sidebar —
+ * the files tree and the "Open Tabs" list — is the research agent's own, with
+ * the app dock hosted at the top of it, instead of the app's generic tool
+ * sidebar. The sidebar button in the dock's mobile toolbar opens that sidebar
+ * there too (see `OPEN_OWN_SIDEBAR_EVENT`).
  */
-export const OWN_SIDEBAR_DOCK_HREFS: readonly string[] = [];
+export const OWN_SIDEBAR_DOCK_HREFS: readonly string[] = ["/doc"];
 
 /**
  * Routes that render the video library page (`LecturesPage`), which draws

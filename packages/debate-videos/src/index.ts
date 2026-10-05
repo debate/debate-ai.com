@@ -146,7 +146,7 @@ export {
 export { WatchAnalysisPanel, type LinkedVideo } from "./components/watch/WatchAnalysisPanel";
 export { WatchStackPlaylist, stackMemberLabel } from "./components/watch/WatchStackPlaylist";
 export { stackKeyOf } from "./components/video-grid/video-stacks";
-export { WatchSidePanel } from "./components/watch/WatchSidePanel";
+export { WatchSidePanel, type WatchSideTab } from "./components/watch/WatchSidePanel";
 export { WatchRoundPanel, type SpeechFocusRequest } from "./components/watch/WatchRoundPanel";
 export { WatchSpeechTimeline } from "./components/watch/WatchSpeechTimeline";
 export { PersistentVideoPlayer } from "./components/video-player/PersistentVideoPlayer";

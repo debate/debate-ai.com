@@ -47,7 +47,7 @@ describe("DISALLOWED_PATHS", () => {
       "/practice/versus-ai",
       "/practice/forums",
       "/coaching/progress",
-      "/doc",
+      "/research/docs",
       "/debate",
       "/reason-editor",
     ]) {

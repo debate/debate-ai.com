@@ -1,4 +1,5 @@
 import type { Setting, RadioSetting } from "../types/settings";
+import { debateStyleNames } from "@debate/timer/src/formats/debate-format-times";
 
 export class Settings {
   data: { [key: string]: Setting };
@@ -94,18 +95,10 @@ export const settings = new Settings({
     value: 0,
     auto: 0,
     detail: {
-      options: [
-        "Public Forum",
-        "Policy",
-        "College Policy",
-        "Lincoln Douglas", //1
-        "College LD",
-        "Congress",
-        "World Schools", //3
-        "Big Questions",
-        "NOF SPAR", //1
-        "Parlimentary",
-      ],
+      // Must stay index-aligned with `debateStyleMap`: every consumer maps the
+      // stored index through it, so a reordered label list would make the
+      // picker say "Policy" while the round runs as Lincoln Douglas.
+      options: [...debateStyleNames],
     },
     info: "Already created flows won't be affected by this setting",
   },
