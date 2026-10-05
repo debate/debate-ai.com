@@ -22,6 +22,7 @@ import { SpeechDocLinkPicker } from "../controls/SpeechDocLinkPicker"
 import { getRoundRecordingShareEmails } from "../round/round-recording-share"
 import { settings } from "../state/settings"
 import { cn } from "../ui/lib/utils"
+import { useAiOutcomeResponsesAction } from "../dialogs/AiOutcomeResponsesDialog"
 
 /** Resolve which debater email corresponds to a given speech column name. */
 function getSpeakerEmail(speechName: string, round: Round): string {
@@ -249,8 +250,11 @@ export function SpeechHeaderBar({
     ? Math.min(Math.max(progressPercent * 100, 2), 100)
     : 0
 
+  const outcomeResponses = useAiOutcomeResponsesAction(speechName)
+
   const recordingMenu = (labeled: boolean) => (
     <SpeechRecordingMenu
+      actions={[outcomeResponses.action]}
       speechName={speechName}
       speechLabel={speechName}
       micDeviceId={micDeviceId}
@@ -441,6 +445,8 @@ export function SpeechHeaderBar({
           )}
         </div>
       </div>
+
+      {showRecordingMenu && outcomeResponses.dialog}
 
       {/* Recording menu on its own row under the speech (round sidebar) */}
       {showRecordingMenu && recordingMenuPlacement === "below" && (

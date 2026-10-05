@@ -5,7 +5,7 @@
 "use client"
 
 
-import { useEffect, useState, type RefObject, useRef } from "react"
+import { useEffect, useState, type ReactNode, type RefObject, useRef } from "react"
 import { createPortal } from "react-dom"
 import { Trash2, RefreshCw, MoreVertical, Clock, Upload, Mic, Check, MicOff, Users, Gauge } from "lucide-react"
 import {
@@ -178,6 +178,14 @@ function PortaledProgress({
     )
 }
 
+/** An extra item a host adds to the top of the speech menu (e.g. an AI tool for this speech). */
+export interface SpeechMenuAction {
+    key: string
+    label: string
+    icon?: ReactNode
+    onSelect: () => void
+}
+
 interface SpeechRecordingMenuProps {
     /** Name of the speech for upload/delete operations */
     speechName: string
@@ -224,6 +232,8 @@ interface SpeechRecordingMenuProps {
      * under a speech in the round sidebar.
      */
     triggerLabel?: string
+    /** Host-supplied items shown first in the menu, above the recording controls. */
+    actions?: SpeechMenuAction[]
 }
 
 interface SpeechRecordingPlayerProps {
@@ -293,6 +303,7 @@ export function SpeechRecordingMenu({
     onPlaybackRateChange,
     participantEmails = [],
     triggerLabel,
+    actions = [],
 }: SpeechRecordingMenuProps) {
     const fileInputRef = useRef<HTMLInputElement>(null)
     const { devices, loading: loadingDevices, loadDevices } = useAudioDevices()
@@ -430,6 +441,14 @@ export function SpeechRecordingMenu({
                     )}
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
+                    {actions.map((action) => (
+                        <DropdownMenuItem key={action.key} onClick={action.onSelect}>
+                            {action.icon}
+                            {action.label}
+                        </DropdownMenuItem>
+                    ))}
+                    {actions.length > 0 && <DropdownMenuSeparator />}
+
                     {/* Share with Opponents & Judge - First menu item */}
                     {recordingKey && (
                         <DropdownMenuItem onClick={() => { void handleShareRecording() }}>

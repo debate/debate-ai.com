@@ -203,3 +203,19 @@ export { speechToFlowPrompt } from "./prompts/speech-to-flow";
 export { speechToResponsePrompt } from "./prompts/speech-to-response";
 export { textToHighlightedPrompt } from "./prompts/text-to-highlighted";
 export { topicToResearchOutlinePrompt } from "./prompts/topic-to-research-outline";
+export {
+  SPEECH_OUTCOME_RESPONSES_SYSTEM_PROMPT,
+  OUTCOME_CANDIDATE_COUNT,
+  buildSpeechOutcomeResponsesUserPrompt,
+  fitPriorSpeeches,
+  parseSpeechOutcomeResponsesResponse,
+} from "./prompts/speech-outcome-responses";
+export type {
+  OutcomeJudge,
+  OutcomeJudgeDecision,
+  OutcomePriorSpeech,
+  OutcomeSide,
+  SpeechOutcomeCandidate,
+  SpeechOutcomeResponsesInput,
+  SpeechOutcomeResponsesResult,
+} from "./prompts/speech-outcome-responses";

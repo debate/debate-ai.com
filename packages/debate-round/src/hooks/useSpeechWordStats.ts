@@ -45,11 +45,17 @@ async function storedDocumentHtml(doc: StoredDocument): Promise<string> {
   return docToHtml(engine.parseNative(engine.base64ToCmir(content)).doc)
 }
 
-async function fetchLinkedStats(docId: number): Promise<{ stats: SpeechDocWordStats; title?: string }> {
+/** Fetches a linked editor document and decodes it to HTML. */
+export async function fetchLinkedDocumentHtml(docId: number): Promise<{ html: string; title?: string }> {
   const res = await fetch(`/api/doc/documents/${docId}`)
   if (!res.ok) throw new Error(`Linked document ${docId} could not be loaded (${res.status}).`)
   const doc = (await res.json()) as StoredDocument
-  return { stats: computeSpeechDocWordStats(await storedDocumentHtml(doc)), title: doc.title }
+  return { html: await storedDocumentHtml(doc), title: doc.title }
+}
+
+async function fetchLinkedStats(docId: number): Promise<{ stats: SpeechDocWordStats; title?: string }> {
+  const { html, title } = await fetchLinkedDocumentHtml(docId)
+  return { stats: computeSpeechDocWordStats(html), title }
 }
 
 export interface SpeechWordStatsResult {
