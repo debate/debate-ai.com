@@ -64,9 +64,8 @@
 - Branch: `claude/gifted-babbage-cg2iak`
 - [x] Audit local-only tool stores vs. the `saved_tool_records` catalog (SQL layer for settings, flows, rounds and 64+ tool collections already exists)
 - [x] Sync pinned debates to the account (`pinnedDebates` catalog entry, legacy `pinned-debates` migration, tests, docs in `round-cloud-save.mdx`)
-- [x] Sync speech-doc links (`speechDocLinks` tool-record collection)
-- [x] Sync flow-editor keymap (`ebb-keymap-settings`) through the `flowKeymap` tool-record collection (no schema change needed)
-- [ ] Follow-up: `ebb-display-settings` stays local (mixes device-local `flowsDir`); needs a portable-subset split
+- [x] Sync speech-doc links (`speech-doc-links`; keyed by scope + speech, points at `documents.id`)
+- [x] Sync flow-editor display/keymap settings (`ebb-display-settings`, `ebb-keymap-settings`) through `user_settings` (`flow_editor_settings` column, `@debate/flow-ebb/account-settings`, `useAccountFlowSettingsSync`; docs in `user-settings.mdx`)
 - [ ] Tool UI pass: surface sync status and pin/save controls in each tool's header
 
 ---
@@ -91,7 +90,7 @@
 - [x] `FlowTab` shows saved / changed-since-save icons
 - [x] Vitest coverage (`flowAccountStatus.test.ts`, `FlowTab.test.tsx`)
 - [x] Document in `features/user-settings.mdx`
-- [ ] Follow-up: same marker on the round start screen and for whole rounds (`hashRoundContent`)
+- [x] Same marker for whole rounds on the `/debate` start screen cards (`recordRoundSavedToAccount`, `RoundAccountMarker`; branch `claude/gifted-babbage-a9pbpd`)
 - [ ] Follow-up: persist baselines / auto-save flows so the marker survives a reload
 - [ ] Follow-up: `ebb-dev-*` and `REASON-*` stores are still browser-only
 
