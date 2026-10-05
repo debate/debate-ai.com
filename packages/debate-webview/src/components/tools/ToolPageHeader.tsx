@@ -132,7 +132,6 @@ export function ToolPageHeader({
         <div className="flex flex-wrap items-center gap-1.5">
           <ToolSyncBadge href={href} />
           {actions}
-          <ToolSyncBadge href={href} />
           {docsUrl ? (
             <HeaderLink href={docsUrl} icon={BookOpen} label="Docs" title={`Read the ${resolvedTitle} documentation`} />
           ) : null}

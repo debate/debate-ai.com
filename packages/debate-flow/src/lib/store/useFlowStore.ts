@@ -7,6 +7,7 @@
  * autosave subscription watches.
  */
 
+import type { FlowEditorAccountSettingsPayload } from "../config/accountSettings";
 import { create } from "zustand";
 
 import { resolveCardMirrorTextType, type CardMirrorTextType } from "../bridge/cardmirror";
@@ -32,6 +33,12 @@ import type { FlowEditorSettingsSyncPayload } from "./flow-editor-settings-sync"
 import { resolveThemeMode, type ThemeMode } from "../theme/mode";
 import { loadUpdateConfig, saveUpdateConfig } from "../update/settings";
 import type { UpdateConfig } from "../update/types";
+import {
+    buildSyncedSettingsRecords,
+    parseSyncedSettings,
+    SYNCED_SETTINGS_KEY,
+    type ParsedSyncedSettings,
+} from "./syncedSettings";
 
 // --- State shape -------------------------------------------------------------
 
@@ -243,6 +250,8 @@ export interface FlowActions {
      * does not bounce straight back out to disk.
      */
     applyExternalConfig(config: AppConfig): void;
+    /** Applies the account-synced subset of display/keymap settings (already validated). */
+    applyAccountSettings(patch: FlowEditorAccountSettingsPayload): void;
     /** Opens/closes the palette; `seed` sets the initial query (">" = command mode). */
     setQuickSwitcherOpen(open: boolean, seed?: string): void;
     /** Follow the open round to a new file after Save As. */
@@ -289,9 +298,51 @@ export function resolveZoom(value: unknown): number {
     return typeof value === "number" && Number.isFinite(value) ? clampZoom(value) : 1;
 }
 
+/** The account-synced records, or `{}` when absent/unreadable. */
+function readSyncedSettings(): ParsedSyncedSettings {
+    try {
+        const raw = window.localStorage.getItem(SYNCED_SETTINGS_KEY);
+        return raw ? parseSyncedSettings(JSON.parse(raw)) : {};
+    } catch {
+        return {};
+    }
+}
+
+/**
+ * Refreshes the synced records from a changed half of the settings; the other
+ * half is carried over from what is already stored. Skips the write when
+ * nothing synced changed so the sync is not woken for device-only edits.
+ */
+function writeSyncedSettings(
+    display?: Record<string, unknown>,
+    keymapOverrides?: Record<string, string>,
+): void {
+    const current = readSyncedSettings();
+    const next = JSON.stringify(
+        buildSyncedSettingsRecords(
+            display ?? current.display ?? loadDisplayRaw(),
+            keymapOverrides ?? current.keymapOverrides ?? {},
+        ),
+    );
+    if (next === window.localStorage.getItem(SYNCED_SETTINGS_KEY)) return;
+    window.localStorage.setItem(SYNCED_SETTINGS_KEY, next);
+}
+
+/** The raw locally stored display object, for seeding the first synced record. */
+function loadDisplayRaw(): Record<string, unknown> {
+    try {
+        const raw = window.localStorage.getItem(DISPLAY_SETTINGS_KEY);
+        return raw ? (JSON.parse(raw) as Record<string, unknown>) : {};
+    } catch {
+        return {};
+    }
+}
+
 function loadKeymapOverrides(): Record<string, string> {
     if (typeof window === "undefined") return {};
     try {
+        const synced = readSyncedSettings().keymapOverrides;
+        if (synced) return synced;
         const raw = window.localStorage.getItem(KEYMAP_SETTINGS_KEY);
         if (!raw) return {};
         const parsed = JSON.parse(raw) as { keymapOverrides?: Record<string, string> };
@@ -305,6 +356,7 @@ function saveKeymapOverrides(keymapOverrides: Record<string, string>): void {
     if (typeof window === "undefined") return;
     try {
         window.localStorage.setItem(KEYMAP_SETTINGS_KEY, JSON.stringify({ keymapOverrides }));
+        writeSyncedSettings(undefined, keymapOverrides);
     } catch {
         // localStorage unavailable (private mode, quota) - ignore.
     }
@@ -373,8 +425,12 @@ function loadDisplaySettings(): DisplaySettings {
     if (typeof window === "undefined") return fallback;
     try {
         const raw = window.localStorage.getItem(DISPLAY_SETTINGS_KEY);
-        if (!raw) return fallback;
-        const p = JSON.parse(raw) as Partial<DisplaySettings>;
+        const syncedDisplay = readSyncedSettings().display;
+        if (!raw && !syncedDisplay) return fallback;
+        const p = {
+            ...(raw ? (JSON.parse(raw) as Partial<DisplaySettings>) : {}),
+            ...readSyncedSettings().display,
+        } as Partial<DisplaySettings>;
         return {
             flowFont: resolveFontId(p.flowFont),
             defaultGridZoom: resolveZoom(p.defaultGridZoom),
@@ -408,6 +464,7 @@ function saveDisplaySettings(s: DisplaySettings): void {
     if (typeof window === "undefined") return;
     try {
         window.localStorage.setItem(DISPLAY_SETTINGS_KEY, JSON.stringify(s));
+        writeSyncedSettings(s as unknown as Record<string, unknown>);
     } catch {
         // ignore
     }
@@ -900,6 +957,22 @@ export const useFlowStore = create<FlowStore>()((set, get) => ({
         });
     },
 
+    applyAccountSettings(patch) {
+        const { keymapOverrides, flowFont, cardmirrorTextType, theme, defaultGridZoom, ...rest } = patch;
+        const display: Partial<DisplaySettings> = { ...rest };
+        if (flowFont !== undefined) display.flowFont = resolveFontId(flowFont);
+        if (cardmirrorTextType !== undefined) display.cardmirrorTextType = cardmirrorTextType;
+        if (theme !== undefined) display.theme = theme;
+        if (defaultGridZoom !== undefined) display.defaultGridZoom = clampZoom(defaultGridZoom);
+        saveDisplaySettings({ ...displaySettingsOf(get()), ...display });
+        if (keymapOverrides) saveKeymapOverrides(keymapOverrides);
+        set({
+            ...display,
+            ...(display.defaultGridZoom !== undefined ? { gridZoom: display.defaultGridZoom } : {}),
+            ...(keymapOverrides ? { keymapOverrides } : {}),
+        });
+    },
+
     setQuickSwitcherOpen(open, seed = "") {
         set({ quickSwitcherOpen: open, paletteSeed: open ? seed : "" });
     },
@@ -925,18 +998,22 @@ export const useFlowStore = create<FlowStore>()((set, get) => ({
     },
 }));
 
-/**
- * Adopts the account's synced flow-editor settings: merges the synced display
- * fields over the current ones (device-bound fields such as `flowsDir` stay),
- * and replaces the keymap overrides, writing both to localStorage and the store.
- */
-export function applyAccountFlowSettings(payload: FlowEditorSettingsSyncPayload): void {
-    const state = useFlowStore.getState();
-    useFlowStore.getState().applyExternalConfig({
-        ...displaySettingsOf(state),
-        // Validated by `isValidFlowEditorSettingsPayload` at the route and on parse.
-        ...(payload.display as Partial<DisplaySettings>),
-        keymapOverrides: payload.keymapOverrides,
-        updateConfig: state.updateConfig,
-    });
+/** The account-synced subset of the store's display and keymap settings. */
+export function accountSettingsOf(s: FlowState): FlowEditorAccountSettingsPayload {
+    return {
+        flowFont: s.flowFont,
+        defaultGridZoom: s.defaultGridZoom,
+        rfdVim: s.rfdVim,
+        insertPaste: s.insertPaste,
+        appendEdit: s.appendEdit,
+        scrollZoom: s.scrollZoom,
+        alignSpeeches: s.alignSpeeches,
+        tooltips: s.tooltips,
+        cardmirrorEnabled: s.cardmirrorEnabled,
+        cardmirrorTextType: s.cardmirrorTextType,
+        theme: s.theme,
+        affColor: s.affColor,
+        negColor: s.negColor,
+        keymapOverrides: s.keymapOverrides,
+    };
 }
