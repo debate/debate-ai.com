@@ -99,7 +99,8 @@
 - Branch: `agent/tool-header-single-sync-badge`
 - [x] `ToolPageHeader` rendered `ToolSyncBadge` twice (merge damage); now once, with a regression test
 - [x] "Save now" / "Retry save" button beside the sync badge (`lib/tools/tool-save-now.ts`, `ToolSyncBadge`; branch `agent/tool-header-save-now`); the favorite star already sits in the same header row
-- [ ] Follow-up: tools with a custom header (flow tabs, start screen) don't get the badge/Save now yet
+- [ ] Follow-up: tools with a custom header (flow tabs, start screen) don't get the badge/Save now yet (the `/reason-editor` status line is done; `/debate`, `/videos`, `/doc` remain)
+- [x] REASON editor (`/reason-editor`) status line shows Saved to your account / Unsaved changes / Saving… / Couldn't save — retrying (`lib/reason-docs/doc-save-status.ts`; branch `claude/gifted-babbage-k4yflf`)
 - [ ] Follow-up: component test for `ToolSyncBadge` click path (no `@testing-library/react` in webview tests)
 
 ## Completed
