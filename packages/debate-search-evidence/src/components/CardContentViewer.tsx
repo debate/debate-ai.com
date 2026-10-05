@@ -10,7 +10,6 @@ import { useState } from "react"
 import { Card, CardContent } from "../ui/primitives/card"
 import { Button } from "../ui/primitives/button"
 import { Eye, ExternalLink, FileText } from "lucide-react"
-import { IntroTextOverview } from "./IntroTextOverview"
 import { SourceArticlePanel } from "./SourceArticlePanel"
 import { MIN_HIGHLIGHTED_WORDS, citationDetail, countHighlightedWords, extractAuthor, extractYear, stripDuplicateHeader } from "../lib/card-content"
 import { findCardSourceUrl } from "../lib/card-source-url"
@@ -81,6 +80,11 @@ interface CardContentViewerProps {
   setViewMode: (mode: "read" | "highlight" | "underline") => void
   /** Word count of the selected card for display */
   wordCount: number
+  /**
+   * Offer "Open page" / "Full article" beside the card. The mobile card view
+   * turns this off because it carries the full page as a tab of its own.
+   */
+  showSourceControls?: boolean
 }
 
 /**
@@ -88,7 +92,7 @@ interface CardContentViewerProps {
  *
  * Shows the complete content of a selected research card with
  * citation information, view mode controls, and formatted content.
- * Renders a product information page when no card is selected.
+ * Renders a short prompt when no card is selected.
  *
  * The stored card markup opens with its own tag heading and citation line, so
  * the header here and the body below it were showing the same two lines twice
@@ -121,13 +125,24 @@ interface CardContentViewerProps {
  * />
  * ```
  */
-export function CardContentViewer({ selectedResult, viewMode, setViewMode, wordCount }: CardContentViewerProps) {
+export function CardContentViewer({
+  selectedResult,
+  viewMode,
+  setViewMode,
+  wordCount,
+  showSourceControls = true,
+}: CardContentViewerProps) {
   /** The source URL whose article is open beside the card, if any. */
   const [articleUrl, setArticleUrl] = useState<string | null>(null)
 
-  // Show empty state with product info when no card selected
+  // Nothing selected: a one-line prompt. The product intro that used to fill
+  // this space now lives on the features page.
   if (!selectedResult) {
-    return <IntroTextOverview />
+    return (
+      <div className="flex size-full items-center justify-center p-6 text-center text-sm text-muted-foreground">
+        Select a card to read it here.
+      </div>
+    )
   }
 
   // Extract author and year from citation
@@ -136,7 +151,7 @@ export function CardContentViewer({ selectedResult, viewMode, setViewMode, wordC
   const authorLine = [author, year].filter(Boolean).join(" ")
   const cite = citationDetail(selectedResult.cite, authorLine)
   const html = stripDuplicateHeader(selectedResult.html, [selectedResult.tag, authorLine, cite])
-  const sourceUrl = findCardSourceUrl(selectedResult)
+  const sourceUrl = showSourceControls ? findCardSourceUrl(selectedResult) : null
   const showArticle = sourceUrl !== null && articleUrl === sourceUrl
   // Embiggen on shows only the highlighting; underlining stands in only for a
   // card with next to no highlighting. Embiggen off shows the whole card.
