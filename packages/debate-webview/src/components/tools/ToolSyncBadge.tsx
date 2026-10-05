@@ -18,13 +18,13 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { Cloud, CloudOff, RotateCw, Save } from "lucide-react"
-import { TOOL_RECORD_COLLECTIONS } from "@debate/data-sync/src/state/toolRecordCollections"
 import { isToolRecordSyncEnabled } from "@debate/data-sync/src/state/tool-record-mirror"
 import {
   flushToolRecordCollection,
   getToolRecordCollectionSyncStatus,
 } from "@debate/data-sync/src/state/tool-record-auto-sync"
 import { saveToolNow } from "../../lib/tools/tool-save-now"
+import { resolveToolSyncKeys } from "../../lib/tools/tool-sync-status"
 import { describeToolSaveState, type ToolSaveDisplay } from "../../lib/tools/tool-save-state"
 
 const POLL_MS = 3000
@@ -36,12 +36,19 @@ function readDisplay(keys: readonly string[]): ToolSaveDisplay | null {
   )
 }
 
-/** Renders nothing for a route with no synced collection. */
-export function ToolSyncBadge({ href }: { href: string }) {
+/**
+ * Renders nothing for a route with no synced collection. `collectionKeys`
+ * names the collections explicitly for a page whose data is filed under a
+ * different route than its own (see `resolveToolSyncKeys`).
+ */
+export function ToolSyncBadge({ href, collectionKeys }: { href: string; collectionKeys?: readonly string[] }) {
   const [display, setDisplay] = useState<ToolSaveDisplay | null>(null)
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
-  const keys = useMemo(() => TOOL_RECORD_COLLECTIONS.filter((c) => c.href === href).map((c) => c.key), [href])
+  // A string signature keeps `keys` referentially stable across renders even
+  // when the caller passes a fresh `collectionKeys` array each time.
+  const keySignature = resolveToolSyncKeys(href, collectionKeys).join("|")
+  const keys = useMemo(() => (keySignature ? keySignature.split("|") : []), [keySignature])
 
   useEffect(() => {
     if (keys.length === 0) return

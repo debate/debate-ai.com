@@ -8,7 +8,7 @@
 
 import { describe, expect, it } from "vitest"
 
-import { summarizeToolSyncFailures, toolSyncBadgeState } from "../../../src/lib/tools/tool-sync-status"
+import { resolveToolSyncKeys, summarizeToolSyncFailures, toolSyncBadgeState } from "../../../src/lib/tools/tool-sync-status"
 import type { ToolRecordHydrationResult } from "@debate/data-sync/src/state/tool-record-mirror"
 
 function result(overrides: Partial<ToolRecordHydrationResult>): ToolRecordHydrationResult {
@@ -89,5 +89,32 @@ describe("toolSyncBadgeState", () => {
         results: [result({ collection: "judgeRoundRecords", synced: false, error: "too large" })],
       }),
     ).toEqual({ kind: "failed", error: "too large" })
+  })
+})
+
+describe("resolveToolSyncKeys", () => {
+  it("defaults to every collection registered under the page's own href", () => {
+    expect(resolveToolSyncKeys("/practice/judges")).toContain("judgeProfiles")
+  })
+
+  it("returns nothing for a route with no synced collection and no explicit keys", () => {
+    expect(resolveToolSyncKeys("/not-a-tool")).toEqual([])
+  })
+
+  it("uses explicit keys for a sub-page whose data is filed under its hub", () => {
+    // `/research/cards/library` has no collections of its own; its data is
+    // registered under `/research/cards`.
+    expect(resolveToolSyncKeys("/research/cards/library")).toEqual([])
+    expect(
+      resolveToolSyncKeys("/research/cards/library", ["evidenceLibraryEntries", "reuseCheckHistory"]),
+    ).toEqual(["evidenceLibraryEntries", "reuseCheckHistory"])
+  })
+
+  it("drops explicit keys the catalog doesn't recognize", () => {
+    expect(resolveToolSyncKeys("/x", ["trackedArguments", "someRemovedCollection"])).toEqual(["trackedArguments"])
+  })
+
+  it("keeps the shared-cards sub-pages' keys in the catalog", () => {
+    expect(resolveToolSyncKeys("/x", ["evidenceLibraryEntries", "reuseCheckHistory", "trackedArguments", "revisionHistory"])).toHaveLength(4)
   })
 })
