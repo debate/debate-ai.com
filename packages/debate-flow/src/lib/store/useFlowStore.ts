@@ -923,3 +923,32 @@ export const useFlowStore = create<FlowStore>()((set, get) => ({
         set({ renamingSheetId: id });
     },
 }));
+
+/**
+ * Re-reads the persisted display and keymap settings into the store.
+ *
+ * The account sync (`debate-data-sync`'s `flowDisplaySettings` /
+ * `flowKeymapSettings` collections) writes `localStorage` directly, so a
+ * signed-in user's settings from another device arrive behind the store's
+ * back. Nothing is written here: this only follows storage, which is why a
+ * sync merge cannot echo back into the account.
+ */
+export function reloadSettingsFromStorage(): void {
+    const display = loadDisplaySettings();
+    const current = useFlowStore.getState();
+    useFlowStore.setState({
+        ...display,
+        // The grid follows its default unless the user has zoomed it live.
+        gridZoom: current.gridZoom === current.defaultGridZoom ? display.defaultGridZoom : current.gridZoom,
+        keymapOverrides: loadKeymapOverrides(),
+    });
+}
+
+if (typeof window !== "undefined") {
+    window.addEventListener("storage", (event) => {
+        // `key === null` is `localStorage.clear()`.
+        if (event.key === null || event.key === DISPLAY_SETTINGS_KEY || event.key === KEYMAP_SETTINGS_KEY) {
+            reloadSettingsFromStorage();
+        }
+    });
+}

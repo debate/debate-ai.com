@@ -44,6 +44,12 @@
  * @module state/toolRecordCollections
  */
 
+import {
+  decodeFlowDisplaySettings,
+  decodeFlowKeymapSettings,
+  encodeFlowDisplaySettings,
+  encodeFlowKeymapSettings,
+} from "./flow-editor-settings-codec";
 import { redactFileSource } from "./redact-file-source";
 
 /**
@@ -267,6 +273,42 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     label: "Pinned Debates",
     href: "/debate",
     section: "Flowing and writing",
+  },
+  {
+    key: "flowDisplaySettings",
+    storageKey: "ebb-display-settings",
+    idField: "id",
+    // The flow editor's font, zoom, colours and typing-mode toggles
+    // (`debate-flow`'s `useFlowStore.ts`) as one `settings` record. The store is a
+    // single object, so the codec carries only the preference fields; this
+    // browser's `flowsDir`, layout and collaboration fields stay local.
+    label: "Flow Editor Display Settings",
+    href: "/debate",
+    section: "Flowing and writing",
+    codec: {
+      decode: decodeFlowDisplaySettings,
+      encode: (records) => {
+        let existing: unknown;
+        try {
+          const raw = typeof localStorage === "undefined" ? null : localStorage.getItem("ebb-display-settings");
+          existing = raw ? JSON.parse(raw) : undefined;
+        } catch {
+          existing = undefined;
+        }
+        return encodeFlowDisplaySettings(records, existing);
+      },
+    },
+  },
+  {
+    key: "flowKeymapSettings",
+    storageKey: "ebb-keymap-settings",
+    idField: "id",
+    // The flow editor's rebound keys: one `settings` record holding
+    // `keymapOverrides` (`commandId -> chord`).
+    label: "Flow Editor Keymap",
+    href: "/debate",
+    section: "Flowing and writing",
+    codec: { decode: decodeFlowKeymapSettings, encode: encodeFlowKeymapSettings },
   },
   {
     key: "flowHistory",
