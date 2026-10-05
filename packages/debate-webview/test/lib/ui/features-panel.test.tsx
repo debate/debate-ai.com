@@ -185,3 +185,14 @@ describe("cardHueShift", () => {
     }
   });
 });
+
+describe("FeaturesPanel downloads", () => {
+  const html = renderToStaticMarkup(<FeaturesPanel />);
+
+  it("has a Downloads section with the Chrome extension button under the badges", () => {
+    expect(html).toContain('data-testid="downloads"');
+    expect(html).toContain("Downloads");
+    expect(html).toContain("noecbaibfhbmpapofcdkgchfifmoinfj");
+    expect(html.indexOf('data-testid="readme-badges"')).toBeLessThan(html.indexOf('data-testid="downloads"'));
+  });
+});
