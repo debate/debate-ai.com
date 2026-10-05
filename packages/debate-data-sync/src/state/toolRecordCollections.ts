@@ -36,10 +36,13 @@
  * watcher, not a requirement of joining it.
  *
  * What *is* required is the shape: a JSON array under one `localStorage` key,
- * each element an object carrying a stable string `idField`. Single-object
- * settings stores (`myTeamProfile`, `fontFamily`), presence heartbeats and
- * per-device playback state are deliberately absent — the first cannot be
- * keyed, and the last two describe this browser rather than this user.
+ * each element an object carrying a stable string `idField` — or a `codec`
+ * that presents the store that way (the flow editor's single-object settings
+ * stores become one fixed-id record, see `ebb-settings-codec.ts`). Other
+ * single-object settings stores (`myTeamProfile`, `fontFamily`), presence
+ * heartbeats and per-device playback state are deliberately absent — the
+ * first have no codec yet, and the last two describe this browser rather than
+ * this user.
  *
  * @module state/toolRecordCollections
  */
@@ -51,7 +54,7 @@ import {
   encodeKeymapSettings,
 } from "./flow-settings-codec";
 import { redactFileSource } from "./redact-file-source";
-import { decodeSingleObject, encodeSingleObject, redactFlowDisplaySettings } from "./single-object-codec";
+import { ebbDisplaySettingsCodec, ebbKeymapSettingsCodec } from "./ebb-settings-codec";
 
 /**
  * The groupings `/settings` → Account → **Tool data** renders as section
@@ -174,25 +177,29 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     section: "Flowing and writing",
   },
   {
-    key: "flowDisplaySettings",
+    key: "ebbDisplaySettings",
     storageKey: "ebb-display-settings",
     idField: "id",
-    // One record (`id: "display"`) of the Flow editor's look-and-feel
-    // preferences. `flowsDir`, `collab*` and `contacts` never leave the
-    // browser; see `flow-settings-codec.ts`.
+    // The flow editor's portable display preferences (font, zoom, theme, side
+    // colors, editing toggles) from `@debate/flow-ebb`'s `useFlowStore`. A
+    // single-object store, so the codec presents it as one `settings` record
+    // and leaves per-device fields (flows folder, drawer state, collab
+    // identity) out of the sync.
     label: "Flow Editor Display Settings",
     href: "/debate",
     section: "Flowing and writing",
-    codec: { decode: decodeDisplaySettings, encode: encodeDisplaySettings },
+    codec: ebbDisplaySettingsCodec,
   },
   {
-    key: "flowKeymapSettings",
+    key: "ebbKeymapSettings",
     storageKey: "ebb-keymap-settings",
     idField: "id",
+    // The flow editor's custom keybindings (`{ keymapOverrides }`), synced as
+    // one `settings` record.
     label: "Flow Editor Keybindings",
     href: "/debate",
     section: "Flowing and writing",
-    codec: { decode: decodeKeymapSettings, encode: encodeKeymapSettings },
+    codec: ebbKeymapSettingsCodec,
   },
   // — Practice —
   {

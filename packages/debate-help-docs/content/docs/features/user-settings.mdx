@@ -212,20 +212,24 @@ Known gap: pins are capped at 12 per browser, and the merge on sign-in is a
 union, so a pin removed on one device while another is offline can reappear
 until that device syncs.
 
-## Flow editor settings
+## Flow editor preferences
 
-The flow editor's display preferences (font, grid zoom, theme, side colors,
-collaboration name and the other toggles) and your custom keybindings follow
-your account. They sync as one `settings` record each in the
-`flowDisplaySettings` and `flowKeymapSettings` collections of the tool-record
-sync (stored in `saved_tool_records`) and are listed under **Settings →
-Account → Tool data** as "Flow Editor Display Settings" and "Flow Editor
-Keymap". The desktop app's flows folder (`flowsDir`) is a path on that
-machine, so it is never uploaded and is kept as-is on each device.
+The flow editor's look and keybindings follow your account. They sync through
+two single-record collections of the tool-record sync, `ebbDisplaySettings`
+and `ebbKeymapSettings`, shown under **Settings → Account → Tool data** as
+"Flow Editor Display Settings" and "Flow Editor Keybindings". Each browser
+store (`ebb-display-settings`, `ebb-keymap-settings`) is one fixed-id record,
+adapted by `ebb-settings-codec.ts` in `debate-data-sync`.
 
-Known gap: the editor reads its settings when it loads, so a change made on
-another device appears the next time the flow editor is opened rather than
-live. When both devices changed settings, the account's copy wins on sign-in.
+Only portable choices sync: font, default zoom, theme, side colors, the editing
+toggles and your custom keybindings. Per-device state stays on the device: the
+desktop flows folder, whether the sidebar or RFD drawer is open, and
+collaboration name and contacts. When your account's copy is applied, the open
+editor restyles immediately (the flow store listens for the sync's `storage`
+event) and those device-only fields are untouched.
+
+Known gap: the newest account copy wins on sign-in, so unsynced edits made on a
+second device before it first syncs are replaced by the account's values.
 
 ## Save status on each tool
 
