@@ -31,7 +31,7 @@
     "sync-upstream": "node scripts/sync-upstream.mjs --rebase",
     "sync-upstream:save": "node scripts/sync-upstream.mjs --save",
     "sync-upstream:check": "node scripts/sync-upstream.mjs --check",
-    "typecheck": "node scripts/sync-upstream.mjs && tsc --noEmit",
+    "typecheck": "tsc --noEmit",
     "test": "node scripts/sync-upstream.mjs && vitest run",
     "test:watch": "node scripts/sync-upstream.mjs && vitest",
     "coverage": "node scripts/sync-upstream.mjs && vitest run --coverage"

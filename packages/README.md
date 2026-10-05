@@ -50,7 +50,7 @@ adapter that holds no copy of it. `upstream.json` pins the upstream commit,
 embed hooks, the settings sidebar, account sync), and `overlay/` holds the files upstream
 doesn't have — the React shell with its dropdown `MenuBar`, the ribbon tabs, the sync
 clients. `scripts/sync-upstream.mjs` assembles the three into a git-ignored `src/` on
-install and before build/typecheck/test; `bun run sync-upstream:save` records edits made in
+install and before build/test (typecheck runs after build, so it never re-assembles); `bun run sync-upstream:save` records edits made in
 `src/`, and `bun run sync-upstream` rebases onto a newer submodule commit.
 
 ## debate-editor-cm (git submodule) and debate-editor-cm-adapter
