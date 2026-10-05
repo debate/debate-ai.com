@@ -19,6 +19,7 @@ import { ViewModeSelector } from "../controls/ViewModeSelector"
 import { Button } from "../ui/primitives/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/primitives/tooltip"
 import { SpeechRecordingMenu } from "@debate/timer/src/recorder/SpeechRecordingPlayer"
+import { useAiOutcomeResponsesAction } from "../dialogs/AiOutcomeResponsesDialog"
 
 export interface SpeechControlsTopBarProps {
   /** The speech these controls apply to, e.g. "1AR". */
@@ -89,6 +90,7 @@ export function SpeechControlsTopBar({
   participantEmails,
   showRecordingMenu = true,
 }: SpeechControlsTopBarProps) {
+  const outcomeResponses = useAiOutcomeResponsesAction(speechName)
   return (
     <div className="flex items-center justify-end gap-1 w-full h-9 px-2 border-b border-border bg-[var(--background)] shrink-0">
       <TooltipProvider delayDuration={300}>
@@ -129,6 +131,7 @@ export function SpeechControlsTopBar({
 
       {showRecordingMenu && (
         <SpeechRecordingMenu
+          actions={[outcomeResponses.action]}
           speechName={speechName}
           speechLabel={speechName}
           micDeviceId={micDeviceId}
@@ -144,6 +147,7 @@ export function SpeechControlsTopBar({
           inHeader={true}
         />
       )}
+      {showRecordingMenu && outcomeResponses.dialog}
 
       <Button
         variant="ghost"

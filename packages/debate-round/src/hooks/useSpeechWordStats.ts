@@ -37,7 +37,12 @@ async function fetchLinkedStats(docId: number): Promise<{ stats: SpeechDocWordSt
   const res = await fetch(`/api/doc/documents/${docId}`)
   if (!res.ok) throw new Error(`Linked document ${docId} could not be loaded (${res.status}).`)
   const doc = (await res.json()) as StoredDocument
-  return { stats: computeSpeechDocWordStats(await storedDocumentHtml(doc)), title: doc.title }
+  return { html: await storedDocumentHtml(doc), title: doc.title }
+}
+
+async function fetchLinkedStats(docId: number): Promise<{ stats: SpeechDocWordStats; title?: string }> {
+  const { html, title } = await fetchLinkedDocumentHtml(docId)
+  return { stats: computeSpeechDocWordStats(html), title }
 }
 
 export interface SpeechWordStatsResult {
