@@ -121,6 +121,8 @@ winner), speech doc panels, export/history tooling, and the flow/settings stores
 exports the roster panels (prep notes, opponent team profiles, drill sets, pre-round
 briefings, coaching sessions, flow summaries) that render persisted records from the
 practice tools.
+The Create New Round dialog reads current tournaments and their fields through
+`debate-tournaments`' API client (`@debate/tournaments/client`).
 
 ## debate-round-practice-ai
 
@@ -173,7 +175,9 @@ to Cloudflare Workers + D1: its public API as a fetch handler (`debate-tournamen
 mounted at `/api/tabroom`), a React port of its invite/pairings/results pages (mounted at
 `/practice/tournaments`), the route table, its `@tabroom/types` Zod schemas and inferred types
 (`debate-tournaments/types`, with `tabroomSchemas` — every schema keyed by record name — and
-a non-throwing `parseTabroom(schema, data)`), and the D1 schema.
+a non-throwing `parseTabroom(schema, data)`), and the D1 schema. Its own `/host` API creates
+tournaments on this site (never on Tabroom) and serves each one's admin web view, and a demo
+tournament loads itself for anyone to browse as the mock admin `demo.admin`.
 `scripts/sync-upstream.mjs` re-clones upstream and re-applies this package's patches and
 overlays, so upstream changes keep flowing in.
 

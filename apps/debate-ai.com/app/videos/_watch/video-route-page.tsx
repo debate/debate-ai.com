@@ -10,6 +10,7 @@ import {
 } from "@debate/videos"
 import { CategoryDock } from "@debate/webview/components/layout/CategoryDock"
 import { VideoStaffControls } from "@debate/webview/components/videos/VideoStaffControls"
+import { featuredSpeechDocsTabs } from "@debate/round/src/panels/featuredSpeechDocsTabs"
 import {
   getRelatedVideos,
   getVideoByRouteSegments,
@@ -109,6 +110,7 @@ export async function VideoRoutePage({ segments }: { segments: string[] }) {
           relation: link.relation,
           note: link.note,
         }))}
+        sideTabs={featuredSpeechDocsTabs(video[0] as string)}
         dockSlot={<CategoryDock embedded />}
         extraControls={
           <>

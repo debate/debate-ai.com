@@ -74,6 +74,9 @@ debate-practice-drills ──► debate-round, debate-speech-writer, debate-time
 
 debate-flow ─────────────► embedded by debate-round (EbbFlowEmbed)
 
+debate-round ────────────► debate-tournaments (only its API client,
+                           `@debate/tournaments/client`, for Create New Round)
+
 debate-timer, debate-card-parser, debate-round, debate-flow, debate-tournaments,
 debate-webview, debate-round-practice-ai, debate-videos, debate-data-sync,
 debate-predictions ───────► debate-types (type-only; leaf, depends on nothing)

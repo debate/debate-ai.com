@@ -139,7 +139,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "reason-docs",
     title: "Reason Docs",
     description: "The nested research-document tree — Research Editor for Annotated Summaries in Outline Notation",
-    href: "/doc",
+    href: "/research/docs",
     category: "workspaces",
     tags: ["docs", "documents", "notes", "outline"],
   },

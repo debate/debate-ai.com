@@ -1,7 +1,13 @@
 /**
  * Typed fetches against the tournaments API (`createTournamentsHandler`),
  * for the React UI. Shapes are upstream Tabroom's public responses, narrowed
- * to the fields the UI reads, plus this app's own `/host` create endpoints.
+ * to the fields the UI reads, plus this app's own `/host` endpoints.
+ *
+ * Two sources can sit behind one client: `apiBase`, this package's own API
+ * (tournaments hosted on this site, the demo, and every `/host` write), and an
+ * optional `liveApiBase`, a read-only proxy to live Tabroom. The upcoming list
+ * merges both, and each tournament's pages read from whichever source holds
+ * it — the hosted copy wins when both answer.
  */
 
 import type { TournamentFormatId } from "../host/formats";
@@ -23,7 +29,12 @@ export interface UpcomingTournament {
   eventTypes?: string | null;
   modes?: string | null;
   schoolCount?: number;
+  /** Which source the row came from: hosted on this site, or live Tabroom. */
+  source?: TournamentSource;
 }
+
+/** `hosted`: this site's own API (`apiBase`). `tabroom`: live Tabroom (`liveApiBase`). */
+export type TournamentSource = "hosted" | "tabroom";
 
 export interface InviteEvent {
   id: number;
@@ -52,6 +63,24 @@ export interface TournamentInvite {
   Webpages: Array<{ id: number; title: string | null; content: string | null; slug?: string | null }>;
   Events: InviteEvent[];
   Contacts: Array<{ id: number; first: string | null; last: string | null; email: string | null }>;
+}
+
+/** One entry in an event's published field (`/rest/tourns/:id/events/:abbr/field`). */
+export interface FieldEntry {
+  id: number;
+  /** Debater names as the tournament writes them, e.g. `"Hu & Liu"`. */
+  name: string;
+  code: string | null;
+  School?: { id: number; name: string; code: string | null } | null;
+}
+
+/** An event's published field: every entry registered in it, with its school. */
+export interface EventField {
+  id: number;
+  name: string;
+  abbr: string;
+  type: string;
+  Entries: FieldEntry[];
 }
 
 export interface PublishedRound {
@@ -105,6 +134,8 @@ export interface ResultSet {
   createdAt?: string | null;
   noPlacement?: boolean;
   Event?: { id: number; name: string; abbr: string } | null;
+  /** The columns of each row's `values`, keyed like them (`"1"`, `"2"`, …). */
+  headers?: Record<string, { tag?: string | null; description?: string | null }>;
   rounds?: Record<string, unknown>;
   results?: Array<{
     rank?: number | null;
@@ -191,10 +222,57 @@ export interface OwnedTournament {
   eventCount: number;
 }
 
-export function createTournamentsClient(apiBase = "/api/tournaments", fetchImpl: typeof fetch = (...a) => fetch(...a)) {
-  const base = apiBase.replace(/\/+$/, "");
-  async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
-    const res = await fetchImpl(`${base}${path}`, { signal: init.signal, ...init });
+/** One hosted tournament as its admins see it: `GET {apiBase}/host/tourns/:id/admin`. */
+export interface TournamentAdmin {
+  /** Who is looking. `mock` is the shared demo admin anyone can browse as. */
+  viewer: { username: string; name: string; mock: boolean };
+  tourn: {
+    id: number;
+    name: string;
+    webname: string | null;
+    city: string | null;
+    state: string | null;
+    country: string | null;
+    tz: string | null;
+    start: string | null;
+    end: string | null;
+    regStart: string | null;
+    regEnd: string | null;
+    hidden: boolean;
+  };
+  events: Array<{ id: number; abbr: string; name: string; type: string; level: string | null; fee: number | null; entryCount: number }>;
+  schools: Array<{ id: number; name: string; code: string | null; entryCount: number }>;
+  entries: Array<{ id: number; code: string | null; name: string | null; eventAbbr: string | null; schoolName: string | null; status: "active" | "dropped" | "waitlist" | "unconfirmed" }>;
+  judges: Array<{ id: number; code: string | null; name: string; schoolName: string | null; active: boolean }>;
+  rooms: Array<{ id: number; name: string; building: string | null }>;
+  rounds: Array<{ id: number; name: number; label: string | null; type: string | null; eventAbbr: string; published: boolean; resultsPosted: boolean; sectionCount: number; start: string | null }>;
+  resultSets: Array<{ id: number; label: string | null; eventAbbr: string | null; published: boolean }>;
+}
+
+export interface TournamentsClientOptions {
+  /**
+   * A read-only proxy to live Tabroom (e.g. `/api/tabroom-beta`). When set, the
+   * upcoming list adds live tournaments, and a tournament this site does not
+   * host is read from there.
+   */
+  liveApiBase?: string;
+}
+
+const trimBase = (base: string) => base.replace(/\/+$/, "");
+
+export function createTournamentsClient(
+  apiBase = "/api/tournaments",
+  fetchImpl: typeof fetch = (...a) => fetch(...a),
+  { liveApiBase }: TournamentsClientOptions = {},
+) {
+  const base = trimBase(apiBase);
+  const live = liveApiBase ? trimBase(liveApiBase) : null;
+  /** Where each tournament id was found, once known. */
+  const sources = new Map<number, TournamentSource>();
+  const baseOf = (source: TournamentSource) => (source === "tabroom" && live ? live : base);
+
+  async function request<T>(root: string, path: string, init: RequestInit = {}): Promise<T> {
+    const res = await fetchImpl(`${root}${path}`, { signal: init.signal, ...init });
     if (!res.ok) {
       let detail = `Request failed (${res.status})`;
       try {
@@ -207,12 +285,46 @@ export function createTournamentsClient(apiBase = "/api/tournaments", fetchImpl:
     }
     return (await res.json()) as T;
   }
-  async function get<T>(path: string, signal?: AbortSignal): Promise<T> {
-    return request<T>(path, { signal, headers: { accept: "application/json" } });
+  async function get<T>(root: string, path: string, signal?: AbortSignal): Promise<T> {
+    return request<T>(root, path, { signal, headers: { accept: "application/json" } });
   }
-  return {
-    upcoming: (signal?: AbortSignal) => get<UpcomingTournament[]>("/pages/invite/upcoming", signal),
+
+  /** Reads the invite from the hosted API first, then live Tabroom, and remembers which answered. */
+  async function invite(tournId: number, signal?: AbortSignal): Promise<TournamentInvite> {
+    const known = sources.get(tournId);
+    if (known || !live) return get<TournamentInvite>(baseOf(known ?? "hosted"), `/rest/tourns/${tournId}/invite`, signal);
+    try {
+      const hosted = await get<TournamentInvite>(base, `/rest/tourns/${tournId}/invite`, signal);
+      sources.set(tournId, "hosted");
+      return hosted;
+    } catch (error) {
+      if (!(error instanceof TournamentsApiError)) throw error;
+      const found = await get<TournamentInvite>(live, `/rest/tourns/${tournId}/invite`, signal);
+      sources.set(tournId, "tabroom");
+      return found;
+    }
+  }
+
+  /** The API root holding `tournId`, resolving it through the invite when not yet known. */
+  async function rootFor(tournId: number, signal?: AbortSignal): Promise<string> {
+    if (!live) return base;
+    if (!sources.has(tournId)) await invite(tournId, signal);
+    return baseOf(sources.get(tournId) ?? "hosted");
+  }
+
+  /** Makes sure the demo tournament is loaded on this site's API. */
+  const ensureDemo = (signal?: AbortSignal) =>
+    request<{ tournId: number; username: string }>(base, "/host/demo", {
+      method: "POST",
+      signal,
+      headers: { accept: "application/json" },
+    });
+
+  return     upcoming: (signal?: AbortSignal) => get<UpcomingTournament[]>("/pages/invite/upcoming", signal),
     invite: (tournId: number, signal?: AbortSignal) => get<TournamentInvite>(`/rest/tourns/${tournId}/invite`, signal),
+    /** The entries registered in one event, when the tournament publishes its field. */
+    field: (tournId: number, eventAbbr: string, signal?: AbortSignal) =>
+      get<EventField>(`/rest/tourns/${tournId}/events/${encodeURIComponent(eventAbbr)}/field`, signal),
     rounds: (tournId: number, signal?: AbortSignal) => get<PublishedRound[]>(`/rest/tourns/${tournId}/rounds`, signal),
     round: (tournId: number, eventAbbr: string, roundName: string, signal?: AbortSignal) =>
       get<RoundSchematic>(
@@ -225,14 +337,20 @@ export function createTournamentsClient(apiBase = "/api/tournaments", fetchImpl:
       get<ResultSet[]>(`/rest/tourns/${tournId}/results/${resultSetId}`, signal),
     /** Creates a tournament owned by the signed-in user. */
     createTournament: (input: CreateTournamentInput, signal?: AbortSignal) =>
-      request<{ tournament: CreatedTournament }>("/host/tourns", {
+      request<{ tournament: CreatedTournament }>(base, "/host/tourns", {
         method: "POST",
         signal,
         headers: { "content-type": "application/json", accept: "application/json" },
         body: JSON.stringify(input),
-      }).then((body) => body.tournament),
+      }).then((body) => {
+        sources.set(body.tournament.id, "hosted");
+        return body.tournament;
+      }),
     /** The tournaments the signed-in user owns, newest first. */
-    myTournaments: (signal?: AbortSignal) => get<{ tournaments: OwnedTournament[] }>("/host/tourns", signal),
+    myTournaments: (signal?: AbortSignal) => get<{ tournaments: OwnedTournament[] }>(base, "/host/tourns", signal),
+    /** A hosted tournament's admin view: its owner's, or the demo's as the mock admin. */
+    admin: (tournId: number, signal?: AbortSignal) => get<TournamentAdmin>(base, `/host/tourns/${tournId}/admin`, signal),
+    ensureDemo,
   };
 }
 

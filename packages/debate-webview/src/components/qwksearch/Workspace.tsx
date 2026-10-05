@@ -63,8 +63,8 @@ export function QwksearchWorkspace() {
 
   // Restore whichever tab (a chat or a REASON document) was active from the
   // URL on first load — the workspace itself never navigates away from
-  // `/doc`, so this is the only way a shared/bookmarked link reopens the
-  // right tab. A document is named in the path (`/doc/cp-answer-to-states`,
+  // `/research/docs`, so this is the only way a shared/bookmarked link reopens the
+  // right tab. A document is named in the path (`/research/docs/cp-answer-to-states`,
   // resolved against the editor's own document store); a chat is still
   // `?chat=<id>`, since a chat has no filed name to carry. `?docs=<id>` is
   // read too: links to that older form are already out there, and the effect
@@ -96,10 +96,10 @@ export function QwksearchWorkspace() {
   // Mirror the active tab into the URL without a route transition: chats and
   // REASON docs are tabs within this one workspace route, not separate pages,
   // so the URL only needs to record which tab is active for sharing/reload —
-  // not drive navigation. An open document is named in the path (`/doc/<its
+  // not drive navigation. An open document is named in the path (`/research/docs/<its
   // title>`, from the editor's own document store); an open chat stays a
-  // `?chat=` id. `history.replaceState` and not the router: `/doc` and
-  // `/doc/<slug>` are different Next routes, and routing between them on
+  // `?chat=` id. `history.replaceState` and not the router: `/research/docs` and
+  // `/research/docs/<slug>` are different Next routes, and routing between them on
   // every tab switch would remount the whole workspace.
   //
   // Waits for the restore effect above so it doesn't clobber the incoming URL
@@ -116,9 +116,9 @@ export function QwksearchWorkspace() {
     // keep naming the document twice, in two different ways.
     url.searchParams.delete("docs")
     if (activeDocId) hasOpenedDocRef.current = true
-    // Between a cold load at `/doc/<name>` and the editor reporting that
+    // Between a cold load at `/research/docs/<name>` and the editor reporting that
     // document as active there is a commit with no active document in it.
-    // Writing `/doc` in that gap would blank the name out of the address bar
+    // Writing `/research/docs` in that gap would blank the name out of the address bar
     // (and out of a reload) before it has been acted on — so until the first
     // document opens, an incoming named path is left as it is. After that,
     // no active document really does mean the bare route.
@@ -221,7 +221,7 @@ export function QwksearchWorkspace() {
   // two views.
   //
   // The left one is that package's `Sidebar` with the app dock mounted above
-  // it: this workspace's sidebar is the only one `/doc` renders (the app's
+  // it: this workspace's sidebar is the only one `/research/docs` renders (the app's
   // generic tool column is skipped there — see `lib/sidebar-routes`), so it
   // is where the dock has to live for the route to keep one.
   const sidebarProps = {

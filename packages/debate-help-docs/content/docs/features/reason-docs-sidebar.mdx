@@ -179,3 +179,12 @@ document.
   now have a "Download as .docx" item — your own documents and public topic
   starters alike can be gotten out as a file without opening them in the
   editor first.
+
+## Save status above the editor
+
+The status line over the REASON editor (`/reason-editor`) says where the open
+document stands: **Saved to your account**, **Unsaved changes** (an edit is
+queued), **Saving…**, or **Couldn't save — retrying** (shown in red; your edits
+stay in the tab and the queue retries with backoff). A public topic starter
+reads **Public topic starter** because it is read-only. The text comes from
+`describeDocSaveStatus` (`lib/reason-docs/doc-save-status.ts`).

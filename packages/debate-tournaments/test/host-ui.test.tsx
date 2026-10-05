@@ -15,7 +15,7 @@ const plainLink = ({ href, children }: { href: string; children?: ReactNode }) =
 function withClient(client: ReturnType<typeof createTournamentsClient>, node: ReactNode) {
   const value = {
     client,
-    hrefs: { upcoming: () => "/t", host: () => "/t/host", tournament: (id: number) => `/t/${id}`, rounds: (id: number) => `/t/${id}/rounds`, round: () => "/t/1/rounds/LD/1", results: () => "/t/1/results", resultSet: () => "/t/1/results/2", tabroom: () => "/t/1/tabroom" },
+    hrefs: { upcoming: () => "/t", host: () => "/t/host", tournament: (id: number) => `/t/${id}`, rounds: (id: number) => `/t/${id}/rounds`, round: () => "/t/1/rounds/LD/1", results: () => "/t/1/results", resultSet: () => "/t/1/results/2", tabroom: () => "/t/1/tabroom", admin: (id: number) => `/t/${id}/admin` },
     Link: plainLink,
   } as unknown as TournamentsContextValue;
   return renderToString(<TournamentsContext.Provider value={value}>{node}</TournamentsContext.Provider>);
@@ -89,11 +89,20 @@ describe("TabroomOverlay", () => {
     expect(html).toContain('role="dialog"');
   });
 
-  it("is reachable from the tournaments list", () => {
+  it("is reachable from the tournaments list, next to the demo admin", () => {
     const html = renderToString(<TournamentsApp segments={[]} />);
     expect(html).toContain("Host Tournament");
-    // The list's own button, which opens the overlay over this same page.
-    expect(html).toContain(">Tabroom<");
+    expect(html).toContain('href="/practice/tournaments/90001/admin"');
+    // Tabroom has its own sidebar row now; the list no longer frames it.
+    expect(html).not.toContain(">Tabroom<");
+  });
+
+  it("hosts on this site's API, never sending the host to Tabroom", () => {
+    const html = withClient(createTournamentsClient("/api/tabroom", noFetch), <TournamentsApp segments={["host"]} />);
+    expect(html).not.toContain("beta.tabroom.com");
+    expect(html).not.toContain("Open Tabroom");
+    expect(html).toContain("Try the demo admin");
+    expect(html).toContain('href="/practice/tournaments/90001/admin"');
   });
 });
 

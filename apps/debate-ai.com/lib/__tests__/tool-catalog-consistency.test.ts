@@ -155,6 +155,7 @@ const ROUTES_WITHOUT_A_CATALOG_ENTRY = new Set([
   "/settings",
   "/settings/editor-panel",
   "/settings/preferences",
+  "/settings/research",
   "/research/topics",
   "/lectures",
   "/practice/glossary",

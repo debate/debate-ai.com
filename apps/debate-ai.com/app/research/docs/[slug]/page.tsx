@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params
   const name = titleFromDocSlug(slug)
   return {
-    title: name ? `${name} — REASON Docs` : "REASON Docs",
+    title: name ? `${name} — Research` : "Research",
     description: "Research Editor for Annotated Summaries in Outline Notation",
   }
 }
