@@ -16,6 +16,10 @@
  *      speech by speech, and the AI summary of it.
  *   3. **Analysis** — the videos an editor has tied to this one.
  *
+ * A host can add its own tabs ahead of these ({@link WatchSideTab}) — the app
+ * mounts a featured round's speech docs this way, since this package can't
+ * reach the docs or the editor that decodes them.
+ *
  * Tabs a video has nothing for are not rendered, so a lecture with neither
  * documents nor linked analysis gets exactly the caption panel it had before
  * and no empty chrome around it. A video with even one document does get the
@@ -29,7 +33,7 @@
 
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react"
 import { WatchTranscriptPanel } from "./WatchTranscriptPanel"
 import { WatchDocumentPanel } from "./WatchDocumentPanel"
 import { WatchAnalysisPanel, type LinkedVideo } from "./WatchAnalysisPanel"
@@ -42,6 +46,15 @@ import {
   type VideoDocument,
 } from "../../lib/video-documents"
 import type { TranscriptSnippet } from "../transcript/transcriptUtils"
+
+/** A host-supplied tab: its label in the strip and what it shows when open. */
+export interface WatchSideTab {
+  id: string
+  label: string
+  /** Shown under the label, e.g. a count. */
+  hint?: string
+  content: ReactNode
+}
 
 interface WatchSidePanelProps {
   /** YouTube's caption cues, already regrouped into sentences. */
@@ -68,6 +81,8 @@ interface WatchSidePanelProps {
   roundTranscript?: string
   onMarkStart?: (speechKey: string, seconds: number | null) => void
   markedKeys?: ReadonlySet<string>
+  /** Host tabs, shown first. See {@link WatchSideTab}. */
+  extraTabs?: WatchSideTab[]
 }
 
 /** Where the reader's auto-scroll choice is remembered. */
@@ -80,6 +95,8 @@ function readAutoScroll(): boolean {
     return true
   }
 }
+
+const NO_EXTRA_TABS: WatchSideTab[] = []
 
 /** One tab in the strip. */
 interface PanelTab {
@@ -104,6 +121,7 @@ export function WatchSidePanel({
   roundTranscript,
   onMarkStart,
   markedKeys,
+  extraTabs = NO_EXTRA_TABS,
 }: WatchSidePanelProps) {
   const ordered = useMemo(() => orderDocuments(documents), [documents])
   const documentSpeeches = useMemo(() => buildRoundSpeeches(documents), [documents])
@@ -111,7 +129,7 @@ export function WatchSidePanel({
   const hasCaptions = sentences.length > 0 || captionsLoading
 
   const tabs = useMemo<PanelTab[]>(() => {
-    const list: PanelTab[] = []
+    const list: PanelTab[] = extraTabs.map(({ id, label, hint }) => ({ id: `extra:${id}`, label, hint }))
     if (speeches.length > 0) {
       list.push({ id: "round", label: "By speech", hint: `${speeches.filter((speech) => speech.isSpeech).length} speeches` })
     }
@@ -133,7 +151,7 @@ export function WatchSidePanel({
       list.push({ id: "analysis", label: "Analysis", hint: `${links.length} video${links.length === 1 ? "" : "s"}` })
     }
     return list
-  }, [speeches.length, hasCaptions, sentences.length, ordered, links.length])
+  }, [extraTabs, speeches.length, hasCaptions, sentences.length, ordered, links.length])
 
   const [activeId, setActiveId] = useState<string | null>(null)
   // Starts on, then picks up the stored choice after mount so the server
@@ -168,13 +186,16 @@ export function WatchSidePanel({
   if (tabs.length === 0) return null
 
   const active = activeId ?? tabs[0].id
+  const activeExtra = active.startsWith("extra:")
+    ? extraTabs.find((tab) => `extra:${tab.id}` === active)
+    : undefined
   const activeDocument = active.startsWith("document:")
     ? ordered.find((document) => `document:${document.kind}` === active)
     : undefined
 
   return (
     <aside className="flex flex-col min-h-0 flex-1 rounded-lg border border-border bg-card/40 overflow-hidden">
-      {(tabs.length > 1 || ordered.length > 0) && (
+      {(tabs.length > 1 || ordered.length > 0 || extraTabs.length > 0) && (
         <div role="tablist" aria-label="Beside this video" className="flex shrink-0 border-b border-border">
           {tabs.map((tab) => {
             const isActive = tab.id === active
@@ -202,6 +223,8 @@ export function WatchSidePanel({
           })}
         </div>
       )}
+
+      {activeExtra?.content}
 
       {active === "round" && (
         <WatchRoundPanel

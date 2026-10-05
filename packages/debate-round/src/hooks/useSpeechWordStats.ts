@@ -28,22 +28,10 @@ import {
   SPEECH_DOC_LINKS_KEY,
   type SpeechDocLink,
 } from "../state/speechDocLinks"
+import { storedDocumentHtml, type StoredDocument } from "../round/stored-document-html"
 
 /** How often the selected speech re-reads a linked document while it's being edited elsewhere. */
 const LINKED_DOC_REFRESH_MS = 30_000
-
-type StoredDocument = { title?: string; content?: string | null; format?: string | null }
-
-/** Decodes a stored row to HTML, handling both `.cmir` and legacy HTML rows. */
-async function storedDocumentHtml(doc: StoredDocument): Promise<string> {
-  const content = doc.content ?? ""
-  if (!content) return ""
-  const engine = await import("@debate/editor/engine")
-  const isCmir = doc.format === "cmir" || (doc.format !== "html" && engine.looksLikeCmirBase64(content))
-  if (!isCmir) return content
-  const { docToHtml } = await import("@debate/editor")
-  return docToHtml(engine.parseNative(engine.base64ToCmir(content)).doc)
-}
 
 async function fetchLinkedStats(docId: number): Promise<{ stats: SpeechDocWordStats; title?: string }> {
   const res = await fetch(`/api/doc/documents/${docId}`)

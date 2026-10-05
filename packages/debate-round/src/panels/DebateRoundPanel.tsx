@@ -50,6 +50,15 @@ import { getRoundRecordingShareEmails } from "../round/round-recording-share"
 import { readPinnedDebateIds, togglePinnedDebate } from "../state/pinnedDebates"
 import { readFlowHistory } from "../state/flowHistoryEntries"
 import { selectSidebarRound } from "../utils/sidebar-round"
+import {
+  buildFeaturedRound,
+  featuredRoundBySlug,
+  featuredRoundStyleIndex,
+  findLocalFeaturedRound,
+  loadFeaturedSpeechDocs,
+  FEATURED_ROUNDS,
+  type FeaturedRound,
+} from "../round/featured-rounds"
 
 /** Props for {@link DebateFlowPage}. */
 export interface DebateFlowPageProps {
@@ -69,7 +78,7 @@ export function DebateFlowPage({ startScreenActions }: DebateFlowPageProps = {})
   // ============================================================================
   // Global State (Zustand)
   // ============================================================================
-  const { flows, selected, setFlows, setSelected, setRounds, getRounds, getFlowHistory, loadFromHistory } =
+  const { flows, selected, setFlows, setSelected, setRounds, getRounds, getFlowHistory, loadFromHistory, createRound } =
     useFlowStore()
   const rounds = getRounds()
 
@@ -143,6 +152,58 @@ export function DebateFlowPage({ startScreenActions }: DebateFlowPageProps = {})
     setEbbActive(false)
   }
 
+  // ============================================================================
+  // Featured Rounds (built-in rounds whose speech docs are fetched on open)
+  // ============================================================================
+  const [loadingFeaturedKey, setLoadingFeaturedKey] = useState<string | null>(null)
+  const [featuredError, setFeaturedError] = useState<string | null>(null)
+
+  /**
+   * Open a built-in featured round. The first time, its speech docs are
+   * fetched from the public library and built into a local round in the
+   * round's format; after that the same local round is reopened. Either way
+   * the timers switch to the round's format.
+   *
+   * @param featured - The catalog entry to open.
+   */
+  const handleOpenFeatured = async (featured: FeaturedRound) => {
+    if (loadingFeaturedKey) return
+    settings.setValue("debateStyle", featuredRoundStyleIndex(featured))
+    settings.saveToLocalStorage()
+
+    const currentFlows = useFlowStore.getState().flows
+    const existing = findLocalFeaturedRound(featured, useFlowStore.getState().rounds, currentFlows)
+    if (existing) {
+      handleOpenRound(existing)
+      return
+    }
+
+    setFeaturedError(null)
+    setLoadingFeaturedKey(featured.key)
+    try {
+      const { docs, missing } = await loadFeaturedSpeechDocs(featured)
+      // Re-read: the store may have changed while the docs were loading.
+      const latestFlows = useFlowStore.getState().flows
+      const { flow, round: roundData } = buildFeaturedRound(featured, docs, latestFlows.length)
+      const round = createRound(roundData)
+      const nextFlows = [
+        ...latestFlows.map((f) => ({ ...f, archived: true })),
+        { ...flow, roundId: round.id },
+      ]
+      setFlows(nextFlows)
+      setSelected(nextFlows.length - 1)
+      setEbbActive(false)
+      if (missing.length > 0) {
+        setFeaturedError(`Opened ${featured.title}, but the ${missing.join(", ")} doc could not be loaded.`)
+      }
+    } catch (error) {
+      setFeaturedError(error instanceof Error ? error.message : String(error))
+    } finally {
+      setLoadingFeaturedKey(null)
+    }
+  }
+
+
   /**
    * Restore one of the start screen's recent flows from the history log and
    * open it, leaving the pinned ebb Flow tab.
@@ -186,6 +247,22 @@ const handleEbbToolAction = (action: EbbFlowToolAction) => {
   useRoundFromSlug()
   useSyncUrlWithRound()
   useJumpToPrepNoteBox()
+
+  // A shared `/debate/<featured slug>` link builds the round for a reader who
+  // has never opened it; `useRoundFromSlug` handles every later visit. Declared
+  // after `useInitialLoad` so the stored flows and rounds are already in the
+  // store when this first runs.
+  const pathname = usePathname()
+  const featuredFromPathRef = useRef<string | null>(null)
+  useEffect(() => {
+    const slug = pathname?.match(/^\/debate\/([^/]+\/[^/]+)$/)?.[1]
+    const featured = slug ? featuredRoundBySlug(slug) : undefined
+    if (!featured || featuredFromPathRef.current === featured.slug) return
+    featuredFromPathRef.current = featured.slug
+    const { rounds: storedRounds, flows: storedFlows } = useFlowStore.getState()
+    if (!findLocalFeaturedRound(featured, storedRounds, storedFlows)) void handleOpenFeatured(featured)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname])
 
   // Update document title when active round changes
   useEffect(() => {
@@ -576,6 +653,10 @@ const handleEbbToolAction = (action: EbbFlowToolAction) => {
         rounds={rounds}
         history={recentHistory}
         pinnedIds={pinnedIds}
+        featuredRounds={FEATURED_ROUNDS}
+        loadingFeaturedKey={loadingFeaturedKey}
+        featuredError={featuredError}
+        onOpenFeatured={(featured) => void handleOpenFeatured(featured)}
         onOpenRound={handleOpenRound}
         onOpenHistoryEntry={handleOpenRecentFlow}
         onTogglePin={handleTogglePin}
