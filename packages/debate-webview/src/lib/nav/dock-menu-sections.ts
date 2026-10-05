@@ -30,7 +30,10 @@ import { Clapperboard, type LucideIcon } from "lucide-react"
 // data (no React, no image assets), which is what lets the Vitest project for
 // `lib/` load them in a Node environment.
 import { SIDEBAR_TOOL_SECTIONS } from "@debate/videos/src/components/category-gallery/sidebar-tool-sections"
-import { SIDEBAR_VIDEO_LINKS } from "@debate/videos/src/components/category-gallery/sidebar-video-links"
+import {
+  SIDEBAR_VIDEO_LINKS,
+  VIDEO_REFERENCE_LINKS,
+} from "@debate/videos/src/components/category-gallery/sidebar-video-links"
 import {
   FOOTER_LINKS,
   type FooterLink,
@@ -53,6 +56,13 @@ export interface DockMenuSection {
 }
 
 /**
+ * The glossary and the topic & video statistics are not videos: the sidebar
+ * tree lists them under Insights ("Data & Reference"), so the Videos submenu
+ * leaves them out rather than listing them in two places.
+ */
+const REFERENCE_HREFS = new Set(VIDEO_REFERENCE_LINKS.map((link) => link.href))
+
+/**
  * One submenu per sidebar section, in tree order: Videos, then the
  * Coaching / Research / Practice tool sections.
  */
@@ -61,7 +71,9 @@ export const SIDEBAR_MENU_SECTIONS: DockMenuSection[] = [
     id: "videos",
     title: "Videos",
     icon: Clapperboard,
-    links: SIDEBAR_VIDEO_LINKS.map(({ href, title }) => ({ href, title })),
+    links: SIDEBAR_VIDEO_LINKS.filter((link) => !REFERENCE_HREFS.has(link.href)).map(
+      ({ href, title }) => ({ href, title }),
+    ),
   },
   ...SIDEBAR_TOOL_SECTIONS.map((section) => ({
     id: section.id,
