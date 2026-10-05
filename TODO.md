@@ -94,6 +94,12 @@
 - [ ] Follow-up: persist baselines / auto-save flows so the marker survives a reload
 - [ ] Follow-up: `ebb-dev-*` and `REASON-*` stores are still browser-only
 
+### Tool UI pass: tool page header
+
+- Branch: `agent/tool-header-single-sync-badge`
+- [x] `ToolPageHeader` rendered `ToolSyncBadge` twice (merge damage); now once, with a regression test
+- [ ] Follow-up: pin/save controls (not just sync status) in each tool's header
+
 ## Completed
 
 ### Fix duplicated tool-record catalog entries (merge damage)
