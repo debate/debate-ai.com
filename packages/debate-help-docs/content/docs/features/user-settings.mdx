@@ -211,24 +211,19 @@ Known gap: pins are capped at 12 per browser, and the merge on sign-in is a
 union, so a pin removed on one device while another is offline can reappear
 until that device syncs.
 
-## Flow editor preferences
+## Flow editor display and keybindings
 
-The flow editor's look and keybindings follow your account. They sync through
-two single-record collections of the tool-record sync, `ebbDisplaySettings`
-and `ebbKeymapSettings`, shown under **Settings → Account → Tool data** as
-"Flow Editor Display Settings" and "Flow Editor Keybindings". Each browser
-store (`ebb-display-settings`, `ebb-keymap-settings`) is one fixed-id record,
-adapted by `ebb-settings-codec.ts` in `debate-data-sync`.
+The flow editor's display settings (font, zoom, theme, colours and its on/off
+toggles) and your rebound keys follow your account. They sync as two
+single-record collections of the tool-record sync, `flowEditorDisplay`
+(`ebb-display-settings`) and `flowEditorKeymap` (`ebb-keymap-settings`), and
+show up under **Settings → Account → Tool data** as "Flow Editor Display
+Settings" and "Flow Editor Keybindings". The desktop flows folder is a path on
+one machine, so it never leaves the device it was set on.
 
-Only portable choices sync: font, default zoom, theme, side colors, the editing
-toggles and your custom keybindings. Per-device state stays on the device: the
-desktop flows folder, whether the sidebar or RFD drawer is open, and
-collaboration name and contacts. When your account's copy is applied, the open
-editor restyles immediately (the flow store listens for the sync's `storage`
-event) and those device-only fields are untouched.
-
-Known gap: the newest account copy wins on sign-in, so unsynced edits made on a
-second device before it first syncs are replaced by the account's values.
+Known gap: the editor reads these settings when it loads, so settings that
+arrive from another device apply the next time the flow editor is opened, not
+live.
 
 ## Save status on each tool
 

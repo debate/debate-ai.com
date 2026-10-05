@@ -48,11 +48,12 @@
  */
 
 import {
-  decodeDisplaySettings,
-  decodeKeymapSettings,
-  encodeDisplaySettings,
-  encodeKeymapSettings,
-} from "./flow-settings-codec";
+  decodeFlowEditorDisplay,
+  decodeFlowEditorKeymap,
+  encodeFlowEditorDisplay,
+  encodeFlowEditorKeymap,
+  redactFlowEditorDisplay,
+} from "./flow-editor-settings-codec";
 import { redactFileSource } from "./redact-file-source";
 import { ebbDisplaySettingsCodec, ebbKeymapSettingsCodec } from "./ebb-settings-codec";
 
@@ -152,17 +153,26 @@ export const MAX_TOOL_RECORDS_PER_PUSH = 500;
 export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
   // — Flowing and writing —
   {
-    key: "flowKeymap",
-    storageKey: "ebb-keymap-settings",
+    key: "flowEditorDisplay",
+    storageKey: "ebb-display-settings",
     idField: "id",
-    // The flow editor's rebound shortcuts (`@debate/flow`'s `useFlowStore`),
-    // stored as `{ keymapOverrides }`; one record per rebound action id. The
-    // flow editor reads it at startup, so a rebinding from another device
-    // applies on the next load.
-    label: "Flow Editor Shortcuts",
+    // The flow editor's font, zoom, theme, colours and toggles, as one record.
+    // `flowsDir` (a desktop folder) is redacted; this browser keeps its own.
+    label: "Flow Editor Display Settings",
     href: "/debate",
     section: "Flowing and writing",
-    codec: { decode: decodeFlowKeymap, encode: encodeFlowKeymap },
+    redact: redactFlowEditorDisplay,
+    codec: { decode: decodeFlowEditorDisplay, encode: encodeFlowEditorDisplay },
+  },
+  {
+    key: "flowEditorKeymap",
+    storageKey: "ebb-keymap-settings",
+    idField: "id",
+    // The flow editor's rebound keys (`keymapOverrides`), as one record.
+    label: "Flow Editor Keybindings",
+    href: "/debate",
+    section: "Flowing and writing",
+    codec: { decode: decodeFlowEditorKeymap, encode: encodeFlowEditorKeymap },
   },
   {
     key: "speechDocLinks",

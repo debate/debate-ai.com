@@ -1,76 +1,104 @@
 /**
- * @fileoverview Adapts the Ebb flow editor's two single-object settings
- * stores — `ebb-display-settings` and `ebb-keymap-settings`, see
- * `debate-flow`'s `useFlowStore.ts` — to the array-of-records shape
- * `TOOL_RECORD_COLLECTIONS` syncs.
+ * @fileoverview Adapts the flow editor's two single-object `localStorage`
+ * settings stores — `ebb-display-settings` (a flat object of display and
+ * collaboration toggles) and `ebb-keymap-settings` (`{ keymapOverrides }`) —
+ * to the array-of-records shape `TOOL_RECORD_COLLECTIONS` syncs.
  *
- * Each store is one object, so each becomes a one-record collection whose
- * `id` is {@link FLOW_EDITOR_SETTINGS_RECORD_ID}. `debate-flow` keeps reading
- * and writing its own object untouched; the sync only wraps it.
+ * Each store becomes exactly one record with a fixed id, so a signed-in user's
+ * zoom, font, colours and rebound keys follow them to another device. Field
+ * validation stays with the flow editor's own loader (`debate-flow`'s
+ * `useFlowStore`), which already resolves every field defensively when it
+ * reads the store; this module only moves the object in and out of a record.
  *
- * Not every display field belongs to the account. {@link redactFlowDisplaySettings}
- * holds back what describes *this device* — the flows folder path, panel
- * open/closed state — and the live-collaboration switches and contact list,
- * which turn networking on or name peers and should be opted into per device.
- * The merge restores those fields from this browser's copy (see
- * `restoreRedactedFields`), so a pull never resets them.
+ * `flowsDir` is a path on one desktop install, so {@link redactFlowEditorDisplay}
+ * keeps it out of the account (the merge restores this browser's own value).
  *
  * Pure — no storage or network.
  *
  * @module state/flow-editor-settings-codec
  */
 
-/** The one record each settings collection holds. */
-export const FLOW_EDITOR_SETTINGS_RECORD_ID = "settings";
+/** Id of the single display-settings record. */
+export const FLOW_EDITOR_DISPLAY_RECORD_ID = "display";
+/** Id of the single keymap record. */
+export const FLOW_EDITOR_KEYMAP_RECORD_ID = "keymap";
 
-/** The display fields that follow the user to every device. */
-export const SYNCED_FLOW_DISPLAY_FIELDS: readonly string[] = [
-  "flowFont",
-  "defaultGridZoom",
-  "rfdVim",
-  "insertPaste",
-  "appendEdit",
-  "scrollZoom",
-  "alignSpeeches",
-  "tooltips",
-  "cardmirrorEnabled",
-  "cardmirrorTextType",
-  "theme",
-  "affColor",
-  "negColor",
-];
-
-/** Wraps a stored settings object as its single record; anything else syncs nothing. */
-export function decodeFlowEditorSettings(raw: unknown): Record<string, unknown>[] {
-  if (typeof raw !== "object" || raw === null || Array.isArray(raw)) return [];
-  return [{ id: FLOW_EDITOR_SETTINGS_RECORD_ID, ...(raw as Record<string, unknown>) }];
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 /**
- * Unwraps the merged records back to the stored object (the inverse of
- * {@link decodeFlowEditorSettings}). An empty list encodes to `{}`, which
- * `debate-flow` reads as "all defaults".
+ * The stored display object as a one-record list; empty when the store is
+ * absent or malformed.
+ *
+ * @param raw - The parsed `ebb-display-settings` value.
  */
-export function encodeFlowEditorSettings(records: readonly unknown[]): Record<string, unknown> {
-  for (const record of records) {
-    if (typeof record !== "object" || record === null || Array.isArray(record)) continue;
-    const { id, ...settings } = record as Record<string, unknown>;
-    if (id === FLOW_EDITOR_SETTINGS_RECORD_ID) return settings;
-  }
-  return {};
+export function decodeFlowEditorDisplay(raw: unknown): Record<string, unknown>[] {
+  if (!isPlainObject(raw)) return [];
+  const { id: _ignored, ...fields } = raw;
+  return [{ ...fields, id: FLOW_EDITOR_DISPLAY_RECORD_ID }];
 }
 
 /**
- * A `ToolRecordCollection.redact` for `ebb-display-settings`: keeps only
- * {@link SYNCED_FLOW_DISPLAY_FIELDS}, so a field added to the store later stays
- * on-device until it is listed here on purpose.
+ * Rebuilds the stored display object from records (inverse of
+ * {@link decodeFlowEditorDisplay}); `{}` when there is no display record, which
+ * the editor's loader reads as "all defaults".
+ *
+ * @param records - Records merged from the account and this browser.
  */
-export function redactFlowDisplaySettings(record: unknown): unknown {
-  if (typeof record !== "object" || record === null || Array.isArray(record)) return record;
-  const source = record as Record<string, unknown>;
-  const kept: Record<string, unknown> = { id: source.id };
-  for (const field of SYNCED_FLOW_DISPLAY_FIELDS) {
-    if (field in source) kept[field] = source[field];
+export function encodeFlowEditorDisplay(records: readonly unknown[]): Record<string, unknown> {
+  const record = records.find(
+    (r) => isPlainObject(r) && r.id === FLOW_EDITOR_DISPLAY_RECORD_ID,
+  ) as Record<string, unknown> | undefined;
+  if (!record) return {};
+  const { id: _id, ...fields } = record;
+  return fields;
+}
+
+/**
+ * Drops the per-device desktop folder before a display record is sent to the
+ * account.
+ *
+ * @param record - A display record.
+ */
+export function redactFlowEditorDisplay(record: unknown): unknown {
+  if (!isPlainObject(record)) return record;
+  const { flowsDir: _flowsDir, ...rest } = record;
+  return rest;
+}
+
+/**
+ * The stored keymap as a one-record list. Only string-to-string overrides are
+ * kept; a store with no overrides yields no record, so a user who never
+ * rebound a key pushes nothing.
+ *
+ * @param raw - The parsed `ebb-keymap-settings` value.
+ */
+export function decodeFlowEditorKeymap(raw: unknown): Record<string, unknown>[] {
+  if (!isPlainObject(raw) || !isPlainObject(raw.keymapOverrides)) return [];
+  const keymapOverrides: Record<string, string> = {};
+  for (const [action, accelerator] of Object.entries(raw.keymapOverrides)) {
+    if (typeof accelerator === "string") keymapOverrides[action] = accelerator;
   }
-  return kept;
+  if (Object.keys(keymapOverrides).length === 0) return [];
+  return [{ id: FLOW_EDITOR_KEYMAP_RECORD_ID, keymapOverrides }];
+}
+
+/**
+ * Rebuilds the stored keymap object from records (inverse of
+ * {@link decodeFlowEditorKeymap}).
+ *
+ * @param records - Records merged from the account and this browser.
+ */
+export function encodeFlowEditorKeymap(
+  records: readonly unknown[],
+): { keymapOverrides: Record<string, string> } {
+  const record = decodeFlowEditorKeymap({
+    keymapOverrides: (
+      records.find((r) => isPlainObject(r) && r.id === FLOW_EDITOR_KEYMAP_RECORD_ID) as
+        | Record<string, unknown>
+        | undefined
+    )?.keymapOverrides,
+  });
+  return { keymapOverrides: (record[0]?.keymapOverrides as Record<string, string>) ?? {} };
 }
