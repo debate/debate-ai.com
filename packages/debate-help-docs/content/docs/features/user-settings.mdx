@@ -105,6 +105,17 @@ category. A row this host hides (desktop-only card sharing, say) would
 otherwise be mirrored at its default and overwrite whatever the account holds
 for it.
 
+## Flow editor preferences follow your account
+
+Signed in, the Ebb flow editor's look-and-behaviour preferences (font, default
+grid zoom, theme, Aff/Neg colours, the Vim/insert-paste/append-edit/scroll-zoom/
+align-speeches/tooltip toggles, the CardMirror options and your custom
+keybindings) are saved to your account as `flowEditorSettings` and applied the
+next time you open a flow on any device. Anything specific to one device — the
+flows folder, collaboration name and relay toggles, contacts, and panel layout —
+stays in that browser. Signed out, nothing changes: settings stay in
+localStorage.
+
 ## Known gaps
 
 No optimistic-concurrency handling in general — two tabs editing the *same*
