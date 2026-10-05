@@ -30,6 +30,7 @@ import { Toaster } from "sonner";
 import AppRoot from "./components/flow/AppRoot";
 import ResumeFlow from "./components/flow/ResumeFlow";
 import { BridgeHost } from "./components/BridgeHost";
+import AccountSettingsSync from "./components/AccountSettingsSync";
 import ConfigFileSync from "./components/ConfigFileSync";
 import ConsentDialog from "./components/collab/ConsentDialog";
 import ContactPickerDialog from "./components/collab/ContactPickerDialog";
@@ -172,6 +173,7 @@ export function EbbFlowEmbed({
             <QuitGuard />
             <ThemeSync />
             <ConfigFileSync />
+            <AccountSettingsSync />
             <InviteWatch />
             <TooltipProvider>
                 <UpdateProvider>

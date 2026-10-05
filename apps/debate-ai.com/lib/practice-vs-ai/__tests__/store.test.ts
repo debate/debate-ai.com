@@ -37,6 +37,7 @@ async function freshDb() {
       favorite_tools TEXT,
       recent_tools TEXT,
       editor_preferences TEXT,
+      flow_editor_settings TEXT,
       news_read TEXT,
       news_liked TEXT,
       word_limit_presets TEXT,
