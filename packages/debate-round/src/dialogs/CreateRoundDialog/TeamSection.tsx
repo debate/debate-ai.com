@@ -13,11 +13,16 @@ import { IconAffBubble, IconNegBubble } from "../../ui/icons"
 import { getMyTeamProfile, saveMyTeamProfile, type MyTeamProfile } from "../../state/myTeamProfile"
 import { fetchUserSettings, saveUserSettings } from "../../round/user-settings-client"
 import { searchSchools } from "../../cache/client-cache"
+import { loadFieldForTournamentName, mergeSchoolOptions, type TournamentField } from "../../round/tournament-field"
 import { UserAutocomplete } from "./UserAutocomplete"
 import { SchoolTeamsPicker } from "./SchoolTeamsPicker"
 
 const SCHOOL_SUGGESTION_LIMIT = 10
-const SCHOOL_DROPDOWN_CLASS = "right-auto w-[14rem]"
+/** Schools at the picked tournament come first, so allow a longer, scrollable list. */
+const SCHOOL_WITH_TOURNAMENT_LIMIT = 60
+const SCHOOL_DROPDOWN_CLASS = "right-auto w-[14rem] max-h-60 !overflow-y-auto"
+/** Wait this long after the tournament name changes before reading its field. */
+const TOURNAMENT_FIELD_DEBOUNCE_MS = 400
 const SCHOOL_OPTION_CLASS = "!px-0"
 
 const ARG_PREFS = [
@@ -113,6 +118,32 @@ interface TeamSectionProps {
   negSchool: string
   setNegSchool: (v: string) => void
   debateStyleIndex: number
+  /** The round's tournament; when it is a current Tabroom tournament, its schools and teams are suggested first. */
+  tournamentName?: string
+}
+
+const EMPTY_FIELD: TournamentField = { schools: [], entries: [] }
+
+/** The field of `tournamentName` in `styleKey`'s format, read once the name settles. */
+function useTournamentField(tournamentName: string, styleKey: string): TournamentField {
+  const [field, setField] = useState<TournamentField>(EMPTY_FIELD)
+  useEffect(() => {
+    let cancelled = false
+    if (!tournamentName.trim()) {
+      setField(EMPTY_FIELD)
+      return
+    }
+    const timer = setTimeout(() => {
+      loadFieldForTournamentName(tournamentName, styleKey).then((found) => {
+        if (!cancelled) setField(found)
+      })
+    }, TOURNAMENT_FIELD_DEBOUNCE_MS)
+    return () => {
+      cancelled = true
+      clearTimeout(timer)
+    }
+  }, [tournamentName, styleKey])
+  return field
 }
 
 interface MyTeamCheckboxProps {
@@ -234,6 +265,7 @@ export function TeamSection({
   negSchool,
   setNegSchool,
   debateStyleIndex,
+  tournamentName = "",
 }: TeamSectionProps) {
   const styleKey = debateStyleMap[debateStyleIndex]
   const styleConfig = debateStyles[styleKey]
@@ -249,6 +281,17 @@ export function TeamSection({
   const [showNegConfig, setShowNegConfig] = useState(false)
   const [profile, setProfile] = useState<MyTeamProfile>(() => getMyTeamProfile())
   const remoteAvailableRef = useRef(false)
+  const tournamentField = useTournamentField(tournamentName, styleKey)
+
+  /** School suggestions: the tournament's schools first, then the usual list. */
+  async function fetchSchoolOptions(query: string): Promise<string[]> {
+    const others = await searchSchools(query, SCHOOL_SUGGESTION_LIMIT)
+    if (tournamentField.schools.length === 0) return others
+    return mergeSchoolOptions(tournamentField.schools, others, query, SCHOOL_WITH_TOURNAMENT_LIMIT)
+  }
+
+  const affFilled = affDebater1.trim() !== "" && (isOnePerson || affDebater2.trim() !== "")
+  const negFilled = negDebater1.trim() !== "" && (isOnePerson || negDebater2.trim() !== "")
 
   // Account-linked "My Team" profile — TODO.md idea #17's "create user
   // settings and link user db" follow-up. Local-first (the profile above
@@ -366,22 +409,21 @@ export function TeamSection({
           />
         )}
         <div className="space-y-2">
-          <div className="relative">
-            <Autocomplete
-              placeholder="School (Optional)"
-              value={affSchool}
-              onChange={setAffSchool}
-              fetchOptions={(q) => searchSchools(q, SCHOOL_SUGGESTION_LIMIT)}
-              dropdownClassName={SCHOOL_DROPDOWN_CLASS}
-              optionClassName={SCHOOL_OPTION_CLASS}
-            />
-            <SchoolTeamsPicker
-              school={affSchool}
-              styleKey={styleKey}
-              side="right"
-              onPick={(debaters) => fillDebaters(setAffDebater1, setAffDebater2, debaters)}
-            />
-          </div>
+          <Autocomplete
+            placeholder="School (Optional)"
+            value={affSchool}
+            onChange={setAffSchool}
+            fetchOptions={fetchSchoolOptions}
+            dropdownClassName={SCHOOL_DROPDOWN_CLASS}
+            optionClassName={SCHOOL_OPTION_CLASS}
+          />
+          <SchoolTeamsPicker
+            school={affSchool}
+            styleKey={styleKey}
+            tournamentEntries={tournamentField.entries}
+            hidden={affFilled}
+            onPick={(debaters) => fillDebaters(setAffDebater1, setAffDebater2, debaters)}
+          />
           <UserAutocomplete
             id="aff-debater-1"
             placeholder="1A name or email"
@@ -421,22 +463,21 @@ export function TeamSection({
           />
         )}
         <div className="space-y-2">
-          <div className="relative">
-            <Autocomplete
-              placeholder="School (Optional)"
-              value={negSchool}
-              onChange={setNegSchool}
-              fetchOptions={(q) => searchSchools(q, SCHOOL_SUGGESTION_LIMIT)}
-              dropdownClassName={SCHOOL_DROPDOWN_CLASS}
-              optionClassName={SCHOOL_OPTION_CLASS}
-            />
-            <SchoolTeamsPicker
-              school={negSchool}
-              styleKey={styleKey}
-              side="left"
-              onPick={(debaters) => fillDebaters(setNegDebater1, setNegDebater2, debaters)}
-            />
-          </div>
+          <Autocomplete
+            placeholder="School (Optional)"
+            value={negSchool}
+            onChange={setNegSchool}
+            fetchOptions={fetchSchoolOptions}
+            dropdownClassName={SCHOOL_DROPDOWN_CLASS}
+            optionClassName={SCHOOL_OPTION_CLASS}
+          />
+          <SchoolTeamsPicker
+            school={negSchool}
+            styleKey={styleKey}
+            tournamentEntries={tournamentField.entries}
+            hidden={negFilled}
+            onPick={(debaters) => fillDebaters(setNegDebater1, setNegDebater2, debaters)}
+          />
           <UserAutocomplete
             id="neg-debater-1"
             placeholder="1N name or email"
