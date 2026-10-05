@@ -7,6 +7,7 @@
  * autosave subscription watches.
  */
 
+import type { FlowEditorAccountSettingsPayload } from "../config/accountSettings";
 import { create } from "zustand";
 
 import { resolveCardMirrorTextType, type CardMirrorTextType } from "../bridge/cardmirror";
@@ -248,6 +249,8 @@ export interface FlowActions {
      * does not bounce straight back out to disk.
      */
     applyExternalConfig(config: AppConfig): void;
+    /** Applies the account-synced subset of display/keymap settings (already validated). */
+    applyAccountSettings(patch: FlowEditorAccountSettingsPayload): void;
     /** Opens/closes the palette; `seed` sets the initial query (">" = command mode). */
     setQuickSwitcherOpen(open: boolean, seed?: string): void;
     /** Follow the open round to a new file after Save As. */
@@ -953,6 +956,22 @@ export const useFlowStore = create<FlowStore>()((set, get) => ({
         });
     },
 
+    applyAccountSettings(patch) {
+        const { keymapOverrides, flowFont, cardmirrorTextType, theme, defaultGridZoom, ...rest } = patch;
+        const display: Partial<DisplaySettings> = { ...rest };
+        if (flowFont !== undefined) display.flowFont = resolveFontId(flowFont);
+        if (cardmirrorTextType !== undefined) display.cardmirrorTextType = cardmirrorTextType;
+        if (theme !== undefined) display.theme = theme;
+        if (defaultGridZoom !== undefined) display.defaultGridZoom = clampZoom(defaultGridZoom);
+        saveDisplaySettings({ ...displaySettingsOf(get()), ...display });
+        if (keymapOverrides) saveKeymapOverrides(keymapOverrides);
+        set({
+            ...display,
+            ...(display.defaultGridZoom !== undefined ? { gridZoom: display.defaultGridZoom } : {}),
+            ...(keymapOverrides ? { keymapOverrides } : {}),
+        });
+    },
+
     setQuickSwitcherOpen(open, seed = "") {
         set({ quickSwitcherOpen: open, paletteSeed: open ? seed : "" });
     },
@@ -978,27 +997,22 @@ export const useFlowStore = create<FlowStore>()((set, get) => ({
     },
 }));
 
-/**
- * Adopts settings the account sync wrote into the synced records (a sign-in or
- * a change from another device) without a reload. The synced keys are copied
- * into the local display bucket so the two never disagree on next load.
- */
-if (typeof window !== "undefined") {
-    window.addEventListener("storage", (event) => {
-        if (event.key !== SYNCED_SETTINGS_KEY && event.key !== null) return;
-        const synced = readSyncedSettings();
-        if (synced.display) {
-            const resolved = loadDisplaySettings();
-            const patch: Partial<DisplaySettings> = {};
-            for (const key of Object.keys(synced.display) as (keyof DisplaySettings)[]) {
-                (patch as Record<string, unknown>)[key] = resolved[key];
-            }
-            useFlowStore.setState({
-                ...patch,
-                ...(patch.defaultGridZoom !== undefined ? { gridZoom: patch.defaultGridZoom } : {}),
-            });
-            saveDisplaySettings(displaySettingsOf(useFlowStore.getState()));
-        }
-        if (synced.keymapOverrides) useFlowStore.setState({ keymapOverrides: synced.keymapOverrides });
-    });
+/** The account-synced subset of the store's display and keymap settings. */
+export function accountSettingsOf(s: FlowState): FlowEditorAccountSettingsPayload {
+    return {
+        flowFont: s.flowFont,
+        defaultGridZoom: s.defaultGridZoom,
+        rfdVim: s.rfdVim,
+        insertPaste: s.insertPaste,
+        appendEdit: s.appendEdit,
+        scrollZoom: s.scrollZoom,
+        alignSpeeches: s.alignSpeeches,
+        tooltips: s.tooltips,
+        cardmirrorEnabled: s.cardmirrorEnabled,
+        cardmirrorTextType: s.cardmirrorTextType,
+        theme: s.theme,
+        affColor: s.affColor,
+        negColor: s.negColor,
+        keymapOverrides: s.keymapOverrides,
+    };
 }

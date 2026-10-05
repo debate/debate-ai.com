@@ -9,6 +9,7 @@
   "types": "./src/EbbFlowEmbed.tsx",
   "exports": {
     ".": "./src/EbbFlowEmbed.tsx",
+    "./account-settings": "./src/lib/config/accountSettings.ts",
     "./settings-panel": "./src/components/settings/EmbeddedSettingsPanel.tsx",
     "./store": "./src/lib/store/useFlowStore.ts",
     "./tools": "./src/tools.ts",
