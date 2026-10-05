@@ -44,6 +44,11 @@
  * @module state/toolRecordCollections
  */
 
+import {
+  decodeFlowEditorSettings,
+  encodeFlowEditorSettings,
+  redactFlowDisplaySettings,
+} from "./flow-editor-settings-codec";
 import { redactFileSource } from "./redact-file-source";
 import { createSingletonSettingsCodec } from "./singleton-settings-codec";
 
@@ -156,28 +161,25 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     key: "flowEditorDisplaySettings",
     storageKey: "ebb-display-settings",
     idField: "id",
-    // The `ebb` flow editor's display preferences (font, zoom, theme, side
-    // colors, collab toggles; `@debate/flow`'s `useFlowStore`). One object
-    // becomes one `settings` record. `flowsDir` is a desktop folder path and
-    // `contacts` is a peer list: both describe this device, so they stay local.
+    // The Ebb flow editor's display preferences — one object, wrapped as a
+    // single record by the codec. `redact` allowlists the fields that follow
+    // the user (font, zoom, editing toggles, theme, side colours) and keeps
+    // device-specific ones (flows folder, panel state, collab) on-device.
     label: "Flow Editor Display Settings",
     href: "/debate",
     section: "Flowing and writing",
-    codec: createSingletonSettingsCodec({
-      storageKey: "ebb-display-settings",
-      localOnlyKeys: ["flowsDir", "contacts"],
-    }),
+    redact: redactFlowDisplaySettings,
+    codec: { decode: decodeFlowEditorSettings, encode: encodeFlowEditorSettings },
   },
   {
-    key: "flowEditorKeymap",
+    key: "flowEditorKeymapSettings",
     storageKey: "ebb-keymap-settings",
     idField: "id",
-    // The flow editor's per-command chord overrides (`{ keymapOverrides }`),
-    // so a rebound key follows the debater to another browser.
+    // The Ebb flow editor's keybinding overrides (`{ keymapOverrides }`).
     label: "Flow Editor Keymap",
     href: "/debate",
     section: "Flowing and writing",
-    codec: createSingletonSettingsCodec({ storageKey: "ebb-keymap-settings" }),
+    codec: { decode: decodeFlowEditorSettings, encode: encodeFlowEditorSettings },
   },
   // — Practice —
   {

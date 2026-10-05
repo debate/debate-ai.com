@@ -63,6 +63,22 @@ Their `/api/settings` fields (`debateStyle`, `fontSize`, `wordLimitPresets`, …
 are all still stored and served; what changed is that nothing writes them from
 here any more.
 
+## Flow editor preferences follow your account
+
+The Ebb flow editor's display preferences (`Cmd/Ctrl+,`) and keybinding
+overrides sync to your account when you are signed in, through the same tool
+data sync as the other tools (`flowEditorDisplaySettings` and
+`flowEditorKeymapSettings` in `debate-data-sync`'s catalog). What follows you:
+flow font, default grid zoom, the editing toggles (insert-paste, append-edit,
+scroll-zoom, align speeches, tooltips, Vim in the RFD pane), CardMirror
+options, light/dark theme, side colours, and every keymap override.
+
+What stays on the device it was set on: the flows folder, whether the sidebar
+and RFD pane are open, and the live-collaboration switches, display name and
+contacts. A pull from the account never resets those. Engineering notes:
+`debate-data-sync`'s `state/flow-editor-settings-codec.ts` — a field joins the
+account only by being added to `SYNCED_FLOW_DISPLAY_FIELDS`.
+
 ## Saved-to-account marker on flow tabs
 
 Each flow tab in the sidebar's **Open Tabs** group shows a small cloud icon
@@ -104,6 +120,17 @@ The push is also limited to the rows that actually rendered — each one tagged
 category. A row this host hides (desktop-only card sharing, say) would
 otherwise be mirrored at its default and overwrite whatever the account holds
 for it.
+
+## Flow editor preferences follow your account
+
+Signed in, the Ebb flow editor's look-and-behaviour preferences (font, default
+grid zoom, theme, Aff/Neg colours, the Vim/insert-paste/append-edit/scroll-zoom/
+align-speeches/tooltip toggles, the CardMirror options and your custom
+keybindings) are saved to your account as `flowEditorSettings` and applied the
+next time you open a flow on any device. Anything specific to one device — the
+flows folder, collaboration name and relay toggles, contacts, and panel layout —
+stays in that browser. Signed out, nothing changes: settings stay in
+localStorage.
 
 ## Known gaps
 

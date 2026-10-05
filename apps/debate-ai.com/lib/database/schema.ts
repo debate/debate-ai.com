@@ -251,6 +251,13 @@ export const userSettings = sqliteTable("user_settings", {
   // "use the client default", same semantics as every other nullable column
   // here.
   editorPreferences: text("editor_preferences"),
+  // JSON-serialized subset of the ebb flow editor's display and keymap
+  // settings (see packages/debate-flow/src/lib/config/accountSettings.ts,
+  // which is both the validator and the read-back filter). Device-specific
+  // values (flowsDir, collab identity, contacts, panel layout) never sync.
+  // Null/absent means "use the client default", like every other nullable
+  // column here.
+  flowEditorSettings: text("flow_editor_settings"),
   // JSON-serialized arrays of News Stream item ids the signed-in user has
   // read/liked (see packages/debate-card-search/src/lib/news-stream-sync.ts
   // and TODO.md's Product Feature Idea "Community-Rated Summaries" /
