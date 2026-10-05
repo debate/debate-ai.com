@@ -51,6 +51,8 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   spellcheckDictionary: "id",
   flowHistory: "id",
   pinnedDebates: "roundId",
+  flowEditorDisplaySettings: "id",
+  flowEditorKeymap: "id",
   docsChatTabs: "id",
   fileSources: "id",
   coachConversation: "id",

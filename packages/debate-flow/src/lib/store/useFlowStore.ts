@@ -923,3 +923,26 @@ export const useFlowStore = create<FlowStore>()((set, get) => ({
         set({ renamingSheetId: id });
     },
 }));
+
+/**
+ * Re-reads the persisted display and keymap settings into the store when the
+ * account sync (or another tab) rewrites them, so an adopted setting shows up
+ * without a reload. The live `gridZoom` is left alone; only its default moves.
+ */
+export function syncSettingsFromStorage(key: string | null): void {
+    if (key === null || key === DISPLAY_SETTINGS_KEY) {
+        const { flowsDir: _flowsDir, ...display } = loadDisplaySettings();
+        useFlowStore.setState(display);
+    }
+    if (key === null || key === KEYMAP_SETTINGS_KEY) {
+        useFlowStore.setState({ keymapOverrides: loadKeymapOverrides() });
+    }
+}
+
+if (typeof window !== "undefined") {
+    window.addEventListener("storage", (e) => {
+        if (e.key === DISPLAY_SETTINGS_KEY || e.key === KEYMAP_SETTINGS_KEY) {
+            syncSettingsFromStorage(e.key);
+        }
+    });
+}
