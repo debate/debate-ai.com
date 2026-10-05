@@ -253,6 +253,10 @@ The video library at `/videos` shows the badge (and **Save now**) beside its
 search bar; `LecturesPage` takes it as a `headerActionsSlot` prop because
 `debate-videos` can't import the webview's component.
 
+The `/research/cards` search workspace has no `ToolPageHeader`, so its route
+(`routes/cards/page.tsx`) puts a slim strip with the badge (and **Save now**)
+above the workspace; `debate-search-evidence` can't import the webview's
+component, so the strip lives in the route rather than in `SearchInterface`.
+
 Known gap: the open-flow tabs and the `/doc` header are custom too and don't
-show the badge yet. The `/research/cards` search workspace, which has no
-`ToolPageHeader`, doesn't either.
+show the badge yet.
