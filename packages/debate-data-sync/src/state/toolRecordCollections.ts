@@ -300,6 +300,17 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     section: "Flowing and writing",
   },
   {
+    key: "flowEditorSettings",
+    storageKey: "flowEditorSettings",
+    idField: "id",
+    // The flow editor's display preferences and keymap overrides
+    // (`@debate/flow-ebb`'s `store/syncedSettings.ts`): two rows, `id`
+    // `display` and `keymap`. The device-local `flowsDir` never syncs.
+    label: "Flow Editor Settings",
+    href: "/debate",
+    section: "Flowing and writing",
+  },
+  {
     key: "pinnedDebates",
     storageKey: "pinnedDebates",
     idField: "roundId",

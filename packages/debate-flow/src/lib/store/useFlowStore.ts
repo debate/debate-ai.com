@@ -33,10 +33,9 @@ import { resolveThemeMode, type ThemeMode } from "../theme/mode";
 import { loadUpdateConfig, saveUpdateConfig } from "../update/settings";
 import type { UpdateConfig } from "../update/types";
 import {
-    buildSyncedSettingsRecords,
-    parseSyncedSettings,
-    SYNCED_SETTINGS_KEY,
-    type ParsedSyncedSettings,
+    FLOW_EDITOR_SETTINGS_KEY,
+    decodeFlowEditorSettings,
+    encodeFlowEditorSettings,
 } from "./syncedSettings";
 
 // --- State shape -------------------------------------------------------------
@@ -297,43 +296,35 @@ export function resolveZoom(value: unknown): number {
     return typeof value === "number" && Number.isFinite(value) ? clampZoom(value) : 1;
 }
 
-/** The account-synced records, or `{}` when absent/unreadable. */
-function readSyncedSettings(): ParsedSyncedSettings {
+/** The account-synced copy of the settings, which wins over the legacy keys once present. */
+function readSyncedSettings(): ReturnType<typeof decodeFlowEditorSettings> {
     try {
-        const raw = window.localStorage.getItem(SYNCED_SETTINGS_KEY);
-        return raw ? parseSyncedSettings(JSON.parse(raw)) : {};
+        const raw = window.localStorage.getItem(FLOW_EDITOR_SETTINGS_KEY);
+        return decodeFlowEditorSettings(raw ? JSON.parse(raw) : null);
     } catch {
-        return {};
+        return { display: null, keymapOverrides: null };
     }
 }
 
 /**
- * Refreshes the synced records from a changed half of the settings; the other
- * half is carried over from what is already stored. Skips the write when
- * nothing synced changed so the sync is not woken for device-only edits.
+ * Re-writes the synced record array after a save so the data-sync watcher
+ * pushes it. Each save passes the half it changed; the other half is carried
+ * over from what is already stored.
  */
-function writeSyncedSettings(
-    display?: Record<string, unknown>,
-    keymapOverrides?: Record<string, string>,
-): void {
-    const current = readSyncedSettings();
-    const next = JSON.stringify(
-        buildSyncedSettingsRecords(
-            display ?? current.display ?? loadDisplayRaw(),
-            keymapOverrides ?? current.keymapOverrides ?? {},
-        ),
-    );
-    if (next === window.localStorage.getItem(SYNCED_SETTINGS_KEY)) return;
-    window.localStorage.setItem(SYNCED_SETTINGS_KEY, next);
-}
-
-/** The raw locally stored display object, for seeding the first synced record. */
-function loadDisplayRaw(): Record<string, unknown> {
+function mirrorSyncedSettings(next: {
+    display?: Record<string, unknown>;
+    keymapOverrides?: Record<string, string>;
+}): void {
     try {
-        const raw = window.localStorage.getItem(DISPLAY_SETTINGS_KEY);
-        return raw ? (JSON.parse(raw) as Record<string, unknown>) : {};
+        const current = readSyncedSettings();
+        const display = next.display ?? current.display ?? {};
+        const keymapOverrides = next.keymapOverrides ?? current.keymapOverrides ?? {};
+        window.localStorage.setItem(
+            FLOW_EDITOR_SETTINGS_KEY,
+            JSON.stringify(encodeFlowEditorSettings(display, keymapOverrides)),
+        );
     } catch {
-        return {};
+        // localStorage unavailable - the legacy keys still hold the settings.
     }
 }
 
@@ -355,7 +346,7 @@ function saveKeymapOverrides(keymapOverrides: Record<string, string>): void {
     if (typeof window === "undefined") return;
     try {
         window.localStorage.setItem(KEYMAP_SETTINGS_KEY, JSON.stringify({ keymapOverrides }));
-        writeSyncedSettings(undefined, keymapOverrides);
+        mirrorSyncedSettings({ keymapOverrides });
     } catch {
         // localStorage unavailable (private mode, quota) - ignore.
     }
@@ -424,12 +415,15 @@ function loadDisplaySettings(): DisplaySettings {
     if (typeof window === "undefined") return fallback;
     try {
         const raw = window.localStorage.getItem(DISPLAY_SETTINGS_KEY);
-        const syncedDisplay = readSyncedSettings().display;
-        if (!raw && !syncedDisplay) return fallback;
-        const p = {
-            ...(raw ? (JSON.parse(raw) as Partial<DisplaySettings>) : {}),
-            ...readSyncedSettings().display,
-        } as Partial<DisplaySettings>;
+        const synced = readSyncedSettings().display;
+        if (!raw && !synced) return fallback;
+        // flowsDir is device-local, so it always comes from the legacy blob.
+        const local = (raw ? JSON.parse(raw) : {}) as Partial<DisplaySettings>;
+        const p: Partial<DisplaySettings> = {
+            ...local,
+            ...(synced as Partial<DisplaySettings> | null),
+            flowsDir: local.flowsDir,
+        };
         return {
             flowFont: resolveFontId(p.flowFont),
             defaultGridZoom: resolveZoom(p.defaultGridZoom),
@@ -463,7 +457,7 @@ function saveDisplaySettings(s: DisplaySettings): void {
     if (typeof window === "undefined") return;
     try {
         window.localStorage.setItem(DISPLAY_SETTINGS_KEY, JSON.stringify(s));
-        writeSyncedSettings(s as unknown as Record<string, unknown>);
+        mirrorSyncedSettings({ display: { ...s } });
     } catch {
         // ignore
     }
@@ -997,22 +991,13 @@ export const useFlowStore = create<FlowStore>()((set, get) => ({
     },
 }));
 
-/** The account-synced subset of the store's display and keymap settings. */
-export function accountSettingsOf(s: FlowState): FlowEditorAccountSettingsPayload {
-    return {
-        flowFont: s.flowFont,
-        defaultGridZoom: s.defaultGridZoom,
-        rfdVim: s.rfdVim,
-        insertPaste: s.insertPaste,
-        appendEdit: s.appendEdit,
-        scrollZoom: s.scrollZoom,
-        alignSpeeches: s.alignSpeeches,
-        tooltips: s.tooltips,
-        cardmirrorEnabled: s.cardmirrorEnabled,
-        cardmirrorTextType: s.cardmirrorTextType,
-        theme: s.theme,
-        affColor: s.affColor,
-        negColor: s.negColor,
-        keymapOverrides: s.keymapOverrides,
-    };
+// An account-sync hydration writes the synced settings key and fires a
+// `storage` event; fold it into the live store so another device's change
+// shows up without a reload.
+if (typeof window !== "undefined") {
+    window.addEventListener("storage", (event) => {
+        if (event.key !== FLOW_EDITOR_SETTINGS_KEY) return;
+        const display = loadDisplaySettings();
+        useFlowStore.setState({ ...display, keymapOverrides: loadKeymapOverrides() });
+    });
 }
