@@ -15,7 +15,7 @@ the sidebar column that hosts it on every tool route.
 
 ## What it shows
 
-Five destinations — Videos, Shared, Debate, Practice vs AI, Docs — plus a
+Five destinations — Videos, Shared, Debate, Practice vs AI, Research — plus a
 gear-icon Settings menu, each with a hover label and `Alt+1`…`Alt+5`
 shortcuts in dock order.
 
@@ -124,6 +124,14 @@ Choosing **Settings** in the dock's menu from `/doc` opens the agent's settings
 as a full page at `/settings/research`, with a tab per section; from anywhere
 else it opens `/settings`, which links on to each of those sections.
 
+The Research button was called **Docs** and lived at `/doc` until October
+2026. Old `/doc` and `/doc/<document>` links answer with a permanent (308)
+redirect to `/research/docs` and `/research/docs/<document>`, from the same
+table as the other category moves
+(`packages/debate-data-sync/src/routes/category-paths.ts`). It sits under
+`/research/docs` rather than `/research` because `/research` is the Research
+Workspace hub.
+
 That now includes `/practice/rankings` and `/practice/glossary`. Both are rows
 in the sidebar's own tree, and both used to answer with a bare page — no
 sidebar, and no fixed dock either, since every `/videos` path counts as
@@ -142,9 +150,9 @@ it renders fixed in the top-left corner on desktop and as a bottom bar on
 mobile. The two never show at once.
 
 Route matching is by path *prefix*, so a nested route under a tree entry
-(`/research/cards/awards` under `/research/cards`, a document route under `/doc`) keeps the
+(`/research/cards/awards` under `/research/cards`, a document route under `/research/docs`) keeps the
 sidebar rather than dropping to the fixed dock. The trailing `/` in the
-comparison keeps `/docs` from matching `/doc`.
+comparison keeps `/cardsy` from matching `/cards`.
 
 ## Search floats over the results
 
@@ -184,7 +192,7 @@ keys resize it.
 A dock sized to its own contents (`w-max`, the default `fluid: false` form)
 is wider than the sidebar at its default 300px. Hosted there it
 either forced the sidebar to scroll sideways or reached over its border onto
-the page beside it — which on `/reason-editor` and `/doc` is a CardMirror
+the page beside it — which on `/reason-editor` and `/research/docs` is a CardMirror
 editor.
 
 The sidebar-hosted form passes `fluid` to `Dock`, which:
@@ -241,12 +249,14 @@ Two rules hold for every h1:
   Resolution is longest-match over the links the tree actually renders:
   `/research/cards/library` opens Research, which lists it, and `/practice/versus-ai` opens
   Practice ("Debate Versus AI"). A dock destination in no tool section —
-  `/research/cards`, `/debate`, `/doc`, `/reason-editor` — matches nothing and opens
-  nothing. `/doc` and `/reason-editor` used to sit in Research as "Debate
-  Docs" and "Reason Editor"; they are the dock's own Docs button and a
-  top-level editor, so the rows only restated what the icons above them
-  already said. Both routes keep their sidebars — `/doc` through the dock
-  link list, `/reason-editor` through `EXTRA_SIDEBAR_HREFS`, which is what
+  `/research/cards`, `/debate`, `/reason-editor` — matches nothing and opens
+  nothing. The dock's Research button (`/research/docs`) opens Research, by
+  prefix on the Research Workspace link. `/research/docs` and `/reason-editor`
+  used to sit in Research as "Debate Docs" and "Reason Editor"; they are the
+  dock's own Research button and a top-level editor, so the rows only restated
+  what the icons above them already said. Both routes keep their sidebars —
+  `/research/docs` through the dock link list, `/reason-editor` through
+  `EXTRA_SIDEBAR_HREFS`, which is what
   gives the editor its file-navigation panels.
 
 `SidebarToolSection.href` outlives the heading link: `sidebar-routes.ts`
@@ -283,7 +293,7 @@ full-color artwork sitting among the grey glyphs — and now match the rest.
   its resting size.
 - `packages/debate-videos/test/sidebar-routes.test.ts` — that `/tools` is no
   longer a dock destination but is still a sidebar one, and the prefix
-  matching (including `/docs` not matching `/doc`).
+  matching (including `/cardsy` not matching `/cards`).
 - `packages/debate-videos/test/sidebar-video-links.test.tsx` — that the tree
   renders every `SIDEBAR_VIDEO_LINKS` entry and the mobile quick-link tiles
   render all but the glossary/statistics pair, which has no tile and is
@@ -366,7 +376,7 @@ To make a switch a render from cache, the dock fetches each destination's
 code ahead of the click. Hovering or focusing an icon prefetches that route,
 and once the current page has loaded the dock prefetches the others one at a
 time in idle time (`lib/nav/dock-idle-prefetch.ts`), so touch screens and
-quick clicks get the same head start. The idle pass skips `/doc`; hovering its icon still warms it. It also
+quick clicks get the same head start. The idle pass skips `/research/docs`; hovering its icon still warms it. It also
 does nothing on a data-saver or 2G connection.
 
 ## A bar across the top shows a page switch in progress

@@ -115,7 +115,7 @@ export const APP_DOCK_LINKS: SidebarToolLink[] = [
   { href: "/research/cards", title: "Shared", icon: Share2 },
   { href: "/debate", title: "Debate", icon: MessageSquare },
   { href: "/practice/versus-ai", title: "Practice vs AI", icon: Swords },
-  { href: "/doc", title: "Docs", icon: FileText },
+  { href: "/research/docs", title: "Research", icon: FileText },
 ];
 
 /**

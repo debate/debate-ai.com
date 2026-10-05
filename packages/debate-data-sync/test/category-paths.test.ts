@@ -13,6 +13,8 @@ describe("canonicalCategoryPathname", () => {
     ["/cards/progress-tracking", "/coaching/progress"],
     ["/topics", "/practice/statistics"],
     ["/research/topics", "/practice/statistics"],
+    ["/doc", "/research/docs"],
+    ["/doc/cp-answer-to-states", "/research/docs/cp-answer-to-states"],
     ["/practice-round", "/practice"],
     ["/practice-partners", "/practice/partners"],
     ["/versus-ai", "/practice/versus-ai"],
@@ -53,9 +55,11 @@ describe("canonicalCategoryPathname", () => {
     "/rankings",
     "/cardsx",
     "/docs/features/drills",
+    "/docs",
     "/api/tournaments",
     "/debate",
-    "/doc",
+    "/documents",
+    "/research/docs",
   ])("leaves %s alone", (path) => {
     expect(canonicalCategoryPathname(path)).toBeNull()
   })

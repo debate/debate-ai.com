@@ -33,7 +33,7 @@ import { SIDEBAR_TOOL_SECTIONS, VIDEO_REFERENCE_LINKS } from "@debate/videos";
  * account-bound as anything in it.
  */
 const WORKSPACE_PREFIXES: readonly string[] = [
-  "/doc",
+  "/research/docs",
   "/debate",
   "/reason-editor",
   "/outline",

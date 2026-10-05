@@ -38,7 +38,7 @@ const redactedWidgets: ToolRecordCollection = {
   storageKey: "test-redacted-widgets",
   idField: "id",
   label: "Test Redacted Widgets",
-  href: "/doc",
+  href: "/research/docs",
   section: "Flowing and writing",
   redact: (record) => {
     const { secret: _secret, ...rest } = record as Record<string, unknown>;

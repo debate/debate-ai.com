@@ -1,8 +1,8 @@
 import ResearchAgentEmbed from "./ResearchAgentEmbed"
 
 /**
- * The research workspace's page frame, shared by both of its routes: `/doc`,
- * and `/doc/<a document name>`. One screen with two addresses, so the frame
+ * The research workspace's page frame, shared by both of its routes: `/research/docs`,
+ * and `/research/docs/<a document name>`. One screen with two addresses, so the frame
  * lives here rather than being written out twice.
  *
  * The page is the research agent (`research-agent-ui`'s workspace), bundled

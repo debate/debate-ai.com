@@ -273,7 +273,7 @@ describe("the synced collection catalog", () => {
     expect(findToolRecordCollection("docsChatTabs")).toMatchObject({
       storageKey: "qwksearch-open-chat-tabs",
       idField: "id",
-      href: "/doc",
+      href: "/research/docs",
     });
   });
 
@@ -287,7 +287,7 @@ describe("the synced collection catalog", () => {
     expect(collection).toMatchObject({
       storageKey: "REASON-file-sources",
       idField: "id",
-      href: "/doc",
+      href: "/research/docs",
     });
     expect(typeof collection?.redact).toBe("function");
     expect(
