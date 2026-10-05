@@ -1,5 +1,6 @@
 import { Suspense } from "react"
 import { SearchInterface } from "@debate/research-evidence"
+import { CardsSearchStatusLine } from "../../components/cards/CardsSearchStatusLine"
 
 /**
  * The CARDS search screen.
@@ -19,6 +20,7 @@ import { SearchInterface } from "@debate/research-evidence"
 export default function SearchPage() {
   return (
     <div className="h-dvh flex flex-col overflow-hidden pt-14 lg:pt-0 pb-20 lg:pb-0">
+      <CardsSearchStatusLine />
       <Suspense>
         <SearchInterface />
       </Suspense>
