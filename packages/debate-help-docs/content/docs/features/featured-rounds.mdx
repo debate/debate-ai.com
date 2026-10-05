@@ -26,6 +26,16 @@ then yours like any other: flow it, edit the docs, pin it. Clicking the card
 again reopens that same copy rather than building a new one; delete the
 round's flow to start fresh.
 
+## Beside the video
+
+The round's video in the library,
+[2015 NDT Finals - Northwestern MV vs Michigan AP](https://www.youtube.com/watch?v=zoKowWVQ1wE),
+gets a **Speech docs** tab in the column beside the player, opened first. It
+shows one speech's doc at a time: click a speech (1AC to 2AR) or use the
+arrows to flip through them while you watch. The 2AR button is greyed out
+because there's no doc for it. **Open in debate view** goes to the full round
+with timers.
+
 ## How it works
 
 Featured rounds are a built-in catalog, `FEATURED_ROUNDS` in
@@ -41,6 +51,15 @@ DebateStartPanel (Featured card) → DebateFlowPage.handleOpenFeatured
   → buildFeaturedRound(): newFlow() in the round's format, speechDocs filled
   → createRound() + setFlows(); settings.debateStyle set to the format
 ```
+
+A catalog entry with a `videoId` also adds the watch page tab: both watch
+routes (`app/videos/_watch/video-route-page.tsx` and the webview's
+`VideoWatchRoute`) pass `featuredSpeechDocsTabs(videoId)` from
+`debate-round` to `VideoWatchPage`'s `sideTabs` prop, which `WatchSidePanel`
+shows ahead of its own tabs. `FeaturedSpeechDocsPanel` loads the docs with the
+same `loadFeaturedSpeechDocs()` and renders the HTML read-only with its own
+`pmd-*` card styles, so no editor is booted. `debate-videos` only knows about
+generic host tabs, not featured rounds.
 
 Opening `/debate/<featured slug>` with no local copy builds it the same way,
 so the link can be shared. A doc that fails to load is named in a notice under

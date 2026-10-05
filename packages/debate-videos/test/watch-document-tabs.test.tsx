@@ -137,3 +137,44 @@ describe("WatchSidePanel documents", () => {
     expect(container.querySelector<HTMLInputElement>('input[type="checkbox"]')?.checked).toBe(false);
   });
 });
+
+describe("WatchSidePanel host tabs", () => {
+  let container: HTMLDivElement;
+  let root: Root;
+
+  beforeEach(() => {
+    container = document.createElement("div");
+    document.body.appendChild(container);
+    root = createRoot(container);
+  });
+
+  afterEach(() => {
+    act(() => root.unmount());
+    container.remove();
+  });
+
+  it("shows a host tab first, opened by default, ahead of the documents", () => {
+    act(() => {
+      root.render(
+        createElement(WatchSidePanel, {
+          sentences: [],
+          captionsLoading: false,
+          documents: [summary],
+          currentTime: 0,
+          onSeek: () => {},
+          extraTabs: [
+            { id: "docs", label: "Speech docs", hint: "7 speeches", content: createElement("p", { id: "host" }, "host body") },
+          ],
+        }),
+      );
+    });
+    const labels = Array.from(container.querySelectorAll('[role="tab"]')).map(
+      (tab) => tab.querySelector("span")?.textContent,
+    );
+    expect(labels).toEqual(["Speech docs", "Summary"]);
+    expect(container.querySelector("#host")?.textContent).toBe("host body");
+
+    act(() => (container.querySelectorAll('[role="tab"]')[1] as HTMLButtonElement).click());
+    expect(container.querySelector("#host")).toBeNull();
+  });
+});

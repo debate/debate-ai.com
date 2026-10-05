@@ -12,7 +12,9 @@
  * like any other; opening the card again reopens it instead of rebuilding.
  *
  * Every round gets a fixed slug, so `/debate/<slug>` is a shareable link that
- * builds the round for a reader who has never opened it.
+ * builds the round for a reader who has never opened it. A round with a
+ * `videoId` also shows its docs beside that video on the watch page
+ * (`panels/FeaturedSpeechDocsPanel`), one speech at a time.
  *
  * @module round/featured-rounds
  */
@@ -47,6 +49,8 @@ export interface FeaturedRound {
   winner?: "aff" | "neg"
   /** Round slug, so `/debate/<slug>` opens it. */
   slug: string
+  /** YouTube id of the round's video in the library, whose watch page shows these docs. */
+  videoId?: string
   /** Speeches that have a published doc, in speaking order. */
   speechDocs: FeaturedSpeechDoc[]
 }
@@ -70,6 +74,7 @@ export const FEATURED_ROUNDS: readonly FeaturedRound[] = [
     schools: { aff: ["Northwestern MV", "Northwestern MV"], neg: ["Michigan AP", "Michigan AP"] },
     winner: "aff",
     slug: "2015-ndt/northwestern-mv-michigan-ap",
+    videoId: "zoKowWVQ1wE",
     speechDocs: [
       { speech: "1AC", topicStarterId: 48 },
       { speech: "1NC", topicStarterId: 46 },
@@ -85,6 +90,12 @@ export const FEATURED_ROUNDS: readonly FeaturedRound[] = [
 /** The featured round whose slug is `slug`, if any. */
 export function featuredRoundBySlug(slug: string): FeaturedRound | undefined {
   return FEATURED_ROUNDS.find((featured) => featured.slug === slug)
+}
+
+/** The featured round recorded in the video `videoId`, if any. */
+export function featuredRoundForVideo(videoId: string | null | undefined): FeaturedRound | undefined {
+  if (!videoId) return undefined
+  return FEATURED_ROUNDS.find((featured) => featured.videoId === videoId)
 }
 
 /**
