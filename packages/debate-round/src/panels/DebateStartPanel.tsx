@@ -19,7 +19,7 @@
  * @module panels/DebateStartPanel
  */
 
-import { useMemo } from "react"
+import { useMemo, type ReactNode } from "react"
 import { FileText, History as HistoryIcon, Pin, PinOff, Plus, Star, Users } from "lucide-react"
 import { Button } from "../ui/primitives/button"
 import { Badge } from "../ui/primitives/badge"
@@ -51,6 +51,11 @@ interface DebateStartPanelProps {
   onCreateRound: () => void
   /** Opens the full round/history dialog. */
   onOpenHistory: () => void
+  /**
+   * Extra header controls rendered before the action buttons — the host app
+   * passes its account-sync badge here, since this package can't import it.
+   */
+  headerActions?: ReactNode
 }
 
 /** "Aff vs Neg" line for a round card, or "" when the round names no debaters. */
@@ -90,6 +95,7 @@ export function DebateStartPanel({
   onCreateFlow,
   onCreateRound,
   onOpenHistory,
+  headerActions,
 }: DebateStartPanelProps) {
   const pinnedRounds = useMemo(() => orderPinnedRounds(rounds, pinnedIds), [rounds, pinnedIds])
   const pinnedSet = useMemo(() => new Set(pinnedIds), [pinnedIds])
@@ -107,6 +113,7 @@ export function DebateStartPanel({
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
+            {headerActions}
             <Button size="sm" onClick={onCreateFlow} className="gap-1.5">
               <Plus className="h-3.5 w-3.5" />
               New flow
