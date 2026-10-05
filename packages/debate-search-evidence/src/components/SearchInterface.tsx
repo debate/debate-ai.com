@@ -35,7 +35,7 @@ export function SearchInterface() {
   const ai = useAiAnalysis(search.selectedResult)
 
   /** Card content view mode: full text, highlighted, or underlined. */
-  const [viewMode, setViewMode] = useState<"read" | "highlight" | "underline">("read")
+  const [viewMode, setViewMode] = useState<"read" | "highlight" | "underline">("highlight")
 
   /** Mobile overlay visibility flags. */
   const [showSearchSidebar, setShowSearchSidebar] = useState(false)
