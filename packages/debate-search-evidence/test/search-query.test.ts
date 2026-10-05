@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  DEFAULT_SEARCH_FILTERS,
   EMPTY_FILTERS,
   SEARCH_DEBOUNCE_MS,
   buildSearchParams,
@@ -127,5 +128,12 @@ describe("buildCardsSearchHref", () => {
     const { searchTerm, filters } = readCardsSearchParams(new URL(href, "https://x").searchParams);
     expect(searchTerm).toBe("Water");
     expect(filters).toEqual({ ...EMPTY_FILTERS, year: "2023", event: "NDT" });
+  });
+});
+
+describe("DEFAULT_SEARCH_FILTERS", () => {
+  it("opens on the Quotes toggle and nothing else", () => {
+    expect(DEFAULT_SEARCH_FILTERS).toEqual({ ...EMPTY_FILTERS, searchQuotes: true });
+    expect(buildSearchParams({ searchTerm: "", sortBy: "_text_match:desc", filters: DEFAULT_SEARCH_FILTERS }).get("searchQuotes")).toBe("1");
   });
 });

@@ -16,7 +16,7 @@
 
 import { type SQL, and, asc, desc, or, sql } from "drizzle-orm";
 import type { SQLiteColumn } from "drizzle-orm/sqlite-core";
-import { debateCards } from "@/lib/database/schema";
+import { debateCards, type CaselistDocumentRow, type YoutubeRoundVideo } from "@/lib/database/schema";
 
 /**
  * Escapes the wildcards `LIKE` would otherwise interpret in user input.
@@ -259,6 +259,108 @@ export function mapDebateCardToSearchResult(card: any): any {
     round: "",
     event: card.event || "CX",
   };
+}
+
+/** What a search lists: cards, outline documents, or round videos. */
+export type SearchKind = "quotes" | "outlines" | "debates";
+
+/**
+ * Reads which kind of upload the sidebar's Quotes / Outlines / Debates toggle
+ * asked for. The sidebar sends at most one of the three flags; `null` means no
+ * toggle is on and the request is an ordinary card search.
+ *
+ * @param params - The request's query string.
+ */
+export function readSearchKind(params: URLSearchParams): SearchKind | null {
+  if (params.get("searchOutlines") === "1") return "outlines";
+  if (params.get("searchRoundSpeeches") === "1") return "debates";
+  if (params.get("searchQuotes") === "1") return "quotes";
+  return null;
+}
+
+/** Epoch-seconds or Date column value as a `YYYY-MM-DD` day, or `""`. */
+function uploadDay(value: Date | number | null | undefined): string {
+  if (value == null) return "";
+  const date = value instanceof Date ? value : new Date(value * 1000);
+  return Number.isNaN(date.getTime()) ? "" : date.toISOString().slice(0, 10);
+}
+
+/**
+ * Projects an outline document (a caselist file) into the search result shape,
+ * so the same list and viewer that show quotes show it.
+ *
+ * @param doc - A `caselist_documents` row.
+ */
+export function mapCaselistDocumentToSearchResult(doc: CaselistDocumentRow): any {
+  const owner = [doc.school, doc.team].filter(Boolean).join(" ");
+  const uploaded = uploadDay(doc.ingestedAt);
+  return {
+    id: doc.id,
+    category: "Outline",
+    researchField: doc.caselistLabel,
+    argBlock: doc.archivePath,
+    summary: `${doc.cardCount} cards · ${doc.caselistLabel}${uploaded ? ` · uploaded ${uploaded}` : ""}`,
+    cite_short: owner,
+    cite: `${owner} — ${doc.fileName}`,
+    readCount: 0,
+    highlightLength: 0,
+    textLength: doc.html.length,
+    word_count: Math.round(doc.html.replace(/<[^>]*>/g, " ").split(/\s+/).filter(Boolean).length),
+    html: doc.html,
+    tag: doc.fileName,
+    year: "",
+    page: "",
+    school: doc.school,
+    team: doc.team ?? "",
+    side: doc.side ?? "",
+    tournament: doc.caselistLabel,
+    round: "",
+    event: "",
+  };
+}
+
+/**
+ * Projects a round video into the search result shape. The viewer shows its
+ * `html`, which carries the video link and description.
+ *
+ * @param video - A `youtube_round_videos` row.
+ */
+export function mapRoundVideoToSearchResult(video: YoutubeRoundVideo): any {
+  const url = `https://www.youtube.com/watch?v=${video.id}`;
+  const teams = [video.aff, video.neg].filter(Boolean).join(" vs ");
+  const escape = (text: string) => text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  return {
+    id: video.id,
+    category: "Debate",
+    researchField: video.channel,
+    argBlock: video.tournament || video.channel,
+    summary: [teams, video.tournament, video.roundLevel].filter(Boolean).join(" · ") || video.channel,
+    cite_short: video.channel,
+    cite: `${video.channel}, ${video.publishedAt}`,
+    readCount: video.views,
+    highlightLength: 0,
+    textLength: video.description.length,
+    word_count: 0,
+    html: `<p><a href="${url}" target="_blank" rel="noopener noreferrer">Watch on YouTube</a></p><p>${escape(video.description).replace(/\n/g, "<br>")}</p>`,
+    tag: video.title,
+    year: video.publishedAt.slice(2, 4),
+    page: "",
+    school: "",
+    team: "",
+    side: "",
+    tournament: video.tournament ?? "",
+    round: video.roundLevel ?? "",
+    event: "",
+  };
+}
+
+/**
+ * Newest-imported-first ordering for the Quotes toggle. Imports happen in
+ * bulk, so many rows share an `importedAt`; `id` breaks the tie so the list
+ * is stable between requests.
+ */
+export function buildRecentCardOrderBy(): SQL[] {
+  return [desc(debateCards.importedAt), desc(debateCards.id)];
 }
 
 /**
