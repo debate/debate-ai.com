@@ -4,31 +4,38 @@ title: "Tournaments"
 
 # Tournaments
 
-Tournament invitations, pairings and results, without leaving the app. There is
-one entry for all of it under **Practice** in the sidebar: **Tournaments**
-(`/practice/tournaments`), with Tabroom's own site available from a button at
-the top of that page.
+Tournament invitations, pairings and results, without leaving the app. Two rows
+under **Prep & Scout** in the sidebar cover it:
+
+- **Tournaments** (`/practice/tournaments`) is this app's own view, built with
+  the site's theme: live Tabroom tournaments plus the ones hosted here.
+- **Tabroom** (`/practice/tabroom`) frames beta.tabroom.com itself.
 
 ## What you can see
 
-- **Upcoming tournaments**, searchable by name, state, circuit or event. A
-  **Host Tournament** button opens the creation form, and a **Tabroom** button
-  frames beta.tabroom.com over the list.
+- **Upcoming tournaments**, searchable by name, state, circuit or event.
+  Tournaments hosted on this site, marked **Hosted here**, come first, then
+  live Tabroom's. **Host Tournament** opens the creation form and **Demo
+  admin** opens the demo tournament's admin view.
 - **Invite**: dates, location, registration deadline, events with entry counts
-  and fees, posted documents, contacts and the tournament's info pages.
+  and fees, posted documents (each opens the file), contacts and the
+  tournament's info pages.
 - **Pairings**: every published round, grouped by event. Opening a round shows
   each room's entries (sides or speaker order) and judges.
-- **Results**: every published result set, with places, entries and schools.
-- **Tabroom**: when viewing a tournament, a tab in the nav opens Tabroom's own
-  page for that tournament in a frame, so you can register or enter ballots
-  without leaving the app.
+- **Results**: every published result set, with places, entries, schools and
+  the tiebreak columns Tabroom reports (wins, points, ranks…).
+- **Tabroom**: on a live Tabroom tournament, the last tab opens Tabroom's own
+  page for it in a frame, so you can register or enter ballots there.
+- **Admin**: on a tournament hosted here, the last tab is its admin view
+  instead (see below).
 
 ## Hosting your own tournament
 
 **Host Tournament** on the upcoming page (or `/practice/tournaments/host`)
-creates the tournament in this site's own API — the vendored Tabroom tables in
-the app's database — rather than sending you to Tabroom first. Give it a name,
-dates, where it is held, and pick the formats it runs:
+creates the tournament in this site's own hosting API (the Tabroom tables the
+`debate-tournaments` package runs in the app's database, at `/api/tabroom`).
+Nothing is created on Tabroom. You need to be signed in. Give it a name, dates,
+where it is held, and pick the formats it runs:
 
 - **Virtual** — fully remote, rounds run online via video.
 - **In-Person** — at a single physical venue.
@@ -49,13 +56,30 @@ Per style you choose the division it runs in (Open, Novice or JV), how entries
 are written in pairings, a cap on entries per school, an entry fee, and a note
 that appears on the public invite.
 
+## The admin view
+
+Every hosted tournament has an admin web view at
+`/practice/tournaments/<id>/admin`, open to its owners and admins. It shows the
+events with their entry counts, the whole schedule (including rounds that are
+not published yet), every entry and its status, schools, judges, rooms and
+result sets, each linked to its public page.
+
+### The demo tournament
+
+The **Bay Area Invitational** is a demo tournament anyone can browse as its
+admin, signed in or not, under the mock username **demo.admin**. It is running
+now, with LD and PF entries, published pairings, an unpublished third round and
+results. **Demo admin** on the upcoming page and **Try the demo admin** on the
+host page both open it. The site loads it by itself when it is missing or over,
+so its dates always stay current.
+
 ## Good to know
 
 - Pairings and results are refreshed at most once a minute, so reload during a
   tournament to see the latest round.
 - You are recorded as the tournament's owner, and registered in every format it
-  runs, so the first pairing has somebody in it. Everything after creation —
-  schools, rooms, rounds and ballots — is still done in Tabroom, from the framed
-  view.
-- Signing in to Tabroom happens on Tabroom, inside the framed view; the
-  **Tournaments** view shows public information only.
+  runs, so the first pairing has somebody in it.
+- The admin view reads the tournament; adding schools, rooms, rounds and
+  ballots from it is not built yet.
+- Signing in to Tabroom happens on Tabroom, inside the **Tabroom** row's frame;
+  live Tabroom tournaments show public information only.

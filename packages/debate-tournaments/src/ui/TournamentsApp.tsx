@@ -10,7 +10,8 @@
  * ```
  *
  * It resolves `segments` with `matchTournamentRoute` and renders that page;
- * data comes from the tournaments API mounted at `apiBase`.
+ * data comes from the tournaments API mounted at `apiBase`, plus live Tabroom
+ * through `liveApiBase` when given (see `createTournamentsClient`).
  */
 
 import { useMemo, type ReactNode } from "react";
@@ -21,6 +22,7 @@ import { TournamentNav, type TournamentTab } from "./TournamentNav";
 import { UpcomingTournamentsPage } from "./pages/UpcomingTournamentsPage";
 import { HostTournamentPage } from "./pages/HostTournamentPage";
 import { TabroomTournamentPage } from "./pages/TabroomTournamentPage";
+import { TournamentAdminPage } from "./pages/TournamentAdminPage";
 import { TournamentInvitePage } from "./pages/TournamentInvitePage";
 import { RoundsPage } from "./pages/RoundsPage";
 import { RoundPage } from "./pages/RoundPage";
@@ -32,16 +34,28 @@ export interface TournamentsAppProps {
   segments?: readonly string[];
   /** Where the UI is mounted (default `/practice/tournaments`). */
   basePath?: string;
-  /** Where the API handler is mounted (default `/api/tournaments`). */
+  /** Where the API handler is mounted (default `/api/tournaments`). Hosting and the admin view use it. */
   apiBase?: string;
+  /** A read-only proxy to live Tabroom (e.g. `/api/tabroom-beta`), merged into the list when set. */
+  liveApiBase?: string;
   /** The host's client-side link component (e.g. `next/link`); defaults to `<a>`. */
   Link?: LinkLike;
 }
 
-export function TournamentsApp({ segments = [], basePath = "/practice/tournaments", apiBase = "/api/tournaments", Link = defaultLink }: TournamentsAppProps) {
+export function TournamentsApp({
+  segments = [],
+  basePath = "/practice/tournaments",
+  apiBase = "/api/tournaments",
+  liveApiBase,
+  Link = defaultLink,
+}: TournamentsAppProps) {
   const value = useMemo(
-    () => ({ client: createTournamentsClient(apiBase), hrefs: tournamentHrefs(basePath), Link }),
-    [apiBase, basePath, Link],
+    () => ({
+      client: createTournamentsClient(apiBase, undefined, { liveApiBase }),
+      hrefs: tournamentHrefs(basePath),
+      Link,
+    }),
+    [apiBase, liveApiBase, basePath, Link],
   );
   const route = matchTournamentRoute(segments);
   return (
@@ -66,6 +80,10 @@ function RouteView({ route }: { route: TournamentRoute }) {
       return <UpcomingTournamentsPage />;
     case "host":
       return <HostTournamentPage />;
+    case "admin":
+      // Read from the hosting API directly, so a tournament that is not
+      // published (or not public) still opens for its admins.
+      return <TournamentAdminPage tournId={route.tournId} />;
     case "notFound":
       return <Empty>That tournament page does not exist.</Empty>;
     default:
@@ -109,7 +127,7 @@ function TournamentShell({
       <Loaded state={state}>
         {(invite) => (
           <>
-            <TournamentNav tournId={tournId} active={tab} name={invite.name} />
+            <TournamentNav tournId={tournId} active={tab} name={invite.name} source={client.sourceOf(tournId)} />
             {children(invite)}
           </>
         )}

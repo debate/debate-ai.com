@@ -22,6 +22,9 @@ export function ResultSetView({ set }: { set: ResultSet | undefined }) {
   // sends no `results` key at all for them and there is no table to render.
   const bracketed = set.tag === "bracket" || set.tag === "table";
   const results = bracketed ? undefined : (set.results ?? []);
+  // Tabroom sends each tiebreak column once in `headers`, keyed like the
+  // `values` on every row.
+  const columns = Object.entries(set.headers ?? {}).sort(([a], [b]) => Number(a) - Number(b));
   return (
     <div className="space-y-2">
       <h2 className="text-lg font-semibold">
@@ -40,6 +43,11 @@ export function ResultSetView({ set }: { set: ResultSet | undefined }) {
                 <TableHead>Place</TableHead>
                 <TableHead>Entry</TableHead>
                 <TableHead>School</TableHead>
+                {columns.map(([key, column]) => (
+                  <TableHead key={key} className="text-right" title={column.description ?? undefined}>
+                    {column.tag || column.description}
+                  </TableHead>
+                ))}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -53,6 +61,11 @@ export function ResultSetView({ set }: { set: ResultSet | undefined }) {
                     )}
                   </TableCell>
                   <TableCell>{row.School?.name}</TableCell>
+                  {columns.map(([key]) => (
+                    <TableCell key={key} className="text-right tabular-nums">
+                      {formatValue(row.values?.[key])}
+                    </TableCell>
+                  ))}
                 </TableRow>
               ))}
             </TableBody>
@@ -62,3 +75,5 @@ export function ResultSetView({ set }: { set: ResultSet | undefined }) {
     </div>
   );
 }
+
+const formatValue = (value: unknown): string => (value === null || value === undefined ? "" : String(value));

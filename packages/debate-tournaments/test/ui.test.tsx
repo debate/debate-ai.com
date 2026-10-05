@@ -43,6 +43,22 @@ describe("ResultSetView", () => {
     expect(html).toContain("State");
   });
 
+  it("adds Tabroom's tiebreak columns from the set's headers", () => {
+    const html = renderToString(
+      <ResultSetView
+        set={{
+          id: 1,
+          tag: "final",
+          label: "Final Places",
+          headers: { "2": { tag: "Pts", description: "Speaker points" }, "1": { tag: "W", description: "Wins" } },
+          results: [{ place: "1st", Entry: { id: 7, code: "AAA", name: null }, values: { "1": "5", "2": "57.6" } }],
+        }}
+      />,
+    );
+    expect(html.indexOf(">W<")).toBeLessThan(html.indexOf(">Pts<"));
+    expect(html).toContain("57.6");
+  });
+
   it("notes a missing result set", () => {
     expect(renderToString(<ResultSetView set={undefined} />)).toContain("not found");
   });
@@ -56,6 +72,79 @@ describe("createTournamentsClient", () => {
       return new Response(JSON.stringify({ detail: "No such tournament found" }), { status: 404 });
     });
     await expect(client.round(3, "PF", "2")).rejects.toThrow("No such tournament found");
-    expect(calls).toEqual(["/api/t/pages/invite/3/PF/2"]);
+    // Live Tabroom serves a round only under `/results`, so a 404 tries that too.
+    expect(calls).toEqual(["/api/t/pages/invite/3/PF/2", "/api/t/pages/invite/3/PF/2/results"]);
+  });
+});
+
+describe("createTournamentsClient with live Tabroom", () => {
+  const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status });
+  const row = (tournId: number, name: string) => ({ id: `${tournId}-0`, tournId, name, webname: null, location: null, state: null, country: null, start: "", end: "" });
+
+  function fakeApis(routes: Record<string, unknown>) {
+    const calls: string[] = [];
+    const client = createTournamentsClient(
+      "/api/tabroom",
+      async (url) => {
+        calls.push(String(url));
+        const body = routes[String(url)];
+        return body === undefined ? json({ detail: "Not found" }, 404) : json(body);
+      },
+      { liveApiBase: "/api/tabroom-beta" },
+    );
+    return { client, calls };
+  }
+
+  it("lists hosted tournaments first, then live ones, each tagged with its source", async () => {
+    const { client, calls } = fakeApis({
+      "/api/tabroom/host/demo": { tournId: 90001 },
+      "/api/tabroom/pages/invite/upcoming": [row(90001, "Bay Area Invitational")],
+      "/api/tabroom-beta/pages/invite/upcoming": [row(38436, "Yale Invitational"), row(90001, "Clash")],
+    });
+    const rows = await client.upcoming();
+    expect(rows.map((r) => [r.tournId, r.source])).toEqual([
+      [90001, "hosted"],
+      [38436, "tabroom"],
+    ]);
+    expect(calls).toContain("/api/tabroom/host/demo");
+    expect(client.sourceOf(38436)).toBe("tabroom");
+  });
+
+  it("still lists live tournaments when the hosted API is down", async () => {
+    const { client } = fakeApis({ "/api/tabroom-beta/pages/invite/upcoming": [row(38436, "Yale Invitational")] });
+    expect((await client.upcoming()).map((r) => r.tournId)).toEqual([38436]);
+  });
+
+  it("reads a tournament this site does not host from live Tabroom", async () => {
+    const { client, calls } = fakeApis({
+      "/api/tabroom-beta/rest/tourns/38436/invite": { id: 38436, name: "Yale Invitational" },
+      "/api/tabroom-beta/rest/tourns/38436/results": {},
+    });
+    expect((await client.invite(38436)).name).toBe("Yale Invitational");
+    await client.results(38436);
+    expect(calls).toEqual([
+      "/api/tabroom/rest/tourns/38436/invite",
+      "/api/tabroom-beta/rest/tourns/38436/invite",
+      "/api/tabroom-beta/rest/tourns/38436/results",
+    ]);
+    expect(client.sourceOf(38436)).toBe("tabroom");
+  });
+
+  it("prefers the hosted copy of a tournament", async () => {
+    const { client, calls } = fakeApis({
+      "/api/tabroom/rest/tourns/90001/invite": { id: 90001, name: "Bay Area Invitational" },
+      "/api/tabroom/rest/tourns/90001/rounds": [],
+    });
+    await client.rounds(90001);
+    expect(calls).toEqual(["/api/tabroom/rest/tourns/90001/invite", "/api/tabroom/rest/tourns/90001/rounds"]);
+    expect(client.sourceOf(90001)).toBe("hosted");
+  });
+
+  it("links posted documents to Tabroom's file store", () => {
+    const { client } = fakeApis({});
+    expect(client.fileUrl(38436, { id: 71154, filename: "HST2026W9.pdf" })).toBe(
+      "https://s3.amazonaws.com/tabroom-files/tourns/38436/postings/71154/HST2026W9.pdf",
+    );
+    expect(client.fileUrl(38436, { id: 1, filename: null })).toBeNull();
   });
 });

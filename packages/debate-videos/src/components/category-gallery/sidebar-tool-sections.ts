@@ -171,10 +171,10 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/practice/judges", title: "Judge Profiles", icon: Gavel },
       { href: "/practice/prep-notes", title: "Prep Notes", icon: StickyNote },
       { href: "/practice/forums", title: "Latest News", icon: Rss },
-      // Tabroom itself is not a row of its own: the tournaments page frames
-      // beta.tabroom.com from a button at the top of the list, so one entry
-      // covers both.
+      // Tournaments is this app's own view (live Tabroom plus the tournaments
+      // hosted here); Tabroom frames beta.tabroom.com itself.
       { href: "/practice/tournaments", title: "Tournaments", icon: Trophy },
+      { href: "/practice/tabroom", title: "Tabroom", icon: CalendarDays },
     ],
   },
   {

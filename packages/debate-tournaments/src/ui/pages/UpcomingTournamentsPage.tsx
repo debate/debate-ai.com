@@ -1,24 +1,29 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CalendarDays, MapPin, Plus, Search } from "lucide-react";
+import { CalendarDays, MapPin, Plus, Search, ShieldCheck } from "lucide-react";
+import { DEMO_TOURN_ID } from "../../host/demo-account";
 import { Badge, Card, Input, buttonVariants } from "../primitives";
-import { TabroomOverlay } from "../TabroomOverlay";
 import { Empty, Loaded, useApi, useTournaments } from "../shared";
 
-/** Upcoming tournaments, as on tabroom.com's front page (`/pages/invite/upcoming`). */
+/**
+ * Upcoming tournaments, as on tabroom.com's front page (`/pages/invite/upcoming`):
+ * the ones hosted on this site (the demo among them) first, then live Tabroom's.
+ * Tabroom's own site has its own sidebar row, so it is not framed from here.
+ */
 export function UpcomingTournamentsPage() {
   const { client, hrefs, Link } = useTournaments();
   const state = useApi("upcoming", (signal) => client.upcoming(signal));
   const [query, setQuery] = useState("");
-  const [tabroomOpen, setTabroomOpen] = useState(false);
 
   return (
     <div className="mx-auto max-w-5xl space-y-4 p-4 md:p-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Tournaments</h1>
-          <p className="text-sm text-muted-foreground">Invitations, pairings and results, powered by Tabroom.</p>
+          <p className="text-sm text-muted-foreground">
+            Invitations, pairings and results from Tabroom, plus the tournaments hosted here.
+          </p>
         </div>
         <div className="flex items-center gap-3">
           <label className="relative w-full max-w-xs">
@@ -31,11 +36,10 @@ export function UpcomingTournamentsPage() {
               className="pl-8"
             />
           </label>
-          {/* Tabroom is framed here rather than given a sidebar row of its own. */}
-          <button type="button" onClick={() => setTabroomOpen(true)} className={buttonVariants({ variant: "outline", size: "sm" })}>
-            <CalendarDays aria-hidden />
-            Tabroom
-          </button>
+          <Link href={hrefs.admin(DEMO_TOURN_ID)} className={buttonVariants({ variant: "outline", size: "sm" })}>
+            <ShieldCheck aria-hidden />
+            Demo admin
+          </Link>
           <Link href={hrefs.host()} className={buttonVariants({ size: "sm" })}>
             <Plus className="mr-1.5 h-4 w-4" />
             Host Tournament
@@ -45,7 +49,6 @@ export function UpcomingTournamentsPage() {
       <Loaded state={state}>
         {(tourns) => <UpcomingList tourns={tourns} query={query} hrefs={hrefs} Link={Link} />}
       </Loaded>
-      <TabroomOverlay open={tabroomOpen} onClose={() => setTabroomOpen(false)} />
     </div>
   );
 }
@@ -78,7 +81,10 @@ function UpcomingList({
           <li key={t.id}>
             <Link href={hrefs.tournament(t.tournId)} className="flex flex-wrap items-start gap-x-4 gap-y-1 p-4 transition-colors hover:bg-accent/60">
               <div className="min-w-0 flex-1">
-                <p className="font-medium">{t.name}</p>
+                <p className="flex flex-wrap items-center gap-2 font-medium">
+                  {t.name}
+                  {t.source === "hosted" ? <Badge variant="outline">Hosted here</Badge> : null}
+                </p>
                 <p className="mt-0.5 flex flex-wrap items-center gap-x-3 text-xs text-muted-foreground">
                   <span className="inline-flex items-center gap-1">
                     <CalendarDays className="h-3.5 w-3.5" aria-hidden />

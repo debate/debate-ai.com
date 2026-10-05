@@ -34,3 +34,6 @@ export {
   type ScheduledType,
 } from "./host/create-tournament";
 export { getHostRouter, hostPathAllowsMethod, isHostPath } from "./host/router";
+export { canAdminTournament, loadTournamentAdmin, type TournamentAdminView } from "./host/admin";
+export { ensureDemoTournament, seedDemo, splitSqlStatements } from "./host/demo";
+export { DEMO_ADMIN, DEMO_TOURN_ID } from "./host/demo-account";

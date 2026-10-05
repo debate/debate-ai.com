@@ -16,6 +16,11 @@
 --
 -- Signing in to debate-ai.com as demo.judge@debate-ai.com maps the better-auth
 -- user onto Tabroom person 90001 (matched by email in src/api/actor.ts).
+-- Person 90010 (demo.admin) owns 90001; its admin view is open to everyone.
+--
+-- The app also loads this file itself (`POST /api/tabroom/host/demo`, see
+-- src/host/demo.ts) whenever the demo is missing or over, so statements must
+-- end with `;` at the end of a line and comments take whole lines.
 
 -- Circuit ----------------------------------------------------------------------
 INSERT OR REPLACE INTO circuit (id, name, abbr, tz, active, state, country, webname) VALUES
@@ -231,3 +236,12 @@ INSERT OR REPLACE INTO webpage (id, title, slug, content, published, sitewide, s
   (90002, 'Welcome', 'main', '<p>The Golden State Classic returns to Los Angeles. Registration is open; entries are capped at 32 per event.</p>', 1, 0, 'main', 1, 90002),
   (90003, 'Hotels', 'hotels', '<p>A hotel block is held at the Downtown Marriott until one week before the tournament.</p>', 1, 0, NULL, 2, 90002),
   (90004, 'Welcome', 'main', '<p>The Pacific Northwest Open is a novice-friendly tournament hosted in Seattle.</p>', 1, 0, 'main', 1, 90003);
+
+-- The demo admin -----------------------------------------------------------------
+-- Anyone can open the Bay Area Invitational's admin view as this mock account
+-- (username demo.admin; see src/host/demo-account.ts). It owns only 90001.
+INSERT OR REPLACE INTO person (id, email, first, last, country, tz, site_admin, no_email) VALUES
+  (90010, 'demo.admin@debate-ai.com', 'Demo', 'Admin', 'US', 'America/Los_Angeles', 0, 1);
+
+INSERT OR REPLACE INTO permission (id, tag, person, tourn, created_by) VALUES
+  (90001, 'owner', 90010, 90001, 90010);

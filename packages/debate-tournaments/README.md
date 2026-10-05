@@ -14,10 +14,18 @@ run on **Cloudflare Workers + D1**. The package exports three things:
 
 In `apps/debate-ai.com` the D1 API is mounted at `/api/tabroom/*`
 (`app/api/tabroom/[...path]/route.ts`, `lib/tournaments/handler.ts`). The UI is
-mounted at `/practice/tournaments/*`, where it reads live Tabroom through
-`/api/tabroom-beta/*`, a read-only proxy to `https://api.tabroom.com/v1`
-(`lib/tournaments/tabroom-beta-proxy.ts`); `/practice/tabroom` frames
-beta.tabroom.com itself. The schema is applied by `.github/scripts/migrate-d1.ts`,
+mounted at `/practice/tournaments/*` with two sources (`apiBase` and
+`liveApiBase`): live Tabroom through `/api/tabroom-beta/*`, a read-only proxy to
+`https://api.tabroom.com/v1` (`lib/tournaments/tabroom-beta-proxy.ts`), and the
+tournaments hosted on this site through `/api/tabroom`. The list merges both and
+each tournament reads from whichever holds it. `/practice/tabroom` frames
+beta.tabroom.com itself.
+
+Hosting never touches Tabroom. `/host` (`src/host/router.ts`) is this package's
+hosting API: `POST /host/tourns` creates a tournament, `GET /host/tourns` lists
+the signed-in user's, `GET /host/tourns/:id/admin` is a hosted tournament's
+admin view (`src/host/admin.ts`, rendered by `TournamentAdminPage`), and
+`POST /host/demo` loads the demo below if it is missing or over. The schema is applied by `.github/scripts/migrate-d1.ts`,
 which picks up this package's `migrations/` after the app's own.
 
 The pages are built from shadcn primitives copied into `src/ui/primitives.tsx`
@@ -53,8 +61,12 @@ bun run db:seed:tournaments:d1   # migrate + seed the remote D1
 ```
 
 Signing in with better-auth as `demo.judge@debate-ai.com` maps onto demo
-Tabroom person 90001. `test/demo-seed.test.ts` checks every UI endpoint
-against this seed.
+Tabroom person 90001. Person 90010, `demo.admin`, owns the Bay Area
+Invitational (90001), whose admin view is open to everyone as that mock
+account. The app also applies the seed itself through `POST /host/demo`
+(`src/host/demo.ts`, which imports the file with `?raw`), so statements end
+with `;` at the end of a line. `test/demo-seed.test.ts` checks every UI
+endpoint against this seed and `test/demo-admin.test.ts` the admin view.
 
 ## Taking upstream changes
 

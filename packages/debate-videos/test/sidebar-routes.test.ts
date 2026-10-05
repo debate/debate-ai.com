@@ -184,19 +184,15 @@ describe("Latest News", () => {
 });
 
 describe("Tournaments and Tabroom", () => {
-  it("are one sidebar entry, not two", () => {
-    // Tabroom is framed from a button at the top of the tournaments page, so
-    // a row of its own would only be a second way to the same thing.
+  it("are two sidebar rows: the app's own Tournaments page, then Tabroom framed", () => {
     const prepScout = SIDEBAR_TOOL_SECTIONS.find((section) => section.id === "prep-scout");
     const hrefs = prepScout?.tools.map((tool) => tool.href) ?? [];
 
     expect(hrefs).toContain("/practice/tournaments");
-    expect(hrefs).not.toContain("/practice/tabroom");
+    expect(hrefs.indexOf("/practice/tabroom")).toBe(hrefs.indexOf("/practice/tournaments") + 1);
   });
 
-  it("still recognise /practice/tabroom as a sidebar route, so it keeps its dock", () => {
-    // The page itself stays reachable — from the tournaments page's button and
-    // from a tournament's Tabroom tab — it just is not listed in the tree.
+  it("recognise /practice/tabroom as a sidebar route, so it keeps its dock", () => {
     expect(matchesToolSidebarHref("/practice/tabroom")).toBe(true);
   });
 });
