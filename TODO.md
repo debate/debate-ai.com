@@ -64,8 +64,8 @@
 - Branch: `claude/gifted-babbage-cg2iak`
 - [x] Audit local-only tool stores vs. the `saved_tool_records` catalog (SQL layer for settings, flows, rounds and 64+ tool collections already exists)
 - [x] Sync pinned debates to the account (`pinnedDebates` catalog entry, legacy `pinned-debates` migration, tests, docs in `round-cloud-save.mdx`)
-- [ ] Sync speech-doc links (`speech-doc-links`; keyed by scope + speech, points at `documents.id`)
-- [x] Sync flow-editor display/keymap settings (`ebb-display-settings`, `ebb-keymap-settings`) — done through the tool-record catalog (`flowDisplaySettings`, `flowKeymapSettings`, via a single-record codec) rather than `user_settings`, which needs a schema migration; the flow store reloads when sync writes storage; documented in `features/user-settings.mdx`
+- [x] Sync speech-doc links (`speech-doc-links`; keyed by scope + speech, points at `documents.id`)
+- [x] Sync flow-editor display/keymap settings (`ebb-display-settings`, `ebb-keymap-settings`) through `user_settings` (`flow_editor_settings` column, `@debate/flow-ebb/account-settings`, `useAccountFlowSettingsSync`; docs in `user-settings.mdx`)
 - [ ] Tool UI pass: surface sync status and pin/save controls in each tool's header
 
 ---
@@ -90,9 +90,15 @@
 - [x] `FlowTab` shows saved / changed-since-save icons
 - [x] Vitest coverage (`flowAccountStatus.test.ts`, `FlowTab.test.tsx`)
 - [x] Document in `features/user-settings.mdx`
-- [ ] Follow-up: same marker on the round start screen and for whole rounds (`hashRoundContent`)
+- [x] Same marker for whole rounds on the `/debate` start screen cards (`recordRoundSavedToAccount`, `RoundAccountMarker`; branch `claude/gifted-babbage-a9pbpd`)
 - [ ] Follow-up: persist baselines / auto-save flows so the marker survives a reload
 - [ ] Follow-up: `ebb-dev-*` and `REASON-*` stores are still browser-only
+
+### Tool UI pass: tool page header
+
+- Branch: `agent/tool-header-single-sync-badge`
+- [x] `ToolPageHeader` rendered `ToolSyncBadge` twice (merge damage); now once, with a regression test
+- [ ] Follow-up: pin/save controls (not just sync status) in each tool's header
 
 ## Completed
 

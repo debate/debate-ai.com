@@ -4,6 +4,13 @@ import { getDBFromContext } from "@/lib/database/context"
 import { userSettings } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
 import {
+  mergeFlowEditorSettings,
+  normalizeFlowEditorSettingsPatch,
+  parseFlowEditorSettings,
+  serializeFlowEditorSettings,
+  type FlowEditorAccountSettingsPayload,
+} from "@debate/flow-ebb/account-settings"
+import {
   applyFavoriteToolOp,
   applyOutlineFilterPresetOp,
   applyWordLimitPresetOp,
@@ -245,6 +252,7 @@ type SettingsRow = {
   favoriteTools: string | null
   recentTools: string | null
   editorPreferences: string | null
+  flowEditorSettings: string | null
   newsRead: string | null
   newsLiked: string | null
   wordLimitPresets: string | null
@@ -264,6 +272,7 @@ type SettingsPayload = UserSettingsPayload & {
   favoriteTools: string[]
   recentTools: string[]
   editorPreferences: EditorPreferencesPayload
+  flowEditorSettings: FlowEditorAccountSettingsPayload
   newsRead: string[]
   newsLiked: string[]
   wordLimitPresets: { name: string; wordLimit: number }[]
@@ -286,6 +295,7 @@ function toPayload(row: SettingsRow | undefined): SettingsPayload {
     favoriteTools: row?.favoriteTools ? parseFavoriteTools(row.favoriteTools) : DEFAULT_FAVORITE_TOOLS.favoriteTools,
     recentTools: row?.recentTools ? parseRecentTools(row.recentTools) : [],
     editorPreferences: parseEditorPreferences(row?.editorPreferences),
+    flowEditorSettings: parseFlowEditorSettings(row?.flowEditorSettings),
     newsRead: row?.newsRead ? parseNewsIdList(row.newsRead) : DEFAULT_NEWS_SYNC.newsRead,
     newsLiked: row?.newsLiked ? parseNewsIdList(row.newsLiked) : DEFAULT_NEWS_SYNC.newsLiked,
     wordLimitPresets: row?.wordLimitPresets
@@ -367,6 +377,9 @@ export async function PUT(req: NextRequest) {
   const editorPreferencesResult = normalizeEditorPreferencesPatch(
     (body as { editorPreferences?: unknown } | null)?.editorPreferences,
   )
+  const flowEditorSettingsResult = normalizeFlowEditorSettingsPatch(
+    (body as { flowEditorSettings?: unknown } | null)?.flowEditorSettings,
+  )
   const valid = { ...userSettingsResult.valid, ...themeSettingsResult.valid }
   const errors = [
     ...userSettingsResult.errors,
@@ -393,6 +406,7 @@ export async function PUT(req: NextRequest) {
     ...qualificationCutoffResult.errors,
     ...myTeamProfileResult.errors,
     ...editorPreferencesResult.errors,
+    ...flowEditorSettingsResult.errors,
   ]
 
   if (errors.length > 0) {
@@ -430,12 +444,13 @@ export async function PUT(req: NextRequest) {
     newsReadOpResult.valid.recordNewsRead === undefined &&
     newsLikedOpResult.valid.addNewsLiked === undefined &&
     newsLikedOpResult.valid.removeNewsLiked === undefined &&
-    Object.keys(editorPreferencesResult.valid).length === 0
+    Object.keys(editorPreferencesResult.valid).length === 0 &&
+    Object.keys(flowEditorSettingsResult.valid).length === 0
   ) {
     return NextResponse.json(
       {
         error:
-          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, recordRecentTool, wordLimitPresets, addWordLimitPreset, updateWordLimitPreset, removeWordLimitPreset, outlineFilterPresets, addOutlineFilterPreset, removeOutlineFilterPreset, savedArgumentCollections, addSavedArgumentCollection, removeSavedArgumentCollection, renameSavedArgumentCollection, updateSavedArgumentCollectionTags, researchProgressGoal, brainstormSessionTimer, questStreakSync, recordStreakFreezeDayKey, setLapseReminderEnabled, recordMissionResultDay, qualificationPointsTable, qualificationCutoff, myTeamProfile, newsRead, newsLiked, recordNewsRead, addNewsLiked, removeNewsLiked, or editorPreferences.",
+          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, recordRecentTool, wordLimitPresets, addWordLimitPreset, updateWordLimitPreset, removeWordLimitPreset, outlineFilterPresets, addOutlineFilterPreset, removeOutlineFilterPreset, savedArgumentCollections, addSavedArgumentCollection, removeSavedArgumentCollection, renameSavedArgumentCollection, updateSavedArgumentCollectionTags, researchProgressGoal, brainstormSessionTimer, questStreakSync, recordStreakFreezeDayKey, setLapseReminderEnabled, recordMissionResultDay, qualificationPointsTable, qualificationCutoff, myTeamProfile, newsRead, newsLiked, recordNewsRead, addNewsLiked, removeNewsLiked, editorPreferences, or flowEditorSettings.",
       },
       { status: 400 },
     )
@@ -451,6 +466,7 @@ export async function PUT(req: NextRequest) {
     favoriteTools?: string | null
     recentTools?: string | null
     editorPreferences?: string | null
+    flowEditorSettings?: string | null
     newsRead?: string | null
     newsLiked?: string | null
     wordLimitPresets?: string | null
@@ -722,6 +738,18 @@ export async function PUT(req: NextRequest) {
       .limit(1)
     const merged = mergeEditorPreferences(parseEditorPreferences(existing?.editorPreferences), editorPreferencesResult.valid)
     dbPatch.editorPreferences = serializeEditorPreferences(merged)
+  }
+  // Same read-merge-write for the flow editor's settings, so two devices
+  // changing different controls do not overwrite each other.
+  if (Object.keys(flowEditorSettingsResult.valid).length > 0) {
+    const [existing] = await db
+      .select({ flowEditorSettings: userSettings.flowEditorSettings })
+      .from(userSettings)
+      .where(eq(userSettings.userId, userId))
+      .limit(1)
+    dbPatch.flowEditorSettings = serializeFlowEditorSettings(
+      mergeFlowEditorSettings(parseFlowEditorSettings(existing?.flowEditorSettings), flowEditorSettingsResult.valid),
+    )
   }
 
   await db

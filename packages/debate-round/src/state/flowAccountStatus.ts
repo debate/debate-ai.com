@@ -15,13 +15,15 @@
  * @module state/flowAccountStatus
  */
 
-import type { Flow } from "../types/flow";
-import { hashFlowContent } from "./bulkRoundSave";
+import type { Flow, Round } from "../types/flow";
+import { hashFlowContent, hashRoundContent } from "./bulkRoundSave";
 
 /** `"saved"`: matches the last account save. `"unsaved"`: edited since. `"unknown"`: no baseline this session. */
 export type FlowAccountStatus = "saved" | "unsaved" | "unknown";
 
 const savedHashes = new Map<number, string>();
+// Rounds get their own map: flow and round ids come from separate counters.
+const savedRoundHashes = new Map<number, string>();
 const listeners = new Set<() => void>();
 let version = 0;
 
@@ -43,9 +45,28 @@ export function forgetFlowAccountStatus(flowId: number): void {
 
 /** Forgets every baseline — what a sign-out leaves behind. */
 export function resetFlowAccountStatus(): void {
-  if (savedHashes.size === 0) return;
+  if (savedHashes.size === 0 && savedRoundHashes.size === 0) return;
   savedHashes.clear();
+  savedRoundHashes.clear();
   notify();
+}
+
+/** Records that `round`'s current content is what the account now holds. */
+export function recordRoundSavedToAccount(round: Round): void {
+  savedRoundHashes.set(round.id, hashRoundContent(round));
+  notify();
+}
+
+/** Forgets a round's baseline (it was deleted). */
+export function forgetRoundAccountStatus(roundId: number): void {
+  if (savedRoundHashes.delete(roundId)) notify();
+}
+
+/** Whether `round`'s current content has reached the account this session. */
+export function getRoundAccountStatus(round: Round): FlowAccountStatus {
+  const saved = savedRoundHashes.get(round.id);
+  if (saved === undefined) return "unknown";
+  return saved === hashRoundContent(round) ? "saved" : "unsaved";
 }
 
 /** Whether `flow`'s current content has reached the account this session. */
