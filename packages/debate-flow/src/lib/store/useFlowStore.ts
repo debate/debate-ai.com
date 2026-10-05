@@ -1029,39 +1029,22 @@ export const useFlowStore = create<FlowStore>()((set, get) => ({
     },
 }));
 
-/**
- * Re-reads the settings the account sync shares across devices from
- * localStorage into the live store. Device-only state (drawer layout, flows
- * folder, collab identity) is deliberately left alone, so a sync merge never
- * moves it under the user.
- */
-export function applySyncedSettingsFromStorage(): void {
-    const d = loadDisplaySettings();
-    useFlowStore.setState({
-        flowFont: d.flowFont,
-        defaultGridZoom: d.defaultGridZoom,
-        rfdVim: d.rfdVim,
-        insertPaste: d.insertPaste,
-        appendEdit: d.appendEdit,
-        scrollZoom: d.scrollZoom,
-        alignSpeeches: d.alignSpeeches,
-        tooltips: d.tooltips,
-        cardmirrorEnabled: d.cardmirrorEnabled,
-        cardmirrorTextType: d.cardmirrorTextType,
-        theme: d.theme,
-        affColor: d.affColor,
-        negColor: d.negColor,
-        keymapOverrides: loadKeymapOverrides(),
-    });
-}
-
-// The account sync (`@debate/data-sync`) writes merged settings straight to
-// localStorage and dispatches a `storage` event; follow it so a sign-in on a
-// second device restyles the open editor without a reload.
-if (typeof window !== "undefined") {
-    window.addEventListener("storage", (e) => {
-        if (e.key === DISPLAY_SETTINGS_KEY || e.key === KEYMAP_SETTINGS_KEY) {
-            applySyncedSettingsFromStorage();
-        }
-    });
+/** The account-synced subset of the store's display and keymap settings. */
+export function accountSettingsOf(s: FlowState): FlowEditorAccountSettingsPayload {
+    return {
+        flowFont: s.flowFont,
+        defaultGridZoom: s.defaultGridZoom,
+        rfdVim: s.rfdVim,
+        insertPaste: s.insertPaste,
+        appendEdit: s.appendEdit,
+        scrollZoom: s.scrollZoom,
+        alignSpeeches: s.alignSpeeches,
+        tooltips: s.tooltips,
+        cardmirrorEnabled: s.cardmirrorEnabled,
+        cardmirrorTextType: s.cardmirrorTextType,
+        theme: s.theme,
+        affColor: s.affColor,
+        negColor: s.negColor,
+        keymapOverrides: s.keymapOverrides,
+    };
 }
