@@ -181,3 +181,21 @@ export function stripDuplicateHeader(html: string, headerTexts: (string | undefi
 
   return cursor === 0 ? html : html.slice(cursor).trimStart();
 }
+
+/** Fewer highlighted words than this and a card counts as having no highlighting. */
+export const MIN_HIGHLIGHTED_WORDS = 2
+
+/**
+ * Counts the words inside a card's `<mark>` highlights.
+ *
+ * @param html - The card's stored HTML
+ * @returns Total highlighted words across every `<mark>` element
+ */
+export function countHighlightedWords(html: string): number {
+  let count = 0
+  for (const match of html.matchAll(/<mark\b[^>]*>([\s\S]*?)<\/mark>/gi)) {
+    const text = match[1].replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ")
+    count += text.split(/\s+/).filter(Boolean).length
+  }
+  return count
+}
