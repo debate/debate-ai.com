@@ -5,7 +5,7 @@ import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHead
 export default function CardsLibraryPage() {
   return (
     <ToolPage>
-      <ToolPageHeader href="/research/cards/library" backHref="/research/cards" backLabel="shared cards" guide="research-collaboration" />
+      <ToolPageHeader href="/research/cards/library" backHref="/research/cards" backLabel="shared cards" guide="research-collaboration" syncCollections={["evidenceLibraryEntries", "reuseCheckHistory"]} />
       <Suspense>
         <EvidenceLibraryPanel />
       </Suspense>

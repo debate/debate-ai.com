@@ -86,6 +86,8 @@ export interface ToolPageHeaderProps {
   highlights?: string[]
   /** Which task guide this tool belongs to; adds the eyebrow and the "Guide" link. */
   guide?: DocsGuide
+  /** Collection keys the "Saved to your account" badge should watch, for a page whose synced data is registered under another route (e.g. a sub-page of the shared-cards hub). Defaults to the collections registered under `href`. */
+  syncCollections?: readonly string[]
   /** Extra controls rendered next to the docs links (right side of the top row). */
   actions?: ReactNode
   /** Rendered under the title block — typically a related-tools link row. */
@@ -106,6 +108,7 @@ export function ToolPageHeader({
   icon,
   highlights,
   guide,
+  syncCollections,
   actions,
   children,
 }: ToolPageHeaderProps) {
@@ -130,7 +133,7 @@ export function ToolPageHeader({
         </Link>
 
         <div className="flex flex-wrap items-center gap-1.5">
-          <ToolSyncBadge href={href} />
+          <ToolSyncBadge href={href} collectionKeys={syncCollections} />
           {actions}
           {docsUrl ? (
             <HeaderLink href={docsUrl} icon={BookOpen} label="Docs" title={`Read the ${resolvedTitle} documentation`} />

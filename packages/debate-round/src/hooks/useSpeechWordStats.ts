@@ -33,7 +33,7 @@ import { storedDocumentHtml, type StoredDocument } from "../round/stored-documen
 /** How often the selected speech re-reads a linked document while it's being edited elsewhere. */
 const LINKED_DOC_REFRESH_MS = 30_000
 
-async function fetchLinkedStats(docId: number): Promise<{ stats: SpeechDocWordStats; title?: string }> {
+export async function fetchLinkedDocumentHtml(docId: number): Promise<{ html: string; title?: string }> {
   const res = await fetch(`/api/doc/documents/${docId}`)
   if (!res.ok) throw new Error(`Linked document ${docId} could not be loaded (${res.status}).`)
   const doc = (await res.json()) as StoredDocument

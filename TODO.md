@@ -66,7 +66,7 @@
 - [x] Sync pinned debates to the account (`pinnedDebates` catalog entry, legacy `pinned-debates` migration, tests, docs in `round-cloud-save.mdx`)
 - [x] Sync speech-doc links (`speech-doc-links`; keyed by scope + speech, points at `documents.id`)
 - [x] Sync flow-editor display/keymap settings (`ebb-display-settings`, `ebb-keymap-settings`) through `user_settings` (`flow_editor_settings` column, `@debate/flow-ebb/account-settings`, `useAccountFlowSettingsSync`; docs in `user-settings.mdx`)
-- [ ] Tool UI pass: surface sync status and pin/save controls in each tool's header
+- [ ] Tool UI pass: surface sync status and pin/save controls in each tool's header (header badge, Save now, favorite star and the shared-cards sub-pages done; remaining custom headers tracked under "Tool UI pass: tool page header")
 
 ---
 
@@ -100,7 +100,9 @@
 - [x] `ToolPageHeader` rendered `ToolSyncBadge` twice (merge damage); now once, with a regression test
 - [x] "Save now" / "Retry save" button beside the sync badge (`lib/tools/tool-save-now.ts`, `ToolSyncBadge`; branch `agent/tool-header-save-now`); the favorite star already sits in the same header row
 - [x] `/debate` start screen shows the badge/Save now (`DebateStartPanel.headerActions`, `DebateFlowPage.startScreenActions`; branch `claude/gifted-babbage-1lcyd6`)
-- [ ] Follow-up: other custom headers (open-flow tabs, `/videos`, `/doc`) still lack the badge/Save now
+- [x] Shared-cards sub-pages (`/research/cards/library`, `/argument-library`, `/revisions`) show the badge/Save now: their collections are filed under the `/research/cards` hub, so `ToolPageHeader` takes `syncCollections` (resolved by `resolveToolSyncKeys`, tested); branch `claude/gifted-babbage-vqktca`
+- [ ] Follow-up: other custom headers (open-flow tabs, `/videos`, `/doc`, the `/research/cards` search workspace) still lack the badge/Save now
+- [ ] Follow-up: `ToolPageHeader.test.tsx` (incl. the new `syncCollections` case) cannot load in a checkout without the `debate-rankings` submodule; verify in CI
 - [ ] Follow-up: component test for `ToolSyncBadge` click path (no `@testing-library/react` in webview tests)
 
 ## Completed
@@ -117,6 +119,11 @@
 - [ ] Follow-up: tool UI pass - sync status and pin/save controls in each tool's header (still In Progress in IDEAS.md)
 - [ ] Follow-up: deploy must apply the new column (schema.ts is the only source now that `drizzle/` is gone)
 
+
+### Known base breakage found while verifying (not fixed here)
+
+- `packages/debate-tournaments/src/ui/client.ts` is a half-resolved merge (`return     upcoming: ...` at ~line 323, no object opening; `get` now takes a root), so `tsc` stops at syntax errors for every package that imports it and `bun run typecheck` fails.
+- [ ] Follow-up: reconstruct `createTournamentsClient`'s returned object against the new `get(root, path)` signature.
 
 ### Fix duplicated tool-record catalog entries (merge damage)
 

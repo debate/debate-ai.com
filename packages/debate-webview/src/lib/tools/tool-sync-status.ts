@@ -92,3 +92,22 @@ export function toolSyncBadgeState(
   if (failed) return { kind: "failed", error: failed.error ?? "" }
   return { kind: "synced" }
 }
+
+/**
+ * The collection keys a tool page's sync badge should watch.
+ *
+ * By default that is every collection registered under the page's own `href`.
+ * A page whose synced data is registered under a parent hub's route (e.g.
+ * `/research/cards/library` reads collections filed under `/research/cards`)
+ * passes `collectionKeys` to name them explicitly. Unknown keys are dropped so
+ * a renamed or removed collection can't leave the badge polling nothing.
+ */
+export function resolveToolSyncKeys(href: string, collectionKeys?: readonly string[]): string[] {
+  if (collectionKeys) {
+    const known = new Set(TOOL_RECORD_COLLECTIONS.map((collection) => collection.key))
+    return collectionKeys.filter((key) => known.has(key))
+  }
+  return TOOL_RECORD_COLLECTIONS.filter((collection) => collection.href === href).map(
+    (collection) => collection.key,
+  )
+}

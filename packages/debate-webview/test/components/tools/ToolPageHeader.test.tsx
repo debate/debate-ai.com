@@ -2,7 +2,9 @@ import { describe, expect, it, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 
 vi.mock("../../../src/components/tools/ToolSyncBadge", () => ({
-  ToolSyncBadge: ({ href }: { href: string }) => <span data-testid="sync-badge" data-href={href} />,
+  ToolSyncBadge: ({ href, collectionKeys }: { href: string; collectionKeys?: readonly string[] }) => (
+    <span data-testid="sync-badge" data-href={href} data-keys={collectionKeys?.join(",")} />
+  ),
 }));
 
 import { ToolPageHeader } from "../../../src/components/tools/ToolPageHeader";
@@ -66,5 +68,18 @@ describe("ToolPageHeader", () => {
 
     expect(html.match(/data-testid="sync-badge"/g)).toHaveLength(1);
     expect(html).toContain('data-href="/practice/drills"');
+  });
+
+  it("passes explicit sync collections to the badge for a sub-page of a hub", () => {
+    const html = renderToStaticMarkup(
+      <ToolPageHeader
+        href="/research/cards/library"
+        backHref="/research/cards"
+        backLabel="shared cards"
+        syncCollections={["evidenceLibraryEntries", "reuseCheckHistory"]}
+      />,
+    );
+
+    expect(html).toContain('data-keys="evidenceLibraryEntries,reuseCheckHistory"');
   });
 });
