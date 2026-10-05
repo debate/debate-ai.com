@@ -13,6 +13,7 @@
     ".": "./src/index.ts",
     "./server": "./src/server.ts",
     "./ui": "./src/ui/index.ts",
+    "./client": "./src/ui/client.ts",
     "./routes": "./src/routes/index.ts",
     "./types": "./src/types.ts",
     "./migrations/*": "./migrations/*"

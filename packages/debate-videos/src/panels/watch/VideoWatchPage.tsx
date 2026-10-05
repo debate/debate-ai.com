@@ -56,7 +56,7 @@ import { AlertCircle, ArrowLeft, Calendar, Eye } from "lucide-react"
 import { CommentSection } from "@debate/comments"
 
 import { WatchToolbar } from "../../components/watch/WatchToolbar"
-import { WatchSidePanel } from "../../components/watch/WatchSidePanel"
+import { WatchSidePanel, type WatchSideTab } from "../../components/watch/WatchSidePanel"
 import type { LinkedVideo } from "../../components/watch/WatchAnalysisPanel"
 import { VideoListRows } from "../../components/video-grid/VideoListRows"
 import { WatchQueuePanel } from "../../components/watch/WatchQueuePanel"
@@ -133,6 +133,11 @@ export interface VideoWatchPageProps {
   dockSlot?: React.ReactNode
   /** App-specific toolbar buttons — see `SlowSpreadButton`. */
   extraControls?: React.ReactNode
+  /**
+   * App-supplied tabs for the column beside the player, shown first — e.g. a
+   * featured round's speech docs. See {@link WatchSideTab}.
+   */
+  sideTabs?: WatchSideTab[]
 }
 
 export function VideoWatchPage({
@@ -143,6 +148,7 @@ export function VideoWatchPage({
   stack = NO_VIDEOS,
   dockSlot,
   extraControls,
+  sideTabs,
 }: VideoWatchPageProps) {
   const router = useRouter()
 
@@ -293,6 +299,7 @@ export function VideoWatchPage({
   )
 
   const hasSidePanel =
+    (sideTabs?.length ?? 0) > 0 ||
     hasTranscript ||
     transcriptLoading ||
     speeches.length > 0 ||
@@ -838,6 +845,7 @@ export function VideoWatchPage({
                 roundTranscript={roundTranscript}
                 onMarkStart={handleMarkStart}
                 markedKeys={markedKeys}
+                extraTabs={sideTabs}
               />
             </div>
           )}

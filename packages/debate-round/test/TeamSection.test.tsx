@@ -128,28 +128,37 @@ describe("TeamSection My Team profile sync", () => {
 })
 
 describe("TeamSection school team picker", () => {
-  it("pops out a school's teams beside its field, fills the debaters on click, then closes", async () => {
+  async function renderWithSchool(overrides: Record<string, unknown>) {
     vi.useFakeTimers()
     stubFetchSignedOut()
-    const setNegDebater1 = vi.fn()
-    const setNegDebater2 = vi.fn()
     await act(async () => {
-      root.render(createElement(TeamSection, baseProps({ negSchool: "Harker", setNegDebater1, setNegDebater2 })))
+      root.render(createElement(TeamSection, baseProps(overrides)))
     })
     await act(async () => {
       await vi.advanceTimersByTimeAsync(400)
     })
     vi.useRealTimers()
+  }
+
+  it("shows a school's teams as badges under its field, fills the debaters on click, then hides", async () => {
+    const setNegDebater1 = vi.fn()
+    const setNegDebater2 = vi.fn()
+    await renderWithSchool({ negSchool: "Harker", setNegDebater1, setNegDebater2 })
 
     const pickers = container.querySelectorAll("[data-testid=school-teams-picker]")
     expect(pickers).toHaveLength(1)
-    expect(pickers[0].textContent).toContain("Teams at Harker")
-
     const team = [...pickers[0].querySelectorAll("button")].find((b) => b.textContent?.includes("Ahuja"))
+    expect(team?.className).toContain("rounded-full")
     await act(async () => team!.click())
 
     expect(setNegDebater1).toHaveBeenCalledWith("Ahuja")
     expect(setNegDebater2).toHaveBeenCalledWith("Miduthuri")
+    expect(container.querySelector("[data-testid=school-teams-picker]")).toBeNull()
+  })
+
+  it("hides a side's badges once its debaters are filled in", async () => {
+    await renderWithSchool({ negSchool: "Harker", negDebater1: "Ahuja", negDebater2: "Miduthuri" })
+
     expect(container.querySelector("[data-testid=school-teams-picker]")).toBeNull()
   })
 })
