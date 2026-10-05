@@ -174,6 +174,20 @@ Known gap: pins are capped at 12 per browser, and the merge on sign-in is a
 union, so a pin removed on one device while another is offline can reappear
 until that device syncs.
 
+## Flow editor display and keybindings
+
+The flow editor's display settings (font, zoom, theme, colours and its on/off
+toggles) and your rebound keys follow your account. They sync as two
+single-record collections of the tool-record sync, `flowEditorDisplay`
+(`ebb-display-settings`) and `flowEditorKeymap` (`ebb-keymap-settings`), and
+show up under **Settings → Account → Tool data** as "Flow Editor Display
+Settings" and "Flow Editor Keybindings". The desktop flows folder is a path on
+one machine, so it never leaves the device it was set on.
+
+Known gap: the editor reads these settings when it loads, so settings that
+arrive from another device apply the next time the flow editor is opened, not
+live.
+
 ## Save status on each tool
 
 A tool page whose data syncs shows a small badge in its header: **Saved to your
