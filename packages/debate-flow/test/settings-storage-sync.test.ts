@@ -1,45 +1,35 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { syncSettingsFromStorage, useFlowStore } from "../src/lib/store/useFlowStore";
+// @vitest-environment jsdom
+import { beforeEach, describe, expect, it } from "vitest";
+import { reloadSettingsFromStorage, useFlowStore } from "../src/lib/store/useFlowStore";
 
-/** The account sync adopts settings by rewriting these localStorage keys. */
-describe("syncSettingsFromStorage", () => {
-    beforeEach(() => {
-        const data = new Map<string, string>();
-        vi.stubGlobal("window", {});
-        vi.stubGlobal("localStorage", {
-            getItem: (k: string) => data.get(k) ?? null,
-            setItem: (k: string, v: string) => void data.set(k, v),
-        });
-        // The store reads through `window.localStorage`.
-        (globalThis as { window: { localStorage: unknown } }).window.localStorage = localStorage;
+describe("following storage written by the account sync", () => {
+    beforeEach(() => localStorage.clear());
+
+    it("adopts display settings written to localStorage", () => {
+        localStorage.setItem("ebb-display-settings", JSON.stringify({ rfdVim: true, defaultGridZoom: 1.5 }));
+        reloadSettingsFromStorage();
+        const state = useFlowStore.getState();
+        expect(state.rfdVim).toBe(true);
+        expect(state.defaultGridZoom).toBe(1.5);
     });
 
-    afterEach(() => {
-        vi.unstubAllGlobals();
+    it("adopts keymap overrides and reacts to a storage event", () => {
+        localStorage.setItem("ebb-keymap-settings", JSON.stringify({ keymapOverrides: { "x.y": "Ctrl+K" } }));
+        window.dispatchEvent(new StorageEvent("storage", { key: "ebb-keymap-settings" }));
+        expect(useFlowStore.getState().keymapOverrides).toEqual({ "x.y": "Ctrl+K" });
     });
 
-    it("applies adopted display settings, keeping this device's flowsDir", () => {
-        useFlowStore.setState({ flowsDir: "/local/flows", theme: "system" });
-        localStorage.setItem(
-            "ebb-display-settings",
-            JSON.stringify({ theme: "dark", flowsDir: "/other/device", tooltips: false }),
-        );
-        syncSettingsFromStorage("ebb-display-settings");
-        const s = useFlowStore.getState();
-        expect(s.theme).toBe("dark");
-        expect(s.tooltips).toBe(false);
-        expect(s.flowsDir).toBe("/local/flows");
+    it("ignores unrelated storage keys", () => {
+        useFlowStore.setState({ rfdVim: false });
+        localStorage.setItem("ebb-display-settings", JSON.stringify({ rfdVim: true }));
+        window.dispatchEvent(new StorageEvent("storage", { key: "something-else" }));
+        expect(useFlowStore.getState().rfdVim).toBe(false);
     });
 
-    it("applies adopted keymap overrides", () => {
-        localStorage.setItem("ebb-keymap-settings", JSON.stringify({ keymapOverrides: { save: "Mod-s" } }));
-        syncSettingsFromStorage("ebb-keymap-settings");
-        expect(useFlowStore.getState().keymapOverrides).toEqual({ save: "Mod-s" });
-    });
-
-    it("falls back to defaults for a corrupt stored value", () => {
-        localStorage.setItem("ebb-display-settings", "{nope");
-        syncSettingsFromStorage("ebb-display-settings");
-        expect(useFlowStore.getState().theme).toBe("system");
+    it("never writes back to storage while following it", () => {
+        localStorage.setItem("ebb-display-settings", JSON.stringify({ rfdVim: true, flowsDir: "/a" }));
+        const before = localStorage.getItem("ebb-display-settings");
+        reloadSettingsFromStorage();
+        expect(localStorage.getItem("ebb-display-settings")).toBe(before);
     });
 });
