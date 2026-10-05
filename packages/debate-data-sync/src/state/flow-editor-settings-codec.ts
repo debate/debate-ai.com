@@ -1,144 +1,76 @@
 /**
- * @fileoverview Adapts the ebb flow editor's two single-object settings stores
- * — `ebb-display-settings` (a flat object of display/behaviour toggles) and
- * `ebb-keymap-settings` (`{ keymapOverrides }`, see `debate-flow`'s
- * `useFlowStore.ts`) — to the array-of-records shape `TOOL_RECORD_COLLECTIONS`
- * syncs.
+ * @fileoverview Adapts the Ebb flow editor's two single-object settings
+ * stores — `ebb-display-settings` and `ebb-keymap-settings`, see
+ * `debate-flow`'s `useFlowStore.ts` — to the array-of-records shape
+ * `TOOL_RECORD_COLLECTIONS` syncs.
  *
- * Each setting becomes one record `{ id: <field>, value }`, so changing the
- * font on one device and a keybinding on another merge instead of one
- * overwriting the other. Fields that describe *this browser* rather than this
- * user (`flowsDir`, a desktop folder path; `sidebarCollapsed` and `rfdOpen`,
- * panel layout) never leave it, and `encode` keeps whatever is already stored
- * for them rather than resetting them to defaults.
+ * Each store is one object, so each becomes a one-record collection whose
+ * `id` is {@link FLOW_EDITOR_SETTINGS_RECORD_ID}. `debate-flow` keeps reading
+ * and writing its own object untouched; the sync only wraps it.
  *
- * Values are validated per field on the way in, so a corrupted account row
- * cannot put a nonsense value in the editor's own store.
+ * Not every display field belongs to the account. {@link redactFlowDisplaySettings}
+ * holds back what describes *this device* — the flows folder path, panel
+ * open/closed state — and the live-collaboration switches and contact list,
+ * which turn networking on or name peers and should be opted into per device.
+ * The merge restores those fields from this browser's copy (see
+ * `restoreRedactedFields`), so a pull never resets them.
+ *
+ * Pure — no storage or network.
  *
  * @module state/flow-editor-settings-codec
  */
 
-/** One synced setting: the field name as `id`, plus its value. */
-export interface FlowEditorSettingRecord {
-  id: string;
-  value: unknown;
+/** The one record each settings collection holds. */
+export const FLOW_EDITOR_SETTINGS_RECORD_ID = "settings";
+
+/** The display fields that follow the user to every device. */
+export const SYNCED_FLOW_DISPLAY_FIELDS: readonly string[] = [
+  "flowFont",
+  "defaultGridZoom",
+  "rfdVim",
+  "insertPaste",
+  "appendEdit",
+  "scrollZoom",
+  "alignSpeeches",
+  "tooltips",
+  "cardmirrorEnabled",
+  "cardmirrorTextType",
+  "theme",
+  "affColor",
+  "negColor",
+];
+
+/** Wraps a stored settings object as its single record; anything else syncs nothing. */
+export function decodeFlowEditorSettings(raw: unknown): Record<string, unknown>[] {
+  if (typeof raw !== "object" || raw === null || Array.isArray(raw)) return [];
+  return [{ id: FLOW_EDITOR_SETTINGS_RECORD_ID, ...(raw as Record<string, unknown>) }];
 }
 
-type Validator = (value: unknown) => boolean;
-
-const isBool: Validator = (v) => typeof v === "boolean";
-const isHexColor: Validator = (v) => v === null || (typeof v === "string" && /^#[0-9a-fA-F]{6}$/.test(v));
-const isShortString =
-  (max: number): Validator =>
-  (v) =>
-    typeof v === "string" && v.length <= max;
-
-/** Display fields that follow the user across devices, with their validators. */
-export const SYNCED_DISPLAY_FIELDS: Readonly<Record<string, Validator>> = {
-  flowFont: isShortString(64),
-  defaultGridZoom: (v) => typeof v === "number" && Number.isFinite(v) && v >= 0.5 && v <= 3,
-  rfdVim: isBool,
-  insertPaste: isBool,
-  appendEdit: isBool,
-  scrollZoom: isBool,
-  alignSpeeches: isBool,
-  tooltips: isBool,
-  cardmirrorEnabled: isBool,
-  cardmirrorTextType: isShortString(32),
-  theme: isShortString(16),
-  affColor: isHexColor,
-  negColor: isHexColor,
-};
-
-const MAX_KEYMAP_ENTRIES = 500;
-
-function parseObject(raw: unknown): Record<string, unknown> | null {
-  return typeof raw === "object" && raw !== null && !Array.isArray(raw)
-    ? (raw as Record<string, unknown>)
-    : null;
-}
-
-/** Reads the object currently stored under `storageKey`, so local-only fields survive an encode. */
-function readStoredObject(storageKey: string): Record<string, unknown> {
-  if (typeof localStorage === "undefined") return {};
-  try {
-    const raw = localStorage.getItem(storageKey);
-    return (raw ? parseObject(JSON.parse(raw)) : null) ?? {};
-  } catch {
-    return {};
-  }
-}
-
-function toRecords(records: readonly unknown[]): FlowEditorSettingRecord[] {
-  const out: FlowEditorSettingRecord[] = [];
+/**
+ * Unwraps the merged records back to the stored object (the inverse of
+ * {@link decodeFlowEditorSettings}). An empty list encodes to `{}`, which
+ * `debate-flow` reads as "all defaults".
+ */
+export function encodeFlowEditorSettings(records: readonly unknown[]): Record<string, unknown> {
   for (const record of records) {
-    const obj = parseObject(record);
-    if (obj && typeof obj.id === "string" && "value" in obj) {
-      out.push({ id: obj.id, value: obj.value });
-    }
+    if (typeof record !== "object" || record === null || Array.isArray(record)) continue;
+    const { id, ...settings } = record as Record<string, unknown>;
+    if (id === FLOW_EDITOR_SETTINGS_RECORD_ID) return settings;
   }
-  return out;
+  return {};
 }
 
 /**
- * Flattens the stored display settings into one record per synced field,
- * skipping local-only fields and any value that fails its validator.
- *
- * @param raw - The parsed `ebb-display-settings` value.
+ * A `ToolRecordCollection.redact` for `ebb-display-settings`: keeps only
+ * {@link SYNCED_FLOW_DISPLAY_FIELDS}, so a field added to the store later stays
+ * on-device until it is listed here on purpose.
  */
-export function decodeFlowDisplaySettings(raw: unknown): FlowEditorSettingRecord[] {
-  const stored = parseObject(raw);
-  if (!stored) return [];
-  const records: FlowEditorSettingRecord[] = [];
-  for (const [id, isValid] of Object.entries(SYNCED_DISPLAY_FIELDS)) {
-    if (id in stored && isValid(stored[id])) records.push({ id, value: stored[id] });
+export function redactFlowDisplaySettings(record: unknown): unknown {
+  if (typeof record !== "object" || record === null || Array.isArray(record)) return record;
+  const source = record as Record<string, unknown>;
+  const kept: Record<string, unknown> = { id: source.id };
+  for (const field of SYNCED_FLOW_DISPLAY_FIELDS) {
+    if (field in source) kept[field] = source[field];
   }
-  return records;
-}
-
-/**
- * Rebuilds the stored display object from records (the inverse of
- * {@link decodeFlowDisplaySettings}), laid over what is already stored so the
- * local-only fields keep their values. Unknown or invalid records are dropped.
- *
- * @param records - Records merged from the account and this browser.
- */
-export function encodeFlowDisplaySettings(records: readonly unknown[]): Record<string, unknown> {
-  const next = readStoredObject("ebb-display-settings");
-  for (const { id, value } of toRecords(records)) {
-    const isValid = SYNCED_DISPLAY_FIELDS[id];
-    if (isValid && isValid(value)) next[id] = value;
-  }
-  return next;
-}
-
-/**
- * Flattens `{ keymapOverrides: { action: keys } }` into one record per rebound
- * action. Non-string bindings are dropped.
- *
- * @param raw - The parsed `ebb-keymap-settings` value.
- */
-export function decodeFlowKeymap(raw: unknown): FlowEditorSettingRecord[] {
-  const overrides = parseObject(parseObject(raw)?.keymapOverrides);
-  if (!overrides) return [];
-  const records: FlowEditorSettingRecord[] = [];
-  for (const [id, value] of Object.entries(overrides)) {
-    if (id.trim() && typeof value === "string" && value.length <= 64) records.push({ id, value });
-    if (records.length >= MAX_KEYMAP_ENTRIES) break;
-  }
-  return records;
-}
-
-/**
- * Rebuilds `{ keymapOverrides }` from records (the inverse of
- * {@link decodeFlowKeymap}).
- *
- * @param records - Records merged from the account and this browser.
- */
-export function encodeFlowKeymap(records: readonly unknown[]): { keymapOverrides: Record<string, string> } {
-  const keymapOverrides: Record<string, string> = {};
-  for (const { id, value } of toRecords(records)) {
-    if (id.trim() && typeof value === "string" && value.length <= 64) keymapOverrides[id] = value;
-  }
-  return { keymapOverrides };
+  return kept;
 }

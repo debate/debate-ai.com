@@ -1,18 +1,19 @@
 /**
- * @fileoverview Pins the adapters that let the ebb flow editor's display and
- * keymap settings join the account sync, including that device-local fields
- * stay put when account records are written back.
+ * @fileoverview Pins the adapter that lets the Ebb flow editor's two
+ * single-object settings stores join the account sync, and what it keeps
+ * on-device.
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import {
-  decodeFlowDisplaySettings,
-  decodeFlowKeymap,
-  encodeFlowDisplaySettings,
-  encodeFlowKeymap,
+  FLOW_EDITOR_SETTINGS_RECORD_ID,
+  SYNCED_FLOW_DISPLAY_FIELDS,
+  decodeFlowEditorSettings,
+  encodeFlowEditorSettings,
+  redactFlowDisplaySettings,
 } from "../src/state/flow-editor-settings-codec";
-import { readLocalToolRecords, writeLocalToolRecords } from "../src/state/tool-record-mirror";
 import {
+  mergeToolRecords,
   findToolRecordCollection,
   isSyncableToolRecord,
   type ToolRecordCollection,
@@ -62,21 +63,21 @@ describe("flow editor stores through the shared read/write helpers", () => {
   });
   afterEach(() => vi.unstubAllGlobals());
 
-  it("keeps device-local fields when account records are written", () => {
-    backing.set(
-      "ebb-display-settings",
-      JSON.stringify({ flowFont: "old", flowsDir: "/home/me/flows", sidebarCollapsed: true }),
-    );
-    writeLocalToolRecords(display, [
-      { id: "flowFont", value: "inter" },
-      { id: "flowsDir", value: "/evil" },
-      { id: "tooltips", value: "nope" },
-      { id: "bogus", value: 1 },
-    ]);
-    expect(JSON.parse(backing.get("ebb-display-settings") as string)).toEqual({
-      flowFont: "inter",
-      flowsDir: "/home/me/flows",
-      sidebarCollapsed: true,
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("reads the plain object debate-flow wrote", () => {
+    backing.set("ebb-keymap-settings", JSON.stringify({ keymapOverrides: { a: "b" } }));
+
+    expect(readLocalToolRecords(keymap)).toEqual([{ id: "settings", keymapOverrides: { a: "b" } }]);
+  });
+
+  it("writes a merged record back as the plain object debate-flow reads", () => {
+    writeLocalToolRecords(keymap, [{ id: "settings", keymapOverrides: { a: "b" } }]);
+
+    expect(JSON.parse(backing.get("ebb-keymap-settings") as string)).toEqual({
+      keymapOverrides: { a: "b" },
     });
   });
 
