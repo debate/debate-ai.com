@@ -18,7 +18,10 @@ import {
   SIDEBAR_TOOL_SECTIONS,
   TOOLS_ROOT_HREF,
 } from "@debate/videos/src/components/category-gallery/sidebar-tool-sections"
-import { SIDEBAR_VIDEO_LINKS } from "@debate/videos/src/components/category-gallery/sidebar-video-links"
+import {
+  SIDEBAR_VIDEO_LINKS,
+  VIDEO_REFERENCE_LINKS,
+} from "@debate/videos/src/components/category-gallery/sidebar-video-links"
 import { FOOTER_LINKS } from "@debate/videos/src/ui/layout/footer-links"
 import {
   DOCK_MENU_HREFS,
@@ -37,6 +40,15 @@ describe("SIDEBAR_MENU_SECTIONS", () => {
   it("reaches every videos destination the sidebar links to", () => {
     for (const link of SIDEBAR_VIDEO_LINKS) {
       expect(DOCK_MENU_HREFS.has(link.href)).toBe(true)
+    }
+  })
+
+  it("lists the glossary and statistics under Insights, not Videos", () => {
+    const linksOf = (id: string) =>
+      SIDEBAR_MENU_SECTIONS.find((section) => section.id === id)!.links.map((link) => link.href)
+    for (const link of VIDEO_REFERENCE_LINKS) {
+      expect(linksOf("videos")).not.toContain(link.href)
+      expect(linksOf("insights")).toContain(link.href)
     }
   })
 
