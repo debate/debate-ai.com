@@ -45,10 +45,11 @@
  */
 
 import {
-  decodeFlowEditorSettings,
-  encodeFlowEditorSettings,
-  redactFlowDisplaySettings,
-} from "./flow-editor-settings-codec";
+  decodeDisplaySettings,
+  decodeKeymapSettings,
+  encodeDisplaySettings,
+  encodeKeymapSettings,
+} from "./flow-settings-codec";
 import { redactFileSource } from "./redact-file-source";
 import { decodeSingleObject, encodeSingleObject, redactFlowDisplaySettings } from "./single-object-codec";
 
@@ -118,11 +119,13 @@ export interface ToolRecordCollection {
    * by string, say — to the array the sync diffs and merges. `decode` turns
    * the parsed `localStorage` value into records (each carrying `idField`);
    * `encode` turns the merged records back into the value to store. Absent
-   * for every collection whose store already is an array.
+   * for every collection whose store already is an array. `encode` also gets
+   * the value currently stored, for a store holding fields that never sync and
+   * must survive a write-back.
    */
   codec?: {
     decode: (stored: unknown) => unknown[];
-    encode: (records: readonly unknown[]) => unknown;
+    encode: (records: readonly unknown[], existing?: unknown) => unknown;
   };
 }
 
@@ -171,28 +174,25 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     section: "Flowing and writing",
   },
   {
-    key: "flowEditorDisplaySettings",
+    key: "flowDisplaySettings",
     storageKey: "ebb-display-settings",
     idField: "id",
-    // The Ebb flow editor's display preferences — one object, wrapped as a
-    // single record by the codec. `redact` allowlists the fields that follow
-    // the user (font, zoom, editing toggles, theme, side colours) and keeps
-    // device-specific ones (flows folder, panel state, collab) on-device.
+    // One record (`id: "display"`) of the Flow editor's look-and-feel
+    // preferences. `flowsDir`, `collab*` and `contacts` never leave the
+    // browser; see `flow-settings-codec.ts`.
     label: "Flow Editor Display Settings",
     href: "/debate",
     section: "Flowing and writing",
-    redact: redactFlowDisplaySettings,
-    codec: { decode: decodeFlowEditorSettings, encode: encodeFlowEditorSettings },
+    codec: { decode: decodeDisplaySettings, encode: encodeDisplaySettings },
   },
   {
-    key: "flowEditorKeymapSettings",
+    key: "flowKeymapSettings",
     storageKey: "ebb-keymap-settings",
     idField: "id",
-    // The Ebb flow editor's keybinding overrides (`{ keymapOverrides }`).
-    label: "Flow Editor Keymap",
+    label: "Flow Editor Keybindings",
     href: "/debate",
     section: "Flowing and writing",
-    codec: { decode: decodeFlowEditorSettings, encode: encodeFlowEditorSettings },
+    codec: { decode: decodeKeymapSettings, encode: encodeKeymapSettings },
   },
   // — Practice —
   {
