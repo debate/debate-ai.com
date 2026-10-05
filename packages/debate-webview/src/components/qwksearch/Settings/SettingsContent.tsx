@@ -82,9 +82,12 @@ export { sections };
 const SettingsContent = ({
   onClose,
   initialSection,
+  basePath = '/settings/research',
 }: {
   onClose: () => void;
   initialSection?: string;
+  /** Route the sections are served under: the active tab is mirrored to `<basePath>/<tab>`. */
+  basePath?: string;
 }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [config, setConfig] = useState<any>(null);
@@ -119,18 +122,18 @@ const SettingsContent = ({
     setSelectedSection(sections.find((s) => s.key === activeSection)!);
   }, [activeSection]);
 
-  // Keep the URL in sync with the active tab (/settings/<tab>) without
+  // Keep the URL in sync with the active tab (<basePath>/<tab>) without
   // triggering a Next.js navigation/remount
   useEffect(() => {
-    if (!window.location.pathname.startsWith('/settings')) return;
+    if (!window.location.pathname.startsWith(basePath)) return;
     const url = new URL(window.location.href);
-    url.pathname = `/settings/${activeSection}`;
+    url.pathname = `${basePath}/${activeSection}`;
     url.searchParams.delete('section');
     // preserve the hash from the initial deep link; clear it on tab switches
     if (!isFirstUrlSync.current) url.hash = '';
     isFirstUrlSync.current = false;
     window.history.replaceState(null, '', url);
-  }, [activeSection]);
+  }, [activeSection, basePath]);
 
   // Scroll to and highlight the section targeted by the URL hash, both on
   // deep links and on later hash changes
