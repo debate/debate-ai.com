@@ -52,6 +52,8 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   flowHistory: "id",
   ebbSyncedSettings: "id",
   pinnedDebates: "roundId",
+  flowEditorDisplaySettings: "id",
+  flowEditorKeymap: "id",
   docsChatTabs: "id",
   fileSources: "id",
   coachConversation: "id",

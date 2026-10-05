@@ -54,7 +54,7 @@ import {
   encodeFlowKeymap,
 } from "./flow-editor-settings-codec";
 import { redactFileSource } from "./redact-file-source";
-import { ebbDisplaySettingsCodec, ebbKeymapSettingsCodec } from "./ebb-settings-codec";
+import { createSingletonSettingsCodec } from "./singleton-settings-codec";
 
 /**
  * The groupings `/settings` → Account → **Tool data** renders as section

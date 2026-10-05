@@ -208,19 +208,23 @@ Known gap: pins are capped at 12 per browser, and the merge on sign-in is a
 union, so a pin removed on one device while another is offline can reappear
 until that device syncs.
 
-## Flow editor display and keybindings
+## Flow editor settings
 
-The flow editor's display settings (font, zoom, theme, colours and its on/off
-toggles) and your rebound keys follow your account. They sync as two
-single-record collections of the tool-record sync, `flowEditorDisplay`
-(`ebb-display-settings`) and `flowEditorKeymap` (`ebb-keymap-settings`), and
-show up under **Settings → Account → Tool data** as "Flow Editor Display
-Settings" and "Flow Editor Keybindings". The desktop flows folder is a path on
-one machine, so it never leaves the device it was set on.
+The flow editor's display preferences (font, zoom, theme, side colors, panel
+and collaboration toggles) and its keyboard shortcut overrides follow your
+account. They are the `flowEditorDisplaySettings` and `flowEditorKeymap`
+collections of the tool-record sync, each stored as a single `settings` record
+(`singleton-settings-codec.ts` in `debate-data-sync` adapts the one-object
+`ebb-display-settings` / `ebb-keymap-settings` stores), and they appear under
+**Settings → Account → Tool data**. When another device's settings are adopted,
+the open editor re-reads them without a reload.
 
-Known gap: the editor reads these settings when it loads, so settings that
-arrive from another device apply the next time the flow editor is opened, not
-live.
+The flows folder (`flowsDir`, a desktop path) and your collaboration contacts
+describe the device, so they are never uploaded and are kept when your account's
+settings are adopted.
+
+Known gap: the record is replaced whole, so changing two settings on two
+offline devices keeps whichever device syncs last.
 
 ## Save status on each tool
 
