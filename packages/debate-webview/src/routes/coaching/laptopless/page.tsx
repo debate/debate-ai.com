@@ -52,6 +52,14 @@ const GEAR: {
       "A 20,000 mAh USB-C power bank that can recharge a phone two or three times and still fits in a bag pocket. It can charge both the phone and the keyboard, which helps on long tournament days.",
   },
   {
+    name: "Belkin 70W GaN 7-in-1 Charging Station",
+    role: "One outlet, every device charged",
+    href: "https://amzn.to/4xZw4ak",
+    image: "https://m.media-amazon.com/images/I/61VAOpYG0vL._AC_SL500_.jpg",
+    blurb:
+      "A compact 70W GaN charging station with three AC outlets, two USB-A ports, and two USB-C ports. Plug it into one hotel or tournament outlet and charge the phone, keyboard, power bank, and a watch at once.",
+  },
+  {
     name: "VITURE Beast XR/AR Glasses (174\" Virtual Display)",
     role: "Giant floating screen, no laptop",
     href: "https://amzn.to/4rA4rmp",
