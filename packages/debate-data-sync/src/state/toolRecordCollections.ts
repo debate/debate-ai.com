@@ -184,16 +184,6 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     redact: redactFlowDisplaySettings,
     codec: { decode: decodeFlowEditorSettings, encode: encodeFlowEditorSettings },
   },
-  {
-    key: "flowEditorKeymapSettings",
-    storageKey: "ebb-keymap-settings",
-    idField: "id",
-    // The Ebb flow editor's keybinding overrides (`{ keymapOverrides }`).
-    label: "Flow Editor Keymap",
-    href: "/debate",
-    section: "Flowing and writing",
-    codec: { decode: decodeFlowEditorSettings, encode: encodeFlowEditorSettings },
-  },
   // — Practice —
   {
     key: "practiceRounds",

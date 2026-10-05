@@ -21,14 +21,13 @@ import {
 import { readLocalToolRecords, writeLocalToolRecords } from "../src/state/tool-record-mirror";
 
 const display = findToolRecordCollection("flowEditorDisplaySettings") as ToolRecordCollection;
-const keymap = findToolRecordCollection("flowEditorKeymapSettings") as ToolRecordCollection;
 
 describe("flow editor settings codec", () => {
   it("wraps a stored object as one id-keyed record", () => {
-    const records = decodeFlowEditorSettings({ keymapOverrides: { undo: "Mod-z" } });
+    const records = decodeFlowEditorSettings({ flowFont: "mono" });
 
-    expect(records).toEqual([{ id: FLOW_EDITOR_SETTINGS_RECORD_ID, keymapOverrides: { undo: "Mod-z" } }]);
-    expect(isSyncableToolRecord(keymap, records[0])).toBe(true);
+    expect(records).toEqual([{ id: FLOW_EDITOR_SETTINGS_RECORD_ID, flowFont: "mono" }]);
+    expect(isSyncableToolRecord(display, records[0])).toBe(true);
   });
 
   it.each([null, undefined, "x", 3, []])("syncs nothing for a malformed store (%j)", (raw) => {
@@ -104,16 +103,16 @@ describe("localStorage round trip", () => {
   });
 
   it("reads the plain object debate-flow wrote", () => {
-    backing.set("ebb-keymap-settings", JSON.stringify({ keymapOverrides: { a: "b" } }));
+    backing.set("ebb-display-settings", JSON.stringify({ flowFont: "mono" }));
 
-    expect(readLocalToolRecords(keymap)).toEqual([{ id: "settings", keymapOverrides: { a: "b" } }]);
+    expect(readLocalToolRecords(display)).toEqual([{ id: "settings", flowFont: "mono" }]);
   });
 
   it("writes a merged record back as the plain object debate-flow reads", () => {
-    writeLocalToolRecords(keymap, [{ id: "settings", keymapOverrides: { a: "b" } }]);
+    writeLocalToolRecords(display, [{ id: "settings", flowFont: "mono" }]);
 
-    expect(JSON.parse(backing.get("ebb-keymap-settings") as string)).toEqual({
-      keymapOverrides: { a: "b" },
+    expect(JSON.parse(backing.get("ebb-display-settings") as string)).toEqual({
+      flowFont: "mono",
     });
   });
 });

@@ -86,7 +86,6 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   flowKeymap: "id",
   speechDocLinks: "id",
   flowEditorDisplaySettings: "id",
-  flowEditorKeymapSettings: "id",
   completedResearchTasks: "id",
   groupChallenges: "id",
   challengeWinEvents: "id",

@@ -68,7 +68,8 @@ Beyond the shared record types, `src/state/` holds the sync every tool's
   bug the watcher cannot have — the record would be dropped with no error
   anywhere.
 - **Single-object stores join through a codec.** `flowEditorDisplaySettings`
-  and `flowEditorKeymapSettings` wrap `debate-flow`'s two settings objects as
-  one record each (`flow-editor-settings-codec.ts`); `debate-flow` itself is
+  wraps `debate-flow`'s display object as one record
+  (`flow-editor-settings-codec.ts`); `flowKeymap` wraps the keymap object as one
+  record per rebound action (`flow-keymap-codec.ts`). `debate-flow` itself is
   untouched. The display collection's `redact` is an **allowlist**
   (`SYNCED_FLOW_DISPLAY_FIELDS`), so a new field stays on-device until listed.
