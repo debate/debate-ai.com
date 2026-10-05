@@ -29,6 +29,7 @@ import {
     type FlowSheet,
 } from "../model/flow";
 import type { Scouting, Side } from "../model/types";
+import type { FlowEditorSettingsSyncPayload } from "./flow-editor-settings-sync";
 import { resolveThemeMode, type ThemeMode } from "../theme/mode";
 import { loadUpdateConfig, saveUpdateConfig } from "../update/settings";
 import type { UpdateConfig } from "../update/types";

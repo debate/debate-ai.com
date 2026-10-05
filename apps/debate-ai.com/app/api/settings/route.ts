@@ -45,6 +45,13 @@ import {
   type UserSettingsPayload,
 } from "@debate/round"
 import {
+  DEFAULT_FLOW_EDITOR_SETTINGS_SYNC,
+  normalizeFlowEditorSettingsPatch,
+  parseFlowEditorSettings,
+  serializeFlowEditorSettings,
+  type FlowEditorSettingsSyncPayload,
+} from "@debate/flow-ebb/settings-sync"
+import {
   applyNewsLikedOp,
   applyNewsReadOp,
   applyQuestStreakFreezeOp,
@@ -267,6 +274,7 @@ type SettingsRow = {
   savedArgumentCollections: string | null
   researchProgressGoal: string | null
   brainstormSessionTimer: string | null
+  flowEditorSettings: string | null
   questStreakSync: string | null
   qualificationPointsTable: string | null
   qualificationCutoff: string | null
@@ -287,6 +295,7 @@ type SettingsPayload = UserSettingsPayload & {
   savedArgumentCollections: SavedArgumentCollection[]
   researchProgressGoal: ResearchProgressGoalSyncPayload | null
   brainstormSessionTimer: BrainstormSessionTimerSyncPayload | null
+  flowEditorSettings: FlowEditorSettingsSyncPayload | null
   questStreakSync: QuestStreakSyncPayload | null
   qualificationPointsTable: QualificationPointsTable | null
   qualificationCutoff: QualificationCutoffSettings | null
@@ -320,6 +329,9 @@ function toPayload(row: SettingsRow | undefined): SettingsPayload {
     brainstormSessionTimer: row?.brainstormSessionTimer
       ? parseBrainstormSessionTimer(row.brainstormSessionTimer)
       : DEFAULT_BRAINSTORM_SESSION_TIMER_SYNC.brainstormSessionTimer,
+    flowEditorSettings: row?.flowEditorSettings
+      ? parseFlowEditorSettings(row.flowEditorSettings)
+      : DEFAULT_FLOW_EDITOR_SETTINGS_SYNC.flowEditorSettings,
     questStreakSync: row?.questStreakSync
       ? parseQuestStreakSync(row.questStreakSync)
       : DEFAULT_QUEST_STREAK_SYNC.questStreakSync,
@@ -371,6 +383,7 @@ export async function PUT(req: NextRequest) {
   const savedArgumentCollectionOpResult = normalizeSavedArgumentCollectionOpPatch(body)
   const researchProgressGoalResult = normalizeResearchProgressGoalPatch(body)
   const brainstormSessionTimerResult = normalizeBrainstormSessionTimerPatch(body)
+  const flowEditorSettingsResult = normalizeFlowEditorSettingsPatch(body)
   const questStreakSyncResult = normalizeQuestStreakSyncPatch(body)
   const questStreakFreezeOpResult = normalizeQuestStreakFreezeOpPatch(body)
   const questStreakReminderOpResult = normalizeQuestStreakReminderOpPatch(body)
@@ -402,6 +415,7 @@ export async function PUT(req: NextRequest) {
     ...savedArgumentCollectionOpResult.errors,
     ...researchProgressGoalResult.errors,
     ...brainstormSessionTimerResult.errors,
+    ...flowEditorSettingsResult.errors,
     ...questStreakSyncResult.errors,
     ...questStreakFreezeOpResult.errors,
     ...questStreakReminderOpResult.errors,
@@ -440,6 +454,7 @@ export async function PUT(req: NextRequest) {
     savedArgumentCollectionOpResult.valid.updateSavedArgumentCollectionTags === undefined &&
     researchProgressGoalResult.valid.researchProgressGoal === undefined &&
     brainstormSessionTimerResult.valid.brainstormSessionTimer === undefined &&
+    flowEditorSettingsResult.valid.flowEditorSettings === undefined &&
     questStreakSyncResult.valid.questStreakSync === undefined &&
     questStreakFreezeOpResult.valid.recordStreakFreezeDayKey === undefined &&
     questStreakReminderOpResult.valid.setLapseReminderEnabled === undefined &&
@@ -481,6 +496,7 @@ export async function PUT(req: NextRequest) {
     savedArgumentCollections?: string | null
     researchProgressGoal?: string | null
     brainstormSessionTimer?: string | null
+    flowEditorSettings?: string | null
     questStreakSync?: string | null
     qualificationPointsTable?: string | null
     qualificationCutoff?: string | null
@@ -633,6 +649,9 @@ export async function PUT(req: NextRequest) {
     dbPatch.brainstormSessionTimer = serializeBrainstormSessionTimer(
       brainstormSessionTimerResult.valid.brainstormSessionTimer,
     )
+  }
+  if (flowEditorSettingsResult.valid.flowEditorSettings !== undefined) {
+    dbPatch.flowEditorSettings = serializeFlowEditorSettings(flowEditorSettingsResult.valid.flowEditorSettings)
   }
   if (questStreakFreezeOpResult.valid.recordStreakFreezeDayKey !== undefined) {
     // A single "spend a freeze on this day" op is resolved against the row's

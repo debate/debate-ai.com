@@ -103,6 +103,19 @@
 
 ## Completed
 
+### Sync flow-editor display/keymap settings to the account
+
+- **Branch**: `agent/flow-settings-account-sync`
+- Remaining slice of "Account-synced user data across all tools" (IDEAS.md). `ebb-display-settings` and `ebb-keymap-settings` now sync through a new `flow_editor_settings` column on `user_settings` (`PUT /api/settings { flowEditorSettings }`).
+- [x] Pure validation/serialization `debate-flow/src/lib/store/flow-editor-settings-sync.ts` (device-bound `flowsDir`, `contacts`, collab connection toggles excluded)
+- [x] Client + `startFlowSettingsAccountSync` (adopt account copy, seed empty account, debounced push, signed-out no-op) mounted in `EbbFlowEmbed`
+- [x] Route + schema wiring in `apps/debate-ai.com`
+- [x] Vitest `packages/debate-flow/test/flow-editor-settings-sync.test.ts`; documented in `features/user-settings.mdx`
+- [ ] Follow-up: route-level test for `flowEditorSettings` GET/PUT (no existing route test harness for `/api/settings`)
+- [ ] Follow-up: tool UI pass - sync status and pin/save controls in each tool's header (still In Progress in IDEAS.md)
+- [ ] Follow-up: deploy must apply the new column (schema.ts is the only source now that `drizzle/` is gone)
+
+
 ### Fix duplicated tool-record catalog entries (merge damage)
 
 - Branch: `claude/gifted-babbage-rvmkc4`
