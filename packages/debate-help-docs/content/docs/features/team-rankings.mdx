@@ -39,13 +39,21 @@ exist for the current season only, so earlier seasons show the banner alone.
 ## Picking an opponent when creating a round
 
 The Create New Round dialog reads the same rankings. Once a school is
-entered on either side, a small `Teams at <school>` pop-out opens beside
-the field listing that school's ranked teams in the round's format (PF, LD,
-Policy or college policy), best rank first. Clicking a team fills that
-side's debater names (`Falk & Sabnani` fills 1st and 2nd speaker; an LD
-entry fills the one debater) and closes the pop-out. The pop-out stays hidden for formats without
-rankings and for schools with no ranked teams, and the × hides it. The
-lookup lives in `debate-round`'s `round/school-teams.ts`.
+entered on either side, up to five of that school's teams in the round's
+format appear as round badges under the field, best rank first. Clicking a
+badge fills that side's debater names (`Falk & Sabnani` fills 1st and 2nd
+speaker; an LD entry fills the one debater). A side's badges go away once its
+debaters are filled in, so after both teams are entered none are left.
+
+The tournament field suggests Tabroom tournaments running now or coming up
+as soon as it is clicked, running ones first. When the round's tournament is
+one of them, its schools in the round's format are listed first in the
+(scrollable) school dropdown, and the badges show that school's entries at
+the tournament instead of its ranked teams. Badges stay hidden for formats
+without rankings and for schools with no teams. The lookups live in
+`debate-round`'s `round/school-teams.ts` and `round/tournament-field.ts`; the
+tournament data is read through `@debate/tournaments/client` from the app's
+`/api/tabroom-beta` proxy.
 
 ## Known gaps
 

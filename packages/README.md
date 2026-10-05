@@ -121,6 +121,8 @@ winner), speech doc panels, export/history tooling, and the flow/settings stores
 exports the roster panels (prep notes, opponent team profiles, drill sets, pre-round
 briefings, coaching sessions, flow summaries) that render persisted records from the
 practice tools.
+The Create New Round dialog reads current tournaments and their fields through
+`debate-tournaments`' API client (`@debate/tournaments/client`).
 
 ## debate-round-practice-ai
 
