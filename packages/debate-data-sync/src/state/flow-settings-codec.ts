@@ -1,32 +1,28 @@
 /**
- * @fileoverview Adapts the Flow editor's two single-object settings stores —
- * `ebb-display-settings` and `ebb-keymap-settings`, see `debate-flow`'s
- * `useFlowStore.ts` — to the array-of-records shape `TOOL_RECORD_COLLECTIONS`
- * syncs, so a debater's font, zoom, theme, side colors and rebound keys follow
- * them to a second device.
+ * @fileoverview Adapts the `ebb` flow editor's two single-object settings
+ * stores — `ebb-display-settings` and `ebb-keymap-settings`, see
+ * `debate-flow`'s `useFlowStore.ts` — to the array-of-records shape
+ * `TOOL_RECORD_COLLECTIONS` syncs.
  *
- * Display settings become one record (`id: "display"`) holding only the
- * preferences that describe the *user*. Device- and people-specific fields stay
- * out of the account: `flowsDir` is a filesystem path, the `collab*` fields
- * configure this machine's live-collaboration relay, and `contacts` holds other
- * people's details. `encodeDisplaySettings` receives the stored value so that
- * writing an account record back never erases those local-only fields.
+ * Each store becomes exactly one record with the fixed id
+ * {@link FLOW_SETTINGS_RECORD_ID}, so the account holds one row per user per
+ * store. Only fields that describe how the user likes to flow travel: the
+ * font, zoom, theme, side colours, editing toggles and key bindings. Fields
+ * that describe *this device* — the desktop flows folder, collaboration
+ * relay/listen switches, contacts, panel open state — stay local, and
+ * {@link encodeFlowDisplaySettings} / {@link encodeFlowKeymapSettings} merge
+ * adopted values over the stored object so a sync never erases them.
  *
- * Keymap overrides become one record per rebound action (`id` = action id,
- * `key` = the binding), so rebinding one action on one device only touches
- * that action's row.
- *
- * Pure — no storage or network.
+ * Pure — no storage or network — so the sync and the tests can import it.
  *
  * @module state/flow-settings-codec
  */
 
-/** The display preferences that sync; everything else in the store stays local. */
-export const SYNCED_DISPLAY_FIELDS = [
-  "flowFont",
-  "defaultGridZoom",
-  "sidebarCollapsed",
-  "rfdOpen",
+/** The id of the single record each flow-settings collection holds. */
+export const FLOW_SETTINGS_RECORD_ID = "settings";
+
+const STRING_FIELDS = ["flowFont", "cardmirrorTextType", "theme"] as const;
+const BOOLEAN_FIELDS = [
   "rfdVim",
   "insertPaste",
   "appendEdit",
@@ -34,90 +30,95 @@ export const SYNCED_DISPLAY_FIELDS = [
   "alignSpeeches",
   "tooltips",
   "cardmirrorEnabled",
-  "cardmirrorTextType",
-  "theme",
-  "affColor",
-  "negColor",
 ] as const;
+const COLOR_FIELDS = ["affColor", "negColor"] as const;
+const HEX_COLOR = /^#[0-9a-fA-F]{6}$/;
+const ZOOM_MIN = 0.5;
+const ZOOM_MAX = 3;
 
-/** The single record id display settings sync under. */
-export const DISPLAY_SETTINGS_RECORD_ID = "display";
-
-function isPlainObject(value: unknown): value is Record<string, unknown> {
+function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-/**
- * The stored display settings as one record, or none when the store is absent
- * or malformed. Only {@link SYNCED_DISPLAY_FIELDS} are carried.
- *
- * @param raw - The parsed `ebb-display-settings` value.
- */
-export function decodeDisplaySettings(raw: unknown): Array<Record<string, unknown>> {
-  if (!isPlainObject(raw)) return [];
-  const record: Record<string, unknown> = { id: DISPLAY_SETTINGS_RECORD_ID };
-  for (const field of SYNCED_DISPLAY_FIELDS) {
-    if (field in raw) record[field] = raw[field];
+/** The syncable subset of a display-settings object, dropping malformed values. */
+function pickDisplayFields(source: Record<string, unknown>): Record<string, unknown> {
+  const picked: Record<string, unknown> = {};
+  for (const key of STRING_FIELDS) {
+    if (typeof source[key] === "string" && source[key] !== "") picked[key] = source[key];
   }
-  return [record];
+  for (const key of BOOLEAN_FIELDS) {
+    if (typeof source[key] === "boolean") picked[key] = source[key];
+  }
+  for (const key of COLOR_FIELDS) {
+    const value = source[key];
+    if (value === null || (typeof value === "string" && HEX_COLOR.test(value))) picked[key] = value;
+  }
+  const zoom = source.defaultGridZoom;
+  if (typeof zoom === "number" && Number.isFinite(zoom) && zoom >= ZOOM_MIN && zoom <= ZOOM_MAX) {
+    picked.defaultGridZoom = zoom;
+  }
+  return picked;
 }
 
 /**
- * Rebuilds the stored display settings: the account's synced fields laid over
- * whatever this browser already has, so local-only fields survive.
+ * Turns the stored display settings into its one syncable record.
+ *
+ * @param stored - The parsed `ebb-display-settings` value.
+ * @returns `[]` when there is nothing valid to sync.
+ */
+export function decodeFlowDisplaySettings(stored: unknown): unknown[] {
+  if (!isObject(stored)) return [];
+  const fields = pickDisplayFields(stored);
+  return Object.keys(fields).length === 0 ? [] : [{ id: FLOW_SETTINGS_RECORD_ID, ...fields }];
+}
+
+/**
+ * Merges the synced record over the stored display settings, leaving every
+ * device-local field in `current` untouched.
  *
  * @param records - Records merged from the account and this browser.
- * @param existing - The parsed value currently in `localStorage`, if any.
+ * @param current - The parsed `ebb-display-settings` currently in storage.
  */
-export function encodeDisplaySettings(
-  records: readonly unknown[],
-  existing?: unknown,
-): Record<string, unknown> {
-  const next: Record<string, unknown> = isPlainObject(existing) ? { ...existing } : {};
-  const record = records.find(
-    (r): r is Record<string, unknown> =>
-      isPlainObject(r) && r.id === DISPLAY_SETTINGS_RECORD_ID,
-  );
-  if (!record) return next;
-  for (const field of SYNCED_DISPLAY_FIELDS) {
-    if (field in record) next[field] = record[field];
+export function encodeFlowDisplaySettings(records: readonly unknown[], current?: unknown): unknown {
+  const base = isObject(current) ? current : {};
+  const record = records.find((r) => isObject(r) && r.id === FLOW_SETTINGS_RECORD_ID);
+  if (!isObject(record)) return base;
+  return { ...base, ...pickDisplayFields(record) };
+}
+
+/** Only entries mapping a command id to a non-empty key-binding string. */
+function pickKeymapOverrides(value: unknown): Record<string, string> {
+  const overrides: Record<string, string> = {};
+  if (!isObject(value)) return overrides;
+  for (const [command, binding] of Object.entries(value)) {
+    if (command !== "" && typeof binding === "string" && binding !== "") overrides[command] = binding;
   }
-  return next;
+  return overrides;
 }
 
 /**
- * One record per rebound action; entries whose binding isn't a non-empty
- * string are skipped.
+ * Turns the stored keymap settings into its one syncable record.
  *
- * @param raw - The parsed `ebb-keymap-settings` value (`{ keymapOverrides }`).
+ * @param stored - The parsed `ebb-keymap-settings` value.
+ * @returns `[]` when no binding is overridden (the default keymap needs no row).
  */
-export function decodeKeymapSettings(raw: unknown): Array<{ id: string; key: string }> {
-  if (!isPlainObject(raw) || !isPlainObject(raw.keymapOverrides)) return [];
-  const records: Array<{ id: string; key: string }> = [];
-  for (const [id, key] of Object.entries(raw.keymapOverrides)) {
-    if (id.trim().length > 0 && typeof key === "string" && key.length > 0) {
-      records.push({ id, key });
-    }
-  }
-  return records;
+export function decodeFlowKeymapSettings(stored: unknown): unknown[] {
+  if (!isObject(stored)) return [];
+  const keymapOverrides = pickKeymapOverrides(stored.keymapOverrides);
+  return Object.keys(keymapOverrides).length === 0
+    ? []
+    : [{ id: FLOW_SETTINGS_RECORD_ID, keymapOverrides }];
 }
 
 /**
- * Rebuilds `{ keymapOverrides }` from records (the inverse of
- * {@link decodeKeymapSettings}).
+ * Rebuilds the stored keymap settings from the synced record.
  *
  * @param records - Records merged from the account and this browser.
+ * @param current - The parsed `ebb-keymap-settings` currently in storage.
  */
-export function encodeKeymapSettings(records: readonly unknown[]): {
-  keymapOverrides: Record<string, string>;
-} {
-  const keymapOverrides: Record<string, string> = {};
-  for (const record of records) {
-    if (!isPlainObject(record)) continue;
-    const { id, key } = record;
-    if (typeof id === "string" && id.length > 0 && typeof key === "string" && key.length > 0) {
-      keymapOverrides[id] = key;
-    }
-  }
-  return { keymapOverrides };
+export function encodeFlowKeymapSettings(records: readonly unknown[], current?: unknown): unknown {
+  const base = isObject(current) ? current : {};
+  const record = records.find((r) => isObject(r) && r.id === FLOW_SETTINGS_RECORD_ID);
+  if (!isObject(record)) return base;
+  return { ...base, keymapOverrides: pickKeymapOverrides(record.keymapOverrides) };
 }

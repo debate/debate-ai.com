@@ -1,81 +1,89 @@
 /**
- * @fileoverview Pins the adapters that let the Flow editor's display and
- * keymap settings join the account sync without leaking device-local fields.
+ * @fileoverview The flow editor's display and keymap stores joining the
+ * account sync: only user preferences travel, device-local fields survive.
  */
-
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
-  decodeDisplaySettings,
-  encodeDisplaySettings,
-  decodeKeymapSettings,
-  encodeKeymapSettings,
+  decodeFlowDisplaySettings,
+  decodeFlowKeymapSettings,
+  encodeFlowDisplaySettings,
+  encodeFlowKeymapSettings,
 } from "../src/state/flow-settings-codec";
+import {
+  findToolRecordCollection,
+  isSyncableToolRecord,
+} from "../src/state/toolRecordCollections";
 import { readLocalToolRecords, writeLocalToolRecords } from "../src/state/tool-record-mirror";
-import { findToolRecordCollection, type ToolRecordCollection } from "../src/state/toolRecordCollections";
 
-const display = findToolRecordCollection("flowDisplaySettings") as ToolRecordCollection;
+const display = findToolRecordCollection("flowDisplaySettings")!;
+const keymap = findToolRecordCollection("flowKeymapSettings")!;
 
-describe("display settings codec", () => {
-  it("carries only the synced preferences", () => {
-    const [record] = decodeDisplaySettings({
-      theme: "dark",
+describe("decodeFlowDisplaySettings", () => {
+  it("keeps preferences and drops device-local fields", () => {
+    const [record] = decodeFlowDisplaySettings({
       flowFont: "mono",
-      flowsDir: "/home/me/flows",
-      collabName: "Me",
-      collabEnabled: true,
-      contacts: { a: "b" },
-    });
-    expect(record).toEqual({ id: "display", theme: "dark", flowFont: "mono" });
-  });
-
-  it("yields nothing for an absent or malformed store", () => {
-    expect(decodeDisplaySettings(null)).toEqual([]);
-    expect(decodeDisplaySettings([1])).toEqual([]);
-    expect(decodeDisplaySettings("x")).toEqual([]);
-  });
-
-  it("keeps local-only fields when writing an account record back", () => {
-    const next = encodeDisplaySettings([{ id: "display", theme: "light" }], {
+      defaultGridZoom: 1.2,
       theme: "dark",
+      affColor: "#112233",
+      negColor: null,
+      tooltips: false,
       flowsDir: "/home/me/flows",
       collabName: "Me",
+      contacts: { a: 1 },
+      sidebarCollapsed: true,
+    }) as Record<string, unknown>[];
+    expect(record).toEqual({
+      id: "settings",
+      flowFont: "mono",
+      defaultGridZoom: 1.2,
+      theme: "dark",
+      affColor: "#112233",
+      negColor: null,
+      tooltips: false,
     });
-    expect(next).toEqual({ theme: "light", flowsDir: "/home/me/flows", collabName: "Me" });
   });
 
-  it("never lets an account record set a local-only field", () => {
-    const next = encodeDisplaySettings([{ id: "display", flowsDir: "/evil", theme: "dark" }], {});
-    expect(next).toEqual({ theme: "dark" });
-  });
-
-  it("leaves the store untouched when there is no display record", () => {
-    expect(encodeDisplaySettings([], { theme: "dark" })).toEqual({ theme: "dark" });
+  it("drops malformed values and yields no record when nothing is valid", () => {
+    expect(
+      decodeFlowDisplaySettings({ defaultGridZoom: 9, affColor: "red", tooltips: "yes", theme: "" }),
+    ).toEqual([]);
+    expect(decodeFlowDisplaySettings(null)).toEqual([]);
+    expect(decodeFlowDisplaySettings([1])).toEqual([]);
   });
 });
 
-describe("keymap settings codec", () => {
-  it("round-trips overrides as one record per action", () => {
-    const stored = { keymapOverrides: { "grid.up": "k", "grid.down": "j" } };
-    const records = decodeKeymapSettings(stored);
-    expect(records).toEqual([
-      { id: "grid.up", key: "k" },
-      { id: "grid.down", key: "j" },
-    ]);
-    expect(encodeKeymapSettings(records)).toEqual(stored);
+describe("encodeFlowDisplaySettings", () => {
+  it("overlays the synced record on the local store without erasing local-only fields", () => {
+    const out = encodeFlowDisplaySettings(
+      [{ id: "settings", theme: "light", flowsDir: "/evil", defaultGridZoom: 99 }],
+      { theme: "dark", flowsDir: "/home/me/flows", collabName: "Me" },
+    );
+    expect(out).toEqual({ theme: "light", flowsDir: "/home/me/flows", collabName: "Me" });
   });
 
-  it("skips malformed entries", () => {
-    expect(decodeKeymapSettings({ keymapOverrides: { a: "", b: 3, "": "x", c: "y" } })).toEqual([
-      { id: "c", key: "y" },
-    ]);
-    expect(decodeKeymapSettings({})).toEqual([]);
-    expect(encodeKeymapSettings([null, { id: "a" }, { id: "b", key: "z" }])).toEqual({
-      keymapOverrides: { b: "z" },
-    });
+  it("returns the current store when there is no settings record", () => {
+    expect(encodeFlowDisplaySettings([], { theme: "dark" })).toEqual({ theme: "dark" });
+    expect(encodeFlowDisplaySettings([{ id: "other", theme: "x" }])).toEqual({});
   });
 });
 
-describe("store helpers with the display codec", () => {
+describe("flow keymap codec", () => {
+  it("round-trips overrides and ignores empty or non-string bindings", () => {
+    const records = decodeFlowKeymapSettings({ keymapOverrides: { "sheet.new": "Mod-n", bad: 3, "": "x", blank: "" } });
+    expect(records).toEqual([{ id: "settings", keymapOverrides: { "sheet.new": "Mod-n" } }]);
+    expect(encodeFlowKeymapSettings(records, { other: 1 })).toEqual({
+      other: 1,
+      keymapOverrides: { "sheet.new": "Mod-n" },
+    });
+  });
+
+  it("syncs nothing for the default keymap", () => {
+    expect(decodeFlowKeymapSettings({ keymapOverrides: {} })).toEqual([]);
+    expect(decodeFlowKeymapSettings("nope")).toEqual([]);
+  });
+});
+
+describe("collections using the flow-settings codecs", () => {
   const backing = new Map<string, string>();
 
   beforeEach(() => {
@@ -90,14 +98,28 @@ describe("store helpers with the display codec", () => {
     vi.unstubAllGlobals();
   });
 
-  it("preserves local-only fields through an account merge", () => {
-    backing.set("ebb-display-settings", JSON.stringify({ theme: "dark", collabName: "Me", flowsDir: "/x" }));
-    expect(readLocalToolRecords(display)).toEqual([{ id: "display", theme: "dark" }]);
-    writeLocalToolRecords(display, [{ id: "display", theme: "light" }]);
-    expect(JSON.parse(backing.get("ebb-display-settings") as string)).toEqual({
+  it("reads each store as one syncable record", () => {
+    backing.set("ebb-display-settings", JSON.stringify({ theme: "dark" }));
+    backing.set("ebb-keymap-settings", JSON.stringify({ keymapOverrides: { a: "b" } }));
+    for (const collection of [display, keymap]) {
+      const records = readLocalToolRecords(collection);
+      expect(records).toHaveLength(1);
+      expect(isSyncableToolRecord(collection, records[0])).toBe(true);
+    }
+  });
+
+  it("writes an adopted record while keeping the device-local flows folder", () => {
+    backing.set("ebb-display-settings", JSON.stringify({ theme: "dark", flowsDir: "/home/me/flows" }));
+    writeLocalToolRecords(display, [{ id: "settings", theme: "light" }]);
+    expect(JSON.parse(backing.get("ebb-display-settings") ?? "null")).toEqual({
       theme: "light",
-      collabName: "Me",
-      flowsDir: "/x",
+      flowsDir: "/home/me/flows",
     });
+  });
+
+  it("writes onto an empty or corrupt store", () => {
+    backing.set("ebb-keymap-settings", "{broken");
+    writeLocalToolRecords(keymap, [{ id: "settings", keymapOverrides: { a: "b" } }]);
+    expect(JSON.parse(backing.get("ebb-keymap-settings") ?? "null")).toEqual({ keymapOverrides: { a: "b" } });
   });
 });
