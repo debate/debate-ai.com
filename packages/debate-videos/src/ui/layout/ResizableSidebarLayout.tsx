@@ -154,7 +154,14 @@ export function ResizableSidebarLayout({
         )}
       />
       <Panel id="app-content" minSize={320} style={{ overflow: "visible", maxHeight: "none" }}>
-        <div className={cn("min-w-0", contentClassName)}>{children}</div>
+        {/* `relative` makes the column the containing block for the page's
+            absolutely positioned bits. Without one, an `sr-only` label in the
+            last column of a wide, horizontally scrolling table (the admin
+            users table) was placed against the viewport instead, at the
+            table's far edge: its overflow escaped every scroller, widened
+            the mobile layout viewport to twice the screen, and the fixed
+            bottom dock centred itself in that, off to the right. */}
+        <div className={cn("relative min-w-0", contentClassName)}>{children}</div>
       </Panel>
     </Group>
   )
