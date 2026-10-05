@@ -10,12 +10,14 @@
  * customize each one — the division it runs in, how entries are written in
  * pairings, a per-school entry cap, a fee, and extra text for the invite.
  *
- * Tabroom's own console is still one button away, framed over the list, for
- * the administration this page has not rebuilt.
+ * Nothing is created on Tabroom: the tournament lives in this site's hosting
+ * API, and its admins manage it from the admin web view
+ * (`./TournamentAdminPage`), which the demo tournament lets anyone try as a
+ * mock admin.
  */
 
 import { useState, type ComponentType, type FormEvent, type ReactNode } from "react";
-import { CalendarRange, Check, Computer, MapPin, Plus } from "lucide-react";
+import { CalendarRange, Check, Computer, MapPin, Plus, ShieldCheck } from "lucide-react";
 import {
   Badge,
   Button,
@@ -29,7 +31,7 @@ import {
   Textarea,
   buttonVariants,
 } from "../primitives";
-import { TabroomOverlay } from "../TabroomOverlay";
+import { DEMO_TOURN_ID } from "../../host/demo-account";
 import { BackLink, Section, useTournaments } from "../shared";
 import { TOURNAMENT_FORMATS, formatSummary, type TournamentFormat } from "../../host/formats";
 import type { CreateEventInput } from "../client";
@@ -117,7 +119,6 @@ function toLocalInput(date: Date): string {
 /** Creates a tournament and links to the result. */
 export function HostTournamentPage() {
   const { client, hrefs, Link } = useTournaments();
-  const [tabroomOpen, setTabroomOpen] = useState(false);
 
   const [name, setName] = useState("");
   const [scheduledType, setScheduledType] = useState<ScheduledType>("in-person");
@@ -194,12 +195,16 @@ export function HostTournamentPage() {
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
             <p className="text-muted-foreground">
-              You own it, and it is registered in every format you picked. Add schools, rooms and a schedule, then
-              publish the rounds to share the invitation.
+              You own it, and it is registered in every format you picked. Its admin view shows the events,
+              entries, schools, judges, rooms and schedule as they fill in.
             </p>
             <div className="flex flex-wrap gap-2">
-              <Link href={hrefs.tournament(created.id)} className={buttonVariants({ size: "sm" })}>
-                Open the tournament
+              <Link href={hrefs.admin(created.id)} className={buttonVariants({ size: "sm" })}>
+                <ShieldCheck aria-hidden />
+                Open the admin view
+              </Link>
+              <Link href={hrefs.tournament(created.id)} className={buttonVariants({ variant: "outline", size: "sm" })}>
+                Public invite
               </Link>
               <Link href={hrefs.rounds(created.id)} className={buttonVariants({ variant: "outline", size: "sm" })}>
                 Pairings
@@ -221,14 +226,14 @@ export function HostTournamentPage() {
         <div className="flex flex-col gap-1">
           <h1 className="text-2xl font-bold tracking-tight">Host a Tournament</h1>
           <p className="text-sm text-muted-foreground">
-            Create it here — the tournament, its formats and your ownership are written straight to this site&rsquo;s
-            API. Tabroom&rsquo;s own console is one button away if you need it.
+            Create it here: the tournament, its formats and your ownership are written to this site&rsquo;s hosting
+            API, not to Tabroom, and you run it from its admin view. Sign in first.
           </p>
         </div>
-        <button type="button" onClick={() => setTabroomOpen(true)} className={buttonVariants({ variant: "outline", size: "sm" })}>
-          <Computer aria-hidden />
-          Open Tabroom
-        </button>
+        <Link href={hrefs.admin(DEMO_TOURN_ID)} className={buttonVariants({ variant: "outline", size: "sm" })}>
+          <ShieldCheck aria-hidden />
+          Try the demo admin
+        </Link>
       </div>
 
       <form className="space-y-4" onSubmit={onSubmit}>
@@ -403,7 +408,6 @@ export function HostTournamentPage() {
         </div>
       </form>
 
-      <TabroomOverlay open={tabroomOpen} onClose={() => setTabroomOpen(false)} />
     </div>
   );
 }

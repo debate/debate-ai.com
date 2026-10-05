@@ -16,6 +16,7 @@ export type TournamentRoute =
   | { page: "results"; tournId: number }
   | { page: "resultSet"; tournId: number; resultSetId: number }
   | { page: "tabroom"; tournId: number }
+  | { page: "admin"; tournId: number }
   | { page: "notFound" };
 
 /** Route patterns, relative to the mount path, for docs and sitemaps. */
@@ -28,6 +29,7 @@ export const TOURNAMENT_ROUTE_PATTERNS = {
   results: "/:tournId/results",
   resultSet: "/:tournId/results/:resultSetId",
   tabroom: "/:tournId/tabroom",
+  admin: "/:tournId/admin",
 } as const;
 
 const id = (s: string | undefined) => (s && /^\d+$/.test(s) ? Number(s) : null);
@@ -51,6 +53,7 @@ export function matchTournamentRoute(segments: readonly string[] = []): Tourname
     if (parts.length === 3 && resultSetId !== null) return { page: "resultSet", tournId, resultSetId };
   }
   if (section === "tabroom" && parts.length === 2) return { page: "tabroom", tournId };
+  if (section === "admin" && parts.length === 2) return { page: "admin", tournId };
   return { page: "notFound" };
 }
 
@@ -68,6 +71,7 @@ export function tournamentHrefs(basePath = "/practice/tournaments") {
     results: (tournId: number) => `${base}/${tournId}/results`,
     resultSet: (tournId: number, resultSetId: number) => `${base}/${tournId}/results/${resultSetId}`,
     tabroom: (tournId: number) => `${base}/${tournId}/tabroom`,
+    admin: (tournId: number) => `${base}/${tournId}/admin`,
   };
 }
 

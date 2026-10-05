@@ -1,8 +1,10 @@
 /// <reference path="../router.d.ts" />
 /**
- * The write side of the tournaments API: `POST /host/tourns` to create a
- * tournament from inside this app, and `GET /host/tourns` to list the ones the
- * signed-in user owns.
+ * The hosting side of the tournaments API: `POST /host/tourns` to create a
+ * tournament from inside this app, `GET /host/tourns` to list the ones the
+ * signed-in user owns, `GET /host/tourns/:tournId/admin` for a hosted
+ * tournament's admin view (see `./admin`), and `POST /host/demo` to load the
+ * demo tournament anyone can browse as its mock admin (see `./demo`).
  *
  * This is deliberately a separate mount from the vendored `/rest` and `/pages`
  * trees. Those mirror upstream's public read API and are mounted as
@@ -18,6 +20,10 @@
 import Router from "router";
 import type { ExpressLikeRouter } from "../api/express-adapter";
 import type { HostUser, TabroomActor } from "../api/actor";
+import { findPersonByEmail } from "../api/actor";
+import { canAdminTournament, isDemoTournament, loadTournamentAdmin, mockAdminViewer, type AdminViewer } from "./admin";
+import { ensureDemoTournament } from "./demo";
+import { DEMO_ADMIN, DEMO_TOURN_ID } from "./demo-account";
 import {
   createTournament,
   createTournamentSchema,
@@ -28,6 +34,7 @@ import {
 /** The `req.actor`/`req.user` the handler mounts, as this router reads them. */
 interface HostRequest {
   body?: unknown;
+  params?: Record<string, string>;
   actor?: TabroomActor;
   hostUser?: HostUser;
   user?: HostUser;
@@ -53,8 +60,46 @@ function createHostRouter(): ExpressLikeRouter {
   const tourns = routes.route("/tourns");
   tourns.get(listMine);
   tourns.post(create);
+  routes.route("/tourns/:tournId/admin").get(admin);
+  routes.route("/demo").post(demo);
   return routes as unknown as ExpressLikeRouter;
 }
+
+const admin = async (req: HostRequest, res: HostResponse) => {
+  const tournId = Number(req.params?.tournId);
+  if (!Number.isInteger(tournId) || tournId <= 0) return res.status(404).json({ detail: "No such tournament." });
+  const user = req.hostUser ?? req.user;
+  try {
+    let viewer: AdminViewer | null = null;
+    const person = user?.email ? await findPersonByEmail(user.email) : undefined;
+    if (person && (await canAdminTournament(person.id, tournId))) {
+      const name = [person.first, person.last].filter(Boolean).join(" ") || user?.name || person.email;
+      viewer = { username: person.email.split("@")[0] ?? person.email, name, mock: false };
+    } else if (isDemoTournament(tournId)) {
+      // The demo is open to everyone, browsed as its mock admin.
+      viewer = mockAdminViewer;
+    }
+    if (!viewer) {
+      return user?.email
+        ? res.status(403).json({ detail: "Only this tournament's owners and admins can open its admin view." })
+        : res.status(401).json({ detail: "Sign in as one of this tournament's admins to open its admin view." });
+    }
+    const view = await loadTournamentAdmin(tournId, viewer);
+    if (!view) return res.status(404).json({ detail: "No such tournament." });
+    res.json(view);
+  } catch (error) {
+    res.status(500).json({ detail: messageFor(error, "Could not load the admin view.") });
+  }
+};
+
+const demo = async (_req: HostRequest, res: HostResponse) => {
+  try {
+    const { seeded } = await ensureDemoTournament();
+    res.json({ tournId: DEMO_TOURN_ID, username: DEMO_ADMIN.username, seeded });
+  } catch (error) {
+    res.status(500).json({ detail: messageFor(error, "Could not load the demo tournament.") });
+  }
+};
 
 const listMine = async (req: HostRequest, res: HostResponse) => {
   const user = req.hostUser ?? req.user;

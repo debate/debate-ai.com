@@ -6,10 +6,11 @@ import { TournamentsApp } from "@debate/tournaments/ui"
 
 /**
  * The tournaments UI from `debate-tournaments`, mounted directly rather than
- * framed, reading and writing through this app's own `/api/tabroom` — the
- * vendored Tabroom API on this site's D1, with the host page's creation routes
- * under `/api/tabroom/host`. `/practice/tabroom` frames beta.tabroom.com
- * itself, and the Tournaments list frames it from a button.
+ * framed. Live Tabroom's tournaments, pairings and results come through this
+ * app's read-only `/api/tabroom-beta` proxy; tournaments hosted here (and the
+ * demo anyone can browse as its admin) come from `/api/tabroom`, the vendored
+ * Tabroom API on this site's D1, whose `/host` routes create them and serve
+ * their admin view. `/practice/tabroom` frames beta.tabroom.com itself.
  */
 export default function Tournaments() {
   const { slug } = useParams<{ slug?: string[] }>()
@@ -18,6 +19,7 @@ export default function Tournaments() {
       segments={slug ?? []}
       basePath="/practice/tournaments"
       apiBase="/api/tabroom"
+      liveApiBase="/api/tabroom-beta"
       Link={Link}
     />
   )

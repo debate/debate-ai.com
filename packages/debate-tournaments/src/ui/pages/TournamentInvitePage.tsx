@@ -3,10 +3,11 @@
 import { FileText, Mail } from "lucide-react";
 import type { TournamentInvite } from "../client";
 import { Badge, Card, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, buttonVariants } from "../primitives";
-import { Empty, Section, formatDate } from "../shared";
+import { Empty, Section, formatDate, useTournaments } from "../shared";
 
 /** A tournament's public invitation: dates, events, documents and contacts. */
 export function TournamentInvitePage({ invite }: { invite: TournamentInvite }) {
+  const { client } = useTournaments();
   const place = [invite.city, invite.state, invite.country].filter(Boolean).join(", ");
   return (
     <div className="space-y-4">
@@ -59,12 +60,30 @@ export function TournamentInvitePage({ invite }: { invite: TournamentInvite }) {
             <Empty>No documents posted.</Empty>
           ) : (
             <ul className="divide-y text-sm">
-              {invite.Files.map((file) => (
-                <li key={file.id} className="flex items-center gap-2 px-4 py-2">
-                  <FileText className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
-                  <span className="truncate">{file.label || file.filename}</span>
-                </li>
-              ))}
+              {invite.Files.map((file) => {
+                const href = client.fileUrl(invite.id, file);
+                const label = file.label || file.filename;
+                return (
+                  <li key={file.id}>
+                    {href ? (
+                      <a
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-4 py-2 transition-colors hover:bg-accent hover:text-accent-foreground"
+                      >
+                        <FileText className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+                        <span className="truncate">{label}</span>
+                      </a>
+                    ) : (
+                      <span className="flex items-center gap-2 px-4 py-2">
+                        <FileText className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+                        <span className="truncate">{label}</span>
+                      </span>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           )}
         </Section>
