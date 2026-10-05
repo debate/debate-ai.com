@@ -37,6 +37,7 @@ import { cn } from "../../lib/ui/lib/utils"
 import { ReasonDocsSidebarPanels } from "../reason-docs/ReasonDocsSidebarPanels"
 import { useReasonDocs } from "../reason-docs/ReasonDocsProvider"
 import { ReasonDocsRouteSync } from "../reason-docs/ReasonDocsRouteSync"
+import { ReasonEditorStatusLine } from "./ReasonEditorStatusLine"
 import { SharedCardOpener } from "./ShareWithContacts"
 
 export function ReasonEditorScreen() {
@@ -146,10 +147,8 @@ export function ReasonEditorScreen() {
                 both in the sidebar's document row
                 (`ReasonDocsSidebarPanels` → `onRename`, `ShareWithContacts`)
                 next to New file / New folder / Upload. This row is just the
-                status line. */}
-            <div className="flex items-center gap-2 px-4 py-2 border-b">
-              {topicDocument ? <span className="text-xs text-muted-foreground">Public topic starter</span> : saving && <span className="text-xs text-muted-foreground">Saving…</span>}
-            </div>
+                status line, plus the account-sync badge. */}
+            <ReasonEditorStatusLine topicDocument={Boolean(topicDocument)} saving={saving} />
             <div className="flex-1 min-h-0 overflow-hidden">
               {/* No React `key` here on purpose: `contentKey` already gives
                   each document a fresh claim (and undo history) inside the

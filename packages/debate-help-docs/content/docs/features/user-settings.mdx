@@ -234,5 +234,10 @@ for the next automatic save. If the save fails the button turns into **Retry
 save** and its tooltip says why. Starring a tool as a favorite uses the star at
 the end of the same header row.
 
-Known gap: the badge is only in the shared tool-page header, so tools with their
-own custom header (the flow tabs and start screen) don't show it yet.
+The REASON editor (`/reason-editor`) has no shared tool-page header, so the same
+badge and **Save now** button sit in the status row above the open document
+(`ReasonEditorStatusLine`).
+
+Known gap: the other tools with their own custom layout (the flow tabs and
+start screen, the document workspace at `/doc`, and the video library) don't
+show the badge yet.
