@@ -30,27 +30,21 @@
  */
 
 import { SECRET_SETTING_KEYS, SETTING_METADATA, type SettingsCategory } from "@debate/editor/settings"
+import { CARDMIRROR_SETTINGS_TABS } from "@debate/editor/settings-tabs"
 
 /**
  * The settings categories `/settings` hosts, in the order it shows them,
- * with the editor's own labels — its full tab set, plus the Appearance and
- * Accessibility tabs that live only here, in the position the editor's
- * `CATEGORY_TABS` used to carry them.
+ * with the editor's own labels — CardMirror's exported tab list
+ * (`CARDMIRROR_SETTINGS_TABS`, from `@debate/editor/settings-tabs`), which
+ * the research settings sidebar lists too.
  *
  * `plugins` is deliberately absent: plugins are installed by the Electron
  * main process, so every row in that category is desktop-only and the tab
  * would render empty on the web.
  */
-export const EDITOR_SETTINGS_TABS: readonly { id: SettingsCategory; label: string }[] = [
-  { id: "general", label: "General" },
-  { id: "files", label: "Files" },
-  { id: "appearance", label: "Appearance" },
-  { id: "accessibility", label: "Accessibility" },
-  { id: "editing", label: "Editing" },
-  { id: "shortcuts", label: "Keyboard" },
-  { id: "comments-ai", label: "Comments & AI" },
-  { id: "pairing", label: "Collaboration" },
-]
+export const EDITOR_SETTINGS_TABS: readonly { id: SettingsCategory; label: string }[] = CARDMIRROR_SETTINGS_TABS.map(
+  ({ id, label }) => ({ id, label }),
+)
 
 /**
  * Settings the page may render but never mirrors to the account: the

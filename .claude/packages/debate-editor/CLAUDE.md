@@ -9,8 +9,9 @@ Entry: `src/react/index.tsx` — consumed as source, no build step. Tests in
 | Export | What it is |
 | --- | --- |
 | `debate-editor` | The React editor shell |
-| `debate-editor/engine` | The ProseMirror engine |
+| `debate-editor/engine` | The ProseMirror engine, plus the web `.docx` helpers (`importDocx`, `exportDocxBlob`, `outlineOf`, `cardsOf`) merged in from the former `debate-editor-cm-adapter` |
 | `debate-editor/settings`, `/settings-ui`, `/settings-categories` | Settings model and UI |
+| `debate-editor/settings-tabs`, `/settings-section` | CardMirror's settings tabs and the React section that renders one, for host Settings sidebars |
 | `debate-editor/collab-bridge` | Collaborative editing bridge |
 | `debate-editor/styles.css` | Styles |
 
@@ -21,7 +22,7 @@ Never reach past these into `src/`.
 `src/` is git-ignored and assembled by `scripts/sync-upstream.mjs` from
 upstream CardMirror (the `packages/debate-editor-cm` submodule, at the commit
 in `upstream.json`) + `patches/debate-ai.patch` + `overlay/` (files upstream
-doesn't have: the React shell, ribbon tabs, sync clients). See the README's
+doesn't have: the React shell, menu bar, sync clients). See the README's
 "Upstream CardMirror" section.
 
 - **Edited anything in `src/`?** Run `bun run sync-upstream:save` in this
@@ -35,10 +36,14 @@ doesn't have: the React shell, ribbon tabs, sync clients). See the README's
   Commit the submodule bump, `upstream.json`, `patches/` and `overlay/` together.
 - Prefer putting new debate-ai.com logic in a file of our own over growing
   the patch. Every patched line is a future merge conflict.
-- After a sync: a new `RIBBON_GROUPS` group must go on a tab in
-  `editor/ribbon-tabs.ts` (its drift guard throws at module load, which kills
-  the embed). A new element in upstream's `index.html` must be copied into
-  `react/ribbon-template.ts`. `test/engine-boot.test.ts` catches both.
+- After a sync: a new `RIBBON_GROUPS` group must go in a menu in
+  `react/menu-bar-categories.ts` (its drift guard throws at module load). A
+  new element in upstream's `index.html` must be copied into
+  `react/ribbon-template.ts`; `test/engine-boot.test.ts` catches it and also
+  checks every toolbar button is wired.
+- The toolbar is upstream's single left↔right scrolling strip. Don't page it
+  into tabs or split it into sections; commands without a button belong in
+  the dropdown `MenuBar` above it.
 
 ## What must not regress
 

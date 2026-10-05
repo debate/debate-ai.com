@@ -39,6 +39,14 @@ import VoiceSection from './Sections/Voice';
 import SkillsAndMemory from './Sections/SkillsAndMemory';
 import { settingsSections } from 'research-agent-ui/settings';
 import type { ComponentType } from 'react';
+// Static import so bundling confines the editor's global stylesheet to this
+// lazily loaded settings chunk.
+import '@debate/editor/styles.css';
+import { CardMirrorSettingsSection } from '@debate/editor/settings-section';
+import type { SettingsCategory } from '@debate/editor/settings';
+import { CARDMIRROR_SETTINGS_TABS } from '@debate/editor/settings-tabs';
+import { CARDMIRROR_TAB_ICONS } from '../../settings/cardmirror-tab-icons';
+import { useEditorPreferencesSync } from '../../../lib/hooks/useEditorPreferencesSync';
 
 // The section list (order, labels, descriptions, icon names) is declared as
 // data in research-agent-ui. The React components and lucide icons stay here in
@@ -79,6 +87,35 @@ const sections = settingsSections
 
 export { sections };
 
+/** Key prefix of the CardMirror tabs in this sidebar, so they can never
+ *  collide with a research section's key (and still deep-link as
+ *  `/settings/research/editor-general`). */
+const EDITOR_SECTION_PREFIX = 'editor-';
+
+/**
+ * The card editor's (CardMirror's) settings, listed under their own heading
+ * below the research sections — the same tabs `/settings` shows, from the
+ * editor's exported `CARDMIRROR_SETTINGS_TABS`, so either Settings page
+ * reaches every editor setting without a detour.
+ */
+const editorSections = CARDMIRROR_SETTINGS_TABS.map((tab) => ({
+  key: `${EDITOR_SECTION_PREFIX}${tab.id}`,
+  name: tab.label,
+  description: tab.description,
+  icon: CARDMIRROR_TAB_ICONS[tab.id] ?? Search,
+  category: tab.id as SettingsCategory,
+}));
+
+type SidebarSection =
+  | (typeof sections)[number]
+  | (typeof editorSections)[number];
+
+const allSections: SidebarSection[] = [...sections, ...editorSections];
+
+function isEditorSection(section: SidebarSection): section is (typeof editorSections)[number] {
+  return 'category' in section;
+}
+
 const SettingsContent = ({
   onClose,
   initialSection,
@@ -91,11 +128,12 @@ const SettingsContent = ({
 }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [config, setConfig] = useState<any>(null);
-  const initialKey = sections.find((s) => s.key === initialSection)?.key ?? sections[0].key;
+  const initialKey = allSections.find((s) => s.key === initialSection)?.key ?? sections[0].key;
   const [activeSection, setActiveSection] = useState<string>(initialKey);
-  const [selectedSection, setSelectedSection] = useState(
-    sections.find((s) => s.key === initialKey)!,
+  const [selectedSection, setSelectedSection] = useState<SidebarSection>(
+    allSections.find((s) => s.key === initialKey)!,
   );
+  const editorSync = useEditorPreferencesSync();
   const [searchQuery, setSearchQuery] = useState('');
 
   const isFirstUrlSync = useRef(true);
@@ -104,7 +142,7 @@ const SettingsContent = ({
   // filtered down as the user types.
   const fuse = useMemo(
     () =>
-      new Fuse(sections, {
+      new Fuse(allSections, {
         keys: ['name', 'description'],
         threshold: 0.4,
         ignoreLocation: true,
@@ -114,12 +152,12 @@ const SettingsContent = ({
 
   const filteredSections = useMemo(() => {
     const query = searchQuery.trim();
-    if (!query) return sections;
+    if (!query) return allSections;
     return fuse.search(query).map((result) => result.item);
   }, [fuse, searchQuery]);
 
   useEffect(() => {
-    setSelectedSection(sections.find((s) => s.key === activeSection)!);
+    setSelectedSection(allSections.find((s) => s.key === activeSection)!);
   }, [activeSection]);
 
   // Keep the URL in sync with the active tab (<basePath>/<tab>) without
@@ -231,21 +269,32 @@ const SettingsContent = ({
               No settings match &ldquo;{searchQuery.trim()}&rdquo;.
             </p>
           ) : (
-            filteredSections.map((section) => (
-              <button
-                key={section.dataAdd}
-                className={cn(
-                  `flex flex-row items-center space-x-2 px-2 py-1.5 rounded-lg w-full text-sm hover:bg-light-200 hover:dark:bg-dark-200 transition duration-200 active:scale-95`,
-                  activeSection === section.key
-                    ? 'bg-light-200 dark:bg-dark-200 text-black/90 dark:text-white/90'
-                    : ' text-black/70 dark:text-white/70',
-                )}
-                onClick={() => setActiveSection(section.key)}
-              >
-                <section.icon size={17} />
-                <p>{section.name}</p>
-              </button>
-            ))
+            filteredSections.map((section, index) => {
+              const previous = filteredSections[index - 1];
+              const startsEditorGroup =
+                isEditorSection(section) && (!previous || !isEditorSection(previous));
+              return (
+                <div key={section.key} className="w-full">
+                  {startsEditorGroup && (
+                    <p className="px-2 pt-4 pb-1 text-[11px] font-medium uppercase tracking-wide text-black/50 dark:text-white/50">
+                      Card editor
+                    </p>
+                  )}
+                  <button
+                    className={cn(
+                      `flex flex-row items-center space-x-2 px-2 py-1.5 rounded-lg w-full text-sm hover:bg-light-200 hover:dark:bg-dark-200 transition duration-200 active:scale-95`,
+                      activeSection === section.key
+                        ? 'bg-light-200 dark:bg-dark-200 text-black/90 dark:text-white/90'
+                        : ' text-black/70 dark:text-white/70',
+                    )}
+                    onClick={() => setActiveSection(section.key)}
+                  >
+                    <section.icon size={17} />
+                    <p>{section.name}</p>
+                  </button>
+                </div>
+              );
+            })
           )}
         </div>
       </div>
@@ -268,7 +317,7 @@ const SettingsContent = ({
               <SelectValue placeholder="Select a section" />
             </SelectTrigger>
             <SelectContent className="bg-light-primary dark:bg-dark-primary border-light-200 dark:border-dark-200">
-              {sections.map((section) => (
+              {allSections.map((section) => (
                 <SelectItem
                   key={section.key}
                   value={section.key}
@@ -280,7 +329,30 @@ const SettingsContent = ({
             </SelectContent>
           </Select>
         </div>
-        {selectedSection.component && (
+        {isEditorSection(selectedSection) ? (
+          <div className="flex flex-1 flex-col overflow-hidden">
+            <div className="border-b border-light-200/60 px-6 pb-6 lg:pt-6 dark:border-dark-200/60 flex-shrink-0">
+              <div className="flex flex-col">
+                <h4 className="font-medium text-black dark:text-white text-sm lg:text-sm">
+                  <AnchorTitle>{selectedSection.name}</AnchorTitle>
+                </h4>
+                <p className="text-[11px] lg:text-xs text-black/50 dark:text-white/50">
+                  {selectedSection.description}
+                </p>
+              </div>
+            </div>
+            <div className="flex-1 overflow-y-auto px-6 py-4">
+              {editorSync.ready ? (
+                <CardMirrorSettingsSection
+                  category={selectedSection.category}
+                  onRowsRendered={editorSync.noteRenderedKeys}
+                />
+              ) : (
+                <AnimatedLoader />
+              )}
+            </div>
+          </div>
+        ) : selectedSection.component && (
           <div className="flex flex-1 flex-col overflow-hidden">
             <div className="border-b border-light-200/60 px-6 pb-6 lg:pt-6 dark:border-dark-200/60 flex-shrink-0">
               <div className="flex flex-col">
