@@ -38,6 +38,7 @@ import { describeDocSaveStatus } from "../../lib/reason-docs/doc-save-status"
 import { ReasonDocsSidebarPanels } from "../reason-docs/ReasonDocsSidebarPanels"
 import { useReasonDocs } from "../reason-docs/ReasonDocsProvider"
 import { ReasonDocsRouteSync } from "../reason-docs/ReasonDocsRouteSync"
+import { ReasonEditorStatusLine } from "./ReasonEditorStatusLine"
 import { SharedCardOpener } from "./ShareWithContacts"
 
 export function ReasonEditorScreen() {
