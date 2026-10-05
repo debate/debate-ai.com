@@ -1,0 +1,55 @@
+---
+title: "Featured Rounds"
+---
+
+# Featured Rounds
+
+Real rounds anyone can open from the **Featured** section of the `/debate`
+start screen, with every speech's doc already filled in and the timers set to
+the round's format.
+
+- **Route:** `/debate` (start screen), or a featured round's own link such as
+  `/debate/2015-ndt/northwestern-mv-michigan-ap`
+- **Package:** `debate-round`
+
+## What's there
+
+**NDT 2015 Finals** (Northwestern MV vs Michigan AP) is a college policy round
+with eight speeches: 1AC, 1NC, 2AC, 2NC, 1NR, 1AR, 2NR and 2AR. The seven
+speech docs that were shared publicly (1AC through 2NR) open in their
+speeches; there is no 2AR doc, so that speech starts blank.
+
+Click the card and the round opens as one flow with college policy timers
+(9-minute constructives, 3-minute cross-examinations, 6-minute rebuttals and
+10 minutes of prep per side). Open any speech to read its doc. The round is
+then yours like any other: flow it, edit the docs, pin it. Clicking the card
+again reopens that same copy rather than building a new one; delete the
+round's flow to start fresh.
+
+## How it works
+
+Featured rounds are a built-in catalog, `FEATURED_ROUNDS` in
+`packages/debate-round/src/round/featured-rounds.ts`. Each entry names the
+round's format, teams and slug, plus the public Topic Starter library file
+(`topic_starter_items.id`) holding each speech's doc.
+
+```
+DebateStartPanel (Featured card) → DebateFlowPage.handleOpenFeatured
+  → findLocalFeaturedRound(): already built? reopen it
+  → loadFeaturedSpeechDocs(): GET /api/topic-starters/by-path?path=<id> per speech
+      → storedDocumentHtml() decodes each .cmir row to HTML
+  → buildFeaturedRound(): newFlow() in the round's format, speechDocs filled
+  → createRound() + setFlows(); settings.debateStyle set to the format
+```
+
+Opening `/debate/<featured slug>` with no local copy builds it the same way,
+so the link can be shared. A doc that fails to load is named in a notice under
+the cards and the rest of the round still opens.
+
+### Known gaps
+
+- The docs are copied into the flow's `speechDocs`, about 1.5 MB of HTML for
+  NDT 2015 Finals, so the round takes a large share of the browser's
+  localStorage (and of the flow history entry the store saves for it).
+- The catalog pins library row ids. If an admin deletes or re-uploads one of
+  those Topic Starter files, its speech opens blank until the id is updated.
