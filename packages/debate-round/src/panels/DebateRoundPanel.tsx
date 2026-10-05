@@ -7,8 +7,7 @@
  * into a clean, modular architecture using custom hooks and layout components.
  */
 
-import { useEffect, useRef, useState } from "react"
-import { usePathname } from "next/navigation"
+import { useEffect, useState, type ReactNode } from "react"
 import { EbbFlowEmbed, type EbbFlowToolAction } from "@debate/flow-ebb"
 import { useFlowStore } from "../state/store"
 import { newFlow } from "../utils/flow-utils"
@@ -61,6 +60,12 @@ import {
   type FeaturedRound,
 } from "../round/featured-rounds"
 
+/** Props for {@link DebateFlowPage}. */
+export interface DebateFlowPageProps {
+  /** Extra controls for the start screen's header (the host app's account-sync badge). */
+  startScreenActions?: ReactNode
+}
+
 /**
  * Manages the entire debate flow experience with a modular, maintainable architecture:
  * - Custom hooks for state management and business logic
@@ -69,7 +74,7 @@ import {
  *
  * @returns The full-screen debate flow page
  */
-export function DebateFlowPage() {
+export function DebateFlowPage({ startScreenActions }: DebateFlowPageProps = {}) {
   // ============================================================================
   // Global State (Zustand)
   // ============================================================================
@@ -658,6 +663,7 @@ const handleEbbToolAction = (action: EbbFlowToolAction) => {
         onCreateFlow={handleAddFlow}
         onCreateRound={() => handleEditRound()}
         onOpenHistory={handleOpenHistory}
+        headerActions={startScreenActions}
       />
     </div>
   ) : (

@@ -11,6 +11,7 @@ import {
   refreshLocalUserSettingsFromStorage,
 } from "../src/state/userSettings";
 import { settings } from "../src/state/settings";
+import { debateStyleMap, debateStyleNames } from "@debate/timer/src/formats/debate-format-times";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment has no DOM by default here. */
 class MemoryStorage {
@@ -32,6 +33,17 @@ class MemoryStorage {
 beforeEach(() => {
   (globalThis as unknown as { localStorage: MemoryStorage }).localStorage = new MemoryStorage();
   settings.resetToAuto();
+});
+
+describe("DEBATE_STYLE_OPTIONS", () => {
+  // Picking a label stores its index, which every consumer reads through
+  // `debateStyleMap` — so "Policy" must sit at the index of `policy`.
+  it("labels each index with the style debateStyleMap resolves it to", () => {
+    expect(DEBATE_STYLE_OPTIONS).toEqual(debateStyleNames);
+    expect(DEBATE_STYLE_OPTIONS.length).toBe(debateStyleMap.length);
+    expect(debateStyleMap[DEBATE_STYLE_OPTIONS.indexOf("Policy")]).toBe("policy");
+    expect(debateStyleMap[DEBATE_STYLE_OPTIONS.indexOf("Lincoln Douglas")]).toBe("lincolnDouglas");
+  });
 });
 
 describe("isValidDebateStyleIndex", () => {

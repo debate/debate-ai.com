@@ -11,9 +11,22 @@ import { ROUND_LEVELS } from "./constants"
 import { settings } from "../../state/settings"
 import type { RadioSetting } from "../../types/settings"
 import { searchTournaments } from "../../cache/client-cache"
+import { searchCurrentTournaments } from "../../round/tournament-field"
 
 const TOURNAMENT_SUGGESTION_LIMIT = 10
-const TOURNAMENT_DROPDOWN_CLASS = "right-auto w-[12rem]"
+const TOURNAMENT_DROPDOWN_CLASS = "right-auto w-[16rem] max-h-60 !overflow-y-auto"
+
+/**
+ * Tournament suggestions: Tabroom tournaments running now or coming up first
+ * (all of them on an empty field), then the static list once 3+ letters are typed.
+ */
+async function fetchTournamentOptions(query: string): Promise<string[]> {
+  const [current, past] = await Promise.all([
+    searchCurrentTournaments(query, TOURNAMENT_SUGGESTION_LIMIT),
+    query.trim().length > 2 ? searchTournaments(query, TOURNAMENT_SUGGESTION_LIMIT) : Promise.resolve([]),
+  ])
+  return [...new Set([...current, ...past])].slice(0, TOURNAMENT_SUGGESTION_LIMIT)
+}
 const TOURNAMENT_OPTION_CLASS = "!px-0"
 
 /** Props for {@link TournamentSection}. */
@@ -54,7 +67,7 @@ export function TournamentSection({
           placeholder="Tournament Name"
           value={tournamentName}
           onChange={setTournamentName}
-          fetchOptions={(q) => q.length > 2 ? searchTournaments(q, TOURNAMENT_SUGGESTION_LIMIT) : Promise.resolve([])}
+          fetchOptions={fetchTournamentOptions}
           dropdownClassName={TOURNAMENT_DROPDOWN_CLASS}
           optionClassName={TOURNAMENT_OPTION_CLASS}
         />
