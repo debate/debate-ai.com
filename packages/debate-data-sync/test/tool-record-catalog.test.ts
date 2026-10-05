@@ -83,6 +83,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   pendingTaskVerifications: "id",
   roundContributorFlows: "contributorId",
   contributorAvailability: "contributorId",
+  flowKeymap: "id",
   speechDocLinks: "id",
   flowEditorDisplaySettings: "id",
   flowEditorKeymapSettings: "id",
