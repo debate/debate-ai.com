@@ -1,51 +1,49 @@
 import { describe, expect, it } from "vitest";
 import {
-    DISPLAY_RECORD_ID,
-    KEYMAP_RECORD_ID,
-    decodeFlowEditorSettings,
-    encodeFlowEditorSettings,
+    buildSyncedSettingsRecords,
+    DEVICE_ONLY_KEYS,
+    parseSyncedSettings,
+    pickSyncedDisplay,
+    SYNCED_DISPLAY_KEYS,
 } from "../src/lib/store/syncedSettings";
 
-describe("encodeFlowEditorSettings", () => {
-    it("emits one display and one keymap record", () => {
-        const records = encodeFlowEditorSettings({ theme: "dark" }, { "cmd.a": "Mod-k" });
-        expect(records.map((r) => r.id)).toEqual([DISPLAY_RECORD_ID, KEYMAP_RECORD_ID]);
-        expect(records[0]).toMatchObject({ theme: "dark" });
-        expect(records[1]).toEqual({ id: "keymap", keymapOverrides: { "cmd.a": "Mod-k" } });
+describe("synced flow settings", () => {
+    it("keeps synced and device-only keys disjoint", () => {
+        const device = new Set<string>(DEVICE_ONLY_KEYS);
+        expect(SYNCED_DISPLAY_KEYS.filter((k) => device.has(k))).toEqual([]);
     });
 
-    it("never syncs the device-local flowsDir", () => {
-        const [display] = encodeFlowEditorSettings({ theme: "dark", flowsDir: "/home/me/flows" }, {});
-        expect(display).not.toHaveProperty("flowsDir");
+    it("never includes device-only values in the display record", () => {
+        const [display] = buildSyncedSettingsRecords(
+            { flowFont: "x", tooltips: false, flowsDir: "/home/me", collabName: "Sam", rfdOpen: true },
+            {},
+        );
+        expect(display).toEqual({ id: "display", values: { flowFont: "x", tooltips: false } });
     });
-});
 
-describe("decodeFlowEditorSettings", () => {
-    it("round-trips an encoded pair", () => {
-        const records = encodeFlowEditorSettings({ theme: "light", tooltips: false }, { "cmd.b": "Alt-b" });
-        expect(decodeFlowEditorSettings(records)).toEqual({
-            display: { theme: "light", tooltips: false },
-            keymapOverrides: { "cmd.b": "Alt-b" },
+    it("round-trips display and keymap records", () => {
+        const records = buildSyncedSettingsRecords({ theme: "dark" }, { "sheet.new": "Mod+n" });
+        expect(parseSyncedSettings(JSON.parse(JSON.stringify(records)))).toEqual({
+            display: { theme: "dark" },
+            keymapOverrides: { "sheet.new": "Mod+n" },
         });
     });
 
-    it("strips flowsDir from an account row written elsewhere", () => {
-        const decoded = decodeFlowEditorSettings([{ id: "display", theme: "dark", flowsDir: "/x" }]);
-        expect(decoded.display).toEqual({ theme: "dark" });
-    });
-
-    it("returns empty results for malformed input", () => {
-        const empty = { display: null, keymapOverrides: null };
-        expect(decodeFlowEditorSettings(null)).toEqual(empty);
-        expect(decodeFlowEditorSettings({ id: "display" })).toEqual(empty);
-        expect(decodeFlowEditorSettings(["x", 3, null])).toEqual(empty);
-        expect(decodeFlowEditorSettings([{ id: "other", a: 1 }])).toEqual(empty);
-    });
-
-    it("drops non-string chords and a non-object keymap", () => {
+    it("drops non-string chords and malformed records", () => {
         expect(
-            decodeFlowEditorSettings([{ id: "keymap", keymapOverrides: { a: "Mod-a", b: 5 } }]).keymapOverrides,
-        ).toEqual({ a: "Mod-a" });
-        expect(decodeFlowEditorSettings([{ id: "keymap", keymapOverrides: "nope" }]).keymapOverrides).toBeNull();
+            parseSyncedSettings([
+                null,
+                "x",
+                { id: "keymap", keymapOverrides: { a: "Mod+a", b: 3, c: "" } },
+                { id: "display", values: { flowsDir: "/x", scrollZoom: false } },
+                { id: "other" },
+            ]),
+        ).toEqual({ display: { scrollZoom: false }, keymapOverrides: { a: "Mod+a" } });
+    });
+
+    it("returns nothing for non-array input", () => {
+        expect(parseSyncedSettings({ id: "display" })).toEqual({});
+        expect(parseSyncedSettings(null)).toEqual({});
+        expect(pickSyncedDisplay({})).toEqual({});
     });
 });

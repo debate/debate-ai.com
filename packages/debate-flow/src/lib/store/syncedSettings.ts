@@ -1,70 +1,121 @@
 /**
- * Pure codec between the flow editor's two settings blobs (display settings and
- * keymap overrides, kept in `ebb-display-settings` / `ebb-keymap-settings`) and
- * the id-keyed record array the account sync carries.
+ * @fileoverview The flow editor settings that follow a signed-in user across
+ * devices, as the array-of-records shape `debate-data-sync`'s tool-record
+ * catalog (`ebbSyncedSettings`) syncs.
  *
- * The data-sync catalog (`flowEditorSettings` in `toolRecordCollections.ts`)
- * watches {@link FLOW_EDITOR_SETTINGS_KEY} and syncs it row by row, so this
- * package only has to keep that key current — it never talks to the network.
- * Two fixed ids, so each blob is one account row and a change on one device
- * replaces only its own row on another.
+ * The editor keeps its display and keymap settings as single objects in
+ * `ebb-display-settings` / `ebb-keymap-settings`, which cannot be keyed, and
+ * mixes in values that describe this machine rather than this user
+ * ({@link DEVICE_ONLY_KEYS}). So the synced copy lives under its own key as two
+ * records: `display` (only {@link SYNCED_DISPLAY_KEYS}) and `keymap`.
+ * Hydration replaces a record wholesale, so keeping the device-only values out
+ * of it is what stops a sign-in on a second machine from clobbering its
+ * folder or panel layout.
  *
- * `flowsDir` is deliberately left out: it is a path on this machine's disk.
+ * Pure - no storage or store access - so the store and the tests share it.
+ *
+ * @module lib/store/syncedSettings
  */
 
-/** localStorage key the data-sync catalog's `flowEditorSettings` entry watches. */
-export const FLOW_EDITOR_SETTINGS_KEY = "flowEditorSettings";
+/** `localStorage` key of the synced records. Matches the catalog's `storageKey`. */
+export const SYNCED_SETTINGS_KEY = "ebbSyncedSettings";
 
-export const DISPLAY_RECORD_ID = "display";
-export const KEYMAP_RECORD_ID = "keymap";
+/** Display settings that describe the user's preferences and travel with them. */
+export const SYNCED_DISPLAY_KEYS = [
+    "flowFont",
+    "defaultGridZoom",
+    "rfdVim",
+    "insertPaste",
+    "appendEdit",
+    "scrollZoom",
+    "alignSpeeches",
+    "tooltips",
+    "cardmirrorEnabled",
+    "cardmirrorTextType",
+    "theme",
+    "affColor",
+    "negColor",
+] as const;
 
-/** Device-local display fields that never leave this browser or machine. */
-const DEVICE_LOCAL_FIELDS = ["flowsDir"] as const;
+/**
+ * Display settings that stay on this machine: a folder path, panel layout, and
+ * the live-collab toggles, name and contacts, which are session/identity
+ * choices made per device.
+ */
+export const DEVICE_ONLY_KEYS = [
+    "flowsDir",
+    "sidebarCollapsed",
+    "rfdOpen",
+    "collabEnabled",
+    "collabRelayEnabled",
+    "collabListenEnabled",
+    "collabShowViewers",
+    "collabName",
+    "contacts",
+] as const;
 
-export interface FlowEditorSettingsRecords {
-    /** The display blob without device-local fields, or `null` when absent. */
-    display: Record<string, unknown> | null;
-    /** The keymap overrides (command id to chord), or `null` when absent. */
-    keymapOverrides: Record<string, string> | null;
+export type SyncedDisplayKey = (typeof SYNCED_DISPLAY_KEYS)[number];
+
+export interface SyncedDisplayRecord {
+    id: "display";
+    values: Record<string, unknown>;
 }
 
-function isPlainObject(value: unknown): value is Record<string, unknown> {
-    return typeof value === "object" && value !== null && !Array.isArray(value);
+export interface SyncedKeymapRecord {
+    id: "keymap";
+    keymapOverrides: Record<string, string>;
 }
 
-/** Builds the synced record array from the current settings. */
-export function encodeFlowEditorSettings(
+export type SyncedSettingsRecord = SyncedDisplayRecord | SyncedKeymapRecord;
+
+/** The synced subset of a display-settings object. */
+export function pickSyncedDisplay(display: Record<string, unknown>): Record<string, unknown> {
+    const values: Record<string, unknown> = {};
+    for (const key of SYNCED_DISPLAY_KEYS) {
+        if (key in display) values[key] = display[key];
+    }
+    return values;
+}
+
+/** A string-to-string map, dropping anything else; `{}` for a non-object. */
+function cleanOverrides(value: unknown): Record<string, string> {
+    if (typeof value !== "object" || value === null || Array.isArray(value)) return {};
+    const out: Record<string, string> = {};
+    for (const [command, chord] of Object.entries(value)) {
+        if (typeof chord === "string" && chord) out[command] = chord;
+    }
+    return out;
+}
+
+/** The two records to store for the given settings. */
+export function buildSyncedSettingsRecords(
     display: Record<string, unknown>,
     keymapOverrides: Record<string, string>,
-): Array<Record<string, unknown>> {
-    const synced: Record<string, unknown> = { ...display };
-    for (const field of DEVICE_LOCAL_FIELDS) delete synced[field];
+): SyncedSettingsRecord[] {
     return [
-        { id: DISPLAY_RECORD_ID, ...synced },
-        { id: KEYMAP_RECORD_ID, keymapOverrides: { ...keymapOverrides } },
+        { id: "display", values: pickSyncedDisplay(display) },
+        { id: "keymap", keymapOverrides: cleanOverrides(keymapOverrides) },
     ];
 }
 
-/**
- * Reads the record array back. Anything malformed (not an array, wrong ids,
- * non-string chords) is dropped rather than thrown, so a hand-edited or
- * half-synced value degrades to "use the legacy keys".
- */
-export function decodeFlowEditorSettings(raw: unknown): FlowEditorSettingsRecords {
-    const out: FlowEditorSettingsRecords = { display: null, keymapOverrides: null };
-    if (!Array.isArray(raw)) return out;
-    for (const record of raw) {
-        if (!isPlainObject(record)) continue;
-        const { id, ...rest } = record;
-        if (id === DISPLAY_RECORD_ID) {
-            for (const field of DEVICE_LOCAL_FIELDS) delete rest[field];
-            out.display = rest;
-        } else if (id === KEYMAP_RECORD_ID && isPlainObject(rest.keymapOverrides)) {
-            const chords: Record<string, string> = {};
-            for (const [commandId, chord] of Object.entries(rest.keymapOverrides)) {
-                if (typeof chord === "string") chords[commandId] = chord;
-            }
-            out.keymapOverrides = chords;
+export interface ParsedSyncedSettings {
+    /** Present only when a `display` record exists; holds synced keys only. */
+    display?: Record<string, unknown>;
+    /** Present only when a `keymap` record exists. */
+    keymapOverrides?: Record<string, string>;
+}
+
+/** Reads stored (or hydrated) records defensively; unknown shapes are ignored. */
+export function parseSyncedSettings(stored: unknown): ParsedSyncedSettings {
+    const out: ParsedSyncedSettings = {};
+    if (!Array.isArray(stored)) return out;
+    for (const record of stored) {
+        if (typeof record !== "object" || record === null) continue;
+        const r = record as Record<string, unknown>;
+        if (r.id === "display" && typeof r.values === "object" && r.values !== null) {
+            out.display = pickSyncedDisplay(r.values as Record<string, unknown>);
+        } else if (r.id === "keymap") {
+            out.keymapOverrides = cleanOverrides(r.keymapOverrides);
         }
     }
     return out;

@@ -57,15 +57,7 @@ gone:
   editable directly on `/word-count`, in a collapsible "Manage word limit
   presets" section below the word-count form, rather than from here
 - **Ebb Flow preferences** — reachable with `Cmd/Ctrl+,` inside a flow, where
-  they apply. When signed in, the display preferences (font, zoom, theme,
-  Aff/Neg colours, editor toggles, your collab display name) and your keymap
-  overrides follow your account: the account copy is adopted when a flow opens,
-  an empty account is seeded from this browser, and later changes are saved
-  after a one-second pause. Device-specific values — the flows folder, collab
-  contacts, relay/listen toggles and update-channel settings — stay on the
-  device. Signed out, nothing changes; they live in this browser only. Stored as
-  the `flow_editor_settings` column on `user_settings`, written through
-  `PUT /api/settings`.
+  they apply
 
 Their `/api/settings` fields (`debateStyle`, `fontSize`, `wordLimitPresets`, …)
 are all still stored and served; what changed is that nothing writes them from
@@ -73,15 +65,19 @@ here any more.
 
 ## Flow editor preferences follow your account
 
-The Ebb flow editor's display preferences (font, default zoom, team colours,
-paste/edit toggles, tooltips, CardMirror options, theme) and keybinding
-overrides sync through the Tool Data catalog as two collections,
-`flowEditorDisplay` and `flowEditorKeymap` (one record per setting, so a font
-change on one device and a rebound key on another both survive). Device-local
-fields — `flowsDir`, `sidebarCollapsed`, `rfdOpen` and the collaboration
-fields — stay in the browser. The editor reads these stores when it starts, so
-a setting adopted from your account shows up the next time the editor loads.
-Nothing changes for signed-out users.
+The Ebb flow editor's display preferences (`Cmd/Ctrl+,`) and keybinding
+overrides sync to your account when you are signed in, through the same tool
+data sync as the other tools (`flowEditorDisplaySettings` and
+`flowEditorKeymapSettings` in `debate-data-sync`'s catalog). What follows you:
+flow font, default grid zoom, the editing toggles (insert-paste, append-edit,
+scroll-zoom, align speeches, tooltips, Vim in the RFD pane), CardMirror
+options, light/dark theme, side colours, and every keymap override.
+
+What stays on the device it was set on: the flows folder, whether the sidebar
+and RFD pane are open, and the live-collaboration switches, display name and
+contacts. A pull from the account never resets those. Engineering notes:
+`debate-data-sync`'s `state/flow-editor-settings-codec.ts` — a field joins the
+account only by being added to `SYNCED_FLOW_DISPLAY_FIELDS`.
 
 ## Saved-to-account marker on flow tabs
 
@@ -234,21 +230,3 @@ second sync, and it refreshes every few seconds rather than instantly.
 
 Known gap: the badge is only in the shared tool-page header, so tools with their
 own custom header (the flow tabs and start screen) don't show it yet.
-
-## Flow editor settings
-
-Your flow editor preferences follow your account: font, default zoom, theme,
-Aff/Neg colours, the editing toggles (insert-paste, append-edit, scroll-zoom,
-align speeches, tooltips, Vim in the RFD, CardMirror) and any custom key
-bindings. They sync as one record each in the `flowDisplaySettings` and
-`flowKeymapSettings` collections of the tool-record sync and show under
-**Settings → Account → Tool data** as "Flow Editor Display Settings" and "Flow
-Editor Key Bindings". Settings that describe a device rather than you — the
-desktop flows folder, collaboration relay/listen switches, contacts and which
-panels are open — stay on that device, and an incoming sync never overwrites
-them. A setting that arrives from another device is applied to an open editor
-immediately.
-
-Known gap: each store is one record, so the merge is account-wins per store —
-settings changed offline on a second device are replaced by the account's copy
-the next time that device syncs, rather than merged field by field.

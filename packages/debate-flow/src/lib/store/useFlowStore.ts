@@ -29,14 +29,14 @@ import {
     type FlowSheet,
 } from "../model/flow";
 import type { Scouting, Side } from "../model/types";
-import type { FlowEditorSettingsSyncPayload } from "./flow-editor-settings-sync";
 import { resolveThemeMode, type ThemeMode } from "../theme/mode";
 import { loadUpdateConfig, saveUpdateConfig } from "../update/settings";
 import type { UpdateConfig } from "../update/types";
 import {
-    FLOW_EDITOR_SETTINGS_KEY,
-    decodeFlowEditorSettings,
-    encodeFlowEditorSettings,
+    buildSyncedSettingsRecords,
+    parseSyncedSettings,
+    SYNCED_SETTINGS_KEY,
+    type ParsedSyncedSettings,
 } from "./syncedSettings";
 
 // --- State shape -------------------------------------------------------------
@@ -249,13 +249,8 @@ export interface FlowActions {
      * does not bounce straight back out to disk.
      */
     applyExternalConfig(config: AppConfig): void;
-    /**
-     * Applies the account-synced subset (`lib/sync/accountSettings.ts`) pulled
-     * from `/api/settings`: each present key is validated like a hand-edited
-     * config value, persisted to localStorage and set on the store. Keys the
-     * patch omits are left alone.
-     */
-    applyAccountSettings(patch: Record<string, unknown>): void;
+    /** Applies the account-synced subset of display/keymap settings (already validated). */
+    applyAccountSettings(patch: FlowEditorAccountSettingsPayload): void;
     /** Opens/closes the palette; `seed` sets the initial query (">" = command mode). */
     setQuickSwitcherOpen(open: boolean, seed?: string): void;
     /** Follow the open round to a new file after Save As. */
@@ -302,35 +297,43 @@ export function resolveZoom(value: unknown): number {
     return typeof value === "number" && Number.isFinite(value) ? clampZoom(value) : 1;
 }
 
-/** The account-synced copy of the settings, which wins over the legacy keys once present. */
-function readSyncedSettings(): ReturnType<typeof decodeFlowEditorSettings> {
+/** The account-synced records, or `{}` when absent/unreadable. */
+function readSyncedSettings(): ParsedSyncedSettings {
     try {
-        const raw = window.localStorage.getItem(FLOW_EDITOR_SETTINGS_KEY);
-        return decodeFlowEditorSettings(raw ? JSON.parse(raw) : null);
+        const raw = window.localStorage.getItem(SYNCED_SETTINGS_KEY);
+        return raw ? parseSyncedSettings(JSON.parse(raw)) : {};
     } catch {
-        return { display: null, keymapOverrides: null };
+        return {};
     }
 }
 
 /**
- * Re-writes the synced record array after a save so the data-sync watcher
- * pushes it. Each save passes the half it changed; the other half is carried
- * over from what is already stored.
+ * Refreshes the synced records from a changed half of the settings; the other
+ * half is carried over from what is already stored. Skips the write when
+ * nothing synced changed so the sync is not woken for device-only edits.
  */
-function mirrorSyncedSettings(next: {
-    display?: Record<string, unknown>;
-    keymapOverrides?: Record<string, string>;
-}): void {
+function writeSyncedSettings(
+    display?: Record<string, unknown>,
+    keymapOverrides?: Record<string, string>,
+): void {
+    const current = readSyncedSettings();
+    const next = JSON.stringify(
+        buildSyncedSettingsRecords(
+            display ?? current.display ?? loadDisplayRaw(),
+            keymapOverrides ?? current.keymapOverrides ?? {},
+        ),
+    );
+    if (next === window.localStorage.getItem(SYNCED_SETTINGS_KEY)) return;
+    window.localStorage.setItem(SYNCED_SETTINGS_KEY, next);
+}
+
+/** The raw locally stored display object, for seeding the first synced record. */
+function loadDisplayRaw(): Record<string, unknown> {
     try {
-        const current = readSyncedSettings();
-        const display = next.display ?? current.display ?? {};
-        const keymapOverrides = next.keymapOverrides ?? current.keymapOverrides ?? {};
-        window.localStorage.setItem(
-            FLOW_EDITOR_SETTINGS_KEY,
-            JSON.stringify(encodeFlowEditorSettings(display, keymapOverrides)),
-        );
+        const raw = window.localStorage.getItem(DISPLAY_SETTINGS_KEY);
+        return raw ? (JSON.parse(raw) as Record<string, unknown>) : {};
     } catch {
-        // localStorage unavailable - the legacy keys still hold the settings.
+        return {};
     }
 }
 
@@ -352,7 +355,7 @@ function saveKeymapOverrides(keymapOverrides: Record<string, string>): void {
     if (typeof window === "undefined") return;
     try {
         window.localStorage.setItem(KEYMAP_SETTINGS_KEY, JSON.stringify({ keymapOverrides }));
-        mirrorSyncedSettings({ keymapOverrides });
+        writeSyncedSettings(undefined, keymapOverrides);
     } catch {
         // localStorage unavailable (private mode, quota) - ignore.
     }
@@ -421,15 +424,12 @@ function loadDisplaySettings(): DisplaySettings {
     if (typeof window === "undefined") return fallback;
     try {
         const raw = window.localStorage.getItem(DISPLAY_SETTINGS_KEY);
-        const synced = readSyncedSettings().display;
-        if (!raw && !synced) return fallback;
-        // flowsDir is device-local, so it always comes from the legacy blob.
-        const local = (raw ? JSON.parse(raw) : {}) as Partial<DisplaySettings>;
-        const p: Partial<DisplaySettings> = {
-            ...local,
-            ...(synced as Partial<DisplaySettings> | null),
-            flowsDir: local.flowsDir,
-        };
+        const syncedDisplay = readSyncedSettings().display;
+        if (!raw && !syncedDisplay) return fallback;
+        const p = {
+            ...(raw ? (JSON.parse(raw) as Partial<DisplaySettings>) : {}),
+            ...readSyncedSettings().display,
+        } as Partial<DisplaySettings>;
         return {
             flowFont: resolveFontId(p.flowFont),
             defaultGridZoom: resolveZoom(p.defaultGridZoom),
@@ -463,7 +463,7 @@ function saveDisplaySettings(s: DisplaySettings): void {
     if (typeof window === "undefined") return;
     try {
         window.localStorage.setItem(DISPLAY_SETTINGS_KEY, JSON.stringify(s));
-        mirrorSyncedSettings({ display: { ...s } });
+        writeSyncedSettings(s as unknown as Record<string, unknown>);
     } catch {
         // ignore
     }
@@ -940,38 +940,6 @@ export const useFlowStore = create<FlowStore>()((set, get) => ({
         const updateConfig = { ...get().updateConfig, ...patch };
         saveUpdateConfig(updateConfig);
         set({ updateConfig });
-    },
-
-    applyAccountSettings(patch) {
-        const display: Partial<DisplaySettings> = {};
-        const pick = <K extends keyof DisplaySettings>(key: K, value: DisplaySettings[K]) => {
-            if (key in patch) display[key] = value;
-        };
-        pick("flowFont", resolveFontId(patch.flowFont));
-        pick("defaultGridZoom", resolveZoom(patch.defaultGridZoom));
-        pick("rfdVim", bool(patch.rfdVim, get().rfdVim));
-        pick("insertPaste", bool(patch.insertPaste, get().insertPaste));
-        pick("appendEdit", bool(patch.appendEdit, get().appendEdit));
-        pick("scrollZoom", bool(patch.scrollZoom, get().scrollZoom));
-        pick("alignSpeeches", bool(patch.alignSpeeches, get().alignSpeeches));
-        pick("tooltips", bool(patch.tooltips, get().tooltips));
-        pick("cardmirrorEnabled", bool(patch.cardmirrorEnabled, get().cardmirrorEnabled));
-        pick("cardmirrorTextType", resolveCardMirrorTextType(patch.cardmirrorTextType));
-        pick("theme", resolveThemeMode(patch.theme));
-        pick("affColor", resolveColor(patch.affColor));
-        pick("negColor", resolveColor(patch.negColor));
-        saveDisplaySettings({ ...displaySettingsOf(get()), ...display });
-        const next: Partial<FlowState> = { ...display };
-        if (display.defaultGridZoom !== undefined) next.gridZoom = display.defaultGridZoom;
-        const raw = patch.keymapOverrides;
-        if (raw && typeof raw === "object" && !Array.isArray(raw)) {
-            const keymapOverrides = Object.fromEntries(
-                Object.entries(raw).filter(([, chord]) => typeof chord === "string"),
-            ) as Record<string, string>;
-            saveKeymapOverrides(keymapOverrides);
-            next.keymapOverrides = keymapOverrides;
-        }
-        set(next);
     },
 
     applyExternalConfig(config) {

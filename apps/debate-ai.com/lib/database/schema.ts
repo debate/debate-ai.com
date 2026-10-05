@@ -251,11 +251,12 @@ export const userSettings = sqliteTable("user_settings", {
   // "use the client default", same semantics as every other nullable column
   // here.
   editorPreferences: text("editor_preferences"),
-  // JSON-serialized map of the ebb flow editor's account-synced display
-  // preferences and `keymapOverrides` (see
-  // packages/debate-flow/src/lib/sync/accountSettings.ts, which is both the
-  // allow-list and the validator). Machine-local fields (`flowsDir`, collab
-  // identity, layout) never land here. Null means "use the client defaults".
+  // JSON-serialized subset of the ebb flow editor's display and keymap
+  // settings (see packages/debate-flow/src/lib/config/accountSettings.ts,
+  // which is both the validator and the read-back filter). Device-specific
+  // values (flowsDir, collab identity, contacts, panel layout) never sync.
+  // Null/absent means "use the client default", like every other nullable
+  // column here.
   flowEditorSettings: text("flow_editor_settings"),
   // JSON-serialized arrays of News Stream item ids the signed-in user has
   // read/liked (see packages/debate-card-search/src/lib/news-stream-sync.ts
@@ -329,10 +330,6 @@ export const userSettings = sqliteTable("user_settings", {
   // op-based fields exist for doesn't apply here. Null/absent means "no
   // synced timer yet", same semantics as every other nullable column here.
   brainstormSessionTimer: text("brainstorm_session_timer"),
-  // JSON-serialized synced subset of the ebb flow editor's display + keymap
-  // settings (see packages/debate-flow/src/lib/store/flow-editor-settings-sync.ts).
-  // Whole-value replace; null means "nothing synced yet".
-  flowEditorSettings: text("flow_editor_settings"),
   // Practice vs AI's gamification score and JSON-serialized array of earned
   // badge ids (see packages/debate-round-practice-ai/src/backend/gamification.ts
   // and packages/debate-help-docs/content/docs/internals/practice-vs-ai.mdx).

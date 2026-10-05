@@ -18,42 +18,79 @@ import {
   isSyncableToolRecord,
   type ToolRecordCollection,
 } from "../src/state/toolRecordCollections";
+import { readLocalToolRecords, writeLocalToolRecords } from "../src/state/tool-record-mirror";
 
-const display = findToolRecordCollection("flowEditorDisplay") as ToolRecordCollection;
-const keymap = findToolRecordCollection("flowEditorKeymap") as ToolRecordCollection;
+const display = findToolRecordCollection("flowEditorDisplaySettings") as ToolRecordCollection;
+const keymap = findToolRecordCollection("flowEditorKeymapSettings") as ToolRecordCollection;
 
-describe("flow editor display codec", () => {
-  it("emits one record per synced field and skips device-local ones", () => {
-    const records = decodeFlowDisplaySettings({
-      flowFont: "inter",
-      tooltips: false,
-      flowsDir: "/home/me/flows",
-      sidebarCollapsed: true,
-      rfdOpen: true,
-    });
-    expect(records).toEqual([
-      { id: "flowFont", value: "inter" },
-      { id: "tooltips", value: false },
-    ]);
+describe("flow editor settings codec", () => {
+  it("wraps a stored object as one id-keyed record", () => {
+    const records = decodeFlowEditorSettings({ keymapOverrides: { undo: "Mod-z" } });
+
+    expect(records).toEqual([{ id: FLOW_EDITOR_SETTINGS_RECORD_ID, keymapOverrides: { undo: "Mod-z" } }]);
+    expect(isSyncableToolRecord(keymap, records[0])).toBe(true);
   });
 
-  it("drops values that fail validation and non-object input", () => {
-    expect(decodeFlowDisplaySettings({ defaultGridZoom: 99, affColor: "red", rfdVim: "yes" })).toEqual([]);
-    expect(decodeFlowDisplaySettings(null)).toEqual([]);
-    expect(decodeFlowDisplaySettings([1])).toEqual([]);
-    expect(decodeFlowDisplaySettings("x")).toEqual([]);
+  it.each([null, undefined, "x", 3, []])("syncs nothing for a malformed store (%j)", (raw) => {
+    expect(decodeFlowEditorSettings(raw)).toEqual([]);
   });
 
-  it("accepts a null team colour (unset) and a valid hex", () => {
-    expect(decodeFlowDisplaySettings({ affColor: null, negColor: "#aabbcc" })).toEqual([
-      { id: "affColor", value: null },
-      { id: "negColor", value: "#aabbcc" },
-    ]);
+  it("round-trips through encode, dropping the id", () => {
+    const stored = { flowFont: "mono", tooltips: false };
+
+    expect(encodeFlowEditorSettings(decodeFlowEditorSettings(stored))).toEqual(stored);
+  });
+
+  it("encodes no settings record to an empty object", () => {
+    expect(encodeFlowEditorSettings([])).toEqual({});
+    expect(encodeFlowEditorSettings([{ id: "other", a: 1 }, null, "x"])).toEqual({});
   });
 });
 
-describe("flow editor stores through the shared read/write helpers", () => {
+describe("redactFlowDisplaySettings", () => {
+  it("keeps only the allowlisted fields", () => {
+    const out = redactFlowDisplaySettings({
+      id: "settings",
+      flowFont: "mono",
+      theme: "dark",
+      flowsDir: "/Users/me/flows",
+      sidebarCollapsed: true,
+      rfdOpen: true,
+      collabEnabled: true,
+      collabName: "Me",
+      contacts: { abc: { name: "Peer" } },
+      someFutureField: 1,
+    }) as Record<string, unknown>;
+
+    expect(out).toEqual({ id: "settings", flowFont: "mono", theme: "dark" });
+  });
+
+  it("leaves a non-object untouched", () => {
+    expect(redactFlowDisplaySettings(null)).toBeNull();
+    expect(redactFlowDisplaySettings([1])).toEqual([1]);
+  });
+
+  it("only allowlists fields that never name a path, peer or network switch", () => {
+    for (const field of SYNCED_FLOW_DISPLAY_FIELDS) {
+      expect(field).not.toMatch(/dir|collab|contacts|sidebar|rfdOpen/i);
+    }
+  });
+});
+
+describe("account merge of the display settings", () => {
+  it("adopts the account's synced fields but keeps this device's own", () => {
+    const local = decodeFlowEditorSettings({ flowFont: "serif", flowsDir: "/local", collabEnabled: true });
+    const remote = [{ id: "settings", flowFont: "mono", theme: "dark" }];
+
+    const [merged] = mergeToolRecords(display, local, remote) as Record<string, unknown>[];
+
+    expect(merged).toMatchObject({ flowFont: "mono", theme: "dark", flowsDir: "/local", collabEnabled: true });
+  });
+});
+
+describe("localStorage round trip", () => {
   const backing = new Map<string, string>();
+
   beforeEach(() => {
     backing.clear();
     vi.stubGlobal("localStorage", {
@@ -61,7 +98,6 @@ describe("flow editor stores through the shared read/write helpers", () => {
       setItem: (key: string, value: string) => void backing.set(key, value),
     });
   });
-  afterEach(() => vi.unstubAllGlobals());
 
   afterEach(() => {
     vi.unstubAllGlobals();
@@ -79,48 +115,5 @@ describe("flow editor stores through the shared read/write helpers", () => {
     expect(JSON.parse(backing.get("ebb-keymap-settings") as string)).toEqual({
       keymapOverrides: { a: "b" },
     });
-  });
-
-  it("writes into an empty store and round-trips", () => {
-    writeLocalToolRecords(display, [{ id: "scrollZoom", value: false }]);
-    expect(readLocalToolRecords(display)).toEqual([{ id: "scrollZoom", value: false }]);
-    expect(isSyncableToolRecord(display, { id: "scrollZoom", value: false })).toBe(true);
-  });
-
-  it("returns no records for a corrupted store", () => {
-    backing.set("ebb-display-settings", "{not json");
-    expect(readLocalToolRecords(display)).toEqual([]);
-  });
-});
-
-describe("flow editor keymap codec", () => {
-  it("flattens overrides to records and back", () => {
-    const stored = { keymapOverrides: { newSheet: "Mod+T", undo: "Mod+Z" } };
-    const records = decodeFlowKeymap(stored);
-    expect(records).toEqual([
-      { id: "newSheet", value: "Mod+T" },
-      { id: "undo", value: "Mod+Z" },
-    ]);
-    expect(encodeFlowKeymap(records)).toEqual(stored);
-  });
-
-  it("ignores malformed overrides and records", () => {
-    expect(decodeFlowKeymap({ keymapOverrides: { a: 3, "": "x", ok: "K" } })).toEqual([{ id: "ok", value: "K" }]);
-    expect(decodeFlowKeymap({})).toEqual([]);
-    expect(decodeFlowKeymap(undefined)).toEqual([]);
-    expect(encodeFlowKeymap([{ id: "a", value: 3 }, "junk", null, { id: "b", value: "B" }])).toEqual({
-      keymapOverrides: { b: "B" },
-    });
-  });
-
-  it("works through the shared helpers", () => {
-    const store = new Map<string, string>();
-    vi.stubGlobal("localStorage", {
-      getItem: (key: string) => store.get(key) ?? null,
-      setItem: (key: string, value: string) => void store.set(key, value),
-    });
-    writeLocalToolRecords(keymap, [{ id: "undo", value: "Mod+Z" }]);
-    expect(readLocalToolRecords(keymap)).toEqual([{ id: "undo", value: "Mod+Z" }]);
-    vi.unstubAllGlobals();
   });
 });

@@ -235,16 +235,6 @@ export function readLocalToolRecords(collection: ToolRecordCollection): unknown[
   }
 }
 
-/** The parsed value currently under a collection's storage key, or `undefined`. */
-function readStoredValue(collection: ToolRecordCollection): unknown {
-  try {
-    const raw = localStorage.getItem(collection.storageKey);
-    return raw ? (JSON.parse(raw) as unknown) : undefined;
-  } catch {
-    return undefined;
-  }
-}
-
 /**
  * Writes a collection's records back to this browser's store and tells any
  * mounted panel to re-read.
@@ -263,16 +253,7 @@ export function writeLocalToolRecords(
   records: readonly unknown[],
 ): void {
   if (typeof localStorage === "undefined") return;
-  let current: unknown;
-  if (collection.codec) {
-    try {
-      const raw = localStorage.getItem(collection.storageKey);
-      current = raw ? JSON.parse(raw) : undefined;
-    } catch {
-      current = undefined;
-    }
-  }
-  const newValue = JSON.stringify(collection.codec ? collection.codec.encode(records, current) : records);
+  const newValue = JSON.stringify(collection.codec ? collection.codec.encode(records) : records);
   localStorage.setItem(collection.storageKey, newValue);
 
   if (typeof window === "undefined" || typeof StorageEvent === "undefined") return;

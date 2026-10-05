@@ -36,13 +36,10 @@
  * watcher, not a requirement of joining it.
  *
  * What *is* required is the shape: a JSON array under one `localStorage` key,
- * each element an object carrying a stable string `idField` — or a `codec`
- * that presents the store that way (the flow editor's single-object settings
- * stores become one fixed-id record, see `ebb-settings-codec.ts`). Other
- * single-object settings stores (`myTeamProfile`, `fontFamily`), presence
- * heartbeats and per-device playback state are deliberately absent — the
- * first have no codec yet, and the last two describe this browser rather than
- * this user.
+ * each element an object carrying a stable string `idField`. Single-object
+ * settings stores (`myTeamProfile`, `fontFamily`), presence heartbeats and
+ * per-device playback state are deliberately absent — the first cannot be
+ * keyed, and the last two describe this browser rather than this user.
  *
  * @module state/toolRecordCollections
  */
@@ -53,7 +50,7 @@ import {
   redactFlowDisplaySettings,
 } from "./flow-editor-settings-codec";
 import { redactFileSource } from "./redact-file-source";
-import { createSingletonSettingsCodec } from "./singleton-settings-codec";
+import { decodeFlowKeymap, encodeFlowKeymap } from "./flow-keymap-codec";
 
 /**
  * The groupings `/settings` → Account → **Tool data** renders as section
@@ -120,14 +117,12 @@ export interface ToolRecordCollection {
    * Adapts a store that is not itself "a JSON array of records" — a map keyed
    * by string, say — to the array the sync diffs and merges. `decode` turns
    * the parsed `localStorage` value into records (each carrying `idField`);
-   * `encode` turns the merged records back into the value to store, and is
-   * given the value currently in storage as `current` so a store that mixes
-   * synced and device-local fields can keep the latter. Absent for every
-   * collection whose store already is an array.
+   * `encode` turns the merged records back into the value to store. Absent
+   * for every collection whose store already is an array.
    */
   codec?: {
     decode: (stored: unknown) => unknown[];
-    encode: (records: readonly unknown[], current?: unknown) => unknown;
+    encode: (records: readonly unknown[]) => unknown;
   };
 }
 
@@ -176,29 +171,28 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     section: "Flowing and writing",
   },
   {
-    key: "ebbDisplaySettings",
+    key: "flowEditorDisplaySettings",
     storageKey: "ebb-display-settings",
     idField: "id",
-    // The flow editor's portable display preferences (font, zoom, theme, side
-    // colors, editing toggles) from `@debate/flow-ebb`'s `useFlowStore`. A
-    // single-object store, so the codec presents it as one `settings` record
-    // and leaves per-device fields (flows folder, drawer state, collab
-    // identity) out of the sync.
+    // The Ebb flow editor's display preferences — one object, wrapped as a
+    // single record by the codec. `redact` allowlists the fields that follow
+    // the user (font, zoom, editing toggles, theme, side colours) and keeps
+    // device-specific ones (flows folder, panel state, collab) on-device.
     label: "Flow Editor Display Settings",
     href: "/debate",
     section: "Flowing and writing",
-    codec: ebbDisplaySettingsCodec,
+    redact: redactFlowDisplaySettings,
+    codec: { decode: decodeFlowEditorSettings, encode: encodeFlowEditorSettings },
   },
   {
-    key: "ebbKeymapSettings",
+    key: "flowEditorKeymapSettings",
     storageKey: "ebb-keymap-settings",
     idField: "id",
-    // The flow editor's custom keybindings (`{ keymapOverrides }`), synced as
-    // one `settings` record.
-    label: "Flow Editor Keybindings",
+    // The Ebb flow editor's keybinding overrides (`{ keymapOverrides }`).
+    label: "Flow Editor Keymap",
     href: "/debate",
     section: "Flowing and writing",
-    codec: ebbKeymapSettingsCodec,
+    codec: { decode: decodeFlowEditorSettings, encode: encodeFlowEditorSettings },
   },
   // — Practice —
   {
@@ -306,17 +300,6 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     section: "Flowing and writing",
   },
   {
-    key: "flowEditorSettings",
-    storageKey: "flowEditorSettings",
-    idField: "id",
-    // The flow editor's display preferences and keymap overrides
-    // (`@debate/flow-ebb`'s `store/syncedSettings.ts`): two rows, `id`
-    // `display` and `keymap`. The device-local `flowsDir` never syncs.
-    label: "Flow Editor Settings",
-    href: "/debate",
-    section: "Flowing and writing",
-  },
-  {
     key: "pinnedDebates",
     storageKey: "pinnedDebates",
     idField: "roundId",
@@ -329,26 +312,16 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     section: "Flowing and writing",
   },
   {
-    key: "flowEditorDisplay",
-    storageKey: "ebb-display-settings",
+    key: "ebbSyncedSettings",
+    storageKey: "ebbSyncedSettings",
     idField: "id",
-    // The ebb flow editor's display/behaviour preferences (font, zoom, colours,
-    // paste/edit toggles). One record per field; device-local fields such as
-    // `flowsDir` stay out (`state/flow-editor-settings-codec.ts`).
-    label: "Flow Editor Display Settings",
+    // The flow editor's display and keymap preferences
+    // (`@debate/flow-ebb/src/lib/store/syncedSettings.ts`): two records,
+    // `display` and `keymap`. Device-only values (flows folder, panel layout,
+    // live-collab toggles) are deliberately not in them.
+    label: "Flow Editor Settings",
     href: "/debate",
     section: "Flowing and writing",
-    codec: { decode: decodeFlowDisplaySettings, encode: encodeFlowDisplaySettings },
-  },
-  {
-    key: "flowEditorKeymap",
-    storageKey: "ebb-keymap-settings",
-    idField: "id",
-    // The ebb flow editor's keybinding overrides, one record per rebound action.
-    label: "Flow Editor Keybindings",
-    href: "/debate",
-    section: "Flowing and writing",
-    codec: { decode: decodeFlowKeymap, encode: encodeFlowKeymap },
   },
   {
     key: "flowHistory",
