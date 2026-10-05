@@ -34,6 +34,7 @@ import { AnimatedLoader } from "../ui/AnimatedLoader"
 import { EditorWithToolbar } from "@debate/editor"
 import { topicStarterHtml } from "../../lib/topic-starters/content"
 import { cn } from "../../lib/ui/lib/utils"
+import { describeDocSaveStatus } from "../../lib/reason-docs/doc-save-status"
 import { ReasonDocsSidebarPanels } from "../reason-docs/ReasonDocsSidebarPanels"
 import { useReasonDocs } from "../reason-docs/ReasonDocsProvider"
 import { ReasonDocsRouteSync } from "../reason-docs/ReasonDocsRouteSync"
@@ -82,6 +83,13 @@ export function ReasonEditorScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [selected?.id, selected?.format, documentHtml],
   )
+
+  const saveStatus = describeDocSaveStatus({
+    isTopicDocument: topicDocument !== null,
+    saving,
+    unsaved,
+    saveFailed,
+  })
 
   return (
     <div className="h-dvh flex flex-col overflow-hidden pt-14 lg:pt-0 pb-20 lg:pb-0">
@@ -146,9 +154,15 @@ export function ReasonEditorScreen() {
                 both in the sidebar's document row
                 (`ReasonDocsSidebarPanels` → `onRename`, `ShareWithContacts`)
                 next to New file / New folder / Upload. This row is just the
-                status line. */}
+                status line (`describeDocSaveStatus`). */}
             <div className="flex items-center gap-2 px-4 py-2 border-b">
-              {topicDocument ? <span className="text-xs text-muted-foreground">Public topic starter</span> : saving && <span className="text-xs text-muted-foreground">Saving…</span>}
+              <span
+                className={cn("text-xs", saveStatus.state === "failed" ? "text-destructive" : "text-muted-foreground")}
+                title={saveStatus.title}
+                data-doc-save-state={saveStatus.state}
+              >
+                {saveStatus.label}
+              </span>
             </div>
             <div className="flex-1 min-h-0 overflow-hidden">
               {/* No React `key` here on purpose: `contentKey` already gives
