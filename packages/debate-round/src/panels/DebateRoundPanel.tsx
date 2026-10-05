@@ -7,7 +7,8 @@
  * into a clean, modular architecture using custom hooks and layout components.
  */
 
-import { useEffect, useState, type ReactNode } from "react"
+import { useEffect, useRef, useState, type ReactNode } from "react"
+import { usePathname } from "next/navigation"
 import { EbbFlowEmbed, type EbbFlowToolAction } from "@debate/flow-ebb"
 import { useFlowStore } from "../state/store"
 import { newFlow } from "../utils/flow-utils"
