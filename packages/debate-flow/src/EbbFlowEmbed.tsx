@@ -27,6 +27,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Toaster } from "sonner";
 
+import AccountSettingsSync from "./components/AccountSettingsSync";
 import AppRoot from "./components/flow/AppRoot";
 import ResumeFlow from "./components/flow/ResumeFlow";
 import { BridgeHost } from "./components/BridgeHost";

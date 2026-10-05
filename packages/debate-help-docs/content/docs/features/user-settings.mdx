@@ -71,19 +71,18 @@ here any more.
 
 ## Flow editor preferences follow your account
 
-The Ebb flow editor's display preferences (`Cmd/Ctrl+,`) and keybinding
-overrides sync to your account when you are signed in, through the same tool
-data sync as the other tools (`flowEditorDisplaySettings` and
-`flowEditorKeymapSettings` in `debate-data-sync`'s catalog). What follows you:
-flow font, default grid zoom, the editing toggles (insert-paste, append-edit,
-scroll-zoom, align speeches, tooltips, Vim in the RFD pane), CardMirror
-options, light/dark theme, side colours, and every keymap override.
+Ebb's display preferences (font, default zoom, Vim mode, paste/append/scroll-zoom
+toggles, tooltips, CardMirror, theme, side colors) and your custom keyboard
+shortcuts sync through the `flowEditorSettings` field of `/api/settings`
+(`user_settings.flow_editor_settings`). On opening a flow, your account's saved
+values are applied; an account with nothing saved is seeded from the current
+browser. Changes are pushed after a one-second pause. Signed out or offline, the
+editor keeps working from localStorage exactly as before.
 
-What stays on the device it was set on: the flows folder, whether the sidebar
-and RFD pane are open, and the live-collaboration switches, display name and
-contacts. A pull from the account never resets those. Engineering notes:
-`debate-data-sync`'s `state/flow-editor-settings-codec.ts` — a field joins the
-account only by being added to `SYNCED_FLOW_DISPLAY_FIELDS`.
+Not synced, because they only make sense on one device or involve other people:
+the flows folder, sidebar/RFD layout, and collaboration name, contacts and
+relay toggles. The allow-list and validation live in
+`debate-flow`'s `lib/sync/accountSettings.ts`.
 
 ## Saved-to-account marker on flow tabs
 

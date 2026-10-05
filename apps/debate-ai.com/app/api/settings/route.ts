@@ -94,6 +94,13 @@ import {
   serializeEditorPreferences,
   type EditorPreferencesPayload,
 } from "@debate/webview/lib/editor-preferences"
+import {
+  mergeFlowEditorSettings,
+  normalizeFlowEditorSettingsPatch,
+  parseFlowEditorSettings,
+  serializeFlowEditorSettings,
+  type FlowEditorSettings,
+} from "@debate/flow-ebb/account-settings"
 import { applyRecentToolOp, normalizeRecentToolOpPatch, parseRecentTools, serializeRecentTools } from "@debate/webview/lib/recentTools"
 import {
   DEFAULT_QUALIFICATION_POINTS_TABLE_SYNC,
@@ -272,7 +279,7 @@ type SettingsPayload = UserSettingsPayload & {
   favoriteTools: string[]
   recentTools: string[]
   editorPreferences: EditorPreferencesPayload
-  flowEditorSettings: FlowEditorAccountSettingsPayload
+  flowEditorSettings: FlowEditorSettings
   newsRead: string[]
   newsLiked: string[]
   wordLimitPresets: { name: string; wordLimit: number }[]
@@ -739,8 +746,8 @@ export async function PUT(req: NextRequest) {
     const merged = mergeEditorPreferences(parseEditorPreferences(existing?.editorPreferences), editorPreferencesResult.valid)
     dbPatch.editorPreferences = serializeEditorPreferences(merged)
   }
-  // Same read-merge-write for the flow editor's settings, so two devices
-  // changing different controls do not overwrite each other.
+  // Same merge-onto-stored-map shape as `editorPreferences`: a PUT carries only
+  // the keys that changed.
   if (Object.keys(flowEditorSettingsResult.valid).length > 0) {
     const [existing] = await db
       .select({ flowEditorSettings: userSettings.flowEditorSettings })
