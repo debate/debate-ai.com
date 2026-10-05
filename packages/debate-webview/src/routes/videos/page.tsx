@@ -1,5 +1,6 @@
 import { Suspense } from "react"
 import { LecturesPage } from "@debate/videos"
+import { ToolSyncBadge } from "../../components/tools/ToolSyncBadge"
 import { CategoryDock } from "../../components/layout/CategoryDock"
 
 export default function VideosHome() {
@@ -14,7 +15,7 @@ export default function VideosHome() {
           statistics branch. It used to arrive here as `topicAreasSlot`
           because the definitions lived in this package; the slot stays
           supported on `LecturesPage`, but nothing passes it now. */}
-      <LecturesPage dockSlot={<CategoryDock embedded />} />
+      <LecturesPage dockSlot={<CategoryDock embedded />} headerActionsSlot={<ToolSyncBadge href="/videos" />} />
     </Suspense>
   )
 }

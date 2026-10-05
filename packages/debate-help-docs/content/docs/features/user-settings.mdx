@@ -249,6 +249,10 @@ own route, so their headers name the collections explicitly
 (`ToolPageHeader`'s `syncCollections` prop, resolved by `resolveToolSyncKeys`)
 and show the badge too.
 
-Known gap: the open-flow tabs and the `/videos` and `/doc` headers are custom
-too and don't show the badge yet. The `/research/cards` search workspace, which
-has no `ToolPageHeader`, doesn't either.
+The video library at `/videos` shows the badge (and **Save now**) beside its
+search bar; `LecturesPage` takes it as a `headerActionsSlot` prop because
+`debate-videos` can't import the webview's component.
+
+Known gap: the open-flow tabs and the `/doc` header are custom too and don't
+show the badge yet. The `/research/cards` search workspace, which has no
+`ToolPageHeader`, doesn't either.

@@ -150,6 +150,8 @@ interface LecturesVideoGridViewProps {
    * (auth session, routing, settings menu).
    */
   dockSlot?: React.ReactNode
+  /** Host-owned controls (e.g. the account-sync badge) rendered beside the search bar. */
+  headerActionsSlot?: React.ReactNode
 }
 
 /**
@@ -207,6 +209,7 @@ export function LecturesVideoGridView({
   selectedStyle,
   onStyleChange,
   dockSlot,
+  headerActionsSlot,
 }: LecturesVideoGridViewProps) {
   const params = useParams()
   const pathname = usePathname()
@@ -381,7 +384,10 @@ export function LecturesVideoGridView({
             (popular debate terms and the tournaments with the most rounds)
             underneath. */}
         <div className="mb-6 flex flex-col gap-4">
-          <div className="w-full max-w-2xl">{searchBarNode}</div>
+          <div className="flex w-full flex-wrap items-center gap-2">
+            <div className="w-full max-w-2xl">{searchBarNode}</div>
+            {headerActionsSlot}
+          </div>
           <VideoSearchSuggestions
             suggestions={searchSuggestions}
             searchTerm={searchTerm}
