@@ -98,7 +98,9 @@
 
 - Branch: `agent/tool-header-single-sync-badge`
 - [x] `ToolPageHeader` rendered `ToolSyncBadge` twice (merge damage); now once, with a regression test
-- [ ] Follow-up: pin/save controls (not just sync status) in each tool's header
+- [x] "Save now" / "Retry save" button beside the sync badge (`lib/tools/tool-save-now.ts`, `ToolSyncBadge`; branch `agent/tool-header-save-now`); the favorite star already sits in the same header row
+- [ ] Follow-up: tools with a custom header (flow tabs, start screen) don't get the badge/Save now yet
+- [ ] Follow-up: component test for `ToolSyncBadge` click path (no `@testing-library/react` in webview tests)
 
 ## Completed
 
