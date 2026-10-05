@@ -320,22 +320,62 @@ export function createTournamentsClient(
       headers: { accept: "application/json" },
     });
 
-  return     upcoming: (signal?: AbortSignal) => get<UpcomingTournament[]>("/pages/invite/upcoming", signal),
-    invite: (tournId: number, signal?: AbortSignal) => get<TournamentInvite>(`/rest/tourns/${tournId}/invite`, signal),
+  return {
+    /** Hosted tournaments (the demo first loaded if missing), then live Tabroom's, each tagged with its source. */
+    upcoming: async (signal?: AbortSignal): Promise<UpcomingTournament[]> => {
+      const hosted = (async () => {
+        await ensureDemo(signal).catch(() => undefined);
+        return get<UpcomingTournament[]>(base, "/pages/invite/upcoming", signal);
+      })();
+      const tabroom = live ? get<UpcomingTournament[]>(live, "/pages/invite/upcoming", signal) : Promise.resolve([]);
+      const [mine, theirs] = await Promise.allSettled([hosted, tabroom]);
+      if (mine.status === "rejected" && (theirs.status === "rejected" || !live)) throw mine.reason;
+      const rows: UpcomingTournament[] = [];
+      const seen = new Set<number>();
+      for (const [result, source] of [[mine, "hosted"], [theirs, "tabroom"]] as const) {
+        if (result.status !== "fulfilled" || !Array.isArray(result.value)) continue;
+        for (const row of result.value) {
+          if (seen.has(row.tournId)) continue;
+          seen.add(row.tournId);
+          if (live) sources.set(row.tournId, source);
+          rows.push({ ...row, source });
+        }
+      }
+      return rows;
+    },
+    invite,
+    /** Which source a tournament was read from, once its invite or the upcoming list has loaded. */
+    sourceOf: (tournId: number): TournamentSource | undefined => (live ? sources.get(tournId) : "hosted"),
     /** The entries registered in one event, when the tournament publishes its field. */
-    field: (tournId: number, eventAbbr: string, signal?: AbortSignal) =>
-      get<EventField>(`/rest/tourns/${tournId}/events/${encodeURIComponent(eventAbbr)}/field`, signal),
-    rounds: (tournId: number, signal?: AbortSignal) => get<PublishedRound[]>(`/rest/tourns/${tournId}/rounds`, signal),
-    round: (tournId: number, eventAbbr: string, roundName: string, signal?: AbortSignal) =>
-      get<RoundSchematic>(
-        `/pages/invite/${tournId}/${encodeURIComponent(eventAbbr)}/${encodeURIComponent(roundName)}`,
-        signal,
-      ),
-    results: (tournId: number, signal?: AbortSignal) =>
-      get<Record<string, ResultsIndexEvent>>(`/rest/tourns/${tournId}/results`, signal),
-    resultSet: (tournId: number, resultSetId: number, signal?: AbortSignal) =>
-      get<ResultSet[]>(`/rest/tourns/${tournId}/results/${resultSetId}`, signal),
-    /** Creates a tournament owned by the signed-in user. */
+    field: async (tournId: number, eventAbbr: string, signal?: AbortSignal) =>
+      get<EventField>(await rootFor(tournId, signal), `/rest/tourns/${tournId}/events/${encodeURIComponent(eventAbbr)}/field`, signal),
+    rounds: async (tournId: number, signal?: AbortSignal) =>
+      get<PublishedRound[]>(await rootFor(tournId, signal), `/rest/tourns/${tournId}/rounds`, signal),
+    /**
+     * One round's pairings. Live Tabroom serves a round only under its
+     * `/results` path (which carries the same sections), so a 404 on the
+     * schematic falls back to it.
+     */
+    round: async (tournId: number, eventAbbr: string, roundName: string, signal?: AbortSignal) => {
+      const root = await rootFor(tournId, signal);
+      const path = `/pages/invite/${tournId}/${encodeURIComponent(eventAbbr)}/${encodeURIComponent(roundName)}`;
+      try {
+        return await get<RoundSchematic>(root, path, signal);
+      } catch (error) {
+        if (!(error instanceof TournamentsApiError) || error.status !== 404) throw error;
+        return get<RoundSchematic>(root, `${path}/results`, signal).catch(() => {
+          throw error;
+        });
+      }
+    },
+    results: async (tournId: number, signal?: AbortSignal) =>
+      get<Record<string, ResultsIndexEvent>>(await rootFor(tournId, signal), `/rest/tourns/${tournId}/results`, signal),
+    resultSet: async (tournId: number, resultSetId: number, signal?: AbortSignal) =>
+      get<ResultSet[]>(await rootFor(tournId, signal), `/rest/tourns/${tournId}/results/${resultSetId}`, signal),
+    /** Where a posted document can be downloaded; Tabroom keeps them on S3. */
+    fileUrl: (tournId: number, file: { id: number; filename: string | null }): string | null =>
+      file.filename ? `https://s3.amazonaws.com/tabroom-files/tourns/${tournId}/postings/${file.id}/${encodeURIComponent(file.filename)}` : null,
+    /** Creates a tournament owned by the signed-in user, on this site's API. */
     createTournament: (input: CreateTournamentInput, signal?: AbortSignal) =>
       request<{ tournament: CreatedTournament }>(base, "/host/tourns", {
         method: "POST",
