@@ -48,11 +48,10 @@
  */
 
 import {
-  decodeFlowEditorDisplay,
-  decodeFlowEditorKeymap,
-  encodeFlowEditorDisplay,
-  encodeFlowEditorKeymap,
-  redactFlowEditorDisplay,
+  decodeFlowDisplaySettings,
+  decodeFlowKeymap,
+  encodeFlowDisplaySettings,
+  encodeFlowKeymap,
 } from "./flow-editor-settings-codec";
 import { redactFileSource } from "./redact-file-source";
 import { ebbDisplaySettingsCodec, ebbKeymapSettingsCodec } from "./ebb-settings-codec";
@@ -340,30 +339,26 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     section: "Flowing and writing",
   },
   {
-    key: "flowDisplaySettings",
+    key: "flowEditorDisplay",
     storageKey: "ebb-display-settings",
     idField: "id",
-    // The flow editor's display preferences (font, zoom, theme, side colors,
-    // collab name, ...) kept by `@debate/flow-ebb`'s `useFlowStore`. One object
-    // synced as a single `settings` record; `flowsDir` (a desktop-only disk
-    // path) never leaves the browser. A change reaches another device on its
-    // next load of the flow editor.
+    // The ebb flow editor's display/behaviour preferences (font, zoom, colours,
+    // paste/edit toggles). One record per field; device-local fields such as
+    // `flowsDir` stay out (`state/flow-editor-settings-codec.ts`).
     label: "Flow Editor Display Settings",
     href: "/debate",
     section: "Flowing and writing",
-    redact: redactFlowDisplaySettings,
-    codec: { decode: decodeSingleObject, encode: encodeSingleObject },
+    codec: { decode: decodeFlowDisplaySettings, encode: encodeFlowDisplaySettings },
   },
   {
-    key: "flowKeymapSettings",
+    key: "flowEditorKeymap",
     storageKey: "ebb-keymap-settings",
     idField: "id",
-    // The flow editor's custom keybindings (`{ keymapOverrides }`), synced as
-    // a single `settings` record so a remapped key follows the user.
-    label: "Flow Editor Keymap",
+    // The ebb flow editor's keybinding overrides, one record per rebound action.
+    label: "Flow Editor Keybindings",
     href: "/debate",
     section: "Flowing and writing",
-    codec: { decode: decodeSingleObject, encode: encodeSingleObject },
+    codec: { decode: decodeFlowKeymap, encode: encodeFlowKeymap },
   },
   {
     key: "flowHistory",
