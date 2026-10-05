@@ -45,12 +45,12 @@
  */
 
 import {
-  decodeFlowDisplaySettings,
-  decodeFlowKeymapSettings,
-  encodeFlowDisplaySettings,
-  encodeFlowKeymapSettings,
+  decodeFlowEditorSettings,
+  encodeFlowEditorSettings,
+  redactFlowDisplaySettings,
 } from "./flow-editor-settings-codec";
 import { redactFileSource } from "./redact-file-source";
+import { decodeFlowKeymap, encodeFlowKeymap } from "./flow-keymap-codec";
 
 /**
  * The groupings `/settings` → Account → **Tool data** renders as section
@@ -150,6 +150,19 @@ export const MAX_TOOL_RECORDS_PER_PUSH = 500;
 export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
   // — Flowing and writing —
   {
+    key: "flowKeymap",
+    storageKey: "ebb-keymap-settings",
+    idField: "id",
+    // The flow editor's rebound shortcuts (`@debate/flow`'s `useFlowStore`),
+    // stored as `{ keymapOverrides }`; one record per rebound action id. The
+    // flow editor reads it at startup, so a rebinding from another device
+    // applies on the next load.
+    label: "Flow Editor Shortcuts",
+    href: "/debate",
+    section: "Flowing and writing",
+    codec: { decode: decodeFlowKeymap, encode: encodeFlowKeymap },
+  },
+  {
     key: "speechDocLinks",
     storageKey: "speechDocLinks",
     idField: "id",
@@ -162,26 +175,28 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     section: "Flowing and writing",
   },
   {
-    key: "flowDisplaySettings",
+    key: "flowEditorDisplaySettings",
     storageKey: "ebb-display-settings",
     idField: "id",
-    // One record (`id: "display"`) of the flow editor's appearance and
-    // editing preferences; device-local fields (folder, collab, layout) stay
-    // out — see `flow-editor-settings-codec.ts`.
-    label: "Flow Editor Settings",
+    // The Ebb flow editor's display preferences — one object, wrapped as a
+    // single record by the codec. `redact` allowlists the fields that follow
+    // the user (font, zoom, editing toggles, theme, side colours) and keeps
+    // device-specific ones (flows folder, panel state, collab) on-device.
+    label: "Flow Editor Display Settings",
     href: "/debate",
     section: "Flowing and writing",
-    codec: { decode: decodeFlowDisplaySettings, encode: encodeFlowDisplaySettings },
+    redact: redactFlowDisplaySettings,
+    codec: { decode: decodeFlowEditorSettings, encode: encodeFlowEditorSettings },
   },
   {
-    key: "flowKeymapSettings",
+    key: "flowEditorKeymapSettings",
     storageKey: "ebb-keymap-settings",
     idField: "id",
-    // One record (`id: "keymap"`) holding the flow editor's shortcut overrides.
+    // The Ebb flow editor's keybinding overrides (`{ keymapOverrides }`).
     label: "Flow Editor Keymap",
     href: "/debate",
     section: "Flowing and writing",
-    codec: { decode: decodeFlowKeymapSettings, encode: encodeFlowKeymapSettings },
+    codec: { decode: decodeFlowEditorSettings, encode: encodeFlowEditorSettings },
   },
   // — Practice —
   {
@@ -297,6 +312,18 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     // also the round's `saved_rounds.client_id`, so a pin resolves to the same
     // round on another device.
     label: "Pinned Debates",
+    href: "/debate",
+    section: "Flowing and writing",
+  },
+  {
+    key: "ebbSyncedSettings",
+    storageKey: "ebbSyncedSettings",
+    idField: "id",
+    // The flow editor's display and keymap preferences
+    // (`@debate/flow-ebb/src/lib/store/syncedSettings.ts`): two records,
+    // `display` and `keymap`. Device-only values (flows folder, panel layout,
+    // live-collab toggles) are deliberately not in them.
+    label: "Flow Editor Settings",
     href: "/debate",
     section: "Flowing and writing",
   },

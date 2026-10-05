@@ -75,3 +75,15 @@ has been saved to the account. A pin whose round is not saved or present on the
 current device is skipped rather than shown. The older `pinned-debates` id list
 is read once as a fallback and replaced on the first pin change. When pins from
 two devices add up to more than 12, the start screen shows the newest 12.
+
+## Flow editor settings follow your account
+
+The flow editor's preferences - font, default zoom, theme, side colors, vim in
+the RFD editor, paste/append behavior, scroll zoom, tooltips, CardMirror options
+and your custom keyboard shortcuts - are stored as two records (`display` and
+`keymap`) under the `ebbSyncedSettings` key, one entry in the Tool Data Sync
+catalog. Signing in on another device applies them there, live. Settings that
+describe a machine rather than you stay local: the flows folder, panel layout
+(sidebar, RFD drawer) and the live-collab toggles, name and contacts. When a
+device syncs, the account's copy of a record replaces the local one as a whole,
+so the last device to sync wins for all synced settings at once.
