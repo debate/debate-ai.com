@@ -59,7 +59,7 @@ describe("matchesToolSidebarHref", () => {
     // dock inside a sidebar.
     expect(matchesToolSidebarHref("/research/cards/awards")).toBe(true);
     expect(matchesToolSidebarHref("/coaching/leaderboard/alice")).toBe(true);
-    expect(matchesToolSidebarHref("/doc/some-document")).toBe(true);
+    expect(matchesToolSidebarHref("/research/docs/some-document")).toBe(true);
     expect(matchesToolSidebarHref("/reason-editor/42")).toBe(true);
     expect(matchesToolSidebarHref("/teams/greenhill-ab")).toBe(true);
     expect(matchesToolSidebarHref("/schools/greenhill")).toBe(true);
@@ -203,26 +203,26 @@ describe("Tournaments and Tabroom", () => {
 
 describe("the REASON research workspace", () => {
   it("is still a sidebar destination, though no longer a Research row", () => {
-    // It lost its "Debate Docs" row in favour of the dock's own Docs button,
+    // It lost its "Debate Docs" row in favour of the dock's own Research button,
     // which is the same route — so the sidebar still has to know about it.
-    expect(TOOL_SIDEBAR_HREFS.has("/doc")).toBe(true);
-    expect(matchesToolSidebarHref("/doc")).toBe(true);
-    expect(matchesToolSidebarHref("/doc/cp-answer-to-states")).toBe(true);
+    expect(TOOL_SIDEBAR_HREFS.has("/research/docs")).toBe(true);
+    expect(matchesToolSidebarHref("/research/docs")).toBe(true);
+    expect(matchesToolSidebarHref("/research/docs/cp-answer-to-states")).toBe(true);
   });
 
   it("no longer hosts a dock of its own, now that it is quick search in an iframe", () => {
-    expect(hostsOwnSidebarDock("/doc")).toBe(false);
-    expect(hostsOwnSidebarDock("/doc/cp-answer-to-states")).toBe(false);
+    expect(hostsOwnSidebarDock("/research/docs")).toBe(false);
+    expect(hostsOwnSidebarDock("/research/docs/cp-answer-to-states")).toBe(false);
     expect(hostsOwnSidebarDock("/docs")).toBe(false);
     expect(hostsOwnSidebarDock(null)).toBe(false);
-    expect(ownsItsLayout("/doc")).toBe(false);
+    expect(ownsItsLayout("/research/docs")).toBe(false);
   });
 
   it("is wrapped in the generic sidebar, which carries the dock beside the frame", () => {
-    expect(isGenericToolSidebarRoute("/doc")).toBe(true);
-    expect(isGenericToolSidebarRoute("/doc/cp-answer-to-states")).toBe(true);
-    expect(hasEmbeddedDock("/doc")).toBe(true);
-    expect(hasEmbeddedDock("/doc/cp-answer-to-states")).toBe(true);
+    expect(isGenericToolSidebarRoute("/research/docs")).toBe(true);
+    expect(isGenericToolSidebarRoute("/research/docs/cp-answer-to-states")).toBe(true);
+    expect(hasEmbeddedDock("/research/docs")).toBe(true);
+    expect(hasEmbeddedDock("/research/docs/cp-answer-to-states")).toBe(true);
   });
 });
 

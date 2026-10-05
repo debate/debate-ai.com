@@ -6,10 +6,10 @@ import {
   scheduleDockIdlePrefetch,
 } from "../../../src/lib/nav/dock-idle-prefetch"
 
-const HREFS = ["/videos", "/research/cards", "/debate", "/practice/versus-ai", "/doc"]
+const HREFS = ["/videos", "/research/cards", "/debate", "/practice/versus-ai", "/research/docs"]
 
 describe("dockIdlePrefetchTargets", () => {
-  it("skips the page on screen and the heavy /doc workspace", () => {
+  it("skips the page on screen and the heavy /research/docs workspace", () => {
     expect(dockIdlePrefetchTargets(HREFS, "/debate")).toEqual(["/videos", "/research/cards", "/practice/versus-ai"])
   })
 

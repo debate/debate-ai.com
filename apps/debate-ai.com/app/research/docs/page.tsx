@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "REASON Docs",
+  title: "Research",
   description: "Research Editor for Annotated Summaries in Outline Notation",
 }
 

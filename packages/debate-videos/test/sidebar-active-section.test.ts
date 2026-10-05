@@ -33,6 +33,11 @@ describe("sidebarSectionForPath", () => {
     }
   });
 
+  it("opens Research for the dock's research tab, which sits under /research", () => {
+    expect(sidebarSectionForPath("/research/docs")).toBe("research");
+    expect(sidebarSectionForPath("/research/docs/cp-answer-to-states")).toBe("research");
+  });
+
   it("resolves a dock destination to the tool section that lists it", () => {
     // `/practice/versus-ai` is a dock button and Practice's "Debate Versus AI"; `/research/cards`
     // is the dock's Shared button and Research's "Card Search". With the Apps

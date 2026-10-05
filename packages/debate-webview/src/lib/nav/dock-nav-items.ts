@@ -28,10 +28,10 @@ export const NAV_ITEMS: DockNavItem[] = [
   // Practice vs AI — a full timed round against an AI opponent, from the
   // `debate-practice-vs-ai` package.
 { href: "/practice/versus-ai", label: dockNavLabel("/practice/versus-ai"), icon: IconVsAi },
-  // Quick search (qwksearch.com, framed at /doc), marked with that site's own
+  // Quick search (qwksearch.com, framed at /research/docs), marked with that site's own
   // app icon (`icon-doc.png`, a copy of qwksearch.com/apple-touch-icon.png)
   // rather than a generic page: it reads as a different tool from the rest.
-  { href: "/doc", label: dockNavLabel("/doc"), icon: IconDoc },
+  { href: "/research/docs", label: dockNavLabel("/research/docs"), icon: IconDoc },
   // No "Tools" icon here on purpose: the tools catalog is reached from the
   // sidebar nav tree (its "Apps" heading and the Coaching/Research/Practice
   // sections) and from the Settings menu's "All Tools" entry and Tools

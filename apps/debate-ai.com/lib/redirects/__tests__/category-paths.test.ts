@@ -21,6 +21,13 @@ describe("handleCategoryPathRedirect", () => {
     );
   });
 
+  it("moves the dock's research tab from /doc to /research/docs", () => {
+    const response = redirectFor("https://d.ebate.app/doc/cp-answer-to-states");
+    expect(response?.status).toBe(308);
+    expect(response?.headers.get("location")).toBe("https://d.ebate.app/research/docs/cp-answer-to-states");
+    expect(redirectFor("https://d.ebate.app/docs/guides")).toBeNull();
+  });
+
   it("leaves pages that did not move alone", () => {
     expect(redirectFor("https://d.ebate.app/videos/pf")).toBeNull();
     expect(redirectFor("https://d.ebate.app/practice/drills")).toBeNull();

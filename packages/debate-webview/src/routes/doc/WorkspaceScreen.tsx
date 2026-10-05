@@ -1,8 +1,8 @@
 import { QWKSEARCH_ORIGIN } from "../../components/qwksearch/base-url"
 
 /**
- * The research workspace's page frame, shared by both of its routes: `/doc`,
- * and `/doc/<a document name>`. One screen with two addresses, so the frame
+ * The research workspace's page frame, shared by both of its routes: `/research/docs`,
+ * and `/research/docs/<a document name>`. One screen with two addresses, so the frame
  * lives here rather than being written out twice.
  *
  * The page is quick search itself (qwksearch.com) in an iframe, rather than

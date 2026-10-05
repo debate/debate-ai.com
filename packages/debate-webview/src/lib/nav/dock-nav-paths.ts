@@ -16,7 +16,7 @@ export const DOCK_NAV_LABELS: Record<string, string> = {
   "/research/cards": "Shared",
   "/debate": "Debate",
   "/practice/versus-ai": "Practice vs AI",
-  "/doc": "Docs",
+  "/research/docs": "Research",
 }
 
 export const DOCK_NAV_HREFS = Object.keys(DOCK_NAV_LABELS)
