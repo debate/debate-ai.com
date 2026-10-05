@@ -13,6 +13,7 @@ import {
   type VideoType,
 } from "@debate/videos"
 import { videoRowToTuple } from "@debate/data-sync/src/videos/video-rows"
+import { featuredSpeechDocsTabs } from "@debate/round/src/panels/featuredSpeechDocsTabs"
 
 import { CategoryDock } from "../../components/layout/CategoryDock"
 import { VideoStaffControls } from "../../components/videos/VideoStaffControls"
@@ -51,6 +52,8 @@ export default function VideoWatchRoute() {
     }
     return null
   }, [rows, pathname, params.slug])
+  const videoId = video ? (video[0] as string) : null
+  const sideTabs = useMemo(() => featuredSpeechDocsTabs(videoId), [videoId])
 
   if (!rows) return <p className="p-8 text-center text-sm text-muted-foreground">Loading video…</p>
   if (!video) return <p className="p-8 text-center text-sm text-muted-foreground">Video not found.</p>
@@ -63,6 +66,7 @@ export default function VideoWatchRoute() {
       <VideoWatchPage
         video={video}
         stack={stack}
+        sideTabs={sideTabs}
         dockSlot={<CategoryDock embedded />}
         extraControls={
           <>

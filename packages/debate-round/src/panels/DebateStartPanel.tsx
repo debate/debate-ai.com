@@ -6,26 +6,28 @@
  * later landing where every flow has been deleted.
  *
  * It answers "what do I open?" in one place instead of leaving the user to
- * dig through the sidebar's round tree: pinned ("featured") rounds first,
- * then the most recent entries from the auto-saved flow history, each openable
- * in one click. Opening anything dismisses it, since the page then has a
+ * dig through the sidebar's round tree: the built-in featured rounds
+ * (`round/featured-rounds`) and the user's pinned rounds first, then the most
+ * recent entries from the auto-saved flow history, each openable in one click. Opening anything dismisses it, since the page then has a
  * `currentFlow` and this is no longer rendered.
  *
- * All data already exists locally — pins from `state/pinnedDebates`, recents
- * from the `flow-history` log, rounds from the `rounds` key — so this
- * component fetches nothing itself and only reports the user's choice back to
- * the page, which owns the store.
+ * Everything it lists is passed in — pins from `state/pinnedDebates`, recents
+ * from the `flow-history` log, rounds from the `rounds` key, featured rounds
+ * from the built-in catalog — so this component fetches nothing itself and
+ * only reports the user's choice back to the page, which owns the store (and
+ * fetches a featured round's speech docs when one is opened).
  *
  * @module panels/DebateStartPanel
  */
 
-import { useMemo } from "react"
+import { useMemo, type ReactNode } from "react"
 import { FileText, History as HistoryIcon, Pin, PinOff, Plus, Star, Users } from "lucide-react"
 import { Button } from "../ui/primitives/button"
 import { Badge } from "../ui/primitives/badge"
 import { orderPinnedRounds } from "../state/pinnedDebates"
 import { formatRelativeCloudTime } from "../state/cloudLibrary"
 import type { FlowHistoryEntry } from "../state/flowHistoryEntries"
+import type { FeaturedRound } from "../round/featured-rounds"
 import type { Round } from "../types/flow"
 import { RoundAccountMarker } from "../navigation/RoundAccountMarker"
 
@@ -39,6 +41,14 @@ interface DebateStartPanelProps {
   history: FlowHistoryEntry[]
   /** Currently pinned round ids, oldest pin first (`readPinnedDebateIds()`). */
   pinnedIds: number[]
+  /** Built-in featured rounds, shown before the pinned ones. */
+  featuredRounds?: readonly FeaturedRound[]
+  /** Key of the featured round whose speech docs are loading, if any. */
+  loadingFeaturedKey?: string | null
+  /** Why the last featured round failed (or only partly) loaded. */
+  featuredError?: string | null
+  /** Opens (building it the first time) a featured round. */
+  onOpenFeatured?: (featured: FeaturedRound) => void
   /** Opens a round's flows (and archives everything else). */
   onOpenRound: (round: Round) => void
   /** Restores a history entry as a new flow and opens it. */
@@ -51,6 +61,11 @@ interface DebateStartPanelProps {
   onCreateRound: () => void
   /** Opens the full round/history dialog. */
   onOpenHistory: () => void
+  /**
+   * Extra header controls rendered before the action buttons — the host app
+   * passes its account-sync badge here, since this package can't import it.
+   */
+  headerActions?: ReactNode
 }
 
 /** "Aff vs Neg" line for a round card, or "" when the round names no debaters. */
@@ -84,12 +99,17 @@ export function DebateStartPanel({
   rounds,
   history,
   pinnedIds,
+  featuredRounds = [],
+  loadingFeaturedKey = null,
+  featuredError = null,
+  onOpenFeatured,
   onOpenRound,
   onOpenHistoryEntry,
   onTogglePin,
   onCreateFlow,
   onCreateRound,
   onOpenHistory,
+  headerActions,
 }: DebateStartPanelProps) {
   const pinnedRounds = useMemo(() => orderPinnedRounds(rounds, pinnedIds), [rounds, pinnedIds])
   const pinnedSet = useMemo(() => new Set(pinnedIds), [pinnedIds])
@@ -103,10 +123,11 @@ export function DebateStartPanel({
           <div>
             <h1 className="text-xl font-semibold">Debate FIAT</h1>
             <p className="text-sm text-muted-foreground mt-1">
-              Open a pinned debate, or pick up one of your recent flows.
+              Open a featured or pinned debate, or pick up one of your recent flows.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
+            {headerActions}
             <Button size="sm" onClick={onCreateFlow} className="gap-1.5">
               <Plus className="h-3.5 w-3.5" />
               New flow
@@ -127,8 +148,53 @@ export function DebateStartPanel({
             <Star className="h-4 w-4 text-muted-foreground" />
             <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Featured</h2>
           </div>
-          {pinnedRounds.length > 0 ? (
+          {featuredRounds.length + pinnedRounds.length > 0 && (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {featuredRounds.map((featured) => {
+                const loading = loadingFeaturedKey === featured.key
+                const open = () => {
+                  if (!loadingFeaturedKey) onOpenFeatured?.(featured)
+                }
+                return (
+                  <div
+                    key={featured.key}
+                    role="button"
+                    tabIndex={0}
+                    aria-busy={loading}
+                    onClick={open}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault()
+                        open()
+                      }
+                    }}
+                    className="flex cursor-pointer flex-col gap-2 rounded-md border bg-card p-3 text-left transition-colors hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <div className="truncate text-sm font-medium">{featured.title}</div>
+                        <div className="truncate text-xs text-muted-foreground">
+                          {`${featured.schools.aff[0]} vs ${featured.schools.neg[0]}`}
+                        </div>
+                      </div>
+                      {loading ? (
+                        <Loader2 className="h-4 w-4 flex-shrink-0 animate-spin text-muted-foreground" />
+                      ) : (
+                        <Trophy className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
+                      )}
+                    </div>
+                    <p className="line-clamp-2 text-xs text-muted-foreground">{featured.description}</p>
+                    <div className="mt-auto flex items-center gap-2 text-[11px] text-muted-foreground">
+                      <Badge variant="secondary" className="text-[10px]">
+                        Featured
+                      </Badge>
+                      <span className="truncate">
+                        {loading ? "Loading speech docs…" : `${featured.speechDocs.length} speech docs`}
+                      </span>
+                    </div>
+                  </div>
+                )
+              })}
               {pinnedRounds.map((round) => (
                 <div
                   key={round.id}
@@ -177,7 +243,13 @@ export function DebateStartPanel({
                 </div>
               ))}
             </div>
-          ) : (
+          )}
+          {featuredError && (
+            <p role="alert" className="text-xs text-destructive">
+              {featuredError}
+            </p>
+          )}
+          {pinnedRounds.length === 0 && (
             <div className="rounded-md border border-dashed p-4 text-sm text-muted-foreground">
               No pinned debates yet. Pin a round from{" "}
               <button type="button" onClick={onOpenHistory} className="underline underline-offset-2">

@@ -34,15 +34,15 @@ describe("addressableDocs", () => {
   })
 
   it("reads a missing title as an empty one rather than dropping the file", () => {
-    // It still has an id, so it is still openable — as `/doc/untitled`.
+    // It still has an id, so it is still openable — as `/research/docs/untitled`.
     expect(addressableDocs([{ id: "doc-c" }])).toEqual([{ id: "doc-c", title: "" }])
   })
 })
 
 describe("docSlugFromPathname", () => {
   it("reads the name out of a workspace path", () => {
-    expect(docSlugFromPathname("/doc/cp-answer-to-states")).toBe("cp-answer-to-states")
-    expect(docSlugFromPathname("/doc/cp-answer-to-states/")).toBe("cp-answer-to-states")
+    expect(docSlugFromPathname("/research/docs/cp-answer-to-states")).toBe("cp-answer-to-states")
+    expect(docSlugFromPathname("/research/docs/cp-answer-to-states/")).toBe("cp-answer-to-states")
   })
 
   it("reads no name off the bare route or another page", () => {

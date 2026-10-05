@@ -18,7 +18,7 @@ owning package before editing anything under `app/`. The map is in the
 | Area | Route | Owning package |
 | --- | --- | --- |
 | Evidence research, card scoring, review queue | `/research`, `/research/cards` | `debate-search-evidence` |
-| The card editor, `.docx` interop | `/reason-editor`, `/doc` | `debate-editor`, `debate-card-parser` |
+| The card editor, `.docx` interop | `/reason-editor`, `/research/docs` | `debate-editor`, `debate-card-parser` |
 | The live round workspace (FIAT), flow grid | `/debate`, `/practice` | `debate-round`, `debate-flow` |
 | Practice drills, AI coach, AI judge | `/practice/drills`, `/coaching`, `/practice/judge-decision` | `debate-practice-drills` |
 | A full timed round against an AI opponent | `/practice/versus-ai`, `/practice/opponents` | `debate-round-practice-ai` |

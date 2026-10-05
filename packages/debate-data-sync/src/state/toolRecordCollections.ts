@@ -335,7 +335,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     // package's own backend and fetched by id, so this record is the tab
     // layout — which chats to reopen and their titles — not the chat content.
     label: "Debate Docs Chat Tabs",
-    href: "/doc",
+    href: "/research/docs",
     section: "Flowing and writing",
   },
   {
@@ -347,7 +347,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     // list. `redact` holds back every field that would let another device
     // connect as this user; see `redact-file-source.ts`.
     label: "File Sources",
-    href: "/doc",
+    href: "/research/docs",
     section: "Flowing and writing",
     redact: redactFileSource,
   },

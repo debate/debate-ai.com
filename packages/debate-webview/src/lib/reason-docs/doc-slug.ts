@@ -1,7 +1,7 @@
 /**
  * @fileoverview Document names as URL path segments.
  *
- * A document's address is its name — `/doc/cp-answer-to-states`, not
+ * A document's address is its name — `/research/docs/cp-answer-to-states`, not
  * `?topic=2`. An opaque id tells a reader nothing about what they are about
  * to open, and reads as an implementation detail in a shared link or a
  * browser history; the file's title is the thing actually being shared.
@@ -15,7 +15,7 @@
  * a discriminator.
  *
  * Pure and shared: both document surfaces (`/reason-editor`, the qwksearch
- * workspace at `/doc`) build and read their paths through here, and both have
+ * workspace at `/research/docs`) build and read their paths through here, and both have
  * unit tests against this module rather than against a rendered route.
  *
  * @module lib/reason-docs/doc-slug
@@ -39,7 +39,7 @@ export const DOC_SLUG_DISCRIMINATOR = "~"
  * `don-t`), accents are folded to their base letters, and everything else
  * non-alphanumeric collapses to one hyphen. A title with nothing left after
  * that — emoji only, whitespace only, empty — is {@link UNTITLED_DOC_SLUG}
- * rather than an empty segment, which would produce `/doc/` and address
+ * rather than an empty segment, which would produce `/research/docs/` and address
  * nothing.
  */
 export function slugifyDocTitle(title: string | null | undefined): string {
@@ -71,7 +71,7 @@ export interface ParsedDocSlug {
 }
 
 /**
- * Reads a `/doc/<segment>` path segment.
+ * Reads a `/research/docs/<segment>` path segment.
  *
  * Next has already percent-decoded the segment; the second decode is for
  * links that double-encoded it, and falls back to the segment as given when

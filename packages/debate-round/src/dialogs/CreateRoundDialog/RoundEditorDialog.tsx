@@ -94,6 +94,7 @@ export function RoundEditorDialog({ open, onOpenChange, roundId }: RoundEditorDi
             negSchool={form.negSchool}
             setNegSchool={form.setNegSchool}
             debateStyleIndex={form.debateStyleIndex}
+            tournamentName={form.tournamentName}
           />
 
           <div className="grid grid-cols-2 gap-6 items-start">
