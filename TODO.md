@@ -64,8 +64,9 @@
 - Branch: `claude/gifted-babbage-cg2iak`
 - [x] Audit local-only tool stores vs. the `saved_tool_records` catalog (SQL layer for settings, flows, rounds and 64+ tool collections already exists)
 - [x] Sync pinned debates to the account (`pinnedDebates` catalog entry, legacy `pinned-debates` migration, tests, docs in `round-cloud-save.mdx`)
-- [x] Sync speech-doc links (`speech-doc-links`; keyed by scope + speech, points at `documents.id`)
-- [x] Sync flow-editor display/keymap settings (`ebb-display-settings`, `ebb-keymap-settings`) via the `flowEditorSettings` tool-record collection (branch `claude/gifted-babbage-cv3cqf`)
+- [ ] Sync speech-doc links (`speech-doc-links`; keyed by scope + speech, points at `documents.id`)
+- [x] Sync flow-editor display/keymap settings (`ebb-display-settings`, `ebb-keymap-settings`) through the tool-record catalog (single-object codec, `flowsDir` redacted); documented in `features/user-settings.mdx`
+- [ ] Follow-up: apply a remote settings change to an already-open flow editor without a reload
 - [ ] Tool UI pass: surface sync status and pin/save controls in each tool's header
 
 ---

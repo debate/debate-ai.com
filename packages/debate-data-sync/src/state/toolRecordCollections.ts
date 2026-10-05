@@ -50,7 +50,7 @@ import {
   redactFlowDisplaySettings,
 } from "./flow-editor-settings-codec";
 import { redactFileSource } from "./redact-file-source";
-import { decodeFlowKeymap, encodeFlowKeymap } from "./flow-keymap-codec";
+import { decodeSingleObject, encodeSingleObject, redactFlowDisplaySettings } from "./single-object-codec";
 
 /**
  * The groupings `/settings` → Account → **Tool data** renders as section
@@ -323,16 +323,30 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     section: "Flowing and writing",
   },
   {
-    key: "ebbSyncedSettings",
-    storageKey: "ebbSyncedSettings",
+    key: "flowDisplaySettings",
+    storageKey: "ebb-display-settings",
     idField: "id",
-    // The flow editor's display and keymap preferences
-    // (`@debate/flow-ebb/src/lib/store/syncedSettings.ts`): two records,
-    // `display` and `keymap`. Device-only values (flows folder, panel layout,
-    // live-collab toggles) are deliberately not in them.
-    label: "Flow Editor Settings",
+    // The flow editor's display preferences (font, zoom, theme, side colors,
+    // collab name, ...) kept by `@debate/flow-ebb`'s `useFlowStore`. One object
+    // synced as a single `settings` record; `flowsDir` (a desktop-only disk
+    // path) never leaves the browser. A change reaches another device on its
+    // next load of the flow editor.
+    label: "Flow Editor Display Settings",
     href: "/debate",
     section: "Flowing and writing",
+    redact: redactFlowDisplaySettings,
+    codec: { decode: decodeSingleObject, encode: encodeSingleObject },
+  },
+  {
+    key: "flowKeymapSettings",
+    storageKey: "ebb-keymap-settings",
+    idField: "id",
+    // The flow editor's custom keybindings (`{ keymapOverrides }`), synced as
+    // a single `settings` record so a remapped key follows the user.
+    label: "Flow Editor Keymap",
+    href: "/debate",
+    section: "Flowing and writing",
+    codec: { decode: decodeSingleObject, encode: encodeSingleObject },
   },
   {
     key: "flowHistory",
