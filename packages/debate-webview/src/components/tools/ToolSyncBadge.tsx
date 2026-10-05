@@ -9,14 +9,22 @@
  * timer because that state isn't observable; each poll is a string compare per
  * collection (see `getToolRecordCollectionSyncStatus`).
  *
+ * While the tool has unsaved changes the badge also offers "Save now", which
+ * flushes that tool's collections immediately (`saveToolNow`) instead of
+ * waiting for the next auto-sync tick.
+ *
  * @module components/tools/ToolSyncBadge
  */
 
-import { useEffect, useState } from "react"
-import { Cloud, CloudOff, RotateCw } from "lucide-react"
+import { useEffect, useMemo, useState } from "react"
+import { Cloud, CloudOff, RotateCw, Save } from "lucide-react"
 import { TOOL_RECORD_COLLECTIONS } from "@debate/data-sync/src/state/toolRecordCollections"
 import { isToolRecordSyncEnabled } from "@debate/data-sync/src/state/tool-record-mirror"
-import { getToolRecordCollectionSyncStatus } from "@debate/data-sync/src/state/tool-record-auto-sync"
+import {
+  flushToolRecordCollection,
+  getToolRecordCollectionSyncStatus,
+} from "@debate/data-sync/src/state/tool-record-auto-sync"
+import { saveToolNow } from "../../lib/tools/tool-save-now"
 import { describeToolSaveState, type ToolSaveDisplay } from "../../lib/tools/tool-save-state"
 
 const POLL_MS = 3000
@@ -31,26 +39,53 @@ function readDisplay(keys: readonly string[]): ToolSaveDisplay | null {
 /** Renders nothing for a route with no synced collection. */
 export function ToolSyncBadge({ href }: { href: string }) {
   const [display, setDisplay] = useState<ToolSaveDisplay | null>(null)
+  const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
+  const keys = useMemo(() => TOOL_RECORD_COLLECTIONS.filter((c) => c.href === href).map((c) => c.key), [href])
 
   useEffect(() => {
-    const keys = TOOL_RECORD_COLLECTIONS.filter((c) => c.href === href).map((c) => c.key)
     if (keys.length === 0) return
     const update = () => setDisplay(readDisplay(keys))
     update()
     const timer = setInterval(update, POLL_MS)
     return () => clearInterval(timer)
-  }, [href])
+  }, [keys])
+
+  const saveNow = async () => {
+    setSaving(true)
+    setSaveError(null)
+    const result = await saveToolNow(keys, flushToolRecordCollection)
+    setSaving(false)
+    setSaveError(result.ok ? null : (result.error ?? "Save failed."))
+    setDisplay(readDisplay(keys))
+  }
 
   if (!display) return null
   const Icon = display.state === "local" ? CloudOff : display.state === "saved" ? Cloud : RotateCw
+  const canSaveNow = display.state === "saving" || saveError !== null
   return (
-    <span
-      className="inline-flex h-9 items-center gap-1.5 rounded-md border border-border bg-background px-3 text-xs text-muted-foreground"
-      title={display.title}
-      data-tool-save-state={display.state}
-    >
-      <Icon className="h-3.5 w-3.5" aria-hidden="true" />
-      <span>{display.label}</span>
-    </span>
+    <>
+      <span
+        className="inline-flex h-9 items-center gap-1.5 rounded-md border border-border bg-background px-3 text-xs text-muted-foreground"
+        title={display.title}
+        data-tool-save-state={display.state}
+      >
+        <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+        <span>{display.label}</span>
+      </span>
+      {canSaveNow ? (
+        <button
+          type="button"
+          onClick={saveNow}
+          disabled={saving}
+          title={saveError ? `Couldn't save: ${saveError}. Try again.` : "Save this tool's changes to your account now."}
+          className="inline-flex h-9 items-center gap-1.5 rounded-md border border-border bg-background px-3 text-sm font-medium text-foreground transition-colors hover:bg-accent disabled:opacity-60"
+          data-tool-save-now
+        >
+          <Save className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+          {saving ? "Saving…" : saveError ? "Retry save" : "Save now"}
+        </button>
+      ) : null}
+    </>
   )
 }

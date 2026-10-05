@@ -228,5 +228,11 @@ out. It is read from the same auto-sync that powers **Tool data** (see
 `getToolRecordCollectionSyncStatus` in `debate-data-sync`), so it never starts a
 second sync, and it refreshes every few seconds rather than instantly.
 
+While changes are waiting to be saved, a **Save now** button appears next to the
+badge and pushes that tool's data to your account immediately instead of waiting
+for the next automatic save. If the save fails the button turns into **Retry
+save** and its tooltip says why. Starring a tool as a favorite uses the star at
+the end of the same header row.
+
 Known gap: the badge is only in the shared tool-page header, so tools with their
 own custom header (the flow tabs and start screen) don't show it yet.
