@@ -121,13 +121,15 @@ export interface ToolRecordCollection {
    * by string, say — to the array the sync diffs and merges. `decode` turns
    * the parsed `localStorage` value into records (each carrying `idField`);
    * `encode` turns the merged records back into the value to store. Absent
-   * for every collection whose store already is an array. `encode` also gets
-   * the value currently stored, for a store holding fields that never sync and
-   * must survive a write-back.
+   * for every collection whose store already is an array.
+   *
+   * `encode` also receives the value currently stored (`undefined` when
+   * there is none), so a codec that syncs only part of a store can write the
+   * synced fields back without erasing the ones that stay on this device.
    */
   codec?: {
     decode: (stored: unknown) => unknown[];
-    encode: (records: readonly unknown[], existing?: unknown) => unknown;
+    encode: (records: readonly unknown[], current?: unknown) => unknown;
   };
 }
 
