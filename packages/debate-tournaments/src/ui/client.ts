@@ -54,6 +54,24 @@ export interface TournamentInvite {
   Contacts: Array<{ id: number; first: string | null; last: string | null; email: string | null }>;
 }
 
+/** One entry in an event's published field (`/rest/tourns/:id/events/:abbr/field`). */
+export interface FieldEntry {
+  id: number;
+  /** Debater names as the tournament writes them, e.g. `"Hu & Liu"`. */
+  name: string;
+  code: string | null;
+  School?: { id: number; name: string; code: string | null } | null;
+}
+
+/** An event's published field: every entry registered in it, with its school. */
+export interface EventField {
+  id: number;
+  name: string;
+  abbr: string;
+  type: string;
+  Entries: FieldEntry[];
+}
+
 export interface PublishedRound {
   id: number;
   type: string;
@@ -213,6 +231,9 @@ export function createTournamentsClient(apiBase = "/api/tournaments", fetchImpl:
   return {
     upcoming: (signal?: AbortSignal) => get<UpcomingTournament[]>("/pages/invite/upcoming", signal),
     invite: (tournId: number, signal?: AbortSignal) => get<TournamentInvite>(`/rest/tourns/${tournId}/invite`, signal),
+    /** The entries registered in one event, when the tournament publishes its field. */
+    field: (tournId: number, eventAbbr: string, signal?: AbortSignal) =>
+      get<EventField>(`/rest/tourns/${tournId}/events/${encodeURIComponent(eventAbbr)}/field`, signal),
     rounds: (tournId: number, signal?: AbortSignal) => get<PublishedRound[]>(`/rest/tourns/${tournId}/rounds`, signal),
     round: (tournId: number, eventAbbr: string, roundName: string, signal?: AbortSignal) =>
       get<RoundSchematic>(

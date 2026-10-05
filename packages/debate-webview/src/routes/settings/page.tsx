@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { CardMirrorSettingsPanel } from "../../components/settings/CardMirrorSettingsPanel"
+import { researchSettingsPages } from "../../lib/qwksearch/settings-paths"
 
 /**
  * The CardMirror editor's settings, and nothing else.
@@ -13,6 +14,11 @@ import { CardMirrorSettingsPanel } from "../../components/settings/CardMirrorSet
  * (`EDITOR_SETTINGS_TABS`, in `lib/editor-preferences.ts`, is the one list of
  * which categories that is, and the allow-list the account mirror validates
  * against).
+ *
+ * The research agent's settings are linked from the top of the page, one
+ * link per section (`researchSettingsPages`, which is `research-agent-ui`'s
+ * own list of sections) — they are pages of their own under
+ * `/settings/research`, with the same tabs down the side.
  *
  * Ebb Flow's own settings are not here: the flow editor opens them with
  * `Cmd/Ctrl+,` inside a flow, which is where they apply.
@@ -31,8 +37,22 @@ export default function SettingsPage() {
         </Link>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6">
-      </div>
+      <nav aria-label="Research agent settings" className="max-w-5xl mx-auto px-4 sm:px-6 mb-4">
+        <h2 className="text-sm font-semibold text-foreground mb-2">Research agent</h2>
+        <ul className="flex flex-wrap gap-2">
+          {researchSettingsPages().map((page) => (
+            <li key={page.key}>
+              <Link
+                href={page.href}
+                title={page.description}
+                className="inline-flex items-center h-8 px-3 rounded-md border border-border bg-background hover:bg-accent text-sm text-foreground transition-colors"
+              >
+                {page.name}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
 
       <CardMirrorSettingsPanel />
     </div>

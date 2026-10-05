@@ -61,7 +61,7 @@ root — opening one does not affect the other, and either can be open at once:
 
   | Menu submenu | Comes from |
   | --- | --- |
-  | Videos | `SIDEBAR_VIDEO_LINKS` (`components/category-gallery/sidebar-video-links.ts`) |
+  | Videos | `SIDEBAR_VIDEO_LINKS` (`components/category-gallery/sidebar-video-links.ts`), minus the glossary and topic & video statistics, which are listed under Insights instead |
   | Research / Prep & Scout / Practice / Coaching / Insights | `SIDEBAR_TOOL_SECTIONS` |
 
   On a phone, where the sidebar column below is `md+` only, this menu is the
@@ -112,14 +112,17 @@ route the tool-nav tree links to (where `AppSidebarShell` wraps the page in
 the generic sidebar), the dock sits at the top of that column (300px wide until you
 drag it — see [Resizing the sidebar](#resizing-the-sidebar)).
 
-`/research/docs` is one of those routes now. The Research button opens quick search
-([qwksearch.com](https://qwksearch.com)) in a frame beside the generic
-sidebar, so the dock sits at the top of that column as it does on any other
-tool page. It used to render the REASON research workspace inside the app,
-whose own files/tabs sidebar hosted the dock (`OWN_SIDEBAR_DOCK_HREFS`, in
-`packages/debate-videos/src/components/category-gallery/sidebar-routes.ts`,
-is empty since). Quick search keeps its own sign-in and documents inside the
-frame; nothing is shared with your debate-ai.com account.
+`/doc` is the exception: the Docs button opens the research agent, which draws
+its own full-height workspace. Its sidebar — the files tree and the "Open Tabs"
+list — is the research agent's own, not the generic tool sidebar, and the dock
+sits at the top of that column (`OWN_SIDEBAR_DOCK_HREFS`, in
+`packages/debate-videos/src/components/category-gallery/sidebar-routes.ts`).
+The research agent's own app dock is never mounted here (it is the host's to
+draw), and on a phone the dock's **Sidebar** button opens the agent's sidebar
+(the `OPEN_OWN_SIDEBAR_EVENT` window event, the same one `/debate` listens for).
+Choosing **Settings** in the dock's menu from `/doc` opens the agent's settings
+as a full page at `/settings/research`, with a tab per section; from anywhere
+else it opens `/settings`, which links on to each of those sections.
 
 The Research button was called **Docs** and lived at `/doc` until October
 2026. Old `/doc` and `/doc/<document>` links answer with a permanent (308)

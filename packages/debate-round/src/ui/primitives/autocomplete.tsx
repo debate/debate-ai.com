@@ -92,7 +92,9 @@ export function Autocomplete({
         onChange={(e) => handleInput(e.target.value)}
         onFocus={async () => {
           setOpen(true)
-          if (fetchOptions && asyncOptions.length === 0) {
+          // Always refetch: the options can depend on other fields (e.g. the
+          // school list leads with the picked tournament's schools).
+          if (fetchOptions) {
             const results = await fetchOptions(query)
             setAsyncOptions(results)
           }

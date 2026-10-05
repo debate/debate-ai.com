@@ -210,19 +210,21 @@ describe("the REASON research workspace", () => {
     expect(matchesToolSidebarHref("/research/docs/cp-answer-to-states")).toBe(true);
   });
 
-  it("no longer hosts a dock of its own, now that it is quick search in an iframe", () => {
-    expect(hostsOwnSidebarDock("/research/docs")).toBe(false);
-    expect(hostsOwnSidebarDock("/research/docs/cp-answer-to-states")).toBe(false);
+  it("hosts the app dock in its own sidebar, itself and every document beneath it", () => {
+    expect(hostsOwnSidebarDock("/doc")).toBe(true);
+    expect(hostsOwnSidebarDock("/doc/cp-answer-to-states")).toBe(true);
+    // `/docs` is the help site, not the workspace.
     expect(hostsOwnSidebarDock("/docs")).toBe(false);
     expect(hostsOwnSidebarDock(null)).toBe(false);
-    expect(ownsItsLayout("/research/docs")).toBe(false);
+    expect(ownsItsLayout("/doc")).toBe(true);
   });
 
-  it("is wrapped in the generic sidebar, which carries the dock beside the frame", () => {
-    expect(isGenericToolSidebarRoute("/research/docs")).toBe(true);
-    expect(isGenericToolSidebarRoute("/research/docs/cp-answer-to-states")).toBe(true);
-    expect(hasEmbeddedDock("/research/docs")).toBe(true);
-    expect(hasEmbeddedDock("/research/docs/cp-answer-to-states")).toBe(true);
+  it("is not wrapped in the generic sidebar: its own sidebar is the only one", () => {
+    expect(isGenericToolSidebarRoute("/doc")).toBe(false);
+    expect(isGenericToolSidebarRoute("/doc/cp-answer-to-states")).toBe(false);
+    // The dock is on screen inside that sidebar, so the floating one stays hidden.
+    expect(hasEmbeddedDock("/doc")).toBe(true);
+    expect(hasEmbeddedDock("/doc/cp-answer-to-states")).toBe(true);
   });
 });
 

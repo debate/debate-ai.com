@@ -5,7 +5,7 @@
  * `src/round` (and, where one exists, its localStorage store in `src/state`).
  */
 
-export { DebateFlowPage } from "./DebateRoundPanel";
+export { DebateFlowPage, type DebateFlowPageProps } from "./DebateRoundPanel";
 export { DebateStartPanel, MAX_RECENT_DEBATES } from "./DebateStartPanel";
 export { FlowEditLogPanel } from "./FlowEditLogPanel";
 export { OpponentTeamProfilesPanel } from "./OpponentTeamProfilesPanel";
