@@ -1,6 +1,6 @@
 /**
  * @fileoverview Full content viewer for research evidence cards.
- * Supports view modes (read, highlight, underline) and year-based color coding.
+ * Supports an Embiggen toggle (highlighting only, or the whole card) and year-based color coding.
  */
 
 "use client"
@@ -9,11 +9,9 @@
 import { useState } from "react"
 import { Card, CardContent } from "../ui/primitives/card"
 import { Button } from "../ui/primitives/button"
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "../ui/primitives/dropdown-menu"
-import { Eye, Check, ExternalLink, FileText } from "lucide-react"
-import { IntroTextOverview } from "./IntroTextOverview"
+import { Eye, ExternalLink, FileText } from "lucide-react"
 import { SourceArticlePanel } from "./SourceArticlePanel"
-import { citationDetail, extractAuthor, extractYear, stripDuplicateHeader } from "../lib/card-content"
+import { MIN_HIGHLIGHTED_WORDS, citationDetail, countHighlightedWords, extractAuthor, extractYear, stripDuplicateHeader } from "../lib/card-content"
 import { findCardSourceUrl } from "../lib/card-source-url"
 
 /**
@@ -76,12 +74,17 @@ const getYearShade = (year: string) => {
 interface CardContentViewerProps {
   /** Currently selected research result to display, or null for empty state */
   selectedResult: SearchResult | null
-  /** Current view mode controlling how card content is rendered */
+  /** `"read"` is Embiggen off (whole card); any other mode is Embiggen on */
   viewMode: "read" | "highlight" | "underline"
-  /** Callback to change the active view mode */
+  /** Callback to change the active view mode (the toggle flips `"highlight"` / `"read"`) */
   setViewMode: (mode: "read" | "highlight" | "underline") => void
   /** Word count of the selected card for display */
   wordCount: number
+  /**
+   * Offer "Open page" / "Full article" beside the card. The mobile card view
+   * turns this off because it carries the full page as a tab of its own.
+   */
+  showSourceControls?: boolean
 }
 
 /**
@@ -89,7 +92,7 @@ interface CardContentViewerProps {
  *
  * Shows the complete content of a selected research card with
  * citation information, view mode controls, and formatted content.
- * Renders a product information page when no card is selected.
+ * Renders a short prompt when no card is selected.
  *
  * The stored card markup opens with its own tag heading and citation line, so
  * the header here and the body below it were showing the same two lines twice
@@ -122,13 +125,24 @@ interface CardContentViewerProps {
  * />
  * ```
  */
-export function CardContentViewer({ selectedResult, viewMode, setViewMode, wordCount }: CardContentViewerProps) {
+export function CardContentViewer({
+  selectedResult,
+  viewMode,
+  setViewMode,
+  wordCount,
+  showSourceControls = true,
+}: CardContentViewerProps) {
   /** The source URL whose article is open beside the card, if any. */
   const [articleUrl, setArticleUrl] = useState<string | null>(null)
 
-  // Show empty state with product info when no card selected
+  // Nothing selected: a one-line prompt. The product intro that used to fill
+  // this space now lives on the features page.
   if (!selectedResult) {
-    return <IntroTextOverview />
+    return (
+      <div className="flex size-full items-center justify-center p-6 text-center text-sm text-muted-foreground">
+        Select a card to read it here.
+      </div>
+    )
   }
 
   // Extract author and year from citation
@@ -137,8 +151,16 @@ export function CardContentViewer({ selectedResult, viewMode, setViewMode, wordC
   const authorLine = [author, year].filter(Boolean).join(" ")
   const cite = citationDetail(selectedResult.cite, authorLine)
   const html = stripDuplicateHeader(selectedResult.html, [selectedResult.tag, authorLine, cite])
-  const sourceUrl = findCardSourceUrl(selectedResult)
+  const sourceUrl = showSourceControls ? findCardSourceUrl(selectedResult) : null
   const showArticle = sourceUrl !== null && articleUrl === sourceUrl
+  // Embiggen on shows only the highlighting; underlining stands in only for a
+  // card with next to no highlighting. Embiggen off shows the whole card.
+  const embiggen = viewMode !== "read"
+  const contentMode = !embiggen
+    ? "show-all"
+    : countHighlightedWords(html) >= MIN_HIGHLIGHTED_WORDS
+      ? "highlighted"
+      : "underlined"
 
   return (
     // `size-full`, not `h-full`: the card column below is the element that
@@ -152,31 +174,17 @@ export function CardContentViewer({ selectedResult, viewMode, setViewMode, wordC
             {/* Header with tag and view mode selector */}
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">{selectedResult.tag}</h3>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm">
-                    <Eye className="h-4 w-4 mr-2" />
-                    View
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => setViewMode("read")}>
-                    {viewMode === "read" && <Check className="h-4 w-4 mr-2" />}
-                    {viewMode !== "read" && <span className="w-4 mr-2" />}
-                    Read
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setViewMode("highlight")}>
-                    {viewMode === "highlight" && <Check className="h-4 w-4 mr-2" />}
-                    {viewMode !== "highlight" && <span className="w-4 mr-2" />}
-                    Embiggen Highlighted
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setViewMode("underline")}>
-                    {viewMode === "underline" && <Check className="h-4 w-4 mr-2" />}
-                    {viewMode !== "underline" && <span className="w-4 mr-2" />}
-                    Embiggen Underlined
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <Button
+                variant={embiggen ? "secondary" : "outline"}
+                size="sm"
+                role="switch"
+                aria-checked={embiggen}
+                title={embiggen ? "Embiggen on: only the highlighting is shown" : "Embiggen off: the whole card is shown"}
+                onClick={() => setViewMode(embiggen ? "read" : "highlight")}
+              >
+                <Eye className="h-4 w-4 mr-2" />
+                Embiggen {embiggen ? "on" : "off"}
+              </Button>
             </div>
 
             {/* Citation info */}
@@ -222,8 +230,7 @@ export function CardContentViewer({ selectedResult, viewMode, setViewMode, wordC
 
             {/* Card content with view mode styling */}
             <div
-              className={`prose prose-sm dark:prose-invert max-w-none editor ${viewMode === "read" ? "show-all" : viewMode === "highlight" ? "highlighted" : "underlined"
-                }`}
+              className={`prose prose-sm dark:prose-invert max-w-none editor ${contentMode}`}
               dangerouslySetInnerHTML={{ __html: html }}
             />
           </CardContent>

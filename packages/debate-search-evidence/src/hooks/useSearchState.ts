@@ -15,7 +15,7 @@ import grab from "grab-url";
 import type { SearchFilters } from "../components/ResearchSearchSidebar";
 import type { SearchResult } from "../types";
 import {
-  EMPTY_FILTERS,
+  DEFAULT_SEARCH_FILTERS,
   SEARCH_DEBOUNCE_MS,
   buildSearchUrl,
   readCardsSearchParams,
@@ -40,7 +40,7 @@ export function useSearchState() {
   );
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const [sortBy, setSortBy] = useState("_text_match:desc");
-  const [filters, setFilters] = useState<SearchFilters>(EMPTY_FILTERS);
+  const [filters, setFilters] = useState<SearchFilters>(DEFAULT_SEARCH_FILTERS);
   const [loading, setLoading] = useState(true);
 
   /**
@@ -63,7 +63,8 @@ export function useSearchState() {
     if (!["q", "year", "school", "team", "tournament", "event"].some((k) => params.has(k))) return;
     const initial = readCardsSearchParams(params);
     setSearchTerm(initial.searchTerm);
-    setFilters(initial.filters);
+    // A pre-filled link narrows quotes; it does not switch kinds.
+    setFilters({ ...initial.filters, searchQuotes: true });
   }, []);
 
   /**

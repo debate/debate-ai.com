@@ -44,6 +44,8 @@ import {
   Users,
 } from "lucide-react";
 
+import { DownloadAppButton } from "react-native-app-buttons";
+
 import { Input } from "../primitives/input";
 import { cn } from "../lib/utils";
 import { EmptyState } from "../panels/panel-shell";
@@ -378,6 +380,21 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
                   })}
                 </div>
               ))}
+            </div>
+          </Reveal>
+
+          {/* Downloads: the browser extension's install button, which used to
+              sit on the card search's empty state. */}
+          <Reveal delay={400}>
+            <div
+              id="downloads"
+              className="mt-8 flex flex-col items-center gap-3 scroll-mt-20"
+              data-testid="downloads"
+            >
+              <h2 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+                Downloads
+              </h2>
+              <DownloadAppButton platform="chrome-extension" appId="noecbaibfhbmpapofcdkgchfifmoinfj" />
             </div>
           </Reveal>
         </div>

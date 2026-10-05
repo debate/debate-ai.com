@@ -6,6 +6,10 @@ import * as schema from "@/lib/database/schema";
 import { debateCards } from "@/lib/database/schema";
 import { applySchema } from "@/lib/database/__tests__/schema-sql";
 import {
+  buildRecentCardOrderBy,
+  mapCaselistDocumentToSearchResult,
+  mapRoundVideoToSearchResult,
+  readSearchKind,
   buildCardSearchOrderBy,
   buildCardSearchWhere,
   escapeLikePattern,
@@ -254,5 +258,82 @@ describe("sortSearchResults", () => {
 
   it("leaves relevance order to the database", () => {
     expect(sortSearchResults(results(), "_text_match:desc").map((r) => r.year)).toEqual(["2014", "2018"]);
+  });
+});
+
+describe("readSearchKind", () => {
+  it("reads the single toggle the sidebar sends", () => {
+    expect(readSearchKind(new URLSearchParams("searchQuotes=1"))).toBe("quotes");
+    expect(readSearchKind(new URLSearchParams("searchOutlines=1"))).toBe("outlines");
+    expect(readSearchKind(new URLSearchParams("searchRoundSpeeches=1"))).toBe("debates");
+  });
+
+  it("is null when no toggle is on", () => {
+    expect(readSearchKind(new URLSearchParams("q=nuclear"))).toBeNull();
+  });
+});
+
+describe("buildRecentCardOrderBy", () => {
+  it("lists the most recently imported quotes first", async () => {
+    const db = await freshDb();
+    await db.insert(debateCards).values([
+      card({ id: 1, importedAt: 100 }),
+      card({ id: 2, importedAt: 300 }),
+      card({ id: 3, importedAt: 300 }),
+      card({ id: 4, importedAt: 200 }),
+    ]);
+
+    const rows = await db.select().from(debateCards).orderBy(...buildRecentCardOrderBy());
+
+    expect(rows.map((row) => row.id)).toEqual([3, 2, 4, 1]);
+  });
+});
+
+describe("recent upload mappers", () => {
+  it("maps an outline document to a result titled by its file", () => {
+    const result = mapCaselistDocumentToSearchResult({
+      id: 7,
+      pathHash: "h",
+      caselistSlug: "hspolicy26",
+      caselistLabel: "HS Policy 2025-26",
+      school: "Glenbrook North",
+      team: "Chen-Patel",
+      side: "Aff",
+      fileName: "1AC.docx",
+      archivePath: "hspolicy26/Glenbrook North/Chen-Patel/1AC.docx",
+      html: "<p>One two three</p>",
+      cardCount: 12,
+      ingestedAt: new Date(0),
+      archiveDate: null,
+    });
+
+    expect(result).toMatchObject({ id: 7, tag: "1AC.docx", category: "Outline", school: "Glenbrook North", word_count: 3 });
+    expect(result.summary).toContain("12 cards");
+  });
+
+  it("maps a round video to a result that links to the video and escapes its description", () => {
+    const result = mapRoundVideoToSearchResult({
+      id: "abc123",
+      title: "NDT Finals",
+      publishedAt: "2026-03-30",
+      channel: "Debate Videos",
+      views: 5,
+      description: "a <b>bold</b> claim",
+      style: 1,
+      tournament: "NDT",
+      roundLevel: "Finals",
+      aff: "Harvard",
+      neg: "Michigan",
+      winner: null,
+      judgeDecision: null,
+      createdAt: new Date(0),
+      updatedAt: new Date(0),
+    });
+
+    expect(result.tag).toBe("NDT Finals");
+    expect(result.category).toBe("Debate");
+    expect(result.html).toContain("https://www.youtube.com/watch?v=abc123");
+    expect(result.html).toContain("a &lt;b&gt;bold&lt;/b&gt; claim");
+    expect(result.summary).toBe("Harvard vs Michigan · NDT · Finals");
   });
 });
