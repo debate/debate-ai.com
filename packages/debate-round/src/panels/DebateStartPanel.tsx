@@ -21,7 +21,7 @@
  */
 
 import { useMemo, type ReactNode } from "react"
-import { FileText, History as HistoryIcon, Pin, PinOff, Plus, Star, Users } from "lucide-react"
+import { FileText, History as HistoryIcon, Loader2, Pin, PinOff, Plus, Star, Trophy, Users } from "lucide-react"
 import { Button } from "../ui/primitives/button"
 import { Badge } from "../ui/primitives/badge"
 import { orderPinnedRounds } from "../state/pinnedDebates"
