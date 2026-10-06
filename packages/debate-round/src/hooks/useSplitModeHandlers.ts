@@ -64,6 +64,42 @@ export function useSplitModeHandlers(
   }, [flows, selected, leftSpeechIndex])
 
   /**
+   * Bring a speech into view by name (matched case-insensitively against the
+   * flow's columns) — the sidebar's round group calls this when a speech
+   * that isn't the active one is clicked.
+   *
+   * With one pane, the left panel jumps to it. With both panes shown, a
+   * speech already in a pane just becomes the active side; otherwise the
+   * pair shifts so it lands on the left (or the right, for the last column).
+   *
+   * @param speechName - Column name to show, e.g. "1NC"
+   * @param bothPanes - Whether both split panes are shown side-by-side
+   * @returns The pane the speech is now in, or null if no column matches
+   */
+  const showSpeech = useCallback(
+    (speechName: string, bothPanes: boolean): "left" | "right" | null => {
+      const columns = flows[selected]?.columns ?? []
+      const index = columns.findIndex((c) => c.toUpperCase() === speechName.toUpperCase())
+      if (index < 0) return null
+      if (!bothPanes) {
+        setLeftSpeechIndex(index)
+        return "left"
+      }
+      if (index === leftSpeechIndex) return "left"
+      if (index === rightSpeechIndex) return "right"
+      if (index < columns.length - 1) {
+        setLeftSpeechIndex(index)
+        setRightSpeechIndex(index + 1)
+        return "left"
+      }
+      setLeftSpeechIndex(Math.max(0, index - 1))
+      setRightSpeechIndex(index)
+      return index > 0 ? "right" : "left"
+    },
+    [flows, selected, leftSpeechIndex, rightSpeechIndex],
+  )
+
+  /**
    * Persist updated markdown content for the speech shown in the left panel.
    *
    * @param content - Updated markdown string for the left panel speech document
@@ -127,6 +163,7 @@ export function useSplitModeHandlers(
     handleNextSpeeches,
     handlePreviousSingle,
     handleNextSingle,
+    showSpeech,
     handleUpdateLeftSpeech,
     handleUpdateRightSpeech,
     getLeftSpeech,

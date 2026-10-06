@@ -66,4 +66,18 @@ describe("spoken-words-store", () => {
     store.set(spokenTranscriptKey("1AR"), "{not json")
     expect(loadSpokenWordCount("1AR")).toBe(0)
   })
+
+  it("keeps timed segments for captions when timing is given", () => {
+    appendSpokenSegment("1AC", "hello there", { start: 0, end: 2 })
+    appendSpokenSegment("1AC", "general kenobi", { start: 2, end: 5 })
+    expect(loadSpokenTranscript("1AC")?.segments).toEqual([
+      { text: "hello there", start: 0, end: 2 },
+      { text: "general kenobi", start: 2, end: 5 },
+    ])
+  })
+
+  it("stores no segments for untimed appends", () => {
+    appendSpokenSegment("1NC", "no timing")
+    expect(loadSpokenTranscript("1NC")?.segments).toBeUndefined()
+  })
 })

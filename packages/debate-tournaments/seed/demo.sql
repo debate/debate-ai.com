@@ -9,7 +9,7 @@
 -- whenever the demo is missing, over, or from an older seed version, so
 -- statements end with `;` at the end of a line and comments take whole lines.
 --
--- One tournament, 90001 Bay Area Invitational, seed version 2:
+-- One tournament, 90001 Debate AI Demo Invitational, seed version 3:
 --   VCX, VLD, VPF, VPRL (debate) and OO, IX, DI, INF (speech),
 --   40 entries each, 32 schools, 148 judges, 120 rooms.
 --   Six power-matched prelims and a 16-team break per debate division; three
@@ -50,7 +50,7 @@ INSERT OR REPLACE INTO circuit (id, name, abbr, tz, active, state, country, webn
 
 -- tourn (1)
 INSERT OR REPLACE INTO tourn (id, name, city, state, country, tz, webname, hidden, start, end, reg_start, reg_end) VALUES
-  (90001, 'Bay Area Invitational', 'San Francisco', 'CA', 'US', 'America/Los_Angeles', 'demobayarea', 0, datetime('now', '-2 days', 'start of day', '+15 hours'), datetime('now', '+1 days', 'start of day', '+23 hours'), datetime('now', '-45 days', 'start of day', '+0 hours'), datetime('now', '-9 days', 'start of day', '+0 hours'));
+  (90001, 'Debate AI Demo Invitational', 'San Francisco', 'CA', 'US', 'America/Los_Angeles', 'demobayarea', 0, datetime('now', '-2 days', 'start of day', '+15 hours'), datetime('now', '+1 days', 'start of day', '+23 hours'), datetime('now', '-45 days', 'start of day', '+0 hours'), datetime('now', '-9 days', 'start of day', '+0 hours'));
 
 -- tourn_circuit (1)
 INSERT OR REPLACE INTO tourn_circuit (id, approved, tourn, circuit) VALUES
@@ -58,7 +58,7 @@ INSERT OR REPLACE INTO tourn_circuit (id, approved, tourn, circuit) VALUES
 
 -- tourn_setting (2)
 INSERT OR REPLACE INTO tourn_setting (id, tag, value, tourn) VALUES
-  (9000001, 'demo_seed', '2', 90001),
+  (9000001, 'demo_seed', '3', 90001),
   (9000002, 'currency', 'usd', 90001);
 
 -- category (2)
@@ -10821,7 +10821,7 @@ INSERT OR REPLACE INTO result_value (id, value, priority, result, result_key) VA
 
 -- webpage (2)
 INSERT OR REPLACE INTO webpage (id, title, slug, content, published, sitewide, special, page_order, tourn) VALUES
-  (9000001, 'Welcome', 'main', '<p>Welcome to the Bay Area Invitational: two days of Policy, Lincoln-Douglas, Public Forum and Parliamentary debate, plus Original Oratory, Extemp, Dramatic Interp and Informative, at Bayview High School in San Francisco.</p><p>Six prelims in every debate division break the top sixteen to octafinals. Speech runs three prelims in sections of six, then semifinals and a final. Pairings, results, speaker awards and brackets post here as rounds are released.</p><p>This is a demo tournament. Open its admin view to see how it is run.</p>', 1, 0, 'main', 1, 90001),
+  (9000001, 'Welcome', 'main', '<p>Welcome to the Debate AI Demo Invitational: two days of Policy, Lincoln-Douglas, Public Forum and Parliamentary debate, plus Original Oratory, Extemp, Dramatic Interp and Informative, at Bayview High School in San Francisco.</p><p>Six prelims in every debate division break the top sixteen to octafinals. Speech runs three prelims in sections of six, then semifinals and a final. Pairings, results, speaker awards and brackets post here as rounds are released.</p><p>This is a demo tournament. Open its admin view to see how it is run.</p>', 1, 0, 'main', 1, 90001),
   (9000002, 'Schedule', 'schedule', '<h3>Day one</h3><p>Registration 8:00am. Debate rounds 1-4 at 9:00, 11:00, 1:00 and 3:00. Speech rounds 1-3 at 10:00, 12:00 and 2:00.</p><h3>Day two</h3><p>Debate rounds 5-6 at 9:00 and 11:00. Octafinals 1:00, quarterfinals 3:00, semifinals 5:00, finals 7:00. Speech semifinals 12:00, finals 4:00. Awards follow the last final.</p>', 1, 0, NULL, 2, 90001);
 
 -- permission (1)

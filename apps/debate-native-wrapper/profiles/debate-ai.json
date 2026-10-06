@@ -23,7 +23,7 @@
   ],
   "defaultSource": "live",
   "deepLinkScheme": "debateai",
-  "iconSource": "../../../apps/debate-ai.com/public/favicon-512.png",
+  "iconSource": "../../../apps/debate-ai.com/app/favicon-512.png",
   "copyright": "Debate AI",
   "category": "Education",
   "shortDescription": "CARDS evidence search, FIAT round flowing, REASON writing, and LEARN video library, in one native app.",
