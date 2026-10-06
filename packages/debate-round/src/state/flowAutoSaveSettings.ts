@@ -4,9 +4,11 @@
  * already on the account, `"all"` also uploads flows with no account baseline
  * (never saved, or not yet restored after a reload), `"off"` disables it.
  *
- * Stored in `localStorage` like the font family: it applies immediately and is
- * not synced to `/api/settings`. Reads fall back to the default when storage is
- * unavailable or holds an unknown value.
+ * Stored in `localStorage` so it applies immediately, and mirrored to the
+ * account's `user_settings.flow_auto_save_mode` column (null = never chosen) so
+ * the choice follows a signed-in user across devices; `UserSettingsPanel` adopts
+ * the account value on load and pushes changes. Reads fall back to the default
+ * when storage is unavailable or holds an unknown value.
  *
  * @module state/flowAutoSaveSettings
  */
@@ -37,4 +39,18 @@ export function setFlowAutoSaveMode(mode: FlowAutoSaveMode): void {
   } catch {
     // Storage blocked: the choice just won't persist past this page.
   }
+}
+
+/**
+ * Validates the `flowAutoSaveMode` field of an untrusted `/api/settings` PUT
+ * body. `undefined` means "not part of this request" (no error, nothing to
+ * save); a present-but-unknown value is rejected rather than coerced.
+ */
+export function normalizeFlowAutoSaveModePatch(input: unknown): {
+  valid: { flowAutoSaveMode?: FlowAutoSaveMode };
+  errors: string[];
+} {
+  if (input === undefined) return { valid: {}, errors: [] };
+  if (isFlowAutoSaveMode(input)) return { valid: { flowAutoSaveMode: input }, errors: [] };
+  return { valid: {}, errors: [`"flowAutoSaveMode" must be one of: ${FLOW_AUTO_SAVE_MODES.join(", ")}.`] };
 }

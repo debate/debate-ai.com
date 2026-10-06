@@ -23,6 +23,7 @@ import type { FavoriteToolOp, FavoriteToolsPayload } from "../state/favoriteTool
 import type { WordLimitPresetOp, WordLimitPresetsPayload } from "../state/wordLimitPresets";
 import type { OutlineFilterPresetOp, OutlineFilterPresetsPayload } from "../state/outlineFilterPresets";
 import type { MyTeamProfilePatch } from "../state/myTeamProfileSync";
+import type { FlowAutoSaveMode } from "../state/flowAutoSaveSettings";
 
 /** The full shape `/api/settings` reads/writes — app preferences, the theme fields (idea #17, follow-up (2)), the favorite-tools list (idea #17, "integrate tools into user settings" follow-up), the custom word-limit presets list (idea #2's "per-style word-limit preset manager" follow-up), the named Outline filter presets list (idea #10's "Save and reuse named filter presets" follow-up), and the "My Team" quick-fill profile (idea #17's "create user settings and link user db" follow-up — see `state/myTeamProfileSync.ts`). The News Stream read/liked id lists (`packages/debate-help-docs/content/docs/internals/news-stream.mdx`'s "Read/like state is per-browser" Known gap) are typed separately by `debate-community` to avoid a package cycle (`debate-team-collaboration` already depends on this package) — the `/api/settings` route still reads/writes them on the same row. */
 export type FullUserSettingsPayload = UserSettingsPayload &
@@ -30,7 +31,10 @@ export type FullUserSettingsPayload = UserSettingsPayload &
   FavoriteToolsPayload &
   WordLimitPresetsPayload &
   OutlineFilterPresetsPayload &
-  MyTeamProfilePatch;
+  MyTeamProfilePatch & {
+    /** Flow auto-save mode; `null` from the server until the user has chosen one. */
+    flowAutoSaveMode: FlowAutoSaveMode | null;
+  };
 
 async function readErrorMessage(res: Response, fallback: string): Promise<string> {
   try {

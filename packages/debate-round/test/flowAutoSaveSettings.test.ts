@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   DEFAULT_FLOW_AUTO_SAVE_MODE,
   isFlowAutoSaveMode,
+  normalizeFlowAutoSaveModePatch,
   readFlowAutoSaveMode,
   setFlowAutoSaveMode,
 } from "../src/state/flowAutoSaveSettings";
@@ -47,5 +48,25 @@ describe("flow auto-save preference", () => {
     });
     expect(readFlowAutoSaveMode()).toBe("saved");
     expect(() => setFlowAutoSaveMode("all")).not.toThrow();
+  });
+});
+
+describe("normalizeFlowAutoSaveModePatch", () => {
+  it("treats an absent field as nothing to save", () => {
+    expect(normalizeFlowAutoSaveModePatch(undefined)).toEqual({ valid: {}, errors: [] });
+  });
+
+  it("accepts every known mode", () => {
+    for (const mode of ["off", "saved", "all"] as const) {
+      expect(normalizeFlowAutoSaveModePatch(mode)).toEqual({ valid: { flowAutoSaveMode: mode }, errors: [] });
+    }
+  });
+
+  it("rejects unknown, null and non-string values", () => {
+    for (const bad of ["sometimes", null, 1, {}]) {
+      const result = normalizeFlowAutoSaveModePatch(bad);
+      expect(result.valid).toEqual({});
+      expect(result.errors).toHaveLength(1);
+    }
   });
 });

@@ -22,6 +22,8 @@ import {
   DEFAULT_THEME_SETTINGS,
   DEFAULT_USER_SETTINGS,
   DEFAULT_WORD_LIMIT_PRESETS,
+  isFlowAutoSaveMode,
+  normalizeFlowAutoSaveModePatch,
   normalizeFavoriteToolOpPatch,
   normalizeFavoriteToolsPatch,
   normalizeOutlineFilterPresetOpPatch,
@@ -39,6 +41,7 @@ import {
   serializeMyTeamProfile,
   serializeOutlineFilterPresets,
   serializeWordLimitPresets,
+  type FlowAutoSaveMode,
   type MyTeamProfileSyncPayload,
   type OutlineFilterPreset,
   type ThemeMode,
@@ -253,6 +256,7 @@ type SettingsRow = {
   recentTools: string | null
   editorPreferences: string | null
   flowEditorSettings: string | null
+  flowAutoSaveMode: string | null
   newsRead: string | null
   newsLiked: string | null
   wordLimitPresets: string | null
@@ -273,6 +277,8 @@ type SettingsPayload = UserSettingsPayload & {
   recentTools: string[]
   editorPreferences: EditorPreferencesPayload
   flowEditorSettings: FlowEditorAccountSettingsPayload
+  /** `null` until the user picks a mode, so a device's local choice is kept. */
+  flowAutoSaveMode: FlowAutoSaveMode | null
   newsRead: string[]
   newsLiked: string[]
   wordLimitPresets: { name: string; wordLimit: number }[]
@@ -296,6 +302,7 @@ function toPayload(row: SettingsRow | undefined): SettingsPayload {
     recentTools: row?.recentTools ? parseRecentTools(row.recentTools) : [],
     editorPreferences: parseEditorPreferences(row?.editorPreferences),
     flowEditorSettings: parseFlowEditorSettings(row?.flowEditorSettings),
+    flowAutoSaveMode: isFlowAutoSaveMode(row?.flowAutoSaveMode) ? row.flowAutoSaveMode : null,
     newsRead: row?.newsRead ? parseNewsIdList(row.newsRead) : DEFAULT_NEWS_SYNC.newsRead,
     newsLiked: row?.newsLiked ? parseNewsIdList(row.newsLiked) : DEFAULT_NEWS_SYNC.newsLiked,
     wordLimitPresets: row?.wordLimitPresets
@@ -380,8 +387,12 @@ export async function PUT(req: NextRequest) {
   const flowEditorSettingsResult = normalizeFlowEditorSettingsPatch(
     (body as { flowEditorSettings?: unknown } | null)?.flowEditorSettings,
   )
-  const valid = { ...userSettingsResult.valid, ...themeSettingsResult.valid }
+  const flowAutoSaveModeResult = normalizeFlowAutoSaveModePatch(
+    (body as { flowAutoSaveMode?: unknown } | null)?.flowAutoSaveMode,
+  )
+  const valid = { ...userSettingsResult.valid, ...themeSettingsResult.valid, ...flowAutoSaveModeResult.valid }
   const errors = [
+    ...flowAutoSaveModeResult.errors,
     ...userSettingsResult.errors,
     ...themeSettingsResult.errors,
     ...favoriteToolsResult.errors,
@@ -450,7 +461,7 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json(
       {
         error:
-          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, recordRecentTool, wordLimitPresets, addWordLimitPreset, updateWordLimitPreset, removeWordLimitPreset, outlineFilterPresets, addOutlineFilterPreset, removeOutlineFilterPreset, savedArgumentCollections, addSavedArgumentCollection, removeSavedArgumentCollection, renameSavedArgumentCollection, updateSavedArgumentCollectionTags, researchProgressGoal, brainstormSessionTimer, questStreakSync, recordStreakFreezeDayKey, setLapseReminderEnabled, recordMissionResultDay, qualificationPointsTable, qualificationCutoff, myTeamProfile, newsRead, newsLiked, recordNewsRead, addNewsLiked, removeNewsLiked, editorPreferences, or flowEditorSettings.",
+          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, recordRecentTool, wordLimitPresets, addWordLimitPreset, updateWordLimitPreset, removeWordLimitPreset, outlineFilterPresets, addOutlineFilterPreset, removeOutlineFilterPreset, savedArgumentCollections, addSavedArgumentCollection, removeSavedArgumentCollection, renameSavedArgumentCollection, updateSavedArgumentCollectionTags, researchProgressGoal, brainstormSessionTimer, questStreakSync, recordStreakFreezeDayKey, setLapseReminderEnabled, recordMissionResultDay, qualificationPointsTable, qualificationCutoff, myTeamProfile, newsRead, newsLiked, recordNewsRead, addNewsLiked, removeNewsLiked, editorPreferences, flowEditorSettings, or flowAutoSaveMode.",
       },
       { status: 400 },
     )

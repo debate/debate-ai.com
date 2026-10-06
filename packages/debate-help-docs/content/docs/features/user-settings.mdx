@@ -155,10 +155,15 @@ Choose how far auto-save goes under **Flow auto-save** in Settings → Preferenc
   already holds a flow with that id, it is treated as a conflict and left alone.
 - **Off** — nothing is saved automatically; use Save now or Flow History.
 
-The choice applies immediately and is stored in this browser only (it is not
-part of the account-synced settings). Engineering notes:
-`state/flowAutoSaveSettings.ts` (`debate:flow-auto-save` in `localStorage`),
-read at each run by `createFlowAutoSaver`'s `getMode`.
+The choice applies immediately and, when you are signed in, is also saved to
+your account (`user_settings.flow_auto_save_mode`, `flowAutoSaveMode` on
+`/api/settings`) so it follows you to other devices. Signing in on a device
+adopts the account's choice; if you never picked one, the device's non-default
+choice is uploaded instead. A failed sync is silent and keeps the local choice.
+Engineering notes: `state/flowAutoSaveSettings.ts` (`debate:flow-auto-save` in
+`localStorage`, plus `normalizeFlowAutoSaveModePatch` for the route), read at
+each run by `createFlowAutoSaver`'s `getMode`. Deploys must apply the new
+nullable column.
 
 ## Data flow
 

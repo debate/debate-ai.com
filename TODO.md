@@ -95,7 +95,8 @@
 - [x] Restore baselines on mount: `restoreAccountBaselinesOnce` (`state/restoreAccountBaselines.ts`, once per session, silent when signed out) via `useRestoreAccountBaselines` in `DebateStartPanel` and `OpenTabsGroup`; test `debate-round/test/restoreAccountBaselines.test.ts`; branch `claude/gifted-babbage-89z8b3`
 - [x] Auto-save flows already saved to the account (`state/flowAutoSave.ts`, `useFlowAutoSave` in `OpenTabsGroup`, `getFlowAccountUpdatedAt`; debounced, never forces, conflicts left for Flow History; test `debate-round/test/flowAutoSave.test.ts`; branch `claude/gifted-babbage-31ofma`)
 - [x] Opt-in setting to auto-save flows never saved before, plus an auto-save on/off toggle: `state/flowAutoSaveSettings.ts` (`off | saved | all`, device-local), `getMode` in `createFlowAutoSaver`, "Flow auto-save" select in `UserSettingsPanel`; tests `flowAutoSave.test.ts`, `flowAutoSaveSettings.test.ts`; docs in `user-settings.mdx` (branch `claude/gifted-babbage-eeg5we`)
-- [ ] Follow-up: sync the auto-save mode to the account (needs a `user_settings` column)
+- [x] Sync the auto-save mode to the account: nullable `user_settings.flow_auto_save_mode`, `flowAutoSaveMode` on `/api/settings` (validated by `normalizeFlowAutoSaveModePatch`), adopted/seeded in `UserSettingsPanel`; tests `flowAutoSaveSettings.test.ts`, `settings-flow-auto-save-route.test.ts`; branch `claude/gifted-babbage-j7rtcr`
+- [ ] Follow-up: deploy must apply the new `flow_auto_save_mode` column (schema.ts is the only source)
 - [ ] Follow-up: `ebb-dev-*` and `REASON-*` stores are still browser-only
 
 ### Tool UI pass: tool page header

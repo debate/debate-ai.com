@@ -86,7 +86,7 @@ import {
 // user-editable form fields, all excluded from this form the same way.
 type FormState = Omit<
   FullUserSettingsPayload,
-  "favoriteTools" | "wordLimitPresets" | "outlineFilterPresets" | "newsRead" | "newsLiked" | "myTeamProfile"
+  "favoriteTools" | "wordLimitPresets" | "outlineFilterPresets" | "newsRead" | "newsLiked" | "myTeamProfile" | "flowAutoSaveMode"
 >
 
 type SaveStatus =
@@ -160,6 +160,9 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
     if (!isFlowAutoSaveMode(value)) return
     setFlowAutoSave(value)
     setFlowAutoSaveMode(value)
+    // Applies at once like the font; when signed in the choice also follows the
+    // account. A failed sync is not fatal: the device keeps its local choice.
+    if (remoteAvailable) void saveUserSettings({ flowAutoSaveMode: value }).catch(() => {})
   }
 
   const handleFontFamilyChange = (value: string) => {
@@ -191,6 +194,14 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
           baselineRef.current = remoteForm
           applyUserSettingsToLocalStore(remote)
           applyThemeLocally(colorTheme, themeMode, setTheme)
+          // Adopt the account's auto-save mode; with none chosen yet, seed it from
+          // this device's choice so other devices pick it up.
+          if (isFlowAutoSaveMode(remote.flowAutoSaveMode)) {
+            setFlowAutoSave(remote.flowAutoSaveMode)
+            setFlowAutoSaveMode(remote.flowAutoSaveMode)
+          } else if (readFlowAutoSaveMode() !== DEFAULT_FLOW_AUTO_SAVE_MODE) {
+            void saveUserSettings({ flowAutoSaveMode: readFlowAutoSaveMode() }).catch(() => {})
+          }
         }
       })
       .catch(() => {
