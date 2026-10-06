@@ -65,8 +65,15 @@ let onChangePluginInstalled = false;
 
 type EngineModule = typeof import('../editor/index.js');
 type BridgeModule = typeof import('./html-bridge.js');
+type ReadModeModule = typeof import('../editor/read-mode-plugin.js');
+type SettingsModule = typeof import('../editor/settings.js');
 let engineModule: EngineModule | null = null;
 let bridgeModule: BridgeModule | null = null;
+// Loaded with the engine (which imports both anyway), not at module scope:
+// `settings.ts` is big and side-effecting, and this module is on every page
+// that merely imports the package.
+let readModeModule: ReadModeModule | null = null;
+let settingsModule: SettingsModule | null = null;
 
 /** Synchronous access to the engine/bridge modules, once loaded (always
  *  true by the time a `CardMirrorEditor` imperative-handle method could
@@ -140,6 +147,8 @@ async function boot(): Promise<void> {
 
   engineModule = await import('../editor/index.js');
   bridgeModule = await import('./html-bridge.js');
+  readModeModule = await import('../editor/read-mode-plugin.js');
+  settingsModule = await import('../editor/settings.js');
   await waitForView(engineModule.getActiveView);
   installUnloadFlush();
 }
@@ -236,6 +245,7 @@ export async function claim(
     }
     if (parsed.ok) unreadableKeys.delete(binding.key);
     loadedHtmlByKey.set(binding.key, html);
+    const readModeOn = isReadModeOn(view);
     applyLoad(view, () => {
       view.updateState(
         EditorState.create({
@@ -245,6 +255,7 @@ export async function claim(
         }),
       );
     });
+    if (readModeOn) reapplyReadMode(view);
     view.focus();
     if (opts.report && parsed.ok) reportNow(view, binding.key);
     return;
@@ -274,6 +285,26 @@ export async function claim(
     view.dispatch(tr);
   });
   if (opts.report) reportNow(view, binding.key);
+}
+
+/** Whether read mode is on for the live view: the engine's own setting
+ *  (what the ribbon's Read mode button shows in the single-doc embed) or
+ *  the read-mode plugin's per-view state. */
+function isReadModeOn(view: EditorView): boolean {
+  if (settingsModule?.settings.get('readMode')) return true;
+  return readModeModule?.readModePlugin.getState(view.state)?.on === true;
+}
+
+/** A fresh `EditorState` re-inits every plugin, and the read-mode plugin
+ *  always starts OFF — so swapping in another speech doc left the ribbon's
+ *  Read mode button lit (and `#editor.pmd-read-mode` set) over a doc with no
+ *  hiding decorations: every word of every card showing. Re-send the toggle
+ *  so the newly mounted doc gets its read-mode decorations too. Not a doc
+ *  change, so the change reporter never sees it as an edit. */
+function reapplyReadMode(view: EditorView): void {
+  const rm = readModeModule;
+  if (!rm || rm.readModePlugin.getState(view.state)?.on === true) return;
+  view.dispatch(view.state.tr.setMeta(rm.PMD_READ_MODE_TOGGLE, true));
 }
 
 /** Report the mounted document to the live binding right now — the explicit
