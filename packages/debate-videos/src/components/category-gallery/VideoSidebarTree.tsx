@@ -43,9 +43,8 @@
 
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Clapperboard, History, GraduationCap, FileText, MessageSquare, Scale, Star } from "lucide-react";
+import { Clapperboard, History } from "lucide-react";
 import { IconTrophy, IconLectures } from "../../ui/icons";
-import type { LucideIcon } from "lucide-react";
 import type { LectureCategoryFacet } from "../../types/videos";
 import { TreeItem } from "./TreeItem";
 import { lectureCategoryHref } from "../../panels/lectureRouteConfig";
@@ -63,15 +62,6 @@ import {
   toggleExpandedSection,
   withSectionExpanded,
 } from "./sidebar-section-expansion";
-
-const VIDEO_LINK_ICONS: Record<string, LucideIcon> = {
-  allVideos: Clapperboard,
-  college: GraduationCap,
-  policy: FileText,
-  pf: MessageSquare,
-  ld: Scale,
-  topPicks: Star,
-};
 
 interface VideoSidebarTreeProps {
   /** Per-category video counts, keyed by quick-link id. */
@@ -171,7 +161,7 @@ export function VideoSidebarTree({
           level={2}
           href={VIDEO_ALL_LINK.href}
           title={VIDEO_ALL_LINK.title}
-          icon={VIDEO_LINK_ICONS[VIDEO_ALL_LINK.id]}
+          icon={VIDEO_ALL_LINK.glyph}
           count={counts?.[VIDEO_ALL_LINK.id]}
           exactCount={VIDEO_ALL_LINK.exactCount}
           isActive={activeId === VIDEO_ALL_LINK.id}
@@ -183,7 +173,7 @@ export function VideoSidebarTree({
             level={2}
             href={link.href}
             title={link.title}
-            icon={VIDEO_LINK_ICONS[link.id]}
+            icon={link.glyph}
             count={counts?.[link.id]}
             exactCount={link.exactCount}
             isActive={activeId === link.id}

@@ -13,7 +13,10 @@ localStorage.
 - **Research agent settings:** `/settings/research` and `/settings/research/<section>`
   — one full page with a tab per section (models, search, MCP servers, skills and
   memory, voice…), linked from the top of `/settings`. The section list is
-  `research-agent-ui`'s own (`research-agent-ui/settings`).
+  `research-agent-ui`'s own (`research-agent-ui/settings`). Its sidebar also lists
+  the card editor's tabs under a **Card editor** heading
+  (`/settings/research/editor-general` and so on), so either Settings page reaches
+  every editor setting.
 - **Package:** `debate-editor` (the settings store, `SETTING_METADATA`, and
   the embedded panel builder), `apps/debate-ai.com`
   (`lib/editor-preferences.ts`, `/api/settings`, `user_settings` D1 table)
@@ -22,7 +25,9 @@ localStorage.
 
 The editor's whole category set, listed in a searchable sidebar — **General**, **Files**, **Appearance**,
 **Accessibility**, **Editing**, **Keyboard**, **Comments & AI**,
-**Collaboration** — built by `debate-editor`'s own
+**Collaboration** — from `debate-editor`'s exported tab list
+(`CARDMIRROR_SETTINGS_TABS`, `@debate/editor/settings-tabs`) and rendered by its
+`CardMirrorSettingsSection` (`@debate/editor/settings-section`), which wraps
 `buildEmbeddedSettingsPanel`, so each tab is the same rows the editor's
 gear-icon modal renders under it, minus the dialog chrome. General also
 carries the personal dictionary, the performance benchmark and this install's
@@ -253,6 +258,8 @@ The video library at `/videos` shows the badge (and **Save now**) beside its
 search bar; `LecturesPage` takes it as a `headerActionsSlot` prop because
 `debate-videos` can't import the webview's component.
 
-Known gap: the open-flow tabs and the `/doc` header are custom too and don't
-show the badge yet. The `/research/cards` search workspace, which has no
-`ToolPageHeader`, doesn't either.
+The `/research/cards` search workspace has no `ToolPageHeader`, so a slim row
+above it (`CardsSearchSyncBar`) carries the badge and **Save now**.
+
+Known gap: the open-flow tabs are custom too and don't show the badge yet. `/doc`
+is an embedded qwksearch.com frame, so there is no local data for it to show.

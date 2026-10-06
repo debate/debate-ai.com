@@ -1,7 +1,7 @@
 {
   "name": "@debate/editor",
   "version": "0.1.0",
-  "description": "Adapter over upstream CardMirror (the packages/debate-editor-cm submodule) for debate-ai.com. Tracks only patches/debate-ai.patch (edits to upstream files: tabbed ribbon + dropdown menu bar, embed hooks, account sync) and overlay/ (the React shell sized for small embedded panels — Flow speech docs, the /reason-editor route — plus site-only engine modules); scripts/sync-upstream.mjs assembles them with the submodule into a git-ignored src/.",
+  "description": "Adapter over upstream CardMirror (the packages/debate-editor-cm submodule) for debate-ai.com. Tracks only patches/debate-ai.patch (edits to upstream files: embed hooks, account sync, settings sidebar) and overlay/ (the React shell with its dropdown menu bar above the single scrolling toolbar strip, sized for small embedded panels — Flow speech docs, the /reason-editor route — plus site-only engine modules and the web .docx helpers merged in from the former editor-cm-adapter package); scripts/sync-upstream.mjs assembles them with the submodule into a git-ignored src/.",
   "private": true,
   "type": "module",
   "license": "SEE LICENSE IN LICENSE",
@@ -15,6 +15,8 @@
     "./settings": "./src/editor/settings.ts",
     "./settings-ui": "./src/editor/settings-ui.ts",
     "./settings-categories": "./src/editor/settings-categories.ts",
+    "./settings-tabs": "./src/editor/settings-tabs.ts",
+    "./settings-section": "./src/react/CardMirrorSettingsSection.tsx",
     "./collab-bridge": "./src/react/collab-bridge.ts"
   },
   "files": [
@@ -31,7 +33,7 @@
     "sync-upstream": "node scripts/sync-upstream.mjs --rebase",
     "sync-upstream:save": "node scripts/sync-upstream.mjs --save",
     "sync-upstream:check": "node scripts/sync-upstream.mjs --check",
-    "typecheck": "node scripts/sync-upstream.mjs && tsc --noEmit",
+    "typecheck": "tsc --noEmit",
     "test": "node scripts/sync-upstream.mjs && vitest run",
     "test:watch": "node scripts/sync-upstream.mjs && vitest",
     "coverage": "node scripts/sync-upstream.mjs && vitest run --coverage"
