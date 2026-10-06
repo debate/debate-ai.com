@@ -15,23 +15,32 @@ import {
 
 import { SiteFooter } from "../../../src/components/layout/SiteFooter";
 
+/** Static markup escapes `&`, as in "Prep & Scout". */
+const escaped = (text: string) => text.replaceAll("&", "&amp;");
+
 describe("SiteFooter", () => {
   const html = renderToStaticMarkup(<SiteFooter />);
 
   it("prints its link sections", () => {
-    expect(html).toContain("Tools");
-    expect(html).toContain("Site");
+    expect(html).toContain(`aria-label="Apps"`);
+    for (const section of SIDEBAR_TOOL_SECTIONS) {
+      expect(html).toContain(`aria-label="${escaped(section.title)}"`);
+    }
+    expect(html).toContain(`aria-label="Site"`);
     // Debate-community links share the Site section, not a column of their own.
     expect(html).not.toContain(`aria-label="Debate"`);
     expect(html).toContain("<footer");
   });
 
-  it("links the app's own surfaces, taken from the dock and the nav tree", () => {
+  it("mirrors the sidebar: the dock's apps and every tool in every nav-tree section", () => {
     for (const link of APP_DOCK_LINKS) {
       expect(html).toContain(`href="${link.href}"`);
     }
     for (const section of SIDEBAR_TOOL_SECTIONS) {
-      expect(html).toContain(`href="${section.href}"`);
+      for (const tool of section.tools) {
+        expect(html).toContain(`href="${tool.href}"`);
+        expect(html).toContain(escaped(tool.title));
+      }
     }
     expect(html).toContain(`href="/practice/features"`);
   });

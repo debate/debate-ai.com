@@ -537,6 +537,8 @@ export function LecturesVideoGridView({
                 // scatter that order across seasons and tournaments.
                 grouped={isHistory ? false : undefined}
                 showWatched={isHistory}
+                // Top Picks mixes every format, so each tournament says which.
+                showFormat={currentCategory === "topPicks"}
                 defaultSort={isHistory ? { column: "watched", direction: "desc" } : undefined}
                 videoContainerRef={videoContainerRef}
                 favorites={favorites}

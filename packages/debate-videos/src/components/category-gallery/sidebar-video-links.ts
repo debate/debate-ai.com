@@ -74,10 +74,10 @@ export const VIDEO_COLLEGE_LINK: SidebarVideoLink = {
  *  rather than children of it: they are sibling collections of the same
  *  round archive, not subsets of the college one. */
 export const VIDEO_FORMAT_LINKS: SidebarVideoLink[] = [
-  { id: "policy", href: "/videos/policy", title: "Policy Debates", glyph: IconFormatVP },
-  { id: "pf", href: "/videos/pf", title: "PF Debates", glyph: IconFormatPF },
-  { id: "ld", href: "/videos/ld", title: "LD Debates", glyph: IconFormatLD },
-  { id: "topPicks", href: "/videos/topPicks", title: "Greatest of All-Time", glyph: Star },
+  { id: "policy", href: "/videos/policy", title: "Policy Debates", glyph: FileText },
+  { id: "pf", href: "/videos/pf", title: "PF Debates", glyph: MessageSquare },
+  { id: "ld", href: "/videos/ld", title: "LD Debates", glyph: Scale },
+  { id: "topPicks", href: "/videos/goat-status", title: "Greatest of All-Time", glyph: Star },
 ];
 
 /** The rest of the video library: My Favorites, the last row under "Round

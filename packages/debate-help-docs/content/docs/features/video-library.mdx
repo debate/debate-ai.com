@@ -120,6 +120,12 @@ the same day read Finals down to the prelims). Rounds with no tournament go
 into an **Unsorted** tournament group, which is placed by its own newest video
 like any other tournament (`buildVideoTree` in `video-tree.ts`).
 
+Top Picks mixes every format, so there each tournament row carries a format
+badge (PF, LD, Policy, College) beside its name — one per format among its
+rounds — and so does the tournament name on every round row under it
+(`showFormat` on `VideoListRows`, drawn by `FormatBadge`). Single-format
+listings such as `/videos/pf` leave it off.
+
 Because the groups are built from whatever has loaded, the row view keeps
 paging on its own (up to the usual 600-video ceiling) instead of waiting for
 you to scroll. Otherwise sorting by views would show only each season's
