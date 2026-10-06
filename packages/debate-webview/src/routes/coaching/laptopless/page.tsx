@@ -60,6 +60,14 @@ const GEAR: {
       "A compact 70W GaN charging station with three AC outlets, two USB-A ports, and two USB-C ports. Plug it into one hotel or tournament outlet and charge the phone, keyboard, power bank, and a watch at once.",
   },
   {
+    name: "Desk Clamp Power Strip with USB-C",
+    role: "Outlets right at the table edge",
+    href: "https://amzn.to/4zCDu4H",
+    image: "https://i.imgur.com/2jnfQjH.jpeg",
+    blurb:
+      "A power strip that clamps onto the edge of a desk or table, with three AC outlets, two USB-A ports, and two USB-C ports. Clamp it to your table in the prep room or at home and the phone, keyboard, and power bank can charge within reach instead of from a wall outlet across the room.",
+  },
+  {
     name: "VITURE Beast XR/AR Glasses (174\" Virtual Display)",
     role: "Giant floating screen, no laptop",
     href: "https://amzn.to/4rA4rmp",
