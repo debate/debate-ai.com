@@ -1,13 +1,12 @@
 "use client"
 
 import type React from "react"
+import { useLayoutEffect, useState } from "react"
 import { usePathname } from "next/navigation"
-import { ResizableSidebarLayout, ToolNavTree, ToolSidebarFooter } from "@debate/videos"
-import { CategoryDock } from "./CategoryDock"
-import { ReasonDocsSidebarPanels } from "../reason-docs/ReasonDocsSidebarPanels"
-import { ChromeErrorBoundary } from "../../lib/ui/layout/chrome-error-boundary"
+import { SIDEBAR_DEFAULT_WIDTH, SIDEBAR_MAX_WIDTH, SIDEBAR_MIN_WIDTH, SIDEBAR_WIDTH_KEY } from "@debate/videos"
+import { SidebarProvider } from "../../lib/ui/primitives/sidebar"
 import { isGenericToolSidebarRoute } from "../../lib/sidebar-routes"
-import { showsCardsOnlySidebar, showsReasonDocsPanels } from "../../lib/reason-docs/sidebar-routes"
+import { AppSidebar } from "./app-sidebar/app-sidebar"
 
 /**
  * Mirrors the persistent left sidebar the `/videos` pages render
@@ -30,6 +29,15 @@ import { showsCardsOnlySidebar, showsReasonDocsPanels } from "../../lib/reason-d
  * nav, and on `/videos` — which keeps its own sidebar and so is not wrapped by
  * this shell at all — it is the video library
  * (see `packages/debate-help-docs/content/docs/internals/reason-docs-sidebar.mdx`).
+ *
+ * The column itself is shadcn's `sidebar-07` block (`app-sidebar/`): it
+ * collapses to a 3rem icon rail from its edge rail, the trigger in its header
+ * or Ctrl/Cmd+B, and remembers that choice in the `sidebar_state` cookie. Its
+ * width is the one the reader last dragged the `/videos` column to
+ * (`SIDEBAR_WIDTH_KEY`, which `ResizableSidebarLayout` writes), so crossing
+ * between the two keeps the column's shape. Below `md` it is not drawn at
+ * all: the bottom dock's Sidebar button opens `MobileSidebarDrawer` instead,
+ * as it always has.
  *
  * `/research/cards` is the docs panels alone (`showsCardsOnlySidebar`): no nav tree, no
  * glossary or rankings links, no site footer. Those are all about somewhere
@@ -64,60 +72,57 @@ export function AppSidebarShell({
   always?: boolean
 }) {
   const pathname = usePathname()
-  const cardsOnly = showsCardsOnlySidebar(pathname)
+  const [open, setOpen] = useState(true)
+  const [widthPx, setWidthPx] = useState(SIDEBAR_DEFAULT_WIDTH)
+
+  // Read after mount, not during render, so the server's markup and the
+  // first client render agree; a layout effect so the column never paints
+  // at the wrong width or state first.
+  useLayoutEffect(() => {
+    setOpen(readCollapsedCookie() !== false)
+    const stored = readStoredWidth()
+    if (stored !== null) setWidthPx(stored)
+  }, [])
 
   if (!always && !isGenericToolSidebarRoute(pathname)) return <>{children}</>
 
   return (
-    // The shared drag-resizable column (`ResizableSidebarLayout`, from
-    // debate-videos): the same width, handle and saved size as the `/videos`
-    // sidebar, so the column keeps its shape as you cross between them.
-    // `min-w-0` inside it plus the dock's own `fluid` sizing keep every child
-    // bound to this column: the dock is sized to the sidebar rather than to
-    // its own contents, so it can't reach across the border onto the page —
-    // a CardMirror editor, on `/reason-editor` and `/doc`.
-    <ResizableSidebarLayout
-      appChrome
-      // On `/research/cards` the panels own the column's leftover height and scroll
-      // inside their own shares, so the column itself must not scroll: a
-      // scrolling parent has no height to hand a `flex-1` child. Same
-      // `overflow-y` utility as the `<aside>`'s own, so `cn`'s tailwind-merge
-      // drops that one rather than leaving the two to fight.
-      sidebarClassName={cardsOnly ? "overflow-y-hidden" : undefined}
-      sidebar={
-        <>
-          {/* Each region is bounded separately. This whole `<aside>` renders
-              from the root layout, so before the boundaries a throw in any one
-              of these unmounted the entire document — and on the server failed
-              the render, answering 500 with no shell and no page (see
-              `chrome-error-boundary.tsx`). Now the sidebar loses the panel that
-              broke and keeps the rest, and the page below renders either way. */}
-          <ChromeErrorBoundary label="CategoryDock">
-            <CategoryDock embedded />
-          </ChromeErrorBoundary>
-          {/* Above the nav tree rather than below it: the tree is long enough
-              (a section auto-expands to show where you are) that anything under
-              it starts below the fold, and on /reason-editor these panels are
-              the page's primary navigation. Absent entirely on the routes that
-              are about something else, so their sidebar is only their own nav. */}
-          {showsReasonDocsPanels(pathname) && (
-            <ChromeErrorBoundary label="ReasonDocsSidebarPanels">
-              <ReasonDocsSidebarPanels
-                className={cardsOnly ? "min-h-0 flex-1" : "shrink-0"}
-                fill={cardsOnly}
-              />
-            </ChromeErrorBoundary>
-          )}
-          {!cardsOnly && (
-            <ChromeErrorBoundary label="ToolNavTree">
-              <ToolNavTree />
-              <ToolSidebarFooter />
-            </ChromeErrorBoundary>
-          )}
-        </>
-      }
+    <SidebarProvider
+      open={open}
+      onOpenChange={setOpen}
+      // The dock needs ~220px to sit on one row; the stock 16rem is close,
+      // but the reader's own width wins wherever they have set one.
+      style={{ "--sidebar-width": `${widthPx}px` } as React.CSSProperties}
+      className="min-h-screen"
     >
-      {children}
-    </ResizableSidebarLayout>
+      <AppSidebar />
+      {/* Not `SidebarInset`: that is a `<main>`, and the pages render their
+          own. `relative` makes the column the containing block for the
+          page's absolutely positioned bits (an `sr-only` label in a wide
+          table used to escape to the viewport and widen the mobile layout);
+          `min-w-0` keeps a wide page from pushing the sidebar off screen. */}
+      <div className="relative flex w-full min-w-0 flex-1 flex-col">{children}</div>
+    </SidebarProvider>
   )
+}
+
+/** The collapsed/expanded choice shadcn's provider writes, or null if unset. */
+function readCollapsedCookie(): boolean | null {
+  try {
+    const match = document.cookie.match(/(?:^|;\s*)sidebar_state=(true|false)/)
+    return match ? match[1] === "true" : null
+  } catch {
+    return null
+  }
+}
+
+/** The width last dragged on `/videos` (`ResizableSidebarLayout`), clamped to its range. */
+function readStoredWidth(): number | null {
+  try {
+    const value = Number(localStorage.getItem(SIDEBAR_WIDTH_KEY))
+    if (!Number.isFinite(value) || value <= 0) return null
+    return Math.min(SIDEBAR_MAX_WIDTH, Math.max(SIDEBAR_MIN_WIDTH, value))
+  } catch {
+    return null
+  }
 }

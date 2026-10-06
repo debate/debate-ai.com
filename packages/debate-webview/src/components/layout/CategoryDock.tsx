@@ -4,7 +4,6 @@ import { useCallback, useEffect, useState, type MouseEvent as ReactMouseEvent, t
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
 import { Globe, LogIn, PanelLeft, LogOut, Monitor, Moon, Palette, Pause, Play, Search, Settings as SettingsIcon, ShieldCheck, Sun, UserCircle2 } from "lucide-react"
-import { toast } from "sonner"
 import { cn } from "../../lib/ui/lib/utils"
 import { Dock, DockIcon, DockItem, DockLabel } from "../../lib/ui/layout/dock"
 import { useAccountNotifications, useContacts } from "@debate/team-collaboration"
@@ -28,8 +27,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "../../lib/ui/primitives/avatar"
 import { themeNames, themeColors, formatThemeName, useThemeState } from "../theme-dropdown"
 import { LoginDialog } from "./LoginDialog"
-import { authClient } from "../../lib/auth/client"
-import { resetUser } from "../../lib/analytics/mixpanel"
+import { useSignOut } from "../../lib/auth/use-sign-out"
 import { useSession } from "../../lib/hooks/useSession"
 import { hasEmbeddedDock, hostsOwnSidebarDock, isGenericToolSidebarRoute } from "../../lib/sidebar-routes"
 import { SIDEBAR_MENU_SECTIONS, SITE_LINKS } from "../../lib/nav/dock-menu-sections"
@@ -73,19 +71,7 @@ interface DockNavRenderItem {
  */
 function AccountSection({ onSignIn }: { onSignIn: () => void }) {
   const { user, isAuthenticated, isLoading } = useSession()
-  const router = useRouter()
-
-  const handleSignOut = async () => {
-    try {
-      resetUser()
-      const { error } = await authClient.signOut()
-      if (error) throw new Error(error.message || error.statusText)
-      router.refresh()
-    } catch (error) {
-      console.error("[auth] sign-out failed:", error)
-      toast.error("Could not sign out")
-    }
-  }
+  const handleSignOut = useSignOut()
 
   if (isLoading) {
     return (
