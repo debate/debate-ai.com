@@ -199,10 +199,6 @@ export function VideoListRow({
   onUnhideVideo: (videoId: string) => void
   /** Searches the library for a team when its name is clicked. */
   onSearch?: (text: string) => void
-  /** The aff team's current-season rankings row, when it has one. */
-  affRanking?: RankingEntry | null
-  /** The neg team's current-season rankings row, when it has one. */
-  negRanking?: RankingEntry | null
   /** Badges the tournament name with the round's debate format. */
   showFormat?: boolean
   /** The aff team's current-season rankings row, when it has one. */
