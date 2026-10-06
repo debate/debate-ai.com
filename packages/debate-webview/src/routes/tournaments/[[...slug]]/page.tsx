@@ -17,7 +17,7 @@ export default function Tournaments() {
   return (
     <TournamentsApp
       segments={slug ?? []}
-      basePath="/practice/tournaments"
+      basePath="/tournaments"
       apiBase="/api/tabroom"
       liveApiBase="/api/tabroom-beta"
       Link={Link}

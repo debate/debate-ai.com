@@ -167,7 +167,7 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/practice/forums", title: "Latest News", icon: Rss },
       // Tournaments is this app's own view (live Tabroom plus the tournaments
       // hosted here); Tabroom frames beta.tabroom.com itself.
-      { href: "/practice/tournaments", title: "Tournaments", icon: Trophy },
+      { href: "/tournaments", title: "Tournaments", icon: Trophy },
       { href: "/practice/tabroom", title: "Tabroom", icon: CalendarDays },
     ],
   },

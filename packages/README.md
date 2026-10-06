@@ -174,7 +174,7 @@ with `import type { … } from "debate"`. Depended on by `debate-timer`, `debate
 Upstream [Tabroom](https://github.com/debate/debate-tournament-tabroom) vendored and adapted
 to Cloudflare Workers + D1: its public API as a fetch handler (`debate-tournaments/server`,
 mounted at `/api/tabroom`), a React port of its invite/pairings/results pages (mounted at
-`/practice/tournaments`), the route table, its `@tabroom/types` Zod schemas and inferred types
+`/tournaments`), the route table, its `@tabroom/types` Zod schemas and inferred types
 (`debate-tournaments/types`, with `tabroomSchemas` — every schema keyed by record name — and
 a non-throwing `parseTabroom(schema, data)`), and the D1 schema. Its own `/host` API creates
 tournaments on this site (never on Tabroom) and serves each one's admin web view, and a demo

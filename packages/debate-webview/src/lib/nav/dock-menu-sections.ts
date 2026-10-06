@@ -42,8 +42,8 @@ import {
 export interface DockMenuLink {
   href: string
   title: string
-  /** The row's sidebar icon, where the sidebar gives it one. */
-  icon?: LucideIcon
+  /** The row's sidebar icon. Every link carries one, Videos included. */
+  icon: LucideIcon
 }
 
 export interface DockMenuSection {
@@ -72,7 +72,7 @@ export const SIDEBAR_MENU_SECTIONS: DockMenuSection[] = [
     title: "Videos",
     icon: Clapperboard,
     links: SIDEBAR_VIDEO_LINKS.filter((link) => !REFERENCE_HREFS.has(link.href)).map(
-      ({ href, title }) => ({ href, title }),
+      ({ href, title, glyph }) => ({ href, title, icon: glyph }),
     ),
   },
   ...SIDEBAR_TOOL_SECTIONS.map((section) => ({

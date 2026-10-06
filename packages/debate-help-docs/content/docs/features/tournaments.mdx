@@ -7,9 +7,18 @@ title: "Tournaments"
 Tournament invitations, pairings and results, without leaving the app. Two rows
 under **Prep & Scout** in the sidebar cover it:
 
-- **Tournaments** (`/practice/tournaments`) is this app's own view, built with
+- **Tournaments** (`/tournaments`) is this app's own view, built with
   the site's theme: live Tabroom tournaments plus the ones hosted here.
 - **Tabroom** (`/practice/tabroom`) frames beta.tabroom.com itself.
+
+## Tournament addresses
+
+Each tournament's pages live under the year it starts and its name, so
+the Yale Invitational's results are at `/tournaments/2026/yale-invitational/results`
+and its pairings at `/tournaments/2026/yale-invitational/rounds`. Links that
+name a tournament by its Tabroom number (`/tournaments/38436/results`) still
+work and settle on the named address once the tournament loads; so do old
+`/practice/tournaments/…` bookmarks, which redirect here.
 
 ## What you can see
 
@@ -31,7 +40,7 @@ under **Prep & Scout** in the sidebar cover it:
 
 ## Hosting your own tournament
 
-**Host Tournament** on the upcoming page (or `/practice/tournaments/host`)
+**Host Tournament** on the upcoming page (or `/tournaments/host`)
 creates the tournament in this site's own hosting API (the Tabroom tables the
 `debate-tournaments` package runs in the app's database, at `/api/tabroom`).
 Nothing is created on Tabroom. You need to be signed in. Give it a name, dates,
@@ -71,7 +80,7 @@ that appears on the public invite.
 ## The admin view
 
 Every hosted tournament has an admin web view at
-`/practice/tournaments/<id>/admin`, open to its owners and admins. It shows the
+`/tournaments/<year>/<name>/admin`, open to its owners and admins. It shows the
 events with their entry counts, the whole schedule (including rounds that are
 not published yet), every entry and its status, schools, judges, rooms and
 result sets, each linked to its public page.
@@ -93,6 +102,8 @@ so its dates always stay current.
 
 - Pairings and results are refreshed at most once a minute, so reload during a
   tournament to see the latest round.
+- Two tournaments with the same name in the same year can't share an address,
+  so the second one keeps its Tabroom number in its links.
 - You are recorded as the tournament's owner, and registered in every format it
   runs, so the first pairing has somebody in it.
 - The admin view reads the tournament; adding schools, rooms, rounds and

@@ -98,7 +98,7 @@ describe("SIDEBAR_MENU_SECTIONS", () => {
     }
   })
 
-  it("gives every section a title, an icon, and at least one link", () => {
+  it("gives every section and every link a title and an icon", () => {
     for (const section of SIDEBAR_MENU_SECTIONS) {
       expect(section.title.length).toBeGreaterThan(0)
       expect(section.icon).toBeTruthy()
@@ -106,6 +106,7 @@ describe("SIDEBAR_MENU_SECTIONS", () => {
       for (const link of section.links) {
         expect(link.href.startsWith("/")).toBe(true)
         expect(link.title.length).toBeGreaterThan(0)
+        expect(link.icon).toBeTruthy()
       }
     }
   })

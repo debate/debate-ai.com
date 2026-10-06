@@ -11,6 +11,7 @@
  */
 
 import type { TournamentFormatId } from "../host/formats";
+import { tournamentSlugOf, type TournamentSlug } from "../routes";
 
 export interface UpcomingTournament {
   id: string;
@@ -273,6 +274,18 @@ export interface TournamentsClientOptions {
 
 const trimBase = (base: string) => base.replace(/\/+$/, "");
 
+/** Rows per page when listing a year's tournaments to resolve a slug (upstream's maximum). */
+const YEAR_PAGE_SIZE = 500;
+/** Pages read per source before a slug is given up on (Tabroom lists ~3,000 tournaments a year). */
+const YEAR_PAGE_LIMIT = 12;
+
+/** A row of `GET /rest/tourns`, narrowed to what resolving a slug reads. */
+interface ListedTourn {
+  id: number;
+  name: string;
+  start: string | null;
+}
+
 export function createTournamentsClient(
   apiBase = "/api/tournaments",
   fetchImpl: typeof fetch = (...a) => fetch(...a),
@@ -283,6 +296,19 @@ export function createTournamentsClient(
   /** Where each tournament id was found, once known. */
   const sources = new Map<number, TournamentSource>();
   const baseOf = (source: TournamentSource) => (source === "tabroom" && live ? live : base);
+  /** Each known tournament's year and name slug, and the reverse, for `/<year>/<slug>` URLs. */
+  const slugs = new Map<number, TournamentSlug>();
+  const ids = new Map<string, number>();
+  const slugKey = (year: number, slug: string) => `${year}/${slug.toLowerCase()}`;
+  /** Records a tournament's name and start, so links to it use its year and slug. */
+  function remember(tournId: number, tourn: { name?: string | null; start?: string | null }) {
+    const named = tournamentSlugOf(tourn);
+    if (!named) return;
+    slugs.set(tournId, named);
+    // The first tournament seen under a name keeps it; the hosted source is read first.
+    const key = slugKey(named.year, named.slug);
+    if (!ids.has(key)) ids.set(key, tournId);
+  }
 
   async function request<T>(root: string, path: string, init: RequestInit = {}): Promise<T> {
     const res = await fetchImpl(`${root}${path}`, { signal: init.signal, ...init });
@@ -305,17 +331,21 @@ export function createTournamentsClient(
   /** Reads the invite from the hosted API first, then live Tabroom, and remembers which answered. */
   async function invite(tournId: number, signal?: AbortSignal): Promise<TournamentInvite> {
     const known = sources.get(tournId);
-    if (known || !live) return get<TournamentInvite>(baseOf(known ?? "hosted"), `/rest/tourns/${tournId}/invite`, signal);
-    try {
-      const hosted = await get<TournamentInvite>(base, `/rest/tourns/${tournId}/invite`, signal);
-      sources.set(tournId, "hosted");
-      return hosted;
-    } catch (error) {
-      if (!(error instanceof TournamentsApiError)) throw error;
-      const found = await get<TournamentInvite>(live, `/rest/tourns/${tournId}/invite`, signal);
-      sources.set(tournId, "tabroom");
-      return found;
+    let found: TournamentInvite;
+    if (known || !live) {
+      found = await get<TournamentInvite>(baseOf(known ?? "hosted"), `/rest/tourns/${tournId}/invite`, signal);
+    } else {
+      try {
+        found = await get<TournamentInvite>(base, `/rest/tourns/${tournId}/invite`, signal);
+        sources.set(tournId, "hosted");
+      } catch (error) {
+        if (!(error instanceof TournamentsApiError)) throw error;
+        found = await get<TournamentInvite>(live, `/rest/tourns/${tournId}/invite`, signal);
+        sources.set(tournId, "tabroom");
+      }
     }
+    remember(tournId, found);
+    return found;
   }
 
   /** The API root holding `tournId`, resolving it through the invite when not yet known. */
@@ -333,30 +363,89 @@ export function createTournamentsClient(
       headers: { accept: "application/json" },
     });
 
-  return {
-    /** Hosted tournaments (the demo first loaded if missing), then live Tabroom's, each tagged with its source. */
-    upcoming: async (signal?: AbortSignal): Promise<UpcomingTournament[]> => {
-      const hosted = (async () => {
-        await ensureDemo(signal).catch(() => undefined);
-        return get<UpcomingTournament[]>(base, "/pages/invite/upcoming", signal);
-      })();
-      const tabroom = live ? get<UpcomingTournament[]>(live, "/pages/invite/upcoming", signal) : Promise.resolve([]);
-      const [mine, theirs] = await Promise.allSettled([hosted, tabroom]);
-      if (mine.status === "rejected" && (theirs.status === "rejected" || !live)) throw mine.reason;
-      const rows: UpcomingTournament[] = [];
-      const seen = new Set<number>();
-      for (const [result, source] of [[mine, "hosted"], [theirs, "tabroom"]] as const) {
-        if (result.status !== "fulfilled" || !Array.isArray(result.value)) continue;
-        for (const row of result.value) {
-          if (seen.has(row.tournId)) continue;
-          seen.add(row.tournId);
-          if (live) sources.set(row.tournId, source);
-          rows.push({ ...row, source });
-        }
+  /** Hosted tournaments (the demo first loaded if missing), then live Tabroom's, each tagged with its source. */
+  async function upcoming(signal?: AbortSignal): Promise<UpcomingTournament[]> {
+    const hosted = (async () => {
+      await ensureDemo(signal).catch(() => undefined);
+      return get<UpcomingTournament[]>(base, "/pages/invite/upcoming", signal);
+    })();
+    const tabroom = live ? get<UpcomingTournament[]>(live, "/pages/invite/upcoming", signal) : Promise.resolve([]);
+    const [mine, theirs] = await Promise.allSettled([hosted, tabroom]);
+    if (mine.status === "rejected" && (theirs.status === "rejected" || !live)) throw mine.reason;
+    const rows: UpcomingTournament[] = [];
+    const seen = new Set<number>();
+    for (const [result, source] of [[mine, "hosted"], [theirs, "tabroom"]] as const) {
+      if (result.status !== "fulfilled" || !Array.isArray(result.value)) continue;
+      for (const row of result.value) {
+        if (seen.has(row.tournId)) continue;
+        seen.add(row.tournId);
+        if (live) sources.set(row.tournId, source);
+        remember(row.tournId, row);
+        rows.push({ ...row, source });
       }
-      return rows;
-    },
+    }
+    return rows;
+  }
+
+  /** Lists `source`'s tournaments starting in `year`, a page at a time, until `key` is known. */
+  async function scanYear(source: TournamentSource, year: number, key: string, signal?: AbortSignal): Promise<number | null> {
+    const startAfter = new Date(Date.UTC(year, 0, 1) - 1).toISOString();
+    const startBefore = new Date(Date.UTC(year + 1, 0, 1)).toISOString();
+    for (let page = 0; page < YEAR_PAGE_LIMIT; page++) {
+      const query = new URLSearchParams({ startAfter, startBefore, limit: String(YEAR_PAGE_SIZE), offset: String(page * YEAR_PAGE_SIZE) });
+      const rows = await get<ListedTourn[]>(baseOf(source), `/rest/tourns?${query}`, signal);
+      if (!Array.isArray(rows)) return null;
+      for (const row of rows) {
+        if (live && !sources.has(row.id)) sources.set(row.id, source);
+        remember(row.id, row);
+      }
+      const found = ids.get(key);
+      if (found !== undefined) return found;
+      if (rows.length < YEAR_PAGE_SIZE) return null;
+    }
+    return null;
+  }
+
+  /**
+   * The Tabroom tourn id a `/<year>/<slug>` URL names: from tournaments already
+   * seen, then the upcoming list, then each source's tournaments for that year
+   * (hosted first). Rejects with a 404 when nothing by that name started then.
+   */
+  async function resolve(year: number, slug: string, signal?: AbortSignal): Promise<number> {
+    const key = slugKey(year, slug);
+    const known = ids.get(key);
+    if (known !== undefined) return known;
+    await upcoming(signal).catch((error) => {
+      if (signal?.aborted) throw error;
+    });
+    const listed = ids.get(key);
+    if (listed !== undefined) return listed;
+    for (const source of live ? (["hosted", "tabroom"] as const) : (["hosted"] as const)) {
+      try {
+        const found = await scanYear(source, year, key, signal);
+        if (found !== null) return found;
+      } catch (error) {
+        if (signal?.aborted || !(error instanceof TournamentsApiError)) throw error;
+      }
+    }
+    throw new TournamentsApiError(404, `No tournament named “${slug}” started in ${year}.`);
+  }
+
+  return {
+    upcoming,
     invite,
+    resolve,
+    /**
+     * A tournament's year and name slug, once its invite, a list or a lookup
+     * has named it. Undefined for a tournament that shares its name and year
+     * with one seen first, so its links keep its id rather than resolve to the other.
+     */
+    slugOf: (tournId: number): TournamentSlug | undefined => {
+      const named = slugs.get(tournId);
+      return named && ids.get(slugKey(named.year, named.slug)) === tournId ? named : undefined;
+    },
+    /** Records a tournament's name and start date for its links (`remember` is called for every row the client reads). */
+    remember,
     /** Which source a tournament was read from, once its invite or the upcoming list has loaded. */
     sourceOf: (tournId: number): TournamentSource | undefined => (live ? sources.get(tournId) : "hosted"),
     /** The entries registered in one event, when the tournament publishes its field. */
@@ -397,6 +486,7 @@ export function createTournamentsClient(
         body: JSON.stringify(input),
       }).then((body) => {
         sources.set(body.tournament.id, "hosted");
+        remember(body.tournament.id, body.tournament);
         return body.tournament;
       }),
     /** The tournaments the signed-in user owns, newest first. */
