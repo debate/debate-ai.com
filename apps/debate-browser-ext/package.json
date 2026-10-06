@@ -1,7 +1,7 @@
 {
   "name": "@debate/web-ext",
   "description": "Read any page in an AI article panel, time a round, and check whether a card has already been cut from the page.",
-  "version": "6.1.0",
+  "version": "6.2.0",
   "type": "module",
   "private": true,
   "scripts": {

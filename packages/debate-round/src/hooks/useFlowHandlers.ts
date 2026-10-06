@@ -7,6 +7,7 @@ import { useCallback } from "react";
 import type { Flow } from "../types/flow";
 import { newFlow } from "../utils/flow-utils";
 import { settings } from "../state/settings";
+import { setBulkItem } from "@debate/data-sync/src/state/bulk-storage";
 
 /**
  * Hook that provides memoized handlers for creating, deleting, and selecting flows.
@@ -37,12 +38,12 @@ export function useFlowHandlers(
     const updatedFlows = [...flows, flow];
     setFlows(updatedFlows);
     setSelected(flow.id);
-    localStorage.setItem("flows", JSON.stringify(updatedFlows));
+    setBulkItem("flows", JSON.stringify(updatedFlows));
   }, [flows, setFlows, setSelected]);
 
   /**
    * Remove the flow with the given id and select an adjacent flow if one exists.
-   * Persists the updated list to localStorage.
+   * Persists the updated list to on-device storage.
    *
    * @param id - The id of the flow to delete
    */
@@ -63,7 +64,7 @@ export function useFlowHandlers(
       // Remove the flow
       const updatedFlows = flows.filter((f) => f.id !== id);
       setFlows(updatedFlows);
-      localStorage.setItem("flows", JSON.stringify(updatedFlows));
+      setBulkItem("flows", JSON.stringify(updatedFlows));
     },
     [flows, setFlows, setSelected],
   );

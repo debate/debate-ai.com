@@ -50,6 +50,7 @@ import { useTimerSync } from "../hooks/useTimerSync"
 import { getRoundRecordingShareEmails } from "../round/round-recording-share"
 import { readPinnedDebateIds, togglePinnedDebate } from "../state/pinnedDebates"
 import { readFlowHistory } from "../state/flowHistoryEntries"
+import { hydrateBulkStorage } from "@debate/data-sync/src/state/bulk-storage"
 import { selectSidebarRound } from "../utils/sidebar-round"
 import {
   buildFeaturedRound,
@@ -122,12 +123,20 @@ export function DebateFlowPage({ startScreenActions, roundActions }: DebateFlowP
   /**
    * Load the pinned round ids and the auto-saved flow history that the start
    * screen renders. Read after mount rather than during the first render so
-   * this stays client-only (both keys are localStorage) and so a second visit
-   * picks up whatever was pinned or worked on in the meantime.
+   * this stays client-only (pins are localStorage, the history is the
+   * IndexedDB-backed bulk store, read again once it has loaded) and so a
+   * second visit picks up whatever was pinned or worked on in the meantime.
    */
   useEffect(() => {
+    let cancelled = false
     setPinnedIds(readPinnedDebateIds())
     setRecentHistory(readFlowHistory())
+    void hydrateBulkStorage().then(() => {
+      if (!cancelled) setRecentHistory(readFlowHistory())
+    })
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   /**
@@ -242,9 +251,9 @@ const handleEbbToolAction = (action: EbbFlowToolAction) => {
   // ============================================================================
   // Side Effects
   // ============================================================================
-  useInitialLoad(setFlows, setRounds)
+  const storedFlowsLoaded = useInitialLoad(setFlows, setRounds)
   useFontSizeSettings()
-  useFlowPersistence(flows, setFlows)
+  useFlowPersistence(flows)
   useArgumentTreeAutoSync(flows, selected)
   useMobileDetection(state.setIsMobile)
   useRoundFromSlug()
@@ -252,12 +261,13 @@ const handleEbbToolAction = (action: EbbFlowToolAction) => {
   useJumpToPrepNoteBox()
 
   // A shared `/debate/<featured slug>` link builds the round for a reader who
-  // has never opened it; `useRoundFromSlug` handles every later visit. Declared
-  // after `useInitialLoad` so the stored flows and rounds are already in the
-  // store when this first runs.
+  // has never opened it; `useRoundFromSlug` handles every later visit. Waits
+  // for `useInitialLoad` (an async IndexedDB read) so the stored flows and
+  // rounds are already in the store when this first runs.
   const pathname = usePathname()
   const featuredFromPathRef = useRef<string | null>(null)
   useEffect(() => {
+    if (!storedFlowsLoaded) return
     const slug = pathname?.match(/^\/debate\/([^/]+\/[^/]+)$/)?.[1]
     const featured = slug ? featuredRoundBySlug(slug) : undefined
     if (!featured || featuredFromPathRef.current === featured.slug) return
@@ -265,7 +275,7 @@ const handleEbbToolAction = (action: EbbFlowToolAction) => {
     const { rounds: storedRounds, flows: storedFlows } = useFlowStore.getState()
     if (!findLocalFeaturedRound(featured, storedRounds, storedFlows)) void handleOpenFeatured(featured)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname])
+  }, [pathname, storedFlowsLoaded])
 
   // Update document title when active round changes
   useEffect(() => {

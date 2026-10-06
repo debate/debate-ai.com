@@ -108,3 +108,28 @@ export async function requestCardAiAnalysis(
   }
   return { result: payload.result, cached: Boolean(payload.cached) };
 }
+
+/**
+ * Returns the analysis already saved for `content` under `prompt`, or `null`
+ * when the card has none yet. Never generates, so it never counts against a
+ * plan's daily `cardAiAnalysesPerDay` limit — this is what preloads the
+ * sidebar when a card is selected, leaving generation to an explicit click.
+ */
+export async function fetchSavedCardAiAnalysis(
+  input: { content: string; prompt: string },
+  endpoint = "/api/card-ai-analysis",
+  fetchImpl: typeof fetch = fetch,
+): Promise<string | null> {
+  const res = await fetchImpl(endpoint, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ ...input, savedOnly: true }),
+  });
+  if (!res.ok) return null;
+  try {
+    const payload = (await res.json()) as { result?: unknown };
+    return typeof payload.result === "string" ? payload.result : null;
+  } catch {
+    return null;
+  }
+}
