@@ -8,7 +8,9 @@ The macOS-style icon dock that carries the app's top-level destinations, and
 the sidebar column that hosts it on every tool route.
 
 - **Component:** `apps/debate-ai.com/components/layout/CategoryDock.tsx`
-- **Sidebar shell:** `apps/debate-ai.com/components/layout/AppSidebarShell.tsx`
+- **Sidebar shell:** `packages/debate-webview/src/components/layout/AppSidebarShell.tsx`
+- **Tool sidebar (shadcn `sidebar-07`):** `packages/debate-webview/src/components/layout/app-sidebar/`,
+  on the primitives in `packages/debate-webview/src/lib/ui/primitives/sidebar.tsx`
 - **Route predicates:** `packages/debate-videos/src/components/category-gallery/sidebar-routes.ts`
   (re-exported for app code as `apps/debate-ai.com/lib/sidebar-routes.ts`)
 - **Dock primitive:** `apps/debate-ai.com/lib/ui/layout/dock.tsx`
@@ -180,12 +182,41 @@ search panel. The choice is not remembered between page loads.
 
 ## Resizing the sidebar
 
-Drag the thin line on the sidebar's right edge to make the column wider or
-narrower (between 220px and 640px). The width you choose is remembered in this
-browser and applies everywhere the sidebar appears — the videos library, the
-tool pages and the research pages all share it. Double-click the line to put
-it back to its default 300px. The line also takes keyboard focus, and the arrow
-keys resize it.
+On `/videos`, drag the thin line on the sidebar's right edge to make the column
+wider or narrower (between 220px and 640px). The width you choose is remembered
+in this browser and the tool and research pages open their sidebar at that same
+width, so the column keeps its shape as you move between them. Double-click the
+line to put it back to its default 300px. The line also takes keyboard focus,
+and the arrow keys resize it.
+
+## Collapsing the sidebar to icons
+
+On the tool and research pages the sidebar collapses to a narrow strip of
+icons. Use the panel button next to **Debate AI** at the top of the
+sidebar, click the sidebar's right edge, or press **Ctrl+B** (**⌘B** on a
+Mac). Do the same again to expand it. The choice is remembered in this browser.
+
+While a text editor has the keyboard (CardMirror, the REASON editor, any text
+field), Ctrl/⌘+B stays **bold** and does not toggle the sidebar.
+
+Collapsed:
+
+- the dock is hidden, since it does not fit, and the five apps it carries —
+  Videos, Shared, Debate, Practice vs AI, Research — show as icons in its place;
+- each tool section shows as its icon, with its name on hover; clicking one
+  expands the sidebar with that section open;
+- your account stays at the bottom as your avatar.
+
+Expanded, each tool section (Research, Prep & Scout, Practice, Coaching,
+Insights) opens and closes on its own. The section containing the page you are
+on opens automatically, and only the row for that page is highlighted. Your
+account menu at the bottom links to Settings, Notifications and Contacts and
+signs you out. Signed out, that row is a **Sign in** button that opens the
+sign-in dialog without leaving the page.
+
+On a phone nothing changes: the sidebar is not drawn below the `md`
+breakpoint, and the dock's **Sidebar** button still opens the drawer described
+above.
 
 ## Staying inside the sidebar
 

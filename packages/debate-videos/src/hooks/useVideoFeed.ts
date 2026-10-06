@@ -65,6 +65,13 @@ export interface VideoFeedFilters {
   sort?: string;
   /** Free-text search over title, channel and description. */
   q?: string;
+  /**
+   * School or team phrases: keeps rounds whose aff/neg team (or, with no teams
+   * recorded, title) contains one as whole words. See `competitorMatches`.
+   */
+  competitors?: string[] | null;
+  /** Keep only rounds in any of these debate styles. */
+  styles?: DebateStyle[] | null;
   /** Explicit id allow-list — how the favourites filter is applied server-side. */
   ids?: string[] | null;
   /**
@@ -158,6 +165,8 @@ export function buildVideoParams(
   if (filters.sort) params.sort = filters.sort;
   const q = filters.q?.trim();
   if (q) params.q = q;
+  if (filters.competitors?.length) params.competitors = filters.competitors.join("|");
+  if (filters.styles?.length) params.styles = filters.styles.join(",");
   // An empty list still has to be sent: "favourites only" with no favourites
   // must return nothing rather than everything.
   if (filters.ids) params.ids = filters.ids.join(",");
@@ -205,6 +214,8 @@ export function toVideoQueryParams(
     style: filters.style === "" || filters.style == null ? null : Number(filters.style),
     year: filters.year || null,
     q: filters.q?.trim() || null,
+    competitors: filters.competitors?.length ? filters.competitors : null,
+    styles: filters.styles?.length ? filters.styles : null,
     // An empty list still filters: "favourites only" with no favourites must
     // return nothing rather than everything, exactly as the API treats it.
     ids: filters.ids ?? null,

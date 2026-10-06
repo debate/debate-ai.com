@@ -1,5 +1,5 @@
 /**
- * @fileoverview Reads a team's current Glicko rating for a rating market, from
+ * @fileoverview Reads a team's current team rating for a rating market, from
  * the `debate-rankings` CSVs bundled with this build.
  *
  * The rankings only change when a deploy ships refreshed CSVs, so a loaded

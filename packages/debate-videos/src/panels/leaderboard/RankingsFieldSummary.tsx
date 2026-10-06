@@ -239,7 +239,7 @@ export function RankingsFieldSummary({ dataset }: { dataset: RankingDataset }) {
       </div>
       {dataset.tournaments.length > 0 && (
         <p className="text-xs text-muted-foreground">
-          Glicko-2 ratings from {dataset.tournaments.length} tournament
+          Bradley-Terry ratings from {dataset.tournaments.length} tournament
           {dataset.tournaments.length === 1 ? "" : "s"}:{" "}
           {dataset.tournaments.map((t, i) => (
             <span key={t}>

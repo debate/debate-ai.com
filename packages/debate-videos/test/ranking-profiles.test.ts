@@ -6,11 +6,11 @@ import {
   profileSlug,
   schoolDivisionRadarData,
   schoolHref,
-  schoolVideoQuery,
+  schoolVideoSearch,
   summarizeSchool,
   teamHref,
   teamRadarData,
-  teamVideoQuery,
+  teamVideoSearch,
   type ProfileEntry,
 } from "../src/panels/leaderboard/profile/rankingProfileHelpers";
 
@@ -74,9 +74,22 @@ describe("ranking profile links", () => {
     expect(summary.divisions.find((d) => d.datasetId === "hspf")).toMatchObject({ teams: 2, bestRank: 1 });
   });
 
-  it("builds video searches without separators", () => {
-    expect(teamVideoQuery({ name: "Falk & Sabnani" })).toBe("Falk Sabnani");
-    expect(schoolVideoQuery("Harvard-Westlake")).toBe("Harvard-Westlake");
+  it("searches a team's rounds by school plus initials, in its own division", () => {
+    const search = teamVideoSearch(findTeamEntries(datasets, "college-prep-falk-sabnani"));
+    expect(search.competitors).toEqual(["college prep fs", "college prep sf"]);
+    expect(search.styles).toEqual([2]);
+    expect(search.label).toBe("College Prep FS");
+  });
+
+  it("searches a school's rounds by its name, in every division it is ranked in", () => {
+    const search = schoolVideoSearch("College Prep", findSchoolEntries(datasets, "college-prep"));
+    expect(search.competitors).toEqual(["college prep"]);
+    expect(search.styles).toEqual([2, 3]);
+    expect(schoolVideoSearch("Harvard-Westlake", []).competitors).toEqual(["harvard westlake", "hw"]);
+  });
+
+  it("finds nothing to search for a missing team", () => {
+    expect(teamVideoSearch([]).competitors).toEqual([]);
   });
 });
 

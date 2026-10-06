@@ -1,7 +1,7 @@
 /**
  * @fileoverview Sortable Schools table: every school with ranked entries,
  * ranked by its best entry's rating, alongside the average rating of all its
- * entries.
+ * entries and a balanced score that blends both with a capped team-count bonus.
  * @module components/debate/DebateVideos/panels/SchoolRankingsTable
  */
 
@@ -84,6 +84,15 @@ const COLUMNS: Column[] = [
     width: 120,
     tooltip: "Mean adjusted rating across every ranked team (or LD debater) from the school.",
     render: (r) => <Rating value={r.avgRating} />,
+  },
+  {
+    key: "balancedScore",
+    label: "Balanced",
+    numeric: true,
+    width: 120,
+    tooltip:
+      "(0.6 × Avg Rating + 0.4 × Best Rating) × (1 + 0.15 × (Teams − 1) / (Teams + 4)). Rewards average quality and a standout entry, plus a depth bonus that grows with team count but stays under 15%.",
+    render: (r) => <Rating value={r.balancedScore} />,
   },
   { key: "teams", label: "Teams", numeric: true, width: 90, render: (r) => r.teams },
   { key: "events", label: "Events", width: 160, render: (r) => r.events.join(", ") },

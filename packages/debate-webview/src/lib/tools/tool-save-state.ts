@@ -60,3 +60,26 @@ export function describeToolSaveState(
   if (statuses.includes("unknown")) return DISPLAYS.checking
   return DISPLAYS.saved
 }
+
+export interface SaveNowButtonDisplay {
+  label: string
+  title: string
+}
+
+/**
+ * What the "Save now" button beside the badge should say, or `null` when it
+ * shouldn't show. It appears while a save is pending (`saving`) or after a
+ * failed attempt (so it can offer a retry), and never for a signed-out or
+ * fully synced tool, where there is nothing to flush.
+ */
+export function describeSaveNowButton(
+  state: ToolSaveState,
+  saving: boolean,
+  saveError: string | null,
+): SaveNowButtonDisplay | null {
+  if (state !== "saving" && saveError === null) return null
+  return {
+    label: saving ? "Saving…" : saveError ? "Retry save" : "Save now",
+    title: saveError ? `Couldn't save: ${saveError}. Try again.` : "Save this tool's changes to your account now.",
+  }
+}
