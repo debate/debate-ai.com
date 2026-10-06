@@ -21,6 +21,7 @@ import {
   BarChart3,
   BookOpen,
   Clapperboard,
+  Heart,
   History,
   Presentation,
   Star,
