@@ -134,7 +134,7 @@ describe("createTournamentsClient with live Tabroom", () => {
   it("lists hosted tournaments first, then live ones, each tagged with its source", async () => {
     const { client, calls } = fakeApis({
       "/api/tabroom/host/demo": { tournId: 90001 },
-      "/api/tabroom/pages/invite/upcoming": [row(90001, "Bay Area Invitational")],
+      "/api/tabroom/pages/invite/upcoming": [row(90001, "Debate AI Demo Invitational")],
       "/api/tabroom-beta/pages/invite/upcoming": [row(38436, "Yale Invitational"), row(90001, "Clash")],
     });
     const rows = await client.upcoming();
@@ -168,7 +168,7 @@ describe("createTournamentsClient with live Tabroom", () => {
 
   it("prefers the hosted copy of a tournament", async () => {
     const { client, calls } = fakeApis({
-      "/api/tabroom/rest/tourns/90001/invite": { id: 90001, name: "Bay Area Invitational" },
+      "/api/tabroom/rest/tourns/90001/invite": { id: 90001, name: "Debate AI Demo Invitational" },
       "/api/tabroom/rest/tourns/90001/rounds": [],
     });
     await client.rounds(90001);

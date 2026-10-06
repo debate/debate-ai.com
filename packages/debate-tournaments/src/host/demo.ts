@@ -21,7 +21,7 @@ import { DEMO_ADMIN, DEMO_TOURN_ID } from "./demo-account";
  * `DEMO_SEED_VERSION` in `scripts/generate-demo-seed.mjs`; a database holding
  * another version is reloaded.
  */
-export const DEMO_SEED_VERSION = "2";
+export const DEMO_SEED_VERSION = "3";
 
 /** The seed's statements, comments dropped. Statements end with `;` at the end of a line. */
 export function splitSqlStatements(sql: string): string[] {
