@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { PracticeRoundSimulatorPanel } from "@debate/practice-rounds"
+import { PracticeRoundSimulatorPanel, TeamMatchupSimulatorPanel } from "@debate/practice-rounds"
 import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
 
 export default function PracticeRoundPage() {
@@ -8,6 +8,7 @@ export default function PracticeRoundPage() {
       <ToolPageHeader href="/practice" backHref="/debate" backLabel="round workspace" guide="practice-tools" />
       <Suspense>
         <PracticeRoundSimulatorPanel />
+        <TeamMatchupSimulatorPanel />
       </Suspense>
     </ToolPage>
   )

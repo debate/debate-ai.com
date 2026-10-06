@@ -22,3 +22,14 @@ export {
   schoolMatchScore,
   type TeamLabel,
 } from "./team-lookup";
+export {
+  GLICKO2_SCALE,
+  majorityProbability,
+  simulateMatchup,
+  simulateRounds,
+  upstreamRating,
+  winProbability,
+  type MatchupSimulation,
+  type SimulatedRounds,
+  type SimulationEntry,
+} from "./match-simulation";

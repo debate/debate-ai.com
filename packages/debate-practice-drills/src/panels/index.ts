@@ -13,6 +13,7 @@ export { FlowAnnotationsPanel } from "./FlowAnnotationsPanel";
 export { FlowSummariesPanel } from "./FlowSummariesPanel";
 export { JudgeDecisionPanel } from "./JudgeDecisionPanel";
 export { SpeechJudgeSection } from "./SpeechJudgeSection";
+export { TeamMatchupSimulatorPanel } from "./TeamMatchupSimulatorPanel";
 export { PracticeRoundSimulatorPanel } from "./PracticeRoundSimulatorPanel";
 export { VulnerabilityChartsPanel } from "./VulnerabilityChartsPanel";
 export { WordCountRoundsPanel } from "./WordCountRoundsPanel";
