@@ -152,6 +152,7 @@ export { WatchSpeechTimeline } from "./components/watch/WatchSpeechTimeline";
 export { PersistentVideoPlayer } from "./components/video-player/PersistentVideoPlayer";
 export { SlowSpreadButton, SLOW_SPREAD_RATE } from "./components/video-player/SlowSpreadButton";
 export { ToolNavTree } from "./components/category-gallery/ToolNavTree";
+export { sidebarSectionForPath } from "./components/category-gallery/sidebar-active-section";
 export { QuickLinksGrid } from "./components/category-gallery/QuickLinksGrid";
 export {
   SIDEBAR_TOOL_SECTIONS,
