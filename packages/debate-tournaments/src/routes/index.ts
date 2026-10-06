@@ -119,6 +119,19 @@ export function matchTournamentRoute(segments: readonly string[] = []): Tourname
 }
 
 /**
+ * The segments of the nearest page above `segments` that exists: trailing
+ * segments are dropped until what is left matches a route, so a mistyped
+ * `/2026/yale-invitational/nope` falls back to the tournament itself and
+ * `/abc` to the upcoming list (`[]`). Segments that already match are returned
+ * unchanged.
+ */
+export function nearestTournamentSegments(segments: readonly string[] = []): string[] {
+  const parts = segments.filter(Boolean);
+  while (parts.length > 0 && matchTournamentRoute(parts).page === "notFound") parts.pop();
+  return parts;
+}
+
+/**
  * Builds hrefs under `basePath` (default `/tournaments`). `slugOf` names a
  * tournament by id; one it knows is linked as `/<year>/<slug>`, any other by
  * its id, which the UI resolves and then rewrites to the named form.

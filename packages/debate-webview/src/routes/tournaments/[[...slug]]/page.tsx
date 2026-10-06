@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { TournamentsApp } from "@debate/tournaments/ui"
 
 /**
@@ -14,6 +14,7 @@ import { TournamentsApp } from "@debate/tournaments/ui"
  */
 export default function Tournaments() {
   const { slug } = useParams<{ slug?: string[] }>()
+  const router = useRouter()
   return (
     <TournamentsApp
       segments={slug ?? []}
@@ -21,6 +22,9 @@ export default function Tournaments() {
       apiBase="/api/tabroom"
       liveApiBase="/api/tabroom-beta"
       Link={Link}
+      // A page that does not exist goes to the nearest one that does — the
+      // tournament for a bad section, `/tournaments` for anything else.
+      replace={router.replace}
     />
   )
 }
