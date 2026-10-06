@@ -95,6 +95,19 @@ account. The app also applies the seed itself through `POST /host/demo`
 with `;` at the end of a line. `test/demo-seed.test.ts` checks every UI
 endpoint against this seed and `test/demo-admin.test.ts` the admin view.
 
+
+### Simulated live rounds
+
+The demo's pairings also show rounds in progress, though nothing is stored for
+them: `src/ui/live/demo-live.ts` derives each room's state — the speech under
+way, its progress, a status feed, transcripts and summaries — from the room's
+section id, its round id and the clock, at `DEMO_SPEED` (6×) and on a loop of
+check-in → speeches → decision. Every viewer therefore sees the same moment.
+`src/ui/live/LiveRoom.tsx` renders it: the **Live** column and stream panel in
+`RoundPage`, a per-round badge in `RoundsPage`, and **Live now** in
+`ResultsPage`. Read-aloud uses the browser's `speechSynthesis`. Only
+`DEMO_TOURN_ID` gets it (`isLiveDemo`); real tournaments are unchanged.
+
 ## Taking upstream changes
 
 Upstream stays the source of truth; this package only *adds* modifications on
