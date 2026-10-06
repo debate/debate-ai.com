@@ -71,11 +71,16 @@ import { TournamentsApp } from "debate-tournaments"
 
 ## Demo data
 
-`seed/demo.sql` fills D1 with dummy tournaments: one running now with
-published LD/PF pairings and results, two upcoming invites, and a hidden one.
-Dates are relative to load time, and every id is ≥ 90000 with `INSERT OR
-REPLACE`, so re-running it refreshes the data without colliding with real
-rows. From `apps/debate-ai.com`:
+`seed/demo.sql` fills D1 with one demo tournament, the Bay Area Invitational
+(tourn 90001): four debate divisions (VCX, VLD, VPF, VPRL) and four speech
+events (OO, IX, DI, INF), 40 entries each, with power-matched prelims, elim
+brackets, speaker awards and posted result sets. It is generated: edit
+`scripts/generate-demo-seed.mjs` and run `bun run seed:demo`, and bump
+`DEMO_SEED_VERSION` in both the script and `src/host/demo.ts` so deployed
+sites reload it. The file first deletes the rows of demo tournaments
+90001-90004 (which also clears the older three-tournament demo), then writes
+its own rows with `INSERT OR REPLACE` at ids from 9,000,001 up, which no hosted
+row is given. Dates are relative to load time. From `apps/debate-ai.com`:
 
 ```bash
 bun run db:seed:tournaments      # migrate + seed the local D1

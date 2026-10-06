@@ -54,7 +54,7 @@ function Schematic({ round }: { round: RoundSchematic }) {
                       {section.letter && <span className="ml-1 text-xs text-muted-foreground">#{section.letter}</span>}
                     </TableCell>
                     <TableCell>
-                      {section.bracket ? <Badge variant="outline" className="mb-1">Bye</Badge> : null}
+                      {section.bye ? <Badge variant="outline" className="mb-1">Bye</Badge> : null}
                       <span className="flex flex-wrap gap-x-3 gap-y-1">
                         {entries.map((entry) => (
                           <span key={entry.id}>

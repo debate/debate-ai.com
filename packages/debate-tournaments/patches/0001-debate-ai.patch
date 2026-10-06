@@ -47,3 +47,16 @@ index 391ee401..d3423eef 100644
  		);
  	}
  
+diff --git a/indexcards/api/repos/resultSetRepo.js b/indexcards/api/repos/resultSetRepo.js
+index 78d20e0b..ded52bcd 100644
+--- a/indexcards/api/repos/resultSetRepo.js
++++ b/indexcards/api/repos/resultSetRepo.js
+@@ -258,7 +258,7 @@ export const getResultSet = async (scope = {}, query = {}, opts = {}) => {
+ 			delete resultSet.cache;
+ 		}
+ 
+-		if (!resultSet.results[0]?.place > 0) {
++		if (!resultSet.results?.[0]?.place > 0) {
+ 			resultSet.noPlacement = true;
+ 		}
+ 		resultSets.push(resultSet);
