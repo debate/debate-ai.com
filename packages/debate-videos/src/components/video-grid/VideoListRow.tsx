@@ -177,8 +177,6 @@ export function VideoListRow({
   affRanking,
   negRanking,
   showFormat = false,
-  affRanking,
-  negRanking,
 }: {
   video: VideoType
   /** Tree depth, for the row's indent. */
