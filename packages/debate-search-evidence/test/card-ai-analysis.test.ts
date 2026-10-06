@@ -3,6 +3,7 @@ import {
   FIND_FLAWS_AND_EXTENSIONS_PROMPT,
   MAX_ANALYSIS_CONTENT_CHARS,
   buildCardAnalysisContent,
+  fetchSavedCardAiAnalysis,
   htmlToPlainText,
   requestCardAiAnalysis,
   sha256Hex,
@@ -55,5 +56,29 @@ describe("requestCardAiAnalysis", () => {
   it("throws the server's error message", async () => {
     const fetchImpl = vi.fn(async () => new Response(JSON.stringify({ error: "Sign in" }), { status: 401 }));
     await expect(requestCardAiAnalysis({ content: "c", prompt: "p" }, "/x", fetchImpl)).rejects.toThrow("Sign in");
+  });
+});
+
+describe("fetchSavedCardAiAnalysis", () => {
+  const reply = (body: unknown, status = 200) =>
+    vi.fn(async () => new Response(JSON.stringify(body), { status })) as unknown as typeof fetch;
+
+  it("asks the route for a saved analysis only", async () => {
+    const fetchImpl = reply({ result: "saved", cached: true });
+    await expect(fetchSavedCardAiAnalysis({ content: "c", prompt: "p" }, "/x", fetchImpl)).resolves.toBe("saved");
+    const [, init] = (fetchImpl as unknown as ReturnType<typeof vi.fn>).mock.calls[0];
+    expect(JSON.parse(init.body)).toEqual({ content: "c", prompt: "p", savedOnly: true });
+  });
+
+  it("returns null when the card has no saved analysis", async () => {
+    await expect(
+      fetchSavedCardAiAnalysis({ content: "c", prompt: "p" }, "/x", reply({ result: null, cached: false })),
+    ).resolves.toBeNull();
+  });
+
+  it("returns null instead of throwing on an error response", async () => {
+    await expect(
+      fetchSavedCardAiAnalysis({ content: "c", prompt: "p" }, "/x", reply({ error: "boom" }, 500)),
+    ).resolves.toBeNull();
   });
 });
