@@ -21,6 +21,7 @@
   "scripts": {
     "sync-upstream": "node scripts/sync-upstream.mjs",
     "sync-upstream:latest": "node scripts/sync-upstream.mjs --latest",
+    "seed:demo": "node scripts/generate-demo-seed.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",

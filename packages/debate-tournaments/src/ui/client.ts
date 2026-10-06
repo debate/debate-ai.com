@@ -106,7 +106,9 @@ export interface RoundSchematic {
       id: number;
       letter: string | null;
       flight: string | null;
+      /** The highest win count among the section's entries (its power-matching bracket). */
       bracket?: number;
+      bye?: number;
       Room?: { id: number; name: string } | null;
       Entries?: Record<string, { id: number; code: string; side?: number; speakerorder?: number; record?: string }>;
       Judges?: Record<string, { first: string | null; last: string | null; chair?: number }>;
@@ -143,8 +145,19 @@ export interface ResultSet {
     place?: string | null;
     Entry?: { id: number; code: string | null; name: string | null } | null;
     School?: { id: number; code: string | null; name: string | null } | null;
+    /** Set on speaker-award rows, whose entity is a competitor, not an entry. */
+    Student?: { id: number; first: string | null; last: string | null } | null;
     values?: Record<string, unknown>;
   }>;
+}
+
+/** One elimination round of a `bracket` set's `rounds`, keyed by round name. */
+export interface BracketRound {
+  label: string;
+  type?: string;
+  order: number;
+  /** Keyed by bracket position; each section's entries are keyed by side. */
+  Sections: Record<string, { letter?: string; bye?: number; room?: string; Entries: Record<string, { id: number; code: string }> }>;
 }
 
 export class TournamentsApiError extends Error {

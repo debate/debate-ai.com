@@ -59,6 +59,42 @@ describe("ResultSetView", () => {
     expect(html).toContain("57.6");
   });
 
+  it("draws a bracket set's rounds, bolding the entries that advanced", () => {
+    const html = renderToString(
+      <ResultSetView
+        set={{
+          id: 2,
+          tag: "bracket",
+          label: "Elimination Bracket",
+          rounds: {
+            9: { label: "Semifinals", order: 1, Sections: { 1: { Entries: { 1: { id: 1, code: "AA" }, 2: { id: 2, code: "BB" } } }, 2: { Entries: { 1: { id: 3, code: "CC" }, 2: { id: 4, code: "DD" } } } } },
+            10: { label: "Finals", order: 2, Sections: { 1: { room: "Auditorium", Entries: { 1: { id: 1, code: "AA" }, 2: { id: 4, code: "DD" } } } } },
+          },
+        }}
+      />,
+    );
+    expect(html.indexOf("Semifinals")).toBeLessThan(html.indexOf("Finals<"));
+    expect(html).toMatch(/font-semibold">AA</);
+    expect(html).toMatch(/text-muted-foreground">BB</);
+    expect(html).toContain("Auditorium");
+    expect(html).not.toContain("Tabroom Classic");
+  });
+
+  it("names the speaker on speaker-award rows", () => {
+    const html = renderToString(
+      <ResultSetView
+        set={{
+          id: 3,
+          tag: "entry",
+          label: "Speaker Awards",
+          results: [{ place: "1st Speaker", Student: { id: 9, first: "Maya", last: "Chen" }, Entry: { id: 7, code: "BV CR", name: "Chen & Ramirez" } }],
+        }}
+      />,
+    );
+    expect(html).toContain("Speaker</th>");
+    expect(html).toContain("Maya Chen");
+  });
+
   it("notes a missing result set", () => {
     expect(renderToString(<ResultSetView set={undefined} />)).toContain("not found");
   });

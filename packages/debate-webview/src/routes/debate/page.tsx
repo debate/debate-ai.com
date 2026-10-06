@@ -5,7 +5,10 @@ import { ToolSyncBadge } from "../../components/tools/ToolSyncBadge"
 export default function Home() {
   return (
     <Suspense>
-      <DebateFlowPage startScreenActions={<ToolSyncBadge href="/debate" />} />
+      <DebateFlowPage
+        startScreenActions={<ToolSyncBadge href="/debate" />}
+        roundActions={<ToolSyncBadge href="/debate" />}
+      />
     </Suspense>
   )
 }

@@ -258,7 +258,7 @@ export const getResultSet = async (scope = {}, query = {}, opts = {}) => {
 			delete resultSet.cache;
 		}
 
-		if (!resultSet.results[0]?.place > 0) {
+		if (!resultSet.results?.[0]?.place > 0) {
 			resultSet.noPlacement = true;
 		}
 		resultSets.push(resultSet);
