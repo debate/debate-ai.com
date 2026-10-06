@@ -1,6 +1,19 @@
 
 ### Completed
 
+- **📊 Team rankings move from Glicko-2 to ballot-level Bradley-Terry.**
+  Bumped the `debate-rankings` submodule to upstream `c7f8405`, whose
+  `src/main.py` now fits one Bradley-Terry model (with an aff side term and a
+  N(0, 1) ridge prior) to every ballot of the season and writes the new CSVs,
+  including an "Aff Rating Advantage" field statistic. Upstream dropped its
+  `js/` loader, so the dataset list, CSV parser and types now live in
+  `debate-rankings-adapter` (reading `config/` and `output/` by path), and the
+  field statistic is parsed and scaled onto the site's rating scale.
+  `ensure-submodules.mjs` now checks for a per-submodule marker file, since
+  `debate-rankings` no longer has a `package.json`. Glicko wording is gone
+  from the leaderboard tooltips, prediction-market copy and docs; the Glicko-2
+  docs page is replaced by `features/bradley-terry-debate-rankings.mdx`.
+
 - **🔗 Sync speech-document links to the account.** The speech header's
   link picker (which Reason Editor document a speech takes its word counts
   from) lived only in one browser's `localStorage`. It now stores id-keyed

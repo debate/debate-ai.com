@@ -242,7 +242,7 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
       },
       {
         href: "/practice/predictions", label: "Prediction Markets", icon: Coins,
-        description: "Bet play-money points on who wins a debate, who wins a tournament, and whose Glicko rating goes up.",
+        description: "Bet play-money points on who wins a debate, who wins a tournament, and whose team rating goes up.",
         highlights: ["Everyone starts with 1,000 points — play money, no cash value", "Prices come from an automated market maker and move with every bet", "Markets tied to hosted rounds, events or the rankings settle themselves"],
       },
       {

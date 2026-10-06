@@ -20,6 +20,9 @@ import type { VideoQueryParams } from "@debate/data-sync/src/videos/video-query"
  * - `style` — numeric debate style, 1–4
  * - `year` — season year (`2026`) or `legacy`
  * - `q` — free-text search over title, channel and description
+ * - `competitors` — `|`-separated school or team phrases; keeps rounds whose
+ *   aff/neg team (or, with no teams recorded, title) contains one as whole words
+ * - `styles` — comma-separated numeric debate styles; keeps rounds in any of them
  * - `ids` — comma-separated id allow-list (used by the favourites filter)
  * - `excludeIds` — comma-separated id deny-list (used to keep hidden videos
  *   out of both the grid and the facet counts)
@@ -39,6 +42,8 @@ export async function GET(request: NextRequest) {
   const offsetParam = Number.parseInt(searchParams.get("offset") ?? "", 10);
   const idsParam = searchParams.get("ids");
   const excludeIdsParam = searchParams.get("excludeIds");
+  const competitorsParam = searchParams.get("competitors");
+  const stylesParam = searchParams.get("styles");
 
   const params: VideoQueryParams = {
     source,
@@ -48,6 +53,10 @@ export async function GET(request: NextRequest) {
     style: Number.isFinite(styleParam) ? styleParam : null,
     year: searchParams.get("year"),
     q: searchParams.get("q"),
+    competitors: competitorsParam ? competitorsParam.split("|") : null,
+    styles: stylesParam
+      ? stylesParam.split(",").map((s) => Number.parseInt(s, 10)).filter(Number.isFinite)
+      : null,
     ids: idsParam ? idsParam.split(",").map((id) => id.trim()).filter(Boolean).slice(0, 500) : null,
     excludeIds: excludeIdsParam
       ? excludeIdsParam.split(",").map((id) => id.trim()).filter(Boolean).slice(0, 500)

@@ -2,7 +2,7 @@
 
 /**
  * @fileoverview Prediction markets — bet play-money points on who wins a
- * debate, who wins a tournament, and whose Glicko rating goes up.
+ * debate, who wins a tournament, and whose team rating goes up.
  *
  * One read (`GET /api/predictions`) fills the page: the viewer's wallet (the
  * 1000 starting points are granted on the first visit), the open markets,

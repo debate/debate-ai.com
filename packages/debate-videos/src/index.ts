@@ -80,6 +80,7 @@ export { LecturesPage } from "./panels/LecturesPage";
 export { DebateVideosPage } from "./panels/DebateVideosPanel";
 export { LeaderboardPanel } from "./panels/leaderboard/RankingsLeaderboardPanel";
 export { TeamProfilePage, SchoolProfilePage } from "./panels/leaderboard/profile/RankingProfiles";
+export { MatchupSimulator, type MatchupSimulatorProps } from "./panels/leaderboard/profile/MatchupSimulator";
 export type { DebateHistory, YearData } from "./panels/leaderboard/leaderboardTypes";
 export {
   formatNamedTopic,
@@ -152,6 +153,7 @@ export { WatchSpeechTimeline } from "./components/watch/WatchSpeechTimeline";
 export { PersistentVideoPlayer } from "./components/video-player/PersistentVideoPlayer";
 export { SlowSpreadButton, SLOW_SPREAD_RATE } from "./components/video-player/SlowSpreadButton";
 export { ToolNavTree } from "./components/category-gallery/ToolNavTree";
+export { sidebarSectionForPath } from "./components/category-gallery/sidebar-active-section";
 export { QuickLinksGrid } from "./components/category-gallery/QuickLinksGrid";
 export {
   SIDEBAR_TOOL_SECTIONS,

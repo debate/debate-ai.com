@@ -184,16 +184,11 @@ describe("Latest News", () => {
 });
 
 describe("Tournaments and Tabroom", () => {
-  it("are two sidebar rows: the app's own Tournaments page, then Tabroom framed", () => {
-    const prepScout = SIDEBAR_TOOL_SECTIONS.find((section) => section.id === "prep-scout");
-    const hrefs = prepScout?.tools.map((tool) => tool.href) ?? [];
+  it("keep the app's own Tournaments row but drop the framed Tabroom row", () => {
+    const hrefs = SIDEBAR_TOOL_SECTIONS.flatMap((section) => section.tools.map((tool) => tool.href));
 
     expect(hrefs).toContain("/tournaments");
-    expect(hrefs.indexOf("/practice/tabroom")).toBe(hrefs.indexOf("/tournaments") + 1);
-  });
-
-  it("recognise /practice/tabroom as a sidebar route, so it keeps its dock", () => {
-    expect(matchesToolSidebarHref("/practice/tabroom")).toBe(true);
+    expect(hrefs).not.toContain("/practice/tabroom");
   });
 });
 

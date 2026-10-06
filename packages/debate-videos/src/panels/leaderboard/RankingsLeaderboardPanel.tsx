@@ -1,6 +1,6 @@
 /**
  * @fileoverview Ranking and leaderboard panel for debate teams.
- * Shows the Glicko-2 rankings computed by the `debate-rankings` package for
+ * Shows the Bradley-Terry rankings computed by the `debate-rankings` package for
  * VPF, VLD, VCX and NDT (college policy), with historical champion data,
  * plus a Schools tab that rolls every division's entries up by school.
  *
@@ -264,7 +264,8 @@ return (
                   <>
                     <p className="mb-3 text-sm text-muted-foreground">
                       {schoolRows.length} schools, ranked by their best entry's rating, with the
-                      average rating of every ranked team from the school.
+                      average rating of every ranked team from the school and a balanced score
+                      that blends both with a capped bonus for team count.
                     </p>
                     <div className="relative mb-3 max-w-sm">
                       <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />

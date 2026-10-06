@@ -172,8 +172,12 @@ The **Round videos** queue further down the page is separate — those are
 rounds still waiting to be published, not videos already on the site.
 Publishing never overwrites a video that is already in the library: the older
 version is kept and the queued copy is skipped. **Deduplicate**, next to
-**Publish all**, clears every queued round that is already in the library
-(within the selected format) without publishing anything.
+**Publish all**, clears every queued round (within the selected format) that
+is already in the library or repeats another queued round, without
+publishing anything. Two videos count as the same when their YouTube IDs match
+— even if one was stored as a full YouTube link — or when their titles match
+once case and punctuation are ignored (very short titles such as "Finals"
+never match on title alone). The older copy is always the one kept.
 
 ### Video durations
 

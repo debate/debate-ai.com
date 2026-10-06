@@ -17,6 +17,7 @@ const rows: SchoolRanking[] = [
     bestEntry: "Doe & Roe",
     bestEvent: "PF",
     avgRating: 1101.6,
+    balancedScore: 1235.9,
     teams: 4,
     events: ["PF", "LD"],
   },
@@ -28,9 +29,9 @@ describe("SchoolRankingsTable", () => {
   );
 
   it("renders one header per cell", () => {
-    expect(html.match(/<th[\s>]/g)).toHaveLength(7);
-    expect(html.match(/<td[\s>]/g)).toHaveLength(7);
-    for (const label of ["School", "Best Rating", "Top Entry", "Avg Rating", "Teams", "Events"]) {
+    expect(html.match(/<th[\s>]/g)).toHaveLength(8);
+    expect(html.match(/<td[\s>]/g)).toHaveLength(8);
+    for (const label of ["School", "Best Rating", "Top Entry", "Avg Rating", "Balanced", "Teams", "Events"]) {
       expect(html).toContain(label);
     }
   });
@@ -39,6 +40,7 @@ describe("SchoolRankingsTable", () => {
     expect(html).toContain('href="/schools/strake-jesuit"');
     expect(html).toContain('aria-label="1312"');
     expect(html).toContain('aria-label="1102"');
+    expect(html).toContain('aria-label="1236"');
     expect(html).toContain("Doe &amp; Roe");
     expect(html).toContain("PF, LD");
     expect(html).toContain('aria-sort="ascending"');
