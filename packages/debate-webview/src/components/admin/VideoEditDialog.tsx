@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { parseYouTubeVideoId } from "@debate/videos";
+import { LECTURE_CATEGORIES } from "@debate/data-sync/src/youtube/parsers/lecture-classifier";
+import { canonicalCategoryLabel } from "@debate/data-sync/src/videos/video-rows";
 import { Button } from "../../lib/ui/primitives/button";
 import { Input } from "../../lib/ui/primitives/input";
 import { Label } from "../../lib/ui/primitives/label";
@@ -53,6 +55,20 @@ const EDIT_STYLE_OPTIONS = [
   { value: "4", label: "College" },
 ];
 
+/** Select value for "no lecture category" — Radix Select can't hold `""`. */
+const NO_CATEGORY = "none";
+
+/**
+ * The lecture-category picker's options: every category the classifier
+ * produces, plus the video's current label when it is a legacy one outside
+ * that set, so opening the dialog never silently drops a stored category.
+ */
+function categoryOptions(current: string): string[] {
+  const options: string[] = [...LECTURE_CATEGORIES];
+  if (current && !options.includes(current)) options.push(current);
+  return options;
+}
+
 const WINNER_OPTIONS = [
   { value: "unknown", label: "Not recorded" },
   { value: "true", label: "Aff won" },
@@ -60,7 +76,7 @@ const WINNER_OPTIONS = [
 ];
 
 /** The edit dialog's fields, all held as strings so inputs stay controlled. */
-interface EditForm {
+export interface EditForm {
   title: string;
   channel: string;
   publishedAt: string;
@@ -78,14 +94,14 @@ interface EditForm {
   isTopPick: boolean;
 }
 
-function toForm(video: LibraryVideo): EditForm {
+export function toForm(video: LibraryVideo): EditForm {
   return {
     title: video.title ?? "",
     channel: video.channel ?? "",
     publishedAt: video.publishedAt ?? "",
     viewCount: String(video.viewCount ?? 0),
     style: video.style === null || video.style === undefined ? "none" : String(video.style),
-    category: video.category ?? "",
+    category: video.category ? canonicalCategoryLabel(video.category) : "",
     tournament: video.tournament ?? "",
     roundLevel: video.roundLevel ?? "",
     affTeam: video.affTeam ?? "",
@@ -129,6 +145,37 @@ function toPatch(form: EditForm) {
     description: form.description,
     isTopPick: form.isTopPick,
   };
+}
+
+/** Fields a viewer's suggestion may change — mirrors `SUGGESTABLE_FIELDS` on the server. */
+const SUGGESTABLE_FIELDS = [
+  "title",
+  "channel",
+  "publishedAt",
+  "description",
+  "style",
+  "category",
+  "tournament",
+  "roundLevel",
+  "affTeam",
+  "negTeam",
+  "affWin",
+  "judgeDecision",
+  "speechDocsUrl",
+] as const;
+
+/**
+ * The fields a suggestion actually changes: the edited form's patch, minus
+ * every field that still matches the stored row.
+ */
+export function changedFields(original: LibraryVideo, form: EditForm): Record<string, unknown> {
+  const before = toPatch(toForm(original)) as Record<string, unknown>;
+  const after = toPatch(form) as Record<string, unknown>;
+  const changes: Record<string, unknown> = {};
+  for (const field of SUGGESTABLE_FIELDS) {
+    if (before[field] !== after[field]) changes[field] = after[field];
+  }
+  return changes;
 }
 
 /** A blank row for the "Add video" form. */
@@ -215,25 +262,43 @@ interface VideoEditDialogProps {
   onClose: () => void;
   /** Called with the saved row once the PATCH (or POST) succeeds. */
   onSaved: (video: LibraryVideo) => void;
+  /**
+   * `suggest` is the viewer's version: nothing is saved — the changed fields,
+   * or a deletion request, go to the moderators' review queue instead.
+   * Staff-only controls (auto-fill, view count, top pick) are hidden.
+   */
+  mode?: "staff" | "suggest";
+  /** Suggest mode: called with a confirmation once a request is filed. */
+  onSubmitted?: (message: string) => void;
 }
 
 /**
  * The metadata editor for one published video, shared by the admin library
  * table and the "Edit video" button admins and moderators see on a watch page.
  */
-export function VideoEditDialog({ video, isNew = false, onClose, onSaved }: VideoEditDialogProps) {
+export function VideoEditDialog({
+  video,
+  isNew = false,
+  onClose,
+  onSaved,
+  mode = "staff",
+  onSubmitted,
+}: VideoEditDialogProps) {
+  const isSuggest = mode === "suggest" && !isNew;
   const [form, setForm] = useState<EditForm | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [linkInput, setLinkInput] = useState("");
   const [isFilling, setIsFilling] = useState(false);
   const [fillNotice, setFillNotice] = useState<string | null>(null);
+  const [reason, setReason] = useState("");
 
   useEffect(() => {
     setForm(video ? toForm(video) : null);
     setSaveError(null);
     setLinkInput("");
     setFillNotice(null);
+    setReason("");
   }, [video]);
 
   /** The id being edited, or the one parsed from the pasted link when adding. */
@@ -269,7 +334,44 @@ export function VideoEditDialog({ video, isNew = false, onClose, onSaved }: Vide
     }
   };
 
+  /** Suggest mode: files an edit or deletion request for a moderator to review. */
+  const submitRequest = async (kind: "edit" | "delete") => {
+    if (!video || !form) return;
+    const proposedChanges = kind === "edit" ? changedFields(video, form) : undefined;
+    if (proposedChanges && Object.keys(proposedChanges).length === 0) {
+      setSaveError("Change at least one field first.");
+      return;
+    }
+    setIsSaving(true);
+    setSaveError(null);
+    try {
+      const res = await fetch("/api/video-issues", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          kind,
+          videoId: video.videoId,
+          title: video.title,
+          reason: reason.trim(),
+          proposedChanges,
+        }),
+      });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body?.error || "Could not submit your request");
+      onSubmitted?.(
+        kind === "delete"
+          ? "Deletion request sent to the moderators."
+          : "Thanks — your changes were sent to the moderators for approval.",
+      );
+    } catch (err) {
+      setSaveError((err as Error).message);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const handleSave = async () => {
+    if (isSuggest) return submitRequest("edit");
     if (!video || !form) return;
     if (isNew && !videoId) {
       setSaveError("Paste a YouTube link or video id first.");
@@ -317,11 +419,13 @@ export function VideoEditDialog({ video, isNew = false, onClose, onSaved }: Vide
     <Dialog open={!!video} onOpenChange={(open) => (open ? undefined : onClose())}>
       <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle>{isNew ? "Add video" : "Edit video"}</DialogTitle>
+          <DialogTitle>{isNew ? "Add video" : isSuggest ? "Suggest an edit" : "Edit video"}</DialogTitle>
           <DialogDescription>
             {isNew
               ? "Paste a YouTube link, then auto-fill or type the details. The video is public as soon as you add it."
-              : `${video?.videoId} — changes apply to the public library immediately.`}
+              : isSuggest
+                ? "Fix anything that's wrong — a moderator reviews your changes before they go live."
+                : `${video?.videoId} — changes apply to the public library immediately.`}
           </DialogDescription>
         </DialogHeader>
 
@@ -344,27 +448,29 @@ export function VideoEditDialog({ video, isNew = false, onClose, onSaved }: Vide
                 )}
               </div>
             )}
-            <div className="flex flex-wrap items-center gap-2">
-              <Button
-                type="button"
-                variant="secondary"
-                size="sm"
-                onClick={handleAutofill}
-                disabled={!videoId || isFilling || isSaving}
-              >
-                {isFilling ? "Auto-filling…" : "✨ Auto-fill with AI"}
-              </Button>
-              <span className="text-muted-foreground text-xs">
-                Reads YouTube&apos;s title and description and fills in the style, category,
-                tournament, teams and result. Empty answers leave your fields alone.
-              </span>
-            </div>
+            {!isSuggest && (
+              <div className="flex flex-wrap items-center gap-2">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  onClick={handleAutofill}
+                  disabled={!videoId || isFilling || isSaving}
+                >
+                  {isFilling ? "Auto-filling…" : "✨ Auto-fill with AI"}
+                </Button>
+                <span className="text-muted-foreground text-xs">
+                  Reads YouTube&apos;s title and description and fills in the style, category,
+                  tournament, teams and result. Empty answers leave your fields alone.
+                </span>
+              </div>
+            )}
             {fillNotice && <p className="text-muted-foreground text-sm">{fillNotice}</p>}
             {field("title", "Title")}
             <div className="grid gap-4 sm:grid-cols-2">
               {field("channel", "Channel")}
               {field("publishedAt", "Published (YYYY-MM-DD)")}
-              {field("viewCount", "View count", "number")}
+              {!isSuggest && field("viewCount", "View count", "number")}
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="video-style">Style</Label>
                 <Select
@@ -385,7 +491,31 @@ export function VideoEditDialog({ video, isNew = false, onClose, onSaved }: Vide
                   </SelectContent>
                 </Select>
               </div>
-              {field("category", "Lecture category")}
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="video-category">Lecture category</Label>
+                <Select
+                  value={form.category || NO_CATEGORY}
+                  onValueChange={(value) =>
+                    setForm((current) =>
+                      current
+                        ? { ...current, category: value === NO_CATEGORY ? "" : value }
+                        : current,
+                    )
+                  }
+                >
+                  <SelectTrigger id="video-category">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={NO_CATEGORY}>None</SelectItem>
+                    {categoryOptions(form.category).map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               {field("tournament", "Tournament")}
               {field("roundLevel", "Round level")}
               {field("affTeam", "Aff team")}
@@ -429,29 +559,60 @@ export function VideoEditDialog({ video, isNew = false, onClose, onSaved }: Vide
               />
             </div>
 
-            <label className="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={form.isTopPick}
-                onChange={(event) =>
-                  setForm((current) =>
-                    current ? { ...current, isTopPick: event.target.checked } : current,
-                  )
-                }
-              />
-              Feature as a top pick
-            </label>
+            {isSuggest ? (
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="video-reason">Why? (optional)</Label>
+                <Input
+                  id="video-reason"
+                  value={reason}
+                  onChange={(event) => setReason(event.target.value)}
+                  placeholder="e.g. this is a college round, not high school"
+                />
+              </div>
+            ) : (
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={form.isTopPick}
+                  onChange={(event) =>
+                    setForm((current) =>
+                      current ? { ...current, isTopPick: event.target.checked } : current,
+                    )
+                  }
+                />
+                Feature as a top pick
+              </label>
+            )}
 
             {saveError && <p className="text-destructive text-sm">{saveError}</p>}
           </div>
         )}
 
         <DialogFooter>
+          {isSuggest && (
+            <Button
+              variant="ghost"
+              className="text-destructive mr-auto"
+              onClick={() => submitRequest("delete")}
+              disabled={isSaving}
+              title="Ask the moderators to take this video off the site"
+            >
+              Request deletion
+            </Button>
+          )}
           <Button variant="outline" onClick={onClose} disabled={isSaving}>
             Cancel
           </Button>
           <Button onClick={handleSave} disabled={isSaving || isFilling || (isNew && !videoId)}>
-            {isSaving ? "Saving…" : isNew ? "Add video" : "Save changes"}
+            {isSaving
+              ? isSuggest
+                ? "Sending…"
+                : "Saving…"
+              : isNew
+                ? "Add video"
+                : isSuggest
+                  ? "Submit for approval"
+                  : "Save changes"}
           </Button>
         </DialogFooter>
       </DialogContent>

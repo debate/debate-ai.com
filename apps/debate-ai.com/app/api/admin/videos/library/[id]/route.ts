@@ -11,14 +11,13 @@ import {
 } from "@/lib/videos/admin-library";
 
 /**
- * Reads one published video's row, for the watch page's "Edit video" dialog.
+ * Reads one published video's row, for the watch page's edit dialog.
+ *
+ * Open to everyone: the row is the public library's own record, and viewers
+ * open the same dialog to suggest a change (filed to `/api/video-issues` for
+ * a moderator to approve). Writing stays staff-only below.
  */
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { canEditContent } = await getStaffAccess();
-  if (!canEditContent) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
-
   const { id } = await params;
 
   try {

@@ -1,10 +1,15 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { and, desc, eq, type SQL } from "drizzle-orm";
 import { isLectureCategory } from "@debate/data-sync/src/youtube/parsers/lecture-classifier";
-import { getStaffAccess } from "@/lib/auth/admin";
+import { getAdminEmails, getStaffAccess } from "@/lib/auth/admin";
 import { getSession } from "@/lib/auth/session";
 import { getDBFromContext } from "@/lib/database/context";
 import { videoIssues } from "@/lib/database/schema";
+import {
+  MAX_CHANGE_REQUEST_LENGTH,
+  notifyVideoModerators,
+  sanitizeProposedChanges,
+} from "@/lib/videos/video-change-requests";
 
 /**
  * Viewer reports about a video — a dead embed, a bad transcript, and above
@@ -20,13 +25,27 @@ import { videoIssues } from "@/lib/database/schema";
  * than prose — the debate style, the lecture category, or the competition
  * level — so an admin can read what it should be instead of guessing from a
  * sentence.
+ *
+ * `edit` and `delete` are change requests from the watch page's edit button
+ * (see `lib/videos/video-change-requests.ts`): an edit carries the proposed
+ * fields as JSON in `issue`, and both ping every moderator. They need a
+ * signed-in account, so a request always names who asked for it.
  */
 
 /** YouTube ids are exactly 11 characters from this alphabet. */
 const VIDEO_ID_RE = /^[A-Za-z0-9_-]{11}$/;
 
 /** What a report can be about. */
-const ISSUE_KINDS = ["miscategorized", "unavailable", "quality", "metadata", "transcript", "other"] as const;
+const ISSUE_KINDS = [
+  "miscategorized",
+  "unavailable",
+  "quality",
+  "metadata",
+  "transcript",
+  "edit",
+  "delete",
+  "other",
+] as const;
 
 /** Competition levels a miscategorised round can be moved between. */
 export const ROUND_LEVELS = ["college", "high-school", "middle-school"] as const;
@@ -64,6 +83,12 @@ export async function POST(request: NextRequest) {
   }
 
   const kind = isIssueKind(body?.kind) ? body.kind : "other";
+  const title = String(body?.title ?? "").trim().slice(0, 300);
+
+  if (kind === "edit" || kind === "delete") {
+    return fileChangeRequest(kind, videoId, title, body);
+  }
+
   const issue = String(body?.issue ?? "").trim().slice(0, MAX_ISSUE_LENGTH);
 
   // A report has to say *something*: either prose, or a correction a
@@ -92,7 +117,7 @@ export async function POST(request: NextRequest) {
     const row = {
       id: crypto.randomUUID(),
       videoId,
-      title: String(body?.title ?? "").trim().slice(0, 300),
+      title,
       kind,
       issue,
       suggestedStyle,
@@ -108,6 +133,64 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Failed to save video issue:", error);
     return NextResponse.json({ error: "Failed to save issue" }, { status: 500 });
+  }
+}
+
+/**
+ * Files an `edit` or `delete` change request and pings the moderators. The
+ * video is untouched until one of them applies it from the admin panel.
+ */
+async function fileChangeRequest(
+  kind: "edit" | "delete",
+  videoId: string,
+  title: string,
+  body: Record<string, unknown>,
+) {
+  const session = await getSession();
+  const email = session?.user?.email?.toLowerCase() ?? null;
+  if (!email) {
+    return NextResponse.json({ error: "Sign in to suggest a change" }, { status: 401 });
+  }
+
+  const reason = String(body?.reason ?? "").trim().slice(0, MAX_ISSUE_LENGTH);
+  let issue = reason;
+  if (kind === "edit") {
+    const changes = sanitizeProposedChanges(body?.proposedChanges);
+    if (Object.keys(changes).length === 0) {
+      return NextResponse.json({ error: "Change at least one field first" }, { status: 400 });
+    }
+    issue = JSON.stringify({ changes, reason });
+    if (issue.length > MAX_CHANGE_REQUEST_LENGTH) {
+      return NextResponse.json({ error: "That change is too long to submit" }, { status: 400 });
+    }
+  }
+
+  try {
+    const db = await getDBFromContext();
+    const id = crypto.randomUUID();
+    await db.insert(videoIssues).values({
+      id,
+      videoId,
+      title,
+      kind,
+      issue,
+      suggestedStyle: null,
+      suggestedCategory: null,
+      suggestedRoundLevel: null,
+      reportedBy: email,
+      status: "open",
+      createdAt: new Date(),
+    });
+
+    await notifyVideoModerators(db, getAdminEmails(), {
+      title: kind === "delete" ? "Video deletion requested" : "Video edit suggested",
+      body: `${email} ${kind === "delete" ? "asked to delete" : "suggested changes to"} “${title || videoId}”. Review it under Reports on the admin panel.`,
+    });
+
+    return NextResponse.json({ success: true, id });
+  } catch (error) {
+    console.error("Failed to save video change request:", error);
+    return NextResponse.json({ error: "Failed to submit your request" }, { status: 500 });
   }
 }
 
