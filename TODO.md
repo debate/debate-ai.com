@@ -103,8 +103,8 @@
 - [x] `/debate` start screen shows the badge/Save now (`DebateStartPanel.headerActions`, `DebateFlowPage.startScreenActions`; branch `claude/gifted-babbage-1lcyd6`)
 - [x] Shared-cards sub-pages (`/research/cards/library`, `/argument-library`, `/revisions`) show the badge/Save now: their collections are filed under the `/research/cards` hub, so `ToolPageHeader` takes `syncCollections` (resolved by `resolveToolSyncKeys`, tested); branch `claude/gifted-babbage-vqktca`
 - [x] `/videos` library shows the badge/Save now beside its search bar (`LecturesPage.headerActionsSlot` -> `LecturesVideoGridView`, test `debate-videos/test/lectures-grid-header-actions.test.tsx`; branch `claude/gifted-babbage-68vx57`)
-- [x] `/research/cards` search workspace shows the badge/Save now in a slim row (`CardsSearchSyncBar`; test `test/components/research/CardsSearchSyncBar.test.tsx`; branch `agent/tool-header-cards-search-sync`)
-- [ ] Follow-up: open-flow tabs still lack the badge/Save now (`/doc` is a qwksearch.com iframe with no local data, so nothing to show)
+- [x] `/research/cards` search workspace shows the badge/Save now in a strip above `SearchInterface` (`routes/cards/page.tsx`, test `test/routes/cards/search-page-sync-badge.test.tsx`; branch `claude/gifted-babbage-ejpopv`)
+- [ ] Follow-up: other custom headers (open-flow tabs, `/doc`) still lack the badge/Save now
 - [ ] Follow-up: `ToolPageHeader.test.tsx` (incl. the new `syncCollections` case) cannot load in a checkout without the `debate-rankings` submodule; verify in CI
 - [ ] Follow-up: component test for `ToolSyncBadge` click path (no `@testing-library/react` in webview tests)
 
