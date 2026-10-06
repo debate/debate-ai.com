@@ -8,6 +8,7 @@
 
 import {
   entryInitials,
+  findTeamRanking,
   schoolSearchNames,
   teamSearchNames,
   type RankingDataset,
@@ -173,6 +174,44 @@ const DATASET_VIDEO_STYLE: Record<string, DebateStyle> = {
   hsld_sepoct: 3,
   cpd: 4,
 };
+
+/**
+ * Full-season dataset each video style is ranked in — the reverse of
+ * {@link DATASET_VIDEO_STYLE}, leaving out the Sep–Oct LD slice so a team is
+ * matched against the whole season.
+ */
+const VIDEO_STYLE_DATASET: Record<number, RankingDatasetId> = {
+  1: "hscx",
+  2: "hspf",
+  3: "hsld",
+  4: "cpd",
+};
+
+/** The full-season dataset a round of `style` is ranked in, or `null` for a lecture. */
+export function videoStyleDatasetId(style: unknown): RankingDatasetId | null {
+  return typeof style === "number" ? (VIDEO_STYLE_DATASET[style] ?? null) : null;
+}
+
+/**
+ * The rankings row behind a round video's aff or neg team label, looked up in
+ * the dataset for the round's style. `null` when the style has no dataset,
+ * that dataset is not among `datasets`, or no entry matches the label (see
+ * `findTeamRanking` for how loosely the school and initials match).
+ *
+ * @param datasets - Loaded datasets, e.g. from `useAllRankingDatasets`.
+ * @param style - The video's style (`video[6]`).
+ * @param label - The video's aff or neg team, e.g. `"Harker LL"`.
+ */
+export function findVideoTeamRanking(
+  datasets: readonly RankingDataset[],
+  style: unknown,
+  label: string | null | undefined,
+): RankingEntry | null {
+  const id = videoStyleDatasetId(style);
+  if (!id || !label?.trim()) return null;
+  const dataset = datasets.find((d) => d.id === id);
+  return dataset ? findTeamRanking(dataset.entries, label) : null;
+}
 
 /** What a profile's Videos section searches for. */
 export interface ProfileVideoSearch {

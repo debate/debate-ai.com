@@ -18,6 +18,7 @@ import { CalendarRange, ChevronRight, Medal, Tag, Trophy, Tv } from "lucide-reac
 import { cn } from "../../ui/lib/utils"
 import { formatVideoDate, TOC_TOURNAMENT_IMAGE } from "../video-card/videoCardUtils"
 import { VideoListRow } from "./VideoListRow"
+import type { VideoTeamRankingLookup } from "../../hooks/useVideoTeamRankings"
 import { treeIndentStyle } from "./tree-indent"
 import type { VideoGroupKind, VideoTreeGroup, VideoTreeNode } from "./video-tree"
 import type { VideoType } from "../../types/videos"
@@ -57,6 +58,8 @@ export interface VideoTreeRowContext {
   onUnhideVideo: (videoId: string) => void
   /** Searches the library for a clicked team name. */
   onSearch?: (text: string) => void
+  /** The rankings row behind a team label, for the team-page link and rating. */
+  teamRanking?: VideoTeamRankingLookup
 }
 
 function GroupRows({
@@ -193,6 +196,8 @@ export function VideoTreeRows({
       onHideVideo={context.onHideVideo}
       onUnhideVideo={context.onUnhideVideo}
       onSearch={context.onSearch}
+      affRanking={context.teamRanking?.(video, video[9]) ?? null}
+      negRanking={context.teamRanking?.(video, video[10]) ?? null}
     />
   )
 }

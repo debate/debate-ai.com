@@ -60,6 +60,7 @@ import { WatchSidePanel, type WatchSideTab } from "../../components/watch/WatchS
 import type { LinkedVideo } from "../../components/watch/WatchAnalysisPanel"
 import { VideoListRows } from "../../components/video-grid/VideoListRows"
 import { WatchQueuePanel } from "../../components/watch/WatchQueuePanel"
+import { WatchSearchBox } from "../../components/watch/WatchSearchBox"
 import { WatchStackPlaylist } from "../../components/watch/WatchStackPlaylist"
 import { WatchSpeechTimeline } from "../../components/watch/WatchSpeechTimeline"
 import type { SpeechFocusRequest } from "../../components/watch/WatchRoundPanel"
@@ -850,6 +851,11 @@ export function VideoWatchPage({
             </div>
           )}
         </div>
+
+        {/* Above the related videos rather than among them: it searches the
+            whole library, not this list, so it is offered on every watch
+            page — a video with nothing related included. */}
+        <WatchSearchBox onSearch={handleBadgeClick} className="max-w-2xl" />
 
         {related.length > 0 && (
           <section className="space-y-3">

@@ -13,12 +13,16 @@
  *
  * The 1AC/2NR argument labels, when recorded, sit in small type under the
  * team that ran them in the Aff and Neg cells — the same pairing the cards
- * (`VideoCardThumbnail`) draw.
+ * (`VideoCardThumbnail`) draw. A team the current season's rankings know
+ * links to its team page and carries its rating; any other team name
+ * searches the library for that team's videos.
  */
 
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
+import type { RankingEntry } from "@debate/rankings-adapter"
 import { Star, ExternalLink, EyeOff, Eye, ListVideo, Play } from "lucide-react"
 import { cn } from "../../ui/lib/utils"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
@@ -34,6 +38,7 @@ import { StackNav, stackMemberLabel } from "../video-card/StackNav"
 import { cleanTournamentName, videoCategoryLabel } from "./video-tree"
 import { TOC_TOURNAMENT_IMAGE } from "../video-card/videoCardUtils"
 import { treeIndentStyle } from "./tree-indent"
+import { teamHref } from "../../panels/leaderboard/profile/rankingProfileHelpers"
 import type { VideoType } from "../../types/videos"
 
 /** Thumbnail strip at the head of a row, 16:9 like the cards'. */
@@ -86,23 +91,37 @@ function RowThumbnail({
 
 /**
  * An Aff or Neg cell: the team, and under it the argument it ran if known.
- * With `onSearch`, the team name is a button that searches the library for
- * that team instead of playing the row.
+ *
+ * A team found in the current season's rankings (`ranking`) links to its
+ * team page and shows its rating beside the name. Otherwise, with
+ * `onSearch`, the name is a button that searches the library for that team's
+ * videos instead of playing the row.
  */
 function TeamCell({
   team,
   argument,
+  ranking,
   onSearch,
 }: {
   team?: string | null
   argument?: string | null
+  ranking?: RankingEntry | null
   onSearch?: (text: string) => void
 }) {
   return (
     <td className="px-3 py-3 align-top text-sm">
-      <div className="truncate">
+      <div className="flex min-w-0 items-baseline gap-1.5">
         {!team ? (
           <span className="text-muted-foreground">—</span>
+        ) : ranking ? (
+          <Link
+            href={teamHref(ranking)}
+            onClick={(e) => e.stopPropagation()}
+            title={`${ranking.school} ${ranking.name} — team page`}
+            className="min-w-0 truncate text-left hover:text-primary hover:underline"
+          >
+            {team}
+          </Link>
         ) : onSearch ? (
           <button
             type="button"
@@ -116,7 +135,15 @@ function TeamCell({
             {team}
           </button>
         ) : (
-          team
+          <span className="truncate">{team}</span>
+        )}
+        {team && ranking && (
+          <span
+            className="shrink-0 rounded bg-muted px-1 py-px text-[11px] font-medium tabular-nums text-muted-foreground"
+            title={`Rating ${ranking.adjustedRating.toFixed(1)} · ranked #${ranking.rank}`}
+          >
+            {Math.round(ranking.adjustedRating)}
+          </span>
         )}
       </div>
       {argument && (
@@ -144,6 +171,8 @@ export function VideoListRow({
   onHideVideo,
   onUnhideVideo,
   onSearch,
+  affRanking,
+  negRanking,
 }: {
   video: VideoType
   /** Tree depth, for the row's indent. */
@@ -166,6 +195,10 @@ export function VideoListRow({
   onUnhideVideo: (videoId: string) => void
   /** Searches the library for a team when its name is clicked. */
   onSearch?: (text: string) => void
+  /** The aff team's current-season rankings row, when it has one. */
+  affRanking?: RankingEntry | null
+  /** The neg team's current-season rankings row, when it has one. */
+  negRanking?: RankingEntry | null
 }) {
   const [
     videoId,
@@ -421,8 +454,8 @@ export function VideoListRow({
 
         {isRoundMode && (
           <>
-            <TeamCell team={affTeam} argument={arg1AC} onSearch={onSearch} />
-            <TeamCell team={negTeam} argument={arg2NR} onSearch={onSearch} />
+            <TeamCell team={affTeam} argument={arg1AC} ranking={affRanking} onSearch={onSearch} />
+            <TeamCell team={negTeam} argument={arg2NR} ranking={negRanking} onSearch={onSearch} />
           </>
         )}
 
