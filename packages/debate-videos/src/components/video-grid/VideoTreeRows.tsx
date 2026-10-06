@@ -18,6 +18,7 @@ import { CalendarRange, ChevronRight, Medal, Tag, Trophy, Tv } from "lucide-reac
 import { cn } from "../../ui/lib/utils"
 import { formatVideoDate, TOC_TOURNAMENT_IMAGE } from "../video-card/videoCardUtils"
 import { VideoListRow } from "./VideoListRow"
+import { FormatBadge, videoFormat } from "./FormatBadge"
 import { treeIndentStyle } from "./tree-indent"
 import type { VideoGroupKind, VideoTreeGroup, VideoTreeNode } from "./video-tree"
 import type { VideoType } from "../../types/videos"
@@ -57,6 +58,24 @@ export interface VideoTreeRowContext {
   onUnhideVideo: (videoId: string) => void
   /** Searches the library for a clicked team name. */
   onSearch?: (text: string) => void
+  /** Badges each tournament name with its debate format, for listings that
+   *  mix formats (Top Picks). */
+  showFormat?: boolean
+}
+
+/** The distinct formats of every video below a group, in label order. */
+function groupFormats(group: VideoTreeGroup): number[] {
+  const formats = new Set<number>()
+  const visit = (node: VideoTreeNode) => {
+    if (node.type === "group") node.children.forEach(visit)
+    else
+      for (const video of node.slot.videos) {
+        const format = videoFormat(video)
+        if (format !== undefined) formats.add(format)
+      }
+  }
+  visit(group)
+  return [...formats].sort((a, b) => a - b)
 }
 
 function GroupRows({
@@ -116,6 +135,9 @@ function GroupRows({
                 {group.label}
               </span>
             )}
+            {context.showFormat &&
+              group.kind === "tournament" &&
+              groupFormats(group).map((format) => <FormatBadge key={format} style={format} />)}
             <span className="shrink-0 rounded-full bg-background/70 px-1.5 py-0.5 text-[11px] tabular-nums text-muted-foreground">
               {group.videoCount}
             </span>
@@ -193,6 +215,7 @@ export function VideoTreeRows({
       onHideVideo={context.onHideVideo}
       onUnhideVideo={context.onUnhideVideo}
       onSearch={context.onSearch}
+      showFormat={context.showFormat}
     />
   )
 }
