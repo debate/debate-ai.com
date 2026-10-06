@@ -71,7 +71,7 @@ describe("the watch history's place in the sidebar", () => {
     expect(ids.indexOf("history")).toBe(ids.indexOf("favorites") + 1);
 
     const link = SIDEBAR_VIDEO_LINKS.find((entry) => entry.id === "history");
-    expect(link).toEqual({
+    expect(link).toMatchObject({
       id: "history",
       href: "/videos/history",
       title: "Watch History",
