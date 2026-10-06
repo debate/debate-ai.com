@@ -91,6 +91,11 @@ interface VideoListRowsProps {
    * played), for the watch-history listing.
    */
   showWatched?: boolean
+  /**
+   * Badges each tournament name — its group row and every round under it —
+   * with the debate format, for a listing that mixes formats (Top Picks).
+   */
+  showFormat?: boolean
 }
 
 type ColumnKey = "tree" | "aff" | "neg" | "date" | "views" | "watched"
@@ -215,6 +220,7 @@ export function VideoListRows({
   defaultSort,
   onSearch,
   showWatched = false,
+  showFormat = false,
 }: VideoListRowsProps) {
   const watchHistory = useWatchHistory()
   // Without an explicit `layout`, round (debate) videos carry tournament/aff/
@@ -324,6 +330,7 @@ export function VideoListRows({
     onHideVideo,
     onUnhideVideo,
     onSearch,
+    showFormat,
   }
 
   return (

@@ -10,13 +10,15 @@ localStorage.
 
 - **Route:** `/settings` (the panel itself renders in an isolated iframe at
   `/settings/editor-panel`)
-- **Research agent settings:** `/settings/research` and `/settings/research/<section>`
-  — one full page with a tab per section (models, search, MCP servers, skills and
-  memory, voice…), linked from the top of `/settings`. The section list is
-  `research-agent-ui`'s own (`research-agent-ui/settings`). Its sidebar also lists
-  the card editor's tabs under a **Card editor** heading
-  (`/settings/research/editor-general` and so on), so either Settings page reaches
-  every editor setting.
+- **Research agent settings:** tabs of `/settings` itself, listed after the
+  editor's under a **Research agent** heading in the same sidebar — one per
+  section (account, language models, connectors, skills and memory, search
+  sources, search settings, cloud storage, rewrite modes, voice). Each is
+  linkable as `/settings?category=research-<section>`. The section list is
+  `research-agent-ui`'s own (`research-agent-ui/settings`); the panes load
+  lazily, the first time one of those tabs is opened. The old
+  `/settings/research` and `/settings/research/<section>` pages now redirect to
+  the matching tab (`editor-<tab>` sections to the editor's own tab).
 - **Package:** `debate-editor` (the settings store, `SETTING_METADATA`, and
   the embedded panel builder), `apps/debate-ai.com`
   (`lib/editor-preferences.ts`, `/api/settings`, `user_settings` D1 table)
@@ -95,11 +97,12 @@ once that flow has been saved to your account from the Flow History dialog
 (including bulk saves): a plain cloud means the account copy matches what you
 see, a crossed-out amber cloud means you've edited it since. A tab with no icon
 has no baseline yet. The marker survives a reload: each save remembers the
-version the account stamped on it, and opening the **Saved to account** tab in
-Flow History re-adopts that baseline only if your account still holds exactly
-that version, so edits made elsewhere (or by a different account on the same
+version the account stamped on it, and opening the `/debate` start screen or a
+round's flow tabs (or the **Saved to account** tab in Flow History) re-adopts
+that baseline only if your account still holds exactly that version, so edits made elsewhere (or by a different account on the same
 browser) never show as saved. Engineering notes: `debate-round`'s
-`state/flowAccountStatus.ts`.
+`state/flowAccountStatus.ts`; the on-mount restore is `state/restoreAccountBaselines.ts`
+(one fetch per page session, silent when signed out).
 
 The same cloud icon appears on the round cards of the `/debate` start screen
 (Featured and Recent) once the round itself has been saved to your account from
