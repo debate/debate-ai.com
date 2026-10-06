@@ -24,6 +24,7 @@ import { LectureCategoryGridGallery } from "../components/category-gallery/Lectu
 import { QuickLinksGrid } from "../components/category-gallery/QuickLinksGrid"
 import { VideoSidebarTree } from "../components/category-gallery/VideoSidebarTree"
 import { ToolNavTree } from "../components/category-gallery/ToolNavTree"
+import { GoatSparklesHeading } from "../components/category-gallery/GoatSparklesHeading"
 import type { DebateStyle } from "../types/videos"
 import type { VideoViewMode } from "../hooks/useVideoState"
 import { useVideoStacks } from "../hooks/useVideoStacks"
@@ -378,6 +379,9 @@ export function LecturesVideoGridView({
         </div>
 
         <div ref={videosSectionRef} className="scroll-mt-20" />
+
+        {/* The Greatest of All-Time collection opens on its own banner. */}
+        {currentCategory === "topPicks" && <GoatSparklesHeading />}
 
         {/* The search and filter controls, always visible on every
             breakpoint, with the one-click searches drawn from the library

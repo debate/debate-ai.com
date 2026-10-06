@@ -120,6 +120,13 @@ describe("the surfaces that render them", () => {
     }
   });
 
+  it("badges College Debates and the formats with their lettered icons", () => {
+    const html = sidebarHtml();
+    for (const label of ["NDT", "VP", "PF", "LD"]) {
+      expect(html).toContain(`>${label}</text>`);
+    }
+  });
+
   it("gives the mobile quick-link tiles one per entry but the reference pair", () => {
     // The tiles are the sidebar's stand-in on `/videos` below `md`. The
     // reference pair has no tile; it stays reachable from Insights.
