@@ -1,5 +1,5 @@
 /**
- * @fileoverview The control on a video card (and list row) that opens the
+ * @fileoverview The control on a video card that opens the
  * video's watch page.
  *
  * It replaces the transcript dialog that used to open over the grid. The

@@ -52,7 +52,7 @@ import type React from "react"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { AlertCircle, ArrowLeft, Calendar, Eye } from "lucide-react"
+import { AlertCircle, ArrowLeft, Calendar, Eye, ListPlus, Loader2 } from "lucide-react"
 import { CommentSection } from "@debate/comments"
 
 import { WatchToolbar } from "../../components/watch/WatchToolbar"
@@ -83,7 +83,7 @@ import {
 import { cn } from "../../ui/lib/utils"
 import { LecturesSidebarShell } from "../LecturesSidebarShell"
 import { useVideoState } from "../../hooks/useVideoState"
-import { useVideoMeta } from "../../hooks/useVideoFeed"
+import { useVideoFeed, useVideoMeta } from "../../hooks/useVideoFeed"
 import {
   sendYouTubeCommand,
   useVideoPlayerStore,
@@ -107,6 +107,9 @@ import type { VideoType } from "../../types/videos"
 
 /** Shared empty default, so an absent list keeps one identity across renders. */
 const NO_VIDEOS: VideoType[] = []
+
+/** How many search results the list under the player shows at once. */
+const RELATED_SEARCH_PAGE_SIZE = 40
 
 /** How long the permalink control shows its "copied" tick. */
 const COPIED_FEEDBACK_MS = 1800
@@ -202,6 +205,42 @@ export function VideoWatchPage({
 
   const { state: viewState, actions: viewActions } = useVideoState()
   const { counts, lectureCategories } = useVideoMeta()
+
+  // The search box above the related videos swaps the list under the player
+  // for the library's matches — in place, with no navigation, so the video
+  // above keeps playing while the reader lines up what to watch next.
+  const [relatedQuery, setRelatedQuery] = useState("")
+  const searchFeed = useVideoFeed({
+    source: "all",
+    q: relatedQuery,
+    pageSize: RELATED_SEARCH_PAGE_SIZE,
+    enabled: relatedQuery !== "",
+  })
+  const searchResults = useMemo(
+    () => searchFeed.videos.filter((candidate) => candidate[0] !== videoId),
+    [searchFeed.videos, videoId],
+  )
+  const listedVideos = relatedQuery ? searchResults : related
+  const unqueuedListed = useMemo(() => {
+    const queued = new Set(queue.map((item) => item.videoId))
+    return listedVideos.filter((candidate) => !queued.has(candidate[0]))
+  }, [listedVideos, queue])
+
+  // Every listed video not already queued, in the list's order — a search
+  // turned into a playlist in one click.
+  const queueAllListed = useCallback(() => {
+    for (const candidate of unqueuedListed) {
+      const [id, candidateTitle, candidateDate, , , , candidateStyle, candidateTournament, , aff, neg] =
+        candidate
+      addToQueue(id, candidateTitle, {
+        style: typeof candidateStyle === "number" ? candidateStyle : undefined,
+        tournament: candidateTournament,
+        year: new Date(candidateDate).getFullYear(),
+        affTeam: aff,
+        negTeam: neg,
+      })
+    }
+  }, [unqueuedListed, addToQueue])
 
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const videoWrapperRef = useRef<HTMLDivElement | null>(null)
@@ -377,13 +416,15 @@ export function VideoWatchPage({
     // this page has never seen, and the store keeps only an id and a title;
     // that falls back to the flat `/videos/watch/` address, which exists for
     // exactly this and redirects to the canonical one on arrival.
-    const next = related.find((candidate) => candidate[0] === store.activeVideoId)
+    const next = [...related, ...searchResults].find(
+      (candidate) => candidate[0] === store.activeVideoId,
+    )
     router.push(
       next
         ? videoRouteHref(next)
         : videoWatchHref(store.activeVideoTitle ?? ""),
     )
-  }, [activeVideoId, activeVideoTitle, videoId, related, router])
+  }, [activeVideoId, activeVideoTitle, videoId, related, searchResults, router])
 
   // A fresh embed always starts at 1x, so re-apply the chosen rate on first play.
   useEffect(() => {
@@ -852,16 +893,38 @@ export function VideoWatchPage({
           )}
         </div>
 
-        {/* Above the related videos rather than among them: it searches the
-            whole library, not this list, so it is offered on every watch
-            page — a video with nothing related included. */}
-        <WatchSearchBox onSearch={handleBadgeClick} className="max-w-2xl" />
+        {/* Above the related videos, and it drives them: a search replaces
+            the list under the player with the library's matches, without
+            leaving the page, so the video above keeps playing while the
+            reader picks — and queues — what comes next. Clearing it brings
+            the related videos back. */}
+        <WatchSearchBox
+          onSearch={setRelatedQuery}
+          onClear={() => setRelatedQuery("")}
+          activeQuery={relatedQuery}
+          className="max-w-2xl"
+        />
 
-        {related.length > 0 && (
+        {(relatedQuery || related.length > 0) && (
           <section className="space-y-3">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-              Related videos
-            </h2>
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                {relatedQuery ? `Results for “${relatedQuery}”` : "Related videos"}
+              </h2>
+              {relatedQuery && searchFeed.isLoading && (
+                <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" aria-label="Searching" />
+              )}
+              {unqueuedListed.length > 0 && (
+                <button
+                  type="button"
+                  onClick={queueAllListed}
+                  className="ml-auto inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1 text-xs font-medium text-foreground transition-colors hover:bg-accent"
+                >
+                  <ListPlus className="h-3.5 w-3.5" />
+                  Queue all ({unqueuedListed.length})
+                </button>
+              )}
+            </div>
             {/* Rows rather than the card grid: a related list is a handful of
                 videos to pick the next one from, and rows put their dates and
                 view counts in one sortable column each — the grid's cards
@@ -872,18 +935,26 @@ export function VideoWatchPage({
                 lined up, and the floating player that normally shows "Up
                 next" is stood down while it is open. */}
             <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-start">
-              <VideoListRows
-                videos={related}
-                videoContainerRef={viewState.videoContainerRef}
-                favorites={viewState.favorites}
-                onToggleFavorite={viewActions.toggleFavorite}
-                onHideVideo={viewActions.hideVideo}
-                onUnhideVideo={viewActions.unhideVideo}
-                hiddenVideos={viewState.hiddenVideos}
-                grouped={false}
-                defaultSort={{ column: "date", direction: "desc" }}
-                onSearch={handleBadgeClick}
-              />
+              {listedVideos.length > 0 ? (
+                <VideoListRows
+                  videos={listedVideos}
+                  videoContainerRef={viewState.videoContainerRef}
+                  favorites={viewState.favorites}
+                  onToggleFavorite={viewActions.toggleFavorite}
+                  onHideVideo={viewActions.hideVideo}
+                  onUnhideVideo={viewActions.unhideVideo}
+                  hiddenVideos={viewState.hiddenVideos}
+                  grouped={false}
+                  defaultSort={{ column: "date", direction: "desc" }}
+                  onSearch={setRelatedQuery}
+                />
+              ) : (
+                <p className="rounded-md border border-dashed border-border px-4 py-6 text-sm text-muted-foreground">
+                  {searchFeed.isLoading
+                    ? "Searching…"
+                    : searchFeed.errorMessage || `No videos match “${relatedQuery}”.`}
+                </p>
+              )}
               <WatchQueuePanel className="lg:sticky lg:top-6" />
             </div>
           </section>

@@ -44,9 +44,18 @@ vi.mock("next/image", () => ({
     createElement("img", { src: typeof src === "string" ? src : (src as { src: string }).src, alt }),
 }));
 
+const searchHit = [
+  "hit-1", "Semis — Harvard vs Northwestern", "2023-04-01", "NDT", 30, "", 1,
+  "2023 NDT", "Semis", "Harvard", "Northwestern", true, "3-0", null, null, false, null, 2023,
+]
+
 vi.mock("grab-url", () => ({
-  default: async (path: string) =>
-    path === "transcript" ? { videoId: "x", snippets: [] } : {},
+  default: async (path: string, params?: Record<string, string>) =>
+    path === "transcript"
+      ? { videoId: "x", snippets: [] }
+      : path === "videos" && params?.q
+        ? { videos: [searchHit], total: 1, hasMore: false }
+        : {},
 }));
 
 const { VideoWatchPage } = await import("../src/panels/watch/VideoWatchPage")
@@ -189,5 +198,76 @@ describe("the queue beside them", () => {
       remove?.click()
     })
     expect(useVideoPlayerStore.getState().queue).toHaveLength(0)
+  })
+})
+
+describe("a related row", () => {
+  it("opens the video's watch page when clicked", () => {
+    mount()
+    push.mockClear()
+    const row = [...container.querySelectorAll<HTMLTableRowElement>("tbody tr")].find((tr) =>
+      tr.textContent?.includes("Texas"),
+    )
+    act(() => {
+      row?.click()
+    })
+    expect(push).toHaveBeenCalledTimes(1)
+    expect(String(push.mock.calls[0][0])).toMatch(/^\/videos\//)
+  })
+
+  it("offers the popout player in place of the transcript link", () => {
+    mount()
+    expect(container.querySelector('[aria-label="Open the watch page with transcript"]')).toBeNull()
+    expect(container.querySelectorAll('[aria-label="Watch in popout player"]').length).toBe(related.length)
+  })
+})
+
+describe("the search above the related videos", () => {
+  async function search(text: string) {
+    const input = container.querySelector<HTMLInputElement>('[aria-label="Search videos"]')
+    const setValue = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set
+    await act(async () => {
+      setValue?.call(input, text)
+      input?.dispatchEvent(new Event("input", { bubbles: true }))
+    })
+    await act(async () => {
+      container.querySelector("form[role=search]")?.dispatchEvent(
+        new Event("submit", { bubbles: true, cancelable: true }),
+      )
+    })
+    // Let the feed's request settle.
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0))
+    })
+  }
+
+  it("swaps the list for the matches without leaving the page", async () => {
+    mount()
+    push.mockClear()
+    await search("Harvard")
+    expect(push).not.toHaveBeenCalled()
+    expect(container.textContent).toContain("Results for “Harvard”")
+    const titles = rowTitles()
+    expect(titles).toHaveLength(1)
+    expect(titles[0]).toContain("Northwestern")
+  })
+
+  it("queues every match in one click, and clears back to the related videos", async () => {
+    mount()
+    await search("Harvard")
+    const queueAll = [...container.querySelectorAll("button")].find((b) =>
+      b.textContent?.startsWith("Queue all"),
+    )
+    act(() => {
+      queueAll?.click()
+    })
+    expect(useVideoPlayerStore.getState().queue.map((item) => item.videoId)).toEqual(["hit-1"])
+
+    const clear = [...container.querySelectorAll("button")].find((b) => b.textContent?.trim() === "Clear" && b.closest("form"))
+    act(() => {
+      clear?.click()
+    })
+    expect(container.textContent).toContain("Related videos")
+    expect(rowTitles()).toHaveLength(related.length)
   })
 })
