@@ -4,9 +4,11 @@
  * already on the account, `"all"` also uploads flows with no account baseline
  * (never saved, or not yet restored after a reload), `"off"` disables it.
  *
- * Stored in `localStorage` like the font family: it applies immediately and is
- * not synced to `/api/settings`. Reads fall back to the default when storage is
- * unavailable or holds an unknown value.
+ * Stored in `localStorage` so it applies immediately, and mirrored to the
+ * account's `user_settings.flow_auto_save` column through `/api/settings`
+ * (`normalizeFlowAutoSavePatch` validates the PUT body; `null` on the account
+ * means "never chosen", so the device keeps its own value). Reads fall back to
+ * the default when storage is unavailable or holds an unknown value.
  *
  * @module state/flowAutoSaveSettings
  */
@@ -37,4 +39,28 @@ export function setFlowAutoSaveMode(mode: FlowAutoSaveMode): void {
   } catch {
     // Storage blocked: the choice just won't persist past this page.
   }
+}
+
+export type FlowAutoSavePatchResult = {
+  /** Present only when `input` carried a valid `flowAutoSave`. */
+  valid: { flowAutoSave?: FlowAutoSaveMode };
+  /** One message per rejected or malformed field. */
+  errors: string[];
+};
+
+/**
+ * Validates an untrusted `/api/settings` PUT body's `flowAutoSave` field. A
+ * present-but-unknown value is reported rather than coerced, matching
+ * `normalizeThemeSettingsPatch`.
+ */
+export function normalizeFlowAutoSavePatch(input: unknown): FlowAutoSavePatchResult {
+  if (typeof input !== "object" || input === null || Array.isArray(input)) {
+    return { valid: {}, errors: ["Request body must be a JSON object."] };
+  }
+  const record = input as Record<string, unknown>;
+  if (!("flowAutoSave" in record)) return { valid: {}, errors: [] };
+  if (isFlowAutoSaveMode(record.flowAutoSave)) {
+    return { valid: { flowAutoSave: record.flowAutoSave }, errors: [] };
+  }
+  return { valid: {}, errors: [`"flowAutoSave" must be one of: ${FLOW_AUTO_SAVE_MODES.join(", ")}.`] };
 }

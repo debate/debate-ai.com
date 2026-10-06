@@ -11,6 +11,11 @@ import {
   type FlowEditorAccountSettingsPayload,
 } from "@debate/flow-ebb/account-settings"
 import {
+  isFlowAutoSaveMode,
+  normalizeFlowAutoSavePatch,
+  type FlowAutoSaveMode,
+} from "@debate/round"
+import {
   applyFavoriteToolOp,
   applyOutlineFilterPresetOp,
   applyWordLimitPresetOp,
@@ -127,7 +132,7 @@ import type { QualificationPointsTable } from "@debate/data-sync/src/rankings/nd
  *
  * GET  — the current user's saved settings, or the matching `DEFAULT_*`
  *   value for any field with no saved row/value yet.
- * PUT  { debateStyle?, fontSize?, colorTheme?, themeMode?, favoriteTools?,
+ * PUT  { debateStyle?, fontSize?, colorTheme?, themeMode?, flowAutoSave?, favoriteTools?,
  *   addFavoriteTool?, removeFavoriteTool?, removeFavoriteTools?,
  *   recordRecentTool?, wordLimitPresets?, addWordLimitPreset?,
  *   updateWordLimitPreset?, removeWordLimitPreset?, outlineFilterPresets?,
@@ -249,6 +254,7 @@ type SettingsRow = {
   fontSize: number | null
   colorTheme: string | null
   themeMode: string | null
+  flowAutoSave: string | null
   favoriteTools: string | null
   recentTools: string | null
   editorPreferences: string | null
@@ -269,6 +275,8 @@ type SettingsRow = {
 type SettingsPayload = UserSettingsPayload & {
   colorTheme: string
   themeMode: ThemeMode
+  /** `null` until the account picks a mode; devices keep their own value meanwhile. */
+  flowAutoSave: FlowAutoSaveMode | null
   favoriteTools: string[]
   recentTools: string[]
   editorPreferences: EditorPreferencesPayload
@@ -292,6 +300,7 @@ function toPayload(row: SettingsRow | undefined): SettingsPayload {
     fontSize: row?.fontSize ?? DEFAULT_USER_SETTINGS.fontSize,
     colorTheme: row?.colorTheme ?? DEFAULT_THEME_SETTINGS.colorTheme,
     themeMode: (row?.themeMode as ThemeMode | null) ?? DEFAULT_THEME_SETTINGS.themeMode,
+    flowAutoSave: isFlowAutoSaveMode(row?.flowAutoSave) ? row.flowAutoSave : null,
     favoriteTools: row?.favoriteTools ? parseFavoriteTools(row.favoriteTools) : DEFAULT_FAVORITE_TOOLS.favoriteTools,
     recentTools: row?.recentTools ? parseRecentTools(row.recentTools) : [],
     editorPreferences: parseEditorPreferences(row?.editorPreferences),
@@ -353,6 +362,7 @@ export async function PUT(req: NextRequest) {
 
   const userSettingsResult = normalizeUserSettingsPatch(body)
   const themeSettingsResult = normalizeThemeSettingsPatch(body)
+  const flowAutoSaveResult = normalizeFlowAutoSavePatch(body)
   const favoriteToolsResult = normalizeFavoriteToolsPatch(body)
   const favoriteToolOpResult = normalizeFavoriteToolOpPatch(body)
   const recentToolOpResult = normalizeRecentToolOpPatch(body)
@@ -380,10 +390,11 @@ export async function PUT(req: NextRequest) {
   const flowEditorSettingsResult = normalizeFlowEditorSettingsPatch(
     (body as { flowEditorSettings?: unknown } | null)?.flowEditorSettings,
   )
-  const valid = { ...userSettingsResult.valid, ...themeSettingsResult.valid }
+  const valid = { ...userSettingsResult.valid, ...themeSettingsResult.valid, ...flowAutoSaveResult.valid }
   const errors = [
     ...userSettingsResult.errors,
     ...themeSettingsResult.errors,
+    ...flowAutoSaveResult.errors,
     ...favoriteToolsResult.errors,
     ...favoriteToolOpResult.errors,
     ...recentToolOpResult.errors,
@@ -450,7 +461,7 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json(
       {
         error:
-          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, recordRecentTool, wordLimitPresets, addWordLimitPreset, updateWordLimitPreset, removeWordLimitPreset, outlineFilterPresets, addOutlineFilterPreset, removeOutlineFilterPreset, savedArgumentCollections, addSavedArgumentCollection, removeSavedArgumentCollection, renameSavedArgumentCollection, updateSavedArgumentCollectionTags, researchProgressGoal, brainstormSessionTimer, questStreakSync, recordStreakFreezeDayKey, setLapseReminderEnabled, recordMissionResultDay, qualificationPointsTable, qualificationCutoff, myTeamProfile, newsRead, newsLiked, recordNewsRead, addNewsLiked, removeNewsLiked, editorPreferences, or flowEditorSettings.",
+          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, flowAutoSave, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, recordRecentTool, wordLimitPresets, addWordLimitPreset, updateWordLimitPreset, removeWordLimitPreset, outlineFilterPresets, addOutlineFilterPreset, removeOutlineFilterPreset, savedArgumentCollections, addSavedArgumentCollection, removeSavedArgumentCollection, renameSavedArgumentCollection, updateSavedArgumentCollectionTags, researchProgressGoal, brainstormSessionTimer, questStreakSync, recordStreakFreezeDayKey, setLapseReminderEnabled, recordMissionResultDay, qualificationPointsTable, qualificationCutoff, myTeamProfile, newsRead, newsLiked, recordNewsRead, addNewsLiked, removeNewsLiked, editorPreferences, or flowEditorSettings.",
       },
       { status: 400 },
     )

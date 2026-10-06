@@ -86,7 +86,7 @@ import {
 // user-editable form fields, all excluded from this form the same way.
 type FormState = Omit<
   FullUserSettingsPayload,
-  "favoriteTools" | "wordLimitPresets" | "outlineFilterPresets" | "newsRead" | "newsLiked" | "myTeamProfile"
+  "favoriteTools" | "wordLimitPresets" | "outlineFilterPresets" | "newsRead" | "newsLiked" | "myTeamProfile" | "flowAutoSave"
 >
 
 type SaveStatus =
@@ -160,6 +160,8 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
     if (!isFlowAutoSaveMode(value)) return
     setFlowAutoSave(value)
     setFlowAutoSaveMode(value)
+    // Best-effort account mirror; signed-out/failed saves keep the device value.
+    if (remoteAvailable) void saveUserSettings({ flowAutoSave: value }).catch(() => {})
   }
 
   const handleFontFamilyChange = (value: string) => {
@@ -190,6 +192,10 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
           setForm(remoteForm)
           baselineRef.current = remoteForm
           applyUserSettingsToLocalStore(remote)
+          if (isFlowAutoSaveMode(remote.flowAutoSave)) {
+            setFlowAutoSave(remote.flowAutoSave)
+            setFlowAutoSaveMode(remote.flowAutoSave)
+          }
           applyThemeLocally(colorTheme, themeMode, setTheme)
         }
       })

@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   DEFAULT_FLOW_AUTO_SAVE_MODE,
   isFlowAutoSaveMode,
+  normalizeFlowAutoSavePatch,
   readFlowAutoSaveMode,
   setFlowAutoSaveMode,
 } from "../src/state/flowAutoSaveSettings";
@@ -47,5 +48,24 @@ describe("flow auto-save preference", () => {
     });
     expect(readFlowAutoSaveMode()).toBe("saved");
     expect(() => setFlowAutoSaveMode("all")).not.toThrow();
+  });
+});
+
+describe("normalizeFlowAutoSavePatch", () => {
+  it("accepts each mode", () => {
+    for (const mode of ["off", "saved", "all"] as const) {
+      expect(normalizeFlowAutoSavePatch({ flowAutoSave: mode })).toEqual({ valid: { flowAutoSave: mode }, errors: [] });
+    }
+  });
+
+  it("ignores bodies without the field", () => {
+    expect(normalizeFlowAutoSavePatch({ fontSize: 14 })).toEqual({ valid: {}, errors: [] });
+  });
+
+  it("reports unknown values and non-object bodies", () => {
+    expect(normalizeFlowAutoSavePatch({ flowAutoSave: "sometimes" }).errors).toHaveLength(1);
+    expect(normalizeFlowAutoSavePatch({ flowAutoSave: null }).valid).toEqual({});
+    expect(normalizeFlowAutoSavePatch([]).errors).toHaveLength(1);
+    expect(normalizeFlowAutoSavePatch(null).errors).toHaveLength(1);
   });
 });

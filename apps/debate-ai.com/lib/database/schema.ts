@@ -237,6 +237,10 @@ export const userSettings = sqliteTable("user_settings", {
   fontSize: integer("font_size"),
   colorTheme: text("color_theme"),
   themeMode: text("theme_mode"),
+  // `"off" | "saved" | "all"` flow auto-save mode (see
+  // packages/debate-round/src/state/flowAutoSaveSettings.ts). Null means the
+  // account never chose one, so each device keeps its own local value.
+  flowAutoSave: text("flow_auto_save"),
   favoriteTools: text("favorite_tools"),
   recentTools: text("recent_tools"),
   // JSON-serialized map of CardMirror editor-setting keys (e.g.
