@@ -1,0 +1,46 @@
+---
+title: "Round Sidebar Speeches & Captions"
+---
+
+# Round Sidebar Speeches & Captions
+
+The round group in the round workspace's sidebar lists every speech in the
+round with its timer and word totals. It also holds the selected speech's
+view controls and shows captions for recorded speeches.
+
+- **Nav:** `/debate`, left sidebar, under the selected round
+- **Package:** `debate-round` (`layout/LiveRoundGroup.tsx`,
+  `round/my-speeches.ts`), `debate-timer` (`recorder/SpeechCaptionsTicker.tsx`,
+  `recorder/speech-captions.ts`)
+
+## What it does
+
+- **View controls above the speeches.** On desktop, when the sidebar shows a
+  round, the quote view, view mode, split layout and "open speech document"
+  buttons sit above the speech list instead of in the top bar. With no round
+  (or on mobile) they stay in the top bar.
+- **Click a speech to make it active.** Clicking any speech that isn't the
+  active one opens it. In split view, a speech already in a pane becomes the
+  active pane; otherwise the pair shifts to show it.
+- **Your speeches are highlighted.** If your email (your signed-in account,
+  or the "My Team" email saved in the round editor) is one of the round's
+  debaters, the speeches you give get an amber outline and a **You** tag.
+  Speeches are matched by speaker: in Policy and PF the first debater listed
+  gives the 1A/1N (A1/N1) speeches and the second gives the 2A/2N ones. In
+  LD, every speech on your side is yours.
+- **Captions ticker.** The captions button on a speech's recording player
+  shows the words transcribed while the speech was recorded, scrolling past
+  the player like a ticker. The word being played is highlighted and kept
+  centred. Click any word to jump the audio to that point. The on/off choice
+  is remembered across speeches.
+
+## Known gaps
+
+- The browser's speech recognition only reports when a phrase ends, not
+  per-word times, so word times are estimated by spreading each phrase
+  across the time it took. Clicking a word lands close to it, not exactly on
+  it.
+- Recordings transcribed before captions existed have no phrase timings, so
+  their words are spread evenly across the whole recording.
+- Transcription needs a browser with the Web Speech API (Chrome, Edge,
+  Safari). Elsewhere the ticker says there are no captions yet.
