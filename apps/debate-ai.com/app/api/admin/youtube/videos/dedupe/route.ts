@@ -4,9 +4,10 @@ import { getDBFromContext } from "@/lib/database/context";
 import { dedupeRoundQueue } from "@/lib/videos/publish-round-video";
 
 /**
- * Removes every queued round video that is already in the public `videos`
- * table (optionally narrowed to the style the admin page has filtered to),
- * without publishing it — the published copy is kept as is. The admin page's
+ * Removes every queued round video that duplicates one in the public `videos`
+ * table or an older queued round — matched by normalized YouTube id or by
+ * title, see `dedupeRoundQueue` — optionally narrowed to the style the admin
+ * page has filtered to, without publishing it. The older copy is kept as is. The admin page's
  * "Deduplicate" button, next to "Publish all".
  */
 export async function POST(req: NextRequest) {
