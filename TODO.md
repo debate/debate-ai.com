@@ -126,10 +126,10 @@
 - [ ] Follow-up: deploy must apply the new column (schema.ts is the only source now that `drizzle/` is gone)
 
 
-### Known base breakage found while verifying (not fixed here)
+### Known base breakage found while verifying (resolved)
 
-- `packages/debate-tournaments/src/ui/client.ts` is a half-resolved merge (`return     upcoming: ...` at ~line 323, no object opening; `get` now takes a root), so `tsc` stops at syntax errors for every package that imports it and `bun run typecheck` fails.
-- [ ] Follow-up: reconstruct `createTournamentsClient`'s returned object against the new `get(root, path)` signature.
+- `packages/debate-tournaments/src/ui/client.ts` was a half-resolved merge that stopped `tsc` for every importing package. It no longer reproduces: `bunx tsc --noEmit` in `packages/debate-tournaments` passes on this branch (2026-10-06).
+- [x] Follow-up: reconstruct `createTournamentsClient`'s returned object against the new `get(root, path)` signature (already fixed on master).
 
 ### Fix duplicated tool-record catalog entries (merge damage)
 
