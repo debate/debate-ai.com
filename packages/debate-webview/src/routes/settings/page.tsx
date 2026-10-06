@@ -19,6 +19,10 @@ import { CardMirrorSettingsPanel } from "../../components/settings/CardMirrorSet
  * is `research-agent-ui`'s own list of sections). They used to be pages of
  * their own under `/settings/research`, which now redirect here.
  *
+ * "Storage on this device" (`DeviceStorageSettings`) explains where offline
+ * data lives — IndexedDB, plus the browser extension's unlimited storage when
+ * it is installed — rather than `localStorage`.
+ *
  * Ebb Flow's own settings are not here: the flow editor opens them with
  * `Cmd/Ctrl+,` inside a flow, which is where they apply.
  */

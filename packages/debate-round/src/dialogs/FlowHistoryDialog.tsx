@@ -45,6 +45,8 @@ import {
   type BulkSaveOutcome,
 } from "../state/bulkRoundSave"
 import { Badge } from "../ui/primitives/badge"
+import { removeBulkItem } from "@debate/data-sync/src/state/bulk-storage"
+import { FLOW_HISTORY_KEY } from "../state/flowHistoryEntries"
 
 /** Load/error state for the "Saved to account" tab's flow list. */
 type CloudListState =
@@ -653,7 +655,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
    */
   const handleClearHistory = () => {
     if (confirm("Are you sure you want to clear all flow history?")) {
-      localStorage.removeItem("flow-history")
+      removeBulkItem(FLOW_HISTORY_KEY)
       setHistory([])
     }
   }
