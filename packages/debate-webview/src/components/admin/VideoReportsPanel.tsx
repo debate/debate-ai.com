@@ -27,6 +27,11 @@ import { VideoContentDialog, type ContentDialogVideo } from "./VideoContentDialo
  * so "Apply" writes it straight to the video instead of leaving an admin to
  * re-derive it from a sentence.
  *
+ * "Suggested edit" and "Deletion request" are viewer change requests from the
+ * watch page's edit button. An edit carries its proposed fields as JSON in
+ * `issue`; "Apply" writes exactly those fields, and "Delete video" removes the
+ * video the same way the library table's Remove does.
+ *
  * "Needs transcript" reports are filed by `/api/transcript` itself, not by a
  * viewer, when YouTube has no captions for a library video. "Add transcript"
  * opens the same content editor the library table uses, and saving there
@@ -67,8 +72,54 @@ const KIND_LABELS: Record<string, string> = {
   metadata: "Wrong metadata",
   quality: "Quality",
   transcript: "Needs transcript",
+  edit: "Suggested edit",
+  delete: "Deletion request",
   other: "Other",
 };
+
+/** How each proposed field reads in a suggested edit. */
+const FIELD_LABELS: Record<string, string> = {
+  title: "Title",
+  channel: "Channel",
+  publishedAt: "Published",
+  description: "Description",
+  style: "Style",
+  category: "Lecture category",
+  tournament: "Tournament",
+  roundLevel: "Round level",
+  affTeam: "Aff team",
+  negTeam: "Neg team",
+  affWin: "Winner",
+  judgeDecision: "Judge decision",
+  speechDocsUrl: "Speech docs URL",
+};
+
+/** A suggested edit's stored request: the proposed fields and the viewer's reason. */
+interface ChangeRequest {
+  changes: Record<string, unknown>;
+  reason: string;
+}
+
+/** Reads an edit request back out of a report's `issue` text. */
+function parseChangeRequest(issue: VideoIssue): ChangeRequest | null {
+  if (issue.kind !== "edit") return null;
+  try {
+    const parsed = JSON.parse(issue.issue) as Partial<ChangeRequest>;
+    if (!parsed?.changes || typeof parsed.changes !== "object") return null;
+    return { changes: parsed.changes, reason: String(parsed.reason ?? "") };
+  } catch {
+    return null;
+  }
+}
+
+/** How one proposed value reads in the review list. */
+function formatProposedValue(field: string, value: unknown): string {
+  if (value === null || value === undefined || value === "") return "(cleared)";
+  if (field === "style") return STYLE_NAMES[Number(value)] ?? String(value);
+  if (field === "affWin") return value ? "Aff won" : "Neg won";
+  const text = String(value);
+  return text.length > 140 ? `${text.slice(0, 140)}…` : text;
+}
 
 /** How each availability state reads, and how alarming it is. */
 const AVAILABILITY_LABELS: Record<string, { label: string; variant: "destructive" | "secondary" }> = {
@@ -194,6 +245,49 @@ export function VideoReportsPanel() {
     }
   };
 
+  /** Writes a suggested edit's proposed fields to the video, then marks it applied. */
+  const applyChangeRequest = async (issue: VideoIssue, request: ChangeRequest) => {
+    setBusyId(issue.id);
+    setError(null);
+    try {
+      const patch: Record<string, unknown> = { ...request.changes };
+      if (Object.hasOwn(patch, "category")) {
+        patch.categoryKey = categoryKeyFor(String(patch.category ?? ""));
+      }
+      const res = await fetch(`/api/admin/videos/library/${issue.videoId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(patch),
+      });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body?.details || body?.error || "Failed to apply the edit");
+      setNotice(`Applied the suggested edit to “${body.video?.title ?? issue.title}”.`);
+      await resolve(issue, "applied");
+    } catch (err) {
+      setError((err as Error).message);
+      setBusyId(null);
+    }
+  };
+
+  /** Approves a deletion request: removes the video, then marks the request applied. */
+  const applyDeletion = async (issue: VideoIssue) => {
+    if (!window.confirm(`Delete “${issue.title || issue.videoId}” from the library? This can't be undone.`)) {
+      return;
+    }
+    setBusyId(issue.id);
+    setError(null);
+    try {
+      const res = await fetch(`/api/admin/videos/library/${issue.videoId}`, { method: "DELETE" });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body?.details || body?.error || "Failed to delete the video");
+      setNotice(`Deleted “${issue.title || issue.videoId}”.`);
+      await resolve(issue, "applied");
+    } catch (err) {
+      setError((err as Error).message);
+      setBusyId(null);
+    }
+  };
+
   const clearFlag = async (video: UnavailableVideo) => {
     setBusyId(video.videoId);
     setError(null);
@@ -246,85 +340,123 @@ export function VideoReportsPanel() {
             Reported issues{issues.length > 0 ? ` (${issues.length})` : ""}
           </h3>
           <ul className="divide-y rounded-md border">
-            {issues.map((issue) => (
-              <li key={issue.id} className="flex flex-wrap items-start gap-3 p-3">
-                <img
-                  src={`https://img.youtube.com/vi/${issue.videoId}/mqdefault.jpg`}
-                  alt=""
-                  loading="lazy"
-                  className="h-10 w-16 shrink-0 rounded object-cover"
-                />
-                <div className="min-w-0 flex-1">
-                  <p className="flex flex-wrap items-center gap-1.5 text-sm">
-                    <span className="truncate font-medium">{issue.title || issue.videoId}</span>
-                    <Badge variant="outline" className="font-normal">
-                      {KIND_LABELS[issue.kind] ?? issue.kind}
-                    </Badge>
-                    {issue.status !== "open" && (
-                      <Badge variant="secondary" className="font-normal">
-                        {issue.status}
+            {issues.map((issue) => {
+              const request = parseChangeRequest(issue);
+              return (
+                <li key={issue.id} className="flex flex-wrap items-start gap-3 p-3">
+                  <img
+                    src={`https://img.youtube.com/vi/${issue.videoId}/mqdefault.jpg`}
+                    alt=""
+                    loading="lazy"
+                    className="h-10 w-16 shrink-0 rounded object-cover"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="flex flex-wrap items-center gap-1.5 text-sm">
+                      <span className="truncate font-medium">{issue.title || issue.videoId}</span>
+                      <Badge variant="outline" className="font-normal">
+                        {KIND_LABELS[issue.kind] ?? issue.kind}
                       </Badge>
-                    )}
-                  </p>
-
-                  {(issue.suggestedStyle || issue.suggestedCategory || issue.suggestedRoundLevel) && (
-                    <p className="text-muted-foreground text-xs">
-                      Should be:{" "}
-                      {[
-                        issue.suggestedStyle ? STYLE_NAMES[issue.suggestedStyle] : null,
-                        issue.suggestedCategory,
-                        issue.suggestedRoundLevel,
-                      ]
-                        .filter(Boolean)
-                        .join(" · ")}
+                      {issue.status !== "open" && (
+                        <Badge variant="secondary" className="font-normal">
+                          {issue.status}
+                        </Badge>
+                      )}
                     </p>
-                  )}
 
-                  {issue.issue && <p className="text-muted-foreground text-xs">{issue.issue}</p>}
-                  <p className="text-muted-foreground text-xs">
-                    {issue.reportedBy ?? (issue.kind === "transcript" ? "automatic" : "anonymous")} ·{" "}
-                    {formatWhen(issue.createdAt)} ·{" "}
-                    {issue.videoId}
-                  </p>
-                </div>
+                    {(issue.suggestedStyle || issue.suggestedCategory || issue.suggestedRoundLevel) && (
+                      <p className="text-muted-foreground text-xs">
+                        Should be:{" "}
+                        {[
+                          issue.suggestedStyle ? STYLE_NAMES[issue.suggestedStyle] : null,
+                          issue.suggestedCategory,
+                          issue.suggestedRoundLevel,
+                        ]
+                          .filter(Boolean)
+                          .join(" · ")}
+                      </p>
+                    )}
 
-                <div className="flex gap-2">
-                  {issue.status === "open" && (issue.suggestedStyle || issue.suggestedCategory) && (
-                    <Button
-                      size="sm"
-                      disabled={busyId === issue.id}
-                      onClick={() => applyCorrection(issue)}
-                    >
-                      Apply
-                    </Button>
-                  )}
-                  {issue.status === "open" && issue.kind === "transcript" && (
-                    <Button size="sm" disabled={busyId === issue.id} onClick={() => setEditing(issue)}>
-                      Add transcript
-                    </Button>
-                  )}
-                  {issue.status === "open" ? (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      disabled={busyId === issue.id}
-                      onClick={() => resolve(issue, "dismissed")}
-                    >
-                      Dismiss
-                    </Button>
-                  ) : (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      disabled={busyId === issue.id}
-                      onClick={() => resolve(issue, "open")}
-                    >
-                      Reopen
-                    </Button>
-                  )}
-                </div>
-              </li>
-            ))}
+                    {request ? (
+                      <>
+                        <ul className="text-xs">
+                          {Object.entries(request.changes).map(([field, value]) => (
+                            <li key={field}>
+                              <span className="text-muted-foreground">{FIELD_LABELS[field] ?? field}:</span>{" "}
+                              {formatProposedValue(field, value)}
+                            </li>
+                          ))}
+                        </ul>
+                        {request.reason && (
+                          <p className="text-muted-foreground text-xs">“{request.reason}”</p>
+                        )}
+                      </>
+                    ) : (
+                      issue.issue && <p className="text-muted-foreground text-xs">{issue.issue}</p>
+                    )}
+                    <p className="text-muted-foreground text-xs">
+                      {issue.reportedBy ?? (issue.kind === "transcript" ? "automatic" : "anonymous")} ·{" "}
+                      {formatWhen(issue.createdAt)} ·{" "}
+                      {issue.videoId}
+                    </p>
+                  </div>
+
+                  <div className="flex gap-2">
+                    {issue.status === "open" && request && (
+                      <Button
+                        size="sm"
+                        disabled={busyId === issue.id}
+                        onClick={() => applyChangeRequest(issue, request)}
+                      >
+                        Apply
+                      </Button>
+                    )}
+                    {issue.status === "open" && issue.kind === "delete" && (
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        disabled={busyId === issue.id}
+                        onClick={() => applyDeletion(issue)}
+                      >
+                        Delete video
+                      </Button>
+                    )}
+                    {issue.status === "open" && (issue.suggestedStyle || issue.suggestedCategory) && (
+                      <Button
+                        size="sm"
+                        disabled={busyId === issue.id}
+                        onClick={() => applyCorrection(issue)}
+                      >
+                        Apply
+                      </Button>
+                    )}
+                    {issue.status === "open" && issue.kind === "transcript" && (
+                      <Button size="sm" disabled={busyId === issue.id} onClick={() => setEditing(issue)}>
+                        Add transcript
+                      </Button>
+                    )}
+                    {issue.status === "open" ? (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={busyId === issue.id}
+                        onClick={() => resolve(issue, "dismissed")}
+                      >
+                        Dismiss
+                      </Button>
+                    ) : (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={busyId === issue.id}
+                        onClick={() => resolve(issue, "open")}
+                      >
+                        Reopen
+                      </Button>
+                    )}
+                  </div>
+                </li>
+              );
+            })}
             {issues.length === 0 && (
               <li className="text-muted-foreground p-3 text-center text-sm">
                 {isLoading ? "Loading reports…" : "No reports waiting."}

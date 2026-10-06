@@ -90,7 +90,7 @@ map, sankey), flow annotations, and AI response-outcome charts. Composes `debate
 
 ## debate-predictions
 
-Play-money prediction markets on debates, tournament winners and Glicko rating moves, mounted at
+Play-money prediction markets on debates, tournament winners and team rating moves, mounted at
 `/practice/predictions`. The framework-free core: the LMSR pricing engine (`lmsr.ts`), payouts and the rules
 that settle a market from hosted Tabroom ballots, hosted event results or a `debate-rankings` rating
 (`settle.ts`), the markets the site opens itself — each division's top five and the season's major tournaments
@@ -100,16 +100,17 @@ the page is in `debate-webview` and the routes and queries in `apps/debate-ai.co
 
 ## debate-rankings
 
-Glicko-2 rankings for HS PF, LD, Policy and college policy — a git submodule of
+Ballot-level Bradley-Terry rankings for HS PF, LD, Policy and college policy — a git submodule of
 [debate/debate-rankings](https://github.com/debate/debate-rankings), kept as upstream ships it. It has its own
-Python toolchain (`src/main.py` replays tournament results into CSVs under `output/`), so it stays out of the
-bun workspace and is imported by path rather than by package name — see `debate-rankings-adapter`. A TypeScript
-entry (`js/index.ts`) exposes the dataset list and a lazy, typed loader for them. Read by the `/coaching/rankings` panel in
+Python toolchain (`src/main.py` fits every ballot of the season into CSVs under `output/`), so it stays out of the
+bun workspace and its `config/` and `output/` files are read by path rather than by package name — see
+`debate-rankings-adapter`, which holds the dataset list and the lazy, typed CSV loader. Read by the `/coaching/rankings` panel in
 `debate-videos` and by `debate-round`'s Create New Round team picker, through `debate-rankings-adapter`.
 
 ## debate-rankings-adapter
 
-What the web UI imports for rankings: everything `debate-rankings` exports, plus the
+What the web UI imports for rankings: the dataset list and typed CSV loader over `debate-rankings`'
+output, ratings moved onto the site's scale (`rating-offset.ts`), plus the
 site-only team-label lookup (`findTeamRanking("Harker LL")` and friends) that matches a round
 video's team to its rankings row. Site additions live here so the submodule never diverges
 from upstream.

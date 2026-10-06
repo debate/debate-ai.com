@@ -37,6 +37,11 @@ export interface SchoolRanking {
   bestEvent: string;
   /** Mean adjusted rating over all the school's entries. */
   avgRating: number;
+  /**
+   * Quality score with a capped depth bonus — see `balancedSchoolScore` in
+   * leaderboardUtils: (0.6 × avg + 0.4 × best) × (1 + 0.15 × (teams − 1) / (teams + 4)).
+   */
+  balancedScore: number;
   /** Number of ranked entries (teams, or debaters in LD). */
   teams: number;
   /** Short labels of the events the school has entries in, in display order. */

@@ -187,3 +187,66 @@ export function findTeamRanking(
   }
   return best?.entry ?? null;
 }
+
+/** Most phrases one profile's video search sends, keeping the SQL small. */
+const MAX_SEARCH_NAMES = 12;
+
+/**
+ * Phrases a round video's team label or title is likely to use for `school`,
+ * longest first. Videos write schools the short way (`"Gunn LL"`, `"SJ FS"`),
+ * so besides the full name this drops trailing filler (`"Gunn HS
+ * Independent"` → `"gunn"`), cuts at the first filler word (`"Carrollton
+ * School of the Sacred Heart"` → `"carrollton"`) and adds known circuit
+ * shorthand (`"Glenbrook North"` → `"gbn"`). Phrases are lower-case words
+ * joined by single spaces.
+ *
+ * @param school - School as the rankings spell it.
+ */
+export function schoolSearchNames(school: string): string[] {
+  const all = words((school ?? "").replace(/\([^)]*\)/g, " "));
+  // A name made only of filler ("College Prep") is the name itself.
+  if (all.every((w) => FILLER_TOKENS.has(w))) return all.length ? [all.join(" ")] : [];
+  let start = 0;
+  while (start < all.length - 1 && FILLER_TOKENS.has(all[start])) start += 1;
+  const core = all.slice(start);
+  if (core.length === 0) return [];
+
+  const names = new Set<string>([core.join(" ")]);
+  let end = core.length;
+  while (end > 1 && FILLER_TOKENS.has(core[end - 1])) end -= 1;
+  names.add(core.slice(0, end).join(" "));
+  const firstFiller = core.findIndex((w) => FILLER_TOKENS.has(w));
+  if (firstFiller > 0) names.add(core.slice(0, firstFiller).join(" "));
+
+  const normalized = normalizeSchool(school);
+  if (normalized) names.add(normalized);
+  for (const [short, full] of Object.entries(SCHOOL_ALIASES)) {
+    if (full === normalized && !short.includes(" ")) names.add(short);
+  }
+
+  return [...names]
+    .filter((name) => name.length >= 2)
+    .sort((a, b) => b.length - a.length)
+    .slice(0, MAX_SEARCH_NAMES);
+}
+
+/**
+ * Phrases a round video uses for one ranked team: each of
+ * {@link schoolSearchNames} followed by the team's initials, in either order
+ * (`"strake jesuit fs"`, `"sj sf"`), so the search finds that team and not
+ * the rest of its school. A single debater (LD) also matches by full name.
+ *
+ * @param entry - The rankings row: its school and its name.
+ */
+export function teamSearchNames(entry: { school: string; name: string }): string[] {
+  const code = entryInitials(entry.name).toLowerCase();
+  if (!code) return schoolSearchNames(entry.school);
+  const codes = [...new Set([code, [...code].reverse().join("")])];
+  const names = schoolSearchNames(entry.school).flatMap((school) =>
+    codes.map((c) => `${school} ${c}`),
+  );
+  const isSingleDebater = !/&|\/|,| and /i.test(entry.name);
+  const fullName = words(entry.name).join(" ");
+  if (isSingleDebater && fullName.includes(" ")) names.unshift(fullName);
+  return names.slice(0, MAX_SEARCH_NAMES);
+}

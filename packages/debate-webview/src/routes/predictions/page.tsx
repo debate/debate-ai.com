@@ -3,7 +3,7 @@ import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
 
 /**
  * Prediction Markets: bet play-money points on who wins a debate, who wins a
- * tournament, and whose Glicko rating goes up. Every account starts with
+ * tournament, and whose team rating goes up. Every account starts with
  * 1,000 points; prices come from an automated market maker (LMSR) in
  * `debate-predictions`, and every market-settled notification links here.
  */

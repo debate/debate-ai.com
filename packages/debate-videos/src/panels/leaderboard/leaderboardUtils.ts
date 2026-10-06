@@ -6,6 +6,7 @@
  */
 
 import { normalizeSchool } from "@debate/rankings-adapter";
+import { balancedSchoolScore } from "./schoolScore";
 import type { RankingDataset, RankingDatasetId, RankingEntry } from "@debate/rankings-adapter";
 import type { SeasonalTopic } from "../../lib/debate-topics";
 import type {
@@ -188,8 +189,8 @@ export function hasLiveLeaderboard(division: Division): boolean {
 export const COLUMN_TOOLTIPS: Partial<Record<SortKey, string>> = {
   rank: "Position by adjusted rating.",
   adjustedRating:
-    "Rating − 2 × Deviation. A conservative Glicko-2 estimate that keeps entries with only a few rounds from topping the list; ranks are sorted on it.",
-  matches: "Rated matches played. Rounds at major tournaments count twice.",
+    "Rating − 2 × Deviation. A conservative Bradley-Terry estimate that keeps entries with only a few rounds from topping the list; ranks are sorted on it.",
+  matches: "Decided rounds debated, aff plus neg. Ballots at major tournaments weigh double in the rating.",
   affWinRate: "Share of rounds won on the affirmative (Pro in PF).",
   negWinRate: "Share of rounds won on the negative (Con in PF).",
   affElimWinRate: "Share of elimination rounds won on the affirmative.",
@@ -200,7 +201,7 @@ export const COLUMN_TOOLTIPS: Partial<Record<SortKey, string>> = {
  * Tooltip text for the Elo column.
  */
 export const ELO_TOOLTIP =
-  "Glicko-2 rating adjusted for the debate field. Higher values indicate stronger teams. Rounds at major tournaments count twice toward the rating.";
+  "Bradley-Terry rating fit to every ballot of the season, with a side term for aff/neg bias. Higher values indicate stronger teams. Ballots at major tournaments count twice toward the rating.";
 
 /**
  * Checks if a value is present and not a placeholder.
@@ -346,13 +347,15 @@ export function aggregateSchools(
 
   const rows = [...bySchool.values()].map((acc) => {
     const school = [...acc.spellings].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0][0];
+    const avgRating = acc.total / acc.teams;
     return {
       rank: 0,
       school,
       bestRating: acc.best.adjustedRating,
       bestEntry: acc.best.name,
       bestEvent: acc.bestEvent,
-      avgRating: acc.total / acc.teams,
+      avgRating,
+      balancedScore: balancedSchoolScore(acc.best.adjustedRating, avgRating, acc.teams),
       teams: acc.teams,
       events: acc.events,
     };

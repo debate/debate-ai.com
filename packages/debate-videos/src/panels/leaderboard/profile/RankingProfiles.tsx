@@ -24,16 +24,18 @@ import {
   findTeamEntries,
   schoolDivisionRadarData,
   schoolHref,
-  schoolVideoQuery,
+  schoolVideoSearch,
   summarizeSchool,
   teamHref,
   teamRadarData,
+  teamSlug,
   teamVideoQuery,
   type ProfileEntry,
 } from "./rankingProfileHelpers"
 import { ProfileVideos } from "./ProfileVideos"
 import { ProfileCaselistDocuments } from "./ProfileCaselistDocuments"
 import { TeamRadarChart } from "./TeamRadarChart"
+import { MatchupSimulator } from "./MatchupSimulator"
 
 const rating = (n: number) => n.toFixed(1)
 const percent = (n: number | null) =>
@@ -147,6 +149,10 @@ export function TeamProfilePage({ slug }: { slug: string }) {
           {entries.map((item) => (
             <TeamDivisionStats key={item.datasetId} item={item} />
           ))}
+          <MatchupSimulator
+            lockedTeamSlug={teamSlug(first)}
+            title={`Simulate ${first.name} vs. any ranked team`}
+          />
           <ProfileVideos query={teamVideoQuery(first)} />
           <ProfileCaselistDocuments school={first.school} team={first.name} />
         </>
@@ -265,7 +271,7 @@ export function SchoolProfilePage({ slug }: { slug: string }) {
             </Table>
           </div>
 
-          <ProfileVideos query={schoolVideoQuery(summary.school)} />
+          <ProfileVideos search={schoolVideoSearch(summary.school, entries)} />
           <ProfileCaselistDocuments school={summary.school} />
         </>
       )}

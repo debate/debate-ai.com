@@ -1,6 +1,6 @@
 /**
  * @fileoverview Play-money prediction markets on debates, tournament winners
- * and Glicko rating moves.
+ * and team rating moves.
  *
  * This package is the framework-free core: the LMSR pricing engine, payout
  * and settlement rules, request validation and wire types, plus the D1

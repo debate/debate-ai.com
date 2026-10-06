@@ -122,6 +122,19 @@ the table is wider than the screen, so swipe it left and right to reach the
 columns beside the round; the first column is capped at three quarters of the
 screen so the next one always peeks in.
 
+## Suggesting a fix to a video
+
+Every watch page has a pencil button next to the video. Click it to open the
+video's details — title, format, lecture category, tournament, teams, winner
+and so on — change whatever is wrong, and press **Submit for approval**.
+Nothing changes right away: your edit goes to the moderators, who are notified
+and approve or dismiss it from the admin panel. **Request deletion** in the
+same dialog asks them to take the video off the site instead. You need to be
+signed in to suggest a change.
+
+Admins and moderators get the same pencil button, but for them it saves
+straight to the library.
+
 ## Fixing a video (admins)
 
 `/admin` has a **Video library** card listing every video already published to
@@ -130,9 +143,17 @@ by format. **Edit** opens the whole record — title, channel, publish date,
 format, tournament, round level, teams, winner, judge decision, description,
 speech-docs link and the top-pick flag — and saving it updates the public
 library right away, including how the video sorts and what searches find it.
+**Lecture category** is a dropdown prefilled with every lecture shelf the
+library uses (Topic Lectures, Affirmative Strategy, Counterplans & Theory and
+the rest), so a typo can't create a stray shelf; pick **None** for a round.
 **Remove** takes the video off the site for good: it is also added to the
 resync exclusion list, so the weekly YouTube sync will not quietly bring it
 back.
+
+Viewers' suggested edits and deletion requests land in the **Reports &
+takedowns** card as **Suggested edit** and **Deletion request**, listing each
+proposed field and the viewer's reason. **Apply** writes exactly those fields;
+**Delete video** removes it as **Remove** does; **Dismiss** rejects it.
 
 ### Transcripts
 
@@ -151,8 +172,12 @@ The **Round videos** queue further down the page is separate — those are
 rounds still waiting to be published, not videos already on the site.
 Publishing never overwrites a video that is already in the library: the older
 version is kept and the queued copy is skipped. **Deduplicate**, next to
-**Publish all**, clears every queued round that is already in the library
-(within the selected format) without publishing anything.
+**Publish all**, clears every queued round (within the selected format) that
+is already in the library or repeats another queued round, without
+publishing anything. Two videos count as the same when their YouTube IDs match
+— even if one was stored as a full YouTube link — or when their titles match
+once case and punctuation are ignored (very short titles such as "Finals"
+never match on title alone). The older copy is always the one kept.
 
 ### Video durations
 

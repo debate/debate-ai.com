@@ -116,6 +116,21 @@ describe("publishRoundVideos", () => {
     expect(row?.adminEdited).toBe(false);
   });
 
+  it("skips a queued round whose title matches a published video, and publishes only the oldest of a duplicate pair", async () => {
+    const db = await freshDb();
+    await publishRoundVideos(db, [roundRow("lib", { title: "Glenbrooks 2024 Semis: One vs Two" })]);
+
+    const published = await publishRoundVideos(db, [
+      roundRow("dupe", { title: "Glenbrooks 2024 Semis: One vs Two" }),
+      roundRow("late", { title: "Berkeley 2025 Finals: Three vs Four", publishedAt: "2025-02-02" }),
+      roundRow("early", { title: "Berkeley 2025 Finals: Three vs Four", publishedAt: "2025-02-01" }),
+    ]);
+
+    expect(published).toBe(1);
+    const ids = (await db.select().from(videos)).map((row) => row.videoId).sort();
+    expect(ids).toEqual(["early", "lib"]);
+  });
+
   it("keeps the older published row when an already-published round is published again", async () => {
     const db = await freshDb();
     await publishRoundVideos(db, [roundRow("a", { title: "First sync title" })]);
@@ -239,7 +254,7 @@ describe("publishRoundVideos over a large queue (D1 bound-parameter ceiling)", (
 
     const published = await publishRoundVideos(
       db,
-      queue.map((row) => ({ ...row, title: "Resynced title" })),
+      queue.map((row) => ({ ...row, title: `Resynced title ${row.id}` })),
     );
 
     expect(published).toBe(250 - 6);
@@ -248,7 +263,7 @@ describe("publishRoundVideos over a large queue (D1 bound-parameter ceiling)", (
       expect(row?.title).toBe(`Kept ${id}`);
     }
     const [untouched] = await db.select().from(videos).where(eq(videos.videoId, "round101"));
-    expect(untouched?.title).toBe("Resynced title");
+    expect(untouched?.title).toBe("Resynced title round101");
   });
 });
 
@@ -304,6 +319,47 @@ describe("dedupeRoundQueue", () => {
     expect(queue.map((row) => row.id)).toEqual(["new"]);
     const [published] = await db.select().from(videos).where(eq(videos.videoId, "old"));
     expect(published?.title).toBe("Original");
+  });
+
+  it("matches a library row stored as a YouTube URL by its video id", async () => {
+    const db = await freshDb();
+    await publishRoundVideos(db, [roundRow("https://www.youtube.com/watch?v=abcdefghijk", { title: "Original" })]);
+    await db.insert(youtubeRoundVideos).values([roundRow("abcdefghijk", { title: "Resynced" })]);
+
+    expect(await dedupeRoundQueue(db)).toEqual(["abcdefghijk"]);
+    expect(await db.select().from(youtubeRoundVideos)).toHaveLength(0);
+  });
+
+  it("removes a re-upload whose title matches a library video, keeping the library row", async () => {
+    const db = await freshDb();
+    await publishRoundVideos(db, [roundRow("old", { title: "TOC 2024 Finals: Alpha vs Beta" })]);
+    await db.insert(youtubeRoundVideos).values([
+      roundRow("reupload", { title: "TOC 2024 Finals — Alpha vs. Beta", publishedAt: "2024-01-01" }),
+    ]);
+
+    expect(await dedupeRoundQueue(db)).toEqual(["reupload"]);
+    const library = await db.select().from(videos);
+    expect(library.map((row) => row.videoId)).toEqual(["old"]);
+  });
+
+  it("keeps the older of two queued rounds that share a title", async () => {
+    const db = await freshDb();
+    await db.insert(youtubeRoundVideos).values([
+      roundRow("newer", { title: "NDT 2025 Octafinals: Gamma vs Delta", publishedAt: "2025-03-02" }),
+      roundRow("older", { title: "NDT 2025 Octafinals: Gamma vs Delta", publishedAt: "2025-03-01" }),
+    ]);
+
+    expect(await dedupeRoundQueue(db)).toEqual(["newer"]);
+    const queue = await db.select().from(youtubeRoundVideos);
+    expect(queue.map((row) => row.id)).toEqual(["older"]);
+  });
+
+  it("does not treat short generic titles as duplicates", async () => {
+    const db = await freshDb();
+    await publishRoundVideos(db, [roundRow("a", { title: "Finals" })]);
+    await db.insert(youtubeRoundVideos).values([roundRow("b", { title: "Finals" })]);
+
+    expect(await dedupeRoundQueue(db)).toEqual([]);
   });
 
   it("narrows to one style when given", async () => {
