@@ -1,7 +1,7 @@
 {
   "name": "@debate/predictions",
   "version": "0.1.0",
-  "description": "Play-money prediction markets on debates, tournament winners and Glicko rating moves — the LMSR pricing engine, wallet and payout rules, auto-resolution rules and the D1 migration",
+  "description": "Play-money prediction markets on debates, tournament winners and team rating moves — the LMSR pricing engine, wallet and payout rules, auto-resolution rules and the D1 migration",
   "private": true,
   "type": "module",
   "author": "vtempest",

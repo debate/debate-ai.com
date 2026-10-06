@@ -458,7 +458,7 @@ export const APP_FEATURES: FeatureEntry[] = [
   {
     id: "prediction-markets",
     title: "Prediction Markets",
-    description: "Bet play-money points on who wins a debate, who wins a tournament, and whose Glicko rating goes up",
+    description: "Bet play-money points on who wins a debate, who wins a tournament, and whose team rating goes up",
     href: "/practice/predictions",
     category: "practice",
     doc: "prediction-markets.md",

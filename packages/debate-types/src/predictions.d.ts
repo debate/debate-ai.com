@@ -10,7 +10,7 @@
  *
  * - `debate` — who wins one round.
  * - `tournament` — who wins a tournament (an event's champion).
- * - `rating` — whether a team's Glicko rating is higher at close than when
+ * - `rating` — whether a team's team rating is higher at close than when
  *   the market opened.
  * - `argument` — whether one flowed argument gets extended by its own side in
  *   a later speech. Opened by the round workspace, never by the new-market form.

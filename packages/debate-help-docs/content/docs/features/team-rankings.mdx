@@ -5,7 +5,9 @@ title: "Team Rankings"
 # Team Rankings
 
 A current-season leaderboard of debate teams and debaters for PF, LD, Policy
-(CX) and college policy (NDT), rated with Glicko-2 from tournament results.
+(CX) and college policy (NDT), rated with a ballot-level Bradley-Terry model
+fit to every tournament result of the season — see
+[How Team Ratings Are Computed](/docs/features/bradley-terry-debate-rankings).
 
 - **Route:** `/coaching/rankings`
 - **Package:** `debate-videos` (the page), `debate-rankings` (the ratings)
@@ -19,14 +21,15 @@ header, and the ⓘ next to a header explains how the number is worked out.
 | --- | --- |
 | Rank | Position by adjusted rating |
 | Name / School | The team (`Last & Last`) or LD debater, and their school |
-| Adj. Rating | Glicko-2 rating − 2 × its deviation, rounded to a whole number — what the rank is sorted on, so a team with only a few rounds can't top the list on luck |
-| Matches | Rated rounds played (rounds at major tournaments count twice) |
+| Adj. Rating | Bradley-Terry rating − 2 × its deviation (the skill's standard error), rounded to a whole number — what the rank is sorted on, so a team with only a few rounds can't top the list on luck |
+| Matches | Decided rounds debated, aff plus neg (ballots at major tournaments weigh double in the rating, not in this count) |
 | Aff Win / Neg Win | Share of rounds won on each side |
 | Aff Elim Win / Neg Elim Win | Share of elimination rounds won on each side; a dash means no elims on that side |
 | ID | A short stable id for the entry across tournaments |
 
 Above the table: the number of ranked entries, the side bias across the
-whole field (aff vs. neg win rate, in prelims and elims), and the list of
+whole field (aff vs. neg win rate, in prelims and elims, and the aff
+side's rating advantage from the model's side term), and the list of
 tournaments the ratings come from, with majors marked. A filter box narrows
 the table by name or school.
 
