@@ -3,8 +3,8 @@
  * as {@link VideoGrid}'s cards. An archive of rounds is grouped into a
  * collapsible tree of rows; lectures are one flat row per video.
  *
- * The round hierarchy is season → tournament, Finals first within each
- * tournament and untagged rounds slotted in by date; `video-tree.ts` builds
+ * The round hierarchy is season → tournament, newest first at every level,
+ * with untagged rounds in an `Unsorted` tournament; `video-tree.ts` builds
  * it and `VideoTreeRows` draws it. Lectures skip the tree: each row already
  * names its channel and category on its second tier, so grouping by them
  * only added clicks between the reader and the videos. A group row opens and closes on click, and the
