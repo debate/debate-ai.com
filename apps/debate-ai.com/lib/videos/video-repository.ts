@@ -9,7 +9,7 @@
  * @module lib/videos/video-repository
  */
 
-import { and, asc, count, desc, eq, gt, inArray, isNotNull, isNull, notInArray, sql, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, gt, inArray, isNotNull, isNull, notInArray, or, sql, type SQL, type SQLWrapper } from "drizzle-orm";
 import { videos } from "@/lib/database/schema";
 import { getDBFromContext } from "@/lib/database/context";
 import {
@@ -23,6 +23,8 @@ import {
 } from "@debate/data-sync/src/videos/video-rows";
 import {
   clampPageSize,
+  COMPETITOR_BREAK_CHARS,
+  competitorPhrases,
   MAX_VIDEO_PAGE_SIZE,
   computeLectureCategories,
   computeVideoFacets,
@@ -218,6 +220,48 @@ function likePattern(token: string): string {
   return `%${token.replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
 }
 
+/** A string as an SQL literal. Inlined rather than bound: D1 allows only 100 bound parameters. */
+function literal(text: string): SQL {
+  return sql.raw(`'${text.replace(/'/g, "''")}'`);
+}
+
+/**
+ * `column` in the form competitor phrases are compared against — the SQL twin
+ * of `normalizeCompetitorText`: lowercased, `&` spelled out, every break
+ * character a space, double spaces squeezed.
+ */
+function competitorText(column: SQLWrapper): SQL {
+  let expr = sql`replace(lower(coalesce(${column}, '')), '&', ' and ')`;
+  for (const ch of COMPETITOR_BREAK_CHARS) {
+    expr = sql`replace(${expr}, ${literal(ch)}, ' ')`;
+  }
+  return sql`replace(replace(${expr}, '  ', ' '), '  ', ' ')`;
+}
+
+/**
+ * One phrase as whole words in `column`; see `phraseInText` for the
+ * short-phrase rule. `competitorPhrases` only lets `[a-z0-9 ]` through, so the
+ * phrase is safe to inline and holds no `LIKE` wildcard.
+ */
+function phraseCondition(column: SQLWrapper, phrase: string): SQL {
+  const text = competitorText(column);
+  if (phrase.length < 4) return sql`(ltrim(${text}) || ' ') LIKE ${literal(`${phrase} %`)}`;
+  return sql`(' ' || ${text} || ' ') LIKE ${literal(`% ${phrase} %`)}`;
+}
+
+/**
+ * Any phrase in the aff or neg team, or — when neither team is recorded — in
+ * the title. The SQL twin of `competitorMatches`.
+ */
+function competitorCondition(phrases: string[]): SQL {
+  const hasTeams = sql`(coalesce(${videos.affTeam}, '') <> '' OR coalesce(${videos.negTeam}, '') <> '')`;
+  const inTeams = or(
+    ...phrases.flatMap((p) => [phraseCondition(videos.affTeam, p), phraseCondition(videos.negTeam, p)]),
+  )!;
+  const inTitle = or(...phrases.map((p) => phraseCondition(videos.title, p)))!;
+  return sql`(CASE WHEN ${hasTeams} THEN ${inTeams} ELSE ${inTitle} END)`;
+}
+
 /**
  * Translates {@link VideoQueryParams} into SQL predicates.
  *
@@ -242,6 +286,11 @@ function buildConditions(
   if (params.tournament) {
     conditions.push(sql`${videos.tournament} LIKE ${likePattern(params.tournament)} ESCAPE '\\'`);
   }
+  if (params.styles && params.styles.length) {
+    conditions.push(inArray(videos.style, params.styles));
+  }
+  const phrases = competitorPhrases(params.competitors);
+  if (phrases.length) conditions.push(competitorCondition(phrases));
   if (!options.skipStyle && params.style != null) {
     conditions.push(eq(videos.style, params.style));
   }

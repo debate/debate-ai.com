@@ -6,6 +6,7 @@
  */
 
 import { normalizeSchool } from "@debate/rankings-adapter";
+import { balancedSchoolScore } from "./schoolScore";
 import type { RankingDataset, RankingDatasetId, RankingEntry } from "@debate/rankings-adapter";
 import type { SeasonalTopic } from "../../lib/debate-topics";
 import type {
@@ -346,13 +347,15 @@ export function aggregateSchools(
 
   const rows = [...bySchool.values()].map((acc) => {
     const school = [...acc.spellings].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0][0];
+    const avgRating = acc.total / acc.teams;
     return {
       rank: 0,
       school,
       bestRating: acc.best.adjustedRating,
       bestEntry: acc.best.name,
       bestEvent: acc.bestEvent,
-      avgRating: acc.total / acc.teams,
+      avgRating,
+      balancedScore: balancedSchoolScore(acc.best.adjustedRating, avgRating, acc.teams),
       teams: acc.teams,
       events: acc.events,
     };

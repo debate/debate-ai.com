@@ -1,7 +1,8 @@
 /**
- * @fileoverview Videos section of a team or school profile: every library
- * video (rounds and lectures) whose title, channel or description matches the
- * profile's search query, newest first.
+ * @fileoverview Videos section of a team or school profile: the rounds the
+ * team or school debated in, newest first. A round counts when its aff or neg
+ * team names the school (or, for a round with no teams recorded, its title
+ * does), limited to the divisions the profile is ranked in.
  * @module panels/leaderboard/profile/ProfileVideos
  */
 
@@ -13,23 +14,30 @@ import { useVideoFeed } from "../../../hooks/useVideoFeed"
 import { useVideoState } from "../../../hooks/useVideoState"
 import { VideoGrid } from "../../../components/video-grid/VideoGrid"
 import { Button } from "../../../ui/primitives/button"
+import type { ProfileVideoSearch } from "./rankingProfileHelpers"
 
 /** Props for {@link ProfileVideos}. */
 interface ProfileVideosProps {
-  /** Search run against the video library, e.g. a school or team name. */
-  query: string
+  /** Who to find rounds for; see `teamVideoSearch` and `schoolVideoSearch`. */
+  search: ProfileVideoSearch
 }
 
 /**
- * Grid of videos matching `query`. Clicking a card's badge narrows the search
- * by that badge's text; the chip beside the heading clears it again.
+ * Grid of the rounds `search` finds. Clicking a card's badge narrows the
+ * results by that badge's text; the chip beside the heading clears it again.
  */
-export function ProfileVideos({ query }: ProfileVideosProps) {
+export function ProfileVideos({ search }: ProfileVideosProps) {
   const { state, actions } = useVideoState()
   const [refinement, setRefinement] = useState("")
-  const q = refinement ? `${query} ${refinement}` : query
 
-  const feed = useVideoFeed({ source: "all", q, sort: "Recency", enabled: Boolean(query) })
+  const feed = useVideoFeed({
+    source: "round",
+    competitors: search.competitors,
+    styles: search.styles,
+    q: refinement,
+    sort: "Recency",
+    enabled: search.competitors.length > 0,
+  })
   const onBadgeClick = useCallback((text: string) => setRefinement(text), [])
 
   return (
@@ -37,7 +45,7 @@ export function ProfileVideos({ query }: ProfileVideosProps) {
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <h2 className="text-lg font-semibold text-foreground">Videos</h2>
         <span className="text-sm text-muted-foreground">
-          {feed.isLoading ? "Searching…" : `${feed.total} matching “${query}”`}
+          {feed.isLoading ? "Searching…" : `${feed.total} matching “${search.label}”`}
         </span>
         {refinement && (
           <Button variant="outline" size="sm" className="h-7" onClick={() => setRefinement("")}>

@@ -28,6 +28,8 @@ export {
   normalizeSchool,
   parseTeamLabel,
   schoolMatchScore,
+  schoolSearchNames,
+  teamSearchNames,
   type TeamLabel,
 } from "./team-lookup";
 export {

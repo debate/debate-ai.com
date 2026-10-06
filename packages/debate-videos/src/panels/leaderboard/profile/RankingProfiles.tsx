@@ -24,7 +24,7 @@ import {
   findTeamEntries,
   schoolDivisionRadarData,
   schoolHref,
-  schoolVideoQuery,
+  schoolVideoSearch,
   summarizeSchool,
   teamHref,
   teamRadarData,
@@ -271,7 +271,7 @@ export function SchoolProfilePage({ slug }: { slug: string }) {
             </Table>
           </div>
 
-          <ProfileVideos query={schoolVideoQuery(summary.school)} />
+          <ProfileVideos search={schoolVideoSearch(summary.school, entries)} />
           <ProfileCaselistDocuments school={summary.school} />
         </>
       )}
