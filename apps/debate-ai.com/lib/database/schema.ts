@@ -2296,7 +2296,7 @@ export const practiceChallenges = sqliteTable(
 export type PracticeChallengeRow = typeof practiceChallenges.$inferSelect;
 
 // Prediction markets — play-money betting on debates, tournament winners and
-// Glicko rating moves. The pricing and settlement rules are the
+// team rating moves. The pricing and settlement rules are the
 // `debate-predictions` package; the queries are `lib/predictions/queries.ts`.
 // These tables also ship as `packages/debate-predictions/migrations/`, which
 // the deploy's `migrate-d1.ts` applies, so they reach D1 from a fresh checkout.

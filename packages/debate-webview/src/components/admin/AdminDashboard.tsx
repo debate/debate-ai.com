@@ -613,7 +613,10 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
     }
   };
 
-  /** Drops queued rounds that are already published, keeping the published copy. */
+  /**
+   * Drops queued rounds that duplicate a published video or an older queued
+   * round (same YouTube id or same title), always keeping the older copy.
+   */
   const handleDedupe = async () => {
     setIsDeduping(true);
     setPublishAllError(null);
@@ -627,8 +630,8 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
       if (!res.ok) throw new Error(data?.error || "Deduplicate failed");
       setQueueNotice(
         data.removed
-          ? `Removed ${data.removed} queued ${data.removed === 1 ? "video" : "videos"} already in the library.`
-          : "No duplicates — none of the queued videos are already in the library.",
+          ? `Removed ${data.removed} duplicate queued ${data.removed === 1 ? "video" : "videos"} (matched by YouTube ID or title); kept the older copies.`
+          : "No duplicates — no queued video matches the library or another queued video by YouTube ID or title.",
       );
       await loadFirstPage(style);
     } catch (error) {

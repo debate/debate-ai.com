@@ -17,7 +17,6 @@ import {
   BookOpen,
   Bot,
   CalendarCheck,
-  CalendarDays,
   ChartColumn,
   ChartLine,
   ChartPie,
@@ -166,9 +165,9 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/practice/prep-notes", title: "Prep Notes", icon: StickyNote },
       { href: "/practice/forums", title: "Latest News", icon: Rss },
       // Tournaments is this app's own view (live Tabroom plus the tournaments
-      // hosted here); Tabroom frames beta.tabroom.com itself.
+      // hosted here). The framed beta.tabroom.com page (`/practice/tabroom`)
+      // is still routed but deliberately has no sidebar row.
       { href: "/tournaments", title: "Tournaments", icon: Trophy },
-      { href: "/practice/tabroom", title: "Tabroom", icon: CalendarDays },
     ],
   },
   {

@@ -25,7 +25,7 @@ import {
 } from "@debate/data-sync/src/state/tool-record-auto-sync"
 import { saveToolNow } from "../../lib/tools/tool-save-now"
 import { resolveToolSyncKeys } from "../../lib/tools/tool-sync-status"
-import { describeToolSaveState, type ToolSaveDisplay } from "../../lib/tools/tool-save-state"
+import { describeSaveNowButton, describeToolSaveState, type ToolSaveDisplay } from "../../lib/tools/tool-save-state"
 
 const POLL_MS = 3000
 
@@ -69,7 +69,7 @@ export function ToolSyncBadge({ href, collectionKeys }: { href: string; collecti
 
   if (!display) return null
   const Icon = display.state === "local" ? CloudOff : display.state === "saved" ? Cloud : RotateCw
-  const canSaveNow = display.state === "saving" || saveError !== null
+  const saveNowButton = describeSaveNowButton(display.state, saving, saveError)
   return (
     <>
       <span
@@ -80,17 +80,17 @@ export function ToolSyncBadge({ href, collectionKeys }: { href: string; collecti
         <Icon className="h-3.5 w-3.5" aria-hidden="true" />
         <span>{display.label}</span>
       </span>
-      {canSaveNow ? (
+      {saveNowButton ? (
         <button
           type="button"
           onClick={saveNow}
           disabled={saving}
-          title={saveError ? `Couldn't save: ${saveError}. Try again.` : "Save this tool's changes to your account now."}
+          title={saveNowButton.title}
           className="inline-flex h-9 items-center gap-1.5 rounded-md border border-border bg-background px-3 text-sm font-medium text-foreground transition-colors hover:bg-accent disabled:opacity-60"
           data-tool-save-now
         >
           <Save className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-          {saving ? "Saving…" : saveError ? "Retry save" : "Save now"}
+          {saveNowButton.label}
         </button>
       ) : null}
     </>

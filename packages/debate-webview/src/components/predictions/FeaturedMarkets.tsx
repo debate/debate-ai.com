@@ -88,7 +88,7 @@ export function FeaturedMarkets({ markets, wallet, now, division, onDivisionChan
       {section({
         title: `Top ${PRESET_TOP_TEAMS} teams`,
         icon: <Medal className="h-4 w-4" />,
-        description: `Will each of the ${PRESET_TOP_TEAMS} highest-rated ${label} teams gain Glicko rating by the end of the month? These settle themselves; a new set opens every month.`,
+        description: `Will each of the ${PRESET_TOP_TEAMS} highest-rated ${label} teams gain team rating by the end of the month? These settle themselves; a new set opens every month.`,
         children: (
           <>
             {picker}

@@ -1,7 +1,7 @@
 # CLAUDE.md — `debate-predictions`
 
 Private. Play-money prediction markets on debates, tournament winners and
-Glicko rating moves. Entry `src/index.ts` (engine, rules, types), browser
+team rating moves. Entry `src/index.ts` (engine, rules, types), browser
 calls at `debate-predictions/client`, tests in `test/`. User and engineering
 doc: `packages/debate-help-docs/content/docs/features/prediction-markets.mdx`.
 

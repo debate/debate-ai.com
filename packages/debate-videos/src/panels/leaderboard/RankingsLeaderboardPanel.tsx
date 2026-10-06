@@ -1,6 +1,6 @@
 /**
  * @fileoverview Ranking and leaderboard panel for debate teams.
- * Shows the Glicko-2 rankings computed by the `debate-rankings` package for
+ * Shows the Bradley-Terry rankings computed by the `debate-rankings` package for
  * VPF, VLD, VCX and NDT (college policy), with historical champion data,
  * plus a Schools tab that rolls every division's entries up by school.
  *
