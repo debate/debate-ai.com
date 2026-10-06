@@ -2,9 +2,8 @@
 
 /**
  * @fileoverview Account sync for the CardMirror editor's settings wherever a
- * Settings page renders them — `/settings` (`EditorSettingsPanel`) and the
- * research settings sidebar (`SettingsContent`), which both list
- * `CARDMIRROR_SETTINGS_TABS`.
+ * Settings page renders them — `/settings` (`EditorSettingsPanel`), which
+ * lists `CARDMIRROR_SETTINGS_TABS`.
  *
  * On mount it hydrates the editor's local settings store from the signed-in
  * account (`GET /api/settings`'s `editorPreferences`; a `401` just means
