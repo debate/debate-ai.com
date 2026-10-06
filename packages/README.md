@@ -46,21 +46,22 @@ a React editor shell sized for the site's speech-doc and `/reason-editor` surfac
 
 Its engine is upstream CardMirror from the `debate-editor-cm` submodule; this package is an
 adapter that holds no copy of it. `upstream.json` pins the upstream commit,
-`patches/debate-ai.patch` records every edit to an upstream file (the tabbed ribbon, the
-embed hooks, the settings sidebar, account sync), and `overlay/` holds the files upstream
-doesn't have — the React shell with its dropdown `MenuBar`, the ribbon tabs, the sync
-clients. `scripts/sync-upstream.mjs` assembles the three into a git-ignored `src/` on
-install and before build/test (typecheck runs after build, so it never re-assembles); `bun run sync-upstream:save` records edits made in
+`patches/debate-ai.patch` records every edit to an upstream file (the single scrolling
+toolbar strip, the embed hooks, the settings sidebar, account sync), and `overlay/` holds
+the files upstream doesn't have — the React shell with its dropdown `MenuBar`, the
+exported settings tabs, the web `.docx` helpers, the sync clients. `scripts/sync-upstream.mjs` assembles the three into a git-ignored `src/` on
+install and before build/typecheck/test; `bun run sync-upstream:save` records edits made in
 `src/`, and `bun run sync-upstream` rebases onto a newer submodule commit.
 
-## debate-editor-cm (git submodule) and debate-editor-cm-adapter
+## debate-editor-cm (git submodule)
 
 `debate-editor-cm` is a git submodule of upstream CardMirror,
 [debate/debate-editor](https://github.com/debate/debate-editor), kept as upstream ships it
-and outside the bun workspace (it is a Vite app with its own toolchain).
-`debate-editor-cm-adapter` is what the web UI imports: CardMirror's schema, `.docx`
-import/export and native `.cmir` format re-exported by path, plus `importDocx(file)`,
-`exportDocxBlob(doc)`, `outlineOf(doc)` and `cardsOf(doc)`.
+and outside the bun workspace (it is a Vite app with its own toolchain). `debate-editor` is
+its only adapter: the former `debate-editor-cm-adapter` package was merged into it, so
+CardMirror's schema, `.docx` import/export and native `.cmir` format, plus
+`importDocx(file)`, `exportDocxBlob(doc)`, `outlineOf(doc)` and `cardsOf(doc)`, all come
+from `@debate/editor/engine`.
 
 ## debate-flow
 

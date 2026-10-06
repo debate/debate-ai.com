@@ -42,8 +42,8 @@ import {
 export interface DockMenuLink {
   href: string
   title: string
-  /** The row's sidebar icon, where the sidebar gives it one. */
-  icon?: LucideIcon
+  /** The row's sidebar icon. Every link carries one, Videos included. */
+  icon: LucideIcon
 }
 
 export interface DockMenuSection {
@@ -57,7 +57,7 @@ export interface DockMenuSection {
 
 /**
  * The glossary and the topic & video statistics are not videos: the sidebar
- * tree lists them under Insights ("Data & Reference"), so the Videos submenu
+ * tree lists them under Insights, so the Videos submenu
  * leaves them out rather than listing them in two places.
  */
 const REFERENCE_HREFS = new Set(VIDEO_REFERENCE_LINKS.map((link) => link.href))
@@ -72,7 +72,7 @@ export const SIDEBAR_MENU_SECTIONS: DockMenuSection[] = [
     title: "Videos",
     icon: Clapperboard,
     links: SIDEBAR_VIDEO_LINKS.filter((link) => !REFERENCE_HREFS.has(link.href)).map(
-      ({ href, title }) => ({ href, title }),
+      ({ href, title, glyph }) => ({ href, title, icon: glyph }),
     ),
   },
   ...SIDEBAR_TOOL_SECTIONS.map((section) => ({

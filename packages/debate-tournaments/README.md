@@ -26,7 +26,18 @@ hosting API: `POST /host/tourns` creates a tournament, `GET /host/tourns` lists
 the signed-in user's, `GET /host/tourns/:id/admin` is a hosted tournament's
 admin view (`src/host/admin.ts`, rendered by `TournamentAdminPage`), and
 `POST /host/demo` loads the demo below if it is missing or over. The schema is applied by `.github/scripts/migrate-d1.ts`,
-which picks up this package's `migrations/` after the app's own.
+which picks up this package's `migrations/` after the app's own, into the same
+`debate_db` the app uses. Its statements are all `IF NOT EXISTS`, so a name
+clash would be silent; `apps/debate-ai.com/lib/tournaments/__tests__/tabroom-schema.test.ts`
+proves no Tabroom table or index shares a name with the app's or the
+prediction markets' (`session` is skipped for that reason).
+
+A hosted tournament can run any debate format in `src/host/formats.ts`:
+Policy, LD, Public Forum, Parliamentary, British Parliamentary, World Schools,
+Asian Parliamentary, Big Questions, IPDA and Congress. Each event is written
+with upstream's own `event.type` (`debate`, `wudc`, `wsdc`, `congress`, typed
+from the vendored `EventSchema`) and the `min_entry` / `max_entry` and
+`aff_label` / `neg_label` settings upstream's pairing and ballot code reads.
 
 The pages are built from shadcn primitives copied into `src/ui/primitives.tsx`
 and use only shadcn theme tokens, so they follow the host's theme.

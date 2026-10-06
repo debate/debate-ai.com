@@ -10,14 +10,14 @@
  * reshaped — only the shim they import through needs to point here.
  *
  * Command chrome: a Google-Docs-style dropdown `MenuBar` (File / Edit /
- * Insert / Workspace / …, lazily projected from the same `RIBBON_TABS`
- * taxonomy the ribbon itself uses — see `menu-bar-categories.ts`) stacked
- * above the engine's own tabbed ribbon (`editor/ribbon-tabs.ts`). The two
- * aren't duplicate surfaces for the same job: the ribbon is the always-
- * visible, icon-driven ribbon strip; the menu bar is the click-to-browse,
- * text-labeled index over the same commands (plus `WORKSPACE_LINKS`
- * navigation), the way Docs/Sheets keep a menu bar above their own
- * toolbar. Both gate on `showToolbar` together.
+ * Insert / Workspace / …, see `menu-bar-categories.ts`) stacked above the
+ * engine's own toolbar — upstream CardMirror's single strip of every panel,
+ * which scrolls left↔right rather than being paged into tabs or split into
+ * sections (`ribbon-template.ts`). The two aren't duplicate surfaces for the
+ * same job: the strip is the always-visible, icon-driven toolbar; the menu
+ * bar is the click-to-browse, text-labeled index over every command (plus
+ * `WORKSPACE_LINKS` navigation), the way Docs/Sheets keep a menu bar above
+ * their own toolbar.
  *
  * CardMirror's engine is a page-level singleton (see singleton.ts) — it
  * cannot run two live instances at once. `live` (default true) controls
@@ -55,12 +55,10 @@ export interface ReasonEditorProps {
   onTitleChange?: (title: string) => void;
   onShareClick?: () => void;
   editable?: boolean;
-  /** Whether the shell renders its own command chrome — the `MenuBar`
-   *  dropdown strip plus the engine's ribbon, paged into Word-style tabs
-   *  (default true). `false` hides the `MenuBar` and un-pages the ribbon:
-   *  the tab strip disappears and every panel shows at once, on one
-   *  horizontally scrolling strip — what hosts that supply their own
-   *  command chrome around the embed want (see `editor/ribbon-tabs.ts`). */
+  /** Whether the shell renders the `MenuBar` dropdown strip above the
+   *  engine's toolbar (default true). `false` leaves just the toolbar
+   *  strip — what hosts that supply their own command menus around the
+   *  embed want. */
   showToolbar?: boolean;
   showCardTools?: boolean;
   showAiTools?: boolean;
@@ -172,23 +170,6 @@ export const CardMirrorEditor = forwardRef<LexicalEditorHandle, ReasonEditorProp
         });
       };
     }, [defaultNavPaneHidden, live]);
-
-    // The ribbon is engine-owned, page-singleton DOM, so paging it is a
-    // singleton-level call rather than a rendered element — but only one
-    // CardMirrorEditor is ever live at a time, so it still tracks THIS
-    // instance's prop. Restored on unmount so the next host starts from the
-    // default (paged) ribbon rather than inheriting this one's choice.
-    useEffect(() => {
-      if (!live || !claimed || showToolbar) return;
-      let alive = true;
-      void import("../editor/ribbon-tabs-ui.js").then((m) => {
-        if (alive) m.setRibbonTabsEnabled(false);
-      });
-      return () => {
-        alive = false;
-        void import("../editor/ribbon-tabs-ui.js").then((m) => m.setRibbonTabsEnabled(true));
-      };
-    }, [live, claimed, showToolbar]);
 
     // Same-identity external content updates (e.g. a realtime sync
     // overwriting `content` while this key is still the live doc).

@@ -22,7 +22,11 @@
  *
  * The settings written are the ones `eventRepo.getEventsForInvite` reads back
  * for the public invite: `cap`, `school_cap`, `description`, `field_report`,
- * `anonymous_public`, `live_updates`, plus the tournament's `currency`.
+ * `anonymous_public`, `live_updates`, plus the tournament's `currency`. Each
+ * event also gets its format's `min_entry` / `max_entry` (competitors per
+ * entry) and `aff_label` / `neg_label` (Government, Proposition, Pro…), and
+ * `event.type` is the format's Tabroom kind (`debate`, `wudc`, `wsdc`,
+ * `congress`).
  */
 
 import type { Kysely } from "kysely";
@@ -30,10 +34,12 @@ import { z } from "zod";
 import { getTabroomKysely } from "../db/runtime";
 import {
   TOURNAMENT_FORMATS,
+  TOURNAMENT_FORMAT_IDS,
   tournamentFormat,
   formatSummary,
   type EventCodeStyle,
   type EventLevel,
+  type TournamentFormat,
   type TournamentFormatId,
 } from "./formats";
 
@@ -63,7 +69,7 @@ const codeStyles = [
 /** How one format should be run for this tournament. */
 const eventInput = z
   .object({
-    format: z.enum(["policy", "ld", "pf"]),
+    format: z.enum(TOURNAMENT_FORMAT_IDS),
     /** `event.level` — the division this event runs in. */
     level: z.enum(eventLevels).default("open"),
     /** `event.code_style` — how entries are written in pairings. */
@@ -103,7 +109,7 @@ export const createTournamentSchema = z
     regEnd: z.iso.datetime({ offset: true }).optional(),
     /** ISO-4217 code shown next to entry fees. */
     currency: z.string().trim().toLowerCase().length(3).default("usd"),
-    events: z.array(eventInput).min(1).max(3),
+    events: z.array(eventInput).min(1).max(TOURNAMENT_FORMATS.length),
   })
   .strict()
   .refine((value) => new Set(value.events.map((e) => e.format)).size === value.events.length, {
@@ -203,8 +209,20 @@ async function uniqueWebname(db: Kysely<any>, base: string): Promise<string> {
  * / `value_date` split `settings.ts`'s `saveSettings` uses: short values in
  * `value`, prose in `value_text` under a `text` marker.
  */
-function settingsForEvent(event: EventInput): Array<{ tag: string; value: string; value_text: string | null }> {
-  const settings: Array<{ tag: string; value: string; value_text: string | null }> = [];
+function settingsForEvent(
+  event: EventInput,
+  format: TournamentFormat,
+): Array<{ tag: string; value: string; value_text: string | null }> {
+  const settings: Array<{ tag: string; value: string; value_text: string | null }> = [
+    // How many competitors make up one entry, and what each bench is called —
+    // the tags upstream's pairing and ballot code reads.
+    { tag: "min_entry", value: String(format.entrySize.min), value_text: null },
+    { tag: "max_entry", value: String(format.entrySize.max), value_text: null },
+  ];
+  if (format.teamsPerRoom > 0) {
+    settings.push({ tag: "aff_label", value: format.sideLabels.aff.label, value_text: null });
+    settings.push({ tag: "neg_label", value: format.sideLabels.neg.label, value_text: null });
+  }
   if (event.schoolCap != null) settings.push({ tag: "school_cap", value: String(event.schoolCap), value_text: null });
   if (event.description) settings.push({ tag: "description", value: "text", value_text: event.description });
   return settings;
@@ -302,7 +320,7 @@ export async function createTournament(
         .values({
           name: format.name,
           abbr: format.abbr,
-          type: "debate",
+          type: format.eventType,
           level: event.level,
           code_style: event.codeStyle,
           fee: event.fee,
@@ -314,7 +332,7 @@ export async function createTournament(
         .executeTakeFirstOrThrow()) as { id: number };
       written.unshift(() => db.deleteFrom("event").where("id", "=", row.id).execute());
 
-      for (const setting of settingsForEvent(event)) {
+      for (const setting of settingsForEvent(event, format)) {
         await db
           .insertInto("event_setting")
           .values({ event: row.id, tag: setting.tag, value: setting.value, value_text: setting.value_text })
