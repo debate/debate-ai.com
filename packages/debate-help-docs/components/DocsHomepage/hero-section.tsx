@@ -33,7 +33,7 @@ export function HeroSection() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center gap-4 mb-12">
-            <Button onClick={() => window.location.href = withBasePath("/guides")} size="lg" className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
+            <Button onClick={() => window.location.href = withBasePath("/features")} size="lg" className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
               <Compass className="h-4 w-4" />
               Guides
             </Button>
