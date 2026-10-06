@@ -16,9 +16,16 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..");
-const SUBMODULES = ["packages/debate-editor-cm", "packages/debate-rankings"];
+// Each submodule with a file that exists only once it is checked out.
+// debate-rankings ships no package.json — it is a Python pipeline and its CSVs.
+const SUBMODULES = {
+  "packages/debate-editor-cm": "package.json",
+  "packages/debate-rankings": "config/hspf-config.json",
+};
 
-const missing = SUBMODULES.filter((path) => !existsSync(join(REPO_ROOT, path, "package.json")));
+const missing = Object.entries(SUBMODULES)
+  .filter(([path, marker]) => !existsSync(join(REPO_ROOT, path, marker)))
+  .map(([path]) => path);
 if (missing.length > 0) {
   console.log(`Checking out submodules: ${missing.join(", ")}`);
   execFileSync("git", ["submodule", "update", "--init", "--depth", "1", ...missing], {

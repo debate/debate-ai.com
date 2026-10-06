@@ -7,7 +7,7 @@
  *   from an event, which then settles itself from the ballots.
  * - **Tournament winner** — the field typed one per line, or every entry of a
  *   hosted Tabroom event, settled from its final results.
- * - **Rating move** — a team from the Glicko rankings; settles itself at close
+ * - **Rating move** — a team from the team rankings; settles itself at close
  *   against the rating it has now.
  */
 

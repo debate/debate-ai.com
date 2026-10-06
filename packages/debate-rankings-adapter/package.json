@@ -1,7 +1,7 @@
 {
   "name": "@debate/rankings-adapter",
   "version": "0.1.0",
-  "description": "Adapter over the debate-rankings git submodule (github.com/debate/debate-rankings) for the web UI: re-exports its datasets and CSV loader and adds the site's team-label lookup",
+  "description": "Adapter over the debate-rankings git submodule (github.com/debate/debate-rankings) for the web UI: the typed dataset list and CSV loader over its Bradley-Terry ranking CSVs, the site's rating scale, and the team-label lookup",
   "private": true,
   "type": "module",
   "author": "vtempest",
