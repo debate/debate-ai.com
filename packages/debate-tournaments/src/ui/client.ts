@@ -344,11 +344,11 @@ export function createTournamentsClient(
       return rows;
     },
     invite,
+    /** Which source a tournament was read from, once its invite or the upcoming list has loaded. */
+    sourceOf: (tournId: number): TournamentSource | undefined => (live ? sources.get(tournId) : "hosted"),
     /** The entries registered in one event, when the tournament publishes its field. */
     field: async (tournId: number, eventAbbr: string, signal?: AbortSignal) =>
       get<EventField>(await rootFor(tournId, signal), `/rest/tourns/${tournId}/events/${encodeURIComponent(eventAbbr)}/field`, signal),
-    /** Which source a tournament was read from, once its invite or the upcoming list has loaded. */
-    sourceOf: (tournId: number): TournamentSource | undefined => (live ? sources.get(tournId) : "hosted"),
     rounds: async (tournId: number, signal?: AbortSignal) =>
       get<PublishedRound[]>(await rootFor(tournId, signal), `/rest/tourns/${tournId}/rounds`, signal),
     /**
