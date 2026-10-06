@@ -253,6 +253,11 @@ The video library at `/videos` shows the badge (and **Save now**) beside its
 search bar; `LecturesPage` takes it as a `headerActionsSlot` prop because
 `debate-videos` can't import the webview's component.
 
-Known gap: the open-flow tabs and the `/doc` header are custom too and don't
-show the badge yet. The `/research/cards` search workspace, which has no
-`ToolPageHeader`, doesn't either.
+The research workspace at `/research/docs` has no header slot, so
+`WorkspaceScreen` floats the badge (and **Save now**) in the bottom-right
+corner; it covers the open chat tabs and file sources. The `/reason-editor`
+status row already carries it.
+
+Known gap: the open-flow tabs are custom too and don't show the badge yet. The
+`/research/cards` search workspace, which has no `ToolPageHeader`, doesn't
+either.
