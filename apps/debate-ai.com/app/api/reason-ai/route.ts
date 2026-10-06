@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { getAuth } from "@/lib/auth"
-import { getEnv } from "@/lib/env"
+import { keyExhaustedResponse, resolveProviderKey } from "@/lib/ai/provider-key"
 import { getDBFromContext } from "@/lib/database/context"
 import { limitsFor } from "@debate/webview/lib/stripe/limits"
 import { consumeDailyUsage, getUserTier, limitMessage, planLimitHeaders } from "@/lib/stripe/usage"
@@ -21,7 +21,10 @@ import { consumeDailyUsage, getUserTier, limitMessage, planLimitHeaders } from "
  *
  * Metered by plan tier (`@debate/webview/src/lib/stripe/limits.ts`): each request counts toward
  * the caller's `llmRequestsPerDay`, and `maxTokens` is capped at the tier's
- * `llmMaxTokens`.
+ * `llmMaxTokens`. A caller who sends their own OpenRouter or Anthropic key
+ * (`x-user-ai-key`, `lib/ai/provider-key.ts`) is billed on it instead, under
+ * the spending limit they set with their provider, so neither plan limit
+ * applies — only `MAX_TOKENS_CAP`.
  */
 
 const ANTHROPIC_MODEL = "claude-sonnet-4-6"
@@ -82,9 +85,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Sign in to use AI features." }, { status: 401 })
   }
 
-const apiKey = getEnv("ANTHROPIC_API_KEY")
-  const openrouterKey = getEnv("OPENROUTER_API_KEY")
-  if (!apiKey && !openrouterKey) {
+  const providerKey = resolveProviderKey(request)
+  if (!providerKey) {
     return NextResponse.json(
       { error: "AI features are not configured on the server." },
       { status: 503 },
@@ -105,30 +107,34 @@ const apiKey = getEnv("ANTHROPIC_API_KEY")
     return NextResponse.json({ error: "Request is too large." }, { status: 413 })
   }
 
-  const db = await getDBFromContext()
-  const tier = await getUserTier(db, session.user.id)
-  const limits = limitsFor(tier)
-  const usage = await consumeDailyUsage(db, session.user.id, "llmRequests", limits)
-  if (!usage.allowed) {
-    return NextResponse.json(
-      { error: limitMessage("llmRequests", usage, tier), limit: usage.limit, tier },
-      { status: 429, headers: planLimitHeaders("llmRequests") },
-    )
+  let tierMaxTokens = MAX_TOKENS_CAP
+  if (!providerKey.own) {
+    const db = await getDBFromContext()
+    const tier = await getUserTier(db, session.user.id)
+    const limits = limitsFor(tier)
+    const usage = await consumeDailyUsage(db, session.user.id, "llmRequests", limits)
+    if (!usage.allowed) {
+      return NextResponse.json(
+        { error: limitMessage("llmRequests", usage, tier), limit: usage.limit, tier },
+        { status: 429, headers: planLimitHeaders("llmRequests") },
+      )
+    }
+    tierMaxTokens = limits.llmMaxTokens
   }
 
-  const maxTokens = Math.min(body.maxTokens ?? 1024, MAX_TOKENS_CAP, limits.llmMaxTokens)
+  const maxTokens = Math.min(body.maxTokens ?? 1024, MAX_TOKENS_CAP, tierMaxTokens)
 
-  const useOpenRouter = Boolean(openrouterKey)
+  const useOpenRouter = providerKey.provider === "openrouter"
   const endpoint = useOpenRouter
     ? "https://openrouter.ai/api/v1/chat/completions"
     : "https://api.anthropic.com/v1/messages"
   const headers: Record<string, string> = { "content-type": "application/json" }
   if (useOpenRouter) {
-    headers.authorization = `Bearer ${openrouterKey}`
+    headers.authorization = `Bearer ${providerKey.key}`
     headers["HTTP-Referer"] = "https://debate-ai.com"
     headers["X-Title"] = "Debate AI"
   } else {
-    headers["x-api-key"] = apiKey!
+    headers["x-api-key"] = providerKey.key
     headers["anthropic-version"] = ANTHROPIC_VERSION
   }
 
@@ -169,6 +175,8 @@ const apiKey = getEnv("ANTHROPIC_API_KEY")
     } catch {
       // Body wasn't JSON.
     }
+    const exhausted = keyExhaustedResponse(providerKey, res.status, detail)
+    if (exhausted) return exhausted
     return NextResponse.json(
       { error: `AI API returned ${res.status}${detail ? `: ${detail}` : ""}` },
       { status: res.status >= 400 && res.status < 500 ? res.status : 502 },
