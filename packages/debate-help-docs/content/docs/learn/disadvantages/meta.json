@@ -1,6 +1,7 @@
 {
   "title": "Disadvantages",
   "description": "Disadvantage strategy and common DA entries.",
+  "icon": "TriangleAlert",
   "pages": [
     "answering-das",
     "disadvantages",
