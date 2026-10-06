@@ -4,7 +4,7 @@
  * @module @debate/rankings-adapter/parse
  */
 
-import type { FieldStatistics, RankingEntry, SideWinRates } from "./types";
+import type { FieldStatistics, RankingEntry, SideWeights, SideWinRates } from "./types";
 
 /**
  * Splits CSV text into rows of cells. Handles pandas' quoting (fields with
@@ -99,10 +99,25 @@ export function parseFullRankings(text: string): RankingEntry[] {
   });
 }
 
+/** The four side-weight columns, or `null` unless every one is present. */
+function sideWeights(record: Record<string, string>): SideWeights | null {
+  const aff = num(record["Aff Side Weight"]);
+  const neg = num(record["Neg Side Weight"]);
+  const affElim = num(record["Aff Elim Side Weight"]);
+  const negElim = num(record["Neg Elim Side Weight"]);
+  return aff === null || neg === null || affElim === null || negElim === null
+    ? null
+    : { aff, neg, affElim, negElim };
+}
+
 /** Parses `output/<prefix>field_statistics.csv` (one data row). */
 export function parseFieldStatistics(text: string): FieldStatistics | null {
   const [record] = toRecords(text);
   return record
-    ? { ...winRates(record), affRatingAdvantage: num(record["Aff Rating Advantage"]) }
+    ? {
+        ...winRates(record),
+        affRatingAdvantage: num(record["Aff Rating Advantage"]),
+        sideWeights: sideWeights(record),
+      }
     : null;
 }
