@@ -92,7 +92,8 @@
 - [x] Document in `features/user-settings.mdx`
 - [x] Same marker for whole rounds on the `/debate` start screen cards (`recordRoundSavedToAccount`, `RoundAccountMarker`; branch `claude/gifted-babbage-a9pbpd`)
 - [x] Persist baselines so the marker survives a reload: saves store `{ hash, updatedAt }` in localStorage and `restoreFlowAccountBaselines` adopts one only when the account's list reports the same `updatedAt` (never wrongly "saved" for another user); wired to the Flow History cloud-tab load (branch `claude/gifted-babbage-o37mws`)
-- [ ] Follow-up: restore baselines on app/round mount (today it happens when the Flow History "Saved to account" tab loads) and auto-save flows
+- [x] Restore baselines on mount: `restoreAccountBaselinesOnce` (`state/restoreAccountBaselines.ts`, once per session, silent when signed out) via `useRestoreAccountBaselines` in `DebateStartPanel` and `OpenTabsGroup`; test `debate-round/test/restoreAccountBaselines.test.ts`; branch `claude/gifted-babbage-89z8b3`
+- [ ] Follow-up: auto-save flows to the account
 - [ ] Follow-up: `ebb-dev-*` and `REASON-*` stores are still browser-only
 
 ### Tool UI pass: tool page header
