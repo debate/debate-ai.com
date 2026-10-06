@@ -44,6 +44,80 @@ export function searchTokens(q?: string | null): string[] {
 }
 
 /**
+ * Characters treated as word breaks when matching competitor phrases. The SQL
+ * backend replaces exactly this list, so both backends agree on every row.
+ */
+export const COMPETITOR_BREAK_CHARS: readonly string[] = [
+  ".", ",", ":", ";", "-", "_", "'", '"', "(", ")", "/", "|", "!", "?", "#", "+", "[", "]",
+];
+
+/** Most phrases one request may send, which bounds the size of the SQL. */
+export const MAX_COMPETITOR_PHRASES = 12;
+
+/**
+ * Lowercases text and turns `&` into `" and "` and every
+ * {@link COMPETITOR_BREAK_CHARS} character into a space, then squeezes the
+ * resulting double spaces — the form both team labels and phrases are
+ * compared in.
+ *
+ * @param text - A team label, title or phrase.
+ */
+export function normalizeCompetitorText(text: string): string {
+  let out = text.toLowerCase().replace(/&/g, " and ");
+  for (const ch of COMPETITOR_BREAK_CHARS) out = out.split(ch).join(" ");
+  // Twice, as the SQL does: runs of up to four spaces become one.
+  for (let i = 0; i < 2; i++) out = out.split("  ").join(" ");
+  return out;
+}
+
+/**
+ * Cleans the requested phrases: normalized and single-spaced; blanks,
+ * duplicates and anything but ASCII letters, digits and spaces dropped;
+ * capped at {@link MAX_COMPETITOR_PHRASES}.
+ *
+ * @param phrases - Raw phrases from the request.
+ */
+export function competitorPhrases(phrases?: readonly string[] | null): string[] {
+  if (!phrases) return [];
+  const cleaned = phrases
+    .map((p) => normalizeCompetitorText(p).split(/\s+/).filter(Boolean).join(" "))
+    // Plain words only: the SQL backend inlines phrases rather than binding them.
+    .filter((p) => p.length >= 2 && /^[a-z0-9 ]+$/.test(p));
+  return [...new Set(cleaned)].slice(0, MAX_COMPETITOR_PHRASES);
+}
+
+/**
+ * Whether `phrase` appears in `text` as whole words. A phrase under four
+ * characters (circuit shorthand like `"sj"`) must open the text instead, so it
+ * cannot match a team's initials (`"Harker SJ"`).
+ *
+ * @param text - A team label or title; `null` never matches.
+ * @param phrase - A phrase from {@link competitorPhrases}.
+ */
+export function phraseInText(text: string | null, phrase: string): boolean {
+  if (!text) return false;
+  const norm = normalizeCompetitorText(text);
+  if (phrase.length < 4) return `${norm.trimStart()} `.startsWith(`${phrase} `);
+  return ` ${norm} `.includes(` ${phrase} `);
+}
+
+/**
+ * Whether a video is a round one of `phrases` debated in: any phrase in its
+ * aff or neg team, or — only when neither team is recorded — in its title.
+ *
+ * @param row - The video.
+ * @param phrases - Output of {@link competitorPhrases}.
+ */
+export function competitorMatches(
+  row: Pick<VideoRow, "affTeam" | "negTeam" | "title">,
+  phrases: readonly string[],
+): boolean {
+  if (phrases.length === 0) return true;
+  const fields = row.affTeam || row.negTeam ? [row.affTeam, row.negTeam] : [row.title];
+  return phrases.some((phrase) => fields.some((field) => phraseInText(field, phrase)));
+}
+
+/**
  * Normalizes the season filter into a numeric season, or `null` for "all".
  *
  * @param year - `"legacy"`, a four-digit year, or an empty value.
@@ -76,6 +150,9 @@ export function filterVideoRows(rows: VideoRow[], params: VideoQueryParams): Vid
     ? new Set(params.excludeIds)
     : null;
 
+  const phrases = competitorPhrases(params.competitors);
+  const styles = params.styles && params.styles.length ? new Set(params.styles) : null;
+
   return rows.filter((row) => {
     if (params.source && params.source !== "all" && row.source !== params.source) return false;
     if (params.lecturesOnly && row.style !== null) return false;
@@ -85,6 +162,8 @@ export function filterVideoRows(rows: VideoRow[], params: VideoQueryParams): Vid
     if (season !== null && row.seasonYear !== season) return false;
     if (idSet && !idSet.has(row.videoId)) return false;
     if (excludeSet && excludeSet.has(row.videoId)) return false;
+    if (styles && (row.style === null || !styles.has(row.style))) return false;
+    if (phrases.length && !competitorMatches(row, phrases)) return false;
     if (tokens.length && !tokens.every((token) => row.searchText.includes(token))) return false;
     if (
       params.tournament &&

@@ -53,6 +53,24 @@ the September–October resolution.
 The season selector still changes the champion and topic banner. Ratings
 exist for the current season only, so earlier seasons show the banner alone.
 
+## Team and school pages
+
+Clicking a team or school opens its profile (`/teams/<team>`,
+`/schools/<school>`): its stats per division, its radar chart, the round
+videos it debated in, and its caselist documents.
+
+The **Videos** section lists rounds, not lectures, and only in the divisions
+the team or school is ranked in — a school ranked only in Policy shows only
+Policy rounds, one ranked only in NDT only college rounds. A round counts when
+its recorded aff or neg team names the school as whole words; the title is
+searched only for a round with no teams recorded, and the description and
+channel never are. The school is matched by its full name and by its short
+forms: trailing words like *HS*, *Independent* or *College Prep* are dropped
+(`Gunn HS Independent` → `Gunn`) and known circuit shorthand is added
+(`Glenbrook North` → `GBN`). A team page also requires the team's initials
+after the school (`Strake Jesuit FS`, in either order), and an LD debater
+also matches by full name. Clicking a card's badge narrows the list further.
+
 ## Picking an opponent when creating a round
 
 The Create New Round dialog reads the same rankings. Once a school is
@@ -73,6 +91,12 @@ tournament data is read through `@debate/tournaments/client` from the app's
 `/api/tabroom-beta` proxy.
 
 ## Known gaps
+
+A profile's Videos section only finds a round whose team label or title spells
+the school the way the rankings do, or by one of the short forms above. A
+round recorded under an unlisted abbreviation is missed, and a school whose
+short name another school shares (two *Memorial* high schools) can show the
+other's rounds.
 
 Ratings cover only the tournaments listed above the table; a team that hasn't
 attended one of them is not ranked. The list updates when the rankings are

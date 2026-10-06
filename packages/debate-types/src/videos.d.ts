@@ -143,6 +143,17 @@ export interface VideoQueryParams {
    * mention the tournament rather than belonging to it.
    */
   tournament?: string | null;
+  /**
+   * Restrict to rounds a given school or team debated in. A video matches when
+   * any of these phrases appears, as whole words, in its aff or neg team — or,
+   * for a video with neither team recorded, in its title. Unlike `q` the
+   * description and channel are never searched. Phrases under four characters
+   * (shorthand like `"sj"`) must open the field rather than appear anywhere in
+   * it, so they cannot hit a team's initials. See `competitorMatches`.
+   */
+  competitors?: string[] | null;
+  /** Restrict to any of these numeric debate styles (1–4); lectures never match. */
+  styles?: number[] | null;
   /** Restrict to an explicit id list — used by the favourites-only filter. */
   ids?: string[] | null;
   /**

@@ -6,7 +6,15 @@
  * @module panels/leaderboard/profile/rankingProfileHelpers
  */
 
-import type { RankingDataset, RankingDatasetId, RankingEntry } from "@debate/rankings-adapter";
+import {
+  entryInitials,
+  schoolSearchNames,
+  teamSearchNames,
+  type RankingDataset,
+  type RankingDatasetId,
+  type RankingEntry,
+} from "@debate/rankings-adapter";
+import type { DebateStyle } from "../../../types/videos";
 
 /**
  * Lowercase, dash-separated URL segment for a school or team name. Accents are
@@ -157,27 +165,60 @@ export function summarizeSchool(entries: ProfileEntry[]): SchoolSummary {
   };
 }
 
+/** Video library style (1 Policy, 2 PF, 3 LD, 4 College) each rankings dataset covers. */
+const DATASET_VIDEO_STYLE: Record<string, DebateStyle> = {
+  hscx: 1,
+  hspf: 2,
+  hsld: 3,
+  hsld_sepoct: 3,
+  cpd: 4,
+};
+
+/** What a profile's Videos section searches for. */
+export interface ProfileVideoSearch {
+  /** Phrases matched against a round's aff/neg team, or its title when it has none. */
+  competitors: string[];
+  /** Only rounds in the divisions the team or school is ranked in. */
+  styles: DebateStyle[];
+  /** Shown as "N matching …". */
+  label: string;
+}
+
+/** Video styles of the divisions `entries` are ranked in, in ascending order. */
+function profileStyles(entries: Pick<ProfileEntry, "datasetId">[]): DebateStyle[] {
+  const styles = new Set<DebateStyle>();
+  for (const { datasetId } of entries) {
+    const style = DATASET_VIDEO_STYLE[datasetId];
+    if (style) styles.add(style);
+  }
+  return [...styles].sort((a, b) => a - b);
+}
+
 /**
- * Words for a video search. The library search requires every whitespace
- * token to appear, so separators like `&` that titles rarely repeat verbatim
- * are dropped.
+ * Video search for a team: rounds whose aff or neg team is the team's school
+ * plus its initials (`"Strake Jesuit FS"`), in the divisions it is ranked in.
+ *
+ * @param entries - Output of {@link findTeamEntries}; the first row names the team.
  */
-function searchWords(text: string): string {
-  return text
-    .replace(/[&/,()]+/g, " ")
-    .split(/\s+/)
-    .filter(Boolean)
-    .join(" ");
+export function teamVideoSearch(entries: ProfileEntry[]): ProfileVideoSearch {
+  const entry = entries[0]?.entry;
+  if (!entry) return { competitors: [], styles: [], label: "" };
+  return {
+    competitors: teamSearchNames(entry),
+    styles: profileStyles(entries),
+    label: `${entry.school} ${entryInitials(entry.name)}`.trim(),
+  };
 }
 
-/** Video search for a team: its debaters' names ("Falk & Sabnani" → "Falk Sabnani"). */
-export function teamVideoQuery(entry: Pick<RankingEntry, "name">): string {
-  return searchWords(entry.name);
-}
-
-/** Video search for a school: its name. */
-export function schoolVideoQuery(school: string): string {
-  return searchWords(school);
+/**
+ * Video search for a school: rounds whose aff or neg team is from the school,
+ * in the divisions it has ranked entries in.
+ *
+ * @param school - School as the rankings spell it.
+ * @param entries - Output of {@link findSchoolEntries}.
+ */
+export function schoolVideoSearch(school: string, entries: ProfileEntry[]): ProfileVideoSearch {
+  return { competitors: schoolSearchNames(school), styles: profileStyles(entries), label: school };
 }
 
 /** One spoke of a team's radar chart. */

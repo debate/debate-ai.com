@@ -24,11 +24,11 @@ import {
   findTeamEntries,
   schoolDivisionRadarData,
   schoolHref,
-  schoolVideoQuery,
+  schoolVideoSearch,
   summarizeSchool,
   teamHref,
   teamRadarData,
-  teamVideoQuery,
+  teamVideoSearch,
   type ProfileEntry,
 } from "./rankingProfileHelpers"
 import { ProfileVideos } from "./ProfileVideos"
@@ -147,7 +147,7 @@ export function TeamProfilePage({ slug }: { slug: string }) {
           {entries.map((item) => (
             <TeamDivisionStats key={item.datasetId} item={item} />
           ))}
-          <ProfileVideos query={teamVideoQuery(first)} />
+          <ProfileVideos search={teamVideoSearch(entries)} />
           <ProfileCaselistDocuments school={first.school} team={first.name} />
         </>
       )}
@@ -265,7 +265,7 @@ export function SchoolProfilePage({ slug }: { slug: string }) {
             </Table>
           </div>
 
-          <ProfileVideos query={schoolVideoQuery(summary.school)} />
+          <ProfileVideos search={schoolVideoSearch(summary.school, entries)} />
           <ProfileCaselistDocuments school={summary.school} />
         </>
       )}
