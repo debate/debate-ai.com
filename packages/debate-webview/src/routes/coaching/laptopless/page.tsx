@@ -68,6 +68,14 @@ const GEAR: {
       "A power strip that clamps onto the edge of a desk or table, with three AC outlets, two USB-A ports, and two USB-C ports. Clamp it to your table in the prep room or at home and the phone, keyboard, and power bank can charge within reach instead of from a wall outlet across the room.",
   },
   {
+    name: "Spinning Pens (2-Pack, Black & White)",
+    role: "Paper flowing & fidget pen",
+    href: "https://amzn.to/4ytQZTP",
+    image: "https://i.imgur.com/7Vi3oaR.jpeg",
+    blurb:
+      "A pair of weighted pens that write normally and are balanced for pen spinning. Use one to flow on paper while the phone handles evidence and the timer, and spin it between speeches to burn off nerves without tapping on the table.",
+  },
+  {
     name: "VITURE Beast XR/AR Glasses (174\" Virtual Display)",
     role: "Giant floating screen, no laptop",
     href: "https://amzn.to/4rA4rmp",

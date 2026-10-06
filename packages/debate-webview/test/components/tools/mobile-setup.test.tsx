@@ -52,6 +52,14 @@ describe("MobileSetupPage", () => {
     expect(html).toContain("https://i.imgur.com/2jnfQjH.jpeg")
   })
 
+  it("lists the spinning pens with their affiliate link and image", () => {
+    const html = renderToStaticMarkup(<MobileSetupPage />)
+
+    expect(html).toContain("Spinning Pens (2-Pack, Black &amp; White)")
+    expect(html).toContain("https://amzn.to/4ytQZTP")
+    expect(html).toContain("https://i.imgur.com/7Vi3oaR.jpeg")
+  })
+
   it("lists every recommended gear item with its role", () => {
     const html = renderToStaticMarkup(<MobileSetupPage />)
 
