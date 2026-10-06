@@ -249,7 +249,9 @@ the end of the same header row.
 The `/debate` start screen has its own header, so it shows the same badge (and
 **Save now**) beside its **New flow** button; `DebateFlowPage` takes it as a
 `startScreenActions` prop because `debate-round` can't import the webview's
-component.
+component. Once a round or flow is open, the same badge sits at the start of the
+speech controls bar above the workspace (`roundActions`, handed to
+`SpeechControlsTopBar` as `leadingActions`).
 
 The shared-cards sub-pages (Evidence Library, Argument Library and Card Revision
 History) keep their data under the `/research/cards` hub rather than under their
