@@ -91,11 +91,6 @@ export interface TreeItemProps {
   isActive?: boolean;
   /** An imported image (SVG/PNG) or a Lucide component. */
   icon?: TreeItemIcon;
-  /**
-   * A text color for a Lucide `icon`, replacing the tree's gray. Only the
-   * lecture category rows set one — see `LECTURE_CATEGORY_ICON_COLORS`.
-   */
-  iconColorClassName?: string;
   /** Present together with `onToggleExpand` to make this item expandable. */
   expanded?: boolean;
   onToggleExpand?: () => void;
@@ -113,7 +108,6 @@ export function TreeItem({
   exactCount,
   isActive,
   icon,
-  iconColorClassName,
   expanded,
   onToggleExpand,
   muted,
@@ -169,14 +163,7 @@ export function TreeItem({
   const rowContents = (
     <>
       {Glyph ? (
-        <Glyph
-          className={
-            iconColorClassName
-              ? cn(TREE_ITEM_ICON_CLASS.replace("text-muted-foreground", ""), iconColorClassName)
-              : TREE_ITEM_ICON_CLASS
-          }
-          aria-hidden
-        />
+        <Glyph className={TREE_ITEM_ICON_CLASS} aria-hidden />
       ) : imageSrc ? (
         <Image src={imageSrc} alt="" width={16} height={16} className="h-4 w-4 shrink-0 object-contain" unoptimized />
       ) : null}
