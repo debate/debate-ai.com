@@ -23,6 +23,8 @@ import {
   DEFAULT_USER_SETTINGS,
   DEFAULT_WORD_LIMIT_PRESETS,
   normalizeFavoriteToolOpPatch,
+  normalizeFlowAutoSavePatch,
+  parseFlowAutoSave,
   normalizeFavoriteToolsPatch,
   normalizeOutlineFilterPresetOpPatch,
   normalizeOutlineFilterPresetsPatch,
@@ -39,6 +41,7 @@ import {
   serializeMyTeamProfile,
   serializeOutlineFilterPresets,
   serializeWordLimitPresets,
+  type FlowAutoSaveMode,
   type MyTeamProfileSyncPayload,
   type OutlineFilterPreset,
   type ThemeMode,
@@ -253,6 +256,7 @@ type SettingsRow = {
   recentTools: string | null
   editorPreferences: string | null
   flowEditorSettings: string | null
+  flowAutoSave: string | null
   newsRead: string | null
   newsLiked: string | null
   wordLimitPresets: string | null
@@ -273,6 +277,7 @@ type SettingsPayload = UserSettingsPayload & {
   recentTools: string[]
   editorPreferences: EditorPreferencesPayload
   flowEditorSettings: FlowEditorAccountSettingsPayload
+  flowAutoSave: FlowAutoSaveMode | null
   newsRead: string[]
   newsLiked: string[]
   wordLimitPresets: { name: string; wordLimit: number }[]
@@ -296,6 +301,7 @@ function toPayload(row: SettingsRow | undefined): SettingsPayload {
     recentTools: row?.recentTools ? parseRecentTools(row.recentTools) : [],
     editorPreferences: parseEditorPreferences(row?.editorPreferences),
     flowEditorSettings: parseFlowEditorSettings(row?.flowEditorSettings),
+    flowAutoSave: parseFlowAutoSave(row?.flowAutoSave),
     newsRead: row?.newsRead ? parseNewsIdList(row.newsRead) : DEFAULT_NEWS_SYNC.newsRead,
     newsLiked: row?.newsLiked ? parseNewsIdList(row.newsLiked) : DEFAULT_NEWS_SYNC.newsLiked,
     wordLimitPresets: row?.wordLimitPresets
@@ -380,10 +386,12 @@ export async function PUT(req: NextRequest) {
   const flowEditorSettingsResult = normalizeFlowEditorSettingsPatch(
     (body as { flowEditorSettings?: unknown } | null)?.flowEditorSettings,
   )
-  const valid = { ...userSettingsResult.valid, ...themeSettingsResult.valid }
+  const flowAutoSaveResult = normalizeFlowAutoSavePatch(body)
+  const valid = { ...userSettingsResult.valid, ...themeSettingsResult.valid, ...flowAutoSaveResult.valid }
   const errors = [
     ...userSettingsResult.errors,
     ...themeSettingsResult.errors,
+    ...flowAutoSaveResult.errors,
     ...favoriteToolsResult.errors,
     ...favoriteToolOpResult.errors,
     ...recentToolOpResult.errors,
@@ -450,7 +458,7 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json(
       {
         error:
-          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, recordRecentTool, wordLimitPresets, addWordLimitPreset, updateWordLimitPreset, removeWordLimitPreset, outlineFilterPresets, addOutlineFilterPreset, removeOutlineFilterPreset, savedArgumentCollections, addSavedArgumentCollection, removeSavedArgumentCollection, renameSavedArgumentCollection, updateSavedArgumentCollectionTags, researchProgressGoal, brainstormSessionTimer, questStreakSync, recordStreakFreezeDayKey, setLapseReminderEnabled, recordMissionResultDay, qualificationPointsTable, qualificationCutoff, myTeamProfile, newsRead, newsLiked, recordNewsRead, addNewsLiked, removeNewsLiked, editorPreferences, or flowEditorSettings.",
+          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, recordRecentTool, wordLimitPresets, addWordLimitPreset, updateWordLimitPreset, removeWordLimitPreset, outlineFilterPresets, addOutlineFilterPreset, removeOutlineFilterPreset, savedArgumentCollections, addSavedArgumentCollection, removeSavedArgumentCollection, renameSavedArgumentCollection, updateSavedArgumentCollectionTags, researchProgressGoal, brainstormSessionTimer, questStreakSync, recordStreakFreezeDayKey, setLapseReminderEnabled, recordMissionResultDay, qualificationPointsTable, qualificationCutoff, myTeamProfile, newsRead, newsLiked, recordNewsRead, addNewsLiked, removeNewsLiked, editorPreferences, flowEditorSettings, or flowAutoSave.",
       },
       { status: 400 },
     )

@@ -65,6 +65,7 @@ import {
 } from "../state/themeSettings"
 import {
   DEFAULT_FLOW_AUTO_SAVE_MODE,
+  adoptAccountFlowAutoSave,
   isFlowAutoSaveMode,
   readFlowAutoSaveMode,
   setFlowAutoSaveMode,
@@ -84,9 +85,10 @@ import {
 // `myTeamProfile` is managed from the Create Round dialog's own "My Team"
 // config panel (`dialogs/CreateRoundDialog/TeamSection.tsx`) — not
 // user-editable form fields, all excluded from this form the same way.
+// `flowAutoSave` syncs on change from its own select, not through Save.
 type FormState = Omit<
   FullUserSettingsPayload,
-  "favoriteTools" | "wordLimitPresets" | "outlineFilterPresets" | "newsRead" | "newsLiked" | "myTeamProfile"
+  "favoriteTools" | "wordLimitPresets" | "outlineFilterPresets" | "newsRead" | "newsLiked" | "myTeamProfile" | "flowAutoSave"
 >
 
 type SaveStatus =
@@ -148,8 +150,9 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
   // in-progress edit and is left alone.
   const baselineRef = useRef<FormState | null>(null)
 
-  // Local-only like `fontFamily`: applies at once, never part of the Save payload.
+  // Applies at once like `fontFamily` and is synced to the account on change, not via Save.
   const [flowAutoSave, setFlowAutoSave] = useState<FlowAutoSaveMode>(DEFAULT_FLOW_AUTO_SAVE_MODE)
+  const remoteAvailableRef = useRef(false)
 
   useEffect(() => {
     setFontFamily(readLocalFontFamily())
@@ -160,6 +163,11 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
     if (!isFlowAutoSaveMode(value)) return
     setFlowAutoSave(value)
     setFlowAutoSaveMode(value)
+    // Mirror to the account right away (the mode never rides the Save button);
+    // a failed sync keeps the local choice, which still applies on this device.
+    if (remoteAvailableRef.current) {
+      saveUserSettings({ flowAutoSave: value }).catch(() => {})
+    }
   }
 
   const handleFontFamilyChange = (value: string) => {
@@ -185,6 +193,9 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
         if (cancelled) return
         if (remote) {
           setRemoteAvailable(true)
+          remoteAvailableRef.current = true
+          // An account value wins over this device's; none saved yet keeps the local one.
+          setFlowAutoSave(adoptAccountFlowAutoSave(remote.flowAutoSave))
           const { debateStyle, fontSize, colorTheme, themeMode } = remote
           const remoteForm: FormState = { debateStyle, fontSize, colorTheme, themeMode }
           setForm(remoteForm)
