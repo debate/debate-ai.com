@@ -53,6 +53,13 @@
         "generate"
       ]
     },
+    "@debate/editor#typecheck": {
+      "dependsOn": [
+        "^typecheck",
+        "^build",
+        "build"
+      ]
+    },
     "test": {
       "dependsOn": [
         "^build"

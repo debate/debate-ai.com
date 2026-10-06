@@ -228,8 +228,10 @@ and listed in the site's Settings sidebars.
 
 `scripts/sync-upstream.mjs` assembles upstream's `src/` at the commit in `upstream.json`,
 the patch and the overlay into `src/`, which the package exports point at. It runs on
-`bun install` and before `build`, `typecheck` and `test`, so check out the submodule first
-(`git submodule update --init packages/debate-editor-cm`).
+`bun install` and before `build` and `test`, so check out the submodule first
+(`git submodule update --init packages/debate-editor-cm`). `typecheck`
+only runs `tsc`: turbo orders it after this package's `build`, so the two never rewrite
+`src/` at the same time.
 
 Edit `src/` as usual, then record the change (CI fails otherwise, via
 `test/upstream-sync.test.ts`, and an assemble refuses to overwrite unrecorded edits):
