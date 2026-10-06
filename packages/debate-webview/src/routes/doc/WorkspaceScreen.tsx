@@ -14,8 +14,8 @@ export const DOC_SYNC_HREF = "/research/docs"
  * sidebar skips it (`hostsOwnSidebarDock`): the sidebar on this page is the
  * research agent's files tree and "Open Tabs" list, with the app dock hosted
  * at the top of it. The agent's own app dock is not mounted here — that dock
- * is this app's — and its settings open as this app's `/settings/research`
- * pages (`SettingsModalProvider`).
+ * is this app's — and its settings open as this app's `/settings` tabs
+ * (`SettingsModalProvider`).
  *
  * The workspace has no header slot, so the "Saved to your account" badge (and
  * "Save now" when something is unsaved) floats in the bottom-right corner. It

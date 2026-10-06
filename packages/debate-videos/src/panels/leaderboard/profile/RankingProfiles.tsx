@@ -29,7 +29,7 @@ import {
   teamHref,
   teamRadarData,
   teamSlug,
-  teamVideoQuery,
+  teamVideoSearch,
   type ProfileEntry,
 } from "./rankingProfileHelpers"
 import { ProfileVideos } from "./ProfileVideos"
@@ -153,7 +153,7 @@ export function TeamProfilePage({ slug }: { slug: string }) {
             lockedTeamSlug={teamSlug(first)}
             title={`Simulate ${first.name} vs. any ranked team`}
           />
-          <ProfileVideos query={teamVideoQuery(first)} />
+          <ProfileVideos search={teamVideoSearch(entries)} />
           <ProfileCaselistDocuments school={first.school} team={first.name} />
         </>
       )}

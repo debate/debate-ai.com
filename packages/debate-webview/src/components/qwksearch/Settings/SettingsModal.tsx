@@ -7,7 +7,7 @@ import { researchSettingsHref } from '../../../lib/qwksearch/settings-paths';
 
 interface SettingsModalContextValue {
   /**
-   * Opens the research agent's settings, as a full page (`/settings/research`),
+   * Opens the research agent's settings — their tabs of `/settings` —
    * optionally on one section. Always returns `true`: debate-ai serves these
    * pages itself, so callers must never route-navigate on their own.
    */
@@ -27,9 +27,10 @@ export function useSettingsModal(): SettingsModalContextValue {
 }
 
 /**
- * Routes the research agent's "open settings" requests to its full settings
- * page. (It was a modal; settings are a full page by default now, with the
- * sections as tabs down the side — see `SettingsContent`.)
+ * Routes the research agent's "open settings" requests to its tabs of
+ * `/settings` (`researchSettingsHref`). (It was a modal, then a page of its
+ * own; the sections are tabs of the app's settings sidebar now — see
+ * `EditorSettingsPanel`.)
  */
 export function SettingsModalProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();

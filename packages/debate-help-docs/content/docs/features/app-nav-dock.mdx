@@ -122,9 +122,10 @@ sits at the top of that column (`OWN_SIDEBAR_DOCK_HREFS`, in
 The research agent's own app dock is never mounted here (it is the host's to
 draw), and on a phone the dock's **Sidebar** button opens the agent's sidebar
 (the `OPEN_OWN_SIDEBAR_EVENT` window event, the same one `/debate` listens for).
-Choosing **Settings** in the dock's menu from `/doc` opens the agent's settings
-as a full page at `/settings/research`, with a tab per section; from anywhere
-else it opens `/settings`, which links on to each of those sections.
+Choosing **Settings** in the dock's menu from `/doc` opens `/settings` on the
+research agent's first tab (`?category=research-account`); from anywhere else it
+opens `/settings` on its first tab. Either way the agent's sections and the app's
+own share one sidebar.
 
 The Research button was called **Docs** and lived at `/doc` until October
 2026. Old `/doc` and `/doc/<document>` links answer with a permanent (308)
