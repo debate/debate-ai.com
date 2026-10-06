@@ -22,6 +22,9 @@ import {
   DEFAULT_THEME_SETTINGS,
   DEFAULT_USER_SETTINGS,
   DEFAULT_WORD_LIMIT_PRESETS,
+  isFlowAutoSaveMode,
+  parseAccountFlowAutoSaveMode,
+  type FlowAutoSaveMode,
   normalizeFavoriteToolOpPatch,
   normalizeFavoriteToolsPatch,
   normalizeOutlineFilterPresetOpPatch,
@@ -136,6 +139,7 @@ import type { QualificationPointsTable } from "@debate/data-sync/src/rankings/nd
  *   savedArgumentCollections?,
  *   addSavedArgumentCollection?, removeSavedArgumentCollection?,
  *   renameSavedArgumentCollection?, updateSavedArgumentCollectionTags?,
+ *   flowAutoSaveMode? ("off" | "saved" | "all"),
  *   researchProgressGoal?, brainstormSessionTimer?, questStreakSync?,
  *   recordStreakFreezeDayKey?, setLapseReminderEnabled?, recordMissionResultDay?,
  *   qualificationPointsTable?, qualificationCutoff?, myTeamProfile? } — validates and
@@ -253,6 +257,7 @@ type SettingsRow = {
   recentTools: string | null
   editorPreferences: string | null
   flowEditorSettings: string | null
+  flowAutoSaveMode: string | null
   newsRead: string | null
   newsLiked: string | null
   wordLimitPresets: string | null
@@ -273,6 +278,8 @@ type SettingsPayload = UserSettingsPayload & {
   recentTools: string[]
   editorPreferences: EditorPreferencesPayload
   flowEditorSettings: FlowEditorAccountSettingsPayload
+  /** `null` until the user picks a mode on any device. */
+  flowAutoSaveMode: FlowAutoSaveMode | null
   newsRead: string[]
   newsLiked: string[]
   wordLimitPresets: { name: string; wordLimit: number }[]
@@ -296,6 +303,7 @@ function toPayload(row: SettingsRow | undefined): SettingsPayload {
     recentTools: row?.recentTools ? parseRecentTools(row.recentTools) : [],
     editorPreferences: parseEditorPreferences(row?.editorPreferences),
     flowEditorSettings: parseFlowEditorSettings(row?.flowEditorSettings),
+    flowAutoSaveMode: parseAccountFlowAutoSaveMode(row?.flowAutoSaveMode),
     newsRead: row?.newsRead ? parseNewsIdList(row.newsRead) : DEFAULT_NEWS_SYNC.newsRead,
     newsLiked: row?.newsLiked ? parseNewsIdList(row.newsLiked) : DEFAULT_NEWS_SYNC.newsLiked,
     wordLimitPresets: row?.wordLimitPresets
@@ -380,6 +388,9 @@ export async function PUT(req: NextRequest) {
   const flowEditorSettingsResult = normalizeFlowEditorSettingsPatch(
     (body as { flowEditorSettings?: unknown } | null)?.flowEditorSettings,
   )
+  const flowAutoSaveModeInput = (body as { flowAutoSaveMode?: unknown } | null)?.flowAutoSaveMode
+  const flowAutoSaveModeProvided = flowAutoSaveModeInput !== undefined
+  const flowAutoSaveModeValid = isFlowAutoSaveMode(flowAutoSaveModeInput)
   const valid = { ...userSettingsResult.valid, ...themeSettingsResult.valid }
   const errors = [
     ...userSettingsResult.errors,
@@ -407,6 +418,9 @@ export async function PUT(req: NextRequest) {
     ...myTeamProfileResult.errors,
     ...editorPreferencesResult.errors,
     ...flowEditorSettingsResult.errors,
+    ...(flowAutoSaveModeProvided && !flowAutoSaveModeValid
+      ? ['"flowAutoSaveMode" must be one of: off, saved, all.']
+      : []),
   ]
 
   if (errors.length > 0) {
@@ -445,12 +459,13 @@ export async function PUT(req: NextRequest) {
     newsLikedOpResult.valid.addNewsLiked === undefined &&
     newsLikedOpResult.valid.removeNewsLiked === undefined &&
     Object.keys(editorPreferencesResult.valid).length === 0 &&
-    Object.keys(flowEditorSettingsResult.valid).length === 0
+    Object.keys(flowEditorSettingsResult.valid).length === 0 &&
+    !flowAutoSaveModeValid
   ) {
     return NextResponse.json(
       {
         error:
-          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, recordRecentTool, wordLimitPresets, addWordLimitPreset, updateWordLimitPreset, removeWordLimitPreset, outlineFilterPresets, addOutlineFilterPreset, removeOutlineFilterPreset, savedArgumentCollections, addSavedArgumentCollection, removeSavedArgumentCollection, renameSavedArgumentCollection, updateSavedArgumentCollectionTags, researchProgressGoal, brainstormSessionTimer, questStreakSync, recordStreakFreezeDayKey, setLapseReminderEnabled, recordMissionResultDay, qualificationPointsTable, qualificationCutoff, myTeamProfile, newsRead, newsLiked, recordNewsRead, addNewsLiked, removeNewsLiked, editorPreferences, or flowEditorSettings.",
+          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, recordRecentTool, wordLimitPresets, addWordLimitPreset, updateWordLimitPreset, removeWordLimitPreset, outlineFilterPresets, addOutlineFilterPreset, removeOutlineFilterPreset, savedArgumentCollections, addSavedArgumentCollection, removeSavedArgumentCollection, renameSavedArgumentCollection, updateSavedArgumentCollectionTags, researchProgressGoal, brainstormSessionTimer, questStreakSync, recordStreakFreezeDayKey, setLapseReminderEnabled, recordMissionResultDay, qualificationPointsTable, qualificationCutoff, myTeamProfile, newsRead, newsLiked, recordNewsRead, addNewsLiked, removeNewsLiked, editorPreferences, flowEditorSettings, or flowAutoSaveMode.",
       },
       { status: 400 },
     )
@@ -467,6 +482,7 @@ export async function PUT(req: NextRequest) {
     recentTools?: string | null
     editorPreferences?: string | null
     flowEditorSettings?: string | null
+    flowAutoSaveMode?: string | null
     newsRead?: string | null
     newsLiked?: string | null
     wordLimitPresets?: string | null
@@ -751,6 +767,8 @@ export async function PUT(req: NextRequest) {
       mergeFlowEditorSettings(parseFlowEditorSettings(existing?.flowEditorSettings), flowEditorSettingsResult.valid),
     )
   }
+
+  if (flowAutoSaveModeValid) dbPatch.flowAutoSaveMode = flowAutoSaveModeInput
 
   await db
     .insert(userSettings)

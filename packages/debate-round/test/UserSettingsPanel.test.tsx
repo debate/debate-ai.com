@@ -109,6 +109,19 @@ describe("UserSettingsPanel", () => {
     expect(readLocalUserSettings()).toEqual({ debateStyle: 3, fontSize: 18 })
   })
 
+  it("adopts the account's flow auto-save mode, and keeps the device's when the account has none", async () => {
+    stubFetchSignedIn({ debateStyle: 0, fontSize: 16, colorTheme: "cyberpunk", themeMode: "dark", flowAutoSaveMode: "all" })
+    await renderPanel()
+    expect(localStorage.getItem("debate:flow-auto-save")).toBe("all")
+
+    await act(async () => root.unmount())
+    root = createRoot(container)
+    localStorage.setItem("debate:flow-auto-save", "off")
+    stubFetchSignedIn({ debateStyle: 0, fontSize: 16, colorTheme: "cyberpunk", themeMode: "dark", flowAutoSaveMode: null })
+    await renderPanel()
+    expect(localStorage.getItem("debate:flow-auto-save")).toBe("off")
+  })
+
   it("keeps an account load failure from blocking the form", async () => {
     vi.stubGlobal(
       "fetch",

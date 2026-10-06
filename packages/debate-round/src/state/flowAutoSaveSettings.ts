@@ -4,9 +4,12 @@
  * already on the account, `"all"` also uploads flows with no account baseline
  * (never saved, or not yet restored after a reload), `"off"` disables it.
  *
- * Stored in `localStorage` like the font family: it applies immediately and is
- * not synced to `/api/settings`. Reads fall back to the default when storage is
- * unavailable or holds an unknown value.
+ * Stored in `localStorage` like the font family, so it applies immediately and
+ * works signed out. A signed-in user's choice is also mirrored to the
+ * account's `user_settings.flow_auto_save_mode` (`flowAutoSaveMode` on
+ * `/api/settings`) so it follows them to other devices; `UserSettingsPanel`
+ * adopts the account value on load. Reads fall back to the default when
+ * storage is unavailable or holds an unknown value.
  *
  * @module state/flowAutoSaveSettings
  */
@@ -20,6 +23,15 @@ const STORAGE_KEY = "debate:flow-auto-save";
 
 export function isFlowAutoSaveMode(value: unknown): value is FlowAutoSaveMode {
   return typeof value === "string" && (FLOW_AUTO_SAVE_MODES as readonly string[]).includes(value);
+}
+
+/**
+ * Narrows an untrusted account value (a column read or a response field) to a
+ * mode, or `null` for "never set on the account" / anything unrecognised, so
+ * a missing or corrupt value never overrides this device's own choice.
+ */
+export function parseAccountFlowAutoSaveMode(value: unknown): FlowAutoSaveMode | null {
+  return isFlowAutoSaveMode(value) ? value : null;
 }
 
 export function readFlowAutoSaveMode(): FlowAutoSaveMode {

@@ -81,3 +81,40 @@ describe("/api/settings flowEditorSettings", () => {
     expect((await (await get()).json()).flowEditorSettings).toEqual({});
   });
 });
+
+describe("/api/settings flowAutoSaveMode", () => {
+  beforeEach(async () => {
+    signedInAs = "user-1";
+    db = drizzle(await freshSchemaClient(), { schema });
+    const now = new Date();
+    await db.insert(schema.user).values(
+      ["user-1", "user-2"].map((id) => ({ id, name: id, email: `${id}@example.com`, createdAt: now, updatedAt: now })),
+    );
+  });
+
+  it("is null until chosen, then saved and read back", async () => {
+    expect((await (await get()).json()).flowAutoSaveMode).toBeNull();
+    const res = await put({ flowAutoSaveMode: "all" });
+    expect(res.status).toBe(200);
+    expect((await res.json()).flowAutoSaveMode).toBe("all");
+    expect((await (await get()).json()).flowAutoSaveMode).toBe("all");
+    await put({ flowAutoSaveMode: "off" });
+    expect((await (await get()).json()).flowAutoSaveMode).toBe("off");
+  });
+
+  it("rejects unknown modes without writing", async () => {
+    await put({ flowAutoSaveMode: "saved" });
+    for (const bad of ["sometimes", 1, null, ""]) {
+      expect((await put({ flowAutoSaveMode: bad })).status).toBe(400);
+    }
+    expect((await (await get()).json()).flowAutoSaveMode).toBe("saved");
+  });
+
+  it("is per user and requires sign-in", async () => {
+    await put({ flowAutoSaveMode: "all" });
+    signedInAs = "user-2";
+    expect((await (await get()).json()).flowAutoSaveMode).toBeNull();
+    signedInAs = null;
+    expect((await put({ flowAutoSaveMode: "all" })).status).toBe(401);
+  });
+});

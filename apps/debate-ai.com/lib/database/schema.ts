@@ -258,6 +258,11 @@ export const userSettings = sqliteTable("user_settings", {
   // Null/absent means "use the client default", like every other nullable
   // column here.
   flowEditorSettings: text("flow_editor_settings"),
+  // Flow auto-save mode (`"off" | "saved" | "all"`, see
+  // packages/debate-round/src/state/flowAutoSaveSettings.ts, which is both
+  // the validator and the read-back filter). Null means "never chosen on the
+  // account": the device keeps its own local value.
+  flowAutoSaveMode: text("flow_auto_save_mode"),
   // JSON-serialized arrays of News Stream item ids the signed-in user has
   // read/liked (see packages/debate-card-search/src/lib/news-stream-sync.ts
   // and TODO.md's Product Feature Idea "Community-Rated Summaries" /

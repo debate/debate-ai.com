@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   DEFAULT_FLOW_AUTO_SAVE_MODE,
   isFlowAutoSaveMode,
+  parseAccountFlowAutoSaveMode,
   readFlowAutoSaveMode,
   setFlowAutoSaveMode,
 } from "../src/state/flowAutoSaveSettings";
@@ -47,5 +48,14 @@ describe("flow auto-save preference", () => {
     });
     expect(readFlowAutoSaveMode()).toBe("saved");
     expect(() => setFlowAutoSaveMode("all")).not.toThrow();
+  });
+});
+
+describe("parseAccountFlowAutoSaveMode", () => {
+  it("passes valid modes through and maps everything else to null", () => {
+    for (const mode of ["off", "saved", "all"]) expect(parseAccountFlowAutoSaveMode(mode)).toBe(mode);
+    for (const bad of [null, undefined, "", "sometimes", 1, {}]) {
+      expect(parseAccountFlowAutoSaveMode(bad)).toBeNull();
+    }
   });
 });

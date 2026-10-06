@@ -66,6 +66,7 @@ import {
 import {
   DEFAULT_FLOW_AUTO_SAVE_MODE,
   isFlowAutoSaveMode,
+  parseAccountFlowAutoSaveMode,
   readFlowAutoSaveMode,
   setFlowAutoSaveMode,
   type FlowAutoSaveMode,
@@ -148,7 +149,8 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
   // in-progress edit and is left alone.
   const baselineRef = useRef<FormState | null>(null)
 
-  // Local-only like `fontFamily`: applies at once, never part of the Save payload.
+  // Applies at once like `fontFamily` (never part of the Save payload); when signed in the
+  // choice is also pushed to the account on change, and the account's value is adopted on load.
   const [flowAutoSave, setFlowAutoSave] = useState<FlowAutoSaveMode>(DEFAULT_FLOW_AUTO_SAVE_MODE)
 
   useEffect(() => {
@@ -160,6 +162,11 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
     if (!isFlowAutoSaveMode(value)) return
     setFlowAutoSave(value)
     setFlowAutoSaveMode(value)
+    if (remoteAvailable) {
+      // Best effort: the local choice already applies, so a failed account sync is silent
+      // and the next successful change (or a reload's adopt-from-account) reconciles it.
+      void saveUserSettings({ flowAutoSaveMode: value }).catch(() => {})
+    }
   }
 
   const handleFontFamilyChange = (value: string) => {
@@ -190,6 +197,12 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
           setForm(remoteForm)
           baselineRef.current = remoteForm
           applyUserSettingsToLocalStore(remote)
+          // `null` = never chosen on the account: keep this device's own value.
+          const accountAutoSave = parseAccountFlowAutoSaveMode(remote.flowAutoSaveMode)
+          if (accountAutoSave) {
+            setFlowAutoSave(accountAutoSave)
+            setFlowAutoSaveMode(accountAutoSave)
+          }
           applyThemeLocally(colorTheme, themeMode, setTheme)
         }
       })
