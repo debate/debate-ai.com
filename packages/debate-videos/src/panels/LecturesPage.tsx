@@ -407,6 +407,17 @@ export function LecturesPage({ dockSlot, headerActionsSlot, topicAreasSlot }: Le
     feed.loadMore,
   )
 
+  // The row view groups what is loaded into seasons and tournaments, so a
+  // partly loaded feed reads as missing videos: sorted by views, the first
+  // page is the most-watched rounds of every season, and a season showed 2 of
+  // its 12. In that view the feed keeps paging on its own, up to the same
+  // `MAX_LOADED_VIDEOS` ceiling, so every group is complete in either sort.
+  useEffect(() => {
+    if (state.viewMode !== "list") return
+    if (!feed.hasMore || feed.atCapacity || feed.isLoading || feed.isLoadingMore) return
+    feed.loadMore()
+  }, [state.viewMode, feed.hasMore, feed.atCapacity, feed.isLoading, feed.isLoadingMore, feed.loadMore])
+
   const handleLoadMore = useCallback(() => feed.loadMore({ force: true }), [feed.loadMore])
 
   // ---------------------------------------------------------------------------

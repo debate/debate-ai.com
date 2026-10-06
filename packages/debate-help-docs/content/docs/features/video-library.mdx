@@ -112,6 +112,11 @@ the same day read Finals down to the prelims). Rounds with no tournament go
 into an **Unsorted** tournament group, which is placed by its own newest video
 like any other tournament (`buildVideoTree` in `video-tree.ts`).
 
+Because the groups are built from whatever has loaded, the row view keeps
+paging on its own (up to the usual 600-video ceiling) instead of waiting for
+you to scroll. Otherwise sorting by views would show only each season's
+most-watched rounds until the rest of the feed arrived (`LecturesPage.tsx`).
+
 Every column (Aff, Neg, Date, Views) shows at every screen width. On a phone
 the table is wider than the screen, so swipe it left and right to reach the
 columns beside the round; the first column is capped at three quarters of the
