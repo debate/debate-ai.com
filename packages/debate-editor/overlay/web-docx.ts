@@ -1,23 +1,24 @@
 /**
- * @fileoverview Web UI entry point for upstream CardMirror.
+ * @fileoverview Web-page helpers over CardMirror's headless core: loading a
+ * `.docx` straight from a `File`, saving one back as a downloadable `Blob`,
+ * and reading a document's outline and cards without mounting an editor.
  *
- * Re-exports CardMirror's core API unchanged and adds what a web page needs
- * on top: loading a `.docx` straight from a `File`, saving one back as a
- * downloadable `Blob`, and reading a document's outline and cards without
- * mounting an editor.
- * @module debate-editor-cm-adapter
+ * Merged in from the former `@debate/editor-cm-adapter` package, which
+ * re-exported the submodule's core API and added these on top. This package
+ * already exposes that core (`@debate/editor/engine`), so the helpers now
+ * live here and are re-exported from the same entry point.
+ * @module debate-editor/web-docx
  */
 
-import type { Node as PMNode } from "prosemirror-model";
-import { fromDocxFull, toDocx, type ExportOptions } from "./upstream";
-
-export * from "./upstream";
+import type { Node as PMNode } from 'prosemirror-model';
+import { fromDocxFull } from './import/index.js';
+import { toDocx, type ExportOptions } from './export/index.js';
 
 /** MIME type of a Word document, for downloads and file pickers. */
-export const DOCX_MIME_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+export const DOCX_MIME_TYPE = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
 
 /** The outline levels of a debate document, outermost first. */
-export type OutlineKind = "pocket" | "hat" | "block" | "tag";
+export type OutlineKind = 'pocket' | 'hat' | 'block' | 'tag';
 
 const OUTLINE_LEVELS: Record<OutlineKind, 1 | 2 | 3 | 4> = { pocket: 1, hat: 2, block: 3, tag: 4 };
 
@@ -67,7 +68,7 @@ export function outlineOf(doc: PMNode): OutlineItem[] {
   doc.descendants((node) => {
     const kind = node.type.name as OutlineKind;
     if (kind in OUTLINE_LEVELS) {
-      items.push({ kind, level: OUTLINE_LEVELS[kind], text: node.textContent, id: String(node.attrs["id"] ?? "") });
+      items.push({ kind, level: OUTLINE_LEVELS[kind], text: node.textContent, id: String(node.attrs['id'] ?? '') });
       // Heading content is inline; nothing below it to visit.
       return false;
     }
@@ -87,16 +88,16 @@ export function outlineOf(doc: PMNode): OutlineItem[] {
 export function cardsOf(doc: PMNode): CardText[] {
   const cards: CardText[] = [];
   doc.descendants((node) => {
-    if (node.type.name !== "card") return true;
-    let tag = "";
+    if (node.type.name !== 'card') return true;
+    let tag = '';
     const cites: string[] = [];
     const body: string[] = [];
     node.forEach((child) => {
-      if (child.type.name === "tag") tag = child.textContent;
-      else if (child.type.name === "cite_paragraph") cites.push(child.textContent);
-      else if (child.type.name === "card_body") body.push(child.textContent);
+      if (child.type.name === 'tag') tag = child.textContent;
+      else if (child.type.name === 'cite_paragraph') cites.push(child.textContent);
+      else if (child.type.name === 'card_body') body.push(child.textContent);
     });
-    cards.push({ tag, cite: cites.join("\n"), body: body.join("\n") });
+    cards.push({ tag, cite: cites.join('\n'), body: body.join('\n') });
     return false;
   });
   return cards;
