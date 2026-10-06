@@ -93,7 +93,9 @@
 - [x] Same marker for whole rounds on the `/debate` start screen cards (`recordRoundSavedToAccount`, `RoundAccountMarker`; branch `claude/gifted-babbage-a9pbpd`)
 - [x] Persist baselines so the marker survives a reload: saves store `{ hash, updatedAt }` in localStorage and `restoreFlowAccountBaselines` adopts one only when the account's list reports the same `updatedAt` (never wrongly "saved" for another user); wired to the Flow History cloud-tab load (branch `claude/gifted-babbage-o37mws`)
 - [x] Restore baselines on mount: `restoreAccountBaselinesOnce` (`state/restoreAccountBaselines.ts`, once per session, silent when signed out) via `useRestoreAccountBaselines` in `DebateStartPanel` and `OpenTabsGroup`; test `debate-round/test/restoreAccountBaselines.test.ts`; branch `claude/gifted-babbage-89z8b3`
-- [ ] Follow-up: auto-save flows to the account
+- [x] Auto-save flows already saved to the account (`state/flowAutoSave.ts`, `useFlowAutoSave` in `OpenTabsGroup`, `getFlowAccountUpdatedAt`; debounced, never forces, conflicts left for Flow History; test `debate-round/test/flowAutoSave.test.ts`; branch `claude/gifted-babbage-31ofma`)
+- [x] Opt-in setting to auto-save flows never saved before, plus an auto-save on/off toggle: `state/flowAutoSaveSettings.ts` (`off | saved | all`, device-local), `getMode` in `createFlowAutoSaver`, "Flow auto-save" select in `UserSettingsPanel`; tests `flowAutoSave.test.ts`, `flowAutoSaveSettings.test.ts`; docs in `user-settings.mdx` (branch `claude/gifted-babbage-eeg5we`)
+- [ ] Follow-up: sync the auto-save mode to the account (needs a `user_settings` column)
 - [ ] Follow-up: `ebb-dev-*` and `REASON-*` stores are still browser-only
 
 ### Tool UI pass: tool page header
@@ -126,10 +128,10 @@
 - [ ] Follow-up: deploy must apply the new column (schema.ts is the only source now that `drizzle/` is gone)
 
 
-### Known base breakage found while verifying (not fixed here)
+### Known base breakage found while verifying (resolved)
 
-- `packages/debate-tournaments/src/ui/client.ts` is a half-resolved merge (`return     upcoming: ...` at ~line 323, no object opening; `get` now takes a root), so `tsc` stops at syntax errors for every package that imports it and `bun run typecheck` fails.
-- [ ] Follow-up: reconstruct `createTournamentsClient`'s returned object against the new `get(root, path)` signature.
+- `packages/debate-tournaments/src/ui/client.ts` was a half-resolved merge that stopped `tsc` for every importing package. It no longer reproduces: `bunx tsc --noEmit` in `packages/debate-tournaments` passes on this branch (2026-10-06).
+- [x] Follow-up: reconstruct `createTournamentsClient`'s returned object against the new `get(root, path)` signature (already fixed on master).
 
 ### Fix duplicated tool-record catalog entries (merge damage)
 

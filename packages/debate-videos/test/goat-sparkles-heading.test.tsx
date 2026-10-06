@@ -16,4 +16,9 @@ describe("GoatSparklesHeading", () => {
     expect(GOAT_HEADING_TITLE).toBe("All Time Greatest Legends");
     expect(html).toMatch(/<h1[^>]*>All Time Greatest Legends<\/h1>/);
   });
+
+  it("shows the trophy-goat icon in the header", () => {
+    const html = renderToStaticMarkup(<GoatSparklesHeading />);
+    expect(html).toMatch(/<img[^>]*alt="Greatest of All-Time trophy"[^>]*src="data:image\/svg/);
+  });
 });

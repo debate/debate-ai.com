@@ -26,7 +26,7 @@ import {
   schoolHref,
   schoolVideoSearch,
   summarizeSchool,
-  teamHref,
+teamHref,
   teamRadarData,
   teamSlug,
   teamVideoSearch,

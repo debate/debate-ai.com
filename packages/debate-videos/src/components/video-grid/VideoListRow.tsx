@@ -22,6 +22,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import type { RankingEntry } from "@debate/rankings-adapter"
 import { Star, ExternalLink, EyeOff, Eye, ListVideo, Play } from "lucide-react"
 import { cn } from "../../ui/lib/utils"
@@ -33,7 +34,8 @@ import { WatchProgressBadge } from "../video-card/WatchProgressBadge"
 import { useWatchHistoryEntry } from "../../hooks/useWatchHistory"
 import { formatWatchedAgo } from "../../state/videoWatchHistory"
 import { HideConfirmDialog } from "../video-card/VideoCardDialogs"
-import { WatchPageLink } from "../watch/WatchPageLink"
+import { PopoutPlayerButton } from "../watch/PopoutPlayerButton"
+import { videoRouteHref } from "../../lib/video-route"
 import { StackNav, stackMemberLabel } from "../video-card/StackNav"
 import { cleanTournamentName, videoCategoryLabel } from "./video-tree"
 import { TOC_TOURNAMENT_IMAGE } from "../video-card/videoCardUtils"
@@ -96,7 +98,7 @@ function RowThumbnail({
  * A team found in the current season's rankings (`ranking`) links to its
  * team page and shows its rating beside the name. Otherwise, with
  * `onSearch`, the name is a button that searches the library for that team's
- * videos instead of playing the row.
+ * videos instead of opening the row.
  */
 function TeamCell({
   team,
@@ -203,6 +205,10 @@ export function VideoListRow({
   negRanking?: RankingEntry | null
   /** Badges the tournament name with the round's debate format. */
   showFormat?: boolean
+  /** The aff team's current-season rankings row, when it has one. */
+  affRanking?: RankingEntry | null
+  /** The neg team's current-season rankings row, when it has one. */
+  negRanking?: RankingEntry | null
 }) {
   const [
     videoId,
@@ -230,9 +236,9 @@ export function VideoListRow({
   const isInQueue = useVideoPlayerStore((state) =>
     state.queue.some((item) => item.videoId === videoId),
   )
-  const setActiveVideo = useVideoPlayerStore((state) => state.setActiveVideo)
   const addToQueue = useVideoPlayerStore((state) => state.addToQueue)
   const watched = useWatchHistoryEntry(videoId)
+  const router = useRouter()
 
   const styleNumber = typeof style === "number" ? style : undefined
   const categoryLabel = videoCategoryLabel(video)
@@ -250,10 +256,17 @@ export function VideoListRow({
   return (
     <>
       <tr
-        onClick={() =>
-          !isPlaying &&
-          setActiveVideo(videoId, title, { style: styleNumber, tournament, year, affTeam, negTeam })
-        }
+        // The row opens the video's watch page; the popout-player icon among
+        // its actions is the way to play it without leaving the listing. A
+        // table row cannot be a link, so a modifier-click is honoured by hand.
+        onClick={(e) => {
+          const href = videoRouteHref(video)
+          if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) {
+            window.open(href, "_blank", "noopener")
+            return
+          }
+          router.push(href)
+        }}
         className={cn(
           "cursor-pointer border-b border-border last:border-0 transition-colors hover:bg-accent/50",
           isPlaying && "bg-primary/10 hover:bg-primary/10",
@@ -414,9 +427,7 @@ export function VideoListRow({
                   <TooltipContent>{isInQueue ? "In queue" : "Add to queue"}</TooltipContent>
                 </Tooltip>
 
-                <WatchPageLink
-                  videoId={videoId}
-                  title={title}
+                <PopoutPlayerButton
                   video={video}
                   className="p-1"
                   iconClassName="h-3.5 w-3.5"

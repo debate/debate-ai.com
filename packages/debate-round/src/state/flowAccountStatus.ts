@@ -108,6 +108,17 @@ export function recordFlowSavedToAccount(flow: Flow, updatedAt?: string): void {
   notify();
 }
 
+/**
+ * The `updatedAt` the account stamped on the save this browser last confirmed
+ * for `flow`, or `null` when there is none or it no longer matches the baseline.
+ * Used as `baseUpdatedAt` so a later save can't silently overwrite a newer copy.
+ */
+export function getFlowAccountUpdatedAt(flow: Flow): string | null {
+  const baseline = readPersisted().flows[String(flow.id)];
+  if (!baseline || baseline.hash !== savedHashes.get(flow.id)) return null;
+  return baseline.updatedAt;
+}
+
 /** Forgets a flow's baseline (it was deleted, or the user signed out). */
 export function forgetFlowAccountStatus(flowId: number): void {
   persistBaseline("flows", flowId, null);

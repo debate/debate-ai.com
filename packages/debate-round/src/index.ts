@@ -23,6 +23,7 @@ export * from "./hooks/useStrategyRecommendations";
 export * from "./state/cloudLibrary";
 export * from "./state/cloudLibraryClient";
 export * from "./state/bulkRoundSave";
+export * from "./state/flowAutoSaveSettings";
 export * from "./round/flow-tool-links";
 export * from "./round/round-invite-client";
 export { searchUsers, type UserSearchResult } from "./cache/client-cache";

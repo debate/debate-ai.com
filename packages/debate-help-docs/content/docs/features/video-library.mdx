@@ -42,7 +42,8 @@ links open the merged shelf.
 
 In the sidebar, College Debates, Policy, PF and LD show lettered badges (NDT,
 VP, PF, LD) instead of generic icons. The Greatest of All-Time collection
-(`/videos/topPicks`) opens on an **All Time Greatest Legends** banner with
+(`/videos/topPicks`) opens on an **All Time Greatest Legends** banner — the gold trophy-goat icon
+over the title — with
 drifting sparkles above the search bar (`GoatSparklesHeading`, built on
 `SparklesCore` in `debate-videos/src/ui/effects/sparkles.tsx`).
 
@@ -113,6 +114,11 @@ Links shared under the older addresses (`…/dartmouth-sv-vs-michigan-pr-round-a
 still work and forward to the new one.
 
 ## List layout
+
+Clicking a row opens that video's [watch page](/docs/features/video-watch-page)
+(Ctrl/⌘-click opens it in a new tab). To keep browsing while it plays, use
+the row's **Watch in popout player** icon instead — it starts the video in
+the floating player in the corner (`PopoutPlayerButton`).
 
 The dense table view (`VideoListRows`, the alternative to the card grid) shows
 a cleaned-up Tournament column rather than the raw stored value: years, round

@@ -64,6 +64,13 @@ import {
   type ThemeMode,
 } from "../state/themeSettings"
 import {
+  DEFAULT_FLOW_AUTO_SAVE_MODE,
+  isFlowAutoSaveMode,
+  readFlowAutoSaveMode,
+  setFlowAutoSaveMode,
+  type FlowAutoSaveMode,
+} from "../state/flowAutoSaveSettings"
+import {
   DEFAULT_FONT_FAMILY,
   FONT_OPTIONS,
   readLocalFontFamily,
@@ -141,9 +148,19 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
   // in-progress edit and is left alone.
   const baselineRef = useRef<FormState | null>(null)
 
+  // Local-only like `fontFamily`: applies at once, never part of the Save payload.
+  const [flowAutoSave, setFlowAutoSave] = useState<FlowAutoSaveMode>(DEFAULT_FLOW_AUTO_SAVE_MODE)
+
   useEffect(() => {
     setFontFamily(readLocalFontFamily())
+    setFlowAutoSave(readFlowAutoSaveMode())
   }, [])
+
+  const handleFlowAutoSaveChange = (value: string) => {
+    if (!isFlowAutoSaveMode(value)) return
+    setFlowAutoSave(value)
+    setFlowAutoSaveMode(value)
+  }
 
   const handleFontFamilyChange = (value: string) => {
     setFontFamily(value)
@@ -297,6 +314,7 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
   const handleResetToDefaults = () => {
     setForm({ ...DEFAULT_USER_SETTINGS, ...DEFAULT_THEME_SETTINGS })
     handleFontFamilyChange(DEFAULT_FONT_FAMILY)
+    handleFlowAutoSaveChange(DEFAULT_FLOW_AUTO_SAVE_MODE)
     setStatus({ kind: "idle" })
   }
 
@@ -369,6 +387,24 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
           </Select>
           <p className="text-xs text-muted-foreground">
             Applies immediately in this browser — unlike the settings above, this one isn't saved to your account.
+          </p>
+        </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor="settings-flow-auto-save">Flow auto-save</Label>
+          <Select value={flowAutoSave} onValueChange={handleFlowAutoSaveChange}>
+            <SelectTrigger id="settings-flow-auto-save">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="saved">Flows already on my account</SelectItem>
+              <SelectItem value="all">All flows</SelectItem>
+              <SelectItem value="off">Off</SelectItem>
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-muted-foreground">
+            Saves edits to your account a few seconds after you stop typing. "All flows" also uploads flows
+            you haven't saved yet. Applies immediately in this browser and needs you to be signed in.
           </p>
         </div>
 

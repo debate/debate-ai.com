@@ -334,6 +334,7 @@ export function VideoListRows({
     onUnhideVideo,
     onSearch,
     showFormat,
+    teamRanking,
   }
 
   return (

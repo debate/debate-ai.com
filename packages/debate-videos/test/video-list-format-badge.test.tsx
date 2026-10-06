@@ -10,6 +10,7 @@ import { createElement } from "react";
 import type { DebateStyle, VideoType } from "../src/types/videos";
 
 vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: () => {} }),
   useParams: () => ({}),
   usePathname: () => "/videos/goat-status",
 }));
