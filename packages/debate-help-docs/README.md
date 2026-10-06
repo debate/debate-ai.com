@@ -52,8 +52,7 @@ theme the reader picked in the app.
 | Route | What it serves |
 | --- | --- |
 | `/docs` | The docs, in a notebook layout with a collapsible sidebar and full-text search |
-| `/docs/guides/*` | Task guides for the training, practice, and research collaboration tools |
-| `/docs/features/*` | One page per product feature |
+| `/docs/features/*` | One page per product feature, including the task guides for the training, practice, and research collaboration tools |
 | `/docs/packages/*` | One page per workspace package |
 | `/docs/welcome` | Landing page: hero, the three task guides, and what the site covers |
 | `/docs/api/docs-search` | Orama search index, downloaded once and queried in the browser by the search dialog |
@@ -68,7 +67,7 @@ exhausting the unauthenticated rate limit.
 
 All documentation content lives under `content/docs/`:
 
-- `content/docs/guides/` — task-oriented walkthroughs. The app's tool pages link to these: every page under
+- `content/docs/features/{training-tools,practice-tools,research-collaboration}.mdx` — task-oriented walkthroughs. The app's tool pages link to these: every page under
   `apps/debate-ai.com/app` that uses `ToolPageHeader` names the guide it belongs to, and each workspace hub
   section (`components/research/ResearchHub.tsx`, `components/coach/CoachHub.tsx`) links to its guide.
 - `content/docs/features/` mirrors `docs/features/*.md` — one page per product feature.

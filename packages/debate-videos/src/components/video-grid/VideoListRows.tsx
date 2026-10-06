@@ -29,6 +29,7 @@ import { ChevronUp, ChevronDown } from "lucide-react"
 import { cn } from "../../ui/lib/utils"
 import { TooltipProvider } from "../../ui/primitives/tooltip"
 import { useWatchHistory } from "../../hooks/useWatchHistory"
+import { useVideoTeamRankings } from "../../hooks/useVideoTeamRankings"
 import { ColumnResizeHandle } from "./ColumnResizeHandle"
 import { useResizableColumns } from "./useResizableColumns"
 import { buildVideoSlots, type VideoSlot, type VideoStackMap } from "./video-stacks"
@@ -91,6 +92,11 @@ interface VideoListRowsProps {
    * played), for the watch-history listing.
    */
   showWatched?: boolean
+  /**
+   * Badges each tournament name — its group row and every round under it —
+   * with the debate format, for a listing that mixes formats (Top Picks).
+   */
+  showFormat?: boolean
 }
 
 type ColumnKey = "tree" | "aff" | "neg" | "date" | "views" | "watched"
@@ -215,6 +221,7 @@ export function VideoListRows({
   defaultSort,
   onSearch,
   showWatched = false,
+  showFormat = false,
 }: VideoListRowsProps) {
   const watchHistory = useWatchHistory()
   // Without an explicit `layout`, round (debate) videos carry tournament/aff/
@@ -224,6 +231,8 @@ export function VideoListRows({
     () => (layout ? layout === "round" : videos.some((video) => video[7] || video[9] || video[10])),
     [videos, layout],
   )
+
+  const teamRanking = useVideoTeamRankings(videos, isRoundMode)
 
   const baseColumns = isRoundMode ? ROUND_COLUMNS : LECTURE_COLUMNS
   const columns = useMemo<ColumnDef[]>(
@@ -324,6 +333,7 @@ export function VideoListRows({
     onHideVideo,
     onUnhideVideo,
     onSearch,
+    showFormat,
   }
 
   return (

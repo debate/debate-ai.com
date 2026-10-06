@@ -20,6 +20,10 @@ that you changed the extension and how you verified it.
 - **Manifest permissions are the security surface.** Adding a host permission or
   a broad content-script match widens what the extension can read on every page
   a user visits. Keep permissions minimal and justify any addition in the PR.
+- `unlimitedStorage` and `externally_connectable` (debate-ai.com + localhost)
+  exist for the site's offline-storage bridge
+  (`src/storage/bulk-storage-bridge.ts`). The bridge accepts only the site's
+  `BULK_STORAGE_KEYS` — keep it that narrow.
 - No remote code. Extension stores reject it and it is a real risk — bundle
   everything.
 - A background/service worker in MV3 is **not persistent**: it is torn down and

@@ -14,6 +14,7 @@ import {
   toggleReaderPanel,
 } from '@/src/reader/panel';
 import { getSettings } from '@/src/settings/settings';
+import { handleBulkStorageMessage, isBulkStorageMessage } from '@/src/storage/bulk-storage-bridge';
 import { OPEN_TIMER_MESSAGE, forgetTimerWindow, openTimerWindow } from '@/src/timer/window';
 
 /**
@@ -194,6 +195,20 @@ export default defineBackground(() => {
       default:
         return;
     }
+  });
+
+  // debate-ai.com mirroring its flows, rounds and history into this
+  // extension's unlimited storage (src/storage/bulk-storage-bridge.ts). The
+  // manifest's `externally_connectable` is what limits who can send these.
+  // Chromium only; Firefox has no `onMessageExternal` for web pages.
+  const onMessageExternal = (
+    browser.runtime as unknown as {
+      onMessageExternal?: typeof browser.runtime.onMessage;
+    }
+  ).onMessageExternal;
+  onMessageExternal?.addListener((message: unknown) => {
+    if (!isBulkStorageMessage(message)) return;
+    return handleBulkStorageMessage(message, browser.storage.local);
   });
 
   browser.contextMenus.onClicked.addListener((info, tab) => {

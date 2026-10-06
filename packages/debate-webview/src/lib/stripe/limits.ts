@@ -16,7 +16,8 @@ export interface TierLimits {
   llmRequestsPerDay: number | null;
   /** Largest `maxTokens` a single AI proxy request may ask for. */
   llmMaxTokens: number;
-  /** New (not already saved) card AI analyses generated per day. */
+  /** New (not already saved) card AI analyses generated per day. Reading a
+   * saved analysis is free, and a generation that fails is refunded. */
   cardAiAnalysesPerDay: number | null;
   /** Card searches (`/api/search`) per day. */
   cardSearchesPerDay: number | null;
@@ -34,7 +35,7 @@ export const TIER_LIMITS: Readonly<Record<TierId, TierLimits>> = {
   free: {
     llmRequestsPerDay: 10,
     llmMaxTokens: 2048,
-    cardAiAnalysesPerDay: 5,
+    cardAiAnalysesPerDay: 25,
     cardSearchesPerDay: 50,
     cardSearchResults: 50,
     teamStudents: 0,
@@ -44,7 +45,7 @@ export const TIER_LIMITS: Readonly<Record<TierId, TierLimits>> = {
   "pro-vip": {
     llmRequestsPerDay: 200,
     llmMaxTokens: 8192,
-    cardAiAnalysesPerDay: 100,
+    cardAiAnalysesPerDay: 300,
     cardSearchesPerDay: 1000,
     cardSearchResults: 200,
     teamStudents: 0,
@@ -54,7 +55,7 @@ export const TIER_LIMITS: Readonly<Record<TierId, TierLimits>> = {
   "research-team": {
     llmRequestsPerDay: 1000,
     llmMaxTokens: 16384,
-    cardAiAnalysesPerDay: 500,
+    cardAiAnalysesPerDay: 1500,
     cardSearchesPerDay: null,
     cardSearchResults: 200,
     teamStudents: 10,

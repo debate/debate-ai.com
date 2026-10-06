@@ -1,10 +1,11 @@
 /**
  * @fileoverview Hook for managing AI analysis sidebar state and actions.
  *
- * The prompt starts prefilled with {@link FIND_FLAWS_AND_EXTENSIONS_PROMPT},
- * and selecting a card runs it automatically: `/api/card-ai-analysis` returns
- * the card's saved analysis, or generates and saves one the first time that
- * card is analyzed with that prompt, so every card keeps a saved version.
+ * The prompt starts prefilled with {@link FIND_FLAWS_AND_EXTENSIONS_PROMPT}.
+ * Selecting a card only *preloads* an analysis that was already saved for it
+ * (`savedOnly`, which is never metered); a new analysis is generated only when
+ * the user clicks Generate. Auto-generating on selection spent a free plan's
+ * whole daily `cardAiAnalysesPerDay` allowance just by browsing five results.
  * Results are also memoized for the session, so stepping back to a card is
  * instant.
  *
@@ -18,6 +19,7 @@ import type { SearchResult } from "../types";
 import {
   FIND_FLAWS_AND_EXTENSIONS_PROMPT,
   buildCardAnalysisContent,
+  fetchSavedCardAiAnalysis,
   requestCardAiAnalysis,
 } from "../lib/card-ai-analysis";
 
@@ -29,12 +31,14 @@ const memoKey = (content: string, prompt: string) => `${prompt}\u0000${content}`
  * Manages AI analysis state: prompt editing, result generation, and clipboard copy.
  *
  * @param selectedResult - The currently selected search result to analyze.
- * @param options.autoGenerate - Analyze each card as soon as it is selected (default true).
+ * @param options.autoLoadSaved - Show a card's saved analysis as soon as it is selected (default true).
+ * @param options.autoGenerate - Also generate a new analysis on selection when none is saved
+ *   (default false — that costs a metered analysis per card browsed).
  * @returns State values and action handlers for the AI analysis sidebar.
  */
 export function useAiAnalysis(
   selectedResult: SearchResult | null,
-  { autoGenerate = true }: { autoGenerate?: boolean } = {},
+  { autoLoadSaved = true, autoGenerate = false }: { autoLoadSaved?: boolean; autoGenerate?: boolean } = {},
 ) {
   const [customPrompt, setCustomPrompt] = useState(FIND_FLAWS_AND_EXTENSIONS_PROMPT);
   const [aiResult, setAiResult] = useState("");
@@ -81,15 +85,37 @@ export function useAiAnalysis(
     }
   }, []);
 
+  /** Shows the selected card's saved analysis, if it has one, without generating. */
+  const loadSaved = useCallback(async (card: SearchResult | null, prompt: string) => {
+    const id = ++requestId.current;
+    setGenerating(false);
+    setAiResult("");
+    if (!card) return;
+    const content = buildCardAnalysisContent(card);
+    if (!content) return;
+    const key = memoKey(content, prompt);
+    const memo = sessionResults.get(key);
+    if (memo !== undefined) {
+      setAiResult(memo);
+      return;
+    }
+    const saved = await fetchSavedCardAiAnalysis({ content, prompt }).catch(() => null);
+    if (saved === null) return;
+    sessionResults.set(key, saved);
+    if (id === requestId.current) setAiResult(saved);
+  }, []);
+
   useEffect(() => {
     if (autoGenerate) {
       void generate(selectedResult, promptRef.current);
+    } else if (autoLoadSaved) {
+      void loadSaved(selectedResult, promptRef.current);
     } else {
       requestId.current++;
       setAiResult("");
       setGenerating(false);
     }
-  }, [selectedResult, autoGenerate, generate]);
+  }, [selectedResult, autoGenerate, autoLoadSaved, generate, loadSaved]);
 
   /** Analyze the selected card with the prompt as currently edited. */
   const handleGenerate = async () => {

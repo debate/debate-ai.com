@@ -41,11 +41,11 @@ describe("docsHomeUrl", () => {
 })
 
 describe("guideDocsUrl", () => {
-  it("resolves each guide under /docs/guides", () => {
-    expect(guideDocsUrl("training-tools")).toBe("/docs/guides/training-tools")
-    expect(guideDocsUrl("practice-tools")).toBe("/docs/guides/practice-tools")
+  it("resolves each guide under /docs/features", () => {
+    expect(guideDocsUrl("training-tools")).toBe("/docs/features/training-tools")
+    expect(guideDocsUrl("practice-tools")).toBe("/docs/features/practice-tools")
     expect(guideDocsUrl("research-collaboration")).toBe(
-      "/docs/guides/research-collaboration",
+      "/docs/features/research-collaboration",
     )
   })
 })

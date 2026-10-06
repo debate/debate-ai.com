@@ -8,7 +8,7 @@ import { ArrowRight, Dumbbell, Swords, Users2 } from "lucide-react"
 
 const guides = [
   {
-    href: "/docs/guides/training-tools",
+    href: "/docs/features/training-tools",
     icon: Dumbbell,
     title: "Training tools",
     description:
@@ -16,7 +16,7 @@ const guides = [
     routes: ["/coaching", "/coaching/ai-coach", "/practice/drills", "/coaching/programs"],
   },
   {
-    href: "/docs/guides/practice-tools",
+    href: "/docs/features/practice-tools",
     icon: Swords,
     title: "Practice tools",
     description:
@@ -24,7 +24,7 @@ const guides = [
     routes: ["/practice/versus-ai", "/practice", "/word-count"],
   },
   {
-    href: "/docs/guides/research-collaboration",
+    href: "/docs/features/research-collaboration",
     icon: Users2,
     title: "Research collaboration",
     description:
