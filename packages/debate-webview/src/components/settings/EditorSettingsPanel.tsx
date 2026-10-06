@@ -12,6 +12,7 @@ import type { SettingsCategory } from "@debate/editor/settings"
 import { CARDMIRROR_SETTINGS_TABS } from "@debate/editor/settings-tabs"
 import { UserSettingsPanel } from "@debate/round"
 import { TeamCoachingSection } from "./TeamCoachingSection"
+import { OwnAiKeySection } from "./OwnAiKeySection"
 import { EDITOR_SETTINGS_TABS } from "../../lib/editor-preferences"
 import { useEditorPreferencesSync } from "../../lib/hooks/useEditorPreferencesSync"
 import { CARDMIRROR_TAB_ICONS } from "./cardmirror-tab-icons"
@@ -66,7 +67,7 @@ const RESEARCH_ICONS: Record<string, ComponentType<{ size?: number }>> = {
 const CATEGORY_DETAILS: Record<string, { icon: ComponentType<{ size?: number }>; description: string }> = {
   preferences: {
     icon: SlidersHorizontal,
-    description: "Your plan, debate style, font, color theme, light/dark mode and tool data sync.",
+    description: "Your plan, your own AI key, debate style, font, color theme, light/dark mode and tool data sync.",
   },
   ...Object.fromEntries(
     CARDMIRROR_SETTINGS_TABS.map((tab) => [tab.id, { icon: CARDMIRROR_TAB_ICONS[tab.id] ?? Settings, description: tab.description }]),
@@ -206,6 +207,7 @@ export function EditorSettingsPanel() {
           ) : active === PREFERENCES_TAB ? (
             <>
               <TeamCoachingSection />
+              <OwnAiKeySection />
               <UserSettingsPanel embedded />
             </>
           ) : (

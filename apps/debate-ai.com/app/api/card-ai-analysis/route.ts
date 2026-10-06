@@ -9,7 +9,7 @@ import {
 import { getDBFromContext } from "@/lib/database/context"
 import { cardAiAnalyses } from "@/lib/database/schema"
 import { getSession } from "@/lib/auth/session"
-import { getEnv } from "@/lib/env"
+import { keyExhaustedResponse, resolveProviderKey } from "@/lib/ai/provider-key"
 import { isMissingTableError } from "@/lib/contacts/server"
 import { limitsFor } from "@debate/webview/lib/stripe/limits"
 import {
@@ -40,6 +40,10 @@ import {
  * signed out); reading a saved analysis is free. A generation that fails
  * (provider error, network error, empty answer) is refunded, so only a
  * delivered analysis counts.
+ *
+ * A caller who sends their own OpenRouter or Anthropic key (`x-user-ai-key`,
+ * `lib/ai/provider-key.ts`) is billed on it, under the spending limit they set
+ * with their provider, so their generations skip the plan limit.
  *
  * `savedOnly: true` returns the saved analysis or `{ result: null }` and never
  * generates — the sidebar uses it to preload a card's analysis on selection
@@ -97,19 +101,23 @@ export async function POST(request: Request) {
     return error("Sign in to run a custom AI prompt.", 401)
   }
 
-  const openrouterKey = getEnv("OPENROUTER_API_KEY")
-  const anthropicKey = getEnv("ANTHROPIC_API_KEY")
-  if (!openrouterKey && !anthropicKey) return error("AI features are not configured on this server.", 503)
+  const providerKey = resolveProviderKey(request)
+  if (!providerKey) return error("AI features are not configured on this server.", 503)
+  const openrouterKey = providerKey.provider === "openrouter" ? providerKey.key : null
 
-  const tier = await getUserTier(db, session?.user.id)
   const subject = usageSubject(session?.user.id, request)
-  const usage = await consumeDailyUsage(db, subject, "cardAiAnalyses", limitsFor(tier))
-  if (!usage.allowed) {
-    return NextResponse.json(
-      { error: limitMessage("cardAiAnalyses", usage, tier) },
-      { status: 429, headers: planLimitHeaders("cardAiAnalyses") },
-    )
+  if (!providerKey.own) {
+    const tier = await getUserTier(db, session?.user.id)
+    const usage = await consumeDailyUsage(db, subject, "cardAiAnalyses", limitsFor(tier))
+    if (!usage.allowed) {
+      return NextResponse.json(
+        { error: limitMessage("cardAiAnalyses", usage, tier) },
+        { status: 429, headers: planLimitHeaders("cardAiAnalyses") },
+      )
+    }
   }
+  // Only a generation the plan limit counted is refunded on failure.
+  const refund = () => (providerKey.own ? Promise.resolve() : refundDailyUsage(db, subject, "cardAiAnalyses"))
 
   let res: Response
   try {
@@ -136,7 +144,7 @@ export async function POST(request: Request) {
         method: "POST",
         headers: {
           "content-type": "application/json",
-          "x-api-key": anthropicKey!,
+          "x-api-key": providerKey.key,
           "anthropic-version": ANTHROPIC_VERSION,
         },
         body: JSON.stringify({
@@ -148,15 +156,20 @@ export async function POST(request: Request) {
       })
     }
   } catch (e) {
-    await refundDailyUsage(db, subject, "cardAiAnalyses")
+    await refund()
     return error(`Network error contacting AI provider: ${e instanceof Error ? e.message : String(e)}`, 502)
   }
   if (!res.ok) {
     // Log the provider's body: the status alone can't tell a bad key, exhausted
     // credits, a rate limit, or a retired model apart in Workers Logs.
     const detail = (await res.text().catch(() => "")).slice(0, 1000)
-    console.error(`card-ai-analysis: ${openrouterKey ? "OpenRouter" : "Anthropic"} returned ${res.status}`, detail)
-    await refundDailyUsage(db, subject, "cardAiAnalyses")
+    console.error(
+      `card-ai-analysis: ${openrouterKey ? "OpenRouter" : "Anthropic"}${providerKey.own ? " (caller's own key)" : ""} returned ${res.status}`,
+      detail,
+    )
+    await refund()
+    const exhausted = keyExhaustedResponse(providerKey, res.status, detail)
+    if (exhausted) return exhausted
     return error(`AI API returned ${res.status}.`, 502)
   }
 
@@ -175,7 +188,7 @@ export async function POST(request: Request) {
   }
   result = result.trim()
   if (!result) {
-    await refundDailyUsage(db, subject, "cardAiAnalyses")
+    await refund()
     return error("AI API returned an empty response.", 502)
   }
 

@@ -5,6 +5,7 @@ import type { DailyMetric } from "../../lib/stripe/limits"
 import { subscribeToPlanLimits, watchPlanLimits } from "../../lib/stripe/plan-limit"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../../lib/ui/primitives/dialog"
 import { PricingPlans, type SubscriptionInfo } from "./PricingPlans"
+import { OwnAiKeyForm } from "../settings/OwnAiKeySection"
 
 const METRIC_NAMES: Record<DailyMetric, string> = {
   llmRequests: "AI requests",
@@ -77,6 +78,12 @@ export function PlanLimitDialog() {
             )}
           </DialogDescription>
         </DialogHeader>
+        {metric !== "cardSearches" && (
+          <div className="rounded-lg border border-border p-4">
+            <p className="mb-2 text-sm font-semibold text-foreground">Or use your own AI key, with your own limit</p>
+            <OwnAiKeyForm />
+          </div>
+        )}
         <PricingPlans info={info} />
       </DialogContent>
     </Dialog>

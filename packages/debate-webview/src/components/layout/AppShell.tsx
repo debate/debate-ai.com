@@ -26,6 +26,7 @@ import { DebaterActivityListener } from "./DebaterActivityListener"
 import { SignInPromptProvider } from "./SignInPromptProvider"
 import { GlobalCommandPalette } from "./GlobalCommandPalette"
 import { PlanLimitDialog } from "../pricing/PlanLimitDialog"
+import { OwnAiKeyDialog } from "../pricing/OwnAiKeyDialog"
 import { ServiceWorkerRegistrar } from "./ServiceWorkerRegistrar"
 import { useIsFramedDocument } from "../../lib/layout/use-framed-document"
 import { isDocsPath } from "../../lib/layout/frame-navigation"
@@ -83,6 +84,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <ChromeErrorBoundary label="PlanLimitDialog">
             <PlanLimitDialog />
           </ChromeErrorBoundary>
+          {/* And the AI tools that send the user's own key fetch from here too. */}
+          <ChromeErrorBoundary label="OwnAiKeyDialog">
+            <OwnAiKeyDialog />
+          </ChromeErrorBoundary>
           <MixpanelProvider />
           <Toaster position="top-center" richColors closeButton />
         </ReasonDocsProvider>
@@ -131,6 +136,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* The pricing plans, shown only when a daily plan limit is hit. */}
       <ChromeErrorBoundary label="PlanLimitDialog">
         <PlanLimitDialog />
+      </ChromeErrorBoundary>
+      {/* Sends the user's own AI key, and asks for one when the shared key runs dry. */}
+      <ChromeErrorBoundary label="OwnAiKeyDialog">
+        <OwnAiKeyDialog />
       </ChromeErrorBoundary>
       <ChromeErrorBoundary label="ServiceWorkerRegistrar">
         <ServiceWorkerRegistrar />
