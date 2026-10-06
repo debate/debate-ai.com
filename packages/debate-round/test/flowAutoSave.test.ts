@@ -85,6 +85,45 @@ describe("createFlowAutoSaver", () => {
     expect(save).not.toHaveBeenCalled();
   });
 
+  it("uploads never-saved flows only in 'all' mode, with no base version", async () => {
+    const fresh = makeFlow({ id: 7, content: "new" });
+    const save = vi.fn().mockResolvedValue({ conflict: false, summary: summary("t1") });
+    const saver = createFlowAutoSaver({ save, getMode: () => "all" });
+    saver.schedule([fresh]);
+    expect(await saver.flush()).toEqual([7]);
+    expect(save).toHaveBeenCalledWith(fresh, { baseUpdatedAt: null });
+    expect(getFlowAccountStatus(fresh)).toBe("saved");
+  });
+
+  it("leaves a never-saved flow alone when an account copy already exists (conflict)", async () => {
+    const save = vi.fn().mockResolvedValue({ conflict: true, current: summary("t9") });
+    const saver = createFlowAutoSaver({ save, getMode: () => "all" });
+    saver.schedule([makeFlow({ id: 8 })]);
+    expect(await saver.flush()).toEqual([]);
+    expect(await saver.flush()).toEqual([]);
+    expect(save).toHaveBeenCalledTimes(1);
+  });
+
+  it("saves nothing in 'off' mode, even for flows already on the account", async () => {
+    recordFlowSavedToAccount(makeFlow(), "t1");
+    const save = vi.fn();
+    const saver = createFlowAutoSaver({ save, delayMs: 10, getMode: () => "off" });
+    saver.schedule([makeFlow({ content: "edited" })]);
+    await vi.advanceTimersByTimeAsync(10);
+    expect(await saver.flush()).toEqual([]);
+    expect(save).not.toHaveBeenCalled();
+  });
+
+  it("reads the stored preference by default", async () => {
+    recordFlowSavedToAccount(makeFlow(), "t1");
+    localStorage.setItem("debate:flow-auto-save", "off");
+    const save = vi.fn();
+    const saver = createFlowAutoSaver({ save });
+    saver.schedule([makeFlow({ content: "edited" })]);
+    expect(await saver.flush()).toEqual([]);
+    expect(save).not.toHaveBeenCalled();
+  });
+
   it("leaves a conflicting flow alone until its content changes", async () => {
     recordFlowSavedToAccount(makeFlow(), "t1");
     const save = vi.fn().mockResolvedValue({ conflict: true, current: summary("t9") });
