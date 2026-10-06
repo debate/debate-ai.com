@@ -187,6 +187,9 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/practice/versus-ai", title: "Debate Versus AI", icon: Swords },
       { href: "/practice/drills", title: "Practice Drills", icon: Repeat },
       { href: "/practice/judge-decision", title: "AI Judge Decision", icon: BadgeCheck },
+      // Lives under /coaching, but it charts how practice responses play out,
+      // so it sits with the practice tools.
+      { href: "/coaching/outcomes", title: "AI Response-Outcome Charts", icon: ChartLine },
     ],
   },
   {
@@ -201,7 +204,6 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/coaching/ai-coach", title: "AI Coach Mode", icon: Bot },
       { href: "/coaching/programs", title: "Coaching Programs", icon: CalendarCheck },
       { href: "/coaching/materials", title: "Coach Materials", icon: FolderOpen },
-      { href: "/coaching/outcomes", title: "Response-Outcome Charts", icon: ChartLine },
       { href: "/coaching/progress", title: "Research Progress", icon: TrendingUp },
       { href: "/coaching/laptopless", title: "Laptop-less Debating", icon: Smartphone },
     ],

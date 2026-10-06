@@ -117,9 +117,14 @@ describe("VideoSidebarTree", () => {
     }
   });
 
-  it("still renders the imported-image icons as images", () => {
-    const html = renderSidebar();
-    expect(html).toContain("<img");
+  it("draws regular rows in gray and only lecture categories in color", () => {
+    const html = renderSidebar({
+      lectureCategories: [{ key: "topic_lectures", label: "Topic Lectures", count: 4, maxViews: 10 }],
+    });
+    // No baked-color image icons: Favorites and Lectures are plain glyphs.
+    expect(html).not.toContain("<img");
+    expect(html).toMatch(/<svg[^>]*text-muted-foreground[^>]*>(?:(?!<\/svg>).)*<\/svg><h2[^>]*>My Favorites/s);
+    expect(html).toMatch(/<svg[^>]*text-lime-600[^>]*>(?:(?!<\/svg>).)*<\/svg><h2[^>]*>Topic Lectures/s);
   });
 
   it("does not select All Lectures while a debate-video tab is active", () => {

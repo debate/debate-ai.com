@@ -31,7 +31,7 @@ import { AppSidebar } from "./app-sidebar/app-sidebar"
  * (see `packages/debate-help-docs/content/docs/internals/reason-docs-sidebar.mdx`).
  *
  * The column itself is shadcn's `sidebar-07` block (`app-sidebar/`): it
- * collapses to a 3rem icon rail from its edge rail, the trigger in its header
+ * collapses to a 3rem icon rail from its edge rail, the trigger in its footer
  * or Ctrl/Cmd+B, and remembers that choice in the `sidebar_state` cookie. Its
  * width is the one the reader last dragged the `/videos` column to
  * (`SIDEBAR_WIDTH_KEY`, which `ResizableSidebarLayout` writes), so crossing
