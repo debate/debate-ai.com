@@ -24,7 +24,11 @@ import { useFlowStore, type FlowHistory } from "../state/store"
 import type { Flow, Round } from "../types/flow"
 import { Clock, FileText, Users, Edit, Gavel, Search, Cloud, UploadCloud, Download, Trash2, Loader2, CloudUpload, AlertTriangle, History as HistoryIcon } from "lucide-react"
 import { FlowHistoryList } from "./FlowHistoryList"
-import { recordFlowSavedToAccount, recordRoundSavedToAccount } from "../state/flowAccountStatus"
+import {
+  recordFlowSavedToAccount,
+  recordRoundSavedToAccount,
+  restoreFlowAccountBaselines,
+} from "../state/flowAccountStatus"
 import { deleteSavedFlow, fetchSavedFlow, listSavedFlows, saveFlowToAccount } from "../round/saved-flows-client"
 import type { SavedFlowSummary } from "../state/savedFlows"
 import { deleteSavedRound, fetchSavedRound, listSavedRounds, saveRoundToAccount } from "../round/saved-rounds-client"
@@ -207,6 +211,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
     listSavedFlows()
       .then((flows) => {
         if (cancelled) return
+        if (flows) restoreFlowAccountBaselines(flows)
         setCloudList(flows === null ? { kind: "signed-out" } : { kind: "loaded", flows })
       })
       .catch((err) => {
@@ -234,6 +239,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
     listSavedRounds()
       .then((rounds) => {
         if (cancelled) return
+        if (rounds) restoreFlowAccountBaselines([], rounds)
         setCloudRoundList(rounds === null ? { kind: "signed-out" } : { kind: "loaded", rounds })
       })
       .catch((err) => {
@@ -278,7 +284,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
         return { kind: "loaded", flows: [...others, result.summary] }
       })
       setLastSavedFlowHashes((prev) => ({ ...prev, [flow.id]: hashFlowContent(flow) }))
-      recordFlowSavedToAccount(flow)
+      recordFlowSavedToAccount(flow, result.summary.updatedAt)
     } catch {
       setCloudActions((prev) => ({ ...prev, [flow.id]: "error" }))
     }
@@ -353,7 +359,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
         return { kind: "loaded", rounds: [...others, result.summary] }
       })
       setLastSavedRoundHashes((prev) => ({ ...prev, [round.id]: hashRoundContent(round) }))
-      recordRoundSavedToAccount(round)
+      recordRoundSavedToAccount(round, result.summary.updatedAt)
     } catch {
       setCloudRoundActions((prev) => ({ ...prev, [round.id]: "error" }))
     }
@@ -415,7 +421,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
             return { kind: "loaded", rounds: [...others, result.summary] }
           })
           setLastSavedRoundHashes((prev) => ({ ...prev, [round.id]: hashRoundContent(round) }))
-          recordRoundSavedToAccount(round)
+          recordRoundSavedToAccount(round, result.summary.updatedAt)
           outcomes[round.id] = "saved"
         } catch {
           setCloudRoundActions((prev) => ({ ...prev, [round.id]: "error" }))
@@ -472,7 +478,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
             return { kind: "loaded", flows: [...others, result.summary] }
           })
           setLastSavedFlowHashes((prev) => ({ ...prev, [flow.id]: hashFlowContent(flow) }))
-          recordFlowSavedToAccount(flow)
+          recordFlowSavedToAccount(flow, result.summary.updatedAt)
           outcomes[flow.id] = "saved"
         } catch {
           setCloudActions((prev) => ({ ...prev, [flow.id]: "error" }))
