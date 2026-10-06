@@ -54,6 +54,25 @@ export interface FieldStatistics extends SideWinRates {
    * model's side term. `null` in CSVs written before the column existed.
    */
   affRatingAdvantage: number | null;
+  /**
+   * Ballot weights the model gave each side so that aff and neg carry equal
+   * weight, separately in prelims and elims — the favored side's ballots
+   * weigh less than 1, the other side's more. `null` in CSVs written before
+   * the columns existed.
+   */
+  sideWeights: SideWeights | null;
+}
+
+/** "Aff/Neg (Elim) Side Weight" — per-ballot weights from the side-balanced fit. */
+export interface SideWeights {
+  /** "Aff Side Weight" — weight of an aff ballot in a prelim. */
+  aff: number;
+  /** "Neg Side Weight" — weight of a neg ballot in a prelim. */
+  neg: number;
+  /** "Aff Elim Side Weight" — weight of an aff ballot in an elim. */
+  affElim: number;
+  /** "Neg Elim Side Weight" — weight of a neg ballot in an elim. */
+  negElim: number;
 }
 
 /** Static description of a dataset, available without loading its CSVs. */
