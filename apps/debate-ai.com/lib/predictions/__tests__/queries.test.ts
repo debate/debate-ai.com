@@ -227,29 +227,43 @@ describe("canResolve on the board", () => {
   });
 });
 
+/** Ids in the demo seed: the VLD event, its first Round 1 pairing and the two entries in it. */
+async function demoIds() {
+  const one = async (sql: string) => Number((await client.execute(sql)).rows[0].id);
+  const vld = await one("SELECT id FROM event WHERE tourn = 90001 AND abbr = 'VLD'");
+  const round1 = await one(`SELECT id FROM round WHERE event = ${vld} AND name = 1`);
+  const panel = await one(`SELECT id FROM panel WHERE round = ${round1} ORDER BY id LIMIT 1`);
+  const entries = (await client.execute(`SELECT entry.id, entry.code FROM ballot JOIN entry ON entry.id = ballot.entry WHERE ballot.panel = ${panel} ORDER BY ballot.side`)).rows.map((row) => ({ id: Number(row.id), label: String(row.code) }));
+  const winner = await one(`SELECT ballot.entry AS id FROM ballot JOIN score ON score.ballot = ballot.id AND score.tag = 'winloss' WHERE ballot.panel = ${panel} AND score.value = 1`);
+  const champion = await one(`SELECT r.entry AS id FROM result r JOIN result_set rs ON rs.id = r.result_set WHERE rs.event = ${vld} AND rs.label = 'Final Places' AND r.rank = 1`);
+  const round3 = await one(`SELECT id FROM round WHERE event = ${vld} AND name = 3`);
+  const room = await one(`SELECT room AS id FROM panel WHERE id = ${panel}`);
+  const judge = await one(`SELECT judge AS id FROM ballot WHERE panel = ${panel} LIMIT 1`);
+  return { vld, panel, entries, winner, champion, round3, room, judge };
+}
+
 describe("hosted Tabroom data", () => {
   it("lists the demo events, their entries and a round's two entries", async () => {
+    const { vld, panel, entries } = await demoIds();
     const events = await listTabroomEvents(q());
-    expect(events.map((event) => event.id)).toContain(90001);
-    const entries = await listEventEntries(q(), 90001);
-    expect(entries.length).toBeGreaterThanOrEqual(4);
-    expect(await getPanelEntries(q(), 90001)).toEqual([
-      { id: 90001, label: "LO MC" },
-      { id: 90002, label: "PA JP" },
-    ]);
+    expect(events.map((event) => event.id)).toContain(vld);
+    expect((await listEventEntries(q(), vld)).length).toBe(40);
+    expect(entries).toHaveLength(2);
+    expect(await getPanelEntries(q(), panel)).toEqual(entries);
   });
 
   it("offers only undecided rounds", async () => {
-    expect(await listOpenPanels(q(), 90001)).toEqual([]);
-    // An unscored round 3 pairing between the first two entries.
+    const { vld, entries, round3, room, judge } = await demoIds();
+    expect(await listOpenPanels(q(), vld)).toEqual([]);
+    // An unscored round 3 pairing between the same two entries.
     await client.executeMultiple(`
-      INSERT OR REPLACE INTO panel (id, letter, flight, bye, bracket, publish, room, round) VALUES (99001, '9', 1, 0, 0, 1, 90001, 90004);
+      INSERT OR REPLACE INTO panel (id, letter, flight, bye, bracket, publish, room, round) VALUES (99001, '99', 1, 0, 0, 1, ${room}, ${round3});
       INSERT OR REPLACE INTO ballot (id, side, speakerorder, chair, bye, forfeit, audit, judge, panel, entry) VALUES
-        (99001, 1, 1, 0, 0, 0, 0, 90001, 99001, 90001),
-        (99002, 2, 2, 0, 0, 0, 0, 90001, 99001, 90002);
+        (99001, 1, 1, 0, 0, 0, 0, ${judge}, 99001, ${entries[0].id}),
+        (99002, 2, 2, 0, 0, 0, 0, ${judge}, 99001, ${entries[1].id});
     `);
-    const open = await listOpenPanels(q(), 90001);
-    expect(open).toEqual([{ id: 99001, label: "Round 3: LO MC vs PA JP", entries: [{ id: 90001, label: "LO MC" }, { id: 90002, label: "PA JP" }] }]);
+    const open = await listOpenPanels(q(), vld);
+    expect(open).toEqual([{ id: 99001, label: `Round 3: ${entries[0].label} vs ${entries[1].label}`, entries }]);
     await client.executeMultiple("DELETE FROM ballot WHERE panel = 99001; DELETE FROM panel WHERE id = 99001;");
   });
 });
@@ -258,39 +272,60 @@ describe("resolveDueMarkets", () => {
   const noRatings = async () => null;
 
   it("settles a market on a hosted round from its ballots, even before betting closes", async () => {
-    const entries = (await getPanelEntries(q(), 90001))!;
+    const { panel, winner } = await demoIds();
+    const entries = (await getPanelEntries(q(), panel))!;
     await insertMarket(q(), {
       id: "hosted",
       creatorId: "ana",
       kind: "debate",
-      title: "Chen v Patel",
+      title: entries.map((e) => e.label).join(" v "),
       description: "",
       outcomes: entryOutcomes(entries),
-      source: { type: "tabroom-panel", panelId: 90001 },
+      source: { type: "tabroom-panel", panelId: panel },
       closesAt: NOW + DAY,
     });
     await ensureWallet(q(), "ben");
-    const shares = await placeBet(q(), { market: (await getMarketRow(q(), "hosted"))!, userId: "ben", outcomeId: "entry:90001", stake: 100, now: NOW });
+    const outcomeId = `entry:${winner}`;
+    const shares = await placeBet(q(), { market: (await getMarketRow(q(), "hosted"))!, userId: "ben", outcomeId, stake: 100, now: NOW });
 
     expect(await resolveDueMarkets(q(), NOW, noRatings)).toBe(1);
-    expect((await getMarketRow(q(), "hosted"))!).toMatchObject({ status: "resolved", resolvedOutcome: "entry:90001" });
+    expect((await getMarketRow(q(), "hosted"))!).toMatchObject({ status: "resolved", resolvedOutcome: outcomeId });
     expect(await balance("ben")).toBe(STARTING_BALANCE - 100 + Math.floor(shares));
   });
 
-  it("leaves a hosted event without final results open", async () => {
+  it("settles a hosted event on its posted final places", async () => {
+    const { vld, champion } = await demoIds();
     await insertMarket(q(), {
       id: "event",
       creatorId: "ana",
       kind: "tournament",
       title: "Who wins VLD?",
       description: "",
-      outcomes: entryOutcomes(await listEventEntries(q(), 90001)),
-      source: { type: "tabroom-event", eventId: 90001 },
+      outcomes: entryOutcomes(await listEventEntries(q(), vld)),
+      source: { type: "tabroom-event", eventId: vld },
       closesAt: NOW + DAY,
     });
-    // The demo event only publishes prelim seeds.
+    expect(await resolveDueMarkets(q(), NOW, noRatings)).toBe(1);
+    expect((await getMarketRow(q(), "event"))!).toMatchObject({ status: "resolved", resolvedOutcome: `entry:${champion}` });
+  });
+
+  it("leaves a hosted event without final results open", async () => {
+    const { vld } = await demoIds();
+    // Only the prelim seeds are posted until the elimination rounds finish.
+    await client.execute(`UPDATE result_set SET published = 0 WHERE event = ${vld} AND label <> 'Prelim Seeds'`);
+    await insertMarket(q(), {
+      id: "event",
+      creatorId: "ana",
+      kind: "tournament",
+      title: "Who wins VLD?",
+      description: "",
+      outcomes: entryOutcomes(await listEventEntries(q(), vld)),
+      source: { type: "tabroom-event", eventId: vld },
+      closesAt: NOW + DAY,
+    });
     expect(await resolveDueMarkets(q(), NOW, noRatings)).toBe(0);
     expect((await getMarketRow(q(), "event"))!.status).toBe("open");
+    await client.execute(`UPDATE result_set SET published = 1 WHERE event = ${vld}`);
   });
 
   it("settles a rating market once it closes, against the rating it opened at", async () => {

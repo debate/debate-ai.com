@@ -29,7 +29,7 @@ async function call(path: string, init: RequestInit & { user?: string } = {}) {
 describe("splitSqlStatements", () => {
   it("splits the seed into whole statements, comments dropped", () => {
     const statements = splitSqlStatements(readFileSync(pkgPath("seed/demo.sql"), "utf8"));
-    expect(statements.every((s) => /^INSERT OR REPLACE INTO /.test(s))).toBe(true);
+    expect(statements.every((s) => /^(INSERT OR REPLACE INTO|DELETE FROM) /.test(s))).toBe(true);
     // A `;` inside a quoted paradigm must not end its statement.
     expect(statements.some((s) => s.includes("Frameworks are fine; tell me"))).toBe(true);
   });
@@ -40,7 +40,13 @@ describe("the demo tournament", () => {
     const first = await call("/host/demo", { method: "POST" });
     expect(first).toMatchObject({ status: 200, body: { tournId: DEMO_TOURN_ID, username: "demo.admin", seeded: true } });
     expect((await call("/host/demo", { method: "POST" })).body.seeded).toBe(false);
-    expect(d1.raw.prepare("SELECT count(*) n FROM tourn WHERE id >= 90000").get()).toEqual({ n: 4 });
+    expect(d1.raw.prepare("SELECT count(*) n FROM tourn WHERE id >= 90000").get()).toEqual({ n: 1 });
+  });
+
+  it("reloads a database holding an older demo seed", async () => {
+    d1.raw.prepare("UPDATE tourn_setting SET value = '1' WHERE tourn = ? AND tag = 'demo_seed'").run(DEMO_TOURN_ID);
+    expect((await call("/host/demo", { method: "POST" })).body.seeded).toBe(true);
+    expect((await call("/host/demo", { method: "POST" })).body.seeded).toBe(false);
   });
 
   it("reloads when it is over, so its dates stay current", async () => {
@@ -53,22 +59,33 @@ describe("the demo tournament", () => {
     expect(status).toBe(200);
     expect(body.viewer).toEqual({ username: "demo.admin", name: "Demo Admin", mock: true });
     expect(body.tourn.name).toBe("Bay Area Invitational");
-    expect(body.events.map((e: any) => [e.abbr, e.entryCount])).toEqual([
-      ["VLD", 4],
-      ["VPF", 4],
-    ]);
-    expect(body.entries).toHaveLength(8);
-    expect(body.schools).toHaveLength(4);
-    expect(body.judges).toHaveLength(4);
-    expect(body.rooms).toHaveLength(4);
-    // Admins see the unpublished round 3 the public pairings hide.
+    expect(body.events.map((e: any) => [e.abbr, e.entryCount]).sort()).toEqual(
+      ["DI", "INF", "IX", "OO", "VCX", "VLD", "VPF", "VPRL"].map((abbr) => [abbr, 40]),
+    );
+    expect(body.entries).toHaveLength(320);
+    expect(body.schools.length).toBeGreaterThanOrEqual(30);
+    expect(body.judges.length).toBeGreaterThanOrEqual(140);
+    expect(body.rooms.length).toBeGreaterThanOrEqual(100);
     const vld = body.rounds.filter((r: any) => r.eventAbbr === "VLD");
-    expect(vld.map((r: any) => [r.name, r.published])).toEqual([
-      [1, true],
-      [2, true],
-      [3, false],
+    expect(vld.map((r: any) => r.label)).toEqual([
+      "Round 1",
+      "Round 2",
+      "Round 3",
+      "Round 4",
+      "Round 5",
+      "Round 6",
+      "Octafinals",
+      "Quarterfinals",
+      "Semifinals",
+      "Finals",
     ]);
-    expect(body.resultSets.map((s: any) => s.id).sort()).toEqual([90001, 90002]);
+    expect(vld.every((r: any) => r.published && r.resultsPosted)).toBe(true);
+    expect(body.resultSets.filter((s: any) => s.eventAbbr === "VLD").map((s: any) => s.label).sort()).toEqual([
+      "Elimination Bracket",
+      "Final Places",
+      "Prelim Seeds",
+      "Speaker Awards",
+    ]);
   });
 
   it("shows the real account when its owner signs in", async () => {

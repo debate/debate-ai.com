@@ -4,7 +4,7 @@
  * UI can import the ids without bundling the seed.
  */
 
-/** The Bay Area Invitational in `seed/demo.sql`: running now, with pairings and results. */
+/** The Bay Area Invitational in `seed/demo.sql`: the one demo tournament, with every round posted. */
 export const DEMO_TOURN_ID = 90001;
 
 /** The mock admin: seeded as Tabroom person 90010, owner of {@link DEMO_TOURN_ID}. */
