@@ -1,7 +1,7 @@
 /**
  * @fileoverview Intro banner for the Greatest of All-Time collection
  * (`/videos/topPicks`): the "All Time Greatest Legends" title over a strip of
- * drifting sparkles.
+ * drifting sparkles, with the trophy-goat icon above the title.
  *
  * Adapted from Aceternity's sparkles demo. The banner is shorter than the
  * demo's 40rem and the sparkle strip is capped at the container's width,
@@ -14,13 +14,23 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { SparklesCore } from "../../ui/effects/sparkles";
+import { IconTrophyGoat } from "../../ui/icons";
 
 export const GOAT_HEADING_TITLE = "All Time Greatest Legends";
 
 export function GoatSparklesHeading() {
   return (
     <div className="mb-6 flex h-56 w-full flex-col items-center justify-center overflow-hidden rounded-md bg-black sm:h-72">
+      <Image
+        src={IconTrophyGoat}
+        alt="Greatest of All-Time trophy"
+        width={64}
+        height={64}
+        className="relative z-20 mb-3 h-12 w-12 object-contain sm:h-16 sm:w-16"
+        unoptimized
+      />
       <h1 className="relative z-20 px-4 text-center text-3xl font-bold text-white md:text-5xl lg:text-6xl">
         {GOAT_HEADING_TITLE}
       </h1>
