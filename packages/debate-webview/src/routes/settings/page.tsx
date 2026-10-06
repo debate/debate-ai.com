@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { CardMirrorSettingsPanel } from "../../components/settings/CardMirrorSettingsPanel"
+import { DeviceStorageSettings } from "../../components/settings/DeviceStorageSettings"
 import { researchSettingsPages } from "../../lib/qwksearch/settings-paths"
 
 /**
@@ -19,6 +20,10 @@ import { researchSettingsPages } from "../../lib/qwksearch/settings-paths"
  * link per section (`researchSettingsPages`, which is `research-agent-ui`'s
  * own list of sections) — they are pages of their own under
  * `/settings/research`, with the same tabs down the side.
+ *
+ * "Storage on this device" (`DeviceStorageSettings`) explains where offline
+ * data lives — IndexedDB, plus the browser extension's unlimited storage when
+ * it is installed — rather than `localStorage`.
  *
  * Ebb Flow's own settings are not here: the flow editor opens them with
  * `Cmd/Ctrl+,` inside a flow, which is where they apply.
@@ -53,6 +58,8 @@ export default function SettingsPage() {
           ))}
         </ul>
       </nav>
+
+      <DeviceStorageSettings />
 
       <CardMirrorSettingsPanel />
     </div>
