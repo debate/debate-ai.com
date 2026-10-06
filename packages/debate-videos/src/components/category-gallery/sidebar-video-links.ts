@@ -21,16 +21,13 @@ import {
   BarChart3,
   BookOpen,
   Clapperboard,
-  FileText,
-  GraduationCap,
   History,
-  MessageSquare,
   Presentation,
-  Scale,
   Star,
   Trophy,
   type LucideIcon,
 } from "lucide-react";
+import { IconFormatLD, IconFormatNDT, IconFormatPF, IconFormatVP } from "./format-badge-icons";
 
 export interface SidebarVideoLink {
   /** Quick-link id — the `activeId` / counts key for this destination. */
@@ -69,7 +66,7 @@ export const VIDEO_COLLEGE_LINK: SidebarVideoLink = {
   id: "college",
   href: "/videos/college",
   title: "College Debates",
-  glyph: GraduationCap,
+  glyph: IconFormatNDT,
   exactCount: true,
 };
 
@@ -77,9 +74,9 @@ export const VIDEO_COLLEGE_LINK: SidebarVideoLink = {
  *  rather than children of it: they are sibling collections of the same
  *  round archive, not subsets of the college one. */
 export const VIDEO_FORMAT_LINKS: SidebarVideoLink[] = [
-  { id: "policy", href: "/videos/policy", title: "Policy Debates", glyph: FileText },
-  { id: "pf", href: "/videos/pf", title: "PF Debates", glyph: MessageSquare },
-  { id: "ld", href: "/videos/ld", title: "LD Debates", glyph: Scale },
+  { id: "policy", href: "/videos/policy", title: "Policy Debates", glyph: IconFormatVP },
+  { id: "pf", href: "/videos/pf", title: "PF Debates", glyph: IconFormatPF },
+  { id: "ld", href: "/videos/ld", title: "LD Debates", glyph: IconFormatLD },
   { id: "topPicks", href: "/videos/topPicks", title: "Greatest of All-Time", glyph: Star },
 ];
 
