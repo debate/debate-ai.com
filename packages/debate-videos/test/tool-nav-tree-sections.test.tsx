@@ -101,24 +101,13 @@ describe("ToolNavTree sectionIds", () => {
     expect(html).toContain("Practice");
   });
 
-  it("splits Insights into its Performance and Data & Reference subgroups", () => {
-    pathname.current = "/practice/glossary";
-    try {
-      const html = render({ sectionIds: [INSIGHTS_SECTION_ID] });
+  it("lists Insights links without subgroup labels", () => {
+    const html = render({ sectionIds: [INSIGHTS_SECTION_ID] });
 
-      const performance = html.indexOf(">Performance<");
-      const reference = html.indexOf(">Data &amp; Reference<");
-      expect(performance).toBeGreaterThan(-1);
-      expect(reference).toBeGreaterThan(performance);
-      // Each label heads its own links.
-      // lastIndexOf: the section heading also carries this href, as its flagship.
-      expect(html.lastIndexOf("/coaching/rankings")).toBeGreaterThan(performance);
-      expect(html.indexOf("/practice/level")).toBeLessThan(reference);
-      expect(html.indexOf("/practice/statistics")).toBeGreaterThan(reference);
-      expect(html).toContain("/practice/glossary");
-    } finally {
-      pathname.current = "/research/cards";
-    }
+    expect(html).not.toContain(">Performance<");
+    expect(html).not.toContain(">Data &amp; Reference<");
+    expect(html).toContain("/practice/level");
+    expect(html).toContain("/practice/glossary");
   });
 
   it("ignores an id no section carries rather than throwing", () => {

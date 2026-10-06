@@ -16,8 +16,7 @@
  * Settings menu still carries the same list for phones.
  *
  * The glossary and statistics pages used to hang off the end of Practice as
- * `VIDEO_REFERENCE_LINKS`. They are ordinary Insights tools now, under its
- * "Data & Reference" subgroup label (see `SidebarToolLink.group`).
+ * `VIDEO_REFERENCE_LINKS`. They are ordinary Insights tools now.
  *
  * Each section heading is a grouping rather than a destination: it renders
  * without an `href`, so clicking it does nothing but toggle the section. Its
@@ -168,34 +167,16 @@ export function ToolNavTree({
           expanded={isExpanded(section.id)}
           onToggleExpand={() => toggleSection(section.id)}
         >
-          {section.tools.flatMap((tool, index) => {
-            const row = (
-              <TreeItem
-                key={tool.href}
-                level={3}
-                href={tool.href}
-                title={tool.title}
-                icon={tool.icon}
-                isActive={isToolActive(tool.href, pathname)}
-              />
-            );
-            // A subgroup label ("Performance", "Data & Reference") heads the
-            // first link of each run that carries one. It is a plain label,
-            // not a TreeItem: it neither links nor toggles anything.
-            const startsGroup =
-              tool.group != null && tool.group !== section.tools[index - 1]?.group;
-            return startsGroup
-              ? [
-                  <p
-                    key={`group:${tool.group}`}
-                    className="px-2 pt-2 pb-0.5 text-xs font-medium uppercase tracking-wide text-muted-foreground"
-                  >
-                    {tool.group}
-                  </p>,
-                  row,
-                ]
-              : [row];
-          })}
+          {section.tools.map((tool) => (
+            <TreeItem
+              key={tool.href}
+              level={3}
+              href={tool.href}
+              title={tool.title}
+              icon={tool.icon}
+              isActive={isToolActive(tool.href, pathname)}
+            />
+          ))}
         </TreeItem>
       ))}
     </>
