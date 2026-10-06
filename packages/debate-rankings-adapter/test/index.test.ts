@@ -68,12 +68,16 @@ describe("@debate/rankings-adapter", () => {
         "Aff Win Rate,Neg Win Rate,Aff Elim Win Rate,Neg Elim Win Rate,Aff Rating Advantage\n49.3,50.7,55.31,44.69,0.51\n",
       ),
     ).toEqual({ affWinRate: 49.3, negWinRate: 50.7, affElimWinRate: 55.31, negElimWinRate: 44.69, affRatingAdvantage: 0.51 });
+    expect(
+      parseFieldStatistics("Aff Win Rate,Neg Win Rate,Aff Elim Win Rate,Neg Elim Win Rate\n49.19,50.81,55.4,44.6\n"),
+    ).toEqual({ affWinRate: 49.19, negWinRate: 50.81, affElimWinRate: 55.4, negElimWinRate: 44.6, affRatingAdvantage: null });
   });
 
   it("loads a bundled dataset on the site scale, sorted by adjusted rating", async () => {
     const dataset = await loadRankingDataset("hspf");
     expect(dataset.entries.length).toBeGreaterThan(0);
-    expect(dataset.field?.affRatingAdvantage).not.toBeNull();
+    // Upstream stopped emitting "Aff Rating Advantage"; the win rates remain.
+    expect(dataset.field?.affWinRate).not.toBeNull();
     const [first, second] = dataset.entries;
     expect(first.rank).toBe(1);
     expect(first.adjustedRating).toBeGreaterThanOrEqual(second.adjustedRating);
