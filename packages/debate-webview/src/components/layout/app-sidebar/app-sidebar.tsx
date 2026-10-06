@@ -19,15 +19,16 @@ import { ReasonDocsSidebarPanels } from "../../reason-docs/ReasonDocsSidebarPane
 import { NavApps } from "./nav-apps"
 import { NavMain } from "./nav-main"
 import { NavUser } from "./nav-user"
-import { SidebarBrand } from "./sidebar-brand"
 
 /** Hidden while the sidebar is collapsed to its 3rem icon rail. */
 const EXPANDED_ONLY = "group-data-[collapsible=icon]:hidden"
 
 /**
- * The app's tool sidebar, composed on shadcn's sidebar-07 block: brand in the
- * header, the tool sections as collapsible `NavMain` groups, the account menu
- * in the footer, and a rail that collapses the whole column to icons.
+ * The app's tool sidebar, composed on shadcn's sidebar-07 block: the dock in
+ * the header, the tool sections as collapsible `NavMain` groups, the account
+ * menu and the collapse trigger in the footer, and a rail that collapses the
+ * whole column to icons. There is no brand row — the dock's destinations are
+ * the way home, and the header's height goes to them.
  *
  * It carries the same regions the drag-resizable column did, each still in
  * its own error boundary — this renders from the root layout, so a throw in
@@ -49,14 +50,6 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" data-app-chrome {...props}>
       <SidebarHeader>
-        {/* Side by side when expanded; stacked at icon width, where the
-            trigger is how you get the column back. */}
-        <div className="flex items-center gap-1 group-data-[collapsible=icon]:flex-col">
-          <div className="min-w-0 flex-1 group-data-[collapsible=icon]:w-full">
-            <SidebarBrand />
-          </div>
-          <SidebarTrigger className="shrink-0" />
-        </div>
         <div className={EXPANDED_ONLY}>
           <ChromeErrorBoundary label="CategoryDock">
             <CategoryDock embedded />
@@ -89,9 +82,16 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
             </ChromeErrorBoundary>
           </div>
         )}
-        <ChromeErrorBoundary label="NavUser">
-          <NavUser />
-        </ChromeErrorBoundary>
+        {/* Side by side when expanded; stacked at icon width, where the
+            trigger is how you get the column back. */}
+        <div className="flex items-center gap-1 group-data-[collapsible=icon]:flex-col-reverse">
+          <div className="min-w-0 flex-1 group-data-[collapsible=icon]:w-full">
+            <ChromeErrorBoundary label="NavUser">
+              <NavUser />
+            </ChromeErrorBoundary>
+          </div>
+          <SidebarTrigger className="shrink-0 text-muted-foreground hover:text-foreground" />
+        </div>
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
