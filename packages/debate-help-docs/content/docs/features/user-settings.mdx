@@ -13,7 +13,10 @@ localStorage.
 - **Research agent settings:** `/settings/research` and `/settings/research/<section>`
   — one full page with a tab per section (models, search, MCP servers, skills and
   memory, voice…), linked from the top of `/settings`. The section list is
-  `research-agent-ui`'s own (`research-agent-ui/settings`).
+  `research-agent-ui`'s own (`research-agent-ui/settings`). Its sidebar also lists
+  the card editor's tabs under a **Card editor** heading
+  (`/settings/research/editor-general` and so on), so either Settings page reaches
+  every editor setting.
 - **Package:** `debate-editor` (the settings store, `SETTING_METADATA`, and
   the embedded panel builder), `apps/debate-ai.com`
   (`lib/editor-preferences.ts`, `/api/settings`, `user_settings` D1 table)
@@ -22,7 +25,9 @@ localStorage.
 
 The editor's whole category set, listed in a searchable sidebar — **General**, **Files**, **Appearance**,
 **Accessibility**, **Editing**, **Keyboard**, **Comments & AI**,
-**Collaboration** — built by `debate-editor`'s own
+**Collaboration** — from `debate-editor`'s exported tab list
+(`CARDMIRROR_SETTINGS_TABS`, `@debate/editor/settings-tabs`) and rendered by its
+`CardMirrorSettingsSection` (`@debate/editor/settings-section`), which wraps
 `buildEmbeddedSettingsPanel`, so each tab is the same rows the editor's
 gear-icon modal renders under it, minus the dialog chrome. General also
 carries the personal dictionary, the performance benchmark and this install's
@@ -89,8 +94,11 @@ Each flow tab in the sidebar's **Open Tabs** group shows a small cloud icon
 once that flow has been saved to your account from the Flow History dialog
 (including bulk saves): a plain cloud means the account copy matches what you
 see, a crossed-out amber cloud means you've edited it since. A tab with no icon
-has no baseline this session — the marker is held in memory, not persisted, so
-it reappears after your next save. Engineering notes: `debate-round`'s
+has no baseline yet. The marker survives a reload: each save remembers the
+version the account stamped on it, and opening the **Saved to account** tab in
+Flow History re-adopts that baseline only if your account still holds exactly
+that version, so edits made elsewhere (or by a different account on the same
+browser) never show as saved. Engineering notes: `debate-round`'s
 `state/flowAccountStatus.ts`.
 
 The same cloud icon appears on the round cards of the `/debate` start screen
@@ -241,7 +249,9 @@ the end of the same header row.
 The `/debate` start screen has its own header, so it shows the same badge (and
 **Save now**) beside its **New flow** button; `DebateFlowPage` takes it as a
 `startScreenActions` prop because `debate-round` can't import the webview's
-component.
+component. Once a round or flow is open, the same badge sits at the start of the
+speech controls bar above the workspace (`roundActions`, handed to
+`SpeechControlsTopBar` as `leadingActions`).
 
 The shared-cards sub-pages (Evidence Library, Argument Library and Card Revision
 History) keep their data under the `/research/cards` hub rather than under their
@@ -249,13 +259,13 @@ own route, so their headers name the collections explicitly
 (`ToolPageHeader`'s `syncCollections` prop, resolved by `resolveToolSyncKeys`)
 and show the badge too.
 
-The video library at `/videos` shows the badge (and **Save now**) beside its
+The video library at `/videos` (and each `/videos/<category>` view of it) shows the badge (and **Save now**) beside its
 search bar; `LecturesPage` takes it as a `headerActionsSlot` prop because
 `debate-videos` can't import the webview's component.
 
-The `/research/cards` search workspace, which has no `ToolPageHeader`, shows the
-badge (and **Save now**) in a slim row above its columns
-(`CardsSearchStatusRow`); the row collapses while there is nothing to show.
+The `/research/cards` search workspace has no `ToolPageHeader`, so its route
+renders a slim strip above the workspace holding the badge (and **Save now**) for
+the Evidence Library collections.
 
-Known gap: the open-flow tabs and the `/doc` header (an embedded
-qwksearch.com frame) are custom too and don't show the badge yet.
+Known gap: the open-flow tabs and the `/doc` header are custom too and don't
+show the badge yet.

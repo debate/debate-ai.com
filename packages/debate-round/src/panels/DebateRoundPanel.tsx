@@ -65,6 +65,8 @@ import {
 export interface DebateFlowPageProps {
   /** Extra controls for the start screen's header (the host app's account-sync badge). */
   startScreenActions?: ReactNode
+  /** Extra controls for the open round/flow workspace's top bar (the host app's account-sync badge). */
+  roundActions?: ReactNode
 }
 
 /**
@@ -75,7 +77,7 @@ export interface DebateFlowPageProps {
  *
  * @returns The full-screen debate flow page
  */
-export function DebateFlowPage({ startScreenActions }: DebateFlowPageProps = {}) {
+export function DebateFlowPage({ startScreenActions, roundActions }: DebateFlowPageProps = {}) {
   // ============================================================================
   // Global State (Zustand)
   // ============================================================================
@@ -763,6 +765,7 @@ const handleEbbToolAction = (action: EbbFlowToolAction) => {
         recordingKey={selectedSpeechHasRecording ? `debate-recording-${selectedSpeech}` : undefined}
         participantEmails={selectedSpeechShareEmails}
         showRecordingMenu={state.isMobile || !sidebarRound}
+        leadingActions={roundActions}
       />
       {/* Main Layout */}
       <div className="flex-1 overflow-hidden">

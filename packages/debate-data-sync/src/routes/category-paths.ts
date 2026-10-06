@@ -51,8 +51,11 @@ export const LEGACY_PATH_PREFIXES: ReadonlyArray<readonly [from: string, to: str
   ["/strategy", "/practice/strategy"],
   ["/opponents", "/practice/opponents"],
   ["/forums", "/practice/forums"],
-  ["/tournaments", "/practice/tournaments"],
-  ["/practice/tournaments-beta", "/practice/tournaments"],
+  // Tournaments sit at the root, named by year and slug
+  // (`/tournaments/2026/yale-invitational`). The page resolves an old
+  // `/practice/tournaments/<id>/…` link by id and rewrites it to that form.
+  ["/practice/tournaments", "/tournaments"],
+  ["/practice/tournaments-beta", "/tournaments"],
   ["/judge-decision", "/practice/judge-decision"],
   ["/judges", "/practice/judges"],
   ["/prep-notes", "/practice/prep-notes"],

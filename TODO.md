@@ -91,7 +91,8 @@
 - [x] Vitest coverage (`flowAccountStatus.test.ts`, `FlowTab.test.tsx`)
 - [x] Document in `features/user-settings.mdx`
 - [x] Same marker for whole rounds on the `/debate` start screen cards (`recordRoundSavedToAccount`, `RoundAccountMarker`; branch `claude/gifted-babbage-a9pbpd`)
-- [ ] Follow-up: persist baselines / auto-save flows so the marker survives a reload
+- [x] Persist baselines so the marker survives a reload: saves store `{ hash, updatedAt }` in localStorage and `restoreFlowAccountBaselines` adopts one only when the account's list reports the same `updatedAt` (never wrongly "saved" for another user); wired to the Flow History cloud-tab load (branch `claude/gifted-babbage-o37mws`)
+- [ ] Follow-up: restore baselines on app/round mount (today it happens when the Flow History "Saved to account" tab loads) and auto-save flows
 - [ ] Follow-up: `ebb-dev-*` and `REASON-*` stores are still browser-only
 
 ### Tool UI pass: tool page header
@@ -102,8 +103,9 @@
 - [x] `/debate` start screen shows the badge/Save now (`DebateStartPanel.headerActions`, `DebateFlowPage.startScreenActions`; branch `claude/gifted-babbage-1lcyd6`)
 - [x] Shared-cards sub-pages (`/research/cards/library`, `/argument-library`, `/revisions`) show the badge/Save now: their collections are filed under the `/research/cards` hub, so `ToolPageHeader` takes `syncCollections` (resolved by `resolveToolSyncKeys`, tested); branch `claude/gifted-babbage-vqktca`
 - [x] `/videos` library shows the badge/Save now beside its search bar (`LecturesPage.headerActionsSlot` -> `LecturesVideoGridView`, test `debate-videos/test/lectures-grid-header-actions.test.tsx`; branch `claude/gifted-babbage-68vx57`)
-- [x] `/research/cards` search workspace shows the badge/Save now in a status row (`CardsSearchStatusRow`, test `test/components/tools/CardsSearchStatusRow.test.tsx`; branch `claude/gifted-babbage-qsrbbk`)
-- [ ] Follow-up: other custom headers (open-flow tabs, `/doc` — an iframe of qwksearch.com, so it needs a host-side overlay) still lack the badge/Save now
+- [x] `/research/cards` search workspace shows the badge/Save now in a strip above the workspace (`routes/cards/page.tsx`, test `test/routes/cards/page.test.tsx`; branch `claude/gifted-babbage-or9nw5`)
+- [x] Open round/flow workspace shows the badge in the speech controls bar (`DebateFlowPage.roundActions` -> `SpeechControlsTopBar.leadingActions`, test `debate-round/test/SpeechControlsTopBar.test.tsx`; branch `claude/gifted-babbage-fca6h1`); `/doc` already done
+- [ ] Follow-up: the open-flow bar shows the badge only (no Save now button yet)
 - [ ] Follow-up: `ToolPageHeader.test.tsx` (incl. the new `syncCollections` case) cannot load in a checkout without the `debate-rankings` submodule; verify in CI
 - [ ] Follow-up: component test for `ToolSyncBadge` click path (no `@testing-library/react` in webview tests)
 

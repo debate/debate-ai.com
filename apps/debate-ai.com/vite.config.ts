@@ -262,7 +262,6 @@ export default defineConfig({
       "@debate/timer",
       "@debate/tournaments",
       "@debate/rankings-adapter",
-      "@debate/editor-cm-adapter",
       "@debate/videos",
       "@debate/help-docs",
     ],

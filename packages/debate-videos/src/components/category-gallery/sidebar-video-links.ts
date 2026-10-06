@@ -17,11 +17,33 @@
  * @module components/category-gallery/sidebar-video-links
  */
 
+import {
+  BarChart3,
+  BookOpen,
+  Clapperboard,
+  FileText,
+  GraduationCap,
+  History,
+  MessageSquare,
+  Presentation,
+  Scale,
+  Star,
+  Trophy,
+  type LucideIcon,
+} from "lucide-react";
+
 export interface SidebarVideoLink {
   /** Quick-link id — the `activeId` / counts key for this destination. */
   id: string;
   href: string;
   title: string;
+  /**
+   * The row's Lucide glyph. Every surface that lists these links draws it —
+   * the sidebar tree, the dock's nav menu, and the quick-link tiles that have
+   * no artwork of their own — so a link never shows up icon-less on one of
+   * them. Named `glyph` to match `QuickLinksGrid`'s own field of that name.
+   */
+  glyph: LucideIcon;
   /**
    * Show this destination's total unabbreviated. Thousands are shortened to
    * `1.4k` elsewhere to keep a count from crowding out its title; the
@@ -37,6 +59,7 @@ export const VIDEO_ALL_LINK: SidebarVideoLink = {
   id: "allVideos",
   href: "/videos",
   title: "All Videos",
+  glyph: Clapperboard,
   exactCount: true,
 };
 
@@ -46,6 +69,7 @@ export const VIDEO_COLLEGE_LINK: SidebarVideoLink = {
   id: "college",
   href: "/videos/college",
   title: "College Debates",
+  glyph: GraduationCap,
   exactCount: true,
 };
 
@@ -53,26 +77,26 @@ export const VIDEO_COLLEGE_LINK: SidebarVideoLink = {
  *  rather than children of it: they are sibling collections of the same
  *  round archive, not subsets of the college one. */
 export const VIDEO_FORMAT_LINKS: SidebarVideoLink[] = [
-  { id: "policy", href: "/videos/policy", title: "Policy Debates" },
-  { id: "pf", href: "/videos/pf", title: "PF Debates" },
-  { id: "ld", href: "/videos/ld", title: "LD Debates" },
-  { id: "topPicks", href: "/videos/topPicks", title: "Greatest of All-Time" },
+  { id: "policy", href: "/videos/policy", title: "Policy Debates", glyph: FileText },
+  { id: "pf", href: "/videos/pf", title: "PF Debates", glyph: MessageSquare },
+  { id: "ld", href: "/videos/ld", title: "LD Debates", glyph: Scale },
+  { id: "topPicks", href: "/videos/topPicks", title: "Greatest of All-Time", glyph: Star },
 ];
 
 /** The rest of the video library: My Favorites, the last row under "Round
  *  Videos", then the watch history — which hangs under that same heading now,
  *  after My Favorites — then Lectures, a heading of its own. */
 export const VIDEO_LIBRARY_LINKS: SidebarVideoLink[] = [
-  { id: "favorites", href: "/videos/favorites", title: "My Favorites" },
-  { id: "history", href: "/videos/history", title: "Watch History" },
-  { id: "lectures", href: "/lectures", title: "Lectures" },
+  { id: "favorites", href: "/videos/favorites", title: "My Favorites", glyph: Trophy },
+  { id: "history", href: "/videos/history", title: "Watch History", glyph: History },
+  { id: "lectures", href: "/lectures", title: "Lectures", glyph: Presentation },
 ];
 
 /** The pair pinned below the tree, under its own divider. Team Rankings lives
  *  in the Research tool section instead, so rankings appear only once. */
 export const VIDEO_REFERENCE_LINKS: SidebarVideoLink[] = [
-  { id: "dictionary", href: "/practice/glossary", title: "Glossary of Terms" },
-  { id: "statistics", href: "/practice/statistics", title: "Topics & Video Statistics" },
+  { id: "dictionary", href: "/practice/glossary", title: "Glossary of Terms", glyph: BookOpen },
+  { id: "statistics", href: "/practice/statistics", title: "Topics & Video Statistics", glyph: BarChart3 },
 ];
 
 /** Every videos destination the sidebar links to, in tree order. */

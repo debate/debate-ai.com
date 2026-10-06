@@ -5,9 +5,10 @@
  *
  * The page posts to the package's own API (`POST {apiBase}/host/tourns`, see
  * `../../host/router`) rather than sending the host to Tabroom, and every
- * tournament gets its events written from the three styles in
- * `../../host/formats`: pick Policy, LD, Public Forum or any combination, then
- * customize each one — the division it runs in, how entries are written in
+ * tournament gets its events written from the formats in `../../host/formats`:
+ * pick any combination of Policy, LD, Public Forum, Parliamentary, British
+ * Parliamentary, World Schools, Asian Parliamentary, Big Questions, IPDA and
+ * Congress, then customize each one — the division it runs in, how entries are written in
  * pairings, a per-school entry cap, a fee, and extra text for the invite.
  *
  * Nothing is created on Tabroom: the tournament lives in this site's hosting
@@ -226,8 +227,9 @@ export function HostTournamentPage() {
         <div className="flex flex-col gap-1">
           <h1 className="text-2xl font-bold tracking-tight">Host a Tournament</h1>
           <p className="text-sm text-muted-foreground">
-            Create it here: the tournament, its formats and your ownership are written to this site&rsquo;s hosting
-            API, not to Tabroom, and you run it from its admin view. Sign in first.
+            Run any debate format: {TOURNAMENT_FORMATS.map((format) => format.abbr).join(", ")}. The tournament is
+            saved on this site with you as its owner, not on Tabroom, and you run it from its admin view. Sign in
+            to create one.
           </p>
         </div>
         <Link href={hrefs.admin(DEMO_TOURN_ID)} className={buttonVariants({ variant: "outline", size: "sm" })}>
@@ -329,6 +331,7 @@ export function HostTournamentPage() {
                         </button>
                         {format.name}
                         {active ? <Badge variant="outline">{format.abbr}</Badge> : null}
+                        <span className="text-xs font-normal text-muted-foreground">{entryLabel(format)}</span>
                       </p>
                       <p className="mt-1 text-xs text-muted-foreground">{format.blurb}</p>
                     </div>
@@ -410,6 +413,14 @@ export function HostTournamentPage() {
 
     </div>
   );
+}
+
+/** Who is on one entry and how many share a room, e.g. "Teams of 2, 4 to a room". */
+function entryLabel(format: TournamentFormat): string {
+  const { min, max } = format.entrySize;
+  const size = min === max ? (min === 1 ? "Individual" : `Teams of ${min}`) : `Teams of ${min}–${max}`;
+  if (format.teamsPerRoom === 0) return `${size}, chambers`;
+  return format.teamsPerRoom > 2 ? `${size}, ${format.teamsPerRoom} to a room` : size;
 }
 
 function foundFormat(id: string): TournamentFormat {

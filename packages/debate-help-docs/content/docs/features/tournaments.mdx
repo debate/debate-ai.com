@@ -7,9 +7,18 @@ title: "Tournaments"
 Tournament invitations, pairings and results, without leaving the app. Two rows
 under **Prep & Scout** in the sidebar cover it:
 
-- **Tournaments** (`/practice/tournaments`) is this app's own view, built with
+- **Tournaments** (`/tournaments`) is this app's own view, built with
   the site's theme: live Tabroom tournaments plus the ones hosted here.
 - **Tabroom** (`/practice/tabroom`) frames beta.tabroom.com itself.
+
+## Tournament addresses
+
+Each tournament's pages live under the year it starts and its name, so
+the Yale Invitational's results are at `/tournaments/2026/yale-invitational/results`
+and its pairings at `/tournaments/2026/yale-invitational/rounds`. Links that
+name a tournament by its Tabroom number (`/tournaments/38436/results`) still
+work and settle on the named address once the tournament loads; so do old
+`/practice/tournaments/…` bookmarks, which redirect here.
 
 ## What you can see
 
@@ -31,7 +40,7 @@ under **Prep & Scout** in the sidebar cover it:
 
 ## Hosting your own tournament
 
-**Host Tournament** on the upcoming page (or `/practice/tournaments/host`)
+**Host Tournament** on the upcoming page (or `/tournaments/host`)
 creates the tournament in this site's own hosting API (the Tabroom tables the
 `debate-tournaments` package runs in the app's database, at `/api/tabroom`).
 Nothing is created on Tabroom. You need to be signed in. Give it a name, dates,
@@ -41,25 +50,37 @@ where it is held, and pick the formats it runs:
 - **In-Person** — at a single physical venue.
 - **Long-Term Online** — online, scheduled across multiple days or weeks.
 
-### The three styles
+### Formats
 
-A tournament runs any combination of **Policy**, **LD** and **Public Forum**,
-each of which becomes its own division you can customize:
+A tournament runs any combination of these formats, each of which becomes its
+own division you can customize:
 
 - **Policy** — 1AC/2AC/1AR/2AR against 1NC/2NC/1NR/2NR, four cross-examination
   periods.
-- **LD** — 1AC/1AR against 1NC/2NR, no speaker points.
+- **LD** — 1AC/1AR against 1NC/2NR, one debater a side.
 - **Public Forum** — CON/AFF/NS/AS/NAF/NEG with a shared grand
   cross-examination, where the flip decides who speaks first.
+- **Parliamentary** — PMC/MG/PMR against LOC/MO/LOR, with points of
+  information instead of cross-examination.
+- **British Parliamentary** — four teams of two in each room, ranked first to
+  fourth.
+- **World Schools** — three speakers a side plus a reply speech, squads of up
+  to five.
+- **Asian Parliamentary** — three speakers a side plus a reply speech.
+- **Big Questions** — constructive, rebuttal, consolidation and rationale on
+  each side, with question segments.
+- **IPDA** — one-on-one, with two cross-examination periods.
+- **Congressional Debate** — a chamber of legislators, with authorship,
+  alternating pro and con speeches and questioning.
 
-Per style you choose the division it runs in (Open, Novice or JV), how entries
+Per format you choose the division it runs in (Open, Novice or JV), how entries
 are written in pairings, a cap on entries per school, an entry fee, and a note
 that appears on the public invite.
 
 ## The admin view
 
 Every hosted tournament has an admin web view at
-`/practice/tournaments/<id>/admin`, open to its owners and admins. It shows the
+`/tournaments/<year>/<name>/admin`, open to its owners and admins. It shows the
 events with their entry counts, the whole schedule (including rounds that are
 not published yet), every entry and its status, schools, judges, rooms and
 result sets, each linked to its public page.
@@ -67,9 +88,13 @@ result sets, each linked to its public page.
 ### The demo tournament
 
 The **Bay Area Invitational** is a demo tournament anyone can browse as its
-admin, signed in or not, under the mock username **demo.admin**. It is running
-now, with LD and PF entries, published pairings, an unpublished third round and
-results. **Demo admin** on the upcoming page and **Try the demo admin** on the
+admin, signed in or not, under the mock username **demo.admin**. It is the
+only demo, and it is a full-size tournament: Policy, Lincoln-Douglas, Public
+Forum and Parliamentary debate plus Original Oratory, Extemp, Dramatic Interp
+and Informative, with 40 entries in each from 32 schools. Every debate division
+has six power-matched prelims and a 16-team break from octafinals to finals,
+and speech has three prelims, semifinals and a final. Its results include
+prelim seeds, final places, speaker awards and the elimination bracket. **Demo admin** on the upcoming page and **Try the demo admin** on the
 host page both open it. The site loads it by itself when it is missing or over,
 so its dates always stay current.
 
@@ -77,6 +102,8 @@ so its dates always stay current.
 
 - Pairings and results are refreshed at most once a minute, so reload during a
   tournament to see the latest round.
+- Two tournaments with the same name in the same year can't share an address,
+  so the second one keeps its Tabroom number in its links.
 - You are recorded as the tournament's owner, and registered in every format it
   runs, so the first pairing has somebody in it.
 - The admin view reads the tournament; adding schools, rooms, rounds and

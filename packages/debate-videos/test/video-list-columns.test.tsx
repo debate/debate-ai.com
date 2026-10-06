@@ -52,8 +52,8 @@ const identifiableRound: VideoType = [
 ];
 
 /** A round with tournament data on the feed but none of its own: it is listed
- *  as a plain row among its season's tournaments, by date, and still shows
- *  its own title. */
+ *  under an `Unsorted` tournament group placed by date, and still shows its
+ *  own title. */
 const bareRound: VideoType = [
   "vid-bare",
   "Untagged Round",
@@ -202,7 +202,7 @@ describe("the round list's tree", () => {
     expect(html).toMatch(/<table[^>]*style="--table-width:\d+px;--table-width-phone:calc\(\d+px \+ min\(\d+px, 75vw\)\)"/);
   });
 
-  it("slots a round with no tournament among the tournaments by date", () => {
+  it("files rounds with no tournament under Unsorted, newest first", () => {
     // Alongside an identifiable round: a feed of nothing but untagged rounds
     // carries no tournament and no teams at all, which is how the table tells
     // a lecture listing apart from an archive of rounds.
@@ -210,11 +210,13 @@ describe("the round list's tree", () => {
     later[0] = "vid-later";
     later[1] = "Later Round";
     later[2] = "2025-03-01";
-    const html = renderList([later, bareRound, identifiableRound]);
-    expect(html).not.toContain("Unsorted");
-    // January's round, then Harvard in February, then March's round.
+    const html = renderList([bareRound, identifiableRound, later]);
+    // Unsorted's newest round (March) beats Harvard (February), so it heads
+    // the season, with March's round above January's inside it.
+    expect(html).toContain("Unsorted");
+    expect(html.indexOf("Unsorted")).toBeLessThan(html.indexOf("Team Aff"));
+    expect(html.indexOf("Later Round")).toBeLessThan(html.indexOf("Untagged Round"));
     expect(html.indexOf("Untagged Round")).toBeLessThan(html.indexOf("Team Aff"));
-    expect(html.indexOf("Later Round")).toBeGreaterThan(html.indexOf("Team Aff"));
   });
 
   it("makes each team name a search for that team", () => {

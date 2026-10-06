@@ -14,19 +14,41 @@ run on **Cloudflare Workers + D1**. The package exports three things:
 
 In `apps/debate-ai.com` the D1 API is mounted at `/api/tabroom/*`
 (`app/api/tabroom/[...path]/route.ts`, `lib/tournaments/handler.ts`). The UI is
-mounted at `/practice/tournaments/*` with two sources (`apiBase` and
+mounted at `/tournaments/*` with two sources (`apiBase` and
 `liveApiBase`): live Tabroom through `/api/tabroom-beta/*`, a read-only proxy to
 `https://api.tabroom.com/v1` (`lib/tournaments/tabroom-beta-proxy.ts`), and the
 tournaments hosted on this site through `/api/tabroom`. The list merges both and
 each tournament reads from whichever holds it. `/practice/tabroom` frames
 beta.tabroom.com itself.
 
+A tournament's pages are addressed by the year it starts and a slug of its
+name: `/tournaments/2026/yale-invitational/results`. `client.resolve` turns that
+pair into the Tabroom tourn id from the tournaments it has already seen, then
+the upcoming list, then each source's `GET /rest/tourns` for that year (hosted
+first). The id form (`/tournaments/38436/results`) still opens, and the page
+rewrites the address to the named form once the name is known; the app's old
+`/practice/tournaments/*` URLs 308 to it (`debate-data-sync`'s
+`routes/category-paths.ts`). Two tournaments with the same name in the same
+year share a slug, so only the first seen gets the named URL; the other keeps
+its id.
+
 Hosting never touches Tabroom. `/host` (`src/host/router.ts`) is this package's
 hosting API: `POST /host/tourns` creates a tournament, `GET /host/tourns` lists
 the signed-in user's, `GET /host/tourns/:id/admin` is a hosted tournament's
 admin view (`src/host/admin.ts`, rendered by `TournamentAdminPage`), and
 `POST /host/demo` loads the demo below if it is missing or over. The schema is applied by `.github/scripts/migrate-d1.ts`,
-which picks up this package's `migrations/` after the app's own.
+which picks up this package's `migrations/` after the app's own, into the same
+`debate_db` the app uses. Its statements are all `IF NOT EXISTS`, so a name
+clash would be silent; `apps/debate-ai.com/lib/tournaments/__tests__/tabroom-schema.test.ts`
+proves no Tabroom table or index shares a name with the app's or the
+prediction markets' (`session` is skipped for that reason).
+
+A hosted tournament can run any debate format in `src/host/formats.ts`:
+Policy, LD, Public Forum, Parliamentary, British Parliamentary, World Schools,
+Asian Parliamentary, Big Questions, IPDA and Congress. Each event is written
+with upstream's own `event.type` (`debate`, `wudc`, `wsdc`, `congress`, typed
+from the vendored `EventSchema`) and the `min_entry` / `max_entry` and
+`aff_label` / `neg_label` settings upstream's pairing and ballot code reads.
 
 The pages are built from shadcn primitives copied into `src/ui/primitives.tsx`
 and use only shadcn theme tokens, so they follow the host's theme.
@@ -44,16 +66,21 @@ const handler = createTournamentsHandler({
 ```tsx
 import { TournamentsApp } from "debate-tournaments"
 
-<TournamentsApp segments={slug} basePath="/practice/tournaments" apiBase="/api/tabroom" Link={Link} />
+<TournamentsApp segments={slug} basePath="/tournaments" apiBase="/api/tabroom" Link={Link} />
 ```
 
 ## Demo data
 
-`seed/demo.sql` fills D1 with dummy tournaments: one running now with
-published LD/PF pairings and results, two upcoming invites, and a hidden one.
-Dates are relative to load time, and every id is ≥ 90000 with `INSERT OR
-REPLACE`, so re-running it refreshes the data without colliding with real
-rows. From `apps/debate-ai.com`:
+`seed/demo.sql` fills D1 with one demo tournament, the Bay Area Invitational
+(tourn 90001): four debate divisions (VCX, VLD, VPF, VPRL) and four speech
+events (OO, IX, DI, INF), 40 entries each, with power-matched prelims, elim
+brackets, speaker awards and posted result sets. It is generated: edit
+`scripts/generate-demo-seed.mjs` and run `bun run seed:demo`, and bump
+`DEMO_SEED_VERSION` in both the script and `src/host/demo.ts` so deployed
+sites reload it. The file first deletes the rows of demo tournaments
+90001-90004 (which also clears the older three-tournament demo), then writes
+its own rows with `INSERT OR REPLACE` at ids from 9,000,001 up, which no hosted
+row is given. Dates are relative to load time. From `apps/debate-ai.com`:
 
 ```bash
 bun run db:seed:tournaments      # migrate + seed the local D1

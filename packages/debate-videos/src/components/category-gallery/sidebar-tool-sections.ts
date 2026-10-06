@@ -68,12 +68,6 @@ export interface SidebarToolLink {
    * baked-in colors next to them; see `TreeItem`'s `TREE_ITEM_ICON_CLASS`.
    */
   icon: LucideIcon;
-  /**
-   * Subgroup heading this link sits under inside its section ("Performance",
-   * "Data & Reference"). `ToolNavTree` prints the label above the first link
-   * of each run; links without one render straight under the section.
-   */
-  group?: string;
 }
 
 export interface SidebarToolSection {
@@ -173,7 +167,7 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/practice/forums", title: "Latest News", icon: Rss },
       // Tournaments is this app's own view (live Tabroom plus the tournaments
       // hosted here); Tabroom frames beta.tabroom.com itself.
-      { href: "/practice/tournaments", title: "Tournaments", icon: Trophy },
+      { href: "/tournaments", title: "Tournaments", icon: Trophy },
       { href: "/practice/tabroom", title: "Tabroom", icon: CalendarDays },
     ],
   },
@@ -221,13 +215,13 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
     href: "/coaching/rankings",
     icon: ChartColumn,
     tools: [
-      { href: "/coaching/rankings", title: "Team Rankings", icon: Medal, group: "Performance" },
-      { href: "/coaching/leaderboard", title: "Leaderboard", icon: Trophy, group: "Performance" },
-      { href: "/practice/level", title: "Debater Level", icon: Star, group: "Performance" },
-      { href: "/practice/statistics", title: "Topics & Video Statistics", icon: BarChart3, group: "Data & Reference" },
-      { href: "/practice/rules", title: "Formats & Rules", icon: Scale, group: "Data & Reference" },
-      { href: "/practice/glossary", title: "Glossary of Terms", icon: BookOpen, group: "Data & Reference" },
-      { href: "/practice/features", title: "All Features", icon: Sparkles, group: "Data & Reference" },
+      { href: "/coaching/rankings", title: "Team Rankings", icon: Medal },
+      { href: "/coaching/leaderboard", title: "Leaderboard", icon: Trophy },
+      { href: "/practice/level", title: "Debater Level", icon: Star },
+      { href: "/practice/statistics", title: "Topics & Video Statistics", icon: BarChart3 },
+      { href: "/practice/rules", title: "Formats & Rules", icon: Scale },
+      { href: "/practice/glossary", title: "Glossary of Terms", icon: BookOpen },
+      { href: "/practice/features", title: "All Features", icon: Sparkles },
     ],
   },
 ];

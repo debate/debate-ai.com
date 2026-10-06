@@ -179,7 +179,7 @@ describe("Latest News", () => {
     const hrefs = prepScout?.tools.map((tool) => tool.href) ?? [];
 
     expect(hrefs.indexOf("/practice/forums")).toBeGreaterThan(-1);
-    expect(hrefs.indexOf("/practice/forums")).toBeLessThan(hrefs.indexOf("/practice/tournaments"));
+    expect(hrefs.indexOf("/practice/forums")).toBeLessThan(hrefs.indexOf("/tournaments"));
   });
 });
 
@@ -188,8 +188,8 @@ describe("Tournaments and Tabroom", () => {
     const prepScout = SIDEBAR_TOOL_SECTIONS.find((section) => section.id === "prep-scout");
     const hrefs = prepScout?.tools.map((tool) => tool.href) ?? [];
 
-    expect(hrefs).toContain("/practice/tournaments");
-    expect(hrefs.indexOf("/practice/tabroom")).toBe(hrefs.indexOf("/practice/tournaments") + 1);
+    expect(hrefs).toContain("/tournaments");
+    expect(hrefs.indexOf("/practice/tabroom")).toBe(hrefs.indexOf("/tournaments") + 1);
   });
 
   it("recognise /practice/tabroom as a sidebar route, so it keeps its dock", () => {
