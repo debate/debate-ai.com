@@ -98,6 +98,17 @@ async function mergeAudioBlobs(existing: Blob, newSegment: Blob): Promise<{ blob
   return { blob, durationSeconds: totalDuration }
 }
 
+/** Length of the recording already saved for `speechName`, in seconds (0 if none). */
+function savedRecordingSeconds(speechName: string): number {
+  try {
+    const raw = localStorage.getItem(`debate-recording-${speechName}`)
+    const seconds = raw ? (JSON.parse(raw) as { durationSeconds?: number }).durationSeconds : undefined
+    return typeof seconds === "number" && Number.isFinite(seconds) ? seconds : 0
+  } catch {
+    return 0
+  }
+}
+
 export function useSpeechRecorder({
   timerState,
   currentSpeechName,
@@ -190,6 +201,11 @@ export function useSpeechRecorder({
    * Start counting spoken words for `speechName`. Chrome ends continuous
    * recognition after a stretch of silence, so it is restarted until
    * {@link stopTranscription} clears the ref.
+   *
+   * Each final result is saved with its time in the recording, for captions:
+   * the new audio is appended after any earlier recording of this speech, so
+   * times start from that recording's saved length. Recognition doesn't
+   * report word times, so a segment spans from the previous result to now.
    */
   const startTranscription = useCallback((speechName: string) => {
     if (!transcribe || typeof window === "undefined") return
@@ -199,10 +215,16 @@ export function useSpeechRecorder({
     recognition.continuous = true
     recognition.interimResults = false
     recognition.lang = "en-US"
+    const offset = savedRecordingSeconds(speechName)
+    const startedAt = Date.now()
+    let lastEnd = offset
     recognition.onresult = (event) => {
       for (let i = event.resultIndex; i < event.results.length; i++) {
         const result = event.results[i]
-        if (result.isFinal) appendSpokenSegment(speechName, result[0].transcript)
+        if (!result.isFinal) continue
+        const end = offset + (Date.now() - startedAt) / 1000
+        appendSpokenSegment(speechName, result[0].transcript, { start: lastEnd, end })
+        lastEnd = end
       }
     }
     recognition.onerror = (event) => {

@@ -7,7 +7,7 @@
 
 import { useEffect, useState, type ReactNode, type RefObject, useRef } from "react"
 import { createPortal } from "react-dom"
-import { Trash2, RefreshCw, MoreVertical, Clock, Upload, Mic, Check, MicOff, Users, Gauge } from "lucide-react"
+import { Trash2, RefreshCw, MoreVertical, Clock, Upload, Mic, Check, MicOff, Users, Gauge, Captions } from "lucide-react"
 import {
     AudioPlayerButton,
     AudioPlayerProgress,
@@ -33,6 +33,18 @@ import { useAudioDevices } from "./mic-selector"
 import { getUserMedia } from "./media-devices"
 import { LiveWaveform } from "./live-waveform"
 import { clearSpokenTranscript } from "./spoken-words-store"
+import { SpeechCaptionsTicker } from "./SpeechCaptionsTicker"
+
+const CAPTIONS_STORAGE_KEY = "debate-recording-captions"
+
+/** Whether captions were left on — remembered across speeches, like playback speed. */
+function readCaptionsOn(): boolean {
+    try {
+        return localStorage.getItem(CAPTIONS_STORAGE_KEY) === "1"
+    } catch {
+        return false
+    }
+}
 
 interface StoredRecording {
     key: string
@@ -103,56 +115,79 @@ function PlayerRow({
     hideInlineMenu?: boolean
 }) {
     const player = useAudioPlayer()
+    const [captionsOn, setCaptionsOn] = useState(readCaptionsOn)
+    const toggleCaptions = () => {
+        const next = !captionsOn
+        setCaptionsOn(next)
+        try { localStorage.setItem(CAPTIONS_STORAGE_KEY, next ? "1" : "0") } catch { /* ignore */ }
+    }
 
     return (
-        <div className="flex items-center gap-2 rounded-md bg-muted/50 px-2.5 py-2 text-xs group">
-            {/* Play / Pause */}
-            <AudioPlayerButton
-                item={track}
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7 flex-shrink-0"
-            />
-
-            {/* Times - Two rows: current time on top, total duration below */}
-            <div className="flex flex-col items-center justify-center text-[10px] tabular-nums min-w-max leading-tight">
-                <AudioPlayerTime className="text-[10px] tabular-nums text-foreground font-medium" />
-                <div className="text-muted-foreground">
-                    {rec.durationSeconds != null ? (
-                        <span>{formatDuration(rec.durationSeconds)}</span>
-                    ) : (
-                        <AudioPlayerDuration className="text-[10px] tabular-nums" />
-                    )}
-                </div>
-            </div>
-
-            {/* Scrubber — hidden when portaled to top bar */}
-            {!progressBarPortalRef && (
-                <AudioPlayerProgress className="flex-1 h-5" />
-            )}
-            {progressBarPortalRef && (
-                <InlineProgressWhenPaused className="flex-1 h-5" />
-            )}
-
-            {/* Menu with Mic Selector, Reset, Cross-X, Upload, Delete, Playback Speed */}
-            {!hideInlineMenu && (
-                <SpeechRecordingMenu
-                    speechName={speechName}
-                    speechLabel={speechLabel}
-                    micDeviceId={micDeviceId}
-                    onMicDeviceChange={onMicDeviceChange}
-                    recordingEnabled={recordingEnabled}
-                    onRecordingEnabledChange={onRecordingEnabledChange}
-                    onResetSpeechTime={onResetSpeechTime}
-                    onSwitchToCrossX={onSwitchToCrossX}
-                    onResetPrepTimers={onResetPrepTimers}
-                    onDeleteRecording={handleDelete}
-                    recordingKey={rec.key}
-                    inHeader={false}
-                    playbackRate={player.playbackRate}
-                    onPlaybackRateChange={player.setPlaybackRate}
-                    speeds={[0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]}
+        <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-2 rounded-md bg-muted/50 px-2.5 py-2 text-xs group">
+                {/* Play / Pause */}
+                <AudioPlayerButton
+                    item={track}
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7 flex-shrink-0"
                 />
+
+                {/* Times - Two rows: current time on top, total duration below */}
+                <div className="flex flex-col items-center justify-center text-[10px] tabular-nums min-w-max leading-tight">
+                    <AudioPlayerTime className="text-[10px] tabular-nums text-foreground font-medium" />
+                    <div className="text-muted-foreground">
+                        {rec.durationSeconds != null ? (
+                            <span>{formatDuration(rec.durationSeconds)}</span>
+                        ) : (
+                            <AudioPlayerDuration className="text-[10px] tabular-nums" />
+                        )}
+                    </div>
+                </div>
+
+                {/* Scrubber — hidden when portaled to top bar */}
+                {!progressBarPortalRef && (
+                    <AudioPlayerProgress className="flex-1 h-5" />
+                )}
+                {progressBarPortalRef && (
+                    <InlineProgressWhenPaused className="flex-1 h-5" />
+                )}
+
+                {/* Captions ticker toggle */}
+                <Button
+                    variant={captionsOn ? "default" : "ghost"}
+                    size="icon"
+                    className="h-7 w-7 flex-shrink-0"
+                    onClick={toggleCaptions}
+                    aria-pressed={captionsOn}
+                    title={captionsOn ? "Hide captions" : "Show captions"}
+                >
+                    <Captions className="h-4 w-4" />
+                </Button>
+
+                {/* Menu with Mic Selector, Reset, Cross-X, Upload, Delete, Playback Speed */}
+                {!hideInlineMenu && (
+                    <SpeechRecordingMenu
+                        speechName={speechName}
+                        speechLabel={speechLabel}
+                        micDeviceId={micDeviceId}
+                        onMicDeviceChange={onMicDeviceChange}
+                        recordingEnabled={recordingEnabled}
+                        onRecordingEnabledChange={onRecordingEnabledChange}
+                        onResetSpeechTime={onResetSpeechTime}
+                        onSwitchToCrossX={onSwitchToCrossX}
+                        onResetPrepTimers={onResetPrepTimers}
+                        onDeleteRecording={handleDelete}
+                        recordingKey={rec.key}
+                        inHeader={false}
+                        playbackRate={player.playbackRate}
+                        onPlaybackRateChange={player.setPlaybackRate}
+                        speeds={[0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]}
+                    />
+                )}
+            </div>
+            {captionsOn && (
+                <SpeechCaptionsTicker speechName={speechName} track={track} durationSeconds={rec.durationSeconds} />
             )}
         </div>
     )
