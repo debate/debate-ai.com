@@ -37,6 +37,9 @@
  * `showLectureCategories`, the same flag that shows the category gallery
  * above the grid, so the sidebar and the page agree on whether you are
  * browsing lectures.
+ *
+ * Every row draws a plain gray Lucide glyph except the lecture categories,
+ * which each get a colored, debate-themed icon (`lecture-category-icons`).
  */
 
 "use client";
@@ -44,12 +47,11 @@
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Clapperboard, History } from "lucide-react";
-import { IconTrophy, IconLectures } from "../../ui/icons";
 import type { LectureCategoryFacet } from "../../types/videos";
 import { TreeItem } from "./TreeItem";
 import { lectureCategoryHref } from "../../panels/lectureRouteConfig";
 import { ToolNavTree } from "./ToolNavTree";
-import { LECTURE_CATEGORY_ICONS } from "./lecture-category-icons";
+import { LECTURE_CATEGORY_ICON_COLORS, LECTURE_CATEGORY_ICONS } from "./lecture-category-icons";
 import {
   VIDEO_ALL_LINK,
   VIDEO_COLLEGE_LINK,
@@ -186,7 +188,7 @@ export function VideoSidebarTree({
           title={SIDEBAR_VIDEO_LINKS_BY_ID.favorites.title}
           count={counts?.favorites}
           isActive={activeId === "favorites"}
-          icon={IconTrophy}
+          icon={SIDEBAR_VIDEO_LINKS_BY_ID.favorites.glyph}
         />
 
         <TreeItem
@@ -203,7 +205,7 @@ export function VideoSidebarTree({
         <TreeItem
           level={1}
           title={lecturesLink.title}
-          icon={IconLectures}
+          icon={lecturesLink.glyph}
           // Same deal as the Round Videos heading: a plain click toggles the
           // section, a modifier click opens the lecture library itself.
           sectionHref={lecturesLink.href}
@@ -219,6 +221,7 @@ export function VideoSidebarTree({
               href={buildLectureCategoryHref(item.id)}
               title={item.title}
               icon={LECTURE_CATEGORY_ICONS[item.title]}
+              iconColorClassName={LECTURE_CATEGORY_ICON_COLORS[item.title]}
               count={item.count}
               // A style/round route resets the lecture filter to "all" as an
               // implementation detail. Do not therefore leave All Lectures
@@ -235,7 +238,7 @@ export function VideoSidebarTree({
           level={1}
           href={lecturesLink.href}
           title={lecturesLink.title}
-          icon={IconLectures}
+          icon={lecturesLink.glyph}
           count={counts?.lectures}
           isActive={lecturesActive}
         />

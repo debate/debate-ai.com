@@ -23,12 +23,12 @@ import {
   Clapperboard,
   FileText,
   GraduationCap,
+  Heart,
   History,
   MessageSquare,
   Presentation,
   Scale,
   Star,
-  Trophy,
   type LucideIcon,
 } from "lucide-react";
 
@@ -87,7 +87,7 @@ export const VIDEO_FORMAT_LINKS: SidebarVideoLink[] = [
  *  Videos", then the watch history — which hangs under that same heading now,
  *  after My Favorites — then Lectures, a heading of its own. */
 export const VIDEO_LIBRARY_LINKS: SidebarVideoLink[] = [
-  { id: "favorites", href: "/videos/favorites", title: "My Favorites", glyph: Trophy },
+  { id: "favorites", href: "/videos/favorites", title: "My Favorites", glyph: Heart },
   { id: "history", href: "/videos/history", title: "Watch History", glyph: History },
   { id: "lectures", href: "/lectures", title: "Lectures", glyph: Presentation },
 ];
