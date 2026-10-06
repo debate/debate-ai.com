@@ -145,8 +145,12 @@ icon flips back to saved. Flows you have never saved are never uploaded
 automatically, and archived flows are skipped. Auto-save never overwrites: if
 the account holds a newer copy (saved from another device) the flow stays
 amber and you resolve it from Flow History. A failed save is retried only after
-the flow changes again. Engineering notes: `debate-round`'s `state/flowAutoSave.ts`,
-mounted by `useFlowAutoSave` in `OpenTabsGroup`.
+the flow changes again. Turn it off with **Auto-save flows to my account** on the
+**Preferences** tab; it is on by default, applies immediately, and is stored in
+this browser only (not synced to other devices). Turning it off discards any
+save still waiting on the timer. Engineering notes: `debate-round`'s
+`state/flowAutoSave.ts`, mounted by `useFlowAutoSave` in `OpenTabsGroup`; the
+preference lives in `state/flowAutoSavePreference.ts`.
 
 ## Data flow
 
