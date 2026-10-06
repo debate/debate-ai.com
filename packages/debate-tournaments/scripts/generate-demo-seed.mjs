@@ -5,7 +5,7 @@
  *
  *   node scripts/generate-demo-seed.mjs
  *
- * The Bay Area Invitational (tourn 90001) runs four debate divisions (Policy,
+ * The Debate AI Demo Invitational (tourn 90001) runs four debate divisions (Policy,
  * Lincoln-Douglas, Public Forum, Parliamentary) and four speech events
  * (Original Oratory, Extemp, Dramatic Interp, Informative), with 40 entries
  * in each. It is simulated the way a real tournament runs: six power-matched
@@ -30,7 +30,7 @@ import { writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-export const DEMO_SEED_VERSION = "2";
+export const DEMO_SEED_VERSION = "3";
 
 const OUT = join(dirname(fileURLToPath(import.meta.url)), "..", "seed", "demo.sql");
 const TOURN = 90001;
@@ -156,7 +156,7 @@ insert("circuit", {
 });
 insert("tourn", {
   id: TOURN,
-  name: "Bay Area Invitational",
+  name: "Debate AI Demo Invitational",
   city: "San Francisco",
   state: "CA",
   country: "US",
@@ -775,7 +775,7 @@ insert("webpage", {
   title: "Welcome",
   slug: "main",
   content:
-    "<p>Welcome to the Bay Area Invitational: two days of Policy, Lincoln-Douglas, Public Forum and Parliamentary debate, plus Original Oratory, Extemp, Dramatic Interp and Informative, at Bayview High School in San Francisco.</p><p>Six prelims in every debate division break the top sixteen to octafinals. Speech runs three prelims in sections of six, then semifinals and a final. Pairings, results, speaker awards and brackets post here as rounds are released.</p><p>This is a demo tournament. Open its admin view to see how it is run.</p>",
+    "<p>Welcome to the Debate AI Demo Invitational: two days of Policy, Lincoln-Douglas, Public Forum and Parliamentary debate, plus Original Oratory, Extemp, Dramatic Interp and Informative, at Bayview High School in San Francisco.</p><p>Six prelims in every debate division break the top sixteen to octafinals. Speech runs three prelims in sections of six, then semifinals and a final. Pairings, results, speaker awards and brackets post here as rounds are released.</p><p>This is a demo tournament. Open its admin view to see how it is run.</p>",
   published: 1,
   sitewide: 0,
   special: "main",
@@ -891,7 +891,7 @@ const lines = [
   "-- whenever the demo is missing, over, or from an older seed version, so",
   "-- statements end with `;` at the end of a line and comments take whole lines.",
   "--",
-  `-- One tournament, 90001 Bay Area Invitational, seed version ${DEMO_SEED_VERSION}:`,
+  `-- One tournament, 90001 Debate AI Demo Invitational, seed version ${DEMO_SEED_VERSION}:`,
   `--   ${DEBATE_EVENTS.map((e) => e.abbr).join(", ")} (debate) and ${SPEECH_EVENTS.map((e) => e.abbr).join(", ")} (speech),`,
   `--   ${ENTRIES_PER_EVENT} entries each, ${schools.length} schools, ${judges.length} judges, ${rooms.length} rooms.`,
   "--   Six power-matched prelims and a 16-team break per debate division; three",
