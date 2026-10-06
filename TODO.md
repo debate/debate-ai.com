@@ -94,7 +94,8 @@
 - [x] Persist baselines so the marker survives a reload: saves store `{ hash, updatedAt }` in localStorage and `restoreFlowAccountBaselines` adopts one only when the account's list reports the same `updatedAt` (never wrongly "saved" for another user); wired to the Flow History cloud-tab load (branch `claude/gifted-babbage-o37mws`)
 - [x] Restore baselines on mount: `restoreAccountBaselinesOnce` (`state/restoreAccountBaselines.ts`, once per session, silent when signed out) via `useRestoreAccountBaselines` in `DebateStartPanel` and `OpenTabsGroup`; test `debate-round/test/restoreAccountBaselines.test.ts`; branch `claude/gifted-babbage-89z8b3`
 - [x] Auto-save flows already saved to the account (`state/flowAutoSave.ts`, `useFlowAutoSave` in `OpenTabsGroup`, `getFlowAccountUpdatedAt`; debounced, never forces, conflicts left for Flow History; test `debate-round/test/flowAutoSave.test.ts`; branch `claude/gifted-babbage-31ofma`)
-- [ ] Follow-up: opt-in setting to auto-save flows never saved before, plus an auto-save on/off toggle in user settings
+- [x] Opt-in setting to auto-save flows never saved before, plus an auto-save on/off toggle: `state/flowAutoSaveSettings.ts` (`off | saved | all`, device-local), `getMode` in `createFlowAutoSaver`, "Flow auto-save" select in `UserSettingsPanel`; tests `flowAutoSave.test.ts`, `flowAutoSaveSettings.test.ts`; docs in `user-settings.mdx` (branch `claude/gifted-babbage-eeg5we`)
+- [ ] Follow-up: sync the auto-save mode to the account (needs a `user_settings` column)
 - [ ] Follow-up: `ebb-dev-*` and `REASON-*` stores are still browser-only
 
 ### Tool UI pass: tool page header
