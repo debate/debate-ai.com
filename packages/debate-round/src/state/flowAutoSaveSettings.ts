@@ -4,9 +4,10 @@
  * already on the account, `"all"` also uploads flows with no account baseline
  * (never saved, or not yet restored after a reload), `"off"` disables it.
  *
- * Stored in `localStorage` like the font family: it applies immediately and is
- * not synced to `/api/settings`. Reads fall back to the default when storage is
- * unavailable or holds an unknown value.
+ * Stored in `localStorage` so it applies immediately; a signed-in user's choice
+ * is also synced to `/api/settings` (`flow_auto_save` column, see
+ * `normalizeFlowAutoSavePatch`) so it follows them across devices. Reads fall
+ * back to the default when storage is unavailable or holds an unknown value.
  *
  * @module state/flowAutoSaveSettings
  */
@@ -37,4 +38,26 @@ export function setFlowAutoSaveMode(mode: FlowAutoSaveMode): void {
   } catch {
     // Storage blocked: the choice just won't persist past this page.
   }
+}
+
+export type FlowAutoSavePatchResult = {
+  /** Only the field when present *and* valid. */
+  valid: { flowAutoSave?: FlowAutoSaveMode };
+  errors: string[];
+};
+
+/** Validates the `flowAutoSave` field of an untrusted `/api/settings` PUT body. */
+export function normalizeFlowAutoSavePatch(input: unknown): FlowAutoSavePatchResult {
+  if (typeof input !== "object" || input === null || Array.isArray(input)) {
+    return { valid: {}, errors: [] };
+  }
+  const record = input as Record<string, unknown>;
+  if (!("flowAutoSave" in record)) return { valid: {}, errors: [] };
+  if (isFlowAutoSaveMode(record.flowAutoSave)) return { valid: { flowAutoSave: record.flowAutoSave }, errors: [] };
+  return { valid: {}, errors: [`"flowAutoSave" must be one of: ${FLOW_AUTO_SAVE_MODES.join(", ")}.`] };
+}
+
+/** Reads the stored column value, falling back to the default for null/unknown. */
+export function parseFlowAutoSave(raw: string | null | undefined): FlowAutoSaveMode {
+  return isFlowAutoSaveMode(raw) ? raw : DEFAULT_FLOW_AUTO_SAVE_MODE;
 }

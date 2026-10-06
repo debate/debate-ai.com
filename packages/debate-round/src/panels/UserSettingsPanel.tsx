@@ -86,7 +86,13 @@ import {
 // user-editable form fields, all excluded from this form the same way.
 type FormState = Omit<
   FullUserSettingsPayload,
-  "favoriteTools" | "wordLimitPresets" | "outlineFilterPresets" | "newsRead" | "newsLiked" | "myTeamProfile"
+  | "favoriteTools"
+  | "wordLimitPresets"
+  | "outlineFilterPresets"
+  | "newsRead"
+  | "newsLiked"
+  | "myTeamProfile"
+  | "flowAutoSave"
 >
 
 type SaveStatus =
@@ -148,7 +154,8 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
   // in-progress edit and is left alone.
   const baselineRef = useRef<FormState | null>(null)
 
-  // Local-only like `fontFamily`: applies at once, never part of the Save payload.
+  // Applies at once like `fontFamily` and is never part of the Save payload; when
+  // signed in it is pushed to the account on change (see handleFlowAutoSaveChange).
   const [flowAutoSave, setFlowAutoSave] = useState<FlowAutoSaveMode>(DEFAULT_FLOW_AUTO_SAVE_MODE)
 
   useEffect(() => {
@@ -160,6 +167,14 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
     if (!isFlowAutoSaveMode(value)) return
     setFlowAutoSave(value)
     setFlowAutoSaveMode(value)
+    if (remoteAvailable) {
+      saveUserSettings({ flowAutoSave: value }).catch((err) =>
+        setStatus({
+          kind: "error",
+          message: err instanceof Error ? err.message : "Failed to save auto-save mode to your account.",
+        }),
+      )
+    }
   }
 
   const handleFontFamilyChange = (value: string) => {
@@ -185,6 +200,10 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
         if (cancelled) return
         if (remote) {
           setRemoteAvailable(true)
+          if (isFlowAutoSaveMode(remote.flowAutoSave)) {
+            setFlowAutoSave(remote.flowAutoSave)
+            setFlowAutoSaveMode(remote.flowAutoSave)
+          }
           const { debateStyle, fontSize, colorTheme, themeMode } = remote
           const remoteForm: FormState = { debateStyle, fontSize, colorTheme, themeMode }
           setForm(remoteForm)
@@ -404,7 +423,7 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
           </Select>
           <p className="text-xs text-muted-foreground">
             Saves edits to your account a few seconds after you stop typing. "All flows" also uploads flows
-            you haven't saved yet. Applies immediately in this browser and needs you to be signed in.
+            you haven't saved yet. Applies immediately; synced to your account when signed in (auto-save itself needs you to be signed in).
           </p>
         </div>
 
