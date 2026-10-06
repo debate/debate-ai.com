@@ -257,12 +257,13 @@ own route, so their headers name the collections explicitly
 (`ToolPageHeader`'s `syncCollections` prop, resolved by `resolveToolSyncKeys`)
 and show the badge too.
 
-The video library at `/videos` shows the badge (and **Save now**) beside its
+The video library at `/videos` (and each `/videos/<category>` view of it) shows the badge (and **Save now**) beside its
 search bar; `LecturesPage` takes it as a `headerActionsSlot` prop because
 `debate-videos` can't import the webview's component.
 
-The `/research/cards` search workspace has no `ToolPageHeader`, so a slim row
-above it (`CardsSearchSyncBar`) carries the badge and **Save now**.
+The `/research/cards` search workspace has no `ToolPageHeader`, so its route
+renders a slim strip above the workspace holding the badge (and **Save now**) for
+the Evidence Library collections.
 
-Known gap: the open-flow tabs are custom too and don't show the badge yet. `/doc`
-is an embedded qwksearch.com frame, so there is no local data for it to show.
+Known gap: the open-flow tabs and the `/doc` header are custom too and don't
+show the badge yet.

@@ -1,6 +1,6 @@
 import { Suspense } from "react"
 import { SearchInterface } from "@debate/research-evidence"
-import { CardsSearchSyncBar } from "../../components/research/CardsSearchSyncBar"
+import { ToolSyncBadge } from "../../components/tools/ToolSyncBadge"
 
 /**
  * The CARDS search screen.
@@ -14,19 +14,31 @@ import { CardsSearchSyncBar } from "../../components/research/CardsSearchSyncBar
  * leaving one page-length scroll that moved the result list and the open card
  * together.
  *
- * A slim sync row (`CardsSearchSyncBar`) sits above the workspace; it is
- * `shrink-0` so the columns keep the rest of the viewport.
+ * A slim strip above the workspace carries the account-sync badge and "Save
+ * now" (`ToolSyncBadge`) for the collections filed under `/research/cards`.
+ * The search workspace has no `ToolPageHeader` of its own, so without the
+ * strip it was the one tool with no sign of whether its data had reached the
+ * account. The badge renders nothing while signed-out data has nothing to
+ * show, and the strip collapses with it.
  *
  * The padding clears the app dock, which is fixed top-left below `lg` and a
  * fixed bar along the bottom on phones.
+ *
+ * A slim strip above the workspace carries the "Saved to your account" badge
+ * and Save now for the evidence library, since this screen has no
+ * `ToolPageHeader` of its own.
  */
 export default function SearchPage() {
   return (
     <div className="h-dvh flex flex-col overflow-hidden pt-14 lg:pt-0 pb-20 lg:pb-0">
-      <CardsSearchSyncBar />
-      <Suspense>
-        <SearchInterface />
-      </Suspense>
+      <div className="flex shrink-0 items-center justify-end gap-1.5 px-3 py-1" data-testid="cards-sync-strip">
+        <ToolSyncBadge href="/research/cards" />
+      </div>
+      <div className="min-h-0 flex-1">
+        <Suspense>
+          <SearchInterface />
+        </Suspense>
+      </div>
     </div>
   )
 }
