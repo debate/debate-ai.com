@@ -2,13 +2,13 @@
  * @fileoverview The grouping rule behind the list layout's collapsible rows.
  *
  * The hierarchy is the point: season → tournament for an archive of rounds,
- * season → channel → category for lectures, newest season first. Inside a
- * tournament the rounds read down from Finals with no round-level groups of
- * their own. Videos missing the field a level groups by have to land
- * somewhere visible rather than vanish: a round with no tournament is a plain
- * row slotted among its season's tournaments by date, one with no round level
- * sits after the tournament's bracket, and an undated one sits in the
- * `Legacy` season.
+ * season → channel → category for lectures. Everything reads newest first:
+ * seasons, tournaments (by their most recent video) and the videos inside a
+ * group, with same-day rounds reading down from Finals. Videos missing the
+ * field a level groups by have to land somewhere visible rather than vanish:
+ * a round with no tournament goes into an `Unsorted` tournament placed by
+ * date, one with no round level sits after the same day's bracket, and an
+ * undated one sits in the `Legacy` season.
  */
 
 import { describe, it, expect } from "vitest";
@@ -102,6 +102,12 @@ function treeOf(videos: VideoType[], mode: "round" | "lecture" = "round"): Video
 }
 
 describe("the path a video takes through the tree", () => {
+  it("files a round with no tournament under Unsorted", () => {
+    expect(
+      videoGroupPath(round("a", { tournament: null }), "round").map((step) => step.label),
+    ).toEqual(["24-25", "Unsorted"]);
+  });
+
   it("files a round under its season and tournament, with no round-level group", () => {
     expect(videoGroupPath(round("a"), "round").map((step) => step.label)).toEqual([
       "24-25",
@@ -148,15 +154,25 @@ describe("the order of the tree", () => {
     expect(labels(groupAt(tree, "24-25", "Harvard").children)).toEqual(["c", "b", "d", "a", "e"]);
   });
 
-  it("sorts tournaments in the order they happened", () => {
+  it("puts the tournament with the most recent video first", () => {
     const tree = treeOf([
-      round("a", { tournament: "Shirley 2025", date: "2025-03-01" }),
-      round("b", { tournament: "Greenhill 2025", date: "2024-09-20" }),
+      round("a", { tournament: "Greenhill 2025", date: "2024-09-20" }),
+      round("b", { tournament: "Shirley 2025", date: "2025-03-01" }),
       round("c", { tournament: "Harvard 2025", date: "2025-02-14" }),
       round("d", { tournament: "Greenhill 2025", date: "2024-09-22" }),
     ]);
-    expect(labels(groupAt(tree, "24-25").children)).toEqual(["Greenhill", "Harvard", "Shirley"]);
+    expect(labels(groupAt(tree, "24-25").children)).toEqual(["Shirley", "Harvard", "Greenhill"]);
     expect(groupAt(tree, "24-25", "Greenhill").earliestDate).toBe("2024-09-20");
+    expect(groupAt(tree, "24-25", "Greenhill").latestDate).toBe("2024-09-22");
+  });
+
+  it("lists the videos inside a tournament newest first", () => {
+    const tree = treeOf([
+      round("old", { date: "2025-02-12", level: "Round 1" }),
+      round("new", { date: "2025-02-14", level: "Finals" }),
+      round("mid", { date: "2025-02-13", level: "Quarterfinals" }),
+    ]);
+    expect(labels(groupAt(tree, "24-25", "Harvard").children)).toEqual(["new", "mid", "old"]);
   });
 
   it("sends the Legacy season to the end of the seasons", () => {
@@ -167,22 +183,16 @@ describe("the order of the tree", () => {
     expect(labels(tree)).toEqual(["24-25", "Legacy"]);
   });
 
-  it("slots a round with no tournament between the tournaments by date", () => {
+  it("files rounds with no tournament under Unsorted, placed by date", () => {
     const tree = treeOf([
-      round("late", { tournament: null, date: "2025-03-10" }),
       round("shirley", { tournament: "Shirley 2025", date: "2025-03-01" }),
       round("mid", { tournament: null, date: "2025-02-20" }),
       round("harvard", { tournament: "Harvard 2025", date: "2025-02-14" }),
-      round("sameDay", { tournament: null, date: "2025-02-14" }),
+      round("early", { tournament: null, date: "2025-02-10" }),
     ]);
-    expect(labels(groupAt(tree, "24-25").children)).toEqual([
-      "Harvard",
-      "sameDay",
-      "mid",
-      "Shirley",
-      "late",
-    ]);
-    expect(countVideoTreeLeaves(tree)).toBe(5);
+    expect(labels(groupAt(tree, "24-25").children)).toEqual(["Shirley", "Unsorted", "Harvard"]);
+    expect(labels(groupAt(tree, "24-25", "Unsorted").children)).toEqual(["mid", "early"]);
+    expect(countVideoTreeLeaves(tree)).toBe(4);
   });
 
   it("lists a round with a tournament but no round level after that tournament's bracket", () => {
@@ -248,7 +258,7 @@ describe("the tree's depth and its leaves", () => {
       String(a.videos[0][1]).localeCompare(String(b.videos[0][1])),
     );
     // Tournaments stay in their own order …
-    expect(labels(groupAt(sorted, "24-25").children)).toEqual(["Greenhill", "Harvard"]);
+    expect(labels(groupAt(sorted, "24-25").children)).toEqual(["Harvard", "Greenhill"]);
     // … while Harvard's two rounds swap into title order.
     const harvardFinals = groupAt(sorted, "24-25", "Harvard").children;
     expect(

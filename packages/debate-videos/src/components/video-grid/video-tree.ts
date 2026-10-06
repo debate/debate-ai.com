@@ -5,15 +5,15 @@
  *
  * The hierarchy is the one an archive of rounds is actually navigated by:
  * season → tournament, with the videos as the leaves. Round levels are not a
- * group of their own: inside a tournament the rounds are ordered Finals,
- * Semifinals, … then prelims, and the level rides on each row's badge.
- * Lectures carry none of those fields, so they group season → channel →
- * category instead.
+ * group of their own: the level rides on each row's badge. Lectures carry
+ * none of those fields, so they group season → channel → category instead.
  *
- * Within a season, tournaments are listed in the order they happened, and a
- * round missing its tournament is a plain row slotted in between them by its
- * date — after the tournament that came before it, not at the end of the
- * season.
+ * Everything reads newest first: the newest season on top, within a season
+ * the tournament with the most recent video on top, and within a group the
+ * newest video on top (rounds on the same day read Finals down to the
+ * prelims). A round missing its tournament goes into an `Unsorted` group,
+ * which is placed among the season's tournaments by its own newest video
+ * rather than pinned to the end.
  *
  * Grouping runs on the *slot* (see `video-stacks.ts`), not on the video: a
  * stacked playlist sits in one leaf under the round its first member belongs
@@ -67,10 +67,10 @@ export interface VideoTreeGroup {
   videoCount: number;
   /** Summed views of those videos. */
   viewCount: number;
-  /** Newest publication date below this group, for the Date column. */
+  /** Newest publication date below this group — the Date column, and what
+   *  places a tournament among its season's other tournaments. */
   latestDate: string | null;
-  /** Oldest publication date below this group — when a tournament started,
-   *  which is what places it among its season's other tournaments. */
+  /** Oldest publication date below this group — when a tournament started. */
   earliestDate: string | null;
   /** Sort position among its siblings; see {@link compareTreeNodes}. */
   sortValue: number | string;
@@ -170,15 +170,13 @@ export function videoGroupPath(video: VideoType, mode: VideoTreeMode): GroupStep
     return steps;
   }
 
-  // A round missing its tournament stops at the season, where it is placed
-  // among the tournaments by date rather than buried under an `Unsorted`
-  // placeholder.
+  // A round missing its tournament goes into an `Unsorted` tournament group.
+  // It is not trailing: like any tournament it is placed by its newest video.
   const tournament = cleanTournamentName(video[7]);
-  if (!tournament) return steps;
   steps.push({
     kind: "tournament",
-    label: tournament,
-    sortValue: tournament.toLowerCase(),
+    label: tournament ?? UNGROUPED_LABEL,
+    sortValue: tournament?.toLowerCase() ?? "",
   });
 
   return steps;
@@ -306,7 +304,7 @@ export function buildVideoTree(slots: VideoSlot[], mode: VideoTreeMode): VideoTr
     siblings.push({ type: "video", key: slot.key, slot });
   }
 
-  sortTree(roots, null);
+  sortTree(roots);
   return roots;
 }
 
@@ -315,57 +313,58 @@ function leafVideo(leaf: VideoTreeLeaf): VideoType | undefined {
   return leaf.slot.videos[leaf.slot.initialIndex] ?? leaf.slot.videos[0];
 }
 
+/** When a node happened: a group's newest video, or a leaf's own date. */
+function nodeTime(node: VideoTreeNode): number | null {
+  return dateTime(node.type === "group" ? node.latestDate : leafVideo(node)?.[2]);
+}
+
 /**
- * Orders a season's children chronologically: each tournament by the date it
- * started, each loose round by its own date, a tournament ahead of a round on
- * the same day. Undated nodes go last, in feed order.
+ * Orders siblings newest first: a group by its most recent video, a leaf by
+ * its own date. Undated nodes go last. Ties fall back to the bracket for
+ * leaves (Finals above Semifinals on the same day) and to the usual group
+ * order for groups; leaves that still tie keep their feed order.
  *
  * @param a - First sibling.
  * @param b - Second sibling.
  * @returns Negative, zero or positive, as `Array.prototype.sort` expects.
  */
-export function compareChronologically(a: VideoTreeNode, b: VideoTreeNode): number {
-  const when = (node: VideoTreeNode) =>
-    dateTime(node.type === "group" ? node.earliestDate : leafVideo(node)?.[2]);
-  const left = when(a);
-  const right = when(b);
+export function compareNewestFirst(a: VideoTreeNode, b: VideoTreeNode): number {
+  if (a.type !== b.type) return a.type === "group" ? -1 : 1;
+  if (a.type === "group" && b.type === "group" && a.trailing !== b.trailing) {
+    return a.trailing ? 1 : -1;
+  }
+  const left = nodeTime(a);
+  const right = nodeTime(b);
   if (left === null || right === null) {
     if (left !== right) return left === null ? 1 : -1;
   } else if (left !== right) {
-    return left - right;
+    return right - left;
   }
-  if (a.type !== b.type) return a.type === "group" ? -1 : 1;
-  return a.type === "group" && b.type === "group" ? compareTreeNodes(a, b) : 0;
+  if (a.type === "video" && b.type === "video") {
+    const leftVideo = leafVideo(a);
+    const rightVideo = leafVideo(b);
+    return (
+      (leftVideo ? roundLevelOrder(leftVideo) : 0) - (rightVideo ? roundLevelOrder(rightVideo) : 0)
+    );
+  }
+  return compareTreeNodes(a, b);
 }
 
 /**
- * Orders a tournament's rounds Finals first, down the bracket.
- *
- * @param a - First sibling.
- * @param b - Second sibling.
- * @returns Negative, zero or positive, as `Array.prototype.sort` expects.
+ * Orders one level: tournaments and videos newest first, every other group
+ * (seasons, lecture channels and categories) by its own sort position.
  */
-function compareRoundLevels(a: VideoTreeNode, b: VideoTreeNode): number {
-  if (a.type !== "video" || b.type !== "video") return compareTreeNodes(a, b);
-  const left = leafVideo(a);
-  const right = leafVideo(b);
-  return (left ? roundLevelOrder(left) : 0) - (right ? roundLevelOrder(right) : 0);
+function compareSiblings(a: VideoTreeNode, b: VideoTreeNode): number {
+  const byLabel =
+    a.type === "group" && b.type === "group" && (a.kind !== "tournament" || b.kind !== "tournament");
+  return byLabel ? compareTreeNodes(a, b) : compareNewestFirst(a, b);
 }
 
 /** Sorts a level and every level below it, in place. */
-function sortTree(nodes: VideoTreeNode[], parent: VideoTreeGroup | null): void {
-  const hasTournaments = nodes.some((node) => node.type === "group" && node.kind === "tournament");
-  const hasLooseRounds =
-    parent?.kind === "season" && nodes.some((node) => node.type === "video");
-  if (parent?.kind === "season" && (hasTournaments || hasLooseRounds)) {
-    nodes.sort(compareChronologically);
-  } else if (parent?.kind === "tournament") {
-    nodes.sort(compareRoundLevels);
-  } else {
-    nodes.sort(compareTreeNodes);
-  }
+function sortTree(nodes: VideoTreeNode[]): void {
+  nodes.sort(compareSiblings);
   for (const node of nodes) {
-    if (node.type === "group") sortTree(node.children, node);
+    if (node.type === "group") sortTree(node.children);
   }
 }
 
