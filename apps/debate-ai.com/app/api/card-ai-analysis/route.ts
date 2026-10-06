@@ -12,7 +12,14 @@ import { getSession } from "@/lib/auth/session"
 import { getEnv } from "@/lib/env"
 import { isMissingTableError } from "@/lib/contacts/server"
 import { limitsFor } from "@debate/webview/lib/stripe/limits"
-import { consumeDailyUsage, getUserTier, limitMessage, planLimitHeaders, usageSubject } from "@/lib/stripe/usage"
+import {
+  consumeDailyUsage,
+  getUserTier,
+  limitMessage,
+  planLimitHeaders,
+  refundDailyUsage,
+  usageSubject,
+} from "@/lib/stripe/usage"
 
 /**
  * Saved AI analyses for the evidence search's "AI Analysis" sidebar
@@ -30,7 +37,13 @@ import { consumeDailyUsage, getUserTier, limitMessage, planLimitHeaders, usageSu
  *
  * Only new generations are metered: each counts toward the caller's
  * `cardAiAnalysesPerDay` plan limit (`@debate/webview/src/lib/stripe/limits.ts`, per IP when
- * signed out); reading a saved analysis is free.
+ * signed out); reading a saved analysis is free. A generation that fails
+ * (provider error, network error, empty answer) is refunded, so only a
+ * delivered analysis counts.
+ *
+ * `savedOnly: true` returns the saved analysis or `{ result: null }` and never
+ * generates — the sidebar uses it to preload a card's analysis on selection
+ * without spending the user's allowance.
  */
 
 const ANTHROPIC_MODEL = "claude-sonnet-4-6"
@@ -42,6 +55,7 @@ interface AnalysisRequestBody {
   content?: unknown
   prompt?: unknown
   tag?: unknown
+  savedOnly?: unknown
 }
 
 const error = (message: string, status: number) => NextResponse.json({ error: message }, { status })
@@ -75,6 +89,7 @@ export async function POST(request: Request) {
     // Before the migration lands, fall through to generating without saving.
     if (!isMissingTableError(e)) throw e
   }
+  if (body.savedOnly === true) return NextResponse.json({ result: null, cached: false })
 
   const isDefaultPrompt = normalizeForHash(prompt) === normalizeForHash(FIND_FLAWS_AND_EXTENSIONS_PROMPT)
   const session = await getSession()
@@ -87,7 +102,8 @@ export async function POST(request: Request) {
   if (!openrouterKey && !anthropicKey) return error("AI features are not configured on this server.", 503)
 
   const tier = await getUserTier(db, session?.user.id)
-  const usage = await consumeDailyUsage(db, usageSubject(session?.user.id, request), "cardAiAnalyses", limitsFor(tier))
+  const subject = usageSubject(session?.user.id, request)
+  const usage = await consumeDailyUsage(db, subject, "cardAiAnalyses", limitsFor(tier))
   if (!usage.allowed) {
     return NextResponse.json(
       { error: limitMessage("cardAiAnalyses", usage, tier) },
@@ -132,6 +148,7 @@ export async function POST(request: Request) {
       })
     }
   } catch (e) {
+    await refundDailyUsage(db, subject, "cardAiAnalyses")
     return error(`Network error contacting AI provider: ${e instanceof Error ? e.message : String(e)}`, 502)
   }
   if (!res.ok) {
@@ -139,10 +156,11 @@ export async function POST(request: Request) {
     // credits, a rate limit, or a retired model apart in Workers Logs.
     const detail = (await res.text().catch(() => "")).slice(0, 1000)
     console.error(`card-ai-analysis: ${openrouterKey ? "OpenRouter" : "Anthropic"} returned ${res.status}`, detail)
+    await refundDailyUsage(db, subject, "cardAiAnalyses")
     return error(`AI API returned ${res.status}.`, 502)
   }
 
-  const json = (await res.json()) as {
+  const json = (await res.json().catch(() => ({}))) as {
     content?: Array<{ type?: string; text?: string }>
     choices?: Array<{ message?: { content?: string } }>
   }
@@ -156,7 +174,10 @@ export async function POST(request: Request) {
       .join("")
   }
   result = result.trim()
-  if (!result) return error("AI API returned an empty response.", 502)
+  if (!result) {
+    await refundDailyUsage(db, subject, "cardAiAnalyses")
+    return error("AI API returned an empty response.", 502)
+  }
 
   try {
     await db

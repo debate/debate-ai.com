@@ -85,6 +85,28 @@ export async function consumeDailyUsage(
   }
 }
 
+/**
+ * Gives back one use counted by `consumeDailyUsage` when the work it paid for
+ * never happened — the model call failed, timed out or answered empty. A
+ * failed analysis is not an analysis, and charging for it locked users out of
+ * the feature on days the provider was down. Never drops below zero.
+ */
+export async function refundDailyUsage(
+  db: any,
+  subject: string,
+  metric: DailyMetric,
+  now: Date = new Date(),
+): Promise<void> {
+  try {
+    await db
+      .update(usageCounters)
+      .set({ count: sql`max(${usageCounters.count} - 1, 0)` })
+      .where(and(eq(usageCounters.subject, subject), eq(usageCounters.metric, metric), eq(usageCounters.day, utcDay(now))));
+  } catch (error) {
+    if (!isMissingTable(error)) console.warn(`Failed to refund ${metric}`, error);
+  }
+}
+
 /** Today's count for each daily metric. */
 export async function getDailyUsage(
   db: any,
