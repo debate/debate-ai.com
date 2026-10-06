@@ -24,7 +24,7 @@ function withClient(client: ReturnType<typeof createTournamentsClient>, node: Re
 const noFetch = () => Promise.resolve(new Response("{}", { status: 200 }));
 
 describe("HostTournamentPage", () => {
-  it("offers all three styles, each with its speech order explained", () => {
+  it("offers every debate format, each with its speech order explained", () => {
     const html = withClient(createTournamentsClient("/api/tabroom", noFetch), <TournamentsApp segments={["host"]} />);
 
     for (const format of TOURNAMENT_FORMATS) {
