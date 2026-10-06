@@ -66,17 +66,47 @@ const tournament = (overrides: Record<string, unknown> = {}) => ({
 const rows = (sql: string, ...params: unknown[]) =>
   runWithTabroomDb(d1, async () => (await d1.prepare(sql).bind(...params).all<Record<string, unknown>>()).results);
 
-describe("the three styles", () => {
-  it("are Policy, LD and Public Forum, each with its own speech order", () => {
-    expect(TOURNAMENT_FORMATS.map((format) => format.id)).toEqual(["policy", "ld", "pf"]);
-    expect(TOURNAMENT_FORMATS.map((format) => format.abbr)).toEqual(["Policy", "LD", "PF"]);
+describe("the debate formats", () => {
+  it("cover every debate format, each with its own speech order", () => {
+    expect(TOURNAMENT_FORMATS.map((format) => format.id)).toEqual([
+      "policy",
+      "ld",
+      "pf",
+      "parli",
+      "bp",
+      "wsdc",
+      "ap",
+      "bq",
+      "ipda",
+      "congress",
+    ]);
+    expect(TOURNAMENT_FORMATS.map((format) => format.abbr)).toEqual([
+      "Policy",
+      "LD",
+      "PF",
+      "Parli",
+      "BP",
+      "WSDC",
+      "AP",
+      "BQ",
+      "IPDA",
+      "Congress",
+    ]);
 
     expect(tournamentFormat("policy")?.aff.map((speech) => speech.short)).toEqual(["1AC", "2AC", "1AR", "2AR"]);
     expect(tournamentFormat("ld")?.neg.map((speech) => speech.short)).toEqual(["1NC", "2NR"]);
     expect(tournamentFormat("pf")?.aff.map((speech) => speech.short)).toEqual(["AFF", "AS", "NAF"]);
   });
 
-  it("mark PF as flip-decided and give the other two a fixed order", () => {
+  it("use Tabroom's own event kinds for BP, World Schools and Congress", () => {
+    expect(tournamentFormat("bp")).toMatchObject({ eventType: "wudc", teamsPerRoom: 4 });
+    expect(tournamentFormat("wsdc")).toMatchObject({ eventType: "wsdc", entrySize: { min: 3, max: 5 } });
+    expect(tournamentFormat("congress")).toMatchObject({ eventType: "congress", teamsPerRoom: 0 });
+    expect(tournamentFormat("parli")?.sideLabels.aff.label).toBe("Government");
+    expect(formatSummary(tournamentFormat("bp")!)).toContain("4 teams a room");
+  });
+
+  it("mark PF as flip-decided and give Policy and LD a fixed order", () => {
     expect(tournamentFormat("pf")?.variableOrder).toBe(true);
     expect(tournamentFormat("policy")?.variableOrder).toBe(false);
     expect(tournamentFormat("ld")?.variableOrder).toBe(false);
@@ -151,13 +181,51 @@ describe("POST /host/tourns", () => {
       { abbr: "Policy", level: "open", code_style: "names", category: 11 },
       { abbr: "PF", level: "novice", code_style: "names", category: 12 },
     ]);
-    const settings = await rows("SELECT event, tag, value, value_text FROM event_setting ORDER BY tag");
+    const settings = await rows("SELECT event, tag, value, value_text FROM event_setting ORDER BY event, tag");
     expect(settings).toEqual([
+      { event: 101, tag: "aff_label", value: "Affirmative", value_text: null },
+      { event: 101, tag: "max_entry", value: "2", value_text: null },
+      { event: 101, tag: "min_entry", value: "2", value_text: null },
+      { event: 101, tag: "neg_label", value: "Negative", value_text: null },
+      { event: 102, tag: "aff_label", value: "Pro", value_text: null },
       { event: 102, tag: "description", value: "text", value_text: "Two on each side." },
+      { event: 102, tag: "max_entry", value: "2", value_text: null },
+      { event: 102, tag: "min_entry", value: "2", value_text: null },
+      { event: 102, tag: "neg_label", value: "Con", value_text: null },
       { event: 102, tag: "school_cap", value: "3", value_text: null },
     ]);
     const currency = await rows("SELECT tag, value FROM tourn_setting WHERE tourn = ?", body.tournament.id);
     expect(currency).toEqual([{ tag: "currency", value: "usd" }]);
+  });
+
+  it("runs BP, World Schools and Congress as Tabroom's own event kinds", async () => {
+    const { status, body } = await post(
+      "/host/tourns",
+      tournament({ name: "Worlds Prep Open", events: [{ format: "bp" }, { format: "wsdc" }, { format: "congress" }] }),
+      "owner@example.com",
+    );
+    expect(status).toBe(201);
+    const events = await rows("SELECT id, abbr, type FROM event WHERE tourn = ? ORDER BY id", body.tournament.id);
+    expect(events.map(({ abbr, type }) => ({ abbr, type }))).toEqual([
+      { abbr: "BP", type: "wudc" },
+      { abbr: "WSDC", type: "wsdc" },
+      { abbr: "Congress", type: "congress" },
+    ]);
+    const wsdc = await rows("SELECT tag, value FROM event_setting WHERE event = ? ORDER BY tag", events[1].id);
+    expect(wsdc).toEqual([
+      { tag: "aff_label", value: "Proposition" },
+      { tag: "max_entry", value: "5" },
+      { tag: "min_entry", value: "3" },
+      { tag: "neg_label", value: "Opposition" },
+    ]);
+    // A Congress chamber has no benches to label.
+    const congress = await rows("SELECT tag FROM event_setting WHERE event = ? ORDER BY tag", events[2].id);
+    expect(congress.map((row) => row.tag)).toEqual(["max_entry", "min_entry"]);
+  });
+
+  it("rejects a format this site does not host", async () => {
+    const { status } = await post("/host/tourns", tournament({ events: [{ format: "oratory" }] }), "owner@example.com");
+    expect(status).toBe(400);
   });
 
   it("registers the host in every event, so pairings are never empty", async () => {
