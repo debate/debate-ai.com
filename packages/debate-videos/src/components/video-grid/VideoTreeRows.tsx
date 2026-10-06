@@ -19,6 +19,7 @@ import { cn } from "../../ui/lib/utils"
 import { formatVideoDate, TOC_TOURNAMENT_IMAGE } from "../video-card/videoCardUtils"
 import { VideoListRow } from "./VideoListRow"
 import { FormatBadge, videoFormat } from "./FormatBadge"
+import type { VideoTeamRankingLookup } from "../../hooks/useVideoTeamRankings"
 import { treeIndentStyle } from "./tree-indent"
 import type { VideoGroupKind, VideoTreeGroup, VideoTreeNode } from "./video-tree"
 import type { VideoType } from "../../types/videos"
@@ -61,6 +62,8 @@ export interface VideoTreeRowContext {
   /** Badges each tournament name with its debate format, for listings that
    *  mix formats (Top Picks). */
   showFormat?: boolean
+  /** The rankings row behind a team label, for the team-page link and rating. */
+  teamRanking?: VideoTeamRankingLookup
 }
 
 /** The distinct formats of every video below a group, in label order. */
@@ -216,6 +219,8 @@ export function VideoTreeRows({
       onUnhideVideo={context.onUnhideVideo}
       onSearch={context.onSearch}
       showFormat={context.showFormat}
+      affRanking={context.teamRanking?.(video, video[9]) ?? null}
+      negRanking={context.teamRanking?.(video, video[10]) ?? null}
     />
   )
 }
