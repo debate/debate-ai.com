@@ -255,9 +255,7 @@ fn desktop_shortcuts_plugin<R: tauri::Runtime>() -> tauri::plugin::TauriPlugin<R
             "F11",
             "CmdOrCtrl+Shift+F",
             "CmdOrCtrl+`",
-            "CmdOrCtrl+Backquote",
             "Ctrl+`",
-            "Ctrl+Backquote",
         ])
         .expect("shortcuts are valid accelerator strings")
         .with_handler(|app, shortcut, event| {
