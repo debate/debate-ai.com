@@ -8,15 +8,16 @@
  * `Footer` in `debate-videos`), which is the right shape for a 300px column
  * under a nav tree. It is not the right shape for the bottom of a full-width
  * page: on the homepage there is no sidebar to hang it from, and the page ends
- * at the catalog with nothing after it. This is that footer — the same links,
- * grouped into sections instead of one wrapped row.
+ * at the catalog with nothing after it. This is that footer — the sidebar's
+ * apps and tool sections, each a column holding every item the sidebar lists
+ * under it, followed by the site links.
  *
  * Every section is derived from the link data the rest of the chrome already
  * renders rather than restated, so the footer cannot drift from the app:
  * `FOOTER_LINKS` is the same one list the app dock's Settings menu shows under
  * Site Links, and
  * `APP_DOCK_LINKS`/`SIDEBAR_TOOL_SECTIONS` are the dock's icons and the nav
- * tree's headings. Adding a link in `debate-videos` puts it in the sidebar
+ * tree's sections and tools. Adding a link in `debate-videos` puts it in the sidebar
  * footer, the dock menu and here at once.
  *
  * In-app routes are followed in place through the router, so the sidebar and
@@ -29,7 +30,7 @@
  */
 
 import Link from "next/link";
-import { BookOpen, Sparkles } from "lucide-react";
+import { BookOpen } from "lucide-react";
 
 import {
   APP_DOCK_LINKS,
@@ -50,24 +51,16 @@ interface FooterSectionLink {
 }
 
 /**
- * The app's own surfaces: the dock's five destinations, then the nav tree's
- * three section headings, then the two catalog pages. Section headings rather
- * than their forty-odd tools — the tree is one click away in the sidebar, and
- * a footer that repeats it in full is a second, worse copy of the same list.
+ * The dock's destinations, in the order the sidebar's apps group lists them,
+ * plus Lectures, which has no other entry point in the chrome.
  */
-const TOOLS_LINKS: FooterSectionLink[] = [
+const APPS_LINKS: FooterSectionLink[] = [
   ...APP_DOCK_LINKS.map((link) => ({
     href: link.href,
     label: link.title,
     icon: link.icon,
   })),
-  ...SIDEBAR_TOOL_SECTIONS.map((section) => ({
-    href: section.href,
-    label: section.title,
-    icon: section.icon,
-  })),
   { href: "/lectures", label: "Lectures", icon: BookOpen },
-  { href: "/practice/features", label: "All Features", icon: Sparkles },
 ];
 
 /** The site's own links, in the order `FOOTER_LINKS` lists them. */
@@ -79,8 +72,21 @@ const toLinks = (links: FooterLink[]): FooterSectionLink[] =>
     hardNavigate: link.hardNavigate,
   }));
 
+/**
+ * The footer's columns, laid out the way the sidebar is: the apps, then each
+ * of the nav tree's sections with every tool it holds (same titles, icons and
+ * order as `NavMain`), then the site links.
+ */
 const SECTIONS: { title: string; links: FooterSectionLink[] }[] = [
-  { title: "Tools", links: TOOLS_LINKS },
+  { title: "Apps", links: APPS_LINKS },
+  ...SIDEBAR_TOOL_SECTIONS.map((section) => ({
+    title: section.title,
+    links: section.tools.map((tool) => ({
+      href: tool.href,
+      label: tool.title,
+      icon: tool.icon,
+    })),
+  })),
   { title: "Site", links: toLinks(FOOTER_LINKS) },
 ];
 
@@ -88,11 +94,11 @@ const SECTIONS: { title: string; links: FooterSectionLink[] }[] = [
 function FooterRow({ href, label, icon: Icon, hardNavigate }: FooterSectionLink) {
   const isExternal = href.startsWith("http");
   const className =
-    "group flex items-center gap-2 rounded-md py-1 text-sm text-muted-foreground transition-colors hover:text-foreground motion-reduce:transition-none";
+    "group flex items-start gap-2 rounded-md py-1 text-sm text-muted-foreground transition-colors hover:text-foreground motion-reduce:transition-none";
 
   const contents = (
     <>
-      {Icon ? <Icon className="size-4 shrink-0 opacity-70 transition-opacity group-hover:opacity-100" /> : null}
+      {Icon ? <Icon className="mt-0.5 size-4 shrink-0 opacity-70 transition-opacity group-hover:opacity-100" /> : null}
       <span>{label}</span>
     </>
   );
@@ -125,8 +131,8 @@ function FooterRow({ href, label, icon: Icon, hardNavigate }: FooterSectionLink)
 export function SiteFooter() {
   return (
     <footer className="border-t border-border bg-background text-muted-foreground">
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:grid-cols-2 lg:grid-cols-3">
-        <div>
+      <div className="mx-auto max-w-6xl px-4 py-12">
+        <div className="mb-10">
           {/* The mark, not the wordmark alone: it is the one place the footer
               repeats the app's own identity, and `APP_LOGO` is what the hero
               above it opens with. */}
@@ -137,20 +143,22 @@ export function SiteFooter() {
           </p>
         </div>
 
-        {SECTIONS.map((section) => (
-          <nav key={section.title} aria-label={section.title}>
-            <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-foreground">
-              {section.title}
-            </h2>
-            <ul className="flex flex-col">
-              {section.links.map((link) => (
-                <li key={`${section.title}:${link.href}:${link.label}`}>
-                  <FooterRow {...link} />
-                </li>
-              ))}
-            </ul>
-          </nav>
-        ))}
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-7">
+          {SECTIONS.map((section) => (
+            <nav key={section.title} aria-label={section.title}>
+              <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-foreground">
+                {section.title}
+              </h2>
+              <ul className="flex flex-col">
+                {section.links.map((link) => (
+                  <li key={`${section.title}:${link.href}:${link.label}`}>
+                    <FooterRow {...link} />
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
+        </div>
       </div>
     </footer>
   );

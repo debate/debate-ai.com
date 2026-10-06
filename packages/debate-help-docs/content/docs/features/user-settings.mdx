@@ -95,11 +95,12 @@ once that flow has been saved to your account from the Flow History dialog
 (including bulk saves): a plain cloud means the account copy matches what you
 see, a crossed-out amber cloud means you've edited it since. A tab with no icon
 has no baseline yet. The marker survives a reload: each save remembers the
-version the account stamped on it, and opening the **Saved to account** tab in
-Flow History re-adopts that baseline only if your account still holds exactly
-that version, so edits made elsewhere (or by a different account on the same
+version the account stamped on it, and opening the `/debate` start screen or a
+round's flow tabs (or the **Saved to account** tab in Flow History) re-adopts
+that baseline only if your account still holds exactly that version, so edits made elsewhere (or by a different account on the same
 browser) never show as saved. Engineering notes: `debate-round`'s
-`state/flowAccountStatus.ts`.
+`state/flowAccountStatus.ts`; the on-mount restore is `state/restoreAccountBaselines.ts`
+(one fetch per page session, silent when signed out).
 
 The same cloud icon appears on the round cards of the `/debate` start screen
 (Featured and Recent) once the round itself has been saved to your account from

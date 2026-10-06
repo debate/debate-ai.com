@@ -64,6 +64,9 @@ export const LEGACY_PATH_PREFIXES: ReadonlyArray<readonly [from: string, to: str
   ["/videos/rankings", "/practice/rankings"],
   ["/videos/statistics", "/practice/statistics"],
   ["/videos/stats", "/practice/statistics"],
+  // Top Picks ("Greatest of All-Time") was renamed after its sidebar title.
+  ["/videos/topPicks", "/videos/goat-status"],
+  ["/videos/toppicks", "/videos/goat-status"],
   // Lectures
   ["/videos/lectures", "/lectures"],
   // Coaching
@@ -86,6 +89,7 @@ export const ROUND_VIDEO_SLUGS: ReadonlySet<string> = new Set([
   "ld",
   "pf",
   "college",
+  "goat-status",
   "toppicks",
   "favoritedebates",
   "favoritelectures",

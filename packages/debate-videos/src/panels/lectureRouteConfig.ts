@@ -36,6 +36,9 @@ export const SLUG_MAP: Record<string, SlugState> = {
   ld: { style: 3 },
   pf: { style: 2 },
   college: { style: 4 },
+  "goat-status": { view: "topPicks" },
+  // The old address; the Worker redirects it to `/videos/goat-status`, and this
+  // keeps any casing the redirect does not match rendering the same view.
   toppicks: { view: "topPicks" },
   favoritedebates: { favorites: true },
   favoritelectures: { favorites: true, view: "lectures", lecturesOnly: true },
