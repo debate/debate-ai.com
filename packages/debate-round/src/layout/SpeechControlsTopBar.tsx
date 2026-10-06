@@ -13,6 +13,7 @@
 
 "use client"
 
+import type { ReactNode } from "react"
 import { FileText, Quote, Columns2 } from "lucide-react"
 import type { ViewMode } from "../types/debate-flow"
 import { ViewModeSelector } from "../controls/ViewModeSelector"
@@ -62,6 +63,8 @@ export interface SpeechControlsTopBarProps {
   participantEmails?: string[]
   /** Whether to render the recording menu here — false when the round sidebar already shows it under the speech. */
   showRecordingMenu?: boolean
+  /** Host-supplied controls rendered first in the bar (the app's account-sync badge). */
+  leadingActions?: ReactNode
 }
 
 /**
@@ -89,10 +92,13 @@ export function SpeechControlsTopBar({
   recordingKey,
   participantEmails,
   showRecordingMenu = true,
+  leadingActions,
 }: SpeechControlsTopBarProps) {
   const outcomeResponses = useAiOutcomeResponsesAction(speechName)
   return (
     <div className="flex items-center justify-end gap-1 w-full h-9 px-2 border-b border-border bg-[var(--background)] shrink-0">
+      {leadingActions}
+
       <TooltipProvider delayDuration={300}>
         <Tooltip>
           <TooltipTrigger asChild>
