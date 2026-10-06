@@ -121,7 +121,7 @@
 - [x] Client + `startFlowSettingsAccountSync` (adopt account copy, seed empty account, debounced push, signed-out no-op) mounted in `EbbFlowEmbed`
 - [x] Route + schema wiring in `apps/debate-ai.com`
 - [x] Vitest `packages/debate-flow/test/flow-editor-settings-sync.test.ts`; documented in `features/user-settings.mdx`
-- [ ] Follow-up: route-level test for `flowEditorSettings` GET/PUT (no existing route test harness for `/api/settings`)
+- [x] Route-level test for `flowEditorSettings` GET/PUT: `apps/debate-ai.com/lib/database/__tests__/settings-flow-editor-route.test.ts` (real SQLite via `freshSchemaClient`, mocked auth; covers 401, save, merge, validation, bad JSON, per-user isolation; branch `claude/gifted-babbage-uhzbcl`). Needs the `debate-rankings` and `debate-editor-cm` submodules plus `node packages/debate-editor/scripts/sync-upstream.mjs`
 - [ ] Follow-up: tool UI pass - sync status and pin/save controls in each tool's header (still In Progress in IDEAS.md)
 - [ ] Follow-up: deploy must apply the new column (schema.ts is the only source now that `drizzle/` is gone)
 
