@@ -33,7 +33,7 @@ export default defineConfig({
       "!packages/debate-tournament-tabroom",
       // Git submodules of upstream CardMirror and Tabroom. Each is its own
       // app with its own toolchain and test setup; CardMirror is rebased into
-      // @debate/editor (and re-exported by debate-editor-cm-adapter), Tabroom is
+      // @debate/editor, Tabroom is
       // vendored into debate-tournaments, and those test the parts the app uses.
       "!packages/debate-editor-cm",
       // The browser extension carries its own config (jsdom, its own `@`

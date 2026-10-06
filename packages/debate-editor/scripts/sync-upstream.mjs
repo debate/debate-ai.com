@@ -7,12 +7,12 @@
  * what this package tracks is only what debate-ai.com adds to it:
  *
  *  - `patches/debate-ai.patch` — edits to upstream files, as a unified diff
- *    from upstream (at the commit pinned in `upstream.json`). The toolbar
- *    tabs, the embed hooks (`adoptEmbeddedDoc`, `hostPlugins`, `chromeHost`,
+ *    from upstream (at the commit pinned in `upstream.json`). The single
+ *    scrolling toolbar strip, the embed hooks (`adoptEmbeddedDoc`, `hostPlugins`, `chromeHost`,
  *    narrow chrome), the settings sidebar, the account-sync wiring, and the
  *    rest.
  *  - `overlay/` — files upstream doesn't have: the React shell (`react/`,
- *    `ui/`) and our own engine modules (`editor/ribbon-tabs*.ts`,
+ *    `ui/`) and our own engine modules (`editor/settings-tabs.ts`,
  *    `editor/chrome-host.ts`, the learn/quick-cards sync clients, …).
  *
  * `src/` is generated (git-ignored): upstream's `src/` at the pinned commit,

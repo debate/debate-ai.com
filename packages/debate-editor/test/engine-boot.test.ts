@@ -37,8 +37,26 @@ Element.prototype.scrollIntoView ??= function scrollIntoView() {};
 // ProseMirror's posAtCoords (the heading breadcrumb bar) hit-tests with it.
 document.elementFromPoint ??= () => null;
 
+// Record which elements get a pointer/click listener while the engine boots,
+// so the test can check every toolbar button is actually wired.
+const wired = new WeakSet<EventTarget>();
+const originalAdd = EventTarget.prototype.addEventListener;
+EventTarget.prototype.addEventListener = function (this: EventTarget, type: string, ...rest: unknown[]) {
+  if (type === "click" || type === "mousedown" || type === "pointerdown") wired.add(this);
+  return (originalAdd as (...args: unknown[]) => void).call(this, type, ...rest);
+} as typeof EventTarget.prototype.addEventListener;
+
+/** A button counts as wired when it, or a panel it sits in below the strip
+ *  itself, has a click/press listener (some panels delegate to a parent). */
+function isWired(button: HTMLElement): boolean {
+  for (let el: HTMLElement | null = button; el && el.id !== "ribbon-strip"; el = el.parentElement) {
+    if (wired.has(el)) return true;
+  }
+  return false;
+}
+
 describe("engine boot inside the embed markup", () => {
-  it("mounts an editor view with the tabbed ribbon wired", async () => {
+  it("mounts an editor view with the single-strip toolbar wired", async () => {
     const root = document.createElement("div");
     root.className = "dec-cardmirror-root";
     root.innerHTML = RIBBON_HTML;
@@ -53,10 +71,15 @@ describe("engine boot inside the embed markup", () => {
     const view = engine.getActiveView();
     expect(view).not.toBeNull();
     expect(root.contains(view!.dom)).toBe(true);
-    // The Word-style tab strip is generated at boot, and the new upstream
-    // "Navigate" group is reachable from it.
-    const tabs = [...root.querySelectorAll("#ribbon-tabs [role='tab']")].map((t) => t.textContent?.trim());
-    expect(tabs).toEqual(expect.arrayContaining(["File", "Card", "Edit", "Format", "View"]));
+    // The toolbar stays one strip: nothing at boot pages it into tabs.
+    expect(root.querySelector("[role='tablist']")).toBeNull();
+    // Every button on the strip is bound to something.
+    const buttons = [...root.querySelectorAll<HTMLElement>("#ribbon-strip button")];
+    expect(buttons.length).toBeGreaterThan(40);
+    const unwired = buttons
+      .filter((b) => !isWired(b))
+      .map((b) => b.id || b.getAttribute("aria-label") || b.textContent?.trim());
+    expect(unwired).toEqual([]);
 
     // The dropzone shelf finishes loading (IndexedDB plus a peer-tab probe)
     // after the view mounts, then renders into the DOM. Wait for that render

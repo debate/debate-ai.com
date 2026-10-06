@@ -3,20 +3,25 @@ import { cardsOf, exportDocxBlob, importDocx, outlineOf, schema } from "../src/i
 
 /** A small debate doc: pocket > hat > block > one card. */
 function sampleDoc() {
-  const { nodes } = schema;
-  return nodes.doc.create(null, [
-    nodes.pocket.create(null, schema.text("1AC")),
-    nodes.hat.create(null, schema.text("Advantage")),
-    nodes.block.create(null, schema.text("Framing")),
-    nodes.card.create(null, [
-      nodes.tag.create(null, schema.text("Pleasure is intrinsic value")),
-      nodes.cite_paragraph.create(null, schema.text("Blum 18")),
-      nodes.card_body.create(null, schema.text("Pleasure is one of the primary reward functions.")),
+  const nodes = schema.nodes as Record<string, import("prosemirror-model").NodeType>;
+  const node = (name: string) => {
+    const type = nodes[name];
+    if (!type) throw new Error(`schema has no ${name} node`);
+    return type;
+  };
+  return node("doc").create(null, [
+    node("pocket").create(null, schema.text("1AC")),
+    node("hat").create(null, schema.text("Advantage")),
+    node("block").create(null, schema.text("Framing")),
+    node("card").create(null, [
+      node("tag").create(null, schema.text("Pleasure is intrinsic value")),
+      node("cite_paragraph").create(null, schema.text("Blum 18")),
+      node("card_body").create(null, schema.text("Pleasure is one of the primary reward functions.")),
     ]),
   ]);
 }
 
-describe("@debate/editor-cm-adapter", () => {
+describe("web .docx helpers (merged from the CM adapter)", () => {
   it("reads the outline and cards of a document", () => {
     const doc = sampleDoc();
     expect(outlineOf(doc).map((item) => [item.kind, item.level, item.text])).toEqual([

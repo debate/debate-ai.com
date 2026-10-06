@@ -19,19 +19,14 @@
  * "CardMirror on GitHub") are dropped: they're optional and don't belong in
  * an embedded product surface.
  *
- * This is CardMirror's OWN ribbon/toolbar, and it is TABBED: `#ribbon-tabs`
- * is the Word-style tab strip and `#ribbon-strip` the page below it, whose
- * panels are shown and hidden per tab by `editor/ribbon-tabs-ui.ts` (the
- * taxonomy lives in `editor/ribbon-tabs.ts`). Both elements are empty /
- * inert here: the strip's buttons are generated, and every panel below
- * renders exactly as before until the controller pages it. The React shell
+ * This is CardMirror's OWN ribbon/toolbar, kept as upstream ships it: one
+ * unbroken strip, `#ribbon-strip`, holding every panel at once and
+ * scrolling left↔right when it outgrows its column. It is deliberately NOT
+ * paged into tabs or split into sections. The React shell
  * (`CardMirrorEditor.tsx`) stacks `MenuBar.tsx` above this markup when
- * `showToolbar` is set — a text-labeled dropdown index over the same
- * commands this tabbed ribbon exposes as icons, Google-Docs-style.
- *
- * `#ribbon-command-panel` is where a tab with no panels of its own (Tools,
- * AI, Workspace, …) renders its generated command clusters; it stays empty
- * and `hidden` on the tabs that don't need it.
+ * `showToolbar` is set — a text-labeled row of dropdown menus over the
+ * same commands this strip exposes as icons (plus the ones it has no
+ * button for), Google-Docs-style.
  *
  * One deliberate deviation from upstream's order: `.ribbon-right` (the
  * shortcuts / settings / timer grid) sits directly after `.ribbon-left`
@@ -39,14 +34,12 @@
  * single unbroken strip rather than one pinned to each edge with a gulf
  * between them. `.ribbon-center` — the flex-grow section holding the
  * opt-in doc-name chip — trails them and soaks up the leftover width.
- * Neither is claimed by a tab, so both (like `#timer-panel`) stay visible
- * on every page of the ribbon. The strip scrolls horizontally when it
+ * The strip scrolls horizontally when it
  * outgrows the window; see `#ribbon-strip` in `editor/style.css` and
  * `initRibbonScroller` in `editor/index.ts`.
  */
 export const RIBBON_HTML = `
 <header id="ribbon">
-  <nav id="ribbon-tabs" class="ribbon-tabstrip" role="tablist" aria-label="Ribbon tabs"></nav>
   <div id="ribbon-strip" class="ribbon-strip">
   <section id="timer-panel" class="ribbon-section pmd-timer-panel" hidden></section>
   <div class="ribbon-section ribbon-left">
@@ -193,7 +186,6 @@ export const RIBBON_HTML = `
     </div>
     <div id="custom-ribbon-panel" class="ribbon-doc-ops-panel ribbon-doc-ops-panel-3col" role="group" aria-label="Custom buttons" hidden></div>
   </div>
-  <div id="ribbon-command-panel" class="ribbon-section ribbon-command-panel" role="group" aria-label="Commands" hidden></div>
   <div class="ribbon-section ribbon-right">
     <div class="ribbon-right-grid">
       <button id="reference-btn" type="button" title="Keyboard shortcuts" aria-label="Keyboard shortcuts"><span class="pmd-icon pmd-icon-shortcuts" aria-hidden="true"></span></button>
