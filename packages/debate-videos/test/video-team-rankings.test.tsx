@@ -15,6 +15,7 @@ import type { RankingDataset, RankingEntry } from "@debate/rankings-adapter";
 import type { VideoType } from "../src/types/videos";
 
 vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: () => {} }),
   useParams: () => ({}),
   usePathname: () => "/videos",
 }));
