@@ -29,6 +29,7 @@ import { ChevronUp, ChevronDown } from "lucide-react"
 import { cn } from "../../ui/lib/utils"
 import { TooltipProvider } from "../../ui/primitives/tooltip"
 import { useWatchHistory } from "../../hooks/useWatchHistory"
+import { useVideoTeamRankings } from "../../hooks/useVideoTeamRankings"
 import { ColumnResizeHandle } from "./ColumnResizeHandle"
 import { useResizableColumns } from "./useResizableColumns"
 import { buildVideoSlots, type VideoSlot, type VideoStackMap } from "./video-stacks"
@@ -230,6 +231,8 @@ export function VideoListRows({
     () => (layout ? layout === "round" : videos.some((video) => video[7] || video[9] || video[10])),
     [videos, layout],
   )
+
+  const teamRanking = useVideoTeamRankings(videos, isRoundMode)
 
   const baseColumns = isRoundMode ? ROUND_COLUMNS : LECTURE_COLUMNS
   const columns = useMemo<ColumnDef[]>(

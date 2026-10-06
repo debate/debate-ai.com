@@ -136,6 +136,21 @@ the table is wider than the screen, so swipe it left and right to reach the
 columns beside the round; the first column is capped at three quarters of the
 screen so the next one always peeks in.
 
+### Team names and ratings
+
+In the Aff and Neg columns, a team from the **current season** that the
+[team rankings](/docs/features/team-rankings) know shows its rating in a
+small badge beside its name, and clicking the name opens that team's page.
+Any other team — one from a past season, or one the rankings don't match —
+keeps the old behaviour: clicking its name searches the library for that
+team's videos. The rankings cover the current season only, so an older
+round's team code is never matched (it would name different debaters).
+
+The match is the one the team pages use (`findTeamRanking` in
+`@debate/rankings-adapter`): the school loosely, the initials exactly, in
+the division the round's format is ranked in. The rankings load only when
+a listing holds a current-season round (`useVideoTeamRankings`).
+
 ## Suggesting a fix to a video
 
 Every watch page has a pencil button next to the video. Click it to open the
