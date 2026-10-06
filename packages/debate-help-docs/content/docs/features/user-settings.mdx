@@ -109,6 +109,17 @@ The same cloud icon appears on the round cards of the `/debate` start screen
 the Flow History dialog, and flips to the amber crossed-out cloud when the round
 is edited afterwards. Saving a round's flows does not by itself mark the round.
 
+### Auto-save for flows already on your account
+
+Once a flow has been saved to your account, further edits to it are saved
+automatically about five seconds after you stop typing, and the tab's cloud
+icon flips back to saved. Flows you have never saved are never uploaded
+automatically, and archived flows are skipped. Auto-save never overwrites: if
+the account holds a newer copy (saved from another device) the flow stays
+amber and you resolve it from Flow History. A failed save is retried only after
+the flow changes again. Engineering notes: `debate-round`'s `state/flowAutoSave.ts`,
+mounted by `useFlowAutoSave` in `OpenTabsGroup`.
+
 ## Data flow
 
 ```
