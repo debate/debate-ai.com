@@ -26,8 +26,8 @@ export function WorkspaceScreen() {
   return (
     <div className="relative h-screen">
       <ResearchAgentEmbed />
-      <div className="pointer-events-none fixed bottom-3 right-3 z-40 flex items-center gap-1.5 [&>*]:pointer-events-auto">
-        <ToolSyncBadge href="/research/docs" />
+      <div className="pointer-events-none fixed bottom-3 right-3 z-40 flex items-center gap-1.5 [&>*]:pointer-events-auto" data-doc-sync-actions>
+        <ToolSyncBadge href={DOC_SYNC_HREF} />
       </div>
     </div>
   )
