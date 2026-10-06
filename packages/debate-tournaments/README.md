@@ -14,12 +14,23 @@ run on **Cloudflare Workers + D1**. The package exports three things:
 
 In `apps/debate-ai.com` the D1 API is mounted at `/api/tabroom/*`
 (`app/api/tabroom/[...path]/route.ts`, `lib/tournaments/handler.ts`). The UI is
-mounted at `/practice/tournaments/*` with two sources (`apiBase` and
+mounted at `/tournaments/*` with two sources (`apiBase` and
 `liveApiBase`): live Tabroom through `/api/tabroom-beta/*`, a read-only proxy to
 `https://api.tabroom.com/v1` (`lib/tournaments/tabroom-beta-proxy.ts`), and the
 tournaments hosted on this site through `/api/tabroom`. The list merges both and
 each tournament reads from whichever holds it. `/practice/tabroom` frames
 beta.tabroom.com itself.
+
+A tournament's pages are addressed by the year it starts and a slug of its
+name: `/tournaments/2026/yale-invitational/results`. `client.resolve` turns that
+pair into the Tabroom tourn id from the tournaments it has already seen, then
+the upcoming list, then each source's `GET /rest/tourns` for that year (hosted
+first). The id form (`/tournaments/38436/results`) still opens, and the page
+rewrites the address to the named form once the name is known; the app's old
+`/practice/tournaments/*` URLs 308 to it (`debate-data-sync`'s
+`routes/category-paths.ts`). Two tournaments with the same name in the same
+year share a slug, so only the first seen gets the named URL; the other keeps
+its id.
 
 Hosting never touches Tabroom. `/host` (`src/host/router.ts`) is this package's
 hosting API: `POST /host/tourns` creates a tournament, `GET /host/tourns` lists
@@ -44,7 +55,7 @@ const handler = createTournamentsHandler({
 ```tsx
 import { TournamentsApp } from "debate-tournaments"
 
-<TournamentsApp segments={slug} basePath="/practice/tournaments" apiBase="/api/tabroom" Link={Link} />
+<TournamentsApp segments={slug} basePath="/tournaments" apiBase="/api/tabroom" Link={Link} />
 ```
 
 ## Demo data
