@@ -44,6 +44,14 @@ describe("MobileSetupPage", () => {
     expect(html).toContain("https://m.media-amazon.com/images/I/61VAOpYG0vL._AC_SL500_.jpg")
   })
 
+  it("lists the desk clamp power strip with its affiliate link and image", () => {
+    const html = renderToStaticMarkup(<MobileSetupPage />)
+
+    expect(html).toContain("Desk Clamp Power Strip with USB-C")
+    expect(html).toContain("https://amzn.to/4zCDu4H")
+    expect(html).toContain("https://i.imgur.com/2jnfQjH.jpeg")
+  })
+
   it("lists every recommended gear item with its role", () => {
     const html = renderToStaticMarkup(<MobileSetupPage />)
 

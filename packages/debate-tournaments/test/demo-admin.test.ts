@@ -58,7 +58,7 @@ describe("the demo tournament", () => {
     const { status, body } = await call(`/host/tourns/${DEMO_TOURN_ID}/admin`);
     expect(status).toBe(200);
     expect(body.viewer).toEqual({ username: "demo.admin", name: "Demo Admin", mock: true });
-    expect(body.tourn.name).toBe("Bay Area Invitational");
+    expect(body.tourn.name).toBe("Debate AI Demo Invitational");
     expect(body.events.map((e: any) => [e.abbr, e.entryCount]).sort()).toEqual(
       ["DI", "INF", "IX", "OO", "VCX", "VLD", "VPF", "VPRL"].map((abbr) => [abbr, 40]),
     );
