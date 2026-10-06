@@ -17,6 +17,7 @@ import {
 import { isRound } from "@debate/data-sync/src/youtube/parsers/video-classifier";
 import { getDBFromContext } from "../database/context";
 import { describeError } from "../database/errors";
+import { findPublishedVideoIds } from "../videos/publish-round-video";
 import { youtubeChannels, youtubeRoundVideos, youtubeSyncRuns, youtubeVideoExclusions } from "../database/schema";
 import { getEnv } from "../env";
 
@@ -127,8 +128,12 @@ export async function resyncYouTubeRounds(
       if (typeof video[0] === "string" && !excludedIds.has(video[0])) uniqueVideos.set(video[0], video);
     }
 
+    const uniqueVideoIds = Array.from(uniqueVideos.keys()).filter((id): id is string => typeof id === "string");
+    const alreadyPublished = await findPublishedVideoIds(db, uniqueVideoIds);
+
     for (const video of uniqueVideos.values()) {
       const [id, title, date, channel, views, desc] = video;
+      if (alreadyPublished.has(id)) continue;
       if (!isRound(title, desc)) continue;
 
       const style = parseDebateStyle(title, channel);

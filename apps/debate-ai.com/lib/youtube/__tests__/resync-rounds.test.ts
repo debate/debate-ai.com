@@ -33,6 +33,7 @@ import {
   youtubeRoundVideos,
   youtubeSyncRuns,
   youtubeVideoExclusions,
+  videos,
 } from "../../database/schema";
 import { resyncYouTubeRounds } from "../resync-rounds";
 
@@ -270,6 +271,48 @@ describe("resyncYouTubeRounds", () => {
       expect(run.channelsSynced).toBe(2);
       expect(run.videosFetched).toBe(2);
       expect(run.videosUpserted).toBe(1);
+    });
+  });
+
+  describe("already-published dedup", () => {
+    it("skips videos that are already in the public videos table", async () => {
+      await db.insert(videos).values({
+        videoId: "published1",
+        source: "round",
+        title: "Published Title",
+        publishedAt: "2024-09-01",
+        publishedMs: Date.parse("2024-09-01"),
+        channel: "ChannelAlpha",
+        viewCount: 100,
+        description: "Published description",
+        style: 1,
+        category: null,
+        categoryKey: null,
+        tournament: "TOC",
+        roundLevel: "Finals",
+        affTeam: "Team A",
+        negTeam: "Team B",
+        affWin: true,
+        judgeDecision: null,
+        isTopPick: false,
+        speechDocsUrl: null,
+        seasonYear: 2024,
+        searchText: "published title channelalpha published description",
+        updatedAt: new Date(),
+      });
+
+      vi.mocked(getVideosForChannel).mockResolvedValue([
+        videoEntry("published1", ROUND_TITLE, "2024-09-01", "ChannelAlpha", 100, ROUND_DESC),
+        videoEntry("new1", ROUND_TITLE, "2024-09-02", "ChannelAlpha", 200, ROUND_DESC),
+      ]);
+
+      const result = await resyncYouTubeRounds("admin@test.com");
+
+      expect(result.success).toBe(true);
+      expect(result.videosUpserted).toBe(1);
+
+      const queued = await db.select().from(youtubeRoundVideos);
+      expect(queued.map((row) => row.id)).toEqual(["new1"]);
     });
   });
 });
