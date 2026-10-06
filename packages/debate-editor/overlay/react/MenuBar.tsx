@@ -6,14 +6,15 @@
  * exposing every ribbon command via `runRibbon(id)`, grouped into labeled
  * sections that mirror CardMirror's own `RIBBON_GROUPS` taxonomy.
  *
- * `CardMirrorEditor` stacks this above its own ribbon (Google-Docs-style: a
- * text-labeled menu strip above an icon toolbar), gated by the same
- * `showToolbar` prop that pages the ribbon into Word-style tabs
- * (`editor/ribbon-tabs.ts`). The two aren't duplicate surfaces for one job —
- * the ribbon is the always-visible icon strip, this is the click-to-browse
- * index over the same commands — and its categories are projected straight
- * from `RIBBON_TABS` (see menu-bar-categories.ts), so this menu can't drift
- * from the ribbon it mirrors. The component also stays exported from this
+ * `CardMirrorEditor` stacks this above CardMirror's own toolbar
+ * (Google-Docs-style: a text-labeled menu strip above an icon toolbar),
+ * gated by its `showToolbar` prop. The two aren't duplicate surfaces for one
+ * job — the toolbar is upstream's single left↔right scrolling icon strip,
+ * this is the click-to-browse index over every command, including the many
+ * the strip has no button for. Its categories (menu-bar-categories.ts) are
+ * checked against `RIBBON_GROUPS` at load, so no command group can go
+ * missing from it, and a category with nothing available on this host is
+ * left off the bar. The component also stays exported from this
  * package for hosts that want a command menu somewhere else on their page
  * (a compact header, a kebab menu beside a document title).
  *
@@ -47,8 +48,8 @@ export interface MenuBarProps {
 }
 
 /** Category list is loaded via dynamic `import()` rather than a
- *  module-scope import — `menu-bar-categories.js` pulls in `RIBBON_TABS`
- *  and (transitively, through its drift guard over `RIBBON_GROUPS`) the
+ *  module-scope import — `menu-bar-categories.js` pulls in (through its
+ *  drift guard over `RIBBON_GROUPS` and its availability check) the
  *  whole ribbon command/table-plugin graph, which is exactly the engine
  *  weight this component otherwise keeps out of the initial render path. A
  *  module-scope import here would force that graph to load — and its
@@ -58,13 +59,32 @@ export interface MenuBarProps {
 export function MenuBar({ className }: MenuBarProps): React.JSX.Element {
   const [categories, setCategories] = useState<MenuBarCategory[] | null>(null);
 
+  // Availability is settings-derived (`cardCutterEnabled`, the collab gate,
+  // the bulk-compress gate) and plugins register after boot, so the list is
+  // recomputed on a settings change and whenever the bar is pointed at or
+  // focused — cheap, and it never shows a category that would open empty.
+  const [refreshCategories, setRefreshCategories] = useState<() => void>(() => () => {});
+
   useEffect(() => {
     let cancelled = false;
-    void import("./menu-bar-categories.js").then((m) => {
-      if (!cancelled) setCategories(m.MENU_BAR_CATEGORIES);
-    });
+    let unsubscribe: (() => void) | undefined;
+    void Promise.all([import("./menu-bar-categories.js"), import("../editor/settings.js")]).then(
+      ([m, settingsMod]) => {
+        if (cancelled) return;
+        const refresh = (): void => {
+          const next = m.MENU_BAR_CATEGORIES.filter(m.isMenuBarCategoryPopulated);
+          setCategories((prev) =>
+            prev && prev.length === next.length && prev.every((c, i) => c === next[i]) ? prev : next,
+          );
+        };
+        refresh();
+        setRefreshCategories(() => refresh);
+        unsubscribe = settingsMod.settings.subscribe(refresh);
+      },
+    );
     return () => {
       cancelled = true;
+      unsubscribe?.();
     };
   }, []);
 
@@ -93,6 +113,8 @@ export function MenuBar({ className }: MenuBarProps): React.JSX.Element {
       }
       role="menubar"
       aria-label="Editor commands"
+      onPointerEnter={refreshCategories}
+      onFocus={refreshCategories}
     >
       {categories?.map((category) => (
         <MenuBarCategoryMenu

@@ -195,7 +195,7 @@ This package holds no copy of the editor; `src/` is generated. Tests live under 
 debate-editor/
 ├── upstream.json     # the upstream CardMirror commit the patch applies to
 ├── patches/          # debate-ai.patch — every debate-ai.com edit to an upstream file
-├── overlay/          # files upstream doesn't have (React shell, ribbon tabs, sync clients, …)
+├── overlay/          # files upstream doesn't have (React shell, menu bar, sync clients, …)
 ├── scripts/          # sync-upstream.mjs — assemble src/, record edits, rebase onto the submodule
 ├── src/              # generated, git-ignored: upstream src/ + the patch + overlay/
 └── test/             # Vitest suites for editor data-model helpers
@@ -208,20 +208,30 @@ This package is an adapter over upstream CardMirror, the
 ([debate/debate-editor](https://github.com/debate/debate-editor)). Git tracks only
 debate-ai.com's changes to it, in two forms:
 
-- **Edits to upstream files**, recorded in `patches/debate-ai.patch`: the Word-style tabbed
-  ribbon (`editor/index.ts`, `style.css`), the embed hooks the React shell needs
+- **Edits to upstream files**, recorded in `patches/debate-ai.patch`: the single
+  left↔right scrolling toolbar strip (`editor/index.ts`, `style.css`), the embed hooks the React shell needs
   (`adoptEmbeddedDoc`, `hostPlugins()`, `chromeHost()`, narrow chrome), the settings
   sidebar, the File-menu commands that replaced the Home screen, and the account-sync
   wiring.
 - **Files upstream doesn't have**, in `overlay/`: the React shell (`react/` —
-  `CardMirrorEditor`, the dropdown `MenuBar`, `ribbon-template.ts`), its UI primitives
-  (`ui/`), and our engine modules (`editor/ribbon-tabs*.ts`, `editor/chrome-host.ts`,
-  `editor/host-plugins.ts`, the learn / quick-card sync clients, …).
+  `CardMirrorEditor`, the dropdown `MenuBar`, `ribbon-template.ts`,
+  `CardMirrorSettingsSection`), its UI primitives (`ui/`), our engine modules
+  (`editor/chrome-host.ts`, `editor/host-plugins.ts`, `editor/settings-tabs.ts`, the
+  learn / quick-card sync clients, …), and `web-docx.ts` — the `importDocx` /
+  `exportDocxBlob` / `outlineOf` / `cardsOf` helpers merged in from the former
+  `debate-editor-cm-adapter` package and exported from `@debate/editor/engine`.
+
+The toolbar is upstream's: one strip of every panel, not paged into tabs or split into
+sections, with the dropdown `MenuBar` above it. CardMirror's settings categories are
+exported for host pages (`@debate/editor/settings-tabs`, `@debate/editor/settings-section`)
+and listed in the site's Settings sidebars.
 
 `scripts/sync-upstream.mjs` assembles upstream's `src/` at the commit in `upstream.json`,
 the patch and the overlay into `src/`, which the package exports point at. It runs on
-`bun install` and before `build`, `typecheck` and `test`, so check out the submodule first
-(`git submodule update --init packages/debate-editor-cm`).
+`bun install` and before `build` and `test`, so check out the submodule first
+(`git submodule update --init packages/debate-editor-cm`). `typecheck`
+only runs `tsc`: turbo orders it after this package's `build`, so the two never rewrite
+`src/` at the same time.
 
 Edit `src/` as usual, then record the change (CI fails otherwise, via
 `test/upstream-sync.test.ts`, and an assemble refuses to overwrite unrecorded edits):
@@ -241,9 +251,9 @@ bun run sync-upstream         # three-way merge src/ onto the submodule's HEAD
 Conflicts are left in `src/` with `<<<<<<< src` markers and listed; resolve them, run
 `sync-upstream:save`, then run the tests. `test/engine-boot.test.ts` boots the real engine
 inside `ribbon-template.ts`'s markup, so a new element upstream's `index.html` added (and
-the engine binds at load) fails there — copy it into the template. A new `RIBBON_GROUPS`
-group must be placed on a tab in `editor/ribbon-tabs.ts`, which is also where the React
-`MenuBar` dropdowns get their categories.
+the engine binds at load) fails there — copy it into the template. The same test checks
+every toolbar button is wired. A new `RIBBON_GROUPS` group must be placed in a menu in
+`react/menu-bar-categories.ts` (its drift guard throws at load otherwise).
 
 ## Tests
 
