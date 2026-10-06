@@ -2,9 +2,13 @@
  * @fileoverview Debounced auto-save of flows to the user's account
  * (`saved_flows`).
  *
- * Only flows whose status is `"unsaved"` are saved: the user already saved
- * them once (or the account confirmed their copy after a reload), so this
- * never uploads a flow the user has not chosen to put on their account. Each
+ * By default (mode `"saved"`) only flows whose status is `"unsaved"` are
+ * saved: the user already saved them once (or the account confirmed their copy
+ * after a reload), so this never uploads a flow the user has not chosen to put
+ * on their account. Mode `"all"` (opt-in, `state/flowAutoSaveSettings.ts`)
+ * also saves `"unknown"` flows with no `baseUpdatedAt`, which the server
+ * answers with a conflict if the account already holds that id; mode `"off"`
+ * saves nothing. Each
  * save sends the last confirmed `updatedAt` as `baseUpdatedAt` and never
  * forces, so a copy saved from another device is reported as a conflict and
  * left alone for the user to resolve in Flow History. A failed or conflicting
@@ -17,12 +21,15 @@ import type { Flow } from "../types/flow";
 import { saveFlowToAccount, type SaveFlowResult } from "../round/saved-flows-client";
 import { getFlowAccountStatus, getFlowAccountUpdatedAt, recordFlowSavedToAccount } from "./flowAccountStatus";
 import { hashFlowContent } from "./bulkRoundSave";
+import { readFlowAutoSaveMode, type FlowAutoSaveMode } from "./flowAutoSaveSettings";
 
 export const FLOW_AUTO_SAVE_DELAY_MS = 5000;
 
 export interface FlowAutoSaveDeps {
   save?: (flow: Flow, opts: { baseUpdatedAt: string | null }) => Promise<SaveFlowResult>;
   delayMs?: number;
+  /** Read at each run, so a preference change applies without remounting. */
+  getMode?: () => FlowAutoSaveMode;
 }
 
 export interface FlowAutoSaver {
@@ -37,6 +44,7 @@ export interface FlowAutoSaver {
 export function createFlowAutoSaver(deps: FlowAutoSaveDeps = {}): FlowAutoSaver {
   const save = deps.save ?? ((flow, opts) => saveFlowToAccount(flow, opts));
   const delayMs = deps.delayMs ?? FLOW_AUTO_SAVE_DELAY_MS;
+  const getMode = deps.getMode ?? readFlowAutoSaveMode;
   let latest: readonly Flow[] = [];
   let timer: ReturnType<typeof setTimeout> | null = null;
   let running: Promise<number[]> | null = null;
@@ -50,8 +58,12 @@ export function createFlowAutoSaver(deps: FlowAutoSaveDeps = {}): FlowAutoSaver 
 
   const run = async (): Promise<number[]> => {
     const saved: number[] = [];
+    const mode = getMode();
+    if (mode === "off") return saved;
     for (const flow of latest) {
-      if (flow.archived || getFlowAccountStatus(flow) !== "unsaved") continue;
+      if (flow.archived) continue;
+      const status = getFlowAccountStatus(flow);
+      if (status === "saved" || (status === "unknown" && mode !== "all")) continue;
       const hash = hashFlowContent(flow);
       if (blocked.get(flow.id) === hash) continue;
       try {
