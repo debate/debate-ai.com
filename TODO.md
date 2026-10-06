@@ -105,9 +105,10 @@
 - [x] `/videos` library shows the badge/Save now beside its search bar (`LecturesPage.headerActionsSlot` -> `LecturesVideoGridView`, test `debate-videos/test/lectures-grid-header-actions.test.tsx`; branch `claude/gifted-babbage-68vx57`)
 - [x] `/research/cards` search workspace shows the badge/Save now in a strip above the workspace (`routes/cards/page.tsx`, test `test/routes/cards/page.test.tsx`; branch `claude/gifted-babbage-or9nw5`)
 - [x] Open round/flow workspace shows the badge in the speech controls bar (`DebateFlowPage.roundActions` -> `SpeechControlsTopBar.leadingActions`, test `debate-round/test/SpeechControlsTopBar.test.tsx`; branch `claude/gifted-babbage-fca6h1`); `/doc` already done
-- [ ] Follow-up: the open-flow bar shows the badge only (no Save now button yet)
+- [x] The open-flow bar already gets Save now: it mounts `ToolSyncBadge`, which shows the button while a save is pending or after a failure (the stale "badge only" follow-up was wrong)
 - [ ] Follow-up: `ToolPageHeader.test.tsx` (incl. the new `syncCollections` case) cannot load in a checkout without the `debate-rankings` submodule; verify in CI
-- [ ] Follow-up: component test for `ToolSyncBadge` click path (no `@testing-library/react` in webview tests)
+- [x] Button visibility/label logic extracted to `describeSaveNowButton` (`lib/tools/tool-save-state.ts`) and unit tested; branch `claude/gifted-babbage-bee65u`
+- [ ] Follow-up: DOM-level click test for `ToolSyncBadge` (no `@testing-library/react` in webview tests)
 
 ## Completed
 
