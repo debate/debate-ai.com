@@ -21,7 +21,7 @@ import { Sheet, SheetContent } from "../ui/primitives/sheet"
 import { FlowPageSidebar } from "../layout/FlowPageSidebar"
 import { FlowMainContent } from "../layout/FlowMainContent"
 import { SpeechDocPanel } from "../layout/SpeechDocPanel"
-import { SpeechControlsTopBar } from "../layout/SpeechControlsTopBar"
+import { SpeechControlsTopBar, SpeechViewControls } from "../layout/SpeechControlsTopBar"
 import { DebateStartPanel } from "./DebateStartPanel"
 
 // Dialogs
@@ -48,6 +48,7 @@ import { useJumpToPrepNoteBox } from "../hooks/useJumpToPrepNoteBox"
 import { useSpeechDocHeadings } from "../hooks/useSpeechDocHeadings"
 import { useTimerSync } from "../hooks/useTimerSync"
 import { getRoundRecordingShareEmails } from "../round/round-recording-share"
+import { getMyTeamProfile } from "../state/myTeamProfile"
 import { readPinnedDebateIds, togglePinnedDebate } from "../state/pinnedDebates"
 import { readFlowHistory } from "../state/flowHistoryEntries"
 import { hydrateBulkStorage } from "@debate/data-sync/src/state/bulk-storage"
@@ -68,6 +69,9 @@ export interface DebateFlowPageProps {
   startScreenActions?: ReactNode
   /** Extra controls for the open round/flow workspace's top bar (the host app's account-sync badge). */
   roundActions?: ReactNode
+  /** The signed-in viewer's email, so the round sidebar can highlight the
+   *  speeches they give. The "My Team" profile emails are checked too. */
+  viewerEmail?: string | null
 }
 
 /**
@@ -78,7 +82,7 @@ export interface DebateFlowPageProps {
  *
  * @returns The full-screen debate flow page
  */
-export function DebateFlowPage({ startScreenActions, roundActions }: DebateFlowPageProps = {}) {
+export function DebateFlowPage({ startScreenActions, roundActions, viewerEmail }: DebateFlowPageProps = {}) {
   // ============================================================================
   // Global State (Zustand)
   // ============================================================================
@@ -540,6 +544,32 @@ const handleEbbToolAction = (action: EbbFlowToolAction) => {
   /** Round the sidebar shows a timer for — when set, the recording menu lives under its speech there. */
   const sidebarRound = selectSidebarRound(rounds, currentFlow)
 
+  /** Whether the speech view controls sit in the round sidebar (desktop with a round) rather than the topbar. */
+  const viewControlsInSidebar = !state.isMobile && !!sidebarRound
+
+  /** The viewer's emails — signed-in account plus the locally saved "My Team" profile. */
+  const [teamProfile] = useState(getMyTeamProfile)
+  const viewerEmails = [viewerEmail, teamProfile.email1]
+
+  /** Make a speech clicked in the sidebar's round group the active one. */
+  const handleSelectSpeech = (speechName: string) => {
+    const side = splitHandlers.showSpeech(speechName, showBothPanes)
+    if (side) setActiveSplitSide(side)
+  }
+
+  const speechViewControls = (
+    <SpeechViewControls
+      speechName={selectedSpeech}
+      viewMode={selectedViewMode}
+      quoteView={selectedQuoteView}
+      onViewModeChange={onSelectedViewModeChange}
+      onQuoteViewToggle={onSelectedQuoteViewToggle}
+      layoutMode={state.singlePaneMode ? "single" : "split"}
+      onToggleLayoutMode={handleToggleLayoutMode}
+      onOpenSpeechPanel={handleOpenSpeechPanel}
+    />
+  )
+
   /** Emails the global topbar's recording menu's "Share with Opponents" notifies. */
   const selectedSpeechShareEmails = getRoundRecordingShareEmails(currentRound)
 
@@ -775,6 +805,7 @@ const handleEbbToolAction = (action: EbbFlowToolAction) => {
         recordingKey={selectedSpeechHasRecording ? `debate-recording-${selectedSpeech}` : undefined}
         participantEmails={selectedSpeechShareEmails}
         showRecordingMenu={state.isMobile || !sidebarRound}
+        showViewControls={!viewControlsInSidebar}
         leadingActions={roundActions}
       />
       {/* Main Layout */}
@@ -811,6 +842,9 @@ const handleEbbToolAction = (action: EbbFlowToolAction) => {
                 onRecordingEnabledChange={setRecordingEnabled}
                 receivedHeadings={receivedHeadings}
                 remoteTimers={remoteTimers}
+                speechViewControls={speechViewControls}
+                onSelectSpeech={handleSelectSpeech}
+                viewerEmails={viewerEmails}
               />
             </ResizablePanel>
             <ResizableHandle withHandle />
@@ -853,6 +887,8 @@ const handleEbbToolAction = (action: EbbFlowToolAction) => {
                   onRecordingEnabledChange={setRecordingEnabled}
                   receivedHeadings={receivedHeadings}
                   remoteTimers={remoteTimers}
+                  onSelectSpeech={handleSelectSpeech}
+                  viewerEmails={viewerEmails}
                 />
               </SheetContent>
             </Sheet>

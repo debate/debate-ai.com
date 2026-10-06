@@ -7,7 +7,7 @@ import { SpeechControlsTopBar } from "../src/layout/SpeechControlsTopBar";
 
 const noop = () => {};
 
-const render = (leadingActions?: React.ReactNode) =>
+const render = (leadingActions?: React.ReactNode, showViewControls?: boolean) =>
   renderToStaticMarkup(
     <SpeechControlsTopBar
       speechName="1AR"
@@ -28,6 +28,7 @@ const render = (leadingActions?: React.ReactNode) =>
       hasRecording={false}
       onDeleteRecording={noop}
       showRecordingMenu={false}
+      showViewControls={showViewControls}
       leadingActions={leadingActions}
     />,
   );
@@ -43,5 +44,12 @@ describe("SpeechControlsTopBar leadingActions", () => {
     const html = render();
     expect(html).toContain("1AR speech document");
     expect(html).not.toContain("sync-badge");
+  });
+});
+
+describe("SpeechControlsTopBar showViewControls", () => {
+  it("leaves the view controls out when the round sidebar shows them", () => {
+    const html = render(undefined, false);
+    expect(html).not.toContain("1AR speech document");
   });
 });

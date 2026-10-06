@@ -1,7 +1,7 @@
 "use client"
 
 import { Suspense } from "react"
-import { DebateFlowPage } from "@debate/round"
+import { ViewerDebateFlowPage } from "../../../../components/round/ViewerDebateFlowPage"
 import { notFound, useParams } from "next/navigation"
 
 export default function DebateRoundPage() {
@@ -14,7 +14,7 @@ export default function DebateRoundPage() {
 
   return (
     <Suspense>
-      <DebateFlowPage />
+      <ViewerDebateFlowPage />
     </Suspense>
   )
 }
