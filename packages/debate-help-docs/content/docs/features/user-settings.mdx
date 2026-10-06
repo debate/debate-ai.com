@@ -74,6 +74,34 @@ Their `/api/settings` fields (`debateStyle`, `fontSize`, `wordLimitPresets`, …
 are all still stored and served; what changed is that nothing writes them from
 here any more.
 
+## Your own AI key
+
+The **Preferences** tab has a **Your own AI key** box. Paste an
+[OpenRouter key](https://openrouter.ai/settings/keys) (`sk-or-…`) or an
+Anthropic key (`sk-ant-…`) and the AI features — card AI analysis, AI coach and
+judge, citation and OCR fixes, every caller of `/api/reason-ai` and
+`/api/card-ai-analysis` — run on your key instead of Debate AI's shared one.
+You set your own spending limit on that key with OpenRouter (or Anthropic), and
+Debate AI's daily AI request and card-analysis limits stop applying to you.
+
+The same box appears:
+
+- in the pricing dialog when you hit a daily AI limit, as an alternative to
+  upgrading, and
+- in an **AI limit reached** dialog when Debate AI's shared key itself has run
+  out of credit or hit its spending cap (the route answers `503` with an
+  `x-ai-key-needed` header).
+
+The key is kept in this browser's `localStorage` only — never in your account's
+settings row — and is sent, as the `x-user-ai-key` header, only on same-origin
+requests to the two AI routes. The server uses it for that one request and
+never stores or logs it. Remove it to go back to the shared key.
+
+- **Packages:** `debate-webview` (`lib/ai/own-ai-key.ts`,
+  `components/settings/OwnAiKeySection.tsx`,
+  `components/pricing/OwnAiKeyDialog.tsx`), `apps/debate-ai.com`
+  (`lib/ai/provider-key.ts`)
+
 ## Flow editor preferences follow your account
 
 The Ebb flow editor's display preferences (`Cmd/Ctrl+,`) and keybinding
