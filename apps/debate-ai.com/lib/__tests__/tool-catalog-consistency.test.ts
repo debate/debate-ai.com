@@ -117,7 +117,7 @@ const STATIC_APP_ROUTES = findAppPageRoutes(APP_DIR, "").filter((route) => !rout
  * preferences page (same reasoning as `/login` — configuration, not a
  * tool), and `/practice/features` itself.
  *
- * `/practice/forums` is here for the reason `/practice/tournaments` never needed an entry: both
+ * `/practice/forums` is here for the reason `/tournaments` never needed an entry: both
  * are destinations in the sidebar's tool tree and the dock's Settings menu
  * rather than tools. A forum is a place members talk to each other, not
  * something the app does for them, and listing it on the `/tools` grid — whose

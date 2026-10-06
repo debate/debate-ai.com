@@ -6,8 +6,8 @@ describe("matchRoute", () => {
   it("matches static, dynamic and catch-all segments with Next's param names", () => {
     expect(matchRoute("/videos", "/videos")).toEqual({})
     expect(matchRoute("/videos/[category]", "/videos/ndt")).toEqual({ category: "ndt" })
-    expect(matchRoute("/practice/tournaments/[[...slug]]", "/practice/tournaments")).toEqual({})
-    expect(matchRoute("/practice/tournaments/[[...slug]]", "/practice/tournaments/a/b")).toEqual({ slug: ["a", "b"] })
+    expect(matchRoute("/tournaments/[[...slug]]", "/tournaments")).toEqual({})
+    expect(matchRoute("/tournaments/[[...slug]]", "/tournaments/a/b")).toEqual({ slug: ["a", "b"] })
     expect(matchRoute("/docs/[...slug]", "/docs")).toBeNull()
   })
 

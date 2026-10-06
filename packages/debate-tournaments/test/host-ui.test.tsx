@@ -92,7 +92,7 @@ describe("TabroomOverlay", () => {
   it("is reachable from the tournaments list, next to the demo admin", () => {
     const html = renderToString(<TournamentsApp segments={[]} />);
     expect(html).toContain("Host Tournament");
-    expect(html).toContain('href="/practice/tournaments/90001/admin"');
+    expect(html).toContain('href="/tournaments/90001/admin"');
     // Tabroom has its own sidebar row now; the list no longer frames it.
     expect(html).not.toContain(">Tabroom<");
   });
@@ -102,7 +102,7 @@ describe("TabroomOverlay", () => {
     expect(html).not.toContain("beta.tabroom.com");
     expect(html).not.toContain("Open Tabroom");
     expect(html).toContain("Try the demo admin");
-    expect(html).toContain('href="/practice/tournaments/90001/admin"');
+    expect(html).toContain('href="/tournaments/90001/admin"');
   });
 });
 
