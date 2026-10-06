@@ -24,7 +24,10 @@ export const highlightAnchor = (id: string, scroll = true): boolean => {
 
 export const copyAnchorLink = (anchorId?: string) => {
   const url = new URL(window.location.href);
+  // Keep `?category=` — on `/settings` it names the tab the anchor lives on.
+  const category = url.searchParams.get('category');
   url.search = '';
+  if (category) url.searchParams.set('category', category);
   url.hash = anchorId ?? '';
   window.history.replaceState(null, '', url);
   navigator.clipboard
