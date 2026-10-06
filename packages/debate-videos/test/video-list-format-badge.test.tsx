@@ -7,7 +7,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createElement } from "react";
-import type { VideoType } from "../src/types/videos";
+import type { DebateStyle, VideoType } from "../src/types/videos";
 
 vi.mock("next/navigation", () => ({
   useParams: () => ({}),
@@ -16,7 +16,7 @@ vi.mock("next/navigation", () => ({
 
 const { VideoListRows } = await import("../src/components/video-grid/VideoListRows");
 
-function round(id: string, style: number): VideoType {
+function round(id: string, style: DebateStyle): VideoType {
   return [id, `Round ${id}`, "2025-04-20", "Channel", 10, "", style, "Tournament of Champions",
     "Finals", "Aff Team", "Neg Team", true, "3-0", null, null, true, null, 2025];
 }
@@ -25,6 +25,7 @@ function render(videos: VideoType[], showFormat: boolean): string {
   return renderToStaticMarkup(
     createElement(VideoListRows, {
       videos,
+      videoContainerRef: { current: null },
       favorites: new Set<string>(),
       onToggleFavorite: () => {},
       onHideVideo: () => {},
