@@ -30,6 +30,23 @@ whole field (aff vs. neg win rate, in prelims and elims), and the list of
 tournaments the ratings come from, with majors marked. A filter box narrows
 the table by name or school.
 
+### Schools tab
+
+The **Schools** tab rolls every ranked entry up by school (All events, or one
+division). Schools are ranked by their best entry's adjusted rating.
+
+| Column | Meaning |
+| --- | --- |
+| Best Rating | Highest adjusted rating among the school's entries — what the rank is sorted on |
+| Top Entry | The entry holding that rating, and its event |
+| Avg Rating | Mean adjusted rating across every ranked team (or LD debater) from the school |
+| Balanced | (0.6 × Avg + 0.4 × Best) × (1 + 0.15 × (Teams − 1) / (Teams + 4)) — average quality counts most, a standout entry still counts, and a depth bonus grows with team count but stays under 15% (0% for one team, ~6.7% for five, ~9.6% for ten) |
+| Teams | Number of ranked entries |
+| Events | Events the school has entries in |
+
+Sort by **Balanced** to see schools ranked on quality with a modest reward for
+depth rather than on a single best team.
+
 LD has a second tab, **Sep–Oct topic**, rated only from the tournaments on
 the September–October resolution.
 
