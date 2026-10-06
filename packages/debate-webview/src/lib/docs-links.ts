@@ -7,7 +7,7 @@
  * `components/coach/CoachHub.tsx`) link to the long-form doc for what's on
  * screen. Those docs are published from `packages/debate-help-docs/content/docs`
  * — `features/*.mdx` is the user-facing page per feature, `internals/*.mdx`
- * the engineering note behind it, and `guides/*.mdx` are the
+ * the engineering note behind it, and `features/{training-tools,practice-tools,research-collaboration}.mdx` are the
  * task-oriented walkthroughs of the training, practice, and research
  * collaboration tools.
  *
@@ -36,7 +36,7 @@ export const DOCS_SITE_URL = (process.env.NEXT_PUBLIC_DOCS_URL ?? "").replace(/\
 /** Path the docs site is served under, on this origin or an override origin. */
 const DOCS_BASE_PATH = "/docs"
 
-/** The task-oriented guides under `content/docs/guides/`. */
+/** The task-oriented guides under `content/docs/features/`. */
 export type DocsGuide = "training-tools" | "practice-tools" | "research-collaboration"
 
 /** Short label for each guide, used as the eyebrow over a tool page's title. */
@@ -55,7 +55,7 @@ export const DOCS_GUIDE_TITLES: Record<DocsGuide, string> = {
 
 /**
  * URL of one docs page, given its path under `content/docs/` without the
- * extension (e.g. `"features/drill-sets"`, `"guides/training-tools"`).
+ * extension (e.g. `"features/drill-sets"`, `"features/training-tools"`).
  *
  * @param path - Docs path, without a leading slash or `.mdx`.
  */
@@ -75,7 +75,7 @@ export function docsHomeUrl(): string {
  * @param guide - Which guide.
  */
 export function guideDocsUrl(guide: DocsGuide): string {
-  return docsPageUrl(`guides/${guide}`)
+  return docsPageUrl(`features/${guide}`)
 }
 
 /**

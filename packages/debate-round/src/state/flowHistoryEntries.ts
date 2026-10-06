@@ -1,6 +1,9 @@
 /**
  * @fileoverview Pure bookkeeping for the auto-saved flow history
- * (`flow-history` in localStorage, written by `useFlowStore().saveToHistory`).
+ * (`flow-history` in the on-device bulk store — `@debate/data-sync`'s
+ * `state/bulk-storage`, IndexedDB-backed — written by
+ * `useFlowStore().saveToHistory`). It used to live in localStorage, whose
+ * ~5 MB quota it kept filling.
  *
  * The store used to push a full snapshot on every change and keep only the
  * newest 20, so a minute of typing in one flow pushed every other flow's
@@ -11,12 +14,14 @@
  * - Edits to the same flow within {@link HISTORY_COALESCE_MS} update that
  *   flow's newest entry in place, so history keeps one version per flow per
  *   stretch of work instead of one per keystroke.
- * - Up to {@link MAX_HISTORY_ENTRIES} entries are kept, and on a quota error
- *   the oldest are dropped one batch at a time until the rest fit.
+ * - Up to {@link MAX_HISTORY_ENTRIES} entries are kept. A storage passed in
+ *   that refuses a write on quota (a plain `localStorage`) has the oldest
+ *   dropped one batch at a time until the rest fit.
  *
  * @module state/flowHistoryEntries
  */
 
+import { bulkStorage } from "@debate/data-sync/src/state/bulk-storage"
 import type { Flow } from "../types/flow"
 
 export const FLOW_HISTORY_KEY = "flow-history"
@@ -60,7 +65,7 @@ export function addFlowHistoryEntry(history: FlowHistoryEntry[], flow: Flow, now
   return [entry, ...history].slice(0, MAX_HISTORY_ENTRIES)
 }
 
-export function readFlowHistory(storage: Pick<Storage, "getItem"> = localStorage): FlowHistoryEntry[] {
+export function readFlowHistory(storage: Pick<Storage, "getItem"> = bulkStorage): FlowHistoryEntry[] {
   try {
     const raw = storage.getItem(FLOW_HISTORY_KEY)
     const parsed = raw ? JSON.parse(raw) : []
@@ -83,7 +88,7 @@ function isQuotaError(error: unknown): boolean {
  */
 export function writeFlowHistory(
   history: FlowHistoryEntry[],
-  storage: Pick<Storage, "setItem" | "removeItem"> = localStorage,
+  storage: Pick<Storage, "setItem" | "removeItem"> = bulkStorage,
 ): number {
   let entries = history
   for (;;) {

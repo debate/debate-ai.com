@@ -18,8 +18,10 @@
  *
  * Its first tab is Preferences — the account's plan and upgrade links, then
  * the app's own debate style, font and theme form (`UserSettingsPanel`),
- * merged in from the old `/settings/preferences` page. A `?category=` on
- * `/settings` opens any tab directly.
+ * merged in from the old `/settings/preferences` page. The research agent's
+ * sections follow the editor's tabs, merged in from the old
+ * `/settings/research` pages. A `?category=` on `/settings` opens any tab
+ * directly (`research-<section>` for a research one).
  *
  * @module components/settings/CardMirrorSettingsPanel
  */
@@ -37,7 +39,7 @@ export function CardMirrorSettingsPanel() {
       <p className="text-sm text-muted-foreground mb-4">
         Your plan, debate preferences and theme, plus every setting for the card editor — files and autosave, editing and typography, colors, fonts and sizing,
         accessibility overrides, keyboard shortcuts, comments and AI, collaboration — plus the performance benchmark
-        and this install&apos;s version info. Saved to your account when signed in; API keys and relay tokens stay in
+        and this install&apos;s version info, and the research agent&apos;s models, connectors, search and voice. Saved to your account when signed in; API keys and relay tokens stay in
         this browser.
       </p>
       <div className="rounded-md border border-border bg-background overflow-hidden">

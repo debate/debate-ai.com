@@ -25,6 +25,7 @@ import { FileText, History as HistoryIcon, Loader2, Pin, PinOff, Plus, Star, Tro
 import { Button } from "../ui/primitives/button"
 import { Badge } from "../ui/primitives/badge"
 import { orderPinnedRounds } from "../state/pinnedDebates"
+import { useRestoreAccountBaselines } from "../state/useRestoreAccountBaselines"
 import { formatRelativeCloudTime } from "../state/cloudLibrary"
 import type { FlowHistoryEntry } from "../state/flowHistoryEntries"
 import type { FeaturedRound } from "../round/featured-rounds"
@@ -111,6 +112,7 @@ export function DebateStartPanel({
   onOpenHistory,
   headerActions,
 }: DebateStartPanelProps) {
+  useRestoreAccountBaselines()
   const pinnedRounds = useMemo(() => orderPinnedRounds(rounds, pinnedIds), [rounds, pinnedIds])
   const pinnedSet = useMemo(() => new Set(pinnedIds), [pinnedIds])
   const recents = useMemo(() => recentEntries(history), [history])

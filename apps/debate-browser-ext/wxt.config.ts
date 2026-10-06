@@ -147,7 +147,22 @@ export default defineConfig({
       // Pinging debate-ai.com with the stored session so a signed-in reader
       // stays signed in (src/auth/session.ts).
       'alarms',
+      // Lifts the quota on this extension's storage — `chrome.storage.local`
+      // and the IndexedDB the Options page (the whole app) keeps its flows,
+      // rounds and history in. debate-ai.com mirrors that same data in here
+      // over the bridge below (src/storage/bulk-storage-bridge.ts), so a
+      // reader with the extension never runs out of room for their work.
+      'unlimitedStorage',
     ],
+    // Lets debate-ai.com (and only it, plus localhost for development) message
+    // the background worker's storage bridge. Chromium only.
+    ...(browser === 'firefox'
+      ? {}
+      : {
+          externally_connectable: {
+            matches: ['https://debate-ai.com/*', 'http://localhost:3000/*'],
+          },
+        }),
     // The article panel is `reader.html` framed over the page the reader is
     // on (src/reader/panel.ts), and a web page may only frame an extension
     // page listed here. It grants no access to any site — it only lets the

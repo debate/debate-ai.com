@@ -38,7 +38,7 @@ import { StackNav, stackMemberLabel } from "../video-card/StackNav"
 import { cleanTournamentName, videoCategoryLabel } from "./video-tree"
 import { TOC_TOURNAMENT_IMAGE } from "../video-card/videoCardUtils"
 import { treeIndentStyle } from "./tree-indent"
-import { teamHref } from "../../panels/leaderboard/profile/rankingProfileHelpers"
+import { FormatBadge } from "./FormatBadge"
 import type { VideoType } from "../../types/videos"
 
 /** Thumbnail strip at the head of a row, 16:9 like the cards'. */
@@ -171,8 +171,7 @@ export function VideoListRow({
   onHideVideo,
   onUnhideVideo,
   onSearch,
-  affRanking,
-  negRanking,
+  showFormat = false,
 }: {
   video: VideoType
   /** Tree depth, for the row's indent. */
@@ -195,10 +194,8 @@ export function VideoListRow({
   onUnhideVideo: (videoId: string) => void
   /** Searches the library for a team when its name is clicked. */
   onSearch?: (text: string) => void
-  /** The aff team's current-season rankings row, when it has one. */
-  affRanking?: RankingEntry | null
-  /** The neg team's current-season rankings row, when it has one. */
-  negRanking?: RankingEntry | null
+  /** Badges the tournament name with the round's debate format. */
+  showFormat?: boolean
 }) {
   const [
     videoId,
@@ -284,6 +281,7 @@ export function VideoListRow({
                         {roundLevel}
                       </span>
                     )}
+                    {showFormat && <FormatBadge style={styleNumber} />}
                     <span className="truncate">
                       {cleanTournament === "TOC" ? (
                         <span className="flex items-center gap-1.5">

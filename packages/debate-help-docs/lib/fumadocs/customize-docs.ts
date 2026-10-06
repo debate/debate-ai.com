@@ -15,7 +15,7 @@ export const docsConfig: DocsConfig = {
   topLinks: [
     {
       text: "Guides",
-      url: "/docs/guides",
+      url: "/docs/features",
     },
     {
       text: "Docs",

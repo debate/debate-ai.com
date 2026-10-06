@@ -5,7 +5,7 @@
  * The docs are part of debate-ai.com rather than their own origin: the web
  * app mounts this package's route modules under `apps/debate-ai.com/app/docs`,
  * so every page lives under `/docs` (`/docs`, `/docs/features/…`,
- * `/docs/guides/…`). There is no Next `basePath` doing the prefixing — the
+ * `/docs/features/…`). There is no Next `basePath` doing the prefixing — the
  * docs share the app's router — so every URL this package builds, whether a
  * `<Link>` href, a page-tree URL, a `fetch()` or a `window.location`
  * assignment, carries the prefix itself, built from this constant.

@@ -24,6 +24,7 @@ import { LectureCategoryGridGallery } from "../components/category-gallery/Lectu
 import { QuickLinksGrid } from "../components/category-gallery/QuickLinksGrid"
 import { VideoSidebarTree } from "../components/category-gallery/VideoSidebarTree"
 import { ToolNavTree } from "../components/category-gallery/ToolNavTree"
+import { GoatSparklesHeading } from "../components/category-gallery/GoatSparklesHeading"
 import type { DebateStyle } from "../types/videos"
 import type { VideoViewMode } from "../hooks/useVideoState"
 import { useVideoStacks } from "../hooks/useVideoStacks"
@@ -379,6 +380,9 @@ export function LecturesVideoGridView({
 
         <div ref={videosSectionRef} className="scroll-mt-20" />
 
+        {/* The Greatest of All-Time collection opens on its own banner. */}
+        {currentCategory === "topPicks" && <GoatSparklesHeading />}
+
         {/* The search and filter controls, always visible on every
             breakpoint, with the one-click searches drawn from the library
             (popular debate terms and the tournaments with the most rounds)
@@ -533,6 +537,8 @@ export function LecturesVideoGridView({
                 // scatter that order across seasons and tournaments.
                 grouped={isHistory ? false : undefined}
                 showWatched={isHistory}
+                // Top Picks mixes every format, so each tournament says which.
+                showFormat={currentCategory === "topPicks"}
                 defaultSort={isHistory ? { column: "watched", direction: "desc" } : undefined}
                 videoContainerRef={videoContainerRef}
                 favorites={favorites}
