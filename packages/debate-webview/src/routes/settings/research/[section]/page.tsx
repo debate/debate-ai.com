@@ -1,15 +1,18 @@
-import { ResearchSettingsPage } from "../../../../components/qwksearch/Settings/ResearchSettingsPage"
+import { redirect } from "next/navigation"
+import { legacyResearchSettingsRedirect } from "../../../../lib/qwksearch/settings-paths"
 
 /**
- * One section of the research agent's settings (`/settings/research/models`),
- * served as its own page so it can be linked to. An unknown section opens the
- * first tab rather than 404ing.
+ * `/settings/research/<section>` — one section of the research agent's
+ * settings used to be its own page here. Each is a tab of `/settings` now
+ * (`/settings?category=research-<section>`), so this route only redirects
+ * there; `editor-<tab>` sections go to the card editor's tab, and an unknown
+ * section opens the first research tab rather than 404ing.
  */
 export default async function ResearchSettingsSectionPage({
   params,
 }: {
   params: Promise<{ section: string }>
-}) {
+}): Promise<never> {
   const { section } = await params
-  return <ResearchSettingsPage section={section} />
+  redirect(legacyResearchSettingsRedirect(section))
 }

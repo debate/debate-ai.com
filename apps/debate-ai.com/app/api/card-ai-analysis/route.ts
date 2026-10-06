@@ -9,10 +9,17 @@ import {
 import { getDBFromContext } from "@/lib/database/context"
 import { cardAiAnalyses } from "@/lib/database/schema"
 import { getSession } from "@/lib/auth/session"
-import { getEnv } from "@/lib/env"
+import { keyExhaustedResponse, resolveProviderKey } from "@/lib/ai/provider-key"
 import { isMissingTableError } from "@/lib/contacts/server"
 import { limitsFor } from "@debate/webview/lib/stripe/limits"
-import { consumeDailyUsage, getUserTier, limitMessage, planLimitHeaders, usageSubject } from "@/lib/stripe/usage"
+import {
+  consumeDailyUsage,
+  getUserTier,
+  limitMessage,
+  planLimitHeaders,
+  refundDailyUsage,
+  usageSubject,
+} from "@/lib/stripe/usage"
 
 /**
  * Saved AI analyses for the evidence search's "AI Analysis" sidebar
@@ -30,7 +37,17 @@ import { consumeDailyUsage, getUserTier, limitMessage, planLimitHeaders, usageSu
  *
  * Only new generations are metered: each counts toward the caller's
  * `cardAiAnalysesPerDay` plan limit (`@debate/webview/src/lib/stripe/limits.ts`, per IP when
- * signed out); reading a saved analysis is free.
+ * signed out); reading a saved analysis is free. A generation that fails
+ * (provider error, network error, empty answer) is refunded, so only a
+ * delivered analysis counts.
+ *
+ * A caller who sends their own OpenRouter or Anthropic key (`x-user-ai-key`,
+ * `lib/ai/provider-key.ts`) is billed on it, under the spending limit they set
+ * with their provider, so their generations skip the plan limit.
+ *
+ * `savedOnly: true` returns the saved analysis or `{ result: null }` and never
+ * generates — the sidebar uses it to preload a card's analysis on selection
+ * without spending the user's allowance.
  */
 
 const ANTHROPIC_MODEL = "claude-sonnet-4-6"
@@ -42,6 +59,7 @@ interface AnalysisRequestBody {
   content?: unknown
   prompt?: unknown
   tag?: unknown
+  savedOnly?: unknown
 }
 
 const error = (message: string, status: number) => NextResponse.json({ error: message }, { status })
@@ -75,6 +93,7 @@ export async function POST(request: Request) {
     // Before the migration lands, fall through to generating without saving.
     if (!isMissingTableError(e)) throw e
   }
+  if (body.savedOnly === true) return NextResponse.json({ result: null, cached: false })
 
   const isDefaultPrompt = normalizeForHash(prompt) === normalizeForHash(FIND_FLAWS_AND_EXTENSIONS_PROMPT)
   const session = await getSession()
@@ -82,18 +101,23 @@ export async function POST(request: Request) {
     return error("Sign in to run a custom AI prompt.", 401)
   }
 
-  const openrouterKey = getEnv("OPENROUTER_API_KEY")
-  const anthropicKey = getEnv("ANTHROPIC_API_KEY")
-  if (!openrouterKey && !anthropicKey) return error("AI features are not configured on this server.", 503)
+  const providerKey = resolveProviderKey(request)
+  if (!providerKey) return error("AI features are not configured on this server.", 503)
+  const openrouterKey = providerKey.provider === "openrouter" ? providerKey.key : null
 
-  const tier = await getUserTier(db, session?.user.id)
-  const usage = await consumeDailyUsage(db, usageSubject(session?.user.id, request), "cardAiAnalyses", limitsFor(tier))
-  if (!usage.allowed) {
-    return NextResponse.json(
-      { error: limitMessage("cardAiAnalyses", usage, tier) },
-      { status: 429, headers: planLimitHeaders("cardAiAnalyses") },
-    )
+  const subject = usageSubject(session?.user.id, request)
+  if (!providerKey.own) {
+    const tier = await getUserTier(db, session?.user.id)
+    const usage = await consumeDailyUsage(db, subject, "cardAiAnalyses", limitsFor(tier))
+    if (!usage.allowed) {
+      return NextResponse.json(
+        { error: limitMessage("cardAiAnalyses", usage, tier) },
+        { status: 429, headers: planLimitHeaders("cardAiAnalyses") },
+      )
+    }
   }
+  // Only a generation the plan limit counted is refunded on failure.
+  const refund = () => (providerKey.own ? Promise.resolve() : refundDailyUsage(db, subject, "cardAiAnalyses"))
 
   let res: Response
   try {
@@ -120,7 +144,7 @@ export async function POST(request: Request) {
         method: "POST",
         headers: {
           "content-type": "application/json",
-          "x-api-key": anthropicKey!,
+          "x-api-key": providerKey.key,
           "anthropic-version": ANTHROPIC_VERSION,
         },
         body: JSON.stringify({
@@ -132,17 +156,24 @@ export async function POST(request: Request) {
       })
     }
   } catch (e) {
+    await refund()
     return error(`Network error contacting AI provider: ${e instanceof Error ? e.message : String(e)}`, 502)
   }
   if (!res.ok) {
     // Log the provider's body: the status alone can't tell a bad key, exhausted
     // credits, a rate limit, or a retired model apart in Workers Logs.
     const detail = (await res.text().catch(() => "")).slice(0, 1000)
-    console.error(`card-ai-analysis: ${openrouterKey ? "OpenRouter" : "Anthropic"} returned ${res.status}`, detail)
+    console.error(
+      `card-ai-analysis: ${openrouterKey ? "OpenRouter" : "Anthropic"}${providerKey.own ? " (caller's own key)" : ""} returned ${res.status}`,
+      detail,
+    )
+    await refund()
+    const exhausted = keyExhaustedResponse(providerKey, res.status, detail)
+    if (exhausted) return exhausted
     return error(`AI API returned ${res.status}.`, 502)
   }
 
-  const json = (await res.json()) as {
+  const json = (await res.json().catch(() => ({}))) as {
     content?: Array<{ type?: string; text?: string }>
     choices?: Array<{ message?: { content?: string } }>
   }
@@ -156,7 +187,10 @@ export async function POST(request: Request) {
       .join("")
   }
   result = result.trim()
-  if (!result) return error("AI API returned an empty response.", 502)
+  if (!result) {
+    await refund()
+    return error("AI API returned an empty response.", 502)
+  }
 
   try {
     await db

@@ -17,6 +17,7 @@ import {
   debateStyles,
   debateStyleMap,
 } from "@debate/timer/src/formats/debate-format-times";
+import { setBulkItem } from "@debate/data-sync/src/state/bulk-storage";
 
 /** Return type of the {@link useRoundEditorForm} hook. */
 export interface RoundEditorFormState {
@@ -422,7 +423,7 @@ export function useRoundEditorForm(
     }));
     const finalFlows = [...archivedFlows, ...updatedFlows];
     setFlows(finalFlows);
-    localStorage.setItem("flows", JSON.stringify(finalFlows));
+    setBulkItem("flows", JSON.stringify(finalFlows));
 
     dispatchRoundInvites({
       emails: [affDebater1, affDebater2, negDebater1, negDebater2, ...judges, ...roundData.spectators],

@@ -48,9 +48,10 @@ describe("FeaturesPanel", () => {
   it("embeds the tour video behind a click, not on page load", () => {
     // The whole point of the poster is that nothing is requested from YouTube
     // until a reader asks for it, so the server-rendered page carries the
-    // thumbnail and no iframe at all.
+    // thumbnail and no YouTube iframe. (The Drive folder viewer further down
+    // is deliberately mounted up front, so it is the one iframe allowed.)
     expect(html).toContain(`src="${README_VIDEO.thumbnail}"`);
-    expect(html).not.toContain("<iframe");
+    expect(html).not.toMatch(/<iframe[^>]*youtube/);
     expect(html).not.toContain("youtube-nocookie.com/embed");
   });
 

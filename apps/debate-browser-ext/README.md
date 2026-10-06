@@ -93,6 +93,12 @@ so:
   cost is that keys don't follow the user to another computer.
 - **The debate-ai.com session** lives in `storage.local` too, for the same
   reason and because it is scoped to one deployment anyway.
+- **debate-ai.com's offline copy** — flows, rounds and flow history — is
+  mirrored into `storage.local` under a `bulk:` prefix by the site itself, over
+  `externally_connectable` (debate-ai.com and localhost only; see
+  [`src/storage/bulk-storage-bridge.ts`](./src/storage/bulk-storage-bridge.ts)).
+  The manifest's `unlimitedStorage` permission is what makes that, and the
+  Options page's own IndexedDB, free of any browser quota. Chromium only.
 
 The one thing worth knowing before you point it somewhere new: the **API base
 URL** setting decides which `debate-ai.com` deployment the reuse check queries,

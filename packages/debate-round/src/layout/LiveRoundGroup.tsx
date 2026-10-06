@@ -11,12 +11,18 @@
  * ever tracks the one speech in view, matching CardMirror, which only ever
  * has one live editable speech at a time. The selected speech's recording
  * menu (mic selector with live waveform, resets, upload/share/delete) sits
- * on its own row under the speech here, rather than in the page topbar.
+ * on its own row under the speech here, rather than in the page topbar, and
+ * the speech view controls (quote view, view mode, split layout, open speech
+ * document) sit above the speech list.
+ *
+ * Any other speech in the list can be clicked to make it the active one.
+ * When the viewer is one of the round's debaters, the speeches they give are
+ * highlighted and tagged "You" (see `round/my-speeches.ts`).
  */
 
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState, type ReactNode } from "react"
 import { ChevronDown, ChevronRight, Radio, Timer } from "lucide-react"
 import { PrepTimer } from "@debate/timer/src/timers/PrepTimer"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/primitives/tooltip"
@@ -26,6 +32,7 @@ import { SpeechWordStats } from "@debate/timer/src/timers/SpeechWordStats"
 import { useSpeechWordStats } from "../hooks/useSpeechWordStats"
 import { useFlowStore } from "../state/store"
 import type { Round } from "../types/flow"
+import { findViewerSeat, isViewerSpeech } from "../round/my-speeches"
 import type { DebateStyle, SpeechTimerState, TimerState } from "@debate/timer/src/types"
 import type { SpeechTimerEntry } from "../hooks/useTimerState"
 
@@ -65,22 +72,68 @@ interface LiveRoundGroupProps {
   recordingEnabled?: boolean
   /** Callback when the recording-enabled flag changes. */
   onRecordingEnabledChange?: (enabled: boolean) => void
+  /** The selected speech's view controls, shown above the speech list. */
+  viewControls?: ReactNode
+  /** Makes a non-active speech the active one when its row is clicked. */
+  onSelectSpeech?: (speechName: string) => void
+  /** The viewer's email(s) — speeches they give in this round are highlighted. */
+  viewerEmails?: readonly (string | null | undefined)[]
 }
 
-/** A non-selected speech's row: its name and word totals. */
-function SpeechTotalsRow({ name, secondary }: { name: string; secondary: boolean }) {
+/** The "You" tag on a speech the viewer gives. */
+function MineBadge() {
+  return (
+    <span className="shrink-0 rounded-full bg-amber-400/90 px-1.5 py-px text-[10px] font-bold uppercase tracking-wide text-amber-950">
+      You
+    </span>
+  )
+}
+
+/** A non-selected speech's row: its name and word totals. Clicking it makes
+ *  it the active speech when `onSelect` is given. */
+function SpeechTotalsRow({
+  name,
+  secondary,
+  mine = false,
+  onSelect,
+}: {
+  name: string
+  secondary: boolean
+  mine?: boolean
+  onSelect?: (name: string) => void
+}) {
   const { flows, selected } = useFlowStore()
   const { stats, spoken } = useSpeechWordStats(flows[selected], name)
-  return (
-    <div
-      className={cn(
-        "flex items-center gap-2 rounded-[var(--border-radius)] px-2 py-1 text-xs font-medium text-muted-foreground",
-        secondary ? "text-red-600/70 dark:text-red-400/70" : "text-blue-600/70 dark:text-blue-400/70",
-      )}
-    >
+  const className = cn(
+    "flex w-full items-center gap-2 rounded-[var(--border-radius)] px-2 py-1 text-left text-xs font-medium text-muted-foreground",
+    secondary ? "text-red-600/70 dark:text-red-400/70" : "text-blue-600/70 dark:text-blue-400/70",
+    mine && "border-l-4 border-amber-400 bg-amber-400/10 font-bold",
+    onSelect && "cursor-pointer hover:bg-[var(--background-indent)]",
+  )
+  const content = (
+    <>
       <span className="flex-1 truncate">{name}</span>
+      {mine && <MineBadge />}
       <SpeechWordStats speechName={name} stats={stats} spoken={spoken} variant="inline" />
-    </div>
+    </>
+  )
+  if (!onSelect) {
+    return (
+      <div className={className} data-mine={mine || undefined}>
+        {content}
+      </div>
+    )
+  }
+  return (
+    <button
+      type="button"
+      className={className}
+      onClick={() => onSelect(name)}
+      title={`Make ${name} the active speech`}
+      data-mine={mine || undefined}
+    >
+      {content}
+    </button>
   )
 }
 
@@ -114,8 +167,12 @@ export function LiveRoundGroup({
   onMicDeviceChange,
   recordingEnabled,
   onRecordingEnabledChange,
+  viewControls,
+  onSelectSpeech,
+  viewerEmails,
 }: LiveRoundGroupProps) {
   const [open, setOpen] = useState(true)
+  const seat = useMemo(() => findViewerSeat(round, viewerEmails ?? []), [round, viewerEmails])
 
   // The main speeches only — cross-ex blocks share a speaker's time budget
   // rather than owning one of their own, so they don't get a timer row here.
@@ -211,17 +268,36 @@ export function LiveRoundGroup({
             </TooltipProvider>
           )}
 
+          {viewControls && <div className="pb-1">{viewControls}</div>}
+
+          {seat && (
+            <p className="px-2 pb-1 text-[11px] text-muted-foreground">
+              Your speeches are tagged <MineBadge />
+            </p>
+          )}
+
           <div className="flex flex-col gap-1">
             {speeches.map((speech) => {
               const isSelected = speech.name.toUpperCase() === selectedSpeech.toUpperCase()
+              const mine = isViewerSpeech(speech, seat)
 
               if (isSelected) {
                 const entry = getSpeechTimerState(speech.name)
                 return (
                   <div
                     key={speech.name}
-                    className="rounded-[var(--border-radius)] border border-border bg-[var(--background-active)] overflow-hidden"
+                    data-mine={mine || undefined}
+                    className={cn(
+                      "rounded-[var(--border-radius)] border bg-[var(--background-active)] overflow-hidden",
+                      mine ? "border-2 border-amber-400" : "border-border",
+                    )}
                   >
+                    {mine && (
+                      <div className="flex items-center gap-1.5 bg-amber-400/15 px-2 py-0.5 text-[11px] font-semibold text-amber-700 dark:text-amber-300">
+                        <MineBadge />
+                        Your speech
+                      </div>
+                    )}
                     <SpeechHeaderBar
                       speechName={speech.name}
                       controlledTime={entry.time}
@@ -246,7 +322,15 @@ export function LiveRoundGroup({
                 )
               }
 
-              return <SpeechTotalsRow key={speech.name} name={speech.name} secondary={speech.secondary} />
+              return (
+                <SpeechTotalsRow
+                  key={speech.name}
+                  name={speech.name}
+                  secondary={speech.secondary}
+                  mine={mine}
+                  onSelect={onSelectSpeech}
+                />
+              )
             })}
           </div>
         </div>

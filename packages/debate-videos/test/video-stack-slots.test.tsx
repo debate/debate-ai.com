@@ -18,6 +18,7 @@ import type { VideoType } from "../src/types/videos";
 import { buildVideoSlots, collectStackKeys, stackKeyOf } from "../src/components/video-grid/video-stacks";
 
 vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: () => {} }),
   useParams: () => ({}),
   usePathname: () => "/videos",
 }));

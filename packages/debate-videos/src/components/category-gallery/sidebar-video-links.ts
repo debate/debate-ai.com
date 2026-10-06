@@ -21,16 +21,13 @@ import {
   BarChart3,
   BookOpen,
   Clapperboard,
-  FileText,
-  GraduationCap,
+  Heart,
   History,
-  MessageSquare,
   Presentation,
-  Scale,
   Star,
-  Trophy,
   type LucideIcon,
 } from "lucide-react";
+import { IconFormatLD, IconFormatNDT, IconFormatPF, IconFormatVP } from "./format-badge-icons";
 
 export interface SidebarVideoLink {
   /** Quick-link id — the `activeId` / counts key for this destination. */
@@ -69,7 +66,7 @@ export const VIDEO_COLLEGE_LINK: SidebarVideoLink = {
   id: "college",
   href: "/videos/college",
   title: "College Debates",
-  glyph: GraduationCap,
+  glyph: IconFormatNDT,
   exactCount: true,
 };
 
@@ -77,17 +74,17 @@ export const VIDEO_COLLEGE_LINK: SidebarVideoLink = {
  *  rather than children of it: they are sibling collections of the same
  *  round archive, not subsets of the college one. */
 export const VIDEO_FORMAT_LINKS: SidebarVideoLink[] = [
-  { id: "policy", href: "/videos/policy", title: "Policy Debates", glyph: FileText },
-  { id: "pf", href: "/videos/pf", title: "PF Debates", glyph: MessageSquare },
-  { id: "ld", href: "/videos/ld", title: "LD Debates", glyph: Scale },
-  { id: "topPicks", href: "/videos/topPicks", title: "Greatest of All-Time", glyph: Star },
+  { id: "policy", href: "/videos/policy", title: "Policy Debates", glyph: IconFormatVP },
+  { id: "pf", href: "/videos/pf", title: "PF Debates", glyph: IconFormatPF },
+  { id: "ld", href: "/videos/ld", title: "LD Debates", glyph: IconFormatLD },
+  { id: "topPicks", href: "/videos/goat-status", title: "Greatest of All-Time", glyph: Star },
 ];
 
 /** The rest of the video library: My Favorites, the last row under "Round
  *  Videos", then the watch history — which hangs under that same heading now,
  *  after My Favorites — then Lectures, a heading of its own. */
 export const VIDEO_LIBRARY_LINKS: SidebarVideoLink[] = [
-  { id: "favorites", href: "/videos/favorites", title: "My Favorites", glyph: Trophy },
+  { id: "favorites", href: "/videos/favorites", title: "My Favorites", glyph: Heart },
   { id: "history", href: "/videos/history", title: "Watch History", glyph: History },
   { id: "lectures", href: "/lectures", title: "Lectures", glyph: Presentation },
 ];

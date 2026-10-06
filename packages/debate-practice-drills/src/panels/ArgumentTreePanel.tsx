@@ -59,7 +59,7 @@
  * this lives here rather than in `debate-flow`'s Handsontable editor).
  * Saving writes the tags onto the flow's underlying `Box` via
  * `setRowsArgumentTags`, pushes the updated flow back through
- * `useFlowStore`, best-effort persists it to `localStorage["flows"]`
+ * `useFlowStore`, best-effort persists it to the on-device `"flows"` bulk store
  * (mirroring `useFlowEffects.ts#useFlowPersistence`'s own write, which
  * isn't mounted on this route), and regenerates this round's outline via
  * `buildAndSaveArgumentTreeFromCurrentFlow` so the filters immediately see
@@ -162,6 +162,7 @@ import { useFlowStore } from "@debate/round/src/state/store"
 import { parseArgumentTreeViewMode, type ArgumentTreeViewMode } from "../flow/argument-map"
 import { ArgumentMapView, ArgumentTreeViewSwitcher } from "./argument-map/ArgumentMapView"
 import type { Flow } from "@debate/round/src/types/flow"
+import { setBulkItem } from "@debate/data-sync/src/state/bulk-storage"
 
 const NONE_VALUE = "__none__"
 
@@ -436,11 +437,7 @@ export function ArgumentTreePanel() {
 
   /** Best-effort mirror of `useFlowEffects.ts#useFlowPersistence`'s write, which isn't mounted on this route. */
   const persistFlows = (updatedFlows: Flow[]) => {
-    try {
-      localStorage.setItem("flows", JSON.stringify(updatedFlows))
-    } catch (e) {
-      console.error("Failed to save flows:", e)
-    }
+    setBulkItem("flows", JSON.stringify(updatedFlows))
   }
 
   const handleSaveTags = () => {

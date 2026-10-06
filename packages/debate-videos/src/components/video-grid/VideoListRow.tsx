@@ -13,12 +13,17 @@
  *
  * The 1AC/2NR argument labels, when recorded, sit in small type under the
  * team that ran them in the Aff and Neg cells — the same pairing the cards
- * (`VideoCardThumbnail`) draw.
+ * (`VideoCardThumbnail`) draw. A team the current season's rankings know
+ * links to its team page and carries its rating; any other team name
+ * searches the library for that team's videos.
  */
 
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import type { RankingEntry } from "@debate/rankings-adapter"
 import { Star, ExternalLink, EyeOff, Eye, ListVideo, Play } from "lucide-react"
 import { cn } from "../../ui/lib/utils"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
@@ -29,11 +34,14 @@ import { WatchProgressBadge } from "../video-card/WatchProgressBadge"
 import { useWatchHistoryEntry } from "../../hooks/useWatchHistory"
 import { formatWatchedAgo } from "../../state/videoWatchHistory"
 import { HideConfirmDialog } from "../video-card/VideoCardDialogs"
-import { WatchPageLink } from "../watch/WatchPageLink"
+import { PopoutPlayerButton } from "../watch/PopoutPlayerButton"
+import { videoRouteHref } from "../../lib/video-route"
 import { StackNav, stackMemberLabel } from "../video-card/StackNav"
 import { cleanTournamentName, videoCategoryLabel } from "./video-tree"
 import { TOC_TOURNAMENT_IMAGE } from "../video-card/videoCardUtils"
 import { treeIndentStyle } from "./tree-indent"
+import { FormatBadge } from "./FormatBadge"
+import { teamHref } from "../../panels/leaderboard/profile/rankingProfileHelpers"
 import type { VideoType } from "../../types/videos"
 
 /** Thumbnail strip at the head of a row, 16:9 like the cards'. */
@@ -86,23 +94,37 @@ function RowThumbnail({
 
 /**
  * An Aff or Neg cell: the team, and under it the argument it ran if known.
- * With `onSearch`, the team name is a button that searches the library for
- * that team instead of playing the row.
+ *
+ * A team found in the current season's rankings (`ranking`) links to its
+ * team page and shows its rating beside the name. Otherwise, with
+ * `onSearch`, the name is a button that searches the library for that team's
+ * videos instead of opening the row.
  */
 function TeamCell({
   team,
   argument,
+  ranking,
   onSearch,
 }: {
   team?: string | null
   argument?: string | null
+  ranking?: RankingEntry | null
   onSearch?: (text: string) => void
 }) {
   return (
     <td className="px-3 py-3 align-top text-sm">
-      <div className="truncate">
+      <div className="flex min-w-0 items-baseline gap-1.5">
         {!team ? (
           <span className="text-muted-foreground">—</span>
+        ) : ranking ? (
+          <Link
+            href={teamHref(ranking)}
+            onClick={(e) => e.stopPropagation()}
+            title={`${ranking.school} ${ranking.name} — team page`}
+            className="min-w-0 truncate text-left hover:text-primary hover:underline"
+          >
+            {team}
+          </Link>
         ) : onSearch ? (
           <button
             type="button"
@@ -116,7 +138,15 @@ function TeamCell({
             {team}
           </button>
         ) : (
-          team
+          <span className="truncate">{team}</span>
+        )}
+        {team && ranking && (
+          <span
+            className="shrink-0 rounded bg-muted px-1 py-px text-[11px] font-medium tabular-nums text-muted-foreground"
+            title={`Rating ${ranking.adjustedRating.toFixed(1)} · ranked #${ranking.rank}`}
+          >
+            {Math.round(ranking.adjustedRating)}
+          </span>
         )}
       </div>
       {argument && (
@@ -144,6 +174,11 @@ export function VideoListRow({
   onHideVideo,
   onUnhideVideo,
   onSearch,
+  affRanking,
+  negRanking,
+  showFormat = false,
+  affRanking,
+  negRanking,
 }: {
   video: VideoType
   /** Tree depth, for the row's indent. */
@@ -166,6 +201,16 @@ export function VideoListRow({
   onUnhideVideo: (videoId: string) => void
   /** Searches the library for a team when its name is clicked. */
   onSearch?: (text: string) => void
+  /** The aff team's current-season rankings row, when it has one. */
+  affRanking?: RankingEntry | null
+  /** The neg team's current-season rankings row, when it has one. */
+  negRanking?: RankingEntry | null
+  /** Badges the tournament name with the round's debate format. */
+  showFormat?: boolean
+  /** The aff team's current-season rankings row, when it has one. */
+  affRanking?: RankingEntry | null
+  /** The neg team's current-season rankings row, when it has one. */
+  negRanking?: RankingEntry | null
 }) {
   const [
     videoId,
@@ -193,9 +238,9 @@ export function VideoListRow({
   const isInQueue = useVideoPlayerStore((state) =>
     state.queue.some((item) => item.videoId === videoId),
   )
-  const setActiveVideo = useVideoPlayerStore((state) => state.setActiveVideo)
   const addToQueue = useVideoPlayerStore((state) => state.addToQueue)
   const watched = useWatchHistoryEntry(videoId)
+  const router = useRouter()
 
   const styleNumber = typeof style === "number" ? style : undefined
   const categoryLabel = videoCategoryLabel(video)
@@ -213,10 +258,17 @@ export function VideoListRow({
   return (
     <>
       <tr
-        onClick={() =>
-          !isPlaying &&
-          setActiveVideo(videoId, title, { style: styleNumber, tournament, year, affTeam, negTeam })
-        }
+        // The row opens the video's watch page; the popout-player icon among
+        // its actions is the way to play it without leaving the listing. A
+        // table row cannot be a link, so a modifier-click is honoured by hand.
+        onClick={(e) => {
+          const href = videoRouteHref(video)
+          if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) {
+            window.open(href, "_blank", "noopener")
+            return
+          }
+          router.push(href)
+        }}
         className={cn(
           "cursor-pointer border-b border-border last:border-0 transition-colors hover:bg-accent/50",
           isPlaying && "bg-primary/10 hover:bg-primary/10",
@@ -251,6 +303,7 @@ export function VideoListRow({
                         {roundLevel}
                       </span>
                     )}
+                    {showFormat && <FormatBadge style={styleNumber} />}
                     <span className="truncate">
                       {cleanTournament === "TOC" ? (
                         <span className="flex items-center gap-1.5">
@@ -376,9 +429,7 @@ export function VideoListRow({
                   <TooltipContent>{isInQueue ? "In queue" : "Add to queue"}</TooltipContent>
                 </Tooltip>
 
-                <WatchPageLink
-                  videoId={videoId}
-                  title={title}
+                <PopoutPlayerButton
                   video={video}
                   className="p-1"
                   iconClassName="h-3.5 w-3.5"
@@ -421,8 +472,8 @@ export function VideoListRow({
 
         {isRoundMode && (
           <>
-            <TeamCell team={affTeam} argument={arg1AC} onSearch={onSearch} />
-            <TeamCell team={negTeam} argument={arg2NR} onSearch={onSearch} />
+            <TeamCell team={affTeam} argument={arg1AC} ranking={affRanking} onSearch={onSearch} />
+            <TeamCell team={negTeam} argument={arg2NR} ranking={negRanking} onSearch={onSearch} />
           </>
         )}
 

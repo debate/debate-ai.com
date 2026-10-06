@@ -21,7 +21,7 @@ import { Sheet, SheetContent } from "../ui/primitives/sheet"
 import { FlowPageSidebar } from "../layout/FlowPageSidebar"
 import { FlowMainContent } from "../layout/FlowMainContent"
 import { SpeechDocPanel } from "../layout/SpeechDocPanel"
-import { SpeechControlsTopBar } from "../layout/SpeechControlsTopBar"
+import { SpeechControlsTopBar, SpeechViewControls } from "../layout/SpeechControlsTopBar"
 import { DebateStartPanel } from "./DebateStartPanel"
 
 // Dialogs
@@ -48,8 +48,10 @@ import { useJumpToPrepNoteBox } from "../hooks/useJumpToPrepNoteBox"
 import { useSpeechDocHeadings } from "../hooks/useSpeechDocHeadings"
 import { useTimerSync } from "../hooks/useTimerSync"
 import { getRoundRecordingShareEmails } from "../round/round-recording-share"
+import { getMyTeamProfile } from "../state/myTeamProfile"
 import { readPinnedDebateIds, togglePinnedDebate } from "../state/pinnedDebates"
 import { readFlowHistory } from "../state/flowHistoryEntries"
+import { hydrateBulkStorage } from "@debate/data-sync/src/state/bulk-storage"
 import { selectSidebarRound } from "../utils/sidebar-round"
 import {
   buildFeaturedRound,
@@ -67,6 +69,9 @@ export interface DebateFlowPageProps {
   startScreenActions?: ReactNode
   /** Extra controls for the open round/flow workspace's top bar (the host app's account-sync badge). */
   roundActions?: ReactNode
+  /** The signed-in viewer's email, so the round sidebar can highlight the
+   *  speeches they give. The "My Team" profile emails are checked too. */
+  viewerEmail?: string | null
 }
 
 /**
@@ -77,7 +82,7 @@ export interface DebateFlowPageProps {
  *
  * @returns The full-screen debate flow page
  */
-export function DebateFlowPage({ startScreenActions, roundActions }: DebateFlowPageProps = {}) {
+export function DebateFlowPage({ startScreenActions, roundActions, viewerEmail }: DebateFlowPageProps = {}) {
   // ============================================================================
   // Global State (Zustand)
   // ============================================================================
@@ -122,12 +127,20 @@ export function DebateFlowPage({ startScreenActions, roundActions }: DebateFlowP
   /**
    * Load the pinned round ids and the auto-saved flow history that the start
    * screen renders. Read after mount rather than during the first render so
-   * this stays client-only (both keys are localStorage) and so a second visit
-   * picks up whatever was pinned or worked on in the meantime.
+   * this stays client-only (pins are localStorage, the history is the
+   * IndexedDB-backed bulk store, read again once it has loaded) and so a
+   * second visit picks up whatever was pinned or worked on in the meantime.
    */
   useEffect(() => {
+    let cancelled = false
     setPinnedIds(readPinnedDebateIds())
     setRecentHistory(readFlowHistory())
+    void hydrateBulkStorage().then(() => {
+      if (!cancelled) setRecentHistory(readFlowHistory())
+    })
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   /**
@@ -242,9 +255,9 @@ const handleEbbToolAction = (action: EbbFlowToolAction) => {
   // ============================================================================
   // Side Effects
   // ============================================================================
-  useInitialLoad(setFlows, setRounds)
+  const storedFlowsLoaded = useInitialLoad(setFlows, setRounds)
   useFontSizeSettings()
-  useFlowPersistence(flows, setFlows)
+  useFlowPersistence(flows)
   useArgumentTreeAutoSync(flows, selected)
   useMobileDetection(state.setIsMobile)
   useRoundFromSlug()
@@ -252,12 +265,13 @@ const handleEbbToolAction = (action: EbbFlowToolAction) => {
   useJumpToPrepNoteBox()
 
   // A shared `/debate/<featured slug>` link builds the round for a reader who
-  // has never opened it; `useRoundFromSlug` handles every later visit. Declared
-  // after `useInitialLoad` so the stored flows and rounds are already in the
-  // store when this first runs.
+  // has never opened it; `useRoundFromSlug` handles every later visit. Waits
+  // for `useInitialLoad` (an async IndexedDB read) so the stored flows and
+  // rounds are already in the store when this first runs.
   const pathname = usePathname()
   const featuredFromPathRef = useRef<string | null>(null)
   useEffect(() => {
+    if (!storedFlowsLoaded) return
     const slug = pathname?.match(/^\/debate\/([^/]+\/[^/]+)$/)?.[1]
     const featured = slug ? featuredRoundBySlug(slug) : undefined
     if (!featured || featuredFromPathRef.current === featured.slug) return
@@ -265,7 +279,7 @@ const handleEbbToolAction = (action: EbbFlowToolAction) => {
     const { rounds: storedRounds, flows: storedFlows } = useFlowStore.getState()
     if (!findLocalFeaturedRound(featured, storedRounds, storedFlows)) void handleOpenFeatured(featured)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname])
+  }, [pathname, storedFlowsLoaded])
 
   // Update document title when active round changes
   useEffect(() => {
@@ -530,6 +544,32 @@ const handleEbbToolAction = (action: EbbFlowToolAction) => {
   /** Round the sidebar shows a timer for — when set, the recording menu lives under its speech there. */
   const sidebarRound = selectSidebarRound(rounds, currentFlow)
 
+  /** Whether the speech view controls sit in the round sidebar (desktop with a round) rather than the topbar. */
+  const viewControlsInSidebar = !state.isMobile && !!sidebarRound
+
+  /** The viewer's emails — signed-in account plus the locally saved "My Team" profile. */
+  const [teamProfile] = useState(getMyTeamProfile)
+  const viewerEmails = [viewerEmail, teamProfile.email1]
+
+  /** Make a speech clicked in the sidebar's round group the active one. */
+  const handleSelectSpeech = (speechName: string) => {
+    const side = splitHandlers.showSpeech(speechName, showBothPanes)
+    if (side) setActiveSplitSide(side)
+  }
+
+  const speechViewControls = (
+    <SpeechViewControls
+      speechName={selectedSpeech}
+      viewMode={selectedViewMode}
+      quoteView={selectedQuoteView}
+      onViewModeChange={onSelectedViewModeChange}
+      onQuoteViewToggle={onSelectedQuoteViewToggle}
+      layoutMode={state.singlePaneMode ? "single" : "split"}
+      onToggleLayoutMode={handleToggleLayoutMode}
+      onOpenSpeechPanel={handleOpenSpeechPanel}
+    />
+  )
+
   /** Emails the global topbar's recording menu's "Share with Opponents" notifies. */
   const selectedSpeechShareEmails = getRoundRecordingShareEmails(currentRound)
 
@@ -765,6 +805,7 @@ const handleEbbToolAction = (action: EbbFlowToolAction) => {
         recordingKey={selectedSpeechHasRecording ? `debate-recording-${selectedSpeech}` : undefined}
         participantEmails={selectedSpeechShareEmails}
         showRecordingMenu={state.isMobile || !sidebarRound}
+        showViewControls={!viewControlsInSidebar}
         leadingActions={roundActions}
       />
       {/* Main Layout */}
@@ -801,6 +842,9 @@ const handleEbbToolAction = (action: EbbFlowToolAction) => {
                 onRecordingEnabledChange={setRecordingEnabled}
                 receivedHeadings={receivedHeadings}
                 remoteTimers={remoteTimers}
+                speechViewControls={speechViewControls}
+                onSelectSpeech={handleSelectSpeech}
+                viewerEmails={viewerEmails}
               />
             </ResizablePanel>
             <ResizableHandle withHandle />
@@ -843,6 +887,8 @@ const handleEbbToolAction = (action: EbbFlowToolAction) => {
                   onRecordingEnabledChange={setRecordingEnabled}
                   receivedHeadings={receivedHeadings}
                   remoteTimers={remoteTimers}
+                  onSelectSpeech={handleSelectSpeech}
+                  viewerEmails={viewerEmails}
                 />
               </SheetContent>
             </Sheet>

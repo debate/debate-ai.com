@@ -98,6 +98,7 @@ export {
   FIND_FLAWS_AND_EXTENSIONS_PROMPT,
   MAX_ANALYSIS_CONTENT_CHARS,
   buildCardAnalysisContent,
+  fetchSavedCardAiAnalysis,
   htmlToPlainText,
   normalizeForHash,
   requestCardAiAnalysis,

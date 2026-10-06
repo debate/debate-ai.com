@@ -33,14 +33,22 @@ export interface AllRankingDatasets {
   error: string | null
 }
 
-/** Loads (once per page) every full-season rankings dataset. */
-export function useAllRankingDatasets(): AllRankingDatasets {
+/**
+ * Loads (once per page) every full-season rankings dataset.
+ *
+ * @param enabled - `false` skips the load until it turns `true`, for a caller
+ *   that only sometimes needs the rankings (a video listing with no
+ *   current-season rounds in it has nothing to look up).
+ */
+export function useAllRankingDatasets(enabled = true): AllRankingDatasets {
   const [datasets, setDatasets] = useState<RankingDataset[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(enabled)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    if (!enabled) return
     let cancelled = false
+    setLoading(true)
     loadAll()
       .then((loaded) => {
         if (!cancelled) setDatasets(loaded)
@@ -54,7 +62,7 @@ export function useAllRankingDatasets(): AllRankingDatasets {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [enabled])
 
   return { datasets, loading, error }
 }

@@ -28,6 +28,15 @@ feed and its category cards are read (`CATEGORY_LABEL_ALIASES` in
 `debate-data-sync/src/videos/video-rows.ts`), and old `/lectures/topic_analysis`
 links open the merged shelf.
 
+## Sidebar format badges and the Greatest of All-Time banner
+
+In the sidebar, College Debates, Policy, PF and LD show lettered badges (NDT,
+VP, PF, LD) instead of generic icons. The Greatest of All-Time collection
+(`/videos/topPicks`) opens on an **All Time Greatest Legends** banner — the gold trophy-goat icon
+over the title — with
+drifting sparkles above the search bar (`GoatSparklesHeading`, built on
+`SparklesCore` in `debate-videos/src/ui/effects/sparkles.tsx`).
+
 ## Category search suggestions
 
 The search chips beneath the grid are specific to the category, debate format,
@@ -96,6 +105,11 @@ still work and forward to the new one.
 
 ## List layout
 
+Clicking a row opens that video's [watch page](/docs/features/video-watch-page)
+(Ctrl/⌘-click opens it in a new tab). To keep browsing while it plays, use
+the row's **Watch in popout player** icon instead — it starts the video in
+the floating player in the corner (`PopoutPlayerButton`).
+
 The dense table view (`VideoListRows`, the alternative to the card grid) shows
 a cleaned-up Tournament column rather than the raw stored value: years, round
 labels ("Quarterfinals", "R3", "Round Robin"), and generic org words
@@ -112,6 +126,12 @@ the same day read Finals down to the prelims). Rounds with no tournament go
 into an **Unsorted** tournament group, which is placed by its own newest video
 like any other tournament (`buildVideoTree` in `video-tree.ts`).
 
+Top Picks mixes every format, so there each tournament row carries a format
+badge (PF, LD, Policy, College) beside its name — one per format among its
+rounds — and so does the tournament name on every round row under it
+(`showFormat` on `VideoListRows`, drawn by `FormatBadge`). Single-format
+listings such as `/videos/pf` leave it off.
+
 Because the groups are built from whatever has loaded, the row view keeps
 paging on its own (up to the usual 600-video ceiling) instead of waiting for
 you to scroll. Otherwise sorting by views would show only each season's
@@ -121,6 +141,21 @@ Every column (Aff, Neg, Date, Views) shows at every screen width. On a phone
 the table is wider than the screen, so swipe it left and right to reach the
 columns beside the round; the first column is capped at three quarters of the
 screen so the next one always peeks in.
+
+### Team names and ratings
+
+In the Aff and Neg columns, a team from the **current season** that the
+[team rankings](/docs/features/team-rankings) know shows its rating in a
+small badge beside its name, and clicking the name opens that team's page.
+Any other team — one from a past season, or one the rankings don't match —
+keeps the old behaviour: clicking its name searches the library for that
+team's videos. The rankings cover the current season only, so an older
+round's team code is never matched (it would name different debaters).
+
+The match is the one the team pages use (`findTeamRanking` in
+`@debate/rankings-adapter`): the school loosely, the initials exactly, in
+the division the round's format is ranked in. The rankings load only when
+a listing holds a current-season round (`useVideoTeamRankings`).
 
 ## Suggesting a fix to a video
 

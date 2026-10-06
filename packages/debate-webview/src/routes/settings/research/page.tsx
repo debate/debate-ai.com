@@ -1,6 +1,11 @@
-import { ResearchSettingsPage } from "../../../components/qwksearch/Settings/ResearchSettingsPage"
+import { redirect } from "next/navigation"
+import { legacyResearchSettingsRedirect } from "../../../lib/qwksearch/settings-paths"
 
-/** The research agent's settings, on their first tab. See `[section]` for a named one. */
-export default function ResearchSettingsIndexPage() {
-  return <ResearchSettingsPage />
+/**
+ * `/settings/research` — the research agent's settings used to be a page of
+ * their own here. They are tabs of `/settings` now, so this route only
+ * redirects to the first of them, keeping old links and bookmarks working.
+ */
+export default function ResearchSettingsIndexPage(): never {
+  redirect(legacyResearchSettingsRedirect())
 }

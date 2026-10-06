@@ -252,7 +252,7 @@ describe("video library routes and the category-path redirects", () => {
     const { canonicalCategoryPathname } = await import(
       "@debate/data-sync/src/routes/category-paths"
     );
-    const moved = new Set(["dictionary", "rankings", "statistics", "stats", "lectures"]);
+    const moved = new Set(["dictionary", "rankings", "statistics", "stats", "lectures", "toppicks"]);
     for (const slug of Object.keys(SLUG_MAP)) {
       if (moved.has(slug)) continue;
       expect(canonicalCategoryPathname(`/videos/${slug}`), slug).toBeNull();

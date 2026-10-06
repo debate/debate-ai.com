@@ -71,7 +71,7 @@ import { TournamentsApp } from "debate-tournaments"
 
 ## Demo data
 
-`seed/demo.sql` fills D1 with one demo tournament, the Bay Area Invitational
+`seed/demo.sql` fills D1 with one demo tournament, the Debate AI Demo Invitational
 (tourn 90001): four debate divisions (VCX, VLD, VPF, VPRL) and four speech
 events (OO, IX, DI, INF), 40 entries each, with power-matched prelims, elim
 brackets, speaker awards and posted result sets. It is generated: edit

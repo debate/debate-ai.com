@@ -1,6 +1,7 @@
 "use client"
 
 import { create } from "zustand"
+import { getBulkItem, setBulkItem } from "@debate/data-sync/src/state/bulk-storage"
 import { History } from "./history"
 import { addFlowHistoryEntry, flowFromHistoryEntry, readFlowHistory, writeFlowHistory } from "./flowHistoryEntries"
 import type { Flow, Round } from "../types/flow"
@@ -94,16 +95,9 @@ export const useFlowStore = create<FlowStore>((set, get) => ({
   },
   setRounds: (rounds) => {
     set({ rounds })
-    try {
-      localStorage.setItem("rounds", JSON.stringify(rounds))
-    } catch (error) {
-      if (error instanceof DOMException && error.name === "QuotaExceededError") {
-        console.error("Quota exceeded when saving rounds. Please free up storage space.")
-        alert("Storage quota exceeded! Unable to save round data. Please delete some old flows or history.")
-      } else {
-        console.error("Failed to save rounds:", error)
-      }
-    }
+    // The IndexedDB-backed bulk store, not localStorage: rounds grow with use,
+    // and a write there never fails back into the UI.
+    setBulkItem("rounds", JSON.stringify(rounds))
   },
   createRound: (round) => {
     // Date.now() alone can collide when two rounds are created within the
@@ -135,7 +129,7 @@ export const useFlowStore = create<FlowStore>((set, get) => ({
   getRounds: () => {
     try {
       if (typeof window === "undefined") return []
-      const storedRounds = localStorage.getItem("rounds")
+      const storedRounds = getBulkItem("rounds")
       return storedRounds ? JSON.parse(storedRounds) : []
     } catch (error) {
       console.error("Failed to load rounds:", error)

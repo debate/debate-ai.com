@@ -10,6 +10,8 @@ import { ChevronDown, ChevronRight, Plus, Workflow } from "lucide-react"
 import { Button } from "../ui/primitives/button"
 import { cn } from "../ui/lib/utils"
 import { FlowTab } from "../navigation/FlowTab"
+import { useRestoreAccountBaselines } from "../state/useRestoreAccountBaselines"
+import { useFlowAutoSave } from "../state/useFlowAutoSave"
 import type { Flow } from "../types/flow"
 
 interface OpenTabsGroupProps {
@@ -35,6 +37,8 @@ export function OpenTabsGroup({
   ebbActive,
   onSelectEbb,
 }: OpenTabsGroupProps) {
+  useRestoreAccountBaselines()
+  useFlowAutoSave(flows)
   const [open, setOpen] = useState(true)
 
   /**

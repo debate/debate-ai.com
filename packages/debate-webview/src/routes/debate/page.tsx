@@ -1,11 +1,11 @@
 import { Suspense } from "react"
-import { DebateFlowPage } from "@debate/round"
+import { ViewerDebateFlowPage } from "../../components/round/ViewerDebateFlowPage"
 import { ToolSyncBadge } from "../../components/tools/ToolSyncBadge"
 
 export default function Home() {
   return (
     <Suspense>
-      <DebateFlowPage
+      <ViewerDebateFlowPage
         startScreenActions={<ToolSyncBadge href="/debate" />}
         roundActions={<ToolSyncBadge href="/debate" />}
       />

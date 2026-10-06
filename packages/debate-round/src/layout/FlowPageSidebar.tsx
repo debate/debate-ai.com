@@ -97,6 +97,12 @@ interface FlowPageSidebarProps {
   receivedHeadings?: RemoteSpeechDocHeadingsType[]
   /** Remote timer states received from other room participants. */
   remoteTimers?: RemoteTimerState[]
+  /** The selected speech's view controls, shown in the round group above its speeches. */
+  speechViewControls?: React.ReactNode
+  /** Makes a speech the active one when it's clicked in the round group. */
+  onSelectSpeech?: (speechName: string) => void
+  /** The viewer's email(s), so the round group can highlight their speeches. */
+  viewerEmails?: readonly (string | null | undefined)[]
 }
 
 /**
@@ -151,6 +157,9 @@ export function FlowPageSidebar({
   onRecordingEnabledChange,
   receivedHeadings = [],
   remoteTimers = [],
+  speechViewControls,
+  onSelectSpeech,
+  viewerEmails,
 }: FlowPageSidebarProps) {
   /**
    * Select a flow tab and close the mobile menu when applicable.
@@ -238,6 +247,9 @@ export function FlowPageSidebar({
           onMicDeviceChange={onMicDeviceChange}
           recordingEnabled={recordingEnabled}
           onRecordingEnabledChange={onRecordingEnabledChange}
+          viewControls={speechViewControls}
+          onSelectSpeech={onSelectSpeech}
+          viewerEmails={viewerEmails}
         />
       )}
 

@@ -6,8 +6,9 @@
  * instead of being duplicated across every speech's own header bar.
  *
  * The recording menu moves into the round sidebar, under the selected speech,
- * whenever the sidebar shows that speech's timer (see `LiveRoundGroup`), so
- * it only renders here otherwise (no round, or the mobile layout).
+ * and the view controls ({@link SpeechViewControls}) move above the sidebar's
+ * speech list, whenever the sidebar shows that round (see `LiveRoundGroup`),
+ * so they only render here otherwise (no round, or the mobile layout).
  * @module layout/SpeechControlsTopBar
  */
 
@@ -18,6 +19,7 @@ import { FileText, Quote, Columns2 } from "lucide-react"
 import type { ViewMode } from "../types/debate-flow"
 import { ViewModeSelector } from "../controls/ViewModeSelector"
 import { Button } from "../ui/primitives/button"
+import { cn } from "../ui/lib/utils"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/primitives/tooltip"
 import { SpeechRecordingMenu } from "@debate/timer/src/recorder/SpeechRecordingPlayer"
 import { useAiOutcomeResponsesAction } from "../dialogs/AiOutcomeResponsesDialog"
@@ -63,6 +65,8 @@ export interface SpeechControlsTopBarProps {
   participantEmails?: string[]
   /** Whether to render the recording menu here — false when the round sidebar already shows it under the speech. */
   showRecordingMenu?: boolean
+  /** Whether to render the view controls here — false when the round sidebar shows them above its speeches. */
+  showViewControls?: boolean
   /** Host-supplied controls rendered first in the bar (the app's account-sync badge). */
   leadingActions?: ReactNode
 }
@@ -92,6 +96,7 @@ export function SpeechControlsTopBar({
   recordingKey,
   participantEmails,
   showRecordingMenu = true,
+  showViewControls = true,
   leadingActions,
 }: SpeechControlsTopBarProps) {
   const outcomeResponses = useAiOutcomeResponsesAction(speechName)
@@ -99,6 +104,77 @@ export function SpeechControlsTopBar({
     <div className="flex items-center justify-end gap-1 w-full h-9 px-2 border-b border-border bg-[var(--background)] shrink-0">
       {leadingActions}
 
+      {showViewControls && (
+        <SpeechViewControls
+          speechName={speechName}
+          viewMode={viewMode}
+          quoteView={quoteView}
+          onViewModeChange={onViewModeChange}
+          onQuoteViewToggle={onQuoteViewToggle}
+          layoutMode={layoutMode}
+          onToggleLayoutMode={onToggleLayoutMode}
+          onOpenSpeechPanel={onOpenSpeechPanel}
+        />
+      )}
+
+      {showRecordingMenu && (
+        <SpeechRecordingMenu
+          actions={[outcomeResponses.action]}
+          speechName={speechName}
+          speechLabel={speechName}
+          micDeviceId={micDeviceId}
+          onMicDeviceChange={onMicDeviceChange}
+          recordingEnabled={recordingEnabled}
+          onRecordingEnabledChange={onRecordingEnabledChange}
+          onResetSpeechTime={onResetSpeechTime}
+          onSwitchToCrossX={onSwitchToCrossX}
+          onResetPrepTimers={onResetPrepTimers}
+          onDeleteRecording={hasRecording ? onDeleteRecording : undefined}
+          recordingKey={recordingKey}
+          participantEmails={participantEmails}
+          inHeader={true}
+        />
+      )}
+      {showRecordingMenu && outcomeResponses.dialog}
+    </div>
+  )
+}
+
+/** Props for {@link SpeechViewControls}. */
+export type SpeechViewControlsProps = Pick<
+  SpeechControlsTopBarProps,
+  | "speechName"
+  | "viewMode"
+  | "quoteView"
+  | "onViewModeChange"
+  | "onQuoteViewToggle"
+  | "layoutMode"
+  | "onToggleLayoutMode"
+  | "onOpenSpeechPanel"
+> & {
+  /** Extra classes for the row — the sidebar left-aligns it above the speech list. */
+  className?: string
+}
+
+/**
+ * The selected speech's view controls — quote view, view mode, single/split
+ * layout and "open speech document". Shown in the round sidebar above the
+ * speech list whenever the sidebar has a round (see `LiveRoundGroup`), and in
+ * the topbar otherwise.
+ */
+export function SpeechViewControls({
+  speechName,
+  viewMode,
+  quoteView,
+  onViewModeChange,
+  onQuoteViewToggle,
+  layoutMode,
+  onToggleLayoutMode,
+  onOpenSpeechPanel,
+  className,
+}: SpeechViewControlsProps) {
+  return (
+    <div className={cn("flex items-center gap-1", className)}>
       <TooltipProvider delayDuration={300}>
         <Tooltip>
           <TooltipTrigger asChild>
@@ -134,26 +210,6 @@ export function SpeechControlsTopBar({
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-
-      {showRecordingMenu && (
-        <SpeechRecordingMenu
-          actions={[outcomeResponses.action]}
-          speechName={speechName}
-          speechLabel={speechName}
-          micDeviceId={micDeviceId}
-          onMicDeviceChange={onMicDeviceChange}
-          recordingEnabled={recordingEnabled}
-          onRecordingEnabledChange={onRecordingEnabledChange}
-          onResetSpeechTime={onResetSpeechTime}
-          onSwitchToCrossX={onSwitchToCrossX}
-          onResetPrepTimers={onResetPrepTimers}
-          onDeleteRecording={hasRecording ? onDeleteRecording : undefined}
-          recordingKey={recordingKey}
-          participantEmails={participantEmails}
-          inHeader={true}
-        />
-      )}
-      {showRecordingMenu && outcomeResponses.dialog}
 
       <Button
         variant="ghost"

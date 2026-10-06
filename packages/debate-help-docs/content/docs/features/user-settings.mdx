@@ -10,13 +10,15 @@ localStorage.
 
 - **Route:** `/settings` (the panel itself renders in an isolated iframe at
   `/settings/editor-panel`)
-- **Research agent settings:** `/settings/research` and `/settings/research/<section>`
-  — one full page with a tab per section (models, search, MCP servers, skills and
-  memory, voice…), linked from the top of `/settings`. The section list is
-  `research-agent-ui`'s own (`research-agent-ui/settings`). Its sidebar also lists
-  the card editor's tabs under a **Card editor** heading
-  (`/settings/research/editor-general` and so on), so either Settings page reaches
-  every editor setting.
+- **Research agent settings:** tabs of `/settings` itself, listed after the
+  editor's under a **Research agent** heading in the same sidebar — one per
+  section (account, language models, connectors, skills and memory, search
+  sources, search settings, cloud storage, rewrite modes, voice). Each is
+  linkable as `/settings?category=research-<section>`. The section list is
+  `research-agent-ui`'s own (`research-agent-ui/settings`); the panes load
+  lazily, the first time one of those tabs is opened. The old
+  `/settings/research` and `/settings/research/<section>` pages now redirect to
+  the matching tab (`editor-<tab>` sections to the editor's own tab).
 - **Package:** `debate-editor` (the settings store, `SETTING_METADATA`, and
   the embedded panel builder), `apps/debate-ai.com`
   (`lib/editor-preferences.ts`, `/api/settings`, `user_settings` D1 table)
@@ -72,6 +74,34 @@ Their `/api/settings` fields (`debateStyle`, `fontSize`, `wordLimitPresets`, …
 are all still stored and served; what changed is that nothing writes them from
 here any more.
 
+## Your own AI key
+
+The **Preferences** tab has a **Your own AI key** box. Paste an
+[OpenRouter key](https://openrouter.ai/settings/keys) (`sk-or-…`) or an
+Anthropic key (`sk-ant-…`) and the AI features — card AI analysis, AI coach and
+judge, citation and OCR fixes, every caller of `/api/reason-ai` and
+`/api/card-ai-analysis` — run on your key instead of Debate AI's shared one.
+You set your own spending limit on that key with OpenRouter (or Anthropic), and
+Debate AI's daily AI request and card-analysis limits stop applying to you.
+
+The same box appears:
+
+- in the pricing dialog when you hit a daily AI limit, as an alternative to
+  upgrading, and
+- in an **AI limit reached** dialog when Debate AI's shared key itself has run
+  out of credit or hit its spending cap (the route answers `503` with an
+  `x-ai-key-needed` header).
+
+The key is kept in this browser's `localStorage` only — never in your account's
+settings row — and is sent, as the `x-user-ai-key` header, only on same-origin
+requests to the two AI routes. The server uses it for that one request and
+never stores or logs it. Remove it to go back to the shared key.
+
+- **Packages:** `debate-webview` (`lib/ai/own-ai-key.ts`,
+  `components/settings/OwnAiKeySection.tsx`,
+  `components/pricing/OwnAiKeyDialog.tsx`), `apps/debate-ai.com`
+  (`lib/ai/provider-key.ts`)
+
 ## Flow editor preferences follow your account
 
 The Ebb flow editor's display preferences (`Cmd/Ctrl+,`) and keybinding
@@ -95,16 +125,28 @@ once that flow has been saved to your account from the Flow History dialog
 (including bulk saves): a plain cloud means the account copy matches what you
 see, a crossed-out amber cloud means you've edited it since. A tab with no icon
 has no baseline yet. The marker survives a reload: each save remembers the
-version the account stamped on it, and opening the **Saved to account** tab in
-Flow History re-adopts that baseline only if your account still holds exactly
-that version, so edits made elsewhere (or by a different account on the same
+version the account stamped on it, and opening the `/debate` start screen or a
+round's flow tabs (or the **Saved to account** tab in Flow History) re-adopts
+that baseline only if your account still holds exactly that version, so edits made elsewhere (or by a different account on the same
 browser) never show as saved. Engineering notes: `debate-round`'s
-`state/flowAccountStatus.ts`.
+`state/flowAccountStatus.ts`; the on-mount restore is `state/restoreAccountBaselines.ts`
+(one fetch per page session, silent when signed out).
 
 The same cloud icon appears on the round cards of the `/debate` start screen
 (Featured and Recent) once the round itself has been saved to your account from
 the Flow History dialog, and flips to the amber crossed-out cloud when the round
 is edited afterwards. Saving a round's flows does not by itself mark the round.
+
+### Auto-save for flows already on your account
+
+Once a flow has been saved to your account, further edits to it are saved
+automatically about five seconds after you stop typing, and the tab's cloud
+icon flips back to saved. Flows you have never saved are never uploaded
+automatically, and archived flows are skipped. Auto-save never overwrites: if
+the account holds a newer copy (saved from another device) the flow stays
+amber and you resolve it from Flow History. A failed save is retried only after
+the flow changes again. Engineering notes: `debate-round`'s `state/flowAutoSave.ts`,
+mounted by `useFlowAutoSave` in `OpenTabsGroup`.
 
 ## Data flow
 

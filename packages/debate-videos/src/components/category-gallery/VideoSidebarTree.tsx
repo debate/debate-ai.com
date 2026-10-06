@@ -37,6 +37,9 @@
  * `showLectureCategories`, the same flag that shows the category gallery
  * above the grid, so the sidebar and the page agree on whether you are
  * browsing lectures.
+ *
+ * Every row draws a plain gray Lucide glyph; the lecture categories take
+ * theirs from `lecture-category-icons`.
  */
 
 "use client";
@@ -44,7 +47,6 @@
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Clapperboard, History } from "lucide-react";
-import { IconTrophy, IconLectures } from "../../ui/icons";
 import type { LectureCategoryFacet } from "../../types/videos";
 import { TreeItem } from "./TreeItem";
 import { lectureCategoryHref } from "../../panels/lectureRouteConfig";
@@ -186,7 +188,7 @@ export function VideoSidebarTree({
           title={SIDEBAR_VIDEO_LINKS_BY_ID.favorites.title}
           count={counts?.favorites}
           isActive={activeId === "favorites"}
-          icon={IconTrophy}
+          icon={SIDEBAR_VIDEO_LINKS_BY_ID.favorites.glyph}
         />
 
         <TreeItem
@@ -203,7 +205,7 @@ export function VideoSidebarTree({
         <TreeItem
           level={1}
           title={lecturesLink.title}
-          icon={IconLectures}
+          icon={lecturesLink.glyph}
           // Same deal as the Round Videos heading: a plain click toggles the
           // section, a modifier click opens the lecture library itself.
           sectionHref={lecturesLink.href}
@@ -235,7 +237,7 @@ export function VideoSidebarTree({
           level={1}
           href={lecturesLink.href}
           title={lecturesLink.title}
-          icon={IconLectures}
+          icon={lecturesLink.glyph}
           count={counts?.lectures}
           isActive={lecturesActive}
         />

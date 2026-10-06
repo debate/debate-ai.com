@@ -67,6 +67,12 @@ Beyond the shared record types, `src/state/` holds the sync every tool's
 - **Never advance a snapshot past a write that did not land.** That is the one
   bug the watcher cannot have — the record would be dropped with no error
   anywhere.
+- **Large data goes in `bulk-storage.ts`, not `localStorage`.** Flows, rounds
+  and flow history live in IndexedDB (mirrored into the browser extension's
+  unlimited storage when installed); `localStorage` is for small preferences.
+  Writes never throw and never surface a quota error. Its key list and message
+  type are duplicated in the extension's bridge — change both together. See
+  `content/docs/architecture/offline-storage.md` in `debate-help-docs`.
 - **Single-object stores join through a codec.** `flowEditorDisplaySettings`
   wraps `debate-flow`'s display object as one record
   (`flow-editor-settings-codec.ts`); `flowKeymap` wraps the keymap object as one
