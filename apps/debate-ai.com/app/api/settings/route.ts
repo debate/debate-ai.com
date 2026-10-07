@@ -22,12 +22,9 @@ import {
   DEFAULT_THEME_SETTINGS,
   DEFAULT_USER_SETTINGS,
   DEFAULT_WORD_LIMIT_PRESETS,
-  isFlowAutoSaveMode,
-  normalizeFlowAutoSaveModePatch,
   normalizeFavoriteToolOpPatch,
   normalizeFlowAutoSavePatch,
-  parseFlowAutoSave,
-  type FlowAutoSaveMode,
+  parseStoredFlowAutoSave,
   normalizeFavoriteToolsPatch,
   normalizeOutlineFilterPresetOpPatch,
   normalizeOutlineFilterPresetsPatch,
@@ -49,9 +46,6 @@ import {
   type OutlineFilterPreset,
   type ThemeMode,
   type UserSettingsPayload,
-  normalizeFlowAutoSavePatch,
-  parseStoredFlowAutoSave,
-  type FlowAutoSaveMode,
 } from "@debate/round"
 import {
   applyNewsLikedOp,
@@ -283,7 +277,7 @@ type SettingsPayload = UserSettingsPayload & {
   recentTools: string[]
   editorPreferences: EditorPreferencesPayload
   flowEditorSettings: FlowEditorAccountSettingsPayload
-  flowAutoSave: FlowAutoSaveMode
+  flowAutoSave: FlowAutoSaveMode | null
   newsRead: string[]
   newsLiked: string[]
   wordLimitPresets: { name: string; wordLimit: number }[]
@@ -307,7 +301,7 @@ function toPayload(row: SettingsRow | undefined): SettingsPayload {
     recentTools: row?.recentTools ? parseRecentTools(row.recentTools) : [],
     editorPreferences: parseEditorPreferences(row?.editorPreferences),
     flowEditorSettings: parseFlowEditorSettings(row?.flowEditorSettings),
-    flowAutoSave: parseFlowAutoSave(row?.flowAutoSave),
+    flowAutoSave: parseStoredFlowAutoSave(row?.flowAutoSave),
     newsRead: row?.newsRead ? parseNewsIdList(row.newsRead) : DEFAULT_NEWS_SYNC.newsRead,
     newsLiked: row?.newsLiked ? parseNewsIdList(row.newsLiked) : DEFAULT_NEWS_SYNC.newsLiked,
     wordLimitPresets: row?.wordLimitPresets
@@ -395,7 +389,6 @@ export async function PUT(req: NextRequest) {
   const flowAutoSaveResult = normalizeFlowAutoSavePatch(body)
   const valid = { ...userSettingsResult.valid, ...themeSettingsResult.valid }
   const errors = [
-    ...flowAutoSaveModeResult.errors,
     ...userSettingsResult.errors,
     ...themeSettingsResult.errors,
     ...favoriteToolsResult.errors,
@@ -768,10 +761,6 @@ export async function PUT(req: NextRequest) {
       mergeFlowEditorSettings(parseFlowEditorSettings(existing?.flowEditorSettings), flowEditorSettingsResult.valid),
     )
   }
-  if (flowAutoSaveResult.valid.flowAutoSave !== undefined) {
-    dbPatch.flowAutoSave = flowAutoSaveResult.valid.flowAutoSave
-  }
-
   if (flowAutoSaveResult.valid.flowAutoSave !== undefined) {
     dbPatch.flowAutoSave = flowAutoSaveResult.valid.flowAutoSave
   }
