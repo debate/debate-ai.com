@@ -24,6 +24,7 @@ import { useResizableColumns } from "../../components/video-grid/useResizableCol
 import { COLUMN_TOOLTIPS, displayEntryName } from "./leaderboardUtils"
 import type { Division, SortKey, SortState } from "./leaderboardTypes"
 import { schoolHref, teamHref } from "./profile/rankingProfileHelpers"
+import { LegendaryBadge, ROW_TIER_CLASS, rowTier } from "./rowTier"
 
 /** The fields shown as columns. */
 type ColumnKey = Extract<
@@ -98,7 +99,17 @@ function WinRate({ value }: { value: number | null }) {
 }
 
 const COLUMNS: Column[] = [
-  { key: "rank", label: "#", numeric: true, render: (e) => <span className="font-semibold">{e.rank}</span> },
+  {
+    key: "rank",
+    label: "#",
+    numeric: true,
+    render: (e) => (
+      <>
+        {rowTier(e.rank, e.adjustedRating) === "legendary" && <LegendaryBadge />}
+        <span className="ml-1 font-semibold">{e.rank}</span>
+      </>
+    ),
+  },
   {
     key: "school",
     label: "School",
@@ -132,7 +143,7 @@ const COLUMNS: Column[] = [
 
 /** Starting pixel width of each column; every column can be dragged wider or narrower. */
 const DEFAULT_COLUMN_WIDTHS: Record<ColumnKey, number> = {
-  rank: 60,
+  rank: 120,
   school: 200,
   name: 200,
   adjustedRating: 90,
@@ -217,8 +228,14 @@ export function RankingsTable({ entries, division, sort, onToggleSort }: Ranking
           </TableRow>
         </TableHeader>
         <TableBody>
-          {entries.map((entry) => (
-            <TableRow key={entry.hash || `${entry.rank}-${entry.name}`}>
+          {entries.map((entry) => {
+            const tier = rowTier(entry.rank, entry.adjustedRating)
+            return (
+            <TableRow
+              key={entry.hash || `${entry.rank}-${entry.name}`}
+              data-tier={tier ?? undefined}
+              className={tier ? ROW_TIER_CLASS[tier] : undefined}
+            >
               {COLUMNS.map((col) => (
                 <TableCell
                   key={col.key}
@@ -232,7 +249,8 @@ export function RankingsTable({ entries, division, sort, onToggleSort }: Ranking
                 </TableCell>
               ))}
             </TableRow>
-          ))}
+            )
+          })}
         </TableBody>
       </Table>
     </div>
