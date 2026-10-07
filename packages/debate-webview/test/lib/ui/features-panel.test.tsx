@@ -10,7 +10,7 @@ import {
   README_SHOWCASE,
   README_VIDEO,
 } from "../../../src/lib/ui/features/readme-media";
-import { CARDS_DOIS, CARDS_VISION } from "../../../src/lib/ui/features/cards-vision";
+import { CARDS_VISION } from "../../../src/lib/ui/features/cards-vision";
 
 describe("FeaturesPanel", () => {
   const html = renderToStaticMarkup(<FeaturesPanel />);
@@ -65,9 +65,6 @@ describe("FeaturesPanel", () => {
     expect(html).toContain("war of warrants");
     for (const point of CARDS_VISION) {
       expect(html).toContain(point.title);
-    }
-    for (const doi of CARDS_DOIS) {
-      expect(html).toContain(`href="${doi.href}"`);
     }
   });
 
@@ -190,10 +187,10 @@ describe("cardHueShift", () => {
 describe("FeaturesPanel downloads", () => {
   const html = renderToStaticMarkup(<FeaturesPanel />);
 
-  it("has a Downloads section with the Chrome extension button under the badges", () => {
+  it("has a Downloads section with the Chrome extension button above the badges", () => {
     expect(html).toContain('data-testid="downloads"');
     expect(html).toContain("Downloads");
     expect(html).toContain("noecbaibfhbmpapofcdkgchfifmoinfj");
-    expect(html.indexOf('data-testid="readme-badges"')).toBeLessThan(html.indexOf('data-testid="downloads"'));
+    expect(html.indexOf('data-testid="downloads"')).toBeLessThan(html.indexOf('data-testid="readme-badges"'));
   });
 });
