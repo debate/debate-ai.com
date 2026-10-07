@@ -135,6 +135,23 @@ inside the debounce dropped the edits to the one you left.
   patch through the same queue as title/content edits, so a re-parent gets
   the same retry-with-backoff and `pagehide`/tab-hide flush.
 
+## What the embed doesn't pop up on open
+
+The site mounts CardMirror on nearly every visit, so the engine's
+first-launch and crash-recovery surfaces are switched off in the embed
+(debate-ai.com edits to upstream, in `patches/debate-ai.patch`):
+
+- **Recover drafts sidebar** — `runStartupRecoveryInner` returns before
+  `openRecoverySidebar` when `BOOT_EMBEDDED`. Journals are left on disk,
+  untouched; the mode-switch auto-reopen above that check still runs.
+- **UI tour and Verbatim nudge** — not auto-started when `detectEmbedded()`.
+  Help → UI tour still starts the tour by hand.
+- **"Receiving cards in-browser needs your account" notice** — shown once per
+  browser (`localStorage` key `cardmirror.pairingAccountRequiredSeen`) instead
+  of on every mount.
+
+The outline nav pane still opens beside the document as before.
+
 ## Tests
 
 - `packages/debate-editor/test/change-reporter.test.ts` — edit vs. load vs.
