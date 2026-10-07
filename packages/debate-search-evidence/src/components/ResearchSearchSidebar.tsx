@@ -6,7 +6,6 @@
 
 
 import { useState } from "react"
-import { Input } from "../ui/primitives/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/primitives/select"
 import { Search, X, ChevronDown, ChevronUp, Scale, ListTree, Quote } from "lucide-react"
 import { SearchResultCard } from "./SearchResultCard"
@@ -18,7 +17,7 @@ import { Autocomplete } from "../ui/primitives/autocomplete"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/primitives/tooltip"
 import { searchSchools, searchTournaments, searchNames } from "../cache/client-cache"
 import { resultCountLabel } from "../lib/card-display"
-import { EMPTY_FILTERS } from "../lib/search-query"
+import { EMPTY_FILTERS, fetchSearchSuggestions } from "../lib/search-query"
 
 const SUGGESTION_LIMIT = 20
 const SEARCH_DROPDOWN_CLASS = "right-auto w-[14rem]"
@@ -138,11 +137,14 @@ export function ResearchSearchSidebar({
           {/* Search input, with the button that opens the evidence submit popup */}
           <div className="flex gap-2">
             <div className="relative flex-1 min-w-0">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
+              <Search className="pointer-events-none absolute left-2 top-2.5 z-10 h-4 w-4 text-muted-foreground" />
+              {/* Completes the word being typed from the words in the card corpus;
+                  `"quoted phrases"` in the term are matched exactly. */}
+              <Autocomplete
                 placeholder="Search debates, outlines, and quotes..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={setSearchTerm}
+                fetchOptions={(q) => fetchSearchSuggestions(q)}
                 className="pl-8"
               />
             </div>
