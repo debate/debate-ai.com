@@ -2424,3 +2424,31 @@ export const topicAreaVotes = sqliteTable(
 );
 
 export type TopicAreaVoteRow = typeof topicAreaVotes.$inferSelect;
+
+// A signed-in user following a team or school profile (/teams/[team],
+// /schools/[school]). Keyed on (user, kind, slug), so following twice is a
+// no-op and a profile's follower count is a count of its rows. `kind` is
+// "team" or "school" and `slug` is the profile's URL segment, both checked by
+// the API before they are written; `name` is the display name at follow time,
+// so the news feed can label a follow without loading the rankings first.
+// Created by packages/debate-videos/migrations.
+export const profileFollows = sqliteTable(
+  "profile_follows",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    kind: text("kind").notNull(),
+    slug: text("slug").notNull(),
+    name: text("name").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.userId, table.kind, table.slug] }),
+    targetIdx: index("idx_profile_follows_target").on(table.kind, table.slug),
+  }),
+);
+
+export type ProfileFollowRow = typeof profileFollows.$inferSelect;

@@ -1,6 +1,6 @@
 # CLAUDE.md — `debate-videos` (LEARN)
 
-Private. The debate video library: search and filtering, grids and cards, a
+Public (`@debate/` scope). The debate video library: search and filtering, grids and cards, a
 **persistent YouTube player with picture-in-picture**, a per-video watch page,
 lecture pages, and rankings leaderboards. Entry `src/index.ts`, tests in
 `test/`.

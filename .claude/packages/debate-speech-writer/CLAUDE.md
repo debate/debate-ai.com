@@ -1,6 +1,6 @@
 # CLAUDE.md — `debate-speech-writer`
 
-Private. The **AI prompt library** behind FIAT's speech and flow features:
+Public (`@debate/` scope). The **AI prompt library** behind FIAT's speech and flow features:
 flow extraction, judge decisions, flaw finding, research outlines, and a batch
 quote-analysis helper. Entry `src/index.ts`, tests in `test/`.
 

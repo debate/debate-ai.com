@@ -41,7 +41,7 @@ export interface AutoFeatureSource {
 }
 
 /** Which of the feed's sources a `NewsItem` came from. */
-export type NewsCategory = "product" | "daily-best-card" | "awards" | "community";
+export type NewsCategory = "product" | "daily-best-card" | "awards" | "community" | "following";
 
 /** Display order and label for each category, in the feed's filter tabs. */
 export const NEWS_CATEGORY_LABELS: Record<NewsCategory, string> = {
@@ -49,6 +49,7 @@ export const NEWS_CATEGORY_LABELS: Record<NewsCategory, string> = {
   "daily-best-card": "Daily Best Card",
   awards: "Contributor Awards",
   community: "Community",
+  following: "Following",
 };
 
 /** One entry in the News Stream feed. */
@@ -73,6 +74,14 @@ export interface NewsItem {
  * hand, the same way `feature-catalog.ts`'s `APP_FEATURES` is maintained.
  */
 export const PRODUCT_NEWS: NewsItem[] = [
+  {
+    id: "product-follow-teams-and-schools",
+    category: "product",
+    title: "Follow teams and schools",
+    body: "Team and school profiles now have a Follow button and a follower count. Everything you follow shows up here under Following: new rounds, new caselist research, tournament results, and a monthly recap of each team's record, big elim runs and rating change.",
+    timestamp: Date.parse("2026-10-07T00:00:00Z"),
+    href: "/coaching/rankings",
+  },
   {
     id: "product-news-stream-daily-quest-completions",
     category: "product",

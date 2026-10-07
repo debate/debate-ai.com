@@ -2,9 +2,17 @@
   "name": "@debate/data-sync",
   "version": "0.1.0",
   "description": "Debate data assets (metadata, videos, schemas) plus sync scripts for YouTube videos, debate rankings and openCaselist bulk downloads",
-  "private": true,
   "author": "vtempest",
   "license": "rights.institute/prosper",
+  "homepage": "https://github.com/debate/debate-ai.com/tree/master/packages/debate-data-sync#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/debate/debate-ai.com.git",
+    "directory": "packages/debate-data-sync"
+  },
+  "bugs": {
+    "url": "https://github.com/debate/debate-ai.com/issues"
+  },
   "exports": {
     ".": "./package.json",
     "./data/metadata/*": "./data/*",
@@ -14,6 +22,15 @@
     "./src/*.tsx": "./src/*.tsx",
     "./src/*": "./src/*.ts",
     "./*": "./*"
+  },
+  "files": [
+    "src",
+    "data",
+    "migrations",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "coverage": "vitest run --coverage",
@@ -35,7 +52,7 @@
     "grab-url": "^1.6.22",
     "jszip": "^3.10.2",
     "linkedom": "^0.18.13",
-    "@types/debate": "workspace:*"
+    "@debate/types": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^26.6.3",

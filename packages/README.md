@@ -164,11 +164,11 @@ includes an in-round speech recorder with mic selection, live waveform, and play
 
 ## debate-types
 
-Package name `@types/debate`. Every shared type — rounds and flows, scouting and
+Package name `@debate/types`. Every shared type — rounds and flows, scouting and
 collaboration state, parsed cards, the video feed, prediction markets, the Practice vs AI
 wire types — declared once, with a description on each object and field so editors show it
 on hover. Declarations only; the packages that owned these types re-export them. Import
-with `import type { … } from "debate"`. Depended on by `debate-timer`, `debate-card-parser`,
+with `import type { … } from "@debate/types"`. Depended on by `debate-timer`, `debate-card-parser`,
 `debate-round`, `debate-flow`, `debate-tournaments`, `debate-webview`,
 `debate-round-practice-ai`, `debate-videos`, `debate-data-sync` and `debate-predictions`.
 

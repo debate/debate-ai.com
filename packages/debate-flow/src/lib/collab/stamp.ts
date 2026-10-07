@@ -1,6 +1,6 @@
-import type { Stamp } from "debate";
+import type { Stamp } from "@debate/types";
 
-export type { Stamp } from "debate";
+export type { Stamp } from "@debate/types";
 
 /**
  * Below every real write. Seeding uses it so two peers that open one file

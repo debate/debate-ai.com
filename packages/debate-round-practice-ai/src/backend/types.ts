@@ -1,6 +1,6 @@
 /**
  * @fileoverview Wire and storage types for the Practice vs AI backend. The
- * definitions (and their field docs) live in `@types/debate`.
+ * definitions (and their field docs) live in `@debate/types`.
  *
  * @module backend/types
  */
@@ -23,4 +23,4 @@ export type {
   JudgmentData,
   DebateActor,
   HandlerResult,
-} from "debate"
+} from "@debate/types"

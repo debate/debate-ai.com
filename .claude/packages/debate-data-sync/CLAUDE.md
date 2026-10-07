@@ -1,6 +1,6 @@
 # CLAUDE.md — `debate-data-sync`
 
-Private. Bundled debate data assets — metadata, videos, schemas — plus the
+Public (`@debate/` scope). Bundled debate data assets — metadata, videos, schemas — plus the
 scripts that sync them. Also defines shared record types such as
 `OpponentTeamProfile`. Tests in `test/`.
 

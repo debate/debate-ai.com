@@ -1,6 +1,6 @@
 # CLAUDE.md — `debate-editor` (CardMirror)
 
-Private. The CardMirror debate-card editor embedded across debate-ai.com.
+Public (`@debate/` scope). The CardMirror debate-card editor embedded across debate-ai.com.
 Entry: `src/react/index.tsx` — consumed as source, no build step. Tests in
 `test/`.
 

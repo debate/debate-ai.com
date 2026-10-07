@@ -22,12 +22,21 @@
  * staying stuck in one browser (`packages/debate-help-docs/content/docs/internals/news-stream.mdx`'s "Read/like
  * state is per-browser" Known gap).
  *
+ * Also folds in `useFollowingNews()` from `@debate/videos` — new rounds,
+ * research, tournament results and monthly recaps for every team and school
+ * the viewer follows — under the feed's "Following" filter, and lists those
+ * follows above the feed. They arrive after mount; the panel rebuilds when
+ * the set of extra item ids changes.
+ *
  * @module app/news/NewsPageContent
  */
 
 "use client"
 
+import { useMemo } from "react"
 import { NewsStreamPanel } from "@debate/community"
+import { useFollowingNews } from "@debate/videos"
+import { followHref } from "@debate/videos/src/lib/follows/profile-follows"
 import { buildAutoFeatureNews } from "@debate/community/src/lib/news-stream"
 import { coachingSessionNews } from "@debate/practice-rounds/src/state/coachingSessions"
 import { APP_FEATURES } from "../../lib/feature-catalog"
@@ -38,5 +47,32 @@ const FEATURE_SPOTLIGHTS = buildAutoFeatureNews(APP_FEATURES)
 
 export function NewsPageContent() {
   const syncRemote = useNewsStreamSync()
-  return <NewsStreamPanel extraItems={[...FEATURE_SPOTLIGHTS, ...coachingSessionNews()]} syncRemote={syncRemote} />
+  const following = useFollowingNews()
+  const extraItems = useMemo(
+    () => [...FEATURE_SPOTLIGHTS, ...coachingSessionNews(), ...following.items],
+    [following.items],
+  )
+  return (
+    <div className="flex flex-col gap-4">
+      {following.follows.length > 0 ? (
+        <p className="text-sm text-muted-foreground">
+          Following{" "}
+          {following.follows.map((follow, i) => (
+            <span key={`${follow.kind}-${follow.slug}`}>
+              {i > 0 && ", "}
+              <a href={followHref(follow)} className="font-medium text-foreground hover:underline">
+                {follow.name}
+              </a>
+            </span>
+          ))}
+          {following.loading && " · loading their updates…"}
+        </p>
+      ) : following.signedIn ? (
+        <p className="text-sm text-muted-foreground">
+          Follow a team or school from its profile page to see its rounds, research, results and monthly recaps here.
+        </p>
+      ) : null}
+      <NewsStreamPanel extraItems={extraItems} syncRemote={syncRemote} />
+    </div>
+  )
 }

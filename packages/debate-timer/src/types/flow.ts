@@ -1,7 +1,7 @@
-import type { Round } from "debate"
+import type { Round } from "@debate/types"
 
-// The definitions (and their field docs) live in `@types/debate`.
-export type { ArgumentType, EvidenceStatus, Box, Flow, Round } from "debate"
+// The definitions (and their field docs) live in `@debate/types`.
+export type { ArgumentType, EvidenceStatus, Box, Flow, Round } from "@debate/types"
 
 /**
  * Generates a formatted title for a debate round

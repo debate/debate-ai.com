@@ -1,6 +1,6 @@
 # CLAUDE.md — `debate-team-collaboration`
 
-Private. Team prep and collaboration: task inbox, prep room, topic sprints, team
+Public (`@debate/` scope). Team prep and collaboration: task inbox, prep room, topic sprints, team
 brainstorm assist, group challenges, research-progress tracking, sprint notes,
 and — moved here from `debate-round` — **prep notes** and account/prep-note
 notifications. Entry `src/index.ts`, tests in `test/`.
