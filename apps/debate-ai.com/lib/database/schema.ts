@@ -229,6 +229,23 @@ export type FlowPresenceHeartbeatRow = typeof flowPresenceHeartbeats.$inferSelec
 // (append-to-front, dedupe, cap) resolved against the row's current value,
 // the same lost-update fix `favoriteTools`' add/remove ops already use,
 // rather than a client-computed whole-list replace.
+// The QwkSearch account a user linked through "Sign in with QwkSearch"
+// (lib/qwksearch/connect.ts): JSON-serialized `QwkSearchConnection` — API key,
+// profile and plan. The embedded research workspace sends the key with every
+// qwksearch.com API call so chats run as that account. A table of its own
+// rather than a `user_settings` column: Drizzle names every column in an
+// insert, so a new column there breaks every other writer of that table on a
+// database that hasn't gained it yet. lib/qwksearch/store.ts creates this
+// table on first use (CREATE TABLE IF NOT EXISTS), since the app ships no
+// migrations folder.
+export const qwksearchConnection = sqliteTable("qwksearch_connection", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => user.id, { onDelete: "cascade" }),
+  connection: text("connection").notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
+});
+
 export const userSettings = sqliteTable("user_settings", {
   userId: text("user_id")
     .primaryKey()
