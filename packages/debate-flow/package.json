@@ -2,9 +2,17 @@
   "name": "@debate/flow-ebb",
   "version": "0.1.0",
   "description": "ebb, the local-first keyboard-first flow editor, ported in as a workspace package. EbbFlowEmbed mounts it as one column of a host page (@debate/round's live round editor) rather than the page-owning app it is standalone.",
-  "private": true,
   "type": "module",
   "license": "MPL-2.0",
+  "homepage": "https://github.com/debate/debate-ai.com/tree/master/packages/debate-flow#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/debate/debate-ai.com.git",
+    "directory": "packages/debate-flow"
+  },
+  "bugs": {
+    "url": "https://github.com/debate/debate-ai.com/issues"
+  },
   "main": "./src/EbbFlowEmbed.tsx",
   "types": "./src/EbbFlowEmbed.tsx",
   "exports": {
@@ -17,7 +25,8 @@
     "./styles/ebb-scope.css": "./src/styles/ebb-scope.css"
   },
   "files": [
-    "src"
+    "src",
+    "README.md"
   ],
   "scripts": {
     "typecheck": "tsc --noEmit"
@@ -34,7 +43,6 @@
     "@handsontable/react-wrapper": "^18.1.1",
     "@phosphor-icons/react": "^2.1.10",
     "@replit/codemirror-vim": "^6.4.0",
-    "@types/debate": "workspace:*",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dompurify": "^3.4.16",
@@ -44,7 +52,8 @@
     "motion": "^13.4.6",
     "sonner": "^2.0.8",
     "tailwind-merge": "^3.7.0",
-    "zustand": "^5.0.15"
+    "zustand": "^5.0.15",
+    "@debate/types": "workspace:*"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
@@ -60,5 +69,8 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "typescript": "^7.0.2"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

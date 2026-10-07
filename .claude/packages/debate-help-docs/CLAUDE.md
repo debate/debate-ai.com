@@ -1,6 +1,6 @@
 # CLAUDE.md — `debate-help-docs`
 
-Private. The Debate AI documentation, on Fumadocs — a library the web app
+Public (`@debate/` scope). The Debate AI documentation, on Fumadocs — a library the web app
 mounts at `/docs`, not a site of its own.
 
 ## The web app renders it

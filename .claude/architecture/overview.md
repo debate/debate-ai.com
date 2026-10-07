@@ -33,7 +33,7 @@ named surfaces:
 
 ## Packages
 
-Everything is private except `debate-api-client`.
+Every package here is public and publishable to npm under the `@debate/` scope; the apps stay private.
 
 | Directory | Package name | Owns |
 | --- | --- | --- |
@@ -53,7 +53,7 @@ Everything is private except `debate-api-client`.
 | `debate-speech-writer` | *(same)* | The AI prompt library: flow extraction, judge decisions, flaw finding, research outlines, batch quote analysis |
 | `debate-team-collaboration` | *(same)* | Task inbox, prep room, topic sprints, brainstorm assist, group challenges, research-progress tracking, sprint notes, prep notes and notifications |
 | `debate-timer` | *(same)* | Speech and prep timers with per-format speech times; in-round recorder with mic selection, live waveform, playback |
-| `debate-types` | `@types/debate` | Shared type declarations (`.d.ts` only) with a doc comment on every object and field; imported as `"debate"`. Owning packages re-export from it. |
+| `debate-types` | `@debate/types` | Shared type declarations (`.d.ts` only) with a doc comment on every object and field. Owning packages re-export from it. |
 | `debate-videos` | *(same)* | LEARN: video search and filtering, grids and cards, the persistent YouTube player with PiP, lecture pages, rankings |
 
 ## The dependency edges

@@ -1,5 +1,5 @@
 /**
- * @fileoverview `@types/debate` — every shared Debate AI type, in one place.
+ * @fileoverview `@debate/types` — every shared Debate AI type, in one place.
  *
  * Declarations only (`.d.ts`): no constants, no functions, nothing that runs. The
  * owning packages keep their runtime code and re-export the types they used
