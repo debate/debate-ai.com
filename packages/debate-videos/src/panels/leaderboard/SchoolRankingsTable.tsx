@@ -21,7 +21,7 @@ import {
 import { cn } from "../../ui/lib/utils"
 import type { SchoolRanking, SchoolSortKey, SchoolSortState } from "./leaderboardTypes"
 import { schoolHref } from "./profile/rankingProfileHelpers"
-import { LegendaryBadge, ROW_TIER_CLASS, rowTier } from "./rowTier"
+import { LegendaryBadge, ROW_TIER_CLASS, rowTier, type RowTier } from "./rowTier"
 
 /** One table column: which field it shows and how. */
 interface Column {
@@ -32,7 +32,7 @@ interface Column {
   /** Explains how the value is computed. */
   tooltip?: string
   width: number
-  render: (row: SchoolRanking) => React.ReactNode
+  render: (row: SchoolRanking, tier: RowTier) => React.ReactNode
 }
 
 /** A rating rounded to a whole number, leading digits emphasized (matches the division tables). */
@@ -54,9 +54,9 @@ const COLUMNS: Column[] = [
     label: "#",
     numeric: true,
     width: 120,
-    render: (r) => (
+    render: (r, tier) => (
       <>
-        {rowTier(r.rank, r.balancedScore) === "legendary" && <LegendaryBadge />}
+        {tier === "legendary" && <LegendaryBadge />}
         <span className="ml-1 font-semibold">{r.rank}</span>
       </>
     ),
@@ -114,6 +114,8 @@ const COLUMNS: Column[] = [
 interface SchoolRankingsTableProps {
   /** Pre-sorted and pre-filtered rows to render. */
   rows: SchoolRanking[]
+  /** How many top ranks are legendary, from the whole list ({@link legendaryCount}). */
+  legendary: number
   /** Current sort state. */
   sort: SchoolSortState
   /** Called when the user clicks a sortable column header. */
@@ -122,13 +124,13 @@ interface SchoolRankingsTableProps {
 
 /**
  * Renders the Schools table. Every column but Events sorts; the rating
- * columns explain how they are computed. The top five schools are marked
- * legendary and schools with a balanced score of 80+ get a gold border
+ * columns explain how they are computed. The top few schools are marked
+ * legendary (see {@link legendaryCount}) and schools with a balanced score of 80+ get a gold border
  * (see {@link rowTier}). Scrolls horizontally on narrow screens.
  *
  * @param props - See {@link SchoolRankingsTableProps}.
  */
-export function SchoolRankingsTable({ rows, sort, onToggleSort }: SchoolRankingsTableProps) {
+export function SchoolRankingsTable({ rows, legendary, sort, onToggleSort }: SchoolRankingsTableProps) {
   return (
     <div className="rounded-lg border bg-card shadow-sm overflow-x-auto">
       <Table
@@ -184,7 +186,7 @@ export function SchoolRankingsTable({ rows, sort, onToggleSort }: SchoolRankings
         </TableHeader>
         <TableBody>
           {rows.map((row) => {
-            const tier = rowTier(row.rank, row.balancedScore)
+            const tier = rowTier(row.rank, row.balancedScore, legendary)
             return (
             <TableRow key={row.school} data-tier={tier ?? undefined} className={tier ? ROW_TIER_CLASS[tier] : undefined}>
               {COLUMNS.map((col) => (
@@ -196,7 +198,7 @@ export function SchoolRankingsTable({ rows, sort, onToggleSort }: SchoolRankings
                   )}
                   title={col.key === "school" ? row.school : col.key === "bestEntry" ? row.bestEntry : undefined}
                 >
-                  {col.render(row)}
+                  {col.render(row, tier)}
                 </TableCell>
               ))}
             </TableRow>
