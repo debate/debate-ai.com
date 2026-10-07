@@ -41,6 +41,7 @@ import {
   type VideoTreeNode,
 } from "./video-tree"
 import { VideoTreeRows, type VideoTreeRowContext } from "./VideoTreeRows"
+import { WindowedChunk } from "./WindowedChunk"
 import type { VideoType } from "../../types/videos"
 
 export { cleanTournamentName } from "./video-tree"
@@ -159,6 +160,22 @@ const LECTURE_COLUMNS: ColumnDef[] = [
 ]
 
 type SortDirection = "asc" | "desc"
+
+/** Rough height of one table row, for a group body that has never been measured. */
+const ESTIMATED_LIST_ROW_HEIGHT = 44
+
+/**
+ * Rows a node draws when every group is at its default open state for
+ * `collapseDepth` — the same rule `VideoTreeRows` seeds its groups with.
+ */
+function openRowCount(node: VideoTreeNode, depth: number, collapseDepth: number): number {
+  if (node.type !== "group") return 1
+  if (depth + 1 >= collapseDepth) return 1
+  return node.children.reduce(
+    (total, child) => total + openRowCount(child, depth + 1, collapseDepth),
+    1,
+  )
+}
 
 /** The `- Ln +` stepper that opens and closes every group at once. */
 function CollapseLevelControl({
@@ -404,18 +421,28 @@ export function VideoListRows({
               ))}
             </tr>
           </thead>
-          <tbody>
-            {countVideoTreeLeaves(sortedTree) > 0 ? (
-              sortedTree.map((node) => (
+          {/* One body per top-level group, each dropping its rows while it is
+              far off screen: the feed loads the whole library on its own, and
+              a row per video for all of it at once froze the page. */}
+          {countVideoTreeLeaves(sortedTree) > 0 ? (
+            sortedTree.map((node, index) => (
+              <WindowedChunk
+                key={`${effectiveCollapseDepth}-${node.key}`}
+                as="tbody"
+                colSpan={columns.length}
+                initiallyMounted={index < 2}
+                estimatedHeight={ESTIMATED_LIST_ROW_HEIGHT * openRowCount(node, 0, effectiveCollapseDepth)}
+              >
                 <VideoTreeRows
-                  key={`${effectiveCollapseDepth}-${node.key}`}
                   node={node}
                   depth={0}
                   collapseDepth={effectiveCollapseDepth}
                   context={context}
                 />
-              ))
-            ) : (
+              </WindowedChunk>
+            ))
+          ) : (
+            <tbody>
               <tr>
                 <td
                   colSpan={columns.length}
@@ -424,8 +451,8 @@ export function VideoListRows({
                   No videos to show
                 </td>
               </tr>
-            )}
-          </tbody>
+            </tbody>
+          )}
         </table>
       </div>
     </TooltipProvider>
