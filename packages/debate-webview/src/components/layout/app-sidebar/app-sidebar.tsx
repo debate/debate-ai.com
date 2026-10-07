@@ -25,8 +25,8 @@ const EXPANDED_ONLY = "group-data-[collapsible=icon]:hidden"
 
 /**
  * The app's tool sidebar, composed on shadcn's sidebar-07 block: the dock in
- * the header, the tool sections as collapsible `NavMain` groups, the account
- * menu and the collapse trigger in the footer, and a rail that collapses the
+ * the header, the tool sections as collapsible `NavMain` groups followed by
+ * the link rows, the account menu and the collapse trigger in the footer, and a rail that collapses the
  * whole column to icons. There is no brand row — the dock's destinations are
  * the way home, and the header's height goes to them.
  *
@@ -73,15 +73,17 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
             <NavMain />
           </ChromeErrorBoundary>
         )}
-      </SidebarContent>
-      <SidebarFooter>
+        {/* The link rows sit at the end of the scrolling content, not in the
+            pinned footer, so they scroll away with the tool sections. */}
         {!cardsOnly && (
-          <div className={`${EXPANDED_ONLY} px-2`}>
+          <div className={`${EXPANDED_ONLY} mt-auto px-2`}>
             <ChromeErrorBoundary label="ToolSidebarFooter">
               <ToolSidebarFooter />
             </ChromeErrorBoundary>
           </div>
         )}
+      </SidebarContent>
+      <SidebarFooter>
         {/* Side by side when expanded; stacked at icon width, where the
             trigger is how you get the column back. */}
         <div className="flex items-center gap-1 group-data-[collapsible=icon]:flex-col-reverse">
