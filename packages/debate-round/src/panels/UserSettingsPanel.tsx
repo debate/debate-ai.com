@@ -151,7 +151,7 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
   // so it lives outside `form` and applies as soon as it's picked rather than
   // waiting on the Save button below.
   const [fontFamily, setFontFamily] = useState(DEFAULT_FONT_FAMILY)
-  const flowAutoSave = useSyncExternalStore(subscribeFlowAutoSavePreference, isFlowAutoSaveEnabled, () => true)
+  const flowAutoSaveEnabled = useSyncExternalStore(subscribeFlowAutoSavePreference, isFlowAutoSaveEnabled, () => true)
   // The last values `form` was loaded/saved from — i.e. what's actually
   // persisted right now, as far as this tab knows. The cross-tab
   // `storage`-event handler below only refreshes a field whose current
@@ -167,24 +167,6 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
   useEffect(() => {
     setFontFamily(readLocalFontFamily())
     setFlowAutoSave(readFlowAutoSaveMode())
-  }, [])
-
-  // Adopt the account's auto-save mode on mount (a new device has none locally).
-  useEffect(() => {
-    let cancelled = false
-    fetchUserSettings()
-      .then((remote) => {
-        const mode = remote?.flowAutoSave
-        if (cancelled || !isFlowAutoSaveMode(mode)) return
-        setFlowAutoSave(mode)
-        setFlowAutoSaveMode(mode)
-      })
-      .catch(() => {
-        // Signed out or offline: keep the device-local value.
-      })
-    return () => {
-      cancelled = true
-    }
   }, [])
 
   const handleFlowAutoSaveChange = (value: string) => {
@@ -224,10 +206,6 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
         if (cancelled) return
         if (remote) {
           setRemoteAvailable(true)
-          if (isFlowAutoSaveMode(remote.flowAutoSave)) {
-            setFlowAutoSave(remote.flowAutoSave)
-            setFlowAutoSaveMode(remote.flowAutoSave)
-          }
           const { debateStyle, fontSize, colorTheme, themeMode } = remote
           const remoteForm: FormState = { debateStyle, fontSize, colorTheme, themeMode }
           setForm(remoteForm)
@@ -236,11 +214,11 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
           applyThemeLocally(colorTheme, themeMode, setTheme)
           // Adopt the account's auto-save mode; with none chosen yet, seed it from
           // this device's choice so other devices pick it up.
-          if (isFlowAutoSaveMode(remote.flowAutoSaveMode)) {
-            setFlowAutoSave(remote.flowAutoSaveMode)
-            setFlowAutoSaveMode(remote.flowAutoSaveMode)
+          if (isFlowAutoSaveMode(remote.flowAutoSave)) {
+            setFlowAutoSave(remote.flowAutoSave)
+            setFlowAutoSaveMode(remote.flowAutoSave)
           } else if (readFlowAutoSaveMode() !== DEFAULT_FLOW_AUTO_SAVE_MODE) {
-            void saveUserSettings({ flowAutoSaveMode: readFlowAutoSaveMode() }).catch(() => {})
+            void saveUserSettings({ flowAutoSave: readFlowAutoSaveMode() }).catch(() => {})
           }
         }
       })
@@ -442,9 +420,9 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor="settings-flow-auto-save">Flow auto-save</Label>
+          <Label htmlFor="settings-flow-auto-save-mode">Flow auto-save</Label>
           <Select value={flowAutoSave} onValueChange={handleFlowAutoSaveChange}>
-            <SelectTrigger id="settings-flow-auto-save">
+            <SelectTrigger id="settings-flow-auto-save-mode">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -505,7 +483,7 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
             <input
               id="settings-flow-auto-save"
               type="checkbox"
-              checked={flowAutoSave}
+              checked={flowAutoSaveEnabled}
               onChange={(event) => setFlowAutoSaveEnabled(event.target.checked)}
             />
             <Label htmlFor="settings-flow-auto-save">Auto-save flows to my account</Label>

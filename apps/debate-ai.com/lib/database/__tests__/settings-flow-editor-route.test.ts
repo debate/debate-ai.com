@@ -90,8 +90,8 @@ describe("/api/settings flowAutoSave", () => {
     await db.insert(schema.user).values({ id: "user-1", name: "u", email: "u@example.com", createdAt: now, updatedAt: now });
   });
 
-  it("defaults to saved, persists a mode, and rejects unknown values", async () => {
-    expect((await (await get()).json()).flowAutoSave).toBe("saved");
+  it("is null until set, persists a mode, and rejects unknown values", async () => {
+    expect((await (await get()).json()).flowAutoSave).toBeNull();
     expect((await put({ flowAutoSave: "all" })).status).toBe(200);
     expect((await (await get()).json()).flowAutoSave).toBe("all");
     const bad = await put({ flowAutoSave: "sometimes" });
