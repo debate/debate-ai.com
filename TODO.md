@@ -98,7 +98,7 @@
 - [x] Sync the auto-save mode to the account: `user_settings.flow_auto_save` column, `flowAutoSave` on `/api/settings` (`normalizeFlowAutoSavePatch`/`parseFlowAutoSave`), `UserSettingsPanel` adopts the account value on load and pushes changes; tests `flowAutoSaveSettings.test.ts`, route test in `settings-flow-editor-route.test.ts` (needs `debate-rankings` submodule); branch `claude/gifted-babbage-r2apft`
 - [ ] Follow-up: deploy must add the nullable `flow_auto_save` column
 - [x] `ebb-dev-flow-files` / `ebb-dev-recents` stay browser-only on purpose: `flowFsMemory.ts` documents them as a dev/test stand-in, not a product surface (real flows sync through `saved_flows`). `REASON-file-sources` already syncs (`toolRecordCollections.ts`)
-- [ ] Follow-up: `REASON-documents` (REASON Docs documents, `QWKSEARCH_DOCS_STORAGE_KEY` in `debate-webview/src/lib/qwksearch/doc-paths.ts`) has no catalog entry and is still browser-only; needs a redaction/size review like `redact-file-source.ts` before it is added
+- [x] `REASON-documents` needs no catalog entry (verified 2026-10-07): the `localStorage` key is only a read cache for the editor. Every edit already reaches the D1 `documents` table per user through `save-queue.ts` -> `PUT /api/doc/documents/:id` (`apps/debate-ai.com/app/api/doc/documents`, `ReasonDocsProvider`). Ids are server-assigned numbers, and a second copy under `saved_tool_records` would duplicate content and race the save queue. No redaction/size review is needed because nothing new leaves the browser
 
 ### Tool UI pass: tool page header
 
