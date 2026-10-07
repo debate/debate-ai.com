@@ -1,6 +1,6 @@
 /**
  * @fileoverview Lettered badge icons for the debate-format rows of the videos
- * sidebar: NDT (College Debates), VP (Policy), PF and LD.
+ * sidebar: NDT (College Debates), CX (Policy), PF and LD.
  *
  * Each is a rounded outline with the format's abbreviation inside, drawn on a
  * 280×168 canvas. They are typed as `LucideIcon` so they drop into

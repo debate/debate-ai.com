@@ -6,7 +6,7 @@ title: "Learn Flashcards Cloud Sync"
 
 Syncs the CONTENT (`id`/`type`/`front`/`back`) of CardMirror's Learn
 spaced-repetition flashcards to a signed-in user's account, closing the
-same account-linking gap [Quick Cards Cloud Save](/docs/features/quick-cards-cloud-save)
+same account-linking gap [Quick Cards Cloud Save](/docs/features/ui-navigation/quick-cards-cloud-save)
 closed for the reusable-snippet library — the Learn store
 (`packages/debate-editor/src/editor/learn-store.ts`) was device-local
 only.
@@ -36,8 +36,8 @@ schedule pressure, the same way the manage GUI's own JSON export/import
 already treats a card whose carried schedule is absent — restoring a card
 is not meant to restore a specific device's review history. **Custom
 decks** and the **review log** each sync separately — see
-[Learn Decks Cloud Sync](/docs/features/learn-decks-cloud-sync) and
-[Learn Review Log Cloud Sync](/docs/features/learn-review-log-cloud-sync).
+[Learn Decks Cloud Sync](/docs/features/research-evidence/learn-decks-cloud-sync) and
+[Learn Review Log Cloud Sync](/docs/features/research-evidence/learn-review-log-cloud-sync).
 The remaining sub-collections (anchors, AI threads, notes, doc registry)
 live in one shared blob per device (not one row per record), so they
 don't fit this sync's per-record shape; syncing them would need a bespoke
@@ -51,7 +51,7 @@ device that hasn't reached this browser yet. On that rejection, this
 browser adopts the newer version into its own `LearnStore` instead of
 losing it, the same "never overwrite, only reconcile" rule `init()`'s merge
 already follows — mirroring
-[Quick Cards Cloud Save](/docs/features/quick-cards-cloud-save)'s own fix
+[Quick Cards Cloud Save](/docs/features/ui-navigation/quick-cards-cloud-save)'s own fix
 for the identical race. `CardDef` didn't carry an `updatedAt` field before
 this: it's now stamped by `upsertCard`/`importCards` themselves (not by
 callers), and stays optional on the type so a card written before this

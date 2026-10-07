@@ -53,7 +53,7 @@ also fixed: every code path that changes a collection
 `renameSavedArgumentCollection`/`updateSavedArgumentCollectionTags` op
 instead, resolved by `/api/settings` against the account's row as it stands
 at write time rather than a client-computed whole-list replace — mirroring
-[User Settings](/docs/features/user-settings)'s `favoriteTools` fix. A plain
+[User Settings](/docs/features/ui-navigation/user-settings)'s `favoriteTools` fix. A plain
 whole-list `savedArgumentCollections` replace is still accepted by the route
 for a caller that genuinely needs one, but nothing in the app sends one
 anymore.
