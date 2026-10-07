@@ -23,6 +23,7 @@ import { getRoundRecordingShareEmails } from "../round/round-recording-share"
 import { settings } from "../state/settings"
 import { cn } from "../ui/lib/utils"
 import { useAiOutcomeResponsesAction } from "../dialogs/AiOutcomeResponsesDialog"
+import { useClarityRequestAction } from "../hooks/useClarityRequests"
 
 /** Resolve which debater email corresponds to a given speech column name. */
 function getSpeakerEmail(speechName: string, round: Round): string {
@@ -251,10 +252,11 @@ export function SpeechHeaderBar({
     : 0
 
   const outcomeResponses = useAiOutcomeResponsesAction(speechName)
+  const clarityRequest = useClarityRequestAction(speechName)
 
   const recordingMenu = (labeled: boolean) => (
     <SpeechRecordingMenu
-      actions={[outcomeResponses.action]}
+      actions={clarityRequest ? [clarityRequest, outcomeResponses.action] : [outcomeResponses.action]}
       speechName={speechName}
       speechLabel={speechName}
       micDeviceId={micDeviceId}

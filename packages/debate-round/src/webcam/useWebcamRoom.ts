@@ -242,8 +242,8 @@ export function useWebcamRoom(roomId: string, { apiBase = "/api/rooms", role = "
           case "room-event":
             if (msg.event === "mute-state") upsert(msg.from, { micOn: !(msg.payload as { muted?: boolean })?.muted })
             if (msg.event === "camera-state") upsert(msg.from, { camOn: !(msg.payload as { off?: boolean })?.off })
-            // Emit custom event for speech-doc-headings and timer-sync so other hooks can listen
-            if (msg.event === "speech-doc-headings" || msg.event === "timer-sync") {
+            // Emit custom event for speech-doc-headings, timer-sync and clarity-request so other hooks can listen
+            if (msg.event === "speech-doc-headings" || msg.event === "timer-sync" || msg.event === "clarity-request") {
               window.dispatchEvent(
                 new CustomEvent(`room-${msg.event}`, {
                   detail: { from: msg.from, event: msg.event, payload: msg.payload },
