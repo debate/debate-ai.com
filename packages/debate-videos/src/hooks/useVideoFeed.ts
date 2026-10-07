@@ -34,19 +34,6 @@ import type {
 /** Videos requested per page; one screenful of grid plus headroom. */
 export const VIDEO_PAGE_SIZE = 60;
 
-/**
- * Hard ceiling on how many videos one feed will hold in memory at once.
- *
- * The grid is not virtualised: every loaded video is a mounted card with a
- * thumbnail, a tooltip provider and a glow subscriber, and infinite scroll
- * appended pages for as long as the library had more to give. A category with
- * a few thousand videos therefore ended with a few thousand live cards, which
- * is what made the page stop responding to clicks a while after it looked
- * loaded. Automatic paging stops here and the view offers an explicit
- * "Load more" instead, so the page can never grow without bound on its own.
- */
-export const MAX_LOADED_VIDEOS = 600;
-
 /** Filters describing one video feed. */
 export interface VideoFeedFilters {
   /** Restrict to rounds or lectures; `"all"` spans both. */
@@ -126,16 +113,11 @@ export interface VideoFeed {
   /** Human-readable error message, or an empty string. */
   errorMessage: string;
   /**
-   * `true` once {@link MAX_LOADED_VIDEOS} videos are loaded and more remain.
-   * Automatic paging stops here; a forced `loadMore` still works, so the view
-   * can put the next page behind a button the user presses deliberately.
+   * Requests the next page; a no-op when one is already in flight or when the
+   * feed is exhausted. The feed has no ceiling: the views stay responsive by
+   * keeping only the on-screen cards mounted (see `WindowedChunk`).
    */
-  atCapacity: boolean;
-  /**
-   * Requests the next page; a no-op when one is already in flight, when the
-   * feed is exhausted, or when it is at capacity and `force` is not set.
-   */
-  loadMore: (options?: { force?: boolean }) => void;
+  loadMore: () => void;
   /** Refetches the feed from the first page. */
   reload: () => void;
 }
@@ -270,8 +252,8 @@ export function useVideoFeed(filters: VideoFeedFilters): VideoFeed {
   /**
    * Appends (or replaces) one page of results, whichever side answered.
    *
-   * Shared by the cached and the networked path so the de-duplication, the
-   * offset bookkeeping and the capacity accounting cannot drift apart.
+   * Shared by the cached and the networked path so the de-duplication and the
+   * offset bookkeeping cannot drift apart.
    */
   const applyPage = useCallback(
     (
@@ -408,21 +390,10 @@ export function useVideoFeed(filters: VideoFeedFilters): VideoFeed {
     void fetchPage(0);
   }, [indexReady, enabled, fetchPage]);
 
-  // Reached the ceiling with more still available: automatic paging stops and
-  // the view puts the next page behind a button. `videos.length` rather than
-  // `loadedRef` so this is state the render actually depends on.
-  const atCapacity = hasMore && videos.length >= MAX_LOADED_VIDEOS;
-
-  const loadMore = useCallback(
-    (options?: { force?: boolean }) => {
-      if (!enabled || isLoading || isLoadingMore || !hasMore) return;
-      // Only a deliberate press gets past the ceiling, and only by one page:
-      // `atCapacity` goes true again as soon as that page lands.
-      if (atCapacity && !options?.force) return;
-      void fetchPage(nextOffsetRef.current);
-    },
-    [enabled, isLoading, isLoadingMore, hasMore, atCapacity, fetchPage],
-  );
+  const loadMore = useCallback(() => {
+    if (!enabled || isLoading || isLoadingMore || !hasMore) return;
+    void fetchPage(nextOffsetRef.current);
+  }, [enabled, isLoading, isLoadingMore, hasMore, fetchPage]);
 
   const reload = useCallback(() => setReloadToken((token) => token + 1), []);
 
@@ -434,7 +405,6 @@ export function useVideoFeed(filters: VideoFeedFilters): VideoFeed {
     isLoading,
     isLoadingMore,
     errorMessage,
-    atCapacity,
     loadMore,
     reload,
   };

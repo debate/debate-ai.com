@@ -1,18 +1,14 @@
 // @vitest-environment jsdom
 /**
- * @fileoverview Pins the limits that stop the video feed from growing until
- * the page stops responding.
+ * @fileoverview Pins how the video feed pages.
  *
- * The grid is not virtualised: every loaded video is a mounted card carrying a
- * thumbnail, a tooltip provider and a glow subscriber, and infinite scroll
- * appended a page each time the sentinel came into view. On a category with a
- * few thousand videos that meant a few thousand live cards — which is what
- * made the page freeze a while after it looked finished loading — and a feed
- * whose server order shifted underneath it could append the same rows over
- * and over without ever advancing.
+ * The feed loads pages on its own for as long as the library has more; the
+ * views stay responsive by keeping only the on-screen cards mounted (see
+ * `WindowedChunk`). A feed whose server order shifted underneath it used to
+ * append the same rows over and over without ever advancing.
  *
- * Three guards, one test each:
- *   - a hard ceiling past which scrolling no longer pages;
+ * Guards, one test each:
+ *   - paging continues to the end of the library, with no ceiling;
  *   - ids are appended once, however often the server returns them;
  *   - a page of nothing ends the feed rather than being asked for again.
  */
@@ -41,7 +37,7 @@ vi.mock("grab-url", () => ({
 
 import type { VideoFeed } from "../src/hooks/useVideoFeed";
 
-const { useVideoFeed, MAX_LOADED_VIDEOS, VIDEO_PAGE_SIZE } = await import(
+const { useVideoFeed, VIDEO_PAGE_SIZE } = await import(
   "../src/hooks/useVideoFeed"
 );
 
@@ -83,39 +79,30 @@ afterEach(async () => {
   vi.restoreAllMocks();
 });
 
-describe("useVideoFeed capacity ceiling", () => {
-  it("stops automatic paging at the ceiling and only a forced call gets past", async () => {
-    // A library far larger than the ceiling: every page reports more to come.
-    respond = (params) => ({
-      videos: rows(Number(params.offset), VIDEO_PAGE_SIZE),
-      total: 10_000,
-      hasMore: true,
-    });
+describe("useVideoFeed paging", () => {
+  it("keeps paging to the end of the library with no ceiling", async () => {
+    // Far more than the 600 the feed used to stop at.
+    const total = VIDEO_PAGE_SIZE * 15;
+    respond = (params) => {
+      const offset = Number(params.offset);
+      const count = Math.min(VIDEO_PAGE_SIZE, total - offset);
+      return { videos: rows(offset, count), total, hasMore: offset + count < total };
+    };
 
     await mountFeed();
     expect(feed.videos).toHaveLength(VIDEO_PAGE_SIZE);
-    expect(feed.atCapacity).toBe(false);
 
-    // Page in as far as the automatic path is willing to go. The extra
-    // iterations are the point: past the ceiling they must do nothing.
-    for (let i = 0; i < MAX_LOADED_VIDEOS / VIDEO_PAGE_SIZE + 5; i++) {
+    for (let i = 0; i < 20 && feed.hasMore; i++) {
       await act(async () => feed.loadMore());
     }
 
-    expect(feed.videos.length).toBeLessThanOrEqual(MAX_LOADED_VIDEOS);
-    expect(feed.atCapacity).toBe(true);
+    expect(feed.videos).toHaveLength(total);
+    expect(feed.hasMore).toBe(false);
 
-    // The sentinel firing again — the state the runaway used to live in —
-    // buys nothing at all.
+    // Once exhausted, another call asks for nothing.
     const settled = requests.length;
     await act(async () => feed.loadMore());
     expect(requests).toHaveLength(settled);
-
-    // A deliberate press still works, and by exactly one page.
-    await act(async () => feed.loadMore({ force: true }));
-    expect(requests).toHaveLength(settled + 1);
-    expect(feed.videos).toHaveLength(MAX_LOADED_VIDEOS + VIDEO_PAGE_SIZE);
-    expect(feed.atCapacity).toBe(true);
   });
 
   it("appends a video once however often the server returns it", async () => {
