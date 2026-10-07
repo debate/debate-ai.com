@@ -14,7 +14,6 @@
  */
 
 import {
-  Activity,
   Book,
   BookOpen,
   BookMarked,
@@ -60,7 +59,6 @@ export const FOOTER_LINKS: FooterLink[] = [
   // { url: "/practice/features", text: "Features", icon: LayoutGrid },
   { url: "https://github.com/debate", text: "Github", icon: SiGithub },
   { url: "https://discord.gg/wMxeKZ3c9e", text: "Support", icon: FaDiscord },
-  { url: "https://status.debate-ai.com", text: "Status", icon: Activity },
   { url: "/legal/privacy", text: "Privacy", icon: LockKeyhole },
   { url: "https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/", text: "Reddit", icon: SiReddit },
   // { url: "https://www.tabroom.com/index/index.mhtml", text: "Tournaments", icon: Calendar },

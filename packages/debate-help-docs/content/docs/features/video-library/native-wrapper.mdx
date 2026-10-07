@@ -22,7 +22,17 @@ embedded webview. A deep link (`debateai://auth-callback`) hands a
 one-time token back to the wrapper's window after the browser completes
 sign-in.
 
+## Camera and microphone
+
+The webcam room and the speech recorder work in the app. The first time a
+page turns the camera or microphone on, the operating system asks once
+(macOS shows "Debate AI would like to access the camera"); the app itself
+does not ask again for its own pages. If the camera still won't turn on,
+check the OS privacy settings for Debate AI.
+
 ## Known gaps
 
 No auto-update yet. Android/iOS projects are scaffolded but not generated
-or exercised end-to-end. No store submissions have been made.
+or exercised end-to-end. No store submissions have been made. Camera and microphone
+access is not set up for the Android/iOS builds yet (their manifests need the
+camera permissions added after `tauri android init` / `tauri ios init`).
