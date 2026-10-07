@@ -2,6 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   DEFAULT_FLOW_AUTO_SAVE_MODE,
   isFlowAutoSaveMode,
+  normalizeFlowAutoSavePatch,
+  parseStoredFlowAutoSave,
   readFlowAutoSaveMode,
   setFlowAutoSaveMode,
 } from "../src/state/flowAutoSaveSettings";
@@ -47,5 +49,29 @@ describe("flow auto-save preference", () => {
     });
     expect(readFlowAutoSaveMode()).toBe("saved");
     expect(() => setFlowAutoSaveMode("all")).not.toThrow();
+  });
+});
+
+describe("flowAutoSave account patch", () => {
+  it("ignores bodies without the field", () => {
+    expect(normalizeFlowAutoSavePatch({ fontSize: 3 })).toEqual({ valid: {}, errors: [] });
+    expect(normalizeFlowAutoSavePatch(null)).toEqual({ valid: {}, errors: [] });
+  });
+
+  it("accepts each mode and rejects anything else", () => {
+    for (const mode of ["off", "saved", "all"]) {
+      expect(normalizeFlowAutoSavePatch({ flowAutoSave: mode }).valid).toEqual({ flowAutoSave: mode });
+    }
+    for (const bad of ["always", "", null, 1, undefined]) {
+      const result = normalizeFlowAutoSavePatch({ flowAutoSave: bad });
+      expect(result.valid).toEqual({});
+      expect(result.errors).toHaveLength(1);
+    }
+  });
+
+  it("parses stored values, treating unknown/null as not synced", () => {
+    expect(parseStoredFlowAutoSave("all")).toBe("all");
+    expect(parseStoredFlowAutoSave("bogus")).toBeNull();
+    expect(parseStoredFlowAutoSave(null)).toBeNull();
   });
 });

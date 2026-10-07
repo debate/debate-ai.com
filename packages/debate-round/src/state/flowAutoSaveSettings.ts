@@ -4,8 +4,9 @@
  * already on the account, `"all"` also uploads flows with no account baseline
  * (never saved, or not yet restored after a reload), `"off"` disables it.
  *
- * Stored in `localStorage` like the font family: it applies immediately and is
- * not synced to `/api/settings`. Reads fall back to the default when storage is
+ * Stored in `localStorage` so it applies immediately; `UserSettingsPanel` also
+ * mirrors it to the account (`user_settings.flow_auto_save` via `/api/settings`)
+ * so a new device adopts it. Reads fall back to the default when storage is
  * unavailable or holds an unknown value.
  *
  * @module state/flowAutoSaveSettings
@@ -37,4 +38,24 @@ export function setFlowAutoSaveMode(mode: FlowAutoSaveMode): void {
   } catch {
     // Storage blocked: the choice just won't persist past this page.
   }
+}
+
+export type FlowAutoSavePatchResult = {
+  valid: { flowAutoSave?: FlowAutoSaveMode };
+  errors: string[];
+};
+
+/** Validates the optional `flowAutoSave` field of a `/api/settings` PUT body. */
+export function normalizeFlowAutoSavePatch(input: unknown): FlowAutoSavePatchResult {
+  if (typeof input !== "object" || input === null || Array.isArray(input) || !("flowAutoSave" in input)) {
+    return { valid: {}, errors: [] };
+  }
+  const value = (input as { flowAutoSave: unknown }).flowAutoSave;
+  if (isFlowAutoSaveMode(value)) return { valid: { flowAutoSave: value }, errors: [] };
+  return { valid: {}, errors: [`"flowAutoSave" must be one of: ${FLOW_AUTO_SAVE_MODES.join(", ")}.`] };
+}
+
+/** Reads the stored `flow_auto_save` column; `null`/unknown means "nothing synced yet". */
+export function parseStoredFlowAutoSave(raw: string | null | undefined): FlowAutoSaveMode | null {
+  return isFlowAutoSaveMode(raw) ? raw : null;
 }
