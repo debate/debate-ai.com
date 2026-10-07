@@ -19,7 +19,7 @@ vi.mock("next/navigation", () => ({
 
 const { LibrarySidebarTree } = await import("../src/components/category-gallery/LibrarySidebarTree");
 const { SIDEBAR_TOOL_SECTIONS } = await import("../src/components/category-gallery/sidebar-tool-sections");
-const { ResizableSidebarLayout, SIDEBAR_DEFAULT_WIDTH, SIDEBAR_MAX_WIDTH, SIDEBAR_MIN_WIDTH, isNearSidebarEdge, sidebarPeekWidth } =
+const { ResizableSidebarLayout, SIDEBAR_DEFAULT_WIDTH, SIDEBAR_MAX_WIDTH, SIDEBAR_MIN_WIDTH, isNearSidebarEdge, isSidebarMenuOpen, sidebarPeekWidth } =
   await import("../src/ui/layout/ResizableSidebarLayout");
 const {
   SIDEBAR_COLLAPSED_KEY,
@@ -104,5 +104,14 @@ describe("hidden sidebar peek", () => {
     expect(sidebarPeekWidth(360)).toBe(360);
     expect(sidebarPeekWidth(10)).toBe(SIDEBAR_MIN_WIDTH);
     expect(sidebarPeekWidth(5000)).toBe(SIDEBAR_MAX_WIDTH);
+  });
+
+  it("stays out for an open menu, but not for an expanded tree section", () => {
+    const aside = document.createElement("aside");
+    aside.innerHTML = '<button aria-expanded="true">Research</button><button aria-haspopup="menu" aria-expanded="false">Me</button>';
+    expect(isSidebarMenuOpen(aside)).toBe(false);
+    aside.querySelector("[aria-haspopup]")!.setAttribute("aria-expanded", "true");
+    expect(isSidebarMenuOpen(aside)).toBe(true);
+    expect(isSidebarMenuOpen(null)).toBe(false);
   });
 });
