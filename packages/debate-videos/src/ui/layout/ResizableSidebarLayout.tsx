@@ -38,6 +38,8 @@
  *   slides away again {@link SIDEBAR_PEEK_HIDE_DELAY_MS} after the pointer
  *   leaves it (or on Escape), and the collapsed choice is left as it was. A
  *   menu opened from inside it (the account menu) keeps it out while open.
+ *   Each entrance and exit is one of ten anime.js animations picked at random
+ *   (`sidebar-peek-animations.ts`), or none under reduced motion.
  *
  * While a drag is in progress the library sets `pointer-events: none` on the
  * panels, so a same-origin frame in the content column cannot swallow the
@@ -53,6 +55,13 @@ import { Group, Panel, Separator, usePanelRef, type PanelSize } from "react-resi
 
 import { cn } from "../lib/utils"
 import { setSidebarCollapsed, toggleSidebarCollapsed, useSidebarCollapsed } from "./sidebar-collapse"
+import {
+  pickPeekAnimation,
+  playPeekAnimation,
+  prefersReducedMotion,
+  type PeekAnimation,
+} from "./sidebar-peek-animations"
+import type { JSAnimation } from "animejs"
 
 /** localStorage key for the sidebar width the user last dragged to, in px. */
 export const SIDEBAR_WIDTH_KEY = "app-sidebar-width"
@@ -156,6 +165,23 @@ export function ResizableSidebarLayout({
   const [peeking, setPeeking] = useState(false)
   const [peekWidth, setPeekWidth] = useState(SIDEBAR_DEFAULT_WIDTH)
   const peek = collapsed && peeking
+  // The animation picked for the current peek, and the one playing on the column.
+  const peekAnimation = useRef<PeekAnimation | null>(null)
+  const playing = useRef<JSAnimation | null>(null)
+
+  // Play the entrance once the column is rendered as an overlay; once it is
+  // back in the panel, drop whatever inline styles the animations left.
+  useLayoutEffect(() => {
+    const aside = asideRef.current
+    if (!aside) return
+    playing.current?.cancel()
+    playing.current = null
+    if (peek && peekAnimation.current && !prefersReducedMotion()) {
+      playing.current = playPeekAnimation(aside, peekAnimation.current, "in")
+    } else if (!peek) {
+      for (const prop of ["transform", "transform-origin", "opacity", "filter"]) aside.style.removeProperty(prop)
+    }
+  }, [peek])
 
   useEffect(() => {
     if (!collapsed) {
@@ -164,6 +190,8 @@ export function ResizableSidebarLayout({
     }
     let hideTimer: ReturnType<typeof setTimeout> | null = null
     let open = false
+    // Mid-exit: still rendered as an overlay while the exit animation plays.
+    let leaving = false
     const cancelHide = () => {
       if (hideTimer !== null) clearTimeout(hideTimer)
       hideTimer = null
@@ -172,13 +200,35 @@ export function ResizableSidebarLayout({
       cancelHide()
       if (open) return
       open = true
+      peekAnimation.current = pickPeekAnimation(peekAnimation.current)
+      const aside = asideRef.current
+      if (leaving && aside) {
+        // Caught mid-exit: come straight back in with a new animation.
+        leaving = false
+        playing.current?.cancel()
+        playing.current = prefersReducedMotion() ? null : playPeekAnimation(aside, peekAnimation.current, "in")
+        return
+      }
       setPeekWidth(sidebarPeekWidth(readStoredWidth()))
       setPeeking(true)
     }
     const hide = () => {
       cancelHide()
+      if (!open) return
       open = false
-      setPeeking(false)
+      const aside = asideRef.current
+      if (!aside || prefersReducedMotion()) {
+        setPeeking(false)
+        return
+      }
+      leaving = true
+      peekAnimation.current = pickPeekAnimation(peekAnimation.current)
+      playing.current?.cancel()
+      playing.current = playPeekAnimation(aside, peekAnimation.current, "out", () => {
+        if (!leaving) return
+        leaving = false
+        setPeeking(false)
+      })
     }
     // A menu opened from inside the column renders outside it; the column
     // stays out until that menu closes, then goes as soon as it does.
@@ -231,6 +281,7 @@ export function ResizableSidebarLayout({
       window.removeEventListener("blur", scheduleHide)
       aside?.removeEventListener("pointerleave", onAsideLeave)
       aside?.removeEventListener("pointerenter", onAsideEnter)
+      leaving = false
       setPeeking(false)
     }
   }, [collapsed])
@@ -310,7 +361,7 @@ export function ResizableSidebarLayout({
             "hidden md:flex min-w-0 flex-col h-screen top-0 overflow-hidden data-[collapsed]:invisible",
             peek
               ? // Over the page, not beside it: the content column keeps its width.
-                "fixed left-0 z-50 border-r border-border bg-background/85 shadow-2xl backdrop-blur-md animate-in slide-in-from-left duration-200"
+                "fixed left-0 z-50 border-r border-border bg-background/85 shadow-2xl backdrop-blur-md"
               : "sticky w-full bg-background/40",
           )}
         >

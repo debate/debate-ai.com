@@ -21,6 +21,7 @@ const { LibrarySidebarTree } = await import("../src/components/category-gallery/
 const { SIDEBAR_TOOL_SECTIONS } = await import("../src/components/category-gallery/sidebar-tool-sections");
 const { ResizableSidebarLayout, SIDEBAR_DEFAULT_WIDTH, SIDEBAR_MAX_WIDTH, SIDEBAR_MIN_WIDTH, isNearSidebarEdge, isSidebarMenuOpen, sidebarPeekWidth } =
   await import("../src/ui/layout/ResizableSidebarLayout");
+const { PEEK_ANIMATIONS, pickPeekAnimation } = await import("../src/ui/layout/sidebar-peek-animations");
 const {
   SIDEBAR_COLLAPSED_KEY,
   readSidebarCollapsed,
@@ -113,5 +114,19 @@ describe("hidden sidebar peek", () => {
     aside.querySelector("[aria-haspopup]")!.setAttribute("aria-expanded", "true");
     expect(isSidebarMenuOpen(aside)).toBe(true);
     expect(isSidebarMenuOpen(null)).toBe(false);
+  });
+
+  it("comes and goes with one of ten animations, never the same twice running", () => {
+    expect(PEEK_ANIMATIONS).toHaveLength(10);
+    expect(new Set(PEEK_ANIMATIONS.map((a) => a.name)).size).toBe(10);
+    for (const a of PEEK_ANIMATIONS) {
+      expect(a.in).toBeTruthy();
+      expect(a.out).toBeTruthy();
+    }
+    expect(pickPeekAnimation(null, () => 0)).toBe(PEEK_ANIMATIONS[0]);
+    expect(pickPeekAnimation(null, () => 0.999)).toBe(PEEK_ANIMATIONS[9]);
+    for (const previous of PEEK_ANIMATIONS) {
+      for (const r of [0, 0.5, 0.999]) expect(pickPeekAnimation(previous, () => r)).not.toBe(previous);
+    }
   });
 });
