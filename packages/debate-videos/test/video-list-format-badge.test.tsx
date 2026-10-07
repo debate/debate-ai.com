@@ -12,7 +12,7 @@ import type { DebateStyle, VideoType } from "../src/types/videos";
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: () => {} }),
   useParams: () => ({}),
-  usePathname: () => "/videos/goat-status",
+  usePathname: () => "/videos/goat",
 }));
 
 const { VideoListRows } = await import("../src/components/video-grid/VideoListRows");
