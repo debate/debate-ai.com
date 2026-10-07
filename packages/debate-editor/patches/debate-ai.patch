@@ -369,7 +369,7 @@ index 33d941f..ca5bb8f 100644
    return (
      getElectronHost() !== null &&
 diff --git a/src/editor/index.ts b/src/editor/index.ts
-index 927a931..b36764a 100644
+index 927a931..bdbf7c6 100644
 --- a/src/editor/index.ts
 +++ b/src/editor/index.ts
 @@ -23,6 +23,7 @@ import { transformForExport, countMarkedCards } from '../export/transform-for-ex
@@ -434,9 +434,15 @@ index 927a931..b36764a 100644
  import { setRePickOpener, setOpenSourceOpener } from './transclusion-actions.js';
  import { isLiteBuild } from './lite.js';
  import { isTransclusionNode, fragmentHasZone } from './transclusion.js';
-@@ -485,6 +498,10 @@ if (!getElectronHost() && !isLiteBuild() && window.location.hash.includes('join=
+@@ -483,8 +496,15 @@ if (!getElectronHost() && !isLiteBuild() && window.location.hash.includes('join=
+ // mobile UI has no ribbon to tour). The module polls for the editor
+ // chrome itself, so first boots that land on the home screen tour on
  // the first opened document instead.
- if (!isMobileLayout()) {
+-if (!isMobileLayout()) {
++// Skipped entirely when embedded in debate-ai.com: the site's panels
++// open CardMirror constantly, and a tour (or nudge) on top of every
++// first open buried the document. Help → UI tour still starts it.
++if (!isMobileLayout() && !detectEmbedded()) {
    void import('./ui-tour.js').then((m) => m.maybeAutoStartUiTour());
 +  // Verbatim onboarding nudge: a one-time pointer at the shortcuts
 +  // reference for whoever the tour above doesn't walk through it
@@ -445,7 +451,7 @@ index 927a931..b36764a 100644
  }
  
  // Tag the body with the host kind so CSS can gate platform-specific chrome
-@@ -538,7 +555,6 @@ export function attachClickBelowToEnd(
+@@ -538,7 +558,6 @@ export function attachClickBelowToEnd(
  // own per-record surface in `buildDocRecord`.
  attachClickBelowToEnd(editorEl, () => view);
  const navEl = document.getElementById('nav-panel')!;
@@ -453,7 +459,7 @@ index 927a931..b36764a 100644
  const openBtn = document.getElementById('open-btn') as HTMLButtonElement;
  const newBtn = document.getElementById('new-btn') as HTMLButtonElement | null;
  const exportBtn = document.getElementById('export-btn') as HTMLButtonElement;
-@@ -691,6 +707,8 @@ async function runAddQuickCard(sourceView: EditorView): Promise<void> {
+@@ -691,6 +710,8 @@ async function runAddQuickCard(sourceView: EditorView): Promise<void> {
      sourceName: activeFile().filename ?? '',
    });
    await quickCardsStore.upsert(card);
@@ -462,7 +468,7 @@ index 927a931..b36764a 100644
    showToast(`Saved quick card “${card.name}”.`);
  }
  
-@@ -1378,6 +1396,24 @@ export function getActiveView(): EditorView | null {
+@@ -1378,6 +1399,24 @@ export function getActiveView(): EditorView | null {
    return view;
  }
  
@@ -487,7 +493,7 @@ index 927a931..b36764a 100644
  /** Benchmark lifecycle (Settings → Benchmark). The mutating editing test runs
   *  on the live doc, but `dispatchTransaction` checks `isBenchmarkActive()` and
   *  skips the autosave / dirty / nav-rebuild side effects, so nothing touches
-@@ -1449,9 +1485,9 @@ function loadCollabUi(): Promise<typeof import('./collab/collab-ui.js')> {
+@@ -1449,9 +1488,9 @@ function loadCollabUi(): Promise<typeof import('./collab/collab-ui.js')> {
  // user-picked slot; single-pane joins in place (or spawns a window).
  // The returned promise reports success so the pill only consumes the
  // invite (and its share code) when the join actually landed.
@@ -499,7 +505,7 @@ index 927a931..b36764a 100644
    ),
  );
  setCollabInviter((target) => {
-@@ -1465,9 +1501,7 @@ setCollabInviter((target) => {
+@@ -1465,9 +1504,7 @@ setCollabInviter((target) => {
  // which start never calls — so using them here bound the session to an
  // empty uid with the window-joined title ("A.docx · B.docx") in the
  // confirm, orphaned from every pane footer (field find, 2026-08-12).
@@ -510,7 +516,7 @@ index 927a931..b36764a 100644
  // The Receive pill's Join button — same flow (and same deps choice) as
  // the Join Collaboration Session command: multi-pane joins into a
  // user-picked slot; single-pane in place.
-@@ -1811,7 +1845,9 @@ const ribbonContext: RibbonContext = {
+@@ -1811,7 +1848,9 @@ const ribbonContext: RibbonContext = {
    openShortcutsReference: () => openReference(),
    toggleCommentsVisible: () => {
      if (!commentsColumn || !commentsColumnEl) return;
@@ -521,7 +527,7 @@ index 927a931..b36764a 100644
      commentsColumn.setVisible(next);
      commentsToggleBtn?.setAttribute('aria-pressed', next ? 'true' : 'false');
      commentsColumn.render();
-@@ -1920,6 +1956,10 @@ const ribbonContext: RibbonContext = {
+@@ -1920,6 +1959,10 @@ const ribbonContext: RibbonContext = {
      if (!view) return;
      runAiCreateCite(view);
    },
@@ -532,7 +538,7 @@ index 927a931..b36764a 100644
    reformatAllCites: () => {
      if (!view) return;
      void runReformatAllCites(view);
-@@ -2350,15 +2390,6 @@ const ribbonContext: RibbonContext = {
+@@ -2350,15 +2393,6 @@ const ribbonContext: RibbonContext = {
    selectSpeechDoc: () => {
      void openSelectSpeechDocModal();
    },
@@ -548,7 +554,7 @@ index 927a931..b36764a 100644
    openHighlightPicker: () => colorPanel?.openPicker('highlight'),
    openShadingPicker: () => colorPanel?.openPicker('shading'),
    openFontColorPicker: () => colorPanel?.openPicker('fontcolor'),
-@@ -2366,13 +2397,33 @@ const ribbonContext: RibbonContext = {
+@@ -2366,13 +2400,33 @@ const ribbonContext: RibbonContext = {
    openDocToolsMenu: () => docMenuBtn?.click(),
    openCardToolsMenu: () => cardMenuBtn?.click(),
    openTableMenu: () => tableMenuBtn?.click(),
@@ -587,7 +593,7 @@ index 927a931..b36764a 100644
  openBtn.addEventListener('mousedown', (e) => e.preventDefault());
  openBtn.addEventListener('click', () => {
    void runOpenFlow();
-@@ -2383,14 +2434,6 @@ if (newBtn) {
+@@ -2383,14 +2437,6 @@ if (newBtn) {
      void onNewDocClicked();
    });
  }
@@ -602,7 +608,7 @@ index 927a931..b36764a 100644
  
  
  /**
-@@ -2880,6 +2923,51 @@ if (navPanePullTab) {
+@@ -2880,6 +2926,51 @@ if (navPanePullTab) {
      else settings.set('navPaneVisible', true);
    });
  }
@@ -654,7 +660,7 @@ index 927a931..b36764a 100644
  applyNavPaneVisible(settings.get('navPaneVisible'));
  
  /** Apply the `formatNavPaneByType` setting. When off, adds the
-@@ -2972,7 +3060,7 @@ export function notifyCommentsForActiveTransaction(
+@@ -2972,7 +3063,7 @@ export function notifyCommentsForActiveTransaction(
  }
  if (commentsToggleBtn && commentsColumn) {
    commentsToggleBtn.addEventListener('click', () => {
@@ -663,7 +669,7 @@ index 927a931..b36764a 100644
      commentsColumn.setVisible(next);
      commentsToggleBtn.setAttribute('aria-pressed', next ? 'true' : 'false');
      commentsColumn.render();
-@@ -3712,8 +3800,8 @@ systemDarkMedia.addEventListener('change', () => {
+@@ -3712,8 +3803,8 @@ systemDarkMedia.addEventListener('change', () => {
  
  /** Apply the `showDocNameChip` setting to `<html>`. The chip's CSS
   *  display is gated on this class — without it, the chip is
@@ -674,7 +680,7 @@ index 927a931..b36764a 100644
   *
   *  Deliberately does NOT call `updateWindowTitle`: at boot this
   *  runs before `currentDocFilename`'s module-level declaration
-@@ -4061,6 +4149,7 @@ settings.subscribe((s) => {
+@@ -4061,6 +4152,7 @@ settings.subscribe((s) => {
    }
    applyNavPaneVisible(s.navPaneVisible);
    applyFormatNavPaneByType(s.formatNavPaneByType);
@@ -682,7 +688,7 @@ index 927a931..b36764a 100644
    // Body zoom is NOT re-applied on settings change — it's per-editor and
    // transient, and `defaultZoomPct` only governs what NEW editors open at,
    // never re-zooms an already-open one. Chrome scale stays a synced global.
-@@ -4141,145 +4230,79 @@ settings.subscribe((s) => {
+@@ -4141,145 +4233,79 @@ settings.subscribe((s) => {
    notifyEditorLayoutChanged();
  });
  
@@ -892,7 +898,7 @@ index 927a931..b36764a 100644
  
  applyTheme(settings.get('theme'), settings.get('themeAppliesToDocument'));
  applyShowDocNameChip(settings.get('showDocNameChip'));
-@@ -4353,7 +4376,6 @@ if (timerToggleBtn) {
+@@ -4353,7 +4379,6 @@ if (timerToggleBtn) {
    };
    button('open-btn', 'openFile');
    button('new-btn', 'newDocument');
@@ -900,7 +906,7 @@ index 927a931..b36764a 100644
    button('export-btn', 'save');
    button('settings-btn', 'openSettings');
    button('reference-btn', 'openShortcutsReference');
-@@ -4531,17 +4553,20 @@ const VIEWLESS_RIBBON_COMMANDS = new Set<AnyCommandId>([
+@@ -4531,17 +4556,20 @@ const VIEWLESS_RIBBON_COMMANDS = new Set<AnyCommandId>([
    // Toggling the nav-pane visibility only flips a transient
    // setting + body class; works without an active doc.
    'toggleNavPane',
@@ -925,7 +931,7 @@ index 927a931..b36764a 100644
    // Multi-pane workspace commands — fire on the shell, not a
    // doc. View-less so they work even when no slot has a doc.
    'focusSlot1',
-@@ -4586,12 +4611,15 @@ function runViewlessRibbon(id: AnyCommandId): void {
+@@ -4586,12 +4614,15 @@ function runViewlessRibbon(id: AnyCommandId): void {
      case 'zoomReset': ribbonContext.zoomReset(); return;
      case 'resetDefaultColors': ribbonContext.resetDefaultColors(); return;
      case 'toggleNavPane': ribbonContext.toggleNavPane(); return;
@@ -942,7 +948,7 @@ index 927a931..b36764a 100644
      case 'toggleVoice': ribbonContext.toggleVoice(); return;
      case 'calibrateVoice': ribbonContext.calibrateVoice(); return;
      case 'startFlowHost': ribbonContext.startFlowHost(); return;
-@@ -5319,6 +5347,15 @@ export function getNavPanel(): NavigationPanel {
+@@ -5319,6 +5350,15 @@ export function getNavPanel(): NavigationPanel {
    return navPanel;
  }
  
@@ -958,7 +964,7 @@ index 927a931..b36764a 100644
  function makeStarterDoc(): PMNode {
    const n = schema.nodes;
    const m = schema.marks;
-@@ -5564,6 +5601,7 @@ function isMobileLayout(): boolean {
+@@ -5564,6 +5604,7 @@ function isMobileLayout(): boolean {
      coarsePointer:
        typeof window.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches,
      viewportWidth: window.innerWidth,
@@ -966,7 +972,7 @@ index 927a931..b36764a 100644
    });
  }
  
-@@ -5874,6 +5912,9 @@ export function buildEditorPlugins(targetUid?: string | null): Plugin[] {
+@@ -5874,6 +5915,9 @@ export function buildEditorPlugins(targetUid?: string | null): Plugin[] {
    // while a session is active binds to the session's shared LoroDoc and gets
    // overwritten with the session doc (multi-pane document fusion).
    plugins.push(...collabPluginsFor(targetUid));
@@ -976,7 +982,7 @@ index 927a931..b36764a 100644
    return plugins;
  }
  
-@@ -6124,6 +6165,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
+@@ -6124,6 +6168,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
    }
    currentDoc = doc;
    navPanel.attach(view);
@@ -984,7 +990,7 @@ index 927a931..b36764a 100644
    // Sync visible state with the persisted setting on every mount.
    const startVisible = settings.get('commentsVisible');
    if (commentsColumnEl) commentsColumnEl.hidden = !startVisible;
-@@ -6146,6 +6188,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
+@@ -6146,6 +6191,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
    // Initial paint: do the heavy update synchronously so the user sees
    // the right thing immediately on doc load.
    navPanel.update(doc);
@@ -992,7 +998,7 @@ index 927a931..b36764a 100644
    refreshWordCount();
    refreshFontSizeDisplay();
    refreshFormattingPanelButtonStates();
-@@ -6168,6 +6211,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
+@@ -6168,6 +6214,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
    // the previous doc was last in.
    navPanel.scrollToTop();
    appEl.scrollTop = 0;
@@ -1000,7 +1006,7 @@ index 927a931..b36764a 100644
    // Re-resolve this doc's flashcard highlights once the caller has set
    // the doc identity (adoptDocId runs synchronously right after
    // mountView returns, so defer a frame). No-op when the column is
-@@ -6264,6 +6308,7 @@ function scheduleHeavyUpdate(): void {
+@@ -6264,6 +6311,7 @@ function scheduleHeavyUpdate(): void {
      pendingHeavyUpdate = null;
      if (!view) return;
      navPanel.update(view.state.doc);
@@ -1008,7 +1014,7 @@ index 927a931..b36764a 100644
      // Re-apply the caret highlight now that `update()` has rebuilt
      // `liEntries` with fresh positions. The synchronous `setCaretHeading`
      // in `dispatchTransaction` ran against stale positions (it fires
-@@ -9774,15 +9819,24 @@ const BOOT_MOBILE_ENV = {
+@@ -9774,15 +9822,24 @@ const BOOT_MOBILE_ENV = {
      typeof window.matchMedia === 'function' &&
      window.matchMedia('(pointer: coarse)').matches,
    viewportWidth: window.innerWidth,
@@ -1035,7 +1041,7 @@ index 927a931..b36764a 100644
  // Set when this window bounced itself as a redundant three-pane duplicate
  // (singleton enforcement). A bounced window that lingers (couldn't self-close)
  // must stop claiming to be a workspace, so it never blocks a future window.
-@@ -10137,7 +10191,14 @@ function positionRightTray(): void {
+@@ -10137,7 +10194,14 @@ function positionRightTray(): void {
  
  // Load the per-user Learn annotation store (flashcards / schedules /
  // anchors) so review counts + the comments column have it available.
@@ -1051,7 +1057,7 @@ index 927a931..b36764a 100644
  
  // Drag-and-drop file opening works in both single-doc and multi-pane modes.
  installDragToOpen();
-@@ -10207,7 +10268,13 @@ if (BOOT_MULTI_DOC_WORKSPACE) {
+@@ -10207,7 +10271,13 @@ if (BOOT_MULTI_DOC_WORKSPACE) {
      // and the shell re-shows it when the last doc closes) — an empty
      // workspace would otherwise land on a bare window with no
      // affordances. Any doc entering a slot hides it.
@@ -1066,7 +1072,7 @@ index 927a931..b36764a 100644
      // Tell main this window can take OS-opened files into its slot
      // picker (so "Open with…" reuses it instead of spawning a blank
      // window), and wire the forward channel.
-@@ -10242,7 +10309,13 @@ if (BOOT_MULTI_DOC_WORKSPACE) {
+@@ -10242,7 +10312,13 @@ if (BOOT_MULTI_DOC_WORKSPACE) {
    // Home screen is a single-doc-mode feature (multi-pane has its
    // own workspace layout). Mount it before boot so the overlay is
    // ready when initSingleDocBoot decides whether to show it.
@@ -1081,7 +1087,7 @@ index 927a931..b36764a 100644
    // Single-pane windows don't take OS-opened files in place — main
    // keeps spawning a fresh window per file. Report the mode so a
    // stale multi-pane registration (from before a mode-toggle reload)
-@@ -10573,8 +10646,9 @@ settings.subscribe((s, meta) => {
+@@ -10573,8 +10649,9 @@ settings.subscribe((s, meta) => {
    if (modeSwitchInFlight) return;
    // The mobile shell forces single-doc rendering without writing the
    // synced `multiDocWorkspace` setting, so the boot constant can
@@ -1093,7 +1099,7 @@ index 927a931..b36764a 100644
    // A `multiDocWorkspace` toggle in ANOTHER window reaches us through
    // the cross-window storage-event sync. Only the window the user
    // actually toggled in may drive the switch (close the other windows
-@@ -10786,12 +10860,25 @@ async function runStartupRecovery(): Promise<void> {
+@@ -10786,12 +10863,25 @@ async function runStartupRecovery(): Promise<void> {
  }
  
  async function runStartupRecoveryInner(): Promise<void> {
@@ -1125,6 +1131,20 @@ index 927a931..b36764a 100644
      return;
    }
    const host = getHost();
+@@ -10836,6 +10926,13 @@ async function runStartupRecoveryInner(): Promise<void> {
+     return;
+   }
+   if (entries.length === 0) return;
++  // Embedded in debate-ai.com: no "Recover drafts" sidebar on open. The
++  // site's panels mount CardMirror on every visit, so the offer popped up
++  // each time beside the outline. Journals stay on disk, untouched.
++  if (BOOT_EMBEDDED) {
++    console.log(`[cardmirror] embedded: skipping recovery sidebar (${entries.length} journal(s) kept)`);
++    return;
++  }
+   const { openRecoverySidebar } = await import('./recovery-ui.js');
+   await openRecoverySidebar(entries, {
+     onSave: async (entry) => {
 diff --git a/src/editor/learn-manage-ui.ts b/src/editor/learn-manage-ui.ts
 index 8085c45..cadea99 100644
 --- a/src/editor/learn-manage-ui.ts
@@ -1570,6 +1590,39 @@ index d5bc357..bd70fab 100644
          }, 200);
        }
        // Selection-only changes refresh just this pane's word-count
+diff --git a/src/editor/pairing/pairing-wiring.ts b/src/editor/pairing/pairing-wiring.ts
+index 56c7e8b..db6b9cd 100644
+--- a/src/editor/pairing/pairing-wiring.ts
++++ b/src/editor/pairing/pairing-wiring.ts
+@@ -168,6 +168,9 @@ export function initPairingWiring(): void {
+         );
+       });
+       m.onWebPairingAccountRequired(() => {
++        // Once per browser, not on every editor open — it fired each time
++        // CardMirror mounted, and the advice never changes.
++        if (accountRequiredNoticeSeen()) return;
+         postNotice({
+           severity: 'warning',
+           title: 'Receiving cards in-browser needs your account',
+@@ -193,3 +196,18 @@ export function initPairingWiring(): void {
+   applyConfig();
+   settings.subscribe(() => applyConfig());
+ }
++
++const ACCOUNT_REQUIRED_SEEN_KEY = 'cardmirror.pairingAccountRequiredSeen';
++
++/** True when the "receiving cards needs your account" notice was already
++ *  shown in this browser; marks it seen otherwise. Storage failures
++ *  (private mode) fall back to showing it. */
++function accountRequiredNoticeSeen(): boolean {
++  try {
++    if (localStorage.getItem(ACCOUNT_REQUIRED_SEEN_KEY)) return true;
++    localStorage.setItem(ACCOUNT_REQUIRED_SEEN_KEY, '1');
++  } catch {
++    /* storage unavailable — show the notice */
++  }
++  return false;
++}
 diff --git a/src/editor/pairing/web-mailbox.ts b/src/editor/pairing/web-mailbox.ts
 index af62a86..0bd7810 100644
 --- a/src/editor/pairing/web-mailbox.ts
