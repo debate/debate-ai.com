@@ -1,5 +1,11 @@
-/** @fileoverview Batch LLM analysis helpers for card quality/warrant scoring. */
-import fs from "node:fs"
+/**
+ * @fileoverview Batch LLM analysis helpers for card quality/warrant scoring.
+ *
+ * Browser-safe: this module is re-exported from the package entry, which the
+ * web app's client bundle imports, so it must not touch `node:*` modules.
+ * Reading an outline from disk or writing the result back lives in
+ * `analyze-quotes.node.ts`, which is deliberately *not* re-exported.
+ */
 import * as ResearchAgent from "qwksearch-api-client"
 import { log } from "grab-url"
 import { findFlawsPrompt } from "../prompts/quote-to-find-flaws"
@@ -17,15 +23,14 @@ type OutlineEntry = Record<string, unknown> & {
   analysis?: Analysis | null
 }
 
-type OutlineData = {
+export type OutlineData = {
   outline?: OutlineEntry[]
   [key: string]: unknown
 }
 
-type AnalyzeQuotesOptions = {
+export type AnalyzeQuotesOptions = {
   limit?: number
   maxChars?: number
-  outputPath?: string | null
 }
 
 /**
@@ -43,18 +48,15 @@ const FLAW_FINDER_MODEL = {
 /**
  * Runs LLM-based analysis over parsed card entries that include HTML content.
  *
- * @param input - Outline JSON path or already-loaded outline object.
- * @param options - Processing limits and optional output path.
+ * @param outlineData - Already-loaded outline object (mutated in place).
+ * @param options - Processing limits.
  * @returns Outline data with per-card analysis attached.
  */
 export async function analyzeQuotes(
-  input: string | OutlineData,
+  outlineData: OutlineData,
   options: AnalyzeQuotesOptions = {},
 ): Promise<OutlineData> {
-  const { limit = 10, maxChars = 4000, outputPath = null } = options
-
-  const outlineData: OutlineData =
-    typeof input === "string" ? (JSON.parse(fs.readFileSync(input, "utf8")) as OutlineData) : input
+  const { limit = 10, maxChars = 4000 } = options
 
   const outline = Array.isArray(outlineData.outline) ? outlineData.outline : []
   let processed = 0
@@ -92,13 +94,7 @@ export async function analyzeQuotes(
     }
   }
 
-  if (outputPath) {
-    fs.writeFileSync(outputPath, JSON.stringify(outlineData, null, 2), "utf8")
-    console.log(`\nCompleted! Processed ${processed} cards.`)
-    console.log(`Analysis saved to: ${outputPath}`)
-  } else {
-    console.log(`\nCompleted! Processed ${processed} cards.`)
-  }
+  console.log(`\nCompleted! Processed ${processed} cards.`)
 
   return outlineData
 }

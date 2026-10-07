@@ -48,6 +48,39 @@ function reasonEditorCommonGrammars(): Plugin {
 }
 
 /**
+ * `api2client` (pulled in by `qwksearch-api-client`) statically imports its
+ * Node-only codegen (`dist/generate-*.js`: spawn, fs, createRequire, …) from
+ * its browser entry. In the client build Vite externalizes those `node:*`
+ * imports to an empty module and warns on every build; the codegen never runs
+ * in a browser. So for the client environment only, each `node:*` import from
+ * inside api2client resolves to a stub whose exports throw if called. The
+ * Worker environments keep the real modules (wrangler's `nodejs_compat`).
+ * Mirrors apps/debate-browser-ext/vite/stub-node-builtins.ts.
+ */
+function stubApi2clientNodeBuiltins(): Plugin {
+  const importerPattern = /[\\/]node_modules[\\/](?:\.bun[\\/][^\\/]+[\\/]node_modules[\\/])?api2client[\\/]/;
+  const prefix = "\0stub-node:";
+  const names = [
+    "spawn", "readFileSync", "existsSync", "writeFileSync", "readdirSync", "statSync",
+    "createRequire", "resolve", "join", "pathToFileURL",
+  ];
+  return {
+    name: "debate:stub-api2client-node-builtins",
+    enforce: "pre",
+    applyToEnvironment: (env) => env.name === "client",
+    resolveId(source, importer) {
+      if (source.startsWith("node:") && importer && importerPattern.test(importer)) return prefix + source;
+      return null;
+    },
+    load(id) {
+      if (!id.startsWith(prefix)) return null;
+      const fn = `() => { throw new Error(${JSON.stringify(`${id.slice(prefix.length)} is not available in the browser`)}); }`;
+      return `${names.map((n) => `export const ${n} = ${fn};`).join("\n")}\nexport default {};\n`;
+    },
+  };
+}
+
+/**
  * Minifier settings for the two server environments (rsc and ssr), which make
  * up the Worker.
  *
@@ -173,6 +206,7 @@ export default defineConfig({
   plugins: [
     appStaticFiles(),
     reasonEditorCommonGrammars(),
+    stubApi2clientNodeBuiltins(),
     // Compiles packages/debate-help-docs/content into the modules the /docs
     // routes (app/docs) render.
     helpDocsMdx(),

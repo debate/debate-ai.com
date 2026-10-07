@@ -8,6 +8,7 @@ vi.mock("qwksearch-api-client", () => ({ articleQa: (...args: unknown[]) => arti
 vi.mock("grab-url", () => ({ log: vi.fn() }))
 
 import { analyzeQuotes } from "../src/analysis/analyze-quotes"
+import { analyzeQuotesFile } from "../src/analysis/analyze-quotes.node"
 
 const reply = (content: string) => ({ data: { content } })
 
@@ -70,13 +71,13 @@ describe("analyzeQuotes", () => {
     expect(console.error).toHaveBeenCalledTimes(2)
   })
 
-  it("reads from and writes to disk when given paths", async () => {
+  it("analyzeQuotesFile reads from and writes to disk when given paths", async () => {
     articleQa.mockResolvedValue(reply('{"score": 1}'))
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), "analyze-quotes-"))
     const input = path.join(dir, "in.json")
     const output = path.join(dir, "out.json")
     fs.writeFileSync(input, JSON.stringify({ outline: [{ html: "x" }] }))
-    await analyzeQuotes(input, { outputPath: output })
+    await analyzeQuotesFile(input, { outputPath: output })
     expect(JSON.parse(fs.readFileSync(output, "utf8")).outline[0].analysis).toEqual({ score: 1 })
     fs.rmSync(dir, { recursive: true, force: true })
   })
