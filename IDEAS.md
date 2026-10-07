@@ -50,11 +50,11 @@
 2. random pair webcam debate matching on mutual pref topics
 3. human feedback on redos and badges and practicle drills against 
 
-## Account sync of tools (In Progress)
+## Account sync of tools (Completed)
 
 - [x] Speech-doc links (editor document <-> round/flow speech) sync via the `speechDocLinks` tool-record collection
 - [x] Pinned debates - synced via the `pinnedDebates` tool-record collection (`{ roundId, pinnedAt }`; PR #1095)
-- [x] Flow tabs show a saved-to-account marker (rounds start screen and other tools still to do)
+- [x] Flow tabs show a saved-to-account marker (also on the rounds start screen cards; every synced tool route mounts the sync badge)
 
 ---
 
