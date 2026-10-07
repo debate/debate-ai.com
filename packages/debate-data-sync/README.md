@@ -132,6 +132,23 @@ rather than guessing — a wrong attribution is worse than a missing one.
 One unreadable document (password-protected, truncated, a `.doc` renamed) is
 recorded in `failures` with a coded reason and the walk continues.
 
+### Reading an archive without downloading it
+
+`loadCaselistArchive` still needs the whole ZIP in memory first, which a browser
+tab cannot hold for a season dump (`hspf26-all-2026-10-06.zip` is 1.87 GB).
+`loadRemoteCaselistArchive(url, options)` gives the same result by reading the
+archive over HTTP Range requests (`remote-zip.ts`): `HEAD` for the size, the
+last 64 KiB for the end-of-central-directory record, the central directory,
+then the `.docx` entries in batches of up to 8 MB, inflated with
+`DecompressionStream("deflate-raw")`. The bucket honours `Range` and is CORS-open,
+and only the simple `bytes=start-end` form is sent, so no preflight is needed.
+The admin panel uses this path and falls back to a whole-file download only
+when a server ignores ranges.
+
+openCaselist's own API (`api.opencaselist.com/v1/caselists/{slug}/downloads`)
+answers `401 Not Authorized` without a logged-in session, so discovery
+normally lands on the bucket probe.
+
 ### The manifest
 
 `bun run sync-caselist` writes `data/metadata/caselist-downloads.json`
