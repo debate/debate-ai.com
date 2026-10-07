@@ -62,7 +62,7 @@ function createFormatBadgeIcon(label: string, displayName: string): LucideIcon {
 /** College Debates — the NDT circuit. */
 export const IconFormatNDT = createFormatBadgeIcon("NDT", "IconFormatNDT");
 /** Policy Debates — varsity policy. */
-export const IconFormatVP = createFormatBadgeIcon("VP", "IconFormatVP");
+export const IconFormatVP = createFormatBadgeIcon("CX", "IconFormatVP");
 /** Public Forum. */
 export const IconFormatPF = createFormatBadgeIcon("PF", "IconFormatPF");
 /** Lincoln-Douglas. */
