@@ -42,7 +42,10 @@
  * related row, picking an entry in the stacked playlist, playing
  * something from the queue panel, skipping to the next queued video —
  * navigates to that video's watch page rather than silently swapping the
- * embed, so the URL always names what is playing.
+ * embed, so the URL always names what is playing. The one exception is a
+ * related row's popout icon, which never switches anything: it lines the
+ * video up as the store's `popoutNext`, and the floating player starts it
+ * once this page releases playback.
  * @module panels/watch/VideoWatchPage
  */
 
