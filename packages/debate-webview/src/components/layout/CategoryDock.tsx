@@ -5,12 +5,13 @@ import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
 import { Globe, LogIn, PanelLeft, LogOut, Monitor, Moon, Palette, Pause, Play, Search, Settings as SettingsIcon, ShieldCheck, Sun, UserCircle2 } from "lucide-react"
 import { cn } from "../../lib/ui/lib/utils"
-import { Dock, DockIcon, DockItem, DockLabel } from "../../lib/ui/layout/dock"
+import { Dock, DockIcon, DockItem } from "../../lib/ui/layout/dock"
 import { useAccountNotifications, useContacts } from "@debate/team-collaboration"
 import {
   useVideoPlayerStore,
   sendYouTubeCommand,
   useCategoryDockState,
+  useSidebarCollapsed,
   type CategoryType,
 } from "@debate/videos"
 import {
@@ -29,7 +30,7 @@ import { themeNames, themeColors, formatThemeName, useThemeState } from "../them
 import { LoginDialog } from "./LoginDialog"
 import { useSignOut } from "../../lib/auth/use-sign-out"
 import { useSession } from "../../lib/hooks/useSession"
-import { hasEmbeddedDock, hostsOwnSidebarDock, isGenericToolSidebarRoute } from "../../lib/sidebar-routes"
+import { hasEmbeddedDock, hostsOwnSidebarDock } from "../../lib/sidebar-routes"
 import { SIDEBAR_MENU_SECTIONS, SITE_LINKS } from "../../lib/nav/dock-menu-sections"
 import { NAV_ITEMS } from "../../lib/nav/dock-nav-items"
 import { dockIdlePrefetchTargets, scheduleDockIdlePrefetch } from "../../lib/nav/dock-idle-prefetch"
@@ -46,6 +47,10 @@ import { IconSettings } from "../../lib/ui/icons"
 // `FlowPageSidebar`), where the speech they are timing is in view. A dock
 // shortcut to a standalone timer page duplicated that surface without the
 // round context, so it was removed.
+
+// No hover labels under the dock icons: in the sidebar-hosted dock the
+// tooltips crowded together and overlapped the sidebar tree below. Each item
+// keeps its `aria-label`, so screen readers still announce it.
 
 const VIDEO_CATEGORY_ITEMS: { category: CategoryType; label: string; icon: any }[] = []
 
@@ -438,7 +443,6 @@ function PracticeVsAiTrigger({
             item.active ? "bg-primary/20 ring-2 ring-primary" : "bg-gray-200 dark:bg-neutral-800",
           )}
         >
-          <DockLabel>{item.label}</DockLabel>
           <DockIcon>
             {item.renderIcon ? item.renderIcon() : (
               <Image src={item.icon} alt={item.label} width={24} height={24} className="w-full h-full" unoptimized />
@@ -502,7 +506,6 @@ function DockInstance({
                   : "bg-gray-200 dark:bg-neutral-800",
               )}
             >
-              <DockLabel>{item.label}</DockLabel>
               <DockIcon>
                 {item.renderIcon ? item.renderIcon() : (
                   <Image src={item.icon} alt={item.label} width={24} height={24} className="w-full h-full" unoptimized />
@@ -513,7 +516,6 @@ function DockInstance({
         )}
         <DropdownMenuTrigger asChild>
           <DockItem aria-label="Settings" className="relative flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer bg-gray-200 dark:bg-neutral-800">
-            <DockLabel>Settings</DockLabel>
             <DockIcon>
               <Image src={IconSettings} alt="settings" width={24} height={24} className="w-full h-full" unoptimized />
             </DockIcon>
@@ -548,6 +550,7 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
   // when it closes, which would tear the dialog down with it.
   const [loginOpen, setLoginOpen] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const sidebarCollapsed = useSidebarCollapsed()
   const { isAuthenticated } = useSession()
   // Called for their app-wide side effects, not for anything this component
   // renders: `useAccountNotifications` is what toasts a notification that
@@ -684,10 +687,12 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
     )
   }
 
-  // The generic sidebar routes (and routes that host their own sidebar dock
-  // like /doc) render an embedded dock inside their sidebar (md+), so the
-  // fixed top-left floating dock stays hidden rather than showing twice.
-  const suppressDesktopDock = isGenericToolSidebarRoute(activePath) || hostsOwnSidebarDock(activePath)
+  // The sidebar routes (and routes that host their own sidebar dock like
+  // /research/docs) render an embedded dock inside their sidebar (md+), so the
+  // fixed top-left floating dock stays hidden rather than showing twice —
+  // unless the reader hid the app sidebar, which takes its dock with it.
+  const suppressDesktopDock =
+    hostsOwnSidebarDock(activePath) || (!sidebarCollapsed && hasEmbeddedDock(activePath))
 
   return (
     <>
@@ -711,7 +716,6 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
               aria-expanded={sidebarOpen}
               className="flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer bg-gray-200 dark:bg-neutral-800"
             >
-              <DockLabel>Sidebar</DockLabel>
               <DockIcon>
                 <PanelLeft className="w-5 h-5" />
               </DockIcon>
@@ -739,7 +743,6 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
                         : "bg-gray-200 dark:bg-neutral-800",
                   )}
                 >
-                  <DockLabel>{label}</DockLabel>
                   <DockIcon>
                     {renderIcon ? (
                       renderIcon()
@@ -757,8 +760,7 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
               )
             })}
             <DropdownMenuTrigger asChild>
-              <DockItem className="relative flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer bg-gray-200 dark:bg-neutral-800">
-                <DockLabel>Settings</DockLabel>
+              <DockItem aria-label="Settings" className="relative flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer bg-gray-200 dark:bg-neutral-800">
                 <DockIcon>
                   <Image src={IconSettings} alt="settings" width={24} height={24} className="w-full h-full" unoptimized />
                 </DockIcon>

@@ -2,7 +2,7 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
-    name: "@types/debate",
+    name: "@debate/types",
     root: import.meta.dirname,
     environment: "node",
     include: ["test/**/*.test.ts"],

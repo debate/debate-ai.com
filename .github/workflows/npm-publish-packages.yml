@@ -1,0 +1,108 @@
+name: Publish a @debate/* package to npm
+
+# Publishes one workspace package from packages/. debate-api-client keeps its
+# own workflow (npm-release.yml) because it generates and builds before packing.
+#
+# Trigger by hand with the package's directory name, or push a tag
+# `<directory>@<version>` (for example `debate-round@0.2.0`) whose version
+# matches that package's package.json.
+
+on:
+  push:
+    tags:
+      - "debate-*@*"
+      - "!debate-api-client@*"
+  workflow_dispatch:
+    inputs:
+      package:
+        description: Directory under packages/ to publish (e.g. debate-round)
+        required: true
+      tag:
+        description: npm dist-tag to publish under
+        required: false
+        default: latest
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: npm-publish-${{ github.event.inputs.package || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Resolve package directory
+        id: pkg
+        env:
+          INPUT_PACKAGE: ${{ github.event.inputs.package }}
+        run: |
+          set -euo pipefail
+          if [ "$GITHUB_EVENT_NAME" = "push" ]; then
+            dir="${GITHUB_REF_NAME%@*}"
+          else
+            dir="$INPUT_PACKAGE"
+          fi
+          if [ ! -f "packages/$dir/package.json" ]; then
+            echo "::error::packages/$dir/package.json not found"
+            exit 1
+          fi
+          name="$(node -p "require('./packages/$dir/package.json').name")"
+          case "$name" in
+            @debate/*) ;;
+            *) echo "::error::$name is not under the @debate/ scope"; exit 1 ;;
+          esac
+          echo "dir=$dir" >> "$GITHUB_OUTPUT"
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+
+      - name: Set up Node (for npm publish)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - name: Install dependencies
+        run: bun install --ignore-scripts
+
+      # debate-editor tracks only its patch and overlay; its src/ is assembled
+      # from the submodule by its postinstall, which --ignore-scripts skips.
+      - name: Assemble debate-editor's sources
+        run: node packages/debate-editor/scripts/sync-upstream.mjs
+
+      - name: Type-check
+        run: bunx turbo typecheck --filter="${{ steps.pkg.outputs.name }}"
+
+      - name: Verify package version matches tag
+        if: github.event_name == 'push'
+        working-directory: packages/${{ steps.pkg.outputs.dir }}
+        run: |
+          set -euo pipefail
+          tag_version="${GITHUB_REF_NAME##*@}"
+          pkg_version="$(node -p "require('./package.json').version")"
+          if [ "$tag_version" != "$pkg_version" ]; then
+            echo "::error::Tag version ($tag_version) does not match package.json version ($pkg_version)"
+            exit 1
+          fi
+
+      # `bun pm pack` rewrites `workspace:*` dependencies to the sibling
+      # packages' real versions; `npm publish` on the folder would not.
+      - name: Pack
+        working-directory: packages/${{ steps.pkg.outputs.dir }}
+        run: bun pm pack --destination "$RUNNER_TEMP/pack"
+
+      - name: Publish to npm
+        run: npm publish "$RUNNER_TEMP"/pack/*.tgz --access public --provenance --tag "${{ github.event.inputs.tag || 'latest' }}"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

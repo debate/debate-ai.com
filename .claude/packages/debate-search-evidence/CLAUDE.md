@@ -1,7 +1,7 @@
 # CLAUDE.md — `debate-research-evidence` (`packages/debate-search-evidence`)
 
 **Package name:** `debate-research-evidence` — filter on that, not the
-directory. Private. Entry `src/index.ts`, tests in `test/`. One of the two
+directory. Public (`@debate/` scope). Entry `src/index.ts`, tests in `test/`. One of the two
 load-bearing packages in the repo.
 
 Owns the evidence card research interface (search bar, result list, card content

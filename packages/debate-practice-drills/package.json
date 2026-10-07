@@ -2,13 +2,29 @@
   "name": "@debate/practice-rounds",
   "version": "0.1.0",
   "description": "Practice & AI Rounds — drills, AI coach mode, judge paradigm picker, AI judge decision, opponent persona picker, word-count speeches, versus-AI, practice round simulator, speech transcript summaries, argument tree outline, flow annotations and AI response-outcome charts",
-  "private": true,
   "type": "module",
   "author": "vtempest",
   "license": "rights.institute/prosper",
+  "homepage": "https://github.com/debate/debate-ai.com/tree/master/packages/debate-practice-drills#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/debate/debate-ai.com.git",
+    "directory": "packages/debate-practice-drills"
+  },
+  "bugs": {
+    "url": "https://github.com/debate/debate-ai.com/issues"
+  },
   "main": "./src/index.ts",
-  "sideEffects": ["**/*.css"],
+  "sideEffects": [
+    "**/*.css"
+  ],
   "types": "./src/index.ts",
+  "files": [
+    "src"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

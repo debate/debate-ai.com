@@ -57,15 +57,23 @@ Scope is the package or surface name without its `debate-` prefix.
 | Workflow | Trigger | What it guards |
 | --- | --- | --- |
 | `test.yml` | push to `master`, PR | `bun install --ignore-scripts`, `bun run typecheck`, `bun run coverage`, upload to Codecov |
-| `npm-release.yml` | manual (`workflow_dispatch`, with a dist-tag input) | Publishes **`debate-api-client`** — the only published package |
+| `npm-release.yml` | manual (`workflow_dispatch`, with a dist-tag input) | Publishes **`debate-api-client`** (generates and builds first) |
+| `npm-publish-packages.yml` | manual (package directory + dist-tag) or a `<directory>@<version>` tag | Publishes any other `@debate/*` package from `packages/` |
 | `native-wrapper-ci.yml` / `native-wrapper-release.yml` | — | `apps/debate-native-wrapper` (Tauri), which the root CI never touches |
 | `auto-merge-claude.yml` | PR | Auto-merge/approve on Claude PRs |
 | `auto-merge-and-create-prs.yml` | schedule | Merges eligible PRs, opens PRs for branches without one |
 
 ## Publishing
 
-Only `debate-api-client` publishes, and only when someone runs the workflow by
-hand with a dist-tag. Everything else is `"private": true`.
+Every package under `packages/` is public and named under the **`@debate/`**
+scope, with `publishConfig.access: "public"`, `files`, and repository metadata.
+Nothing publishes on its own: someone runs `npm-publish-packages.yml` (or
+`npm-release.yml` for `debate-api-client`) or pushes a `<directory>@<version>`
+tag. The workflow packs with `bun pm pack`, which rewrites `workspace:*`
+dependencies to real versions, so publish a package's `@debate/*` dependencies
+first. Most packages ship TypeScript source (`main: ./src/index.ts`), so
+consumers need a TS-aware bundler. The repo root and everything under `apps/`
+stay `"private": true`. A new package must be named `@debate/<name>`.
 
 ## Security and user data
 

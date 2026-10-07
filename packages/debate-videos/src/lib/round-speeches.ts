@@ -14,7 +14,7 @@
  * the same speech. Cross-examinations all read "CX", so repeats are matched by
  * the order they come in — the second CX of the transcript is the second CX of
  * the summary. Every cross-ex is labelled with a three-letter code for the
- * speech it questions (`2AX` for the 1AC); a heading that just says `## CX`
+ * speech it questions (`1AX` for the 1AC); a heading that just says `## CX`
  * questions the constructive right before it. Headings that name no speech (an
  * overview, an intro) are dropped, except the judge's decision and comments,
  * which go last.
@@ -35,7 +35,7 @@ export type SpeechSide = "aff" | "neg" | "cx" | "neutral";
 export interface RoundSpeech {
   /** Stable across the documents: the speech's code plus its occurrence, e.g. `CX#2`. */
   key: string;
-  /** Short tab label — `1AC`, `2NX`, `Pro Summary`, `Decision`. */
+  /** Short tab label — `1AC`, `1NX`, `Pro Summary`, `Decision`. */
   label: string;
   /** The first document's heading for it, timecode removed. */
   heading: string;
@@ -79,13 +79,13 @@ function sideOfCode(code: string): SpeechSide {
 
 /**
  * A cross-ex named for the speech it questions, the way debaters say it: the
- * 1AC is crossed in the "2AX", the 1NC in the "2NX", a 2AC in the "1AX". A
+ * 1AC is crossed in the "1AX", the 1NC in the "1NX", a 2AC in the "2AX". A
  * target with no number ("AC") is taken as the first.
  */
 function crossExLabel(target: string): string {
   const [, num = "1", side] = /^([12])?([AN])/.exec(target) ?? [];
   if (!side) return "CX";
-  return `${num === "1" ? "2" : "1"}${side}X`;
+  return `${num}${side}X`;
 }
 
 /**

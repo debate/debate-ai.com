@@ -21,11 +21,20 @@ completions, Revision Incentives' daily top reviser, Team Collaboration
 Mode prep notes, new Argument Library submissions, and new AI Coach Mode
 sessions. Each item can be liked and is marked read on hover.
 
+**Following** shows updates from the teams and schools the reader follows
+from their profile pages: new rounds, new caselist research, tournament
+results and monthly recaps (see
+[Team Rankings](/docs/features/team-rankings#following-a-team-or-school)).
+The followed profiles are listed above the feed. These items are fetched
+after the page loads, so the panel rebuilds when the set of extra item ids
+changes.
+
 ## Data flow
 
 ```
 lib/news-stream.ts        — NewsItem type, PRODUCT_NEWS, buildAutoFeatureNews()
 state/newsStream.ts        — buildNewsFeed(extraItems?) merges every source
+@debate/videos useFollowingNews() — "following" items, passed in as extraItems
 panels/NewsStreamPanel.tsx — category filter tabs, read/like UI
 ```
 

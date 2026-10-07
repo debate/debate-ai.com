@@ -140,6 +140,22 @@ tab has to stay open for the duration, since the browser is doing the decoding.
 Below the queue it shows what the library currently holds and every file
 imported into it so far.
 
+## Syncing openCaselist speech docs
+
+The **Sync ongoing speech docs** card on `/admin` pulls this season's
+openCaselist bulk archives (HS Policy, HS LD, HS PF, NDT/CEDA, NFA LD) into the
+same library. Season dumps are large (the HS PF dump was 1.9 GB in October
+2026), so the panel never downloads one whole: it reads the archive's file list
+first, then fetches the documents a few megabytes at a time, showing how much
+of the current archive has been read. Keep the tab open until it finishes.
+
+Everything that goes wrong is written to the **Import log** under the
+caselist rows: a caselist whose archives could not be found (with the reason
+for each source tried), an archive that could not be opened, every document
+that could not be read, and every batch of cards the server rejected. The log
+survives a reload, can be filtered to errors and warnings, and has **Copy** and
+**Download** buttons for sharing it.
+
 ## Authorization
 
 `POST` and `GET /api/admin/debate-cards` accept either:

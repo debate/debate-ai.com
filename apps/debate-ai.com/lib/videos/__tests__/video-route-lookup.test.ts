@@ -20,6 +20,7 @@ vi.mock("@/lib/database/context", () => ({
 /** Copied from `rounds-college.json` (descriptions shortened). */
 const COLLEGE_ROUNDS = [
   ["uQ1-3BOv_6E", "NDT 2026 - Octas - AFF Kansas LS v NEG Michigan SS", "2026-04-02", "Kansas Debate", 1840, "", 4, "NDT", "Octas", "Kansas LS", "Michigan SS", null, null, null, null, false, null],
+  ["pQ2p9xUntag", "Kentucky Round Robin - Greenhill vs Westminster", "2027-01-20", "Kentucky Debate", 210, "", 1, null, "Finals", null, null, null, null, null, null, false, null, 2027],
   ["qx7Xx_6exzk", "NDT 2022 - Finals - Dartmouth SV (Aff) vs Michigan PR (Neg)", "2022-04-05", "Jacob Wilkus", 23533, "NDT 2022 - Finals", 4, "NDT 2022", "Finals", "Dartmouth SV", "Michigan PR", null, null, null, null, true],
 ] as unknown as VideoTuple[];
 
@@ -104,6 +105,21 @@ describe("getVideoByRouteSegments", () => {
       "dartmouth-sv-vs-michigan-pr-round-analysis",
     ]);
     expect(video?.[0]).toBe("Afl7_hl-H0c");
+  });
+
+  it("gives an untagged final a titled address and resolves its old partial one", async () => {
+    const current = await getVideoByRouteSegments([
+      "2027",
+      "policy",
+      "finals-kentucky-round-robin-greenhill-vs-westminster",
+    ]);
+    expect(current?.[0]).toBe("pQ2p9xUntag");
+    expect(videoRouteHref(current as unknown as VideoType)).toBe(
+      "/videos/2027/policy/finals-kentucky-round-robin-greenhill-vs-westminster",
+    );
+
+    const partial = await getVideoByRouteSegments(["2027", "policy", "finals"]);
+    expect(partial?.[0]).toBe("pQ2p9xUntag");
   });
 
   it("returns null for a path naming nothing", async () => {

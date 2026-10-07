@@ -1,7 +1,7 @@
 /**
  * @fileoverview Sortable Schools table: every school with ranked entries,
- * ranked by its best entry's rating, alongside the average rating of all its
- * entries and a balanced score that blends both with a capped team-count bonus.
+ * ranked by its balanced score, alongside its best rating, the average rating of all its
+ * entries and a balanced score that blends both with a team-count factor.
  * @module components/debate/DebateVideos/panels/SchoolRankingsTable
  */
 
@@ -21,6 +21,7 @@ import {
 import { cn } from "../../ui/lib/utils"
 import type { SchoolRanking, SchoolSortKey, SchoolSortState } from "./leaderboardTypes"
 import { schoolHref } from "./profile/rankingProfileHelpers"
+import { LegendaryBadge, ROW_TIER_CLASS, rowTier, type RowTier } from "./rowTier"
 
 /** One table column: which field it shows and how. */
 interface Column {
@@ -31,7 +32,7 @@ interface Column {
   /** Explains how the value is computed. */
   tooltip?: string
   width: number
-  render: (row: SchoolRanking) => React.ReactNode
+  render: (row: SchoolRanking, tier: RowTier) => React.ReactNode
 }
 
 /** A rating rounded to a whole number, leading digits emphasized (matches the division tables). */
@@ -48,7 +49,18 @@ function Rating({ value }: { value: number }) {
 }
 
 const COLUMNS: Column[] = [
-  { key: "rank", label: "#", numeric: true, width: 60, render: (r) => <span className="font-semibold">{r.rank}</span> },
+  {
+    key: "rank",
+    label: "#",
+    numeric: true,
+    width: 120,
+    render: (r, tier) => (
+      <>
+        {tier === "legendary" && <LegendaryBadge />}
+        <span className="ml-1 font-semibold">{r.rank}</span>
+      </>
+    ),
+  },
   {
     key: "school",
     label: "School",
@@ -64,7 +76,7 @@ const COLUMNS: Column[] = [
     label: "Best Rating",
     numeric: true,
     width: 120,
-    tooltip: "Highest adjusted rating (Rating − 2 × Deviation) among the school's ranked entries. Schools rank on it.",
+    tooltip: "Highest adjusted rating (Rating − 2 × Deviation) among the school's ranked entries.",
     render: (r) => <Rating value={r.bestRating} />,
   },
   {
@@ -91,7 +103,7 @@ const COLUMNS: Column[] = [
     numeric: true,
     width: 120,
     tooltip:
-      "(0.6 × Avg Rating + 0.4 × Best Rating) × (1 + 0.15 × (Teams − 1) / (Teams + 4)). Rewards average quality and a standout entry, plus a depth bonus that grows with team count but stays under 15%.",
+      "(0.7 × Avg Rating + 0.3 × Best Rating) × team-count factor. Schools under 4 teams are diluted (×0.80 for 1 team up to ×1.00 for 4), schools with 5–20 teams get a 10% bonus, larger schools taper to 5%. Schools rank on it.",
     render: (r) => <Rating value={r.balancedScore} />,
   },
   { key: "teams", label: "Teams", numeric: true, width: 90, render: (r) => r.teams },
@@ -102,6 +114,8 @@ const COLUMNS: Column[] = [
 interface SchoolRankingsTableProps {
   /** Pre-sorted and pre-filtered rows to render. */
   rows: SchoolRanking[]
+  /** How many top ranks are legendary, from the whole list ({@link legendaryCount}). */
+  legendary: number
   /** Current sort state. */
   sort: SchoolSortState
   /** Called when the user clicks a sortable column header. */
@@ -110,11 +124,13 @@ interface SchoolRankingsTableProps {
 
 /**
  * Renders the Schools table. Every column but Events sorts; the rating
- * columns explain how they are computed. Scrolls horizontally on narrow screens.
+ * columns explain how they are computed. The top few schools are marked
+ * legendary (see {@link legendaryCount}) and schools with a balanced score of 80+ get a gold border
+ * (see {@link rowTier}). Scrolls horizontally on narrow screens.
  *
  * @param props - See {@link SchoolRankingsTableProps}.
  */
-export function SchoolRankingsTable({ rows, sort, onToggleSort }: SchoolRankingsTableProps) {
+export function SchoolRankingsTable({ rows, legendary, sort, onToggleSort }: SchoolRankingsTableProps) {
   return (
     <div className="rounded-lg border bg-card shadow-sm overflow-x-auto">
       <Table
@@ -169,8 +185,10 @@ export function SchoolRankingsTable({ rows, sort, onToggleSort }: SchoolRankings
           </TableRow>
         </TableHeader>
         <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.school}>
+          {rows.map((row) => {
+            const tier = rowTier(row.rank, row.balancedScore, legendary)
+            return (
+            <TableRow key={row.school} data-tier={tier ?? undefined} className={tier ? ROW_TIER_CLASS[tier] : undefined}>
               {COLUMNS.map((col) => (
                 <TableCell
                   key={col.key}
@@ -180,11 +198,12 @@ export function SchoolRankingsTable({ rows, sort, onToggleSort }: SchoolRankings
                   )}
                   title={col.key === "school" ? row.school : col.key === "bestEntry" ? row.bestEntry : undefined}
                 >
-                  {col.render(row)}
+                  {col.render(row, tier)}
                 </TableCell>
               ))}
             </TableRow>
-          ))}
+            )
+          })}
         </TableBody>
       </Table>
     </div>

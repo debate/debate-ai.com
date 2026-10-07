@@ -50,6 +50,7 @@ import { getVideoRowsFromJson } from "./video-json-source";
 import {
   legacyVideoRouteHref,
   previousVideoRouteHref,
+  untitledVideoRouteHref,
   slugifyVideoTitle,
   videoRouteHref,
   type VideoRouteParts,
@@ -818,7 +819,8 @@ const MAX_ROUTE_LOOKUP_PAGES = 50;
  * round, with a fifth `<variant>` segment for its analysis or a part,
  * `<season>/<event>/<matchup>` otherwise — and both older round paths (the
  * three-segment one, and the four-segment one whose teams carried `vs` and
- * the variant), so the caller can redirect a stale one. The segments are slugs,
+ * the variant) and the untitled three-segment path of a video with no team
+ * (`2027/policy/finals`), so the caller can redirect a stale one. The segments are slugs,
  * which the library's search text does not hold, so candidates are read by
  * season and each one's path is rebuilt and compared; failing that, by the
  * words of the last segment (a round whose path came from its title), and
@@ -836,7 +838,10 @@ export async function getVideoByRouteSegments(segments: string[]): Promise<Video
   const matches = (videos: VideoTuple[]) =>
     videos.find((v) => videoRouteHref(v as unknown as VideoType) === target) ??
     videos.find((v) => previousVideoRouteHref(v as unknown as VideoType) === target) ??
-    videos.find((v) => legacyVideoRouteHref(v as unknown as VideoType) === target);
+    videos.find((v) => legacyVideoRouteHref(v as unknown as VideoType) === target) ??
+    // A partial path from before titles were added, which several videos may
+    // share: the first one found keeps the video the link always opened.
+    videos.find((v) => untitledVideoRouteHref(v as unknown as VideoType) === target);
 
   const [season] = clean;
   // A season segment is a year, or `archive` for a video with no usable date,

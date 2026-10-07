@@ -19,7 +19,7 @@
  */
 
 import { RATING_OUTCOMES } from "./settle";
-import type { PresetInfo } from "debate";
+import type { PresetInfo } from "@debate/types";
 import type { MarketKind, MarketOutcome, MarketSource } from "./types";
 
 /** A division the presets cover: a `debate-rankings` dataset. */
@@ -119,7 +119,7 @@ export interface PlannedMarket {
   closesAt: number;
 }
 
-export type { PresetInfo } from "debate";
+export type { PresetInfo } from "@debate/types";
 
 const RATING_PREFIX = "preset:rating:";
 const MAJOR_PREFIX = "preset:major:";

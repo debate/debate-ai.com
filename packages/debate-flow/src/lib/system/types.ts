@@ -1,2 +1,2 @@
-// The definitions (and their field docs) live in `@types/debate`.
-export type { SystemInfo } from "debate";
+// The definitions (and their field docs) live in `@debate/types`.
+export type { SystemInfo } from "@debate/types";

@@ -1,6 +1,7 @@
 @import "tailwindcss" source(none);
 @import 'fumadocs-ui/css/shadcn.css';
-@import "fumadocs-ui/css/preset.css";
+@import "fumadocs-ui/css/lib/base.css";
+@import "fumadocs-ui/css/lib/shiki.css";
 @import "fumadocs-ui/css/generated/docs.css";
 @import "fumadocs-ui/css/generated/home.css";
 @import "fumadocs-ui/css/generated/notebook.css";
@@ -23,18 +24,27 @@
  * variables, which the app's colour themes (`.theme-<name>` on <html>) set —
  * so the docs follow whichever theme the reader picked in the app.
  *
- * The @imports above come first, ahead of this comment and every @source and
- * rule below: CSS drops an @import that follows any other statement, and
- * Vite's CSS pipeline warns about it.
+ * The @imports above come first, ahead of this comment and every @source,
+ * @plugin and rule below: CSS drops an @import that follows any other
+ * statement, and Vite's CSS pipeline warns about it.
  *
- * preset.css pulls in the generated/*.css files above — each only an
- * `@source inline(...)` list of the classes Fumadocs' layouts use — *after*
- * an `@plugin` rule. Vite's CSS pipeline follows the CSS rule and drops an
- * @import that comes after another rule, so in the app build none of the
- * layout grid (the docs sidebar's `[grid-area:sidebar]`, its
- * `--fd-sidebar-width`, …) was generated and the docs sidebar collapsed to
- * nothing. Importing them here, ahead of any rule, keeps them in.
+ * That is also why fumadocs-ui's `css/preset.css` is not imported: it puts
+ * an `@plugin` rule *before* its own @imports of `lib/*.css` and the
+ * `generated/*.css` files (each only an `@source inline(...)` list of the
+ * classes Fumadocs' layouts use). Vite follows the CSS rule, so every build
+ * warned about it and dropped those imports — none of the layout grid (the
+ * docs sidebar's `[grid-area:sidebar]`, its `--fd-sidebar-width`, …) was
+ * generated and the docs sidebar collapsed to nothing. The preset's pieces
+ * are imported directly here instead, in a valid order, and its typography
+ * plugin is registered below.
  */
+
+/*
+ * fumadocs-ui's `prose` styles (what preset.css registers). The package's
+ * `exports` map only exposes `css/*`, so the plugin is reached through this
+ * package's own node_modules link rather than a bare specifier.
+ */
+@plugin "../node_modules/fumadocs-ui/dist/tailwind/typography.js";
 
 @source "../components";
 @source "../routes";
@@ -84,6 +94,25 @@
 
 :root {
   --fd-layout-width: 1400px;
+}
+
+/*
+ * One sidebar on desktop: the app's. Its column (the web app's
+ * `DocsAppChrome`) carries this page tree as one of its sections
+ * (`components/fumadocs/layout/app-sidebar-docs-tree.tsx`), so Fumadocs' own
+ * desktop sidebar is hidden and its grid column closed. `!important` beats
+ * Fumadocs' `md:layout:[--fd-sidebar-width:268px]`, which sets the width from
+ * a `:has()` selector. Below `md` nothing changes: Fumadocs' drawer is the
+ * docs' navigation there, since the app's column is not drawn.
+ */
+@media (min-width: 768px) {
+  #nd-notebook-layout {
+    --fd-sidebar-width: 0px !important;
+  }
+
+  #nd-notebook-layout > [data-sidebar-placeholder] {
+    display: none;
+  }
 }
 
 /* Typography for MDX content */

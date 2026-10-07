@@ -1,6 +1,6 @@
 # CLAUDE.md — `debate-timer`
 
-Private. Speech and prep timers for live rounds, with per-format speech times
+Public (`@debate/` scope). Speech and prep timers for live rounds, with per-format speech times
 built in. Also the **in-round speech recorder**: mic selection, live waveform,
 playback. Entry `src/index.ts`, tests in `test/`.
 

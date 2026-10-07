@@ -89,12 +89,12 @@
       "pf_topics": [
         {
           "start_month": "September",
-          "topic_name": "The The",
-          "topic": "The the 'Bush' tax cuts should be made permanent."
+          "topic_name": "Bush Tax Cuts",
+          "topic": "The 'Bush' tax cuts should be made permanent."
         },
         {
           "start_month": "November",
-          "topic_name": "Commercial Airline",
+          "topic_name": "Armed Pilots",
           "topic": "Commercial airline pilots should be armed in the cockpit."
         }
       ]
@@ -140,12 +140,12 @@
       "pf_topics": [
         {
           "start_month": "September",
-          "topic_name": "The United",
+          "topic_name": "Rebuilding Iraq",
           "topic": "That the United States should assume primary responsibility for the rebuilding of Iraq."
         },
         {
           "start_month": "November",
-          "topic_name": "Awards For",
+          "topic_name": "Malpractice Caps",
           "topic": "Awards for pain and suffering in medical malpractice cases should be limited to $250,000."
         },
         {
@@ -155,12 +155,12 @@
         },
         {
           "start_month": "February",
-          "topic_name": "The Death",
+          "topic_name": "Death Penalty",
           "topic": "The death penalty should be abolished in America."
         },
         {
           "start_month": "March",
-          "topic_name": "The Federal",
+          "topic_name": "ANWR Drilling",
           "topic": "The Federal Government should authorize oil exploration in the Arctic National Wildlife Reserve."
         }
       ]
@@ -206,27 +206,27 @@
       "pf_topics": [
         {
           "start_month": "September",
-          "topic_name": "All Young",
+          "topic_name": "National Service",
           "topic": "All young adults in every nation should be required to perform at least one full year of national service."
         },
         {
           "start_month": "November",
-          "topic_name": "English Should",
+          "topic_name": "Official English",
           "topic": "English should be the official national language of the United States."
         },
         {
           "start_month": "January",
-          "topic_name": "Provide Universal",
+          "topic_name": "Universal Health Care",
           "topic": "The United States should provide universal health care insurance to all U.S. citizens."
         },
         {
           "start_month": "February",
-          "topic_name": "Americans Should",
+          "topic_name": "File Sharing",
           "topic": "Americans should be allowed to share copyrighted media over the internet."
         },
         {
           "start_month": "March",
-          "topic_name": "The United",
+          "topic_name": "War on Terror",
           "topic": "The United States is losing the War on Terror."
         }
       ]
@@ -272,27 +272,27 @@
       "pf_topics": [
         {
           "start_month": "September",
-          "topic_name": "That When",
+          "topic_name": "Vocational Education",
           "topic": "That, when a choice is required for public high schools in the United States, government funding should prioritize vocational education over college preparatory education."
         },
         {
           "start_month": "November",
-          "topic_name": "Issue Guest",
+          "topic_name": "Guest Worker Visas",
           "topic": "The United States should issue guest worker visas to illegal aliens."
         },
         {
           "start_month": "January",
-          "topic_name": "Student Aptitude",
+          "topic_name": "Standardized Testing",
           "topic": "Student aptitude should be assessed through standardized testing."
         },
         {
           "start_month": "February",
-          "topic_name": "The Current",
+          "topic_name": "Income Tax Reform",
           "topic": "In the United States, the current system of federal income taxation should be replaced by a flat rate income tax."
         },
         {
           "start_month": "March",
-          "topic_name": "The United",
+          "topic_name": "Supreme Court Retirement",
           "topic": "The United States Constitution should be amended to establish a mandatory retirement age for Supreme Court Justices."
         }
       ]
@@ -338,27 +338,27 @@
       "pf_topics": [
         {
           "start_month": "September",
-          "topic_name": "The United",
+          "topic_name": "Kyoto Protocol",
           "topic": "That the United States government should ratify the Kyoto Protocol."
         },
         {
           "start_month": "November",
-          "topic_name": "The American",
+          "topic_name": "American Media",
           "topic": "That the American media work against the best interest of the American public."
         },
         {
           "start_month": "January",
-          "topic_name": "Big Box",
+          "topic_name": "Big Box Retailers",
           "topic": "That big box retailers benefit the communities in which they are located."
         },
         {
           "start_month": "February",
-          "topic_name": "The Policy",
+          "topic_name": "Israel and Palestine",
           "topic": "That the policy decisions of the current Israeli government toward the Palestinian state have improved prospects for peace in the Middle East."
         },
         {
           "start_month": "March",
-          "topic_name": "Public High",
+          "topic_name": "Intelligent Design",
           "topic": "In the United States, public high school science curriculum should include the study of the Theory of Intelligent Design."
         }
       ]
@@ -404,32 +404,32 @@
       "pf_topics": [
         {
           "start_month": "September",
-          "topic_name": "The Private",
+          "topic_name": "Handgun Ban",
           "topic": "That the private ownership of handguns should be banned in the United States."
         },
         {
           "start_month": "November",
-          "topic_name": "The President",
+          "topic_name": "Popular Vote",
           "topic": "That the President and Vice-President of the United States should be elected by a direct vote of the American citizens."
         },
         {
           "start_month": "January",
-          "topic_name": "United States",
+          "topic_name": "Employee Pensions",
           "topic": "United States corporations should honor all prior commitments to employee pensions."
         },
         {
           "start_month": "February",
-          "topic_name": "The Quantity",
+          "topic_name": "Consumer Credit",
           "topic": "That the quantity of credit available to American consumers should be significantly reduced."
         },
         {
           "start_month": "March",
-          "topic_name": "The Costs",
+          "topic_name": "Casino Gambling",
           "topic": "The costs of legalized casino gambling in the United States outweigh the benefits."
         },
         {
           "start_month": "April",
-          "topic_name": "Lobbyists Negatively",
+          "topic_name": "Lobbyists",
           "topic": "That lobbyists negatively influence the legislative process in the United States."
         }
       ]
@@ -475,32 +475,32 @@
       "pf_topics": [
         {
           "start_month": "September",
-          "topic_name": "Us Policies",
+          "topic_name": "Post-9/11 Policies",
           "topic": "US policies established after September 11, 2001 have substantially reduced the risk of terrorist acts against the United States."
         },
         {
           "start_month": "November",
-          "topic_name": "The Us",
+          "topic_name": "Indigenous Peoples",
           "topic": "That the US Government should increase social services for indigenous peoples in America."
         },
         {
           "start_month": "January",
-          "topic_name": "The Economic",
+          "topic_name": "Economic Stimulus",
           "topic": "That the Economic Stimulus Act of 2008 will successfully mitigate economic slowdowns over the next year."
         },
         {
           "start_month": "February",
-          "topic_name": "The Us",
+          "topic_name": "Presidential Primaries",
           "topic": "The US system of presidential primaries is contrary to democratic values."
         },
         {
           "start_month": "March",
-          "topic_name": "Russia Has",
+          "topic_name": "Russia",
           "topic": "That Russia has become a threat to U.S. interests."
         },
         {
           "start_month": "April",
-          "topic_name": "In A",
+          "topic_name": "Civil Disobedience",
           "topic": "In a democracy, civil disobedience is an appropriate weapon in the fight for justice."
         }
       ]
@@ -546,32 +546,32 @@
       "pf_topics": [
         {
           "start_month": "September",
-          "topic_name": "The United",
+          "topic_name": "Cuba Relations",
           "topic": "That the United States should normalize relations with Cuba."
         },
         {
           "start_month": "November",
-          "topic_name": "A Society",
+          "topic_name": "Health Care",
           "topic": "A society has an obligation to ensure adequate health care for its citizens."
         },
         {
           "start_month": "January",
-          "topic_name": "The Employee",
+          "topic_name": "Employee Free Choice Act",
           "topic": "That the Employee Free Choice Act of 2009 serves the best interest of the American people."
         },
         {
           "start_month": "February",
-          "topic_name": "That On",
+          "topic_name": "No Child Left Behind",
           "topic": "That, on balance, the No Child Left Behind Act of 2001 has improved academic achievement in the United States."
         },
         {
           "start_month": "March",
-          "topic_name": "That On",
+          "topic_name": "Rise of BRIC",
           "topic": "That, on balance, the rise of Brazil, Russia, India, and China (BRIC) has had a positive impact on the United States."
         },
         {
           "start_month": "April",
-          "topic_name": "That By",
+          "topic_name": "Alternative Fuel Vehicles",
           "topic": "That, by 2040, the federal government should mandate that all new passenger vehicles and light trucks sold in the United States be powered by alternative fuels."
         }
       ]
