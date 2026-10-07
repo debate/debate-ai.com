@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { Bell, Check, ChevronsUpDown, Globe, LogIn, LogOut, Monitor, Moon, Palette, Settings, Sun, Users } from "lucide-react"
+import { Bell, Check, CheckCheck, ChevronsUpDown, Globe, X, LogIn, LogOut, Monitor, Moon, Palette, Settings, Sun, Users } from "lucide-react"
 
 import { Avatar, AvatarFallback, AvatarImage } from "../../../lib/ui/primitives/avatar"
 import {
@@ -27,6 +27,7 @@ import { settingsHrefForPath } from "../../../lib/qwksearch/settings-paths"
 import { cn } from "../../../lib/ui/lib/utils"
 import { formatThemeName, themeColors, themeNames, useThemeState } from "../../theme-dropdown"
 import { SITE_LINKS } from "../../../lib/nav/dock-menu-sections"
+import { useAccountNotifications, type UseAccountNotificationsResult } from "@debate/team-collaboration"
 import { AddMembersDialog, CreateOrganizationDialog, OrganizationSubmenu } from "./organization-menu"
 
 /**
@@ -136,6 +137,100 @@ function SiteLinkItems() {
   )
 }
 
+/** "9+" past nine, so the badge stays one small pill. */
+function badgeText(count: number) {
+  return count > 9 ? "9+" : String(count)
+}
+
+function UnreadBadge({ count, className }: { count: number; className?: string }) {
+  if (count <= 0) return null
+  return (
+    <span
+      className={cn(
+        "inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold leading-none text-primary-foreground",
+        className,
+      )}
+    >
+      {badgeText(count)}
+    </span>
+  )
+}
+
+/**
+ * The account menu's Notifications submenu: every unread notification (the
+ * same `/api/notifications` data the `/notifications` page shows), each
+ * opening its link and clearing itself, with an X to clear it without
+ * opening it, then Clear all and a link to the full page. "Clear" is the
+ * page's mark-as-read; nothing is deleted.
+ */
+function NotificationsSubmenu({ feed }: { feed: UseAccountNotificationsResult }) {
+  const router = useRouter()
+  const unread = feed.notifications.filter((n) => !n.readAt)
+
+  return (
+    <DropdownMenuSub>
+      <DropdownMenuSubTrigger className={ITEM}>
+        <Bell />
+        Notifications
+        <UnreadBadge count={feed.unreadCount} className="ml-auto" />
+      </DropdownMenuSubTrigger>
+      <DropdownMenuSubContent className="max-h-[min(28rem,var(--radix-dropdown-menu-content-available-height))] w-72 overflow-y-auto rounded-lg">
+        {unread.length === 0 ? (
+          <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
+            You&apos;re all caught up.
+          </DropdownMenuLabel>
+        ) : (
+          unread.map((n) => (
+            <DropdownMenuItem
+              key={n.id}
+              className="cursor-pointer items-start gap-2"
+              onSelect={() => {
+                void feed.markRead(n.id)
+                if (n.link) router.push(n.link)
+              }}
+            >
+              <div className="grid min-w-0 flex-1 gap-0.5">
+                <span className="line-clamp-2 text-sm">{n.title}</span>
+                {n.body ? <span className="line-clamp-2 text-xs text-muted-foreground">{n.body}</span> : null}
+              </div>
+              <button
+                type="button"
+                aria-label="Clear notification"
+                title="Clear"
+                className="inline-flex size-6 shrink-0 items-center justify-center rounded text-muted-foreground hover:bg-background hover:text-foreground"
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  void feed.markRead(n.id)
+                }}
+              >
+                <X className="size-3.5" />
+              </button>
+            </DropdownMenuItem>
+          ))
+        )}
+        <DropdownMenuSeparator />
+        {unread.length > 0 ? (
+          <DropdownMenuItem
+            className={ITEM}
+            onSelect={(e) => { e.preventDefault(); void feed.markAllRead() }}
+          >
+            <CheckCheck />
+            Clear all
+          </DropdownMenuItem>
+        ) : null}
+        <DropdownMenuItem asChild className={ITEM}>
+          <Link href="/notifications">
+            <Bell />
+            All notifications
+          </Link>
+        </DropdownMenuItem>
+      </DropdownMenuSubContent>
+    </DropdownMenuSub>
+  )
+}
+
 function SiteLinksSubmenu() {
   return (
     <DropdownMenuSub>
@@ -178,6 +273,9 @@ export function NavUser() {
   const [loginOpen, setLoginOpen] = useState(false)
   const [createOrgOpen, setCreateOrgOpen] = useState(false)
   const [membersOpen, setMembersOpen] = useState(false)
+  // The dock's instance is the one that toasts; this one only feeds the badge
+  // and the submenu.
+  const notifications = useAccountNotifications(isAuthenticated, { toastOnArrival: false })
 
   if (isLoading) {
     return (
@@ -226,8 +324,17 @@ export function NavUser() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button type="button" className={cn(ROW, "data-[state=open]:bg-accent")}>
-          <UserAvatar image={user.image} name={name} />
+          <span className="relative shrink-0">
+            <UserAvatar image={user.image} name={name} />
+            <UnreadBadge
+              count={notifications.unreadCount}
+              className="absolute -right-1.5 -top-1.5 ring-2 ring-background"
+            />
+          </span>
           <span className="min-w-0 flex-1 truncate text-left text-sm font-medium">{name}</span>
+          {notifications.unreadCount > 0 ? (
+            <span className="sr-only">{`${notifications.unreadCount} unread notifications`}</span>
+          ) : null}
           <ChevronsUpDown className="ml-auto size-4 text-muted-foreground" />
         </button>
       </DropdownMenuTrigger>
@@ -254,12 +361,7 @@ export function NavUser() {
               Settings
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem asChild className={ITEM}>
-            <Link href="/notifications">
-              <Bell />
-              Notifications
-            </Link>
-          </DropdownMenuItem>
+          <NotificationsSubmenu feed={notifications} />
           <DropdownMenuItem asChild className={ITEM}>
             <Link href="/contacts">
               <Users />
