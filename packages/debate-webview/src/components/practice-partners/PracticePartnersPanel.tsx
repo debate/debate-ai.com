@@ -15,7 +15,9 @@
  *    closed ones.
  * 3. **Rounds needing a judge** — accepted rounds with an empty judge seat,
  *    shown only when you volunteer to judge.
- * 4. **Find a practice partner** — the board, ranked by match.
+ * 4. **Find a practice partner** — "Find me a match" (`MatchFinder`): one
+ *    anonymous, compatibility-ranked debater at a time, with a request button.
+ *    The list of volunteers is not public.
  *
  * Every write refreshes the whole board rather than patching local state: a
  * challenge answered on one side changes what the other side's buttons may do,
@@ -46,7 +48,7 @@ import {
 } from "../../lib/practice-partners/types";
 import { ChallengeCard } from "./ChallengeCard";
 import { PracticeProfileForm } from "./PracticeProfileForm";
-import { VolunteerBoard } from "./VolunteerBoard";
+import { MatchFinder } from "./MatchFinder";
 
 type LoadState = "loading" | "ready" | "signed-out" | "error";
 
@@ -126,7 +128,7 @@ function ProfileSummary({ profile }: { profile: PracticeProfileInput }) {
             </span>
           ))
         ) : (
-          <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">Hidden from the board</span>
+          <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">Not matching or judging</span>
         )}
       </div>
       <p className="text-muted-foreground">
@@ -197,16 +199,6 @@ export function PracticePartnersPanel({ className }: { className?: string }) {
     document.getElementById(judgeLinkTarget(isJudge))?.scrollIntoView({ block: "start" });
   }, [loadState, isJudge]);
 
-  const pendingOpponentIds = useMemo(
-    () =>
-      new Set(
-        (board?.challenges ?? [])
-          .filter((challenge) => challenge.status === "pending" && challenge.challenger.id === viewerId)
-          .map((challenge) => challenge.opponent.id),
-      ),
-    [board?.challenges, viewerId],
-  );
-
   async function handleAction(challengeId: string, action: ChallengeAction) {
     await actOnChallenge(challengeId, action);
     await load();
@@ -232,7 +224,7 @@ export function PracticePartnersPanel({ className }: { className?: string }) {
           <a href="/login" className="font-medium text-primary hover:underline">
             Sign in
           </a>{" "}
-          to see who&rsquo;s looking for a practice round and to put yourself on the board.
+          to get matched with a practice partner and to volunteer for rounds.
         </p>
       </Block>
     );
@@ -280,7 +272,7 @@ export function PracticePartnersPanel({ className }: { className?: string }) {
         icon={<UserRound className="h-4 w-4" />}
         description={
           showForm
-            ? "Put yourself on the board as a debater, a judge, or both — and say what you're comfortable with."
+            ? "Volunteer as a debater, a judge, or both — and say what you're comfortable with. Matches are ranked by it."
             : undefined
         }
         action={
@@ -316,7 +308,7 @@ export function PracticePartnersPanel({ className }: { className?: string }) {
         icon={<Inbox className="h-4 w-4" />}
         description={
           activeCount === 0 && groups.closed.length === 0
-            ? "Nothing yet. Challenge someone from the board below — they'll get a notification."
+            ? "Nothing yet. Find a match below and send a request — they'll get a notification."
             : undefined
         }
       >
@@ -371,18 +363,16 @@ export function PracticePartnersPanel({ className }: { className?: string }) {
       <Block
         title="Find a practice partner"
         icon={<Swords className="h-4 w-4" />}
-        description="Everyone who asked to be challenged or volunteered to judge, best matches for your profile first."
+        description="Get matched at random with a compatible debater for your profile. You won't see who it is — send a request, and you'll both find out once they accept."
       >
-        {!profile?.asCompetitor ? (
+        {profile && !profile.asCompetitor ? (
           <p className="rounded-md border border-border bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
-            You can challenge anyone here. Switch on &ldquo;Open to challenges&rdquo; in your profile so they can challenge you back.
+            Switch on &ldquo;Open to challenges&rdquo; in your profile so others can be matched with you too.
           </p>
         ) : null}
-        <VolunteerBoard
-          volunteers={board.volunteers}
+        <MatchFinder
           viewerPreferences={profile}
-          pendingOpponentIds={pendingOpponentIds}
-          onChallenge={async (challenge) => {
+          onRequest={async (challenge) => {
             await createChallenge(challenge);
             await load();
           }}

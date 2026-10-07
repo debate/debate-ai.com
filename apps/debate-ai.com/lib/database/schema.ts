@@ -229,6 +229,23 @@ export type FlowPresenceHeartbeatRow = typeof flowPresenceHeartbeats.$inferSelec
 // (append-to-front, dedupe, cap) resolved against the row's current value,
 // the same lost-update fix `favoriteTools`' add/remove ops already use,
 // rather than a client-computed whole-list replace.
+// The QwkSearch account a user linked through "Sign in with QwkSearch"
+// (lib/qwksearch/connect.ts): JSON-serialized `QwkSearchConnection` — API key,
+// profile and plan. The embedded research workspace sends the key with every
+// qwksearch.com API call so chats run as that account. A table of its own
+// rather than a `user_settings` column: Drizzle names every column in an
+// insert, so a new column there breaks every other writer of that table on a
+// database that hasn't gained it yet. lib/qwksearch/store.ts creates this
+// table on first use (CREATE TABLE IF NOT EXISTS), since the app ships no
+// migrations folder.
+export const qwksearchConnection = sqliteTable("qwksearch_connection", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => user.id, { onDelete: "cascade" }),
+  connection: text("connection").notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
+});
+
 export const userSettings = sqliteTable("user_settings", {
   userId: text("user_id")
     .primaryKey()
@@ -365,6 +382,12 @@ export const userSettings = sqliteTable("user_settings", {
   // the local `myTeamProfile.ts` localStorage value stays the source of
   // truth for a signed-out browser.
   myTeamProfile: text("my_team_profile"),
+  // JSON-serialized `MyRankedTeams` (`{ role, partner, teams: { <division>:
+  // teamSlug } }`) — Settings → My team, the ranked team the viewer debates
+  // on, coaches or assists per division, which the matchup simulator
+  // pre-fills (packages/debate-videos/src/lib/my-ranked-teams). Whole-value
+  // replace, like `myTeamProfile` above.
+  myRankedTeams: text("my_ranked_teams"),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(unixepoch())`),
@@ -2403,6 +2426,8 @@ export type PredictionBetRow = typeof predictionBets.$inferSelect;
 // season and voting again overwrites it rather than adding a second row. `area`
 // is a topic-area name from @debate/videos' resolutions.json, checked by the
 // API before it is written. Created by packages/debate-videos/migrations.
+// Superseded by `topicAreaRankings` (ranked ballots), which copied these rows
+// in as first choices; nothing reads or writes this table any more.
 export const topicAreaVotes = sqliteTable(
   "topic_area_votes",
   {
@@ -2424,6 +2449,33 @@ export const topicAreaVotes = sqliteTable(
 );
 
 export type TopicAreaVoteRow = typeof topicAreaVotes.$inferSelect;
+
+// Ranked ballots in the next-season topic-area poll (/practice/statistics):
+// one row per choice, so a ballot is up to five rows (rank 1 = first choice)
+// for one (season, user). Casting a new ballot deletes the user's rows for
+// that season and writes the new ones. `area` is a topic-area name checked by
+// the API. Replaces `topic_area_votes` (single-choice), whose rows were copied
+// in as first choices. Created by packages/debate-videos/migrations.
+export const topicAreaRankings = sqliteTable(
+  "topic_area_rankings",
+  {
+    season: integer("season").notNull(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    rank: integer("rank").notNull(),
+    area: text("area").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.season, table.userId, table.rank] }),
+    seasonIdx: index("idx_topic_area_rankings_season").on(table.season),
+  }),
+);
+
+export type TopicAreaRankingRow = typeof topicAreaRankings.$inferSelect;
 
 // A signed-in user following a team or school profile (/teams/[team],
 // /schools/[school]). Keyed on (user, kind, slug), so following twice is a

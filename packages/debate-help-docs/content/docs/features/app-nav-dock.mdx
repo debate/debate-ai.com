@@ -242,6 +242,19 @@ dragging the edge back out. The choice holds on every page and is remembered
 in this browser (`app-sidebar-collapsed` in localStorage; `sidebar-collapse.ts`
 broadcasts it, so the column and the dock always agree).
 
+**Peeking.** While the sidebar is hidden, move the pointer to the very left
+edge of the window (within 8px) and it slides out *over* the page — slightly
+translucent, at your usual width — without pushing the page aside. Move away
+from it and it slides back after a moment (or press Esc); it stays hidden
+until you pin it with the panel button at its foot, which reads **Keep
+sidebar open** while peeking. A menu opened from it (the account menu) keeps
+it out until the menu closes. Each time it comes or goes it plays one of ten
+animations at random (slide, elastic, wiggle, zoom, flip, bounce, swing, drop,
+blur or jelly), and none if your system asks for reduced motion.
+(`ResizableSidebarLayout`: a `pointermove`
+listener while collapsed restyles the same `<aside>` as a fixed overlay, so
+the content panel never resizes.)
+
 While the sidebar is hidden the dock it carried floats at the top-left
 instead (`CategoryDock` lifts its suppression while `useSidebarCollapsed()`
 is true), so the five destinations stay one click away.

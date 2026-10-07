@@ -1,0 +1,38 @@
+---
+title: "Sign in with QwkSearch"
+---
+
+# Sign in with QwkSearch
+
+Links your Debate AI account to your [QwkSearch](https://qwksearch.com)
+account, so the research chat built into Debate AI runs as you on QwkSearch —
+your saved chats, your history, and the models your QwkSearch plan includes —
+instead of as a guest.
+
+- **Nav:** the research workspace's **Settings → Account** tab (also the
+  **Login** item in its menu)
+- **Package:** `debate-webview` (`components/qwksearch/connect-auth.ts`,
+  `Settings/Sections/Account.tsx`); routes in `apps/debate-ai.com`
+  (`/api/qwksearch/*`)
+
+## Signing in
+
+1. Sign in to Debate AI (you'll be asked first if you aren't).
+2. Press **Sign in with QwkSearch**. You go to qwksearch.com, sign in or create
+   a QwkSearch account there, and press **Allow** to let Debate AI use it.
+3. You land back where you started, with a "Signed in with QwkSearch" notice.
+
+Cancelling on qwksearch.com brings you back unchanged.
+
+## Your plan and upgrading
+
+The Account tab shows your QwkSearch plan. On the free plan, **Upgrade
+QwkSearch** opens QwkSearch's checkout for your QwkSearch account; when you
+come back, the plan refreshes on its own (or press **Refresh plan**).
+
+## Signing out
+
+**Sign out of QwkSearch** unlinks the account: research goes back to guest mode
+here. Your QwkSearch account and its chats are untouched. To cut Debate AI off
+from QwkSearch's side, regenerate your API key in QwkSearch's settings — the
+link stops working and you'll be asked to sign in again.

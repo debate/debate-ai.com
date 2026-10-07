@@ -8,11 +8,12 @@ import { nextPollSeason, parseVoteBody } from "@debate/videos/src/lib/topic-area
 /**
  * The next-season topic-area poll on /practice/statistics.
  *
- * GET — the tally for `?season=` (defaults to next season), readable signed
- * out; a signed-in reader also gets their own pick back as `myVote`.
+ * GET — the ranked-choice tally for `?season=` (defaults to next season),
+ * readable signed out; a signed-in reader also gets their own ballot back as
+ * `myRanking`.
  *
- * PUT `{ season, area }` — casts or changes the signed-in user's vote. Only
- * next season is open, and `area` must be one of the explorer's topic areas.
+ * PUT `{ season, ranking }` — casts or replaces the signed-in user's ballot:
+ * one to five distinct topic areas, best first. Only next season is open.
  */
 
 export const GET = withRouteErrors("GET /api/topic-area-poll", async (req: NextRequest) => {
@@ -36,5 +37,5 @@ export const PUT = withRouteErrors("PUT /api/topic-area-poll", async (req: NextR
     return NextResponse.json({ error: parsed.error }, { status: 400 })
   }
   const db = await getDBFromContext()
-  return NextResponse.json(await castTopicAreaVote(db, { season: parsed.season, userId, area: parsed.area }))
+  return NextResponse.json(await castTopicAreaVote(db, { season: parsed.season, userId, ranking: parsed.ranking }))
 })

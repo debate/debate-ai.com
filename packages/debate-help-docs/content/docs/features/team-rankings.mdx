@@ -141,28 +141,74 @@ simulator reads each division's full-season rankings
 (`<division>_full_rankings.csv`), so every ranked team can be picked — filter
 by name or school, or hit **Random opponent**.
 
-It shows the single-round win probability for each side, the odds of taking a
-3- or 5-judge elim panel, and a **Simulate 1,000 rounds** button that plays
-the matchup out to show the spread a percentage hides.
+Each side is simulated separately: team A locked **aff**, then team A locked
+**neg**, so you can see which side a team does better on. Pick **Aff**,
+**Neg** or **Both**, and **Prelim** (one judge), **Elim** (3- and 5-judge
+panels) or **Both**. With both sides shown, it says which side team A should
+take on a coin flip, and by how many points. **Simulate 1,000 rounds per
+side** plays each side out to show the spread a percentage hides.
 
-The probability is Glicko-2's expected score, the same formula as upstream's
-`simulate_round.py` (skelo's `Glicko2Model.compute_prob`): ratings are
-converted back to Glicko-2's 1500 scale, and the result is
-`1 / (1 + exp(−g(φ_opp) · (μ − μ_opp)))`. Panel odds assume each ballot is
-independent at that probability.
+### What goes into the rating
+
+Each team's rating is a blend of three signals, set by two sliders:
+
+- **Team**: the pairing's own rating.
+- **Individual performance**: how each debater rates in their *other*
+  entries at the same school, in any division (other partners, or LD). A
+  pair that only does well together, or a debater who carries every partner,
+  shows up here. Teams whose debaters have no other entries just use the
+  team rating.
+- **School performance**: the average rating of every entry the school has
+  in the division. This is program strength (coaching, shared files) rather
+  than the pair itself.
+
+Under each team the simulator shows all three numbers, the blend, and a
+**recommended** mix for that team. A team with few rounds of its own leans
+more on its school (15 rounds → 50%, 60 → 20%). A team whose debaters have
+other entries leans more on those, up to half. Click it to apply it.
+
+The side effect has two parts: the field's aff/neg split for the stage (elims
+often lean further than prelims), and each team's own aff-vs-neg record
+beyond the field's, shrunk toward zero for teams with few rounds. A team's
+elim-only rates come from a handful of rounds, so its tilt always comes from
+its overall record.
+
+The base probability is Glicko-2's expected score, the same formula as
+upstream's `simulate_round.py` (skelo's `Glicko2Model.compute_prob`): ratings
+are converted back to Glicko-2's 1500 scale, and the result is
+`1 / (1 + exp(−g(φ_opp) · (μ − μ_opp)))`. The side shift is added in
+log-odds. Panel odds assume each ballot is independent at that probability.
+
+### Your team, pre-filled
+
+**Settings → My team** sets your role (debater, coach, or assistant/judge),
+your partner, and the ranked team you represent in each division. It's saved
+in this browser and, when you're signed in, to your account
+(`/api/settings`' `myRankedTeams`). The simulator starts from it.
 
 It appears in two places:
 
-- **Practice round** (`/practice`): both sides are free to pick.
-- **Every team profile** (`/teams/<team>`): that team is locked in as side A,
-  across each division it is ranked in, and any other ranked team can be its
-  opponent.
+- **Practice round** (`/practice`): side A starts as your team for the
+  division, and both sides can be changed.
+- **Every team profile** (`/teams/<team>`): if you have a team set for that
+  division, **Simulate vs. any ranked team** pits your team (side A) against
+  the profile's team. On your own profile, or with no team set, the profile's
+  team is locked in as side A and any other ranked team can be its opponent.
 
-The math lives in `@debate/rankings-adapter`'s `match-simulation.ts`; the UI
-is `debate-videos`' `MatchupSimulator`, composed on the practice page by
-`debate-practice-rounds`' `TeamMatchupSimulatorPanel`.
+The math lives in `@debate/rankings-adapter`: `match-simulation.ts` (Glicko-2)
+and `matchup-model.ts` (blending, side terms, recommendations). The UI is
+`debate-videos`' `MatchupSimulator`, composed on the practice page by
+`debate-practice-rounds`' `TeamMatchupSimulatorPanel`. The setting is
+`debate-videos`' `lib/my-ranked-teams` and `MyRankedTeamsSettings`.
 
 ## Known gaps
+
+The matchup simulator's individual rating finds a debater's other entries by
+surname and school, so two debaters with the same surname at one school are
+merged, and someone who changed schools isn't linked. The rankings carry no
+speaker points, so individual skill is only inferred from other pairings.
+The partner name in **My team** is informational and doesn't change the
+model.
 
 A profile's Videos section only finds a round whose team label or title spells
 the school the way the rankings do, or by one of the short forms above. A
