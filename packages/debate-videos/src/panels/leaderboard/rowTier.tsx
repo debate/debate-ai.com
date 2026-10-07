@@ -62,7 +62,7 @@ export const ROW_TIER_CLASS: Record<Exclude<RowTier, null>, string> = {
     "outline outline-2 -outline-offset-2 outline-amber-500 bg-amber-400/10 shadow-[0_0_12px_rgb(251_191_36/0.5)] hover:bg-amber-400/20",
 }
 
-/** The small "Legendary" label shown beside a legendary row's rank. */
+/** The small "Legendary" label: after the team name in division tables, beside the rank in the Schools table. */
 export function LegendaryBadge() {
   return (
     <span
