@@ -693,6 +693,37 @@ export function VideoWatchPage({
                     </span>
                   </>
                 )}
+                {/* The two teams sit right after the level, in the same row as
+                    the round's other badges: aff blue, neg red, the winner
+                    ringed in gold. */}
+                {affTeam && (
+                  <button
+                    onClick={() => handleBadgeClick(affTeam)}
+                    title={`Affirmative: ${affTeam}`}
+                    className={cn(
+                      "text-sm font-bold backdrop-blur-md px-2 py-1 rounded",
+                      affWin === true
+                        ? "border-2 border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)] text-blue-100 bg-blue-900/80"
+                        : "border border-blue-400/90 shadow-lg text-blue-300 bg-blue-900/80",
+                    )}
+                  >
+                    {affTeam}
+                  </button>
+                )}
+                {negTeam && (
+                  <button
+                    onClick={() => handleBadgeClick(negTeam)}
+                    title={`Negative: ${negTeam}`}
+                    className={cn(
+                      "text-sm font-bold backdrop-blur-md px-2 py-1 rounded",
+                      affWin === false
+                        ? "border-2 border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)] text-red-100 bg-red-900/80"
+                        : "border border-red-400/90 shadow-lg text-red-300 bg-red-900/80",
+                    )}
+                  >
+                    {negTeam}
+                  </button>
+                )}
               </div>
 
               <WatchToolbar
@@ -801,49 +832,17 @@ export function VideoWatchPage({
                 {judgeDecision && <span>Decision {judgeDecision}</span>}
               </div>
 
-              {(affTeam || negTeam) && (
-                <div className="flex flex-wrap items-start justify-center gap-2">
-                  {affTeam && (
-                    <div className="flex flex-col items-center gap-0.5">
-                      <button
-                        onClick={() => handleBadgeClick(affTeam)}
-                        title={`Affirmative: ${affTeam}`}
-                        className={cn(
-                          "text-sm font-bold backdrop-blur-md px-2 py-1 rounded",
-                          affWin === true
-                            ? "border-[3px] border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)] text-blue-100 bg-blue-900/80"
-                            : "border border-blue-400/90 shadow-lg text-blue-300 bg-blue-900/80",
-                        )}
-                      >
-                        {affTeam}
-                      </button>
-                      {arg1AC && (
-                        <span className="text-xs font-medium text-blue-100 backdrop-blur-md bg-blue-950/90 px-2 py-0.5 rounded border border-blue-800/50 shadow-sm text-center max-w-[120px] leading-tight">
-                          {arg1AC}
-                        </span>
-                      )}
-                    </div>
+              {(arg1AC || arg2NR) && (
+                <div className="flex flex-wrap items-start gap-2">
+                  {arg1AC && (
+                    <span className="text-xs font-medium text-blue-100 backdrop-blur-md bg-blue-950/90 px-2 py-0.5 rounded border border-blue-800/50 shadow-sm leading-tight">
+                      1AC: {arg1AC}
+                    </span>
                   )}
-                  {negTeam && (
-                    <div className="flex flex-col items-center gap-0.5">
-                      <button
-                        onClick={() => handleBadgeClick(negTeam)}
-                        title={`Negative: ${negTeam}`}
-                        className={cn(
-                          "text-sm font-bold backdrop-blur-md px-2 py-1 rounded",
-                          affWin === false
-                            ? "border-[3px] border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)] text-red-100 bg-red-900/80"
-                            : "border border-red-400/90 shadow-lg text-red-300 bg-red-900/80",
-                        )}
-                      >
-                        {negTeam}
-                      </button>
-                      {arg2NR && (
-                        <span className="text-xs font-medium text-red-100 backdrop-blur-md bg-red-950/90 px-2 py-0.5 rounded border border-red-800/50 shadow-sm text-center max-w-[120px] leading-tight">
-                          {arg2NR}
-                        </span>
-                      )}
-                    </div>
+                  {arg2NR && (
+                    <span className="text-xs font-medium text-red-100 backdrop-blur-md bg-red-950/90 px-2 py-0.5 rounded border border-red-800/50 shadow-sm leading-tight">
+                      2NR: {arg2NR}
+                    </span>
                   )}
                 </div>
               )}
