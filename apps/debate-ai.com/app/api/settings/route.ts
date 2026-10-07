@@ -5,6 +5,12 @@ import { ensureTableColumns } from "@/lib/database/ensure-columns"
 import { userSettings } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
 import {
+  normalizeMyRankedTeamsPatch,
+  parseMyRankedTeams,
+  serializeMyRankedTeams,
+  type MyRankedTeams,
+} from "@debate/videos/src/lib/my-ranked-teams/my-ranked-teams"
+import {
   mergeFlowEditorSettings,
   normalizeFlowEditorSettingsPatch,
   parseFlowEditorSettings,
@@ -142,7 +148,7 @@ import type { QualificationPointsTable } from "@debate/data-sync/src/rankings/nd
  *   renameSavedArgumentCollection?, updateSavedArgumentCollectionTags?,
  *   researchProgressGoal?, brainstormSessionTimer?, questStreakSync?,
  *   recordStreakFreezeDayKey?, setLapseReminderEnabled?, recordMissionResultDay?,
- *   qualificationPointsTable?, qualificationCutoff?, myTeamProfile? } — validates and
+ *   qualificationPointsTable?, qualificationCutoff?, myTeamProfile?, myRankedTeams? } — validates and
  *   upserts the given fields (validated by `debate-round`'s
  *   `normalizeUserSettingsPatch`/`normalizeThemeSettingsPatch`/
  *   `normalizeFavoriteToolsPatch`/`normalizeFavoriteToolOpPatch`/
@@ -269,6 +275,7 @@ type SettingsRow = {
   qualificationPointsTable: string | null
   qualificationCutoff: string | null
   myTeamProfile: string | null
+  myRankedTeams: string | null
 }
 
 type SettingsPayload = UserSettingsPayload & {
@@ -290,6 +297,7 @@ type SettingsPayload = UserSettingsPayload & {
   qualificationPointsTable: QualificationPointsTable | null
   qualificationCutoff: QualificationCutoffSettings | null
   myTeamProfile: MyTeamProfileSyncPayload | null
+  myRankedTeams: MyRankedTeams | null
 }
 
 function toPayload(row: SettingsRow | undefined): SettingsPayload {
@@ -330,6 +338,7 @@ function toPayload(row: SettingsRow | undefined): SettingsPayload {
       ? parseQualificationCutoff(row.qualificationCutoff)
       : DEFAULT_QUALIFICATION_CUTOFF_SYNC.qualificationCutoff,
     myTeamProfile: row?.myTeamProfile ? parseMyTeamProfile(row.myTeamProfile) : DEFAULT_MY_TEAM_PROFILE_SYNC.myTeamProfile,
+    myRankedTeams: parseMyRankedTeams(row?.myRankedTeams),
   }
 }
 
@@ -384,6 +393,7 @@ export async function PUT(req: NextRequest) {
   const qualificationPointsTableResult = normalizeQualificationPointsTablePatch(body)
   const qualificationCutoffResult = normalizeQualificationCutoffPatch(body)
   const myTeamProfileResult = normalizeMyTeamProfilePatch(body)
+  const myRankedTeamsResult = normalizeMyRankedTeamsPatch(body)
   const editorPreferencesResult = normalizeEditorPreferencesPatch(
     (body as { editorPreferences?: unknown } | null)?.editorPreferences,
   )
@@ -416,6 +426,7 @@ export async function PUT(req: NextRequest) {
     ...qualificationPointsTableResult.errors,
     ...qualificationCutoffResult.errors,
     ...myTeamProfileResult.errors,
+    ...myRankedTeamsResult.errors,
     ...editorPreferencesResult.errors,
     ...flowEditorSettingsResult.errors,
     ...flowAutoSaveResult.errors,
@@ -452,6 +463,7 @@ export async function PUT(req: NextRequest) {
     qualificationPointsTableResult.valid.qualificationPointsTable === undefined &&
     qualificationCutoffResult.valid.qualificationCutoff === undefined &&
     myTeamProfileResult.valid.myTeamProfile === undefined &&
+    myRankedTeamsResult.valid.myRankedTeams === undefined &&
     Object.keys(newsSyncResult.valid).length === 0 &&
     newsReadOpResult.valid.recordNewsRead === undefined &&
     newsLikedOpResult.valid.addNewsLiked === undefined &&
@@ -463,7 +475,7 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json(
       {
         error:
-          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, recordRecentTool, wordLimitPresets, addWordLimitPreset, updateWordLimitPreset, removeWordLimitPreset, outlineFilterPresets, addOutlineFilterPreset, removeOutlineFilterPreset, savedArgumentCollections, addSavedArgumentCollection, removeSavedArgumentCollection, renameSavedArgumentCollection, updateSavedArgumentCollectionTags, researchProgressGoal, brainstormSessionTimer, questStreakSync, recordStreakFreezeDayKey, setLapseReminderEnabled, recordMissionResultDay, qualificationPointsTable, qualificationCutoff, myTeamProfile, newsRead, newsLiked, recordNewsRead, addNewsLiked, removeNewsLiked, editorPreferences, flowEditorSettings, or flowAutoSave.",
+          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, recordRecentTool, wordLimitPresets, addWordLimitPreset, updateWordLimitPreset, removeWordLimitPreset, outlineFilterPresets, addOutlineFilterPreset, removeOutlineFilterPreset, savedArgumentCollections, addSavedArgumentCollection, removeSavedArgumentCollection, renameSavedArgumentCollection, updateSavedArgumentCollectionTags, researchProgressGoal, brainstormSessionTimer, questStreakSync, recordStreakFreezeDayKey, setLapseReminderEnabled, recordMissionResultDay, qualificationPointsTable, qualificationCutoff, myTeamProfile, myRankedTeams, newsRead, newsLiked, recordNewsRead, addNewsLiked, removeNewsLiked, editorPreferences, flowEditorSettings, or flowAutoSave.",
       },
       { status: 400 },
     )
@@ -493,6 +505,7 @@ export async function PUT(req: NextRequest) {
     qualificationPointsTable?: string | null
     qualificationCutoff?: string | null
     myTeamProfile?: string | null
+    myRankedTeams?: string | null
   } = { ...valid }
   if (
     favoriteToolOpResult.valid.addFavoriteTool !== undefined ||
@@ -710,6 +723,9 @@ export async function PUT(req: NextRequest) {
   }
   if (myTeamProfileResult.valid.myTeamProfile !== undefined) {
     dbPatch.myTeamProfile = serializeMyTeamProfile(myTeamProfileResult.valid.myTeamProfile)
+  }
+  if (myRankedTeamsResult.valid.myRankedTeams !== undefined) {
+    dbPatch.myRankedTeams = serializeMyRankedTeams(myRankedTeamsResult.valid.myRankedTeams)
   }
   if (newsReadOpResult.valid.recordNewsRead !== undefined) {
     // A single mark-read op is resolved against the row's *current* stored

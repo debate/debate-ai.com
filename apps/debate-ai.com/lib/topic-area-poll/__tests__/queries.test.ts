@@ -1,7 +1,7 @@
 /**
  * @fileoverview The topic-area poll queries against a real SQLite database:
- * one vote per user per season, a second vote replaces the first, and the
- * tally and the viewer's own pick come back right.
+ * one ranked ballot per user per season, a second ballot replaces the
+ * first, and the Borda tally and the viewer's own ballot come back right.
  */
 
 import { beforeEach, describe, expect, it } from "vitest";
@@ -25,31 +25,39 @@ describe("topic-area poll queries", () => {
     await addUser("u2");
   });
 
-  it("tallies votes and reports the viewer's pick", async () => {
+  it("tallies ranked ballots by Borda points and reports the viewer's ballot", async () => {
     const asDb = db as never;
-    await castTopicAreaVote(asDb, { season: 2028, userId: "u1", area: "Nuclear Policy" });
-    const poll = await castTopicAreaVote(asDb, { season: 2028, userId: "u2", area: "Nuclear Policy" });
-    expect(poll).toEqual({ season: 2028, counts: { "Nuclear Policy": 2 }, total: 2, myVote: "Nuclear Policy", signedIn: true });
+    await castTopicAreaVote(asDb, { season: 2028, userId: "u1", ranking: ["Nuclear Policy", "Environment & Climate"] });
+    const poll = await castTopicAreaVote(asDb, { season: 2028, userId: "u2", ranking: ["Environment & Climate"] });
+    expect(poll).toEqual({
+      season: 2028,
+      points: { "Nuclear Policy": 5, "Environment & Climate": 9 },
+      firstChoices: { "Nuclear Policy": 1, "Environment & Climate": 1 },
+      total: 2,
+      myRanking: ["Environment & Climate"],
+      signedIn: true,
+    });
   });
 
-  it("replaces a user's vote when they change it", async () => {
+  it("replaces a user's whole ballot when they change it", async () => {
     const asDb = db as never;
-    await castTopicAreaVote(asDb, { season: 2028, userId: "u1", area: "Nuclear Policy" });
-    const poll = await castTopicAreaVote(asDb, { season: 2028, userId: "u1", area: "Environment & Climate" });
-    expect(poll.counts).toEqual({ "Environment & Climate": 1 });
+    await castTopicAreaVote(asDb, { season: 2028, userId: "u1", ranking: ["Nuclear Policy", "Environment & Climate"] });
+    const poll = await castTopicAreaVote(asDb, { season: 2028, userId: "u1", ranking: ["Environment & Climate"] });
+    expect(poll.points).toEqual({ "Environment & Climate": 5 });
     expect(poll.total).toBe(1);
-    expect(poll.myVote).toBe("Environment & Climate");
+    expect(poll.myRanking).toEqual(["Environment & Climate"]);
   });
 
   it("keeps seasons apart and shows a signed-out reader the tally only", async () => {
     const asDb = db as never;
-    await castTopicAreaVote(asDb, { season: 2028, userId: "u1", area: "Nuclear Policy" });
-    expect(await getTopicAreaPoll(asDb, 2029, "u1")).toMatchObject({ total: 0, myVote: null });
+    await castTopicAreaVote(asDb, { season: 2028, userId: "u1", ranking: ["Nuclear Policy"] });
+    expect(await getTopicAreaPoll(asDb, 2029, "u1")).toMatchObject({ total: 0, myRanking: [] });
     expect(await getTopicAreaPoll(asDb, 2028, null)).toEqual({
       season: 2028,
-      counts: { "Nuclear Policy": 1 },
+      points: { "Nuclear Policy": 5 },
+      firstChoices: { "Nuclear Policy": 1 },
       total: 1,
-      myVote: null,
+      myRanking: [],
       signedIn: false,
     });
   });
