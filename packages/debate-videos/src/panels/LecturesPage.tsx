@@ -396,13 +396,13 @@ export function LecturesPage({ dockSlot, headerActionsSlot, topicAreasSlot }: Le
   // Infinite scroll
   // ---------------------------------------------------------------------------
 
-  // `atCapacity` stops the automatic paging at `MAX_LOADED_VIDEOS`: past that
-  // the next page comes from the button in `LecturesVideoGridView`, which the
-  // user has to press. Scrolling on its own can no longer grow the grid past
-  // the point where the page stops responding.
+  // Scrolling toward the bottom asks for the next page, with no ceiling: the
+  // grid and the list keep only the cards near the viewport mounted (see
+  // `WindowedChunk`), which is what lets the feed grow without the page
+  // locking up.
   useInfiniteScroll(
     state.loadMoreTriggerRef,
-    feed.hasMore && !feed.atCapacity,
+    feed.hasMore,
     feed.isLoading || feed.isLoadingMore,
     feed.loadMore,
   )
@@ -410,15 +410,23 @@ export function LecturesPage({ dockSlot, headerActionsSlot, topicAreasSlot }: Le
   // The row view groups what is loaded into seasons and tournaments, so a
   // partly loaded feed reads as missing videos: sorted by views, the first
   // page is the most-watched rounds of every season, and a season showed 2 of
-  // its 12. In that view the feed keeps paging on its own, up to the same
-  // `MAX_LOADED_VIDEOS` ceiling, so every group is complete in either sort.
+  // its 12. In that view the feed keeps paging on its own until the library
+  // is exhausted, so every group is complete in either sort. Each page waits
+  // for the browser to be idle first, so clicks and scrolling are never
+  // queued behind a run of page loads.
   useEffect(() => {
     if (state.viewMode !== "list") return
-    if (!feed.hasMore || feed.atCapacity || feed.isLoading || feed.isLoadingMore) return
-    feed.loadMore()
-  }, [state.viewMode, feed.hasMore, feed.atCapacity, feed.isLoading, feed.isLoadingMore, feed.loadMore])
-
-  const handleLoadMore = useCallback(() => feed.loadMore({ force: true }), [feed.loadMore])
+    if (!feed.hasMore || feed.isLoading || feed.isLoadingMore) return
+    const next = () => feed.loadMore()
+    if (typeof window.requestIdleCallback === "function") {
+      const handle = window.requestIdleCallback(next, { timeout: 500 })
+      return () => window.cancelIdleCallback(handle)
+    }
+    const handle = window.setTimeout(next, 50)
+    return () => window.clearTimeout(handle)
+    // `videos.length` re-arms this after a page the browser's own copy of the
+    // library answered synchronously, which flips none of the loading flags.
+  }, [state.viewMode, feed.hasMore, feed.isLoading, feed.isLoadingMore, feed.loadMore, feed.videos.length])
 
   // ---------------------------------------------------------------------------
   // Shared back button
@@ -524,8 +532,6 @@ export function LecturesPage({ dockSlot, headerActionsSlot, topicAreasSlot }: Le
       isLoading={feed.isLoading}
       errorMessage={feed.errorMessage}
       isLoadingMore={feed.isLoadingMore}
-      atCapacity={feed.atCapacity}
-      onLoadMore={handleLoadMore}
       currentVideos={currentVideos}
       favorites={state.favorites}
       hiddenVideos={state.hiddenVideos}
