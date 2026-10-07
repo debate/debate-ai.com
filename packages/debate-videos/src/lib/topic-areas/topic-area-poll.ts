@@ -4,10 +4,15 @@
  * coming season's resolutions to come from.
  *
  * Shared by both halves — the explorer's poll panel and the app's
- * `/api/topic-area-poll` route — so the season being polled and the list of
- * areas a vote may name are decided in one place. Anyone can read the tally;
- * casting a vote needs a session, and each signed-in user holds one vote per
- * season that a later vote replaces.
+ * `/api/topic-area-poll` route — so the season being polled, the list of
+ * areas a ballot may name and how a ballot is scored are decided in one place.
+ * Anyone can read the tally; voting needs a session.
+ *
+ * It is a ranked-choice poll: each signed-in user submits one ballot per
+ * season ranking up to {@link MAX_RANKED_CHOICES} areas, best first, and a
+ * later ballot replaces the earlier one. An area scores Borda points — a first
+ * choice is worth {@link MAX_RANKED_CHOICES} points, a second one fewer, down
+ * to 1 for a fifth — and the tally ranks areas by points.
  *
  * @module lib/topic-areas/topic-area-poll
  */
@@ -43,34 +48,60 @@ export function isTopicArea(name: unknown): name is string {
   return typeof name === "string" && AREA_NAMES.has(name)
 }
 
+/** How many areas one ballot may rank. */
+export const MAX_RANKED_CHOICES = 5
+
+/** Borda points for the choice at `rank` (1-based): 5 for a first choice, down to 1 for a fifth. */
+export function pointsForRank(rank: number): number {
+  return Math.max(0, MAX_RANKED_CHOICES + 1 - rank)
+}
+
 /** What `GET` and `PUT /api/topic-area-poll` answer with. */
 export interface TopicAreaPollResponse {
   season: number
-  /** Votes per area; areas nobody picked are absent. */
-  counts: Record<string, number>
+  /** Borda points per area across every ballot; areas nobody ranked are absent. */
+  points: Record<string, number>
+  /** How many ballots ranked each area first; areas nobody ranked first are absent. */
+  firstChoices: Record<string, number>
+  /** Ballots cast this season. */
   total: number
-  /** The viewer's current pick, or `null` when they haven't voted. */
-  myVote: string | null
+  /** The viewer's ballot, best first — empty when they haven't voted. */
+  myRanking: string[]
   /** False for a signed-out reader, who sees the tally but can't vote. */
   signedIn: boolean
 }
 
-/** Validates a `PUT` body: `{ season, area }` for the season being polled. */
+/**
+ * Validates a `PUT` body: `{ season, ranking }` for the season being polled,
+ * where `ranking` is 1 to {@link MAX_RANKED_CHOICES} distinct known areas,
+ * best first.
+ */
 export function parseVoteBody(
   body: unknown,
   now: Date = new Date(),
-): { ok: true; season: number; area: string } | { ok: false; error: string } {
-  const { season, area } = (body ?? {}) as { season?: unknown; area?: unknown }
+): { ok: true; season: number; ranking: string[] } | { ok: false; error: string } {
+  const { season, ranking } = (body ?? {}) as { season?: unknown; ranking?: unknown }
   if (season !== nextPollSeason(now)) return { ok: false, error: "Voting is only open for next season." }
-  if (!isTopicArea(area)) return { ok: false, error: "Unknown topic area." }
-  return { ok: true, season, area }
+  if (!Array.isArray(ranking) || ranking.length === 0) return { ok: false, error: "Rank at least one topic area." }
+  if (ranking.length > MAX_RANKED_CHOICES) {
+    return { ok: false, error: `Rank at most ${MAX_RANKED_CHOICES} topic areas.` }
+  }
+  if (!ranking.every(isTopicArea)) return { ok: false, error: "Unknown topic area." }
+  if (new Set(ranking).size !== ranking.length) return { ok: false, error: "Rank each topic area only once." }
+  return { ok: true, season, ranking }
 }
 
-/** Poll options, most votes first, then in the explorer's area order. */
-export function rankPollOptions(counts: Record<string, number>): { name: string; color: string; count: number }[] {
-  return TOPIC_AREAS.map((a, i) => ({ ...a, count: counts[a.name] ?? 0, i }))
-    .sort((a, b) => b.count - a.count || a.i - b.i)
-    .map(({ name, color, count }) => ({ name, color, count }))
+/**
+ * Poll options, most points first, then most first choices, then in the
+ * explorer's area order.
+ */
+export function rankPollOptions(
+  points: Record<string, number>,
+  firstChoices: Record<string, number> = {},
+): { name: string; color: string; points: number; firstChoices: number }[] {
+  return TOPIC_AREAS.map((a, i) => ({ ...a, points: points[a.name] ?? 0, firstChoices: firstChoices[a.name] ?? 0, i }))
+    .sort((a, b) => b.points - a.points || b.firstChoices - a.firstChoices || a.i - b.i)
+    .map(({ name, color, points, firstChoices }) => ({ name, color, points, firstChoices }))
 }
 
 async function readPoll(response: Response, fallback: string): Promise<TopicAreaPollResponse> {
@@ -85,17 +116,17 @@ export async function fetchTopicAreaPoll(season: number, fetchImpl: typeof fetch
   return readPoll(response, "Couldn't load the poll.")
 }
 
-/** Casts or changes the viewer's vote; answers with the updated tally. */
+/** Casts or replaces the viewer's ranked ballot; answers with the updated tally. */
 export async function castTopicAreaVote(
   season: number,
-  area: string,
+  ranking: string[],
   fetchImpl: typeof fetch = fetch,
 ): Promise<TopicAreaPollResponse> {
   const response = await fetchImpl(TOPIC_AREA_POLL_PATH, {
     method: "PUT",
     credentials: "same-origin",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ season, area }),
+    body: JSON.stringify({ season, ranking }),
   })
   return readPoll(response, "Couldn't save your vote.")
 }

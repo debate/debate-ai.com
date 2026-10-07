@@ -13,6 +13,11 @@
  * the other's board and refuses a challenge between them — the same rule
  * Contacts applies to requests.
  *
+ * The volunteer list itself never leaves the server any more: debaters are
+ * matched one at a time and anonymously (`/api/practice-partners/match`), and
+ * a challenge shows each debater the other only once it is accepted
+ * ({@link ANONYMOUS_PRACTICE_PERSON} stands in until then).
+ *
  * ## Why people are hydrated separately
  *
  * A challenge names up to three accounts. Rather than joining `user` three
@@ -24,6 +29,7 @@
  */
 
 import { and, desc, eq, inArray, isNull, ne, or } from "drizzle-orm";
+import { ANONYMOUS_PRACTICE_PERSON } from "@debate/webview/lib/practice-partners/types";
 import type {
   ChallengeStatus,
   JudgeStatus,
@@ -125,7 +131,11 @@ export async function upsertProfile(db: Db, userId: string, profile: PracticePro
     .onConflictDoUpdate({ target: practiceProfiles.userId, set: values });
 }
 
-/** Everyone else volunteering in at least one role, minus blocks and guests, most recently updated first. */
+/**
+ * Everyone else volunteering in at least one role, minus blocks and guests,
+ * most recently updated first. Server-side only — the match route draws from
+ * it; it is never sent to a browser.
+ */
 export async function listVolunteers(db: Db, viewerId: string, blocked: Set<string>): Promise<PracticeVolunteer[]> {
   const rows: (ProfileRow & { updatedAt: Date; id: string; name: string; image: string | null })[] = await db
     .select({
@@ -160,8 +170,13 @@ export async function listVolunteers(db: Db, viewerId: string, blocked: Set<stri
 
 type ChallengeRow = typeof practiceChallenges.$inferSelect;
 
-/** Rows to the wire shape, dropping any whose debaters no longer exist. */
-async function toWireChallenges(db: Db, rows: ChallengeRow[]): Promise<PracticeChallenge[]> {
+/**
+ * Rows to the wire shape, dropping any whose debaters no longer exist. With a
+ * `viewerId`, the other debater on a challenge that was never accepted is
+ * replaced by {@link ANONYMOUS_PRACTICE_PERSON}: a match is anonymous on both
+ * sides until the opponent says yes.
+ */
+async function toWireChallenges(db: Db, rows: ChallengeRow[], viewerId?: string): Promise<PracticeChallenge[]> {
   const people = await hydratePeople(
     db,
     rows.flatMap((row) => [row.challengerId, row.opponentId, ...(row.judgeId ? [row.judgeId] : [])]),
@@ -172,11 +187,12 @@ async function toWireChallenges(db: Db, rows: ChallengeRow[]): Promise<PracticeC
     const opponent = people.get(row.opponentId);
     if (!challenger || !opponent) continue;
     const judge = row.judgeId ? people.get(row.judgeId) ?? null : null;
+    const hidden = viewerId !== undefined && row.status !== "accepted";
     out.push({
       id: row.id,
       status: row.status as ChallengeStatus,
-      challenger,
-      opponent,
+      challenger: hidden && challenger.id !== viewerId ? ANONYMOUS_PRACTICE_PERSON : challenger,
+      opponent: hidden && opponent.id !== viewerId ? ANONYMOUS_PRACTICE_PERSON : opponent,
       judge,
       judgeStatus: judge ? (row.judgeStatus as JudgeStatus) : null,
       format: row.format as PracticeFormat,
@@ -205,7 +221,7 @@ export async function listChallengesFor(db: Db, viewerId: string): Promise<Pract
     )
     .orderBy(desc(practiceChallenges.createdAt))
     .limit(CHALLENGE_LIMIT);
-  return toWireChallenges(db, rows);
+  return toWireChallenges(db, rows, viewerId);
 }
 
 /**
@@ -250,6 +266,15 @@ export async function countPendingOutgoing(db: Db, viewerId: string): Promise<nu
   return rows.length;
 }
 
+/** Everyone the viewer has a challenge waiting on — not worth matching them with again. */
+export async function listPendingOpponentIds(db: Db, viewerId: string): Promise<Set<string>> {
+  const rows: { opponentId: string }[] = await db
+    .select({ opponentId: practiceChallenges.opponentId })
+    .from(practiceChallenges)
+    .where(and(eq(practiceChallenges.challengerId, viewerId), eq(practiceChallenges.status, "pending")));
+  return new Set(rows.map((row) => row.opponentId));
+}
+
 /** Whether the viewer already has a challenge waiting on this opponent. */
 export async function hasPendingChallenge(db: Db, challengerId: string, opponentId: string): Promise<boolean> {
   const [row] = await db
@@ -272,11 +297,11 @@ export async function getChallengeRow(db: Db, id: string): Promise<ChallengeRow 
   return row ?? null;
 }
 
-/** One challenge in the wire shape, or `null`. */
-export async function getChallenge(db: Db, id: string): Promise<PracticeChallenge | null> {
+/** One challenge in the wire shape as `viewerId` may see it, or `null`. */
+export async function getChallenge(db: Db, id: string, viewerId: string): Promise<PracticeChallenge | null> {
   const row = await getChallengeRow(db, id);
   if (!row) return null;
-  const [wire] = await toWireChallenges(db, [row]);
+  const [wire] = await toWireChallenges(db, [row], viewerId);
   return wire ?? null;
 }
 
@@ -312,7 +337,7 @@ export async function insertChallenge(
     createdAt: now,
     updatedAt: now,
   });
-  const created = await getChallenge(db, id);
+  const created = await getChallenge(db, id, challengerId);
   if (!created) throw new Error("The challenge could not be saved.");
   return created;
 }

@@ -1,12 +1,11 @@
 /**
  * @fileoverview How well a volunteer on the practice board suits the viewer.
  *
- * The board is sorted by this and each card carries its label, so the first
- * people a debater sees are the ones who debate the formats they debate, at a
- * speed and in styles they said they are comfortable with. It is a ranking
- * aid, not a gate: anyone open to challenges can be challenged whatever their
- * score, because "I want to practise against spreading" is a perfectly good
- * reason to pick a mismatch.
+ * "Find me a match" draws from the most compatible debaters open to
+ * challenges ({@link pickPracticeMatch}), so the partner a debater is offered
+ * debates the formats they debate, at a speed and in styles they said they
+ * are comfortable with. The board of volunteers is no longer public — the
+ * match is anonymous until the other debater accepts.
  *
  * An empty list on either side means "any" rather than "none" — a debater who
  * ticked no formats has not said they debate nothing — so it scores as a
@@ -87,4 +86,35 @@ export function rankVolunteers(
   return volunteers
     .map((volunteer) => ({ volunteer, match: practiceMatch(viewer, volunteer) }))
     .sort((a, b) => b.match.score - a.match.score || b.volunteer.updatedAt - a.volunteer.updatedAt);
+}
+
+/** How many of the best-scoring candidates a random match is drawn from. */
+export const MATCH_POOL_SIZE = 5;
+
+/**
+ * Picks one partner for the viewer: scores every candidate, keeps the
+ * {@link MATCH_POOL_SIZE} most compatible, and draws one of them at random,
+ * weighted by score — so pressing the button again can land on someone else
+ * without ever drifting to a poor fit while good ones are open. `null` when
+ * there is nobody to pick.
+ */
+export function pickPracticeMatch<T extends PracticePreferences>(
+  viewer: PracticePreferences | null,
+  candidates: readonly T[],
+  random: () => number = Math.random,
+): { candidate: T; match: PracticeMatch } | null {
+  const pool = candidates
+    .map((candidate) => ({ candidate, match: practiceMatch(viewer, candidate) }))
+    .sort((a, b) => b.match.score - a.match.score)
+    .slice(0, MATCH_POOL_SIZE);
+  if (pool.length === 0) return null;
+
+  // +1 keeps a zero-score candidate drawable when nobody scores higher.
+  const weights = pool.map((entry) => entry.match.score + 1);
+  let roll = random() * weights.reduce((sum, weight) => sum + weight, 0);
+  for (let i = 0; i < pool.length; i++) {
+    roll -= weights[i]!;
+    if (roll < 0) return pool[i]!;
+  }
+  return pool[pool.length - 1]!;
 }

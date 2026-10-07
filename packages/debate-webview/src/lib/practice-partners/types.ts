@@ -197,8 +197,6 @@ export interface PracticeBoardResponse {
   viewer: PracticePerson;
   /** The viewer's own profile, or `null` before they have saved one. */
   profile: PracticeProfileInput | null;
-  /** Everyone else volunteering in at least one role, most recently updated first. */
-  volunteers: PracticeVolunteer[];
   /** Challenges the viewer is in — as challenger, opponent or judge — newest first. */
   challenges: PracticeChallenge[];
   /**
@@ -208,9 +206,63 @@ export interface PracticeBoardResponse {
   openToJudge: PracticeChallenge[];
 }
 
+/**
+ * One partner found by `POST /api/practice-partners/match` — what they are
+ * comfortable with and how well it suits the viewer, but never who they are.
+ * No name, no avatar, no account id and no free-text note (the one field a
+ * debater might sign): the only handle on the person is {@link token}, an
+ * opaque, short-lived reference the server alone can read, which is what a
+ * request to them is sent with.
+ */
+export interface AnonymousPracticeMatch {
+  /** Opaque reference to the matched debater — send it back as `matchToken`. */
+  token: string;
+  /** 0–100, from `lib/practice-partners/match.ts`. */
+  score: number;
+  /** "Great match" / "Good match", or `null`. */
+  label: string | null;
+  formats: PracticeFormat[];
+  styles: PracticeStyle[];
+  sharedFormats: PracticeFormat[];
+  sharedStyles: PracticeStyle[];
+  speed: PracticeSpeed;
+  level: PracticeLevel;
+  /** Whether they also volunteer to judge. */
+  alsoJudges: boolean;
+}
+
+/** The body of `POST /api/practice-partners/match`. */
+export interface FindMatchRequest {
+  /** Only match debaters who list this format (or list none). */
+  format?: PracticeFormat | null;
+  /** Tokens already shown this session, so "Find another" skips them. */
+  exclude?: string[];
+}
+
+/** What `POST /api/practice-partners/match` returns; `match` is `null` when nobody suitable is open. */
+export interface FindMatchResponse {
+  match: AnonymousPracticeMatch | null;
+}
+
+/** The most already-seen tokens one match request may exclude. */
+export const MAX_MATCH_EXCLUDES = 25;
+
+/**
+ * Stand-in for the other debater on a challenge that has not been accepted:
+ * matches are anonymous on both sides until the opponent says yes.
+ */
+export const ANONYMOUS_PRACTICE_PERSON: PracticePerson = {
+  id: "anonymous",
+  name: "Your practice match",
+  imageUrl: null,
+};
+
 /** The body of `POST /api/practice-partners/challenges`. */
 export interface NewChallenge {
-  opponentId: string;
+  /** A known debater's id — or omit it and send {@link matchToken} for an anonymous match. */
+  opponentId?: string;
+  /** From {@link AnonymousPracticeMatch.token}; the server resolves it to the opponent. */
+  matchToken?: string;
   judgeId?: string | null;
   format: PracticeFormat;
   topic: string;

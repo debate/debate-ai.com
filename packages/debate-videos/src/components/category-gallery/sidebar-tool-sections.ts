@@ -149,6 +149,9 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/research/cards/inbox", title: "Task Inbox", icon: Inbox },
       { href: "/research/cards/contributions", title: "Contributions Feed", icon: Rss },
       { href: "/research/cards/brainstorm", title: "Team Brainstorm Assist", icon: Lightbulb },
+      // Lives under /coaching, but it ranks research contributors by
+      // helpfulness, so it sits with the research tools.
+      { href: "/coaching/leaderboard", title: "Leaderboard", icon: Trophy },
     ],
   },
   {
@@ -219,7 +222,6 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
     icon: ChartColumn,
     tools: [
       { href: "/coaching/rankings", title: "Team Rankings", icon: Medal },
-      { href: "/coaching/leaderboard", title: "Leaderboard", icon: Trophy },
       { href: "/practice/level", title: "Debater Level", icon: Star },
       { href: "/practice/statistics", title: "Topics & Video Statistics", icon: BarChart3 },
       { href: "/practice/rules", title: "Formats & Rules", icon: Scale },
