@@ -456,10 +456,13 @@ describe("buildRecentCloudItems", () => {
   });
 
   it("labels an evidence library entry by argBlock when cite is blank, and untitled when both are", () => {
+    // One shared timestamp: two separate Date.now() calls can straddle a
+    // millisecond and flip the newest-first order this asserts on.
+    const createdAt = Date.now();
     const items = buildRecentCloudItems({
       evidenceLibraryEntries: [
-        { id: "entry-2", cite: "  ", argBlock: "Warming DA", createdAt: Date.now() },
-        { id: "entry-3", cite: "  ", argBlock: "  ", createdAt: Date.now() },
+        { id: "entry-2", cite: "  ", argBlock: "Warming DA", createdAt },
+        { id: "entry-3", cite: "  ", argBlock: "  ", createdAt },
       ],
     });
     expect(items.map((i) => i.label)).toEqual(["Warming DA", "Untitled evidence entry"]);
