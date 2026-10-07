@@ -45,6 +45,7 @@ import { useSchoolRankingsData } from "../../hooks/useSchoolRankingsData"
 import { SchoolRankingsTable } from "./SchoolRankingsTable"
 import { LeaderboardChampionBanner } from "./LeaderboardChampionBanner"
 import { RankingsTable } from "./RankingsTable"
+import { legendaryCount } from "./rowTier"
 import { RankingsFieldSummary } from "./RankingsFieldSummary"
 import { LeaderboardFilterBar } from "./LeaderboardFilterBar"
 
@@ -167,6 +168,9 @@ export function LeaderboardPanel({
     [isSchools, schoolData.datasets, schoolScope],
   )
   const visibleSchools = sortSchools(filterSchools(schoolRows, query), schoolSort)
+  // Legendary cutoffs come from the whole list, so searching never changes them.
+  const entryLegendary = legendaryCount((dataset?.entries ?? []).map((e) => e.adjustedRating))
+  const schoolLegendary = legendaryCount(schoolRows.map((r) => r.balancedScore))
 
   const divConfig = DIVISION_CONFIG.find((d) => d.value === division)!
   const yearData = debateHistory?.[year]
@@ -278,7 +282,7 @@ return (
                       />
                     </div>
                     {visibleSchools.length > 0 ? (
-                      <SchoolRankingsTable rows={visibleSchools} sort={schoolSort} onToggleSort={toggleSchoolSort} />
+                      <SchoolRankingsTable rows={visibleSchools} legendary={schoolLegendary} sort={schoolSort} onToggleSort={toggleSchoolSort} />
                     ) : (
                       <p className="py-8 text-center text-sm text-muted-foreground">
                         {query ? `No schools match "${query}".` : "No school rankings are published yet."}
@@ -324,7 +328,7 @@ return (
                   />
                 </div>
                 {visibleEntries.length > 0 ? (
-                  <RankingsTable entries={visibleEntries} division={division} sort={sort} onToggleSort={toggleSort} />
+                  <RankingsTable entries={visibleEntries} legendary={entryLegendary} division={division} sort={sort} onToggleSort={toggleSort} />
                 ) : (
                   <p className="py-8 text-center text-sm text-muted-foreground">
                     No entries match "{query}".
