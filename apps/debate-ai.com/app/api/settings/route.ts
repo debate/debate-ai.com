@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
+import { ensureTableColumns } from "@/lib/database/ensure-columns"
 import { userSettings } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
 import {
@@ -41,7 +42,6 @@ import {
   serializeMyTeamProfile,
   serializeOutlineFilterPresets,
   serializeWordLimitPresets,
-  type FlowAutoSaveMode,
   type MyTeamProfileSyncPayload,
   type OutlineFilterPreset,
   type ThemeMode,
@@ -339,6 +339,9 @@ export async function GET(req: NextRequest) {
   }
 
   const db = await getDBFromContext()
+  // Drizzle names every column in a select/insert, so one column the live
+  // D1 lacks fails the whole route — see lib/database/ensure-columns.ts.
+  await ensureTableColumns(db, userSettings)
   const [row] = await db.select().from(userSettings).where(eq(userSettings.userId, userId)).limit(1)
 
   return NextResponse.json(toPayload(row))
@@ -466,6 +469,7 @@ export async function PUT(req: NextRequest) {
   }
 
   const db = await getDBFromContext()
+  await ensureTableColumns(db, userSettings)
   const now = new Date()
 
   // `favoriteTools`/`newsRead`/`newsLiked` are stored as JSON-serialized
