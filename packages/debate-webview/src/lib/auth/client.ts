@@ -6,6 +6,7 @@ import {
   magicLinkClient,
   anonymousClient,
   oneTimeTokenClient,
+  organizationClient,
 } from "better-auth/client/plugins";
 import {
   APP_ORIGIN,
@@ -62,6 +63,9 @@ export function createAppAuthClient(
       magicLinkClient(),
       anonymousClient(),
       oneTimeTokenClient(),
+      // Organizations the account menu lists, creates and switches between
+      // (components/layout/app-sidebar/organization-menu.tsx).
+      organizationClient(),
     ],
   });
 }

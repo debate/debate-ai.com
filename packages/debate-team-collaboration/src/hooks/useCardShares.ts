@@ -22,6 +22,7 @@ import {
   type ShareCardInput,
   type ShareCardResult,
 } from "../state/cardShares";
+import { ORGANIZATION_CHANGED_EVENT } from "../state/contacts";
 
 const POLL_INTERVAL_MS = 30_000;
 const LAST_SEEN_STORAGE_KEY = "cardShares:lastSeenUpdatedAt";
@@ -110,7 +111,13 @@ export function useCardShares(enabled: boolean, options: UseCardSharesOptions = 
     const interval = setInterval(() => {
       if (typeof document === "undefined" || document.visibilityState === "visible") void refresh();
     }, POLL_INTERVAL_MS);
-    return () => clearInterval(interval);
+    // An active organization narrows the list to its members' shares.
+    const onOrganizationChanged = () => void refresh();
+    if (typeof window !== "undefined") window.addEventListener(ORGANIZATION_CHANGED_EVENT, onOrganizationChanged);
+    return () => {
+      clearInterval(interval);
+      if (typeof window !== "undefined") window.removeEventListener(ORGANIZATION_CHANGED_EVENT, onOrganizationChanged);
+    };
   }, [enabled, refresh]);
 
   const share = useCallback(

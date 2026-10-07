@@ -18,8 +18,8 @@ sign in on.
   on the second)
 - **Nav:** the dock's Settings menu ("Contacts", with a count of pending
   requests); the Tools page's Prep & Practice group; the Reason Editor
-  sidebar's Documents row (the share glyph beside Upload) and Workspace menu
-  (`t contacts` in Ctrl/Cmd-K's search palette)
+  sidebar's Documents row (the share glyph beside Upload) and `t contacts`
+  in Ctrl/Cmd-K's search palette
 - **Package:** `debate-team-collaboration`
   (`lib/contacts.ts` rules, `state/contacts.ts` + `state/cardShares.ts`
   clients, `useContacts` / `useCardShares` hooks, `ContactsPanel` /
@@ -46,6 +46,30 @@ while their last poll is inside `PRESENCE_ONLINE_WINDOW_MS` (2 min).
 
 Requests and accepts write ordinary account notifications (`contact_request`,
 `contact_accepted`; see [Notifications](https://github.com/debate/debate-ai.com/blob/master/apps/debate-ai.com/app/api/notifications/route.ts)).
+
+## Organizations
+
+An **organization** is a shared group, like a team or a school squad
+(better-auth's `organization` plugin, registered in
+`apps/debate-ai.com/lib/auth/index.ts`). The sidebar's account menu has an
+**Organizations** submenu: **Personal**, every organization you belong to,
+**Members of …** for the active one, and **New organization**. Creating one
+makes you its owner and switches to it.
+
+The organization you pick is stored on your session
+(`session.active_organization_id`), and it changes what this page shows:
+
+| | Personal | An organization |
+| --- | --- | --- |
+| Contacts list | Your accepted contacts | The organization's other members (minus blocks either way); Remove is hidden, since membership is not a contact row |
+| Shared cards | Every live share | Only shares with its members |
+| Who you can share with | Accepted contacts | Accepted contacts and its members |
+
+Members are added by an owner or admin from **their own contacts** (Members of
+… → Add), so nobody lands in a group without a contact who trusts them; there
+are no invitation emails. An id on the session is only honoured after the
+caller is confirmed to be a member (`lib/organizations/server.ts`), so a stale
+or forged id falls back to Personal.
 
 ## Sharing a card
 
@@ -129,11 +153,18 @@ All four cascade-delete with the account. Until the migration has run
 against an environment, the list endpoints degrade to empty (same "no such
 table" handling as `/api/notifications`).
 
+The organization plugin adds `organization`, `member` and `invitation`, and
+`session.active_organization_id`. The app ships no migrations, and better-auth
+names that session column in every sign-in insert, so `getAuth()` creates them
+idempotently before it builds the auth instance
+(`lib/organizations/ensure-tables.ts`, whose `ORGANIZATION_DDL` an operator
+can also run with `wrangler d1 execute`).
+
 ## API
 
 | Endpoint | Body / query | Notes |
 | --- | --- | --- |
-| `GET /api/contacts` | — | `{ contacts, incoming, outgoing, blocked }`; bumps presence. |
+| `GET /api/contacts` | — | `{ organization, contacts, incoming, outgoing, blocked }`; bumps presence. With an active organization, `contacts` is its members and `organization` is `{ id, name, role }`. |
 | `POST /api/contacts` | `{ userId }` \| `{ email }` | `{ status: "requested" \| "accepted" \| "already-requested" \| "already-contacts" }` |
 | `PATCH /api/contacts` | `{ id, action: "accept" \| "decline" }` | Addressee only. |
 | `DELETE /api/contacts?id=` | — | Remove a contact / cancel your request. |
@@ -142,6 +173,9 @@ table" handling as `/api/notifications`).
 | `POST /api/card-shares` | `{ shareCode, guestPass?, title?, message?, recipientIds }` | `{ shared, skipped }` |
 | `PATCH /api/card-shares` | `{ id, action: "opened" }` | Recipient only. |
 | `DELETE /api/card-shares?id=` | — | Owner revokes; recipient dismisses. |
+| `GET /api/organizations/members` | — | `{ organization, members, candidates }` for the active organization; `candidates` (your contacts who are not members) only for owners/admins. |
+| `POST /api/organizations/members` | `{ userId }` | Owner/admin adds one of their shareable contacts. |
+| `/api/auth/organization/*` | — | better-auth's own create / list / set-active endpoints, called by the account menu. |
 
 Every endpoint requires a session (401 otherwise).
 
@@ -153,5 +187,8 @@ Every endpoint requires a session (401 otherwise).
   so reopening a shared card always creates another fresh document; the
   engine's own IndexedDB session record does dedupe the *room* (a second
   join resumes instead of re-joining).
-- Groups/teams: today a share is one owner → one recipient; a team roster
-  (see Coaching Programs) could fan out the same share.
+- Groups/teams: a share is still one owner → one recipient; sharing to a
+  whole organization at once would fan the same share out to its members.
+- Organizations have no rename, leave, remove-member or role-change UI yet,
+  and no invitation by email; better-auth's endpoints for all of these exist.
+- The Reason Editor's documents are not scoped by organization.

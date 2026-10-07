@@ -38,7 +38,26 @@ export interface BlockedEntry {
   createdAt: string;
 }
 
+/** The organization the session is working in (better-auth organization plugin). */
+export interface ActiveOrganizationSummary {
+  id: string;
+  name: string;
+  role: string;
+}
+
+/**
+ * Fired on `window` when the account switches organization, so contact and
+ * shared-card lists refetch at once instead of on their next poll.
+ */
+export const ORGANIZATION_CHANGED_EVENT = "debate:organization-changed";
+
 export interface ContactsPage {
+  /**
+   * Set while an organization is active: `contacts` is then its other members
+   * (an `id` of 0 means that member is not also a personal contact, so there
+   * is no contact row to remove). Null or absent for the personal workspace.
+   */
+  organization?: ActiveOrganizationSummary | null;
   contacts: ContactEntry[];
   incoming: ContactRequestEntry[];
   outgoing: ContactRequestEntry[];

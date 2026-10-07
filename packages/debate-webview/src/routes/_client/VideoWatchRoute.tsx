@@ -16,6 +16,7 @@ import { videoRowToTuple } from "@debate/data-sync/src/videos/video-rows"
 import { featuredSpeechDocsTabs } from "@debate/round/src/panels/featuredSpeechDocsTabs"
 
 import { CategoryDock } from "../../components/layout/CategoryDock"
+import { SidebarAccount } from "../../components/layout/app-sidebar/sidebar-account"
 import { VideoStaffControls } from "../../components/videos/VideoStaffControls"
 
 /**
@@ -68,6 +69,7 @@ export default function VideoWatchRoute() {
         stack={stack}
         sideTabs={sideTabs}
         dockSlot={<CategoryDock embedded />}
+        accountSlot={<SidebarAccount />}
         extraControls={
           <>
             <SlowSpreadButton size="md" />

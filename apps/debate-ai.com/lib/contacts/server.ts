@@ -65,8 +65,17 @@ export async function loadRelationship(db: DB, viewerId: string, targetId: strin
   return deriveRelationship(viewerId, targetId, pairs, blocks)
 }
 
-/** Ids among `candidateIds` that are accepted contacts of `viewerId` with no block in either direction. */
-export async function filterShareableContacts(db: DB, viewerId: string, candidateIds: string[]): Promise<Set<string>> {
+/**
+ * Ids among `candidateIds` that are accepted contacts of `viewerId` with no
+ * block in either direction. `groupMemberIds` — the viewer's active
+ * organization's members — count as contacts too, still subject to blocks.
+ */
+export async function filterShareableContacts(
+  db: DB,
+  viewerId: string,
+  candidateIds: string[],
+  groupMemberIds: ReadonlySet<string> = new Set(),
+): Promise<Set<string>> {
   const ids = [...new Set(candidateIds)].filter((id) => id && id !== viewerId)
   if (ids.length === 0) return new Set()
   const [pairs, blocks] = await Promise.all([
@@ -99,6 +108,7 @@ export async function filterShareableContacts(db: DB, viewerId: string, candidat
     const other = p.requesterId === viewerId ? p.addresseeId : p.requesterId
     if (!blocked.has(other)) ok.add(other)
   }
+  for (const id of ids) if (groupMemberIds.has(id) && !blocked.has(id)) ok.add(id)
   return ok
 }
 
