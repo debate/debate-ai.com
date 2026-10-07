@@ -86,6 +86,17 @@ describe("getVideoByRouteSegments", () => {
     );
   });
 
+  it("resolves a round's path with the bare-year season links used before", async () => {
+    const video = await getVideoByRouteSegments(["2022", "ndt", "finals", "dartmouth-sv-michigan-pr"]);
+    expect(video).not.toBeNull();
+    expect(videoRouteHref(video as unknown as VideoType)).toBe(
+      "/videos/21-22/ndt/finals/dartmouth-sv-michigan-pr",
+    );
+    expect(
+      (await getVideoByRouteSegments(["21-22", "ndt", "finals", "dartmouth-sv-michigan-pr"]))?.[0],
+    ).toBe(video?.[0]);
+  });
+
   it("resolves a round read from a lecture's title, stored under another season", async () => {
     const video = await getVideoByRouteSegments([
       "2022",
@@ -115,11 +126,12 @@ describe("getVideoByRouteSegments", () => {
     ]);
     expect(current?.[0]).toBe("pQ2p9xUntag");
     expect(videoRouteHref(current as unknown as VideoType)).toBe(
-      "/videos/2027/policy/finals-kentucky-round-robin-greenhill-vs-westminster",
+      "/videos/26-27/policy/finals-kentucky-round-robin-greenhill-vs-westminster",
     );
 
     const partial = await getVideoByRouteSegments(["2027", "policy", "finals"]);
     expect(partial?.[0]).toBe("pQ2p9xUntag");
+    expect((await getVideoByRouteSegments(["26-27", "policy", "finals"]))?.[0]).toBe("pQ2p9xUntag");
   });
 
   it("returns null for a path naming nothing", async () => {
