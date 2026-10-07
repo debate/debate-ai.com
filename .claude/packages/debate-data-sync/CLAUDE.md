@@ -49,7 +49,9 @@ scripts that sync them. Also defines shared record types such as
 - **`collectDocxEntries` is the wrong tool for these archives.** It caps an
   upload at 100 files and buffers every entry at once; a season dump is
   thousands of documents and hundreds of megabytes. `loadCaselistArchive`
-  streams instead. Keep it that way.
+  streams instead. Keep it that way. In the browser, use
+  `loadRemoteCaselistArchive` (HTTP Range reads via `remote-zip.ts`): even
+  `arrayBuffer()` on a 1–2 GB dump fails before JSZip ever sees it.
 - **Provenance degrades to `null`, never to a guess.** The school, team and side
   read out of an entry path are what an ingested card is credited to.
 - An archive is recorded as synced only after its ingest succeeds, so a failed
