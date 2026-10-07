@@ -1,7 +1,9 @@
 /**
  * @fileoverview Hook that pops a DOM node into a floating always-on-top
  * window via the Document Picture-in-Picture API. The node is physically
- * moved (not cloned), so a live iframe keeps playing without reloading.
+ * moved (not cloned). Browsers reload an iframe when it changes document, so
+ * callers that host a YouTube embed record the playback time before toggling
+ * and resume from it (see `buildEmbedUrl`'s `startSeconds`).
  */
 
 import { useCallback, useEffect, useRef, useState } from "react"
@@ -79,7 +81,16 @@ export function useDocumentPictureInPicture(nodeRef: React.RefObject<HTMLElement
     node.after(anchor)
     anchorRef.current = anchor
 
-    const pipWindow = await docPip.requestWindow({ width: 480, height: 270 })
+    let pipWindow: Window
+    try {
+      // Must run straight from the click: the browser rejects the request
+      // once the user activation has been spent.
+      pipWindow = await docPip.requestWindow({ width: 480, height: 270 })
+    } catch {
+      anchor.remove()
+      anchorRef.current = null
+      return
+    }
     copyStyles(pipWindow)
     pipWindow.document.body.style.margin = "0"
     pipWindow.document.body.style.background = "#000"
