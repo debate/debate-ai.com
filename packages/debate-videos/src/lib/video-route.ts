@@ -3,11 +3,17 @@
  *
  * A tagged debate round lives at
  * `/videos/<season>/<tournament>/<round>/<aff>-<neg>`, e.g.
- * `/videos/2022/ndt/finals/dartmouth-sv-michigan-pr`, and a video made from
+ * `/videos/21-22/ndt/finals/dartmouth-sv-michigan-pr`, and a video made from
  * that round — its analysis, one part of a split upload — one segment below
- * it: `/videos/2022/ndt/finals/dartmouth-sv-michigan-pr/analysis`. Everything
+ * it: `/videos/21-22/ndt/finals/dartmouth-sv-michigan-pr/analysis`. Everything
  * else — a lecture, or a round nobody has tagged with a round and a team yet —
  * lives at `/videos/<season>/<event>/<matchup>`.
+ *
+ * The season is spelled as the two years it spans, `21-22`, because a season
+ * runs from summer to summer and a bare `2022` could mean either half. Paths
+ * from before that spelled it as the year the season ended (`/videos/2022/…`);
+ * every path builder takes a {@link SeasonSpelling} to rebuild them, so old
+ * links still resolve.
  *
  * The segments are coarse-to-fine, which is what the old flat
  * `/videos/watch/<title-slug>` could never be. Every segment is for
@@ -17,6 +23,7 @@
  * @module lib/video-route
  */
 
+import { formatSeasonLabel } from "@debate/data-sync/src/videos/video-rows";
 import { slugifyVideoTitle } from "./video-slug";
 import type { DebateStyle, VideoType } from "../types/videos";
 
@@ -30,6 +37,42 @@ const STYLE_SLUGS: Record<DebateStyle, string> = {
 
 /** Season segment for a video whose publish date cannot be parsed. */
 export const ARCHIVE_SEASON_SEGMENT = "archive";
+
+/**
+ * How a path spells its season: `"season"` is the current `21-22`, `"year"`
+ * the bare `2022` (or, for an undated season, the publish year) that paths
+ * used before it.
+ */
+export type SeasonSpelling = "season" | "year";
+
+/** A season segment in either spelling: `21-22`, or the older `2022`. */
+const SEASON_SEGMENT = /^(?:(\d{2})-(\d{2})|((?:19|20)\d{2}))$/;
+
+/**
+ * The year a season segment's season ends in.
+ *
+ * @param segment - `"21-22"`, or a bare year as older paths spelled it.
+ * @returns `2022` for either, or `null` when the segment is not a season
+ *   (including `archive` and a pair of years that are not consecutive).
+ */
+export function parseSeasonSegment(segment: string | null | undefined): number | null {
+  const match = (segment ?? "").trim().match(SEASON_SEGMENT);
+  if (!match) return null;
+  if (match[3]) return Number(match[3]);
+  const start = Number(match[1]);
+  const end = Number(match[2]);
+  if ((start + 1) % 100 !== end) return null;
+  // Two digits name a year from 1970 to 2069, far wider than the library.
+  return end + (end >= 70 ? 1900 : 2000);
+}
+
+/**
+ * The season a publish date falls in, by the year it ends: July starts the
+ * next one, as `seasonYearForDate` in debate-data-sync has it.
+ */
+function seasonEndYearForDate(date: Date): number {
+  return date.getUTCFullYear() + (date.getUTCMonth() >= 6 ? 1 : 0);
+}
 
 /** Event segment for a video with no tournament, format or category at all. */
 export const UNSORTED_EVENT_SEGMENT = "library";
@@ -64,7 +107,7 @@ export interface VideoRouteParts {
 
 /** The path segments under `/videos`. */
 export interface VideoRouteSegments {
-  /** Season, e.g. `"2006"`, or {@link ARCHIVE_SEASON_SEGMENT}. */
+  /** Season, e.g. `"05-06"`, or {@link ARCHIVE_SEASON_SEGMENT}. */
   season: string;
   /**
    * The tournament for a round (`"ndt"`), else format and tournament or a
@@ -108,18 +151,25 @@ function withoutTournamentYear(tournament: string): string {
 }
 
 /**
- * The season segment.
+ * The season segment, e.g. `"05-06"`.
  *
  * `seasonYear` is preferred over the publish date because the two disagree
  * exactly where it matters: a round debated in March 2006 belongs to the
- * 2005-06 season, and an upload posted months later still does.
+ * 2005-06 season, and an upload posted months later still does. Without one,
+ * the season is the one the publish date falls in.
+ *
+ * @param spelling - `"year"` rebuilds the bare-year segment older paths used:
+ *   the season's end year, or for an undated season the publish year itself.
  */
-export function seasonSegment(parts: VideoRouteParts): string {
+export function seasonSegment(parts: VideoRouteParts, spelling: SeasonSpelling = "season"): string {
   if (parts.seasonYear && Number.isFinite(parts.seasonYear) && parts.seasonYear > 1900) {
-    return String(Math.trunc(parts.seasonYear));
+    const year = Math.trunc(parts.seasonYear);
+    return spelling === "year" ? String(year) : formatSeasonLabel(year);
   }
-  const year = parts.date ? new Date(parts.date).getUTCFullYear() : Number.NaN;
-  return Number.isFinite(year) && year > 1900 ? String(year) : ARCHIVE_SEASON_SEGMENT;
+  const date = parts.date ? new Date(parts.date) : null;
+  const year = date ? date.getUTCFullYear() : Number.NaN;
+  if (!date || !Number.isFinite(year) || year <= 1900) return ARCHIVE_SEASON_SEGMENT;
+  return spelling === "year" ? String(year) : formatSeasonLabel(seasonEndYearForDate(date));
 }
 
 /**
@@ -195,7 +245,7 @@ function clipSlug(slug: string, max: number): string {
  *
  * A video with a round or arguments but no team would otherwise get a
  * partial address that names no one video — every untagged policy final of a
- * season at `/videos/2027/policy/finals` — so its title is added after the
+ * season at `/videos/26-27/policy/finals` — so its title is added after the
  * tags: `finals-<title-slug>`, or the title alone when it already says them.
  *
  * The video id is no longer appended — clean URLs are the point.
@@ -241,6 +291,7 @@ function withoutAnyTournamentYear(tournament: string): string {
 
 /** A round as read from a video's title, for a video nobody has tagged. */
 export interface TitleRound {
+  /** The year the title names, e.g. `"2022"`, taken as the season's end. */
   season: string;
   tournament: string;
   round: string;
@@ -347,7 +398,7 @@ interface RoundRoute {
 }
 
 /** Reads a video as a round, from its tags or failing that its title. */
-function roundRoute(parts: VideoRouteParts): RoundRoute | null {
+function roundRoute(parts: VideoRouteParts, spelling: SeasonSpelling = "season"): RoundRoute | null {
   const round = slugifyVideoTitle(parts.roundLevel ?? "");
   const part = titlePart(parts.title);
 
@@ -356,7 +407,7 @@ function roundRoute(parts: VideoRouteParts): RoundRoute | null {
       ? slugifyVideoTitle(withoutAnyTournamentYear(parts.tournament))
       : "";
     return {
-      season: seasonSegment(parts),
+      season: seasonSegment(parts, spelling),
       event: tournament || eventSegment(parts),
       round,
       parts,
@@ -368,7 +419,7 @@ function roundRoute(parts: VideoRouteParts): RoundRoute | null {
   const fromTitle = parseRoundTitle(parts.title);
   if (!fromTitle) return null;
   return {
-    season: fromTitle.season,
+    season: spelling === "year" ? fromTitle.season : formatSeasonLabel(Number(fromTitle.season)),
     event: slugifyVideoTitle(fromTitle.tournament),
     round: slugifyVideoTitle(fromTitle.round),
     parts: { ...parts, affTeam: fromTitle.affTeam, negTeam: fromTitle.negTeam },
@@ -390,10 +441,17 @@ function roundRoute(parts: VideoRouteParts): RoundRoute | null {
  * does not take the round's address: a lecture read as a round carries its
  * category (`analysis`), a round uploaded in pieces its part (`part-2`).
  */
-export function videoRouteSegments(parts: VideoRouteParts): VideoRouteSegments {
-  const round = roundRoute(parts);
+export function videoRouteSegments(
+  parts: VideoRouteParts,
+  spelling: SeasonSpelling = "season",
+): VideoRouteSegments {
+  const round = roundRoute(parts, spelling);
   if (!round) {
-    return { season: seasonSegment(parts), event: eventSegment(parts), matchup: matchupSegment(parts) };
+    return {
+      season: seasonSegment(parts, spelling),
+      event: eventSegment(parts),
+      matchup: matchupSegment(parts),
+    };
   }
 
   const variant = joinSlugs(round.category, round.part && `part ${round.part}`);
@@ -415,30 +473,36 @@ function hrefFromSegments({ season, event, matchup, teams, variant }: VideoRoute
  * Builds a video's canonical path.
  *
  * @param video - The video, as a tuple or as named parts.
- * @returns e.g. `/videos/2022/ndt/finals/dartmouth-sv-michigan-pr`, or
- *   `/videos/2019/critique-critical-theory/how-to-give-a-2nr` for a lecture.
+ * @returns e.g. `/videos/21-22/ndt/finals/dartmouth-sv-michigan-pr`, or
+ *   `/videos/19-20/critique-critical-theory/how-to-give-a-2nr` for a lecture.
  */
-export function videoRouteHref(video: VideoType | VideoRouteParts): string {
+export function videoRouteHref(
+  video: VideoType | VideoRouteParts,
+  spelling: SeasonSpelling = "season",
+): string {
   const parts = Array.isArray(video) ? videoRouteParts(video) : video;
-  return hrefFromSegments(videoRouteSegments(parts));
+  return hrefFromSegments(videoRouteSegments(parts, spelling));
 }
 
 /**
  * The three-segment path a round had before rounds moved to
  * `<season>/<tournament>/<round>/<teams>`, e.g.
- * `/videos/2006/college-ndt/northwestern-gw-vs-michigan-state-bp-finals`.
+ * `/videos/05-06/college-ndt/northwestern-gw-vs-michigan-state-bp-finals`.
  *
  * Kept so links shared under that scheme still resolve and redirect.
  */
-export function legacyVideoRouteHref(video: VideoType | VideoRouteParts): string {
+export function legacyVideoRouteHref(
+  video: VideoType | VideoRouteParts,
+  spelling: SeasonSpelling = "season",
+): string {
   const parts = Array.isArray(video) ? videoRouteParts(video) : video;
   const matchup = taggedMatchupSegment(parts) || slugifyVideoTitle(parts.title) || "video";
-  return `/videos/${seasonSegment(parts)}/${eventSegment(parts)}/${matchup}`;
+  return `/videos/${seasonSegment(parts, spelling)}/${eventSegment(parts)}/${matchup}`;
 }
 
 /**
  * The three-segment path a video with no team recorded had before its title
- * was added to it, e.g. `/videos/2027/policy/finals`.
+ * was added to it, e.g. `/videos/26-27/policy/finals`.
  *
  * Several videos can share it, so it only ever redirects; see
  * `getVideoByRouteSegments` in the app.
@@ -446,26 +510,32 @@ export function legacyVideoRouteHref(video: VideoType | VideoRouteParts): string
  * @returns The path, or `null` when it is the video's current one or the
  *   video is filed as a round.
  */
-export function untitledVideoRouteHref(video: VideoType | VideoRouteParts): string | null {
+export function untitledVideoRouteHref(
+  video: VideoType | VideoRouteParts,
+  spelling: SeasonSpelling = "season",
+): string | null {
   const parts = Array.isArray(video) ? videoRouteParts(video) : video;
   if (roundRoute(parts)) return null;
   const tagged = taggedMatchupSegment(parts);
   if (!tagged || tagged === matchupSegment(parts)) return null;
-  return `/videos/${seasonSegment(parts)}/${eventSegment(parts)}/${tagged}`;
+  return `/videos/${seasonSegment(parts, spelling)}/${eventSegment(parts)}/${tagged}`;
 }
 
 /**
  * The four-segment path a round had before `vs` was dropped from its teams
  * and its variant moved into a segment of its own, e.g.
- * `/videos/2022/ndt/finals/dartmouth-sv-vs-michigan-pr-round-analysis`.
+ * `/videos/21-22/ndt/finals/dartmouth-sv-vs-michigan-pr-round-analysis`.
  *
  * Kept so links shared under that scheme still resolve and redirect.
  *
  * @returns The path, or `null` for a video that is not filed as a round.
  */
-export function previousVideoRouteHref(video: VideoType | VideoRouteParts): string | null {
+export function previousVideoRouteHref(
+  video: VideoType | VideoRouteParts,
+  spelling: SeasonSpelling = "season",
+): string | null {
   const parts = Array.isArray(video) ? videoRouteParts(video) : video;
-  const round = roundRoute(parts);
+  const round = roundRoute(parts, spelling);
   if (!round) return null;
   const teams = [
     teamsSegmentWithVs(round.parts),

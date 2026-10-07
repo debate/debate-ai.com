@@ -3,7 +3,7 @@ import { VideoRoutePage, videoRouteMetadata } from "../../../../_watch/video-rou
 
 /**
  * A debate round at `/videos/<season>/<tournament>/<round>/<teams>`, e.g.
- * `/videos/2022/ndt/finals/dartmouth-sv-vs-michigan-pr`.
+ * `/videos/21-22/ndt/finals/dartmouth-sv-vs-michigan-pr`.
  *
  * The router names the segments by position (see
  * `app/videos/_watch/video-route-page.tsx`): `category` is the season,
