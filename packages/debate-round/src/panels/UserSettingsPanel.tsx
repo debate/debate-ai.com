@@ -169,6 +169,24 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
     setFlowAutoSave(readFlowAutoSaveMode())
   }, [])
 
+  // Adopt the account's auto-save mode on mount (a new device has none locally).
+  useEffect(() => {
+    let cancelled = false
+    fetchUserSettings()
+      .then((remote) => {
+        const mode = remote?.flowAutoSave
+        if (cancelled || !isFlowAutoSaveMode(mode)) return
+        setFlowAutoSave(mode)
+        setFlowAutoSaveMode(mode)
+      })
+      .catch(() => {
+        // Signed out or offline: keep the device-local value.
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   const handleFlowAutoSaveChange = (value: string) => {
     if (!isFlowAutoSaveMode(value)) return
     setFlowAutoSave(value)

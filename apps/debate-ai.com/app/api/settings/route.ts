@@ -46,6 +46,9 @@ import {
   type OutlineFilterPreset,
   type ThemeMode,
   type UserSettingsPayload,
+  normalizeFlowAutoSavePatch,
+  parseStoredFlowAutoSave,
+  type FlowAutoSaveMode,
 } from "@debate/round"
 import {
   applyNewsLikedOp,
@@ -761,6 +764,10 @@ export async function PUT(req: NextRequest) {
       mergeFlowEditorSettings(parseFlowEditorSettings(existing?.flowEditorSettings), flowEditorSettingsResult.valid),
     )
   }
+  if (flowAutoSaveResult.valid.flowAutoSave !== undefined) {
+    dbPatch.flowAutoSave = flowAutoSaveResult.valid.flowAutoSave
+  }
+
   if (flowAutoSaveResult.valid.flowAutoSave !== undefined) {
     dbPatch.flowAutoSave = flowAutoSaveResult.valid.flowAutoSave
   }
