@@ -24,7 +24,7 @@
  */
 
 import { useEffect, useMemo, useRef, useState } from "react"
-import { Check, ChevronDown } from "lucide-react"
+import { ChevronDown } from "lucide-react"
 
 import { cn } from "../../ui/lib/utils"
 import {
@@ -43,6 +43,7 @@ import {
 import {
   castTopicAreaVote,
   fetchTopicAreaPoll,
+  MAX_RANKED_CHOICES,
   nextPollSeason,
   rankPollOptions,
   seasonRangeLabel,
@@ -82,39 +83,62 @@ export function TopicAreasExplorer() {
 
 /**
  * The coming season, shown before any of its resolutions are announced, with a
- * poll on which topic area debaters would like it to come from. The tally is
- * public; voting needs a session, and voting again moves your one vote.
+ * ranked-choice poll on which topic areas debaters would like it to come from.
+ * Clicking an area gives it the next free rank (up to five); clicking a ranked
+ * area takes it off the ballot. The tally (Borda points) is public; voting
+ * needs a session, and saving again replaces your ballot.
  */
 export function NextSeasonPanel({ season = nextPollSeason() }: { season?: number }) {
   const [poll, setPoll] = useState<TopicAreaPollResponse | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [pending, setPending] = useState<string | null>(null)
+  const [saving, setSaving] = useState(false)
+  /** The ballot being edited, best first — starts as the saved one. */
+  const [draft, setDraft] = useState<string[]>([])
 
   useEffect(() => {
     let cancelled = false
     fetchTopicAreaPoll(season)
-      .then((p) => !cancelled && setPoll(p))
+      .then((p) => {
+        if (cancelled) return
+        setPoll(p)
+        setDraft(p.myRanking)
+      })
       .catch((e: Error) => !cancelled && setError(e.message))
     return () => {
       cancelled = true
     }
   }, [season])
 
-  async function vote(area: string) {
-    if (!poll?.signedIn || area === poll.myVote) return
-    setPending(area)
+  function toggle(area: string) {
+    if (!poll?.signedIn || saving) return
+    setDraft((current) =>
+      current.includes(area)
+        ? current.filter((a) => a !== area)
+        : current.length < MAX_RANKED_CHOICES
+          ? [...current, area]
+          : current,
+    )
+  }
+
+  async function save() {
+    if (!poll?.signedIn || draft.length === 0) return
+    setSaving(true)
     setError(null)
     try {
-      setPoll(await castTopicAreaVote(season, area))
+      const next = await castTopicAreaVote(season, draft)
+      setPoll(next)
+      setDraft(next.myRanking)
     } catch (e) {
       setError((e as Error).message)
     } finally {
-      setPending(null)
+      setSaving(false)
     }
   }
 
-  const options = rankPollOptions(poll?.counts ?? {})
-  const max = Math.max(1, ...options.map((o) => o.count))
+  const options = rankPollOptions(poll?.points ?? {}, poll?.firstChoices ?? {})
+  const max = Math.max(1, ...options.map((o) => o.points))
+  const saved = poll?.myRanking ?? []
+  const dirty = draft.length !== saved.length || draft.some((area, i) => saved[i] !== area)
 
   return (
     <details open className="group overflow-hidden rounded-2xl border border-border bg-card">
@@ -122,7 +146,7 @@ export function NextSeasonPanel({ season = nextPollSeason() }: { season?: number
         <span>
           <span className="block text-lg font-semibold text-foreground">Next season · {seasonRangeLabel(season)}</span>
           <span className="block text-sm text-muted-foreground">
-            Resolutions not announced yet · {poll ? `${poll.total} ${poll.total === 1 ? "vote" : "votes"}` : "poll"}
+            Resolutions not announced yet · {poll ? `${poll.total} ${poll.total === 1 ? "ballot" : "ballots"}` : "poll"}
           </span>
         </span>
         <ChevronDown
@@ -137,48 +161,90 @@ export function NextSeasonPanel({ season = nextPollSeason() }: { season?: number
           {poll === null ? (
             error ?? "Loading the poll…"
           ) : poll.signedIn ? (
-            poll.myVote ? "You can change your vote at any time." : "Pick one area. You can change your vote later."
+            `Rank your top ${MAX_RANKED_CHOICES}: click areas in order of preference, click again to remove. A first choice is worth ${MAX_RANKED_CHOICES} points, a fifth 1.`
           ) : (
             <>
               <a href="/login" className="font-medium text-primary hover:underline">
                 Sign in
               </a>{" "}
-              to vote. Anyone can see the results.
+              to rank your top {MAX_RANKED_CHOICES}. Anyone can see the results.
             </>
           )}
         </p>
         {poll && error ? <p role="alert" className="mt-1 text-sm text-destructive">{error}</p> : null}
 
+        {poll?.signedIn ? (
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <ol className="flex flex-wrap gap-1.5" aria-label="Your ranking">
+              {Array.from({ length: MAX_RANKED_CHOICES }, (_, i) => {
+                const area = draft[i]
+                return (
+                  <li
+                    key={i}
+                    className={cn(
+                      "flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs",
+                      area ? "border-primary/50 bg-primary/10 text-foreground" : "border-dashed border-border text-muted-foreground",
+                    )}
+                  >
+                    <span className="font-bold tabular-nums">{i + 1}.</span>
+                    {area ?? "—"}
+                  </li>
+                )
+              })}
+            </ol>
+            <button
+              type="button"
+              onClick={() => void save()}
+              disabled={!dirty || draft.length === 0 || saving}
+              className="ml-auto inline-flex h-8 items-center rounded-full bg-primary px-3 text-xs font-medium text-primary-foreground disabled:opacity-50"
+            >
+              {saving ? "Saving…" : saved.length > 0 ? "Update ranking" : "Submit ranking"}
+            </button>
+          </div>
+        ) : null}
+
         {poll ? (
           <div className="mt-3 rounded-xl border border-border bg-background p-3" role="group" aria-label={`Topic area poll for ${seasonRangeLabel(season)}`}>
             {options.map((o) => {
-              const mine = poll.myVote === o.name
+              const rank = draft.indexOf(o.name) + 1
+              const full = draft.length >= MAX_RANKED_CHOICES && rank === 0
               return (
                 <button
                   key={o.name}
                   type="button"
-                  onClick={() => vote(o.name)}
-                  disabled={!poll.signedIn || pending !== null}
-                  aria-pressed={mine}
+                  onClick={() => toggle(o.name)}
+                  disabled={!poll.signedIn || saving || full}
+                  aria-pressed={rank > 0}
+                  title={full ? `You've ranked ${MAX_RANKED_CHOICES} areas — remove one to add another.` : undefined}
                   className={cn(
                     "my-1 grid w-full grid-cols-1 items-center gap-1 rounded-lg p-1.5 text-left transition-colors sm:grid-cols-[16rem_1fr] sm:gap-3",
-                    poll.signedIn ? "hover:bg-accent" : "cursor-default",
-                    mine && "bg-accent ring-1 ring-primary/50",
+                    poll.signedIn && !full ? "hover:bg-accent" : "cursor-default",
+                    rank > 0 && "bg-accent ring-1 ring-primary/50",
                   )}
                 >
                   <span className="flex items-center text-sm font-semibold text-foreground">
-                    <span aria-hidden="true" className="mr-2 h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: o.color }} />
+                    {rank > 0 ? (
+                      <span
+                        aria-label={`Your choice ${rank}`}
+                        className="mr-2 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground"
+                      >
+                        {rank}
+                      </span>
+                    ) : (
+                      <span aria-hidden="true" className="mr-2 h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: o.color }} />
+                    )}
                     {o.name}
-                    {mine ? <Check aria-label="Your vote" className="ml-1.5 h-4 w-4 text-primary" /> : null}
                   </span>
                   <span className="flex items-center gap-2">
                     <span className="h-6 flex-1 overflow-hidden rounded-md bg-muted">
                       <span
                         className="block h-full rounded-md"
-                        style={{ width: `${(o.count / max) * 100}%`, background: o.color }}
+                        style={{ width: `${(o.points / max) * 100}%`, background: o.color }}
                       />
                     </span>
-                    <span className="w-7 text-right text-sm font-bold tabular-nums text-foreground">{o.count}</span>
+                    <span className="w-10 text-right text-sm font-bold tabular-nums text-foreground" title={`${o.points} points · ${o.firstChoices} first choices`}>
+                      {o.points}
+                    </span>
                   </span>
                 </button>
               )

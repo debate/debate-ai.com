@@ -6,15 +6,16 @@ title: "Practice Partners"
 
 Lets debaters find each other for practice rounds between tournaments.
 Volunteer to be challenged, volunteer to judge, or both, and say which
-formats, styles, speed, and level you're comfortable with. Then challenge
-anyone on the board to a virtual round.
+formats, styles, speed, and level you're comfortable with. Then get matched
+— anonymously — with a compatible debater and send them a request for a
+virtual round.
 
 - **Route:** `/practice/partners`. Also the first panel in the Coach
   Workspace's Practice section (`/coaching?section=practice`).
 - **Package:** `debate-webview` (UI, wire types, action rules) and
   `apps/debate-ai.com` (API, queries).
 - **API:** `GET /api/practice-partners`; `PUT /api/practice-partners/profile`;
-  `POST /api/practice-partners/challenges`;
+  `POST /api/practice-partners/match`; `POST /api/practice-partners/challenges`;
   `PATCH /api/practice-partners/challenges/[challengeId]`
 
 ## What it shows
@@ -24,8 +25,8 @@ anyone on the board to a virtual round.
   Under them you set formats (PF, LD, Policy, Parli, Worlds/BP, Congress),
   the styles you're comfortable with (traditional/lay, progressive/tech,
   plans/CPs/DAs, critiques, theory & T, philosophy/framework, truth-testing),
-  speed, experience level, availability, and a note for partners. Turning
-  both switches off hides you from the board but keeps your preferences.
+  speed, experience level, availability, and a note. Turning both switches
+  off takes you out of matching and judging but keeps your preferences.
 - **Your challenges.** They're grouped as *Waiting on you* (challenges to
   answer, judging invitations), *Upcoming rounds* (soonest first), *Sent*,
   and a few closed ones. An accepted round shows its **room code**. Debaters
@@ -34,13 +35,17 @@ anyone on the board to a virtual round.
 - **Rounds needing a judge.** This only appears for judge volunteers. It
   lists accepted rounds with an empty judge seat, and picking one up
   notifies both debaters.
-- **Find a practice partner.** The board, with a Debaters tab and a Judges
-  tab and filters for format and name. It's ranked by how well each person
-  matches your profile. Shared formats count most, then shared styles, then
-  speed and level. Formats and styles you share are highlighted. **Challenge**
-  opens a short form with the format (shared formats first), resolution,
-  optional start time, optional judge (only volunteers who judge that
-  format), and a message.
+- **Find a practice partner.** There is no public list of volunteers.
+  Pick a format (or any) and press **Find me a match**: the server scores
+  everyone open to challenges against your profile — shared formats count
+  most, then shared styles, then speed and level — and draws one of the five
+  most compatible at random, weighted by score. The match is shown
+  anonymously: level, speed, formats and styles (the ones you share
+  highlighted), a compatibility percentage, and whether they also judge — no
+  name, avatar, availability or note. **Send request** opens a short form
+  with the format (shared formats first), resolution, optional start time and
+  a message. **Find another** draws again, skipping everyone already shown
+  and anyone you already have a request waiting on.
 
 ## How it works
 
@@ -61,9 +66,19 @@ the second gets a 409 instead of overwriting the first.
 Each change creates a `practice_challenge` row in the existing notifications
 feed for everyone else in the round, linking back to `/practice/partners`.
 
-**Safety rules.** The board requires an account, and guest (anonymous)
+**Anonymity.** The match endpoint never sends a name or account id. The
+browser gets an opaque token instead (`apps/debate-ai.com/lib/practice-partners/match-token.ts`):
+the matched debater's id, the viewer's id and a two-hour expiry, sealed with
+AES-GCM under a key derived from the auth secret. `POST …/challenges` accepts
+it as `matchToken` and opens it server-side; a token opens only for the viewer
+it was minted for. Until a challenge is accepted, each debater sees the other
+as "Your practice match" (`ANONYMOUS_PRACTICE_PERSON`, applied in
+`toWireChallenges`), and the notifications for sending, declining or calling
+off a pending request don't name the sender. Accepting reveals both names.
+
+**Safety rules.** Matching requires an account, and guest (anonymous)
 accounts can't volunteer or send challenges. A block from Contacts in either
-direction hides each person from the other's board, stops them challenging
+direction keeps each person out of the other's matches, stops them challenging
 each other, and keeps the round off the other's "needing a judge" list. A
 blocked challenge gets the same "not open to challenges" reply as a volunteer
 who has switched off, so the reply doesn't reveal the block. Each debater can
@@ -81,4 +96,11 @@ are never deleted by the feature; a closed challenge keeps its status.
   change it, decline and send a new challenge.
 - Nothing links a finished practice round back to its challenge, so results
   and judge feedback aren't recorded here yet.
-- The board shows up to 200 volunteers with no pagination.
+- Matching draws from the 200 most recently updated volunteers.
+- Compatibility is a deterministic score over the profile fields; the free-text
+  note and availability aren't read by the matcher (and aren't shown, since
+  they could identify someone).
+- A pending request's judge seat can't be filled by invitation any more —
+  the judge list isn't public — so judges pick up accepted rounds instead.
+- A request that is called off after being accepted shows the other debater
+  as anonymous again, since only `accepted` reveals names.
