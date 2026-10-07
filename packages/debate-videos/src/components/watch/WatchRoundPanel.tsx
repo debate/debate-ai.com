@@ -27,13 +27,20 @@
  *   - **Mark start** sets the speech's start to the current video time, for
  *     rounds whose documents don't time their speeches (see
  *     `state/speechStartMarks.ts`). A marked start can be cleared again.
+ *   - **Detect speeches** does every Mark start at once: the model reads the
+ *     whole caption track, names the format and times each speech (see
+ *     `lib/speech-segmentation.ts`). The page owns that request; this panel
+ *     only shows its button and status ({@link SpeechDetectionControl}).
+ *   - **LLM summary** outlines the speech's key points and warrants in
+ *     bullet phrases from its transcript (see `lib/speech-summary.ts`),
+ *     shown in its own view and kept in this browser.
  * @module components/watch/WatchRoundPanel
  */
 
 "use client"
 
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react"
-import { Bot, Flag, Play, Sparkles, X } from "lucide-react"
+import { Bot, Flag, ListTree, Loader2, Play, RotateCcw, Sparkles, Wand2, X } from "lucide-react"
 import { ScrollArea } from "../../ui/primitives/scroll-area"
 import { playingSpeechIndex, type RoundSpeech } from "../../lib/round-speeches"
 import { formatTimecode, type VideoDocument, type VideoDocumentKind } from "../../lib/video-documents"
@@ -44,15 +51,18 @@ import { SPEECH_SIDE_STYLES } from "./speech-side-styles"
 import { WatchSpeechOutcomes } from "./WatchSpeechOutcomes"
 import type { RoundContext } from "../../lib/speech-outcomes"
 import { cachedSpeechKeys } from "../../state/speechOutcomeCache"
+import { readSpeechSummaries, writeSpeechSummary } from "../../state/speechAiCache"
+import { requestSpeechSummary } from "../../lib/speech-ai-client"
 
-/** A document view, or the AI alternative-responses view. */
-type SpeechView = VideoDocumentKind | "outcomes"
+/** A document view, the AI alternative-responses view, or the AI outline. */
+type SpeechView = VideoDocumentKind | "outcomes" | "llm"
 
 /** The views inside a speech, in the order they are offered. */
 const VIEWS: Array<{ kind: SpeechView; label: string }> = [
   { kind: "summary", label: "Summary" },
   { kind: "analysis", label: "Analysis" },
   { kind: "transcript", label: "Transcript" },
+  { kind: "llm", label: "LLM summary" },
   { kind: "outcomes", label: "Outcomes" },
 ]
 
@@ -61,6 +71,23 @@ export interface SpeechFocusRequest {
   key: string
   /** Bumped on every request, so asking for the same speech twice still lands. */
   seq: number
+}
+
+/**
+ * The page's "Detect speeches" request, as the panel shows it. The page owns
+ * it because the result re-times the whole round, timeline included.
+ */
+export interface SpeechDetectionControl {
+  /** Starts (or re-runs) the detection. */
+  onDetect: () => void
+  /** Forgets the detected speeches; omitted while there are none. */
+  onClear?: () => void
+  running: boolean
+  error?: string | null
+  /** A one-line description of the last result — `Policy · 11 speeches found`. */
+  result?: string | null
+  /** False while the captions it reads are not loaded. */
+  available: boolean
 }
 
 interface WatchRoundPanelProps {
@@ -86,6 +113,8 @@ interface WatchRoundPanelProps {
   onMarkStart?: (speechKey: string, seconds: number | null) => void
   /** Speeches whose start the reader marked, and so can clear. */
   markedKeys?: ReadonlySet<string>
+  /** The AI speech detection; without it the panel offers no Detect control. */
+  detection?: SpeechDetectionControl
 }
 
 const NO_KEYS: ReadonlySet<string> = new Set()
@@ -104,12 +133,25 @@ export function WatchRoundPanel({
   roundTranscript,
   onMarkStart,
   markedKeys = NO_KEYS,
+  detection,
 }: WatchRoundPanelProps) {
   const [activeKey, setActiveKey] = useState(speeches[0]?.key ?? "")
   const [view, setView] = useState<SpeechView>("summary")
   const [simulated, setSimulated] = useState<Set<string>>(() => new Set())
   useEffect(() => {
     setSimulated(videoId ? cachedSpeechKeys(videoId) : new Set())
+  }, [videoId])
+  /** LLM outlines by speech key, for this video. */
+  const [outlines, setOutlines] = useState<Record<string, string>>({})
+  /** The speech whose outline is being written, and the last failure. */
+  const [summarizing, setSummarizing] = useState<string | null>(null)
+  const [summaryError, setSummaryError] = useState<{ key: string; message: string } | null>(null)
+  const summaryVideo = useRef(videoId)
+  useEffect(() => {
+    summaryVideo.current = videoId
+    setOutlines(videoId ? readSpeechSummaries(videoId) : {})
+    setSummarizing(null)
+    setSummaryError(null)
   }, [videoId])
   const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({})
   const stripRef = useRef<HTMLDivElement | null>(null)
@@ -152,13 +194,21 @@ export function WatchRoundPanel({
     speeches.findIndex((speech) => speech.key === activeKey),
   )
   const active = speeches[activeIndex]
+  const hasOutline = Boolean(
+    active && (outlines[active.key] || summarizing === active.key || summaryError?.key === active.key),
+  )
   const views = VIEWS.filter(({ kind }) =>
-    kind === "outcomes" ? Boolean(videoId && active?.isSpeech) : active?.parts[kind],
+    kind === "outcomes" ? Boolean(videoId && active?.isSpeech) : kind === "llm" ? hasOutline : active?.parts[kind],
   )
   // A speech with nothing written still has Outcomes, but a reader who asked
   // for the summary should land on words where there are any.
   const shownView = views.some(({ kind }) => kind === view) ? view : views[0]?.kind
-  const body = shownView && shownView !== "outcomes" ? active?.parts[shownView] : undefined
+  const body =
+    shownView === "llm"
+      ? active && outlines[active.key]
+      : shownView && shownView !== "outcomes"
+        ? active?.parts[shownView]
+        : undefined
   const html = useMemo(() => (body ? renderDocumentMarkdown(body) : ""), [body])
   const source = documents.find((document) => document.kind === shownView)
 
@@ -183,6 +233,37 @@ export function WatchRoundPanel({
   }
 
   const side = SPEECH_SIDE_STYLES[active.side]
+  const speechText = active.parts.transcript?.trim() ?? ""
+
+  const summarize = async (speech: RoundSpeech, text: string) => {
+    if (!videoId) return
+    const forVideo = videoId
+    setView("llm")
+    setSummarizing(speech.key)
+    setSummaryError(null)
+    try {
+      const outline = await requestSpeechSummary({
+        heading: speech.heading,
+        side: speech.side,
+        transcript: text,
+        videoTitle,
+        format: round?.format,
+      })
+      if (summaryVideo.current !== forVideo) return
+      writeSpeechSummary(forVideo, speech.key, outline)
+      setOutlines((current) => ({ ...current, [speech.key]: outline }))
+    } catch (error) {
+      if (summaryVideo.current !== forVideo) return
+      setSummaryError({ key: speech.key, message: error instanceof Error ? error.message : "The summary failed." })
+    } finally {
+      if (summaryVideo.current === forVideo) setSummarizing((current) => (current === speech.key ? null : current))
+    }
+  }
+
+  const handleSummaryClick = () => {
+    if (outlines[active.key]) setView("llm")
+    else void summarize(active, speechText)
+  }
 
   return (
     <div className="flex flex-col min-h-0 flex-1">
@@ -231,6 +312,46 @@ export function WatchRoundPanel({
         })}
       </div>
 
+      {detection && (
+        <div className="flex shrink-0 flex-wrap items-center gap-x-2 gap-y-1 border-b border-border px-3 py-1.5 text-[11px]">
+          <button
+            type="button"
+            onClick={detection.onDetect}
+            disabled={detection.running || !detection.available}
+            className="inline-flex items-center gap-1 rounded-md border border-border px-1.5 py-0.5 font-medium hover:bg-accent transition-colors disabled:opacity-50 disabled:hover:bg-transparent"
+            title={
+              detection.available
+                ? "Read the whole transcript with AI to find the format and where every speech begins and ends"
+                : "Waiting for the captions"
+            }
+          >
+            {detection.running ? (
+              <Loader2 className="h-3 w-3 animate-spin motion-reduce:animate-none" />
+            ) : (
+              <Wand2 className="h-3 w-3" />
+            )}
+            {detection.running ? "Detecting speeches…" : detection.result ? "Detect again" : "Detect speeches"}
+          </button>
+          {detection.result && !detection.running && (
+            <span className="text-muted-foreground">{detection.result}</span>
+          )}
+          {detection.onClear && !detection.running && (
+            <button
+              type="button"
+              onClick={detection.onClear}
+              className="text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+            >
+              Clear
+            </button>
+          )}
+          {detection.error && !detection.running && (
+            <span role="alert" className="text-destructive">
+              {detection.error}
+            </span>
+          )}
+        </div>
+      )}
+
       <div
         id="speech-panel"
         role="tabpanel"
@@ -244,8 +365,9 @@ export function WatchRoundPanel({
               <p className="text-[11px] text-muted-foreground">{side.name}</p>
               {onMarkStart && !isTimed && (
                 <p className="mt-0.5 text-[10px] text-muted-foreground">
-                  Play to where each speech begins and press Mark start — the timeline, the playing marker and each
-                  speech&apos;s captions follow.
+                  Play to where each speech begins and press Mark start
+                  {detection ? ", or let Detect speeches find them all" : ""} — the timeline, the playing marker and
+                  each speech&apos;s captions follow.
                 </p>
               )}
             </div>
@@ -273,6 +395,26 @@ export function WatchRoundPanel({
                   title="Clear this start"
                 >
                   <X className="h-3 w-3" />
+                </button>
+              )}
+              {videoId && active.isSpeech && (
+                <button
+                  type="button"
+                  onClick={handleSummaryClick}
+                  disabled={!speechText || summarizing === active.key}
+                  className="inline-flex items-center gap-1 rounded-md border border-border px-1.5 py-0.5 text-[11px] hover:bg-accent transition-colors disabled:opacity-50 disabled:hover:bg-transparent"
+                  title={
+                    speechText
+                      ? `Outline ${active.label}'s key points and warrants with AI`
+                      : "No transcript for this speech yet — mark or detect where it starts first"
+                  }
+                >
+                  {summarizing === active.key ? (
+                    <Loader2 className="h-3 w-3 animate-spin motion-reduce:animate-none" />
+                  ) : (
+                    <ListTree className="h-3 w-3" />
+                  )}
+                  LLM summary
                 </button>
               )}
               {onMarkStart && (
@@ -324,7 +466,16 @@ export function WatchRoundPanel({
         ) : (
         <ScrollArea className="flex-1 min-h-0">
           <div className="p-3">
-            {html ? (
+            {shownView === "llm" && summarizing === active.key ? (
+              <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <Loader2 className="h-3 w-3 animate-spin motion-reduce:animate-none" />
+                Outlining {active.label}&apos;s key points and warrants…
+              </p>
+            ) : shownView === "llm" && summaryError?.key === active.key && !html ? (
+              <p role="alert" className="text-xs text-destructive">
+                {summaryError.message}
+              </p>
+            ) : html ? (
               <div
                 className={MARKDOWN_CLASSES}
                 // Sanitized by renderDocumentMarkdown: raw HTML is escaped
@@ -341,7 +492,26 @@ export function WatchRoundPanel({
         </ScrollArea>
         )}
 
-        {shownView !== "outcomes" && source?.author === "ai" && (
+        {shownView === "llm" && outlines[active.key] && summarizing !== active.key && (
+          <p className="flex items-center justify-between gap-2 border-t border-border px-3 py-1.5 text-[10px] text-muted-foreground shrink-0">
+            <span className="flex items-center gap-1">
+              <Bot className="h-3 w-3 shrink-0" />
+              AI outline from the captions — check it against the video.
+            </span>
+            {speechText && (
+              <button
+                type="button"
+                onClick={() => void summarize(active, speechText)}
+                className="inline-flex items-center gap-1 hover:text-foreground"
+              >
+                <RotateCcw className="h-3 w-3" />
+                Run again
+              </button>
+            )}
+          </p>
+        )}
+
+        {shownView !== "outcomes" && shownView !== "llm" && source?.author === "ai" && (
           <p className="flex items-center gap-1 border-t border-border px-3 py-1.5 text-[10px] text-muted-foreground shrink-0">
             <Bot className="h-3 w-3 shrink-0" />
             Generated{source.model ? ` by ${source.model}` : ""} — check it against the video before relying on it.
