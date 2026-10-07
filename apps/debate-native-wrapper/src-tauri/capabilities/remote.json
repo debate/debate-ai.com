@@ -16,7 +16,6 @@
     "opener:allow-open-url",
     "allow-system-info",
     "allow-quick-launch",
-    "autostart:default",
     "allow-app-source"
   ]
 }

@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { oneTap, openAPI, magicLink, anonymous, bearer } from "better-auth/plugins";
 import { oneTimeToken } from "better-auth/plugins/one-time-token";
+import { organization } from "better-auth/plugins/organization";
 import { getDBFromContext } from "../database/context";
 import * as schema from "../database/schema";
 import { Resend } from "resend";
@@ -9,6 +10,7 @@ import { APP_NAME, APP_EMAIL, APP_ORIGIN, NEXT_PUBLIC_BASE_URL } from "@debate/w
 import { buildAllowedHosts, buildTrustedOrigins } from "./hosts";
 import { OAUTH_STATE_COOKIE_MAX_AGE_SECONDS, SIGN_IN_ERROR_URL } from "./oauth-state";
 import { getEnv } from "../env";
+import { ensureOrganizationTables } from "../organizations/ensure-tables";
 
 /**
  * Providers are only registered when both halves of their credential pair are
@@ -39,6 +41,15 @@ function buildSocialProviders() {
 
 async function buildAuth() {
   const db = await getDBFromContext();
+  // The organization plugin writes `session.active_organization_id` on every
+  // sign-in, so its tables and that column have to exist first — see
+  // ../organizations/ensure-tables. A failure is logged rather than thrown:
+  // on a database that already has them, auth must still come up.
+  try {
+    await ensureOrganizationTables(db);
+  } catch (error) {
+    console.error("Could not ensure organization tables", error);
+  }
 
   // An explicitly configured URL, when there is one. It is no longer the only
   // origin this instance answers on — see `baseURL` below — but it still wins
@@ -157,6 +168,16 @@ async function buildAuth() {
       oneTimeToken({
         expiresIn: 5,
         storeToken: "hashed",
+      }),
+      // Shared groups a user can create and switch between from the sidebar's
+      // account menu (packages/debate-webview's nav-user). The active one is
+      // `session.activeOrganizationId`; /api/contacts and /api/card-shares
+      // narrow to its members while it is set. Members are added from the
+      // creator's own contacts (/api/organizations/members), so no
+      // invitation email is configured.
+      organization({
+        allowUserToCreateOrganization: (user) => !(user as { isAnonymous?: boolean }).isAnonymous,
+        organizationLimit: 25,
       }),
       magicLink({
         sendMagicLink: async ({ email, url }) => {

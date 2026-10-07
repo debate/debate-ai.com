@@ -5,9 +5,8 @@ import { usePathname } from "next/navigation"
 import { ResizableSidebarLayout } from "@debate/videos"
 import { isGenericToolSidebarRoute } from "../../lib/sidebar-routes"
 import { showsCardsOnlySidebar } from "../../lib/reason-docs/sidebar-routes"
-import { ChromeErrorBoundary } from "../../lib/ui/layout/chrome-error-boundary"
 import { AppSidebar } from "./app-sidebar/app-sidebar"
-import { NavUser } from "./app-sidebar/nav-user"
+import { SidebarAccount } from "./app-sidebar/sidebar-account"
 
 /**
  * Puts the app's one sidebar beside every page that is not in the video
@@ -58,11 +57,7 @@ export function AppSidebarShell({
       // viewport high is what the pages were laid out against before.
       contentClassName="flex min-h-screen flex-col"
       sidebar={<AppSidebar />}
-      footer={
-        <ChromeErrorBoundary label="NavUser">
-          <NavUser />
-        </ChromeErrorBoundary>
-      }
+      footer={<SidebarAccount />}
     >
       {children}
     </ResizableSidebarLayout>

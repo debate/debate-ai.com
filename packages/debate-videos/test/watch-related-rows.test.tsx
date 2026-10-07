@@ -218,7 +218,11 @@ describe("a related row", () => {
   it("offers the popout player in place of the transcript link", () => {
     mount()
     expect(container.querySelector('[aria-label="Open the watch page with transcript"]')).toBeNull()
-    expect(container.querySelectorAll('[aria-label="Watch in popout player"]').length).toBe(related.length)
+    // On a watch page the icon lines the video up for when the reader leaves,
+    // rather than taking over from the page's player — see watch-popout-next.
+    expect(
+      container.querySelectorAll('[aria-label="Play in popout player when you leave this page"]').length,
+    ).toBe(related.length)
   })
 })
 

@@ -1,0 +1,284 @@
+---
+title: "Video Library"
+---
+
+# Video Library — SQL-backed feed with scroll pagination
+
+The debate video library (rounds, lectures, top picks) is stored in SQL and
+served one page at a time, instead of downloading the entire ~1.1 MB
+dataset before a single card renders.
+
+- **Where:** `/videos`, `/videos/[category]`, and the rounds grid
+- **Package:** `debate-videos`, `debate-data-sync`
+
+## How it fits together
+
+JSON assets under `debate-data-sync/data/videos/` are projected into a
+`videos` SQL table via `buildVideoRows()`. `GET /api/videos` pushes
+filtering, search, sorting, and pagination into SQL; `GET /api/videos/meta`
+is a small fetch-once companion for counts/topics/champions. If the table
+is missing or unseeded, both endpoints fall back to rebuilding from the
+JSON assets in memory with identical semantics.
+
+## Season and tournament addresses
+
+A video's address starts with its season and tournament
+(`/videos/21-22/ndt/finals/…`). The season is written as the two years it
+spans, because a season runs from summer to summer: `21-22` is the season that
+ends in 2022. A publish date from July onward counts toward the next season.
+Older links spelled the season as the year it ended (`/videos/2022/…`); they
+still work and forward to the new address.
+
+An address can be trimmed: `/videos/24-25` opens the library filtered to that
+season, and `/videos/24-25/ndt` filtered to that season with the tournament's
+name as the search (`/videos?year=2025&q=ndt`). The bare-year forms
+(`/videos/2025`) still work too. The Worker
+does this with a redirect (`apps/debate-ai.com/lib/redirects/video-listing.ts`)
+before the request reaches the app. `/videos/archive/…` maps to the undated
+(`legacy`) season.
+
+## Merged lecture categories
+
+Topic analysis and topic lectures share one shelf, **Topic Lectures**. Videos
+still stored under the old "Topic Analysis" label are folded into it when the
+feed and its category cards are read (`CATEGORY_LABEL_ALIASES` in
+`debate-data-sync/src/videos/video-rows.ts`), and old `/lectures/topic_analysis`
+links open the merged shelf.
+
+## Sidebar format badges and the Greatest of All-Time banner
+
+In the sidebar, College Debates, Policy, PF and LD show lettered badges (NDT,
+VP, PF, LD) instead of generic icons. The Greatest of All-Time collection
+(`/videos/topPicks`) opens on an **All Time Greatest Legends** banner — the gold trophy-goat icon
+over the title — with
+drifting sparkles above the search bar (`GoatSparklesHeading`, built on
+`SparklesCore` in `debate-videos/src/ui/effects/sparkles.tsx`).
+
+## Category search suggestions
+
+The search chips beneath the grid are specific to the category, debate format,
+season, or top-picks view currently open. Their counts come from the titles and
+metadata of videos in that selection, so choosing a chip never sends you to
+unrelated lectures or rounds from elsewhere in the library.
+
+## Client paging
+
+```
+hooks/useVideoFeed.ts — useVideoFeed(filters) / useVideoMeta()
+hooks/useInfiniteScroll.ts — loads the next page as the grid is scrolled
+components/video-grid/WindowedChunk.tsx — keeps only on-screen cards mounted
+```
+
+Loading is automatic and has no ceiling: the grid asks for the next page as
+you scroll, and the row (list) view keeps paging on its own, one page per idle
+moment, until every group is complete. To keep a long feed from freezing the
+page, the grid is drawn in blocks of 60 cards and the list in one table body
+per top-level group; a block far from the viewport swaps its cards for an
+empty box of the same height, so only the cards near the screen are ever
+mounted.
+
+Favourites and hidden videos are sent to the feed as explicit id lists rather
+than columns the query already understands — favourites as an `ids`
+allow-list, hidden videos as an `excludeIds` deny-list (so a hidden video also
+stops inflating the season/style dropdown counts) — but they are no longer
+*stored* only client-side: both are kept on your account and follow you to
+another device. See Tool Data Sync.
+
+My Favorites (`/videos/favorites`) lists starred rounds and lectures together,
+in separate Rounds and Lectures tables. It shares the lectures view internally,
+so `isLecturesOnlyListing()` in `lectureRouteConfig.ts` is what keeps the
+"All Lectures" lectures-only filter off it; only `/videos/favoritelectures`
+narrows favourites to lectures. No other library filter applies there either:
+`favoritesFeedFilters()` in `useVideoFeed.ts` drops the style, season,
+category, top-picks, search and hidden-video filters, so every starred video
+is listed.
+
+Signed out, they save in that browser alone, and favouriting a video says so
+once — with an offer to sign in and keep the collection. Declining is fine: the
+favourite is still saved, and signing in later pushes everything that browser
+already holds up to the account rather than replacing it.
+
+## Stacked playlists
+
+Some videos are the same debate twice: a round, and the round-analysis video
+made from it. They used to sit pages apart in the grid — and in a rounds
+view the analysis was filtered out altogether — so the pair was there and
+invisible. They now share one card (or one row, in the list layout) with
+`<` / `>` arrows and a `1/2` counter to flip between them. The full round is
+what the slot opens on, unless you arrived at the companion, in which case it
+opens on that.
+
+The same applies to a round split across uploads (a decision and a rebuttals
+cut) and to the parts of a lecture series.
+
+Nothing about this is hand-curated: a stack exists because one video's
+YouTube description links to the other ("Full Debate:
+`https://www.youtube.com/watch?v=…`"). Linking two videos is therefore an
+edit to a description on YouTube, not a change to the site.
+
+Every card in the grid and every row in the list shows the video's length
+(`1h 05m`, `42m`) on its own line under the action buttons — not as a column —
+and flipping a stack shows the length of the video now on top. Lengths come
+from `/api/videos/durations`, which reads the `video_durations` table the admin
+backfill fills (see Video durations below); the cards ask for them in batches
+as they render (`state/videoDurations.ts`), so a video with no stored length
+simply shows none.
+
+The **Stacked playlists** button in the search panel (the layers icon) turns
+it off, giving one card per video again.
+
+On a video's own page the stack is spelled out as a **Playlist** under the
+player — the round, its analysis, each part — with the one you are watching
+marked, so the analysis of a round is one click away.
+
+A video made from a round lives one level below the round's address: the
+2022 NDT final is at `/videos/21-22/ndt/finals/dartmouth-sv-michigan-pr`, and
+its analysis at `/videos/21-22/ndt/finals/dartmouth-sv-michigan-pr/analysis`.
+Links shared under the older addresses (`…/dartmouth-sv-vs-michigan-pr-round-analysis`)
+still work and forward to the new one.
+
+A video tagged with a round but no team would have an address that names no
+one video (`/videos/26-27/policy/finals`), so its title is added after the
+round: `/videos/26-27/policy/finals-<title>`, or just the title when it already
+says the round. The short address still works and forwards to the video it
+always opened.
+
+## List layout
+
+Clicking a row opens that video's [watch page](/docs/features/video-library/video-watch-page)
+(Ctrl/⌘-click opens it in a new tab). To keep browsing while it plays, use
+the row's **Watch in popout player** icon instead — it starts the video in
+the floating player in the corner (`PopoutPlayerButton`). On a watch page the
+same icon lines the video up for the popout instead, and it starts when you
+leave the page — see [Up next in the popout player](/docs/features/video-library/video-watch-page#up-next-in-the-popout-player).
+
+The dense table view (`VideoListRows`, the alternative to the card grid) shows
+a cleaned-up Tournament column rather than the raw stored value: years, round
+labels ("Quarterfinals", "R3", "Round Robin"), and generic org words
+("Tournament", "Nationals", "Invitational") are stripped, and "Tournament of
+Champions"/"National Debate Tournament" collapse to "TOC"/"NDT" —
+`cleanTournamentName` in `VideoListRows.tsx`. A round whose tournament cleans
+to nothing (or that has no team on either side) shows its title across the
+row instead of blank Tournament/Aff/Neg columns.
+
+Rounds are grouped season → tournament, newest first at every level: the
+newest season on top, within a season the tournament with the most recent
+video on top, and within a tournament the newest video on top (rounds from
+the same day read Finals down to the prelims). Rounds with no tournament go
+into an **Unsorted** tournament group, which is placed by its own newest video
+like any other tournament (`buildVideoTree` in `video-tree.ts`).
+
+Top Picks mixes every format, so there each tournament row carries a format
+badge (PF, LD, Policy, College) beside its name — one per format among its
+rounds — and so does the tournament name on every round row under it
+(`showFormat` on `VideoListRows`, drawn by `FormatBadge`). Single-format
+listings such as `/videos/pf` leave it off.
+
+Because the groups are built from whatever has loaded, the row view keeps
+paging on its own (up to the usual 600-video ceiling) instead of waiting for
+you to scroll. Otherwise sorting by views would show only each season's
+most-watched rounds until the rest of the feed arrived (`LecturesPage.tsx`).
+
+Every column (Aff, Neg, Date, Views) shows at every screen width. On a phone
+the table is wider than the screen, so swipe it left and right to reach the
+columns beside the round; the first column is capped at three quarters of the
+screen so the next one always peeks in.
+
+### Team names and ratings
+
+In the Aff and Neg columns, a team from the **current season** that the
+[team rankings](/docs/features/team-collaboration/team-rankings) know shows its rating in a
+small badge beside its name, and clicking the name opens that team's page.
+Any other team — one from a past season, or one the rankings don't match —
+keeps the old behaviour: clicking its name searches the library for that
+team's videos. The rankings cover the current season only, so an older
+round's team code is never matched (it would name different debaters).
+
+The match is the one the team pages use (`findTeamRanking` in
+`@debate/rankings-adapter`): the school loosely, the initials exactly, in
+the division the round's format is ranked in. The rankings load only when
+a listing holds a current-season round (`useVideoTeamRankings`).
+
+## Suggesting a fix to a video
+
+Every watch page has a pencil button next to the video. Click it to open the
+video's details — title, format, lecture category, tournament, teams, winner
+and so on — change whatever is wrong, and press **Submit for approval**.
+Nothing changes right away: your edit goes to the moderators, who are notified
+and approve or dismiss it from the admin panel. **Request deletion** in the
+same dialog asks them to take the video off the site instead. You need to be
+signed in to suggest a change.
+
+Admins and moderators get the same pencil button, but for them it saves
+straight to the library.
+
+## Fixing a video (admins)
+
+`/admin` has a **Video library** card listing every video already published to
+the site, searchable by title, channel, tournament or YouTube id and filterable
+by format. **Edit** opens the whole record — title, channel, publish date,
+format, tournament, round level, teams, winner, judge decision, description,
+speech-docs link and the top-pick flag — and saving it updates the public
+library right away, including how the video sorts and what searches find it.
+**Lecture category** is a dropdown prefilled with every lecture shelf the
+library uses (Topic Lectures, Affirmative Strategy, Counterplans & Theory and
+the rest), so a typo can't create a stray shelf; pick **None** for a round.
+**Remove** takes the video off the site for good: it is also added to the
+resync exclusion list, so the weekly YouTube sync will not quietly bring it
+back.
+
+Viewers' suggested edits and deletion requests land in the **Reports &
+takedowns** card as **Suggested edit** and **Deletion request**, listing each
+proposed field and the viewer's reason. **Apply** writes exactly those fields;
+**Delete video** removes it as **Remove** does; **Dismiss** rejects it.
+
+### Transcripts
+
+The card's **Transcript** column shows which videos have a typed-up transcript
+(with its word count), which have only YouTube's captions cached, and which have
+neither; the **Has transcript / No transcript** filter narrows the list to either
+side. **Transcripts** on a row opens the editor, and **Import YouTube captions**
+there fills it with the video's captions as a first draft — split into timed
+"Part" sections at each long pause, which in a round is usually the gap between
+speeches. Rename each part to its speech (`## 1AC — Michigan (0:00)`) and save.
+
+To write a transcript for a video that isn't in the list — say, a round not yet
+published — paste its YouTube link or id into the box at the top of the card.
+
+The **Round videos** queue further down the page is separate — those are
+rounds still waiting to be published, not videos already on the site.
+Publishing never overwrites a video that is already in the library: the older
+version is kept and the queued copy is skipped. **Deduplicate**, next to
+**Publish all**, clears every queued round (within the selected format) that
+is already in the library or repeats another queued round, without
+publishing anything. Two videos count as the same when their YouTube IDs match
+— even if one was stored as a full YouTube link — or when their titles match
+once case and punctuation are ignored (very short titles such as "Finals"
+never match on title alone). The older copy is always the one kept.
+
+### Video durations
+
+**Fetch video durations** looks up how long every stored video is — published
+rounds and lectures plus the queue — and shows the library's total running time
+in hours, split into published and queued. **Fetch missing durations** only
+looks up videos that don't have a length yet, so it is quick to run again after
+new videos arrive; **Refetch all** looks every video up again. Videos YouTube
+no longer serves (deleted or private) are counted as unavailable and stay
+without a duration.
+
+## Known gaps
+
+Stacks only exist where a description links the videos, so a round-analysis
+video that names its round in the title alone is not paired with it. Search
+is `LIKE`-based token matching, not fuzzy.
+
+Curated rounds added to the queue from the `test/` records (see
+`.github/scripts/queue-test-videos.ts`) carry their topic and argument tags in
+the description, with `Aff 1AC args:` and `Neg 2NR args:` lines that become the
+round's 1AC and 2NR arguments when it is published. The queue has no editor,
+so a wrong split is corrected in the library after publishing. The records
+have no upload date, so these rounds are dated January 1st of their event's
+year.
+
+The watch page doesn't display a video's length yet, and a video only shows
+one in the library after **Fetch video durations** has looked it up.

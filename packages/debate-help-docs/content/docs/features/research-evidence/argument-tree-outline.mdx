@@ -1,0 +1,100 @@
+---
+title: "Outline Filters and Argument Tree View"
+---
+
+# Outline Filters and Argument Tree View
+
+Renders a filterable, heading-grouped outline of a round's flow.
+
+- **Route:** `/outline`
+- **Nav:** the Tools page's Prep & Practice group; `t outline` in the Reason
+  Editor's search palette
+- **Package:** `debate-round`
+
+## What it shows
+
+Every persisted `ArgumentTreeRecord` (one card per round). Each card has
+seven filter controls — **Kind**, **Side**, **Speech**, **Argument type**,
+**Contributor**, **Evidence status**, and an **Unanswered only** toggle.
+Changing a control re-filters the tree in place and saves the chosen
+filter through `saveArgumentTreeFilterSelection`.
+
+## Map views
+
+A switcher at the top of each round card picks how the (filtered) tree is
+shown: **Outline** (the plain row list, where tagging and bulk selection
+live) or one of five map views. The panel remembers the last view per
+browser and opens on **Tiered tree** the first time.
+
+| View | What it draws |
+| --- | --- |
+| Tiered tree | Kialo-style minimap: one small box per claim, in tiers |
+| Sunburst | The round in the center, each ring one level deeper, wedges sized by how many claims sit under them |
+| Mind map | The round in the middle, pros branching right and cons branching left, with labels |
+| Bubble map | Nested circles: each claim's bubble holds its responses |
+| Sankey | The round flowing into contentions, arguments and responses, widths by claim count |
+
+The map is a claim hierarchy: the round at the root, each flow heading as
+a contention, each argument row under its heading, and each later speech's
+entry on that row as a response to the entry before it. Every claim is
+colored **green (pro)** or **red (con)** relative to its parent, the way
+Kialo does it: an aff/pro row supports the round, a response from the same
+side extends its parent, and a response from the other side answers it.
+A heading takes the side of most of its rows.
+
+Under the chart, the focused claim sits in a large card with its parent
+above it (the arrow walks back up) and its responses split into **Pros**
+and **Cons** columns. Clicking any claim, in the chart or in a column,
+focuses it; hovering a chart mark shows its full text. The d3 chart code
+loads only when a map view is first shown.
+
+## Filter presets
+
+Each round card has a "Filter presets" row: apply a saved preset, or save
+the round's current filter combination under a new name. Local-first and
+best-effort account-synced through the same `/api/settings` row.
+
+The panel also has one global "Saved filter presets" list, above every
+round card. There, each preset's name records which round it was saved
+from; clicking it applies that filter to its origin round and scrolls that
+round's card into view, so a preset saved from a round that isn't currently
+on screen is still reachable. A preset saved before this existed, or whose
+origin round's outline was since cleared, stays inert there — it's still
+usable from any round's own "Filter presets" dropdown.
+
+## Tagging an argument from the flow grid
+
+Right-clicking any row in the live flow grid offers **Tag Argument…**,
+opening a popover with an Argument type select, Evidence status select, and
+a Contributor field. Saving writes the tags onto the row's root `Box`.
+
+## Outline export
+
+Each round card has a "Download outline" button that downloads the
+flattened, filtered rows as a plain-text `.txt` outline.
+
+## Data flow
+
+```
+flow/argument-tree.ts
+  → buildArgumentTree(flow)
+  → filterArgumentTree(tree, filter)
+  → flattenArgumentTree(nodes)
+
+state/argumentTrees.ts (localStorage: argumentTrees)
+  → buildAndSaveArgumentTree(flow, roundId)
+  → panels/ArgumentTreePanel.tsx
+      → flow/argument-map.ts buildArgumentMap(filteredTree)   (pro/con claim hierarchy)
+      → panels/argument-map/ArgumentMapView.tsx               (focus view + Pros/Cons)
+      → panels/argument-map/ArgumentMapChart.tsx              (d3 layouts, React.lazy)
+  → apps/debate-ai.com/app/outline/page.tsx
+```
+
+## Known gaps
+
+- Tagging is row-level, not per-speech.
+- The contributor field is a free-form typed id, not an authenticated user.
+- The map's root is labelled "Round …" because outlines don't store the
+  resolution, and a claim's pro/con stance comes only from which side's
+  speech made it (there is no per-claim stance override).
+- Tagging and bulk selection are only in the Outline view.

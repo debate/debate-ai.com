@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { listCameras, videoConstraints } from "../src/webcam/useWebcamRoom"
+import { MEDIA_UNAVAILABLE, captureMedia, listCameras, videoConstraints } from "../src/webcam/useWebcamRoom"
 
 describe("videoConstraints", () => {
   it("asks for the browser's default camera when none is chosen", () => {
@@ -30,5 +30,22 @@ describe("listCameras", () => {
     expect(await listCameras()).toEqual([])
     vi.stubGlobal("navigator", { mediaDevices: { enumerateDevices: async () => Promise.reject(new Error("denied")) } })
     expect(await listCameras()).toEqual([])
+  })
+})
+
+describe("captureMedia", () => {
+  afterEach(() => vi.unstubAllGlobals())
+
+  it("rejects with a readable message where the page has no mediaDevices", async () => {
+    vi.stubGlobal("navigator", {})
+    await expect(captureMedia({ video: true })).rejects.toThrow(MEDIA_UNAVAILABLE)
+  })
+
+  it("passes the constraints through to getUserMedia", async () => {
+    const stream = {} as MediaStream
+    const getUserMedia = vi.fn(async () => stream)
+    vi.stubGlobal("navigator", { mediaDevices: { getUserMedia } })
+    expect(await captureMedia({ audio: true })).toBe(stream)
+    expect(getUserMedia).toHaveBeenCalledWith({ audio: true })
   })
 })

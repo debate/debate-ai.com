@@ -1,0 +1,35 @@
+---
+title: "Offline Storage"
+---
+
+# Offline Storage
+
+Where Debate AI keeps your work on this device, and how to get unlimited
+offline storage with the browser extension.
+
+- **Settings:** `/settings` → **Storage on this device**
+- **Packages:** `debate-data-sync` (`src/state/bulk-storage.ts`),
+  `apps/debate-browser-ext` (`src/storage/bulk-storage-bridge.ts`)
+
+## What it does
+
+- **Your account is the real copy.** Signed in, your flows, rounds, cards and
+  settings are saved to your account and follow you to any device.
+- **The browser keeps an offline copy** so you can keep flowing without a
+  connection. Flows, rounds and flow history live in the browser's database
+  (IndexedDB), which has room for gigabytes — not in `localStorage`, which is
+  kept for small preferences only. You will not see "storage quota exceeded"
+  warnings, and nothing is deleted to make room.
+- **The browser extension makes it unlimited.** Install the Debate AI
+  extension and it asks for the *unlimited storage* permission. While it is
+  installed, the site mirrors its offline copy into the extension, where no
+  browser quota applies, and restores from it if the browser ever clears the
+  site's own copy.
+
+The Settings card shows which of these is active on this browser: whether the
+offline copy is in the browser database, whether the extension is connected,
+how much space the site is using, and whether the browser has agreed not to
+clear it.
+
+Older versions kept flows in `localStorage`. The first visit after updating
+moves them into the browser database automatically and frees that space.
