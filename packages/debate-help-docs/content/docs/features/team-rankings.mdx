@@ -94,6 +94,27 @@ forms: trailing words like *HS*, *Independent* or *College Prep* are dropped
 after the school (`Strake Jesuit FS`, in either order), and an LD debater
 also matches by full name. Clicking a card's badge narrows the list further.
 
+## Following a team or school
+
+Every team and school page has a **Follow** button with its follower count
+beside it. Signed out, the count still shows and the button reads *Sign in to
+follow*. Following adds that team or school to the **Following** filter of
+the [News Stream](/docs/features/news-stream) (`/news`), which posts:
+
+- **New rounds**: its three latest round videos, with who won on which side.
+- **New research**: its two latest caselist documents.
+- **Tournament results**: one line per tournament in the last 120 days, with
+  the record and how far it went (*reached Quarterfinals*, *finished
+  runner-up*, *won the tournament*).
+- **Monthly recaps**: for each of the last three completed months it debated
+  in, the month's record, its deep elim runs called out as big results, and
+  an estimated rating change.
+
+A user can follow up to 50 teams and schools. Follows are stored in the
+`profile_follows` table (migration in `packages/debate-videos/migrations`)
+and served by `/api/follows`; the feed items are built in `debate-videos`'
+`lib/follows/follow-feed.ts` and loaded by its `useFollowingNews` hook.
+
 ## Picking an opponent when creating a round
 
 The Create New Round dialog reads the same rankings. Once a school is
@@ -148,6 +169,14 @@ the school the way the rankings do, or by one of the short forms above. A
 round recorded under an unlisted abbreviation is missed, and a school whose
 short name another school shares (two *Memorial* high schools) can show the
 other's rounds.
+
+Followed teams' results and recaps come from the round video library, so a
+tournament's record counts only the rounds someone recorded, and a round is
+dated by its upload, not the day it was debated. The rankings keep no
+history, so a recap's rating change is an estimate: each decided round moves
+the rating by 32 × (result − expected) on the upstream scale, the expected
+score coming from both teams' current ratings. Nothing is emailed; the recap
+only appears in the News Stream.
 
 Ratings cover only the tournaments listed above the table; a team that hasn't
 attended one of them is not ranked. The list updates when the rankings are

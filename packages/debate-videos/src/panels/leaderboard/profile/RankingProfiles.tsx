@@ -2,7 +2,8 @@
  * @fileoverview Team and school profile pages opened from the Team Rankings
  * table. A team profile shows its ranking stats in every division it is
  * ranked in; a school profile aggregates all of that school's ranked entries.
- * Both list the library videos matching the team or school below the stats.
+ * Both list the library videos matching the team or school below the stats,
+ * and carry a Follow button with the follower count in the header.
  * @module panels/leaderboard/profile/RankingProfiles
  */
 
@@ -24,6 +25,7 @@ import {
   findSchoolDivisionEntries,
   findSchoolEntries,
   findTeamEntries,
+  profileSlug,
   schoolDivisionRadarData,
   schoolHref,
   schoolVideoSearch,
@@ -38,6 +40,7 @@ import { ProfileVideos } from "./ProfileVideos"
 import { ProfileCaselistDocuments } from "./ProfileCaselistDocuments"
 import { TeamRadarChart } from "./TeamRadarChart"
 import { MatchupSimulator } from "./MatchupSimulator"
+import { FollowButton } from "./FollowButton"
 
 const rating = (n: number) => n.toFixed(1)
 const percent = (n: number | null) =>
@@ -177,6 +180,7 @@ export function TeamProfilePage({ slug }: { slug: string }) {
             >
               {first.school}
             </Link>
+            <FollowButton kind="team" slug={teamSlug(first)} name={`${first.school} ${first.name}`} />
           </header>
           {entries.map((item) => (
             <TeamDivisionStats key={item.datasetId} item={item} datasets={datasets} />
@@ -222,6 +226,7 @@ export function SchoolProfilePage({ slug }: { slug: string }) {
             <p className="text-sm text-muted-foreground">
               {summary.divisions.map((d) => d.datasetLabel).join(" · ")}
             </p>
+            <FollowButton kind="school" slug={profileSlug(summary.school)} name={summary.school} />
           </header>
 
           <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
