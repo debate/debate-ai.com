@@ -145,8 +145,12 @@ icon flips back to saved. Flows you have never saved are never uploaded
 automatically, and archived flows are skipped. Auto-save never overwrites: if
 the account holds a newer copy (saved from another device) the flow stays
 amber and you resolve it from Flow History. A failed save is retried only after
-the flow changes again. Engineering notes: `debate-round`'s `state/flowAutoSave.ts`,
-mounted by `useFlowAutoSave` in `OpenTabsGroup`.
+the flow changes again. Turn it off with **Auto-save flows to my account** on the
+**Preferences** tab; it is on by default, applies immediately, and is stored in
+this browser only (not synced to other devices). Turning it off discards any
+save still waiting on the timer. Engineering notes: `debate-round`'s
+`state/flowAutoSave.ts`, mounted by `useFlowAutoSave` in `OpenTabsGroup`; the
+preference lives in `state/flowAutoSavePreference.ts`.
 
 Choose how far auto-save goes under **Flow auto-save** in Settings → Preferences:
 
@@ -155,14 +159,14 @@ Choose how far auto-save goes under **Flow auto-save** in Settings → Preferenc
   already holds a flow with that id, it is treated as a conflict and left alone.
 - **Off** — nothing is saved automatically; use Save now or Flow History.
 
-The choice applies immediately in this browser and, when you are signed in, is
-also saved to your account (`PUT /api/settings { flowAutoSave }`, stored in the
-`user_settings.flow_auto_save` column). Opening Settings on another device adopts
-the account's choice; until a device has synced one, it keeps its own default.
-Signed out or offline, the choice stays local. Engineering notes:
+The choice applies immediately in this browser. When you are signed in it is
+also saved to your account (`PUT /api/settings { flowAutoSave }`, the
+`user_settings.flow_auto_save` column) and adopted on your other devices the
+next time Settings loads. Engineering notes:
 `state/flowAutoSaveSettings.ts` (`debate:flow-auto-save` in `localStorage`,
-`normalizeFlowAutoSavePatch`), read at each run by `createFlowAutoSaver`'s
-`getMode`. Deploys must add the new nullable column (`schema.ts` is the only source).
+`normalizeFlowAutoSavePatch`/`parseFlowAutoSave` for the route), read at each
+run by `createFlowAutoSaver`'s `getMode`. Deploy must add the new nullable
+column (`schema.ts` is the only source of truth).
 
 ## Data flow
 

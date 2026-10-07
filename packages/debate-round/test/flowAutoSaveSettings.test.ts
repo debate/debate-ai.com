@@ -3,7 +3,7 @@ import {
   DEFAULT_FLOW_AUTO_SAVE_MODE,
   isFlowAutoSaveMode,
   normalizeFlowAutoSavePatch,
-  parseStoredFlowAutoSave,
+  parseFlowAutoSave,
   readFlowAutoSaveMode,
   setFlowAutoSaveMode,
 } from "../src/state/flowAutoSaveSettings";
@@ -53,25 +53,22 @@ describe("flow auto-save preference", () => {
 });
 
 describe("flowAutoSave account patch", () => {
-  it("ignores bodies without the field", () => {
-    expect(normalizeFlowAutoSavePatch({ fontSize: 3 })).toEqual({ valid: {}, errors: [] });
+  it("accepts each valid mode", () => {
+    for (const mode of ["off", "saved", "all"] as const) {
+      expect(normalizeFlowAutoSavePatch({ flowAutoSave: mode })).toEqual({ valid: { flowAutoSave: mode }, errors: [] });
+    }
+  });
+
+  it("rejects unknown values and ignores bodies without the field", () => {
+    expect(normalizeFlowAutoSavePatch({ flowAutoSave: "sometimes" }).errors).toHaveLength(1);
+    expect(normalizeFlowAutoSavePatch({ flowAutoSave: 3 }).valid).toEqual({});
+    expect(normalizeFlowAutoSavePatch({ fontSize: 14 })).toEqual({ valid: {}, errors: [] });
     expect(normalizeFlowAutoSavePatch(null)).toEqual({ valid: {}, errors: [] });
   });
 
-  it("accepts each mode and rejects anything else", () => {
-    for (const mode of ["off", "saved", "all"]) {
-      expect(normalizeFlowAutoSavePatch({ flowAutoSave: mode }).valid).toEqual({ flowAutoSave: mode });
-    }
-    for (const bad of ["always", "", null, 1, undefined]) {
-      const result = normalizeFlowAutoSavePatch({ flowAutoSave: bad });
-      expect(result.valid).toEqual({});
-      expect(result.errors).toHaveLength(1);
-    }
-  });
-
-  it("parses stored values, treating unknown/null as not synced", () => {
-    expect(parseStoredFlowAutoSave("all")).toBe("all");
-    expect(parseStoredFlowAutoSave("bogus")).toBeNull();
-    expect(parseStoredFlowAutoSave(null)).toBeNull();
+  it("parses stored values with a default fallback", () => {
+    expect(parseFlowAutoSave("all")).toBe("all");
+    expect(parseFlowAutoSave(null)).toBe("saved");
+    expect(parseFlowAutoSave("junk")).toBe("saved");
   });
 });

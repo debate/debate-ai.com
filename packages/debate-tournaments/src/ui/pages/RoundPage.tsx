@@ -7,12 +7,13 @@ import { LiveRoomPanel, LiveStatusCell, useNow } from "../live/LiveRoom";
 import { Badge, Card, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../primitives";
 import { BackLink, Empty, Loaded, formatDate, useApi, useTournaments } from "../shared";
 
+/** The emblem in the top-right corner of a round's pairings. */
+export const PAIRINGS_EMBLEM = "https://i.imgur.com/ejU0Qon.png";
+
 /** One round's pairings: rooms, entries (sides or speaker order) and judges. */
 export function RoundPage({ tournId, eventAbbr, roundName }: { tournId: number; eventAbbr: string; roundName: string }) {
   const { client, hrefs } = useTournaments();
-  const state = useApi(`round:${tournId}:${eventAbbr}:${roundName}`, (signal) =>
-    client.round(tournId, eventAbbr, roundName, signal),
-  );
+  const state = useApi(`round:${tournId}:${eventAbbr}:${roundName}`, (signal) => client.round(tournId, eventAbbr, roundName, signal));
   return (
     <div className="space-y-3">
       <BackLink href={hrefs.rounds(tournId)}>All pairings</BackLink>
@@ -32,16 +33,19 @@ export function Schematic({ round, live = false }: { round: RoundSchematic; live
   const [openId, setOpenId] = useState<number | null>(null);
   return (
     <div className="space-y-3">
-      <div>
-        <h2 className="text-lg font-semibold">
-          {round.Event.name} — {round.label || `Round ${round.name}`}
-        </h2>
-        {round.startTime && <p className="text-sm text-muted-foreground">Starts {formatDate(round.startTime, round.tz, true)}</p>}
-        {live && (
-          <p className="text-xs text-muted-foreground">
-            Demo tournament: live status is simulated. Tune in to a room to follow its speeches, hear them read aloud and read summaries.
-          </p>
-        )}
+      <div className="flex items-start gap-4">
+        <div className="min-w-0 flex-1">
+          <h2 className="text-lg font-semibold">
+            {round.Event.name} — {round.label || `Round ${round.name}`}
+          </h2>
+          {round.startTime && <p className="text-sm text-muted-foreground">Starts {formatDate(round.startTime, round.tz, true)}</p>}
+          {live && (
+            <p className="text-xs text-muted-foreground">
+              Demo tournament: live status is simulated. Tune in to a room to follow its speeches, hear them read aloud and read summaries.
+            </p>
+          )}
+        </div>
+        <img src={PAIRINGS_EMBLEM} alt="" width={80} height={80} className="size-16 shrink-0 rounded-full md:size-20" />
       </div>
       {sections.length === 0 ? (
         <Empty>No sections in this round.</Empty>

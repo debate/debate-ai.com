@@ -23,6 +23,9 @@ import {
   DEFAULT_USER_SETTINGS,
   DEFAULT_WORD_LIMIT_PRESETS,
   normalizeFavoriteToolOpPatch,
+  normalizeFlowAutoSavePatch,
+  parseFlowAutoSave,
+  type FlowAutoSaveMode,
   normalizeFavoriteToolsPatch,
   normalizeOutlineFilterPresetOpPatch,
   normalizeOutlineFilterPresetsPatch,
@@ -277,7 +280,7 @@ type SettingsPayload = UserSettingsPayload & {
   recentTools: string[]
   editorPreferences: EditorPreferencesPayload
   flowEditorSettings: FlowEditorAccountSettingsPayload
-  flowAutoSave: FlowAutoSaveMode | null
+  flowAutoSave: FlowAutoSaveMode
   newsRead: string[]
   newsLiked: string[]
   wordLimitPresets: { name: string; wordLimit: number }[]
@@ -301,7 +304,7 @@ function toPayload(row: SettingsRow | undefined): SettingsPayload {
     recentTools: row?.recentTools ? parseRecentTools(row.recentTools) : [],
     editorPreferences: parseEditorPreferences(row?.editorPreferences),
     flowEditorSettings: parseFlowEditorSettings(row?.flowEditorSettings),
-    flowAutoSave: parseStoredFlowAutoSave(row?.flowAutoSave),
+    flowAutoSave: parseFlowAutoSave(row?.flowAutoSave),
     newsRead: row?.newsRead ? parseNewsIdList(row.newsRead) : DEFAULT_NEWS_SYNC.newsRead,
     newsLiked: row?.newsLiked ? parseNewsIdList(row.newsLiked) : DEFAULT_NEWS_SYNC.newsLiked,
     wordLimitPresets: row?.wordLimitPresets
@@ -476,7 +479,7 @@ export async function PUT(req: NextRequest) {
     recentTools?: string | null
     editorPreferences?: string | null
     flowEditorSettings?: string | null
-    flowAutoSave?: FlowAutoSaveMode
+    flowAutoSave?: string | null
     newsRead?: string | null
     newsLiked?: string | null
     wordLimitPresets?: string | null
@@ -760,6 +763,9 @@ export async function PUT(req: NextRequest) {
     dbPatch.flowEditorSettings = serializeFlowEditorSettings(
       mergeFlowEditorSettings(parseFlowEditorSettings(existing?.flowEditorSettings), flowEditorSettingsResult.valid),
     )
+  }
+  if (flowAutoSaveResult.valid.flowAutoSave !== undefined) {
+    dbPatch.flowAutoSave = flowAutoSaveResult.valid.flowAutoSave
   }
 
   if (flowAutoSaveResult.valid.flowAutoSave !== undefined) {

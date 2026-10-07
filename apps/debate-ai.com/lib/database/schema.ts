@@ -259,8 +259,8 @@ export const userSettings = sqliteTable("user_settings", {
   // column here.
   flowEditorSettings: text("flow_editor_settings"),
   // Flow auto-save mode: "off" | "saved" | "all" (see
-  // packages/debate-round/src/state/flowAutoSaveSettings.ts). Null means no
-  // device has synced a choice yet, so clients keep their own default.
+  // packages/debate-round/src/state/flowAutoSaveSettings.ts). Null means the
+  // client default ("saved").
   flowAutoSave: text("flow_auto_save"),
   // JSON-serialized arrays of News Stream item ids the signed-in user has
   // read/liked (see packages/debate-card-search/src/lib/news-stream-sync.ts

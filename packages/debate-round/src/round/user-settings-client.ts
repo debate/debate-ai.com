@@ -31,7 +31,7 @@ export type FullUserSettingsPayload = UserSettingsPayload &
   FavoriteToolsPayload &
   WordLimitPresetsPayload &
   OutlineFilterPresetsPayload &
-  MyTeamProfilePatch & { flowAutoSave?: FlowAutoSaveMode | null };
+  MyTeamProfilePatch & { flowAutoSave?: FlowAutoSaveMode };
 
 async function readErrorMessage(res: Response, fallback: string): Promise<string> {
   try {

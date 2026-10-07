@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { matchTournamentRoute, tournamentHrefs, tournamentSlug, tournamentSlugOf } from "../src/routes";
+import { matchTournamentRoute, nearestTournamentSegments, tournamentHrefs, tournamentSlug, tournamentSlugOf } from "../src/routes";
 
 describe("matchTournamentRoute", () => {
   const yale = { year: 2026, slug: "yale-invitational" };
@@ -28,6 +28,20 @@ describe("matchTournamentRoute", () => {
     [["2026", "yale-invitational", "nope"], { page: "notFound" }],
   ])("%j", (segments, route) => {
     expect(matchTournamentRoute(segments)).toEqual(route);
+  });
+});
+
+describe("nearestTournamentSegments", () => {
+  it.each([
+    [[], []],
+    [["abc"], []],
+    [["host", "x"], ["host"]],
+    [["2026", "yale-invitational", "nope"], ["2026", "yale-invitational"]],
+    [["2026", "yale-invitational", "rounds", "LD"], ["2026", "yale-invitational", "rounds"]],
+    [["12", "results", "x"], ["12", "results"]],
+    [["2026", "yale-invitational", "results", "99"], ["2026", "yale-invitational", "results", "99"]],
+  ])("%j → %j", (segments, nearest) => {
+    expect(nearestTournamentSegments(segments)).toEqual(nearest);
   });
 });
 
