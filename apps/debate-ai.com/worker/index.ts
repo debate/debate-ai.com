@@ -19,7 +19,12 @@ import { openAutoMarkets } from "../lib/predictions/auto-markets";
 import { purgeOldReuseCheckLogRows } from "../lib/evidence-reuse-check/purge-reuse-check-log";
 import { DB_BACKUP_CRON, runWeeklyDbBackup } from "../lib/admin/weekly-db-backup";
 import { handleTurnstileGate, type TurnstileEnv } from "../lib/turnstile";
-import { handleCanonicalHostRedirect, handleCategoryPathRedirect } from "../lib/redirects";
+import {
+  handleCanonicalHostRedirect,
+  handleCategoryPathRedirect,
+  handleVideoListingRedirect,
+  redirectNotFound,
+} from "../lib/redirects";
 import { setSiteOriginReader } from "../lib/seo/site-url";
 import { youtubeWatchRedirect } from "../lib/youtube/video-redirect";
 import { getAuth } from "../lib/auth";
@@ -110,6 +115,12 @@ export default {
     const moved = handleCategoryPathRedirect(request);
     if (moved) return moved;
 
+    // `/videos/<season>` and `/videos/<season>/<tournament>` — a video's
+    // address trimmed back — open the library filtered to that season and
+    // tournament. See lib/redirects/video-listing.ts.
+    const listing = handleVideoListingRedirect(request);
+    if (listing) return listing;
+
     // App-owned `/youtube` links are convenience links only: send the viewer
     // to YouTube's normal watch page. Do not proxy YouTube content, user
     // credentials, or account-specific entitlements through this Worker.
@@ -165,7 +176,11 @@ export default {
           }, allowedWidths);
         }
 
-        const response = await handler.fetch(request, env, ctx);
+        const rendered = await handler.fetch(request, env, ctx);
+        // A page that does not exist sends the viewer one segment up — a bad
+        // `/tournaments/…` address lands back on `/tournaments` — rather than
+        // on a bare 404. See lib/redirects/not-found.ts.
+        const response = redirectNotFound(request, rendered) ?? rendered;
         return applyD1Bookmark(response, { debug: Boolean(env.D1_SESSION_DEBUG) });
       }),
     );
