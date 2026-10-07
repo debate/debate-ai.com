@@ -34,6 +34,13 @@ interface VideoPlayerStore {
    * only ever one embed is playing — see `PersistentVideoPlayer`.
    */
   theaterVideoId: string | null
+  /**
+   * A video lined up for the floating popout player while a full-page watch
+   * player holds playback. It waits, paused, until that page lets go — the
+   * reader keeps watching the page's video and the popout picks this one up
+   * the moment they navigate away. See `PopoutPlayerButton`.
+   */
+  popoutNext: QueueItem | null
   searchHandler: ((searchTerm: string) => void) | null
   /** Store the current playback time getter function */
   getCurrentTimeRef: (() => number) | null
@@ -48,6 +55,8 @@ interface VideoPlayerStore {
   setMinimized: (minimized: boolean) => void
   /** Hand playback to (`videoId`) or back from (`null`) a full-page watch player. */
   setTheaterVideoId: (videoId: string | null) => void
+  /** Line a video up for the popout player (or cancel it with `null`); it starts when the watch page releases playback. */
+  setPopoutNext: (item: QueueItem | null) => void
   setIsPlaying: (playing: boolean) => void
   setPlaybackRate: (rate: number) => void
   addToQueue: (videoId: string, title: string, meta?: VideoMeta) => void
@@ -75,6 +84,7 @@ export const useVideoPlayerStore = create<VideoPlayerStore>((set, get) => ({
   queue: [],
   startTime: 0,
   theaterVideoId: null,
+  popoutNext: null,
   searchHandler: null,
   getCurrentTimeRef: null,
   setActiveVideo: (videoId, title, meta, startTimeSeconds) => {
@@ -99,13 +109,23 @@ export const useVideoPlayerStore = create<VideoPlayerStore>((set, get) => ({
     // An explicit start time wins over the video's own saved timestamp
     const savedTime = startTimeSeconds ?? loadVideoTimestamp(videoId) ?? 0
 
-    set({ activeVideoId: videoId, activeVideoTitle: title, activeVideoMeta: meta ?? null, isMinimized: false, isPlaying: true, startTime: savedTime })
+    set({
+      activeVideoId: videoId,
+      activeVideoTitle: title,
+      activeVideoMeta: meta ?? null,
+      isMinimized: false,
+      isPlaying: true,
+      startTime: savedTime,
+      // Once a lined-up video is actually playing, it is no longer waiting.
+      ...(state.popoutNext?.videoId === videoId ? { popoutNext: null } : {}),
+    })
   },
   clearActiveVideo: () => {
     set({ activeVideoId: null, activeVideoTitle: null, activeVideoMeta: null, isMinimized: false, isPlaying: false, startTime: 0 })
   },
   setMinimized: (minimized) => set({ isMinimized: minimized }),
   setTheaterVideoId: (videoId) => set({ theaterVideoId: videoId }),
+  setPopoutNext: (item) => set({ popoutNext: item }),
   setIsPlaying: (playing) => set({ isPlaying: playing }),
   setPlaybackRate: (rate) => set({ playbackRate: rate }),
   addToQueue: (videoId, title, meta) =>
