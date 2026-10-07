@@ -150,7 +150,9 @@ judge decisions, flaw finding, research outlines, and a batch quote-analysis hel
 ## debate-team-collaboration
 
 Team prep and collaboration tools: task inbox, prep room, topic sprints, team brainstorm
-assist, group challenges, research-progress tracking, sprint notes, and (moved from
+assist, group challenges, research-progress tracking, sprint notes, the team calendar
+(tasks, assignments, deadlines and group-only virtual tournaments per coaching group),
+and (moved from
 `debate-round`) prep notes and account/prep-note notifications. Split out of
 `debate-card-search` and `debate-round`; depends on `debate-search-evidence` and
 `debate-round`.

@@ -56,6 +56,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   fileSources: "id",
   coachConversation: "id",
   coachingPrograms: "id",
+  teamCalendarItems: "id",
   coachingSessionHistory: "id",
   coachingSessions: "id",
   flowEdits: "id",
