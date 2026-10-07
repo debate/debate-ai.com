@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDBFromContext } from "@/lib/database/context";
 import { getUserId } from "@/lib/auth/session";
 import { withRouteErrors } from "@/lib/api/route-errors";
+import { getEnv } from "@/lib/env";
+import { matchTokenSecret, openMatchToken } from "@/lib/practice-partners/match-token";
 import {
   countPendingOutgoing,
   getProfile,
@@ -21,9 +23,12 @@ import {
 /**
  * Sends a practice challenge.
  *
- * POST { opponentId, judgeId?, format, topic, message?, proposedAt? } — challenges
- *   a debater who is open to challenges, optionally inviting a judge volunteer,
- *   and notifies both. Returns the challenge (201) as the board shows it.
+ * POST { opponentId | matchToken, judgeId?, format, topic, message?, proposedAt? }
+ *   — challenges a debater who is open to challenges, optionally inviting a
+ *   judge volunteer, and notifies both. Returns the challenge (201) as the
+ *   board shows it. `matchToken` is the opaque reference `POST ./match` hands
+ *   out instead of an id; it is opened here, and the challenge stays
+ *   anonymous on both sides — the notification included — until accepted.
  *
  * Refused when: the opponent (or judge) has not volunteered for that role, is
  * the challenger, or has a block with the challenger in either direction; the
@@ -46,7 +51,17 @@ export const POST = withRouteErrors("POST /api/practice-partners/challenges", as
     return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
   }
 
-  const parsed = parseNewChallenge(payload, Math.floor(Date.now() / 1000));
+  const nowSeconds = Math.floor(Date.now() / 1000);
+  const matchToken = (payload as { matchToken?: unknown } | null)?.matchToken;
+  if (matchToken !== undefined) {
+    const opponentId = await openMatchToken(matchTokenSecret(getEnv), matchToken, userId, nowSeconds);
+    if (!opponentId) {
+      return NextResponse.json({ error: "That match has expired — find a new one." }, { status: 410 });
+    }
+    payload = { ...(payload as Record<string, unknown>), opponentId };
+  }
+
+  const parsed = parseNewChallenge(payload, nowSeconds);
   if (!parsed.ok) {
     return NextResponse.json({ error: parsed.error }, { status: 400 });
   }
@@ -97,8 +112,9 @@ export const POST = withRouteErrors("POST /api/practice-partners/challenges", as
   const created = await insertChallenge(db, { id: crypto.randomUUID(), challengerId: userId, challenge });
 
   const roundLine = `${optionLabel(PRACTICE_FORMATS, challenge.format)} — ${challenge.topic}`;
+  // Practice challenges are anonymous until accepted (see `./match`).
   await notifyPracticePartners(db, [challenge.opponentId], {
-    title: `${viewer.name} challenged you to a practice round`,
+    title: "A practice match challenged you to a round",
     body: roundLine,
   });
   if (challenge.judgeId) {

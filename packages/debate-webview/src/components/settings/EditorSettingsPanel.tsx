@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react"
 import type { ComponentType } from "react"
 import { useSearchParams } from "next/navigation"
-import { Brain, BrainCog, HardDrive, Search, Server, Settings, SlidersHorizontal, UserCircle, Volume2, Wand2 } from "lucide-react"
+import { Brain, BrainCog, HardDrive, Search, Server, Settings, SlidersHorizontal, UserCircle, Users, Volume2, Wand2 } from "lucide-react"
 // Static import so bundling confines this ~15k-line global stylesheet to
 // the settings routes' own chunk — never loaded by the host app's main bundle.
 import "@debate/editor/styles.css"
@@ -11,6 +11,7 @@ import { CardMirrorSettingsSection } from "@debate/editor/settings-section"
 import type { SettingsCategory } from "@debate/editor/settings"
 import { CARDMIRROR_SETTINGS_TABS } from "@debate/editor/settings-tabs"
 import { UserSettingsPanel } from "@debate/round"
+import { MyRankedTeamsSettings } from "@debate/videos"
 import { TeamCoachingSection } from "./TeamCoachingSection"
 import { OwnAiKeySection } from "./OwnAiKeySection"
 import { EDITOR_SETTINGS_TABS } from "../../lib/editor-preferences"
@@ -24,9 +25,12 @@ import { researchSectionOfTab, researchSettingsPages } from "../../lib/qwksearch
 // syncs itself via `/api/settings`, rather than by the editor's settings UI.
 // It used to be its own page, `/settings/preferences` (now a redirect here).
 const PREFERENCES_TAB = "preferences"
+// The ranked team the viewer debates on, coaches or assists in each division,
+// which the matchup simulator pre-fills (`@debate/videos`' MyRankedTeamsSettings).
+const MY_TEAM_TAB = "my-team"
 /** A research section's tab id: `research-<section key>` (see `researchTabId`). */
 type ResearchTabId = `research-${string}`
-type TabId = SettingsCategory | typeof PREFERENCES_TAB | ResearchTabId
+type TabId = SettingsCategory | typeof PREFERENCES_TAB | typeof MY_TEAM_TAB | ResearchTabId
 
 // The research agent's settings sections (`research-agent-ui/settings`'s
 // list), listed after the editor's tabs under their own heading. Each renders
@@ -44,6 +48,7 @@ const RESEARCH_TABS: readonly { id: ResearchTabId; label: string }[] = RESEARCH_
 // agent's sections after.
 const CATEGORIES: readonly { id: TabId; label: string }[] = [
   { id: PREFERENCES_TAB, label: "Preferences" },
+  { id: MY_TEAM_TAB, label: "My team" },
   ...EDITOR_SETTINGS_TABS,
   ...RESEARCH_TABS,
 ]
@@ -68,6 +73,10 @@ const CATEGORY_DETAILS: Record<string, { icon: ComponentType<{ size?: number }>;
   preferences: {
     icon: SlidersHorizontal,
     description: "Your plan, your own AI key, debate style, font, color theme, light/dark mode and tool data sync.",
+  },
+  [MY_TEAM_TAB]: {
+    icon: Users,
+    description: "Your role, your partner, and the ranked team you represent in each division — pre-filled in the matchup simulator.",
   },
   ...Object.fromEntries(
     CARDMIRROR_SETTINGS_TABS.map((tab) => [tab.id, { icon: CARDMIRROR_TAB_ICONS[tab.id] ?? Settings, description: tab.description }]),
@@ -204,6 +213,8 @@ export function EditorSettingsPanel() {
           </div>
           {researchSectionOfTab(active) !== null ? (
             <ResearchSettingsTab section={researchSectionOfTab(active)!} />
+          ) : active === MY_TEAM_TAB ? (
+            <MyRankedTeamsSettings />
           ) : active === PREFERENCES_TAB ? (
             <>
               <TeamCoachingSection />

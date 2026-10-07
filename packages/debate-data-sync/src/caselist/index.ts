@@ -58,7 +58,11 @@ export type {
   FetchOptions,
 } from "./caselist-sync";
 
-export { describeCaselistEntry, loadCaselistArchive } from "./caselist-archive";
+export {
+  describeCaselistEntry,
+  loadCaselistArchive,
+  loadRemoteCaselistArchive,
+} from "./caselist-archive";
 export type {
   CaselistArchiveLoad,
   CaselistDocument,
@@ -66,7 +70,16 @@ export type {
   CaselistEntryInfo,
   CaselistSide,
   LoadArchiveOptions,
+  LoadRemoteArchiveOptions,
 } from "./caselist-archive";
+
+export {
+  RemoteZipEntryError,
+  openRemoteZip,
+  parseCentralDirectory,
+  readRemoteZipEntries,
+} from "./remote-zip";
+export type { ReadEntriesOptions, RemoteZip, RemoteZipEntry, RemoteZipOptions } from "./remote-zip";
 
 export {
   CASELIST_DOWNLOAD_STYLES,

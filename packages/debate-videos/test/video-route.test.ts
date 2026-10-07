@@ -19,6 +19,7 @@ import {
   previousVideoRouteHref,
   matchupSegment,
   parseRoundTitle,
+  parseSeasonSegment,
   parseVideoRouteMatchup,
   seasonSegment,
   teamsSegment,
@@ -54,7 +55,7 @@ const ndtFinal: VideoType = [
 describe("videoRouteSegments", () => {
   it("files a round under its season, tournament, round and teams", () => {
     expect(videoRouteSegments(videoRouteParts(ndtFinal))).toEqual({
-      season: "2006",
+      season: "05-06",
       event: "ndt",
       matchup: "finals",
       teams: "northwestern-gw-michigan-state-bp",
@@ -62,7 +63,11 @@ describe("videoRouteSegments", () => {
   });
 
   it("builds the whole path from a tuple", () => {
-    expect(videoRouteHref(ndtFinal)).toBe("/videos/2006/ndt/finals/northwestern-gw-michigan-state-bp");
+    expect(videoRouteHref(ndtFinal)).toBe("/videos/05-06/ndt/finals/northwestern-gw-michigan-state-bp");
+  });
+
+  it("rebuilds the path with the bare-year season links used before", () => {
+    expect(videoRouteHref(ndtFinal, "year")).toBe("/videos/2006/ndt/finals/northwestern-gw-michigan-state-bp");
   });
 
   it("falls back to the format for a round with no tournament", () => {
@@ -75,7 +80,7 @@ describe("videoRouteSegments", () => {
         roundLevel: "Semifinals",
         affTeam: "Dartmouth SV",
       }),
-    ).toBe("/videos/2022/college/semifinals/dartmouth-sv");
+    ).toBe("/videos/21-22/college/semifinals/dartmouth-sv");
   });
 
   it("keeps three segments for a video with no round or no teams", () => {
@@ -86,7 +91,7 @@ describe("videoRouteSegments", () => {
         seasonYear: 2019,
         style: "Critique / Critical Theory",
       }),
-    ).toBe("/videos/2019/critique-critical-theory/how-to-give-a-2nr");
+    ).toBe("/videos/18-19/critique-critical-theory/how-to-give-a-2nr");
     expect(
       videoRouteHref({
         videoId: "abcdefghijk",
@@ -97,7 +102,7 @@ describe("videoRouteSegments", () => {
         affTeam: "Dartmouth SV",
         negTeam: "Michigan PR",
       }),
-    ).toBe("/videos/2022/college-ndt/dartmouth-sv-vs-michigan-pr");
+    ).toBe("/videos/21-22/college-ndt/dartmouth-sv-vs-michigan-pr");
   });
 });
 
@@ -149,7 +154,7 @@ describe("videoRouteHref for untagged videos", () => {
         seasonYear: 2027,
         style: "Round Analysis",
       }),
-    ).toBe("/videos/2022/ndt/finals/dartmouth-sv-michigan-pr/analysis");
+    ).toBe("/videos/21-22/ndt/finals/dartmouth-sv-michigan-pr/analysis");
   });
 
   it("gives each part of a round uploaded in pieces its own address", () => {
@@ -164,8 +169,8 @@ describe("videoRouteHref for untagged videos", () => {
         affTeam: "Emory GS",
         negTeam: "Kansas LS",
       });
-    expect(part(1)).toBe("/videos/2025/shirley/finals/emory-gs-kansas-ls/part-1");
-    expect(part(2)).toBe("/videos/2025/shirley/finals/emory-gs-kansas-ls/part-2");
+    expect(part(1)).toBe("/videos/24-25/shirley/finals/emory-gs-kansas-ls/part-1");
+    expect(part(2)).toBe("/videos/24-25/shirley/finals/emory-gs-kansas-ls/part-2");
   });
 
   it("drops a year trailing the tournament name", () => {
@@ -180,14 +185,14 @@ describe("videoRouteHref for untagged videos", () => {
         affTeam: "Michigan State GL",
         negTeam: "Dartmouth CG",
       }),
-    ).toBe("/videos/2026/ndt/octafinals/michigan-state-gl-dartmouth-cg");
+    ).toBe("/videos/25-26/ndt/octafinals/michigan-state-gl-dartmouth-cg");
   });
 });
 
 describe("legacyVideoRouteHref", () => {
   it("rebuilds the three-segment path a round had before", () => {
     expect(legacyVideoRouteHref(ndtFinal)).toBe(
-      "/videos/2006/college-ndt/northwestern-gw-vs-michigan-state-bp-finals",
+      "/videos/05-06/college-ndt/northwestern-gw-vs-michigan-state-bp-finals",
     );
   });
 });
@@ -195,7 +200,7 @@ describe("legacyVideoRouteHref", () => {
 describe("previousVideoRouteHref", () => {
   it("rebuilds the four-segment path whose teams carried vs and the variant", () => {
     expect(previousVideoRouteHref(ndtFinal)).toBe(
-      "/videos/2006/ndt/finals/northwestern-gw-vs-michigan-state-bp",
+      "/videos/05-06/ndt/finals/northwestern-gw-vs-michigan-state-bp",
     );
     expect(
       previousVideoRouteHref({
@@ -204,7 +209,7 @@ describe("previousVideoRouteHref", () => {
         seasonYear: 2027,
         style: "Round Analysis",
       }),
-    ).toBe("/videos/2022/ndt/finals/dartmouth-sv-vs-michigan-pr-round-analysis");
+    ).toBe("/videos/21-22/ndt/finals/dartmouth-sv-vs-michigan-pr-round-analysis");
     expect(
       previousVideoRouteHref({ videoId: "x", title: "How to give a 2NR", style: "Critique" }),
     ).toBeNull();
@@ -221,17 +226,43 @@ describe("teamsSegment", () => {
   });
 });
 
+describe("parseSeasonSegment", () => {
+  it("reads the year a season ends from either spelling", () => {
+    expect(parseSeasonSegment("26-27")).toBe(2027);
+    expect(parseSeasonSegment("2027")).toBe(2027);
+    expect(parseSeasonSegment("99-00")).toBe(2000);
+  });
+
+  it("rejects anything that is not one season", () => {
+    expect(parseSeasonSegment("26-28")).toBeNull();
+    expect(parseSeasonSegment("archive")).toBeNull();
+    expect(parseSeasonSegment("policy")).toBeNull();
+    expect(parseSeasonSegment(null)).toBeNull();
+  });
+});
+
 describe("seasonSegment", () => {
   it("prefers the season over the publish date", () => {
     // A round debated in March 2006 belongs to the 2005-06 season, and an
     // upload posted months later still does.
     expect(seasonSegment({ videoId: "x", title: "t", date: "2007-01-04", seasonYear: 2006 })).toBe(
-      "2006",
+      "05-06",
     );
   });
 
-  it("falls back to the publish year when no season is recorded", () => {
-    expect(seasonSegment({ videoId: "x", title: "t", date: "2019-11-02" })).toBe("2019");
+  it("spells a season as the two years it spans, across centuries", () => {
+    expect(seasonSegment({ videoId: "x", title: "t", seasonYear: 2027 })).toBe("26-27");
+    expect(seasonSegment({ videoId: "x", title: "t", seasonYear: 2000 })).toBe("99-00");
+  });
+
+  it("falls back to the season of the publish date when no season is recorded", () => {
+    expect(seasonSegment({ videoId: "x", title: "t", date: "2019-11-02" })).toBe("19-20");
+    expect(seasonSegment({ videoId: "x", title: "t", date: "2019-04-02" })).toBe("18-19");
+  });
+
+  it("rebuilds the bare year older paths used", () => {
+    expect(seasonSegment({ videoId: "x", title: "t", seasonYear: 2027 }, "year")).toBe("2027");
+    expect(seasonSegment({ videoId: "x", title: "t", date: "2019-11-02" }, "year")).toBe("2019");
   });
 
   it("files an unparseable date under the archive", () => {
@@ -317,7 +348,7 @@ describe("a video whose tags name no team", () => {
   } as const;
 
   it("adds the title after the round, so the address names one video", () => {
-    expect(videoRouteHref(untaggedFinal)).toBe("/videos/2027/policy/finals-greenhill-vs-westminster");
+    expect(videoRouteHref(untaggedFinal)).toBe("/videos/26-27/policy/finals-greenhill-vs-westminster");
   });
 
   it("uses the title alone when it already says the round", () => {
@@ -327,7 +358,8 @@ describe("a video whose tags name no team", () => {
   });
 
   it("keeps the old partial address so it can redirect", () => {
-    expect(untitledVideoRouteHref(untaggedFinal)).toBe("/videos/2027/policy/finals");
+    expect(untitledVideoRouteHref(untaggedFinal)).toBe("/videos/26-27/policy/finals");
+    expect(untitledVideoRouteHref(untaggedFinal, "year")).toBe("/videos/2027/policy/finals");
     expect(untitledVideoRouteHref({ videoId: "x", title: "How to give a 2NR" })).toBeNull();
     expect(untitledVideoRouteHref(ndtFinal)).toBeNull();
   });

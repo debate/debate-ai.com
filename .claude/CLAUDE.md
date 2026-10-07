@@ -68,6 +68,7 @@ extension and a native wrapper.
 | A shared data type and its field docs | `packages/debate-types` |
 | Routes, `/api`, auth, D1 schema, the Worker | `apps/debate-ai.com` |
 | User-facing documentation | `packages/debate-help-docs` |
+| The generic, publishable app sidebar (no debate code) | `packages/shadcn-sidebar` |
 
 Full map: [`architecture/overview.md`](.claude/architecture/overview.md).
 
@@ -134,3 +135,4 @@ one tree rather than beside the source.
 | `packages/debate-types` | [.claude/packages/debate-types/CLAUDE.md](.claude/packages/debate-types/CLAUDE.md) |
 | `packages/debate-ui` | [.claude/packages/debate-ui/CLAUDE.md](.claude/packages/debate-ui/CLAUDE.md) |
 | `packages/debate-videos` | [.claude/packages/debate-videos/CLAUDE.md](.claude/packages/debate-videos/CLAUDE.md) |
+| `packages/shadcn-sidebar` | [.claude/packages/shadcn-sidebar/CLAUDE.md](.claude/packages/shadcn-sidebar/CLAUDE.md) |

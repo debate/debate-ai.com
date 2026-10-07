@@ -33,6 +33,12 @@ import {
   isImportableDocxEntry,
   normalizeImportPath,
 } from "@debate/card-parser";
+import {
+  type ReadEntriesOptions,
+  RemoteZipEntryError,
+  openRemoteZip,
+  readRemoteZipEntries,
+} from "./remote-zip";
 
 /** Which side of the resolution a file is evidence for. */
 export type CaselistSide = "Aff" | "Neg" | null;
@@ -182,38 +188,120 @@ export async function loadCaselistArchive(
     isImportableDocxEntry(entry.name, entry.dir),
   );
 
+  const walk = createDocumentWalker(options);
+  for (const entry of entries) {
+    if (walk.done()) break;
+    await walk.convert(entry.name, () => entry.async("arraybuffer"));
+  }
+
+  return walk.result(entries.length);
+}
+
+/** Options for {@link loadRemoteCaselistArchive}. */
+export interface LoadRemoteArchiveOptions extends LoadArchiveOptions, ReadEntriesOptions {}
+
+/**
+ * Walks a bulk archive on a server without downloading all of it.
+ *
+ * Same result as {@link loadCaselistArchive}, but the archive is read with
+ * HTTP Range requests through {@link openRemoteZip}, so a 2 GB season dump
+ * costs a few megabytes of memory instead of the whole file. Use it whenever
+ * the archive has a URL whose server honours `Range` — openCaselist's bucket
+ * does.
+ *
+ * @param url - Archive URL.
+ * @param options - The {@link loadCaselistArchive} options plus progress,
+ *   chunk size, `fetchImpl` and `signal`.
+ * @returns Counts, failures, and the documents when not streamed.
+ * @throws When the archive cannot be opened or a range request fails.
+ */
+export async function loadRemoteCaselistArchive(
+  url: string,
+  options: LoadRemoteArchiveOptions = {},
+): Promise<CaselistArchiveLoad> {
+  const zip = await openRemoteZip(url, options);
+  const entries = zip.entries.filter((entry) => isImportableDocxEntry(entry.name, entry.dir));
+  const walk = createDocumentWalker(options);
+  // Stops the walk once `limit` is reached, alongside the caller's signal.
+  const controller = new AbortController();
+  options.signal?.addEventListener("abort", () => controller.abort(), { once: true });
+  const signal = controller.signal;
+
+  await readRemoteZipEntries(
+    zip,
+    entries,
+    async (entry, result) => {
+      if (walk.done()) {
+        controller.abort();
+        return;
+      }
+      if ("error" in result) {
+        const code = result.error instanceof RemoteZipEntryError ? result.error.code : "unreadable";
+        walk.fail(entry.name, code, result.error.message);
+        return;
+      }
+      await walk.convert(entry.name, async () => result.bytes);
+    },
+    { ...options, signal },
+  );
+
+  return walk.result(entries.length);
+}
+
+/**
+ * The per-document half shared by the local and remote walks: convert one
+ * entry, record why it failed, and count.
+ */
+function createDocumentWalker(options: LoadArchiveOptions) {
   const documents: CaselistDocument[] = [];
   const failures: CaselistDocumentFailure[] = [];
   let importedCount = 0;
 
-  for (const entry of entries) {
-    if (options.limit !== undefined && importedCount >= options.limit) break;
-
-    const info = describeCaselistEntry(entry.name, options.slug);
-    let document: CaselistDocument;
-    try {
-      const entryBytes = await entry.async("arraybuffer");
-      const html = await docxBytesToHtml(entryBytes);
-      document = { ...info, html };
-      if (options.parseCards) {
-        const parsed = htmlToCards(html, info.fileName);
-        document.cards = parsed.outline.filter(isCardNode);
-        document.metadata = parsed.metadata;
-        document.outline = parsed.outline;
+  return {
+    /** Whether {@link LoadArchiveOptions.limit} has been reached. */
+    done: () => options.limit !== undefined && importedCount >= options.limit,
+    /** Records an entry that could not even be read out of the archive. */
+    fail(name: string, code: string, reason: string) {
+      failures.push({ path: describeCaselistEntry(name, options.slug).path, code, reason });
+    },
+    async convert(name: string, read: () => Promise<ArrayBuffer | Uint8Array>) {
+      const info = describeCaselistEntry(name, options.slug);
+      let document: CaselistDocument;
+      try {
+        const entryBytes = await read();
+        const html = await docxBytesToHtml(
+          entryBytes instanceof Uint8Array
+            ? (entryBytes.buffer.slice(
+                entryBytes.byteOffset,
+                entryBytes.byteOffset + entryBytes.byteLength,
+              ) as ArrayBuffer)
+            : entryBytes,
+        );
+        document = { ...info, html };
+        if (options.parseCards) {
+          const parsed = htmlToCards(html, info.fileName);
+          document.cards = parsed.outline.filter(isCardNode);
+          document.metadata = parsed.metadata;
+          document.outline = parsed.outline;
+        }
+      } catch (error) {
+        // One unreadable document is data, not an outage: record why and keep
+        // walking, so a run's report names the files to chase rather than
+        // stopping the other 2,999.
+        const described = describeDocxImportError(error);
+        failures.push({ path: info.path, code: described.code, reason: described.reason });
+        return;
       }
-    } catch (error) {
-      // One unreadable document is data, not an outage: record why and keep
-      // walking, so a run's report names the files to chase rather than
-      // stopping the other 2,999.
-      const described = describeDocxImportError(error);
-      failures.push({ path: info.path, code: described.code, reason: described.reason });
-      continue;
-    }
 
-    importedCount += 1;
-    if (options.onDocument) await options.onDocument(document);
-    else documents.push(document);
-  }
-
-  return { documents, failures, entryCount: entries.length, importedCount };
+      importedCount += 1;
+      if (options.onDocument) await options.onDocument(document);
+      else documents.push(document);
+    },
+    result: (entryCount: number): CaselistArchiveLoad => ({
+      documents,
+      failures,
+      entryCount,
+      importedCount,
+    }),
+  };
 }

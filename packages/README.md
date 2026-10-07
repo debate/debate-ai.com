@@ -202,3 +202,16 @@ LEARN, the debate video library. Covers video search and filtering, grids and ca
 persistent YouTube player with picture-in-picture, a per-video watch page at
 `/videos/watch/<title-slug>` (player, synced transcript, related videos),
 lecture pages, and the rankings leaderboard (data from `debate-rankings`).
+
+## shadcn-sidebar
+
+A generic, publishable version of the app sidebar, with no debate code in it: a
+drag-resizable column whose width and hidden/shown state persist, three collapse modes
+(`offcanvas` with an edge tab, `icon` rail, `none`), `sidebar` / `floating` / `inset`
+variants, Ctrl/Cmd+B, a magnifying app dock (in the column, in the rail, floating while
+hidden, or a bottom bar on phones), a data-driven accordion nav tree with nested groups and
+counts, an account menu with a light/dark/system and colour-theme submenu, and a mobile
+drawer. Everything is configured with plain data, and links render through a `renderLink`
+hook so any router plugs in. `shadcn-sidebar/demo` ships "ClipWire", a mock site for
+watching videos and clipping and sharing news articles; `bun run storybook` in the package
+opens its stories. Depends on no other package in this repo.

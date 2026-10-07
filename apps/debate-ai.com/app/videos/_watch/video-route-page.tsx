@@ -22,7 +22,7 @@ import { getVideoSidePanelContent } from "@/lib/videos/video-content"
  * One video at its canonical address, shared by the three route shapes:
  *
  * - `/videos/<season>/<tournament>/<round>/<teams>` for a tagged round, e.g.
- *   `/videos/2022/ndt/finals/dartmouth-sv-michigan-pr`
+ *   `/videos/21-22/ndt/finals/dartmouth-sv-michigan-pr`
  *   (`app/videos/[category]/[event]/[matchup]/[teams]/page.tsx`);
  * - `.../<teams>/<variant>` for a video made from that round — its analysis,
  *   one part of a split upload — e.g. `.../dartmouth-sv-michigan-pr/analysis`
