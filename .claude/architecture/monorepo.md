@@ -122,7 +122,10 @@ Consequences for you:
 - **App tests go in `apps/debate-ai.com/lib/**/__tests__/*.test.ts(x)`** — that
   is the only include pattern for the app.
 - Coverage counts `packages/*/src/**/*.{ts,tsx}` only; `debate-data-sync`'s
-  `data/` and `schemas/` are excluded as pure assets.
+  `data/` and `schemas/` are excluded as pure assets. The vendored editor code
+  is left out: `debate-editor-cm` entirely, and of `debate-editor`'s assembled
+  `src/` only the files its `overlay/` supplies are counted (Codecov maps them
+  back to `overlay/` through `fixes` in `codecov.yml`).
 
 ## CI
 

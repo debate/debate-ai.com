@@ -37,7 +37,7 @@ flag_management:
 flags:
   debate-webview:
     paths:
-      - packages/debate-ai-webui/src
+      - packages/debate-webview/src
   debate-api-client:
     paths:
       - packages/debate-api-client/src
@@ -52,7 +52,7 @@ flags:
       - packages/debate-data-sync/src
   debate-editor:
     paths:
-      - packages/debate-editor/src
+      - packages/debate-editor/overlay
   debate-flow:
     paths:
       - packages/debate-flow/src
@@ -110,7 +110,7 @@ component_management:
   individual_components:
     - component_id: debate-webview
       paths:
-        - packages/debate-ai-webui/src
+        - packages/debate-webview/src
     - component_id: debate-api-client
       paths:
         - packages/debate-api-client/src
@@ -125,7 +125,7 @@ component_management:
         - packages/debate-data-sync/src
     - component_id: debate-editor
       paths:
-        - packages/debate-editor/src
+        - packages/debate-editor/overlay
     - component_id: debate-flow
       paths:
         - packages/debate-flow/src
@@ -167,6 +167,13 @@ component_management:
         - apps/debate-browser-ext/lib
         - apps/debate-browser-ext/entrypoints
         - apps/debate-browser-ext/components
+
+# debate-editor's src/ is assembled at install time and git-ignored, so the
+# coverage report's paths there name no tracked file. Only the files its
+# overlay/ supplies are measured (see apps/debate-ai.com/vitest.config.ts), and
+# this points each of them at the overlay copy the repo actually tracks.
+fixes:
+  - "packages/debate-editor/src/::packages/debate-editor/overlay/"
 
 comment:
   layout: "header, diff, flags, components, files, footer"
