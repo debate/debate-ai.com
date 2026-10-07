@@ -156,6 +156,36 @@ that could not be read, and every batch of cards the server rejected. The log
 survives a reload, can be filtered to errors and warnings, and has **Copy** and
 **Download** buttons for sharing it.
 
+## Search index
+
+`/api/search` matches card text through an SQLite **FTS5** index,
+`debate_cards_fts` (`apps/debate-ai.com/lib/search/card-fts.ts`), and ranks it
+with `bm25()`, weighting the tag above the summary, highlighted text, cite and
+body. The index is external-content: it stores tokens and positions only, and
+three triggers on `debate_cards` keep it in step with every insert, update of
+an indexed column, and delete — so an import needs no extra step. The
+`debate_cards_vocab` view (`fts5vocab`) feeds `/api/search/autocomplete`.
+
+There is no migration folder, so the first search creates the index. A corpus
+of up to 20,000 cards is indexed right then; a larger one is left to the
+admin backfill, and searches keep using the old `LIKE` match until it is done.
+`/api/admin/search-index` (same authorization as below) reports coverage on
+`GET` and takes `POST {"action": …}`:
+
+- `backfill` indexes the next 10,000 cards the index lacks. Repeat until the
+  response says `"complete": true`.
+- `rebuild` re-indexes everything in one statement. Run it after restoring a
+  SQL backup: the backup's `INSERT OR REPLACE` bypasses the delete trigger and
+  leaves stale entries behind.
+- `optimize` merges index segments after a large import.
+
+### Known gaps
+
+- Underlined text is not indexed (it exists only as `<u>` tags in `markup`),
+  so an *Underlined* scope still runs the slow `LIKE` search.
+- Autocomplete ranks words by how often they occur in cards, not by what
+  people search for.
+
 ## Authorization
 
 `POST` and `GET /api/admin/debate-cards` accept either:

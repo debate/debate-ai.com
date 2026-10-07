@@ -105,8 +105,12 @@ export const OWN_LAYOUT_SIDEBAR_HREFS: readonly string[] = ["/debate"];
  * the app dock hosted at the top of it, instead of the app's generic tool
  * sidebar. The sidebar button in the dock's mobile toolbar opens that sidebar
  * there too (see `OPEN_OWN_SIDEBAR_EVENT`).
+ *
+ * `/research/docs` is where that workspace is served now. Leaving it off this
+ * list wrapped it in the generic sidebar too, so the page showed two sidebars
+ * side by side, each with its own dock.
  */
-export const OWN_SIDEBAR_DOCK_HREFS: readonly string[] = ["/doc"];
+export const OWN_SIDEBAR_DOCK_HREFS: readonly string[] = ["/doc", "/research/docs"];
 
 /**
  * Routes that render the video library page (`LecturesPage`), which draws

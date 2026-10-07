@@ -3,11 +3,10 @@
 import type React from "react"
 import { usePathname } from "next/navigation"
 import { ResizableSidebarLayout } from "@debate/videos"
-import { isGenericToolSidebarRoute } from "../../lib/sidebar-routes"
+import { isGenericToolSidebarRoute, ownsItsLayout } from "../../lib/sidebar-routes"
 import { showsCardsOnlySidebar } from "../../lib/reason-docs/sidebar-routes"
-import { ChromeErrorBoundary } from "../../lib/ui/layout/chrome-error-boundary"
 import { AppSidebar } from "./app-sidebar/app-sidebar"
-import { NavUser } from "./app-sidebar/nav-user"
+import { SidebarAccount } from "./app-sidebar/sidebar-account"
 
 /**
  * Puts the app's one sidebar beside every page that is not in the video
@@ -30,9 +29,11 @@ import { NavUser } from "./app-sidebar/nav-user"
  * scrolling area does not scroll as a whole — each panel scrolls inside its
  * own share.
  *
- * `/debate` and `/research/docs` are the two tree destinations this shell
- * skips (`ownsItsLayout`, in @debate/videos' `sidebar-routes`): both fill the
- * viewport with a workspace sidebar of their own. Below `md` the column is
+ * `/debate` and `/research/docs` fill the viewport with a workspace sidebar
+ * of their own (`ownsItsLayout`, in @debate/videos' `sidebar-routes`), so
+ * there the column starts collapsed (`autoCollapse`): the page's own sidebar
+ * is the only one on screen, and the app's still peeks out from the left
+ * edge. That leaves the app-wide hidden/shown choice alone. Below `md` the column is
  * not drawn at all: the bottom dock's Sidebar button opens
  * `MobileSidebarDrawer` instead, with the same tree.
  */
@@ -46,11 +47,14 @@ export function AppSidebarShell({
 }) {
   const pathname = usePathname()
 
-  if (!always && !isGenericToolSidebarRoute(pathname)) return <>{children}</>
+  const ownLayout = ownsItsLayout(pathname)
+
+  if (!always && !ownLayout && !isGenericToolSidebarRoute(pathname)) return <>{children}</>
 
   return (
     <ResizableSidebarLayout
       appChrome
+      autoCollapse={ownLayout}
       className="bg-background"
       sidebarClassName={showsCardsOnlySidebar(pathname) ? "overflow-hidden" : undefined}
       // `relative` (from the layout) makes the column the containing block for
@@ -58,11 +62,7 @@ export function AppSidebarShell({
       // viewport high is what the pages were laid out against before.
       contentClassName="flex min-h-screen flex-col"
       sidebar={<AppSidebar />}
-      footer={
-        <ChromeErrorBoundary label="NavUser">
-          <NavUser />
-        </ChromeErrorBoundary>
-      }
+      footer={<SidebarAccount />}
     >
       {children}
     </ResizableSidebarLayout>

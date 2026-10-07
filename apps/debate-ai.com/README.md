@@ -111,6 +111,9 @@ Secrets survive either way.
 | --- | --- | --- |
 | `YOUTUBE_API_KEY` | The weekly channel scan and view-count refresh, and the `/admin` resync. **Required** for either to run. | [Google Cloud Console](https://console.cloud.google.com/apis/credentials) → enable *YouTube Data API v3* → Create Credentials → API key. |
 | `YOUTUBE_PROXY_URL` | A fetch-through proxy for transcripts, e.g. `https://proxy.example.com/fetch?key=K&url={url}`. YouTube rate-limits Cloudflare egress IPs, so transcripts often need one. | Your own proxy. |
+| `YOUTUBE_AUDIO_SERVICE_URL` | **Transcribe audio** / **Download MP3** in the admin Transcripts dialog, for videos with no captions. Base URL of an `extract-youtube/download` media API — the Worker can't download YouTube media itself. | Host one on any Node box with ffmpeg: `npm i extract-youtube cloud-ytdl && MEDIA_API_KEY=… npx extract-youtube serve-media`. |
+| `YOUTUBE_AUDIO_SERVICE_KEY` | The `MEDIA_API_KEY` that media API was started with. | Generate one: `openssl rand -hex 32`. |
+| `GROQ_API_KEY` / `OPENAI_API_KEY` | Whisper transcription for **Transcribe audio** (Groq first, OpenAI as fallback). | [console.groq.com](https://console.groq.com/keys) / [platform.openai.com](https://platform.openai.com/api-keys) |
 
 ### Card import
 

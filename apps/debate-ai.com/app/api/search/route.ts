@@ -10,6 +10,13 @@
  * route's catch-all turns a malformed query into an empty result list rather
  * than an error, which is exactly how a broken `where` clause hid here before.
  *
+ * Card text is matched through the FTS5 index in `@/lib/search/card-fts` and
+ * ranked by BM25: quoted phrases must match exactly, the word being typed is
+ * prefix-matched, and `operator=AND` requires every word (the default, `OR`,
+ * ranks cards matching more of them higher). Until the index exists and covers
+ * the corpus — or for an underlined-text search, which it cannot express —
+ * the route falls back to the `LIKE` search.
+ *
  * Metered by plan tier (`@debate/webview/src/lib/stripe/limits.ts`): each search counts toward
  * the caller's `cardSearchesPerDay` (per IP when signed out) and returns at
  * most the tier's `cardSearchResults` cards.
@@ -33,6 +40,13 @@ import {
   readSearchScope,
   sortSearchResults,
 } from "@/lib/search/debate-card-search";
+import {
+  buildFtsMatch,
+  ensureCardFts,
+  ftsColumnsForScope,
+  readFtsOperator,
+  searchCardsRanked,
+} from "@/lib/search/card-fts";
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -40,15 +54,16 @@ export async function GET(request: NextRequest) {
   const kind = readSearchKind(searchParams);
   const term = (searchParams.get("q") || "").trim();
 
-  const where = buildCardSearchWhere({
-    query: searchParams.get("q") || "",
+  const scope = readSearchScope(searchParams);
+  const filterInput = {
     year: searchParams.get("year") || "",
     school: searchParams.get("school") || "",
     team: searchParams.get("team") || "",
     tournament: searchParams.get("tournament") || "",
     event: searchParams.get("event") || "",
-    ...readSearchScope(searchParams),
-  });
+    ...scope,
+  };
+  const where = buildCardSearchWhere({ query: searchParams.get("q") || "", ...filterInput });
 
   try {
     const db = await getDBFromContext();
@@ -102,8 +117,30 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ results: rows.map(mapRoundVideoToSearchResult), total: rows.length });
     }
 
-    // Quotes: an explicit sort (most read, season…) wins; otherwise newest first.
     const explicitOrder = buildCardSearchOrderBy(sortBy);
+
+    // A term goes through the full-text index when it can: BM25 relevance
+    // unless an explicit sort (most read) was chosen.
+    const columns = term ? ftsColumnsForScope(scope) : null;
+    const match =
+      columns === null ? "" : buildFtsMatch(term, { operator: readFtsOperator(searchParams), prefixLastWord: true, columns });
+    if (match && (await ensureCardFts(db))) {
+      try {
+        const cards = await searchCardsRanked(
+          db,
+          match,
+          buildCardSearchWhere(filterInput),
+          limits.cardSearchResults,
+          explicitOrder,
+        );
+        const results = sortSearchResults(cards.map(mapDebateCardToSearchResult), sortBy);
+        return NextResponse.json({ results, total: results.length });
+      } catch (error) {
+        console.error("Ranked card search failed; falling back to LIKE:", error);
+      }
+    }
+
+    // Quotes: an explicit sort (most read, season…) wins; otherwise newest first.
     const orderBy = explicitOrder.length > 0 || kind !== "quotes" ? explicitOrder : buildRecentCardOrderBy();
     const cards = await db
       .select()

@@ -44,6 +44,12 @@ export interface RoundSpeech {
   isSpeech: boolean;
   /** Second the speech starts at, from the first document that gave one. */
   startSeconds: number | null;
+  /**
+   * Second the speaker stopped, when known (the AI speech detection gives
+   * one) — keeps prep time and a judge's RFD out of the speech's captions.
+   * Without it a speech runs to the next one's start.
+   */
+  endSeconds?: number | null;
   /** This speech's markdown in each document that covers it. */
   parts: Partial<Record<VideoDocumentKind, string>>;
 }
@@ -274,7 +280,8 @@ export function playingSpeechIndex(speeches: RoundSpeech[], seconds: number): nu
 export function withSpeechStarts(speeches: RoundSpeech[], marks: Record<string, number>): RoundSpeech[] {
   if (Object.keys(marks).length === 0) return speeches;
   return speeches.map((speech) =>
-    typeof marks[speech.key] === "number" ? { ...speech, startSeconds: marks[speech.key] } : speech,
+    // A detected end belongs to the detected start, so a re-marked speech drops it.
+    typeof marks[speech.key] === "number" ? { ...speech, startSeconds: marks[speech.key], endSeconds: null } : speech,
   );
 }
 
@@ -286,8 +293,9 @@ interface CaptionLine {
 
 /**
  * Gives every timed speech without a written transcript the captions that
- * play between its start and the next timed speech's start — what the
- * Outcomes simulator reads for a round nobody typed up.
+ * play between its start and the next timed speech's start (or its own end,
+ * when that comes sooner) — what the Outcomes simulator and the per-speech
+ * AI summary read for a round nobody typed up.
  */
 export function withCaptionTranscripts(speeches: RoundSpeech[], captions: CaptionLine[]): RoundSpeech[] {
   if (captions.length === 0) return speeches;
@@ -299,7 +307,9 @@ export function withCaptionTranscripts(speeches: RoundSpeech[], captions: Captio
   return speeches.map((speech) => {
     const start = speech.startSeconds;
     if (start === null || speech.parts.transcript) return speech;
-    const end = starts.find((other) => other > start) ?? Infinity;
+    const next = starts.find((other) => other > start) ?? Infinity;
+    const own = speech.endSeconds ?? null;
+    const end = own !== null && own > start ? Math.min(own + 1, next) : next;
     const text = captions
       .filter((line) => line.start >= start && line.start < end)
       .map((line) => line.text.trim())

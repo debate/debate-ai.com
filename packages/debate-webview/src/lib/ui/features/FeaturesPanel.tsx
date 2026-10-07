@@ -294,9 +294,9 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
 
           <Reveal delay={80}>
             <h1 className="text-4xl leading-[1.08] font-bold tracking-tight text-balance text-foreground sm:text-5xl">
-              Cut, flow, drill, debate.
+              Debate your dream.
               <br />
-              <span className="da-shimmer-text">All of it, here.</span>
+              <span className="da-shimmer-text">Define your destiny.</span>
             </h1>
           </Reveal>
 

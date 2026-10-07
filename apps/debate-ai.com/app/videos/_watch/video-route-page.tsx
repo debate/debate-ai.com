@@ -9,6 +9,7 @@ import {
   type VideoType,
 } from "@debate/videos"
 import { CategoryDock } from "@debate/webview/components/layout/CategoryDock"
+import { SidebarAccount } from "@debate/webview/components/layout/app-sidebar/sidebar-account"
 import { VideoStaffControls } from "@debate/webview/components/videos/VideoStaffControls"
 import { featuredSpeechDocsTabs } from "@debate/round/src/panels/featuredSpeechDocsTabs"
 import {
@@ -112,6 +113,7 @@ export async function VideoRoutePage({ segments }: { segments: string[] }) {
         }))}
         sideTabs={featuredSpeechDocsTabs(video[0] as string)}
         dockSlot={<CategoryDock embedded />}
+        accountSlot={<SidebarAccount />}
         extraControls={
           <>
             <SlowSpreadButton size="md" />

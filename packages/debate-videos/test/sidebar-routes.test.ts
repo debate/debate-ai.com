@@ -265,3 +265,15 @@ describe("video library routes and the category-path redirects", () => {
     }
   });
 });
+
+describe("the REASON docs workspace", () => {
+  it("draws its own sidebar, so the app's collapses there instead of sitting beside it", () => {
+    for (const path of ["/research/docs", "/research/docs/market-analysis"]) {
+      expect(ownsItsLayout(path)).toBe(true);
+      expect(hostsOwnSidebarDock(path)).toBe(true);
+      expect(hasEmbeddedDock(path)).toBe(true);
+      expect(isGenericToolSidebarRoute(path)).toBe(false);
+    }
+    expect(ownsItsLayout("/research/cards")).toBe(false);
+  });
+});
