@@ -99,12 +99,15 @@ export const PATCH = withRouteErrors(
       );
     }
 
+    // Until a challenge is accepted neither debater knows who the other is,
+    // so answering or calling one off doesn't name the actor either.
+    const actorName = from.status === "pending" && action !== "accept" ? "Your practice match" : viewer.name;
     await notifyPracticePartners(db, result.notify, {
-      title: challengeNotificationTitle(action, viewer.name),
+      title: challengeNotificationTitle(action, actorName),
       body: `${optionLabel(PRACTICE_FORMATS, row.format)} — ${row.topic}`,
     });
 
-    const updated = await getChallenge(db, id.value);
+    const updated = await getChallenge(db, id.value, userId);
     if (!updated) {
       return NextResponse.json({ error: "That challenge no longer exists." }, { status: 404 });
     }

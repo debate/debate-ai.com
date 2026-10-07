@@ -19,6 +19,7 @@ import { CommentAvatar } from "@debate/comments";
 import { cn } from "../../lib/ui/lib/utils";
 import { availableChallengeActions } from "../../lib/practice-partners/challenge-actions";
 import {
+  ANONYMOUS_PRACTICE_PERSON,
   PRACTICE_FORMATS,
   optionLabel,
   type ChallengeAction,
@@ -66,8 +67,13 @@ export function formatProposedTime(seconds: number): string {
 
 function headline(challenge: PracticeChallenge, viewerId: string): string {
   const { challenger, opponent } = challenge;
-  if (challenger.id === viewerId) return `You challenged ${opponent.name}`;
-  if (opponent.id === viewerId) return `${challenger.name} challenged you`;
+  // The other debater stays anonymous until the challenge is accepted.
+  if (challenger.id === viewerId) {
+    return opponent.id === ANONYMOUS_PRACTICE_PERSON.id ? "You challenged your practice match" : `You challenged ${opponent.name}`;
+  }
+  if (opponent.id === viewerId) {
+    return challenger.id === ANONYMOUS_PRACTICE_PERSON.id ? "A practice match challenged you" : `${challenger.name} challenged you`;
+  }
   return `${challenger.name} vs ${opponent.name}`;
 }
 

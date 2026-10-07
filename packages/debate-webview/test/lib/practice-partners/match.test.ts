@@ -5,7 +5,7 @@
 
 import { describe, expect, it } from "vitest";
 
-import { practiceMatch, rankVolunteers } from "../../../src/lib/practice-partners/match";
+import { MATCH_POOL_SIZE, pickPracticeMatch, practiceMatch, rankVolunteers } from "../../../src/lib/practice-partners/match";
 import type { PracticePreferences, PracticeVolunteer } from "../../../src/lib/practice-partners/types";
 
 const me: PracticePreferences = {
@@ -63,5 +63,30 @@ describe("rankVolunteers", () => {
       volunteer("new", {}, 20),
     ]);
     expect(ranked.map(({ volunteer: v }) => v.person.id)).toEqual(["new", "old", "far"]);
+  });
+});
+
+describe("pickPracticeMatch", () => {
+  it("returns null with nobody to pick", () => {
+    expect(pickPracticeMatch(me, [])).toBeNull();
+  });
+
+  it("draws only from the most compatible few", () => {
+    const poor = Array.from({ length: 10 }, (_, i) =>
+      volunteer(`poor-${i}`, { formats: ["congress"], styles: [], speed: "conversational", level: "coach" }),
+    );
+    const good = Array.from({ length: MATCH_POOL_SIZE }, (_, i) => volunteer(`good-${i}`, {}));
+    for (const roll of [0, 0.25, 0.5, 0.75, 0.999]) {
+      const picked = pickPracticeMatch(me, [...poor, ...good], () => roll);
+      expect(picked?.candidate.person.id).toMatch(/^good-/);
+    }
+  });
+
+  it("varies with the random roll and reports the match it scored", () => {
+    const candidates = [volunteer("a", {}), volunteer("b", {})];
+    const first = pickPracticeMatch(me, candidates, () => 0);
+    const last = pickPracticeMatch(me, candidates, () => 0.999);
+    expect(first?.candidate.person.id).not.toBe(last?.candidate.person.id);
+    expect(first?.match).toEqual(practiceMatch(me, candidates[0]!));
   });
 });

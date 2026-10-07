@@ -43,9 +43,12 @@ Three sections, stacked, with Debate Topics by Year at the top:
   Above the format panels sits a **Next season** entry (`NextSeasonPanel`,
   e.g. "Next season · 2027–28"), shown before any of that season's
   resolutions are announced. It holds a poll — "Which topic area would you
-  most like to debate next season?" — listing every area with its vote count,
-  most votes first. Anyone can see the tally; voting needs a sign-in, and each
-  user has one vote per season that they can move to another area at any time.
+  most like to debate next season?" It's ranked-choice: click up to five
+  areas in order of preference (click again to remove one) and press
+  **Submit ranking**. Each area scores Borda points — 5 for a first choice
+  down to 1 for a fifth — and the list is ordered by points, then first
+  choices. Anyone can see the tally; voting needs a sign-in, and each user has
+  one ballot per season that they can update at any time.
 - **YouTube Channel Statistics** (`YouTubeStatsCharts`) — the top-channels
   table and the views/videos/avg-views-over-time charts `YouTubeStatsModal`
   already drew in its dialog, extracted so they can render inline on a full
@@ -115,20 +118,25 @@ the 2002–2009 PF topics, which now carry real short names ("National Service",
 "War on Terror"). Other seasons' names may still need the same pass; the fix
 is better names in the data, not in the link.
 
-The next-season poll has no admin view or reset; votes for a season stay in
-`topic_area_votes` after that season starts, and the panel simply moves on to
+The next-season poll has no admin view or reset; ballots for a season stay in
+`topic_area_rankings` after that season starts, and the panel simply moves on to
 the following season in July (`nextPollSeason`).
 
 ## Topic-area poll internals
 
 - Shared rules: `debate-videos` `lib/topic-areas/topic-area-poll.ts` — which
   season is polled (`nextPollSeason`: July starts a new season, labelled by its
-  spring year), vote validation (`parseVoteBody`), option order and the two
-  client calls.
-- API: `GET /api/topic-area-poll?season=` (tally, plus `myVote` when signed in)
-  and `PUT /api/topic-area-poll` `{ season, area }` (401 signed out; only next
-  season and a known area are accepted).
-- Storage: `topic_area_votes`, primary key `(season, user_id)`, so a second
-  vote is an upsert that replaces the first. Declared in `schema.ts`, created by
-  `packages/debate-videos/migrations/0001_topic_area_votes.sql`.
+  spring year), ballot validation (`parseVoteBody`: 1–5 distinct known
+  areas), Borda scoring (`pointsForRank`), option order and the two client
+  calls.
+- API: `GET /api/topic-area-poll?season=` (`points`, `firstChoices`, `total`
+  ballots, plus `myRanking` when signed in) and `PUT /api/topic-area-poll`
+  `{ season, ranking }` (401 signed out; only next season, and one to five
+  distinct known areas).
+- Storage: `topic_area_rankings`, primary key `(season, user_id, rank)` — one
+  row per ranked area. A new ballot deletes the user's rows for the season and
+  inserts the new ones in one batch. Declared in `schema.ts`, created by
+  `packages/debate-videos/migrations/0003_topic_area_rankings.sql`, which also
+  copies the old single-choice `topic_area_votes` rows in as first choices
+  (that table is left in place, unread).
 
