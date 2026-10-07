@@ -100,6 +100,14 @@ YouTube description links to the other ("Full Debate:
 `https://www.youtube.com/watch?v=…`"). Linking two videos is therefore an
 edit to a description on YouTube, not a change to the site.
 
+Every card in the grid and every row in the list shows the video's length
+(`1h 05m`, `42m`) on its own line under the action buttons — not as a column —
+and flipping a stack shows the length of the video now on top. Lengths come
+from `/api/videos/durations`, which reads the `video_durations` table the admin
+backfill fills (see Video durations below); the cards ask for them in batches
+as they render (`state/videoDurations.ts`), so a video with no stored length
+simply shows none.
+
 The **Stacked playlists** button in the search panel (the layers icon) turns
 it off, giving one card per video again.
 
@@ -254,5 +262,5 @@ so a wrong split is corrected in the library after publishing. The records
 have no upload date, so these rounds are dated January 1st of their event's
 year.
 
-Video durations are only shown as totals on `/admin`; the library cards and
-watch page don't display a video's length yet.
+The watch page doesn't display a video's length yet, and a video only shows
+one in the library after **Fetch video durations** has looked it up.
