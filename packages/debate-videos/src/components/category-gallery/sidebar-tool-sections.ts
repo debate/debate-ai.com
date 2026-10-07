@@ -49,7 +49,6 @@ import {
   Swords,
   Handshake,
   Coins,
-  Timer,
   TrendingUp,
   Trophy,
   Users,
@@ -175,16 +174,17 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
     // or AI, and test predictions.
     id: "practice",
     title: "Practice",
-    href: "/practice",
+    // `/practice` (the old Practice Round Simulator) redirects here: the two
+    // pages were merged into Practice vs AI.
+    href: "/practice/versus-ai",
     icon: Dumbbell,
     tools: [
-      { href: "/practice", title: "Practice Round Simulator", icon: Timer },
+      { href: "/practice/versus-ai", title: "Practice vs AI", icon: Swords },
       { href: "/practice/partners", title: "Practice Partners", icon: Handshake },
       // Same page, landing on the open judge seats (or the profile, for
       // someone who has not volunteered to judge yet).
       { href: "/practice/partners#judge", title: "Judge Practice Rounds", icon: Gavel },
       { href: "/practice/predictions", title: "Prediction Markets", icon: Coins },
-      { href: "/practice/versus-ai", title: "Debate Versus AI", icon: Swords },
       { href: "/practice/drills", title: "Practice Drills", icon: Repeat },
       { href: "/practice/judge-decision", title: "AI Judge Decision", icon: BadgeCheck },
       // Lives under /coaching, but it charts how practice responses play out,

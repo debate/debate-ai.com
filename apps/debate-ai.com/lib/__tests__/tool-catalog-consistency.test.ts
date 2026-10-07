@@ -131,6 +131,8 @@ const STATIC_APP_ROUTES = findAppPageRoutes(APP_DIR, "").filter((route) => !rout
  * `/research/topics` is the one route that no longer renders a page of its
  * own: the Topics Explorer's research-area explorer is now the first section
  * of `/practice/statistics`, so `/research/topics` only redirects there.
+ * `/practice` is the same: the Practice Round Simulator was merged into
+ * Practice vs AI, so it only redirects to `/practice/versus-ai`.
  *
  * `/lectures`, `/practice/glossary`, `/practice/rankings` and
  * `/practice/statistics` are views of the video library page (the same page
@@ -157,6 +159,7 @@ const ROUTES_WITHOUT_A_CATALOG_ENTRY = new Set([
   "/settings/preferences",
   "/settings/research",
   "/research/topics",
+  "/practice",
   "/lectures",
   "/practice/glossary",
   "/practice/rankings",
