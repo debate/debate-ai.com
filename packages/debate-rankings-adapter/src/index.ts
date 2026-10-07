@@ -43,3 +43,21 @@ export {
   type SimulatedRounds,
   type SimulationEntry,
 } from "./match-simulation";
+export {
+  blendedRating,
+  debaterKeys,
+  fieldAffLogit,
+  individualRating,
+  modelMatchup,
+  recommendSide,
+  recommendWeights,
+  schoolRating,
+  teamSideTilt,
+  type DebateSide,
+  type MatchupModelResult,
+  type MatchupWeights,
+  type ModelDataset,
+  type RatingBreakdown,
+  type RoundStage,
+  type SideOutcome,
+} from "./matchup-model";

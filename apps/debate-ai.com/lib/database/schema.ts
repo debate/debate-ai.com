@@ -365,6 +365,12 @@ export const userSettings = sqliteTable("user_settings", {
   // the local `myTeamProfile.ts` localStorage value stays the source of
   // truth for a signed-out browser.
   myTeamProfile: text("my_team_profile"),
+  // JSON-serialized `MyRankedTeams` (`{ role, partner, teams: { <division>:
+  // teamSlug } }`) — Settings → My team, the ranked team the viewer debates
+  // on, coaches or assists per division, which the matchup simulator
+  // pre-fills (packages/debate-videos/src/lib/my-ranked-teams). Whole-value
+  // replace, like `myTeamProfile` above.
+  myRankedTeams: text("my_ranked_teams"),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(unixepoch())`),

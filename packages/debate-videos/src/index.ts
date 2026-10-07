@@ -88,6 +88,19 @@ export { DebateVideosPage } from "./panels/DebateVideosPanel";
 export { LeaderboardPanel } from "./panels/leaderboard/RankingsLeaderboardPanel";
 export { TeamProfilePage, SchoolProfilePage } from "./panels/leaderboard/profile/RankingProfiles";
 export { MatchupSimulator, type MatchupSimulatorProps } from "./panels/leaderboard/profile/MatchupSimulator";
+export { MyRankedTeamsSettings } from "./panels/leaderboard/profile/MyRankedTeamsSettings";
+export {
+  EMPTY_MY_RANKED_TEAMS,
+  MY_TEAM_ROLES,
+  getMyRankedTeams,
+  normalizeMyRankedTeamsPatch,
+  parseMyRankedTeams,
+  serializeMyRankedTeams,
+  validateMyRankedTeams,
+  type MyRankedTeams,
+  type MyTeamRole,
+} from "./lib/my-ranked-teams/my-ranked-teams";
+export { useMyRankedTeams } from "./lib/my-ranked-teams/useMyRankedTeams";
 export { FollowButton, type FollowButtonProps } from "./panels/leaderboard/profile/FollowButton";
 export { useFollowingNews, type FollowingNews } from "./hooks/useFollowingNews";
 export type { FollowNewsItem } from "./lib/follows/follow-feed";

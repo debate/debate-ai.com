@@ -73,6 +73,16 @@ export function isNearSidebarEdge(x: number): boolean {
   return x >= 0 && x <= SIDEBAR_PEEK_EDGE_PX
 }
 
+/**
+ * Whether a popup menu opened from inside the sidebar (the account menu) is
+ * still open. Only popup triggers count: an expanded tree section also
+ * carries `aria-expanded="true"`, and counting those kept a peeked column out
+ * for good.
+ */
+export function isSidebarMenuOpen(aside: ParentNode | null | undefined): boolean {
+  return aside?.querySelector('[aria-haspopup]:not([aria-haspopup="false"])[aria-expanded="true"]') != null
+}
+
 /** The width a peeked sidebar opens at: the user's stored width, clamped, or the default. */
 export function sidebarPeekWidth(stored: number | null): number {
   if (stored === null) return SIDEBAR_DEFAULT_WIDTH
@@ -170,38 +180,57 @@ export function ResizableSidebarLayout({
       open = false
       setPeeking(false)
     }
+    // A menu opened from inside the column renders outside it; the column
+    // stays out until that menu closes, then goes as soon as it does.
+    const scheduleHide = () => {
+      if (!open || hideTimer !== null) return
+      hideTimer = setTimeout(() => {
+        hideTimer = null
+        if (isSidebarMenuOpen(asideRef.current)) scheduleHide()
+        else hide()
+      }, SIDEBAR_PEEK_HIDE_DELAY_MS)
+    }
     const onPointerMove = (event: PointerEvent) => {
       if (event.pointerType === "touch") return
       if (!open) {
         if (isNearSidebarEdge(event.clientX)) show()
         return
       }
-      const aside = asideRef.current
-      const right = aside?.getBoundingClientRect().right ?? 0
-      // A menu opened from inside the column renders outside it; keep the
-      // column out until that menu closes.
-      const menuOpen = aside?.querySelector('[aria-expanded="true"]') != null
-      if (event.clientX <= right || menuOpen) cancelHide()
-      else if (hideTimer === null) hideTimer = setTimeout(hide, SIDEBAR_PEEK_HIDE_DELAY_MS)
+      const right = asideRef.current?.getBoundingClientRect().right ?? 0
+      if (event.clientX <= right) cancelHide()
+      else scheduleHide()
+    }
+    // `pointerleave` on the column itself also fires when the pointer goes
+    // straight into a framed page, where the document sees no more moves.
+    const aside = asideRef.current
+    const onAsideLeave = (event: PointerEvent) => {
+      if (event.pointerType !== "touch") scheduleHide()
+    }
+    const onAsideEnter = () => {
+      if (open) cancelHide()
     }
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape" && open) hide()
     }
     // The pointer leaving the window (onto another screen, into the browser
-    // chrome) is leaving the column too.
+    // chrome) or focus moving into a frame is leaving the column too.
     const onPointerLeaveWindow = (event: MouseEvent) => {
-      if (open && event.relatedTarget === null && hideTimer === null) {
-        hideTimer = setTimeout(hide, SIDEBAR_PEEK_HIDE_DELAY_MS)
-      }
+      if (event.relatedTarget === null) scheduleHide()
     }
     document.addEventListener("pointermove", onPointerMove)
     document.addEventListener("keydown", onKeyDown)
     document.documentElement.addEventListener("mouseleave", onPointerLeaveWindow)
+    window.addEventListener("blur", scheduleHide)
+    aside?.addEventListener("pointerleave", onAsideLeave)
+    aside?.addEventListener("pointerenter", onAsideEnter)
     return () => {
       cancelHide()
       document.removeEventListener("pointermove", onPointerMove)
       document.removeEventListener("keydown", onKeyDown)
       document.documentElement.removeEventListener("mouseleave", onPointerLeaveWindow)
+      window.removeEventListener("blur", scheduleHide)
+      aside?.removeEventListener("pointerleave", onAsideLeave)
+      aside?.removeEventListener("pointerenter", onAsideEnter)
       setPeeking(false)
     }
   }, [collapsed])
