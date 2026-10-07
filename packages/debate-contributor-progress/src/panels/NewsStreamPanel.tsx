@@ -17,7 +17,9 @@
  * itself without a dependency cycle (e.g. `debate-round`'s
  * `coachingSessionNews()`, passed in from `apps/debate-ai.com/app/news/page.tsx`).
  * Held in a ref rather than a `buildNewsFeed` dependency so a caller passing
- * a fresh array literal each render doesn't re-trigger the mount effect.
+ * a fresh array literal each render doesn't re-trigger the mount effect; the
+ * feed rebuilds only when the set of extra item ids changes (items fetched
+ * after mount, such as the "Following" items for followed teams and schools).
  *
  * An optional `syncRemote` prop closes `packages/debate-help-docs/content/docs/internals/news-stream.mdx`'s
  * "Read/like state is per-browser" Known gap the same way `extraItems`
@@ -47,7 +49,7 @@
 "use client"
 
 import { useEffect, useMemo, useRef, useState } from "react"
-import { Bell, Heart, Megaphone, Sparkles, Trophy } from "lucide-react"
+import { Bell, Heart, Megaphone, Sparkles, Trophy, UserCheck } from "lucide-react"
 import { Badge } from "@debate/research-evidence/src/ui/primitives/badge"
 import { Button } from "@debate/research-evidence/src/ui/primitives/button"
 import { Card, CardContent } from "@debate/research-evidence/src/ui/primitives/card"
@@ -68,6 +70,7 @@ const CATEGORY_ICON: Record<NewsCategory, typeof Bell> = {
   "daily-best-card": Trophy,
   awards: Trophy,
   community: Megaphone,
+  following: UserCheck,
 }
 
 const FILTERS: { value: NewsCategory | "all"; label: string }[] = [
@@ -76,6 +79,7 @@ const FILTERS: { value: NewsCategory | "all"; label: string }[] = [
   { value: "daily-best-card", label: NEWS_CATEGORY_LABELS["daily-best-card"] },
   { value: "awards", label: NEWS_CATEGORY_LABELS.awards },
   { value: "community", label: NEWS_CATEGORY_LABELS.community },
+  { value: "following", label: NEWS_CATEGORY_LABELS.following },
 ]
 
 function relativeTime(timestamp: number): string {
@@ -187,6 +191,19 @@ export function NewsStreamPanel({
       }
     })
   }, [])
+
+  // `extraItems` that arrive after mount (the followed teams' and schools'
+  // items are fetched) rebuild the feed. Keyed on the ids, so a caller's
+  // fresh array literal with the same items changes nothing.
+  const extraItemsKey = extraItems.map((item) => item.id).join("|")
+  const mounted = useRef(false)
+  useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true
+      return
+    }
+    setItems(buildNewsFeed(extraItemsRef.current))
+  }, [extraItemsKey])
 
   /**
    * Cross-tab live update: rebuild the feed and bump `viewerTick` whenever
