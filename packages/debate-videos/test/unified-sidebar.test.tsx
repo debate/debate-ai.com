@@ -19,7 +19,8 @@ vi.mock("next/navigation", () => ({
 
 const { LibrarySidebarTree } = await import("../src/components/category-gallery/LibrarySidebarTree");
 const { SIDEBAR_TOOL_SECTIONS } = await import("../src/components/category-gallery/sidebar-tool-sections");
-const { ResizableSidebarLayout } = await import("../src/ui/layout/ResizableSidebarLayout");
+const { ResizableSidebarLayout, SIDEBAR_DEFAULT_WIDTH, SIDEBAR_MAX_WIDTH, SIDEBAR_MIN_WIDTH, isNearSidebarEdge, sidebarPeekWidth } =
+  await import("../src/ui/layout/ResizableSidebarLayout");
 const {
   SIDEBAR_COLLAPSED_KEY,
   readSidebarCollapsed,
@@ -87,5 +88,21 @@ describe("sidebar-collapse", () => {
     window.removeEventListener("app-sidebar-collapsed-change", listener);
     expect(listener).toHaveBeenCalledTimes(2);
     expect(readSidebarCollapsed()).toBe(false);
+  });
+});
+
+describe("hidden sidebar peek", () => {
+  it("peeks only when the pointer is right at the left edge", () => {
+    expect(isNearSidebarEdge(0)).toBe(true);
+    expect(isNearSidebarEdge(8)).toBe(true);
+    expect(isNearSidebarEdge(9)).toBe(false);
+    expect(isNearSidebarEdge(400)).toBe(false);
+  });
+
+  it("opens at the user's own width, clamped, or the default", () => {
+    expect(sidebarPeekWidth(null)).toBe(SIDEBAR_DEFAULT_WIDTH);
+    expect(sidebarPeekWidth(360)).toBe(360);
+    expect(sidebarPeekWidth(10)).toBe(SIDEBAR_MIN_WIDTH);
+    expect(sidebarPeekWidth(5000)).toBe(SIDEBAR_MAX_WIDTH);
   });
 });

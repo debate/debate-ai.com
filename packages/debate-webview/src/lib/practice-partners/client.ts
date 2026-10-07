@@ -13,6 +13,8 @@
 
 import type {
   ChallengeAction,
+  FindMatchRequest,
+  FindMatchResponse,
   NewChallenge,
   PracticeBoardResponse,
   PracticeChallenge,
@@ -80,6 +82,23 @@ export async function savePracticeProfile(
   );
   if (response.status === 401) throw new Error("Sign in to volunteer for practice rounds.");
   return (await response.json()) as PracticeProfileInput;
+}
+
+/**
+ * Asks the server for one anonymous, compatibility-ranked practice partner.
+ * Resolves to `null` when nobody suitable is open to challenges right now.
+ */
+export async function findPracticeMatch(
+  request: FindMatchRequest = {},
+  options: PracticePartnersClientOptions = {},
+): Promise<FindMatchResponse["match"]> {
+  const response = await requester(options)(
+    "/match",
+    { method: "POST", body: JSON.stringify(request) },
+    "Could not find a match right now.",
+  );
+  if (response.status === 401) throw new Error("Sign in to find a practice partner.");
+  return ((await response.json()) as FindMatchResponse).match;
 }
 
 /** Sends a challenge and returns it as the board will show it. */

@@ -1,14 +1,16 @@
 "use client";
 
 /**
- * @fileoverview The form that challenges one volunteer to a practice round:
- * format, resolution, a proposed time, an optional judge, and a note.
+ * @fileoverview The form that sends a practice-round request to one debater —
+ * usually the anonymous match `MatchFinder` found: format, resolution, a
+ * proposed time and a note.
  *
- * The format list leads with the formats both debaters listed, and the judge
- * list only offers volunteers who judge that format (or listed none), so the
- * defaults are always a round that can actually happen. Nothing is locked,
- * though — a debater may still pick a format the opponent did not list, and the
- * opponent can decline.
+ * The format list leads with the formats both debaters listed, so the default
+ * is always a round that can actually happen. Nothing is locked, though — a
+ * debater may still pick a format the opponent did not list, and the opponent
+ * can decline. No judge is picked here: the list of judge volunteers is not
+ * public, and an accepted round without one is offered to every judge
+ * volunteer to pick up.
  */
 
 import { useMemo, useState, type FormEvent } from "react";
@@ -21,7 +23,6 @@ import {
   PRACTICE_FORMATS,
   type NewChallenge,
   type PracticeFormat,
-  type PracticeVolunteer,
 } from "../../lib/practice-partners/types";
 
 const inputClass =
@@ -34,17 +35,25 @@ export function localInputToSeconds(value: string): number | null {
   return Number.isFinite(ms) ? Math.floor(ms / 1000) : null;
 }
 
+/** Who the request goes to, as far as the challenger may know. */
+export interface ChallengeTarget {
+  /** Unique per target, for element ids. */
+  key: string;
+  /** How the form names them — "your match" for an anonymous one. */
+  label: string;
+  formats: readonly PracticeFormat[];
+}
+
 export interface ChallengeFormProps {
-  opponent: PracticeVolunteer;
+  opponent: ChallengeTarget;
   /** The viewer's own formats, to lead the format list with the shared ones. */
   viewerFormats: readonly PracticeFormat[];
-  /** Every judge volunteer on the board. */
-  judges: readonly PracticeVolunteer[];
-  onSubmit: (challenge: NewChallenge) => Promise<void>;
+  /** Resolves once the request is stored; the caller adds who it goes to. */
+  onSubmit: (challenge: Omit<NewChallenge, "opponentId" | "matchToken">) => Promise<void>;
   onCancel: () => void;
 }
 
-export function ChallengeForm({ opponent, viewerFormats, judges, onSubmit, onCancel }: ChallengeFormProps) {
+export function ChallengeForm({ opponent, viewerFormats, onSubmit, onCancel }: ChallengeFormProps) {
   const formatOptions = useMemo(() => {
     const shared = PRACTICE_FORMATS.filter(
       (format) => opponent.formats.includes(format.id) && viewerFormats.includes(format.id),
@@ -61,15 +70,9 @@ export function ChallengeForm({ opponent, viewerFormats, judges, onSubmit, onCan
   );
   const [topic, setTopic] = useState("");
   const [when, setWhen] = useState("");
-  const [judgeId, setJudgeId] = useState("");
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const judgeOptions = judges.filter(
-    (judge) =>
-      judge.person.id !== opponent.person.id && (judge.formats.length === 0 || judge.formats.includes(format)),
-  );
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -78,8 +81,6 @@ export function ChallengeForm({ opponent, viewerFormats, judges, onSubmit, onCan
     setError(null);
     try {
       await onSubmit({
-        opponentId: opponent.person.id,
-        judgeId: judgeId || null,
         format,
         topic: topic.trim(),
         message: message.trim(),
@@ -91,13 +92,13 @@ export function ChallengeForm({ opponent, viewerFormats, judges, onSubmit, onCan
     }
   }
 
-  const idPrefix = `challenge-${opponent.person.id}`;
+  const idPrefix = `challenge-${opponent.key}`;
 
   return (
     <form
       onSubmit={handleSubmit}
       className="mt-3 flex flex-col gap-3 rounded-lg border border-primary/30 bg-primary/5 p-3"
-      aria-label={`Challenge ${opponent.person.name}`}
+      aria-label={`Send a practice request to ${opponent.label}`}
     >
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground" htmlFor={`${idPrefix}-format`}>
@@ -105,10 +106,7 @@ export function ChallengeForm({ opponent, viewerFormats, judges, onSubmit, onCan
           <select
             id={`${idPrefix}-format`}
             value={format}
-            onChange={(event) => {
-              setFormat(event.target.value as PracticeFormat);
-              setJudgeId("");
-            }}
+            onChange={(event) => setFormat(event.target.value as PracticeFormat)}
             className={cn(inputClass, "h-9")}
           >
             {formatOptions.shared.length > 0 ? (
@@ -121,7 +119,7 @@ export function ChallengeForm({ opponent, viewerFormats, judges, onSubmit, onCan
               </optgroup>
             ) : null}
             {formatOptions.theirs.length > 0 ? (
-              <optgroup label={`${opponent.person.name} debates`}>
+              <optgroup label={`Only ${opponent.label} debates`}>
                 {formatOptions.theirs.map((option) => (
                   <option key={option.id} value={option.id}>
                     {option.label}
@@ -164,23 +162,6 @@ export function ChallengeForm({ opponent, viewerFormats, judges, onSubmit, onCan
         />
       </label>
 
-      <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground" htmlFor={`${idPrefix}-judge`}>
-        Judge (optional)
-        <select
-          id={`${idPrefix}-judge`}
-          value={judgeId}
-          onChange={(event) => setJudgeId(event.target.value)}
-          className={cn(inputClass, "h-9")}
-        >
-          <option value="">No judge yet — let a volunteer pick it up</option>
-          {judgeOptions.map((judge) => (
-            <option key={judge.person.id} value={judge.person.id}>
-              {judge.person.name}
-            </option>
-          ))}
-        </select>
-      </label>
-
       <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground" htmlFor={`${idPrefix}-message`}>
         Message (optional)
         <textarea
@@ -189,7 +170,7 @@ export function ChallengeForm({ opponent, viewerFormats, judges, onSubmit, onCan
           onChange={(event) => setMessage(event.target.value)}
           maxLength={MAX_CHALLENGE_MESSAGE_LENGTH}
           rows={2}
-          placeholder="Side preference, what you want to practise, how to reach you…"
+          placeholder="Side preference, what you want to practise…"
           className={cn(inputClass, "resize-y py-2 leading-6")}
         />
       </label>
@@ -215,7 +196,7 @@ export function ChallengeForm({ opponent, viewerFormats, judges, onSubmit, onCan
           className="inline-flex h-8 items-center gap-1.5 rounded-full bg-primary px-3 text-xs font-medium text-primary-foreground hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
         >
           {sending ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : <Swords className="h-3.5 w-3.5" aria-hidden="true" />}
-          {sending ? "Sending…" : "Send challenge"}
+          {sending ? "Sending…" : "Send request"}
         </button>
       </div>
     </form>

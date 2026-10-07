@@ -7,7 +7,6 @@ import {
   getViewer,
   listChallengesFor,
   listOpenToJudge,
-  listVolunteers,
   loadBlockedIds,
 } from "@/lib/practice-partners/queries";
 import type { PracticeBoardResponse } from "@debate/webview/lib/practice-partners/types";
@@ -15,14 +14,15 @@ import type { PracticeBoardResponse } from "@debate/webview/lib/practice-partner
 /**
  * The practice board — everything the Practice Partners panel draws, in one read.
  *
- * GET — the viewer, their own practice profile, everyone else volunteering to
- *   debate or judge (minus blocks and guest accounts), every challenge the
- *   viewer is in, and — for judge volunteers only — accepted rounds that still
- *   need a judge. Account-only, 401 without a session: the board lists real
- *   people who asked to be contacted by members, not by the open web. See
+ * GET — the viewer, their own practice profile, every challenge the viewer is
+ *   in (the other debater anonymous until accepted), and — for judge
+ *   volunteers only — accepted rounds that still need a judge. Account-only,
+ *   401 without a session. The list of volunteers is deliberately not here:
+ *   partners are found one at a time, anonymously, by `./match`. See
  *   `lib/practice-partners/queries.ts`.
  *
- * Writes go to `./profile` (PUT) and `./challenges` (POST, then PATCH per id).
+ * Writes go to `./profile` (PUT), `./match` (POST) and `./challenges` (POST,
+ * then PATCH per id).
  */
 
 export const GET = withRouteErrors("GET /api/practice-partners", async () => {
@@ -43,15 +43,11 @@ export const GET = withRouteErrors("GET /api/practice-partners", async () => {
     loadBlockedIds(db, userId),
     listChallengesFor(db, userId),
   ]);
-  const [volunteers, openToJudge] = await Promise.all([
-    listVolunteers(db, userId, blocked),
-    profile?.asJudge ? listOpenToJudge(db, userId, blocked, nowSeconds) : Promise.resolve([]),
-  ]);
+  const openToJudge = profile?.asJudge ? await listOpenToJudge(db, userId, blocked, nowSeconds) : [];
 
   const body: PracticeBoardResponse = {
     viewer: { id: viewer.id, name: viewer.name, imageUrl: viewer.imageUrl },
     profile,
-    volunteers,
     challenges,
     openToJudge,
   };

@@ -2420,6 +2420,8 @@ export type PredictionBetRow = typeof predictionBets.$inferSelect;
 // season and voting again overwrites it rather than adding a second row. `area`
 // is a topic-area name from @debate/videos' resolutions.json, checked by the
 // API before it is written. Created by packages/debate-videos/migrations.
+// Superseded by `topicAreaRankings` (ranked ballots), which copied these rows
+// in as first choices; nothing reads or writes this table any more.
 export const topicAreaVotes = sqliteTable(
   "topic_area_votes",
   {
@@ -2441,6 +2443,33 @@ export const topicAreaVotes = sqliteTable(
 );
 
 export type TopicAreaVoteRow = typeof topicAreaVotes.$inferSelect;
+
+// Ranked ballots in the next-season topic-area poll (/practice/statistics):
+// one row per choice, so a ballot is up to five rows (rank 1 = first choice)
+// for one (season, user). Casting a new ballot deletes the user's rows for
+// that season and writes the new ones. `area` is a topic-area name checked by
+// the API. Replaces `topic_area_votes` (single-choice), whose rows were copied
+// in as first choices. Created by packages/debate-videos/migrations.
+export const topicAreaRankings = sqliteTable(
+  "topic_area_rankings",
+  {
+    season: integer("season").notNull(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    rank: integer("rank").notNull(),
+    area: text("area").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.season, table.userId, table.rank] }),
+    seasonIdx: index("idx_topic_area_rankings_season").on(table.season),
+  }),
+);
+
+export type TopicAreaRankingRow = typeof topicAreaRankings.$inferSelect;
 
 // A signed-in user following a team or school profile (/teams/[team],
 // /schools/[school]). Keyed on (user, kind, slug), so following twice is a
