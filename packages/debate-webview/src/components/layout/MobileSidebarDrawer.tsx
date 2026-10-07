@@ -3,7 +3,7 @@
 import { useEffect } from "react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { usePathname } from "next/navigation"
-import { QuickLinksGrid, ToolNavTree, ToolSidebarFooter } from "@debate/videos"
+import { LibrarySidebarTree, ToolSidebarFooter } from "@debate/videos"
 import { ReasonDocsSidebarPanels } from "../reason-docs/ReasonDocsSidebarPanels"
 import { ChromeErrorBoundary } from "../../lib/ui/layout/chrome-error-boundary"
 import { mobileSidebarKind } from "../../lib/mobile-sidebar"
@@ -46,14 +46,11 @@ export function MobileSidebarDrawer({
                 fill={kind === "cards"}
               />
             )}
-            {kind === "videos" && (
-              <div className="mb-3">
-                <QuickLinksGrid layout="list" />
-              </div>
-            )}
+            {/* The same tree as the desktop column, on every view: Round Videos,
+                Lectures and the tool sections. */}
             {kind !== "cards" && kind !== "own" && (
               <>
-                <ToolNavTree defaultExpanded={kind === "tools"} />
+                <LibrarySidebarTree />
                 <ToolSidebarFooter />
               </>
             )}
