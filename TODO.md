@@ -59,14 +59,7 @@
 
 ## In Progress
 
-### Account-synced user data across all tools (user settings + SQL)
-
-- Branch: `claude/gifted-babbage-c11oc8`
-- [x] Audit local-only tool stores vs. the `saved_tool_records` catalog (SQL layer for settings, flows, rounds and 64+ tool collections already exists)
-- [x] Sync pinned debates to the account (`pinnedDebates` catalog entry, legacy `pinned-debates` migration, tests, docs in `round-cloud-save.mdx`)
-- [x] Sync speech-doc links (`speech-doc-links`; keyed by scope + speech, points at `documents.id`)
-- [x] Sync flow-editor display/keymap settings (`ebb-display-settings`, `ebb-keymap-settings`) through `user_settings` (`flow_editor_settings` column, `@debate/flow-ebb/account-settings`, `useAccountFlowSettingsSync`; docs in `user-settings.mdx`)
-- [x] Tool UI pass: surface sync status and pin/save controls in each tool's header. Audit (2026-10-07): every route with a synced collection mounts `ToolSyncBadge` (via `ToolPageHeader` or its own bar; `/reason-editor` via `ReasonEditorStatusLine`, `/doc` and the open round via their own bars). The routes without one (`/tournaments`, `/tabroom`, `/settings/*`, `/coaching/laptopless`, `/features`, `/legal`, `/auth/*`, `/login`) have no `TOOL_RECORD_COLLECTIONS` entry, so there is nothing to badge. Only the test-environment follow-ups under "Tool UI pass: tool page header" remain
+_(moved to Completed — see "Account-synced user data across all tools")_
 
 ---
 
@@ -116,6 +109,17 @@
 - [ ] Follow-up: DOM-level click test for `ToolSyncBadge` (no `@testing-library/react` in webview tests)
 
 ## Completed
+
+### Account-synced user data across all tools (user settings + SQL)
+
+- Branch: `claude/gifted-babbage-c11oc8`
+- [x] Audit local-only tool stores vs. the `saved_tool_records` catalog (SQL layer for settings, flows, rounds and 64+ tool collections already exists)
+- [x] Sync pinned debates to the account (`pinnedDebates` catalog entry, legacy `pinned-debates` migration, tests, docs in `round-cloud-save.mdx`)
+- [x] Sync speech-doc links (`speech-doc-links`; keyed by scope + speech, points at `documents.id`)
+- [x] Sync flow-editor display/keymap settings (`ebb-display-settings`, `ebb-keymap-settings`) through `user_settings` (`flow_editor_settings` column, `@debate/flow-ebb/account-settings`, `useAccountFlowSettingsSync`; docs in `user-settings.mdx`)
+- [x] Tool UI pass: surface sync status and pin/save controls in each tool's header. Audit (2026-10-07): every route with a synced collection mounts `ToolSyncBadge` (via `ToolPageHeader` or its own bar; `/reason-editor` via `ReasonEditorStatusLine`, `/doc` and the open round via their own bars). The routes without one (`/tournaments`, `/tabroom`, `/settings/*`, `/coaching/laptopless`, `/features`, `/legal`, `/auth/*`, `/login`) have no `TOOL_RECORD_COLLECTIONS` entry, so there is nothing to badge. Only the test-environment follow-ups under "Tool UI pass: tool page header" remain
+- Verified 2026-10-07 (`bun install --frozen-lockfile`; `bunx vitest run --config apps/debate-ai.com/vitest.config.ts` over `packages/debate-webview/test/components/tools`, `test/routes/cards`, `test/routes/videos-routes-sync-badge.test.tsx`): 16 tests pass in 5 suites; `ToolPageHeader.test.tsx` and `videos-routes-sync-badge.test.tsx` cannot load without the `debate-rankings` submodule (env, tracked under "Tool UI pass: tool page header")
+
 
 ### Sync flow-editor display/keymap settings to the account
 
