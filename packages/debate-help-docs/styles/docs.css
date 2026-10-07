@@ -96,6 +96,25 @@
   --fd-layout-width: 1400px;
 }
 
+/*
+ * One sidebar on desktop: the app's. Its column (the web app's
+ * `DocsAppChrome`) carries this page tree as one of its sections
+ * (`components/fumadocs/layout/app-sidebar-docs-tree.tsx`), so Fumadocs' own
+ * desktop sidebar is hidden and its grid column closed. `!important` beats
+ * Fumadocs' `md:layout:[--fd-sidebar-width:268px]`, which sets the width from
+ * a `:has()` selector. Below `md` nothing changes: Fumadocs' drawer is the
+ * docs' navigation there, since the app's column is not drawn.
+ */
+@media (min-width: 768px) {
+  #nd-notebook-layout {
+    --fd-sidebar-width: 0px !important;
+  }
+
+  #nd-notebook-layout > [data-sidebar-placeholder] {
+    display: none;
+  }
+}
+
 /* Typography for MDX content */
 .prose a {
   color: var(--color-fd-primary);

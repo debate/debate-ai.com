@@ -11,6 +11,7 @@ import {
   useVideoPlayerStore,
   sendYouTubeCommand,
   useCategoryDockState,
+  useSidebarCollapsed,
   type CategoryType,
 } from "@debate/videos"
 import {
@@ -29,7 +30,7 @@ import { themeNames, themeColors, formatThemeName, useThemeState } from "../them
 import { LoginDialog } from "./LoginDialog"
 import { useSignOut } from "../../lib/auth/use-sign-out"
 import { useSession } from "../../lib/hooks/useSession"
-import { hasEmbeddedDock, hostsOwnSidebarDock, isGenericToolSidebarRoute } from "../../lib/sidebar-routes"
+import { hasEmbeddedDock, hostsOwnSidebarDock } from "../../lib/sidebar-routes"
 import { SIDEBAR_MENU_SECTIONS, SITE_LINKS } from "../../lib/nav/dock-menu-sections"
 import { NAV_ITEMS } from "../../lib/nav/dock-nav-items"
 import { dockIdlePrefetchTargets, scheduleDockIdlePrefetch } from "../../lib/nav/dock-idle-prefetch"
@@ -549,6 +550,7 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
   // when it closes, which would tear the dialog down with it.
   const [loginOpen, setLoginOpen] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const sidebarCollapsed = useSidebarCollapsed()
   const { isAuthenticated } = useSession()
   // Called for their app-wide side effects, not for anything this component
   // renders: `useAccountNotifications` is what toasts a notification that
@@ -685,10 +687,12 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
     )
   }
 
-  // The generic sidebar routes (and routes that host their own sidebar dock
-  // like /doc) render an embedded dock inside their sidebar (md+), so the
-  // fixed top-left floating dock stays hidden rather than showing twice.
-  const suppressDesktopDock = isGenericToolSidebarRoute(activePath) || hostsOwnSidebarDock(activePath)
+  // The sidebar routes (and routes that host their own sidebar dock like
+  // /research/docs) render an embedded dock inside their sidebar (md+), so the
+  // fixed top-left floating dock stays hidden rather than showing twice —
+  // unless the reader hid the app sidebar, which takes its dock with it.
+  const suppressDesktopDock =
+    hostsOwnSidebarDock(activePath) || (!sidebarCollapsed && hasEmbeddedDock(activePath))
 
   return (
     <>

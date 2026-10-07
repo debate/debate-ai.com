@@ -25,6 +25,13 @@
  *   with CSS rather than unmounted, so crossing the breakpoint never remounts
  *   the page beside them (a framed destination would reload).
  *
+ * - **It can be hidden.** The button at the foot of the column, Ctrl/Cmd+B
+ *   (outside text fields, where it means bold), or dragging the handle past
+ *   half the minimum width collapses the column to nothing; a tab on the left
+ *   edge, the same shortcut or dragging the handle back out brings it back.
+ *   The choice is one for the whole app (`sidebar-collapse.ts`), so it holds
+ *   across pages, and the app dock floats while the column is hidden.
+ *
  * While a drag is in progress the library sets `pointer-events: none` on the
  * panels, so a same-origin frame in the content column cannot swallow the
  * pointer mid-drag.
@@ -33,10 +40,12 @@
  */
 
 import type React from "react"
-import { useCallback, useLayoutEffect, useRef } from "react"
+import { useCallback, useEffect, useLayoutEffect, useRef } from "react"
+import { PanelLeftClose, PanelLeftOpen } from "lucide-react"
 import { Group, Panel, Separator, usePanelRef, type PanelSize } from "react-resizable-panels"
 
 import { cn } from "../lib/utils"
+import { setSidebarCollapsed, toggleSidebarCollapsed, useSidebarCollapsed } from "./sidebar-collapse"
 
 /** localStorage key for the sidebar width the user last dragged to, in px. */
 export const SIDEBAR_WIDTH_KEY = "app-sidebar-width"
@@ -65,13 +74,15 @@ function writeStoredWidth(px: number) {
 }
 
 export interface ResizableSidebarLayoutProps {
-  /** Contents of the sidebar `<aside>`. */
+  /** Contents of the sidebar `<aside>`, in its scrolling area. */
   sidebar: React.ReactNode
+  /** Pinned under the scrolling area, beside the hide button (e.g. the account menu). */
+  footer?: React.ReactNode
   /** The page beside the sidebar. */
   children: React.ReactNode
   /** Classes for the outer row (e.g. its background). */
   className?: string
-  /** Extra classes for the `<aside>`. */
+  /** Extra classes for the `<aside>`'s scrolling area. */
   sidebarClassName?: string
   /** Classes for the content column. */
   contentClassName?: string
@@ -81,6 +92,7 @@ export interface ResizableSidebarLayoutProps {
 
 export function ResizableSidebarLayout({
   sidebar,
+  footer,
   children,
   className,
   sidebarClassName,
@@ -104,8 +116,43 @@ export function ResizableSidebarLayout({
     restored.current = true
   }, [panelRef])
 
+  const collapsed = useSidebarCollapsed()
+
+  // The shared choice drives the panel. `collapse()`/`expand()` are no-ops
+  // when the panel is already in that state, so this is safe to repeat.
+  useEffect(() => {
+    const panel = panelRef.current
+    if (!panel) return
+    try {
+      if (collapsed) panel.collapse()
+      else panel.expand()
+    } catch {
+      // Not registered with its group yet; the next change applies it.
+    }
+  }, [collapsed, panelRef])
+
+  // Ctrl/Cmd+B, except where it already means bold (inputs, editors).
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key.toLowerCase() !== "b" || !(event.metaKey || event.ctrlKey)) return
+      if (event.altKey || event.shiftKey || isEditableTarget(event.target)) return
+      event.preventDefault()
+      toggleSidebarCollapsed()
+    }
+    window.addEventListener("keydown", onKeyDown)
+    return () => window.removeEventListener("keydown", onKeyDown)
+  }, [])
+
   const handleResize = useCallback((size: PanelSize, _id: unknown, prev: PanelSize | undefined) => {
-    if (!restored.current || !prev || size.inPixels <= 0) return
+    if (!restored.current || !prev) return
+    // A drag past the collapse threshold, or back out of it, is the same
+    // choice as the button. Transitions only: the mount-time reports go from
+    // one open width to another, so they never overwrite the stored choice.
+    if (size.inPixels <= 0) {
+      if (prev.inPixels > 0) setSidebarCollapsed(true)
+      return
+    }
+    if (prev.inPixels <= 0) setSidebarCollapsed(false)
     writeStoredWidth(size.inPixels)
   }, [])
 
@@ -130,18 +177,32 @@ export function ResizableSidebarLayout({
         defaultSize={SIDEBAR_DEFAULT_WIDTH}
         minSize={SIDEBAR_MIN_WIDTH}
         maxSize={SIDEBAR_MAX_WIDTH}
+        collapsible
+        collapsedSize={0}
         groupResizeBehavior="preserve-pixel-size"
         onResize={handleResize}
         style={{ overflow: "visible", maxHeight: "none" }}
       >
         <aside
           data-app-chrome={appChrome || undefined}
-          className={cn(
-            "hidden md:flex w-full min-w-0 flex-col h-screen sticky top-0 overflow-y-auto bg-background/40 gap-4 p-3",
-            sidebarClassName,
-          )}
+          data-collapsed={collapsed || undefined}
+          className="hidden md:flex w-full min-w-0 flex-col h-screen sticky top-0 overflow-hidden bg-background/40 data-[collapsed]:invisible"
         >
-          {sidebar}
+          <div className={cn("flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-3", sidebarClassName)}>
+            {sidebar}
+          </div>
+          <div className="flex shrink-0 items-center gap-1 border-t border-border/60 px-2 py-1.5">
+            <div className="min-w-0 flex-1">{footer}</div>
+            <button
+              type="button"
+              onClick={() => setSidebarCollapsed(true)}
+              aria-label="Hide sidebar"
+              title="Hide sidebar (Ctrl+B)"
+              className="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+            >
+              <PanelLeftClose className="size-4" />
+            </button>
+          </div>
         </aside>
       </Panel>
       <Separator
@@ -163,6 +224,25 @@ export function ResizableSidebarLayout({
             bottom dock centred itself in that, off to the right. */}
         <div className={cn("relative min-w-0", contentClassName)}>{children}</div>
       </Panel>
+      {collapsed && (
+        <button
+          type="button"
+          data-app-chrome={appChrome || undefined}
+          onClick={() => setSidebarCollapsed(false)}
+          aria-label="Show sidebar"
+          title="Show sidebar (Ctrl+B)"
+          className="fixed left-0 top-1/2 z-40 hidden -translate-y-1/2 items-center justify-center rounded-r-md border border-l-0 border-border bg-background py-3 pl-1 pr-1.5 text-muted-foreground shadow-sm transition-colors hover:bg-accent hover:text-foreground md:flex"
+        >
+          <PanelLeftOpen className="size-4" />
+        </button>
+      )}
     </Group>
   )
+}
+
+/** Text fields and rich-text editors, where Ctrl/Cmd+B is bold rather than ours. */
+function isEditableTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false
+  if (target.isContentEditable) return true
+  return target.closest("input, textarea, select, [contenteditable=''], [contenteditable='true']") !== null
 }
