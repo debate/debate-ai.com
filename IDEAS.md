@@ -53,7 +53,7 @@
 ## Account sync of tools (In Progress)
 
 - [x] Speech-doc links (editor document <-> round/flow speech) sync via the `speechDocLinks` tool-record collection
-- [ ] Pinned debates (`pinned-debates`, numeric round ids) - needs a `user_settings` op or an id-carrying record shape; blocked on a schema migration path since `drizzle/` was removed on purpose
+- [x] Pinned debates - synced via the `pinnedDebates` tool-record collection (`{ roundId, pinnedAt }`; PR #1095)
 - [x] Flow tabs show a saved-to-account marker (rounds start screen and other tools still to do)
 
 ---
