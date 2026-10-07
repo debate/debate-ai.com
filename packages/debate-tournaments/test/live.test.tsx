@@ -15,7 +15,7 @@ import {
   type LiveRoomInput,
 } from "../src/ui/live/demo-live";
 import { LiveRoundBadge, LiveStatusCell } from "../src/ui/live/LiveRoom";
-import { Schematic } from "../src/ui/pages/RoundPage";
+import { PAIRINGS_EMBLEM, Schematic } from "../src/ui/pages/RoundPage";
 
 const room: LiveRoomInput = { sectionId: 4242, eventAbbr: "VCX", eventType: "debate", entries: ["Alpha AB", "Beta CD"], judgeCount: 3 };
 
@@ -91,6 +91,17 @@ describe("demo live simulation", () => {
 });
 
 describe("live UI", () => {
+  const round = {
+    id: 7,
+    name: 1,
+    label: null,
+    type: "prelim",
+    tz: null,
+    startTime: null,
+    Event: { id: 1, name: "Varsity Policy", abbr: "VCX", type: "debate" },
+    Sections: { "1": { id: 4242, letter: "1", flight: null, Entries: { "1": { id: 1, code: "Alpha AB", side: 1 }, "2": { id: 2, code: "Beta CD", side: 2 } } } },
+  };
+
   it("renders the status cell with the current speech and a tune-in button", () => {
     const html = renderToString(<LiveStatusCell room={room} roundId={7} now={findPhase("live")} open={false} onToggle={() => {}} />);
     expect(html).toContain('data-live-phase="live"');
@@ -104,17 +115,11 @@ describe("live UI", () => {
   });
 
   it("adds a Live column to the demo's pairings only", () => {
-    const round = {
-      id: 7,
-      name: 1,
-      label: null,
-      type: "prelim",
-      tz: null,
-      startTime: null,
-      Event: { id: 1, name: "Varsity Policy", abbr: "VCX", type: "debate" },
-      Sections: { "1": { id: 4242, letter: "1", flight: null, Entries: { "1": { id: 1, code: "Alpha AB", side: 1 }, "2": { id: 2, code: "Beta CD", side: 2 } } } },
-    };
     expect(renderToString(<Schematic round={round} live />)).toContain(">Live<");
     expect(renderToString(<Schematic round={round} />)).not.toContain(">Live<");
+  });
+
+  it("shows the emblem in the pairings header on every tournament", () => {
+    expect(renderToString(<Schematic round={round} />)).toContain(PAIRINGS_EMBLEM);
   });
 });

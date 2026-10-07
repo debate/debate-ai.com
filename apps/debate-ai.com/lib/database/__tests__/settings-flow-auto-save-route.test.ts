@@ -1,6 +1,6 @@
 /**
- * @fileoverview `/api/settings` `flowAutoSaveMode` GET/PUT against a real
- * SQLite database: null default, validation, persistence and per-user isolation.
+ * @fileoverview `/api/settings` `flowAutoSave` GET/PUT against a real
+ * SQLite database: validation, persistence and per-user isolation.
  */
 
 import { drizzle } from "drizzle-orm/libsql";
@@ -17,11 +17,18 @@ vi.mock("@/lib/auth/session", () => ({ getUserId: async () => signedInAs }));
 
 const { GET, PUT } = await import("@/app/api/settings/route");
 
-const put = (body: unknown) =>
-  PUT(new Request("https://d.ebate.app/api/settings", { method: "PUT", body: JSON.stringify(body) }) as never);
+function put(body: unknown) {
+  return PUT(
+    new Request("https://d.ebate.app/api/settings", {
+      method: "PUT",
+      body: typeof body === "string" ? body : JSON.stringify(body),
+    }) as never,
+  );
+}
+
 const get = () => GET(new Request("https://d.ebate.app/api/settings") as never);
 
-describe("/api/settings flowAutoSaveMode", () => {
+describe("/api/settings flowAutoSave", () => {
   beforeEach(async () => {
     signedInAs = "user-1";
     db = drizzle(await freshSchemaClient(), { schema });
@@ -31,26 +38,33 @@ describe("/api/settings flowAutoSaveMode", () => {
     );
   });
 
-  it("returns null until a mode is chosen", async () => {
-    expect((await (await get()).json()).flowAutoSaveMode).toBeNull();
+  it("is null until a device syncs a choice", async () => {
+    expect((await (await get()).json()).flowAutoSave).toBeNull();
   });
 
-  it("saves and returns each mode", async () => {
+  it("rejects signed-out writes", async () => {
+    signedInAs = null;
+    expect((await put({ flowAutoSave: "all" })).status).toBe(401);
+  });
+
+  it("saves each mode and returns it", async () => {
     for (const mode of ["all", "off", "saved"]) {
-      expect((await put({ flowAutoSaveMode: mode })).status).toBe(200);
-      expect((await (await get()).json()).flowAutoSaveMode).toBe(mode);
+      const res = await put({ flowAutoSave: mode });
+      expect(res.status).toBe(200);
+      expect((await res.json()).flowAutoSave).toBe(mode);
+      expect((await (await get()).json()).flowAutoSave).toBe(mode);
     }
   });
 
-  it("rejects an unknown mode without changing the stored one", async () => {
-    await put({ flowAutoSaveMode: "all" });
-    expect((await put({ flowAutoSaveMode: "sometimes" })).status).toBe(400);
-    expect((await (await get()).json()).flowAutoSaveMode).toBe("all");
+  it("rejects unknown modes without writing", async () => {
+    await put({ flowAutoSave: "all" });
+    expect((await put({ flowAutoSave: "always" })).status).toBe(400);
+    expect((await (await get()).json()).flowAutoSave).toBe("all");
   });
 
-  it("keeps modes per user", async () => {
-    await put({ flowAutoSaveMode: "off" });
+  it("keeps each user's mode separate", async () => {
+    await put({ flowAutoSave: "off" });
     signedInAs = "user-2";
-    expect((await (await get()).json()).flowAutoSaveMode).toBeNull();
+    expect((await (await get()).json()).flowAutoSave).toBeNull();
   });
 });
