@@ -125,7 +125,7 @@ describe("SIDEBAR_TOOL_SECTIONS", () => {
     );
     expect(SIDEBAR_TOOL_SECTIONS.map((section) => section.title)).toEqual([
       "Research",
-      "Prep & Scout",
+      "Prepare",
       "Practice",
       "Coaching",
       "Insights",
