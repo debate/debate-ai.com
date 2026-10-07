@@ -49,141 +49,53 @@ function EmphasizedPercent({
   );
 }
 
-/** The triangle that caps a bias bar, pointing the way the offset leans. */
-function BiasMarker({ side, value }: { side: "aff" | "neg"; value: number }) {
+/** "Aff +2.50" / "Neg +1.20" / "Even" — how far a split leans from 50%. */
+function SkewLabel({ aff }: { aff: number }) {
+  const skew = aff - 50;
   return (
     <span
-      aria-hidden
-      className={`pointer-events-none absolute top-1/2 -translate-x-1/2 -translate-y-1/2 text-[10px] leading-none ${
-        side === "aff"
-          ? "text-blue-600 dark:text-blue-400"
-          : "text-red-600 dark:text-red-400"
-      }`}
-      style={{ left: `${value}%` }}
+      className={
+        skew === 0
+          ? ""
+          : skew > 0
+            ? "font-medium text-blue-600 dark:text-blue-400"
+            : "font-medium text-red-600 dark:text-red-400"
+      }
     >
-      {side === "aff" ? "▲" : "▼"}
+      {skew === 0
+        ? "Even"
+        : `${skew > 0 ? "Aff" : "Neg"} +${Math.abs(skew).toFixed(2)}`}
     </span>
   );
 }
 
 /**
- * One elim win rate drawn as a bar that starts at the 50% parity line and runs
- * to the value, so the bar's length *is* the offset bias, with a triangle
- * marker on the endpoint pointing the way the bias leans.
+ * One aff/neg split drawn as a diverging bar with the 50% line marked, the
+ * aff and neg win rates under it and the lean on the right of its label.
  */
-function BiasBar({ side, value }: { side: "aff" | "neg"; value: number }) {
-  const start = Math.min(50, value);
-  const width = Math.abs(value - 50);
-  return (
-    <div className="relative h-3.5 rounded-sm bg-muted">
-      <span
-        className={`absolute inset-y-0 rounded-sm ${SPEECH_SIDE_STYLES[side].dot} transition-all duration-500`}
-        style={{ left: `${start}%`, width: `${width}%` }}
-      />
-      <span className="absolute inset-y-0 left-1/2 w-px bg-background" />
-      <BiasMarker side={side} value={value} />
-    </div>
-  );
-}
-
-/**
- * The two elim win rates overlaid on one chart: both bars share a single track
- * that is anchored at the 50% parity line, so the pair reads as one mirrored
- * bias rather than two independent percentages.
- */
-function ElimSideBiasCard({
+function SideSplitBar({
+  label,
   aff,
   neg,
 }: {
+  label: string;
   aff: number | null;
   neg: number | null;
 }) {
-  const skew = aff !== null && neg !== null ? aff - 50 : null;
   return (
-    <div className="col-span-2 rounded-lg border bg-card px-3 py-2">
-      <div className="mb-1.5 flex items-center justify-between text-xs text-muted-foreground">
-        <span>Elim side bias</span>
-        {skew !== null && (
-          <span
-            className={
-              skew === 0
-                ? ""
-                : skew > 0
-                  ? "font-medium text-blue-600 dark:text-blue-400"
-                  : "font-medium text-red-600 dark:text-red-400"
-            }
-          >
-            {skew === 0
-              ? "Even"
-              : `${skew > 0 ? "Aff" : "Neg"} +${Math.abs(skew).toFixed(2)}`}
-          </span>
-        )}
+    <div>
+      <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+        <span>{label}</span>
+        {aff !== null && neg !== null && <SkewLabel aff={aff} />}
       </div>
       {aff === null || neg === null ? (
-        <div className="text-lg font-semibold text-muted-foreground">—</div>
-      ) : (
-        <>
-          <div
-            className="space-y-1"
-            role="img"
-            aria-label={`Aff elim win rate ${aff.toFixed(2)} percent, neg elim win rate ${neg.toFixed(2)} percent, bars measured from the 50 percent parity line.`}
-          >
-            <BiasBar side="aff" value={aff} />
-            <BiasBar side="neg" value={neg} />
-          </div>
-          <div className="mt-1.5 flex justify-between text-xs text-muted-foreground">
-            <span>
-              Aff elim <EmphasizedPercent value={aff} side="aff" />
-            </span>
-            <span>
-              Neg elim <EmphasizedPercent value={neg} side="neg" />
-            </span>
-          </div>
-        </>
-      )}
-    </div>
-  );
-}
-
-/**
- * The field-wide aff/neg split for regular rounds, as one diverging bar with
- * the 50% line marked — how far the whole field's results lean to a side.
- */
-function SideBiasCard({
-  aff,
-  neg,
-}: {
-  aff: number | null;
-  neg: number | null;
-}) {
-  const skew = aff !== null && neg !== null ? aff - 50 : null;
-  return (
-    <div className="col-span-2 rounded-lg border bg-card px-3 py-2">
-      <div className="mb-1.5 flex items-center justify-between text-xs text-muted-foreground">
-        <span>Side bias</span>
-        {skew !== null && (
-          <span
-            className={
-              skew === 0
-                ? ""
-                : skew > 0
-                  ? "font-medium text-blue-600 dark:text-blue-400"
-                  : "font-medium text-red-600 dark:text-red-400"
-            }
-          >
-            {skew === 0
-              ? "Even"
-              : `${skew > 0 ? "Aff" : "Neg"} +${Math.abs(skew).toFixed(1)}`}
-          </span>
-        )}
-      </div>
-      {aff === null || neg === null ? (
-        <div className="text-lg font-semibold text-muted-foreground">—</div>
+        <div className="relative h-3 rounded-sm bg-muted" aria-hidden />
       ) : (
         <>
           <div
             className="relative flex h-3 overflow-hidden rounded-sm bg-muted"
-            aria-hidden
+            role="img"
+            aria-label={`${label}: aff ${aff.toFixed(2)} percent, neg ${neg.toFixed(2)} percent.`}
           >
             <span
               className={`${SPEECH_SIDE_STYLES.aff.dot} transition-[width] duration-500`}
@@ -194,7 +106,7 @@ function SideBiasCard({
             />
             <span className="absolute inset-y-0 left-1/2 w-px bg-background" />
           </div>
-          <div className="mt-1.5 flex justify-between text-xs text-muted-foreground">
+          <div className="mt-1 flex justify-between text-xs text-muted-foreground">
             <span>
               Aff <EmphasizedPercent value={aff} side="aff" />
             </span>
@@ -209,9 +121,37 @@ function SideBiasCard({
 }
 
 /**
- * The field-wide side bias (aff vs. neg win rate, as one split bar) plus the
- * elimination-round win rates overlaid on one parity-anchored chart, the entry
- * count, and the list of tournaments that fed the ratings (majors marked, since
+ * The field-wide side bias as one chart with two bars: the aff/neg split for
+ * prelims and the same split for elims, stacked on a shared 50% line so the
+ * two round types compare at a glance.
+ */
+function SideBiasCard({
+  aff,
+  neg,
+  affElim,
+  negElim,
+}: {
+  aff: number | null;
+  neg: number | null;
+  affElim: number | null;
+  negElim: number | null;
+}) {
+  return (
+    <div className="col-span-2 rounded-lg border bg-card px-3 py-2 sm:col-span-4">
+      <div className="mb-1.5 text-xs font-medium text-muted-foreground">
+        Side bias
+      </div>
+      <div className="space-y-2">
+        <SideSplitBar label="Prelims" aff={aff} neg={neg} />
+        <SideSplitBar label="Elims" aff={affElim} neg={negElim} />
+      </div>
+    </div>
+  );
+}
+
+/**
+ * The field-wide side bias (prelim and elim aff vs. neg win rates, as two
+ * split bars on one chart), the entry count, and the list of tournaments that fed the ratings (majors marked, since
  * they count double).
  *
  * @param props.dataset - The loaded rankings dataset.
@@ -225,6 +165,8 @@ export function RankingsFieldSummary({ dataset }: { dataset: RankingDataset }) {
         <SideBiasCard
           aff={field?.affWinRate ?? null}
           neg={field?.negWinRate ?? null}
+          affElim={field?.affElimWinRate ?? null}
+          negElim={field?.negElimWinRate ?? null}
         />
         <div className="col-span-2 rounded-lg border bg-card px-3 py-2 sm:col-span-1">
           <div className="text-xs text-muted-foreground">Ranked entries</div>
@@ -232,10 +174,6 @@ export function RankingsFieldSummary({ dataset }: { dataset: RankingDataset }) {
             {dataset.entries.length}
           </div>
         </div>
-        <ElimSideBiasCard
-          aff={field?.affElimWinRate ?? null}
-          neg={field?.negElimWinRate ?? null}
-        />
       </div>
       {dataset.tournaments.length > 0 && (
         <p className="text-xs text-muted-foreground">
