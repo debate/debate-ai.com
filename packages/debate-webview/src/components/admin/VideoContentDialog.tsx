@@ -48,6 +48,12 @@ import {
  */
 
 /** The video this dialog is editing, as the library table holds it. */
+/** `GET /api/admin/videos/library/[id]/audio?status=1`. */
+interface AudioExtractStatus {
+  audioService: boolean;
+  transcription: { provider: string; model: string } | null;
+}
+
 export interface ContentDialogVideo {
   videoId: string;
   title: string;
@@ -139,6 +145,8 @@ export function VideoContentDialog({ video, onOpenChange, onSaved }: VideoConten
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
+  const [isTranscribing, setIsTranscribing] = useState(false);
+  const [audioStatus, setAudioStatus] = useState<AudioExtractStatus | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
 
@@ -191,6 +199,16 @@ export function VideoContentDialog({ video, onOpenChange, onSaved }: VideoConten
     setNote("");
     void load();
   }, [videoId, load]);
+
+  // Which halves of audio extraction this deployment has configured, so the
+  // buttons can say why they are off instead of failing on click.
+  useEffect(() => {
+    if (!videoId || audioStatus) return;
+    fetch(`/api/admin/videos/library/${videoId}/audio?status=1`)
+      .then((res) => (res.ok ? (res.json() as Promise<AudioExtractStatus>) : null))
+      .then((status) => status && setAudioStatus(status))
+      .catch(() => undefined);
+  }, [videoId, audioStatus]);
 
   // Search the published library for something to link. Debounced, because
   // this fires on every keystroke against the same endpoint the table pages.
@@ -298,6 +316,48 @@ export function VideoContentDialog({ video, onOpenChange, onSaved }: VideoConten
       setError((err as Error).message);
     } finally {
       setIsImporting(false);
+    }
+  };
+
+  /**
+   * For a video YouTube never captioned: the server downloads its audio
+   * through the extract-youtube media API, runs it through Whisper, and the
+   * timed result fills the box exactly as imported captions would. Nothing is
+   * saved until the editor saves, but the timed captions are stored for the
+   * player's synced-captions panel right away.
+   */
+  const handleTranscribeAudio = async () => {
+    if (!videoId || !activeDocument) return;
+    if (
+      activeDocument.body.trim() &&
+      !window.confirm("Replace what's in the box with a transcript of the video's audio?")
+    ) {
+      return;
+    }
+    setIsTranscribing(true);
+    setError(null);
+    setNotice("Downloading and transcribing the audio — this takes a minute for a full round…");
+    try {
+      const res = await fetch(`/api/admin/videos/library/${videoId}/audio`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ language: "en" }),
+      });
+      const body = await readJsonResponse<{ snippets?: CaptionCue[]; model?: string }>(
+        res,
+        "Could not transcribe the audio",
+      );
+      const markdown = captionsToTranscriptMarkdown(body.snippets ?? []);
+      if (!markdown) throw new Error("The transcription came back empty.");
+      patchDocument(activeDocument.kind, { body: markdown, author: "ai", model: body.model ?? null });
+      setNotice(
+        "Transcribed the audio. Check the wording, rename the “Part” headings to the speeches, then save.",
+      );
+    } catch (err) {
+      setNotice(null);
+      setError((err as Error).message);
+    } finally {
+      setIsTranscribing(false);
     }
   };
 
@@ -501,6 +561,40 @@ export function VideoContentDialog({ video, onOpenChange, onSaved }: VideoConten
                     title="Fill the box with YouTube's captions, split into timed parts"
                   >
                     {isImporting ? "Importing…" : "Import YouTube captions"}
+                  </Button>
+                )}
+                {activeDocument.kind === "transcript" && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleTranscribeAudio}
+                    disabled={
+                      isTranscribing ||
+                      isImporting ||
+                      isSaving ||
+                      !audioStatus?.audioService ||
+                      !audioStatus?.transcription
+                    }
+                    title={
+                      !audioStatus?.audioService
+                        ? "Set YOUTUBE_AUDIO_SERVICE_URL to an extract-youtube media API to enable"
+                        : !audioStatus?.transcription
+                          ? "Set GROQ_API_KEY or OPENAI_API_KEY to enable"
+                          : `Download the audio and transcribe it with ${audioStatus.transcription.model} — for videos with no captions`
+                    }
+                  >
+                    {isTranscribing ? "Transcribing…" : "Transcribe audio"}
+                  </Button>
+                )}
+                {activeDocument.kind === "transcript" && audioStatus?.audioService && videoId && (
+                  <Button size="sm" variant="ghost" asChild>
+                    <a
+                      href={`/api/admin/videos/library/${videoId}/audio?format=mp3`}
+                      download
+                      title="Download the audio as MP3, to transcribe by hand or elsewhere"
+                    >
+                      Download MP3
+                    </a>
                   </Button>
                 )}
                 <span className="text-muted-foreground text-xs tabular-nums">

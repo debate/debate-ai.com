@@ -106,6 +106,14 @@ import {
 import { resolveRoundSpeeches } from "../../lib/round-formats"
 import type { RoundContext } from "../../lib/speech-outcomes"
 import { readSpeechStarts, writeSpeechStart } from "../../state/speechStartMarks"
+import { readSpeechSegmentation, writeSpeechSegmentation } from "../../state/speechAiCache"
+import { requestSpeechSegmentation } from "../../lib/speech-ai-client"
+import {
+  FORMAT_LABELS,
+  applySpeechSegmentation,
+  type SpeechSegmentation,
+} from "../../lib/speech-segmentation"
+import type { SpeechDetectionControl } from "../../components/watch/WatchRoundPanel"
 import type { VideoType } from "../../types/videos"
 
 /** Shared empty default, so an absent list keeps one identity across renders. */
@@ -323,14 +331,77 @@ export function VideoWatchPage({
     [videoId],
   )
   const markedKeys = useMemo(() => new Set(Object.keys(speechMarks)), [speechMarks])
-  /** The round speech by speech, timed by the reader's marks, each untyped speech given its captions. */
+  /** The speeches the AI found in the captions, kept in this browser per video. */
+  const [segmentation, setSegmentation] = useState<SpeechSegmentation | null>(null)
+  const [detecting, setDetecting] = useState(false)
+  const [detectError, setDetectError] = useState<string | null>(null)
+  const detectVideoRef = useRef(videoId)
+  useEffect(() => {
+    detectVideoRef.current = videoId
+    setSegmentation(readSpeechSegmentation(videoId))
+    setDetecting(false)
+    setDetectError(null)
+  }, [videoId])
+  /**
+   * The round speech by speech: the AI's detected timing laid over what was
+   * written, then the reader's own marks (which win), then each untyped
+   * speech given the captions spoken during it.
+   */
   const speeches = useMemo(
-    () => withCaptionTranscripts(withSpeechStarts(baseSpeeches, speechMarks), sentences),
-    [baseSpeeches, speechMarks, sentences],
+    () =>
+      withCaptionTranscripts(
+        withSpeechStarts(applySpeechSegmentation(baseSpeeches, segmentation), speechMarks),
+        sentences,
+      ),
+    [baseSpeeches, segmentation, speechMarks, sentences],
   )
   const roundTranscript = useMemo(
     () => (baseSpeeches.length > 0 ? captionText(sentences) : ""),
     [baseSpeeches.length, sentences],
+  )
+  const handleDetectSpeeches = useCallback(async () => {
+    if (sentences.length === 0) return
+    const forVideo = videoId
+    setDetecting(true)
+    setDetectError(null)
+    try {
+      const result = await requestSpeechSegmentation({
+        captions: sentences,
+        videoTitle: title,
+        formatHint:
+          styleNumber !== undefined ? DEBATE_STYLE_LABELS[styleNumber as keyof typeof DEBATE_STYLE_LABELS] : undefined,
+        aff: affTeam ?? undefined,
+        neg: negTeam ?? undefined,
+      })
+      if (detectVideoRef.current !== forVideo) return
+      writeSpeechSegmentation(forVideo, result)
+      setSegmentation(result)
+    } catch (error) {
+      if (detectVideoRef.current !== forVideo) return
+      setDetectError(error instanceof Error ? error.message : "Speech detection failed.")
+    } finally {
+      if (detectVideoRef.current === forVideo) setDetecting(false)
+    }
+  }, [sentences, videoId, title, styleNumber, affTeam, negTeam])
+  const handleClearDetected = useCallback(() => {
+    writeSpeechSegmentation(videoId, null)
+    setSegmentation(null)
+  }, [videoId])
+  const speechDetection = useMemo<SpeechDetectionControl | undefined>(
+    () =>
+      baseSpeeches.length > 0 || segmentation
+        ? {
+            onDetect: () => void handleDetectSpeeches(),
+            onClear: segmentation ? handleClearDetected : undefined,
+            running: detecting,
+            error: detectError,
+            result: segmentation
+              ? `${FORMAT_LABELS[segmentation.format]} · ${segmentation.speeches.length} speech${segmentation.speeches.length === 1 ? "" : "es"} found`
+              : null,
+            available: sentences.length > 0,
+          }
+        : undefined,
+    [baseSpeeches.length, segmentation, handleDetectSpeeches, handleClearDetected, detecting, detectError, sentences.length],
   )
   const roundContext = useMemo<RoundContext>(
     () => ({
@@ -893,6 +964,7 @@ export function VideoWatchPage({
                 roundTranscript={roundTranscript}
                 onMarkStart={handleMarkStart}
                 markedKeys={markedKeys}
+                speechDetection={speechDetection}
                 extraTabs={sideTabs}
               />
             </div>
