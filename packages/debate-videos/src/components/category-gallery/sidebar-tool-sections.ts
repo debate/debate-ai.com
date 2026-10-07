@@ -154,7 +154,7 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
     // Turn research into round-specific strategy by studying opponents,
     // judges, tournaments, news, and likely arguments.
     id: PREP_SCOUT_SECTION_ID,
-    title: "Prep & Scout",
+    title: "Prepare",
     href: "/practice/briefings",
     icon: Binoculars,
     tools: [
