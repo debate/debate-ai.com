@@ -42,11 +42,11 @@ describe("WindowedChunk", () => {
   it("mounts its children only while near the viewport", async () => {
     await act(async () => {
       root.render(
-        createElement(
-          WindowedChunk,
-          { initiallyMounted: false, estimatedHeight: 500 },
-          createElement("span", { id: "card" }, "card"),
-        ),
+        createElement(WindowedChunk, {
+          initiallyMounted: false,
+          estimatedHeight: 500,
+          children: createElement("span", { id: "card" }, "card"),
+        }),
       );
     });
     const box = container.firstElementChild as HTMLElement;
@@ -70,11 +70,13 @@ describe("WindowedChunk", () => {
     const tableRoot = createRoot(table);
     await act(async () => {
       tableRoot.render(
-        createElement(
-          WindowedChunk,
-          { as: "tbody", colSpan: 4, initiallyMounted: false, estimatedHeight: 88 },
-          createElement("tr", null, createElement("td", null, "row")),
-        ),
+        createElement(WindowedChunk, {
+          as: "tbody",
+          colSpan: 4,
+          initiallyMounted: false,
+          estimatedHeight: 88,
+          children: createElement("tr", null, createElement("td", null, "row")),
+        }),
       );
     });
     const placeholder = table.querySelector("tbody > tr > td") as HTMLTableCellElement;
