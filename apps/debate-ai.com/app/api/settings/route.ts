@@ -26,6 +26,7 @@ import {
   normalizeFavoriteToolOpPatch,
   normalizeFlowAutoSavePatch,
   parseStoredFlowAutoSave,
+  type FlowAutoSaveMode,
   normalizeFavoriteToolsPatch,
   normalizeOutlineFilterPresetOpPatch,
   normalizeOutlineFilterPresetsPatch,

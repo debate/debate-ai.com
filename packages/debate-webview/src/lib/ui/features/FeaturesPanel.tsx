@@ -307,6 +307,21 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
             </p>
           </Reveal>
 
+          {/* Downloads: the browser extension's install button, which used to
+              sit on the card search's empty state. */}
+          <Reveal delay={400}>
+            <div
+              id="downloads"
+              className="mt-8 flex flex-col items-center gap-3 scroll-mt-20"
+              data-testid="downloads"
+            >
+              <h2 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+                Downloads
+              </h2>
+              <DownloadAppButton platform="chrome-extension" appId="noecbaibfhbmpapofcdkgchfifmoinfj" />
+            </div>
+          </Reveal>
+
           <Reveal delay={220}>
             <div className="relative mx-auto mt-8 max-w-xl">
               {/* Above the input, not just before it: the field's own
@@ -361,20 +376,6 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
             </div>
           </Reveal>
 
-          {/* Downloads: the browser extension's install button, which used to
-              sit on the card search's empty state. */}
-          <Reveal delay={400}>
-            <div
-              id="downloads"
-              className="mt-8 flex flex-col items-center gap-3 scroll-mt-20"
-              data-testid="downloads"
-            >
-              <h2 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
-                Downloads
-              </h2>
-              <DownloadAppButton platform="chrome-extension" appId="noecbaibfhbmpapofcdkgchfifmoinfj" />
-            </div>
-          </Reveal>
         </div>
       </section>
 
@@ -455,19 +456,7 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
           <h2 className="text-2xl font-semibold tracking-tight text-balance text-foreground">
             {CARDS_TITLE}
           </h2>
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-            {CARDS_DOIS.map((doi) => (
-              <a
-                key={doi.href}
-                href={doi.href}
-                target="_blank"
-                rel="noreferrer"
-                className="transition-opacity hover:opacity-80"
-              >
-                <img src={doi.badge} alt="DOI" loading="lazy" decoding="async" className="h-5 w-auto" />
-              </a>
-            ))}
-          </div>
+          
         </Reveal>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
