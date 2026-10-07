@@ -7,9 +7,9 @@ title: "Learn Review Log Cloud Sync"
 Syncs CardMirror's Learn review log (`cardId`/`at`/`grade`/
 `intervalBefore`/`intervalAfter` — the grading history `grade()` appends
 to on every review) to a signed-in user's account, the same way
-[Learn Flashcards Cloud Sync](/docs/features/learn-cards-cloud-sync)
+[Learn Flashcards Cloud Sync](/docs/features/research-evidence/learn-cards-cloud-sync)
 syncs a card's own content and
-[Learn Decks Cloud Sync](/docs/features/learn-decks-cloud-sync) syncs
+[Learn Decks Cloud Sync](/docs/features/research-evidence/learn-decks-cloud-sync) syncs
 custom decks — the Learn store
 (`packages/debate-editor/src/editor/learn-store.ts`) was device-local
 only, and before this the review log had no user-facing surface at all,
@@ -35,7 +35,7 @@ before, purely on-device.
 A review-log entry has no id field of its own — `reviewLogEntryId(entry)`
 (`` `${cardId}:${at}` ``) doubles as its synced record's key, since `at` is
 a millisecond-precision ISO timestamp already unique per card. Unlike
-[Learn Flashcards Cloud Sync](/docs/features/learn-cards-cloud-sync),
+[Learn Flashcards Cloud Sync](/docs/features/research-evidence/learn-cards-cloud-sync),
 there's no optimistic-concurrency conflict to handle: an entry's content
 for a given id never changes (`grade()` only ever appends a new entry,
 never edits an existing one), so `PUT /api/learn-review-log/[entryId]` is
@@ -65,6 +65,6 @@ shape.
 
 - An entry adopted from another device can reference a card that hasn't
   reached this device yet (the same soft-reference gap
-  [Learn Decks Cloud Sync](/docs/features/learn-decks-cloud-sync) already
+  [Learn Decks Cloud Sync](/docs/features/research-evidence/learn-decks-cloud-sync) already
   accepts for a deck's `cardIds`) — the History list shows
   "(deleted card)" for it rather than the card's front text.
