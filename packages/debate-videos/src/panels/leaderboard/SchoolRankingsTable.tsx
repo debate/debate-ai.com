@@ -21,6 +21,7 @@ import {
 import { cn } from "../../ui/lib/utils"
 import type { SchoolRanking, SchoolSortKey, SchoolSortState } from "./leaderboardTypes"
 import { schoolHref } from "./profile/rankingProfileHelpers"
+import { LegendaryBadge, ROW_TIER_CLASS, rowTier } from "./rowTier"
 
 /** One table column: which field it shows and how. */
 interface Column {
@@ -48,7 +49,18 @@ function Rating({ value }: { value: number }) {
 }
 
 const COLUMNS: Column[] = [
-  { key: "rank", label: "#", numeric: true, width: 60, render: (r) => <span className="font-semibold">{r.rank}</span> },
+  {
+    key: "rank",
+    label: "#",
+    numeric: true,
+    width: 120,
+    render: (r) => (
+      <>
+        {rowTier(r.rank, r.balancedScore) === "legendary" && <LegendaryBadge />}
+        <span className="ml-1 font-semibold">{r.rank}</span>
+      </>
+    ),
+  },
   {
     key: "school",
     label: "School",
@@ -110,7 +122,9 @@ interface SchoolRankingsTableProps {
 
 /**
  * Renders the Schools table. Every column but Events sorts; the rating
- * columns explain how they are computed. Scrolls horizontally on narrow screens.
+ * columns explain how they are computed. The top five schools are marked
+ * legendary and schools with a balanced score of 80+ get a gold border
+ * (see {@link rowTier}). Scrolls horizontally on narrow screens.
  *
  * @param props - See {@link SchoolRankingsTableProps}.
  */
@@ -169,8 +183,10 @@ export function SchoolRankingsTable({ rows, sort, onToggleSort }: SchoolRankings
           </TableRow>
         </TableHeader>
         <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.school}>
+          {rows.map((row) => {
+            const tier = rowTier(row.rank, row.balancedScore)
+            return (
+            <TableRow key={row.school} data-tier={tier ?? undefined} className={tier ? ROW_TIER_CLASS[tier] : undefined}>
               {COLUMNS.map((col) => (
                 <TableCell
                   key={col.key}
@@ -184,7 +200,8 @@ export function SchoolRankingsTable({ rows, sort, onToggleSort }: SchoolRankings
                 </TableCell>
               ))}
             </TableRow>
-          ))}
+            )
+          })}
         </TableBody>
       </Table>
     </div>
