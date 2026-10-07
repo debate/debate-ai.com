@@ -4,7 +4,7 @@ import {
   ListTree, Bot, Lightbulb, PlayCircle, BarChart3, Users2, School,
   ThumbsUp, Medal, Target, BookOpen, PieChart, Presentation,
   ListChecks, Flame, CheckSquare, Landmark, MapPin, Sparkles, Bell, Contact,
-  Rss, Gauge, Crosshair, Crown, Send, Smartphone, Star, Handshake, Coins,
+  Rss, Gauge, Crosshair, Crown, Send, Smartphone, Star, Handshake, Coins, CalendarDays,
   type LucideIcon,
 } from "lucide-react"
 
@@ -301,6 +301,11 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         href: "/coaching/programs", label: "Coaching Programs", icon: School,
         description: "Run group coaching spaces scoped to a squad roster.",
         highlights: ["A shared topic sprint, group-challenge standings, and drills in one board", "Scoped to a named squad roster you control"],
+      },
+      {
+        href: "/coaching/calendar", label: "Team Calendar", icon: CalendarDays,
+        description: "Schedule tasks, assignments and group-only virtual tournaments for each group you coach.",
+        highlights: ["Deadlines with assignees and per-researcher completion", "Round-robin tournaments open only to that group's roster"],
       },
       {
         href: "/coaching/materials", label: "Coach Materials", icon: BookOpen,

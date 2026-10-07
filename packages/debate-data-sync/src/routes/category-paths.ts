@@ -71,6 +71,7 @@ export const LEGACY_PATH_PREFIXES: ReadonlyArray<readonly [from: string, to: str
   ["/videos/lectures", "/lectures"],
   // Coaching
   ["/coaching-programs", "/coaching/programs"],
+  ["/team-calendar", "/coaching/calendar"],
   ["/coach-materials", "/coaching/materials"],
   ["/coach", "/coaching"],
   ["/outcomes", "/coaching/outcomes"],

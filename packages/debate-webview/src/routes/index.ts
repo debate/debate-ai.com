@@ -59,6 +59,7 @@ export const PAGE_ROUTES: AppRoute[] = [
   { pattern: "/coaching/materials", load: () => import("./coach-materials/page") },
   { pattern: "/coaching/ai-coach", load: () => import("./coaching/page") },
   { pattern: "/coaching/programs", load: () => import("./coaching-programs/page") },
+  { pattern: "/coaching/calendar", load: () => import("./team-calendar/page") },
   { pattern: "/contacts", load: () => import("./contacts/page") },
   { pattern: "/debate", load: () => import("./debate/page") },
   { pattern: "/debate/[tournament]/[teams]", load: () => import("./debate/[tournament]/[teams]/page") },

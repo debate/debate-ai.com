@@ -321,6 +321,16 @@ export const APP_FEATURES: FeatureEntry[] = [
     tags: ["squad", "roster", "program", "board"],
   },
   {
+    id: "team-calendar",
+    title: "Team Calendar",
+    description:
+      "A month calendar per coaching group: research tasks and assignments with deadlines and assignees, plus virtual tournaments only that group enters",
+    href: "/coaching/calendar",
+    category: "collaboration",
+    doc: "team-calendar.md",
+    tags: ["calendar", "deadlines", "todo", "assignments", "schedule", "tournament"],
+  },
+  {
     id: "coach-materials",
     title: "Coach Materials",
     description: "Upload grounding materials for the team coach AI and preview which ones answer a question",
