@@ -17,7 +17,7 @@
     alt="Production uptime"
   ></a>
     <a href="https://codecov.io/gh/debate/debate-ai.com">
-    <img src="https://img.shields.io/badge/%EB%AA%A8%20lines-64k-yellow" /></a>
+    <img src="https://img.shields.io/badge/%EB%AA%A8%20lines-75k-yellow" /></a>
     <br />
     <a href="https://github.com/debate/debate-ai.com/stargazers"><img src="https://img.shields.io/github/stars/debate/debate-ai.com" alt="GitHub Stars" /></a>
     <a href="https://codecov.io/gh/debate/debate-ai.com"><img src="https://codecov.io/gh/debate/debate-ai.com/graph/badge.svg" alt="Coverage" /></a>
