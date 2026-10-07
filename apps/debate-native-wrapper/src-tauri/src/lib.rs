@@ -10,10 +10,12 @@
 // 6. Native machine diagnostics (`system_info`)
 // 7. A choice of where the app loads from (`app_source`): for debate-ai, the
 //    live site, the beta site, or the offline build bundled in dist/
+// 8. Camera and microphone access for the app's own pages (`media`)
 
 mod app_source;
 mod commands;
 mod generated_scheme;
+mod media;
 mod system_info;
 
 use tauri::{Emitter, Manager, Url};
@@ -63,7 +65,12 @@ pub fn run() {
         ])
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_deep_link::init())
+        .on_permission_request(|webview, kind| media::permission_response(&webview, kind))
         .setup(|app| {
+            if let Some(window) = app.get_webview_window("main") {
+                media::enable_media(&window);
+            }
+
             let saved_source = app_source::load(app.handle());
             app.manage(app_source::AppSourceState(std::sync::Mutex::new(saved_source)));
 

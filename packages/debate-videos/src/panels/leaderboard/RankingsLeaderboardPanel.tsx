@@ -29,6 +29,7 @@ import {
   filterSchools,
   resolveDivisionTopic,
   schoolRankingsFor,
+  schoolRanksByName,
   seasonYears,
   sortEntries,
   sortSchools,
@@ -166,6 +167,12 @@ export function LeaderboardPanel({
   const schoolRows = useMemo(
     () => (isSchools ? schoolRankingsFor(schoolData.datasets, schoolScope) : []),
     [isSchools, schoolData.datasets, schoolScope],
+  )
+  /** The division table's School column shows each school's Schools-tab rank for this division. */
+  const divisionSchoolRanks = useMemo(
+    () =>
+      schoolRanksByName(isSchools || !dataset ? [] : schoolRankingsFor({ [division]: dataset }, division)),
+    [isSchools, dataset, division],
   )
   const visibleSchools = sortSchools(filterSchools(schoolRows, query), schoolSort)
   // Legendary cutoffs come from the whole list, so searching never changes them.
@@ -328,7 +335,7 @@ return (
                   />
                 </div>
                 {visibleEntries.length > 0 ? (
-                  <RankingsTable entries={visibleEntries} legendary={entryLegendary} division={division} sort={sort} onToggleSort={toggleSort} />
+                  <RankingsTable entries={visibleEntries} legendary={entryLegendary} schoolRanks={divisionSchoolRanks} division={division} sort={sort} onToggleSort={toggleSort} />
                 ) : (
                   <p className="py-8 text-center text-sm text-muted-foreground">
                     No entries match "{query}".
