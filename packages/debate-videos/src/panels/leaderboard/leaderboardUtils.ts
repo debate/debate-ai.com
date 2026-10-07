@@ -306,8 +306,8 @@ export function displayEntryName(name: string, division: Division): string {
 /**
  * Rolls ranked entries up by school. Spellings that {@link normalizeSchool}
  * treats as the same school are merged, and the table shows the spelling most
- * entries use. Schools rank by their best entry's adjusted rating, ties broken
- * by the average adjusted rating across all of the school's entries.
+ * entries use. Schools rank by their balanced score (see `balancedSchoolScore`),
+ * ties broken by the average adjusted rating, then the best entry's rating.
  *
  * @param groups - Each dataset's entries with the short event label to show for it.
  */
@@ -362,7 +362,10 @@ export function aggregateSchools(
   });
   rows.sort(
     (a, b) =>
-      b.bestRating - a.bestRating || b.avgRating - a.avgRating || a.school.localeCompare(b.school),
+      b.balancedScore - a.balancedScore ||
+      b.avgRating - a.avgRating ||
+      b.bestRating - a.bestRating ||
+      a.school.localeCompare(b.school),
   );
   rows.forEach((row, i) => {
     row.rank = i + 1;
