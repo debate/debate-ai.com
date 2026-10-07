@@ -54,7 +54,7 @@
 
 - [x] Speech-doc links (editor document <-> round/flow speech) sync via the `speechDocLinks` tool-record collection
 - [x] Pinned debates - synced via the `pinnedDebates` tool-record collection (`{ roundId, pinnedAt }`; PR #1095)
-- [x] Flow tabs show a saved-to-account marker (rounds start screen and other tools still to do)
+- [x] Flow tabs and round cards show a saved-to-account marker; every synced tool header shows the sync badge and Save now (see TODO.md)
 
 ---
 

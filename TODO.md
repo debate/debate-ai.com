@@ -106,7 +106,7 @@ _(moved to Completed — see "Account-synced user data across all tools")_
 - [x] Open-flow bar Save now: `DebateFlowPage.roundActions` mounts the same `ToolSyncBadge` as the other headers, which already renders "Save now" / "Retry save" while changes are unsaved, so no extra wiring is needed (verified by reading `routes/debate/page.tsx`, `ToolSyncBadge.tsx`, `SpeechControlsTopBar.tsx`; tests not run, dependencies not installed in this session)
 - [ ] Follow-up: `ToolPageHeader.test.tsx` (incl. the new `syncCollections` case) cannot load in a checkout without the `debate-rankings` submodule; verify in CI
 - [x] Button visibility/label logic extracted to `describeSaveNowButton` (`lib/tools/tool-save-state.ts`) and unit tested; branch `claude/gifted-babbage-bee65u`
-- [ ] Follow-up: DOM-level click test for `ToolSyncBadge` (no `@testing-library/react` in webview tests)
+- [x] DOM-level click test for `ToolSyncBadge` (`debate-webview/test/components/tools/ToolSyncBadge.test.tsx`, jsdom + `createRoot`/`act`, same harness as `debate-comments`): Save now flushes each collection, Retry save shows the error, no button when saved
 
 ## Completed
 
