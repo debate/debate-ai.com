@@ -47,6 +47,7 @@ import { useSyncUrlWithRound } from "../hooks/useSyncUrlWithRound"
 import { useJumpToPrepNoteBox } from "../hooks/useJumpToPrepNoteBox"
 import { useSpeechDocHeadings } from "../hooks/useSpeechDocHeadings"
 import { useTimerSync } from "../hooks/useTimerSync"
+import { ClarityRequestProvider, useClarityRequests } from "../hooks/useClarityRequests"
 import { getRoundRecordingShareEmails } from "../round/round-recording-share"
 import { getMyTeamProfile } from "../state/myTeamProfile"
 import { readPinnedDebateIds, togglePinnedDebate } from "../state/pinnedDebates"
@@ -324,7 +325,7 @@ const handleEbbToolAction = (action: EbbFlowToolAction) => {
   const currentFlowForRoom = flows[selected] || null
   const roomId = currentFlowForRoom?.roundId ? `round-${currentFlowForRoom.roundId}` : null
   const { receivedHeadings, broadcastSpeechDocHeadings } = useSpeechDocHeadings(roomId ?? "", "speaker")
-  const { remoteTimers, broadcastTimerState } = useTimerSync(roomId ?? "", "speaker")
+  const { remoteTimers, broadcastTimerState, sendClarityRequest } = useTimerSync(roomId ?? "", "speaker")
 
   // Broadcast timer state changes to the room
   useEffect(() => {
@@ -550,6 +551,16 @@ const handleEbbToolAction = (action: EbbFlowToolAction) => {
   /** The viewer's emails — signed-in account plus the locally saved "My Team" profile. */
   const [teamProfile] = useState(getMyTeamProfile)
   const viewerEmails = [viewerEmail, teamProfile.email1]
+
+  /** The judge's "Tell the debater to be more clear" — null unless the viewer judges this round. */
+  const requestClarity = useClarityRequests({
+    inRoom: !!roomId,
+    round: currentRound,
+    viewerEmails,
+    speeches: timerState.debateStyle.timerSpeeches,
+    isSpeechTimerRunning: (speechName) => timerState.perSpeechTimerStates[speechName]?.state.name === "running",
+    send: sendClarityRequest,
+  })
 
   /** Make a speech clicked in the sidebar's round group the active one. */
   const handleSelectSpeech = (speechName: string) => {
@@ -780,6 +791,7 @@ const handleEbbToolAction = (action: EbbFlowToolAction) => {
   // Render
   // ============================================================================
   return (
+    <ClarityRequestProvider value={requestClarity}>
     <div className="h-screen w-full flex flex-col overflow-hidden">
       {/* Global speech controls — quote view, view mode, layout, recording
           menu, and open-speech-doc, formerly duplicated inside each speech's
@@ -912,5 +924,6 @@ const handleEbbToolAction = (action: EbbFlowToolAction) => {
         roundId={state.editingRoundId}
       />
     </div>
+    </ClarityRequestProvider>
   )
 }

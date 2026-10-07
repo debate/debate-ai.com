@@ -105,9 +105,18 @@ export function useTimerSync(roomId: string, role: "speaker" | "judge" | "observ
     return () => window.removeEventListener("room-peer-left", handlePeerLeft as EventListener);
   }, []);
 
+  /** Asks whoever gives `speechName` to be more clear (see `round/clarity-request.ts`). */
+  const sendClarityRequest = useCallback(
+    (speechName: string) => {
+      broadcast("clarity-request", { speechName, sentAt: Date.now() });
+    },
+    [broadcast]
+  );
+
   return {
     remoteTimers,
     broadcastTimerState,
+    sendClarityRequest,
     clearTimers: () => setRemoteTimers([]),
   };
 }
