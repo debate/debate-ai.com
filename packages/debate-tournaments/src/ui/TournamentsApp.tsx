@@ -20,8 +20,8 @@
  */
 
 import { useEffect, useMemo, type ReactNode } from "react";
-import { matchTournamentRoute, tournamentHrefs, type TournamentPageRoute, type TournamentRoute } from "../routes";
-import { createTournamentsClient } from "./client";
+import { matchTournamentRoute, nearestTournamentSegments, tournamentHrefs, type TournamentPageRoute, type TournamentRoute } from "../routes";
+import { TournamentsApiError, createTournamentsClient } from "./client";
 import { Empty, Loaded, TournamentsContext, defaultLink, useApi, useTournaments, type LinkLike } from "./shared";
 import { TournamentNav, type TournamentTab } from "./TournamentNav";
 import { UpcomingTournamentsPage } from "./pages/UpcomingTournamentsPage";
@@ -45,6 +45,12 @@ export interface TournamentsAppProps {
   liveApiBase?: string;
   /** The host's client-side link component (e.g. `next/link`); defaults to `<a>`. */
   Link?: LinkLike;
+  /**
+   * Replaces the current address without adding a history entry (e.g. a
+   * Next.js router's `replace`). Used to send a page that does not exist to
+   * the nearest one that does; defaults to `window.location.replace`.
+   */
+  replace?: (href: string) => void;
 }
 
 export function TournamentsApp({
@@ -53,15 +59,26 @@ export function TournamentsApp({
   apiBase = "/api/tournaments",
   liveApiBase,
   Link = defaultLink,
+  replace = defaultReplace,
 }: TournamentsAppProps) {
   const value = useMemo(() => {
     const client = createTournamentsClient(apiBase, undefined, { liveApiBase });
     return { client, hrefs: tournamentHrefs(basePath, client.slugOf), Link };
   }, [apiBase, liveApiBase, basePath, Link]);
   const route = matchTournamentRoute(segments);
+  const base = basePath.replace(/\/+$/, "");
+  const nearest = nearestTournamentSegments(segments);
+  const fallback = {
+    // The nearest page above a mistyped one — the tournament for a bad
+    // section, the list for anything else.
+    nearest: nearest.length ? `${base}/${nearest.join("/")}` : base || "/",
+    // A tournament name that resolves to nothing has no page above it.
+    upcoming: base || "/",
+    replace,
+  };
   return (
     <TournamentsContext.Provider value={value}>
-      <RouteView route={route} />
+      <RouteView route={route} fallback={fallback} />
     </TournamentsContext.Provider>
   );
 }
@@ -75,27 +92,68 @@ const TAB_FOR: Partial<Record<TournamentRoute["page"], TournamentTab>> = {
   tabroom: "tabroom",
 };
 
-function RouteView({ route }: { route: TournamentRoute }) {
+function defaultReplace(href: string) {
+  if (typeof window !== "undefined") window.location.replace(href);
+}
+
+/** Where a page that does not exist sends the viewer instead. */
+interface Fallback {
+  nearest: string;
+  upcoming: string;
+  replace: (href: string) => void;
+}
+
+/** Replaces the address with `href` once mounted, showing `children` meanwhile. */
+function RedirectTo({ href, replace, children }: { href: string; replace: (href: string) => void; children: ReactNode }) {
+  useEffect(() => {
+    replace(href);
+  }, [href, replace]);
+  return <Empty>{children}</Empty>;
+}
+
+function RouteView({ route, fallback }: { route: TournamentRoute; fallback: Fallback }) {
   switch (route.page) {
     case "upcoming":
       return <UpcomingTournamentsPage />;
     case "host":
       return <HostTournamentPage />;
     case "notFound":
-      return <Empty>That tournament page does not exist.</Empty>;
+      return (
+        <RedirectTo href={fallback.nearest} replace={fallback.replace}>
+          That tournament page does not exist.
+        </RedirectTo>
+      );
     default:
       return "tournId" in route.tourn ? (
         <TournamentRouteView route={route} tournId={route.tourn.tournId} />
       ) : (
-        <ResolveTournament route={route} year={route.tourn.year} slug={route.tourn.slug} />
+        <ResolveTournament route={route} year={route.tourn.year} slug={route.tourn.slug} fallback={fallback} />
       );
   }
 }
 
 /** Looks up the tourn id a `/<year>/<slug>` route names, then renders its page. */
-function ResolveTournament({ route, year, slug }: { route: TournamentPageRoute; year: number; slug: string }) {
+function ResolveTournament({
+  route,
+  year,
+  slug,
+  fallback,
+}: {
+  route: TournamentPageRoute;
+  year: number;
+  slug: string;
+  fallback: Fallback;
+}) {
   const { client } = useTournaments();
   const state = useApi(`resolve:${year}/${slug}`, (signal) => client.resolve(year, slug, signal));
+  // No tournament by that name: back to the list rather than an error note.
+  if (state.status === "error" && state.error instanceof TournamentsApiError && state.error.status === 404) {
+    return (
+      <RedirectTo href={fallback.upcoming} replace={fallback.replace}>
+        {state.error.message}
+      </RedirectTo>
+    );
+  }
   return (
     <div className={state.status === "ready" ? undefined : "mx-auto max-w-5xl p-4 md:p-6"}>
       <Loaded state={state}>{(tournId) => <TournamentRouteView route={route} tournId={tournId} />}</Loaded>
