@@ -17,22 +17,24 @@ function tournamentLabel(slug: string): string {
     .join(" ");
 }
 
-/** "Aff +2.50" / "Neg +1.20" / "Even" — how far a split leans from 50%. */
+/**
+ * "Aff 2" / "Neg 1" / "Even" — how far a split leans from 50%, rounded down to
+ * whole points (a lean under one point reads as Even).
+ */
 function SkewLabel({ aff }: { aff: number }) {
   const skew = aff - 50;
+  const points = Math.floor(Math.abs(skew));
   return (
     <span
       className={
-        skew === 0
+        points === 0
           ? ""
           : skew > 0
             ? "font-medium text-blue-600 dark:text-blue-400"
             : "font-medium text-red-600 dark:text-red-400"
       }
     >
-      {skew === 0
-        ? "Even"
-        : `${skew > 0 ? "Aff" : "Neg"} +${Math.abs(skew).toFixed(2)}`}
+      {points === 0 ? "Even" : `${skew > 0 ? "Aff" : "Neg"} ${points}`}
     </span>
   );
 }
