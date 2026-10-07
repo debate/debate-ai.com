@@ -25,8 +25,7 @@ import {
   DEFAULT_WORD_LIMIT_PRESETS,
   normalizeFavoriteToolOpPatch,
   normalizeFlowAutoSavePatch,
-  isFlowAutoSaveMode,
-  type FlowAutoSaveMode,
+  parseStoredFlowAutoSave,
   normalizeFavoriteToolsPatch,
   normalizeOutlineFilterPresetOpPatch,
   normalizeOutlineFilterPresetsPatch,
@@ -302,8 +301,7 @@ function toPayload(row: SettingsRow | undefined): SettingsPayload {
     recentTools: row?.recentTools ? parseRecentTools(row.recentTools) : [],
     editorPreferences: parseEditorPreferences(row?.editorPreferences),
     flowEditorSettings: parseFlowEditorSettings(row?.flowEditorSettings),
-    // Null until a device syncs a choice, so the client can seed it from its local mode.
-    flowAutoSave: isFlowAutoSaveMode(row?.flowAutoSave) ? row.flowAutoSave : null,
+    flowAutoSave: parseStoredFlowAutoSave(row?.flowAutoSave),
     newsRead: row?.newsRead ? parseNewsIdList(row.newsRead) : DEFAULT_NEWS_SYNC.newsRead,
     newsLiked: row?.newsLiked ? parseNewsIdList(row.newsLiked) : DEFAULT_NEWS_SYNC.newsLiked,
     wordLimitPresets: row?.wordLimitPresets

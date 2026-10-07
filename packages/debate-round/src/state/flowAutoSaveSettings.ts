@@ -57,6 +57,15 @@ export function normalizeFlowAutoSavePatch(input: unknown): FlowAutoSavePatchRes
   return { valid: {}, errors: [`"flowAutoSave" must be one of: ${FLOW_AUTO_SAVE_MODES.join(", ")}.`] };
 }
 
+/**
+ * Reads the stored column value for the `/api/settings` payload: `null` when
+ * the account has no (valid) choice yet, so a client can tell "never synced"
+ * apart from an explicit `"saved"` and seed the account from its device.
+ */
+export function parseStoredFlowAutoSave(raw: string | null | undefined): FlowAutoSaveMode | null {
+  return isFlowAutoSaveMode(raw) ? raw : null;
+}
+
 /** Reads the stored column value, falling back to the default for null/unknown. */
 export function parseFlowAutoSave(raw: string | null | undefined): FlowAutoSaveMode {
   return isFlowAutoSaveMode(raw) ? raw : DEFAULT_FLOW_AUTO_SAVE_MODE;
