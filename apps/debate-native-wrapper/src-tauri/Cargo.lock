@@ -719,6 +719,7 @@ dependencies = [
  "tauri-plugin-single-instance",
  "url",
  "urlencoding",
+ "webkit2gtk",
  "winreg 0.52.0",
 ]
 

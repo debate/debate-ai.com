@@ -36,6 +36,11 @@ tauri-plugin-autostart = "2"
 # regardless of what the wrapped page's own JS does.
 tauri-plugin-global-shortcut = "2"
 
+# Linux-only: WebKitGTK keeps getUserMedia and WebRTC off until its settings
+# turn them on (see src/media.rs). Same version and feature level wry uses.
+[target.'cfg(target_os = "linux")'.dependencies]
+webkit2gtk = { version = "2.0", features = ["v2_38"] }
+
 # Windows-only: the version, edition and build number of the running Windows
 # all live in one registry key, and reading it is the only way to get them
 # right — GetVersionEx reports a capped version unless the binary ships a
