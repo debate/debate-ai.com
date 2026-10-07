@@ -81,3 +81,21 @@ describe("/api/settings flowEditorSettings", () => {
     expect((await (await get()).json()).flowEditorSettings).toEqual({});
   });
 });
+
+describe("/api/settings flowAutoSave", () => {
+  beforeEach(async () => {
+    signedInAs = "user-1";
+    db = drizzle(await freshSchemaClient(), { schema });
+    const now = new Date();
+    await db.insert(schema.user).values({ id: "user-1", name: "u", email: "u@example.com", createdAt: now, updatedAt: now });
+  });
+
+  it("is null until chosen, persists a mode, and rejects unknown values", async () => {
+    expect((await (await get()).json()).flowAutoSave).toBeNull();
+    expect((await put({ flowAutoSave: "all" })).status).toBe(200);
+    expect((await (await get()).json()).flowAutoSave).toBe("all");
+    const bad = await put({ flowAutoSave: "sometimes" });
+    expect(bad.status).toBe(400);
+    expect((await (await get()).json()).flowAutoSave).toBe("all");
+  });
+});

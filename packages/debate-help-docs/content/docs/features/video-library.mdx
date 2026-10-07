@@ -20,6 +20,16 @@ is a small fetch-once companion for counts/topics/champions. If the table
 is missing or unseeded, both endpoints fall back to rebuilding from the
 JSON assets in memory with identical semantics.
 
+## Season and tournament addresses
+
+A video's address starts with its season and tournament
+(`/videos/2022/ndt/finals/…`), so it can be trimmed: `/videos/2025` opens the
+library filtered to that season, and `/videos/2025/ndt` filtered to that season
+with the tournament's name as the search (`/videos?year=2025&q=ndt`). The Worker
+does this with a redirect (`apps/debate-ai.com/lib/redirects/video-listing.ts`)
+before the request reaches the app. `/videos/archive/…` maps to the undated
+(`legacy`) season.
+
 ## Merged lecture categories
 
 Topic analysis and topic lectures share one shelf, **Topic Lectures**. Videos

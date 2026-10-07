@@ -66,7 +66,7 @@
 - [x] Sync pinned debates to the account (`pinnedDebates` catalog entry, legacy `pinned-debates` migration, tests, docs in `round-cloud-save.mdx`)
 - [x] Sync speech-doc links (`speech-doc-links`; keyed by scope + speech, points at `documents.id`)
 - [x] Sync flow-editor display/keymap settings (`ebb-display-settings`, `ebb-keymap-settings`) through `user_settings` (`flow_editor_settings` column, `@debate/flow-ebb/account-settings`, `useAccountFlowSettingsSync`; docs in `user-settings.mdx`)
-- [ ] Tool UI pass: surface sync status and pin/save controls in each tool's header (header badge, Save now, favorite star and the shared-cards sub-pages done; remaining custom headers tracked under "Tool UI pass: tool page header")
+- [x] Tool UI pass: surface sync status and pin/save controls in each tool's header. Audit (2026-10-07): every route with a synced collection mounts `ToolSyncBadge` (via `ToolPageHeader` or its own bar; `/reason-editor` via `ReasonEditorStatusLine`, `/doc` and the open round via their own bars). The routes without one (`/tournaments`, `/tabroom`, `/settings/*`, `/coaching/laptopless`, `/features`, `/legal`, `/auth/*`, `/login`) have no `TOOL_RECORD_COLLECTIONS` entry, so there is nothing to badge. Only the test-environment follow-ups under "Tool UI pass: tool page header" remain
 
 ---
 
@@ -94,8 +94,11 @@
 - [x] Persist baselines so the marker survives a reload: saves store `{ hash, updatedAt }` in localStorage and `restoreFlowAccountBaselines` adopts one only when the account's list reports the same `updatedAt` (never wrongly "saved" for another user); wired to the Flow History cloud-tab load (branch `claude/gifted-babbage-o37mws`)
 - [x] Restore baselines on mount: `restoreAccountBaselinesOnce` (`state/restoreAccountBaselines.ts`, once per session, silent when signed out) via `useRestoreAccountBaselines` in `DebateStartPanel` and `OpenTabsGroup`; test `debate-round/test/restoreAccountBaselines.test.ts`; branch `claude/gifted-babbage-89z8b3`
 - [x] Auto-save flows already saved to the account (`state/flowAutoSave.ts`, `useFlowAutoSave` in `OpenTabsGroup`, `getFlowAccountUpdatedAt`; debounced, never forces, conflicts left for Flow History; test `debate-round/test/flowAutoSave.test.ts`; branch `claude/gifted-babbage-31ofma`)
-- [ ] Follow-up: opt-in setting to auto-save flows never saved before, plus an auto-save on/off toggle in user settings
-- [ ] Follow-up: `ebb-dev-*` and `REASON-*` stores are still browser-only
+- [x] Opt-in setting to auto-save flows never saved before, plus an auto-save on/off toggle: `state/flowAutoSaveSettings.ts` (`off | saved | all`, device-local), `getMode` in `createFlowAutoSaver`, "Flow auto-save" select in `UserSettingsPanel`; tests `flowAutoSave.test.ts`, `flowAutoSaveSettings.test.ts`; docs in `user-settings.mdx` (branch `claude/gifted-babbage-eeg5we`)
+- [x] Sync the auto-save mode to the account: `user_settings.flow_auto_save` column, `flowAutoSave` on `/api/settings` (`normalizeFlowAutoSavePatch`/`parseFlowAutoSave`), `UserSettingsPanel` adopts the account value on load and pushes changes; tests `flowAutoSaveSettings.test.ts`, route test in `settings-flow-editor-route.test.ts` (needs `debate-rankings` submodule); branch `claude/gifted-babbage-r2apft`
+- [ ] Follow-up: deploy must add the nullable `flow_auto_save` column
+- [x] `ebb-dev-flow-files` / `ebb-dev-recents` stay browser-only on purpose: `flowFsMemory.ts` documents them as a dev/test stand-in, not a product surface (real flows sync through `saved_flows`). `REASON-file-sources` already syncs (`toolRecordCollections.ts`)
+- [ ] Follow-up: `REASON-documents` (REASON Docs documents, `QWKSEARCH_DOCS_STORAGE_KEY` in `debate-webview/src/lib/qwksearch/doc-paths.ts`) has no catalog entry and is still browser-only; needs a redaction/size review like `redact-file-source.ts` before it is added
 
 ### Tool UI pass: tool page header
 

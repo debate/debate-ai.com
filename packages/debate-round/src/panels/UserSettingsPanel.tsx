@@ -33,7 +33,7 @@
 
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, useSyncExternalStore } from "react"
 import { useTheme } from "next-themes"
 import { Badge } from "../ui/primitives/badge"
 import { Button } from "../ui/primitives/button"
@@ -46,6 +46,11 @@ import {
   SelectValue,
 } from "../ui/primitives/select"
 import { fetchUserSettings, saveUserSettings, type FullUserSettingsPayload } from "../round/user-settings-client"
+import {
+  isFlowAutoSaveEnabled,
+  setFlowAutoSaveEnabled,
+  subscribeFlowAutoSavePreference,
+} from "../state/flowAutoSavePreference"
 import { isUserSettingsPanelLiveUpdateStorageEvent } from "../flow/live-update"
 import {
   applyUserSettingsToLocalStore,
@@ -64,6 +69,13 @@ import {
   type ThemeMode,
 } from "../state/themeSettings"
 import {
+  DEFAULT_FLOW_AUTO_SAVE_MODE,
+  isFlowAutoSaveMode,
+  readFlowAutoSaveMode,
+  setFlowAutoSaveMode,
+  type FlowAutoSaveMode,
+} from "../state/flowAutoSaveSettings"
+import {
   DEFAULT_FONT_FAMILY,
   FONT_OPTIONS,
   readLocalFontFamily,
@@ -79,7 +91,13 @@ import {
 // user-editable form fields, all excluded from this form the same way.
 type FormState = Omit<
   FullUserSettingsPayload,
-  "favoriteTools" | "wordLimitPresets" | "outlineFilterPresets" | "newsRead" | "newsLiked" | "myTeamProfile"
+  | "favoriteTools"
+  | "wordLimitPresets"
+  | "outlineFilterPresets"
+  | "newsRead"
+  | "newsLiked"
+  | "myTeamProfile"
+  | "flowAutoSave"
 >
 
 type SaveStatus =
@@ -133,6 +151,7 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
   // so it lives outside `form` and applies as soon as it's picked rather than
   // waiting on the Save button below.
   const [fontFamily, setFontFamily] = useState(DEFAULT_FONT_FAMILY)
+  const flowAutoSaveEnabled = useSyncExternalStore(subscribeFlowAutoSavePreference, isFlowAutoSaveEnabled, () => true)
   // The last values `form` was loaded/saved from — i.e. what's actually
   // persisted right now, as far as this tab knows. The cross-tab
   // `storage`-event handler below only refreshes a field whose current
@@ -141,9 +160,28 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
   // in-progress edit and is left alone.
   const baselineRef = useRef<FormState | null>(null)
 
+  // Applies at once like `fontFamily` and is never part of the Save payload; when
+  // signed in it is pushed to the account on change (see handleFlowAutoSaveChange).
+  const [flowAutoSave, setFlowAutoSave] = useState<FlowAutoSaveMode>(DEFAULT_FLOW_AUTO_SAVE_MODE)
+
   useEffect(() => {
     setFontFamily(readLocalFontFamily())
+    setFlowAutoSave(readFlowAutoSaveMode())
   }, [])
+
+  const handleFlowAutoSaveChange = (value: string) => {
+    if (!isFlowAutoSaveMode(value)) return
+    setFlowAutoSave(value)
+    setFlowAutoSaveMode(value)
+    if (remoteAvailable) {
+      saveUserSettings({ flowAutoSave: value }).catch((err) =>
+        setStatus({
+          kind: "error",
+          message: err instanceof Error ? err.message : "Failed to save auto-save mode to your account.",
+        }),
+      )
+    }
+  }
 
   const handleFontFamilyChange = (value: string) => {
     setFontFamily(value)
@@ -174,6 +212,14 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
           baselineRef.current = remoteForm
           applyUserSettingsToLocalStore(remote)
           applyThemeLocally(colorTheme, themeMode, setTheme)
+          // Adopt the account's auto-save mode; with none chosen yet, seed it from
+          // this device's choice so other devices pick it up.
+          if (isFlowAutoSaveMode(remote.flowAutoSave)) {
+            setFlowAutoSave(remote.flowAutoSave)
+            setFlowAutoSaveMode(remote.flowAutoSave)
+          } else if (readFlowAutoSaveMode() !== DEFAULT_FLOW_AUTO_SAVE_MODE) {
+            void saveUserSettings({ flowAutoSave: readFlowAutoSaveMode() }).catch(() => {})
+          }
         }
       })
       .catch(() => {
@@ -297,6 +343,7 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
   const handleResetToDefaults = () => {
     setForm({ ...DEFAULT_USER_SETTINGS, ...DEFAULT_THEME_SETTINGS })
     handleFontFamilyChange(DEFAULT_FONT_FAMILY)
+    handleFlowAutoSaveChange(DEFAULT_FLOW_AUTO_SAVE_MODE)
     setStatus({ kind: "idle" })
   }
 
@@ -373,6 +420,24 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
         </div>
 
         <div className="space-y-1.5">
+          <Label htmlFor="settings-flow-auto-save-mode">Flow auto-save</Label>
+          <Select value={flowAutoSave} onValueChange={handleFlowAutoSaveChange}>
+            <SelectTrigger id="settings-flow-auto-save-mode">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="saved">Flows already on my account</SelectItem>
+              <SelectItem value="all">All flows</SelectItem>
+              <SelectItem value="off">Off</SelectItem>
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-muted-foreground">
+            Saves edits to your account a few seconds after you stop typing. "All flows" also uploads flows
+            you haven't saved yet. Applies immediately; synced to your account when signed in (auto-save itself needs you to be signed in).
+          </p>
+        </div>
+
+        <div className="space-y-1.5">
           <Label htmlFor="settings-color-theme">Color theme</Label>
           <Select
             value={form.colorTheme}
@@ -411,6 +476,22 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
               ))}
             </SelectContent>
           </Select>
+        </div>
+
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-2">
+            <input
+              id="settings-flow-auto-save"
+              type="checkbox"
+              checked={flowAutoSaveEnabled}
+              onChange={(event) => setFlowAutoSaveEnabled(event.target.checked)}
+            />
+            <Label htmlFor="settings-flow-auto-save">Auto-save flows to my account</Label>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Saves edits to flows you've already saved to your account, a few seconds after you stop typing. Applies
+            immediately in this browser and isn't synced to other devices.
+          </p>
         </div>
 
         <div className="flex items-center gap-2">

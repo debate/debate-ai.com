@@ -5,7 +5,7 @@ title: "Tournaments"
 # Tournaments
 
 Tournament invitations, pairings and results, without leaving the app.
-**Tournaments** under **Prep & Scout** in the sidebar (`/tournaments`) is this
+**Tournaments** at the top of **Coaching** in the sidebar (`/tournaments`) is this
 app's own view, built with the site's theme: live Tabroom tournaments plus the
 ones hosted here. Tabroom's own site, framed, is still reachable directly at
 `/practice/tabroom`, but no longer has a sidebar row.
@@ -18,6 +18,12 @@ and its pairings at `/tournaments/2026/yale-invitational/rounds`. Links that
 name a tournament by its Tabroom number (`/tournaments/38436/results`) still
 work and settle on the named address once the tournament loads; so do old
 `/practice/tournaments/…` bookmarks, which redirect here.
+
+An address that doesn't match a page sends you to the nearest one that does:
+a mistyped section (`/tournaments/2026/yale-invitational/nope`) goes back to
+the tournament, and a tournament name that matches nothing goes back to
+`/tournaments`. Anywhere else on the site, a missing page sends you one level
+up the address the same way.
 
 ## What you can see
 
@@ -96,6 +102,27 @@ and speech has three prelims, semifinals and a final. Its results include
 prelim seeds, final places, speaker awards and the elimination bracket. **Demo admin** on the upcoming page and **Try the demo admin** on the
 host page both open it. The site loads it by itself when it is missing or over,
 so its dates always stay current.
+
+#### Watching the demo's rounds live
+
+The demo's pairings show simulated live rounds. Next to each room the
+**Live** column shows the speech under way (for example **2NC · Neg**) and how
+far through the round it is, and each round on the **Pairings** tab shows the
+same for its typical room. The **Results** tab lists the round each event is
+debating right now under **Live now**.
+
+**Tune in** opens a room's stream under it:
+
+- live captions of the speech being given, with the time left in it;
+- the speech order, with finished speeches greyed and the current one filling up;
+- **Live updates**: when each speech, cross-ex and prep began and ended, then the decision;
+- **Speech summaries**, one per finished speech, each with **Listen** to hear it read aloud;
+- **Listen live**, which reads each speech aloud as it starts.
+
+Rounds run at six times real speed and loop — check-in, the speeches, then the
+decision — so there is always something on. The speeches and summaries are
+generated filler, not real debates, and every viewer sees the same moment.
+Read-aloud uses your browser's built-in voices.
 
 ## Good to know
 
