@@ -9,6 +9,7 @@ import {
   type VideoType,
 } from "@debate/videos"
 import { CategoryDock } from "@debate/webview/components/layout/CategoryDock"
+import { SidebarAccount } from "@debate/webview/components/layout/app-sidebar/sidebar-account"
 import { VideoStaffControls } from "@debate/webview/components/videos/VideoStaffControls"
 import { featuredSpeechDocsTabs } from "@debate/round/src/panels/featuredSpeechDocsTabs"
 import {
@@ -22,7 +23,7 @@ import { getVideoSidePanelContent } from "@/lib/videos/video-content"
  * One video at its canonical address, shared by the three route shapes:
  *
  * - `/videos/<season>/<tournament>/<round>/<teams>` for a tagged round, e.g.
- *   `/videos/2022/ndt/finals/dartmouth-sv-michigan-pr`
+ *   `/videos/21-22/ndt/finals/dartmouth-sv-michigan-pr`
  *   (`app/videos/[category]/[event]/[matchup]/[teams]/page.tsx`);
  * - `.../<teams>/<variant>` for a video made from that round — its analysis,
  *   one part of a split upload — e.g. `.../dartmouth-sv-michigan-pr/analysis`
@@ -112,6 +113,7 @@ export async function VideoRoutePage({ segments }: { segments: string[] }) {
         }))}
         sideTabs={featuredSpeechDocsTabs(video[0] as string)}
         dockSlot={<CategoryDock embedded />}
+        accountSlot={<SidebarAccount />}
         extraControls={
           <>
             <SlowSpreadButton size="md" />

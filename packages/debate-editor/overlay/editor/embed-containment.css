@@ -91,3 +91,29 @@ html:not(:has(.dec-cardmirror-embed)) body > [class^="pmd-"],
 html:not(:has(.dec-cardmirror-embed)) body > [class*=" pmd-"] {
   display: none !important;
 }
+
+/* Send / Receive pills docked in the React menu bar beside Settings (moved
+ * there from the bottom-left `.pmd-pill-tray` by MenuBar's
+ * `usePairingPillDock`). The bar is h-8, so the pills shrink to fit it, and
+ * their popups drop DOWN from the bar, right-aligned to the pill, instead of
+ * rising from the tray's left edge. */
+.dec-menubar-pills > .pmd-pill {
+  position: relative;
+}
+.dec-menubar-pills > .pmd-pill > .pmd-pill-bar {
+  height: 24px;
+  padding: 0 0.45rem;
+  font-size: 0.75rem;
+  box-shadow: none;
+}
+.dec-menubar-pills > .pmd-pill > .pmd-pill-bar .pmd-pill-icon > .pmd-icon {
+  font-size: 14px;
+}
+.dec-menubar-pills > .pmd-pill > .pmd-pill-popup {
+  top: calc(100% + var(--pmd-pill-popup-gap, 8px));
+  bottom: auto;
+  left: auto;
+  right: 0;
+  width: min(420px, calc(100vw - 16px));
+  max-width: calc(100vw - 16px);
+}

@@ -31,6 +31,7 @@ beforeEach(() => {
     queue: [],
     startTime: 0,
     theaterVideoId: null,
+    popoutNext: null,
     searchHandler: null,
     getCurrentTimeRef: null,
   });
@@ -340,5 +341,41 @@ describe("theaterVideoId", () => {
 
     expect(store().startTime).toBe(128);
     expect(store().queue).toHaveLength(1);
+  });
+});
+
+describe("popoutNext", () => {
+  it("is empty until a watch page lines a video up", () => {
+    expect(store().popoutNext).toBeNull();
+  });
+
+  it("waits without touching the video that is playing", () => {
+    store().setActiveVideo("vid1", "Round 3");
+    store().setTheaterVideoId("vid1");
+    store().setPopoutNext({ videoId: "vid2", title: "Round 4" });
+
+    expect(store().popoutNext?.videoId).toBe("vid2");
+    expect(store().activeVideoId).toBe("vid1");
+    expect(store().isPlaying).toBe(true);
+  });
+
+  it("clears once the lined-up video is put up", () => {
+    store().setPopoutNext({ videoId: "vid2", title: "Round 4" });
+    store().setActiveVideo("vid2", "Round 4");
+    expect(store().popoutNext).toBeNull();
+  });
+
+  it("survives a different video being put up", () => {
+    store().setPopoutNext({ videoId: "vid2", title: "Round 4" });
+    // A watch page handing its own video back on the way out must not
+    // consume what was lined up behind it.
+    store().setActiveVideo("vid1", "Round 3", undefined, 42);
+    expect(store().popoutNext?.videoId).toBe("vid2");
+  });
+
+  it("can be cancelled", () => {
+    store().setPopoutNext({ videoId: "vid2", title: "Round 4" });
+    store().setPopoutNext(null);
+    expect(store().popoutNext).toBeNull();
   });
 });

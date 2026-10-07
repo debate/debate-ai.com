@@ -1,0 +1,67 @@
+---
+title: "AI Outcome Responses"
+---
+
+# AI Outcome Responses
+
+During a live round, the speech timer's menu (the ⋮ next to the timer) has
+an **AI Outcome Responses** item. It reads the whole round so far and
+suggests three ways to give the speech you are on, then plays each one
+forward.
+
+- **Where:** live round workspace, speech timer menu
+- **Package:** `debate-round` (UI and context), `debate-speech-writer` (prompt)
+
+## What it shows
+
+Three candidate approaches side by side. Each one has:
+
+- a **success rate**: the AI's estimate that this approach wins the round
+  for your side, with the best bet marked;
+- a speech-ready **outline** that extends cards already read and answers
+  the opponent's newest arguments (copy button included);
+- the **opponent's likely answers** in their next speech;
+- the **judge decision**: who the predicted judge votes for on that path,
+  and why;
+- the **issues** that could lose it (drops, missing evidence, judge fit);
+- **cards to find**: search queries that run against CARDS in place and
+  show the highlighted text of the top hits, with a copy button and a link
+  to open the full search.
+
+You can override the judge paradigm and add an optional focus ("go for the
+DA") before regenerating.
+
+## Where the context comes from
+
+- **Prior speeches:** every speech column before the current one. Each
+  speech's linked editor document is used when it has one, otherwise the
+  flow's own speech doc. Highlighted card text is kept marked so the model
+  can tell what was read aloud.
+- **Flow:** every flow sheet in the round, one line per argument row with
+  each speech's entry, unanswered rows flagged.
+- **Judge:** the round judge with the most ballots in
+  [Judge Profiles](/docs/features/tournaments-judge/judge-profiles), voting under that profile's most-tagged
+  paradigm. With no saved profile for the round's judges, the paradigm most
+  common across your saved profiles is used, else a flow judge.
+
+## Data flow
+
+```
+SpeechRecordingMenu (debate-timer) actions prop
+  → dialogs/AiOutcomeResponsesDialog.tsx
+round/outcome-responses-context.ts   (prior speeches, flow text, likely judge)
+round/outcome-responses-client.ts    (linked docs, /api/reason-ai, /api/search)
+debate-speech-writer prompts/speech-outcome-responses.ts
+  → SPEECH_OUTCOME_RESPONSES_SYSTEM_PROMPT (built on speechToResponsePrompt)
+  → buildSpeechOutcomeResponsesUserPrompt / parseSpeechOutcomeResponsesResponse
+```
+
+## Known gaps
+
+- Results are not saved; closing the dialog keeps them only until you
+  switch speeches.
+- Success rates are model estimates, not calibrated against real ballots.
+- On the free plan the AI reply is capped at 2,048 tokens, which can cut a
+  long three-candidate reply short; the dialog then shows a parse error.
+- Long rounds are trimmed to about 60,000 characters of speech text, oldest
+  speeches first.

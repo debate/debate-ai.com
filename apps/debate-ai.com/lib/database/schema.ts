@@ -39,6 +39,12 @@ export const session = sqliteTable("session", {
   userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
+  // better-auth `organization` plugin: the organization this session is
+  // working in, or null for the personal workspace. Contacts and shared cards
+  // narrow to its members while it is set (lib/organizations/server.ts).
+  // Nullable so `ensureTableColumns` can add it to a live D1 — see
+  // lib/organizations/ensure-tables.ts, which runs before auth handles anything.
+  activeOrganizationId: text("active_organization_id"),
 });
 
 export const account = sqliteTable("account", {
@@ -67,6 +73,62 @@ export const verification = sqliteTable("verification", {
   createdAt: integer("created_at", { mode: "timestamp" }),
   updatedAt: integer("updated_at", { mode: "timestamp" }),
 });
+
+// better-auth `organization` plugin tables (organization, member, invitation).
+// An organization is a shared group a user can switch into from the sidebar's
+// account menu; the drizzle adapter finds these by their export names, so the
+// names must stay `organization`, `member` and `invitation`. The app ships no
+// migrations folder, so lib/organizations/ensure-tables.ts creates them on a
+// live D1 with the DDL in that file, which must match these definitions.
+export const organization = sqliteTable("organization", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  slug: text("slug").notNull().unique(),
+  logo: text("logo"),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  metadata: text("metadata"),
+});
+
+export const member = sqliteTable(
+  "member",
+  {
+    id: text("id").primaryKey(),
+    organizationId: text("organization_id")
+      .notNull()
+      .references(() => organization.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    role: text("role").notNull().default("member"),
+    createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  },
+  (table) => ({
+    organizationIdx: index("idx_member_organization").on(table.organizationId),
+    userIdx: index("idx_member_user").on(table.userId),
+  }),
+);
+
+export const invitation = sqliteTable(
+  "invitation",
+  {
+    id: text("id").primaryKey(),
+    organizationId: text("organization_id")
+      .notNull()
+      .references(() => organization.id, { onDelete: "cascade" }),
+    email: text("email").notNull(),
+    role: text("role"),
+    status: text("status").notNull().default("pending"),
+    expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+    inviterId: text("inviter_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+  },
+  (table) => ({
+    organizationIdx: index("idx_invitation_organization").on(table.organizationId),
+    emailIdx: index("idx_invitation_email").on(table.email),
+  }),
+);
 
 // REASON editor documents — persistence for the native reason-editor route
 // (ported from quick search's document model; see /reason-editor). `parentId`

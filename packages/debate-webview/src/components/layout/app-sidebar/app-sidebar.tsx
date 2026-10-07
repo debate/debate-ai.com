@@ -1,7 +1,7 @@
 "use client"
 
 import { usePathname } from "next/navigation"
-import { LibrarySidebarTree, ToolSidebarFooter } from "@debate/videos"
+import { LibrarySidebarTree } from "@debate/videos"
 
 import { ChromeErrorBoundary } from "../../../lib/ui/layout/chrome-error-boundary"
 import { showsCardsOnlySidebar, showsReasonDocsPanels } from "../../../lib/reason-docs/sidebar-routes"
@@ -26,11 +26,12 @@ export const DOCS_SIDEBAR_SLOT_ID = "app-sidebar-docs-slot"
  * - **The embedded dock** at the top, sticky as the column scrolls.
  * - **The REASON docs panels** on `/research/cards` and `/reason-editor`
  *   (`showsReasonDocsPanels`). On `/research/cards` they are the whole column
- *   (`showsCardsOnlySidebar`): no tree, no footer links, and the panels
+ *   (`showsCardsOnlySidebar`): no tree, and the panels
  *   `fill` the leftover height so each scrolls inside its own share.
  * - **The help docs' page tree** on `/docs` ({@link DOCS_SIDEBAR_SLOT_ID}).
  * - **The library tree** — Round Videos, Lectures and the tool sections —
- *   and the footer links everywhere else.
+ *   everywhere else. The site links that used to sit under it as a footer
+ *   row are a submenu of the account menu now (`nav-user.tsx`).
  */
 export function AppSidebar() {
   const pathname = usePathname()
@@ -53,13 +54,6 @@ export function AppSidebar() {
         <ChromeErrorBoundary label="LibrarySidebarTree">
           <LibrarySidebarTree />
         </ChromeErrorBoundary>
-      )}
-      {!cardsOnly && (
-        <div className="mt-auto">
-          <ChromeErrorBoundary label="ToolSidebarFooter">
-            <ToolSidebarFooter />
-          </ChromeErrorBoundary>
-        </div>
       )}
     </>
   )

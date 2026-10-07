@@ -6,6 +6,8 @@ export interface AuthSession {
     id: string;
     userId: string;
     expiresAt: Date;
+    /** better-auth organization plugin: the organization this session works in, or null for the personal workspace. */
+    activeOrganizationId?: string | null;
   };
   user: {
     id: string;

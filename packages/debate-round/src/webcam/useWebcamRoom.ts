@@ -52,6 +52,22 @@ export async function listCameras(): Promise<MediaDeviceInfo[]> {
   }
 }
 
+/** Shown when the page has no `navigator.mediaDevices` at all. */
+export const MEDIA_UNAVAILABLE =
+  "Camera and microphone are not available here. Open the page over HTTPS, or update the desktop app."
+
+/**
+ * `navigator.mediaDevices` only exists in secure contexts, and embedded
+ * WebViews (the Tauri desktop app on Linux, or on macOS without camera usage
+ * descriptions) can leave it out entirely. Calling through this turns that
+ * into a readable rejection instead of a TypeError about `undefined`.
+ */
+export function captureMedia(constraints: MediaStreamConstraints): Promise<MediaStream> {
+  const devices = typeof navigator === "undefined" ? undefined : navigator.mediaDevices
+  if (!devices?.getUserMedia) return Promise.reject(new Error(MEDIA_UNAVAILABLE))
+  return devices.getUserMedia(constraints)
+}
+
 const DEFAULT_ICE: RTCIceServer[] = [{ urls: "stun:stun.cloudflare.com:3478" }]
 
 async function loadIceServers(apiBase: string): Promise<RTCIceServer[]> {
@@ -268,7 +284,7 @@ export function useWebcamRoom(roomId: string, { apiBase = "/api/rooms", role = "
     pendingRef.current.add(kind)
     const session = sessionRef.current
     try {
-      const captured = await navigator.mediaDevices.getUserMedia(
+      const captured = await captureMedia(
         kind === "video" ? { video: videoConstraints(cameraIdRef.current) } : { audio: true },
       )
       const track = kind === "video" ? captured.getVideoTracks()[0] : captured.getAudioTracks()[0]
@@ -360,7 +376,7 @@ export function useWebcamRoom(roomId: string, { apiBase = "/api/rooms", role = "
     if (oldTrack.getSettings().deviceId === id) return
     let newTrack: MediaStreamTrack | undefined
     try {
-      const captured = await navigator.mediaDevices.getUserMedia({ video: videoConstraints(id) })
+      const captured = await captureMedia({ video: videoConstraints(id) })
       newTrack = captured.getVideoTracks()[0]
     } catch (e) {
       setError(e instanceof Error ? `Could not switch camera: ${e.message}` : "Could not switch camera.")

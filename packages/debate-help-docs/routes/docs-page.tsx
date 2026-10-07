@@ -5,7 +5,7 @@
  */
 import { pageMarkdownUrl, source } from '../lib/fumadocs/source';
 import { DocsBody, DocsPage } from 'fumadocs-ui/page';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { getMDXComponents } from '../mdx-components';
 import type { Metadata } from 'next';
 import { AskAIDropdown } from '../components/fumadocs/ai/ask-ai-dropdown';
@@ -44,6 +44,22 @@ function lastEditFor(path: string): Promise<Date | undefined> {
   return pending;
 }
 
+/**
+ * The page a pre-regrouping feature URL now lives at.
+ *
+ * Feature pages used to sit flat at `features/<slug>`; they now live one level
+ * down in a group folder (`features/<group>/<slug>`). In-app help links and
+ * bookmarks still use the flat form, so a `features/<slug>` miss resolves to
+ * the one grouped page with that file name, if exactly one exists.
+ */
+function movedFeaturePage(slug: string[] | undefined) {
+  if (slug?.length !== 2 || slug[0] !== 'features') return undefined;
+  const matches = source
+    .getPages()
+    .filter((page) => page.slugs.length === 3 && page.slugs[0] === 'features' && page.slugs[2] === slug[1]);
+  return matches.length === 1 ? matches[0] : undefined;
+}
+
 export default async function Page(props: {
   params: Promise<{ slug?: string[] }>;
 }) {
@@ -51,6 +67,8 @@ export default async function Page(props: {
   const page = source.getPage(params.slug);
 
   if (!page) {
+    const moved = movedFeaturePage(params.slug);
+    if (moved) permanentRedirect(moved.url);
     notFound();
   }
 
@@ -94,7 +112,7 @@ export async function generateMetadata(props: {
   params: Promise<{ slug?: string[] }>;
 }) {
   const params = await props.params;
-  const page = source.getPage(params.slug);
+  const page = source.getPage(params.slug) ?? movedFeaturePage(params.slug);
   if (!page) notFound();
 
   return {

@@ -42,6 +42,12 @@ import type { LectureCategoryFacet } from "../types/videos"
 export interface LecturesSidebarShellProps {
   /** App-owned navigation dock, rendered at the top of the column. */
   dockSlot?: React.ReactNode
+  /**
+   * App-owned account menu, pinned at the column's foot beside the hide
+   * button. It carries the site links as a submenu, so when it is given the
+   * column drops its own footer link row.
+   */
+  accountSlot?: React.ReactNode
   /** Per-category video counts, keyed by quick-link id. */
   counts?: Record<string, number>
   lectureCategories: LectureCategoryFacet[]
@@ -55,6 +61,7 @@ export interface LecturesSidebarShellProps {
 
 export function LecturesSidebarShell({
   dockSlot,
+  accountSlot,
   counts,
   lectureCategories,
   selectedCategory,
@@ -70,6 +77,7 @@ export function LecturesSidebarShell({
     <ResizableSidebarLayout
       appChrome
       className="bg-background"
+      footer={accountSlot}
       sidebar={
         <>
           {dockSlot}
@@ -83,7 +91,7 @@ export function LecturesSidebarShell({
             onToggleLectures={onToggleLectures}
           />
 
-          <Footer />
+          {accountSlot ? null : <Footer />}
         </>
       }
     >
