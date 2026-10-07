@@ -50,9 +50,8 @@ export function isToolActive(href: string, pathname: string | null): boolean {
  * (`SIDEBAR_TOOL_SECTIONS`, from @debate/videos) in sidebar-07's collapsible
  * `NavMain` form.
  *
- * The section holding the current route opens on load and again whenever a
- * navigation lands in a closed one; sections are never closed for you, so a
- * list you opened by hand stays open. Collapsed to icons, the section's icon
+ * Every section starts expanded, and a navigation that lands in a section
+ * you closed by hand opens it again; sections are never closed for you. Collapsed to icons, the section's icon
  * expands the sidebar and opens that section, since a submenu cannot show in
  * a 3rem column.
  */
@@ -66,7 +65,7 @@ export function NavMain({ sectionIds }: { sectionIds?: readonly string[] }) {
     : SIDEBAR_TOOL_SECTIONS
 
   const [openIds, setOpenIds] = useState<ReadonlySet<string>>(
-    () => new Set(activeSectionId ? [activeSectionId] : []),
+    () => new Set(SIDEBAR_TOOL_SECTIONS.map((section) => section.id)),
   )
 
   useEffect(() => {
