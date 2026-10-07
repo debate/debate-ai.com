@@ -145,16 +145,13 @@ export function eventSegment(parts: VideoRouteParts): string {
 }
 
 /**
- * The matchup segment, naming who debated and which round.
- *
- * Teams first, then the round, then the arguments that were run — each only
- * while the segment has room for it. A video with no teams recorded (a
- * lecture, or a round nobody has tagged yet) falls back to its title, which
- * is what the old flat slug carried and is still better than a bare id.
- *
- * The video id is no longer appended — clean URLs are the point.
+ * Longest a matchup segment may grow once the title is added to it, for a
+ * video whose tags alone do not say which one it is.
  */
-export function matchupSegment(parts: VideoRouteParts): string {
+const MAX_TITLED_MATCHUP_LENGTH = 110;
+
+/** The matchup segment built from the tags alone, before any title is added. */
+function taggedMatchupSegment(parts: VideoRouteParts): string {
   const pieces: string[] = [];
   let length = 0;
 
@@ -177,7 +174,39 @@ export function matchupSegment(parts: VideoRouteParts): string {
   add(parts.arg1ac);
   add(parts.arg2nr);
 
-  return pieces.join("-") || slugifyVideoTitle(parts.title) || "video";
+  return pieces.join("-");
+}
+
+/** Clips a slug to `max` characters, at the last whole word when it can. */
+function clipSlug(slug: string, max: number): string {
+  if (slug.length <= max) return slug;
+  const clipped = slug.slice(0, max);
+  const lastBreak = clipped.lastIndexOf("-");
+  return (lastBreak > max / 2 ? clipped.slice(0, lastBreak) : clipped).replace(/-+$/, "");
+}
+
+/**
+ * The matchup segment, naming who debated and which round.
+ *
+ * Teams first, then the round, then the arguments that were run — each only
+ * while the segment has room for it. A video with no teams recorded (a
+ * lecture, or a round nobody has tagged yet) falls back to its title, which
+ * is what the old flat slug carried and is still better than a bare id.
+ *
+ * A video with a round or arguments but no team would otherwise get a
+ * partial address that names no one video — every untagged policy final of a
+ * season at `/videos/2027/policy/finals` — so its title is added after the
+ * tags: `finals-<title-slug>`, or the title alone when it already says them.
+ *
+ * The video id is no longer appended — clean URLs are the point.
+ */
+export function matchupSegment(parts: VideoRouteParts): string {
+  const tagged = taggedMatchupSegment(parts);
+  const titleSlug = slugifyVideoTitle(parts.title);
+  if (!tagged) return titleSlug || "video";
+  if (parts.affTeam || parts.negTeam || !titleSlug) return tagged;
+  if (`-${titleSlug}-`.includes(`-${tagged}-`)) return titleSlug;
+  return clipSlug(`${tagged}-${titleSlug}`, MAX_TITLED_MATCHUP_LENGTH);
 }
 
 /**
@@ -403,7 +432,26 @@ export function videoRouteHref(video: VideoType | VideoRouteParts): string {
  */
 export function legacyVideoRouteHref(video: VideoType | VideoRouteParts): string {
   const parts = Array.isArray(video) ? videoRouteParts(video) : video;
-  return `/videos/${seasonSegment(parts)}/${eventSegment(parts)}/${matchupSegment(parts)}`;
+  const matchup = taggedMatchupSegment(parts) || slugifyVideoTitle(parts.title) || "video";
+  return `/videos/${seasonSegment(parts)}/${eventSegment(parts)}/${matchup}`;
+}
+
+/**
+ * The three-segment path a video with no team recorded had before its title
+ * was added to it, e.g. `/videos/2027/policy/finals`.
+ *
+ * Several videos can share it, so it only ever redirects; see
+ * `getVideoByRouteSegments` in the app.
+ *
+ * @returns The path, or `null` when it is the video's current one or the
+ *   video is filed as a round.
+ */
+export function untitledVideoRouteHref(video: VideoType | VideoRouteParts): string | null {
+  const parts = Array.isArray(video) ? videoRouteParts(video) : video;
+  if (roundRoute(parts)) return null;
+  const tagged = taggedMatchupSegment(parts);
+  if (!tagged || tagged === matchupSegment(parts)) return null;
+  return `/videos/${seasonSegment(parts)}/${eventSegment(parts)}/${tagged}`;
 }
 
 /**

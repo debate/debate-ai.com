@@ -107,6 +107,7 @@ export {
   parseVideoRouteMatchup,
   seasonSegment,
   teamsSegment,
+  untitledVideoRouteHref,
   videoRouteHref,
   videoRouteParts,
   videoRouteSegments,

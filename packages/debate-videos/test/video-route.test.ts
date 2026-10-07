@@ -22,6 +22,7 @@ import {
   parseVideoRouteMatchup,
   seasonSegment,
   teamsSegment,
+  untitledVideoRouteHref,
   videoRouteHref,
   videoRouteParts,
   videoRouteSegments,
@@ -303,6 +304,32 @@ describe("matchupSegment", () => {
     expect(
       matchupSegment({ videoId: "abcdefghijk", title: "How to give a 2NR" }),
     ).toBe("how-to-give-a-2nr");
+  });
+});
+
+describe("a video whose tags name no team", () => {
+  const untaggedFinal = {
+    videoId: "abcdefghijk",
+    title: "Greenhill vs Westminster",
+    seasonYear: 2027,
+    style: 1,
+    roundLevel: "Finals",
+  } as const;
+
+  it("adds the title after the round, so the address names one video", () => {
+    expect(videoRouteHref(untaggedFinal)).toBe("/videos/2027/policy/finals-greenhill-vs-westminster");
+  });
+
+  it("uses the title alone when it already says the round", () => {
+    expect(matchupSegment({ ...untaggedFinal, title: "Policy Finals Highlights" })).toBe(
+      "policy-finals-highlights",
+    );
+  });
+
+  it("keeps the old partial address so it can redirect", () => {
+    expect(untitledVideoRouteHref(untaggedFinal)).toBe("/videos/2027/policy/finals");
+    expect(untitledVideoRouteHref({ videoId: "x", title: "How to give a 2NR" })).toBeNull();
+    expect(untitledVideoRouteHref(ndtFinal)).toBeNull();
   });
 });
 
