@@ -175,10 +175,9 @@ The list below groups the same command set into feature highlights — 50+ in to
 
 - **Runtime plugin registry** — third-party commands surface automatically in their own
   Plugins menu section and in the command palette
-- **12-category menu bar** (File, Speech, Card, Edit, Format, Color, Insert, AI, View,
-  Panes, Tools, Flow, Workspace, Plugins) bucketing all ~500 ribbon commands for a compact
-  embedded panel
-- **Workspace menu** linking out to roughly 50 other app tools and pages
+- **Menu bar** (File, Speech, Card, Edit, Format, Color, Insert, AI, View, Panes, Tools,
+  Flow, Plugins) bucketing all ~500 ribbon commands for a compact embedded panel, with the
+  Send / Receive card-sharing pills beside its Settings button
 - **Customizable keybindings editor**, grouped by the same ~30 thematic command groups as
   the shortcuts reference
 - **Per-user preferences** (general, appearance, accessibility) synced through the site's account settings
