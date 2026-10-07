@@ -15,6 +15,7 @@ import {
   backfillVideoDurations,
   ensureVideoDurationsTable,
   getVideoDurationStatus,
+  getVideoDurations,
 } from "../backfill-video-durations";
 
 const mockFetchVideoDurations = vi.fn();
@@ -134,5 +135,25 @@ describe("backfillVideoDurations", () => {
     const refreshed = await backfillVideoDurations(db, { refresh: true });
     expect(mockFetchVideoDurations.mock.calls[1][0]).toEqual(["a", "b"]);
     expect(refreshed.status.totalSeconds).toBe(198);
+  });
+});
+
+describe("getVideoDurations", () => {
+  it("returns stored lengths for the asked ids and omits the rest", async () => {
+    const db = await freshDb();
+    await ensureVideoDurationsTable(db);
+    await db.insert(videoDurations).values([
+      { videoId: "a", durationSeconds: 3900 },
+      { videoId: "b", durationSeconds: 120 },
+    ] as any);
+
+    expect(await getVideoDurations(db, ["a", "c", "a"])).toEqual({ a: 3900 });
+    expect(await getVideoDurations(db, [])).toEqual({});
+  });
+
+  it("reads a database without the table as having no durations", async () => {
+    const client = createClient({ url: ":memory:" });
+    const db = drizzle(client, { schema });
+    expect(await getVideoDurations(db, ["a"])).toEqual({});
   });
 });
