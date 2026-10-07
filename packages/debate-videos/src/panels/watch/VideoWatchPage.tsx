@@ -138,6 +138,8 @@ export interface VideoWatchPageProps {
   stack?: VideoType[]
   /** App-owned navigation dock, rendered at the top of the sidebar. */
   dockSlot?: React.ReactNode
+  /** App-owned account menu for the sidebar's foot; see `LecturesSidebarShell`. */
+  accountSlot?: React.ReactNode
   /** App-specific toolbar buttons — see `SlowSpreadButton`. */
   extraControls?: React.ReactNode
   /**
@@ -154,6 +156,7 @@ export function VideoWatchPage({
   links = [],
   stack = NO_VIDEOS,
   dockSlot,
+  accountSlot,
   extraControls,
   sideTabs,
 }: VideoWatchPageProps) {
@@ -630,6 +633,7 @@ export function VideoWatchPage({
   return (
     <LecturesSidebarShell
       dockSlot={dockSlot}
+      accountSlot={accountSlot}
       counts={quickLinkCounts}
       lectureCategories={lectureCategories}
       lecturesExpanded={lecturesExpanded}

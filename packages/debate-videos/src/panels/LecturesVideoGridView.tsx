@@ -143,6 +143,11 @@ interface LecturesVideoGridViewProps {
    * (auth session, routing, settings menu).
    */
   dockSlot?: React.ReactNode
+  /**
+   * App-owned account menu, pinned at the sidebar's foot. It carries the site
+   * links, so the column drops its own footer row when this is given.
+   */
+  accountSlot?: React.ReactNode
   /** Host-owned controls (e.g. the account-sync badge) rendered beside the search bar. */
   headerActionsSlot?: React.ReactNode
 }
@@ -200,6 +205,7 @@ export function LecturesVideoGridView({
   selectedStyle,
   onStyleChange,
   dockSlot,
+  accountSlot,
   headerActionsSlot,
 }: LecturesVideoGridViewProps) {
   const params = useParams()
@@ -313,6 +319,7 @@ export function LecturesVideoGridView({
     <ResizableSidebarLayout
       className="bg-background"
       contentClassName="p-3 sm:p-6"
+      footer={accountSlot}
       sidebar={
         <>
           {dockSlot}
@@ -331,7 +338,7 @@ export function LecturesVideoGridView({
             onToggleLectures={onToggleLectureCategories}
           />
 
-          <Footer />
+          {accountSlot ? null : <Footer />}
         </>
       }
     >

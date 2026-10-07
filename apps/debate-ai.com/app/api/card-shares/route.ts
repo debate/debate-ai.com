@@ -10,6 +10,7 @@ import {
   toContactUser,
   userSummaryColumns,
 } from "@/lib/contacts/server"
+import { loadActiveOrganization } from "@/lib/organizations/server"
 import {
   normalizeCardShareMessage,
   normalizeCardShareTitle,
@@ -22,14 +23,17 @@ import {
  * up as available on the recipient's account instead of only on the
  * clipboard the invite link was pasted into (`card_shares` in
  * `lib/database/schema.ts`; see packages/debate-help-docs/content/docs/features/contacts.mdx). Shares only
- * ever go to accepted contacts with no block in either direction —
+ * ever go to accepted contacts (or members of the active organization) with
+ * no block in either direction —
  * `filterShareableContacts` — and blocking revokes them. Requires a session.
  *
  * GET   — `{ received, sent }`, live shares only (no `revokedAt`), newest
- *   first, each with the other party's user summary.
+ *   first, each with the other party's user summary. While the session has an
+ *   active organization, only shares with its members (lib/organizations).
  * POST  { shareCode, guestPass?, title?, message?, recipientIds: string[] }
  *   — validates the code's format (`parseShareCode`), upserts one row per
- *   shareable recipient keyed on `(roomId, recipientId)` (re-sharing the
+ *   shareable recipient (accepted contacts, plus the active organization's
+ *   members) keyed on `(roomId, recipientId)` (re-sharing the
  *   same room refreshes the code/pass, clears any revoke, and re-notifies),
  *   and returns `{ shared, skipped }` ids.
  * PATCH { id, action: "opened" } — recipient marks first open.
@@ -75,6 +79,10 @@ export async function GET() {
       .where(and(eq(cardShares.ownerId, me), isNull(cardShares.revokedAt)))
       .orderBy(desc(cardShares.updatedAt))
 
+    // An active organization narrows both lists to shares with its members.
+    const org = await loadActiveOrganization(db, me, session.session.activeOrganizationId)
+    const inScope = (r: (typeof received)[number]) => !org || org.memberIds.has(r.other.id)
+
     const shape = (r: (typeof received)[number]) => ({
       id: r.id,
       user: toContactUser(r.other),
@@ -87,7 +95,7 @@ export async function GET() {
       updatedAt: iso(r.updatedAt),
       openedAt: iso(r.openedAt),
     })
-    return NextResponse.json({ received: received.map(shape), sent: sent.map(shape) })
+    return NextResponse.json({ received: received.filter(inScope).map(shape), sent: sent.filter(inScope).map(shape) })
   } catch (error) {
     if (isMissingTableError(error)) {
       console.warn("card_shares table missing (migration pending)", error)
@@ -130,7 +138,8 @@ export async function POST(req: NextRequest) {
 
   try {
     const db = await getDBFromContext()
-    const shareable = await filterShareableContacts(db, me, recipientIds as string[])
+    const org = await loadActiveOrganization(db, me, session.session.activeOrganizationId)
+    const shareable = await filterShareableContacts(db, me, recipientIds as string[], org?.memberIds)
     const shared: string[] = []
     const skipped: string[] = []
     const now = new Date()
