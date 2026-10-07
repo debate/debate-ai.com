@@ -33,7 +33,7 @@
 
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, useSyncExternalStore } from "react"
 import { useTheme } from "next-themes"
 import { Badge } from "../ui/primitives/badge"
 import { Button } from "../ui/primitives/button"
@@ -46,6 +46,11 @@ import {
   SelectValue,
 } from "../ui/primitives/select"
 import { fetchUserSettings, saveUserSettings, type FullUserSettingsPayload } from "../round/user-settings-client"
+import {
+  isFlowAutoSaveEnabled,
+  setFlowAutoSaveEnabled,
+  subscribeFlowAutoSavePreference,
+} from "../state/flowAutoSavePreference"
 import { isUserSettingsPanelLiveUpdateStorageEvent } from "../flow/live-update"
 import {
   applyUserSettingsToLocalStore,
@@ -146,6 +151,7 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
   // so it lives outside `form` and applies as soon as it's picked rather than
   // waiting on the Save button below.
   const [fontFamily, setFontFamily] = useState(DEFAULT_FONT_FAMILY)
+  const flowAutoSave = useSyncExternalStore(subscribeFlowAutoSavePreference, isFlowAutoSaveEnabled, () => true)
   // The last values `form` was loaded/saved from — i.e. what's actually
   // persisted right now, as far as this tab knows. The cross-tab
   // `storage`-event handler below only refreshes a field whose current
@@ -466,6 +472,22 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
               ))}
             </SelectContent>
           </Select>
+        </div>
+
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-2">
+            <input
+              id="settings-flow-auto-save"
+              type="checkbox"
+              checked={flowAutoSave}
+              onChange={(event) => setFlowAutoSaveEnabled(event.target.checked)}
+            />
+            <Label htmlFor="settings-flow-auto-save">Auto-save flows to my account</Label>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Saves edits to flows you've already saved to your account, a few seconds after you stop typing. Applies
+            immediately in this browser and isn't synced to other devices.
+          </p>
         </div>
 
         <div className="flex items-center gap-2">

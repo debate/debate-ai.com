@@ -29,6 +29,7 @@ import { createRoot, type Root } from "react-dom/client"
 import { UserSettingsPanel } from "../src/panels/UserSettingsPanel"
 import { readLocalUserSettings } from "../src/state/userSettings"
 import { settings } from "../src/state/settings"
+import { isFlowAutoSaveEnabled } from "../src/state/flowAutoSavePreference"
 
 let container: HTMLDivElement
 let root: Root
@@ -87,6 +88,19 @@ describe("UserSettingsPanel", () => {
     expect(html).toContain("Light / dark mode")
     // The one field that never reaches the account, per `fontSettings.ts`.
     expect(html).toContain("this one isn't saved to your account")
+  })
+
+  it("renders the flow auto-save toggle checked by default and writes the opt-out to this browser", async () => {
+    stubFetchSignedOut()
+    await renderPanel()
+    const box = container.querySelector<HTMLInputElement>("#settings-flow-auto-save")!
+
+    expect(container.innerHTML).toContain("Auto-save flows to my account")
+    expect(box.checked).toBe(true)
+
+    await act(async () => box.click())
+    expect(isFlowAutoSaveEnabled()).toBe(false)
+    expect(container.querySelector<HTMLInputElement>("#settings-flow-auto-save")!.checked).toBe(false)
   })
 
   it("shows the local-only status line when signed out", async () => {
