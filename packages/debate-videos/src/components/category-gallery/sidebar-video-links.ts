@@ -77,7 +77,7 @@ export const VIDEO_FORMAT_LINKS: SidebarVideoLink[] = [
   { id: "policy", href: "/videos/policy", title: "Policy Debates", glyph: IconFormatVP },
   { id: "pf", href: "/videos/pf", title: "PF Debates", glyph: IconFormatPF },
   { id: "ld", href: "/videos/ld", title: "LD Debates", glyph: IconFormatLD },
-  { id: "topPicks", href: "/videos/goat-status", title: "Greatest of All-Time", glyph: Star },
+  { id: "topPicks", href: "/videos/goat", title: "Greatest of All-Time", glyph: Star },
 ];
 
 /** The rest of the video library: My Favorites, the last row under "Round
