@@ -70,6 +70,38 @@ them under **Transcript**. Marks are saved in this browser only. Until
 any speech has a start, the timeline shows equal segments that still
 open each speech.
 
+### Detect speeches — let AI find where every speech starts
+
+Instead of marking each start by hand, press **Detect speeches** at the
+top of the By speech tab. The AI reads the video's whole caption track,
+works out the format (Policy, LD, Public Forum, or another), and finds
+when each speech begins and ends — 1AC, 1AX (the cross-ex of the 1AC),
+1NC, 1NX, 2AC, 2AX, 2NC, 2NX, 1NR, 1AR, 2NR, 2AR for Policy, and the
+matching speeches for LD and PF.
+
+- Each speech's tab is timed, the timeline fills in, and **Transcript**
+  shows exactly the captions spoken during that speech — cut off at its
+  end, so prep time and the judge's comments stay out.
+- A round with a written summary keeps its own speeches and only gains
+  the times it was missing. A **Mark start** you set yourself always
+  wins over a detected one.
+- The result is kept in this browser. **Detect again** re-runs it and
+  **Clear** forgets it.
+
+### LLM summary — a speech's key points and warrants
+
+Every speech with a transcript has an **LLM summary** button. It outlines
+the speech the way you'd flow it: each key point as a short bold tag, the
+warrants behind it as nested bullet phrases, in the order the speaker
+made them, ending with the speech's bottom line. The outline opens in its
+own **LLM summary** view, is kept in this browser, and **Run again** asks
+for a fresh one. On a round nobody typed up, the button turns on once the
+speech has a start — marked or detected.
+
+Both buttons need you to be signed in, and use the site's AI model — or
+your own OpenRouter or Anthropic key if you've added one in settings.
+They work from auto-generated captions, so check them against the video.
+
 ### Outcomes — what else the speech could have done
 
 Every speech tab also has an **Outcomes** view. Press **Simulate** and

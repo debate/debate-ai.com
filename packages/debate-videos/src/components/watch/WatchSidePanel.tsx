@@ -37,7 +37,7 @@ import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react
 import { WatchTranscriptPanel } from "./WatchTranscriptPanel"
 import { WatchDocumentPanel } from "./WatchDocumentPanel"
 import { WatchAnalysisPanel, type LinkedVideo } from "./WatchAnalysisPanel"
-import { WatchRoundPanel, type SpeechFocusRequest } from "./WatchRoundPanel"
+import { WatchRoundPanel, type SpeechDetectionControl, type SpeechFocusRequest } from "./WatchRoundPanel"
 import { buildRoundSpeeches, type RoundSpeech } from "../../lib/round-speeches"
 import type { RoundContext } from "../../lib/speech-outcomes"
 import {
@@ -81,6 +81,8 @@ interface WatchSidePanelProps {
   roundTranscript?: string
   onMarkStart?: (speechKey: string, seconds: number | null) => void
   markedKeys?: ReadonlySet<string>
+  /** The AI "Detect speeches" control for the By speech tab. */
+  speechDetection?: SpeechDetectionControl
   /** Host tabs, shown first. See {@link WatchSideTab}. */
   extraTabs?: WatchSideTab[]
 }
@@ -121,6 +123,7 @@ export function WatchSidePanel({
   roundTranscript,
   onMarkStart,
   markedKeys,
+  speechDetection,
   extraTabs = NO_EXTRA_TABS,
 }: WatchSidePanelProps) {
   const ordered = useMemo(() => orderDocuments(documents), [documents])
@@ -241,6 +244,7 @@ export function WatchSidePanel({
           roundTranscript={roundTranscript}
           onMarkStart={onMarkStart}
           markedKeys={markedKeys}
+          detection={speechDetection}
         />
       )}
 
