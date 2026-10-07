@@ -2397,3 +2397,30 @@ export const predictionBets = sqliteTable(
 );
 
 export type PredictionBetRow = typeof predictionBets.$inferSelect;
+
+// One signed-in user's pick in the next-season topic-area poll on
+// /practice/statistics. Keyed on (season, user), so a user holds one vote per
+// season and voting again overwrites it rather than adding a second row. `area`
+// is a topic-area name from @debate/videos' resolutions.json, checked by the
+// API before it is written. Created by packages/debate-videos/migrations.
+export const topicAreaVotes = sqliteTable(
+  "topic_area_votes",
+  {
+    season: integer("season").notNull(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    area: text("area").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.season, table.userId] }),
+  }),
+);
+
+export type TopicAreaVoteRow = typeof topicAreaVotes.$inferSelect;
