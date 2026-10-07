@@ -4,7 +4,7 @@ import { VideoRoutePage, videoRouteMetadata } from "../../../../../_watch/video-
 /**
  * A video made from a debate round, one segment below the round itself:
  * `/videos/<season>/<tournament>/<round>/<teams>/<variant>`, e.g.
- * `/videos/2022/ndt/finals/dartmouth-sv-michigan-pr/analysis` or
+ * `/videos/21-22/ndt/finals/dartmouth-sv-michigan-pr/analysis` or
  * `.../emory-gs-kansas-ls/part-2`.
  *
  * The router names the segments by position (see

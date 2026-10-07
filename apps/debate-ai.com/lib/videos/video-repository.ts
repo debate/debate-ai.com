@@ -49,6 +49,7 @@ import {
 import { getVideoRowsFromJson } from "./video-json-source";
 import {
   legacyVideoRouteHref,
+  parseSeasonSegment,
   previousVideoRouteHref,
   untitledVideoRouteHref,
   slugifyVideoTitle,
@@ -820,7 +821,8 @@ const MAX_ROUTE_LOOKUP_PAGES = 50;
  * `<season>/<event>/<matchup>` otherwise — and both older round paths (the
  * three-segment one, and the four-segment one whose teams carried `vs` and
  * the variant) and the untitled three-segment path of a video with no team
- * (`2027/policy/finals`), so the caller can redirect a stale one. The segments are slugs,
+ * (`26-27/policy/finals`), and any of those with the season spelled as a bare
+ * year (`2027/…`), so the caller can redirect a stale one. The segments are slugs,
  * which the library's search text does not hold, so candidates are read by
  * season and each one's path is rebuilt and compared; failing that, by the
  * words of the last segment (a round whose path came from its title), and
@@ -834,19 +836,25 @@ export async function getVideoByRouteSegments(segments: string[]): Promise<Video
   const clean = segments.map((segment) => decodeSegment(segment).toLowerCase()).filter(Boolean);
   if (clean.length < 3 || clean.length > 5) return null;
   const target = `/videos/${clean.join("/")}`;
+  const [season] = clean;
+  // Paths from before seasons read `26-27` spelled them as a bare `2027`, so
+  // such a path is compared against every path rebuilt with that spelling.
+  const spelling = /^\d{4}$/.test(season) ? "year" : "season";
+  const hrefOf = (v: VideoTuple, build: typeof previousVideoRouteHref) =>
+    build(v as unknown as VideoType, spelling);
   // A video whose current path this is wins over one whose old path it was.
   const matches = (videos: VideoTuple[]) =>
-    videos.find((v) => videoRouteHref(v as unknown as VideoType) === target) ??
-    videos.find((v) => previousVideoRouteHref(v as unknown as VideoType) === target) ??
-    videos.find((v) => legacyVideoRouteHref(v as unknown as VideoType) === target) ??
+    videos.find((v) => hrefOf(v, videoRouteHref) === target) ??
+    videos.find((v) => hrefOf(v, previousVideoRouteHref) === target) ??
+    videos.find((v) => hrefOf(v, legacyVideoRouteHref) === target) ??
     // A partial path from before titles were added, which several videos may
     // share: the first one found keeps the video the link always opened.
-    videos.find((v) => untitledVideoRouteHref(v as unknown as VideoType) === target);
+    videos.find((v) => hrefOf(v, untitledVideoRouteHref) === target);
 
-  const [season] = clean;
-  // A season segment is a year, or `archive` for a video with no usable date,
-  // which a season filter cannot express.
-  const year = /^\d{4}$/.test(season) ? season : null;
+  // A season segment names the year its season ends, or is `archive` for a
+  // video with no usable date, which a season filter cannot express.
+  const seasonEnd = parseSeasonSegment(season);
+  const year = seasonEnd === null ? null : String(seasonEnd);
 
   /** Reads pages of one filter until a match or the end. */
   const scan = async (params: { year?: string | null; q?: string | null }) => {

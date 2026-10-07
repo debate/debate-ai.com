@@ -23,9 +23,16 @@ JSON assets in memory with identical semantics.
 ## Season and tournament addresses
 
 A video's address starts with its season and tournament
-(`/videos/2022/ndt/finals/…`), so it can be trimmed: `/videos/2025` opens the
-library filtered to that season, and `/videos/2025/ndt` filtered to that season
-with the tournament's name as the search (`/videos?year=2025&q=ndt`). The Worker
+(`/videos/21-22/ndt/finals/…`). The season is written as the two years it
+spans, because a season runs from summer to summer: `21-22` is the season that
+ends in 2022. A publish date from July onward counts toward the next season.
+Older links spelled the season as the year it ended (`/videos/2022/…`); they
+still work and forward to the new address.
+
+An address can be trimmed: `/videos/24-25` opens the library filtered to that
+season, and `/videos/24-25/ndt` filtered to that season with the tournament's
+name as the search (`/videos?year=2025&q=ndt`). The bare-year forms
+(`/videos/2025`) still work too. The Worker
 does this with a redirect (`apps/debate-ai.com/lib/redirects/video-listing.ts`)
 before the request reaches the app. `/videos/archive/…` maps to the undated
 (`legacy`) season.
@@ -117,14 +124,14 @@ player — the round, its analysis, each part — with the one you are watching
 marked, so the analysis of a round is one click away.
 
 A video made from a round lives one level below the round's address: the
-2022 NDT final is at `/videos/2022/ndt/finals/dartmouth-sv-michigan-pr`, and
-its analysis at `/videos/2022/ndt/finals/dartmouth-sv-michigan-pr/analysis`.
+2022 NDT final is at `/videos/21-22/ndt/finals/dartmouth-sv-michigan-pr`, and
+its analysis at `/videos/21-22/ndt/finals/dartmouth-sv-michigan-pr/analysis`.
 Links shared under the older addresses (`…/dartmouth-sv-vs-michigan-pr-round-analysis`)
 still work and forward to the new one.
 
 A video tagged with a round but no team would have an address that names no
-one video (`/videos/2027/policy/finals`), so its title is added after the
-round: `/videos/2027/policy/finals-<title>`, or just the title when it already
+one video (`/videos/26-27/policy/finals`), so its title is added after the
+round: `/videos/26-27/policy/finals-<title>`, or just the title when it already
 says the round. The short address still works and forwards to the video it
 always opened.
 
