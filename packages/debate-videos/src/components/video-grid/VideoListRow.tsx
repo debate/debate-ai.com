@@ -31,6 +31,7 @@ import { useVideoPlayerStore } from "../../state/videoPlayerStore"
 import { STYLE_COLORS, getRoundBadgeColor, formatVideoDate } from "../video-card/videoCardUtils"
 import { TopPickBadge } from "../video-card/TopPickBadge"
 import { WatchProgressBadge } from "../video-card/WatchProgressBadge"
+import { VideoDuration } from "../video-card/VideoDuration"
 import { useWatchHistoryEntry } from "../../hooks/useWatchHistory"
 import { formatWatchedAgo } from "../../state/videoWatchHistory"
 import { HideConfirmDialog } from "../video-card/VideoCardDialogs"
@@ -452,6 +453,9 @@ export function VideoListRow({
                   <TooltipContent>{isHidden ? "Unhide video" : "Hide video"}</TooltipContent>
                 </Tooltip>
               </div>
+              {/* The video's length, under the buttons rather than in a column
+                  of its own. */}
+              <VideoDuration videoId={videoId} className="mt-0.5 sm:mt-1" />
               {/* What the cards have always carried and the rows did not: the
                   uploader's own blurb, clamped to two lines. It is often the
                   only place a lecture says what it actually covers. */}

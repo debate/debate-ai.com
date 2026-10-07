@@ -40,6 +40,11 @@
  *   menu opened from inside it (the account menu) keeps it out while open.
  *   Each entrance and exit is one of ten anime.js animations picked at random
  *   (`sidebar-peek-animations.ts`), or none under reduced motion.
+ * - **Pages with a sidebar of their own collapse it.** With `autoCollapse`
+ *   (the REASON docs workspace, the flow workspace) the column starts hidden
+ *   so the page's own sidebar is the only one on screen, and it can still be
+ *   peeked or pinned. That is a choice for this page alone: it never touches
+ *   the app-wide hidden/shown choice, and leaving the page restores it.
  *
  * While a drag is in progress the library sets `pointer-events: none` on the
  * panels, so a same-origin frame in the content column cannot swallow the
@@ -130,6 +135,12 @@ export interface ResizableSidebarLayoutProps {
   contentClassName?: string
   /** Marks the `<aside>` as app chrome (`data-app-chrome`). */
   appChrome?: boolean
+  /**
+   * Starts the column hidden on this page, whatever the app-wide choice, for
+   * pages that draw a sidebar of their own. Showing or pinning it then lasts
+   * until the page changes and is not remembered.
+   */
+  autoCollapse?: boolean
 }
 
 export function ResizableSidebarLayout({
@@ -140,15 +151,20 @@ export function ResizableSidebarLayout({
   sidebarClassName,
   contentClassName,
   appChrome,
+  autoCollapse = false,
 }: ResizableSidebarLayoutProps) {
   const panelRef = usePanelRef()
   // Nothing is saved until the stored width has been applied: the panel
   // reports its default size on mount, which would otherwise overwrite it.
   const restored = useRef(false)
 
+  // An `autoCollapse` page mounts the panel collapsed (`defaultSize` 0); the
+  // stored width is applied when it is first shown instead.
+  const mountedCollapsed = useRef(autoCollapse)
+
   useLayoutEffect(() => {
     const stored = readStoredWidth()
-    if (stored !== null) {
+    if (stored !== null && !mountedCollapsed.current) {
       try {
         panelRef.current?.resize(stored)
       } catch {
@@ -158,7 +174,20 @@ export function ResizableSidebarLayout({
     restored.current = true
   }, [panelRef])
 
-  const collapsed = useSidebarCollapsed()
+  const storedCollapsed = useSidebarCollapsed()
+  // On an `autoCollapse` page the column follows a choice local to the page:
+  // hidden until the reader shows or pins it, and hidden again on the next
+  // page that asks for it.
+  const [shownHere, setShownHere] = useState(false)
+  useEffect(() => setShownHere(false), [autoCollapse])
+  const collapsed = autoCollapse ? !shownHere : storedCollapsed
+  const setCollapsed = useCallback(
+    (next: boolean) => (autoCollapse ? setShownHere(!next) : setSidebarCollapsed(next)),
+    [autoCollapse],
+  )
+  // The resize handler is created once; it reads the current setter here.
+  const setCollapsedRef = useRef(setCollapsed)
+  setCollapsedRef.current = setCollapsed
   const asideRef = useRef<HTMLElement>(null)
   // Peeking: the collapsed column shown as an overlay while the pointer is
   // near the edge or over it. Never set while the column is open.
@@ -286,14 +315,22 @@ export function ResizableSidebarLayout({
     }
   }, [collapsed])
 
-  // The shared choice drives the panel. `collapse()`/`expand()` are no-ops
-  // when the panel is already in that state, so this is safe to repeat.
-  useEffect(() => {
+  // The choice drives the panel, before paint so a page that collapses it
+  // never flashes the column open. `collapse()`/`expand()` are no-ops when the
+  // panel is already in that state, so this is safe to repeat.
+  useLayoutEffect(() => {
     const panel = panelRef.current
     if (!panel) return
     try {
       if (collapsed) panel.collapse()
-      else panel.expand()
+      else if (panel.isCollapsed()) {
+        panel.expand()
+        // A panel that mounted collapsed has no width to expand back to.
+        if (mountedCollapsed.current) {
+          mountedCollapsed.current = false
+          panel.resize(sidebarPeekWidth(readStoredWidth()))
+        }
+      }
     } catch {
       // Not registered with its group yet; the next change applies it.
     }
@@ -305,11 +342,12 @@ export function ResizableSidebarLayout({
       if (event.key.toLowerCase() !== "b" || !(event.metaKey || event.ctrlKey)) return
       if (event.altKey || event.shiftKey || isEditableTarget(event.target)) return
       event.preventDefault()
-      toggleSidebarCollapsed()
+      if (autoCollapse) setShownHere((shown) => !shown)
+      else toggleSidebarCollapsed()
     }
     window.addEventListener("keydown", onKeyDown)
     return () => window.removeEventListener("keydown", onKeyDown)
-  }, [])
+  }, [autoCollapse])
 
   const handleResize = useCallback((size: PanelSize, _id: unknown, prev: PanelSize | undefined) => {
     if (!restored.current || !prev) return
@@ -317,10 +355,10 @@ export function ResizableSidebarLayout({
     // choice as the button. Transitions only: the mount-time reports go from
     // one open width to another, so they never overwrite the stored choice.
     if (size.inPixels <= 0) {
-      if (prev.inPixels > 0) setSidebarCollapsed(true)
+      if (prev.inPixels > 0) setCollapsedRef.current(true)
       return
     }
-    if (prev.inPixels <= 0) setSidebarCollapsed(false)
+    if (prev.inPixels <= 0) setCollapsedRef.current(false)
     writeStoredWidth(size.inPixels)
   }, [])
 
@@ -342,7 +380,7 @@ export function ResizableSidebarLayout({
       <Panel
         id="app-sidebar"
         panelRef={panelRef}
-        defaultSize={SIDEBAR_DEFAULT_WIDTH}
+        defaultSize={mountedCollapsed.current ? 0 : SIDEBAR_DEFAULT_WIDTH}
         minSize={SIDEBAR_MIN_WIDTH}
         maxSize={SIDEBAR_MAX_WIDTH}
         collapsible
@@ -373,7 +411,7 @@ export function ResizableSidebarLayout({
             {/* While peeking, the same spot pins the column open instead. */}
             <button
               type="button"
-              onClick={() => setSidebarCollapsed(!peek)}
+              onClick={() => setCollapsed(!peek)}
               aria-label={peek ? "Keep sidebar open" : "Hide sidebar"}
               title={peek ? "Keep sidebar open (Ctrl+B)" : "Hide sidebar (Ctrl+B)"}
               className="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
@@ -402,11 +440,13 @@ export function ResizableSidebarLayout({
             bottom dock centred itself in that, off to the right. */}
         <div className={cn("relative min-w-0", contentClassName)}>{children}</div>
       </Panel>
-      {collapsed && !peek && (
+      {/* No tab on an `autoCollapse` page: it would sit over the page's own
+          sidebar. The left edge still peeks the column there. */}
+      {collapsed && !peek && !autoCollapse && (
         <button
           type="button"
           data-app-chrome={appChrome || undefined}
-          onClick={() => setSidebarCollapsed(false)}
+          onClick={() => setCollapsed(false)}
           aria-label="Show sidebar"
           title="Show sidebar (Ctrl+B)"
           className="fixed left-0 top-1/2 z-40 hidden -translate-y-1/2 items-center justify-center rounded-r-md border border-l-0 border-border bg-background py-3 pl-1 pr-1.5 text-muted-foreground shadow-sm transition-colors hover:bg-accent hover:text-foreground md:flex"

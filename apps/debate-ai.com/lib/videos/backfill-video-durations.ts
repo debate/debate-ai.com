@@ -120,6 +120,44 @@ export async function getVideoDurationStatus(db: any): Promise<DurationStatus> {
   };
 }
 
+/** Most ids one {@link getVideoDurations} call resolves. */
+export const MAX_DURATION_IDS = 200;
+
+/**
+ * Reads the stored lengths of the given videos, for the grid and list views.
+ *
+ * Ids without a stored duration are simply left out. A database the backfill
+ * has never run against has no `video_durations` table at all; that reads as
+ * "no durations yet" rather than an error.
+ *
+ * @param db - Drizzle handle bound to D1 (or local SQLite in development).
+ * @param ids - YouTube ids; at most {@link MAX_DURATION_IDS} are looked up.
+ * @returns Seconds per video id.
+ */
+export async function getVideoDurations(db: any, ids: string[]): Promise<Record<string, number>> {
+  const wanted = [...new Set(ids.filter(Boolean))].slice(0, MAX_DURATION_IDS);
+  if (wanted.length === 0) return {};
+
+  let rows: Array<{ id: string; seconds: number | null }>;
+  try {
+    rows = (await db.all(
+      sql`SELECT "video_id" AS id, "duration_seconds" AS seconds FROM "video_durations" WHERE "video_id" IN (SELECT value FROM json_each(${JSON.stringify(wanted)}))`,
+    )) as Array<{ id: string; seconds: number | null }>;
+  } catch (error) {
+    // Drizzle wraps the driver's error, so the reason is on `cause`.
+    const text = `${(error as Error)?.message ?? error} ${(error as { cause?: Error })?.cause?.message ?? ""}`;
+    if (/no such table/i.test(text)) return {};
+    throw error;
+  }
+
+  const durations: Record<string, number> = {};
+  for (const row of rows) {
+    const seconds = Number(row.seconds);
+    if (row.id && Number.isFinite(seconds) && seconds > 0) durations[row.id] = seconds;
+  }
+  return durations;
+}
+
 /**
  * Fetches durations for one page of ids and stores them.
  *
