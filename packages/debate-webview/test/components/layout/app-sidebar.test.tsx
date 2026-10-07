@@ -1,7 +1,7 @@
 /**
  * @fileoverview Pins the sidebar-07 tool sidebar's navigation: the real tool
  * routes (not the block's `#` demo links), one highlighted row, the current
- * route's section open, and the five apps standing in for the dock at icon
+ * sections all open, and the five apps standing in for the dock at icon
  * width.
  */
 
@@ -61,11 +61,14 @@ describe("NavMain", () => {
     expect(html.match(/data-active="true"/g)).toHaveLength(1);
   });
 
-  it("leaves the other sections closed", () => {
+  it("starts every section expanded", () => {
     pathname = "/coaching/ai-coach";
     const html = render(<NavMain />);
-    // Closed Radix collapsibles render no content, so no Practice links.
-    expect(html).not.toContain('href="/practice/drills"');
+    // Closed Radix collapsibles render no content, so every tool link showing
+    // means every section is open.
+    for (const section of SIDEBAR_TOOL_SECTIONS) {
+      for (const tool of section.tools) expect(html).toContain(`href="${tool.href}"`);
+    }
   });
 });
 

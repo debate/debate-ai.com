@@ -89,7 +89,7 @@ own five icons as text and then hang the whole feature catalog underneath,
 one nested submenu per category — a second, deeper copy of `/practice/features`
 hanging off the dock that was already showing those five icons. One
 **Features** row reaches the catalog instead, and a **Docs** row the help
-site; both are footer links, so the sidebar footer carries them too.
+site; both are footer links, so the sidebar's link rows carry them too.
 
 `apps/debate-ai.com/lib/nav/dock-menu-sections.ts` does the site-nav menu's
 composition, and `lib/nav/__tests__/dock-menu-sections.test.ts` fails if a
@@ -219,9 +219,11 @@ Collapsed:
 - your account stays at the bottom as your avatar.
 
 Expanded, each tool section (Research, Prep & Scout, Practice, Coaching,
-Insights) opens and closes on its own. The section containing the page you are
-on opens automatically, and only the row for that page is highlighted. Your
-account menu at the bottom links to Settings, Notifications and Contacts and
+Insights) opens and closes on its own. Every section starts open; if you close
+the one containing the page you navigate to, it opens again, and only the row
+for that page is highlighted. The Docs, Github, Support, Status, Privacy and
+Reddit links sit after the last section and scroll with the list rather than
+staying pinned. Your account menu at the bottom links to Settings, Notifications and Contacts and
 signs you out. Signed out, that row is a **Sign in** button that opens the
 sign-in dialog without leaving the page.
 

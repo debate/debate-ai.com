@@ -41,7 +41,18 @@ flaws back onto the outline entries.
 ```ts
 import { analyzeQuotes } from "debate-speech-writer"
 
-const analyzed = await analyzeQuotes("./outline.json", { limit: 50, maxChars: 8000 })
+const analyzed = await analyzeQuotes(outline, { limit: 50, maxChars: 8000 })
+```
+
+`analyzeQuotes()` is browser-safe and takes an already-loaded outline. To read the
+outline from disk and write the result back, use the Node-only wrapper, which is
+deliberately not exported from the package entry so `node:fs` stays out of the
+client bundle:
+
+```ts
+import { analyzeQuotesFile } from "debate-speech-writer/src/analysis/analyze-quotes.node"
+
+await analyzeQuotesFile("./outline.json", { limit: 50, outputPath: "./analyzed.json" })
 ```
 
 Prompts are treated as a contract: the test suite asserts each one stays a distinct,
