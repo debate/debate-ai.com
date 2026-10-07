@@ -368,26 +368,30 @@ export function PracticePartnersPanel({ className }: { className?: string }) {
         </Block>
       ) : null}
 
-      <Block
-        title="Find a practice partner"
-        icon={<Swords className="h-4 w-4" />}
-        description="Everyone who asked to be challenged or volunteered to judge, best matches for your profile first."
-      >
-        {!profile?.asCompetitor ? (
-          <p className="rounded-md border border-border bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
-            You can challenge anyone here. Switch on &ldquo;Open to challenges&rdquo; in your profile so they can challenge you back.
-          </p>
-        ) : null}
-        <VolunteerBoard
-          volunteers={board.volunteers}
-          viewerPreferences={profile}
-          pendingOpponentIds={pendingOpponentIds}
-          onChallenge={async (challenge) => {
-            await createChallenge(challenge);
-            await load();
-          }}
-        />
-      </Block>
+      {/* An empty board is just two "(0)" tabs and a filter over nothing, so
+          the whole block waits until someone has volunteered. */}
+      {board.volunteers.length > 0 ? (
+        <Block
+          title="Find a practice partner"
+          icon={<Swords className="h-4 w-4" />}
+          description="Everyone who asked to be challenged or volunteered to judge, best matches for your profile first."
+        >
+          {!profile?.asCompetitor ? (
+            <p className="rounded-md border border-border bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
+              You can challenge anyone here. Switch on &ldquo;Open to challenges&rdquo; in your profile so they can challenge you back.
+            </p>
+          ) : null}
+          <VolunteerBoard
+            volunteers={board.volunteers}
+            viewerPreferences={profile}
+            pendingOpponentIds={pendingOpponentIds}
+            onChallenge={async (challenge) => {
+              await createChallenge(challenge);
+              await load();
+            }}
+          />
+        </Block>
+      ) : null}
     </div>
   );
 }

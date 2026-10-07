@@ -118,11 +118,7 @@ export function VolunteerBoard({ volunteers, viewerPreferences, pendingOpponentI
 
       {ranked.length === 0 ? (
         <p className="rounded-lg border border-dashed border-border py-8 text-center text-sm text-muted-foreground">
-          {volunteers.length === 0
-            ? "Nobody has volunteered yet — switch on your profile above and be the first on the board."
-            : role === "debaters"
-              ? "No debaters match these filters."
-              : "No judges match these filters."}
+          {role === "debaters" ? "No debaters match these filters." : "No judges match these filters."}
         </p>
       ) : (
         <ul className="flex flex-col gap-2">
