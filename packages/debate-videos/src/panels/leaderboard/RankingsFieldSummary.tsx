@@ -17,22 +17,24 @@ function tournamentLabel(slug: string): string {
     .join(" ");
 }
 
-/** "Aff +2.50" / "Neg +1.20" / "Even" — how far a split leans from 50%. */
+/**
+ * "Aff 2" / "Neg 1" / "Even" — how far a split leans from 50%, rounded down to
+ * whole points (a lean under one point reads as Even).
+ */
 function SkewLabel({ aff }: { aff: number }) {
   const skew = aff - 50;
+  const points = Math.floor(Math.abs(skew));
   return (
     <span
       className={
-        skew === 0
+        points === 0
           ? ""
           : skew > 0
             ? "font-medium text-blue-600 dark:text-blue-400"
             : "font-medium text-red-600 dark:text-red-400"
       }
     >
-      {skew === 0
-        ? "Even"
-        : `${skew > 0 ? "Aff" : "Neg"} +${Math.abs(skew).toFixed(2)}`}
+      {points === 0 ? "Even" : `${skew > 0 ? "Aff" : "Neg"} ${points}`}
     </span>
   );
 }
@@ -79,8 +81,8 @@ function SideSplitBar({
 }
 
 /**
- * The field-wide side bias as one chart with two bars: the aff/neg split for
- * prelims and the same split for elims, stacked on a shared 50% line so the
+ * The field-wide side bias as one chart with two bars: the aff/neg split over
+ * all rounds and the same split for elims, stacked on a shared 50% line so the
  * two round types compare at a glance.
  */
 function SideBiasCard({
@@ -100,7 +102,7 @@ function SideBiasCard({
         Side bias
       </div>
       <div className="space-y-2">
-        <SideSplitBar label="Prelims" aff={aff} neg={neg} />
+        <SideSplitBar label="Overall" aff={aff} neg={neg} />
         <SideSplitBar label="Elims" aff={affElim} neg={negElim} />
       </div>
     </div>
@@ -108,7 +110,7 @@ function SideBiasCard({
 }
 
 /**
- * The field-wide side bias (prelim and elim aff vs. neg win rates, as two
+ * The field-wide side bias (overall and elim aff vs. neg win rates, as two
  * split bars on one chart), the entry count, and the list of tournaments that fed the ratings (majors marked, since
  * they count double).
  *
