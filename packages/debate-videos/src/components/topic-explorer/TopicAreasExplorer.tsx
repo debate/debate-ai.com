@@ -23,8 +23,8 @@
  * @module components/topics/TopicAreasExplorer
  */
 
-import { useMemo, useRef, useState } from "react"
-import { ChevronDown } from "lucide-react"
+import { useEffect, useMemo, useRef, useState } from "react"
+import { Check, ChevronDown } from "lucide-react"
 
 import { cn } from "../../ui/lib/utils"
 import {
@@ -40,6 +40,14 @@ import {
   resolutionsInArea,
   type TopicFormatFilter,
 } from "../../lib/topic-areas/topic-areas"
+import {
+  castTopicAreaVote,
+  fetchTopicAreaPoll,
+  nextPollSeason,
+  rankPollOptions,
+  seasonRangeLabel,
+  type TopicAreaPollResponse,
+} from "../../lib/topic-areas/topic-area-poll"
 
 export function TopicAreasExplorer() {
   return (
@@ -56,6 +64,8 @@ export function TopicAreasExplorer() {
         <Stat value={TOPIC_FORMAT_FILTERS.length - 1} label="Debate formats" />
       </div>
 
+      <NextSeasonPanel />
+
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold text-foreground">Explore by format</h2>
         {TOPIC_FORMAT_FILTERS.map(({ id, label }) => (
@@ -67,6 +77,116 @@ export function TopicAreasExplorer() {
         Topic assignments are heuristic research categories, not official NSDA or NDT classifications.
       </p>
     </div>
+  )
+}
+
+/**
+ * The coming season, shown before any of its resolutions are announced, with a
+ * poll on which topic area debaters would like it to come from. The tally is
+ * public; voting needs a session, and voting again moves your one vote.
+ */
+export function NextSeasonPanel({ season = nextPollSeason() }: { season?: number }) {
+  const [poll, setPoll] = useState<TopicAreaPollResponse | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [pending, setPending] = useState<string | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    fetchTopicAreaPoll(season)
+      .then((p) => !cancelled && setPoll(p))
+      .catch((e: Error) => !cancelled && setError(e.message))
+    return () => {
+      cancelled = true
+    }
+  }, [season])
+
+  async function vote(area: string) {
+    if (!poll?.signedIn || area === poll.myVote) return
+    setPending(area)
+    setError(null)
+    try {
+      setPoll(await castTopicAreaVote(season, area))
+    } catch (e) {
+      setError((e as Error).message)
+    } finally {
+      setPending(null)
+    }
+  }
+
+  const options = rankPollOptions(poll?.counts ?? {})
+  const max = Math.max(1, ...options.map((o) => o.count))
+
+  return (
+    <details open className="group overflow-hidden rounded-2xl border border-border bg-card">
+      <summary className="flex cursor-pointer select-none list-none items-center justify-between px-5 py-4 [&::-webkit-details-marker]:hidden">
+        <span>
+          <span className="block text-lg font-semibold text-foreground">Next season · {seasonRangeLabel(season)}</span>
+          <span className="block text-sm text-muted-foreground">
+            Resolutions not announced yet · {poll ? `${poll.total} ${poll.total === 1 ? "vote" : "votes"}` : "poll"}
+          </span>
+        </span>
+        <ChevronDown
+          aria-hidden="true"
+          className="h-5 w-5 text-muted-foreground transition-transform group-open:rotate-180"
+        />
+      </summary>
+
+      <div className="border-t border-border px-4 pb-6 pt-4 sm:px-5">
+        <h3 className="text-sm font-semibold text-foreground">Which topic area would you most like to debate next season?</h3>
+        <p className="mt-1 text-sm text-muted-foreground">
+          {poll === null ? (
+            error ?? "Loading the poll…"
+          ) : poll.signedIn ? (
+            poll.myVote ? "You can change your vote at any time." : "Pick one area. You can change your vote later."
+          ) : (
+            <>
+              <a href="/login" className="font-medium text-primary hover:underline">
+                Sign in
+              </a>{" "}
+              to vote. Anyone can see the results.
+            </>
+          )}
+        </p>
+        {poll && error ? <p role="alert" className="mt-1 text-sm text-destructive">{error}</p> : null}
+
+        {poll ? (
+          <div className="mt-3 rounded-xl border border-border bg-background p-3" role="group" aria-label={`Topic area poll for ${seasonRangeLabel(season)}`}>
+            {options.map((o) => {
+              const mine = poll.myVote === o.name
+              return (
+                <button
+                  key={o.name}
+                  type="button"
+                  onClick={() => vote(o.name)}
+                  disabled={!poll.signedIn || pending !== null}
+                  aria-pressed={mine}
+                  className={cn(
+                    "my-1 grid w-full grid-cols-1 items-center gap-1 rounded-lg p-1.5 text-left transition-colors sm:grid-cols-[16rem_1fr] sm:gap-3",
+                    poll.signedIn ? "hover:bg-accent" : "cursor-default",
+                    mine && "bg-accent ring-1 ring-primary/50",
+                  )}
+                >
+                  <span className="flex items-center text-sm font-semibold text-foreground">
+                    <span aria-hidden="true" className="mr-2 h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: o.color }} />
+                    {o.name}
+                    {mine ? <Check aria-label="Your vote" className="ml-1.5 h-4 w-4 text-primary" /> : null}
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <span className="h-6 flex-1 overflow-hidden rounded-md bg-muted">
+                      <span
+                        className="block h-full rounded-md"
+                        style={{ width: `${(o.count / max) * 100}%`, background: o.color }}
+                      />
+                    </span>
+                    <span className="w-7 text-right text-sm font-bold tabular-nums text-foreground">{o.count}</span>
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+        ) : null}
+      </div>
+    </details>
   )
 }
 

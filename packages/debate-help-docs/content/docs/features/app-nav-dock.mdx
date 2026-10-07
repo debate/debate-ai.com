@@ -18,8 +18,10 @@ the sidebar column that hosts it on every tool route.
 ## What it shows
 
 Five destinations — Videos, Shared, Debate, Practice vs AI, Research — plus a
-gear-icon Settings menu, each with a hover label and `Alt+1`…`Alt+5`
-shortcuts in dock order.
+gear-icon Settings menu, with `Alt+1`…`Alt+5` shortcuts in dock order. The
+icons carry no hover labels — in the sidebar-hosted dock the tooltips crowded
+together over the nav tree — so each item's name lives in its `aria-label`
+(read by screen readers) and in the icon art itself.
 
 **Practice vs AI opens a menu instead of navigating.** A plain click on that
 icon does not go to `/practice/versus-ai` — it opens the site-nav menu described below
@@ -254,8 +256,8 @@ and a magnified icon adds 12px more — so the row fits without wrapping at
 every breakpoint, and the wrapping above is the backstop rather than the
 normal case.
 
-Hover labels stay `overflow-visible`: the sidebar column is the clipping
-boundary, and clipping at the dock would hide every tooltip.
+The dock stays `overflow-visible` so a magnified icon isn't clipped at the
+dock's edge; the sidebar column is the clipping boundary.
 
 ## The nav tree's headings
 
