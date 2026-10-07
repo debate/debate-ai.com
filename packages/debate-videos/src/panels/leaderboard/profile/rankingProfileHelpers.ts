@@ -102,6 +102,19 @@ export function findSchoolEntries(datasets: RankingDataset[], slug: string): Pro
   );
 }
 
+/**
+ * The team's school in the team's division: every row of that school in the
+ * same dataset, the team itself included, for the school-average overlay on a
+ * team's radar. Pass the result to {@link schoolDivisionRadarData}.
+ *
+ * @param item - One of the team's rows, from {@link findTeamEntries}.
+ */
+export function findSchoolDivisionEntries(datasets: RankingDataset[], item: ProfileEntry): ProfileEntry[] {
+  return findSchoolEntries(datasets, profileSlug(item.entry.school)).filter(
+    (other) => other.datasetId === item.datasetId,
+  );
+}
+
 /** A route param may arrive still percent-encoded; a malformed one is used as-is. */
 function decodeSlug(slug: string): string {
   try {

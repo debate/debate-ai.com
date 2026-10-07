@@ -9,7 +9,8 @@
 "use client"
 
 import Link from "next/link"
-import type { ReactNode } from "react"
+import { useState, type ReactNode } from "react"
+import type { RankingDataset } from "@debate/rankings-adapter"
 import { useAllRankingDatasets } from "../../../hooks/useAllRankingDatasets"
 import {
   Table,
@@ -20,13 +21,14 @@ import {
   TableRow,
 } from "../../../ui/primitives/table"
 import {
+  findSchoolDivisionEntries,
   findSchoolEntries,
   findTeamEntries,
   schoolDivisionRadarData,
   schoolHref,
   schoolVideoSearch,
   summarizeSchool,
-teamHref,
+  teamHref,
   teamRadarData,
   teamSlug,
   teamVideoSearch,
@@ -91,10 +93,18 @@ function ProfileStatus({
   return null
 }
 
-/** Stats and radar chart for one team in one division. */
-function TeamDivisionStats({ item }: { item: ProfileEntry }) {
+/**
+ * Stats and radar chart for one team in one division. When the team's school
+ * has other ranked teams in the division, a checkbox under the radar (off by
+ * default) overlays the school's average in that division.
+ */
+function TeamDivisionStats({ item, datasets }: { item: ProfileEntry; datasets: RankingDataset[] }) {
   const { entry } = item
   const data = teamRadarData(item)
+  const [showSchool, setShowSchool] = useState(false)
+  const schoolItems = findSchoolDivisionEntries(datasets, item)
+  const hasSchoolPeers = schoolItems.length > 1
+  const schoolData = hasSchoolPeers && showSchool ? schoolDivisionRadarData(schoolItems) : null
   return (
     <div className="mt-4">
       <h2 className="mb-2 text-sm font-medium text-muted-foreground">
@@ -115,7 +125,29 @@ function TeamDivisionStats({ item }: { item: ProfileEntry }) {
         <TeamRadarChart
           data={data}
           caption={`Profile · ${item.datasetLabel} (edge = best; ranking is a field percentile, matches are relative to the most-played entry)`}
-          ariaLabel={`${entry.name} radar: ${data.map((d) => `${d.metric} ${d.display}`).join(", ")}`}
+          ariaLabel={`${entry.name} radar: ${data.map((d) => `${d.metric} ${d.display}`).join(", ")}${
+            schoolData
+              ? `; ${entry.school} average: ${schoolData.map((d) => `${d.metric} ${d.display}`).join(", ")}`
+              : ""
+          }`}
+          comparison={
+            schoolData
+              ? { label: `${entry.school} average (${schoolItems.length} teams)`, data: schoolData }
+              : undefined
+          }
+          footer={
+            hasSchoolPeers && (
+              <label className="mt-1 flex cursor-pointer select-none items-center gap-1.5 px-1 text-xs text-muted-foreground hover:text-foreground">
+                <input
+                  type="checkbox"
+                  checked={showSchool}
+                  onChange={(event) => setShowSchool(event.target.checked)}
+                  className="h-3.5 w-3.5 cursor-pointer accent-primary"
+                />
+                Show {entry.school} average in {item.datasetLabel}
+              </label>
+            )
+          }
         />
       </div>
     </div>
@@ -147,7 +179,7 @@ export function TeamProfilePage({ slug }: { slug: string }) {
             </Link>
           </header>
           {entries.map((item) => (
-            <TeamDivisionStats key={item.datasetId} item={item} />
+            <TeamDivisionStats key={item.datasetId} item={item} datasets={datasets} />
           ))}
           <MatchupSimulator
             lockedTeamSlug={teamSlug(first)}
