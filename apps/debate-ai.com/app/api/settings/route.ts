@@ -22,6 +22,8 @@ import {
   DEFAULT_THEME_SETTINGS,
   DEFAULT_USER_SETTINGS,
   DEFAULT_WORD_LIMIT_PRESETS,
+  isFlowAutoSaveMode,
+  normalizeFlowAutoSaveModePatch,
   normalizeFavoriteToolOpPatch,
   normalizeFlowAutoSavePatch,
   parseFlowAutoSave,
@@ -42,6 +44,7 @@ import {
   serializeMyTeamProfile,
   serializeOutlineFilterPresets,
   serializeWordLimitPresets,
+  type FlowAutoSaveMode,
   type MyTeamProfileSyncPayload,
   type OutlineFilterPreset,
   type ThemeMode,
@@ -392,6 +395,7 @@ export async function PUT(req: NextRequest) {
   const flowAutoSaveResult = normalizeFlowAutoSavePatch(body)
   const valid = { ...userSettingsResult.valid, ...themeSettingsResult.valid }
   const errors = [
+    ...flowAutoSaveModeResult.errors,
     ...userSettingsResult.errors,
     ...themeSettingsResult.errors,
     ...favoriteToolsResult.errors,

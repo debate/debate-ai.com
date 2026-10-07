@@ -234,6 +234,14 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
           baselineRef.current = remoteForm
           applyUserSettingsToLocalStore(remote)
           applyThemeLocally(colorTheme, themeMode, setTheme)
+          // Adopt the account's auto-save mode; with none chosen yet, seed it from
+          // this device's choice so other devices pick it up.
+          if (isFlowAutoSaveMode(remote.flowAutoSaveMode)) {
+            setFlowAutoSave(remote.flowAutoSaveMode)
+            setFlowAutoSaveMode(remote.flowAutoSaveMode)
+          } else if (readFlowAutoSaveMode() !== DEFAULT_FLOW_AUTO_SAVE_MODE) {
+            void saveUserSettings({ flowAutoSaveMode: readFlowAutoSaveMode() }).catch(() => {})
+          }
         }
       })
       .catch(() => {
