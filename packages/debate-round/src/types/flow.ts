@@ -64,6 +64,8 @@ export type Round = {
   title?: string
   /** URL slug: "2025-glenbrooks/lynbrook-bz-monta-ey" */
   slug?: string
+  /** Rubric grades per speech name ("1AC", "2NR"…); see `round/speech-rubric.ts`. */
+  speechGrades?: Record<string, import("../round/speech-rubric").SpeechGrade>
 }
 
 /**

@@ -61,3 +61,16 @@ export function isViewerSpeech(speech: SpeakerSpeech, seat: ViewerSeat | null): 
   const digit = code.match(/[12]/)?.[0]
   return digit ? Number(digit) - 1 === seat.index : true
 }
+
+/**
+ * The email of the debater who gives `speech` — the same side/slot rule as
+ * {@link isViewerSpeech}. A code with no digit (LD) takes the side's first
+ * debater. Empty string when the round has no one seated there.
+ */
+export function speechSpeakerEmail(round: Round | null | undefined, speech: SpeakerSpeech): string {
+  if (!round) return ""
+  const code = (speech.speaker ?? "").toUpperCase()
+  const side = code.includes("N") ? "neg" : code.includes("A") ? "aff" : speech.secondary ? "neg" : "aff"
+  const digit = code.match(/[12]/)?.[0]
+  return (round.debaters?.[side]?.[digit ? Number(digit) - 1 : 0] ?? "").trim()
+}
