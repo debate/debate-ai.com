@@ -6,7 +6,7 @@
 
 import React, { useEffect, useMemo, useRef, useState, useCallback, type ReactNode } from "react" // useState kept for PersistentVideoPlayer mounted state
 import { createPortal } from "react-dom"
-import { AlertCircle } from "lucide-react"
+import { AlertCircle, PictureInPicture2, X } from "lucide-react"
 import { useVideoPlayerStore, videoPlayerIframeRef, sendYouTubeCommand } from "../../state/videoPlayerStore"
 import { savePlayerState, loadPlayerState, clearSavedPlayerState } from "../../state/videoPlayerPersistence"
 import { recordWatchProgress } from "../../state/videoWatchHistory"
@@ -41,6 +41,9 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
     queue,
     startTime,
     theaterVideoId,
+    popoutNext,
+    setActiveVideo,
+    setPopoutNext,
     clearActiveVideo,
     setMinimized,
     setIsPlaying,
@@ -361,6 +364,46 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
     sendYouTubeCommand("seekTo", [seconds, true])
     sendYouTubeCommand("playVideo")
   }, [])
+
+  // A video lined up from a watch page starts as soon as that page lets go of
+  // playback. This runs on a committed render rather than inside
+  // `setTheaterVideoId`: a move between two watch pages releases and
+  // re-claims playback in one effect flush, and the lined-up video should
+  // keep waiting through that rather than flash into the corner.
+  useEffect(() => {
+    if (theaterVideoId || !popoutNext) return
+    setActiveVideo(popoutNext.videoId, popoutNext.title, popoutNext.meta)
+  }, [theaterVideoId, popoutNext, setActiveVideo])
+
+  // While a watch page plays, a lined-up video shows as a small card in the
+  // popout's corner, so the reader can see what will pick up — and cancel it.
+  if (theaterVideoId && popoutNext) {
+    return (
+      <div
+        className="fixed bottom-20 right-4 md:bottom-6 z-[9999] w-72 shadow-2xl rounded-xl overflow-hidden border border-border bg-background"
+        style={{ maxWidth: "calc(100vw - 2rem)" }}
+        role="status"
+        aria-label="Up next in popout player"
+      >
+        <div className="flex items-start gap-2 px-3 py-2 bg-muted/80 backdrop-blur-sm">
+          <PictureInPicture2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+          <div className="min-w-0 flex-1">
+            <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Up next in popout</p>
+            <p className="truncate text-sm font-medium" title={popoutNext.title}>{popoutNext.title}</p>
+            <p className="text-xs text-muted-foreground">Plays when you leave this page</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setPopoutNext(null)}
+            className="shrink-0 rounded p-0.5 text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Cancel popout video"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   // The full-page watch player owns the embed while it is mounted, so the
   // floating widget renders nothing rather than mounting a second one that

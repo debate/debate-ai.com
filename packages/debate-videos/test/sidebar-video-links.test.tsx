@@ -122,7 +122,7 @@ describe("the surfaces that render them", () => {
 
   it("badges College Debates and the formats with their lettered icons", () => {
     const html = sidebarHtml();
-    for (const label of ["NDT", "VP", "PF", "LD"]) {
+    for (const label of ["NDT", "CX", "PF", "LD"]) {
       expect(html).toContain(`>${label}</text>`);
     }
   });

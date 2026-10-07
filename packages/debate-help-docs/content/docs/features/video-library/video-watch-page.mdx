@@ -106,7 +106,7 @@ whole round's captions, so marking starts gives sharper results.
 
 ## Speech docs
 
-A round that is also a [featured round](/docs/features/featured-rounds), like
+A round that is also a [featured round](/docs/features/rounds/featured-rounds), like
 the 2015 NDT Finals, gets a **Speech docs** tab first in the column beside the
 player. Pick a speech, or use the arrows, to read the doc that speech was
 given from. **Open in debate view** opens the whole round with its timers.
@@ -147,3 +147,13 @@ Underneath the player: the rest of the same tournament first, then the
 same debate format or lecture category, then the most recent videos in the
 library — enough passes to fill the row for a video with neither. Clicking
 one opens *its* watch page, so the URL always names what is playing.
+
+### Up next in the popout player
+
+A related row's popout icon does not take over from the video you are
+watching. It lines that video up in the floating popout player instead: the
+page's video keeps playing, a small **Up next in popout** card in the corner
+names the lined-up video, and the popout starts playing it as soon as you
+leave the page. Click the icon again, or the card's ×, to cancel. Opening the
+lined-up video's own watch page plays it there and clears it
+(`popoutNext` in `videoPlayerStore`, `PopoutPlayerButton`).
