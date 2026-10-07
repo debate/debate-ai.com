@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
+import { ensureTableColumns } from "@/lib/database/ensure-columns"
 import { userSettings } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
 import {
@@ -22,8 +23,6 @@ import {
   DEFAULT_THEME_SETTINGS,
   DEFAULT_USER_SETTINGS,
   DEFAULT_WORD_LIMIT_PRESETS,
-  isFlowAutoSaveMode,
-  normalizeFlowAutoSaveModePatch,
   normalizeFavoriteToolOpPatch,
   normalizeFlowAutoSavePatch,
   parseFlowAutoSave,
@@ -44,14 +43,10 @@ import {
   serializeMyTeamProfile,
   serializeOutlineFilterPresets,
   serializeWordLimitPresets,
-  type FlowAutoSaveMode,
   type MyTeamProfileSyncPayload,
   type OutlineFilterPreset,
   type ThemeMode,
   type UserSettingsPayload,
-  normalizeFlowAutoSavePatch,
-  parseStoredFlowAutoSave,
-  type FlowAutoSaveMode,
 } from "@debate/round"
 import {
   applyNewsLikedOp,
@@ -345,6 +340,9 @@ export async function GET(req: NextRequest) {
   }
 
   const db = await getDBFromContext()
+  // Drizzle names every column in a select/insert, so one column the live
+  // D1 lacks fails the whole route — see lib/database/ensure-columns.ts.
+  await ensureTableColumns(db, userSettings)
   const [row] = await db.select().from(userSettings).where(eq(userSettings.userId, userId)).limit(1)
 
   return NextResponse.json(toPayload(row))
@@ -395,7 +393,6 @@ export async function PUT(req: NextRequest) {
   const flowAutoSaveResult = normalizeFlowAutoSavePatch(body)
   const valid = { ...userSettingsResult.valid, ...themeSettingsResult.valid }
   const errors = [
-    ...flowAutoSaveModeResult.errors,
     ...userSettingsResult.errors,
     ...themeSettingsResult.errors,
     ...favoriteToolsResult.errors,
@@ -473,6 +470,7 @@ export async function PUT(req: NextRequest) {
   }
 
   const db = await getDBFromContext()
+  await ensureTableColumns(db, userSettings)
   const now = new Date()
 
   // `favoriteTools`/`newsRead`/`newsLiked` are stored as JSON-serialized
@@ -768,10 +766,6 @@ export async function PUT(req: NextRequest) {
       mergeFlowEditorSettings(parseFlowEditorSettings(existing?.flowEditorSettings), flowEditorSettingsResult.valid),
     )
   }
-  if (flowAutoSaveResult.valid.flowAutoSave !== undefined) {
-    dbPatch.flowAutoSave = flowAutoSaveResult.valid.flowAutoSave
-  }
-
   if (flowAutoSaveResult.valid.flowAutoSave !== undefined) {
     dbPatch.flowAutoSave = flowAutoSaveResult.valid.flowAutoSave
   }
