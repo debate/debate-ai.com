@@ -96,7 +96,7 @@
 - [x] Auto-save flows already saved to the account (`state/flowAutoSave.ts`, `useFlowAutoSave` in `OpenTabsGroup`, `getFlowAccountUpdatedAt`; debounced, never forces, conflicts left for Flow History; test `debate-round/test/flowAutoSave.test.ts`; branch `claude/gifted-babbage-31ofma`)
 - [x] Opt-in setting to auto-save flows never saved before, plus an auto-save on/off toggle: `state/flowAutoSaveSettings.ts` (`off | saved | all`, device-local), `getMode` in `createFlowAutoSaver`, "Flow auto-save" select in `UserSettingsPanel`; tests `flowAutoSave.test.ts`, `flowAutoSaveSettings.test.ts`; docs in `user-settings.mdx` (branch `claude/gifted-babbage-eeg5we`)
 - [x] Sync the auto-save mode to the account: `user_settings.flow_auto_save` column, `flowAutoSave` on `/api/settings` (`normalizeFlowAutoSavePatch`/`parseFlowAutoSave`), `UserSettingsPanel` adopts the account value on load and pushes changes; tests `flowAutoSaveSettings.test.ts`, route test in `settings-flow-editor-route.test.ts` (needs `debate-rankings` submodule); branch `claude/gifted-babbage-r2apft`
-- [ ] Follow-up: deploy must add the nullable `flow_auto_save` column
+- [x] Deploy column: `ensureTableColumns(db, userSettings)` (`lib/database/ensure-columns.ts`, called by GET/PUT `/api/settings`) adds the nullable `flow_auto_save` column on first request; covered by `ensure-columns.test.ts`
 - [x] `ebb-dev-flow-files` / `ebb-dev-recents` stay browser-only on purpose: `flowFsMemory.ts` documents them as a dev/test stand-in, not a product surface (real flows sync through `saved_flows`). `REASON-file-sources` already syncs (`toolRecordCollections.ts`)
 - [x] `REASON-documents` needs no catalog entry (verified 2026-10-07): the `localStorage` key is only a read cache for the editor. Every edit already reaches the D1 `documents` table per user through `save-queue.ts` -> `PUT /api/doc/documents/:id` (`apps/debate-ai.com/app/api/doc/documents`, `ReasonDocsProvider`). Ids are server-assigned numbers, and a second copy under `saved_tool_records` would duplicate content and race the save queue. No redaction/size review is needed because nothing new leaves the browser
 
@@ -127,7 +127,7 @@
 - [x] Vitest `packages/debate-flow/test/flow-editor-settings-sync.test.ts`; documented in `features/user-settings.mdx`
 - [x] Route-level test for `flowEditorSettings` GET/PUT: `apps/debate-ai.com/lib/database/__tests__/settings-flow-editor-route.test.ts` (real SQLite via `freshSchemaClient`, mocked auth; covers 401, save, merge, validation, bad JSON, per-user isolation; branch `claude/gifted-babbage-uhzbcl`). Needs the `debate-rankings` and `debate-editor-cm` submodules plus `node packages/debate-editor/scripts/sync-upstream.mjs`
 - [ ] Follow-up: tool UI pass - sync status and pin/save controls in each tool's header (still In Progress in IDEAS.md)
-- [ ] Follow-up: deploy must apply the new column (schema.ts is the only source now that `drizzle/` is gone)
+- [x] Deploy column: `flow_editor_settings` is added the same way by `ensureTableColumns` on `/api/settings`, so no migration is needed
 
 
 ### Known base breakage found while verifying (resolved)
