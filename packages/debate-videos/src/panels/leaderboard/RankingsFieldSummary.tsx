@@ -79,8 +79,8 @@ function SideSplitBar({
 }
 
 /**
- * The field-wide side bias as one chart with two bars: the aff/neg split for
- * prelims and the same split for elims, stacked on a shared 50% line so the
+ * The field-wide side bias as one chart with two bars: the aff/neg split over
+ * all rounds and the same split for elims, stacked on a shared 50% line so the
  * two round types compare at a glance.
  */
 function SideBiasCard({
@@ -100,7 +100,7 @@ function SideBiasCard({
         Side bias
       </div>
       <div className="space-y-2">
-        <SideSplitBar label="Prelims" aff={aff} neg={neg} />
+        <SideSplitBar label="Overall" aff={aff} neg={neg} />
         <SideSplitBar label="Elims" aff={affElim} neg={negElim} />
       </div>
     </div>
@@ -108,7 +108,7 @@ function SideBiasCard({
 }
 
 /**
- * The field-wide side bias (prelim and elim aff vs. neg win rates, as two
+ * The field-wide side bias (overall and elim aff vs. neg win rates, as two
  * split bars on one chart), the entry count, and the list of tournaments that fed the ratings (majors marked, since
  * they count double).
  *
