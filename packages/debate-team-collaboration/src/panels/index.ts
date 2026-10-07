@@ -15,6 +15,7 @@ export { PrepRoomPanel } from "./PrepRoomPanel";
 export { ResearchProgressPanel } from "./ResearchProgressPanel";
 export { SprintNotesPanel } from "./SprintNotesPanel";
 export { TaskInboxPanel } from "./TaskInboxPanel";
+export { TeamCalendarPanel } from "./TeamCalendarPanel";
 export { TopicSprintPanel, type TopicSprintPanelProps } from "./TopicSprintPanel";
 export { ContactsPanel, ContactAvatar, type ContactsPanelProps } from "./ContactsPanel";
 export { SharedCardsPanel, type SharedCardsPanelProps } from "./SharedCardsPanel";

@@ -73,6 +73,7 @@ export const WORKSPACE_LINKS: WorkspaceLink[] = [
   { href: '/coaching/rankings', label: 'Team Rankings', description: 'Elo-based team leaderboard and rankings', category: 'Coaching & Analytics' },
   { href: '/coaching/outcomes', label: 'AI Response-Outcome Charts', description: 'Per-side exposure and most-vulnerable arguments', category: 'Coaching & Analytics' },
   { href: '/coaching/programs', label: 'Coaching Programs', description: "A coach's squad-scoped coaching space and boards", category: 'Coaching & Analytics' },
+  { href: '/coaching/calendar', label: 'Team Calendar', description: 'Tasks, assignments, deadlines and group tournaments on a calendar', category: 'Coaching & Analytics' },
   { href: '/coaching/materials', label: 'Coach Materials', description: 'Grounding materials for the team coach AI', category: 'Coaching & Analytics' },
 
 ];

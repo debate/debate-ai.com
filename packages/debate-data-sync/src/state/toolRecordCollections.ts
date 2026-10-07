@@ -369,6 +369,14 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     section: "Coaching",
   },
   {
+    key: "teamCalendarItems",
+    storageKey: "teamCalendarItems",
+    idField: "id",
+    label: "Team Calendar",
+    href: "/coaching/calendar",
+    section: "Coaching",
+  },
+  {
     key: "coachingSessionHistory",
     storageKey: "coachingSessionHistory",
     idField: "id",
