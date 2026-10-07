@@ -171,15 +171,11 @@ describe("Latest News", () => {
     expect(hasEmbeddedDock("/practice/forums")).toBe(true);
   });
 
-  it("sit directly above the Tabroom tournaments entry in the Prep & Scout section", () => {
-    // The order is the requirement, not an accident of how the list was
-    // edited: reading the section top to bottom, the community surfaces come
-    // before the external tournament tool.
+  it("stay in the Prep & Scout section", () => {
     const prepScout = SIDEBAR_TOOL_SECTIONS.find((section) => section.id === "prep-scout");
     const hrefs = prepScout?.tools.map((tool) => tool.href) ?? [];
 
-    expect(hrefs.indexOf("/practice/forums")).toBeGreaterThan(-1);
-    expect(hrefs.indexOf("/practice/forums")).toBeLessThan(hrefs.indexOf("/tournaments"));
+    expect(hrefs).toContain("/practice/forums");
   });
 });
 
@@ -189,6 +185,16 @@ describe("Tournaments and Tabroom", () => {
 
     expect(hrefs).toContain("/tournaments");
     expect(hrefs).not.toContain("/practice/tabroom");
+  });
+
+  it("list Tournaments first in the Coaching section, and only there", () => {
+    const coaching = SIDEBAR_TOOL_SECTIONS.find((section) => section.id === "coaching");
+    const sectionsWithTournaments = SIDEBAR_TOOL_SECTIONS.filter((section) =>
+      section.tools.some((tool) => tool.href === "/tournaments"),
+    );
+
+    expect(coaching?.tools[0]?.href).toBe("/tournaments");
+    expect(sectionsWithTournaments.map((section) => section.id)).toEqual(["coaching"]);
   });
 });
 

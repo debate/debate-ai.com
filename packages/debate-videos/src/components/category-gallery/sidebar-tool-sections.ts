@@ -164,10 +164,6 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/practice/judges", title: "Judge Profiles", icon: Gavel },
       { href: "/practice/prep-notes", title: "Prep Notes", icon: StickyNote },
       { href: "/practice/forums", title: "Latest News", icon: Rss },
-      // Tournaments is this app's own view (live Tabroom plus the tournaments
-      // hosted here). The framed beta.tabroom.com page (`/practice/tabroom`)
-      // is still routed but deliberately has no sidebar row.
-      { href: "/tournaments", title: "Tournaments", icon: Trophy },
     ],
   },
   {
@@ -200,6 +196,10 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
     href: "/coaching",
     icon: GraduationCap,
     tools: [
+      // Tournaments is this app's own view (live Tabroom plus the tournaments
+      // hosted here), first in Coaching. The framed beta.tabroom.com page
+      // (`/practice/tabroom`) is still routed but deliberately has no sidebar row.
+      { href: "/tournaments", title: "Tournaments", icon: Trophy },
       { href: "/coaching", title: "Coach Workspace", icon: Presentation },
       { href: "/coaching/ai-coach", title: "AI Coach Mode", icon: Bot },
       { href: "/coaching/programs", title: "Coaching Programs", icon: CalendarCheck },
