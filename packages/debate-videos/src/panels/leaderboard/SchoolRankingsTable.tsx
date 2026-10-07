@@ -1,7 +1,7 @@
 /**
  * @fileoverview Sortable Schools table: every school with ranked entries,
- * ranked by its best entry's rating, alongside the average rating of all its
- * entries and a balanced score that blends both with a capped team-count bonus.
+ * ranked by its balanced score, alongside its best rating, the average rating of all its
+ * entries and a balanced score that blends both with a team-count factor.
  * @module components/debate/DebateVideos/panels/SchoolRankingsTable
  */
 
@@ -64,7 +64,7 @@ const COLUMNS: Column[] = [
     label: "Best Rating",
     numeric: true,
     width: 120,
-    tooltip: "Highest adjusted rating (Rating − 2 × Deviation) among the school's ranked entries. Schools rank on it.",
+    tooltip: "Highest adjusted rating (Rating − 2 × Deviation) among the school's ranked entries.",
     render: (r) => <Rating value={r.bestRating} />,
   },
   {
@@ -91,7 +91,7 @@ const COLUMNS: Column[] = [
     numeric: true,
     width: 120,
     tooltip:
-      "(0.6 × Avg Rating + 0.4 × Best Rating) × (1 + 0.15 × (Teams − 1) / (Teams + 4)). Rewards average quality and a standout entry, plus a depth bonus that grows with team count but stays under 15%.",
+      "(0.7 × Avg Rating + 0.3 × Best Rating) × team-count factor. Schools under 4 teams are diluted (×0.80 for 1 team up to ×1.00 for 4), schools with 5–20 teams get a 10% bonus, larger schools taper to 5%. Schools rank on it.",
     render: (r) => <Rating value={r.balancedScore} />,
   },
   { key: "teams", label: "Teams", numeric: true, width: 90, render: (r) => r.teams },
