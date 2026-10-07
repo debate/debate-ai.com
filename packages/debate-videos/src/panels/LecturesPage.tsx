@@ -61,6 +61,12 @@ interface LecturesPageProps {
    */
   dockSlot?: React.ReactNode
   /**
+   * App-owned account menu for the sidebar's foot (see
+   * {@link LecturesSidebarShellProps.accountSlot}); it carries the site links,
+   * so the column drops its own footer row when this is given.
+   */
+  accountSlot?: React.ReactNode
+  /**
    * Host-owned controls rendered beside the search bar on the video grid —
    * the app passes its "Saved to your account" badge / Save now here, since
    * the account-sync state lives in `debate-webview`, which this package
@@ -83,7 +89,7 @@ interface LecturesPageProps {
  * API, and rendering is delegated to the three branch view components
  * depending on `state.currentCategory`.
  */
-export function LecturesPage({ dockSlot, headerActionsSlot, topicAreasSlot }: LecturesPageProps = {}) {
+export function LecturesPage({ dockSlot, accountSlot, headerActionsSlot, topicAreasSlot }: LecturesPageProps = {}) {
   const searchParams = useSearchParams()
   const routeParams = useParams()
 
@@ -447,6 +453,7 @@ export function LecturesPage({ dockSlot, headerActionsSlot, topicAreasSlot }: Le
   // so a second row under the content repeated the same links on one screen.
   const sidebarShellProps = {
     dockSlot,
+    accountSlot,
     counts: quickLinkCounts,
     lectureCategories,
     selectedCategory,
@@ -561,6 +568,7 @@ export function LecturesPage({ dockSlot, headerActionsSlot, topicAreasSlot }: Le
         setStateInURL({ style: style ? String(style) : null })
       }}
       dockSlot={dockSlot}
+      accountSlot={accountSlot}
       headerActionsSlot={headerActionsSlot}
     />
   )
