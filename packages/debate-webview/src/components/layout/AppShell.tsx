@@ -101,7 +101,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           AppSidebarShell) while the editor that opens them is a page below
           it, so their shared state has to be owned above both. */}
       <ReasonDocsProvider>
-        <div className="w-screen h-screen overflow-auto pb-[70px] md:pb-0">
+        <div className="w-screen h-screen overflow-auto pb-[calc(88px+env(safe-area-inset-bottom))] md:pb-0">
           <ChromeErrorBoundary label="CategoryDock">
             <CategoryDock />
           </ChromeErrorBoundary>
