@@ -40,14 +40,7 @@
       "term": "Apriori",
       "definition": "An argument framed as logically prior to — and therefore more important than — all other arguments in the debate. A team advancing an apriori claim contends the judge must evaluate and resolve this issue before considering anything else. Common examples include certain theory arguments (like conditionality) or critiques that challenge the fundamental assumptions of the debate itself. Apriori arguments are controversial; opponents argue they short-circuit fair deliberation, while proponents contend some issues are genuinely prerequisite to evaluating the rest of the round."
     },
-    {
-      "term": "Argument",
-      "definition": "A complete unit of reasoning in a debate consisting of three essential components: a claim (the assertion being made), a warrant (the reasoning or evidence supporting it), and an impact (why it matters). Judges expect arguments to contain all three elements — a claim without a warrant is merely an assertion, and an argument without an impact may be true but irrelevant to the decision. Strong arguments are backed by quality evidence, logically sound reasoning, and clearly articulated significance."
-    },
-    {
-      "term": "Assertion",
-      "definition": "A statement or claim made without supporting evidence, reasoning, or warrants. In competitive debate, assertions carry little to no argumentative weight because they lack the backing needed to be persuasive. Judges are generally taught that an assertion can be answered with a counter-assertion, and neither should factor into the decision without further development. Debaters are encouraged to call out unwarranted claims as 'mere assertions' to diminish their credibility in the round."
-    },
+
     {
       "term": "Assumptions",
       "definition": "Implicit premises or beliefs that underlie an argument but are not explicitly stated or defended. Every argument rests on certain assumptions — for example, a disadvantage assumes the status quo is stable, or a solvency claim assumes the plan will be implemented effectively. Critiques frequently target the underlying assumptions of the affirmative's framework, such as assumptions about state action, capitalism, or epistemology. Identifying and challenging hidden assumptions is a key critical thinking skill in debate."
@@ -763,10 +756,6 @@
     {
       "term": "Topic-specific education",
       "definition": "A topicality standard arguing that the best interpretation of the resolution is one that maximizes learning about the specific subject matter of the year's topic rather than producing debates about generic, cross-topic issues. For example, if the topic concerns ocean policy, an interpretation that encourages research into marine biology, maritime law, and coastal economics provides better topic-specific education than one that allows cases only tangentially related to oceans. This standard is often used alongside limits and ground to evaluate competing topicality interpretations, and it reflects the educational mission of debate as an activity."
-    },
-    {
-      "term": "Tournament",
-      "definition": "An organized competitive event where multiple debate teams from different schools gather to compete over the course of one to three days. Tournaments typically consist of a series of preliminary rounds followed by single-elimination rounds for qualifying teams. They are hosted by schools or debate organizations and range from small local invitationals (8–20 teams) to major national tournaments (100+ teams) such as the TOC (Tournament of Champions), NSDA Nationals, and the NDT (National Debate Tournament). Tournaments provide the competitive framework for the season, with teams traveling regionally and nationally to accumulate bids, rankings, and experience."
     },
     {
       "term": "Turn",
