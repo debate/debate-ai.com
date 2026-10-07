@@ -394,6 +394,27 @@ export function schoolRankingsFor(
 }
 
 /**
+ * Each school's Schools-tab rank, keyed by {@link normalizeSchool} so any
+ * spelling of a school finds it.
+ *
+ * @param rows - Rows from {@link aggregateSchools} (for example {@link schoolRankingsFor}).
+ */
+export function schoolRanksByName(rows: SchoolRanking[]): Map<string, number> {
+  return new Map(rows.map((row) => [normalizeSchool(row.school), row.rank]));
+}
+
+/**
+ * Looks up a school's rank in a {@link schoolRanksByName} map, or `undefined`
+ * when the school is not ranked.
+ *
+ * @param ranks - Map from {@link schoolRanksByName}.
+ * @param school - School name as it appears on a ranking entry.
+ */
+export function schoolRankOf(ranks: ReadonlyMap<string, number>, school: string): number | undefined {
+  return ranks.get(normalizeSchool(school.trim()));
+}
+
+/**
  * Returns a sorted copy of the Schools table rows.
  *
  * @param rows - Rows from {@link aggregateSchools}.

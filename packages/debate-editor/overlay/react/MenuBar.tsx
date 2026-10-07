@@ -2,7 +2,7 @@
 
 /**
  * A compact dropdown menu bar — File / Speech / Card / Edit / Format /
- * Color / Insert / AI / View / Panes / Tools / Flow / Workspace / Plugins —
+ * Color / Insert / AI / View / Panes / Tools / Flow / Plugins —
  * exposing every ribbon command via `runRibbon(id)`, grouped into labeled
  * sections that mirror CardMirror's own `RIBBON_GROUPS` taxonomy.
  *
@@ -18,16 +18,21 @@
  * package for hosts that want a command menu somewhere else on their page
  * (a compact header, a kebab menu beside a document title).
  *
- * Two categories aren't sourced from `RIBBON_GROUPS`: Plugins lists whatever
+ * One category isn't sourced from `RIBBON_GROUPS`: Plugins lists whatever
  * the palette's `command` search source pulls from the runtime plugin
  * registry, so a plugin-registered command reachable via the palette is
- * always reachable here too; Workspace lists `WORKSPACE_LINKS` — the app's
- * other tools and pages, the same list the palette's `t` prefix searches —
- * so switching workspaces doesn't require leaving the editor to find the
- * Tools page first.
+ * always reachable here too.
+ *
+ * The bar's right end also hosts the engine's Send / Receive card-sharing
+ * pills, beside the Settings button (`usePairingPillDock`). The engine mounts
+ * them in its body-level `.pmd-pill-tray` at the editor's bottom-left, where
+ * they floated over the last lines of the doc; this moves the live nodes
+ * (listeners ride along) into the bar while it is mounted, and hands them
+ * back to the tray when it unmounts. embed-containment.css drops their
+ * popups downward from the bar.
  */
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Settings } from "lucide-react";
 import {
   DropdownMenu,
@@ -40,8 +45,6 @@ import {
 } from "../ui/primitives/dropdown-menu";
 import { Button } from "../ui/primitives/button";
 import type { MenuBarCategory } from "./menu-bar-categories.js";
-import { WORKSPACE_LINKS } from "../editor/workspace-links.js";
-import { recordWorkspaceVisit } from "../editor/recent-tools.js";
 
 export interface MenuBarProps {
   className?: string;
@@ -98,36 +101,36 @@ export function MenuBar({ className }: MenuBarProps): React.JSX.Element {
     void import("../editor/settings-ui.js").then((m) => m.openSettings());
   }, []);
 
-  // Workspace links navigate away from the editor entirely (a different app
-  // route), so this is a full navigation rather than a `runRibbon` dispatch.
-  const navigate = useCallback((href: string) => {
-    recordWorkspaceVisit(href);
-    window.location.assign(href);
-  }, []);
+  const pillDockRef = useRef<HTMLDivElement>(null);
+  usePairingPillDock(pillDockRef);
 
+  // The menus scroll sideways in a narrow embed; the pill dock and Settings
+  // sit outside that scroller so the pills' popups aren't clipped by it.
   return (
     <div
       className={
-        "dec-menubar flex items-center gap-0.5 border-b border-border bg-muted/40 px-1 h-8 shrink-0 overflow-x-auto overflow-y-hidden" +
+        "dec-menubar relative z-[225] flex items-center gap-1 border-b border-border bg-muted/40 px-1 h-8 shrink-0" +
         (className ? ` ${className}` : "")
       }
-      role="menubar"
-      aria-label="Editor commands"
-      onPointerEnter={refreshCategories}
-      onFocus={refreshCategories}
     >
-      {categories?.map((category) => (
-        <MenuBarCategoryMenu
-          key={category.title}
-          title={category.title}
-          groupTitles={category.groupTitles}
-          includesPluginCommands={category.includesPluginCommands}
-          isWorkspaceLinks={category.isWorkspaceLinks}
-          onRun={run}
-          onNavigate={navigate}
-        />
-      ))}
-      <div className="flex-1 min-w-2" />
+      <div
+        className="flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto overflow-y-hidden"
+        role="menubar"
+        aria-label="Editor commands"
+        onPointerEnter={refreshCategories}
+        onFocus={refreshCategories}
+      >
+        {categories?.map((category) => (
+          <MenuBarCategoryMenu
+            key={category.title}
+            title={category.title}
+            groupTitles={category.groupTitles}
+            includesPluginCommands={category.includesPluginCommands}
+            onRun={run}
+          />
+        ))}
+      </div>
+      <div ref={pillDockRef} className="dec-menubar-pills flex shrink-0 items-center gap-1" />
       <Button
         type="button"
         variant="ghost"
@@ -143,20 +146,67 @@ export function MenuBar({ className }: MenuBarProps): React.JSX.Element {
   );
 }
 
+/** The engine's Send / Receive pills, in the order they sit in the dock. */
+const PAIRING_PILL_SELECTORS = [".pmd-send-pill", ".pmd-receive-pill"] as const;
+
+/** Keeps the engine's Send / Receive pills in `dockRef` while the bar is
+ *  mounted. The engine creates its tray (a direct child of <body>) during
+ *  boot, after this bar first renders, and re-parents the Receive pill into
+ *  the tray again whenever its home screen closes — so this watches <body>'s
+ *  own children until the tray exists, then the tray's children, re-claiming
+ *  the pills on every change instead of moving them once. Neither observer
+ *  looks into the editor's subtree, so typing never triggers one. On unmount
+ *  the pills go back to the tray, which is where the engine expects them. */
+function usePairingPillDock(dockRef: React.RefObject<HTMLDivElement | null>): void {
+  useEffect(() => {
+    const dock = dockRef.current;
+    if (!dock || typeof MutationObserver === "undefined") return;
+    let tray: HTMLElement | null = null;
+    const claim = (): void => {
+      if (!tray) return;
+      for (const [i, selector] of PAIRING_PILL_SELECTORS.entries()) {
+        const pill = tray.querySelector<HTMLElement>(`:scope > ${selector}`);
+        if (!pill) continue;
+        const next = PAIRING_PILL_SELECTORS.slice(i + 1)
+          .map((s) => dock.querySelector(`:scope > ${s}`))
+          .find((el) => el !== null);
+        dock.insertBefore(pill, next ?? null);
+      }
+    };
+    const trayObserver = new MutationObserver(claim);
+    const findTray = (): boolean => {
+      tray = document.querySelector<HTMLElement>("body > .pmd-pill-tray");
+      if (!tray) return false;
+      trayObserver.observe(tray, { childList: true });
+      claim();
+      return true;
+    };
+    const bodyObserver = new MutationObserver(() => {
+      if (findTray()) bodyObserver.disconnect();
+    });
+    if (!findTray()) bodyObserver.observe(document.body, { childList: true });
+    return () => {
+      bodyObserver.disconnect();
+      trayObserver.disconnect();
+      if (!tray) return;
+      for (const selector of PAIRING_PILL_SELECTORS) {
+        const pill = dock.querySelector<HTMLElement>(`:scope > ${selector}`);
+        if (pill) tray.appendChild(pill);
+      }
+    };
+  }, [dockRef]);
+}
+
 function MenuBarCategoryMenu({
   title,
   groupTitles,
   includesPluginCommands,
-  isWorkspaceLinks,
   onRun,
-  onNavigate,
 }: {
   title: string;
   groupTitles: string[];
   includesPluginCommands?: boolean;
-  isWorkspaceLinks?: boolean;
   onRun: (id: string) => void;
-  onNavigate: (href: string) => void;
 }): React.JSX.Element {
   return (
     <DropdownMenu>
@@ -170,59 +220,9 @@ function MenuBarCategoryMenu({
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="min-w-[10rem] max-h-[70vh] overflow-y-auto p-0.5">
-        {isWorkspaceLinks ? (
-          <WorkspaceLinksContent onNavigate={onNavigate} />
-        ) : (
-          <CategoryContent groupTitles={groupTitles} includesPluginCommands={includesPluginCommands} onRun={onRun} />
-        )}
+        <CategoryContent groupTitles={groupTitles} includesPluginCommands={includesPluginCommands} onRun={onRun} />
       </DropdownMenuContent>
     </DropdownMenu>
-  );
-}
-
-/** Workspace category content: every `WORKSPACE_LINKS` entry as a menu
- *  item, navigating to the tool's app route on select, grouped into
- *  labeled sections by `link.category` (same four headings as `/tools`) so
- *  the dropdown reads as a miniature copy of that page rather than one long
- *  undifferentiated list. Entries with no `category` render in a trailing,
- *  unlabeled section. Unlike `CategoryContent`, this needs no lazy engine
- *  import — the link list is a small static module already loaded with
- *  MenuBar itself. */
-function WorkspaceLinksContent({
-  onNavigate,
-}: {
-  onNavigate: (href: string) => void;
-}): React.JSX.Element {
-  const sections: { category: string | undefined; links: typeof WORKSPACE_LINKS }[] = [];
-  for (const link of WORKSPACE_LINKS) {
-    const last = sections[sections.length - 1];
-    if (last && last.category === link.category) {
-      last.links.push(link);
-    } else {
-      sections.push({ category: link.category, links: [link] });
-    }
-  }
-  return (
-    <>
-      {sections.map((section, i) => (
-        <div key={section.category ?? `untitled-${i}`}>
-          {i > 0 && <DropdownMenuSeparator className="my-0.5" />}
-          <DropdownMenuLabel className="px-2 py-0.5 text-[10px] leading-tight uppercase tracking-wide text-muted-foreground">
-            {section.category ?? 'Go to'}
-          </DropdownMenuLabel>
-          {section.links.map((link) => (
-            <DropdownMenuItem
-              key={link.href}
-              onSelect={() => onNavigate(link.href)}
-              title={link.description}
-              className="px-2 py-0.5 text-xs leading-tight"
-            >
-              {link.label}
-            </DropdownMenuItem>
-          ))}
-        </div>
-      ))}
-    </>
   );
 }
 

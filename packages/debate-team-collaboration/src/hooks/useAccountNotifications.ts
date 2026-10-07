@@ -34,6 +34,22 @@ import {
 } from "../state/accountNotifications";
 
 const POLL_INTERVAL_MS = 30_000;
+
+/**
+ * Fired on `window` after a notification is marked read from any instance of
+ * this hook, so every other instance (the dock's, the sidebar account menu's
+ * badge) refetches at once instead of on its next poll.
+ */
+export const NOTIFICATIONS_CHANGED_EVENT = "debate:notifications-changed";
+
+export interface UseAccountNotificationsOptions {
+  /**
+   * Toast notifications that arrive after the first load (default true).
+   * Only one mounted instance should toast — the dock's — or each arrival
+   * would toast once per instance.
+   */
+  toastOnArrival?: boolean;
+}
 const LAST_SEEN_STORAGE_KEY = "accountNotifications:lastSeenId";
 
 export interface UseAccountNotificationsResult {
@@ -60,7 +76,10 @@ function writeLastSeenId(id: number): void {
  * {@link POLL_INTERVAL_MS} while `enabled`, toasting any that arrive after
  * the first load (see module doc for the watermark rule).
  */
-export function useAccountNotifications(enabled: boolean): UseAccountNotificationsResult {
+export function useAccountNotifications(
+  enabled: boolean,
+  { toastOnArrival = true }: UseAccountNotificationsOptions = {},
+): UseAccountNotificationsResult {
   const [notifications, setNotifications] = useState<AccountNotification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -83,7 +102,7 @@ export function useAccountNotifications(enabled: boolean): UseAccountNotificatio
 
     const highestId = page.notifications.reduce((max, n) => Math.max(max, n.id), lastSeenIdRef.current);
 
-    if (initializedRef.current) {
+    if (initializedRef.current && toastOnArrival) {
       const fresh = page.notifications.filter((n) => n.id > lastSeenIdRef.current);
       for (const notification of fresh) {
         toast(notification.title, {
@@ -97,8 +116,8 @@ export function useAccountNotifications(enabled: boolean): UseAccountNotificatio
 
     initializedRef.current = true;
     lastSeenIdRef.current = highestId;
-    writeLastSeenId(highestId);
-  }, [router]);
+    if (toastOnArrival) writeLastSeenId(highestId);
+  }, [router, toastOnArrival]);
 
   useEffect(() => {
     if (!enabled) return;
@@ -106,21 +125,32 @@ export function useAccountNotifications(enabled: boolean): UseAccountNotificatio
     const interval = setInterval(() => {
       if (typeof document === "undefined" || document.visibilityState === "visible") load();
     }, POLL_INTERVAL_MS);
-    return () => clearInterval(interval);
+    const onChanged = () => void load();
+    if (typeof window !== "undefined") window.addEventListener(NOTIFICATIONS_CHANGED_EVENT, onChanged);
+    return () => {
+      clearInterval(interval);
+      if (typeof window !== "undefined") window.removeEventListener(NOTIFICATIONS_CHANGED_EVENT, onChanged);
+    };
   }, [enabled, load]);
+
+  // The event reloads every mounted instance, this one included.
+  const announce = useCallback(async () => {
+    if (typeof window !== "undefined") window.dispatchEvent(new Event(NOTIFICATIONS_CHANGED_EVENT));
+    else await load();
+  }, [load]);
 
   const markRead = useCallback(
     async (id: number) => {
       await markAccountNotificationRead(id);
-      await load();
+      await announce();
     },
-    [load],
+    [announce],
   );
 
   const markAllRead = useCallback(async () => {
     await markAllAccountNotificationsRead();
-    await load();
-  }, [load]);
+    await announce();
+  }, [announce]);
 
   return { notifications, unreadCount, loading, refresh: load, markRead, markAllRead };
 }

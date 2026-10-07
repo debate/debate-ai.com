@@ -77,7 +77,7 @@ export function ProfileVideos({ search }: ProfileVideosProps) {
 
       {feed.hasMore && (
         <div className="mt-6 flex justify-center">
-          <Button variant="outline" disabled={feed.isLoadingMore} onClick={() => feed.loadMore({ force: true })}>
+          <Button variant="outline" disabled={feed.isLoadingMore} onClick={() => feed.loadMore()}>
             {feed.isLoadingMore ? "Loading…" : "Load more"}
           </Button>
         </div>

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
-import { and, eq, or } from "drizzle-orm"
+import { and, eq, inArray, or } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
-import { contacts, user, userBlocks, userPresence } from "@/lib/database/schema"
+import { contacts, member, user, userBlocks, userPresence } from "@/lib/database/schema"
 import { getSession } from "@/lib/auth/session"
 import {
   findUserByEmail,
@@ -13,6 +13,7 @@ import {
   touchPresence,
   userSummaryColumns,
 } from "@/lib/contacts/server"
+import { loadActiveOrganization } from "@/lib/organizations/server"
 import { isPresenceOnline, resolveContactRequest } from "@debate/team-collaboration"
 
 /**
@@ -23,10 +24,15 @@ import { isPresenceOnline, resolveContactRequest } from "@debate/team-collaborat
  * 401 without one, like `/api/settings`; `debate-team-collaboration`'s
  * `useContacts` polls the GET.
  *
- * GET   — `{ contacts, incoming, outgoing, blocked }`, each row carrying the
- *   other account's `{ id, name, email, image }`; contacts also carry
- *   `online`/`lastSeenAt` from `user_presence`. The call itself bumps the
- *   caller's own presence row, so polling the list IS the heartbeat.
+ * GET   — `{ contacts, incoming, outgoing, blocked, organization }`, each row
+ *   carrying the other account's `{ id, name, email, image }`; contacts also
+ *   carry `online`/`lastSeenAt` from `user_presence`. The call itself bumps the
+ *   caller's own presence row, so polling the list IS the heartbeat. While the
+ *   session has an active organization (`lib/organizations/server.ts`),
+ *   `contacts` is that organization's other members instead (minus blocks in
+ *   either direction; `id` is their contact row's id, or 0 when they are not
+ *   also a personal contact) and `organization` names it; otherwise
+ *   `organization` is null.
  * POST  { userId } | { email } — send a request. Outcome follows
  *   `resolveContactRequest`: a request at someone who already asked you
  *   accepts on the spot; self/blocked are refused. Writes a `contact_request`
@@ -85,14 +91,56 @@ export async function GET() {
     const incoming = pairRows.filter((r: PairRow) => r.status !== "accepted" && r.addresseeId === me)
     const outgoing = pairRows.filter((r: PairRow) => r.status !== "accepted" && r.requesterId === me)
 
-    return NextResponse.json({
-      contacts: accepted.map((r: PairRow) => ({
-        id: r.id,
+    let contactList = accepted.map((r: PairRow) => ({
+      id: r.id,
+      user: toContactUser(r.other),
+      online: isPresenceOnline(r.lastSeenAt, now),
+      lastSeenAt: iso(r.lastSeenAt),
+      since: iso(r.updatedAt) ?? iso(r.createdAt),
+    }))
+
+    const org = await loadActiveOrganization(db, me, session.session.activeOrganizationId)
+    if (org) {
+      const otherIds = [...org.memberIds].filter((id) => id !== me)
+      const blockRows = otherIds.length
+        ? await db
+            .select({ blockerId: userBlocks.blockerId, blockedId: userBlocks.blockedId })
+            .from(userBlocks)
+            .where(
+              or(
+                and(eq(userBlocks.blockerId, me), inArray(userBlocks.blockedId, otherIds)),
+                and(eq(userBlocks.blockedId, me), inArray(userBlocks.blockerId, otherIds)),
+              ),
+            )
+        : []
+      const blockedIds = new Set(
+        blockRows.map((b: { blockerId: string; blockedId: string }) => (b.blockerId === me ? b.blockedId : b.blockerId)),
+      )
+      const visibleIds = otherIds.filter((id) => !blockedIds.has(id))
+      const memberRows = visibleIds.length
+        ? await db
+            .select({ createdAt: member.createdAt, other: userSummaryColumns, lastSeenAt: userPresence.lastSeenAt })
+            .from(member)
+            .innerJoin(user, eq(user.id, member.userId))
+            .leftJoin(userPresence, eq(userPresence.userId, user.id))
+            .where(and(eq(member.organizationId, org.id), inArray(member.userId, visibleIds)))
+        : []
+      const contactRowId = new Map(
+        accepted.map((r: PairRow) => [r.requesterId === me ? r.addresseeId : r.requesterId, r.id] as const),
+      )
+      type MemberRow = (typeof memberRows)[number]
+      contactList = memberRows.map((r: MemberRow) => ({
+        id: contactRowId.get(r.other.id) ?? 0,
         user: toContactUser(r.other),
         online: isPresenceOnline(r.lastSeenAt, now),
         lastSeenAt: iso(r.lastSeenAt),
-        since: iso(r.updatedAt) ?? iso(r.createdAt),
-      })),
+        since: iso(r.createdAt),
+      }))
+    }
+
+    return NextResponse.json({
+      organization: org ? { id: org.id, name: org.name, role: org.role } : null,
+      contacts: contactList,
       incoming: incoming.map((r: PairRow) => ({ id: r.id, user: toContactUser(r.other), createdAt: iso(r.createdAt) })),
       outgoing: outgoing.map((r: PairRow) => ({ id: r.id, user: toContactUser(r.other), createdAt: iso(r.createdAt) })),
       blocked: blockedRows.map((r: (typeof blockedRows)[number]) => ({
@@ -104,7 +152,7 @@ export async function GET() {
     // Pre-migration deploys: degrade to an empty list, same as /api/notifications.
     if (isMissingTableError(error)) {
       console.warn("Contacts tables missing (migration pending)", error)
-      return NextResponse.json({ contacts: [], incoming: [], outgoing: [], blocked: [] })
+      return NextResponse.json({ organization: null, contacts: [], incoming: [], outgoing: [], blocked: [] })
     }
     console.error("Failed to load contacts", error)
     return NextResponse.json({ error: "Failed to load contacts." }, { status: 500 })

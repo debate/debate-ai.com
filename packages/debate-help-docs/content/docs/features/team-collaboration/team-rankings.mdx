@@ -1,0 +1,233 @@
+---
+title: "Team Rankings"
+---
+
+# Team Rankings
+
+A current-season leaderboard of debate teams and debaters for PF, LD, Policy
+(CX) and college policy (NDT), rated with a ballot-level Bradley-Terry model
+fit to every tournament result of the season — see
+[How Team Ratings Are Computed](/docs/features/ai-coaching/bradley-terry-debate-rankings).
+
+- **Route:** `/coaching/rankings`
+- **Package:** `debate-videos` (the page), `debate-rankings` (the ratings)
+
+## What it shows
+
+Pick a division tab. Every column below can be sorted by clicking its
+header, and the ⓘ next to a header explains how the number is worked out.
+
+| Column | Meaning |
+| --- | --- |
+| Rank | Position by adjusted rating |
+| Name / School | The team (`Last & Last`) or LD debater, and their school |
+| Adj. Rating | Bradley-Terry rating − 2 × its deviation (the skill's standard error), rounded to a whole number — what the rank is sorted on, so a team with only a few rounds can't top the list on luck |
+| Matches | Decided rounds debated, aff plus neg (ballots at major tournaments weigh double in the rating, not in this count) |
+| Aff Win / Neg Win | Share of rounds won on each side (raw — the rating itself weights each side's ballots so neither aff nor neg is favored, in prelims and elims separately) |
+| Aff Elim Win / Neg Elim Win | Share of elimination rounds won on each side; a dash means no elims on that side |
+| ID | A short stable id for the entry across tournaments |
+
+Above the table: the number of ranked entries, the side bias across the
+whole field (one chart with two aff vs. neg bars, prelims and elims, and the aff
+side's rating advantage from the model's side term), and the list of
+tournaments the ratings come from, with majors marked. A filter box narrows
+the table by name or school.
+
+### Schools tab
+
+The **Schools** tab rolls every ranked entry up by school (All events, or one
+division). Schools are ranked by their **Balanced** score (below).
+
+| Column | Meaning |
+| --- | --- |
+| Best Rating | Highest adjusted rating among the school's entries |
+| Top Entry | The entry holding that rating, and its event |
+| Avg Rating | Mean adjusted rating across every ranked team (or LD debater) from the school |
+| Balanced | What the rank is sorted on: (0.7 × Avg + 0.3 × Best) × team-count factor — average quality counts most and a standout entry still counts. Schools under four teams are diluted (×0.80 for one team, ×0.87 for two, ×0.93 for three, ×1.00 for four), schools with 5–20 teams get a 10% bonus, and larger schools taper to a 5% bonus by 40 teams |
+| Teams | Number of ranked entries |
+| Events | Events the school has entries in |
+
+Ranking on **Balanced** rewards average quality and depth rather than a single
+best team — a school with one or two strong entries no longer tops the table
+over a 5–20 team program that does well on average.
+
+### Legendary and gold rows
+
+In every division table and on the Schools tab, a small group at the top is
+**Legendary**: a thicker gold border, a soft glow and a small crowned
+"Legendary" label (after the team's name in division tables, beside the rank
+on the Schools tab). Each list sets its own cutoff: it counts the
+rows rated 90 or more and the rows rated 80 or more, and uses whichever count
+is closer to five (on a list with no 80s it keeps going down by tens). So LD,
+with four teams in the 90s and fourteen in the 80s, has four legendary teams,
+while a list whose best rating is in the 80s takes everyone rated 80+. A list
+never has more than seven legendary rows, and searching doesn't change who is
+legendary. Any other row whose rating reads 80 or more (a bold leading **8**
+or **9**) gets a thin gold border. The division tables use the adjusted
+rating; the Schools tab uses the Balanced score.
+
+In the division tables, the School column also shows each school's rank on the
+Schools tab for that division as a small **#N** after the school's name.
+
+LD has a second tab, **Sep–Oct topic**, rated only from the tournaments on
+the September–October resolution.
+
+The season selector still changes the champion and topic banner. Ratings
+exist for the current season only, so earlier seasons show the banner alone.
+
+## Team and school pages
+
+Clicking a team or school opens its profile (`/teams/<team>`,
+`/schools/<school>`): its stats per division, its radar chart, the round
+videos it debated in, and its caselist documents.
+
+Under a team's radar chart, a **Show school average** checkbox (off by default)
+overlays a dashed polygon with the average of every ranked team from the same
+school in that division, so you can see where the team beats its school. The
+checkbox only appears when the school has another ranked team in the division.
+
+The **Videos** section lists rounds, not lectures, and only in the divisions
+the team or school is ranked in — a school ranked only in Policy shows only
+Policy rounds, one ranked only in NDT only college rounds. A round counts when
+its recorded aff or neg team names the school as whole words; the title is
+searched only for a round with no teams recorded, and the description and
+channel never are. The school is matched by its full name and by its short
+forms: trailing words like *HS*, *Independent* or *College Prep* are dropped
+(`Gunn HS Independent` → `Gunn`) and known circuit shorthand is added
+(`Glenbrook North` → `GBN`). A team page also requires the team's initials
+after the school (`Strake Jesuit FS`, in either order), and an LD debater
+also matches by full name. Clicking a card's badge narrows the list further.
+
+## Following a team or school
+
+Every team and school page has a **Follow** button with its follower count
+beside it. Signed out, the count still shows and the button reads *Sign in to
+follow*. Following adds that team or school to the **Following** filter of
+the [News Stream](/docs/features/team-collaboration/news-stream) (`/news`), which posts:
+
+- **New rounds**: its three latest round videos, with who won on which side.
+- **New research**: its two latest caselist documents.
+- **Tournament results**: one line per tournament in the last 120 days, with
+  the record and how far it went (*reached Quarterfinals*, *finished
+  runner-up*, *won the tournament*).
+- **Monthly recaps**: for each of the last three completed months it debated
+  in, the month's record, its deep elim runs called out as big results, and
+  an estimated rating change.
+
+A user can follow up to 50 teams and schools. Follows are stored in the
+`profile_follows` table (migration in `packages/debate-videos/migrations`)
+and served by `/api/follows`; the feed items are built in `debate-videos`'
+`lib/follows/follow-feed.ts` and loaded by its `useFollowingNews` hook.
+
+## Picking an opponent when creating a round
+
+The Create New Round dialog reads the same rankings. Once a school is
+entered on either side, up to five of that school's teams in the round's
+format appear as round badges under the field, best rank first. Clicking a
+badge fills that side's debater names (`Falk & Sabnani` fills 1st and 2nd
+speaker; an LD entry fills the one debater). A side's badges go away once its
+debaters are filled in, so after both teams are entered none are left.
+
+The tournament field suggests Tabroom tournaments running now or coming up
+as soon as it is clicked, running ones first. When the round's tournament is
+one of them, its schools in the round's format are listed first in the
+(scrollable) school dropdown, and the badges show that school's entries at
+the tournament instead of its ranked teams. Badges stay hidden for formats
+without rankings and for schools with no teams. The lookups live in
+`debate-round`'s `round/school-teams.ts` and `round/tournament-field.ts`; the
+tournament data is read through `@debate/tournaments/client` from the app's
+`/api/tabroom-beta` proxy.
+
+## Matchup simulator
+
+Pair any two ranked teams in a division and see who the ratings favour. The
+simulator reads each division's full-season rankings
+(`<division>_full_rankings.csv`), so every ranked team can be picked — filter
+by name or school, or hit **Random opponent**.
+
+Each side is simulated separately: team A locked **aff**, then team A locked
+**neg**, so you can see which side a team does better on. Pick **Aff**,
+**Neg** or **Both**, and **Prelim** (one judge), **Elim** (3- and 5-judge
+panels) or **Both**. With both sides shown, it says which side team A should
+take on a coin flip, and by how many points. **Simulate 1,000 rounds per
+side** plays each side out to show the spread a percentage hides.
+
+### What goes into the rating
+
+Each team's rating is a blend of three signals, set by two sliders:
+
+- **Team**: the pairing's own rating.
+- **Individual performance**: how each debater rates in their *other*
+  entries at the same school, in any division (other partners, or LD). A
+  pair that only does well together, or a debater who carries every partner,
+  shows up here. Teams whose debaters have no other entries just use the
+  team rating.
+- **School performance**: the average rating of every entry the school has
+  in the division. This is program strength (coaching, shared files) rather
+  than the pair itself.
+
+Under each team the simulator shows all three numbers, the blend, and a
+**recommended** mix for that team. A team with few rounds of its own leans
+more on its school (15 rounds → 50%, 60 → 20%). A team whose debaters have
+other entries leans more on those, up to half. Click it to apply it.
+
+The side effect has two parts: the field's aff/neg split for the stage (elims
+often lean further than prelims), and each team's own aff-vs-neg record
+beyond the field's, shrunk toward zero for teams with few rounds. A team's
+elim-only rates come from a handful of rounds, so its tilt always comes from
+its overall record.
+
+The base probability is Glicko-2's expected score, the same formula as
+upstream's `simulate_round.py` (skelo's `Glicko2Model.compute_prob`): ratings
+are converted back to Glicko-2's 1500 scale, and the result is
+`1 / (1 + exp(−g(φ_opp) · (μ − μ_opp)))`. The side shift is added in
+log-odds. Panel odds assume each ballot is independent at that probability.
+
+### Your team, pre-filled
+
+**Settings → My team** sets your role (debater, coach, or assistant/judge),
+your partner, and the ranked team you represent in each division. It's saved
+in this browser and, when you're signed in, to your account
+(`/api/settings`' `myRankedTeams`). The simulator starts from it.
+
+It appears in two places:
+
+- **Practice round** (`/practice`): side A starts as your team for the
+  division, and both sides can be changed.
+- **Every team profile** (`/teams/<team>`): if you have a team set for that
+  division, **Simulate vs. any ranked team** pits your team (side A) against
+  the profile's team. On your own profile, or with no team set, the profile's
+  team is locked in as side A and any other ranked team can be its opponent.
+
+The math lives in `@debate/rankings-adapter`: `match-simulation.ts` (Glicko-2)
+and `matchup-model.ts` (blending, side terms, recommendations). The UI is
+`debate-videos`' `MatchupSimulator`, composed on the practice page by
+`debate-practice-rounds`' `TeamMatchupSimulatorPanel`. The setting is
+`debate-videos`' `lib/my-ranked-teams` and `MyRankedTeamsSettings`.
+
+## Known gaps
+
+The matchup simulator's individual rating finds a debater's other entries by
+surname and school, so two debaters with the same surname at one school are
+merged, and someone who changed schools isn't linked. The rankings carry no
+speaker points, so individual skill is only inferred from other pairings.
+The partner name in **My team** is informational and doesn't change the
+model.
+
+A profile's Videos section only finds a round whose team label or title spells
+the school the way the rankings do, or by one of the short forms above. A
+round recorded under an unlisted abbreviation is missed, and a school whose
+short name another school shares (two *Memorial* high schools) can show the
+other's rounds.
+
+Followed teams' results and recaps come from the round video library, so a
+tournament's record counts only the rounds someone recorded, and a round is
+dated by its upload, not the day it was debated. The rankings keep no
+history, so a recap's rating change is an estimate: each decided round moves
+the rating by 32 × (result − expected) on the upstream scale, the expected
+score coming from both teams' current ratings. Nothing is emailed; the recap
+only appears in the News Stream.
+
+Ratings cover only the tournaments listed above the table; a team that hasn't
+attended one of them is not ranked. The list updates when the rankings are
+recomputed, not live.

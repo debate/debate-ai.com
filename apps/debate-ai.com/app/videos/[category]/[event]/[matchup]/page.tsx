@@ -3,7 +3,7 @@ import { VideoRoutePage, videoRouteMetadata } from "../../../_watch/video-route-
 
 /**
  * A video at `/videos/<season>/<event>/<matchup>`, e.g.
- * `/videos/2019/critique-critical-theory/how-to-give-a-2nr`.
+ * `/videos/18-19/critique-critical-theory/how-to-give-a-2nr`.
  *
  * Lectures and untagged rounds live here. A tagged round's older address in
  * this shape (`/videos/2022/college-ndt/dartmouth-sv-vs-michigan-pr-finals`)

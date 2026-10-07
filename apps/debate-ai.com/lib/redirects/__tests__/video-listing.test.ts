@@ -12,6 +12,12 @@ describe("videoListingPath", () => {
     expect(videoListingPath("/videos/2025/toc/", "?sort=Views")).toBe("/videos?sort=Views&year=2025&q=toc");
   });
 
+  it("reads a season spelled as the two years it spans", () => {
+    expect(videoListingPath("/videos/24-25")).toBe("/videos?year=2025");
+    expect(videoListingPath("/videos/99-00/ndt")).toBe("/videos?year=2000&q=ndt");
+    expect(videoListingPath("/videos/24-26")).toBeNull();
+  });
+
   it("maps the archive season to the legacy filter", () => {
     expect(videoListingPath("/videos/archive/ndt")).toBe("/videos?year=legacy&q=ndt");
   });
@@ -20,6 +26,7 @@ describe("videoListingPath", () => {
     expect(videoListingPath("/videos")).toBeNull();
     expect(videoListingPath("/videos/pf")).toBeNull();
     expect(videoListingPath("/videos/2022/ndt/finals")).toBeNull();
+    expect(videoListingPath("/videos/21-22/ndt/finals")).toBeNull();
     expect(videoListingPath("/videos/2022/ndt/finals/dartmouth-sv-michigan-pr")).toBeNull();
     expect(videoListingPath("/tournaments/2025/ndt")).toBeNull();
   });

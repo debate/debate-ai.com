@@ -60,13 +60,14 @@ describe("menu bar categories", () => {
     const titles = MENU_BAR_CATEGORIES.map((c) => c.title);
     expect(new Set(titles).size).toBe(titles.length);
     for (const c of MENU_BAR_CATEGORIES) {
-      expect(c.groupTitles.length > 0 || c.includesPluginCommands || c.isWorkspaceLinks, c.title).toBeTruthy();
+      expect(c.groupTitles.length > 0 || c.includesPluginCommands, c.title).toBeTruthy();
     }
   });
 
   it("shows the everyday menus and hides Plugins until a plugin registers", () => {
     const shown = MENU_BAR_CATEGORIES.filter(isMenuBarCategoryPopulated).map((c) => c.title);
-    expect(shown).toEqual(expect.arrayContaining(["File", "Card", "Edit", "Format", "View", "Workspace"]));
+    expect(shown).toEqual(expect.arrayContaining(["File", "Card", "Edit", "Format", "View"]));
     expect(shown).not.toContain("Plugins");
+    expect(shown).not.toContain("Workspace");
   });
 });

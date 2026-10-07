@@ -241,17 +241,24 @@ export function ContactsPanel({ enabled = true, onShareWith, contacts: shared }:
         </PanelSection>
       )}
 
-      <PanelSection title="Your contacts">
+      <PanelSection title={contacts.organization ? `Members of ${contacts.organization.name}` : "Your contacts"}>
         {contacts.loading && !contacts.loaded ? (
           <p className="text-sm text-muted-foreground">Loading contacts…</p>
         ) : sorted.length === 0 ? (
-          <EmptyState
-            title="No contacts yet."
-            message="Search for a teammate above and send them a request — once they accept, you can share cards with each other."
-          />
+          contacts.organization ? (
+            <EmptyState
+              title="No other members yet."
+              message="Add people from your contacts with Members in the account menu's organization submenu, or switch back to Personal."
+            />
+          ) : (
+            <EmptyState
+              title="No contacts yet."
+              message="Search for a teammate above and send them a request — once they accept, you can share cards with each other."
+            />
+          )
         ) : (
           sorted.map((contact) => (
-            <div key={contact.id} className="rounded-md border border-border px-3 py-2 flex flex-wrap items-center justify-between gap-2">
+            <div key={contact.user.id} className="rounded-md border border-border px-3 py-2 flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-center gap-2 min-w-0">
                 <UserLine user={contact.user} online={contact.online} />
                 <Pill tone={contact.online ? "positive" : "neutral"}>{contact.online ? "Available" : "Away"}</Pill>
@@ -262,9 +269,12 @@ export function ContactsPanel({ enabled = true, onShareWith, contacts: shared }:
                     Share a card
                   </Button>
                 )}
-                <Button size="sm" variant="outline" onClick={() => void run(contacts.remove(contact.id), "Contact removed.")}>
-                  Remove
-                </Button>
+                {/* In an organization the list is its membership, which removing a contact would not change. */}
+                {!contacts.organization && (
+                  <Button size="sm" variant="outline" onClick={() => void run(contacts.remove(contact.id), "Contact removed.")}>
+                    Remove
+                  </Button>
+                )}
                 <Button
                   size="sm"
                   variant="ghost"

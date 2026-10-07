@@ -64,12 +64,6 @@ interface LecturesVideoGridViewProps {
   errorMessage: string
   /** `true` while additional pages are loading (infinite scroll). */
   isLoadingMore: boolean
-  /**
-   * `true` once the feed has loaded as many videos as it will hold at once
-   * and more remain. Scrolling stops paging here; the button rendered below
-   * the grid is how the next page is asked for.
-   */
-  atCapacity?: boolean
 
   // ---- Video data ----
   /** Videos loaded so far for the active filters. */
@@ -130,8 +124,6 @@ interface LecturesVideoGridViewProps {
   onToggleStackedPlaylists: () => void
   /** Toggles the lecture category gallery visibility. */
   onToggleLectureCategories: () => void
-  /** Loads one more page past the capacity ceiling. */
-  onLoadMore?: () => void
   /** Toggles the favorite state of a single video. */
   onToggleFavorite: (id: string) => void
   /** Hides a video from the grid. */
@@ -151,6 +143,11 @@ interface LecturesVideoGridViewProps {
    * (auth session, routing, settings menu).
    */
   dockSlot?: React.ReactNode
+  /**
+   * App-owned account menu, pinned at the sidebar's foot. It carries the site
+   * links, so the column drops its own footer row when this is given.
+   */
+  accountSlot?: React.ReactNode
   /** Host-owned controls (e.g. the account-sync badge) rendered beside the search bar. */
   headerActionsSlot?: React.ReactNode
 }
@@ -180,8 +177,6 @@ export function LecturesVideoGridView({
   isLoading,
   errorMessage,
   isLoadingMore,
-  atCapacity = false,
-  onLoadMore,
   currentVideos,
   favorites,
   hiddenVideos,
@@ -210,6 +205,7 @@ export function LecturesVideoGridView({
   selectedStyle,
   onStyleChange,
   dockSlot,
+  accountSlot,
   headerActionsSlot,
 }: LecturesVideoGridViewProps) {
   const params = useParams()
@@ -323,6 +319,7 @@ export function LecturesVideoGridView({
     <ResizableSidebarLayout
       className="bg-background"
       contentClassName="p-3 sm:p-6"
+      footer={accountSlot}
       sidebar={
         <>
           {dockSlot}
@@ -341,7 +338,7 @@ export function LecturesVideoGridView({
             onToggleLectures={onToggleLectureCategories}
           />
 
-          <Footer />
+          {accountSlot ? null : <Footer />}
         </>
       }
     >
@@ -572,36 +569,11 @@ export function LecturesVideoGridView({
               />
             )}
 
-            {/* The sentinel only exists while scrolling is allowed to page:
-                past the ceiling it is removed, so the observer above it has
-                nothing to fire against and the grid can only grow when the
-                button below is pressed. */}
-            {!atCapacity && <div ref={loadMoreTriggerRef} className="h-10" />}
+            <div ref={loadMoreTriggerRef} className="h-10" />
 
             {isLoadingMore && (
               <div className="text-center py-4">
                 <p className="text-sm text-muted-foreground">Loading more...</p>
-              </div>
-            )}
-
-            {atCapacity && !isLoadingMore && (
-              <div className="flex flex-col items-center gap-2 py-8">
-                <p className="text-sm text-muted-foreground">
-                  Showing {currentVideos.length.toLocaleString()} of{" "}
-                  {totalVideos.toLocaleString()} videos.
-                </p>
-                <button
-                  type="button"
-                  onClick={onLoadMore}
-                  className="inline-flex h-9 items-center rounded-md border border-border bg-background px-4 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-                >
-                  Load more
-                </button>
-                <p className="max-w-md text-center text-xs text-muted-foreground">
-                  Loading every video at once is what made this page stop
-                  responding — search or pick a category above to narrow the
-                  list instead.
-                </p>
               </div>
             )}
           </>
