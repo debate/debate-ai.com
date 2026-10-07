@@ -25,7 +25,7 @@ const rows: SchoolRanking[] = [
 
 describe("SchoolRankingsTable", () => {
   const html = renderToStaticMarkup(
-    createElement(SchoolRankingsTable, { rows, sort: { key: "rank", dir: "asc" }, onToggleSort: () => {} }),
+    createElement(SchoolRankingsTable, { rows, legendary: 0, sort: { key: "rank", dir: "asc" }, onToggleSort: () => {} }),
   );
 
   it("renders one header per cell", () => {
