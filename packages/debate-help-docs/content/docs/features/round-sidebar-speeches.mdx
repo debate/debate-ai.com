@@ -10,7 +10,8 @@ view controls and shows captions for recorded speeches.
 
 - **Nav:** `/debate`, left sidebar, under the selected round
 - **Package:** `debate-round` (`layout/LiveRoundGroup.tsx`,
-  `round/my-speeches.ts`), `debate-timer` (`recorder/SpeechCaptionsTicker.tsx`,
+  `round/my-speeches.ts`, `dialogs/SpeechGradeDialog.tsx`,
+  `round/speech-rubric.ts`), `debate-timer` (`recorder/SpeechCaptionsTicker.tsx`,
   `recorder/speech-captions.ts`)
 
 ## What it does
@@ -28,6 +29,15 @@ view controls and shows captions for recorded speeches.
   Speeches are matched by speaker: in Policy and PF the first debater listed
   gives the 1A/1N (A1/N1) speeches and the second gives the 2A/2N ones. In
   LD, every speech on your side is yours.
+- **Grade a speech.** Every speech row has a clipboard button (tooltip:
+  "Grade 1AC (speaker)"). It opens a modal that scores the speech on five
+  independent categories, 1–5 each, with a slider apiece: Organization,
+  Evidence Quality, Argument Analysis, Clash & Strategy and Presentation
+  Clarity. A radar chart and the /25 total (Deficient → Exceptional) update as
+  you drag. The ⓘ beside each category says what it does and doesn't grade,
+  and "Criteria and examples" shows what a 5 and a 3 look like. There is a
+  notes box, a Reset button and "Copy scorecard". Grades save to the round as
+  you go, and the row shows the total once a speech is graded.
 - **Captions ticker.** The captions button on a speech's recording player
   shows the words transcribed while the speech was recorded, scrolling past
   the player like a ticker. The word being played is highlighted and kept
@@ -35,6 +45,10 @@ view controls and shows captions for recorded speeches.
   is remembered across speeches.
 
 ## Known gaps
+
+- Grades are stored on the round (`Round.speechGrades`, keyed by speech name),
+  so they follow the round's own save and sync. They are not a separate
+  per-grader record: two people grading the same speech overwrite each other.
 
 - The browser's speech recognition only reports when a phrase ends, not
   per-word times, so word times are estimated by spreading each phrase

@@ -157,6 +157,7 @@ function FeatureVideo() {
             <iframe
               src={`https://www.youtube-nocookie.com/embed/${README_VIDEO.id}?rel=0`}
               title={README_VIDEO.title}
+              referrerPolicy="strict-origin-when-cross-origin"
               allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
               className="size-full border-0"

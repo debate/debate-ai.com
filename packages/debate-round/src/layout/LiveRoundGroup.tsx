@@ -23,7 +23,7 @@
 "use client"
 
 import { useMemo, useState, type ReactNode } from "react"
-import { ChevronDown, ChevronRight, Radio, Timer } from "lucide-react"
+import { ChevronDown, ChevronRight, ClipboardCheck, Radio, Timer } from "lucide-react"
 import { PrepTimer } from "@debate/timer/src/timers/PrepTimer"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/primitives/tooltip"
 import { cn } from "../ui/lib/utils"
@@ -32,7 +32,9 @@ import { SpeechWordStats } from "@debate/timer/src/timers/SpeechWordStats"
 import { useSpeechWordStats } from "../hooks/useSpeechWordStats"
 import { useFlowStore } from "../state/store"
 import type { Round } from "../types/flow"
-import { findViewerSeat, isViewerSpeech } from "../round/my-speeches"
+import { findViewerSeat, isViewerSpeech, speechSpeakerEmail } from "../round/my-speeches"
+import { SpeechGradeDialog } from "../dialogs/SpeechGradeDialog"
+import { totalScore, MAX_TOTAL, normalizeScores } from "../round/speech-rubric"
 import type { DebateStyle, SpeechTimerState, TimerState } from "@debate/timer/src/types"
 import type { SpeechTimerEntry } from "../hooks/useTimerState"
 
@@ -89,6 +91,40 @@ function MineBadge() {
   )
 }
 
+/** Opens the rubric modal for one speech; shows the saved total once graded. */
+function GradeSpeechButton({ round, speechName, speakerLabel }: { round: Round; speechName: string; speakerLabel?: string }) {
+  const [open, setOpen] = useState(false)
+  const grade = useFlowStore((s) => s.rounds.find((r) => r.id === round.id)?.speechGrades?.[speechName])
+  const total = grade ? totalScore(normalizeScores(grade.scores)) : null
+  const who = speakerLabel ? ` (${speakerLabel})` : ""
+  return (
+    <>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            aria-label={`Grade ${speechName}${who}`}
+            className={cn(
+              "flex shrink-0 items-center gap-1 rounded-[var(--border-radius)] px-1 py-0.5 text-[11px] font-semibold tabular-nums hover:bg-[var(--background-indent)]",
+              total === null ? "text-muted-foreground" : "text-primary",
+            )}
+          >
+            <ClipboardCheck className="h-3.5 w-3.5" aria-hidden="true" />
+            {total !== null && <span>{total}/{MAX_TOTAL}</span>}
+          </button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{total === null ? `Grade ${speechName}${who}` : `${speechName} graded ${total}/${MAX_TOTAL} — edit`}</p>
+        </TooltipContent>
+      </Tooltip>
+      {open && (
+        <SpeechGradeDialog round={round} speechName={speechName} speakerLabel={speakerLabel} open onOpenChange={setOpen} />
+      )}
+    </>
+  )
+}
+
 /** A non-selected speech's row: its name and word totals. Clicking it makes
  *  it the active speech when `onSelect` is given. */
 function SpeechTotalsRow({
@@ -96,10 +132,12 @@ function SpeechTotalsRow({
   secondary,
   mine = false,
   onSelect,
+  gradeButton,
 }: {
   name: string
   secondary: boolean
   mine?: boolean
+  gradeButton?: ReactNode
   onSelect?: (name: string) => void
 }) {
   const { flows, selected } = useFlowStore()
@@ -121,19 +159,24 @@ function SpeechTotalsRow({
     return (
       <div className={className} data-mine={mine || undefined}>
         {content}
+        {gradeButton}
       </div>
     )
   }
+  // The grade button sits beside the select button — nesting buttons is invalid.
   return (
-    <button
-      type="button"
-      className={className}
-      onClick={() => onSelect(name)}
-      title={`Make ${name} the active speech`}
-      data-mine={mine || undefined}
-    >
-      {content}
-    </button>
+    <div className="flex items-center gap-0.5">
+      <button
+        type="button"
+        className={className}
+        onClick={() => onSelect(name)}
+        title={`Make ${name} the active speech`}
+        data-mine={mine || undefined}
+      >
+        {content}
+      </button>
+      {gradeButton}
+    </div>
   )
 }
 
@@ -298,6 +341,13 @@ export function LiveRoundGroup({
                         Your speech
                       </div>
                     )}
+                    <div className="flex items-center justify-end border-b border-border/60 px-1">
+                      <GradeSpeechButton
+                        round={round}
+                        speechName={speech.name}
+                        speakerLabel={speechSpeakerEmail(round, speech) || undefined}
+                      />
+                    </div>
                     <SpeechHeaderBar
                       speechName={speech.name}
                       controlledTime={entry.time}
@@ -329,6 +379,13 @@ export function LiveRoundGroup({
                   secondary={speech.secondary}
                   mine={mine}
                   onSelect={onSelectSpeech}
+                  gradeButton={
+                    <GradeSpeechButton
+                      round={round}
+                      speechName={speech.name}
+                      speakerLabel={speechSpeakerEmail(round, speech) || undefined}
+                    />
+                  }
                 />
               )
             })}

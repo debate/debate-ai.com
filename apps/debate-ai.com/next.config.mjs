@@ -40,21 +40,6 @@ const nextConfig = {
     root: monoRoot,
   },
   outputFileTracingRoot: monoRoot,
-  webpack(config, { isServer }) {
-    // Skip Service Worker bundling on server side
-    if (isServer) {
-      return config;
-    }
-
-    config.module.rules.push({
-      test: /\.(ogg|mp3|wav|mpe?g)$/i,
-      type: "asset/resource",
-      generator: {
-        filename: "static/chunks/[path][name].[hash][ext]",
-      },
-    });
-    return config;
-  },
 };
 
 export default nextConfig;

@@ -1,7 +1,7 @@
 # CLAUDE.md — `debate-flow-ebb` (`packages/debate-flow`)
 
 **Package name:** `debate-flow-ebb` — filter on that, not the directory.
-Private. Entry: `src/EbbFlowEmbed.tsx`. Tests in `test/`.
+Public (`@debate/` scope). Entry: `src/EbbFlowEmbed.tsx`. Tests in `test/`.
 
 `ebb`, the local-first, keyboard-first flow editor, ported in as a workspace
 package. `EbbFlowEmbed` mounts the flow grid as **one column of a host page** —

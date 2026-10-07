@@ -1,7 +1,7 @@
 # CLAUDE.md — `debate-practice-rounds` (`packages/debate-practice-drills`)
 
 **Package name:** `debate-practice-rounds` — filter on that, not the directory.
-Private. Entry `src/index.ts`, tests in `test/`.
+Public (`@debate/` scope). Entry `src/index.ts`, tests in `test/`.
 
 Practice and AI round tooling: AI drill generator, AI coach mode, AI judge
 decision, word-count speeches, practice round simulator, speech transcript

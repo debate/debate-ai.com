@@ -2,20 +2,38 @@
   "name": "@debate/videos",
   "version": "0.1.0",
   "description": "Debate video library — grids, search, the persistent YouTube player, lecture pages and rankings leaderboards",
-  "private": true,
   "type": "module",
   "author": "vtempest",
   "license": "rights.institute/prosper",
+  "homepage": "https://github.com/debate/debate-ai.com/tree/master/packages/debate-videos#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/debate/debate-ai.com.git",
+    "directory": "packages/debate-videos"
+  },
+  "bugs": {
+    "url": "https://github.com/debate/debate-ai.com/issues"
+  },
   "main": "./src/index.ts",
-  "sideEffects": ["**/*.css"],
+  "sideEffects": [
+    "**/*.css"
+  ],
   "types": "./src/index.ts",
+  "files": [
+    "src",
+    "migrations",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "coverage": "vitest run --coverage"
   },
-"dependencies": {
+  "dependencies": {
     "@icons-pack/react-simple-icons": "^13.15.1",
     "@radix-ui/react-dialog": "1.1.23",
     "@radix-ui/react-scroll-area": "1.2.18",
@@ -43,7 +61,7 @@
     "recharts": "3.10.1",
     "tailwind-merge": "^3.7.0",
     "zustand": "^5.0.15",
-    "@types/debate": "workspace:*"
+    "@debate/types": "workspace:*"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",

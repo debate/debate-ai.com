@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { RankingDataset, RankingEntry } from "@debate/rankings-adapter";
 import {
+  findSchoolDivisionEntries,
   findSchoolEntries,
   findTeamEntries,
   profileSlug,
@@ -197,5 +198,19 @@ describe("schoolDivisionRadarData", () => {
 
   it("returns an empty array for no entries", () => {
     expect(schoolDivisionRadarData([])).toEqual([]);
+  });
+});
+
+describe("findSchoolDivisionEntries", () => {
+  it("returns the team's school in the team's division only, the team included", () => {
+    const [team] = findTeamEntries(datasets, "college-prep-falk-sabnani");
+    const school = findSchoolDivisionEntries(datasets, team);
+    expect(school.map((i) => i.entry.name)).toEqual(["Falk & Sabnani", "Lee & Park"]);
+    expect(school.every((i) => i.datasetId === "hspf")).toBe(true);
+  });
+
+  it("returns only the team when its school has no other entry in the division", () => {
+    const [team] = findTeamEntries(datasets, "college-prep-jane-doe");
+    expect(findSchoolDivisionEntries(datasets, team).map((i) => i.entry.name)).toEqual(["Jane Doe"]);
   });
 });

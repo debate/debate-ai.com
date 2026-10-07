@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from "vitest";
 
-import { findViewerSeat, isViewerSpeech } from "../src/round/my-speeches";
+import { findViewerSeat, isViewerSpeech, speechSpeakerEmail } from "../src/round/my-speeches";
 import type { Round } from "../src/types/flow";
 
 const round = {
@@ -59,5 +59,19 @@ describe("isViewerSpeech", () => {
 
   it("is false when the viewer has no seat", () => {
     expect(isViewerSpeech({ speaker: "1A", secondary: false }, null)).toBe(false);
+  });
+});
+
+describe("speechSpeakerEmail", () => {
+  it("resolves the debater by side and speaker number", () => {
+    expect(speechSpeakerEmail(round, { speaker: "1A", secondary: false })).toBe("a1@x.com");
+    expect(speechSpeakerEmail(round, { speaker: "2A", secondary: false })).toBe("a2@x.com");
+    expect(speechSpeakerEmail(round, { speaker: "N2", secondary: true })).toBe("N2@X.com");
+  });
+
+  it("falls back to the side's first debater with no digit, and to blank with no round", () => {
+    expect(speechSpeakerEmail(round, { speaker: "N", secondary: true })).toBe("n1@x.com");
+    expect(speechSpeakerEmail(round, { secondary: false })).toBe("a1@x.com");
+    expect(speechSpeakerEmail(null, { speaker: "1A", secondary: false })).toBe("");
   });
 });

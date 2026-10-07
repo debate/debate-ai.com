@@ -9,12 +9,15 @@
  */
 import type { ReactNode } from 'react';
 import { DocsLayout } from 'fumadocs-ui/layouts/notebook';
+import { AppSidebarDocsTree } from '../components/fumadocs/layout/app-sidebar-docs-tree';
 import { source } from '../lib/fumadocs/source';
 import { baseOptions } from './layout.config';
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
     <DocsLayout tree={source.pageTree} {...baseOptions}>
+      {/* The page tree again, as a section of the app's sidebar (desktop). */}
+      <AppSidebarDocsTree tree={source.pageTree} />
       {children}
     </DocsLayout>
   );

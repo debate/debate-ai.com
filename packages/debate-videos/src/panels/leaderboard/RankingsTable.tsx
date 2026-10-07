@@ -24,6 +24,7 @@ import { useResizableColumns } from "../../components/video-grid/useResizableCol
 import { COLUMN_TOOLTIPS, displayEntryName } from "./leaderboardUtils"
 import type { Division, SortKey, SortState } from "./leaderboardTypes"
 import { schoolHref, teamHref } from "./profile/rankingProfileHelpers"
+import { LegendaryBadge, ROW_TIER_CLASS, rowTier, type RowTier } from "./rowTier"
 
 /** The fields shown as columns. */
 type ColumnKey = Extract<
@@ -45,7 +46,7 @@ interface Column {
   label: string
   /** Right-align and use tabular figures. */
   numeric?: boolean
-  render: (entry: RankingEntry, division: Division) => React.ReactNode
+  render: (entry: RankingEntry, division: Division, tier: RowTier) => React.ReactNode
 }
 
 /**
@@ -98,7 +99,17 @@ function WinRate({ value }: { value: number | null }) {
 }
 
 const COLUMNS: Column[] = [
-  { key: "rank", label: "#", numeric: true, render: (e) => <span className="font-semibold">{e.rank}</span> },
+  {
+    key: "rank",
+    label: "#",
+    numeric: true,
+    render: (e, _division, tier) => (
+      <>
+        {tier === "legendary" && <LegendaryBadge />}
+        <span className="ml-1 font-semibold">{e.rank}</span>
+      </>
+    ),
+  },
   {
     key: "school",
     label: "School",
@@ -132,7 +143,7 @@ const COLUMNS: Column[] = [
 
 /** Starting pixel width of each column; every column can be dragged wider or narrower. */
 const DEFAULT_COLUMN_WIDTHS: Record<ColumnKey, number> = {
-  rank: 60,
+  rank: 120,
   school: 200,
   name: 200,
   adjustedRating: 90,
@@ -147,6 +158,8 @@ const DEFAULT_COLUMN_WIDTHS: Record<ColumnKey, number> = {
 interface RankingsTableProps {
   /** Pre-sorted and pre-filtered rows to render. */
   entries: RankingEntry[]
+  /** How many top ranks are legendary, from the whole list ({@link legendaryCount}). */
+  legendary: number
   /** Active division; LD rows show only the debater's last name. */
   division: Division
   /** Current sort state. */
@@ -164,7 +177,7 @@ interface RankingsTableProps {
  *
  * @param props - See {@link RankingsTableProps}.
  */
-export function RankingsTable({ entries, division, sort, onToggleSort }: RankingsTableProps) {
+export function RankingsTable({ entries, legendary, division, sort, onToggleSort }: RankingsTableProps) {
   const { widths, startResize } = useResizableColumns(DEFAULT_COLUMN_WIDTHS)
   return (
     <div className="rounded-lg border bg-card shadow-sm">
@@ -217,8 +230,14 @@ export function RankingsTable({ entries, division, sort, onToggleSort }: Ranking
           </TableRow>
         </TableHeader>
         <TableBody>
-          {entries.map((entry) => (
-            <TableRow key={entry.hash || `${entry.rank}-${entry.name}`}>
+          {entries.map((entry) => {
+            const tier = rowTier(entry.rank, entry.adjustedRating, legendary)
+            return (
+            <TableRow
+              key={entry.hash || `${entry.rank}-${entry.name}`}
+              data-tier={tier ?? undefined}
+              className={tier ? ROW_TIER_CLASS[tier] : undefined}
+            >
               {COLUMNS.map((col) => (
                 <TableCell
                   key={col.key}
@@ -228,11 +247,12 @@ export function RankingsTable({ entries, division, sort, onToggleSort }: Ranking
                   )}
                   title={col.key === "school" ? entry.school : col.key === "name" ? entry.name : undefined}
                 >
-                  {col.render(entry, division)}
+                  {col.render(entry, division, tier)}
                 </TableCell>
               ))}
             </TableRow>
-          ))}
+            )
+          })}
         </TableBody>
       </Table>
     </div>

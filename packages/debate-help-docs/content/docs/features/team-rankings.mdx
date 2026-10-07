@@ -28,7 +28,7 @@ header, and the ⓘ next to a header explains how the number is worked out.
 | ID | A short stable id for the entry across tournaments |
 
 Above the table: the number of ranked entries, the side bias across the
-whole field (aff vs. neg win rate, in prelims and elims, and the aff
+whole field (one chart with two aff vs. neg bars, prelims and elims, and the aff
 side's rating advantage from the model's side term), and the list of
 tournaments the ratings come from, with majors marked. A filter box narrows
 the table by name or school.
@@ -36,19 +36,34 @@ the table by name or school.
 ### Schools tab
 
 The **Schools** tab rolls every ranked entry up by school (All events, or one
-division). Schools are ranked by their best entry's adjusted rating.
+division). Schools are ranked by their **Balanced** score (below).
 
 | Column | Meaning |
 | --- | --- |
-| Best Rating | Highest adjusted rating among the school's entries — what the rank is sorted on |
+| Best Rating | Highest adjusted rating among the school's entries |
 | Top Entry | The entry holding that rating, and its event |
 | Avg Rating | Mean adjusted rating across every ranked team (or LD debater) from the school |
-| Balanced | (0.6 × Avg + 0.4 × Best) × (1 + 0.15 × (Teams − 1) / (Teams + 4)) — average quality counts most, a standout entry still counts, and a depth bonus grows with team count but stays under 15% (0% for one team, ~6.7% for five, ~9.6% for ten) |
+| Balanced | What the rank is sorted on: (0.7 × Avg + 0.3 × Best) × team-count factor — average quality counts most and a standout entry still counts. Schools under four teams are diluted (×0.80 for one team, ×0.87 for two, ×0.93 for three, ×1.00 for four), schools with 5–20 teams get a 10% bonus, and larger schools taper to a 5% bonus by 40 teams |
 | Teams | Number of ranked entries |
 | Events | Events the school has entries in |
 
-Sort by **Balanced** to see schools ranked on quality with a modest reward for
-depth rather than on a single best team.
+Ranking on **Balanced** rewards average quality and depth rather than a single
+best team — a school with one or two strong entries no longer tops the table
+over a 5–20 team program that does well on average.
+
+### Legendary and gold rows
+
+In every division table and on the Schools tab, a small group at the top is
+**Legendary**: a thicker gold border, a soft glow and a small crowned
+"Legendary" label beside the rank. Each list sets its own cutoff: it counts the
+rows rated 90 or more and the rows rated 80 or more, and uses whichever count
+is closer to five (on a list with no 80s it keeps going down by tens). So LD,
+with four teams in the 90s and fourteen in the 80s, has four legendary teams,
+while a list whose best rating is in the 80s takes everyone rated 80+. A list
+never has more than seven legendary rows, and searching doesn't change who is
+legendary. Any other row whose rating reads 80 or more (a bold leading **8**
+or **9**) gets a thin gold border. The division tables use the adjusted
+rating; the Schools tab uses the Balanced score.
 
 LD has a second tab, **Sep–Oct topic**, rated only from the tournaments on
 the September–October resolution.
@@ -62,6 +77,11 @@ Clicking a team or school opens its profile (`/teams/<team>`,
 `/schools/<school>`): its stats per division, its radar chart, the round
 videos it debated in, and its caselist documents.
 
+Under a team's radar chart, a **Show school average** checkbox (off by default)
+overlays a dashed polygon with the average of every ranked team from the same
+school in that division, so you can see where the team beats its school. The
+checkbox only appears when the school has another ranked team in the division.
+
 The **Videos** section lists rounds, not lectures, and only in the divisions
 the team or school is ranked in — a school ranked only in Policy shows only
 Policy rounds, one ranked only in NDT only college rounds. A round counts when
@@ -73,6 +93,27 @@ forms: trailing words like *HS*, *Independent* or *College Prep* are dropped
 (`Glenbrook North` → `GBN`). A team page also requires the team's initials
 after the school (`Strake Jesuit FS`, in either order), and an LD debater
 also matches by full name. Clicking a card's badge narrows the list further.
+
+## Following a team or school
+
+Every team and school page has a **Follow** button with its follower count
+beside it. Signed out, the count still shows and the button reads *Sign in to
+follow*. Following adds that team or school to the **Following** filter of
+the [News Stream](/docs/features/news-stream) (`/news`), which posts:
+
+- **New rounds**: its three latest round videos, with who won on which side.
+- **New research**: its two latest caselist documents.
+- **Tournament results**: one line per tournament in the last 120 days, with
+  the record and how far it went (*reached Quarterfinals*, *finished
+  runner-up*, *won the tournament*).
+- **Monthly recaps**: for each of the last three completed months it debated
+  in, the month's record, its deep elim runs called out as big results, and
+  an estimated rating change.
+
+A user can follow up to 50 teams and schools. Follows are stored in the
+`profile_follows` table (migration in `packages/debate-videos/migrations`)
+and served by `/api/follows`; the feed items are built in `debate-videos`'
+`lib/follows/follow-feed.ts` and loaded by its `useFollowingNews` hook.
 
 ## Picking an opponent when creating a round
 
@@ -128,6 +169,14 @@ the school the way the rankings do, or by one of the short forms above. A
 round recorded under an unlisted abbreviation is missed, and a school whose
 short name another school shares (two *Memorial* high schools) can show the
 other's rounds.
+
+Followed teams' results and recaps come from the round video library, so a
+tournament's record counts only the rounds someone recorded, and a round is
+dated by its upload, not the day it was debated. The rankings keep no
+history, so a recap's rating change is an estimate: each decided round moves
+the rating by 32 × (result − expected) on the upstream scale, the expected
+score coming from both teams' current ratings. Nothing is emailed; the recap
+only appears in the News Stream.
 
 Ratings cover only the tournaments listed above the table; a team that hasn't
 attended one of them is not ranked. The list updates when the rankings are

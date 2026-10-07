@@ -81,6 +81,40 @@ function stubApi2clientNodeBuiltins(): Plugin {
 }
 
 /**
+ * @moonshine-ai/moonshine-js (the speech-to-text engine use-voice-control
+ * loads) ships one prebuilt `dist/moonshine.min.js` with onnxruntime-web
+ * 1.22.0 bundled inside it. That bundled runtime keeps ORT's fallback of
+ * `new URL("ort-wasm-simd-threaded.jsep.wasm", import.meta.url)` — a file
+ * that sits next to ORT's own dist, not moonshine's, so Vite cannot resolve
+ * it and warns on every build; at runtime the URL would 404 under
+ * /_next/static/chunks/.
+ *
+ * Moonshine never reaches that fallback in practice: creating a model sets
+ * `ort.env.wasm.wasmPaths` to its `BASE_ASSET_PATH.ONNX_RUNTIME` (the
+ * matching onnxruntime-web@1.22.0 dist on jsDelivr) first. This points the
+ * fallback at that same base, read out of the bundle itself, so the JS and
+ * WASM always come from the same ORT build. The WASM Vite does emit
+ * (`_next/static/media/ort-wasm-simd-threaded.jsep.*.wasm`) belongs to
+ * @huggingface/transformers' own onnxruntime-web, a different version, and
+ * is deliberately not reused here.
+ */
+function moonshineOrtWasmBase(): Plugin {
+  const fallback = /new URL\(("ort-wasm[\w.-]*\.wasm"),import\.meta\.url\)/g;
+  const ortBase = /ONNX_RUNTIME:"(https:\/\/[^"]+\/)"/;
+  return {
+    name: "debate:moonshine-ort-wasm-base",
+    enforce: "pre",
+    transform(code, id) {
+      if (!/[\\/]@moonshine-ai[\\/]moonshine-js[\\/]dist[\\/]moonshine\.min\.js$/.test(id)) return null;
+      const base = ortBase.exec(code)?.[1];
+      if (!base) return null;
+      const next = code.replace(fallback, (_, file) => `new URL(${file},${JSON.stringify(base)})`);
+      return next === code ? null : { code: next, map: null };
+    },
+  };
+}
+
+/**
  * Minifier settings for the two server environments (rsc and ssr), which make
  * up the Worker.
  *
@@ -207,6 +241,7 @@ export default defineConfig({
     appStaticFiles(),
     reasonEditorCommonGrammars(),
     stubApi2clientNodeBuiltins(),
+    moonshineOrtWasmBase(),
     // Compiles packages/debate-help-docs/content into the modules the /docs
     // routes (app/docs) render.
     helpDocsMdx(),

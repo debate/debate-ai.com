@@ -1,6 +1,6 @@
 # CLAUDE.md — `debate-videos` (LEARN)
 
-Private. The debate video library: search and filtering, grids and cards, a
+Public (`@debate/` scope). The debate video library: search and filtering, grids and cards, a
 **persistent YouTube player with picture-in-picture**, a per-video watch page,
 lecture pages, and rankings leaderboards. Entry `src/index.ts`, tests in
 `test/`.
@@ -95,3 +95,7 @@ channels for new videos *and* refreshes view counts on existing ones. So:
   `debate-data-sync`.
 - The YouTube API has a quota. A change that multiplies per-video calls can
   exhaust it and stall the whole weekly refresh.
+- The next-season topic-area poll (`lib/topic-areas/topic-area-poll.ts`) is
+  the one thing here backed by its own table: `topic_area_votes`, declared in
+  the app's `schema.ts` and created by this package's `migrations/`, which
+  `.github/scripts/migrate-d1.ts` applies after the app's own.

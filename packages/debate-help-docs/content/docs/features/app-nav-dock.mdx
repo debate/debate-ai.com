@@ -9,8 +9,11 @@ the sidebar column that hosts it on every tool route.
 
 - **Component:** `apps/debate-ai.com/components/layout/CategoryDock.tsx`
 - **Sidebar shell:** `packages/debate-webview/src/components/layout/AppSidebarShell.tsx`
-- **Tool sidebar (shadcn `sidebar-07`):** `packages/debate-webview/src/components/layout/app-sidebar/`,
-  on the primitives in `packages/debate-webview/src/lib/ui/primitives/sidebar.tsx`
+- **The one sidebar column:** `packages/debate-videos/src/ui/layout/ResizableSidebarLayout.tsx`
+  (hide/show state in `sidebar-collapse.ts` beside it), filled by
+  `packages/debate-webview/src/components/layout/app-sidebar/` off the video pages
+- **The tree in it:** `VideoSidebarTree`, mounted off the video pages through
+  `LibrarySidebarTree` (`packages/debate-videos/src/components/category-gallery/`)
 - **Route predicates:** `packages/debate-videos/src/components/category-gallery/sidebar-routes.ts`
   (re-exported for app code as `apps/debate-ai.com/lib/sidebar-routes.ts`)
 - **Dock primitive:** `apps/debate-ai.com/lib/ui/layout/dock.tsx`
@@ -18,8 +21,10 @@ the sidebar column that hosts it on every tool route.
 ## What it shows
 
 Five destinations — Videos, Shared, Debate, Practice vs AI, Research — plus a
-gear-icon Settings menu, each with a hover label and `Alt+1`…`Alt+5`
-shortcuts in dock order.
+gear-icon Settings menu, with `Alt+1`…`Alt+5` shortcuts in dock order. The
+icons carry no hover labels — in the sidebar-hosted dock the tooltips crowded
+together over the nav tree — so each item's name lives in its `aria-label`
+(read by screen readers) and in the icon art itself.
 
 **Practice vs AI opens a menu instead of navigating.** A plain click on that
 icon does not go to `/practice/versus-ai` — it opens the site-nav menu described below
@@ -43,20 +48,20 @@ the view in the centre (`mobileSidebarKind`, `lib/mobile-sidebar.ts`):
 
 | View | Drawer |
 | --- | --- |
-| Video library (`/videos`, `/lectures`, glossary, rankings, statistics) | Video links above the tool tree |
+| Video library (`/videos`, `/lectures`, glossary, rankings, statistics) | The sidebar tree (Round Videos, Lectures, tool sections) and footer |
 | `/research/cards` | The document panels alone |
-| `/reason-editor` | Document panels above the tool tree |
+| `/reason-editor` | Document panels above the sidebar tree |
 | `/debate` | Its own flows/rounds sidebar — the button dispatches `debate:open-sidebar` and the workspace opens its own sheet |
-| Everything else | The tool tree and footer |
+| Everything else | The sidebar tree and footer |
 
 The drawer closes on navigation.
 
 ## The desktop sidebar's footer
 
 On `md+` the column has no brand row at the top — it opens straight onto the
-dock. Its bottom row is the account menu with the **collapse button** beside
-it (it stacks above the avatar once the column is collapsed to icons; Ctrl/Cmd+B
-and the edge rail still work too). The account menu holds Settings,
+dock. Its bottom row, pinned under the scrolling tree, is the account menu
+(off the video pages) with the **hide button** beside it — see
+[Hiding the sidebar](#hiding-the-sidebar). The account menu holds Settings,
 Notifications, Contacts, a **Theme** submenu (Light / Dark / System and every
 colour theme, with swatches — the same picker as the dock's Settings menu, and
 synced to the account the same way) and Sign out.
@@ -191,41 +196,67 @@ column everywhere in the library.
 four times as many results per screen. The grid is one toggle away inside the
 search panel. The choice is not remembered between page loads.
 
+## One sidebar everywhere
+
+Every view draws the same sidebar: the one the video pages always had — the
+dock, then **Round Videos**, **Lectures** and the Research / Prep & Scout /
+Practice / Coaching / Insights sections, then the footer links. The tool and
+research pages, `/admin`, the legal pages and the help docs used to get a
+different column (shadcn's `sidebar-07`, tool sections only), and `/docs`
+showed Fumadocs' own sidebar beside that one. Now:
+
+- **Off the video pages** `AppSidebarShell` wraps the page in the same
+  `ResizableSidebarLayout` the video pages use, and `LibrarySidebarTree`
+  mounts the same `VideoSidebarTree`, reading the library's counts and
+  lecture categories itself (`useVideoMeta`). Its Lectures section starts
+  closed there.
+- **Page-specific panels are sections of it.** The REASON document panels
+  sit above the tree on `/reason-editor` and are the whole column on
+  `/research/cards`, as before.
+- **On `/docs` the docs' page tree is a section of it.** `debate-help-docs`'
+  layouts portal the page tree (`app-sidebar-docs-tree.tsx`) into a slot the
+  column leaves for it (`DOCS_SIDEBAR_SLOT_ID`), and `styles/docs.css` hides
+  Fumadocs' desktop sidebar and closes its grid column. Below `md` Fumadocs'
+  drawer is still the docs' navigation.
+- **The mobile drawer** shows the same tree (`MobileSidebarDrawer`).
+
+`/debate` and `/research/docs` keep their own workspace sidebars
+(`ownsItsLayout`) — see Known gaps.
+
 ## Resizing the sidebar
 
-On `/videos`, drag the thin line on the sidebar's right edge to make the column
+On every page with the sidebar, drag the thin line on the sidebar's right edge to make the column
 wider or narrower (between 220px and 640px). The width you choose is remembered
-in this browser and the tool and research pages open their sidebar at that same
-width, so the column keeps its shape as you move between them. Double-click the
+in this browser and every page opens the sidebar at that same width, so the
+column keeps its shape as you move between them. Double-click the
 line to put it back to its default 300px. The line also takes keyboard focus,
 and the arrow keys resize it.
 
-## Collapsing the sidebar to icons
+## Hiding the sidebar
 
-On the tool and research pages the sidebar collapses to a narrow strip of
-icons. Use the panel button next to **Debate AI** at the top of the
-sidebar, click the sidebar's right edge, or press **Ctrl+B** (**⌘B** on a
-Mac). Do the same again to expand it. The choice is remembered in this browser.
+Hide the sidebar with the panel button at its bottom-right, by pressing
+**Ctrl+B** (**⌘B** on a Mac), or by dragging its edge past half its minimum
+width. It collapses to nothing and the page takes the full width. A small tab
+on the left edge of the window brings it back, as do the same shortcut and
+dragging the edge back out. The choice holds on every page and is remembered
+in this browser (`app-sidebar-collapsed` in localStorage; `sidebar-collapse.ts`
+broadcasts it, so the column and the dock always agree).
+
+While the sidebar is hidden the dock it carried floats at the top-left
+instead (`CategoryDock` lifts its suppression while `useSidebarCollapsed()`
+is true), so the five destinations stay one click away.
 
 While a text editor has the keyboard (CardMirror, the REASON editor, any text
 field), Ctrl/⌘+B stays **bold** and does not toggle the sidebar.
 
-Collapsed:
-
-- the dock is hidden, since it does not fit, and the five apps it carries —
-  Videos, Shared, Debate, Practice vs AI, Research — show as icons in its place;
-- each tool section shows as its icon, with its name on hover; clicking one
-  expands the sidebar with that section open;
-- your account stays at the bottom as your avatar.
-
-Expanded, each tool section (Research, Prep & Scout, Practice, Coaching,
-Insights) opens and closes on its own. Every section starts open; if you close
-the one containing the page you navigate to, it opens again, and only the row
-for that page is highlighted. The Docs, Github, Support, Status, Privacy and
-Reddit links sit after the last section and scroll with the list rather than
-staying pinned. Your account menu at the bottom links to Settings, Notifications and Contacts and
-signs you out. Signed out, that row is a **Sign in** button that opens the
-sign-in dialog without leaving the page.
+Each tree section (Round Videos, Lectures, Research, Prep & Scout, Practice,
+Coaching, Insights) opens and closes on its own; see
+[The nav tree's headings](#the-nav-trees-headings). The Docs, Github, Support,
+Status, Privacy and Reddit links sit after the last section and scroll with
+the list rather than staying pinned. The account menu at the bottom links to
+Settings, Notifications and Contacts and signs you out. Signed out, that row
+is a **Sign in** button that opens the sign-in dialog without leaving the
+page.
 
 On a phone nothing changes: the sidebar is not drawn below the `md`
 breakpoint, and the dock's **Sidebar** button still opens the drawer described
@@ -254,8 +285,8 @@ and a magnified icon adds 12px more — so the row fits without wrapping at
 every breakpoint, and the wrapping above is the backstop rather than the
 normal case.
 
-Hover labels stay `overflow-visible`: the sidebar column is the clipping
-boundary, and clipping at the dock would hide every tooltip.
+The dock stays `overflow-visible` so a magnified icon isn't clipped at the
+dock's edge; the sidebar column is the clipping boundary.
 
 ## The nav tree's headings
 
@@ -351,6 +382,11 @@ full-color artwork sitting among the grey glyphs — and now match the rest.
   every sidebar destination (videos, tool sections, footer links) is
   reachable from the Settings menu, which is the whole nav below `md`, that
   there is no Apps section, and that `/practice/features` and `/docs` are reachable.
+- `packages/debate-videos/test/unified-sidebar.test.tsx` — that the tree
+  mounted off the video pages carries the video sections and every tool
+  section, that the column has a resize handle, a hide button and the footer
+  it is handed, renders shown on the server, and that the hide/show choice
+  is stored and broadcast.
 - `packages/debate-webview/test/lib/layout/frame-navigation.test.ts` — which
   clicks are left to the browser, and which links out of `/docs` become a
   full page load.
@@ -438,3 +474,13 @@ animating.
 
 The full-screen loading orb no longer shows for page transitions; it is left
 for code that asks for it with `beginLoading`.
+
+## Known gaps
+
+- `/debate` (the flow workspace) and `/research/docs` (the research agent)
+  still draw their own full-height workspace sidebars instead of the shared
+  one, so they have no resize handle or hide button of their own design and
+  their contents are not yet sections of the shared column.
+- On `/docs` the docs' search box sits in Fumadocs' header, not in the shared
+  column, and with the sidebar hidden the docs have no dock (the docs don't
+  mount the floating one).

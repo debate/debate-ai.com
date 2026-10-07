@@ -76,11 +76,22 @@ export {
   SIDEBAR_WIDTH_KEY,
   type ResizableSidebarLayoutProps,
 } from "./ui/layout/ResizableSidebarLayout";
+export {
+  SIDEBAR_COLLAPSED_KEY,
+  setSidebarCollapsed,
+  toggleSidebarCollapsed,
+  useSidebarCollapsed,
+} from "./ui/layout/sidebar-collapse";
+export { LibrarySidebarTree } from "./components/category-gallery/LibrarySidebarTree";
 export { LecturesPage } from "./panels/LecturesPage";
 export { DebateVideosPage } from "./panels/DebateVideosPanel";
 export { LeaderboardPanel } from "./panels/leaderboard/RankingsLeaderboardPanel";
 export { TeamProfilePage, SchoolProfilePage } from "./panels/leaderboard/profile/RankingProfiles";
 export { MatchupSimulator, type MatchupSimulatorProps } from "./panels/leaderboard/profile/MatchupSimulator";
+export { FollowButton, type FollowButtonProps } from "./panels/leaderboard/profile/FollowButton";
+export { useFollowingNews, type FollowingNews } from "./hooks/useFollowingNews";
+export type { FollowNewsItem } from "./lib/follows/follow-feed";
+export type { FollowKind, FollowState, ProfileFollow } from "./lib/follows/profile-follows";
 export type { DebateHistory, YearData } from "./panels/leaderboard/leaderboardTypes";
 export {
   formatNamedTopic,
@@ -107,6 +118,7 @@ export {
   parseVideoRouteMatchup,
   seasonSegment,
   teamsSegment,
+  untitledVideoRouteHref,
   videoRouteHref,
   videoRouteParts,
   videoRouteSegments,

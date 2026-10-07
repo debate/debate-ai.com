@@ -2,14 +2,16 @@
  * @fileoverview Team and school profile pages opened from the Team Rankings
  * table. A team profile shows its ranking stats in every division it is
  * ranked in; a school profile aggregates all of that school's ranked entries.
- * Both list the library videos matching the team or school below the stats.
+ * Both list the library videos matching the team or school below the stats,
+ * and carry a Follow button with the follower count in the header.
  * @module panels/leaderboard/profile/RankingProfiles
  */
 
 "use client"
 
 import Link from "next/link"
-import type { ReactNode } from "react"
+import { useState, type ReactNode } from "react"
+import type { RankingDataset } from "@debate/rankings-adapter"
 import { useAllRankingDatasets } from "../../../hooks/useAllRankingDatasets"
 import {
   Table,
@@ -20,13 +22,15 @@ import {
   TableRow,
 } from "../../../ui/primitives/table"
 import {
+  findSchoolDivisionEntries,
   findSchoolEntries,
   findTeamEntries,
+  profileSlug,
   schoolDivisionRadarData,
   schoolHref,
   schoolVideoSearch,
   summarizeSchool,
-teamHref,
+  teamHref,
   teamRadarData,
   teamSlug,
   teamVideoSearch,
@@ -36,6 +40,7 @@ import { ProfileVideos } from "./ProfileVideos"
 import { ProfileCaselistDocuments } from "./ProfileCaselistDocuments"
 import { TeamRadarChart } from "./TeamRadarChart"
 import { MatchupSimulator } from "./MatchupSimulator"
+import { FollowButton } from "./FollowButton"
 
 const rating = (n: number) => n.toFixed(1)
 const percent = (n: number | null) =>
@@ -91,10 +96,18 @@ function ProfileStatus({
   return null
 }
 
-/** Stats and radar chart for one team in one division. */
-function TeamDivisionStats({ item }: { item: ProfileEntry }) {
+/**
+ * Stats and radar chart for one team in one division. When the team's school
+ * has other ranked teams in the division, a checkbox under the radar (off by
+ * default) overlays the school's average in that division.
+ */
+function TeamDivisionStats({ item, datasets }: { item: ProfileEntry; datasets: RankingDataset[] }) {
   const { entry } = item
   const data = teamRadarData(item)
+  const [showSchool, setShowSchool] = useState(false)
+  const schoolItems = findSchoolDivisionEntries(datasets, item)
+  const hasSchoolPeers = schoolItems.length > 1
+  const schoolData = hasSchoolPeers && showSchool ? schoolDivisionRadarData(schoolItems) : null
   return (
     <div className="mt-4">
       <h2 className="mb-2 text-sm font-medium text-muted-foreground">
@@ -115,7 +128,29 @@ function TeamDivisionStats({ item }: { item: ProfileEntry }) {
         <TeamRadarChart
           data={data}
           caption={`Profile · ${item.datasetLabel} (edge = best; ranking is a field percentile, matches are relative to the most-played entry)`}
-          ariaLabel={`${entry.name} radar: ${data.map((d) => `${d.metric} ${d.display}`).join(", ")}`}
+          ariaLabel={`${entry.name} radar: ${data.map((d) => `${d.metric} ${d.display}`).join(", ")}${
+            schoolData
+              ? `; ${entry.school} average: ${schoolData.map((d) => `${d.metric} ${d.display}`).join(", ")}`
+              : ""
+          }`}
+          comparison={
+            schoolData
+              ? { label: `${entry.school} average (${schoolItems.length} teams)`, data: schoolData }
+              : undefined
+          }
+          footer={
+            hasSchoolPeers && (
+              <label className="mt-1 flex cursor-pointer select-none items-center gap-1.5 px-1 text-xs text-muted-foreground hover:text-foreground">
+                <input
+                  type="checkbox"
+                  checked={showSchool}
+                  onChange={(event) => setShowSchool(event.target.checked)}
+                  className="h-3.5 w-3.5 cursor-pointer accent-primary"
+                />
+                Show {entry.school} average in {item.datasetLabel}
+              </label>
+            )
+          }
         />
       </div>
     </div>
@@ -145,9 +180,10 @@ export function TeamProfilePage({ slug }: { slug: string }) {
             >
               {first.school}
             </Link>
+            <FollowButton kind="team" slug={teamSlug(first)} name={`${first.school} ${first.name}`} />
           </header>
           {entries.map((item) => (
-            <TeamDivisionStats key={item.datasetId} item={item} />
+            <TeamDivisionStats key={item.datasetId} item={item} datasets={datasets} />
           ))}
           <MatchupSimulator
             lockedTeamSlug={teamSlug(first)}
@@ -190,6 +226,7 @@ export function SchoolProfilePage({ slug }: { slug: string }) {
             <p className="text-sm text-muted-foreground">
               {summary.divisions.map((d) => d.datasetLabel).join(" · ")}
             </p>
+            <FollowButton kind="school" slug={profileSlug(summary.school)} name={summary.school} />
           </header>
 
           <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">

@@ -1,17 +1,34 @@
 {
   "name": "@debate/comments",
   "version": "0.1.0",
-  "description": "Threaded comments \u2014 the YouTube/Instagram-style discussion UI (replies, nested reply trees, likes) for any commentable resource in debate-ai",
-  "private": true,
+  "description": "Threaded comments — the YouTube/Instagram-style discussion UI (replies, nested reply trees, likes) for any commentable resource in debate-ai",
   "type": "module",
   "author": "vtempest",
   "license": "rights.institute/preserve",
+  "homepage": "https://github.com/debate/debate-ai.com/tree/master/packages/debate-comments#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/debate/debate-ai.com.git",
+    "directory": "packages/debate-comments"
+  },
+  "bugs": {
+    "url": "https://github.com/debate/debate-ai.com/issues"
+  },
   "main": "./src/index.ts",
-  "sideEffects": ["**/*.css"],
+  "sideEffects": [
+    "**/*.css"
+  ],
   "types": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
     "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
