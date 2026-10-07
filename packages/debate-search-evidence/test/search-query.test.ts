@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   DEFAULT_SEARCH_FILTERS,
   EMPTY_FILTERS,
@@ -6,6 +6,8 @@ import {
   buildSearchParams,
   buildSearchUrl,
   buildCardsSearchHref,
+  buildAutocompleteUrl,
+  fetchSearchSuggestions,
   readCardsSearchParams,
 } from "../src/lib/search-query";
 
@@ -135,5 +137,29 @@ describe("DEFAULT_SEARCH_FILTERS", () => {
   it("opens on the Quotes toggle and nothing else", () => {
     expect(DEFAULT_SEARCH_FILTERS).toEqual({ ...EMPTY_FILTERS, searchQuotes: true });
     expect(buildSearchParams({ searchTerm: "", sortBy: "_text_match:desc", filters: DEFAULT_SEARCH_FILTERS }).get("searchQuotes")).toBe("1");
+  });
+});
+
+describe("search box autocomplete", () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it("asks the server to complete the whole query", () => {
+    expect(buildAutocompleteUrl("nuclear det", 5)).toBe("/api/search/autocomplete?q=nuclear+det&limit=5");
+  });
+
+  it("returns completions, and nothing for a too-short or finished word", async () => {
+    const fetchMock = vi.fn(async () =>
+      Response.json({ suggestions: [{ completion: "nuclear deterrence" }, { completion: "nuclear det" }] }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    expect(await fetchSearchSuggestions("nuclear det")).toEqual(["nuclear deterrence"]);
+    expect(await fetchSearchSuggestions("nuclear d")).toEqual([]);
+    expect(await fetchSearchSuggestions("nuclear ")).toEqual([]);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("degrades to no suggestions when the request fails", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("", { status: 500 })));
+    expect(await fetchSearchSuggestions("nuclear")).toEqual([]);
   });
 });

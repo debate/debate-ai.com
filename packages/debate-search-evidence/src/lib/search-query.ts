@@ -115,6 +115,42 @@ export function buildSearchUrl(input: SearchQueryInput): string {
   return `/api/search?${buildSearchParams(input).toString()}`;
 }
 
+/** Shortest last word the search box asks the server to complete. */
+const MIN_COMPLETION_PREFIX = 2;
+
+/**
+ * Builds the URL that completes the last word of a search-box query.
+ *
+ * @param query - The query as typed.
+ * @param limit - Most suggestions to return.
+ */
+export function buildAutocompleteUrl(query: string, limit = 8): string {
+  return `/api/search/autocomplete?${new URLSearchParams({ q: query, limit: String(limit) }).toString()}`;
+}
+
+/**
+ * Completions for the search box: the query with its last word completed from
+ * the words in the card corpus, most frequent first. Empty when the word being
+ * typed is too short, the query ends in a space, or the request fails.
+ *
+ * @param query - The query as typed.
+ * @param limit - Most suggestions to return.
+ */
+export async function fetchSearchSuggestions(query: string, limit = 8): Promise<string[]> {
+  const lastWord = /[\p{L}\p{N}]+$/u.exec(query)?.[0] ?? "";
+  if (lastWord.length < MIN_COMPLETION_PREFIX) return [];
+  try {
+    const response = await fetch(buildAutocompleteUrl(query, limit));
+    if (!response.ok) return [];
+    const data = (await response.json()) as { suggestions?: { completion?: unknown }[] };
+    return (data.suggestions ?? [])
+      .map((suggestion) => suggestion.completion)
+      .filter((completion): completion is string => typeof completion === "string" && completion !== query);
+  } catch {
+    return [];
+  }
+}
+
 /** Path of the CARDS search page, which reads its starting state from the URL. */
 export const CARDS_SEARCH_PATH = "/research/cards";
 
