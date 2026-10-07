@@ -1,17 +1,32 @@
 {
-  "name": "@types/debate",
+  "name": "@debate/types",
   "version": "0.1.0",
   "description": "Every shared Debate AI type in one place, with a description on every object and field so editors show it on hover",
-  "private": true,
   "type": "module",
   "author": "vtempest",
   "license": "rights.institute/prosper",
+  "homepage": "https://github.com/debate/debate-ai.com/tree/master/packages/debate-types#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/debate/debate-ai.com.git",
+    "directory": "packages/debate-types"
+  },
+  "bugs": {
+    "url": "https://github.com/debate/debate-ai.com/issues"
+  },
   "types": "./src/index.d.ts",
   "exports": {
     ".": {
       "types": "./src/index.d.ts"
     },
     "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
@@ -24,9 +39,5 @@
     "@vitest/coverage-v8": "^5.0.3",
     "typescript": "^7.0.2",
     "vitest": "^5.0.3"
-  },
-  "files": [
-    "src",
-    "README.md"
-  ]
+  }
 }

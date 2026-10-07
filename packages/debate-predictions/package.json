@@ -2,16 +2,31 @@
   "name": "@debate/predictions",
   "version": "0.1.0",
   "description": "Play-money prediction markets on debates, tournament winners and team rating moves — the LMSR pricing engine, wallet and payout rules, auto-resolution rules and the D1 migration",
-  "private": true,
   "type": "module",
   "author": "vtempest",
   "license": "rights.institute/prosper",
+  "homepage": "https://github.com/debate/debate-ai.com/tree/master/packages/debate-predictions#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/debate/debate-ai.com.git",
+    "directory": "packages/debate-predictions"
+  },
+  "bugs": {
+    "url": "https://github.com/debate/debate-ai.com/issues"
+  },
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
     "./client": "./src/client.ts",
     "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "migrations"
+  ],
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
@@ -20,7 +35,7 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@types/debate": "workspace:*"
+    "@debate/types": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^26.6.3",

@@ -1,7 +1,7 @@
 # CLAUDE.md — `debate-community` (`packages/debate-contributor-progress`)
 
 **Package name:** `debate-community` — filter on that, not the directory.
-Private. Entry `src/index.ts`, tests in `test/`.
+Public (`@debate/` scope). Entry `src/index.ts`, tests in `test/`.
 
 Community and contributor-progress surfaces: contribution leaderboard, news
 stream, contributor awards, daily best card, progress unlocks, quest streaks,

@@ -2,13 +2,30 @@
   "name": "@debate/card-parser",
   "version": "0.1.0",
   "description": "Parser for debate evidence cards — Verbatim .docx and HTML in, structured cards with citations and highlighting out",
-  "private": true,
   "type": "module",
   "author": "vtempest",
   "license": "rights.institute/prosper",
+  "homepage": "https://github.com/debate/debate-ai.com/tree/master/packages/debate-card-parser#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/debate/debate-ai.com.git",
+    "directory": "packages/debate-card-parser"
+  },
+  "bugs": {
+    "url": "https://github.com/debate/debate-ai.com/issues"
+  },
   "main": "./src/index.ts",
-  "sideEffects": ["**/*.css"],
+  "sideEffects": [
+    "**/*.css"
+  ],
   "types": "./src/index.ts",
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
@@ -16,12 +33,12 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@types/debate": "workspace:*",
     "docx-preview": "^0.4.1",
     "grab-url": "^1.6.22",
     "htmlparser2": "^12.0.0",
     "jszip": "^3.10.2",
-    "linkedom": "^0.18.13"
+    "linkedom": "^0.18.13",
+    "@debate/types": "workspace:*"
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^5.0.3",

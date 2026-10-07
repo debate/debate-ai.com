@@ -2,10 +2,18 @@
   "name": "@debate/help-docs",
   "description": "Debate AI documentation (Fumadocs), mounted by the web app at /docs",
   "version": "0.1.0",
-  "private": true,
   "type": "module",
   "author": "vtempest",
   "license": "rights.institute/prosper",
+  "homepage": "https://github.com/debate/debate-ai.com/tree/master/packages/debate-help-docs#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/debate/debate-ai.com.git",
+    "directory": "packages/debate-help-docs"
+  },
+  "bugs": {
+    "url": "https://github.com/debate/debate-ai.com/issues"
+  },
   "exports": {
     "./routes/root-layout": "./routes/root-layout.tsx",
     "./routes/docs-layout": "./routes/docs-layout.tsx",
@@ -18,6 +26,21 @@
     "./vite": "./vite.mjs",
     "./lib/fumadocs/sitemap-helper": "./lib/fumadocs/sitemap-helper.ts",
     "./package.json": "./package.json"
+  },
+  "files": [
+    "routes",
+    "lib",
+    "components",
+    "content",
+    "styles",
+    "vite.mjs",
+    "mdx-components.tsx",
+    "source.config.ts",
+    "cli.json",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "build:api": "node ./lib/fumadocs/generate-api-docs.ts",

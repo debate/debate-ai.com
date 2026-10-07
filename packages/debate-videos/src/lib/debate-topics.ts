@@ -3,9 +3,9 @@
  * month-stamped LD/PF lists.
  */
 
-import type { DebateTopicYear, SeasonalTopic } from "debate";
+import type { DebateTopicYear, SeasonalTopic } from "@debate/types";
 
-// The definitions (and their field docs) live in `@types/debate`.
+// The definitions (and their field docs) live in `@debate/types`.
 export type { DebateTopicYear, SeasonalTopic };
 
 /** Joins monthly topics for tooltips and banners that still want one string. */

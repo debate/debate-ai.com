@@ -1,11 +1,11 @@
 /**
  * The replicated shape of a round. The type definitions (and their field docs)
- * live in `@types/debate`; the helpers that work on them stay here.
+ * live in `@debate/types`; the helpers that work on them stay here.
  */
 
-import type { CollabCell, Json, Role } from "debate";
+import type { CollabCell, Json, Role } from "@debate/types";
 
-export type { Json, Register, Role, CollabCell, CollabSheet, CollabDoc } from "debate";
+export type { Json, Register, Role, CollabCell, CollabSheet, CollabDoc } from "@debate/types";
 
 /** A role off the wire, a ticket, or a sidecar, none of them trusted. */
 export function isRole(value: unknown): value is Role {

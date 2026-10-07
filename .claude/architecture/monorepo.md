@@ -72,7 +72,7 @@ Turbo filters take the **package name**, and five directories don't match:
 | `debate-practice-drills` | `debate-practice-rounds` |
 | `debate-round-practice-ai` | `debate-practice-vs-ai` |
 | `debate-search-evidence` | `debate-research-evidence` |
-| `debate-types` | `@types/debate` (import it as `"debate"`) |
+| `debate-types` | `@debate/types` |
 
 ## Turbo task graph
 
