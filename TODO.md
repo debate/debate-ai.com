@@ -241,7 +241,7 @@ roughly 500 editing commands into ~30 thematic groups. Highlights (full 50+ feat
 - [x] Open-flow bar Save now: `DebateFlowPage.roundActions` mounts the same `ToolSyncBadge` as the other headers, which already renders "Save now" / "Retry save" while changes are unsaved, so no extra wiring is needed (verified by reading `routes/debate/page.tsx`, `ToolSyncBadge.tsx`, `SpeechControlsTopBar.tsx`; tests not run, dependencies not installed in this session)
 - [x] `ToolPageHeader.test.tsx` (incl. the `syncCollections` case) verified 2026-10-07 with the `debate-rankings` and `debate-editor-cm` submodules checked out and `sync-upstream.mjs` run: `bunx vitest run` on `debate-webview/test/components/tools` + `test/lib/tools` -> 9 files, 53 tests pass; `settings-flow-editor-route` + `ensure-columns` tests also pass (11 tests)
 - [x] Button visibility/label logic extracted to `describeSaveNowButton` (`lib/tools/tool-save-state.ts`) and unit tested; branch `claude/gifted-babbage-bee65u`
-- [ ] Follow-up: DOM-level click test for `ToolSyncBadge` (no `@testing-library/react` in webview tests)
+- [x] DOM-level click test for `ToolSyncBadge` using jsdom + `react-dom/client` + `act` (no testing-library needed): `packages/debate-webview/test/components/tools/ToolSyncBadge.test.tsx` covers Save now -> flush -> saved, and Retry save with the error (branch `claude/gifted-babbage-zxyxfh`)
 
 ## Completed
 
