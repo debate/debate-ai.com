@@ -67,6 +67,8 @@ type EngineModule = typeof import('../editor/index.js');
 type BridgeModule = typeof import('./html-bridge.js');
 type ReadModeModule = typeof import('../editor/read-mode-plugin.js');
 type SettingsModule = typeof import('../editor/settings.js');
+type CardActionsModule = typeof import('../editor/card-hover-actions.js');
+type CardAiModule = typeof import('../editor/card-ai-client.js');
 let engineModule: EngineModule | null = null;
 let bridgeModule: BridgeModule | null = null;
 // Loaded with the engine (which imports both anyway), not at module scope:
@@ -74,6 +76,10 @@ let bridgeModule: BridgeModule | null = null;
 // that merely imports the package.
 let readModeModule: ReadModeModule | null = null;
 let settingsModule: SettingsModule | null = null;
+// The card hover buttons (summarize / find flaws / read aloud), also loaded
+// with the engine so pages that never mount an editor don't carry them.
+let cardActionsModule: CardActionsModule | null = null;
+let cardAiModule: CardAiModule | null = null;
 
 /** Synchronous access to the engine/bridge modules, once loaded (always
  *  true by the time a `CardMirrorEditor` imperative-handle method could
@@ -149,6 +155,8 @@ async function boot(): Promise<void> {
   bridgeModule = await import('./html-bridge.js');
   readModeModule = await import('../editor/read-mode-plugin.js');
   settingsModule = await import('../editor/settings.js');
+  cardActionsModule = await import('../editor/card-hover-actions.js');
+  cardAiModule = await import('../editor/card-ai-client.js');
   await waitForView(engineModule.getActiveView);
   installUnloadFlush();
 }
@@ -481,8 +489,14 @@ function installOnChangePlugin(view: EditorView): EditorView {
     // since that one is the loaded file disappearing.
     onStateReplaced: restoreIfEngineBlankedTheDoc,
   });
-  setHostPluginsProvider(() => [plugin]);
-  view.updateState(view.state.reconfigure({ plugins: [...view.state.plugins, plugin] }));
+  // The card hover buttons ride the same seam, so they also survive every
+  // plugin-stack rebuild.
+  const hostPlugins = [plugin];
+  if (cardActionsModule && cardAiModule) {
+    hostPlugins.push(cardActionsModule.createCardHoverActionsPlugin({ runAi: cardAiModule.runCardAi }));
+  }
+  setHostPluginsProvider(() => hostPlugins);
+  view.updateState(view.state.reconfigure({ plugins: [...view.state.plugins, ...hostPlugins] }));
   return view;
 }
 

@@ -63,3 +63,12 @@ The site's speech-doc surfaces and `/reason-editor`. Recent history shows
 package regresses — check both.
 
 Document input arrives from `debate-card-parser`; treat it as untrusted.
+
+## Card hover actions
+
+`overlay/editor/card-hover-actions.ts` (Summarize / Find flaws / Read aloud
+beside a hovered card) is a host plugin registered in `react/singleton.ts`.
+Its AI goes through `overlay/editor/card-ai-client.ts`: the user's own
+CardMirror key when set, else the app's `/api/card-ai-analysis`. It has no
+package dependency on `debate-search-evidence`; keep it that way. User doc:
+`debate-help-docs/content/docs/features/research-evidence/card-hover-actions.mdx`.

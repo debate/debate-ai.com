@@ -1,0 +1,36 @@
+---
+title: "Card hover actions in the editor"
+---
+
+# Card hover actions in the editor
+
+Hover over any card in the CardMirror editor and a small column of buttons
+appears beside it:
+
+- **Summarize** asks the AI for a two-to-four sentence summary of the card: its
+  claim, its warrant, and the impact it supports.
+- **Find flaws** asks the AI for the weaknesses an opponent would attack, the
+  same find-flaws-and-extensions analysis as the evidence search's AI panel.
+- **Read aloud** reads the card out loud with your browser's voice: the tag,
+  then the highlighted text (what you would read in round), or the whole card
+  when nothing is highlighted. Click it again to stop.
+
+AI answers open in a small panel next to the card, with **Copy** and **Close**
+buttons; Escape closes it too. The buttons only appear with a mouse, so they
+never get in the way on a phone or tablet.
+
+## Which AI it uses
+
+If you have turned on AI features with your own Anthropic or OpenRouter key in
+the editor's settings, the buttons use that key. Otherwise they use
+debate-ai.com's AI: each new answer counts toward your plan's daily card AI
+analyses, a card that already has a saved answer costs nothing, and the
+summary needs you to be signed in.
+
+## Where it lives
+
+- **Routes:** `/reason-editor` and Flow's speech-doc panels (anywhere the
+  CardMirror embed is mounted)
+- **Package:** `debate-editor` (`overlay/editor/card-hover-actions.ts`,
+  `overlay/editor/card-ai-client.ts`, registered in `overlay/react/singleton.ts`)
+- **API:** `/api/card-ai-analysis`
