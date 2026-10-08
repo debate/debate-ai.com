@@ -13,6 +13,7 @@ pub fn get_last_selected_text(state: State<AppSelectionState>) -> String {
 pub fn show_main_window(app: tauri::AppHandle) {
     if let Some(window) = tauri::Manager::get_webview_window(&app, "main") {
         let _ = window.show();
+        #[cfg(desktop)]
         let _ = window.unminimize();
         let _ = window.set_focus();
     }

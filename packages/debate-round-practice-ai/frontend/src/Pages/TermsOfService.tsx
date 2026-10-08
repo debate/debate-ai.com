@@ -12,9 +12,9 @@ import { LegalTermsPrivacyPolicy } from 'legal-terms-privacy-policy/react';
 function TermsOfService() {
   return (
     <LegalTermsPrivacyPolicy
-      appName="DebateAI"
-      companyName="AOSSIE"
-      contactEmail="noreply@debate-ai.com"
+      appName="Debate AI"
+      companyName="DebateAI"
+      contactEmail="support@debate-ai.com"
       lastRevisedDate="2026-08-26"
       homeUrl="/"
       defaultVariant="full"
