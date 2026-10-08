@@ -18,7 +18,10 @@ mod generated_scheme;
 mod media;
 mod system_info;
 
-use tauri::{Emitter, Manager, Url};
+use tauri::{Manager, Url};
+
+#[cfg(desktop)]
+use tauri::Emitter;
 use tauri_plugin_deep_link::DeepLinkExt;
 
 pub use commands::AppSelectionState;
@@ -438,6 +441,7 @@ fn handle_deep_link(app: &tauri::AppHandle, raw_url: &str) {
     if let Ok(url) = Url::parse(&callback_url) {
         let _ = window.navigate(url);
         let _ = window.show();
+        #[cfg(desktop)]
         let _ = window.unminimize();
         let _ = window.set_focus();
     }
