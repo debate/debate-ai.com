@@ -17,10 +17,13 @@ export * from "./upstream";
 // shifted and scaled from upstream's (see rating-offset.ts).
 export {
   RATING_DIVISOR,
+  RATING_MAX,
+  RATING_MIN,
   RATING_OFFSET,
   loadRankingDataset,
   offsetEntryRatings,
   offsetFieldStatistics,
+  toSiteRating,
 } from "./rating-offset";
 export {
   entryInitials,

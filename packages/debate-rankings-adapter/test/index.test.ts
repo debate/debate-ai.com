@@ -2,10 +2,13 @@ import { describe, expect, it } from "vitest";
 import {
   RANKING_DATASETS,
   RATING_DIVISOR,
+  RATING_MAX,
+  RATING_MIN,
   RATING_OFFSET,
   entryInitials,
   offsetEntryRatings,
   offsetFieldStatistics,
+  toSiteRating,
   findTeamRanking,
   getRankingDatasetInfo,
   loadRankingDataset,
@@ -44,16 +47,26 @@ describe("@debate/rankings-adapter", () => {
     expect(findTeamRanking(rows, "Harker QQ")).toBeNull();
   });
 
-  it("shows Bradley-Terry ratings 500 points lower and divided by 15, leaving the rest of the row alone", () => {
-    expect(RATING_OFFSET).toBe(500);
-    expect(RATING_DIVISOR).toBe(15);
-    const row = entry({ rank: 3, rating: 1900, adjustedRating: 1700, deviation: 100 });
-    expect(offsetEntryRatings(row)).toEqual({ ...row, rating: 1400 / 15, adjustedRating: 1200 / 15 });
+  it("shows Bradley-Terry ratings 1000 points lower and divided by 8, leaving the rest of the row alone", () => {
+    expect(RATING_OFFSET).toBe(1000);
+    expect(RATING_DIVISOR).toBe(8);
+    const row = entry({ rank: 3, rating: 1800, adjustedRating: 1700, deviation: 100 });
+    expect(offsetEntryRatings(row)).toEqual({ ...row, rating: 100, adjustedRating: 87.5 });
+  });
+
+  it("caps the site rating at 110 and floors it at 0", () => {
+    expect(RATING_MAX).toBe(110);
+    expect(RATING_MIN).toBe(0);
+    expect(toSiteRating(1954)).toBe(110);
+    expect(toSiteRating(1880)).toBe(110);
+    expect(toSiteRating(1000)).toBe(0);
+    expect(toSiteRating(882)).toBe(0);
+    expect(toSiteRating(1024)).toBe(3);
   });
 
   it("scales the field's aff rating advantage without offsetting it", () => {
     const field = { affWinRate: 49.3, negWinRate: 50.7, affElimWinRate: null, negElimWinRate: null, affRatingAdvantage: 30, sideWeights: null };
-    expect(offsetFieldStatistics(field)).toEqual({ ...field, affRatingAdvantage: 2 });
+    expect(offsetFieldStatistics(field)).toEqual({ ...field, affRatingAdvantage: 30 / 8 });
     expect(offsetFieldStatistics({ ...field, affRatingAdvantage: null }).affRatingAdvantage).toBeNull();
   });
 
@@ -88,5 +101,14 @@ describe("@debate/rankings-adapter", () => {
     expect(first.rank).toBe(1);
     expect(first.adjustedRating).toBeGreaterThanOrEqual(second.adjustedRating);
     expect(first.rating).toBeLessThan(200);
+  });
+
+  it("spreads every bundled dataset from about 0 up to about 100, never past 110", async () => {
+    for (const { id } of RANKING_DATASETS) {
+      const ratings = (await loadRankingDataset(id)).entries.map((e) => e.adjustedRating).sort((a, b) => b - a);
+      expect(ratings[0]).toBeLessThanOrEqual(RATING_MAX);
+      expect(ratings[0]).toBeGreaterThan(95);
+      expect(ratings[ratings.length - 1]).toBe(RATING_MIN);
+    }
   });
 });

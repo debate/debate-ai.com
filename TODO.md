@@ -49,7 +49,7 @@
 1. ability to challenge legends - and speculators bet
 2. random pair webcam debate matching on mutual pref topics
 
-## Account sync of tools (In Progress)
+## Account sync of tools (Completed)
 
 - [x] Speech-doc links (editor document <-> round/flow speech) sync via the `speechDocLinks` tool-record collection
 - [x] Pinned debates - synced via the `pinnedDebates` tool-record collection
@@ -209,7 +209,9 @@ roughly 500 editing commands into ~30 thematic groups. Highlights (full 50+ feat
 
 ## In Progress
 
-### Saved-to-account indicator on flow tabs (slice of "integrate tools + user settings + SQL-linked flows/docs/debates")
+_Only the two test-environment follow-ups under "Tool UI pass: tool page header" remain open; everything else is under Completed._
+
+### Saved-to-account indicator on flow tabs (all items done 2026-10-08; kept here beside its open follow-ups) (slice of "integrate tools + user settings + SQL-linked flows/docs/debates")
 
 - **Branch**: `claude/gifted-babbage-4ax563`
 - **Status**: Settings, flows (`saved_flows`), rounds, documents, AI debates, ~60 tool stores and pinned debates already persist to D1 per user. Flow tabs now show whether each flow's current content has reached the account.
@@ -228,7 +230,11 @@ roughly 500 editing commands into ~30 thematic groups. Highlights (full 50+ feat
 - [x] `ebb-dev-flow-files` / `ebb-dev-recents` stay browser-only on purpose: `flowFsMemory.ts` documents them as a dev/test stand-in, not a product surface (real flows sync through `saved_flows`). `REASON-file-sources` already syncs (`toolRecordCollections.ts`)
 - [x] `REASON-documents` needs no catalog entry (verified 2026-10-07): the `localStorage` key is only a read cache for the editor. Every edit already reaches the D1 `documents` table per user through `save-queue.ts` -> `PUT /api/doc/documents/:id` (`apps/debate-ai.com/app/api/doc/documents`, `ReasonDocsProvider`). Ids are server-assigned numbers, and a second copy under `saved_tool_records` would duplicate content and race the save queue. No redaction/size review is needed because nothing new leaves the browser
 
+## In Progress
+
 ### Tool UI pass: tool page header
+
+- Remaining items are environment-only (missing `debate-rankings` submodule / no `@testing-library/react`); no product work is left.
 
 - Branch: `agent/tool-header-single-sync-badge`
 - [x] `ToolPageHeader` rendered `ToolSyncBadge` twice (merge damage); now once, with a regression test
@@ -241,9 +247,9 @@ roughly 500 editing commands into ~30 thematic groups. Highlights (full 50+ feat
 - [x] Open-flow bar Save now: `DebateFlowPage.roundActions` mounts the same `ToolSyncBadge` as the other headers, which already renders "Save now" / "Retry save" while changes are unsaved, so no extra wiring is needed (verified by reading `routes/debate/page.tsx`, `ToolSyncBadge.tsx`, `SpeechControlsTopBar.tsx`; tests not run, dependencies not installed in this session)
 - [x] `ToolPageHeader.test.tsx` (incl. the `syncCollections` case) verified 2026-10-07 with the `debate-rankings` and `debate-editor-cm` submodules checked out and `sync-upstream.mjs` run: `bunx vitest run` on `debate-webview/test/components/tools` + `test/lib/tools` -> 9 files, 53 tests pass; `settings-flow-editor-route` + `ensure-columns` tests also pass (11 tests)
 - [x] Button visibility/label logic extracted to `describeSaveNowButton` (`lib/tools/tool-save-state.ts`) and unit tested; branch `claude/gifted-babbage-bee65u`
-- [ ] Follow-up: DOM-level click test for `ToolSyncBadge` (no `@testing-library/react` in webview tests)
+- [x] DOM-level click test for `ToolSyncBadge` using jsdom + `react-dom/client` + `act` (no testing-library needed): `packages/debate-webview/test/components/tools/ToolSyncBadge.test.tsx` covers Save now -> flush -> saved, and Retry save with the error (branch `claude/gifted-babbage-zxyxfh`)
 
-## Completed
+## Completed (earlier)
 
 ### Account-synced user data across all tools (user settings + SQL)
 
@@ -265,7 +271,7 @@ roughly 500 editing commands into ~30 thematic groups. Highlights (full 50+ feat
 - [x] Route + schema wiring in `apps/debate-ai.com`
 - [x] Vitest `packages/debate-flow/test/flow-editor-settings-sync.test.ts`; documented in `features/user-settings.mdx`
 - [x] Route-level test for `flowEditorSettings` GET/PUT: `apps/debate-ai.com/lib/database/__tests__/settings-flow-editor-route.test.ts` (real SQLite via `freshSchemaClient`, mocked auth; covers 401, save, merge, validation, bad JSON, per-user isolation; branch `claude/gifted-babbage-uhzbcl`). Needs the `debate-rankings` and `debate-editor-cm` submodules plus `node packages/debate-editor/scripts/sync-upstream.mjs`
-- [ ] Follow-up: tool UI pass - sync status and pin/save controls in each tool's header (still In Progress in IDEAS.md)
+- [x] Follow-up: tool UI pass - sync status and pin/save controls in each tool's header (done; see "Account-synced user data across all tools", audited 2026-10-07)
 - [x] Deploy column: `flow_editor_settings` is added the same way by `ensureTableColumns` on `/api/settings`, so no migration is needed
 
 
