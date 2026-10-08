@@ -129,7 +129,11 @@ The Create New Round dialog reads current tournaments and their fields through
 ## debate-round-practice-ai
 
 Package name `debate-practice-vs-ai`. A full timed debate round against an AI opponent,
-mounted at `/practice/versus-ai`. Node/TypeScript port of the Go `arguehub` vs-bot backend (13 bot
+mounted at `/practice/versus-ai` (the Practice Round Simulator's `/practice` redirects there, and
+`debate-webview`'s `PracticeVsAiSections` mounts the simulator panels below the round). Setup is a
+difficulty → topic → opponent wizard, then a prep step where the opponent turns cards and caselist
+outlines found for the topic into a case brief (`backend/case-prep.ts`, `POST /api/vsbot/prep`).
+Node/TypeScript port of the Go `arguehub` vs-bot backend (13 bot
 personalities, prompt construction, AI judging, gamification) plus the React round UI;
 plain `fetch`, no Go/Mongo/Gin, runs under Next.js or a Cloudflare Worker.
 
