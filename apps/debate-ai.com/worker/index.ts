@@ -17,6 +17,7 @@ import { applyD1Bookmark, runWithD1Session, runWithPrimaryD1Session } from "../l
 import { runWeeklyYouTubeSync } from "../lib/youtube/weekly-sync";
 import { openAutoMarkets } from "../lib/predictions/auto-markets";
 import { purgeOldReuseCheckLogRows } from "../lib/evidence-reuse-check/purge-reuse-check-log";
+import { maintainCardSearchIndexes } from "../lib/search/card-search-maintenance";
 import { DB_BACKUP_CRON, runWeeklyDbBackup } from "../lib/admin/weekly-db-backup";
 import { handleTurnstileGate, type TurnstileEnv } from "../lib/turnstile";
 import {
@@ -227,6 +228,15 @@ export default {
     ctx.waitUntil(
       runWithPrimaryD1Session(() => runWithContext(env, () => purgeOldReuseCheckLogRows())).catch((error) => {
         console.error("Scheduled reuse-check log purge failed:", describeError(error), error);
+      }),
+    );
+    // Finishes the card search's FTS index and sort indexes, which a search
+    // request never builds for a large corpus (lib/search/card-search-maintenance.ts).
+    ctx.waitUntil(
+      runWithPrimaryD1Session(() =>
+        runWithContext(env, async () => maintainCardSearchIndexes(await getDBFromContext())),
+      ).catch((error) => {
+        console.error("Scheduled card search index maintenance failed:", describeError(error), error);
       }),
     );
     ctx.waitUntil(

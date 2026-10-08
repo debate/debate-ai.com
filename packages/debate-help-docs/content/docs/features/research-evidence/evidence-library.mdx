@@ -50,7 +50,7 @@ Opening `/research/cards` with no pre-filled search shows the default list
 current list and swaps it in without a spinner. That first request skips the
 300 ms typing debounce. On the server, `/api/search` keeps the no-term,
 no-filter list in each Worker isolate for five minutes, since it sorts the
-whole `debate_cards` table by `imported_at`, which has no index. Every
+`debate_cards` table by `imported_at`. Every
 request still counts toward the daily search limit.
 
 ## Data flow
@@ -64,9 +64,10 @@ panels/EvidenceLibraryPanel.tsx
 
 ## Known gaps
 
-`debate_cards.imported_at` has no index, so the uncached default list is a
-full-table sort; the isolate cache only hides it for most page opens. Adding
-the index needs a migration, and this repo's migrations folder was removed.
+The `imported_at` index that turns the default list into an index walk is
+created by the weekly cron or an admin search-index action (see
+[card library import](/docs/features/research-evidence/card-library-import#search-index)); until one runs,
+the uncached default list is still a full-table sort.
 
 
 Tag identity is still exact-string, though autocomplete matching is

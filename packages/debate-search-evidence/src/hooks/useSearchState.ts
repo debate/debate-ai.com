@@ -28,6 +28,13 @@ import {
   writeDefaultSearchCache,
 } from "../lib/default-search-cache";
 
+/**
+ * Seconds before a search request is given up on (grab's default is 30). The
+ * server stops waiting on its own queries well before this and answers with
+ * whatever it has (`timedOut: true`), so this only catches a stalled network.
+ */
+const SEARCH_TIMEOUT_S = 10;
+
 /** Params that open the page on a pre-filled search instead of the default one. */
 const PREFILL_PARAMS = ["q", "year", "school", "team", "tournament", "event"];
 
@@ -146,7 +153,7 @@ export function useSearchState() {
     if (!(isDefault && showingCachedDefault.current)) setLoading(true);
     showingCachedDefault.current = false;
     try {
-      const response = await grab(buildSearchUrl(query), { baseURL: "" });
+      const response = await grab(buildSearchUrl(query), { baseURL: "", timeout: SEARCH_TIMEOUT_S });
       if (id !== requestId.current) return;
       const data = response.data;
       setSearchResults(data?.results ?? []);

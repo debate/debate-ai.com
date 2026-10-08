@@ -452,6 +452,10 @@ export async function autocompleteCardTerms(db: unknown, input: string, limit: n
  * @param match - An expression from {@link buildFtsMatch}.
  * @param where - The non-text filters (season, school, event…), if any.
  * @param orderBy - An explicit sort ("Most read") to apply instead of BM25.
+ * @param ranked - `false` skips BM25 and returns the first matches the index
+ *   yields. Ranking scores and sorts *every* match, which for a very common
+ *   word is most of the corpus; unranked, the query stops after `limit` rows.
+ *   The search route falls back to it when the ranked query runs too long.
  */
 export async function searchCardsRanked(
   db: BaseSQLiteDatabase<"async", any, any>,
@@ -459,13 +463,16 @@ export async function searchCardsRanked(
   where: SQL | undefined,
   limit: number,
   orderBy: SQL[] = [],
+  ranked = true,
 ): Promise<DebateCardRow[]> {
+  const order =
+    orderBy.length > 0 ? orderBy : ranked ? [cardBm25(), desc(debateCards.duplicateCount), asc(debateCards.id)] : [];
   const rows = await db
     .select({ card: debateCards })
     .from(debateCardsFts)
     .innerJoin(debateCards, eq(debateCards.id, debateCardsFts.rowid))
     .where(and(sql`${sql.raw(CARD_FTS_TABLE)} MATCH ${match}`, where))
-    .orderBy(...(orderBy.length > 0 ? orderBy : [cardBm25(), desc(debateCards.duplicateCount), asc(debateCards.id)]))
+    .orderBy(...order)
     .limit(limit);
   return rows.map((row) => row.card);
 }
