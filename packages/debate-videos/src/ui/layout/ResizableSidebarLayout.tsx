@@ -60,6 +60,7 @@ import { Group, Panel, Separator, usePanelRef, type PanelSize } from "react-resi
 
 import { cn } from "../lib/utils"
 import { setSidebarCollapsed, toggleSidebarCollapsed, useSidebarCollapsed } from "./sidebar-collapse"
+import { useSidebarIconHover } from "./sidebar-icon-hover"
 import {
   pickPeekAnimation,
   playPeekAnimation,
@@ -189,6 +190,8 @@ export function ResizableSidebarLayout({
   const setCollapsedRef = useRef(setCollapsed)
   setCollapsedRef.current = setCollapsed
   const asideRef = useRef<HTMLElement>(null)
+  // Every icon in the column wiggles, bounces, pulses, spins or shakes on hover.
+  useSidebarIconHover(asideRef)
   // Peeking: the collapsed column shown as an overlay while the pointer is
   // near the edge or over it. Never set while the column is open.
   const [peeking, setPeeking] = useState(false)

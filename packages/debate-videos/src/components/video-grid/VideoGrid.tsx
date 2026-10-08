@@ -30,7 +30,7 @@ export const GRID_CHUNK_SIZE = 60
 
 /** Grid classes shared by every chunk, so the chunks line up as one grid. */
 const GRID_CLASSES =
-  "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-6"
+  "grid grid-cols-[repeat(auto-fit,_minmax(150px,_1fr))] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-6"
 
 /** Rough card height plus gap, for a chunk that has never been measured. */
 const ESTIMATED_ROW_HEIGHT = 380
@@ -43,7 +43,7 @@ function currentColumnCount(): number {
   if (width >= 1280) return 4
   if (width >= 1024) return 3
   if (width >= 640) return 2
-  return 1
+  return Math.max(1, Math.floor((width + 12) / 162))
 }
 
 interface VideoGridProps {

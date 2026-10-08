@@ -7,7 +7,7 @@ export const APP_NAME = "Debate AI";
 export const APP_LOGO = "/logo.png";
 export const APP_LOGO_WIDTH = 400;
 export const APP_LOGO_HEIGHT = 89;
-export const APP_EMAIL = "noreply@debate-ai.com";
+export const APP_EMAIL = "support@debate-ai.com";
 
 /** Terms & Privacy Last Revised Date */
 export const LAST_REVISED_DATE = "2026-08-26";
