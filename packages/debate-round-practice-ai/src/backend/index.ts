@@ -8,6 +8,7 @@
 export * from "./types"
 export * from "./personalities"
 export * from "./prompt"
+export * from "./case-prep"
 export * from "./persona-fallbacks"
 export * from "./model-client"
 export * from "./service"
