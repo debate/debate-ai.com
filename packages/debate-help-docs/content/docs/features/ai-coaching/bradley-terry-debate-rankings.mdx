@@ -100,7 +100,9 @@ P(A \text{ beats } B) = \frac{1}{1 + 10^{(R_B - R_A)/400}}
 
 ## On this site
 
-The site shows every rating 500 points lower and divided by 15
-(`RATING_OFFSET` and `RATING_DIVISOR` in `debate-rankings-adapter`). Both are a
-shift and a positive scale, so ranks and win probabilities are unchanged; the
-aff rating advantage, being a difference, is only divided by 15.
+The site shows every rating 1000 points lower and divided by 8, then clamped
+to 0–110 (`RATING_OFFSET`, `RATING_DIVISOR`, `RATING_MIN` and `RATING_MAX` in
+`debate-rankings-adapter`). That puts the top handful of teams in each event
+around 100 and the weakest teams at or near 0. The shift and scale keep ranks
+and win probabilities unchanged; the clamp only ties the few teams past either
+end. The aff rating advantage, being a difference, is only divided by 8.
