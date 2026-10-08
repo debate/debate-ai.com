@@ -25,8 +25,16 @@ import {
   type ContactsPage,
   type SendContactRequestResult,
 } from "../state/contacts";
+import { createSharedFetch } from "../lib/shared-fetch";
 
 const POLL_INTERVAL_MS = 30_000;
+
+/**
+ * Every mounted copy (the dock's presence heartbeat, the contacts page, the
+ * share dialog) polls on its own interval, so a tick within this long of
+ * another copy's reuses its request (see `lib/shared-fetch`).
+ */
+const fetchContactsShared = createSharedFetch(() => fetchContacts(), POLL_INTERVAL_MS - 2_000);
 
 const EMPTY: ContactsPage = { contacts: [], incoming: [], outgoing: [], blocked: [] };
 
@@ -49,23 +57,26 @@ export function useContacts(enabled: boolean): UseContactsResult {
   const [loading, setLoading] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
-  const refresh = useCallback(async () => {
+  const load = useCallback(async (force: boolean) => {
     setLoading(true);
-    const next = await fetchContacts();
+    const next = await fetchContactsShared(force);
     setLoading(false);
     setLoaded(true);
     if (next) setPage(next);
   }, []);
+  const refresh = useCallback(() => load(true), [load]);
 
   useEffect(() => {
     if (!enabled) {
+      // Signed out: a request made for the last account must not be reused.
+      fetchContactsShared.reset();
       setPage(EMPTY);
       setLoaded(false);
       return;
     }
-    void refresh();
+    void load(false);
     const interval = setInterval(() => {
-      if (typeof document === "undefined" || document.visibilityState === "visible") void refresh();
+      if (typeof document === "undefined" || document.visibilityState === "visible") void load(false);
     }, POLL_INTERVAL_MS);
     // Switching organization changes who the contacts are.
     const onOrganizationChanged = () => void refresh();
@@ -74,7 +85,7 @@ export function useContacts(enabled: boolean): UseContactsResult {
       clearInterval(interval);
       if (typeof window !== "undefined") window.removeEventListener(ORGANIZATION_CHANGED_EVENT, onOrganizationChanged);
     };
-  }, [enabled, refresh]);
+  }, [enabled, load, refresh]);
 
   const after = useCallback(
     async <T,>(work: Promise<T>): Promise<T> => {

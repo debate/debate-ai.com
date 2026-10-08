@@ -21,12 +21,35 @@ import {
   readCardsSearchParams,
 } from "../lib/search-query";
 import { isTypingTarget, nextSelectionIndex } from "../lib/result-navigation";
+import {
+  DEFAULT_SEARCH_SORT,
+  isDefaultSearch,
+  readDefaultSearchCache,
+  writeDefaultSearchCache,
+} from "../lib/default-search-cache";
+
+/**
+ * Seconds before a search request is given up on (grab's default is 30). The
+ * server stops waiting on its own queries well before this and answers with
+ * whatever it has (`timedOut: true`), so this only catches a stalled network.
+ */
+const SEARCH_TIMEOUT_S = 10;
+
+/** Params that open the page on a pre-filled search instead of the default one. */
+const PREFILL_PARAMS = ["q", "year", "school", "team", "tournament", "event"];
+
+function hasPrefillParams(): boolean {
+  if (typeof window === "undefined") return false;
+  const params = new URLSearchParams(window.location.search);
+  return PREFILL_PARAMS.some((k) => params.has(k));
+}
 
 /**
  * Manages search state including term, filters, sorting, results, and selection.
  *
- * Automatically fetches results with a 300ms debounce whenever the search term,
- * sort order, or filters change. Supports keyboard navigation with arrow keys
+ * Fetches the default search as soon as the page mounts, showing the results
+ * cached from the last visit until it returns, then fetches with a 300ms
+ * debounce whenever the search term, sort order, or filters change. Supports keyboard navigation with arrow keys
  * to cycle through results.
  *
  * @returns All search state values and their setters, plus computed helpers.
@@ -39,7 +62,7 @@ export function useSearchState() {
     null,
   );
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
-  const [sortBy, setSortBy] = useState("_text_match:desc");
+  const [sortBy, setSortBy] = useState(DEFAULT_SEARCH_SORT);
   const [filters, setFilters] = useState<SearchFilters>(DEFAULT_SEARCH_FILTERS);
   const [loading, setLoading] = useState(true);
 
@@ -53,6 +76,16 @@ export function useSearchState() {
   const requestId = useRef(0);
 
   /**
+   * True while the list shows the cached default results from the last
+   * visit. The refresh that replaces them runs without the loading state, so
+   * the list stays on screen rather than flashing to a spinner.
+   */
+  const showingCachedDefault = useRef(false);
+
+  /** The first fetch runs at once; only later changes wait out the debounce. */
+  const firstFetch = useRef(true);
+
+  /**
    * Starts the search from the URL (`/research/cards?q=…&year=…&event=…`), so other
    * pages — the topics explorer's links, for one — can open a pre-filled
    * search. Read once on mount; the debounced fetch below picks it up before
@@ -60,7 +93,17 @@ export function useSearchState() {
    */
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (!["q", "year", "school", "team", "tournament", "event"].some((k) => params.has(k))) return;
+    if (!hasPrefillParams()) {
+      // The default search: show last visit's results while it refreshes.
+      const cached = readDefaultSearchCache();
+      if (cached) {
+        showingCachedDefault.current = true;
+        setSearchResults(cached.results);
+        setTotalResults(cached.total);
+        setLoading(false);
+      }
+      return;
+    }
     const initial = readCardsSearchParams(params);
     setSearchTerm(initial.searchTerm);
     // A pre-filled link narrows quotes; it does not switch kinds.
@@ -105,16 +148,17 @@ export function useSearchState() {
    */
   const fetchResults = useCallback(async () => {
     const id = ++requestId.current;
-    setLoading(true);
+    const query = { searchTerm, sortBy, filters };
+    const isDefault = isDefaultSearch(query);
+    if (!(isDefault && showingCachedDefault.current)) setLoading(true);
+    showingCachedDefault.current = false;
     try {
-      const response = await grab(
-        buildSearchUrl({ searchTerm, sortBy, filters }),
-        { baseURL: "" },
-      );
+      const response = await grab(buildSearchUrl(query), { baseURL: "", timeout: SEARCH_TIMEOUT_S });
       if (id !== requestId.current) return;
       const data = response.data;
       setSearchResults(data?.results ?? []);
       setTotalResults(data?.total ?? 0);
+      if (isDefault && !data?.error) writeDefaultSearchCache(data?.results ?? [], data?.total ?? 0);
       setSelectedResult(null);
       setSelectedIndex(-1);
     } catch (error) {
@@ -131,6 +175,16 @@ export function useSearchState() {
 
   /** Debounced search: re-fetch when search term, sort, or filters change. */
   useEffect(() => {
+    // Opening the page has nothing to debounce: the default search goes out
+    // straight away. A pre-filled link still waits, because the state it
+    // sets on mount replaces this first query.
+    if (firstFetch.current) {
+      firstFetch.current = false;
+      if (!hasPrefillParams()) {
+        void fetchResults();
+        return;
+      }
+    }
     const timer = setTimeout(fetchResults, SEARCH_DEBOUNCE_MS);
     return () => clearTimeout(timer);
   }, [fetchResults]);

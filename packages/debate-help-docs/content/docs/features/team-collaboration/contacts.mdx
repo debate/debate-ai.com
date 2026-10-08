@@ -41,7 +41,8 @@ A typical friends list, all of it server-side and per account:
 Contacts show an **online / away** dot. There's no push channel in this repo,
 so presence is a heartbeat: the contacts poll (`GET /api/contacts`, every
 30 s while a tab is visible — run from the dock on every page, not just
-`/contacts`) bumps the caller's `user_presence` row, and a contact is online
+`/contacts`, and shared by every mounted copy so a page sends one request per
+tick) bumps the caller's `user_presence` row, and a contact is online
 while their last poll is inside `PRESENCE_ONLINE_WINDOW_MS` (2 min).
 
 Requests and accepts write ordinary account notifications (`contact_request`,

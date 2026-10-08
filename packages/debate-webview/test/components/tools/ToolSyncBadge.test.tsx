@@ -50,7 +50,8 @@ describe("ToolSyncBadge Save now", () => {
     await act(async () => button()!.click())
 
     expect(flush).toHaveBeenCalledExactlyOnceWith("flowKeymap")
-    expect(badge()?.dataset.toolSaveState).toBe("saved")
+    // Fully saved: the badge hides instead of showing "Saved to your account".
+    expect(badge()).toBeNull()
     expect(button()).toBeNull()
   })
 

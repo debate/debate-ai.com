@@ -55,7 +55,9 @@ describe("FeaturedSpeechDocsPanel", () => {
     await act(async () => {
       root.render(createElement(FeaturedSpeechDocsPanel, { featuredKey: "ndt-2015-finals" }))
     })
-    await vi.waitFor(() => expect(container.textContent).toContain("doc 48"))
+    // The first load decodes through a lazily imported converter, which can
+    // outlast `waitFor`'s 1s default on a cold module graph.
+    await vi.waitFor(() => expect(container.textContent).toContain("doc 48"), { timeout: 10_000 })
 
     expect(Array.from(container.querySelectorAll('[role="tab"]')).map((b) => b.textContent)).toEqual([
       "1AC", "1NC", "2AC", "2NC", "1NR", "1AR", "2NR", "2AR",

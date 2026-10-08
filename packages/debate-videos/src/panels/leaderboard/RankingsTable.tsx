@@ -7,6 +7,7 @@
 "use client"
 
 import type { RankingEntry } from "@debate/rankings-adapter"
+import { RatingDigits } from "./RatingDigits"
 import Link from "next/link"
 import { ChevronDown, ChevronUp, Info } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
@@ -47,23 +48,6 @@ interface Column {
   /** Right-align and use tabular figures. */
   numeric?: boolean
   render: (entry: RankingEntry, division: Division, tier: RowTier, schoolRanks: ReadonlyMap<string, number>) => React.ReactNode
-}
-
-/**
- * A rating rounded to a whole number, with the leading digits bold and
- * large and the last digit smaller, so the magnitude reads at a glance:
- * **154**3.
- */
-function Rating({ value }: { value: number }) {
-  const text = Math.round(value).toString()
-  const head = text.length > 1 ? text.slice(0, -1) : text
-  const tail = text.length > 1 ? text.slice(-1) : ""
-  return (
-    <span className="text-foreground" aria-label={text}>
-      <span className="text-base font-bold">{head}</span>
-      {tail && <span className="text-xs font-medium text-muted-foreground">{tail}</span>}
-    </span>
-  )
 }
 
 /** A win-rate bar with its whole-number percentage overlaid, or a dash when no rounds were debated on that side. */
@@ -144,7 +128,7 @@ const COLUMNS: Column[] = [
     key: "adjustedRating",
     label: "Rating",
     numeric: true,
-    render: (e) => <Rating value={e.adjustedRating} />,
+    render: (e) => <RatingDigits value={e.adjustedRating} />,
   },
   { key: "matches", label: "Matches", numeric: true, render: (e) => e.matches },
   { key: "affWinRate", label: "Aff Win", numeric: true, render: (e) => <WinRate value={e.affWinRate} /> },

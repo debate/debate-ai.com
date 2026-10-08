@@ -1883,6 +1883,9 @@ export const debateCards = sqliteTable(
     bucketIdx: index("idx_debate_cards_bucket").on(table.bucketId),
     sourceFileIdx: index("idx_debate_cards_source_file").on(table.sourceFile),
     sourceUrlIdx: index("idx_debate_cards_source_url").on(table.sourceUrl),
+    // Created at runtime by lib/search/card-search-indexes.ts (no migrations folder).
+    importedAtIdx: index("idx_debate_cards_imported_at").on(table.importedAt, table.id),
+    duplicateCountIdx: index("idx_debate_cards_duplicate_count").on(table.duplicateCount),
   }),
 );
 

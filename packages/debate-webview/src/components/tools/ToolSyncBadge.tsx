@@ -1,7 +1,7 @@
 "use client"
 
 /**
- * @fileoverview Small "Saved to your account" badge for a tool page's header.
+ * @fileoverview Small save-status badge for a tool page's header.
  *
  * Reads the shared auto-sync's module state (the same state
  * `ToolRecordSyncProvider` drives) instead of calling `useToolRecordSync`
@@ -13,11 +13,14 @@
  * flushes that tool's collections immediately (`saveToolNow`) instead of
  * waiting for the next auto-sync tick.
  *
+ * Once everything is saved the badge renders nothing: a steady "Saved to your
+ * account" pill was noise, so only the states that need attention show.
+ *
  * @module components/tools/ToolSyncBadge
  */
 
 import { useEffect, useMemo, useState } from "react"
-import { Cloud, CloudOff, RotateCw, Save } from "lucide-react"
+import { CloudOff, RotateCw, Save } from "lucide-react"
 import { isToolRecordSyncEnabled } from "@debate/data-sync/src/state/tool-record-mirror"
 import {
   flushToolRecordCollection,
@@ -67,8 +70,8 @@ export function ToolSyncBadge({ href, collectionKeys }: { href: string; collecti
     setDisplay(readDisplay(keys))
   }
 
-  if (!display) return null
-  const Icon = display.state === "local" ? CloudOff : display.state === "saved" ? Cloud : RotateCw
+  if (!display || display.state === "saved") return null
+  const Icon = display.state === "local" ? CloudOff : RotateCw
   const saveNowButton = describeSaveNowButton(display.state, saving, saveError)
   return (
     <>

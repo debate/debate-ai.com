@@ -46,6 +46,12 @@ export function createAppAuthClient(
 ) {
   return createAuthClient({
     baseURL,
+    // better-auth refetches `/api/auth/get-session` whenever the tab regains
+    // focus, and its 5-second rate limit only counts earlier focus refetches,
+    // not the initial load, so the first focus after a page load always sent
+    // a second identical request. Sign-in and sign-out in another tab still
+    // reach this one over better-auth's BroadcastChannel.
+    sessionOptions: { refetchOnWindowFocus: false },
     ...(pageOrigin && !isWebOrigin
       ? { fetchOptions: { customFetchImpl: viaHostProxy } }
       : {}),

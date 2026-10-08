@@ -199,7 +199,7 @@ describe("the synced collection catalog", () => {
     expect(findToolRecordCollection("prepNoteNotifications")).toMatchObject({
       storageKey: "prepNoteNotifications",
       idField: "id",
-      href: "/practice/prep-notes",
+      href: "/practice/prep",
     });
     expect(findToolRecordCollection("questTeams")).toMatchObject({
       storageKey: "questTeams",

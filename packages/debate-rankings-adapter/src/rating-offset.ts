@@ -23,7 +23,7 @@ export const RATING_DIVISOR = 8;
 export const RATING_MIN = 0;
 
 /** Highest rating the UI shows; anything stronger is capped here. */
-export const RATING_MAX = 110;
+export const RATING_MAX = 109;
 
 /** An upstream rating on the site's scale: shifted, scaled, then clamped. */
 export function toSiteRating(rating: number): number {

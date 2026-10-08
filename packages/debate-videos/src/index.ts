@@ -82,6 +82,12 @@ export {
   toggleSidebarCollapsed,
   useSidebarCollapsed,
 } from "./ui/layout/sidebar-collapse";
+export {
+  ICON_HOVER_EFFECTS,
+  attachSidebarIconHover,
+  pickIconHoverEffect,
+  useSidebarIconHover,
+} from "./ui/layout/sidebar-icon-hover";
 export { LibrarySidebarTree } from "./components/category-gallery/LibrarySidebarTree";
 export { LecturesPage } from "./panels/LecturesPage";
 export { DebateVideosPage } from "./panels/DebateVideosPanel";

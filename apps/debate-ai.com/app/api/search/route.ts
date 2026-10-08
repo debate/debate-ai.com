@@ -23,7 +23,7 @@
  */
 import { type NextRequest, NextResponse } from "next/server";
 import { getDBFromContext } from "@/lib/database/context";
-import { caselistDocuments, debateCards, youtubeRoundVideos } from "@/lib/database/schema";
+import { caselistDocuments, debateCards, youtubeRoundVideos, type DebateCardRow } from "@/lib/database/schema";
 import { desc, or } from "drizzle-orm";
 import { getUserId } from "@/lib/auth/session";
 import { limitsFor } from "@debate/webview/lib/stripe/limits";
@@ -47,6 +47,29 @@ import {
   readFtsOperator,
   searchCardsRanked,
 } from "@/lib/search/card-fts";
+import { TIMED_OUT, withinDeadline } from "@/lib/search/deadline";
+
+/**
+ * The search `/research/cards` opens with (no term, no filter) is the same
+ * list for everyone on a plan, and it orders the whole `debate_cards` table
+ * by import time, which has no index to read it from. Each Worker isolate
+ * keeps that list for a few minutes instead of re-sorting the corpus on every
+ * page open. Usage is still counted per request, before the cache is read.
+ */
+const BROWSE_CACHE_TTL_MS = 5 * 60 * 1000;
+const browseCache = new Map<string, { at: number; results: unknown[] }>();
+
+/**
+ * How long each query may run before the route stops waiting for it. Ranked
+ * FTS gets the first slot; past it, the unranked FTS query (the first matches
+ * the inverted index yields, no BM25 sort) gets the second. The `LIKE` scan,
+ * used only when the index can't serve the search, gets the third. A query
+ * that runs out answers with `timedOut: true` and whatever it could return, so
+ * the whole request stays well inside the client's own timeout.
+ */
+const RANKED_TIMEOUT_MS = 2_500;
+const UNRANKED_TIMEOUT_MS = 2_000;
+const LIKE_TIMEOUT_MS = 4_000;
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -126,29 +149,43 @@ export async function GET(request: NextRequest) {
       columns === null ? "" : buildFtsMatch(term, { operator: readFtsOperator(searchParams), prefixLastWord: true, columns });
     if (match && (await ensureCardFts(db))) {
       try {
-        const cards = await searchCardsRanked(
-          db,
-          match,
-          buildCardSearchWhere(filterInput),
-          limits.cardSearchResults,
-          explicitOrder,
+        const filters = buildCardSearchWhere(filterInput);
+        const ranked = await withinDeadline(
+          searchCardsRanked(db, match, filters, limits.cardSearchResults, explicitOrder),
+          RANKED_TIMEOUT_MS,
         );
-        const results = sortSearchResults(cards.map(mapDebateCardToSearchResult), sortBy);
-        return NextResponse.json({ results, total: results.length });
+        if (ranked !== TIMED_OUT) {
+          const results = sortSearchResults(ranked.map(mapDebateCardToSearchResult), sortBy);
+          return NextResponse.json({ results, total: results.length });
+        }
+        // BM25 sorts every match, and a common word matches most of the corpus.
+        // The unranked query stops at the limit, so it answers in time.
+        const quick = await withinDeadline(
+          searchCardsRanked(db, match, filters, limits.cardSearchResults, explicitOrder, false),
+          UNRANKED_TIMEOUT_MS,
+        );
+        const results = quick === TIMED_OUT ? [] : sortSearchResults(quick.map(mapDebateCardToSearchResult), sortBy);
+        return NextResponse.json({ results, total: results.length, timedOut: true });
       } catch (error) {
         console.error("Ranked card search failed; falling back to LIKE:", error);
       }
     }
 
     // Quotes: an explicit sort (most read, season…) wins; otherwise newest first.
+    const browseKey = where === undefined ? `${kind ?? ""}|${sortBy}|${limits.cardSearchResults}` : null;
+    const cached = browseKey ? browseCache.get(browseKey) : undefined;
+    if (cached && Date.now() - cached.at < BROWSE_CACHE_TTL_MS) {
+      return NextResponse.json({ results: cached.results, total: cached.results.length });
+    }
+
     const orderBy = explicitOrder.length > 0 || kind !== "quotes" ? explicitOrder : buildRecentCardOrderBy();
-    const cards = await db
-      .select()
-      .from(debateCards)
-      .where(where)
-      .orderBy(...orderBy)
-      .limit(limits.cardSearchResults);
+    const cards = await withinDeadline(
+      db.select().from(debateCards).where(where).orderBy(...orderBy).limit(limits.cardSearchResults) as Promise<DebateCardRow[]>,
+      LIKE_TIMEOUT_MS,
+    );
+    if (cards === TIMED_OUT) return NextResponse.json({ results: [], total: 0, timedOut: true });
     const results = sortSearchResults(cards.map(mapDebateCardToSearchResult), sortBy);
+    if (browseKey) browseCache.set(browseKey, { at: Date.now(), results });
 
     return NextResponse.json({ results, total: results.length });
   } catch (error) {

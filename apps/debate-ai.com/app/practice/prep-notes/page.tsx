@@ -1,8 +1,16 @@
 import type { Metadata } from "next"
+import { permanentRedirect } from "next/navigation"
+
+/**
+ * The old address of Prep Notes, merged into the Prep Workspace at
+ * `/practice/prep`. It permanently redirects to its "notes" tab.
+ */
 
 export const metadata: Metadata = {
   title: "Prep Notes",
-  description: "Live prep notes across every flow, grouped by status",
+  alternates: { canonical: "/practice/prep?section=notes" },
 }
 
-export { default } from "@debate/webview/routes/prep-notes/page"
+export default function LegacyPrepNotesPage() {
+  permanentRedirect("/practice/prep?section=notes")
+}

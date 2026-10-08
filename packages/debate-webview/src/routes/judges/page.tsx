@@ -1,14 +1,6 @@
-import { Suspense } from "react"
-import { JudgeProfilesPanel } from "@debate/speech-writer"
-import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
+import { PrepWorkspacePage } from "../prep/page"
 
+/** Old `/practice/judges` address: now the Prep Workspace's "judges" tab. */
 export default function JudgesPage() {
-  return (
-    <ToolPage>
-      <ToolPageHeader href="/practice/judges" backHref="/debate" backLabel="round workspace" guide="training-tools" />
-      <Suspense>
-        <JudgeProfilesPanel />
-      </Suspense>
-    </ToolPage>
-  )
+  return <PrepWorkspacePage initialSection="judges" />
 }

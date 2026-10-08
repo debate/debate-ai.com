@@ -10,6 +10,7 @@
  * @module components/rules/FormatsRulesGuide
  */
 
+import { ExternalLink, FileText } from "lucide-react"
 import type { ReactNode } from "react"
 
 import { cn } from "../../lib/ui/lib/utils"
@@ -322,6 +323,13 @@ const FORMAT_RULES: { title: string; badge: string; summary: string; cards: { ti
   },
 ]
 
+/** The NSDA's official High School Unified Manual, as a live Google Doc. */
+const NSDA_RULES_DOC_URL = "https://docs.google.com/document/d/1hq7-DE6ls2ryVtOttxR4BNpRdP7xUbBr0M3SMYefek8/edit?tab=t.0"
+
+/** The 2026–27 edition of the same manual as a PDF, posted on Tabroom. */
+const NSDA_RULES_PDF_URL =
+  "https://s3.amazonaws.com/tabroom-files/tourns/40557/postings/71429/HighSchoolUnifiedManual202627.pdf"
+
 const CHECKLIST = [
   "Read the current invitation and confirm the event’s timing, topic, procedures, evidence rules, and AI policy.",
   "Verify every card: correct tag, complete citation, accurate highlighting, and saved original context.",
@@ -351,6 +359,7 @@ export function FormatsRulesGuide() {
           local leagues may use different speech times, procedures, internet rules, or AI policies. Always follow the rules
           governing your specific tournament.
         </Callout>
+        <NsdaRulebookCard />
       </div>
 
       <Section id="formats" title="Formats at a glance">
@@ -448,6 +457,53 @@ export function FormatsRulesGuide() {
         material. Tournament-specific rules take priority whenever they differ.
       </p>
     </div>
+  )
+}
+
+/**
+ * The official source behind this guide: a paragraph on what the NSDA's High
+ * School Unified Manual covers, with links to the live Google Doc and the
+ * 2026–27 PDF edition.
+ */
+function NsdaRulebookCard() {
+  const linkClass =
+    "inline-flex h-9 items-center gap-1.5 rounded-md border border-border bg-background px-3 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+  return (
+    <article className="rounded-xl border border-border bg-card p-5 shadow-sm">
+      <p className="mb-1.5 text-xs font-bold uppercase tracking-wider text-primary">Official source</p>
+      <h3 className="text-base font-semibold text-foreground">NSDA High School Unified Manual</h3>
+      <p className="mt-1.5 text-sm text-muted-foreground">
+        The National Speech &amp; Debate Association publishes its rules for every event in a single High School
+        Unified Manual, updated each season. It sets the official speech times and prep time for Policy,
+        Lincoln-Douglas, Public Forum, World Schools and Congress, the evidence rules (what a citation must include,
+        how to produce original sources when asked, and what counts as distortion or fabrication), the policies on
+        electronic devices and internet use in rounds, and the procedures for protests, judging and disqualification
+        at NSDA districts and Nationals. This guide summarizes those rules; when a detail matters, check the manual
+        itself, and remember that a tournament&apos;s own invitation can still override it.
+      </p>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <a
+          href={NSDA_RULES_DOC_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Open the NSDA rulebook as a Google Doc (opens in a new tab)"
+          className={linkClass}
+        >
+          <ExternalLink className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+          Google Doc
+        </a>
+        <a
+          href={NSDA_RULES_PDF_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Open the 2026–27 NSDA High School Unified Manual PDF (opens in a new tab)"
+          className={linkClass}
+        >
+          <FileText className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+          2026–27 PDF
+        </a>
+      </div>
+    </article>
   )
 }
 

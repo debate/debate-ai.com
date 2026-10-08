@@ -36,23 +36,26 @@ const SECTION_PARAM = "section"
 
 /**
  * Active-section state for a hub, read from `?section=` first, then from
- * localStorage, then the first section.
+ * `preferred`, then from localStorage, then the first section.
  *
  * @param sections - The hub's sections.
  * @param storageKey - localStorage key remembering the last section.
+ * @param preferred - Section to open when the URL names none, ahead of the
+ *   remembered one (e.g. the section an old standalone route stood for).
  */
 export function useHubSection<Id extends string>(
   sections: readonly HubSection<Id>[],
   storageKey: string,
+  preferred?: Id,
 ): [Id, (id: Id) => void] {
   const params = useSearchParams()
   const fromUrl = params?.get(SECTION_PARAM) ?? null
-  const [section, setSectionState] = useState<Id>(() => resolveSectionId(sections, fromUrl))
+  const [section, setSectionState] = useState<Id>(() => resolveSectionId(sections, fromUrl ?? preferred))
 
   // Only the URL is available during render; the remembered section is a
   // client-only fallback, applied after mount so the server markup matches.
   useEffect(() => {
-    if (fromUrl) return
+    if (fromUrl || preferred) return
     try {
       const saved = localStorage.getItem(storageKey)
       if (saved) setSectionState(resolveSectionId(sections, saved))
@@ -89,6 +92,8 @@ export interface HubSectionNavProps<Id extends string> {
   onChange: (id: Id) => void
   /** Accessible name for the tab list. */
   label: string
+  /** Show each tab's panel count badge (default `true`); off for one-panel sections. */
+  showPanelCounts?: boolean
 }
 
 /**
@@ -96,7 +101,13 @@ export interface HubSectionNavProps<Id extends string> {
  *
  * @param props - See {@link HubSectionNavProps}.
  */
-export function HubSectionNav<Id extends string>({ sections, active, onChange, label }: HubSectionNavProps<Id>) {
+export function HubSectionNav<Id extends string>({
+  sections,
+  active,
+  onChange,
+  label,
+  showPanelCounts = true,
+}: HubSectionNavProps<Id>) {
   const tabRefs = useRef<Map<Id, HTMLButtonElement>>(new Map())
 
   const focusTab = (id: Id) => {
@@ -147,15 +158,17 @@ export function HubSectionNav<Id extends string>({ sections, active, onChange, l
             >
               <Icon className="h-4 w-4" aria-hidden="true" />
               {section.label}
-              <span
-                className={cn(
-                  "rounded-full px-1.5 text-[10px] tabular-nums",
-                  selected ? "bg-primary-foreground/20" : "bg-muted text-muted-foreground",
-                )}
-                aria-label={`${section.panels.length} panels`}
-              >
-                {section.panels.length}
-              </span>
+              {showPanelCounts ? (
+                <span
+                  className={cn(
+                    "rounded-full px-1.5 text-[10px] tabular-nums",
+                    selected ? "bg-primary-foreground/20" : "bg-muted text-muted-foreground",
+                  )}
+                  aria-label={`${section.panels.length} panels`}
+                >
+                  {section.panels.length}
+                </span>
+              ) : null}
             </button>
           )
         })}

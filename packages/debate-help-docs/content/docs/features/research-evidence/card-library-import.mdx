@@ -179,12 +179,33 @@ admin backfill, and searches keep using the old `LIKE` match until it is done.
   leaves stale entries behind.
 - `optimize` merges index segments after a large import.
 
+The weekly cron (`lib/search/card-search-maintenance.ts`) does the same
+backfill on its own, up to 250,000 cards a run, then optimizes, so a large
+corpus reaches the index without anyone pressing the button. It and every
+admin action also create the two sort indexes
+(`lib/search/card-search-indexes.ts`): `imported_at, id` for the newest-first
+list the page opens on, and `duplicate_count` for *Most read*. They are never
+built from a search request, because building one holds the database.
+
+### Time limits
+
+D1 can't cancel a query, so `/api/search` stops waiting instead
+(`lib/search/deadline.ts`). A ranked FTS query gets 2.5 s; past that the
+route runs the same match unranked, which stops at the result limit instead
+of scoring every match, and gives it 2 s. The `LIKE` fallback gets 4 s. A
+search that runs out answers `timedOut: true` with what it has, possibly
+nothing. The page gives up on a request after 10 s instead of grab's default
+30 s.
+
 ### Known gaps
 
 - Underlined text is not indexed (it exists only as `<u>` tags in `markup`),
   so an *Underlined* scope still runs the slow `LIKE` search.
 - Autocomplete ranks words by how often they occur in cards, not by what
   people search for.
+- A timed-out query keeps running in D1 after the route answers, so a burst of
+  very slow searches still loads the database.
+- The page doesn't tell you a result list was cut short by `timedOut`.
 
 ## Authorization
 

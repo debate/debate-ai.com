@@ -1,7 +1,7 @@
 /**
  * @fileoverview Sortable Schools table: every school with ranked entries,
  * ranked by its balanced score, alongside its best rating, the average rating of all its
- * entries and a balanced score that blends both with a team-count factor.
+ * entries and a balanced score led by its top three entries.
  * @module components/debate/DebateVideos/panels/SchoolRankingsTable
  */
 
@@ -22,6 +22,7 @@ import { cn } from "../../ui/lib/utils"
 import type { SchoolRanking, SchoolSortKey, SchoolSortState } from "./leaderboardTypes"
 import { schoolHref } from "./profile/rankingProfileHelpers"
 import { LegendaryBadge, ROW_TIER_CLASS, rowTier, type RowTier } from "./rowTier"
+import { RatingDigits } from "./RatingDigits"
 
 /** One table column: which field it shows and how. */
 interface Column {
@@ -33,19 +34,6 @@ interface Column {
   tooltip?: string
   width: number
   render: (row: SchoolRanking, tier: RowTier) => React.ReactNode
-}
-
-/** A rating rounded to a whole number, leading digits emphasized (matches the division tables). */
-function Rating({ value }: { value: number }) {
-  const text = Math.round(value).toString()
-  const head = text.length > 1 ? text.slice(0, -1) : text
-  const tail = text.length > 1 ? text.slice(-1) : ""
-  return (
-    <span className="text-foreground" aria-label={text}>
-      <span className="text-base font-bold">{head}</span>
-      {tail && <span className="text-xs font-medium text-muted-foreground">{tail}</span>}
-    </span>
-  )
 }
 
 const COLUMNS: Column[] = [
@@ -77,7 +65,7 @@ const COLUMNS: Column[] = [
     numeric: true,
     width: 120,
     tooltip: "Highest adjusted rating (Rating − 2 × Deviation) among the school's ranked entries.",
-    render: (r) => <Rating value={r.bestRating} />,
+    render: (r) => <RatingDigits value={r.bestRating} />,
   },
   {
     key: "bestEntry",
@@ -95,7 +83,7 @@ const COLUMNS: Column[] = [
     numeric: true,
     width: 120,
     tooltip: "Mean adjusted rating across every ranked team (or LD debater) from the school.",
-    render: (r) => <Rating value={r.avgRating} />,
+    render: (r) => <RatingDigits value={r.avgRating} />,
   },
   {
     key: "balancedScore",
@@ -103,8 +91,8 @@ const COLUMNS: Column[] = [
     numeric: true,
     width: 120,
     tooltip:
-      "(0.7 × Avg Rating + 0.3 × Best Rating) × team-count factor. Schools under 4 teams are diluted (×0.80 for 1 team up to ×1.00 for 4), schools with 5–20 teams get a 10% bonus, larger schools taper to 5%. Schools rank on it.",
-    render: (r) => <Rating value={r.balancedScore} />,
+      "1.1 × (0.7 × average of the top 3 entries + 0.3 × (½ Avg Rating + ½ depth)), where depth grows with team count and reaches 100 at 15 teams. Schools under 4 teams are diluted (×0.80 for 1 team up to ×1.00 for 4); capped at 109. Schools rank on it.",
+    render: (r) => <RatingDigits value={r.balancedScore} />,
   },
   { key: "teams", label: "Teams", numeric: true, width: 90, render: (r) => r.teams },
   { key: "events", label: "Events", width: 160, render: (r) => r.events.join(", ") },

@@ -125,6 +125,12 @@ describe("searchCardsRanked", () => {
     expect(ids(rows)).toContain(2);
   });
 
+  it("returns the same matches unranked, capped at the limit", async () => {
+    const all = await searchCardsRanked(db, buildFtsMatch("nuclear"), undefined, 10, [], false);
+    expect(ids(all).sort()).toEqual([1, 2, 3]);
+    expect(await searchCardsRanked(db, buildFtsMatch("nuclear"), undefined, 2, [], false)).toHaveLength(2);
+  });
+
   it("requires every word with AND", async () => {
     const rows = await searchCardsRanked(db, buildFtsMatch("nuclear deterrence", { operator: "AND" }), undefined, 10);
     expect(ids(rows).sort()).toEqual([1, 3]);

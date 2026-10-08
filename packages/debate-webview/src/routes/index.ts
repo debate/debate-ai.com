@@ -83,6 +83,8 @@ export const PAGE_ROUTES: AppRoute[] = [
   { pattern: "/outline", load: () => import("./outline/page") },
   { pattern: "/practice/partners", load: () => import("./practice-partners/page") },
   { pattern: "/practice/predictions", load: () => import("./predictions/page") },
+  // The Prep Workspace; the five old prep routes above and below open its tabs.
+  { pattern: "/practice/prep", load: () => import("./prep/page") },
   { pattern: "/practice/prep-notes", load: () => import("./prep-notes/page") },
   { pattern: "/practice/rankings", load: () => import("./videos/page") },
   { pattern: "/coaching/rankings", load: () => import("./rank/page") },

@@ -21,7 +21,7 @@ describe("summarizeToolSyncFailures", () => {
       result({ collection: "judgeProfiles", synced: false, error: "network error" }),
     ])
     expect(failures).toEqual([
-      { key: "judgeProfiles", label: "Judge Profiles", href: "/practice/judges", error: "network error" },
+      { key: "judgeProfiles", label: "Judge Profiles", href: "/practice/prep", error: "network error" },
     ])
   })
 
@@ -66,16 +66,16 @@ describe("toolSyncBadgeState", () => {
   })
 
   it("says the data is local when signed out", () => {
-    expect(toolSyncBadgeState("/practice/judges", { ...base, enabled: false })).toEqual({ kind: "local" })
+    expect(toolSyncBadgeState("/practice/prep", { ...base, enabled: false })).toEqual({ kind: "local" })
   })
 
   it("says syncing until the tab's merge finishes", () => {
-    expect(toolSyncBadgeState("/practice/judges", { ...base, reconciled: false })).toEqual({ kind: "syncing" })
+    expect(toolSyncBadgeState("/practice/prep", { ...base, reconciled: false })).toEqual({ kind: "syncing" })
   })
 
   it("reports synced when no owned collection failed", () => {
     expect(
-      toolSyncBadgeState("/practice/judges", {
+      toolSyncBadgeState("/practice/prep", {
         ...base,
         results: [result({ collection: "judgeProfiles" }), result({ collection: "flowSummaries", synced: false, error: "x" })],
       }),
@@ -84,7 +84,7 @@ describe("toolSyncBadgeState", () => {
 
   it("fails if any collection owned by the tool failed", () => {
     expect(
-      toolSyncBadgeState("/practice/judges", {
+      toolSyncBadgeState("/practice/prep", {
         ...base,
         results: [result({ collection: "judgeRoundRecords", synced: false, error: "too large" })],
       }),
@@ -94,7 +94,7 @@ describe("toolSyncBadgeState", () => {
 
 describe("resolveToolSyncKeys", () => {
   it("defaults to every collection registered under the page's own href", () => {
-    expect(resolveToolSyncKeys("/practice/judges")).toContain("judgeProfiles")
+    expect(resolveToolSyncKeys("/practice/prep")).toContain("judgeProfiles")
   })
 
   it("returns nothing for a route with no synced collection and no explicit keys", () => {

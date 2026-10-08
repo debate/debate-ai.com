@@ -78,7 +78,6 @@ import { useTranscript } from "../../components/transcript/useTranscript"
 import { groupIntoSentences } from "../../components/transcript/transcriptUtils"
 import {
   DEBATE_STYLE_LABELS,
-  STYLE_COLORS,
   TOURNAMENT_COLORS,
   getRoundBadgeColor,
   formatVideoDate,
@@ -698,9 +697,6 @@ export function VideoWatchPage({
     [counts, viewState.favorites],
   )
 
-  const styleLabel =
-    styleNumber && DEBATE_STYLE_LABELS[styleNumber as keyof typeof DEBATE_STYLE_LABELS]
-
   return (
     <LecturesSidebarShell
       dockSlot={dockSlot}
@@ -725,13 +721,6 @@ export function VideoWatchPage({
           <div className="min-w-0 space-y-3 bg-background">
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <div className="flex items-center gap-1.5 flex-wrap min-w-0">
-                {styleLabel && (
-                  <span
-                    className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] uppercase tracking-wide ${STYLE_COLORS[styleNumber!] ?? "bg-muted text-muted-foreground"}`}
-                  >
-                    {styleLabel}
-                  </span>
-                )}
                 {categoryLabel && (
                   <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] uppercase tracking-wide bg-muted text-muted-foreground">
                     {categoryLabel}

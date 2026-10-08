@@ -122,8 +122,8 @@ export const COACH_SECTIONS: readonly HubSection<SectionId>[] = [
     description: "Get ready for the next round: briefings, prep notes handed off to teammates, and annotations on recorded rounds.",
     guide: "training-tools",
     panels: [
-      panel("Pre-Round Briefings", "/practice/briefings"),
-      panel("Prep Notes", "/practice/prep-notes"),
+      panel("Pre-Round Briefings", "/practice/prep?section=briefings"),
+      panel("Prep Notes", "/practice/prep?section=notes"),
       panel("Flow Annotations", "/annotations"),
     ],
   },
@@ -134,9 +134,9 @@ export const COACH_SECTIONS: readonly HubSection<SectionId>[] = [
     description: "What you know about the other side: opponent profiles, judge profiles, and the case ranking they imply.",
     guide: "training-tools",
     panels: [
-      panel("Opponent Team Profiles", "/practice/opponents"),
-      panel("Judge Profiles", "/practice/judges"),
-      panel("Scout-to-Strategy", "/practice/strategy"),
+      panel("Opponent Team Profiles", "/practice/prep?section=opponents"),
+      panel("Judge Profiles", "/practice/prep?section=judges"),
+      panel("Scout-to-Strategy", "/practice/prep?section=strategy"),
     ],
   },
   {

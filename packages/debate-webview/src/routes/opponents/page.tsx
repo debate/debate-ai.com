@@ -1,14 +1,6 @@
-import { Suspense } from "react"
-import { OpponentTeamProfilesPanel } from "@debate/round"
-import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
+import { PrepWorkspacePage } from "../prep/page"
 
+/** Old `/practice/opponents` address: now the Prep Workspace's "opponents" tab. */
 export default function OpponentsPage() {
-  return (
-    <ToolPage>
-      <ToolPageHeader href="/practice/opponents" backHref="/debate" backLabel="round workspace" guide="training-tools" />
-      <Suspense>
-        <OpponentTeamProfilesPanel />
-      </Suspense>
-    </ToolPage>
-  )
+  return <PrepWorkspacePage initialSection="opponents" />
 }

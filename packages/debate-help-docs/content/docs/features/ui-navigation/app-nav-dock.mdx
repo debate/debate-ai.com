@@ -66,7 +66,7 @@ and name only, never your email address, with a badge on the avatar counting
 unread notifications. The account menu holds Settings, a **Notifications**
 submenu (every unread notification: pick one to open its link and clear it, X
 to clear it in place, **Clear all**, and a link to `/notifications`; clearing
-is the page's mark-as-read), Contacts, an **Organizations** submenu (switch between Personal
+is the page's mark-as-read), an **Organizations** submenu (switch between Personal
 and your organizations, or create one — see
 [Contacts](/docs/features/team-collaboration/contacts#organizations)), a **Theme** submenu
 (Light / Dark / System and every colour theme, with swatches — the same picker
@@ -273,6 +273,11 @@ research docs (`/research/docs`) draw a sidebar of their own, so there the app
 sidebar starts hidden and theirs is the only one on screen. It still peeks
 from the left edge, and pinning it keeps it open until you leave the page; it
 doesn't change whether the sidebar is hidden anywhere else.
+
+**Icons that move.** Hovering a row in the sidebar, or tabbing to it, makes
+its icon wiggle, bounce, pulse, spin or shake, a different one from the last
+time. The research docs' own sidebar does the same. Nothing moves if your
+system asks for reduced motion.
 
 While the sidebar is hidden the dock it carried floats at the top-left
 instead (`CategoryDock` lifts its suppression while `useSidebarCollapsed()`
@@ -488,8 +493,18 @@ To make a switch a render from cache, the dock fetches each destination's
 code ahead of the click. Hovering or focusing an icon prefetches that route,
 and once the current page has loaded the dock prefetches the others one at a
 time in idle time (`lib/nav/dock-idle-prefetch.ts`), so touch screens and
-quick clicks get the same head start. The idle pass skips `/research/docs`; hovering its icon still warms it. It also
-does nothing on a data-saver or 2G connection.
+quick clicks get the same head start. The idle pass skips the two heavy
+routes, `/research/docs` and `/practice/versus-ai` (the whole practice stack:
+the AI opponent, the round and matchup simulators, coach mode, the drill
+generator and the judge); hovering their icons still warms them. Each route is
+warmed at most once per page load, even when the sidebar's embedded dock
+remounts and restarts the pass. It also does nothing on a data-saver or 2G
+connection.
+
+Only the app shell's dock runs the app-wide notifications and contacts polls;
+the sidebar's embedded copy doesn't, and every other mounted copy of those
+hooks (the account menu's badge, the contacts page) reuses the request one
+copy already made in the same 30-second tick.
 
 ## A bar across the top shows a page switch in progress
 

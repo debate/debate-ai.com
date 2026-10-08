@@ -20,7 +20,9 @@
  *   content for a returning visitor who already knows the tool,
  * - an eyebrow naming the guide the tool belongs to (training / practice /
  *   research collaboration),
- * - "Docs" and "Guide" links into the Fumadocs site (`lib/docs-links.ts`),
+ * - a single "Docs" link into the Fumadocs site (`lib/docs-links.ts`) — the
+ *   tool's feature page, falling back to its task guide's page when the tool
+ *   has no feature doc of its own,
  * - a "Saved to your account" badge for tools whose data syncs (`ToolSyncBadge`),
  * - the same favorite-star toggle as the `/tools` grid, and
  * - an optional row of related-tool links (`RoundToolsCrossLinks`).
@@ -33,11 +35,10 @@
 
 import type { ReactNode } from "react"
 import Link from "next/link"
-import { ArrowLeft, BookOpen, Compass, type LucideIcon } from "lucide-react"
+import { ArrowLeft, BookOpen, type LucideIcon } from "lucide-react"
 import { ALL_TOOLS } from "../../routes/tools/tool-groups"
 import {
   DOCS_GUIDE_LABELS,
-  DOCS_GUIDE_TITLES,
   featureDocsUrlForRoute,
   guideDocsUrl,
   type DocsGuide,
@@ -84,7 +85,7 @@ export interface ToolPageHeaderProps {
   icon?: LucideIcon
   /** Bullet points for the "What this tool does" disclosure; defaults to the `/tools` catalog `highlights` for `href`. Pass `[]` to omit the disclosure entirely even when the catalog has highlights. */
   highlights?: string[]
-  /** Which task guide this tool belongs to; adds the eyebrow and the "Guide" link. */
+  /** Which task guide this tool belongs to; adds the eyebrow, and its guide page is the "Docs" link when the tool has no feature doc. */
   guide?: DocsGuide
   /** Collection keys the "Saved to your account" badge should watch, for a page whose synced data is registered under another route (e.g. a sub-page of the shared-cards hub). Defaults to the collections registered under `href`. */
   syncCollections?: readonly string[]
@@ -117,7 +118,7 @@ export function ToolPageHeader({
   const resolvedTitle = title ?? tool?.label ?? href
   const resolvedDescription = description ?? tool?.description
   const resolvedHighlights = highlights ?? tool?.highlights
-  const docsUrl = featureDocsUrlForRoute(href)
+  const docsUrl = featureDocsUrlForRoute(href) ?? (guide ? guideDocsUrl(guide) : undefined)
 
   return (
     <header className="flex flex-col gap-4">
@@ -137,14 +138,6 @@ export function ToolPageHeader({
           {actions}
           {docsUrl ? (
             <HeaderLink href={docsUrl} icon={BookOpen} label="Docs" title={`Read the ${resolvedTitle} documentation`} />
-          ) : null}
-          {guide ? (
-            <HeaderLink
-              href={guideDocsUrl(guide)}
-              icon={Compass}
-              label="Guide"
-              title={`Open the ${DOCS_GUIDE_TITLES[guide].toLowerCase()}`}
-            />
           ) : null}
           {tool ? (
             <FavoriteToolButton

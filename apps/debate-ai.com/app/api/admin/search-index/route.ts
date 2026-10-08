@@ -26,6 +26,7 @@ import {
   rebuildCardFts,
   resetCardFtsMemo,
 } from "@/lib/search/card-fts";
+import { ensureCardSortIndexes } from "@/lib/search/card-search-indexes";
 
 export async function GET(request: NextRequest) {
   const access = await authorizeCardImport(request);
@@ -47,6 +48,9 @@ export async function POST(request: NextRequest) {
 
   const db = await getDBFromContext();
   try {
+    // Every index action also builds the sort indexes the search's
+    // newest-first and "Most read" orders read from.
+    if (action === "backfill" || action === "rebuild" || action === "optimize") await ensureCardSortIndexes(db);
     if (action === "backfill") {
       const status = await backfillCardFts(db);
       resetCardFtsMemo();
