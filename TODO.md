@@ -49,7 +49,7 @@
 1. ability to challenge legends - and speculators bet
 2. random pair webcam debate matching on mutual pref topics
 
-## Account sync of tools (In Progress)
+## Account sync of tools (Completed)
 
 - [x] Speech-doc links (editor document <-> round/flow speech) sync via the `speechDocLinks` tool-record collection
 - [x] Pinned debates - synced via the `pinnedDebates` tool-record collection
@@ -228,7 +228,11 @@ roughly 500 editing commands into ~30 thematic groups. Highlights (full 50+ feat
 - [x] `ebb-dev-flow-files` / `ebb-dev-recents` stay browser-only on purpose: `flowFsMemory.ts` documents them as a dev/test stand-in, not a product surface (real flows sync through `saved_flows`). `REASON-file-sources` already syncs (`toolRecordCollections.ts`)
 - [x] `REASON-documents` needs no catalog entry (verified 2026-10-07): the `localStorage` key is only a read cache for the editor. Every edit already reaches the D1 `documents` table per user through `save-queue.ts` -> `PUT /api/doc/documents/:id` (`apps/debate-ai.com/app/api/doc/documents`, `ReasonDocsProvider`). Ids are server-assigned numbers, and a second copy under `saved_tool_records` would duplicate content and race the save queue. No redaction/size review is needed because nothing new leaves the browser
 
+## In Progress
+
 ### Tool UI pass: tool page header
+
+- Remaining items are environment-only (missing `debate-rankings` submodule / no `@testing-library/react`); no product work is left.
 
 - Branch: `agent/tool-header-single-sync-badge`
 - [x] `ToolPageHeader` rendered `ToolSyncBadge` twice (merge damage); now once, with a regression test
@@ -243,7 +247,7 @@ roughly 500 editing commands into ~30 thematic groups. Highlights (full 50+ feat
 - [x] Button visibility/label logic extracted to `describeSaveNowButton` (`lib/tools/tool-save-state.ts`) and unit tested; branch `claude/gifted-babbage-bee65u`
 - [x] DOM-level click test for `ToolSyncBadge` using jsdom + `react-dom/client` + `act` (no testing-library needed): `packages/debate-webview/test/components/tools/ToolSyncBadge.test.tsx` covers Save now -> flush -> saved, and Retry save with the error (branch `claude/gifted-babbage-zxyxfh`)
 
-## Completed
+## Completed (earlier)
 
 ### Account-synced user data across all tools (user settings + SQL)
 
