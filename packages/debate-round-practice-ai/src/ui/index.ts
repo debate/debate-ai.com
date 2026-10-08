@@ -18,4 +18,11 @@ export {
   type JudgmentPopupProps,
   type RatingSummary,
 } from "./JudgmentPopup"
+export {
+  PracticeSetupWizard,
+  CaseBriefView,
+  DIFFICULTY_BLURBS,
+  SETUP_STEPS,
+  type PracticeSetupWizardProps,
+} from "./PracticeSetupWizard"
 export { DebatePracticeVsAi, type DebatePracticeVsAiProps } from "./DebatePracticeVsAi"

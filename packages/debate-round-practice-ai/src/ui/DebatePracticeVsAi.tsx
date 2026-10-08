@@ -1,6 +1,11 @@
 /**
  * @fileoverview The Practice vs AI feature, whole — the screen the
- * `/practice/versus-ai` route renders.
+ * `/practice/versus-ai` route renders (and `/practice`, which redirects
+ * there since the Practice Round Simulator was merged into this page).
+ *
+ * Setup runs through `PracticeSetupWizard`: difficulty, topic, opponent,
+ * then the opponent's prep brief. The brief stays available above the
+ * round in a collapsible panel.
  *
  * Upstream split this across three react-router routes (`/game` for the
  * picker, `/debate/:id` for the round, and the scorecard inside it), passing
@@ -17,10 +22,11 @@
 
 import { useState } from "react"
 import { clearActiveRound, readActiveRound, writeActiveRound } from "./active-round"
-import { BotSelection, type StartedDebate } from "./BotSelection"
+import type { StartedDebate } from "./BotSelection"
 import { DebateHistory } from "./DebateHistory"
 import { DebateRoom } from "./DebateRoom"
 import type { CoachSkill } from "./JudgmentPopup"
+import { CaseBriefView, PracticeSetupWizard } from "./PracticeSetupWizard"
 
 export interface DebatePracticeVsAiProps {
   /** Namespaces the round's resume key. Pass the signed-in user's id. */
@@ -31,6 +37,8 @@ export interface DebatePracticeVsAiProps {
   userAvatar?: string
   /** Where the client posts. Defaults to the app's `/api/vsbot`. */
   apiBaseUrl?: string
+  /** The host's card search, used by the opponent's prep. Defaults to `/api/search`. */
+  searchUrl?: string
   /** Recommendation cards shown on the scorecard. */
   coachSkills?: CoachSkill[]
   /** Called when a debate round is initiated. */
@@ -44,6 +52,7 @@ export function DebatePracticeVsAi({
   userRating,
   userAvatar,
   apiBaseUrl,
+  searchUrl,
   coachSkills,
   onStartDebate,
 }: DebatePracticeVsAiProps = {}) {
@@ -66,28 +75,49 @@ export function DebatePracticeVsAi({
       return <DebateHistory apiBaseUrl={apiBaseUrl} onBack={() => setShowHistory(false)} />
     }
     return (
-      <BotSelection onStart={handleStart} apiBaseUrl={apiBaseUrl} onViewHistory={() => setShowHistory(true)} />
+      <PracticeSetupWizard
+        onStart={handleStart}
+        apiBaseUrl={apiBaseUrl}
+        searchUrl={searchUrl}
+        onViewHistory={() => setShowHistory(true)}
+      />
     )
   }
 
   return (
-    <DebateRoom
-      key={debate.debateId}
-      debateId={debate.debateId}
-      botName={debate.botName}
-      botLevel={debate.botLevel}
-      topic={debate.topic}
-      stance={debate.stance}
-      phaseTimings={debate.phaseTimings}
-      userId={userId}
-      userDisplayName={userDisplayName}
-      userBio={userBio}
-      userRating={userRating}
-      userAvatar={userAvatar}
-      apiBaseUrl={apiBaseUrl}
-      coachSkills={coachSkills}
-      onExit={handleExit}
-    />
+    <>
+      {debate.brief && (
+        <details className="mx-auto mb-3 w-full max-w-4xl rounded-md border border-border bg-card p-3">
+          <summary className="cursor-pointer font-medium text-foreground">Prep brief: cards, cases and arguments</summary>
+          <div className="mt-3">
+            <CaseBriefView
+              brief={debate.brief}
+              stance={debate.stance}
+              botName={debate.botName}
+              cards={debate.cards}
+              cases={debate.cases}
+            />
+          </div>
+        </details>
+      )}
+      <DebateRoom
+        key={debate.debateId}
+        debateId={debate.debateId}
+        botName={debate.botName}
+        botLevel={debate.botLevel}
+        topic={debate.topic}
+        stance={debate.stance}
+        phaseTimings={debate.phaseTimings}
+        userId={userId}
+        userDisplayName={userDisplayName}
+        userBio={userBio}
+        userRating={userRating}
+        userAvatar={userAvatar}
+        apiBaseUrl={apiBaseUrl}
+        coachSkills={coachSkills}
+        onExit={handleExit}
+      />
+    </>
   )
 }
 

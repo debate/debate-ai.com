@@ -1,7 +1,7 @@
 import {
   Trophy, Inbox, Award, Library, NotebookPen, History, Gavel, Users, Dumbbell,
   ClipboardList, GraduationCap, FileText, MessageSquareText, Type,
-  ListTree, Bot, Lightbulb, PlayCircle, BarChart3, Users2, School,
+  ListTree, Bot, Lightbulb, BarChart3, Users2, School,
   ThumbsUp, Medal, Target, BookOpen, PieChart, Presentation,
   ListChecks, Flame, CheckSquare, Landmark, MapPin, Sparkles, Bell, Contact,
   Rss, Gauge, Crosshair, Crown, Send, Smartphone, Star, Handshake, Coins, CalendarDays,
@@ -247,13 +247,13 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
       },
       {
         href: "/practice/versus-ai", label: "Practice vs AI", icon: Bot,
-        description: "Debate a full timed round against an AI opponent, then get a judged scorecard.",
-        highlights: ["Thirteen opponent personas across five difficulty tiers", "Timed opening, cross-examination and closing phases with an AI verdict"],
-      },
-      {
-        href: "/practice", label: "Practice Round Simulator", icon: PlayCircle,
-        description: "Recreate a tournament round with a timer, judge paradigm, and AI opponent persona.",
-        highlights: ["Format, side, AI judge paradigm, and AI opponent persona in one setup", "Built-in or custom paradigms and personas, same as the standalone pickers"],
+        description: "Choose a difficulty, a topic and an opponent; the AI finds cards and cases, summarizes both sides, then debates you in a timed round.",
+        highlights: [
+          "Three-step setup: difficulty, topic and side, then one of thirteen opponent personas",
+          "The opponent preps first: evidence cards, caselist outlines and a summary of each side's arguments",
+          "Timed opening, cross-examination and closing phases with an AI verdict",
+          "The round simulator (judge paradigms, saved rounds, replays, team matchups) on the same page",
+        ],
       },
       {
         href: "/annotations", label: "Flow Annotations", icon: MapPin,

@@ -23,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@debate/speech-writer/src/ui/primitives/select"
+import type { CaseBrief, PrepCard, PrepCaseDocument } from "../backend/case-prep"
 import { createDebate } from "../client"
 import {
   ALL_BOTS,
@@ -44,6 +45,12 @@ export interface StartedDebate {
   /** The user's side — "For" or "Against". */
   stance: string
   phaseTimings: { name: string; time: number }[]
+  /** The opponent's pre-round prep, when the round was set up through `PracticeSetupWizard`. */
+  brief?: CaseBrief
+  /** The cards the brief's `cardIndexes` point into. */
+  cards?: PrepCard[]
+  /** Caselist outlines found during prep. */
+  cases?: PrepCaseDocument[]
 }
 
 export interface BotSelectionProps {

@@ -1,7 +1,13 @@
 # CLAUDE.md — `debate-practice-vs-ai` (`packages/debate-round-practice-ai`)
 
 **Package name:** `debate-practice-vs-ai` — filter on that, not the directory.
-Public (`@debate/` scope). Mounted at `/practice/versus-ai`. Tests in `test/`.
+Public (`@debate/` scope). Mounted at `/practice/versus-ai` (which `/practice`, the
+old Practice Round Simulator page, redirects to). Tests in `test/`.
+
+The page's setup is `ui/PracticeSetupWizard` (difficulty → topic → opponent →
+prep). Prep is the one non-Go-ported backend piece: `backend/case-prep.ts`
+builds a case brief from cards the client found via the host's `/api/search`,
+and must keep working with `model: null` (it falls back to the cards alone).
 
 A full timed debate round against an AI opponent: a Node/TypeScript port of the
 Go `arguehub` vs-bot backend — 13 bot personalities, prompt construction, AI
