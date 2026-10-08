@@ -156,15 +156,19 @@ export function ReasonEditorScreen() {
                 (`ReasonDocsSidebarPanels` → `onRename`, `ShareWithContacts`)
                 next to New file / New folder / Upload. This row is just the
                 status line (`describeDocSaveStatus`). */}
-            <div className="flex items-center gap-2 px-4 py-2 border-b">
-              <span
-                className={cn("text-xs", saveStatus.state === "failed" ? "text-destructive" : "text-muted-foreground")}
-                title={saveStatus.title}
-                data-doc-save-state={saveStatus.state}
-              >
-                {saveStatus.label}
-              </span>
-            </div>
+            {/* Hidden once the document is saved; only unsaved, saving and
+                failed states need the user's attention. */}
+            {saveStatus.state === "saved" ? null : (
+              <div className="flex items-center gap-2 px-4 py-2 border-b">
+                <span
+                  className={cn("text-xs", saveStatus.state === "failed" ? "text-destructive" : "text-muted-foreground")}
+                  title={saveStatus.title}
+                  data-doc-save-state={saveStatus.state}
+                >
+                  {saveStatus.label}
+                </span>
+              </div>
+            )}
             <div className="flex-1 min-h-0 overflow-hidden">
               {/* No React `key` here on purpose: `contentKey` already gives
                   each document a fresh claim (and undo history) inside the

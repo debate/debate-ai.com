@@ -36,12 +36,12 @@ describe("MobileSetupPage", () => {
     expect(html).not.toContain("Bnnwa")
   })
 
-  it("lists the Belkin charging station with its affiliate link and image", () => {
+  it("lists the Anker charging station with its affiliate link and image", () => {
     const html = renderToStaticMarkup(<MobileSetupPage />)
 
-    expect(html).toContain("Belkin 70W GaN 7-in-1 Charging Station")
-    expect(html).toContain("https://amzn.to/4xZw4ak")
-    expect(html).toContain("https://m.media-amazon.com/images/I/61VAOpYG0vL._AC_SL500_.jpg")
+    expect(html).toContain("Anker Nano Charging Station, 100W 7-in-1 Power Strip, Retractable Charger")
+    expect(html).toContain("https://amzn.to/4zeWEgy")
+    expect(html).toContain("https://m.media-amazon.com/images/I/51vONxxXduL._AC_SL500_.jpg")
   })
 
   it("lists the desk clamp power strip with its affiliate link and image", () => {
