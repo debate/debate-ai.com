@@ -6,25 +6,48 @@ title: "Practice vs AI"
 
 ![Practice vs AI — the opponent picker, a live timed round, and the scorecard](https://i.imgur.com/2awjrUp.png)
 
-Lets a debater run a full timed round against an AI opponent: pick one of
-13 opponent personas across five difficulty tiers, set the topic, stance,
-and per-phase clocks, debate through opening statements, cross-examination
-and closing statements, then get an AI-judged scorecard.
+Lets a debater run a full timed round against an AI opponent. Setup is three
+choices: **difficulty** (Easy through Legends), **topic** (a suggested one or
+your own resolution, plus your side), and **opponent** (one of the 13
+personas at that difficulty). Then the opponent preps: it finds evidence
+cards and caselist outlines for the topic and writes a short brief, a summary
+of the clash plus the main arguments for your side and the ones it plans to
+run. After that you debate through opening statements, cross-examination and
+closing statements, then get an AI-judged scorecard.
 
-- **Route:** `/practice/versus-ai`
-- **Package:** `debate-practice-vs-ai`
-- **API:** `POST /api/vsbot/create`, `/debate`, `/judge`, `/concede`;
-  `GET /api/vsbot/history`
+This page is also where the **Practice Round Simulator** lives now: its old
+address, `/practice`, redirects here, and its saved rounds, judge paradigms,
+replays and team matchups are in the collapsed **Round simulator** section
+below the round (see [Practice Round Simulator](/docs/features/rounds/practice-round-simulator)).
+
+- **Route:** `/practice/versus-ai` (`/practice` redirects here)
+- **Package:** `debate-practice-vs-ai`, composed with `debate-practice-rounds`
+  by `debate-webview`'s `PracticeVsAiSections`
+- **API:** `POST /api/vsbot/create`, `/prep`, `/debate`, `/judge`, `/concede`;
+  `GET /api/vsbot/history`; prep also reads `GET /api/search`
 
 ## What it shows
 
-A bot picker across five difficulty tiers (Easy through Legends), a setup
-panel (topic, stance, per-phase clocks), the live round (two side-by-side
-panels with countdowns, typed or dictated turns), and a scorecard (each
-phase scored out of 10 for both sides, totals, a verdict, and follow-up
-drill recommendations).
+A four-step setup (Difficulty, Topic, Opponent, Prep), the live round (two
+side-by-side panels with countdowns, typed or dictated turns), and a
+scorecard (each phase scored out of 10 for both sides, totals, a verdict, and
+follow-up drill recommendations). Per-phase clocks sit in a collapsed
+"Phase timings" box on the Prep step. During the round, the prep brief stays
+one click away in a collapsed panel above it.
 
-A "View Debate History" button on the bot picker opens **Debate History**:
+## The opponent's prep
+
+The Prep step searches the card corpus with the topic's key words (filler
+words such as "should" and "be" dropped) and, separately, the caselist
+outlines. Up to eight cards and four outlines go to `POST /api/vsbot/prep`,
+which asks the model for a brief in a fixed JSON shape: a summary, then two
+to four arguments per side, each citing the cards that back it. When no model
+key is set, or the model's reply can't be read, the brief is built from the
+cards alone: each card's tag becomes an argument on the side the corpus says
+read it. A card search that is rate-limited or fails counts as finding
+nothing, so prep still produces a brief.
+
+A "View Debate History" button on the setup screen opens **Debate History**:
 every past round (topic, opponent, result, date), newest first, each
 expandable in place to its full transcript.
 
@@ -58,3 +81,8 @@ bug was already there. ~~A reload during a round returns to the picker.~~
 **Fixed:** reloading mid-round now resumes the same round instead of
 dropping back to the picker. Only the vs-bot slice of the Go server is
 ported.
+
+The prep brief is not yet fed into the opponent's turns: the bot argues from
+its persona and the topic, not from the cards it found. The brief is kept with
+the in-progress round in the browser only, so it is not part of Debate
+History.

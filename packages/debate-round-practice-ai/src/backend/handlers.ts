@@ -13,6 +13,7 @@
  * @module backend/handlers
  */
 
+import { prepareCaseBrief, type CaseBrief, type PrepareCaseInput } from "./case-prep"
 import type { GamificationAward } from "./gamification"
 import type { ModelClient } from "./model-client"
 import { generateBotResponse, judgeDebate, resolveResultStatus } from "./service"
@@ -330,7 +331,26 @@ export function createPracticeVsAiBackend(options: PracticeVsAiBackendOptions) {
     return { status: 200, body: { debates } }
   }
 
-  return { createDebate, sendDebateMessage, judgeDebate: judge, concedeDebate, listDebates }
+  /**
+   * POST /vsbot/prep — the opponent's pre-round prep: turn the cards and
+   * caselist outlines the page found into a case brief for both sides. Not a
+   * Go-ported route; see `case-prep.ts`. Always 200 with a brief once the
+   * required fields are present — the brief falls back to the cards alone
+   * when the model is missing or unhelpful.
+   */
+  async function prepareCase(
+    _actor: DebateActor,
+    body: PrepareCaseInput,
+  ): Promise<HandlerResult<{ brief: CaseBrief }>> {
+    const missing = (["botName", "topic", "stance"] as const).filter((field) => !body?.[field])
+    if (missing.length > 0) {
+      return { status: 400, body: { error: `Invalid request payload: missing ${missing.join(", ")}` } }
+    }
+    const brief = await prepareCaseBrief(model, body)
+    return { status: 200, body: { brief } }
+  }
+
+  return { createDebate, sendDebateMessage, judgeDebate: judge, concedeDebate, listDebates, prepareCase }
 }
 
 export type PracticeVsAiBackend = ReturnType<typeof createPracticeVsAiBackend>

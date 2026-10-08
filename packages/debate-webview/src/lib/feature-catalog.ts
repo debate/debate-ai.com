@@ -448,15 +448,6 @@ export const APP_FEATURES: FeatureEntry[] = [
 
   // ── Practice & coaching ────────────────────────────────────────────────
   {
-    id: "practice-round-simulator",
-    title: "Practice Round Simulator",
-    description: "Recreate a tournament round with a timer, judge paradigm, and AI opponent persona",
-    href: "/practice",
-    category: "practice",
-    doc: "practice-round-simulator.md",
-    tags: ["simulation", "format", "side"],
-  },
-  {
     id: "practice-partners",
     title: "Practice Partners",
     description: "Challenge other debaters to a virtual practice round, or volunteer to debate or judge in the styles you're comfortable with",
@@ -477,11 +468,11 @@ export const APP_FEATURES: FeatureEntry[] = [
   {
     id: "practice-vs-ai",
     title: "Practice vs AI",
-    description: "Debate a full timed round against an AI opponent, then get a judged scorecard",
+    description: "Choose a difficulty, topic and opponent; the AI preps cards, cases and an argument summary, then debates you in a timed round",
     href: "/practice/versus-ai",
     category: "practice",
     doc: "practice-vs-ai.md",
-    tags: ["speeches", "bot", "persona", "judge"],
+    tags: ["speeches", "bot", "persona", "judge", "simulation", "prep", "difficulty"],
   },
   {
     id: "ai-coach-mode",

@@ -39,7 +39,7 @@ describe("sidebarSectionForPath", () => {
   });
 
   it("resolves a dock destination to the tool section that lists it", () => {
-    // `/practice/versus-ai` is a dock button and Practice's "Debate Versus AI"; `/research/cards`
+    // `/practice/versus-ai` is a dock button and Practice's "Practice vs AI"; `/research/cards`
     // is the dock's Shared button and Research's "Card Search". With the Apps
     // node gone, the section holding the link wins outright.
     expect(sidebarSectionForPath("/practice/versus-ai")).toBe("practice");
@@ -53,7 +53,7 @@ describe("sidebarSectionForPath", () => {
   });
 
   it("matches nested paths under a link", () => {
-    expect(sidebarSectionForPath("/practice/setup")).toBe("practice");
+    expect(sidebarSectionForPath("/practice/partners/setup")).toBe("practice");
   });
 
   it("returns null for a route the tree does not cover", () => {

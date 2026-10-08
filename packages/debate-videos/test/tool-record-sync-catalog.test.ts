@@ -51,7 +51,8 @@ describe("synced tool collections", () => {
     const synced = new Set(TOOL_RECORD_COLLECTIONS.map((collection) => collection.href));
 
     for (const href of [
-      "/practice",
+      // The Practice Round Simulator's records: its page merged into Practice vs AI.
+      "/practice/versus-ai",
       "/practice/briefings",
       "/practice/opponents",
       "/practice/judges",
