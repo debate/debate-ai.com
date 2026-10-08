@@ -49,7 +49,7 @@
 1. ability to challenge legends - and speculators bet
 2. random pair webcam debate matching on mutual pref topics
 
-## Account sync of tools (In Progress)
+## Account sync of tools (Completed 2026-10-08 — see TODO.md "Completed")
 
 - [x] Speech-doc links (editor document <-> round/flow speech) sync via the `speechDocLinks` tool-record collection
 - [x] Pinned debates - synced via the `pinnedDebates` tool-record collection
@@ -74,7 +74,9 @@ _(moved to Completed — see "Account-synced user data across all tools")_
 
 ## In Progress
 
-### Saved-to-account indicator on flow tabs (slice of "integrate tools + user settings + SQL-linked flows/docs/debates")
+_Only the two test-environment follow-ups under "Tool UI pass: tool page header" remain open; everything else is under Completed._
+
+### Saved-to-account indicator on flow tabs (all items done 2026-10-08; kept here beside its open follow-ups) (slice of "integrate tools + user settings + SQL-linked flows/docs/debates")
 
 - **Branch**: `claude/gifted-babbage-4ax563`
 - **Status**: Settings, flows (`saved_flows`), rounds, documents, AI debates, ~60 tool stores and pinned debates already persist to D1 per user. Flow tabs now show whether each flow's current content has reached the account.
