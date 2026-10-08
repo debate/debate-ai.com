@@ -123,7 +123,7 @@ const DEFAULT_COLUMN_WIDTHS: Record<ColumnKey, number> = {
 }
 
 /** Widest the tree column gets on a phone, so the next column shows beside it. */
-const TREE_COLUMN_PHONE_MAX = "75vw"
+const TREE_COLUMN_PHONE_MAX = "85vw"
 
 const DATE_COLUMN: ColumnDef = { key: "date", label: "Date", sortValue: (v) => new Date(v[2]).getTime() || 0 }
 const VIEWS_COLUMN: ColumnDef = {
@@ -382,7 +382,7 @@ export function VideoListRows({
                   className={cn(
                     "relative px-3 py-2 select-none sm:w-[var(--col-width)] sm:min-w-[var(--col-width)]",
                     column.key === "tree"
-                      ? "w-[min(var(--col-width),75vw)]"
+                      ? "w-[min(var(--col-width),85vw)]"
                       : "w-[var(--col-width)] min-w-[var(--col-width)]",
                     column.headerClassName,
                   )}

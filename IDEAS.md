@@ -50,13 +50,13 @@
 2. random pair webcam debate matching on mutual pref topics
 3. human feedback on redos and badges and practicle drills against 
 
-## Account sync of tools (In Progress)
+## Account sync of tools (Completed 2026-10-07 — see TODO.md "Account-synced user data across all tools")
 
 - [x] Speech-doc links (editor document <-> round/flow speech) sync via the `speechDocLinks` tool-record collection
 - [x] Pinned debates - synced via the `pinnedDebates` tool-record collection (`{ roundId, pinnedAt }`; PR #1095)
-- [x] Flow tabs and `/debate` round cards show a saved-to-account marker; flows auto-save per the synced `flowAutoSave` setting
-- [x] Every synced tool shows `ToolSyncBadge` / "Save now" in its header (audit in `TODO.md`, "Account-synced user data across all tools")
-- [ ] Remaining follow-ups (test-environment only, tracked in `TODO.md` under "Tool UI pass: tool page header"): verify `ToolPageHeader.test.tsx` in CI (needs the `debate-rankings` submodule) and add a DOM-level click test for `ToolSyncBadge`
+- [x] Flow tabs and `/debate` round cards show a saved-to-account marker; flow auto-save mode syncs via `user_settings`
+- [x] Tool pages show the sync badge / Save now (`ToolPageHeader`, `ToolSyncBadge`)
+- [x] Tool UI pass finished; no open follow-ups (2026-10-08 tracker review)
 
 ---
 
