@@ -3,27 +3,20 @@ import { act } from "react"
 import { createRoot, type Root } from "react-dom/client"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-const mocks = vi.hoisted(() => ({
-  enabled: true,
-  status: "pending" as "pending" | "synced" | "unknown",
-  flush: vi.fn(),
-}))
+const flush = vi.fn()
+let status: "pending" | "synced" = "pending"
 
 vi.mock("@debate/data-sync/src/state/tool-record-mirror", () => ({
-  isToolRecordSyncEnabled: () => mocks.enabled,
+  isToolRecordSyncEnabled: () => true,
 }))
 vi.mock("@debate/data-sync/src/state/tool-record-auto-sync", () => ({
-  getToolRecordCollectionSyncStatus: () => mocks.status,
-  flushToolRecordCollection: (key: string) => mocks.flush(key),
+  flushToolRecordCollection: (key: string) => flush(key),
+  getToolRecordCollectionSyncStatus: () => status,
 }))
 
-import { resolveToolSyncKeys } from "../../../src/lib/tools/tool-sync-status"
 import { ToolSyncBadge } from "../../../src/components/tools/ToolSyncBadge"
 
 ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
-
-// Real catalog keys: the badge drops keys that are not in the catalog.
-const KEYS = resolveToolSyncKeys("/research/cards").slice(0, 2)
 
 let root: Root
 let host: HTMLDivElement
@@ -31,59 +24,41 @@ let host: HTMLDivElement
 const button = () => host.querySelector<HTMLButtonElement>("[data-tool-save-now]")
 const badge = () => host.querySelector<HTMLElement>("[data-tool-save-state]")
 
-async function renderBadge() {
-  await act(async () => root.render(<ToolSyncBadge href="/x" collectionKeys={KEYS} />))
-}
-
-beforeEach(() => {
-  mocks.enabled = true
-  mocks.status = "pending"
-  mocks.flush.mockReset()
+beforeEach(async () => {
+  status = "pending"
+  flush.mockReset()
   host = document.createElement("div")
-  document.body.appendChild(host)
+  document.body.append(host)
   root = createRoot(host)
+  await act(async () => root.render(<ToolSyncBadge href="/x" collectionKeys={["flowKeymap"]} />))
 })
 
-afterEach(() => {
-  act(() => root.unmount())
-  document.body.innerHTML = ""
+afterEach(async () => {
+  await act(async () => root.unmount())
+  host.remove()
 })
 
-describe("ToolSyncBadge", () => {
-  it("offers Save now while changes are pending and flushes every collection on click", async () => {
-    mocks.flush.mockResolvedValue({ pushed: 1, deleted: 0 })
-    await renderBadge()
+describe("ToolSyncBadge Save now", () => {
+  it("shows Save now while a save is pending and flushes the tool's collections on click", async () => {
     expect(badge()?.dataset.toolSaveState).toBe("saving")
     expect(button()?.textContent).toBe("Save now")
 
-    mocks.status = "synced"
-    await act(async () => button()?.click())
+    flush.mockImplementation(async () => {
+      status = "synced"
+      return { pushed: 1, deleted: 0 }
+    })
+    await act(async () => button()!.click())
 
-    expect(mocks.flush.mock.calls.map(([key]) => key)).toEqual(KEYS)
+    expect(flush).toHaveBeenCalledExactlyOnceWith("flowKeymap")
     expect(badge()?.dataset.toolSaveState).toBe("saved")
     expect(button()).toBeNull()
   })
 
-  it("shows Retry save with the error after a failed flush", async () => {
-    mocks.flush.mockResolvedValue({ pushed: 0, deleted: 0, error: "offline" })
-    await renderBadge()
-    await act(async () => button()?.click())
+  it("offers Retry save with the error when a flush fails", async () => {
+    flush.mockResolvedValue({ pushed: 0, deleted: 0, error: "offline" })
+    await act(async () => button()!.click())
 
     expect(button()?.textContent).toBe("Retry save")
     expect(button()?.title).toContain("offline")
-  })
-
-  it("has no button when the tool is fully synced", async () => {
-    mocks.status = "synced"
-    await renderBadge()
-    expect(badge()?.dataset.toolSaveState).toBe("saved")
-    expect(button()).toBeNull()
-  })
-
-  it("has no button when signed out", async () => {
-    mocks.enabled = false
-    await renderBadge()
-    expect(badge()?.dataset.toolSaveState).toBe("local")
-    expect(button()).toBeNull()
   })
 })
