@@ -48,6 +48,16 @@ import {
   searchCardsRanked,
 } from "@/lib/search/card-fts";
 
+/**
+ * The search `/research/cards` opens with (no term, no filter) is the same
+ * list for everyone on a plan, and it orders the whole `debate_cards` table
+ * by import time, which has no index to read it from. Each Worker isolate
+ * keeps that list for a few minutes instead of re-sorting the corpus on every
+ * page open. Usage is still counted per request, before the cache is read.
+ */
+const BROWSE_CACHE_TTL_MS = 5 * 60 * 1000;
+const browseCache = new Map<string, { at: number; results: unknown[] }>();
+
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const sortBy = searchParams.get("sort") || "_text_match:desc";
@@ -141,6 +151,12 @@ export async function GET(request: NextRequest) {
     }
 
     // Quotes: an explicit sort (most read, season…) wins; otherwise newest first.
+    const browseKey = where === undefined ? `${kind ?? ""}|${sortBy}|${limits.cardSearchResults}` : null;
+    const cached = browseKey ? browseCache.get(browseKey) : undefined;
+    if (cached && Date.now() - cached.at < BROWSE_CACHE_TTL_MS) {
+      return NextResponse.json({ results: cached.results, total: cached.results.length });
+    }
+
     const orderBy = explicitOrder.length > 0 || kind !== "quotes" ? explicitOrder : buildRecentCardOrderBy();
     const cards = await db
       .select()
@@ -149,6 +165,7 @@ export async function GET(request: NextRequest) {
       .orderBy(...orderBy)
       .limit(limits.cardSearchResults);
     const results = sortSearchResults(cards.map(mapDebateCardToSearchResult), sortBy);
+    if (browseKey) browseCache.set(browseKey, { at: Date.now(), results });
 
     return NextResponse.json({ results, total: results.length });
   } catch (error) {

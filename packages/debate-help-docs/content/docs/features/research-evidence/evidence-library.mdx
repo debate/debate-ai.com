@@ -42,6 +42,17 @@ and `useSearchState` reads them once on mount via `readCardsSearchParams()`
 `/practice/statistics` uses this to link every resolution to its cards.
 The URL isn't kept in sync as you edit the search afterwards.
 
+## The first search is ready on open
+
+Opening `/research/cards` with no pre-filled search shows the default list
+(newest cards, quotes) from your last visit straight away, kept in
+`localStorage` by `lib/default-search-cache.ts`, while the page fetches the
+current list and swaps it in without a spinner. That first request skips the
+300 ms typing debounce. On the server, `/api/search` keeps the no-term,
+no-filter list in each Worker isolate for five minutes, since it sorts the
+whole `debate_cards` table by `imported_at`, which has no index. Every
+request still counts toward the daily search limit.
+
 ## Data flow
 
 ```
@@ -52,6 +63,11 @@ panels/EvidenceLibraryPanel.tsx
 ```
 
 ## Known gaps
+
+`debate_cards.imported_at` has no index, so the uncached default list is a
+full-table sort; the isolate cache only hides it for most page opens. Adding
+the index needs a migration, and this repo's migrations folder was removed.
+
 
 Tag identity is still exact-string, though autocomplete matching is
 case-insensitive, typed tags are normalized to an existing casing, and the
