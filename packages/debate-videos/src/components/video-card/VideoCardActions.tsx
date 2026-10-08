@@ -26,6 +26,7 @@ import { topicDisplayLines } from "../../lib/debate-topics"
 import { HideConfirmDialog } from "./VideoCardDialogs"
 import { WatchPageLink } from "../watch/WatchPageLink"
 import { WatchProgressBadge } from "./WatchProgressBadge"
+import { VideoDuration } from "./VideoDuration"
 import { useWatchHistoryEntry } from "../../hooks/useWatchHistory"
 import type { VideoType } from "../../types/videos"
 
@@ -320,6 +321,9 @@ export function VideoCardActions({
             </Tooltip>
           )}
         </div>
+
+        {/* Length, under the buttons rather than crowding the row above */}
+        <VideoDuration videoId={videoId} className="mt-1" />
 
         {/* Optional description block */}
         {showDescription && description && (

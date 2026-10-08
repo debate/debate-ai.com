@@ -1,3 +1,4 @@
+import { readdirSync } from "node:fs";
 import path from "node:path";
 import { defineConfig } from "vitest/config";
 
@@ -15,6 +16,31 @@ import { defineConfig } from "vitest/config";
  * matter which directory Vitest is invoked from.
  */
 const repoRoot = path.resolve(import.meta.dirname, "../..");
+
+/**
+ * `packages/debate-editor/src/` is assembled at install time from the upstream
+ * CardMirror submodule plus this repo's patch and `overlay/` (see that
+ * package's `scripts/sync-upstream.mjs`). Only the overlay is code this repo
+ * owns outright, so only the overlay's files are measured there — the ~50k
+ * lines of vendored upstream would otherwise swamp the number, and since
+ * `src/` is git-ignored Codecov could not map them to a tracked file anyway
+ * (it suffix-matched `editor/index.ts` onto `debate-icons/editor/`).
+ * `codecov.yml`'s `fixes` maps the measured `src/` paths back to `overlay/`.
+ */
+const editorOverlay = path.join(repoRoot, "packages/debate-editor/overlay");
+const editorOverlaySources = readdirSync(editorOverlay, { recursive: true, encoding: "utf8" })
+  .filter((file) => /\.tsx?$/.test(file) && !file.endsWith(".d.ts"))
+  .map((file) => `packages/debate-editor/src/${file.split(path.sep).join("/")}`);
+
+/**
+ * Every package's `src/`, except the two that hold vendored upstream code: the
+ * editor (measured through its overlay, above) and the CardMirror submodule it
+ * is assembled from, which no suite here tests.
+ */
+const VENDORED_PACKAGES = new Set(["debate-editor", "debate-editor-cm"]);
+const measuredPackageSources = readdirSync(path.join(repoRoot, "packages"), { withFileTypes: true })
+  .filter((entry) => entry.isDirectory() && !VENDORED_PACKAGES.has(entry.name))
+  .map((entry) => `packages/${entry.name}/src/**/*.{ts,tsx}`);
 
 export default defineConfig({
   root: repoRoot,
@@ -66,7 +92,9 @@ export default defineConfig({
       reportsDirectory: path.join(repoRoot, "coverage"),
       reporter: ["text", "lcov", "html"],
       include: [
-        "packages/*/src/**/*.{ts,tsx}",
+        ...measuredPackageSources,
+        // Only the overlay half of the assembled editor (see above).
+        ...editorOverlaySources,
         // The web app's routes, server libraries and Worker entry.
         "apps/debate-ai.com/{app,lib,worker}/**/*.{ts,tsx}",
         // The browser extension's source, entrypoints and UI.

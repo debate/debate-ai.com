@@ -1590,6 +1590,112 @@ index d5bc357..bd70fab 100644
          }, 200);
        }
        // Selection-only changes refresh just this pane's word-count
+diff --git a/src/editor/nav-panel.ts b/src/editor/nav-panel.ts
+index 9d885e8..3801bdd 100644
+--- a/src/editor/nav-panel.ts
++++ b/src/editor/nav-panel.ts
+@@ -81,6 +81,11 @@ import { isMobileShellActive } from './mobile-plugin.js';
+ import { createNumberGlyph, numberingDisplaySig } from './numbering-plugin.js';
+ import { computeNumbering } from './numbering.js';
+ import { isRightClickContextMenu } from './context-menu-gate.js';
++import {
++  copyNavSection,
++  isSectionCopyEntry,
++  NAV_SECTION_COPY_LABELS,
++} from './nav-section-copy.js';
+ 
+ /** Minimum nav-pane width — must fit the 4 level buttons + the
+  *  close (×) button + row padding; anything narrower clips the ×. */
+@@ -934,14 +939,41 @@ export class NavigationPanel {
+       // zero width — yielding a squashed row. Normalize to truly empty
+       // so the CSS fallback applies.
+       label.textContent = entry.text.trim() === '' ? '' : entry.text;
+-      li.appendChild(label);
+-
+-      if (entry.cite && settings.get('showCitePreview')) {
+-        const citePreview = document.createElement('span');
+-        citePreview.className = 'pmd-nav-cite-preview';
+-        citePreview.textContent = entry.cite;
+-        citePreview.title = entry.cite;
+-        li.appendChild(citePreview);
++      if (entry.type === 'tag') {
++        // Tag rows wrap to a compact two-line clamp with the card's cite
++        // (author + year) in bold on the line after, always visible.
++        li.classList.add('pmd-nav-item-tag-wrap');
++        const body = document.createElement('span');
++        body.className = 'pmd-nav-tag-body';
++        body.title = entry.cite ? `${entry.text}\n${entry.cite}` : entry.text;
++        body.appendChild(label);
++        if (entry.cite && settings.get('showCitePreview')) {
++          const cite = document.createElement('span');
++          cite.className = 'pmd-nav-cite';
++          cite.textContent = entry.cite;
++          body.appendChild(cite);
++        }
++        li.appendChild(body);
++      } else {
++        li.appendChild(label);
++      }
++
++      if (isSectionCopyEntry(entry)) {
++        // Copy button → dropdown with the section-copy options (the same
++        // two entries the row's right-click menu carries).
++        const copyBtn = document.createElement('button');
++        copyBtn.type = 'button';
++        copyBtn.className = 'pmd-nav-copy-btn';
++        copyBtn.title = 'Copy tags from this heading';
++        copyBtn.setAttribute('aria-label', 'Copy tags from this heading');
++        setIcon(copyBtn, 'copy');
++        copyBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
++        copyBtn.addEventListener('click', (e) => {
++          e.stopPropagation();
++          const r = copyBtn.getBoundingClientRect();
++          this.openContextMenu(r.left, r.bottom + 2, entry, true);
++        });
++        li.appendChild(copyBtn);
+       }
+ 
+       if (entry.windowed) {
+@@ -2126,17 +2158,29 @@ export class NavigationPanel {
+ 
+   // ---------------------------------------------- Context menu ----
+ 
+-  private openContextMenu(x: number, y: number, entry: HeadingEntry): void {
++  private openContextMenu(x: number, y: number, entry: HeadingEntry, copyOnly = false): void {
+     closeAnyOpenContextMenu();
+ 
+     const menu = document.createElement('div');
+     menu.className = 'pmd-nav-context-menu';
+ 
++    // Section copy (tags / tags + cites + highlighting) — the row's copy
++    // button opens just these; right-click lists them with the rest.
++    const sectionCopyItems: ContextMenuItem[] = isSectionCopyEntry(entry)
++      ? (['tags', 'full'] as const).map((mode): ContextMenuItem => ({
++          kind: 'item',
++          label: NAV_SECTION_COPY_LABELS[mode],
++          action: () => {
++            if (this.view) void copyNavSection(this.view.state.doc, entry, mode);
++          },
++        }))
++      : [];
++
+     // Right-click on a row that's part of the multi-selection → the
+     // menu acts on ALL selected rows; on any other row → just that one.
+     const n = this.contextTargets(entry).length;
+     const what = n > 1 ? `${n} headings` : 'heading';
+-    const items: ContextMenuItem[] = [
++    const items: ContextMenuItem[] = copyOnly ? sectionCopyItems : [
+       {
+         kind: 'item',
+         label: `Select ${what} and contents`,
+@@ -2152,6 +2196,7 @@ export class NavigationPanel {
+         label: `Copy ${what} and contents`,
+         action: () => { void this.copyHeadingAndContents(entry); },
+       },
++      ...sectionCopyItems,
+       {
+         kind: 'item',
+         label: `Delete ${what} and contents`,
 diff --git a/src/editor/pairing/pairing-wiring.ts b/src/editor/pairing/pairing-wiring.ts
 index 56c7e8b..db6b9cd 100644
 --- a/src/editor/pairing/pairing-wiring.ts
@@ -3306,7 +3412,7 @@ index 99dbfe2..89800bc 100644
    actions.appendChild(run);
    section.appendChild(actions);
 diff --git a/src/editor/settings.ts b/src/editor/settings.ts
-index d729443..eeea486 100644
+index d729443..7a2a61b 100644
 --- a/src/editor/settings.ts
 +++ b/src/editor/settings.ts
 @@ -68,8 +68,14 @@ const TRANSIENT_SETTING_KEYS = new Set<string>([
@@ -3507,7 +3613,7 @@ index d729443..eeea486 100644
      aliases: ['ui font', 'app font'],
    },
    {
-@@ -3366,6 +3411,16 @@ export const SETTING_METADATA: SettingMeta[] = [
+@@ -3366,11 +3411,21 @@ export const SETTING_METADATA: SettingMeta[] = [
      category: 'appearance',
      section: 'Nav pane & indicators',
    },
@@ -3523,7 +3629,14 @@ index d729443..eeea486 100644
 +  },
    {
      key: 'showCitePreview',
-     label: 'Cite preview on hover',
+-    label: 'Cite preview on hover',
++    label: 'Show cites in nav pane',
+     description:
+-      'Show the cite-formatted text from a card on the right side of its nav-pane entry when you hover.',
++      'Show the cite-formatted text (author and year) in bold under each tag in the nav pane.',
+     kind: 'toggle',
+     category: 'appearance',
+     section: 'Nav pane & indicators',
 @@ -3992,6 +4047,7 @@ export const SETTING_METADATA: SettingMeta[] = [
      description: 'Display name attached to comments you create. Stored locally.',
      kind: 'text',
@@ -3947,7 +4060,7 @@ index cbf4cb0..8f733a0 100644
      copyBtn.type = 'button';
      copyBtn.className = 'pmd-settings-btn';
 diff --git a/src/editor/style.css b/src/editor/style.css
-index 19ab630..9f162be 100644
+index 19ab630..7b663a3 100644
 --- a/src/editor/style.css
 +++ b/src/editor/style.css
 @@ -527,15 +527,68 @@
@@ -4477,7 +4590,96 @@ index 19ab630..9f162be 100644
  .pmd-underline,
  .pmd-emphasis {
    font-variant-ligatures: none;
-@@ -5881,10 +6072,6 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+@@ -5437,34 +5628,68 @@ body.pmd-nav-resize-active {
+   text-overflow: ellipsis;
+ }
+ 
+-/* Hover-only cite preview: overlays the right portion of the row,
+-   fades in when the row is hovered. The white backdrop hides the
+-   tag-text underneath cleanly when the cite is wider than expected. */
+-.pmd-nav-cite-preview {
+-  position: absolute;
+-  right: 0.75rem;
+-  top: 50%;
+-  transform: translateY(-50%);
+-  max-width: 65%;
+-  padding: 0 0.5rem 0 1.75rem;
++/* Tag rows: the tag wraps to a compact two-line clamp (small type, tight
++   leading and padding) with the card's cite — author + year — in bold on
++   the line after it, so the author is always visible without hovering. */
++.pmd-nav-item.pmd-nav-item-tag-wrap {
++  align-items: flex-start;
++  padding-top: 0.1rem;
++  padding-bottom: 0.1rem;
++}
++.pmd-nav-tag-body {
++  flex: 1 1 auto;
++  min-width: 0;
++  display: flex;
++  flex-direction: column;
++  line-height: 1.2;
++}
++.pmd-nav-tag-body .pmd-nav-label {
++  font-size: 0.75rem;
++  white-space: normal;
++  overflow-wrap: anywhere;
++  display: -webkit-box;
++  -webkit-box-orient: vertical;
++  -webkit-line-clamp: 2;
++  line-clamp: 2;
++}
++.pmd-nav-cite {
++  font-size: 0.7rem;
++  font-weight: 700;
++  color: var(--pmd-c-text-secondary);
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+-  font-size: 0.75rem;
+-  font-weight: 600;
+-  color: var(--pmd-c-text-secondary);
+-  /* Wider, fully-opaque fade. The preview's body sits past the fade
+-     zone (padding-left: 1.75rem), so the cite text reads on solid
+-     background and never overlaps the tag text underneath. */
+-  background: linear-gradient(to right, transparent 0, var(--pmd-c-surface) 1.5rem);
++}
++
++/* Copy button on pocket / hat / block rows — opens the section-copy
++   dropdown (tags, or tags + cites + highlighted text). Shown on hover. */
++.pmd-nav-copy-btn {
++  flex: 0 0 auto;
++  align-self: center;
++  margin-left: auto;
++  padding: 0 0.2rem;
++  border: 0;
++  border-radius: 3px;
++  background: transparent;
++  color: var(--pmd-c-text-faint);
++  font-size: 0.8rem;
++  line-height: 1;
++  cursor: pointer;
+   opacity: 0;
+   transition: opacity 0.15s ease;
+-  pointer-events: none;
+ }
+-
+-.pmd-nav-item:hover .pmd-nav-cite-preview {
++.pmd-nav-item:hover .pmd-nav-copy-btn,
++.pmd-nav-item-selected .pmd-nav-copy-btn,
++.pmd-nav-copy-btn:focus-visible {
+   opacity: 1;
+ }
++.pmd-nav-copy-btn:hover {
++  color: var(--pmd-c-text);
++  background: var(--pmd-c-card-hover);
++}
++@media (hover: none) {
++  .pmd-nav-copy-btn { opacity: 0.6; }
++}
+ 
+ /* Empty headings still occupy a normal line's worth of height. */
+ .pmd-nav-label:empty::before {
+@@ -5881,10 +6106,6 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
    border-radius: 8px;
    box-shadow: 0 8px 32px var(--pmd-c-shadow-deep);
    width: 90%;
@@ -4488,7 +4690,7 @@ index 19ab630..9f162be 100644
    max-width: 720px;
    max-height: 80vh;
    display: flex;
-@@ -5892,18 +6079,37 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+@@ -5892,18 +6113,37 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
    font-family: var(--pmd-ui-font);
  }
  
@@ -4528,7 +4730,7 @@ index 19ab630..9f162be 100644
    font-weight: 600;
  }
  
-@@ -5921,105 +6127,97 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+@@ -5921,105 +6161,97 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
    color: var(--pmd-c-text-strong);
  }
  
@@ -4692,7 +4894,7 @@ index 19ab630..9f162be 100644
  /* Section headers inside a settings tab (SettingMeta.section).
   * Sized to match .pmd-install-info-heading ("About this install").
   * All settings dividers — between rows and between sections — use the
-@@ -6038,7 +6236,10 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+@@ -6038,7 +6270,10 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
    text-transform: uppercase;
    color: var(--pmd-c-text-muted);
  }
@@ -4704,10 +4906,15 @@ index 19ab630..9f162be 100644
    margin-top: 0.3rem;
    padding-top: 0;
    border-top: none;
-@@ -6952,6 +7153,107 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
-   background: var(--pmd-c-hover);
+@@ -6948,10 +7183,111 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+   cursor: pointer;
  }
  
+-.pmd-readers-add:hover {
++.pmd-readers-add:hover {
++  background: var(--pmd-c-hover);
++}
++
 +.pmd-settings-dictionary {
 +  margin-top: 1rem;
 +}
@@ -4801,9 +5008,9 @@ index 19ab630..9f162be 100644
 +}
 +
 +.pmd-dictionary-delete:hover {
-+  background: var(--pmd-c-hover);
-+}
-+
+   background: var(--pmd-c-hover);
+ }
+ 
 +.pmd-dictionary-empty {
 +  font-size: 0.85rem;
 +  opacity: 0.7;
@@ -4812,7 +5019,7 @@ index 19ab630..9f162be 100644
  /* Word Count modal */
  .pmd-wc-scope {
    margin: 0 0 0.75rem 0;
-@@ -10430,6 +10732,7 @@ body.pmd-recovery-active.pmd-multi-doc #app {
+@@ -10430,6 +10766,7 @@ body.pmd-recovery-active.pmd-multi-doc #app {
     Diverge by pulling a selector out, not by re-copying. */
  .pmd-qcs-badge-settings,
  .pmd-qcs-badge-file,
@@ -4820,7 +5027,7 @@ index 19ab630..9f162be 100644
  .pmd-learn-session-remembered:hover,
  .pmd-learn-session-context:hover,
  .pmd-learn-manage-link:hover,
-@@ -10870,6 +11173,8 @@ body.pmd-recovery-active.pmd-multi-doc #app {
+@@ -10870,6 +11207,8 @@ body.pmd-recovery-active.pmd-multi-doc #app {
    display: flex;
    align-items: center;
    justify-content: space-between;
@@ -4829,7 +5036,7 @@ index 19ab630..9f162be 100644
    padding: 1rem 1.25rem;
    border-bottom: 1px solid var(--pmd-c-divider);
    flex: 0 0 auto;
-@@ -10881,7 +11186,26 @@ body.pmd-recovery-active.pmd-multi-doc #app {
+@@ -10881,7 +11220,26 @@ body.pmd-recovery-active.pmd-multi-doc #app {
    font-weight: 600;
  }
  
@@ -4856,7 +5063,7 @@ index 19ab630..9f162be 100644
  
  .pmd-reference-close:hover {
    color: var(--pmd-c-text);
-@@ -10956,6 +11280,68 @@ body.pmd-recovery-active.pmd-multi-doc #app {
+@@ -10956,6 +11314,68 @@ body.pmd-recovery-active.pmd-multi-doc #app {
    color: var(--pmd-c-text);
  }
  
@@ -4925,7 +5132,7 @@ index 19ab630..9f162be 100644
  /* ---------------------------------------------- Tables */
  
  /* columnResizing()'s TableView nodeView replaces our schema toDOM at
-@@ -12393,6 +12779,10 @@ textarea.pmd-text-prompt-input {
+@@ -12393,6 +12813,10 @@ textarea.pmd-text-prompt-input {
    font-size: 0.8rem;
    color: var(--pmd-c-text-muted);
  }
@@ -4936,7 +5143,7 @@ index 19ab630..9f162be 100644
  .pmd-learn-manage-new {
    margin-left: auto;
    background: transparent;
-@@ -12582,6 +12972,257 @@ textarea.pmd-text-prompt-input {
+@@ -12582,6 +13006,257 @@ textarea.pmd-text-prompt-input {
    border-color: var(--pmd-c-error);
  }
  
@@ -5194,7 +5401,7 @@ index 19ab630..9f162be 100644
  /* ---- Multi-pane: typography parity ----
   *
   * The single-doc editor scopes typography-flag rules to `#editor.X`.
-@@ -13215,9 +13856,10 @@ body.pmd-timer-popout-page .pmd-timer-display {
+@@ -13215,9 +13890,10 @@ body.pmd-timer-popout-page .pmd-timer-display {
   * skip animation events entirely. Properties listed cover all the
   * motion the editor ships: CSS `transition` / `animation`, plus
   * `scroll-behavior` (so smooth scroll snaps instead of animating). */
@@ -5208,7 +5415,7 @@ index 19ab630..9f162be 100644
    animation-duration: 0.01ms !important;
    animation-iteration-count: 1 !important;
    transition-duration: 0.01ms !important;
-@@ -13225,9 +13867,10 @@ body.pmd-timer-popout-page .pmd-timer-display {
+@@ -13225,9 +13901,10 @@ body.pmd-timer-popout-page .pmd-timer-display {
  }
  
  @media (prefers-reduced-motion: reduce) {
@@ -5222,7 +5429,7 @@ index 19ab630..9f162be 100644
      animation-duration: 0.01ms !important;
      animation-iteration-count: 1 !important;
      transition-duration: 0.01ms !important;
-@@ -15275,6 +15918,17 @@ body.pmd-multi-doc .pmd-cardcutter-trim {
+@@ -15275,6 +15952,17 @@ body.pmd-multi-doc .pmd-cardcutter-trim {
    user-select: none;
  }
  
@@ -5240,7 +5447,7 @@ index 19ab630..9f162be 100644
  /* Small corner chip shown while the benchmark drives the (visible) editor. */
  .pmd-bench-chip {
    position: fixed;
-@@ -16301,3 +16955,72 @@ body.pmd-multi-doc #collab-chip {
+@@ -16301,3 +16989,72 @@ body.pmd-multi-doc #collab-chip {
    pointer-events: none;
    z-index: 4;
  }

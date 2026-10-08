@@ -190,7 +190,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "practiceRounds",
     idField: "roundId",
     label: "Practice Round Simulator",
-    href: "/practice",
+    href: "/practice/versus-ai",
     section: "Practice",
   },
   {
@@ -430,7 +430,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "ownRoundHistory",
     idField: "id",
     label: "Your Round History",
-    href: "/practice",
+    href: "/practice/versus-ai",
     section: "Practice",
   },
   // — Research —

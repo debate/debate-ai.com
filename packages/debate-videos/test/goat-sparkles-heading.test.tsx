@@ -17,6 +17,13 @@ describe("GoatSparklesHeading", () => {
     expect(html).toMatch(/<h1[^>]*>All Time Greatest Legends<\/h1>/);
   });
 
+  it("draws the title in animated dots that stop for reduced motion", () => {
+    const html = renderToStaticMarkup(<GoatSparklesHeading />);
+    expect(html).toMatch(/<h1[^>]*class="[^"]*goat-dots-title[^"]*text-transparent/);
+    expect(html).toContain("@keyframes goat-dots-in");
+    expect(html).toMatch(/prefers-reduced-motion: reduce\)\s*\{\s*\.goat-dots-title \{ animation: none; \}/);
+  });
+
   it("shows the trophy-goat icon in the header", () => {
     const html = renderToStaticMarkup(<GoatSparklesHeading />);
     expect(html).toMatch(/<img[^>]*alt="Greatest of All-Time trophy"[^>]*src="data:image\/svg/);

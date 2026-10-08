@@ -23,6 +23,7 @@ import { cn } from "../ui/lib/utils"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/primitives/tooltip"
 import { SpeechRecordingMenu } from "@debate/timer/src/recorder/SpeechRecordingPlayer"
 import { useAiOutcomeResponsesAction } from "../dialogs/AiOutcomeResponsesDialog"
+import { useClarityRequestAction } from "../hooks/useClarityRequests"
 
 export interface SpeechControlsTopBarProps {
   /** The speech these controls apply to, e.g. "1AR". */
@@ -100,6 +101,7 @@ export function SpeechControlsTopBar({
   leadingActions,
 }: SpeechControlsTopBarProps) {
   const outcomeResponses = useAiOutcomeResponsesAction(speechName)
+  const clarityRequest = useClarityRequestAction(speechName)
   return (
     <div className="flex items-center justify-end gap-1 w-full h-9 px-2 border-b border-border bg-[var(--background)] shrink-0">
       {leadingActions}
@@ -119,7 +121,7 @@ export function SpeechControlsTopBar({
 
       {showRecordingMenu && (
         <SpeechRecordingMenu
-          actions={[outcomeResponses.action]}
+          actions={clarityRequest ? [clarityRequest, outcomeResponses.action] : [outcomeResponses.action]}
           speechName={speechName}
           speechLabel={speechName}
           micDeviceId={micDeviceId}

@@ -83,7 +83,6 @@ export const PAGE_ROUTES: AppRoute[] = [
   { pattern: "/outline", load: () => import("./outline/page") },
   { pattern: "/practice/partners", load: () => import("./practice-partners/page") },
   { pattern: "/practice/predictions", load: () => import("./predictions/page") },
-  { pattern: "/practice", load: () => import("./practice-round/page") },
   { pattern: "/practice/prep-notes", load: () => import("./prep-notes/page") },
   { pattern: "/practice/rankings", load: () => import("./videos/page") },
   { pattern: "/coaching/rankings", load: () => import("./rank/page") },
@@ -118,6 +117,8 @@ export const CLIENT_ROUTES: AppRoute[] = [
   { pattern: "/", load: () => import("./_client/HomeRoute") },
   { pattern: "/admin", load: () => import("./_client/AdminRoute") },
   { pattern: "/practice/versus-ai", load: () => import("./_client/VersusAiRoute") },
+  // The Practice Round Simulator's old address: merged into Practice vs AI.
+  { pattern: "/practice", load: () => import("./_client/VersusAiRoute") },
   { pattern: "/videos/watch/[slug]", load: () => import("./_client/VideoWatchRoute") },
   { pattern: "/videos/[category]/[event]/[matchup]", load: () => import("./_client/VideoWatchRoute") },
   { pattern: "/videos/[category]/[event]/[matchup]/[teams]", load: () => import("./_client/VideoWatchRoute") },

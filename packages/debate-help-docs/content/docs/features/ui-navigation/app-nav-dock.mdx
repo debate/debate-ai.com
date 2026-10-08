@@ -268,6 +268,12 @@ blur or jelly), and none if your system asks for reduced motion.
 listener while collapsed restyles the same `<aside>` as a fixed overlay, so
 the content panel never resizes.)
 
+**Pages with their own sidebar.** The flow workspace (`/debate`) and the
+research docs (`/research/docs`) draw a sidebar of their own, so there the app
+sidebar starts hidden and theirs is the only one on screen. It still peeks
+from the left edge, and pinning it keeps it open until you leave the page; it
+doesn't change whether the sidebar is hidden anywhere else.
+
 While the sidebar is hidden the dock it carried floats at the top-left
 instead (`CategoryDock` lifts its suppression while `useSidebarCollapsed()`
 is true), so the five destinations stay one click away.
