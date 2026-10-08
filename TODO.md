@@ -265,7 +265,7 @@ roughly 500 editing commands into ~30 thematic groups. Highlights (full 50+ feat
 - [x] Route + schema wiring in `apps/debate-ai.com`
 - [x] Vitest `packages/debate-flow/test/flow-editor-settings-sync.test.ts`; documented in `features/user-settings.mdx`
 - [x] Route-level test for `flowEditorSettings` GET/PUT: `apps/debate-ai.com/lib/database/__tests__/settings-flow-editor-route.test.ts` (real SQLite via `freshSchemaClient`, mocked auth; covers 401, save, merge, validation, bad JSON, per-user isolation; branch `claude/gifted-babbage-uhzbcl`). Needs the `debate-rankings` and `debate-editor-cm` submodules plus `node packages/debate-editor/scripts/sync-upstream.mjs`
-- [ ] Follow-up: tool UI pass - sync status and pin/save controls in each tool's header (still In Progress in IDEAS.md)
+- [x] Follow-up: tool UI pass - sync status and pin/save controls in each tool's header (done; see "Account-synced user data across all tools", audited 2026-10-07)
 - [x] Deploy column: `flow_editor_settings` is added the same way by `ensureTableColumns` on `/api/settings`, so no migration is needed
 
 
