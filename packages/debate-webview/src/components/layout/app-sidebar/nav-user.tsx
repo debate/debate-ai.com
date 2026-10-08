@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { Bell, Check, CheckCheck, ChevronsUpDown, Globe, X, LogIn, LogOut, Monitor, Moon, Palette, Settings, Sun, Users } from "lucide-react"
+import { Bell, Check, CheckCheck, ChevronsUpDown, Globe, X, LogIn, LogOut, Monitor, Moon, Palette, Settings, Sun } from "lucide-react"
 
 import { Avatar, AvatarFallback, AvatarImage } from "../../../lib/ui/primitives/avatar"
 import {
@@ -260,7 +260,7 @@ function UserAvatar({ image, name }: { image?: string | null; name: string }) {
  * The sidebar's account row, on the real session. Signed in, it shows the
  * name and avatar only (never the email address, which is on screen whenever
  * the sidebar is) and opens the account menu: settings, notifications,
- * contacts, organizations, theme, site links and sign out (the same handler
+ * organizations, theme, site links and sign out (the same handler
  * the dock's Settings menu uses). Signed out, the row itself is the sign-in
  * button and opens the sign-in dialog in place, so the current page survives,
  * with the site links in a small menu beside it.
@@ -362,12 +362,6 @@ export function NavUser() {
             </Link>
           </DropdownMenuItem>
           <NotificationsSubmenu feed={notifications} />
-          <DropdownMenuItem asChild className={ITEM}>
-            <Link href="/contacts">
-              <Users />
-              Contacts
-            </Link>
-          </DropdownMenuItem>
           <OrganizationSubmenu
             itemClassName={ITEM}
             activeOrganizationId={activeOrganizationId}
