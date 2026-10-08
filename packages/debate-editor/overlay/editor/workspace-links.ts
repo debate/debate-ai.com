@@ -49,14 +49,10 @@ export const WORKSPACE_LINKS: WorkspaceLink[] = [
   { href: '/research/cards/collaboration', label: 'Team Collaboration Mode', description: 'Live prep notes on a shared topic sprint', category: 'Community & Progress' },
 
   // ── Prep & Practice ─────────────────────────────────────────────────────
-  { href: '/practice/prep-notes', label: 'Prep Notes', description: 'Live prep notes across every flow', category: 'Prep & Practice' },
+  { href: '/practice/prep', label: 'Prep Workspace', description: 'Briefings, scout-to-strategy, opponent and judge profiles, and prep notes on one page', category: 'Prep & Practice' },
   { href: '/contacts', label: 'Contacts', description: "Requests, blocking, who's online, and live cards shared with you", category: 'Prep & Practice' },
   { href: '/notifications', label: 'Notifications', description: 'Assignee notifications for handed-off prep notes', category: 'Prep & Practice' },
-  { href: '/practice/judges', label: 'Judge Profiles', description: 'Side-vote bias and speaker-point tendencies', category: 'Prep & Practice' },
-  { href: '/practice/opponents', label: 'Opponent Team Profiles', description: 'Side-record tendencies and common arguments per opponent', category: 'Prep & Practice' },
   { href: '/practice/drills', label: 'Practice Drills', description: "Overview, frontline, cross-ex, and collapse prompts from a round's flow", category: 'Prep & Practice' },
-  { href: '/practice/briefings', label: 'Pre-Round Briefings', description: 'Opponent scouting, judge tendencies, and prep notes combined', category: 'Prep & Practice' },
-  { href: '/practice/strategy', label: 'Scout-to-Strategy', description: 'Case-choice ranking and matchup risk from scouted opponent and judge data', category: 'Prep & Practice' },
   { href: '/coaching/ai-coach', label: 'AI Coach Mode', description: 'Extension, refutation, collapse, and weighing prompts', category: 'Prep & Practice' },
   { href: '/practice/judge-decision', label: 'AI Judge Decision', description: 'An AI round decision under a saved paradigm and flow', category: 'Prep & Practice' },
   { href: '/summaries', label: 'Speech Transcript Summaries', description: 'Per-argument summaries with cross-exam questions', category: 'Prep & Practice' },

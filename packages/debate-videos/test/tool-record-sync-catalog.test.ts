@@ -53,13 +53,11 @@ describe("synced tool collections", () => {
     for (const href of [
       // The Practice Round Simulator's records: its page merged into Practice vs AI.
       "/practice/versus-ai",
-      "/practice/briefings",
-      "/practice/opponents",
-      "/practice/judges",
+      // Briefings, opponent and judge profiles and prep notes: one Prep Workspace page.
+      "/practice/prep",
       "/practice/judge-decision",
       "/summaries",
       "/outline",
-      "/practice/prep-notes",
       "/annotations",
     ]) {
       expect(synced, href).toContain(href);

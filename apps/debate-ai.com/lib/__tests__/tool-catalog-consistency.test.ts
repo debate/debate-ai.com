@@ -132,7 +132,10 @@ const STATIC_APP_ROUTES = findAppPageRoutes(APP_DIR, "").filter((route) => !rout
  * own: the Topics Explorer's research-area explorer is now the first section
  * of `/practice/statistics`, so `/research/topics` only redirects there.
  * `/practice` is the same: the Practice Round Simulator was merged into
- * Practice vs AI, so it only redirects to `/practice/versus-ai`.
+ * Practice vs AI, so it only redirects to `/practice/versus-ai`. So are
+ * `/practice/briefings`, `/practice/strategy`, `/practice/opponents`,
+ * `/practice/judges` and `/practice/prep-notes`: those five were merged into
+ * the Prep Workspace, and each redirects to its tab of `/practice/prep`.
  *
  * `/lectures`, `/practice/glossary`, `/practice/rankings` and
  * `/practice/statistics` are views of the video library page (the same page
@@ -160,6 +163,11 @@ const ROUTES_WITHOUT_A_CATALOG_ENTRY = new Set([
   "/settings/research",
   "/research/topics",
   "/practice",
+  "/practice/briefings",
+  "/practice/strategy",
+  "/practice/opponents",
+  "/practice/judges",
+  "/practice/prep-notes",
   "/lectures",
   "/practice/glossary",
   "/practice/rankings",

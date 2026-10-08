@@ -1,14 +1,6 @@
-import { Suspense } from "react"
-import { StrategyPanel } from "@debate/round"
-import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
+import { PrepWorkspacePage } from "../prep/page"
 
+/** Old `/practice/strategy` address: now the Prep Workspace's "strategy" tab. */
 export default function StrategyPage() {
-  return (
-    <ToolPage>
-      <ToolPageHeader href="/practice/strategy" backHref="/debate" backLabel="round workspace" guide="training-tools" />
-      <Suspense>
-        <StrategyPanel />
-      </Suspense>
-    </ToolPage>
-  )
+  return <PrepWorkspacePage initialSection="strategy" />
 }

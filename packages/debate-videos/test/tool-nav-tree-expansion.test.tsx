@@ -50,7 +50,7 @@ const { ALL_SIDEBAR_SECTION_IDS, toggleExpandedSection, withSectionExpanded } = 
 const SAMPLE_HREF_BY_SECTION: Record<string, string> = {
   coaching: "/coaching/programs",
   research: "/research/cards/coverage",
-  "prep-scout": "/practice/opponents",
+  "prep-scout": "/practice/forums",
   practice: "/practice/judge-decision",
   insights: "/practice/glossary",
 };
@@ -72,7 +72,10 @@ describe("ToolNavTree expansion", () => {
   it("starts fully collapsed when defaultExpanded is false", () => {
     const html = renderToStaticMarkup(<ToolNavTree defaultExpanded={false} />);
 
-    for (const href of Object.values(SAMPLE_HREF_BY_SECTION)) {
+    for (const section of SIDEBAR_TOOL_SECTIONS) {
+      const href = SAMPLE_HREF_BY_SECTION[section.id];
+      // Prepare holds one link, so its heading carries the same href.
+      if (href === section.href) continue;
       expect(html).not.toContain(`href="${href}"`);
     }
     // The headings themselves are still there to expand.

@@ -1,10 +1,10 @@
 import {
-  Trophy, Inbox, Award, Library, NotebookPen, History, Gavel, Users, Dumbbell,
+  Trophy, Inbox, Award, Library, History, Dumbbell,
   ClipboardList, GraduationCap, FileText, MessageSquareText, Type,
   ListTree, Bot, Lightbulb, BarChart3, Users2, School,
   ThumbsUp, Medal, Target, BookOpen, PieChart, Presentation,
   ListChecks, Flame, CheckSquare, Landmark, MapPin, Sparkles, Bell, Contact,
-  Rss, Gauge, Crosshair, Crown, Send, Smartphone, Star, Handshake, Coins, CalendarDays,
+  Rss, Gauge, Crown, Send, Smartphone, Star, Handshake, Coins, CalendarDays,
   type LucideIcon,
 } from "lucide-react"
 
@@ -171,9 +171,13 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
     heading: "Prep & Practice",
     tools: [
       {
-        href: "/practice/prep-notes", label: "Prep Notes", icon: NotebookPen,
-        description: "Keep live prep notes across every flow, grouped by status.",
-        highlights: ["Needs-follow-up notes surfaced first, then open, then covered", "Assign a note to a teammate — they get a real Notifications entry"],
+        href: "/practice/prep", label: "Prep Workspace", icon: ClipboardList,
+        description: "Get ready for a round on one page: briefings, scout-to-strategy, opponent and judge profiles, and prep notes.",
+        highlights: [
+          "One tab each for Pre-Round Briefings, Scout-to-Strategy, Opponent Team Profiles, Judge Profiles and Prep Notes",
+          "Briefings and the case-choice ranking read straight from the saved opponent and judge profiles",
+          "Assign a prep note to a teammate and they get a real Notifications entry",
+        ],
       },
       {
         href: "/contacts", label: "Contacts", icon: Contact,
@@ -186,29 +190,9 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         highlights: ["Fires automatically the moment a Prep Note is assigned to you", "Mark individual notifications read, newest first"],
       },
       {
-        href: "/practice/judges", label: "Judge Profiles", icon: Gavel,
-        description: "Check side-vote bias, average speaker points, and tendencies for every saved judge profile.",
-        highlights: ["Side-vote bias, speed tolerance, and theory receptiveness per judge", "Sorted by rounds judged — most experienced first"],
-      },
-      {
-        href: "/practice/opponents", label: "Opponent Team Profiles", icon: Users,
-        description: "Review records, side-record tendencies, and common arguments or cases for every saved opponent scouting profile.",
-        highlights: ["Overall and Aff/Neg side record, with a \"notably stronger side\" flag", "Most commonly run argument tags and cases per team"],
-      },
-      {
         href: "/practice/drills", label: "Practice Drills", icon: Dumbbell,
         description: "Run quick practice drills generated from each round's flow.",
         highlights: ["Overview, frontline, cross-ex, and collapse-scenario prompts", "Generated straight from a round's already-flowed arguments"],
-      },
-      {
-        href: "/practice/briefings", label: "Pre-Round Briefings", icon: ClipboardList,
-        description: "Pull opponent scouting, judge tendencies, head-to-head record, and prep notes together for a round.",
-        highlights: ["Pulls straight from saved Opponent and Judge Profiles", "One briefing per round, with free-text team prep notes attached"],
-      },
-      {
-        href: "/practice/strategy", label: "Scout-to-Strategy", icon: Crosshair,
-        description: "Turn opponent scouting and judge tendencies into a case-choice ranking and matchup risk level.",
-        highlights: ["Reads straight from saved Opponent Team and Judge Profiles", "Ranks case options with a judge-adaptation note per option", "Also mounted in the Coach Workspace's Scouting section"],
       },
       {
         href: "/coaching/ai-coach", label: "AI Coach Mode", icon: GraduationCap,

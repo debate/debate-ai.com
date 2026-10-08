@@ -56,14 +56,15 @@
  * a round can accumulate many) via `GET /api/counsel-panel-assessments`, but
  * the same "sync wired, discoverability not" gap applied here too.
  *
- * A tenth kind, Pre-Round Briefings' saved round pairings (`/practice/briefings`),
+ * A tenth kind, Pre-Round Briefings' saved round pairings (the Prep Workspace's
+ * Briefings tab, `/practice/prep?section=briefings`),
  * joined next: `saved_round_pairings` already synced a signed-in user's
  * `RoundPairingRecord`s (`debate-round` itself this time, one row per
  * pairing keyed by `roundId`) via `GET /api/round-pairings`, but the same
  * "sync wired, discoverability not" gap applied here too.
  *
  * An eleventh kind, Scout-to-Strategy's saved strategy recommendations
- * (`/practice/strategy`), joined next: `saved_strategy_recommendations` already
+ * (`/practice/prep?section=strategy`), joined next: `saved_strategy_recommendations` already
  * synced a signed-in user's `StrategyRecommendationRecord`s (`debate-round`
  * itself, one row per built recommendation, many rows can share a
  * `matchupId`) via `GET /api/strategy-recommendations`, but the same "sync
@@ -124,7 +125,7 @@
  * card clipped on one device stayed invisible from this widget on another,
  * discoverable only from inside the editor's own quick-card search/manage UI.
  *
- * An eighteenth kind, Prep Notes' live per-argument notes (`/practice/prep-notes`),
+ * An eighteenth kind, Prep Notes' live per-argument notes (`/practice/prep?section=notes`),
  * joined next: `PrepNote`s (`debate-round`'s own
  * `flow/strategy-sync-notes.ts`, persisted by `debate-team-collaboration`'s
  * `state/prepNotes.ts`) already synced a signed-in user's notes via
@@ -636,15 +637,15 @@ export function buildRecentCloudItems(
     drillSetHref = "/practice/drills",
     judgeDecisionHref = "/practice/judge-decision",
     counselPanelAssessmentHref = "/coaching/outcomes",
-    roundPairingHref = "/practice/briefings",
-    strategyRecommendationHref = "/practice/strategy",
+    roundPairingHref = "/practice/prep?section=briefings",
+    strategyRecommendationHref = "/practice/prep?section=strategy",
     sprintSessionHref = "/research",
     speechSendLogEntryHref = "/speech-documents",
     learnDeckHref = "/reason-editor",
     customOpponentPersonaHref = "/practice",
     flowAnnotationHref = "/annotations",
     quickCardHref = "/reason-editor",
-    prepNoteHref = "/practice/prep-notes",
+    prepNoteHref = "/practice/prep?section=notes",
     evidenceLibraryEntryHref = "/research/cards/library",
     practiceRoundHref = "/practice",
     coachMaterialHref = "/coaching/materials",

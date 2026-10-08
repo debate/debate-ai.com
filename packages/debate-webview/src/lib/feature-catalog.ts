@@ -284,15 +284,6 @@ export const APP_FEATURES: FeatureEntry[] = [
     tags: ["prep", "drafts", "search"],
   },
   {
-    id: "prep-notes",
-    title: "Prep Notes",
-    description: "Live prep notes across every flow, grouped by status, with handoff to a teammate",
-    href: "/practice/prep-notes",
-    category: "collaboration",
-    doc: "prep-notes.md",
-    tags: ["strategy sync", "follow-up", "assign"],
-  },
-  {
     id: "contacts",
     title: "Contacts",
     description:
@@ -400,42 +391,14 @@ export const APP_FEATURES: FeatureEntry[] = [
 
   // ── Pre-round intelligence ─────────────────────────────────────────────
   {
-    id: "opponent-team-profiles",
-    title: "Opponent Team Profiles",
+    id: "prep-workspace",
+    title: "Prep Workspace",
     description:
-      "Records, side-record tendencies, and common arguments/cases for every saved opponent scouting profile",
-    href: "/practice/opponents",
+      "Pre-round briefings, scout-to-strategy case rankings, opponent team profiles, judge profiles and prep notes, one tab each on a single page",
+    href: "/practice/prep",
     category: "intelligence",
-    doc: "opponent-team-profiles.md",
-    tags: ["scouting", "aff", "neg", "record"],
-  },
-  {
-    id: "judge-profiles",
-    title: "Judge Profiles",
-    description: "Side-vote bias, average speaker points, and tendencies for every saved judge profile",
-    href: "/practice/judges",
-    category: "intelligence",
-    doc: "judge-profiles.md",
-    tags: ["speaks", "theory", "speed", "paradigm"],
-  },
-  {
-    id: "pre-round-briefings",
-    title: "Pre-Round Briefings",
-    description: "Opponent scouting, judge tendencies, head-to-head record, and prep notes per round",
-    href: "/practice/briefings",
-    category: "intelligence",
-    doc: "pre-round-briefings.md",
-    tags: ["matchup", "intelligence panel"],
-  },
-  {
-    id: "scout-to-strategy",
-    title: "Scout-to-Strategy",
-    description:
-      "Case-choice rankings, judge-adaptation notes, and matchup risk level from scouted opponent and judge data",
-    href: "/practice/strategy",
-    category: "intelligence",
-    doc: "scout-to-strategy.md",
-    tags: ["risk", "case choice", "adaptation", "ai panel"],
+    doc: "prep-workspace.md",
+    tags: ["briefings", "scouting", "opponents", "judges", "case choice", "prep notes", "matchup"],
   },
   {
     id: "ai-judge-decision",

@@ -1,8 +1,16 @@
 import type { Metadata } from "next"
+import { permanentRedirect } from "next/navigation"
+
+/**
+ * The old address of Scout-to-Strategy, merged into the Prep Workspace at
+ * `/practice/prep`. It permanently redirects to its "strategy" tab.
+ */
 
 export const metadata: Metadata = {
   title: "Scout-to-Strategy",
-  description: "Case-choice rankings, judge-adaptation notes, and matchup risk level from scouted opponent and judge data",
+  alternates: { canonical: "/practice/prep?section=strategy" },
 }
 
-export { default } from "@debate/webview/routes/strategy/page"
+export default function LegacyScouttoStrategyPage() {
+  permanentRedirect("/practice/prep?section=strategy")
+}
