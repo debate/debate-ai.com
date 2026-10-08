@@ -1,0 +1,11 @@
+{
+  "installCommand": "bun install",
+  "buildCommand": "turbo build --filter='!@debate/help-docs' --filter='!@debate/flow-ebb'",
+  "framework": "nextjs",
+  "regions": ["iad1"],
+  "functions": {
+    "apps/debate-ai.com/**/*.ts": {
+      "maxDuration": 60
+    }
+  }
+}
