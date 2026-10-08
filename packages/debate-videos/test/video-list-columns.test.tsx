@@ -200,7 +200,7 @@ describe("the round list's tree", () => {
 
   it("sizes the table to its columns rather than the page", () => {
     const html = renderList([identifiableRound]);
-    expect(html).toMatch(/<table[^>]*style="--table-width:\d+px;--table-width-phone:calc\(\d+px \+ min\(\d+px, 75vw\)\)"/);
+    expect(html).toMatch(/<table[^>]*style="--table-width:\d+px;--table-width-phone:calc\(\d+px \+ min\(\d+px, 85vw\)\)"/);
   });
 
   it("files rounds with no tournament under Unsorted, newest first", () => {
