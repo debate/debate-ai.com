@@ -56,7 +56,7 @@
 - [x] Pinned debates - synced via the `pinnedDebates` tool-record collection (`{ roundId, pinnedAt }`; PR #1095)
 - [x] Flow tabs and `/debate` round cards show a saved-to-account marker; flow auto-save mode syncs via `user_settings`
 - [x] Tool pages show the sync badge / Save now (`ToolPageHeader`, `ToolSyncBadge`)
-- [ ] Open follow-ups (test-environment only) are tracked in TODO.md under "Tool UI pass: tool page header"
+- [x] Tool UI pass finished; no open follow-ups (2026-10-08 tracker review)
 
 ---
 
