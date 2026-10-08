@@ -54,11 +54,11 @@ describe("@debate/rankings-adapter", () => {
     expect(offsetEntryRatings(row)).toEqual({ ...row, rating: 100, adjustedRating: 87.5 });
   });
 
-  it("caps the site rating at 110 and floors it at 0", () => {
-    expect(RATING_MAX).toBe(110);
+  it("caps the site rating at 109 and floors it at 0", () => {
+    expect(RATING_MAX).toBe(109);
     expect(RATING_MIN).toBe(0);
-    expect(toSiteRating(1954)).toBe(110);
-    expect(toSiteRating(1880)).toBe(110);
+    expect(toSiteRating(1954)).toBe(109);
+    expect(toSiteRating(1880)).toBe(109);
     expect(toSiteRating(1000)).toBe(0);
     expect(toSiteRating(882)).toBe(0);
     expect(toSiteRating(1024)).toBe(3);
@@ -103,7 +103,7 @@ describe("@debate/rankings-adapter", () => {
     expect(first.rating).toBeLessThan(200);
   });
 
-  it("spreads every bundled dataset from about 0 up to about 100, never past 110", async () => {
+  it("spreads every bundled dataset from about 0 up to about 100, never past 109", async () => {
     for (const { id } of RANKING_DATASETS) {
       const ratings = (await loadRankingDataset(id)).entries.map((e) => e.adjustedRating).sort((a, b) => b - a);
       expect(ratings[0]).toBeLessThanOrEqual(RATING_MAX);
