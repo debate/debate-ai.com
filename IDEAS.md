@@ -54,7 +54,9 @@
 
 - [x] Speech-doc links (editor document <-> round/flow speech) sync via the `speechDocLinks` tool-record collection
 - [x] Pinned debates - synced via the `pinnedDebates` tool-record collection (`{ roundId, pinnedAt }`; PR #1095)
-- [x] Flow tabs show a saved-to-account marker (rounds start screen and other tools still to do)
+- [x] Flow tabs and `/debate` round cards show a saved-to-account marker; flows auto-save per the synced `flowAutoSave` setting
+- [x] Every synced tool shows `ToolSyncBadge` / "Save now" in its header (audit in `TODO.md`, "Account-synced user data across all tools")
+- [ ] Remaining follow-ups (test-environment only, tracked in `TODO.md` under "Tool UI pass: tool page header"): verify `ToolPageHeader.test.tsx` in CI (needs the `debate-rankings` submodule) and add a DOM-level click test for `ToolSyncBadge`
 
 ---
 
