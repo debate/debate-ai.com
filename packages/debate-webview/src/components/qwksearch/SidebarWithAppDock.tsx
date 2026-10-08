@@ -1,6 +1,8 @@
 "use client"
 
+import { useRef } from "react"
 import { Sidebar, type SidebarProps } from "react-reason-editor-sidebar"
+import { useSidebarIconHover } from "@debate/videos"
 
 import { CategoryDock } from "../layout/CategoryDock"
 import { ChromeErrorBoundary } from "../../lib/ui/layout/chrome-error-boundary"
@@ -27,13 +29,17 @@ import { ChromeErrorBoundary } from "../../lib/ui/layout/chrome-error-boundary"
  * second one.
  */
 export function SidebarWithAppDock(props: SidebarProps) {
+  // Its icons animate on hover like the app sidebar's do.
+  const rootRef = useRef<HTMLDivElement>(null)
+  useSidebarIconHover(rootRef)
+
   if (props.isMobile) return <Sidebar {...props} />
 
   return (
     // The `<aside>` below is `h-screen`, and stays a direct flex child here so
     // that height is a basis the dock's row can shrink it against rather than
     // a viewport's worth of column pushing the sidebar's footer off screen.
-    <div className="flex h-screen flex-col [&>aside]:pt-2">
+    <div ref={rootRef} className="flex h-screen flex-col [&>aside]:pt-2">
       {/* Bounded like the dock in the app's own sidebar is: a throw in the
           dock leaves the workspace its files tree rather than taking the
           whole editor down with it. */}
