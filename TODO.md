@@ -104,7 +104,7 @@ _(moved to Completed — see "Account-synced user data across all tools")_
 - [x] `/research/cards` search workspace shows the badge/Save now in a strip above the workspace (`routes/cards/page.tsx`, test `test/routes/cards/page.test.tsx`; branch `claude/gifted-babbage-or9nw5`)
 - [x] Open round/flow workspace shows the badge in the speech controls bar (`DebateFlowPage.roundActions` -> `SpeechControlsTopBar.leadingActions`, test `debate-round/test/SpeechControlsTopBar.test.tsx`; branch `claude/gifted-babbage-fca6h1`); `/doc` already done
 - [x] Open-flow bar Save now: `DebateFlowPage.roundActions` mounts the same `ToolSyncBadge` as the other headers, which already renders "Save now" / "Retry save" while changes are unsaved, so no extra wiring is needed (verified by reading `routes/debate/page.tsx`, `ToolSyncBadge.tsx`, `SpeechControlsTopBar.tsx`; tests not run, dependencies not installed in this session)
-- [ ] Follow-up: `ToolPageHeader.test.tsx` (incl. the new `syncCollections` case) cannot load in a checkout without the `debate-rankings` submodule; verify in CI
+- [x] `ToolPageHeader.test.tsx` (incl. the `syncCollections` case) verified 2026-10-07 with the `debate-rankings` and `debate-editor-cm` submodules checked out and `sync-upstream.mjs` run: `bunx vitest run` on `debate-webview/test/components/tools` + `test/lib/tools` -> 9 files, 53 tests pass; `settings-flow-editor-route` + `ensure-columns` tests also pass (11 tests)
 - [x] Button visibility/label logic extracted to `describeSaveNowButton` (`lib/tools/tool-save-state.ts`) and unit tested; branch `claude/gifted-babbage-bee65u`
 - [ ] Follow-up: DOM-level click test for `ToolSyncBadge` (no `@testing-library/react` in webview tests)
 
