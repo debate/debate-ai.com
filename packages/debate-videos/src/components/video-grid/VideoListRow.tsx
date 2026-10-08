@@ -45,6 +45,21 @@ import { FormatBadge } from "./FormatBadge"
 import { teamHref } from "../../panels/leaderboard/profile/rankingProfileHelpers"
 import type { VideoType } from "../../types/videos"
 
+/**
+ * One slot of the row's action strip. Below md the strip runs the full width
+ * of the row under the thumbnail and its slots share that width evenly, up to
+ * a 44px touch target each, so every icon sits in an equal box on one line.
+ * `min-w-0!` lets a slot shrink past the app's mobile `button { min-width:
+ * 44px }` rule, which would otherwise push the strip onto several lines.
+ * From md up the slots shrink back to the tight padded icons of the desktop
+ * list.
+ */
+const ACTION_SLOT =
+  "inline-flex h-11 min-w-0! max-w-11 flex-1 items-center justify-center rounded md:h-auto md:max-w-none md:flex-none md:p-1"
+
+/** Icon size inside an {@link ACTION_SLOT}: larger on a phone. */
+const ACTION_ICON = "h-4 w-4 md:h-3.5 md:w-3.5"
+
 /** Thumbnail strip at the head of a row, 16:9 like the cards'. */
 function RowThumbnail({
   videoId,
@@ -271,15 +286,27 @@ export function VideoListRow({
         )}
       >
         <td className="py-2 pr-2 align-top sm:py-3 sm:pr-3" style={treeIndentStyle(depth)}>
-          <div className="flex items-start gap-2 sm:gap-3">
-            {/* Stands in for a group row's chevron, so titles line up under
-                the round they belong to rather than under its arrow. Lectures
-                are listed flat, with no group rows to line up under. */}
-            {isRoundMode && <span className="hidden w-4 shrink-0 sm:block" aria-hidden="true" />}
-            {showThumbnails && (
-              <RowThumbnail videoId={videoId} title={title} isPlaying={isPlaying} />
+          {/* A grid rather than a flex row so that on a phone the actions can
+              drop under the thumbnail and use the row's full width, while from
+              sm up they stay in the text column beside it. The left padding
+              from sm up stands in for a group row's chevron, so titles line up
+              under the round they belong to rather than under its arrow.
+              Lectures are listed flat, with no group rows to line up under. */}
+          <div
+            className={cn(
+              "grid items-start gap-x-2 gap-y-1 sm:gap-x-3 sm:gap-y-1.5",
+              showThumbnails
+                ? "grid-cols-[auto_minmax(0,1fr)] sm:grid-rows-[auto_1fr]"
+                : "grid-cols-[minmax(0,1fr)]",
+              isRoundMode && "sm:pl-7",
             )}
-            <div className="min-w-0 flex-1">
+          >
+            {showThumbnails && (
+              <span className="sm:row-span-2">
+                <RowThumbnail videoId={videoId} title={title} isPlaying={isPlaying} />
+              </span>
+            )}
+            <div className="min-w-0">
               {!hasCoreRoundInfo && (
                 <div className="line-clamp-2 text-sm font-medium leading-snug text-foreground">
                   {title}
@@ -337,11 +364,13 @@ export function VideoListRow({
                   </>
                 )}
               </div>
+            </div>
+            <div className={cn("col-span-full min-w-0", showThumbnails && "sm:col-span-1 sm:col-start-2")}>
               {/* The row's controls sit under the title and details rather than
                   in a column of their own, so they never crowd the Date and
                   Views cells and the table stays narrow. */}
               <div
-                className="mt-1 flex flex-wrap items-center gap-0.5 sm:mt-1.5 sm:gap-1"
+                className="-ml-2.5 flex items-center md:ml-0 md:flex-wrap md:gap-1"
                 onClick={(e) => e.stopPropagation()}
               >
                 {stackVideos.length > 1 && (
@@ -351,14 +380,16 @@ export function VideoListRow({
                     label={stackMemberLabel(video)}
                     onSelect={onStackSelect}
                     variant="inline"
-                    className="mr-1"
+                    className="mr-1 shrink-0"
                   />
                 )}
 
                 {/* Every row carries it, watched or not: the point of the marker
                     is that you can hover any row and learn where you got to —
                     "Not watched" included. */}
-                <WatchProgressBadge entry={watched} size={14} plain showUnwatched />
+                <span className={ACTION_SLOT}>
+                  <WatchProgressBadge entry={watched} size={14} plain showUnwatched />
+                </span>
 
                 {isTopPick && (
                   <TopPickBadge
@@ -370,6 +401,7 @@ export function VideoListRow({
                     year={date ? new Date(date).getFullYear() : undefined}
                     roundLevel={roundLevel}
                     size="sm"
+                    className={ACTION_SLOT}
                   />
                 )}
 
@@ -379,9 +411,9 @@ export function VideoListRow({
                       href={youtubeUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-1 rounded text-muted-foreground hover:text-foreground transition-colors"
+                      className={cn(ACTION_SLOT, "text-muted-foreground hover:text-foreground transition-colors")}
                     >
-                      <ExternalLink className="h-3.5 w-3.5" />
+                      <ExternalLink className={ACTION_ICON} />
                     </a>
                   </TooltipTrigger>
                   <TooltipContent>Watch on YouTube</TooltipContent>
@@ -392,14 +424,15 @@ export function VideoListRow({
                     <button
                       onClick={() => onToggleFavorite(videoId)}
                       className={cn(
-                        "p-1 rounded transition-colors",
+                        ACTION_SLOT,
+                        "transition-colors",
                         isFavorite
                           ? "text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300"
                           : "text-muted-foreground hover:text-foreground",
                       )}
                       aria-label={isFavorite ? "Remove from My Favorites" : "Star to add to My Favorites"}
                     >
-                      <Star className={cn("h-3.5 w-3.5", isFavorite && "fill-current")} />
+                      <Star className={cn(ACTION_ICON, isFavorite && "fill-current")} />
                     </button>
                   </TooltipTrigger>
                   <TooltipContent>{isFavorite ? "Remove from My Favorites" : "Star to add to My Favorites"}</TooltipContent>
@@ -413,12 +446,13 @@ export function VideoListRow({
                       }}
                       disabled={isInQueue}
                       className={cn(
-                        "p-1 rounded transition-colors",
+                        ACTION_SLOT,
+                        "transition-colors",
                         isInQueue ? "text-muted-foreground/50 cursor-not-allowed" : "text-muted-foreground hover:text-foreground",
                       )}
                       aria-label={isInQueue ? "In queue" : "Add to queue"}
                     >
-                      <ListVideo className="h-3.5 w-3.5" />
+                      <ListVideo className={ACTION_ICON} />
                     </button>
                   </TooltipTrigger>
                   <TooltipContent>{isInQueue ? "In queue" : "Add to queue"}</TooltipContent>
@@ -426,8 +460,8 @@ export function VideoListRow({
 
                 <PopoutPlayerButton
                   video={video}
-                  className="p-1"
-                  iconClassName="h-3.5 w-3.5"
+                  className={ACTION_SLOT}
+                  iconClassName={ACTION_ICON}
                 />
 
                 <Tooltip>
@@ -435,18 +469,18 @@ export function VideoListRow({
                     {isHidden ? (
                       <button
                         onClick={() => onUnhideVideo(videoId)}
-                        className="p-1 rounded text-muted-foreground hover:text-foreground transition-colors"
+                        className={cn(ACTION_SLOT, "text-muted-foreground hover:text-foreground transition-colors")}
                         aria-label="Unhide video"
                       >
-                        <Eye className="h-3.5 w-3.5" />
+                        <Eye className={ACTION_ICON} />
                       </button>
                     ) : (
                       <button
                         onClick={() => setShowHideConfirm(true)}
-                        className="p-1 rounded text-muted-foreground hover:text-destructive transition-colors"
+                        className={cn(ACTION_SLOT, "text-muted-foreground hover:text-destructive transition-colors")}
                         aria-label="Hide video"
                       >
-                        <EyeOff className="h-3.5 w-3.5" />
+                        <EyeOff className={ACTION_ICON} />
                       </button>
                     )}
                   </TooltipTrigger>

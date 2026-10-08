@@ -1,78 +1,64 @@
-// @vitest-environment jsdom
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+/** @vitest-environment jsdom */
 import { act } from "react"
 import { createRoot, type Root } from "react-dom/client"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-const mocks = vi.hoisted(() => ({
-  enabled: true,
-  status: "pending" as "pending" | "synced" | "unknown",
-  flush: vi.fn(),
-  saveToolNow: vi.fn(),
-}))
+const flush = vi.fn()
+let status: "pending" | "synced" = "pending"
 
 vi.mock("@debate/data-sync/src/state/tool-record-mirror", () => ({
-  isToolRecordSyncEnabled: () => mocks.enabled,
+  isToolRecordSyncEnabled: () => true,
 }))
 vi.mock("@debate/data-sync/src/state/tool-record-auto-sync", () => ({
-  flushToolRecordCollection: mocks.flush,
-  getToolRecordCollectionSyncStatus: () => mocks.status,
-}))
-vi.mock("../../../src/lib/tools/tool-save-now", () => ({
-  saveToolNow: mocks.saveToolNow,
+  flushToolRecordCollection: (key: string) => flush(key),
+  getToolRecordCollectionSyncStatus: () => status,
 }))
 
 import { ToolSyncBadge } from "../../../src/components/tools/ToolSyncBadge"
 
-const KEYS = ["pinnedDebates"] as const
+;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
 
-describe("ToolSyncBadge (DOM)", () => {
-  let container: HTMLDivElement
-  let root: Root
+let root: Root
+let host: HTMLDivElement
 
-  beforeEach(() => {
-    ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
-    mocks.enabled = true
-    mocks.status = "pending"
-    mocks.flush.mockReset()
-    mocks.saveToolNow.mockReset()
-    container = document.createElement("div")
-    document.body.appendChild(container)
-    root = createRoot(container)
-  })
+const button = () => host.querySelector<HTMLButtonElement>("[data-tool-save-now]")
+const badge = () => host.querySelector<HTMLElement>("[data-tool-save-state]")
 
-  afterEach(() => {
-    act(() => root.unmount())
-    container.remove()
-  })
+beforeEach(async () => {
+  status = "pending"
+  flush.mockReset()
+  host = document.createElement("div")
+  document.body.append(host)
+  root = createRoot(host)
+  await act(async () => root.render(<ToolSyncBadge href="/x" collectionKeys={["flowKeymap"]} />))
+})
 
-  const render = () => act(() => root.render(<ToolSyncBadge href="/x" collectionKeys={KEYS} />))
-  const button = () => container.querySelector<HTMLButtonElement>("[data-tool-save-now]")
+afterEach(async () => {
+  await act(async () => root.unmount())
+  host.remove()
+})
 
-  it("flushes the tool's collections when Save now is clicked, then shows no error", async () => {
-    mocks.saveToolNow.mockResolvedValue({ ok: true })
-    render()
-    expect(button()).not.toBeNull()
+describe("ToolSyncBadge Save now", () => {
+  it("shows Save now while a save is pending and flushes the tool's collections on click", async () => {
+    expect(badge()?.dataset.toolSaveState).toBe("saving")
+    expect(button()?.textContent).toBe("Save now")
 
+    flush.mockImplementation(async () => {
+      status = "synced"
+      return { pushed: 1, deleted: 0 }
+    })
     await act(async () => button()!.click())
 
-    expect(mocks.saveToolNow).toHaveBeenCalledWith(KEYS, mocks.flush)
-    expect(container.textContent).not.toContain("Save failed")
-  })
-
-  it("offers a retry after a failed save", async () => {
-    mocks.saveToolNow.mockResolvedValue({ ok: false, error: "offline" })
-    render()
-
-    await act(async () => button()!.click())
-
-    expect(button()).not.toBeNull()
-    expect(button()!.textContent).toMatch(/retry/i)
-  })
-
-  it("hides Save now when everything is synced", () => {
-    mocks.status = "synced"
-    render()
-    expect(container.querySelector("[data-tool-save-state]")?.getAttribute("data-tool-save-state")).toBe("saved")
+    expect(flush).toHaveBeenCalledExactlyOnceWith("flowKeymap")
+    expect(badge()?.dataset.toolSaveState).toBe("saved")
     expect(button()).toBeNull()
+  })
+
+  it("offers Retry save with the error when a flush fails", async () => {
+    flush.mockResolvedValue({ pushed: 0, deleted: 0, error: "offline" })
+    await act(async () => button()!.click())
+
+    expect(button()?.textContent).toBe("Retry save")
+    expect(button()?.title).toContain("offline")
   })
 })
