@@ -1,46 +1,84 @@
 /**
- * @fileoverview Pins the Schools table's balanced score: 70% average + 30% best,
- * times a team-count factor that dilutes schools under four teams and prefers
- * schools with 5–20 teams.
+ * @fileoverview Pins the Schools table's balanced score: 70% the average of
+ * the top three entries, 30% average rating and depth, scaled ×1.1, diluted
+ * under four teams and capped at 109.
  */
 
 import { describe, it, expect } from "vitest";
-import { balancedSchoolScore, teamCountFactor } from "../src/panels/leaderboard/schoolScore";
+import {
+  balancedSchoolScore,
+  depthScore,
+  smallSchoolFactor,
+  topThreeAverage,
+} from "../src/panels/leaderboard/schoolScore";
 
-describe("teamCountFactor", () => {
+describe("smallSchoolFactor", () => {
   it("dilutes schools with fewer than four teams", () => {
-    expect(teamCountFactor(1)).toBeCloseTo(0.8, 6);
-    expect(teamCountFactor(2)).toBeCloseTo(0.8667, 3);
-    expect(teamCountFactor(3)).toBeCloseTo(0.9333, 3);
-    expect(teamCountFactor(4)).toBeCloseTo(1, 6);
+    expect(smallSchoolFactor(1)).toBeCloseTo(0.8, 6);
+    expect(smallSchoolFactor(2)).toBeCloseTo(0.8667, 3);
+    expect(smallSchoolFactor(3)).toBeCloseTo(0.9333, 3);
+    for (const t of [4, 10, 500]) expect(smallSchoolFactor(t)).toBe(1);
   });
+});
 
-  it("gives the full bonus to 5–20 teams", () => {
-    for (const t of [5, 10, 20]) expect(teamCountFactor(t)).toBeCloseTo(1.1, 6);
+describe("depthScore", () => {
+  it("grows with team count and tops out at 15 teams", () => {
+    expect(depthScore(1)).toBeCloseTo(25, 6);
+    expect(depthScore(5)).toBeCloseTo(64.62, 2);
+    expect(depthScore(15)).toBeCloseTo(100, 6);
+    expect(depthScore(40)).toBe(100);
+    expect(depthScore(0)).toBe(0);
   });
+});
 
-  it("tapers very large schools but keeps a bonus", () => {
-    expect(teamCountFactor(30)).toBeCloseTo(1.075, 6);
-    expect(teamCountFactor(40)).toBeCloseTo(1.05, 6);
-    expect(teamCountFactor(500)).toBeCloseTo(1.05, 6);
+describe("topThreeAverage", () => {
+  it("averages the three highest ratings, or fewer when that's all there is", () => {
+    expect(topThreeAverage([10, 90, 50, 80, 70])).toBeCloseTo(80, 6);
+    expect(topThreeAverage([60, 80])).toBe(70);
+    expect(topThreeAverage([])).toBe(0);
   });
 });
 
 describe("balancedSchoolScore", () => {
   it("matches the worked examples", () => {
-    expect(balancedSchoolScore(101, 101, 1)).toBeCloseTo(80.8, 2);
-    expect(balancedSchoolScore(98, 76, 5)).toBeCloseTo(90.86, 2);
-    expect(balancedSchoolScore(106, 59, 25)).toBeCloseTo(79.5, 2);
+    expect(balancedSchoolScore([101])).toBeCloseTo(78.85, 2);
+    expect(balancedSchoolScore([98, 90, 85, 60, 40])).toBeCloseTo(93.04, 2);
   });
 
-  it("ranks a deep school that does well on average above a one- or two-team school", () => {
-    const deep = balancedSchoolScore(80, 66, 5);
-    expect(deep).toBeGreaterThan(balancedSchoolScore(89, 89, 1));
-    expect(deep).toBeGreaterThan(balancedSchoolScore(88, 88, 1));
-    expect(deep).toBeGreaterThan(balancedSchoolScore(85, 72, 3));
+  it("weighs the top three entries most", () => {
+    const strongTop = balancedSchoolScore([95, 92, 90, 30, 30, 30]);
+    const evenMiddle = balancedSchoolScore([70, 70, 70, 70, 70, 70]);
+    expect(strongTop).toBeGreaterThan(evenMiddle);
+  });
+
+  it("ranks a deep school above a one- or two-team school with the same top", () => {
+    const deep = balancedSchoolScore([95, 90, 88, 60, 55, 50, 45, 40]);
+    expect(deep).toBeGreaterThan(balancedSchoolScore([95]));
+    expect(deep).toBeGreaterThan(balancedSchoolScore([95, 90]));
+  });
+
+  it("never goes past 109", () => {
+    expect(balancedSchoolScore([109, 109, 109, ...Array(20).fill(109)])).toBe(109);
   });
 
   it("returns 0 with no teams", () => {
-    expect(balancedSchoolScore(100, 100, 0)).toBe(0);
+    expect(balancedSchoolScore([])).toBe(0);
+  });
+});
+
+describe("balanced scores on the bundled rankings", () => {
+  it("puts a few dozen schools in the 70s–90s and none past 109", async () => {
+    const { loadRankingDataset } = await import("@debate/rankings-adapter");
+    const { schoolRankingsFor } = await import("../src/panels/leaderboard/leaderboardUtils");
+    const datasets = {
+      VPF: await loadRankingDataset("hspf"),
+      VLD: await loadRankingDataset("hsld"),
+      VCX: await loadRankingDataset("hscx"),
+      NDT: await loadRankingDataset("cpd"),
+    };
+    const scores = schoolRankingsFor(datasets, "all").map((r) => Math.round(r.balancedScore));
+    expect(Math.max(...scores)).toBeLessThanOrEqual(109);
+    expect(scores.filter((s) => s >= 70).length).toBeGreaterThanOrEqual(25);
+    expect(scores.filter((s) => s >= 80).length).toBeGreaterThanOrEqual(10);
   });
 });

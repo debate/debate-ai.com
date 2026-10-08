@@ -544,15 +544,15 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.drillSet).toBe("/practice/drills");
     expect(byKind.judgeDecision).toBe("/practice/judge-decision");
     expect(byKind.counselPanelAssessment).toBe("/coaching/outcomes");
-    expect(byKind.roundPairing).toBe("/practice/briefings");
-    expect(byKind.strategyRecommendation).toBe("/practice/strategy");
+    expect(byKind.roundPairing).toBe("/practice/prep?section=briefings");
+    expect(byKind.strategyRecommendation).toBe("/practice/prep?section=strategy");
     expect(byKind.sprintSession).toBe("/research");
     expect(byKind.speechSendLogEntry).toBe("/speech-documents");
     expect(byKind.learnDeck).toBe("/reason-editor");
     expect(byKind.customOpponentPersona).toBe("/practice");
     expect(byKind.flowAnnotation).toBe("/annotations");
     expect(byKind.quickCard).toBe("/reason-editor");
-    expect(byKind.prepNote).toBe("/practice/prep-notes");
+    expect(byKind.prepNote).toBe("/practice/prep?section=notes");
     expect(byKind.evidenceLibraryEntry).toBe("/research/cards/library");
     expect(byKind.practiceRound).toBe("/practice");
     expect(byKind.coachMaterial).toBe("/coaching/materials");

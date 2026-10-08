@@ -1,0 +1,55 @@
+---
+title: "Prep Workspace"
+---
+
+# Prep Workspace
+
+One page for getting ready for a round. The five pre-round prep tools sit
+side by side, one tab each:
+
+| Tab | `?section=` | What it does |
+| --- | --- | --- |
+| [Pre-Round Briefings](/docs/features/tournaments-judge/pre-round-briefings) | `briefings` | One briefing per upcoming round: opponent scouting, judge tendencies, the head-to-head record, and team prep notes. |
+| [Scout-to-Strategy](/docs/features/ai-coaching/scout-to-strategy) | `strategy` | Ranks your case options against the saved opponent and judge profiles, with a judge-adaptation note each and a matchup risk level. |
+| [Opponent Team Profiles](/docs/features/tournaments-judge/opponent-team-profiles) | `opponents` | Records, Aff/Neg side tendencies, and the arguments and cases each scouted team runs most. |
+| [Judge Profiles](/docs/features/tournaments-judge/judge-profiles) | `judges` | Side-vote bias, average speaker points, speed tolerance, and theory receptiveness for every saved judge. |
+| [Prep Notes](/docs/features/flow-speech/prep-notes) | `notes` | Live prep notes across every flow, needs-follow-up first, with handoff to a teammate. |
+
+- **Route:** `/practice/prep`, listed in the sidebar's **Practice** section
+- **Package:** `debate-webview` (`components/practice/PrepWorkspace.tsx`) over
+  panels from `debate-round`, `debate-speech-writer` and
+  `debate-team-collaboration`
+
+## Old addresses
+
+Each tool used to have its own page. Those addresses still work and
+permanently redirect to the matching tab:
+
+| Old route | Now |
+| --- | --- |
+| `/practice/briefings` | `/practice/prep?section=briefings` |
+| `/practice/strategy` | `/practice/prep?section=strategy` |
+| `/practice/opponents` | `/practice/prep?section=opponents` |
+| `/practice/judges` | `/practice/prep?section=judges` |
+| `/practice/prep-notes` | `/practice/prep?section=notes` |
+
+## How it works
+
+The page is navigation only: each tab mounts the same panel the old page
+did, and each panel still reads and writes its own store, so saved
+briefings, profiles, recommendations and notes carry over unchanged and
+keep syncing to your account. The open tab is kept in `?section=` (so a tab
+can be shared or bookmarked) and remembered in this browser for the next
+visit. The tab strip is the Coach and Research workspaces' own
+(`components/hubs/HubSectionNav.tsx`).
+
+Outside Next (the browser extension's router), the old routes render this
+page opened on their tab instead of redirecting.
+
+## Known gaps
+
+- Opening a saved record from the Tools page's recent-items list lands on
+  the right tab, not on the record itself.
+- The Coach Workspace still splits these tools across its **Prep** and
+  **Scouting** sections; its "open as its own page" chips now lead to the
+  matching Prep Workspace tab.

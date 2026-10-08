@@ -67,7 +67,7 @@ export type ToolSyncBadgeState =
 
 /**
  * What the per-tool "Saved to account" badge should say for the tool at
- * `href`. A tool can own several collections (e.g. `/practice/judges`); it
+ * `href`. A tool can own several collections (e.g. `/practice/prep`); it
  * counts as failed if any of them failed.
  */
 export function toolSyncBadgeState(

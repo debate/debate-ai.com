@@ -33,7 +33,6 @@ import {
   Inbox,
   Library,
   Lightbulb,
-  Map as MapIcon,
   Medal,
   MessageSquare,
   Presentation,
@@ -45,13 +44,11 @@ import {
   Smartphone,
   Sparkles,
   Star,
-  StickyNote,
   Swords,
   Handshake,
   Coins,
   TrendingUp,
   Trophy,
-  Users,
   type LucideIcon,
 } from "lucide-react";
 
@@ -158,14 +155,12 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
     // judges, tournaments, news, and likely arguments.
     id: PREP_SCOUT_SECTION_ID,
     title: "Prepare",
-    href: "/practice/briefings",
+    // The prep tools (briefings, scout-to-strategy, opponent and judge
+    // profiles, prep notes) are one page now, the Prep Workspace, listed
+    // under Practice.
+    href: "/practice/forums",
     icon: Binoculars,
     tools: [
-      { href: "/practice/briefings", title: "Pre-Round Briefings", icon: ClipboardList },
-      { href: "/practice/strategy", title: "Scout-to-Strategy", icon: MapIcon },
-      { href: "/practice/opponents", title: "Opponent Team Profiles", icon: Users },
-      { href: "/practice/judges", title: "Judge Profiles", icon: Gavel },
-      { href: "/practice/prep-notes", title: "Prep Notes", icon: StickyNote },
       { href: "/practice/forums", title: "Latest News", icon: Rss },
     ],
   },
@@ -180,6 +175,9 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
     icon: Dumbbell,
     tools: [
       { href: "/practice/versus-ai", title: "Practice vs AI", icon: Swords },
+      // Pre-Round Briefings, Scout-to-Strategy, Opponent Team Profiles, Judge
+      // Profiles and Prep Notes, one tab each.
+      { href: "/practice/prep", title: "Prep Workspace", icon: ClipboardList },
       { href: "/practice/partners", title: "Practice Partners", icon: Handshake },
       // Same page, landing on the open judge seats (or the profile, for
       // someone who has not volunteered to judge yet).

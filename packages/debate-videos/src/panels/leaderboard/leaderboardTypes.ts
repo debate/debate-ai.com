@@ -38,9 +38,9 @@ export interface SchoolRanking {
   /** Mean adjusted rating over all the school's entries. */
   avgRating: number;
   /**
-   * Quality score scaled by team count — see `balancedSchoolScore` in
-   * schoolScore: (0.7 × avg + 0.3 × best) × teamCountFactor(teams), which
-   * dilutes schools under four teams and prefers schools with 5–20.
+   * What schools rank on — see `balancedSchoolScore` in schoolScore: 70%
+   * the average of the top three entries, 30% average rating and depth,
+   * scaled ×1.1, diluted under four teams and capped at 109.
    */
   balancedScore: number;
   /** Number of ranked entries (teams, or debaters in LD). */

@@ -1,14 +1,6 @@
-import { Suspense } from "react"
-import { PreRoundBriefingsPanel } from "@debate/round"
-import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
+import { PrepWorkspacePage } from "../prep/page"
 
+/** Old `/practice/briefings` address: now the Prep Workspace's "briefings" tab. */
 export default function BriefingsPage() {
-  return (
-    <ToolPage>
-      <ToolPageHeader href="/practice/briefings" backHref="/debate" backLabel="round workspace" guide="training-tools" />
-      <Suspense>
-        <PreRoundBriefingsPanel />
-      </Suspense>
-    </ToolPage>
-  )
+  return <PrepWorkspacePage initialSection="briefings" />
 }

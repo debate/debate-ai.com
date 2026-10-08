@@ -1,14 +1,6 @@
-import { Suspense } from "react"
-import { PrepNotesWithIdentity } from "../../components/research/PrepNotesWithIdentity"
-import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
+import { PrepWorkspacePage } from "../prep/page"
 
+/** Old `/practice/prep-notes` address: now the Prep Workspace's "notes" tab. */
 export default function PrepNotesPage() {
-  return (
-    <ToolPage>
-      <ToolPageHeader href="/practice/prep-notes" backHref="/debate" backLabel="round workspace" guide="training-tools" />
-      <Suspense>
-        <PrepNotesWithIdentity />
-      </Suspense>
-    </ToolPage>
-  )
+  return <PrepWorkspacePage initialSection="notes" />
 }

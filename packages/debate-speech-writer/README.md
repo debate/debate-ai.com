@@ -60,7 +60,7 @@ non-trivial string with no unreplaced template placeholders, so an accidental tr
 during editing fails CI rather than silently degrading model output.
 
 `JudgeProfilesPanel` renders every persisted judge profile (built with `buildJudgeProfile`,
-saved with `saveJudgeProfile`) as a roster, mounted at `/practice/judges` in the web app:
+saved with `saveJudgeProfile`) as a roster, mounted as the Judge Profiles tab of the web app's Prep Workspace (`/practice/prep?section=judges`):
 
 ```tsx
 import { JudgeProfilesPanel } from "debate-speech-writer"

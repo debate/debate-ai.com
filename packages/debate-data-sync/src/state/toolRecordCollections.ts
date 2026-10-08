@@ -198,7 +198,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "preRoundBriefings",
     idField: "roundId",
     label: "Pre-Round Briefings",
-    href: "/practice/briefings",
+    href: "/practice/prep",
     section: "Practice",
   },
   {
@@ -206,7 +206,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "opponentTeamProfiles",
     idField: "teamId",
     label: "Opponent Team Profiles",
-    href: "/practice/opponents",
+    href: "/practice/prep",
     section: "Scouting and judging",
   },
   {
@@ -214,7 +214,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "opponentRoundRecords",
     idField: "id",
     label: "Opponent round records",
-    href: "/practice/opponents",
+    href: "/practice/prep",
     section: "Scouting and judging",
   },
   {
@@ -222,7 +222,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "judgeProfiles",
     idField: "judgeId",
     label: "Judge Profiles",
-    href: "/practice/judges",
+    href: "/practice/prep",
     section: "Scouting and judging",
   },
   {
@@ -230,7 +230,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "judgeRoundRecords",
     idField: "id",
     label: "Judge round records",
-    href: "/practice/judges",
+    href: "/practice/prep",
     section: "Scouting and judging",
   },
   {
@@ -270,7 +270,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "prepNotes",
     idField: "id",
     label: "Prep Notes",
-    href: "/practice/prep-notes",
+    href: "/practice/prep",
     section: "Flowing and writing",
   },
   {
@@ -528,7 +528,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "prepNoteReplies",
     idField: "id",
     label: "Prep Note Replies",
-    href: "/practice/prep-notes",
+    href: "/practice/prep",
     section: "Flowing and writing",
   },
   {
@@ -536,7 +536,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "prepNoteNotifications",
     idField: "id",
     label: "Prep Note Notifications",
-    href: "/practice/prep-notes",
+    href: "/practice/prep",
     section: "Flowing and writing",
   },
   {

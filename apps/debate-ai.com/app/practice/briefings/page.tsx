@@ -1,8 +1,16 @@
 import type { Metadata } from "next"
+import { permanentRedirect } from "next/navigation"
+
+/**
+ * The old address of Pre-Round Briefings, merged into the Prep Workspace at
+ * `/practice/prep`. It permanently redirects to its "briefings" tab.
+ */
 
 export const metadata: Metadata = {
   title: "Pre-Round Briefings",
-  description: "Opponent scouting, judge tendencies, head-to-head record, and prep notes per round",
+  alternates: { canonical: "/practice/prep?section=briefings" },
 }
 
-export { default } from "@debate/webview/routes/briefings/page"
+export default function LegacyPreRoundBriefingsPage() {
+  permanentRedirect("/practice/prep?section=briefings")
+}

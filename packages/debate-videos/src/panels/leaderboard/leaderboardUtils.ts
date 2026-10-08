@@ -320,6 +320,7 @@ export function aggregateSchools(
     bestEvent: string;
     total: number;
     teams: number;
+    ratings: number[];
     events: string[];
   };
   const bySchool = new Map<string, Acc>();
@@ -331,7 +332,7 @@ export function aggregateSchools(
       if (!key) continue;
       let acc = bySchool.get(key);
       if (!acc) {
-        acc = { spellings: new Map(), best: entry, bestEvent: event, total: 0, teams: 0, events: [] };
+        acc = { spellings: new Map(), best: entry, bestEvent: event, total: 0, teams: 0, ratings: [], events: [] };
         bySchool.set(key, acc);
       }
       acc.spellings.set(school, (acc.spellings.get(school) ?? 0) + 1);
@@ -341,6 +342,7 @@ export function aggregateSchools(
       }
       acc.total += entry.adjustedRating;
       acc.teams += 1;
+      acc.ratings.push(entry.adjustedRating);
       if (!acc.events.includes(event)) acc.events.push(event);
     }
   }
@@ -355,7 +357,7 @@ export function aggregateSchools(
       bestEntry: acc.best.name,
       bestEvent: acc.bestEvent,
       avgRating,
-      balancedScore: balancedSchoolScore(acc.best.adjustedRating, avgRating, acc.teams),
+      balancedScore: balancedSchoolScore(acc.ratings),
       teams: acc.teams,
       events: acc.events,
     };

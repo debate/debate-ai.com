@@ -21,12 +21,12 @@ owning package before editing anything under `app/`. The map is in the
 | The card editor, `.docx` interop | `/reason-editor`, `/research/docs` | `debate-editor`, `debate-card-parser` |
 | The live round workspace (FIAT), flow grid | `/debate`, `/practice` | `debate-round`, `debate-flow` |
 | Practice drills, AI coach, AI judge | `/practice/drills`, `/coaching`, `/practice/judge-decision` | `debate-practice-drills` |
-| A full timed round against an AI opponent | `/practice/versus-ai`, `/practice/opponents` | `debate-round-practice-ai` |
+| A full timed round against an AI opponent | `/practice/versus-ai` | `debate-round-practice-ai` |
 | Speech and prep timers, the in-round recorder | `/speech-documents`, `/word-count` | `debate-timer` |
 | The video library (LEARN) | `/videos` | `debate-videos` |
-| Team prep, task inbox, prep room | `/practice/prep-notes`, `/contacts` | `debate-team-collaboration` |
+| Team prep, task inbox, prep room | `/practice/prep` (Prep Notes tab), `/contacts` | `debate-team-collaboration` |
 | Leaderboards, quests, contributor awards | `/coaching/rankings`, `/coaching/outcomes` | `debate-contributor-progress` |
-| AI prompts for speeches and flows | `/summaries`, `/practice/strategy`, `/outline` | `debate-speech-writer` |
+| AI prompts for speeches and flows | `/summaries`, `/practice/prep` (Scout-to-Strategy tab), `/outline` | `debate-speech-writer` |
 | Documentation | `/docs` | `debate-help-docs` |
 | Accounts | `/login`, `/settings` | better-auth |
 | Admin | `/admin` | gated on `ADMIN_EMAIL` / `ADMIN_EMAILS`; invited moderators see the video sections |
