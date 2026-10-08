@@ -274,9 +274,9 @@ return (
                 ) : (
                   <>
                     <p className="mb-3 text-sm text-muted-foreground">
-                      {schoolRows.length} schools, ranked by a balanced score that blends the
-                      average rating of every ranked team from the school with its best entry,
-                      diluting schools with fewer than four teams.
+                      {schoolRows.length} schools, ranked by a balanced score that weighs the
+                      average of each school's top three teams at 70%, with the rest from its
+                      average rating and number of teams.
                     </p>
                     <div className="relative mb-3 max-w-sm">
                       <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
