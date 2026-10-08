@@ -1,7 +1,8 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import type { ComponentType } from "react"
+import type { ComponentType, ReactNode } from "react"
+import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import { Brain, BrainCog, HardDrive, Search, Server, Settings, SlidersHorizontal, UserCircle, Users, Volume2, Wand2 } from "lucide-react"
 // Static import so bundling confines this ~15k-line global stylesheet to
@@ -19,6 +20,7 @@ import { useEditorPreferencesSync } from "../../lib/hooks/useEditorPreferencesSy
 import { CARDMIRROR_TAB_ICONS } from "./cardmirror-tab-icons"
 import { ResearchSettingsTab } from "./ResearchSettingsTab"
 import { researchSectionOfTab, researchSettingsPages } from "../../lib/qwksearch/settings-paths"
+import { SITE_LINKS } from "../../lib/nav/dock-menu-sections"
 
 // The app's own account-linked preferences (debate style, font size, font
 // family, color theme, light/dark) — rendered by `UserSettingsPanel`, which
@@ -89,9 +91,12 @@ const CATEGORY_DETAILS: Record<string, { icon: ComponentType<{ size?: number }>;
 // `dai-` rather than the editor's `pmd-` prefix: its stylesheet already
 // styles `.pmd-settings-sidebar` for its own modal.
 const SIDEBAR_CSS = `
-.dai-settings-shell { display: flex; gap: 24px; align-items: flex-start; }
-.dai-settings-sidebar { width: 220px; flex-shrink: 0; position: sticky; top: 0; }
-.dai-settings-main { flex: 1; min-width: 0; }
+.dai-settings-shell { display: flex; height: 100%; min-height: 0; }
+.dai-settings-sidebar { width: 240px; flex-shrink: 0; height: 100%; display: flex; flex-direction: column;
+  box-sizing: border-box; padding: 12px; overflow-y: auto;
+  border-right: 1px solid var(--pmd-border, rgba(127, 127, 127, 0.25)); }
+.dai-settings-sidebar-nav { flex: 1; }
+.dai-settings-main { flex: 1; min-width: 0; height: 100%; overflow-y: auto; box-sizing: border-box; padding: 12px 24px 24px; }
 .dai-settings-nav-item { display: flex; align-items: center; gap: 10px; width: 100%; padding: 7px 10px;
   border: none; border-radius: 8px; background: none; color: inherit; font: inherit; font-size: 14px;
   text-align: left; cursor: pointer; opacity: 0.75; transition: background 150ms, opacity 150ms; }
@@ -102,9 +107,16 @@ const SIDEBAR_CSS = `
 .dai-settings-group { margin: 14px 0 4px; padding: 0 10px; font-size: 11px; font-weight: 600;
   text-transform: uppercase; letter-spacing: 0.04em; opacity: 0.55; }
 .dai-settings-search:focus { box-shadow: 0 0 0 1px rgba(127, 127, 127, 0.4); }
+.dai-settings-footer { margin-top: 16px; padding-top: 10px; display: flex; flex-wrap: wrap; gap: 2px 4px;
+  border-top: 1px solid var(--pmd-border, rgba(127, 127, 127, 0.25)); }
+.dai-settings-footer-link { display: inline-flex; align-items: center; gap: 6px; padding: 4px 6px; border-radius: 6px;
+  color: inherit; font-size: 12px; text-decoration: none; opacity: 0.65; }
+.dai-settings-footer-link:hover { background: rgba(127, 127, 127, 0.12); opacity: 1; }
 @media (max-width: 640px) {
-  .dai-settings-shell { flex-direction: column; gap: 12px; }
-  .dai-settings-sidebar { width: 100%; position: static; }
+  .dai-settings-shell { flex-direction: column; height: auto; }
+  .dai-settings-sidebar { width: 100%; height: auto; border-right: none;
+    border-bottom: 1px solid var(--pmd-border, rgba(127, 127, 127, 0.25)); }
+  .dai-settings-main { height: auto; overflow: visible; padding: 12px 16px 24px; }
 }
 `
 
@@ -112,7 +124,48 @@ function isTabId(value: string | null): value is TabId {
   return CATEGORIES.some((category) => category.id === value)
 }
 
-export function EditorSettingsPanel() {
+/**
+ * The site's footer links (`FOOTER_LINKS` from `@debate/videos`, the same
+ * list the app sidebar's footer and the dock's Site Links menu read), pinned
+ * to the bottom of the settings sidebar. App routes go through `Link`; the
+ * help docs and outside sites get a real page load (see `hardNavigate`).
+ */
+function SettingsSidebarFooter() {
+  return (
+    <nav className="dai-settings-footer" aria-label="Site links">
+      {SITE_LINKS.map((link) => {
+        const isExternal = link.url.startsWith("http")
+        const content = (
+          <>
+            <link.icon size={13} className="h-[13px] w-[13px]" />
+            <span>{link.text}</span>
+          </>
+        )
+        return isExternal || link.hardNavigate ? (
+          <a
+            key={link.text}
+            href={link.url}
+            target={isExternal ? "_blank" : undefined}
+            rel={isExternal ? "noopener noreferrer" : undefined}
+            className="dai-settings-footer-link"
+          >
+            {content}
+          </a>
+        ) : (
+          <Link key={link.text} href={link.url} className="dai-settings-footer-link">
+            {content}
+          </Link>
+        )
+      })}
+    </nav>
+  )
+}
+
+/**
+ * @param sidebarHeader Rendered above the search box at the top of the
+ *   sidebar (the settings page puts its Back link there).
+ */
+export function EditorSettingsPanel({ sidebarHeader }: { sidebarHeader?: ReactNode } = {}) {
   const searchParams = useSearchParams()
   const requestedCategory = searchParams.get("category")
   const [active, setActive] = useState<TabId>(isTabId(requestedCategory) ? requestedCategory : PREFERENCES_TAB)
@@ -146,10 +199,11 @@ export function EditorSettingsPanel() {
   const activeCategory = CATEGORIES.find((category) => category.id === active)
 
   return (
-    <div style={{ fontFamily: "system-ui, sans-serif", padding: "12px 16px 16px" }}>
+    <div style={{ fontFamily: "system-ui, sans-serif", height: "100%" }}>
       <style>{SIDEBAR_CSS}</style>
       <div className="dai-settings-shell">
         <div className="dai-settings-sidebar" role="navigation" aria-label="Settings">
+          {sidebarHeader}
           <div style={{ position: "relative", marginBottom: 10 }}>
             <span style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", opacity: 0.5, display: "flex" }}>
               <Search size={15} />
@@ -167,6 +221,7 @@ export function EditorSettingsPanel() {
             role="tablist"
             aria-label="Settings categories"
             aria-orientation="vertical"
+            className="dai-settings-sidebar-nav"
             style={{ display: "flex", flexDirection: "column", gap: 2 }}
           >
             {filtered.length === 0 && (
@@ -199,6 +254,7 @@ export function EditorSettingsPanel() {
               )
             })}
           </div>
+          <SettingsSidebarFooter />
         </div>
         <div className="dai-settings-main">
           <div

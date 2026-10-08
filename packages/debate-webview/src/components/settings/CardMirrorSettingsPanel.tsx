@@ -26,25 +26,36 @@
  * @module components/settings/CardMirrorSettingsPanel
  */
 
-import { Settings2 } from "lucide-react"
+import Link from "next/link"
+import { ArrowLeft, Settings2 } from "lucide-react"
 import { EditorSettingsPanel } from "./EditorSettingsPanel"
 
+/**
+ * Fills its parent edge to edge, with no padding: the settings sidebar runs
+ * the full height on the left, with the Back link and the "Settings" title at
+ * its top and the site's footer links (Docs, Privacy, …) at its bottom.
+ */
 export function CardMirrorSettingsPanel() {
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 pb-6">
-      <div className="flex items-center gap-1.5 mb-1">
-        <Settings2 className="h-4 w-4 text-foreground" />
-        <h2 className="text-base font-semibold">Settings</h2>
-      </div>
-      <p className="text-sm text-muted-foreground mb-4">
-        Your plan, debate preferences and theme, plus every setting for the card editor — files and autosave, editing and typography, colors, fonts and sizing,
-        accessibility overrides, keyboard shortcuts, comments and AI, collaboration — plus the performance benchmark
-        and this install&apos;s version info, and the research agent&apos;s models, connectors, search and voice. Saved to your account when signed in; API keys and relay tokens stay in
-        this browser.
-      </p>
-      <div className="rounded-md border border-border bg-background overflow-hidden">
-        <EditorSettingsPanel />
-      </div>
+    <div className="h-full bg-background">
+      <EditorSettingsPanel
+        sidebarHeader={
+          <div className="flex items-center justify-between gap-2 mb-3">
+            <div className="flex items-center gap-1.5">
+              <Settings2 className="h-4 w-4 text-foreground" />
+              <h2 className="text-base font-semibold">Settings</h2>
+            </div>
+            <Link
+              href="/debate"
+              className="inline-flex items-center gap-1 h-8 px-2.5 rounded-md border border-border bg-background hover:bg-accent text-xs font-medium text-foreground transition-colors"
+              aria-label="Back to debate flow"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              Back
+            </Link>
+          </div>
+        }
+      />
     </div>
   )
 }
