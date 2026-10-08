@@ -32,8 +32,16 @@ import {
   markAllAccountNotificationsRead,
   type AccountNotification,
 } from "../state/accountNotifications";
+import { createSharedFetch } from "../lib/shared-fetch";
 
 const POLL_INTERVAL_MS = 30_000;
+
+/**
+ * Every mounted copy (the dock's, the sidebar account menu's) polls on its own
+ * interval, so a tick within this long of another copy's reuses its request
+ * rather than sending another (see `lib/shared-fetch`).
+ */
+const fetchNotificationsShared = createSharedFetch(() => fetchAccountNotifications(), POLL_INTERVAL_MS - 2_000);
 
 /**
  * Fired on `window` after a notification is marked read from any instance of
@@ -87,9 +95,9 @@ export function useAccountNotifications(
   const initializedRef = useRef(false);
   const router = useRouter();
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (force = false) => {
     setLoading(true);
-    const page = await fetchAccountNotifications();
+    const page = await fetchNotificationsShared(force);
     setLoading(false);
     if (!page) return;
 
@@ -120,10 +128,14 @@ export function useAccountNotifications(
   }, [router, toastOnArrival]);
 
   useEffect(() => {
-    if (!enabled) return;
-    load();
+    if (!enabled) {
+      // Signed out: a request made for the last account must not be reused.
+      fetchNotificationsShared.reset();
+      return;
+    }
+    void load();
     const interval = setInterval(() => {
-      if (typeof document === "undefined" || document.visibilityState === "visible") load();
+      if (typeof document === "undefined" || document.visibilityState === "visible") void load();
     }, POLL_INTERVAL_MS);
     const onChanged = () => void load();
     if (typeof window !== "undefined") window.addEventListener(NOTIFICATIONS_CHANGED_EVENT, onChanged);
@@ -133,10 +145,13 @@ export function useAccountNotifications(
     };
   }, [enabled, load]);
 
-  // The event reloads every mounted instance, this one included.
+  // The event reloads every mounted instance, this one included. Dropping
+  // the shared request first makes the first of them fetch the new state and
+  // the rest share that one request.
   const announce = useCallback(async () => {
+    fetchNotificationsShared.reset();
     if (typeof window !== "undefined") window.dispatchEvent(new Event(NOTIFICATIONS_CHANGED_EVENT));
-    else await load();
+    else await load(true);
   }, [load]);
 
   const markRead = useCallback(
@@ -152,5 +167,7 @@ export function useAccountNotifications(
     await announce();
   }, [announce]);
 
-  return { notifications, unreadCount, loading, refresh: load, markRead, markAllRead };
+  const refresh = useCallback(() => load(true), [load]);
+
+  return { notifications, unreadCount, loading, refresh, markRead, markAllRead };
 }

@@ -559,8 +559,10 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
   // contacts (not only on /contacts). Neither count is shown in the dock any
   // more — the Settings menu is navigation now, and its Notifications and
   // Contacts rows, plus the unread dot that advertised them, are gone.
-  useAccountNotifications(isAuthenticated)
-  useContacts(isAuthenticated)
+  // Only the app shell's own dock runs them: the sidebar mounts an embedded
+  // copy beside it, and a second copy only doubled both polls.
+  useAccountNotifications(isAuthenticated && !embedded)
+  useContacts(isAuthenticated && !embedded)
 
   const navigate = useCallback((href: string) => router.push(href), [router])
 

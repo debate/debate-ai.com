@@ -8,15 +8,22 @@
  * This prefetches the rest of the dock's routes one at a time, in idle time
  * after the page has loaded, so a switch is a render from cache.
  *
- * Skipped on a data-saver or 2G connection, and never for `/research/docs`: its
- * workspace is several megabytes (see the docs page `internals/performance`),
- * which only someone heading there should pay for. Hover still warms it.
+ * Skipped on a data-saver or 2G connection, and never for the heavy routes:
+ * `/research/docs`' workspace is several megabytes (see the docs page
+ * `internals/performance`), and `/practice/versus-ai` pulls in the whole
+ * practice stack (the AI opponent, round and matchup simulators, coach mode,
+ * the drill generator, the judge), which showed up as a dozen unused chunks
+ * on every other page. Only someone heading there should pay for either.
+ * Hover still warms them.
+ *
+ * Each route is warmed at most once per page load, even when the dock that
+ * started the queue unmounts and another dock picks it up.
  *
  * @module lib/nav/dock-idle-prefetch
  */
 
 /** Dock routes too heavy to fetch for someone who may never open them. */
-export const IDLE_PREFETCH_EXCLUDED: ReadonlySet<string> = new Set(["/research/docs"])
+export const IDLE_PREFETCH_EXCLUDED: ReadonlySet<string> = new Set(["/research/docs", "/practice/versus-ai"])
 
 /** Wait after `load` before the first prefetch, so it never competes with it. */
 const START_DELAY_MS = 1_500
@@ -57,6 +64,9 @@ type IdleWindow = Window & {
 /** One idle warm-up per page load, however many docks are mounted. */
 let started = false
 
+/** Routes already warmed this page load, so a restarted queue skips them. */
+const warmed = new Set<string>()
+
 /**
  * Prefetches `targets` one per idle period, starting after the page's `load`.
  *
@@ -67,11 +77,11 @@ export function scheduleDockIdlePrefetch(
   targets: readonly string[],
   win: IdleWindow = window,
 ): () => void {
-  if (started || targets.length === 0) return () => {}
+  const queue = targets.filter((href) => !warmed.has(href))
+  if (started || queue.length === 0) return () => {}
   if (!canIdlePrefetch(win.navigator as { connection?: ConnectionHints })) return () => {}
   started = true
 
-  const queue = [...targets]
   let timer = 0
   let idle = 0
   let cancelled = false
@@ -80,6 +90,7 @@ export function scheduleDockIdlePrefetch(
     if (cancelled) return
     const href = queue.shift()
     if (!href) return
+    warmed.add(href)
     try {
       prefetch(href)
     } catch {
@@ -106,4 +117,10 @@ export function scheduleDockIdlePrefetch(
     win.clearTimeout(timer)
     if (idle && typeof win.cancelIdleCallback === "function") win.cancelIdleCallback(idle)
   }
+}
+
+/** Forget this page load's warm-up, as a fresh document would (tests). */
+export function resetDockIdlePrefetch(): void {
+  started = false
+  warmed.clear()
 }

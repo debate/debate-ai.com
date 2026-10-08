@@ -1,20 +1,25 @@
-import { describe, expect, it, vi } from "vitest"
+import { beforeEach, describe, expect, it, vi } from "vitest"
 
 import {
   canIdlePrefetch,
   dockIdlePrefetchTargets,
+  resetDockIdlePrefetch,
   scheduleDockIdlePrefetch,
 } from "../../../src/lib/nav/dock-idle-prefetch"
 
 const HREFS = ["/videos", "/research/cards", "/debate", "/practice/versus-ai", "/research/docs"]
 
 describe("dockIdlePrefetchTargets", () => {
-  it("skips the page on screen and the heavy /research/docs workspace", () => {
-    expect(dockIdlePrefetchTargets(HREFS, "/debate")).toEqual(["/videos", "/research/cards", "/practice/versus-ai"])
+  it("skips the page on screen and the heavy routes", () => {
+    expect(dockIdlePrefetchTargets(HREFS, "/debate")).toEqual(["/videos", "/research/cards"])
+  })
+
+  it("never warms the practice stack from another page", () => {
+    expect(dockIdlePrefetchTargets(HREFS, "/research/cards")).not.toContain("/practice/versus-ai")
   })
 
   it("treats a page under a destination as that destination", () => {
-    expect(dockIdlePrefetchTargets(HREFS, "/videos/pf")).toEqual(["/research/cards", "/debate", "/practice/versus-ai"])
+    expect(dockIdlePrefetchTargets(HREFS, "/videos/pf")).toEqual(["/research/cards", "/debate"])
   })
 
   it("does not confuse a sibling path with a destination's subtree", () => {
@@ -37,6 +42,8 @@ describe("canIdlePrefetch", () => {
 })
 
 describe("scheduleDockIdlePrefetch", () => {
+  beforeEach(() => resetDockIdlePrefetch())
+
   function fakeWindow(connection?: { saveData?: boolean }) {
     return {
       navigator: { connection },
@@ -68,6 +75,20 @@ describe("scheduleDockIdlePrefetch", () => {
     expect(first).toHaveBeenCalledTimes(1)
     expect(second).not.toHaveBeenCalled()
     cancel()
+    vi.useRealTimers()
+  })
+
+  it("does not warm a route twice when another dock restarts the queue", async () => {
+    vi.useFakeTimers()
+    const first = vi.fn()
+    const cancel = scheduleDockIdlePrefetch(first, ["/videos", "/research/cards"], fakeWindow())
+    await vi.runAllTimersAsync()
+    cancel()
+    const second = vi.fn()
+    scheduleDockIdlePrefetch(second, ["/videos", "/research/cards", "/debate"], fakeWindow())
+    await vi.runAllTimersAsync()
+    expect(first.mock.calls.map(([href]) => href)).toEqual(["/videos", "/research/cards"])
+    expect(second.mock.calls.map(([href]) => href)).toEqual(["/debate"])
     vi.useRealTimers()
   })
 
