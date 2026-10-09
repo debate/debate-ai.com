@@ -250,30 +250,30 @@ export function VideoSearchBar({
               )}
               {isSearchFocused && <GlowingEffect />}
             </div>
-            {phrasesOpen && visiblePhrases.length > 0 && (
-              <ul
-                id="video-search-phrases"
-                role="listbox"
-                aria-label="Suggested searches"
-                className="absolute left-0 right-0 top-full z-50 mt-1 max-h-64 overflow-y-auto rounded-md border border-border bg-popover p-1 text-sm text-popover-foreground shadow-md"
-              >
-                {visiblePhrases.map((phrase) => (
-                  <li key={phrase} role="option" aria-selected={false}>
-                    <button
-                      type="button"
-                      // mousedown keeps focus in the input, so blur does not
-                      // close the list before the click lands.
-                      onMouseDown={(e) => e.preventDefault()}
-                      onClick={() => handlePickPhrase(phrase)}
-                      className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left hover:bg-accent hover:text-accent-foreground"
-                    >
-                      <Search className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                      <span className="truncate">{phrase}</span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
+              {phrasesOpen && visiblePhrases.length > 0 && (
+                <ul
+                  id="video-search-phrases"
+                  role="listbox"
+                  aria-label="Suggested searches"
+                  className="absolute left-0 top-full z-50 mt-1 w-64 max-h-15 rounded-md border border-border bg-popover p-1 text-sm text-popover-foreground shadow-md overflow-x-auto overflow-y-hidden flex flex-row gap-1.5"
+                >
+                  {visiblePhrases.map((phrase) => (
+                    <li key={phrase} role="option" aria-selected={false}>
+                      <button
+                        type="button"
+                        // mousedown keeps focus in the input, so blur does not
+                        // close the list before the click lands.
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={() => handlePickPhrase(phrase)}
+                        className="shrink-0 flex items-center gap-2 rounded-sm px-2 py-1.5 text-left hover:bg-accent hover:text-accent-foreground whitespace-nowrap"
+                      >
+                        <Search className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                        <span>{phrase}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
           </div>
 
           {afterSearchElement}
