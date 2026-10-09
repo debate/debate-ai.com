@@ -97,7 +97,7 @@ describe("CardContentViewer", () => {
     const markup = render(result({ year: "", cite_short: "Birhane and van Dijk", cite: "" }))
 
     expect(markup).toContain("Birhane and van Dijk")
-    expect(markup).not.toContain("rounded text-xs font-medium")
+    expect(markup).not.toContain("bg-yellow")
   })
 
   it("offers to open the source page and pull its full article when the cite has a URL", () => {

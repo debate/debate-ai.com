@@ -28,8 +28,8 @@ export const EMPTY_FILTERS: SearchFilters = {
 
 /**
  * The filter state a fresh search opens with: the Quotes toggle on, so the
- * list is the most recently uploaded quotes until the user picks another kind
- * or types a term.
+ * list is the corpus's cards — most recently popular first — until the user
+ * picks another kind or types a term.
  */
 export const DEFAULT_SEARCH_FILTERS: SearchFilters = {
   ...EMPTY_FILTERS,

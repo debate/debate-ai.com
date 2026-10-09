@@ -11,7 +11,7 @@ import { Card, CardContent } from "../ui/primitives/card"
 import { Button } from "../ui/primitives/button"
 import { Eye, ExternalLink, FileText } from "lucide-react"
 import { SourceArticlePanel } from "./SourceArticlePanel"
-import { MIN_HIGHLIGHTED_WORDS, citationDetail, countHighlightedWords, extractAuthor, extractYear, stripDuplicateHeader } from "../lib/card-content"
+import { MIN_HIGHLIGHTED_WORDS, citationDetail, countHighlightedWords, extractAuthor, extractYear, stripDuplicateHeader, stripAuthorFromBody } from "../lib/card-content"
 import { findCardSourceUrl } from "../lib/card-source-url"
 
 /**
@@ -150,7 +150,10 @@ export function CardContentViewer({
   const year = extractYear(selectedResult.year, selectedResult.cite_short)
   const authorLine = [author, year].filter(Boolean).join(" ")
   const cite = citationDetail(selectedResult.cite, authorLine)
-  const html = stripDuplicateHeader(selectedResult.html, [selectedResult.tag, authorLine, cite])
+  const html = stripAuthorFromBody(
+    stripDuplicateHeader(selectedResult.html, [selectedResult.tag, authorLine, cite]),
+    author,
+  )
   const sourceUrl = showSourceControls ? findCardSourceUrl(selectedResult) : null
   const showArticle = sourceUrl !== null && articleUrl === sourceUrl
   // Embiggen on shows only the highlighting; underlining stands in only for a
@@ -190,7 +193,9 @@ export function CardContentViewer({
             {/* Citation info */}
             <div className="space-y-2">
               <p className="text-sm">
-                <span className="font-semibold">{author}</span>
+                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                  {author}
+                </span>
                 {year && (
                   <>
                     {" "}

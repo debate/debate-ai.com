@@ -236,6 +236,24 @@ describe("buildCardSearchOrderBy", () => {
     expect(rows.map((row) => row.id)).toEqual([2, 3]);
   });
 
+  it("orders by recent season, then most read, for Recent & Popular", async () => {
+    const db = await freshDb();
+    await db.insert(debateCards).values([
+      card({ id: 1, year: 2024, duplicateCount: 900 }),
+      card({ id: 2, year: 2026, duplicateCount: 5 }),
+      card({ id: 3, year: 2026, duplicateCount: 500 }),
+      card({ id: 4, year: 2026, duplicateCount: 500 }),
+    ]);
+    const rows = await db
+      .select()
+      .from(debateCards)
+      .orderBy(...buildCardSearchOrderBy("recentPopular:desc"))
+      .limit(3);
+    // 2026 first; within it the 500-read cards ahead of the 5-read
+    // one, the tie broken by the newer card id.
+    expect(rows.map((row) => row.id)).toEqual([4, 3, 2]);
+  });
+
   it("leaves other sorts to the database order", () => {
     expect(buildCardSearchOrderBy("_text_match:desc")).toEqual([]);
   });
@@ -256,6 +274,21 @@ describe("sortSearchResults", () => {
     expect(sortSearchResults(results(), "highlightLength:asc").map((r) => r.highlightLength)).toEqual([100, 300]);
   });
 
+  it("sorts recent and popular cards first", () => {
+    const recent = [
+      { year: "2024", readCount: 900 },
+      { year: "2026", readCount: 5 },
+      { year: "2026", readCount: 500 },
+      { year: "", readCount: 10_000 },
+    ];
+    expect(sortSearchResults(recent, "recentPopular:desc").map((r) => `${r.year}:${r.readCount}`)).toEqual([
+      "2026:500",
+      "2026:5",
+      "2024:900",
+      ":10000",
+    ]);
+  });
+
   it("leaves relevance order to the database", () => {
     expect(sortSearchResults(results(), "_text_match:desc").map((r) => r.year)).toEqual(["2014", "2018"]);
   });
@@ -274,7 +307,7 @@ describe("readSearchKind", () => {
 });
 
 describe("buildRecentCardOrderBy", () => {
-  it("lists the most recently imported quotes first", async () => {
+  it("lists the newest cards first, by id", async () => {
     const db = await freshDb();
     await db.insert(debateCards).values([
       card({ id: 1, importedAt: 100 }),
@@ -285,7 +318,9 @@ describe("buildRecentCardOrderBy", () => {
 
     const rows = await db.select().from(debateCards).orderBy(...buildRecentCardOrderBy());
 
-    expect(rows.map((row) => row.id)).toEqual([3, 2, 4, 1]);
+    // The dump's ids grow with every import, so the rowid walk
+    // backwards is the newest-imported-first order.
+    expect(rows.map((row) => row.id)).toEqual([4, 3, 2, 1]);
   });
 });
 

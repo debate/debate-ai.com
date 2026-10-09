@@ -211,6 +211,7 @@ export function ResearchSearchSidebar({
                           <SelectValue placeholder="Sort by" />
                         </SelectTrigger>
                         <SelectContent>
+                          <SelectItem value="recentPopular:desc">Recent &amp; Popular</SelectItem>
                           <SelectItem value="_text_match:desc">Relevance</SelectItem>
                           <SelectItem value="readCount:desc">Most Read</SelectItem>
                           <SelectItem value="year:asc">Oldest</SelectItem>
@@ -221,7 +222,7 @@ export function ResearchSearchSidebar({
                       </Select>
                     </div>
                   </TooltipTrigger>
-                  <TooltipContent>Sort results by relevance, popularity, date, or length</TooltipContent>
+                  <TooltipContent>Sort results by recent popularity, relevance, date, or length</TooltipContent>
                 </Tooltip>
 
                 {/* Search in: Highlighted / Underlined / Summaries / All Text */}
