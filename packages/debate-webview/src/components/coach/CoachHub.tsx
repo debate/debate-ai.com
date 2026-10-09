@@ -112,7 +112,6 @@ export const COACH_SECTIONS: readonly HubSection<SectionId>[] = [
       panel("Coaching Programs", "/coaching/programs"),
       panel("Practice Drills", "/practice/drills"),
       panel("Coach Materials", "/coaching/materials"),
-      panel("Latest News"),
     ],
   },
   {
@@ -151,6 +150,7 @@ export const COACH_SECTIONS: readonly HubSection<SectionId>[] = [
       panel("Practice vs AI", "/practice/versus-ai"),
       panel("Word-Count Speeches", "/word-count"),
       panel("AI Judge Decision", "/practice/judge-decision"),
+      panel("Latest News", "/practice/forums"),
     ],
   },
 ]

@@ -103,7 +103,7 @@ function VideoCardComponent({
   const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`
   const hasTeams = !!(affTeam || negTeam)
   const hasFullMetadata = Boolean(tournament && affTeam && negTeam)
-  const styleSuffix = styleNumber === 2 ? " (PF)" : styleNumber === 3 ? " (LD)" : ""
+  const styleSuffix = styleNumber === 1 ? " (Policy)" : styleNumber === 2 ? " (PF)" : styleNumber === 3 ? " (LD)" : ""
   const cleanTournament = tournament ? tournament.replace(/\d+/g, "").trim() + styleSuffix : undefined
   const yearTopic = getYearTopic(year, styleNumber, topics)
 
