@@ -16,9 +16,10 @@
  *   inside the card's top-right corner, and hides a moment after the pointer
  *   leaves both the card and the column (long enough to travel onto it).
  * - Read aloud uses the browser's `speechSynthesis`. It reads the tag,
- *   then the cite (author and year), then the card's highlighted
- *   text — what a debater reads in round — or the whole body when
- *   nothing is highlighted. Clicking it again (on any card) stops.
+ *   then the author's last name and the year (two digits, nothing more
+ *   of the citation line), then the card's highlighted text — what a
+ *   debater reads in round — or its underlined text when nothing is
+ *   highlighted. Clicking it again (on any card) stops.
  * - The AI calls are injected (`runAi`; `card-ai-client.ts` in production),
  *   so this file has no dependency on the LLM client or settings.
  *
@@ -44,15 +45,19 @@ export interface CardParts {
   body: string;
   /** Highlighted body text, runs joined with spaces; `''` when none. */
   highlighted: string;
+  /** Underlined body text, runs joined with spaces; `''` when none. */
+  underlined: string;
 }
 
-/** Tag, cite, body and highlighted text of a `card` node. */
+/** Tag, cite, body, highlighted and underlined text of a `card` node. */
 export function cardParts(card: PMNode): CardParts {
   let tag = '';
   const cites: string[] = [];
   const body: string[] = [];
-  const runs: string[] = [];
-  let inRun = false;
+  const hlRuns: string[] = [];
+  const ulRuns: string[] = [];
+  let inHlRun = false;
+  let inUlRun = false;
   card.forEach((child) => {
     const name = child.type.name;
     if (name === 'tag') {
@@ -64,21 +69,29 @@ export function cardParts(card: PMNode): CardParts {
       child.descendants((node) => {
         if (!node.isText) return true;
         const lit = node.marks.some((m) => m.type.name === 'highlight');
+        const und = node.marks.some((m) => m.type.name === 'underline_mark');
         if (lit) {
-          if (inRun) runs[runs.length - 1] += node.text ?? '';
-          else runs.push(node.text ?? '');
+          if (inHlRun) hlRuns[hlRuns.length - 1] += node.text ?? '';
+          else hlRuns.push(node.text ?? '');
         }
-        inRun = lit;
+        if (und) {
+          if (inUlRun) ulRuns[ulRuns.length - 1] += node.text ?? '';
+          else ulRuns.push(node.text ?? '');
+        }
+        inHlRun = lit;
+        inUlRun = und;
         return false;
       });
-      inRun = false;
+      inHlRun = false;
+      inUlRun = false;
     }
   });
   return {
     tag: tag.trim(),
     cite: cites.join('\n').trim(),
     body: body.join('\n').trim(),
-    highlighted: runs.map((r) => r.trim()).filter(Boolean).join(' '),
+    highlighted: hlRuns.map((r) => r.trim()).filter(Boolean).join(' '),
+    underlined: ulRuns.map((r) => r.trim()).filter(Boolean).join(' '),
   };
 }
 
@@ -87,10 +100,34 @@ export function cardAnalysisText(parts: CardParts): string {
   return [parts.tag, parts.cite, parts.body].filter(Boolean).join('\n\n');
 }
 
-/** What Read aloud speaks: the tag, the cite (author and year), then the highlighted text (or the whole body). */
+/**
+ * The author's last name and the year a card's citation dates
+ * by, as a debater says them before the evidence: the
+ * citation's first word and its first year, the year as the
+ * two digits a debater says aloud ("Smith 24", a four-digit
+ * year shortened to its last two). Nothing more of the
+ * citation line is read — the qualification that follows the
+ * year stays on the page.
+ */
+function citeSpeaker(cite: string): string {
+  const firstLine = cite.split('\n')[0]?.trim() ?? '';
+  if (!firstLine) return '';
+  const author = firstLine.split(/\s+/)[0];
+  const year = firstLine.match(/\d{4}|\d{2}/);
+  if (!year) return author;
+  const digits = year[0];
+  return `${author} ${digits.length === 4 ? digits.slice(2) : digits}`;
+}
+
+/**
+ * What Read aloud speaks: the tag, then the author's last name
+ * and the year, then only the card's highlighted text — what a
+ * debater reads in round — or its underlined text when nothing
+ * in the card is highlighted.
+ */
 export function cardSpeechText(parts: CardParts): string {
-  const text = parts.highlighted || parts.body;
-  return [parts.tag, parts.cite, text].filter(Boolean).join('. ').replace(/\s+/g, ' ').trim();
+  const text = parts.highlighted || parts.underlined;
+  return [parts.tag, citeSpeaker(parts.cite), text].filter(Boolean).join('. ').replace(/\s+/g, ' ').trim();
 }
 
 /** The `card` node containing `pos`, or null. */

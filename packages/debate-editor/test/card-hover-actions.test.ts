@@ -13,8 +13,9 @@ import {
 import { requestSiteCardAi, SUMMARIZE_CARD_PROMPT } from "../src/editor/card-ai-client";
 
 const hl = () => schema.marks.highlight!.create();
+const ul = () => schema.marks.underline_mark!.create();
 
-function card(withHighlight = true): PMNode {
+function card(withHighlight = true, withUnderline = false): PMNode {
   return schema.node("card", null, [
     schema.node("tag", null, schema.text("Warming causes extinction")),
     schema.node("cite_paragraph", null, schema.text("Smith 24, climate scientist")),
@@ -29,18 +30,35 @@ function card(withHighlight = true): PMNode {
             schema.text("ecosystems", [hl()]),
             schema.text(" by 2100."),
           ]
-        : [schema.text("Rising temperatures will collapse most ecosystems by 2100.")],
+        : withUnderline
+          ? [
+              schema.text("Rising temperatures "),
+              schema.text("will collapse", [ul()]),
+              schema.text(" most ecosystems by 2100."),
+            ]
+          : [schema.text("Rising temperatures will collapse most ecosystems by 2100.")],
     ),
   ]);
 }
 
 describe("cardParts", () => {
-  it("splits a card into tag, cite, body and highlighted runs", () => {
+  it("splits a card into tag, cite, body, highlighted and underlined runs", () => {
     expect(cardParts(card())).toEqual({
       tag: "Warming causes extinction",
       cite: "Smith 24, climate scientist",
       body: "Rising temperatures will collapse most ecosystems by 2100.",
       highlighted: "will collapse ecosystems",
+      underlined: "",
+    });
+  });
+
+  it("collects the underlined runs", () => {
+    expect(cardParts(card(false, true))).toEqual({
+      tag: "Warming causes extinction",
+      cite: "Smith 24, climate scientist",
+      body: "Rising temperatures will collapse most ecosystems by 2100.",
+      highlighted: "",
+      underlined: "will collapse",
     });
   });
 
@@ -50,22 +68,43 @@ describe("cardParts", () => {
 });
 
 describe("cardSpeechText", () => {
-  it("reads the tag, the citation, then only the highlighted text", () => {
+  it("reads the tag, the author's last name and the year, then only the highlighted text", () => {
     expect(cardSpeechText(cardParts(card()))).toBe(
-      "Warming causes extinction. Smith 24, climate scientist. will collapse ecosystems",
+      "Warming causes extinction. Smith 24. will collapse ecosystems",
     );
   });
 
-  it("falls back to the whole body when nothing is highlighted", () => {
+  it("falls back to the underlined text when nothing is highlighted", () => {
+    expect(cardSpeechText(cardParts(card(false, true)))).toBe(
+      "Warming causes extinction. Smith 24. will collapse",
+    );
+  });
+
+  it("reads nothing of the body when no text is highlighted or underlined", () => {
     expect(cardSpeechText(cardParts(card(false)))).toBe(
-      "Warming causes extinction. Smith 24, climate scientist. Rising temperatures will collapse most ecosystems by 2100.",
+      "Warming causes extinction. Smith 24.",
+    );
+  });
+
+  it("reads a four-digit year as its two digits", () => {
+    const fourDigit = schema.node("card", null, [
+      schema.node("tag", null, schema.text("Warming causes extinction")),
+      schema.node("cite_paragraph", null, schema.text("Smith 2024, climate scientist")),
+      schema.node(
+        "card_body",
+        null,
+        schema.text("Rising temperatures ", [hl()]),
+      ),
+    ]);
+    expect(cardSpeechText(cardParts(fourDigit))).toBe(
+      "Warming causes extinction. Smith 24. Rising temperatures",
     );
   });
 
   it("skips the citation when a card has none", () => {
     const noCite = schema.node("card", null, [
       schema.node("tag", null, schema.text("Warming causes extinction")),
-      schema.node("card_body", null, schema.text("Rising temperatures.")),
+      schema.node("card_body", null, schema.text("Rising temperatures.", [hl()])),
     ]);
     expect(cardSpeechText(cardParts(noCite))).toBe(
       "Warming causes extinction. Rising temperatures.",
