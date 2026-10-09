@@ -17,7 +17,23 @@ import type { TournamentHrefs } from "../src/routes";
 import { TournamentsContext, type TournamentsContextValue } from "../src/ui/shared";
 import { createTournamentsClient } from "../src/ui/client";
 
-const plainLink = ({ href, children }: { href: string; children?: ReactNode }) => <a href={href}>{children}</a>;
+const plainLink = ({
+  href,
+  className,
+  title,
+  "aria-label": ariaLabel,
+  children,
+}: {
+  href: string;
+  className?: string;
+  title?: string;
+  "aria-label"?: string;
+  children?: ReactNode;
+}) => (
+  <a href={href} className={className} title={title} aria-label={ariaLabel}>
+    {children}
+  </a>
+);
 
 function withClient(client: ReturnType<typeof createTournamentsClient>, node: ReactNode) {
   const value = {
