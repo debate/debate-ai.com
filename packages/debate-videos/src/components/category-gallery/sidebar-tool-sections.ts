@@ -158,10 +158,10 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
     // The prep tools (briefings, scout-to-strategy, opponent and judge
     // profiles, prep notes) are one page now, the Prep Workspace, listed
     // under Practice.
-    href: "/practice/prep",
+    href: "/practice/forums",
     icon: Binoculars,
     tools: [
-      { href: "/practice/prep", title: "Prep Workspace", icon: ClipboardList },
+      { href: "/practice/forums", title: "Latest News", icon: Rss },
     ],
   },
   {
@@ -174,7 +174,6 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
     href: "/practice/versus-ai",
     icon: Dumbbell,
     tools: [
-      { href: "/practice/forums", title: "Latest News", icon: Rss },
       { href: "/practice/versus-ai", title: "Practice vs AI", icon: Swords },
       // Pre-Round Briefings, Scout-to-Strategy, Opponent Team Profiles, Judge
       // Profiles and Prep Notes, one tab each.
