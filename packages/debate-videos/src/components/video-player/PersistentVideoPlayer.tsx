@@ -422,7 +422,7 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
       const params = new URLSearchParams({
         vid: activeVideoId,
         autoplay: "1",
-        start: String(Math.floor(startSeconds))
+        start: startSeconds && startSeconds > 0 ? String(Math.floor(startSeconds)) : ""
       })
       const origin = (isPipActive ? pipOrigin ?? undefined : undefined) ?? embedOrigin() ?? loc.origin
       if (origin) params.set("origin", origin)
