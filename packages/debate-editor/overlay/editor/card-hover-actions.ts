@@ -112,7 +112,7 @@ export function cardAnalysisText(parts: CardParts): string {
 function citeSpeaker(cite: string): string {
   const firstLine = cite.split('\n')[0]?.trim() ?? '';
   if (!firstLine) return '';
-  const author = firstLine.split(/\s+/)[0];
+  const author = firstLine.split(/\s+/)[0] ?? '';
   const year = firstLine.match(/\d{4}|\d{2}/);
   if (!year) return author;
   const digits = year[0];

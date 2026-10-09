@@ -82,7 +82,7 @@ describe("cardSpeechText", () => {
 
   it("reads nothing of the body when no text is highlighted or underlined", () => {
     expect(cardSpeechText(cardParts(card(false)))).toBe(
-      "Warming causes extinction. Smith 24.",
+      "Warming causes extinction. Smith 24",
     );
   });
 
