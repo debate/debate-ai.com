@@ -57,6 +57,7 @@ import type React from "react"
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react"
 import { Group, Panel, Separator, usePanelRef, type PanelSize } from "react-resizable-panels"
+import { playUISoundEffect } from "@debate/timer"
 
 import { cn } from "../lib/utils"
 import { setSidebarCollapsed, toggleSidebarCollapsed, useSidebarCollapsed } from "./sidebar-collapse"
@@ -338,6 +339,23 @@ export function ResizableSidebarLayout({
       // Not registered with its group yet; the next change applies it.
     }
   }, [collapsed, panelRef])
+
+  // A sound confirms the sidebar opening or closing — the hide/show
+  // button, Ctrl/Cmd+B and a drag past the collapse threshold all
+  // land here. The first run (mount) is skipped, and the hover-peek
+  // is silent: it previews the column without changing the real
+  // hidden/shown choice, so it never sounds.
+  const prevCollapsed = useRef<boolean | null>(null)
+  useEffect(() => {
+    if (prevCollapsed.current === null) {
+      prevCollapsed.current = collapsed
+      return
+    }
+    if (prevCollapsed.current !== collapsed) {
+      playUISoundEffect(collapsed ? "popDown" : "popUpOn")
+      prevCollapsed.current = collapsed
+    }
+  }, [collapsed])
 
   // Ctrl/Cmd+B, except where it already means bold (inputs, editors).
   useEffect(() => {

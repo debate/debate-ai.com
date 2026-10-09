@@ -1,10 +1,18 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CalendarDays, MapPin, Plus, Search, ShieldCheck } from "lucide-react";
+import { CalendarDays, MapPin, Plus, Search, ShieldCheck, Trophy } from "lucide-react";
 import { DEMO_TOURN_ID } from "../../host/demo-account";
+import { FramedOverlay } from "../FramedOverlay";
 import { Badge, Card, Input, buttonVariants } from "../primitives";
 import { Empty, Loaded, useApi, useTournaments } from "../shared";
+
+/**
+ * The Debate Majors season calendar — the week-by-week grid of the
+ * season's major tournaments — a standalone page served from the
+ * app's static assets, framed over this list rather than linked to.
+ */
+const MAJORS_CALENDAR_HREF = "/debate-majors-a-to-z.html";
 
 /**
  * Upcoming tournaments, as on tabroom.com's front page (`/pages/invite/upcoming`):
@@ -15,6 +23,7 @@ export function UpcomingTournamentsPage() {
   const { client, hrefs, Link } = useTournaments();
   const state = useApi("upcoming", (signal) => client.upcoming(signal));
   const [query, setQuery] = useState("");
+  const [majorsOpen, setMajorsOpen] = useState(false);
 
   return (
     <div className="mx-auto max-w-5xl space-y-4 p-4 md:p-6">
@@ -36,6 +45,14 @@ export function UpcomingTournamentsPage() {
               className="pl-8"
             />
           </label>
+          <button
+            type="button"
+            onClick={() => setMajorsOpen(true)}
+            className={buttonVariants({ variant: "outline", size: "sm" })}
+          >
+            <Trophy aria-hidden />
+            Debate Majors
+          </button>
           <Link href={hrefs.admin(DEMO_TOURN_ID)} className={buttonVariants({ variant: "outline", size: "sm" })}>
             <ShieldCheck aria-hidden />
             Demo admin
@@ -49,6 +66,13 @@ export function UpcomingTournamentsPage() {
       <Loaded state={state}>
         {(tourns) => <UpcomingList tourns={tourns} query={query} hrefs={hrefs} Link={Link} />}
       </Loaded>
+      <FramedOverlay
+        open={majorsOpen}
+        onClose={() => setMajorsOpen(false)}
+        url={MAJORS_CALENDAR_HREF}
+        title="Debate Majors"
+        description="The whole 2026–27 season at a glance — weeks A–Y plus the Z championships, one placement per tournament."
+      />
     </div>
   );
 }

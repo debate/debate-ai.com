@@ -6,7 +6,7 @@
 import { describe, expect, it } from "vitest";
 import { renderToString } from "react-dom/server";
 import type { ReactNode } from "react";
-import { TabroomOverlay, TOURNAMENT_FORMATS, TournamentsApp } from "../src/ui";
+import { FramedOverlay, TOURNAMENT_FORMATS, TournamentsApp } from "../src/ui";
 import { TournamentsContext, type TournamentsContextValue } from "../src/ui/shared";
 import { createTournamentsClient } from "../src/ui/client";
 
@@ -76,17 +76,25 @@ describe("HostTournamentPage", () => {
   });
 });
 
-describe("TabroomOverlay", () => {
-  it("renders nothing until it is opened, so Tabroom is not fetched with the list", () => {
-    expect(renderToString(<TabroomOverlay open={false} onClose={() => {}} />)).toBe("");
+describe("FramedOverlay", () => {
+  it("renders nothing until it is opened, so the framed page is not fetched with the list", () => {
+    expect(renderToString(<FramedOverlay open={false} onClose={() => {}} />)).toBe("");
   });
 
   it("frames beta.tabroom.com over the page, with a way out", () => {
-    const html = renderToString(<TabroomOverlay open onClose={() => {}} />);
+    const html = renderToString(<FramedOverlay open onClose={() => {}} />);
     expect(html).toContain('src="https://beta.tabroom.com"');
     expect(html).toContain("Close Tabroom overlay");
     expect(html).toContain("Open in a new tab");
     expect(html).toContain('role="dialog"');
+  });
+
+  it("frames any page, naming the close control for it", () => {
+    const html = renderToString(
+      <FramedOverlay open onClose={() => {}} url="/debate-majors-a-to-z.html" title="Debate Majors" />,
+    );
+    expect(html).toContain('src="/debate-majors-a-to-z.html"');
+    expect(html).toContain("Close Debate Majors overlay");
   });
 
   it("is reachable from the tournaments list, next to the demo admin", () => {
@@ -95,6 +103,13 @@ describe("TabroomOverlay", () => {
     expect(html).toContain('href="/tournaments/90001/admin"');
     // Tabroom has its own sidebar row now; the list no longer frames it.
     expect(html).not.toContain(">Tabroom<");
+  });
+
+  it("offers the Debate Majors season calendar as an overlay of the list", () => {
+    const html = renderToString(<TournamentsApp segments={[]} />);
+    expect(html).toContain("Debate Majors");
+    // The calendar page itself is only fetched once the overlay opens.
+    expect(html).not.toContain("debate-majors-a-to-z.html");
   });
 
   it("hosts on this site's API, never sending the host to Tabroom", () => {

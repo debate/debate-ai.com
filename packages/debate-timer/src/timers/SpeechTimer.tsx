@@ -21,7 +21,7 @@ import type { Round } from "../types/flow"
 
 import { useEffect, useRef, useState } from "react"
 import { Play, Pause } from "lucide-react"
-import { playSoundEffect } from "../audio/sound-effects"
+import { playUISoundEffect } from "../audio/sound-effect-preferences"
 import { Button } from "../ui/primitives/button"
 import { MicSelector } from "../recorder/mic-selector"
 import { cn } from "../ui/lib/utils"
@@ -129,7 +129,7 @@ export function SpeechTimer({
     onRecordingEnabledChange,
   })
 
-  // Sound effects imported via playSoundEffect
+  // Sound effects imported via playUISoundEffect
 
   /**
    * Sync display with time prop
@@ -153,7 +153,7 @@ export function SpeechTimer({
         onTimeChange(newTime)
 
         if (newTime <= 0) {
-          playSoundEffect("finalBwong")
+          playUISoundEffect("finalBwong")
           if (onFinish) {
             onFinish()
           } else {
@@ -238,8 +238,8 @@ export function SpeechTimer({
     } else if (e.key === "Enter") {
       e.preventDefault()
       e.currentTarget.blur()
-      playSoundEffect("popDown")
-      playSoundEffect("popUpOn")
+      playUISoundEffect("popDown")
+      playUISoundEffect("popUpOn")
       const mVal = Number.parseInt(minutes) || 0
       const sVal = Number.parseInt(seconds) || 0
       const newTime = mVal * 60000 + sVal * 1000
@@ -268,8 +268,8 @@ export function SpeechTimer({
     } else if (e.key === "Enter") {
       e.preventDefault()
       e.currentTarget.blur()
-      playSoundEffect("popDown")
-      playSoundEffect("popUpOn")
+      playUISoundEffect("popDown")
+      playUISoundEffect("popUpOn")
       const mVal = Number.parseInt(minutes) || 0
       const sVal = Number.parseInt(seconds) || 0
       const newTime = mVal * 60000 + sVal * 1000
@@ -349,9 +349,9 @@ export function SpeechTimer({
               state.name === "running" && "bg-red-500 hover:bg-red-600 text-white"
             )}
             onClick={toggleTimer}
-            onMouseDown={() => playSoundEffect("popDown")}
+            onMouseDown={() => playUISoundEffect("popDown")}
             onMouseUp={() => {
-              state.name === "running" ? playSoundEffect("popUpOff") : playSoundEffect("popUpOn")
+              state.name === "running" ? playUISoundEffect("popUpOff") : playUISoundEffect("popUpOn")
             }}
           >
             {state.name === "running" ? (

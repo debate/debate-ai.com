@@ -10,7 +10,7 @@ export { RoundPage } from "./pages/RoundPage";
 export { ResultsPage } from "./pages/ResultsPage";
 export { ResultSetPage } from "./pages/ResultSetPage";
 export { TournamentsContext, useTournaments, formatDate, type LinkLike } from "./shared";
-export { TabroomOverlay, TABROOM_BETA_URL, type TabroomOverlayProps } from "./TabroomOverlay";
+export { FramedOverlay, TABROOM_BETA_URL, type FramedOverlayProps } from "./FramedOverlay";
 export {
   TOURNAMENT_FORMATS,
   tournamentFormat,

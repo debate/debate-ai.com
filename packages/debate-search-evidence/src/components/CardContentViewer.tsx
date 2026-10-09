@@ -7,7 +7,7 @@
 
 
 import { useState } from "react"
-import { playSoundEffect } from "@debate/timer"
+import { playUISoundEffect } from "@debate/timer"
 import { Card, CardContent } from "../ui/primitives/card"
 import { Button } from "../ui/primitives/button"
 import { Eye, ExternalLink, FileText } from "lucide-react"
@@ -185,7 +185,7 @@ export function CardContentViewer({
                 aria-checked={embiggen}
                 title={embiggen ? "Embiggen on: only the highlighting is shown" : "Embiggen off: the whole card is shown"}
                 onClick={() => {
-                  playSoundEffect("shutter")
+                  playUISoundEffect("shutter")
                   setViewMode(embiggen ? "read" : "highlight")
                 }}
               >

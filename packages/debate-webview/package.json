@@ -76,6 +76,7 @@
     "@debate/round": "workspace:*",
     "@debate/speech-writer": "workspace:*",
     "@debate/team-collaboration": "workspace:*",
+    "@debate/timer": "workspace:*",
     "@debate/tournaments": "workspace:*",
     "@debate/videos": "workspace:*",
     "easydrawer": "^0.0.18",
