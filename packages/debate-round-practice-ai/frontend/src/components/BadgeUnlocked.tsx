@@ -74,7 +74,7 @@ const BadgeUnlocked: React.FC<BadgeUnlockedProps> = ({ badgeName, isOpen, onClos
           </DialogTitle>
           <DialogDescription className="text-center">
             <div className="flex flex-col items-center justify-center space-y-4 py-4">
-              <div className="animate-bounce">{badgeIcon}</div>
+              <div>{badgeIcon}</div>
               <h3 className="text-xl font-semibold text-foreground">{badgeName}</h3>
               <p className="text-muted-foreground">{badgeDescription}</p>
             </div>

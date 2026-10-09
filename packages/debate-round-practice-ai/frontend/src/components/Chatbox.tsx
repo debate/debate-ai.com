@@ -232,15 +232,9 @@ const Chatbox: React.FC<{
                 {message.isTyping && (
                   <div className='flex items-center gap-1 text-xs opacity-70'>
                     <div className='flex space-x-1'>
-                      <div className='w-1 h-1 bg-current rounded-full animate-bounce'></div>
-                      <div
-                        className='w-1 h-1 bg-current rounded-full animate-bounce'
-                        style={{ animationDelay: '0.1s' }}
-                      ></div>
-                      <div
-                        className='w-1 h-1 bg-current rounded-full animate-bounce'
-                        style={{ animationDelay: '0.2s' }}
-                      ></div>
+                      <div className='w-1 h-1 bg-current rounded-full animate-pulse' style={{ animationDelay: '0s', animationDuration: '4s' }}></div>
+                      <div className='w-1 h-1 bg-current rounded-full animate-pulse' style={{ animationDelay: '1.33s', animationDuration: '4s' }}></div>
+                      <div className='w-1 h-1 bg-current rounded-full animate-pulse' style={{ animationDelay: '2.66s', animationDuration: '4s' }}></div>
                     </div>
                     <span>typing...</span>
                   </div>
@@ -276,15 +270,9 @@ const Chatbox: React.FC<{
                 {indicator.isTyping && (
                   <div className='flex items-center gap-1 text-xs opacity-70'>
                     <div className='flex space-x-1'>
-                      <div className='w-1 h-1 bg-current rounded-full animate-bounce'></div>
-                      <div
-                        className='w-1 h-1 bg-current rounded-full animate-bounce'
-                        style={{ animationDelay: '0.1s' }}
-                      ></div>
-                      <div
-                        className='w-1 h-1 bg-current rounded-full animate-bounce'
-                        style={{ animationDelay: '0.2s' }}
-                      ></div>
+                      <div className='w-1 h-1 bg-current rounded-full animate-pulse' style={{ animationDelay: '0s', animationDuration: '4s' }}></div>
+                      <div className='w-1 h-1 bg-current rounded-full animate-pulse' style={{ animationDelay: '1.33s', animationDuration: '4s' }}></div>
+                      <div className='w-1 h-1 bg-current rounded-full animate-pulse' style={{ animationDelay: '2.66s', animationDuration: '4s' }}></div>
                     </div>
                     <span>typing...</span>
                   </div>
