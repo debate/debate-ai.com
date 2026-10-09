@@ -1,7 +1,8 @@
 /**
  * @fileoverview A random little animation on a sidebar icon whenever its row
  * is hovered or focused: a wiggle, bounce, pulse, spin or shake, never the
- * same one twice in a row, driven by Motion.
+ * same one twice in a row, driven by Motion. Each icon also gets a random
+ * color flash — throttled to once per 5 seconds so the sidebar stays calm.
  *
  * It is attached once to a sidebar's root rather than wrapped around each
  * icon, so every row any tree puts in the column (links, buttons, tree items,
@@ -16,6 +17,21 @@ import { animate, type AnimationPlaybackControls, type DOMKeyframesDefinition } 
 import { useEffect, type RefObject } from "react"
 
 import { prefersReducedMotion } from "./sidebar-peek-animations"
+
+/** Colors the icon can flash — chosen at random each time. */
+const ICON_HOVER_COLORS = [
+  "hsl(142 76% 36%)",   // emerald
+  "hsl(217 91% 60%)",   // blue
+  "hsl(38 92% 50%)",    // amber
+  "hsl(330 81% 60%)",   // pink
+  "hsl(262 83% 58%)",   // violet
+  "hsl(199 89% 48%)",   // sky
+  "hsl(34 100% 52%)",   // orange
+  "hsl(162 73% 42%)",   // teal
+] as const
+
+/** Minimum time between two animations on the same icon, in ms. */
+const ICON_HOVER_THROTTLE_MS = 5_000
 
 /** One hover effect: keyframes that start and end with the icon at rest. */
 export interface IconHoverEffect {
@@ -64,16 +80,37 @@ export function sidebarIconFor(target: EventTarget | null, root: Element): { row
 export function attachSidebarIconHover(root: HTMLElement): () => void {
   let previous: IconHoverEffect | null = null
   const playing = new WeakMap<SVGElement, AnimationPlaybackControls>()
+  /** Per-icon timestamp of the last animation start, for the 5s throttle. */
+  const lastAnimationAt = new WeakMap<SVGElement, number>()
 
   const play = (icon: SVGElement) => {
     if (prefersReducedMotion()) return
+
+    // Throttle: only animate once per ICON_HOVER_THROTTLE_MS per icon.
+    const now = Date.now()
+    const last = lastAnimationAt.get(icon) ?? 0
+    if (now - last < ICON_HOVER_THROTTLE_MS) return
+    lastAnimationAt.set(icon, now)
+
     playing.get(icon)?.stop()
     const effect = pickIconHoverEffect(previous)
     previous = effect
+
+    // Pick a random hover color and apply it.
+    const color = ICON_HOVER_COLORS[Math.floor(Math.random() * ICON_HOVER_COLORS.length)]
+    const originalColor = icon.style.color
+    icon.style.color = color
+
     // From rest every time, so a stopped spin or bounce never leaves it
     // askew. Through Motion, which remembers each transform it set.
     animate(icon, AT_REST, { duration: 0 })
-    playing.set(icon, animate(icon, effect.keyframes, { duration: effect.duration, ease: "easeInOut" }))
+    const ctrl = animate(icon, effect.keyframes, { duration: effect.duration, ease: "easeInOut" })
+    playing.set(icon, ctrl)
+
+    // Restore the original color when the animation finishes.
+    ctrl.finished.finally(() => {
+      icon.style.color = originalColor
+    })
   }
 
   const onEnter = (event: PointerEvent | FocusEvent) => {

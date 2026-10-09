@@ -23,4 +23,12 @@ describe("matchRoute", () => {
     const patterns = ["/videos/[[...rest]]", "/videos/[category]", "/videos/watch"]
     expect([...patterns].sort(compareSpecificity)).toEqual(["/videos/watch", "/videos/[category]", "/videos/[[...rest]]"])
   })
+
+  it("binds a dynamic segment's literal prefix, for @handle routes", () => {
+    expect(matchRoute("/@[team]", "/@harker-ll")).toEqual({ team: "harker-ll" })
+    expect(matchRoute("/@[team]", "/teams/harker-ll")).toBeNull()
+    expect(matchRoute("/@[team]", "/@")).toBeNull()
+    // The prefix is matched, not consumed by a longer one.
+    expect(matchRoute("/@@[team]", "/@@harker")).toEqual({ team: "harker" })
+  })
 })

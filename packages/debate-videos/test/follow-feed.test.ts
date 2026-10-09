@@ -96,7 +96,8 @@ describe("follow request parsing", () => {
   });
 
   it("links a follow to its profile page", () => {
-    expect(followHref({ kind: "team", slug: "harker-lee-lin" })).toBe("/teams/harker-lee-lin");
+    expect(followHref({ kind: "team", slug: "harker-lee-lin" })).toBe("/@harker-lee-lin");
+    expect(followHref({ kind: "team", slug: "harker-ll" })).toBe("/@harker-ll");
     expect(followHref({ kind: "school", slug: "harker" })).toBe("/schools/harker");
   });
 });

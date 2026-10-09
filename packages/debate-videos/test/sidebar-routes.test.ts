@@ -66,6 +66,11 @@ describe("matchesToolSidebarHref", () => {
     expect(matchesToolSidebarHref("/legal/privacy")).toBe(true);
   });
 
+  it("matches a team's @handle profile page", () => {
+    expect(matchesToolSidebarHref("/@greenhill-ab")).toBe(true);
+    expect(matchesToolSidebarHref("/@harker-ll")).toBe(true);
+  });
+
   it("does not match a sibling route that merely shares a prefix", () => {
     expect(matchesToolSidebarHref("/docs")).toBe(false);
     expect(matchesToolSidebarHref("/cardsy")).toBe(false);
@@ -142,6 +147,8 @@ describe("team and school profile pages", () => {
     }
     expect(isGenericToolSidebarRoute("/teams/greenhill-ab")).toBe(true);
     expect(isGenericToolSidebarRoute("/schools/greenhill")).toBe(true);
+    expect(isGenericToolSidebarRoute("/@greenhill-ab")).toBe(true);
+    expect(hasEmbeddedDock("/@harker-ll")).toBe(true);
   });
 });
 

@@ -9,8 +9,10 @@ import {
   schoolHref,
   schoolVideoSearch,
   summarizeSchool,
+  teamHandle,
   teamHref,
   teamRadarData,
+  teamSlug,
   teamVideoSearch,
   type ProfileEntry,
 } from "../src/panels/leaderboard/profile/rankingProfileHelpers";
@@ -50,18 +52,30 @@ describe("ranking profile links", () => {
   it("slugifies schools and teams", () => {
     expect(profileSlug("St. Mark's School")).toBe("st-mark-s-school");
     expect(schoolHref("College Prep")).toBe("/schools/college-prep");
+    expect(teamSlug({ school: "College Prep", name: "Falk & Sabnani" })).toBe(
+      "college-prep-falk-sabnani",
+    );
+    expect(teamHandle({ school: "College Prep", name: "Falk & Sabnani" })).toBe(
+      "college-prep-fs",
+    );
     expect(teamHref({ school: "College Prep", name: "Falk & Sabnani" })).toBe(
-      "/teams/college-prep-falk-sabnani",
+      "/@college-prep-fs",
     );
   });
 
-  it("finds a team from its slug, including percent-encoded params", () => {
-    const found = findTeamEntries(datasets, "college-prep-falk-sabnani");
+  it("finds a team from its handle, including percent-encoded params", () => {
+    const found = findTeamEntries(datasets, "college-prep-fs");
     expect(found).toHaveLength(1);
     expect(found[0].entry.name).toBe("Falk & Sabnani");
     expect(found[0].fieldSize).toBe(3);
-    expect(findTeamEntries(datasets, "College%20Prep%20Falk%20Sabnani")).toHaveLength(1);
+    expect(findTeamEntries(datasets, "College%20Prep%20FS")).toHaveLength(1);
     expect(findTeamEntries(datasets, "nobody")).toEqual([]);
+  });
+
+  it("still finds a team from its old school-plus-name slug", () => {
+    const found = findTeamEntries(datasets, "college-prep-falk-sabnani");
+    expect(found).toHaveLength(1);
+    expect(found[0].entry.name).toBe("Falk & Sabnani");
   });
 
   it("finds and summarizes every entry of a school across divisions", () => {
@@ -76,7 +90,7 @@ describe("ranking profile links", () => {
   });
 
   it("searches a team's rounds by school plus initials, in its own division", () => {
-    const search = teamVideoSearch(findTeamEntries(datasets, "college-prep-falk-sabnani"));
+    const search = teamVideoSearch(findTeamEntries(datasets, "college-prep-fs"));
     expect(search.competitors).toEqual(["college prep fs", "college prep sf"]);
     expect(search.styles).toEqual([2]);
     expect(search.label).toBe("College Prep FS");
@@ -203,7 +217,7 @@ describe("schoolDivisionRadarData", () => {
 
 describe("findSchoolDivisionEntries", () => {
   it("returns the team's school in the team's division only, the team included", () => {
-    const [team] = findTeamEntries(datasets, "college-prep-falk-sabnani");
+    const [team] = findTeamEntries(datasets, "college-prep-fs");
     const school = findSchoolDivisionEntries(datasets, team);
     expect(school.map((i) => i.entry.name)).toEqual(["Falk & Sabnani", "Lee & Park"]);
     expect(school.every((i) => i.datasetId === "hspf")).toBe(true);

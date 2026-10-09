@@ -5,6 +5,11 @@
  * web app's `app/` directory — `/videos/[category]`,
  * `/tournaments/[[...slug]]` — so the two stay easy to compare and the params
  * a page reads through `useParams()` have the same names in both hosts.
+ *
+ * A dynamic segment may also carry a literal prefix, written `@[team]` for
+ * the `@<team>` profile handles: `app/` cannot name a folder `@team` (Next
+ * reserves a leading `@` for parallel-route slots), so the handle pages are
+ * served from `/teams/[team]` and rewritten; this host matches them directly.
  */
 
 export type RouteParams = Record<string, string | string[]>
@@ -12,6 +17,8 @@ export type RouteParams = Record<string, string | string[]>
 interface Segment {
   kind: "static" | "dynamic" | "catchAll" | "optionalCatchAll"
   name: string
+  /** Literal text a dynamic segment must start with, e.g. `@` in `@[team]`. */
+  prefix?: string
 }
 
 function parse(pattern: string): Segment[] {
@@ -25,6 +32,11 @@ function parse(pattern: string): Segment[] {
       if (catchAll) return { kind: "catchAll", name: catchAll[1] }
       const dynamic = part.match(/^\[(.+)\]$/)
       if (dynamic) return { kind: "dynamic", name: dynamic[1] }
+      // A dynamic segment with a literal prefix, e.g. `@[team]`.
+      const prefixed = part.match(/^([^[]+)\[(.+)\]$/)
+      if (prefixed) {
+        return { kind: "dynamic", name: prefixed[2], prefix: prefixed[1] }
+      }
       return { kind: "static", name: part }
     })
 }
@@ -56,7 +68,15 @@ export function matchRoute(pattern: string, pathname: string): RouteParams | nul
     if (segment.kind === "static") {
       if (part !== segment.name) return null
     } else {
-      params[segment.name] = decode(part)
+      // A prefixed dynamic segment (`@[team]`) binds what follows
+      // its literal prefix, and only matches a part that has it.
+      if (segment.prefix) {
+        const rest = part.slice(segment.prefix.length)
+        if (!part.startsWith(segment.prefix) || rest === "") return null
+        params[segment.name] = decode(rest)
+      } else {
+        params[segment.name] = decode(part)
+      }
     }
   }
   return parts.length === segments.length ? params : null

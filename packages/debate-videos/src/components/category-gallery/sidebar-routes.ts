@@ -40,7 +40,9 @@ import {
  * `/teams/<team>` and `/schools/<school>` are the profile pages opened from
  * the Team Rankings table (`/coaching/rankings`, itself a tree destination). They used to
  * render bare, with only a "← Team Rankings" text link back — landing on one
- * from anywhere else in the app dropped the nav entirely.
+ * from anywhere else in the app dropped the nav entirely. Team profiles now
+ * live at `@<team>` handles (`/@harker-ll`); both spellings are covered —
+ * see {@link isTeamProfilePath}.
  *
  * `/legal` is the Terms of Service and Privacy Policy page (`/legal/privacy`
  * today). Same reasoning: a page reachable from the footer on every other
@@ -160,6 +162,11 @@ export function ownsItsLayout(pathname: string | null | undefined): boolean {
   return OWN_LAYOUT_SIDEBAR_HREFS.some((href) => isAtOrUnder(pathname, href));
 }
 
+/** True on a team profile's `@<handle>` address, e.g. `/@harker-ll`. */
+export function isTeamProfilePath(pathname: string | null | undefined): boolean {
+  return pathname != null && pathname.startsWith("/@");
+}
+
 /**
  * True when `pathname` is one of the sidebar's destinations or sits beneath
  * one.
@@ -174,6 +181,9 @@ export function ownsItsLayout(pathname: string | null | undefined): boolean {
  */
 export function matchesToolSidebarHref(pathname: string): boolean {
   if (TOOL_SIDEBAR_HREFS.has(pathname)) return true;
+  // Team profiles live at `/@<handle>`, which no tree entry names —
+  // the set only carries the old `/teams` root they moved from.
+  if (isTeamProfilePath(pathname)) return true;
   for (const href of TOOL_SIDEBAR_HREFS) {
     if (pathname.startsWith(`${href}/`)) return true;
   }

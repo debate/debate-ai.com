@@ -160,7 +160,9 @@ function TeamDivisionStats({ item, datasets }: { item: ProfileEntry; datasets: R
 /**
  * Profile of one ranked team (or LD debater).
  *
- * @param props.slug - The `/teams/[team]` segment, from `teamSlug`.
+ * @param props.slug - The team's `@<handle>` segment — or the older
+ * school-plus-name slug a pre-move link or followed profile carries,
+ * which still resolves (see `findTeamEntries`).
  */
 export function TeamProfilePage({ slug }: { slug: string }) {
   const { datasets, loading, error } = useAllRankingDatasets()
