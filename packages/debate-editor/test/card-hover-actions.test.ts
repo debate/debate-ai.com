@@ -50,13 +50,25 @@ describe("cardParts", () => {
 });
 
 describe("cardSpeechText", () => {
-  it("reads the tag then only the highlighted text", () => {
-    expect(cardSpeechText(cardParts(card()))).toBe("Warming causes extinction. will collapse ecosystems");
+  it("reads the tag, the citation, then only the highlighted text", () => {
+    expect(cardSpeechText(cardParts(card()))).toBe(
+      "Warming causes extinction. Smith 24, climate scientist. will collapse ecosystems",
+    );
   });
 
   it("falls back to the whole body when nothing is highlighted", () => {
     expect(cardSpeechText(cardParts(card(false)))).toBe(
-      "Warming causes extinction. Rising temperatures will collapse most ecosystems by 2100.",
+      "Warming causes extinction. Smith 24, climate scientist. Rising temperatures will collapse most ecosystems by 2100.",
+    );
+  });
+
+  it("skips the citation when a card has none", () => {
+    const noCite = schema.node("card", null, [
+      schema.node("tag", null, schema.text("Warming causes extinction")),
+      schema.node("card_body", null, schema.text("Rising temperatures.")),
+    ]);
+    expect(cardSpeechText(cardParts(noCite))).toBe(
+      "Warming causes extinction. Rising temperatures.",
     );
   });
 });

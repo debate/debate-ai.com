@@ -15,9 +15,10 @@
  * - It sits just right of the card when the editor has room there, otherwise
  *   inside the card's top-right corner, and hides a moment after the pointer
  *   leaves both the card and the column (long enough to travel onto it).
- * - Read aloud uses the browser's `speechSynthesis`. It reads the tag, then
- *   the card's highlighted text — what a debater reads in round — or the whole
- *   body when nothing is highlighted. Clicking it again (on any card) stops.
+ * - Read aloud uses the browser's `speechSynthesis`. It reads the tag,
+ *   then the cite (author and year), then the card's highlighted
+ *   text — what a debater reads in round — or the whole body when
+ *   nothing is highlighted. Clicking it again (on any card) stops.
  * - The AI calls are injected (`runAi`; `card-ai-client.ts` in production),
  *   so this file has no dependency on the LLM client or settings.
  *
@@ -86,10 +87,10 @@ export function cardAnalysisText(parts: CardParts): string {
   return [parts.tag, parts.cite, parts.body].filter(Boolean).join('\n\n');
 }
 
-/** What Read aloud speaks: the tag, then the highlighted text (or the whole body). */
+/** What Read aloud speaks: the tag, the cite (author and year), then the highlighted text (or the whole body). */
 export function cardSpeechText(parts: CardParts): string {
   const text = parts.highlighted || parts.body;
-  return [parts.tag, text].filter(Boolean).join('. ').replace(/\s+/g, ' ').trim();
+  return [parts.tag, parts.cite, text].filter(Boolean).join('. ').replace(/\s+/g, ' ').trim();
 }
 
 /** The `card` node containing `pos`, or null. */
