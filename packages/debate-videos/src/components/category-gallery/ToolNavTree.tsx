@@ -1,5 +1,5 @@
 /**
- * @fileoverview The Research / Prep & Scout / Practice / Coaching / Insights
+ * @fileoverview The Research / Practice / Coaching / Insights
  * portion of the videos
  * sidebar — the h1 sections that follow "Round Videos" and "Lectures" in the
  * tree — factored out of `VideoSidebarTree` so it can also render on the

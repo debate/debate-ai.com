@@ -15,7 +15,7 @@ import {
 
 import { SiteFooter } from "../../../src/components/layout/SiteFooter";
 
-/** Static markup escapes `&`, as in "Prep & Scout". */
+/** Static markup escapes `&`, as in a title that carries one. */
 const escaped = (text: string) => text.replaceAll("&", "&amp;");
 
 describe("SiteFooter", () => {

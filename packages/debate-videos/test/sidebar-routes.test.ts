@@ -178,9 +178,9 @@ describe("Latest News", () => {
     expect(hasEmbeddedDock("/practice/forums")).toBe(true);
   });
 
-  it("stay in the Prep & Scout section", () => {
-    const prepScout = SIDEBAR_TOOL_SECTIONS.find((section) => section.id === "prep-scout");
-    const hrefs = prepScout?.tools.map((tool) => tool.href) ?? [];
+  it("stay in the Coaching section", () => {
+    const coaching = SIDEBAR_TOOL_SECTIONS.find((section) => section.id === "coaching");
+    const hrefs = coaching?.tools.map((tool) => tool.href) ?? [];
 
     expect(hrefs).toContain("/practice/forums");
   });

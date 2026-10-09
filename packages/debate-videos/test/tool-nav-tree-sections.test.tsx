@@ -119,13 +119,12 @@ describe("ToolNavTree sectionIds", () => {
 });
 
 describe("SIDEBAR_TOOL_SECTIONS", () => {
-  it("is the five requested sections, in order", async () => {
+  it("is the four requested sections, in order", async () => {
     const { SIDEBAR_TOOL_SECTIONS } = await import(
       "../src/components/category-gallery/sidebar-tool-sections"
     );
     expect(SIDEBAR_TOOL_SECTIONS.map((section) => section.title)).toEqual([
       "Research",
-      "Prepare",
       "Practice",
       "Coaching",
       "Insights",

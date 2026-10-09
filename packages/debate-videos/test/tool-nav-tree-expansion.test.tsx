@@ -50,7 +50,6 @@ const { ALL_SIDEBAR_SECTION_IDS, toggleExpandedSection, withSectionExpanded } = 
 const SAMPLE_HREF_BY_SECTION: Record<string, string> = {
   coaching: "/coaching/programs",
   research: "/research/cards/coverage",
-  "prep-scout": "/practice/forums",
   practice: "/practice/judge-decision",
   insights: "/practice/glossary",
 };
@@ -74,7 +73,8 @@ describe("ToolNavTree expansion", () => {
 
     for (const section of SIDEBAR_TOOL_SECTIONS) {
       const href = SAMPLE_HREF_BY_SECTION[section.id];
-      // Prepare holds one link, so its heading carries the same href.
+      // A section whose flagship href is also its sample href still
+      // renders that href on its heading when collapsed, so skip it.
       if (href === section.href) continue;
       expect(html).not.toContain(`href="${href}"`);
     }
