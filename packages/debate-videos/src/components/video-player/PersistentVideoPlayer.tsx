@@ -415,7 +415,20 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
   if (!activeVideoId || theaterVideoId) return null
 
   const startSeconds = resumeSeconds ?? startTime
-  const iframeSrc = buildEmbedUrl(activeVideoId, { autoplay: true, controls: true, startSeconds, origin: isPipActive ? pipOrigin ?? undefined : undefined })
+  let iframeSrc = buildEmbedUrl(activeVideoId, { autoplay: true, controls: true, startSeconds, origin: isPipActive ? pipOrigin ?? undefined : undefined })
+  if (typeof window !== "undefined") {
+    const loc = window.location
+    if (loc.origin.startsWith("chrome-extension://")) {
+      const params = new URLSearchParams({
+        vid: activeVideoId,
+        autoplay: "1",
+        start: String(Math.floor(startSeconds))
+      })
+      const origin = (isPipActive ? pipOrigin ?? undefined : undefined) ?? embedOrigin() ?? loc.origin
+      if (origin) params.set("origin", origin)
+      iframeSrc = `https://debate-ai.com/youtube-player.html?${params.toString()}`
+    }
+  }
 
   const positionStyle: React.CSSProperties = position
     ? { left: position.x, top: position.y, bottom: "auto", right: "auto" }

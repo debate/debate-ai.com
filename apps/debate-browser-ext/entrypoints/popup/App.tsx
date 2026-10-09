@@ -150,15 +150,6 @@ export default function App() {
     <div className="p-3 text-foreground">
       <div className="mb-2 flex items-center justify-between gap-2">
         <h1 className="text-sm font-semibold">Debate AI</h1>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-7 w-7"
-          aria-label="Extension settings"
-          onClick={() => browser.runtime.openOptionsPage()}
-        >
-          <Settings2 className="h-4 w-4" />
-        </Button>
       </div>
 
       {canRead && (
@@ -177,6 +168,18 @@ export default function App() {
       )}
 
       <Button
+        variant="outline"
+        className="mb-2 w-full"
+        onClick={() => {
+          void browser.runtime.openOptionsPage();
+          window.close();
+        }}
+      >
+        <Settings2 className="mr-2 h-4 w-4" />
+        Extension options
+      </Button>
+
+      <Button
         variant={canRead ? 'outline' : 'default'}
         className="mb-3 w-full"
         onClick={async () => {
@@ -185,7 +188,7 @@ export default function App() {
         }}
       >
         <Timer className="mr-2 h-4 w-4" />
-        Open round timer
+        Open debate timer
       </Button>
 
       <h2 className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
