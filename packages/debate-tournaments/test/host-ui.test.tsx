@@ -6,7 +6,14 @@
 import { describe, expect, it } from "vitest";
 import { renderToString } from "react-dom/server";
 import type { ReactNode } from "react";
-import { FramedOverlay, TOURNAMENT_FORMATS, TournamentsApp } from "../src/ui";
+import {
+  FramedOverlay,
+  HostedTournamentButton,
+  TOURNAMENT_FORMATS,
+  TournamentsApp,
+  type OwnedTournament,
+} from "../src/ui";
+import type { TournamentHrefs } from "../src/routes";
 import { TournamentsContext, type TournamentsContextValue } from "../src/ui/shared";
 import { createTournamentsClient } from "../src/ui/client";
 
@@ -118,6 +125,44 @@ describe("FramedOverlay", () => {
     expect(html).not.toContain("Open Tabroom");
     expect(html).toContain("Try the demo admin");
     expect(html).toContain('href="/tournaments/90001/admin"');
+  });
+});
+
+describe("HostedTournamentButton", () => {
+  const owned = (id: number, name: string): OwnedTournament => ({
+    id,
+    name,
+    webname: null,
+    start: null,
+    end: null,
+    tz: null,
+    hidden: false,
+    eventCount: 0,
+  });
+  const hrefs = { admin: (id: number) => `/t/${id}/admin` } as unknown as TournamentHrefs;
+
+  it("shows the newest tournament the user hosts, opening its admin view", () => {
+    const html = renderToString(
+      <HostedTournamentButton
+        tournaments={[owned(42, "Golden Gate Invitational"), owned(7, "Earlier Classic")]}
+        hrefs={hrefs}
+        Link={plainLink}
+      />,
+    );
+    expect(html).toContain("Golden Gate Invitational");
+    expect(html).toContain('href="/t/42/admin"');
+    // The older one is counted by the badge, not listed.
+    expect(html).toContain(">2</span>");
+    expect(html).not.toContain("Earlier Classic");
+    expect(html).toContain(
+      "Open the admin view of Golden Gate Invitational, the newest of your 2 hosted tournaments",
+    );
+  });
+
+  it("renders nothing when the user hosts nothing", () => {
+    expect(
+      renderToString(<HostedTournamentButton tournaments={[]} hrefs={hrefs} Link={plainLink} />),
+    ).toBe("");
   });
 });
 

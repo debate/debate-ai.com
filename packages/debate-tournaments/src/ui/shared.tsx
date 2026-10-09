@@ -13,10 +13,17 @@ import type { TournamentHrefs } from "../routes";
 import type { TournamentsClient } from "./client";
 import { Card, CardHeader, CardTitle, buttonVariants } from "./primitives";
 
-export type LinkLike = ComponentType<{ href: string; className?: string; children?: ReactNode }>;
+export type LinkLike = ComponentType<{
+  href: string;
+  className?: string;
+  /** Anchor attributes the host's link component passes through to its `<a>`. */
+  title?: string;
+  "aria-label"?: string;
+  children?: ReactNode;
+}>;
 
-const PlainLink: LinkLike = ({ href, className, children }) => (
-  <a href={href} className={className}>
+const PlainLink: LinkLike = ({ href, className, title, "aria-label": ariaLabel, children }) => (
+  <a href={href} className={className} title={title} aria-label={ariaLabel}>
     {children}
   </a>
 );
