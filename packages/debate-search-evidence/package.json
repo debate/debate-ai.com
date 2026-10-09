@@ -44,6 +44,7 @@
     "clsx": "^2.1.1",
     "@debate/card-parser": "workspace:*",
     "@debate/comments": "workspace:*",
+    "@debate/timer": "workspace:*",
     "dompurify": "^3.4.16",
     "fuse.js": "^7.5.0",
     "grab-url": "^1.6.22",

@@ -7,6 +7,7 @@
 
 
 import { useState } from "react"
+import { playSoundEffect } from "@debate/timer"
 import { Card, CardContent } from "../ui/primitives/card"
 import { Button } from "../ui/primitives/button"
 import { Eye, ExternalLink, FileText } from "lucide-react"
@@ -183,7 +184,10 @@ export function CardContentViewer({
                 role="switch"
                 aria-checked={embiggen}
                 title={embiggen ? "Embiggen on: only the highlighting is shown" : "Embiggen off: the whole card is shown"}
-                onClick={() => setViewMode(embiggen ? "read" : "highlight")}
+                onClick={() => {
+                  playSoundEffect("shutter")
+                  setViewMode(embiggen ? "read" : "highlight")
+                }}
               >
                 <Eye className="h-4 w-4 mr-2" />
                 Embiggen {embiggen ? "on" : "off"}
