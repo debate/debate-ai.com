@@ -87,7 +87,7 @@
     "@debate/webview": "workspace:*",
     "docx-preview": "^0.4.1",
     "dompurify": "^3.4.16",
-    "drizzle-orm": "^0.45.3",
+    "drizzle-orm": "^0.45.4",
     "easydrawer": "^0.0.18",
     "framer-motion": "^13.4.6",
     "fuse.js": "^7.5.0",
