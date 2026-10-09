@@ -1,0 +1,102 @@
+name: Build and Release Debate Browser Extension
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/debate-browser-ext/**"
+      - ".github/workflows/release-debate-extension.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Serialize releases so simultaneous builds don't race.
+concurrency:
+  group: debate-extension-release
+  cancel-in-progress: false
+
+env:
+  EXTENSION_DIR: "apps/debate-browser-ext"
+  BUILD_DIR: "dist"
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies and build
+        working-directory: ${{ env.EXTENSION_DIR }}
+        run: |
+          set -euo pipefail
+
+          if [[ -f package-lock.json ]]; then
+            npm ci
+          else
+            npm install
+          fi
+
+          npm run build
+
+      - name: Validate and package extension
+        id: package
+        run: |
+          set -euo pipefail
+
+          BUILD_PATH="$GITHUB_WORKSPACE/$EXTENSION_DIR/$BUILD_DIR"
+          MANIFEST="$BUILD_PATH/manifest.json"
+
+          if [[ ! -f "$MANIFEST" ]]; then
+            echo "::error::Missing manifest.json at $MANIFEST. Update BUILD_DIR to the extension's actual build output."
+            exit 1
+          fi
+
+          VERSION=$(node -e '
+            const fs = require("fs");
+            const manifest = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
+            if (!manifest.version) {
+              throw new Error("manifest.json must contain a version");
+            }
+            process.stdout.write(manifest.version);
+          ' "$MANIFEST")
+
+          TAG="debate-extension-v${VERSION}-build.${GITHUB_RUN_NUMBER}.${GITHUB_RUN_ATTEMPT}"
+          ASSET_NAME="debate-browser-extension-${VERSION}.zip"
+          ASSET_PATH="$RUNNER_TEMP/$ASSET_NAME"
+
+          # ZIP the contents, not the containing directory.
+          cd "$BUILD_PATH"
+          zip -r "$ASSET_PATH" .
+
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "asset_path=$ASSET_PATH" >> "$GITHUB_OUTPUT"
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ steps.package.outputs.tag }}
+          VERSION: ${{ steps.package.outputs.version }}
+          ASSET_PATH: ${{ steps.package.outputs.asset_path }}
+        run: |
+          set -euo pipefail
+
+          gh release create "$TAG" "$ASSET_PATH" \
+            --target "$GITHUB_SHA" \
+            --title "Debate Browser Extension v${VERSION} — Build ${GITHUB_RUN_NUMBER}.${GITHUB_RUN_ATTEMPT}" \
+            --notes "Automated extension build from commit ${GITHUB_SHA}." \
+            --latest
