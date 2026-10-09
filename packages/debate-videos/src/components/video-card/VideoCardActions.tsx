@@ -21,6 +21,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "../../ui/primitives/tooltip"
+import { formatCount } from "../../components/category-gallery/format-count"
 import { formatVideoDate } from "./videoCardUtils"
 import { topicDisplayLines } from "../../lib/debate-topics"
 import { HideConfirmDialog } from "./VideoCardDialogs"
@@ -303,7 +304,7 @@ export function VideoCardActions({
           {/* View count */}
           <div className="flex items-center gap-1 shrink-0">
             <Eye className="h-3 w-3" />
-            <span>{viewCount.toLocaleString()}</span>
+            <span>{formatCount(viewCount)}</span>
           </div>
 
           {/* Judge decision */}

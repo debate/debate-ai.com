@@ -107,12 +107,20 @@ const ICONS = {
     '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>',
   flaws:
     '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.3 3.9L2.4 17.5A2 2 0 0 0 4.1 20.5h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>',
-  speak:
-    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>',
-  stop: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>',
+   speak:
+     '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>',
+   stop: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>',
+   settings:
+     '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 1v4.55a5.05 5.05 0 0 0 0 8.9V23"/><line x1="12" y1="7.5" x2="12" y2="7.5"/><path d="M19.95 12a5.05 5.05 0 0 0-1.41-3.4l3.22-3.22"/><path d="M16.54 6.54L14 9.07"/></svg>',
 } as const;
 
 const STYLE_ID = 'pmd-card-hover-actions-style';
+
+/** Where the reader's speech rate is persisted across cards. */
+const SPEED_STORAGE_KEY = 'pmd-card-actions-read-speed';
+/** Read-aloud defaults to 2x speed, per the card reader's setting. */
+const DEFAULT_READ_SPEED = 2;
+
 const STYLES = `
 .pmd-card-actions{position:fixed;z-index:60;display:none;flex-direction:column;gap:2px;padding:2px;
   background:var(--pmd-c-bg,#fff);border:1px solid var(--pmd-c-border,#d4d4d8);border-radius:8px;
@@ -136,6 +144,12 @@ const STYLES = `
 .pmd-card-ai-panel .pmd-card-ai-body{padding:10px;overflow:auto;white-space:pre-wrap;word-break:break-word}
 .pmd-card-ai-panel[data-state="loading"] .pmd-card-ai-body{color:var(--pmd-c-text-muted,#52525b);font-style:italic}
 .pmd-card-ai-panel[data-state="error"] .pmd-card-ai-body{color:var(--pmd-c-error,#b91c1c)}
+.pmd-read-settings{position:fixed;z-index:60;display:none;flex-direction:column;gap:6px;background:var(--pmd-c-bg,#fff);
+  border:1px solid var(--pmd-c-border,#d4d4d8);border-radius:8px;padding:8px;box-shadow:0 2px 8px var(--pmd-c-shadow-deep,rgba(0,0,0,.15));
+  font:13px/1.5 system-ui,sans-serif;min-width:140px}
+.pmd-read-settings[data-open]{display:flex}
+.pmd-read-settings label{display:block;font-size:11px;font-weight:600;text-foreground/70;letter-spacing:.03em}
+.pmd-read-settings input[type=range]{width:100%;accent-color:var(--pmd-c-accent,#2563eb)}
 `;
 
 function ensureStyles(): void {
@@ -155,12 +169,25 @@ function speechAvailable(): boolean {
   return typeof window !== 'undefined' && 'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined';
 }
 
+/** Reads the persisted read speed, defaulting to 2x. */
+function readStoredSpeed(): number {
+  if (typeof localStorage === 'undefined') return DEFAULT_READ_SPEED;
+  const raw = localStorage.getItem(SPEED_STORAGE_KEY);
+  const parsed = raw == null ? NaN : Number(raw);
+  return Number.isFinite(parsed) && parsed >= 0.5 && parsed <= 4 ? parsed : DEFAULT_READ_SPEED;
+}
+
 class CardHoverActionsView {
   private readonly bar: HTMLDivElement;
   private readonly panel: HTMLDivElement;
   private readonly panelTitle: HTMLElement;
   private readonly panelBody: HTMLDivElement;
   private readonly speakBtn: HTMLButtonElement | null;
+  private readonly settingsBtn: HTMLButtonElement;
+  private readonly settingsPanel: HTMLDivElement;
+  private readonly speedInput: HTMLInputElement;
+  private readonly speedLabel: HTMLLabelElement;
+  private readSpeed = DEFAULT_READ_SPEED;
   private cardEl: HTMLElement | null = null;
   private hideTimer: ReturnType<typeof setTimeout> | null = null;
   private requestId = 0;
@@ -178,9 +205,40 @@ class CardHoverActionsView {
     this.speakBtn = speechAvailable()
       ? this.button('speak', 'Read card aloud', ICONS.speak, () => this.toggleSpeak())
       : null;
+    this.settingsBtn = this.button('settings', 'Read-aloud speed', ICONS.settings, () => this.toggleSettings());
+    this.settingsBtn.setAttribute('aria-label', 'Read-aloud speed settings');
+    this.settingsBtn.setAttribute('aria-haspopup', 'true');
+    this.settingsBtn.setAttribute('aria-expanded', 'false');
+    this.readSpeed = readStoredSpeed();
+    this.speedLabel = document.createElement('label');
+    this.speedLabel.setAttribute('for', 'pmd-read-speed');
+    this.speedLabel.textContent = `Speed: ${this.readSpeed.toFixed(1)}x`;
+    this.speedInput = document.createElement('input');
+    this.speedInput.id = 'pmd-read-speed';
+    this.speedInput.type = 'range';
+    this.speedInput.min = String(0.5);
+    this.speedInput.max = String(4);
+    this.speedInput.step = '0.1';
+    this.speedInput.value = String(this.readSpeed);
+    this.speedInput.setAttribute('aria-label', 'Read-aloud speed multiplier');
+    this.speedInput.addEventListener('input', () => this.onSpeedInput());
+    this.settingsPanel = document.createElement('div');
+    this.settingsPanel.className = 'pmd-read-settings';
+    this.settingsPanel.setAttribute('role', 'dialog');
+    this.settingsPanel.setAttribute('aria-label', 'Read-aloud speed settings');
+    this.settingsPanel.append(this.speedLabel, this.speedInput);
     if (this.speakBtn) {
       this.speakBtn.setAttribute('aria-pressed', 'false');
       this.bar.appendChild(this.speakBtn);
+      // The settings gear lives under the read-aloud button: it opens a speed
+      // slider that adjusts how fast the card is read, saved across cards.
+      this.bar.appendChild(this.settingsBtn);
+      this.settingsBtn.style.marginTop = '4px';
+    } else {
+      // No speech support: keep the settings control out of the tab order and
+      // the document, since there is nothing to read.
+      this.settingsBtn.setAttribute('aria-hidden', 'true');
+      this.settingsPanel.setAttribute('aria-hidden', 'true');
     }
     this.bar.addEventListener('mouseenter', this.cancelHide);
     this.bar.addEventListener('mouseleave', this.scheduleHide);
@@ -208,7 +266,7 @@ class CardHoverActionsView {
     this.panelBody.className = 'pmd-card-ai-body';
     this.panel.append(header, this.panelBody);
 
-    document.body.append(this.bar, this.panel);
+    document.body.append(this.bar, this.panel, this.settingsPanel);
     view.dom.addEventListener('pointermove', this.onPointerMove);
     view.dom.addEventListener('mouseleave', this.scheduleHide);
     window.addEventListener('scroll', this.onScroll, true);
@@ -231,6 +289,7 @@ class CardHoverActionsView {
     if (this.hideTimer) clearTimeout(this.hideTimer);
     this.bar.remove();
     this.panel.remove();
+    this.settingsPanel.remove();
   }
 
   private button(name: string, label: string, icon: string, run: () => void): HTMLButtonElement {
@@ -261,7 +320,10 @@ class CardHoverActionsView {
   };
 
   private readonly onKeyDown = (e: KeyboardEvent): void => {
-    if (e.key === 'Escape' && this.panel.hasAttribute('data-open')) this.closePanel();
+    if (e.key === 'Escape') {
+      if (this.panel.hasAttribute('data-open')) this.closePanel();
+      if (this.settingsPanel.hasAttribute('data-open')) this.setSettingsOpen(false);
+    }
   };
 
   private readonly cancelHide = (): void => {
@@ -286,6 +348,7 @@ class CardHoverActionsView {
   private hideBar(): void {
     this.bar.removeAttribute('data-open');
     this.cardEl = null;
+    this.setSettingsOpen(false);
   }
 
   /** Right of the card when the editor has room there, else inside its top-right corner. */
@@ -359,6 +422,42 @@ class CardHoverActionsView {
     this.panel.removeAttribute('data-open');
   }
 
+  private toggleSettings(): void {
+    const open = this.settingsPanel.hasAttribute('data-open');
+    this.setSettingsOpen(!open);
+  }
+
+  private setSettingsOpen(open: boolean): void {
+    this.settingsPanel.toggleAttribute('data-open', open);
+    this.settingsBtn.setAttribute('aria-expanded', String(open));
+    if (open) this.positionSettings();
+  }
+
+  private positionSettings(): void {
+    if (!this.bar) return;
+    const rect = this.bar.getBoundingClientRect();
+    const w = this.settingsPanel.offsetWidth || 150;
+    const h = this.settingsPanel.offsetHeight || 60;
+    // The settings icon is the last button in the bar, stacked under the read
+    // button; pop the slider out to the right of the bar.
+    let left = rect.right + GAP;
+    if (left + w > window.innerWidth - GAP) left = Math.max(GAP, rect.right - w - GAP);
+    let top = rect.bottom + GAP;
+    if (top + h > window.innerHeight - GAP) top = Math.max(GAP, rect.top - h - GAP);
+    this.settingsPanel.style.left = `${Math.round(left)}px`;
+    this.settingsPanel.style.top = `${Math.round(top)}px`;
+  }
+
+  private onSpeedInput(): void {
+    const value = Math.min(4, Math.max(0.5, Number(this.speedInput.value)));
+    this.readSpeed = value;
+    this.speedLabel.textContent = `Speed: ${value.toFixed(1)}x`;
+    if (typeof localStorage !== 'undefined') localStorage.setItem(SPEED_STORAGE_KEY, String(value));
+    // The new rate applies to the next utterance started by toggleSpeak; speechSynthesis
+    // does not expose live rate control per running utterance, so an in-flight read
+    // picks up the new speed once stopped and restarted.
+  }
+
   private toggleSpeak(): void {
     if (this.speaking) {
       this.stopSpeaking();
@@ -371,6 +470,8 @@ class CardHoverActionsView {
     const synth = window.speechSynthesis;
     synth.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
+    // Read at the speed chosen in the settings popover; 2x by default.
+    utterance.rate = this.readSpeed;
     const done = () => {
       if (this.speaking) this.setSpeaking(false);
     };
