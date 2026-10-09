@@ -65,7 +65,6 @@ import {
   type FeatureCategory,
   type FeatureEntry,
 } from "../../feature-catalog";
-import { APP_LOGO, APP_LOGO_HEIGHT, APP_LOGO_WIDTH, APP_NAME } from "../../config/site";
 import { README_BADGE_ROWS, README_BANNER, README_SHOWCASE, README_VIDEO } from "./readme-media";
 import {
   CARDS_CAPABILITIES,
@@ -259,16 +258,6 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
         <AuroraBackdrop />
 
         <div className="mx-auto max-w-4xl text-center">
-          <Reveal>
-            <img
-              src={APP_LOGO}
-              alt={APP_NAME}
-              width={APP_LOGO_WIDTH}
-              height={APP_LOGO_HEIGHT}
-              className="mx-auto mb-6 h-auto w-full max-w-[320px]"
-            />
-          </Reveal>
-
           <Reveal>
             {/* The README's banner, which doubles as the tour video's poster. */}
             <FeatureVideo />

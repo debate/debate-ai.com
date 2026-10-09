@@ -37,6 +37,7 @@ import { UsersTable } from "./UsersTable";
 import { VideoLibraryTable } from "./VideoLibraryTable";
 import { VideoReportsPanel } from "./VideoReportsPanel";
 import { YoutubeChannelsPanel } from "./YoutubeChannelsPanel";
+import { TranscriptScraperPanel } from "./TranscriptScraperPanel";
 
 interface YoutubeRoundVideo { id: string; title: string; publishedAt: string; channel: string; views: number; style: number; tournament: string | null; }
 interface SyncRun { id: number; status: "running" | "success" | "error"; triggeredBy?: string | null; channelsSynced: number; videosUpserted: number; error: string | null; }
@@ -915,6 +916,8 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
             </Card>
 
             <YoutubeChannelsPanel />
+
+            <TranscriptScraperPanel />
 
             <Card>
               <CardHeader>
