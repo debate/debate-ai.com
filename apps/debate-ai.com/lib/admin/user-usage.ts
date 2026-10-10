@@ -231,5 +231,9 @@ export async function loadSiteUsageTotals(db: AdminDB) {
     regularSources.map(([key], index) => [key, counts[index]]),
   ) as Record<"users" | "sessions" | Exclude<UsageKey, "videosWatched">, number>;
 
-  return { ...totals, videosWatched, activity: USAGE_KEYS.reduce((sum, key) => sum + (totals[key] ?? 0), 0) + videosWatched };
+  return {
+    ...totals,
+    videosWatched,
+    activity: USAGE_KEYS.filter((k) => k !== "videosWatched").reduce((sum, key) => sum + (totals[key] ?? 0), 0) + videosWatched,
+  };
 }

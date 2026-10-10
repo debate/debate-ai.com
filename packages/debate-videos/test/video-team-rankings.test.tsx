@@ -130,10 +130,11 @@ function renderRow(affRanking: RankingEntry | null, negRanking: RankingEntry | n
 }
 
 describe("VideoListRow team cells", () => {
-  it("links a ranked team to its team page and shows its rating", () => {
+  it("links a ranked team to its team page without showing rating", () => {
     const html = renderRow(harker, null);
     expect(html).toContain('href="/@harker-ll"');
-    expect(html).toContain(">72<");
+    // Rating is no longer displayed in team cells (replaced by row index in first column)
+    expect(html).not.toContain(">72<");
   });
 
   it("keeps an unranked team as a library search", () => {

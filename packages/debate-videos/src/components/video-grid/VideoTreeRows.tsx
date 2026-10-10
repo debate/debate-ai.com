@@ -21,7 +21,7 @@ import { VideoListRow } from "./VideoListRow"
 import { FormatBadge, videoFormat } from "./FormatBadge"
 import type { VideoTeamRankingLookup } from "../../hooks/useVideoTeamRankings"
 import { treeIndentStyle } from "./tree-indent"
-import type { VideoGroupKind, VideoTreeGroup, VideoTreeNode } from "./video-tree"
+import type { VideoGroupKind, VideoTreeGroup, VideoTreeLeaf, VideoTreeNode } from "./video-tree"
 import type { VideoType } from "../../types/videos"
 
 /** Icon per group level, so the depth reads without counting indents. */
@@ -197,6 +197,7 @@ export function VideoTreeRows({
   }
 
   const { slot } = node
+  const leafWithIndex = node as { index: number } & VideoTreeLeaf
   const selected = context.stackSelection[slot.key] ?? slot.initialIndex
   const stackIndex = Math.min(Math.max(selected, 0), slot.videos.length - 1)
   const video: VideoType = slot.videos[stackIndex]
@@ -221,6 +222,7 @@ export function VideoTreeRows({
       showFormat={context.showFormat}
       affRanking={context.teamRanking?.(video, video[9]) ?? null}
       negRanking={context.teamRanking?.(video, video[10]) ?? null}
+      rowIndex={leafWithIndex.index}
     />
   )
 }

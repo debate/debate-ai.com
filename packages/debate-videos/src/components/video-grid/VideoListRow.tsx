@@ -112,9 +112,8 @@ function RowThumbnail({
  * An Aff or Neg cell: the team, and under it the argument it ran if known.
  *
  * A team found in the current season's rankings (`ranking`) links to its
- * team page and shows its rating beside the name. Otherwise, with
- * `onSearch`, the name is a button that searches the library for that team's
- * videos instead of opening the row.
+ * team page. Otherwise, with `onSearch`, the name is a button that searches
+ * the library for that team's videos instead of opening the row.
  */
 function TeamCell({
   team,
@@ -156,14 +155,6 @@ function TeamCell({
         ) : (
           <span className="truncate">{team}</span>
         )}
-        {team && ranking && (
-          <span
-            className="shrink-0 rounded bg-muted px-1 py-px text-[11px] font-medium tabular-nums text-muted-foreground"
-            title={`Rating ${ranking.adjustedRating.toFixed(1)} · ranked #${ranking.rank}`}
-          >
-            {Math.round(ranking.adjustedRating)}
-          </span>
-        )}
       </div>
       {argument && (
         <div className="mt-0.5 line-clamp-2 text-xs leading-tight text-muted-foreground" title={argument}>
@@ -193,6 +184,7 @@ export function VideoListRow({
   affRanking,
   negRanking,
   showFormat = false,
+  rowIndex,
 }: {
   video: VideoType
   /** Tree depth, for the row's indent. */
@@ -221,6 +213,8 @@ export function VideoListRow({
   negRanking?: RankingEntry | null
   /** Badges the tournament name with the round's debate format. */
   showFormat?: boolean
+  /** Sequential index of this video in the list (1-based). */
+  rowIndex?: number
 }) {
   const [
     videoId,
@@ -306,8 +300,18 @@ export function VideoListRow({
                 <RowThumbnail videoId={videoId} title={title} isPlaying={isPlaying} />
               </span>
             )}
-            <div className="min-w-0">
-              {!hasCoreRoundInfo && (
+<div className="min-w-0">
+                {rowIndex && (
+                  <div className="mb-0.5 flex items-center gap-1.5">
+                    <span
+                      className="shrink-0 rounded bg-primary/10 px-1.5 py-0.5 text-[11px] font-medium tabular-nums text-primary"
+                      title="Row index"
+                    >
+                      #{rowIndex}
+                    </span>
+                  </div>
+                )}
+                {!hasCoreRoundInfo && (
                 <div className="line-clamp-2 text-sm font-medium leading-snug text-foreground">
                   {title}
                 </div>
