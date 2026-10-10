@@ -9,6 +9,7 @@ import {
   savedJudgeDecisions,
   savedRounds,
   savedSpeechSendLog,
+  savedToolRecords,
   savedWordCountRounds,
   session,
   user,
@@ -25,6 +26,10 @@ type AdminDB = Awaited<ReturnType<typeof getDBFromContext>>;
  * be sorted by any usage column across the whole result set instead of only
  * within the page that happened to be fetched.
  */
+type UsageSource =
+  | { table: SQLiteTable; userId: AnySQLiteColumn; collection?: never }
+  | { table: typeof savedToolRecords; userId: AnySQLiteColumn; collection: string };
+
 const USAGE_SOURCES = {
   docs: { table: documents, userId: documents.userId },
   flows: { table: savedFlows, userId: savedFlows.userId },
@@ -34,7 +39,12 @@ const USAGE_SOURCES = {
   speeches: { table: savedSpeechSendLog, userId: savedSpeechSendLog.userId },
   practiceRounds: { table: practiceVsAiDebates, userId: practiceVsAiDebates.userId },
   drills: { table: savedDrillSets, userId: savedDrillSets.userId },
-} as const;
+  videosWatched: {
+    table: savedToolRecords,
+    userId: savedToolRecords.userId,
+    collection: "debateVideoWatchHistory",
+  },
+} as const satisfies Record<string, UsageSource>;
 
 export type UsageKey = keyof typeof USAGE_SOURCES;
 
@@ -50,17 +60,19 @@ export const USAGE_KEYS = Object.keys(USAGE_SOURCES) as UsageKey[];
 const qualified = (table: SQLiteTable, column: AnySQLiteColumn) =>
   sql`${table}.${sql.identifier(column.name)}`;
 
-const countForUser = ({ table, userId }: { table: SQLiteTable; userId: AnySQLiteColumn }) =>
-  sql<number>`(select count(*) from ${table} where ${qualified(table, userId)} = ${qualified(user, user.id)})`.mapWith(
-    Number,
-  );
+const countForUser = (source: UsageSource) => {
+  const where = source.collection
+    ? sql`${qualified(source.table, source.userId)} = ${qualified(user, user.id)} and ${sql.identifier("collection")} = ${source.collection}`
+    : sql`${qualified(source.table, source.userId)} = ${qualified(user, user.id)}`;
+  return sql<number>`(select count(*) from ${source.table} where ${where})`.mapWith(Number);
+};
 
 const usageExpressions = Object.fromEntries(
   USAGE_KEYS.map((key) => [key, countForUser(USAGE_SOURCES[key])]),
 ) as Record<UsageKey, SQL<number>>;
 
 /** Sessions are logins rather than saved work, so they sit outside `total`. */
-const sessionsExpression = countForUser({ table: session, userId: session.userId });
+const sessionsExpression = countForUser({ table: session, userId: session.userId } as UsageSource);
 
 /** One number for "how much has this account actually been used". */
 const totalExpression = sql<number>`(${sql.join(
@@ -195,23 +207,29 @@ export async function loadUserUsage(db: AdminDB, id: string) {
  * stable reference while an admin narrows the table underneath them.
  */
 export async function loadSiteUsageTotals(db: AdminDB) {
-  const sources: Array<[string, SQLiteTable]> = [
+  const regularSources: Array<[string, SQLiteTable]> = [
     ["users", user],
     ["sessions", session],
-    ...USAGE_KEYS.map((key) => [key, USAGE_SOURCES[key].table] as [string, SQLiteTable]),
+    ...USAGE_KEYS.filter((k) => k !== "videosWatched").map((key) => [key, USAGE_SOURCES[key].table] as [string, SQLiteTable]),
   ];
 
   const counts = await Promise.all(
-    sources.map(async ([, table]) => {
+    regularSources.map(async ([, table]) => {
       const [row] = await db.select({ value: count() }).from(table);
       return row?.value ?? 0;
     }),
   );
 
-  const totals = Object.fromEntries(sources.map(([key], index) => [key, counts[index]])) as Record<
-    "users" | "sessions" | UsageKey,
-    number
-  >;
+  // Videos watched needs a filtered count on saved_tool_records
+  const [videosWatchedRow] = await db
+    .select({ value: count() })
+    .from(savedToolRecords)
+    .where(eq(savedToolRecords.collection, "debateVideoWatchHistory"));
+  const videosWatched = videosWatchedRow?.value ?? 0;
 
-  return { ...totals, activity: USAGE_KEYS.reduce((sum, key) => sum + totals[key], 0) };
+  const totals = Object.fromEntries(
+    regularSources.map(([key], index) => [key, counts[index]]),
+  ) as Record<"users" | "sessions" | Exclude<UsageKey, "videosWatched">, number>;
+
+  return { ...totals, videosWatched, activity: USAGE_KEYS.reduce((sum, key) => sum + (totals[key] ?? 0), 0) + videosWatched };
 }

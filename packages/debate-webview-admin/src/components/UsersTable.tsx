@@ -31,6 +31,7 @@ interface UserRow {
   speeches: number;
   practiceRounds: number;
   drills: number;
+  videosWatched: number;
 }
 
 interface UsersResponse {
@@ -56,6 +57,7 @@ const USAGE_COLUMNS = [
   { key: "speeches", label: "Speeches", hint: "Speech documents sent" },
   { key: "practiceRounds", label: "vs AI", hint: "Practice-vs-AI rounds" },
   { key: "drills", label: "Drills", hint: "Saved drill sets" },
+  { key: "videosWatched", label: "Videos", hint: "Videos watched" },
 ] as const;
 
 const SUMMARY_TILES = [
@@ -201,7 +203,7 @@ export function UsersTable() {
         <CardTitle>Users</CardTitle>
         <CardDescription>
           Every account with what it has actually saved — documents, flows, rounds, judging,
-          speeches, practice rounds and drills. Click a column to sort by it across all users.
+          speeches, practice rounds, drills and videos watched. Click a column to sort by it across all users.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
