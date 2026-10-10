@@ -54,7 +54,7 @@ export const README_BANNER = "https://i.imgur.com/mVdcP7Y.png";
 export const README_VIDEO = {
   /** YouTube video id — the one the README's YouTube badge points at. */
   id: "XB0tzpBUEKQ",
-  title: "Debate AI in two minutes",
+  title: "Debate AI video intro",
   /** Canonical watch page, for readers who would rather watch it there. */
   watchUrl: "https://www.youtube.com/watch?v=XB0tzpBUEKQ",
 } as const;

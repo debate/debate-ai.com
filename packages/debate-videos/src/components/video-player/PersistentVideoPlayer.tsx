@@ -424,7 +424,7 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
         autoplay: "1",
         start: startSeconds && startSeconds > 0 ? String(Math.floor(startSeconds)) : ""
       })
-      const origin = (isPipActive ? pipOrigin ?? undefined : undefined) ?? embedOrigin() ?? loc.origin
+      const origin = (isPipActive ? pipOrigin : undefined) ?? embedOrigin() ?? loc.origin
       if (origin) params.set("origin", origin)
       iframeSrc = `https://debate-ai.com/youtube-player.html?${params.toString()}`
     }

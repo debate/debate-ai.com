@@ -56,7 +56,7 @@ Same as the Add New Event/Division Screen
 
 ## Registration
 
-### <big>Deadlines</big>
+### Deadlines
 
 <img src="/screenshots/Settings_-_Event_-_Registration_-_Event_Specific_Deadline.png" />
 
@@ -72,7 +72,7 @@ the school.
 **Event Specific Nuisance Fine for Drops** - Sets the value of the fine
 for drops after a certain date.
 
-### <big>Registration</big>
+### Registration
 
 <img src="/screenshots/Settings_-_Event_-_Registration_-_Registration_Settings.png" />
 
@@ -94,7 +94,7 @@ event, usually considered one that doesn't count towards sweepstakes, or
 that students can participate in if they are not participating in the
 elimination rounds of their main event.
 
-### <big>Caps & Waitlists</big>
+### Caps & Waitlists
 
 <img src="/screenshots/Settings_-_Event_-_Registration_-_Caps_and_Waitlists.png" />
 
@@ -115,7 +115,7 @@ used at all).
 rank its entries in the event to help determine priorities for those
 entries getting off the waitlist.
 
-### <big>Judging adjustments</big>
+### Judging adjustments
 
 <img src="/screenshots/Settings_-_Event_-_Registration_-_Judging_adjustments.png" />
 
@@ -134,7 +134,7 @@ self-select that they don't want to judge an event. For example, can be
 useful to allow inexperienced judges to choose not to judge a "TOC
 qualifying" division.
 
-### <big>Breakout Round Designations</big>
+### Breakout Round Designations
 
 <img src="/screenshots/Settings_-_Event_-_Registration_-_Breakout_flags.png" />
 
@@ -152,7 +152,7 @@ should be eligible for a breakout.
 entries that are in another elim round are not allowed to also compete
 in a breakout.
 
-### <big>Qualifiers</big>
+### Qualifiers
 
 <img src="/screenshots/Settings_-_Event_-_Registration_-_Qualifiers.png" />
 
@@ -171,7 +171,7 @@ clear "at-large" teams into the tournament at your discretion.
 
 ## Online
 
-### <big>Online Options</big>
+### Online Options
 
 <img src="/screenshots/Settings_-_Event_-_Online_-_Online_Options.png" />
 
@@ -212,7 +212,7 @@ online room before a round start, that team would be considered present
 screen and allows tab room staff to poke only judges if they have not
 shown to their competition room.
 
-### <big>NSDA Campus Options</big>
+### NSDA Campus Options
 
 <img src="/screenshots/Settings_-_Event_-_Online_-_NSDA_Campus_Options.png" />
 
@@ -228,7 +228,7 @@ in NSDA Campus rooms.
 **Show judges in rooms by** - Sets the default display for judges in
 NSDA Campus rooms.
 
-### <big>Online Support Options</big>
+### Online Support Options
 
 <img src="/screenshots/Settings_-_Event_-_Online_-_Online_Support_Options.png" />
 
@@ -243,7 +243,7 @@ specific events or the entire tournament.
 
 ## Pairing
 
-### <big>Pairing</big>
+### Pairing
 
 <img src="/screenshots/Settings_-_Event_-_Pairing_-_Pairing.png" />
 
@@ -278,7 +278,7 @@ sides.
 elimination (an entry has to lose twice) before they are eliminated from
 the tournament.
 
-### <big>Judges</big>
+### Judges
 
 <img src="/screenshots/Settings_-_Event_-_Pairing_-_Judges.png" />
 
@@ -351,7 +351,7 @@ debating from getting pullups multiple times in a tournament.
 **Disable auto-scheduling** - Toggle to prevent a round from being
 auto-paired once results from the previous round are in.
 
-### <big>Web Publishing</big>
+### Web Publishing
 
 <img src="/screenshots/Settings_-_Event_-_Pairing_-_Publish.png" />
 
@@ -382,7 +382,7 @@ publicly post the result of a round after they announce it.
 
 ## Tabulation
 
-### <big>Input</big>
+### Input
 
 <img src="/screenshots/Settings_-_Event_-_Tabulation_-_Input.png" />
 
@@ -406,7 +406,7 @@ a judge can assign.
 
 **Flight length in minutes** - Sets a time limit for flighted events.
 
-### <big>Output</big>
+### Output
 
 <img src="/screenshots/Settings_-_Event_-_Tabulation_-_Output.png" />
 
