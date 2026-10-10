@@ -25,3 +25,21 @@ describe("sidebar icon hover", () => {
     expect(sidebarIconFor(outside, root)).toBeNull();
   });
 });
+
+describe("sidebar icon animation setting", () => {
+  it("is off by default and follows the Settings switch", async () => {
+    const { readSidebarIconAnimations, setSidebarIconAnimations, subscribeSidebarIconAnimations } = await import(
+      "../src/ui/layout/sidebar-icon-hover"
+    );
+    localStorage.clear();
+    expect(readSidebarIconAnimations()).toBe(false);
+    let changes = 0;
+    const stop = subscribeSidebarIconAnimations(() => changes++);
+    setSidebarIconAnimations(true);
+    expect(readSidebarIconAnimations()).toBe(true);
+    setSidebarIconAnimations(false);
+    expect(readSidebarIconAnimations()).toBe(false);
+    stop();
+    expect(changes).toBe(2);
+  });
+});
