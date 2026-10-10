@@ -446,3 +446,64 @@ export function indexVideoTreeLeaves(nodes: VideoTreeNode[], startIndex = 1): nu
 export interface VideoTreeLeafWithIndex extends VideoTreeLeaf {
   index: number;
 }
+
+/**
+ * Rows a node draws when every group is at its default open state for
+ * `collapseDepth` — the same rule `VideoTreeRows` seeds its groups with.
+ *
+ * @param node - The node to measure.
+ * @param depth - The node's depth in the tree (0 for a root).
+ * @param collapseDepth - The table's collapse level.
+ * @returns The group's own row plus its open descendants, or 1 for a video.
+ */
+export function openVideoTreeRowCount(
+  node: VideoTreeNode,
+  depth: number,
+  collapseDepth: number,
+): number {
+  if (node.type !== "group") return 1;
+  if (depth + 1 >= collapseDepth) return 1;
+  return node.children.reduce(
+    (total, child) => total + openVideoTreeRowCount(child, depth + 1, collapseDepth),
+    1,
+  );
+}
+
+/**
+ * Deals the roots of a tree into two side-by-side tables, for a screen wide
+ * enough to hold the list twice over.
+ *
+ * Each root goes to whichever column is shorter so far, ties to the left —
+ * so a flat list reads left, right, left, right like the card grid, and
+ * loading another page only adds to the bottom of the columns rather than
+ * moving rows already placed. A lone open group (a feed that is all one
+ * season) is split by its children instead, and both columns repeat its
+ * heading row, so a single season still fills both columns.
+ *
+ * @param nodes - Roots of the tree, already sorted and indexed.
+ * @param collapseDepth - The table's collapse level, which decides how tall
+ *   each root opens.
+ * @returns The left and right columns' roots.
+ */
+export function splitVideoTreeColumns(
+  nodes: VideoTreeNode[],
+  collapseDepth: number,
+): [VideoTreeNode[], VideoTreeNode[]] {
+  const only = nodes[0];
+  if (nodes.length === 1 && only.type === "group" && collapseDepth > 1 && only.children.length > 1) {
+    const [left, right] = splitVideoTreeColumns(only.children, collapseDepth - 1);
+    return [
+      left.length > 0 ? [{ ...only, children: left }] : [],
+      right.length > 0 ? [{ ...only, children: right }] : [],
+    ];
+  }
+
+  const columns: [VideoTreeNode[], VideoTreeNode[]] = [[], []];
+  const heights = [0, 0];
+  for (const node of nodes) {
+    const column = heights[1] < heights[0] ? 1 : 0;
+    columns[column].push(node);
+    heights[column] += openVideoTreeRowCount(node, 0, collapseDepth);
+  }
+  return columns;
+}

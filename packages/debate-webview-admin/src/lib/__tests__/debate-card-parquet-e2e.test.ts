@@ -13,15 +13,15 @@
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 import path from "node:path";
-import { applySchema } from "../../database/__tests__/schema-sql";
+import { applySchema } from "@/lib/database/__tests__/schema-sql";
 import { describe, expect, it } from "vitest";
 import {
   createCardBatchSender,
   uploadDebateCardShard,
   type ParquetSource,
 } from "@debate/research-evidence";
-import { buildCardShard } from "../../../../../packages/debate-search-evidence/test/parquet-card-fixture";
-import { debateCardImports, debateCards } from "../../database/schema";
+import { buildCardShard } from "../../../../debate-search-evidence/test/parquet-card-fixture";
+import { debateCardImports, debateCards } from "@/lib/database/schema";
 import {
   MAX_CARDS_PER_REQUEST,
   recordCardImportBatch,

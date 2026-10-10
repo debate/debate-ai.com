@@ -24,7 +24,7 @@
 
 "use client"
 
-import React, { useCallback, useMemo, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { ChevronUp, ChevronDown } from "lucide-react"
 import { cn } from "../../ui/lib/utils"
 import { TooltipProvider } from "../../ui/primitives/tooltip"
@@ -37,7 +37,9 @@ import {
   buildVideoTree,
   countVideoTreeLeaves,
   indexVideoTreeLeaves,
+  openVideoTreeRowCount,
   sortVideoTreeLeaves,
+  splitVideoTreeColumns,
   videoTreeDepth,
   type VideoTreeNode,
 } from "./video-tree"
@@ -162,21 +164,14 @@ const LECTURE_COLUMNS: ColumnDef[] = [
 
 type SortDirection = "asc" | "desc"
 
+/** Space between the two tables when the list is shown in two columns. */
+const TWO_COLUMN_GAP = 16
+
+/** Both sides of the 1px border around each table. */
+const TABLE_BORDER_WIDTH = 2
+
 /** Rough height of one table row, for a group body that has never been measured. */
 const ESTIMATED_LIST_ROW_HEIGHT = 44
-
-/**
- * Rows a node draws when every group is at its default open state for
- * `collapseDepth` — the same rule `VideoTreeRows` seeds its groups with.
- */
-function openRowCount(node: VideoTreeNode, depth: number, collapseDepth: number): number {
-  if (node.type !== "group") return 1
-  if (depth + 1 >= collapseDepth) return 1
-  return node.children.reduce(
-    (total, child) => total + openRowCount(child, depth + 1, collapseDepth),
-    1,
-  )
-}
 
 /** The `- Ln +` stepper that opens and closes every group at once. */
 function CollapseLevelControl({
@@ -361,106 +356,136 @@ export function VideoListRows({
     teamRanking,
   }
 
+  // A screen with room for the table twice over shows it in two columns, the
+  // rows dealt between them, rather than one narrow table beside empty space.
+  const [containerWidth, setContainerWidth] = useState(0)
+  const outerRef = useRef<HTMLDivElement | null>(null)
+  useEffect(() => {
+    const element = outerRef.current
+    if (!element || typeof ResizeObserver === "undefined") return
+    setContainerWidth(element.clientWidth)
+    const observer = new ResizeObserver(([entry]) => setContainerWidth(entry.contentRect.width))
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [])
+  const twoColumns =
+    countVideoTreeLeaves(indexedTree) > 1 && containerWidth >= 2 * (tableWidth + TABLE_BORDER_WIDTH) + TWO_COLUMN_GAP
+
+  const tableColumns = useMemo(
+    () => (twoColumns ? splitVideoTreeColumns(indexedTree, effectiveCollapseDepth) : [indexedTree]),
+    [twoColumns, indexedTree, effectiveCollapseDepth],
+  )
+
+  const renderTable = (nodes: VideoTreeNode[]) => (
+    <table
+      // Every column shows at every width; on a phone the wrapper scrolls
+      // sideways to reach them. There the tree column is capped at
+      // `TREE_COLUMN_PHONE_MAX` so the Aff column peeks in beside it —
+      // the hint that there is more to the right.
+      className="w-[var(--table-width-phone)] table-fixed border-collapse text-sm sm:w-[var(--table-width)]"
+      style={
+        {
+          "--table-width": `${tableWidth}px`,
+          "--table-width-phone": `calc(${tableWidth - widths.tree}px + min(${widths.tree}px, ${TREE_COLUMN_PHONE_MAX}))`,
+        } as React.CSSProperties
+      }
+    >
+      <thead>
+        <tr className="border-b border-border bg-muted/50 text-left text-xs font-medium text-muted-foreground">
+          {columns.map((column) => (
+            <th
+              key={column.key}
+              style={{ "--col-width": `${widths[column.key]}px` } as React.CSSProperties}
+              className={cn(
+                "relative px-3 py-2 select-none sm:w-[var(--col-width)] sm:min-w-[var(--col-width)]",
+                column.key === "tree"
+                  ? "w-[min(var(--col-width),85vw)]"
+                  : "w-[var(--col-width)] min-w-[var(--col-width)]",
+                column.headerClassName,
+              )}
+            >
+              <span className="flex items-center gap-1">
+                {column.sortValue ? (
+                  <button
+                    type="button"
+                    onClick={() => handleSort(column)}
+                    className={cn(
+                      "flex items-center gap-1 hover:text-foreground",
+                      column.headerClassName?.includes("text-right") && "ml-auto",
+                    )}
+                  >
+                    {column.label}
+                    {sortColumn === column.key &&
+                      (sortDirection === "asc" ? (
+                        <ChevronUp className="h-3 w-3 shrink-0" />
+                      ) : (
+                        <ChevronDown className="h-3 w-3 shrink-0" />
+                      ))}
+                  </button>
+                ) : (
+                  column.label
+                )}
+                {column.key === "tree" && maxCollapseDepth > 1 && (
+                  <CollapseLevelControl
+                    level={effectiveCollapseDepth}
+                    maxLevel={maxCollapseDepth}
+                    onChange={setCollapseDepth}
+                  />
+                )}
+              </span>
+              <ColumnResizeHandle onResizeStart={(clientX) => startResize(column.key, clientX)} />
+            </th>
+          ))}
+        </tr>
+      </thead>
+      {/* One body per top-level group, each dropping its rows while it is
+          far off screen: the feed loads the whole library on its own, and
+          a row per video for all of it at once froze the page. */}
+      {countVideoTreeLeaves(nodes) > 0 ? (
+        nodes.map((node, index) => (
+          <WindowedChunk
+            key={`${effectiveCollapseDepth}-${node.key}`}
+            as="tbody"
+            colSpan={columns.length}
+            initiallyMounted={index < 2}
+            estimatedHeight={ESTIMATED_LIST_ROW_HEIGHT * openVideoTreeRowCount(node, 0, effectiveCollapseDepth)}
+          >
+            <VideoTreeRows
+              node={node}
+              depth={0}
+              collapseDepth={effectiveCollapseDepth}
+              context={context}
+            />
+          </WindowedChunk>
+        ))
+      ) : (
+        <tbody>
+          <tr>
+            <td
+              colSpan={columns.length}
+              className="px-3 py-8 text-center text-sm text-muted-foreground"
+            >
+              No videos to show
+            </td>
+          </tr>
+        </tbody>
+      )}
+    </table>
+  )
+
   return (
     <TooltipProvider>
-      <div ref={videoContainerRef} className="w-full overflow-x-auto rounded-md border border-border">
-        {/* Sized to its columns rather than stretched across the page, so a
-            wide screen does not pull a row's date and views far from its
-            title, and a phone scrolls sideways to reach them. */}
-        <table
-          // Every column shows at every width; on a phone the wrapper scrolls
-          // sideways to reach them. There the tree column is capped at
-          // `TREE_COLUMN_PHONE_MAX` so the Aff column peeks in beside it —
-          // the hint that there is more to the right.
-          className="w-[var(--table-width-phone)] table-fixed border-collapse text-sm sm:w-[var(--table-width)]"
-          style={
-            {
-              "--table-width": `${tableWidth}px`,
-              "--table-width-phone": `calc(${tableWidth - widths.tree}px + min(${widths.tree}px, ${TREE_COLUMN_PHONE_MAX}))`,
-            } as React.CSSProperties
-          }
-        >
-          <thead>
-            <tr className="border-b border-border bg-muted/50 text-left text-xs font-medium text-muted-foreground">
-              {columns.map((column) => (
-                <th
-                  key={column.key}
-                  style={{ "--col-width": `${widths[column.key]}px` } as React.CSSProperties}
-                  className={cn(
-                    "relative px-3 py-2 select-none sm:w-[var(--col-width)] sm:min-w-[var(--col-width)]",
-                    column.key === "tree"
-                      ? "w-[min(var(--col-width),85vw)]"
-                      : "w-[var(--col-width)] min-w-[var(--col-width)]",
-                    column.headerClassName,
-                  )}
-                >
-                  <span className="flex items-center gap-1">
-                    {column.sortValue ? (
-                      <button
-                        type="button"
-                        onClick={() => handleSort(column)}
-                        className={cn(
-                          "flex items-center gap-1 hover:text-foreground",
-                          column.headerClassName?.includes("text-right") && "ml-auto",
-                        )}
-                      >
-                        {column.label}
-                        {sortColumn === column.key &&
-                          (sortDirection === "asc" ? (
-                            <ChevronUp className="h-3 w-3 shrink-0" />
-                          ) : (
-                            <ChevronDown className="h-3 w-3 shrink-0" />
-                          ))}
-                      </button>
-                    ) : (
-                      column.label
-                    )}
-                    {column.key === "tree" && maxCollapseDepth > 1 && (
-                      <CollapseLevelControl
-                        level={effectiveCollapseDepth}
-                        maxLevel={maxCollapseDepth}
-                        onChange={setCollapseDepth}
-                      />
-                    )}
-                  </span>
-                  <ColumnResizeHandle onResizeStart={(clientX) => startResize(column.key, clientX)} />
-                </th>
-              ))}
-            </tr>
-          </thead>
-          {/* One body per top-level group, each dropping its rows while it is
-              far off screen: the feed loads the whole library on its own, and
-              a row per video for all of it at once froze the page. */}
-          {countVideoTreeLeaves(indexedTree) > 0 ? (
-            indexedTree.map((node, index) => (
-              <WindowedChunk
-                key={`${effectiveCollapseDepth}-${node.key}`}
-                as="tbody"
-                colSpan={columns.length}
-                initiallyMounted={index < 2}
-                estimatedHeight={ESTIMATED_LIST_ROW_HEIGHT * openRowCount(node, 0, effectiveCollapseDepth)}
-              >
-                <VideoTreeRows
-                  node={node}
-                  depth={0}
-                  collapseDepth={effectiveCollapseDepth}
-                  context={context}
-                />
-              </WindowedChunk>
-            ))
-          ) : (
-            <tbody>
-              <tr>
-                <td
-                  colSpan={columns.length}
-                  className="px-3 py-8 text-center text-sm text-muted-foreground"
-                >
-                  No videos to show
-                </td>
-              </tr>
-            </tbody>
-          )}
-        </table>
+      <div ref={outerRef} className="w-full">
+        <div ref={videoContainerRef} className={cn("w-full", twoColumns && "flex items-start gap-4")}>
+          {tableColumns.map((nodes, column) => (
+            <div
+              key={column}
+              className={cn("overflow-x-auto rounded-md border border-border", twoColumns ? "shrink-0" : "w-full")}
+            >
+              {renderTable(nodes)}
+            </div>
+          ))}
+        </div>
       </div>
     </TooltipProvider>
   )

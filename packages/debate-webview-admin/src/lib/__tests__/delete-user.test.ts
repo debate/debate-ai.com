@@ -10,8 +10,8 @@ import { drizzle } from "drizzle-orm/libsql";
 import { generateSQLiteDrizzleJson, generateSQLiteMigration } from "drizzle-kit/api";
 import { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import * as schema from "../../database/schema";
-import { cardAiAnalyses, contacts, savedFlows, session, user } from "../../database/schema";
+import * as schema from "@/lib/database/schema";
+import { cardAiAnalyses, contacts, savedFlows, session, user } from "@/lib/database/schema";
 import { deleteUserAccount } from "../delete-user";
 
 const access = vi.hoisted(() => ({ email: null as string | null, db: null as unknown }));
