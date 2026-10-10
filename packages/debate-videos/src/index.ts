@@ -84,7 +84,11 @@ export {
 } from "./ui/layout/sidebar-collapse";
 export {
   ICON_HOVER_EFFECTS,
+  SIDEBAR_ICON_ANIMATIONS_KEY,
   attachSidebarIconHover,
+  readSidebarIconAnimations,
+  setSidebarIconAnimations,
+  subscribeSidebarIconAnimations,
   pickIconHoverEffect,
   useSidebarIconHover,
 } from "./ui/layout/sidebar-icon-hover";
