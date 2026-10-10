@@ -28,10 +28,13 @@ export const DOCS_SIDEBAR_SLOT_ID = "app-sidebar-docs-slot"
  *   (`showsReasonDocsPanels`). On `/research/cards` they are the whole column
  *   (`showsCardsOnlySidebar`): no tree, and the panels
  *   `fill` the leftover height so each scrolls inside its own share.
- * - **The help docs' page tree** on `/docs` ({@link DOCS_SIDEBAR_SLOT_ID}).
  * - **The library tree** — Round Videos, Lectures and the tool sections —
  *   everywhere else. The site links that used to sit under it as a footer
  *   row are a submenu of the account menu now (`nav-user.tsx`).
+ * - **The help docs' page tree** on `/docs` ({@link DOCS_SIDEBAR_SLOT_ID}),
+ *   at the bottom of the column, below the tool sections' Insights
+ *   category and just above the account menu pinned at the foot — not
+ *   under the dock, where it used to sit.
  */
 export function AppSidebar() {
   const pathname = usePathname()
@@ -49,12 +52,12 @@ export function AppSidebar() {
           </ChromeErrorBoundary>
         </div>
       )}
-      {isDocsPath(pathname) && <div id={DOCS_SIDEBAR_SLOT_ID} className="shrink-0" />}
       {!cardsOnly && (
         <ChromeErrorBoundary label="LibrarySidebarTree">
           <LibrarySidebarTree />
         </ChromeErrorBoundary>
       )}
+      {isDocsPath(pathname) && <div id={DOCS_SIDEBAR_SLOT_ID} className="shrink-0" />}
     </>
   )
 }

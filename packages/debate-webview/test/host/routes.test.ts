@@ -38,6 +38,10 @@ describe("route table", () => {
     expect(resolveRoute(APP_ROUTES, "/coaching/leaderboard")?.route.pattern).toBe("/coaching/leaderboard")
     expect(resolveRoute(APP_ROUTES, "/tournaments/2026/yale-invitational/rounds")?.params).toEqual({ slug: ["2026", "yale-invitational", "rounds"] })
     expect(resolveRoute(APP_ROUTES, "/practice/tabroom")?.route.pattern).toBe("/practice/tabroom/[[...slug]]")
+    // Team profiles: the @handle the web app links to, and the
+    // /teams spelling it moved from.
+    expect(resolveRoute(APP_ROUTES, "/@harker-ll")?.params).toEqual({ team: "harker-ll" })
+    expect(resolveRoute(APP_ROUTES, "/teams/harker-ll")?.params).toEqual({ team: "harker-ll" })
     expect(resolveRoute(APP_ROUTES, "/no-such-page")).toBeNull()
   })
 

@@ -1,9 +1,10 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { usePathname } from "next/navigation"
 import { LibrarySidebarTree, ToolSidebarFooter } from "@debate/videos"
+import { playUISoundEffect } from "@debate/timer"
 import { ReasonDocsSidebarPanels } from "../reason-docs/ReasonDocsSidebarPanels"
 import { ChromeErrorBoundary } from "../../lib/ui/layout/chrome-error-boundary"
 import { mobileSidebarKind } from "../../lib/mobile-sidebar"
@@ -29,6 +30,21 @@ export function MobileSidebarDrawer({
     // Only a navigation closes the drawer.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname])
+
+  // A sound confirms the drawer opening or closing. The first
+  // run (mount) is skipped, so a drawer that starts closed
+  // stays silent.
+  const prevOpen = useRef<boolean | null>(null)
+  useEffect(() => {
+    if (prevOpen.current === null) {
+      prevOpen.current = open
+      return
+    }
+    if (prevOpen.current !== open) {
+      playUISoundEffect(open ? "popUpOn" : "popDown")
+      prevOpen.current = open
+    }
+  }, [open])
 
   return (
     <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>

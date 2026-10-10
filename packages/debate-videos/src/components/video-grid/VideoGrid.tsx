@@ -29,21 +29,14 @@ import { WindowedChunk } from "./WindowedChunk"
 export const GRID_CHUNK_SIZE = 60
 
 /** Grid classes shared by every chunk, so the chunks line up as one grid. */
-const GRID_CLASSES =
-  "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-6"
+const GRID_CLASSES = "grid grid-cols-2 gap-3 sm:gap-6"
 
 /** Rough card height plus gap, for a chunk that has never been measured. */
 const ESTIMATED_ROW_HEIGHT = 380
 
 /** Columns the grid has at the current window width, matching {@link GRID_CLASSES}. */
 function currentColumnCount(): number {
-  if (typeof window === "undefined") return 1
-  const width = window.innerWidth
-  if (width >= 1536) return 5
-  if (width >= 1280) return 4
-  if (width >= 1024) return 3
-  if (width >= 640) return 2
-  return 1
+  return 2
 }
 
 interface VideoGridProps {

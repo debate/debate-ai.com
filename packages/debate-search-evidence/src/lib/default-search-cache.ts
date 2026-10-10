@@ -14,8 +14,8 @@
 import type { SearchResult } from "../types";
 import { DEFAULT_SEARCH_FILTERS, buildSearchUrl, type SearchQueryInput } from "./search-query";
 
-/** Sort the search starts with; the default search uses it. */
-export const DEFAULT_SEARCH_SORT = "_text_match:desc";
+/** Sort the search starts with: the most recently popular cards, so the page opens on a list rather than an empty search. */
+export const DEFAULT_SEARCH_SORT = "recentPopular:desc";
 
 export const DEFAULT_SEARCH_CACHE_KEY = "cardsSearch:defaultResults:v1";
 

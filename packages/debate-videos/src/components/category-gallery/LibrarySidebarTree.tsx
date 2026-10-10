@@ -3,7 +3,7 @@
  * the video library.
  *
  * The app has one sidebar: the one the video pages draw — Round Videos,
- * Lectures, then the Research / Prep & Scout / Practice / Coaching / Insights
+ * Lectures, then the Research / Practice / Coaching / Insights
  * tool sections (`VideoSidebarTree`). The library pages feed that tree from
  * their own feed state; every other page (the tool pages, /docs, the mobile
  * drawer) mounts it through this wrapper, which reads the same counts and

@@ -41,7 +41,7 @@ const CDNJS = new RegExp(
 
 /** Any other remote script: a `.js`/`.mjs` path on some host, query optional. */
 const ANY_REMOTE_SCRIPT = new RegExp(
-  `https?://[^/${URL_END}]+/[^?#${URL_END}]*?\\.m?js(?![\\w.-])(?:[?#][^${URL_END}]*)?`,
+  `https?://[^/${URL_END}]+(?:/[^?#${URL_END}]*)?\\.m?js(?![\\w.-])(?:[?#][^${URL_END}]*)?`,
   'g'
 );
 

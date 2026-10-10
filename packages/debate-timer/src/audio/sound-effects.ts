@@ -55,9 +55,13 @@ const soundEffectData: Record<SoundEffect, string> = {
 export function playSoundEffect(effectName: SoundEffect) {
   if (typeof Audio === "undefined") return { error: "Could not play sound" };
   try {
-    void new Audio(
+    const audio = new Audio(
       "data:audio/mp3;base64," + soundEffectData[effectName],
-    ).play();
+    );
+    // Browsers reject play() until the reader has interacted with the
+    // page (autoplay policy); that rejection is expected, not an error
+    // to surface, so it is swallowed here.
+    audio.play().catch(() => {});
   } catch (e: any) {
     return { error: e.message };
   }

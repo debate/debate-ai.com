@@ -1,0 +1,9 @@
+{
+  "label": "Tabbing - Results Menu",
+  "position": 10,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "description": "Tournament results"
+  }
+}

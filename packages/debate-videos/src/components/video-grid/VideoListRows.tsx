@@ -36,6 +36,7 @@ import { buildVideoSlots, type VideoSlot, type VideoStackMap } from "./video-sta
 import {
   buildVideoTree,
   countVideoTreeLeaves,
+  indexVideoTreeLeaves,
   sortVideoTreeLeaves,
   videoTreeDepth,
   type VideoTreeNode,
@@ -336,6 +337,12 @@ export function VideoListRows({
   const maxCollapseDepth = useMemo(() => videoTreeDepth(tree), [tree])
   const effectiveCollapseDepth = Math.min(collapseDepth ?? maxCollapseDepth, maxCollapseDepth)
 
+  // Assign sequential 1-based indices to video leaves for display in rows
+  const indexedTree = useMemo(() => {
+    indexVideoTreeLeaves(sortedTree)
+    return sortedTree
+  }, [sortedTree])
+
   const context: VideoTreeRowContext = {
     isRoundMode,
     showWatched,
@@ -424,8 +431,8 @@ export function VideoListRows({
           {/* One body per top-level group, each dropping its rows while it is
               far off screen: the feed loads the whole library on its own, and
               a row per video for all of it at once froze the page. */}
-          {countVideoTreeLeaves(sortedTree) > 0 ? (
-            sortedTree.map((node, index) => (
+          {countVideoTreeLeaves(indexedTree) > 0 ? (
+            indexedTree.map((node, index) => (
               <WindowedChunk
                 key={`${effectiveCollapseDepth}-${node.key}`}
                 as="tbody"

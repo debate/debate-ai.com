@@ -1,25 +1,27 @@
 "use client";
 
 /**
- * An overlay holding Tabroom itself, for the parts of tournament setup this
- * app has not rebuilt yet — the full tabroom administration console, at
- * `beta.tabroom.com`, framed over the page rather than navigated away from it.
+ * An overlay framing another page in an iframe, for the parts of
+ * tournament work this app has not rebuilt yet — Tabroom's own
+ * administration console at `beta.tabroom.com`, the Debate Majors
+ * season calendar — framed over the page rather than navigated away
+ * from it.
  *
- * The frame is only mounted once the overlay is open, so the console's own
- * bundle is not fetched by the tournaments list.
+ * The frame is only mounted once the overlay is open, so the framed
+ * page's own bundle is not fetched by the tournaments list.
  */
 
 import { useEffect, useRef, type ReactNode } from "react";
 import { ExternalLink, X } from "lucide-react";
 import { buttonVariants } from "./primitives";
 
-/** Tabroom's beta console, framed in the overlay. */
+/** Tabroom's beta console, framed in the overlay by default. */
 export const TABROOM_BETA_URL = "https://beta.tabroom.com";
 
-export interface TabroomOverlayProps {
+export interface FramedOverlayProps {
   open: boolean;
   onClose: () => void;
-  /** Where the frame starts; the whole console by default. */
+  /** Where the frame starts; Tabroom's beta console by default. */
   url?: string;
   /** The heading, and the dialog's accessible name. */
   title?: string;
@@ -28,14 +30,14 @@ export interface TabroomOverlayProps {
   children?: ReactNode;
 }
 
-export function TabroomOverlay({
+export function FramedOverlay({
   open,
   onClose,
   url = TABROOM_BETA_URL,
   title = "Tabroom",
   description = "Tabroom's own console, framed here so you stay on this page.",
   children,
-}: TabroomOverlayProps) {
+}: FramedOverlayProps) {
   const closeRef = useRef<HTMLButtonElement>(null);
 
   // Escape closes, and the overlay hands focus back where it came from.
@@ -83,7 +85,7 @@ export function TabroomOverlay({
               ref={closeRef}
               type="button"
               onClick={onClose}
-              aria-label="Close Tabroom overlay"
+              aria-label={`Close ${title} overlay`}
               className="inline-flex h-8 w-8 items-center justify-center rounded-md border bg-background transition-colors hover:bg-accent"
             >
               <X aria-hidden />

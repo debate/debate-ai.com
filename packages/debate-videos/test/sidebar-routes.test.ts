@@ -66,6 +66,11 @@ describe("matchesToolSidebarHref", () => {
     expect(matchesToolSidebarHref("/legal/privacy")).toBe(true);
   });
 
+  it("matches a team's @handle profile page", () => {
+    expect(matchesToolSidebarHref("/@greenhill-ab")).toBe(true);
+    expect(matchesToolSidebarHref("/@harker-ll")).toBe(true);
+  });
+
   it("does not match a sibling route that merely shares a prefix", () => {
     expect(matchesToolSidebarHref("/docs")).toBe(false);
     expect(matchesToolSidebarHref("/cardsy")).toBe(false);
@@ -142,6 +147,8 @@ describe("team and school profile pages", () => {
     }
     expect(isGenericToolSidebarRoute("/teams/greenhill-ab")).toBe(true);
     expect(isGenericToolSidebarRoute("/schools/greenhill")).toBe(true);
+    expect(isGenericToolSidebarRoute("/@greenhill-ab")).toBe(true);
+    expect(hasEmbeddedDock("/@harker-ll")).toBe(true);
   });
 });
 
@@ -171,9 +178,9 @@ describe("Latest News", () => {
     expect(hasEmbeddedDock("/practice/forums")).toBe(true);
   });
 
-  it("stay in the Prep & Scout section", () => {
-    const prepScout = SIDEBAR_TOOL_SECTIONS.find((section) => section.id === "prep-scout");
-    const hrefs = prepScout?.tools.map((tool) => tool.href) ?? [];
+  it("stay in the Coaching section", () => {
+    const coaching = SIDEBAR_TOOL_SECTIONS.find((section) => section.id === "coaching");
+    const hrefs = coaching?.tools.map((tool) => tool.href) ?? [];
 
     expect(hrefs).toContain("/practice/forums");
   });

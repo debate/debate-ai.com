@@ -44,7 +44,8 @@ export const README_BANNER = "https://i.imgur.com/mVdcP7Y.png";
  * The project's YouTube video, embedded on the features page.
  *
  * The same video the README's YouTube badge links to, promoted to an embed so a
- * reader gets the tour without leaving the page.
+ * reader gets the tour without leaving the page. Its poster frame is the
+ * README's banner (`README_BANNER`), which is the button that starts it.
  *
  * `youtube-nocookie.com` rather than `youtube.com/embed`: the embeddable host
  * does not drop tracking cookies until the reader actually presses play, which
@@ -53,9 +54,7 @@ export const README_BANNER = "https://i.imgur.com/mVdcP7Y.png";
 export const README_VIDEO = {
   /** YouTube video id — the one the README's YouTube badge points at. */
   id: "XB0tzpBUEKQ",
-  title: "Debate AI in two minutes",
-  /** Poster frame, so the embed has something to show before it is played. */
-  thumbnail: "https://i.ytimg.com/vi/XB0tzpBUEKQ/maxresdefault.jpg",
+  title: "Debate AI video intro",
   /** Canonical watch page, for readers who would rather watch it there. */
   watchUrl: "https://www.youtube.com/watch?v=XB0tzpBUEKQ",
 } as const;

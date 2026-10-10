@@ -31,9 +31,10 @@
  * @module components/layout/GlobalCommandPalette
  */
 
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import { Clock, CornerDownLeft, LayoutGrid, Rss, SearchX, Settings as SettingsIcon, Star } from "lucide-react"
+import { playUISoundEffect } from "@debate/timer"
 
 import {
   CommandDialog,
@@ -201,6 +202,21 @@ export function GlobalCommandPalette() {
   // Each opening starts from the browse view, not the last query.
   useEffect(() => {
     if (!open) setSearch("")
+  }, [open])
+
+  // A sound confirms the palette opening or closing — the
+  // Ctrl/Cmd-K chord, the dock's Search row and the Esc key
+  // all land here. The first run (mount) is skipped.
+  const prevOpen = useRef<boolean | null>(null)
+  useEffect(() => {
+    if (prevOpen.current === null) {
+      prevOpen.current = open
+      return
+    }
+    if (prevOpen.current !== open) {
+      playUISoundEffect(open ? "popUpOn" : "popDown")
+      prevOpen.current = open
+    }
   }, [open])
 
   const go = useCallback(

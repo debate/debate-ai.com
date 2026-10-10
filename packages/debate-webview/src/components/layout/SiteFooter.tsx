@@ -159,6 +159,10 @@ export function SiteFooter() {
             </nav>
           ))}
         </div>
+
+        <p className="mt-10 border-t border-border pt-6 text-center text-sm">
+          © 2026 Debate AI Institute. All rights reserved.
+        </p>
       </div>
     </footer>
   );

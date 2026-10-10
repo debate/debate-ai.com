@@ -62,6 +62,12 @@ export function buildEmbedUrl(videoId: string, options: EmbedOptions = {}): stri
     params.set("widget_referrer", effectiveOrigin)
   }
 
+  // If running in extension context, prefer using hosted wrapper to ensure proper referrer
+  if (typeof window !== "undefined" && window.location.origin.startsWith("chrome-extension://")) {
+    const extParams = new URLSearchParams(params)
+    return `https://debate-ai.com/youtube-player.html?vid=${videoId}&${extParams.toString()}`
+  }
+
   return `https://www.youtube.com/embed/${videoId}?${params.toString()}`
 }
 
@@ -79,8 +85,12 @@ export function watchUrl(videoId: string, startSeconds = 0): string {
  * error screen and the app never learns about it.
  */
 export function startListening(iframe: HTMLIFrameElement | null) {
-  iframe?.contentWindow?.postMessage(
-    JSON.stringify({ event: "listening", id: iframe.id || "debate-video-player", channel: "widget" }),
-    "https://www.youtube.com",
-  )
+  if (!iframe?.contentWindow) return
+  const target = "https://www.youtube.com"
+  try {
+    iframe.contentWindow.postMessage(
+      JSON.stringify({ event: "listening", id: iframe.id || "debate-video-player", channel: "widget" }),
+      target,
+    )
+  } catch {}
 }

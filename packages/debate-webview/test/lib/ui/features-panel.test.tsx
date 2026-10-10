@@ -45,12 +45,14 @@ describe("FeaturesPanel", () => {
     }
   });
 
-  it("embeds the tour video behind a click, not on page load", () => {
+  it("embeds the tour video behind a click on the banner, not on page load", () => {
     // The whole point of the poster is that nothing is requested from YouTube
     // until a reader asks for it, so the server-rendered page carries the
-    // thumbnail and no YouTube iframe. (The Drive folder viewer further down
-    // is deliberately mounted up front, so it is the one iframe allowed.)
-    expect(html).toContain(`src="${README_VIDEO.thumbnail}"`);
+    // banner — the video's poster frame and the button that starts it — and no
+    // YouTube iframe. (The Drive folder viewer further down is deliberately
+    // mounted up front, so it is the one iframe allowed.)
+    expect(html).toContain(`src="${README_BANNER}"`);
+    expect(html).toContain(`aria-label="Play video: ${README_VIDEO.title}"`);
     expect(html).not.toMatch(/<iframe[^>]*youtube/);
     expect(html).not.toContain("youtube-nocookie.com/embed");
   });

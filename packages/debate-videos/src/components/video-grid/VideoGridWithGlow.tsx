@@ -29,7 +29,7 @@ export function VideoGridWithGlow({ videos, showThumbnails, topics, videoContain
   return (
     <div
       ref={videoContainerRef}
-      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-6"
+      className="grid grid-cols-[repeat(auto-fit,_minmax(150px,_1fr))] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-6"
     >
       {videos.map((video, index) => (
         <GlowingShadow

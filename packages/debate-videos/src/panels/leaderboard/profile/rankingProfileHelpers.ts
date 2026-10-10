@@ -1,8 +1,12 @@
 /**
- * @fileoverview Pure helpers behind the `/teams/[team]` and `/schools/[school]`
- * profile pages: the URL slugs a rankings row links to, the lookups that turn
- * a slug back into rows across every `debate-rankings` dataset, the stats a
- * school profile aggregates, and the video-search query each profile runs.
+ * @fileoverview Pure helpers behind the `/@[team]` and
+ * `/schools/[school]` profile pages: the URL slugs a rankings
+ * row links to, the lookups that turn a slug back into rows
+ * across every `debate-rankings` dataset, the stats a school
+ * profile aggregates, and the video-search query each profile
+ * runs. Team pages moved from `/teams/<slug>` to `@<handle>`
+ * (school plus initials); both shapes still resolve, so links
+ * written before the move keep working.
  * @module panels/leaderboard/profile/rankingProfileHelpers
  */
 
@@ -32,14 +36,26 @@ export function profileSlug(text: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
+/**
+ * Handle identifying one team (or LD debater) for its `@handle` URL:
+ * its school plus its debaters' initials, e.g. `harker-ll`. Shorter
+ * than {@link teamSlug} and stable across devices, at the cost of
+ * colliding when one school fields two teams sharing initials — a
+ * profile then shows every row that shares the handle, the same way
+ * it already shows a team ranked in several divisions.
+ */
+export function teamHandle(entry: Pick<RankingEntry, "school" | "name">): string {
+  return profileSlug(`${entry.school} ${entryInitials(entry.name)}`);
+}
+
 /** Slug identifying one team (or LD debater): its school plus its name. */
 export function teamSlug(entry: Pick<RankingEntry, "school" | "name">): string {
   return profileSlug(`${entry.school} ${entry.name}`);
 }
 
-/** Path of the team profile page for a rankings row. */
+/** Path of the team profile page for a rankings row: its `@handle`. */
 export function teamHref(entry: Pick<RankingEntry, "school" | "name">): string {
-  return `/teams/${teamSlug(entry)}`;
+  return `/@${teamHandle(entry)}`;
 }
 
 /** Path of the school profile page for a school name. */
@@ -84,13 +100,18 @@ function collect(
 }
 
 /**
- * Every row whose {@link teamSlug} is `slug`. Usually one; more when the same
- * school and name are ranked in several divisions.
+ * Every row whose {@link teamHandle} — or, for links written
+ * before handles existed, whose {@link teamSlug} — is `slug`.
+ * Usually one; more when the same school and name are ranked
+ * in several divisions, or two teams share a handle.
  */
 export function findTeamEntries(datasets: RankingDataset[], slug: string): ProfileEntry[] {
   const target = profileSlug(decodeSlug(slug));
   if (!target) return [];
-  return collect(datasets, (entry) => teamSlug(entry) === target);
+  return collect(
+    datasets,
+    (entry) => teamHandle(entry) === target || teamSlug(entry) === target,
+  );
 }
 
 /** Every row whose school slugifies to `slug`, across all datasets, best rank first. */

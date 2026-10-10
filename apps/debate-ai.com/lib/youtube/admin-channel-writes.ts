@@ -9,6 +9,7 @@
 
 import { eq } from "drizzle-orm";
 import { youtubeChannels, type YoutubeChannel } from "@/lib/database/schema";
+import { describeError } from "../database/errors";
 
 /** What the add endpoint accepts. It takes a name alone — the channel id is
  *  resolved from YouTube on the next resync, never typed by an admin. */
@@ -52,8 +53,10 @@ export function normalizeChannelName(input: unknown): string | null {
 }
 
 /**
- * Adds a channel. A duplicate name is a conflict — the resync keys off it, so
- * two rows with the same name would both scan and double-upsert rounds.
+ * Adds a channel. If the name already exists — e.g. it was seeded by the
+ * migration and later paused — the channel is re-enabled in place rather than
+ * rejected, so "adding" is idempotent. The resync keys off name, so the upsert
+ * guarantees only one row ever scans a given channel.
  */
 export async function addAdminChannel(db: any, input: AddChannelInput, addedBy: string | null): Promise<AddChannelResult> {
   const name = normalizeChannelName(input.name);
@@ -65,14 +68,16 @@ export async function addAdminChannel(db: any, input: AddChannelInput, addedBy: 
     const [channel] = await db
       .insert(youtubeChannels)
       .values({ name, addedBy })
+      .onConflictDoUpdate({
+        target: youtubeChannels.name,
+        set: { enabled: true, addedBy, updatedAt: new Date() },
+      })
       .returning();
     return { channel: channel ?? null, error: null };
   } catch (error) {
-    // A unique-name violation is the expected conflict; anything else is a
-    // database problem worth surfacing verbatim.
-    const message = String((error as Error)?.message ?? error);
+    const message = describeError(error);
     if (message.includes("UNIQUE constraint failed") || message.includes("unique")) {
-      return { channel: null, error: `A channel named “${name}” already exists.` };
+      return { channel: null, error: `A channel named "${name}" already exists.` };
     }
     return { channel: null, error: message };
   }
@@ -115,7 +120,7 @@ export async function editAdminChannel(
       .returning();
     return { channel: channel ?? null, error: null };
   } catch (error) {
-    const message = String((error as Error)?.message ?? error);
+    const message = describeError(error);
     if (message.includes("UNIQUE constraint failed") || message.includes("unique")) {
       return { channel: null, error: "Another channel already uses that name." };
     }
@@ -140,6 +145,6 @@ export async function deleteAdminChannel(db: any, id: number): Promise<DeleteCha
     // uploads, not derived from the subscription), so nothing cascades here.
     return { deleted: true, error: null };
   } catch (error) {
-    return { deleted: false, error: String((error as Error)?.message ?? error) };
+    return { deleted: false, error: describeError(error) };
   }
 }

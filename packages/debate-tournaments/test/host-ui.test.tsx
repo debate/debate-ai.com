@@ -6,11 +6,34 @@
 import { describe, expect, it } from "vitest";
 import { renderToString } from "react-dom/server";
 import type { ReactNode } from "react";
-import { TabroomOverlay, TOURNAMENT_FORMATS, TournamentsApp } from "../src/ui";
+import {
+  FramedOverlay,
+  HostedTournamentButton,
+  TOURNAMENT_FORMATS,
+  TournamentsApp,
+  type OwnedTournament,
+} from "../src/ui";
+import type { TournamentHrefs } from "../src/routes";
 import { TournamentsContext, type TournamentsContextValue } from "../src/ui/shared";
 import { createTournamentsClient } from "../src/ui/client";
 
-const plainLink = ({ href, children }: { href: string; children?: ReactNode }) => <a href={href}>{children}</a>;
+const plainLink = ({
+  href,
+  className,
+  title,
+  "aria-label": ariaLabel,
+  children,
+}: {
+  href: string;
+  className?: string;
+  title?: string;
+  "aria-label"?: string;
+  children?: ReactNode;
+}) => (
+  <a href={href} className={className} title={title} aria-label={ariaLabel}>
+    {children}
+  </a>
+);
 
 function withClient(client: ReturnType<typeof createTournamentsClient>, node: ReactNode) {
   const value = {
@@ -76,17 +99,25 @@ describe("HostTournamentPage", () => {
   });
 });
 
-describe("TabroomOverlay", () => {
-  it("renders nothing until it is opened, so Tabroom is not fetched with the list", () => {
-    expect(renderToString(<TabroomOverlay open={false} onClose={() => {}} />)).toBe("");
+describe("FramedOverlay", () => {
+  it("renders nothing until it is opened, so the framed page is not fetched with the list", () => {
+    expect(renderToString(<FramedOverlay open={false} onClose={() => {}} />)).toBe("");
   });
 
   it("frames beta.tabroom.com over the page, with a way out", () => {
-    const html = renderToString(<TabroomOverlay open onClose={() => {}} />);
+    const html = renderToString(<FramedOverlay open onClose={() => {}} />);
     expect(html).toContain('src="https://beta.tabroom.com"');
     expect(html).toContain("Close Tabroom overlay");
     expect(html).toContain("Open in a new tab");
     expect(html).toContain('role="dialog"');
+  });
+
+  it("frames any page, naming the close control for it", () => {
+    const html = renderToString(
+      <FramedOverlay open onClose={() => {}} url="/debate-majors-a-to-z.html" title="Debate Majors" />,
+    );
+    expect(html).toContain('src="/debate-majors-a-to-z.html"');
+    expect(html).toContain("Close Debate Majors overlay");
   });
 
   it("is reachable from the tournaments list, next to the demo admin", () => {
@@ -97,12 +128,57 @@ describe("TabroomOverlay", () => {
     expect(html).not.toContain(">Tabroom<");
   });
 
+  it("offers the Debate Majors season calendar as an overlay of the list", () => {
+    const html = renderToString(<TournamentsApp segments={[]} />);
+    expect(html).toContain("Debate Majors");
+    // The calendar page itself is only fetched once the overlay opens.
+    expect(html).not.toContain("debate-majors-a-to-z.html");
+  });
+
   it("hosts on this site's API, never sending the host to Tabroom", () => {
     const html = withClient(createTournamentsClient("/api/tabroom", noFetch), <TournamentsApp segments={["host"]} />);
     expect(html).not.toContain("beta.tabroom.com");
     expect(html).not.toContain("Open Tabroom");
     expect(html).toContain("Try the demo admin");
     expect(html).toContain('href="/tournaments/90001/admin"');
+  });
+});
+
+describe("HostedTournamentButton", () => {
+  const owned = (id: number, name: string): OwnedTournament => ({
+    id,
+    name,
+    webname: null,
+    start: null,
+    end: null,
+    tz: null,
+    hidden: false,
+    eventCount: 0,
+  });
+  const hrefs = { admin: (id: number) => `/t/${id}/admin` } as unknown as TournamentHrefs;
+
+  it("shows the newest tournament the user hosts, opening its admin view", () => {
+    const html = renderToString(
+      <HostedTournamentButton
+        tournaments={[owned(42, "Golden Gate Invitational"), owned(7, "Earlier Classic")]}
+        hrefs={hrefs}
+        Link={plainLink}
+      />,
+    );
+    expect(html).toContain("Golden Gate Invitational");
+    expect(html).toContain('href="/t/42/admin"');
+    // The older one is counted by the badge, not listed.
+    expect(html).toContain(">2</span>");
+    expect(html).not.toContain("Earlier Classic");
+    expect(html).toContain(
+      "Open the admin view of Golden Gate Invitational, the newest of your 2 hosted tournaments",
+    );
+  });
+
+  it("renders nothing when the user hosts nothing", () => {
+    expect(
+      renderToString(<HostedTournamentButton tournaments={[]} hrefs={hrefs} Link={plainLink} />),
+    ).toBe("");
   });
 });
 

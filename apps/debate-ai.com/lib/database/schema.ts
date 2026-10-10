@@ -2542,7 +2542,7 @@ export const topicAreaRankings = sqliteTable(
 
 export type TopicAreaRankingRow = typeof topicAreaRankings.$inferSelect;
 
-// A signed-in user following a team or school profile (/teams/[team],
+// A signed-in user following a team or school profile (`/@[team]`,
 // /schools/[school]). Keyed on (user, kind, slug), so following twice is a
 // no-op and a profile's follower count is a count of its rows. `kind` is
 // "team" or "school" and `slug` is the profile's URL segment, both checked by

@@ -1,0 +1,9 @@
+{
+  "label": "Public Info",
+  "position": 11,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "description": "Public info"
+  }
+}

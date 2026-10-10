@@ -179,6 +179,10 @@ export default defineConfig({
       'http://localhost:3000/*',
       ...AI_PROVIDER_HOSTS,
     ],
+    content_security_policy: {
+      extension_pages:
+        "script-src 'self'; object-src 'self'; frame-src 'self' https://www.youtube.com https://debate-ai.com;",
+    },
     // `action.default_popup` (and its title, from the popup's <title>) come
     // from entrypoints/popup; the background worker swaps the popup out when
     // the toolbar icon is configured to open the timer window or the article

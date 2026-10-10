@@ -10,8 +10,14 @@
  * they read the session or D1 directly; here each has a client version that
  * asks the API for the same thing (see `./_client`).
  *
- * `test/routes/route-table.test.ts` fails when a page is added to `app/` and
- * not here.
+ * Team profiles are listed twice: the web app serves them at `@<team>`
+ * handles (`/@harker-ll`) via a rewrite of `app/teams/[team]`, and a
+ * segment like `@[team]` matches here directly (see `host/match`).
+ * The plain `/teams/[team]` pattern stays for links written before
+ * the move.
+ *
+ * `test/routes/route-table.test.ts` fails when a page is added to `app/`
+ * and not here.
  */
 
 import type { ComponentType, ReactNode } from "react"
@@ -103,6 +109,9 @@ export const PAGE_ROUTES: AppRoute[] = [
   { pattern: "/practice/strategy", load: () => import("./strategy/page") },
   { pattern: "/summaries", load: () => import("./summaries/page") },
   { pattern: "/practice/tabroom/[[...slug]]", load: () => import("./tabroom/[[...slug]]/page") },
+  // Team profiles: `/@<team>` handles in the web app (rewritten
+  // from `app/teams/[team]`), plus the old `/teams/[team]` spelling.
+  { pattern: "/@[team]", load: () => import("./teams/[team]/page") },
   { pattern: "/teams/[team]", load: () => import("./teams/[team]/page") },
   { pattern: "/coaching/laptopless", load: () => import("./coaching/laptopless/page") },
   // `/research/topics` was the standalone Topics Explorer. Its research-area

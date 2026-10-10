@@ -65,7 +65,6 @@ import {
   type FeatureCategory,
   type FeatureEntry,
 } from "../../feature-catalog";
-import { APP_LOGO, APP_LOGO_HEIGHT, APP_LOGO_WIDTH, APP_NAME } from "../../config/site";
 import { README_BADGE_ROWS, README_BANNER, README_SHOWCASE, README_VIDEO } from "./readme-media";
 import {
   CARDS_CAPABILITIES,
@@ -132,13 +131,16 @@ function DocumentsFolder() {
 }
 
 /**
- * The project's YouTube video, embedded behind a click.
+ * The README's banner, doubled as the door to the project's YouTube video.
  *
- * Mounted on click: an embed
- * pulls the whole third-party player — script, fonts and tracking — down the
- * moment it is in the document, and this page is a marketing surface most
- * visitors reach after already passing the Turnstile gate. A poster frame and a
- * play button cost one image, and nothing from YouTube is requested until
+ * The banner and the video are one element: the image is the poster, and the
+ * embed is laid over it on click rather than replacing it, so pressing play
+ * doesn't move the heading beneath it.
+ *
+ * Mounting the embed on click also keeps the page light — an embed pulls the
+ * whole third-party player, script, fonts and tracking down the moment it is in
+ * the document, and this page is a marketing surface most visitors reach after
+ * already passing the Turnstile gate. Nothing from YouTube is requested until
  * someone asks for it.
  *
  * `rel="0"` on the embed keeps YouTube from offering "more from this channel"
@@ -150,57 +152,47 @@ function FeatureVideo() {
   const [play, setPlay] = useState(false);
 
   return (
-    <div className="mx-auto w-full max-w-3xl">
-      <div className="overflow-hidden rounded-2xl border border-border bg-card">
-        {play ? (
-          <div className="aspect-video">
-            <iframe
-              src={`https://www.youtube-nocookie.com/embed/${README_VIDEO.id}?rel=0`}
-              title={README_VIDEO.title}
-              referrerPolicy="strict-origin-when-cross-origin"
-              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              className="size-full border-0"
-            />
-          </div>
-        ) : (
-          <button
-            type="button"
-            onClick={() => setPlay(true)}
-            className="group relative block aspect-video w-full cursor-pointer"
-            aria-label={`Play video: ${README_VIDEO.title}`}
-          >
-            <img
-              src={README_VIDEO.thumbnail}
-              alt=""
-              loading="lazy"
-              decoding="async"
-              className="size-full object-cover"
-            />
-            <span className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent transition-opacity group-hover:opacity-90" />
-            <span className="absolute inset-0 flex items-center justify-center">
-              <span className="flex size-16 items-center justify-center rounded-full bg-black/55 backdrop-blur-sm transition-transform group-hover:scale-110">
-                <Play className="size-7 translate-x-0.5 text-white" fill="currentColor" />
-              </span>
+    <div className="relative mx-auto mb-8 w-full max-w-3xl overflow-hidden rounded-2xl border border-border bg-card">
+      <img src={README_BANNER} alt="Debate AI" className="block w-full" />
+      {play ? (
+        <iframe
+          src={`https://www.youtube-nocookie.com/embed/${README_VIDEO.id}?rel=0`}
+          title={README_VIDEO.title}
+          referrerPolicy="strict-origin-when-cross-origin"
+          allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          className="absolute inset-0 size-full border-0"
+        />
+      ) : (
+        <button
+          type="button"
+          onClick={() => setPlay(true)}
+          className="group absolute inset-0 block w-full cursor-pointer"
+          aria-label={`Play video: ${README_VIDEO.title}`}
+        >
+          <span className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent transition-opacity group-hover:opacity-90" />
+          <span className="absolute inset-0 flex items-center justify-center">
+            <span className="flex size-16 items-center justify-center rounded-full bg-black/55 backdrop-blur-sm transition-transform group-hover:scale-110">
+              <Play className="size-7 translate-x-0.5 text-white" fill="currentColor" />
             </span>
-            <span className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 px-4 pb-3 text-left">
-              <span className="text-sm font-semibold text-white">{README_VIDEO.title}</span>
-              <a
-                href={README_VIDEO.watchUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="shrink-0 text-xs text-white/80 underline underline-offset-2 hover:text-white"
-                // The play button is a <button>, so this link sits inside it.
-                // Without stopping the click, following the link would mount the
-                // embed and then navigate away from the page that mounted it.
-                onClick={(event) => event.stopPropagation()}
-              >
-                Watch on YouTube
-              </a>
-            </span>
-          </button>
-        )}
-      </div>
+          </span>
+          <span className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 px-4 pb-3 text-left">
+            <span className="text-sm font-semibold text-white">{README_VIDEO.title}</span>
+            <a
+              href={README_VIDEO.watchUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="shrink-0 text-xs text-white/80 underline underline-offset-2 hover:text-white"
+              // The play button is a <button>, so this link sits inside it.
+              // Without stopping the click, following the link would mount the
+              // embed and then navigate away from the page that mounted it.
+              onClick={(event) => event.stopPropagation()}
+            >
+              Watch on YouTube
+            </a>
+          </span>
+        </button>
+      )}
     </div>
   );
 }
@@ -267,22 +259,8 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
 
         <div className="mx-auto max-w-4xl text-center">
           <Reveal>
-            <img
-              src={APP_LOGO}
-              alt={APP_NAME}
-              width={APP_LOGO_WIDTH}
-              height={APP_LOGO_HEIGHT}
-              className="mx-auto mb-6 h-auto w-full max-w-[320px]"
-            />
-          </Reveal>
-
-          <Reveal>
-            <img
-              src={README_BANNER}
-              alt="Debate AI"
-              width={800}
-              className="mx-auto mb-8 w-full max-w-3xl"
-            />
+            {/* The README's banner, which doubles as the tour video's poster. */}
+            <FeatureVideo />
           </Reveal>
 
           <Reveal>
@@ -300,16 +278,7 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
             </h1>
           </Reveal>
 
-          <Reveal delay={160}>
-            <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-pretty text-muted-foreground sm:text-lg">
-              Cut and tag evidence, flow a live round, time every speech, scout judges and
-              opponents, and take a full round against an AI. Search by tool, by route, or by
-              the word you would actually say in a block — then open it straight from its card.
-            </p>
-          </Reveal>
 
-          {/* Downloads: the browser extension's install button, which used to
-              sit on the card search's empty state. */}
           <Reveal delay={400}>
             <div
               id="downloads"
@@ -430,18 +399,6 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
             </Reveal>
           ))}
         </div>
-      </section>
-
-      {/* The tour video, between the workspace screenshots it walks through and
-          the long-form sections below. */}
-      <section
-        id="tour"
-        aria-label="Tour video"
-        className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 lg:px-8"
-      >
-        <Reveal>
-          <FeatureVideo />
-        </Reveal>
       </section>
 
       {/* The CARDS overview and vision, moved here from `/research/cards`'s empty state. */}

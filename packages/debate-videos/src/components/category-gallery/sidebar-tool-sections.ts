@@ -1,9 +1,9 @@
 /**
- * @fileoverview The Research / Prep & Scout / Practice / Coaching / Insights
- * tool sections rendered in
+ * @fileoverview The Research / Practice / Coaching / Insights tool sections
+ * rendered in
  * the videos sidebar underneath the "Round Videos" and "Lectures" nodes. Mirrors the entries of
  * the app's `/tools` catalog (`app/tools/tool-groups.ts`), regrouped into the
- * five headings the sidebar shows and trimmed to the label, href and icon
+ * four headings the sidebar shows and trimmed to the label, href and icon
  * the tree needs — the sidebar lives in this package, which cannot import
  * app-local modules, so the links are restated here rather than derived.
  *
@@ -13,7 +13,6 @@
 import {
   BadgeCheck,
   BarChart3,
-  Binoculars,
   BookOpen,
   Bot,
   CalendarCheck,
@@ -122,9 +121,6 @@ export const PRACTICE_SECTION_ID = "practice";
  */
 export const RESEARCH_SECTION_ID = "research";
 
-/** Id of the Prep & Scout section (opponent, judge and tournament scouting). */
-export const PREP_SCOUT_SECTION_ID = "prep-scout";
-
 /** Id of the Insights section, whose links split into labelled subgroups. */
 export const INSIGHTS_SECTION_ID = "insights";
 
@@ -148,20 +144,6 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       // Lives under /coaching, but it ranks research contributors by
       // helpfulness, so it sits with the research tools.
       { href: "/coaching/leaderboard", title: "Leaderboard", icon: Trophy },
-    ],
-  },
-  {
-    // Turn research into round-specific strategy by studying opponents,
-    // judges, tournaments, news, and likely arguments.
-    id: PREP_SCOUT_SECTION_ID,
-    title: "Prepare",
-    // The prep tools (briefings, scout-to-strategy, opponent and judge
-    // profiles, prep notes) are one page now, the Prep Workspace, listed
-    // under Practice.
-    href: "/practice/forums",
-    icon: Binoculars,
-    tools: [
-      { href: "/practice/forums", title: "Latest News", icon: Rss },
     ],
   },
   {
@@ -209,6 +191,8 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/coaching/materials", title: "Coach Materials", icon: FolderOpen },
       { href: "/coaching/progress", title: "Research Progress", icon: TrendingUp },
       { href: "/coaching/laptopless", title: "Laptop-less Debating", icon: Smartphone },
+      // The community's news feed, listed last among the coaching tools.
+      { href: "/practice/forums", title: "Latest News", icon: Rss },
     ],
   },
   {

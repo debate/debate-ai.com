@@ -24,6 +24,7 @@ import { OneTap } from "./OneTap"
 import { ToolRecordSyncProvider } from "./ToolRecordSyncProvider"
 import { DebaterActivityListener } from "./DebaterActivityListener"
 import { SignInPromptProvider } from "./SignInPromptProvider"
+import { FirstLoginWelcomeProvider } from "./FirstLoginWelcomeProvider"
 import { GlobalCommandPalette } from "./GlobalCommandPalette"
 import { PlanLimitDialog } from "../pricing/PlanLimitDialog"
 import { OwnAiKeyDialog } from "../pricing/OwnAiKeyDialog"
@@ -74,6 +75,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               be able to open its dialog in this document. */}
           <ChromeErrorBoundary label="SignInPromptProvider">
             <SignInPromptProvider />
+          </ChromeErrorBoundary>
+          {/* The first-sign-in welcome rides along with the session
+              this document already holds. */}
+          <ChromeErrorBoundary label="FirstLoginWelcomeProvider">
+            <FirstLoginWelcomeProvider />
           </ChromeErrorBoundary>
           {/* A framed document owns its own keyboard focus, so the Ctrl/Cmd-K
               listener has to live here too. */}
@@ -129,6 +135,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </ChromeErrorBoundary>
       <ChromeErrorBoundary label="SignInPromptProvider">
         <SignInPromptProvider />
+      </ChromeErrorBoundary>
+      {/* The first-sign-in welcome: key links for a reader whose
+          session just landed on this browser. */}
+      <ChromeErrorBoundary label="FirstLoginWelcomeProvider">
+        <FirstLoginWelcomeProvider />
       </ChromeErrorBoundary>
       <ChromeErrorBoundary label="GlobalCommandPalette">
         <GlobalCommandPalette />

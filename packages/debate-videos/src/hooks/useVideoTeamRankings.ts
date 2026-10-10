@@ -1,7 +1,7 @@
 /**
  * @fileoverview Looks up the rankings row behind a round's aff or neg team,
  * for the Aff and Neg cells of the list layout: a team found in the rankings
- * links to its `/teams/<slug>` profile and shows its rating.
+ * links to its `@<handle>` profile and shows its rating.
  *
  * `debate-rankings` covers the current season only, so only a round from the
  * current season is looked up — a team code from a past season names

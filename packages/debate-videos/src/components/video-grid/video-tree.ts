@@ -422,3 +422,27 @@ export function countVideoTreeLeaves(nodes: VideoTreeNode[]): number {
     0,
   );
 }
+
+/**
+ * Assigns a sequential index to each video leaf in the tree.
+ * Mutates the tree by adding an `index` property to video leaves.
+ *
+ * @param nodes - Roots of the tree.
+ * @param startIndex - Starting index (1-based).
+ * @returns The next available index after numbering all leaves.
+ */
+export function indexVideoTreeLeaves(nodes: VideoTreeNode[], startIndex = 1): number {
+  let index = startIndex;
+  for (const node of nodes) {
+    if (node.type === "video") {
+      (node as VideoTreeLeaf & { index: number }).index = index++;
+    } else {
+      index = indexVideoTreeLeaves(node.children, index);
+    }
+  }
+  return index;
+}
+
+export interface VideoTreeLeafWithIndex extends VideoTreeLeaf {
+  index: number;
+}

@@ -15,7 +15,7 @@ import {
 
 import { SiteFooter } from "../../../src/components/layout/SiteFooter";
 
-/** Static markup escapes `&`, as in "Prep & Scout". */
+/** Static markup escapes `&`, as in a title that carries one. */
 const escaped = (text: string) => text.replaceAll("&", "&amp;");
 
 describe("SiteFooter", () => {
@@ -71,5 +71,9 @@ describe("SiteFooter", () => {
 
   it("loads /docs as a real page, since the help site has no app shell", () => {
     expect(html).toContain(`href="/docs" target="_self"`);
+  });
+
+  it("closes with the institute's copyright line", () => {
+    expect(html).toContain("© 2026 Debate AI Institute. All rights reserved.");
   });
 });

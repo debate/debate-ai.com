@@ -182,6 +182,24 @@ export function stripDuplicateHeader(html: string, headerTexts: (string | undefi
   return cursor === 0 ? html : html.slice(cursor).trimStart();
 }
 
+/**
+ * Removes all occurrences of the author name from HTML markup.
+ * The author is already displayed in the header badge, so we strip it
+ * from the body to avoid repetition.
+ *
+ * @param html - The card's stored markup.
+ * @param author - The author name to remove.
+ * @returns The markup with the author name removed.
+ */
+export function stripAuthorFromBody(html: string, author: string): string {
+  if (!html || !author) return html;
+
+  const escapedAuthor = author.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const regex = new RegExp(`\\b${escapedAuthor}\\b`, "gi");
+
+  return html.replace(regex, "");
+}
+
 /** Fewer highlighted words than this and a card counts as having no highlighting. */
 export const MIN_HIGHLIGHTED_WORDS = 2
 

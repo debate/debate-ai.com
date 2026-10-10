@@ -1,0 +1,70 @@
+{
+  "name": "@debate/webview-admin",
+  "version": "0.1.0",
+  "description": "Admin features and API for debate-ai.com: admin UI components, API route handlers, and admin utilities",
+  "type": "module",
+  "author": "vtempest",
+  "license": "rights.institute/prosper",
+  "homepage": "https://github.com/debate/debate-ai.com/tree/master/packages/debate-webview-admin#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/debate/debate-ai.com.git",
+    "directory": "packages/debate-webview-admin"
+  },
+  "bugs": {
+    "url": "https://github.com/debate/debate-ai.com/issues"
+  },
+  "main": "./src/index.ts",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@debate/card-parser": "workspace:*",
+    "@debate/data-sync": "workspace:*",
+    "@debate/research-evidence": "workspace:*",
+    "@debate/types": "workspace:*",
+    "@debate/videos": "workspace:*",
+    "@debate/webview": "workspace:*",
+    "@radix-ui/react-select": "^2.3.7",
+    "@radix-ui/react-slot": "1.3.3",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "drizzle-orm": "^0.45.4",
+    "lucide-react": "^1.49.0",
+    "next": "16.3.8",
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0",
+    "tailwind-merge": "^3.7.0"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0",
+    "next": ">=15"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitest/coverage-v8": "^5.0.3",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.3"
+  }
+}

@@ -1,5 +1,5 @@
 /**
- * @fileoverview The Research / Prep & Scout / Practice / Coaching / Insights
+ * @fileoverview The Research / Practice / Coaching / Insights
  * portion of the videos
  * sidebar — the h1 sections that follow "Round Videos" and "Lectures" in the
  * tree — factored out of `VideoSidebarTree` so it can also render on the
@@ -54,17 +54,19 @@ import {
 } from "./sidebar-section-expansion";
 
 /**
- * Team and school profile pages (`/teams/<team>`, `/schools/<school>`) are
- * opened from the Team Rankings table rather than nested under its own
- * `/coaching/rankings` route, so a plain `pathname === tool.href` match never lights that
- * row up while you are reading one — the tree looked like it had lost track
- * of where you were the moment you followed a rankings link. Both prefixes
- * count as "still on Team Rankings" for highlighting, same as
- * `EXTRA_SIDEBAR_HREFS` already treats them for keeping the sidebar itself
- * mounted (`sidebar-routes.ts`).
+ * Team and school profile pages (`/@<team>` handles, and the
+ * `/teams/<team>` and `/schools/<school>` addresses they moved
+ * from) are opened from the Team Rankings table rather than nested
+ * under its own `/coaching/rankings` route, so a plain
+ * `pathname === tool.href` match never lights that row up while you
+ * are reading one — the tree looked like it had lost track of where
+ * you were the moment you followed a rankings link. Both prefixes
+ * count as "still on Team Rankings", same as `EXTRA_SIDEBAR_HREFS`
+ * already treats them for keeping the sidebar itself mounted
+ * (`sidebar-routes.ts`).
  */
 const TEAM_RANKINGS_HREF = "/coaching/rankings";
-const TEAM_RANKINGS_PROFILE_PREFIXES = ["/teams", "/schools"];
+const TEAM_RANKINGS_PROFILE_PREFIXES = ["/@", "/teams", "/schools"];
 
 function isToolActive(href: string, pathname: string | null): boolean {
   if (pathname == null) return false;

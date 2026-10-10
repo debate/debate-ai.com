@@ -1,10 +1,20 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CalendarDays, MapPin, Plus, Search, ShieldCheck } from "lucide-react";
+import { CalendarDays, MapPin, Plus, Search, ShieldCheck, Trophy } from "lucide-react";
 import { DEMO_TOURN_ID } from "../../host/demo-account";
+import { FramedOverlay } from "../FramedOverlay";
 import { Badge, Card, Input, buttonVariants } from "../primitives";
-import { Empty, Loaded, useApi, useTournaments } from "../shared";
+import { Empty, Loaded, useApi, useTournaments, type LinkLike } from "../shared";
+import type { OwnedTournament } from "../client";
+import type { TournamentHrefs } from "../../routes";
+
+/**
+ * The Debate Majors season calendar — the week-by-week grid of the
+ * season's major tournaments — a standalone page served from the
+ * app's static assets, framed over this list rather than linked to.
+ */
+const MAJORS_CALENDAR_HREF = "/debate-majors-a-to-z.html";
 
 /**
  * Upcoming tournaments, as on tabroom.com's front page (`/pages/invite/upcoming`):
@@ -14,7 +24,12 @@ import { Empty, Loaded, useApi, useTournaments } from "../shared";
 export function UpcomingTournamentsPage() {
   const { client, hrefs, Link } = useTournaments();
   const state = useApi("upcoming", (signal) => client.upcoming(signal));
+  // The tournaments the signed-in user hosts, for the button beside
+  // "Host Tournament". A signed-out user's 401 reads as hosting none,
+  // so the button simply stays off rather than erroring the page.
+  const hosted = useApi("hosted", (signal) => client.myTournaments(signal));
   const [query, setQuery] = useState("");
+  const [majorsOpen, setMajorsOpen] = useState(false);
 
   return (
     <div className="mx-auto max-w-5xl space-y-4 p-4 md:p-6">
@@ -36,10 +51,21 @@ export function UpcomingTournamentsPage() {
               className="pl-8"
             />
           </label>
+          <button
+            type="button"
+            onClick={() => setMajorsOpen(true)}
+            className={buttonVariants({ variant: "outline", size: "sm" })}
+          >
+            <Trophy aria-hidden />
+            Debate Majors
+          </button>
           <Link href={hrefs.admin(DEMO_TOURN_ID)} className={buttonVariants({ variant: "outline", size: "sm" })}>
             <ShieldCheck aria-hidden />
             Demo admin
           </Link>
+          {hosted.status === "ready" && hosted.data.tournaments.length > 0 && (
+            <HostedTournamentButton tournaments={hosted.data.tournaments} hrefs={hrefs} Link={Link} />
+          )}
           <Link href={hrefs.host()} className={buttonVariants({ size: "sm" })}>
             <Plus className="mr-1.5 h-4 w-4" />
             Host Tournament
@@ -49,7 +75,54 @@ export function UpcomingTournamentsPage() {
       <Loaded state={state}>
         {(tourns) => <UpcomingList tourns={tourns} query={query} hrefs={hrefs} Link={Link} />}
       </Loaded>
+      <FramedOverlay
+        open={majorsOpen}
+        onClose={() => setMajorsOpen(false)}
+        url={MAJORS_CALENDAR_HREF}
+        title="Debate Majors"
+        description="The whole 2026–27 season at a glance — weeks A–Y plus the Z championships, one placement per tournament."
+      />
     </div>
+  );
+}
+
+/**
+ * The button beside "Host Tournament" that shows the tournament the
+ * signed-in user is hosting — the newest one, since the host's
+ * tournaments come back newest first — and opens its admin view. A
+ * count badge stands for the rest when the user hosts more than one.
+ */
+export function HostedTournamentButton({
+  tournaments,
+  hrefs,
+  Link,
+}: {
+  tournaments: OwnedTournament[];
+  hrefs: TournamentHrefs;
+  Link: LinkLike;
+}) {
+  if (tournaments.length === 0) return null;
+  const newest = tournaments[0];
+  const hosting = tournaments.length > 1;
+  return (
+    <Link
+      href={hrefs.admin(newest.id)}
+      className={buttonVariants({ variant: "outline", size: "sm" })}
+      title={
+        hosting
+          ? `Hosting ${tournaments.length} tournaments — opens the newest one's admin view`
+          : "Open the admin view of the tournament you are hosting"
+      }
+      aria-label={
+        hosting
+          ? `Open the admin view of ${newest.name}, the newest of your ${tournaments.length} hosted tournaments`
+          : `Open the admin view of ${newest.name}, the tournament you are hosting`
+      }
+    >
+      <ShieldCheck aria-hidden />
+      {newest.name}
+      {hosting ? <Badge variant="outline">{tournaments.length}</Badge> : null}
+    </Link>
   );
 }
 

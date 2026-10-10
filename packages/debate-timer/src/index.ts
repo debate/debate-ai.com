@@ -10,3 +10,5 @@ export * from "./formats/word-count-format";
 export * from "./formats/speech-doc-word-stats";
 export * from "./recorder/spoken-words-store";
 export * from "./types";
+export * from "./audio/sound-effects";
+export * from "./audio/sound-effect-preferences";

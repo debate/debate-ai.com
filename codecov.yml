@@ -96,6 +96,10 @@ flags:
       - apps/debate-browser-ext/lib
       - apps/debate-browser-ext/entrypoints
       - apps/debate-browser-ext/components
+  debate-native-wrapper:
+    paths:
+      - apps/debate-native-wrapper/src
+      - apps/debate-native-wrapper/lib
 
 # Components mirror the flags above so the "components" section of the PR
 # comment (below) actually has something to render, and so each package gets

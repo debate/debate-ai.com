@@ -27,7 +27,8 @@
     "docker:build:linux": "bash scripts/build-docker.sh --linux",
     "docker:build:android": "bash scripts/build-docker.sh --android",
     "docker:build:ios-core": "bash scripts/build-docker.sh --ios-core",
-    "docker:build:all": "bash scripts/build-docker.sh --all"
+    "docker:build:all": "bash scripts/build-docker.sh --all",
+    "tauri": "tauri"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2"
@@ -35,7 +36,7 @@
   "dependencies": {
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-opener": "^2",
-    "@tauri-apps/plugin-updater": "^2",
-    "@tauri-apps/plugin-process": "^2"
+    "@tauri-apps/plugin-process": "^2",
+    "@tauri-apps/plugin-updater": "^2"
   }
 }

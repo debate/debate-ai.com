@@ -1,0 +1,57 @@
+import { NextRequest, NextResponse } from "next/server";
+import { and, eq, inArray } from "drizzle-orm";
+import { getStaffAccess } from "@/lib/auth/admin";
+import { chunkBoundParams } from "@/lib/database/bound-params";
+import { getDBFromContext } from "@/lib/database/context";
+import { chunkStatements } from "@/lib/database/query-budget";
+import { youtubeRoundVideos, type YoutubeRoundVideo } from "@/lib/database/schema";
+import { publishRoundVideos } from "@/lib/videos/publish-round-video";
+
+/**
+ * Publishes every currently queued round video (optionally narrowed to the
+ * style the admin page has filtered to) into the public `videos` table, then
+ * clears the published rows out of the queue — the "publish all" bulk
+ * counterpart to the per-video publish action. Rounds already in `videos`
+ * are skipped, not overwritten (see `publishRoundVideos`), and are cleared
+ * from the queue along with the rest.
+ */
+export async function POST(req: NextRequest) {
+  const { canEditContent } = await getStaffAccess();
+  if (!canEditContent) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const { searchParams } = new URL(req.url);
+  const styleParam = searchParams.get("style");
+
+  const conditions = [];
+  if (styleParam) {
+    const style = Number(styleParam);
+    if (Number.isFinite(style)) conditions.push(eq(youtubeRoundVideos.style, style));
+  }
+
+  const db = await getDBFromContext();
+  const rows = await db
+    .select()
+    .from(youtubeRoundVideos)
+    .where(conditions.length ? and(...conditions) : undefined);
+
+  if (rows.length === 0) {
+    return NextResponse.json({ ok: true, published: 0, skipped: 0 });
+  }
+
+  const published = await publishRoundVideos(db, rows);
+  // Cleared in chunks for the same reason the publish reads in chunks: the
+  // `id IN (...)` list binds one D1 parameter per queued round, and the whole
+  // point of this endpoint is a queue too long to name in one statement. Those
+  // chunks then go out in batches, so clearing the queue costs a handful of
+  // D1 queries rather than one per hundred rounds — see
+  // `lib/database/query-budget.ts`.
+  const queuedIds: string[] = rows.map((row: YoutubeRoundVideo) => row.id);
+  const clears = chunkBoundParams<string>(queuedIds).map((idChunk) =>
+    db.delete(youtubeRoundVideos).where(inArray(youtubeRoundVideos.id, idChunk)),
+  );
+  for (const batch of chunkStatements(clears)) await db.batch(batch);
+
+  return NextResponse.json({ ok: true, published, skipped: rows.length - published });
+}

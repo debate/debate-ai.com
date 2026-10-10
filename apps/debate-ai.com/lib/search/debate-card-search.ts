@@ -355,37 +355,51 @@ export function mapRoundVideoToSearchResult(video: YoutubeRoundVideo): any {
 }
 
 /**
- * Newest-imported-first ordering for the Quotes toggle. Imports happen in
- * bulk, so many rows share an `importedAt`; `id` breaks the tie so the list
- * is stable between requests.
+ * Newest-imported-first ordering for the Quotes toggle: the dump's own
+ * card ids grow with every import, so walking the rowid backwards is
+ * the same order as `imported_at DESC, id DESC` — but needs no index
+ * at all, which keeps the browse fast on a database where the sort
+ * indexes have not been built yet.
  */
 export function buildRecentCardOrderBy(): SQL[] {
-  return [desc(debateCards.importedAt), desc(debateCards.id)];
+  return [desc(debateCards.id)];
 }
 
 /**
  * Database ordering for sorts that must rank the whole corpus.
  *
  * The route caps a search at a fixed number of rows, so sorting only in
- * memory would rank whichever rows happened to come back first. "Most read"
- * orders by `duplicate_count` in SQL so the top of the list really is the
- * most-read cards.
+ * memory would rank whichever rows happened to come back first. "Most
+ * read" and "Recent & Popular" order in SQL so the top of the list
+ * really is the most-read and the most recent cards. Both read an index
+ * (`duplicate_count`, or `year` for the recency half), so neither sorts
+ * the whole table.
  *
  * @param sortBy - Sort expression such as `"readCount:desc"`.
  * @returns ORDER BY terms, empty when the database order should stand.
  */
 export function buildCardSearchOrderBy(sortBy: string): SQL[] {
   const [field, order] = sortBy.split(":");
-  if (field !== "readCount") return [];
   const direction = order === "asc" ? asc : desc;
-  return [direction(debateCards.duplicateCount), asc(debateCards.id)];
+  if (field === "readCount") {
+    return [direction(debateCards.duplicateCount), asc(debateCards.id)];
+  }
+  if (field === "recentPopular") {
+    // Most recent season first, then the cards read the most within it,
+    // newest card last of the ties. `year` is indexed, so the walk
+    // starts at the current season instead of scanning the corpus.
+    return [desc(debateCards.year), desc(debateCards.duplicateCount), desc(debateCards.id)];
+  }
+  return [];
 }
 
 /**
  * Sorts mapped results by the UI's `field:direction` sort expression.
  *
  * `_text_match` has no score to sort by in a `LIKE` search, so it leaves the
- * database order alone.
+ * database order alone. "Recent & Popular" compares season year first and
+ * read count second; the sort is stable, so the `id` tiebreak the SQL
+ * ordering applied is kept for cards that are equal on both.
  *
  * @param results - Mapped search results, sorted in place.
  * @param sortBy - Sort expression such as `"year:desc"`.
@@ -393,6 +407,16 @@ export function buildCardSearchOrderBy(sortBy: string): SQL[] {
  */
 export function sortSearchResults(results: any[], sortBy: string): any[] {
   const [field, order] = sortBy.split(":");
+
+  if (field === "recentPopular") {
+    // The comparison below orders descending; ascending flips it.
+    const sign = order === "asc" ? -1 : 1;
+    return results.sort((a, b) =>
+      sign * ((Number.parseInt(b.year) || 0) - (Number.parseInt(a.year) || 0)) ||
+      sign * ((Number(b.readCount) || 0) - (Number(a.readCount) || 0)),
+    );
+  }
+
   const readers: Record<string, (result: any) => number> = {
     readCount: (result) => Number(result.readCount) || 0,
     year: (result) => Number.parseInt(result.year) || 0,

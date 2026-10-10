@@ -15,6 +15,7 @@ import { UserSettingsPanel } from "@debate/round"
 import { MyRankedTeamsSettings } from "@debate/videos"
 import { TeamCoachingSection } from "./TeamCoachingSection"
 import { OwnAiKeySection } from "./OwnAiKeySection"
+import { SoundEffectsSection } from "./SoundEffectsSection"
 import { EDITOR_SETTINGS_TABS } from "../../lib/editor-preferences"
 import { useEditorPreferencesSync } from "../../lib/hooks/useEditorPreferencesSync"
 import { CARDMIRROR_TAB_ICONS } from "./cardmirror-tab-icons"
@@ -74,7 +75,8 @@ const RESEARCH_ICONS: Record<string, ComponentType<{ size?: number }>> = {
 const CATEGORY_DETAILS: Record<string, { icon: ComponentType<{ size?: number }>; description: string }> = {
   preferences: {
     icon: SlidersHorizontal,
-    description: "Your plan, your own AI key, debate style, font, color theme, light/dark mode and tool data sync.",
+    description:
+      "Your plan, your own AI key, debate style, font, color theme, light/dark mode, sound effects and tool data sync.",
   },
   [MY_TEAM_TAB]: {
     icon: Users,
@@ -275,6 +277,7 @@ export function EditorSettingsPanel({ sidebarHeader }: { sidebarHeader?: ReactNo
             <>
               <TeamCoachingSection />
               <OwnAiKeySection />
+              <SoundEffectsSection />
               <UserSettingsPanel embedded />
             </>
           ) : (

@@ -15,7 +15,8 @@ export type FollowKind = "team" | "school"
 /** One profile the viewer follows. */
 export interface ProfileFollow {
   kind: FollowKind
-  /** The profile's URL segment, from `teamSlug` or `profileSlug`. */
+  /** The profile's URL segment, from `teamSlug` or `profileSlug`
+   *  (teams are reached as `@<slug>`). */
   slug: string
   /** Display name at follow time, e.g. "Harker Lee & Lin" or "Harker". */
   name: string
@@ -110,7 +111,9 @@ export async function fetchMyFollows(fetchImpl: typeof fetch = fetch): Promise<F
   return readJson(response, "Couldn't load your follows.")
 }
 
-/** Path of a followed profile's page. */
+/** Path of a followed profile's page. A team's is its `@handle`
+ *  address — the stored slug may be the older school-plus-name
+ *  form, which the profile page still resolves. */
 export function followHref(follow: Pick<ProfileFollow, "kind" | "slug">): string {
-  return `/${follow.kind === "team" ? "teams" : "schools"}/${follow.slug}`
+  return follow.kind === "team" ? `/@${follow.slug}` : `/schools/${follow.slug}`;
 }
