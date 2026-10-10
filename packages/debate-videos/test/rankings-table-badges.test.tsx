@@ -1,6 +1,6 @@
 /**
  * @fileoverview Pins where the division rankings table puts its labels: the
- * Legendary badge follows the team's name, and the School column shows the
+ * legend badge ("PF Legend") follows the team's name, and the School column shows the
  * school's Schools-tab rank after its name.
  */
 
@@ -57,9 +57,10 @@ describe("RankingsTable labels", () => {
   );
   const rows = html.split("<tr").slice(2);
 
-  it("puts the Legendary badge after the team name", () => {
-    expect(html.match(/Legendary<\/span>/g)).toHaveLength(1);
-    expect(rows[0].indexOf("Le &amp; Luo")).toBeLessThan(rows[0].indexOf("Legendary</span>"));
+  it("puts the format's legend badge after the team name", () => {
+    expect(html.match(/PF Legend<\/span>/g)).toHaveLength(1);
+    expect(html).not.toContain("Legendary</span>");
+    expect(rows[0].indexOf("Le &amp; Luo")).toBeLessThan(rows[0].indexOf("PF Legend</span>"));
   });
 
   it("shows the school's rank after the school name only when it has one", () => {

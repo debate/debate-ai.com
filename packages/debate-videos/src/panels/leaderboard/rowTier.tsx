@@ -62,15 +62,22 @@ export const ROW_TIER_CLASS: Record<Exclude<RowTier, null>, string> = {
     "outline outline-2 -outline-offset-2 outline-amber-500 bg-amber-400/10 shadow-[0_0_12px_rgb(251_191_36/0.5)] hover:bg-amber-400/20",
 }
 
-/** The small "Legendary" label: after the team name in division tables, beside the rank in the Schools table. */
-export function LegendaryBadge() {
+/**
+ * The small legend label: after the team name in division tables, beside the
+ * rank in the Schools table. Names the format ("PF Legend", "LD Legend"), or
+ * reads just "Legend" when the list spans every format.
+ *
+ * @param format - Short format label, e.g. "PF" or "NDT".
+ */
+export function LegendaryBadge({ format }: { format?: string }) {
+  const label = format ? `${format} Legend` : "Legend"
   return (
     <span
       className="inline-flex items-center gap-0.5 rounded-sm bg-amber-500/90 px-1 py-px align-middle text-[9px] font-bold uppercase tracking-wide text-white"
-      title="Legendary: the small group at the top of this list"
+      title={`${label}: the small group at the top of this list`}
     >
       <Crown className="h-2.5 w-2.5" aria-hidden />
-      Legendary
+      {label}
     </span>
   )
 }
