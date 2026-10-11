@@ -115,7 +115,7 @@ import {
   updateOpponentRoundRecord,
   type OpponentRoundRecordEntry,
 } from "@debate/data-sync/src/state/opponentRoundRecords"
-import { parseTeamLabel } from "@debate/rankings-adapter/src/team-lookup"
+import { parseTeamLabel } from "@debate/rankings-adapter"
 import { OPPONENT_ROUND_CSV_TEMPLATE } from "@debate/data-sync/src/rankings/opponent-round-csv-import"
 import {
   buildOpponentScoutingReportText,

@@ -49,6 +49,7 @@ interface UsersResponse {
  * onto a server-side ORDER BY.
  */
 const USAGE_COLUMNS = [
+  { key: "videosWatched", label: "Videos", hint: "Videos watched" },
   { key: "docs", label: "Docs", hint: "REASON editor documents" },
   { key: "flows", label: "Flows", hint: "Saved flows" },
   { key: "rounds", label: "Rounds", hint: "Saved rounds" },
@@ -57,7 +58,6 @@ const USAGE_COLUMNS = [
   { key: "speeches", label: "Speeches", hint: "Speech documents sent" },
   { key: "practiceRounds", label: "vs AI", hint: "Practice-vs-AI rounds" },
   { key: "drills", label: "Drills", hint: "Saved drill sets" },
-  { key: "videosWatched", label: "Videos", hint: "Videos watched" },
 ] as const;
 
 const SUMMARY_TILES = [

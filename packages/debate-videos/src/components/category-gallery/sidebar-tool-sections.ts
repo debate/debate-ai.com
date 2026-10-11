@@ -167,9 +167,6 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/practice/predictions", title: "Prediction Markets", icon: Coins },
       { href: "/practice/drills", title: "Practice Drills", icon: Repeat },
       { href: "/practice/judge-decision", title: "AI Judge Decision", icon: BadgeCheck },
-      // Lives under /coaching, but it charts how practice responses play out,
-      // so it sits with the practice tools.
-      { href: "/coaching/outcomes", title: "AI Response-Outcome Charts", icon: ChartLine },
     ],
   },
   {
