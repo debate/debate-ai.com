@@ -222,7 +222,6 @@ export function VideoTreeRows({
       showFormat={context.showFormat}
       affRanking={context.teamRanking?.(video, video[9]) ?? null}
       negRanking={context.teamRanking?.(video, video[10]) ?? null}
-      rowIndex={leafWithIndex.index}
     />
   )
 }

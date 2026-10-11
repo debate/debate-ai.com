@@ -65,7 +65,7 @@ export function buildEmbedUrl(videoId: string, options: EmbedOptions = {}): stri
   // If running in extension context, prefer using hosted wrapper to ensure proper referrer
   if (typeof window !== "undefined" && window.location.origin.startsWith("chrome-extension://")) {
     const extParams = new URLSearchParams(params)
-    return `https://debate-ai.com/youtube-player.html?vid=${videoId}&${extParams.toString()}`
+    return `https://debate-ai.com/youtube-player?vid=${videoId}&${extParams.toString()}`
   }
 
   return `https://www.youtube.com/embed/${videoId}?${params.toString()}`

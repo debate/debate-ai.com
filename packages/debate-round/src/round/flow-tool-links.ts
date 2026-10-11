@@ -53,11 +53,6 @@ export const FLOW_TOOL_LINKS: FlowToolLink[] = [
     description: "Generate a filterable outline of this round's flow, grouped by heading.",
   },
   {
-    href: "/coaching/outcomes",
-    label: "AI Response-Outcome Charts",
-    description: "See per-side exposure and the most vulnerable arguments in this round's flow.",
-  },
-  {
     href: "/practice/drills",
     label: "Practice Drills",
     description: "Generate quick practice drills from this round's flowed arguments.",

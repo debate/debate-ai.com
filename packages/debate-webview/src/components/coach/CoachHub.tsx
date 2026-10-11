@@ -47,7 +47,6 @@ import {
   FlowSummariesPanel,
   JudgeDecisionPanel,
   PracticeRoundSimulatorPanel,
-  VulnerabilityChartsPanel,
   WordCountRoundsPanel,
 } from "@debate/practice-rounds"
 import { CoachingProgramsPanel } from "@debate/team-collaboration"
@@ -96,7 +95,6 @@ export const COACH_SECTIONS: readonly HubSection<SectionId>[] = [
     panels: [
       panel("Argument Tree Outline", "/outline"),
       panel("Speech Transcript Summaries", "/summaries"),
-      panel("AI Response-Outcome Charts", "/coaching/outcomes"),
       panel("Shared Flow Sync"),
       panel("Flow Edit Log"),
     ],
@@ -243,9 +241,6 @@ export function CoachHub() {
             </HubPanelAnchor>
             <HubPanelAnchor anchor={ANCHORS["Speech Transcript Summaries"]}>
               <FlowSummariesPanel />
-            </HubPanelAnchor>
-            <HubPanelAnchor anchor={ANCHORS["AI Response-Outcome Charts"]}>
-              <VulnerabilityChartsPanel />
             </HubPanelAnchor>
             <HubPanelAnchor anchor={ANCHORS["Shared Flow Sync"]}>
               <SharedFlowSyncPanel

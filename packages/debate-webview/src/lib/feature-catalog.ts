@@ -362,15 +362,6 @@ export const APP_FEATURES: FeatureEntry[] = [
     tags: ["video", "timestamp", "jump to", "flow-in-speech"],
   },
   {
-    id: "response-outcome-charts",
-    title: "AI Response-Outcome Charts",
-    description: "Per-side exposure and the most vulnerable arguments in each round's flow",
-    href: "/coaching/outcomes",
-    category: "round",
-    doc: "response-outcome-charts.md",
-    tags: ["vulnerability", "what if", "counsel panel", "chart"],
-  },
-  {
     id: "speech-documents",
     title: "Speech Documents",
     description: "History of evidence sent into the designated speech document from the Reason Editor",

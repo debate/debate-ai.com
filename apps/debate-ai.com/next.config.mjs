@@ -59,7 +59,10 @@ const nextConfig = {
     ];
   },
   async rewrites() {
-    return [{ source: "/@:handle", destination: "/teams/:handle" }];
+    return [
+      { source: "/@:handle", destination: "/teams/:handle" },
+      { source: "/youtube-player.html", destination: "/youtube-player" },
+    ];
   },
 };
 

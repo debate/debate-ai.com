@@ -269,11 +269,6 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
     heading: "Coaching & Analytics",
     tools: [
       {
-        href: "/coaching/outcomes", label: "AI Response-Outcome Charts", icon: BarChart3,
-        description: "See per-side exposure and the most vulnerable arguments in each round's flow.",
-        highlights: ["\"What if\" picker recomputes exposure under a hypothetical extend/answer/concede", "AI counsel panel assesses likely response paths for exposed arguments"],
-      },
-      {
         href: "/coaching/rankings", label: "Team Rankings", icon: Crown,
         description: "Debate team rankings, leaderboard, and Elo ratings.",
         highlights: [

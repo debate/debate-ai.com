@@ -36,7 +36,6 @@ import { buildVideoSlots, type VideoSlot, type VideoStackMap } from "./video-sta
 import {
   buildVideoTree,
   countVideoTreeLeaves,
-  indexVideoTreeLeaves,
   openVideoTreeRowCount,
   sortVideoTreeLeaves,
   splitVideoTreeColumns,
@@ -332,12 +331,6 @@ export function VideoListRows({
   const maxCollapseDepth = useMemo(() => videoTreeDepth(tree), [tree])
   const effectiveCollapseDepth = Math.min(collapseDepth ?? maxCollapseDepth, maxCollapseDepth)
 
-  // Assign sequential 1-based indices to video leaves for display in rows
-  const indexedTree = useMemo(() => {
-    indexVideoTreeLeaves(sortedTree)
-    return sortedTree
-  }, [sortedTree])
-
   const context: VideoTreeRowContext = {
     isRoundMode,
     showWatched,
@@ -369,11 +362,11 @@ export function VideoListRows({
     return () => observer.disconnect()
   }, [])
   const twoColumns =
-    countVideoTreeLeaves(indexedTree) > 1 && containerWidth >= 2 * (tableWidth + TABLE_BORDER_WIDTH) + TWO_COLUMN_GAP
+    countVideoTreeLeaves(sortedTree) > 1 && containerWidth >= 2 * (tableWidth + TABLE_BORDER_WIDTH) + TWO_COLUMN_GAP
 
   const tableColumns = useMemo(
-    () => (twoColumns ? splitVideoTreeColumns(indexedTree, effectiveCollapseDepth) : [indexedTree]),
-    [twoColumns, indexedTree, effectiveCollapseDepth],
+    () => (twoColumns ? splitVideoTreeColumns(sortedTree, effectiveCollapseDepth) : [sortedTree]),
+    [twoColumns, sortedTree, effectiveCollapseDepth],
   )
 
   const renderTable = (nodes: VideoTreeNode[]) => (
