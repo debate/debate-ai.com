@@ -175,6 +175,14 @@ rounds — and so does the tournament name on every round row under it
 (`showFormat` on `VideoListRows`, drawn by `FormatBadge`). Single-format
 listings such as `/videos/pf` leave it off.
 
+On a screen wide enough to hold the table twice over, the list splits into two
+side-by-side tables, each with its own header (the sort, collapse and column
+widths are shared). Rows are dealt to whichever column is shorter, so a flat
+list reads left, right, left, right like the card grid, and a page loading more
+only adds to the bottom. A listing that is all one season splits that season's
+tournaments and repeats the season row atop both columns. Narrower screens keep
+the single table (`splitVideoTreeColumns` in `video-tree.ts`).
+
 Because the groups are built from whatever has loaded, the row view keeps
 paging on its own (up to the usual 600-video ceiling) instead of waiting for
 you to scroll. Otherwise sorting by views would show only each season's

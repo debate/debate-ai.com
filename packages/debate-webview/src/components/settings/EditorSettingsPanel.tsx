@@ -16,6 +16,7 @@ import { MyRankedTeamsSettings } from "@debate/videos"
 import { TeamCoachingSection } from "./TeamCoachingSection"
 import { OwnAiKeySection } from "./OwnAiKeySection"
 import { SoundEffectsSection } from "./SoundEffectsSection"
+import { SidebarIconAnimationsSection } from "./SidebarIconAnimationsSection"
 import { EDITOR_SETTINGS_TABS } from "../../lib/editor-preferences"
 import { useEditorPreferencesSync } from "../../lib/hooks/useEditorPreferencesSync"
 import { CARDMIRROR_TAB_ICONS } from "./cardmirror-tab-icons"
@@ -278,6 +279,7 @@ export function EditorSettingsPanel({ sidebarHeader }: { sidebarHeader?: ReactNo
               <TeamCoachingSection />
               <OwnAiKeySection />
               <SoundEffectsSection />
+              <SidebarIconAnimationsSection />
               <UserSettingsPanel embedded />
             </>
           ) : (

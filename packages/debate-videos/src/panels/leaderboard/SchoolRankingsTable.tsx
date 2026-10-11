@@ -33,7 +33,7 @@ interface Column {
   /** Explains how the value is computed. */
   tooltip?: string
   width: number
-  render: (row: SchoolRanking, tier: RowTier) => React.ReactNode
+  render: (row: SchoolRanking, tier: RowTier, format: string | undefined) => React.ReactNode
 }
 
 const COLUMNS: Column[] = [
@@ -42,9 +42,9 @@ const COLUMNS: Column[] = [
     label: "#",
     numeric: true,
     width: 120,
-    render: (r, tier) => (
+    render: (r, tier, format) => (
       <>
-        {tier === "legendary" && <LegendaryBadge />}
+        {tier === "legendary" && <LegendaryBadge format={format} />}
         <span className="ml-1 font-semibold">{r.rank}</span>
       </>
     ),
@@ -104,6 +104,8 @@ interface SchoolRankingsTableProps {
   rows: SchoolRanking[]
   /** How many top ranks are legendary, from the whole list ({@link legendaryCount}). */
   legendary: number
+  /** Short format label for the legend badge ("PF"), or omitted when the list spans every format. */
+  format?: string
   /** Current sort state. */
   sort: SchoolSortState
   /** Called when the user clicks a sortable column header. */
@@ -118,7 +120,7 @@ interface SchoolRankingsTableProps {
  *
  * @param props - See {@link SchoolRankingsTableProps}.
  */
-export function SchoolRankingsTable({ rows, legendary, sort, onToggleSort }: SchoolRankingsTableProps) {
+export function SchoolRankingsTable({ rows, legendary, format, sort, onToggleSort }: SchoolRankingsTableProps) {
   return (
     <div className="rounded-lg border bg-card shadow-sm overflow-x-auto">
       <Table
@@ -186,7 +188,7 @@ export function SchoolRankingsTable({ rows, legendary, sort, onToggleSort }: Sch
                   )}
                   title={col.key === "school" ? row.school : col.key === "bestEntry" ? row.bestEntry : undefined}
                 >
-                  {col.render(row, tier)}
+                  {col.render(row, tier, format)}
                 </TableCell>
               ))}
             </TableRow>

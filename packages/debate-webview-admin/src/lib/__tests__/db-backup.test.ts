@@ -9,8 +9,8 @@ import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 import { generateSQLiteDrizzleJson, generateSQLiteMigration } from "drizzle-kit/api";
 import { describe, expect, it } from "vitest";
-import * as schema from "../../database/schema";
-import { cardAiAnalyses, debateCards, user, videoIssues, videos } from "../../database/schema";
+import * as schema from "@/lib/database/schema";
+import { cardAiAnalyses, debateCards, user, videoIssues, videos } from "@/lib/database/schema";
 import {
   BACKUP_TABLES,
   backupSqlStream,

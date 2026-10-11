@@ -18,7 +18,7 @@
  * @module lib/videos/transcript-scraper
  */
 
-import { and, asc, count, eq, gt, isNull, leftJoin, sql } from "drizzle-orm";
+import { and, asc, count, eq, gt, isNull, sql } from "drizzle-orm";
 import { fetchYouTubeTranscript, type TranscriptSnippet } from "@/lib/youtube/transcript";
 import { writeCachedTranscript } from "@/lib/youtube/transcript-cache";
 import { saveVideoDocument } from "@/lib/videos/video-content";

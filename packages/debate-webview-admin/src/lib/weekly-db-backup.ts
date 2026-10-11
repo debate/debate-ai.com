@@ -14,7 +14,7 @@
  * @module lib/admin/weekly-db-backup
  */
 
-import { getDBFromContext } from "../database/context";
+import { getDBFromContext } from "@/lib/database/context";
 import { BACKUP_GROUPS, type BackupDb } from "./db-backup";
 import { createR2Backup, getBackupBucket, getBackupKv, type BackupResult } from "./db-backup-r2";
 

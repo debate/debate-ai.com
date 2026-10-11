@@ -289,7 +289,7 @@ return (
                       />
                     </div>
                     {visibleSchools.length > 0 ? (
-                      <SchoolRankingsTable rows={visibleSchools} legendary={schoolLegendary} sort={schoolSort} onToggleSort={toggleSchoolSort} />
+                      <SchoolRankingsTable rows={visibleSchools} legendary={schoolLegendary} format={schoolScope === "all" ? undefined : DIVISION_SHORT_LABELS[schoolScope]} sort={schoolSort} onToggleSort={toggleSchoolSort} />
                     ) : (
                       <p className="py-8 text-center text-sm text-muted-foreground">
                         {query ? `No schools match "${query}".` : "No school rankings are published yet."}

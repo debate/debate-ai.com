@@ -12,9 +12,9 @@ import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 import path from "node:path";
 import { beforeEach, describe, expect, it } from "vitest";
-import * as schema from "../../database/schema";
-import { applySchema } from "../../database/__tests__/schema-sql";
-import { debateCardImports, debateCards, evidenceReuseIndex } from "../../database/schema";
+import * as schema from "@/lib/database/schema";
+import { applySchema } from "@/lib/database/__tests__/schema-sql";
+import { debateCardImports, debateCards, evidenceReuseIndex } from "@/lib/database/schema";
 import {
   CARD_ROWS_PER_STATEMENT,
   buildSourceUrlStatements,

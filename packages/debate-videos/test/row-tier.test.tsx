@@ -82,6 +82,19 @@ describe("SchoolRankingsTable tiers", () => {
   it("labels legendary rows and outlines gold ones", () => {
     expect(html.match(/data-tier="legendary"/g)).toHaveLength(1);
     expect(html.match(/data-tier="gold"/g)).toHaveLength(1);
-    expect(html.match(/Legendary<\/span>/g)).toHaveLength(1);
+    expect(html.match(/>Legend<\/span>/g)).toHaveLength(1);
+  });
+
+  it("names the format on the legend badge when the list is one division", () => {
+    const ld = renderToStaticMarkup(
+      createElement(SchoolRankingsTable, {
+        rows: [row(1, 90)],
+        legendary: 1,
+        format: "LD",
+        sort: { key: "rank", dir: "asc" },
+        onToggleSort: () => {},
+      }),
+    );
+    expect(ld).toContain("LD Legend</span>");
   });
 });

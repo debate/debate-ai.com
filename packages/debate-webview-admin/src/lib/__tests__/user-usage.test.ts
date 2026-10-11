@@ -7,9 +7,9 @@
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 import { describe, expect, it } from "vitest";
-import * as schema from "../../database/schema";
-import { applySchema } from "../../database/__tests__/schema-sql";
-import { user } from "../../database/schema";
+import * as schema from "@/lib/database/schema";
+import { applySchema } from "@/lib/database/__tests__/schema-sql";
+import { user } from "@/lib/database/schema";
 import { loadUserUsagePage } from "../user-usage";
 
 async function freshDb() {

@@ -13,7 +13,6 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,
-    "baseUrl": ".",
     "paths": {
       "@/*": ["../../apps/debate-ai.com/*"],
       "@debate/webview-admin/*": ["./src/*"],

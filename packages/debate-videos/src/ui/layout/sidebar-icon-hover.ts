@@ -10,6 +10,9 @@
  * a row animates the first icon in it; moving between the parts of one row
  * does not restart it. Under reduced motion nothing plays.
  *
+ * It is off by default: nothing moves until the reader turns on "Animate
+ * sidebar icons" in Settings → Preferences ({@link setSidebarIconAnimations}).
+ *
  * @module ui/layout/sidebar-icon-hover
  */
 
@@ -58,6 +61,45 @@ export function pickIconHoverEffect(
   return pool[Math.min(pool.length - 1, Math.floor(random() * pool.length))]
 }
 
+/** localStorage key for the reader's choice; "1" = animate. Off by default. */
+export const SIDEBAR_ICON_ANIMATIONS_KEY = "sidebar-icon-animations"
+
+/** Same-document change event; other tabs get the real `storage` event. */
+const ICON_ANIMATIONS_CHANGE_EVENT = "sidebar-icon-animations-change"
+
+/** True when the reader turned the icon hover animation on in Settings. */
+export function readSidebarIconAnimations(): boolean {
+  try {
+    return localStorage.getItem(SIDEBAR_ICON_ANIMATIONS_KEY) === "1"
+  } catch {
+    return false
+  }
+}
+
+/** Turns the icon hover animation on or off in this browser, and remembers it. */
+export function setSidebarIconAnimations(on: boolean): void {
+  try {
+    if (on) localStorage.setItem(SIDEBAR_ICON_ANIMATIONS_KEY, "1")
+    else localStorage.removeItem(SIDEBAR_ICON_ANIMATIONS_KEY)
+  } catch {
+    // Blocked storage: the choice just isn't kept.
+  }
+  window.dispatchEvent(new Event(ICON_ANIMATIONS_CHANGE_EVENT))
+}
+
+/** Calls `onChange` whenever the choice changes, here or in another tab. */
+export function subscribeSidebarIconAnimations(onChange: () => void): () => void {
+  const onStorage = (event: StorageEvent) => {
+    if (event.key === null || event.key === SIDEBAR_ICON_ANIMATIONS_KEY) onChange()
+  }
+  window.addEventListener(ICON_ANIMATIONS_CHANGE_EVENT, onChange)
+  window.addEventListener("storage", onStorage)
+  return () => {
+    window.removeEventListener(ICON_ANIMATIONS_CHANGE_EVENT, onChange)
+    window.removeEventListener("storage", onStorage)
+  }
+}
+
 /** Every property an effect moves, at rest. */
 const AT_REST: DOMKeyframesDefinition = { x: 0, y: 0, rotate: 0, scale: 1 }
 
@@ -84,7 +126,9 @@ export function attachSidebarIconHover(root: HTMLElement): () => void {
   const lastAnimationAt = new WeakMap<SVGElement, number>()
 
   const play = (icon: SVGElement) => {
-    if (prefersReducedMotion()) return
+    // Off unless the reader turned it on (Settings → Preferences); read on
+    // every hover so flipping the switch applies without a reload.
+    if (!readSidebarIconAnimations() || prefersReducedMotion()) return
 
     // Throttle: only animate once per ICON_HOVER_THROTTLE_MS per icon.
     const now = Date.now()

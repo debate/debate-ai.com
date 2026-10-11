@@ -28,7 +28,7 @@
  * @module lib/admin/db-backup-r2
  */
 
-import { getCloudflareContext } from "../database/context";
+import { getCloudflareContext } from "@/lib/database/context";
 import {
   backupFileName,
   emptyBackupStats,

@@ -22,7 +22,7 @@ import {
 import { cn } from "../../ui/lib/utils"
 import { ColumnResizeHandle } from "../../components/video-grid/ColumnResizeHandle"
 import { useResizableColumns } from "../../components/video-grid/useResizableColumns"
-import { COLUMN_TOOLTIPS, displayEntryName, schoolRankOf } from "./leaderboardUtils"
+import { COLUMN_TOOLTIPS, DIVISION_SHORT_LABELS, displayEntryName, schoolRankOf } from "./leaderboardUtils"
 import type { Division, SortKey, SortState } from "./leaderboardTypes"
 import { schoolHref, teamHref } from "./profile/rankingProfileHelpers"
 import { LegendaryBadge, ROW_TIER_CLASS, rowTier, type RowTier } from "./rowTier"
@@ -118,7 +118,7 @@ const COLUMNS: Column[] = [
         </Link>
         {tier === "legendary" && (
           <span className="ml-1.5">
-            <LegendaryBadge />
+            <LegendaryBadge format={DIVISION_SHORT_LABELS[division]} />
           </span>
         )}
       </>
