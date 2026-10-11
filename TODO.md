@@ -203,9 +203,7 @@ roughly 500 editing commands into ~30 thematic groups. Highlights (full 50+ feat
 - [Coach Materials](https://debate-ai.com/coach-materials) — Upload or dictate grounding material for the team coach AI and preview relevant sources.
 
 
-## Completed
-
-_Every item below is checked off (re-reviewed 2026-10-11); nothing is left In Progress. No open follow-ups remain._
+## Completed (2026-10-10 tracker review: no product work left; the only caveat is that some suites need the `debate-rankings` / `debate-editor-cm` submodules to load)
 
 ### Saved-to-account indicator on flow tabs (all items done 2026-10-08; kept here beside its open follow-ups) (slice of "integrate tools + user settings + SQL-linked flows/docs/debates")
 
@@ -226,9 +224,7 @@ _Every item below is checked off (re-reviewed 2026-10-11); nothing is left In Pr
 - [x] `ebb-dev-flow-files` / `ebb-dev-recents` stay browser-only on purpose: `flowFsMemory.ts` documents them as a dev/test stand-in, not a product surface (real flows sync through `saved_flows`). `REASON-file-sources` already syncs (`toolRecordCollections.ts`)
 - [x] `REASON-documents` needs no catalog entry (verified 2026-10-07): the `localStorage` key is only a read cache for the editor. Every edit already reaches the D1 `documents` table per user through `save-queue.ts` -> `PUT /api/doc/documents/:id` (`apps/debate-ai.com/app/api/doc/documents`, `ReasonDocsProvider`). Ids are server-assigned numbers, and a second copy under `saved_tool_records` would duplicate content and race the save queue. No redaction/size review is needed because nothing new leaves the browser
 
-### Tool UI pass: tool page header (Completed)
-
-- The earlier environment-only caveats were cleared: the `ToolSyncBadge` click test needs no testing-library, and the submodule-dependent suites were verified 2026-10-07. No product work is left.
+### Tool UI pass: tool page header (done)
 
 - Branch: `agent/tool-header-single-sync-badge`
 - [x] `ToolPageHeader` rendered `ToolSyncBadge` twice (merge damage); now once, with a regression test
