@@ -4,7 +4,7 @@
 # shadcn-sidebar
 
 A data-driven, [shadcn/ui](https://ui.shadcn.com)-style app sidebar for React and
-Tailwind CSS v4, extracted from [debate-ai.com](https://debate-ai.com)'s app shell.
+Tailwind CSS v4.
 
 - **Resizable column.** Drag the edge; the width is remembered. Double-click the handle
   to reset it.
