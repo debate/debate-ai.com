@@ -1,3 +1,6 @@
+![img](https://i.imgur.com/tsV6aLJ.png)
+
+
 # shadcn-sidebar
 
 A data-driven, [shadcn/ui](https://ui.shadcn.com)-style app sidebar for React and
