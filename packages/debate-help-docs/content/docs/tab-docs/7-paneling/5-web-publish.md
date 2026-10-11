@@ -3,7 +3,7 @@ title: Paneling - Web Publish
 slug: web-publish
 ---
 
-<img src="/screenshots/Paneling_-_Web_Publish.png"
+<img src="/screenshots/placeholder.png"
 title="Paneling_-_Web_Publish.png" />
 
 This screen allows you to publish results for an event. You may choose

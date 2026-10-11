@@ -20,7 +20,7 @@ school's complete entry, or vice versa.
 Usually, the fastest way to find information in Tabroom is to use the
 search box in the upper right corner of the page.
 
-<img src="/screenshots/tabs_search.png" title="tabs_search.png" width="200" />
+<img src="/screenshots/placeholder.png" title="tabs_search.png" width="200" />
 
 For example, if you search for a school's name, you'll be taken right to
 their entry. If you search for a judge's or entry's last name, you'll be
@@ -32,7 +32,7 @@ keyboard. Then, just type your search and press Enter.
 
 ## School Info
 
-<img src="/screenshots/tabs_entries_schools.png" title="tabs_entries_schools.png" />
+<img src="/screenshots/placeholder.png" title="tabs_entries_schools.png" />
 
 Each school registered for your tournament has it's own page where you
 can see their entries, judges, vital information, and invoices, as well
@@ -48,7 +48,7 @@ viewing school statistics are instead found under the "Data" or
 To access a school's page, you select it from one of the dropdown menus
 under the Schools menu option:
 
-<img src="/screenshots/register_index-schools.png" title="register_index-schools.png"
+<img src="/screenshots/placeholder.png" title="register_index-schools.png"
 width="300" />
 
 School's will be listed as "Not Checked In" until they are marked as
@@ -61,7 +61,7 @@ instead.
 The Judges and Money tabs will appear in red if a school is under their
 judging obligations, or if they owe judge fees:
 
-<img src="/screenshots/register_school_edit-redtabs.png"
+<img src="/screenshots/placeholder.png"
 title="register_school_edit-redtabs.png" width="400" />
 
 ### Adding A School
@@ -70,7 +70,7 @@ If not using online registration and you need to manually add a school,
 you use the "Data" menu option, and then click "Add new school" on the
 sidebar:
 
-<img src="/screenshots/register_data_index-entry.png"
+<img src="/screenshots/placeholder.png"
 title="register_data_index-entry.png" width="300" />
 
 If your tournament is listed in a circuit, you'll have the option of
@@ -79,7 +79,7 @@ school by name. If Tabroom finds a matching school with a similar name,
 you'll be prompted whether to add the pre-existing school or create one
 from scratch:
 
-<img src="/screenshots/register_data_add-school.png"
+<img src="/screenshots/placeholder.png"
 title="register_data_add-school.png" width="500" />
 
 The same section of the sidebar also has options to check on "Empty
@@ -96,20 +96,20 @@ After accessing a school through the **Entries - Schools** menu, the
 such as name, code and contact information. You can also enter how much
 they've paid and any relevant notes like a check number or monies owed:
 
-<img src="/screenshots/register_school_edit-general.png"
+<img src="/screenshots/placeholder.png"
 title="register_school_edit-general.png" width="500" />
 
 At the bottom, you will see information about the school, who originally
 registered their school and when, and which tabroom accounts have access
 to their school account, so you know who to contact if necessary:
 
-<img src="/screenshots/register_school_edit-info.png"
+<img src="/screenshots/placeholder.png"
 title="register_school_edit-info.png" width="500" />
 
 To drop the entire school's entry permanently, use the "Drop Entire
 Entry" link - you will be prompted to confirm first.
 
-<img src="/screenshots/register_school_edit-drop.png"
+<img src="/screenshots/placeholder.png"
 title="register_school_edit-drop.png" width="300" />
 
 ### Accessing/Adding School Entries
@@ -117,7 +117,7 @@ title="register_school_edit-drop.png" width="300" />
 The "Entries" tab of a school's page will first show you the school's
 complete entry roster:
 
-<img src="/screenshots/register_school_entries-roster.png"
+<img src="/screenshots/placeholder.png"
 title="register_school_entries-roster.png" width="500" />
 
 To access any individual entry, just click on their name or code. You
@@ -131,14 +131,14 @@ To see only entries in a particular event, click the 'Add to' menu on
 the right (the number is the current number of entries from the school
 in that event):
 
-<img src="/screenshots/register_school_entries-divisions.png"
+<img src="/screenshots/placeholder.png"
 title="register_school_entries-divisions.png" width="300" />
 
 Once you have selected an event, you can manually add an entry, either
 from that school's roster, by entering their name, or just as a "TBA"
 slot:
 
-<img src="/screenshots/register_school_entries-add.png"
+<img src="/screenshots/placeholder.png"
 title="register_school_entries-add.png" width="300" />
 
 ### Accessing/Adding School Judges
@@ -147,18 +147,18 @@ Once you select the "Judges" tab of a school's page, you must then
 select which judge category to view. If the school is below their
 obligation in a judge category, it will appear in red:
 
-<img src="/screenshots/register_school_judges-groups.png"
+<img src="/screenshots/placeholder.png"
 title="register_school_judges-groups.png" width="300" />
 
 For each judge category, you will see a list of currently entered
 judges, with options to change their rounds or delete them:
 
-<img src="/screenshots/register_school_judges-list.png"
+<img src="/screenshots/placeholder.png"
 title="register_school_judges-list.png" width="500" />
 
 You can also add a new judge to the school by clicking on the plus sign:
 
-<img src="/screenshots/Add_a_Judge.png" title="Add_a_Judge.png" width="400" />
+<img src="/screenshots/placeholder.png" title="Add_a_Judge.png" width="400" />
 
 Note that for events using the "Rounds Per Entry" burden method, newly
 added judges will default to a full (maximum) commitment. Make sure to
@@ -177,28 +177,28 @@ judging fees, purchased concessions, and nuisance fines all in one
 place. It will update automatically as changes are made to a school's
 entry (for example dropping a team before the add/drop deadline).
 
-<img src="/screenshots/register_school_invoice-fees.png"
+<img src="/screenshots/placeholder.png"
 title="register_school_invoice-fees.png" width="500" />
 
 Fees or Nuisance Fines can be removed from a school's invoice by
 selecting the box next to each charge in the sidebar. Note that after
 deletion, no record of that charge will remain on the invoice.
 
-<img src="/screenshots/Custom_Invoice_Image.png" title="Custom_Invoice_Image.png"
+<img src="/screenshots/placeholder.png" title="Custom_Invoice_Image.png"
 width="300" />
 
 To add additional charges or payments, use the "Add Charge" box on the
 sidebar. To credit a payment to the invoice, use a negative number for
 Amount.
 
-<img src="/screenshots/register_school_invoice-add.png"
+<img src="/screenshots/placeholder.png"
 title="register_school_invoice-add.png" width="300" />
 
 If you need a printout of the invoice, for example to hand out at
 registration (either for entry fees, concessions, or combined), you can
 generate a PDF using the pdf icon on the invoice:
 
-<img src="/screenshots/register_school_invoice-printouts.png"
+<img src="/screenshots/placeholder.png"
 title="register_school_invoice-printouts.png" width="500" />
 
 If you have configured concessions available for purchase, you will also
@@ -207,14 +207,14 @@ let you add or remove concessions orders for a school manually. The
 charges will then update on the main invoice. You can also print out a
 separate concessions order for the school with the link on the sidebar.
 
-<img src="/screenshots/register_school_concessions.png"
+<img src="/screenshots/placeholder.png"
 title="register_school_concessions.png" width="500" />
 
 To see information about money and payments in the aggregate rather than
 one school at a time, you can use the "Reports" menu option instead, and
 then the "Money/Concessions" section of the sidebar:
 
-<img src="/screenshots/register_reports_index-money.png"
+<img src="/screenshots/placeholder.png"
 title="register_reports_index-money.png" width="300" />
 
 **Entry Fees & Fines** - Shows an itemized financial report for your
@@ -243,7 +243,7 @@ Each report also has the option to print as a PDF or CSV spreadsheet.
 The "Followers" tab lets you add or remove which Tabroom accounts
 receive Live Updates for the entire school with pairings/results:
 
-<img src="/screenshots/register_school_followers.png"
+<img src="/screenshots/placeholder.png"
 title="register_school_followers.png" width="500" />
 
 ### School Registration
@@ -252,10 +252,10 @@ When viewing a school's info page, the "Status" section of the sidebar
 will show whether a school is registered (i.e. physically at the
 tournament or completed online registration) or not:
 
-<img src="/screenshots/register_school_edit-status.png"
+<img src="/screenshots/placeholder.png"
 title="register_school_edit-status.png" width="300"
 alt="register_school_edit-status.png" />
-<img src="/screenshots/register_school_edit-status2.png"
+<img src="/screenshots/placeholder.png"
 title="register_school_edit-status2.png" width="300"
 alt="register_school_edit-status2.png" />
 
@@ -275,7 +275,7 @@ The sidebar contains links for a number of useful printouts that can be
 used at registration, such as entry sheets, invoices, or judge
 assignments.
 
-<img src="/screenshots/register_school_edit-printouts.png"
+<img src="/screenshots/placeholder.png"
 title="register_school_edit-printouts.png" width="300" />
 
 If you want to see the registration status of all schools at once, or
@@ -284,7 +284,7 @@ use the "Reports" menu option instead of viewing each school
 individually. You then use the "Onsite Registration" section of the
 sidebar:
 
-<img src="/screenshots/register_reports_index-onsite.png"
+<img src="/screenshots/placeholder.png"
 title="register_reports_index-onsite.png" width="300" />
 
 This section lets you view the registration status of each event (so you
@@ -307,20 +307,20 @@ use and then assign each school to a region. You configure regions in
 **Entries - Data**, and then the "Edit regions" and "School regions"
 options.
 
-<img src="/screenshots/register_data_index-regions.png"
+<img src="/screenshots/placeholder.png"
 title="register_data_index-regions.png" width="300" />
 
 To create the regions you want to use, select "Edit regions," then fill
 out a name and code for each region:
 
-<img src="/screenshots/register_data_regions.png" title="register_data_regions.png"
+<img src="/screenshots/placeholder.png" title="register_data_regions.png"
 width="500" />
 
 Once you have created the regions, you have to assign each school to a
 region. Click the "School regions" option on the sidebar, and then
 select an option for each school:
 
-<img src="/screenshots/register_data_school-regions.png"
+<img src="/screenshots/placeholder.png"
 title="register_data_school-regions.png" width="500" />
 
 You can also select the "School states" option to change which state
@@ -328,7 +328,7 @@ each school is listed from.
 
 ## Events / Entry Info
 
-<img src="/screenshots/tabs_entries_events.png" title="tabs_entries_events.png" />
+<img src="/screenshots/placeholder.png" title="tabs_entries_events.png" />
 
 The "Events" menu option lets you access information about individual
 entries. You can also get to the same place by going through the entry's
@@ -341,7 +341,7 @@ After selecting the "Events" menu option, you will see a list of events
 at the tournament, including the number of active entries, drops, and
 waitlisted entries in each event:
 
-<img src="/screenshots/register_event_index-divisions.png"
+<img src="/screenshots/placeholder.png"
 title="register_event_index-divisions.png" width="500" />
 
 To access the list of entries in an event, just click on the event name.
@@ -350,19 +350,19 @@ If you want a spreadsheet or PDF with all the entry information (or just
 drops/waitlist, etc.), a master list of entry codes, or a list of which
 schools are entered in each event, you can use the links on the sidebar:
 
-<img src="/screenshots/register_event_index-all.png"
+<img src="/screenshots/placeholder.png"
 title="register_event_index-all.png" width="300" />
 
 Once you have selected an event, you will see a list of entries in that
 event:
 
-<img src="/screenshots/register_event_roster.png" title="register_event_roster.png"
+<img src="/screenshots/placeholder.png" title="register_event_roster.png"
 width="500" />
 
 You can switch to viewing drops or waitlisted entries by choosing the
 option on the sidebar:
 
-<img src="/screenshots/register_event_roster-options.png"
+<img src="/screenshots/placeholder.png"
 title="register_event_roster-options.png" width="300" />
 
 To view an individual entry's information, click on their name or entry
@@ -373,7 +373,7 @@ code.
 Once you have selected an individual entry, you can make a variety of
 changes:
 
-<img src="/screenshots/register_entry_edit.png" title="register_entry_edit.png"
+<img src="/screenshots/placeholder.png" title="register_entry_edit.png"
 width="500" />
 
 You can manually change their entry name or code, mark whether the entry
@@ -386,7 +386,7 @@ name (for example to fix a spelling error).
 Using the tools on the sidebar, you can make a variety of swaps for an
 entry:
 
-<img src="/screenshots/register_entry_edit-swap.png"
+<img src="/screenshots/placeholder.png"
 title="register_entry_edit-swap.png" width="300" />
 
 To change which student(s) are part of an entry, use the "Swap
@@ -410,7 +410,7 @@ an entry is affiliated with.
 To Drop or Disqualify an entry, use the "Drop & Stop Scheduling" button
 in the Details section on the sidebar:
 
-<img src="/screenshots/register_entry_edit-havoc.png"
+<img src="/screenshots/placeholder.png"
 title="register_entry_edit-havoc.png" width="300" />
 
 Dropping an entry does not automatically remove them from any pairing on
@@ -435,7 +435,7 @@ the disqualified entry in their rounds.
 When viewing an entry, you will also see their list of scheduled rounds
 (with results, if any):
 
-<img src="/screenshots/register_entry_edit-rounds.png"
+<img src="/screenshots/placeholder.png"
 title="register_entry_edit-rounds.png" width="600" />
 
 If you click on any opponent, judge, or room, you will be taken directly
@@ -444,7 +444,7 @@ to that information instead.
 To make changes to an individual entry's results, click the "eye" icon
 in the Action column for the particular round.:
 
-<img src="/screenshots/tabbing_entry_card.png" title="tabbing_entry_card.png"
+<img src="/screenshots/placeholder.png" title="tabbing_entry_card.png"
 width="500" />
 
 Note that most of the time, you'll make changes to an individual round
@@ -459,14 +459,14 @@ the prefs they've entered, and allow you to make changes to it directly.
 Note that pref quotas are not enforced on this screen, so be careful
 with any manual changes:
 
-<img src="/screenshots/register_entry_prefs.png" title="register_entry_prefs.png"
+<img src="/screenshots/placeholder.png" title="register_entry_prefs.png"
 width="500" />
 
 If you want to copy another team from the same school's pref sheet, use
 the "Clone Prefs" section on the sidebar. Be very careful - once you
 overwrite a team's prefs, you can't get the original prefs back:
 
-<img src="/screenshots/register_entry_prefs-clone.png"
+<img src="/screenshots/placeholder.png"
 title="register_entry_prefs-clone.png" width="300" />
 
 ### Managing The Waitlist
@@ -477,25 +477,25 @@ selecting **Entries - Events**, choosing an event, and then selecting
 with the option of admitting them (including whether to automatically
 notify coaches):
 
-<img src="/screenshots/register_event_roster-waitlist.png"
+<img src="/screenshots/placeholder.png"
 title="register_event_roster-waitlist.png" width="500" />
 
 When viewing a school's complete entry, waitlisted entries will be
 listed as "On Waitlist":
 
-<img src="/screenshots/register_school_entries-waitlist.png"
+<img src="/screenshots/placeholder.png"
 title="register_school_entries-waitlist.png" width="600" />
 
 If you view an individual entry on the waitlist, you will see options on
 the sidebar for admitting that single entry:
 
-<img src="/screenshots/register_entry_edit-waitlist.png"
+<img src="/screenshots/placeholder.png"
 title="register_entry_edit-waitlist.png" width="300" />
 
 Or, you can re-waitlist an entry by toggling the "Waitlisted - Notifies
 coaches" button.
 
-<img src="/screenshots/register_entry_edit-rewaitlist.png"
+<img src="/screenshots/placeholder.png"
 title="register_entry_edit-rewaitlist.png" width="300" />
 
 ### Re-coding Entry Codes
@@ -513,23 +513,23 @@ correct format, reflect the correct names, etc.
 Re-coding functions are found under **Entries - Data**, and the "Codes &
 Names" section of the sidebar:
 
-<img src="/screenshots/register_data_index-codes.png"
+<img src="/screenshots/placeholder.png"
 title="register_data_index-codes.png" width="300" />
 
 From there, you can re-code schools, entries (by event), or judges. For
 example, to recode the entries for an event, you select "Entry codes,"
 then set a code value to start from and a sorting method and click Go:
 
-<img src="/screenshots/register_data_entry-recode.png"
+<img src="/screenshots/placeholder.png"
 title="register_data_entry-recode.png" width="500" />
 
 ### Entry Stats
 
-<img src="/screenshots/tabs_entries_reports.png" title="tabs_entries_reports.png" /> You can access
+<img src="/screenshots/placeholder.png" title="tabs_entries_reports.png" /> You can access
 a variety of statistics about your tournament using the **Entries -
 Reports** menu, including generating a PDF for each type of report:
 
-<img src="/screenshots/register_reports_index-stats.png"
+<img src="/screenshots/placeholder.png"
 title="register_reports_index-stats.png" width="300" />
 
 **Total Headcounts** - Generates a report with the total number of
@@ -571,7 +571,7 @@ Once you have enabled preset seeding for an event, you will see an
 option for "Pairing Seeds" on the sidebar when viewing that event in
 **Entries - Events**:
 
-<img src="/screenshots/register_event_seeds-sidebar.png"
+<img src="/screenshots/placeholder.png"
 title="register_event_seeds-sidebar.png" width="300" />
 
 For each entry, you can assign a numeric seed (usually, 1-4), and view
@@ -579,12 +579,12 @@ that entry's record for help in determining their correct seed
 placement. You can also choose to auto-generate seedings based on
 tournaments in your region that the entries have previously attended:
 
-<img src="/screenshots/register_event_seeds.png" title="register_event_seeds.png"
+<img src="/screenshots/placeholder.png" title="register_event_seeds.png"
 width="500" />
 
 ## Judge Info
 
-<img src="/screenshots/tabs_entries_judges.png" title="tabs_entries_judges.png" />
+<img src="/screenshots/placeholder.png" title="tabs_entries_judges.png" />
 
 The "Judges" menu option is usually the easiest place to access judge
 information, though as with entry information, you can access the same
@@ -596,7 +596,7 @@ The "Judges" menu option will first show you an overview of all your
 judge categories, including the total number of judges and obligated
 rounds in each category, along with hire requests, if any:
 
-<img src="/screenshots/register_judge_index.png" title="register_judge_index.png"
+<img src="/screenshots/placeholder.png" title="register_judge_index.png"
 width="500" />
 
 The links on the sidebar lets you download a CSV spreadsheet or PDF of
@@ -606,10 +606,10 @@ such as how many rounds each judge in the pool has judged so far in the
 current season, choose a specific judge category then make your choice
 from the sidebar :
 
-<img src="/screenshots/register_judge_index-all.png"
+<img src="/screenshots/placeholder.png"
 title="register_judge_index-all.png" width="400" />
 
-<img src="/screenshots/register_judge_seasonal-round-counts.png"
+<img src="/screenshots/placeholder.png"
 title="register_judge_seasonal-round-counts.png" width="400" />
 
 ### Judge Category Info
@@ -620,7 +620,7 @@ that judge category, including their round commitment, code/school, and
 any notes included by the coach. Judges marked as "Inactive" will be
 shown in red.
 
-<img src="/screenshots/register_judge_roster.png" title="register_judge_roster.png"
+<img src="/screenshots/placeholder.png" title="register_judge_roster.png"
 width="600" />
 
 Make sure to scan the coaches notes before pairing your first round, as
@@ -629,7 +629,7 @@ coaches frequently include availability information in the Notes field
 
 To get more info on the judge group, use the links on the sidebar:
 
-<img src="/screenshots/register_judge_roster-group.png"
+<img src="/screenshots/placeholder.png"
 title="register_judge_roster-group.png" width="300" />
 
 This gives you options to see all judges, conflict sheets, the pref
@@ -647,7 +647,7 @@ code.
 When viewing an individual judges' info page, you have a variety of
 options:
 
-<img src="/screenshots/register_judge_edit.png" title="register_judge_edit.png"
+<img src="/screenshots/placeholder.png" title="register_judge_edit.png"
 width="600" />
 
 If the event is using online ballots, you will see a box that allows you
@@ -707,13 +707,13 @@ To add any kind of strike (other than MPJ strikes, which are added by
 competitors on their pref sheets), you access the judge's info sheet and
 then click the "Strikes" box at the top:
 
-<img src="/screenshots/register_judge_edit-strikes.png"
+<img src="/screenshots/placeholder.png"
 title="register_judge_edit-strikes.png" width="500" />
 
 You will then be given the option of adding any of the previously
 discussed types of strikes:
 
-<img src="/screenshots/register_judge_judge-strikes.png"
+<img src="/screenshots/placeholder.png"
 title="register_judge_judge-strikes.png" width="500" />
 
 **Important Note** - When adding a time strike for a judge, be careful
@@ -732,7 +732,7 @@ To remove any "strike," view the judge's info sheet, and click on the
 trash can next to the strike you want to delete on the list in the
 sidebar:
 
-<img src="/screenshots/register_judge_judge-strikes-existing.png"
+<img src="/screenshots/placeholder.png"
 title="register_judge_judge-strikes-existing.png" width="300" />
 
 One final option is found under **Entries - Data**, and lets you select
@@ -753,7 +753,7 @@ Depending on how you configure MPJ for the judge group, you may also
 have additional options on the sidebar to see free strikes, check time
 block totals or see all conflicts in one place:
 
-<img src="/screenshots/register_judge_roster-group-prefs.png"
+<img src="/screenshots/placeholder.png"
 title="register_judge_roster-group-prefs.png" width="300" />
 
 To see how all entries rated a particular judge, first access that
@@ -767,7 +767,7 @@ select the "Check School Judging Burdens" link on the sidebar from the
 main judges page. You will then see a list of schools and their
 outstanding commitment in each judge group:
 
-<img src="/screenshots/register_judge_check-burdens.png"
+<img src="/screenshots/placeholder.png"
 title="register_judge_check-burdens.png" width="600" />
 
 If a school is under their commitment, it will show as "X owed" where X
@@ -789,10 +789,10 @@ will give you options to manually link judge entries to their Tabroom
 accounts, or to approve requests from judges to do the linking (the link
 will appear in Red if there are active requests):
 
-<img src="/screenshots/register_judge_roster-online.png"
+<img src="/screenshots/placeholder.png"
 title="register_judge_roster-online.png" width="300"
 alt="register_judge_roster-online.png" />
-<img src="/screenshots/register_judge_index-requests.png"
+<img src="/screenshots/placeholder.png"
 title="register_judge_index-requests.png" width="300"
 alt="register_judge_index-requests.png" />
 
@@ -812,14 +812,14 @@ For more information on enabling hired judging, see the section on
 If you have enabled tournament-provided hired judging for a judge group,
 you will see a a link on the sidebar for "Hire Requests."
 
-<img src="/screenshots/register_judge_hire-requests-sidebar.png"
+<img src="/screenshots/placeholder.png"
 title="register_judge_hire-requests-sidebar.png" width="300" />
 
 This will show you the list of hire requests and allow you to fully or
 partially accept them. The coach who made the request will then be
 notified by email of any changes in the status of their request:
 
-<img src="/screenshots/register_judge_hire-requests.png"
+<img src="/screenshots/placeholder.png"
 title="register_judge_hire-requests.png" width="600" />
 
 #### Hiring Exchange
@@ -827,13 +827,13 @@ title="register_judge_hire-requests.png" width="600" />
 If you have enabled a "hiring exchange," for a judge group, you can view
 offers and hires by selecting "Hiring Exchange" on the sidebar:
 
-<img src="/screenshots/register_judge_roster-exchange.png"
+<img src="/screenshots/placeholder.png"
 title="register_judge_roster-exchange.png" width="300" />
 
 This will show you a list of pending and accepted offers, and let you
 approve (or unapprove) judges requests to be on the exchange:
 
-<img src="/screenshots/register_judge_hire-exchange.png"
+<img src="/screenshots/placeholder.png"
 title="register_judge_hire-exchange.png" width="600" />
 
 To cancel a specific hire request, you can click a judges name to view
@@ -842,7 +842,7 @@ the sidebar.
 
 ## Change Log
 
-<img src="/screenshots/tabs_entries_changelog.png"
+<img src="/screenshots/placeholder.png"
 title="tabs_entries_changelog.png" />
 
 Tabroom keeps a log of most of the changes you make to your tournament
@@ -854,18 +854,18 @@ First, you should set a date range on the sidebar - it's usually helpful
 to include a little extra on each side of your range, just in case you
 were wrong about the time:
 
-<img src="/screenshots/register_changes_index-date.png"
+<img src="/screenshots/placeholder.png"
 title="register_changes_index-date.png" width="300" />
 
 Then, choose which log you want to view, including Entry/Judge drops or
 moves, or the full tabulation log:
 
-<img src="/screenshots/register_changes_index-change.png"
+<img src="/screenshots/placeholder.png"
 title="register_changes_index-change.png" width="300" />
 
 ## Importing / Exporting Data
 
-<img src="/screenshots/tabs_entries_data.png" title="tabs_entries_data.png" />
+<img src="/screenshots/placeholder.png" title="tabs_entries_data.png" />
 
 In addition to adding schools or re-coding entry/judge codes, the "Data"
 menu option is where you can import or export your full tournament data,
@@ -880,7 +880,7 @@ variety of sources, including the "Universal XML" format used by the
 TRPC, CAT, and STA, as well as importing registration data from Joy of
 Tournaments:
 
-<img src="/screenshots/register_data_index-import.png"
+<img src="/screenshots/placeholder.png"
 title="register_data_index-import.png" width="300" />
 
 To import, select the option from the sidebar which matches the source
@@ -923,12 +923,12 @@ the link on the sidebar. For obvious reasons, this shouldn't be done
 once a tournament has started - once you've deleted everything, there's
 no way to get the data back.
 
-<img src="/screenshots/register_data_index-reset.png"
+<img src="/screenshots/placeholder.png"
 title="register_data_index-reset.png" width="300" />
 
 ## Emails
 
-<img src="/screenshots/tabs_entries_emails.png" title="tabs_entries_emails.png" />
+<img src="/screenshots/placeholder.png" title="tabs_entries_emails.png" />
 
 Tabroom's built-in email functions make it easy to contact all your
 tournament participants with important notifications and information. To
@@ -939,13 +939,13 @@ communicating general information to the tournament.
 
 To email the tournament, click "Compose New Email" on the sidebar:
 
-<img src="/screenshots/register_emails_index-new.png"
+<img src="/screenshots/placeholder.png"
 title="register_emails_index-new.png" width="300" />
 
 Fill out a subject line and email message in the boxes provided, and
 then make sure to select who to send it to:
 
-<img src="/screenshots/register_emails_compose-send.png"
+<img src="/screenshots/placeholder.png"
 title="register_emails_compose-send.png" width="300" />
 
 You must choose at least one group to send to - you can choose to send
@@ -954,5 +954,5 @@ the email to all coaches, or just a subset of coaches or judges.
 Once you have sent an email, you can view it in the "Email Archive" on
 the sidebar:
 
-<img src="/screenshots/register_emails_index-archive.png"
+<img src="/screenshots/placeholder.png"
 title="register_emails_index-archive.png" width="300" />

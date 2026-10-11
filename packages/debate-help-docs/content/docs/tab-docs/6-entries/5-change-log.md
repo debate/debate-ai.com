@@ -3,7 +3,7 @@ title: Entries - Change Log
 slug: change-log
 ---
 
-<img src="/screenshots/Entries_-_Change_Log.png" title="Entries_-_Change_Log.png" />
+<img src="/screenshots/placeholder.png" title="Entries_-_Change_Log.png" />
 
 Tabroom keeps a log of most of the changes you make to your tournament
 as they happen, such as entry drops or pairing a round. The "Change Log"

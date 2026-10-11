@@ -3,7 +3,7 @@ title: Results - Reports
 slug: reports
 ---
 
-<img src="/screenshots/Results_-_Reports.png" />
+<img src="/screenshots/placeholder.png" />
 
 The "Reports" menu option is where you generate printouts for any kind
 of result set you need, including lists of entries, speaker awards, and

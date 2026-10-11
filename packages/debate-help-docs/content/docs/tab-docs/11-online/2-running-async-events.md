@@ -13,7 +13,7 @@ Tabroom.com's free asynchronous features do NOT support live viewing of recorded
 
 **Before registration opens for your tournament:** In Tabroom.com, go to Settings > Events and select your event. On the Online tab, toggle "Online event" and select the setting "Asynchronous links to online videos". Do this for each event that will be held asynchronously. This setting will create a space for coaches to copy/paste a link to a video in the entry details of any student entered in an asynchronous event during the registration process. Use this option if you would like competitors to record their video on an external platform and submit the link to you via Tabroom.com. This is what coaches will see on their entry:
 
-<img src="/screenshots/running_async_recording_link.png" />
+<img src="/screenshots/placeholder.png" />
 
 If you are comfortable with coaches adding links to student videos directly into Tabroom.com, you do not need to follow the "Uploading Videos from Outside Tabroom.com" instructions below.
 
@@ -43,8 +43,8 @@ Make sure you publish your schematics to make ballots show up! On the Schemats p
 
 This is how round assignments will appear on a judge's Tabroom.com account after you publish the round.
 
-<img src="/screenshots/running_async_ballot_view.png" />
+<img src="/screenshots/placeholder.png" />
 
 This is what judges will see after they click "Start Round" next to a ballot. They will click video icons to watch the recordings.
 
-<img src="/screenshots/running_async_recording_icons.png" />
+<img src="/screenshots/placeholder.png" />

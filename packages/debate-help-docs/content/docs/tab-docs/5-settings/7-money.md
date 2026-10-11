@@ -5,7 +5,7 @@ slug: money
 
 ## Invoice Message/Payable Note
 
-<img src="/screenshots/Settings_-_Money_-_Invoices_Message.png" title="Settings_-_Money_-_Invoices_Message.png" />
+<img src="/screenshots/placeholder.png" title="Settings_-_Money_-_Invoices_Message.png" />
 
 **Payable to/Address** - Payment instructions that appear at the top of
 tournament invoices.
@@ -18,7 +18,7 @@ invoices that accompanies assigning a judge fine.
 
 ## Entry Fees
 
-<img src="/screenshots/Settings_-_Money_-_Entry_Fees.png" title="Settings_-_Money_-_Entry_Fees.png" />
+<img src="/screenshots/placeholder.png" title="Settings_-_Money_-_Entry_Fees.png" />
 
 **Include waitlisted entries on invoices** - Option to include
 waitlisted entries in charged totals to schools.
@@ -35,7 +35,7 @@ set of fees depending on state or region.
 
 ## School & Student Fees
 
-<img src="/screenshots/Settings_-_Money_-_School_and_student_fees.png" title="Settings_-_Money_-_School_and_student_fees.png" />
+<img src="/screenshots/placeholder.png" title="Settings_-_Money_-_School_and_student_fees.png" />
 
 **Fee for each individual student** - Charge issued for each individual
 student entered.
@@ -52,7 +52,7 @@ schools. Does not apply to schools that enter after the fee is applied.
 
 ## Judge Hire Fees
 
-<img src="/screenshots/Settings_-_Money_-_Judge_hire_fees.png" title="Settings_-_Money_-_Judge_hire_fees.png" />
+<img src="/screenshots/placeholder.png" title="Settings_-_Money_-_Judge_hire_fees.png" />
 
 This screen assigns the value of hired judging per event and whether it
 is calculated by per judge, entry or round. It also allows allocating a
@@ -63,7 +63,7 @@ manually approve requests for hired judging.
 
 ## Nuisance Fines
 
-<img src="/screenshots/Settings_-_Money_-_nuisance_fines.png" title="Settings_-_Money_-_nuisance_fines.png" />
+<img src="/screenshots/placeholder.png" title="Settings_-_Money_-_nuisance_fines.png" />
 
 When set, nuisance fines are levied automatically when a school or judge
 does something annoying, such as late registrations, late entry drops,
@@ -80,7 +80,7 @@ in Settings - Tournament - Dates & Deadlines.
 
 ## Concessions
 
-<img src="/screenshots/Settings_-_Money_-_Concessions.png" title="Settings_-_Money_-_Concessions.png" />
+<img src="/screenshots/placeholder.png" title="Settings_-_Money_-_Concessions.png" />
 
 A "concession" is any item that you want to sell at the tournament, such
 as parking passes or bus tickets. These will then be available for
@@ -95,7 +95,7 @@ purchased by a particular date.
 
 ## Hotel Blocks
 
-<img src="/screenshots/Settings_-_Money_-_hotel_blocks.png" title="Settings_-_Money_-_hotel_blocks.png" />
+<img src="/screenshots/placeholder.png" title="Settings_-_Money_-_hotel_blocks.png" />
 
 A hotel block can be used, if for some reason, your tournament allows
 schools to pay you for the hotel rather than the hotel directly. You can

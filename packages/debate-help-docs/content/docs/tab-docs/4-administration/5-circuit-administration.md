@@ -16,7 +16,7 @@ see the section on [School Administration](school-administration) instead.
 If your account is listed as a circuit administrator, then you will see
 a list of circuits on the sidebar of your account dashboard:
 
-<img src="/screenshots/user_chapter_home-circuits.png" width="300" />
+<img src="/screenshots/placeholder.png" width="300" />
 
 ## Creating A Circuit
 
@@ -29,12 +29,12 @@ Tabroom for your local league or region, email help@tabroom.com.
 If there are any active tournament approval requests, a notice will
 appear on the sidebar under the relevant circuit:
 
-<img src="/screenshots/user_chapter_home-approve.png" width="300" />
+<img src="/screenshots/placeholder.png" width="300" />
 
 Click the link for "Approve Tourn Requests" and you will be shown a list
 of pending requests:
 
-<img src="/screenshots/user_circuit_approvals.png" />
+<img src="/screenshots/placeholder.png" />
 
 For each request, you can "Approve" it, which will add the tournament to
 your circuit calendar, "Delete" it, which will remove the tournament
@@ -48,7 +48,7 @@ To access the main circuit administration functions, click the name of
 the circuit on the sidebar. This will give you a new set of options for
 your circuit on the sidebar:
 
-<img src="/screenshots/user_circuit_index-sidebar.png" width="300" />
+<img src="/screenshots/placeholder.png" width="300" />
 
 You can edit the main settings for the circuit by clicking the Edit
 Circuit link.
@@ -58,13 +58,13 @@ Circuit link.
 The first set of options let you set the circuit details, such as name,
 abbreviation, and location:
 
-<img src="/screenshots/user_circuit_index-name.png" width="500" />
+<img src="/screenshots/placeholder.png" width="500" />
 
 ### Circuit Options
 
 Below that, you can configure several options for your circuit:
 
-<img src="/screenshots/user_circuit_index-options.png" width="500" />
+<img src="/screenshots/placeholder.png" width="500" />
 
 **Full Membership Tracking** - This will keep track of member schools,
 including options for membership fees.
@@ -97,7 +97,7 @@ you're actually NAUDL.
 At the bottom of the main circuit settings page, you can also control
 which Tabroom accounts have access as a circuit administrator:
 
-<img src="/screenshots/user_circuit_index-admins.png" width="500" />
+<img src="/screenshots/placeholder.png" width="500" />
 
 ## Circuit Emails
 
@@ -111,11 +111,11 @@ You can fill out a subject, and then select a group of recipients. You
 can either choose "Send to all Circuit members" or choose a particular
 set of tournament entrants:
 
-<img src="/screenshots/user_circuit_email-compose-recipients.png" width="500" />
+<img src="/screenshots/placeholder.png" width="500" />
 
 Then, fill out the text of your email and click "Send Email:"
 
-<img src="/screenshots/user_circuit_email-compose-text.png" width="400" />
+<img src="/screenshots/placeholder.png" width="400" />
 
 ### Email Archive
 
@@ -123,19 +123,19 @@ To see a list of emails that have been sent to the circuit, click the
 "Email Archive" link on the sidebar: This will show you a list of emails
 from the current season, which you can view with the "View" button:
 
-<img src="/screenshots/user_circuit_emails.png" width="400" />
+<img src="/screenshots/placeholder.png" width="400" />
 
 To see emails from another season, use the drop-down list on the
 sidebar:
 
-<img src="/screenshots/user_circuit_emails-past.png" width="300" />
+<img src="/screenshots/placeholder.png" width="300" />
 
 ## Member Schools
 
 To see a list of schools in the chapter, use the "Member Schools" link
 on the sidebar, then search for a school name or press "See All:"
 
-<img src="/screenshots/user_circuit_chapters.png" width="500" />
+<img src="/screenshots/placeholder.png" width="500" />
 
 For each search result, you can click the "Edit" button to edit that
 school's information, including their name and adding/remove Tabrrom
@@ -149,12 +149,12 @@ controlled by that school's admin instead.
 The Tournaments link on the sidebar will show you a list of all
 tournaments on the circuit for the current season:
 
-<img src="/screenshots/user_circuit_tourns.png" width="600" />
+<img src="/screenshots/placeholder.png" width="600" />
 
 To see a different season's calendar, use the dropdown box on the
 sidebar:
 
-<img src="/screenshots/user_circuit_tourns-past.png" width="300" />
+<img src="/screenshots/placeholder.png" width="300" />
 
 For each tournament in the list, you can press the "Access" button to
 edit who has administrative access to the tournament, or "Remove" to
@@ -183,7 +183,7 @@ with their chapter so that results appear in the correct place.
 Selecting this option will give you a list of school entries at the
 tournament:
 
-<img src="/screenshots/user_circuit_chapter-by-tourn.png" width="500" />
+<img src="/screenshots/placeholder.png" width="500" />
 
 If any of the Chapters are 0, you can click the name of the school entry
 to search for the appropriate chapter to link it to.
@@ -199,7 +199,7 @@ for a tournament, which is used in computing RPI and WUDC rankings. You
 will see a list of tournaments from the current season, or you can
 select a different season with the box at the bottom of the page.
 
-<img src="/screenshots/user_circuit_tourn-results.png" width="500" />
+<img src="/screenshots/placeholder.png" width="500" />
 
 For each tournament, you can select "Generate Final Places" to calculate
 them.
@@ -211,7 +211,7 @@ tournaments in the circuit, you can set them with the "School Codes"
 option in the sidebar - this can make it easier to follow results over
 the season:
 
-<img src="/screenshots/user_circuit_codes.png" width="500" />
+<img src="/screenshots/placeholder.png" width="500" />
 
 ## Download Contacts
 

@@ -5,7 +5,7 @@ slug: rooms
 
 ## Mass Assign
 
-<img src="/screenshots/Paneling_-_Rooms_-_Mass_Assign.png"
+<img src="/screenshots/placeholder.png"
 title="Paneling_-_Rooms_-_Mass_Assign.png" />
 
 If you didn't auto-assign rooms during the paneling step, you can assign
@@ -16,7 +16,7 @@ timeslot
 
 ## Pools
 
-<img src="/screenshots/Paneling_-_Rooms_-_Pools.png"
+<img src="/screenshots/placeholder.png"
 title="Paneling_-_Rooms_-_Pools.png" />
 
 To create a room pool, click the "Create New Room Pool" link on the
@@ -28,14 +28,14 @@ event.
 
 ## Pool Rooms
 
-<img src="/screenshots/Paneling_-_Rooms_-_Pool_Rooms.png"
+<img src="/screenshots/placeholder.png"
 title="Paneling_-_Rooms_-_Pool_Rooms.png" />
 
 Clicking a room on the right adds the room to the selected room pool.
 
 ### Side Menu
 
-<img src="/screenshots/Paneling_-_Rooms_-_Pool_Rooms_-_Options.png"
+<img src="/screenshots/placeholder.png"
 title="Paneling_-_Rooms_-_Pool_Rooms_-_Options.png" />
 
 **Clone another pool** - This copies all rooms from one pool to another.
@@ -55,7 +55,7 @@ spreadsheet.
 
 ## Chart
 
-<img src="/screenshots/Paneling_-_Rooms_-_Pool_Rooms_-_Chart.png"
+<img src="/screenshots/placeholder.png"
 title="Paneling_-_Rooms_-_Pool_Rooms_-_Chart.png" />
 
 The "Chart" tab shows you a list of all rooms for the Timeslot and Site
@@ -63,7 +63,7 @@ you choose.
 
 ## Reports
 
-<img src="/screenshots/Paneling_-_Rooms_-_Pool_Rooms_-_Reports.png"
+<img src="/screenshots/placeholder.png"
 title="Paneling_-_Rooms_-_Pool_Rooms_-_Reports.png" />
 
 The "Report" tab shows you information about individual rooms, including
@@ -72,7 +72,7 @@ in.
 
 ## Reservations
 
-<img src="/screenshots/Paneling_-_Rooms_-_Pool_Rooms_-_Reservations.png"
+<img src="/screenshots/placeholder.png"
 title="Paneling_-_Rooms_-_Pool_Rooms_-_Reservations.png" />
 
 Under Paneling - Rooms, the "Reservations" tab lets you assign a room to
@@ -82,7 +82,7 @@ sidebar, and then select a room to assign the judge.
 
 ## Utility
 
-<img src="/screenshots/Paneling_-_Rooms_-_Pool_Rooms_-_Utility.png"
+<img src="/screenshots/placeholder.png"
 title="Paneling_-_Rooms_-_Pool_Rooms_-_Utility.png" />
 
 For online tournaments, allows you to create rooms that are availble to

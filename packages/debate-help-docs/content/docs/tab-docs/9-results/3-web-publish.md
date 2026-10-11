@@ -3,7 +3,7 @@ title: Results - Web Publish
 slug: web-publish
 ---
 
-<img src="/screenshots/Results_-_Web_Publish.png" />
+<img src="/screenshots/placeholder.png" />
 
 The "Web Publish" menu option lets you flexibly choose which results to
 make available on Tabroom. Most of the reports available in the

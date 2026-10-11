@@ -7,7 +7,7 @@ slug: rules-and-results
 
 ### Create Tiebreak Set
 
-<img src="/screenshots/Settings_-_RR_-_Tiebreakers_-_Create.png" />
+<img src="/screenshots/placeholder.png" />
 
 **Advance equal entries from each section** - In speech and Congress, Tabroom's default is to advance the top X entries based on overall scores, which could mean more entries advance from one section than another. This button makes Tabroom advance an equal number of entries from each section or chamber instead.
 
@@ -21,7 +21,7 @@ slug: rules-and-results
 
 ### Setup
 
-<img src="/screenshots/Settings_-_RR_-_Sweepstakes-_Setup.png" />
+<img src="/screenshots/placeholder.png" />
 
 **Name of ruleset** This allows you to name particular sweepstakes awards at your tournament (ex: Debate Sweepstakes, IE Sweepstakes, etc).
 
@@ -53,7 +53,7 @@ slug: rules-and-results
 
 ### Scope
 
-<img src="/screenshots/Settings_-_RR_-_Sweepstakes-_Scope.png" />
+<img src="/screenshots/placeholder.png" />
 
 **Events Counted**
 
@@ -63,81 +63,81 @@ slug: rules-and-results
 
 ### Add New Rule
 
-<img src="/screenshots/Settings_-_RR_-_Sweepstakes-_Add_Rules_-_Add_new_rule.png" />
+<img src="/screenshots/placeholder.png" />
 
 **Count Manually entered points entered under Tabbing → Sweeps**
 
 **Each participating entry gets a minimum # of points**
 
 **Each Appearance**
-<img src="/screenshots/Settings_-_RR_-_Sweepstakes-_Add_Rules_-_Add_new_rule_-_dropdown_1.png" />
+<img src="/screenshots/placeholder.png" />
 
 **Any Round**
 
-<img src="/screenshots/Settings_-_RR_-_Sweepstakes-_Add_Rules_-_Add_new_rule_-_dropdown_2.png" />
+<img src="/screenshots/placeholder.png" />
 
 ### Placement or Seeding
 
-<img src="/screenshots/Settings_-_RR_-_Sweepstakes-_Add_Rules_-_Placement_Seeding.png" />
+<img src="/screenshots/placeholder.png" />
 
 **Result**
 
-<img src="/screenshots/Settings_-_RR_-_Sweepstakes-_Add_Rules_-_placement_seeding_-_dropdown_1.png" />
+<img src="/screenshots/placeholder.png" />
 
 **Placement**
 
 **Basis for Placement**
 
-<img src="/screenshots/Settings_-_RR_-_Sweepstakes-_Add_Rules_-_placement_seeding_-_dropdown_2.png" />
+<img src="/screenshots/placeholder.png" />
 
 **Which Rounds Should be Counted**
 
-<img src="/screenshots/Settings_-_RR_-_Sweepstakes-_Add_Rules_-_placement_seeding_-_dropdown_3.png" />
+<img src="/screenshots/placeholder.png" />
 
 ### Ranks (IE/Congress)
 
-<img src="/screenshots/Settings_-_RR_-_Sweepstakes-_Add_Rules_-_Ranks.png" />
+<img src="/screenshots/placeholder.png" />
 
 **Result**
 
-<img src="/screenshots/Settings_-_RR_-_Sweepstakes-_Add_Rules_-_Ranks_-_dropdown_1.png" />
+<img src="/screenshots/placeholder.png" />
 
 **Which Rounds Should be Counted**
 
-<img src="/screenshots/Settings_-_RR_-_Sweepstakes-_Add_Rules_-_Ranks_-_dropdown_2.png" />
+<img src="/screenshots/placeholder.png" />
 
 ### Debate Wins & Losses
 
-<img src="/screenshots/Settings_-_RR_-_Sweepstakes-_Add_Rules_-_Debate_Wins_Loses.png" />
+<img src="/screenshots/placeholder.png" />
 
 **Type**
 
-<img src="/screenshots/Settings_-_RR_-_Sweepstakes-_Add_Rules_-_Debate_Wins_Loses_-_dropdown_1.png" />
+<img src="/screenshots/placeholder.png" />
 
-<img src="/screenshots/Settings_-_RR_-_Sweepstakes-_Add_Rules_-_Debate_Wins_Loses_-_dropdown_2.png" />
+<img src="/screenshots/placeholder.png" />
 
 ### Rank Cumulative Totals
 
-<img src="/screenshots/Settings_-_RR_-_Sweepstakes-_Add_Rules_-_rank_cumulative_totals.png" />
+<img src="/screenshots/placeholder.png" />
 
 **Total Ranks Of**
 
-<img src="/screenshots/Settings_-_RR_-_Sweepstakes-_Add_Rules_-_rank_cumulative_totals_-_dropdown_1.png" />
+<img src="/screenshots/placeholder.png" />
 
 **Rounds to Count**
 
-<img src="/screenshots/Settings_-_RR_-_Sweepstakes-_Add_Rules_-_rank_cumulative_totals_-_dropdown_2.png" />
+<img src="/screenshots/placeholder.png" />
 
 ## Points & Bids
 
 ### NDCA Points
 
-<img src="/screenshots/Settings_-_RR_-_Poitns_and_Bids_-_NDCA_points.png" />
+<img src="/screenshots/placeholder.png" />
 
 If your tournament awards NDCA points for NDCA tournament qualification or the Baker award, you can configure which divisions to auto-report
 
 ### Tournament of Champions Bid Reporting
 
-<img src="/screenshots/Settings_-_RR_-_Poitns_and_Bids_-_TOC_bids.png" />
+<img src="/screenshots/placeholder.png" />
 
 If your tournament has a bid for the Tournament of Champions, you can set the bid level for the qualifying division on the "Points & Bids" tab. You must first have configured the events and rounds in the schedule - then just select the bid level, and the results will automatically be reported to the T

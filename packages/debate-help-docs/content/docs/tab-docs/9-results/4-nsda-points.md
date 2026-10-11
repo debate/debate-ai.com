@@ -3,7 +3,7 @@ title: Results - NSDA Points
 slug: nsda-points
 ---
 
-<img src="/screenshots/Results_-_NSDA_Points.png" />
+<img src="/screenshots/placeholder.png" />
 
 Use the Results/NSDA Points tab to post merit points at the conclusion
 of your tournament. These will post automatically once the tournament

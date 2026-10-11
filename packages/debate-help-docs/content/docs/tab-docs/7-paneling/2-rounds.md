@@ -3,7 +3,7 @@ title: Paneling - Rounds
 slug: rounds
 ---
 
-<img src="/screenshots/Paneling_-_Rounds.png" title="Paneling_-_Rounds.png" />
+<img src="/screenshots/placeholder.png" title="Paneling_-_Rounds.png" />
 
 To get started paneling prelims in Congress or Speech, use the "Rounds"
 menu item. You will then be given the option to panel all speech events

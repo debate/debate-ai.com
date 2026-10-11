@@ -5,7 +5,7 @@ slug: schedule
 
 ## Add a new timeslot
 
-<img src="/screenshots/Settings_-_Schedule-_Add_time_slot.png" title="Settings_-_Schedule-_Add_time_slot.png" />
+<img src="/screenshots/placeholder.png" title="Settings_-_Schedule-_Add_time_slot.png" />
 
 A timeslot is a block of time that you will schedule rounds into.
 Different events can share one timeslot."
@@ -22,18 +22,18 @@ round can be scheduled (the system avoids overlaps).
 
 ## Tournament Days
 
-<img src="/screenshots/Settings_-_Schedule-_Time_slots.png" title="Settings_-_Schedule-_Time_slots.png" />
+<img src="/screenshots/placeholder.png" title="Settings_-_Schedule-_Time_slots.png" />
 
 This panel is populated based on the dates entered under Settings ->
 Tournament
 
-<img src="/screenshots/Settings_-_Schedule-_Example.png" title="Settings_-_Schedule-_Example.png" />
+<img src="/screenshots/placeholder.png" title="Settings_-_Schedule-_Example.png" />
 
 This screen mirrors the information entered under Add New Time Slot
 
 ## Schedule Rounds
 
-<img src="/screenshots/Settings_-_Schedule-_Scheduling.png" title="Settings_-_Schedule-_Scheduling.png" />
+<img src="/screenshots/placeholder.png" title="Settings_-_Schedule-_Scheduling.png" />
 
 **Rnd** - Option to assign that timeslot to a given event.
 

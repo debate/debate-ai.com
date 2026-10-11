@@ -58,15 +58,15 @@ refunds or credits available for unused rooms.
 [Once an event has been created](/settings/events) an online tab will
 appear.
 
-<img src="/screenshots/V1.png" title="V1.png" width="550" />
+<img src="/screenshots/placeholder.png" title="V1.png" width="550" />
 
 Use the Online Event toggle to set the event to green (online)
 
-<img src="/screenshots/V2.png" title="V2.png" width="300" />
+<img src="/screenshots/placeholder.png" title="V2.png" width="300" />
 
 Select NSDA Campus by clicking on the circle to the right of the text.
 
-<img src="/screenshots/V3.png" title="V3.png" width="400" />
+<img src="/screenshots/placeholder.png" title="V3.png" width="400" />
 
 Make the appropriate selections under Identify Users in Online Rooms.
 This gives you the option to set how each user's name is displayed in
@@ -74,13 +74,13 @@ the video room. For example, Tab - George Brown, Judge - Alana Green, or
 Code - Student Name. Select the option that works best for your
 tournament.
 
-<img src="/screenshots/V4.png" title="V4.png" width="400" />
+<img src="/screenshots/placeholder.png" title="V4.png" width="400" />
 
 The section titled Online Support Options gives tabulation staff the
 ability to list email(s) and instructions that will appear on online
 room landing pages.
 
-<img src="/screenshots/V5.png" title="V5.png" width="650" />
+<img src="/screenshots/placeholder.png" title="V5.png" width="650" />
 
 ## Setting up Competition Rooms
 
@@ -89,23 +89,23 @@ each day of the tournament. All settings are accessed by hovering over
 the Settings tab, clicking on Sites & Rooms, then selecting NSDA Campus
 in the upper right corner.
 
-<img src="/screenshots/Day_Allocation.png" title="Day_Allocation.png" width="700" />
+<img src="/screenshots/placeholder.png" title="Day_Allocation.png" width="700" />
 
 ## Setting up Utility Rooms (e.g., Judge Pooling, Tab Rooms, etc.)
 
 After purchasing NSDA Campus rooms, hover over the Paneling tab and
 click on Rooms.
 
-<img src="/screenshots/A1.png" title="A1.png" width="200" />
+<img src="/screenshots/placeholder.png" title="A1.png" width="200" />
 
 Select Utility and add a room name.
 
-<img src="/screenshots/A2.png" title="A2.png" width="400" />
+<img src="/screenshots/placeholder.png" title="A2.png" width="400" />
 
 Determine if this room is for Entries, Judges, Coaches, or Tab, and
 whether it's for a specific event, and click Save.
 
-<img src="/screenshots/A4.png" title="A4.png" width="200" />
+<img src="/screenshots/placeholder.png" title="A4.png" width="200" />
 
 Remember—we suggest that rooms host no more than 15 people at a time. If
 you need a room that can easily manage more than 15 people, you may want
@@ -147,7 +147,7 @@ event settings. For the best estimate, make sure your entry numbers are
 final and your settings are complete! Make sure you double check the
 estimates with your own calculations.
 
-<img src="/screenshots/campus_payment_shot_6.png" title="campus_payment_shot_6.png"
+<img src="/screenshots/placeholder.png" title="campus_payment_shot_6.png"
 width="500" />
 
 When you are ready to purchase your NSDA Campus rooms, enter the number
@@ -155,7 +155,7 @@ of rooms you wish to purchase and follow the payment instructions
 described above. Once payment is complete, don't forget to allocate your
 purchased rooms to days at Settings \> Tournament \> Payment.
 
-<img src="/screenshots/campus_payment_shot_7.png" title="campus_payment_shot_7.png"
+<img src="/screenshots/placeholder.png" title="campus_payment_shot_7.png"
 width="500" />
 
 ### New: NSDA Campus with Observers
@@ -183,7 +183,7 @@ Tabroom.com accounts with Coach/Administrator access to your school in
 Tabroom.com (which can be designated on the Access tab) may be
 designated as observers.
 
-<img src="/screenshots/campus_payment_shot_8.png" title="campus_payment_shot_8.png"
+<img src="/screenshots/placeholder.png" title="campus_payment_shot_8.png"
 width="500" />
 
 Coaches may designate observers on their school tournament dashboard on
@@ -194,7 +194,7 @@ a room, no other coaches can enter that room for your entry, even if
 observer permissions are changed on the dashboard or if they leave the
 room.
 
-<img src="/screenshots/campus_payment_shot_9.png" title="campus_payment_shot_9.png"
+<img src="/screenshots/placeholder.png" title="campus_payment_shot_9.png"
 width="500" />
 
 ## Linking Student Performance Videos
@@ -216,16 +216,16 @@ Tabroom.com](https://docs.google.com/document/d/1r3jAI7mXjww2MAMMkdRV7GZsh-fr5ob
 ## Holding Asynchronous Prelims and Synchronous Elims
 
 For prelims, hover over Settings, then click on Events.
-<img src="/screenshots/Screen_Shot_2021-07-28_at_12.27.34_PM.png"
+<img src="/screenshots/placeholder.png"
 title="Screen_Shot_2021-07-28_at_12.27.34_PM.png" width="200"
 alt="Screen_Shot_2021-07-28_at_12.27.34_PM.png" />
 
 Select the event you wish to edit.
-<img src="/screenshots/B4.png" title="B4.png" width="400" alt="B4.png" />
+<img src="/screenshots/placeholder.png" title="B4.png" width="400" alt="B4.png" />
 
 Click the Online tab, then set the event to "Asynchronous links to
 online videos."
-<img src="/screenshots/B1.png" title="B1.png" width="600" alt="B1.png" />
+<img src="/screenshots/placeholder.png" title="B1.png" width="600" alt="B1.png" />
 
 Upload your video links.
 
@@ -249,7 +249,7 @@ First access the tournament and click settings. Then events, the
 specific event, and finally the online tab.
 
 You should then see the button for enabling livestreams.
-<img src="/screenshots/Screen_Shot_2021-07-28_at_1.21.31_PM.png"
+<img src="/screenshots/placeholder.png"
 title="Screen_Shot_2021-07-28_at_1.21.31_PM.png" width="550"
 alt="Screen_Shot_2021-07-28_at_1.21.31_PM.png" />
 

@@ -5,7 +5,7 @@ slug: data
 
 ## Entry Manipulation
 
-<img src="/screenshots/Entries_-_Data_-_Entry_Manipulation.png"
+<img src="/screenshots/placeholder.png"
 title="Entries_-_Data_-_Entry_Manipulation.png" />
 
 **Add new school** - Allows you to add a school to a tournament
@@ -29,7 +29,7 @@ tournament.
 
 ## Codes & Names
 
-<img src="/screenshots/Entries_-_Data_-_Codes_and_Names.png"
+<img src="/screenshots/placeholder.png"
 title="Entries_-_Data_-_Codes_and_Names.png" />
 
 After a tournament initially creates settings and schools have entered
@@ -38,7 +38,7 @@ based on the categories above.
 
 ## Import/Export
 
-<img src="/screenshots/Entries_-_Data_-_Import_Export.png"
+<img src="/screenshots/placeholder.png"
 title="Entries_-_Data_-_Import_Export.png" />
 
 Tabroom can import entry data (including schools and judges) from a
@@ -51,7 +51,7 @@ of your data, and follow the instructions to upload your data file.
 
 ## Reset Tournament
 
-<img src="/screenshots/Entries_-_Data_-_Reset.png"
+<img src="/screenshots/placeholder.png"
 title="Entries_-_Data_-_Reset.png" />
 
 If necessary, you can also completely reset your tournament data using

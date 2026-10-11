@@ -24,7 +24,7 @@ that each event was audited and that coaches were able to access ballots
 & results during the tournament before doing so. The qualifiers should
 be listed in order.
 
-<img src="/screenshots/QualifierLIst-Vacates.png" title="QualifierLIst-Vacates.png"
+<img src="/screenshots/placeholder.png" title="QualifierLIst-Vacates.png"
 width="800" />
 
 On this screen you can process your single-entry collisions. The
@@ -54,7 +54,7 @@ from the Qualifiers list you just processed through. Vacated slots will
 still appear on this results sheet; don't worry about that, they'll be
 filtered out later.
 
-<img src="/screenshots/publication-list.png" title="publication-list.png"
+<img src="/screenshots/placeholder.png" title="publication-list.png"
 width="800" />
 
 If anything is in error here, contact Tabroom support or the National
@@ -78,7 +78,7 @@ this sheet as marked. Auto-qualifiers cannot be vacated by you, though
 the coach can refuse those entries in the Nationals registration
 process.
 
-<img src="/screenshots/FinalQualifiersList.png" title="FinalQualifiersList.png"
+<img src="/screenshots/placeholder.png" title="FinalQualifiersList.png"
 width="800" />
 
 Once you have confirmed that all the above information is correct and
@@ -88,7 +88,7 @@ everything is set and ready to go when you do it. When you are ready, go
 all the way to the bottom of the page, and click the checkbox to confirm
 you have checked it, and then post:
 
-<img src="/screenshots/ConfirmAndPost.png" title="ConfirmAndPost.png" width="800" />
+<img src="/screenshots/placeholder.png" title="ConfirmAndPost.png" width="800" />
 
 After you have done that, you're all set!
 
@@ -130,7 +130,7 @@ visible under "Tournaments" on the right sidebar. Otherwise, click "See
 Past Tournaments" under Tournaments and find your district series on the
 list that appears.
 
-<img src="/screenshots/FindingTournament.png" title="File:FindingTournament.png" />
+<img src="/screenshots/placeholder.png" title="File:FindingTournament.png" />
 
 Once you do that, you should be shunted directly to the JOT Districts
 interface. We've grouped everything together in one screen with a
@@ -138,7 +138,7 @@ sequence of steps listed at right. You can return to this screen if you
 end up elsewhere by going to the Results menu at top and selecting JOT
 Results.
 
-<img src="/screenshots/JOT-interface.png" title="File:JOT-interface.png" />
+<img src="/screenshots/placeholder.png" title="File:JOT-interface.png" />
 
 #### 2. Uploading the JOT Data
 
@@ -147,7 +147,7 @@ with an upload interface where you can upload your .jot tournament data
 file. Click on Choose File, select your .jot file, and then click
 Upload.
 
-<img src="/screenshots/JOT-Upload.png" title="File:JOT-Upload.png" />
+<img src="/screenshots/placeholder.png" title="File:JOT-Upload.png" />
 
 Once you run the uploader, you will see a large log of data being
 processed. It can't hurt to scan it for errors and the like, but for the
@@ -156,7 +156,7 @@ cannot be found, and there will be a chance later to reconcile that
 easier. Once the process finishes you'll see a navigation menu to the
 right. Click Return to Districts Import to head to the next step.
 
-<img src="/screenshots/import-finished.png" title="File:import-finished.png" />
+<img src="/screenshots/placeholder.png" title="File:import-finished.png" />
 
 #### 3. Adjusting Congress chambers
 
@@ -171,7 +171,7 @@ right. The correct time blocks don't much matter, as long as the rounds
 are properly numbered. If you change the round number or round type of
 one chamber of a round, all the chambers in that round will be changed.
 
-<img src="/screenshots/CongressChambers.png" title="File:CongressChambers.png" />
+<img src="/screenshots/placeholder.png" title="File:CongressChambers.png" />
 
 Once you save the chambers, it will bring you to the next step.
 
@@ -191,7 +191,7 @@ linked to their proper NSDA account. If a school is linked a green check
 will appear next to it. If a school is unlinked, you can select the
 school from your district that corresponds to it, and save.
 
-<img src="/screenshots/school_memberships.png" title="File:school memberships.png" />
+<img src="/screenshots/placeholder.png" title="File:school memberships.png" />
 
 Below the school list, any students who do not have an active found NSDA
 membership will also be listed. Select the NSDA member student in the
@@ -201,7 +201,7 @@ it will be a student who has their name listed somewhat differently
 student. If the student does not appear, then contact the National
 office.
 
-<img src="/screenshots/student_memberships.png"
+<img src="/screenshots/placeholder.png"
 title="File:student memberships.png" />
 
 #### 5. Generate Results Sheets
@@ -214,13 +214,13 @@ necessary).
 Click Generate Results Sheets at the top. You will then get a District
 Qualifiers report listing for all your District events below.
 
-<img src="/screenshots/jot-qualifiers.png" title="File:jot-qualifiers.png" />
+<img src="/screenshots/placeholder.png" title="File:jot-qualifiers.png" />
 
 You should click each one to verify they are correct. If anything on
 this screen is wrong, please contact help@tabroom.com or the National
 Office at info@speechanddebate.org with details.
 
-<img src="/screenshots/results_sheet.png" title="File:results sheet.png" />
+<img src="/screenshots/placeholder.png" title="File:results sheet.png" />
 
 Once the sheets are correctly generated, go to the next step.
 
@@ -240,7 +240,7 @@ this sheet as marked. Auto-qualifiers cannot be vacated by you, though
 the coach can refuse those entries in the Nationals registration
 process.
 
-<img src="/screenshots/FinalQualifiersList.png" title="FinalQualifiersList.png"
+<img src="/screenshots/placeholder.png" title="FinalQualifiersList.png"
 width="800" />
 
 Once you have confirmed that all the above information is correct and
@@ -250,7 +250,7 @@ everything is set and ready to go when you do it. When you are ready, go
 all the way to the bottom of the page, and click the check box to
 confirm you have checked it, and then post:
 
-<img src="/screenshots/ConfirmAndPost.png" title="ConfirmAndPost.png" width="800" />
+<img src="/screenshots/placeholder.png" title="ConfirmAndPost.png" width="800" />
 
 After you have done that, you're all set!
 
@@ -284,7 +284,7 @@ places on the screen you reach when you first log in. One is the NSDA
 tab of your member school. The other is your District name underneath
 the Institutions link:
 
-<img src="/screenshots/DistrictsSelections.png" title="DistrictsSelections.png"
+<img src="/screenshots/placeholder.png" title="DistrictsSelections.png"
 width="500" />
 
 Once you click there, a screen will appear with the National Tournament
@@ -292,7 +292,7 @@ name and logo. Underneath that will be a space to upload Congress
 legislation. You may upload up to two pieces of legislation, and delete
 and re-upload it at any time until the deadline:
 
-<img src="/screenshots/CongressUploadBills.png" title="CongressUploadBills.png"
+<img src="/screenshots/placeholder.png" title="CongressUploadBills.png"
 width="500" />
 
 ### World Schools District Teams
@@ -301,7 +301,7 @@ Go to the same place you found the District Congress legislation upload
 (just above.) Below your Congress legislation, find the section for
 World Schools teams:
 
-<img src="/screenshots/wsdc.png" title="File:wsdc.png" />
+<img src="/screenshots/placeholder.png" title="File:wsdc.png" />
 
 At marker #1, you can see an icon where you can print out a report of
 your World Schools Invitational registration.
@@ -334,7 +334,7 @@ balloting, choose them from the select menus at right. Otherwise, enter
 as much information as you can at left and save. Hit "Return to District
 Registration" at far right to return to your District WS Registration.
 
-<img src="/screenshots/9-AddJudge.png" title="File:9-AddJudge.png" />
+<img src="/screenshots/placeholder.png" title="File:9-AddJudge.png" />
 
 A judge who judges for Worlds cannot count as a judge elsewhere in the
 tournament. One judge is owed per WS entry for all prelim rounds, and

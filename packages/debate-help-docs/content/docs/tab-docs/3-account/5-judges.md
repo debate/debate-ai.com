@@ -29,10 +29,10 @@ Ballot" or whichever text appears on screen to let the tournament know
 that you're aware you're judging, arrive at your room, and/or the round
 is set to begin.
 
-<img src="/screenshots/Screen_Shot_2023-03-27_at_5.47.05_PM.png"
+<img src="/screenshots/placeholder.png"
 title="Screen_Shot_2023-03-27_at_5.47.05_PM.png" />
 
-<img src="/screenshots/Screen_Shot_2023-03-27_at_6.01.40_PM.png"
+<img src="/screenshots/placeholder.png"
 title="Screen_Shot_2023-03-27_at_6.01.40_PM.png" />
 
 **Upcoming** – displays tournaments you will be judging at in the
@@ -53,7 +53,7 @@ at tournaments you're not currently entered to judge at.
 
 ## Online Ballots
 
-<img src="/screenshots/Screen_Shot_2023-03-24_at_12.51.43_PM.png"
+<img src="/screenshots/placeholder.png"
 title="Screen_Shot_2023-03-24_at_12.51.43_PM.png" width="400" />
 
 **Judge** – Displays the judge's name. This should be your name.
@@ -74,7 +74,7 @@ room.
 **Start Button (Green)** – Press this button once you receive your
 ballot, arrive at the room, and/or the round is set to begin.
 
-<img src="/screenshots/Screen_Shot_2023-03-24_at_12.56.53_PM.png"
+<img src="/screenshots/placeholder.png"
 title="Screen_Shot_2023-03-24_at_12.56.53_PM.png" width="400" />
 
 **Top Left** – Displays the onsite or virtual room you're assigned. If
@@ -141,7 +141,7 @@ yourself against must have a Tabroom account.
 From your account dashboard, click the link for "Standing Conflicts" on
 the sidebar:
 
-<img src="/screenshots/Screen_Shot_2023-03-27_at_6.11.39_PM.png"
+<img src="/screenshots/placeholder.png"
 title="Screen_Shot_2023-03-27_at_6.11.39_PM.png" width="650" />
 
 You can then search for a person or school to conflict:
@@ -149,13 +149,13 @@ You can then search for a person or school to conflict:
 If any results are found, they will appear in a list next to the search
 box. Just click the "Conflict" button next to the search result:
 
-<img src="/screenshots/Screen_Shot_2023-03-27_at_6.15.28_PM.png"
+<img src="/screenshots/placeholder.png"
 title="Screen_Shot_2023-03-27_at_6.15.28_PM.png" width="500" />
 
 Once you have added a conflict, they will appear in your "Individual or
 Program Conflicts" list:
 
-<img src="/screenshots/Screen_Shot_2023-03-27_at_6.18.02_PM.png"
+<img src="/screenshots/placeholder.png"
 title="Screen_Shot_2023-03-27_at_6.18.02_PM.png" width="500" />
 
 To remove an existing conflict, click the trash can icon button next to
@@ -167,7 +167,7 @@ Competitor feedback can be found underneath your ballot. You should
 always submit your ballot first and then fill out your reason for
 decision and feedback for each competitor.
 
-<img src="/screenshots/Screen_Shot_2023-03-24_at_12.56.53_PM.png"
+<img src="/screenshots/placeholder.png"
 title="Screen_Shot_2023-03-24_at_12.56.53_PM.png" width="700" />
 
 **Reason for Decision** – Comments go to all competitors in the round.
@@ -196,20 +196,20 @@ To offer yourself as a hired judge at an upcoming tournament with this
 feature enabled, click the "Offer Hired Judging Rounds" link in the
 Sidebar.
 
-<img src="/screenshots/Screen_Shot_2023-03-27_at_6.27.30_PM.png"
+<img src="/screenshots/placeholder.png"
 title="Screen_Shot_2023-03-27_at_6.27.30_PM.png" width="350" />
 
 You will see a list of upcoming tournaments, with an "+" button for each
 one under the add column:
 
-<img src="/screenshots/Screen_Shot_2023-03-27_at_6.32.52_PM.png"
+<img src="/screenshots/placeholder.png"
 title="Screen_Shot_2023-03-27_at_6.32.52_PM.png" width="600"
 alt="Screen_Shot_2023-03-27_at_6.32.52_PM.png" />
 
 After clicking the + button, you will see the screen below and you'll be
 asked how many rounds you are offering:
 
-<img src="/screenshots/Screen_Shot_2023-03-27_at_6.30.03_PM.png"
+<img src="/screenshots/placeholder.png"
 title="Screen_Shot_2023-03-27_at_6.30.03_PM.png" width="600" />
 
 Fill out a number and click "Offer" - you will then be notified whenever
