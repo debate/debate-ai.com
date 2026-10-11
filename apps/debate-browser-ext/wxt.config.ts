@@ -120,7 +120,7 @@ export default defineConfig({
     },
   },
   manifest: ({ browser, manifestVersion }) => ({
-    name: 'Debate AI — Reader, Timer & Card Reuse Check',
+    name: 'Debate AI',
     description:
       'Read any page in an AI article panel, time a round, and check whether a card has already been cut from the page.',
     // Kept from the original timer manifest so the extension ID (and therefore
