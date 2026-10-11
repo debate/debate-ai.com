@@ -10,8 +10,7 @@ preferred judging.
 If the tournament you are attending uses MPJ, you will see a "Prefs" tab
 while viewing your entry (once prefs are opened by the tournament):
 
-<img src="/screenshots/user_enter_ratings-tabs.png"
-title="user_enter_ratings-tabs.png" width="400" />
+![Prefs tab](/screenshots/user_enter_ratings-tabs.png)
 
 ## Accessing Prefs as a Coach
 
@@ -20,8 +19,7 @@ the Prefs tab, which will appear in red if you have any incomplete pref
 sheets. If necessary, select the relevant Judge Group from the menu on
 the sidebar, then, select the pref sheet you want to edit:
 
-<img src="/screenshots/user_enter_ratings.png" title="user_enter_ratings.png"
-width="300" />
+![Enter ratings](/screenshots/user_enter_ratings.png)
 
 ## Accessing Prefs as a Competitor
 
@@ -33,12 +31,8 @@ If they have done so, you will see a list of tournaments with pref
 sheets in the "Upcoming" section of the sidebar, and then you can select
 the link for the pref sheet you want to edit:
 
-<img src="/screenshots/user_student_index-upcoming.png"
-title="user_student_index-upcoming.png" width="300"
-alt="user_student_index-upcoming.png" />
-<img src="/screenshots/user_student_entry-prefsheet.png"
-title="user_student_entry-prefsheet.png" width="300"
-alt="user_student_entry-prefsheet.png" />
+![Student index upcoming](/screenshots/user_student_index-upcoming.png)
+![Student entry prefsheet](/screenshots/user_student_entry-prefsheet.png)
 
 ## Filling Out Prefs
 
@@ -50,27 +44,23 @@ that "C" is a Constraint, and "S" is a Strike. You can also click the
 button to export your current pref sheet to a spreadsheet for future
 reference:
 
-<img src="/screenshots/user_enter_ratings_tiered-prefs.png"
-title="user_enter_ratings_tiered-prefs.png" width="600" />
+![Tiered prefs](/screenshots/user_enter_ratings_tiered-prefs.png)
 
 If using tiers, the sidebar will show you how many judges you currently
 have in each tier, and whether you have the correct number of judges in
 each:
 
-<img src="/screenshots/user_enter_ratings_tiered-prefs-guide.png"
-title="user_enter_ratings_tiered-prefs-guide.png" width="300" />
+![Tiered prefs guide](/screenshots/user_enter_ratings_tiered-prefs-guide.png)
 
 If using ordinals, you can either give each judge a number (you can use
 the "Fill Gaps" button at the bottom to help deal with accidental gaps):
 
-<img src="/screenshots/user_enter_ratings_ordinal-prefs.png"
-title="user_enter_ratings_ordinal-prefs.png" width="500" />
+![Ordinal prefs](/screenshots/user_enter_ratings_ordinal-prefs.png)
 
 Or, you can switch to the "Drag and Drop" mode, and move judges up and
 down in the order:
 
-<img src="/screenshots/user_enter_ratings_ordinals-prefs-sortable.png"
-title="user_enter_ratings_ordinals-prefs-sortable.png" width="500" />
+![Ordinal prefs sortable](/screenshots/user_enter_ratings_ordinals-prefs-sortable.png)
 
 To switch back to the previous mode, you can click the button for
 "Numeric Entry."
@@ -79,7 +69,7 @@ When done, make sure to press "Save Prefs" at the bottom.
 
 ## Duplicating Prefs
 
-![](/screenshots/user_enter_ratings_dolly.png "user_enter_ratings_dolly.png") If you
+![Dolly the Sheep](/screenshots/user_enter_ratings_dolly.png) If you
 want to copy prefs from one entry to another, you can use the "Dolly the
 Sheep" section of the sidebar. This will let you export your pref sheet
 to a spreadsheet, automatically fill in the sheet based on previous

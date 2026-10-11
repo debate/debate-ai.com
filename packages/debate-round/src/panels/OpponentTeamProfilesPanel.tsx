@@ -115,6 +115,7 @@ import {
   updateOpponentRoundRecord,
   type OpponentRoundRecordEntry,
 } from "@debate/data-sync/src/state/opponentRoundRecords"
+import { parseTeamLabel } from "@debate/rankings-adapter/src/team-lookup"
 import { OPPONENT_ROUND_CSV_TEMPLATE } from "@debate/data-sync/src/rankings/opponent-round-csv-import"
 import {
   buildOpponentScoutingReportText,
@@ -182,6 +183,32 @@ function draftFromRecord(record: OpponentRoundRecordEntry): RoundDraft {
     caseName: record.caseName ?? "",
     opponentTeamId: record.opponentTeamId ?? "",
   }
+}
+
+/** Extracts school name from teamId (e.g., "Westlake AB" -> "Westlake"). */
+function extractSchoolName(teamId: string): string {
+  const parsed = parseTeamLabel(teamId)
+  return parsed?.school ?? teamId
+}
+
+/** Groups profiles by school name, sorts schools alphabetically, and sorts teams within each school by roundsRecorded descending. */
+function buildSchoolGroupedRoster(profiles: OpponentTeamProfile[]): Map<string, OpponentTeamProfile[]> {
+  const grouped = new Map<string, OpponentTeamProfile[]>()
+  for (const profile of profiles) {
+    const school = extractSchoolName(profile.teamId)
+    const existing = grouped.get(school) ?? []
+    existing.push(profile)
+    grouped.set(school, existing)
+  }
+  // Sort teams within each school by roundsRecorded descending, then by teamId
+  for (const [school, teams] of grouped) {
+    teams.sort((a, b) => {
+      if (b.roundsRecorded !== a.roundsRecorded) return b.roundsRecorded - a.roundsRecorded
+      return a.teamId.localeCompare(b.teamId)
+    })
+  }
+  // Return a new Map with schools sorted alphabetically
+  return new Map([...grouped.entries()].sort((a, b) => a[0].localeCompare(b[0])))
 }
 
 /**
@@ -524,49 +551,58 @@ export function OpponentTeamProfilesPanel() {
           message="Log a scouted round above to build one."
         />
       ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Team</TableHead>
-              <TableHead className="text-right">Rounds</TableHead>
-              <TableHead>Record</TableHead>
-              <TableHead>Side record</TableHead>
-              <TableHead>Common arguments</TableHead>
-              <TableHead>Common cases</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {roster.map((profile) => (
-              <TableRow key={profile.teamId}>
-                <TableCell className="font-medium">{profile.teamId}</TableCell>
-                <TableCell className="text-right">{profile.roundsRecorded}</TableCell>
-                <TableCell>
-                  {profile.roundsRecorded > 0
-                    ? `${profile.record.wins}-${profile.record.losses} (${Math.round(
-                        profile.record.winRate * 100,
-                      )}%)`
-                    : "—"}
-                </TableCell>
-                <TableCell>
-                  Aff {profile.sideRecord.aff.wins}-{profile.sideRecord.aff.rounds - profile.sideRecord.aff.wins}
-                  {" · "}
-                  Neg {profile.sideRecord.neg.wins}-{profile.sideRecord.neg.rounds - profile.sideRecord.neg.wins}
-                  {profile.sideRecord.hasNotableSidePreference && (
-                    <Badge variant="outline" className="ml-2">
-                      stronger on {profile.sideRecord.strongerSide}
-                    </Badge>
-                  )}
-                </TableCell>
-                <TableCell className="text-muted-foreground">
-                  {formatFrequencyList(profile.topArgumentTags)}
-                </TableCell>
-                <TableCell className="text-muted-foreground">
-                  {formatFrequencyList(profile.topCases)}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <>
+          {Array.from(buildSchoolGroupedRoster(roster).entries()).map(([school, teams]) => (
+            <div key={school} className="space-y-2">
+              <h3 className="text-sm font-semibold text-foreground border-b border-border pb-1">
+                {school}
+              </h3>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Team</TableHead>
+                    <TableHead className="text-right">Rounds</TableHead>
+                    <TableHead>Record</TableHead>
+                    <TableHead>Side record</TableHead>
+                    <TableHead>Common arguments</TableHead>
+                    <TableHead>Common cases</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {teams.map((profile) => (
+                    <TableRow key={profile.teamId}>
+                      <TableCell className="font-medium">{profile.teamId}</TableCell>
+                      <TableCell className="text-right">{profile.roundsRecorded}</TableCell>
+                      <TableCell>
+                        {profile.roundsRecorded > 0
+                          ? `${profile.record.wins}-${profile.record.losses} (${Math.round(
+                              profile.record.winRate * 100,
+                            )}%)`
+                          : "—"}
+                      </TableCell>
+                      <TableCell>
+                        Aff {profile.sideRecord.aff.wins}-{profile.sideRecord.aff.rounds - profile.sideRecord.aff.wins}
+                        {" · "}
+                        Neg {profile.sideRecord.neg.wins}-{profile.sideRecord.neg.rounds - profile.sideRecord.neg.wins}
+                        {profile.sideRecord.hasNotableSidePreference && (
+                          <Badge variant="outline" className="ml-2">
+                            stronger on {profile.sideRecord.strongerSide}
+                          </Badge>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {formatFrequencyList(profile.topArgumentTags)}
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {formatFrequencyList(profile.topCases)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          ))}
+        </>
       )}
 
       {roster.length > 0 && (
@@ -588,10 +624,17 @@ export function OpponentTeamProfilesPanel() {
                   <SelectValue placeholder="Choose an opponent" />
                 </SelectTrigger>
                 <SelectContent>
-                  {roster.map((profile) => (
-                    <SelectItem key={profile.teamId} value={profile.teamId}>
-                      {profile.teamId}
-                    </SelectItem>
+                  {Array.from(buildSchoolGroupedRoster(roster).entries()).map(([school, teams]) => (
+                    <div key={school}>
+                      <SelectItem value="" disabled className="text-xs font-medium text-muted-foreground">
+                        {school}
+                      </SelectItem>
+                      {teams.map((profile) => (
+                        <SelectItem key={profile.teamId} value={profile.teamId}>
+                          {profile.teamId}
+                        </SelectItem>
+                      ))}
+                    </div>
                   ))}
                 </SelectContent>
               </Select>
