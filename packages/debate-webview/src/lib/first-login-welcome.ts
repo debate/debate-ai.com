@@ -1,18 +1,17 @@
 /**
- * @fileoverview Once-per-browser flag for the first-sign-in welcome
+ * @fileoverview The "already shown" flag for the first-sign-in welcome
  * notification (`components/layout/FirstLoginWelcomeProvider.tsx`).
  *
- * "First time login" is decided per browser, not per account: the
- * welcome outlines the app's key links, so the right moment to show
- * it is the first time this browser carries a signed-in session. A
- * reader who signs in on a new device still benefits from the tour,
- * and a reader who cleared storage gets it back — the same policy the
- * guest sign-in prompt's opt-out (`lib/sign-in-prompt-preference.ts`)
- * follows for its own state.
+ * The welcome shows once per account: the source of truth is
+ * `user_settings.welcome_dismissed_at`, read and written through
+ * `/api/settings/welcome`, so dismissing it on one device keeps it from
+ * appearing on any other. A `localStorage` copy of the flag sits in
+ * front of that as a cache, so a browser that has already shown (or
+ * learned about) the dismissal never pays the request again.
  *
- * Kept separate from the provider: the flag is plain storage
- * bookkeeping with no React and no `fetch`, so it stays testable
- * without a DOM, and the provider stays free of storage details.
+ * Kept separate from the provider: the flag is plain storage and
+ * `fetch` bookkeeping with no React, so it stays testable without a
+ * DOM, and the provider stays free of storage details.
  *
  * @module lib/first-login-welcome
  */
@@ -47,5 +46,76 @@ export function markFirstLoginWelcomeShown(): void {
   } catch {
     // A browser refusing local storage just can't remember; the
     // provider's own `open` state keeps it from stacking copies.
+  }
+}
+
+const SYNCED_KEY = "firstLoginWelcomeSynced"
+
+/**
+ * Whether this browser has confirmed the account carries the
+ * dismissal, so a browser that showed the welcome before the flag
+ * moved to the account records it there exactly once.
+ */
+export function wasFirstLoginWelcomeSynced(): boolean {
+  if (typeof localStorage === "undefined") return false
+  try {
+    return localStorage.getItem(SYNCED_KEY) === "true"
+  } catch {
+    return false
+  }
+}
+
+/** Records that the account carries the dismissal. */
+export function markFirstLoginWelcomeSynced(): void {
+  if (typeof localStorage === "undefined") return
+  try {
+    localStorage.setItem(SYNCED_KEY, "true")
+  } catch {
+    // Without storage the sync just repeats next load; it is idempotent.
+  }
+}
+
+/** The account flag's route (`apps/debate-ai.com/app/api/settings/welcome`). */
+const WELCOME_ENDPOINT = "/api/settings/welcome"
+
+/**
+ * Whether the signed-in account has already seen the welcome, from
+ * `user_settings.welcome_dismissed_at`.
+ *
+ * `null` when the answer is unknown — signed out, a failed request, or
+ * no `fetch` — so the caller can choose to stay quiet rather than show
+ * the welcome to an account that may already have dismissed it.
+ */
+export async function fetchFirstLoginWelcomeDismissed(
+  endpoint = WELCOME_ENDPOINT,
+): Promise<boolean | null> {
+  if (typeof fetch === "undefined") return null
+  try {
+    const res = await fetch(endpoint, { credentials: "same-origin" })
+    if (!res.ok) return null
+    const body = (await res.json()) as { dismissed?: unknown }
+    return typeof body.dismissed === "boolean" ? body.dismissed : null
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Records on the account that the welcome was shown, so no browser
+ * shows it again. Best-effort: a failure is swallowed, and the
+ * per-browser flag above still keeps this browser from repeating it.
+ *
+ * @returns Whether the account accepted the write.
+ */
+export async function saveFirstLoginWelcomeDismissed(
+  endpoint = WELCOME_ENDPOINT,
+): Promise<boolean> {
+  if (typeof fetch === "undefined") return false
+  try {
+    const res = await fetch(endpoint, { method: "POST", credentials: "same-origin" })
+    return res.ok
+  } catch {
+    // Offline or signed out mid-request: the local flag still holds.
+    return false
   }
 }
