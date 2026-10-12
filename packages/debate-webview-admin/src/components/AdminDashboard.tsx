@@ -2,32 +2,32 @@
 
 import { useCallback, useEffect, useRef, useState, type ComponentType } from "react";
 import { DatabaseBackup, FileSearch, Film, Globe, ListVideo, RefreshCw, Upload, Users } from "lucide-react";
-import { cn } from "../../lib/ui/lib/utils";
-import { Button } from "../../lib/ui/primitives/button";
-import { Badge } from "../../lib/ui/primitives/badge";
-import { Input } from "../../lib/ui/primitives/input";
-import { Label } from "../../lib/ui/primitives/label";
+import { cn } from "@debate/webview/lib/ui/lib/utils";
+import { Button } from "@debate/webview/lib/ui/primitives/button";
+import { Badge } from "@debate/webview/lib/ui/primitives/badge";
+import { Input } from "@debate/webview/lib/ui/primitives/input";
+import { Label } from "@debate/webview/lib/ui/primitives/label";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../../lib/ui/primitives/card";
+} from "@debate/webview/lib/ui/primitives/card";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../lib/ui/primitives/select";
+} from "@debate/webview/lib/ui/primitives/select";
 import { REUSE_CHECK_LOG_RETENTION_DAYS } from "@debate/research-evidence";
-import { formatRecomputeStacksResult } from "../../lib/videos/format-recompute-stacks-result";
+import { formatRecomputeStacksResult } from "@debate/webview/lib/videos/format-recompute-stacks-result";
 import {
   formatSeedVideosResult,
   formatSeedVideosStatus,
   type SeedVideosStatus,
-} from "../../lib/videos/format-seed-videos-result";
+} from "@debate/webview/lib/videos/format-seed-videos-result";
 import { CaselistSyncPanel } from "./CaselistSyncPanel";
 import { DbBackupPanel } from "./DbBackupPanel";
 import { DebateCardParquetUpload } from "./DebateCardParquetUpload";

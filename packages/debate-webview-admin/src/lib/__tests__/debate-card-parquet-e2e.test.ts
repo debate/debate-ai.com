@@ -1,6 +1,11 @@
 /**
+ * @vitest-environment node
  * @fileoverview The admin panel's import, end to end: a real Parquet shard,
  * read the way the browser reads it, through the real server write path.
+ *
+ * Runs under Node, as it did in the app's suite: this package defaults to
+ * jsdom, whose `File` hands back ArrayBuffers from another realm that the
+ * Parquet reader rejects.
  *
  * The unit suites either side of this one prove their own half — the reader
  * decodes Parquet, the writer upserts rows — but the panel's failures live in

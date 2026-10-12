@@ -1,21 +1,21 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Button } from "../../lib/ui/primitives/button";
+import { Button } from "@debate/webview/lib/ui/primitives/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../../lib/ui/primitives/card";
+} from "@debate/webview/lib/ui/primitives/card";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../lib/ui/primitives/select";
+} from "@debate/webview/lib/ui/primitives/select";
 
 interface TranscriptScraperStats {
   totalVideos: number;
