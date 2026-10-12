@@ -589,8 +589,7 @@ describe("YoutubeChannelsPanel", () => {
     await clickAsync(button("Remove channel"));
     expect(calls.filter((c) => c.method === "DELETE")).toHaveLength(2);
     expect(bodyText()).toContain("Removed “Kansas Debate” — it will no longer be scanned.");
-
-    // The list is updated in place: removing never refetches it.
+    // The removal updates the list in place; nothing refetches it.
     expect(calls.filter((c) => c.method === "GET")).toHaveLength(1);
   });
 });

@@ -218,8 +218,12 @@ async function readYouTube(videoId: string, warnings: string[]): Promise<Autofil
   }
 }
 
-/** Asks the model for the structured fields. Throws with a user-facing message. */
-async function askModel(content: string): Promise<AutofillFields> {
+/**
+ * Asks the model for the structured fields. Throws with a user-facing message.
+ * Exported for bulk re-parsing (`reclassify-by-title.ts`), which reads stored
+ * rows instead of the form.
+ */
+export async function askModel(content: string): Promise<AutofillFields> {
   const openrouterKey = getEnv("OPENROUTER_API_KEY");
   const anthropicKey = getEnv("ANTHROPIC_API_KEY");
   if (!openrouterKey && !anthropicKey) throw new Error("AI features are not configured on the server.");
