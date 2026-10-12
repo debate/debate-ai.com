@@ -42,6 +42,35 @@ up the address the same way.
   page for it in a frame, so you can register or enter ballots there.
 - **Admin**: on a tournament hosted here, the last tab is its admin view
   instead (see below).
+- **Ballot**: judges submit a ballot for a round (see below).
+
+## Submitting a ballot
+
+The **Ballot** tab (`/tournaments/2026/yale-invitational/ballot`) is where a
+judge files a ballot: event, round, room, the two entries, the winner (with a
+low-point-win box), optional speaker points and the reason for decision. Each
+debate room on a round's pairings has a **Submit ballot** link that opens the
+tab with that room's pairing filled in.
+
+You must be signed in, and the **Tabroom account email** on the ballot must
+match the email you are signed in to Debate AI with. The form shows whether it
+matches as you type and won't submit until it does; the server checks again
+and turns the ballot away if not.
+
+**Send to** picks where the ballot goes:
+
+- **Debate AI only** stores it here, at `/api/judge-ballots`. Your ballots for
+  the tournament are listed under the form.
+- **Tabroom** also sends it on to Tabroom using your own Tabroom API token,
+  which is passed along and never saved. A copy is kept here either way, marked
+  with whether Tabroom accepted it. This option is greyed out until the site
+  sets `TABROOM_BALLOT_URL` to Tabroom's ballot endpoint; until then, use
+  **Open my Tabroom ballots** to enter it on Tabroom directly.
+
+AI agents can submit the same ballot as a tool call: `GET
+/api/judge-ballots/tool` returns the `submit_judge_ballot` tool definition, and
+calling it means posting those arguments to `/api/judge-ballots` under the
+judge's session, with the same email rule.
 
 ## Hosting your own tournament
 

@@ -29,6 +29,7 @@ export type TournamentRoute =
   | { page: "results"; tourn: TournamentKey }
   | { page: "resultSet"; tourn: TournamentKey; resultSetId: number }
   | { page: "tabroom"; tourn: TournamentKey }
+  | { page: "ballot"; tourn: TournamentKey }
   | { page: "admin"; tourn: TournamentKey }
   | { page: "notFound" };
 
@@ -45,10 +46,11 @@ export const TOURNAMENT_ROUTE_PATTERNS = {
   results: "/:year/:slug/results",
   resultSet: "/:year/:slug/results/:resultSetId",
   tabroom: "/:year/:slug/tabroom",
+  ballot: "/:year/:slug/ballot",
   admin: "/:year/:slug/admin",
 } as const;
 
-const SECTIONS = new Set(["rounds", "results", "tabroom", "admin"]);
+const SECTIONS = new Set(["rounds", "results", "tabroom", "ballot", "admin"]);
 
 const id = (s: string | undefined) => (s && /^\d+$/.test(s) ? Number(s) : null);
 const year = (s: string | undefined) => (s && /^\d{4}$/.test(s) ? Number(s) : null);
@@ -114,6 +116,7 @@ export function matchTournamentRoute(segments: readonly string[] = []): Tourname
     if (rest.length === 2 && resultSetId !== null) return { page: "resultSet", tourn, resultSetId };
   }
   if (section === "tabroom" && rest.length === 1) return { page: "tabroom", tourn };
+  if (section === "ballot" && rest.length === 1) return { page: "ballot", tourn };
   if (section === "admin" && rest.length === 1) return { page: "admin", tourn };
   return { page: "notFound" };
 }
@@ -156,6 +159,7 @@ export function tournamentHrefs(
     results: (tournId: number) => `${at(tournId)}/results`,
     resultSet: (tournId: number, resultSetId: number) => `${at(tournId)}/results/${resultSetId}`,
     tabroom: (tournId: number) => `${at(tournId)}/tabroom`,
+    ballot: (tournId: number) => `${at(tournId)}/ballot`,
     admin: (tournId: number) => `${at(tournId)}/admin`,
     /** The href of `route`'s page for the tournament it resolved to. */
     forRoute: (route: TournamentPageRoute, tournId: number): string => {

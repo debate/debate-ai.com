@@ -10,10 +10,11 @@ import {
   FramedOverlay,
   HostedTournamentButton,
   TOURNAMENT_FORMATS,
+  TournamentNav,
   TournamentsApp,
   type OwnedTournament,
 } from "../src/ui";
-import type { TournamentHrefs } from "../src/routes";
+import { tournamentHrefs, type TournamentHrefs } from "../src/routes";
 import { TournamentsContext, type TournamentsContextValue } from "../src/ui/shared";
 import { createTournamentsClient } from "../src/ui/client";
 
@@ -190,5 +191,27 @@ describe("createTournamentsClient host methods", () => {
     await expect(client.createTournament({ name: "x", start: "a", end: "b", events: [] })).rejects.toThrow(
       "Sign in to host a tournament.",
     );
+  });
+});
+
+describe("TournamentNav ballot tab", () => {
+  const hrefs = tournamentHrefs("/t");
+  const render = (ballotApiBase?: string) =>
+    renderToString(
+      <TournamentsContext.Provider
+        value={{ client: createTournamentsClient("/api/tabroom", noFetch), hrefs, Link: plainLink, ballotApiBase }}
+      >
+        <TournamentNav tournId={7} active="ballot" source="tabroom" />
+      </TournamentsContext.Provider>,
+    );
+
+  it("shows a Ballot tab when the host has a ballot API", () => {
+    const html = render("/api/judge-ballots");
+    expect(html).toContain('href="/t/7/ballot"');
+    expect(html).toContain(">Ballot<");
+  });
+
+  it("hides it otherwise", () => {
+    expect(render()).not.toContain("/t/7/ballot");
   });
 });

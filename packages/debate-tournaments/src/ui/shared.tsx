@@ -32,6 +32,8 @@ export interface TournamentsContextValue {
   client: TournamentsClient;
   hrefs: TournamentHrefs;
   Link: LinkLike;
+  /** The host app's judge ballot API (e.g. `/api/judge-ballots`); the Ballot tab shows only when set. */
+  ballotApiBase?: string;
 }
 
 export const TournamentsContext = createContext<TournamentsContextValue | null>(null);
