@@ -82,6 +82,13 @@ export interface ImportOutcome {
  *  the tree the same way an import failure is. */
 export type DownloadOutcome = { ok: true } | { ok: false; error: string }
 
+/** The result of copying rows between the sidebar's two areas — the rows
+ *  made, or why nothing was. */
+export type CopyOutcome = { ok: true; created: ReasonDocument[] } | { ok: false; error: string }
+
+/** The result of {@link ReasonDocsContextValue.publishToTopics}. */
+export type PublishOutcome = { ok: true; item: TopicStarterItem } | { ok: false; error: string }
+
 export interface ReasonDocsContextValue {
   documents: ReasonDocument[]
   topicItems: TopicStarterItem[]
@@ -137,6 +144,28 @@ export interface ReasonDocsContextValue {
    * `{ ok: false }` for the caller to show.
    */
   downloadTopicDocument: (item: TopicStarterItem) => Promise<DownloadOutcome>
+  /**
+   * Copies a public topic starter — a file, or a folder with everything in
+   * it — into the reader's own files under `parentId`. This is what dragging a
+   * row from Topic Starters onto Files does, and what "Save to my files" and
+   * "Edit a copy" do: the catalogue is read-only, so a file is edited by
+   * editing your own copy of it. Keeps the stored format, so a `.cmir` stays a
+   * `.cmir`. Never throws.
+   */
+  copyTopicToDocuments: (item: TopicStarterItem, parentId?: number | null) => Promise<CopyOutcome>
+  /**
+   * Makes a copy of one of the reader's own files (or a folder and its
+   * contents) under `parentId` — the same folder when omitted — named
+   * "<title> copy". Never throws.
+   */
+  duplicateDocument: (id: number, parentId?: number | null) => Promise<CopyOutcome>
+  /**
+   * Publishes one of the reader's own files into the public Topic Starters,
+   * under the catalogue folder `topicParentId` (top level when null). This is
+   * what dropping a file onto Topic Starters does. Admin-only on the server,
+   * so for everyone else it comes back `{ ok: false }` with a reason to show.
+   */
+  publishToTopics: (id: number, topicParentId?: number | null) => Promise<PublishOutcome>
   /**
    * Opens a public file by the name a URL carries, for a link whose file this
    * client hasn't loaded — the catalogue is capped, and a signed-out reader
@@ -241,11 +270,108 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
           isFolder,
         }),
       })
+      // A refused write (signed-out quota, server error) answers with an
+      // error body, not a row — adding that to the tree would show a
+      // nameless file that 404s on every edit.
+      if (!res.ok) return
       const created: ReasonDocument = await res.json()
+      if (typeof created?.id !== "number") return
       setDocuments((prev) => [created, ...prev])
       if (!isFolder) openDocument(created.id)
     },
     [openDocument],
+  )
+
+  /**
+   * Writes `rows` (a file, or a folder followed by its descendants, each
+   * pointing at its parent by *source* id) as new documents under
+   * `parentId`, re-pointing each child at its new parent. Shared by the
+   * topic-starter copy and duplicate, which differ only in where the rows
+   * come from.
+   */
+  const copyRows = useCallback(
+    async (
+      rows: readonly { id: number; title: string; content: string; format?: string; parentId: number | null; isFolder: boolean }[],
+      rootId: number,
+      parentId: number | null,
+      rootTitle: string,
+    ): Promise<CopyOutcome> => {
+      const created: ReasonDocument[] = []
+      const newIds = new Map<number, number>()
+      try {
+        for (const row of rows) {
+          const isRoot = row.id === rootId
+          const res = await fetch("/api/doc/documents", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+              title: isRoot ? rootTitle : row.title,
+              content: row.isFolder ? "" : row.content ?? "",
+              format: row.isFolder ? undefined : row.format,
+              parentId: isRoot ? parentId : (newIds.get(row.parentId ?? -1) ?? parentId),
+              isFolder: row.isFolder,
+            }),
+          })
+          if (!res.ok) throw new Error(`the server refused it (${res.status})`)
+          const saved: ReasonDocument = await res.json()
+          newIds.set(row.id, saved.id)
+          created.push({ ...saved, format: saved.format ?? row.format })
+        }
+      } catch (error) {
+        if (created.length > 0) setDocuments((prev) => [...created, ...prev])
+        return {
+          ok: false,
+          error: `${rootTitle || "That file"} could not be copied (${error instanceof Error ? error.message : String(error)}).`,
+        }
+      }
+      setDocuments((prev) => [...created, ...prev])
+      return { ok: true, created }
+    },
+    [],
+  )
+
+  const copyTopicToDocuments = useCallback(
+    async (item: TopicStarterItem, parentId: number | null = null): Promise<CopyOutcome> => {
+      const rows = subtreeOf(topicItems, item)
+      return copyRows(rows, item.id, parentId, item.title)
+    },
+    [topicItems, copyRows],
+  )
+
+  const duplicateDocument = useCallback(
+    async (id: number, parentId?: number | null): Promise<CopyOutcome> => {
+      const doc = documents.find((d) => d.id === id)
+      if (!doc) return { ok: false, error: "That file could not be found." }
+      return copyRows(subtreeOf(documents, doc), doc.id, parentId === undefined ? doc.parentId : parentId, `${doc.title} copy`)
+    },
+    [documents, copyRows],
+  )
+
+  const publishToTopics = useCallback(
+    async (id: number, topicParentId: number | null = null): Promise<PublishOutcome> => {
+      const doc = documents.find((d) => d.id === id)
+      if (!doc || doc.isFolder) return { ok: false, error: "Only a file can be added to Topic Starters." }
+      try {
+        const res = await fetch("/api/admin/topic-starters/items", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ title: doc.title, content: doc.content ?? "", format: doc.format, parentId: topicParentId }),
+        })
+        if (res.status === 401 || res.status === 403) {
+          return { ok: false, error: "Only admins can add files to Topic Starters. Drag a topic starter into Files to keep your own copy." }
+        }
+        if (!res.ok) throw new Error(`the server refused it (${res.status})`)
+        const { item } = (await res.json()) as { item: TopicStarterItem }
+        setTopicItems((prev) => [...prev, item])
+        return { ok: true, item }
+      } catch (error) {
+        return {
+          ok: false,
+          error: `${doc.title || "This file"} could not be published (${error instanceof Error ? error.message : String(error)}).`,
+        }
+      }
+    },
+    [documents],
   )
 
   const deleteDocument = useCallback(
@@ -563,6 +689,9 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
       downloadDocument,
       downloadTopicDocument,
       openPublicByRef,
+      copyTopicToDocuments,
+      duplicateDocument,
+      publishToTopics,
     }),
     [
       documents,
@@ -589,10 +718,38 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
       downloadDocument,
       downloadTopicDocument,
       openPublicByRef,
+      copyTopicToDocuments,
+      duplicateDocument,
+      publishToTopics,
     ],
   )
 
   return <ReasonDocsContext.Provider value={value}>{children}</ReasonDocsContext.Provider>
+}
+
+/** `item` followed by every row under it, parents before children — the
+ *  order a copy has to be written in so each child's new parent exists.
+ *  Only folders have children: a row pointing at a *file* as its parent is
+ *  stray data, and is not copied along with that file. */
+function subtreeOf<T extends { id: number; parentId: number | null; isFolder: boolean }>(items: readonly T[], item: T): T[] {
+  const out: T[] = [item]
+  const seen = new Set<number>([item.id])
+  for (let i = 0; i < out.length; i++) {
+    if (!out[i]!.isFolder) continue
+    for (const row of items) {
+      if (row.parentId === out[i]!.id && !seen.has(row.id)) {
+        seen.add(row.id)
+        out.push(row)
+      }
+    }
+  }
+  return out
+}
+
+/** The provider's value, or `null` outside it — for chrome such as the
+ *  Ctrl/Cmd-K palette that also renders where no provider is mounted. */
+export function useOptionalReasonDocs(): ReasonDocsContextValue | null {
+  return useContext(ReasonDocsContext)
 }
 
 /** Throws outside the provider — every consumer renders under the root layout. */

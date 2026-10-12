@@ -11,17 +11,22 @@
  * open. Everywhere else in the app — `/tools`, `/settings`, `/practice/judges`, the
  * community and coaching hubs — the same shortcut did nothing.
  *
- * This is that shortcut's app-wide counterpart: a lighter, navigation-only
- * palette (no quick cards, no ribbon commands, no file search — those stay
- * the editor's own) built from the same catalog `/tools` and the favorites
+ * This is that shortcut's app-wide counterpart: a lighter palette (no quick
+ * cards or ribbon commands — those stay the editor's own) built from the same
+ * catalog `/tools` and the favorites
  * system already share (`app/tools/tool-groups.ts`'s `ALL_TOOLS`), so a
  * tool typed here, starred on `/tools`, or linked from the editor's
  * Workspace menu all resolve to the one list. Mounted once per document by
  * {@link AppShell} (in both its branches, matching
  * {@link ToolRecordSyncProvider}'s reach), so the shortcut works whether or
- * not another site has framed the app — except on
- * `/reason-editor`, where the CardMirror engine's own richer palette already
- * owns it.
+ * not another site has framed the app. On `/reason-editor` the CardMirror
+ * engine's own palette keeps Ctrl/Cmd-P; this one answers Ctrl/Cmd-K there.
+ *
+ * It also searches the docs sidebar's files — the reader's own and the public
+ * Topic Starters — by name *and* contents (`lib/reason-docs/file-search.ts`),
+ * listed under "Files" below the tools; picking one opens it in the editor.
+ * The text of a `.cmir` file comes from CardMirror's engine, which is loaded
+ * on demand the first time a query needs it.
  *
  * Two views: with an empty query it browses (Favorites, Recent, Go to, then
  * the catalog by group); once something is typed it switches to one flat
@@ -33,7 +38,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { useRouter, usePathname } from "next/navigation"
-import { Clock, CornerDownLeft, LayoutGrid, Rss, SearchX, Settings as SettingsIcon, Star } from "lucide-react"
+import { BookOpen, Clock, CornerDownLeft, FileText, LayoutGrid, Rss, SearchX, Settings as SettingsIcon, Star } from "lucide-react"
 import { playUISoundEffect } from "@debate/timer"
 
 import {
@@ -49,6 +54,18 @@ import { TOOL_GROUPS, ALL_TOOLS, type Tool } from "../../routes/tools/tool-group
 import { useFavoriteTools } from "../../lib/hooks/useFavoriteTools"
 import { useRecentTools } from "../../lib/hooks/useRecentTools"
 import { onQuickLaunchText } from "../../lib/native/tauri"
+import { useOptionalReasonDocs } from "../reason-docs/ReasonDocsProvider"
+import type { TopicStarterItem } from "../reason-docs/TopicStarterTree"
+import type { ReasonDocument } from "../reason-docs/types"
+import {
+  folderPathOf,
+  htmlToPlainText,
+  searchFiles,
+  type FileSearchEntry,
+} from "../../lib/reason-docs/file-search"
+import { editorHrefForSelection } from "../../lib/reason-docs/route-selection"
+import { isCmirContent } from "../../lib/cardmirror/content-format"
+import { loadStoredCmir, storedCmirIfLoaded, type StoredCmir } from "../../lib/cardmirror/lazy-stored-cmir"
 import {
   createPaletteIndex,
   searchPalette,
@@ -65,8 +82,8 @@ const QUICK_ACTIONS: Tool[] = [
 ]
 
 /** Routes where the CardMirror editor engine mounts its own, richer
- *  Ctrl/Cmd-P palette — this one stands down there rather than
- *  fighting over the same shortcut. */
+ *  Ctrl/Cmd-P palette — this one leaves Ctrl/Cmd-P to it there and answers
+ *  only Ctrl/Cmd-K, so the two never fight over one chord. */
 function ownedByEditor(pathname: string): boolean {
   return pathname === "/reason-editor" || pathname.startsWith("/reason-editor/")
 }
@@ -95,6 +112,56 @@ export function isPaletteShortcut(e: Pick<KeyboardEvent, "metaKey" | "ctrlKey" |
   const code = e.code
   const key = e.key.toLowerCase()
   return code === "KeyK" || key === "k" || code === "KeyP" || key === "p"
+}
+
+/** True for the K half of {@link isPaletteShortcut} — the only chord this
+ *  palette answers on the editor route, where Ctrl/Cmd-P is the engine's. */
+export function isKShortcut(e: Pick<KeyboardEvent, "code" | "key">): boolean {
+  return e.code === "KeyK" || e.key.toLowerCase() === "k"
+}
+
+/** The sidebar files as search rows, text included. Each row's text is
+ *  cached on the row object, so a keystroke re-ranks without re-converting
+ *  every file; a changed row is a new object and is converted again. */
+const fileTextCache = new WeakMap<object, string>()
+
+function fileText(row: object, toHtml: () => string): string {
+  const cached = fileTextCache.get(row)
+  if (cached !== undefined) return cached
+  const text = htmlToPlainText(toHtml())
+  // An empty result while the engine is still loading isn't cached, so the
+  // row is converted properly once it arrives.
+  if (text) fileTextCache.set(row, text)
+  return text
+}
+
+function buildFileEntries(
+  documents: readonly ReasonDocument[],
+  topics: readonly TopicStarterItem[],
+  documentHtml: (doc: ReasonDocument) => string,
+  engine: StoredCmir | null,
+): FileSearchEntry[] {
+  const entries: FileSearchEntry[] = []
+  for (const doc of documents) {
+    if (doc.isFolder) continue
+    entries.push({
+      kind: "document",
+      id: doc.id,
+      title: doc.title || "Untitled",
+      folder: folderPathOf(documents, doc),
+      text: fileText(doc, () => documentHtml(doc)),
+    })
+  }
+  for (const item of topics) {
+    if (item.isFolder) continue
+    const text = isCmirContent(item)
+      ? engine
+        ? fileText(item, () => engine.storedContentToHtml(item))
+        : ""
+      : fileText(item, () => item.content ?? "")
+    entries.push({ kind: "topic", id: item.id, title: item.title, folder: folderPathOf(topics, item), text })
+  }
+  return entries
 }
 
 /** Heading for {@link QUICK_ACTIONS} — both as a browse-view group and as
@@ -171,6 +238,8 @@ export function GlobalCommandPalette() {
   const pathname = usePathname()
   const { favorites } = useFavoriteTools()
   const { recent, recordVisit } = useRecentTools()
+  const docs = useOptionalReasonDocs()
+  const [engine, setEngine] = useState<StoredCmir | null>(storedCmirIfLoaded)
 
   useEffect(() => {
     return onQuickLaunchText((text) => {
@@ -184,7 +253,9 @@ export function GlobalCommandPalette() {
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (!isPaletteShortcut(e)) return
-      if (ownedByEditor(pathname)) return
+      // On the editor, Ctrl/Cmd-P is the engine's palette, and a Ctrl/Cmd-K
+      // the editor already handled (a chord pad) is left to it.
+      if (ownedByEditor(pathname) && (!isKShortcut(e) || e.defaultPrevented)) return
       e.preventDefault()
       setOpen((prev) => !prev)
     }
@@ -193,11 +264,10 @@ export function GlobalCommandPalette() {
   }, [pathname])
 
   useEffect(() => {
-    if (ownedByEditor(pathname)) return
     const onOpenEvent = () => setOpen(true)
     window.addEventListener(OPEN_EVENT, onOpenEvent)
     return () => window.removeEventListener(OPEN_EVENT, onOpenEvent)
-  }, [pathname])
+  }, [])
 
   // Each opening starts from the browse view, not the last query.
   useEffect(() => {
@@ -263,6 +333,63 @@ export function GlobalCommandPalette() {
   const query = search.trim()
   const results = useMemo(() => searchPalette(index, query), [index, query])
 
+  // The files only matter once the palette is open; opening it is what
+  // fetches them, the same lazy load the sidebar does when it is expanded.
+  const ensureDocsLoaded = docs?.ensureLoaded
+  useEffect(() => {
+    if (open) ensureDocsLoaded?.()
+  }, [open, ensureDocsLoaded])
+
+  const documents = docs?.documents
+  const topicItems = docs?.topicItems
+  const documentHtml = docs?.documentHtml
+  // A `.cmir` file's text needs CardMirror's engine; it is fetched the first
+  // time a query could match one, not when the palette opens.
+  const needsEngine =
+    open &&
+    Boolean(query) &&
+    !engine &&
+    Boolean(documents?.some(isCmirContent) || topicItems?.some(isCmirContent))
+  useEffect(() => {
+    if (!needsEngine) return
+    let cancelled = false
+    void loadStoredCmir()
+      .then((loaded) => {
+        if (!cancelled) setEngine(loaded)
+      })
+      .catch(() => {
+        // Names still match without the engine; only `.cmir` bodies don't.
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [needsEngine])
+
+  const fileEntries = useMemo(
+    () =>
+      open && query && documentHtml
+        ? buildFileEntries(documents ?? [], topicItems ?? [], documentHtml, engine)
+        : [],
+    [open, query, documents, topicItems, documentHtml, engine],
+  )
+  const fileResults = useMemo(() => searchFiles(fileEntries, query), [fileEntries, query])
+
+  const openFile = useCallback(
+    (entry: FileSearchEntry) => {
+      setOpen(false)
+      if (!docs) return
+      if (entry.kind === "document") {
+        docs.openDocument(entry.id)
+        router.push(editorHrefForSelection({ kind: "document", id: entry.id }, docs.documents))
+      } else {
+        const item = docs.topicItems.find((t) => t.id === entry.id)
+        if (item) docs.selectTopicDocument(item)
+        router.push(editorHrefForSelection({ kind: "topic", id: entry.id }, docs.topicItems))
+      }
+    },
+    [docs, router],
+  )
+
   // cmdk's own filter is off (we rank), so keep its selection on the best
   // hit as results change rather than on a row that may have moved.
   const firstBrowseValue = favoriteTools[0]
@@ -270,11 +397,10 @@ export function GlobalCommandPalette() {
     : recentTools[0]
       ? `recent-${recentTools[0].href}`
       : `go-${QUICK_ACTIONS[0].href}`
+  const firstFileValue = fileResults[0] ? `file-${fileResults[0].entry.kind}-${fileResults[0].entry.id}` : ""
   useEffect(() => {
-    setSelected(query ? (results[0]?.entry.href ?? "") : firstBrowseValue)
-  }, [query, results, firstBrowseValue])
-
-  if (ownedByEditor(pathname)) return null
+    setSelected(query ? (results[0]?.entry.href ?? firstFileValue) : firstBrowseValue)
+  }, [query, results, firstFileValue, firstBrowseValue])
 
   const browseRow = (tool: Tool, prefix: string, icon: ReactNode) => (
     <PaletteRow
@@ -292,7 +418,7 @@ export function GlobalCommandPalette() {
       open={open}
       onOpenChange={setOpen}
       title="Search"
-      description="Jump to any tool, workspace, or settings page"
+      description="Jump to any tool, workspace, settings page, or file"
       showCloseButton={false}
       className="top-[12%] translate-y-0 gap-0 rounded-xl border shadow-2xl sm:max-w-2xl"
       commandProps={{ shouldFilter: false, loop: true, value: selected, onValueChange: setSelected }}
@@ -301,7 +427,7 @@ export function GlobalCommandPalette() {
         <CommandInput
           value={search}
           onValueChange={setSearch}
-          placeholder="Search tools, workspaces, and settings…"
+          placeholder="Search tools, settings, and files…"
           className="h-12 pr-12 text-base"
         />
         <Kbd className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2">Esc</Kbd>
@@ -332,6 +458,30 @@ export function GlobalCommandPalette() {
                         </span>
                       }
                       onSelect={() => go(entry.href)}
+                    />
+                  )
+                })}
+              </CommandGroup>
+            )}
+            {fileResults.length > 0 && (
+              <CommandGroup heading="Files">
+                {fileResults.map(({ entry, snippet }) => {
+                  const location = [entry.kind === "topic" ? "Topic Starters" : "My files", entry.folder]
+                    .filter(Boolean)
+                    .join(" / ")
+                  return (
+                    <PaletteRow
+                      key={`file-${entry.kind}-${entry.id}`}
+                      value={`file-${entry.kind}-${entry.id}`}
+                      icon={entry.kind === "topic" ? <BookOpen /> : <FileText />}
+                      label={entry.title}
+                      description={snippet ?? location}
+                      trailing={
+                        <span className="hidden shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-medium text-muted-foreground sm:inline">
+                          {entry.kind === "topic" ? "Topic" : "File"}
+                        </span>
+                      }
+                      onSelect={() => openFile(entry)}
                     />
                   )
                 })}

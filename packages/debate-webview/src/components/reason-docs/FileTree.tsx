@@ -12,35 +12,55 @@
  * CardMirror `.cmir` — see `lib/cardmirror/stored-cmir.ts`), and clicking the
  * row that appears opens it in CardMirror. Rows keep the name they were
  * uploaded under, extension included, so the file you dropped is the file you
- * see.
+ * see. No row carries a format badge: everything stored here is a CardMirror
+ * file whatever it was uploaded as.
+ *
+ * Rows drag both ways between this tree and Topic Starters
+ * (`lib/reason-docs/drag-data.ts`): a topic starter dropped here becomes your
+ * own copy, and a row dragged from here onto Topic Starters is published.
+ *
+ * Right-clicking a row opens the same menu as its "…" button — open, edit,
+ * share, rename, duplicate, move to a folder, download, publish, delete — so
+ * every way of organising a file is one gesture from the file itself.
  */
 
 import { type DragEvent, type ReactNode, useMemo, useState } from "react"
 import {
   ChevronDown,
   ChevronRight,
+  Copy,
   Download,
+  ExternalLink,
   FilePlus2,
   FileText,
   FolderIcon,
+  FolderInput,
   FolderOpenIcon,
   FolderPlus,
+  Globe,
   MoreHorizontal,
   Pencil,
+  Share2,
+  TextCursorInput,
   Trash2,
 } from "lucide-react"
 import { cn } from "../../lib/ui/lib/utils"
-import { IMPORTABLE_EXTENSIONS, fileExtension } from "../../lib/cardmirror/import-files"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "../../lib/ui/primitives/dropdown-menu"
 import { Input } from "../../lib/ui/primitives/input"
 import { Badge } from "../../lib/ui/primitives/badge"
 import { getSampleReasonDocuments } from "../../lib/reason-docs/sample-documents"
+import { compareRows, type FileSort } from "../../lib/reason-docs/file-sort"
+import { folderPathOf } from "../../lib/reason-docs/file-search"
+import { DOCUMENT_DRAG_TYPE, TOPIC_DRAG_TYPE, draggedId } from "../../lib/reason-docs/drag-data"
 import type { ReasonDocument } from "./types"
 
 interface TreeNode {
@@ -48,25 +68,30 @@ interface TreeNode {
   children: TreeNode[]
 }
 
-function buildTree(documents: ReasonDocument[]): TreeNode[] {
+/**
+ * Nests the flat rows under their folders, siblings ordered by `sort`. A row
+ * whose parent isn't in the list (deleted elsewhere, or not a folder) is shown
+ * at the top level rather than silently dropped from the tree.
+ */
+export function buildTree(documents: ReasonDocument[], sort: FileSort = "name"): TreeNode[] {
+  const folderIds = new Set(documents.filter((d) => d.isFolder).map((d) => d.id))
   const byParent = new Map<number | null, ReasonDocument[]>()
   for (const doc of documents) {
-    const key = doc.parentId ?? null
+    const key = doc.parentId != null && folderIds.has(doc.parentId) && doc.parentId !== doc.id ? doc.parentId : null
     const siblings = byParent.get(key) ?? []
     siblings.push(doc)
     byParent.set(key, siblings)
   }
-  const sortSiblings = (docs: ReasonDocument[]) =>
-    [...docs].sort((a, b) => {
-      if (a.isFolder !== b.isFolder) return a.isFolder ? -1 : 1
-      return a.title.localeCompare(b.title)
-    })
-
+  const compare = compareRows(sort)
+  const seen = new Set<number>()
   const build = (parentId: number | null): TreeNode[] =>
-    sortSiblings(byParent.get(parentId) ?? []).map((doc) => ({
-      doc,
-      children: doc.isFolder ? build(doc.id) : [],
-    }))
+    [...(byParent.get(parentId) ?? [])]
+      .sort(compare)
+      .filter((doc) => !seen.has(doc.id) && seen.add(doc.id))
+      .map((doc) => ({
+        doc,
+        children: doc.isFolder ? build(doc.id) : [],
+      }))
 
   return build(null)
 }
@@ -99,29 +124,59 @@ interface FileTreeProps {
   /** Downloads a file as `.docx`, without opening it in CardMirror first. Not
    *  offered for folders — there is nothing to convert. */
   onDownload?: (id: number) => void
+  /** How siblings are ordered. Folders always come first. */
+  sort?: FileSort
+  /** "Duplicate": a copy of the row (and, for a folder, its contents). */
+  onDuplicate?: (id: number) => void
+  /** "Share…": opens the file and the share-with-contacts dialog. */
+  onShare?: (id: number) => void
+  /** "Add to Topic Starters": publishes the file to the public catalogue. */
+  onPublish?: (id: number) => void
+  /** A row dragged in from Topic Starters, to copy into `parentId`. */
+  onImportTopic?: (topicId: number, parentId: number | null) => void
 }
 
-/** The extension a row was uploaded under, uppercased for the badge — `""`
- *  for a document written in the editor, which needs no label. Only the
- *  extensions the upload path knows count, so a title that merely contains a
- *  dot ("Notes v1.2") isn't labelled "2". */
-function sourceLabel(doc: ReasonDocument): string {
-  const extension = fileExtension(doc.title)
-  return (IMPORTABLE_EXTENSIONS as readonly string[]).includes(extension)
-    ? extension.slice(1).toUpperCase()
-    : ""
-}
-
-export function FileTree({ documents, activeId, onSelect, onAdd, onRename, onDelete, onMove, onUpload, onDownload }: FileTreeProps) {
-  const tree = useMemo(() => buildTree(documents), [documents])
-  const [expanded, setExpanded] = useState<Set<number>>(() => new Set(documents.filter((d) => d.isFolder).map((d) => d.id)))
+export function FileTree({
+  documents,
+  activeId,
+  onSelect,
+  onAdd,
+  onRename,
+  onDelete,
+  onMove,
+  onUpload,
+  onDownload,
+  sort = "name",
+  onDuplicate,
+  onShare,
+  onPublish,
+  onImportTopic,
+}: FileTreeProps) {
+  const tree = useMemo(() => buildTree(documents, sort), [documents, sort])
+  // Collapsed rather than expanded: the documents arrive after this mounts,
+  // so an "expanded" set seeded on mount started every folder closed. A
+  // folder is open until the reader closes it.
+  const [collapsed, setCollapsed] = useState<Set<number>>(() => new Set())
   const [renamingId, setRenamingId] = useState<number | null>(null)
   const [renameValue, setRenameValue] = useState("")
   const [dragOverId, setDragOverId] = useState<number | null>(null)
   const [dragOverRoot, setDragOverRoot] = useState(false)
+  /** The row whose menu a right-click opened. The same menu as the row's
+   *  "…" button, so the two can never offer different actions. */
+  const [menuId, setMenuId] = useState<number | null>(null)
+
+  /** Every folder, with its path, for the "Move to" submenu. */
+  const folders = useMemo(
+    () =>
+      documents
+        .filter((d) => d.isFolder)
+        .map((d) => ({ doc: d, label: [folderPathOf(documents, d), d.title || "Untitled"].filter(Boolean).join(" / ") }))
+        .sort((a, b) => a.label.localeCompare(b.label)),
+    [documents],
+  )
 
   const toggleExpanded = (id: number) => {
-    setExpanded((prev) => {
+    setCollapsed((prev) => {
       const next = new Set(prev)
       if (next.has(id)) next.delete(id)
       else next.add(id)
@@ -140,6 +195,14 @@ export function FileTree({ documents, activeId, onSelect, onAdd, onRename, onDel
     setRenamingId(null)
   }
 
+  /** A move the tree allows: not into the row's own subtree, and not to
+   *  where it already is. */
+  const canMove = (id: number, targetFolderId: number | null) => {
+    if (targetFolderId != null && isSelfOrDescendant(documents, id, targetFolderId)) return false
+    const dragged = documents.find((d) => d.id === id)
+    return Boolean(dragged) && (dragged!.parentId ?? null) !== targetFolderId
+  }
+
   const handleDrop = (e: DragEvent, targetFolderId: number | null) => {
     e.preventDefault()
     e.stopPropagation()
@@ -152,17 +215,105 @@ export function FileTree({ documents, activeId, onSelect, onAdd, onRename, onDel
       onUpload?.(files, targetFolderId)
       return
     }
-    const draggedId = Number(e.dataTransfer.getData("text/reason-document-id"))
-    if (!draggedId) return
-    if (targetFolderId != null && isSelfOrDescendant(documents, draggedId, targetFolderId)) return
-    const dragged = documents.find((d) => d.id === draggedId)
-    if (!dragged || dragged.parentId === targetFolderId) return
-    onMove(draggedId, targetFolderId)
+    // A row from Topic Starters: the catalogue is read-only, so the drop
+    // saves a copy here rather than moving anything out of it.
+    const topicId = draggedId(e.dataTransfer, TOPIC_DRAG_TYPE)
+    if (topicId != null) {
+      onImportTopic?.(topicId, targetFolderId)
+      return
+    }
+    const id = draggedId(e.dataTransfer, DOCUMENT_DRAG_TYPE)
+    if (id == null || !canMove(id, targetFolderId)) return
+    onMove(id, targetFolderId)
   }
+
+  /** The actions on one row — shared by the "…" button and right-click. */
+  const rowMenu = (doc: ReasonDocument) => (
+    <DropdownMenuContent align="start" onClick={(e) => e.stopPropagation()}>
+      {doc.isFolder ? (
+        <>
+          <DropdownMenuItem onClick={() => onAdd(doc.id, false)}>
+            <FilePlus2 className="mr-2 h-4 w-4" />
+            New File
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => onAdd(doc.id, true)}>
+            <FolderPlus className="mr-2 h-4 w-4" />
+            New Folder
+          </DropdownMenuItem>
+        </>
+      ) : (
+        <>
+          <DropdownMenuItem onClick={() => onSelect(doc.id)}>
+            <ExternalLink className="mr-2 h-4 w-4" />
+            Open
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => onSelect(doc.id)}>
+            <Pencil className="mr-2 h-4 w-4" />
+            Edit
+          </DropdownMenuItem>
+          {onShare && (
+            <DropdownMenuItem onClick={() => onShare(doc.id)}>
+              <Share2 className="mr-2 h-4 w-4" />
+              Share…
+            </DropdownMenuItem>
+          )}
+        </>
+      )}
+      <DropdownMenuSeparator />
+      <DropdownMenuItem onClick={() => startRename(doc)}>
+        <TextCursorInput className="mr-2 h-4 w-4" />
+        Rename
+      </DropdownMenuItem>
+      {onDuplicate && (
+        <DropdownMenuItem onClick={() => onDuplicate(doc.id)}>
+          <Copy className="mr-2 h-4 w-4" />
+          Duplicate
+        </DropdownMenuItem>
+      )}
+      <DropdownMenuSub>
+        <DropdownMenuSubTrigger>
+          <FolderInput className="mr-2 h-4 w-4" />
+          Move to
+        </DropdownMenuSubTrigger>
+        <DropdownMenuSubContent className="max-h-72 overflow-auto">
+          <DropdownMenuItem disabled={!canMove(doc.id, null)} onClick={() => onMove(doc.id, null)}>
+            Top level
+          </DropdownMenuItem>
+          {folders.map(({ doc: folder, label }) => (
+            <DropdownMenuItem
+              key={folder.id}
+              disabled={!canMove(doc.id, folder.id)}
+              onClick={() => onMove(doc.id, folder.id)}
+            >
+              {label}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuSubContent>
+      </DropdownMenuSub>
+      {!doc.isFolder && (onDownload || onPublish) && <DropdownMenuSeparator />}
+      {!doc.isFolder && onDownload && (
+        <DropdownMenuItem onClick={() => onDownload(doc.id)}>
+          <Download className="mr-2 h-4 w-4" />
+          Download as .docx
+        </DropdownMenuItem>
+      )}
+      {!doc.isFolder && onPublish && (
+        <DropdownMenuItem onClick={() => onPublish(doc.id)}>
+          <Globe className="mr-2 h-4 w-4" />
+          Add to Topic Starters
+        </DropdownMenuItem>
+      )}
+      <DropdownMenuSeparator />
+      <DropdownMenuItem onClick={() => onDelete(doc.id)} className="text-destructive focus:text-destructive">
+        <Trash2 className="mr-2 h-4 w-4" />
+        Delete
+      </DropdownMenuItem>
+    </DropdownMenuContent>
+  )
 
   const renderNode = (node: TreeNode, depth: number): ReactNode => {
     const { doc } = node
-    const isOpen = expanded.has(doc.id)
+    const isOpen = !collapsed.has(doc.id)
     const isRenaming = renamingId === doc.id
 
     return (
@@ -174,8 +325,11 @@ export function FileTree({ documents, activeId, onSelect, onAdd, onRename, onDel
             dragOverId === doc.id && doc.isFolder && "ring-1 ring-primary",
           )}
           style={{ paddingLeft: 8 + depth * 16 }}
-          draggable
-          onDragStart={(e) => e.dataTransfer.setData("text/reason-document-id", String(doc.id))}
+          draggable={!isRenaming}
+          onDragStart={(e) => {
+            e.dataTransfer.setData(DOCUMENT_DRAG_TYPE, String(doc.id))
+            e.dataTransfer.effectAllowed = "copyMove"
+          }}
           onDragOver={(e) => {
             if (!doc.isFolder) return
             e.preventDefault()
@@ -192,6 +346,11 @@ export function FileTree({ documents, activeId, onSelect, onAdd, onRename, onDel
             else onSelect(doc.id)
           }}
           onDoubleClick={() => startRename(doc)}
+          onContextMenu={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            setMenuId(doc.id)
+          }}
         >
           {doc.isFolder ? (
             <button
@@ -232,64 +391,23 @@ export function FileTree({ documents, activeId, onSelect, onAdd, onRename, onDel
               className="h-6 flex-1 px-1 text-sm"
             />
           ) : (
-            <>
-              <span className="flex-1 truncate">{doc.title || "Untitled"}</span>
-              {!doc.isFolder && sourceLabel(doc) && (
-                <span
-                  className="shrink-0 rounded bg-muted px-1 text-[10px] uppercase text-muted-foreground"
-                  title="Opens in CardMirror"
-                >
-                  {sourceLabel(doc)}
-                </span>
-              )}
-            </>
+            // Every file is a CardMirror file however it arrived, so the row
+            // carries no ".docx"/".cmir" badge — the name is the whole label.
+            <span className="flex-1 truncate">{doc.title || "Untitled"}</span>
           )}
 
-          <DropdownMenu>
+          <DropdownMenu open={menuId === doc.id} onOpenChange={(open) => setMenuId(open ? doc.id : null)}>
             <DropdownMenuTrigger asChild>
               <button
                 type="button"
-                className="shrink-0 h-5 w-5 flex items-center justify-center rounded opacity-0 group-hover:opacity-100 hover:bg-accent"
+                aria-label={`Actions for ${doc.title || "Untitled"}`}
+                className="shrink-0 h-5 w-5 flex items-center justify-center rounded opacity-0 group-hover:opacity-100 hover:bg-accent data-[state=open]:opacity-100"
                 onClick={(e) => e.stopPropagation()}
               >
                 <MoreHorizontal className="h-3.5 w-3.5" />
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" onClick={(e) => e.stopPropagation()}>
-              {doc.isFolder && (
-                <>
-                  <DropdownMenuItem onClick={() => onAdd(doc.id, false)}>
-                    <FilePlus2 className="mr-2 h-4 w-4" />
-                    New File
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => onAdd(doc.id, true)}>
-                    <FolderPlus className="mr-2 h-4 w-4" />
-                    New Folder
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                </>
-              )}
-              {!doc.isFolder && onDownload && (
-                <>
-                  <DropdownMenuItem onClick={() => onDownload(doc.id)}>
-                    <Download className="mr-2 h-4 w-4" />
-                    Download as .docx
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                </>
-              )}
-              <DropdownMenuItem onClick={() => startRename(doc)}>
-                <Pencil className="mr-2 h-4 w-4" />
-                Rename
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => onDelete(doc.id)}
-                className="text-destructive focus:text-destructive"
-              >
-                <Trash2 className="mr-2 h-4 w-4" />
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
+            {rowMenu(doc)}
           </DropdownMenu>
         </div>
 
@@ -328,13 +446,14 @@ export function FileTree({ documents, activeId, onSelect, onAdd, onRename, onDel
         e.preventDefault()
         setDragOverRoot(true)
       }}
+      data-testid="file-tree"
       onDragLeave={() => setDragOverRoot(false)}
       onDrop={(e) => handleDrop(e, null)}
     >
       {documents.length === 0 ? (
         <div className="px-3 py-4">
           <p className="text-sm text-muted-foreground">
-            No documents yet. Create one, or drop a .docx here to open it in CardMirror.
+            No documents yet. Create one, drop a .docx here, or drag a topic starter in to keep your own copy.
           </p>
           <div className="mt-3 rounded-lg border border-dashed border-border p-2">
             <div className="mb-1 flex items-center justify-between gap-2 px-1">

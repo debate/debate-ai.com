@@ -1,0 +1,30 @@
+/**
+ * Layout fixes for the SVAR file manager in the docs sidebar's file manager
+ * dialog (`components/reason-docs/FileManagerView.tsx`), ported from quick
+ * search's `filemanager.css`.
+ *
+ * `<Willow>` wraps its children in a bare `<div class="wx-theme …">` with no
+ * height of its own while the widget root (`.wx-filemanager`) is
+ * `height: 100%`, so the file manager collapsed to the height of its rows.
+ * Stretch the theme wrapper, and the widget inside it, across the shell.
+ * Three classes deep so these outrank SVAR's own two-class rules whatever
+ * order the stylesheets are concatenated in.
+ */
+
+.debate-filemanager-shell > .wx-theme {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.debate-filemanager-shell > .wx-theme > .wx-filemanager {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  /* SVAR defaults the root to `max-height: 100vh`, which spills out of a
+     dialog that is shorter than the viewport. */
+  max-height: 100%;
+}
