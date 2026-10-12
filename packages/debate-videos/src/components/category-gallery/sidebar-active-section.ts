@@ -12,8 +12,8 @@
 
 import { SIDEBAR_TOOL_SECTIONS } from "./sidebar-tool-sections";
 
-/** Id of the tree's "Round Videos" node — the one section not backed by tool
- *  data. (Lectures sits outside the accordion; see `VideoSidebarTree`.) */
+/** Id of the tree's "Videos" node — the one section not backed by tool
+ *  data. */
 export const VIDEOS_SECTION_ID = "videos";
 
 /** Matches a route against a link, counting nested paths as that link's. */
@@ -28,7 +28,7 @@ interface SectionHref {
 }
 
 /**
- * Every route the tree covers, in tie-break order: Round Videos first, then
+ * Every route the tree covers, in tie-break order: Videos first, then
  * the tool sections. Order only decides ties — a longer match always wins, so
  * `/videos/pf` resolves to the video library rather than to a tool that
  * happens to sit at `/videos`.

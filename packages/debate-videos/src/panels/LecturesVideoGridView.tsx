@@ -90,8 +90,6 @@ interface LecturesVideoGridViewProps {
   // ---- Lecture-specific state ----
   /** Per-category video counts shown on the quick-link cards. */
   quickLinkCounts: Record<string, number>
-  /** Whether the lecture category gallery is visible. */
-  showLectureCategories: boolean
   /** The active lecture category filter key, or `"all"`. */
   selectedCategory: string
 
@@ -122,8 +120,6 @@ interface LecturesVideoGridViewProps {
   onToggleFavoritesOnly: () => void
   /** Toggles whether related videos are stacked onto one card/row. */
   onToggleStackedPlaylists: () => void
-  /** Toggles the lecture category gallery visibility. */
-  onToggleLectureCategories: () => void
   /** Toggles the favorite state of a single video. */
   onToggleFavorite: (id: string) => void
   /** Hides a video from the grid. */
@@ -187,7 +183,6 @@ export function LecturesVideoGridView({
   videoContainerRef,
   videosSectionRef,
   quickLinkCounts,
-  showLectureCategories,
   selectedCategory,
   onSearchChange,
   onSearchFocus,
@@ -198,7 +193,6 @@ export function LecturesVideoGridView({
   onToggleThumbnails,
   onViewModeChange,
   onToggleFavoritesOnly,
-  onToggleLectureCategories,
   onToggleFavorite,
   onHideVideo,
   onUnhideVideo,
@@ -290,8 +284,10 @@ export function LecturesVideoGridView({
     />
   )
 
-  const showLectureGallery =
-    showLectureCategories && browsingLectures && lectureCategories.length > 0
+  // The lecture categories are not in the sidebar: on the lecture library
+  // they are a bar of cards at the top of the page, the one place to switch
+  // between categories.
+  const showLectureGallery = browsingLectures && lectureCategories.length > 0
 
   /** Favorite round videos, for the separate tables on the favorites page. */
   const favoriteRounds = useMemo(
@@ -330,12 +326,8 @@ export function LecturesVideoGridView({
               the video library. */}
           <VideoSidebarTree
             counts={quickLinkCounts}
-            lectureCategories={lectureCategories}
-            selectedCategory={selectedCategory}
             browsingLectures={browsingLectures}
             activeId={activeQuickLinkId}
-            lecturesExpanded={showLectureCategories}
-            onToggleLectures={onToggleLectureCategories}
           />
 
           {accountSlot ? null : <Footer />}
@@ -347,19 +339,8 @@ export function LecturesVideoGridView({
         <div className="md:hidden">
           <QuickLinksGrid
             counts={quickLinkCounts}
-            showLectures={showLectureCategories}
-            onToggleLectures={onToggleLectureCategories}
             activeId={activeQuickLinkId}
           />
-
-          {showLectureGallery && (
-            <div className="mb-8">
-              <LectureCategoryGridGallery
-                categories={lectureCategories}
-                selectedCategory={selectedCategory}
-              />
-            </div>
-          )}
 
           {/* The rest of the sidebar tree — Apps / Coaching / Research /
               Practice and the glossary/rankings pair. The tiles above cover
@@ -376,6 +357,17 @@ export function LecturesVideoGridView({
         </div>
 
         <div ref={videosSectionRef} className="scroll-mt-20" />
+
+        {/* Lecture categories, on every breakpoint: clicking a card switches
+            the grid to that category. */}
+        {showLectureGallery && (
+          <nav className="mb-6" aria-label="Lecture categories">
+            <LectureCategoryGridGallery
+              categories={lectureCategories}
+              selectedCategory={selectedCategory}
+            />
+          </nav>
+        )}
 
         {/* The Greatest of All-Time collection opens on its own banner. */}
         {currentCategory === "topPicks" && <GoatSparklesHeading />}

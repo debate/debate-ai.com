@@ -62,8 +62,8 @@ export function MobileSidebarDrawer({
                 fill={kind === "cards"}
               />
             )}
-            {/* The same tree as the desktop column, on every view: Round Videos,
-                Lectures and the tool sections. */}
+            {/* The same tree as the desktop column, on every view: Videos
+                (Lectures included) and the tool sections. */}
             {kind !== "cards" && kind !== "own" && (
               <>
                 <LibrarySidebarTree />

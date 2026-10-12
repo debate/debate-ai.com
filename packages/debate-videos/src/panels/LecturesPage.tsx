@@ -129,7 +129,6 @@ export function LecturesPage({ dockSlot, accountSlot, headerActionsSlot, topicAr
 
   const [dictSearchTerm, setDictSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
-  const [showLectureCategories, setShowLectureCategories] = useState(true)
   const [statsModalOpen, setStatsModalOpen] = useState(false)
   const youtubeStats = useYouTubeStats()
 
@@ -190,11 +189,6 @@ export function LecturesPage({ dockSlot, accountSlot, headerActionsSlot, topicAr
       const nextView: CategoryType = slugState.view ?? "lectures"
       actions.setCurrentCategory(nextView)
       setSelectedCategory("all")
-      // A style route still uses the shared "lectures" grid view internally,
-      // but it is a round-archive destination.  Do not leave the Lectures
-      // section expanded/looking selected after clicking College, Policy, PF,
-      // or LD merely because that implementation detail says "lectures".
-      setShowLectureCategories(nextView === "lectures" && !slugState.style)
       scrollToVideos()
     } else if (slug) {
       // Unknown slug → treat as lecture-category id
@@ -204,7 +198,6 @@ export function LecturesPage({ dockSlot, accountSlot, headerActionsSlot, topicAr
       actions.setCurrentCategory("lectures")
       setSelectedCategory(slug)
       scrollToVideos()
-      setShowLectureCategories(true)
     } else {
       actions.setSelectedStyle("")
       actions.setShowFavoritesOnly(false)
@@ -463,10 +456,6 @@ export function LecturesPage({ dockSlot, accountSlot, headerActionsSlot, topicAr
     dockSlot,
     accountSlot,
     counts: quickLinkCounts,
-    lectureCategories,
-    selectedCategory,
-    lecturesExpanded: showLectureCategories,
-    onToggleLectures: () => setShowLectureCategories((shown) => !shown),
   }
 
   if (state.currentCategory === "leaderboard") {
@@ -549,7 +538,6 @@ export function LecturesPage({ dockSlot, accountSlot, headerActionsSlot, topicAr
       videoContainerRef={state.videoContainerRef}
       videosSectionRef={videosSectionRef}
       quickLinkCounts={quickLinkCounts}
-      showLectureCategories={showLectureCategories}
       selectedCategory={selectedCategory}
       youtubeStats={youtubeStats}
       statsModalOpen={statsModalOpen}
@@ -563,7 +551,6 @@ export function LecturesPage({ dockSlot, accountSlot, headerActionsSlot, topicAr
       onViewModeChange={actions.setViewMode}
       onToggleFavoritesOnly={() => actions.setShowFavoritesOnly(!state.showFavoritesOnly)}
       onToggleStackedPlaylists={() => actions.setStackedPlaylists(!state.stackedPlaylists)}
-      onToggleLectureCategories={() => setShowLectureCategories((v) => !v)}
       onToggleFavorite={actions.toggleFavorite}
       onHideVideo={actions.hideVideo}
       onUnhideVideo={actions.unhideVideo}

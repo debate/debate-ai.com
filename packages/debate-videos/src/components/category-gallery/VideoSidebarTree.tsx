@@ -1,10 +1,9 @@
 /**
  * @fileoverview Collapsible navigation tree shown in the persistent left
  * sidebar on the videos pages. Structure:
- *   Round Videos (h1, expandable, heading-only)
+ *   Videos (h1, expandable, heading-only)
  *     -> All Videos / College Debates / Policy / PF / LD / Greatest of All-Time /
- *        My Favorites / Watch History (h2, plain links, all peers)
- *   Lectures (h1, expandable, heading-only) -> lecture categories (h2)
+ *        My Favorites / Watch History / Lectures (h2, plain links, all peers)
  *   Apps / Coaching / Research / Practice (h1, expandable) -> tool links
  *     — this trailing portion is `ToolNavTree`, shared with the non-video
  *       tool pages those links point to (see `ToolNavTree`'s file comment).
@@ -14,32 +13,22 @@
  * subsets of it — they are sibling collections of the same library, and the
  * extra level only bought an indent and a second chevron to fight with.
  *
- * Exactly one row in the tree is highlighted at a time. The round collections
- * and the lecture categories are two separate highlight rules — `activeId` for
- * the first, `selectedCategory` for the second — and the second only applies
- * while `browsingLectures` says the page is in the lecture library, because
- * `selectedCategory` defaults to "all" everywhere else and lit "All Lectures"
- * up next to whichever round collection was open.
- *
- * Lectures is a top-level section rather than a node inside the video tree:
- * the two libraries are peers — rounds recorded at tournaments on one side,
- * teaching videos on the other — and burying one two levels inside the other
- * made the lecture categories read as a sub-filter of the round archive.
+ * Lectures is a single row in that list. Its categories used to be a section
+ * of their own here; they now live only on the lectures page itself, as a
+ * bar of category cards above the grid (`LectureCategoryGridGallery`), so
+ * the sidebar stays a short list of destinations. The Lectures row lights up
+ * on every lecture-library page (`browsingLectures`), category pages
+ * included.
  *
  * The h1 sections are groupings, not destinations: a plain click on one only
  * toggles it (a ctrl/shift/middle-click still opens its flagship page in a
- * new tab, via `TreeItem`'s `sectionHref`). "Round Videos" and the
- * `ToolNavTree` sections form one accordion — exactly one is open and a
- * closed section renders none of its links. The open one follows the route,
- * which is what makes clicking an app dock button load that destination's
- * section and nothing else (see `sidebar-active-section`). Lectures sits
- * outside that accordion: its expanded state is the page's own
- * `showLectureCategories`, the same flag that shows the category gallery
- * above the grid, so the sidebar and the page agree on whether you are
- * browsing lectures.
+ * new tab, via `TreeItem`'s `sectionHref`). "Videos" and the `ToolNavTree`
+ * sections form one accordion — exactly one is open and a closed section
+ * renders none of its links. The open one follows the route, which is what
+ * makes clicking an app dock button load that destination's section and
+ * nothing else (see `sidebar-active-section`).
  *
- * Every row draws a plain gray Lucide glyph; the lecture categories take
- * theirs from `lecture-category-icons`.
+ * Every row draws a plain gray Lucide glyph.
  */
 
 "use client";
@@ -47,11 +36,8 @@
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Clapperboard, History } from "lucide-react";
-import type { LectureCategoryFacet } from "../../types/videos";
 import { TreeItem } from "./TreeItem";
-import { lectureCategoryHref } from "../../panels/lectureRouteConfig";
 import { ToolNavTree } from "./ToolNavTree";
-import { LECTURE_CATEGORY_ICONS } from "./lecture-category-icons";
 import {
   VIDEO_ALL_LINK,
   VIDEO_COLLEGE_LINK,
@@ -68,42 +54,25 @@ import {
 interface VideoSidebarTreeProps {
   /** Per-category video counts, keyed by quick-link id. */
   counts?: Record<string, number>;
-  /** Lecture category facets (label, slug, count) from `/api/videos/meta`. */
-  lectureCategories: LectureCategoryFacet[];
-  /** Slug of the lecture category currently being browsed, or `"all"`. */
-  selectedCategory?: string;
   /**
-   * Whether the page is browsing the lecture library at all.
-   *
-   * `selectedCategory` alone cannot answer that: it sits at `"all"` on every
-   * video route, including the round collections and the glossary and
-   * rankings pages, which is what used to light up "All Lectures" at the same
-   * time as College Debates. The category rows highlight only when this is
-   * set.
+   * Whether the page is browsing the lecture library (`/lectures` or one of
+   * its categories). Lights the Lectures row even when `activeId` is unset,
+   * as it is on a category page.
    */
   browsingLectures?: boolean;
   /** Id of the currently active nav item, used for highlighting. */
   activeId?: string;
-  /** Whether the "Lectures" section is expanded. */
-  lecturesExpanded: boolean;
-  /** Toggles the "Lectures" section's expanded state. */
-  onToggleLectures: () => void;
 }
 
 export function VideoSidebarTree({
   counts,
-  lectureCategories,
-  selectedCategory,
   browsingLectures = false,
   activeId,
-  lecturesExpanded,
-  onToggleLectures,
 }: VideoSidebarTreeProps) {
   const pathname = usePathname();
-  // "Round Videos" and the tool sections are one accordion: this component
-  // owns which of them is open and hands the same state down to `ToolNavTree`,
-  // so opening a tool section closes Round Videos rather than stacking on top
-  // of it. Lectures is not part of it — see the file comment.
+  // "Videos" and the tool sections are one accordion: this component owns
+  // which of them is open and hands the same state down to `ToolNavTree`, so
+  // opening a tool section closes Videos rather than stacking on top of it.
   const routeSectionId = sidebarSectionForPath(pathname);
   const [expandedSectionIds, setExpandedSectionIds] =
     useState<readonly string[]>(ALL_SIDEBAR_SECTION_IDS);
@@ -124,35 +93,13 @@ export function VideoSidebarTree({
 
   const videosExpanded = expandedSectionIds.includes(VIDEOS_SECTION_ID);
 
-  const lectureCategoryItems = React.useMemo(() => {
-    if (lectureCategories.length === 0) return [];
-    const totalCount = lectureCategories.reduce((sum, c) => sum + c.count, 0);
-    return [
-      { id: "all", title: "All Lectures", count: totalCount },
-      ...lectureCategories.map((c) => ({ id: c.key, title: c.label, count: c.count })),
-    ];
-  }, [lectureCategories]);
-
-  const buildLectureCategoryHref = (categoryId: string) => {
-    // Clicking the open category again goes back to all lectures.
-    return lectureCategoryHref(selectedCategory === categoryId ? "all" : categoryId);
-  };
-
   const lecturesLink = SIDEBAR_VIDEO_LINKS_BY_ID.lectures;
-  const historyLink = SIDEBAR_VIDEO_LINKS_BY_ID.history;
-  const lecturesActive = activeId === "lectures";
-  // The "Lectures" heading itself only lights up via `activeId`, matching
-  // "Round Videos" never highlighting either — but the category rows below it
-  // (their own separate highlight rule) light up while `browsingLectures` says
-  // the page is in the lecture library at all, not only when `activeId` is
-  // literally `"lectures"`.
-  const lectureCategoriesActive = lecturesActive || browsingLectures;
 
   return (
     <nav className="flex flex-col gap-3 text-sm" aria-label="Videos">
       <TreeItem
         level={1}
-        title="Round Videos"
+        title="Videos"
         icon={Clapperboard}
         sectionHref={VIDEO_COLLEGE_LINK.href}
         expanded={videosExpanded}
@@ -199,49 +146,16 @@ export function VideoSidebarTree({
           isActive={activeId === "history"}
           icon={History}
         />
-      </TreeItem>
 
-      {lectureCategoryItems.length > 0 ? (
         <TreeItem
-          level={1}
-          title={lecturesLink.title}
-          icon={lecturesLink.glyph}
-          // Same deal as the Round Videos heading: a plain click toggles the
-          // section, a modifier click opens the lecture library itself.
-          sectionHref={lecturesLink.href}
-          count={counts?.lectures}
-          isActive={lecturesActive}
-          expanded={lecturesExpanded}
-          onToggleExpand={onToggleLectures}
-        >
-          {lectureCategoryItems.map((item) => (
-            <TreeItem
-              key={item.id}
-              level={2}
-              href={buildLectureCategoryHref(item.id)}
-              title={item.title}
-              icon={LECTURE_CATEGORY_ICONS[item.title]}
-              count={item.count}
-              // A style/round route resets the lecture filter to "all" as an
-              // implementation detail. Do not therefore leave All Lectures
-              // selected alongside the active debate-video tab.
-              isActive={lectureCategoriesActive && (selectedCategory === item.id || (item.id === "all" && !selectedCategory))}
-            />
-          ))}
-        </TreeItem>
-      ) : (
-        // No categories to expand into (they arrive with `/api/videos/meta`).
-        // A heading-only row would toggle nothing and read as a dead click, so
-        // the section is a plain link until its children exist.
-        <TreeItem
-          level={1}
+          level={2}
           href={lecturesLink.href}
           title={lecturesLink.title}
           icon={lecturesLink.glyph}
           count={counts?.lectures}
-          isActive={lecturesActive}
+          isActive={activeId === "lectures" || browsingLectures}
         />
-      )}
+      </TreeItem>
 
       <ToolNavTree expandedSectionIds={expandedSectionIds} onToggleSection={toggleSection} />
     </nav>

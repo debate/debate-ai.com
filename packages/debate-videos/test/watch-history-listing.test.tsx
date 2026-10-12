@@ -6,7 +6,7 @@
  * *lecture category id*, so a missing entry there does not 404, it silently
  * renders an empty category page named "history".
  *
- * And its place in the nav: the row sits inside the Round Videos
+ * And its place in the nav: the row sits inside the Videos
  * dropdown expander, after My Favorites, because the history spans both
  * libraries and is a peer of the round collections. `sidebar-video-links.test.tsx`
  * already holds every surface to `SIDEBAR_VIDEO_LINKS`; what this adds is the
@@ -47,11 +47,6 @@ const { VideoSidebarTree } = await import(
 function sidebarHtml(): string {
   return renderToStaticMarkup(
     createElement(VideoSidebarTree, {
-      lectureCategories: [
-        { key: "theory", label: "Counterplans & Theory", count: 12, maxViews: 900 },
-      ],
-      lecturesExpanded: true,
-      onToggleLectures: () => {},
       activeId: "history",
       counts: { history: 7 },
     }),
@@ -78,16 +73,15 @@ describe("the watch history's place in the sidebar", () => {
     });
   });
 
-  it("renders inside the Round Videos dropdown rather than as a peer of it", () => {
+  it("renders inside the Videos dropdown rather than as a peer of it", () => {
     const html = sidebarHtml();
     expect(html).toContain("Watch History");
-    // Inside the Round Videos dropdown, after My Favorites, not after the
-    // lecture categories.
+    // Inside the Videos dropdown, after My Favorites and before Lectures.
     expect(html.indexOf("Watch History")).toBeGreaterThan(
       html.indexOf("My Favorites"),
     );
     expect(html.indexOf("Watch History")).toBeLessThan(
-      html.indexOf("Counterplans &amp; Theory"),
+      html.indexOf('href="/lectures"'),
     );
     expect(html.indexOf('href="/videos/history"')).toBeGreaterThan(
       html.indexOf('href="/videos/favorites"'),
