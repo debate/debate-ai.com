@@ -8,7 +8,8 @@
  * and (optionally) re-runs the same model extraction the admin form's
  * "Auto-fill with AI" uses (`askModel` in `video-autofill.ts`) over the
  * stored title, channel and description, writing back the round fields it
- * finds: tournament, round, teams, winner, decision, speech docs. A field the
+ * finds: tournament, round, teams, each side's arguments, winner, decision,
+ * speech docs. A field the
  * model leaves empty keeps its stored value rather than being blanked.
  *
  * Writes go through {@link updateLibraryVideo}, so the rows are marked
@@ -39,6 +40,8 @@ const ROUND_FIELDS = [
   "affWin",
   "judgeDecision",
   "speechDocsUrl",
+  "arg1ac",
+  "arg2nr",
 ] as const;
 
 export interface ReclassifyByTitleOptions {

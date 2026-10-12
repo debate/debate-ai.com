@@ -41,6 +41,10 @@ export interface LibraryVideo {
   negTeam: string | null;
   affWin: boolean | null;
   judgeDecision: string | null;
+  /** The affirmative's arguments — plan or advocacy and advantages (the 1AC). */
+  arg1ac?: string | null;
+  /** The negative's positions — what was run, ideally what went for the 2NR. */
+  arg2nr?: string | null;
   isTopPick: boolean;
   speechDocsUrl: string | null;
   seasonYear: number;
@@ -90,6 +94,8 @@ export interface EditForm {
   affWin: string;
   judgeDecision: string;
   speechDocsUrl: string;
+  arg1ac: string;
+  arg2nr: string;
   description: string;
   isTopPick: boolean;
 }
@@ -109,6 +115,8 @@ export function toForm(video: LibraryVideo): EditForm {
     affWin: video.affWin === null || video.affWin === undefined ? "unknown" : String(video.affWin),
     judgeDecision: video.judgeDecision ?? "",
     speechDocsUrl: video.speechDocsUrl ?? "",
+    arg1ac: video.arg1ac ?? "",
+    arg2nr: video.arg2nr ?? "",
     description: video.description ?? "",
     isTopPick: !!video.isTopPick,
   };
@@ -142,6 +150,8 @@ function toPatch(form: EditForm) {
     affWin: form.affWin === "unknown" ? null : form.affWin === "true",
     judgeDecision: form.judgeDecision.trim() || null,
     speechDocsUrl: form.speechDocsUrl.trim() || null,
+    arg1ac: form.arg1ac.trim() || null,
+    arg2nr: form.arg2nr.trim() || null,
     description: form.description,
     isTopPick: form.isTopPick,
   };
@@ -162,6 +172,8 @@ const SUGGESTABLE_FIELDS = [
   "affWin",
   "judgeDecision",
   "speechDocsUrl",
+  "arg1ac",
+  "arg2nr",
 ] as const;
 
 /**
@@ -197,6 +209,8 @@ export function emptyLibraryVideo(): LibraryVideo {
     negTeam: null,
     affWin: null,
     judgeDecision: null,
+    arg1ac: null,
+    arg2nr: null,
     isTopPick: false,
     speechDocsUrl: null,
     seasonYear: 0,
@@ -221,6 +235,8 @@ type AutofillFields = Partial<
     | "affWin"
     | "judgeDecision"
     | "speechDocsUrl"
+    | "arg1ac"
+    | "arg2nr"
   >
 >;
 
@@ -245,6 +261,8 @@ function applyAutofill(form: EditForm, fields: AutofillFields): EditForm {
   setText("negTeam", fields.negTeam);
   setText("judgeDecision", fields.judgeDecision);
   setText("speechDocsUrl", fields.speechDocsUrl);
+  setText("arg1ac", fields.arg1ac);
+  setText("arg2nr", fields.arg2nr);
   if (typeof fields.viewCount === "number") next.viewCount = String(fields.viewCount);
   if (fields.style !== undefined) next.style = fields.style === null ? "none" : String(fields.style);
   if (typeof fields.affWin === "boolean") next.affWin = String(fields.affWin);
@@ -415,6 +433,23 @@ export function VideoEditDialog({
     </div>
   );
 
+  /** A two-line box for one side's arguments, which run longer than a team name. */
+  const argumentsField = (key: "arg1ac" | "arg2nr", label: string, placeholder: string) => (
+    <div className="flex flex-col gap-1.5">
+      <Label htmlFor={`video-${key}`}>{label}</Label>
+      <textarea
+        id={`video-${key}`}
+        value={form?.[key] ?? ""}
+        placeholder={placeholder}
+        onChange={(event) =>
+          setForm((current) => (current ? { ...current, [key]: event.target.value } : current))
+        }
+        rows={2}
+        className="border-input focus-visible:border-ring focus-visible:ring-ring/50 dark:bg-input/30 placeholder:text-muted-foreground w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:ring-[3px]"
+      />
+    </div>
+  );
+
   return (
     <Dialog open={!!video} onOpenChange={(open) => (open ? undefined : onClose())}>
       <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-2xl">
@@ -461,7 +496,8 @@ export function VideoEditDialog({
                 </Button>
                 <span className="text-muted-foreground text-xs">
                   Reads YouTube&apos;s title and description and fills in the style, category,
-                  tournament, teams and result. Empty answers leave your fields alone.
+                  tournament, teams, each side&apos;s arguments and result. Empty answers leave
+                  your fields alone.
                 </span>
               </div>
             )}
@@ -542,6 +578,8 @@ export function VideoEditDialog({
               </div>
               {field("judgeDecision", "Judge decision")}
               {field("speechDocsUrl", "Speech docs URL")}
+              {argumentsField("arg1ac", "Aff arguments", "Plan / advocacy and advantages (1AC)")}
+              {argumentsField("arg2nr", "Neg arguments", "Positions run, e.g. Cap K, Politics DA, T")}
             </div>
 
             <div className="flex flex-col gap-1.5">

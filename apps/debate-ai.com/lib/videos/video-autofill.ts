@@ -9,9 +9,18 @@
  *    not undo the correction.
  * 2. **The model** — the fields the sync's regex parsers guess at from the
  *    title and description (style, lecture category, tournament, round,
- *    teams, winner, decision, speech-doc link). The model reads the same text
- *    and answers into a fixed schema; the category is constrained to
- *    `LECTURE_CATEGORIES` so auto-fill can't invent a new library shelf.
+ *    teams, each side's arguments, winner, decision, speech-doc link). The
+ *    model reads the same text and answers with one JSON object; the category
+ *    is checked against `LECTURE_CATEGORIES` so auto-fill can't invent a new
+ *    library shelf.
+ *
+ * The request is a plain chat completion, the same shape the site's other AI
+ * routes send, with the JSON shape spelled out in the prompt. It used to ask
+ * OpenRouter for a strict `json_schema` response from `anthropic/claude-opus-5`,
+ * and OpenRouter rejected that request, so every auto-fill failed with only
+ * "AI API returned 4xx" to show for it. Errors now carry the provider's own
+ * message, and a failed OpenRouter call falls back to Anthropic when that key
+ * is configured too.
  *
  * Nothing here writes to the database. The route returns suggestions, the
  * form shows them, and the admin saves (or doesn't) as with any edit.
@@ -25,8 +34,10 @@ import {
 import { LECTURE_CATEGORIES } from "@debate/data-sync/src/youtube/parsers/lecture-classifier";
 import { getEnv } from "@/lib/env";
 
-const ANTHROPIC_MODEL = "claude-opus-5";
-const OPENROUTER_MODEL = "anthropic/claude-opus-5";
+// The models the site's other AI routes (`card-ai-analysis`, `reason-ai`,
+// the transcript summaries) already call in production.
+const ANTHROPIC_MODEL = "claude-sonnet-4-6";
+const OPENROUTER_MODEL = "anthropic/claude-sonnet-4.6";
 const ANTHROPIC_VERSION = "2023-06-01";
 const MAX_TOKENS = 2_000;
 /** Descriptions run long (full tournament credits, sponsor blurbs); the facts are near the top. */
@@ -56,6 +67,10 @@ export interface AutofillFields {
   affWin?: boolean | null;
   judgeDecision?: string | null;
   speechDocsUrl?: string | null;
+  /** The affirmative's arguments: the plan or advocacy and its advantages (the 1AC). */
+  arg1ac?: string | null;
+  /** The negative's positions: off-case and on-case arguments, ideally what went for the 2NR. */
+  arg2nr?: string | null;
 }
 
 export interface AutofillResult {
@@ -77,10 +92,11 @@ const STYLE_BY_LABEL: Record<string, number | null> = {
 };
 
 /**
- * The model's answer schema. Every field is required and nothing is nullable
- * — an empty string (or `unknown` / `none`) means "can't tell" — which keeps
- * the schema inside what structured output accepts and gives the parser one
- * shape to read.
+ * The model's answer shape. Every field is required and nothing is nullable
+ * — an empty string (or `unknown` / `none`) means "can't tell" — so the parser
+ * reads one shape. Not sent as a structured-output schema (see the module
+ * note); kept as the single description of the answer for the prompt and
+ * tests.
  */
 export const VIDEO_AUTOFILL_SCHEMA = {
   type: "object",
@@ -95,6 +111,8 @@ export const VIDEO_AUTOFILL_SCHEMA = {
     "winner",
     "judgeDecision",
     "speechDocsUrl",
+    "affArguments",
+    "negArguments",
   ],
   properties: {
     style: { type: "string", enum: Object.keys(STYLE_BY_LABEL) },
@@ -106,12 +124,15 @@ export const VIDEO_AUTOFILL_SCHEMA = {
     winner: { type: "string", enum: ["aff", "neg", "unknown"] },
     judgeDecision: { type: "string" },
     speechDocsUrl: { type: "string" },
+    affArguments: { type: "string" },
+    negArguments: { type: "string" },
   },
 } as const;
 
 export const VIDEO_AUTOFILL_PROMPT = `You catalogue YouTube videos for a competitive debate video library (Policy, Public Forum, Lincoln-Douglas, college debate).
 
-Given a video's title, channel and description, fill in its library metadata. Answer with JSON only, matching the schema.
+Given a video's title, channel and description, fill in its library metadata. Answer with a single JSON object and nothing else — no prose, no code fence — with exactly these keys:
+{"style": "", "category": "", "tournament": "", "roundLevel": "", "affTeam": "", "negTeam": "", "winner": "", "judgeDecision": "", "speechDocsUrl": "", "affArguments": "", "negArguments": ""}
 
 Fields:
 - style: "policy", "pf" (Public Forum), "ld" (Lincoln-Douglas), "college" (NDT/CEDA/college policy or parli) when the video is a recorded debate round. "lecture" for anything else — lectures, drills, demo explanations, documentaries, advice.
@@ -122,6 +143,10 @@ Fields:
 - winner: "aff" or "neg" only when the description or title states the result; otherwise "unknown".
 - judgeDecision: the decision as stated, e.g. "3-2 Aff" or "2-1 for Neg". Empty if not stated.
 - speechDocsUrl: a link from the description to the round's speech documents (opencaselist, Google Drive/Docs, Dropbox, speechdrop). Empty if there is none. Never invent a URL.
+- affArguments: the affirmative's case as stated — the plan or advocacy and its advantages (the 1AC), e.g. "Space cooperation plan; Asteroid and Russia advantages". Empty if not stated.
+- negArguments: the negative's positions as stated — off-case (kritiks, counterplans, disadvantages, topicality) and on-case, preferring what went for the 2NR, e.g. "Cap K, Politics DA, T-Substantial". Empty if not stated.
+
+Allowed values: style is one of ${Object.keys(STYLE_BY_LABEL).map((s) => `"${s}"`).join(", ")}. winner is "aff", "neg" or "unknown". category is "none" or one of: ${LECTURE_CATEGORIES.map((c) => `"${c}"`).join(", ")}.
 
 Use only what the text says. Leave a field empty rather than guess.`;
 
@@ -188,6 +213,9 @@ export function parseAutofillReply(reply: string): AutofillFields | null {
   fields.judgeDecision = text(answer.judgeDecision);
   fields.affWin = answer.winner === "aff" ? true : answer.winner === "neg" ? false : null;
 
+  fields.arg1ac = text(answer.affArguments);
+  fields.arg2nr = text(answer.negArguments);
+
   const docs = text(answer.speechDocsUrl);
   fields.speechDocsUrl = docs && /^https?:\/\//i.test(docs) ? docs : null;
 
@@ -218,81 +246,118 @@ async function readYouTube(videoId: string, warnings: string[]): Promise<Autofil
   }
 }
 
+/** One provider attempt: the reply text, or a user-facing error. */
+type ModelReply = { ok: true; text: string } | { ok: false; error: string };
+
+/** The provider's own error message out of a non-OK body, trimmed for the form. */
+function providerError(provider: string, status: number, body: string): string {
+  let message = body.trim();
+  try {
+    const parsed = JSON.parse(body) as { error?: { message?: string } | string };
+    const inner = typeof parsed.error === "string" ? parsed.error : parsed.error?.message;
+    if (inner) message = inner;
+  } catch {
+    // Not JSON — keep the raw text.
+  }
+  return `${provider} returned ${status}${message ? `: ${message.slice(0, 300)}` : "."}`;
+}
+
+async function callOpenRouter(key: string, content: string): Promise<ModelReply> {
+  const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${key}`,
+      "HTTP-Referer": "https://debate-ai.com",
+      "X-Title": "Debate AI",
+    },
+    body: JSON.stringify({
+      model: OPENROUTER_MODEL,
+      max_tokens: MAX_TOKENS,
+      messages: [
+        { role: "system", content: VIDEO_AUTOFILL_PROMPT },
+        { role: "user", content },
+      ],
+    }),
+  });
+  if (!res.ok) return { ok: false, error: providerError("OpenRouter", res.status, await res.text().catch(() => "")) };
+  const json = (await res.json()) as {
+    choices?: Array<{ message?: { content?: string | null } }>;
+    error?: { message?: string };
+  };
+  // OpenRouter can answer 200 with an `error` body when the upstream failed.
+  if (json.error) return { ok: false, error: `OpenRouter: ${json.error.message ?? "upstream error"}` };
+  return { ok: true, text: json.choices?.[0]?.message?.content ?? "" };
+}
+
+async function callAnthropic(key: string, content: string): Promise<ModelReply> {
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-api-key": key,
+      "anthropic-version": ANTHROPIC_VERSION,
+    },
+    body: JSON.stringify({
+      model: ANTHROPIC_MODEL,
+      max_tokens: MAX_TOKENS,
+      system: VIDEO_AUTOFILL_PROMPT,
+      messages: [{ role: "user", content }],
+    }),
+  });
+  if (!res.ok) return { ok: false, error: providerError("Anthropic", res.status, await res.text().catch(() => "")) };
+  const json = (await res.json()) as {
+    stop_reason?: string;
+    content?: Array<{ type?: string; text?: string }>;
+  };
+  if (json.stop_reason === "refusal") return { ok: false, error: "The model declined to read this video." };
+  return {
+    ok: true,
+    text: (json.content ?? [])
+      .filter((block) => block.type === "text")
+      .map((block) => block.text ?? "")
+      .join(""),
+  };
+}
+
 /**
  * Asks the model for the structured fields. Throws with a user-facing message.
  * Exported for bulk re-parsing (`reclassify-by-title.ts`), which reads stored
  * rows instead of the form.
+ *
+ * Tries OpenRouter first when its key is set (as the other AI routes do), then
+ * Anthropic; the second is only reached when the first failed.
  */
 export async function askModel(content: string): Promise<AutofillFields> {
   const openrouterKey = getEnv("OPENROUTER_API_KEY");
   const anthropicKey = getEnv("ANTHROPIC_API_KEY");
   if (!openrouterKey && !anthropicKey) throw new Error("AI features are not configured on the server.");
 
-  let res: Response;
-  try {
-    if (openrouterKey) {
-      res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          authorization: `Bearer ${openrouterKey}`,
-          "HTTP-Referer": "https://debate-ai.com",
-          "X-Title": "Debate AI",
-        },
-        body: JSON.stringify({
-          model: OPENROUTER_MODEL,
-          max_tokens: MAX_TOKENS,
-          response_format: {
-            type: "json_schema",
-            json_schema: { name: "video_metadata", strict: true, schema: VIDEO_AUTOFILL_SCHEMA },
-          },
-          messages: [
-            { role: "system", content: VIDEO_AUTOFILL_PROMPT },
-            { role: "user", content },
-          ],
-        }),
-      });
-    } else {
-      res = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          "x-api-key": anthropicKey!,
-          "anthropic-version": ANTHROPIC_VERSION,
-        },
-        body: JSON.stringify({
-          model: ANTHROPIC_MODEL,
-          max_tokens: MAX_TOKENS,
-          system: VIDEO_AUTOFILL_PROMPT,
-          output_config: {
-            effort: "low",
-            format: { type: "json_schema", schema: VIDEO_AUTOFILL_SCHEMA },
-          },
-          messages: [{ role: "user", content }],
-        }),
-      });
+  const attempts: Array<() => Promise<ModelReply>> = [];
+  if (openrouterKey) attempts.push(() => callOpenRouter(openrouterKey, content));
+  if (anthropicKey) attempts.push(() => callAnthropic(anthropicKey, content));
+
+  const errors: string[] = [];
+  for (const attempt of attempts) {
+    let reply: ModelReply;
+    try {
+      reply = await attempt();
+    } catch (error) {
+      reply = {
+        ok: false,
+        error: `Network error contacting AI provider: ${error instanceof Error ? error.message : String(error)}`,
+      };
     }
-  } catch (error) {
-    throw new Error(`Network error contacting AI provider: ${error instanceof Error ? error.message : String(error)}`);
+    if (!reply.ok) {
+      console.error(`video-autofill: ${reply.error}`);
+      errors.push(reply.error);
+      continue;
+    }
+    const fields = parseAutofillReply(reply.text);
+    if (fields) return fields;
+    errors.push("The model returned an unreadable answer.");
   }
-  if (!res.ok) throw new Error(`AI API returned ${res.status}.`);
-
-  const json = (await res.json()) as {
-    stop_reason?: string;
-    content?: Array<{ type?: string; text?: string }>;
-    choices?: Array<{ message?: { content?: string } }>;
-  };
-  if (json.stop_reason === "refusal") throw new Error("The model declined to read this video.");
-
-  const reply =
-    json.choices?.[0]?.message?.content ??
-    (json.content ?? [])
-      .filter((block) => block.type === "text")
-      .map((block) => block.text ?? "")
-      .join("");
-  const fields = parseAutofillReply(reply);
-  if (!fields) throw new Error("The model returned an unreadable answer.");
-  return fields;
+  throw new Error(errors.join(" "));
 }
 
 /**
