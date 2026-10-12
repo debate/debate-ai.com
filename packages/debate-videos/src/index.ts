@@ -83,12 +83,14 @@ export {
   useSidebarCollapsed,
 } from "./ui/layout/sidebar-collapse";
 export {
+  ICON_HOVER_DURATIONS,
   ICON_HOVER_EFFECTS,
   SIDEBAR_ICON_ANIMATIONS_KEY,
   attachSidebarIconHover,
   readSidebarIconAnimations,
   setSidebarIconAnimations,
   subscribeSidebarIconAnimations,
+  pickIconHoverDuration,
   pickIconHoverEffect,
   useSidebarIconHover,
 } from "./ui/layout/sidebar-icon-hover";
