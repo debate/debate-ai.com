@@ -1,7 +1,13 @@
 // @vitest-environment jsdom
 import { describe, expect, it } from "vitest";
 
-import { ICON_HOVER_EFFECTS, pickIconHoverEffect, sidebarIconFor } from "../src/ui/layout/sidebar-icon-hover";
+import {
+  ICON_HOVER_DURATIONS,
+  ICON_HOVER_EFFECTS,
+  pickIconHoverDuration,
+  pickIconHoverEffect,
+  sidebarIconFor,
+} from "../src/ui/layout/sidebar-icon-hover";
 
 describe("sidebar icon hover", () => {
   it("has wiggle, bounce, pulse, spin and shake, and never plays one twice running", () => {
@@ -10,6 +16,14 @@ describe("sidebar icon hover", () => {
     for (const previous of ICON_HOVER_EFFECTS) {
       for (const r of [0, 0.5, 0.999]) expect(pickIconHoverEffect(previous, () => r)).not.toBe(previous);
     }
+  });
+
+  it("lasts 0.5s or 1s, picked at random each hover", () => {
+    expect([...ICON_HOVER_DURATIONS]).toEqual([0.5, 1]);
+    expect(pickIconHoverDuration(() => 0)).toBe(0.5);
+    expect(pickIconHoverDuration(() => 0.49)).toBe(0.5);
+    expect(pickIconHoverDuration(() => 0.5)).toBe(1);
+    expect(pickIconHoverDuration(() => 0.999)).toBe(1);
   });
 
   it("finds the icon of the row under the pointer, inside the sidebar only", () => {
