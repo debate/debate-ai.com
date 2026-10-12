@@ -12,8 +12,14 @@ import { eq } from "drizzle-orm";
 import type { YouTubeVideoStatus, YouTubeStatusReport } from "@debate/data-sync/src/youtube/youtube-api";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
-import { videos, youtubeRoundVideos } from "../../database/schema";
-import { resyncVideoViewCounts, type ViewCountResyncResult } from "../resync-view-counts";
+import { videos, youtubeRoundVideos, youtubeVideoExclusions } from "../../database/schema";
+import {
+  countUnavailableVideos,
+  deleteUnavailableVideos,
+  parseUnavailableStates,
+  resyncVideoViewCounts,
+  type ViewCountResyncResult,
+} from "../resync-view-counts";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -313,5 +319,82 @@ describe("resyncVideoViewCounts", () => {
 
     expect(typeof result.durationMs).toBe("number");
     expect(result.durationMs).toBeGreaterThanOrEqual(0);
+  });
+});
+
+describe("removing unavailable videos", () => {
+  /** Inserts a published row as a resync would have left it. */
+  async function flagged(db: ReturnType<typeof drizzle>, id: string, availability: string, checked = true) {
+    await insertVideo(db, id, 10, 1_700_000_000_000, availability);
+    if (checked) {
+      await db
+        .update(videos)
+        .set({ availabilityCheckedAt: new Date(), missingChecks: 1 })
+        .where(eq(videos.videoId, id));
+    }
+  }
+
+  it("counts published rows per takedown state", async () => {
+    const db = await freshDb();
+    await flagged(db, "gone1", "removed");
+    await flagged(db, "gone2", "removed");
+    await flagged(db, "priv1", "private");
+    await flagged(db, "fine1", "available");
+
+    expect(await countUnavailableVideos(db)).toEqual({ removed: 2, private: 1, not_embeddable: 0 });
+  });
+
+  it("removes only the chosen states, drops the queue copy, and excludes them from resync", async () => {
+    const db = await freshDb();
+    await flagged(db, "gone1", "removed");
+    await flagged(db, "priv1", "private");
+    await flagged(db, "noembed1", "not_embeddable");
+    await flagged(db, "fine1", "available");
+    await insertQueuedVideo(db, "gone1", 10, "2024-01-01");
+
+    const removed = await deleteUnavailableVideos(db, ["removed", "not_embeddable"], "admin@example.com");
+
+    expect(removed.sort()).toEqual(["gone1", "noembed1"]);
+    const left = (await db.select({ id: videos.videoId }).from(videos)).map((row) => row.id).sort();
+    expect(left).toEqual(["fine1", "priv1"]);
+    expect(await db.select().from(youtubeRoundVideos)).toHaveLength(0);
+    const exclusions = await db.select().from(youtubeVideoExclusions);
+    expect(exclusions.map((row) => row.videoId).sort()).toEqual(["gone1", "noembed1"]);
+    expect(exclusions.every((row) => row.deletedBy === "admin@example.com")).toBe(true);
+  });
+
+  it("leaves rows no resync has checked", async () => {
+    const db = await freshDb();
+    await flagged(db, "unchecked", "removed", false);
+
+    expect(await deleteUnavailableVideos(db, ["removed"], null)).toEqual([]);
+    expect(await db.select().from(videos)).toHaveLength(1);
+  });
+
+  it("removes more rows than one batch carries, and refreshes an existing exclusion", async () => {
+    const db = await freshDb();
+    const ids = Array.from({ length: 45 }, (_, i) => `gone${String(i).padStart(2, "0")}`);
+    for (const id of ids) await flagged(db, id, "removed");
+    await db.insert(youtubeVideoExclusions).values({ videoId: "gone00", deletedBy: "old@example.com" });
+
+    expect(await deleteUnavailableVideos(db, ["removed"], "admin@example.com")).toHaveLength(45);
+    expect(await db.select().from(videos)).toHaveLength(0);
+    const [old] = await db
+      .select()
+      .from(youtubeVideoExclusions)
+      .where(eq(youtubeVideoExclusions.videoId, "gone00"));
+    expect(old.deletedBy).toBe("admin@example.com");
+  });
+
+  it("removes nothing when no state is chosen", async () => {
+    const db = await freshDb();
+    await flagged(db, "gone1", "removed");
+    expect(await deleteUnavailableVideos(db, [], null)).toEqual([]);
+    expect(await db.select().from(videos)).toHaveLength(1);
+  });
+
+  it("keeps only known states from untrusted input", () => {
+    expect(parseUnavailableStates(["private", "available", "removed", 3])).toEqual(["removed", "private"]);
+    expect(parseUnavailableStates("removed")).toEqual([]);
   });
 });

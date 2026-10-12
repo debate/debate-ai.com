@@ -280,6 +280,17 @@ the subscribed list the resync scans, so its videos arrive on the next sync.
 Subscribing is admin-only, like the YouTube channels tab, so a moderator sees
 "Only admins can subscribe to a channel" and leaves it for an admin.
 
+The same card's **Unavailable videos** list shows what YouTube no longer
+serves: **Gone from YouTube** (deleted), **Made private**, and **Embedding
+turned off**, each with a count. **Check YouTube now** runs the view-count
+resync right away instead of waiting for the weekly run. Tick the states to
+clear (only **Gone from YouTube** is ticked by default, since private videos
+can come back) and press **Remove N unavailable videos**; after a confirmation
+naming the counts, every flagged video in those states is removed the way
+**Remove** removes one, exclusion included. Each row also has its own
+**Remove**, and **It works now** clears a flag that is out of date. Only an
+admin can bulk-remove (`DELETE /api/admin/videos/availability`).
+
 Engineering note: both kinds ride the `video_issues` queue
 (`apps/debate-ai.com/lib/videos/video-submissions.ts`) rather than a table of
 their own. A `submit-channel` row has no video, so its `videoId` is empty.

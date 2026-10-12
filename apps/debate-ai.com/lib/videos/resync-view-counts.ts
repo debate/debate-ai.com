@@ -19,7 +19,7 @@
  * @module lib/videos/resync-view-counts
  */
 
-import { desc, eq, sql } from "drizzle-orm";
+import { and, count, desc, eq, inArray, sql } from "drizzle-orm";
 import { sqlLiteral } from "@debate/data-sync/src/videos/video-seed-sql";
 import {
   fetchVideoStatuses,
@@ -33,7 +33,7 @@ import {
   type ViewCountTarget,
   type ViewCountUpdate,
 } from "@debate/data-sync/src/videos/view-count-sql";
-import { videos, youtubeRoundVideos } from "@/lib/database/schema";
+import { videos, youtubeRoundVideos, youtubeVideoExclusions } from "@/lib/database/schema";
 import { getEnv } from "@/lib/env";
 
 /** What a stored video's availability can be, as written to `videos`. */
@@ -341,4 +341,99 @@ export async function markVideoAvailable(db: any, videoId: string): Promise<void
     .update(videos)
     .set({ availability: "available", missingChecks: 0, availabilityCheckedAt: new Date() })
     .where(eq(videos.videoId, videoId));
+}
+
+/** The takedown states an admin can bulk-remove, in the order the panel lists them. */
+export const UNAVAILABLE_STATES = ["removed", "private", "not_embeddable"] as const;
+
+/** One of {@link UNAVAILABLE_STATES}. */
+export type UnavailableState = (typeof UNAVAILABLE_STATES)[number];
+
+/** Narrows untrusted input (a request body) to the known takedown states. */
+export function parseUnavailableStates(value: unknown): UnavailableState[] {
+  if (!Array.isArray(value)) return [];
+  return UNAVAILABLE_STATES.filter((state) => value.includes(state));
+}
+
+/**
+ * Counts the published videos in each takedown state.
+ *
+ * The admin list is capped, so this is what tells an admin how many rows a
+ * bulk removal will actually touch before they confirm it.
+ *
+ * @param db - Drizzle handle.
+ * @returns How many published rows sit in each state.
+ */
+export async function countUnavailableVideos(db: any): Promise<Record<UnavailableState, number>> {
+  const rows: { availability: string | null; n: number }[] = await db
+    .select({ availability: videos.availability, n: count() })
+    .from(videos)
+    .where(inArray(videos.availability, [...UNAVAILABLE_STATES]))
+    .groupBy(videos.availability);
+
+  const counts: Record<UnavailableState, number> = { removed: 0, private: 0, not_embeddable: 0 };
+  for (const row of rows) {
+    if (row.availability && row.availability in counts) {
+      counts[row.availability as UnavailableState] = Number(row.n);
+    }
+  }
+  return counts;
+}
+
+/**
+ * How many ids one bulk-removal statement may carry. The exclusion insert binds
+ * three values per row, and D1 allows 100 bound parameters per statement.
+ */
+const REMOVAL_BATCH = 30;
+
+/**
+ * Removes every published video a resync has flagged in one of `states`.
+ *
+ * Does what the library table's per-row Remove does — `deleteLibraryVideo` —
+ * for all of them at once, in batches rather than a few queries per video so a
+ * library with hundreds of takedowns stays inside the Worker's query budget:
+ * the row leaves `videos` and the resync queue, and an exclusion is recorded
+ * so the weekly YouTube sync does not re-ingest it.
+ *
+ * Only rows a resync has actually checked are touched, so a video whose
+ * availability was never looked at cannot be swept up.
+ *
+ * @param db - Drizzle handle.
+ * @param states - Which takedown states to remove. Empty removes nothing.
+ * @param deletedBy - Admin email, when known, for the exclusion rows.
+ * @returns The ids that were removed.
+ */
+export async function deleteUnavailableVideos(
+  db: any,
+  states: readonly UnavailableState[],
+  deletedBy: string | null,
+): Promise<string[]> {
+  if (states.length === 0) return [];
+
+  const rows: { videoId: string }[] = await db
+    .select({ videoId: videos.videoId })
+    .from(videos)
+    .where(
+      and(
+        inArray(videos.availability, [...states]),
+        sql`${videos.availabilityCheckedAt} is not null`,
+      ),
+    );
+  const ids = rows.map((row) => row.videoId);
+
+  for (let i = 0; i < ids.length; i += REMOVAL_BATCH) {
+    const batch = ids.slice(i, i + REMOVAL_BATCH);
+    const deletedAt = new Date();
+    await db.delete(videos).where(inArray(videos.videoId, batch));
+    await db.delete(youtubeRoundVideos).where(inArray(youtubeRoundVideos.id, batch));
+    await db
+      .insert(youtubeVideoExclusions)
+      .values(batch.map((videoId) => ({ videoId, deletedBy, deletedAt })))
+      .onConflictDoUpdate({
+        target: youtubeVideoExclusions.videoId,
+        set: { deletedBy: sql`excluded.deleted_by`, deletedAt: sql`excluded.deleted_at` },
+      });
+  }
+
+  return ids;
 }
