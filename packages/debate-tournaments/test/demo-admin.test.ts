@@ -126,3 +126,81 @@ describe("a hosted tournament's admin view", () => {
     expect((await call("/host/tourns/nope/admin")).status).toBe(404);
   });
 });
+
+describe("editing the demo's mock data", () => {
+  const post = (path: string, body?: unknown) =>
+    call(path, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: body === undefined ? undefined : JSON.stringify(body),
+    });
+  const admin = async () => (await call(`/host/tourns/${DEMO_TOURN_ID}/admin`)).body;
+
+  beforeAll(async () => {
+    await post("/host/demo");
+  });
+
+  it("edits entries, judges, rounds and result sets, for anyone", async () => {
+    const before = await admin();
+    const entry = before.entries[0];
+    const judge = before.judges[0];
+    const round = before.rounds[0];
+    const set = before.resultSets[0];
+    expect((await post("/host/demo/edit", { kind: "entry", id: entry.id, name: "Renamed Entry", status: "dropped" })).status).toBe(200);
+    expect((await post("/host/demo/edit", { kind: "judge", id: judge.id, first: "Mock", active: false })).status).toBe(200);
+    expect((await post("/host/demo/edit", { kind: "round", id: round.id, label: "Opener", published: false, resultsPosted: false })).status).toBe(200);
+    expect((await post("/host/demo/edit", { kind: "resultSet", id: set.id, published: false })).status).toBe(200);
+
+    const after = await admin();
+    expect(after.entries.find((e: any) => e.id === entry.id)).toMatchObject({ name: "Renamed Entry", status: "dropped" });
+    expect(after.judges.find((j: any) => j.id === judge.id)).toMatchObject({ first: "Mock", active: false });
+    expect(after.rounds.find((r: any) => r.id === round.id)).toMatchObject({ label: "Opener", published: false, resultsPosted: false });
+    expect(after.resultSets.find((s: any) => s.id === set.id).published).toBe(false);
+  });
+
+  it("edits a section's judge and winner", async () => {
+    const round = (await admin()).rounds.find((r: any) => r.eventAbbr === "VLD");
+    const { body } = await call(`/host/demo/rounds/${round.id}/sections`);
+    const section = body.sections.find((s: any) => s.entries.length === 2 && s.judges.length > 0);
+    const loser = section.entries.find((e: any) => !(e.scored > 0 && e.wins * 2 > e.scored));
+    expect((await post("/host/demo/edit", { kind: "section", id: section.id, winnerEntryId: loser.id })).status).toBe(200);
+
+    const otherJudge = (await admin()).judges.find((j: any) => !section.judges.some((s: any) => s.id === j.id));
+    const from = section.judges[0].id;
+    expect((await post("/host/demo/edit", { kind: "section", id: section.id, fromJudgeId: from, judgeId: otherJudge.id })).status).toBe(200);
+
+    const updated = (await call(`/host/demo/rounds/${round.id}/sections`)).body.sections.find((s: any) => s.id === section.id);
+    const won = updated.entries.find((e: any) => e.id === loser.id);
+    expect(won.wins * 2).toBeGreaterThan(won.scored);
+    expect(updated.judges.map((j: any) => j.id)).toContain(otherJudge.id);
+    expect(updated.judges.map((j: any) => j.id)).not.toContain(from);
+  });
+
+  it("never touches rows outside the demo", async () => {
+    const created = await call("/host/tourns", {
+      method: "POST",
+      user: "other-host@example.com",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        name: "Real Invitational",
+        start: "2030-03-01T09:00:00-08:00",
+        end: "2030-03-02T18:00:00-08:00",
+        events: [{ format: "ld" }],
+      }),
+    });
+    const id = created.body.tournament.id;
+    const real = (await call(`/host/tourns/${id}/admin`, { user: "other-host@example.com" })).body.entries[0];
+    expect((await post("/host/demo/edit", { kind: "entry", id: real.id, name: "Hijacked" })).status).toBe(404);
+    const after = (await call(`/host/tourns/${id}/admin`, { user: "other-host@example.com" })).body.entries[0];
+    expect(after.name).toBe(real.name);
+    expect((await post("/host/demo/edit", { kind: "entry", id: "nope" })).status).toBe(400);
+  });
+
+  it("resets every edit", async () => {
+    await post("/host/demo/edit", { kind: "judge", id: (await admin()).judges[0].id, first: "Changed" });
+    expect((await post("/host/demo/reset")).body.seeded).toBe(true);
+    const after = await admin();
+    expect(after.judges.some((j: any) => j.first === "Changed" || j.first === "Mock")).toBe(false);
+    expect(after.entries.some((e: any) => e.name === "Renamed Entry")).toBe(false);
+  });
+});
