@@ -151,6 +151,20 @@ export async function fetchSearchSuggestions(query: string, limit = 8): Promise<
   }
 }
 
+/**
+ * The rest of a suggestion past what has been typed, for showing it inline in
+ * the search box as ghost text. Empty unless the suggestion continues the
+ * query exactly (ignoring case) and adds something to it.
+ *
+ * @param query - The query as typed.
+ * @param suggestion - The top completion for it.
+ */
+export function inlineCompletionSuffix(query: string, suggestion: string | undefined): string {
+  if (!query || !suggestion || suggestion.length <= query.length) return "";
+  if (!suggestion.toLowerCase().startsWith(query.toLowerCase())) return "";
+  return suggestion.slice(query.length);
+}
+
 /** Path of the CARDS search page, which reads its starting state from the URL. */
 export const CARDS_SEARCH_PATH = "/research/cards";
 

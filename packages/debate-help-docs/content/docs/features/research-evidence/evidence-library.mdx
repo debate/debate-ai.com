@@ -53,6 +53,27 @@ no-filter list in each Worker isolate for five minutes, since it sorts the
 `debate_cards` table by `imported_at`. Every
 request still counts toward the daily search limit.
 
+## A new search always wins
+
+Typing waits out the 300 ms debounce, but changing the term, sort or filters
+retires the previous search at once in `useSearchState`: its request is
+aborted (plain `fetch` with an `AbortController`, since grab keys cancellation
+by path and every query is a different path) and its answer is dropped by a
+request sequence number, so results for an older query can't land after a
+newer one. A committed query — Enter, a clicked suggestion, or an accepted
+inline completion — calls `setSearchTerm(term, { immediate: true })` and
+searches with no debounce; if that term is already waiting on the debounce,
+the pending search goes out now.
+
+The search box (`ui/primitives/autocomplete.tsx`) shows the top completion
+inline as ghost text (`inlineCompletionSuffix()` in `lib/search-query.ts`),
+accepted with Tab or →. ↑/↓ load the next suggestion into the box and its
+results follow after the debounce, so stepping quickly through the list costs
+one search, not one per suggestion. Suggestion requests carry their own
+sequence number, so a slow answer for an earlier prefix can't replace the
+list for the newer one. Results are not prefetched for suggestions the user
+hasn't reached, because every request counts toward the daily search limit.
+
 ## Data flow
 
 ```
