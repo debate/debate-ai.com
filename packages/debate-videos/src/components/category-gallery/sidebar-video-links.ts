@@ -1,6 +1,6 @@
 /**
  * @fileoverview The Videos portion of the sidebar tree — the destinations
- * under its "Round Videos" and "Lectures" headings plus the glossary/statistics
+ * under its "Videos" heading (Lectures included) plus the glossary/statistics
  * pair pinned below the tree — as plain data.
  *
  * Three surfaces render these links and used to each restate them: the
@@ -51,7 +51,7 @@ export interface SidebarVideoLink {
 }
 
 /** The All Videos node — every round and lecture in the library, and the
- *  app's home page (`/` renders it directly). First child under "Round Videos". */
+ *  app's home page (`/` renders it directly). First child under "Videos". */
 export const VIDEO_ALL_LINK: SidebarVideoLink = {
   id: "allVideos",
   href: "/videos",
@@ -80,8 +80,9 @@ export const VIDEO_FORMAT_LINKS: SidebarVideoLink[] = [
   { id: "topPicks", href: "/videos/goat", title: "Greatest of All-Time", glyph: Star },
 ];
 
-/** The rest of the video library under "Round Videos": My Favorites,
- *  Watch History, and Lectures — all as sibling links. */
+/** The rest of the video library, the last rows under "Videos": My
+ *  Favorites, the watch history, then Lectures — a single row whose
+ *  categories live on the lectures page itself, not in the sidebar. */
 export const VIDEO_LIBRARY_LINKS: SidebarVideoLink[] = [
   { id: "favorites", href: "/videos/favorites", title: "My Favorites", glyph: Heart },
   { id: "history", href: "/videos/history", title: "Watch History", glyph: History },

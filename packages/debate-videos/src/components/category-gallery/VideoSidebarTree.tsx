@@ -1,7 +1,7 @@
 /**
  * @fileoverview Collapsible navigation tree shown in the persistent left
  * sidebar on the videos pages. Structure:
- *   Round Videos (h1, expandable, heading-only)
+ *   Videos (h1, expandable, heading-only)
  *     -> All Videos / College Debates / Policy / PF / LD / Greatest of All-Time /
  *        My Favorites / Watch History / Lectures (h2, plain links, all peers)
  *   Apps / Coaching / Research / Practice (h1, expandable) -> tool links
@@ -13,6 +13,7 @@
  * subsets of it — they are sibling collections of the same library, and the
  * extra level only bought an indent and a second chevron to fight with.
  *
+<<<<<<< HEAD
  * Exactly one row in the tree is highlighted at a time via `activeId`.
  *
  * The h1 sections are groupings, not destinations: a plain click on one only
@@ -22,6 +23,22 @@
  * closed section renders none of its links. The open one follows the route,
  * which is what makes clicking an app dock button load that destination's
  * section and nothing else (see `sidebar-active-section`).
+=======
+ * Lectures is a single row in that list. Its categories used to be a section
+ * of their own here; they now live only on the lectures page itself, as a
+ * bar of category cards above the grid (`LectureCategoryGridGallery`), so
+ * the sidebar stays a short list of destinations. The Lectures row lights up
+ * on every lecture-library page (`browsingLectures`), category pages
+ * included.
+ *
+ * The h1 sections are groupings, not destinations: a plain click on one only
+ * toggles it (a ctrl/shift/middle-click still opens its flagship page in a
+ * new tab, via `TreeItem`'s `sectionHref`). "Videos" and the `ToolNavTree`
+ * sections form one accordion — exactly one is open and a closed section
+ * renders none of its links. The open one follows the route, which is what
+ * makes clicking an app dock button load that destination's section and
+ * nothing else (see `sidebar-active-section`).
+>>>>>>> 8812e44e4244f02f1c92747637862f4a7d2808fd
  *
  * Every row draws a plain gray Lucide glyph.
  */
@@ -49,12 +66,22 @@ import {
 interface VideoSidebarTreeProps {
   /** Per-category video counts, keyed by quick-link id. */
   counts?: Record<string, number>;
+<<<<<<< HEAD
+=======
+  /**
+   * Whether the page is browsing the lecture library (`/lectures` or one of
+   * its categories). Lights the Lectures row even when `activeId` is unset,
+   * as it is on a category page.
+   */
+  browsingLectures?: boolean;
+>>>>>>> 8812e44e4244f02f1c92747637862f4a7d2808fd
   /** Id of the currently active nav item, used for highlighting. */
   activeId?: string;
 }
 
 export function VideoSidebarTree({
   counts,
+<<<<<<< HEAD
   activeId,
 }: VideoSidebarTreeProps) {
   const pathname = usePathname();
@@ -62,6 +89,15 @@ export function VideoSidebarTree({
   // owns which of them is open and hands the same state down to `ToolNavTree`,
   // so opening a tool section closes Round Videos rather than stacking on top
   // of it.
+=======
+  browsingLectures = false,
+  activeId,
+}: VideoSidebarTreeProps) {
+  const pathname = usePathname();
+  // "Videos" and the tool sections are one accordion: this component owns
+  // which of them is open and hands the same state down to `ToolNavTree`, so
+  // opening a tool section closes Videos rather than stacking on top of it.
+>>>>>>> 8812e44e4244f02f1c92747637862f4a7d2808fd
   const routeSectionId = sidebarSectionForPath(pathname);
   const [expandedSectionIds, setExpandedSectionIds] =
     useState<readonly string[]>(ALL_SIDEBAR_SECTION_IDS);
@@ -83,13 +119,16 @@ export function VideoSidebarTree({
   const videosExpanded = expandedSectionIds.includes(VIDEOS_SECTION_ID);
 
   const lecturesLink = SIDEBAR_VIDEO_LINKS_BY_ID.lectures;
+<<<<<<< HEAD
   const lecturesActive = activeId === "lectures";
+=======
+>>>>>>> 8812e44e4244f02f1c92747637862f4a7d2808fd
 
   return (
     <nav className="flex flex-col gap-3 text-sm" aria-label="Videos">
       <TreeItem
         level={1}
-        title="Round Videos"
+        title="Videos"
         icon={Clapperboard}
         sectionHref={VIDEO_COLLEGE_LINK.href}
         expanded={videosExpanded}
@@ -143,7 +182,7 @@ export function VideoSidebarTree({
           title={lecturesLink.title}
           icon={lecturesLink.glyph}
           count={counts?.lectures}
-          isActive={lecturesActive}
+          isActive={activeId === "lectures" || browsingLectures}
         />
       </TreeItem>
 

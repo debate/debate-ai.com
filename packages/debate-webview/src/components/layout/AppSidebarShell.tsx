@@ -14,7 +14,7 @@ import { SidebarAccount } from "./app-sidebar/sidebar-account"
  * (`ResizableSidebarLayout` with the dock and `VideoSidebarTree`), so the
  * sidebar is the same thing everywhere: the same width the reader last
  * dragged it to, the same hide button and Ctrl/Cmd+B, and the same tree of
- * Round Videos, Lectures and the tool sections.
+ * Videos (Lectures is one of its rows) and the tool sections.
  *
  * Without this, following one of the tree's links off `/videos` (into
  * `/coaching`, `/practice`, …) landed on a page with no sidebar at all.

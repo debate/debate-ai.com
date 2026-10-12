@@ -51,11 +51,7 @@ const { INSIGHTS_SECTION_ID } = await import(
 
 function sidebarHtml(): string {
   return renderToStaticMarkup(
-    createElement(VideoSidebarTree, {
-      lectureCategories: [],
-      lecturesExpanded: true,
-      onToggleLectures: () => {},
-    }),
+    createElement(VideoSidebarTree, {}),
   );
 }
 

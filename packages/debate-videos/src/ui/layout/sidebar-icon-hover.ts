@@ -1,7 +1,8 @@
 /**
  * @fileoverview A random little animation on a sidebar icon whenever its row
  * is hovered or focused: a wiggle, bounce, pulse, spin or shake, never the
- * same one twice in a row, driven by Motion. Each icon also gets a random
+ * same one twice in a row, lasting 0.5s or 1s (also picked at random), driven
+ * by Motion. Each icon also gets a random
  * color flash — throttled to once per 5 seconds so the sidebar stays calm.
  *
  * It is attached once to a sidebar's root rather than wrapped around each
@@ -40,17 +41,25 @@ const ICON_HOVER_THROTTLE_MS = 5_000
 export interface IconHoverEffect {
   name: string
   keyframes: DOMKeyframesDefinition
-  duration: number
 }
 
 /** The effects a hovered sidebar icon picks from. */
 export const ICON_HOVER_EFFECTS: readonly IconHoverEffect[] = [
-  { name: "wiggle", keyframes: { rotate: [0, -15, 15, -10, 10, 0] }, duration: 0.45 },
-  { name: "bounce", keyframes: { y: [0, -6, 0, -3, 0] }, duration: 0.45 },
-  { name: "pulse", keyframes: { scale: [1, 1.22, 0.95, 1.1, 1] }, duration: 0.45 },
-  { name: "spin", keyframes: { rotate: [0, 360] }, duration: 0.5 },
-  { name: "shake", keyframes: { x: [0, -3, 3, -3, 3, 0] }, duration: 0.4 },
+  { name: "wiggle", keyframes: { rotate: [0, -15, 15, -10, 10, 0] } },
+  { name: "bounce", keyframes: { y: [0, -6, 0, -3, 0] } },
+  { name: "pulse", keyframes: { scale: [1, 1.22, 0.95, 1.1, 1] } },
+  { name: "spin", keyframes: { rotate: [0, 360] } },
+  { name: "shake", keyframes: { x: [0, -3, 3, -3, 3, 0] } },
 ]
+
+/** How long one hover animation lasts, in seconds — chosen at random each hover. */
+export const ICON_HOVER_DURATIONS = [0.5, 1] as const
+
+/** Picks a hover duration at random from {@link ICON_HOVER_DURATIONS}. */
+export function pickIconHoverDuration(random: () => number = Math.random): number {
+  const i = Math.min(ICON_HOVER_DURATIONS.length - 1, Math.floor(random() * ICON_HOVER_DURATIONS.length))
+  return ICON_HOVER_DURATIONS[i]
+}
 
 /** Picks an effect at random, never `previous` again. */
 export function pickIconHoverEffect(
@@ -148,7 +157,7 @@ export function attachSidebarIconHover(root: HTMLElement): () => void {
     // From rest every time, so a stopped spin or bounce never leaves it
     // askew. Through Motion, which remembers each transform it set.
     animate(icon, AT_REST, { duration: 0 })
-    const ctrl = animate(icon, effect.keyframes, { duration: effect.duration, ease: "easeInOut" })
+    const ctrl = animate(icon, effect.keyframes, { duration: pickIconHoverDuration(), ease: "easeInOut" })
     playing.set(icon, ctrl)
 
     // Restore the original color when the animation finishes.

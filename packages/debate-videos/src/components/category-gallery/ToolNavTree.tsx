@@ -1,7 +1,7 @@
 /**
  * @fileoverview The Research / Practice / Coaching / Insights
  * portion of the videos
- * sidebar — the h1 sections that follow "Round Videos" and "Lectures" in the
+ * sidebar — the h1 sections that follow "Videos" in the
  * tree — factored out of `VideoSidebarTree` so it can also render on the
  * non-video tool pages those sections link to (`/coaching`, `/research`,
  * `/practice`, etc.) — those pages otherwise render no sidebar at all
@@ -87,8 +87,8 @@ export interface ToolNavTreeProps {
   defaultExpanded?: boolean;
   /**
    * Id of the open section, when a parent owns the accordion. `VideoSidebarTree`
-   * passes this so its own "Round Videos" node takes part: opening a tool
-   * section there closes Round Videos, and vice versa.
+   * passes this so its own "Videos" node takes part: opening a tool
+   * section there closes Videos, and vice versa.
    */
   expandedSectionIds?: readonly string[];
   /** Present together with {@link ToolNavTreeProps.expandedSectionIds}. */

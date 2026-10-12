@@ -1,16 +1,16 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Button } from "../../lib/ui/primitives/button";
-import { Badge } from "../../lib/ui/primitives/badge";
-import { Input } from "../../lib/ui/primitives/input";
+import { Button } from "@debate/webview/lib/ui/primitives/button";
+import { Badge } from "@debate/webview/lib/ui/primitives/badge";
+import { Input } from "@debate/webview/lib/ui/primitives/input";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../../lib/ui/primitives/card";
+} from "@debate/webview/lib/ui/primitives/card";
 
 interface UserRow {
   id: string;

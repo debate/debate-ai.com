@@ -37,6 +37,17 @@ does this with a redirect (`apps/debate-ai.com/lib/redirects/video-listing.ts`)
 before the request reaches the app. `/videos/archive/…` maps to the undated
 (`legacy`) season.
 
+## Lecture categories
+
+The sidebar has a single **Lectures** row under **Videos**. Opening it
+(`/lectures`) shows the lecture categories as a bar of cards at the top of the
+page, on every screen size: **All Lectures** first, then each category with
+its icon and video count. A card's background highlights on hover, the open
+category is drawn selected, and clicking a card switches the list to that
+category (`/lectures/<category>`). The categories used to be a second,
+expandable section of the sidebar; they now live only on the page
+(`LectureCategoryGridGallery`, rendered by `LecturesVideoGridView`).
+
 ## Merged lecture categories
 
 Topic analysis and topic lectures share one shelf, **Topic Lectures**. Videos
@@ -289,8 +300,10 @@ Stacks only exist where a description links the videos, so a round-analysis
 video that names its round in the title alone is not paired with it. Search
 is `LIKE`-based token matching, not fuzzy.
 
-Curated rounds added to the queue from the `test/` records (see
-`.github/scripts/queue-test-videos.ts`) carry their topic and argument tags in
+Curated rounds added to the queue from the `video_metadata*.json` records
+(see `.github/scripts/queue-test-videos.ts`; the 506 rounds in those two files
+are queued by the `debate-data-sync` migration `0002_curated_round_queue.sql`
+on deploy, pending admin approval) carry their topic and argument tags in
 the description, with `Aff 1AC args:` and `Neg 2NR args:` lines that become the
 round's 1AC and 2NR arguments when it is published. The queue has no editor,
 so a wrong split is corrected in the library after publishing. The records

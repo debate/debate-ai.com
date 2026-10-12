@@ -217,7 +217,7 @@ export function VideoWatchPage({
   const clearActiveVideo = useVideoPlayerStore((state) => state.clearActiveVideo)
 
   const { state: viewState, actions: viewActions } = useVideoState()
-  const { counts, lectureCategories } = useVideoMeta()
+  const { counts } = useVideoMeta()
 
   // The search box above the related videos swaps the list under the player
   // for the library's matches — in place, with no navigation, so the video
@@ -291,7 +291,6 @@ export function VideoWatchPage({
   const [reloadKey, setReloadKey] = useState(0)
   /** Position a self-inflicted reload (PiP, retry) has to resume from. */
   const [resumeSeconds, setResumeSeconds] = useState<number | null>(null)
-  const [lecturesExpanded, setLecturesExpanded] = useState(true)
   /**
    * Whether this browser exposes a clipboard for the permalink control.
    * Resolved in an effect rather than read during render: `navigator` does
@@ -702,9 +701,6 @@ export function VideoWatchPage({
       dockSlot={dockSlot}
       accountSlot={accountSlot}
       counts={quickLinkCounts}
-      lectureCategories={lectureCategories}
-      lecturesExpanded={lecturesExpanded}
-      onToggleLectures={() => setLecturesExpanded((shown) => !shown)}
     >
       <div className="min-h-screen bg-background p-3 sm:p-6 space-y-6">
         <div className="flex items-center gap-2 text-xs text-muted-foreground">

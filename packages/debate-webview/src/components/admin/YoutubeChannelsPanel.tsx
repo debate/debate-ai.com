@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../../lib/ui/primitives/button";
 import { Badge } from "../../lib/ui/primitives/badge";
 import { Input } from "../../lib/ui/primitives/input";
@@ -32,11 +32,6 @@ interface ChannelRow {
   updatedAt: string | number;
 }
 
-interface ChannelsResponse {
-  channels: ChannelRow[];
-  nextCursor: string | null;
-}
-
 /** Formats a stored timestamp, which arrives as an ISO string or epoch seconds. */
 function formatWhen(value: string | number | null): string {
   if (value === null || value === undefined) return "—";
@@ -44,19 +39,37 @@ function formatWhen(value: string | number | null): string {
   return Number.isNaN(date.getTime()) ? "unknown" : date.toLocaleDateString();
 }
 
-const PAGE_LIMIT = 50;
+/** The API's maximum page size, so most lists arrive in a single request. */
+const PAGE_LIMIT = 200;
+
+/** Fetches every subscribed channel, following the cursor until the list ends. */
+async function fetchAllChannels(): Promise<ChannelRow[]> {
+  const all: ChannelRow[] = [];
+  let cursor: string | null = null;
+  do {
+    const params = new URLSearchParams({ limit: String(PAGE_LIMIT) });
+    if (cursor) params.set("cursor", cursor);
+    const res = await fetch(`/api/admin/youtube/channels?${params.toString()}`);
+    const body = await res.json();
+    if (!res.ok) throw new Error(body?.error || `Request failed: ${res.status}`);
+    all.push(...((body.channels ?? []) as ChannelRow[]));
+    cursor = body.nextCursor ?? null;
+  } while (cursor);
+  return all;
+}
 
 /**
  * The admin "YouTube channels" section: the list of channels the weekly resync
  * scans for new debate rounds. Adding one subscribes the resync to it; toggling
  * "allowed in" on pauses a channel without losing it; removing it drops the
  * subscription and stops new rounds from that channel appearing at all.
+ *
+ * The full list is fetched once on mount. Adds, renames, toggles and removals
+ * update the list in place from the API's response — nothing refetches.
  */
 export function YoutubeChannelsPanel() {
   const [channels, setChannels] = useState<ChannelRow[]>([]);
-  const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
 
@@ -73,49 +86,31 @@ export function YoutubeChannelsPanel() {
   const [isRemoving, setIsRemoving] = useState(false);
   const [removeError, setRemoveError] = useState<string | null>(null);
 
-  const reset = () => {
-    setChannels([]);
-    setNextCursor(null);
-  };
-
-  const loadPage = useCallback(
-    async (cursor: string | null, { append = false }: { append?: boolean } = {}) => {
-      if (append && !nextCursor) return;
-      const isMore = append;
-      if (isMore) setIsLoadingMore(true);
-      else setIsLoading(true);
-      setError(null);
-      try {
-        const params = new URLSearchParams({ limit: String(PAGE_LIMIT) });
-        if (cursor) params.set("cursor", cursor);
-        const res = await fetch(`/api/admin/youtube/channels?${params.toString()}`);
-        const body = await res.json();
-        if (!res.ok) throw new Error(body?.error || `Request failed: ${res.status}`);
-        setChannels((prev) => (append ? [...prev, ...(body.channels ?? [])] : body.channels ?? []));
-        setNextCursor(body.nextCursor ?? null);
-      } catch (err) {
-        setError((err as Error).message);
-      } finally {
-        if (isMore) setIsLoadingMore(false);
-        else setIsLoading(false);
-      }
-    },
-    [nextCursor],
-  );
-
-  const load = useCallback(() => {
-    reset();
-    void loadPage(null, { append: false });
-  }, [loadPage]);
-
   useEffect(() => {
-    load();
-  }, [load]);
+    let cancelled = false;
+    fetchAllChannels()
+      .then((rows) => {
+        if (!cancelled) setChannels(rows);
+      })
+      .catch((err) => {
+        if (!cancelled) setError((err as Error).message);
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
-  const refresh = () => {
-    setNotice(null);
-    setError(null);
-    load();
+  /** Puts a row returned by the API into the list, replacing any row with its id. */
+  const upsertRow = (row: ChannelRow, { prepend = false }: { prepend?: boolean } = {}) => {
+    setChannels((prev) => {
+      if (prev.some((existing) => existing.id === row.id)) {
+        return prev.map((existing) => (existing.id === row.id ? row : existing));
+      }
+      return prepend ? [row, ...prev] : [...prev, row];
+    });
   };
 
   const handleAdd = async (event: React.FormEvent) => {
@@ -135,7 +130,7 @@ export function YoutubeChannelsPanel() {
       if (!res.ok) throw new Error(body?.error || "Could not add the channel");
       setNotice(`Added “${body.channel?.name ?? name}” to the subscribed channels.`);
       setAddInput("");
-      load();
+      if (body.channel) upsertRow(body.channel as ChannelRow, { prepend: true });
     } catch (err) {
       setAddError((err as Error).message);
     } finally {
@@ -174,7 +169,7 @@ export function YoutubeChannelsPanel() {
       if (!res.ok) throw new Error(body?.error || "Could not rename the channel");
       setNotice(`Renamed “${channel.name}” to “${body.channel?.name ?? name}”.`);
       cancelEditing();
-      load();
+      if (body.channel) upsertRow(body.channel as ChannelRow);
     } catch (err) {
       setSaveError((err as Error).message);
     } finally {
@@ -221,8 +216,8 @@ export function YoutubeChannelsPanel() {
       const body = await res.json();
       if (!res.ok) throw new Error(body?.error || "Could not remove the channel");
       setNotice(`Removed “${removing.name}” — it will no longer be scanned.`);
+      setChannels((prev) => prev.filter((row) => row.id !== removing.id));
       setRemoving(null);
-      load();
     } catch (err) {
       setRemoveError((err as Error).message);
     } finally {
@@ -265,13 +260,12 @@ export function YoutubeChannelsPanel() {
           {addError && <span className="text-destructive text-sm">{addError}</span>}
         </form>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <Button variant="outline" size="sm" onClick={refresh} disabled={isLoading}>
-            {isLoading ? "Loading…" : "Refresh"}
-          </Button>
-          {error && <span className="text-destructive text-sm">{error}</span>}
-          {notice && <span className="text-muted-foreground text-sm">{notice}</span>}
-        </div>
+        {(error || notice) && (
+          <div className="flex flex-wrap items-center gap-3">
+            {error && <span className="text-destructive text-sm">{error}</span>}
+            {notice && <span className="text-muted-foreground text-sm">{notice}</span>}
+          </div>
+        )}
 
         <ul className="divide-y rounded-md border text-sm">
           {channels.map((channel) => {
@@ -367,17 +361,6 @@ export function YoutubeChannelsPanel() {
             </li>
           )}
         </ul>
-
-        {nextCursor && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => void loadPage(nextCursor, { append: true })}
-            disabled={isLoadingMore}
-          >
-            {isLoadingMore ? "Loading more…" : "Load more"}
-          </Button>
-        )}
       </CardContent>
 
       <Dialog

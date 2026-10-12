@@ -43,9 +43,6 @@ function render(activeId: string): string {
   return renderToStaticMarkup(
     createElement(LecturesSidebarShell, {
       dockSlot: createElement("div", { "data-testid": "dock-slot" }, "dock"),
-      lectureCategories: [],
-      lecturesExpanded: false,
-      onToggleLectures: () => {},
       activeId,
       children: createElement("main", null, "page"),
     }),

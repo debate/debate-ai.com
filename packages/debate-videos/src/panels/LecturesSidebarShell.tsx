@@ -37,7 +37,6 @@ import { ToolNavTree } from "../components/category-gallery/ToolNavTree"
 import { VideoSidebarTree } from "../components/category-gallery/VideoSidebarTree"
 import { Footer } from "../ui/layout/footer"
 import { ResizableSidebarLayout } from "../ui/layout/ResizableSidebarLayout"
-import type { LectureCategoryFacet } from "../types/videos"
 
 export interface LecturesSidebarShellProps {
   /** App-owned navigation dock, rendered at the top of the column. */
@@ -50,12 +49,8 @@ export interface LecturesSidebarShellProps {
   accountSlot?: React.ReactNode
   /** Per-category video counts, keyed by quick-link id. */
   counts?: Record<string, number>
-  lectureCategories: LectureCategoryFacet[]
-  selectedCategory?: string
   /** Quick-link id of the page inside this shell, for highlighting. */
   activeId?: string
-  lecturesExpanded: boolean
-  onToggleLectures: () => void
   children: React.ReactNode
 }
 
@@ -63,11 +58,7 @@ export function LecturesSidebarShell({
   dockSlot,
   accountSlot,
   counts,
-  lectureCategories,
-  selectedCategory,
   activeId,
-  lecturesExpanded,
-  onToggleLectures,
   children,
 }: LecturesSidebarShellProps) {
   return (
@@ -84,11 +75,7 @@ export function LecturesSidebarShell({
 
           <VideoSidebarTree
             counts={counts}
-            lectureCategories={lectureCategories}
-            selectedCategory={selectedCategory}
             activeId={activeId}
-            lecturesExpanded={lecturesExpanded}
-            onToggleLectures={onToggleLectures}
           />
 
           {accountSlot ? null : <Footer />}

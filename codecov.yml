@@ -192,4 +192,9 @@ ignore:
   - "apps/debate-native-wrapper/**"
   - "packages/debate-data-sync/data/**"
   - "packages/debate-data-sync/schemas/**"
+  # Image assets plus one generated re-export index each; nothing to test. Its
+  # editor/ folder was also where Codecov suffix-matched the vendored
+  # debate-editor/src/editor/** paths (~6k lines at 15%), so ignoring it keeps
+  # a stray mapping from ever showing up as an untested component again.
+  - "packages/debate-icons/**"
   - "**/node_modules/**"
