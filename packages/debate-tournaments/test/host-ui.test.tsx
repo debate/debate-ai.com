@@ -10,12 +10,14 @@ import {
   FramedOverlay,
   HostedTournamentButton,
   TOURNAMENT_FORMATS,
+  TournamentNav,
   TournamentsApp,
   type OwnedTournament,
 } from "../src/ui";
-import type { TournamentHrefs } from "../src/routes";
+import { tournamentHrefs, type TournamentHrefs } from "../src/routes";
 import { TournamentsContext, type TournamentsContextValue } from "../src/ui/shared";
-import { createTournamentsClient } from "../src/ui/client";
+import { createTournamentsClient, type TournamentAdmin } from "../src/ui/client";
+import { AdminView } from "../src/ui/pages/TournamentAdminPage";
 
 const plainLink = ({
   href,
@@ -190,5 +192,53 @@ describe("createTournamentsClient host methods", () => {
     await expect(client.createTournament({ name: "x", start: "a", end: "b", events: [] })).rejects.toThrow(
       "Sign in to host a tournament.",
     );
+  });
+});
+
+describe("the admin view's mock-data editor", () => {
+  const view = (id: number): TournamentAdmin => ({
+    viewer: { username: "demo.admin", name: "Demo Admin", mock: true },
+    tourn: { id, name: "Demo", webname: null, city: null, state: null, country: null, tz: null, start: null, end: null, regStart: null, regEnd: null, hidden: false },
+    events: [],
+    schools: [],
+    entries: [{ id: 1, code: "BV DW", name: "Dubois & Weber", eventAbbr: "VCX", schoolName: "Bay View", status: "active" }],
+    judges: [],
+    rooms: [],
+    rounds: [],
+    resultSets: [],
+  });
+  const client = createTournamentsClient("/api/tabroom", noFetch);
+
+  it("shows on the demo tournament, with a reset", () => {
+    const html = withClient(client, <AdminView view={view(90001)} onChanged={() => {}} />);
+    expect(html).toContain("Edit mock data");
+    expect(html).toContain("Reset demo data");
+    expect(html).toContain('value="Dubois &amp; Weber"');
+  });
+
+  it("is absent from any other tournament", () => {
+    expect(withClient(client, <AdminView view={view(42)} onChanged={() => {}} />)).not.toContain("Edit mock data");
+  });
+});
+
+describe("TournamentNav ballot tab", () => {
+  const hrefs = tournamentHrefs("/t");
+  const render = (ballotApiBase?: string) =>
+    renderToString(
+      <TournamentsContext.Provider
+        value={{ client: createTournamentsClient("/api/tabroom", noFetch), hrefs, Link: plainLink, ballotApiBase }}
+      >
+        <TournamentNav tournId={7} active="ballot" source="tabroom" />
+      </TournamentsContext.Provider>,
+    );
+
+  it("shows a Ballot tab when the host has a ballot API", () => {
+    const html = render("/api/judge-ballots");
+    expect(html).toContain('href="/t/7/ballot"');
+    expect(html).toContain(">Ballot<");
+  });
+
+  it("hides it otherwise", () => {
+    expect(render()).not.toContain("/t/7/ballot");
   });
 });

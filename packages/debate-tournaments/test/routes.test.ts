@@ -12,6 +12,8 @@ describe("matchTournamentRoute", () => {
     [["2026", "yale-invitational", "results"], { page: "results", tourn: yale }],
     [["2026", "yale-invitational", "results", "99"], { page: "resultSet", tourn: yale, resultSetId: 99 }],
     [["2026", "yale-invitational", "tabroom"], { page: "tabroom", tourn: yale }],
+    [["2026", "yale-invitational", "ballot"], { page: "ballot", tourn: yale }],
+    [["38436", "ballot"], { page: "ballot", tourn: { tournId: 38436 } }],
     [["2026", "yale-invitational", "admin"], { page: "admin", tourn: yale }],
     // The id form still resolves, including four-digit ids before a section.
     [["12"], { page: "tournament", tourn: { tournId: 12 } }],
@@ -25,6 +27,7 @@ describe("matchTournamentRoute", () => {
     [["12", "results", "x"], { page: "notFound" }],
     [["12", "nope"], { page: "notFound" }],
     [["12", "tabroom", "extra"], { page: "notFound" }],
+    [["12", "ballot", "extra"], { page: "notFound" }],
     [["2026", "yale-invitational", "nope"], { page: "notFound" }],
   ])("%j", (segments, route) => {
     expect(matchTournamentRoute(segments)).toEqual(route);

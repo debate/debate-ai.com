@@ -79,9 +79,7 @@ describe("useSearchState", () => {
     await flush(() => search.current.setSearchTerm("nuclear"));
     expect(defaultSearch.signal.aborted).toBe(true);
 
-    await flush(() => {
-      vi.advanceTimersByTime(SEARCH_DEBOUNCE_MS);
-    });
+    await flush(() => { vi.advanceTimersByTime(SEARCH_DEBOUNCE_MS); });
     expect(fetches).toHaveLength(2);
     expect(queryOf(fetches[1])).toBe("nuclear");
 
@@ -99,13 +97,9 @@ describe("useSearchState", () => {
     await fetches[0].respond({ results: [], total: 0 });
 
     await flush(() => search.current.setSearchTerm("nuc"));
-    await flush(() => {
-      vi.advanceTimersByTime(SEARCH_DEBOUNCE_MS - 1);
-    });
+    await flush(() => { vi.advanceTimersByTime(SEARCH_DEBOUNCE_MS - 1); });
     expect(fetches).toHaveLength(1);
-    await flush(() => {
-      vi.advanceTimersByTime(1);
-    });
+    await flush(() => { vi.advanceTimersByTime(1); });
     expect(fetches.map(queryOf)).toEqual([null, "nuc"]);
     await unmount();
   });
@@ -118,9 +112,7 @@ describe("useSearchState", () => {
     expect(fetches.map(queryOf)).toEqual([null, "nuclear war"]);
 
     // Nothing else goes out once the debounce would have elapsed.
-    await flush(() => {
-      vi.advanceTimersByTime(SEARCH_DEBOUNCE_MS * 2);
-    });
+    await flush(() => { vi.advanceTimersByTime(SEARCH_DEBOUNCE_MS * 2); });
     expect(fetches).toHaveLength(2);
     await unmount();
   });
@@ -134,9 +126,7 @@ describe("useSearchState", () => {
     await flush(() => search.current.setSearchTerm("nuclear", { immediate: true }));
     expect(fetches.map(queryOf)).toEqual([null, "nuclear"]);
 
-    await flush(() => {
-      vi.advanceTimersByTime(SEARCH_DEBOUNCE_MS * 2);
-    });
+    await flush(() => { vi.advanceTimersByTime(SEARCH_DEBOUNCE_MS * 2); });
     expect(fetches).toHaveLength(2);
     await unmount();
   });

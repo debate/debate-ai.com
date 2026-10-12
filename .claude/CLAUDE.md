@@ -68,6 +68,7 @@ extension and a native wrapper.
 | A shared data type and its field docs | `packages/debate-types` |
 | Routes, `/api`, auth, D1 schema, the Worker | `apps/debate-ai.com` |
 | User-facing documentation | `packages/debate-help-docs` |
+| Table reference, self-hosting guide (internal, unpublished) | `packages/dev-docs` |
 | The generic, publishable app sidebar (no debate code) | `packages/shadcn-sidebar` |
 
 Full map: [`architecture/overview.md`](.claude/architecture/overview.md).
@@ -124,6 +125,7 @@ one tree rather than beside the source.
 | `packages/debate-editor` | [.claude/packages/debate-editor/CLAUDE.md](.claude/packages/debate-editor/CLAUDE.md) |
 | `packages/debate-flow` | [.claude/packages/debate-flow/CLAUDE.md](.claude/packages/debate-flow/CLAUDE.md) |
 | `packages/debate-help-docs` | [.claude/packages/debate-help-docs/CLAUDE.md](.claude/packages/debate-help-docs/CLAUDE.md) |
+| `packages/dev-docs` | [.claude/packages/dev-docs/CLAUDE.md](.claude/packages/dev-docs/CLAUDE.md) |
 | `packages/debate-practice-drills` | [.claude/packages/debate-practice-drills/CLAUDE.md](.claude/packages/debate-practice-drills/CLAUDE.md) |
 | `packages/debate-predictions` | [.claude/packages/debate-predictions/CLAUDE.md](.claude/packages/debate-predictions/CLAUDE.md) |
 | `packages/debate-round-practice-ai` | [.claude/packages/debate-round-practice-ai/CLAUDE.md](.claude/packages/debate-round-practice-ai/CLAUDE.md) |

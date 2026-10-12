@@ -12,7 +12,8 @@
  * pass to `/api/card-shares` so the card shows up as available on each
  * contact's account — no clipboard, no pasting a `cmshare…` code.
  * `?shareWith=<userId>` (from /contacts' "Share a card") opens the dialog with
- * that contact preselected. Its trigger lives in the sidebar's Documents row
+ * that contact preselected, and `?shareOpen=1` (the docs sidebar's right-click
+ * "Share…") opens it with nobody picked yet. Its trigger lives in the sidebar's Documents row
  * beside Upload (`ReasonDocsSidebarPanels`, `variant="icon"`), with the open
  * file's other actions, rather than in a header strip of the editor's own.
  *
@@ -169,6 +170,10 @@ export function SharedCardOpener() {
   return null
 }
 
+/** The query parameter that opens the share dialog on arrival — set by the
+ *  docs sidebar's "Share…" menu item. */
+export const SHARE_OPEN_PARAM = "shareOpen"
+
 export interface ShareWithContactsProps {
   /** Title of the open document — becomes the shared card's title. */
   title: string
@@ -208,6 +213,16 @@ export function ShareWithContacts({ title, variant = "button" }: ShareWithContac
     setOpen(true)
     dropQueryParam("shareWith")
   }, [shareWithParam])
+
+  // `?shareOpen=1` → open the dialog with nobody picked yet. The sidebar's
+  // right-click "Share…" opens the file with this, so sharing a file is one
+  // gesture from the file rather than a hunt for this control.
+  const shareOpenParam = searchParams.get(SHARE_OPEN_PARAM)
+  useEffect(() => {
+    if (!shareOpenParam) return
+    setOpen(true)
+    dropQueryParam(SHARE_OPEN_PARAM)
+  }, [shareOpenParam])
 
   const sorted = useMemo(() => sortContacts(contacts.contacts), [contacts.contacts])
 

@@ -95,6 +95,12 @@ account. The app also applies the seed itself through `POST /host/demo`
 with `;` at the end of a line. `test/demo-seed.test.ts` checks every UI
 endpoint against this seed and `test/demo-admin.test.ts` the admin view.
 
+Anyone can edit the demo's mock data from its admin view (`src/host/demo-edit.ts`,
+`src/ui/pages/DemoMockEditor.tsx`): `POST /host/demo/edit` changes one entry,
+judge, round, section (judges, winner) or result set, refusing any row that is
+not tournament 90001's; `GET /host/demo/rounds/:roundId/sections` reads a round's
+pairings to edit; `POST /host/demo/reset` re-applies the seed.
+
 
 ### Simulated live rounds
 

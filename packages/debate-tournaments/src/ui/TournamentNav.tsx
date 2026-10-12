@@ -4,7 +4,7 @@ import type { TournamentSource } from "./client";
 import { Badge, tabsListClass, tabsTriggerClass } from "./primitives";
 import { BackLink, useTournaments } from "./shared";
 
-export type TournamentTab = "invite" | "rounds" | "results" | "tabroom" | "admin";
+export type TournamentTab = "invite" | "rounds" | "results" | "tabroom" | "ballot" | "admin";
 
 /**
  * Tab strip for one tournament's pages. The last tab depends on where the
@@ -22,11 +22,13 @@ export function TournamentNav({
   name?: string;
   source?: TournamentSource;
 }) {
-  const { hrefs, Link } = useTournaments();
+  const { hrefs, Link, ballotApiBase } = useTournaments();
   const tabs: Array<[TournamentTab, string, string]> = [
     ["invite", "Invite", hrefs.tournament(tournId)],
     ["rounds", "Pairings", hrefs.rounds(tournId)],
     ["results", "Results", hrefs.results(tournId)],
+    // Judges submit ballots here when the host app has a ballot API.
+    ...(ballotApiBase ? [["ballot", "Ballot", hrefs.ballot(tournId)] as [TournamentTab, string, string]] : []),
     source === "hosted" ? ["admin", "Admin", hrefs.admin(tournId)] : ["tabroom", "Tabroom", hrefs.tabroom(tournId)],
   ];
   return (

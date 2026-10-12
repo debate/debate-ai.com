@@ -26,6 +26,7 @@
     "./client": "./src/ui/client.ts",
     "./routes": "./src/routes/index.ts",
     "./types": "./src/types.ts",
+    "./ballots": "./src/ballots.ts",
     "./migrations/*": "./migrations/*"
   },
   "files": [
