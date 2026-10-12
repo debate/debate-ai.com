@@ -37,21 +37,16 @@ const resolveLocalPackageFile = createPackageFileResolver(
 );
 
 /**
- * The AI provider APIs the article panel calls directly when the reader has
- * pasted their own key (src/ai/providers.ts). An extension page may call these
+ * The AI provider APIs the article panel calls directly with the OpenRouter or
+ * Anthropic key the reader saved in the app's own settings
+ * (src/ai/providers.ts, src/ai/app-key.ts). An extension page may call these
  * without a CORS preflight only if their origins are granted here.
  *
  * They are listed rather than requested at runtime so that what the extension
  * can reach is visible in one place, in the manifest, to anyone reviewing it.
- * Nothing is sent to any of them unless the reader has both chosen that
- * provider and stored a key for it.
+ * Nothing is sent to either unless the reader has saved a key for it.
  */
-const AI_PROVIDER_HOSTS = [
-  'https://openrouter.ai/*',
-  'https://api.openai.com/*',
-  'https://api.anthropic.com/*',
-  'https://generativelanguage.googleapis.com/*',
-];
+const AI_PROVIDER_HOSTS = ['https://openrouter.ai/*', 'https://api.anthropic.com/*'];
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({
@@ -94,6 +89,12 @@ export default defineConfig({
         { find: /^next\/link$/, replacement: webui('src/next/link.tsx') },
         { find: /^next\/navigation$/, replacement: webui('src/next/navigation.tsx') },
         { find: /^next\/image$/, replacement: webui('src/next/image.tsx') },
+        // A single `debate-webview` module, as its source file (the package's
+        // `./*` export has no extension for Vite to resolve).
+        { find: /^@debate\/webview\/lib\/(.*)$/, replacement: webui('src/lib/$1') },
+        // A single `debate-webview` module, as its source file (the package's
+        // `./*` export has no extension for Vite to resolve).
+        { find: /^@debate\/webview\/lib\/(.*)$/, replacement: webui('src/lib/$1') },
         // The separately-versioned card-cutter engine is never shipped; the web
         // app resolves it to the same in-repo stub (apps/debate-ai.com/vite.config.ts).
         {
@@ -142,7 +143,7 @@ export default defineConfig({
       // MV3 only: the Firefox build is MV2, where the same job is done by
       // `tabs.executeScript` under `activeTab` and there is no such permission.
       ...(browser === 'firefox' ? [] : ['scripting']),
-      // Right-click → "Read this page" / "Check this page for existing cards".
+      // Right-click → "Read this page in Debate AI".
       'contextMenus',
       // Pinging debate-ai.com with the stored session so a signed-in reader
       // stays signed in (src/auth/session.ts).
@@ -163,6 +164,10 @@ export default defineConfig({
             matches: ['https://debate-ai.com/*', 'http://localhost:3000/*'],
           },
         }),
+    // The page-tools content script (entrypoints/page-tools.content.ts) runs
+    // on every http(s) page — the reading-mode button on detected articles and
+    // the backtick search menu — and WXT adds its `content_scripts` entry.
+    //
     // The article panel is `reader.html` framed over the page the reader is
     // on (src/reader/panel.ts), and a web page may only frame an extension
     // page listed here. It grants no access to any site — it only lets the

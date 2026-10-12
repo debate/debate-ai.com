@@ -10,8 +10,6 @@
  */
 import { browser } from 'wxt/browser';
 
-import { isAiProviderId, type AiProviderId } from '@/src/ai/providers';
-
 /** What clicking the toolbar icon does. */
 export type ToolbarAction = 'popup' | 'timer' | 'reader';
 
@@ -28,14 +26,12 @@ export interface Settings {
   /** Run the reuse check as soon as the popup opens, vs. on an explicit click. */
   autoCheck: boolean;
 
-  /**
-   * Where the article panel's Ask/Suggest answers come from — the reader's
-   * debate-ai.com account, or one of the providers they hold a key for. The
-   * keys themselves are deliberately not here: see src/ai/keys.ts.
-   */
-  aiProvider: AiProviderId;
-  /** Model id to use with `aiProvider`; blank means that provider's default. */
-  aiModel: string;
+  // No AI provider or key settings: the article panel reuses the key saved in
+  // the app's own settings, or the reader's account (src/ai/app-key.ts).
+  /** Show the reading-mode arrow on the left edge of pages with a long article. */
+  articleButton: boolean;
+  /** Open the search menu for selected text when the backtick key is pressed. */
+  searchShortcut: boolean;
   /** How many follow-up questions "Suggest" asks for. */
   maxFollowupQuestions: number;
   /** The prompt the article panel starts with, and what "Summarize" sends. */
@@ -60,8 +56,8 @@ export const DEFAULT_SETTINGS: Settings = {
   timerWindowWidth: DEFAULT_TIMER_WINDOW.width,
   timerWindowHeight: DEFAULT_TIMER_WINDOW.height,
   autoCheck: true,
-  aiProvider: 'account',
-  aiModel: '',
+  articleButton: true,
+  searchShortcut: true,
   maxFollowupQuestions: 4,
   summarizePrompt: DEFAULT_SUMMARIZE_PROMPT,
 };
@@ -107,8 +103,8 @@ export async function getSettings(): Promise<Settings> {
       MAX_TIMER_WINDOW.height
     ),
     autoCheck: stored.autoCheck !== false,
-    aiProvider: isAiProviderId(stored.aiProvider) ? stored.aiProvider : 'account',
-    aiModel: typeof stored.aiModel === 'string' ? stored.aiModel.trim() : '',
+    articleButton: stored.articleButton !== false,
+    searchShortcut: stored.searchShortcut !== false,
     maxFollowupQuestions: clamp(
       stored.maxFollowupQuestions,
       DEFAULT_SETTINGS.maxFollowupQuestions,
@@ -126,6 +122,5 @@ export async function getSettings(): Promise<Settings> {
 export async function saveSettings(patch: Partial<Settings>): Promise<void> {
   const next: Partial<Settings> = { ...patch };
   if (typeof next.apiBase === 'string') next.apiBase = next.apiBase.trim();
-  if (typeof next.aiModel === 'string') next.aiModel = next.aiModel.trim();
   await browser.storage.sync.set(next as Record<string, unknown>);
 }

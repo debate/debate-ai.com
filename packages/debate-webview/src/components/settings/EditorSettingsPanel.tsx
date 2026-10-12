@@ -23,6 +23,7 @@ import { CARDMIRROR_TAB_ICONS } from "./cardmirror-tab-icons"
 import { ResearchSettingsTab } from "./ResearchSettingsTab"
 import { researchSectionOfTab, researchSettingsPages } from "../../lib/qwksearch/settings-paths"
 import { SITE_LINKS } from "../../lib/nav/dock-menu-sections"
+import { getHostConfig } from "../../host/config"
 
 // The app's own account-linked preferences (debate style, font size, font
 // family, color theme, light/dark) — rendered by `UserSettingsPanel`, which
@@ -123,8 +124,21 @@ const SIDEBAR_CSS = `
 }
 `
 
-function isTabId(value: string | null): value is TabId {
-  return CATEGORIES.some((category) => category.id === value)
+/**
+ * The host's own tabs, slotted in after Preferences and My team. Read when the
+ * panel renders, since hosts configure themselves before the first render.
+ */
+function useCategories() {
+  return useMemo(() => {
+    const sections = getHostConfig().settingsSections ?? []
+    const categories: { id: TabId; label: string }[] = [...CATEGORIES]
+    categories.splice(2, 0, ...sections.map(({ id, label }) => ({ id: id as TabId, label })))
+    const details = { ...CATEGORY_DETAILS }
+    for (const section of sections) {
+      details[section.id] = { icon: section.icon ?? Settings, description: section.description }
+    }
+    return { categories, details, sections }
+  }, [])
 }
 
 /**
@@ -170,6 +184,8 @@ function SettingsSidebarFooter() {
  */
 export function EditorSettingsPanel({ sidebarHeader }: { sidebarHeader?: ReactNode } = {}) {
   const searchParams = useSearchParams()
+  const { categories, details, sections } = useCategories()
+  const isTabId = (value: string | null): value is TabId => categories.some((category) => category.id === value)
   const requestedCategory = searchParams.get("category")
   const [active, setActive] = useState<TabId>(isTabId(requestedCategory) ? requestedCategory : PREFERENCES_TAB)
   // Follow `?category=` when it changes under a mounted page — the research
@@ -193,13 +209,13 @@ export function EditorSettingsPanel({ sidebarHeader }: { sidebarHeader?: ReactNo
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
-    if (!q) return CATEGORIES
-    return CATEGORIES.filter(
-      ({ id, label }) =>
-        label.toLowerCase().includes(q) || CATEGORY_DETAILS[id]?.description.toLowerCase().includes(q),
+    if (!q) return categories
+    return categories.filter(
+      ({ id, label }) => label.toLowerCase().includes(q) || details[id]?.description.toLowerCase().includes(q),
     )
-  }, [query])
-  const activeCategory = CATEGORIES.find((category) => category.id === active)
+  }, [query, categories, details])
+  const activeCategory = categories.find((category) => category.id === active)
+  const activeHostSection = sections.find((section) => section.id === active)
 
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", height: "100%" }}>
@@ -233,7 +249,7 @@ export function EditorSettingsPanel({ sidebarHeader }: { sidebarHeader?: ReactNo
               </p>
             )}
             {filtered.map(({ id, label }, index) => {
-              const Icon = CATEGORY_DETAILS[id]?.icon ?? Settings
+              const Icon = details[id]?.icon ?? Settings
               const startsResearchGroup =
                 researchSectionOfTab(id) !== null && researchSectionOfTab(filtered[index - 1]?.id) === null
               return (
@@ -268,9 +284,11 @@ export function EditorSettingsPanel({ sidebarHeader }: { sidebarHeader?: ReactNo
             }}
           >
             <h3 style={{ margin: 0, fontSize: 15, fontWeight: 600 }}>{activeCategory?.label}</h3>
-            <p style={{ margin: "2px 0 0", fontSize: 13, opacity: 0.6 }}>{CATEGORY_DETAILS[active]?.description}</p>
+            <p style={{ margin: "2px 0 0", fontSize: 13, opacity: 0.6 }}>{details[active]?.description}</p>
           </div>
-          {researchSectionOfTab(active) !== null ? (
+          {activeHostSection ? (
+            <activeHostSection.component />
+          ) : researchSectionOfTab(active) !== null ? (
             <ResearchSettingsTab section={researchSectionOfTab(active)!} />
           ) : active === MY_TEAM_TAB ? (
             <MyRankedTeamsSettings />

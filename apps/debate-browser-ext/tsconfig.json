@@ -40,7 +40,10 @@
       "react-dom/*": ["./node_modules/@types/react-dom/*"],
       // The type-level half of `wxt.config.ts`'s `debate-api-client` alias:
       // typed from its source, since its `dist/` exists only after its build.
-      "@debate/api-client": ["../../packages/debate-api-client/src/index.ts"]
+      "@debate/api-client": ["../../packages/debate-api-client/src/index.ts"],
+      // Single modules of `debate-webview` (the reader reuses its own-AI-key
+      // storage, src/ai/app-key.ts) without pulling in the whole app.
+      "@debate/webview/lib/*": ["../../packages/debate-webview/src/lib/*"]
     }
   }
 }
