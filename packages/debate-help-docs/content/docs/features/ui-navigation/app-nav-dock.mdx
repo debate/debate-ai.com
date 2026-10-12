@@ -357,7 +357,7 @@ It is three levels deep:
 | Level | Element | What it is |
 | --- | --- | --- |
 | 1 | `h1` | A top-level section: Videos, Coaching, Research, Practice |
-| 2 | `h2` | A subgroup inside one — College Debates, Favorites, Lectures |
+| 2 | `h2` | A subgroup inside one — College Policy, Favorites, Lectures |
 | 3 | `span` | A leaf link: a tool, a debate format |
 
 Two rules hold for every h1:
@@ -398,7 +398,7 @@ Two rules hold for every h1:
 still folds it into the set of paths that get the tool sidebar.
 
 Indentation follows *nesting*, not `level` — each expanded node pads its own
-child list — so a leaf under College Debates sits a step deeper than one
+child list — so a leaf under College Policy sits a step deeper than one
 hanging straight off Coaching, wherever in the tree it is.
 
 ### Every tool has an icon
@@ -417,7 +417,7 @@ full-color artwork sitting among the grey glyphs — and now match the rest.
 ## Tests
 
 - `packages/debate-videos/test/video-sidebar-render.test.tsx` — the heading
-  structure above: College Debates under a Videos `h1`, no `h1` inside an
+  structure above: College Policy under a Videos `h1`, no `h1` inside an
   anchor, every section a toggle button, and only the section holding the
   current route open (with the closed ones rendering none of their links).
 - `packages/debate-videos/test/sidebar-active-section.test.ts` — the
@@ -467,7 +467,7 @@ shows them as a bar of cards at its top (see
 
 ## One collection highlighted at a time
 
-The sidebar's collections (All Videos, College Debates, Policy, PF, LD,
+The sidebar's collections (All Videos, College Policy, HS Policy, HS Policy 1v1 (LD), Public Forum,
 Greatest of All-Time, My Favorites, Watch History, Lectures) are one list, and
 only the open one is highlighted. **Lectures** lights up on every lecture page,
 category pages included (`browsingLectures`), and never alongside a round

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Lettered badge icons for the debate-format rows of the videos
- * sidebar: NDT (College Debates), CX (Policy), PF and LD.
+ * sidebar: NDT (College Policy), CX (Policy), PF and LD.
  *
  * Each is a rounded outline with the format's abbreviation inside, drawn on a
  * 280×168 canvas. They are typed as `LucideIcon` so they drop into
@@ -59,9 +59,9 @@ function createFormatBadgeIcon(label: string, displayName: string): LucideIcon {
   return Badge as LucideIcon;
 }
 
-/** College Debates — the NDT circuit. */
+/** College Policy — the NDT circuit. */
 export const IconFormatNDT = createFormatBadgeIcon("NDT", "IconFormatNDT");
-/** Policy Debates — varsity policy. */
+/** HS Policy — varsity policy. */
 export const IconFormatVP = createFormatBadgeIcon("CX", "IconFormatVP");
 /** Public Forum. */
 export const IconFormatPF = createFormatBadgeIcon("PF", "IconFormatPF");

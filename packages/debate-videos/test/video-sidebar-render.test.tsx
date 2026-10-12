@@ -118,33 +118,33 @@ describe("VideoSidebarTree", () => {
 
   it("does not select Lectures while a debate-video tab is active", () => {
     const html = renderSidebar({ activeId: "pf" });
-    expect(html).toMatch(/<h2 class="[^"]*text-primary[^"]*">PF Debates/);
+    expect(html).toMatch(/<h2 class="[^"]*text-primary[^"]*">Public Forum/);
     expect(html).not.toMatch(/<h2 class="[^"]*text-primary[^"]*">Lectures/);
   });
 });
 
 describe("the sidebar's heading structure", () => {
-  it("puts College Debates and My Favorites under a Videos h1", () => {
+  it("puts College Policy and My Favorites under a Videos h1", () => {
     const html = renderSidebar();
     expect(html).toMatch(/<h1[^>]*>Videos<\/h1>/);
-    expect(html).toMatch(/<h2[^>]*>College Debates<\/h2>/);
+    expect(html).toMatch(/<h2[^>]*>College Policy<\/h2>/);
     expect(html).toMatch(/<h2[^>]*>My Favorites<\/h2>/);
     // The h1 comes first: both are nested inside it, not siblings of it.
-    expect(html.indexOf(">Videos<")).toBeLessThan(html.indexOf(">College Debates<"));
-    expect(html.indexOf(">College Debates<")).toBeLessThan(html.indexOf(">My Favorites<"));
+    expect(html.indexOf(">Videos<")).toBeLessThan(html.indexOf(">College Policy<"));
+    expect(html.indexOf(">College Policy<")).toBeLessThan(html.indexOf(">My Favorites<"));
   });
 
   it("keeps every round-archive link on one level under Videos", () => {
     // Policy / PF / LD / Greatest of All-Time used to be h3 leaves inside a
-    // College Debates node, one indent deeper than it. They are peers of it:
-    // same heading level, same indent, and no chevron on College Debates to
+    // College Policy node, one indent deeper than it. They are peers of it:
+    // same heading level, same indent, and no chevron on College Policy to
     // collapse them out of view.
     const html = renderSidebar();
     for (const title of [
-      "College Debates",
-      "Policy Debates",
-      "PF Debates",
-      "LD Debates",
+      "College Policy",
+      "HS Policy",
+      "HS Policy 1v1 \\(LD\\)",
+      "Public Forum",
       "Greatest of All-Time",
       "My Favorites",
     ]) {
@@ -152,8 +152,8 @@ describe("the sidebar's heading structure", () => {
       expect(html).not.toMatch(new RegExp(`<span[^>]*>${title}</span>`));
     }
     // One expand control in the section — the Videos heading itself.
-    expect(html).not.toContain("Collapse College Debates");
-    expect(html).not.toContain("Expand College Debates");
+    expect(html).not.toContain("Collapse College Policy");
+    expect(html).not.toContain("Expand College Policy");
   });
 
   it("lists Lectures as a single row under Videos, with no categories", () => {
@@ -224,11 +224,11 @@ describe("the sidebar's heading structure", () => {
     expect(html).toContain("Topic Coverage");
     expect(html).toContain("AI Judge Decision");
     // ...alongside the Videos node's own links, which were never in doubt.
-    expect(html).toContain("PF Debates");
+    expect(html).toContain("Public Forum");
     expect(html).toContain("My Favorites");
   });
 
-  it("prints the College Debates total in full in the tree", () => {
+  it("prints the College Policy total in full in the tree", () => {
     // The sidebar row sits next to the title, where an abbreviated count
     // fits — but the number is the round archive's headline figure, so the
     // tree abbreviates every total except this one.
@@ -259,7 +259,7 @@ describe("QuickLinksGrid", () => {
           layout,
         }),
       );
-      expect(html).toContain("College Debates");
+      expect(html).toContain("College Policy");
       expect(html).not.toContain('src="undefined"');
       for (const [, src] of html.matchAll(/<img[^>]*\ssrc="([^"]*)"/g)) {
         expect(src.length).toBeGreaterThan(0);
@@ -267,7 +267,7 @@ describe("QuickLinksGrid", () => {
     }
   });
 
-  it("prints the College Debates total in full on every layout", () => {
+  it("prints the College Policy total in full on every layout", () => {
     // Rounded to `1.4k`, the round archive's flagship number both lost its
     // digits and read lower than it is. Every other tile still abbreviates.
     for (const layout of ["grid", "list"] as const) {

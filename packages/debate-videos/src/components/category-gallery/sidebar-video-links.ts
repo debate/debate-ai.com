@@ -44,7 +44,7 @@ export interface SidebarVideoLink {
   /**
    * Show this destination's total unabbreviated. Thousands are shortened to
    * `1.4k` elsewhere to keep a count from crowding out its title; the
-   * College Debates total is the round archive's headline number and reads
+   * College Policy total is the round archive's headline number and reads
    * as `1400`, not `1.4k`.
    */
   exactCount?: boolean;
@@ -60,12 +60,12 @@ export const VIDEO_ALL_LINK: SidebarVideoLink = {
   exactCount: true,
 };
 
-/** The College Debates node — the round archive's flagship link, and the
+/** The College Policy node — the round archive's flagship link, and the
  *  first of the peer collections it heads in the tree. */
 export const VIDEO_COLLEGE_LINK: SidebarVideoLink = {
   id: "college",
   href: "/videos/college",
-  title: "College Debates",
+  title: "College Policy",
   glyph: IconFormatNDT,
   exactCount: true,
 };
@@ -74,9 +74,9 @@ export const VIDEO_COLLEGE_LINK: SidebarVideoLink = {
  *  rather than children of it: they are sibling collections of the same
  *  round archive, not subsets of the college one. */
 export const VIDEO_FORMAT_LINKS: SidebarVideoLink[] = [
-  { id: "policy", href: "/videos/policy", title: "Policy Debates", glyph: IconFormatVP },
-  { id: "pf", href: "/videos/pf", title: "PF Debates", glyph: IconFormatPF },
-  { id: "ld", href: "/videos/ld", title: "LD Debates", glyph: IconFormatLD },
+  { id: "policy", href: "/videos/policy", title: "HS Policy", glyph: IconFormatVP },
+  { id: "ld", href: "/videos/ld", title: "HS Policy 1v1 (LD)", glyph: IconFormatLD },
+  { id: "pf", href: "/videos/pf", title: "Public Forum", glyph: IconFormatPF },
   { id: "topPicks", href: "/videos/goat", title: "Greatest of All-Time", glyph: Star },
 ];
 
