@@ -55,7 +55,7 @@ import type React from "react"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { AlertCircle, ArrowLeft, Calendar, Eye, ListPlus, Loader2 } from "lucide-react"
+import { AlertCircle, ArrowLeft, Calendar, Clock, Eye, ListPlus, Loader2 } from "lucide-react"
 import { CommentSection } from "@debate/comments"
 
 import { WatchToolbar } from "../../components/watch/WatchToolbar"
@@ -93,6 +93,11 @@ import {
 } from "../../state/videoPlayerStore"
 import { savePlayerState } from "../../state/videoPlayerPersistence"
 import { recordWatchProgress } from "../../state/videoWatchHistory"
+import {
+  formatVideoDuration,
+  useVideoDuration,
+  useVideoDurationTotal,
+} from "../../state/videoDurations"
 import { videoWatchHref } from "../../lib/video-slug"
 import { videoRouteHref } from "../../lib/video-route"
 import type { VideoDocument } from "../../lib/video-documents"
@@ -234,6 +239,12 @@ export function VideoWatchPage({
     [searchFeed.videos, videoId],
   )
   const listedVideos = relatedQuery ? searchResults : related
+  // Lengths come from the stored `video_durations` table, so a video the
+  // admin backfill has not reached yet simply shows none (the player's own
+  // reading fills in for the video on screen once it loads).
+  const listedIds = useMemo(() => listedVideos.map((candidate) => candidate[0]), [listedVideos])
+  const listedDurationTotal = useVideoDurationTotal(listedIds)
+  const storedDuration = useVideoDuration(videoId)
   const unqueuedListed = useMemo(() => {
     const queued = new Set(queue.map((item) => item.videoId))
     return listedVideos.filter((candidate) => !queued.has(candidate[0]))
@@ -892,6 +903,12 @@ export function VideoWatchPage({
                   <Eye className="h-3 w-3" />
                   {viewCount.toLocaleString()}
                 </span>
+                {(storedDuration || duration > 0) && (
+                  <span className="inline-flex items-center gap-1 tabular-nums" title="Duration">
+                    <Clock className="h-3 w-3" />
+                    {formatVideoDuration(storedDuration || duration)}
+                  </span>
+                )}
                 {judgeDecision && <span>Decision {judgeDecision}</span>}
               </div>
 
@@ -974,6 +991,15 @@ export function VideoWatchPage({
               <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                 {relatedQuery ? `Results for “${relatedQuery}”` : "Related videos"}
               </h2>
+              {listedVideos.length > 0 && listedDurationTotal > 0 && (
+                <span
+                  className="inline-flex items-center gap-1 text-xs tabular-nums text-muted-foreground"
+                  title="Combined length of the listed videos with a stored duration"
+                >
+                  <Clock className="h-3 w-3" aria-hidden="true" />
+                  {formatVideoDuration(listedDurationTotal)} total
+                </span>
+              )}
               {relatedQuery && searchFeed.isLoading && (
                 <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" aria-label="Searching" />
               )}
