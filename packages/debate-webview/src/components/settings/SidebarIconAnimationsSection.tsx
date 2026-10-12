@@ -59,7 +59,7 @@ export function SidebarIconAnimationsSection() {
         <Switch id="settings-sidebar-icon-animations" checked={on} onCheckedChange={handleChange} />
       </div>
       <p className="mt-2 text-xs text-muted-foreground">
-        Icons wiggle, bounce, pulse, spin or shake when you hover or tab to them. Off by default.
+        Icons wiggle, bounce, pulse, spin or shake at random, for 0.5s or 1s, when you hover or tab to them. Off by default.
       </p>
     </section>
   )
