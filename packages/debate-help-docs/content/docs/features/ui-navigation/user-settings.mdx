@@ -96,7 +96,9 @@ The same box appears:
   upgrading, and
 - in an **AI limit reached** dialog when Debate AI's shared key itself has run
   out of credit or hit its spending cap (the route answers `503` with an
-  `x-ai-key-needed` header).
+  `x-ai-key-needed` header). That dialog is an upgrade box: it offers the plan
+  cards to upgrade your account first, with bringing your own key as the other
+  option. If the plans can't be loaded, only the key option shows.
 
 The key is kept in this browser's `localStorage` only — never in your account's
 settings row — and is sent, as the `x-user-ai-key` header, only on same-origin
