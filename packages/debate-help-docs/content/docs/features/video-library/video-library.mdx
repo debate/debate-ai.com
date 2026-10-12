@@ -37,6 +37,17 @@ does this with a redirect (`apps/debate-ai.com/lib/redirects/video-listing.ts`)
 before the request reaches the app. `/videos/archive/…` maps to the undated
 (`legacy`) season.
 
+## Lecture categories
+
+The sidebar has a single **Lectures** row under **Videos**. Opening it
+(`/lectures`) shows the lecture categories as a bar of cards at the top of the
+page, on every screen size: **All Lectures** first, then each category with
+its icon and video count. A card's background highlights on hover, the open
+category is drawn selected, and clicking a card switches the list to that
+category (`/lectures/<category>`). The categories used to be a second,
+expandable section of the sidebar; they now live only on the page
+(`LectureCategoryGridGallery`, rendered by `LecturesVideoGridView`).
+
 ## Merged lecture categories
 
 Topic analysis and topic lectures share one shelf, **Topic Lectures**. Videos

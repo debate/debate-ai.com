@@ -28,7 +28,7 @@ export const DOCS_SIDEBAR_SLOT_ID = "app-sidebar-docs-slot"
  *   (`showsReasonDocsPanels`). On `/research/cards` they are the whole column
  *   (`showsCardsOnlySidebar`): no tree, and the panels
  *   `fill` the leftover height so each scrolls inside its own share.
- * - **The library tree** — Round Videos, Lectures and the tool sections —
+ * - **The library tree** — Videos (Lectures is one of its rows) and the tool sections —
  *   everywhere else. The site links that used to sit under it as a footer
  *   row are a submenu of the account menu now (`nav-user.tsx`).
  * - **The help docs' page tree** on `/docs` ({@link DOCS_SIDEBAR_SLOT_ID}),

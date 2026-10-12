@@ -48,7 +48,7 @@ the view in the centre (`mobileSidebarKind`, `lib/mobile-sidebar.ts`):
 
 | View | Drawer |
 | --- | --- |
-| Video library (`/videos`, `/lectures`, glossary, rankings, statistics) | The sidebar tree (Round Videos, Lectures, tool sections) and footer |
+| Video library (`/videos`, `/lectures`, glossary, rankings, statistics) | The sidebar tree (Videos, tool sections) and footer |
 | `/research/cards` | The document panels alone |
 | `/reason-editor` | Document panels above the sidebar tree |
 | `/debate` | Its own flows/rounds sidebar — the button dispatches `debate:open-sidebar` and the workspace opens its own sheet |
@@ -212,7 +212,7 @@ search panel. The choice is not remembered between page loads.
 ## One sidebar everywhere
 
 Every view draws the same sidebar: the one the video pages always had — the
-dock, then **Round Videos**, **Lectures** and the Research / Practice /
+dock, then **Videos** and the Research / Practice /
 Coaching / Insights sections, then the footer links. The tool and
 research pages, `/admin`, the legal pages and the help docs used to get a
 different column (shadcn's `sidebar-07`, tool sections only), and `/docs`
@@ -220,9 +220,8 @@ showed Fumadocs' own sidebar beside that one. Now:
 
 - **Off the video pages** `AppSidebarShell` wraps the page in the same
   `ResizableSidebarLayout` the video pages use, and `LibrarySidebarTree`
-  mounts the same `VideoSidebarTree`, reading the library's counts and
-  lecture categories itself (`useVideoMeta`). Its Lectures section starts
-  closed there.
+  mounts the same `VideoSidebarTree`, reading the library's counts itself
+  (`useVideoMeta`).
 - **Page-specific panels are sections of it.** The REASON document panels
   sit above the tree on `/reason-editor` and are the whole column on
   `/research/cards`, as before.
@@ -289,7 +288,7 @@ is true), so the five destinations stay one click away.
 While a text editor has the keyboard (CardMirror, the REASON editor, any text
 field), Ctrl/⌘+B stays **bold** and does not toggle the sidebar.
 
-Each tree section (Round Videos, Lectures, Research, Practice, Coaching,
+Each tree section (Videos, Research, Practice, Coaching,
 Insights) opens and closes on its own; see
 [The nav tree's headings](#the-nav-trees-headings). The Docs, Github, Support,
 Privacy and Reddit links sit on one compact line after the last section and
@@ -338,7 +337,7 @@ It is three levels deep:
 | --- | --- | --- |
 | 1 | `h1` | A top-level section: Videos, Coaching, Research, Practice |
 | 2 | `h2` | A subgroup inside one — College Debates, Favorites, Lectures |
-| 3 | `span` | A leaf link: a tool, a lecture category, a debate format |
+| 3 | `span` | A leaf link: a tool, a debate format |
 
 Two rules hold for every h1:
 
@@ -435,21 +434,22 @@ full-color artwork sitting among the grey glyphs — and now match the rest.
 
 ## All Videos is the home page
 
-**All Videos** (`/videos`) sits at the top of the sidebar, above Round Videos,
-and lists every round and lecture in the library. It is where `/` lands. The
-lecture library on its own is **Lectures** (`/lectures`), whose **All
-Lectures** row lists lectures only.
+**All Videos** (`/videos`) is the first row under **Videos** and lists every
+round and lecture in the library. It is where `/` lands. The lecture library
+on its own is **Lectures** (`/lectures`), a single row at the end of the same
+section. The lecture categories are not in the sidebar: the lectures page
+shows them as a bar of cards at its top (see
+[Lecture categories](/docs/features/video-library/video-library#lecture-categories)).
 
 ## One collection highlighted at a time
 
-The sidebar's round collections (College Debates, Policy, PF, LD, Greatest of
-All-Time) and its lecture categories are highlighted by two different rules,
-and the second used to fire everywhere: opening **College Debates** lit up
-**All Lectures** with it, as if two collections were open at once. The lecture
-rows now highlight only while the lecture library is actually what is being
-browsed — so a round collection, the glossary and the rankings pages each
-leave them alone. `packages/debate-videos/test/sidebar-single-highlight.test.tsx`
+The sidebar's collections (All Videos, College Debates, Policy, PF, LD,
+Greatest of All-Time, My Favorites, Watch History, Lectures) are one list, and
+only the open one is highlighted. **Lectures** lights up on every lecture page,
+category pages included (`browsingLectures`), and never alongside a round
+collection. `packages/debate-videos/test/sidebar-single-highlight.test.tsx`
 pins it.
+
 
 **Team Rankings stays highlighted on a team or school page.** `/teams/<team>`
 and `/schools/<school>` are opened from the **Team Rankings** row (`/coaching/rankings`)
