@@ -1,7 +1,7 @@
 /**
  * @fileoverview The Research / Practice / Coaching / Insights tool sections
  * rendered in
- * the videos sidebar underneath the "Round Videos" and "Lectures" nodes. Mirrors the entries of
+ * the videos sidebar underneath the "Videos" node. Mirrors the entries of
  * the app's `/tools` catalog (`app/tools/tool-groups.ts`), regrouped into the
  * four headings the sidebar shows and trimmed to the label, href and icon
  * the tree needs — the sidebar lives in this package, which cannot import

@@ -59,17 +59,7 @@ function renderSidebar(overrides: Partial<ComponentProps<typeof VideoSidebarTree
   return renderToStaticMarkup(
     createElement(VideoSidebarTree, {
       counts: { college: 12, favorites: 3, lectures: 40 },
-      // The real `/api/videos/meta` shape — `key`/`label`, not `id`/`title`.
-      // Cast as `never`, the wrong shape rendered blank rows pointing at
-      // `/videos/undefined` and the assertions below never noticed.
-      lectureCategories: [
-        { key: "strategy", label: "Strategy", count: 9, maxViews: 100 },
-        { key: "theory", label: "Theory", count: 31, maxViews: 80 },
-      ],
-      selectedCategory: "all",
       activeId: "lectures",
-      lecturesExpanded: true,
-      onToggleLectures: () => {},
       ...overrides,
     }),
   );
@@ -117,36 +107,34 @@ describe("VideoSidebarTree", () => {
     }
   });
 
-  it("draws every row, lecture categories included, in gray", () => {
-    const html = renderSidebar({
-      lectureCategories: [{ key: "topic_lectures", label: "Topic Lectures", count: 4, maxViews: 10 }],
-    });
+  it("draws every row in gray", () => {
+    const html = renderSidebar();
     // No baked-color image icons: Favorites and Lectures are plain glyphs.
     expect(html).not.toContain("<img");
     expect(html).toMatch(/<svg[^>]*text-muted-foreground[^>]*>(?:(?!<\/svg>).)*<\/svg><h2[^>]*>My Favorites/s);
-    expect(html).toMatch(/<svg[^>]*text-muted-foreground[^>]*>(?:(?!<\/svg>).)*<\/svg><h2[^>]*>Topic Lectures/s);
+    expect(html).toMatch(/<svg[^>]*text-muted-foreground[^>]*>(?:(?!<\/svg>).)*<\/svg><h2[^>]*>Lectures/s);
     expect(html).not.toMatch(/<svg[^>]*text-lime-600/);
   });
 
-  it("does not select All Lectures while a debate-video tab is active", () => {
-    const html = renderSidebar({ activeId: "pf", selectedCategory: "all" });
+  it("does not select Lectures while a debate-video tab is active", () => {
+    const html = renderSidebar({ activeId: "pf" });
     expect(html).toMatch(/<h2 class="[^"]*text-primary[^"]*">PF Debates/);
-    expect(html).not.toMatch(/<h2 class="[^"]*text-primary[^"]*">All Lectures/);
+    expect(html).not.toMatch(/<h2 class="[^"]*text-primary[^"]*">Lectures/);
   });
 });
 
 describe("the sidebar's heading structure", () => {
-  it("puts College Debates and My Favorites under a Round Videos h1", () => {
+  it("puts College Debates and My Favorites under a Videos h1", () => {
     const html = renderSidebar();
-    expect(html).toMatch(/<h1[^>]*>Round Videos<\/h1>/);
+    expect(html).toMatch(/<h1[^>]*>Videos<\/h1>/);
     expect(html).toMatch(/<h2[^>]*>College Debates<\/h2>/);
     expect(html).toMatch(/<h2[^>]*>My Favorites<\/h2>/);
     // The h1 comes first: both are nested inside it, not siblings of it.
-    expect(html.indexOf(">Round Videos<")).toBeLessThan(html.indexOf(">College Debates<"));
+    expect(html.indexOf(">Videos<")).toBeLessThan(html.indexOf(">College Debates<"));
     expect(html.indexOf(">College Debates<")).toBeLessThan(html.indexOf(">My Favorites<"));
   });
 
-  it("keeps every round-archive link on one level under Round Videos", () => {
+  it("keeps every round-archive link on one level under Videos", () => {
     // Policy / PF / LD / Greatest of All-Time used to be h3 leaves inside a
     // College Debates node, one indent deeper than it. They are peers of it:
     // same heading level, same indent, and no chevron on College Debates to
@@ -163,21 +151,20 @@ describe("the sidebar's heading structure", () => {
       expect(html).toMatch(new RegExp(`<h2[^>]*>${title}</h2>`));
       expect(html).not.toMatch(new RegExp(`<span[^>]*>${title}</span>`));
     }
-    // One expand control in the section — the Round Videos heading itself.
+    // One expand control in the section — the Videos heading itself.
     expect(html).not.toContain("Collapse College Debates");
     expect(html).not.toContain("Expand College Debates");
   });
 
-  it("gives Lectures an h1 of its own, after the Round Videos section", () => {
-    // Lectures used to hang off the Videos node as an h2 two levels in, which
-    // read as a filter on the round archive rather than the other library.
+  it("lists Lectures as a single row under Videos, with no categories", () => {
+    // The lecture categories live on the lectures page as a card bar; the
+    // sidebar carries one Lectures link, after My Favorites.
     const html = renderSidebar();
-    expect(html).toMatch(/<h1[^>]*>Lectures<\/h1>/);
-    expect(html).not.toMatch(/<h2[^>]*>Lectures<\/h2>/);
+    expect(html).toMatch(/<h2[^>]*>Lectures<\/h2>/);
+    expect(html).not.toMatch(/<h1[^>]*>Lectures<\/h1>/);
+    expect(html).toMatch(/<a[^>]*href="\/lectures"/);
     expect(html.indexOf(">My Favorites<")).toBeLessThan(html.indexOf(">Lectures<"));
-    // Its categories are the section's own content, one level in.
-    expect(html).toMatch(/<h2[^>]*>All Lectures<\/h2>/);
-    expect(html).toMatch(/<h2[^>]*>Strategy<\/h2>/);
+    expect(html).not.toContain("All Lectures");
   });
 
   it("renders Coaching / Research / Practice as h1 sections", () => {
@@ -196,7 +183,7 @@ describe("the sidebar's heading structure", () => {
     // "open in a new tab" silently did nothing on the five rows that happened
     // to be sections.
     const html = renderSidebar();
-    for (const title of ["Round Videos", "Lectures", "Coaching", "Research", "Practice"]) {
+    for (const title of ["Videos", "Coaching", "Research", "Practice"]) {
       expect(html).toMatch(
         new RegExp(
           `<a[^>]*href="/[^"]*"[^>]*aria-expanded="(?:true|false)"[^>]*>(?:(?!</a>)[\\s\\S])*<h1[^>]*>${title}</h1>`,
@@ -206,14 +193,10 @@ describe("the sidebar's heading structure", () => {
   });
 
   it("opens only the section that holds the current route", () => {
-    // `usePathname` is mocked to `/videos`, so Round Videos is the open
-    // section and every tool section is closed: those are one accordion,
-    // which is what keeps the sidebar to the content of wherever the dock
-    // just took you. Lectures is outside it — the page owns whether it is
-    // open, and here it is.
+    // `usePathname` is mocked to `/videos`, so Videos is the open section.
     const html = renderSidebar();
     expect(html).toMatch(
-      /<a[^>]*aria-expanded="true"[^>]*>(?:(?!<\/a>)[\s\S])*<h1[^>]*>Round Videos<\/h1>/,
+      /<a[^>]*aria-expanded="true"[^>]*>(?:(?!<\/a>)[\s\S])*<h1[^>]*>Videos<\/h1>/,
     );
     for (const title of ["Coaching", "Research", "Practice"]) {
       expect(html).toMatch(

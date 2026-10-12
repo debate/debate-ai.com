@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button } from "@debate/webview/lib/ui/primitives/button";
 import { Badge } from "@debate/webview/lib/ui/primitives/badge";
 import { Input } from "@debate/webview/lib/ui/primitives/input";

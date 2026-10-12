@@ -317,10 +317,12 @@ describe("buildRecentCloudItems", () => {
   });
 
   it("labels a sprint session by topic when its title is blank, and untitled when both are", () => {
+    // One shared timestamp so the newest-first order can't flip (see below).
+    const createdAt = Date.now();
     const items = buildRecentCloudItems({
       sprintSessions: [
-        { id: "s1", topic: "AI regulation", title: "  ", createdAt: Date.now() },
-        { id: "s2", topic: "  ", title: "  ", createdAt: Date.now() },
+        { id: "s1", topic: "AI regulation", title: "  ", createdAt },
+        { id: "s2", topic: "  ", title: "  ", createdAt },
       ],
     });
     expect(items.map((i) => i.label)).toEqual(["AI regulation", "Untitled sprint session"]);
@@ -396,10 +398,12 @@ describe("buildRecentCloudItems", () => {
   });
 
   it("labels a flow annotation by tag when its note is blank, and untitled when both are", () => {
+    // One shared timestamp so the newest-first order can't flip (see below).
+    const createdAt = Date.now();
     const items = buildRecentCloudItems({
       flowAnnotations: [
-        { id: "a1", note: "  ", tag: "turn", createdAt: Date.now() },
-        { id: "a2", note: "  ", tag: undefined, createdAt: Date.now() },
+        { id: "a1", note: "  ", tag: "turn", createdAt },
+        { id: "a2", note: "  ", tag: undefined, createdAt },
       ],
     });
     expect(items.map((i) => i.label)).toEqual(["turn", "Untitled annotation"]);
@@ -456,10 +460,13 @@ describe("buildRecentCloudItems", () => {
   });
 
   it("labels an evidence library entry by argBlock when cite is blank, and untitled when both are", () => {
+    // One shared timestamp: two separate Date.now() calls can straddle a
+    // millisecond and flip the newest-first order this asserts on.
+    const createdAt = Date.now();
     const items = buildRecentCloudItems({
       evidenceLibraryEntries: [
-        { id: "entry-2", cite: "  ", argBlock: "Warming DA", createdAt: Date.now() },
-        { id: "entry-3", cite: "  ", argBlock: "  ", createdAt: Date.now() },
+        { id: "entry-2", cite: "  ", argBlock: "Warming DA", createdAt },
+        { id: "entry-3", cite: "  ", argBlock: "  ", createdAt },
       ],
     });
     expect(items.map((i) => i.label)).toEqual(["Warming DA", "Untitled evidence entry"]);

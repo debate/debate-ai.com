@@ -125,8 +125,6 @@ const QUICK_LINKS: QuickLink[] = SIDEBAR_VIDEO_LINKS.filter((link) => !REFERENCE
 
 interface QuickLinksGridProps {
   counts?: Record<string, number>;
-  showLectures?: boolean;
-  onToggleLectures?: () => void;
   activeId?: string;
   /**
    * `"grid"` (default) renders the square tile gallery used at the top of the
@@ -136,7 +134,7 @@ interface QuickLinksGridProps {
   layout?: "grid" | "list";
 }
 
-function CardBody({ link, showLectures, count, isActive }: { link: QuickLink; showLectures?: boolean; count?: number; isActive?: boolean }) {
+function CardBody({ link, count, isActive }: { link: QuickLink; count?: number; isActive?: boolean }) {
   return (
     <>
       <GlowingEffect spread={30} glow proximity={48} inactiveZone={0.01} borderWidth={1.5} />
@@ -197,7 +195,7 @@ function ListRow({ link, count, isActive }: { link: QuickLink; count?: number; i
   );
 }
 
-export function QuickLinksGrid({ counts, showLectures = false, onToggleLectures, activeId, layout = "grid" }: QuickLinksGridProps) {
+export function QuickLinksGrid({ counts, activeId, layout = "grid" }: QuickLinksGridProps) {
   if (layout === "list") {
     return (
       <ul className="flex flex-col gap-1">
@@ -229,7 +227,7 @@ export function QuickLinksGrid({ counts, showLectures = false, onToggleLectures,
                 isActive && "border-primary/60",
               )}
             >
-              <CardBody link={link} showLectures={showLectures} count={counts?.[link.id]} isActive={isActive} />
+              <CardBody link={link} count={counts?.[link.id]} isActive={isActive} />
             </Link>
           </li>
         );
