@@ -22,7 +22,8 @@ import type { ExpressLikeRouter } from "../api/express-adapter";
 import type { HostUser, TabroomActor } from "../api/actor";
 import { findPersonByEmail } from "../api/actor";
 import { canAdminTournament, isDemoTournament, loadTournamentAdmin, mockAdminViewer, type AdminViewer } from "./admin";
-import { ensureDemoTournament } from "./demo";
+import { ensureDemoTournament, seedDemo } from "./demo";
+import { applyDemoEdit, DemoEditNotFound, demoEditSchema, loadDemoSections } from "./demo-edit";
 import { DEMO_ADMIN, DEMO_TOURN_ID } from "./demo-account";
 import {
   createTournament,
@@ -62,6 +63,9 @@ function createHostRouter(): ExpressLikeRouter {
   tourns.post(create);
   routes.route("/tourns/:tournId/admin").get(admin);
   routes.route("/demo").post(demo);
+  routes.route("/demo/edit").post(demoEdit);
+  routes.route("/demo/reset").post(demoReset);
+  routes.route("/demo/rounds/:roundId/sections").get(demoSections);
   return routes as unknown as ExpressLikeRouter;
 }
 
@@ -98,6 +102,40 @@ const demo = async (_req: HostRequest, res: HostResponse) => {
     res.json({ tournId: DEMO_TOURN_ID, username: DEMO_ADMIN.username, seeded });
   } catch (error) {
     res.status(500).json({ detail: messageFor(error, "Could not load the demo tournament.") });
+  }
+};
+
+const demoEdit = async (req: HostRequest, res: HostResponse) => {
+  const parsed = demoEditSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({ detail: parsed.error.issues[0]?.message ?? "That edit is not valid." });
+  }
+  try {
+    await applyDemoEdit(parsed.data);
+    res.json({ ok: true });
+  } catch (error) {
+    if (error instanceof DemoEditNotFound) return res.status(404).json({ detail: error.message });
+    res.status(500).json({ detail: messageFor(error, "Could not save that edit.") });
+  }
+};
+
+const demoSections = async (req: HostRequest, res: HostResponse) => {
+  const roundId = Number(req.params?.roundId);
+  if (!Number.isInteger(roundId) || roundId <= 0) return res.status(404).json({ detail: "No such round." });
+  try {
+    res.json({ sections: await loadDemoSections(roundId) });
+  } catch (error) {
+    if (error instanceof DemoEditNotFound) return res.status(404).json({ detail: error.message });
+    res.status(500).json({ detail: messageFor(error, "Could not load that round.") });
+  }
+};
+
+const demoReset = async (_req: HostRequest, res: HostResponse) => {
+  try {
+    await seedDemo();
+    res.json({ tournId: DEMO_TOURN_ID, seeded: true });
+  } catch (error) {
+    res.status(500).json({ detail: messageFor(error, "Could not reset the demo tournament.") });
   }
 };
 

@@ -197,6 +197,8 @@ export async function loadTournamentAdmin(
       id: Number(j.id),
       code: (j.code as string | null) ?? null,
       name: [j.first, j.last].filter(Boolean).join(" "),
+      first: (j.first as string | null) ?? null,
+      last: (j.last as string | null) ?? null,
       schoolName: (j.schoolName as string | null) ?? null,
       active: flag(j.active),
     })),

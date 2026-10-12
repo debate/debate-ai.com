@@ -36,4 +36,5 @@ export {
 export { getHostRouter, hostPathAllowsMethod, isHostPath } from "./host/router";
 export { canAdminTournament, loadTournamentAdmin, type TournamentAdminView } from "./host/admin";
 export { ensureDemoTournament, seedDemo, splitSqlStatements } from "./host/demo";
+export { applyDemoEdit, demoEditSchema, loadDemoSections, type DemoEdit, type DemoSection } from "./host/demo-edit";
 export { DEMO_ADMIN, DEMO_TOURN_ID } from "./host/demo-account";
