@@ -5,8 +5,8 @@
  * Compiled by `bun run build:app-css` with the Tailwind v4 CLI into
  * `public/debate-ai-app.css`, which options/index.html links as a static file.
  * It is kept out of Vite's CSS pipeline on purpose: the rest of the extension
- * is Tailwind v3 through PostCSS, which rejects v4's `@layer` output, and the
- * two stylesheets define the same `--background`/`--primary` variables in
+ * goes through PostCSS with its own `tailwind.config.js`, and the two
+ * stylesheets define the same `--background`/`--primary` variables in
  * different colour formats, so they can't share a page either. */
 @import "@debate/webview/app.css";
 

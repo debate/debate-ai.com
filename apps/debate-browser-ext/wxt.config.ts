@@ -113,7 +113,7 @@ export default defineConfig({
   // `wxt dev` launches a browser via chrome-launcher, which only auto-detects
   // "Google Chrome" / "Chromium". This machine only has Chrome Beta installed,
   // so point the dev runner at it explicitly.
-  runner: {
+  webExt: {
     binaries: {
       chrome:
         '/Applications/Google Chrome Beta.app/Contents/MacOS/Google Chrome Beta',

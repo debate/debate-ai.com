@@ -46,16 +46,16 @@
     "youtube-update-views": "bun run src/youtube/youtube-sync-cli.ts --update-views"
   },
   "dependencies": {
-    "@libsql/client": "^0.14.0",
+    "@libsql/client": "^0.18.0",
     "@debate/card-parser": "workspace:*",
-    "extract-youtube": "^1.0.425",
-    "grab-url": "^1.6.22",
+    "extract-youtube": "^1.0.477",
+    "grab-url": "^3.0.7",
     "jszip": "^3.10.2",
     "linkedom": "^0.18.13",
     "@debate/types": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^26.6.3",
+    "@types/node": "^26.6.5",
     "@vitest/coverage-v8": "^5.0.3",
     "typescript": "^7.0.2",
     "vitest": "^5.0.3"
