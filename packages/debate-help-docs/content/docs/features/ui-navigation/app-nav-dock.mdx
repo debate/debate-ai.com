@@ -98,7 +98,8 @@ root — opening one does not affect the other, and either can be open at once:
   only way to reach those links at all.
 
 - **The gear icon opens `SettingsMenu`** — Settings, the light/dark toggle
-  and Theme submenu, one Site Links submenu listing every footer link
+  and Theme submenu, **Hide Dock** (see [Hiding the dock](#hiding-the-dock)),
+  one Site Links submenu listing every footer link
   (site and debate-community links together, from `FOOTER_LINKS`),
   and the account block.
 
@@ -130,6 +131,26 @@ under the quick-link tiles: the tiles are the Videos section only, so
 `ToolNavTree` follows them with `defaultExpanded={false}` (its sections start
 collapsed there — expanded, forty rows would push the video grid off the
 screen).
+
+## Hiding the dock
+
+Choose **Hide Dock** in the gear menu and the row of app icons folds away to a
+small arrow tab where it sat: hanging down from the top-left corner or the top
+of the sidebar, or rising from the bottom of the screen on a phone. Hover the
+tab (or Tab to it from the keyboard, or tap it on a touch screen) and the full
+dock slides back over it; move away and it folds up again. It stays out while
+one of its menus is open, so the same menu's **Show Dock** row puts it back
+for good. The choice holds on every page and is remembered in this browser
+(`app-dock-hidden` in localStorage, broadcast by
+`packages/debate-webview/src/lib/nav/dock-hidden.ts` so every dock instance
+agrees).
+
+`CollapsibleDock` in `CategoryDock.tsx` does the folding. Shown, it renders
+the dock untouched. Hidden, it keeps the dock mounted inside an absolutely
+positioned, transparent panel over the tab, and reveals it with CSS alone:
+`group-hover`, keyboard focus inside (`:focus-visible`, so a mouse click that
+leaves focus on an icon does not pin it open), a tap on the tab, or a dock
+menu trigger with `data-state=open`.
 
 ## Where it renders
 
@@ -429,6 +450,9 @@ full-color artwork sitting among the grey glyphs — and now match the rest.
 - `packages/debate-webview/test/lib/layout/frame-navigation.test.ts` — which
   clicks are left to the browser, and which links out of `/docs` become a
   full page load.
+- `packages/debate-webview/test/lib/nav/dock-hidden.test.ts` — that the dock
+  starts shown, the Hide Dock choice is stored, broadcast and cleared, and
+  still applies to the page when storage is blocked.
 - `packages/debate-webview/test/lib/nav/dock-idle-prefetch.test.ts` — which
   destinations are warmed in idle time, and that data saver turns it off.
 
@@ -531,6 +555,9 @@ for code that asks for it with `beginLoading`.
   still draw their own full-height workspace sidebars instead of the shared
   one, so they have no resize handle or hide button of their own design and
   their contents are not yet sections of the shared column.
+- A hidden dock's tab does not reveal it on a pen or a touch screen that
+  reports hover; it opens on a tap there too, and a tap elsewhere does not fold
+  it again until the next navigation or a second tap on the tab.
 - On `/docs` the docs' search box sits in Fumadocs' header, not in the shared
   column, and with the sidebar hidden the docs have no dock (the docs don't
   mount the floating one).
