@@ -1167,17 +1167,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
             </>
           )}
 
-          {/* Debate timer illustration */}
-          <div className="flex justify-center">
-            <Image
-              src="https://i.imgur.com/5FHYqWY.mp4"
-              alt="Debate timer"
-              width={320}
-              height={80}
-              unoptimized
-              className="rounded-md opacity-80"
-            />
-          </div>
+        
         </div>
       </DialogContent>
     </Dialog>
