@@ -5,21 +5,18 @@ slug: schematics
 
 ## Settings
 
-<img src="/screenshots/placeholder.png"
 title="Schematics_-_Settings.png" />
 
 An alternate screen to modify the settings of a given round.
 
 ## Actions
 
-<img src="/screenshots/placeholder.png" title="Schematics_-_Actions.png" />
 
 This is where you find options to configure online strike cards and
 publish them to relevant participants.
 
 ## Example Schematic
 
-<img src="/screenshots/placeholder.png" title="Schematics_-_Example.png" />
 
 The Schematic screen displays the following information:
 
@@ -36,19 +33,16 @@ The Schematic screen displays the following information:
 
 ## Reports
 
-<img src="/screenshots/placeholder.png" title="Schematics_-_Reports.png" />
 
 Menu of printout options
 
 ## Results
 
-<img src="/screenshots/placeholder.png" title="Schematics_-_Results.png" />
 
 Alternate format for displaying results of a given round.
 
 ## Change & Destory
 
-<img src="/screenshots/placeholder.png"
 title="Schematics_-_Change_&amp;_Destroy.png" />
 
 This box allows you to auto or manually pair each event along with auto
@@ -58,7 +52,6 @@ be.
 
 ## Share & Enjoy
 
-<img src="/screenshots/placeholder.png"
 title="Schematics_-_Share_&amp;_Enjoy.png" />
 
 This box is where you will run an event or round disaster check, set the
@@ -70,13 +63,11 @@ before releasing an pairing publicly.
 
 ## Display
 
-<img src="/screenshots/placeholder.png" title="Schematics_-_Display.png" />
 
 Options for what you want to appear on the schematic screen.
 
 ## Online Rooms
 
-<img src="/screenshots/placeholder.png"
 title="Schematics_-_online_rooms.png" />
 
 Links to utility rooms designated for tournament tab staff.
@@ -86,7 +77,6 @@ rooms of a tournament.
 
 ## Stats & Data
 
-<img src="/screenshots/placeholder.png"
 title="Schematics_-_states_&amp;_data.png" />
 
 This box provides round data to the tournament tab staff. That data

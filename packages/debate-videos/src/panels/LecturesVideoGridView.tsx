@@ -17,6 +17,7 @@ import { Footer } from "../ui/layout/footer"
 import { ResizableSidebarLayout } from "../ui/layout/ResizableSidebarLayout"
 import { VideoSearchBar } from "../components/video-search/VideoSearchBar"
 import { VideoSearchSuggestions } from "../components/video-search/VideoSearchSuggestions"
+import { SubmitToLibraryButton } from "../components/video-search/SubmitToLibraryButton"
 import { getSearchPhrases } from "../components/video-search/searchPhrases"
 import { VideoGrid } from "../components/video-grid/VideoGrid"
 import { VideoListRows } from "../components/video-grid/VideoListRows"
@@ -379,6 +380,8 @@ export function LecturesVideoGridView({
         <div className="mb-6 flex flex-col gap-4">
           <div className="flex w-full flex-wrap items-center gap-2">
             <div className="w-full max-w-2xl">{searchBarNode}</div>
+            {/* Submit a video or channel to the moderators' review queue. */}
+            <SubmitToLibraryButton />
             {headerActionsSlot}
           </div>
           <VideoSearchSuggestions

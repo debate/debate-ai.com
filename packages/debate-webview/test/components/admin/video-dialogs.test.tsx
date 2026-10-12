@@ -92,6 +92,21 @@ describe("VideoEditDialog", () => {
     expect(onSaved).toHaveBeenCalledWith(saved);
   });
 
+  it("edits and saves each side's arguments", async () => {
+    const { calls } = mockFetch([{ method: "PATCH", match: `/api/admin/videos/library/${VIDEO_ID}`, respond: { video: libraryVideo() } }]);
+    mount(<VideoEditDialog video={libraryVideo({ arg1ac: "Old aff" })} onClose={() => {}} onSaved={() => {}} />);
+
+    expect(input("video-arg1ac").value).toBe("Old aff");
+    change(document.getElementById("video-arg1ac")!, "  Space plan; Asteroid advantage ");
+    change(document.getElementById("video-arg2nr")!, "Cap K, Politics DA");
+
+    await clickAsync(button("Save changes"));
+    expect(calls.find((c) => c.method === "PATCH")!.body).toMatchObject({
+      arg1ac: "Space plan; Asteroid advantage",
+      arg2nr: "Cap K, Politics DA",
+    });
+  });
+
   it("shows the save error and calls onClose from Cancel", async () => {
     const onClose = vi.fn();
     mockFetch([{ method: "PATCH", match: "/api/admin/videos/library/", respond: { details: "DB locked" }, status: 500 }]);
@@ -108,14 +123,23 @@ describe("VideoEditDialog", () => {
         method: "POST",
         match: "/api/admin/videos/library/autofill",
         respond: {
-          fields: { title: "", channel: "AI Channel", viewCount: 42, style: null, affWin: false, tournament: "NSDA" },
+          fields: {
+            title: "",
+            channel: "AI Channel",
+            viewCount: 42,
+            style: null,
+            affWin: false,
+            tournament: "NSDA",
+            arg1ac: "Space plan; Asteroid advantage",
+            arg2nr: null,
+          },
           fromYouTube: true,
           fromAi: true,
           warnings: ["Model unsure about teams."],
         },
       },
     ]);
-    mount(<VideoEditDialog video={libraryVideo()} onClose={() => {}} onSaved={() => {}} />);
+    mount(<VideoEditDialog video={libraryVideo({ arg2nr: "Cap K" })} onClose={() => {}} onSaved={() => {}} />);
     await clickAsync(button("✨ Auto-fill with AI"));
 
     expect(calls[0].body).toEqual({ videoId: VIDEO_ID, title: "TOC Finals", channel: "Debate Channel", description: "A round" });
@@ -123,6 +147,8 @@ describe("VideoEditDialog", () => {
     expect(input("video-channel").value).toBe("AI Channel");
     expect(input("video-viewCount").value).toBe("42");
     expect(input("video-tournament").value).toBe("NSDA");
+    expect(input("video-arg1ac").value).toBe("Space plan; Asteroid advantage");
+    expect(input("video-arg2nr").value).toBe("Cap K");
     expect(bodyText()).toContain("Filled from YouTube and AI — check the fields before saving. Model unsure about teams.");
   });
 

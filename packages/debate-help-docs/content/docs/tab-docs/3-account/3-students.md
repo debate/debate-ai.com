@@ -7,7 +7,6 @@ slug: students
 
 ### Current
 
-<img src="/screenshots/placeholder.png"
 title="Screen_Shot_2023-03-06_at_8.31.33_AM.png" width="500" />
 
 This tab will show competitor information for the tournament currently
@@ -52,7 +51,6 @@ tournament enables those options.
 
 ### Future
 
-<img src="/screenshots/placeholder.png"
 title="Students_-_Future_Entries.png" />
 
 This tab will show competitors the tournaments they are signed up to
@@ -80,7 +78,6 @@ has denied your registration for the tournament.
 
 ### Signups
 
-<img src="/screenshots/placeholder.png" title="Students_-_Signup.png" />
 
 This tab will show competitors any tournament their advisor has made
 available for signup. This tab won’t appear if your advisor has not
@@ -105,7 +102,6 @@ wants to attend the tournament. More information will be found in our
 
 ### Results
 
-<img src="/screenshots/placeholder.png" title="Results_Screenshot_1.png"
 width="500" />
 
 This tab shows you the results of all the tournaments a competitor has
@@ -129,7 +125,6 @@ document you will see those results.
 
 ### Results Screen
 
-<img src="/screenshots/placeholder.png"
 title="Results_screen_screenshot.png" />
 
 This screen indicates the result(s) of individual rounds a competitor
@@ -153,7 +148,6 @@ competitors to review after the round.
 
 ### NSDA
 
-<img src="/screenshots/placeholder.png"
 title="Screen_Shot_2023-03-11_at_2.09.54_PM.png" />
 
 This tab shows you the competitors NSDA credentials. On the right side
@@ -169,7 +163,6 @@ degree was issued.
 
 ## Standing Conflicts
 
-<img src="/screenshots/placeholder.png" title="Standing_Conflicts.png" />
 
 This page allows competitors to enter “standing conflicts” against
 individuals they believe would be biased or unfairly able to judge them
@@ -189,7 +182,6 @@ standing conflicts against.
 
 ## Parent Notifications
 
-<img src="/screenshots/placeholder.png" title="parent-notifications.png" />
 
 Parent notifications allow competitors to enter their parents email
 address to receive memos and messages when they sign up for a tournament

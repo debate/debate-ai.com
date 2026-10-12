@@ -53,13 +53,11 @@ entire process of running a tournament from start to finish.
 Once you have a tournament linked to your account, the first step is to
 make it your active tournament by clicking on it in your sidebar:
 
-<img src="/screenshots/placeholder.png"
 title="user_chapter_home-tournaments.png" width="400" />
 
 You'll notice the top row of tabs change - you're now in "Tournament
 Mode" rather than the general public website:
 
-<img src="/screenshots/placeholder.png" title="register_index-tabs.png"
 width="500" />
 
 **IMPORTANT TIP:** Tabroom is designed to progress logically from left
@@ -94,7 +92,6 @@ is over.
 
 ## Settings Tab (aka Tournament Setup)
 
-<img src="/screenshots/placeholder.png"
 title="setup_tourn-settingstab.png" width="500" />
 
 The Settings tab is where you configure your tournament, from general
@@ -117,7 +114,6 @@ inaccurate registration data that needs to be fixed.
 
 ### General Settings
 
-<img src="/screenshots/placeholder.png" title="setup_tourn_main-tabs.png"
 width="500" />
 
 The "Tournament" menu option contains a number of tabs with general
@@ -211,7 +207,6 @@ semi-finals.
 After creating or selecting a judge category from the sidebar, you'll
 see a list of tabs with the settings for that judge category:
 
-<img src="/screenshots/placeholder.png" title="setup_judges_edit-tabs.png"
 width="400" />
 
 **Register** - General settings for the judge category. The most
@@ -265,7 +260,6 @@ This is where you configure which events/divisions you will offer at the
 tournament. Once you have created or selected an event on the sidebar,
 you will have a number of tabs with options for that event:
 
-<img src="/screenshots/placeholder.png" title="setup_events_edit-tabs.png"
 width="400" />
 
 **Main** - General settings that you set when you created the event.
@@ -332,7 +326,6 @@ First, create your timeslots, which should largely mimic your tournament
 schedule. Then, click each event on the sidebar and schedule rounds in
 the appropriate timeslots:
 
-<img src="/screenshots/placeholder.png"
 title="setup_schedule_event-schedule.png" width="700" />
 
 This is also where you can select whether to double-flight rounds for a
@@ -415,7 +408,6 @@ website is optional. For more information, see the section on your
 
 ## Entries Tab
 
-<img src="/screenshots/placeholder.png" title="tabs_entries.png" width="500" />
 
 The Entries tab is where you access and manipulate individual entry
 information, whether for a school, competitor, or judge. It's where you
@@ -458,13 +450,11 @@ entries, judges, and invoice. The Judges and Money tabs will appear in
 red if a school is under their judging obligations, or if they owe judge
 fees:
 
-<img src="/screenshots/placeholder.png"
 title="register_school_edit-redtabs.png" width="400" />
 
 The "Entries" tab of a school's page will first show you the school's
 complete entry roster:
 
-<img src="/screenshots/placeholder.png"
 title="register_school_entries-roster.png" width="600" />
 
 To access any individual entry, just click on their name or code. You
@@ -475,14 +465,12 @@ Once you have selected an event, you can manually add an entry, either
 from that school's roster, by entering their name, or just as a "TBA"
 slot:
 
-<img src="/screenshots/placeholder.png"
 title="register_school_entries-add.png" width="200" />
 
 The "Judges" tab works the same way as "Entries" - you can view the
 school's current judge roster, edit an individual judge, or add a new
 judge to the school:
 
-<img src="/screenshots/placeholder.png"
 title="register_school_judges-list.png" width="400" />
 
 ### Modifying Entries & Judges
@@ -496,21 +484,17 @@ The "Events" and "Judges" menu options also include a variety of options
 on the sidebar for viewing information about the entire event/judge
 group:
 
-<img src="/screenshots/placeholder.png"
 title="register_event_index-divisions.png" width="400"
 
 alt="register_event_index-divisions.png" />
-<img src="/screenshots/placeholder.png"
 title="register_judge_roster-group.png" width="250"
 alt="register_judge_roster-group.png" />
 
 Accessing an individual entry or judge's page will let you edit their
 information:
 
-<img src="/screenshots/placeholder.png" title="register_entry_edit.png"
 width="600" />
 
-<img src="/screenshots/placeholder.png" title="register_judge_edit.png"
 width="600" />
 
 Use the links on the sidebar if you need to swap competitors, drop an
@@ -531,7 +515,6 @@ the right side of the page. To remove any strike, click the garbage can
 next to the time strike or competitor strike on the right side of the
 page.
 
-<img src="/screenshots/placeholder.png"
 title="register_judge_edit-strikes.png" width="600" />
 
 **Important Note** - When adding a time strike for a judge, be careful
@@ -562,11 +545,9 @@ will give you options to manually link judge entries to their Tabroom
 accounts, or to approve requests from judges to do the linking (the link
 will appear in Red if there are active requests):
 
-<img src="/screenshots/placeholder.png"
 title="register_judge_roster-online.png" width="250"
 alt="register_judge_roster-online.png" />
 
-<img src="/screenshots/placeholder.png"
 title="register_judge_index-requests.png" width="250"
 alt="register_judge_index-requests.png" />
 
@@ -578,7 +559,6 @@ selecting Entries -\> Events, choosing an event, and then selecting
 with the option of admitting them (including whether to automatically
 notify coaches):
 
-<img src="/screenshots/placeholder.png"
 title="register_event_roster-waitlist.png" width="600" />
 
 For more information, see the section on [Managing The
@@ -603,7 +583,6 @@ tab of their school page. That's also where you can add or remove
 various fines, such as missed judge fees. You have the option of adding
 or removing fees from a school's invoice as you see fit.
 
-<img src="/screenshots/placeholder.png"
 title="register_school_invoice-fees.png" width="600" />
 
 Note that if you have configured "concessions" such as parking passes
@@ -616,7 +595,6 @@ To see information about money and payments in the aggregate rather than
 one school at a time, you can use the "Reports" menu option instead, and
 then the "Finances/Concessions" section of the sidebar:
 
-<img src="/screenshots/placeholder.png"
 title="register_reports_index-money.png" width="300" />
 
 For more information, see the section on [Managing
@@ -636,7 +614,6 @@ section.
 You can mark a school as registered by viewing their school info page,
 and then using the "Status" section of the sidebar:
 
-<img src="/screenshots/placeholder.png"
 title="register_school_edit-status.png" width="250" />
 
 If you are using online on-site registration, then each school will be
@@ -671,7 +648,6 @@ Rounds](pairing-rounds).
 
 ### Paneling Tab (aka Pairing IE's)
 
-<img src="/screenshots/placeholder.png" title="tabs_paneling.png" width="500" />
 
 The "Paneling" tab is where you pair IE prelims. Most of the time,
 you'll pair all the prelims for all events in advance. All you need to
@@ -680,7 +656,6 @@ select a section size for each event (the more sections, the smaller the
 average size). You can also choose to have it assign the rooms at the
 same time:
 
-<img src="/screenshots/placeholder.png"
 title="panel_round_mass-create.png" width="600" />
 
 Alternately, you can choose to panel a single event at a time using the
@@ -694,7 +669,6 @@ Once your rounds are created, you can assign IE judges with the
 Paneling - Judges menu option. Use the "Mass Assign" tab to add judges
 to all your prelims at once:
 
-<img src="/screenshots/placeholder.png" title="panel_judge_index.png"
 width="600" />
 
 Rooms for IE events are usually assigned during the pairing step - but
@@ -707,12 +681,10 @@ Web Publish menu option. You may then choose to publish ballots per
 round per event or mass publish all ballots for events once the
 tournament has concluded.
 
-<img src="/screenshots/placeholder.png"
 title="Paneling_Web_Publish_Ballots.png" width="600" />
 
 ### Schemats Tab (aka Pairing Debate)
 
-<img src="/screenshots/placeholder.png" title="tabs_schemats.png" width="500" />
 
 Debate events are paired directly from the schematic, as are IE elims.
 First, select the event from the menu, then choose the appropriate tab
@@ -721,7 +693,6 @@ under "Change & Destroy" - if you've already created a pairing for that
 round, you might need to expand the box to see the options, so you don't
 accidentally overwrite a round.
 
-<img src="/screenshots/placeholder.png"
 title="panel_schemat_show-change-debate.png" width="300" />
 
 To pair the round automatically, use the "Auto-pair" link on the
@@ -755,7 +726,6 @@ hand.
 
 ### Pairing Elims
 
-<img src="/screenshots/placeholder.png"
 title="tabbing_break_index-advance2.png" width="300" />
 
 The process of pairing elims is similar for both debate and IE's, and is
@@ -796,7 +766,6 @@ conflicts, strikes, etc. Once you have added the new judge, remember to
 remove the old judge from the panel by clicking "Remove" or "RM & Fine"
 (if you have missed judging fees configured):
 
-<img src="/screenshots/placeholder.png"
 title="panel_schemat_panel-view-judges.png" width="600" />
 
 To change a room, click on the room name from the schematic. Then, use
@@ -811,11 +780,9 @@ the web, text/email blast participants, and/or print out schematics and
 ballots. Most of this is done on the schematic in the "Share & Enjoy"
 and "Display" sections of the sidebar:
 
-<img src="/screenshots/placeholder.png"
 title="panel_schemat_show-share.png" width="250"
 alt="panel_schemat_show-share.png" />
 
-<img src="/screenshots/placeholder.png"
 title="panel_schemat_show-display.png" width="250"
 alt="panel_schemat_show-display.png" />
 
@@ -824,7 +791,6 @@ Paneling - Reports menu option.
 
 ## Tabbing Tab (aka Entering Ballots)
 
-<img src="/screenshots/placeholder.png" title="tabs_tabbing.png" width="500" />
 
 The "Tabbing" tab is where you manually enter ballots and monitor the
 status of each event. If you're using online ballots, the ballots are
@@ -841,13 +807,11 @@ outstanding ballots - once they are entered, they will appear on the
 method, then ballots which have only been entered once will be shown in
 yellow:
 
-<img src="/screenshots/placeholder.png"
 title="tabbing_entry_index-entry.png" width="250" />
 
 To enter a ballot, click on the judge code/name. You will then be shown
 the ballot entry screen:
 
-<img src="/screenshots/placeholder.png"
 title="tabbing_entry_index-debate.png" width="600" />
 
 Read the "Hints & Shortcuts" section below the ballot you're entering
@@ -870,7 +834,6 @@ whether a round is ready to pair, etc. The 'Event Overview' tab will
 show you a box for each event, with how many rounds haven't started, how
 many ballots are still outstanding, and the status of ballot entry.
 
-<img src="/screenshots/placeholder.png"
 title="tabbing_status_dashboard-tabs.png" width="700"
 alt="tabbing_status_dashboard-tabs.png" />
 
@@ -881,7 +844,6 @@ and mark each debate started on their phone.
 
 ## Results Tab
 
-<img src="/screenshots/placeholder.png" title="tabs_results.png" width="500" />
 
 The "Results" menu is where you generate final results packets, ensure
 tournament results are published to the web, and see up-to-date seed
@@ -902,7 +864,6 @@ The "Web Publish" menu option lets you flexibly choose which results to
 make available on Tabroom. To publish a results report, you first need
 to use the "Result Sheets" in the sidebar:
 
-<img src="/screenshots/placeholder.png"
 title="tabbing_publish_index-calculate.png" width="250" />
 
 Choose an event, the type of report, and whether to make it public, then
