@@ -114,6 +114,13 @@ describe("buildLibraryUpdate", () => {
     expect(update.isTopPick).toBe(true);
   });
 
+  it("writes each side's arguments, trimmed, and blanks to null", () => {
+    const update = buildLibraryUpdate(current, { arg1ac: "  Space plan ", arg2nr: "  " }) as any;
+
+    expect(update.arg1ac).toBe("Space plan");
+    expect(update.arg2nr).toBeNull();
+  });
+
   it("clears the numeric style when a round is re-labelled a lecture", () => {
     const update = buildLibraryUpdate(current, { style: null }) as any;
 

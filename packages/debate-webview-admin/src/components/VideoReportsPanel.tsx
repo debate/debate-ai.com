@@ -92,6 +92,8 @@ const FIELD_LABELS: Record<string, string> = {
   affWin: "Winner",
   judgeDecision: "Judge decision",
   speechDocsUrl: "Speech docs URL",
+  arg1ac: "Aff arguments",
+  arg2nr: "Neg arguments",
 };
 
 /** A suggested edit's stored request: the proposed fields and the viewer's reason. */

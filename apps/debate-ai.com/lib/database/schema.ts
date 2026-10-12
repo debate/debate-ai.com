@@ -1485,7 +1485,11 @@ export const videoIssues = sqliteTable(
     videoId: text("video_id").notNull(),
     /** Title as the reporter saw it, so a later retitle still reads sensibly. */
     title: text("title").notNull().default(""),
-    /** `miscategorized`, `unavailable`, `quality`, `metadata` or `other`. */
+    /**
+     * `miscategorized`, `unavailable`, `quality`, `metadata`, `transcript`,
+     * `edit`, `delete`, `submit-video`, `submit-channel` or `other`. A
+     * `submit-channel` row has no video, so its `videoId` is empty.
+     */
     kind: text("kind").notNull().default("other"),
     /** The reporter's own words; optional once a `kind` is chosen. */
     issue: text("issue").notNull().default(""),

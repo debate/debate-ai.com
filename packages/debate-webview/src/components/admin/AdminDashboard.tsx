@@ -32,6 +32,7 @@ import { CaselistSyncPanel } from "./CaselistSyncPanel";
 import { DbBackupPanel } from "./DbBackupPanel";
 import { DebateCardParquetUpload } from "./DebateCardParquetUpload";
 import { ModeratorsPanel } from "./ModeratorsPanel";
+import { ReclassifyVideosPanel } from "./ReclassifyVideosPanel";
 import { TopicStarterUpload } from "./TopicStarterUpload";
 import { UsersTable } from "./UsersTable";
 import { VideoLibraryTable } from "./VideoLibraryTable";
@@ -1042,6 +1043,8 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
                 {recomputeStacksError && <p className="text-destructive text-sm">{recomputeStacksError}</p>}
               </CardContent>
             </Card>
+
+            <ReclassifyVideosPanel />
           </>
         )}
 

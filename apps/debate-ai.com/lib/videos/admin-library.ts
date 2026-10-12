@@ -93,6 +93,8 @@ export const EDITABLE_FIELDS = [
   "negTeam",
   "affWin",
   "judgeDecision",
+  "arg1ac",
+  "arg2nr",
   "isTopPick",
   "speechDocsUrl",
   "source",
@@ -174,6 +176,8 @@ export function buildLibraryUpdate(
   if (has("negTeam")) update.negTeam = optionalText(patch.negTeam);
   if (has("affWin")) update.affWin = optionalBoolean(patch.affWin);
   if (has("judgeDecision")) update.judgeDecision = optionalText(patch.judgeDecision);
+  if (has("arg1ac")) update.arg1ac = optionalText(patch.arg1ac);
+  if (has("arg2nr")) update.arg2nr = optionalText(patch.arg2nr);
   if (has("speechDocsUrl")) update.speechDocsUrl = optionalText(patch.speechDocsUrl);
   if (has("isTopPick")) update.isTopPick = optionalBoolean(patch.isTopPick) ?? false;
 
