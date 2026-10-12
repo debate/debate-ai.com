@@ -60,3 +60,46 @@ export async function click(target: Element): Promise<void> {
     target.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
   });
 }
+
+/**
+ * Types `value` into a controlled input the way React expects: the native
+ * value setter has to be used so React's own value tracker sees the change.
+ * Mirrors `@debate/team-collaboration/test/helpers/mount.tsx`'s `type`.
+ */
+export async function type(
+  input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement,
+  value: string,
+): Promise<void> {
+  const prototype =
+    input instanceof HTMLTextAreaElement
+      ? HTMLTextAreaElement.prototype
+      : input instanceof HTMLSelectElement
+        ? HTMLSelectElement.prototype
+        : HTMLInputElement.prototype;
+  const setter = Object.getOwnPropertyDescriptor(prototype, "value")?.set;
+  await flush(() => {
+    setter?.call(input, value);
+    input.dispatchEvent(new Event(input instanceof HTMLSelectElement ? "change" : "input", { bubbles: true }));
+  });
+}
+
+/** Every `<button>` in `root` whose trimmed text content is exactly `text`. */
+export function buttonsByText(root: ParentNode, text: string): HTMLButtonElement[] {
+  return Array.from(root.querySelectorAll("button")).filter(
+    (button) => button.textContent?.trim() === text,
+  );
+}
+
+/** The first `<button>` in `root` whose trimmed text is exactly `text`; throws when missing. */
+export function buttonByText(root: ParentNode, text: string): HTMLButtonElement {
+  const [button] = buttonsByText(root, text);
+  if (!button) throw new Error(`No button with text "${text}"`);
+  return button;
+}
+
+/** The element in `root` matching `selector`; throws when missing. */
+export function query<T extends Element = HTMLElement>(root: ParentNode, selector: string): T {
+  const element = root.querySelector(selector);
+  if (!element) throw new Error(`No element matches "${selector}"`);
+  return element as unknown as T;
+}
