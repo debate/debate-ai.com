@@ -1,9 +1,11 @@
 ---
-title: "Settings - Schedule"
-slug: schedule
+title: Settings - Schedule & Sites
+slug: schedule-and-sites
 ---
 
-## Add a new timeslot
+## Schedule
+
+### Add a new timeslot
 
 
 A timeslot is a block of time that you will schedule rounds into.
@@ -19,7 +21,7 @@ pairings.
 **End Time** - End time for the round that will impact when another
 round can be scheduled (the system avoids overlaps).
 
-## Tournament Days
+### Tournament Days
 
 
 This panel is populated based on the dates entered under Settings ->
@@ -28,7 +30,7 @@ Tournament
 
 This screen mirrors the information entered under Add New Time Slot
 
-## Schedule Rounds
+### Schedule Rounds
 
 
 **Rnd** - Option to assign that timeslot to a given event.
@@ -72,3 +74,73 @@ to occur. Usually 1 or 2.
 **Move** - This dropdown will list the other open timeslots. Selecting a
 timeslot from this dropdown will move your label, round type, and
 tiebreaker to the new timeslot.
+
+## Sites & Rooms
+
+### Sites
+
+
+
+**Add an existing site/location** - Dropdown menu to select sites
+previously saved to Tabroom.
+
+**Add a site not in Tabroom** - Option to save a new site name to
+Tabroom.
+
+### Edit Rooms
+
+
+**Name** - Label for room that will show up in various Tabroom screens.
+
+**Quality** - Value that will prioritize the room being used in the
+creation of pairings. The higher the number the more valuable.
+
+**Capacity** - Occupancy limits for a given room.
+
+**Notes** - Option to leave notes and reminders about a given room.
+
+**Map Link** - Option for a link to be sent to participants when
+pairings are blasted that provide directions to a room/building.
+
+**Accessible** - Toggle to mark a room as ADA accessible.
+
+**Active** - Toggle to mark a room available to be put on a pairing.
+
+### Add New
+
+
+Options are the same as explained above in Edit Rooms.
+
+### Import from File
+
+
+This allows you to upload a list of rooms en masse into Tabroom.
+
+### Time Blocks
+
+
+
+**Block Against Time** - Allows for a room not to be used in a certain
+timeframe.
+
+**Block Against Event** - Prevents a room from being used in a certain
+event.
+
+**Block Against Judge** - Prevents a judge from being placed in a
+certain room.
+
+**Block Against Entry** - Prevents an entry from being placed in a
+certain room.
+
+### Site Settings
+
+
+**Site Name** - Name for your tournament site.
+
+**Online Site** - Option to mark the site as a physical or online site.
+
+**Ballot Dropoff Location** - Option to mark a physical ballot drop off
+location.
+
+**Directions/GPS Link** - Navigation information provided to
+participants so a tournament site can be located.

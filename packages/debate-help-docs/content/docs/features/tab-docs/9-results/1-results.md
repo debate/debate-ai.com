@@ -1,8 +1,29 @@
 ---
-title: Results - Web Publish
-slug: web-publish
+title: Results
+slug: results
 ---
 
+## Event Display
+
+For a rank-ordered list of entries in an event as of any round, use the
+"Event Display" menu option, then choose an event and round from the
+dropdown menus. This will show you the list of entries in rank order
+based on the tiebreakers you have configured for that event. For events
+with separate speaker awards, you will see a separate tab for the
+entry/seed order and speaker awards.
+
+## Reports
+
+The "Reports" menu option is where you generate printouts for any kind
+of result set you need, including lists of entries, speaker awards, and
+sweepstakes for an awards ceremony.
+
+Results reports are available by Event, School, or Entry. For any
+report, select the event(s) and/or round(s) to include in the report,
+and then click "Print." For some reports, you can also choose to limit
+the resulting list to only a certain number, such as the top 20.
+
+## Web Publish
 
 The "Web Publish" menu option lets you flexibly choose which results to
 make available on Tabroom. Most of the reports available in the
@@ -35,3 +56,13 @@ Files" box on the sidebar.
 
 After uploading, they will also appear in the list for publishing or
 deleting.
+
+## NSDA Points
+
+Use the Results/NSDA Points tab to post merit points at the conclusion
+of your tournament. These will post automatically once the tournament
+ends, but you can post them immediately once an event has ended.
+
+**Update - Auto-posting of NSDA points in rounds with two judge panels
+does not configure correctly. Coaches will need to manually enter points
+for those rounds.**

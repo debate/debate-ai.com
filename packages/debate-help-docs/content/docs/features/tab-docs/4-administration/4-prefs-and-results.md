@@ -1,7 +1,9 @@
 ---
-title: Prefs
-slug: prefs
+title: Prefs & Viewing Results
+slug: prefs-and-results
 ---
+
+## Prefs
 
 This section of the manual explains how to access and complete a judge
 preference sheet ("pref sheet") for a tournament which uses mutually
@@ -11,7 +13,7 @@ If the tournament you are attending uses MPJ, you will see a "Prefs" tab
 while viewing your entry (once prefs are opened by the tournament):
 
 
-## Accessing Prefs as a Coach
+### Accessing Prefs as a Coach
 
 As a coach, you can access the prefs for all of your entries by going to
 the Prefs tab, which will appear in red if you have any incomplete pref
@@ -19,7 +21,7 @@ sheets. If necessary, select the relevant Judge Group from the menu on
 the sidebar, then, select the pref sheet you want to edit:
 
 
-## Accessing Prefs as a Competitor
+### Accessing Prefs as a Competitor
 
 In order for you to access your own pref sheet as a competitor, your
 coach must have first checked the box for "Entries may enter their own
@@ -30,7 +32,7 @@ sheets in the "Upcoming" section of the sidebar, and then you can select
 the link for the pref sheet you want to edit:
 
 
-## Filling Out Prefs
+### Filling Out Prefs
 
 The interface for filling out your pref sheet will differ slightly
 depending on whether the tournament uses tiers or ordinal prefs.
@@ -59,7 +61,7 @@ To switch back to the previous mode, you can click the button for
 
 When done, make sure to press "Save Prefs" at the bottom.
 
-## Duplicating Prefs
+### Duplicating Prefs
 
 want to copy prefs from one entry to another, you can use the "Dolly the
 Sheep" section of the sidebar. This will let you export your pref sheet
@@ -70,3 +72,27 @@ current sheet over another entry's prefs.
 **Important Note** - Make sure to be careful when copying prefs between
 one sheet and another - once you confirm the copy, there's no "undo"
 button.
+
+## Viewing Results
+
+To view online ballots after a tournament (Or during, if they're being
+published as you go:)
+
+1. Log into your tabroom account and go to your school record. Then hit
+the "Results" tab at the top. Or if the tournament is over, for a while
+it appears in your tournament listing with a red Results button instead
+of a blue Entry button.
+
+
+2. Find the tournament you want to view results for and click Results
+
+
+3. On the right are a number of options. If a tournament is publishing
+results round by round to coaches only, your results will be visible
+under the Show Ballots button. Click the eye symbol next to each
+competitor to see their written critiques or points/results:
+
+
+4. The Show Results button will be where aggregate results are posted,
+such as "Entries in Order" style results. They probably will not be
+available until the conclusion of the tournament.

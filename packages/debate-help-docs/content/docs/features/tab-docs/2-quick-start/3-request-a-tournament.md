@@ -20,7 +20,7 @@ Give the tournament a name (don't include a year), set the Start and End dates/t
 You will also be asked for a "Web Name" for your tournament. Each tournament on Tabroom gets a special web address in the form:
 webname.Tournament Admin
 
-...where webname is the Web Name you enter. Visitors to this web address will be taken directly to your [Tournament Info](/settings/website) page, where they can access the invitation, pairings, and results. You should not use the year (like 2015) in the Web Name, because you can reuse the same Web Name every year for the same tournament.
+...where webname is the Web Name you enter. Visitors to this web address will be taken directly to your [Tournament Info](/settings/money-website-share) page, where they can access the invitation, pairings, and results. You should not use the year (like 2015) in the Web Name, because you can reuse the same Web Name every year for the same tournament.
 
 ### Creating A Test Tournament
 

@@ -68,7 +68,7 @@ title="index_tourn_postings_round.png" width="600" />
 
 From the pairing, you can click any entry's name to be taken to their
 complete record at that tournament, where you can also sign up for [live
-updates](live-updates) for that team:
+updates](results-updates-paradigms) for that team:
 
 title="index_tourn_postings_entry-record.png" width="600" />
 
@@ -87,7 +87,7 @@ Clicking on a judge will take you to their judge record for the
 tournament. You can also access a judge's record by clicking their name
 directly from the pairing. From this page, you can see how they've
 voted, along with links to their full judging record and the option to
-follow them for [live updates](live-updates):
+follow them for [live updates](results-updates-paradigms):
 
 title="index_tourn_postings_judge.png" width="500" />
 
@@ -98,7 +98,7 @@ title="index_tourn_postings_judge-updates.png" width="400" />
 The Live Updates tab will show you anyone at the tournament you are
 currently following, with options to add additional entries or judges,
 or stop updates altogether. For additional information, see the section
-on [live updates](live-updates).
+on [live updates](results-updates-paradigms).
 
 ## Results
 

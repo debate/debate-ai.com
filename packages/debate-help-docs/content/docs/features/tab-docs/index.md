@@ -31,7 +31,7 @@ For first-time Tabroom users, check out these sections of the manual:
 [Enabling Web Push Notifications to replace Text
 Blasts](https://docs.google.com/document/d/12jVaG0oITTU2gsOwMc3Fs5TY0GUCC0ekq5RsLD0EPjI)
 
-[Speech doc sharing on share.Tournament Admin](settings/tabroom-share)
+[Speech doc sharing on share.Tournament Admin](settings/money-website-share)
 
 [Usage Videos](overview/videos)
 
@@ -56,11 +56,11 @@ student.
 
 [Competitor Signups](administration/competitor-signups) - New feature allowing competitors to self register for tournaments, with coach confirmation and optional parental notifications.
 
-[Prefs](administration/prefs) - Filling out a pref sheet for mutually preferred judging.
+[Prefs](administration/prefs-and-results) - Filling out a pref sheet for mutually preferred judging.
 
 [Circuit Administration](administration/circuit-administration) - If you're a circuit administrator, this will explain how to approve tournaments, communicate with member schools, and fix tournament results.
 
-[Viewing Results & Online Ballots](administration/viewing-results) - How to see tournament results as a coach and access online ballots as a judge.
+[Viewing Results & Online Ballots](administration/prefs-and-results) - How to see tournament results as a coach and access online ballots as a judge.
 
 [Register for Nationals (Coach)](administration/nationals-registration) - How to register for the NSDA National Tournament in Tabroom.
 
@@ -82,9 +82,9 @@ information about tournaments, invitations, entries, and judges.
 [Public Results](public/public-results) - Where to find results from
 completed or ongoing tournaments.
 
-[Live Updates](public/live-updates) - Configuring your account to
+[Live Updates](public/results-updates-paradigms) - Configuring your account to
 receive "Live Updates" about pairings and results via email/text, for a
 student, judge, or school.
 
-[Paradigms](public/paradigms) - Viewing, uploading, and editing
+[Paradigms](public/results-updates-paradigms) - Viewing, uploading, and editing
 judge paradigms.

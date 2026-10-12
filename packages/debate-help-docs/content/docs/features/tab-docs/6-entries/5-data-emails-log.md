@@ -1,9 +1,11 @@
 ---
-title: Entries - Data
-slug: data
+title: Entries - Data, Emails & Change Log
+slug: data-emails-log
 ---
 
-## Entry Manipulation
+## Data
+
+### Entry Manipulation
 
 title="Entries_-_Data_-_Entry_Manipulation.png" />
 
@@ -26,7 +28,7 @@ contact information.
 **Delete TBAs** - Deletes TBA entries entirely from across the
 tournament.
 
-## Codes & Names
+### Codes & Names
 
 title="Entries_-_Data_-_Codes_and_Names.png" />
 
@@ -34,7 +36,7 @@ After a tournament initially creates settings and schools have entered
 the tournament, this screen allows you to manually manipulate the data
 based on the categories above.
 
-## Import/Export
+### Import/Export
 
 title="Entries_-_Data_-_Import_Export.png" />
 
@@ -46,7 +48,7 @@ Tournaments.
 To import, select the option from the sidebar which matches the source
 of your data, and follow the instructions to upload your data file.
 
-## Reset Tournament
+### Reset Tournament
 
 title="Entries_-_Data_-_Reset.png" />
 
@@ -54,3 +56,36 @@ If necessary, you can also completely reset your tournament data using
 the link on the sidebar. For obvious reasons, this shouldn't be done
 once a tournament has started - once you've deleted everything, there's
 no way to get the data back.
+
+## Emails
+
+### Compose New Email
+
+title="Entries_-_Emails_-_compose_new_email.png" />
+
+Tabroom's built-in email functions make it easy to contact all your
+tournament participants with important notifications and information. To
+use them, select the "Emails" menu option. Note that this is distinct
+from the notifications of pairings via email or your browser, which is
+done directly from the schematic - the "Emails" section is instead for
+communicating general information to the tournament.
+
+### Send email to
+
+title="Entries_-_Emails_-_send_email_to.png" />
+
+Menu of options to target who receives the email.
+
+## Change Log
+
+Tabroom keeps a log of most of the changes you make to your tournament
+as they happen, such as entry drops or pairing a round. The "Change Log"
+menu option lets you view these logs, which can make it easier to track
+down when something happened or who made a particular change.
+
+First, you should set a date range on the sidebar - it's usually helpful
+to include a little extra on each side of your range, just in case you
+were wrong about the time.
+
+Then, choose which log you want to view, including Entry/Judge drops or
+moves, or the full tabulation log.
