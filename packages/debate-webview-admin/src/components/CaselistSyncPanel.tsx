@@ -50,14 +50,14 @@ import {
   normalizeDebateCardRows,
   type DebateCardRecord,
 } from "@debate/research-evidence";
-import { Button } from "../../lib/ui/primitives/button";
+import { Button } from "@debate/webview/lib/ui/primitives/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../../lib/ui/primitives/card";
+} from "@debate/webview/lib/ui/primitives/card";
 
 const DISCOVERY_ENDPOINT = "/api/admin/caselist-sync";
 const CARDS_ENDPOINT = "/api/admin/debate-cards";

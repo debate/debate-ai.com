@@ -1,17 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button } from "../../lib/ui/primitives/button";
-import { Badge } from "../../lib/ui/primitives/badge";
-import { Input } from "../../lib/ui/primitives/input";
-import { Label } from "../../lib/ui/primitives/label";
+import { Button } from "@debate/webview/lib/ui/primitives/button";
+import { Badge } from "@debate/webview/lib/ui/primitives/badge";
+import { Input } from "@debate/webview/lib/ui/primitives/input";
+import { Label } from "@debate/webview/lib/ui/primitives/label";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../../lib/ui/primitives/card";
+} from "@debate/webview/lib/ui/primitives/card";
 import {
   Dialog,
   DialogContent,
@@ -19,7 +19,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "../../lib/ui/primitives/dialog";
+} from "@debate/webview/lib/ui/primitives/dialog";
 
 /** One subscribed channel, as `/api/admin/youtube/channels` returns it. */
 interface ChannelRow {
