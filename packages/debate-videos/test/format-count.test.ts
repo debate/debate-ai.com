@@ -3,7 +3,7 @@
  * display string, now that the sidebar tree, the quick-link tiles and the
  * search chips all share it.
  *
- * The `exact` escape hatch exists for the College Debates total: every other
+ * The `exact` escape hatch exists for the College Policy total: every other
  * count is shortened to `1.4k` so it cannot crowd out its title, but that
  * collection's number is the round archive's headline figure and reads
  * wrong — and low — rounded to one decimal place.

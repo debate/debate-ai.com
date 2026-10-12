@@ -15,7 +15,7 @@ automatically be applied to your tournament name on public-facing pages.
 
 **Tournament public site** - Tournament public site - This is the name
 for your tournament's website, which comes in the form
-webname.Tournament Admin. Visitors to that web address will be taken
+webname.tabroom.com. Visitors to that web address will be taken
 directly to your Tournament Info page on Tabroom, where they can view
 your invitation, postings, results, etc. The webname must be lowercase
 or numbers with no punctuation. If you repeat the URL for a tournament

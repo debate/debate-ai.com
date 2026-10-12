@@ -14,7 +14,7 @@
  * Renders a video total, shortening thousands to `1.4k` to keep the count
  * from crowding out the title it sits next to.
  *
- * Pass `exact` for a total that reads better in full. The College Debates
+ * Pass `exact` for a total that reads better in full. The College Policy
  * total is the case for it: it is the round archive's headline number, the
  * one a visitor checks the site by, and rounding it to `1.4k` both hides the
  * digits and understates a collection that is past fourteen hundred.

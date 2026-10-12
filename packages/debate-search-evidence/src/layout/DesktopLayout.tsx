@@ -19,13 +19,15 @@ import { ResearchSearchSidebar, type SearchFilters } from "../components/Researc
 import { CardContentViewer } from "../components/CardContentViewer"
 import { AiAnalysisSidebar } from "../components/AiAnalysisSidebar"
 import type { SearchResult } from "../types"
+import type { SetSearchTermOptions } from "../hooks/useSearchState"
 
 /** Props for the {@link DesktopLayout} component. */
 interface DesktopLayoutProps {
   /** Current search term. */
   searchTerm: string
   /** Setter for the search term. */
-  setSearchTerm: (term: string) => void
+  /** Sets the term; `{ immediate: true }` searches without waiting out the debounce. */
+  setSearchTerm: (term: string, options?: SetSearchTermOptions) => void
   /** Current sort field and direction (e.g. `"_text_match:desc"`). */
   sortBy: string
   /** Setter for the sort order. */

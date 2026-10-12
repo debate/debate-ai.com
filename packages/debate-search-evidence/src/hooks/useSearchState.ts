@@ -11,7 +11,6 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import grab from "grab-url";
 import type { SearchFilters } from "../components/ResearchSearchSidebar";
 import type { SearchResult } from "../types";
 import {
@@ -29,11 +28,20 @@ import {
 } from "../lib/default-search-cache";
 
 /**
- * Seconds before a search request is given up on (grab's default is 30). The
+ * Seconds before a search request is given up on. The
  * server stops waiting on its own queries well before this and answers with
  * whatever it has (`timedOut: true`), so this only catches a stalled network.
  */
 const SEARCH_TIMEOUT_S = 10;
+
+/** Options for {@link useSearchState}'s `setSearchTerm`. */
+export interface SetSearchTermOptions {
+  /**
+   * Search straight away instead of waiting out the typing debounce — for a
+   * committed query (Enter, a picked suggestion) rather than a keystroke.
+   */
+  immediate?: boolean;
+}
 
 /** Params that open the page on a pre-filled search instead of the default one. */
 const PREFILL_PARAMS = ["q", "year", "school", "team", "tournament", "event"];
@@ -55,7 +63,7 @@ function hasPrefillParams(): boolean {
  * @returns All search state values and their setters, plus computed helpers.
  */
 export function useSearchState() {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTermState] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [totalResults, setTotalResults] = useState(0);
   const [selectedResult, setSelectedResult] = useState<SearchResult | null>(
@@ -85,6 +93,18 @@ export function useSearchState() {
   /** The first fetch runs at once; only later changes wait out the debounce. */
   const firstFetch = useRef(true);
 
+  /** Aborts the request in flight, so a superseded search stops downloading. */
+  const inFlight = useRef<AbortController | null>(null);
+
+  /** The debounced search waiting to go out, if any. */
+  const pendingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  /** Set by a committed query so the next fetch skips the debounce. */
+  const skipDebounce = useRef(false);
+
+  /** The term as last set, read by {@link setSearchTerm} without re-creating it. */
+  const latestTerm = useRef("");
+
   /**
    * Starts the search from the URL (`/research/cards?q=…&year=…&event=…`), so other
    * pages — the topics explorer's links, for one — can open a pre-filled
@@ -105,7 +125,8 @@ export function useSearchState() {
       return;
     }
     const initial = readCardsSearchParams(params);
-    setSearchTerm(initial.searchTerm);
+    latestTerm.current = initial.searchTerm;
+    setSearchTermState(initial.searchTerm);
     // A pre-filled link narrows quotes; it does not switch kinds.
     setFilters({ ...initial.filters, searchQuotes: true });
   }, []);
@@ -147,15 +168,28 @@ export function useSearchState() {
    * Resets selection on each new fetch.
    */
   const fetchResults = useCallback(async () => {
+    pendingTimer.current = null;
+    inFlight.current?.abort();
+    const controller = new AbortController();
+    inFlight.current = controller;
     const id = ++requestId.current;
     const query = { searchTerm, sortBy, filters };
     const isDefault = isDefaultSearch(query);
     if (!(isDefault && showingCachedDefault.current)) setLoading(true);
     showingCachedDefault.current = false;
+    const timeout = setTimeout(() => controller.abort(), SEARCH_TIMEOUT_S * 1000);
     try {
-      const response = await grab(buildSearchUrl(query), { baseURL: "", timeout: SEARCH_TIMEOUT_S });
+      // Plain fetch rather than grab: grab keys cancellation by path, and every
+      // query is a different path, so it never aborted a superseded search.
+      const response = await fetch(buildSearchUrl(query), {
+        signal: controller.signal,
+        headers: { Accept: "application/json" },
+      });
+      // Plan-limit and error answers still carry `{ results, total, error }`.
+      const data = (await response.json()) as
+        | { results?: SearchResult[]; total?: number; error?: string }
+        | null;
       if (id !== requestId.current) return;
-      const data = response.data;
       setSearchResults(data?.results ?? []);
       setTotalResults(data?.total ?? 0);
       if (isDefault && !data?.error) writeDefaultSearchCache(data?.results ?? [], data?.total ?? 0);
@@ -169,11 +203,25 @@ export function useSearchState() {
       setSelectedResult(null);
       setSelectedIndex(-1);
     } finally {
-      if (id === requestId.current) setLoading(false);
+      clearTimeout(timeout);
+      if (id === requestId.current) {
+        inFlight.current = null;
+        setLoading(false);
+      }
     }
   }, [sortBy, searchTerm, filters]);
 
-  /** Debounced search: re-fetch when search term, sort, or filters change. */
+  /** The latest {@link fetchResults}, for callers outside the effect below. */
+  const fetchLatest = useRef(fetchResults);
+  fetchLatest.current = fetchResults;
+
+  /**
+   * Debounced search: re-fetch when search term, sort, or filters change.
+   *
+   * A change retires the previous search at once — its request is aborted and
+   * its answer ignored — so results for an older query can never land after
+   * the newer one was typed, even during the debounce window.
+   */
   useEffect(() => {
     // Opening the page has nothing to debounce: the default search goes out
     // straight away. A pre-filled link still waits, because the state it
@@ -185,9 +233,48 @@ export function useSearchState() {
         return;
       }
     }
+    if (inFlight.current) {
+      inFlight.current.abort();
+      inFlight.current = null;
+      requestId.current++;
+    }
+    if (skipDebounce.current) {
+      skipDebounce.current = false;
+      void fetchResults();
+      return;
+    }
     const timer = setTimeout(fetchResults, SEARCH_DEBOUNCE_MS);
-    return () => clearTimeout(timer);
+    pendingTimer.current = timer;
+    return () => {
+      clearTimeout(timer);
+      if (pendingTimer.current === timer) pendingTimer.current = null;
+    };
   }, [fetchResults]);
+
+  /** Aborts whatever is still in flight when the page unmounts. */
+  useEffect(() => () => inFlight.current?.abort(), []);
+
+  /**
+   * Sets the search term. Typing waits out the debounce; a committed query
+   * (`{ immediate: true }`) searches straight away — and if the term is already
+   * the one waiting on the debounce, that pending search goes out now.
+   */
+  const setSearchTerm = useCallback(
+    (term: string, options?: SetSearchTermOptions) => {
+      const changed = term !== latestTerm.current;
+      latestTerm.current = term;
+      if (options?.immediate) {
+        if (changed) {
+          skipDebounce.current = true;
+        } else if (pendingTimer.current) {
+          clearTimeout(pendingTimer.current);
+          void fetchLatest.current();
+        }
+      }
+      setSearchTermState(term);
+    },
+    [],
+  );
 
   return {
     searchTerm,

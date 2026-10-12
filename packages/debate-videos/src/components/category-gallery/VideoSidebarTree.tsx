@@ -2,14 +2,14 @@
  * @fileoverview Collapsible navigation tree shown in the persistent left
  * sidebar on the videos pages. Structure:
  *   Videos (h1, expandable, heading-only)
- *     -> All Videos / College Debates / Policy / PF / LD / Greatest of All-Time /
+ *     -> All Videos / College Policy / Policy / PF / LD / Greatest of All-Time /
  *        My Favorites / Watch History / Lectures (h2, plain links, all peers)
  *   Apps / Coaching / Research / Practice (h1, expandable) -> tool links
  *     — this trailing portion is `ToolNavTree`, shared with the non-video
  *       tool pages those links point to (see `ToolNavTree`'s file comment).
  *
  * The round-archive links are one flat list. Policy / PF / LD / Greatest of
- * All-Time used to hang inside College Debates, which read as if they were
+ * All-Time used to hang inside College Policy, which read as if they were
  * subsets of it — they are sibling collections of the same library, and the
  * extra level only bought an indent and a second chevron to fight with.
  *

@@ -241,7 +241,7 @@ export function LecturesVideoGridView({
   // Whether the page is browsing the lecture library at all. The tree's
   // lecture-category rows highlight only then: `selectedCategory` stays at
   // "all" while a round collection is open, which used to light up "All
-  // Lectures" alongside College Debates.
+  // Lectures" alongside College Policy.
   const browsingLibrary =
     currentCategory === "lectures" && !selectedStyle && !showFavoritesOnly
   // Bare `/videos` is "All Videos" — every round and lecture — not the

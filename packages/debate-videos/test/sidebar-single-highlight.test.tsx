@@ -56,10 +56,10 @@ function activeRows(markup: string): string[] {
 }
 
 describe("VideoSidebarTree highlighting", () => {
-  it("highlights only College Debates on a round collection", () => {
+  it("highlights only College Policy on a round collection", () => {
     const rows = activeRows(render({ activeId: "college" }));
 
-    expect(rows).toEqual(["College Debates"]);
+    expect(rows).toEqual(["College Policy"]);
     expect(rows).not.toContain("Lectures");
   });
 

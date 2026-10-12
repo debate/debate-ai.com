@@ -9,7 +9,7 @@ import { BackLink, useTournaments } from "../shared";
  * Linked to from the Tabroom tab in the tournament nav. */
 export function TabroomTournamentPage({ tournId, name }: { tournId: number; name?: string }) {
   const { hrefs } = useTournaments();
-  const src = `https://beta.Tournament Admin/invite/${tournId}`;
+  const src = `https://beta.tabroom.com/invite/${tournId}`;
   return (
     <div className="space-y-3">
       <BackLink href={hrefs.tournament(tournId)}>{name || "Tournament"} overview</BackLink>

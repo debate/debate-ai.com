@@ -178,7 +178,7 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
     icon: GraduationCap,
     tools: [
       // Tournaments is this app's own view (live Tabroom plus the tournaments
-      // hosted here), first in Coaching. The framed beta.Tournament Admin page
+      // hosted here), first in Coaching. The framed beta.tabroom.com page
       // (`/practice/tabroom`) is still routed but deliberately has no sidebar row.
       { href: "/tournaments", title: "Tournaments", icon: Trophy },
       { href: "/coaching", title: "Coach Workspace", icon: Presentation },

@@ -8,7 +8,7 @@ import grab from "grab-url";
 import { parseHTML } from "linkedom";
 import type { LeaderboardEntry } from "./sync-rankings-debatedrills";
 
-const NDCA_URL = "https://www.Tournament Admin/index/results/ndca_standings.mhtml";
+const NDCA_URL = "https://www.tabroom.com/index/results/ndca_standings.mhtml";
 
 /**
  * Extracts the Tabroom authentication token from TABROOM_API_KEY env var.
@@ -98,7 +98,7 @@ export async function scrapeNdca(): Promise<LeaderboardEntry[]> {
   if (cookie) {
     headers["Cookie"] = cookie;
     headers["Referer"] =
-      "https://www.Tournament Admin/index/results/debate_stats_ada.mhtml?circuit_id=103&level=Open";
+      "https://www.tabroom.com/index/results/debate_stats_ada.mhtml?circuit_id=103&level=Open";
   }
 
   const result = await grab(NDCA_URL, {

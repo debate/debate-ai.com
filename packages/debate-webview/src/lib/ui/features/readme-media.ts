@@ -86,7 +86,7 @@ export const README_BADGE_ROWS: ReadmeBadge[][] = [
       height: 20,
     },
     {
-      href: "https://www.Tournament Admin/",
+      href: "https://www.tabroom.com/",
       src: "https://img.shields.io/badge/🏆_Tournaments-informational?style=for-the-badge",
       alt: "Tournaments",
       height: 20,
