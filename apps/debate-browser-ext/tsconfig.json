@@ -17,6 +17,11 @@
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "noEmit": true,
+    // WXT 0.20+ turns these on in its generated base config; the extension's
+    // code was written without them, so keep the pre-upgrade checks.
+    "noUncheckedIndexedAccess": false,
+    "verbatimModuleSyntax": false,
+    "noImplicitOverride": false,
     "types": [
       "node"
     ],
