@@ -78,6 +78,13 @@ notes behind them (`content/docs/internals/`) and package READMEs as a searchabl
 app mounts its route modules at `app/docs` and compiles its MDX in the app's own Vite build, so it is
 served at [debate-ai.com/docs](https://debate-ai.com/docs) rather than deployed on its own.
 
+## dev-docs
+
+Package name `@debate/dev-docs`, private and never published or deployed. Internal developer
+documentation: a column-by-column reference for every database table (the app's Drizzle schema
+and the Tabroom tables) and a self-hosting guide covering local setup, the Cloudflare D1
+schema, deployment and every environment variable. No code and no dependencies.
+
 ## debate-practice-drills
 
 Package name `debate-practice-rounds`. Practice and AI round tooling: AI drill generator,
