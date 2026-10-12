@@ -6,7 +6,7 @@
   <a href="https://doi.org/10.5281/zenodo.20517983"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.20517983.svg" alt="DOI"></a>
     <br />
      <a href="https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/"><img  height="20px" src="https://img.shields.io/badge/_Reddit-FF4500?style=for-the-badge&logo=reddit&logoColor=white" alt="Reddit Forum"></a>
-    <a href="https://www.Tournament Admin/"><img height="20px" src="https://img.shields.io/badge/🏆_Tournaments-informational?style=for-the-badge" alt="Tournaments"></a>
+    <a href="https://www.tabroom.com/"><img height="20px" src="https://img.shields.io/badge/🏆_Tournaments-informational?style=for-the-badge" alt="Tournaments"></a>
     <a href="https://debate-ai.com"><img height="20px" src="https://img.shields.io/badge/App-blueviolet?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Website" /></a>
     <a href="https://deepwiki.com/debate/debate-ai.com"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki" /></a>
     <a href="https://debate-ai.com/docs"><img src="https://img.shields.io/badge/Docs-blue?logo=ReadTheDocs&logoColor=white" alt="Documentation" /></a>

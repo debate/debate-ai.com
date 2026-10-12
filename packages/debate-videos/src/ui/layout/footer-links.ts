@@ -61,6 +61,6 @@ export const FOOTER_LINKS: FooterLink[] = [
   { url: "https://discord.gg/wMxeKZ3c9e", text: "Support", icon: FaDiscord },
   { url: "/legal/privacy", text: "Privacy", icon: LockKeyhole },
   { url: "https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/", text: "Reddit", icon: SiReddit },
-  // { url: "https://www.Tournament Admin/index/index.mhtml", text: "Tournaments", icon: Calendar },
+  // { url: "https://www.tabroom.com/index/index.mhtml", text: "Tournaments", icon: Calendar },
   // { url: "https://opencaselist.com", text: "Research", icon: BookMarked },
 ];
