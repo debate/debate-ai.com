@@ -395,7 +395,7 @@ information about the tournament, schematics, results, etc. You chose
 the "web name" of your tournament when you requested it, and it will be
 something like:
 
-https://mytournamentname.Tournament Admin
+https://mytournamentname.tabroom.com
 
 The Website section lets you configure what information/pages are
 visible on your tournaments site, or when accessing it through one of

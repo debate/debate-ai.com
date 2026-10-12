@@ -16,7 +16,7 @@ describe("TournamentsApp", () => {
 });
 
 describe("ResultSetView", () => {
-  // Real payload from api.Tournament Admin for tourn 40663 / result set 461590: a
+  // Real payload from api.tabroom.com for tourn 40663 / result set 461590: a
   // bracket set carrying `rounds` and no `results` key, which used to throw
   // `Cannot read properties of undefined (reading 'length')`.
   const bracket = { id: 461590, tag: "bracket", label: "Bracket", Event: { id: 386573, name: "Open", abbr: "CX-O" }, rounds: { 7: {} } };

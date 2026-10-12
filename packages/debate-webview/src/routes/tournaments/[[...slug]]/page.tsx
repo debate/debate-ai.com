@@ -10,7 +10,7 @@ import { TournamentsApp } from "@debate/tournaments/ui"
  * app's read-only `/api/tabroom-beta` proxy; tournaments hosted here (and the
  * demo anyone can browse as its admin) come from `/api/tabroom`, the vendored
  * Tabroom API on this site's D1, whose `/host` routes create them and serve
- * their admin view. `/practice/tabroom` frames beta.Tournament Admin itself.
+ * their admin view. `/practice/tabroom` frames beta.tabroom.com itself.
  */
 export default function Tournaments() {
   const { slug } = useParams<{ slug?: string[] }>()

@@ -16,10 +16,10 @@ In `apps/debate-ai.com` the D1 API is mounted at `/api/tabroom/*`
 (`app/api/tabroom/[...path]/route.ts`, `lib/tournaments/handler.ts`). The UI is
 mounted at `/tournaments/*` with two sources (`apiBase` and
 `liveApiBase`): live Tabroom through `/api/tabroom-beta/*`, a read-only proxy to
-`https://api.Tournament Admin/v1` (`lib/tournaments/tabroom-beta-proxy.ts`), and the
+`https://api.tabroom.com/v1` (`lib/tournaments/tabroom-beta-proxy.ts`), and the
 tournaments hosted on this site through `/api/tabroom`. The list merges both and
 each tournament reads from whichever holds it. `/practice/tabroom` frames
-beta.Tournament Admin itself.
+beta.tabroom.com itself.
 
 A tournament's pages are addressed by the year it starts and a slug of its
 name: `/tournaments/2026/yale-invitational/results`. `client.resolve` turns that

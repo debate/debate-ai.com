@@ -104,9 +104,9 @@ describe("FramedOverlay", () => {
     expect(renderToString(<FramedOverlay open={false} onClose={() => {}} />)).toBe("");
   });
 
-  it("frames beta.Tournament Admin over the page, with a way out", () => {
+  it("frames beta.tabroom.com over the page, with a way out", () => {
     const html = renderToString(<FramedOverlay open onClose={() => {}} />);
-    expect(html).toContain('src="https://beta.Tournament Admin"');
+    expect(html).toContain('src="https://beta.tabroom.com"');
     expect(html).toContain("Close Tabroom overlay");
     expect(html).toContain("Open in a new tab");
     expect(html).toContain('role="dialog"');
@@ -137,7 +137,7 @@ describe("FramedOverlay", () => {
 
   it("hosts on this site's API, never sending the host to Tabroom", () => {
     const html = withClient(createTournamentsClient("/api/tabroom", noFetch), <TournamentsApp segments={["host"]} />);
-    expect(html).not.toContain("beta.Tournament Admin");
+    expect(html).not.toContain("beta.tabroom.com");
     expect(html).not.toContain("Open Tabroom");
     expect(html).toContain("Try the demo admin");
     expect(html).toContain('href="/tournaments/90001/admin"');
