@@ -1,9 +1,9 @@
 "use client"
 
-import { useCallback, useEffect, useState, type MouseEvent as ReactMouseEvent, type ReactNode } from "react"
+import { useCallback, useEffect, useRef, useState, type MouseEvent as ReactMouseEvent, type ReactNode } from "react"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { Globe, LogIn, PanelLeft, LogOut, Monitor, Moon, Palette, Pause, Play, Search, Settings as SettingsIcon, ShieldCheck, Sun, UserCircle2 } from "lucide-react"
+import { ChevronDown, ChevronUp, Globe, LogIn, PanelLeft, PanelTopClose, PanelTopOpen, LogOut, Monitor, Moon, Palette, Pause, Play, Search, Settings as SettingsIcon, ShieldCheck, Sun, UserCircle2 } from "lucide-react"
 import { cn } from "../../lib/ui/lib/utils"
 import { Dock, DockIcon, DockItem } from "../../lib/ui/layout/dock"
 import { useAccountNotifications, useContacts } from "@debate/team-collaboration"
@@ -40,6 +40,7 @@ import { MobileSidebarDrawer } from "./MobileSidebarDrawer"
 import { mobileSidebarKind, OPEN_OWN_SIDEBAR_EVENT } from "../../lib/mobile-sidebar"
 import { settingsHrefForPath } from "../../lib/qwksearch/settings-paths"
 import { openGlobalCommandPalette } from "./GlobalCommandPalette"
+import { toggleDockHidden, useDockHidden } from "../../lib/nav/dock-hidden"
 import { IconSettings } from "../../lib/ui/icons"
 
 // No Timer button here on purpose: the round timers live in the rounds
@@ -259,11 +260,20 @@ function SettingsMenu({
   const router = useRouter()
   const pathname = usePathname()
   const canEditContent = useCanEditContent()
+  const dockHidden = useDockHidden()
+  // Hiding the dock from this menu must not hand focus back to the Settings
+  // icon as the menu closes: focus inside the hidden dock reveals it again.
+  const skipFocusRestore = useRef(false)
 
   return (
     <DropdownMenuContent
       side={side}
       align="end"
+      onCloseAutoFocus={(e) => {
+        if (!skipFocusRestore.current) return
+        skipFocusRestore.current = false
+        e.preventDefault()
+      }}
       // Tall enough (the theme/links block above the account rows) to run
       // past a phone viewport, which would otherwise cut them off with no
       // way to reach them.
@@ -336,6 +346,12 @@ function SettingsMenu({
           })}
         </DropdownMenuSubContent>
       </DropdownMenuSub>
+      {/* Collapses every dock to an arrow tab that reveals it on hover (see
+          `CollapsibleDock`); the same row shows it again. */}
+      <DropdownMenuItem onSelect={() => { skipFocusRestore.current = !dockHidden; toggleDockHidden() }}>
+        {dockHidden ? <PanelTopOpen className="mr-2 h-4 w-4" /> : <PanelTopClose className="mr-2 h-4 w-4" />}
+        {dockHidden ? "Show Dock" : "Hide Dock"}
+      </DropdownMenuItem>
       <DropdownMenuSub>
         <DropdownMenuSubTrigger>
           <Globe className="mr-2 h-4 w-4" />
@@ -456,6 +472,82 @@ function PracticeVsAiTrigger({
 }
 
 /**
+ * Wraps one dock instance so the reader can hide it (Settings → Hide Dock,
+ * kept by `lib/nav/dock-hidden`). Shown, it renders the dock untouched.
+ * Hidden, only a small arrow tab stays on screen; hovering it (or focusing
+ * into it from the keyboard, or tapping it on a touch screen) brings the full
+ * dock back over it, and the dock stays up while one of its menus is open, so
+ * the Settings menu can still be reached to show the dock for good.
+ *
+ * `edge` is the screen edge the dock sits on: the top-left and sidebar docks
+ * hang a tab down from the top, the mobile bar raises one from the bottom.
+ * `fill` stretches the revealed dock across its column (sidebar, mobile bar)
+ * rather than sizing it to its icons (the floating desktop dock).
+ */
+function CollapsibleDock({
+  hidden,
+  edge,
+  fill = false,
+  children,
+}: {
+  hidden: boolean
+  edge: "top" | "bottom"
+  fill?: boolean
+  children: ReactNode
+}) {
+  const pathname = usePathname()
+  // Tap-to-peek for touch screens, which have no hover; a navigation from the
+  // revealed dock folds it away again.
+  const [peek, setPeek] = useState(false)
+  useEffect(() => setPeek(false), [pathname])
+
+  if (!hidden) return <>{children}</>
+
+  const Arrow = edge === "top" ? ChevronDown : ChevronUp
+  return (
+    <div
+      data-dock-hidden
+      data-peek={peek ? "true" : "false"}
+      className={cn("group/dock relative flex", edge === "top" ? "justify-start" : "justify-center")}
+    >
+      <button
+        type="button"
+        aria-label="Show dock"
+        aria-expanded={peek}
+        onClick={() => setPeek((open) => !open)}
+        className={cn(
+          "flex h-5 w-10 items-center justify-center border bg-background/90 text-muted-foreground shadow-sm backdrop-blur transition-colors",
+          "hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+          edge === "top" ? "ml-2 rounded-b-md border-t-0" : "mb-1 rounded-t-md border-b-0",
+        )}
+      >
+        <Arrow className="h-4 w-4" />
+      </button>
+      <div
+        className={cn(
+          // Solid behind the dock's translucent surface: revealed, it floats
+          // over page content rather than over the bar it used to sit in.
+          "absolute z-10 rounded-2xl bg-background/95 shadow-md transition-[opacity,transform] duration-150 ease-out",
+          "pointer-events-none opacity-0",
+          edge === "top" ? "top-0 -translate-y-1" : "bottom-full translate-y-1",
+          fill ? "inset-x-0" : "left-0 w-max",
+          // Written out per trigger so Tailwind sees every class literally:
+          // hover, keyboard focus inside (focus-visible, so a mouse click
+          // that leaves focus on an icon does not pin the dock open), a tap on the tab, or one of the
+          // dock's own menus still open (its trigger carries data-state=open).
+          "group-hover/dock:pointer-events-auto group-hover/dock:opacity-100 group-hover/dock:translate-y-0",
+          "group-has-[:focus-visible]/dock:pointer-events-auto group-has-[:focus-visible]/dock:opacity-100 group-has-[:focus-visible]/dock:translate-y-0",
+          "group-data-[peek=true]/dock:pointer-events-auto group-data-[peek=true]/dock:opacity-100 group-data-[peek=true]/dock:translate-y-0",
+          "group-has-[[data-state=open]]/dock:pointer-events-auto group-has-[[data-state=open]]/dock:opacity-100 group-has-[[data-state=open]]/dock:translate-y-0",
+        )}
+      >
+        {children}
+      </div>
+    </div>
+  )
+}
+
+/**
  * Renders a single dock instance with all items inline as direct children.
  * This ensures Dock's cloneElement passes mousex/magnification/distance properly.
  *
@@ -552,6 +644,7 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const sidebarCollapsed = useSidebarCollapsed()
   const { isAuthenticated } = useSession()
+  const dockHidden = useDockHidden()
   // Called for their app-wide side effects, not for anything this component
   // renders: `useAccountNotifications` is what toasts a notification that
   // arrives while the user is anywhere in the app, and `useContacts`' poll
@@ -677,13 +770,15 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
       // hides that tree behind the dock's translucent, blurred surface. The
       // wrapper also carries the marker the pre-paint CSS hides on.
       <div data-app-chrome className="sticky top-0 z-30 shrink-0 bg-background">
-        <DockInstance
-          dockClassName="shrink-0 min-h-[52px]"
-          side="bottom"
-          allItems={allItems}
-          onSignIn={() => setLoginOpen(true)}
-          embedded
-        />
+        <CollapsibleDock hidden={dockHidden} edge="top" fill>
+          <DockInstance
+            dockClassName="shrink-0 min-h-[52px]"
+            side="bottom"
+            allItems={allItems}
+            onSignIn={() => setLoginOpen(true)}
+            embedded
+          />
+        </CollapsibleDock>
         <LoginDialog open={loginOpen} onOpenChange={setLoginOpen} />
       </div>
     )
@@ -700,16 +795,19 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
     <>
       {/* Desktop: top-left corner */}
       <div data-app-chrome className={cn("fixed top-0 left-2 z-50", suppressDesktopDock ? "hidden" : "hidden md:block")}>
-        <DockInstance
-          dockClassName="h-[52px] shrink-0 !mt-0 !mx-0"
-          side="bottom"
-          allItems={allItems}
-          onSignIn={() => setLoginOpen(true)}
-        />
+        <CollapsibleDock hidden={dockHidden} edge="top">
+          <DockInstance
+            dockClassName="h-[52px] shrink-0 !mt-0 !mx-0"
+            side="bottom"
+            allItems={allItems}
+            onSignIn={() => setLoginOpen(true)}
+          />
+        </CollapsibleDock>
       </div>
 
       {/* Mobile: fixed bottom bar */}
       <div data-app-chrome className="md:hidden fixed bottom-0 left-0 right-0 z-50 pb-safe">
+        <CollapsibleDock hidden={dockHidden} edge="bottom" fill>
         <DropdownMenu>
           <Dock direction="middle" className="h-[52px] shrink-0 !mt-0 mx-auto w-max mb-2 !gap-1 !p-1">
             <DockItem
@@ -771,6 +869,7 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
           </Dock>
           <SettingsMenu side="top" onSignIn={() => setLoginOpen(true)} />
         </DropdownMenu>
+        </CollapsibleDock>
       </div>
 
       <MobileSidebarDrawer open={sidebarOpen} onOpenChange={setSidebarOpen} />

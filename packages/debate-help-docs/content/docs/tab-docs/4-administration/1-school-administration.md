@@ -14,7 +14,6 @@ When your Tabroom account is linked as the administrator for a school,
 you will see a set of tabs when you log-in that correspond to the main
 school admin functions:
 
-<img src="/screenshots/placeholder.png" title="coach_menu.png" width="400" />
 
 This section of the manual will explain how to use each of these tabs.
 
@@ -59,7 +58,6 @@ If your school doesn't exist in Tabroom yet, you'll need to create it.
 After logging in, click the link for "Create a new school/team" in the
 sidebar:
 
-<img src="/screenshots/placeholder.png" title="Coaches_-_Your_Account.png"
 width="300" />
 
 Then, fill out the required information such as School Name, State, etc.
@@ -67,10 +65,8 @@ If you have a National Speech & Debate chapter number, or a variety of
 other school ID numbers, you can put them in here to ensure proper
 tracking. When done, press Save School Info.
 
-<img src="/screenshots/placeholder.png"
 title="coaches_-_create_new_school_1.png" width="500" />
 
-<img src="/screenshots/placeholder.png"
 title="coaches_-_create_new_school_1.png" width="500" />
 
 If a school already exists in Tabroom with a similar name, you will see
@@ -80,14 +76,12 @@ If you need help getting access to an existing school, email
 help@tabroom.com. If you're sure you need to create a new school,
 check the "Confirm duplication" box:
 
-<img src="/screenshots/placeholder.png"
 title="user_chapter_create-confirm.png" width="400" />
 
 Once your school is created, you should see a welcome message telling
 you what to do next - each of the suggested steps is covered in this
 manual in detail:
 
-<img src="/screenshots/placeholder.png"
 title="user_chapter_chapter-welcome.png" width="500" />
 
 ## School Settings
@@ -95,7 +89,6 @@ title="user_chapter_chapter-welcome.png" width="500" />
 To make changes to your school name, coach access, etc. you will use the
 Settings tab:
 
-<img src="/screenshots/placeholder.png" title="coaches_-_settings.png"
 width="600" />
 
 ### Controlling Access To A School
@@ -103,7 +96,6 @@ width="600" />
 To edit who has access to your school's account in Tabroom, go to the
 Settings tab and then use the form at the bottom:
 
-<img src="/screenshots/placeholder.png" title="coaches_-_access.png"
 width="500" />
 
 You will see a list of Tabroom accounts with access to your school
@@ -136,7 +128,6 @@ If your Tabroom account is listed as the administrator for more than one
 school simultaneously, you will see a list under "Institutions" in the
 sidebar on your account dashboard:
 
-<img src="/screenshots/placeholder.png" title="coaches_-_instituions.png"
 width="300" />
 
 Before editing your rosters, entering a tournament, etc. make sure you
@@ -149,7 +140,6 @@ Before registering for a tournament, you must add students to your
 student roster. When you first go to the Competitors tab, your roster
 will be empty:
 
-<img src="/screenshots/placeholder.png"
 title="user_chapter_students-empty.png" width="500" />
 
 You can add students to your roster manually, import them from your NSDA
@@ -159,7 +149,6 @@ account, or import them from a file.
 
 Click the "Add a new student" link on the sidebar:
 
-<img src="/screenshots/placeholder.png"
 title="coaches_-_competitor_roster.png" width="300" />
 
 This will give you two options - you can search for a student to add by
@@ -168,7 +157,6 @@ information and click the "Save Student" button. You can always link
 your student roster entries to your student's Tabroom account later if
 you wish.
 
-<img src="/screenshots/placeholder.png"
 title="coaches_-_competitor_screen.png" width="500" />
 
 Make sure to give each of your students a 4-digit graduation date, like
@@ -185,7 +173,6 @@ instead.
 
 This will give you a form to choose the file to import:
 
-<img src="/screenshots/placeholder.png"
 title="coaches_-_add_new_student_-_imports.png" width="500" />
 
 Your file must be saved as a ".csv" comma-delimited file. You can
@@ -202,7 +189,6 @@ the file format.
 Once you have added students to your roster, you will see them in a list
 on the Students tab:
 
-<img src="/screenshots/placeholder.png" title="competitor_list.png"
 width="600" />
 
 Each line on your roster has a number of options. Clicking the "Record"
@@ -234,7 +220,6 @@ easily remove them by using the "De-duplicate students" link on the
 sidebar. If any duplicates are found, you will be given the choice to
 merge them:
 
-<img src="/screenshots/placeholder.png" title="deduplicate_students.png"
 width="500" />
 
 #### Dietary Preferences
@@ -244,7 +229,6 @@ student's dietary preferences, which also makes it easy for tournaments
 to access that information. You can see all of this information in one
 place with the "Dietary preferences" link in the sidebar:
 
-<img src="/screenshots/placeholder.png" title="diet_notes.png" width="500" />
 
 ### Linking Your National Speech & Debate Association Roster
 
@@ -255,7 +239,6 @@ points can be posted automatically. To take advantage of this, click the
 "Students" tab to view your Student Roster. Then, click the link on the
 right for "Connect to NSDA Auto Pointing:"
 
-<img src="/screenshots/placeholder.png" title="linking_nsda_member.png"
 width="500" />
 
 First, you'll need to give Tabroom access to your Points Application
@@ -321,7 +304,6 @@ The judge roster works very similar to the student roster. You can click
 the "Add a new judge" link in the sidebar, or if your judge roster is
 empty, the form will appear automatically:
 
-<img src="/screenshots/placeholder.png" title="Judge_Roster.png" width="300" />
 
 You can add judges by their Tabroom account email, or manually enter
 their information and click the "Save Judge" button. You can link judges
@@ -336,7 +318,6 @@ the "Judge" template, instead of the "Student" template.
 
 Once you have added judges to your roster, they will appear in a list:
 
-<img src="/screenshots/placeholder.png" title="active_judges.png" width="600" />
 
 Clicking on a judge's first or last name will let you edit their
 information. You can also toggle a judge between active/inactive to keep
@@ -348,7 +329,6 @@ easily remove them by using the "Deduplicate judges" link on the
 sidebar. If any duplicates are found, you will be given the choice to
 merge them:
 
-<img src="/screenshots/placeholder.png" title="deduplicate_judges.png"
 width="500" />
 
 To keep track of your judges dietary preferences, you can use the
@@ -364,7 +344,6 @@ in is a part of, look on the main [Calendar](/public/calendars).
 
 Then, use the "Circuits" tab to join the circuit:
 
-<img src="/screenshots/placeholder.png" title="circuit_screen.png" width="600" />
 
 First, select the circuit you want to join from the dropdown. Then,
 choose whether to join for "Tournaments Only" or "Full Membership."
@@ -422,13 +401,11 @@ your entire team.
 From your account dashboard, you can use the Results tab to see a list
 of tournaments with available results:
 
-<img src="/screenshots/placeholder.png" title="results_screen.png" width="600" />
 
 Clicking the Results tab will give you a list of of available reports
 for that tournament. Full Tournament Results takes you to the full
 public results for the entire tournament instead:
 
-<img src="/screenshots/placeholder.png" title="results_menu.png" width="300" />
 
 Tournament Stats will give you a general overview of participation at
 the tournament.
@@ -438,7 +415,6 @@ Show Entry Roster will show you your complete entry from the tournament.
 Show Team Results will give you the complete results for the entire
 team, including final places, seeds, and speaker awards:
 
-<img src="/screenshots/placeholder.png" title="results_menu.png" width="300" />
 
 Print Team Results contains the same information, but in PDF form for
 easy printing.
@@ -448,7 +424,6 @@ easy printing.
 The Show Online Ballots link in the sidebar allows you to access and
 RFD's or Comments (if any) that judges entered online:
 
-<img src="/screenshots/placeholder.png"
 title="user_results_online-ballots.png" width="500" />
 
 Print Ballots contains the same information in PDF form.
@@ -465,7 +440,6 @@ You can also access past pref sheets from the sidebar by selecting a
 competitor, which will then download a .csv file with the pref sheet for
 that tournament:
 
-<img src="/screenshots/placeholder.png"
 title="user_results_tourn-prefsheets.png" width="300" />
 
 ### Competitor Schools
@@ -473,5 +447,4 @@ title="user_results_tourn-prefsheets.png" width="300" />
 On the main Results tab, you can also see a list of all the schools your
 program has competed against (e.g. for PR reasons):
 
-<img src="/screenshots/placeholder.png"
 title="user_results_index-stats.png" width="300" />

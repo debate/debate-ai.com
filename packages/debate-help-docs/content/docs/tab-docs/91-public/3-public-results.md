@@ -14,14 +14,12 @@ For information on how to access personalized results, see the page on
 
 To access general tournament results, click the "Results" tab:
 
-<img src="/screenshots/placeholder.png" title="index_index_resultstab.png"
 width="500" />
 
 This will give you a list of recent tournament results - clicking the
 green "Results" button next to a tournament will take you to that
 tournament's [result page.](#tournament-results)
 
-<img src="/screenshots/placeholder.png" title="index_results_recent.png"
 width="600" />
 
 ## Circuit Results
@@ -29,13 +27,11 @@ width="600" />
 To see results from a specific circuit, use the "Circuit Selector" to
 choose a circuit and year:
 
-<img src="/screenshots/placeholder.png" title="index_results_selector.png"
 width="300" />
 
 You can then use the "Circuit Stats" box on the right to find a variety
 of information about that circuit's results:
 
-<img src="/screenshots/placeholder.png"
 title="index_results_circuitstats.png" width="300" />
 
 Each of these options is explained briefly:
@@ -46,7 +42,6 @@ Circuit Totals will show you a broad overview of the results from the
 circuit, such as the number of participating schools, students, and
 judges, and the number of tournament entries to date:
 
-<img src="/screenshots/placeholder.png"
 title="index_results_circuit-stats.png" width="500" />
 
 ### School/Team Tables
@@ -56,7 +51,6 @@ showing you how many participants each school has, how many tournaments
 they have attended, etc. You can hover your mouse over any column name
 to get additional information about what it means:
 
-<img src="/screenshots/placeholder.png"
 title="index_results_circuit-chapter.png" width="500" />
 
 ### Tournament Overall Results
@@ -65,7 +59,6 @@ This will take you to the list of tournaments in the circuit - clicking
 the name of any tournament will take you directly to that tournament's
 results page:
 
-<img src="/screenshots/placeholder.png"
 title="index_results_circuit-tourney-portal.png" width="500" />
 
 See the section below on [Tournament Results](#tournament-results) for more information on
@@ -76,13 +69,11 @@ navigating an individual tournament's results.
 This will show you the aggregated average speaker points for the entire
 circuit to date, and you can sort the table based on any column:
 
-<img src="/screenshots/placeholder.png"
 title="index_results_speaker-rankings-by-circuit.png" width="500" />
 
 You can also further filter the information using the "Event selector"
 on the right, for example if you want to only see results from JV:
 
-<img src="/screenshots/placeholder.png"
 title="index_results_speaker-rankings-by-circuit-eventselector.png"
 width="300" />
 
@@ -92,12 +83,10 @@ This will show the aggregated results from all teams/entries in a
 circuit, with stats like Total Rounds, Win/Loss percentage, Prelim/Elim
 Win/Loss. By default it is limited to entries with at least 5 rounds:
 
-<img src="/screenshots/placeholder.png"
 title="index_results_debate-stats2.png" width="500" />
 
 You can further filter the table with the "Event selector" on the right:
 
-<img src="/screenshots/placeholder.png"
 title="index_results_debate-stats2-eventselector.png" width="300" />
 
 #### RPI
@@ -112,7 +101,6 @@ determined by total entries divided by 150 with a maximum of 1.
 Clicking any entry's RPI score in the table will take you to a detailed
 explanation of their RPI:
 
-<img src="/screenshots/placeholder.png"
 title="index_results_rpi-detail.png" width="500" />
 
 ## Tournament Results
@@ -122,18 +110,15 @@ access that tournament via a Calendar, the "Recent Results" page, or the
 "Circuit Results," as explained above. Once you have reached the
 "Results" tab for that tournament, you will see a page like this:
 
-<img src="/screenshots/placeholder.png"
 title="index_tourn_results_event-results.png" width="500" />
 
 First, you should select the event you're interested in the "Event
 Results" dropdown, then click "Go:"
 
-<img src="/screenshots/placeholder.png"
 title="index_tourn_results_event-results-dropdown.png" width="300" />
 
 Each event will have a list on the right side of published results:
 
-<img src="/screenshots/placeholder.png"
 title="index_tourn_results_event-results-list.png" width="300" />
 
 This will usually include results for each round, and frequently will
@@ -146,7 +131,6 @@ interested in, you should contact the tournament director.
 To see National Rankings, you can use the links under the section on the
 right under the Results tab:
 
-<img src="/screenshots/placeholder.png"
 title="index_results_nationalrankings.png" width="300" />
 
 Currently, Tabroom is tracking National Rankings for NDT/CEDA. This
@@ -154,13 +138,11 @@ section may have additional national rankings for other organizations in
 the future. Clicking the link for CEDA/NDT Points Results will show you
 the current standings. You can sort this table by any column you like.:
 
-<img src="/screenshots/placeholder.png"
 title="index_results_ndt-ceda-points.png" width="500" />
 
 Further down the page you can see the results sorted by school or
 tournaments:
 
-<img src="/screenshots/placeholder.png"
 title="index_results_ndt-ceda-points-byschool.png" width="500" />
 
 ### Checker Sheets
@@ -168,7 +150,6 @@ title="index_results_ndt-ceda-points-byschool.png" width="500" />
 You can also use the "Checker Sheets" for any individual team to make
 sure the points are correct:
 
-<img src="/screenshots/placeholder.png"
 title="index_results_ndt-ceda-points-checkersheets.png" width="500" />
 
 There is a separate checker sheet for each team at each tournament they

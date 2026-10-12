@@ -293,6 +293,63 @@ describe("VideoReportsPanel", () => {
     expect(bodyText()).toContain("Reports down");
   });
 
+  it("adds a submitted video to the library then marks it applied", async () => {
+    const submission = issue({
+      kind: "submit-video",
+      issue: JSON.stringify({ url: `https://youtu.be/${VIDEO_ID}`, channel: "Debate Chan", note: "TOC final" }),
+      suggestedStyle: null,
+      suggestedRoundLevel: null,
+    });
+    const { calls } = reportRoutes(
+      [
+        { method: "POST", match: "/api/admin/videos/library", respond: { ok: true } },
+        { method: "PATCH", match: "/api/video-issues", respond: { ok: true } },
+      ],
+      [submission],
+    );
+    mount(<VideoReportsPanel />);
+    await flush();
+    const text = bodyText();
+    expect(text).toContain("Submitted video");
+    expect(text).toContain("Channel: Debate Chan");
+    expect(text).toContain("“TOC final”");
+    await clickAsync(button("Add to library"));
+    const post = calls.find((c) => c.method === "POST");
+    expect(post?.body).toEqual({ videoId: VIDEO_ID, title: "TOC Finals", channel: "Debate Chan" });
+    expect(calls.find((c) => c.method === "PATCH")?.body).toEqual({ id: "i1", status: "applied" });
+    expect(bodyText()).toContain("Added “TOC Finals” to the library.");
+  });
+
+  it("subscribes to a submitted channel, and explains a moderator's 403", async () => {
+    const submission = issue({
+      kind: "submit-channel",
+      videoId: "",
+      title: "@DebateChan",
+      issue: JSON.stringify({ url: "https://www.youtube.com/@DebateChan", note: "" }),
+      suggestedStyle: null,
+      suggestedRoundLevel: null,
+    });
+    const { calls } = reportRoutes(
+      [
+        { method: "POST", match: "/api/admin/youtube/channels", respond: { error: "Forbidden" }, status: 403, once: true },
+        { method: "POST", match: "/api/admin/youtube/channels", respond: { channel: { id: 9 } } },
+        { method: "PATCH", match: "/api/video-issues", respond: { ok: true } },
+      ],
+      [submission],
+    );
+    mount(<VideoReportsPanel />);
+    await flush();
+    expect(bodyText()).toContain("Submitted channel");
+    await clickAsync(button("Subscribe"));
+    expect(bodyText()).toContain("Only admins can subscribe to a channel");
+    await clickAsync(button("Subscribe"));
+    expect(calls.filter((c) => c.method === "POST").map((c) => c.body)).toEqual([
+      { name: "@DebateChan" },
+      { name: "@DebateChan" },
+    ]);
+    expect(bodyText()).toContain("Subscribed to @DebateChan");
+  });
+
   it("applies a style correction then marks the report applied", async () => {
     const { calls } = reportRoutes([
       { method: "PATCH", match: `/api/admin/videos/library/${VIDEO_ID}`, respond: { video: { title: "TOC Finals" } } },
@@ -425,7 +482,7 @@ describe("YoutubeChannelsPanel", () => {
     mount(<YoutubeChannelsPanel />);
     expect(bodyText()).toContain("Loading channels…");
     await flush();
-    expect(calls[0].url).toBe("/api/admin/youtube/channels?limit=50");
+    expect(calls[0].url).toBe("/api/admin/youtube/channels?limit=200");
     const text = bodyText();
     expect(text).toContain("Kansas Debate");
     expect(text).toContain("(UC123)");
@@ -532,9 +589,7 @@ describe("YoutubeChannelsPanel", () => {
     await clickAsync(button("Remove channel"));
     expect(calls.filter((c) => c.method === "DELETE")).toHaveLength(2);
     expect(bodyText()).toContain("Removed “Kansas Debate” — it will no longer be scanned.");
-
-    const before = calls.length;
-    await clickAsync(button("Refresh"));
-    expect(calls.length).toBe(before + 1);
+    // The removal updates the list in place; nothing refetches it.
+    expect(calls.filter((c) => c.method === "GET")).toHaveLength(1);
   });
 });

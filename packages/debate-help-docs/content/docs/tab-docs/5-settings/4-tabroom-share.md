@@ -8,7 +8,6 @@ and thereby hand their personal contact information to everyone in the
 round, you can now enable Share rooms on Tabroom under Setup -> Events
 -> Pairing tab.
 
-<img src="/screenshots/placeholder.png" title="Share.tabroom.com_Enable_Setting.png" />
 
 If enabled, Tabroom will automatically send out a speech doc chain email
 to all the participants and judges in the round as soon as a round is

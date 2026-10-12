@@ -63,7 +63,10 @@ async function isTimerWindow(windowId: number): Promise<boolean> {
     // MV2 (the Firefox build): the background page can see the extension's
     // own pages directly.
     const views = browser.extension?.getViews?.({ windowId }) ?? [];
-    return views.some((view) => view.location.href.startsWith(timerPageUrl()));
+    // The `browser` types model these as their own `Window` type, not the DOM's.
+    return views.some((view) =>
+      (view as unknown as globalThis.Window).location.href.startsWith(timerPageUrl()),
+    );
   } catch {
     return false;
   }

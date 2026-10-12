@@ -5,11 +5,9 @@ slug: judging
 
 ## Add New Judge Category
 
-<img src="/screenshots/placeholder.png" title="add_new_judge_category.png" />
 
 After you click Add New Judge Category, you will see this screen:
 
-<img src="/screenshots/placeholder.png" title="name.png" />
 
 In this screen, you need to enter a name for the judge category and
 click "Save Registration Settings" before you can fill out the other
@@ -17,7 +15,6 @@ settings on this page.
 
 ## Register
 
-<img src="/screenshots/placeholder.png" title="Settings_-_Judges_-_Add_new_judge_category.png" />
 
 **Category Name** - This is just the name of the judge group. Should
 usually be something like "Policy" or "Individual Events."
@@ -144,7 +141,6 @@ school can count in that alternate category.
 judges to complete particular trainings in order to judge at your
 tournament.
 
-<img src="/screenshots/placeholder.png" title="Judge_Questionnaire.png" />
 
 **Judge Registration Questions** - This section allows you to ask judges
 particular questions related to following the set rules of your
@@ -152,11 +148,9 @@ tournament, etc. You can craft free response questions, questions that
 only require a yes/no answer or questions that require numerical
 answers.
 
-<img src="/screenshots/placeholder.png" title="Judge_Registration_Questions.png" />
 
 ## Hires
 
-<img src="/screenshots/placeholder.png" title="Settings_-_Judges_-_Hires.png" />
 
 **Offer tournament hired judging** - Unlike the Hiring Exchange, which
 lets judges and schools match up judging themselves, this option enables
@@ -211,7 +205,6 @@ your tournament on your public Tabroom site.
 
 ### Pairing Settings
 
-<img src="/screenshots/placeholder.png" title="Settings_-_Judges_-_Tabbing_-_Pairing_Settings.png" />
 
 **Prevent back to back rounds** - Toggle to not allow judges to judge
 two consecutive rounds.
@@ -252,7 +245,6 @@ will begin.
 
 ### Tabulation Settings
 
-<img src="/screenshots/placeholder.png" title="Settings_-_Judges_-_Tabbing_-_Tabulation_Settings.png" />
 
 **Ballot Entry Method** - Choose which method to use for
 confirming/double-checking ballot entry. Your choices are:
@@ -282,7 +274,6 @@ progresses.
 
 ### Ballot Options
 
-<img src="/screenshots/placeholder.png" title="Settings_-_Judges_-_Tabbing_-_Ballot_Options.png" />
 
 All toggle buttons under this heading allows you to specifically tailor
 ballots for speech and Congress at your tournament.
@@ -291,7 +282,6 @@ ballots for speech and Congress at your tournament.
 
 ### Strikes, judging ratings, mutually-preferred judging
 
-<img src="/screenshots/placeholder.png" title="Strikes,_Judging_and_Prefs.png" />
 
 **Judge registration deadline** - Allows you to set a deadline for
 judges to be entered in your tournament if you want that deadline to be
@@ -305,7 +295,6 @@ preferences close.
 
 ### Registration Settings
 
-<img src="/screenshots/placeholder.png" title="Settings_-_Judges_-_Ratings-_Registration_settings.png" />
 
 **No prefs until judge obligations met** - Toggle if you want to prevent
 schools, that haven't met their judge obligations, from completing
@@ -337,14 +326,12 @@ prefs and strikes will apply to.
 
 ### Conflicts
 
-<img src="/screenshots/placeholder.png" title="Settings_-_Judges_-_Ratings-_Conflicts.png" />
 
 **Enter conflicts separately** - Toggle to allow coaches to enter judge
 conflicts separately from prefs.
 
 ### Strikes
 
-<img src="/screenshots/placeholder.png" title="Settings_-_Judges_-_Ratings-_Strikes.png" />
 
 **School-wide strikes/scratches** - Allows you to set a maximum number
 of judges who can be rated as strikes by a school.
@@ -354,7 +341,6 @@ judges who can be rated as strikes by an entry.
 
 ### Mutually Preferred Judging
 
-<img src="/screenshots/placeholder.png" title="MPJ_Choices.png" />
 
 **Pref Method**
 
@@ -386,7 +372,6 @@ judging scores. For example, it allows you to control whether the judge
 placement algorithm privileges "mutuality" more than "preference" or how
 important it is to try and "save" committed judges for later rounds.
 
-<img src="/screenshots/placeholder.png"
 title="setup_judges_tabbing-mpj.png" width="400" />
 
 These numbers are not "percentages," per se - they don't need to sum up
@@ -477,7 +462,6 @@ could turn down the "Penalize non-mutual matches" score to 50.
 
 ### Other Ratings
 
-<img src="/screenshots/placeholder.png" title="Settings_-_Judges_-_Ratings-_Other_Ratings.png" />
 
 **Ask volunteers to rate themselves** - Toggle to allow volunteer judges
 to rate themselves based upon a scale that the tournament sets up.
@@ -494,7 +478,6 @@ use ratings in the elimination rounds (rarely, if ever, used).
 
 ## Shifts
 
-<img src="/screenshots/placeholder.png" title="Settings_-_Judges_-_Shifts.png" />
 
 **Name** - This is where you add each day of the tournament for which
 you will allow time shifts.
@@ -514,7 +497,6 @@ tournament, when you will allow judges to be unavailable.
 
 ## Pools
 
-<img src="/screenshots/placeholder.png" title="Registration_Judge_Pools_Tab.png" />
 
 **Pool Name** - This is where you create labels for specific pools in
 each judge category. For example, you have a Policy judge category. You
@@ -540,7 +522,6 @@ locations.
 
 ## Messages
 
-<img src="/screenshots/placeholder.png" title="Settings_-_Judges_-_Messages.png" />
 
 **Judge Post-Registration Email** - This is where you send messages to
 judges once they have registered. Only judges with linked Tabroom

@@ -232,17 +232,37 @@ signed in to suggest a change.
 Admins and moderators get the same pencil button, but for them it saves
 straight to the library.
 
+## Submitting a video or channel
+
+The **+** button beside the library's search bar opens **Add to the library**.
+On the **Video** tab, paste a YouTube link to a round or lecture — to share
+your own, upload it to YouTube first (unlisted works) and paste that link. On
+the **Channel** tab, paste a channel link or type its `@handle` to have the
+library follow it. Add a note for the moderators if it helps, then press
+**Submit for review**. Nothing is published right away: the submission goes to
+the moderators, who are notified and approve or dismiss it from the admin
+panel. You need to be signed in to submit.
+
 ## Fixing a video (admins)
 
 `/admin` has a **Video library** card listing every video already published to
 the site, searchable by title, channel, tournament or YouTube id and filterable
 by format. **Edit** opens the whole record — title, channel, publish date,
-format, tournament, round level, teams, winner, judge decision, description,
-speech-docs link and the top-pick flag — and saving it updates the public
+format, tournament, round level, teams, each side's arguments, winner, judge
+decision, description, speech-docs link and the top-pick flag — and saving it
+updates the public
 library right away, including how the video sorts and what searches find it.
 **Lecture category** is a dropdown prefilled with every lecture shelf the
 library uses (Topic Lectures, Affirmative Strategy, Counterplans & Theory and
 the rest), so a typo can't create a stray shelf; pick **None** for a round.
+**Aff arguments** holds the affirmative's case — the plan or advocacy and its
+advantages — and **Neg arguments** the positions the negative ran (ideally
+what went for the 2NR); they are the 1AC and 2NR lines shown on the video's
+card and watch page. **✨ Auto-fill with AI** reads YouTube's title and
+description and fills the format, category, tournament, round, teams, both
+sides' arguments, winner, decision and speech-docs link; anything the model
+can't read leaves your field as it is. If it fails, the message under the form
+says which AI provider refused and why.
 **Remove** takes the video off the site for good: it is also added to the
 resync exclusion list, so the weekly YouTube sync will not quietly bring it
 back.
@@ -251,6 +271,31 @@ Viewers' suggested edits and deletion requests land in the **Reports &
 takedowns** card as **Suggested edit** and **Deletion request**, listing each
 proposed field and the viewer's reason. **Apply** writes exactly those fields;
 **Delete video** removes it as **Remove** does; **Dismiss** rejects it.
+
+Submissions from the **+** button land in the same card as **Submitted video**
+and **Submitted channel**, with the pasted link and the viewer's note. **Add to
+library** publishes the video under the title and channel YouTube reports
+(through the same endpoint as **Add video**); **Subscribe** adds the channel to
+the subscribed list the resync scans, so its videos arrive on the next sync.
+Subscribing is admin-only, like the YouTube channels tab, so a moderator sees
+"Only admins can subscribe to a channel" and leaves it for an admin.
+
+Engineering note: both kinds ride the `video_issues` queue
+(`apps/debate-ai.com/lib/videos/video-submissions.ts`) rather than a table of
+their own. A `submit-channel` row has no video, so its `videoId` is empty.
+
+### Reclassifying by title
+
+**Reclassify videos by title**, below **Recompute video stacks**, sets the
+format of every library video whose title contains a phrase (and of matching
+rounds still in the queue), and with **Parse round info with AI** ticked
+re-reads each title and description with the same model as the edit form's
+**Auto-fill with AI**, filling tournament, round, teams, both sides'
+arguments, winner, decision and speech-docs link. A field the model can't read keeps its current value. It
+defaults to **Dartmouth RR** → **College**: those rounds are college, but their
+titles name no format, so the YouTube sync used to file them as Policy. The
+`debate-data-sync` migration `0003_dartmouth_rr_college.sql` moves them to
+College on deploy, and the sync now files new ones there itself.
 
 ### Transcripts
 
@@ -333,9 +378,17 @@ are queued by the `debate-data-sync` migration `0002_curated_round_queue.sql`
 on deploy, pending admin approval) carry their topic and argument tags in
 the description, with `Aff 1AC args:` and `Neg 2NR args:` lines that become the
 round's 1AC and 2NR arguments when it is published. The queue has no editor,
-so a wrong split is corrected in the library after publishing. The records
+so a wrong split is corrected in the library after publishing, with the edit
+form's **Aff arguments** and **Neg arguments** boxes. The records
 have no upload date, so these rounds are dated January 1st of their event's
 year.
+
+Submitted videos have to be on YouTube: the library has no file hosting
+behind its player, so the **+** dialog takes a link rather than an upload.
+
+Reclassifying with AI parsing calls the model once per video, a page of 20
+per request; a video whose call fails still gets its new format but keeps its
+old round fields, and the result counts it as failed so it can be run again.
 
 The watch page doesn't display a video's length yet, and a video only shows
 one in the library after **Fetch video durations** has looked it up.

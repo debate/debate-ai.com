@@ -3,7 +3,6 @@ title: Results - Event Display
 slug: event-display
 ---
 
-<img src="/screenshots/placeholder.png" />
 
 For a rank-ordered list of entries in an event as of any round, use the
 "Event Display" menu option, then choose an event and round from the

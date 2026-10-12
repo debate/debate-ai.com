@@ -13,7 +13,6 @@ to your main account dashboard. By default, this will give you a list of
 options for linking your account to an entry/judge, or creating a new
 school to link to your account.
 
-<img src="/screenshots/placeholder.png" title="Account_Dashboard.png"
 width="750" />
 
 If you've already done that, your dashboard will instead show you a list
@@ -22,7 +21,6 @@ of upcoming tournaments current ballots, or recent results.
 The sidebar will also contain links to administer any institutions,
 tournaments, or circuits for which you are the admin:
 
-<img src="/screenshots/placeholder.png"
 title="user_chapter_home-sidebar.png" width="300" />
 
 Since you can be the administrator for more than one
@@ -36,7 +34,6 @@ tournament, etc!
 At any time while logged in, you can access your user profile by
 clicking the "Profile" link in the upper right portion of the page:
 
-<img src="/screenshots/placeholder.png" title="index_index-profile.png"
 width="400" />
 
 From there, you can update your contact info or change your password.
@@ -51,7 +48,6 @@ have a phone number listed to register as a judge.
 
 ### Adding Pronouns to Your Profile
 
-<img src="/screenshots/placeholder.png"
 title="Screen_Shot_2021-05-02_at_1.36.03_PM.png" />
 
 When you add pronouns they will be sent to judges and competitors of a
@@ -75,18 +71,15 @@ Follow these steps to add phonetic spellings:
 1\. Select the profile button on the top right corner of the homepage of
 Tabroom.com.
 
-<img src="/screenshots/placeholder.png" />
 
 2\. Select the edit names button
 
-<img src="/screenshots/placeholder.png" />
 
 3\. Competitors should now see a text box to enter a phonetic spelling
 next to the student name (e.g. Kev-on Haugh-ton). If a student is
 affiliated with multiple institutions, they should add this to all of
 their contestant records on various rosters (see below).
 
-<img src="/screenshots/placeholder.png" />
 
 The pronunciation guide will appear whenever the tournament staff prints
 an awards script
@@ -99,7 +92,6 @@ judge and competitor records in Tabroom.
 Click the "Profile" link in the upper part of the page, then use the
 Change Password box on the sidebar:
 
-<img src="/screenshots/placeholder.png"
 title="user_login_profile-changepw.png" width="300" />
 
 ## Forgot Your Password
@@ -107,13 +99,11 @@ title="user_login_profile-changepw.png" width="300" />
 Click the "Login" link in the upper right, and click the "Forget your
 password?" link at the bottom:
 
-<img src="/screenshots/placeholder.png" title="index_index-loginbox.png"
 width="300" />
 
 You'll be taken to a page where you can input your email and have it
 email you instructions on resetting your password.
 
-<img src="/screenshots/placeholder.png" title="user_login_forgot.png"
 width="500" />
 
 If you don't receive the password reset email, check your Spam folder.
@@ -136,7 +126,6 @@ Some things to remember:
 After you create an account on tabroom it will need to be verified and
 confirmed. Check your inbox for a confirmation email about your account.
 
-<img src="/screenshots/placeholder.png"
 title="Screen_Shot_2021-07-01_at_10.54.04_AM.png" width="700" />
 
 ## openCaselist and classrooms.cloud
@@ -144,7 +133,6 @@ title="Screen_Shot_2021-07-01_at_10.54.04_AM.png" width="700" />
 Your Tabroom account can be used to access both the caselist at opencaselist.com and classrooms.cloud. If your password ever stops working to allow you access
 to either service, click the "resync" button on your Tabroom profile and
 try logging in again.
-<img src="/screenshots/placeholder.png" title="Screen_Shot_2021-05-02_at_12.54.34_PM.png" />
 
 ## Linking To A Student
 
@@ -161,13 +149,11 @@ administration](/administration/school-administration).
 To request linking yourself, from your account dashboard, click "Link
 your account to a student" in the sidebar:
 
-<img src="/screenshots/placeholder.png" title="user_setup-linkstudent.png"
 width="300" />
 
 This will automatically search for any unlinked entries and show you a
 list of results, if any:
 
-<img src="/screenshots/placeholder.png" title="user_student_search.png"
 width="600" />
 
 If you find yourself in the list, click the "Link" button to request
@@ -192,13 +178,11 @@ administration](/administration/school-administration).
 Or, you can request linking your account to a judge by clicking the link
 for "Link your account to a judge" in the sidebar:
 
-<img src="/screenshots/placeholder.png" title="user_setup-linkjudge.png"
 width="300" />
 
 This will automatically search for any unlinked judges and show you a
 list of results, if any:
 
-<img src="/screenshots/placeholder.png" title="user_judge_search.png"
 width="600" />
 
 If you find yourself in the list, click the "Claim judge" button to
@@ -216,13 +200,11 @@ If one of your judges requests access it will appear like this below in
 your coach's dashboard when you click the judge's button. Remember to
 only permit access if you recognize the judge's account.
 
-<img src="/screenshots/placeholder.png"
 title="Screen_Shot_2021-05-03_at_2.13.49_PM.png" />
 
 If one of your competitors requests access it will appear like this
 below in your coach's dashboard when you click the competitor's button
 
-<img src="/screenshots/placeholder.png" title="Please_add.png" />
 
 ## Unlinking Your Account
 
@@ -243,20 +225,16 @@ directors of tournaments you attend will likely get very angry.
 
 After logging in, find the link for "Standing Conflicts" in the sidebar:
 
-<img src="/screenshots/placeholder.png" title="Conflicts_1.png" width="350" />
 
 You can then search for a person to conflict - note that they must have
 a Tabroom account for standing conflicts to work:
 
-<img src="/screenshots/placeholder.png" />
 
 If any results are found, just click the "Conflict" button next to their
 name.
 
-<img src="/screenshots/placeholder.png" title="Conflicts_4.png" width="600" />
 
 Once you have added a conflict, they will appear in your "Existing
 Conflicts" list. To remove an existing conflict, click the red "trash
 can" icon next to their name.
 
-<img src="/screenshots/placeholder.png" title="Conflicts_5.png" width="600" />

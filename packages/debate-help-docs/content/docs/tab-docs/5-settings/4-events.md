@@ -5,7 +5,6 @@ slug: events
 
 ## Add a New Event
 
-![Add a New Event](/screenshots/placeholder.png)
 
 **Full Name** - Displayed name for the event
 
@@ -58,7 +57,6 @@ Same as the Add New Event/Division Screen
 
 ### Deadlines
 
-![Registration Event Specific Deadline](/screenshots/placeholder.png)
 
 **New Entries Due** - Deadline for schools to add new entries to an
 event.
@@ -74,7 +72,6 @@ for drops after a certain date.
 
 ### Registration
 
-![Registration Settings](/screenshots/placeholder.png)
 
 **Allow hybrid entries (2+ schools)** - Toggle to allow hybrid entries
 to register for particular events.
@@ -96,7 +93,6 @@ elimination rounds of their main event.
 
 ### Caps & Waitlists
 
-![Caps and Waitlists](/screenshots/placeholder.png)
 
 **Event-Wide Cap** - Value that sets the limit for how many total
 entries will be allowed in the given event.
@@ -117,7 +113,6 @@ entries getting off the waitlist.
 
 ### Judging adjustments
 
-![Judging adjustments](/screenshots/placeholder.png)
 
 **No judge obligations** - Overrides other judging settings and doesn't
 require any obligated judging for entries in the event.
@@ -136,7 +131,6 @@ qualifying" division.
 
 ### Breakout Round Designations
 
-![Breakout flags](/screenshots/placeholder.png)
 
 **Add a breakout/flag labeled** - The initial box that allows you to add
 a breakout section to an event.
@@ -154,7 +148,6 @@ in a breakout.
 
 ### Qualifiers
 
-![Qualifiers](/screenshots/placeholder.png)
 
 **Required number of qualifiers/bids** - If your tournament has an
 explicit bid qualification process, you can include the number required
@@ -173,7 +166,6 @@ clear "at-large" teams into the tournament at your discretion.
 
 ### Online Options
 
-![Online Options](/screenshots/placeholder.png)
 
 **Not Online** - Option to select if your event is in person.
 
@@ -214,7 +206,6 @@ shown to their competition room.
 
 ### NSDA Campus Options
 
-![NSDA Campus Options](/screenshots/placeholder.png)
 
 **Event room usage limit** - Option to set the limit on how many rooms
 you choose to use in any particular online event.
@@ -230,7 +221,6 @@ NSDA Campus rooms.
 
 ### Online Support Options
 
-![Online Support Options](/screenshots/placeholder.png)
 
 **Support Email** - Email given to participants to contact for support
 during the tournament.
@@ -245,7 +235,6 @@ specific events or the entire tournament.
 
 ### Pairing
 
-![Pairing](/screenshots/placeholder.png)
 
 **Preset seeding** - Choose a method for pairing preset rounds. If you
 choose an option other than "Randomly," you will need to assign preset
@@ -280,7 +269,6 @@ the tournament.
 
 ### Judges
 
-![Judges](/screenshots/placeholder.png)
 
 **Judges may judge their own school** - Generally not recommended, but
 can be useful in very tight judging situations or when one school is
@@ -305,7 +293,6 @@ judge will receive a bye.
 
 ### Powermatch
 
-![Powermatch](/screenshots/placeholder.png)
 
 **Powering Method** - All powermatching is done based on the Tiebreak
 rules you set in Settings - Rules & Results, but this option lets you
@@ -353,7 +340,6 @@ auto-paired once results from the previous round are in.
 
 ### Web Publishing
 
-![Publish](/screenshots/placeholder.png)
 
 **Auto-generate share.tabroom.com rooms** - Toggle to enable document
 sharing in the NSDA Campus rooms.
@@ -384,7 +370,6 @@ publicly post the result of a round after they announce it.
 
 ### Input
 
-![Tabulation Input](/screenshots/placeholder.png)
 
 **Point increments** - Choose whether to use Whole, Half, Quarter, or
 Tenth points for speakers.
@@ -408,7 +393,6 @@ a judge can assign.
 
 ### Output
 
-![Tabulation Output](/screenshots/placeholder.png)
 
 **Speaker award tiebreakers** - Determines the set of values used to
 determine speaker awards.
@@ -430,7 +414,6 @@ participants or from those not advancing to elims.
 
 ### Online Ballot Options
 
-![Online Ballot Options](/screenshots/placeholder.png)
 
 **Use Online Ballots** - When enabled, this will allow judges to link
 their tabroom account to their judge entry at the tournament and
@@ -471,7 +454,6 @@ button.
 
 ## Ballot & Rules
 
-![Ballot & Rules top](/screenshots/placeholder.png)
 
 **Affirmative designation** - Option to label the side that will be
 Affirmative in rounds (can choose Aff, Pro, Prop, etc).
@@ -489,7 +471,6 @@ use a BQ-specific ballot for that event.
 
 ### Ballot Boxes
 
-![Message boxes](/screenshots/placeholder.png)
 
 **Text on top of ballots** - Message displayed on the top of ballots.
 
@@ -512,7 +493,6 @@ all ballots.
 
 ## Updates
 
-![Updates](/screenshots/placeholder.png)
 
 **Status Texts** - Option for tab staff to receive updates when the
 first and last ballot of an event are entered.

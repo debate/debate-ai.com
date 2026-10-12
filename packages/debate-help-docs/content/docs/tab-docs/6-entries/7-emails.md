@@ -5,7 +5,6 @@ slug: emails
 
 ## Compose New Email
 
-<img src="/screenshots/placeholder.png"
 title="Entries_-_Emails_-_compose_new_email.png" />
 
 Tabroom's built-in email functions make it easy to contact all your
@@ -17,7 +16,6 @@ communicating general information to the tournament.
 
 ## Send email to
 
-<img src="/screenshots/placeholder.png"
 title="Entries_-_Emails_-_send_email_to.png" />
 
 Menu of options to target who receives the email.

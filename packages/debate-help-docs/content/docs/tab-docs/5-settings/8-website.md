@@ -5,7 +5,6 @@ slug: website
 
 ## Standard Pages
 
-<img src="/screenshots/placeholder.png" title="Settings_-_Website_-_Standard_Pages.png" />
 
 **Main Page** - This text will be the first thing anyone sees when they
 click on your tournament website. A welcome letter, a tournament
@@ -32,7 +31,6 @@ messages prior to when elimination rounds are announced.
 
 ## Web Pages
 
-<img src="/screenshots/placeholder.png" title="Settings_-_Website_-_Custom_Pages.png" />
 
 To add a new page, click the "Add New Web Page" link on the sidebar.
 Then, fill out a (short) Title, choose whether the page is
@@ -44,7 +42,6 @@ set "Published" to No.
 
 ### Field Reports
 
-<img src="/screenshots/placeholder.png" title="Settings_-_Website_-_Field_Reports.png" />
 
 Field Reports are lists of who has entered your tournament in a given
 event. Click the "Field Reports" link, and then you can toggle whether
@@ -53,7 +50,6 @@ that event.
 
 ### Upload Files/Postings
 
-<img src="/screenshots/placeholder.png" title="Settings_-_Website_-_upload_file.png" />
 
 You can also post any arbitrary file/posting that you want to make
 available to participants, such as event-specific instructions, a
