@@ -10,6 +10,13 @@ import {
   notifyVideoModerators,
   sanitizeProposedChanges,
 } from "@/lib/videos/video-change-requests";
+import {
+  fetchYouTubeOEmbed,
+  isSubmissionKind,
+  parseChannelName,
+  parseYouTubeVideoId,
+  type SubmissionKind,
+} from "@/lib/videos/video-submissions";
 
 /**
  * Viewer reports about a video — a dead embed, a bad transcript, and above
@@ -30,6 +37,11 @@ import {
  * (see `lib/videos/video-change-requests.ts`): an edit carries the proposed
  * fields as JSON in `issue`, and both ping every moderator. They need a
  * signed-in account, so a request always names who asked for it.
+ *
+ * `submit-video` and `submit-channel` are viewer submissions from the plus
+ * button beside the library's search bar (see
+ * `lib/videos/video-submissions.ts`): a video to add, or a channel to
+ * subscribe to. They also need an account, and also ping every moderator.
  */
 
 /** YouTube ids are exactly 11 characters from this alphabet. */
@@ -44,6 +56,8 @@ const ISSUE_KINDS = [
   "transcript",
   "edit",
   "delete",
+  "submit-video",
+  "submit-channel",
   "other",
 ] as const;
 
@@ -75,6 +89,12 @@ export async function POST(request: NextRequest) {
     body = (await request.json()) as Record<string, unknown>;
   } catch {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
+
+  // A submission names a link rather than a library video, so it is routed
+  // before the video-id check every other report needs.
+  if (isSubmissionKind(body?.kind)) {
+    return fileSubmission(body.kind, body);
   }
 
   const videoId = String(body?.videoId ?? "").trim();
@@ -191,6 +211,79 @@ async function fileChangeRequest(
   } catch (error) {
     console.error("Failed to save video change request:", error);
     return NextResponse.json({ error: "Failed to submit your request" }, { status: 500 });
+  }
+}
+
+/**
+ * Files a `submit-video` or `submit-channel` submission and pings the
+ * moderators. Nothing reaches the library until one of them approves it from
+ * the admin panel.
+ */
+async function fileSubmission(kind: SubmissionKind, body: Record<string, unknown>) {
+  const session = await getSession();
+  const email = session?.user?.email?.toLowerCase() ?? null;
+  if (!email) {
+    return NextResponse.json({ error: "Sign in to submit to the library" }, { status: 401 });
+  }
+
+  const url = String(body?.url ?? "").trim().slice(0, 500);
+  const note = String(body?.note ?? "").trim().slice(0, MAX_ISSUE_LENGTH);
+
+  let videoId = "";
+  let title: string;
+  let issue: string;
+  if (kind === "submit-video") {
+    const parsedId = parseYouTubeVideoId(url);
+    if (!parsedId) {
+      return NextResponse.json({ error: "Paste a YouTube video link" }, { status: 400 });
+    }
+    videoId = parsedId;
+    let channel = String(body?.channel ?? "").trim().slice(0, 200);
+    title = String(body?.title ?? "").trim().slice(0, 300);
+    if (!title || !channel) {
+      const looked = await fetchYouTubeOEmbed(videoId);
+      title ||= looked?.title.slice(0, 300) ?? "";
+      channel ||= looked?.channel.slice(0, 200) ?? "";
+    }
+    issue = JSON.stringify({ url, channel, note });
+  } else {
+    const name = parseChannelName(url || body?.name);
+    if (!name) {
+      return NextResponse.json(
+        { error: "Paste a YouTube channel link, or type its @handle" },
+        { status: 400 },
+      );
+    }
+    title = name;
+    issue = JSON.stringify({ url, note });
+  }
+
+  try {
+    const db = await getDBFromContext();
+    const id = crypto.randomUUID();
+    await db.insert(videoIssues).values({
+      id,
+      videoId,
+      title,
+      kind,
+      issue,
+      suggestedStyle: null,
+      suggestedCategory: null,
+      suggestedRoundLevel: null,
+      reportedBy: email,
+      status: "open",
+      createdAt: new Date(),
+    });
+
+    await notifyVideoModerators(db, getAdminEmails(), {
+      title: kind === "submit-video" ? "Video submitted" : "Channel submitted",
+      body: `${email} ${kind === "submit-video" ? "submitted the video" : "asked to subscribe to the channel"} “${title || videoId}”. Review it under Reports on the admin panel.`,
+    });
+
+    return NextResponse.json({ success: true, id });
+  } catch (error) {
+    console.error("Failed to save video submission:", error);
+    return NextResponse.json({ error: "Failed to submit" }, { status: 500 });
   }
 }
 

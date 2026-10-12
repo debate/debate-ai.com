@@ -32,6 +32,11 @@ import { VideoContentDialog, type ContentDialogVideo } from "./VideoContentDialo
  * `issue`; "Apply" writes exactly those fields, and "Delete video" removes the
  * video the same way the library table's Remove does.
  *
+ * "Submitted video" and "Submitted channel" come from the plus button beside
+ * the library's search bar. "Add to library" adds the video through the same
+ * endpoint as the library table's Add video form; "Subscribe" adds the channel
+ * to the subscribed list the resync scans (admins only, like that tab).
+ *
  * "Needs transcript" reports are filed by `/api/transcript` itself, not by a
  * viewer, when YouTube has no captions for a library video. "Add transcript"
  * opens the same content editor the library table uses, and saving there
@@ -74,6 +79,8 @@ const KIND_LABELS: Record<string, string> = {
   transcript: "Needs transcript",
   edit: "Suggested edit",
   delete: "Deletion request",
+  "submit-video": "Submitted video",
+  "submit-channel": "Submitted channel",
   other: "Other",
 };
 
@@ -109,6 +116,28 @@ function parseChangeRequest(issue: VideoIssue): ChangeRequest | null {
     return { changes: parsed.changes, reason: String(parsed.reason ?? "") };
   } catch {
     return null;
+  }
+}
+
+/** A viewer submission's stored details: the pasted link, and their note. */
+interface Submission {
+  url: string;
+  channel: string;
+  note: string;
+}
+
+/** Reads a `submit-video` or `submit-channel` report's `issue` JSON back out. */
+function parseSubmission(issue: VideoIssue): Submission | null {
+  if (issue.kind !== "submit-video" && issue.kind !== "submit-channel") return null;
+  try {
+    const parsed = JSON.parse(issue.issue) as Partial<Submission>;
+    return {
+      url: String(parsed?.url ?? ""),
+      channel: String(parsed?.channel ?? ""),
+      note: String(parsed?.note ?? ""),
+    };
+  } catch {
+    return { url: "", channel: "", note: issue.issue };
   }
 }
 
@@ -288,6 +317,58 @@ export function VideoReportsPanel() {
     }
   };
 
+  /** Approves a submitted video: adds it to the library, then marks it applied. */
+  const approveVideoSubmission = async (issue: VideoIssue, submission: Submission) => {
+    setBusyId(issue.id);
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/videos/library", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          videoId: issue.videoId,
+          title: issue.title || issue.videoId,
+          channel: submission.channel || null,
+        }),
+      });
+      const body = await res.json();
+      // Already in the library is still an answer to the submission.
+      if (!res.ok && res.status !== 409) {
+        throw new Error(body?.details || body?.error || "Failed to add the video");
+      }
+      setNotice(
+        res.status === 409
+          ? `“${issue.title || issue.videoId}” was already in the library.`
+          : `Added “${issue.title || issue.videoId}” to the library.`,
+      );
+      await resolve(issue, "applied");
+    } catch (err) {
+      setError((err as Error).message);
+      setBusyId(null);
+    }
+  };
+
+  /** Approves a submitted channel: subscribes to it, then marks it applied. */
+  const approveChannelSubmission = async (issue: VideoIssue) => {
+    setBusyId(issue.id);
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/youtube/channels", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: issue.title }),
+      });
+      const body = await res.json();
+      if (res.status === 403) throw new Error("Only admins can subscribe to a channel");
+      if (!res.ok) throw new Error(body?.error || "Failed to subscribe to the channel");
+      setNotice(`Subscribed to ${issue.title}; its videos arrive on the next resync.`);
+      await resolve(issue, "applied");
+    } catch (err) {
+      setError((err as Error).message);
+      setBusyId(null);
+    }
+  };
+
   const clearFlag = async (video: UnavailableVideo) => {
     setBusyId(video.videoId);
     setError(null);
@@ -342,14 +423,19 @@ export function VideoReportsPanel() {
           <ul className="divide-y rounded-md border">
             {issues.map((issue) => {
               const request = parseChangeRequest(issue);
+              const submission = parseSubmission(issue);
               return (
                 <li key={issue.id} className="flex flex-wrap items-start gap-3 p-3">
-                  <img
-                    src={`https://img.youtube.com/vi/${issue.videoId}/mqdefault.jpg`}
-                    alt=""
-                    loading="lazy"
-                    className="h-10 w-16 shrink-0 rounded object-cover"
-                  />
+                  {issue.videoId ? (
+                    <img
+                      src={`https://img.youtube.com/vi/${issue.videoId}/mqdefault.jpg`}
+                      alt=""
+                      loading="lazy"
+                      className="h-10 w-16 shrink-0 rounded object-cover"
+                    />
+                  ) : (
+                    <div className="bg-muted h-10 w-16 shrink-0 rounded" aria-hidden />
+                  )}
                   <div className="min-w-0 flex-1">
                     <p className="flex flex-wrap items-center gap-1.5 text-sm">
                       <span className="truncate font-medium">{issue.title || issue.videoId}</span>
@@ -390,13 +476,32 @@ export function VideoReportsPanel() {
                           <p className="text-muted-foreground text-xs">“{request.reason}”</p>
                         )}
                       </>
+                    ) : submission ? (
+                      <>
+                        {submission.url && (
+                          <a
+                            href={submission.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block truncate text-xs hover:underline"
+                          >
+                            {submission.url}
+                          </a>
+                        )}
+                        {submission.channel && (
+                          <p className="text-muted-foreground text-xs">Channel: {submission.channel}</p>
+                        )}
+                        {submission.note && (
+                          <p className="text-muted-foreground text-xs">“{submission.note}”</p>
+                        )}
+                      </>
                     ) : (
                       issue.issue && <p className="text-muted-foreground text-xs">{issue.issue}</p>
                     )}
                     <p className="text-muted-foreground text-xs">
                       {issue.reportedBy ?? (issue.kind === "transcript" ? "automatic" : "anonymous")} ·{" "}
-                      {formatWhen(issue.createdAt)} ·{" "}
-                      {issue.videoId}
+                      {formatWhen(issue.createdAt)}
+                      {issue.videoId ? ` · ${issue.videoId}` : ""}
                     </p>
                   </div>
 
@@ -408,6 +513,24 @@ export function VideoReportsPanel() {
                         onClick={() => applyChangeRequest(issue, request)}
                       >
                         Apply
+                      </Button>
+                    )}
+                    {issue.status === "open" && submission && issue.kind === "submit-video" && (
+                      <Button
+                        size="sm"
+                        disabled={busyId === issue.id}
+                        onClick={() => approveVideoSubmission(issue, submission)}
+                      >
+                        Add to library
+                      </Button>
+                    )}
+                    {issue.status === "open" && issue.kind === "submit-channel" && (
+                      <Button
+                        size="sm"
+                        disabled={busyId === issue.id}
+                        onClick={() => approveChannelSubmission(issue)}
+                      >
+                        Subscribe
                       </Button>
                     )}
                     {issue.status === "open" && issue.kind === "delete" && (
