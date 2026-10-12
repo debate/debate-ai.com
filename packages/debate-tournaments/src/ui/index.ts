@@ -4,6 +4,7 @@ export { UpcomingTournamentsPage, HostedTournamentButton } from "./pages/Upcomin
 export { HostTournamentPage } from "./pages/HostTournamentPage";
 export { TournamentAdminPage } from "./pages/TournamentAdminPage";
 export { TabroomTournamentPage } from "./pages/TabroomTournamentPage";
+export { BallotPage } from "./pages/BallotPage";
 export { TournamentInvitePage } from "./pages/TournamentInvitePage";
 export { RoundsPage } from "./pages/RoundsPage";
 export { RoundPage } from "./pages/RoundPage";
