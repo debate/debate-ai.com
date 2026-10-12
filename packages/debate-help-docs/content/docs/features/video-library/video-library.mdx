@@ -284,6 +284,33 @@ publishing anything. Two videos count as the same when their YouTube IDs match
 once case and punctuation are ignored (very short titles such as "Finals"
 never match on title alone). The older copy is always the one kept.
 
+### Speech AI — speeches, summaries and alternatives in bulk
+
+`/admin` opens on the **Round queue**; **Users** is now the last section.
+The **Speech AI** section (admins only) runs the AI over many rounds at once,
+so viewers don't have to press **Detect speeches** themselves. Pick
+**Greatest of All-Time videos** (the top-pick collection) or **Every video**
+and press **Process**. For each video it:
+
+1. fetches the YouTube captions (or uses the ones already cached);
+2. has the AI find the format and where every speech starts and ends, the
+   same way **Detect speeches** does on the watch page;
+3. runs the prompt in the box over the round, speech by speech. The default
+   prompt asks for a summary of each speech and what the speaker could have
+   done instead; edit it to ask for something else. The reply format is added
+   after your prompt automatically.
+
+The result is saved as the video's **Summary** and **Analysis** documents,
+with one `## 1AC (0:42–8:51)` heading per speech. On the watch page those
+become the speech buttons under the player, and each speech's tab in the
+sidebar shows its summary and its alternative. Documents an editor wrote are
+never replaced, and videos already analyzed are skipped unless **Redo videos
+the AI already analyzed** is ticked. To try a prompt first, paste one video's
+link into the box below the prompt and press **Preview**, which shows both
+documents without saving them; **Process and save** does that one video for
+real. Every video costs two AI calls on the site's shared key, so the run goes
+one video per request and **Stop after this video** halts it.
+
 ### Video durations
 
 **Fetch video durations** looks up how long every stored video is — published

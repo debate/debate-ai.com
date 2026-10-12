@@ -48,7 +48,7 @@ export interface ScrapePageResult {
 const SUMMARY_SYSTEM_PROMPT = `You are a debate analyst. Summarize the transcript of a competitive debate round or lecture. Cover: the resolution or topic if stated, the arguments each side made (affirmative and negative), the key evidence and warrants, and how the round was decided if that is clear. Be concise and factual — a few paragraphs, no preamble.`;
 
 /** The model summaries are generated with, for the attribution line. */
-const SUMMARY_MODEL = "claude-sonnet-4-6";
+export const SUMMARY_MODEL = "claude-sonnet-4-6";
 
 /** Longest transcript sent to the model, in characters. */
 const MAX_SUMMARY_INPUT_CHARS = 300_000;
@@ -96,7 +96,7 @@ function transcriptToText(snippets: TranscriptSnippet[]): string {
 }
 
 /** Calls the model directly with the shared key. */
-async function callModel(
+export async function callModel(
   providerKey: ProviderKey,
   system: string,
   prompt: string,
