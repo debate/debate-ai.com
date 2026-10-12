@@ -52,7 +52,7 @@ export const channels = [
   "msudebate6544",
   "ProfessorGraham",
   "michigandebate7440",
-  // Channels uploading the rounds in test/video_metadata*.json, by @handle
+  // Channels uploading the rounds in video_metadata*.json, by @handle
   // (resolved from each video via YouTube oEmbed, not the `ab_channel` URL
   // param, which is a display name and often not the handle).
   "ArrmanKapoor",

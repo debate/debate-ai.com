@@ -1,6 +1,6 @@
 /**
- * @fileoverview Turns the curated round records in the root `test/` folder
- * (`video_metadata.json`, `video_metadata_deduplicated.json`) into rows for
+ * @fileoverview Turns curated round records (`video_metadata.json`,
+ * `video_metadata_deduplicated.json`) into rows for
  * the admin "Round videos" queue (`youtube_round_videos`).
  *
  * Each record carries a title, an event, a format and argument tags whose
@@ -14,7 +14,7 @@
 import { formatRoundArgumentLines, splitRoundArguments } from "../youtube/parsers/round-arguments";
 import { parseRoundLevel } from "../youtube/parsers/round-parsers";
 
-/** One record from `test/video_metadata*.json`. */
+/** One record from `video_metadata*.json`. */
 export interface CuratedRoundRecord {
   record_id: string;
   title: string;
