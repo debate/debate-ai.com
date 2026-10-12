@@ -76,13 +76,16 @@ function adminRoutes(extra: Route[] = []) {
 }
 
 describe("AdminDashboard", () => {
-  it("opens on Users for admins and mirrors the tab into the hash", async () => {
+  it("opens on the Round queue, lists Users last and mirrors the tab into the hash", async () => {
     adminRoutes();
     mount(<AdminDashboard />);
     await flush();
     expect(bodyText()).toContain("Accounts, videos, the debate card library and imports");
-    expect(window.location.hash).toBe("#users");
-    expect(button("Users", nav()).getAttribute("aria-current")).toBe("page");
+    expect(window.location.hash).toBe("#queue");
+    expect(button("Round queue", nav()).getAttribute("aria-current")).toBe("page");
+    const names = [...nav().querySelectorAll("button")].map((b) => b.textContent);
+    expect(names[0]).toBe("Round queue");
+    expect(names[names.length - 1]).toBe("Users");
 
     await openTab("Backups");
     expect(window.location.hash).toBe("#backups");
@@ -110,8 +113,11 @@ describe("AdminDashboard", () => {
     await flush();
     expect(bodyText()).toContain("Moderation");
     const names = [...nav().querySelectorAll("button")].map((b) => b.textContent);
-    expect(names).toEqual(["Video library", "Round queue"]);
+    expect(names).toEqual(["Round queue", "Video library"]);
     expect(calls.some((c) => c.url.includes("/resync"))).toBe(false);
+    expect(bodyText()).toContain("Queued rounds waiting to be published");
+
+    await openTab("Video library");
     expect(bodyText()).toContain("Reports & takedowns");
   });
 

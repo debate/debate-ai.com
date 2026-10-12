@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, type ComponentType } from "react";
-import { DatabaseBackup, FileSearch, Film, Globe, ListVideo, RefreshCw, Upload, Users } from "lucide-react";
+import { DatabaseBackup, FileSearch, Film, Globe, ListVideo, RefreshCw, Sparkles, Upload, Users } from "lucide-react";
 import { cn } from "../../lib/ui/lib/utils";
 import { Button } from "../../lib/ui/primitives/button";
 import { Badge } from "../../lib/ui/primitives/badge";
@@ -39,6 +39,7 @@ import { VideoLibraryTable } from "./VideoLibraryTable";
 import { VideoReportsPanel } from "./VideoReportsPanel";
 import { YoutubeChannelsPanel } from "./YoutubeChannelsPanel";
 import { TranscriptScraperPanel } from "./TranscriptScraperPanel";
+import { SpeechAnalysisPanel } from "./SpeechAnalysisPanel";
 
 interface YoutubeRoundVideo { id: string; title: string; publishedAt: string; channel: string; views: number; style: number; tournament: string | null; }
 interface SyncRun { id: number; status: "running" | "success" | "error"; triggeredBy?: string | null; channelsSynced: number; videosUpserted: number; error: string | null; }
@@ -76,7 +77,7 @@ const STYLE_OPTIONS = [{ value: "all", label: "All styles" }, { value: "1", labe
  * moderators see only the content sections — the video library, video
  * reports and the round-video queue.
  */
-type AdminTabKey = "users" | "library" | "queue" | "youtube" | "cards" | "imports" | "url-detection" | "backups";
+type AdminTabKey = "users" | "library" | "queue" | "speech-ai" | "youtube" | "cards" | "imports" | "url-detection" | "backups";
 
 interface AdminTab {
   key: AdminTabKey;
@@ -91,14 +92,15 @@ interface AdminTab {
 // sidebar. The active one is mirrored into the URL hash (/admin#cards) so a
 // section can be linked to and survives a reload.
 const ADMIN_TABS: AdminTab[] = [
-  { key: "users", name: "Users", description: "Accounts, usage and the moderators who can edit content", icon: Users, adminOnly: true },
-  { key: "library", name: "Video library", description: "Edit the published video library and review video reports", icon: Film, adminOnly: false },
   { key: "queue", name: "Round queue", description: "Queued debate rounds waiting to be published", icon: ListVideo, adminOnly: false },
+  { key: "library", name: "Video library", description: "Edit the published video library and review video reports", icon: Film, adminOnly: false },
+  { key: "speech-ai", name: "Speech AI", description: "Split round transcripts into speeches and write a summary and an alternative for each", icon: Sparkles, adminOnly: true },
   { key: "youtube", name: "YouTube sync", description: "Channel scans, view counts, video seeding and stacked playlists", icon: RefreshCw, adminOnly: true },
   { key: "cards", name: "Debate cards", description: "Extract source URLs from card citations, recheck them and the reuse-check log", icon: FileSearch, adminOnly: true },
   { key: "url-detection", name: "URL Detection", description: "View URLs detected by the browser extension from pages users visit", icon: Globe, adminOnly: true },
   { key: "imports", name: "Imports", description: "Topic starters, debate card Parquet shards and the caselist sync", icon: Upload, adminOnly: true },
   { key: "backups", name: "Backups", description: "SQL dumps of videos, debate cards and history — download or store in R2", icon: DatabaseBackup, adminOnly: true },
+  { key: "users", name: "Users", description: "Accounts, usage and the moderators who can edit content", icon: Users, adminOnly: true },
 ];
 
 function isAdminTabKey(value: string): value is AdminTabKey {
@@ -139,7 +141,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
   const [isExtractingUrls, setIsExtractingUrls] = useState(false);
   const [urlExtractionError, setUrlExtractionError] = useState<string | null>(null);
   const [urlExtractionProgress, setUrlExtractionProgress] = useState<{ processed: number; withUrl: number; updated: number; demoUrls: string[]; done: boolean } | null>(null);
-  const [activeTab, setActiveTab] = useState<AdminTabKey>(isAdmin ? "users" : "library");
+  const [activeTab, setActiveTab] = useState<AdminTabKey>("queue");
   const [isRecomputingStacks, setIsRecomputingStacks] = useState(false);
   const [recomputeStacksResult, setRecomputeStacksResult] = useState<string | null>(null);
   const [recomputeStacksError, setRecomputeStacksError] = useState<string | null>(null);
@@ -747,6 +749,8 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
             <ModeratorsPanel />
           </>
         )}
+
+        {currentTab.key === "speech-ai" && <SpeechAnalysisPanel />}
 
         {currentTab.key === "library" && (
           <>

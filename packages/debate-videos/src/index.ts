@@ -177,6 +177,24 @@ export {
   type SpeechSide,
 } from "./lib/round-speeches";
 export { resolveRoundSpeeches, standardRoundSpeeches } from "./lib/round-formats";
+export {
+  SPEECH_SEGMENTATION_SYSTEM_PROMPT,
+  buildSpeechSegmentationPrompt,
+  parseSpeechSegmentationResponse,
+  type SegmentationCaption,
+  type SpeechSegmentation,
+} from "./lib/speech-segmentation";
+export {
+  DEFAULT_SPEECH_ANALYSIS_INSTRUCTIONS,
+  buildSpeechAnalysisPrompt,
+  parseSpeechAnalysisResponse,
+  speechAnalysisDocuments,
+  speechAnalysisSystemPrompt,
+  speechTranscripts,
+  type SpeechAnalysis,
+  type SpeechAnalysisDocuments,
+} from "./lib/speech-analysis";
+export { groupIntoSentences } from "./components/transcript/transcriptUtils";
 export { parseYouTubeVideoId } from "./lib/youtube-video-id";
 export {
   VIDEO_RELATION_KINDS,
