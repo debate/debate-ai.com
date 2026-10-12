@@ -5,14 +5,12 @@ slug: judges
 
 ## Judge Categories
 
-<img src="/screenshots/placeholder.png" title="Entries_-_Judges.png" />
 
 **Groups** - Allows switching between judge groups assigned to certain
 events.
 
 ### Check Judging Burdens
 
-<img src="/screenshots/placeholder.png"
 title="Entries_-_Judges_-_Check_Judging_Burdens.png" />
 
 Displays how much judging a school owes in a given event. The columns
@@ -20,7 +18,6 @@ are sortable.
 
 ### Menu Options
 
-<img src="/screenshots/placeholder.png"
 title="Entries_-_Judges_-_Category_-_Buttons.png" />
 
 **Roster** - List of all the judges in an event.
@@ -48,7 +45,6 @@ record of those rounds and the judge's paradigm.
 
 ### Category Grid
 
-<img src="/screenshots/placeholder.png"
 title="Entries_-_Judges_-_Category_-_Grid.png" />
 
 **Notes** - Shows any judge notes for a particular judge
@@ -65,7 +61,6 @@ notifications
 
 ### Online Ballots
 
-<img src="/screenshots/placeholder.png"
 title="Entries_-_Judges_-_Category_-_online_ballots.png" />
 
 **Link Judges to Online Accounts** - Allows for entering emails to

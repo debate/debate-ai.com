@@ -80,9 +80,8 @@ export const VIDEO_FORMAT_LINKS: SidebarVideoLink[] = [
   { id: "topPicks", href: "/videos/goat", title: "Greatest of All-Time", glyph: Star },
 ];
 
-/** The rest of the video library: My Favorites, the last row under "Round
- *  Videos", then the watch history — which hangs under that same heading now,
- *  after My Favorites — then Lectures, a heading of its own. */
+/** The rest of the video library under "Round Videos": My Favorites,
+ *  Watch History, and Lectures — all as sibling links. */
 export const VIDEO_LIBRARY_LINKS: SidebarVideoLink[] = [
   { id: "favorites", href: "/videos/favorites", title: "My Favorites", glyph: Heart },
   { id: "history", href: "/videos/history", title: "Watch History", glyph: History },

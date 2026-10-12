@@ -7,7 +7,6 @@ slug: tournament
 
 ### Name & Location
 
-<img src="/screenshots/placeholder.png" title="Settings_-_Tournament_-_Name_and_Info_-_Name_&_Location.png" />
 
 **Tournament Full Name** - Tournament Full Name - This is the name which
 will appear on tournament calendars and in things like result packets.
@@ -35,7 +34,6 @@ your registration deadlines, drop fee deadlines, etc.
 
 ### Logo
 
-<img src="/screenshots/placeholder.png" title="Settings_-_Tournament_-_General_-_Copy_Settings.png" />
 
 **Logo (PNG or JPG)** - file upload option that will appear in upper
 right of tournament's tabroom page
@@ -48,7 +46,6 @@ tournament's 'Settings: Website' tab
 
 ### Circuits
 
-<img src="/screenshots/placeholder.png" title="Settings_-_Tournament_-_Name_and_Info_-_Circuits.png" />
 
 **Circuits** - categories used to sort tournaments on Tabroom.com.
 Designating a circuit will have the tournament appear on the main
@@ -58,7 +55,6 @@ calendar to members of that circuit
 
 ### General Settings
 
-<img src="/screenshots/placeholder.png" title="Settings_-_Tournament_-_General_-_General_Settings.png" />
 
 **Test tournament (hidden from public)** - A "test" tournament will not
 appear on any of the Tabroom calendars and
@@ -180,7 +176,6 @@ fit on your paper.
 
 ### Day-of/Arrival Online registration
 
-<img src="/screenshots/placeholder.png" title="Settings_-_Tournament_-_General_-_Online_day_of_registration.png" />
 
 **Enable online registration system** - Toggle this option if you plan
 to use the online day-of registration feature. Note that enabling the
@@ -207,7 +202,6 @@ participants.
 
 ### Clone Settings
 
-<img src="/screenshots/placeholder.png" title="Settings_-_Tournament_-_General_-_Copy_Settings.png" />
 
 Option to allow duplication of settings from a previously held
 tournament. This should be used if you did NOT clone your tournament
@@ -227,7 +221,6 @@ tournament.
 
 ### Dates & Deadlines
 
-<img src="/screenshots/placeholder.png" title="Settings_-_Tournament_-_Dates.png" />
 
 **Tournament start** - Sets the date and time a tournament starts. This
 is also the time NSDA Campus utility rooms will become live.
@@ -262,7 +255,6 @@ separate deadline for video links).
 
 ### Administrator Access
 
-<img src="/screenshots/placeholder.png" title="Settings_-_Tournament_-_Access_-_Admin_Access.png" />
 
 **Owner** - The account that created the tournament is automatically
 named the tournament owner and contact. For district tournaments, the
@@ -286,7 +278,6 @@ to their name.
 
 To add a new account, use the box on the sidebar:
 
-<img src="/screenshots/placeholder.png" title="Settings_-_Tournament_-_Access_-_Add_New_Staff.png" />
 
 ## Messages
 
@@ -297,15 +288,12 @@ invoices (such as a mailing address for checks, or other pertinent
 payment info), as well as a disclaimer that will appear before allowing
 schools to register (such as a policy regarding student supervision):
 
-<img src="/screenshots/placeholder.png" title="setup_tourn_messages.png" width="500" />
 
 ### Message on waitlist admission emails
 
-<img src="/screenshots/placeholder.png" title="Settings_-_TOurnament_-_Messages_-_waitlist.png" />
 
 ### School Forms
 
-<img src="/screenshots/placeholder.png" title="Settings_-_Tournament_-_Messages_-_Documents.png" />
 
 ## Notes
 
@@ -316,7 +304,6 @@ catering, or which competition rooms turned out to be too small. These
 notes will then be preserved in future years if you use the Clone
 Tournament function when setting up the tournament.
 
-<img src="/screenshots/placeholder.png" title="Settings_-_Tournament_-_Messages_-_Notes.png" />
 
 ## Payment
 
@@ -324,7 +311,6 @@ The Payment tab allows you to pay for the use of Tabroom during your
 tournament based on entry numbers and/or to pay for the use of NSDA
 Campus rooms if your tournament is being held online.
 
-<img src="/screenshots/placeholder.png" title="Settings_-_Tournament_-_Payment_-_Purchase.png" />
 
 **Tabroom licenses** - Allows you to pay for the use of Tabroom.com to
 run your tournament. Charges here are based upon all entries above the
