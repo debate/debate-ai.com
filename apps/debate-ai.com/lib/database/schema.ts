@@ -2391,6 +2391,78 @@ export const practiceChallenges = sqliteTable(
 
 export type PracticeChallengeRow = typeof practiceChallenges.$inferSelect;
 
+// Judge Pool — judges offering to be hired for tournament weekends, and the
+// hire requests organizers send them. The wire format, the option lists and
+// the season weekends live in `@debate/webview/lib/judge-pool`; the queries
+// are `lib/judge-pool/queries.ts`. Shipped to D1 by
+// `packages/debate-webview/migrations/0001_judge_pool.sql`.
+//
+// One listing per account. `active` is a real column because the pool's read
+// filters on it; the lists are JSON (`weekends` holds Saturday ISO keys from
+// the circuit calendar) because nothing queries inside them and the pool is
+// small enough to filter after the read.
+export const judgePoolListings = sqliteTable(
+  "judge_pool_listings",
+  {
+    userId: text("user_id")
+      .primaryKey()
+      .references(() => user.id, { onDelete: "cascade" }),
+    active: integer("active", { mode: "boolean" }).notNull().default(true),
+    /** JSON array of Saturday ISO keys — up to three upcoming season weekends. */
+    weekends: text("weekends").notNull().default("[]"),
+    /** JSON array of US postal codes. */
+    states: text("states").notNull().default("[]"),
+    canTravel: integer("can_travel", { mode: "boolean" }).notNull().default(false),
+    /** JSON array of practice format ids. */
+    formats: text("formats").notNull().default("[]"),
+    philosophy: text("philosophy").notNull().default(""),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    activeIdx: index("idx_judge_pool_listings_active").on(table.active, table.updatedAt),
+  }),
+);
+
+export type JudgePoolListingRow = typeof judgePoolListings.$inferSelect;
+
+// An organizer asking a listed judge to judge their tournament on one weekend.
+// Never deleted by the feature — a declined or cancelled request is a status.
+// No payment is taken; `offer` is the organizer's own line of text.
+export const judgeHireRequests = sqliteTable(
+  "judge_hire_requests",
+  {
+    /** A UUID minted by the API. */
+    id: text("id").primaryKey(),
+    organizerId: text("organizer_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    judgeId: text("judge_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    tournamentName: text("tournament_name").notNull(),
+    /** Saturday ISO key of the weekend. */
+    weekend: text("weekend").notNull(),
+    offer: text("offer").notNull().default(""),
+    message: text("message").notNull().default(""),
+    /** `pending` | `accepted` | `declined` | `cancelled`. */
+    status: text("status").notNull().default("pending"),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    organizerIdx: index("idx_judge_hire_requests_organizer").on(table.organizerId, table.status),
+    judgeIdx: index("idx_judge_hire_requests_judge").on(table.judgeId, table.status),
+  }),
+);
+
+export type JudgeHireRequestRow = typeof judgeHireRequests.$inferSelect;
+
 // Prediction markets — play-money betting on debates, tournament winners and
 // team rating moves. The pricing and settlement rules are the
 // `debate-predictions` package; the queries are `lib/predictions/queries.ts`.

@@ -28,7 +28,7 @@ import {
   type PracticeSpeed,
 } from "../../lib/practice-partners/types";
 
-const inputClass =
+export const inputClass =
   "w-full rounded-md border border-border bg-background px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50";
 
 /** A row of toggleable chips over one option list. */
@@ -73,7 +73,7 @@ export function ChipGroup<T extends string>({
   );
 }
 
-function RoleToggle({
+export function RoleToggle({
   on,
   onToggle,
   icon,
@@ -124,7 +124,7 @@ function RoleToggle({
   );
 }
 
-function Field({ label, htmlFor, hint, children }: { label: string; htmlFor?: string; hint?: string; children: ReactNode }) {
+export function Field({ label, htmlFor, hint, children }: { label: string; htmlFor?: string; hint?: string; children: ReactNode }) {
   return (
     <div className="flex flex-col gap-1.5">
       <label htmlFor={htmlFor} className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
