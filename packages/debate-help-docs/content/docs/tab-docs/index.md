@@ -2,10 +2,9 @@
 sidebar_position: 1
 slug: /
 id: index
-title: Tabroom.com Help Center
+title: Tournament Admin
 ---
 
-# Tabroom.com Help Center
 
 This is the online manual for Tabroom.com. It describes the function of each feature of Tabroom for tournament directors, coaches, and participants.
 
