@@ -172,6 +172,9 @@ const ROUTES_WITHOUT_A_CATALOG_ENTRY = new Set([
   "/practice/glossary",
   "/practice/rankings",
   "/practice/statistics",
+  // Response-Outcome Charts: taken out of every menu on 2026-10-11 (0d61f13),
+  // but the page stays routed for saved counsel-panel assessments that link to it.
+  "/coaching/outcomes",
 ])
 
 describe("tool catalog route coverage", () => {
