@@ -223,7 +223,7 @@ to have more than one judge from the same school.
 **Allow panels w/same region judges** - Toggle to allow panels of judges
 to have more than one judge from the same region.
 
-**Randomize judge assignments** - Toggle to allow Tabroom.com's default
+**Randomize judge assignments** - Toggle to allow Tournament Admin's default
 to randomize judges when pairing rounds.
 
 **Use diversity tracking** - Toggle to use this feature to keep track of
@@ -507,7 +507,7 @@ Quarterfinals.'
 pool for a particular round.
 
 **On Web** - If checked, the particular pool is posted publicly on
-Tabroom.com
+Tournament Admin
 
 **On Dash** - If checked, the particular pool will be visible on the
 dashboard of each judge in that pool.

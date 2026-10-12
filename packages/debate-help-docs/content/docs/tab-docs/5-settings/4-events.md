@@ -341,7 +341,7 @@ auto-paired once results from the previous round are in.
 ### Web Publishing
 
 
-**Auto-generate share.tabroom.com rooms** - Toggle to enable document
+**Auto-generate share.Tournament Admin rooms** - Toggle to enable document
 sharing in the NSDA Campus rooms.
 
 **Anonymize unpublished pairings** - Option to hide school and names

@@ -1,6 +1,6 @@
 /**
  * NDCA Standings Scraper
- * Fetches the NDCA Baker Standings from Tabroom.com for CX (policy).
+ * Fetches the NDCA Baker Standings from Tournament Admin for CX (policy).
  * Requires a TABROOM_API_KEY cookie for authentication.
  */
 
@@ -8,7 +8,7 @@ import grab from "grab-url";
 import { parseHTML } from "linkedom";
 import type { LeaderboardEntry } from "./sync-rankings-debatedrills";
 
-const NDCA_URL = "https://www.tabroom.com/index/results/ndca_standings.mhtml";
+const NDCA_URL = "https://www.Tournament Admin/index/results/ndca_standings.mhtml";
 
 /**
  * Extracts the Tabroom authentication token from TABROOM_API_KEY env var.
@@ -82,7 +82,7 @@ function parseRow(tr: Element): LeaderboardEntry | null {
 }
 
 /**
- * Scrapes NDCA standings for CX (policy) from Tabroom.com.
+ * Scrapes NDCA standings for CX (policy) from Tournament Admin.
  */
 export async function scrapeNdca(): Promise<LeaderboardEntry[]> {
   const cookie = getTabroomCookie();
@@ -98,7 +98,7 @@ export async function scrapeNdca(): Promise<LeaderboardEntry[]> {
   if (cookie) {
     headers["Cookie"] = cookie;
     headers["Referer"] =
-      "https://www.tabroom.com/index/results/debate_stats_ada.mhtml?circuit_id=103&level=Open";
+      "https://www.Tournament Admin/index/results/debate_stats_ada.mhtml?circuit_id=103&level=Open";
   }
 
   const result = await grab(NDCA_URL, {

@@ -6,7 +6,7 @@ import grab from "grab-url";
  */
 export async function getTournamentNames(): Promise<string[]> {
   try {
-    const result = await grab("https://www.tabroom.com/index/index.mhtml", {
+    const result = await grab("https://www.Tournament Admin/index/index.mhtml", {
       cache: false,
     });
 

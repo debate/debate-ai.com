@@ -56,7 +56,7 @@ title="Students_-_Future_Entries.png" />
 This tab will show competitors the tournaments they are signed up to
 attend at future dates. Information won’t appear on this screen until
 you register for an event via the tournament signups function on
-tabroom.com or your advisor adds you to an event.
+Tournament Admin or your advisor adds you to an event.
 
 **Tournament** – Indicates future tournaments the competitor is
 registered to attend.
@@ -81,7 +81,7 @@ has denied your registration for the tournament.
 
 This tab will show competitors any tournament their advisor has made
 available for signup. This tab won’t appear if your advisor has not
-enabled student signups using tabroom.com.
+enabled student signups using Tournament Admin.
 
 **Tournament** – Indicates the tournament available for signup.
 
@@ -169,7 +169,7 @@ individuals they believe would be biased or unfairly able to judge them
 during competition. “Standing conflicts” are not confidential and should
 not be used to conflict with individuals you simply do not like as a
 judge. “Standing conflicts” will work automatically against any judge
-that has a Tabroom.com account. Furthermore, if a judge is already
+that has a Tournament Admin account. Furthermore, if a judge is already
 entered into a tournament, the conflict may not automatically apply, and
 a competitor should contact the tournament directly to have them check.
 

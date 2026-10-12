@@ -6,7 +6,7 @@
 export function TabroomPage() {
   return (
     <iframe
-      src="https://beta.tabroom.com"
+      src="https://beta.Tournament Admin"
       title="Tabroom"
       loading="lazy"
       className="h-[calc(100dvh-70px)] w-full border-0 md:h-screen"

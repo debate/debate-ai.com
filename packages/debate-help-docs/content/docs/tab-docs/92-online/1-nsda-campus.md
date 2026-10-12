@@ -5,7 +5,7 @@ slug: nsda-campus
 
 This software is intended for Live/Synchronous Competition. Asynchronous
 speech rounds using one recording for the duration of the tournament is
-a FREE feature offered through Tabroom.com.
+a FREE feature offered through Tournament Admin.
 
 ## Determining How Many Rooms to Purchase
 
@@ -29,7 +29,7 @@ Although one does not need to be an NSDA Member to purchase NSDA Campus
 rooms, they must have a free speechanddebate.org website account to
 complete the purchase. For a quicker purchasing process, be sure to be
 signed into your speechanddebate.org account before requesting rooms in
-Tabroom.com.
+Tournament Admin.
 
 After creating a tournament and making decisions regarding entries,
 schedules, and fees, etc., tournament directors can purchase rooms in
@@ -130,7 +130,7 @@ Payments. Like last year, each NSDA Campus room covers one room for one
 day of use. If your tournament lasts multiple days, you will purchase
 sets of rooms for each day.
 
-Tabroom.com will help you estimate the number of NSDA Campus rooms
+Tournament Admin will help you estimate the number of NSDA Campus rooms
 needed for one day of preliminary rounds. For debate, it will take into
 account whether you are flighting rounds, and for speech and Congress,
 it will divide your entry numbers by the default section size in your
@@ -168,8 +168,8 @@ to view rounds, please consider live streaming!
 
 If your students are competing in an event using Campus with Observers
 rooms, you can designate observers from the tournament dashboard. Only
-Tabroom.com accounts with Coach/Administrator access to your school in
-Tabroom.com (which can be designated on the Access tab) may be
+Tournament Admin accounts with Coach/Administrator access to your school in
+Tournament Admin (which can be designated on the Access tab) may be
 designated as observers.
 
 width="500" />
@@ -195,10 +195,10 @@ click Data.
 1.  Click the blue rectangle with the words Import CSV/Excel.
 2.  Upload a CSV file that has columns for Code and Link. Detailed
     Instructions for Setting Up Asynchronous Speech Judging in
-    Tabroom.com
+    Tournament Admin
 
 [Detailed Instructions for Setting Up Asynchronous Speech Judging in
-Tabroom.com](https://docs.google.com/document/d/1r3jAI7mXjww2MAMMkdRV7GZsh-fr5obKTfBQcdFZ2k0/edit)
+Tournament Admin](https://docs.google.com/document/d/1r3jAI7mXjww2MAMMkdRV7GZsh-fr5obKTfBQcdFZ2k0/edit)
 
 ## Holding Asynchronous Prelims and Synchronous Elims
 
@@ -222,7 +222,7 @@ NSDA Campus rooms.
 Remember—The NSDA Campus rooms have to be purchased in advance and
 assigned to the correct day of your tournament. [Detailed Instructions
 for Setting Up Asynchronous Speech Judging in
-Tabroom.com](/online/running-async-events)
+Tournament Admin](/online/running-async-events)
 
 ## Live Streaming Options
 
@@ -250,7 +250,7 @@ an NSDA Campus room) directly to YouTube or other streaming services.
 - You may also opt to use a different video platform (e.g., Zoom) for
   your later elimination rounds that you wish to stream. You can then
   save a URL to a specific external room in Settings » Sites & Rooms to
-  be used on a Tabroom.com pairing.
+  be used on a Tournament Admin pairing.
 - You also have the option to host your elimination rounds on a public
   server that has the ability to livestream to YouTube enabled directly
   from NSDA Campus. However, this comes with significant downsides and
@@ -372,7 +372,7 @@ If you have any additional questions, please email
 - [Purchase Trophies and/or Extemp
   Questions](https://www.speechanddebate.org/tournament-services/)
 - [Detailed Instructions for Setting Up Asynchronous Speech Judging in
-  Tabroom.com](running-async-events)
+  Tournament Admin](running-async-events)
 
 ## Need Support
 
@@ -383,7 +383,7 @@ diagnose any issues more quickly and get you answers more efficiently!
   email info@speechanddebate.org with your questions.
 - During the weekend (Saturday and Sunday) if you feel there is an issue
   with NSDA Campus specifically that needs to be brought to our
-  attention, please email our tech team at help@tabroom.com and our NSDA
+  attention, please email our tech team at help@Tournament Admin and our NSDA
   Campus team will route your concerns to the relevant staff member.
 - At any point in the week, if you have a Tabroom related question or
-  concern please contact the Tabroom support team at help@tabroom.com.
+  concern please contact the Tabroom support team at help@Tournament Admin.

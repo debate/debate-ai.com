@@ -21,7 +21,7 @@ a list of circuits on the sidebar of your account dashboard:
 
 You can't, they're created by Tabroom and then an administrator is
 designated to run them. If you would like a new circuit created on
-Tabroom for your local league or region, email help@tabroom.com.
+Tabroom for your local league or region, email help@Tournament Admin.
 
 ## Approving Tournaments
 

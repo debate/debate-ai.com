@@ -22,7 +22,7 @@ Check your spam folder - sometimes, it ends up there.
 
 ### I'm a new coach at a school, and I don't have access to our school's current account. How do I get access?
 
-Email us at help@tabroom.com. Please don't create a new school unless
+Email us at help@Tournament Admin. Please don't create a new school unless
 you're sure your school has never registered on Tabroom before.
 
 ### How do I stop getting emails?
@@ -58,7 +58,7 @@ immediately.
 
 Often school email systems trap confirmation emails as Spam. If you can,
 check your spam folder to see if it's there. If that still doesn't work,
-contact help@tabroom.com
+contact help@Tournament Admin
 
 ### My student transferred from another school, how do I add them on my competitor’s roster?
 
@@ -69,11 +69,11 @@ Profile in the top right corner. You will be able to change your account
 email there. Tabroom will also text and email BOTH addresses to notify
 you of the change. So, if someone tries to access your account without
 authorization, you'll know immediately and should contact us at
-help@tabroom.com.
+help@Tournament Admin.
 
 ### My student has 2 tabroom accounts. How can I combine them?
 
-Email help@tabroom.com and ask; this operation is an easy one, but it
+Email help@Tournament Admin and ask; this operation is an easy one, but it
 does have to be done by a site administrator.
 
 ### I accidentally retired one of my students on my competitor’s roster. How do I reverse this issue?
@@ -136,12 +136,12 @@ available.
 
 ### How can speakers view their own online ballots/RFDS?
 
-First, they must register for their own Tabroom.com account: check the
+First, they must register for their own Tournament Admin account: check the
 How To Sign Up link at left. Second, they must be linked to their entry
 record on your roster. You can either link them yourself by clicking the
 Students tab when you first log in, and then the name of the speaker,
 and entering the email address they used to sign up for Tabroom in the
-"Link to a Tabroom.com Login" box at the top. You can also un-link
+"Link to a Tournament Admin Login" box at the top. You can also un-link
 students here, if say a student's record were linked to the wrong
 account.
 

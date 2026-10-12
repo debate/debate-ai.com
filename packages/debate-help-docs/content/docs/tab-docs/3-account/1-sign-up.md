@@ -29,7 +29,7 @@ alt="user_setup.png" />
 After signing up you will have to verify your account by entering a
 confirmation code. If you think that you did not receive a confirmation
 code please be sure to check your spam folder. If the code was never
-sent, please contact help@tabroom.com. Tabroom support staff can
+sent, please contact help@Tournament Admin. Tabroom support staff can
 manually confirm and verify your account.
 
 title="Screen_Shot_2021-07-01_at_10.54.04_AM.png" />

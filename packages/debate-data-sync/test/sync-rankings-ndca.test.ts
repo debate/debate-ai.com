@@ -33,10 +33,10 @@ describe("scrapeNdca", () => {
     await scrapeNdca();
 
     const [url, options] = grabMock.mock.calls[0];
-    expect(url).toBe("https://www.tabroom.com/index/results/ndca_standings.mhtml");
+    expect(url).toBe("https://www.Tournament Admin/index/results/ndca_standings.mhtml");
     expect(options.headers.Cookie).toBe("TabroomToken=test-token");
     expect(options.headers.Referer).toBe(
-      "https://www.tabroom.com/index/results/debate_stats_ada.mhtml?circuit_id=103&level=Open",
+      "https://www.Tournament Admin/index/results/debate_stats_ada.mhtml?circuit_id=103&level=Open",
     );
     expect(options.timeout).toBe(30);
   });

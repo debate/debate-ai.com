@@ -41,7 +41,7 @@ ensure that your school's tournament results maintain continuity.
 
 If you are a new coach, you should see if the previous coach can give
 your account access to your school in Tabroom. If that's not possible,
-you can contact us at help@tabroom.com for help getting access.
+you can contact us at help@Tournament Admin for help getting access.
 
 IMPORTANT NOTE: If you are a student trying to register for a
 tournament, you should NOT create a new school just to sign yourself
@@ -73,7 +73,7 @@ If a school already exists in Tabroom with a similar name, you will see
 a warning that says "THAT INSTITUTION ALREADY EXISTS!"
 
 If you need help getting access to an existing school, email
-help@tabroom.com. If you're sure you need to create a new school,
+help@Tournament Admin. If you're sure you need to create a new school,
 check the "Confirm duplication" box:
 
 title="user_chapter_create-confirm.png" width="400" />
@@ -270,7 +270,7 @@ entry.
 Once the initial linking of your Tabroom school to your National Speech
 & Debate Association account is done, you can import any students on
 your NSDA roster to Tabroom by choosing the "Import NSDA Roster to
-Tabroom.com" option on the sidebar.
+Tournament Admin" option on the sidebar.
 
 This will show you a list of students from your NSDA roster that are
 available to import (with the option to exclude any you don't want).

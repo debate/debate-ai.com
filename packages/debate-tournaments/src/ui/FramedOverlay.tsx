@@ -3,7 +3,7 @@
 /**
  * An overlay framing another page in an iframe, for the parts of
  * tournament work this app has not rebuilt yet — Tabroom's own
- * administration console at `beta.tabroom.com`, the Debate Majors
+ * administration console at `beta.Tournament Admin`, the Debate Majors
  * season calendar — framed over the page rather than navigated away
  * from it.
  *
@@ -16,7 +16,7 @@ import { ExternalLink, X } from "lucide-react";
 import { buttonVariants } from "./primitives";
 
 /** Tabroom's beta console, framed in the overlay by default. */
-export const TABROOM_BETA_URL = "https://beta.tabroom.com";
+export const TABROOM_BETA_URL = "https://beta.Tournament Admin";
 
 export interface FramedOverlayProps {
   open: boolean;

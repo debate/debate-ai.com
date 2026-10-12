@@ -15,7 +15,7 @@ automatically be applied to your tournament name on public-facing pages.
 
 **Tournament public site** - Tournament public site - This is the name
 for your tournament's website, which comes in the form
-webname.tabroom.com. Visitors to that web address will be taken
+webname.Tournament Admin. Visitors to that web address will be taken
 directly to your Tournament Info page on Tabroom, where they can view
 your invitation, postings, results, etc. The webname must be lowercase
 or numbers with no punctuation. If you repeat the URL for a tournament
@@ -47,7 +47,7 @@ tournament's 'Settings: Website' tab
 ### Circuits
 
 
-**Circuits** - categories used to sort tournaments on Tabroom.com.
+**Circuits** - categories used to sort tournaments on Tournament Admin.
 Designating a circuit will have the tournament appear on the main
 calendar to members of that circuit
 
@@ -73,7 +73,7 @@ judges will appear for them. This contact will receive tournament
 communications through Tabroom.
 
 **Tabroom account based coaches & contacts** - This will allow only
-those with Tabroom.com accounts to be added to and compete in your
+those with Tournament Admin accounts to be added to and compete in your
 tournament.
 
 **Require second adult contact or coach** - This will ask people
@@ -312,9 +312,9 @@ tournament based on entry numbers and/or to pay for the use of NSDA
 Campus rooms if your tournament is being held online.
 
 
-**Tabroom licenses** - Allows you to pay for the use of Tabroom.com to
+**Tabroom licenses** - Allows you to pay for the use of Tournament Admin to
 run your tournament. Charges here are based upon all entries above the
-50 free entries you get to host via Tabroom.com
+50 free entries you get to host via Tournament Admin
 
 **Campus Rooms** - Allows you to select and pay for the number of
 general NSDA Campus rooms you will need for your online tournament.

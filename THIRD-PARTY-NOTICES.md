@@ -7,13 +7,13 @@ the PROSPER license.
 
 | Project | Where it lives here | License |
 | --- | --- | --- |
-| [Tabroom.com](#tabroomcom) | `packages/debate-tournaments/vendor/tabroom` | Reciprocal Public License 1.5 (RPL-1.5) |
+| [Tournament Admin](#tabroomcom) | `packages/debate-tournaments/vendor/tabroom` | Reciprocal Public License 1.5 (RPL-1.5) |
 | [CardMirror](#cardmirror) | `packages/debate-editor` | PolyForm Noncommercial License 1.0.0 |
 | [ebb](#ebb) | `packages/debate-flow` (`debate-flow-ebb`) | Mozilla Public License 2.0 (MPL-2.0) |
 
 ---
 
-## Tabroom.com
+## Tournament Admin
 
 - **Upstream:** <https://github.com/debate/debate-tournament-tabroom>
   (fork of `speechanddebate/Tabroomv4`; legacy code at

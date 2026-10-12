@@ -41,7 +41,7 @@ ensure that your school's tournament results maintain continuity.
 
 If you are a new coach, you should see if the previous coach can give
 your account access to your school in Tabroom. If that's not possible,
-you can contact us at **help@tabroom.com** for help getting access.
+you can contact us at **help@Tournament Admin** for help getting access.
 
 **IMPORTANT NOTE:** If you are a student trying to register for a
 tournament, you should NOT create a new school just to sign yourself
@@ -72,7 +72,7 @@ title="coaches_-_create_new_school_1.png" width="500" />
 If a school already exists in Tabroom with a similar name, you will see
 a warning that says "THAT INSTITUTION ALREADY EXISTS!"
 
-If you need help getting access to an existing school, email [help@tabroom.com](mailto:help@tabroom.com). If you're sure
+If you need help getting access to an existing school, email [help@Tournament Admin](mailto:help@Tournament Admin). If you're sure
 you need to create a new school, check the "Confirm duplication" box:
 
 title="user_chapter_create-confirm.png" width="400" />
@@ -131,9 +131,9 @@ school of the National Association for Urban Debate Leagues.
 ### Controlling Access To A School
 
 To edit who has access to your school's account in Tabroom, go to the
-"Access" tab and enter the tabroom.com email of the advisor that should
+"Access" tab and enter the Tournament Admin email of the advisor that should
 be added to the account and click "Grant." Each adviser must have a
-tabroom.com account to be associated with a school.
+Tournament Admin account to be associated with a school.
 
 width="500" />
 
@@ -193,41 +193,41 @@ title="coaches_-_competitor_roster.png" width="350" />
 There are three options to add students to a school roster:
 
 **1. Find a student w/ a Tabroom login** – You can manually enter a
-student tabroom.com email into this field to add them to your student
-roster. This will require the student to have a tabroom.com account
+student Tournament Admin email into this field to add them to your student
+roster. This will require the student to have a Tournament Admin account
 setup prior to adding them.
 
 title="Screen_Shot_2023-03-11_at_3.40.28_PM.png" width="500" />
 
-**2. Create a new student (without a Tabroom.com account)** – If a
-student does not have a tabroom.com account, you can manually enter
+**2. Create a new student (without a Tournament Admin account)** – If a
+student does not have a Tournament Admin account, you can manually enter
 their information in the provided fields. Make sure your information is
 accurate. Enter the 4-digit graduation date and make sure it is
 accurate. Accounts with graduation dates in the past will be retired and
 not show on your entries dropdown menu to register the student for a
 tournament. The NSDA ID and Email fields do not automatically create
 accounts for the student and/or link them to their student records in
-tabroom.com or speechanddebate.org.
+Tournament Admin or speechanddebate.org.
 
 title="Screen_Shot_2023-03-11_at_3.45.13_PM.png" width="350" />
 
 **2a. Competitors requesting online access** – Once you manually add a
 student to your roster, it will allow them to request access later once
-they have completed the setup of their tabroom.com account. Once a
+they have completed the setup of their Tournament Admin account. Once a
 competitor requests access, you will receive an email notifying you of
 the request and the "competitors" tab will be red once you login to
-tabroom.com. To link the competitor, you will need to approve their
+Tournament Admin. To link the competitor, you will need to approve their
 account by selecting the green check mark. If you do not want to allow
 the competitor to link to their account or someone is linking to the
 wrong account, select the red X and it will deny them access. We suggest
 always allowing students to link to their competitor records to allow
-them access to the full benefits of tabroom.com, including access to
+them access to the full benefits of Tournament Admin, including access to
 their past, present, and future tournament data and results.
 
 title="Screen_Shot_2023-03-11_at_3.46.53_PM.png" width="350" />
 
 **Competitors requesting online access** – If you have manually added a
-student to tabroom.com Make sure to give each of your students a 4-digit
+student to Tournament Admin Make sure to give each of your students a 4-digit
 graduation date, like "2018," and not just two-digits. You can also fill
 out additional information, such as diet preferences and gender. When
 you're done entering all your students, you can return to your student
@@ -264,11 +264,11 @@ competitor. Only tournaments that have posted public results will be
 visible.
 
 **First, Middle, Last** – Name of the competitor that will be visible on
-tabroom.com. Clicking any of these names will allow you to edit the full
-student record, including linking them to their tabroom.com account.
+Tournament Admin. Clicking any of these names will allow you to edit the full
+student record, including linking them to their Tournament Admin account.
 
 **Account** – Allows you to see if a competitor is already linked to
-tabroom.com. If they are, their email will appear in that field. If they
+Tournament Admin. If they are, their email will appear in that field. If they
 are not, it will be blank.
 
 **Points** – Shows a competitor's career NSDA points. A competitor must
@@ -356,7 +356,7 @@ entry.
 Once the initial linking of your Tabroom school to your National Speech
 & Debate Association account is done, you can import any students on
 your NSDA roster to Tabroom by choosing the "Import NSDA Roster to
-Tabroom.com" option on the sidebar.
+Tournament Admin" option on the sidebar.
 
 This will show you a list of students from your NSDA roster that are
 available to import (with the option to exclude any you don't want).
@@ -415,19 +415,19 @@ easily remove them by using the "Deduplicate judges" link on the
 sidebar. If any duplicates are found, you will be given the choice to
 merge them:
 
-**First, Last** – Name of the judge that will be visible on tabroom.com.
+**First, Last** – Name of the judge that will be visible on Tournament Admin.
 Clicking any of these names will allow you to edit the full judge
-record, including linking them to their tabroom.com account.
+record, including linking them to their Tournament Admin account.
 
 **Judged** – Indicates the number of tournaments they've judged on
-tabroom.com. This record will only reflect the tournaments their linked
+Tournament Admin. This record will only reflect the tournaments their linked
 account was attached to and not other tournaments where they may have
 judged prior to having an account.
 
 **Phone** – Indicates the phone number they have registered on their
-tabroom.com account.
+Tournament Admin account.
 
-**Linked To** – Indicates the tabroom.com linked account email.
+**Linked To** – Indicates the Tournament Admin linked account email.
 
 **Inactive** – By default all judges are active. If a judge is no with
 your program, toggle this to a red "Y" and they will be disabled from

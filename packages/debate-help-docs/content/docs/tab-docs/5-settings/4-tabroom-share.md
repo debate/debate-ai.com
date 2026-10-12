@@ -1,5 +1,5 @@
 ---
-title: "Settings - share.tabroom.com"
+title: "Settings - share.Tournament Admin"
 slug: tabroom-share
 ---
 
@@ -17,7 +17,7 @@ Then, speakers can just respond to that email, attach their speech docs,
 and it will automatically send to everybody in the room.
 
 Alternately, every round has a unique easy to remember URL at
-https://share.tabroom.com where you can upload or download the speech
+https://share.Tournament Admin where you can upload or download the speech
 docs (or share with scouts, coaches, etc. without needing to be on the
 email chain). The share room URL will appear on the online ballot for
 judges or the debater's home landing page on Tabroom.
@@ -26,7 +26,7 @@ In a few weeks, there will also be a one-click button from Verbatim to
 send out your speech doc to everybody in your round without needing to
 touch your email.
 
-The key feature of share.tabroom.com is that it's all privacy-first.
+The key feature of share.Tournament Admin is that it's all privacy-first.
 Nobody can see each other's actual email address, so a student never
 needs to share their email with anyone else. The emails are handled by
 our servers and sent to the web interface and the participants in the

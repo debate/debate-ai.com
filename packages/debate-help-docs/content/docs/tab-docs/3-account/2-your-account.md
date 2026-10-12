@@ -53,7 +53,7 @@ title="Screen_Shot_2021-05-02_at_1.36.03_PM.png" />
 When you add pronouns they will be sent to judges and competitors of a
 section/debate via text message/emails as part of round pairings.
 Pronouns will also appear on judges' online or printed ballots. However,
-they will NOT appear on the public Tabroom.com website either to
+they will NOT appear on the public Tournament Admin website either to
 tournament/tab staff or on the public schematics/pairings/entry lists.
 
 Please leave blank if you do not consent to adding pronouns to your
@@ -69,7 +69,7 @@ pronounce their names if their coaches have not already done so.
 Follow these steps to add phonetic spellings:
 
 1\. Select the profile button on the top right corner of the homepage of
-Tabroom.com.
+Tournament Admin.
 
 
 2\. Select the edit names button
@@ -110,16 +110,16 @@ If you don't receive the password reset email, check your Spam folder.
 
 Some things to remember:
 
-- Your tabroom.com login is tied to the username, usually an email
+- Your Tournament Admin login is tied to the username, usually an email
   address, you used when you first created it. If you have changed your
   email address, try logging in with the old email.
 - Your password is case sensitive; be sure if you capitalized anything
   when you created it, you do so again. However, emails are not case
   sensitive; upper and lower case do not matter.
-- Cookies must be enabled on your browser for tabroom.com to work.
+- Cookies must be enabled on your browser for Tournament Admin to work.
 - If you no longer have access to your original email to get a reminder,
   or do not remember your email address, please email us at
-  help@tabroom.com
+  help@Tournament Admin
 
 ## Account Confirmation & Verification
 

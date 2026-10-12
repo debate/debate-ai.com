@@ -11,7 +11,7 @@ registrations to Nationals. If you are a coach looking to register your
 school, consult the [Nationals
 Registration](nationals-registration) page.
 
-### Posting your results from Tabroom.com
+### Posting your results from Tournament Admin
 
 If you ran your tournament on Tabroom, you can post your Nationals
 registration and results directly from your District tournament.
@@ -118,7 +118,7 @@ tournament series.
 
 #### 1. Finding your District Tournament in Tabroom
 
-First log into Tabroom.com with the account tied to your District chair
+First log into Tournament Admin with the account tied to your District chair
 position. This should be the same email and password as the one you used
 in the Fall to register your District tournament series. Then, find your
 District tournament at right. If it has recently finished it will be
@@ -205,7 +205,7 @@ Qualifiers report listing for all your District events below.
 
 
 You should click each one to verify they are correct. If anything on
-this screen is wrong, please contact help@tabroom.com or the National
+this screen is wrong, please contact help@Tournament Admin or the National
 Office at info@speechanddebate.org with details.
 
 
@@ -257,8 +257,8 @@ then only you will be notified with a request to resolve the tie.
 
 Congress legislation should be uploaded by the District Chairs. Each
 district may submit two pieces of Congress Legislation for the national
-tournament. To upload Congress legislation, first log into Tabroom.com
-with your account. If you do not use Tabroom.com often, your account
+tournament. To upload Congress legislation, first log into Tournament Admin
+with your account. If you do not use Tournament Admin often, your account
 will be the same one you used to register your District Tournament
 series in the fall. If you forgot your password, there'll be a place to
 send yourself a password reset link under the pop up window where you

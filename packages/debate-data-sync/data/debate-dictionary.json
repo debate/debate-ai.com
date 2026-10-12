@@ -343,7 +343,7 @@
     },
     {
       "term": "Judge philosophy",
-      "definition": "A written statement (also called a 'judge paradigm' or 'judging philosophy') published on platforms like Tabroom.com or the NDCA wiki, in which a judge describes their preferences, biases, and approach to evaluating debates. Philosophies typically address the judge's views on speed/spreading, theory arguments, critiques, counterplan legitimacy, evidence quality, speaker point ranges, and what they consider voting issues. Savvy debaters research their judge's philosophy before each round and adapt their strategy accordingly — for example, avoiding dense theory arguments in front of a judge who prefers substantive policy debates."
+      "definition": "A written statement (also called a 'judge paradigm' or 'judging philosophy') published on platforms like Tournament Admin or the NDCA wiki, in which a judge describes their preferences, biases, and approach to evaluating debates. Philosophies typically address the judge's views on speed/spreading, theory arguments, critiques, counterplan legitimacy, evidence quality, speaker point ranges, and what they consider voting issues. Savvy debaters research their judge's philosophy before each round and adapt their strategy accordingly — for example, avoiding dense theory arguments in front of a judge who prefers substantive policy debates."
     },
     {
       "term": "Judge paradigm",
@@ -703,7 +703,7 @@
     },
     {
       "term": "Tab room",
-      "definition": "The administrative nerve center of a debate tournament, staffed by experienced tournament directors and assistants who manage pairings, judge assignments, ballot collection, results tabulation, and schedule management. The tab room uses specialized software (such as Tabroom.com or Joy of Tournaments) to generate brackets, power-match teams, assign judges based on mutual preference rankings, and calculate standings. Tab room decisions on procedural matters (such as forfeits, late starts, and evidence disputes) are generally final. Access to the tab room is typically restricted to prevent teams from gaining advance knowledge of pairings or results."
+      "definition": "The administrative nerve center of a debate tournament, staffed by experienced tournament directors and assistants who manage pairings, judge assignments, ballot collection, results tabulation, and schedule management. The tab room uses specialized software (such as Tournament Admin or Joy of Tournaments) to generate brackets, power-match teams, assign judges based on mutual preference rankings, and calculate standings. Tab room decisions on procedural matters (such as forfeits, late starts, and evidence disputes) are generally final. Access to the tab room is typically restricted to prevent teams from gaining advance knowledge of pairings or results."
     },
     {
       "term": "Tabula Rasa",

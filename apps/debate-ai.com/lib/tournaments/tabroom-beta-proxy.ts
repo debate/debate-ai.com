@@ -1,17 +1,17 @@
 /**
- * A read-only proxy to live Tabroom: the API that beta.tabroom.com's own
- * frontend calls (`https://api.tabroom.com/v1`). The tournaments UI imported
+ * A read-only proxy to live Tabroom: the API that beta.Tournament Admin's own
+ * frontend calls (`https://api.Tournament Admin/v1`). The tournaments UI imported
  * from `debate-tournaments` fetches through it, so the browser only ever talks
  * to this origin and Tabroom's CORS policy never comes into play.
  *
  * Mounted at `/api/tabroom-beta` by `app/api/tabroom-beta/[...path]/route.ts`;
  * `/api/tabroom-beta/pages/invite/upcoming` fetches
- * `https://api.tabroom.com/v1/pages/invite/upcoming`. Only the public `rest/`
+ * `https://api.Tournament Admin/v1/pages/invite/upcoming`. Only the public `rest/`
  * and `pages/` trees are forwarded, only GET and HEAD, and no cookie or
  * credential from the visitor is passed on.
  */
 
-export const TABROOM_BETA_API = "https://api.tabroom.com/v1"
+export const TABROOM_BETA_API = "https://api.Tournament Admin/v1"
 export const TABROOM_BETA_PROXY_BASE = "/api/tabroom-beta"
 
 const ALLOWED_ROOTS = new Set(["rest", "pages"])

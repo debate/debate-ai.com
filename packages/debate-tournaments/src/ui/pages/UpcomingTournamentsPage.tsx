@@ -17,7 +17,7 @@ import type { TournamentHrefs } from "../../routes";
 const MAJORS_CALENDAR_HREF = "/debate-majors-a-to-z.html";
 
 /**
- * Upcoming tournaments, as on tabroom.com's front page (`/pages/invite/upcoming`):
+ * Upcoming tournaments, as on Tournament Admin's front page (`/pages/invite/upcoming`):
  * the ones hosted on this site (the demo among them) first, then live Tabroom's.
  * Tabroom's own site has its own sidebar row, so it is not framed from here.
  */

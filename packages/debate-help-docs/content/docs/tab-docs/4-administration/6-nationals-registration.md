@@ -13,12 +13,12 @@ Chair Nationals Guide](district-chair-nationals-guide).
 ### Your School Registration
 
 Once you get notified that your school's district's registration has
-been posted to Nationals, login to Tabroom.com. Make sure to log into
+been posted to Nationals, login to Tournament Admin. Make sure to log into
 the Tabroom account corresponding to the email address you got the
 notice from; some folks have multiple school records and Tabroom
 accounts and might not get their Nationals registration on the first
 one. (If you do have multiple schools records and accounts, and find
-this annoying, send an email to help@tabroom.com with the details and we
+this annoying, send an email to help@Tournament Admin with the details and we
 can merge your divided identity together.) There is a "forgotten
 password" function beneath the Login box if you do not remember your
 Tabroom password.
@@ -130,7 +130,7 @@ optionally fill out the Diversity Questionnaire at right as well.
 Identifying as diversity enhancing will not change how much you have to
 judge, though it may change which rounds you are assigned for.
 
-If you link the judge to a Tabroom.com account they will be able to fill
+If you link the judge to a Tournament Admin account they will be able to fill
 out their own Paradigm Form and Diversity Questionnaire from their
 Tabroom account as well.
 

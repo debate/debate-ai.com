@@ -154,7 +154,7 @@ repeat the same mistakes twice.
 
 **Payment** - This tab lets you choose the number of NSDA Campus rooms
 you need for your tournament and to pay for those rooms and the use of
-Tabroom.com before your tournament begins.
+Tournament Admin before your tournament begins.
 
 For more in-depth explanation of each, see the section on [General
 Settings](/settings/tournament).
@@ -395,7 +395,7 @@ information about the tournament, schematics, results, etc. You chose
 the "web name" of your tournament when you requested it, and it will be
 something like:
 
-https://mytournamentname.tabroom.com
+https://mytournamentname.Tournament Admin
 
 The Website section lets you configure what information/pages are
 visible on your tournaments site, or when accessing it through one of

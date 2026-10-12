@@ -28,21 +28,21 @@ first log in. Click on "Parent Notifications" at right.
 Then next to each competitor, you can see who is already set to follow a
 student's notifications, click the trash icon to remove them, or to
 enter their email address to set them to follow. Parent notification
-recipients do NOT need to have a Tabroom.com account; just a simple
+recipients do NOT need to have a Tournament Admin account; just a simple
 email will do. You can also see this information by clicking on a
 competitor on your main roster; this screen just lets you see them all
 at once:
 
 
 Once linked parents will be notified with a short email informing them
-they are linked and what Tabroom.com is and why they're getting emailed
+they are linked and what Tournament Admin is and why they're getting emailed
 from it.
 
 ### Competitors linking parents
 
 You can also have competitors register their own parents for updates, to
 make it easier on those with large squads. Students must have a
-Tabroom.com account linked to their student record first. When they log
+Tournament Admin account linked to their student record first. When they log
 in, they should find at right a section labeled Competing, and after
 that can click on Parent Notifications at right.
 

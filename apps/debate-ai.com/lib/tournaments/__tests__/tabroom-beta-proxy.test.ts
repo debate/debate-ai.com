@@ -5,12 +5,12 @@ import { proxyTabroomBeta, tabroomBetaUpstreamUrl } from "../tabroom-beta-proxy"
 const ORIGIN = "https://d.ebate.app"
 
 describe("tabroomBetaUpstreamUrl", () => {
-  it("maps the public API trees onto api.tabroom.com/v1, query included", () => {
+  it("maps the public API trees onto api.Tournament Admin/v1, query included", () => {
     expect(tabroomBetaUpstreamUrl(`${ORIGIN}/api/tabroom-beta/pages/invite/upcoming`)?.href).toBe(
-      "https://api.tabroom.com/v1/pages/invite/upcoming",
+      "https://api.Tournament Admin/v1/pages/invite/upcoming",
     )
     expect(tabroomBetaUpstreamUrl(`${ORIGIN}/api/tabroom-beta/rest/tourns/38436/invite?x=1`)?.href).toBe(
-      "https://api.tabroom.com/v1/rest/tourns/38436/invite?x=1",
+      "https://api.Tournament Admin/v1/rest/tourns/38436/invite?x=1",
     )
   })
 
@@ -34,7 +34,7 @@ describe("proxyTabroomBeta", () => {
     expect(await res.json()).toEqual([])
     expect(res.headers.get("cache-control")).toContain("max-age=60")
     const [url, init] = fetchImpl.mock.calls[0] as unknown as [URL, RequestInit]
-    expect(url.href).toBe("https://api.tabroom.com/v1/pages/invite/upcoming")
+    expect(url.href).toBe("https://api.Tournament Admin/v1/pages/invite/upcoming")
     expect(new Headers(init.headers).get("cookie")).toBeNull()
   })
 

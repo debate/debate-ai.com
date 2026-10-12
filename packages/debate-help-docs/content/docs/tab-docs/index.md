@@ -6,7 +6,7 @@ title: Tournament Admin
 ---
 
 
-This is the online manual for Tabroom.com. It describes the function of each feature of Tabroom for tournament directors, coaches, and participants.
+This is the online manual for Tournament Admin. It describes the function of each feature of Tabroom for tournament directors, coaches, and participants.
 
 Contributors include Aaron Hardy, Chris Palmer, Jon Bruschke, Jim Menick, Lauren Burdt, Shunta Jordan, Kevon Haughton, and Brian Manuel. It was developed with the support of the National Speech & Debate Association.
 
@@ -31,7 +31,7 @@ For first-time Tabroom users, check out these sections of the manual:
 [Enabling Web Push Notifications to replace Text
 Blasts](https://docs.google.com/document/d/12jVaG0oITTU2gsOwMc3Fs5TY0GUCC0ekq5RsLD0EPjI)
 
-[Speech doc sharing on share.tabroom.com](settings/tabroom-share)
+[Speech doc sharing on share.Tournament Admin](settings/tabroom-share)
 
 [Usage Videos](overview/videos)
 
