@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import { parseYouTubeVideoId } from "@debate/videos";
 import { LECTURE_CATEGORIES } from "@debate/data-sync/src/youtube/parsers/lecture-classifier";
 import { canonicalCategoryLabel } from "@debate/data-sync/src/videos/video-rows";
-import { Button } from "../../lib/ui/primitives/button";
-import { Input } from "../../lib/ui/primitives/input";
-import { Label } from "../../lib/ui/primitives/label";
+import { Button } from "@debate/webview/lib/ui/primitives/button";
+import { Input } from "@debate/webview/lib/ui/primitives/input";
+import { Label } from "@debate/webview/lib/ui/primitives/label";
 import {
   Dialog,
   DialogContent,
@@ -14,14 +14,14 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "../../lib/ui/primitives/dialog";
+} from "@debate/webview/lib/ui/primitives/dialog";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../lib/ui/primitives/select";
+} from "@debate/webview/lib/ui/primitives/select";
 
 /** One row of the published `videos` table, as the admin API returns it. */
 export interface LibraryVideo {

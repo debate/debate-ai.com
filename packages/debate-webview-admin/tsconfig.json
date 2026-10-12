@@ -19,6 +19,11 @@
       "@debate/webview/*": ["../debate-webview/src/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "../../apps/debate-ai.com/lib/types/cloudflare.d.ts",
+    "../debate-webview/src/types/assets.d.ts"
+  ],
   "exclude": ["node_modules"]
 }
