@@ -252,6 +252,19 @@ takedowns** card as **Suggested edit** and **Deletion request**, listing each
 proposed field and the viewer's reason. **Apply** writes exactly those fields;
 **Delete video** removes it as **Remove** does; **Dismiss** rejects it.
 
+### Reclassifying by title
+
+**Reclassify videos by title**, below **Recompute video stacks**, sets the
+format of every library video whose title contains a phrase (and of matching
+rounds still in the queue), and with **Parse round info with AI** ticked
+re-reads each title and description with the same model as the edit form's
+**Auto-fill with AI**, filling tournament, round, teams, winner, decision and
+speech-docs link. A field the model can't read keeps its current value. It
+defaults to **Dartmouth RR** → **College**: those rounds are college, but their
+titles name no format, so the YouTube sync used to file them as Policy. The
+`debate-data-sync` migration `0003_dartmouth_rr_college.sql` moves them to
+College on deploy, and the sync now files new ones there itself.
+
 ### Transcripts
 
 The card's **Transcript** column shows which videos have a typed-up transcript
@@ -309,6 +322,10 @@ round's 1AC and 2NR arguments when it is published. The queue has no editor,
 so a wrong split is corrected in the library after publishing. The records
 have no upload date, so these rounds are dated January 1st of their event's
 year.
+
+Reclassifying with AI parsing calls the model once per video, a page of 20
+per request; a video whose call fails still gets its new format but keeps its
+old round fields, and the result counts it as failed so it can be run again.
 
 The watch page doesn't display a video's length yet, and a video only shows
 one in the library after **Fetch video durations** has looked it up.

@@ -425,7 +425,7 @@ describe("YoutubeChannelsPanel", () => {
     mount(<YoutubeChannelsPanel />);
     expect(bodyText()).toContain("Loading channels…");
     await flush();
-    expect(calls[0].url).toBe("/api/admin/youtube/channels?limit=50");
+    expect(calls[0].url).toBe("/api/admin/youtube/channels?limit=200");
     const text = bodyText();
     expect(text).toContain("Kansas Debate");
     expect(text).toContain("(UC123)");
@@ -532,9 +532,7 @@ describe("YoutubeChannelsPanel", () => {
     await clickAsync(button("Remove channel"));
     expect(calls.filter((c) => c.method === "DELETE")).toHaveLength(2);
     expect(bodyText()).toContain("Removed “Kansas Debate” — it will no longer be scanned.");
-
-    const before = calls.length;
-    await clickAsync(button("Refresh"));
-    expect(calls.length).toBe(before + 1);
+    // The removal updates the list in place; nothing refetches it.
+    expect(calls.filter((c) => c.method === "GET")).toHaveLength(1);
   });
 });
