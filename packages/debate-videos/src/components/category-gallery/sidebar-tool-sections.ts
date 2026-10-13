@@ -14,7 +14,6 @@ import {
   BadgeCheck,
   BarChart3,
   BookOpen,
-  Briefcase,
   ChartColumn,
   ChartLine,
   Clapperboard,
@@ -145,7 +144,7 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
   },
   {
     // Simulate rounds, rehearse individual skills, compete with other users
-    // or AI, and test predictions.
+    // or AI.
     id: "practice",
     title: "Practice",
     // `/practice` (the old Practice Round Simulator) redirects here: the two
@@ -161,10 +160,6 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       // Same page, landing on the open judge seats (or the profile, for
       // someone who has not volunteered to judge yet).
       { href: "/practice/partners#judge", title: "Judge Practice Rounds", icon: Gavel },
-      // Same page again, at the Judge Pool: list yourself for hire on circuit
-      // weekends, or hire a judge for a tournament.
-      { href: "/practice/partners#judge-pool", title: "Hire a Judge", icon: Briefcase },
-      { href: "/practice/predictions", title: "Prediction Markets", icon: Coins },
       { href: "/practice/drills", title: "Practice Drills", icon: Repeat },
       { href: "/practice/judge-decision", title: "AI Judge Decision", icon: BadgeCheck },
     ],
@@ -201,6 +196,7 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/coaching/rankings", title: "Team Rankings", icon: Medal },
       { href: "/practice/level", title: "Debater Level", icon: Star },
       { href: "/practice/statistics", title: "Topics & Video Statistics", icon: BarChart3 },
+      { href: "/practice/predictions", title: "Prediction Markets", icon: Coins },
       { href: "/practice/rules", title: "Formats & Rules", icon: Scale },
       { href: "/practice/glossary", title: "Glossary of Terms", icon: BookOpen },
       { href: "/practice/features", title: "All Features", icon: Sparkles },

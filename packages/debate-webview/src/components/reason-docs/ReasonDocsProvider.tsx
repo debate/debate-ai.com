@@ -1,8 +1,8 @@
 "use client"
 
 /**
- * Shared state for the REASON docs sidebar — the files tree, the "Open Tabs"
- * list and the topic-starter catalogue — lifted out of `/reason-editor`'s
+ * Shared state for the REASON docs sidebar — the files tree, the open tabs
+ * (shown as the tab strip above the editor) and the topic-starter catalogue — lifted out of `/reason-editor`'s
  * page so the app's persistent sidebar (`AppSidebarShell`) can render those
  * panels on every tool route while `/reason-editor` renders the editor for
  * whatever they select.
@@ -34,6 +34,15 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { DocumentSaveQueue, type SaveQueueState } from "../../lib/reason-docs/save-queue"
+import {
+  canReopenTab as canReopen,
+  closeAllTabs as closeAll,
+  closeOtherTabs as closeOthers,
+  closeTabs,
+  closeTabsToRight as closeToRight,
+  reopenClosedTab as reopenClosed,
+  type TabState,
+} from "../../lib/reason-docs/tab-actions"
 import { STORED_FORMATS } from "../../lib/cardmirror/format"
 import { isCmirContent } from "../../lib/cardmirror/content-format"
 // CardMirror's engine is loaded on demand (`lazy-stored-cmir`), not imported:
@@ -115,6 +124,14 @@ export interface ReasonDocsContextValue {
   /** Switches to an already-open tab. */
   selectTab: (id: number) => void
   closeTab: (id: number) => void
+  /** The tab strip's right-click menu (`lib/reason-docs/tab-actions.ts`). */
+  closeOtherTabs: (id: number) => void
+  closeTabsToRight: (id: number) => void
+  closeAllTabs: () => void
+  /** Reopens the most recently closed tab that still exists. */
+  reopenClosedTab: () => void
+  /** Whether {@link reopenClosedTab} has anything to bring back. */
+  canReopenTab: boolean
   createDocument: (parentId?: number | null, isFolder?: boolean) => Promise<void>
   deleteDocument: (id: number) => Promise<void>
   moveDocument: (id: number, parentId: number | null) => Promise<void>
@@ -182,6 +199,7 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
   const [topicItems, setTopicItems] = useState<TopicStarterItem[]>([])
   const [openTabs, setOpenTabs] = useState<number[]>([])
   const [activeId, setActiveId] = useState<number | null>(null)
+  const [closedTabs, setClosedTabs] = useState<number[]>([])
   const [topicDocument, setTopicDocument] = useState<TopicStarterItem | null>(null)
   const [loading, setLoading] = useState(false)
   const [loaded, setLoaded] = useState(false)
@@ -246,16 +264,36 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
     setActiveId(id)
   }, [])
 
-  const closeTab = useCallback(
-    (id: number) => {
-      const idx = openTabs.indexOf(id)
-      const next = openTabs.filter((tabId) => tabId !== id)
-      setOpenTabs(next)
-      // Closing the active tab falls through to its neighbour, preferring the
-      // one that slid into its slot.
-      if (activeId === id) setActiveId(next[idx] ?? next[idx - 1] ?? next[0] ?? null)
+  /** Runs one of the tab-strip transitions in `lib/reason-docs/tab-actions.ts`
+   *  over the open tabs, the active one and the closed-tab stack together. */
+  const applyTabs = useCallback(
+    (transition: (state: TabState) => TabState) => {
+      const next = transition({ openTabs, activeId, closed: closedTabs })
+      setOpenTabs(next.openTabs)
+      setActiveId(next.activeId)
+      setClosedTabs(next.closed)
     },
-    [openTabs, activeId],
+    [openTabs, activeId, closedTabs],
+  )
+
+  // Closing the active tab falls through to its neighbour, preferring the one
+  // that slid into its slot.
+  const closeTab = useCallback((id: number) => applyTabs((state) => closeTabs(state, [id])), [applyTabs])
+  const closeOtherTabs = useCallback((id: number) => applyTabs((state) => closeOthers(state, id)), [applyTabs])
+  const closeTabsToRight = useCallback((id: number) => applyTabs((state) => closeToRight(state, id)), [applyTabs])
+  const closeAllTabs = useCallback(() => applyTabs(closeAll), [applyTabs])
+
+  const documentExists = useCallback(
+    (id: number) => documents.some((doc) => doc.id === id && !doc.isFolder),
+    [documents],
+  )
+  const reopenClosedTab = useCallback(() => {
+    setTopicDocument(null)
+    applyTabs((state) => reopenClosed(state, documentExists))
+  }, [applyTabs, documentExists])
+  const canReopenTab = useMemo(
+    () => canReopen({ openTabs, activeId, closed: closedTabs }, documentExists),
+    [openTabs, activeId, closedTabs, documentExists],
   )
 
   const createDocument = useCallback(
@@ -678,6 +716,11 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
       openDocument,
       selectTab,
       closeTab,
+      closeOtherTabs,
+      closeTabsToRight,
+      closeAllTabs,
+      reopenClosedTab,
+      canReopenTab,
       createDocument,
       deleteDocument,
       moveDocument,
@@ -707,6 +750,11 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
       openDocument,
       selectTab,
       closeTab,
+      closeOtherTabs,
+      closeTabsToRight,
+      closeAllTabs,
+      reopenClosedTab,
+      canReopenTab,
       createDocument,
       deleteDocument,
       moveDocument,
