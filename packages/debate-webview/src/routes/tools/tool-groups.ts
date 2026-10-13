@@ -179,7 +179,7 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         highlights: ["Overview, frontline, cross-ex, and collapse-scenario prompts", "Generated straight from a round's already-flowed arguments"],
       },
       {
-        href: "/coaching/ai-coach", label: "AI Coach Mode", icon: GraduationCap,
+        href: "/coaching?section=ai-coach", label: "AI Coach Mode", icon: GraduationCap,
         description: "Get extension, refutation, collapse, and weighing prompts generated from each round's flow.",
         highlights: ["Template prompts per round + side, generated from the flow", "\"Get AI feedback\" expands any prompt into open-ended coaching"],
       },
@@ -261,17 +261,17 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         ],
       },
       {
-        href: "/coaching/programs", label: "Coaching Programs", icon: School,
+        href: "/coaching?section=programs", label: "Coaching Programs", icon: School,
         description: "Run group coaching spaces scoped to a squad roster.",
         highlights: ["A shared topic sprint, group-challenge standings, and drills in one board", "Scoped to a named squad roster you control"],
       },
       {
-        href: "/coaching/calendar", label: "Team Calendar", icon: CalendarDays,
+        href: "/coaching?section=calendar", label: "Team Calendar", icon: CalendarDays,
         description: "Schedule tasks, assignments and group-only virtual tournaments for each group you coach.",
         highlights: ["Deadlines with assignees and per-researcher completion", "Round-robin tournaments open only to that group's roster"],
       },
       {
-        href: "/coaching/materials", label: "Coach Materials", icon: BookOpen,
+        href: "/coaching?section=materials", label: "Coach Materials", icon: BookOpen,
         description: "Upload grounding materials for the team coach AI and preview which ones answer a question.",
         highlights: ["Upload a .docx/.txt/.md file or dictate by voice instead of pasting text", "Preview which materials a question would draw on before asking"],
       },

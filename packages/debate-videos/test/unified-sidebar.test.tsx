@@ -14,7 +14,7 @@ vi.mock("next/link", () => ({
 }));
 
 vi.mock("next/navigation", () => ({
-  usePathname: () => "/coaching/ai-coach",
+  usePathname: () => "/coaching/progress",
 }));
 
 const { LibrarySidebarTree } = await import("../src/components/category-gallery/LibrarySidebarTree");

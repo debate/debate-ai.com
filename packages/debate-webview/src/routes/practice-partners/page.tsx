@@ -15,7 +15,7 @@ import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
 export default function PracticePartnersPage() {
   return (
     <ToolPage>
-      <ToolPageHeader href="/practice/partners" backHref="/coaching?section=practice" backLabel="practice" guide="practice-tools" />
+      <ToolPageHeader href="/practice/partners" backHref="/coaching?stage=practice" backLabel="practice" guide="practice-tools" />
       <PracticePartnersPanel />
       <JudgePoolPanel className="mt-4" />
     </ToolPage>
