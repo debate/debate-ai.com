@@ -12,8 +12,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import {
+  fetchFirstLoginWelcomeDismissed,
   markFirstLoginWelcomeShown,
+  markFirstLoginWelcomeSynced,
+  saveFirstLoginWelcomeDismissed,
   wasFirstLoginWelcomeShown,
+  wasFirstLoginWelcomeSynced,
 } from "../../src/lib/first-login-welcome"
 
 /** A minimal localStorage, since these tests run in the node environment. */
@@ -74,5 +78,52 @@ describe("markFirstLoginWelcomeShown", () => {
       },
     })
     expect(() => markFirstLoginWelcomeShown()).not.toThrow()
+  })
+})
+
+describe("markFirstLoginWelcomeSynced", () => {
+  it("is separate from the shown flag", () => {
+    installLocalStorage()
+    markFirstLoginWelcomeShown()
+    expect(wasFirstLoginWelcomeSynced()).toBe(false)
+    markFirstLoginWelcomeSynced()
+    expect(wasFirstLoginWelcomeSynced()).toBe(true)
+  })
+})
+
+describe("fetchFirstLoginWelcomeDismissed", () => {
+  it("reads the account's dismissed flag", async () => {
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify({ dismissed: false })))
+    vi.stubGlobal("fetch", fetchMock)
+    await expect(fetchFirstLoginWelcomeDismissed()).resolves.toBe(false)
+    expect(fetchMock).toHaveBeenCalledWith("/api/settings/welcome", expect.anything())
+  })
+
+  it("is null when signed out or the request fails, so nothing shows", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("{}", { status: 401 })))
+    await expect(fetchFirstLoginWelcomeDismissed()).resolves.toBeNull()
+    vi.stubGlobal("fetch", vi.fn(async () => {
+      throw new Error("offline")
+    }))
+    await expect(fetchFirstLoginWelcomeDismissed()).resolves.toBeNull()
+  })
+})
+
+describe("saveFirstLoginWelcomeDismissed", () => {
+  it("POSTs the dismissal and reports success", async () => {
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify({ dismissed: true })))
+    vi.stubGlobal("fetch", fetchMock)
+    await expect(saveFirstLoginWelcomeDismissed()).resolves.toBe(true)
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/settings/welcome",
+      expect.objectContaining({ method: "POST" }),
+    )
+  })
+
+  it("swallows a network failure", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => {
+      throw new Error("offline")
+    }))
+    await expect(saveFirstLoginWelcomeDismissed()).resolves.toBe(false)
   })
 })

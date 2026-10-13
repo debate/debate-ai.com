@@ -219,6 +219,19 @@ flows folder, collaboration name and relay toggles, contacts, and panel layout â
 stays in that browser. Signed out, nothing changes: settings stay in
 localStorage.
 
+## The welcome dialog shows once per account
+
+The "Welcome to Debate AI" dialog of key links appears the first time an
+account signs in, and never again on any device. Showing it records
+`user_settings.welcome_dismissed_at` through `GET`/`POST
+/api/settings/welcome` (`FirstLoginWelcomeProvider` in `@debate/webview`,
+helpers in `lib/first-login-welcome.ts`). A `localStorage` copy of the flag
+saves the request on browsers that already know, and a browser that showed
+the dialog before the flag moved to the account records it there once. If the
+account's answer cannot be read (offline, an error), the dialog stays hidden
+rather than risk showing it twice. A second account signing in on a browser
+that already showed it does not see it.
+
 ## Known gaps
 
 No optimistic-concurrency handling in general â€” two tabs editing the *same*

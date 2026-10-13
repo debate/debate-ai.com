@@ -450,6 +450,13 @@ export const userSettings = sqliteTable("user_settings", {
   // pre-fills (packages/debate-videos/src/lib/my-ranked-teams). Whole-value
   // replace, like `myTeamProfile` above.
   myRankedTeams: text("my_ranked_teams"),
+  // When the first-sign-in welcome dialog (`@debate/webview`'s
+  // `FirstLoginWelcomeProvider`) was shown and dismissed, or null when the
+  // account has never seen it. Read and written only by
+  // `/api/settings/welcome`, so the dialog shows once per account rather
+  // than once per browser. Nullable, so `ensureTableColumns` can add it to
+  // the live D1 table without a migration.
+  welcomeDismissedAt: integer("welcome_dismissed_at", { mode: "timestamp" }),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(unixepoch())`),
