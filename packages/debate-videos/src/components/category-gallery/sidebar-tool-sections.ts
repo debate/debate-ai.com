@@ -60,6 +60,13 @@ export interface SidebarToolLink {
    * baked-in colors next to them; see `TreeItem`'s `TREE_ITEM_ICON_CLASS`.
    */
   icon: LucideIcon;
+  /**
+   * Other routes that belong to this row, each counted with the pages below
+   * it: they light the row up, open its section and keep the sidebar mounted.
+   * Used when one row stands for a page that absorbed another, like News &
+   * Forums, whose single threads still live under `/practice/forums`.
+   */
+  aliases?: readonly string[];
 }
 
 export interface SidebarToolSection {
@@ -185,8 +192,10 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/coaching/materials", title: "Coach Materials", icon: FolderOpen },
       { href: "/coaching/progress", title: "Research Progress", icon: TrendingUp },
       { href: "/coaching/laptopless", title: "Laptop-less Debating", icon: Smartphone },
-      // The community's news feed, listed last among the coaching tools.
-      { href: "/practice/forums", title: "Latest News", icon: Rss },
+      // The community's news feed and forums, one tabbed page, listed last
+      // among the coaching tools. Forum threads keep their
+      // `/practice/forums/<id>` addresses, so that prefix is this row's too.
+      { href: "/news", title: "News & Forums", icon: Rss, aliases: ["/practice/forums"] },
     ],
   },
   {

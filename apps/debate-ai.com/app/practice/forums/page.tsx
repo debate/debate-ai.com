@@ -1,8 +1,17 @@
 import type { Metadata } from "next"
+import { permanentRedirect } from "next/navigation"
+
+/**
+ * The old address of the forums feed, merged into News & Forums at `/news`.
+ * It permanently redirects to its "forums" tab. Single threads still live at
+ * `/practice/forums/<id>`.
+ */
 
 export const metadata: Metadata = {
-  title: "Latest News",
-  description: "The latest from the debate community — post a thread, read the replies, and follow the discussions moving fastest.",
+  title: "Forums",
+  alternates: { canonical: "/news?section=forums" },
 }
 
-export { default } from "@debate/webview/routes/forums/page"
+export default function LegacyForumsPage() {
+  permanentRedirect("/news?section=forums")
+}

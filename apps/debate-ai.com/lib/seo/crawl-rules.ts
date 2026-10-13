@@ -73,6 +73,9 @@ function toolHrefs(): string[] {
     hrefs.add(section.href);
     for (const tool of section.tools) {
       hrefs.add(tool.href.split("#")[0]);
+      // A row's aliases are the old addresses it absorbed, still serving
+      // pages (forum threads under `/practice/forums`).
+      for (const alias of tool.aliases ?? []) hrefs.add(alias);
     }
   }
   return [...hrefs].filter(Boolean).sort();

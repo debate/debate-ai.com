@@ -90,7 +90,7 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         highlights: ["Ranked by total helpfulness score across every contribution kind", "Tier, streak, and merged tier/streak-milestone badges per row", "Your own row highlighted with a \"You\" badge when signed in"],
       },
       {
-        href: "/news", label: "News Stream", icon: Rss,
+        href: "/news", label: "News & Forums", icon: Rss,
         description: "A single feed for product updates and community announcements — new features, Daily Best Card winners, and Contributor Award standings.",
         highlights: ["Hand-picked product-update posts", "Auto-posts Daily Best Card and Contributor Award announcements", "Filter by category, like, and mark read"],
       },

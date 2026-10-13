@@ -442,12 +442,12 @@ export const APP_FEATURES: FeatureEntry[] = [
   },
   {
     id: "news-stream",
-    title: "News Stream",
-    description: "Product updates and community announcements — new features, Daily Best Card winners, and Contributor Award standings, in one feed",
+    title: "News & Forums",
+    description: "Product updates, community announcements and forum threads — new features, Daily Best Card winners, Contributor Award standings, and the discussions moving fastest",
     href: "/news",
     category: "recognition",
     doc: "news-stream.md",
-    tags: ["feed", "activity", "updates", "announcements"],
+    tags: ["feed", "activity", "updates", "announcements", "forums", "discussion", "threads"],
   },
   {
     id: "daily-quests",

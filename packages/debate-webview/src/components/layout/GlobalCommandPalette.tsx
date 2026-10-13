@@ -77,7 +77,7 @@ import {
 /** Meta destinations that aren't themselves a `/tools` catalog entry. */
 const QUICK_ACTIONS: Tool[] = [
   { href: "/practice/features", label: "All Features", description: "Every user-facing surface in the app, with docs", icon: LayoutGrid },
-  { href: "/news", label: "News Stream", description: "Product updates and community announcements", icon: Rss },
+  { href: "/news", label: "News & Forums", description: "Product updates, community announcements and forum threads", icon: Rss },
   { href: "/settings", label: "Settings", description: "Card editor settings — files, editing, appearance, shortcuts, AI", icon: SettingsIcon },
 ]
 

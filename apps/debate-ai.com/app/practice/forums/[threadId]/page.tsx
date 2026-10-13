@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Latest News Thread",
+  title: "Forum Thread",
   description: "A community thread and its replies.",
 }
 
