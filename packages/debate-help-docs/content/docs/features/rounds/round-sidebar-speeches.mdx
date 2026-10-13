@@ -12,7 +12,8 @@ view controls and shows captions for recorded speeches.
 - **Package:** `debate-round` (`layout/LiveRoundGroup.tsx`,
   `round/my-speeches.ts`, `dialogs/SpeechGradeDialog.tsx`,
   `round/speech-rubric.ts`), `debate-timer` (`recorder/SpeechCaptionsTicker.tsx`,
-  `recorder/speech-captions.ts`)
+  `recorder/SpeechTranscriptDialog.tsx`, `recorder/speech-captions.ts`,
+  `recorder/transcript-sections.ts`)
 
 ## What it does
 
@@ -42,7 +43,17 @@ view controls and shows captions for recorded speeches.
   shows the words transcribed while the speech was recorded, scrolling past
   the player like a ticker. The word being played is highlighted and kept
   centred. Click any word to jump the audio to that point. The on/off choice
-  is remembered across speeches.
+  is remembered across speeches. The player sits on its own row under the
+  speech's name and timer, so the ticker spans the full width of the panel.
+- **Full transcript.** The expand button at the end of the ticker opens the
+  whole transcript in a modal. Click any word to jump the audio there; the
+  word being played stays highlighted and in view.
+- **AI sections.** "Split into sections" in the transcript modal asks the AI
+  to break the speech into titled sections (framework, each contention,
+  each off-case, responses). The headings show above the transcript and
+  inside it, and clicking one jumps the audio to where it starts. Sections
+  are remembered for the speech until its transcript changes. This needs
+  you to be signed in, like the other AI features.
 - **Ask the speaker to be more clear.** When you judge a round (your email is
   one of its judges), each speech's ⋮ menu has "Tell the debater to be more
   clear". It pops a toast on the laptop of the debater giving that speech:
@@ -63,6 +74,10 @@ view controls and shows captions for recorded speeches.
   their words are spread evenly across the whole recording.
 - Transcription needs a browser with the Web Speech API (Chrome, Edge,
   Safari). Elsewhere the ticker says there are no captions yet.
+- AI sections are saved only in this browser (localStorage), not on the
+  round, so other devices and other people in the round don't see them.
+  Section starts are snapped to the transcript's ~20-word lines, so a
+  heading can land a few words early.
 - The clarity request reaches the speaker over the round's live room, so both
   laptops need the round open. The speaker is found from the round's debater
   emails; a device not seated there gets it only while its own timer for that
