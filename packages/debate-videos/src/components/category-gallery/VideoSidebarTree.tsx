@@ -2,8 +2,8 @@
  * @fileoverview Collapsible navigation tree shown in the persistent left
  * sidebar on the videos pages. Structure:
  *   Videos (h1, expandable, heading-only)
- *     -> All Videos / College Policy / Policy / PF / LD / Greatest of All-Time /
- *        My Favorites / Watch History / Lectures (h2, plain links, all peers)
+ *     -> All Videos / Lectures / College Policy / Policy / PF / LD / Greatest
+ *        of All-Time / My Favorites / Watch History (h2, plain links, all peers)
  *   Apps / Coaching / Research / Practice (h1, expandable) -> tool links
  *     — this trailing portion is `ToolNavTree`, shared with the non-video
  *       tool pages those links point to (see `ToolNavTree`'s file comment).
@@ -116,6 +116,15 @@ export function VideoSidebarTree({
           isActive={activeId === VIDEO_ALL_LINK.id}
         />
 
+        <TreeItem
+          level={2}
+          href={lecturesLink.href}
+          title={lecturesLink.title}
+          icon={lecturesLink.glyph}
+          count={counts?.lectures}
+          isActive={activeId === "lectures" || browsingLectures}
+        />
+
         {[VIDEO_COLLEGE_LINK, ...VIDEO_FORMAT_LINKS].map((link) => (
           <TreeItem
             key={link.id}
@@ -145,15 +154,6 @@ export function VideoSidebarTree({
           count={counts?.history}
           isActive={activeId === "history"}
           icon={History}
-        />
-
-        <TreeItem
-          level={2}
-          href={lecturesLink.href}
-          title={lecturesLink.title}
-          icon={lecturesLink.glyph}
-          count={counts?.lectures}
-          isActive={activeId === "lectures" || browsingLectures}
         />
       </TreeItem>
 
