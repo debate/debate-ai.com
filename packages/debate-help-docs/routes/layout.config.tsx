@@ -11,7 +11,7 @@ export const baseOptions: BaseLayoutProps = {
   nav: {
     title: (
       <span className="inline-flex items-center gap-2">
-        {/* The app serves the wordmark at its root (apps/debate-ai.com/app/logo.png),
+        {/* The app serves the wordmark (packages/debate-icons/brand/logo.png) at /logo.png,
             and /docs is mounted in that app. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={docsConfig.logo} alt="Debate AI" width={400} height={89} className="h-6 w-auto" />
