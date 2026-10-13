@@ -1,5 +1,6 @@
 "use client"
 
+import { Suspense } from "react"
 import { EditorSettingsPanel } from "../../../components/settings/EditorSettingsPanel"
 
 /**
@@ -8,5 +9,11 @@ import { EditorSettingsPanel } from "../../../components/settings/EditorSettings
  * route in an iframe; it stays for existing links.
  */
 export default function EditorSettingsPanelPage() {
-  return <EditorSettingsPanel />
+  // The panel reads its tab from useSearchParams(), which fails the
+  // production render with a 500 without a Suspense boundary above it.
+  return (
+    <Suspense>
+      <EditorSettingsPanel />
+    </Suspense>
+  )
 }
