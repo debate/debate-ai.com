@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { BookOpen, ChevronRight } from "lucide-react"
+import { BookOpen, ChevronRight, Settings } from "lucide-react"
 import { LibrarySidebarTree } from "@debate/videos"
 
 import { ChromeErrorBoundary } from "../../../lib/ui/layout/chrome-error-boundary"
@@ -38,6 +38,8 @@ export const DOCS_SIDEBAR_SLOT_ID = "app-sidebar-docs-slot"
  *   the foot. On `/docs` the docs portal their page tree into
  *   {@link DOCS_SIDEBAR_SLOT_ID}; everywhere else it is a collapsed Docs
  *   row ({@link DocsSidebarRow}) that opens `/docs`.
+ * - **Settings** ({@link SettingsSidebarRow}), right under Docs on every
+ *   route, so both always close the list of sections.
  */
 export function AppSidebar() {
   const pathname = usePathname()
@@ -61,6 +63,7 @@ export function AppSidebar() {
       ) : (
         <DocsSidebarRow />
       )}
+      <SettingsSidebarRow active={isSettingsPath(pathname)} />
     </>
   )
 }
@@ -70,16 +73,39 @@ export function AppSidebar() {
  * row `debate-help-docs`' `app-sidebar-docs-tree.tsx` draws there, linking to
  * the docs, so the section is always in the sidebar.
  */
+const SECTION_ROW =
+  "flex w-full min-w-0 items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm font-semibold transition-colors hover:bg-accent hover:text-foreground"
+
 function DocsSidebarRow() {
   return (
     <nav aria-label="Docs" className="flex shrink-0 flex-col gap-1 text-sm">
       <Link
         href="/docs"
-        className="flex w-full min-w-0 items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm font-semibold transition-colors hover:bg-accent hover:text-foreground"
+        className={SECTION_ROW}
       >
         <BookOpen className="size-4 shrink-0 text-muted-foreground" />
         <span className="flex-1 truncate">Docs</span>
         <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
+      </Link>
+    </nav>
+  )
+}
+
+function isSettingsPath(pathname: string | null | undefined): boolean {
+  return pathname === "/settings" || !!pathname?.startsWith("/settings/")
+}
+
+/** The Settings row under Docs, on every route; highlighted on `/settings`. */
+function SettingsSidebarRow({ active }: { active: boolean }) {
+  return (
+    <nav aria-label="Settings" className="flex shrink-0 flex-col gap-1 text-sm">
+      <Link
+        href="/settings"
+        aria-current={active ? "page" : undefined}
+        className={`${SECTION_ROW} ${active ? "bg-accent text-foreground" : ""}`}
+      >
+        <Settings className="size-4 shrink-0 text-muted-foreground" />
+        <span className="flex-1 truncate">Settings</span>
       </Link>
     </nav>
   )
