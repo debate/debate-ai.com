@@ -13,8 +13,9 @@
  * left sidebar (`AppSidebarShell`) instead of a second sidebar owned by the
  * editor route.
  *
- * It is mounted only where the documents are the subject — `/research/cards` and
- * `/reason-editor` (`lib/reason-docs/sidebar-routes.ts`). Elsewhere the
+ * It is mounted only where the documents are the subject — `/reason-editor`,
+ * in the app sidebar, and `/research/cards`, as a second column inside the page
+ * beside it (`lib/reason-docs/sidebar-routes.ts`). Elsewhere the
  * sidebar is that page's own nav: `/videos`, which renders its own sidebar
  * rather than the shell, shows the video library and nothing else.
  *
@@ -163,8 +164,8 @@ export interface ReasonDocsSidebarPanelsProps {
   /**
    * Take the height the container gives instead of the panels' own fixed one.
    *
-   * Passed on `/research/cards`, where these panels *are* the sidebar and so own what
-   * is left of the column under the dock. Left off where something else sits
+   * Passed on `/research/cards`, where these panels are a column of their own
+   * inside the page and so own its full height. Left off where something else sits
    * below them in a scrolling column (`/reason-editor`'s sidebar, and the
    * strip above the editor below `md`): a flexible box there is squeezed to
    * nothing by the nav tree under it.

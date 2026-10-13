@@ -1,6 +1,6 @@
 /**
- * @fileoverview Which routes carry the REASON docs panels in the app sidebar,
- * and which routes trim that sidebar down to them.
+ * @fileoverview Which routes carry the REASON docs panels, and which of them
+ * open the panels as a column inside the page instead of in the app sidebar.
  *
  * The Files / Topics / Tabs panels used to ride in every sidebar, `/videos`
  * included. That put a document tree above the video library's own nav, where
@@ -50,21 +50,20 @@ export function showsReasonDocsPanels(pathname: string | null | undefined): bool
 }
 
 /**
- * True in the `/research/cards` subtree, where the sidebar is *only* the document
- * panels.
+ * True in the `/research/cards` subtree, where the document panels open as a
+ * second column *inside the page* (`routes/cards/page.tsx`), beside the app
+ * sidebar rather than in place of it.
  *
- * Clicking Cards in the dock otherwise lands you on a column carrying four
- * navigations at once — the docs panels, the whole Apps / Coaching / Research /
- * Practice tree, the glossary and rankings links, and the site footer — on a
- * page that is about the first of them. On this subtree the tree and the footer
- * are dropped, which also leaves the panels the column to themselves: they
- * divide its height between them, so the file tree and the open tabs are sized
- * by dragging the seam rather than by scrolling past each other. The dock
- * stays, since it is what you clicked Cards in and what takes you back to
- * videos. `/reason-editor` keeps the full tree — it is reached *from* those
- * other sections rather than being one of them.
+ * The cards subtree used to trim the app sidebar down to the panels alone, so
+ * clicking Cards swapped out the Videos / tool tree the reader had just used
+ * to get there. The app sidebar now stays the same on every destination, and
+ * the card search brings its own panels column with it: the panels get the
+ * page's full height to divide between them (the file tree and the open tabs
+ * are sized by dragging the seam), and the tree stays one click away. Below
+ * `md` the page column is not drawn; the mobile drawer shows the panels above
+ * the tree instead (`mobileSidebarKind`).
  */
-export function showsCardsOnlySidebar(pathname: string | null | undefined): boolean {
+export function showsCardsPagePanel(pathname: string | null | undefined): boolean {
   if (!pathname) return false
   return isUnder(normalize(pathname), CARDS_ROUTE)
 }

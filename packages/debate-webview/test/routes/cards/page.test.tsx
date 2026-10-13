@@ -4,6 +4,9 @@ import { renderToStaticMarkup } from "react-dom/server"
 vi.mock("../../../src/components/tools/ToolSyncBadge", () => ({
   ToolSyncBadge: ({ href }: { href: string }) => <span data-testid="sync-badge" data-href={href} />,
 }))
+vi.mock("../../../src/components/reason-docs/ReasonDocsSidebarPanels", () => ({
+  ReasonDocsSidebarPanels: () => <div data-testid="docs-panels" />,
+}))
 vi.mock("@debate/research-evidence", () => ({
   SearchInterface: () => <div data-testid="search-interface" />,
 }))
@@ -19,5 +22,11 @@ describe("CARDS search page", () => {
 
   it("still renders the search workspace", () => {
     expect(renderToStaticMarkup(<SearchPage />)).toContain("search-interface")
+  })
+
+  it("opens the docs panels as a column inside the page, beside the search", () => {
+    const html = renderToStaticMarkup(<SearchPage />)
+    expect(html).toContain('data-testid="cards-docs-panel"')
+    expect(html.indexOf("docs-panels")).toBeLessThan(html.indexOf("search-interface"))
   })
 })

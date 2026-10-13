@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation"
 import { LibrarySidebarTree } from "@debate/videos"
 
 import { ChromeErrorBoundary } from "../../../lib/ui/layout/chrome-error-boundary"
-import { showsCardsOnlySidebar, showsReasonDocsPanels } from "../../../lib/reason-docs/sidebar-routes"
+import { showsCardsPagePanel, showsReasonDocsPanels } from "../../../lib/reason-docs/sidebar-routes"
 import { isDocsPath } from "../../../lib/layout/frame-navigation"
 import { CategoryDock } from "../CategoryDock"
 import { ReasonDocsSidebarPanels } from "../../reason-docs/ReasonDocsSidebarPanels"
@@ -24,12 +24,12 @@ export const DOCS_SIDEBAR_SLOT_ID = "app-sidebar-docs-slot"
  * cost only that region, not the page (see `chrome-error-boundary.tsx`):
  *
  * - **The embedded dock** at the top, sticky as the column scrolls.
- * - **The REASON docs panels** on `/research/cards` and `/reason-editor`
- *   (`showsReasonDocsPanels`). On `/research/cards` they are the whole column
- *   (`showsCardsOnlySidebar`): no tree, and the panels
- *   `fill` the leftover height so each scrolls inside its own share.
- * - **The library tree** — Videos (Lectures is one of its rows) and the tool sections —
- *   everywhere else. The site links that used to sit under it as a footer
+ * - **The REASON docs panels** on `/reason-editor` (`showsReasonDocsPanels`).
+ *   `/research/cards` opens them as a second column inside the page instead
+ *   (`showsCardsPagePanel`), so this column stays the same there as on every
+ *   other destination.
+ * - **The library tree** — Videos (Lectures is one of its rows) and the tool
+ *   sections — on every route. The site links that used to sit under it as a footer
  *   row are a submenu of the account menu now (`nav-user.tsx`).
  * - **The help docs' page tree** on `/docs` ({@link DOCS_SIDEBAR_SLOT_ID}),
  *   at the bottom of the column, below the tool sections' Insights
@@ -38,25 +38,21 @@ export const DOCS_SIDEBAR_SLOT_ID = "app-sidebar-docs-slot"
  */
 export function AppSidebar() {
   const pathname = usePathname()
-  const cardsOnly = showsCardsOnlySidebar(pathname)
+  const docsPanels = showsReasonDocsPanels(pathname) && !showsCardsPagePanel(pathname)
 
   return (
     <>
       <ChromeErrorBoundary label="CategoryDock">
         <CategoryDock embedded />
       </ChromeErrorBoundary>
-      {showsReasonDocsPanels(pathname) && (
-        <div className={cardsOnly ? "flex min-h-0 flex-1 flex-col" : undefined}>
-          <ChromeErrorBoundary label="ReasonDocsSidebarPanels">
-            <ReasonDocsSidebarPanels className={cardsOnly ? "min-h-0 flex-1" : "shrink-0"} fill={cardsOnly} />
-          </ChromeErrorBoundary>
-        </div>
-      )}
-      {!cardsOnly && (
-        <ChromeErrorBoundary label="LibrarySidebarTree">
-          <LibrarySidebarTree />
+      {docsPanels && (
+        <ChromeErrorBoundary label="ReasonDocsSidebarPanels">
+          <ReasonDocsSidebarPanels className="shrink-0" />
         </ChromeErrorBoundary>
       )}
+      <ChromeErrorBoundary label="LibrarySidebarTree">
+        <LibrarySidebarTree />
+      </ChromeErrorBoundary>
       {isDocsPath(pathname) && <div id={DOCS_SIDEBAR_SLOT_ID} className="shrink-0" />}
     </>
   )
