@@ -11,8 +11,9 @@
  *
  *  - a table whose definition changed is rebuilt (create, copy, drop, rename —
  *    SQLite cannot alter a column's type or constraints in place), mapping a
- *    reference column's 0 sentinel to NULL and coercing flag columns to 0/1 on
- *    the way, then its indexes are recreated;
+ *    reference column's 0 sentinel to NULL, coercing flag columns to 0/1 and
+ *    filling a NOT NULL column's NULLs with its default on the way, then its
+ *    indexes are recreated;
  *  - an index that no longer exists is dropped, a new one created;
  *  - a new table is created. A table the new schema no longer has is left
  *    alone: dropping data is never automatic.
@@ -51,6 +52,8 @@ function copyExpression(col) {
   const name = q(col.name);
   if (col.sentinel) return `NULLIF(${name}, 0)`;
   if (col.check === "IN (0, 1)") return `CASE WHEN ${name} IS NULL THEN NULL WHEN ${name} = 0 THEN 0 ELSE 1 END`;
+  // A column that became NOT NULL again (e.g. a sentinel rewrite undone) gets its default back.
+  if (col.notNull && col.default !== null && col.default !== "NULL") return `COALESCE(${name}, ${col.default})`;
   return name;
 }
 

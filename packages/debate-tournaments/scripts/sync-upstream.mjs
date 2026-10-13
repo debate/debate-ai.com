@@ -46,7 +46,9 @@ import {
   parseMysqlTables,
   seedCleanupStatements,
   tablesToSqlite,
+  unclassifiedColumns,
 } from "./lib/mysql-to-sqlite.mjs";
+import { JUNCTIONS } from "./lib/schema-rules.mjs";
 import { renderSchemaDoc } from "./lib/schema-doc.mjs";
 import { upgradeStatements } from "./lib/schema-upgrade.mjs";
 
@@ -230,6 +232,9 @@ function writeSchema(commit) {
   const tables = parseMysqlTables(dump);
   const ruled = applySchemaRules(tables);
   const kept = ruled.filter((t) => !config.skipTables.includes(t.name));
+  for (const key of unclassifiedColumns(tables, { skipTables: config.skipTables })) {
+    console.warn(`[sync-upstream] warning: ${key} looks like a reference but is not in scripts/lib/relationships.mjs (RELATIONSHIPS or SCALARS)`);
+  }
   const keptNames = new Set(kept.map((t) => t.name));
   const statements = tablesToSqlite(ruled, { skipTables: config.skipTables });
   const header = [
@@ -263,13 +268,41 @@ function writeSchema(commit) {
       "/** Columns holding DATETIME/TIMESTAMP/DATE values in some upstream table. */",
       `export const DATE_COLUMNS: readonly string[] = ${JSON.stringify(dateColumns(tables), null, 2)};`,
       "",
-      "/** Reference columns (`table` → `column` → the table whose id it holds), for the orphan check. */",
-      `export const REFERENCES: Readonly<Record<string, Readonly<Record<string, string>>>> = ${JSON.stringify(
-        Object.fromEntries(
-          kept
-            .map((t) => [t.name, Object.fromEntries(t.columns.filter((c) => c.reference && keptNames.has(c.reference)).map((c) => [c.name, c.reference]))])
-            .filter(([, refs]) => Object.keys(refs).length),
+      "/** Reference columns from `scripts/lib/relationships.mjs`: `table` → `column` → target table and evidence. */",
+      `export const REFERENCES: Readonly<Record<string, Readonly<Record<string, { target: string; verified: string | false }>>>> = {\n${kept
+        .map((t) => [t.name, t.columns.filter((c) => c.reference && keptNames.has(c.reference))])
+        .filter(([, refs]) => refs.length)
+        .map(([name, refs]) => `  ${JSON.stringify(name)}: {\n${refs.map((c) => `    ${JSON.stringify(c.name)}: ${JSON.stringify({ target: c.reference, verified: c.verified })},`).join("\n")}\n  },`)
+        .join("\n")}\n};`,
+      "",
+      "/** Public field allowlist per table: every column except credentials and personal contact details. */",
+      `export const PUBLIC_COLUMNS: Readonly<Record<string, readonly string[]>> = {\n${kept
+        .map((t) => `  ${JSON.stringify(t.name)}: ${JSON.stringify(t.columns.filter((c) => !c.sensitive).map((c) => c.name))},`)
+        .join("\n")}\n};`,
+      "",
+      "/** Column names no table allows publicly, stripped from every API response. */",
+      `export const PRIVATE_KEYS: readonly string[] = ${JSON.stringify(
+        [...new Set(kept.flatMap((t) => t.columns.filter((c) => c.sensitive).map((c) => c.name)))]
+          .filter((name) => kept.every((t) => t.columns.every((c) => c.name !== name || c.sensitive)))
+          .sort(),
+        null,
+        2,
+      )};`,
+      "",
+      "/** Unique indexes with a nullable column: SQLite treats NULLs as distinct, so they admit duplicates. */",
+      `export const NULLABLE_UNIQUE_INDEXES: readonly { table: string; index: string; columns: readonly string[] }[] = ${JSON.stringify(
+        kept.flatMap((t) =>
+          t.indexes
+            .filter((ix) => ix.unique && ix.columns.some((name) => !t.columns.find((c) => c.name === name)?.notNull))
+            .map((ix) => ({ table: t.name, index: `${t.name}__${ix.name}`, columns: ix.columns })),
         ),
+        null,
+        2,
+      )};`,
+      "",
+      "/** Set-membership tables whose pair should be unique (`schema-rules.mjs` JUNCTIONS). */",
+      `export const JUNCTIONS: Readonly<Record<string, readonly [string, string]>> = ${JSON.stringify(
+        Object.fromEntries(Object.entries(JUNCTIONS).filter(([t]) => keptNames.has(t))),
         null,
         2,
       )};`,

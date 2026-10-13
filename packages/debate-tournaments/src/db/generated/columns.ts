@@ -92,483 +92,933 @@ export const DATE_COLUMNS: readonly string[] = [
   "visible_at"
 ];
 
-/** Reference columns (`table` → `column` → the table whose id it holds), for the orphan check. */
-export const REFERENCES: Readonly<Record<string, Readonly<Record<string, string>>>> = {
+/** Reference columns from `scripts/lib/relationships.mjs`: `table` → `column` → target table and evidence. */
+export const REFERENCES: Readonly<Record<string, Readonly<Record<string, { target: string; verified: string | false }>>>> = {
   "ad": {
-    "person": "person",
-    "approved_by": "person"
+    "person": {"target":"person","verified":false},
+    "approved_by": {"target":"person","verified":false},
   },
   "autoqueue": {
-    "round": "round",
-    "event": "event",
-    "created_by": "person"
+    "round": {"target":"round","verified":false},
+    "event": {"target":"event","verified":false},
+    "created_by": {"target":"person","verified":false},
   },
   "ballot": {
-    "started_by": "person",
-    "entered_by": "person",
-    "audited_by": "person",
-    "judge": "judge",
-    "panel": "panel",
-    "entry": "entry"
+    "started_by": {"target":"person","verified":"sample-data"},
+    "entered_by": {"target":"person","verified":"sample-data"},
+    "audited_by": {"target":"person","verified":"sample-data"},
+    "judge": {"target":"judge","verified":"upstream-fk"},
+    "panel": {"target":"panel","verified":"upstream-fk"},
+    "entry": {"target":"entry","verified":"upstream-fk"},
   },
   "caselist": {
-    "person": "person"
+    "person": {"target":"person","verified":"upstream-fk"},
+    "partner": {"target":"person","verified":"upstream-fk"},
   },
   "category": {
-    "tourn": "tourn",
-    "pattern": "pattern"
+    "tourn": {"target":"tourn","verified":"upstream-fk"},
+    "pattern": {"target":"pattern","verified":false},
   },
   "category_setting": {
-    "category": "category",
-    "setting": "setting"
+    "category": {"target":"category","verified":"upstream-fk"},
+    "setting": {"target":"setting","verified":false},
   },
   "change_log": {
-    "person": "person",
-    "event": "event",
-    "category": "category",
-    "chapter": "chapter",
-    "circuit": "circuit",
-    "tourn": "tourn",
-    "entry": "entry",
-    "judge": "judge",
-    "fine": "fine",
-    "panel": "panel",
-    "round": "round",
-    "school": "school"
+    "person": {"target":"person","verified":false},
+    "event": {"target":"event","verified":false},
+    "category": {"target":"category","verified":false},
+    "chapter": {"target":"chapter","verified":false},
+    "circuit": {"target":"circuit","verified":false},
+    "tourn": {"target":"tourn","verified":false},
+    "entry": {"target":"entry","verified":false},
+    "judge": {"target":"judge","verified":false},
+    "fine": {"target":"fine","verified":false},
+    "panel": {"target":"panel","verified":false},
+    "round": {"target":"round","verified":false},
+    "school": {"target":"school","verified":false},
   },
   "chapter": {
-    "district": "district"
+    "district": {"target":"district","verified":"sample-data"},
   },
   "chapter_circuit": {
-    "circuit": "circuit",
-    "chapter": "chapter",
-    "region": "region",
-    "circuit_membership": "circuit_membership"
+    "circuit": {"target":"circuit","verified":"upstream-fk"},
+    "chapter": {"target":"chapter","verified":"upstream-fk"},
+    "region": {"target":"region","verified":"sample-data"},
+    "circuit_membership": {"target":"circuit_membership","verified":"sample-data"},
   },
   "chapter_judge": {
-    "chapter": "chapter",
-    "person": "person"
+    "chapter": {"target":"chapter","verified":"upstream-fk"},
+    "person": {"target":"person","verified":"upstream-fk"},
   },
   "chapter_setting": {
-    "chapter": "chapter",
-    "setting": "setting"
+    "chapter": {"target":"chapter","verified":"upstream-fk"},
+    "setting": {"target":"setting","verified":false},
   },
   "circuit_membership": {
-    "circuit": "circuit"
+    "circuit": {"target":"circuit","verified":"sample-data"},
   },
   "circuit_setting": {
-    "circuit": "circuit",
-    "setting": "setting"
+    "circuit": {"target":"circuit","verified":"upstream-fk"},
+    "setting": {"target":"setting","verified":false},
   },
   "coach": {
-    "person": "person",
-    "entry": "entry",
-    "student": "student",
-    "created_by": "person"
+    "person": {"target":"person","verified":"upstream-fk"},
+    "entry": {"target":"entry","verified":"upstream-fk"},
+    "student": {"target":"student","verified":"upstream-fk"},
+    "created_by": {"target":"person","verified":"upstream-fk"},
   },
   "concession": {
-    "tourn": "tourn"
+    "tourn": {"target":"tourn","verified":"upstream-fk"},
   },
   "concession_option": {
-    "concession_type": "concession_type"
+    "concession_type": {"target":"concession_type","verified":"sample-data"},
   },
   "concession_purchase": {
-    "school": "school",
-    "concession": "concession",
-    "invoice": "invoice"
+    "school": {"target":"school","verified":"upstream-fk"},
+    "concession": {"target":"concession","verified":"upstream-fk"},
+    "invoice": {"target":"invoice","verified":false},
   },
   "concession_purchase_option": {
-    "concession_purchase": "concession_purchase",
-    "concession_option": "concession_option"
+    "concession_purchase": {"target":"concession_purchase","verified":"upstream-fk"},
+    "concession_option": {"target":"concession_option","verified":"upstream-fk"},
   },
   "concession_type": {
-    "concession": "concession"
+    "concession": {"target":"concession","verified":"sample-data"},
   },
   "conflict": {
-    "person": "person",
-    "chapter": "chapter",
-    "added_by": "person"
+    "person": {"target":"person","verified":"upstream-fk"},
+    "conflicted": {"target":"person","verified":"upstream-fk"},
+    "chapter": {"target":"chapter","verified":"upstream-fk"},
+    "added_by": {"target":"person","verified":"sample-data"},
   },
   "contact": {
-    "school": "school",
-    "person": "person",
-    "created_by": "person"
+    "school": {"target":"school","verified":"upstream-fk"},
+    "person": {"target":"person","verified":"upstream-fk"},
+    "created_by": {"target":"person","verified":"upstream-fk"},
   },
   "district": {
-    "region": "region"
+    "region": {"target":"region","verified":"sample-data"},
   },
   "email": {
-    "person": "person",
-    "tourn": "tourn",
-    "circuit": "circuit"
+    "person": {"target":"person","verified":false},
+    "tourn": {"target":"tourn","verified":"upstream-fk"},
+    "circuit": {"target":"circuit","verified":false},
   },
   "entry": {
-    "tourn": "tourn",
-    "school": "school",
-    "event": "event",
-    "registered_by": "person"
+    "tourn": {"target":"tourn","verified":"sample-data"},
+    "school": {"target":"school","verified":"sample-data"},
+    "event": {"target":"event","verified":"upstream-fk"},
+    "registered_by": {"target":"person","verified":"upstream-fk"},
   },
   "entry_setting": {
-    "entry": "entry",
-    "setting": "setting"
+    "entry": {"target":"entry","verified":"upstream-fk"},
+    "setting": {"target":"setting","verified":false},
   },
   "entry_student": {
-    "entry": "entry",
-    "student": "student"
+    "entry": {"target":"entry","verified":"upstream-fk"},
+    "student": {"target":"student","verified":"upstream-fk"},
   },
   "event": {
-    "tourn": "tourn",
-    "category": "category",
-    "pattern": "pattern",
-    "rating_subset": "rating_subset",
-    "nsda_category": "nsda_category"
+    "tourn": {"target":"tourn","verified":"upstream-fk"},
+    "category": {"target":"category","verified":"upstream-fk"},
+    "pattern": {"target":"pattern","verified":"sample-data"},
+    "rating_subset": {"target":"rating_subset","verified":"sample-data"},
+    "nsda_category": {"target":"nsda_category","verified":"upstream-fk"},
   },
   "event_setting": {
-    "event": "event",
-    "setting": "setting"
+    "event": {"target":"event","verified":"upstream-fk"},
+    "setting": {"target":"setting","verified":false},
   },
   "file": {
-    "tourn": "tourn",
-    "school": "school",
-    "entry": "entry",
-    "event": "event",
-    "district": "district",
-    "circuit": "circuit",
-    "webpage": "webpage",
-    "person": "person"
+    "tourn": {"target":"tourn","verified":"upstream-fk"},
+    "school": {"target":"school","verified":"sample-data"},
+    "entry": {"target":"entry","verified":false},
+    "event": {"target":"event","verified":"sample-data"},
+    "district": {"target":"district","verified":false},
+    "circuit": {"target":"circuit","verified":false},
+    "webpage": {"target":"webpage","verified":false},
+    "person": {"target":"person","verified":false},
   },
   "fine": {
-    "levied_by": "person",
-    "deleted_by": "person",
-    "tourn": "tourn",
-    "school": "school",
-    "region": "region",
-    "judge": "judge",
-    "person": "person",
-    "invoice": "invoice"
+    "levied_by": {"target":"person","verified":false},
+    "deleted_by": {"target":"person","verified":false},
+    "tourn": {"target":"tourn","verified":"upstream-fk"},
+    "school": {"target":"school","verified":false},
+    "region": {"target":"region","verified":false},
+    "judge": {"target":"judge","verified":false},
+    "person": {"target":"person","verified":false},
+    "parent": {"target":"fine","verified":false},
+    "invoice": {"target":"invoice","verified":false},
   },
   "follower": {
-    "person": "person",
-    "tourn": "tourn",
-    "judge": "judge",
-    "entry": "entry",
-    "school": "school",
-    "student": "student"
+    "person": {"target":"person","verified":false},
+    "tourn": {"target":"tourn","verified":"sample-data"},
+    "judge": {"target":"judge","verified":"upstream-fk"},
+    "entry": {"target":"entry","verified":"upstream-fk"},
+    "school": {"target":"school","verified":"upstream-fk"},
+    "student": {"target":"student","verified":false},
   },
   "hotel": {
-    "tourn": "tourn"
+    "tourn": {"target":"tourn","verified":"sample-data"},
   },
   "housing": {
-    "tourn": "tourn",
-    "student": "student",
-    "judge": "judge",
-    "school": "school"
+    "tourn": {"target":"tourn","verified":false},
+    "student": {"target":"student","verified":false},
+    "judge": {"target":"judge","verified":false},
+    "school": {"target":"school","verified":false},
   },
   "housing_slots": {
-    "tourn": "tourn"
+    "tourn": {"target":"tourn","verified":false},
   },
   "invoice": {
-    "school": "school"
+    "school": {"target":"school","verified":"upstream-fk"},
   },
   "jpool": {
-    "category": "category",
-    "site": "site"
+    "category": {"target":"category","verified":"upstream-fk"},
+    "site": {"target":"site","verified":"sample-data"},
+    "parent": {"target":"jpool","verified":"sample-data"},
   },
   "jpool_judge": {
-    "judge": "judge",
-    "jpool": "jpool"
+    "judge": {"target":"judge","verified":"upstream-fk"},
+    "jpool": {"target":"jpool","verified":"upstream-fk"},
   },
   "jpool_round": {
-    "jpool": "jpool",
-    "round": "round"
+    "jpool": {"target":"jpool","verified":"upstream-fk"},
+    "round": {"target":"round","verified":"upstream-fk"},
   },
   "jpool_setting": {
-    "jpool": "jpool",
-    "setting": "setting"
+    "jpool": {"target":"jpool","verified":"upstream-fk"},
+    "setting": {"target":"setting","verified":false},
   },
   "judge": {
-    "school": "school",
-    "category": "category",
-    "chapter_judge": "chapter_judge",
-    "person": "person",
-    "registered_by": "person"
+    "school": {"target":"school","verified":"sample-data"},
+    "category": {"target":"category","verified":"upstream-fk"},
+    "chapter_judge": {"target":"chapter_judge","verified":"sample-data"},
+    "person": {"target":"person","verified":"upstream-fk"},
+    "registered_by": {"target":"person","verified":"upstream-fk"},
   },
   "judge_hire": {
-    "judge": "judge",
-    "tourn": "tourn",
-    "school": "school",
-    "region": "region",
-    "category": "category"
+    "judge": {"target":"judge","verified":"sample-data"},
+    "tourn": {"target":"tourn","verified":"sample-data"},
+    "school": {"target":"school","verified":"upstream-fk"},
+    "region": {"target":"region","verified":"sample-data"},
+    "category": {"target":"category","verified":"sample-data"},
   },
   "judge_setting": {
-    "judge": "judge",
-    "setting": "setting"
+    "judge": {"target":"judge","verified":"upstream-fk"},
+    "setting": {"target":"setting","verified":false},
   },
   "message": {
-    "person": "person",
-    "tourn": "tourn",
-    "email": "email"
+    "person": {"target":"person","verified":"upstream-fk"},
+    "tourn": {"target":"tourn","verified":"upstream-fk"},
+    "sender": {"target":"person","verified":"upstream-fk"},
+    "email": {"target":"email","verified":"upstream-fk"},
   },
   "panel": {
-    "room": "room",
-    "round": "round"
+    "room": {"target":"room","verified":"sample-data"},
+    "round": {"target":"round","verified":"upstream-fk"},
   },
   "panel_setting": {
-    "panel": "panel",
-    "setting": "setting"
+    "panel": {"target":"panel","verified":"upstream-fk"},
+    "setting": {"target":"setting","verified":false},
   },
   "pattern": {
-    "tourn": "tourn"
+    "tourn": {"target":"tourn","verified":"upstream-fk"},
   },
   "permission": {
-    "person": "person",
-    "tourn": "tourn",
-    "region": "region",
-    "district": "district",
-    "chapter": "chapter",
-    "circuit": "circuit",
-    "category": "category",
-    "event": "event",
-    "created_by": "person"
+    "person": {"target":"person","verified":"upstream-fk"},
+    "tourn": {"target":"tourn","verified":"upstream-fk"},
+    "region": {"target":"region","verified":"upstream-fk"},
+    "district": {"target":"district","verified":"upstream-fk"},
+    "chapter": {"target":"chapter","verified":"upstream-fk"},
+    "circuit": {"target":"circuit","verified":"upstream-fk"},
+    "category": {"target":"category","verified":"upstream-fk"},
+    "event": {"target":"event","verified":"sample-data"},
+    "created_by": {"target":"person","verified":"sample-data"},
   },
   "person_quiz": {
-    "approved_by": "person",
-    "person": "person",
-    "quiz": "quiz"
+    "approved_by": {"target":"person","verified":"sample-data"},
+    "person": {"target":"person","verified":"upstream-fk"},
+    "quiz": {"target":"quiz","verified":"upstream-fk"},
   },
   "person_setting": {
-    "person": "person",
-    "setting": "setting"
+    "person": {"target":"person","verified":"upstream-fk"},
+    "setting": {"target":"setting","verified":false},
   },
   "practice": {
-    "chapter": "chapter",
-    "created_by": "person"
+    "chapter": {"target":"chapter","verified":"upstream-fk"},
+    "created_by": {"target":"person","verified":"sample-data"},
   },
   "practice_student": {
-    "practice": "practice",
-    "student": "student",
-    "created_by": "person"
+    "practice": {"target":"practice","verified":"upstream-fk"},
+    "student": {"target":"student","verified":"upstream-fk"},
+    "created_by": {"target":"person","verified":"sample-data"},
   },
   "protocol": {
-    "tourn": "tourn"
+    "tourn": {"target":"tourn","verified":"upstream-fk"},
   },
   "protocol_setting": {
-    "protocol": "protocol",
-    "setting": "setting"
+    "protocol": {"target":"protocol","verified":"upstream-fk"},
+    "setting": {"target":"setting","verified":false},
   },
   "qualifier": {
-    "entry": "entry",
-    "tourn": "tourn"
+    "entry": {"target":"entry","verified":"upstream-fk"},
+    "tourn": {"target":"tourn","verified":false},
   },
   "quiz": {
-    "person": "person",
-    "tourn": "tourn",
-    "circuit": "circuit"
+    "person": {"target":"person","verified":"sample-data"},
+    "tourn": {"target":"tourn","verified":"upstream-fk"},
+    "circuit": {"target":"circuit","verified":false},
   },
   "rating": {
-    "entry": "entry",
-    "rating_tier": "rating_tier",
-    "judge": "judge",
-    "rating_subset": "rating_subset"
+    "entry": {"target":"entry","verified":"upstream-fk"},
+    "rating_tier": {"target":"rating_tier","verified":"sample-data"},
+    "judge": {"target":"judge","verified":"upstream-fk"},
+    "rating_subset": {"target":"rating_subset","verified":"sample-data"},
   },
   "rating_subset": {
-    "category": "category"
+    "category": {"target":"category","verified":"sample-data"},
   },
   "rating_tier": {
-    "category": "category",
-    "rating_subset": "rating_subset"
+    "category": {"target":"category","verified":"upstream-fk"},
+    "rating_subset": {"target":"rating_subset","verified":false},
   },
   "region": {
-    "circuit": "circuit",
-    "tourn": "tourn"
+    "circuit": {"target":"circuit","verified":"sample-data"},
+    "tourn": {"target":"tourn","verified":"sample-data"},
   },
   "region_fine": {
-    "levied_by": "person",
-    "tourn": "tourn",
-    "region": "region",
-    "school": "school"
+    "levied_by": {"target":"person","verified":"sample-data"},
+    "tourn": {"target":"tourn","verified":false},
+    "region": {"target":"region","verified":"sample-data"},
+    "school": {"target":"school","verified":false},
   },
   "region_setting": {
-    "region": "region",
-    "setting": "setting",
-    "event": "event"
+    "region": {"target":"region","verified":"upstream-fk"},
+    "setting": {"target":"setting","verified":false},
+    "event": {"target":"event","verified":false},
   },
   "result": {
-    "result_set": "result_set",
-    "entry": "entry",
-    "student": "student",
-    "school": "school",
-    "round": "round",
-    "panel": "panel"
+    "result_set": {"target":"result_set","verified":"upstream-fk"},
+    "entry": {"target":"entry","verified":"upstream-fk"},
+    "student": {"target":"student","verified":"upstream-fk"},
+    "school": {"target":"school","verified":"upstream-fk"},
+    "round": {"target":"round","verified":"sample-data"},
+    "panel": {"target":"panel","verified":"sample-data"},
   },
   "result_key": {
-    "result_set": "result_set"
+    "result_set": {"target":"result_set","verified":"upstream-fk"},
   },
   "result_set": {
-    "tourn": "tourn",
-    "sweep_set": "sweep_set",
-    "sweep_award": "sweep_award",
-    "event": "event",
-    "nsda_category": "nsda_category",
-    "circuit": "circuit"
+    "tourn": {"target":"tourn","verified":"upstream-fk"},
+    "sweep_set": {"target":"sweep_set","verified":"sample-data"},
+    "sweep_award": {"target":"sweep_award","verified":false},
+    "event": {"target":"event","verified":"upstream-fk"},
+    "nsda_category": {"target":"nsda_category","verified":"upstream-fk"},
+    "circuit": {"target":"circuit","verified":"sample-data"},
   },
   "result_value": {
-    "result": "result",
-    "result_key": "result_key",
-    "protocol": "protocol"
+    "result": {"target":"result","verified":"upstream-fk"},
+    "result_key": {"target":"result_key","verified":false},
+    "protocol": {"target":"protocol","verified":false},
   },
   "room": {
-    "site": "site"
+    "site": {"target":"site","verified":"upstream-fk"},
   },
   "room_strike": {
-    "room": "room",
-    "event": "event",
-    "tourn": "tourn",
-    "entry": "entry",
-    "judge": "judge"
+    "room": {"target":"room","verified":"upstream-fk"},
+    "event": {"target":"event","verified":false},
+    "tourn": {"target":"tourn","verified":"sample-data"},
+    "entry": {"target":"entry","verified":false},
+    "judge": {"target":"judge","verified":false},
   },
   "round": {
-    "event": "event",
-    "timeslot": "timeslot",
-    "site": "site",
-    "protocol": "protocol"
+    "event": {"target":"event","verified":"upstream-fk"},
+    "timeslot": {"target":"timeslot","verified":"upstream-fk"},
+    "site": {"target":"site","verified":"upstream-fk"},
+    "protocol": {"target":"protocol","verified":"upstream-fk"},
   },
   "round_setting": {
-    "round": "round",
-    "setting": "setting"
+    "round": {"target":"round","verified":"upstream-fk"},
+    "setting": {"target":"setting","verified":false},
   },
   "rpool": {
-    "tourn": "tourn"
+    "tourn": {"target":"tourn","verified":"upstream-fk"},
   },
   "rpool_room": {
-    "rpool": "rpool",
-    "room": "room"
+    "rpool": {"target":"rpool","verified":"upstream-fk"},
+    "room": {"target":"room","verified":"upstream-fk"},
   },
   "rpool_round": {
-    "rpool": "rpool",
-    "round": "round"
+    "rpool": {"target":"rpool","verified":"upstream-fk"},
+    "round": {"target":"round","verified":"upstream-fk"},
   },
   "rpool_setting": {
-    "rpool": "rpool",
-    "setting": "setting"
+    "rpool": {"target":"rpool","verified":"upstream-fk"},
+    "setting": {"target":"setting","verified":false},
   },
   "school": {
-    "tourn": "tourn",
-    "chapter": "chapter",
-    "region": "region",
-    "district": "district",
-    "registered_by": "person"
+    "tourn": {"target":"tourn","verified":"upstream-fk"},
+    "chapter": {"target":"chapter","verified":"sample-data"},
+    "region": {"target":"region","verified":"sample-data"},
+    "district": {"target":"district","verified":"sample-data"},
+    "registered_by": {"target":"person","verified":"upstream-fk"},
   },
   "school_setting": {
-    "school": "school",
-    "setting": "setting",
-    "chapter": "chapter"
+    "school": {"target":"school","verified":"upstream-fk"},
+    "setting": {"target":"setting","verified":false},
+    "chapter": {"target":"chapter","verified":false},
   },
   "score": {
-    "ballot": "ballot",
-    "student": "student"
+    "ballot": {"target":"ballot","verified":"upstream-fk"},
+    "student": {"target":"student","verified":"sample-data"},
   },
   "setting_label": {
-    "setting": "setting"
+    "setting": {"target":"setting","verified":"upstream-fk"},
   },
   "shift": {
-    "category": "category"
+    "category": {"target":"category","verified":"upstream-fk"},
   },
   "site": {
-    "circuit": "circuit"
+    "circuit": {"target":"circuit","verified":"sample-data"},
   },
   "stats": {
-    "event": "event"
+    "event": {"target":"event","verified":false},
   },
   "strike": {
-    "tourn": "tourn",
-    "judge": "judge",
-    "event": "event",
-    "entry": "entry",
-    "school": "school",
-    "region": "region",
-    "district": "district",
-    "timeslot": "timeslot",
-    "shift": "shift",
-    "entered_by": "person"
+    "tourn": {"target":"tourn","verified":"upstream-fk"},
+    "judge": {"target":"judge","verified":"upstream-fk"},
+    "event": {"target":"event","verified":"sample-data"},
+    "entry": {"target":"entry","verified":"upstream-fk"},
+    "school": {"target":"school","verified":"sample-data"},
+    "region": {"target":"region","verified":"sample-data"},
+    "district": {"target":"district","verified":"sample-data"},
+    "timeslot": {"target":"timeslot","verified":false},
+    "shift": {"target":"shift","verified":"sample-data"},
+    "entered_by": {"target":"person","verified":"sample-data"},
   },
   "student": {
-    "chapter": "chapter",
-    "person": "person"
+    "chapter": {"target":"chapter","verified":"upstream-fk"},
+    "person": {"target":"person","verified":"sample-data"},
   },
   "student_ballot": {
-    "panel": "panel",
-    "entry": "entry",
-    "entered_by": "person"
+    "panel": {"target":"panel","verified":false},
+    "entry": {"target":"entry","verified":false},
+    "entered_by": {"target":"person","verified":"sample-data"},
   },
   "student_setting": {
-    "student": "student",
-    "setting": "setting"
+    "student": {"target":"student","verified":"upstream-fk"},
+    "setting": {"target":"setting","verified":false},
   },
   "student_vote": {
-    "panel": "panel",
-    "entry": "entry",
-    "entered_by": "person"
+    "panel": {"target":"panel","verified":"upstream-fk"},
+    "entry": {"target":"entry","verified":"upstream-fk"},
+    "entered_by": {"target":"person","verified":"sample-data"},
   },
   "sweep_award": {
-    "circuit": "circuit"
+    "circuit": {"target":"circuit","verified":"sample-data"},
   },
   "sweep_award_event": {
-    "sweep_set": "sweep_set"
+    "sweep_set": {"target":"sweep_set","verified":false},
   },
   "sweep_event": {
-    "sweep_set": "sweep_set",
-    "event": "event",
-    "nsda_category": "nsda_category",
-    "sweep_award_event": "sweep_award_event"
+    "sweep_set": {"target":"sweep_set","verified":"upstream-fk"},
+    "event": {"target":"event","verified":"upstream-fk"},
+    "nsda_category": {"target":"nsda_category","verified":"upstream-fk"},
+    "sweep_award_event": {"target":"sweep_award_event","verified":false},
+  },
+  "sweep_include": {
+    "parent": {"target":"sweep_set","verified":"upstream-fk"},
+    "child": {"target":"sweep_set","verified":"upstream-fk"},
   },
   "sweep_rule": {
-    "sweep_set": "sweep_set",
-    "protocol": "protocol"
+    "sweep_set": {"target":"sweep_set","verified":"upstream-fk"},
+    "protocol": {"target":"protocol","verified":"sample-data"},
   },
   "sweep_set": {
-    "tourn": "tourn",
-    "sweep_award": "sweep_award"
+    "tourn": {"target":"tourn","verified":"upstream-fk"},
+    "sweep_award": {"target":"sweep_award","verified":false},
   },
   "tabroom_setting": {
-    "person": "person"
+    "person": {"target":"person","verified":"sample-data"},
   },
   "tiebreak": {
-    "protocol": "protocol"
+    "protocol": {"target":"protocol","verified":"upstream-fk"},
   },
   "timeslot": {
-    "tourn": "tourn"
+    "tourn": {"target":"tourn","verified":"upstream-fk"},
   },
   "topic": {
-    "created_by": "person"
+    "created_by": {"target":"person","verified":"sample-data"},
   },
   "tourn_circuit": {
-    "tourn": "tourn",
-    "circuit": "circuit"
+    "tourn": {"target":"tourn","verified":"upstream-fk"},
+    "circuit": {"target":"circuit","verified":"upstream-fk"},
   },
   "tourn_fee": {
-    "tourn": "tourn"
+    "tourn": {"target":"tourn","verified":"upstream-fk"},
   },
   "tourn_ignore": {
-    "tourn": "tourn",
-    "person": "person"
+    "tourn": {"target":"tourn","verified":"upstream-fk"},
+    "person": {"target":"person","verified":"upstream-fk"},
   },
   "tourn_setting": {
-    "tourn": "tourn",
-    "setting": "setting"
+    "tourn": {"target":"tourn","verified":"upstream-fk"},
+    "setting": {"target":"setting","verified":false},
   },
   "tourn_site": {
-    "tourn": "tourn",
-    "site": "site"
+    "tourn": {"target":"tourn","verified":"upstream-fk"},
+    "site": {"target":"site","verified":"upstream-fk"},
   },
   "webpage": {
-    "tourn": "tourn",
-    "last_editor": "person"
+    "tourn": {"target":"tourn","verified":"upstream-fk"},
+    "parent": {"target":"webpage","verified":false},
+    "last_editor": {"target":"person","verified":"sample-data"},
   },
   "weekend": {
-    "tourn": "tourn",
-    "site": "site"
+    "tourn": {"target":"tourn","verified":"upstream-fk"},
+    "site": {"target":"site","verified":"sample-data"},
+  },
+};
+
+/** Public field allowlist per table: every column except credentials and personal contact details. */
+export const PUBLIC_COLUMNS: Readonly<Record<string, readonly string[]>> = {
+  "ad": ["id","tag","filename","url","sort_order","start","end","approved","background","person","approved_by","created_at","timestamp"],
+  "autoqueue": ["id","tag","round","event","active_at","message","timestamp","created_at","created_by"],
+  "ballot": ["id","side","speakerorder","seat","chair","bye","forfeit","tv","audit","approved","judge_started","started_by","entered_by","audited_by","judge","panel","entry","timestamp","created_at"],
+  "caselist": ["id","slug","eventcode","person","partner","timestamp","created_at"],
+  "category": ["id","name","abbr","tourn","pattern","timestamp","created_at"],
+  "category_setting": ["id","category","tag","value","value_text","value_date","setting","timestamp","created_at"],
+  "change_log": ["id","tag","description","count","person","event","category","chapter","circuit","tourn","entry","judge","fine","panel","round","new_panel","old_panel","school","timestamp","deleted","created_at"],
+  "chapter": ["id","name","formal","street","city","state","zip","postal","country","coaches","self_prefs","level","nsda","district","naudl","ipeds","nces","ceeb","timestamp","created_at"],
+  "chapter_circuit": ["id","code","full_member","circuit","chapter","region","circuit_membership","timestamp","created_at"],
+  "chapter_judge": ["id","first","middle","last","ada","retired","email","diet","notes","notes_timestamp","nsda","chapter","person","person_request","timestamp","created_at"],
+  "chapter_setting": ["id","chapter","tag","value","value_text","value_date","timestamp","created_at","setting"],
+  "circuit": ["id","name","abbr","tz","active","state","country","webname","timestamp","created_at"],
+  "circuit_membership": ["id","name","approval","description","circuit","timestamp","created_at"],
+  "circuit_setting": ["id","circuit","tag","value","value_text","value_date","setting","timestamp","created_at"],
+  "coach": ["id","person","entry","student","nsda","created_at","created_by","timestamp"],
+  "concession": ["id","name","price","description","deadline","cap","school_cap","billing_code","tourn","timestamp","created_at"],
+  "concession_option": ["id","name","description","disabled","concession_type","timestamp","created_at"],
+  "concession_purchase": ["id","quantity","placed","fulfilled","school","concession","invoice","timestamp","created_at"],
+  "concession_purchase_option": ["id","concession_purchase","concession_option","timestamp","created_at"],
+  "concession_type": ["id","name","description","concession","timestamp","created_at"],
+  "conflict": ["id","type","person","conflicted","chapter","added_by","timestamp","created_at"],
+  "contact": ["id","school","person","official","onsite","email","book","nsda","created_at","timestamp","created_by"],
+  "diocese": ["id","name","code","state","quota","active","archdiocese","cooke_award_points","timestamp","created_at"],
+  "district": ["id","name","code","location","chair","level","region","realm","timestamp","financials","created_at"],
+  "email": ["id","subject","content","metadata","sent_to","sent_at","sender","sender_raw","hidden","person","tourn","circuit","timestamp","created_at"],
+  "entry": ["id","code","name","ada","active","dropped","waitlist","unconfirmed","tourn","school","event","registered_by","timestamp","created_at"],
+  "entry_setting": ["id","tag","value","value_text","value_date","entry","setting","timestamp","created_at"],
+  "entry_student": ["id","entry","student","timestamp","created_at"],
+  "event": ["id","name","abbr","type","level","fee","code_style","tourn","category","pattern","rating_subset","nsda_category","timestamp","created_at"],
+  "event_setting": ["id","tag","value","value_text","value_date","event","setting","timestamp","created_at"],
+  "file": ["id","tag","type","label","filename","published","coach","page_order","uploaded","bill_category","tourn","school","entry","event","district","circuit","webpage","parent","person","timestamp","created_at"],
+  "fine": ["id","reason","amount","payment","levied_at","levied_by","deleted","deleted_at","deleted_by","tourn","school","region","judge","person","parent","invoice","timestamp","created_at"],
+  "follower": ["id","type","person","follower","tourn","judge","entry","school","student","timestamp","created_at"],
+  "hotel": ["id","name","multiple","surcharge","no_confirm","tourn_default","tourn","timestamp","created_at"],
+  "housing": ["id","type","night","waitlist","tba","requested","requestor","tourn","student","judge","school","timestamp","created_at"],
+  "housing_slots": ["id","night","slots","tourn","timestamp","created_at"],
+  "invoice": ["id","blusynergy","blu_number","total","paid","school","details","timestamp","created_at"],
+  "jpool": ["id","name","category","site","parent","timestamp","created_at"],
+  "jpool_judge": ["id","judge","jpool","timestamp","created_at"],
+  "jpool_round": ["id","jpool","round","timestamp","created_at"],
+  "jpool_setting": ["id","tag","value","value_text","value_date","jpool","setting","timestamp","created_at"],
+  "judge": ["id","code","first","middle","last","active","ada","obligation","hired","school","category","alt_category","covers","chapter_judge","person","person_request","registered_by","timestamp","score","tmp","created_at"],
+  "judge_hire": ["id","entries_requested","entries_accepted","rounds_requested","rounds_accepted","requested_at","requestor","judge","tourn","school","region","category","timestamp","created_at"],
+  "judge_setting": ["id","tag","value","value_text","value_date","judge","setting","conditional","timestamp","created_at"],
+  "message": ["id","subject","body","url","sender_string","person","tourn","sender","email","created_at","visible_at","read_at","deleted_at","timestamp"],
+  "nsda_category": ["id","name","type","code","national","timestamp"],
+  "panel": ["id","letter","flight","bye","started","bracket","publish","room","round","timestamp","created_at"],
+  "panel_setting": ["id","panel","tag","value","value_text","value_date","setting","timestamp"],
+  "pattern": ["id","name","type","max","exclude","tourn","timestamp"],
+  "permission": ["id","tag","person","tourn","region","district","chapter","circuit","category","event","created_by","details","timestamp"],
+  "person": ["id","email","first","middle","last","pronoun","no_email","city","state","country","tz","provider","site_admin","nsda","accesses","last_access","timestamp","created_at"],
+  "person_quiz": ["id","hidden","pending","approved_by","completed","answers","updated_at","created_at","person","quiz","timestamp"],
+  "person_setting": ["id","tag","value","value_text","value_date","person","setting","timestamp","created_at"],
+  "practice": ["id","chapter","name","tag","start","end","reported","timestamp","created_at","created_by"],
+  "practice_student": ["id","practice","student","timestamp","created_at","created_by"],
+  "protocol": ["id","name","tourn","timestamp"],
+  "protocol_setting": ["id","tag","value","value_date","protocol","value_text","setting","timestamp"],
+  "qualifier": ["id","name","result","entry","tourn","qualifier_tourn","timestamp"],
+  "quiz": ["id","tag","label","questions","description","sitewide","hidden","approval","show_answers","admin_only","badge","badge_link","badge_description","person","tourn","circuit","nsda_course","created_at","timestamp"],
+  "rating": ["id","type","entered","ordinal","percentile","entry","rating_tier","judge","rating_subset","side","timestamp"],
+  "rating_subset": ["id","name","category","timestamp"],
+  "rating_tier": ["id","type","name","description","strike","conflict","min","max","start","category","rating_subset","timestamp"],
+  "region": ["id","name","code","quota","arch","cooke_pts","sweeps","circuit","tourn","timestamp","created_at"],
+  "region_fine": ["id","amount","reason","levied_at","levied_by","tourn","region","school","timestamp"],
+  "region_setting": ["id","tag","value","value_text","value_date","region","timestamp","created_at","setting","event"],
+  "result": ["id","rank","place","percentile","result_set","entry","student","school","round","panel","cache","timestamp","created_at"],
+  "result_key": ["id","tag","description","no_sort","sort_desc","result_set","timestamp"],
+  "result_set": ["id","tag","entity","label","bracket","published","coach","generated","cache","tourn","sweep_set","sweep_award","event","nsda_category","circuit","timestamp","code"],
+  "result_value": ["id","value","priority","result","result_key","protocol","timestamp"],
+  "room": ["id","building","name","quality","capacity","rowcount","seats","inactive","deleted","ada","notes","url","judge_url","api","site","timestamp"],
+  "room_strike": ["id","type","start","end","room","event","tourn","entry","judge","timestamp"],
+  "round": ["id","type","name","label","flighted","published","post_primary","post_secondary","post_feedback","paired_at","start_time","event","timeslot","site","protocol","runoff","timestamp","created_at"],
+  "round_setting": ["id","tag","value","value_text","value_date","round","setting","timestamp"],
+  "rpool": ["id","name","tourn","timestamp"],
+  "rpool_room": ["id","rpool","room","timestamp"],
+  "rpool_round": ["id","rpool","round","timestamp"],
+  "rpool_setting": ["id","tag","value","value_text","value_date","rpool","setting","timestamp"],
+  "school": ["id","name","code","onsite","tourn","chapter","state","region","district","registered_by","timestamp","created_at"],
+  "school_setting": ["id","tag","value","value_text","value_date","school","setting","timestamp","last_changed","chapter"],
+  "score": ["id","tag","value","content","topic","speech","position","ballot","student","timestamp"],
+  "setting": ["id","type","subtype","tag","value_type","conditions","timestamp"],
+  "setting_label": ["id","lang","label","guide","options","setting","timestamp"],
+  "shift": ["id","name","type","fine","no_hires","start","end","category","timestamp"],
+  "site": ["id","name","online","directions","dropoff","host","circuit","timestamp"],
+  "stats": ["id","type","tag","value","event","timestamp"],
+  "strike": ["id","type","start","end","registrant","conflict","conflictee","tourn","judge","event","entry","school","region","district","timeslot","shift","entered_by","created_at","dioregion","timestamp"],
+  "student": ["id","first","middle","last","phonetic","grad_year","novice","retired","nsda","chapter","person","person_request","timestamp","created_at"],
+  "student_ballot": ["id","tag","panel","entry","voter","value","entered_by","timestamp"],
+  "student_setting": ["id","student","tag","value","value_text","value_date","timestamp","created_at","setting"],
+  "student_vote": ["id","tag","value","panel","entry","voter","entered_by","entered_at","timestamp"],
+  "sweep_award": ["id","name","description","target","period","count","min_schools","min_entries","circuit","timestamp"],
+  "sweep_award_event": ["id","name","abbr","level","sweep_set","timestamp"],
+  "sweep_event": ["id","sweep_set","event","event_type","event_level","nsda_category","sweep_award_event","timestamp"],
+  "sweep_include": ["id","parent","child","timestamp"],
+  "sweep_rule": ["id","tag","value","place","count","rev_min","count_round","truncate","sweep_set","protocol","timestamp"],
+  "sweep_set": ["id","name","tourn","sweep_award","timestamp"],
+  "tabroom_setting": ["id","tag","value","value_text","value_date","person","timestamp"],
+  "tiebreak": ["id","name","count","count_round","truncate","truncate_smallest","multiplier","violation","result","priority","chair","highlow","highlow_count","highlow_threshold","child","protocol","timestamp","highlow_target"],
+  "timeslot": ["id","name","start","end","tourn","timestamp"],
+  "topic": ["id","tag","source","event_type","pattern","topic_text","school_year","sort_order","timestamp","created_at","created_by"],
+  "tourn": ["id","name","city","state","country","tz","webname","hidden","timestamp","start","end","reg_start","reg_end"],
+  "tourn_circuit": ["id","approved","tourn","circuit","timestamp"],
+  "tourn_fee": ["id","start","end","tourn","amount","reason","timestamp"],
+  "tourn_ignore": ["id","tourn","person","timestamp"],
+  "tourn_setting": ["id","tourn","tag","value","value_text","value_date","setting","timestamp"],
+  "tourn_site": ["id","tourn","site","timestamp"],
+  "webpage": ["id","title","slug","content","sidebar","published","sitewide","special","page_order","tourn","parent","last_editor","timestamp","created_at"],
+  "weekend": ["id","name","start","end","reg_start","reg_end","freeze_deadline","drop_deadline","judge_deadline","fine_deadline","tourn","site","city","state","timestamp"],
+};
+
+/** Column names no table allows publicly, stripped from every API response. */
+export const PRIVATE_KEYS: readonly string[] = [
+  "gender",
+  "judge_password",
+  "pass_timestamp",
+  "password",
+  "phone"
+];
+
+/** Unique indexes with a nullable column: SQLite treats NULLs as distinct, so they admit duplicates. */
+export const NULLABLE_UNIQUE_INDEXES: readonly { table: string; index: string; columns: readonly string[] }[] = [
+  {
+    "table": "ballot",
+    "index": "ballot__ballot_ejp",
+    "columns": [
+      "entry",
+      "judge",
+      "panel"
+    ]
+  },
+  {
+    "table": "ballot",
+    "index": "ballot__ballot_sideorder",
+    "columns": [
+      "panel",
+      "judge",
+      "side",
+      "speakerorder"
+    ]
+  },
+  {
+    "table": "category",
+    "index": "category__category_abbr",
+    "columns": [
+      "abbr",
+      "tourn"
+    ]
+  },
+  {
+    "table": "category",
+    "index": "category__category_name",
+    "columns": [
+      "name",
+      "tourn"
+    ]
+  },
+  {
+    "table": "category_setting",
+    "index": "category_setting__uk_judge_group_setting",
+    "columns": [
+      "category",
+      "tag"
+    ]
+  },
+  {
+    "table": "chapter_circuit",
+    "index": "chapter_circuit__uk_chapter_circuit",
+    "columns": [
+      "chapter",
+      "circuit"
+    ]
+  },
+  {
+    "table": "chapter_setting",
+    "index": "chapter_setting__cs_tag",
+    "columns": [
+      "chapter",
+      "tag"
+    ]
+  },
+  {
+    "table": "circuit_setting",
+    "index": "circuit_setting__uk_circuit_setting",
+    "columns": [
+      "circuit",
+      "tag"
+    ]
+  },
+  {
+    "table": "coach",
+    "index": "coach__uq_entry",
+    "columns": [
+      "entry"
+    ]
+  },
+  {
+    "table": "coach",
+    "index": "coach__uq_student",
+    "columns": [
+      "student"
+    ]
+  },
+  {
+    "table": "conflict",
+    "index": "conflict__uk_constraint",
+    "columns": [
+      "person",
+      "conflicted",
+      "chapter"
+    ]
+  },
+  {
+    "table": "diocese",
+    "index": "diocese__codes",
+    "columns": [
+      "active",
+      "code"
+    ]
+  },
+  {
+    "table": "district",
+    "index": "district__code",
+    "columns": [
+      "code"
+    ]
+  },
+  {
+    "table": "entry_setting",
+    "index": "entry_setting__entry_tag",
+    "columns": [
+      "entry",
+      "tag"
+    ]
+  },
+  {
+    "table": "entry_student",
+    "index": "entry_student__uk_entry_student",
+    "columns": [
+      "entry",
+      "student"
+    ]
+  },
+  {
+    "table": "event",
+    "index": "event__event_name",
+    "columns": [
+      "name",
+      "tourn"
+    ]
+  },
+  {
+    "table": "event",
+    "index": "event__event_abbr",
+    "columns": [
+      "abbr",
+      "tourn"
+    ]
+  },
+  {
+    "table": "jpool_setting",
+    "index": "jpool_setting__uk_jpool",
+    "columns": [
+      "jpool",
+      "tag"
+    ]
+  },
+  {
+    "table": "judge_setting",
+    "index": "judge_setting__uk_judge_setting",
+    "columns": [
+      "judge",
+      "tag",
+      "conditional"
+    ]
+  },
+  {
+    "table": "panel_setting",
+    "index": "panel_setting__panel_tag",
+    "columns": [
+      "panel",
+      "tag"
+    ]
+  },
+  {
+    "table": "person_setting",
+    "index": "person_setting__person_tag",
+    "columns": [
+      "person",
+      "tag"
+    ]
+  },
+  {
+    "table": "protocol_setting",
+    "index": "protocol_setting__tiebreak_set_tag",
+    "columns": [
+      "protocol",
+      "tag"
+    ]
+  },
+  {
+    "table": "rating",
+    "index": "rating__judge_entry",
+    "columns": [
+      "entry",
+      "judge",
+      "side"
+    ]
+  },
+  {
+    "table": "region_setting",
+    "index": "region_setting__region_tag",
+    "columns": [
+      "region",
+      "tag"
+    ]
+  },
+  {
+    "table": "room",
+    "index": "room__uk_room",
+    "columns": [
+      "site",
+      "name"
+    ]
+  },
+  {
+    "table": "round",
+    "index": "round__uk_round",
+    "columns": [
+      "name",
+      "event"
+    ]
+  },
+  {
+    "table": "round_setting",
+    "index": "round_setting__round_tag",
+    "columns": [
+      "round",
+      "tag"
+    ]
+  },
+  {
+    "table": "rpool_setting",
+    "index": "rpool_setting__uk_rpool",
+    "columns": [
+      "rpool",
+      "tag"
+    ]
+  },
+  {
+    "table": "school_setting",
+    "index": "school_setting__school_tag",
+    "columns": [
+      "school",
+      "tag"
+    ]
+  },
+  {
+    "table": "score",
+    "index": "score__uk_score_restraint",
+    "columns": [
+      "tag",
+      "ballot",
+      "speech",
+      "position",
+      "student"
+    ]
+  },
+  {
+    "table": "student_setting",
+    "index": "student_setting__student_tag",
+    "columns": [
+      "student",
+      "tag"
+    ]
+  },
+  {
+    "table": "student_vote",
+    "index": "student_vote__sv_evp",
+    "columns": [
+      "panel",
+      "entry",
+      "voter"
+    ]
+  },
+  {
+    "table": "tourn_circuit",
+    "index": "tourn_circuit__uk_tourn_circuit",
+    "columns": [
+      "tourn",
+      "circuit"
+    ]
+  },
+  {
+    "table": "tourn_setting",
+    "index": "tourn_setting__tourn_tag",
+    "columns": [
+      "tourn",
+      "tag"
+    ]
+  },
+  {
+    "table": "tourn_site",
+    "index": "tourn_site__tourn_site_unique",
+    "columns": [
+      "tourn",
+      "site"
+    ]
   }
+];
+
+/** Set-membership tables whose pair should be unique (`schema-rules.mjs` JUNCTIONS). */
+export const JUNCTIONS: Readonly<Record<string, readonly [string, string]>> = {
+  "jpool_judge": [
+    "jpool",
+    "judge"
+  ],
+  "jpool_round": [
+    "jpool",
+    "round"
+  ],
+  "rpool_room": [
+    "rpool",
+    "room"
+  ],
+  "rpool_round": [
+    "rpool",
+    "round"
+  ],
+  "practice_student": [
+    "practice",
+    "student"
+  ],
+  "sweep_include": [
+    "parent",
+    "child"
+  ]
 };
 
 /** Upstream tables created by the D1 migration. */

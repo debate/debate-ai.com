@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { DatabaseSync } from "node:sqlite";
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { applySchemaRules, parseMysqlTables, tablesToSqlite } from "../scripts/lib/mysql-to-sqlite.mjs";
 import { upgradeStatements } from "../scripts/lib/schema-upgrade.mjs";
 import { pkgPath } from "./helpers/sqlite-d1";
@@ -57,7 +57,7 @@ describe("schema upgrade migration", () => {
     expect(schema(db)).toEqual(schema(fresh));
   });
 
-  it("the shipped upgrade migration leaves a fresh database's schema unchanged", () => {
+  it("the shipped upgrade migrations leave a fresh database's schema unchanged", () => {
     const fresh = () => {
       const db = new DatabaseSync(":memory:");
       run(db, readFileSync(pkgPath("migrations/0001_tabroom_schema.sql"), "utf8"));
@@ -65,7 +65,9 @@ describe("schema upgrade migration", () => {
     };
     const db = fresh();
     db.exec("INSERT INTO tourn (id, name, webname, tz) VALUES (1, 'Open', 'open', 'UTC')");
-    run(db, readFileSync(pkgPath("migrations/0003_tabroom_schema_upgrade.sql"), "utf8"));
+    for (const file of readdirSync(pkgPath("migrations")).filter((f) => f.endsWith("_tabroom_schema_upgrade.sql")).sort()) {
+      run(db, readFileSync(pkgPath(`migrations/${file}`), "utf8"));
+    }
     expect(schema(db)).toEqual(schema(fresh()));
     expect(db.prepare("SELECT webname FROM tourn").get()).toEqual({ webname: "open" });
   });

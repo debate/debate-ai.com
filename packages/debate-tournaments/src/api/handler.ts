@@ -31,6 +31,7 @@ import legacyDb from "../../vendor/tabroom/indexcards/api/data/db.js";
 import { tabroomConfig } from "../config";
 import { actorForHostUser, anonymousActor, type HostUser, type TabroomActor } from "./actor";
 import { runExpressRouter, type ExpressLikeRouter } from "./express-adapter";
+import { withoutPrivateFields } from "./public-fields";
 import { getHostRouter, hostPathAllowsMethod } from "../host/router";
 
 export interface TournamentsHandlerOptions {
@@ -84,7 +85,7 @@ export function createTournamentsHandler(options: TournamentsHandlerOptions) {
     const d1 = await getDb(request);
     const user = getUser ? await getUser(request) : null;
 
-    const response = await runWithTabroomDb(d1, async () => {
+    const routed = await runWithTabroomDb(d1, async () => {
       const actor: TabroomActor = user ? await actorForHostUser(user) : anonymousActor;
       const person = actor.Person;
       return runExpressRouter(router, request, {
@@ -106,6 +107,8 @@ export function createTournamentsHandler(options: TournamentsHandlerOptions) {
       });
     });
 
+    // Credentials and contact details never leave, whatever a route selected.
+    const response = await withoutPrivateFields(routed);
     if (cacheControl && request.method === "GET" && response.ok && !user && !response.headers.has("cache-control")) {
       response.headers.set("cache-control", cacheControl);
     }

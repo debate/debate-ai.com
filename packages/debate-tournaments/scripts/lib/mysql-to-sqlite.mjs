@@ -23,19 +23,13 @@
  * `applySchemaRules` then corrects what upstream's types get wrong (see
  * `schema-rules.mjs`): it drops indexes another index already covers, widens
  * types that lose data, adds CHECK constraints to flag columns, and turns a
- * reference column's `DEFAULT 0` "none" sentinel into a nullable column.
+ * verified reference column's `DEFAULT 0` "none" sentinel into a nullable
+ * column. Which columns are references comes from the explicit registry in
+ * `relationships.mjs`, never from column names.
  */
 
-import {
-  CHECKS,
-  EXTRA_INDEXES,
-  MONEY_COLUMNS,
-  NOT_BOOLEAN,
-  NOT_REFERENCES,
-  REFERENCE_COLUMNS,
-  SEED_NULL_COLUMNS,
-  TYPE_OVERRIDES,
-} from "./schema-rules.mjs";
+import { RELATIONSHIPS, SCALARS } from "./relationships.mjs";
+import { CHECKS, EXTRA_INDEXES, MONEY_COLUMNS, NOT_BOOLEAN, SENSITIVE, TYPE_OVERRIDES } from "./schema-rules.mjs";
 
 const INTEGER_TYPES = new Set(["tinyint", "smallint", "mediumint", "int", "integer", "bigint", "bit", "year"]);
 const REAL_TYPES = new Set(["float", "double", "real"]);
@@ -90,19 +84,21 @@ export function mysqlStringToSqlite(literal) {
 
 /**
  * Parses every `CREATE TABLE` in a mysqldump.
- * @returns {Array<{ name: string, columns: Array<{ name: string, type: string, mysqlType: string, length: string|null, notNull: boolean, default: string|null, autoIncrement: boolean }>, primaryKey: string[], indexes: Array<{ name: string, unique: boolean, columns: string[] }> }>}
+ * @returns {Array<{ name: string, columns: Array<{ name: string, type: string, mysqlType: string, length: string|null, notNull: boolean, default: string|null, autoIncrement: boolean }>, primaryKey: string[], indexes: Array<{ name: string, unique: boolean, columns: string[] }>, foreignKeys: Array<{ column: string, target: string }> }>}
  */
 export function parseMysqlTables(dump) {
   const tables = [];
   const createRe = /CREATE TABLE `([^`]+)` \(\n([\s\S]*?)\n\)[^;]*;/g;
   for (const match of dump.matchAll(createRe)) {
     const [, name, body] = match;
-    const table = { name, columns: [], primaryKey: [], indexes: [] };
+    const table = { name, columns: [], primaryKey: [], indexes: [], foreignKeys: [] };
     for (const rawLine of body.split("\n")) {
       const line = rawLine.trim().replace(/,$/, "");
       let m;
       if ((m = line.match(/^PRIMARY KEY \((.+)\)/))) {
         table.primaryKey = parseColumnList(m[1]);
+      } else if ((m = line.match(/^CONSTRAINT `[^`]+` FOREIGN KEY \(`([^`]+)`\) REFERENCES `([^`]+)` \(`id`\)/))) {
+        table.foreignKeys.push({ column: m[1], target: m[2] });
       } else if ((m = line.match(/^(UNIQUE )?KEY `([^`]+)` \((.+?)\)(?: USING \w+)?$/))) {
         table.indexes.push({ name: m[2], unique: Boolean(m[1]), columns: parseColumnList(m[3]) });
       } else if ((m = line.match(/^`([^`]+)` (\w+)(?:\(([^)]*)\))?(.*)$/))) {
@@ -118,7 +114,8 @@ export function parseMysqlTables(dump) {
           autoIncrement: /AUTO_INCREMENT/i.test(rest),
         });
       }
-      // CONSTRAINT … FOREIGN KEY, FULLTEXT KEY and anything else: dropped.
+      // Foreign keys are recorded (for the registry check) but never emitted;
+      // FULLTEXT KEY and anything else: dropped.
     }
     tables.push(table);
   }
@@ -170,18 +167,42 @@ export function tablesToSqlite(tables, { skipTables = [] } = {}) {
 const isTinyintBool = (col) => col.mysqlType === "tinyint" && col.length === "1";
 
 /**
- * The table a column's values are ids of, or null. A reference is an INTEGER
- * column (never a `tinyint(1)` flag) named after a table, or listed in
- * `REFERENCE_COLUMNS`, unless `NOT_REFERENCES` says otherwise.
+ * The registry entry for a column, or null: `{ target, verified }` from
+ * `relationships.mjs`. `verified` is the evidence ("upstream-fk",
+ * "sample-data") or false.
  * @param {string} table
- * @param {{ name: string, type: string, mysqlType: string, length: string|null }} col
- * @param {Set<string>} tableNames
+ * @param {string} column
  */
-export function referenceTarget(table, col, tableNames) {
-  if (col.type !== "INTEGER" || isTinyintBool(col)) return null;
-  if (NOT_REFERENCES.has(`${table}.${col.name}`)) return null;
-  if (REFERENCE_COLUMNS[col.name]) return REFERENCE_COLUMNS[col.name];
-  return tableNames.has(col.name) ? col.name : null;
+export function relationship(table, column) {
+  return RELATIONSHIPS[`${table}.${column}`] ?? null;
+}
+
+/**
+ * Columns that look like references but are in neither registry: an upstream
+ * foreign key, or an INTEGER (not a flag) named after a table or ending in
+ * `_by`. `sync-upstream.mjs` warns about each, so a new upstream column is
+ * classified by a person instead of guessed.
+ * @param {ReturnType<typeof parseMysqlTables>} tables
+ * @param {{ skipTables?: string[] }} [options]
+ */
+export function unclassifiedColumns(tables, { skipTables = [] } = {}) {
+  const skip = new Set(skipTables);
+  const names = new Set(tables.map((t) => t.name));
+  const out = [];
+  for (const table of tables) {
+    if (skip.has(table.name)) continue;
+    const declared = new Map(table.foreignKeys.map((fk) => [fk.column, fk.target]));
+    for (const col of table.columns) {
+      const key = `${table.name}.${col.name}`;
+      if (RELATIONSHIPS[key] || SCALARS[key]) continue;
+      const looksLikeId = col.type === "INTEGER" && !isTinyintBool(col) && (names.has(col.name) || col.name.endsWith("_by"));
+      const target = declared.get(col.name);
+      if (target && skip.has(target)) continue;
+      if (looksLikeId && skip.has(col.name)) continue;
+      if (target || looksLikeId) out.push(target ? `${key} (upstream foreign key to ${target})` : key);
+    }
+  }
+  return out;
 }
 
 /**
@@ -220,22 +241,35 @@ export function redundantIndexes(table) {
 }
 
 /**
- * Applies `schema-rules.mjs` to parsed tables. Returns new table objects whose
- * columns carry `check`, `reference` and `sentinel` (a reference whose
- * `DEFAULT 0` became nullable), and a `droppedIndexes` list per table.
+ * Applies `schema-rules.mjs` and `relationships.mjs` to parsed tables. Returns
+ * new table objects whose columns carry `check`, `reference` and `verified`
+ * (from the registry), `scalar`, `sensitive`, and `sentinel` (a verified
+ * reference whose `DEFAULT 0` became nullable), and a `droppedIndexes` list
+ * per table.
  * @param {ReturnType<typeof parseMysqlTables>} tables
  */
 export function applySchemaRules(tables) {
-  const tableNames = new Set(tables.map((t) => t.name));
+  const credential = new Set(SENSITIVE.credential);
+  const pii = new Set(SENSITIVE.pii);
   return tables.map((table) => {
     const columns = table.columns.map((source) => {
       const key = `${table.name}.${source.name}`;
-      const col = { ...source, check: null, reference: referenceTarget(table.name, source, tableNames), sentinel: false };
+      const rel = relationship(table.name, source.name);
+      const col = {
+        ...source,
+        check: null,
+        reference: rel?.target ?? null,
+        verified: rel?.verified ?? false,
+        scalar: SCALARS[key] ?? null,
+        sensitive: credential.has(key) ? "credential" : pii.has(key) ? "pii" : null,
+        sentinel: false,
+      };
       if (TYPE_OVERRIDES[key]) col.type = TYPE_OVERRIDES[key];
       if (MONEY_COLUMNS.has(key)) col.type = "NUMERIC";
       if (CHECKS[key]) col.check = CHECKS[key];
       else if (isTinyintBool(source) && !NOT_BOOLEAN.has(key)) col.check = "IN (0, 1)";
-      if (col.reference && col.default === "0" && !table.primaryKey.includes(col.name)) {
+      // Only a verified reference's 0 means "none"; elsewhere 0 may be a real value.
+      if (col.reference && col.verified && col.default === "0" && !table.primaryKey.includes(col.name)) {
         col.sentinel = true;
         col.notNull = false;
         col.default = "NULL";
@@ -254,7 +288,8 @@ export function applySchemaRules(tables) {
 
 /**
  * Statements that bring sample rows in line with `applySchemaRules`: a
- * reference column's 0 "none" becomes NULL, and password columns are blanked.
+ * verified reference's 0 "none" becomes NULL, and sensitive columns
+ * (credentials, personal contact details) are blanked.
  * @param {ReturnType<typeof applySchemaRules>} tables
  * @param {{ skipTables?: string[] }} [options]
  */
@@ -267,10 +302,11 @@ export function seedCleanupStatements(tables, { skipTables = [] } = {}) {
       if (col.sentinel) statements.push(`UPDATE ${q(table.name)} SET ${q(col.name)} = NULL WHERE ${q(col.name)} = 0;`);
     }
   }
-  const present = new Set(tables.map((t) => t.name));
-  for (const key of SEED_NULL_COLUMNS) {
-    const [table, column] = key.split(".");
-    if (present.has(table) && !skip.has(table)) statements.push(`UPDATE ${q(table)} SET ${q(column)} = NULL WHERE ${q(column)} IS NOT NULL;`);
+  for (const table of tables) {
+    if (skip.has(table.name)) continue;
+    for (const col of table.columns) {
+      if (col.sensitive) statements.push(`UPDATE ${q(table.name)} SET ${q(col.name)} = NULL WHERE ${q(col.name)} IS NOT NULL;`);
+    }
   }
   return statements;
 }

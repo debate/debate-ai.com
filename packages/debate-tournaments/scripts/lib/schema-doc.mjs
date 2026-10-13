@@ -8,11 +8,12 @@
  * the renderer reads the previous doc and carries it forward, so edit the
  * markdown to improve a description and it survives the next sync.
  *
- * The one thing the renderer decides is which columns are references. A
- * purpose of "References `x.id`." is only kept or written for a column
- * `referenceTarget` accepts (an INTEGER named after a table, with the
- * exceptions in `schema-rules.mjs`); `PURPOSE_OVERRIDES` replaces purposes
- * the old name-matching guessed wrong.
+ * Which columns are references comes from the registry
+ * (`relationships.mjs`), never from names: a purpose of "References `x.id`."
+ * is only kept or written for a registered column, marked "(unverified)" when
+ * upstream gives no evidence for it, and `PURPOSE_OVERRIDES` replaces
+ * purposes the old name-matching guessed wrong. Sensitive columns are marked
+ * as never served.
  */
 
 /** Purposes that replace whatever the doc said: `table.column` → text ("" for none). */
@@ -74,18 +75,32 @@ function constraints(table, col) {
 
 function purpose(table, col, previous) {
   const key = `${table.name}.${col.name}`;
-  if (key in PURPOSE_OVERRIDES) return PURPOSE_OVERRIDES[key];
+  if (key in PURPOSE_OVERRIDES) return withSensitivity(col, PURPOSE_OVERRIDES[key]);
   const prev = previous ?? "";
   const named = prev.match(REFERENCE_RE)?.[1];
   if (col.reference) {
-    let text = named === col.reference ? prev : `References \`${col.reference}.id\`.`;
-    if (col.sentinel && !/NULL/.test(text)) text += " NULL when none.";
-    return text;
+    // Strip what this function appends, so a regenerated doc never stacks it.
+    const base = prev.replace(/ ?(Credential|Private): never served, blanked in seeds\.$/, "").replace(/ NULL when none(?: \(unverified\))?\.$/, "").replace(/ \(unverified\)\.$/, ".");
+    let text = named === col.reference ? base : `References \`${col.reference}.id\`.`;
+    if (!col.verified) text = text.replace(/\.$/, " (unverified).");
+    if (col.sentinel) text += " NULL when none.";
+    return withSensitivity(col, text);
   }
   // Not a reference: drop a guessed "References `x.id`" and setting-table wording elsewhere.
-  if (named) return "";
-  if (/^Setting value/.test(prev) && !/(^|_)setting$/.test(table.name)) return "";
-  return prev;
+  if (named) return withSensitivity(col, "");
+  if (/^Setting value/.test(prev) && !/(^|_)setting$/.test(table.name)) return withSensitivity(col, "");
+  return withSensitivity(col, prev);
+}
+
+const SENSITIVITY_NOTE = {
+  credential: "Credential: never served, blanked in seeds.",
+  pii: "Private: never served, blanked in seeds.",
+};
+
+function withSensitivity(col, text) {
+  const note = col.sensitive ? SENSITIVITY_NOTE[col.sensitive] : "";
+  const base = text.replace(/ ?(Credential|Private): never served, blanked in seeds\.$/, "");
+  return note ? `${base}${base ? " " : ""}${note}` : base;
 }
 
 const escapeCell = (text) => text.replace(/\|/g, "\\|");
@@ -121,12 +136,17 @@ export function renderSchemaDoc(tables, previousMarkdown, { skipTables = [] } = 
     "",
     "## Conventions",
     "",
-    "- **References** are plain `INTEGER` columns named after the table they point at: `tourn` holds a",
-    "  `tourn.id`, `judge` a `judge.id`, `person` a `person.id`; `*_by` columns and `last_editor` hold a",
-    "  `person.id`. Text columns and `0`/`1` flags are never references, even when named after a table.",
-    "  The SQL declares no foreign keys (upstream data has orphan rows); most reference columns are",
-    "  indexed instead (index names are `<table>__<index>`), and `bun run db:check:tournaments` reports",
-    "  orphans. A missing reference is `NULL`: upstream's `DEFAULT 0` \"none\" sentinels are rewritten.",
+    "- **References** are listed explicitly in `scripts/lib/relationships.mjs`, not guessed from names.",
+    "  Most are `INTEGER` columns named after the table they point at (`tourn` holds a `tourn.id`); the",
+    "  registry also covers `*_by`, `partner`, `sender` and the like, and lists look-alikes that are not",
+    "  ids (`person.email`, `judge.score`). \"(unverified)\" marks a reference upstream gives no evidence",
+    "  for: no declared foreign key and no sample rows that resolve. The SQL declares no foreign keys",
+    "  (upstream data has orphan rows); most reference columns are indexed instead (index names are",
+    "  `<table>__<index>`), and `bun run db:check:tournaments` reports orphans, tournament mismatches,",
+    "  duplicate memberships and duplicates a nullable unique index admits. A verified reference's",
+    "  missing value is `NULL` (upstream's `DEFAULT 0` sentinel is rewritten); unverified ones keep `0`.",
+    "- **Sensitive columns** (password hashes, room passwords, a person's phone, address and gender) are",
+    "  outside each table's public field allowlist: the API strips them and seeds blank them.",
     "- **Flags** (`tinyint(1)` upstream) are `INTEGER` with `CHECK (col IN (0, 1))`; `side` is 0 (none),",
     "  1 or 2.",
     "- **Money** (`fee`, `amount`, `price`, `total`, `surcharge`) is `NUMERIC`, in the tournament's currency.",
