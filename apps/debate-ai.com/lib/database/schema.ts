@@ -1143,12 +1143,18 @@ export type YoutubeSyncRun = typeof youtubeSyncRuns.$inferSelect;
 // YouTube rather than trusting an admin to type it. A row with
 // `enabled = 0` is skipped by the scan but kept, so pausing a channel is
 // reversible and its history survives.
+//
+// `title` is the channel's display title as YouTube reports it on its videos
+// (`snippet.channelTitle`), written back by the resync. Video rows store that
+// title, not the handle in `name`, so the admin list matches a channel to its
+// videos through it. Nullable and added at runtime by `ensureTableColumns`.
 export const youtubeChannels = sqliteTable(
   "youtube_channels",
   {
     id: integer("id").primaryKey({ autoIncrement: true }),
     channelId: text("channel_id"),
     name: text("name").notNull(),
+    title: text("title"),
     enabled: integer("enabled", { mode: "boolean" }).notNull().default(true),
     addedBy: text("added_by"),
     createdAt: integer("created_at", { mode: "timestamp" })

@@ -521,9 +521,9 @@ function channelRoutes(extra: Route[] = []) {
     ...extra,
     {
       method: "GET",
-      match: "/api/admin/youtube/channels?",
+      match: "/api/admin/youtube/channels",
       respond: {
-        channels: [channel(), channel({ id: 2, name: "", channelId: null, enabled: false, addedBy: null, createdAt: 1_700_000_000, updatedAt: 1_700_000_000 })],
+        channels: [channel({ videoCount: 12, latestVideo: { videoId: "abc123", title: "TOC Finals 2026", publishedAt: "2026-04-20" } }), channel({ id: 2, name: "", channelId: null, enabled: false, addedBy: null, createdAt: 1_700_000_000, updatedAt: 1_700_000_000 })],
         nextCursor: null,
       },
     },
@@ -536,8 +536,10 @@ describe("YoutubeChannelsPanel", () => {
     mount(<YoutubeChannelsPanel />);
     expect(bodyText()).toContain("Loading channels…");
     await flush();
-    expect(calls[0].url).toBe("/api/admin/youtube/channels?limit=200");
+    expect(calls[0].url).toBe("/api/admin/youtube/channels");
     const text = bodyText();
+    expect(text).toContain("Most recent video");
+    expect(text).toContain("TOC Finals 2026");
     expect(text).toContain("Kansas Debate");
     expect(text).toContain("(UC123)");
     expect(text).toContain("added by boss@example.com");

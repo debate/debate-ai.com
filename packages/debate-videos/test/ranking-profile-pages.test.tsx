@@ -142,7 +142,9 @@ describe("TeamProfilePage", () => {
     expect(root.querySelector('a[href="/schools/harker"]')?.textContent).toBe("Harker");
     expect(root.textContent).toContain("Label hspf · rank 1 of 3");
     expect(root.textContent).toContain("62.5%");
-    expect(root.textContent).toContain("— / 40%");
+    expect(root.textContent).toContain("Elim neg win %");
+    expect(root.textContent).toContain("40%");
+    expect(root.textContent).toContain("Top 33.3%");
     expect(fetchMock.mock.calls[0][0]).toBe("/api/caselist-documents?school=Harker&team=Kim+%26+Lee&limit=50");
     expect(root.textContent).toContain("Files from Harker / Kim & Lee");
     expect(root.textContent).toContain("3 documents found");
