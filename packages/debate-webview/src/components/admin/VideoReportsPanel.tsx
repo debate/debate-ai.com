@@ -41,6 +41,10 @@ import { VideoContentDialog, type ContentDialogVideo } from "./VideoContentDialo
  * viewer, when YouTube has no captions for a library video. "Add transcript"
  * opens the same content editor the library table uses, and saving there
  * marks the report applied.
+ *
+ * Unavailable videos can be cleared one at a time ("It works now", "Remove")
+ * or removed in bulk by takedown state. "Check YouTube now" runs the same
+ * resync the weekly cron does, so the list can be refreshed before removing.
  */
 
 /** One report, as `/api/video-issues` returns it. */
@@ -159,6 +163,15 @@ const AVAILABILITY_LABELS: Record<string, { label: string; variant: "destructive
   not_embeddable: { label: "Embedding turned off", variant: "secondary" },
 };
 
+/** The takedown states, in the order the bulk-removal choices list them. */
+const TAKEDOWN_STATES = ["removed", "private", "not_embeddable"] as const;
+type TakedownState = (typeof TAKEDOWN_STATES)[number];
+
+/** Published rows per takedown state, as `/api/admin/videos/availability` counts them. */
+type TakedownCounts = Record<TakedownState, number>;
+
+const NO_TAKEDOWNS: TakedownCounts = { removed: 0, private: 0, not_embeddable: 0 };
+
 /**
  * Derives the lecture category slug the public feed filters on, matching
  * `normalizeCategoryKey` in `debate-data-sync`.
@@ -179,6 +192,11 @@ function formatWhen(value: string | number | null): string {
 export function VideoReportsPanel() {
   const [issues, setIssues] = useState<VideoIssue[]>([]);
   const [unavailable, setUnavailable] = useState<UnavailableVideo[]>([]);
+  const [takedownCounts, setTakedownCounts] = useState<TakedownCounts>(NO_TAKEDOWNS);
+  /** Which takedown states the bulk removal covers. Deleted uploads only, by default. */
+  const [removeStates, setRemoveStates] = useState<TakedownState[]>(["removed"]);
+  const [isChecking, setIsChecking] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showResolved, setShowResolved] = useState(false);
   const [busyId, setBusyId] = useState<string | null>(null);
@@ -200,6 +218,7 @@ export function VideoReportsPanel() {
       if (!issuesRes.ok) throw new Error(issuesBody?.error || "Failed to load reports");
       setIssues(issuesBody.issues ?? []);
       setUnavailable(unavailableRes.ok ? (unavailableBody.videos ?? []) : []);
+      setTakedownCounts(unavailableRes.ok ? { ...NO_TAKEDOWNS, ...unavailableBody.counts } : NO_TAKEDOWNS);
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -388,6 +407,85 @@ export function VideoReportsPanel() {
     } finally {
       setBusyId(null);
     }
+  };
+
+  /** Removes one unavailable video from the library, like the library table's Remove. */
+  const removeOne = async (video: UnavailableVideo) => {
+    if (!window.confirm(`Remove “${video.title || video.videoId}” from the library? This can't be undone.`)) {
+      return;
+    }
+    setBusyId(video.videoId);
+    setError(null);
+    try {
+      const res = await fetch(`/api/admin/videos/library/${video.videoId}`, { method: "DELETE" });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body?.details || body?.error || "Failed to remove the video");
+      setNotice(`Removed “${video.title || video.videoId}”.`);
+      await load();
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  /** Asks YouTube about every stored video again, then reloads the list. */
+  const checkNow = async () => {
+    setIsChecking(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/videos/view-counts", { method: "POST" });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body?.details || body?.error || "Checking YouTube failed");
+      setNotice(`Checked ${body.videosChecked ?? 0} videos against YouTube.`);
+      await load();
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setIsChecking(false);
+    }
+  };
+
+  const removeCount = removeStates.reduce((sum, state) => sum + takedownCounts[state], 0);
+
+  /** Removes every video in the chosen takedown states, after a confirmation naming the count. */
+  const removeUnavailable = async () => {
+    if (removeCount === 0) return;
+    const breakdown = removeStates
+      .filter((state) => takedownCounts[state] > 0)
+      .map((state) => `${takedownCounts[state]} ${AVAILABILITY_LABELS[state].label.toLowerCase()}`)
+      .join(", ");
+    if (
+      !window.confirm(
+        `Remove ${removeCount} ${removeCount === 1 ? "video" : "videos"} from the library (${breakdown})? ` +
+          "They won't be re-imported by the YouTube sync. This can't be undone.",
+      )
+    ) {
+      return;
+    }
+    setIsRemoving(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/videos/availability", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ states: removeStates }),
+      });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body?.details || body?.error || "Failed to remove videos");
+      setNotice(`Removed ${body.removed} unavailable ${body.removed === 1 ? "video" : "videos"}.`);
+      await load();
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setIsRemoving(false);
+    }
+  };
+
+  const toggleRemoveState = (state: TakedownState, checked: boolean) => {
+    setRemoveStates((current) =>
+      checked ? TAKEDOWN_STATES.filter((s) => s === state || current.includes(s)) : current.filter((s) => s !== state),
+    );
   };
 
   return (
@@ -594,6 +692,31 @@ export function VideoReportsPanel() {
           <h3 className="text-sm font-medium">
             Unavailable videos{unavailable.length > 0 ? ` (${unavailable.length})` : ""}
           </h3>
+          <div className="flex flex-wrap items-center gap-3 rounded-md border p-3">
+            <Button variant="outline" size="sm" onClick={checkNow} disabled={isChecking || isRemoving}>
+              {isChecking ? "Checking YouTube…" : "Check YouTube now"}
+            </Button>
+            {TAKEDOWN_STATES.map((state) => (
+              <label key={state} className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={removeStates.includes(state)}
+                  onChange={(event) => toggleRemoveState(state, event.target.checked)}
+                />
+                {AVAILABILITY_LABELS[state].label} ({takedownCounts[state]})
+              </label>
+            ))}
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={removeUnavailable}
+              disabled={removeCount === 0 || isRemoving || isChecking}
+            >
+              {isRemoving
+                ? "Removing…"
+                : `Remove ${removeCount} unavailable ${removeCount === 1 ? "video" : "videos"}`}
+            </Button>
+          </div>
           <ul className="divide-y rounded-md border">
             {unavailable.map((video) => {
               const state = AVAILABILITY_LABELS[video.availability] ?? {
@@ -629,6 +752,14 @@ export function VideoReportsPanel() {
                     onClick={() => clearFlag(video)}
                   >
                     It works now
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    disabled={busyId === video.videoId}
+                    onClick={() => removeOne(video)}
+                  >
+                    Remove
                   </Button>
                 </li>
               );
