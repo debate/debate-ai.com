@@ -5,11 +5,12 @@ import { NotFound } from '../../helpers/problem.js';
 import config from '../../config.js';
 import { judgeRecord } from '../../services/results/judgeRecords.js';
 import { db } from '../../data/database.js';
-import type { Request, Response } from '../../_shims/express.js';
+import type { Response } from '../../_shims/express.js';
+import type { ValidatedRequest } from '../../middleware/validation.js';
 
-async function getParadigms(req: Request, res: Response) {
+async function getParadigms(req: ValidatedRequest, res: Response) {
 	//get the search query from the query params
-	const { search, limit = 50, offset = 0 } = req.valid.query;
+	const { search, limit = 50, offset = 0 } = req.query;
 
 	const paradigms = await personRepo.personSearch(db, search ?? '', {
 		excludeBanned: true,
@@ -63,8 +64,8 @@ async function getParadigms(req: Request, res: Response) {
 	res.json(results);
 };
 
-async function getParadigmByPersonId(req: Request, res: Response) {
-	const { personId } = req.valid.params;
+async function getParadigmByPersonId(req: ValidatedRequest, res: Response) {
+	const { personId } = req.params;
 	const person = await personRepo.getPerson(db, personId, {
 		excludeBanned: true,
 		excludeUnconfirmedEmail: true,
@@ -142,8 +143,8 @@ async function getParadigmByPersonId(req: Request, res: Response) {
 /**
  *  Get a judges public debate judging record to display on the paradigm details page
  */
-async function getJudgingRecord(req: Request, res: Response) {
-	const { personId } = req.valid.params;
+async function getJudgingRecord(req: ValidatedRequest, res: Response) {
+	const { personId } = req.params;
 
 	const record = await judgeRecord(personId);
 

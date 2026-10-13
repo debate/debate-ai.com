@@ -10,7 +10,7 @@ import resultSetRouter from './resultSetRouter.js';
 import eventRouter from './eventRouter.js';
 import entryRouter from './entryRouter.js';
 
-import { FileSchema, TournInviteSchema, TournSchema } from '../../../../../../types/index.js';
+import { FileSchema, ScheduleRoundSchema, TournInviteSchema, TournSchema } from '../../../../../../types/index.js';
 const router = Router({ mergeParams: true });
 
 router.route('/').get(ValidateRequest,controller.getTourns).openapi = {
@@ -36,12 +36,7 @@ router.route('/').get(ValidateRequest,controller.getTourns).openapi = {
 			description: 'List of tournaments',
 			content: {
 				'application/json': {
-					schema: {
-						type: 'array',
-						items: {
-							$ref: '#/components/schemas/Tourn',
-						},
-					},
+					schema: z.array(TournSchema),
 				},
 			},
 		},
@@ -53,11 +48,14 @@ router.route('/').get(ValidateRequest,controller.getTourns).openapi = {
 
 router.use('/:tournId', requirePublicTourn);
 
-router.route('/:tournId').get(controller.getTourn).openapi = {
+router.route('/:tournId').get(ValidateRequest, controller.getTourn).openapi = {
 	path: '/rest/tourns/{tournId}',
 	summary: 'Get Public Tournament',
 	description: 'Retrieve public information about a specific tournament.',
 	tags: ['Tournaments'],
+	requestParams: {
+		path: z.object({ tournId: z.coerce.number().int().positive() }),
+	},
 	responses: {
 		200: {
 			description: 'Tournament information',
@@ -78,12 +76,15 @@ router.use('/:tournId/results' , resultSetRouter);
 router.use('/:tournId/events'  , eventRouter);
 router.use('/:tournId/entries' , entryRouter);
 
-router.route('/:tournId/invite').get(controller.getTournInvite).openapi = {
+router.route('/:tournId/invite').get(ValidateRequest, controller.getTournInvite).openapi = {
 	path: '/rest/tourns/{tournId}/invite',
 	summary: 'Get Tournament Invite',
 	operationId: 'getTournInvite',
 	description: 'Retrieve a public invite for a specific tournament, including pages, files, events, and contacts.',
-	tags: ['Tournaments','test'],
+	tags: ['Tournaments'],
+	requestParams: {
+		path: z.object({ tournId: z.coerce.number().int().positive() }),
+	},
 	responses: {
 		200: {
 			description: 'Public facing page data for a given tournament',
@@ -111,7 +112,7 @@ router.route('/:tournId/files').get(ValidateRequest, controller.getPublishedFile
 	description: 'Retrieve a list of published files associated with a specific tournament.',
 	tags: ['Tournaments'],
 	requestParams: {
-		path: z.object({tournId: z.coerce.number().int() }),
+		path: z.object({ tournId: z.coerce.number().int().positive() }),
 	},
 	responses: {
 		200: {
@@ -128,24 +129,19 @@ router.route('/:tournId/files').get(ValidateRequest, controller.getPublishedFile
 	},
 };
 
-router.route('/:tournId/schedule').get(controller.getSchedule).openapi = {
+router.route('/:tournId/schedule').get(ValidateRequest, controller.getSchedule).openapi = {
 	path: '/rest/tourns/{tournId}/schedule',
 	summary: 'Get tournament schedule',
 	tags: ['Tournaments'],
-	parameters: [
-		{
-			in: 'path',
-			name: 'tournId',
-			required: true,
-			schema: { type: 'integer' },
-		},
-	],
+	requestParams: {
+		path: z.object({ tournId: z.coerce.number().int().positive() }),
+	},
 	responses: {
 		200: {
 			description: 'Tournament schedule',
 			content: {
 				'application/json': {
-					schema: { type: 'object' },
+					schema: z.array(ScheduleRoundSchema),
 				},
 			},
 		},

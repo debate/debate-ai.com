@@ -1,4 +1,5 @@
 import { NotFound } from '../../helpers/problem.js';
+import logger from '../../helpers/logger.js';
 import roundRepo from '../../repos/roundRepo.js';
 import { entryWins } from '../../services/results/entryWins.js';
 import { getSchematic } from '../pages/invite/schematController.js';
@@ -45,19 +46,19 @@ export async function getPublishedRounds(req, res) {
 			'name'             : round.name,
 			'label'            : round.label,
 			'flighted'         : round.flighted,
-			'postPrimary'      : round.post_primary,
-			'postSecondary'    : round.post_secondary,
-			'postFeedback'     : round.post_feedback,
+			'post_primary'     : round.post_primary,
+			'post_secondary'   : round.post_secondary,
+			'post_feedback'    : round.post_feedback,
 			'published'        : round.published,
-			'eventId'          : round.event,
-			'protocolId'       : round.protocol_id,
+			'event'            : round.event,
+			'protocol'         : round.protocol,
 			Event              : {
-				'id'           : round.eventId,
-				'name'         : round.eventName,
-				'abbr'         : round.eventAbbr,
-				'type'         : round.eventType,
-				'level'        : round.eventLevel,
-				'nsdaCategory' : round.nsdaCategory,
+				'id'            : round.eventId,
+				'name'          : round.eventName,
+				'abbr'          : round.eventAbbr,
+				'type'          : round.eventType,
+				'level'         : round.eventLevel,
+				'nsda_category' : round.nsdaCategory,
 				Settings: {
 					publishResults : round.publishResults,
 				},
@@ -111,8 +112,8 @@ export async function getPublishedBrackets(req, res) {
 	const records = await entryWins({
 		...req.params,
 	});
-	console.log(records);
-	console.log('end of records');
+	logger.info('records', { records });
+	logger.info('end of records');
 	return res.status(200).json(records);
 }
 

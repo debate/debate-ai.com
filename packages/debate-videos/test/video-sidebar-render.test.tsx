@@ -118,7 +118,7 @@ describe("VideoSidebarTree", () => {
 
   it("does not select Lectures while a debate-video tab is active", () => {
     const html = renderSidebar({ activeId: "pf" });
-    expect(html).toMatch(/<h2 class="[^"]*text-primary[^"]*">Public Forum/);
+    expect(html).toMatch(/<h2 class="[^"]*text-primary[^"]*">HS Public Forum/);
     expect(html).not.toMatch(/<h2 class="[^"]*text-primary[^"]*">Lectures/);
   });
 });
@@ -142,9 +142,9 @@ describe("the sidebar's heading structure", () => {
     const html = renderSidebar();
     for (const title of [
       "College Policy",
-      "HS Policy",
-      "HS Policy 1v1 \\(LD\\)",
-      "Public Forum",
+      "HS Policy Teams",
+      "HS Debate 1v1",
+      "HS Public Forum",
       "Greatest of All-Time",
       "My Favorites",
     ]) {
@@ -221,7 +221,7 @@ describe("the sidebar's heading structure", () => {
     // start expanded and collapse independently, so one link from each is
     // mounted on arrival.
     const html = renderSidebar();
-    expect(html).toContain("Coaching Programs");
+    expect(html).toContain("Research Progress");
     expect(html).toContain("Team Research");
     expect(html).toContain("AI Judge Decision");
     // ...alongside the Videos node's own links, which were never in doubt.

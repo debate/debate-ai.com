@@ -70,7 +70,7 @@ describe("synced tool collections", () => {
   it("covers the Coaching section's saved-work tools", () => {
     const synced = new Set(TOOL_RECORD_COLLECTIONS.map((collection) => collection.href));
 
-    for (const href of ["/coaching/ai-coach", "/coaching/programs"]) {
+    for (const href of ["/coaching"]) {
       expect(synced, href).toContain(href);
     }
   });

@@ -74,9 +74,9 @@ export const VIDEO_COLLEGE_LINK: SidebarVideoLink = {
  *  rather than children of it: they are sibling collections of the same
  *  round archive, not subsets of the college one. */
 export const VIDEO_FORMAT_LINKS: SidebarVideoLink[] = [
-  { id: "policy", href: "/videos/policy", title: "HS Policy", glyph: IconFormatVP },
-  { id: "ld", href: "/videos/ld", title: "HS Policy 1v1 (LD)", glyph: IconFormatLD },
-  { id: "pf", href: "/videos/pf", title: "Public Forum", glyph: IconFormatPF },
+  { id: "policy", href: "/videos/policy", title: "HS Policy Teams", glyph: IconFormatVP },
+  { id: "ld", href: "/videos/ld", title: "HS Debate 1v1", glyph: IconFormatLD },
+  { id: "pf", href: "/videos/pf", title: "HS Public Forum", glyph: IconFormatPF },
   { id: "topPicks", href: "/videos/goat", title: "Greatest of All-Time", glyph: Star },
 ];
 

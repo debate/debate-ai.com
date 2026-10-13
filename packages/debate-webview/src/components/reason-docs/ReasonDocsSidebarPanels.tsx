@@ -1,17 +1,16 @@
 "use client"
 
 /**
- * The REASON docs section of the app sidebar: the folder/file tree and the
- * "Open Tabs" list, ported from quick search's REASON editor sidebar
- * (`packages/reason-editor-sidebar`'s `SidebarContent` — its `renderFiles`
- * and `renderOpenTabs` panels and the panel-toggle row above them), adapted
- * to this app's document model and primitives.
+ * The REASON docs section of the app sidebar: two collapsible sections,
+ * Topic Starters (the public catalogue) and My Personal Documents (the
+ * reader's own folder/file tree), stacked above the Videos library tree that
+ * follows them in the app sidebar. Ported from quick search's REASON editor
+ * sidebar (`packages/reason-editor-sidebar`'s `SidebarContent`), adapted to
+ * this app's document model and primitives.
  *
- * As in that sidebar the enabled panels *stack* vertically rather than
- * switching exclusively, so Files and Open Tabs are both visible at once
- * (its default view). Unlike that sidebar this lives in the app's persistent
- * left sidebar (`AppSidebarShell`) instead of a second sidebar owned by the
- * editor route.
+ * There is no "Open Tabs" list here: the open files are the tab strip above
+ * CardMirror (`EditorTabStrip`), whose right-click menu closes and reopens
+ * them. Each section remembers whether it was collapsed, per device.
  *
  * It is mounted only where the documents are the subject — `/reason-editor`,
  * in the app sidebar, and `/research/cards`, as a second column inside the page
@@ -45,12 +44,10 @@
  * at once; the Sort control orders the tree.
  */
 
-import { Fragment, Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { usePathname, useRouter } from "next/navigation"
-import { Group, Panel, Separator } from "react-resizable-panels"
 import {
   ArrowDownUp,
-  BookOpen,
   Check,
   ChevronDown,
   ChevronRight,
@@ -58,8 +55,6 @@ import {
   FolderKanban,
   FolderPlus,
   Loader2,
-  PanelLeft,
-  PanelsTopLeft,
   Upload,
 } from "lucide-react"
 import { toast } from "sonner"
@@ -70,7 +65,6 @@ import {
   DropdownMenuTrigger,
 } from "../../lib/ui/primitives/dropdown-menu"
 import { FILE_SORTS, FILE_SORT_LABELS, isFileSort, type FileSort } from "../../lib/reason-docs/file-sort"
-import { AnimatedLoader } from "../ui/AnimatedLoader"
 import { cn } from "../../lib/ui/lib/utils"
 import { IMPORT_ACCEPT } from "../../lib/cardmirror/import-files"
 import {
@@ -79,74 +73,81 @@ import {
   isEditorPathname,
   type ReasonDocsSelection,
 } from "../../lib/reason-docs/route-selection"
-import {
-  PANEL_LABELS,
-  PANEL_MIN_SIZE,
-  isPanel,
-  layoutFor,
-  parseLayout,
-  visiblePanelsOf,
-  type PanelLayout,
-  type SidebarPanel,
-} from "../../lib/reason-docs/panel-layout"
 import { SHARE_OPEN_PARAM, ShareWithContacts } from "../reason-editor/ShareWithContacts"
 import { SellFileDialog } from "../market/SellFileDialog"
 import { useSession } from "../../lib/hooks/useSession"
 import { FileManagerDialog } from "./FileManagerDialog"
 import { FileTree } from "./FileTree"
-import { OpenTabsPanel } from "./OpenTabsPanel"
 import { TopicStarterTree, type TopicStarterItem } from "./TopicStarterTree"
 import { useReasonDocs } from "./ReasonDocsProvider"
 import type { ReasonDocument } from "./types"
 
-/** Which panels are shown, stacked top-to-bottom like the REASON sidebar
- *  this is ported from. Files + Open Tabs both visible is that sidebar's
- *  default view. The stack order itself, and how the panels divide the height
- *  they share, live in `lib/reason-docs/panel-layout.ts`. */
-const DEFAULT_PANELS: SidebarPanel[] = ["files", "openTabs"]
-const PANELS_STORAGE_KEY = "reason-editor-sidebar-panels"
-const SECTION_STORAGE_KEY = "reason-editor-sidebar-open"
-const LAYOUT_STORAGE_KEY = "reason-editor-sidebar-layout"
+/** Each section's collapse choice, per device. Both start open. */
+const TOPICS_OPEN_STORAGE_KEY = "reason-editor-sidebar-topics-open"
+const FILES_OPEN_STORAGE_KEY = "reason-editor-sidebar-files-open"
 const SORT_STORAGE_KEY = "reason-editor-sidebar-sort"
 
-const PANEL_TOGGLES: { panel: SidebarPanel; label: string; icon: typeof PanelLeft }[] = [
-  { panel: "files", label: "Files", icon: PanelLeft },
-  { panel: "topicStarters", label: "Topics", icon: BookOpen },
-  { panel: "openTabs", label: "Tabs", icon: PanelsTopLeft },
-]
-
-function loadPanels(): SidebarPanel[] {
+/** A section's stored collapse choice; open when there is none (or storage
+ *  is unavailable — private mode). */
+function loadSectionOpen(key: string): boolean {
   try {
-    const raw = localStorage.getItem(PANELS_STORAGE_KEY)
-    if (!raw) return DEFAULT_PANELS
-    const parsed = JSON.parse(raw)
-    if (!Array.isArray(parsed)) return DEFAULT_PANELS
-    const valid = parsed.filter(isPanel)
-    return valid.length > 0 ? valid : DEFAULT_PANELS
+    return localStorage.getItem(key) !== "false"
   } catch {
-    return DEFAULT_PANELS
+    return true
   }
 }
 
-/** The user's explicit collapse choice, or `null` when they've never made
- *  one (in which case the section starts open — see `isOpen` below). */
-function loadSectionOpen(): boolean | null {
+function saveSectionOpen(key: string, open: boolean) {
   try {
-    const raw = localStorage.getItem(SECTION_STORAGE_KEY)
-    return raw === "true" ? true : raw === "false" ? false : null
+    localStorage.setItem(key, String(open))
   } catch {
-    return null
+    // Storage unavailable — the toggle still works for this visit, it just
+    // won't be remembered.
   }
 }
 
-/** The panel sizes the reader last dragged to, or `{}` when they never have
- *  (or when storage is unavailable — see `loadPanels` above). */
-function loadLayout(): PanelLayout {
-  try {
-    return parseLayout(localStorage.getItem(LAYOUT_STORAGE_KEY))
-  } catch {
-    return {}
-  }
+/** One collapsible section: a chevron header (with any `actions` beside it)
+ *  over a body that scrolls inside a bounded box. */
+function SidebarSection({
+  title,
+  open,
+  onToggle,
+  actions,
+  fill,
+  children,
+}: {
+  title: string
+  open: boolean
+  onToggle: () => void
+  actions?: ReactNode
+  fill: boolean
+  children: ReactNode
+}) {
+  return (
+    <section className={cn("flex min-h-0 flex-col", open && fill && "flex-1")}>
+      <div className="flex items-center gap-1 px-1">
+        <button
+          type="button"
+          onClick={onToggle}
+          aria-expanded={open}
+          className="flex min-w-0 flex-1 items-center gap-1 rounded-md px-1 py-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground hover:text-foreground"
+        >
+          {open ? <ChevronDown className="h-3.5 w-3.5 shrink-0" /> : <ChevronRight className="h-3.5 w-3.5 shrink-0" />}
+          <span className="truncate">{title}</span>
+        </button>
+        {open && actions}
+      </div>
+      {/* Where these sections are the whole column (`fill`) the open ones
+          share its height; everywhere else each keeps a definite height, since
+          the sidebar scrolls as a whole there and a flexible box would be
+          squeezed to nothing by the Videos tree under it. */}
+      {open && (
+        <div className={cn("flex min-h-0 flex-col", fill ? "flex-1" : "h-[300px] max-h-[25vh] md:max-h-[40vh]")}>
+          {children}
+        </div>
+      )}
+    </section>
+  )
 }
 
 /** The Files tree's sort, per device like the other view choices here. */
@@ -179,13 +180,10 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
   const {
     documents,
     topicItems,
-    openTabs,
     activeId,
     loading,
     ensureLoaded,
     openDocument,
-    selectTab,
-    closeTab,
     createDocument,
     deleteDocument,
     moveDocument,
@@ -200,13 +198,10 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
     publishToTopics,
   } = useReasonDocs()
 
-  const [panels, setPanels] = useState<SidebarPanel[]>(DEFAULT_PANELS)
-  const [openOverride, setOpenOverride] = useState<boolean | null>(null)
-  /** The reader's last dragged panel sizes, and whether they have been read
-   *  yet — the group opens at the defaults for the server render and is
-   *  remounted on the stored sizes once they are in (see `key` below). */
-  const [storedLayout, setStoredLayout] = useState<PanelLayout>({})
-  const [layoutHydrated, setLayoutHydrated] = useState(false)
+  const [topicsOpen, setTopicsOpen] = useState(true)
+  const [filesOpen, setFilesOpen] = useState(true)
+  /** Whether the stored collapse choices have been read yet. */
+  const [hydrated, setHydrated] = useState(false)
   /** What the last upload couldn't take, shown under the tree until the next
    *  one. Silence would leave a reader watching a file that never appears. */
   const [importErrors, setImportErrors] = useState<string[]>([])
@@ -222,15 +217,13 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
   const [sellingId, setSellingId] = useState<number | null>(null)
   const { isAuthenticated } = useSession()
 
-  // Panel choice and collapse state are per-device view preferences (same as
-  // the source sidebar's persisted panel list); read after mount so the SSR
-  // markup stays deterministic.
+  // Collapse state and sort are per-device view preferences; read after
+  // mount so the SSR markup stays deterministic.
   useEffect(() => {
-    setPanels(loadPanels())
-    setOpenOverride(loadSectionOpen())
-    setStoredLayout(loadLayout())
+    setTopicsOpen(loadSectionOpen(TOPICS_OPEN_STORAGE_KEY))
+    setFilesOpen(loadSectionOpen(FILES_OPEN_STORAGE_KEY))
     setSort(loadSort())
-    setLayoutHydrated(true)
+    setHydrated(true)
   }, [])
 
   const onEditorRoute = isEditorPathname(pathname)
@@ -240,41 +233,24 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
     () => (activeId == null ? null : documents.find((doc) => doc.id === activeId) ?? null),
     [documents, activeId],
   )
-  // Expanded by default: this only mounts where the documents *are* the
-  // page's subject (`/research/cards` and the editor), and on `/research/cards` these panels are
-  // the whole sidebar — a collapsed "Documents" row would leave that column
-  // empty but for the dock. The user's own collapse still wins, and sticks.
-  const isOpen = openOverride ?? true
 
-  // Nothing is fetched until the section is actually on screen, so a reader
-  // who collapses it makes no document requests at all.
+  // Nothing is fetched until a section is actually on screen, so a reader who
+  // collapses both makes no document requests at all — which is why this
+  // waits for the stored choices rather than acting on the open defaults.
+  const anyOpen = topicsOpen || filesOpen
   useEffect(() => {
-    if (isOpen) ensureLoaded()
-  }, [isOpen, ensureLoaded])
+    if (hydrated && anyOpen) ensureLoaded()
+  }, [hydrated, anyOpen, ensureLoaded])
 
-  const toggleSection = () => {
-    const next = !isOpen
-    setOpenOverride(next)
-    try {
-      localStorage.setItem(SECTION_STORAGE_KEY, String(next))
-    } catch {
-      // Storage unavailable (private mode) — the toggle still works for this
-      // visit, it just won't be remembered.
-    }
+  const toggleTopics = () => {
+    setTopicsOpen(!topicsOpen)
+    saveSectionOpen(TOPICS_OPEN_STORAGE_KEY, !topicsOpen)
   }
 
-  const togglePanel = useCallback((panel: SidebarPanel) => {
-    setPanels((prev) => {
-      const next = prev.includes(panel) ? prev.filter((p) => p !== panel) : [...prev, panel]
-      if (next.length === 0) return prev // always keep at least one panel
-      try {
-        localStorage.setItem(PANELS_STORAGE_KEY, JSON.stringify(next))
-      } catch {
-        // See above — the preference just isn't persisted.
-      }
-      return next
-    })
-  }, [])
+  const toggleFiles = () => {
+    setFilesOpen(!filesOpen)
+    saveSectionOpen(FILES_OPEN_STORAGE_KEY, !filesOpen)
+  }
 
   /** A new document has no id until the POST resolves, so its hop carries no
    *  selection — `createDocument` opens the created file itself. */
@@ -457,150 +433,44 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
     [topicItems],
   )
 
-  const visiblePanels = useMemo(() => visiblePanelsOf(panels), [panels])
-  const defaultLayout = useMemo(() => layoutFor(visiblePanels, storedLayout), [visiblePanels, storedLayout])
+  const spinner = (
+    <div className="flex justify-center py-8">
+      <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+    </div>
+  )
 
-  /**
-   * Remembers a drag, per-device, like the panel choice above it.
-   *
-   * Only a reader's own drag is stored (`isUserInteraction`): the same callback
-   * also fires for the layout the group computes on mount and on a constraint
-   * recompute, and writing those back would overwrite a deliberate split with
-   * whatever the defaults worked out to.
-   */
-  const saveLayout = useCallback((layout: PanelLayout, meta: { isUserInteraction: boolean }) => {
-    if (!meta.isUserInteraction) return
-    setStoredLayout((prev) => {
-      const next = { ...prev, ...layout }
-      try {
-        localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify(next))
-      } catch {
-        // See above — the split holds for this visit, it just isn't remembered.
-      }
-      return next
-    })
-  }, [])
-
-  /** Each panel's contents, so the stack below is one pass over the visible
-   *  panels rather than three near-identical branches. Sizing lives on the
-   *  `Panel` wrapper, not here. */
-  const panelBodies: Record<SidebarPanel, ReactNode> = {
-    files: (
-      <>
-        <div className="flex shrink-0 items-center justify-between px-3 pb-1 pt-2">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Files</p>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button
-                type="button"
-                title={`Sort: ${FILE_SORT_LABELS[sort]}`}
-                aria-label="Sort files"
-                className="flex h-5 w-5 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
-              >
-                <ArrowDownUp className="h-3.5 w-3.5" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {FILE_SORTS.map((option) => (
-                <DropdownMenuItem key={option} onClick={() => chooseSort(option)}>
-                  <Check className={cn("mr-2 h-4 w-4", sort === option ? "opacity-100" : "opacity-0")} />
-                  {FILE_SORT_LABELS[option]}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-        <FileTree
-          documents={documents}
-          activeId={activeId}
-          sort={sort}
-          onSelect={openFile}
-          onAdd={(parentId, isFolder) => void createDocument(parentId, isFolder)}
-          onRename={updateTitle}
-          onDelete={(id) => void deleteDocument(id)}
-          onMove={(id, parentId) => void moveDocument(id, parentId)}
-          onUpload={(files, parentId) => void uploadFiles(files, parentId)}
-          onDownload={downloadFile}
-          onDuplicate={duplicateFile}
-          onShare={shareFile}
-          onSell={isAuthenticated ? setSellingId : undefined}
-          onPublish={publishFile}
-          onImportTopic={saveTopicCopyById}
-        />
-        {importErrors.length > 0 && (
-          <ul className="shrink-0 space-y-1 px-3 pb-2 text-xs text-destructive">
-            {importErrors.map((message) => (
-              <li key={message}>{message}</li>
-            ))}
-          </ul>
-        )}
-        {downloadError && <p className="shrink-0 px-3 pb-2 text-xs text-destructive">{downloadError}</p>}
-      </>
-    ),
-    topicStarters: (
-      <>
-        <p className="shrink-0 px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          Topic Starters
-        </p>
-        <TopicStarterTree
-          items={topicItems}
-          onSelect={openTopic}
-          onDownload={downloadTopicFile}
-          onSaveCopy={(item) => saveTopicCopy(item, null)}
-          onEditCopy={(item) => saveTopicCopy(item, null, true)}
-          onCopyLink={copyTopicLink}
-          onPublish={publishFile}
-        />
-        {topicDownloadError && (
-          <p className="shrink-0 px-3 pb-2 text-xs text-destructive">{topicDownloadError}</p>
-        )}
-      </>
-    ),
-    openTabs: (
-      <>
-        <div className="flex shrink-0 items-center justify-between px-3 pb-1 pt-2">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Open Tabs{openTabs.length > 0 && ` (${openTabs.length})`}
-          </p>
-          <button
-            type="button"
-            onClick={() => {
-              void createDocument(null, false)
-              goToBlankEditor()
-            }}
-            title="New File"
-            className="flex h-5 w-5 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
-          >
-            <FilePlus2 className="h-3.5 w-3.5" />
-          </button>
-        </div>
-        <OpenTabsPanel
-          documents={documents}
-          openTabs={openTabs}
-          activeId={activeId}
-          onSelect={(id) => {
-            selectTab(id)
-            goToEditor({ kind: "document", id })
-          }}
-          onClose={closeTab}
-        />
-      </>
-    ),
-  }
+  const iconButton =
+    "flex h-6 w-6 shrink-0 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-50"
 
   return (
-    <div className={cn("flex min-h-0 flex-col", className)}>
-      <div className="flex items-center gap-1 px-1">
-        <button
-          type="button"
-          onClick={toggleSection}
-          aria-expanded={isOpen}
-          className="flex flex-1 items-center gap-1 rounded-md px-1 py-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground hover:text-foreground"
-        >
-          {isOpen ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
-          Documents
-        </button>
-        {isOpen && (
+    <div className={cn("flex min-h-0 flex-col gap-1", className)}>
+      <SidebarSection title="Topic Starters" open={topicsOpen} onToggle={toggleTopics} fill={fill}>
+        {loading ? (
+          spinner
+        ) : (
+          <>
+            <TopicStarterTree
+              items={topicItems}
+              onSelect={openTopic}
+              onDownload={downloadTopicFile}
+              onSaveCopy={(item) => saveTopicCopy(item, null)}
+              onEditCopy={(item) => saveTopicCopy(item, null, true)}
+              onCopyLink={copyTopicLink}
+              onPublish={publishFile}
+            />
+            {topicDownloadError && (
+              <p className="shrink-0 px-3 pb-2 text-xs text-destructive">{topicDownloadError}</p>
+            )}
+          </>
+        )}
+      </SidebarSection>
+
+      <SidebarSection
+        title="My Personal Documents"
+        open={filesOpen}
+        onToggle={toggleFiles}
+        fill={fill}
+        actions={
           <>
             <button
               type="button"
@@ -609,7 +479,7 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
                 goToBlankEditor()
               }}
               title="New document"
-              className="flex h-6 w-6 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
+              className={iconButton}
             >
               <FilePlus2 className="h-3.5 w-3.5" />
             </button>
@@ -617,7 +487,7 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
               type="button"
               onClick={() => void createDocument(null, true)}
               title="New folder"
-              className="flex h-6 w-6 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
+              className={iconButton}
             >
               <FolderPlus className="h-3.5 w-3.5" />
             </button>
@@ -626,7 +496,7 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
               onClick={() => uploadInputRef.current?.click()}
               disabled={importing}
               title={`Upload a file (${IMPORT_ACCEPT})`}
-              className="flex h-6 w-6 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-50"
+              className={iconButton}
             >
               {importing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Upload className="h-3.5 w-3.5" />}
             </button>
@@ -634,10 +504,25 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
               type="button"
               onClick={() => setFileManagerOpen(true)}
               title="File manager"
-              className="flex h-6 w-6 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
+              className={iconButton}
             >
               <FolderKanban className="h-3.5 w-3.5" />
             </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button type="button" title={`Sort: ${FILE_SORT_LABELS[sort]}`} aria-label="Sort files" className={iconButton}>
+                  <ArrowDownUp className="h-3.5 w-3.5" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {FILE_SORTS.map((option) => (
+                  <DropdownMenuItem key={option} onClick={() => chooseSort(option)}>
+                    <Check className={cn("mr-2 h-4 w-4", sort === option ? "opacity-100" : "opacity-0")} />
+                    {FILE_SORT_LABELS[option]}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
             {/* Sharing rides in this row rather than in the editor's own
                 header strip: it is a thing done to the open file, and this is
                 the row the file's other actions are in. Only on the editor
@@ -650,99 +535,56 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
                 <ShareWithContacts variant="icon" title={activeDocument.title} />
               </Suspense>
             )}
-            <input
-              ref={uploadInputRef}
-              type="file"
-              multiple
-              accept={IMPORT_ACCEPT}
-              className="hidden"
-              onChange={(event) => {
-                const files = Array.from(event.target.files ?? [])
-                // Cleared before the await so picking the same file twice in a
-                // row still fires `change` the second time.
-                event.target.value = ""
-                void uploadFiles(files, null)
-              }}
+          </>
+        }
+      >
+        {loading ? (
+          spinner
+        ) : (
+          <>
+            <FileTree
+              documents={documents}
+              activeId={activeId}
+              sort={sort}
+              onSelect={openFile}
+              onAdd={(parentId, isFolder) => void createDocument(parentId, isFolder)}
+              onRename={updateTitle}
+              onDelete={(id) => void deleteDocument(id)}
+              onMove={(id, parentId) => void moveDocument(id, parentId)}
+              onUpload={(files, parentId) => void uploadFiles(files, parentId)}
+              onDownload={downloadFile}
+              onDuplicate={duplicateFile}
+              onShare={shareFile}
+              onSell={isAuthenticated ? setSellingId : undefined}
+              onPublish={publishFile}
+              onImportTopic={saveTopicCopyById}
             />
+            {importErrors.length > 0 && (
+              <ul className="shrink-0 space-y-1 px-3 pb-2 text-xs text-destructive">
+                {importErrors.map((message) => (
+                  <li key={message}>{message}</li>
+                ))}
+              </ul>
+            )}
+            {downloadError && <p className="shrink-0 px-3 pb-2 text-xs text-destructive">{downloadError}</p>}
           </>
         )}
-      </div>
+      </SidebarSection>
 
-      {isOpen && (
-        <>
-          {/* Panel toggles — multi-select, so Files and Open Tabs stack
-              together like the source REASON sidebar's default view. */}
-          <div className="mt-1 flex items-center gap-1 border-b pb-1.5">
-            {PANEL_TOGGLES.map(({ panel, label, icon: Icon }) => (
-              <button
-                key={panel}
-                type="button"
-                onClick={() => togglePanel(panel)}
-                aria-pressed={panels.includes(panel)}
-                className={cn(
-                  "flex flex-1 items-center justify-center gap-1 rounded-md py-1 text-xs font-medium transition-colors",
-                  panels.includes(panel)
-                    ? "bg-muted text-foreground"
-                    : "text-muted-foreground hover:text-foreground",
-                )}
-              >
-                <Icon className="h-3.5 w-3.5" />
-                {label}
-                {panel === "openTabs" && openTabs.length > 0 && (
-                  <span className="text-muted-foreground">({openTabs.length})</span>
-                )}
-              </button>
-            ))}
-          </div>
-
-          {/* Where these panels are the sidebar (`fill`) the box takes what
-              is left of the column and the separators below divide it, so the
-              tree and the tabs are sized by dragging rather than by a number
-              in this file. Everywhere else it keeps a definite height: the
-              sidebar scrolls as a whole there, and a flexible box would be
-              squeezed to nothing by the nav tree under it. Either way the
-              panels scroll inside the box. */}
-          {loading ? (
-            <div className="flex justify-center py-8">
-              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-            </div>
-          ) : (
-            <div
-              className={cn(
-                "flex min-h-0 flex-col",
-                fill ? "flex-1" : "h-[380px] max-h-[30vh] md:max-h-[45vh]",
-              )}
-            >
-              {/* `key` covers the panel set changing, and the stored sizes
-                  arriving after mount: a layout belongs to the set it was
-                  dragged on, so switching a panel on reopens the group at the
-                  sizes saved for *that* set instead of squeezing the new panel
-                  into what the others left. */}
-              <Group
-                key={`${layoutHydrated}:${visiblePanels.join("|")}`}
-                orientation="vertical"
-                defaultLayout={defaultLayout}
-                onLayoutChanged={saveLayout}
-                className="flex min-h-0 flex-1 flex-col"
-              >
-                {visiblePanels.map((panel, index) => (
-                  <Fragment key={panel}>
-                    {index > 0 && (
-                      <Separator
-                        aria-label={`Resize ${PANEL_LABELS[panel]}`}
-                        className="relative flex h-px w-full shrink-0 bg-border transition-colors after:absolute after:inset-x-0 after:top-1/2 after:h-2 after:-translate-y-1/2 hover:bg-primary/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                      />
-                    )}
-                    <Panel id={panel} minSize={PANEL_MIN_SIZE} className="flex h-full min-h-0 flex-col">
-                      {panelBodies[panel]}
-                    </Panel>
-                  </Fragment>
-                ))}
-              </Group>
-            </div>
-          )}
-        </>
-      )}
+      <input
+        ref={uploadInputRef}
+        type="file"
+        multiple
+        accept={IMPORT_ACCEPT}
+        className="hidden"
+        onChange={(event) => {
+          const files = Array.from(event.target.files ?? [])
+          // Cleared before the await so picking the same file twice in a
+          // row still fires `change` the second time.
+          event.target.value = ""
+          void uploadFiles(files, null)
+        }}
+      />
       <FileManagerDialog
         open={fileManagerOpen}
         onOpenChange={setFileManagerOpen}

@@ -4,8 +4,8 @@ title: "REASON docs sidebar — files on the document routes, opened in CardMirr
 
 # REASON docs sidebar — files on the document routes, opened in CardMirror
 
-The Files / Topic Starters / Open Tabs panels that sit above the tool nav
-tree, and the URL round trip that turns a click on one of them into "that
+The two collapsible sections, **Topic Starters** and **My Personal
+Documents**, that sit above the Videos library tree, and the URL round trip that turns a click on one of them into "that
 file, loaded in CardMirror, in the main column."
 
 - **Routes:** `/research/cards` (and below it) and `/reason-editor` — the routes the
@@ -13,11 +13,13 @@ file, loaded in CardMirror, in the main column."
   `apps/debate-ai.com/lib/reason-docs/sidebar-routes.ts`
 - **Panels:** `packages/debate-webview/src/components/reason-docs/`
   (`ReasonDocsSidebarPanels`, `FileTree`, `TopicStarterTree`,
-  `OpenTabsPanel`, `FileManagerDialog`), over `ReasonDocsProvider` in the
+  `FileManagerDialog`), over `ReasonDocsProvider` in the
   root layout
 - **URL rules:** `apps/debate-ai.com/lib/reason-docs/route-selection.ts`
 - **Where they show:** `apps/debate-ai.com/lib/reason-docs/sidebar-routes.ts`
-- **Editor:** `/reason-editor` (`debate-editor`'s CardMirror embed)
+- **Editor:** `/reason-editor` (`debate-editor`'s CardMirror embed), with
+  its tab strip in `components/reason-editor/EditorTabStrip.tsx` and the tab
+  rules in `lib/reason-docs/tab-actions.ts`
 
 ## Where the panels mount
 
@@ -39,20 +41,38 @@ sidebar is the dock plus the video nav. The trade is that
 a file opened from `/research/cards` is no longer one click away after hopping to the
 video library — the dock hop back is.
 
-In the sidebar the panels sit under the dock and above the nav tree: the
-tree is long enough (a section auto-expands to show where you are) that
-anything below it starts under the fold.
+In the sidebar the sections sit under the dock and above the Videos tree:
+the tree is long enough (a section auto-expands to show where you are) that
+anything below it starts under the fold. Topic Starters comes first, then
+My Personal Documents. There is no panel switcher and no Open Tabs list: the
+open files are the tab strip above the editor (below).
 
-The section is expanded by default on `/reason-editor`, where the docs are
-the page's subject, and collapsed on `/research/cards` until the reader says
-otherwise — which sticks, per-device, in `localStorage`. Nothing is fetched
-until it is actually open, so a page that leaves it collapsed makes no
-document request at all.
+Each section has a chevron header and is expanded by default. Collapsing one
+sticks, per-device, in `localStorage` (`reason-editor-sidebar-topics-open`,
+`reason-editor-sidebar-files-open`). Nothing is fetched until a section is
+actually open, so a page that leaves both collapsed makes no document
+request at all.
+
+## Tabs above the editor
+
+Every file opened on `/reason-editor` gets a tab in the strip above
+CardMirror. Click a tab to switch to it, or its × to close it. Right-click a
+tab for:
+
+- **Close** that tab.
+- **Close others**: every tab but this one, which becomes the open file.
+- **Close to the right**: every tab after this one.
+- **Close all**.
+- **Undo close**: reopens the most recently closed tab. It walks back through
+  the last 20 closed tabs, skipping files deleted since.
+
+Closing the open tab moves to its neighbour, preferring the tab that slid
+into its place.
 
 ## Opening a file
 
-Picking a file — an owned document, a public topic starter, or an open tab —
-does two things:
+Picking a file — an owned document or a public topic starter — does two
+things:
 
 - sets it active in `ReasonDocsProvider`, so a client-side hop switches the
   editor instantly; and
@@ -174,7 +194,7 @@ already up (`?shareOpen=1`, read and stripped by `ShareWithContacts`).
 Sharing starts a live co-editing session in the editor, which is why the file
 has to be open there first.
 
-The **Sort** button in the Files header orders the tree by name (A–Z or Z–A)
+The **Sort** button in the My Personal Documents header orders the tree by name (A–Z or Z–A)
 or by last modified (`lib/reason-docs/file-sort.ts`). Folders always come
 before files. The choice is remembered per device.
 
@@ -195,7 +215,7 @@ Rows drag both ways between the two trees, and each drop means what it can
 
 ## File manager
 
-The File manager button in the Documents row opens a full-window file
+The File manager button in the My Personal Documents header opens a full-window file
 manager over the same files: SVAR's `@svar-ui/react-filemanager`, the widget
 quick search's REASON sidebar opens from its own file manager dialog. Every
 action it offers is routed back to the real rows
@@ -229,9 +249,13 @@ Ctrl/Cmd-P stays the editor's own palette.
 
 ## Known gaps
 
-- The docs section starts collapsed on `/research/cards`, so the files are one click
-  away there rather than on screen. A reader who opens it has that choice
-  remembered per-device.
+- ~~The docs section starts collapsed on `/research/cards`, so the files are
+  one click away there rather than on screen.~~ **Fixed:** both sections start
+  expanded everywhere; a reader's own collapse is remembered per device.
+- Undo close lives in the tab strip's right-click menu, and the strip is
+  hidden once every tab is closed, so after Close all there is no tab left to
+  right-click. Reopen a file from the sidebar instead. There is no keyboard
+  shortcut for it either: browsers keep Ctrl/Cmd-Shift-T for themselves.
 - `showsReasonDocsPanels` is a hard-coded route list, not something derived
   from the nav data. A new documents route has to be added to it by hand.
 - ~~`SharedCardOpener`'s `?share=<id>` flow replaces the URL with a bare

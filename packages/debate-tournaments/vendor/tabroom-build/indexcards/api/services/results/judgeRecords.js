@@ -1,10 +1,11 @@
-import db from '../../data/db.js';
+import { sql } from 'kysely';
+import { db } from '../../data/database.js';
 /**
  * Returns a judging record of a particular person
  * @param {*} personId the person to get the record for
  */
 export async function judgeRecord(personId){
-	const sql = `
+	const query = sql`
 		select ballot.id as ballot_id,
 						ballot.side as ballot_side,
 						event.abbr as event_abbr,
@@ -66,7 +67,7 @@ export async function judgeRecord(personId){
 							and neg_label.event = event.id
 
 					where ballot.judge         = judge.id
-						and judge.person       = :personId
+						and judge.person       = ${personId}
 						and panel.id           = ballot.panel
 						and round.id           = panel.round
 						and round.event        = event.id
@@ -90,10 +91,7 @@ export async function judgeRecord(personId){
 						ballot.panel asc;
 		`;
 
-	const rows = await db.sequelize.query(sql, {
-		replacements: { personId },
-		type: db.Sequelize.QueryTypes.SELECT,
-	});
+	const { rows } = await query.execute(db);
 
 	const groupedByPanel = new Map();
 

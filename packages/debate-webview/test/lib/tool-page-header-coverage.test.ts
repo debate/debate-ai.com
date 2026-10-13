@@ -42,10 +42,11 @@ const APP_DIR = join(PACKAGE_ROOT, "..", "..", "apps", "debate-ai.com", "app")
  * The app's `page.tsx` for `href` — or, when that page only re-exports a
  * `@debate/webview/routes/…` module, as most do, that module's source. A route
  * with no `app/` page (served from the `routes/index.ts` registry instead)
- * reads its `routes/<href>/page.tsx` directly.
+ * reads its `routes/<href>/page.tsx` directly. A `?section=` query (a tab of
+ * a tabbed page) is ignored: the page is the path's.
  */
 function pageSource(href: string): string {
-  const segments = href.split("/").filter(Boolean)
+  const segments = href.split("?")[0].split("/").filter(Boolean)
   const appPage = join(APP_DIR, ...segments, "page.tsx")
   if (!existsSync(appPage)) return readFileSync(join(ROUTES_DIR, ...segments, "page.tsx"), "utf8")
   const source = readFileSync(appPage, "utf8")

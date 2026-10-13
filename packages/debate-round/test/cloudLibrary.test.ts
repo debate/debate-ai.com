@@ -562,7 +562,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.prepNote).toBe("/practice/prep?section=notes");
     expect(byKind.evidenceLibraryEntry).toBe("/research/cards/library");
     expect(byKind.practiceRound).toBe("/practice");
-    expect(byKind.coachMaterial).toBe("/coaching/materials");
+    expect(byKind.coachMaterial).toBe("/coaching?section=materials");
 
     const overridden = buildRecentCloudItems({ flows }, { flowHref: "/custom-flow-route" });
     expect(overridden[0]?.href).toBe("/custom-flow-route");

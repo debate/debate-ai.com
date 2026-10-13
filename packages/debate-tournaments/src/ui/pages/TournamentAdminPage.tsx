@@ -5,6 +5,8 @@
  * hosting API (`GET {apiBase}/host/tourns/:id/admin`) rather than Tabroom's
  * console: the schedule with unpublished rounds, every entry and its status,
  * schools, judges, rooms and result sets, each linked to its public page.
+ * For a real (non-demo) owner it adds the tournament's timeslots and judge
+ * categories from upstream Tabroom's own tournament-admin API (`/tab/tourns`).
  *
  * Owners and admins see their own tournaments. The demo tournament is open to
  * everyone, who browse it as the mock admin `demo.admin`, and its admin view
@@ -200,8 +202,36 @@ export function AdminView({ view, onChanged }: { view: TournamentAdmin; onChange
         />
       ) : null}
 
+      {viewer.mock ? null : <TabroomSetup tournId={tourn.id} tz={tourn.tz} />}
+
       {tourn.id === DEMO_TOURN_ID && onChanged ? <DemoMockEditor view={view} onChanged={onChanged} /> : null}
     </div>
+  );
+}
+
+/** Timeslots and judge categories, read through upstream's tournament-admin API. */
+function TabroomSetup({ tournId, tz }: { tournId: number; tz: string | null }) {
+  const { client } = useTournaments();
+  const state = useApi(`setup:${tournId}`, (signal) => client.setup(tournId, signal));
+  return (
+    <Section title="Tournament setup">
+      <Loaded state={state}>
+        {(setup) => (
+          <div className="grid gap-4 p-4 md:grid-cols-2">
+            <AdminTable
+              empty="No timeslots yet."
+              head={["Timeslot", "Starts", "Ends"]}
+              rows={setup.timeslots.map((t) => [t.name, formatDate(t.start, tz, true) || "—", formatDate(t.end, tz, true) || "—"])}
+            />
+            <AdminTable
+              empty="No judge categories yet."
+              head={["Judge category", "Code"]}
+              rows={setup.categories.map((c) => [c.name, c.abbr])}
+            />
+          </div>
+        )}
+      </Loaded>
+    </Section>
   );
 }
 

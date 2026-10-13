@@ -1,24 +1,25 @@
-import db from '../../../data/db.js';
+import { sql } from 'kysely';
+import { db } from '../../../data/database.js';
 import { parseDateTime } from '../../../helpers/dateTime.js';
 import { NotFound } from '../../../helpers/problem.js';
 import { publishLevel, snakeToCamel } from '../../../helpers/text.js';
-import { settingsMapper } from '../../../helpers/settings.js';
+import { selectSettings } from '../../../repos/utils/index.js';
 import { entryWins } from '../../../services/results/entryWins.js';
 
 export async function getSchematic (req,res) {
 
-	let finders = '';
+	const finders = [];
 
-	if (req.params.eventId) finders += ' and event.id = :eventId ';
-	if (req.params.eventAbbr) finders += ' and event.abbr = :eventAbbr ';
-	if (req.params.roundId) finders += ' and round.id = :roundId ';
-	if (req.params.roundName) finders += ' and round.name = :roundName ';
+	if (req.params.eventId) finders.push(sql` and event.id = ${req.params.eventId} `);
+	if (req.params.eventAbbr) finders.push(sql` and event.abbr = ${req.params.eventAbbr} `);
+	if (req.params.roundId) finders.push(sql` and round.id = ${req.params.roundId} `);
+	if (req.params.roundName) finders.push(sql` and round.name = ${req.params.roundName} `);
 
-	if (!finders) {
+	if (finders.length < 1) {
 		return NotFound(req, res, 'No parameters for retrieval sent');
 	}
 
-	const roundData = await db.sequelize.query(`
+	const { rows: roundData } = await sql`
 		select
 			event.id eventId, event.name eventName, event.abbr eventAbbr, event.type eventType,
 			event.nsda_category nsdaCategory,
@@ -61,9 +62,9 @@ export async function getSchematic (req,res) {
 		from (event, round, timeslot, tourn)
 
 		where 1=1
-			and event.tourn = :tournId
+			and event.tourn = ${req.params.tournId}
 			and tourn.id    = event.tourn
-			${finders}
+			${sql.join(finders, sql` `)}
 			and event.id    = round.event
 			and round.published > 0
 			and round.timeslot = timeslot.id
@@ -74,10 +75,7 @@ export async function getSchematic (req,res) {
 				and panel.id = ballot.panel
 				and ballot.entry > 0
 			)
-	`, {
-		replacements: { ...req.params },
-		type: db.Sequelize.QueryTypes.SELECT,
-	});
+	`.execute(db);
 
 	const rounds = roundData.map( (round) => {
 
@@ -125,18 +123,12 @@ export async function getSchematic (req,res) {
 
 	const round = rounds[0];
 
-	const rawEventSettings = await db.sequelize.query(`
-		select
-			es.id, es.tag, es.value, es.value_date valueDate, es.value_text valueText
-		from event_setting es, round
-		where 1=1
-			and round.id = :roundId
-			and es.event = round.event
-			and es.tag IN (:settingTags)
-	`, {
-		replacements: {
-			roundId: round.id,
-			settingTags : [
+	const { settings: eventSettings } = await db
+		.selectFrom('event')
+		.innerJoin('round', 'round.event', 'event.id')
+		.select(selectSettings({
+			table: 'event',
+			settings: [
 				'anonymous_public',
 				'pods',
 				'no_side_constraints',
@@ -151,12 +143,11 @@ export async function getSchematic (req,res) {
 				'neg_label',
 				'prep_offset',
 			],
-		},
-		type: db.Sequelize.QueryTypes.SELECT,
-	});
+		}))
+		.where('round.id', '=', round.id)
+		.executeTakeFirstOrThrow();
 
-	const sets = settingsMapper(rawEventSettings);
-	round.Event.Settings = sets.settings;
+	round.Event.Settings = eventSettings ?? {};
 
 	// Mapping start times and decision deadlines. Doing it here and not on the
 	// front end because syncing up this logic together with reactivity is a
@@ -170,20 +161,17 @@ export async function getSchematic (req,res) {
 
 	if (round.published === 'entryList' || round.published === 'prelimChambers') {
 
-		const rawEntries = await db.sequelize.query(`
+		const { rows: rawEntries } = await sql`
 			select
 				entry.id, entry.code,
 				section.bye, section.letter chamber
 			from (panel section, ballot, entry)
 			where 1=1
-				and section.round = :roundId
+				and section.round = ${round.id}
 				and section.id = ballot.panel
 				and ballot.entry = entry.id
 			order by entry.code
-		`, {
-			replacements: { roundId: round.id },
-			type: db.Sequelize.QueryTypes.SELECT,
-		});
+		`.execute(db);
 
 		round.Entries = rawEntries.map( (entry) => {
 			const e = { ...entry };
@@ -194,7 +182,7 @@ export async function getSchematic (req,res) {
 
 	} else if (round.published === 'full' || round.published === 'noJudges') {
 
-		const rawPanels = await db.sequelize.query(`
+		const { rows: rawPanels } = await sql`
 			select panel.id,
 				panel.letter, panel.flight, panel.bye,
 				room.id roomId, room.name as roomName,
@@ -208,14 +196,9 @@ export async function getSchematic (req,res) {
 
 				left join room on panel.room = room.id
 
-			where panel.round = :roundId
+			where panel.round = ${round.id}
 				order by panel.bye, room.name, panel.flight
-		`, {
-			replacements: {
-				roundId: round.id,
-			},
-			type: db.Sequelize.QueryTypes.SELECT,
-		});
+		`.execute(db);
 
 		round.Sections = rawPanels.reduce((acc, section) => {
 
@@ -244,7 +227,7 @@ export async function getSchematic (req,res) {
 			return acc;
 		}, {});
 
-		const rawBallots = await db.sequelize.query(`
+		const { rows: rawBallots } = await sql`
 			select
 				section.id sectionId,
 				ballot.side, ballot.speakerorder, ballot.chair,
@@ -266,17 +249,12 @@ export async function getSchematic (req,res) {
 					and pod.tag = 'pod'
 
 			where 1=1
-				and section.round = :roundId
+				and section.round = ${round.id}
 				and section.id = ballot.panel
 				and ballot.entry = entry.id
 
 			order by ballot.chair, ballot.judge, ballot.side
-		`, {
-			replacements: {
-				roundId: round.id,
-			},
-			type: db.Sequelize.QueryTypes.SELECT,
-		});
+		`.execute(db);
 
 		rawBallots.forEach( (ballot) => {
 
@@ -295,11 +273,11 @@ export async function getSchematic (req,res) {
 				};
 			}
 
-			if (round.published === 'full') {
+			if (round.published === 'full' && ballot.judgeId) {
 				if (!round.Sections[ballot.sectionId].Judges[ballot.judgeId]) {
 
 					const judge = {
-						id     : ballot.id,
+						id     : ballot.judgeId,
 						first  : ballot.judgeFirst,
 						last   : ballot.judgeLast,
 					};
@@ -308,7 +286,7 @@ export async function getSchematic (req,res) {
 					if (ballot.chair) judge.chair = ballot.chair;
 					if (ballot.judgeCode) judge.code = ballot.judgeCode;
 
-					if (round.Event.Settings.anonymousPublic) {
+					if (round.Event.Settings.anonymous_public) {
 						delete ballot.judgeFirst;
 						delete ballot.judgeLast;
 						delete judge.first;
@@ -367,11 +345,11 @@ const showFlightTimes = (round, personTz = undefined) => {
 
 		// Start Time
 		const offset = {};
-		if (round.Event.Settings?.flightOffset && tick > 0) {
-			offset.minutes = tick * parseInt(round.Event.Settings.flightOffset);
+		if (round.Event.Settings?.flight_offset && tick > 0) {
+			offset.minutes = tick * parseInt(round.Event.Settings.flight_offset);
 		} else if (tick > 0) {
 			// Do not display flight differentials unless there's an offset;
-			continue;
+			break;
 		}
 
 		flightTimes.start= parseDateTime({
@@ -380,10 +358,10 @@ const showFlightTimes = (round, personTz = undefined) => {
 		});
 
 		// Prep Room Draw time offset for Extemp.
-		if (round.Event.Settings.prepOffset) {
-			offset.minutes = -1 * round.Event.Settings.prepOffset;
-			if (round.Event.Settings.flightOffset && tick > 0) {
-				offset.minutes += tick * parseInt(round.Event.Settings.flightOffset);
+		if (round.Event.Settings.prep_offset) {
+			offset.minutes = -1 * round.Event.Settings.prep_offset;
+			if (round.Event.Settings.flight_offset && tick > 0) {
+				offset.minutes += tick * parseInt(round.Event.Settings.flight_offset);
 			}
 
 			flightTimes.draw = parseDateTime({
@@ -398,7 +376,7 @@ const showFlightTimes = (round, personTz = undefined) => {
 
 		flightTimes.tz = [round.tz];
 
-		if ( round.Event.Settings.onlineMode
+		if ( round.Event.Settings.online_mode
 			&& personTz
 			&& personTz !== round.tz
 		) {
@@ -412,20 +390,20 @@ const showFlightTimes = (round, personTz = undefined) => {
 		offset.minutes = 0;
 
 		if (['prelim', 'highhigh', 'highlow', 'snaked_prelim'].includes(round.type)) {
-			if (round.Event.Settings.prelimDecisionDeadline) {
-				offset.minutes = parseInt(round.Event.Settings.prelimDecisionDeadline);
+			if (round.Event.Settings.prelim_decision_deadline) {
+				offset.minutes = parseInt(round.Event.Settings.prelim_decision_deadline);
 			}
 		} else {
-			if (round.Event.Settings.elimDecisionDeadline) {
-				offset.minutes = round.Event.Settings.elimDecisionDeadline;
-			} else if (round.Event.Settings.prelimDecisionDeadline) {
-				offset.minutes = parseInt(round.Event.Settings.prelimDecisionDeadline);
+			if (round.Event.Settings.elim_decision_deadline) {
+				offset.minutes = parseInt(round.Event.Settings.elim_decision_deadline);
+			} else if (round.Event.Settings.prelim_decision_deadline) {
+				offset.minutes = parseInt(round.Event.Settings.prelim_decision_deadline);
 			}
 		}
 
 		if (offset.minutes > 0) {
-			if (round.Event.Settings.flightOffset && tick > 0) {
-				offset.minutes += tick * parseInt(round.Event.Settings.flightOffset);
+			if (round.Event.Settings.flight_offset && tick > 0) {
+				offset.minutes += tick * parseInt(round.Event.Settings.flight_offset);
 			}
 
 			flightTimes.deadline = parseDateTime({

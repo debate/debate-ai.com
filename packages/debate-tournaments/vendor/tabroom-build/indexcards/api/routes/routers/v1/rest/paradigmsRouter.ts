@@ -1,15 +1,22 @@
 // @ts-nocheck
 import z from 'zod';
 import controller from '../../../../controllers/rest/paradigmsController.js';
-import { requireLogin } from '../../../../middleware/authorization/authorization.js';
+import { Unauthorized } from '../../../../helpers/problem.js';
 import { ValidateRequest } from '../../../../middleware/validation.js';
-import { JudgeRecordSchema, ParadigmDetailsSchema } from '../../../../../../types/index.js';
+import { JudgeRecordSchema, ParadigmDetailsSchema, ParadigmSearchResultSchema } from '../../../../../../types/index.js';
 import { Router } from '../../../../_shims/express.js';
 
 const router = Router();
 
 //searching paradigms requires a user to be logged in
-router.use(requireLogin);
+// debate-ai: a signed-in host user with no Tabroom person row still counts, so
+// check the actor rather than requirePerson (which also demands req.person).
+router.use((req, res, next) => {
+	if (req.actor?.type !== 'person') {
+		return Unauthorized(req, res, 'User not Authenticated');
+	}
+	next();
+});
 
 router.route('/').get(ValidateRequest, controller.getParadigms).openapi = {
 	path: '/rest/paradigms',
@@ -34,19 +41,7 @@ router.route('/').get(ValidateRequest, controller.getParadigms).openapi = {
 			description: 'List of paradigms matching the search query',
 			content: {
 				'application/json': {
-					schema: z.array(
-						z.object({
-							id: z.coerce.number().int().positive(),
-							name: z.string().meta({ description: 'Full name' }),
-							tournJudged: z.coerce.number().int().positive().meta({ description: 'Number of tournaments judged' }),
-							schools: z.array(
-								z.object({
-									id: z.coerce.number().int().positive(),
-									name: z.string(),
-								})
-							),
-						})
-					),
+					schema: z.array(ParadigmSearchResultSchema),
 				},
 			},
 		},

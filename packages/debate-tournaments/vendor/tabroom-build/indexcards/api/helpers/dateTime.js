@@ -111,29 +111,29 @@ export const getWeek = (date) => {
 	return 1 + Math.ceil((n1stThursday - date) / 604800000);
 };
 
-export const getPast = ({ days, months, years, hours, minutes }) => {
+export const getPast = ({ days = 0, months = 0, years = 0, hours = 0, minutes = 0 }) => {
 
 	const today = new Date();
 	const lastWeek = new Date(
-		today.getFullYear() - (years || 0 ),
-		today.getMonth() - (months || 0),
-		today.getDate() - (days || 0),
-		today.getHours() - (hours || 0),
-		today.getMinutes() - (minutes || 0),
+		today.getFullYear() - years,
+		today.getMonth() - months,
+		today.getDate() - days,
+		today.getHours() - hours,
+		today.getMinutes() - minutes,
 	);
 	return lastWeek;
 };
 
-export const getFuture = ({days, months, years, hours, minutes }) => {
+export const getFuture = ({ days = 0, months = 0, years = 0, hours = 0, minutes = 0 }) => {
 
 	const today = new Date();
 
 	const lastWeek = new Date(
-		today.getFullYear() + (years || 0),
-		today.getMonth() + (months || 0),
-		today.getDate() + (days || 0),
-		today.getHours() + (hours || 0),
-		today.getMinutes() + (minutes || 0),
+		today.getFullYear() + years,
+		today.getMonth() + months,
+		today.getDate() + days,
+		today.getHours() + hours,
+		today.getMinutes() + minutes,
 	);
 
 	return lastWeek;

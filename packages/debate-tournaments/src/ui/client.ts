@@ -266,6 +266,27 @@ export interface TournamentAdmin {
   resultSets: Array<{ id: number; label: string | null; eventAbbr: string | null; published: boolean }>;
 }
 
+/**
+ * A tournament's setup as upstream Tabroom's tournament-admin ("tab") API
+ * returns it: `GET {apiBase}/tab/tourns/:id/{timeslots,categories}`, for the
+ * tournament's signed-in owners and admins only.
+ */
+export interface TabroomTimeslot {
+  id: number;
+  name: string;
+  start: string | null;
+  end: string | null;
+}
+export interface TabroomCategory {
+  id: number;
+  name: string;
+  abbr: string;
+}
+export interface TournamentSetup {
+  timeslots: TabroomTimeslot[];
+  categories: TabroomCategory[];
+}
+
 export interface TournamentsClientOptions {
   /**
    * A read-only proxy to live Tabroom (e.g. `/api/tabroom-beta`). When set, the
@@ -496,6 +517,12 @@ export function createTournamentsClient(
     myTournaments: (signal?: AbortSignal) => get<{ tournaments: OwnedTournament[] }>(base, "/host/tourns", signal),
     /** A hosted tournament's admin view: its owner's, or the demo's as the mock admin. */
     admin: (tournId: number, signal?: AbortSignal) => get<TournamentAdmin>(base, `/host/tourns/${tournId}/admin`, signal),
+    /** A hosted tournament's timeslots and judge categories, from upstream's tab API (owners and admins only). */
+    setup: (tournId: number, signal?: AbortSignal): Promise<TournamentSetup> =>
+      Promise.all([
+        get<TabroomTimeslot[]>(base, `/tab/tourns/${tournId}/timeslots`, signal),
+        get<TabroomCategory[]>(base, `/tab/tourns/${tournId}/categories`, signal),
+      ]).then(([timeslots, categories]) => ({ timeslots, categories })),
     ensureDemo,
     /** Saves one edit to the demo tournament's mock data. */
     editDemo: (edit: DemoEdit, signal?: AbortSignal) =>

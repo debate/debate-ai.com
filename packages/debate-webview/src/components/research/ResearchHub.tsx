@@ -26,6 +26,11 @@
  * now reads that composition itself from real persisted state
  * (`state/topicSprints.ts`'s `readPersistedTopicSprintInputs`), so this hub
  * only needs to give it a topic.
+ *
+ * The {@link SampleDataBar} on top fills the evidence library, tracked
+ * arguments and contributions stores with sample data built from real corpus
+ * cards (kept out of the account sync); the panels are remounted after a
+ * load or clear so each one re-reads its store.
  */
 
 import { useEffect, useMemo, useState } from "react"
@@ -73,6 +78,7 @@ import { useStoreSnapshot } from "../../lib/ui/panels/use-store-snapshot"
 import { Input } from "../../lib/ui/primitives/input"
 import { LabeledField } from "../../lib/ui/panels/panel-shell"
 import { panel, type HubSection } from "../hubs/hub-sections"
+import { SampleDataBar } from "../hubs/SampleDataBar"
 import {
   HubPanelAnchor,
   HubSectionIntro,
@@ -213,6 +219,7 @@ export function ResearchHub() {
   const [contributorId, setContributorId] = useState("me")
   const [hasSetContributorId, setHasSetContributorId] = useState(false)
   const [topic, setTopic] = useState("")
+  const [sampleVersion, setSampleVersion] = useState(0)
   const { user } = useSession()
 
   useEffect(() => {
@@ -237,7 +244,7 @@ export function ResearchHub() {
     if (typeof localStorage !== "undefined") localStorage.setItem(CONTRIBUTOR_KEY, value)
   }
 
-  const { data: entries } = useStoreSnapshot<EvidenceLibraryEntry[]>(listEvidenceLibraryEntries, [])
+  const { data: entries, refresh: refreshEntries } = useStoreSnapshot<EvidenceLibraryEntry[]>(listEvidenceLibraryEntries, [])
 
   // Only used to guess a sensible default topic below — the evidence
   // library's own argBlock/caseArea tagging, not a card corpus for scoring.
@@ -256,6 +263,13 @@ export function ResearchHub() {
 
   return (
     <div className="flex flex-col gap-4">
+      <SampleDataBar
+        workspace="research"
+        onChange={() => {
+          setSampleVersion((v) => v + 1)
+          refreshEntries()
+        }}
+      />
       <HubSectionNav sections={RESEARCH_SECTIONS} active={section} onChange={setSection} label="Research sections" />
 
       <section
@@ -287,7 +301,7 @@ export function ResearchHub() {
 
       <HubSectionIntro section={active} />
 
-      <HubSectionPanel id={section}>
+      <HubSectionPanel key={sampleVersion} id={section}>
         {section === "coverage" ? (
           <HubPanelAnchor anchor={ANCHORS["Topic Coverage Dashboard"]}>
             <TopicCoverageDashboardPanel />

@@ -223,6 +223,20 @@ The match is the one the team pages use (`findTeamRanking` in
 the division the round's format is ranked in. The rankings load only when
 a listing holds a current-season round (`useVideoTeamRankings`).
 
+## Guest video limit
+
+Signed out, a visitor can open ten different videos in a browser; opening an
+eleventh new one pauses it behind a sign-in dialog. Videos already opened stay
+watchable, and signing in returns to the same page with the video playing.
+Closing the dialog closes the popout player, or leaves the watch page for the
+library.
+
+The count lives in `localStorage` (`guestVideosWatched`, in
+`debate-webview`'s `lib/videos/guest-video-limit.ts`), and
+`GuestVideoLimitGate` in the app shell watches the player store's
+`activeVideoId` and `theaterVideoId`, so both players are covered without
+either one knowing about it.
+
 ## Suggesting a fix to a video
 
 Every watch page has a pencil button next to the video. Click it to open the
@@ -413,3 +427,7 @@ old round fields, and the result counts it as failed so it can be run again.
 
 The watch page doesn't display a video's length yet, and a video only shows
 one in the library after **Fetch video durations** has looked it up.
+
+The guest video limit is a nudge, not access control: the count is per
+browser, so a private window or cleared site data starts it over, and the
+embeds are public YouTube videos.

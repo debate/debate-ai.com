@@ -1,8 +1,16 @@
 import type { Metadata } from "next"
+import { permanentRedirect } from "next/navigation"
+
+/**
+ * The old address of Coaching Programs, merged into Coaching at `/coaching`. It
+ * permanently redirects to its "programs" tab.
+ */
 
 export const metadata: Metadata = {
   title: "Coaching Programs",
-  description: "Group coaching spaces scoped to a squad roster",
+  alternates: { canonical: "/coaching?section=programs" },
 }
 
-export { default } from "@debate/webview/routes/coaching-programs/page"
+export default function LegacyProgramsPage() {
+  permanentRedirect("/coaching?section=programs")
+}

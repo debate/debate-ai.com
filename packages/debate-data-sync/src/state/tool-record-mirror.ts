@@ -51,6 +51,7 @@ import {
   saveToolRecordToAccount,
   saveToolRecordsToAccount,
 } from "./tool-records-client";
+import { isSampleToolRecord } from "./sampleRecords";
 
 /** Whether writes mirror to the account. Off until the app says otherwise. */
 let syncEnabled = false;
@@ -195,7 +196,9 @@ export function mirrorToolRecordsSave(collectionKey: string, records: readonly u
   // The route refuses the whole batch if any record lacks its id field.
   // Dropping the unsyncable ones here means one odd row can't cost a CSV
   // import its entire sync — those rows stay local, which is where they were.
-  const syncable = records.filter((record) => toolRecordId(collection, record) !== null);
+  const syncable = records.filter(
+    (record) => toolRecordId(collection, record) !== null && !isSampleToolRecord(collection, record),
+  );
   if (syncable.length === 0) return;
   const payload = collection.redact ? syncable.map(collection.redact) : syncable;
   mirror(collectionKey, () => saveToolRecordsToAccount(collectionKey, payload));
@@ -319,7 +322,9 @@ export async function hydrateToolRecords(
 
   const local = readLocalToolRecords(collection);
   const merged = mergeToolRecords(collection, local, remote);
-  const missing = toolRecordsMissingRemotely(collection, local, remote);
+  const missing = toolRecordsMissingRemotely(collection, local, remote).filter(
+    (record) => !isSampleToolRecord(collection, record),
+  );
 
   if (merged.length !== local.length || remote.length > 0) {
     writeLocalToolRecords(collection, merged);

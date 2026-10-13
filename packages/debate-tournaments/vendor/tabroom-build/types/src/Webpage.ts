@@ -1,17 +1,18 @@
 // @ts-nocheck
 import type { ZodOpenApiSchemaObject } from 'zod-openapi';
 import { z } from 'zod';
-import { datetime } from './utils.js';
 
 export const WebpageSchema = z.object({
 	id: z.number().int(),
 	title: z.string().max(63).nullable(),
 	content: z.string().nullable(),
-	published: z.boolean(),
-	sitewide: z.boolean(),
+	published: z.int(),
+	sitewide: z.int(),
 	special: z.string().max(15).nullable(),
 	slug: z.string().max(63).nullable(),
-	pageOrder: z.number().int().nullable(),
-	parentId: z.number().int().nullable(),
-	updatedAt: datetime(),
+	page_order: z.number().int().nullable(),
+	parent: z.number().int().nullable(),
+	timestamp: z.iso.datetime(),
 }) satisfies ZodOpenApiSchemaObject;
+
+export type Webpage = z.infer<typeof WebpageSchema>;
