@@ -204,6 +204,10 @@ the table is wider than the screen, so swipe it left and right to reach the
 columns beside the round; the first column is capped at three quarters of the
 screen so the next one always peeks in.
 
+A round's title wraps to up to three lines. When a round has no Aff or Neg
+team recorded, its title cell spans the Aff and Neg columns instead of
+leaving two empty dashes (`VideoListRow.tsx`).
+
 ### Team names and ratings
 
 In the Aff and Neg columns, a team from the **current season** that the
