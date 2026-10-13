@@ -257,11 +257,9 @@ showed Fumadocs' own sidebar beside that one. Now:
   drawer is still the docs' navigation. Only the folders on the path to
   the current page start expanded, and the current page is scrolled into
   view when the docs open and after each navigation.
-- **Off `/docs` the Docs section is still there**, collapsed: one Docs row
-  at the same spot (`DocsSidebarRow` in `app-sidebar.tsx`) that opens the
-  docs.
-- **Settings sits right under Docs on every page** (`SettingsSidebarRow`),
-  so Docs and Settings always end the list of sections, below Insights.
+- **Off `/docs`** the tree is not drawn; the Docs and Settings links
+  pinned above the account row (`SidebarPinnedLinks`) reach it from every
+  page.
 - **The mobile drawer** shows the same tree (`MobileSidebarDrawer`).
 
 `/debate` and `/research/docs` keep their own workspace sidebars

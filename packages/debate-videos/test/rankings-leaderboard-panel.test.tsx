@@ -114,6 +114,9 @@ describe("LeaderboardPanel", () => {
     const root = view.container;
 
     expect(m.loadRankingDataset).toHaveBeenCalledWith("hspf");
+    // The app serves this at /api/history; a bare "history" resolves to the
+    // page route /history, which 404s.
+    expect(m.grab).toHaveBeenCalledWith("history", expect.objectContaining({ baseURL: "/api/" }));
     expect(root.textContent).toContain("Harker KL");
     expect(root.querySelectorAll("tbody tr")).toHaveLength(3);
     expect(root.textContent).toContain("Kim & Lee");

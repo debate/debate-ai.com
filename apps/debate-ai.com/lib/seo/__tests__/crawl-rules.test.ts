@@ -71,8 +71,7 @@ describe("DISALLOWED_PATHS", () => {
   });
 
   it("carries no URL fragment, which robots.txt does not match on", () => {
-    // The tool tree links to `/practice/partners#judge`; the path is the part
-    // that goes in the file.
+    // A tool href may carry a fragment; only the path goes in the file.
     for (const path of DISALLOWED_PATHS) {
       expect(path).not.toContain("#");
     }
