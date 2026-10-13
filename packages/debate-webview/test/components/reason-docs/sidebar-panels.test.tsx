@@ -135,6 +135,9 @@ function makeDocs(overrides: Record<string, unknown> = {}) {
     importFiles: vi.fn(async () => ({ created: [], failures: [] })),
     downloadDocument: vi.fn(async () => ({ ok: true })),
     downloadTopicDocument: vi.fn(async () => ({ ok: true })),
+    copyTopicToDocuments: vi.fn(async () => ({ ok: true, created: [doc({ id: 60, title: "Solar Aff", parentId: null })] })),
+    duplicateDocument: vi.fn(async () => ({ ok: true, created: [] })),
+    publishToTopics: vi.fn(async () => ({ ok: true, item: { ...TOPICS[1], id: 61, title: "Case.docx" } })),
     ...overrides,
   };
 }
@@ -154,16 +157,28 @@ function rowOf(title: string) {
   return allByText(title, "div.group").at(-1)!.querySelector<HTMLElement>("div") ?? allByText(title, "div.group").at(-1)!;
 }
 
-function dropEvent(type: string, data: { files?: File[]; id?: number }) {
+function dropEvent(type: string, data: { files?: File[]; id?: number; topicId?: number }) {
   const event = new Event(type, { bubbles: true, cancelable: true });
   Object.defineProperty(event, "dataTransfer", {
     value: {
       files: data.files ?? [],
-      getData: (key: string) => (key === "text/reason-document-id" && data.id ? String(data.id) : ""),
+      getData: (key: string) =>
+        key === "text/reason-document-id" && data.id
+          ? String(data.id)
+          : key === "text/topic-starter-id" && data.topicId
+            ? String(data.topicId)
+            : "",
       setData: vi.fn(),
     },
   });
   return event;
+}
+
+/** Right-clicks `el` — the row's context menu. */
+function rightClick(el: Element) {
+  act(() => {
+    el.dispatchEvent(new MouseEvent("contextmenu", { bubbles: true, cancelable: true }));
+  });
 }
 
 describe("FileTree", () => {
@@ -177,11 +192,13 @@ describe("FileTree", () => {
     onDownload: vi.fn(),
   });
 
-  it("selects files, toggles folders and badges imported files", () => {
+  it("selects files and toggles folders, with no format badge on any row", () => {
     const h = handlers();
     mount(<FileTree documents={DOCS} activeId={1} {...h} />);
     expect(bodyText()).toContain("Child");
-    expect(bodyText()).toContain("DOCX");
+    // Every file is a CardMirror file however it arrived — no DOCX/CMIR label.
+    expect(bodyText()).not.toContain("DOCX");
+    expect(bodyText()).not.toContain("CMIR");
 
     click(byTitle("Case.docx"));
     expect(h.onSelect).toHaveBeenCalledWith(1);
@@ -279,6 +296,94 @@ describe("FileTree", () => {
     expect(h.onMove).toHaveBeenLastCalledWith(3, null);
   });
 
+  it("opens the row's menu on right-click, with open, edit, share, duplicate, move and publish", () => {
+    const h = { ...handlers(), onDuplicate: vi.fn(), onShare: vi.fn(), onPublish: vi.fn() };
+    mount(<FileTree documents={DOCS} activeId={null} {...h} />);
+
+    rightClick(byTitle("Child"));
+    click(menuItem("Edit"));
+    expect(h.onSelect).toHaveBeenCalledWith(3);
+
+    rightClick(byTitle("Child"));
+    click(menuItem("Open"));
+    expect(h.onSelect).toHaveBeenCalledTimes(2);
+
+    rightClick(byTitle("Child"));
+    click(menuItem("Share…"));
+    expect(h.onShare).toHaveBeenCalledWith(3);
+
+    rightClick(byTitle("Child"));
+    click(menuItem("Duplicate"));
+    expect(h.onDuplicate).toHaveBeenCalledWith(3);
+
+    rightClick(byTitle("Child"));
+    click(menuItem("Add to Topic Starters"));
+    expect(h.onPublish).toHaveBeenCalledWith(3);
+
+    // Folders get New File / New Folder instead of open, edit and share.
+    rightClick(byTitle("Folder"));
+    expect(allByText("Share…", "[role=menuitem]")).toHaveLength(0);
+    click(menuItem("New File"));
+    expect(h.onAdd).toHaveBeenCalledWith(2, false);
+  });
+
+  it("moves a row to any folder, or the top level, from the menu", () => {
+    const h = handlers();
+    mount(<FileTree documents={DOCS} activeId={null} {...h} />);
+    rightClick(byTitle("Child"));
+    // A Radix sub-menu opens from its trigger with the arrow key.
+    keyDown(menuItem("Move to"), "ArrowRight");
+    // Where the row already is can't be picked.
+    expect(menuItem("Folder").getAttribute("aria-disabled")).toBe("true");
+    click(menuItem("Folder / Sub"));
+    expect(h.onMove).toHaveBeenCalledWith(3, 4);
+
+    rightClick(byTitle("Folder"));
+    keyDown(menuItem("Move to"), "ArrowRight");
+    // A folder can't go into its own subtree.
+    expect(menuItem("Folder / Sub").getAttribute("aria-disabled")).toBe("true");
+    rightClick(byTitle("Child"));
+    keyDown(menuItem("Move to"), "ArrowRight");
+    click(menuItem("Top level"));
+    expect(h.onMove).toHaveBeenLastCalledWith(3, null);
+  });
+
+  it("copies a topic starter dropped on the tree into the folder it lands on", () => {
+    const h = { ...handlers(), onImportTopic: vi.fn() };
+    mount(<FileTree documents={DOCS} activeId={null} {...h} />);
+    act(() => {
+      byTitle("Folder").dispatchEvent(dropEvent("drop", { topicId: 11 }));
+    });
+    expect(h.onImportTopic).toHaveBeenCalledWith(11, 2);
+    act(() => {
+      document.querySelector("[data-testid=file-tree]")!.dispatchEvent(dropEvent("drop", { topicId: 12 }));
+    });
+    expect(h.onImportTopic).toHaveBeenLastCalledWith(12, null);
+    expect(h.onMove).not.toHaveBeenCalled();
+  });
+
+  it("sorts by the chosen order and keeps rows whose folder is gone", () => {
+    const rows = [
+      doc({ id: 1, title: "Alpha", updatedAt: 1 }),
+      doc({ id: 2, title: "Beta", updatedAt: 3 }),
+      doc({ id: 3, title: "Stray", parentId: 99, updatedAt: 2 }),
+    ];
+    const h = handlers();
+    mount(<FileTree documents={rows} activeId={null} sort="updated" {...h} />);
+    const titles = () => [...document.querySelectorAll("span.flex-1")].map((el) => el.textContent);
+    expect(titles()).toEqual(["Beta", "Stray", "Alpha"]);
+    cleanup();
+    mount(<FileTree documents={rows} activeId={null} sort="name-desc" {...h} />);
+    expect(titles()).toEqual(["Stray", "Beta", "Alpha"]);
+  });
+
+  it("opens folders that arrive after it mounts", () => {
+    const h = handlers();
+    const { rerender } = mount(<FileTree documents={[]} activeId={null} {...h} />);
+    rerender(<FileTree documents={DOCS} activeId={null} {...h} />);
+    expect(bodyText()).toContain("Child");
+  });
+
   function byTitle(title: string): HTMLElement {
     const span = [...document.querySelectorAll("span.flex-1")].find((s) => s.textContent === title);
     if (!span) throw new Error(`No row ${title}`);
@@ -312,7 +417,6 @@ describe("TopicStarterTree", () => {
     const onDownload = vi.fn();
     mount(<TopicStarterTree items={TOPICS} onSelect={onSelect} onDownload={onDownload} />);
     expect(bodyText()).toContain("Solar Aff");
-    expect(bodyText()).toContain("aff");
 
     click(button("Solar Aff"));
     expect(onSelect).toHaveBeenCalledWith(TOPICS[1]);
@@ -324,7 +428,14 @@ describe("TopicStarterTree", () => {
     change(document.querySelector("input")!, "nuclear");
     expect(bodyText()).toContain("Nuclear Neg");
     expect(bodyText()).not.toContain("Solar Aff");
+    // By tag, too, though tags are no longer drawn on the row.
+    change(document.querySelector("input")!, "aff");
+    expect(bodyText()).toContain("Solar Aff");
+    expect(bodyText()).not.toContain("Nuclear Neg");
     change(document.querySelector("input")!, "zzz");
+    expect(bodyText()).not.toContain("Energy");
+    // A word that only appears in a row's JSON (its keys) matches nothing.
+    change(document.querySelector("input")!, "isfolder");
     expect(bodyText()).not.toContain("Energy");
     change(document.querySelector("input")!, "");
 
@@ -332,6 +443,53 @@ describe("TopicStarterTree", () => {
     openMenu(solarRow.querySelectorAll("button")[1]);
     click(menuItem("Download as .docx"));
     expect(onDownload).toHaveBeenCalledWith(TOPICS[1]);
+  });
+
+  it("draws no format badge, and shows rows whose folder the capped catalogue left out", () => {
+    const items: TopicStarterItem[] = [
+      ...TOPICS,
+      { id: 13, title: "Orphan Neg", content: "z", parentId: 404, isFolder: false, tags: '["cmir","public"]' },
+    ];
+    mount(<TopicStarterTree items={items} onSelect={() => {}} />);
+    expect(bodyText()).toContain("Orphan Neg");
+    expect(bodyText()).not.toContain("cmir");
+  });
+
+  it("offers save, edit-a-copy and copy-link on right-click, and takes files dropped from Files", () => {
+    const h = { onSelect: vi.fn(), onSaveCopy: vi.fn(), onEditCopy: vi.fn(), onCopyLink: vi.fn(), onPublish: vi.fn() };
+    mount(<TopicStarterTree items={TOPICS} {...h} />);
+    const solar = button("Solar Aff").parentElement!;
+    rightClick(solar);
+    click(menuItem("Edit a copy"));
+    expect(h.onEditCopy).toHaveBeenCalledWith(TOPICS[1]);
+    rightClick(solar);
+    click(menuItem("Save to my files"));
+    expect(h.onSaveCopy).toHaveBeenCalledWith(TOPICS[1]);
+    rightClick(solar);
+    click(menuItem("Copy link"));
+    expect(h.onCopyLink).toHaveBeenCalledWith(TOPICS[1]);
+    rightClick(solar);
+    click(menuItem("Open"));
+    expect(h.onSelect).toHaveBeenCalledWith(TOPICS[1]);
+
+    // A folder can be saved whole, but has nothing to open.
+    rightClick(button("Energy").parentElement!);
+    expect(allByText("Open", "[role=menuitem]")).toHaveLength(0);
+    click(menuItem("Save to my files"));
+    expect(h.onSaveCopy).toHaveBeenLastCalledWith(TOPICS[0]);
+
+    // A drag carries the row out, and a file from Files dropped in is published.
+    const setData = vi.fn();
+    const start = new Event("dragstart", { bubbles: true });
+    Object.defineProperty(start, "dataTransfer", { value: { setData } });
+    act(() => {
+      solar.dispatchEvent(start);
+    });
+    expect(setData).toHaveBeenCalledWith("text/topic-starter-id", "11");
+    act(() => {
+      button("Energy").parentElement!.dispatchEvent(dropEvent("drop", { id: 1 }));
+    });
+    expect(h.onPublish).toHaveBeenCalledWith(1, 10);
   });
 
   it("shows the empty catalogue", () => {
@@ -469,6 +627,100 @@ describe("ReasonDocsSidebarPanels", () => {
     expect(nav.push).toHaveBeenCalledWith("/reason-editor?doc=imported");
   });
 
+  it("copies a topic starter dropped on Files, and publishes a file dropped on Topic Starters", async () => {
+    localStorage.setItem("reason-editor-sidebar-panels", JSON.stringify(["files", "topicStarters"]));
+    const docs = makeDocs();
+    docsState.value = docs;
+    mount(<ReasonDocsSidebarPanels />);
+    const folderRow = [...document.querySelectorAll("span.flex-1")].find((el) => el.textContent === "Folder")!.parentElement!;
+    act(() => {
+      folderRow.dispatchEvent(dropEvent("drop", { topicId: 11 }));
+    });
+    await flush();
+    expect(docs.copyTopicToDocuments).toHaveBeenCalledWith(TOPICS[1], 2);
+    expect(toast.success).toHaveBeenCalledWith("Saved Solar Aff to your files.");
+
+    act(() => {
+      button("Energy").parentElement!.dispatchEvent(dropEvent("drop", { id: 1 }));
+    });
+    await flush();
+    expect(docs.publishToTopics).toHaveBeenCalledWith(1, 10);
+    expect(toast.success).toHaveBeenLastCalledWith("Added Case.docx to Topic Starters.");
+  });
+
+  it("explains a publish the server refuses and a copy that fails", async () => {
+    localStorage.setItem("reason-editor-sidebar-panels", JSON.stringify(["files", "topicStarters"]));
+    const docs = makeDocs({
+      publishToTopics: vi.fn(async () => ({ ok: false, error: "Only admins can add files to Topic Starters." })),
+      copyTopicToDocuments: vi.fn(async () => ({ ok: false, error: "Energy could not be copied (x)." })),
+    });
+    docsState.value = docs;
+    mount(<ReasonDocsSidebarPanels />);
+    const caseRow = [...document.querySelectorAll("span.flex-1")].find((el) => el.textContent === "Case.docx")!.parentElement!;
+    rightClick(caseRow);
+    click(menuItem("Add to Topic Starters"));
+    await flush();
+    expect(toast.error).toHaveBeenCalledWith("Only admins can add files to Topic Starters.");
+
+    rightClick(button("Energy").parentElement!);
+    click(menuItem("Save to my files"));
+    await flush();
+    expect(toast.error).toHaveBeenLastCalledWith("Energy could not be copied (x).");
+  });
+
+  it("edits a copy of a topic starter by opening the copy", async () => {
+    localStorage.setItem("reason-editor-sidebar-panels", JSON.stringify(["topicStarters"]));
+    const docs = makeDocs();
+    docsState.value = docs;
+    mount(<ReasonDocsSidebarPanels />);
+    rightClick(button("Solar Aff").parentElement!);
+    click(menuItem("Edit a copy"));
+    await flush();
+    expect(docs.copyTopicToDocuments).toHaveBeenCalledWith(TOPICS[1], null);
+    expect(docs.openDocument).toHaveBeenCalledWith(60);
+    expect(nav.push).toHaveBeenCalledWith("/reason-editor?doc=solar-aff");
+  });
+
+  it("copies a topic starter's public link", async () => {
+    localStorage.setItem("reason-editor-sidebar-panels", JSON.stringify(["topicStarters"]));
+    const writeText = vi.fn(async () => {});
+    Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
+    docsState.value = makeDocs();
+    mount(<ReasonDocsSidebarPanels />);
+    rightClick(button("Solar Aff").parentElement!);
+    click(menuItem("Copy link"));
+    await flush();
+    expect(writeText).toHaveBeenCalledWith(`${window.location.origin}/reason-editor?topic=energy/solar-aff`);
+    expect(toast.success).toHaveBeenCalledWith("Link copied.");
+  });
+
+  it("shares a file from its menu by opening it with the share dialog up", () => {
+    const docs = makeDocs();
+    docsState.value = docs;
+    mount(<ReasonDocsSidebarPanels />);
+    const childRow = [...document.querySelectorAll("span.flex-1")].find((el) => el.textContent === "Child")!.parentElement!;
+    rightClick(childRow);
+    click(menuItem("Share…"));
+    expect(docs.openDocument).toHaveBeenCalledWith(3);
+    expect(nav.push).toHaveBeenCalledWith("/reason-editor?doc=folder/child&shareOpen=1");
+
+    rightClick(childRow);
+    click(menuItem("Duplicate"));
+    expect(docs.duplicateDocument).toHaveBeenCalledWith(3, undefined);
+  });
+
+  it("sorts the tree from the Files header and remembers the order", () => {
+    localStorage.setItem("reason-editor-sidebar-sort", "name-desc");
+    docsState.value = makeDocs();
+    mount(<ReasonDocsSidebarPanels />);
+    const sortButton = document.querySelector("button[aria-label='Sort files']")!;
+    expect(sortButton.getAttribute("title")).toBe("Sort: Name (Z–A)");
+    openMenu(sortButton);
+    click(menuItem("Last modified"));
+    expect(localStorage.getItem("reason-editor-sidebar-sort")).toBe("updated");
+    expect(document.querySelector("button[aria-label='Sort files']")!.getAttribute("title")).toBe("Sort: Last modified");
+  });
+
   it("shows a spinner while loading", () => {
     docsState.value = makeDocs({ loading: true });
     mount(<ReasonDocsSidebarPanels />);
@@ -574,6 +826,14 @@ describe("ShareWithContacts", () => {
     click(button("Share with 1"));
     await flush();
     expect(toast.error).toHaveBeenLastCalledWith("Could not share this card.");
+  });
+
+  it("opens from ?shareOpen=1 with nobody picked, and strips the parameter", () => {
+    nav.search = new URLSearchParams("doc=case&shareOpen=1");
+    window.history.replaceState(null, "", "/reason-editor?doc=case&shareOpen=1");
+    mount(<ShareWithContacts title="Case" />);
+    expect(document.querySelector("[role=dialog]")).not.toBeNull();
+    expect(window.location.search).toBe("?doc=case");
   });
 
   it("opens preselected from ?shareWith= and strips the parameter", () => {

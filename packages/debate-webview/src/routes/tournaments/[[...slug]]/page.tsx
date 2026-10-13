@@ -21,6 +21,7 @@ export default function Tournaments() {
       basePath="/tournaments"
       apiBase="/api/tabroom"
       liveApiBase="/api/tabroom-beta"
+      ballotApiBase="/api/judge-ballots"
       Link={Link}
       // A page that does not exist goes to the nearest one that does — the
       // tournament for a bad section, `/tournaments` for anything else.

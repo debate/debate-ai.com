@@ -76,6 +76,7 @@
     "@debate/practice-rounds": "workspace:*",
     "@debate/practice-vs-ai": "workspace:*",
     "@debate/predictions": "workspace:*",
+    "@debate/file-market": "workspace:*",
     "@debate/rankings-adapter": "workspace:*",
     "@debate/research-evidence": "workspace:*",
     "@debate/round": "workspace:*",

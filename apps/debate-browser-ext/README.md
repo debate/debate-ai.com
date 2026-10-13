@@ -87,10 +87,10 @@ Options page, documented under [Options](#options) below.
 Two of those settings are not in `storage.sync` with the rest, and deliberately
 so:
 
-- **Model API keys** live in `storage.local`. `storage.sync` is uploaded to the
-  signed-in browser profile's account and copied to every device on it, which
-  is not somewhere a billable API key should land without the user asking. The
-  cost is that keys don't follow the user to another computer.
+- **The AI key** is not the extension's own: it is the OpenRouter or Anthropic
+  key saved in the app's Settings → Preferences, mirrored by the Options page
+  into `storage.local` (`src/ai/app-key.ts`) so the panel can read it on any
+  site. `storage.sync` would copy a billable key to the browser account.
 - **The debate-ai.com session** lives in `storage.local` too, for the same
   reason and because it is scoped to one deployment anyway.
 - **debate-ai.com's offline copy** — flows, rounds and flow history — is
@@ -147,17 +147,29 @@ secret in this repository; nothing here automates them.
 | `reader.html` | `entrypoints/reader` | The article panel, framed over the page you're on — full-page by default, or as a side panel. |
 | `popup.html` | `entrypoints/popup` | Toolbar dropdown: the reuse check for the active tab + **Read this page** and **Open round timer** buttons. |
 | `timer.html` | `entrypoints/timer` | The timer + timeline, opened as its own `popup`-type window. |
-| `options.html` | `entrypoints/options` | `debate-webview`'s app UI, with every setting for the other three tools as its last screen. |
+| `options.html` | `entrypoints/options` | `debate-webview`'s app UI, with the extension's settings as the **Browser extension** tab of its Settings. |
+| content script | `entrypoints/page-tools.content.ts` | On every http(s) page: the reading-mode arrow on detected articles, and the backtick search menu. |
 
-`popup.html` doubles as a standalone check window: right-click any page →
-**Check this page for existing cards** opens it in its own window with a
-`?url=` to check, so the reuse check stays reachable whichever the toolbar
-icon is set to open.
+## Page tools
+
+The `page-tools` content script runs on every http(s) page:
+
+- **Reading-mode arrow.** When the page settles it is checked for an article
+  (`src/article/detect.ts`): a regex word count over the raw text, then the
+  reading-mode extractor. Over 1000 words gets a small, half-transparent arrow
+  on the far left edge (`src/page-tools/reading-button.ts`) that opens the
+  article panel. Nothing is sent anywhere to decide. Because a click on the
+  page grants no `activeTab`, the panel's snapshot request falls back to
+  asking this content script for the page (`src/reader/snapshot.ts`).
+- **Backtick search.** The key under Escape, with text selected and focus
+  outside any field, opens a search menu (`src/page-tools/search-menu.ts`)
+  listing every engine in `src/search/engines.ts`, Quick search first and
+  selected.
 
 ## The article panel
 
 Open it from **Read this page** in the popup, from right-click → **Read this
-page in Debate AI**, or by setting the toolbar icon to open it directly. It
+page in Debate AI**, from the reading-mode arrow on detected articles, or by setting the toolbar icon to open it directly. It
 shows the page you're on in reading mode, with the toolbar, prompt box,
 suggested follow-up questions, chat history, reading zoom and Alt-key shortcuts
 ported from `research-agent-ui`'s `ArticleExtractPanel`.
@@ -200,16 +212,15 @@ part the tests are most pointed at.
 
 ### The answers are yours
 
-There's no server holding a model key here, so **Ask** and **Suggest** run
-against whichever of these you pick on the Options page:
+**Ask** and **Suggest** use the OpenRouter or Anthropic key saved in the app's
+Settings → Preferences ("Your own AI key"), or your account when none is saved.
+The extension asks for no key of its own:
 
 | Provider | Key | Where the request goes |
 | --- | --- | --- |
 | My Debate AI account | none — sign in | `POST /api/reason-ai` on your deployment, with the session as a bearer token |
-| OpenRouter | yours | `openrouter.ai` |
-| OpenAI | yours | `api.openai.com` |
-| Anthropic | yours | `api.anthropic.com` |
-| Google Gemini | yours | `generativelanguage.googleapis.com` |
+| OpenRouter | the app's saved key | `openrouter.ai` |
+| Anthropic | the app's saved key | `api.anthropic.com` |
 
 The prompts are copied verbatim from the web app's `article-qa` and
 `article-followups` handlers, so answers read the same. Your key is sent to
@@ -302,25 +313,19 @@ those screens reach is still `host_permissions`, so a deployment other than
 production or `localhost:3000` needs `wxt.config.ts` updated and the extension
 reloaded, exactly as the reuse check always has.
 
-The extension's own settings are the **Extension** screen at the end of that
-nav:
+The extension's own settings are the **Browser extension** tab of the app's
+Settings page (passed in through `configureHost({ settingsSections })`). The
+account and the AI key are the app's own, not repeated there:
 
-**Your Debate AI account**
+**Reading mode**
 
-- **Sign in with Google** — opens sign-in on debate-ai.com in a normal tab, and
-  keeps the session alive afterwards. See
-  [Signing in](#signing-in-and-staying-signed-in).
-
-**Article panel AI**
-
-- **Answers come from** — your account (the deployment holds the model key), or
-  OpenRouter / OpenAI / Anthropic / Google Gemini with your own key.
-- **Model** — the model id for that provider; blank uses its default. Disabled
-  for the account option, where the deployment picks.
-- **Your API keys** — one per provider, stored in `storage.local` only. Clear a
-  field and save to delete a key.
+- **Show the reading-mode arrow on articles** — the page-tools arrow (above).
 - **Default question** — what the panel's prompt box starts with.
 - **Follow-up questions to suggest** — how many **Suggest** asks for (1–8).
+
+**Search shortcut**
+
+- **Search selected text with the `` ` `` key** — the backtick search menu.
 
 **Round timer**
 
@@ -330,8 +335,7 @@ nav:
 - **Toolbar icon opens** — the reuse-check popup (default), the article panel,
   or the timer window directly. Implemented by clearing/restoring
   `action.default_popup`, since Chrome only fires `action.onClicked` when no
-  popup is registered. Whichever you pick, the other two stay one right-click
-  away (above).
+  popup is registered. The article panel is also on the right-click menu.
 - **Timer window size** — width × height for the window that gets opened next,
   clamped to 360–1200 px.
 
@@ -368,20 +372,23 @@ src/
     readability.ts       DOM reading-mode extractor + allowlist sanitizer
     cite.ts              JSON-LD / meta-tag citation metadata
     extract.ts           PageSnapshot -> Article
+    detect.ts            is there a 1000+ word article on this page?
     types.ts             Article, ChatMessage, PageSnapshot
   reader/
-    snapshot.ts          reads the tab's HTML under `activeTab`
+    snapshot.ts          reads the tab's HTML under `activeTab`, or via page-tools
     panel.ts             the overlay frame over the page; panel message names
   ai/
-    providers.ts         the provider registry and their origins
-    keys.ts              API keys in storage.local (never storage.sync)
-    article-ai.ts        Ask + Suggest, against account or own key
+    providers.ts         account / OpenRouter / Anthropic and their origins
+    app-key.ts           the app's saved AI key, mirrored into storage.local
+    article-ai.ts        Ask + Suggest, against account or the app's key
     markdown.ts          escape-first Markdown -> HTML for model answers
   auth/
     handoff.ts           the names both halves share; token-from-URL parsing
     session.ts           bearer session: store, authorize, refresh, sign out
     sign-in-flow.ts      background half of the sign-in handoff
     useAccount.ts        the account as React state, synced across pages
+  page-tools/           reading-mode arrow, search menu, backtick shortcut
+  search/engines.ts      the search menu's engines (Quick search first)
   reuse/api.ts           GET /api/evidence-reuse-check + skip-domain matching
   timer/
     constants.ts         debate formats, speech tables, toTimeString/toNumber

@@ -55,7 +55,7 @@ async function type(input: HTMLInputElement, text: string) {
     input.setSelectionRange(text.length, text.length);
     input.dispatchEvent(new Event("input", { bubbles: true }));
   });
-  await flush(() => vi.advanceTimersByTimeAsync(200));
+  await flush(async () => { await vi.advanceTimersByTimeAsync(200); });
 }
 
 async function press(input: HTMLInputElement, key: string) {

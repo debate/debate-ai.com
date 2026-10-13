@@ -31,13 +31,44 @@
  *
  * And they leave here: the row above the tree is where the open file is shared
  * with a contact (`ShareWithContacts`), next to New file / New folder /
- * Upload, so every action on a file is in the row the files are in.
+ * Upload, so every action on a file is in the row the files are in. Any file
+ * can also be shared from its own right-click menu, which opens it with the
+ * share dialog up (`?shareOpen=1`).
+ *
+ * Files and Topic Starters trade rows by drag and drop (and by the same moves
+ * in each row's right-click menu): a topic starter dragged onto Files becomes
+ * the reader's own copy, and a file dragged onto Topic Starters is published
+ * there (admins only — the server refuses everyone else, and the reason is
+ * shown). The File manager button opens the same files in the SVAR file
+ * manager quick search uses (`FileManagerDialog`), for organising many files
+ * at once; the Sort control orders the tree.
  */
 
 import { Fragment, Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import { Group, Panel, Separator } from "react-resizable-panels"
-import { BookOpen, ChevronDown, ChevronRight, FilePlus2, FolderPlus, Loader2, PanelLeft, PanelsTopLeft, Upload } from "lucide-react"
+import {
+  ArrowDownUp,
+  BookOpen,
+  Check,
+  ChevronDown,
+  ChevronRight,
+  FilePlus2,
+  FolderKanban,
+  FolderPlus,
+  Loader2,
+  PanelLeft,
+  PanelsTopLeft,
+  Upload,
+} from "lucide-react"
+import { toast } from "sonner"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../../lib/ui/primitives/dropdown-menu"
+import { FILE_SORTS, FILE_SORT_LABELS, isFileSort, type FileSort } from "../../lib/reason-docs/file-sort"
 import { AnimatedLoader } from "../ui/AnimatedLoader"
 import { cn } from "../../lib/ui/lib/utils"
 import { IMPORT_ACCEPT } from "../../lib/cardmirror/import-files"
@@ -57,7 +88,10 @@ import {
   type PanelLayout,
   type SidebarPanel,
 } from "../../lib/reason-docs/panel-layout"
-import { ShareWithContacts } from "../reason-editor/ShareWithContacts"
+import { SHARE_OPEN_PARAM, ShareWithContacts } from "../reason-editor/ShareWithContacts"
+import { SellFileDialog } from "../market/SellFileDialog"
+import { useSession } from "../../lib/hooks/useSession"
+import { FileManagerDialog } from "./FileManagerDialog"
 import { FileTree } from "./FileTree"
 import { OpenTabsPanel } from "./OpenTabsPanel"
 import { TopicStarterTree, type TopicStarterItem } from "./TopicStarterTree"
@@ -72,6 +106,7 @@ const DEFAULT_PANELS: SidebarPanel[] = ["files", "openTabs"]
 const PANELS_STORAGE_KEY = "reason-editor-sidebar-panels"
 const SECTION_STORAGE_KEY = "reason-editor-sidebar-open"
 const LAYOUT_STORAGE_KEY = "reason-editor-sidebar-layout"
+const SORT_STORAGE_KEY = "reason-editor-sidebar-sort"
 
 const PANEL_TOGGLES: { panel: SidebarPanel; label: string; icon: typeof PanelLeft }[] = [
   { panel: "files", label: "Files", icon: PanelLeft },
@@ -113,6 +148,16 @@ function loadLayout(): PanelLayout {
   }
 }
 
+/** The Files tree's sort, per device like the other view choices here. */
+function loadSort(): FileSort {
+  try {
+    const raw = localStorage.getItem(SORT_STORAGE_KEY)
+    return isFileSort(raw) ? raw : "name"
+  } catch {
+    return "name"
+  }
+}
+
 export interface ReasonDocsSidebarPanelsProps {
   className?: string
   /**
@@ -149,6 +194,9 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
     importing,
     downloadDocument,
     downloadTopicDocument,
+    copyTopicToDocuments,
+    duplicateDocument,
+    publishToTopics,
   } = useReasonDocs()
 
   const [panels, setPanels] = useState<SidebarPanel[]>(DEFAULT_PANELS)
@@ -167,6 +215,11 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
    *  a failure in one panel isn't shown under the other. */
   const [topicDownloadError, setTopicDownloadError] = useState<string | null>(null)
   const uploadInputRef = useRef<HTMLInputElement>(null)
+  const [sort, setSort] = useState<FileSort>("name")
+  const [fileManagerOpen, setFileManagerOpen] = useState(false)
+  /** The file whose "Sell…" dialog is open. */
+  const [sellingId, setSellingId] = useState<number | null>(null)
+  const { isAuthenticated } = useSession()
 
   // Panel choice and collapse state are per-device view preferences (same as
   // the source sidebar's persisted panel list); read after mount so the SSR
@@ -175,6 +228,7 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
     setPanels(loadPanels())
     setOpenOverride(loadSectionOpen())
     setStoredLayout(loadLayout())
+    setSort(loadSort())
     setLayoutHydrated(true)
   }, [])
 
@@ -301,6 +355,107 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
     [downloadTopicDocument],
   )
 
+  const chooseSort = useCallback((next: FileSort) => {
+    setSort(next)
+    try {
+      localStorage.setItem(SORT_STORAGE_KEY, next)
+    } catch {
+      // See above — the order holds for this visit.
+    }
+  }, [])
+
+  const openFile = useCallback(
+    (id: number) => {
+      openDocument(id)
+      goToEditor({ kind: "document", id })
+    },
+    [openDocument, goToEditor],
+  )
+
+  const openTopic = useCallback(
+    (item: TopicStarterItem) => {
+      selectTopicDocument(item)
+      goToEditor({ kind: "topic", id: item.id })
+    },
+    [selectTopicDocument, goToEditor],
+  )
+
+  /** "Share…" on a row: open the file with the share dialog already up. The
+   *  dialog lives on the editor page (sharing starts a live session in the
+   *  editor), so the file has to be open there first. */
+  const shareFile = useCallback(
+    (id: number) => {
+      openDocument(id)
+      const href = editorHrefForSelection({ kind: "document", id }, documents)
+      const withShare = `${href}${href.includes("?") ? "&" : "?"}${SHARE_OPEN_PARAM}=1`
+      if (onEditorRoute) router.replace(withShare)
+      else router.push(withShare)
+    },
+    [openDocument, documents, onEditorRoute, router],
+  )
+
+  /** A topic starter into the reader's own files — the drop from Topic
+   *  Starters onto Files, "Save to my files", and (with `open`) "Edit a copy". */
+  const saveTopicCopy = useCallback(
+    (item: TopicStarterItem, parentId: number | null, open = false) => {
+      void copyTopicToDocuments(item, parentId).then((result) => {
+        if (!result.ok) {
+          toast.error(result.error)
+          return
+        }
+        const first = result.created.find((doc) => !doc.isFolder)
+        if (open && first) {
+          openDocument(first.id)
+          goToEditor({ kind: "document", id: first.id }, result.created)
+        } else {
+          toast.success(`Saved ${item.title} to your files.`)
+        }
+      })
+    },
+    [copyTopicToDocuments, openDocument, goToEditor],
+  )
+
+  const saveTopicCopyById = useCallback(
+    (topicId: number, parentId: number | null) => {
+      const item = topicItems.find((t) => t.id === topicId)
+      if (item) saveTopicCopy(item, parentId)
+    },
+    [topicItems, saveTopicCopy],
+  )
+
+  const duplicateFile = useCallback(
+    (id: number, parentId?: number | null) => {
+      void duplicateDocument(id, parentId).then((result) => {
+        if (!result.ok) toast.error(result.error)
+      })
+    },
+    [duplicateDocument],
+  )
+
+  const publishFile = useCallback(
+    (id: number, topicParentId: number | null = null) => {
+      void publishToTopics(id, topicParentId).then((result) => {
+        if (result.ok) toast.success(`Added ${result.item.title} to Topic Starters.`)
+        else toast.error(result.error)
+      })
+    },
+    [publishToTopics],
+  )
+
+  /** The topic starter's own editor link, which anyone can open — the
+   *  catalogue is public, unlike a reader's own files. */
+  const copyTopicLink = useCallback(
+    (item: TopicStarterItem) => {
+      const href = editorHrefForSelection({ kind: "topic", id: item.id }, topicItems)
+      const url = `${window.location.origin}${href}`
+      void navigator.clipboard
+        ?.writeText(url)
+        .then(() => toast.success("Link copied."))
+        .catch(() => toast.error("The link could not be copied."))
+    },
+    [topicItems],
+  )
+
   const visiblePanels = useMemo(() => visiblePanelsOf(panels), [panels])
   const defaultLayout = useMemo(() => layoutFor(visiblePanels, storedLayout), [visiblePanels, storedLayout])
 
@@ -331,22 +486,45 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
   const panelBodies: Record<SidebarPanel, ReactNode> = {
     files: (
       <>
-        <p className="shrink-0 px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          Files
-        </p>
+        <div className="flex shrink-0 items-center justify-between px-3 pb-1 pt-2">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Files</p>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                title={`Sort: ${FILE_SORT_LABELS[sort]}`}
+                aria-label="Sort files"
+                className="flex h-5 w-5 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
+              >
+                <ArrowDownUp className="h-3.5 w-3.5" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {FILE_SORTS.map((option) => (
+                <DropdownMenuItem key={option} onClick={() => chooseSort(option)}>
+                  <Check className={cn("mr-2 h-4 w-4", sort === option ? "opacity-100" : "opacity-0")} />
+                  {FILE_SORT_LABELS[option]}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
         <FileTree
           documents={documents}
           activeId={activeId}
-          onSelect={(id) => {
-            openDocument(id)
-            goToEditor({ kind: "document", id })
-          }}
+          sort={sort}
+          onSelect={openFile}
           onAdd={(parentId, isFolder) => void createDocument(parentId, isFolder)}
           onRename={updateTitle}
           onDelete={(id) => void deleteDocument(id)}
           onMove={(id, parentId) => void moveDocument(id, parentId)}
           onUpload={(files, parentId) => void uploadFiles(files, parentId)}
           onDownload={downloadFile}
+          onDuplicate={duplicateFile}
+          onShare={shareFile}
+          onSell={isAuthenticated ? setSellingId : undefined}
+          onPublish={publishFile}
+          onImportTopic={saveTopicCopyById}
         />
         {importErrors.length > 0 && (
           <ul className="shrink-0 space-y-1 px-3 pb-2 text-xs text-destructive">
@@ -365,11 +543,12 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
         </p>
         <TopicStarterTree
           items={topicItems}
-          onSelect={(item) => {
-            selectTopicDocument(item)
-            goToEditor({ kind: "topic", id: item.id })
-          }}
+          onSelect={openTopic}
           onDownload={downloadTopicFile}
+          onSaveCopy={(item) => saveTopicCopy(item, null)}
+          onEditCopy={(item) => saveTopicCopy(item, null, true)}
+          onCopyLink={copyTopicLink}
+          onPublish={publishFile}
         />
         {topicDownloadError && (
           <p className="shrink-0 px-3 pb-2 text-xs text-destructive">{topicDownloadError}</p>
@@ -449,6 +628,14 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
               className="flex h-6 w-6 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-50"
             >
               {importing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Upload className="h-3.5 w-3.5" />}
+            </button>
+            <button
+              type="button"
+              onClick={() => setFileManagerOpen(true)}
+              title="File manager"
+              className="flex h-6 w-6 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
+            >
+              <FolderKanban className="h-3.5 w-3.5" />
             </button>
             {/* Sharing rides in this row rather than in the editor's own
                 header strip: it is a thing done to the open file, and this is
@@ -555,6 +742,25 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
           )}
         </>
       )}
+      <FileManagerDialog
+        open={fileManagerOpen}
+        onOpenChange={setFileManagerOpen}
+        documents={documents}
+        topics={topicItems}
+        onOpenDocument={openFile}
+        onOpenTopic={openTopic}
+        onCreate={(parentId, isFolder) => void createDocument(parentId, isFolder)}
+        onUpload={(files, parentId) => void uploadFiles(files, parentId)}
+        onRename={updateTitle}
+        onDelete={(id) => void deleteDocument(id)}
+        onMove={(id, parentId) => void moveDocument(id, parentId)}
+        onDuplicate={duplicateFile}
+        onDownload={downloadFile}
+        onDownloadTopic={downloadTopicFile}
+        onSaveTopicCopy={(item, parentId) => saveTopicCopy(item, parentId)}
+        onPublish={publishFile}
+      />
+      <SellFileDialog documentId={sellingId} onClose={() => setSellingId(null)} />
     </div>
   )
 }

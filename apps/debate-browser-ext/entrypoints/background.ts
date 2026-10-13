@@ -28,14 +28,8 @@ import { OPEN_TIMER_MESSAGE, forgetTimerWindow, openTimerWindow } from '@/src/ti
  */
 const POPUP_PAGE = 'popup.html';
 
-/** Right-click → check this page, so the reuse check stays reachable in either toolbar mode. */
-const CHECK_PAGE_MENU_ID = 'check-page-for-existing-cards';
-
 /** Right-click → read this page, the article panel's other way in. */
 const READ_PAGE_MENU_ID = 'read-page-in-article-panel';
-
-/** Standalone reuse-check window: the same popup, told which URL to check. */
-const CHECK_WINDOW = { width: 380, height: 460 } as const;
 
 /**
  * How often to ping the server with the stored session.
@@ -75,12 +69,6 @@ async function createContextMenus(): Promise<void> {
     id: READ_PAGE_MENU_ID,
     title: 'Read this page in Debate AI',
     contexts: ['page', 'selection'],
-    documentUrlPatterns: ['http://*/*', 'https://*/*'],
-  });
-  browser.contextMenus.create({
-    id: CHECK_PAGE_MENU_ID,
-    title: 'Check this page for existing cards',
-    contexts: ['page'],
     documentUrlPatterns: ['http://*/*', 'https://*/*'],
   });
 }
@@ -180,22 +168,37 @@ export default defineBackground(() => {
     })();
   });
 
-  browser.runtime.onMessage.addListener((message: unknown, sender: { tab?: { id?: number } }) => {
-    const type = (message as { type?: string } | undefined)?.type;
-    switch (type) {
-      case OPEN_TIMER_MESSAGE:
-        void openTimerWindow();
-        return;
-      case READER_SNAPSHOT_MESSAGE:
-        return handleSnapshotRequest(sender.tab?.id);
-      case SIGN_IN_MESSAGE:
-        return runSignInFlow();
-      case SIGN_OUT_MESSAGE:
-        return signOut();
-      default:
-        return;
-    }
-  });
+  browser.runtime.onMessage.addListener(
+    (
+      message: unknown,
+      sender: { tab?: { id?: number } },
+      sendResponse: (response?: unknown) => void,
+    ) => {
+      // WXT's `browser` is Chrome's own API, not webextension-polyfill, and
+      // Chrome does not take a returned promise as the reply: answer through
+      // `sendResponse` and return `true` to keep the channel open.
+      const reply = (work: Promise<unknown>) => {
+        work.then(sendResponse, (error: unknown) =>
+          sendResponse({ ok: false, error: error instanceof Error ? error.message : String(error) }),
+        );
+        return true;
+      };
+      const type = (message as { type?: string } | undefined)?.type;
+      switch (type) {
+        case OPEN_TIMER_MESSAGE:
+          void openTimerWindow();
+          return;
+        case READER_SNAPSHOT_MESSAGE:
+          return reply(handleSnapshotRequest(sender.tab?.id));
+        case SIGN_IN_MESSAGE:
+          return reply(runSignInFlow());
+        case SIGN_OUT_MESSAGE:
+          return reply(signOut());
+        default:
+          return;
+      }
+    },
+  );
 
   // debate-ai.com mirroring its flows, rounds and history into this
   // extension's unlimited storage (src/storage/bulk-storage-bridge.ts). The
@@ -212,18 +215,7 @@ export default defineBackground(() => {
   });
 
   browser.contextMenus.onClicked.addListener((info, tab) => {
-    if (info.menuItemId === READ_PAGE_MENU_ID) {
-      void toggleReaderOrFallBack(tab?.id);
-      return;
-    }
-    if (info.menuItemId !== CHECK_PAGE_MENU_ID || !info.pageUrl) return;
-    // The popup can't read another window's active tab, so the URL to check is
-    // handed to it explicitly.
-    void browser.windows.create({
-      url: browser.runtime.getURL(`/${POPUP_PAGE}?url=${encodeURIComponent(info.pageUrl)}`),
-      type: 'popup',
-      ...CHECK_WINDOW,
-    });
+    if (info.menuItemId === READ_PAGE_MENU_ID) void toggleReaderOrFallBack(tab?.id);
   });
 
   browser.tabs.onUpdated.addListener((tabId, change) => {

@@ -49,7 +49,7 @@ const PACKAGE_MIGRATION_DIRS: Record<string, string> = {
   "debate-predictions": join(REPO_ROOT, "packages/debate-predictions/migrations"),
   "debate-data-sync": join(REPO_ROOT, "packages/debate-data-sync/migrations"),
   "debate-videos": join(REPO_ROOT, "packages/debate-videos/migrations"),
-  "debate-webview": join(REPO_ROOT, "packages/debate-webview/migrations"),
+  "debate-file-market": join(REPO_ROOT, "packages/debate-file-market/migrations"),
 };
 const DATABASE = process.env.D1_DATABASE_NAME || "debate-ai-db";
 const TRACKING_TABLE = "_d1_applied_migrations";

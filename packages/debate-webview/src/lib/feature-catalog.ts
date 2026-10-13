@@ -191,6 +191,15 @@ export const APP_FEATURES: FeatureEntry[] = [
     doc: "argument-library-collections.md",
   },
   {
+    id: "file-market",
+    title: "File Market",
+    description: "Sell your research files or buy other debaters'; every file's table of contents is a free preview, and buying unlocks the cards",
+    href: "/research/market",
+    category: "evidence",
+    doc: "file-market.md",
+    tags: ["sell", "buy", "wallet", "stripe", "preview", "table of contents"],
+  },
+  {
     id: "contributions-feed",
     title: "Contributions Feed",
     description: "Submit, like, save, and endorse the community's cards, summaries, highlights, and annotations",
