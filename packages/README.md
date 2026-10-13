@@ -129,8 +129,9 @@ bun workspace and its `config/` and `output/` files are read by path rather than
 What the web UI imports for rankings: the dataset list and typed CSV loader over `debate-rankings`'
 output, ratings moved onto the site's scale (`rating-offset.ts`), plus the
 site-only team-label lookup (`findTeamRanking("Harker LL")` and friends) that matches a round
-video's team to its rankings row. Site additions live here so the submodule never diverges
-from upstream.
+video's team to its rankings row, and past-season college policy tables (2009-10 to 2024-25)
+scraped from debatedata.weebly.com (`college-history.ts`). Site additions live here so the
+submodule never diverges from upstream.
 
 ## debate-round
 
