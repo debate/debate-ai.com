@@ -200,15 +200,6 @@ export const APP_FEATURES: FeatureEntry[] = [
     tags: ["sell", "buy", "wallet", "stripe", "preview", "table of contents"],
   },
   {
-    id: "contributions-feed",
-    title: "Contributions Feed",
-    description: "Submit, like, save, and endorse the community's cards, summaries, highlights, and annotations",
-    href: "/research/cards/contributions",
-    category: "evidence",
-    tags: ["feed", "endorse", "upvote", "helpfulness"],
-    doc: "contributions-feed.md",
-  },
-  {
     id: "llm-card-scoring",
     title: "LLM Card Scoring",
     description: "Score cards for relevance, clarity, uniqueness, evidence quality, and usability",
@@ -216,15 +207,6 @@ export const APP_FEATURES: FeatureEntry[] = [
     category: "evidence",
     doc: "llm-card-scoring.md",
     tags: ["ai", "duplicate", "ranking", "quality"],
-  },
-  {
-    id: "review-queue",
-    title: "Review Queue",
-    description: "Move a submitted card through peer review — comment, request changes, approve, and publish",
-    href: "/research/cards/reviews",
-    category: "evidence",
-    doc: "review-queue.md",
-    tags: ["peer review", "approve", "publish", "reviewer tier"],
   },
   {
     id: "revision-incentives",
@@ -237,15 +219,6 @@ export const APP_FEATURES: FeatureEntry[] = [
     tags: ["rewards", "stale", "citations"],
   },
   {
-    id: "topic-coverage-dashboard",
-    title: "Topic Coverage Dashboard",
-    description: "See which arguments are well-covered, which are missing, and where the team needs more work",
-    href: "/research/cards/coverage",
-    category: "evidence",
-    doc: "topic-coverage-dashboard.md",
-    tags: ["gaps", "checklist", "thin", "missing"],
-  },
-  {
     id: "research-progress",
     title: "Research Progress",
     description: "Each contributor's contribution history and per-topic task completion",
@@ -254,25 +227,17 @@ export const APP_FEATURES: FeatureEntry[] = [
     doc: "research-progress-tracking.md",
     tags: ["tracking", "completion"],
   },
-  {
-    id: "task-inbox",
-    title: "Task Inbox",
-    description: "Research tasks routed to contributors, grouped by topic",
-    href: "/research/cards/inbox",
-    category: "evidence",
-    doc: "task-inbox.md",
-    tags: ["assignments", "routing", "my tasks"],
-  },
 
   // ── Team collaboration ─────────────────────────────────────────────────
   {
-    id: "team-brainstorm-assist",
-    title: "Team Brainstorm Assist",
-    description: "Submit and upvote squad ideas for an argument block, grouped into boards by category",
-    href: "/research/cards/brainstorm",
+    id: "team-research",
+    title: "Team Research",
+    description:
+      "Topic coverage, the collaboration prep room, review queue, task inbox, contributions feed and team brainstorm board, one tab each on a single page",
+    href: "/research/team",
     category: "collaboration",
-    doc: "brainstorm-board.md",
-    tags: ["ai", "ideas", "impact framing", "frontlines", "turns"],
+    doc: "team-research.md",
+    tags: ["coverage", "gaps", "prep room", "peer review", "tasks", "routing", "feed", "endorse", "brainstorm", "ideas"],
   },
   {
     id: "team-collaboration-mode",
@@ -282,15 +247,6 @@ export const APP_FEATURES: FeatureEntry[] = [
     category: "collaboration",
     doc: "team-collaboration-mode.md",
     tags: ["sprint notes", "assign"],
-  },
-  {
-    id: "collaboration-prep-room",
-    title: "Collaboration Prep Room",
-    description: "A topic's shared prep space: evidence, draft blocks, and routed research tasks",
-    href: "/research/cards/prep-room",
-    category: "collaboration",
-    doc: "collaboration-prep-room.md",
-    tags: ["prep", "drafts", "search"],
   },
   {
     id: "contacts",

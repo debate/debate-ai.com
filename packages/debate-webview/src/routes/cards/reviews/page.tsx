@@ -1,14 +1,6 @@
-import { Suspense } from "react"
-import { ReviewQueueWithIdentity } from "../../../components/research/ReviewQueueWithIdentity"
-import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHeader"
+import { TeamResearchPage } from "../../research/team/page"
 
+/** Old `/research/cards/reviews` address: now Team Research's "reviews" tab. */
 export default function CardsReviewsPage() {
-  return (
-    <ToolPage>
-      <ToolPageHeader href="/research/cards/reviews" backHref="/research/cards" backLabel="shared cards" guide="research-collaboration" />
-      <Suspense>
-        <ReviewQueueWithIdentity />
-      </Suspense>
-    </ToolPage>
-  )
+  return <TeamResearchPage initialSection="reviews" />
 }

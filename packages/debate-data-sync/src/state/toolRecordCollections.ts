@@ -447,7 +447,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "cardScores",
     idField: "id",
     label: "Card Scores",
-    href: "/research/cards/reviews",
+    href: "/research/team",
     section: "Research",
   },
   {
@@ -455,7 +455,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "cardScoreHistory",
     idField: "id",
     label: "Card Score History",
-    href: "/research/cards/reviews",
+    href: "/research/team",
     section: "Research",
   },
   {
@@ -463,7 +463,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "aiCardAssessments",
     idField: "cardId",
     label: "AI Card Assessments",
-    href: "/research/cards/reviews",
+    href: "/research/team",
     section: "Research",
   },
   {
@@ -471,7 +471,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "peerReviews",
     idField: "cardId",
     label: "Review Queue",
-    href: "/research/cards/reviews",
+    href: "/research/team",
     section: "Research",
   },
   {
@@ -479,7 +479,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "contributions",
     idField: "id",
     label: "Contributions Feed",
-    href: "/research/cards/contributions",
+    href: "/research/team",
     section: "Research",
   },
   {
@@ -511,7 +511,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "topicCoverageSnapshots",
     idField: "id",
     label: "Topic Coverage",
-    href: "/research/cards/coverage",
+    href: "/research/team",
     section: "Research",
   },
   // — Team —
@@ -520,7 +520,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "brainstormIdeas",
     idField: "id",
     label: "Team Brainstorm Assist",
-    href: "/research/cards/brainstorm",
+    href: "/research/team",
     section: "Team",
   },
   {
@@ -544,7 +544,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "prepRoomChecklist",
     idField: "id",
     label: "Collaboration Prep Room",
-    href: "/research/cards/prep-room",
+    href: "/research/team",
     section: "Team",
   },
   {
@@ -552,7 +552,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "sprintNotes",
     idField: "id",
     label: "Sprint Notes",
-    href: "/research/cards/prep-room",
+    href: "/research/team",
     section: "Team",
   },
   {
@@ -560,7 +560,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "sprintWhiteboardNotes",
     idField: "id",
     label: "Sprint Whiteboard",
-    href: "/research/cards/prep-room",
+    href: "/research/team",
     section: "Team",
   },
   {
@@ -568,7 +568,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "routedTaskQueues",
     idField: "topicId",
     label: "Task Inbox",
-    href: "/research/cards/inbox",
+    href: "/research/team",
     section: "Team",
   },
   {
@@ -576,7 +576,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "pendingTaskVerifications",
     idField: "id",
     label: "Task Verification Queue",
-    href: "/research/cards/inbox",
+    href: "/research/team",
     section: "Team",
   },
   {

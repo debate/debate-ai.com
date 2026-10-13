@@ -1,8 +1,8 @@
 import {
   Trophy, Inbox, Award, Library, History, Dumbbell,
-  ClipboardList, GraduationCap, FileText, MessageSquareText, Type,
-  ListTree, Bot, Lightbulb, BarChart3, Users2, School,
-  ThumbsUp, Medal, Target, BookOpen, PieChart, Presentation,
+  ClipboardList, GraduationCap, FileText, Type,
+  ListTree, Bot, BarChart3, Users2, School,
+  Medal, Target, BookOpen,
   ListChecks, Flame, CheckSquare, Landmark, MapPin, Sparkles, Bell, Contact,
   Rss, Gauge, Crown, Send, Smartphone, Star, Handshake, Coins, CalendarDays, ShoppingBag,
   type LucideIcon,
@@ -66,6 +66,15 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         highlights: ["Topic coverage dashboard", "Evidence library search", "Task routing, quests, and peer review in one place"],
       },
       {
+        href: "/research/team", label: "Team Research", icon: Users2,
+        description: "Work a topic with your squad on one page: topic coverage, the prep room, review queue, task inbox, contributions feed, and brainstorm board.",
+        highlights: [
+          "One tab each for Topic Coverage, Prep Room, Review Queue, Task Inbox, Contributions and Brainstorm",
+          "Coverage gaps become routed tasks; submitted cards move through peer review and into the feed",
+          "Part of the Research Workspace, alongside the evidence library, quests and rewards",
+        ],
+      },
+      {
         href: "/coaching", label: "Coach Workspace", icon: GraduationCap,
         description: "Coach a round from the argument tree and flow summary through coaching prompts, drills, scouting, briefings, and practice rounds.",
         highlights: ["Argument tree + flow summary in one view", "AI coaching prompts and drills", "Opponent scouting and pre-round briefings"],
@@ -86,11 +95,6 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         highlights: ["Hand-picked product-update posts", "Auto-posts Daily Best Card and Contributor Award announcements", "Filter by category, like, and mark read"],
       },
       {
-        href: "/research/cards/contributions", label: "Contributions Feed", icon: ThumbsUp,
-        description: "Submit, like, save, and endorse the community's cards, summaries, highlights, and annotations.",
-        highlights: ["Every contribution kind in one scored feed", "Like, save, and endorse signals feed the Leaderboard"],
-      },
-      {
         href: "/research/cards/awards", label: "Contributor Awards", icon: Medal,
         description: "See category winners for best evidence finder, best explainer, and more, ranked by helpfulness score.",
         highlights: ["One card per contribution kind — evidence, summaries, highlights, annotations, arguments, refutations", "Freeze a day's standings as an official announced result"],
@@ -99,11 +103,6 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         href: "/research/cards/best-card", label: "Daily Best Card", icon: Sparkles,
         description: "Check today's highest-helpfulness card along with every past day's winner.",
         highlights: ["Live leader computed from the Contributions Feed", "Announce a day's winner to freeze it against later submissions"],
-      },
-      {
-        href: "/research/cards/inbox", label: "Task Inbox", icon: Inbox,
-        description: "See research tasks routed to contributors, grouped by topic.",
-        highlights: ["Coverage-gap tasks routed by skill level, grouped by topic", "Mark done, then a different contributor verifies before it counts"],
       },
       {
         href: "/research/cards/progress", label: "Progress", icon: Award,
@@ -121,24 +120,9 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         highlights: ["Points for quality gains, citation completeness, and fresher evidence", "Weak-card improvements score double"],
       },
       {
-        href: "/research/cards/reviews", label: "Review Queue", icon: MessageSquareText,
-        description: "Move a submitted card through peer review by commenting, requesting changes, approving, and publishing it.",
-        highlights: ["Full lifecycle: draft → in review → changes requested → approved → published", "Blocking comments must be resolved before approval"],
-      },
-      {
         href: "/research/cards/group-challenges", label: "Group Challenges", icon: Target,
         description: "Create squad-scoped friendly challenges, like completing a set of blocks or winning a rebuttal exercise.",
         highlights: ["Contribution-count or recorded-win challenge goals", "Live per-member standings with an MVP badge for the leader"],
-      },
-      {
-        href: "/research/cards/coverage", label: "Topic Coverage Dashboard", icon: PieChart,
-        description: "See which arguments are well-covered, which are missing, and where the team needs more work.",
-        highlights: ["Missing / thin / covered, by card count and word count", "Untracked section for submitted cards nobody added to the checklist"],
-      },
-      {
-        href: "/research/cards/prep-room", label: "Collaboration Prep Room", icon: Presentation,
-        description: "Share a topic's prep space, covering evidence, draft blocks, and routed research tasks.",
-        highlights: ["Keyword search scoped to just this topic's evidence and drafts", "Active-now roster of teammates currently working the topic", "Room activity timeline of dated evidence/draft-block submissions"],
       },
       {
         href: "/coaching/progress", label: "Research Progress", icon: ListChecks,
@@ -159,11 +143,6 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         href: "/research/cards/quests", label: "Daily Quests", icon: CheckSquare,
         description: "Track team goals like \"find 5 solvency cards\" against today's live progress from real contributions.",
         highlights: ["Progress tracked live against same-day contribution submissions", "Bulk-seed quests from a topic's under-covered arguments"],
-      },
-      {
-        href: "/research/cards/brainstorm", label: "Team Brainstorm Assist", icon: Lightbulb,
-        description: "Submit and upvote squad ideas for an argument block, grouped into boards by category.",
-        highlights: ["Boards for new arguments, impact framing, frontlines, and turns", "Near-duplicate badge, plus AI-generated idea seeding"],
       },
       {
         href: "/research/cards/collaboration", label: "Team Collaboration Mode", icon: Users2,

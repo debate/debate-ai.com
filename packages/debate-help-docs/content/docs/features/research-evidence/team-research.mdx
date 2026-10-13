@@ -1,0 +1,60 @@
+---
+title: "Team Research"
+---
+
+# Team Research
+
+One page for working a topic with your squad. Six research collaboration
+tools sit side by side, one tab each, as part of the
+[Research Workspace](/docs/features/research-evidence/research-collaboration):
+
+| Tab | `?section=` | What it does |
+| --- | --- | --- |
+| [Topic Coverage](/docs/features/research-evidence/topic-coverage-dashboard) | `coverage` | Which arguments are well-covered, thin, or missing, by card count and word count. |
+| [Prep Room](/docs/features/team-collaboration/collaboration-prep-room) | `prep-room` | A topic's shared prep space: its evidence, draft blocks, and routed research tasks. |
+| [Review Queue](/docs/features/team-collaboration/review-queue) | `reviews` | Move a submitted card through peer review: comment, request changes, approve, and publish. |
+| [Task Inbox](/docs/features/team-collaboration/task-inbox) | `inbox` | Research tasks routed to contributors by skill level, grouped by topic, with peer verification. |
+| [Contributions](/docs/features/team-collaboration/contributions-feed) | `contributions` | Submit, like, save, and endorse the community's cards, summaries, highlights, and annotations. |
+| [Brainstorm](/docs/features/research-evidence/brainstorm-board) | `brainstorm` | Submit and upvote squad ideas for an argument block, grouped into boards by category. |
+
+- **Route:** `/research/team`, listed in the sidebar's **Research** section
+  under the Research Workspace
+- **Package:** `debate-webview` (`components/research/TeamResearchWorkspace.tsx`)
+  over panels from `debate-research-evidence`, `debate-team-collaboration`
+  and `debate-community`
+
+## Old addresses
+
+Each tool used to have its own page. Those addresses still work and
+permanently redirect to the matching tab:
+
+| Old route | Now |
+| --- | --- |
+| `/research/cards/coverage` | `/research/team?section=coverage` |
+| `/research/cards/prep-room` | `/research/team?section=prep-room` |
+| `/research/cards/reviews` | `/research/team?section=reviews` |
+| `/research/cards/inbox` | `/research/team?section=inbox` |
+| `/research/cards/contributions` | `/research/team?section=contributions` |
+| `/research/cards/brainstorm` | `/research/team?section=brainstorm` |
+
+## How it works
+
+The page is navigation only: each tab mounts the same panel the old page
+did, and each panel still reads and writes its own store, so coverage
+snapshots, prep-room checklists, reviews, routed tasks, contributions and
+brainstorm ideas carry over unchanged and keep syncing to your account. The
+open tab is kept in `?section=` (so a tab can be shared or bookmarked) and
+remembered in this browser for the next visit. The tab strip is the
+Research, Coach and Prep workspaces' own (`components/hubs/HubSectionNav.tsx`).
+
+The Research Workspace (`/research`) still mounts these panels inside its
+own stage-by-stage sections; its "open as its own page" chips for them now
+lead to the matching Team Research tab.
+
+Outside Next (the browser extension's router), the old routes render this
+page opened on their tab instead of redirecting.
+
+## Known gaps
+
+- Opening a saved record from the Tools page's recent-items list lands on
+  the Team Research page's last-opened tab, not on the record itself.

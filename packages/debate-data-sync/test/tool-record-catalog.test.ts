@@ -233,7 +233,7 @@ describe("the synced collection catalog", () => {
     expect(findToolRecordCollection("pendingTaskVerifications")).toMatchObject({
       storageKey: "pendingTaskVerifications",
       idField: "id",
-      href: "/research/cards/inbox",
+      href: "/research/team",
     });
   });
 
