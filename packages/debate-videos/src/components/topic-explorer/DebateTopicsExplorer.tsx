@@ -93,6 +93,17 @@ export function matchesStyleFilter(entry: DebateTopicYear, styleFilter: StyleFil
   return !!getStyleTopicText(entry, styleFilter);
 }
 
+/** A resolution's start month as the short label under its style badge:
+ *  every full month name cut to its first three letters, so "September"
+ *  reads "Sep" and "September/October" reads "Sep/Oct". Already-short values
+ *  pass through. Exported for its own unit test. */
+export function shortMonth(month: string): string {
+  return month.replace(
+    /\b(January|February|March|April|May|June|July|August|September|October|November|December)\b/gi,
+    (name) => name.slice(0, 3),
+  );
+}
+
 const compactNumber = new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 1 });
 
 /**
@@ -146,7 +157,7 @@ export function DebateTopicsExplorer({ topics, videoStatsByYear, defaultYear }: 
           <Badge variant="secondary" className="h-6 rounded-full px-2 py-1 font-normal">
             Season
           </Badge>
-          <h3 className="text-5xl font-medium tracking-tight text-foreground lg:text-8xl">{entry.year}</h3>
+          <h3 className="text-2xl font-semibold tracking-tight text-foreground">{entry.year}</h3>
           {stats ? (
             <dl className="grid w-full max-w-sm grid-cols-3 gap-3 pt-2">
               {[
@@ -170,32 +181,38 @@ export function DebateTopicsExplorer({ topics, videoStatsByYear, defaultYear }: 
             const items = getStyleTopicItems(entry, style);
             if (items.length === 0) return null;
             return (
-              <div key={style} className="flex items-start gap-2 text-sm">
-                <Badge variant="outline" className="mt-0.5 shrink-0">
-                  {DEBATE_STYLE_LABELS[style]}
-                </Badge>
-                <ul className="min-w-0 space-y-1">
-                  {items.map((topic, i) => (
-                    <li key={i} className="whitespace-pre-line text-muted-foreground">
-                      <Link
-                        href={topicSearchHref(entry.year, style, topic)}
-                        title={`Search ${entry.year} ${DEBATE_STYLE_LABELS[style]} cards, outlines and rounds`}
-                        className="block rounded-sm hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                      >
-                        {topic.title && (
-                          <span className="font-medium text-foreground">
-                            {topic.emoji && <span aria-hidden="true">{topic.emoji} </span>}
-                            {topic.title}
-                            {": "}
-                          </span>
-                        )}
-                        {topic.month && <span>{topic.month}: </span>}
-                        {topic.text}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              <ul key={style} className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-2 gap-y-1 text-sm">
+                {items.map((topic, i) => (
+                  <li key={i} className="contents">
+                    <div className="flex flex-col items-center gap-0.5">
+                      {i === 0 && (
+                        <Badge variant="outline" className="mt-0.5 shrink-0">
+                          {DEBATE_STYLE_LABELS[style]}
+                        </Badge>
+                      )}
+                      {topic.month && (
+                        <span className={`text-xs text-muted-foreground${i === 0 ? "" : " mt-0.5"}`}>
+                          {shortMonth(topic.month)}
+                        </span>
+                      )}
+                    </div>
+                    <Link
+                      href={topicSearchHref(entry.year, style, topic)}
+                      title={`Search ${entry.year} ${DEBATE_STYLE_LABELS[style]} cards, outlines and rounds`}
+                      className="block whitespace-pre-line rounded-sm text-muted-foreground hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                      {topic.title && (
+                        <span className="font-medium text-foreground">
+                          {topic.emoji && <span aria-hidden="true">{topic.emoji} </span>}
+                          {topic.title}
+                          {": "}
+                        </span>
+                      )}
+                      {topic.text}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             );
           })}
         </div>
