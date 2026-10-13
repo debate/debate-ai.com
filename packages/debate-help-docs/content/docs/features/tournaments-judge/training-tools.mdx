@@ -12,6 +12,10 @@ them starts from the same input: the **current round**, meaning the flow selecte
 [round workspace](https://debate-ai.com/debate) (`/debate`). The Coach Workspace shows which round that is at
 the top of every section, with a link to change it.
 
+The Coach Workspace is the first tab of the [Coaching](/docs/features/ai-coaching/coaching) page. AI Coach
+Mode, Coaching Programs, the Team Calendar and Coach Materials each have a tab of their own next to it, so
+the "own page" for each of those is its tab.
+
 ## The workflow
 
 1. **Flow the round** in the round workspace, or open a saved one.
@@ -41,10 +45,10 @@ workspace.
 
 | Tool | Route | What it does |
 | --- | --- | --- |
-| AI Coach Mode | [`/coaching/ai-coach`](/docs/features/ai-coaching/coaching-sessions) | Extension, refutation, collapse, and weighing prompts generated from the round for one side. "Get AI feedback" expands any prompt into open-ended coaching; sessions keep a history and can be compared side by side or downloaded. |
+| AI Coach Mode | [`/coaching?section=ai-coach`](/docs/features/ai-coaching/coaching-sessions) | Extension, refutation, collapse, and weighing prompts generated from the round for one side. "Get AI feedback" expands any prompt into open-ended coaching; sessions keep a history and can be compared side by side or downloaded. |
 | Practice Drills | [`/practice/drills`](/docs/features/tournaments-judge/drill-sets) | Overview, frontline, cross-ex, and collapse drills derived from the round, each with a difficulty rating, an optional AI-written script, a "mark practiced" toggle, and a review reminder. Practiced drills feed a practice tier. |
-| Coaching Programs | [`/coaching/programs`](/docs/features/ai-coaching/coaching-programs) | A group coaching space scoped to a squad roster: a shared topic sprint, group-challenge standings, and drills on one board, plus roster analytics. |
-| Coach Materials | [`/coaching/materials`](/docs/features/ai-coaching/coach-materials) | Upload `.docx`/`.txt`/`.md` files or dictate by voice to ground the team coach AI, and preview which materials a question would draw on. |
+| Coaching Programs | [`/coaching?section=programs`](/docs/features/ai-coaching/coaching-programs) | A group coaching space scoped to a squad roster: a shared topic sprint, group-challenge standings, and drills on one board, plus roster analytics. |
+| Coach Materials | [`/coaching?section=materials`](/docs/features/ai-coaching/coach-materials) | Upload `.docx`/`.txt`/`.md` files or dictate by voice to ground the team coach AI, and preview which materials a question would draw on. |
 
 Drill sets and coaching sessions are saved to your account when signed in, so they follow you across devices.
 
@@ -80,4 +84,4 @@ guide.
   `/debate` to flow or pick one.
 - **Working on one tool?** Open it as its own page from the chip in the section heading; the standalone page
   has the same data and a lighter layout.
-- **Sharing a section:** the URL carries the open section, e.g. `/coaching?section=coaching`.
+- **Sharing a section:** the URL carries the open stage, e.g. `/coaching?stage=coaching`. Older links that put the stage in `?section=` still open it.

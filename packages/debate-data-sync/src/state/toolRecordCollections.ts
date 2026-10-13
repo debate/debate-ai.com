@@ -357,7 +357,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "coachConversation",
     idField: "id",
     label: "AI Coach Mode",
-    href: "/coaching/ai-coach",
+    href: "/coaching",
     section: "Coaching",
   },
   {
@@ -365,7 +365,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "coachingPrograms",
     idField: "id",
     label: "Coaching Programs",
-    href: "/coaching/programs",
+    href: "/coaching",
     section: "Coaching",
   },
   {
@@ -373,7 +373,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "teamCalendarItems",
     idField: "id",
     label: "Team Calendar",
-    href: "/coaching/calendar",
+    href: "/coaching",
     section: "Coaching",
   },
   {
@@ -389,7 +389,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "coachingSessions",
     idField: "id",
     label: "AI Coach Mode",
-    href: "/coaching/ai-coach",
+    href: "/coaching",
     section: "Coaching",
   },
   {

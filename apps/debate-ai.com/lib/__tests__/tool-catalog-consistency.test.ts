@@ -136,7 +136,10 @@ const STATIC_APP_ROUTES = findAppPageRoutes(APP_DIR, "").filter((route) => !rout
  * Likewise `/research/cards/coverage`, `/research/cards/prep-room`,
  * `/research/cards/reviews`, `/research/cards/inbox`,
  * `/research/cards/contributions` and `/research/cards/brainstorm`: merged
- * into Team Research, each redirects to its tab of `/research/team`.
+ * into Team Research, each redirects to its tab of `/research/team`. And
+ * `/coaching/ai-coach`, `/coaching/programs`, `/coaching/calendar` and
+ * `/coaching/materials`: merged into Coaching, each redirects to its tab of
+ * `/coaching`.
  *
  * `/lectures`, `/practice/glossary`, `/practice/rankings` and
  * `/practice/statistics` are views of the video library page (the same page
@@ -175,6 +178,10 @@ const ROUTES_WITHOUT_A_CATALOG_ENTRY = new Set([
   "/research/cards/inbox",
   "/research/cards/contributions",
   "/research/cards/brainstorm",
+  "/coaching/ai-coach",
+  "/coaching/programs",
+  "/coaching/calendar",
+  "/coaching/materials",
   "/lectures",
   "/practice/glossary",
   "/practice/rankings",

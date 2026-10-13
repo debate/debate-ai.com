@@ -49,7 +49,7 @@ export const WORKSPACE_LINKS: WorkspaceLink[] = [
   { href: '/contacts', label: 'Contacts', description: "Requests, blocking, who's online, and live cards shared with you", category: 'Prep & Practice' },
   { href: '/notifications', label: 'Notifications', description: 'Assignee notifications for handed-off prep notes', category: 'Prep & Practice' },
   { href: '/practice/drills', label: 'Practice Drills', description: "Overview, frontline, cross-ex, and collapse prompts from a round's flow", category: 'Prep & Practice' },
-  { href: '/coaching/ai-coach', label: 'AI Coach Mode', description: 'Extension, refutation, collapse, and weighing prompts', category: 'Prep & Practice' },
+  { href: '/coaching?section=ai-coach', label: 'AI Coach Mode', description: 'Extension, refutation, collapse, and weighing prompts', category: 'Prep & Practice' },
   { href: '/practice/judge-decision', label: 'AI Judge Decision', description: 'An AI round decision under a saved paradigm and flow', category: 'Prep & Practice' },
   { href: '/summaries', label: 'Speech Transcript Summaries', description: 'Per-argument summaries with cross-exam questions', category: 'Prep & Practice' },
   { href: '/word-count', label: 'Word-Count Speeches', description: 'A live word-count readout instead of a timer', category: 'Prep & Practice' },
@@ -62,8 +62,8 @@ export const WORKSPACE_LINKS: WorkspaceLink[] = [
 
   // ── Coaching & Analytics ────────────────────────────────────────────────
   { href: '/coaching/rankings', label: 'Team Rankings', description: 'Elo-based team leaderboard and rankings', category: 'Coaching & Analytics' },
-  { href: '/coaching/programs', label: 'Coaching Programs', description: "A coach's squad-scoped coaching space and boards", category: 'Coaching & Analytics' },
-  { href: '/coaching/calendar', label: 'Team Calendar', description: 'Tasks, assignments, deadlines and group tournaments on a calendar', category: 'Coaching & Analytics' },
-  { href: '/coaching/materials', label: 'Coach Materials', description: 'Grounding materials for the team coach AI', category: 'Coaching & Analytics' },
+  { href: '/coaching?section=programs', label: 'Coaching Programs', description: "A coach's squad-scoped coaching space and boards", category: 'Coaching & Analytics' },
+  { href: '/coaching?section=calendar', label: 'Team Calendar', description: 'Tasks, assignments, deadlines and group tournaments on a calendar', category: 'Coaching & Analytics' },
+  { href: '/coaching?section=materials', label: 'Coach Materials', description: 'Grounding materials for the team coach AI', category: 'Coaching & Analytics' },
 
 ];

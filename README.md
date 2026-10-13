@@ -153,7 +153,7 @@ roughly 500 editing commands into ~30 thematic groups. Highlights (full 50+ feat
 ## Practice & AI Rounds
 
 - [Practice Drills](https://debate-ai.com/drills) — Run flow-derived overview, frontline, cross-examination, and collapse drills.
-- [AI Coach Mode](https://debate-ai.com/coaching) — Generate extension, refutation, collapse, and weighing prompts from a round’s flow.
+- [AI Coach Mode](https://debate-ai.com/coaching?section=ai-coach) — Generate extension, refutation, collapse, and weighing prompts from a round’s flow.
 - [AI Judge Decision](https://debate-ai.com/judge-decision) — Generate an AI decision grounded in the selected judge paradigm and flow summary.
 - [Word-Count Speeches](https://debate-ai.com/word-count) — Practice speeches under a maximum word count instead of a time limit.
 - [Online Debate Versus AI](https://debate-ai.com/versus-ai) — Debate an AI opponent in real turn order using a chosen format and side.
@@ -170,8 +170,8 @@ roughly 500 editing commands into ~30 thematic groups. Highlights (full 50+ feat
 - [Pre-Round Briefings](https://debate-ai.com/briefings) — Combine judge and opponent scouting, head-to-head records, and team prep notes for an upcoming round.
 - [Scout-to-Strategy](https://debate-ai.com/strategy) — Convert scouting and judge tendencies into ranked case options and matchup-risk assessments.
 - [Team Rankings](https://debate-ai.com/rank) — Browse debate-team rankings, leaderboards, and Elo ratings.
-- [Coaching Programs](https://debate-ai.com/coaching-programs) — Run roster-scoped group coaching spaces with topic sprints, challenges, and drills.
-- [Coach Materials](https://debate-ai.com/coach-materials) — Upload or dictate grounding material for the team coach AI and preview relevant sources.
+- [Coaching Programs](https://debate-ai.com/coaching?section=programs) — Run roster-scoped group coaching spaces with topic sprints, challenges, and drills.
+- [Coach Materials](https://debate-ai.com/coaching?section=materials) — Upload or dictate grounding material for the team coach AI and preview relevant sources.
 
 
 ## Contributing

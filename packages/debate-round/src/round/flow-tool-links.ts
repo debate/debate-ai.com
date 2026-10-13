@@ -58,7 +58,7 @@ export const FLOW_TOOL_LINKS: FlowToolLink[] = [
     description: "Generate quick practice drills from this round's flowed arguments.",
   },
   {
-    href: "/coaching/ai-coach",
+    href: "/coaching?section=ai-coach",
     label: "AI Coach Mode",
     description: "Get extension, refutation, collapse, and weighing prompts for this round.",
   },

@@ -221,7 +221,7 @@ describe("the sidebar's heading structure", () => {
     // start expanded and collapse independently, so one link from each is
     // mounted on arrival.
     const html = renderSidebar();
-    expect(html).toContain("Coaching Programs");
+    expect(html).toContain("Research Progress");
     expect(html).toContain("Team Research");
     expect(html).toContain("AI Judge Decision");
     // ...alongside the Videos node's own links, which were never in doubt.

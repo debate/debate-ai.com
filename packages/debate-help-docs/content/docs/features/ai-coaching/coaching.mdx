@@ -1,0 +1,59 @@
+---
+title: "Coaching"
+---
+
+# Coaching
+
+One page for a coach's tools. Five tools that used to have their own pages
+and sidebar entries sit side by side, one tab each:
+
+| Tab | `?section=` | What it does |
+| --- | --- | --- |
+| [Coach Workspace](/docs/features/tournaments-judge/training-tools) | `workspace` | Every round and coaching panel, grouped by stage of a round: flow, coaching, prep, scouting, and practice. |
+| [AI Coach Mode](/docs/features/ai-coaching/coaching-sessions) | `ai-coach` | Extension, refutation, collapse, and weighing prompts generated from each round's flow. |
+| [Coaching Programs](/docs/features/ai-coaching/coaching-programs) | `programs` | Group coaching spaces scoped to a squad roster, with roster analytics and drill reviews. |
+| [Team Calendar](/docs/features/team-collaboration/team-calendar) | `calendar` | Research tasks, assignments, deadlines, and group-only virtual tournaments for each group you coach. |
+| [Coach Materials](/docs/features/ai-coaching/coach-materials) | `materials` | Grounding materials for the team coach AI, with a preview of which ones answer a question. |
+
+- **Route:** `/coaching`, listed in the sidebar's **Coaching** section as
+  Coach Workspace
+- **Package:** `debate-webview` (`components/coach/CoachingWorkspace.tsx`)
+  over panels from `debate-practice-rounds`, `debate-team-collaboration`
+  and `debate-speech-writer`
+
+## Old addresses
+
+Each tool used to have its own page. Those addresses still work and
+permanently redirect to the matching tab:
+
+| Old route | Now |
+| --- | --- |
+| `/coaching/ai-coach` | `/coaching?section=ai-coach` |
+| `/coaching/programs` | `/coaching?section=programs` |
+| `/coaching/calendar` | `/coaching?section=calendar` |
+| `/coaching/materials` | `/coaching?section=materials` |
+
+## How it works
+
+The page is navigation only: each tab mounts the same panel the old page
+did, and each panel still reads and writes its own store, so coaching
+sessions, programs, calendar items and coach materials carry over unchanged
+and keep syncing to your account. The open tab is kept in `?section=` (so a
+tab can be shared or bookmarked) and remembered in this browser for the next
+visit. The tab strip is the same one Team Research and the Prep Workspace use
+(`components/hubs/HubSectionNav.tsx`).
+
+The Coach Workspace tab keeps its own stage strip (Flow, Coaching, Prep,
+Scouting, Practice) under `?stage=`, since `?section=` belongs to the page's
+tabs. Links from before the page had tabs, such as `/coaching?section=practice`,
+still open the Coach Workspace on that stage.
+
+Outside Next (the browser extension's router), the old routes render this
+page opened on their tab instead of redirecting.
+
+## Known gaps
+
+- AI Coach Mode lost its "Other round tools" cross-link row when it became a
+  tab; Outline, Outcomes and Drills still link to it.
+- Opening a saved record from the Tools page's recent-items list lands on
+  the tab its tool lives in, not on the record itself.
