@@ -1,7 +1,7 @@
 /// <reference path="../router.d.ts" />
 /**
  * The tournaments API as a fetch handler: upstream Tabroom's public `/rest`
- * and `/pages` routers (vendored under `vendor/tabroom`, see README) running
+ * and `/pages` routers (vendored under `vendor/tabroom-build`, see README) running
  * on D1.
  *
  * ```ts
@@ -23,11 +23,11 @@
  */
 
 import Router from "router";
-import restRouter from "../../vendor/tabroom/indexcards/api/routes/routers/v1/rest/restRouter";
-import pagesRouter from "../../vendor/tabroom/indexcards/api/routes/routers/v1/pages/pagesRouter";
+import restRouter from "../../vendor/tabroom-build/indexcards/api/routes/routers/v1/rest/restRouter";
+import pagesRouter from "../../vendor/tabroom-build/indexcards/api/routes/routers/v1/pages/pagesRouter";
 import type { D1DatabaseLike } from "../db/d1-types";
 import { runWithTabroomDb } from "../db/runtime";
-import legacyDb from "../../vendor/tabroom/indexcards/api/data/db.js";
+import legacyDb from "../../vendor/tabroom-build/indexcards/api/data/db.js";
 import { tabroomConfig } from "../config";
 import { actorForHostUser, anonymousActor, type HostUser, type TabroomActor } from "./actor";
 import { runExpressRouter, type ExpressLikeRouter } from "./express-adapter";

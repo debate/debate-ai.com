@@ -75,6 +75,11 @@ gone:
   presets" section below the word-count form, rather than from here
 - **Ebb Flow preferences** — reachable with `Cmd/Ctrl+,` inside a flow, where
   they apply
+- **Default format for new speech documents** (Files → New documents) — a
+  new speech document is now always created as `.cmir`, CardMirror's native
+  format, so autosave always applies to it (autosave only writes `.cmir`).
+  Save As still exports a `.docx` for teammates on Verbatim. The format is
+  `SPEECH_DOC_FORMAT` in `debate-editor`'s `src/editor/speech-filename.ts`
 
 Their `/api/settings` fields (`debateStyle`, `fontSize`, `wordLimitPresets`, …)
 are all still stored and served; what changed is that nothing writes them from

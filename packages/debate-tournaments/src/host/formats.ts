@@ -19,7 +19,7 @@
  * created here.
  */
 
-import type { Event as TabroomEvent } from "../../vendor/tabroom/types";
+import type { Event as TabroomEvent } from "../../vendor/tabroom-build/types";
 
 /** The formats this app can host. */
 export type TournamentFormatId =
