@@ -1,10 +1,19 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { authClient } from "../../../lib/auth/client"
 
 export default function NativeCallbackPage() {
+  // useSearchParams() needs a Suspense boundary.
+  return (
+    <Suspense fallback={null}>
+      <NativeCallback />
+    </Suspense>
+  )
+}
+
+function NativeCallback() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [status, setStatus] = useState<"working" | "error">("working")
