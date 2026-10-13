@@ -24,6 +24,7 @@ export interface WorkspaceLink {
 export const WORKSPACE_LINKS: WorkspaceLink[] = [
   // ── Workspaces ──────────────────────────────────────────────────────────
   { href: '/research/docs', label: 'Debate Docs', description: 'Annotated summaries and case outlines', category: 'Workspaces' },
+  { href: '/research/market', label: 'File Market', description: 'Buy research files or sell your own; tables of contents are free previews', category: 'Workspaces' },
   { href: '/research', label: 'Research Workspace', description: 'Topic coverage, evidence library, tasks, quests, review', category: 'Workspaces' },
   { href: '/coaching', label: 'Coach Workspace', description: 'Argument tree, flow summary, drills, scouting, briefings', category: 'Workspaces' },
 

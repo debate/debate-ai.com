@@ -4,7 +4,7 @@ import {
   ListTree, Bot, Lightbulb, BarChart3, Users2, School,
   ThumbsUp, Medal, Target, BookOpen, PieChart, Presentation,
   ListChecks, Flame, CheckSquare, Landmark, MapPin, Sparkles, Bell, Contact,
-  Rss, Gauge, Crown, Send, Smartphone, Star, Handshake, Coins, CalendarDays,
+  Rss, Gauge, Crown, Send, Smartphone, Star, Handshake, Coins, CalendarDays, ShoppingBag,
   type LucideIcon,
 } from "lucide-react"
 
@@ -54,6 +54,11 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         href: "/research/docs", label: "Debate Docs", icon: BookOpen,
         description: "Write annotated summaries and case outlines in the REASON Docs research editor.",
         highlights: ["Nested document tree", "Outline Notation for case structure"],
+      },
+      {
+        href: "/research/market", label: "File Market", icon: ShoppingBag,
+        description: "Sell your research files or buy other debaters'. Every file's table of contents is free to read; buying unlocks the cards.",
+        highlights: ["\"Sell…\" on any file in the Files sidebar sets a price", "Fund your wallet with $10 or $20 through Stripe", "Purchases save the full file to your own files"],
       },
       {
         href: "/research", label: "Research Workspace", icon: Library,

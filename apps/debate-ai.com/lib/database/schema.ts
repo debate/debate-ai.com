@@ -2573,3 +2573,115 @@ export const profileFollows = sqliteTable(
 );
 
 export type ProfileFollowRow = typeof profileFollows.$inferSelect;
+
+// ── File market (packages/debate-file-market) ─────────────────────────────
+// Selling research files for real-money wallet balance. All four tables are
+// created by packages/debate-file-market/migrations; lib/market/__tests__
+// checks the two stay in step. Money is whole US cents.
+
+// One wallet per account, created at zero on first use. `balance_cents` only
+// moves through `lib/market/queries.ts`, and every move is also written to
+// `wallet_transactions`.
+export const wallets = sqliteTable("wallets", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => user.id, { onDelete: "cascade" }),
+  balanceCents: integer("balance_cents").notNull().default(0),
+  updatedAt: integer("updated_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
+});
+
+export type WalletRow = typeof wallets.$inferSelect;
+
+// The wallet ledger: a top-up (`topup`, positive), a purchase (`purchase`,
+// negative) or a sale (`sale`, positive). `ref` is unique, which is what makes
+// a Stripe top-up credit exactly once however often its webhook is delivered
+// (`stripe:<checkout session id>`); a purchase and its sale use
+// `purchase:<listing>:<buyer>` and `sale:<listing>:<buyer>`.
+export const walletTransactions = sqliteTable(
+  "wallet_transactions",
+  {
+    /** A UUID minted by the API. */
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    kind: text("kind").notNull(),
+    amountCents: integer("amount_cents").notNull(),
+    ref: text("ref").notNull(),
+    listingId: text("listing_id"),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    refIdx: uniqueIndex("idx_wallet_transactions_ref").on(table.ref),
+    userIdx: index("idx_wallet_transactions_user").on(table.userId, table.createdAt),
+  }),
+);
+
+export type WalletTransactionRow = typeof walletTransactions.$inferSelect;
+
+// A file for sale. `content` and `format` are a snapshot of the seller's
+// `documents` row taken when it was listed (or relisted), so later edits to
+// the seller's own copy don't change what buyers already paid for until the
+// seller chooses "Sell…" again. `outline` is the free preview: a JSON
+// `OutlineEntry[]` of the file's headings, no card text. One listing per
+// seller document (`document_id`); stopping a sale sets `active` false rather
+// than deleting, so buyers keep access.
+export const fileListings = sqliteTable(
+  "file_listings",
+  {
+    /** A UUID minted by the API. */
+    id: text("id").primaryKey(),
+    sellerId: text("seller_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    documentId: integer("document_id").references(() => documents.id, { onDelete: "set null" }),
+    title: text("title").notNull(),
+    outline: text("outline").notNull().default("[]"),
+    content: text("content").notNull().default(""),
+    format: text("format").notNull().default("html"),
+    priceCents: integer("price_cents").notNull(),
+    active: integer("active", { mode: "boolean" }).notNull().default(true),
+    sales: integer("sales").notNull().default(0),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    documentIdx: uniqueIndex("idx_file_listings_document").on(table.documentId),
+    activeIdx: index("idx_file_listings_active").on(table.active, table.updatedAt),
+    sellerIdx: index("idx_file_listings_seller").on(table.sellerId),
+  }),
+);
+
+export type FileListingRow = typeof fileListings.$inferSelect;
+
+// Who bought what, at the price they paid. Keyed on (listing, buyer), so a
+// file can't be bought twice.
+export const filePurchases = sqliteTable(
+  "file_purchases",
+  {
+    listingId: text("listing_id")
+      .notNull()
+      .references(() => fileListings.id, { onDelete: "cascade" }),
+    buyerId: text("buyer_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    priceCents: integer("price_cents").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.listingId, table.buyerId] }),
+    buyerIdx: index("idx_file_purchases_buyer").on(table.buyerId, table.createdAt),
+  }),
+);
+
+export type FilePurchaseRow = typeof filePurchases.$inferSelect;
