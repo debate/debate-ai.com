@@ -21,17 +21,28 @@
  * the same tab strip and `?section=` URL sync as Team Research
  * (`components/hubs/HubSectionNav.tsx`).
  *
+ * The {@link SampleDataBar} on top loads sample scouting data and a sample
+ * round flow built from real corpus cards (`lib/sample-data/`). The sample
+ * flow joins the round workspace's in-memory store only while this page is
+ * mounted (selected, so every "current round" action reads it) and leaves
+ * again on unmount, so it is never persisted with the user's own flows. The
+ * tabs remount after a load or clear so each panel re-reads its store.
+ *
  * @module components/coach/CoachingWorkspace
  */
 
+import { useEffect, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import { Bot, CalendarCheck, CalendarDays, FolderOpen, Presentation } from "lucide-react"
 import { CoachingSessionsPanel } from "@debate/practice-rounds"
 import { CoachingProgramsPanel, TeamCalendarPanel } from "@debate/team-collaboration"
 import { CoachMaterialsPanel } from "@debate/speech-writer"
+import { useFlowStore } from "@debate/round"
 import { panel, type HubSection } from "../hubs/hub-sections"
 import { HubSectionIntro, HubSectionNav, HubSectionPanel, useHubSection } from "../hubs/HubSectionNav"
 import { CoachingProgramRosterAnalyticsWithDrills } from "../../routes/coaching-programs/CoachingProgramRosterAnalyticsWithDrills"
+import { SampleDataBar } from "../hubs/SampleDataBar"
+import { SAMPLE_FLOW_ID, readSampleFlow } from "../../lib/sample-data/workspace-sample-data"
 import { CoachHub, isCoachStageId } from "./CoachHub"
 
 /** localStorage key remembering the last open tab. */
@@ -93,6 +104,31 @@ export function coachingHref(section: CoachingSectionId): string {
   return section === "workspace" ? "/coaching" : `/coaching?section=${section}`
 }
 
+/**
+ * Puts the loaded sample round flow (if any) into the round workspace's
+ * store and selects it, and takes it out again when `sampleVersion` changes
+ * or the page unmounts.
+ *
+ * @param sampleVersion - Bumped whenever the sample is loaded or cleared.
+ */
+function useSampleFlow(sampleVersion: number) {
+  useEffect(() => {
+    const sample = readSampleFlow()
+    if (!sample) return
+    const { flows, selected } = useFlowStore.getState()
+    const own = flows.filter((flow) => flow.id !== SAMPLE_FLOW_ID)
+    // Set directly rather than through setSelected, which would save the
+    // sample into the flow history.
+    useFlowStore.setState({ flows: [...own, sample], selected: own.length })
+    return () => {
+      const current = useFlowStore.getState()
+      const rest = current.flows.filter((flow) => flow.id !== SAMPLE_FLOW_ID)
+      if (rest.length === current.flows.length) return
+      useFlowStore.setState({ flows: rest, selected: Math.min(selected, Math.max(rest.length - 1, 0)) })
+    }
+  }, [sampleVersion])
+}
+
 /** Props for {@link CoachingWorkspace}. */
 export interface CoachingWorkspaceProps {
   /** Tab to open when the URL names none (the old route's tab, outside Next). */
@@ -115,9 +151,12 @@ export function CoachingWorkspace({ initialSection }: CoachingWorkspaceProps) {
     legacyStage ? "workspace" : initialSection,
   )
   const active = COACHING_SECTIONS.find((entry) => entry.id === section) ?? COACHING_SECTIONS[0]
+  const [sampleVersion, setSampleVersion] = useState(0)
+  useSampleFlow(sampleVersion)
 
   return (
     <div className="flex flex-col gap-4">
+      <SampleDataBar workspace="coaching" onChange={() => setSampleVersion((v) => v + 1)} />
       <HubSectionNav
         sections={COACHING_SECTIONS}
         active={section}
@@ -126,7 +165,7 @@ export function CoachingWorkspace({ initialSection }: CoachingWorkspaceProps) {
         showPanelCounts={false}
       />
       {section === "workspace" ? null : <HubSectionIntro section={active} />}
-      <HubSectionPanel id={section}>
+      <HubSectionPanel key={sampleVersion} id={section}>
         {section === "workspace" ? <CoachHub /> : null}
         {section === "ai-coach" ? <CoachingSessionsPanel /> : null}
         {section === "programs" ? (
