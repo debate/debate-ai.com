@@ -76,11 +76,11 @@ describe("the watch history's place in the sidebar", () => {
   it("renders inside the Videos dropdown rather than as a peer of it", () => {
     const html = sidebarHtml();
     expect(html).toContain("Watch History");
-    // Inside the Videos dropdown, after My Favorites and before Lectures.
+    // Inside the Videos dropdown, after Lectures and My Favorites.
     expect(html.indexOf("Watch History")).toBeGreaterThan(
       html.indexOf("My Favorites"),
     );
-    expect(html.indexOf("Watch History")).toBeLessThan(
+    expect(html.indexOf("Watch History")).toBeGreaterThan(
       html.indexOf('href="/lectures"'),
     );
     expect(html.indexOf('href="/videos/history"')).toBeGreaterThan(

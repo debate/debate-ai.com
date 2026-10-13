@@ -15,6 +15,7 @@ import {
 import { toggleReaderPanel } from '@/src/reader/panel';
 import { getSettings } from '@/src/settings/settings';
 import { requestTimerWindow } from '@/src/timer/window';
+import { openExtensionSettings } from '@/src/settings/open';
 
 /**
  * Corpus matches annotated automatically when the popup opens on a signed-in
@@ -171,7 +172,7 @@ export default function App() {
         variant="outline"
         className="mb-2 w-full"
         onClick={() => {
-          void browser.runtime.openOptionsPage();
+          openExtensionSettings();
           window.close();
         }}
       >

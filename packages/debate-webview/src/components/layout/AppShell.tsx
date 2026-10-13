@@ -113,6 +113,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </ChromeErrorBoundary>
           <AppSidebarShell>{children}</AppSidebarShell>
         </div>
+        {/* Inside the docs provider so Ctrl/Cmd-K can search the sidebar's
+            files as well as the tools. */}
+        <ChromeErrorBoundary label="GlobalCommandPalette">
+          <GlobalCommandPalette />
+        </ChromeErrorBoundary>
       </ReasonDocsProvider>
       {/* None of the chrome below is what the reader came for, so each piece
           is bounded on its own: a crash in the player, the sign-in prompt or
@@ -140,9 +145,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           session just landed on this browser. */}
       <ChromeErrorBoundary label="FirstLoginWelcomeProvider">
         <FirstLoginWelcomeProvider />
-      </ChromeErrorBoundary>
-      <ChromeErrorBoundary label="GlobalCommandPalette">
-        <GlobalCommandPalette />
       </ChromeErrorBoundary>
       {/* The pricing plans, shown only when a daily plan limit is hit. */}
       <ChromeErrorBoundary label="PlanLimitDialog">

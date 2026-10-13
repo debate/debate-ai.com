@@ -14,6 +14,7 @@ import {
   BadgeCheck,
   BarChart3,
   BookOpen,
+  Briefcase,
   Bot,
   CalendarCheck,
   CalendarDays,
@@ -164,6 +165,9 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       // Same page, landing on the open judge seats (or the profile, for
       // someone who has not volunteered to judge yet).
       { href: "/practice/partners#judge", title: "Judge Practice Rounds", icon: Gavel },
+      // Same page again, at the Judge Pool: list yourself for hire on circuit
+      // weekends, or hire a judge for a tournament.
+      { href: "/practice/partners#judge-pool", title: "Hire a Judge", icon: Briefcase },
       { href: "/practice/predictions", title: "Prediction Markets", icon: Coins },
       { href: "/practice/drills", title: "Practice Drills", icon: Repeat },
       { href: "/practice/judge-decision", title: "AI Judge Decision", icon: BadgeCheck },

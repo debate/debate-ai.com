@@ -190,6 +190,19 @@ export async function toggleReaderPanel(tabId: number): Promise<boolean> {
   return Boolean(frames?.[0]);
 }
 
+/**
+ * Shows or hides the panel from a content script already running in the page
+ * (the reading-mode button, src/page-tools). No injection is needed there, so
+ * this works without the `activeTab` grant a toolbar click gives.
+ */
+export function toggleReaderPanelInPage(): boolean {
+  return toggleOverlayInPage(
+    browser.runtime.getURL(`/${READER_PAGE}`),
+    READER_CLOSE_MESSAGE,
+    READER_LAYOUT_MESSAGE,
+  );
+}
+
 /** Asks the page framing this panel to take `layout`. Called from inside the panel. */
 export function requestReaderPanelLayout(layout: ReaderLayout): void {
   if (window.parent === window) return;

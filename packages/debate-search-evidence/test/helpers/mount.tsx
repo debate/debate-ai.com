@@ -46,7 +46,7 @@ export async function mount(element: ReactElement): Promise<Mounted> {
 }
 
 /** Runs `fn` inside `act` so React flushes the state updates it triggers. */
-export async function flush(fn: () => void | Promise<void>): Promise<void> {
+export async function flush(fn: () => unknown): Promise<void> {
   await act(async () => {
     await fn();
   });

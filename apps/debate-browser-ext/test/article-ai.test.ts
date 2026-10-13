@@ -61,74 +61,35 @@ afterEach(() => {
 const ask = () =>
   askArticleQuestion({ article: 'The article body.', question: 'What is the main claim?' });
 
-describe('OpenAI (my key)', () => {
+describe('OpenRouter key from the app settings', () => {
   beforeEach(() => {
-    storage.sync.aiProvider = 'openai';
-    storage.local.aiApiKeys = { openai: 'sk-test' };
+    storage.local.appOwnAiKey = 'sk-or-v1-test';
   });
 
-  it('calls chat completions with max_completion_tokens, which current models require', async () => {
-    fetchMock.mockResolvedValue(
-      jsonResponse({ choices: [{ message: { role: 'assistant', content: 'It argues X.' } }] }),
-    );
-    await expect(ask()).resolves.toBe('It argues X.');
-
-    const { url, headers, body } = sentRequest();
-    expect(url).toBe('https://api.openai.com/v1/chat/completions');
-    expect(headers.get('Authorization')).toBe('Bearer sk-test');
-    expect(body.model).toBe('gpt-4o-mini');
-    expect(body.max_completion_tokens).toBe(2048);
-    expect(body).not.toHaveProperty('max_tokens');
-    expect(body.messages[0].role).toBe('system');
-    expect(body.messages[1]).toMatchObject({ role: 'user' });
-    expect(body.messages[1].content).toContain('The article body.');
-    expect(body.messages[1].content).toContain('What is the main claim?');
-  });
-
-  it('uses the model named in Settings', async () => {
-    storage.sync.aiModel = 'gpt-5-mini';
+  it('calls chat completions with max_tokens, which OpenRouter translates per model', async () => {
     fetchMock.mockResolvedValue(jsonResponse({ choices: [{ message: { content: 'ok' } }] }));
-    await ask();
-    expect(sentRequest().body.model).toBe('gpt-5-mini');
+    await expect(ask()).resolves.toBe('ok');
+    const { url, headers, body } = sentRequest();
+    expect(url).toBe('https://openrouter.ai/api/v1/chat/completions');
+    expect(headers.get('Authorization')).toBe('Bearer sk-or-v1-test');
+    expect(body.max_tokens).toBe(2048);
+    expect(body.messages[0].role).toBe('system');
   });
 
-  it("surfaces OpenAI's own error message", async () => {
-    fetchMock.mockResolvedValue(
-      jsonResponse({ error: { message: 'Incorrect API key provided' } }, 401),
-    );
-    await expect(ask()).rejects.toThrow('Incorrect API key provided');
+  it("surfaces OpenRouter's own error message", async () => {
+    fetchMock.mockResolvedValue(jsonResponse({ error: { message: 'Key limit exceeded' } }, 403));
+    await expect(ask()).rejects.toThrow('Key limit exceeded');
   });
 
   it('reports a refusal instead of an empty answer', async () => {
-    fetchMock.mockResolvedValue(
-      jsonResponse({ choices: [{ message: { content: null, refusal: 'I can’t help with that.' } }] }),
-    );
-    await expect(ask()).rejects.toThrow('I can’t help with that.');
-  });
-
-  it('asks for a key rather than calling out without one', async () => {
-    storage.local.aiApiKeys = {};
-    await expect(ask()).rejects.toBeInstanceOf(AiNotConfiguredError);
-    expect(fetchMock).not.toHaveBeenCalled();
+    fetchMock.mockResolvedValue(jsonResponse({ choices: [{ message: { content: null, refusal: 'No.' } }] }));
+    await expect(ask()).rejects.toThrow('No.');
   });
 });
 
-describe('OpenRouter (my key)', () => {
-  it('keeps max_tokens, which OpenRouter translates per model', async () => {
-    storage.sync.aiProvider = 'openrouter';
-    storage.local.aiApiKeys = { openrouter: 'sk-or-test' };
-    fetchMock.mockResolvedValue(jsonResponse({ choices: [{ message: { content: 'ok' } }] }));
-    await ask();
-    const { url, body } = sentRequest();
-    expect(url).toBe('https://openrouter.ai/api/v1/chat/completions');
-    expect(body.max_tokens).toBe(2048);
-  });
-});
-
-describe('Anthropic (my key)', () => {
+describe('Anthropic key from the app settings', () => {
   it('sends the Messages API shape and joins the text blocks', async () => {
-    storage.sync.aiProvider = 'anthropic';
-    storage.local.aiApiKeys = { anthropic: 'sk-ant-test' };
+    storage.local.appOwnAiKey = 'sk-ant-test';
     fetchMock.mockResolvedValue(
       jsonResponse({ content: [{ type: 'text', text: 'Part one. ' }, { type: 'text', text: 'Two.' }] }),
     );
@@ -138,6 +99,12 @@ describe('Anthropic (my key)', () => {
     expect(headers.get('x-api-key')).toBe('sk-ant-test');
     expect(headers.get('anthropic-dangerous-direct-browser-access')).toBe('true');
     expect(typeof body.system).toBe('string');
+  });
+
+  it('ignores a stored value that is not a key', async () => {
+    storage.local.appOwnAiKey = 'not-a-key';
+    await expect(ask()).rejects.toBeInstanceOf(AiNotConfiguredError);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });
 
@@ -165,8 +132,7 @@ describe('Debate AI account', () => {
 
 describe('suggestFollowups', () => {
   it('turns the answer into clean questions', async () => {
-    storage.sync.aiProvider = 'openai';
-    storage.local.aiApiKeys = { openai: 'sk-test' };
+    storage.local.appOwnAiKey = 'sk-or-v1-test';
     fetchMock.mockResolvedValue(
       jsonResponse({
         choices: [

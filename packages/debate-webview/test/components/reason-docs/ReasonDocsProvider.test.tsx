@@ -371,3 +371,114 @@ describe("ReasonDocsProvider", () => {
     }
   });
 });
+
+describe("moving files between Files and Topic Starters", () => {
+  const TOPICS = [
+    { id: 70, title: "Energy", content: "", parentId: null, isFolder: true, tags: "[]" },
+    { id: 71, title: "Solar Aff", content: "H4sIcmir", format: "cmir", parentId: 70, isFolder: false, tags: "[]" },
+    { id: 72, title: "Wind", content: "", parentId: 70, isFolder: true, tags: "[]" },
+    { id: 73, title: "Offshore", content: "<p>wind</p>", format: "html", parentId: 72, isFolder: false, tags: "[]" },
+  ];
+
+  function creating(startId: number): Route {
+    let nextId = startId;
+    return {
+      method: "POST",
+      match: "/api/doc/documents",
+      respond: (call: FetchCall) => {
+        const body = call.body as Partial<ReasonDocument>;
+        return doc({ ...body, id: nextId++ });
+      },
+    };
+  }
+
+  it("copies a topic starter folder and everything in it into the reader's files", async () => {
+    const { calls } = await mountLoaded([
+      { method: "GET", match: "/api/topic-starters", respond: { items: TOPICS } },
+      creating(100),
+    ]);
+    let result: Awaited<ReturnType<ReasonDocsContextValue["copyTopicToDocuments"]>> | undefined;
+    await act(async () => {
+      result = await ctx.copyTopicToDocuments(ctx.topicItems.find((t) => t.id === 70)!, 2);
+    });
+    expect(result?.ok).toBe(true);
+    const posts = calls.filter((c) => c.method === "POST").map((c) => c.body);
+    // Parents before children, each child re-pointed at its new parent, and
+    // the stored format kept so a `.cmir` stays a `.cmir`.
+    expect(posts).toEqual([
+      { title: "Energy", content: "", parentId: 2, isFolder: true },
+      { title: "Solar Aff", content: "H4sIcmir", format: "cmir", parentId: 100, isFolder: false },
+      { title: "Wind", content: "", parentId: 100, isFolder: true },
+      { title: "Offshore", content: "<p>wind</p>", format: "html", parentId: 102, isFolder: false },
+    ]);
+    expect(ctx.documents.filter((d) => d.id >= 100).map((d) => d.title).sort()).toEqual(["Energy", "Offshore", "Solar Aff", "Wind"]);
+  });
+
+  it("reports a copy the server refuses, keeping what was already written", async () => {
+    await mountLoaded([
+      { method: "GET", match: "/api/topic-starters", respond: { items: TOPICS } },
+      { method: "POST", match: "/api/doc/documents", once: true, respond: () => doc({ id: 200, title: "Energy", isFolder: true }) },
+      { method: "POST", match: "/api/doc/documents", respond: {}, status: 507 },
+    ]);
+    let result: Awaited<ReturnType<ReasonDocsContextValue["copyTopicToDocuments"]>> | undefined;
+    await act(async () => {
+      result = await ctx.copyTopicToDocuments(ctx.topicItems.find((t) => t.id === 70)!);
+    });
+    expect(result).toEqual({ ok: false, error: "Energy could not be copied (the server refused it (507))." });
+    expect(ctx.documents.some((d) => d.id === 200)).toBe(true);
+  });
+
+  it("duplicates a file next to itself, or into another folder", async () => {
+    const { calls } = await mountLoaded([creating(300)]);
+    await act(async () => {
+      await ctx.duplicateDocument(3);
+    });
+    expect(calls.at(-1)!.body).toEqual({ title: "Child copy", content: "<p>child</p>", format: "html", parentId: 2, isFolder: false });
+    await act(async () => {
+      await ctx.duplicateDocument(1, null);
+    });
+    expect(calls.at(-1)!.body).toMatchObject({ title: "Case copy", parentId: null });
+    let missing: Awaited<ReturnType<ReasonDocsContextValue["duplicateDocument"]>> | undefined;
+    await act(async () => {
+      missing = await ctx.duplicateDocument(999);
+    });
+    expect(missing).toEqual({ ok: false, error: "That file could not be found." });
+  });
+
+  it("publishes a file to Topic Starters, and explains a refusal", async () => {
+    const { calls } = await mountLoaded([
+      {
+        method: "POST",
+        match: "/api/admin/topic-starters/items",
+        once: true,
+        respond: { item: { id: 500, title: "Case", content: "<p>aff</p>", format: "html", parentId: 70, isFolder: false, tags: "[]" } },
+      },
+      { method: "POST", match: "/api/admin/topic-starters/items", respond: { error: "Forbidden" }, status: 403 },
+    ]);
+    let published: Awaited<ReturnType<ReasonDocsContextValue["publishToTopics"]>> | undefined;
+    await act(async () => {
+      published = await ctx.publishToTopics(1, 70);
+    });
+    expect(calls.at(-1)!.body).toEqual({ title: "Case", content: "<p>aff</p>", format: "html", parentId: 70 });
+    expect(published?.ok).toBe(true);
+    expect(ctx.topicItems.some((t) => t.id === 500)).toBe(true);
+
+    await act(async () => {
+      published = await ctx.publishToTopics(1);
+    });
+    expect(published).toMatchObject({ ok: false, error: expect.stringContaining("Only admins") });
+
+    await act(async () => {
+      published = await ctx.publishToTopics(2);
+    });
+    expect(published).toEqual({ ok: false, error: "Only a file can be added to Topic Starters." });
+  });
+
+  it("adds nothing to the tree when the server refuses a new document", async () => {
+    await mountLoaded([{ method: "POST", match: "/api/doc/documents", respond: { error: "quota" }, status: 429 }]);
+    const before = ctx.documents.length;
+    await act(async () => ctx.createDocument());
+    expect(ctx.documents.length).toBe(before);
+    expect(ctx.activeId).toBeNull();
+  });
+});

@@ -158,12 +158,13 @@ describe("the sidebar's heading structure", () => {
 
   it("lists Lectures as a single row under Videos, with no categories", () => {
     // The lecture categories live on the lectures page as a card bar; the
-    // sidebar carries one Lectures link, after My Favorites.
+    // sidebar carries one Lectures link, between All Videos and College Policy.
     const html = renderSidebar();
     expect(html).toMatch(/<h2[^>]*>Lectures<\/h2>/);
     expect(html).not.toMatch(/<h1[^>]*>Lectures<\/h1>/);
     expect(html).toMatch(/<a[^>]*href="\/lectures"/);
-    expect(html.indexOf(">My Favorites<")).toBeLessThan(html.indexOf(">Lectures<"));
+    expect(html.indexOf(">All Videos<")).toBeLessThan(html.indexOf(">Lectures<"));
+    expect(html.indexOf(">Lectures<")).toBeLessThan(html.indexOf(">College Policy<"));
     expect(html).not.toContain("All Lectures");
   });
 

@@ -428,6 +428,60 @@ describe("VideoReportsPanel", () => {
     expect(bodyText()).toContain("Still gone");
   });
 
+  it("shows takedown counts and removes the chosen states after confirming", async () => {
+    const confirm = vi.spyOn(window, "confirm").mockReturnValueOnce(false).mockReturnValue(true);
+    const { calls } = reportRoutes([
+      {
+        method: "GET",
+        match: "/api/admin/videos/availability",
+        respond: {
+          videos: [{ videoId: "RRRRRRRRRRR", title: "Removed one", channel: "Chan", availability: "removed", missingChecks: 1, availabilityCheckedAt: 1_700_000_000 }],
+          counts: { removed: 3, private: 2, not_embeddable: 0 },
+        },
+      },
+      { method: "DELETE", match: "/api/admin/videos/availability", respond: { ok: true, removed: 5 }, once: true },
+      { method: "DELETE", match: "/api/admin/videos/availability", respond: { error: "Locked" }, status: 500 },
+    ]);
+    mount(<VideoReportsPanel />);
+    await flush();
+    expect(bodyText()).toContain("Gone from YouTube (3)");
+    expect(bodyText()).toContain("Made private (2)");
+
+    // Deleted uploads only, by default; declining the confirm sends nothing.
+    await clickAsync(button("Remove 3 unavailable videos"));
+    expect(calls.some((c) => c.method === "DELETE")).toBe(false);
+
+    toggle(allByText(/Made private/, "label")[0].querySelector("input")!);
+    await flush();
+    await clickAsync(button("Remove 5 unavailable videos"));
+    expect(confirm).toHaveBeenLastCalledWith(expect.stringContaining("3 gone from youtube, 2 made private"));
+    expect(calls.find((c) => c.method === "DELETE")!.body).toEqual({ states: ["removed", "private"] });
+    expect(bodyText()).toContain("Removed 5 unavailable videos.");
+
+    await clickAsync(button("Remove 5 unavailable videos"));
+    expect(bodyText()).toContain("Locked");
+  });
+
+  it("removes one unavailable video, and checks YouTube on demand", async () => {
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    const { calls } = reportRoutes([
+      { method: "DELETE", match: "/api/admin/videos/library/RRRRRRRRRRR", respond: { ok: true } },
+      { method: "POST", match: "/api/admin/videos/view-counts", respond: { videosChecked: 42 }, once: true },
+      { method: "POST", match: "/api/admin/videos/view-counts", respond: { error: "No API key" }, status: 500 },
+    ]);
+    mount(<VideoReportsPanel />);
+    await flush();
+    expect(button("Remove 0 unavailable videos").disabled).toBe(true);
+    await clickAsync(allByText("Remove", "button").find((b) => b.textContent === "Remove")!);
+    expect(calls.some((c) => c.method === "DELETE" && c.url === "/api/admin/videos/library/RRRRRRRRRRR")).toBe(true);
+    expect(bodyText()).toContain("Removed “Removed one”.");
+
+    await clickAsync(button("Check YouTube now"));
+    expect(bodyText()).toContain("Checked 42 videos against YouTube.");
+    await clickAsync(button("Check YouTube now"));
+    expect(bodyText()).toContain("No API key");
+  });
+
   it("opens the transcript editor for a needs-transcript report and applies it on save", async () => {
     const { calls } = reportRoutes(
       [

@@ -12,7 +12,8 @@
  * pass to `/api/card-shares` so the card shows up as available on each
  * contact's account — no clipboard, no pasting a `cmshare…` code.
  * `?shareWith=<userId>` (from /contacts' "Share a card") opens the dialog with
- * that contact preselected. Its trigger lives in the sidebar's Documents row
+ * that contact preselected, and `?shareOpen=1` (the docs sidebar's right-click
+ * "Share…") opens it with nobody picked yet. Its trigger lives in the sidebar's Documents row
  * beside Upload (`ReasonDocsSidebarPanels`, `variant="icon"`), with the open
  * file's other actions, rather than in a header strip of the editor's own.
  *
@@ -26,7 +27,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { Loader2, Share2, Users } from "lucide-react"
+import { Loader2, Share2, Tag, Users } from "lucide-react"
 import { toast } from "sonner"
 import {
   ContactAvatar,
@@ -50,6 +51,7 @@ import {
 import { useSession } from "../../lib/hooks/useSession"
 import { useReasonDocs } from "../reason-docs/ReasonDocsProvider"
 import { urlWithoutParam } from "../../lib/reason-docs/route-selection"
+import { SellFileDialog } from "../market/SellFileDialog"
 
 type Bridge = typeof import("@debate/editor/collab-bridge")
 
@@ -169,6 +171,10 @@ export function SharedCardOpener() {
   return null
 }
 
+/** The query parameter that opens the share dialog on arrival — set by the
+ *  docs sidebar's "Share…" menu item. */
+export const SHARE_OPEN_PARAM = "shareOpen"
+
 export interface ShareWithContactsProps {
   /** Title of the open document — becomes the shared card's title. */
   title: string
@@ -197,6 +203,8 @@ export function ShareWithContacts({ title, variant = "button" }: ShareWithContac
   const [picked, setPicked] = useState<Set<string>>(new Set())
   const [message, setMessage] = useState("")
   const [busy, setBusy] = useState(false)
+  /** The "Sell…" dialog, opened from this one for the open file. */
+  const [selling, setSelling] = useState(false)
 
   // `?shareWith=<userId>` → open the dialog with that contact preselected.
   const shareWithParam = searchParams.get("shareWith")
@@ -208,6 +216,16 @@ export function ShareWithContacts({ title, variant = "button" }: ShareWithContac
     setOpen(true)
     dropQueryParam("shareWith")
   }, [shareWithParam])
+
+  // `?shareOpen=1` → open the dialog with nobody picked yet. The sidebar's
+  // right-click "Share…" opens the file with this, so sharing a file is one
+  // gesture from the file rather than a hunt for this control.
+  const shareOpenParam = searchParams.get(SHARE_OPEN_PARAM)
+  useEffect(() => {
+    if (!shareOpenParam) return
+    setOpen(true)
+    dropQueryParam(SHARE_OPEN_PARAM)
+  }, [shareOpenParam])
 
   const sorted = useMemo(() => sortContacts(contacts.contacts), [contacts.contacts])
 
@@ -349,6 +367,19 @@ export function ShareWithContacts({ title, variant = "button" }: ShareWithContac
             <Button type="button" variant="ghost" onClick={() => router.push("/contacts")}>
               <Users className="h-4 w-4" /> Manage contacts
             </Button>
+            {activeId != null && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setOpen(false)
+                  setSelling(true)
+                }}
+                title="Sell this file: buyers see its table of contents for free and pay to unlock the cards"
+              >
+                <Tag className="h-4 w-4" /> Sell…
+              </Button>
+            )}
             <Button type="button" disabled={picked.size === 0 || busy} onClick={() => void submit()}>
               {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Share2 className="h-4 w-4" />}
               Share{picked.size > 0 ? ` with ${picked.size}` : ""}
@@ -356,6 +387,7 @@ export function ShareWithContacts({ title, variant = "button" }: ShareWithContac
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <SellFileDialog documentId={selling ? activeId : null} onClose={() => setSelling(false)} />
     </>
   )
 }

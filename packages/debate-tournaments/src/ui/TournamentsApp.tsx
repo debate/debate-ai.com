@@ -33,6 +33,7 @@ import { RoundsPage } from "./pages/RoundsPage";
 import { RoundPage } from "./pages/RoundPage";
 import { ResultsPage } from "./pages/ResultsPage";
 import { ResultSetPage } from "./pages/ResultSetPage";
+import { BallotPage } from "./pages/BallotPage";
 
 export interface TournamentsAppProps {
   /** Path segments after `basePath` (a catch-all route's params). */
@@ -51,6 +52,13 @@ export interface TournamentsAppProps {
    * the nearest one that does; defaults to `window.location.replace`.
    */
   replace?: (href: string) => void;
+  /**
+   * The host app's judge ballot API (e.g. `/api/judge-ballots`). When set,
+   * every tournament gets a **Ballot** tab where a judge whose signed-in email
+   * matches their Tabroom account submits a ballot, stored by that API and
+   * optionally sent on to Tabroom. See `../ballots`.
+   */
+  ballotApiBase?: string;
 }
 
 export function TournamentsApp({
@@ -60,11 +68,12 @@ export function TournamentsApp({
   liveApiBase,
   Link = defaultLink,
   replace = defaultReplace,
+  ballotApiBase,
 }: TournamentsAppProps) {
   const value = useMemo(() => {
     const client = createTournamentsClient(apiBase, undefined, { liveApiBase });
-    return { client, hrefs: tournamentHrefs(basePath, client.slugOf), Link };
-  }, [apiBase, liveApiBase, basePath, Link]);
+    return { client, hrefs: tournamentHrefs(basePath, client.slugOf), Link, ballotApiBase };
+  }, [apiBase, liveApiBase, basePath, Link, ballotApiBase]);
   const route = matchTournamentRoute(segments);
   const base = basePath.replace(/\/+$/, "");
   const nearest = nearestTournamentSegments(segments);
@@ -90,6 +99,7 @@ const TAB_FOR: Partial<Record<TournamentRoute["page"], TournamentTab>> = {
   results: "results",
   resultSet: "results",
   tabroom: "tabroom",
+  ballot: "ballot",
 };
 
 function defaultReplace(href: string) {
@@ -194,6 +204,8 @@ function TournamentRouteView({ route, tournId }: { route: TournamentPageRoute; t
             return <ResultSetPage tournId={tournId} resultSetId={route.resultSetId} />;
           case "tabroom":
             return <TabroomTournamentPage tournId={tournId} name={invite.name} />;
+          case "ballot":
+            return <BallotPage tournId={tournId} name={invite.name} events={(invite.Events ?? []).map((e) => e.abbr)} />;
         }
       }}
     </TournamentShell>

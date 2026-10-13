@@ -1,0 +1,9 @@
+{
+  "name": "@debate/dev-docs",
+  "description": "Internal developer docs for Debate AI: database table reference and self-hosting guide. Never published or deployed.",
+  "version": "0.0.0",
+  "private": true,
+  "author": "vtempest",
+  "license": "rights.institute/prosper",
+  "files": []
+}

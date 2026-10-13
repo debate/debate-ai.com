@@ -12,12 +12,17 @@ export const PAIRINGS_EMBLEM = "https://i.imgur.com/ejU0Qon.png";
 
 /** One round's pairings: rooms, entries (sides or speaker order) and judges. */
 export function RoundPage({ tournId, eventAbbr, roundName }: { tournId: number; eventAbbr: string; roundName: string }) {
-  const { client, hrefs } = useTournaments();
+  const { client, hrefs, ballotApiBase } = useTournaments();
   const state = useApi(`round:${tournId}:${eventAbbr}:${roundName}`, (signal) => client.round(tournId, eventAbbr, roundName, signal));
+  // Each debate room links to the Ballot tab with its pairing filled in.
+  const ballotHref = ballotApiBase
+    ? (room: { room?: string; aff: string; neg: string }) =>
+        `${hrefs.ballot(tournId)}?${new URLSearchParams({ event: eventAbbr, round: roundName, ...(room.room ? { room: room.room } : {}), aff: room.aff, neg: room.neg })}`
+    : undefined;
   return (
     <div className="space-y-3">
       <BackLink href={hrefs.rounds(tournId)}>All pairings</BackLink>
-      <Loaded state={state}>{(round) => <Schematic round={round} live={isLiveDemo(tournId)} />}</Loaded>
+      <Loaded state={state}>{(round) => <Schematic round={round} live={isLiveDemo(tournId)} ballotHref={ballotHref} />}</Loaded>
     </div>
   );
 }
@@ -26,7 +31,16 @@ export function RoundPage({ tournId, eventAbbr, roundName }: { tournId: number; 
  * `live` adds the demo tournament's simulated live status beside each room
  * (`../live/demo-live`), with a stream panel that opens under the room.
  */
-export function Schematic({ round, live = false }: { round: RoundSchematic; live?: boolean }) {
+export function Schematic({
+  round,
+  live = false,
+  ballotHref,
+}: {
+  round: RoundSchematic;
+  live?: boolean;
+  /** When given, each two-entry debate room gets a "Submit ballot" link to this href. */
+  ballotHref?: (room: { room?: string; aff: string; neg: string }) => string;
+}) {
   const sections = Object.values(round.Sections ?? {});
   const debate = round.Event.type !== "speech" && round.Event.type !== "congress";
   const now = useNow(live ? 1000 : 60_000);
@@ -108,6 +122,14 @@ export function Schematic({ round, live = false }: { round: RoundSchematic; live
                             ) : null}
                           </span>
                         ))}
+                        {ballotHref && debate && !section.bye && entries.length === 2 ? (
+                          <a
+                            href={ballotHref({ room: section.Room?.name, aff: entries[0].code, neg: entries[1].code })}
+                            className="block text-xs text-primary underline-offset-4 hover:underline"
+                          >
+                            Submit ballot
+                          </a>
+                        ) : null}
                       </TableCell>
                       {live && (
                         <TableCell>

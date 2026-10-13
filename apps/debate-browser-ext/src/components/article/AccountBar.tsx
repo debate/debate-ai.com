@@ -8,10 +8,10 @@
  */
 import { LogIn, LogOut, Settings2 } from 'lucide-react';
 import React from 'react';
-import { browser } from 'wxt/browser';
 
 import { Button } from '@/components/ui/button';
 import type { AuthUser } from '@/src/auth/session';
+import { openExtensionSettings } from '@/src/settings/open';
 
 interface AccountBarProps {
   user: AuthUser | null;
@@ -79,7 +79,7 @@ const AccountBar: React.FC<AccountBarProps> = ({
         size="icon"
         className="h-7 w-7"
         aria-label="Extension settings"
-        onClick={() => browser.runtime.openOptionsPage()}
+        onClick={() => openExtensionSettings()}
       >
         <Settings2 className="h-4 w-4" />
       </Button>
@@ -95,9 +95,9 @@ const AccountBar: React.FC<AccountBarProps> = ({
             <button
               type="button"
               className="underline underline-offset-2"
-              onClick={() => browser.runtime.openOptionsPage()}
+              onClick={() => openExtensionSettings('preferences')}
             >
-              Add a key
+              Add a key in Settings
             </button>
             .
           </span>
