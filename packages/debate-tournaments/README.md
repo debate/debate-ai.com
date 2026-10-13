@@ -144,10 +144,14 @@ node scripts/sync-upstream.mjs --seed && bun run test   # + every route on upstr
    (`indexcards/tests/test.sql`) with `scripts/lib/mysql-to-sqlite.mjs`,
    corrected by `scripts/lib/schema-rules.mjs`: redundant indexes dropped,
    lossy types widened (`person.phone`, `chapter.zip` are TEXT), CHECKs on
-   flag columns, reference columns' `DEFAULT 0` sentinels made nullable. It
+   flag columns, verified reference columns' `DEFAULT 0` sentinels made
+   nullable. Which columns are references is never guessed from names: it is
+   the explicit registry in `scripts/lib/relationships.mjs`, with the evidence
+   for each (an upstream foreign key, or sample rows that resolve), and the
+   sync warns about any new column that looks like one but is not listed. It
    also regenerates `packages/dev-docs/tabroom-schema.md`
-   (`scripts/lib/schema-doc.mjs`), and `--seed` nulls the sentinels and
-   password hashes in the sample data.
+   (`scripts/lib/schema-doc.mjs`), and `--seed` nulls the sentinels,
+   credentials and personal contact details in the sample data.
 
 **Never edit `vendor/`, `migrations/` or `src/db/generated/` by hand** — the
 next sync overwrites them. To change upstream code, edit it in `.upstream/`
@@ -162,7 +166,16 @@ drops a table the new schema skips.
 
 The schema declares no foreign keys (upstream data has orphan rows). `bun run
 db:check:tournaments` (local) or `db:check:tournaments:d1` (remote), from
-`apps/debate-ai.com`, reports orphan ids per reference column instead.
+`apps/debate-ai.com`, audits instead (`src/db/audit.ts`): orphan ids, rows
+whose `tourn` differs from a parent's (an entry pointing at another
+tournament's event or school), duplicate set memberships (`jpool_judge`,
+`rpool_room`, …) and duplicates a unique index admits through a NULL column
+(`judge_setting.conditional`).
+
+Credentials and personal contact details (`SENSITIVE` in
+`schema-rules.mjs`) are outside each table's public field allowlist
+(`PUBLIC_COLUMNS` in `src/db/generated/columns.ts`); the API handler strips
+them from every JSON response (`src/api/public-fields.ts`).
 
 ## How upstream runs on Workers
 

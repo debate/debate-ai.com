@@ -2,33 +2,10 @@
  * Corrections the converter (`mysql-to-sqlite.mjs`) applies on top of
  * upstream's MySQL schema when it writes the D1 migration, and the overrides
  * the schema doc (`schema-doc.mjs`) reads. Upstream's dump is the source of
- * truth for *which* tables and columns exist; this file is where we say what
- * some of them mean, so a fresh upstream pull keeps the fixes.
+ * truth for *which* tables and columns exist; this file (with
+ * `relationships.mjs`, the registry of what references what) is where we say
+ * what some of them mean, so a fresh upstream pull keeps the fixes.
  */
-
-/**
- * Columns that look like references but are not.
- *
- * The default rule is "an INTEGER column named after a table holds that
- * table's id". These match a table name and are INTEGER, yet hold a score,
- * an amount or a person rather than that table's id. (`tinyint(1)` flags such
- * as `rating_tier.strike` or `file.coach` are excluded by type already.)
- */
-export const NOT_REFERENCES = new Set(["judge.score", "follower.follower", "shift.fine"]);
-
-/** Reference columns not named after the table they point at: column → table. */
-export const REFERENCE_COLUMNS = {
-  added_by: "person",
-  approved_by: "person",
-  audited_by: "person",
-  created_by: "person",
-  deleted_by: "person",
-  entered_by: "person",
-  last_editor: "person",
-  levied_by: "person",
-  registered_by: "person",
-  started_by: "person",
-};
 
 /** Columns whose upstream type loses data in SQLite: `table.column` → SQLite type. */
 export const TYPE_OVERRIDES = {
@@ -67,10 +44,39 @@ export const CHECKS = {
 export const NOT_BOOLEAN = new Set(["entry.unconfirmed"]);
 
 /**
- * Columns the sample-data seed blanks: upstream's dump carries real password
- * hashes, which must never reach a database we load it into.
+ * Columns that must never leave the database. `credential`: password hashes
+ * and room passwords. `pii`: a person's contact details and gender. Neither
+ * is in a table's public field allowlist (`PUBLIC_COLUMNS` in the generated
+ * `columns.ts`), the API strips them from every response, and the
+ * sample-data seed blanks them.
  */
-export const SEED_NULL_COLUMNS = ["person.password", "room.password", "room.judge_password"];
+export const SENSITIVE = {
+  credential: ["person.password", "person.pass_timestamp", "room.password", "room.judge_password"],
+  pii: [
+    "person.phone",
+    "person.street",
+    "person.zip",
+    "person.postal",
+    "person.gender",
+    "chapter_judge.phone",
+    "chapter_judge.gender",
+    "student.gender",
+  ],
+};
+
+/**
+ * Set-membership tables whose (left, right) pair should be unique but has no
+ * unique index upstream. The audit reports duplicate pairs; a unique index
+ * waits until the data is known to be clean.
+ */
+export const JUNCTIONS = {
+  jpool_judge: ["jpool", "judge"],
+  jpool_round: ["jpool", "round"],
+  rpool_room: ["rpool", "room"],
+  rpool_round: ["rpool", "round"],
+  practice_student: ["practice", "student"],
+  sweep_include: ["parent", "child"],
+};
 
 /**
  * Indexes upstream lacks that the `/api/tabroom` queries need: `EXPLAIN QUERY

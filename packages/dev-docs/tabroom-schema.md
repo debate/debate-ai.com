@@ -20,12 +20,17 @@ upstream Tabroom is the reference for those.
 
 ## Conventions
 
-- **References** are plain `INTEGER` columns named after the table they point at: `tourn` holds a
-  `tourn.id`, `judge` a `judge.id`, `person` a `person.id`; `*_by` columns and `last_editor` hold a
-  `person.id`. Text columns and `0`/`1` flags are never references, even when named after a table.
-  The SQL declares no foreign keys (upstream data has orphan rows); most reference columns are
-  indexed instead (index names are `<table>__<index>`), and `bun run db:check:tournaments` reports
-  orphans. A missing reference is `NULL`: upstream's `DEFAULT 0` "none" sentinels are rewritten.
+- **References** are listed explicitly in `scripts/lib/relationships.mjs`, not guessed from names.
+  Most are `INTEGER` columns named after the table they point at (`tourn` holds a `tourn.id`); the
+  registry also covers `*_by`, `partner`, `sender` and the like, and lists look-alikes that are not
+  ids (`person.email`, `judge.score`). "(unverified)" marks a reference upstream gives no evidence
+  for: no declared foreign key and no sample rows that resolve. The SQL declares no foreign keys
+  (upstream data has orphan rows); most reference columns are indexed instead (index names are
+  `<table>__<index>`), and `bun run db:check:tournaments` reports orphans, tournament mismatches,
+  duplicate memberships and duplicates a nullable unique index admits. A verified reference's
+  missing value is `NULL` (upstream's `DEFAULT 0` sentinel is rewritten); unverified ones keep `0`.
+- **Sensitive columns** (password hashes, room passwords, a person's phone, address and gender) are
+  outside each table's public field allowlist: the API strips them and seeds blank them.
 - **Flags** (`tinyint(1)` upstream) are `INTEGER` with `CHECK (col IN (0, 1))`; `side` is 0 (none),
   1 or 2.
 - **Money** (`fee`, `amount`, `price`, `total`, `surcharge`) is `NUMERIC`, in the tournament's currency.
@@ -54,8 +59,8 @@ Sponsor/banner ads shown on Tabroom pages, with an approval workflow.
 | `end` | TEXT |  | End time. |
 | `approved` | INTEGER | NOT NULL DEFAULT 0 CHECK IN (0, 1) | Approved by an admin. |
 | `background` | TEXT |  |  |
-| `person` | INTEGER | NOT NULL | References `person.id`. |
-| `approved_by` | INTEGER | NOT NULL | Approver (`person.id`). |
+| `person` | INTEGER | NOT NULL | References `person.id` (unverified). |
+| `approved_by` | INTEGER | NOT NULL | Approver (`person.id`) (unverified). |
 | `created_at` | TEXT | DEFAULT CURRENT_TIMESTAMP | When the row was created. |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 
@@ -69,13 +74,13 @@ Queued automatic actions (e.g. auto-blast or auto-publish) for a round or event,
 | --- | --- | --- | --- |
 | `id` | INTEGER | PK | Primary key (autoincrement). |
 | `tag` | TEXT |  | Machine name (for `*_setting` tables, the setting key). |
-| `round` | INTEGER |  | References `round.id`. |
-| `event` | INTEGER |  | References `event.id`. |
+| `round` | INTEGER |  | References `round.id` (unverified). |
+| `event` | INTEGER |  | References `event.id` (unverified). |
 | `active_at` | TEXT |  |  |
 | `message` | TEXT |  | Message text sent when the action runs (not a `message.id`). |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 | `created_at` | TEXT | DEFAULT CURRENT_TIMESTAMP | When the row was created. |
-| `created_by` | INTEGER |  | Person who created it (`person.id`). NULL when none. |
+| `created_by` | INTEGER | NOT NULL DEFAULT 0 | Person who created it (`person.id`) (unverified). |
 
 ### ballot
 
@@ -115,7 +120,7 @@ Links a person (and partner) to an openCaselist page for an event.
 | `slug` | TEXT | NOT NULL | URL slug. |
 | `eventcode` | INTEGER | NOT NULL DEFAULT 0 |  |
 | `person` | INTEGER | NOT NULL | References `person.id`. |
-| `partner` | INTEGER |  |  |
+| `partner` | INTEGER |  | References `person.id`. |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 | `created_at` | TEXT | DEFAULT CURRENT_TIMESTAMP | When the row was created. |
 
@@ -131,7 +136,7 @@ Judge category within a tournament (a pool of judges shared by events).
 | `name` | TEXT |  | Display name. |
 | `abbr` | TEXT |  | Abbreviation. |
 | `tourn` | INTEGER |  | References `tourn.id`. |
-| `pattern` | INTEGER |  | References `pattern.id`. |
+| `pattern` | INTEGER |  | References `pattern.id` (unverified). |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 | `created_at` | TEXT | DEFAULT CURRENT_TIMESTAMP | When the row was created. |
 
@@ -149,7 +154,7 @@ Key/value settings for a judge category.
 | `value` | TEXT | NOT NULL DEFAULT '' | Setting value (short). |
 | `value_text` | TEXT |  | Long setting value. |
 | `value_date` | TEXT |  | Date-valued setting. |
-| `setting` | INTEGER |  | References `setting.id`. |
+| `setting` | INTEGER |  | References `setting.id` (unverified). |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 | `created_at` | TEXT | DEFAULT CURRENT_TIMESTAMP | When the row was created. |
 
@@ -165,20 +170,20 @@ Audit log of tab and registration changes (moves, drops, fines).
 | `tag` | TEXT |  | Machine name (for `*_setting` tables, the setting key). |
 | `description` | TEXT |  | Description. |
 | `count` | INTEGER |  | Count. |
-| `person` | INTEGER |  | References `person.id`. |
-| `event` | INTEGER |  | References `event.id`. |
-| `category` | INTEGER |  | References `category.id`. |
-| `chapter` | INTEGER |  | References `chapter.id`. |
-| `circuit` | INTEGER |  | References `circuit.id`. |
-| `tourn` | INTEGER |  | References `tourn.id`. |
-| `entry` | INTEGER |  | References `entry.id`. |
-| `judge` | INTEGER |  | References `judge.id`. |
-| `fine` | INTEGER |  | References `fine.id`. |
-| `panel` | INTEGER |  | References `panel.id`. |
-| `round` | INTEGER |  | References `round.id`. |
+| `person` | INTEGER |  | References `person.id` (unverified). |
+| `event` | INTEGER |  | References `event.id` (unverified). |
+| `category` | INTEGER |  | References `category.id` (unverified). |
+| `chapter` | INTEGER |  | References `chapter.id` (unverified). |
+| `circuit` | INTEGER |  | References `circuit.id` (unverified). |
+| `tourn` | INTEGER |  | References `tourn.id` (unverified). |
+| `entry` | INTEGER |  | References `entry.id` (unverified). |
+| `judge` | INTEGER |  | References `judge.id` (unverified). |
+| `fine` | INTEGER |  | References `fine.id` (unverified). |
+| `panel` | INTEGER |  | References `panel.id` (unverified). |
+| `round` | INTEGER |  | References `round.id` (unverified). |
 | `new_panel` | INTEGER |  |  |
 | `old_panel` | INTEGER |  |  |
-| `school` | INTEGER |  | References `school.id`. |
+| `school` | INTEGER |  | References `school.id` (unverified). |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 | `deleted` | INTEGER | CHECK IN (0, 1) | Soft-delete flag. |
 | `created_at` | TEXT | DEFAULT CURRENT_TIMESTAMP | When the row was created. |
@@ -244,12 +249,12 @@ A judge on a chapter's permanent roster.
 | `last` | TEXT |  | Last name. |
 | `ada` | INTEGER | NOT NULL DEFAULT 0 CHECK IN (0, 1) | Needs accessible (ADA) rooms. |
 | `retired` | INTEGER | NOT NULL DEFAULT 0 CHECK IN (0, 1) | No longer active on the roster. |
-| `phone` | TEXT |  | Phone. |
+| `phone` | TEXT |  | Phone. Private: never served, blanked in seeds. |
 | `email` | TEXT |  | Email address. |
 | `diet` | TEXT |  |  |
 | `notes` | TEXT |  | Free-text notes. |
 | `notes_timestamp` | TEXT |  |  |
-| `gender` | TEXT |  | Gender. |
+| `gender` | TEXT |  | Gender. Private: never served, blanked in seeds. |
 | `nsda` | INTEGER |  | NSDA membership id. |
 | `chapter` | INTEGER |  | References `chapter.id`. |
 | `person` | INTEGER |  | References `person.id`. |
@@ -273,7 +278,7 @@ Key/value settings for a chapter.
 | `value_date` | TEXT |  | Date-valued setting. |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 | `created_at` | TEXT |  | When the row was created. |
-| `setting` | INTEGER |  | References `setting.id`. |
+| `setting` | INTEGER |  | References `setting.id` (unverified). |
 
 Indexes: `chapter_setting__cs_tag` (unique) on (chapter, tag)
 
@@ -320,7 +325,7 @@ Key/value settings for a circuit.
 | `value` | TEXT | NOT NULL DEFAULT '' | Setting value (short). |
 | `value_text` | TEXT |  | Long setting value. |
 | `value_date` | TEXT |  | Date-valued setting. |
-| `setting` | INTEGER |  | References `setting.id`. |
+| `setting` | INTEGER |  | References `setting.id` (unverified). |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 | `created_at` | TEXT | DEFAULT CURRENT_TIMESTAMP | When the row was created. |
 
@@ -391,7 +396,7 @@ A school's order of a concession.
 | `fulfilled` | INTEGER |  |  |
 | `school` | INTEGER |  | References `school.id`. |
 | `concession` | INTEGER |  | References `concession.id`. |
-| `invoice` | INTEGER |  | References `invoice.id`. |
+| `invoice` | INTEGER |  | References `invoice.id` (unverified). |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 | `created_at` | TEXT | DEFAULT CURRENT_TIMESTAMP | When the row was created. |
 
@@ -435,7 +440,7 @@ A standing conflict between a person and another person or chapter (judging cons
 | `id` | INTEGER | PK | Primary key (autoincrement). |
 | `type` | TEXT |  | Kind of row; values defined upstream. |
 | `person` | INTEGER |  | References `person.id`. |
-| `conflicted` | INTEGER |  |  |
+| `conflicted` | INTEGER |  | References `person.id`. |
 | `chapter` | INTEGER |  | References `chapter.id`. |
 | `added_by` | INTEGER |  | References `person.id`. |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
@@ -517,9 +522,9 @@ Emails sent through Tabroom to a tournament or circuit.
 | `sender` | INTEGER |  |  |
 | `sender_raw` | TEXT |  |  |
 | `hidden` | INTEGER | NOT NULL DEFAULT 0 CHECK IN (0, 1) | Hidden from public lists. |
-| `person` | INTEGER |  | References `person.id`. |
+| `person` | INTEGER |  | References `person.id` (unverified). |
 | `tourn` | INTEGER |  | References `tourn.id`. |
-| `circuit` | INTEGER |  | References `circuit.id`. |
+| `circuit` | INTEGER |  | References `circuit.id` (unverified). |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 | `created_at` | TEXT | DEFAULT CURRENT_TIMESTAMP | When the row was created. |
 
@@ -560,7 +565,7 @@ Key/value settings for an entry.
 | `value_text` | TEXT |  | Long setting value. |
 | `value_date` | TEXT |  | Date-valued setting. |
 | `entry` | INTEGER |  | References `entry.id`. |
-| `setting` | INTEGER |  | References `setting.id`. |
+| `setting` | INTEGER |  | References `setting.id` (unverified). |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 | `created_at` | TEXT | DEFAULT CURRENT_TIMESTAMP | When the row was created. |
 
@@ -615,7 +620,7 @@ Key/value settings for an event.
 | `value_text` | TEXT |  | Long setting value. |
 | `value_date` | TEXT |  | Date-valued setting. |
 | `event` | INTEGER | NOT NULL | References `event.id`. |
-| `setting` | INTEGER |  | References `setting.id`. |
+| `setting` | INTEGER |  | References `setting.id` (unverified). |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 | `created_at` | TEXT | DEFAULT CURRENT_TIMESTAMP | When the row was created. |
 
@@ -639,13 +644,13 @@ Uploaded files (postings, invoices, documents) attached to a tournament, school,
 | `bill_category` | TEXT |  |  |
 | `tourn` | INTEGER |  | References `tourn.id`. |
 | `school` | INTEGER |  | References `school.id`. |
-| `entry` | INTEGER |  | References `entry.id`. |
+| `entry` | INTEGER |  | References `entry.id` (unverified). |
 | `event` | INTEGER |  | References `event.id`. |
-| `district` | INTEGER |  | References `district.id`. |
-| `circuit` | INTEGER |  | References `circuit.id`. |
-| `webpage` | INTEGER |  | References `webpage.id`. |
+| `district` | INTEGER |  | References `district.id` (unverified). |
+| `circuit` | INTEGER |  | References `circuit.id` (unverified). |
+| `webpage` | INTEGER |  | References `webpage.id` (unverified). |
 | `parent` | INTEGER |  | Parent row in the same table. |
-| `person` | INTEGER |  | References `person.id`. |
+| `person` | INTEGER |  | References `person.id` (unverified). |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 | `created_at` | TEXT | DEFAULT CURRENT_TIMESTAMP | When the row was created. |
 
@@ -662,17 +667,17 @@ Fines and payments levied on a school or judge.
 | `amount` | NUMERIC |  | Money amount. |
 | `payment` | INTEGER | NOT NULL DEFAULT 0 CHECK IN (0, 1) |  |
 | `levied_at` | TEXT |  | When levied. |
-| `levied_by` | INTEGER |  | References `person.id`. |
+| `levied_by` | INTEGER |  | References `person.id` (unverified). |
 | `deleted` | INTEGER | NOT NULL DEFAULT 0 CHECK IN (0, 1) | Soft-delete flag. |
 | `deleted_at` | TEXT |  | When deleted. |
-| `deleted_by` | INTEGER |  | References `person.id`. |
+| `deleted_by` | INTEGER |  | References `person.id` (unverified). |
 | `tourn` | INTEGER |  | References `tourn.id`. |
-| `school` | INTEGER |  | References `school.id`. |
-| `region` | INTEGER |  | References `region.id`. |
-| `judge` | INTEGER |  | References `judge.id`. |
-| `person` | INTEGER |  | References `person.id`. |
-| `parent` | INTEGER |  | Parent row in the same table. |
-| `invoice` | INTEGER |  | References `invoice.id`. |
+| `school` | INTEGER |  | References `school.id` (unverified). |
+| `region` | INTEGER |  | References `region.id` (unverified). |
+| `judge` | INTEGER |  | References `judge.id` (unverified). |
+| `person` | INTEGER |  | References `person.id` (unverified). |
+| `parent` | INTEGER |  | References `fine.id` (unverified). |
+| `invoice` | INTEGER |  | References `invoice.id` (unverified). |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 | `created_at` | TEXT | DEFAULT CURRENT_TIMESTAMP | When the row was created. |
 
@@ -686,13 +691,13 @@ People following an entry, judge, school or tournament for notifications.
 | --- | --- | --- | --- |
 | `id` | INTEGER | PK | Primary key (autoincrement). |
 | `type` | TEXT |  | Kind of row; values defined upstream. |
-| `person` | INTEGER |  | References `person.id`. NULL when none. |
+| `person` | INTEGER | NOT NULL DEFAULT 0 | References `person.id` (unverified). |
 | `follower` | INTEGER |  | Not a `follower.id`; upstream gives no detail. |
 | `tourn` | INTEGER |  | References `tourn.id`. |
 | `judge` | INTEGER |  | References `judge.id`. |
 | `entry` | INTEGER |  | References `entry.id`. |
 | `school` | INTEGER |  | References `school.id`. |
-| `student` | INTEGER |  | References `student.id`. |
+| `student` | INTEGER |  | References `student.id` (unverified). |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 | `created_at` | TEXT | DEFAULT CURRENT_TIMESTAMP | When the row was created. |
 
@@ -727,10 +732,10 @@ Housing requests for students and judges per night.
 | `tba` | INTEGER | NOT NULL DEFAULT 0 CHECK IN (0, 1) |  |
 | `requested` | TEXT |  |  |
 | `requestor` | INTEGER |  |  |
-| `tourn` | INTEGER |  | References `tourn.id`. |
-| `student` | INTEGER |  | References `student.id`. |
-| `judge` | INTEGER |  | References `judge.id`. |
-| `school` | INTEGER |  | References `school.id`. |
+| `tourn` | INTEGER |  | References `tourn.id` (unverified). |
+| `student` | INTEGER |  | References `student.id` (unverified). |
+| `judge` | INTEGER |  | References `judge.id` (unverified). |
+| `school` | INTEGER |  | References `school.id` (unverified). |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 | `created_at` | TEXT | DEFAULT CURRENT_TIMESTAMP | When the row was created. |
 
@@ -743,7 +748,7 @@ Housing capacity per night.
 | `id` | INTEGER | PK | Primary key (autoincrement). |
 | `night` | TEXT |  |  |
 | `slots` | INTEGER |  |  |
-| `tourn` | INTEGER |  | References `tourn.id`. |
+| `tourn` | INTEGER |  | References `tourn.id` (unverified). |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 | `created_at` | TEXT | DEFAULT CURRENT_TIMESTAMP | When the row was created. |
 
@@ -775,7 +780,7 @@ A judge pool (a subset of a category's judges used for particular rounds).
 | `name` | TEXT |  | Display name. |
 | `category` | INTEGER |  | References `category.id`. |
 | `site` | INTEGER |  | References `site.id`. NULL when none. |
-| `parent` | INTEGER |  | Parent row in the same table. |
+| `parent` | INTEGER |  | References `jpool.id`. |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 | `created_at` | TEXT | DEFAULT CURRENT_TIMESTAMP | When the row was created. |
 
@@ -821,7 +826,7 @@ Key/value settings for a judge pool.
 | `value_text` | TEXT |  | Long setting value. |
 | `value_date` | TEXT |  | Date-valued setting. |
 | `jpool` | INTEGER |  | References `jpool.id`. |
-| `setting` | INTEGER |  | References `setting.id`. |
+| `setting` | INTEGER |  | References `setting.id` (unverified). |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 | `created_at` | TEXT | DEFAULT CURRENT_TIMESTAMP | When the row was created. |
 
@@ -892,7 +897,7 @@ Key/value settings for a judge (paradigm flags, availability).
 | `value_text` | TEXT |  | Long setting value. |
 | `value_date` | TEXT |  | Date-valued setting. |
 | `judge` | INTEGER |  | References `judge.id`. |
-| `setting` | INTEGER |  | References `setting.id`. |
+| `setting` | INTEGER |  | References `setting.id` (unverified). |
 | `conditional` | INTEGER |  |  |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 | `created_at` | TEXT | DEFAULT CURRENT_TIMESTAMP | When the row was created. |
@@ -912,7 +917,7 @@ In-app messages to a person.
 | `sender_string` | TEXT |  |  |
 | `person` | INTEGER |  | References `person.id`. |
 | `tourn` | INTEGER |  | References `tourn.id`. |
-| `sender` | INTEGER |  |  |
+| `sender` | INTEGER |  | References `person.id`. |
 | `email` | INTEGER |  | References `email.id`. |
 | `created_at` | TEXT | DEFAULT CURRENT_TIMESTAMP | When the row was created. |
 | `visible_at` | TEXT | DEFAULT CURRENT_TIMESTAMP |  |
@@ -967,7 +972,7 @@ Key/value settings for a panel.
 | `value` | TEXT | NOT NULL DEFAULT '' | Setting value (short). |
 | `value_text` | TEXT |  | Long setting value. |
 | `value_date` | TEXT |  | Date-valued setting. |
-| `setting` | INTEGER |  | References `setting.id`. |
+| `setting` | INTEGER |  | References `setting.id` (unverified). |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 
 Indexes: `panel_setting__panel_tag` (unique) on (panel, tag); `panel_setting__setting` on (setting); `panel_setting__tag` on (tag)
@@ -1021,24 +1026,24 @@ A Tabroom account. Separate from this app's `user` table.
 | `first` | TEXT |  | First name. |
 | `middle` | TEXT |  | Middle name. |
 | `last` | TEXT |  | Last name. |
-| `gender` | TEXT |  | Gender. |
+| `gender` | TEXT |  | Gender. Private: never served, blanked in seeds. |
 | `pronoun` | TEXT |  |  |
 | `no_email` | INTEGER | NOT NULL DEFAULT 0 CHECK IN (0, 1) |  |
-| `street` | TEXT |  | Street address. |
+| `street` | TEXT |  | Street address. Private: never served, blanked in seeds. |
 | `city` | TEXT |  | City. |
 | `state` | TEXT |  | State/province. |
-| `zip` | TEXT |  | ZIP code. |
-| `postal` | TEXT |  | Postal code. |
+| `zip` | TEXT |  | ZIP code. Private: never served, blanked in seeds. |
+| `postal` | TEXT |  | Postal code. Private: never served, blanked in seeds. |
 | `country` | TEXT |  | Country. |
 | `tz` | TEXT |  | Time zone. |
-| `phone` | TEXT |  | Phone. |
+| `phone` | TEXT |  | Phone. Private: never served, blanked in seeds. |
 | `provider` | TEXT |  |  |
 | `site_admin` | INTEGER | CHECK IN (0, 1) |  |
 | `nsda` | INTEGER |  | NSDA membership id. |
-| `password` | TEXT |  | Password hash (person) or room password. |
+| `password` | TEXT |  | Password hash (person) or room password. Credential: never served, blanked in seeds. |
 | `accesses` | INTEGER |  |  |
 | `last_access` | TEXT |  |  |
-| `pass_timestamp` | TEXT |  |  |
+| `pass_timestamp` | TEXT |  | Credential: never served, blanked in seeds. |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 | `created_at` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | When the row was created. |
 
@@ -1076,7 +1081,7 @@ Key/value settings for a person.
 | `value_text` | TEXT |  | Long setting value. |
 | `value_date` | TEXT |  | Date-valued setting. |
 | `person` | INTEGER |  | References `person.id`. |
-| `setting` | INTEGER |  | References `setting.id`. |
+| `setting` | INTEGER |  | References `setting.id` (unverified). |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 | `created_at` | TEXT | DEFAULT CURRENT_TIMESTAMP | When the row was created. |
 
@@ -1141,7 +1146,7 @@ Key/value settings for a tiebreak set.
 | `value_date` | TEXT |  | Date-valued setting. |
 | `protocol` | INTEGER |  | References `protocol.id`. |
 | `value_text` | TEXT |  | Long setting value. |
-| `setting` | INTEGER |  | References `setting.id`. |
+| `setting` | INTEGER |  | References `setting.id` (unverified). |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 
 Indexes: `protocol_setting__tiebreak_set_tag` (unique) on (protocol, tag)
@@ -1156,7 +1161,7 @@ Qualifications an entry earned at a tournament.
 | `name` | TEXT |  | Display name. |
 | `result` | TEXT |  | Qualification result text (not a `result.id`). |
 | `entry` | INTEGER |  | References `entry.id`. |
-| `tourn` | INTEGER |  | References `tourn.id`. |
+| `tourn` | INTEGER |  | References `tourn.id` (unverified). |
 | `qualifier_tourn` | INTEGER |  |  |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 
@@ -1183,7 +1188,7 @@ Quizzes and certifications (e.g. judge training) with optional badges.
 | `badge_description` | TEXT |  |  |
 | `person` | INTEGER | NOT NULL | References `person.id`. |
 | `tourn` | INTEGER |  | References `tourn.id`. |
-| `circuit` | INTEGER |  | References `circuit.id`. |
+| `circuit` | INTEGER |  | References `circuit.id` (unverified). |
 | `nsda_course` | INTEGER |  |  |
 | `created_at` | TEXT | DEFAULT CURRENT_TIMESTAMP | When the row was created. |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
@@ -1237,7 +1242,7 @@ Rating tiers (e.g. 1-6 pref tiers) and their constraints.
 | `max` | NUMERIC |  |  |
 | `start` | INTEGER | NOT NULL DEFAULT 0 CHECK IN (0, 1) | Start time. |
 | `category` | INTEGER |  | References `category.id`. |
-| `rating_subset` | INTEGER |  | References `rating_subset.id`. |
+| `rating_subset` | INTEGER |  | References `rating_subset.id` (unverified). |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 
 Indexes: `rating_tier__fk_rating_tier_category` on (category)
@@ -1271,9 +1276,9 @@ Fines levied on a region.
 | `reason` | TEXT |  | Why it was levied. |
 | `levied_at` | TEXT |  | When levied. |
 | `levied_by` | INTEGER |  | References `person.id`. |
-| `tourn` | INTEGER |  | References `tourn.id`. |
+| `tourn` | INTEGER |  | References `tourn.id` (unverified). |
 | `region` | INTEGER |  | References `region.id`. |
-| `school` | INTEGER |  | References `school.id`. |
+| `school` | INTEGER |  | References `school.id` (unverified). |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 
 ### region_setting
@@ -1290,8 +1295,8 @@ Key/value settings for a region.
 | `region` | INTEGER |  | References `region.id`. |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 | `created_at` | TEXT | DEFAULT CURRENT_TIMESTAMP | When the row was created. |
-| `setting` | INTEGER |  | References `setting.id`. |
-| `event` | INTEGER |  | References `event.id`. |
+| `setting` | INTEGER |  | References `setting.id` (unverified). |
+| `event` | INTEGER |  | References `event.id` (unverified). |
 
 Indexes: `region_setting__region_tag` (unique) on (region, tag); `region_setting__event` on (event)
 
@@ -1350,7 +1355,7 @@ A published results report (final places, speaker awards, sweepstakes).
 | `cache` | TEXT |  | Cached rendering. |
 | `tourn` | INTEGER |  | References `tourn.id`. |
 | `sweep_set` | INTEGER |  | References `sweep_set.id`. |
-| `sweep_award` | INTEGER |  | References `sweep_award.id`. |
+| `sweep_award` | INTEGER |  | References `sweep_award.id` (unverified). |
 | `event` | INTEGER |  | References `event.id`. |
 | `nsda_category` | INTEGER |  | References `nsda_category.id`. |
 | `circuit` | INTEGER |  | References `circuit.id`. |
@@ -1369,8 +1374,8 @@ Cell values of a result row.
 | `value` | TEXT |  | The cell's value. |
 | `priority` | INTEGER |  | Order of application. |
 | `result` | INTEGER |  | References `result.id`. |
-| `result_key` | INTEGER |  | References `result_key.id`. NULL when none. |
-| `protocol` | INTEGER |  | References `protocol.id`. |
+| `result_key` | INTEGER | NOT NULL DEFAULT 0 | References `result_key.id` (unverified). |
+| `protocol` | INTEGER |  | References `protocol.id` (unverified). |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 
 Indexes: `result_value__result` on (result); `result_value__result_key` on (result_key)
@@ -1393,9 +1398,9 @@ A room at a site, including online-room URLs.
 | `ada` | INTEGER | NOT NULL DEFAULT 0 CHECK IN (0, 1) | Needs accessible (ADA) rooms. |
 | `notes` | TEXT |  | Free-text notes. |
 | `url` | TEXT |  | URL. |
-| `password` | TEXT |  | Password hash (person) or room password. |
+| `password` | TEXT |  | Password hash (person) or room password. Credential: never served, blanked in seeds. |
 | `judge_url` | TEXT |  |  |
-| `judge_password` | TEXT |  |  |
+| `judge_password` | TEXT |  | Credential: never served, blanked in seeds. |
 | `api` | INTEGER |  |  |
 | `site` | INTEGER |  | References `site.id`. |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
@@ -1413,10 +1418,10 @@ Constraints keeping an entry, judge or event out of a room.
 | `start` | TEXT |  | Start time. |
 | `end` | TEXT |  | End time. |
 | `room` | INTEGER |  | References `room.id`. |
-| `event` | INTEGER |  | References `event.id`. |
+| `event` | INTEGER |  | References `event.id` (unverified). |
 | `tourn` | INTEGER |  | References `tourn.id`. |
-| `entry` | INTEGER |  | References `entry.id`. |
-| `judge` | INTEGER |  | References `judge.id`. |
+| `entry` | INTEGER |  | References `entry.id` (unverified). |
+| `judge` | INTEGER |  | References `judge.id` (unverified). |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 
 Indexes: `room_strike__room` on (room)
@@ -1460,7 +1465,7 @@ Key/value settings for a round.
 | `value_text` | TEXT |  | Long setting value. |
 | `value_date` | TEXT |  | Date-valued setting. |
 | `round` | INTEGER |  | References `round.id`. |
-| `setting` | INTEGER |  | References `setting.id`. |
+| `setting` | INTEGER |  | References `setting.id` (unverified). |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 
 Indexes: `round_setting__round_tag` (unique) on (round, tag); `round_setting__tag` on (tag)
@@ -1516,7 +1521,7 @@ Key/value settings for a room pool.
 | `value_text` | TEXT |  | Long setting value. |
 | `value_date` | TEXT |  | Date-valued setting. |
 | `rpool` | INTEGER |  | References `rpool.id`. |
-| `setting` | INTEGER |  | References `setting.id`. |
+| `setting` | INTEGER |  | References `setting.id` (unverified). |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 
 Indexes: `rpool_setting__uk_rpool` (unique) on (rpool, tag)
@@ -1554,10 +1559,10 @@ Key/value settings for a school's registration.
 | `value_text` | TEXT |  | Long setting value. |
 | `value_date` | TEXT |  | Date-valued setting. |
 | `school` | INTEGER |  | References `school.id`. |
-| `setting` | INTEGER |  | References `setting.id`. |
+| `setting` | INTEGER |  | References `setting.id` (unverified). |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 | `last_changed` | INTEGER |  |  |
-| `chapter` | INTEGER |  | References `chapter.id`. |
+| `chapter` | INTEGER |  | References `chapter.id` (unverified). |
 
 Indexes: `school_setting__school_tag` (unique) on (school, tag)
 
@@ -1657,7 +1662,7 @@ Aggregate statistics per event.
 | `type` | TEXT |  | Kind of row; values defined upstream. |
 | `tag` | TEXT |  | Machine name (for `*_setting` tables, the setting key). |
 | `value` | NUMERIC |  | The statistic's value, by `tag`. |
-| `event` | INTEGER | NOT NULL | References `event.id`. |
+| `event` | INTEGER | NOT NULL | References `event.id` (unverified). |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 
 Indexes: `stats__event` on (event)
@@ -1682,7 +1687,7 @@ Constraints on when or whom a judge may judge.
 | `school` | INTEGER |  | References `school.id`. |
 | `region` | INTEGER |  | References `region.id`. |
 | `district` | INTEGER |  | References `district.id`. |
-| `timeslot` | INTEGER |  | References `timeslot.id`. |
+| `timeslot` | INTEGER |  | References `timeslot.id` (unverified). |
 | `shift` | INTEGER |  | References `shift.id`. |
 | `entered_by` | INTEGER |  | Who entered it (`person.id`). |
 | `created_at` | TEXT | DEFAULT CURRENT_TIMESTAMP | When the row was created. |
@@ -1705,7 +1710,7 @@ A student on a chapter's roster.
 | `grad_year` | INTEGER |  |  |
 | `novice` | INTEGER | NOT NULL DEFAULT 0 CHECK IN (0, 1) |  |
 | `retired` | INTEGER | NOT NULL DEFAULT 0 CHECK IN (0, 1) | No longer active on the roster. |
-| `gender` | TEXT |  | Gender. |
+| `gender` | TEXT |  | Gender. Private: never served, blanked in seeds. |
 | `nsda` | INTEGER |  | NSDA membership id. |
 | `chapter` | INTEGER |  | References `chapter.id`. |
 | `person` | INTEGER |  | References `person.id`. |
@@ -1723,8 +1728,8 @@ Student-congress ballots cast by students.
 | --- | --- | --- | --- |
 | `id` | INTEGER | PK | Primary key (autoincrement). |
 | `tag` | TEXT |  | Machine name (for `*_setting` tables, the setting key). |
-| `panel` | INTEGER |  | References `panel.id`. NULL when none. |
-| `entry` | INTEGER |  | References `entry.id`. NULL when none. |
+| `panel` | INTEGER | NOT NULL DEFAULT 0 | References `panel.id` (unverified). |
+| `entry` | INTEGER | NOT NULL DEFAULT 0 | References `entry.id` (unverified). |
 | `voter` | INTEGER | NOT NULL DEFAULT 0 |  |
 | `value` | INTEGER |  |  |
 | `entered_by` | INTEGER |  | Who entered it (`person.id`). |
@@ -1746,7 +1751,7 @@ Key/value settings for a student.
 | `value_date` | TEXT |  | Date-valued setting. |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 | `created_at` | TEXT | DEFAULT CURRENT_TIMESTAMP | When the row was created. |
-| `setting` | INTEGER |  | References `setting.id`. |
+| `setting` | INTEGER |  | References `setting.id` (unverified). |
 
 Indexes: `student_setting__student_tag` (unique) on (student, tag); `student_setting__sstag` on (tag, student)
 
@@ -1795,7 +1800,7 @@ Event groupings for a sweepstakes award.
 | `name` | TEXT | NOT NULL | Display name. |
 | `abbr` | TEXT |  | Abbreviation. |
 | `level` | TEXT |  | Competition level. |
-| `sweep_set` | INTEGER |  | References `sweep_set.id`. |
+| `sweep_set` | INTEGER |  | References `sweep_set.id` (unverified). |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 
 Indexes: `sweep_award_event__sweep_set` on (sweep_set)
@@ -1812,7 +1817,7 @@ Events counted in a sweepstakes set.
 | `event_type` | TEXT |  |  |
 | `event_level` | TEXT |  |  |
 | `nsda_category` | INTEGER |  | References `nsda_category.id`. |
-| `sweep_award_event` | INTEGER |  | References `sweep_award_event.id`. |
+| `sweep_award_event` | INTEGER |  | References `sweep_award_event.id` (unverified). |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 
 Indexes: `sweep_event__sweep_set` on (sweep_set); `sweep_event__event` on (event); `sweep_event__nsda_category` on (nsda_category)
@@ -1824,8 +1829,8 @@ Nesting between sweepstakes sets.
 | Column | Type | Constraints | Purpose |
 | --- | --- | --- | --- |
 | `id` | INTEGER | PK | Primary key (autoincrement). |
-| `parent` | INTEGER |  | Parent row in the same table. |
-| `child` | INTEGER |  |  |
+| `parent` | INTEGER |  | References `sweep_set.id`. |
+| `child` | INTEGER |  | References `sweep_set.id`. |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 
 Indexes: `sweep_include__fk_sweepinclude_parent` on (parent); `sweep_include__fk_sweepinclude_child` on (child)
@@ -1859,7 +1864,7 @@ A set of sweepstakes rules for a tournament.
 | `id` | INTEGER | PK | Primary key (autoincrement). |
 | `name` | TEXT |  | Display name. |
 | `tourn` | INTEGER |  | References `tourn.id`. |
-| `sweep_award` | INTEGER |  | References `sweep_award.id`. |
+| `sweep_award` | INTEGER |  | References `sweep_award.id` (unverified). |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 
 Indexes: `sweep_set__tourn` on (tourn); `sweep_set__sweep_award` on (sweep_award)
@@ -2017,7 +2022,7 @@ Key/value settings for a tournament.
 | `value` | TEXT | NOT NULL DEFAULT '' | Setting value (short). |
 | `value_text` | TEXT |  | Long setting value. |
 | `value_date` | TEXT |  | Date-valued setting. |
-| `setting` | INTEGER |  | References `setting.id`. |
+| `setting` | INTEGER |  | References `setting.id` (unverified). |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 
 Indexes: `tourn_setting__tourn_tag` (unique) on (tourn, tag); `tourn_setting__tags` on (tag, tourn)
@@ -2051,7 +2056,7 @@ Pages of a tournament's website.
 | `special` | TEXT |  |  |
 | `page_order` | INTEGER |  | Display order. |
 | `tourn` | INTEGER |  | References `tourn.id`. |
-| `parent` | INTEGER |  | Parent row in the same table. |
+| `parent` | INTEGER |  | References `webpage.id` (unverified). |
 | `last_editor` | INTEGER |  | References `person.id`. |
 | `timestamp` | TEXT | NOT NULL DEFAULT CURRENT_TIMESTAMP | Last modified. |
 | `created_at` | TEXT | DEFAULT CURRENT_TIMESTAMP | When the row was created. |
