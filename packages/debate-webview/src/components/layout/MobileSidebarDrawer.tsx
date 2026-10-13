@@ -56,15 +56,10 @@ export function MobileSidebarDrawer({
         >
           <DialogPrimitive.Title className="sr-only">Sidebar</DialogPrimitive.Title>
           <ChromeErrorBoundary label="MobileSidebarDrawer">
-            {(kind === "cards" || kind === "editor") && (
-              <ReasonDocsSidebarPanels
-                className={kind === "cards" ? "min-h-0 flex-1" : "shrink-0"}
-                fill={kind === "cards"}
-              />
-            )}
+            {kind === "editor" && <ReasonDocsSidebarPanels className="shrink-0" />}
             {/* The same tree as the desktop column, on every view: Videos
                 (Lectures included) and the tool sections. */}
-            {kind !== "cards" && kind !== "own" && (
+            {kind !== "own" && (
               <>
                 <LibrarySidebarTree />
                 <ToolSidebarFooter />

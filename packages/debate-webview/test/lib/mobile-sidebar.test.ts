@@ -8,7 +8,8 @@ describe("mobileSidebarKind", () => {
     // The research agent draws its own sidebar; the toolbar button opens that one.
     expect(mobileSidebarKind("/doc")).toBe("own")
     expect(mobileSidebarKind("/doc/cp-answer-to-states")).toBe("own")
-    expect(mobileSidebarKind("/research/cards")).toBe("cards")
+    // The card search keeps the tool tree too, with its panels above it.
+    expect(mobileSidebarKind("/research/cards")).toBe("editor")
     expect(mobileSidebarKind("/reason-editor")).toBe("editor")
     expect(mobileSidebarKind("/videos")).toBe("videos")
     expect(mobileSidebarKind("/lectures")).toBe("videos")

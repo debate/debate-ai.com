@@ -9,7 +9,7 @@
  */
 
 import { describe, it, expect } from "vitest"
-import { showsCardsOnlySidebar, showsReasonDocsPanels } from "../../../src/lib/reason-docs/sidebar-routes"
+import { showsCardsPagePanel, showsReasonDocsPanels } from "../../../src/lib/reason-docs/sidebar-routes"
 
 describe("showsReasonDocsPanels", () => {
   it("shows them on /cards, the dock destination they belong to", () => {
@@ -57,39 +57,39 @@ describe("showsReasonDocsPanels", () => {
   })
 })
 
-describe("showsCardsOnlySidebar", () => {
-  it("trims the sidebar to the docs panels on /cards", () => {
-    expect(showsCardsOnlySidebar("/research/cards")).toBe(true)
+describe("showsCardsPagePanel", () => {
+  it("opens the docs panels inside the page on /cards", () => {
+    expect(showsCardsPagePanel("/research/cards")).toBe(true)
   })
 
-  it("trims it the same on a page below /cards", () => {
-    expect(showsCardsOnlySidebar("/research/cards/library")).toBe(true)
-    expect(showsCardsOnlySidebar("/research/cards/awards")).toBe(true)
+  it("opens them the same on a page below /cards", () => {
+    expect(showsCardsPagePanel("/research/cards/library")).toBe(true)
+    expect(showsCardsPagePanel("/research/cards/awards")).toBe(true)
   })
 
-  it("leaves the editor its full tree — it is reached from those sections", () => {
-    expect(showsCardsOnlySidebar("/reason-editor")).toBe(false)
+  it("keeps the editor's panels in the app sidebar", () => {
+    expect(showsCardsPagePanel("/reason-editor")).toBe(false)
   })
 
   it("leaves every other tool route its own nav", () => {
     for (const path of ["/", "/coaching", "/practice", "/videos", "/debate", "/doc"]) {
-      expect(showsCardsOnlySidebar(path)).toBe(false)
+      expect(showsCardsPagePanel(path)).toBe(false)
     }
   })
 
   it("does not match a route that merely starts with /cards", () => {
-    expect(showsCardsOnlySidebar("/cardsomething")).toBe(false)
+    expect(showsCardsPagePanel("/cardsomething")).toBe(false)
   })
 
   it("ignores a trailing slash, a query string and a hash", () => {
-    expect(showsCardsOnlySidebar("/research/cards/")).toBe(true)
-    expect(showsCardsOnlySidebar("/research/cards?tab=library")).toBe(true)
-    expect(showsCardsOnlySidebar("/research/cards#top")).toBe(true)
+    expect(showsCardsPagePanel("/research/cards/")).toBe(true)
+    expect(showsCardsPagePanel("/research/cards?tab=library")).toBe(true)
+    expect(showsCardsPagePanel("/research/cards#top")).toBe(true)
   })
 
-  it("reads a missing pathname as the full sidebar rather than throwing", () => {
-    expect(showsCardsOnlySidebar(null)).toBe(false)
-    expect(showsCardsOnlySidebar(undefined)).toBe(false)
-    expect(showsCardsOnlySidebar("")).toBe(false)
+  it("reads a missing pathname as no page panel rather than throwing", () => {
+    expect(showsCardsPagePanel(null)).toBe(false)
+    expect(showsCardsPagePanel(undefined)).toBe(false)
+    expect(showsCardsPagePanel("")).toBe(false)
   })
 })
