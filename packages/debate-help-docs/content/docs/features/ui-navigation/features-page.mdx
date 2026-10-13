@@ -27,11 +27,15 @@ header count line, a strip of the five workspace screenshots from the README
 overview and seven-point vision (anchored at `#cards-vision`), a **Downloads**
 section under the badges (the Chrome extension install button, which used to
 sit on the card search's empty state), a search box (matching title/description/route/hidden
-tags), a jump-to-category row, and eight category sections (Core
-Workspaces, Evidence & Research, Team Collaboration, Flowing & Round
-Analysis, Pre-Round Intelligence, Practice & Coaching, Recognition &
-Progress, Standings & Rankings), each feature card linking to its route and
-docs page.
+tags), and a tab bar of the feature categories (Core Workspaces, Evidence &
+Research, Team Collaboration, Flowing & Round Analysis, Pre-Round
+Intelligence, Practice & Coaching, Recognition & Progress), each tab showing
+its feature count. One category is shown at a time: the first tab is
+selected on load, clicking a tab shows only that category's feature cards,
+and a `#<category>` link (for example `/features#practice`) opens on that
+tab. Searching narrows every tab's count, and if the selected tab has no
+matches the first tab that does is shown. Each feature card links to its
+route and docs page.
 
 Pointing at a card lights it up — a gradient that follows the cursor, a
 glowing border and a coloured title — in a shade of its own, so neighbouring
