@@ -21,6 +21,7 @@ export { d1FromLibsql, type LibsqlClientLike } from "./db/libsql-d1";
 export { translateMysqlToSqlite } from "./db/mysql-compat";
 export { configureTabroom, tabroomConfig, type TabroomConfig } from "./config";
 export { TABLES as TABROOM_TABLES } from "./db/generated/columns";
+export { orphanCheckStatements, type OrphanCount } from "./db/orphans";
 export type { D1DatabaseLike, D1PreparedStatementLike, D1Result } from "./db/d1-types";
 export {
   createTournament,

@@ -26,6 +26,15 @@ export {
   toSiteRating,
 } from "./rating-offset";
 export {
+  COLLEGE_HISTORY_FIRST_YEAR,
+  COLLEGE_HISTORY_LAST_YEAR,
+  COLLEGE_HISTORY_SOURCE_URL,
+  hasCollegeHistory,
+  loadCollegeHistory,
+  parseCollegeHistory,
+  type CollegeHistoryEntry,
+} from "./college-history";
+export {
   entryInitials,
   findTeamRanking,
   normalizeSchool,

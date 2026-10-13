@@ -259,6 +259,11 @@ export function VideoListRow({
   const hasCoreRoundInfo = Boolean(
     isRoundMode && cleanTournament && roundLevel?.trim() && affTeam?.trim() && negTeam?.trim(),
   )
+  // A round with no Aff or Neg recorded would leave both team cells as bare
+  // dashes, so its first cell spans them instead and the title gets the room.
+  const spansTeamCells = Boolean(
+    isRoundMode && !affTeam?.trim() && !negTeam?.trim() && !arg1AC?.trim() && !arg2NR?.trim(),
+  )
 
   return (
     <>
@@ -280,7 +285,11 @@ export function VideoListRow({
           isHidden && "opacity-50",
         )}
       >
-        <td className="py-2 pr-2 align-top sm:py-3 sm:pr-3" style={treeIndentStyle(depth)}>
+        <td
+          className="py-2 pr-2 align-top sm:py-3 sm:pr-3"
+          style={treeIndentStyle(depth)}
+          colSpan={spansTeamCells ? 3 : undefined}
+        >
           {/* A grid rather than a flex row so that on a phone the actions can
               drop under the thumbnail and use the row's full width, while from
               sm up they stay in the text column beside it. The left padding
@@ -303,7 +312,7 @@ export function VideoListRow({
             )}
           <div className="min-w-0">
             {!hasCoreRoundInfo && (
-                <div className="line-clamp-2 text-sm font-medium leading-snug text-foreground">
+                <div className="line-clamp-3 text-sm font-medium leading-snug text-foreground">
                   {title}
                 </div>
               )}
@@ -497,7 +506,7 @@ export function VideoListRow({
           </div>
         </td>
 
-        {isRoundMode && (
+        {isRoundMode && !spansTeamCells && (
           <>
             <TeamCell team={affTeam} argument={arg1AC} ranking={affRanking} onSearch={onSearch} />
             <TeamCell team={negTeam} argument={arg2NR} ranking={negRanking} onSearch={onSearch} />

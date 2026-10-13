@@ -125,18 +125,18 @@ roughly 500 editing commands into ~30 thematic groups. Highlights (full 50+ feat
 
 - [Evidence Library](https://debate-ai.com/cards/library) — Search shared cut cards and reusable analytics by keyword, citation, argument, topic, or tag.
 - [Argument Library](https://debate-ai.com/cards/argument-library) — Browse shared research through topic folders, case areas, and tag-based collections.
-- [Contributions Feed](https://debate-ai.com/cards/contributions) — Submit, like, save, and endorse community cards, summaries, highlights, and annotations.
+- [Contributions Feed](https://debate-ai.com/research/team?section=contributions) — Submit, like, save, and endorse community cards, summaries, highlights, and annotations.
 - [LLM Card Scoring](https://debate-ai.com/cards/scoring) — Score cards for relevance, clarity, uniqueness, evidence quality, and usability.
 - [Revision Incentives](https://debate-ai.com/cards/revisions) — Reward and rank improvements to weak cards, citations, and stale evidence.
-- [Review Queue](https://debate-ai.com/cards/reviews) — Move cards through draft, review, requested changes, approval, and publication.
-- [Topic Coverage Dashboard](https://debate-ai.com/cards/coverage) — Identify missing, thin, covered, and untracked arguments by card and word count.
-- [Task Inbox](https://debate-ai.com/cards/inbox) — Review research tasks routed to contributors and organized by topic.
-- [Collaboration Prep Room](https://debate-ai.com/cards/prep-room) — Share a topic-specific prep space for evidence, draft blocks, tasks, and active teammates.
+- [Review Queue](https://debate-ai.com/research/team?section=reviews) — Move cards through draft, review, requested changes, approval, and publication.
+- [Topic Coverage Dashboard](https://debate-ai.com/research/team?section=coverage) — Identify missing, thin, covered, and untracked arguments by card and word count.
+- [Task Inbox](https://debate-ai.com/research/team?section=inbox) — Review research tasks routed to contributors and organized by topic.
+- [Collaboration Prep Room](https://debate-ai.com/research/team?section=prep-room) — Share a topic-specific prep space for evidence, draft blocks, tasks, and active teammates.
 - [Team Collaboration Mode](https://debate-ai.com/cards/collaboration) — Leave, assign, and track live prep notes during shared topic sprints.
 - [Prep Notes](https://debate-ai.com/prep-notes) — Maintain live prep notes grouped into needs-follow-up, open, and covered status.
 - [Contacts](https://debate-ai.com/contacts) — Keep an account-linked contacts list (requests, blocking, who's online) and share the document you're editing as a live co-editing card straight to a contact's account.
 - [Notifications](https://debate-ai.com/notifications) — See and mark read notifications for prep-note assignments and activity.
-- [Team Brainstorm Assist](https://debate-ai.com/cards/brainstorm) — Submit, seed, organize, and upvote ideas for arguments, impacts, frontlines, and turns.
+- [Team Brainstorm Assist](https://debate-ai.com/research/team?section=brainstorm) — Submit, seed, organize, and upvote ideas for arguments, impacts, frontlines, and turns.
 - [Group Challenges](https://debate-ai.com/cards/group-challenges) — Create squad challenges based on contributions or recorded rebuttal wins.
 - [Research Progress](https://debate-ai.com/cards/progress-tracking) — Review contribution history, task-completion rates, and per-topic work progress.
 

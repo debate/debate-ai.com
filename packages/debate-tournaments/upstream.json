@@ -19,5 +19,6 @@
   "schemaDump": "indexcards/tests/test.sql",
   "migration": "migrations/0001_tabroom_schema.sql",
   "columnsModule": "src/db/generated/columns.ts",
-  "skipTables": ["session"]
+  "schemaDoc": "../dev-docs/tabroom-schema.md",
+  "skipTables": ["session", "server", "campus_log"]
 }

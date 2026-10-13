@@ -52,7 +52,7 @@
     "hyparquet-compressors": "^1.1.2",
     "lucide-react": "^1.55.0",
     "prismjs": "^1.30.0",
-    "qwksearch-api-client": "^1.0.161",
+    "qwksearch-api-client": "^1.0.167",
     "react-native-app-buttons": "^0.1.4",
     "react-resizable-panels": "^4.14.4",
     "research-agent-ui": "^0.1.293",

@@ -69,6 +69,10 @@ Document input arrives from `debate-card-parser`; treat it as untrusted.
 `overlay/editor/card-hover-actions.ts` (Summarize / Find flaws / Read aloud
 beside a hovered card) is a host plugin registered in `react/singleton.ts`.
 Its AI goes through `overlay/editor/card-ai-client.ts`: the user's own
-CardMirror key when set, else the app's `/api/card-ai-analysis`. It has no
+CardMirror key when set, else the app's `/api/card-ai-analysis`. Read aloud's
+model voices go through `overlay/editor/card-tts-client.ts`: the app's
+`/api/tts` (QwkSearch Kokoro/Deepgram or Cloudflare Workers AI), then
+qwksearch.com straight from the browser on a `429`, then the browser's
+`speechSynthesis`. It has no
 package dependency on `debate-search-evidence`; keep it that way. User doc:
 `debate-help-docs/content/docs/features/research-evidence/card-hover-actions.mdx`.

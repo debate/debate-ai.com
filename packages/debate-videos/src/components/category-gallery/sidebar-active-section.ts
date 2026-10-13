@@ -44,7 +44,9 @@ const SECTION_HREFS: SectionHref[] = [
   { sectionId: VIDEOS_SECTION_ID, href: "/videos" },
   { sectionId: VIDEOS_SECTION_ID, href: "/lectures" },
   ...SIDEBAR_TOOL_SECTIONS.flatMap((section) =>
-    section.tools.map((tool) => ({ sectionId: section.id, href: tool.href })),
+    section.tools.flatMap((tool) =>
+      [tool.href, ...(tool.aliases ?? [])].map((href) => ({ sectionId: section.id, href })),
+    ),
   ),
 ];
 

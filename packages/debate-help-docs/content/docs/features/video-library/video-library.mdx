@@ -204,6 +204,10 @@ the table is wider than the screen, so swipe it left and right to reach the
 columns beside the round; the first column is capped at three quarters of the
 screen so the next one always peeks in.
 
+A round's title wraps to up to three lines. When a round has no Aff or Neg
+team recorded, its title cell spans the Aff and Neg columns instead of
+leaving two empty dashes (`VideoListRow.tsx`).
+
 ### Team names and ratings
 
 In the Aff and Neg columns, a team from the **current season** that the
@@ -279,6 +283,12 @@ library** publishes the video under the title and channel YouTube reports
 the subscribed list the resync scans, so its videos arrive on the next sync.
 Subscribing is admin-only, like the YouTube channels tab, so a moderator sees
 "Only admins can subscribe to a channel" and leaves it for an admin.
+
+The **Subscribed YouTube channels** card lists those channels as a table, most
+videos first. **Videos** counts each channel's videos in the library and the
+round queue, and **Most recent video** links its newest upload with the date.
+Videos record a channel's display name rather than its handle, so a channel
+added by `@handle` may show 0 until the next resync learns its display name.
 
 The same card's **Unavailable videos** list shows what YouTube no longer
 serves: **Gone from YouTube** (deleted), **Made private**, and **Embedding

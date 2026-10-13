@@ -99,6 +99,7 @@ export const PAGE_ROUTES: AppRoute[] = [
   { pattern: "/reason-editor", load: () => import("./reason-editor/page") },
   { pattern: "/reason-editor/[slug]", load: () => import("./reason-editor/[slug]/page") },
   { pattern: "/research", load: () => import("./research/page") },
+  { pattern: "/research/team", load: () => import("./research/team/page") },
   { pattern: "/practice/rules", load: () => import("./rules/page") },
   { pattern: "/schools/[school]", load: () => import("./schools/[school]/page") },
   { pattern: "/settings", load: () => import("./settings/page") },

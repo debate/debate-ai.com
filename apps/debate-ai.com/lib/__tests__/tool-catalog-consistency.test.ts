@@ -117,12 +117,9 @@ const STATIC_APP_ROUTES = findAppPageRoutes(APP_DIR, "").filter((route) => !rout
  * preferences page (same reasoning as `/login` — configuration, not a
  * tool), and `/practice/features` itself.
  *
- * `/practice/forums` is here for the reason `/tournaments` never needed an entry: both
- * are destinations in the sidebar's tool tree and the dock's Settings menu
- * rather than tools. A forum is a place members talk to each other, not
- * something the app does for them, and listing it on the `/tools` grid — whose
- * entries each describe a capability with a docs page behind it — would claim a
- * feature guide that does not exist.
+ * `/practice/forums` only redirects now: the forums feed was merged into
+ * News & Forums, so it lands on the Forums tab of `/news`. Single threads
+ * still live under it.
  *
  * `/practice/rules` is here for that reason: it is a reference
  * page in the sidebar tree (the formats-and-rules guide) — reading material,
@@ -136,6 +133,10 @@ const STATIC_APP_ROUTES = findAppPageRoutes(APP_DIR, "").filter((route) => !rout
  * `/practice/briefings`, `/practice/strategy`, `/practice/opponents`,
  * `/practice/judges` and `/practice/prep-notes`: those five were merged into
  * the Prep Workspace, and each redirects to its tab of `/practice/prep`.
+ * Likewise `/research/cards/coverage`, `/research/cards/prep-room`,
+ * `/research/cards/reviews`, `/research/cards/inbox`,
+ * `/research/cards/contributions` and `/research/cards/brainstorm`: merged
+ * into Team Research, each redirects to its tab of `/research/team`.
  *
  * `/lectures`, `/practice/glossary`, `/practice/rankings` and
  * `/practice/statistics` are views of the video library page (the same page
@@ -168,6 +169,12 @@ const ROUTES_WITHOUT_A_CATALOG_ENTRY = new Set([
   "/practice/opponents",
   "/practice/judges",
   "/practice/prep-notes",
+  "/research/cards/coverage",
+  "/research/cards/prep-room",
+  "/research/cards/reviews",
+  "/research/cards/inbox",
+  "/research/cards/contributions",
+  "/research/cards/brainstorm",
   "/lectures",
   "/practice/glossary",
   "/practice/rankings",

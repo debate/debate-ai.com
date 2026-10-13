@@ -11,14 +11,28 @@ appears beside it:
   claim, its warrant, and the impact it supports.
 - **Find flaws** asks the AI for the weaknesses an opponent would attack, the
   same find-flaws-and-extensions analysis as the evidence search's AI panel.
-- **Read aloud** reads the card out loud with your browser's voice: the
+- **Read aloud** reads the card out loud in a natural AI voice: the
   tag, then the citation (the author and year), then the highlighted
-  text (what you would read in round), or the whole card when nothing
-  is highlighted. Click it again to stop.
+  text (what you would read in round), or the underlined text when
+  nothing is highlighted. Click it again to stop.
 
 AI answers open in a small panel next to the card, with **Copy** and **Close**
 buttons; Escape closes it too. The buttons only appear with a mouse, so they
 never get in the way on a phone or tablet.
+
+## Read aloud voices
+
+The gear under **Read aloud** opens its settings: a speed slider (2x by
+default, and it changes speed while a card is playing) and a **Voice** list.
+Kokoro voices come first and are the default; Deepgram voices and your
+browser's built-in voice are the other choices. Both settings are remembered.
+
+The AI voices come from QwkSearch (Kokoro or Deepgram), or from Cloudflare's
+Deepgram Aura voices when the site has Cloudflare AI set up. Signed out, you
+share QwkSearch's free allowance of 10 reads a day; link your QwkSearch account
+in settings to read on your own account. When an AI voice isn't available, or
+the daily allowance is used up, the card is read with your browser's voice
+instead, so Read aloud always works.
 
 ## Which AI it uses
 
@@ -33,5 +47,6 @@ summary needs you to be signed in.
 - **Routes:** `/reason-editor` and Flow's speech-doc panels (anywhere the
   CardMirror embed is mounted)
 - **Package:** `debate-editor` (`overlay/editor/card-hover-actions.ts`,
-  `overlay/editor/card-ai-client.ts`, registered in `overlay/react/singleton.ts`)
-- **API:** `/api/card-ai-analysis`
+  `overlay/editor/card-ai-client.ts`, `overlay/editor/card-tts-client.ts`,
+  registered in `overlay/react/singleton.ts`)
+- **API:** `/api/card-ai-analysis`, `/api/tts` (`apps/debate-ai.com/lib/tts/voice.ts`)

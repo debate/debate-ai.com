@@ -161,12 +161,15 @@ describe("card hover actions plugin", () => {
     view = null;
   });
 
-  function mount(runAi = vi.fn(async () => "A short summary.")) {
+  function mount(
+    runAi = vi.fn(async () => "A short summary."),
+    fetchVoice?: Parameters<typeof createCardHoverActionsPlugin>[0]["fetchVoice"],
+  ) {
     const doc = schema.node("doc", null, [card()]);
     const place = document.createElement("div");
     document.body.appendChild(place);
     view = new EditorView(place, {
-      state: EditorState.create({ doc, plugins: [createCardHoverActionsPlugin({ runAi })] }),
+      state: EditorState.create({ doc, plugins: [createCardHoverActionsPlugin({ runAi, fetchVoice })] }),
     });
     return { view, runAi };
   }
@@ -202,6 +205,36 @@ describe("card hover actions plugin", () => {
     const panel = document.querySelector<HTMLElement>(".pmd-card-ai-panel")!;
     expect(panel.hasAttribute("data-open")).toBe(true);
     expect(panel.textContent).toContain("A short summary.");
+  });
+
+  it("reads in the Kokoro voice by default and falls back to the browser's speech", async () => {
+    const speak = vi.fn();
+    vi.stubGlobal("speechSynthesis", { speak, cancel: vi.fn() });
+    vi.stubGlobal(
+      "SpeechSynthesisUtterance",
+      class {
+        rate = 1;
+        onend: (() => void) | null = null;
+        onerror: (() => void) | null = null;
+        constructor(public text: string) {}
+      },
+    );
+    const fetchVoice = vi.fn(async () => null);
+    const { view } = mount(undefined, fetchVoice);
+    hover(view.dom.querySelector(".pmd-card")!);
+    const speakBtn = bar().querySelector<HTMLButtonElement>('[data-action="speak"]')!;
+    speakBtn.click();
+    expect(fetchVoice).toHaveBeenCalledWith(
+      expect.stringContaining("Warming causes extinction"),
+      { provider: "kokoro", voice: "af_heart" },
+      expect.any(AbortSignal),
+    );
+    expect(speakBtn.getAttribute("aria-pressed")).toBe("true");
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(speak).toHaveBeenCalledTimes(1);
+    expect(document.querySelector<HTMLSelectElement>("#pmd-read-voice")?.value).toBe("kokoro:af_heart");
+    vi.unstubAllGlobals();
   });
 
   it("removes its elements when the view is destroyed", () => {

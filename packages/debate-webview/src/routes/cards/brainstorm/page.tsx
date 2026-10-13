@@ -1,14 +1,6 @@
-import { Suspense } from "react"
-import { BrainstormBoardWithIdentity } from "../../../components/research/BrainstormBoardWithIdentity"
-import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHeader"
+import { TeamResearchPage } from "../../research/team/page"
 
+/** Old `/research/cards/brainstorm` address: now Team Research's "brainstorm" tab. */
 export default function CardsBrainstormPage() {
-  return (
-    <ToolPage>
-      <ToolPageHeader href="/research/cards/brainstorm" backHref="/research/cards" backLabel="shared cards" guide="research-collaboration" />
-      <Suspense>
-        <BrainstormBoardWithIdentity />
-      </Suspense>
-    </ToolPage>
-  )
+  return <TeamResearchPage initialSection="brainstorm" />
 }

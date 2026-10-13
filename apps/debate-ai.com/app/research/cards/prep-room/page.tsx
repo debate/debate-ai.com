@@ -1,8 +1,16 @@
 import type { Metadata } from "next"
+import { permanentRedirect } from "next/navigation"
+
+/**
+ * The old address of Collaboration Prep Room, merged into Team Research at
+ * `/research/team`. It permanently redirects to its "prep-room" tab.
+ */
 
 export const metadata: Metadata = {
   title: "Collaboration Prep Room",
-  description: "A topic's shared prep space: evidence, draft blocks, and routed research tasks",
+  alternates: { canonical: "/research/team?section=prep-room" },
 }
 
-export { default } from "@debate/webview/routes/cards/prep-room/page"
+export default function LegacyPrepRoomPage() {
+  permanentRedirect("/research/team?section=prep-room")
+}

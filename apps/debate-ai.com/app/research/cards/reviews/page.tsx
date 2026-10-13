@@ -1,8 +1,16 @@
 import type { Metadata } from "next"
+import { permanentRedirect } from "next/navigation"
+
+/**
+ * The old address of Review Queue, merged into Team Research at
+ * `/research/team`. It permanently redirects to its "reviews" tab.
+ */
 
 export const metadata: Metadata = {
   title: "Review Queue",
-  description: "Move a submitted card through peer review — comment, request changes, approve, and publish",
+  alternates: { canonical: "/research/team?section=reviews" },
 }
 
-export { default } from "@debate/webview/routes/cards/reviews/page"
+export default function LegacyReviewsPage() {
+  permanentRedirect("/research/team?section=reviews")
+}

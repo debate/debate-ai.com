@@ -44,6 +44,7 @@ import { usePathname } from "next/navigation";
 import { TreeItem } from "./TreeItem";
 import {
   SIDEBAR_TOOL_SECTIONS,
+  type SidebarToolLink,
   type SidebarToolSection,
 } from "./sidebar-tool-sections";
 import { sidebarSectionForPath } from "./sidebar-active-section";
@@ -68,9 +69,19 @@ import {
 const TEAM_RANKINGS_HREF = "/coaching/rankings";
 const TEAM_RANKINGS_PROFILE_PREFIXES = ["/@", "/teams", "/schools"];
 
-function isToolActive(href: string, pathname: string | null): boolean {
+function isToolActive(tool: SidebarToolLink, pathname: string | null): boolean {
   if (pathname == null) return false;
+  const { href } = tool;
   if (pathname === href) return true;
+  // A row's aliases (see `SidebarToolLink.aliases`) count with every page
+  // below them, e.g. a forum thread under News & Forums.
+  if (
+    tool.aliases?.some(
+      (alias) => pathname === alias || pathname.startsWith(`${alias}/`),
+    )
+  ) {
+    return true;
+  }
   if (href !== TEAM_RANKINGS_HREF) return false;
   return TEAM_RANKINGS_PROFILE_PREFIXES.some(
     (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
@@ -176,7 +187,7 @@ export function ToolNavTree({
               href={tool.href}
               title={tool.title}
               icon={tool.icon}
-              isActive={isToolActive(tool.href, pathname)}
+              isActive={isToolActive(tool, pathname)}
             />
           ))}
         </TreeItem>

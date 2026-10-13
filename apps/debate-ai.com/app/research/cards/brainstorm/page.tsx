@@ -1,8 +1,16 @@
 import type { Metadata } from "next"
+import { permanentRedirect } from "next/navigation"
+
+/**
+ * The old address of Team Brainstorm Assist, merged into Team Research at
+ * `/research/team`. It permanently redirects to its "brainstorm" tab.
+ */
 
 export const metadata: Metadata = {
   title: "Team Brainstorm Assist",
-  description: "Submit and upvote squad ideas for an argument block, grouped into boards by category",
+  alternates: { canonical: "/research/team?section=brainstorm" },
 }
 
-export { default } from "@debate/webview/routes/cards/brainstorm/page"
+export default function LegacyBrainstormPage() {
+  permanentRedirect("/research/team?section=brainstorm")
+}

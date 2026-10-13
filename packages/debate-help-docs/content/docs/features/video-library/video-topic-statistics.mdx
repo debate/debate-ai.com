@@ -19,7 +19,9 @@ Three sections, stacked, with Debate Topics by Year at the top:
   (`components/timeline/Timeline.tsx`, adapted from the shadcn-space
   "timeline-02" block): a scrollable rail of every season, newest first,
   beside an animated pane for the selected year. The pane shows that year's
-  Policy, College (NDT), LD and PF resolutions, each behind a style badge,
+  Policy, College (NDT), LD and PF resolutions, each behind a style badge
+  (LD and PF list each month's resolution with its short start month, such
+  as "Sep" or "Nov", under the badge rather than in the resolution text),
   and — once `/api/youtube-stats` resolves — that year's video count, total
   views and average views from its `byYear` rows. Click a year, use the
   arrow / Home / End keys on the rail, or the up/down buttons beside it to

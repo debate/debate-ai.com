@@ -148,7 +148,7 @@ export const COACH_SECTIONS: readonly HubSection<SectionId>[] = [
       panel("Practice vs AI", "/practice/versus-ai"),
       panel("Word-Count Speeches", "/word-count"),
       panel("AI Judge Decision", "/practice/judge-decision"),
-      panel("Latest News", "/practice/forums"),
+      panel("News & Forums", "/news"),
     ],
   },
 ]
@@ -276,7 +276,7 @@ export function CoachHub() {
             <HubPanelAnchor anchor={ANCHORS["Coach Materials"]}>
               <CoachMaterialsPanel />
             </HubPanelAnchor>
-            <HubPanelAnchor anchor={ANCHORS["Latest News"]}>
+            <HubPanelAnchor anchor={ANCHORS["News & Forums"]}>
               <NewsStreamPanel extraItems={coachingSessionNews()} />
             </HubPanelAnchor>
           </>

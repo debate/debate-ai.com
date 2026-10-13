@@ -69,6 +69,7 @@ type ReadModeModule = typeof import('../editor/read-mode-plugin.js');
 type SettingsModule = typeof import('../editor/settings.js');
 type CardActionsModule = typeof import('../editor/card-hover-actions.js');
 type CardAiModule = typeof import('../editor/card-ai-client.js');
+type CardTtsModule = typeof import('../editor/card-tts-client.js');
 let engineModule: EngineModule | null = null;
 let bridgeModule: BridgeModule | null = null;
 // Loaded with the engine (which imports both anyway), not at module scope:
@@ -80,6 +81,7 @@ let settingsModule: SettingsModule | null = null;
 // with the engine so pages that never mount an editor don't carry them.
 let cardActionsModule: CardActionsModule | null = null;
 let cardAiModule: CardAiModule | null = null;
+let cardTtsModule: CardTtsModule | null = null;
 
 /** Synchronous access to the engine/bridge modules, once loaded (always
  *  true by the time a `CardMirrorEditor` imperative-handle method could
@@ -157,6 +159,7 @@ async function boot(): Promise<void> {
   settingsModule = await import('../editor/settings.js');
   cardActionsModule = await import('../editor/card-hover-actions.js');
   cardAiModule = await import('../editor/card-ai-client.js');
+  cardTtsModule = await import('../editor/card-tts-client.js');
   await waitForView(engineModule.getActiveView);
   installUnloadFlush();
 }
@@ -493,7 +496,13 @@ function installOnChangePlugin(view: EditorView): EditorView {
   // plugin-stack rebuild.
   const hostPlugins = [plugin];
   if (cardActionsModule && cardAiModule) {
-    hostPlugins.push(cardActionsModule.createCardHoverActionsPlugin({ runAi: cardAiModule.runCardAi }));
+    const tts = cardTtsModule;
+    hostPlugins.push(
+      cardActionsModule.createCardHoverActionsPlugin({
+        runAi: cardAiModule.runCardAi,
+        fetchVoice: tts ? (text, voice, signal) => tts.fetchModelSpeech(text, voice, { signal }) : undefined,
+      }),
+    );
   }
   setHostPluginsProvider(() => hostPlugins);
   view.updateState(view.state.reconfigure({ plugins: [...view.state.plugins, ...hostPlugins] }));

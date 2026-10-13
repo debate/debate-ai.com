@@ -104,8 +104,8 @@ export function ForumThreadView({ threadId }: ForumThreadViewProps) {
           >
             Try again
           </button>
-          <Link href="/practice/forums" className="text-muted-foreground underline">
-            Back to Latest News
+          <Link href="/news?section=forums" className="text-muted-foreground underline">
+            Back to Forums
           </Link>
         </div>
       </div>
@@ -115,12 +115,12 @@ export function ForumThreadView({ threadId }: ForumThreadViewProps) {
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
       <Link
-        href="/practice/forums"
+        href="/news?section=forums"
         className="inline-flex h-9 w-fit items-center gap-1.5 self-start rounded-md border border-border bg-background px-3 text-sm font-medium text-foreground transition-colors hover:bg-accent"
       >
         <ArrowLeft className="h-4 w-4" aria-hidden="true" />
         <span>
-          Back <span className="hidden text-muted-foreground sm:inline">to Latest News</span>
+          Back <span className="hidden text-muted-foreground sm:inline">to Forums</span>
         </span>
       </Link>
 

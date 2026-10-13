@@ -19,7 +19,23 @@
  *    Tabroom's data was never written under them;
  *  - tables listed in `skipTables` are left out (e.g. `session`, which would
  *    collide with better-auth's table in the host app's database).
+ *
+ * `applySchemaRules` then corrects what upstream's types get wrong (see
+ * `schema-rules.mjs`): it drops indexes another index already covers, widens
+ * types that lose data, adds CHECK constraints to flag columns, and turns a
+ * reference column's `DEFAULT 0` "none" sentinel into a nullable column.
  */
+
+import {
+  CHECKS,
+  EXTRA_INDEXES,
+  MONEY_COLUMNS,
+  NOT_BOOLEAN,
+  NOT_REFERENCES,
+  REFERENCE_COLUMNS,
+  SEED_NULL_COLUMNS,
+  TYPE_OVERRIDES,
+} from "./schema-rules.mjs";
 
 const INTEGER_TYPES = new Set(["tinyint", "smallint", "mediumint", "int", "integer", "bigint", "bit", "year"]);
 const REAL_TYPES = new Set(["float", "double", "real"]);
@@ -131,6 +147,7 @@ export function tablesToSqlite(tables, { skipTables = [] } = {}) {
       let def = `  ${q(col.name)} ${col.type}`;
       if (col.notNull) def += " NOT NULL";
       if (col.default !== null && !(col.default === "NULL" && col.notNull)) def += ` DEFAULT ${col.default}`;
+      if (col.check) def += ` CHECK (${q(col.name)} ${col.check})`;
       return def;
     });
     if (table.primaryKey.length && !singleAutoPk) {
@@ -145,6 +162,115 @@ export function tablesToSqlite(tables, { skipTables = [] } = {}) {
           .join(", ")});`,
       );
     }
+  }
+  return statements;
+}
+
+/** True for a MySQL boolean (`tinyint(1)`) column. */
+const isTinyintBool = (col) => col.mysqlType === "tinyint" && col.length === "1";
+
+/**
+ * The table a column's values are ids of, or null. A reference is an INTEGER
+ * column (never a `tinyint(1)` flag) named after a table, or listed in
+ * `REFERENCE_COLUMNS`, unless `NOT_REFERENCES` says otherwise.
+ * @param {string} table
+ * @param {{ name: string, type: string, mysqlType: string, length: string|null }} col
+ * @param {Set<string>} tableNames
+ */
+export function referenceTarget(table, col, tableNames) {
+  if (col.type !== "INTEGER" || isTinyintBool(col)) return null;
+  if (NOT_REFERENCES.has(`${table}.${col.name}`)) return null;
+  if (REFERENCE_COLUMNS[col.name]) return REFERENCE_COLUMNS[col.name];
+  return tableNames.has(col.name) ? col.name : null;
+}
+
+/**
+ * Index names on `table` that another index (or the primary key) already
+ * covers: same columns, or a leading prefix of a longer index. A unique index
+ * is only dropped for another unique index (or the primary key) over the same
+ * columns, in any order; of two equal indexes the unique one, then the one
+ * named after its columns, then the first declared, is kept.
+ */
+export function redundantIndexes(table) {
+  const pk = table.primaryKey.length ? [{ name: "PRIMARY", unique: true, columns: table.primaryKey, pk: true }] : [];
+  const all = [...pk, ...table.indexes];
+  const rank = (ix) => [ix.pk ? 0 : 1, ix.unique ? 0 : 1, ix.name === ix.columns.join("_") ? 0 : 1, all.indexOf(ix)];
+  const better = (a, b) => {
+    const [ra, rb] = [rank(a), rank(b)];
+    for (let i = 0; i < ra.length; i++) if (ra[i] !== rb[i]) return ra[i] < rb[i];
+    return false;
+  };
+  const isPrefix = (a, b) => a.length <= b.length && a.every((c, i) => b[i] === c);
+  const sameSet = (a, b) => a.length === b.length && a.every((c) => b.includes(c));
+  const dropped = new Set();
+  for (const ix of table.indexes) {
+    for (const other of all) {
+      if (other === ix || dropped.has(other.name)) continue;
+      const same = isPrefix(ix.columns, other.columns) && ix.columns.length === other.columns.length;
+      const covered = ix.unique
+        ? other.unique && sameSet(ix.columns, other.columns) && better(other, ix)
+        : (same && better(other, ix)) || (isPrefix(ix.columns, other.columns) && !same);
+      if (covered) {
+        dropped.add(ix.name);
+        break;
+      }
+    }
+  }
+  return dropped;
+}
+
+/**
+ * Applies `schema-rules.mjs` to parsed tables. Returns new table objects whose
+ * columns carry `check`, `reference` and `sentinel` (a reference whose
+ * `DEFAULT 0` became nullable), and a `droppedIndexes` list per table.
+ * @param {ReturnType<typeof parseMysqlTables>} tables
+ */
+export function applySchemaRules(tables) {
+  const tableNames = new Set(tables.map((t) => t.name));
+  return tables.map((table) => {
+    const columns = table.columns.map((source) => {
+      const key = `${table.name}.${source.name}`;
+      const col = { ...source, check: null, reference: referenceTarget(table.name, source, tableNames), sentinel: false };
+      if (TYPE_OVERRIDES[key]) col.type = TYPE_OVERRIDES[key];
+      if (MONEY_COLUMNS.has(key)) col.type = "NUMERIC";
+      if (CHECKS[key]) col.check = CHECKS[key];
+      else if (isTinyintBool(source) && !NOT_BOOLEAN.has(key)) col.check = "IN (0, 1)";
+      if (col.reference && col.default === "0" && !table.primaryKey.includes(col.name)) {
+        col.sentinel = true;
+        col.notNull = false;
+        col.default = "NULL";
+      }
+      return col;
+    });
+    const droppedIndexes = redundantIndexes(table);
+    const indexes = table.indexes.filter((ix) => !droppedIndexes.has(ix.name));
+    for (const cols of EXTRA_INDEXES[table.name] ?? []) {
+      if (indexes.some((ix) => ix.columns.join() === cols.join())) continue;
+      indexes.push({ name: cols.join("_"), unique: false, columns: cols });
+    }
+    return { ...table, columns, indexes, droppedIndexes: [...droppedIndexes] };
+  });
+}
+
+/**
+ * Statements that bring sample rows in line with `applySchemaRules`: a
+ * reference column's 0 "none" becomes NULL, and password columns are blanked.
+ * @param {ReturnType<typeof applySchemaRules>} tables
+ * @param {{ skipTables?: string[] }} [options]
+ */
+export function seedCleanupStatements(tables, { skipTables = [] } = {}) {
+  const skip = new Set(skipTables);
+  const statements = [];
+  for (const table of tables) {
+    if (skip.has(table.name)) continue;
+    for (const col of table.columns) {
+      if (col.sentinel) statements.push(`UPDATE ${q(table.name)} SET ${q(col.name)} = NULL WHERE ${q(col.name)} = 0;`);
+    }
+  }
+  const present = new Set(tables.map((t) => t.name));
+  for (const key of SEED_NULL_COLUMNS) {
+    const [table, column] = key.split(".");
+    if (present.has(table) && !skip.has(table)) statements.push(`UPDATE ${q(table)} SET ${q(column)} = NULL WHERE ${q(column)} IS NOT NULL;`);
   }
   return statements;
 }
