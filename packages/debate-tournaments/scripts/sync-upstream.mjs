@@ -1,24 +1,24 @@
 #!/usr/bin/env node
 /**
- * Pulls upstream Tabroom (github.com/debate/debate-tournament-tabroom) from the
- * submodule at `vendor/tabroom-upstream/` into `vendor/tabroom/`, with this
+ * Pulls upstream Tabroom (github.com/debate/debate-tournaments) from the
+ * submodule at `packages/debate-tournaments-tabroom/` into `vendor/tabroom-build/`, with this
  * package's modifications re-applied on top.
  *
  *   node scripts/sync-upstream.mjs              # re-vendor the pinned commit
  *   node scripts/sync-upstream.mjs --latest     # move the pin to upstream's branch head
  *   node scripts/sync-upstream.mjs --ref <sha>  # move the pin to a specific commit
- *   node scripts/sync-upstream.mjs --source ../debate-tournament-tabroom
+ *   node scripts/sync-upstream.mjs --source ../some-local-clone   
  *                                               # use a local clone instead of GitHub
  *   node scripts/sync-upstream.mjs --save-patch # record edits made in .upstream/ as a patch
  *   node scripts/sync-upstream.mjs --seed       # also write .upstream-seed.sql (sample data)
  *
  * Steps:
- *  1. Update the submodule at `vendor/tabroom-upstream/` to the pinned commit from `upstream.json`.
+ *  1. Update the submodule at `packages/debate-tournaments-tabroom/` to the pinned commit from `upstream.json`.
  *  2. Apply `patches/*.patch` with `git apply --3way` — small line edits to
  *     upstream files. If upstream changed the same lines, the conflict is left
  *     in the submodule to resolve; then run `--save-patch` and sync again.
  *  3. Walk the import graph from `entries` and copy exactly the reachable
- *     files into `vendor/tabroom/`, rewriting `express` and `@tabroom/types`
+ *     files into `vendor/tabroom-build/`, rewriting `express` and `@tabroom/types`
  *     imports to their in-package targets and marking `.ts` files
  *     `// @ts-nocheck` (upstream is type-checked upstream, not here).
  *  4. Layer `overlays/` on top — whole-file replacements for the modules that
@@ -26,7 +26,7 @@
  *  5. Regenerate the D1 migration and the boolean/date column lists from
  *     upstream's schema dump (`scripts/lib/mysql-to-sqlite.mjs`).
  *
- * `vendor/tabroom/` is generated — edit `patches/` or `overlays/`
+ * `vendor/tabroom-build/` is generated — edit `patches/` or `overlays/`
  * instead, so the change survives the next upstream pull.
  */
 
@@ -50,7 +50,7 @@ import { upgradeStatements } from "./lib/schema-upgrade.mjs";
 const PKG = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const CONFIG_PATH = join(PKG, "upstream.json");
 const config = JSON.parse(readFileSync(CONFIG_PATH, "utf8"));
-const UPSTREAM = join(PKG, "vendor/tabroom-upstream");
+const UPSTREAM = join(PKG, "../debate-tournaments-tabroom");
 const VENDOR = join(PKG, config.vendorDir);
 const PATCHES = join(PKG, "patches");
 const OVERLAYS = join(PKG, "overlays");
@@ -107,7 +107,7 @@ function checkoutAndPatch(commit) {
 }
 
 function savePatch() {
-  if (!existsSync(join(UPSTREAM, ".git"))) throw new Error("No vendor/tabroom-upstream/ submodule to save a patch from — run a sync first.");
+  if (!existsSync(join(UPSTREAM, ".git"))) throw new Error("No packages/debate-tournaments-tabroom/ submodule to save a patch from — run a sync first.");
   git("add", "-A");
   const diff = gitRaw("diff", "--cached", "--binary", config.commit);
   git("reset", "--quiet");

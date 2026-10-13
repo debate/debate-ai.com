@@ -3,7 +3,7 @@
 **Tournaments on debate-ai.com: find one, read its invitation, follow its
 pairings and results, read judge paradigms, and host your own.**
 
-This package is the [Tabroom](https://github.com/debate/debate-tournament-tabroom)
+This package is the [Tabroom](https://github.com/debate/debate-tournaments)
 code that real speech and debate tournaments run on (the speechanddebate/Tabroom
 v4 rewrite), brought into this monorepo and adapted to run on
 **Cloudflare Workers + D1**. It gives the app three pieces: an API server, the
@@ -236,12 +236,13 @@ node scripts/sync-upstream.mjs --seed && bun run test   # + every route on upstr
 
 What `scripts/sync-upstream.mjs` does:
 
-1. `git clone`s upstream into `.upstream/` (git-ignored) and checks out the
-   commit pinned in `upstream.json` (or `--latest` / `--ref <sha>`; `--source
-   <path>` uses a local clone).
+1. Fetches upstream into the `packages/debate-tournaments-tabroom` git
+   submodule (run `git submodule update --init packages/debate-tournaments-tabroom`
+   first) and checks out the commit pinned in `upstream.json` (or `--latest` /
+   `--ref <sha>`; `--source <path>` fetches from a local clone).
 2. Applies `patches/*.patch` with `git apply --3way`: small line fixes to
    upstream files. If upstream touched the same lines, the conflict is left in
-   `.upstream/`; resolve it and run `--save-patch`, then sync again.
+   the submodule; resolve it and run `--save-patch`, then sync again.
 3. Layers `overlays/`: whole-file replacements for the modules that cannot
    run on Workers.
 4. Walks the import graph from `upstream.json`'s `entries` and copies exactly
@@ -261,11 +262,19 @@ What `scripts/sync-upstream.mjs` does:
    (`scripts/lib/schema-doc.mjs`), and `--seed` nulls the sentinels,
    credentials and personal contact details in the sample data.
 
-**`vendor/tabroom/` vs `vendor/tabroom-build/`.** `vendor/tabroom/` is a git
-submodule of upstream, which `sync-upstream.mjs` patches and overlays in place.
-Upstream's files still import `express` and `@tabroom/types` directly, so until
-the submodule builds on Workers the app imports `vendor/tabroom-build/`: the
-last generated copy, with those imports rewritten to the in-package shims.
+**The submodule vs `vendor/tabroom-build/`.** `packages/debate-tournaments-tabroom`
+is a git submodule of upstream ([debate/debate-tournaments](https://github.com/debate/debate-tournaments)),
+which `sync-upstream.mjs` patches in place. Upstream's files import `express` and
+`@tabroom/types` and pull in Node-only modules, so the app imports
+`vendor/tabroom-build/`: the generated copy of just the reachable files, with
+those imports rewritten to the in-package shims. Commit both the submodule pin
+and `vendor/tabroom-build/` after a sync.
+
+**Tournament admin.** Besides the public `/rest` and `/pages` trees, the handler
+mounts upstream's tournament-admin routers at
+`/tab/tourns/:tournId/{categories,schools,sites,timeslots}` (GET only, owners and
+admins of that tournament only, via upstream's `requireAccess`). The admin page
+reads timeslots and judge categories from there.
 
 ### Schema changes and upgrades
 

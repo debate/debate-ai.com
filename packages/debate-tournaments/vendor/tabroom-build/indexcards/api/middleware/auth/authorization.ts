@@ -1,29 +1,35 @@
 // @ts-nocheck
-import { buildTarget, type Target } from './buildTarget.js';
-import { Unauthorized, Forbidden, NotImplemented } from '../../helpers/problem.js';
+import { buildTarget, resourceKey, type Target } from './buildTarget.js';
+import { Unauthorized, Forbidden } from '../../helpers/problem.js';
 import type { Request, Response, NextFunction } from '../../_shims/express.js';
-import type { AuthError, Perm } from './types.js';
-//requires login - use before any route that needs authentication
-export function requireLogin(req: Request, res: Response, next: NextFunction) {
-	if (!req.actor || req.actor.type === 'anonymous') {
-		return Unauthorized(req, res,'User not Authenticated');
-	}
-	next();
-}
-// used for ext routes
-export async function requireAreaAccess(req: Request, res: Response, next: NextFunction) {
-	if (!req.actor) {
-		return Unauthorized(req, res,'User not Authenticated');
-	}
+import type { Actor, AuthError, Perm, ResourceId, SessionPerson } from './types.js';
+import type { Database } from '../../data/database.js';
 
-	if(!req.actor.Person){
-		return NotImplemented(req,res,'Area access not implemented for non-person actors');
+/** middleware that rejects anonymous requests. the OpenAPI spec marks routes behind one of these as requiring auth */
+export const authMiddleware = new WeakSet<Function>();
+/**
+ * the person making the request. throws a 401 (handled by errorHandler) when there is none,
+ * so handlers can use the result without null checks
+ */
+export function getPerson(req: Pick<Request, 'person'>): SessionPerson {
+	if (!req.person) {
+		const err = new Error('User not Authenticated') as AuthError;
+		err.status = 401;
+		err.code = 'AUTH_UNAUTHENTICATED';
+		throw err;
 	}
-	if(!(await req.actor.can(`api_auth_${req.params.area}`, 'authorized', req.actor.Person.id))) {
-		return Forbidden(req, res,`You do not have permission to access area: ${req.params.area}`);
+	return req.person;
+}
+
+//requires a logged in person - use before any route that acts as or on behalf of a person
+export function requirePerson(req: Request, res: Response, next: NextFunction) {
+	if (!req.person || req.actor?.type !== 'person') {
+		return Unauthorized(req, res,'User not Authenticated');
 	}
 	next();
 }
+authMiddleware.add(requirePerson);
+
 // should be rolled into the RBAC scheme at some point
 export function requireSiteAdmin(req: Request, res: Response, next: NextFunction) {
 	if (!req.actor) {
@@ -34,42 +40,57 @@ export function requireSiteAdmin(req: Request, res: Response, next: NextFunction
 	}
 	next();
 }
+authMiddleware.add(requireSiteAdmin);
 
-export function requireAccess(resource: string, action: string) {
-	return async (req: Request, res: Response, next: NextFunction) => {
-		if (!req.actor) {
+/**
+ * route middleware: 403 unless the actor can perform action on resource.
+ * the resource id comes from the :<resource>Id path param, or from resolveId for
+ * resources identified some other way (e.g. a ballot by its judge and panel)
+ */
+export function requireAccess(resource: string, action: string, resolveId?: (req: Request) => ResourceId) {
+	const middleware = async (req: Request, res: Response, next: NextFunction) => {
+		// anonymous actors can't be granted anything, so the answer is "log in", not "forbidden"
+		if (!req.actor || req.actor.type === 'anonymous') {
 			return Unauthorized(req, res,'User not Authenticated');
 		}
-		const resourceId = Number(req.params[resource + 'Id']);
+		const resourceId = resolveId ? resolveId(req) : Number(req.params[resource + 'Id']);
 		try{
 			await req.actor.assert(resource, action, resourceId);
 			next();
 		}
 		catch(err: unknown){
 			if (err instanceof Error && (err as AuthError).code === 'AUTH_FORBIDDEN'){
-				return Forbidden(req, res,`You do not have permission to ${action} on ${resource}: ${resourceId}`);
+				return Forbidden(req, res,`You do not have permission to ${action} on ${resource}: ${formatResourceId(resourceId)}`);
 			}
 			return next(err);
 		}
 	};
+	authMiddleware.add(middleware);
+	return middleware;
 }
-/** create and attach the actor to the request */
-export function createActor(req: Request) {
+
+function formatResourceId(resourceId: ResourceId) {
+	if (typeof resourceId === 'number') return String(resourceId);
+	return Object.entries(resourceId).map(([key, id]) => `${key} ${id}`).join(', ');
+}
+
+/**
+ * create an actor for the given person, or an anonymous actor if there is none.
+ * the actor holds its own perms, which auth context loaders add with grant()
+ */
+export function createActor(db: Database, person?: SessionPerson | null): Actor {
 	//if the request is scoped to a specific person
-	if(req.session?.Person){
-		const auth = createAuthContext(req);
+	if(person){
 		return {
-			id: req.session?.Person?.id,
-			Person: req.session?.Person,
-			type: 'person' as const,
-			can: auth.can,
-			assert: auth.assert,
-			allowedIds: auth.allowedIds,
+			id: person.id,
+			Person: person,
+			type: 'person',
+			...createAuthContext(db, person),
 		};
 	}
 	// unauthenticated
 	return {
-		type: 'anonymous' as const,
+		type: 'anonymous',
 		can: async () => false,
 		assert: async () => {
 			const err = new Error('Forbidden') as AuthError;
@@ -78,34 +99,44 @@ export function createActor(req: Request) {
 			throw err;
 		},
 		allowedIds: () => ({ all: false, ids: [] }),
-
+		grant: () => {},
 	};
 }
 // this is a misnomer, I should rename it RT
-function createAuthContext(req: Request) {
-	// Per-request cache
+function createAuthContext(db: Database, person: SessionPerson) {
+	// Per-actor cache
 	const targetCache = new Map();
 	const permCache = new Map();
+	const perms: Perm[] = [];
 
-	async function can(resource: string, action: string, resourceId: number) {
+	function grant(newPerms: Perm[]) {
+		perms.push(...newPerms);
+		//cached decisions were made without these perms
+		permCache.clear();
+	}
+
+	async function can(resource: string, action: string, resourceId: ResourceId) {
 		if (!resource || !action) {
 			throw new Error('Invalid auth call');
 		}
 
-		if(req.actor?.Person?.site_admin){
+		if(person.site_admin){
 			return true;
 		}
 
-		const key = `${resource}:${resourceId}`;
+		// JS callers pass path params straight through, e.g. '12'
+		if (typeof resourceId === 'string') resourceId = Number(resourceId);
+
+		const key = resourceKey(resource, resourceId);
 
 		// Build target once per request
 		let target = targetCache.get(key);
 
 		if (!target) {
-			target = await buildTarget(resource, resourceId, targetCache);
+			target = await buildTarget(db, resource, resourceId, targetCache);
 			targetCache.set(key, target);
 		}
-		const permKey = `${resource}:${action}:${resourceId}`;
+		const permKey = `${key}:${action}`;
 
 		if (permCache.has(permKey)) {
 			return permCache.get(permKey);
@@ -115,7 +146,7 @@ function createAuthContext(req: Request) {
 			resource,
 			action,
 			target,
-			req.auth?.perms ?? [],
+			perms,
 		);
 
 		permCache.set(permKey, result);
@@ -123,7 +154,7 @@ function createAuthContext(req: Request) {
 		return result;
 	}
 
-	async function assert(resource: string, action: string, resourceId: number) {
+	async function assert(resource: string, action: string, resourceId: ResourceId) {
 		const ok = await can(resource, action, resourceId);
 
 		if (!ok) {
@@ -140,15 +171,8 @@ function createAuthContext(req: Request) {
 		if (!resource || !action) {
 			throw new Error('Invalid auth call');
 		}
-		if (!req.actor?.Person) {
-			return { all: false, ids: [] };
-		}
-		if (req.actor.Person?.site_admin) {
+		if (person.site_admin) {
 			return { all: true, ids: [] };
-		}
-		const perms = req.auth?.perms;
-		if (!perms || !Array.isArray(perms)) {
-			return { all: false, ids: [] };
 		}
 
 		return getAllowedResourceIds(resource, action, perms, opts);
@@ -158,6 +182,7 @@ function createAuthContext(req: Request) {
 		can,
 		assert,
 		allowedIds,
+		grant,
 	};
 }
 
@@ -213,6 +238,15 @@ const ROLES: Record<string, RoleDef> = {
 			},
 		],
 	},
+	//the person a record belongs to (a judge, student, etc). only applies within the scope it's granted on
+	self: {
+		description: 'The person a record belongs to',
+		permissions: [
+			{
+				actions: ['judge/read', 'ballot/*'],
+			},
+		],
+	},
 	//admin of the resource, used for chapters
 	chapterAdmin: {
 		description: 'resource administrator - manage a chapter and its resources',
@@ -241,18 +275,23 @@ const ROLES: Record<string, RoleDef> = {
  */
 const CHILDREN: Record<string, string[]> = {
 	tourn: ['category', 'event', 'timeslot'],   // Tourn has these direct children
-	category: ['jpool'],            // Category has jpools as children
+	category: ['jpool', 'judge'],   // Category has jpools and judges as children
 	event: ['round'],               // Event has these direct children
+	round: ['panel'],
+	judge: ['ballot'],              // a ballot has two parents: its judge and its panel
+	panel: ['ballot'],
 };
 
 /**
  * Action hierarchy - higher actions grant lower actions
- * read > check
+ * write > read > check
  *
  * Example: If a user has 'read' permission, they can also perform 'check' actions.
+ * Note actionMatches only looks one level down: 'write' grants 'read' but not 'check'.
  */
 const ACTION_HIERARCHY: Record<string, string[]> = {
 	read: ['check'],
+	write: ['read'],
 };
 
 /**

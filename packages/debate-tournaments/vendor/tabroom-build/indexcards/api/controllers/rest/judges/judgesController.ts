@@ -1,16 +1,19 @@
 // @ts-nocheck
-import judgeRepo from '../../repos/judgeRepo.js';
-import chapterJudgeRepo from '../../repos/chapterJudgeRepo.js';
-import { db } from '../../data/database.js';
+import judgeRepo from '../../../repos/judgeRepo.js';
+import chapterJudgeRepo from '../../../repos/chapterJudgeRepo.js';
+import { db } from '../../../data/database.js';
 
-import type { Request, Response } from '../../_shims/express.js';
+import type { Response } from '../../../_shims/express.js';
+import type { ValidatedRequest } from '../../../middleware/validation.js';
+import { getPerson } from '../../../middleware/auth/authorization.js';
 
-async function unlinkedSearch(req: Request, res: Response) {
-	let { first, last, limit, offset } = req.valid.query;
+async function unlinkedSearch(req: ValidatedRequest, res: Response) {
+	const person = getPerson(req);
+	let { first, last, limit, offset } = req.query;
 
 	if (!first || !last) {
-		first = req.actor.Person?.first;
-		last = req.actor.Person?.last;
+		first = person.first;
+		last = person.last;
 	}
 
 	const [unlinkedJudges, unlinkedChapterJudges] = await Promise.all([

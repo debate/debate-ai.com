@@ -1,7 +1,7 @@
 // @ts-nocheck
-	import z from 'zod';
+	import { z } from 'zod';
 	import type { ZodOpenApiSchemaObject } from 'zod-openapi';
-	import * as utils from './utils.js';
+	import * as utils from '../utils.js';
 	export const BallotSchema = z.object({
 		id: utils.id,
 		side: z.boolean(),

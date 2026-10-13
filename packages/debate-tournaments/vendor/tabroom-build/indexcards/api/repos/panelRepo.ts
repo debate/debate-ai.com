@@ -1,6 +1,5 @@
 // @ts-nocheck
-import { saveSettings, selectSettings } from './utils/settings.js';
-import type { Settings } from './utils/settings.js';
+import { saveSettings, selectSettings, withTransaction, type Settings } from './utils/index.js';
 
 import type { Database } from '../data/database.js';
 import type { Insertable, Updateable } from 'kysely';
@@ -29,13 +28,119 @@ async function getPanel(db: Database, id: number, opts: queryOpts = {}){
 	.executeTakeFirst();
 }
 
+/**
+ * Returns every panel where this panel's two entries met, this one included, with each
+ * entry's side and the round number, bye and forfeit flags, one row per ballot.
+ * Empty unless the panel has exactly two entries. */
+async function getMeetings(db: Database, id: number) {
+	const current = await db.selectFrom('ballot')
+		.select('ballot.entry')
+		.where('ballot.panel', '=', id)
+		.distinct()
+		.execute();
+
+	const entries = current.map(row => row.entry).filter(entry => entry !== null);
+	if (entries.length !== 2) return [];
+
+	const rows = await db.selectFrom('ballot')
+		.innerJoin('panel', 'panel.id', 'ballot.panel')
+		.innerJoin('round', 'round.id', 'panel.round')
+		.select([
+			'panel.id as panel',
+			'round.name as round',
+			'panel.bye as panelBye',
+			'ballot.entry',
+			'ballot.side',
+			'ballot.bye',
+			'ballot.forfeit',
+		])
+		.where('ballot.entry', 'in', entries)
+		.execute();
+
+	// Only panels where both entries were there
+	const entriesByPanel = new Map<number, Set<number | null>>();
+	for (const row of rows) {
+		entriesByPanel.set(row.panel, (entriesByPanel.get(row.panel) ?? new Set()).add(row.entry));
+	}
+
+	return rows.filter(row => entriesByPanel.get(row.panel)?.size === 2);
+}
+
+/**
+ * Returns pairs of this panel's entries and the other entries they're doubled with: entries
+ * sharing a student that have a ballot in a round whose timeslot overlaps this one, at any
+ * tourn (round_doubled.mas). One row per pair. */
+async function getDoubledEntries(db: Database, id: number) {
+	const timeslot = await db.selectFrom('panel')
+		.innerJoin('round', 'round.id', 'panel.round')
+		.innerJoin('timeslot', 'timeslot.id', 'round.timeslot')
+		.select(['timeslot.start', 'timeslot.end'])
+		.where('panel.id', '=', id)
+		.executeTakeFirst();
+	if (!timeslot?.start || !timeslot.end) return [];
+
+	return await db.selectFrom('ballot')
+		.innerJoin('panel', 'panel.id', 'ballot.panel')
+		.innerJoin('round', 'round.id', 'panel.round')
+		.innerJoin('timeslot', 'timeslot.id', 'round.timeslot')
+		.innerJoin('entry_student as es', 'es.entry', 'ballot.entry')
+		.innerJoin('entry_student as oes', join => join
+			.onRef('oes.student', '=', 'es.student')
+			.onRef('oes.entry', '!=', 'es.entry'))
+		.innerJoin('ballot as oballot', 'oballot.entry', 'oes.entry')
+		.innerJoin('panel as opanel', 'opanel.id', 'oballot.panel')
+		.innerJoin('round as oround', 'oround.id', 'opanel.round')
+		.innerJoin('timeslot as otimeslot', 'otimeslot.id', 'oround.timeslot')
+		.select(['ballot.entry as entry', 'oes.entry as other'])
+		.where('ballot.panel', '=', id)
+		.where('es.student', '>', 0)
+		// Every overlap below falls inside this panel's timeslot. As constants these bounds can
+		// use the timeslot indexes, so students with long histories don't join every ballot they've had
+		.where('otimeslot.start', '<=', timeslot.end)
+		.where('otimeslot.end', '>=', timeslot.start)
+		.where(eb => eb.or([
+			eb('otimeslot.id', '=', eb.ref('timeslot.id')),
+			eb.and([
+				eb('otimeslot.start', '<', eb.ref('timeslot.end')),
+				eb('otimeslot.end', '>', eb.ref('timeslot.start')),
+			]),
+			eb.and([
+				eb('otimeslot.start', '=', eb.ref('timeslot.end')),
+				eb('otimeslot.end', '=', eb.ref('timeslot.start')),
+			]),
+		]))
+		.distinct()
+		.execute();
+}
+
+/**
+ * Returns the judges on a panel with their person's pronoun, one row per judge. chair is 1 when
+ * any of the judge's ballots on the panel is the chair's. */
+async function getPanelJudges(db: Database, id: number) {
+	return await db.selectFrom('ballot')
+		.innerJoin('judge', 'judge.id', 'ballot.judge')
+		.leftJoin('person', 'person.id', 'judge.person')
+		.select(eb => [
+			'judge.id',
+			'judge.code',
+			'judge.first',
+			'judge.middle',
+			'judge.last',
+			'person.pronoun',
+			eb.fn.max('ballot.chair').as('chair'),
+		])
+		.where('ballot.panel', '=', id)
+		.groupBy(['judge.id', 'person.pronoun'])
+		.execute();
+}
+
 async function getPanels(db: Database, opts: queryOpts = {}) {
 	return await buildPanelQuery(db, opts).selectAll('panel').execute();
 }
 async function createPanel(db: Database, data: Insertable<Panel> & { settings?: Settings }){
 	const { settings, ...panelData } = data;
 
-	return await db.transaction().execute(async (trx) => {
+	return await withTransaction(db, async (trx) => {
 		if (Object.keys(panelData).length === 0) {
 			throw new Error('createPanel requires panel data');
 		}
@@ -62,7 +167,7 @@ async function createPanel(db: Database, data: Insertable<Panel> & { settings?: 
 async function updatePanel(db: Database, id: number, data: Updateable<Panel> & { settings?: Settings }){
 	const { settings, ...panelData } = data;
 
-	return await db.transaction().execute(async (trx) => {
+	return await withTransaction(db, async (trx) => {
 		if (Object.keys(panelData).length > 0) {
 			await trx
 				.updateTable('panel')
@@ -82,6 +187,17 @@ async function updatePanel(db: Database, id: number, data: Updateable<Panel> & {
 
 		return id;
 	});
+}
+
+// Returns the tournament the panel's round belongs to
+async function getPanelTourn(db: Database, id: number) {
+	return await db.selectFrom('panel')
+		.innerJoin('round', 'round.id', 'panel.round')
+		.innerJoin('event', 'event.id', 'round.event')
+		.innerJoin('tourn', 'tourn.id', 'event.tourn')
+		.selectAll('tourn')
+		.where('panel.id', '=', id)
+		.executeTakeFirst();
 }
 
 async function deletePanel(db: Database, id: number){
@@ -366,7 +482,11 @@ async function getCurrentBallots(db: Database, personId: number, tournId: number
 export default {
 	getPanel,
 	getPanels,
+	getMeetings,
+	getDoubledEntries,
+	getPanelJudges,
 	updatePanel,
+	getPanelTourn,
 	createPanel,
 	deletePanel,
 	getCurrentBallots,

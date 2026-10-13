@@ -4,18 +4,19 @@ import { schoolYearDateRange } from '../../helpers/dateTime.js';
 import { NotFound } from '../../helpers/problem.js';
 import { db } from '../../data/database.js'; 
 
-import type { Request, Response } from '../../_shims/express.js';
+import type { Response } from '../../_shims/express.js';
+import type { ValidatedRequest } from '../../middleware/validation.js';
 
-export async function getCircuit(req: Request, res: Response) {
-	const circuit = await circuitRepo.getCircuit(db, Number(req.params.circuitId), {
+export async function getCircuit(req: ValidatedRequest, res: Response) {
+	const circuit = await circuitRepo.getCircuit(db, req.params.circuitId, {
 		active: true,
 	});
 	if (!circuit) return NotFound(req, res, 'No such circuit found');
 	return res.json(circuit);
 }
 
-export async function activeCircuits(req: Request, res: Response) {
-	const { state, country, limit, offset } = req.valid.query;
+export async function activeCircuits(req: ValidatedRequest, res: Response) {
+	const { state, country, limit, offset } = req.query;
 	const { start, end } = schoolYearDateRange();
 	const circuits = await circuitRepo.getActiveCircuits(db,{
 		startDate: start,

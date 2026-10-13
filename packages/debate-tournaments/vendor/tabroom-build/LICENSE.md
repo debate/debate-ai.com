@@ -553,7 +553,7 @@
 		The User-Visible Attribution Notice below, when provided, must appear
 		in each user-visible display as defined in Section 6.4 (d):
 
-		Tournament Admin is copyrighted free software by the National Speech &
+		Tabroom.com is copyrighted free software by the National Speech &
 		Debate Association, https://www.speechanddebate.org.
 
 		You can redistribute it and/or modify it under either the terms of the

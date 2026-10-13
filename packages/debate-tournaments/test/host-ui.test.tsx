@@ -219,6 +219,28 @@ describe("the admin view's mock-data editor", () => {
   it("is absent from any other tournament", () => {
     expect(withClient(client, <AdminView view={view(42)} onChanged={() => {}} />)).not.toContain("Edit mock data");
   });
+
+  it("adds upstream's tournament setup for a real owner, not the mock admin", () => {
+    expect(withClient(client, <AdminView view={view(42)} />)).not.toContain("Tournament setup");
+    const owned = { ...view(42), viewer: { username: "olive", name: "Olive", mock: false } };
+    expect(withClient(client, <AdminView view={owned} />)).toContain("Tournament setup");
+  });
+});
+
+describe("the tournament setup client", () => {
+  it("reads timeslots and judge categories from upstream's tab API", async () => {
+    const seen: string[] = [];
+    const client = createTournamentsClient("/api/tabroom", async (input) => {
+      const url = String(input);
+      seen.push(url);
+      const body = url.endsWith("/timeslots") ? [{ id: 400, name: "Round 1", start: null, end: null }] : [{ id: 10, name: "Debate Judges", abbr: "DJ" }];
+      return new Response(JSON.stringify(body), { status: 200, headers: { "content-type": "application/json" } });
+    });
+    const setup = await client.setup(7);
+    expect(seen).toEqual(["/api/tabroom/tab/tourns/7/timeslots", "/api/tabroom/tab/tourns/7/categories"]);
+    expect(setup.timeslots[0]?.name).toBe("Round 1");
+    expect(setup.categories[0]?.abbr).toBe("DJ");
+  });
 });
 
 describe("TournamentNav ballot tab", () => {

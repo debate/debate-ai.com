@@ -1,5 +1,5 @@
 // @ts-nocheck
-import z from 'zod';
+import { z } from 'zod';
 import * as utils from './utils.js';
 import type { ZodOpenApiSchemaObject } from 'zod-openapi';
 import { ChapterSchema } from './Chapter.js';
@@ -21,7 +21,8 @@ export const StudentSchema = z.object({
 	Chapter: ChapterSchema.optional(),
 	Person: PersonSchema.optional(),
 	createdAt: z.string().readonly().meta({ description: 'Creation timestamp' }),
-	settings: z.object().optional().meta({ description: 'Custom settings for the student' }),
+	settings: utils.settings,
+	settingsTimestamps: utils.settingsTimestamps,
 	metadata: z.object().optional().meta({ description: 'Additional metadata for the student' }),
 }) satisfies ZodOpenApiSchemaObject;
 

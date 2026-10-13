@@ -1,7 +1,10 @@
 // @ts-nocheck
 export * from './src/Ad.js';
+export * from './src/Admin.js';
 export * from './src/Auth.js';
-export * from './src/Ballot.js';
+export * from './src/Ballot/Ballot.js';
+export * from './src/Ballot/BallotContext.js';
+export * from './src/Ballot/BallotSubmission.js';
 export * from './src/Category.js';
 export * from './src/Chapter.js';
 export * from './src/Circuit.js';

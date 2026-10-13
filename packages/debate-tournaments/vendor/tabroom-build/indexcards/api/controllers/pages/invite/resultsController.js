@@ -1,19 +1,20 @@
-import db from '../../../data/db.js';
+import { sql } from 'kysely';
+import { db } from '../../../data/database.js';
 import { NotFound } from '../../../helpers/problem.js';
 import { dbToObject, stripNulls } from '../../../helpers/text.js';
 
 export const getRoundResults = async (req,res) => {
 
 	// Be agnostic about accepting round ID or the human interface stuff.
-	let finderQuery = ` and round.id = :roundId `;
+	let finderQuery = sql` and round.id = ${req.params.roundId} `;
 
-	if (!req.valid.params.roundId) {
-		finderQuery =` and event.tourn = :tournId
-			and event.abbr   = :eventAbbr
-			and round.name   = :roundName `;
+	if (!req.params.roundId) {
+		finderQuery = sql` and event.tourn = ${req.params.tournId}
+			and event.abbr   = ${req.params.eventAbbr}
+			and round.name   = ${req.params.roundName} `;
 	}
 
-	const rawBallots = await db.sequelize.query(`
+	const { rows: rawBallots } = await sql`
 		select
 			round.id roundId, round.name roundName, round.label roundLabel,
 			round.flighted roundFlighted,
@@ -69,10 +70,7 @@ export const getRoundResults = async (req,res) => {
 			and section.id      = ballot.panel
 			and round.event     = event.id
 		order by section.bye, ballot.forfeit, ballot.bye, section.flight, judge.last
-	`, {
-		replacements: { ...req.valid.params },
-		type: db.Sequelize.QueryTypes.SELECT,
-	});
+	`.execute(db);
 
 	if (rawBallots.length < 1) 	return NotFound(req, res, 'No public results matching your search exist');
 
@@ -132,7 +130,7 @@ export const getRoundResults = async (req,res) => {
 			}
 
 			if (ballot.schoolId) {
-				entry.schoolId = ballot.schoolId;
+				entry.school = ballot.schoolId;
 				entry.schoolName = ballot.schoolName;
 			}
 
@@ -146,7 +144,7 @@ export const getRoundResults = async (req,res) => {
 		round.Sections[ballot.sectionId] = section;
 	});
 
-	const rawScores = await db.sequelize.query(`
+	const { rows: rawScores } = await sql`
 		select
 			panel.id sectionId,
 			score.tag, score.value, score.speech,
@@ -157,14 +155,11 @@ export const getRoundResults = async (req,res) => {
 		from (ballot, panel, score)
 			left join student on score.student = student.id
 		where 1=1
-			and panel.round = :roundId
+			and panel.round = ${round.id}
 			and panel.id = ballot.panel
 			and ballot.id = score.ballot
 			and score.tag IN ('winloss', 'rank', 'point', 'refute', 'po', 'speech')
-	`,{
-		replacements: { roundId: round.id },
-		type: db.Sequelize.QueryTypes.SELECT,
-	});
+	`.execute(db);
 
 	rawScores.forEach( (score) => {
 

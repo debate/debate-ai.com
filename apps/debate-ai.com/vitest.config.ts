@@ -37,7 +37,7 @@ const editorOverlaySources = readdirSync(editorOverlay, { recursive: true, encod
  * editor (measured through its overlay, above) and the CardMirror submodule it
  * is assembled from, which no suite here tests.
  */
-const VENDORED_PACKAGES = new Set(["debate-editor", "debate-editor-cm"]);
+const VENDORED_PACKAGES = new Set(["debate-editor", "debate-editor-cm", "debate-tournaments-tabroom"]);
 const measuredPackageSources = readdirSync(path.join(repoRoot, "packages"), { withFileTypes: true })
   .filter((entry) => entry.isDirectory() && !VENDORED_PACKAGES.has(entry.name))
   .map((entry) => `packages/${entry.name}/src/**/*.{ts,tsx}`);
@@ -53,15 +53,14 @@ export default defineConfig({
       "packages/*",
       "!packages/README.md",
       "!packages/debate-help-docs",
-      // A local, git-ignored clone of upstream Tabroom (the source for
-      // @debate/tournaments' sync script); its tests need upstream's own
-      // toolchain and MariaDB. @debate/tournaments tests the vendored code.
-      "!packages/debate-tournament-tabroom",
       // Git submodules of upstream CardMirror and Tabroom. Each is its own
       // app with its own toolchain and test setup; CardMirror is rebased into
       // @debate/editor, Tabroom is
       // vendored into debate-tournaments, and those test the parts the app uses.
       "!packages/debate-editor-cm",
+      // Upstream Tabroom (github.com/debate/debate-tournaments): its tests need
+      // its own toolchain and MariaDB; @debate/tournaments tests what it vendors.
+      "!packages/debate-tournaments-tabroom",
       // The browser extension carries its own config (jsdom, its own `@`
       // alias), so it's registered by path and runs under that config.
       "apps/debate-browser-ext",

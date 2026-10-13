@@ -1,5 +1,5 @@
 /**
- * @debate/tournaments — upstream Tabroom (debate/debate-tournament-tabroom) as
+ * @debate/tournaments — upstream Tabroom (debate/debate-tournaments, the `packages/debate-tournaments-tabroom` submodule) as
  * a debate-ai.com package.
  *
  *  - `debate-tournaments`         route table + React UI (client-safe)

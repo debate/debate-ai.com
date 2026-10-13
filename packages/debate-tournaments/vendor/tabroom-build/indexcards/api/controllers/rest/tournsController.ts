@@ -8,15 +8,16 @@ import fileRepo from '../../repos/fileRepo.js';
 //TODO remove all references
 import { db }  from '../../data/database.js';
 import type { Request, Response } from '../../_shims/express.js';
+import type { ValidatedRequest } from '../../middleware/validation.js';
 
 export async function getTourn(req: Request, res: Response) {
 	var tourn = req.tourn;
 	return res.status(200).json(tourn);
 };
 
-export async function getTourns(req: Request, res: Response) {
+export async function getTourns(req: ValidatedRequest, res: Response) {
 
-	const query = req.valid.query;
+	const query = req.query;
 
 	const tourns = await tournRepo.getTourns(db,{
 		hasPublishedResults: query.publishedResults,
@@ -30,23 +31,25 @@ export async function getTourns(req: Request, res: Response) {
 	return res.json(tourns);
 }
 
-export async function getTournInvite(req: Request, res: Response) {
+export async function getTournInvite(req: ValidatedRequest, res: Response) {
 
-	let invite = await tournRepo.getTourn(db, Number(req.params.tournId));
+	let invite = await tournRepo.getTourn(db, req.params.tournId);
 
 	if (!invite?.id || invite?.hidden) {
 		return NotFound(req, res, 'No such tournament found');
 	}
 
-	const [Files, Webpages, Events, Contacts] = await Promise.all([
+	const [Files, Webpages, Events, Contacts, eventModes] = await Promise.all([
 		fileRepo.getFiles(db, { tourn: invite.id }),
 		webpageRepo.getWebpages(db, { tourn: invite.id }),
 		eventRepo.getEventsForInvite(db,invite.id),
 		tournRepo.getContacts(db, invite.id),
+		tournRepo.getEventModeCounts(db, invite.id),
 	]);
-	
+
 	const response = {
 		...invite,
+		...eventModes,
 		Files,
 		Webpages,
 		Events,
@@ -55,13 +58,13 @@ export async function getTournInvite(req: Request, res: Response) {
 	return res.status(200).json(response);
 };
 
-export async function getSchedule(req: Request, res: Response){
-	const schedule = await tournRepo.getSchedule(db, Number(req.params.tournId));
+export async function getSchedule(req: ValidatedRequest, res: Response){
+	const schedule = await tournRepo.getSchedule(db, req.params.tournId);
 	return res.status(200).json(schedule);
 };
 
-export async function getPublishedFiles(req: Request, res: Response) {
-	const files = await fileRepo.getFiles(db, { tourn: Number(req.valid.params.tournId) });
+export async function getPublishedFiles(req: ValidatedRequest, res: Response) {
+	const files = await fileRepo.getFiles(db, { tourn: req.params.tournId });
 	return res.status(200).json(files);
 };
 

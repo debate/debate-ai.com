@@ -17,14 +17,21 @@
  * `/api/tournaments/rest/tourns`, `/api/tournaments/v1/rest/tourns/123/invite`,
  * `/api/tournaments/pages/invite/upcoming`, …
  *
- * Those two trees are upstream's public read API and answer GET only. This
- * app's own write routes live under `/api/tournaments/host` (see
+ * Those two trees are upstream's public read API and answer GET only. So does
+ * `/tab/tourns/:tournId/{categories,schools,sites,timeslots}`: upstream's
+ * tournament-admin ("tab") API, which answers only a signed-in owner or admin
+ * of that tournament (upstream's own `requireAccess`, against this app's
+ * actor). This app's own write routes live under `/api/tournaments/host` (see
  * `../host/router`), which is what the "Host a Tournament" page posts to.
  */
 
 import Router from "router";
 import restRouter from "../../vendor/tabroom-build/indexcards/api/routes/routers/v1/rest/restRouter";
 import pagesRouter from "../../vendor/tabroom-build/indexcards/api/routes/routers/v1/pages/pagesRouter";
+import tabCategoriesRouter from "../../vendor/tabroom-build/indexcards/api/routes/routers/v1/tab/tourns/categoriesRouter";
+import tabSchoolsRouter from "../../vendor/tabroom-build/indexcards/api/routes/routers/v1/tab/tourns/schoolsRouter";
+import tabSitesRouter from "../../vendor/tabroom-build/indexcards/api/routes/routers/v1/tab/tourns/sitesRouter";
+import tabTimeslotsRouter from "../../vendor/tabroom-build/indexcards/api/routes/routers/v1/tab/tourns/timeslotsRouter";
 import type { D1DatabaseLike } from "../db/d1-types";
 import { runWithTabroomDb } from "../db/runtime";
 import legacyDb from "../../vendor/tabroom-build/indexcards/api/data/db.js";
@@ -50,6 +57,13 @@ function createRootRouter(): ExpressLikeRouter {
   const root = Router({ mergeParams: true });
   root.use("/rest", restRouter);
   root.use("/pages", pagesRouter);
+  // Upstream's tournament-admin API, mounted router by router as upstream's
+  // `tab/tourns/tournsRouter` does — not that router itself, which also pulls in
+  // the legacy Sequelize/email/blast controllers that cannot run on Workers.
+  root.use("/tab/tourns/:tournId/categories", tabCategoriesRouter);
+  root.use("/tab/tourns/:tournId/schools", tabSchoolsRouter);
+  root.use("/tab/tourns/:tournId/sites", tabSitesRouter);
+  root.use("/tab/tourns/:tournId/timeslots", tabTimeslotsRouter);
   // This app's own write routes (creating a tournament), kept off the vendored
   // read trees so a write can never land in them by accident.
   root.use("/host", getHostRouter());

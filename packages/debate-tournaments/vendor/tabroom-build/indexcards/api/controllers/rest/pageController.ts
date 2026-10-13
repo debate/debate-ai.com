@@ -6,13 +6,13 @@ import type { Request, Response } from '../../_shims/express.js';
 /** Get a list of the public, sitewide pages
  */
 export async function getPublicPages(req: Request, res: Response){
-
+	const slug = typeof req.params.slug === 'string' ? req.params.slug : undefined;
 	const pages = await webpageRepo.getWebpages(db, {
 		sitewide: true,
-		slug: req.params.slug ?? undefined,
+		slug,
 	});
 
-	if (req.params.slug) {
+	if (slug) {
 		if (!pages.length) {
 			return res.status(404).json({ message: 'Page with not found' });
 		}

@@ -47,51 +47,49 @@ async function updateChapterJudge(db: Database, id: number, data: Updateable<Cha
 	.executeTakeFirstOrThrow();
 }
 async function unlinkedSearch(db: Database, { first, last }: { first?: string | null; last?: string | null }, opts: queryOpts & { notRequestedBy?: number | null } = {}) {
-	let query = db.selectFrom('chapter_judge as cj')
-		.leftJoin('chapter', 'cj.chapter', 'chapter.id')
-		.leftJoin('judge', 'judge.chapter_judge', 'cj.id')
+	return await buildChapterJudgeQuery(db, opts)
+		.leftJoin('chapter', 'chapter_judge.chapter', 'chapter.id')
+		.leftJoin('judge', 'judge.chapter_judge', 'chapter_judge.id')
 		.leftJoin('category', 'judge.category', 'category.id')
 		.select([
-			'cj.id',
-			'cj.first',
-			'cj.middle',
-			'cj.last',
+			'chapter_judge.id',
+			'chapter_judge.first',
+			'chapter_judge.middle',
+			'chapter_judge.last',
 			sql<string>`chapter.name`.as('chapter_name'),
 			sql<number>`COUNT(DISTINCT category.tourn)`.as('tourn_count')
 		])
 		.where((eb) => {
 			const conditions = [
 				eb.or([
-					eb('cj.person', '=', 0),
-					eb('cj.person', 'is', null)
+					eb('chapter_judge.person', '=', 0),
+					eb('chapter_judge.person', 'is', null)
 				]),
 				eb.or([
-					eb('cj.person_request', 'is', null),
-					eb('cj.person_request', '!=', opts.notRequestedBy ?? null)
+					eb('chapter_judge.person_request', 'is', null),
+					eb('chapter_judge.person_request', '!=', opts.notRequestedBy ?? null)
 				])
 			];
 
 			if (first) {
-				conditions.push(eb('cj.first', 'like', `${first}%`));
+				conditions.push(eb('chapter_judge.first', 'like', `${first}%`));
 			}
 			if (last) {
-				conditions.push(eb('cj.last', 'like', `${last}%`));
+				conditions.push(eb('chapter_judge.last', 'like', `${last}%`));
 			}
 
 			return eb.and(conditions);
 		})
-		.groupBy(['cj.id', 'cj.first', 'cj.middle', 'cj.last', sql.ref('chapter.name')])
-		.orderBy('cj.last', 'asc')
-		.orderBy('cj.first', 'asc');
-
-	if (opts.limit) {
-		query = query.limit(opts.limit);
-	}
-	if (opts.offset !== undefined) {
-		query = query.offset(opts.offset);
-	}
-
-	return query.execute();
+		.groupBy([
+			'chapter_judge.id',
+			'chapter_judge.first',
+			'chapter_judge.middle',
+			'chapter_judge.last',
+			sql.ref('chapter.name')
+		])
+		.orderBy('chapter_judge.last', 'asc')
+		.orderBy('chapter_judge.first', 'asc')
+		.execute();
 };
 
 export default {
