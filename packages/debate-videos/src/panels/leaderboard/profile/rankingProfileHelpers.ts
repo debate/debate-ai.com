@@ -247,6 +247,33 @@ export function findVideoTeamRanking(
   return dataset ? findTeamRanking(dataset.entries, label) : null;
 }
 
+/**
+ * {@link findVideoTeamRanking}, tagged with its dataset like a profile row, so
+ * the watch page can draw the team's {@link teamRadarData} radar. `null` when
+ * no entry matches.
+ *
+ * @param datasets - Loaded datasets, e.g. from `useAllRankingDatasets`.
+ * @param style - The video's style (`video[6]`).
+ * @param label - The video's aff or neg team, e.g. `"Harker LL"`.
+ */
+export function findVideoTeamProfile(
+  datasets: readonly RankingDataset[],
+  style: unknown,
+  label: string | null | undefined,
+): ProfileEntry | null {
+  const id = videoStyleDatasetId(style);
+  const dataset = id ? datasets.find((d) => d.id === id) : undefined;
+  const entry = dataset && label?.trim() ? findTeamRanking(dataset.entries, label) : null;
+  if (!dataset || !entry) return null;
+  return {
+    datasetId: dataset.id,
+    datasetLabel: dataset.label,
+    fieldSize: dataset.entries.length,
+    maxMatches: dataset.entries.reduce((max, e) => Math.max(max, e.matches), 0),
+    entry,
+  };
+}
+
 /** What a profile's Videos section searches for. */
 export interface ProfileVideoSearch {
   /** Phrases matched against a round's aff/neg team, or its title when it has none. */
