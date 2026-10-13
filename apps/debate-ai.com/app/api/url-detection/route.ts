@@ -1,7 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { and, desc, eq, sql } from "drizzle-orm";
 import { getDBFromContext } from "@/lib/database/context";
-import { detectedUrls, user } from "@/lib/database/schema";
+import { detectedUrls } from "@/lib/database/schema";
+import { getUserId } from "@/lib/auth/session";
+
+/**
+ * Pages the browser extension saw the user visit, one row per account and
+ * normalized URL (`detected_urls`, read back by the admin URL Detection tab).
+ *
+ * Account-only, like `/api/judge-decisions`: `detected_urls.user_id` is a
+ * foreign key to `user.id`, so a signed-out visit has no row to hang off.
+ * Writing those under a literal `"anonymous"` id used to fail the foreign
+ * key on D1 and return a 500 for every signed-out page view; now they get
+ * a 401 and nothing is stored.
+ */
 
 const MAX_FIELD_LENGTH = 2048;
 
@@ -16,6 +28,11 @@ function normalizeSourceUrl(url: string): string {
 }
 
 export async function POST(req: NextRequest) {
+  const userId = await getUserId();
+  if (!userId) {
+    return NextResponse.json({ error: "Sign in to record visited pages." }, { status: 401 });
+  }
+
   let body: Partial<{
     url: string;
     title: string;
@@ -45,7 +62,7 @@ export async function POST(req: NextRequest) {
   const result = await db
     .insert(detectedUrls)
     .values({
-      userId: "anonymous",
+      userId,
       url: url.slice(0, MAX_FIELD_LENGTH),
       normalizedUrl,
       title,
@@ -72,8 +89,14 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
+  // Only the signed-in user's own history; there is no `?userId=` override,
+  // since that would let anyone read another account's browsing.
+  const userId = await getUserId();
+  if (!userId) {
+    return NextResponse.json({ error: "Sign in to view your visited pages." }, { status: 401 });
+  }
+
   const searchParams = req.nextUrl.searchParams;
-  const userId = searchParams.get("userId") || "anonymous";
   const limit = Math.min(100, Math.max(1, Number(searchParams.get("limit")) || 50));
   const offset = Math.max(0, Number(searchParams.get("offset")) || 0);
   const search = searchParams.get("search")?.trim() || "";

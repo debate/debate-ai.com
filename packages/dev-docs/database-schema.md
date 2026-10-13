@@ -1021,7 +1021,7 @@ _Drizzle export `reuseCheckLog`, `schema.ts:1201`._
 
 ### detected_urls
 
-Pages the browser extension reported a user visiting (`POST /api/url-detection`), one row per (user, URL).
+Pages the browser extension reported a signed-in user visiting (`POST /api/url-detection`), one row per (user, URL). Signed-out visits get a 401 and are not stored, since `user_id` must reference a real `user` row.
 
 _Drizzle export `detectedUrls`, `schema.ts:1225`._
 
