@@ -136,6 +136,10 @@ const STATIC_APP_ROUTES = findAppPageRoutes(APP_DIR, "").filter((route) => !rout
  * `/practice/briefings`, `/practice/strategy`, `/practice/opponents`,
  * `/practice/judges` and `/practice/prep-notes`: those five were merged into
  * the Prep Workspace, and each redirects to its tab of `/practice/prep`.
+ * Likewise `/research/cards/coverage`, `/research/cards/prep-room`,
+ * `/research/cards/reviews`, `/research/cards/inbox`,
+ * `/research/cards/contributions` and `/research/cards/brainstorm`: merged
+ * into Team Research, each redirects to its tab of `/research/team`.
  *
  * `/lectures`, `/practice/glossary`, `/practice/rankings` and
  * `/practice/statistics` are views of the video library page (the same page
@@ -168,6 +172,12 @@ const ROUTES_WITHOUT_A_CATALOG_ENTRY = new Set([
   "/practice/opponents",
   "/practice/judges",
   "/practice/prep-notes",
+  "/research/cards/coverage",
+  "/research/cards/prep-room",
+  "/research/cards/reviews",
+  "/research/cards/inbox",
+  "/research/cards/contributions",
+  "/research/cards/brainstorm",
   "/lectures",
   "/practice/glossary",
   "/practice/rankings",

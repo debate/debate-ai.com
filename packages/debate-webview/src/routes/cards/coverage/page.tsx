@@ -1,14 +1,6 @@
-import { Suspense } from "react"
-import { TopicCoverageDashboardPanel } from "@debate/research-evidence"
-import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHeader"
+import { TeamResearchPage } from "../../research/team/page"
 
+/** Old `/research/cards/coverage` address: now Team Research's "coverage" tab. */
 export default function CardsCoveragePage() {
-  return (
-    <ToolPage>
-      <ToolPageHeader href="/research/cards/coverage" backHref="/research/cards" backLabel="shared cards" guide="research-collaboration" />
-      <Suspense>
-        <TopicCoverageDashboardPanel />
-      </Suspense>
-    </ToolPage>
-  )
+  return <TeamResearchPage initialSection="coverage" />
 }

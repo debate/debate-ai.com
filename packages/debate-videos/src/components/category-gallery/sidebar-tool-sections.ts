@@ -20,19 +20,14 @@ import {
   CalendarDays,
   ChartColumn,
   ChartLine,
-  ChartPie,
   Clapperboard,
-  ClipboardCheck,
   ClipboardList,
-  DoorOpen,
   Dumbbell,
   FileText,
   FolderOpen,
   Gavel,
   GraduationCap,
-  Inbox,
   Library,
-  Lightbulb,
   Medal,
   MessageSquare,
   Presentation,
@@ -49,6 +44,7 @@ import {
   Coins,
   TrendingUp,
   Trophy,
+  Users,
   type LucideIcon,
 } from "lucide-react";
 
@@ -136,12 +132,9 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
     tools: [
       { href: "/research", title: "Research Workspace", icon: Search },
       { href: "/research/cards", title: "Card Search", icon: Search },
-      { href: "/research/cards/coverage", title: "Topic Coverage", icon: ChartPie },
-      { href: "/research/cards/prep-room", title: "Collaboration Prep Room", icon: DoorOpen },
-      { href: "/research/cards/reviews", title: "Review Queue", icon: ClipboardCheck },
-      { href: "/research/cards/inbox", title: "Task Inbox", icon: Inbox },
-      { href: "/research/cards/contributions", title: "Contributions Feed", icon: Rss },
-      { href: "/research/cards/brainstorm", title: "Team Brainstorm Assist", icon: Lightbulb },
+      // Topic Coverage, Collaboration Prep Room, Review Queue, Task Inbox,
+      // Contributions Feed and Team Brainstorm Assist, one tab each.
+      { href: "/research/team", title: "Team Research", icon: Users },
       // Lives under /coaching, but it ranks research contributors by
       // helpfulness, so it sits with the research tools.
       { href: "/coaching/leaderboard", title: "Leaderboard", icon: Trophy },

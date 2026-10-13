@@ -1,14 +1,6 @@
-import { Suspense } from "react"
-import { TaskInboxWithIdentity } from "../../../components/research/TaskInboxWithIdentity"
-import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHeader"
+import { TeamResearchPage } from "../../research/team/page"
 
+/** Old `/research/cards/inbox` address: now Team Research's "inbox" tab. */
 export default function CardsInboxPage() {
-  return (
-    <ToolPage>
-      <ToolPageHeader href="/research/cards/inbox" backHref="/research/cards" backLabel="shared cards" guide="research-collaboration" />
-      <Suspense>
-        <TaskInboxWithIdentity />
-      </Suspense>
-    </ToolPage>
-  )
+  return <TeamResearchPage initialSection="inbox" />
 }

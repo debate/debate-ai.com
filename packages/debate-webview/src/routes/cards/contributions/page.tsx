@@ -1,14 +1,6 @@
-import { Suspense } from "react"
-import { ContributionsFeedWithIdentity } from "../../../components/research/ContributionsFeedWithIdentity"
-import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHeader"
+import { TeamResearchPage } from "../../research/team/page"
 
+/** Old `/research/cards/contributions` address: now Team Research's "contributions" tab. */
 export default function CardsContributionsPage() {
-  return (
-    <ToolPage>
-      <ToolPageHeader href="/research/cards/contributions" backHref="/research/cards" backLabel="shared cards" guide="research-collaboration" />
-      <Suspense>
-        <ContributionsFeedWithIdentity />
-      </Suspense>
-    </ToolPage>
-  )
+  return <TeamResearchPage initialSection="contributions" />
 }

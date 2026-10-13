@@ -30,8 +30,8 @@ describe("FeaturesPanel", () => {
   it("links entries that have a long-form doc into the app's own docs site", () => {
     // The panel takes `featureDocUrl`'s default base, so a doc lands on
     // `/docs/features/…` without the source file's extension.
-    expect(html).toContain("/docs/features/task-inbox");
-    expect(html).not.toContain("task-inbox.md");
+    expect(html).toContain("/docs/features/team-research");
+    expect(html).not.toContain("team-research.md");
   });
 
   it("shows the root README's banner, badges and workspace screenshots", () => {
@@ -77,9 +77,9 @@ describe("FeaturesPanel", () => {
 
   it("renders only the entries it is given", () => {
     const single = renderToStaticMarkup(
-      <FeaturesPanel entries={[APP_FEATURES.find((f) => f.id === "task-inbox")!]} />,
+      <FeaturesPanel entries={[APP_FEATURES.find((f) => f.id === "team-research")!]} />,
     );
-    expect(single).toContain("Task Inbox");
+    expect(single).toContain("Team Research");
     expect(single).not.toContain("Practice Drills");
     // A single section means no jump-to-category row.
     expect(single).not.toContain('aria-label="Jump to a category"');
@@ -87,7 +87,7 @@ describe("FeaturesPanel", () => {
 
   it("renders the shared EmptyState when no feature matches the search query", () => {
     const single = renderToStaticMarkup(
-      <FeaturesPanel entries={[APP_FEATURES.find((f) => f.id === "task-inbox")!]} />,
+      <FeaturesPanel entries={[APP_FEATURES.find((f) => f.id === "team-research")!]} />,
     );
     expect(single).not.toContain('data-slot="empty-state"');
 
@@ -106,13 +106,13 @@ describe("FeaturesPanel", () => {
   });
 
   it("colours a card by its catalog position, not its place in the filter", () => {
-    const index = APP_FEATURES.findIndex((f) => f.id === "task-inbox");
+    const index = APP_FEATURES.findIndex((f) => f.id === "team-research");
     expect(index).toBeGreaterThan(0);
 
     // Rendered alone it is the only card on the page, but it keeps the hue its
     // catalog position gives it — so searching does not recolour the grid.
     const single = renderToStaticMarkup(
-      <FeaturesPanel entries={[APP_FEATURES.find((f) => f.id === "task-inbox")!]} />,
+      <FeaturesPanel entries={[APP_FEATURES.find((f) => f.id === "team-research")!]} />,
     );
     expect(single).toContain(`--da-card-hue:${cardHueShift(0)}`);
     expect(html).toContain(`--da-card-hue:${cardHueShift(index)}`);
