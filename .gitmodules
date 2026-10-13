@@ -16,3 +16,7 @@
 # `upload-pack: not our ref`. They are also redundant: the `debate-flow-ebb`
 # package name now resolves to the in-tree `packages/debate-flow`, and Tabroom
 # is vendored under `packages/debate-tournaments/vendor/tabroom`.
+[submodule "packages/debate-tournaments/vendor/tabroom"]
+	path = packages/debate-tournaments/vendor/tabroom
+	url = https://github.com/debate/debate-tournament-tabroom.git
+	branch = main
