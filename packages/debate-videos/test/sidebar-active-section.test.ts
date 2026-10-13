@@ -47,7 +47,7 @@ describe("sidebarSectionForPath", () => {
   });
 
   it("finds the tool section holding a tool route", () => {
-    expect(sidebarSectionForPath("/coaching/programs")).toBe("coaching");
+    expect(sidebarSectionForPath("/coaching/progress")).toBe("coaching");
     expect(sidebarSectionForPath("/research/cards/library")).toBe("research");
     expect(sidebarSectionForPath("/practice/judge-decision")).toBe("practice");
     // News & Forums rides with the Coaching section, threads included.

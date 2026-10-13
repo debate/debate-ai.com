@@ -1,20 +1,6 @@
-import { Suspense } from "react"
-import { CoachingProgramsPanel } from "@debate/team-collaboration"
-import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
-import { CoachingProgramRosterAnalyticsWithDrills } from "./CoachingProgramRosterAnalyticsWithDrills"
+import { CoachingPage } from "../coach/page"
 
+/** Old `/coaching/programs` address: now Coaching's "programs" tab. */
 export default function CoachingProgramsPage() {
-  return (
-    <ToolPage>
-      <ToolPageHeader href="/coaching/programs" backHref="/debate" backLabel="round workspace" guide="training-tools" />
-      <Suspense>
-        <CoachingProgramsPanel />
-      </Suspense>
-      <div className="border-t border-border pt-6">
-        <Suspense>
-          <CoachingProgramRosterAnalyticsWithDrills />
-        </Suspense>
-      </div>
-    </ToolPage>
-  )
+  return <CoachingPage initialSection="programs" />
 }
