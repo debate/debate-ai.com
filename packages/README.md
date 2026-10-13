@@ -63,6 +63,16 @@ CardMirror's schema, `.docx` import/export and native `.cmir` format, plus
 `importDocx(file)`, `exportDocxBlob(doc)`, `outlineOf(doc)` and `cardsOf(doc)`, all come
 from `@debate/editor/engine`.
 
+## debate-file-market
+
+Selling research files for wallet balance, mounted at `/research/market` and on the Files sidebar's
+"Sell…" menu item. The framework-free core: the free table-of-contents preview read from a file's
+headings (`outline.ts`), prices and the sell request (`pricing.ts`), the $10 / $20 Stripe top-ups and
+the parsing of their webhook events (`topups.ts`), wire types, a browser client
+(`debate-file-market/client`), and the D1 migration for its four tables (`migrations/`, applied by
+`.github/scripts/migrate-d1.ts`). No dependencies; the pages and the Sell dialog are in `debate-webview`
+and the routes and queries in `apps/debate-ai.com`.
+
 ## debate-flow
 
 Package name `debate-flow-ebb`. The `ebb` local-first, keyboard-first flow editor, ported

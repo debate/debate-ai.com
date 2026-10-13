@@ -89,6 +89,8 @@ import {
   type SidebarPanel,
 } from "../../lib/reason-docs/panel-layout"
 import { SHARE_OPEN_PARAM, ShareWithContacts } from "../reason-editor/ShareWithContacts"
+import { SellFileDialog } from "../market/SellFileDialog"
+import { useSession } from "../../lib/hooks/useSession"
 import { FileManagerDialog } from "./FileManagerDialog"
 import { FileTree } from "./FileTree"
 import { OpenTabsPanel } from "./OpenTabsPanel"
@@ -215,6 +217,9 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
   const uploadInputRef = useRef<HTMLInputElement>(null)
   const [sort, setSort] = useState<FileSort>("name")
   const [fileManagerOpen, setFileManagerOpen] = useState(false)
+  /** The file whose "Sell…" dialog is open. */
+  const [sellingId, setSellingId] = useState<number | null>(null)
+  const { isAuthenticated } = useSession()
 
   // Panel choice and collapse state are per-device view preferences (same as
   // the source sidebar's persisted panel list); read after mount so the SSR
@@ -517,6 +522,7 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
           onDownload={downloadFile}
           onDuplicate={duplicateFile}
           onShare={shareFile}
+          onSell={isAuthenticated ? setSellingId : undefined}
           onPublish={publishFile}
           onImportTopic={saveTopicCopyById}
         />
@@ -754,6 +760,7 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
         onSaveTopicCopy={(item, parentId) => saveTopicCopy(item, parentId)}
         onPublish={publishFile}
       />
+      <SellFileDialog documentId={sellingId} onClose={() => setSellingId(null)} />
     </div>
   )
 }

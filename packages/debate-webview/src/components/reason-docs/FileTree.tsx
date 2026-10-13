@@ -41,6 +41,7 @@ import {
   MoreHorizontal,
   Pencil,
   Share2,
+  Tag,
   TextCursorInput,
   Trash2,
 } from "lucide-react"
@@ -130,6 +131,8 @@ interface FileTreeProps {
   onDuplicate?: (id: number) => void
   /** "Share…": opens the file and the share-with-contacts dialog. */
   onShare?: (id: number) => void
+  /** "Sell…": opens the dialog that lists the file for sale. */
+  onSell?: (id: number) => void
   /** "Add to Topic Starters": publishes the file to the public catalogue. */
   onPublish?: (id: number) => void
   /** A row dragged in from Topic Starters, to copy into `parentId`. */
@@ -149,6 +152,7 @@ export function FileTree({
   sort = "name",
   onDuplicate,
   onShare,
+  onSell,
   onPublish,
   onImportTopic,
 }: FileTreeProps) {
@@ -255,6 +259,12 @@ export function FileTree({
             <DropdownMenuItem onClick={() => onShare(doc.id)}>
               <Share2 className="mr-2 h-4 w-4" />
               Share…
+            </DropdownMenuItem>
+          )}
+          {onSell && (
+            <DropdownMenuItem onClick={() => onSell(doc.id)}>
+              <Tag className="mr-2 h-4 w-4" />
+              Sell…
             </DropdownMenuItem>
           )}
         </>

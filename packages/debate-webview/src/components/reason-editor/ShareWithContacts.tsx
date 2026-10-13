@@ -27,7 +27,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { Loader2, Share2, Users } from "lucide-react"
+import { Loader2, Share2, Tag, Users } from "lucide-react"
 import { toast } from "sonner"
 import {
   ContactAvatar,
@@ -51,6 +51,7 @@ import {
 import { useSession } from "../../lib/hooks/useSession"
 import { useReasonDocs } from "../reason-docs/ReasonDocsProvider"
 import { urlWithoutParam } from "../../lib/reason-docs/route-selection"
+import { SellFileDialog } from "../market/SellFileDialog"
 
 type Bridge = typeof import("@debate/editor/collab-bridge")
 
@@ -202,6 +203,8 @@ export function ShareWithContacts({ title, variant = "button" }: ShareWithContac
   const [picked, setPicked] = useState<Set<string>>(new Set())
   const [message, setMessage] = useState("")
   const [busy, setBusy] = useState(false)
+  /** The "Sell…" dialog, opened from this one for the open file. */
+  const [selling, setSelling] = useState(false)
 
   // `?shareWith=<userId>` → open the dialog with that contact preselected.
   const shareWithParam = searchParams.get("shareWith")
@@ -364,6 +367,19 @@ export function ShareWithContacts({ title, variant = "button" }: ShareWithContac
             <Button type="button" variant="ghost" onClick={() => router.push("/contacts")}>
               <Users className="h-4 w-4" /> Manage contacts
             </Button>
+            {activeId != null && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setOpen(false)
+                  setSelling(true)
+                }}
+                title="Sell this file: buyers see its table of contents for free and pay to unlock the cards"
+              >
+                <Tag className="h-4 w-4" /> Sell…
+              </Button>
+            )}
             <Button type="button" disabled={picked.size === 0 || busy} onClick={() => void submit()}>
               {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Share2 className="h-4 w-4" />}
               Share{picked.size > 0 ? ` with ${picked.size}` : ""}
@@ -371,6 +387,7 @@ export function ShareWithContacts({ title, variant = "button" }: ShareWithContac
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <SellFileDialog documentId={selling ? activeId : null} onClose={() => setSelling(false)} />
     </>
   )
 }

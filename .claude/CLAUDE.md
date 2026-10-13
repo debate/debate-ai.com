@@ -58,6 +58,7 @@ extension and a native wrapper.
 | The `ebb` flow editor embedded in a round | `packages/debate-flow` |
 | Practice drills, AI coach, AI judge | `packages/debate-practice-drills` |
 | Prediction markets: pricing, payouts, settlement rules | `packages/debate-predictions` |
+| Selling files: wallets, $10 / $20 Stripe top-ups, paid previews | `packages/debate-file-market` |
 | A full timed round vs. an AI opponent | `packages/debate-round-practice-ai` |
 | Speech/prep timers and the in-round recorder | `packages/debate-timer` |
 | The video library (LEARN) | `packages/debate-videos` |
@@ -123,6 +124,7 @@ one tree rather than beside the source.
 | `packages/debate-contributor-progress` | [.claude/packages/debate-contributor-progress/CLAUDE.md](.claude/packages/debate-contributor-progress/CLAUDE.md) |
 | `packages/debate-data-sync` | [.claude/packages/debate-data-sync/CLAUDE.md](.claude/packages/debate-data-sync/CLAUDE.md) |
 | `packages/debate-editor` | [.claude/packages/debate-editor/CLAUDE.md](.claude/packages/debate-editor/CLAUDE.md) |
+| `packages/debate-file-market` | [.claude/packages/debate-file-market/CLAUDE.md](.claude/packages/debate-file-market/CLAUDE.md) |
 | `packages/debate-flow` | [.claude/packages/debate-flow/CLAUDE.md](.claude/packages/debate-flow/CLAUDE.md) |
 | `packages/debate-help-docs` | [.claude/packages/debate-help-docs/CLAUDE.md](.claude/packages/debate-help-docs/CLAUDE.md) |
 | `packages/dev-docs` | [.claude/packages/dev-docs/CLAUDE.md](.claude/packages/dev-docs/CLAUDE.md) |
