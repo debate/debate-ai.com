@@ -88,6 +88,50 @@ have at most ten challenges waiting for an answer, and only one per opponent.
 `preferences` payload. `practice_challenges` has one row per challenge. Rows
 are never deleted by the feature; a closed challenge keeps its status.
 
+## Judge Pool
+
+Below the practice board, the same page has a **Judge Pool** (`#judge-pool`,
+the sidebar's **Hire a Judge**) for tournament judging, as opposed to
+practice rounds.
+
+- **Volunteer as a judge.** Pick up to three upcoming weekends from the
+  circuit calendar's season weeks (the same A–Y + Z weeks as the Debate
+  Majors calendar). Each weekend row shows its week letter, dates and the
+  majors running that Friday–Sunday. Add the states you're in (up to five),
+  switch on **Able to travel** if you'll judge out of state, pick the formats
+  you judge, and write your judge philosophy. **List me for hire** off hides
+  you without losing the listing. Weekends drop off once they pass; with
+  none left you're out of the pool until you pick new ones.
+- **Hire a judge.** Every listed judge, by name, with their weekends,
+  states, travel, formats and philosophy. Filter by weekend, tournament state
+  and format. A judge fits a state if they're in it or will travel; in-state
+  judges come first. **Hire** sends a request: tournament name, one of the
+  judge's weekends, a pay offer and a message.
+- **Hire requests.** The judge accepts or declines; the organizer can cancel
+  while it's waiting, and either side can call off an accepted one. Each
+  change sends a `judge_hire` notification to the other side, linking to
+  `#judge-pool`.
+
+**Payment isn't connected.** The pay offer is text. Nothing is charged or
+paid out on the site; the two sides settle pay directly once a request is
+accepted. The site's Stripe setup only sells subscriptions through Payment
+Links, which can't pay a judge.
+
+**How it works.** The weekends come from `SEASON_MAJORS` in
+`debate-webview/lib/judge-pool/season-calendar.ts`, a copy of the dated
+events in `apps/debate-ai.com/public/debate-majors-a-to-z.html`; a test fails
+if the two drift. Validation and the hire rules (`applyHireAction`) are in
+`debate-webview/lib/judge-pool/validation.ts`, and the pool filter is
+`filter.ts` next to it. The API is `GET /api/judge-pool`,
+`PUT /api/judge-pool/listing`, `POST /api/judge-pool/hires` and
+`PATCH /api/judge-pool/hires/[hireId]`, over `apps/debate-ai.com/lib/judge-pool/queries.ts`.
+Guests can't list or hire, blocks hide people from each other, an organizer
+can have 20 requests waiting and one open request per judge per weekend.
+
+**Tables.** `judge_pool_listings` (one row per user, lists as JSON) and
+`judge_hire_requests` (one row per request, never deleted). They ship to D1
+as `packages/debate-webview/migrations/0001_judge_pool.sql`.
+
 ## Known gaps
 
 - There's no in-app messaging. Beyond the challenge message, debaters arrange
@@ -104,3 +148,8 @@ are never deleted by the feature; a closed challenge keeps its status.
   the judge list isn't public — so judges pick up accepted rounds instead.
 - A request that is called off after being accepted shows the other debater
   as anonymous again, since only `accepted` reveals names.
+- The judge pool takes no payment, and has no contract or confirmation beyond
+  the accepted request.
+- Judge weekends are limited to the 2026–27 circuit calendar; next season's
+  weekends need a new `SEASON_MAJORS` list.
+- The pool lists the 200 most recently updated listings.
