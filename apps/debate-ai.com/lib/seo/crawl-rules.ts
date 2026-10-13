@@ -60,8 +60,8 @@ const ACCOUNT_PATHS: readonly string[] = [
  * The tool tree's own destinations — the Research, Practice and Coaching
  * sections and every tool in them.
  *
- * Two hrefs carry a fragment (`/practice/partners#judge`); robots.txt matches
- * on the path, so the fragment is dropped and the path is used.
+ * An href may carry a fragment; robots.txt matches on the path, so the
+ * fragment is dropped and the path is used.
  *
  * The section headings' own hrefs (`/research`, `/practice`, `/coaching`) are
  * the "flagship tool", and the same href is already one of the section's

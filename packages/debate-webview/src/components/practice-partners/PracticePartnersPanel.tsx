@@ -24,7 +24,7 @@
  * and one read is cheaper than getting that derivation wrong twice.
  *
  * Mounted in the Coach workspace's Practice tab and at `/practice/partners`.
- * `/practice/partners#judge` (the sidebar's "Judge Practice Rounds") scrolls
+ * `/practice/partners#judge` scrolls
  * to the rounds needing a judge — or, for someone not volunteering yet, to
  * the profile where they turn that on.
  */

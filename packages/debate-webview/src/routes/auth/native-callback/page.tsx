@@ -4,6 +4,8 @@ import { Suspense, useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { authClient } from "../../../lib/auth/client"
 
+// useSearchParams() fails the production render with a 500 unless a Suspense
+// boundary sits above it.
 export default function NativeCallbackPage() {
   // useSearchParams() needs a Suspense boundary.
   return (

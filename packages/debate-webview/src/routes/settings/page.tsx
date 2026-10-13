@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import { CardMirrorSettingsPanel } from "../../components/settings/CardMirrorSettingsPanel"
 
 /**
@@ -30,7 +31,11 @@ import { CardMirrorSettingsPanel } from "../../components/settings/CardMirrorSet
 export default function SettingsPage() {
   return (
     <div className="h-dvh bg-background">
-      <CardMirrorSettingsPanel />
+      {/* The panel reads its tab from useSearchParams(), which fails the
+          production render with a 500 without a Suspense boundary above it. */}
+      <Suspense>
+        <CardMirrorSettingsPanel />
+      </Suspense>
     </div>
   )
 }

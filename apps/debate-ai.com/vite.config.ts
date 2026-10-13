@@ -147,6 +147,10 @@ const serverMinify = { compress: true, mangle: true, codegen: { asciiOnly: true 
  * static assets) otherwise. Source files (.ts/.tsx/.js/.css/…) are never
  * exposed — which also leaves app/service-worker.js, a stale pre-Vite build,
  * to `build:sw`. A file of the same name in `public/` still wins.
+ *
+ * `ROOT_ASSETS` adds files that live in a package rather than in `app/` but
+ * must still be served at the site root (`/logo.png` is linked from the
+ * webview, the docs and external consumers).
  */
 const APP_SOURCE_EXT = /\.(?:[cm]?[jt]sx?|mdx?|css|scss|sass|less)$/i;
 const CONTENT_TYPES: Record<string, string> = {
@@ -165,14 +169,20 @@ const CONTENT_TYPES: Record<string, string> = {
   ".yaml": "text/yaml",
 };
 
+const ROOT_ASSETS: Record<string, string> = {
+  "logo.png": path.resolve(appDir, "../../packages/debate-icons/brand/logo.png"),
+};
+
 function appStaticFiles(): Plugin {
   const dir = path.join(appDir, "app");
-  const list = () =>
+  const appFiles = () =>
     fs
       .readdirSync(dir, { withFileTypes: true })
       .filter((e) => e.isFile() && !e.name.startsWith("."))
       .map((e) => e.name)
       .filter((name) => !APP_SOURCE_EXT.test(name));
+  const list = () => [...appFiles(), ...Object.keys(ROOT_ASSETS)];
+  const source = (name: string) => ROOT_ASSETS[name] ?? path.join(dir, name);
   let publicDir = "";
   const inPublic = (name: string) => !!publicDir && fs.existsSync(path.join(publicDir, name));
 
@@ -187,14 +197,14 @@ function appStaticFiles(): Plugin {
         if (!name || name.includes("/") || inPublic(name) || !list().includes(name)) return next();
         const type = CONTENT_TYPES[path.extname(name).toLowerCase()];
         if (type) res.setHeader("Content-Type", type);
-        fs.createReadStream(path.join(dir, name)).pipe(res);
+        fs.createReadStream(source(name)).pipe(res);
       });
     },
     generateBundle() {
       if (this.environment?.name !== "client") return;
       for (const name of list()) {
         if (inPublic(name)) continue;
-        this.emitFile({ type: "asset", fileName: name, source: fs.readFileSync(path.join(dir, name)) });
+        this.emitFile({ type: "asset", fileName: name, source: fs.readFileSync(source(name)) });
       }
     },
   };
