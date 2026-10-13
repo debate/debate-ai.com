@@ -58,7 +58,7 @@ export function useLeaderboardData(
       return
     }
     const fetchHistory = async () => {
-      const result = await grab<DebateHistory>("history", { cache: true })
+      const result = await grab<DebateHistory>("history", { cache: true, baseURL: "/api/" })
       if (result && !result.error && result.data) {
         setInternalDebateHistory(result.data as DebateHistory)
       }

@@ -264,12 +264,12 @@ describe("useVideoStacks", () => {
     const seen: any[] = [];
     const view = await mount(<Probe videos={list} />);
     await flush();
-    expect(calls).toEqual([{ path: "videos/stacks", params: { keys: "s1,s2" } }]);
+    expect(calls).toEqual([{ path: "videos/stacks", params: { keys: "s1,s2", baseURL: "/api/" } }]);
     expect(Object.keys(seen.at(-1))).toEqual(["s1", "s2"]);
 
     await view.rerender(<Probe videos={[...list, video("d", "s3")]} />);
     await flush();
-    expect(calls.at(-1)).toEqual({ path: "videos/stacks", params: { keys: "s3" } });
+    expect(calls.at(-1)).toEqual({ path: "videos/stacks", params: { keys: "s3", baseURL: "/api/" } });
     expect(Object.keys(seen.at(-1)).sort()).toEqual(["s1", "s2", "s3"]);
   });
 
