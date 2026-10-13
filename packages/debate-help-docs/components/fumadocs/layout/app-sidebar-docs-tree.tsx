@@ -15,8 +15,8 @@
  *
  * Only the folders on the path to the current page start expanded (plus any
  * marked `defaultOpen`), and the current page is scrolled into view in the
- * sidebar when the docs open and after each navigation. Off /docs the app's
- * sidebar shows a collapsed Docs row in this slot instead (`app-sidebar.tsx`).
+ * sidebar when the docs open and after each navigation. Off /docs the
+ * Docs link pinned at the sidebar's foot (`sidebar-pinned-links.tsx`) opens it.
  */
 
 import { useEffect, useState, type ReactNode } from 'react';
