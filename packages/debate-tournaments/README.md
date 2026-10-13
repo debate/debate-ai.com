@@ -10,7 +10,7 @@ run on **Cloudflare Workers + D1**. The package exports three things:
 | `debate-tournaments/server` | `createTournamentsHandler()` — upstream's public `/rest` and `/pages` API as a fetch handler on D1 |
 | `debate-tournaments` / `debate-tournaments/ui` | `TournamentsApp` and the individual React pages (upcoming, invite, pairings, round, results, result set) |
 | `debate-tournaments/routes` | `matchTournamentRoute()` / `tournamentHrefs()` — the UI's route table |
-| `debate-tournaments/migrations/*` | the D1 schema (110 upstream tables) |
+| `debate-tournaments/migrations/*` | the D1 schema (108 upstream tables) |
 
 In `apps/debate-ai.com` the D1 API is mounted at `/api/tabroom/*`
 (`app/api/tabroom/[...path]/route.ts`, `lib/tournaments/handler.ts`). The UI is
@@ -141,15 +141,28 @@ node scripts/sync-upstream.mjs --seed && bun run test   # + every route on upstr
    automatically; a new npm dependency is reported).
 5. Regenerates `migrations/0001_tabroom_schema.sql` and
    `src/db/generated/columns.ts` from upstream's schema dump
-   (`indexcards/tests/test.sql`) with `scripts/lib/mysql-to-sqlite.mjs`.
+   (`indexcards/tests/test.sql`) with `scripts/lib/mysql-to-sqlite.mjs`,
+   corrected by `scripts/lib/schema-rules.mjs`: redundant indexes dropped,
+   lossy types widened (`person.phone`, `chapter.zip` are TEXT), CHECKs on
+   flag columns, reference columns' `DEFAULT 0` sentinels made nullable. It
+   also regenerates `packages/dev-docs/tabroom-schema.md`
+   (`scripts/lib/schema-doc.mjs`), and `--seed` nulls the sentinels and
+   password hashes in the sample data.
 
 **Never edit `vendor/`, `migrations/` or `src/db/generated/` by hand** — the
 next sync overwrites them. To change upstream code, edit it in `.upstream/`
 and run `node scripts/sync-upstream.mjs --save-patch`.
 
 A changed migration file is *not* re-applied to a database that already ran
-it (`migrate-d1.ts` records applied names). When an upstream schema change
-lands, add the difference as a new `migrations/0002_….sql`.
+it (`migrate-d1.ts` records applied names), so when a sync changes 0001 it
+also writes the next-numbered `migrations/NNNN_tabroom_schema_upgrade.sql`
+(`scripts/lib/schema-upgrade.mjs`): it rebuilds each changed table, keeping
+its rows, and drops or creates indexes. Commit it with the new 0001. It never
+drops a table the new schema skips.
+
+The schema declares no foreign keys (upstream data has orphan rows). `bun run
+db:check:tournaments` (local) or `db:check:tournaments:d1` (remote), from
+`apps/debate-ai.com`, reports orphan ids per reference column instead.
 
 ## How upstream runs on Workers
 
@@ -174,7 +187,7 @@ The UI is a React port of upstream's Svelte invite/pairings/results pages
 are ported by hand.
 
 The `session` table is skipped: it would collide with better-auth's table in
-`debate_db`. Set a separate `tabroom_db` D1 binding to keep Tabroom's tables
+`debate_db`. `server` and `campus_log` are skipped too: nothing here reads them. Set a separate `tabroom_db` D1 binding to keep Tabroom's tables
 in their own database; `lib/tournaments/handler.ts` prefers it when present.
 
 ## License

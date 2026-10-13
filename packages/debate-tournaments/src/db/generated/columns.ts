@@ -92,12 +92,490 @@ export const DATE_COLUMNS: readonly string[] = [
   "visible_at"
 ];
 
+/** Reference columns (`table` → `column` → the table whose id it holds), for the orphan check. */
+export const REFERENCES: Readonly<Record<string, Readonly<Record<string, string>>>> = {
+  "ad": {
+    "person": "person",
+    "approved_by": "person"
+  },
+  "autoqueue": {
+    "round": "round",
+    "event": "event",
+    "created_by": "person"
+  },
+  "ballot": {
+    "started_by": "person",
+    "entered_by": "person",
+    "audited_by": "person",
+    "judge": "judge",
+    "panel": "panel",
+    "entry": "entry"
+  },
+  "caselist": {
+    "person": "person"
+  },
+  "category": {
+    "tourn": "tourn",
+    "pattern": "pattern"
+  },
+  "category_setting": {
+    "category": "category",
+    "setting": "setting"
+  },
+  "change_log": {
+    "person": "person",
+    "event": "event",
+    "category": "category",
+    "chapter": "chapter",
+    "circuit": "circuit",
+    "tourn": "tourn",
+    "entry": "entry",
+    "judge": "judge",
+    "fine": "fine",
+    "panel": "panel",
+    "round": "round",
+    "school": "school"
+  },
+  "chapter": {
+    "district": "district"
+  },
+  "chapter_circuit": {
+    "circuit": "circuit",
+    "chapter": "chapter",
+    "region": "region",
+    "circuit_membership": "circuit_membership"
+  },
+  "chapter_judge": {
+    "chapter": "chapter",
+    "person": "person"
+  },
+  "chapter_setting": {
+    "chapter": "chapter",
+    "setting": "setting"
+  },
+  "circuit_membership": {
+    "circuit": "circuit"
+  },
+  "circuit_setting": {
+    "circuit": "circuit",
+    "setting": "setting"
+  },
+  "coach": {
+    "person": "person",
+    "entry": "entry",
+    "student": "student",
+    "created_by": "person"
+  },
+  "concession": {
+    "tourn": "tourn"
+  },
+  "concession_option": {
+    "concession_type": "concession_type"
+  },
+  "concession_purchase": {
+    "school": "school",
+    "concession": "concession",
+    "invoice": "invoice"
+  },
+  "concession_purchase_option": {
+    "concession_purchase": "concession_purchase",
+    "concession_option": "concession_option"
+  },
+  "concession_type": {
+    "concession": "concession"
+  },
+  "conflict": {
+    "person": "person",
+    "chapter": "chapter",
+    "added_by": "person"
+  },
+  "contact": {
+    "school": "school",
+    "person": "person",
+    "created_by": "person"
+  },
+  "district": {
+    "region": "region"
+  },
+  "email": {
+    "person": "person",
+    "tourn": "tourn",
+    "circuit": "circuit"
+  },
+  "entry": {
+    "tourn": "tourn",
+    "school": "school",
+    "event": "event",
+    "registered_by": "person"
+  },
+  "entry_setting": {
+    "entry": "entry",
+    "setting": "setting"
+  },
+  "entry_student": {
+    "entry": "entry",
+    "student": "student"
+  },
+  "event": {
+    "tourn": "tourn",
+    "category": "category",
+    "pattern": "pattern",
+    "rating_subset": "rating_subset",
+    "nsda_category": "nsda_category"
+  },
+  "event_setting": {
+    "event": "event",
+    "setting": "setting"
+  },
+  "file": {
+    "tourn": "tourn",
+    "school": "school",
+    "entry": "entry",
+    "event": "event",
+    "district": "district",
+    "circuit": "circuit",
+    "webpage": "webpage",
+    "person": "person"
+  },
+  "fine": {
+    "levied_by": "person",
+    "deleted_by": "person",
+    "tourn": "tourn",
+    "school": "school",
+    "region": "region",
+    "judge": "judge",
+    "person": "person",
+    "invoice": "invoice"
+  },
+  "follower": {
+    "person": "person",
+    "tourn": "tourn",
+    "judge": "judge",
+    "entry": "entry",
+    "school": "school",
+    "student": "student"
+  },
+  "hotel": {
+    "tourn": "tourn"
+  },
+  "housing": {
+    "tourn": "tourn",
+    "student": "student",
+    "judge": "judge",
+    "school": "school"
+  },
+  "housing_slots": {
+    "tourn": "tourn"
+  },
+  "invoice": {
+    "school": "school"
+  },
+  "jpool": {
+    "category": "category",
+    "site": "site"
+  },
+  "jpool_judge": {
+    "judge": "judge",
+    "jpool": "jpool"
+  },
+  "jpool_round": {
+    "jpool": "jpool",
+    "round": "round"
+  },
+  "jpool_setting": {
+    "jpool": "jpool",
+    "setting": "setting"
+  },
+  "judge": {
+    "school": "school",
+    "category": "category",
+    "chapter_judge": "chapter_judge",
+    "person": "person",
+    "registered_by": "person"
+  },
+  "judge_hire": {
+    "judge": "judge",
+    "tourn": "tourn",
+    "school": "school",
+    "region": "region",
+    "category": "category"
+  },
+  "judge_setting": {
+    "judge": "judge",
+    "setting": "setting"
+  },
+  "message": {
+    "person": "person",
+    "tourn": "tourn",
+    "email": "email"
+  },
+  "panel": {
+    "room": "room",
+    "round": "round"
+  },
+  "panel_setting": {
+    "panel": "panel",
+    "setting": "setting"
+  },
+  "pattern": {
+    "tourn": "tourn"
+  },
+  "permission": {
+    "person": "person",
+    "tourn": "tourn",
+    "region": "region",
+    "district": "district",
+    "chapter": "chapter",
+    "circuit": "circuit",
+    "category": "category",
+    "event": "event",
+    "created_by": "person"
+  },
+  "person_quiz": {
+    "approved_by": "person",
+    "person": "person",
+    "quiz": "quiz"
+  },
+  "person_setting": {
+    "person": "person",
+    "setting": "setting"
+  },
+  "practice": {
+    "chapter": "chapter",
+    "created_by": "person"
+  },
+  "practice_student": {
+    "practice": "practice",
+    "student": "student",
+    "created_by": "person"
+  },
+  "protocol": {
+    "tourn": "tourn"
+  },
+  "protocol_setting": {
+    "protocol": "protocol",
+    "setting": "setting"
+  },
+  "qualifier": {
+    "entry": "entry",
+    "tourn": "tourn"
+  },
+  "quiz": {
+    "person": "person",
+    "tourn": "tourn",
+    "circuit": "circuit"
+  },
+  "rating": {
+    "entry": "entry",
+    "rating_tier": "rating_tier",
+    "judge": "judge",
+    "rating_subset": "rating_subset"
+  },
+  "rating_subset": {
+    "category": "category"
+  },
+  "rating_tier": {
+    "category": "category",
+    "rating_subset": "rating_subset"
+  },
+  "region": {
+    "circuit": "circuit",
+    "tourn": "tourn"
+  },
+  "region_fine": {
+    "levied_by": "person",
+    "tourn": "tourn",
+    "region": "region",
+    "school": "school"
+  },
+  "region_setting": {
+    "region": "region",
+    "setting": "setting",
+    "event": "event"
+  },
+  "result": {
+    "result_set": "result_set",
+    "entry": "entry",
+    "student": "student",
+    "school": "school",
+    "round": "round",
+    "panel": "panel"
+  },
+  "result_key": {
+    "result_set": "result_set"
+  },
+  "result_set": {
+    "tourn": "tourn",
+    "sweep_set": "sweep_set",
+    "sweep_award": "sweep_award",
+    "event": "event",
+    "nsda_category": "nsda_category",
+    "circuit": "circuit"
+  },
+  "result_value": {
+    "result": "result",
+    "result_key": "result_key",
+    "protocol": "protocol"
+  },
+  "room": {
+    "site": "site"
+  },
+  "room_strike": {
+    "room": "room",
+    "event": "event",
+    "tourn": "tourn",
+    "entry": "entry",
+    "judge": "judge"
+  },
+  "round": {
+    "event": "event",
+    "timeslot": "timeslot",
+    "site": "site",
+    "protocol": "protocol"
+  },
+  "round_setting": {
+    "round": "round",
+    "setting": "setting"
+  },
+  "rpool": {
+    "tourn": "tourn"
+  },
+  "rpool_room": {
+    "rpool": "rpool",
+    "room": "room"
+  },
+  "rpool_round": {
+    "rpool": "rpool",
+    "round": "round"
+  },
+  "rpool_setting": {
+    "rpool": "rpool",
+    "setting": "setting"
+  },
+  "school": {
+    "tourn": "tourn",
+    "chapter": "chapter",
+    "region": "region",
+    "district": "district",
+    "registered_by": "person"
+  },
+  "school_setting": {
+    "school": "school",
+    "setting": "setting",
+    "chapter": "chapter"
+  },
+  "score": {
+    "ballot": "ballot",
+    "student": "student"
+  },
+  "setting_label": {
+    "setting": "setting"
+  },
+  "shift": {
+    "category": "category"
+  },
+  "site": {
+    "circuit": "circuit"
+  },
+  "stats": {
+    "event": "event"
+  },
+  "strike": {
+    "tourn": "tourn",
+    "judge": "judge",
+    "event": "event",
+    "entry": "entry",
+    "school": "school",
+    "region": "region",
+    "district": "district",
+    "timeslot": "timeslot",
+    "shift": "shift",
+    "entered_by": "person"
+  },
+  "student": {
+    "chapter": "chapter",
+    "person": "person"
+  },
+  "student_ballot": {
+    "panel": "panel",
+    "entry": "entry",
+    "entered_by": "person"
+  },
+  "student_setting": {
+    "student": "student",
+    "setting": "setting"
+  },
+  "student_vote": {
+    "panel": "panel",
+    "entry": "entry",
+    "entered_by": "person"
+  },
+  "sweep_award": {
+    "circuit": "circuit"
+  },
+  "sweep_award_event": {
+    "sweep_set": "sweep_set"
+  },
+  "sweep_event": {
+    "sweep_set": "sweep_set",
+    "event": "event",
+    "nsda_category": "nsda_category",
+    "sweep_award_event": "sweep_award_event"
+  },
+  "sweep_rule": {
+    "sweep_set": "sweep_set",
+    "protocol": "protocol"
+  },
+  "sweep_set": {
+    "tourn": "tourn",
+    "sweep_award": "sweep_award"
+  },
+  "tabroom_setting": {
+    "person": "person"
+  },
+  "tiebreak": {
+    "protocol": "protocol"
+  },
+  "timeslot": {
+    "tourn": "tourn"
+  },
+  "topic": {
+    "created_by": "person"
+  },
+  "tourn_circuit": {
+    "tourn": "tourn",
+    "circuit": "circuit"
+  },
+  "tourn_fee": {
+    "tourn": "tourn"
+  },
+  "tourn_ignore": {
+    "tourn": "tourn",
+    "person": "person"
+  },
+  "tourn_setting": {
+    "tourn": "tourn",
+    "setting": "setting"
+  },
+  "tourn_site": {
+    "tourn": "tourn",
+    "site": "site"
+  },
+  "webpage": {
+    "tourn": "tourn",
+    "last_editor": "person"
+  },
+  "weekend": {
+    "tourn": "tourn",
+    "site": "site"
+  }
+};
+
 /** Upstream tables created by the D1 migration. */
 export const TABLES: readonly string[] = [
   "ad",
   "autoqueue",
   "ballot",
-  "campus_log",
   "caselist",
   "category",
   "category_setting",
@@ -175,7 +653,6 @@ export const TABLES: readonly string[] = [
   "school",
   "school_setting",
   "score",
-  "server",
   "setting",
   "setting_label",
   "shift",
