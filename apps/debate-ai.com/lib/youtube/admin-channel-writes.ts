@@ -10,6 +10,7 @@
 import { eq } from "drizzle-orm";
 import { youtubeChannels, type YoutubeChannel } from "@/lib/database/schema";
 import { describeError } from "../database/errors";
+import { ensureTableColumns } from "../database/ensure-columns";
 
 /** What the add endpoint accepts. It takes a name alone — the channel id is
  *  resolved from YouTube on the next resync, never typed by an admin. */
@@ -64,6 +65,7 @@ export async function addAdminChannel(db: any, input: AddChannelInput, addedBy: 
     return { channel: null, error: "Channel name is required." };
   }
 
+  await ensureTableColumns(db, youtubeChannels);
   try {
     const [channel] = await db
       .insert(youtubeChannels)
@@ -95,6 +97,7 @@ export async function editAdminChannel(
   if (!Number.isInteger(id) || id <= 0) {
     return { channel: null, error: "Channel not found." };
   }
+  await ensureTableColumns(db, youtubeChannels);
 
   const patch: Record<string, unknown> = { updatedAt: new Date() };
   if (input.name !== undefined) {
