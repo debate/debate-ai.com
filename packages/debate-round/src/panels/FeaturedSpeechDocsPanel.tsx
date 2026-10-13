@@ -25,6 +25,7 @@ import {
   type FeaturedRound,
   type FeaturedSpeechDocsResult,
 } from "../round/featured-rounds"
+import { highlightedOnlyHtml } from "../round/highlighted-only-html"
 
 interface FeaturedSpeechDocsPanelProps {
   /** `FeaturedRound.key` of the round to show. Unknown keys render nothing. */
@@ -90,6 +91,9 @@ export function FeaturedSpeechDocsPanel({ featuredKey }: FeaturedSpeechDocsPanel
     }
   }, [featured])
 
+  const fullHtml = result?.docs[speech]
+  const html = useMemo(() => (fullHtml ? highlightedOnlyHtml(fullHtml) : fullHtml), [fullHtml])
+
   if (!featured) return null
 
   const available = speeches.filter((name) => result?.docs[name])
@@ -98,7 +102,6 @@ export function FeaturedSpeechDocsPanel({ featuredKey }: FeaturedSpeechDocsPanel
     const next = available[position + delta]
     if (next) setSpeech(next)
   }
-  const html = result?.docs[speech]
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
