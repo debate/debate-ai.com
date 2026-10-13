@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { Suspense, useEffect, useMemo, useState } from "react"
 import type { ComponentType, ReactNode } from "react"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
@@ -183,6 +183,16 @@ function SettingsSidebarFooter() {
  *   sidebar (the settings page puts its Back link there).
  */
 export function EditorSettingsPanel({ sidebarHeader }: { sidebarHeader?: ReactNode } = {}) {
+  // The panel reads `?category=` with useSearchParams(), which needs a
+  // Suspense boundary or a statically rendered page fails to render.
+  return (
+    <Suspense fallback={null}>
+      <EditorSettingsPanelContent sidebarHeader={sidebarHeader} />
+    </Suspense>
+  )
+}
+
+function EditorSettingsPanelContent({ sidebarHeader }: { sidebarHeader?: ReactNode }) {
   const searchParams = useSearchParams()
   const { categories, details, sections } = useCategories()
   const isTabId = (value: string | null): value is TabId => categories.some((category) => category.id === value)
