@@ -3,7 +3,7 @@
   "repository": "https://github.com/debate/debate-tournament-tabroom.git",
   "branch": "main",
   "commit": "75239a31cd8523d31dc119fe994b3fec488e77f3",
-  "vendorDir": "vendor/tabroom-build",
+  "vendorDir": "vendor/tabroom",
   "entries": [
     "indexcards/api/routes/routers/v1/rest/restRouter.ts",
     "indexcards/api/routes/routers/v1/pages/pagesRouter.js",

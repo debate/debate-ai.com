@@ -153,9 +153,11 @@ node scripts/sync-upstream.mjs --seed && bun run test   # + every route on upstr
    (`scripts/lib/schema-doc.mjs`), and `--seed` nulls the sentinels,
    credentials and personal contact details in the sample data.
 
-`vendor/tabroom/` is a git submodule of upstream itself (unpatched, for
-reference and `--source vendor/tabroom`); the app imports only the generated,
-patched copy in `vendor/tabroom-build/`.
+`vendor/tabroom/` is a git submodule of upstream, which `sync-upstream.mjs`
+patches and overlays in place. Upstream's files still import `express` and
+`@tabroom/types` directly, so until the submodule builds on Workers the app
+imports `vendor/tabroom-build/`: the last generated copy, with those imports
+rewritten to the in-package shims.
 
 **Never edit `vendor/`, `migrations/` or `src/db/generated/` by hand** — the
 next sync overwrites them. To change upstream code, edit it in `.upstream/`
