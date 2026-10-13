@@ -31,7 +31,7 @@ export const WORKSPACE_LINKS: WorkspaceLink[] = [
 
   // ── Community & Progress ────────────────────────────────────────────────
   { href: '/coaching/leaderboard', label: 'Leaderboard', description: 'Helpfulness score, tier, badges, and quest streak', category: 'Community & Progress' },
-  { href: '/news', label: 'News Stream', description: 'Product updates and community announcements', category: 'Community & Progress' },
+  { href: '/news', label: 'News & Forums', description: 'Product updates, community announcements and forum threads', category: 'Community & Progress' },
   { href: '/research/cards/awards', label: 'Contributor Awards', description: 'Category winners for best evidence finder, best explainer, and more', category: 'Community & Progress' },
   { href: '/research/cards/best-card', label: 'Daily Best Card', description: "Today's highest-helpfulness card, plus every past winner", category: 'Community & Progress' },
   { href: '/research/cards/progress', label: 'Progress', description: 'Unlock tier, badges, and daily-quest streak per contributor', category: 'Community & Progress' },
