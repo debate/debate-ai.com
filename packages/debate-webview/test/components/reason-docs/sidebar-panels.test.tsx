@@ -63,7 +63,6 @@ vi.mock("sonner", () => ({ toast }));
 
 import { ReasonDocsSidebarPanels } from "../../../src/components/reason-docs/ReasonDocsSidebarPanels";
 import { FileTree } from "../../../src/components/reason-docs/FileTree";
-import { OpenTabsPanel } from "../../../src/components/reason-docs/OpenTabsPanel";
 import { TopicStarterTree, type TopicStarterItem } from "../../../src/components/reason-docs/TopicStarterTree";
 import { SharedCardOpener, ShareWithContacts } from "../../../src/components/reason-editor/ShareWithContacts";
 import type { ReasonDocument } from "../../../src/components/reason-docs/types";
@@ -391,26 +390,6 @@ describe("FileTree", () => {
   }
 });
 
-describe("OpenTabsPanel", () => {
-  it("lists tabs and selects or closes them", () => {
-    const onSelect = vi.fn();
-    const onClose = vi.fn();
-    mount(<OpenTabsPanel documents={DOCS} openTabs={[1, 99]} activeId={1} onSelect={onSelect} onClose={onClose} />);
-    expect(bodyText()).toContain("Case.docx");
-    expect(bodyText()).toContain("Untitled");
-    click(allByText("Untitled", "div.group")[0]);
-    expect(onSelect).toHaveBeenCalledWith(99);
-    click(allByText("Case.docx", "div.group")[0].querySelector("button")!);
-    expect(onClose).toHaveBeenCalledWith(1);
-    expect(onSelect).toHaveBeenCalledTimes(1);
-  });
-
-  it("shows the empty state", () => {
-    mount(<OpenTabsPanel documents={[]} openTabs={[]} activeId={null} onSelect={() => {}} onClose={() => {}} />);
-    expect(bodyText()).toContain("No open tabs. Select a file to open it.");
-  });
-});
-
 describe("TopicStarterTree", () => {
   it("expands folders, selects files, filters by title and tag, and downloads", () => {
     const onSelect = vi.fn();
@@ -499,18 +478,20 @@ describe("TopicStarterTree", () => {
 });
 
 describe("ReasonDocsSidebarPanels", () => {
-  it("loads on mount and shows the files and open-tabs panels", () => {
+  it("loads on mount and shows Topic Starters above My Personal Documents, with no Open Tabs", () => {
     const docs = makeDocs();
     docsState.value = docs;
     mount(<ReasonDocsSidebarPanels fill />);
     expect(docs.ensureLoaded).toHaveBeenCalled();
     const text = bodyText();
-    expect(text).toContain("Files");
-    expect(text).toContain("Open Tabs (2)");
-    expect(text).not.toContain("Topic Starters");
+    expect(text).not.toContain("Open Tabs");
+    expect(text.indexOf("Topic Starters")).toBeGreaterThanOrEqual(0);
+    expect(text.indexOf("Topic Starters")).toBeLessThan(text.indexOf("My Personal Documents"));
+    expect(text).toContain("Solar Aff");
+    expect(text).toContain("Case.docx");
   });
 
-  it("routes a picked file and tab to the editor", () => {
+  it("routes a picked file to the editor", () => {
     const docs = makeDocs();
     docsState.value = docs;
     mount(<ReasonDocsSidebarPanels />);
@@ -518,11 +499,6 @@ describe("ReasonDocsSidebarPanels", () => {
     click(childRow);
     expect(docs.openDocument).toHaveBeenCalledWith(3);
     expect(nav.push).toHaveBeenCalledWith("/reason-editor?doc=folder/child");
-
-    const tab = allByText("Case.docx", "div.group").find((el) => el.className.includes("mx-1"))!;
-    click(tab);
-    expect(docs.selectTab).toHaveBeenCalledWith(1);
-    expect(nav.push).toHaveBeenLastCalledWith("/reason-editor?doc=case");
   });
 
   it("replaces the URL in place on the editor route and offers sharing", () => {
@@ -530,8 +506,8 @@ describe("ReasonDocsSidebarPanels", () => {
     const docs = makeDocs();
     docsState.value = docs;
     mount(<ReasonDocsSidebarPanels />);
-    const tab = allByText("Child", "div.group").find((el) => el.className.includes("mx-1"))!;
-    click(tab);
+    const childRow = [...document.querySelectorAll("span.flex-1")].find((s) => s.textContent === "Child")!.parentElement!;
+    click(childRow);
     expect(nav.replace).toHaveBeenCalledWith("/reason-editor?doc=folder/child");
     expect(document.querySelector("button[aria-label='Share with contacts']")).not.toBeNull();
 
@@ -549,45 +525,38 @@ describe("ReasonDocsSidebarPanels", () => {
     expect(nav.push).toHaveBeenCalledWith("/reason-editor");
     click(document.querySelector("button[title='New folder']")!);
     expect(docs.createDocument).toHaveBeenCalledWith(null, true);
-    click(document.querySelector("button[title='New File']")!);
-    expect(docs.createDocument).toHaveBeenCalledTimes(3);
+    expect(docs.createDocument).toHaveBeenCalledTimes(2);
   });
 
-  it("toggles panels, keeping at least one, and remembers the choice", () => {
-    docsState.value = makeDocs();
-    mount(<ReasonDocsSidebarPanels />);
-    click(button("Topics"));
-    expect(bodyText()).toContain("Topic Starters");
-    expect(JSON.parse(localStorage.getItem("reason-editor-sidebar-panels")!)).toEqual(["files", "openTabs", "topicStarters"]);
-
-    click(button("Files"));
-    click(button(/Tabs/));
-    click(button("Topics"));
-    // The last panel cannot be switched off.
-    expect(button("Topics").getAttribute("aria-pressed")).toBe("true");
-    expect(JSON.parse(localStorage.getItem("reason-editor-sidebar-panels")!)).toEqual(["topicStarters"]);
-  });
-
-  it("restores stored panels and collapse state, and collapses on demand", () => {
-    localStorage.setItem("reason-editor-sidebar-panels", JSON.stringify(["topicStarters", "bogus"]));
-    localStorage.setItem("reason-editor-sidebar-layout", JSON.stringify({ topicStarters: 50 }));
+  it("collapses each section on its own and remembers it", () => {
     const docs = makeDocs();
     docsState.value = docs;
     mount(<ReasonDocsSidebarPanels />);
-    expect(bodyText()).toContain("Topic Starters");
-    expect(bodyText()).not.toContain("Open Tabs");
-
-    click(button("Documents"));
-    expect(localStorage.getItem("reason-editor-sidebar-open")).toBe("false");
-    expect(bodyText()).not.toContain("Topic Starters");
+    click(button("Topic Starters"));
+    expect(button("Topic Starters").getAttribute("aria-expanded")).toBe("false");
+    expect(localStorage.getItem("reason-editor-sidebar-topics-open")).toBe("false");
+    expect(bodyText()).not.toContain("Solar Aff");
+    expect(bodyText()).toContain("Case.docx");
     cleanup();
 
     mount(<ReasonDocsSidebarPanels />);
-    expect(button("Documents").getAttribute("aria-expanded")).toBe("false");
+    expect(button("Topic Starters").getAttribute("aria-expanded")).toBe("false");
+    click(button("My Personal Documents"));
+    expect(localStorage.getItem("reason-editor-sidebar-files-open")).toBe("false");
+    expect(bodyText()).not.toContain("Case.docx");
+    expect(document.querySelector("button[title='New document']")).toBeNull();
+  });
+
+  it("fetches nothing while both sections are collapsed", () => {
+    localStorage.setItem("reason-editor-sidebar-topics-open", "false");
+    localStorage.setItem("reason-editor-sidebar-files-open", "false");
+    const docs = makeDocs();
+    docsState.value = docs;
+    mount(<ReasonDocsSidebarPanels />);
+    expect(docs.ensureLoaded).not.toHaveBeenCalled();
   });
 
   it("selects topic starters and shows download failures", async () => {
-    localStorage.setItem("reason-editor-sidebar-panels", JSON.stringify(["files", "topicStarters"]));
     const docs = makeDocs({
       downloadDocument: vi.fn(async () => ({ ok: false, error: "Case could not be downloaded (x)." })),
       downloadTopicDocument: vi.fn(async () => ({ ok: false, error: "Solar Aff could not be downloaded (y)." })),
@@ -628,7 +597,6 @@ describe("ReasonDocsSidebarPanels", () => {
   });
 
   it("copies a topic starter dropped on Files, and publishes a file dropped on Topic Starters", async () => {
-    localStorage.setItem("reason-editor-sidebar-panels", JSON.stringify(["files", "topicStarters"]));
     const docs = makeDocs();
     docsState.value = docs;
     mount(<ReasonDocsSidebarPanels />);
@@ -649,7 +617,6 @@ describe("ReasonDocsSidebarPanels", () => {
   });
 
   it("explains a publish the server refuses and a copy that fails", async () => {
-    localStorage.setItem("reason-editor-sidebar-panels", JSON.stringify(["files", "topicStarters"]));
     const docs = makeDocs({
       publishToTopics: vi.fn(async () => ({ ok: false, error: "Only admins can add files to Topic Starters." })),
       copyTopicToDocuments: vi.fn(async () => ({ ok: false, error: "Energy could not be copied (x)." })),
@@ -669,7 +636,6 @@ describe("ReasonDocsSidebarPanels", () => {
   });
 
   it("edits a copy of a topic starter by opening the copy", async () => {
-    localStorage.setItem("reason-editor-sidebar-panels", JSON.stringify(["topicStarters"]));
     const docs = makeDocs();
     docsState.value = docs;
     mount(<ReasonDocsSidebarPanels />);
@@ -682,7 +648,6 @@ describe("ReasonDocsSidebarPanels", () => {
   });
 
   it("copies a topic starter's public link", async () => {
-    localStorage.setItem("reason-editor-sidebar-panels", JSON.stringify(["topicStarters"]));
     const writeText = vi.fn(async () => {});
     Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
     docsState.value = makeDocs();
