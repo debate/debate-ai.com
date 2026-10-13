@@ -1,9 +1,9 @@
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Coach",
+  title: "Coaching",
   description:
-    "Round coaching workspace: argument tree, flow summary, coaching prompts, drills, scouting, briefings and practice rounds",
+    "Coach workspace, AI coach mode, coaching programs, team calendar and coach materials on one page",
 }
 
 export { default } from "@debate/webview/routes/coach/page"

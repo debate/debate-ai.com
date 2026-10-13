@@ -1,5 +1,5 @@
 // @ts-nocheck
-import z from 'zod';
+import { z } from 'zod';
 import type { ZodOpenApiSchemaObject } from 'zod-openapi';
 
 export const HomepageAdSchema = z.object({

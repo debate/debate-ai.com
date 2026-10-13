@@ -11,7 +11,11 @@
  * group at a time. The individual routes still mount the same panels one at
  * a time; this is the view for working across them.
  *
- * Navigation chrome (the sticky tab strip, the per-section intro card with
+ * It is the first tab ("Coach Workspace") of the Coaching page
+ * (`CoachingWorkspace.tsx`), so its stage lives in `?stage=` rather than
+ * `?section=`, which the page's own tabs own.
+ *
+ * Navigation chrome (the tab strip, the per-section intro card with
  * a chip per panel and an "open as its own page" link, `?section=` URL
  * sync) comes from `components/hubs/HubSectionNav.tsx`; this file owns the
  * section list ({@link COACH_SECTIONS}) and the "current round" context bar,
@@ -27,6 +31,7 @@
 
 import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
+import { useSearchParams } from "next/navigation"
 import { ArrowUpRight, ClipboardList, Crosshair, GraduationCap, ListTree, PlayCircle, Workflow } from "lucide-react"
 import {
   FlowEditLogPanel,
@@ -82,7 +87,15 @@ const EMPTY_FLOW: Flow = {
 /** localStorage key remembering the last open section. */
 const SECTION_KEY = "coachHubSection"
 
-type SectionId = "flow" | "coaching" | "prep" | "scouting" | "practice"
+/**
+ * URL query parameter carrying the open stage. The hub is the first tab of
+ * the Coaching page, whose own tabs own `?section=`.
+ */
+export const COACH_STAGE_PARAM = "stage"
+
+/** One tab per stage of a round; also the `?stage=` values. */
+export type CoachStageId = "flow" | "coaching" | "prep" | "scouting" | "practice"
+type SectionId = CoachStageId
 
 /** A round's life in the coach's hands, one tab per stage — see the Training and Practice guides. */
 export const COACH_SECTIONS: readonly HubSection<SectionId>[] = [
@@ -106,10 +119,10 @@ export const COACH_SECTIONS: readonly HubSection<SectionId>[] = [
     description: "Turn that flow into training: AI coaching prompts, drills, squad programs, and the coach AI's grounding materials.",
     guide: "training-tools",
     panels: [
-      panel("AI Coach Mode", "/coaching/ai-coach"),
-      panel("Coaching Programs", "/coaching/programs"),
+      panel("AI Coach Mode", "/coaching?section=ai-coach"),
+      panel("Coaching Programs", "/coaching?section=programs"),
       panel("Practice Drills", "/practice/drills"),
-      panel("Coach Materials", "/coaching/materials"),
+      panel("Coach Materials", "/coaching?section=materials"),
     ],
   },
   {
@@ -164,12 +177,29 @@ function flowTitle(flow: Flow): string {
 }
 
 /**
+ * Whether a raw URL value names one of the hub's stages. Links from before
+ * the Coaching page had its own tabs put the stage in `?section=`.
+ *
+ * @param value - Raw query value.
+ */
+export function isCoachStageId(value: string | null | undefined): value is CoachStageId {
+  return COACH_SECTIONS.some((entry) => entry.id === value)
+}
+
+/**
  * Tabbed hub over every round/coach panel.
  *
  * @returns The coach hub element.
  */
 export function CoachHub() {
-  const [section, setSection] = useHubSection(COACH_SECTIONS, SECTION_KEY)
+  const params = useSearchParams()
+  const legacyStage = params?.get("section")
+  const [section, setSection] = useHubSection(
+    COACH_SECTIONS,
+    SECTION_KEY,
+    isCoachStageId(legacyStage) ? legacyStage : undefined,
+    COACH_STAGE_PARAM,
+  )
   const [mounted, setMounted] = useState(false)
 
   const flows = useFlowStore((state) => state.flows)
@@ -199,7 +229,13 @@ export function CoachHub() {
 
   return (
     <div className="flex flex-col gap-4">
-      <HubSectionNav sections={COACH_SECTIONS} active={section} onChange={setSection} label="Coach sections" />
+      <HubSectionNav
+        sections={COACH_SECTIONS}
+        active={section}
+        onChange={setSection}
+        label="Coach workspace stages"
+        sticky={false}
+      />
 
       <section
         aria-label="Current round"

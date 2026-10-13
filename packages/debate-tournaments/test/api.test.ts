@@ -99,3 +99,26 @@ describe("tournaments API on D1", () => {
     expect((await get("/rest/nope")).status).toBe(404);
   });
 });
+
+describe("upstream's tournament-admin (tab) API", () => {
+  it("answers only a signed-in owner or admin of the tournament, read-only", async () => {
+    d1.raw.exec(`
+      INSERT INTO person (id, email, first, last) VALUES (900, 'owner@example.com', 'Olive', 'Owner'), (901, 'other@example.com', 'Otto', 'Other');
+      INSERT INTO permission (person, tourn, tag) VALUES (900, 1, 'owner');
+    `);
+    const owner = { headers: { "x-user": "owner@example.com" } };
+
+    expect((await get("/tab/tourns/1/timeslots")).status).toBe(401);
+    expect((await get("/tab/tourns/1/timeslots", { headers: { "x-user": "other@example.com" } })).status).toBe(403);
+
+    const timeslots = await get("/tab/tourns/1/timeslots", owner);
+    expect(timeslots.status).toBe(200);
+    expect(timeslots.body.map((t: any) => t.id)).toEqual([400]);
+    const categories = await get("/tab/tourns/1/categories", owner);
+    expect(categories.status).toBe(200);
+    expect(categories.body.map((c: any) => c.abbr)).toEqual(["DJ"]);
+    expect((await get("/tab/tourns/1/schools", owner)).status).toBe(200);
+    expect((await get("/tab/tourns/1/sites", owner)).status).toBe(200);
+    expect((await get("/tab/tourns/1/timeslots", { ...owner, method: "POST" })).status).toBe(405);
+  });
+});

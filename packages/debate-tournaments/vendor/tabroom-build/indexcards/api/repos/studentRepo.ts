@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { schoolYearDateRange } from '../helpers/dateTime.js';
 import type { Database } from '../data/database.js';
-import { selectSettings } from './utils/settings.js';
+import { selectSettings } from './utils/index.js';
 import type { Insertable, Updateable } from 'kysely';
 import type { Student } from '../data/schema.js';
 

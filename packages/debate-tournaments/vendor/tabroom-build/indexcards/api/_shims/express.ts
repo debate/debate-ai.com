@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * @debate/tournaments shim for `express` in vendored upstream code.
  *

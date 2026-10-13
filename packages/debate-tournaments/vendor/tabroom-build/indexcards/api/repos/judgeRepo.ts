@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { saveSettings, selectSettings, type Settings } from './utils/settings.js';
+import { saveSettings, selectSettings, withTransaction, type Settings } from './utils/index.js';
 import type { Database } from '../data/database.js'
 import type { Insertable } from 'kysely';
 import { sql } from 'kysely';
@@ -43,7 +43,7 @@ async function getJudges(db: Database, opts: queryOpts = {}) {
 async function createJudge(db: Database, data: Insertable<Judge> & { settings?: Settings}){
 	const { settings, ...judgeData } = data;
 
-	return await db.transaction().execute(async (trx) => {
+	return await withTransaction(db, async (trx) => {
 		const judge = await trx
 			.insertInto('judge')
 			.values(judgeData)
@@ -66,7 +66,7 @@ async function createJudge(db: Database, data: Insertable<Judge> & { settings?: 
 async function updateJudge(db: Database, id: number, data: Insertable<Judge> & { settings?: Settings}) {
 	const { settings, ...judgeData } = data;
 
-	await db.transaction().execute(async (trx) => {
+	await withTransaction(db, async (trx) => {
 		await trx
 			.updateTable('judge')
 			.set(judgeData)

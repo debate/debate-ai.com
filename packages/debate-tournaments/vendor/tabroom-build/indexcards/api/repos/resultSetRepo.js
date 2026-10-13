@@ -1,50 +1,52 @@
+import { sql } from 'kysely';
 import { stripNulls, dbToObject } from '../helpers/text.js';
-import db from '../data/db.js';
+import { db as kdb } from '../data/database.js';
+import logger from '../helpers/logger.js';
 
 const buildResultSetQuery = ({opts = {}, scope = {}}) => {
 
-	let limiter = {
-		condition : '',
-		joins     : '',
-		fields    : '',
-	};
-
-	const query = {
-		where: {},
-		include: [],
-	};
+	// Fragments composed into the result set queries below
+	const conditions = [];
+	let fields = sql``;
+	let joins = sql``;
 
 	if(opts.coach) {
-		query.where.coach = 1;
-		limiter.condition += 'and rs.coach = 1 ';
+		conditions.push(sql`and rs.coach = 1 `);
 	} else if(!opts.unpublished){
-		query.where.published = 1;
-		limiter.condition += ' and rs.published = 1 ';
+		conditions.push(sql` and rs.published = 1 `);
 	}
 
 	const conditionals = [];
 
 	Object.keys(scope).forEach( (rawField) => {
 		if (rawField === 'resultSetId') {
-			limiter.condition += '\n and rs.id = :resultSetId ';
+			conditions.push(sql`\n and rs.id = ${scope.resultSetId} `);
 		} else if (rawField === 'tournId' && !scope.eventId) {
-			limiter.fields += ', event';
-			limiter.condition += '\n and rs.event = event.id and event.tourn = :tournId ';
+			fields = sql`, event`;
+			conditions.push(sql`\n and rs.event = event.id and event.tourn = ${scope.tournId} `);
 			conditionals.push('event');
 		} else {
 			// invalid request.  BEGONE!
-			limiter.condition += '\n and 1=2 ';
+			conditions.push(sql`\n and 1=2 `);
 		}
 
 		let field = rawField.replace('Id', '');
-		if (scope.eventId) limiter.condition += ` and rs.${field} = :${rawField}`;
+		if (scope.eventId) conditions.push(sql` and ${sql.ref(`rs.${field}`)} = ${scope[rawField]}`);
 	});
 
 	if (!conditionals.includes('event')) {
-		limiter.joins = ' left join event on event.id = rs.event ';
+		joins = sql` left join event on event.id = rs.event `;
 	}
 
-	return {query, limiter};
+	const limiter = {
+		fields,
+		joins,
+		condition: conditions.length > 0
+			? sql.join(conditions, sql``)
+			: sql`and rs.published = 1`,
+	};
+
+	return { limiter };
 };
 
 /*
@@ -55,7 +57,7 @@ export const getResultSets = async (scope = {}, opts = {}) => {
 
 	let { limiter } = buildResultSetQuery({opts, scope});
 
-	const resultSetData = await db.sequelize.query(`
+	const { rows: resultSetData } = await sql`
 		select
 			rs.id, rs.tag, rs.label, rs.published, rs.coach, rs.entity,
 			rs.nsda_category rsNSDA,
@@ -70,13 +72,10 @@ export const getResultSets = async (scope = {}, opts = {}) => {
 			left join circuit on circuit.id = rs.circuit
 			${limiter.joins}
 		where 1=1
-			${limiter.condition || 'and rs.published = 1'}
+			${limiter.condition}
 		group by rs.id
 		order by event.nsda_category, rs.nsda_category, event.level, event.abbr, rs.generated DESC
-	`, {
-		type: db.Sequelize.QueryTypes.SELECT,
-		replacements: { ...scope},
-	});
+	`.execute(kdb);
 
 	const events = {};
 
@@ -119,7 +118,7 @@ export const getResultSet = async (scope = {}, query = {}, opts = {}) => {
 
 	let { limiter } = buildResultSetQuery({opts, scope});
 
-	const rsen = await db.sequelize.query(`
+	const { rows: rsen } = await sql`
 		select
 			rs.id, rs.tag, rs.label, rs.published, rs.coach, rs.entity,
 			rs.cache,
@@ -135,12 +134,9 @@ export const getResultSet = async (scope = {}, query = {}, opts = {}) => {
 			left join circuit on circuit.id = rs.circuit
 			${limiter.joins}
 		where 1=1
-			${limiter.condition || 'and rs.published = 1'}
-			and rs.id = :resultSetId
-	`, {
-		type         : db.Sequelize.QueryTypes.SELECT,
-		replacements : { ...scope },
-	});
+			${limiter.condition}
+			and rs.id = ${scope.resultSetId}
+	`.execute(kdb);
 
 	const resultSets = [];
 
@@ -186,7 +182,7 @@ export const getResultSet = async (scope = {}, query = {}, opts = {}) => {
 
 			delete resultSet.cache;
 
-			const rawResults = await db.sequelize.query(`
+			const { rows: rawResults } = await sql`
 				select
 					result.rank,
 					result.place,
@@ -195,12 +191,9 @@ export const getResultSet = async (scope = {}, query = {}, opts = {}) => {
 					result.panel section
 				from result
 				where 1=1
-					and result_set = :resultSetId
+					and result_set = ${resultSet.id}
 					order by result.rank
-			`, {
-				replacements : {resultSetId: resultSet.id},
-				type         : db.Sequelize.QueryTypes.SELECT,
-			});
+			`.execute(kdb);
 
 			resultSet.results = rawResults.map( (result) => {
 				if (query.nocache) delete result.cache;
@@ -245,20 +238,15 @@ export const getResultSet = async (scope = {}, query = {}, opts = {}) => {
 				}
 			}
 
-			await db.sequelize.query(`
-				update result_set set cache = :cache where id = :resultSetId
-			`, {
-				replacements: {
-					cache       : JSON.stringify({ ...newCache }),
-					resultSetId : resultSet.id,
-				},
-				type: db.Sequelize.QueryTypes.UPDATE,
-			});
+			await kdb.updateTable('result_set')
+				.set({ cache: JSON.stringify({ ...newCache }) })
+				.where('id', '=', resultSet.id)
+				.execute();
 
 			delete resultSet.cache;
 		}
 
-		if (!resultSet.results?.[0]?.place > 0) {
+		if (!resultSet.results || !resultSet.results[0]?.place > 0) {
 			resultSet.noPlacement = true;
 		}
 		resultSets.push(resultSet);
@@ -288,7 +276,7 @@ const createResultCache = async (resultSet) => {
 	// We're not going to be fancy with the joins here. Just pull the raw data
 	// for once and process it in code, Palmer.
 
-	const rawResults = await db.sequelize.query(`
+	const { rows: rawResults } = await sql`
 		select
 			result.*,
 			entry.id entryId, entry.code entryCode, entry.name entryName,
@@ -305,30 +293,24 @@ const createResultCache = async (resultSet) => {
 			left join school entrySchool on entrySchool.id = entry.school
 			left join panel section on section.id = result.panel
 		where 1=1
-			and result.result_set = :resultSetId
+			and result.result_set = ${resultSet.id}
 			order by result.rank
-	`, {
-		replacements: { resultSetId: resultSet.id },
-		type: db.Sequelize.QueryTypes.SELECT,
-	});
+	`.execute(kdb);
 
 	const results = mapResults(rawResults);
 
-	const rawHeaders = await db.sequelize.query(`
+	const { rows: rawHeaders } = await sql`
 		select rk.*
 		from (result_key rk)
 		where 1=1
-			and rk.result_set = :resultSetId
-	`, {
-		replacements: { resultSetId: resultSet.id },
-		type: db.Sequelize.QueryTypes.SELECT,
-	});
+			and rk.result_set = ${resultSet.id}
+	`.execute(kdb);
 
-	console.log(`I should be here`);
+	logger.info(`I should be here`);
 
 	const headersById = {};
 	rawHeaders.forEach( (header) => {
-		console.log(`I have tag ${header.tag} id ${header.id}`);
+		logger.info(`I have tag ${header.tag} id ${header.id}`);
 
 		headersById[header.id] = {
 			tag         : header.tag,
@@ -343,20 +325,17 @@ const createResultCache = async (resultSet) => {
 	// represent the individual scores for each header the entity has, where it
 	// exists.
 
-	const rawValues = await db.sequelize.query(`
+	const { rows: rawValues } = await sql`
 		select rv.id, rv.value, rv.result,
 			rv.result_key header, rv.priority,
 			protocol.id protocolId, protocol.name protocolName
 		from (result_value rv, result)
 			left join protocol on rv.protocol = protocol.id
 		where 1=1
-			and result.result_set = :resultSetId
+			and result.result_set = ${resultSet.id}
 			and result.id = rv.result
 		order by result.rank, rv.priority
-	`, {
-		replacements: { resultSetId: resultSet.id },
-		type: db.Sequelize.QueryTypes.SELECT,
-	});
+	`.execute(kdb);
 
 	let headerKey      = 1;
 	const idToKey      = {};
@@ -420,12 +399,12 @@ const createResultCache = async (resultSet) => {
 
 	} else {
 
-		let studentLimiter = '';
+		let studentLimiter = sql``;
 		if (resultSet.entity === 'student') {
-			studentLimiter = 'and (score.student = result.student OR result.student IS NULL OR result.student = 0)';
+			studentLimiter = sql`and (score.student = result.student OR result.student IS NULL OR result.student = 0)`;
 		}
 
-		const rawScores = await db.sequelize.query(`
+		const { rows: rawScores } = await sql`
 			select
 				round.name roundName,
 				panel.bye,
@@ -440,7 +419,7 @@ const createResultCache = async (resultSet) => {
 					and score.tag IN ('winloss', 'rank', 'point', 'refute', 'po')
 					${studentLimiter}
 			where 1=1
-				and result.result_set = :resultSetId
+				and result.result_set = ${resultSet.id}
 				and result.entry = ballot.entry
 				and ballot.panel = panel.id
 				and panel.round = round.id
@@ -453,10 +432,7 @@ const createResultCache = async (resultSet) => {
 					when 'refute' then 4
 					when 'po' then 5
 				END
-		`, {
-			replacements: { resultSetId: resultSet.id },
-			type: db.Sequelize.QueryTypes.SELECT,
-		});
+		`.execute(kdb);
 
 		if (rawScores.length > 1) {
 			rawScores.forEach( (score) => {
@@ -488,15 +464,10 @@ const createResultCache = async (resultSet) => {
 
 	Object.keys(results).forEach( (resultId) => {
 
-		const promise = db.sequelize.query(`
-			update result set cache = :cache where id = :resultId
-		`, {
-			replacements : {
-				cache    : JSON.stringify(results[resultId]),
-				resultId,
-			},
-			type: db.Sequelize.QueryTypes.UPDATE,
-		});
+		const promise = kdb.updateTable('result')
+			.set({ cache: JSON.stringify(results[resultId]) })
+			.where('id', '=', resultId)
+			.execute();
 		promises.push(promise);
 	});
 
@@ -518,7 +489,7 @@ const createBracketCache = async (resultSet) => {
 	// rounds in the system but since I'm trying to use result sets as a data
 	// independent thing, recreate that here.
 
-	const rawSections = await db.sequelize.query(`
+	const { rows: rawSections } = await sql`
 		select
 			round.id roundId, round.name roundName, round.label roundLabel,
 			round.type roundType,
@@ -528,7 +499,7 @@ const createBracketCache = async (resultSet) => {
 			(select room.name from room where panel.room = room.id) as roomName
 		from (round, panel, ballot, entry)
 			where 1=1
-			and round.event = :eventId
+			and round.event = ${resultSet.Event.id}
 			and round.type IN ('elim', 'final')
 			and round.published IN (1, 2)
 			and round.id = panel.round
@@ -536,10 +507,7 @@ const createBracketCache = async (resultSet) => {
 			and ballot.entry = entry.id
 		group by entry.id, round.id
 		order by round.name, panel.bracket, ballot.side
-	`, {
-		replacements: { eventId: resultSet.Event.id },
-		type: db.Sequelize.QueryTypes.SELECT,
-	});
+	`.execute(kdb);
 
 	const rounds = {};
 	let order = 1;
@@ -580,15 +548,10 @@ const createBracketCache = async (resultSet) => {
 
 	});
 
-	await db.sequelize.query(`
-		update result_set set cache = :cache where id = :resultSetId
-	`, {
-		replacements: {
-			cache       : JSON.stringify({ rounds }),
-			resultSetId : resultSet.id,
-		},
-		type: db.Sequelize.QueryTypes.UPDATE,
-	});
+	await kdb.updateTable('result_set')
+		.set({ cache: JSON.stringify({ rounds }) })
+		.where('id', '=', resultSet.id)
+		.execute();
 
 	return { rounds };
 };

@@ -648,7 +648,7 @@ export function buildRecentCloudItems(
     prepNoteHref = "/practice/prep?section=notes",
     evidenceLibraryEntryHref = "/research/cards/library",
     practiceRoundHref = "/practice",
-    coachMaterialHref = "/coaching/materials",
+    coachMaterialHref = "/coaching?section=materials",
   } = opts;
 
   const documentItems: CloudLibraryItem[] = (input.documents ?? []).slice(0, perKindLimit).map((doc) => ({

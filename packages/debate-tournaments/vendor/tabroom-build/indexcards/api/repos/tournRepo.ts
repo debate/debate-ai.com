@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { saveSettings, selectSettings, type Settings } from './utils/settings.js';
+import { saveSettings, selectSettings, withTransaction, type Settings } from './utils/index.js';
 import type { Database } from '../data/database.js';
 import type { Insertable, Updateable } from 'kysely';
 import type { Tourn } from '../data/schema.js';
@@ -85,7 +85,7 @@ async function getTourns(db: Database, opts: queryOpts = {}) {
 async function createTourn(db: Database, data: Insertable<Tourn> & { settings?: Settings } = {}) {
 	const { settings, ...tournData } = data;
 
-	return await db.transaction().execute(async (trx) => {
+	return await withTransaction(db, async (trx) => {
 		if (Object.keys(tournData).length === 0) {
 			throw new Error('createTourn requires tourn data');
 		}
@@ -112,7 +112,7 @@ async function createTourn(db: Database, data: Insertable<Tourn> & { settings?: 
 			async function updateTourn(db: Database, id: number, data: Updateable<Tourn> & { settings?: Settings }) {
 				const { settings, ...tournData } = data;
 
-	return await db.transaction().execute(async (trx) => {
+	return await withTransaction(db, async (trx) => {
 		if (Object.keys(tournData).length > 0) {
 			await trx
 				.updateTable('tourn')
@@ -181,19 +181,19 @@ export async function getSchedule(db: Database, id: number){
 
 	return schedule.map( (round) => {
 		return {
-			id          : round.id,
-			type        : round.type,
-			name        : round.name,
-			label       : round.label,
-			published   : round.published,
-			postPrimary : round.post_primary,
-			startTime   : round.start_time,
+			id           : round.id,
+			type         : round.type,
+			name         : round.name,
+			label        : round.label,
+			published    : round.published,
+			post_primary : round.post_primary,
+			start_time   : round.start_time,
 			Event: {
-				id           : round.eventId,
-				name         : round.eventName,
-				abbr         : round.eventAbbr,
-				type         : round.eventType,
-				nsdaCategory : round.nsda_category,
+				id            : round.eventId,
+				name          : round.eventName,
+				abbr          : round.eventAbbr,
+				type          : round.eventType,
+				nsda_category : round.nsda_category,
 			},
 			Timeslot  : {
 				id    : round.timeslotId,
@@ -217,6 +217,41 @@ export async function getContacts(db: Database, tournId: number) {
 			'person.email',
 		])
 		.execute();
+};
+
+/**
+ * Counts of in person and hybrid events, matching the upcoming tournaments query.
+ * A tournament with neither is fully online.
+ */
+export async function getEventModeCounts(db: Database, tournId: number) {
+	const [inPerson, hybrid] = await Promise.all([
+		db.selectFrom('event')
+			.where('event.tourn', '=', tournId)
+			.where('event.type', '!=', 'attendee')
+			.where(({ not, exists, selectFrom }) => not(exists(
+				selectFrom('event_setting')
+					.select('event_setting.id')
+					.whereRef('event_setting.event', '=', 'event.id')
+					.where('event_setting.tag', '=', 'online_mode')
+			)))
+			.select(({ fn }) => fn.countAll<number>().as('count'))
+			.executeTakeFirstOrThrow(),
+		db.selectFrom('event')
+			.where('event.tourn', '=', tournId)
+			.where(({ exists, selectFrom }) => exists(
+				selectFrom('event_setting')
+					.select('event_setting.id')
+					.whereRef('event_setting.event', '=', 'event.id')
+					.where('event_setting.tag', '=', 'online_hybrid')
+			))
+			.select(({ fn }) => fn.countAll<number>().as('count'))
+			.executeTakeFirstOrThrow(),
+	]);
+
+	return {
+		inPerson: Number(inPerson.count),
+		hybrid: Number(hybrid.count),
+	};
 };
 
 async function getPersonTourns(db: Database, personId: number, opts: queryOpts = {}) {
@@ -346,6 +381,7 @@ export default {
 	addSite,
 	getSchedule,
 	getContacts,
+	getEventModeCounts,
 	getPersonTourns,
 	getPersonTournSummary,
 };

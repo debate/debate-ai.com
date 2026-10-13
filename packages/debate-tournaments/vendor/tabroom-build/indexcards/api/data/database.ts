@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * @debate/tournaments overlay — replaces upstream's `api/data/database.ts`.
  *

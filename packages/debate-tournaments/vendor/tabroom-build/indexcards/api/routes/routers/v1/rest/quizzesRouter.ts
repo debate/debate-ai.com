@@ -4,11 +4,12 @@ import con from '../../../../controllers/rest/QuizController.js';
 import z from 'zod';
 import { QuizSchema } from '../../../../../../types/index.js';
 import { optionalAuth } from '../../../openapi/security.js';
+import { ValidateRequest } from '../../../../middleware/validation.js';
 
 const router = Router();
 
 router.route('/')
-  .get(con.getQuizzes).openapi = {
+  .get(ValidateRequest, con.getQuizzes).openapi = {
   	summary: 'Get all quizzes',
 	path: '/rest/quizzes',
   	operationId: 'RestQuizzes',

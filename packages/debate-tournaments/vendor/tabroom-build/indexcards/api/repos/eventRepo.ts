@@ -5,15 +5,20 @@ import { sql } from 'kysely';
 import { snakeToCamel } from '../helpers/text.js';
 import type { Database } from '../data/database.js';
 import type { Event } from '../data/schema.js';
-import { saveSettings, type Settings } from './utils/settings.js';
+import { saveSettings, selectSettings, withTransaction, type Settings } from './utils/index.js';
 
 type queryOpts = {
 	ids?: number[];
 	tourn?: number;
+	settings?: boolean | string[];
 };
 
 function buildEventQuery(db:Database, opts: queryOpts = {}) {
-	let query = db.selectFrom('event');
+	let query = db.selectFrom('event')
+	.$if(opts.settings !== undefined && opts.settings !== false, (q) => q.select(selectSettings({
+		table: 'event',
+		settings: opts.settings ?? false,
+	})));
 	if (opts.tourn) query = query.where('event.tourn', '=', opts.tourn);
 	if (opts.ids && opts.ids.length > 0) query = query.where('event.id', 'in', opts.ids);
 	return query;
@@ -167,23 +172,23 @@ export async function getEventsForInvite(db: Database, tournId: number) {
 	}));
 }
 
-export function getEvent(db:Database, id: number, opts = {}) {
+export function getEvent(db:Database, id: number, opts: queryOpts = {}) {
 	const query = buildEventQuery(db, opts)
-		.where('id','=', id)
-	
-	return query.selectAll().executeTakeFirst();
+		.where('event.id','=', id);
+
+	return query.selectAll('event').executeTakeFirst();
 }
 
 export async function getEvents(db: Database, opts: queryOpts = {}){
 	return await buildEventQuery(db, opts)
-		.selectAll()
+		.selectAll('event')
 		.execute();
 }
 
 async function createEvent(db: Database, data: Insertable<Event> & { settings?: Settings }) {
 	const { settings, ...categoryData } = data;
 
-	return await db.transaction().execute(async (trx) => {
+	return await withTransaction(db, async (trx) => {
 		if (Object.keys(categoryData).length === 0) {
 			throw new Error('createEvent requires event data');
 		}

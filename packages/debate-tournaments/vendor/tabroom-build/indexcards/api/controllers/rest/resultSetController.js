@@ -7,11 +7,11 @@ export async function getResultSet(req,res) {
 	// For now the site admins get to do nocache but nobody else does
 	let queryParams;
 	if (req.person?.site_admin) {
-		queryParams = { ...req.valid.query };
+		queryParams = { ...req.query };
 	}
 
 	const resultSet = await resultSetRepo.getResultSet(
-		{ ...req.valid.params },
+		{ ...req.params },
 		{ ...queryParams },
 	);
 	if (resultSet.length > 0) {
@@ -25,11 +25,11 @@ export async function getResultSets(req,res) {
 	// For now the site admins get to do nocache but nobody else does
 	let queryParams;
 	if (req.person?.site_admin) {
-		queryParams = { ...req.valid.query };
+		queryParams = { ...req.query };
 	}
 
 	const resultSet = await resultSetRepo.getResultSets(
-		{ ...req.valid.params },
+		{ ...req.params },
 		{ ...queryParams },
 	);
 
@@ -40,6 +40,6 @@ export async function getResultSets(req,res) {
 }
 
 export async function getTiebreaks(req, res) {
-	const answer = await tiebreakTypes({...req.valid.params});
+	const answer = await tiebreakTypes({...req.params});
 	return res.status(200).json(answer);
 }

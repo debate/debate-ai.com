@@ -1,7 +1,7 @@
 // @ts-nocheck
 import type { ZodOpenApiSchemaObject } from 'zod-openapi';
 import * as utils from './utils.js'
-import z from "zod";
+import { z } from 'zod';
 
 export const ResultSetEventSchema = z.object({
 	id: utils.id,
@@ -35,7 +35,7 @@ export const ResultSetSchema = z.object({
 		abbr: z.string(),
 		level: z.string(),
 		name: z.string(),
-		nsdacategory: utils.id,
+		nsdacategory: utils.id.optional().meta({ description: 'Absent when the event has no NSDA category' }),
 		type: z.string(),
 	}),
 	results: z.array(z.object({
@@ -47,7 +47,7 @@ export type ResultSet = z.infer<typeof ResultSetSchema>;
 
 export const EventResultSetsSchema = z.object({
 	id: utils.id,
-	nsdacategory: utils.id,
+	nsdacategory: utils.id.optional().meta({ description: 'Absent when the event has no NSDA category' }),
 	name: z.string(),
 	abbr: z.string(),
 	level: z.string(),

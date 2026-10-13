@@ -1,6 +1,6 @@
 // @ts-nocheck
 import type { ZodOpenApiSchemaObject } from 'zod-openapi';
-import z from 'zod';
+import { z } from 'zod';
 import * as utils from './utils.js';
 
 export const ChapterSchema = z.object({
@@ -25,7 +25,7 @@ export const ChapterSchema = z.object({
 	timestamp: z.string().nullish(),
 	created_at: z.string().nullish(),
 }).meta({
-	id: 'Chapter',
+	id: 'User: Chapter',
 	description: 'A chapter object representing a chapter entity'
 }).strict() satisfies ZodOpenApiSchemaObject;
 
@@ -43,4 +43,15 @@ export const UserChapterSchema = z.object({
 }) satisfies ZodOpenApiSchemaObject;
 
 export type UserChapter = z.infer<typeof UserChapterSchema>;
+
+// A chapter the user administers that is not yet registered in a tournament
+export const NonTournChapterSchema = ChapterSchema.pick({
+	id: true,
+	name: true,
+}).meta({
+	id: 'NonTournChapter',
+	description: 'A chapter the user administers that has no school in a tournament',
+}) satisfies ZodOpenApiSchemaObject;
+
+export type NonTournChapter = z.infer<typeof NonTournChapterSchema>;
 

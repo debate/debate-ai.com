@@ -1,6 +1,6 @@
 // @ts-nocheck
 import * as utils from './utils.js';
-import * as z from 'zod';
+import { z } from 'zod';
 import type { ZodOpenApiSchemaObject } from 'zod-openapi';
 
 export const JudgeSchema = z.object({
@@ -105,3 +105,18 @@ export const JudgeHistorySchema = z.object({
 }) satisfies ZodOpenApiSchemaObject;
 
 export type JudgeHistory = z.infer<typeof JudgeHistorySchema>;
+
+export const JudgeLiveDocSchema = z.object({
+	judgeId: z.coerce.number().int(),
+	categoryAbbr: z.string(),
+	tournName: z.string(),
+	tournEnd: z.iso.datetime(),
+	tournTz: z.string(),
+	url: z.string(),
+	caption: z.string().nullable(),
+}).meta({
+	id: 'JudgeLiveDoc',
+	description: 'A live doc link for a category the logged in user is judging in',
+}) satisfies ZodOpenApiSchemaObject;
+
+export type JudgeLiveDoc = z.infer<typeof JudgeLiveDocSchema>;

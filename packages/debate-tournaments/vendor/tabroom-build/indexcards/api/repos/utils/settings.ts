@@ -3,8 +3,11 @@ import { sql } from 'kysely';
 
 import type { Database } from '../../data/database.js';
 /** Possible types for a setting value. Can be a string, a Date, an object, or null.*/
-type SettingValue = string | number | Date | object | null;
+type SettingValue = string | number | boolean| Date | object | null;
 export type Settings = Record<string, SettingValue>;
+type NonNullSettings = {
+	[x: string]: NonNullable<Settings[string]>;
+};
 /** Tables that have a corresponding settings table */
 type SettingsTable = 
 	'category' |
@@ -163,25 +166,40 @@ export async function saveSettings({
 }: SaveSettingsArgs) {
 	const config = settingConfig[table];
 
-	const rows = buildSettingsRows({
-		settings,
-		ownerKey: config.ownerKey,
-		ownerId,
-	});
-
-	if (!rows.length) {
-		return;
+	const toUpdate: NonNullSettings = {};
+	const toDelete: string[] = [];
+	for (const [tag, value] of Object.entries(settings)) {
+		if (value == null) {
+			toDelete.push(tag);
+		} else {
+			toUpdate[tag] = value;
+		}
 	}
+	
 
-	await db
-		.insertInto(config.table)
-		.values(rows)
-		.onDuplicateKeyUpdate({
-			value: sql`VALUES(value)`,
-			value_text: sql`VALUES(value_text)`,
-			value_date: sql`VALUES(value_date)`,
-		})
-		.execute();
+	if (toDelete.length) {
+		await db
+			.deleteFrom(config.table)
+			.where(`${config.ownerKey}`, "=", ownerId)
+			.where("tag", "in", toDelete)
+			.execute();
+	}
+	if (toUpdate && Object.keys(toUpdate).length) {
+		const rows = buildSettingsRows({
+			settings: toUpdate,
+			ownerKey: config.ownerKey,
+			ownerId,
+		});
+		await db
+			.insertInto(config.table)
+			.values(rows)
+			.onDuplicateKeyUpdate({
+				value: sql`VALUES(value)`,
+				value_text: sql`VALUES(value_text)`,
+				value_date: sql`VALUES(value_date)`,
+			})
+			.execute();
+	}
 }
 
 /** 
@@ -267,12 +285,10 @@ function buildSettingsRows({
 	ownerKey,
 	ownerId,
 }: {
-	settings: Settings;
+	settings: NonNullSettings;
 	ownerKey: string;
 	ownerId: number;
 }): SettingInsert[] {
-	if (!settings || typeof settings !== 'object') return [];
-
 	return Object.entries(settings).map(([tag, value]) => ({
 		[ownerKey]: ownerId,
 		tag,
@@ -285,16 +301,8 @@ function buildSettingsRows({
  * @param {*} value  - the setting value
  * @returns an object with keys: value, value_text, value_date
  */
-function encodeSettingValue(value: unknown, tag: string) {
+function encodeSettingValue(value: NonNullable<SettingValue>, tag: string) {
 	const VALUE_TEXT_TAGS = ['livedoc_url'];
-	// null / undefined -> clear all value fields
-	if (value === null || value === undefined) {
-		return {
-			value: null,
-			value_text: null,
-			value_date: null,
-		};
-	}
 
 	// Date → value_date
 	if (value instanceof Date) {
