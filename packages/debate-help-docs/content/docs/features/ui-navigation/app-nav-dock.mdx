@@ -250,10 +250,12 @@ showed Fumadocs' own sidebar beside that one. Now:
   column leaves for it (`DOCS_SIDEBAR_SLOT_ID`), at the bottom of the column
   below the Insights section, and `styles/docs.css` hides
   Fumadocs' desktop sidebar and closes its grid column. Below `md` Fumadocs'
-  drawer is still the docs' navigation. Both start with every folder
-  expanded (the drawer through `sidebar.defaultOpenLevel` in
-  `docs-layout.tsx`), and both scroll the current page into view when the
-  docs open and after each navigation.
+  drawer is still the docs' navigation. Only the folders on the path to
+  the current page start expanded, and the current page is scrolled into
+  view when the docs open and after each navigation.
+- **Off `/docs` the Docs section is still there**, collapsed: one Docs row
+  at the same spot (`DocsSidebarRow` in `app-sidebar.tsx`) that opens the
+  docs.
 - **The mobile drawer** shows the same tree (`MobileSidebarDrawer`).
 
 `/debate` and `/research/docs` keep their own workspace sidebars

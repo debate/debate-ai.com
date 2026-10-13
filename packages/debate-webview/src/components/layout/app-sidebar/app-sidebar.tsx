@@ -1,6 +1,8 @@
 "use client"
 
+import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { BookOpen, ChevronRight } from "lucide-react"
 import { LibrarySidebarTree } from "@debate/videos"
 
 import { ChromeErrorBoundary } from "../../../lib/ui/layout/chrome-error-boundary"
@@ -31,10 +33,11 @@ export const DOCS_SIDEBAR_SLOT_ID = "app-sidebar-docs-slot"
  * - **The library tree** — Videos (Lectures is one of its rows) and the tool
  *   sections — on every route. The site links that used to sit under it as a footer
  *   row are a submenu of the account menu now (`nav-user.tsx`).
- * - **The help docs' page tree** on `/docs` ({@link DOCS_SIDEBAR_SLOT_ID}),
- *   at the bottom of the column, below the tool sections' Insights
- *   category and just above the account menu pinned at the foot — not
- *   under the dock, where it used to sit.
+ * - **The help docs' section**, at the bottom of the column, below the tool
+ *   sections' Insights category and just above the account menu pinned at
+ *   the foot. On `/docs` the docs portal their page tree into
+ *   {@link DOCS_SIDEBAR_SLOT_ID}; everywhere else it is a collapsed Docs
+ *   row ({@link DocsSidebarRow}) that opens `/docs`.
  */
 export function AppSidebar() {
   const pathname = usePathname()
@@ -53,7 +56,31 @@ export function AppSidebar() {
       <ChromeErrorBoundary label="LibrarySidebarTree">
         <LibrarySidebarTree />
       </ChromeErrorBoundary>
-      {isDocsPath(pathname) && <div id={DOCS_SIDEBAR_SLOT_ID} className="shrink-0" />}
+      {isDocsPath(pathname) ? (
+        <div id={DOCS_SIDEBAR_SLOT_ID} className="shrink-0" />
+      ) : (
+        <DocsSidebarRow />
+      )}
     </>
+  )
+}
+
+/**
+ * The Docs section, collapsed, for routes outside `/docs`: the same header
+ * row `debate-help-docs`' `app-sidebar-docs-tree.tsx` draws there, linking to
+ * the docs, so the section is always in the sidebar.
+ */
+function DocsSidebarRow() {
+  return (
+    <nav aria-label="Docs" className="flex shrink-0 flex-col gap-1 text-sm">
+      <Link
+        href="/docs"
+        className="flex w-full min-w-0 items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm font-semibold transition-colors hover:bg-accent hover:text-foreground"
+      >
+        <BookOpen className="size-4 shrink-0 text-muted-foreground" />
+        <span className="flex-1 truncate">Docs</span>
+        <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
+      </Link>
+    </nav>
   )
 }
