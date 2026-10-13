@@ -182,6 +182,10 @@ export default defineConfig({
     host_permissions: [
       'https://debate-ai.com/*',
       'http://localhost:3000/*',
+      // qwksearch's extract-webpage endpoint, which reading mode sends a URL
+      // to for PDFs, and for pages and videos it can't read from the tab
+      // (src/article/remote.ts).
+      'https://qwksearch.com/*',
       ...AI_PROVIDER_HOSTS,
     ],
     content_security_policy: {

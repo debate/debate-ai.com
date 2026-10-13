@@ -46,4 +46,6 @@ export interface PageSnapshot {
   html: string;
   /** Text the reader had selected when they opened the panel, if any. */
   selectionText: string;
+  /** `document.contentType` — `application/pdf` in the browser's PDF viewer. */
+  contentType?: string;
 }

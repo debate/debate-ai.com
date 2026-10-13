@@ -1,7 +1,8 @@
 /**
  * The reading-mode button: a small, half-transparent arrow tab on the far
  * left edge of a page the extension has detected an article on
- * (src/article/detect.ts). Clicking it opens the article panel.
+ * (src/article/detect.ts), or a YouTube video (read as its transcript).
+ * Clicking it opens the article panel.
  *
  * Drawn in a closed shadow root so the site's CSS can't restyle it and its
  * styles can't leak into the site.
@@ -28,8 +29,11 @@ svg { width: 14px; height: 14px; }
 const ARROW =
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>';
 
-/** Shows the button (once) and calls `onOpen` when it is clicked. */
-export function showReadingButton(wordCount: number, onOpen: () => void): void {
+/**
+ * Shows the button (once) and calls `onOpen` when it is clicked. `label` is
+ * its tooltip, e.g. "Open in reading mode (1,200 words)".
+ */
+export function showReadingButton(label: string, onOpen: () => void): void {
   if (document.getElementById(HOST_ID)) return;
   const host = document.createElement('div');
   host.id = HOST_ID;
@@ -38,7 +42,6 @@ export function showReadingButton(wordCount: number, onOpen: () => void): void {
   style.textContent = STYLE;
   const button = document.createElement('button');
   button.type = 'button';
-  const label = `Open in reading mode (${wordCount.toLocaleString()} words)`;
   button.title = label;
   button.setAttribute('aria-label', label);
   button.innerHTML = ARROW;

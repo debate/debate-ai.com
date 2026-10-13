@@ -36,6 +36,7 @@ export function collectPageSnapshot() {
     title: document.title || '',
     html: document.documentElement ? document.documentElement.outerHTML : '',
     selectionText: String(window.getSelection() || ''),
+    contentType: document.contentType || '',
   };
 }
 

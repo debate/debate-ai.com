@@ -336,3 +336,27 @@ export function toReadingMode(
     wordCount: text.split(/\s+/).filter(Boolean).length,
   };
 }
+
+/**
+ * Sanitizes article markup that came from somewhere other than the page — the
+ * server-side extractor (./remote) — through the same allowlist the reading
+ * mode uses. Unlike {@link toReadingMode} it keeps the whole body: the server
+ * has already picked the article out.
+ */
+export function sanitizeArticleHtml(html: string, baseUrl: string): ReadingModeResult | null {
+  const source = new DOMParser().parseFromString(html, 'text/html');
+  // Dropped outright: the sanitizer would otherwise keep a <script>'s text.
+  source.querySelectorAll(ALWAYS_DROP).forEach((el) => el.remove());
+
+  const output = document.implementation.createHTMLDocument('');
+  const holder = output.createElement('div');
+  source.body.childNodes.forEach((child) => {
+    const cleaned = toCleanHtml(child, output, baseUrl);
+    if (cleaned) holder.appendChild(cleaned);
+  });
+  dropEmpty(holder);
+
+  const text = (holder.textContent || '').replace(/\s+/g, ' ').trim();
+  if (!text) return null;
+  return { html: holder.innerHTML, wordCount: text.split(/\s+/).filter(Boolean).length };
+}
