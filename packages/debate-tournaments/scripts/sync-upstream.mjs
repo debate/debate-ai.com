@@ -20,7 +20,7 @@
  *  3. Layer `overlays/` on top — whole-file replacements for the modules that
  *     cannot run on Workers (MariaDB pool, Sequelize, winston, config.json).
  *  4. Walk the import graph from `entries` and copy exactly the reachable
- *     files into `vendor/tabroom/`, rewriting `express` and `@tabroom/types`
+ *     files into `vendor/tabroom-build/`, rewriting `express` and `@tabroom/types`
  *     imports to their in-package targets and marking `.ts` files
  *     `// @ts-nocheck` (upstream is type-checked upstream, not here).
  *  5. Regenerate the D1 migration and the boolean/date column lists from

@@ -7,7 +7,7 @@ the PROSPER license.
 
 | Project | Where it lives here | License |
 | --- | --- | --- |
-| [Tournament Admin](#tabroomcom) | `packages/debate-tournaments/vendor/tabroom` | Reciprocal Public License 1.5 (RPL-1.5) |
+| [Tournament Admin](#tabroomcom) | `packages/debate-tournaments/vendor/tabroom-build` | Reciprocal Public License 1.5 (RPL-1.5) |
 | [CardMirror](#cardmirror) | `packages/debate-editor` | PolyForm Noncommercial License 1.0.0 |
 | [ebb](#ebb) | `packages/debate-flow` (`debate-flow-ebb`) | Mozilla Public License 2.0 (MPL-2.0) |
 
@@ -20,10 +20,10 @@ the PROSPER license.
   <https://github.com/speechanddebate/tabroom>)
 - **Pinned commit:** `75239a31cd8523d31dc119fe994b3fec488e77f3`
   (see `packages/debate-tournaments/upstream.json`)
-- **Used in:** `packages/debate-tournaments/vendor/tabroom`, a subset of the
+- **Used in:** `packages/debate-tournaments/vendor/tabroom-build`, a subset of the
   `indexcards` API routes, database schema and types, vendored by
   `packages/debate-tournaments/scripts/sync-upstream.mjs` with local patches and overlays applied on top
-  (listed in `vendor/tabroom/UPSTREAM.json`).
+  (listed in `vendor/tabroom-build/UPSTREAM.json`).
 - **License:** Reciprocal Public License 1.5 —
   <https://opensource.org/licenses/RPL-1.5>
 
@@ -34,7 +34,7 @@ the PROSPER license.
 > 1.5, available at https://opensource.org/licenses/RPL-1.5 or see the text below.
 
 The full license text is shipped alongside the vendored code in
-[`packages/debate-tournaments/vendor/tabroom/LICENSE.md`](packages/debate-tournaments/vendor/tabroom/LICENSE.md).
+[`packages/debate-tournaments/vendor/tabroom-build/LICENSE.md`](packages/debate-tournaments/vendor/tabroom-build/LICENSE.md).
 Under the RPL, modifications to the vendored code, including the patches in
 `packages/debate-tournaments/patches/`, must be made available in source form
 when deployed.

@@ -1,0 +1,156 @@
+// @ts-nocheck
+import { Router } from '../../../../_shims/express.js';
+import z from 'zod';
+
+import { ValidateRequest } from '../../../../middleware/validation.js';
+import * as controller from '../../../../controllers/rest/tournsController.js';
+import { requirePublicTourn } from '../../../../policy/tournPolicy.js';
+import roundRouter from './roundRouter.js';
+import resultSetRouter from './resultSetRouter.js';
+import eventRouter from './eventRouter.js';
+import entryRouter from './entryRouter.js';
+
+import { FileSchema, TournInviteSchema, TournSchema } from '../../../../../../types/index.js';
+const router = Router({ mergeParams: true });
+
+router.route('/').get(ValidateRequest,controller.getTourns).openapi = {
+	path: '/rest/tourns',
+	summary: 'Get Public Tournaments',
+	operationId: 'RestTourns',
+	description: 'Retrieve public information about tournaments.',
+	tags: ['Tournaments','Orval'],
+	requestParams: {
+		query: z.object({
+			limit: z.coerce.number().max(500).min(0).default(50).meta({ description: 'Maximum number of tournaments to return. Default: 50, Max: 500.' }),
+			offset: z.coerce.number().min(0).optional().meta({ description: 'Number of tournaments to skip. Must be a non-negative number.' }),
+			circuit: z.coerce.number().optional().meta({ description: 'Filter tournaments to those approved in this circuit.' }),
+			startAfter: z.iso.datetime().optional().meta({ description: 'Return tournaments with start date after this UTC timestamp.' }),
+			startBefore: z.iso.datetime().optional().meta({ description: 'Return tournaments with start date before this UTC timestamp.' }),
+			fields: z.string().optional().meta({ description: 'Comma-separated tournament fields. Example: id,name,start' }),
+			'fields[events]': z.string().optional().meta({ description: 'Comma-separated event fields to include when requesting events.' }),
+			publishedResults: z.coerce.boolean().optional().meta({ description: 'Filter tournaments to those with published results.' }),
+		}),
+	},
+	responses: {
+		200: {
+			description: 'List of tournaments',
+			content: {
+				'application/json': {
+					schema: {
+						type: 'array',
+						items: {
+							$ref: '#/components/schemas/Tourn',
+						},
+					},
+				},
+			},
+		},
+		404: {
+			$ref: '#/components/responses/NotFound',
+		},
+	},
+};
+
+router.use('/:tournId', requirePublicTourn);
+
+router.route('/:tournId').get(controller.getTourn).openapi = {
+	path: '/rest/tourns/{tournId}',
+	summary: 'Get Public Tournament',
+	description: 'Retrieve public information about a specific tournament.',
+	tags: ['Tournaments'],
+	responses: {
+		200: {
+			description: 'Tournament information',
+			content: {
+				'application/json': {
+					schema: TournSchema,
+				},
+			},
+		},
+		404: {
+			$ref: '#/components/responses/NotFound',
+		},
+	},
+};
+
+router.use('/:tournId/rounds'  , roundRouter);
+router.use('/:tournId/results' , resultSetRouter);
+router.use('/:tournId/events'  , eventRouter);
+router.use('/:tournId/entries' , entryRouter);
+
+router.route('/:tournId/invite').get(controller.getTournInvite).openapi = {
+	path: '/rest/tourns/{tournId}/invite',
+	summary: 'Get Tournament Invite',
+	operationId: 'getTournInvite',
+	description: 'Retrieve a public invite for a specific tournament, including pages, files, events, and contacts.',
+	tags: ['Tournaments','test'],
+	responses: {
+		200: {
+			description: 'Public facing page data for a given tournament',
+			content: {
+				'application/json': {
+					schema: TournInviteSchema,
+				},
+			},
+		},
+		401 : {
+			$ref : '#/components/responses/Unauthorized',
+		},
+		404: {
+			$ref: '#/components/responses/NotFound',
+		},
+		default: {
+			$ref: '#/components/responses/ErrorResponse',
+		},
+	},
+};
+
+router.route('/:tournId/files').get(ValidateRequest, controller.getPublishedFiles).openapi = {
+	path: '/rest/tourns/{tournId}/files',
+	summary: 'Get Tournament Files',
+	description: 'Retrieve a list of published files associated with a specific tournament.',
+	tags: ['Tournaments'],
+	requestParams: {
+		path: z.object({tournId: z.coerce.number().int() }),
+	},
+	responses: {
+		200: {
+			description: 'List of tournament files',
+			content: {
+				'application/json': {
+					schema: z.array(FileSchema),
+				},
+			},
+		},
+		404: {
+			$ref: '#/components/responses/NotFound',
+		},
+	},
+};
+
+router.route('/:tournId/schedule').get(controller.getSchedule).openapi = {
+	path: '/rest/tourns/{tournId}/schedule',
+	summary: 'Get tournament schedule',
+	tags: ['Tournaments'],
+	parameters: [
+		{
+			in: 'path',
+			name: 'tournId',
+			required: true,
+			schema: { type: 'integer' },
+		},
+	],
+	responses: {
+		200: {
+			description: 'Tournament schedule',
+			content: {
+				'application/json': {
+					schema: { type: 'object' },
+				},
+			},
+		},
+		default: { $ref: '#/components/responses/ErrorResponse' },
+	},
+};
+
+export default router;

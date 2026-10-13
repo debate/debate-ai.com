@@ -137,7 +137,7 @@ node scripts/sync-upstream.mjs --seed && bun run test   # + every route on upstr
 3. Layers `overlays/` — whole-file replacements for the modules that cannot
    run on Workers.
 4. Walks the import graph from `upstream.json`'s `entries` and copies exactly
-   the reachable files into `vendor/tabroom/` (new upstream files come along
+   the reachable files into `vendor/tabroom-build/` (new upstream files come along
    automatically; a new npm dependency is reported).
 5. Regenerates `migrations/0001_tabroom_schema.sql` and
    `src/db/generated/columns.ts` from upstream's schema dump
@@ -152,6 +152,10 @@ node scripts/sync-upstream.mjs --seed && bun run test   # + every route on upstr
    also regenerates `packages/dev-docs/tabroom-schema.md`
    (`scripts/lib/schema-doc.mjs`), and `--seed` nulls the sentinels,
    credentials and personal contact details in the sample data.
+
+`vendor/tabroom/` is a git submodule of upstream itself (unpatched, for
+reference and `--source vendor/tabroom`); the app imports only the generated,
+patched copy in `vendor/tabroom-build/`.
 
 **Never edit `vendor/`, `migrations/` or `src/db/generated/` by hand** — the
 next sync overwrites them. To change upstream code, edit it in `.upstream/`
@@ -206,7 +210,7 @@ in their own database; `lib/tournaments/handler.ts` prefers it when present.
 ## License
 
 Upstream Tabroom is © the National Speech & Debate Association under the
-RPL-1.5 (see `vendor/tabroom/LICENSE.md`); this package is distributed under
+RPL-1.5 (see `vendor/tabroom-build/LICENSE.md`); this package is distributed under
 the same terms.
 
 ## Tests
