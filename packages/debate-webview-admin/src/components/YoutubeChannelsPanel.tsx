@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@debate/webview/lib/ui/primitives/button";
 import { Badge } from "@debate/webview/lib/ui/primitives/badge";
 import { Input } from "@debate/webview/lib/ui/primitives/input";
@@ -21,15 +21,26 @@ import {
   DialogTitle,
 } from "@debate/webview/lib/ui/primitives/dialog";
 
+/** A channel's newest known video. */
+interface LatestVideo {
+  videoId: string;
+  title: string;
+  publishedAt: string;
+}
+
 /** One subscribed channel, as `/api/admin/youtube/channels` returns it. */
 interface ChannelRow {
   id: number;
   channelId: string | null;
   name: string;
+  title?: string | null;
   enabled: boolean;
   addedBy: string | null;
   createdAt: string | number;
   updatedAt: string | number;
+  /** Absent on add/edit responses, which return the bare row. */
+  videoCount?: number;
+  latestVideo?: LatestVideo | null;
 }
 
 /** Formats a stored timestamp, which arrives as an ISO string or epoch seconds. */
@@ -39,23 +50,17 @@ function formatWhen(value: string | number | null): string {
   return Number.isNaN(date.getTime()) ? "unknown" : date.toLocaleDateString();
 }
 
-/** The API's maximum page size, so most lists arrive in a single request. */
-const PAGE_LIMIT = 200;
+/** Most videos first, ties by name — the order the API sends. */
+function byVideoCount(a: ChannelRow, b: ChannelRow): number {
+  return (b.videoCount ?? 0) - (a.videoCount ?? 0) || a.name.localeCompare(b.name);
+}
 
-/** Fetches every subscribed channel, following the cursor until the list ends. */
+/** Fetches every subscribed channel. The API sends the whole list in one response. */
 async function fetchAllChannels(): Promise<ChannelRow[]> {
-  const all: ChannelRow[] = [];
-  let cursor: string | null = null;
-  do {
-    const params = new URLSearchParams({ limit: String(PAGE_LIMIT) });
-    if (cursor) params.set("cursor", cursor);
-    const res = await fetch(`/api/admin/youtube/channels?${params.toString()}`);
-    const body = await res.json();
-    if (!res.ok) throw new Error(body?.error || `Request failed: ${res.status}`);
-    all.push(...((body.channels ?? []) as ChannelRow[]));
-    cursor = body.nextCursor ?? null;
-  } while (cursor);
-  return all;
+  const res = await fetch("/api/admin/youtube/channels");
+  const body = await res.json();
+  if (!res.ok) throw new Error(body?.error || `Request failed: ${res.status}`);
+  return (body.channels ?? []) as ChannelRow[];
 }
 
 /**
@@ -64,7 +69,8 @@ async function fetchAllChannels(): Promise<ChannelRow[]> {
  * "allowed in" on pauses a channel without losing it; removing it drops the
  * subscription and stops new rounds from that channel appearing at all.
  *
- * The full list is fetched once on mount. Adds, renames, toggles and removals
+ * Shown as a table, most videos first, with each channel's newest video. The
+ * full list is fetched once on mount. Adds, renames, toggles and removals
  * update the list in place from the API's response — nothing refetches.
  */
 export function YoutubeChannelsPanel() {
@@ -103,13 +109,16 @@ export function YoutubeChannelsPanel() {
     };
   }, []);
 
-  /** Puts a row returned by the API into the list, replacing any row with its id. */
-  const upsertRow = (row: ChannelRow, { prepend = false }: { prepend?: boolean } = {}) => {
+  const sortedChannels = useMemo(() => [...channels].sort(byVideoCount), [channels]);
+
+  /** Puts a row returned by the API into the list, merging into any row with its id
+   *  so the video count and newest video it already had are kept. */
+  const upsertRow = (row: ChannelRow) => {
     setChannels((prev) => {
       if (prev.some((existing) => existing.id === row.id)) {
-        return prev.map((existing) => (existing.id === row.id ? row : existing));
+        return prev.map((existing) => (existing.id === row.id ? { ...existing, ...row } : existing));
       }
-      return prepend ? [row, ...prev] : [...prev, row];
+      return [...prev, row];
     });
   };
 
@@ -130,7 +139,7 @@ export function YoutubeChannelsPanel() {
       if (!res.ok) throw new Error(body?.error || "Could not add the channel");
       setNotice(`Added “${body.channel?.name ?? name}” to the subscribed channels.`);
       setAddInput("");
-      if (body.channel) upsertRow(body.channel as ChannelRow, { prepend: true });
+      if (body.channel) upsertRow(body.channel as ChannelRow);
     } catch (err) {
       setAddError((err as Error).message);
     } finally {
@@ -267,100 +276,141 @@ export function YoutubeChannelsPanel() {
           </div>
         )}
 
-        <ul className="divide-y rounded-md border text-sm">
-          {channels.map((channel) => {
-            const isEditing = editingId === channel.id;
-            const isToggling = togglingId === channel.id;
-            const isPending = isSaving || isToggling || removing?.id === channel.id;
-            return (
-              <li key={channel.id} className="flex flex-wrap items-center gap-3 p-3">
-                <label className="flex items-center gap-2" title={channel.enabled ? "Allowed in" : "Paused"}>
-                  <input
-                    type="checkbox"
-                    checked={channel.enabled}
-                    disabled={isPending || isEditing}
-                    onChange={() => toggleEnabled(channel)}
-                    aria-label={channel.enabled ? "Pause channel" : "Allow channel in"}
-                  />
-                  <span className="text-xs text-muted-foreground">allowed in</span>
-                </label>
+        <div className="overflow-x-auto rounded-md border">
+          <table className="w-full text-sm">
+            <thead className="bg-muted/50 text-muted-foreground text-left text-xs">
+              <tr>
+                <th className="p-3 font-medium">Allowed in</th>
+                <th className="p-3 font-medium">Channel</th>
+                <th className="p-3 text-right font-medium">Videos</th>
+                <th className="p-3 font-medium">Most recent video</th>
+                <th className="p-3 text-right font-medium">
+                  <span className="sr-only">Actions</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y">
+              {sortedChannels.map((channel) => {
+                const isEditing = editingId === channel.id;
+                const isToggling = togglingId === channel.id;
+                const isPending = isSaving || isToggling || removing?.id === channel.id;
+                const latest = channel.latestVideo;
+                return (
+                  <tr key={channel.id} className="align-top">
+                    <td className="p-3">
+                      <input
+                        type="checkbox"
+                        checked={channel.enabled}
+                        disabled={isPending || isEditing}
+                        onChange={() => toggleEnabled(channel)}
+                        title={channel.enabled ? "Allowed in" : "Paused"}
+                        aria-label={channel.enabled ? "Pause channel" : "Allow channel in"}
+                      />
+                    </td>
 
-                <div className="min-w-0 flex-1">
-                  {isEditing ? (
-                    <Input
-                      value={draftName}
-                      onChange={(event) => setDraftName(event.target.value)}
-                      disabled={isSaving}
-                      aria-label="Channel name"
-                    />
-                  ) : (
-                    <div className="flex items-center gap-1.5">
-                      <span className="font-medium">
-                        {channel.name || <span className="text-muted-foreground">—</span>}
-                      </span>
-                      {!channel.enabled && (
-                        <Badge variant="secondary" className="font-normal">
-                          paused
-                        </Badge>
+                    <td className="min-w-48 p-3">
+                      {isEditing ? (
+                        <Input
+                          value={draftName}
+                          onChange={(event) => setDraftName(event.target.value)}
+                          disabled={isSaving}
+                          aria-label="Channel name"
+                        />
+                      ) : (
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <span className="font-medium">
+                            {channel.name || <span className="text-muted-foreground">—</span>}
+                          </span>
+                          {!channel.enabled && (
+                            <Badge variant="secondary" className="font-normal">
+                              paused
+                            </Badge>
+                          )}
+                          {channel.channelId && (
+                            <span className="text-muted-foreground" title="YouTube channel id">
+                              ({channel.channelId})
+                            </span>
+                          )}
+                        </div>
                       )}
-                      {channel.channelId && (
-                        <span className="text-muted-foreground" title="YouTube channel id">
-                          ({channel.channelId})
-                        </span>
+                      {isEditing && saveError && (
+                        <p className="text-destructive text-xs">{saveError}</p>
                       )}
-                    </div>
-                  )}
-                  {isEditing && saveError && (
-                    <p className="text-destructive text-xs">{saveError}</p>
-                  )}
-                  <p className="text-muted-foreground truncate text-xs">
-                    {channel.addedBy ? `added by ${channel.addedBy} · ` : ""}
-                    updated {formatWhen(channel.updatedAt)}
-                    {channel.createdAt !== channel.updatedAt &&
-                      ` · added ${formatWhen(channel.createdAt)}`}
-                  </p>
-                </div>
+                      <p className="text-muted-foreground text-xs">
+                        {channel.title && channel.title !== channel.name ? `${channel.title} · ` : ""}
+                        {channel.addedBy ? `added by ${channel.addedBy} · ` : ""}
+                        updated {formatWhen(channel.updatedAt)}
+                        {channel.createdAt !== channel.updatedAt &&
+                          ` · added ${formatWhen(channel.createdAt)}`}
+                      </p>
+                    </td>
 
-                <div className="flex shrink-0 items-center gap-2">
-                  {isEditing ? (
-                    <>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => cancelEditing()}
-                        disabled={isSaving}
-                      >
-                        Cancel
-                      </Button>
-                      <Button size="sm" onClick={() => handleSave(channel)} disabled={isSaving || !draftName.trim()}>
-                        {isSaving ? "Saving…" : "Save"}
-                      </Button>
-                    </>
-                  ) : (
-                    <>
-                      <Button size="sm" variant="outline" onClick={() => startEditing(channel)} disabled={isPending}>
-                        Edit
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setRemoving(channel)}
-                        disabled={isPending}
-                      >
-                        Remove
-                      </Button>
-                    </>
-                  )}
-                </div>
-              </li>
-            );
-          })}
-          {channels.length === 0 && (
-            <li className="text-muted-foreground p-3 text-center text-sm">
-              {isLoading ? "Loading channels…" : "No subscribed channels yet."}
-            </li>
-          )}
-        </ul>
+                    <td className="p-3 text-right tabular-nums">{channel.videoCount ?? 0}</td>
+
+                    <td className="min-w-56 p-3">
+                      {latest ? (
+                        <>
+                          <a
+                            href={`https://www.youtube.com/watch?v=${latest.videoId}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="line-clamp-2 hover:underline"
+                          >
+                            {latest.title || latest.videoId}
+                          </a>
+                          <p className="text-muted-foreground text-xs">{formatWhen(latest.publishedAt)}</p>
+                        </>
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
+                      )}
+                    </td>
+
+                    <td className="p-3">
+                      <div className="flex justify-end gap-2">
+                        {isEditing ? (
+                          <>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => cancelEditing()}
+                              disabled={isSaving}
+                            >
+                              Cancel
+                            </Button>
+                            <Button size="sm" onClick={() => handleSave(channel)} disabled={isSaving || !draftName.trim()}>
+                              {isSaving ? "Saving…" : "Save"}
+                            </Button>
+                          </>
+                        ) : (
+                          <>
+                            <Button size="sm" variant="outline" onClick={() => startEditing(channel)} disabled={isPending}>
+                              Edit
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setRemoving(channel)}
+                              disabled={isPending}
+                            >
+                              Remove
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+              {channels.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="text-muted-foreground p-3 text-center text-sm">
+                    {isLoading ? "Loading channels…" : "No subscribed channels yet."}
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </CardContent>
 
       <Dialog

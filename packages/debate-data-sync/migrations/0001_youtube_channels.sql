@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS `youtube_channels` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`channel_id` text,
 	`name` text NOT NULL,
+	`title` text,
 	`enabled` integer DEFAULT true NOT NULL,
 	`added_by` text,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,

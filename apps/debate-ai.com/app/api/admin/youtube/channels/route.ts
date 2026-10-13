@@ -10,19 +10,15 @@ import {
 } from "@/lib/youtube/admin-channel-writes";
 import { listAdminChannels, type AdminChannelPage } from "@/lib/youtube/admin-channels";
 
-/** Keyset-paginated list of every subscribed YouTube channel, newest first. */
-export async function GET(req: NextRequest) {
+/** Every subscribed YouTube channel with its video count and newest video, most videos first. */
+export async function GET() {
   const { isAdmin } = await getAdminAccess();
   if (!isAdmin) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   const db = await getDBFromContext();
-  const { searchParams } = new URL(req.url);
-  const page: AdminChannelPage = await listAdminChannels(db, {
-    cursor: searchParams.get("cursor"),
-    limit: Number(searchParams.get("limit")) || undefined,
-  });
+  const page: AdminChannelPage = await listAdminChannels(db);
 
   return NextResponse.json(page);
 }

@@ -18,6 +18,7 @@ import { isRound } from "@debate/data-sync/src/youtube/parsers/video-classifier"
 import { getDBFromContext } from "../database/context";
 import { describeError } from "../database/errors";
 import { findPublishedVideoIds } from "../videos/publish-round-video";
+import { ensureTableColumns } from "../database/ensure-columns";
 import { youtubeChannels, youtubeRoundVideos, youtubeSyncRuns, youtubeVideoExclusions } from "../database/schema";
 import { getEnv } from "../env";
 
@@ -65,6 +66,9 @@ export async function resyncYouTubeRounds(
   const cutoff = publishedAfterDate ?? publishedAfter;
 
   const db = await getDBFromContext();
+  // `youtube_channels.title` postdates the table; add it before the select()
+  // below names it. See lib/database/ensure-columns.ts.
+  await ensureTableColumns(db, youtubeChannels);
 
   const [run] = await db
     .insert(youtubeSyncRuns)
@@ -105,6 +109,12 @@ export async function resyncYouTubeRounds(
       }
       if (!channelId) continue;
       const videos = await getVideosForChannel(channelId, channelRow.name, cutoff);
+      // Video rows carry the channel's display title, not its handle; keep it
+      // on the channel row so the admin list can count each channel's videos.
+      const title = videos[0]?.[3];
+      if (typeof title === "string" && title && title !== channelRow.title) {
+        await db.update(youtubeChannels).set({ title }).where(eq(youtubeChannels.id, channelRow.id));
+      }
       allVideos.push(...videos);
       channelsSynced++;
     }

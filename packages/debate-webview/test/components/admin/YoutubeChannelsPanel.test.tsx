@@ -7,7 +7,7 @@ import { YoutubeChannelsPanel } from "../../../src/components/admin/YoutubeChann
 
 ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
 
-const row = (id: number, name: string) => ({
+const row = (id: number, name: string, videoCount = 0) => ({
   id,
   channelId: null,
   name,
@@ -15,6 +15,10 @@ const row = (id: number, name: string) => ({
   addedBy: null,
   createdAt: "2026-10-01T00:00:00Z",
   updatedAt: "2026-10-01T00:00:00Z",
+  videoCount,
+  latestVideo: videoCount
+    ? { videoId: `v${id}`, title: `${name} latest round`, publishedAt: "2026-09-30" }
+    : null,
 })
 
 const json = (body: unknown, status = 200) =>
@@ -28,7 +32,7 @@ const getCalls = () =>
   fetchMock.mock.calls.filter(([, init]) => !init || !(init as RequestInit).method)
 
 const names = () =>
-  [...host.querySelectorAll("li span.font-medium")].map((node) => node.textContent)
+  [...host.querySelectorAll("tbody span.font-medium")].map((node) => node.textContent)
 
 beforeEach(() => {
   fetchMock = vi.fn()
@@ -45,19 +49,46 @@ afterEach(async () => {
 })
 
 describe("YoutubeChannelsPanel", () => {
-  it("follows the cursor once on mount and never refetches the list", async () => {
-    fetchMock
-      .mockResolvedValueOnce(json({ channels: [row(2, "Beta")], nextCursor: "c1" }))
-      .mockResolvedValueOnce(json({ channels: [row(1, "Alpha")], nextCursor: null }))
+  it("loads the list once, most videos first, and never refetches it", async () => {
+    fetchMock.mockResolvedValueOnce(
+      json({ channels: [row(1, "Alpha", 3), row(2, "Beta", 40), row(3, "Gamma", 0)], nextCursor: null }),
+    )
 
     await act(async () => root.render(<YoutubeChannelsPanel />))
     await act(async () => {})
 
-    expect(getCalls()).toHaveLength(2)
-    expect(String(getCalls()[1][0])).toContain("cursor=c1")
-    expect(names()).toEqual(["Beta", "Alpha"])
+    expect(getCalls()).toHaveLength(1)
+    expect(names()).toEqual(["Beta", "Alpha", "Gamma"])
+    const firstRow = host.querySelector("tbody tr")!
+    expect(firstRow.textContent).toContain("40")
+    expect(firstRow.querySelector("a")!.getAttribute("href")).toBe("https://www.youtube.com/watch?v=v2")
+    expect(firstRow.textContent).toContain("Beta latest round")
     expect(host.textContent).not.toContain("Refresh")
     expect(host.textContent).not.toContain("Load more")
+  })
+
+  it("keeps a channel's video count when a toggle returns the bare row", async () => {
+    fetchMock.mockResolvedValueOnce(json({ channels: [row(1, "Alpha", 7)], nextCursor: null }))
+    await act(async () => root.render(<YoutubeChannelsPanel />))
+    await act(async () => {})
+
+    const { videoCount: _count, latestVideo: _latest, ...bare } = row(1, "Alpha Renamed")
+    fetchMock.mockResolvedValueOnce(json({ channel: bare }))
+    await act(async () => {
+      ;[...host.querySelectorAll("button")].find((b) => b.textContent === "Edit")!.click()
+    })
+    const input = host.querySelector<HTMLInputElement>('input[aria-label="Channel name"]')!
+    await act(async () => {
+      const setValue = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!
+      setValue.call(input, "Alpha Renamed")
+      input.dispatchEvent(new Event("input", { bubbles: true }))
+    })
+    await act(async () => {
+      ;[...host.querySelectorAll("button")].find((b) => b.textContent === "Save")!.click()
+    })
+
+    expect(names()).toEqual(["Alpha Renamed"])
+    expect(host.textContent).toContain("Alpha latest round")
   })
 
   it("updates the row in place after a toggle, without reloading", async () => {
@@ -73,8 +104,8 @@ describe("YoutubeChannelsPanel", () => {
     expect(host.textContent).toContain("paused")
   })
 
-  it("prepends an added channel from the POST response, without reloading", async () => {
-    fetchMock.mockResolvedValueOnce(json({ channels: [row(1, "Alpha")], nextCursor: null }))
+  it("adds a channel from the POST response, without reloading", async () => {
+    fetchMock.mockResolvedValueOnce(json({ channels: [row(1, "Alpha", 5)], nextCursor: null }))
     await act(async () => root.render(<YoutubeChannelsPanel />))
     await act(async () => {})
 
@@ -88,6 +119,7 @@ describe("YoutubeChannelsPanel", () => {
     await act(async () => host.querySelector("form")!.requestSubmit())
 
     expect(getCalls()).toHaveLength(1)
-    expect(names()).toEqual(["Gamma", "Alpha"])
+    // A new channel has no videos yet, so it sorts below Alpha.
+    expect(names()).toEqual(["Alpha", "Gamma"])
   })
 })
