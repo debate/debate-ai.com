@@ -20,7 +20,6 @@ import {
   ClipboardList,
   Dumbbell,
   FileText,
-  Gavel,
   GraduationCap,
   Library,
   Medal,
@@ -157,9 +156,6 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       // Profiles and Prep Notes, one tab each.
       { href: "/practice/prep", title: "Prep Workspace", icon: ClipboardList },
       { href: "/practice/partners", title: "Practice Partners", icon: Handshake },
-      // Same page, landing on the open judge seats (or the profile, for
-      // someone who has not volunteered to judge yet).
-      { href: "/practice/partners#judge", title: "Judge Practice Rounds", icon: Gavel },
       { href: "/practice/drills", title: "Practice Drills", icon: Repeat },
       { href: "/practice/judge-decision", title: "AI Judge Decision", icon: BadgeCheck },
     ],
