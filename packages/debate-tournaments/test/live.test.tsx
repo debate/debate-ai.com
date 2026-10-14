@@ -125,7 +125,7 @@ describe("live UI", () => {
 
   it("gives the emblem the Panopticon quote as a tooltip, with its dialog closed until clicked", () => {
     const html = renderToString(<Schematic round={round} />);
-    expect(html).toContain("This Panopticon, subtly arranged");
+    expect(html).toContain("Panopticon, subtly arranged");
     expect(html).toContain("p. 207.");
     expect(PANOPTICON_QUOTE.source).toContain("Michel Foucault");
     expect(PANOPTICON_RELATED).toHaveLength(4);
