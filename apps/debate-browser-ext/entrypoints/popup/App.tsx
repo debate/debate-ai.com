@@ -12,7 +12,7 @@ import {
   parseSkipDomains,
   type ReuseMatch,
 } from '@/src/reuse/api';
-import { toggleReaderPanel } from '@/src/reader/panel';
+import { openReaderForTab } from '@/src/reader/panel';
 import { getSettings } from '@/src/settings/settings';
 import { requestTimerWindow } from '@/src/timer/window';
 import { openExtensionSettings } from '@/src/settings/open';
@@ -158,7 +158,7 @@ export default function App() {
           className="mb-2 w-full"
           onClick={() => {
             if (tabId == null) return;
-            void toggleReaderPanel(tabId)
+            void openReaderForTab({ id: tabId, url: pageUrl })
               .catch((err) => console.warn('Could not show the article panel on this page:', err))
               .finally(() => window.close());
           }}
