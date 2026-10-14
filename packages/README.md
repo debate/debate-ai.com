@@ -196,7 +196,7 @@ with `import type { … } from "@debate/types"`. Depended on by `debate-timer`, 
 
 ## debate-tournaments
 
-Upstream [Tabroom](https://github.com/debate/debate-tournament-tabroom) vendored and adapted
+Upstream [Tabroom](https://github.com/debate/debate-tournaments) vendored and adapted
 to Cloudflare Workers + D1: its public API as a fetch handler (`debate-tournaments/server`,
 mounted at `/api/tabroom`), a React port of its invite/pairings/results pages (mounted at
 `/tournaments`), the route table, its `@tabroom/types` Zod schemas and inferred types

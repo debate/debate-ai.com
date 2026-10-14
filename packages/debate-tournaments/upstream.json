@@ -1,24 +1,43 @@
 {
   "$comment": "Pinned upstream for scripts/sync-upstream.mjs. Bump `commit` (or run the script with --latest) to take new upstream changes; the patches and overlays are re-applied on top.",
-  "repository": "https://github.com/debate/debate-tournament-tabroom.git",
+  "repository": "https://github.com/debate/debate-tournaments.git",
   "branch": "main",
-  "commit": "75239a31cd8523d31dc119fe994b3fec488e77f3",
-  "vendorDir": "vendor/tabroom",
+  "commit": "c8535f9ef133a18dca5283133e2bd69e8e4a4cbe",
+  "vendorDir": "vendor/tabroom-build",
   "entries": [
     "indexcards/api/routes/routers/v1/rest/restRouter.ts",
-    "indexcards/api/routes/routers/v1/pages/pagesRouter.js",
+    "indexcards/api/routes/routers/v1/pages/pagesRouter.ts",
+    "indexcards/api/routes/routers/v1/tab/tourns/categoriesRouter.ts",
+    "indexcards/api/routes/routers/v1/tab/tourns/schoolsRouter.ts",
+    "indexcards/api/routes/routers/v1/tab/tourns/sitesRouter.ts",
+    "indexcards/api/routes/routers/v1/tab/tourns/timeslotsRouter.ts",
     "indexcards/api/data/schema.ts",
     "types/index.ts"
   ],
-  "copy": ["LICENSE.md"],
+  "copy": [
+    "LICENSE.md"
+  ],
   "importRewrites": {
     "express": "indexcards/api/_shims/express.ts",
     "@tabroom/types": "types/index.ts"
   },
-  "allowedExternals": ["kysely", "zod", "zod-openapi", "luxon", "sanitize-html", "router", "node:async_hooks"],
+  "allowedExternals": [
+    "kysely",
+    "zod",
+    "zod-openapi",
+    "luxon",
+    "sanitize-html",
+    "router",
+    "node:async_hooks",
+    "html-to-text"
+  ],
   "schemaDump": "indexcards/tests/test.sql",
   "migration": "migrations/0001_tabroom_schema.sql",
   "columnsModule": "src/db/generated/columns.ts",
   "schemaDoc": "../dev-docs/tabroom-schema.md",
-  "skipTables": ["session", "server", "campus_log"]
+  "skipTables": [
+    "session",
+    "server",
+    "campus_log"
+  ]
 }

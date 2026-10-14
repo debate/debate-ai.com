@@ -1,8 +1,16 @@
 import type { Metadata } from "next"
+import { permanentRedirect } from "next/navigation"
+
+/**
+ * The old address of Coach Materials, merged into Coaching at `/coaching`. It
+ * permanently redirects to its "materials" tab.
+ */
 
 export const metadata: Metadata = {
   title: "Coach Materials",
-  description: "Upload grounding materials for the team coach AI and preview which ones answer a question",
+  alternates: { canonical: "/coaching?section=materials" },
 }
 
-export { default } from "@debate/webview/routes/coach-materials/page"
+export default function LegacyMaterialsPage() {
+  permanentRedirect("/coaching?section=materials")
+}

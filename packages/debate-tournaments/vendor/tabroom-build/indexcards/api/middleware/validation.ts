@@ -42,15 +42,24 @@ function getOpenApiForMethod(openapi: RouteOpenApiConfig | undefined, method: st
 	} as ZodOpenApiOperationObject;
 }
 
+/**
+ * A request whose params, query and body have been validated and coerced in
+ * place by ValidateRequest. They are typed loosely because the route's zod
+ * schemas, not Express, define their shape.
+ */
+export type ValidatedRequest = Omit<Request, 'params' | 'query' | 'body'> & {
+	// oxlint-disable-next-line typescript/no-explicit-any
+	params: any;
+	// oxlint-disable-next-line typescript/no-explicit-any
+	query: any;
+	// oxlint-disable-next-line typescript/no-explicit-any
+	body: any;
+};
+
 export async function ValidateRequest(req: Request, res: Response, next: NextFunction) {
 	const openapi = getOpenApiForMethod(req.route?.openapi, req.method);
 	const bodySchema = openapi?.requestBody?.content?.['application/json']?.schema;
 	const paramsSchema = openapi?.requestParams;
-	req.valid = {
-		body: undefined,
-		params: undefined,
-		query: undefined
-	};
 	try {
 		if (paramsSchema) {
 			const pathSchema = paramsSchema.path;
@@ -62,7 +71,7 @@ export async function ValidateRequest(req: Request, res: Response, next: NextFun
 					logger.debug('Validation failed for request parameters:', result.error.issues);
 					return BadRequest(req,res, 'Invalid request parameters', result.error.issues);
 				}
-				req.valid.params = result.data;
+				(req as ValidatedRequest).params = result.data;
 			}
 			if (isZodType(querySchema)) {
 				result = querySchema.safeParse(req.query);
@@ -70,7 +79,13 @@ export async function ValidateRequest(req: Request, res: Response, next: NextFun
 					logger.debug('Validation failed for request query:', result.error.issues);
 					return BadRequest(req,res, 'Invalid request query', result.error.issues);
 				}
-				req.valid.query = result.data;
+				// req.query is a getter in Express 5, so it has to be redefined to replace it
+				Object.defineProperty(req, 'query', {
+					value: result.data,
+					writable: true,
+					configurable: true,
+					enumerable: true,
+				});
 			}
 		} else {
 			logger.debug('no schema found for RequestParams');
@@ -81,7 +96,7 @@ export async function ValidateRequest(req: Request, res: Response, next: NextFun
 				logger.debug('Validation failed for request body:', result.error.issues);
 				return BadRequest(req,res, 'Invalid request body',result.error.issues);
 			}
-			req.valid.body = result.data;
+			req.body = result.data;
 		} else {
 			logger.debug('No schema found for request body');
 		}

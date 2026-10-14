@@ -75,6 +75,11 @@ Beyond the shared record types, `src/state/` holds the sync every tool's
   `fetch` outside `tool-records-client.ts`.
 - **Never let a sync failure block a local write.** A mirror call returns
   immediately and swallows its error; a store applies locally first, always.
+- **Sample records never sync.** `sampleRecords.ts` seeds the demo "Load
+  sample data" records into tool stores and lists their ids in a manifest;
+  the auto-sync snapshot, `mirrorToolRecordsSave` and hydrate's push all skip
+  them via `isSampleToolRecord`. A new path that pushes local records must
+  skip them too.
 - **Never advance a snapshot past a write that did not land.** That is the one
   bug the watcher cannot have — the record would be dropped with no error
   anywhere.

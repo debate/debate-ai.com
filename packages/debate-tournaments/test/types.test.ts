@@ -9,11 +9,12 @@ const tourn = {
   country: "US",
   tz: "America/Chicago",
   webname: "greenhill",
-  hidden: false,
+  hidden: 0,
   start: "2026-09-18T13:00:00Z",
   end: "2026-09-20T23:00:00Z",
-  regStart: "2026-08-01T00:00:00Z",
-  regEnd: "2026-09-10T00:00:00Z",
+  reg_start: "2026-08-01T00:00:00Z",
+  reg_end: "2026-09-10T00:00:00Z",
+  timestamp: "2026-07-01T00:00:00Z",
 };
 
 describe("@debate/tournaments/types", () => {
@@ -22,7 +23,7 @@ describe("@debate/tournaments/types", () => {
     expect(result.ok).toBe(true);
     if (result.ok) {
       expect(result.data.id).toBe(42);
-      expect(result.data.start).toBeInstanceOf(Date);
+      expect(result.data.start).toBe("2026-09-18T13:00:00Z");
     }
   });
 

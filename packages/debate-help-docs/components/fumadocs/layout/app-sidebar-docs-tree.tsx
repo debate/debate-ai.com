@@ -13,8 +13,10 @@
  * Below `md` the app's column is not drawn and Fumadocs' drawer stays the
  * docs' navigation.
  *
- * Every folder starts expanded, and the current page is scrolled into view
- * in the sidebar when the docs open and after each navigation.
+ * Only the folders on the path to the current page start expanded (plus any
+ * marked `defaultOpen`), and the current page is scrolled into view in the
+ * sidebar when the docs open and after each navigation. Off /docs the
+ * Docs link pinned at the sidebar's foot (`sidebar-pinned-links.tsx`) opens it.
  */
 
 import { useEffect, useState, type ReactNode } from 'react';
@@ -98,8 +100,8 @@ function TreeNode({ node }: { node: Node }) {
 
 function FolderNode({ folder, pathname }: { folder: Folder; pathname: string | null }) {
   const containsActive = pathname != null && folderContains(folder, pathname);
-  // Every folder starts expanded so the whole tree is visible.
-  const [open, setOpen] = useState(true);
+  // Only the path to the current page starts expanded.
+  const [open, setOpen] = useState(containsActive || folder.defaultOpen === true);
 
   // Opening a page inside a closed folder opens it; nothing closes for you.
   useEffect(() => {

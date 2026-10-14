@@ -11,12 +11,7 @@ import { baseOptions } from './layout.config';
 
 export default function RootDocsLayout({ children }: { children: ReactNode }) {
   return (
-    <DocsLayout
-      tree={source.pageTree}
-      {...baseOptions}
-      // Open every folder in Fumadocs' own sidebar (the mobile drawer) too.
-      sidebar={{ defaultOpenLevel: Number.MAX_SAFE_INTEGER }}
-    >
+    <DocsLayout tree={source.pageTree} {...baseOptions}>
       {/* The page tree again, as a section of the app's sidebar (desktop). */}
       <AppSidebarDocsTree tree={source.pageTree} />
       {children}

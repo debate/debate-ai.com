@@ -1,6 +1,6 @@
 // @ts-nocheck
 import type { DBSchema, Database } from '../data/database.js';
-import { saveSettings, selectSettings, type Settings } from './utils/settings.js';
+import { saveSettings, selectSettings, withTransaction, type Settings } from './utils/index.js';
 import type { Person } from '../data/schema.js';
 import type { Insertable, ExpressionBuilder } from 'kysely';
 
@@ -119,7 +119,11 @@ export async function getPerson(db: Database, id: number, opts: queryOpts = {}) 
 export async function personSearch(db: Database, term: string, opts: queryOpts = {},) {
 	const sanitize = (term: string) => {
 		if (!term) return '';
-		return term.replace(/[^a-zA-Z0-9\-\s]/g, '').trim();
+		return term
+			.normalize('NFC')
+			.replace(/[\u2018\u2019]/g, "'")
+			.replace(/[^\p{L}\p{M}0-9\-'\s]/gu, '')
+			.trim();
 	};
 
 	const cleanTerm = sanitize(term);
@@ -155,7 +159,7 @@ type CreatePersonData = Insertable<Person> & {
 export async function updatePerson(db: Database, personId: number, data: Partial<CreatePersonData>) {
 	const { settings, ...personData } = data;
 
-	return await db.transaction().execute(async (trx) => {
+	return await withTransaction(db, async (trx) => {
 		if (Object.keys(personData).length > 0) {
 			await trx
 				.updateTable('person')
@@ -179,7 +183,7 @@ export async function updatePerson(db: Database, personId: number, data: Partial
 export async function createPerson(db: Database, data: CreatePersonData) {
 	const { settings, ...personData } = data;
 
-	return await db.transaction().execute(async (trx) => {
+	return await withTransaction(db, async (trx) => {
 		const person = await trx
 			.insertInto('person')
 			.values(personData)

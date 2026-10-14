@@ -168,6 +168,13 @@ The `page-tools` content script runs on every http(s) page:
 
 ## The article panel
 
+YouTube videos, PDFs and pages the local extractor finds nothing in are read
+by URL instead (`src/article/remote.ts`): a video's transcript from
+debate-ai.com's `/api/transcript`, falling back to qwksearch's extract-webpage
+(`GET https://qwksearch.com/api/doc/article?url=`), which also handles PDFs
+and any other URL. A PDF, or a page the overlay can't be injected into, opens
+the panel as its own tab at `reader.html?url=…`.
+
 Open it from **Read this page** in the popup, from right-click → **Read this
 page in Debate AI**, from the reading-mode arrow on detected articles, or by setting the toolbar icon to open it directly. It
 shows the page you're on in reading mode, with the toolbar, prompt box,

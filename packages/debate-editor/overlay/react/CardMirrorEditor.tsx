@@ -81,6 +81,10 @@ export interface ReasonEditorProps {
    *  persisted, and the previous value is restored on unmount (unless
    *  the user re-showed the pane themselves in the meantime). */
   defaultNavPaneHidden?: boolean;
+  /** Open each document in read mode — set for `.cmir` documents. Applied
+   *  when a document is mounted (a new `contentKey`), so turning read mode
+   *  off with the ribbon button sticks for that document. */
+  defaultReadMode?: boolean;
   /** Read-only preview only: fires when the user clicks/focuses it,
    *  requesting to become the live pane. No-op while `live` is true. */
   onActivate?: () => void;
@@ -98,6 +102,7 @@ export const CardMirrorEditor = forwardRef<LexicalEditorHandle, ReasonEditorProp
       className,
       showToolbar = true,
       defaultNavPaneHidden = false,
+      defaultReadMode = false,
     },
     ref,
   ) {
@@ -114,7 +119,7 @@ export const CardMirrorEditor = forwardRef<LexicalEditorHandle, ReasonEditorProp
       setClaimed(false);
       setBootError(null);
       void singleton
-        .claim({ key, onChange: (html) => onChangeRef.current?.(html) }, content)
+        .claim({ key, onChange: (html) => onChangeRef.current?.(html) }, content, { readMode: defaultReadMode })
         .then(
           () => {
             if (cancelled) return;
@@ -223,7 +228,7 @@ export const CardMirrorEditor = forwardRef<LexicalEditorHandle, ReasonEditorProp
           await singleton.claim(
             { key, onChange: (h) => onChangeRef.current?.(h) },
             bridge.docToHtml(doc),
-            { report: true },
+            { report: true, readMode: true },
           );
         },
         exportCmir: async () => {

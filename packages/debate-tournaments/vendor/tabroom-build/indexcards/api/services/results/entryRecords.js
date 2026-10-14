@@ -1,7 +1,9 @@
 /* This delivers the published record for a given entry */
-import db from '../../data/db.js';
+import { sql } from 'kysely';
+import { db } from '../../data/database.js';
 import { snakeToCamel } from '../../helpers/text.js';
 import { addDecimals } from '../../helpers/math.js';
+import logger from '../../helpers/logger.js';
 
 export const entryRecords = async (entryId, tournId, options) => {
 
@@ -10,7 +12,7 @@ export const entryRecords = async (entryId, tournId, options) => {
 	if (options?.isCoach) postLevel = 1;
 	if (options?.isEntry) postLevel = 2;
 
-	const resultsData = await db.sequelize.query(`
+	const { rows: resultsData } = await sql`
 		select
 			entry.id, entry.code, entry.name,
 			event.id eventId, event.name eventName, event.abbr eventAbbr, event.type eventType, event.nsda_category nsdaCategory,
@@ -100,9 +102,9 @@ export const entryRecords = async (entryId, tournId, options) => {
 
 		where 1=1
 
-			and entry.id     = :entryId
+			and entry.id     = ${entryId}
 			and entry.event  = event.id
-			and event.tourn  = :tournId
+			and event.tourn  = ${tournId}
 			and event.id     = round.event
 			and round.id     = section.round
 			and section.id   = ballot.panel
@@ -116,10 +118,7 @@ export const entryRecords = async (entryId, tournId, options) => {
 			)
 
 		order by round.name, ballot.chair DESC, ballot.id
-	`, {
-		type: db.Sequelize.QueryTypes.SELECT,
-		replacements: { entryId, tournId },
-	});
+	`.execute(db);
 
 	if (resultsData
 		&& resultsData[0]
@@ -253,7 +252,7 @@ export const entryRecords = async (entryId, tournId, options) => {
 			if (row.sectionBye) records.Rounds[row.roundName].bye = true;
 			if (row.forfeit) records.Rounds[row.roundName].forfeit = true;
 
-			console.log(`Round ${row.roundName} bye ${row.bye} tag ${row.scoreTag} value ${row.scoreValue}`);
+			logger.info(`Round ${row.roundName} bye ${row.bye} tag ${row.scoreTag} value ${row.scoreValue}`);
 
 			if ((row.sectionBye || row.bye) && row.scoreTag === 'winloss')  {
 
@@ -296,7 +295,7 @@ export const entryRecords = async (entryId, tournId, options) => {
 						}
 					} else {
 						if (!results[row.judgeId][scoreTag]) results[row.judgeId][scoreTag] = 0;
-						results[row.judgeId][scoreTag] +=
+						results[row.judgeId][scoreTag] =
 							addDecimals([results[row.judgeId][scoreTag], row.scoreValue]);
 					}
 				}

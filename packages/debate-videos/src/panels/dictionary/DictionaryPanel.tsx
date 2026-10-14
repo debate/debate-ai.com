@@ -45,7 +45,7 @@ export function DictionaryPanel({ controlledSearchTerm, onControlledSearchChange
 
   useEffect(() => {
     let cancelled = false
-    grab("dictionary")
+    grab("dictionary", { baseURL: "/api/" })
       .then(res => {
         if (!cancelled) setDictionary(res?.data || [])
       })

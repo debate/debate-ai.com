@@ -6,13 +6,13 @@
 // TODO: this one is going to need some pretty extensive testing because it's a
 // big ol' logic bomb in the middle of tabroom for a bunch of functions.
 
-//import db from '../../data/db.js';
-import { db }from '../../data/database.js';
+import { db } from '../../data/database.js';
 //import { db as kyselyDb } from '../../data/database.js';
 import { getRound } from '../../repos/roundRepo.js';
 import { getProtocol, getProtocols } from '../../repos/protocolRepo.js';
 
-type Counted = {
+export type Counted = {
+	tv?: boolean,
 	rank?: boolean,
 	entryWinloss?: boolean,
 	entryRank?: boolean,
@@ -27,7 +27,8 @@ export const tiebreakTypes = async ({roundId, protocolId = false}: {
 	protocolId?: number | false,
 }) => {
 
-	const round = await getRound(db, roundId);
+	// Ballots and results can be entered before a round is published
+	const round = await getRound(db, roundId, { unpublished: true });
 
 	if(!round){
 		throw new Error(`Round with ID ${roundId} not found`);
@@ -72,21 +73,22 @@ export const tiebreakTypes = async ({roundId, protocolId = false}: {
 		.where('round.id', '=', roundId)
 		.executeTakeFirstOrThrow();
 
-	let protocols = [];
+	let protocols: NonNullable<Awaited<ReturnType<typeof getProtocol>>>[] = [];
 
 	if (protocolId) {
-		const specifiedProtocol = await getProtocol(protocolId);
-		protocols = [specifiedProtocol];
+		const specifiedProtocol = await getProtocol(db, protocolId);
+		protocols = specifiedProtocol ? [specifiedProtocol] : [];
+		protocols = protocols.filter(Boolean);
 	} else {
 
-		protocols = await getProtocols({roundId});
+		protocols = await getProtocols(db, {roundId});
 		let roundLeadDone = false;
 
 		for (const event of [eventDetails]) {
 
 			if (event.roundLeadership && !roundLeadDone) {
-				const roundProtocol = await getProtocol(event.roundLeadership);
-				protocols.push(roundProtocol);
+				const roundProtocol = await getProtocol(db, Number(event.roundLeadership));
+				if(roundProtocol) protocols.push(roundProtocol);
 				roundLeadDone = true;
 			}
 
@@ -94,17 +96,19 @@ export const tiebreakTypes = async ({roundId, protocolId = false}: {
 				event.protocolId
 				&& (event.protocolType !== 'speaker_protocol' || round.type === 'prelim')
 			) {
-				const specialProtocol = await getProtocol(event.protocolId);
-				protocols.push(specialProtocol);
+				const specialProtocol = await getProtocol(db, Number(event.protocolId));
+				if(specialProtocol) protocols.push(specialProtocol);
 			}
 		};
 	}
 
 	const counted: Counted = {};
 
+	//const Tiebreaks = await getTiebreaks(db, { protocols: protocols.map(p => p.id) });
+
 	for (const protocol of protocols) {
 
-		for (const tiebreak of protocol.Tiebreaks) {
+		for (const tiebreak of protocol.Tiebreaks ?? []) {
 
 			if (
 				tiebreak.count !== 'all'
@@ -123,24 +127,24 @@ export const tiebreakTypes = async ({roundId, protocolId = false}: {
 				'downs',
 				'preponderance',
 				'judgepref',
-			].includes(tiebreak.name)
+			].includes(tiebreak.name ?? '')
 			) {
 				counted.rank = true;
 			}
 
-			if (['entry_vote_one', 'entry_vote_all'].includes(tiebreak.name)) {
+			if (['entry_vote_one', 'entry_vote_all'].includes(tiebreak.name ?? '')) {
 				counted.entryWinloss = true;
 			}
 
-			if (['student_rank', 'student_recip'].includes(tiebreak.name)) {
+			if (['student_rank', 'student_recip'].includes(tiebreak.name ?? '')) {
 				counted.entryRank = true;
 			}
 
-			if (['best_po'].includes(tiebreak.name)) {
+			if (['best_po'].includes(tiebreak.name ?? '')) {
 				counted.bestPO = true;
 			}
 
-			if (['opp_wins', 'opp_ballots', 'winloss', 'ballots', 'losses', 'headtohead'].includes(tiebreak.name)) {
+			if (['opp_wins', 'opp_ballots', 'winloss', 'ballots', 'losses', 'headtohead'].includes(tiebreak.name ?? '')) {
 				counted.winloss = true;
 			}
 
@@ -151,7 +155,7 @@ export const tiebreakTypes = async ({roundId, protocolId = false}: {
 				'judgevar',
 				'judgevar2',
 				'refute',
-			].includes(tiebreak.name)) {
+			].includes(tiebreak.name ?? '')) {
 				counted.point = true;
 
 				if (eventDetails.type === 'wsdc') {
@@ -160,5 +164,9 @@ export const tiebreakTypes = async ({roundId, protocolId = false}: {
 			}
 		}
 	}
+
+	// TODO: port tv (time violations) from tiebreak_types.mas. Stubbed off until then
+	counted.tv = false;
+
 	return counted;
 };

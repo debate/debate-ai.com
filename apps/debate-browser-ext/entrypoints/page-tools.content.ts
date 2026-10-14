@@ -1,6 +1,7 @@
 import { browser } from 'wxt/browser';
 
 import { detectArticle } from '@/src/article/detect';
+import { youtubeVideoId } from '@/src/article/remote';
 import { hideReadingButton, showReadingButton } from '@/src/page-tools/reading-button';
 import { closeSearchMenu, openSearchMenu } from '@/src/page-tools/search-menu';
 import { isEditableTarget, isSearchShortcut } from '@/src/page-tools/shortcut';
@@ -15,7 +16,8 @@ import { getSettings, type Settings } from '@/src/settings/settings';
  * - **Reading-mode button.** Once the page settles, it is checked for an
  *   article (src/article/detect.ts: a regex word count, then the reading-mode
  *   extractor, all in the page). Over 1000 words gets a small arrow on the
- *   left edge that opens the article panel; anything else gets nothing.
+ *   left edge that opens the article panel, and so does a YouTube video
+ *   (read as its transcript); anything else gets nothing.
  * - **Backtick search.** The key under Escape, pressed with text selected,
  *   opens the search menu on that text, Quick search first.
  *
@@ -49,9 +51,15 @@ export default defineContentScript({
     const checkForArticle = async (allowRetry: boolean) => {
       const { articleButton } = settings ?? (await loadSettings());
       if (!articleButton || ctx.isInvalid) return hideReadingButton();
+      const open = () => void toggleReaderPanelInPage();
+      // A video's transcript is its article; the panel fetches it by URL.
+      if (youtubeVideoId(window.location.href)) {
+        showReadingButton('Read the transcript in reading mode', open);
+        return;
+      }
       const found = detectArticle(document, window.location.href);
       if (found) {
-        showReadingButton(found.wordCount, () => void toggleReaderPanelInPage());
+        showReadingButton(`Open in reading mode (${found.wordCount.toLocaleString()} words)`, open);
       } else {
         hideReadingButton();
         if (allowRetry) retry = ctx.setTimeout(() => void checkForArticle(false), 3000);

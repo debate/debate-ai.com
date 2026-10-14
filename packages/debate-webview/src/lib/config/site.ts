@@ -1,8 +1,9 @@
 export const APP_NAME = "Debate AI";
 
 /**
- * The official Debate AI wordmark (400x89), served from the site root —
- * `apps/debate-ai.com/app/logo.png`. Favicons and app icons stay separate.
+ * The official Debate AI wordmark (400x89), served from the site root. The file is
+ * `packages/debate-icons/brand/logo.png`, which the app's Vite config serves
+ * at `/logo.png`. Favicons and app icons stay separate.
  */
 export const APP_LOGO = "/logo.png";
 export const APP_LOGO_WIDTH = 400;

@@ -1,4 +1,5 @@
-import db from '../../../data/db.js';
+import { sql } from 'kysely';
+import { db } from '../../../data/database.js';
 import {
 	convertTZ,
 	shortZone,
@@ -14,18 +15,15 @@ export async function getTournIdByWebname(req,res) {
 	// Remove non alphanumerics.
 	const webname = req.params.webname.replace(/\W/g, '');
 
-	const results = await db.sequelize.query(`
+	const { rows: results } = await sql`
 		select
 			tourn.*
 		from tourn
 		where 1=1
 			and tourn.hidden != 1
-			and (tourn.webname = :webname OR tourn.id = :webname)
+			and (tourn.webname = ${webname} OR tourn.id = ${webname})
 		ORDER BY tourn.start DESC
-	`, {
-		replacements : {webname},
-		type         : db.sequelize.QueryTypes.SELECT,
-	});
+	`.execute(db);
 
 	if (results.length < 1) {
 		return NotFound(req, res, 'No such tournament found');
@@ -40,22 +38,16 @@ export async function getTournIdByWebname(req,res) {
 	// parallel tournaments that go with it.
 
 	if (parseInt(webname) === tourn.id) {
-		const others = await db.sequelize.query(`
+		const { rows: others } = await sql`
 			select
 				tourn.*
 			from tourn
 			where 1=1
 				and tourn.hidden != 1
-				and tourn.webname = :webname
-				and tourn.id != :tournId
+				and tourn.webname = ${tourn.webname}
+				and tourn.id != ${tourn.id}
 			ORDER BY tourn.start DESC
-		`, {
-			replacements : {
-				webname: tourn.webname,
-				tournId: tourn.id,
-			},
-			type         : db.sequelize.QueryTypes.SELECT,
-		});
+		`.execute(db);
 
 		if (others.length > 0) {
 			tourn.settings.multiYear = true;
@@ -72,14 +64,12 @@ export async function getTournIdByWebname(req,res) {
 }
 
 export async function getNSDACategories(req, res) {
-	const eventCodes = await db.sequelize.query(`
+	const { rows: eventCodes } = await sql`
 		select
 			nsda.*
 		from nsda_category nsda
 			order by nsda.name
-	`, {
-		type : db.sequelize.QueryTypes.SELECT,
-	});
+	`.execute(db);
 	return res.status(200).json(eventCodes);
 };
 
@@ -95,18 +85,15 @@ export async function getEventIdByWebname(req,res) {
 	};
 
 	// Find the most recent tournament that answers to that name.
-	const results = await db.sequelize.query(`
+	const { rows: results } = await sql`
 		select
 			tourn.id, tourn.webname
 		from tourn
 		where 1=1
-			and (tourn.webname = :webname OR tourn.id = :webname)
+			and (tourn.webname = ${webname} OR tourn.id = ${webname})
 		ORDER BY tourn.start DESC
 		LIMIT 1
-	`, {
-		replacements: {webname},
-		type		 : db.sequelize.QueryTypes.SELECT,
-	});
+	`.execute(db);
 
 	if (results.length > 0) {
 
@@ -114,18 +101,15 @@ export async function getEventIdByWebname(req,res) {
 
 		// If I'm searching by ID number, find the webname
 		if (tourn.webname !== webname) {
-			const nameCheck = await db.sequelize.query(`
+			const { rows: nameCheck } = await sql`
 				select
 					tourn.id, tourn.webname
 				from tourn
 				where 1=1
-					and tourn.webname = :webname
+					and tourn.webname = ${tourn.webname}
 				ORDER BY tourn.start DESC
 				LIMIT 1
-			`, {
-				replacements: {webname: tourn.webname},
-				type		 : db.sequelize.QueryTypes.SELECT,
-			});
+			`.execute(db);
 
 			if (nameCheck[0].id !== tourn.id) {
 				// I am the current instance of webname
@@ -155,7 +139,7 @@ export async function getEventIdByWebname(req,res) {
 
 export async function getThisWeekTourns(req,res){
 
-	const tourns = await db.sequelize.query(`
+	const { rows: tourns } = await sql`
 		select
 			 tourn.id, tourn.name, tourn.webname, tourn.start, tourn.end, tourn.city, tourn.state, tourn.country, tourn.tz,
 			 count(distinct entry.id) as entries,
@@ -187,9 +171,7 @@ export async function getThisWeekTourns(req,res){
 		 )
 
 		group by tourn.id
-	`, {
-		type: db.sequelize.QueryTypes.SELECT,
-	});
+	`.execute(db);
 
 	const totals = {
 		entries	 : 0,
@@ -209,10 +191,10 @@ export async function getThisWeekTourns(req,res){
 }
 
 export async function getFutureTourns(req,res){
-	let limit = '';
-	let endLimit = '';
+	let limit = sql``;
+	let endLimit = sql``;
 
-	let timeScope = ' DATE(NOW() - INTERVAL 2 DAY)';
+	let timeScope = sql`DATE(NOW() - INTERVAL 2 DAY)`;
 
 	const timeLimit = new Date();
 	timeLimit.setDate(timeLimit.getDate() - 3);
@@ -224,30 +206,21 @@ export async function getFutureTourns(req,res){
 	) {
 		// the nine test suite tournaments are forever in the past.  This one
 		// excludes the Nationals test but not the other eight others.
-		timeScope = `'2023-08-01 00:00:00'`;
+		timeScope = sql`${'2023-08-01 00:00:00'}`;
 		thisWeekDT = 1;
 	}
 
-	if (typeof req.params.circuit === 'number') {
-		limit = ` and exists (
-					select tourn_circuit.id from tourn_circuit
-					where tourn_circuit.tourn = tourn.id
-					and tourn_circuit.approved = 1
-					and tourn_circuit.circuit = ${req.params.circuit}
-				) `;
+	const { state, limit: queryLimit } = req.query;
+
+	if (state) {
+		limit = sql` and tourn.state = ${state.toUpperCase()} `;
 	}
 
-	if (typeof req.query.state === 'string' && req.query.state.length === 2) {
-		limit = ` and tourn.state = '${req.query.state.toUpperCase()}'`;
+	if (queryLimit) {
+		endLimit = sql` limit ${queryLimit} `;
 	}
 
-	const queryLimit = parseInt(req.query.limit);
-
-	if (!isNaN(queryLimit)) {
-		endLimit = ` limit ${req.query.limit} `;
-	}
-
-	const futureTourns = await db.sequelize.query(`
+	const { rows: futureTourns } = await sql`
 		SELECT
 			CONCAT(tourn.id, '-', '0') as id,
 			tourn.id tournId, tourn.webname, tourn.name, tourn.tz,
@@ -263,7 +236,7 @@ export async function getFutureTourns(req,res){
 				select ts.value
 				from tourn_setting ts
 				where ts.tourn = tourn.id
-				and ts.tag = "closed_entry"
+				and ts.tag = 'closed_entry'
 			) as closed,
 			(
 				select ts.value
@@ -387,11 +360,9 @@ export async function getFutureTourns(req,res){
 			group by tourn.id
 			order by special DESC, week, tourn.end, schoolCount DESC
 			${ endLimit }
-	`, {
-		type : db.sequelize.QueryTypes.SELECT,
-	});
+	`.execute(db);
 
-	const futureDistricts = await db.sequelize.query(`
+	const { rows: futureDistricts } = await sql`
 		SELECT
 			CONCAT(tourn.id, '-', weekend.id) as id,
 			tourn.id tournId, tourn.webname, tourn.name, tourn.tz,
@@ -532,9 +503,7 @@ export async function getFutureTourns(req,res){
 		group by weekend.id
 		order by week, weekend.end
 		${ endLimit }
-	`, {
-		type : db.sequelize.QueryTypes.SELECT,
-	});
+	`.execute(db);
 
 	futureTourns.push(...futureDistricts);
 
@@ -621,7 +590,7 @@ export async function getFutureTourns(req,res){
 // performant than the repo for now. don't move until there's a true
 // replacement pls.
 export async function getRound(roundId){
-	const rounds = await db.sequelize.query(`
+	const { rows: rounds } = await sql`
             select
                 round.id, round.name, round.label, round.type tag,
                 round.published, round.post_primary, round.post_secondary,
@@ -720,18 +689,13 @@ export async function getRound(roundId){
                     and no_codes.tag = 'no_codes'
 
             where 1=1
-                and round.id = :roundId
+                and round.id = ${roundId}
                 and event.id = round.event
                 and category.id = event.category
                 and round.published > 0
                 and round.timeslot = timeslot.id
 
-        `, {
-		replacements : {
-			roundId,
-		},
-		type: db.Sequelize.QueryTypes.SELECT,
-	});
+        `.execute(db);
 
 	if (rounds.length > 0) {
 
@@ -794,7 +758,7 @@ export async function getRound(roundId){
 };
 
 export async function getSections(roundId){
-	let sections = await db.sequelize.query(`
+	let { rows: sections } = await sql`
             select
 
                 panel.id,
@@ -817,15 +781,12 @@ export async function getSections(roundId){
 
             where 1=1
 
-                and panel.round = :roundId
+                and panel.round = ${roundId}
                 and panel.id = ballot.panel
                 and ballot.entry = entry.id
 
             order by panel.letter, ballot.side, ballot.speakerorder
-        `, {
-		replacements : { roundId },
-		type: db.Sequelize.QueryTypes.SELECT,
-	});
+        `.execute(db);
 
 	return sections;
 }

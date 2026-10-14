@@ -52,7 +52,7 @@ describe("useLeaderboardData", () => {
     const hook = await renderHook(() => useLeaderboardData("hspf"));
     await flush();
 
-    expect(m.grab).toHaveBeenCalledWith("history", { cache: true });
+    expect(m.grab).toHaveBeenCalledWith("history", { cache: true, baseURL: "/api/" });
     expect(hook.result.current).toMatchObject({
       dataset: { id: "hspf" },
       loading: false,

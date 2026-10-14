@@ -73,7 +73,7 @@ materials, instructional documents, practice-round recordings) through `saveCoac
 lists every persisted material grouped by kind, and lets a coach ask the team coach AI a
 question — previewing which materials + grounded prompt it draws on via
 `findRelevantMaterialsFromStore`/`buildGroundedCoachPrompt`, then calling `requestTeamCoachAnswer`
-for a real, grounded answer — mounted at `/coaching/materials` in the web app:
+for a real, grounded answer — mounted as the Coach Materials tab of `/coaching` (`?section=materials`) in the web app:
 
 ```tsx
 import { CoachMaterialsPanel } from "debate-speech-writer"

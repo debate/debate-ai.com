@@ -28,7 +28,7 @@ export const tabroomConfig: TabroomConfig = {
   csrf: { trusted_origins: [] },
   ratelimiter: { enabled: false, message: "Too many requests", search: {} },
   aws: { s3: { bucket: "", region: "", url: "https://s3.amazonaws.com/tabroom-files" } },
-  features: { HIDE_DEV_ENDPOINTS: true },
+  features: { HIDE_DEV_ENDPOINTS: false },
 };
 
 const isPlainObject = (v: unknown): v is Record<string, unknown> =>

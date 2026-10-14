@@ -4,6 +4,7 @@ import {
   findSchoolDivisionEntries,
   findSchoolEntries,
   findTeamEntries,
+  findVideoTeamProfile,
   profileSlug,
   schoolDivisionRadarData,
   schoolHref,
@@ -226,5 +227,19 @@ describe("findSchoolDivisionEntries", () => {
   it("returns only the team when its school has no other entry in the division", () => {
     const [team] = findTeamEntries(datasets, "college-prep-jane-doe");
     expect(findSchoolDivisionEntries(datasets, team).map((i) => i.entry.name)).toEqual(["Jane Doe"]);
+  });
+});
+
+describe("findVideoTeamProfile", () => {
+  it("tags a round's team with its dataset, field size and busiest entry", () => {
+    const found = findVideoTeamProfile(datasets, 2, "College Prep FS");
+    expect(found?.entry.name).toBe("Falk & Sabnani");
+    expect(found).toMatchObject({ datasetId: "hspf", fieldSize: 3, maxMatches: 10 });
+  });
+
+  it("returns null for an unknown team, a lecture or a missing label", () => {
+    expect(findVideoTeamProfile(datasets, 2, "Nowhere High ZZ")).toBeNull();
+    expect(findVideoTeamProfile(datasets, "Lecture", "College Prep FS")).toBeNull();
+    expect(findVideoTeamProfile(datasets, 2, "")).toBeNull();
   });
 });

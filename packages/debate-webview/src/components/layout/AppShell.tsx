@@ -24,6 +24,7 @@ import { OneTap } from "./OneTap"
 import { ToolRecordSyncProvider } from "./ToolRecordSyncProvider"
 import { DebaterActivityListener } from "./DebaterActivityListener"
 import { SignInPromptProvider } from "./SignInPromptProvider"
+import { GuestVideoLimitGate } from "./GuestVideoLimitGate"
 import { FirstLoginWelcomeProvider } from "./FirstLoginWelcomeProvider"
 import { GlobalCommandPalette } from "./GlobalCommandPalette"
 import { PlanLimitDialog } from "../pricing/PlanLimitDialog"
@@ -75,6 +76,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               be able to open its dialog in this document. */}
           <ChromeErrorBoundary label="SignInPromptProvider">
             <SignInPromptProvider />
+          </ChromeErrorBoundary>
+          {/* A framed watch page plays its video in this document. */}
+          <ChromeErrorBoundary label="GuestVideoLimitGate">
+            <GuestVideoLimitGate />
           </ChromeErrorBoundary>
           {/* The first-sign-in welcome rides along with the session
               this document already holds. */}
@@ -140,6 +145,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </ChromeErrorBoundary>
       <ChromeErrorBoundary label="SignInPromptProvider">
         <SignInPromptProvider />
+      </ChromeErrorBoundary>
+      {/* Asks a guest to sign in once they have opened ten videos. */}
+      <ChromeErrorBoundary label="GuestVideoLimitGate">
+        <GuestVideoLimitGate />
       </ChromeErrorBoundary>
       {/* The first-sign-in welcome: key links for a reader whose
           session just landed on this browser. */}

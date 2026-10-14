@@ -42,15 +42,25 @@ const SECTION_PARAM = "section"
  * @param storageKey - localStorage key remembering the last section.
  * @param preferred - Section to open when the URL names none, ahead of the
  *   remembered one (e.g. the section an old standalone route stood for).
+ * @param param - URL query parameter to sync (default `section`); a hub
+ *   nested inside another hub's tab uses its own so the two don't collide.
  */
 export function useHubSection<Id extends string>(
   sections: readonly HubSection<Id>[],
   storageKey: string,
   preferred?: Id,
+  param: string = SECTION_PARAM,
 ): [Id, (id: Id) => void] {
   const params = useSearchParams()
-  const fromUrl = params?.get(SECTION_PARAM) ?? null
+  const raw = params?.get(param) ?? null
+  // An unknown value (e.g. a stale link) falls through to the remembered tab.
+  const fromUrl = raw && sections.some((entry) => entry.id === raw) ? raw : null
   const [section, setSectionState] = useState<Id>(() => resolveSectionId(sections, fromUrl ?? preferred))
+
+  // Follow in-app links that change the param while the hub stays mounted.
+  useEffect(() => {
+    if (fromUrl) setSectionState(fromUrl as Id)
+  }, [fromUrl])
 
   // Only the URL is available during render; the remembered section is a
   // client-only fallback, applied after mount so the server markup matches.
@@ -69,14 +79,14 @@ export function useHubSection<Id extends string>(
   const setSection = useCallback(
     (id: Id) => {
       setSectionState(id)
-      setStateInURL({ [SECTION_PARAM]: id })
+      setStateInURL({ [param]: id })
       try {
         localStorage.setItem(storageKey, id)
       } catch {
         // Ignore storage failures; the URL still carries the section.
       }
     },
-    [storageKey],
+    [storageKey, param],
   )
 
   return [section, setSection]
@@ -94,6 +104,8 @@ export interface HubSectionNavProps<Id extends string> {
   label: string
   /** Show each tab's panel count badge (default `true`); off for one-panel sections. */
   showPanelCounts?: boolean
+  /** Pin the strip to the top while scrolling (default `true`); off for a hub nested under another's strip. */
+  sticky?: boolean
 }
 
 /**
@@ -107,6 +119,7 @@ export function HubSectionNav<Id extends string>({
   onChange,
   label,
   showPanelCounts = true,
+  sticky = true,
 }: HubSectionNavProps<Id>) {
   const tabRefs = useRef<Map<Id, HTMLButtonElement>>(new Map())
 
@@ -128,7 +141,13 @@ export function HubSectionNav<Id extends string>({
   }
 
   return (
-    <div className="sticky top-0 z-20 -mx-3 border-b border-border bg-background/90 px-3 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/75 sm:-mx-6 sm:px-6">
+    <div
+      className={cn(
+        sticky
+          ? "sticky top-0 z-20 -mx-3 border-b border-border bg-background/90 px-3 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/75 sm:-mx-6 sm:px-6"
+          : "py-1",
+      )}
+    >
       <div role="tablist" aria-label={label} className="scrollbar-hide flex gap-1 overflow-x-auto">
         {sections.map((section, index) => {
           const selected = section.id === active

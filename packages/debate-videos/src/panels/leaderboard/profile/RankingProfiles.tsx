@@ -101,7 +101,7 @@ function RecordStat({ label, value }: { label: string; value: ReactNode }) {
   return (
     <div className="flex flex-col items-center justify-center px-2 py-4 text-center sm:py-5">
       <div className="text-2xl font-bold tabular-nums tracking-tight sm:text-3xl">{value}</div>
-      <div className="mt-1 text-[11px] font-medium uppercase tracking-wider text-white/75">{label}</div>
+      <div className="mt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">{label}</div>
     </div>
   )
 }
@@ -111,10 +111,10 @@ function StatBand({ title, tone, children }: { title: string; tone: "light" | "d
   return (
     <section
       aria-label={title}
-      className={`border-t border-white/15 ${tone === "dark" ? "bg-black/15" : ""}`}
+      className={`border-t ${tone === "dark" ? "bg-muted/40" : ""}`}
     >
-      <h3 className="px-4 pt-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/60">{title}</h3>
-      <div className="grid grid-cols-2 divide-white/15 sm:grid-cols-4 sm:divide-x [&>*]:border-white/15 max-sm:[&>*:nth-child(odd)]:border-r max-sm:[&>*:nth-child(n+3)]:border-t">
+      <h3 className="px-4 pt-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">{title}</h3>
+      <div className="grid grid-cols-2 divide-border sm:grid-cols-4 sm:divide-x [&>*]:border-border max-sm:[&>*:nth-child(odd)]:border-r max-sm:[&>*:nth-child(n+3)]:border-t">
         {children}
       </div>
     </section>
@@ -124,11 +124,11 @@ function StatBand({ title, tone, children }: { title: string; tone: "light" | "d
 /** The pill style the header's division and rating chips share. */
 const pillClass = (active: boolean) =>
   `inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm transition-colors ${
-    active ? "bg-white/25 font-medium text-white" : "bg-white/10 text-white/85 hover:bg-white/20"
+    active ? "bg-primary font-medium text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/70"
   }`
 
 /**
- * The team's record card: a blue header with the team, its school, the
+ * The team's record card: a header with the team, its school, the
  * Follow button, a division picker and each division's rating, over the
  * picked division's stats grouped into Standing, Win rates and Rating model.
  */
@@ -145,13 +145,13 @@ function TeamRecordCard({
   const { entry, fieldSize, datasetLabel } = selected
   const topPercent = fieldSize > 0 ? (entry.rank / fieldSize) * 100 : null
   return (
-    <div className="mt-3 overflow-hidden rounded-xl bg-blue-700 text-white shadow-sm dark:bg-blue-900">
+    <div className="mt-3 overflow-hidden rounded-xl border bg-card text-card-foreground shadow-sm">
       <header className="px-4 pb-4 pt-5 sm:px-6">
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{first.name}</h1>
-        <Link href={schoolHref(first.school)} className="text-base text-white/85 underline-offset-4 hover:underline">
+        <Link href={schoolHref(first.school)} className="text-base text-muted-foreground underline-offset-4 hover:underline">
           {first.school}
         </Link>
-        <div className="[&_.text-muted-foreground]:text-white/75 [&_.text-primary]:text-white">
+        <div>
           <FollowButton kind="team" slug={teamSlug(first)} name={`${first.school} ${first.name}`} />
         </div>
         {entries.length > 1 && (
@@ -173,7 +173,7 @@ function TeamRecordCard({
           {entries.map((item) => (
             <span key={item.datasetId} className={pillClass(false)}>
               {item.datasetLabel}
-              <span className="font-semibold tabular-nums text-white">{rating(item.entry.adjustedRating)}</span>
+              <span className="font-semibold tabular-nums text-foreground">{rating(item.entry.adjustedRating)}</span>
             </span>
           ))}
         </div>
@@ -285,11 +285,38 @@ export function TeamProfilePage({ slug }: { slug: string }) {
  * Profile of one school: aggregate stats and every ranked entry, by division.
  *
  * @param props.slug - The `/schools/[school]` segment, from `profileSlug`.
+ * @param props.ownerPanel - Rendered under the school's name: the host's
+ *   owner-managed logo, roster and claim link.
+ * @param props.knownName - The school's name when the host knows the school
+ *   though no ranking lists it (one a coach created when claiming it); the
+ *   page then shows the name and `ownerPanel` instead of "not found".
  */
-export function SchoolProfilePage({ slug }: { slug: string }) {
+export function SchoolProfilePage({
+  slug,
+  ownerPanel,
+  knownName,
+}: {
+  slug: string
+  ownerPanel?: ReactNode
+  knownName?: string | null
+}) {
   const { datasets, loading, error } = useAllRankingDatasets()
   const entries = loading ? [] : findSchoolEntries(datasets, slug)
   const summary = summarizeSchool(entries)
+
+  if (!loading && entries.length === 0 && knownName) {
+    return (
+      <ProfileFrame>
+        <header className="mt-3">
+          <h1 className="text-2xl font-semibold text-foreground">{knownName}</h1>
+          <p className="text-sm text-muted-foreground">No ranked entries yet</p>
+          <FollowButton kind="school" slug={slug} name={knownName} />
+        </header>
+        {ownerPanel}
+        <ProfileVideos search={schoolVideoSearch(knownName, [])} />
+      </ProfileFrame>
+    )
+  }
 
   const divisions = entries.reduce(
     (groups, item) => {
@@ -312,6 +339,7 @@ export function SchoolProfilePage({ slug }: { slug: string }) {
             </p>
             <FollowButton kind="school" slug={profileSlug(summary.school)} name={summary.school} />
           </header>
+          {ownerPanel}
 
           <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
             <Stat label="Ranked entries" value={summary.teams} />

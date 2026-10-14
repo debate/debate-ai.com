@@ -11,7 +11,7 @@ import { PageNotReadableError, capturePageSnapshot } from '@/src/reader/snapshot
 import {
   READER_SNAPSHOT_MESSAGE,
   READER_TAB_CHANGED_MESSAGE,
-  toggleReaderPanel,
+  openReaderForTab,
 } from '@/src/reader/panel';
 import { getSettings } from '@/src/settings/settings';
 import { handleBulkStorageMessage, isBulkStorageMessage } from '@/src/storage/bulk-storage-bridge';
@@ -80,17 +80,14 @@ async function getActiveTab(): Promise<{ id?: number; url?: string } | undefined
 }
 
 /**
- * Shows or hides the article panel over `tabId`, falling back to the timer
- * window on pages the panel can't be put on (browser-internal pages, the web
- * store), so the click still does something.
+ * Shows or hides the article panel over `tab` — or opens it as its own tab for
+ * a PDF or a page it can't sit on (src/reader/panel.ts) — falling back to the
+ * timer window on pages with no web URL at all (browser-internal pages, the
+ * web store), so the click still does something.
  */
-async function toggleReaderOrFallBack(tabId: number | undefined): Promise<void> {
-  if (tabId == null) {
-    await openTimerWindow();
-    return;
-  }
+async function toggleReaderOrFallBack(tab: { id?: number; url?: string } | undefined): Promise<void> {
   try {
-    await toggleReaderPanel(tabId);
+    await openReaderForTab(tab ?? {});
   } catch (error) {
     console.warn('Could not show the article panel on this page:', error);
     await openTimerWindow();
@@ -163,7 +160,7 @@ export default defineBackground(() => {
   toolbarButton.onClicked.addListener((tab) => {
     void (async () => {
       const { toolbarAction } = await getSettings();
-      if (toolbarAction === 'reader') await toggleReaderOrFallBack(tab?.id);
+      if (toolbarAction === 'reader') await toggleReaderOrFallBack(tab);
       else await openTimerWindow();
     })();
   });
@@ -215,7 +212,7 @@ export default defineBackground(() => {
   });
 
   browser.contextMenus.onClicked.addListener((info, tab) => {
-    if (info.menuItemId === READ_PAGE_MENU_ID) void toggleReaderOrFallBack(tab?.id);
+    if (info.menuItemId === READ_PAGE_MENU_ID) void toggleReaderOrFallBack(tab);
   });
 
   browser.tabs.onUpdated.addListener((tabId, change) => {

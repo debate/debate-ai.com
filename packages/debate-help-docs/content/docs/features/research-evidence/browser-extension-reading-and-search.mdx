@@ -21,6 +21,22 @@ reading-mode extractor the article panel uses, so navigation, comments and
 footers don't count toward the 1000 words. No page text is sent anywhere to
 decide.
 
+## YouTube, PDFs and pages that won't read
+
+Reading mode works on more than articles:
+
+- **YouTube videos** open as their transcript, split into paragraphs that each
+  start with a timestamp linking to that moment in the video. The arrow also
+  shows on every YouTube video page.
+- **PDFs** open in reading mode in a new tab, since the browser's PDF viewer
+  has no page to put the panel on.
+- **Any other page** the extension can't find an article in is tried once more
+  by its address.
+
+For these, the page's address (only the address, and only when you open
+reading mode) is sent to Debate AI's transcript service for YouTube and to the
+QwkSearch extract-webpage service for everything else.
+
 ## Backtick search
 
 Select text on any page and press the key under Escape (`` ` `` / `~`). A
@@ -45,5 +61,6 @@ saved.
 - The AI key is reused from the extension's own copy of the app (its Options
   page). A key saved only on debate-ai.com in a normal tab is not visible to the
   extension; save it once from the Options page.
+- A video with no captions has no transcript to read.
 - Running on every page means the extension now asks for access to all
   http(s) sites when installed.

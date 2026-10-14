@@ -219,6 +219,11 @@ export interface ClaimOptions {
    *  loads (`setHTML`, `importDocx`, `importCmir`) DO pass it: there the host
    *  asked for the new content and expects to be told what it now has. */
   report?: boolean;
+  /** Turn read mode on for the newly mounted doc. Only applies when the
+   *  claim mounts a different document — re-claiming the live key leaves
+   *  whatever the user toggled alone. Set for `.cmir` docs, which open in
+   *  read mode. */
+  readMode?: boolean;
 }
 
 /** Claim the live singleton for `binding.key`, loading `html` into it
@@ -266,7 +271,11 @@ export async function claim(
         }),
       );
     });
-    if (readModeOn) reapplyReadMode(view);
+    if (opts.readMode && !settingsModule?.settings.get('readMode')) {
+      // The engine's settings subscriber applies it to the live view.
+      settingsModule?.settings.set('readMode', true);
+    }
+    if (readModeOn || opts.readMode) reapplyReadMode(view);
     view.focus();
     if (opts.report && parsed.ok) reportNow(view, binding.key);
     return;

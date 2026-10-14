@@ -1,6 +1,6 @@
 // @ts-nocheck
 import type { ZodOpenApiSchemaObject } from 'zod-openapi';
-import z from 'zod';
+import { z } from 'zod';
 import * as utils from './utils.js';
 
 export const QuizBadgeSchema = z.object({
@@ -19,7 +19,7 @@ export const PersonQuizSchema = z.object({
 	person: utils.id,
 	quiz: utils.id,
 	approvedBy: utils.id.nullable(),
-	pending: z.boolean(),
+	pending: z.int(),
 	updatedAt: z.iso.datetime(),
 }).meta({
 	id: 'PersonQuiz',
@@ -32,11 +32,11 @@ export const QuizSchema = z.object({
 	tag: z.string().max(63).nullable(),
 	label: z.string().max(255).nullable(),
 	description: z.string().max(511).nullable(),
-	sitewide: z.boolean().default(false),
-	hidden: z.boolean().default(false),
-	approval: z.boolean().default(false),
-	show_answers: z.boolean().default(false),
-	admin_only: z.boolean().default(false),
+	sitewide: z.int().default(0),
+	hidden: z.int().default(0),
+	approval: z.int().default(0),
+	show_answers: z.int().default(0),
+	admin_only: z.int().default(0),
 	circuit: utils.id.nullable(),
 	Badge: QuizBadgeSchema,
 	PersonQuizzes: z.array(PersonQuizSchema).optional(),
