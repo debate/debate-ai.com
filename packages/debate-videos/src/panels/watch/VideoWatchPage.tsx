@@ -58,6 +58,7 @@ import Link from "next/link"
 import { AlertCircle, ArrowLeft, Calendar, Clock, Eye, ListOrdered, ListPlus, Loader2 } from "lucide-react"
 import { CommentSection } from "@debate/comments"
 import { SpeechStartsDialog } from "@debate/timer"
+import { formatCount } from "../../components/category-gallery/format-count"
 
 import { WatchToolbar } from "../../components/watch/WatchToolbar"
 import { WatchSidePanel, type WatchSideTab } from "../../components/watch/WatchSidePanel"
@@ -978,9 +979,9 @@ export function VideoWatchPage({
                   <Calendar className="h-3 w-3" />
                   {formatVideoDate(date, "full")}
                 </span>
-                <span className="inline-flex items-center gap-1">
+                <span className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium tabular-nums">
                   <Eye className="h-3 w-3" />
-                  {viewCount.toLocaleString()}
+                  {formatCount(viewCount)}
                 </span>
                 {(storedDuration || duration > 0) && (
                   <span className="inline-flex items-center gap-1 tabular-nums" title="Duration">

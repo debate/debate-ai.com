@@ -518,7 +518,9 @@ export function VideoListRow({
           {formatVideoDate(date, "full", "—")}
         </td>
         <td className="px-3 py-3 align-top text-sm text-muted-foreground text-right tabular-nums whitespace-nowrap">
-          {viewCount.toLocaleString()}
+          <span className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium tabular-nums">
+            {formatCount(viewCount)}
+          </span>
         </td>
         {showWatched && (
           <td
