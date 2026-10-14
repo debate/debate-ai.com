@@ -2,15 +2,16 @@
  * @fileoverview The circuit calendar's major-season weekends — what a judge
  * volunteering for hire picks their availability from.
  *
- * The Debate Majors calendar (`apps/debate-ai.com/public/debate-majors-a-to-z.html`,
- * framed by the Tournaments page as "CIRCUIT/CAL") lays the 2026–27 season out
- * as lettered weeks: A is September 1–6, 2026, B–Y run Monday–Sunday through
- * February 21, 2027, and Z groups the season-ending championships. A judge
- * works weekends, so this module turns those weeks into one row per weekend
- * (keyed by its Saturday) carrying the majors that run over it.
+ * The Debate Majors calendar (`packages/debate-tournaments/src/ui/majors`,
+ * rendered inline by the Tournaments page as "CIRCUIT/CAL") lays the 2026–27
+ * season out as lettered weeks: A is September 1–6, 2026, B–Y run Monday–Sunday
+ * through February 21, 2027, and Z groups the season-ending championships. A
+ * judge works weekends, so this module turns those weeks into one row per
+ * weekend (keyed by its Saturday) carrying the majors that run over it.
  *
- * The dated majors are copied from that page's `data` array; the page is a
- * static file that cannot import this module.
+ * The dated majors are copied from that page's `DEBATE_MAJORS` array; the page
+ * is a React component that imports that array directly, so unlike the old
+ * standalone HTML page it cannot drift.
  * `test/lib/judge-pool/season-calendar.test.ts` fails if the two drift apart.
  *
  * Dates are ISO day strings ("YYYY-MM-DD") throughout and all arithmetic is in

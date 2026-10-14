@@ -90,7 +90,8 @@ function weekOf(major: DebateMajor): number {
 }
 
 function toneFor(circuit: Circuit, major: DebateMajor): string {
-  return TONES[circuit === "All" ? major.formats[0] : circuit] ?? "bg-slate-400/15 text-slate-300";
+  const key = circuit === "All" ? major.formats[0] : circuit;
+  return (TONES as Record<string, string>)[key] ?? "bg-slate-400/15 text-slate-300";
 }
 
 function StatusBadge({ status }: { status: DebateMajor["status"] }) {
@@ -258,7 +259,7 @@ export function DebateMajorsCalendar({ caption }: DebateMajorsCalendarProps) {
             </button>
           ))}
         </div>
-        <Select value={status} onValueChange={setStatus} aria-label="Date status">
+        <Select value={status} onChange={(e) => setStatus(e.target.value)} aria-label="Date status">
           <option value="all">All statuses</option>
           <option value="published">Published</option>
           <option value="provisional">Provisional</option>
