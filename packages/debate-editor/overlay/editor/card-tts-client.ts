@@ -16,6 +16,8 @@
  * @module editor/card-tts-client
  */
 
+import { kokoroInBrowserSupported, streamKokoroSpeech } from './kokoro-browser-tts.js';
+
 export type ModelVoiceProvider = 'kokoro' | 'deepgram';
 
 /** A model voice the reader can pick in the Read aloud settings. */
@@ -48,7 +50,18 @@ export function readVoiceChoice(id: string | null | undefined): ReadVoiceChoice 
 
 export const DEFAULT_QWKSEARCH_VOICE_URL = 'https://qwksearch.com/api/agent/voice';
 
+/** Model speech: one clip, or clips to play one after another. */
+export type SpeechAudio = Blob | AsyncIterable<Blob>;
+
+/** Speaks text in a Kokoro voice on this device, one clip at a time. */
+export type BrowserKokoro = (text: string, voice: string, signal?: AbortSignal) => AsyncIterable<Blob>;
+
 export interface FetchModelSpeechOptions {
+  /**
+   * Kokoro run in the browser, tried first for Kokoro voices. Defaults to
+   * `streamKokoroSpeech` where the browser can run it; `null` skips it.
+   */
+  browserKokoro?: BrowserKokoro | null;
   /** The site's TTS route. */
   siteEndpoint?: string;
   /** QwkSearch's voice endpoint, called from the browser as a fallback. */
@@ -60,12 +73,47 @@ function isAudio(res: Response): boolean {
   return res.ok && /^audio\//i.test(res.headers.get('content-type') ?? '');
 }
 
+/**
+ * The first clip of `stream`, then the rest, as one iterable; null when the
+ * stream fails or ends before its first clip (so the caller can try a
+ * server). Errors after the first clip end the stream quietly.
+ */
+async function startStream(stream: AsyncIterable<Blob>, signal?: AbortSignal): Promise<AsyncIterable<Blob> | null> {
+  const it = stream[Symbol.asyncIterator]();
+  let first: IteratorResult<Blob>;
+  try {
+    first = await it.next();
+  } catch (error) {
+    if (signal?.aborted) throw error;
+    console.warn('[read aloud] Kokoro in the browser failed; using a server voice.', error);
+    return null;
+  }
+  if (first.done) return null;
+  const head = first.value;
+  return {
+    async *[Symbol.asyncIterator]() {
+      yield head;
+      try {
+        for (let next = await it.next(); !next.done; next = await it.next()) yield next.value;
+      } catch (error) {
+        if (!signal?.aborted) console.warn('[read aloud] Kokoro stopped mid-card.', error);
+      }
+    },
+  };
+}
+
 /** Speech audio for `text` in `voice`, or null when no model could give it (see the module doc). */
 export async function fetchModelSpeech(
   text: string,
   voice: ModelVoice,
   options: FetchModelSpeechOptions = {},
-): Promise<Blob | null> {
+): Promise<SpeechAudio | null> {
+  const browserKokoro =
+    options.browserKokoro === undefined ? (kokoroInBrowserSupported() ? streamKokoroSpeech : null) : options.browserKokoro;
+  if (voice.provider === 'kokoro' && browserKokoro) {
+    const stream = await startStream(browserKokoro(text, voice.voice, options.signal), options.signal);
+    if (stream) return stream;
+  }
   const { siteEndpoint = '/api/tts', qwksearchEndpoint = DEFAULT_QWKSEARCH_VOICE_URL, signal } = options;
   const payload: Record<string, string> = { text, provider: voice.provider };
   if (voice.voice) payload['voice'] = voice.voice;
