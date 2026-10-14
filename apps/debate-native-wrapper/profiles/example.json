@@ -19,6 +19,7 @@
     "minWidth": 480,
     "minHeight": 480,
     "fullscreen": false,
+    "maximized": false,
     "resizable": true
   },
   "android": {
