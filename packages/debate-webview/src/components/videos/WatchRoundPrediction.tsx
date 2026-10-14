@@ -4,11 +4,12 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Loader2, TrendingUp, TrendingDown, Minus, Plus, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { createMarket, placeBet, fetchPredictionBoard, type PredictionMarket, type PredictionBoardResponse } from "@debate/predictions/client";
-import { useSession } from "@debate/webview/lib/hooks/useSession";
-import { Button } from "@debate/webview/lib/ui/primitives/button";
-import { cn } from "@debate/videos/ui/lib/utils";
+import { createMarket, placeBet, fetchPredictionBoard } from "@debate/predictions/client";
+import type { PredictionMarket, PredictionBoardResponse } from "@debate/predictions";
 import type { VideoType } from "@debate/videos/types/videos";
+import { useSession } from "../../lib/hooks/useSession";
+import { Button } from "../../lib/ui/primitives/button";
+import { cn } from "../../lib/ui/lib/utils";
 
 const OUTCOME_LABELS = {
   aff: "Affirmative wins",
@@ -81,7 +82,7 @@ export function WatchRoundPrediction({ video }: { video: VideoType }) {
         const roundMarket = board.markets
           .map(parseMarket)
           .find((m) => m && m.title.toLowerCase().includes(title.toLowerCase().slice(0, 50)));
-        setMarket(roundMarket);
+        setMarket(roundMarket ?? null);
         setMarketsLoading(false);
       })
       .catch(() => {
@@ -202,7 +203,7 @@ export function WatchRoundPrediction({ video }: { video: VideoType }) {
             <span>Total shares: {formatPoints(market.affShares + market.negShares)}</span>
             {market.status !== "open" && (
               <span className="px-1.5 py-0.5 rounded bg-muted">
-                {market.status === "resolved" ? "Settled" : market.status === "voided" ? "Voided" : "Closed"}
+                {market.status === "resolved" ? "Settled" : market.status === "void" ? "Voided" : "Closed"}
               </span>
             )}
           </div>

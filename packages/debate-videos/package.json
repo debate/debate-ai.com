@@ -1,7 +1,7 @@
 {
   "name": "@debate/videos",
   "version": "0.1.0",
-  "description": "Debate video library \u2014 grids, search, the persistent YouTube player, lecture pages and rankings leaderboards",
+  "description": "Debate video library — grids, search, the persistent YouTube player, lecture pages and rankings leaderboards",
   "type": "module",
   "author": "vtempest",
   "license": "rights.institute/prosper",
@@ -21,8 +21,18 @@
   "types": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./*": "./src/*",
-    "./src/*": "./src/*",
+    "./src/*": [
+      "./src/*",
+      "./src/*.ts",
+      "./src/*.tsx",
+      "./src/*/index.ts"
+    ],
+    "./*": [
+      "./src/*",
+      "./src/*.ts",
+      "./src/*.tsx",
+      "./src/*/index.ts"
+    ],
     "./package.json": "./package.json"
   },
   "files": [
