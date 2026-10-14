@@ -457,6 +457,13 @@ export const userSettings = sqliteTable("user_settings", {
   // than once per browser. Nullable, so `ensureTableColumns` can add it to
   // the live D1 table without a migration.
   welcomeDismissedAt: integer("welcome_dismissed_at", { mode: "timestamp" }),
+  // JSON-serialized `RecordingPrivacy` — Settings → Privacy's recording
+  // release: whether published recordings are allowed at all, audio only or
+  // audio and video, and how the user is credited (anonymous, a username, or
+  // the real name in full or as first name plus initial). Validated and read
+  // back by `@debate/webview/lib/privacy/recording-release`, through
+  // `/api/settings/privacy`. Null means the defaults: nothing published.
+  recordingPrivacy: text("recording_privacy"),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(unixepoch())`),
@@ -466,6 +473,27 @@ export const userSettings = sqliteTable("user_settings", {
 });
 
 export type UserSettingsRow = typeof userSettings.$inferSelect;
+
+// Settings → Privacy's "request deletion" form: a signed-in user asks for all
+// of their data, or the parts they name, to be deleted, with a free-text box
+// of suggested deletions. Admins work the queue; `status` moves from
+// "pending" to "done" or "declined". Created on first use by
+// `lib/privacy/store.ts` (there are no tracked migrations).
+export const dataDeletionRequests = sqliteTable("data_deletion_requests", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  // "all" | "part"
+  scope: text("scope").notNull(),
+  // JSON array of `DELETION_CATEGORIES` ids; empty for "all".
+  categories: text("categories").notNull().default("[]"),
+  details: text("details").notNull().default(""),
+  status: text("status").notNull().default("pending"),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
+});
 
 // Account-linked flow cloud save — TODO.md idea #17 ("User Settings —
 // account-linked debate preferences"), follow-up (3): `debate-round`'s
