@@ -51,6 +51,7 @@ const win = {
   minWidth: 480,
   minHeight: 480,
   fullscreen: false,
+  maximized: false,
   resizable: true,
   ...profile.window,
 };
@@ -78,6 +79,7 @@ const tauriConf = {
         minHeight: win.minHeight,
         resizable: win.resizable,
         fullscreen: win.fullscreen,
+        maximized: win.maximized,
         center: true,
       },
     ],
