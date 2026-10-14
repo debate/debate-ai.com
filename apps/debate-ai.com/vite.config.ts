@@ -240,6 +240,8 @@ export default defineConfig({
     // pulls in, which is work in research-agent-ui and react-reason-editor,
     // not a bundler setting here.
     chunkSizeWarningLimit: 8000,
+    // Disable sourcemaps to stay under Cloudflare Workers' 15 MB gzipped limit
+    sourcemap: false,
     rolldownOptions: {
       onLog(level, log, defaultHandler) {
         if (isVendoredDashPlayerNoise(log)) return;

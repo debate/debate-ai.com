@@ -23,6 +23,7 @@ import { cn } from "../ui/lib/utils"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/primitives/tooltip"
 import { SpeechRecordingMenu } from "@debate/timer/src/recorder/SpeechRecordingPlayer"
 import { useAiOutcomeResponsesAction } from "../dialogs/AiOutcomeResponsesDialog"
+import { useYouTubeSpeechAction } from "../dialogs/YouTubeSpeechDialog"
 import { useClarityRequestAction } from "../hooks/useClarityRequests"
 
 export interface SpeechControlsTopBarProps {
@@ -64,6 +65,8 @@ export interface SpeechControlsTopBarProps {
   recordingKey?: string
   /** Emails to notify via the recording menu's "Share with Opponents" — see `round/round-recording-share.ts`. */
   participantEmails?: string[]
+  /** The round "Join round recording" joins; see `round/round-recording-items.ts`. */
+  roundRecording?: { roundId: string; items: Array<{ key: string; label: string }> }
   /** Whether to render the recording menu here — false when the round sidebar already shows it under the speech. */
   showRecordingMenu?: boolean
   /** Whether to render the view controls here — false when the round sidebar shows them above its speeches. */
@@ -96,11 +99,13 @@ export function SpeechControlsTopBar({
   onDeleteRecording,
   recordingKey,
   participantEmails,
+  roundRecording,
   showRecordingMenu = true,
   showViewControls = true,
   leadingActions,
 }: SpeechControlsTopBarProps) {
   const outcomeResponses = useAiOutcomeResponsesAction(speechName)
+  const youtubeSpeech = useYouTubeSpeechAction(speechName)
   const clarityRequest = useClarityRequestAction(speechName)
   return (
     <div className="flex items-center justify-end gap-1 w-full h-9 px-2 border-b border-border bg-[var(--background)] shrink-0">
@@ -122,6 +127,7 @@ export function SpeechControlsTopBar({
       {showRecordingMenu && (
         <SpeechRecordingMenu
           actions={clarityRequest ? [clarityRequest, outcomeResponses.action] : [outcomeResponses.action]}
+          uploadActions={[youtubeSpeech.action]}
           speechName={speechName}
           speechLabel={speechName}
           micDeviceId={micDeviceId}
@@ -134,10 +140,12 @@ export function SpeechControlsTopBar({
           onDeleteRecording={hasRecording ? onDeleteRecording : undefined}
           recordingKey={recordingKey}
           participantEmails={participantEmails}
+          roundRecording={roundRecording}
           inHeader={true}
         />
       )}
       {showRecordingMenu && outcomeResponses.dialog}
+      {showRecordingMenu && youtubeSpeech.dialog}
     </div>
   )
 }

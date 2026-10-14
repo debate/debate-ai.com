@@ -9,6 +9,7 @@ import {
   cardParts,
   cardSpeechText,
   createCardHoverActionsPlugin,
+  readModeShownText,
 } from "../src/editor/card-hover-actions";
 import { requestSiteCardAi, SUMMARIZE_CARD_PROMPT } from "../src/editor/card-ai-client";
 
@@ -109,6 +110,40 @@ describe("cardSpeechText", () => {
     expect(cardSpeechText(cardParts(noCite))).toBe(
       "Warming causes extinction. Rising temperatures.",
     );
+  });
+});
+
+describe("readModeShownText", () => {
+  function cardDom(readMode: boolean): HTMLElement {
+    const host = document.createElement("div");
+    if (readMode) host.className = "pmd-read-mode";
+    host.innerHTML =
+      '<div class="pmd-card"><p class="pmd-tag">Tag</p>' +
+      '<p class="pmd-card-body"><span class="pmd-rm-hide">Rising </span><mark class="pmd-rm-keep">will collapse</mark>' +
+      '<span class="pmd-rm-hide"> most </span><mark class="pmd-rm-keep">ecosystems</mark></p>' +
+      '<p class="pmd-undertag">undertag</p></div>';
+    return host.querySelector<HTMLElement>(".pmd-card")!;
+  }
+
+  it("reads only what read mode shows of the body", () => {
+    const el = cardDom(true);
+    // jsdom draws no stylesheet; stand in for the browser's visibility check.
+    const shown = (e: Element) => !e.closest(".pmd-rm-hide") && !e.closest(".pmd-undertag");
+    const proto = Element.prototype as Element & { checkVisibility?: () => boolean };
+    const original = proto.checkVisibility;
+    proto.checkVisibility = function (this: Element) {
+      return shown(this);
+    };
+    try {
+      expect(readModeShownText(el)).toBe("will collapse ecosystems");
+    } finally {
+      if (original) proto.checkVisibility = original;
+      else Reflect.deleteProperty(proto, "checkVisibility");
+    }
+  });
+
+  it("is empty outside read mode, so the highlighted text is read", () => {
+    expect(readModeShownText(cardDom(false))).toBe("");
   });
 });
 
@@ -234,6 +269,44 @@ describe("card hover actions plugin", () => {
     await Promise.resolve();
     expect(speak).toHaveBeenCalledTimes(1);
     expect(document.querySelector<HTMLSelectElement>("#pmd-read-voice")?.value).toBe("kokoro:af_heart");
+    vi.unstubAllGlobals();
+  });
+
+  it("plays streamed Kokoro clips one after another", async () => {
+    const played: string[] = [];
+    vi.stubGlobal("URL", Object.assign(URL, { createObjectURL: (b: Blob) => `blob:${b.size}`, revokeObjectURL: () => {} }));
+    vi.stubGlobal(
+      "Audio",
+      class {
+        playbackRate = 1;
+        ended = false;
+        onended: (() => void) | null = null;
+        onerror: (() => void) | null = null;
+        onpause: (() => void) | null = null;
+        constructor(public src: string) {}
+        play() {
+          played.push(this.src);
+          queueMicrotask(() => {
+            this.ended = true;
+            this.onended?.();
+          });
+          return Promise.resolve();
+        }
+        pause() {}
+      },
+    );
+    const fetchVoice = vi.fn(async () =>
+      (async function* () {
+        yield new Blob([new Uint8Array(1)]);
+        yield new Blob([new Uint8Array(2)]);
+      })(),
+    );
+    const { view } = mount(undefined, fetchVoice);
+    hover(view.dom.querySelector(".pmd-card")!);
+    const speakBtn = bar().querySelector<HTMLButtonElement>('[data-action="speak"]')!;
+    speakBtn.click();
+    await vi.waitFor(() => expect(speakBtn.getAttribute("aria-pressed")).toBe("false"));
+    expect(played).toEqual(["blob:1", "blob:2"]);
     vi.unstubAllGlobals();
   });
 
