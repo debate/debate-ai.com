@@ -308,6 +308,12 @@ interface SpeechRecordingMenuProps {
     actions?: SpeechMenuAction[]
     /** Host-supplied items shown right under "Upload Speech Audio" (e.g. "Select YouTube Start"). */
     uploadActions?: SpeechMenuAction[]
+    /**
+     * The round this speech belongs to — adds "Join round recording", which
+     * joins every recorded speech of the round into one MP3
+     * (`RoundRecordingDialog`). Omitted outside a round.
+     */
+    roundRecording?: { roundId: string; items: SpeechStartItem[] }
 }
 
 interface SpeechRecordingPlayerProps {
@@ -379,6 +385,7 @@ export function SpeechRecordingMenu({
     triggerLabel,
     actions = [],
     uploadActions = [],
+    roundRecording,
 }: SpeechRecordingMenuProps) {
     const fileInputRef = useRef<HTMLInputElement>(null)
     const [joinOpen, setJoinOpen] = useState(false)
