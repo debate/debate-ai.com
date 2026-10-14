@@ -804,7 +804,7 @@ export function VideoWatchPage({
                           onClick={() => handleBadgeClick(cleanT)}
                           className="text-sm font-bold backdrop-blur-md border px-2 py-1 rounded shadow-lg bg-transparent"
                         >
-                          <img src={typeof logo==="string"?logo:(logo as any)?.src??logo} alt={tournament} className="h-5 w-auto" />
+                          <LogoComp className="h-5 w-auto" />
                         </button>
                       );
                     }
