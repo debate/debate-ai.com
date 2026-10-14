@@ -76,6 +76,9 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   "Documentaries & Culture": <Film className="h-4 w-4" />,
   "Camp & Coaching Advice": <Users className="h-4 w-4" />,
   "Novice & Introductory": <GraduationCap className="h-4 w-4" />,
+  "WSD": <Globe className="h-4 w-4" />, // Example icon, adjust as needed
+  "ACC": <Users className="h-4 w-4" />, // Example icon, adjust as needed
+  "Speech": <Mic className="h-4 w-4" />, // Example icon, adjust as needed
 };
 
 

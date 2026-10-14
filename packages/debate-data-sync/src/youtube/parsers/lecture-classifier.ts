@@ -30,6 +30,9 @@ export const LECTURE_CATEGORIES = [
   "Philosophy & IR Theory",
   "Camp & Coaching Advice",
   "Documentaries & Culture",
+  "WSD",
+  "ACC",
+  "Speech",
 ] as const;
 
 export type LectureCategory = (typeof LECTURE_CATEGORIES)[number];
