@@ -19,7 +19,7 @@ export interface Quote {
 
 /** The quote the emblem shows as its tooltip and at the top of its dialog. */
 export const PANOPTICON_QUOTE: Quote = {
-  text: "“This Panopticon, subtly arranged so that an observer may observe, at a glance, so many different individuals, also enables everyone to come and observe any of the observers.”",
+  text: "“Panopticon, subtly arranged so that an observer may observe, at a glance, so many different individuals, also enables everyone to come and observe any of the observers.”",
   source: "— Michel Foucault, Discipline and Punish, translated by Alan Sheridan, “Panopticism,” p. 207.",
 };
 
@@ -38,8 +38,8 @@ export const PANOPTICON_RELATED: Quote[] = [
     source: "— Foucault, Discipline and Punish, pp. 207–208.",
   },
   {
-    text: "“He who is subjected to a field of visibility, and who knows it, assumes responsibility for the constraints of power; he makes them play spontaneously upon himself.”",
-    source: "— Foucault, Discipline and Punish, p. 202.",
+    text: "“He who is subjected to a field of visibility, and who knows it, assumes responsibility for the constraints ”,
+    source: "",
   },
 ];
 
