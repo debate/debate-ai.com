@@ -3,6 +3,7 @@
  */
 
 import type { FC, SVGProps } from "react";
+import type { StaticImageData } from "next/image";
 
 // Import school logos that might also be used for tournaments
 import IconSchoolHarvard from "../../../../debate-icons/schools/harvard.png";
@@ -32,34 +33,34 @@ const slugify = (s: string): string =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 
-export const TOURNAMENT_LOGO_MAP: Record<string, string | FC<SVGProps<SVGSVGElement>>> = {
-  harvard: IconSchoolHarvard,
-  "harvard-national": IconSchoolHarvard,
-  "harvard-westlake": IconSchoolHarvardWestlake,
-  greenhill: IconSchoolGreenhill,
-  emory: IconSchoolEmory,
-  georgetown: IconSchoolGeorgetown,
-  ceda: IconSchoolCeda,
-  glenbrooks: IconSchoolGlenbrookNorth, // often associated with Glenbrook
-  "glenbrook-north": IconSchoolGlenbrookNorth,
-  "glenbrook-south": IconSchoolGlenbrookNorth,
-  northwestern: IconSchoolNorthwestern,
-  "wake-forest": IconSchoolWakeForest,
-  kentucky: IconSchoolKentucky,
-  "michigan-state": IconSchoolMichiganState,
-  ndt: IconSchoolNdt,
-  "national-debate-tournament": IconSchoolNdt,
-  dartmouth: IconSchoolDartmouth,
-  redlands: IconSchoolRedlands,
-  "st-marks": IconSchoolStMarks,
-  westminster: IconSchoolWestminster,
-  blake: IconSchoolBlake,
-  harker: IconSchoolHarker,
+export const TOURNAMENT_LOGO_MAP: Record<string, string | FC<SVGProps<SVGSVGElement>> | StaticImageData> = {
+  harvard: (IconSchoolHarvard as any)?.src ?? (IconSchoolHarvard as any),
+  "harvard-national": (IconSchoolHarvard as any)?.src ?? (IconSchoolHarvard as any),
+  "harvard-westlake": (IconSchoolHarvardWestlake as any)?.src ?? (IconSchoolHarvardWestlake as any),
+  greenhill: (IconSchoolGreenhill as any)?.src ?? (IconSchoolGreenhill as any),
+  emory: (IconSchoolEmory as any)?.src ?? (IconSchoolEmory as any),
+  georgetown: (IconSchoolGeorgetown as any)?.src ?? (IconSchoolGeorgetown as any),
+  ceda: (IconSchoolCeda as any)?.src ?? (IconSchoolCeda as any),
+  glenbrooks: (IconSchoolGlenbrookNorth as any)?.src ?? (IconSchoolGlenbrookNorth as any), // often associated with Glenbrook
+  "glenbrook-north": (IconSchoolGlenbrookNorth as any)?.src ?? (IconSchoolGlenbrookNorth as any),
+  "glenbrook-south": (IconSchoolGlenbrookNorth as any)?.src ?? (IconSchoolGlenbrookNorth as any),
+  northwestern: (IconSchoolNorthwestern as any)?.src ?? (IconSchoolNorthwestern as any),
+  "wake-forest": (IconSchoolWakeForest as any)?.src ?? (IconSchoolWakeForest as any),
+  kentucky: (IconSchoolKentucky as any)?.src ?? (IconSchoolKentucky as any),
+  "michigan-state": (IconSchoolMichiganState as any)?.src ?? (IconSchoolMichiganState as any),
+  ndt: (IconSchoolNdt as any)?.src ?? (IconSchoolNdt as any),
+  "national-debate-tournament": (IconSchoolNdt as any)?.src ?? (IconSchoolNdt as any),
+  dartmouth: (IconSchoolDartmouth as any)?.src ?? (IconSchoolDartmouth as any),
+  redlands: (IconSchoolRedlands as any)?.src ?? (IconSchoolRedlands as any),
+  "st-marks": (IconSchoolStMarks as any)?.src ?? (IconSchoolStMarks as any),
+  westminster: (IconSchoolWestminster as any)?.src ?? (IconSchoolWestminster as any),
+  blake: (IconSchoolBlake as any)?.src ?? (IconSchoolBlake as any),
+  harker: (IconSchoolHarker as any)?.src ?? (IconSchoolHarker as any),
 };
 
 export const getTournamentLogo = (
   tournament: string | undefined | null,
-): string | FC<SVGProps<SVGSVGElement>> | null => {
+): string | FC<SVGProps<SVGSVGElement>> | StaticImageData | null => {
   if (!tournament) return null;
   const base = tournament
     .replace(/\s*\(\d+\)/, "")

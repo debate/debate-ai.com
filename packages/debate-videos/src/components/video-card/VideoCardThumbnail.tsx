@@ -181,14 +181,14 @@ export function VideoCardThumbnail({
                   if (logo) {
                     const LogoComp = typeof logo === "string" ? null : logo;
                     const logoSrc = typeof logo === "string" ? logo : null;
-                    return LogoComp ? (
-                      <LogoComp className="h-6 w-auto object-contain drop-shadow-lg [filter:drop-shadow(0_0_2px_rgba(0,0,0,0.7))]" />
-                    ) : logoSrc ? (
+                    return logoIsString ? (
                       <img
-                        src={logoSrc}
+                        src={logo as string}
                         alt={cleanTournament}
                         className="h-6 w-auto object-contain drop-shadow-lg [filter:drop-shadow(0_0_2px_rgba(0,0,0,0.7))]"
                       />
+                    ) : (LogoComp && typeof LogoComp !== "string") ? (
+                      <img src={typeof logo==="string"?logo:(logo as any)?.src??logo}h-6 w-auto object-contain drop-shadow-lg [filter:drop-shadow(0_0_2px_rgba(0,0,0,0.7))]" />
                     ) : null;
                   }
                   if (isTOCTournament(cleanTournament)) {

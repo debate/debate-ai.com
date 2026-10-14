@@ -153,15 +153,15 @@ function TeamRecordCard({
           {(() => {
             const logo = getSchoolLogo(first.school);
             if (logo) {
-              const LogoComp = typeof logo === "string" ? null : logo;
-              const logoSrc = typeof logo === "string" ? logo : null;
-              return LogoComp ? (
-                <LogoComp className="h-5 w-auto" />
-              ) : logoSrc ? (
-                <img src={logoSrc} alt={first.school} className="h-5 w-auto" />
-              ) : (
-                first.school
-              );
+              if (typeof logo === "string") {
+                return <img src={logo} alt={first.school} className="h-5 w-auto" />;
+              }
+              if (typeof logo === "function") {
+                const LogoComp = logo;
+                return <img src={(typeof logo==="string"?logo:(logo as any)?.src??logo)} className="h-5 w-auto" />;
+              }
+              // StaticImageData from Next.js
+              return <img src={logo.src} alt={first.school} className="h-5 w-auto" />;
             }
             return first.school;
           })()}
@@ -351,15 +351,15 @@ export function SchoolProfilePage({
             {(() => {
               const logo = getSchoolLogo(summary.school);
               if (logo) {
-                const LogoComp = typeof logo === "string" ? null : logo;
-                const logoSrc = typeof logo === "string" ? logo : null;
-                return LogoComp ? (
-                  <LogoComp className="h-12 w-auto mb-2" />
-                ) : logoSrc ? (
-                  <img src={logoSrc} alt={summary.school} className="h-12 w-auto mb-2" />
-                ) : (
-                  <h1 className="text-2xl font-semibold text-foreground">{summary.school}</h1>
-                );
+                if (typeof logo === "string") {
+                  return <img src={logo} alt={summary.school} className="h-12 w-auto mb-2" />;
+                }
+                if (typeof logo === "function") {
+                  const LogoComp = logo;
+                  return <img src={(typeof logo==="string"?logo:(logo as any)?.src??logo)} />;
+                }
+                // StaticImageData from Next.js
+                return <img src={logo.src} alt={summary.school} className="h-12 w-auto mb-2" />;
               }
               return <h1 className="text-2xl font-semibold text-foreground">{summary.school}</h1>;
             })()}

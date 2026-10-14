@@ -163,7 +163,7 @@ export function TopPickBadge({
                   const logoSrc = typeof logo === "string" ? logo : null;
                   return (
                     <span className="flex items-center gap-1">
-                      • {LogoComp ? <LogoComp className="h-3 w-auto" /> : logoSrc ? <img src={logoSrc} alt={cleanTournament} className="h-3 w-auto" /> : cleanTournament}
+                      • {<img src={typeof logo==="string"?logo:(logo as any)?.src??logo} className="h-3 w-auto" /> : <img src={typeof logo==="string"?logo:(logo as any)?.src??logo} alt={cleanTournament} className="h-3 w-auto" /> : cleanTournament}
                     </span>
                   );
                 }

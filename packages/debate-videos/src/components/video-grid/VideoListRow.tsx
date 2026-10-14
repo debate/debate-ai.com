@@ -340,7 +340,7 @@ export function VideoListRow({
                           const logoSrc = typeof logo === "string" ? logo : null;
                           return (
                             <span className="flex items-center gap-1.5">
-                              {LogoComp ? <LogoComp className="h-4 w-auto object-contain shrink-0" /> : logoSrc ? <img src={logoSrc} alt={cleanTournament} className="h-4 w-auto object-contain shrink-0" /> : cleanTournament}
+                              {<img src={typeof logo==="string"?logo:(logo as any)?.src??logo} className="h-4 w-auto object-contain shrink-0" /> : <img src={typeof logo==="string"?logo:(logo as any)?.src??logo} alt={cleanTournament} className="h-4 w-auto object-contain shrink-0" /> : cleanTournament}
                               {channel && (
                                 <>
                                   <span className="text-muted-foreground">·</span>

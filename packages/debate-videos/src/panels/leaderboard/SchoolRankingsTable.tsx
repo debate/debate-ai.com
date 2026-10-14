@@ -21,6 +21,7 @@ import {
 import { cn } from "../../ui/lib/utils"
 import type { SchoolRanking, SchoolSortKey, SchoolSortState } from "./leaderboardTypes"
 import { schoolHref } from "./profile/rankingProfileHelpers"
+import { getSchoolLogo } from "../../lib/schoolLogos"
 import { LegendaryBadge, ROW_TIER_CLASS, rowTier, type RowTier } from "./rowTier"
 import { RatingDigits } from "./RatingDigits"
 
@@ -58,9 +59,15 @@ const COLUMNS: Column[] = [
         {(() => {
           const logo = getSchoolLogo(r.school);
           if (logo) {
-            const LogoComp = typeof logo === "string" ? null : logo;
-            const logoSrc = typeof logo === "string" ? logo : null;
-            return LogoComp ? <LogoComp className="h-4 w-auto" /> : logoSrc ? <img src={logoSrc} alt={r.school} className="h-4 w-auto" /> : r.school;
+            if (typeof logo === "string") {
+              return <img src={logo} alt={r.school} className="h-4 w-auto" />;
+            }
+            if (typeof logo === "function") {
+              const LogoComp = logo;
+              return <img src={typeof logo==="string"?logo:(logo as any)?.src??logo}h-4 w-auto" />;
+            }
+            // StaticImageData from Next.js
+            return <img src={logo.src} alt={r.school} className="h-4 w-auto" />;
           }
           return r.school;
         })()}

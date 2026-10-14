@@ -85,6 +85,7 @@ import {
   TOURNAMENT_COLORS,
   getRoundBadgeColor,
   formatVideoDate,
+  getTournamentLogo,
 } from "../../components/video-card/videoCardUtils"
 import { cn } from "../../ui/lib/utils"
 import { LecturesSidebarShell } from "../LecturesSidebarShell"
@@ -786,14 +787,34 @@ export function VideoWatchPage({
                   const cleanT = tournament.replace(/\d+/g, "").trim();
                   const logo = getTournamentLogo(cleanT);
                   if (logo) {
-                    const LogoComp = typeof logo === "string" ? null : logo;
-                    const logoSrc = typeof logo === "string" ? logo : null;
+                    if (typeof logo === "string") {
+                      return (
+                        <button
+                          onClick={() => handleBadgeClick(cleanT)}
+                          className="text-sm font-bold backdrop-blur-md border px-2 py-1 rounded shadow-lg bg-transparent"
+                        >
+                          <img src={logo} alt={tournament} className="h-5 w-auto" />
+                        </button>
+                      );
+                    }
+                    if (typeof logo === "function") {
+                      const LogoComp = logo;
+                      return (
+                        <button
+                          onClick={() => handleBadgeClick(cleanT)}
+                          className="text-sm font-bold backdrop-blur-md border px-2 py-1 rounded shadow-lg bg-transparent"
+                        >
+                          <img src={typeof logo==="string"?logo:(logo as any)?.src??logo}h-5 w-auto" />
+                        </button>
+                      );
+                    }
+                    // StaticImageData from Next.js
                     return (
                       <button
                         onClick={() => handleBadgeClick(cleanT)}
                         className="text-sm font-bold backdrop-blur-md border px-2 py-1 rounded shadow-lg bg-transparent"
                       >
-                        {LogoComp ? <LogoComp className="h-5 w-auto" /> : logoSrc ? <img src={logoSrc} alt={tournament} className="h-5 w-auto" /> : tournament}
+                        <img src={logo.src} alt={tournament} className="h-5 w-auto" />
                       </button>
                     );
                   }

@@ -25,6 +25,7 @@ import { useResizableColumns } from "../../components/video-grid/useResizableCol
 import { COLUMN_TOOLTIPS, DIVISION_SHORT_LABELS, displayEntryName, schoolRankOf } from "./leaderboardUtils"
 import type { Division, SortKey, SortState } from "./leaderboardTypes"
 import { schoolHref, teamHref } from "./profile/rankingProfileHelpers"
+import { getSchoolLogo } from "../../lib/schoolLogos"
 import { LegendaryBadge, ROW_TIER_CLASS, rowTier, type RowTier } from "./rowTier"
 
 /** The fields shown as columns. */
@@ -100,9 +101,15 @@ const COLUMNS: Column[] = [
             {(() => {
               const logo = getSchoolLogo(e.school);
               if (logo) {
-                const LogoComp = typeof logo === "string" ? null : logo;
-                const logoSrc = typeof logo === "string" ? logo : null;
-                return LogoComp ? <LogoComp className="h-4 w-auto" /> : logoSrc ? <img src={logoSrc} alt={e.school} className="h-4 w-auto" /> : e.school;
+                if (typeof logo === "string") {
+                  return <img src={logo} alt={e.school} className="h-4 w-auto" />;
+                }
+                if (typeof logo === "function") {
+                  const LogoComp = logo;
+                  return <img src={typeof logo==="string"?logo:(logo as any)?.src??logo}h-4 w-auto" />;
+                }
+                // StaticImageData from Next.js
+                return <img src={logo.src} alt={e.school} className="h-4 w-auto" />;
               }
               return e.school;
             })()}
