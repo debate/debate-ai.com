@@ -44,7 +44,7 @@ import { SpeechAnalysisPanel } from "./SpeechAnalysisPanel";
 
 interface YoutubeRoundVideo { id: string; title: string; publishedAt: string; channel: string; views: number; style: number; tournament: string | null; }
 interface SyncRun { id: number; status: "running" | "success" | "error"; triggeredBy?: string | null; channelsSynced: number; videosUpserted: number; error: string | null; }
-// `youtube_sync_runs.triggered_by` for a run the weekly cron started rather
+// `youtube_sync_runs.triggered_by` for a run the daily scan cron started rather
 // than an admin — the sentinel written by lib/youtube/weekly-sync.ts. Repeated
 // here as a literal so this client component does not import that server module.
 const CRON_TRIGGERED_BY = "cron";
