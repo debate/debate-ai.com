@@ -68,6 +68,40 @@ export async function shareRecording(emails: string[], speechName: string, audio
     return { success: true, message: `Shared with ${emails.length} participant${emails.length === 1 ? "" : "s"}` }
 }
 
+/**
+ * Save an uploaded audio file as a speech's recording, exactly as a live
+ * recording is saved, and announce it with `debate-recording-saved`. Rejects
+ * with a readable message when the file isn't audio.
+ */
+export function saveSpeechAudioFile(file: File, speechName: string, speechLabel?: string): Promise<void> {
+    if (!file.type.startsWith("audio/")) return Promise.reject(new Error("Please select an audio file"))
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onerror = () => reject(new Error("Couldn't read that file."))
+        reader.onload = async (e) => {
+            const audioData = e.target?.result as string
+            if (!audioData) return reject(new Error("Couldn't read that file."))
+
+            const audio = new Audio(audioData)
+            await new Promise((done) => {
+                audio.onloadedmetadata = done
+            })
+
+            const recording = {
+                speechName,
+                speechLabel: speechLabel || speechName,
+                recordedAt: new Date().toISOString(),
+                audio: audioData,
+                durationSeconds: audio.duration,
+            }
+            localStorage.setItem(`debate-recording-${speechName}`, JSON.stringify(recording))
+            window.dispatchEvent(new CustomEvent("debate-recording-saved"))
+            resolve()
+        }
+        reader.readAsDataURL(file)
+    })
+}
+
 /** Format seconds as m:ss, e.g. 312.4 → "5:12" */
 function formatDuration(s: number): string {
     const m = Math.floor(s / 60)
@@ -269,6 +303,8 @@ interface SpeechRecordingMenuProps {
     triggerLabel?: string
     /** Host-supplied items shown first in the menu, above the recording controls. */
     actions?: SpeechMenuAction[]
+    /** Host-supplied items shown right under "Upload Speech Audio" (e.g. "Select YouTube Start"). */
+    uploadActions?: SpeechMenuAction[]
 }
 
 interface SpeechRecordingPlayerProps {
@@ -339,6 +375,7 @@ export function SpeechRecordingMenu({
     participantEmails = [],
     triggerLabel,
     actions = [],
+    uploadActions = [],
 }: SpeechRecordingMenuProps) {
     const fileInputRef = useRef<HTMLInputElement>(null)
     const { devices, loading: loadingDevices, loadDevices } = useAudioDevices()
@@ -366,39 +403,11 @@ export function SpeechRecordingMenu({
         }
     }
 
-    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0]
-        if (!file) return
-
-        if (!file.type.startsWith("audio/")) {
-            alert("Please select an audio file")
-            return
-        }
-
-        const reader = new FileReader()
-        reader.onload = async (e) => {
-            const audioData = e.target?.result as string
-            if (!audioData) return
-
-            const audio = new Audio(audioData)
-            await new Promise((resolve) => {
-                audio.onloadedmetadata = resolve
-            })
-
-            const durationSeconds = audio.duration
-            const key = `debate-recording-${speechName}`
-            const recording = {
-                speechName,
-                speechLabel: speechLabel || speechName,
-                recordedAt: new Date().toISOString(),
-                audio: audioData,
-                durationSeconds,
-            }
-            localStorage.setItem(key, JSON.stringify(recording))
-            window.dispatchEvent(new CustomEvent("debate-recording-saved"))
-        }
-        reader.readAsDataURL(file)
         event.target.value = ""
+        if (!file) return
+        void saveSpeechAudioFile(file, speechName, speechLabel).catch((error: Error) => alert(error.message))
     }
 
     const handleMenuOpenChange = async (open: boolean) => {
@@ -561,6 +570,12 @@ export function SpeechRecordingMenu({
                         <Upload className="h-4 w-4 mr-2" />
                         Upload Speech Audio
                     </DropdownMenuItem>
+                    {uploadActions.map((action) => (
+                        <DropdownMenuItem key={action.key} onClick={action.onSelect}>
+                            {action.icon}
+                            {action.label}
+                        </DropdownMenuItem>
+                    ))}
                     {onDeleteRecording && recordingKey && (
                         <DropdownMenuItem
                             onClick={() => {
