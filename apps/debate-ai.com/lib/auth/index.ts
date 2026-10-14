@@ -140,12 +140,18 @@ async function buildAuth() {
         trustedProviders: ["google", "discord", "linkedin"],
       },
     },
+    emailAndPassword: {
+      enabled: true,
+      disableSignUp: true, // Only allow demo user, no public sign-up
+      minPasswordLength: 1, // Allow short password for demo
+      autoSignIn: true,
+    },
     emailVerification: {
       sendOnSignUp: false,
       autoSignInAfterVerification: true,
     },
-    // The seeded demo account (scripts/seed-demo-user.ts) signs in with a
-    // password; nobody else can sign up this way.
+    // A top-level option, not a plugin: inside `plugins: [...]` it was a
+    // syntax error that broke every typecheck and build.
     emailAndPassword: {
       enabled: true,
       disableSignUp: true, // Only allow demo user, no public sign-up

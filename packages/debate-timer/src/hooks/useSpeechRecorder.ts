@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import grab from "grab-url"
 import type { SpeechTimerState } from "../types"
 import { getUserMedia } from "../recorder/media-devices"
+import { RECORD_VIDEO_EVENT, readRecordVideo, saveClip, writeRecordVideo } from "../recorder/media-store"
 import { appendSpokenSegment } from "../recorder/spoken-words-store"
 import { getSpeechRecognitionConstructor } from "../timers/microphone-transcription"
 
@@ -42,6 +43,12 @@ interface UseSpeechRecorderOptions {
    */
   transcribe?: boolean
 }
+
+/** Webcam clips stay small enough to upload: ~30 MB for an 8-minute speech. */
+const VIDEO_BITS_PER_SECOND = 500_000
+
+/** Fired on `window` when a speech's recording stops, with `{ speechName }` in `detail`. */
+export const RECORDING_STOPPED_EVENT = "debate-recording-stopped"
 
 /**
  * Decode a Blob into an AudioBuffer using a temporary AudioContext.
@@ -122,6 +129,16 @@ export function useSpeechRecorder({
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const recordedChunksRef = useRef<Blob[]>([])
   const recognitionRef = useRef<LiveRecognition | null>(null)
+  const videoRecorderRef = useRef<MediaRecorder | null>(null)
+  /** The speech being recorded right now, for the stopped event. */
+  const activeSpeechRef = useRef<string | null>(null)
+  const [recordVideo, setRecordVideoState] = useState(false)
+  useEffect(() => {
+    const sync = () => setRecordVideoState(readRecordVideo())
+    sync()
+    window.addEventListener(RECORD_VIDEO_EVENT, sync)
+    return () => window.removeEventListener(RECORD_VIDEO_EVENT, sync)
+  }, [])
 
   // Internal state (used when not controlled externally)
   const [internalRecordingEnabled, setInternalRecordingEnabled] = useState(false)
@@ -255,47 +272,77 @@ export function useSpeechRecorder({
   }, [])
 
   /**
-   * Start microphone recording.
+   * Start microphone recording — and, with "Record webcam video" on, the
+   * camera too, as a separate clip of the speech. A camera that can't be
+   * opened falls back to audio only; timing never waits on either.
    */
   const startRecording = useCallback(async () => {
     try {
       recordedChunksRef.current = []
-      const constraints: MediaStreamConstraints = {
-        audio: selectedMicDeviceId ? { deviceId: { exact: selectedMicDeviceId } } : true,
+      const audio: MediaTrackConstraints | boolean = selectedMicDeviceId ? { deviceId: { exact: selectedMicDeviceId } } : true
+      let stream: MediaStream
+      let withVideo = false
+      if (recordVideo) {
+        try {
+          stream = await getUserMedia({ audio, video: { width: 640, height: 360 } })
+          withVideo = stream.getVideoTracks().length > 0
+        } catch {
+          stream = await getUserMedia({ audio })
+        }
+      } else {
+        stream = await getUserMedia({ audio })
       }
-      const stream = await getUserMedia(constraints)
-      const mr = new MediaRecorder(stream)
+      const speechName = currentSpeechName
+      const audioStream = withVideo ? new MediaStream(stream.getAudioTracks()) : stream
+      const mr = new MediaRecorder(audioStream)
       mr.ondataavailable = (e) => {
         if (e.data.size > 0) {
           recordedChunksRef.current.push(e.data)
         }
       }
       mr.onstop = () => {
-        const label = speechLabel ?? currentSpeechName
-        saveRecordingToLocalStorage(recordedChunksRef.current, currentSpeechName, label)
+        const label = speechLabel ?? speechName
+        saveRecordingToLocalStorage(recordedChunksRef.current, speechName, label)
         stream.getTracks().forEach((t) => t.stop())
         setIsActivelyRecording(false)
       }
+      if (withVideo) {
+        const videoChunks: Blob[] = []
+        const vr = new MediaRecorder(stream, { videoBitsPerSecond: VIDEO_BITS_PER_SECOND })
+        vr.ondataavailable = (e) => { if (e.data.size > 0) videoChunks.push(e.data) }
+        vr.onstop = () => {
+          if (videoChunks.length) void saveClip(speechName, "You", new Blob(videoChunks, { type: vr.mimeType || "video/webm" }))
+        }
+        vr.start(1000)
+        videoRecorderRef.current = vr
+      }
       mr.start()
       mediaRecorderRef.current = mr
+      activeSpeechRef.current = speechName
       setIsActivelyRecording(true)
-      startTranscription(currentSpeechName)
+      startTranscription(speechName)
       window.dispatchEvent(
-        new CustomEvent("debate-recording-started", { detail: { speechName: currentSpeechName } })
+        new CustomEvent("debate-recording-started", { detail: { speechName, video: recordVideo } })
       )
     } catch (err) {
       console.warn("Microphone access denied or unavailable:", err)
     }
-  }, [currentSpeechName, speechLabel, selectedMicDeviceId, saveRecordingToLocalStorage, startTranscription])
+  }, [currentSpeechName, speechLabel, selectedMicDeviceId, recordVideo, saveRecordingToLocalStorage, startTranscription])
 
   /**
    * Stop microphone recording.
    */
   const stopRecording = useCallback(() => {
     stopTranscription()
+    if (videoRecorderRef.current && videoRecorderRef.current.state !== "inactive") {
+      videoRecorderRef.current.stop()
+    }
+    videoRecorderRef.current = null
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
       mediaRecorderRef.current.stop()
       mediaRecorderRef.current = null
+      window.dispatchEvent(new CustomEvent(RECORDING_STOPPED_EVENT, { detail: { speechName: activeSpeechRef.current } }))
+      activeSpeechRef.current = null
     }
   }, [stopTranscription])
 
@@ -320,5 +367,7 @@ export function useSpeechRecorder({
     setIsRecordingEnabled,
     selectedMicDeviceId,
     setSelectedMicDeviceId,
+    recordVideo,
+    setRecordVideo: writeRecordVideo,
   }
 }

@@ -7,7 +7,7 @@
 
 import { useEffect, useState, type ReactNode, type RefObject, useRef } from "react"
 import { createPortal } from "react-dom"
-import { Trash2, RefreshCw, MoreVertical, Clock, Upload, Mic, Check, MicOff, Users, Gauge, Captions } from "lucide-react"
+import { Trash2, RefreshCw, MoreVertical, Clock, Upload, Mic, Check, MicOff, Users, Gauge, Captions, Video, Merge } from "lucide-react"
 import {
     AudioPlayerButton,
     AudioPlayerProgress,
@@ -34,6 +34,9 @@ import { getUserMedia } from "./media-devices"
 import { LiveWaveform } from "./live-waveform"
 import { clearSpokenTranscript } from "./spoken-words-store"
 import { SpeechCaptionsTicker } from "./SpeechCaptionsTicker"
+import { RECORD_VIDEO_EVENT, readRecordVideo, writeRecordVideo } from "./media-store"
+import { RoundRecordingDialog } from "./RoundRecordingDialog"
+import type { SpeechStartItem } from "./round-recording"
 
 const CAPTIONS_STORAGE_KEY = "debate-recording-captions"
 
@@ -66,6 +69,40 @@ export async function shareRecording(emails: string[], speechName: string, audio
     await new Promise((resolve) => setTimeout(resolve, 500))
 
     return { success: true, message: `Shared with ${emails.length} participant${emails.length === 1 ? "" : "s"}` }
+}
+
+/**
+ * Save an uploaded audio file as a speech's recording, exactly as a live
+ * recording is saved, and announce it with `debate-recording-saved`. Rejects
+ * with a readable message when the file isn't audio.
+ */
+export function saveSpeechAudioFile(file: File, speechName: string, speechLabel?: string): Promise<void> {
+    if (!file.type.startsWith("audio/")) return Promise.reject(new Error("Please select an audio file"))
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onerror = () => reject(new Error("Couldn't read that file."))
+        reader.onload = async (e) => {
+            const audioData = e.target?.result as string
+            if (!audioData) return reject(new Error("Couldn't read that file."))
+
+            const audio = new Audio(audioData)
+            await new Promise((done) => {
+                audio.onloadedmetadata = done
+            })
+
+            const recording = {
+                speechName,
+                speechLabel: speechLabel || speechName,
+                recordedAt: new Date().toISOString(),
+                audio: audioData,
+                durationSeconds: audio.duration,
+            }
+            localStorage.setItem(`debate-recording-${speechName}`, JSON.stringify(recording))
+            window.dispatchEvent(new CustomEvent("debate-recording-saved"))
+            resolve()
+        }
+        reader.readAsDataURL(file)
+    })
 }
 
 /** Format seconds as m:ss, e.g. 312.4 → "5:12" */
@@ -269,6 +306,8 @@ interface SpeechRecordingMenuProps {
     triggerLabel?: string
     /** Host-supplied items shown first in the menu, above the recording controls. */
     actions?: SpeechMenuAction[]
+    /** Host-supplied items shown right under "Upload Speech Audio" (e.g. "Select YouTube Start"). */
+    uploadActions?: SpeechMenuAction[]
 }
 
 interface SpeechRecordingPlayerProps {
@@ -339,8 +378,17 @@ export function SpeechRecordingMenu({
     participantEmails = [],
     triggerLabel,
     actions = [],
+    uploadActions = [],
 }: SpeechRecordingMenuProps) {
     const fileInputRef = useRef<HTMLInputElement>(null)
+    const [joinOpen, setJoinOpen] = useState(false)
+    const [recordVideo, setRecordVideo] = useState(false)
+    useEffect(() => {
+        const sync = () => setRecordVideo(readRecordVideo())
+        sync()
+        window.addEventListener(RECORD_VIDEO_EVENT, sync)
+        return () => window.removeEventListener(RECORD_VIDEO_EVENT, sync)
+    }, [])
     const { devices, loading: loadingDevices, loadDevices } = useAudioDevices()
     const [previewStream, setPreviewStream] = useState<MediaStream | null>(null)
     const previewStreamRef = useRef<MediaStream | null>(null)
@@ -366,39 +414,11 @@ export function SpeechRecordingMenu({
         }
     }
 
-    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0]
-        if (!file) return
-
-        if (!file.type.startsWith("audio/")) {
-            alert("Please select an audio file")
-            return
-        }
-
-        const reader = new FileReader()
-        reader.onload = async (e) => {
-            const audioData = e.target?.result as string
-            if (!audioData) return
-
-            const audio = new Audio(audioData)
-            await new Promise((resolve) => {
-                audio.onloadedmetadata = resolve
-            })
-
-            const durationSeconds = audio.duration
-            const key = `debate-recording-${speechName}`
-            const recording = {
-                speechName,
-                speechLabel: speechLabel || speechName,
-                recordedAt: new Date().toISOString(),
-                audio: audioData,
-                durationSeconds,
-            }
-            localStorage.setItem(key, JSON.stringify(recording))
-            window.dispatchEvent(new CustomEvent("debate-recording-saved"))
-        }
-        reader.readAsDataURL(file)
         event.target.value = ""
+        if (!file) return
+        void saveSpeechAudioFile(file, speechName, speechLabel).catch((error: Error) => alert(error.message))
     }
 
     const handleMenuOpenChange = async (open: boolean) => {
@@ -534,6 +554,23 @@ export function SpeechRecordingMenu({
                         </DropdownMenuItem>
                     )}
 
+                    {/* Webcam video alongside the audio (a per-browser setting) */}
+                    <DropdownMenuItem
+                        onClick={() => writeRecordVideo(!recordVideo)}
+                        className={cn("cursor-pointer", recordVideo && "bg-accent")}
+                    >
+                        <Video className="h-4 w-4 mr-2" />
+                        <span className="flex-1">Record webcam video</span>
+                        {recordVideo && <Check className="h-4 w-4 ml-2" />}
+                    </DropdownMenuItem>
+
+                    {roundRecording && (
+                        <DropdownMenuItem onClick={() => setJoinOpen(true)}>
+                            <Merge className="h-4 w-4 mr-2" />
+                            Join round recording…
+                        </DropdownMenuItem>
+                    )}
+
                     {/* Timer control actions */}
                     {onResetSpeechTime && (
                         <DropdownMenuItem onClick={onResetSpeechTime}>
@@ -561,6 +598,12 @@ export function SpeechRecordingMenu({
                         <Upload className="h-4 w-4 mr-2" />
                         Upload Speech Audio
                     </DropdownMenuItem>
+                    {uploadActions.map((action) => (
+                        <DropdownMenuItem key={action.key} onClick={action.onSelect}>
+                            {action.icon}
+                            {action.label}
+                        </DropdownMenuItem>
+                    ))}
                     {onDeleteRecording && recordingKey && (
                         <DropdownMenuItem
                             onClick={() => {
@@ -636,6 +679,15 @@ export function SpeechRecordingMenu({
                 onChange={handleFileChange}
                 className="hidden"
             />
+
+            {roundRecording && (
+                <RoundRecordingDialog
+                    open={joinOpen}
+                    onOpenChange={setJoinOpen}
+                    roundId={roundRecording.roundId}
+                    items={roundRecording.items}
+                />
+            )}
         </>
     )
 }

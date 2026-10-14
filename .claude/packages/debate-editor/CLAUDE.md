@@ -70,7 +70,10 @@ Document input arrives from `debate-card-parser`; treat it as untrusted.
 beside a hovered card) is a host plugin registered in `react/singleton.ts`.
 Its AI goes through `overlay/editor/card-ai-client.ts`: the user's own
 CardMirror key when set, else the app's `/api/card-ai-analysis`. Read aloud's
-model voices go through `overlay/editor/card-tts-client.ts`: the app's
+model voices go through `overlay/editor/card-tts-client.ts`: Kokoro voices
+run in the browser first (`overlay/editor/kokoro-browser-tts.ts`, a lazy
+`kokoro-js` import that downloads the q8 ONNX model from Hugging Face once and
+streams one WAV clip per short text chunk), then the app's
 `/api/tts` (QwkSearch Kokoro/Deepgram or Cloudflare Workers AI), then
 qwksearch.com straight from the browser on a `429`, then the browser's
 `speechSynthesis`. It has no

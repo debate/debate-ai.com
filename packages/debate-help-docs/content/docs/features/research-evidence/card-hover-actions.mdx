@@ -14,7 +14,8 @@ appears beside it:
 - **Read aloud** reads the card out loud in a natural AI voice: the
   tag, then the citation (the author and year), then the highlighted
   text (what you would read in round), or the underlined text when
-  nothing is highlighted. Click it again to stop.
+  nothing is highlighted. In read mode it reads only what read mode shows
+  of the card. Click it again to stop.
 
 AI answers open in a small panel next to the card, with **Copy** and **Close**
 buttons; Escape closes it too. The buttons only appear with a mouse, so they
@@ -27,7 +28,13 @@ default, and it changes speed while a card is playing) and a **Voice** list.
 Kokoro voices come first and are the default; Deepgram voices and your
 browser's built-in voice are the other choices. Both settings are remembered.
 
-The AI voices come from QwkSearch (Kokoro or Deepgram), or from Cloudflare's
+Kokoro voices run right in your browser: the first time you read a card
+aloud, the Kokoro voice model (about 90 MB) downloads once and is kept by your
+browser, and from then on reading needs no server and has no daily limit. The
+card starts playing as soon as its first sentence is ready.
+
+If your browser can't run Kokoro, or the download fails, the card is read by
+a server instead. Those voices come from QwkSearch (Kokoro or Deepgram), or from Cloudflare's
 Deepgram Aura voices when the site has Cloudflare AI set up. Signed out, you
 share QwkSearch's free allowance of 10 reads a day; link your QwkSearch account
 in settings to read on your own account. When an AI voice isn't available, or
@@ -48,5 +55,6 @@ summary needs you to be signed in.
   CardMirror embed is mounted)
 - **Package:** `debate-editor` (`overlay/editor/card-hover-actions.ts`,
   `overlay/editor/card-ai-client.ts`, `overlay/editor/card-tts-client.ts`,
+  `overlay/editor/kokoro-browser-tts.ts`,
   registered in `overlay/react/singleton.ts`)
 - **API:** `/api/card-ai-analysis`, `/api/tts` (`apps/debate-ai.com/lib/tts/voice.ts`)
