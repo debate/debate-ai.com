@@ -2,7 +2,10 @@
  * @fileoverview The two teams of a round on its watch page: each team's
  * rankings row (rank, rating, matches, side win rates) and its radar chart,
  * with the opponent overlaid as a dashed polygon so the matchup reads at a
- * glance. Renders nothing unless at least one team is found in the rankings.
+ * glance. When both teams are found, a simulated matchup above the cards
+ * predicts the winner for the sides they debated and the round's stage (see
+ * `WatchMatchupPrediction`). Renders nothing unless at least one team is
+ * found in the rankings.
  *
  * The lookup is the one the list layout's Aff and Neg cells use, so it shares
  * their limit: only a current-season round of a ranked style is matched (see
@@ -24,6 +27,8 @@ import {
 } from "../../panels/leaderboard/profile/rankingProfileHelpers"
 import { TeamRadarChart } from "../../panels/leaderboard/profile/TeamRadarChart"
 import { cn } from "../../ui/lib/utils"
+import { predictWatchMatchup } from "../../lib/watch-matchup-prediction"
+import { WatchMatchupPrediction } from "./WatchMatchupPrediction"
 import type { VideoType } from "../../types/videos"
 
 const rating = (n: number) => n.toFixed(1)
@@ -113,10 +118,23 @@ export function WatchTeamStats({ video }: { video: VideoType }) {
   const aff = affTeam ? findVideoTeamProfile(datasets, video[6], affTeam) : null
   const neg = negTeam ? findVideoTeamProfile(datasets, video[6], negTeam) : null
   if (!aff && !neg) return null
+  const dataset = aff && neg ? datasets.find((d) => d.id === aff.datasetId) : undefined
+  const prediction =
+    aff && neg && dataset && aff.entry !== neg.entry
+      ? predictWatchMatchup(aff.entry, neg.entry, dataset, datasets, video[8], video[11], video[0])
+      : null
 
   return (
     <section aria-label="Team stats" className="space-y-2">
       <h2 className="text-sm font-semibold">Team rankings</h2>
+      {prediction && affTeam && negTeam && (
+        <WatchMatchupPrediction
+          prediction={prediction}
+          affLabel={affTeam}
+          negLabel={negTeam}
+          decision={typeof video[12] === "string" ? video[12] : null}
+        />
+      )}
       <div className={cn("grid grid-cols-1 gap-3", aff && neg && "xl:grid-cols-2")}>
         {aff && affTeam && (
           <TeamCard side="aff" label={affTeam} item={aff} opponent={neg && negTeam ? { label: negTeam, item: neg } : null} />
