@@ -58,6 +58,7 @@ import Link from "next/link"
 import { AlertCircle, ArrowLeft, Calendar, Clock, Eye, ListOrdered, ListPlus, Loader2 } from "lucide-react"
 import { CommentSection } from "@debate/comments"
 import { SpeechStartsDialog } from "@debate/timer"
+import { formatCount } from "../../components/category-gallery/format-count"
 
 import { WatchToolbar } from "../../components/watch/WatchToolbar"
 import { WatchSidePanel, type WatchSideTab } from "../../components/watch/WatchSidePanel"
@@ -68,6 +69,7 @@ import { WatchSearchBox } from "../../components/watch/WatchSearchBox"
 import { WatchStackPlaylist } from "../../components/watch/WatchStackPlaylist"
 import { WatchSpeechTimeline } from "../../components/watch/WatchSpeechTimeline"
 import { WatchTeamStats } from "../../components/watch/WatchTeamStats"
+import { WatchRankingsPrediction } from "../../components/watch/WatchRankingsPrediction"
 import type { SpeechFocusRequest } from "../../components/watch/WatchRoundPanel"
 import { useDocumentPictureInPicture } from "../../components/video-player/useDocumentPictureInPicture"
 import {
@@ -266,6 +268,7 @@ export function VideoWatchPage({
   // for the library's matches — in place, with no navigation, so the video
   // above keeps playing while the reader lines up what to watch next.
   const [relatedQuery, setRelatedQuery] = useState("")
+  const [decisionRevealed, setDecisionRevealed] = useState(false);
   const searchFeed = useVideoFeed({
     source: "all",
     q: relatedQuery,
@@ -976,9 +979,9 @@ export function VideoWatchPage({
                   <Calendar className="h-3 w-3" />
                   {formatVideoDate(date, "full")}
                 </span>
-                <span className="inline-flex items-center gap-1">
+                <span className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium tabular-nums">
                   <Eye className="h-3 w-3" />
-                  {viewCount.toLocaleString()}
+                  {formatCount(viewCount)}
                 </span>
                 {(storedDuration || duration > 0) && (
                   <span className="inline-flex items-center gap-1 tabular-nums" title="Duration">
@@ -986,7 +989,7 @@ export function VideoWatchPage({
                     {formatVideoDuration(storedDuration || duration)}
                   </span>
                 )}
-                {judgeDecision && <span>Decision {judgeDecision}</span>}
+                {judgeDecision && !decisionRevealed ? (<button onClick={() => setDecisionRevealed(true)} className="text-xs text-muted-foreground hover:text-foreground">Reveal decision</button>) : (decisionRevealed ? (<span>Decision {judgeDecision}</span>) : null)}
               </div>
 
               {shownDescription && (
@@ -999,6 +1002,9 @@ export function VideoWatchPage({
             {/* The two teams' rankings and radars, when the rankings know
                 either of them; nothing at all otherwise. */}
             <WatchTeamStats video={video} />
+
+            {/* Rankings-based win prediction accounting for side effects. */}
+            <WatchRankingsPrediction video={video} />
 
             {/* The discussion, under the video's own metadata and above
                 everything else on the page. YouTube puts it here for a reason:
