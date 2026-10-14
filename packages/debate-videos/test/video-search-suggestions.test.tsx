@@ -42,14 +42,14 @@ describe("VideoSearchSuggestions", () => {
     expect(html).toContain("Tournaments");
   });
 
-  it("renders one chip per suggestion, with its match count", () => {
+  it("renders one chip per suggestion, with its match count in k format", () => {
     const html = render();
     for (const label of ["Finals", "Critique", "NDT", "TOC"]) {
       expect(html).toContain(`>${label}</span>`);
     }
-    expect(html).toContain(">206<");
-    // Four-digit counts are abbreviated, matching the quick-link cards.
-    expect(html).toContain(">1.3k<");
+    expect(html).toContain(">0.2k<"); // Finals: 206 -> 0.2k
+    expect(html).toContain(">0.0k<"); // Critique: 43 -> 0.0k
+    expect(html).toContain(">1.3k<"); // NDT: 1346 -> 1.3k
   });
 
   it("marks the chip matching the active search term", () => {
