@@ -21,10 +21,13 @@ import {
   BarChart3,
   BookOpen,
   Clapperboard,
+  Globe,
   Heart,
   History,
+  Mic,
   Presentation,
   Star,
+  Users,
   type LucideIcon,
 } from "lucide-react";
 import { IconFormatLD, IconFormatNDT, IconFormatPF, IconFormatVP } from "./format-badge-icons";
