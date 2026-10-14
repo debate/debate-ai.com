@@ -14,6 +14,7 @@ import { WatchProgressBadge, WatchProgressBar } from "./WatchProgressBadge"
 import { useWatchHistoryEntry } from "../../hooks/useWatchHistory"
 import { videoRouteHref } from "../../lib/video-route"
 import { videoWatchHref } from "../../lib/video-slug"
+import { getTournamentLogo } from "./tournamentLogos"
 import type { VideoType } from "../../types/videos"
 
 /** Shape of the video metadata forwarded to the player store on play. */
@@ -175,24 +176,43 @@ export function VideoCardThumbnail({
                     size="md"
                   />
                 )}
-                {cleanTournament && isTOCTournament(cleanTournament) ? (
-                  <img
-                    src={TOC_TOURNAMENT_IMAGE}
-                    alt="Tournament of Champions"
-                    className="h-6 w-auto object-contain drop-shadow-lg [filter:drop-shadow(0_0_2px_rgba(0,0,0,0.7))]"
-                  />
-                ) : cleanTournament ? (
-                  <span
-                    className={cn(
-                      "text-sm font-bold backdrop-blur-md border px-2 py-1 rounded [font-variant:small-caps] tracking-wider shadow-lg",
-                      styleNumber && TOURNAMENT_COLORS[styleNumber]
-                        ? TOURNAMENT_COLORS[styleNumber]
-                        : "text-purple-300 bg-purple-900/80 border-purple-400/90",
-                    )}
-                  >
-                    {cleanTournament}
-                  </span>
-                ) : null}
+                {cleanTournament ? (() => {
+                  const logo = getTournamentLogo(cleanTournament);
+                  if (logo) {
+                    const LogoComp = typeof logo === "string" ? null : logo;
+                    const logoSrc = typeof logo === "string" ? logo : null;
+                    return LogoComp ? (
+                      <LogoComp className="h-6 w-auto object-contain drop-shadow-lg [filter:drop-shadow(0_0_2px_rgba(0,0,0,0.7))]" />
+                    ) : logoSrc ? (
+                      <img
+                        src={logoSrc}
+                        alt={cleanTournament}
+                        className="h-6 w-auto object-contain drop-shadow-lg [filter:drop-shadow(0_0_2px_rgba(0,0,0,0.7))]"
+                      />
+                    ) : null;
+                  }
+                  if (isTOCTournament(cleanTournament)) {
+                    return (
+                      <img
+                        src={TOC_TOURNAMENT_IMAGE}
+                        alt="Tournament of Champions"
+                        className="h-6 w-auto object-contain drop-shadow-lg [filter:drop-shadow(0_0_2px_rgba(0,0,0,0.7))]"
+                      />
+                    );
+                  }
+                  return (
+                    <span
+                      className={cn(
+                        "text-sm font-bold backdrop-blur-md border px-2 py-1 rounded [font-variant:small-caps] tracking-wider shadow-lg",
+                        styleNumber && TOURNAMENT_COLORS[styleNumber]
+                          ? TOURNAMENT_COLORS[styleNumber]
+                          : "text-purple-300 bg-purple-900/80 border-purple-400/90",
+                      )}
+                    >
+                      {cleanTournament}
+                    </span>
+                  );
+                })() : null}
                 {year && (
                   <span className="text-sm font-bold text-orange-300 backdrop-blur-md bg-orange-900/80 border border-orange-400/90 px-2 py-1 rounded shadow-lg">
                     '{String(year).slice(-2)}

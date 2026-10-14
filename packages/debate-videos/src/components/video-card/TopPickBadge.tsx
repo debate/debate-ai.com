@@ -8,6 +8,7 @@
 import * as React from "react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
 import { getTopPickBadgeInfo, type TopPickBadgeInfo } from "../../lib/topPickBadges"
+import { getTournamentLogo } from "./tournamentLogos"
 import { cn } from "../../ui/lib/utils"
 
 export interface TopPickBadgeProps {
@@ -155,9 +156,19 @@ export function TopPickBadge({
               {effectiveYear && (
                 <span className="text-amber-300/90 font-medium">'{String(effectiveYear).slice(-2)}</span>
               )}
-              {cleanTournament && (
-                <span>• {cleanTournament}</span>
-              )}
+              {cleanTournament && (() => {
+                const logo = getTournamentLogo(cleanTournament);
+                if (logo) {
+                  const LogoComp = typeof logo === "string" ? null : logo;
+                  const logoSrc = typeof logo === "string" ? logo : null;
+                  return (
+                    <span className="flex items-center gap-1">
+                      • {LogoComp ? <LogoComp className="h-3 w-auto" /> : logoSrc ? <img src={logoSrc} alt={cleanTournament} className="h-3 w-auto" /> : cleanTournament}
+                    </span>
+                  );
+                }
+                return <span>• {cleanTournament}</span>;
+              })()}
               {effectiveRound && (
                 <span>• {effectiveRound}</span>
               )}
