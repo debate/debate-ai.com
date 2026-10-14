@@ -11,7 +11,6 @@
  */
 
 import {
-  BadgeCheck,
   BarChart3,
   BookOpen,
   ChartColumn,
@@ -157,7 +156,6 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/practice/prep", title: "Prep Workspace", icon: ClipboardList },
       { href: "/practice/partners", title: "Practice Partners", icon: Handshake },
       { href: "/practice/drills", title: "Practice Drills", icon: Repeat },
-      { href: "/practice/judge-decision", title: "AI Judge Decision", icon: BadgeCheck },
     ],
   },
   {

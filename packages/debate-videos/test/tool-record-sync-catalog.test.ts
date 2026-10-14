@@ -36,11 +36,6 @@ const SIDEBAR_HREFS = new Set([
   "/outline",
   "/annotations",
   // The CardMirror editor, likewise: a real route with synced data of its
-  // own, reached from the dock rather than from a section row now.
-  "/reason-editor",
-  // Response-Outcome Charts, taken out of every menu but still routed: its
-  // saved vulnerability reports open there.
-  "/coaching/outcomes",
 ]);
 
 describe("synced tool collections", () => {

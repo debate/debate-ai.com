@@ -8,6 +8,7 @@
  *
  * 1. **Volunteer as a judge** — the viewer's listing: up to three upcoming
  *    weekends from the circuit calendar, their states, whether they travel,
+import { getTournamentLogo } from "../../lib/tournament-logo-map"
  *    formats and judge philosophy. Collapsed to a summary once saved.
  * 2. **Hire requests** — requests sent to the viewer as a judge (accept or
  *    decline) and the ones they sent as an organizer (cancel).
