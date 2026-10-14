@@ -1,0 +1,43 @@
+---
+title: "Select YouTube Start"
+---
+
+# Select YouTube Start
+
+A speech in the round workspace can come from a YouTube video instead of a
+recording. Each speech's ⋮ menu has **Select YouTube Start** right under
+**Upload Speech Audio**. It opens a modal for that speech.
+
+- **Where:** live round workspace, speech timer menu
+- **Package:** `debate-round` (`dialogs/YouTubeSpeechDialog.tsx`,
+  `round/youtube-speech-client.ts`), `debate-timer`
+  (`recorder/youtube-speech-segments.ts`), `debate-speech-writer`
+  (`prompts/youtube-speech-timestamps.ts`)
+
+## What it does
+
+- **Upload audio or pick a video.** The "Upload audio" tab saves an audio
+  file as the speech's recording, the same as the menu item. The "YouTube
+  video" tab takes a pasted YouTube link (a `t=` start is kept) or a search,
+  which looks through the site's own video library.
+- **Preview and mark the speech.** The video plays in the modal. Type a start
+  and stop time, or press **Set to** to use where the video is now. **Play
+  clip** plays just that stretch. **Save** keeps the clip for this speech.
+- **AI suggests every speech.** **Suggest all speeches with AI** reads the
+  video's captions, finds where words are spoken and where there is silence,
+  and fits the format's speeches to them: all 12 in Policy, cross-examinations
+  included, or the 7 in LD. Speech lengths come from the format but are
+  allowed to vary, and prep time between speeches is expected. The AI then
+  checks the captions for cues like a roadmap or "cross-ex" and adjusts.
+  Pick a different format if the video isn't the round's format; picking a
+  video from the library sets it for you. If you set a start point first,
+  the suggestion starts there.
+- **Save them all.** Each suggested row has **Use** to load it into the start
+  and stop fields; **Save all** keeps a clip for every speech at once.
+
+## Good to know
+
+- If the AI can't be reached, the suggestion is placed from the caption
+  pauses alone. If the video has no captions, speeches are laid out by their
+  lengths from your start point, so set one first.
+- Clips are saved in this browser, beside the speech's recordings.

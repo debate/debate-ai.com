@@ -23,6 +23,7 @@ import { cn } from "../ui/lib/utils"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/primitives/tooltip"
 import { SpeechRecordingMenu } from "@debate/timer/src/recorder/SpeechRecordingPlayer"
 import { useAiOutcomeResponsesAction } from "../dialogs/AiOutcomeResponsesDialog"
+import { useYouTubeSpeechAction } from "../dialogs/YouTubeSpeechDialog"
 import { useClarityRequestAction } from "../hooks/useClarityRequests"
 
 export interface SpeechControlsTopBarProps {
@@ -101,6 +102,7 @@ export function SpeechControlsTopBar({
   leadingActions,
 }: SpeechControlsTopBarProps) {
   const outcomeResponses = useAiOutcomeResponsesAction(speechName)
+  const youtubeSpeech = useYouTubeSpeechAction(speechName)
   const clarityRequest = useClarityRequestAction(speechName)
   return (
     <div className="flex items-center justify-end gap-1 w-full h-9 px-2 border-b border-border bg-[var(--background)] shrink-0">
@@ -122,6 +124,7 @@ export function SpeechControlsTopBar({
       {showRecordingMenu && (
         <SpeechRecordingMenu
           actions={clarityRequest ? [clarityRequest, outcomeResponses.action] : [outcomeResponses.action]}
+          uploadActions={[youtubeSpeech.action]}
           speechName={speechName}
           speechLabel={speechName}
           micDeviceId={micDeviceId}
@@ -138,6 +141,7 @@ export function SpeechControlsTopBar({
         />
       )}
       {showRecordingMenu && outcomeResponses.dialog}
+      {showRecordingMenu && youtubeSpeech.dialog}
     </div>
   )
 }
