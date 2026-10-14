@@ -24,6 +24,7 @@ import { roundRecordingFor } from "../round/round-recording-items"
 import { settings } from "../state/settings"
 import { cn } from "../ui/lib/utils"
 import { useAiOutcomeResponsesAction } from "../dialogs/AiOutcomeResponsesDialog"
+import { useYouTubeSpeechAction } from "../dialogs/YouTubeSpeechDialog"
 import { useClarityRequestAction } from "../hooks/useClarityRequests"
 
 /** Resolve which debater email corresponds to a given speech column name. */
@@ -254,11 +255,13 @@ export function SpeechHeaderBar({
     : 0
 
   const outcomeResponses = useAiOutcomeResponsesAction(speechName)
+  const youtubeSpeech = useYouTubeSpeechAction(speechName)
   const clarityRequest = useClarityRequestAction(speechName)
 
   const recordingMenu = (labeled: boolean) => (
     <SpeechRecordingMenu
       actions={clarityRequest ? [clarityRequest, outcomeResponses.action] : [outcomeResponses.action]}
+      uploadActions={[youtubeSpeech.action]}
       speechName={speechName}
       speechLabel={speechName}
       micDeviceId={micDeviceId}
@@ -455,6 +458,7 @@ export function SpeechHeaderBar({
       </div>
 
       {showRecordingMenu && outcomeResponses.dialog}
+      {showRecordingMenu && youtubeSpeech.dialog}
 
       {/* Recording menu on its own row under the speech (round sidebar) */}
       {showRecordingMenu && recordingMenuPlacement === "below" && (

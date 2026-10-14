@@ -5,8 +5,8 @@
  * hover.
  *
  * Hovering or focusing a sidebar row can wiggle, bounce, pulse, spin, flip (and more)
- * its icon (`@debate/videos`' `sidebar-icon-hover.ts`). That is off by
- * default; this switch turns it on. Like the sound-effect level, the choice is
+ * its icon (`@debate/videos`' `sidebar-icon-hover.ts`). That is on by
+ * default; this switch turns it off. Like the sound-effect level, the choice is
  * local to this browser, applies the moment it's made and is never synced to
  * the account.
  *
@@ -25,11 +25,11 @@ import { Switch } from "../qwksearch/ui/switch"
 
 /**
  * The sidebar-animation row of Settings → Preferences. Loaded after mount so
- * the server render and the first client render both show it off, then the
+ * the server render and the first client render both show it on, then the
  * stored choice takes over.
  */
 export function SidebarIconAnimationsSection() {
-  const [on, setOn] = useState(false)
+  const [on, setOn] = useState(true)
 
   useEffect(() => {
     setOn(readSidebarIconAnimations())
@@ -59,7 +59,7 @@ export function SidebarIconAnimationsSection() {
         <Switch id="settings-sidebar-icon-animations" checked={on} onCheckedChange={handleChange} />
       </div>
       <p className="mt-2 text-xs text-muted-foreground">
-        Icons wiggle, bounce, spin, flip and more at random, in a random color, when you hover or tab to them; each at most once every 3 seconds. Off by default.
+        Icons wiggle, bounce, spin, flip and more at random, in a random color, when you hover or tab to them; each at most once every 3 seconds. On by default.
       </p>
     </section>
   )

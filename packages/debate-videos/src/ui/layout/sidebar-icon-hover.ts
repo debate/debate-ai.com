@@ -12,8 +12,8 @@
  * a row animates the first icon in it; moving between the parts of one row
  * does not restart it. Under reduced motion the icon only changes color.
  *
- * It is off by default: nothing moves until the reader turns on "Animate
- * sidebar icons" in Settings → Preferences ({@link setSidebarIconAnimations}).
+ * It is on by default: the reader can turn off "Animate sidebar icons" in
+ * Settings → Preferences ({@link setSidebarIconAnimations}).
  *
  * @module ui/layout/sidebar-icon-hover
  */
@@ -87,26 +87,25 @@ export function pickIconHoverEffect(
   return pool[Math.min(pool.length - 1, Math.floor(random() * pool.length))]
 }
 
-/** localStorage key for the reader's choice; "1" = animate. Off by default. */
+/** localStorage key for the reader's choice; "0" = don't animate. On by default. */
 export const SIDEBAR_ICON_ANIMATIONS_KEY = "sidebar-icon-animations"
 
 /** Same-document change event; other tabs get the real `storage` event. */
 const ICON_ANIMATIONS_CHANGE_EVENT = "sidebar-icon-animations-change"
 
-/** True when the reader turned the icon hover animation on in Settings. */
+/** False only when the reader turned the icon hover animation off in Settings. */
 export function readSidebarIconAnimations(): boolean {
   try {
-    return localStorage.getItem(SIDEBAR_ICON_ANIMATIONS_KEY) === "1"
+    return localStorage.getItem(SIDEBAR_ICON_ANIMATIONS_KEY) !== "0"
   } catch {
-    return false
+    return true
   }
 }
 
 /** Turns the icon hover animation on or off in this browser, and remembers it. */
 export function setSidebarIconAnimations(on: boolean): void {
   try {
-    if (on) localStorage.setItem(SIDEBAR_ICON_ANIMATIONS_KEY, "1")
-    else localStorage.removeItem(SIDEBAR_ICON_ANIMATIONS_KEY)
+    localStorage.setItem(SIDEBAR_ICON_ANIMATIONS_KEY, on ? "1" : "0")
   } catch {
     // Blocked storage: the choice just isn't kept.
   }
@@ -151,7 +150,7 @@ export function attachSidebarIconHover(root: HTMLElement): () => void {
   const lastPlayedAt = new WeakMap<SVGElement, number>()
 
   const play = (icon: SVGElement) => {
-    // Off unless the reader turned it on (Settings → Preferences); read on
+    // On unless the reader turned it off (Settings → Preferences); read on
     // every hover so flipping the switch applies without a reload.
     if (!readSidebarIconAnimations()) return
 
