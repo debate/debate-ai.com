@@ -4,7 +4,7 @@ import { Suspense, useEffect, useMemo, useState } from "react"
 import type { ComponentType, ReactNode } from "react"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
-import { Brain, BrainCog, HardDrive, School, Search, Server, Settings, SlidersHorizontal, UserCircle, Users, Volume2, Wand2 } from "lucide-react"
+import { Brain, BrainCog, HardDrive, School, Search, Server, Settings, ShieldCheck, SlidersHorizontal, UserCircle, Users, Volume2, Wand2 } from "lucide-react"
 // Static import so bundling confines this ~15k-line global stylesheet to
 // the settings routes' own chunk — never loaded by the host app's main bundle.
 import "@debate/editor/styles.css"
@@ -18,6 +18,8 @@ import { MySchoolSettings } from "../schools/MySchoolSettings"
 import { OwnAiKeySection } from "./OwnAiKeySection"
 import { SoundEffectsSection } from "./SoundEffectsSection"
 import { SidebarIconAnimationsSection } from "./SidebarIconAnimationsSection"
+import { PrivacySettingsSection } from "./PrivacySettingsSection"
+import { useSession } from "../../lib/hooks/useSession"
 import { EDITOR_SETTINGS_TABS } from "../../lib/editor-preferences"
 import { useEditorPreferencesSync } from "../../lib/hooks/useEditorPreferencesSync"
 import { CARDMIRROR_TAB_ICONS } from "./cardmirror-tab-icons"
@@ -37,9 +39,13 @@ const MY_TEAM_TAB = "my-team"
 // Claiming to coach or run a school, and the schools the viewer manages
 // (`components/schools/MySchoolSettings`).
 const MY_SCHOOL_TAB = "my-school"
+// The recording release (publish or not, audio only, how the viewer is
+// credited), the privacy policy link and data deletion requests
+// (`PrivacySettingsSection`).
+const PRIVACY_TAB = "privacy"
 /** A research section's tab id: `research-<section key>` (see `researchTabId`). */
 type ResearchTabId = `research-${string}`
-type TabId = SettingsCategory | typeof PREFERENCES_TAB | typeof MY_TEAM_TAB | typeof MY_SCHOOL_TAB | ResearchTabId
+type TabId = SettingsCategory | typeof PREFERENCES_TAB | typeof MY_TEAM_TAB | typeof MY_SCHOOL_TAB | typeof PRIVACY_TAB | ResearchTabId
 
 // The research agent's settings sections (`research-agent-ui/settings`'s
 // list), listed after the editor's tabs under their own heading. Each renders
@@ -59,6 +65,7 @@ const CATEGORIES: readonly { id: TabId; label: string }[] = [
   { id: PREFERENCES_TAB, label: "Preferences" },
   { id: MY_TEAM_TAB, label: "My team" },
   { id: MY_SCHOOL_TAB, label: "My school" },
+  { id: PRIVACY_TAB, label: "Privacy" },
   ...EDITOR_SETTINGS_TABS,
   ...RESEARCH_TABS,
 ]
@@ -92,6 +99,11 @@ const CATEGORY_DETAILS: Record<string, { icon: ComponentType<{ size?: number }>;
   [MY_SCHOOL_TAB]: {
     icon: School,
     description: "Claim to be your school's coach or administrator, then manage its teams, students and logo.",
+  },
+  [PRIVACY_TAB]: {
+    icon: ShieldCheck,
+    description:
+      "Whether your recordings can be published, audio only or with video, how you are credited, the privacy policy, and deleting your data.",
   },
   ...Object.fromEntries(
     CARDMIRROR_SETTINGS_TABS.map((tab) => [tab.id, { icon: CARDMIRROR_TAB_ICONS[tab.id] ?? Settings, description: tab.description }]),
@@ -225,6 +237,7 @@ function EditorSettingsPanelContent({ sidebarHeader }: { sidebarHeader?: ReactNo
   // Hydrates the editor's store from the account, then mirrors the keys
   // whose rows render back to it (see the hook for why rendered rows decide).
   const { ready, noteRenderedKeys } = useEditorPreferencesSync()
+  const { user } = useSession()
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -313,6 +326,8 @@ function EditorSettingsPanelContent({ sidebarHeader }: { sidebarHeader?: ReactNo
             <MyRankedTeamsSettings />
           ) : active === MY_SCHOOL_TAB ? (
             <MySchoolSettings />
+          ) : active === PRIVACY_TAB ? (
+            <PrivacySettingsSection accountName={user?.name ?? null} />
           ) : active === PREFERENCES_TAB ? (
             <>
               <TeamCoachingSection />
