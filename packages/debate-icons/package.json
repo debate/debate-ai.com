@@ -1,0 +1,14 @@
+{
+  "name": "@debate/icons",
+  "version": "0.0.1",
+  "private": true,
+  "exports": {
+    ".": "./index.ts",
+    "./app-icons": "./app-icons/index.ts",
+    "./brand": "./brand/index.ts",
+    "./editor": "./editor/index.ts",
+    "./schools": "./schools/index.ts",
+    "./schools/index": "./schools/index.ts"
+  },
+  "sideEffects": false
+}
