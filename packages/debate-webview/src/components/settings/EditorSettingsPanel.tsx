@@ -4,7 +4,7 @@ import { Suspense, useEffect, useMemo, useState } from "react"
 import type { ComponentType, ReactNode } from "react"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
-import { Brain, BrainCog, HardDrive, Search, Server, Settings, SlidersHorizontal, UserCircle, Users, Volume2, Wand2 } from "lucide-react"
+import { Brain, BrainCog, HardDrive, School, Search, Server, Settings, SlidersHorizontal, UserCircle, Users, Volume2, Wand2 } from "lucide-react"
 // Static import so bundling confines this ~15k-line global stylesheet to
 // the settings routes' own chunk — never loaded by the host app's main bundle.
 import "@debate/editor/styles.css"
@@ -14,6 +14,7 @@ import { CARDMIRROR_SETTINGS_TABS } from "@debate/editor/settings-tabs"
 import { UserSettingsPanel } from "@debate/round"
 import { MyRankedTeamsSettings } from "@debate/videos"
 import { TeamCoachingSection } from "./TeamCoachingSection"
+import { MySchoolSettings } from "../schools/MySchoolSettings"
 import { OwnAiKeySection } from "./OwnAiKeySection"
 import { SoundEffectsSection } from "./SoundEffectsSection"
 import { SidebarIconAnimationsSection } from "./SidebarIconAnimationsSection"
@@ -33,9 +34,12 @@ const PREFERENCES_TAB = "preferences"
 // The ranked team the viewer debates on, coaches or assists in each division,
 // which the matchup simulator pre-fills (`@debate/videos`' MyRankedTeamsSettings).
 const MY_TEAM_TAB = "my-team"
+// Claiming to coach or run a school, and the schools the viewer manages
+// (`components/schools/MySchoolSettings`).
+const MY_SCHOOL_TAB = "my-school"
 /** A research section's tab id: `research-<section key>` (see `researchTabId`). */
 type ResearchTabId = `research-${string}`
-type TabId = SettingsCategory | typeof PREFERENCES_TAB | typeof MY_TEAM_TAB | ResearchTabId
+type TabId = SettingsCategory | typeof PREFERENCES_TAB | typeof MY_TEAM_TAB | typeof MY_SCHOOL_TAB | ResearchTabId
 
 // The research agent's settings sections (`research-agent-ui/settings`'s
 // list), listed after the editor's tabs under their own heading. Each renders
@@ -54,6 +58,7 @@ const RESEARCH_TABS: readonly { id: ResearchTabId; label: string }[] = RESEARCH_
 const CATEGORIES: readonly { id: TabId; label: string }[] = [
   { id: PREFERENCES_TAB, label: "Preferences" },
   { id: MY_TEAM_TAB, label: "My team" },
+  { id: MY_SCHOOL_TAB, label: "My school" },
   ...EDITOR_SETTINGS_TABS,
   ...RESEARCH_TABS,
 ]
@@ -83,6 +88,10 @@ const CATEGORY_DETAILS: Record<string, { icon: ComponentType<{ size?: number }>;
   [MY_TEAM_TAB]: {
     icon: Users,
     description: "Your role, your partner, and the ranked team you represent in each division — pre-filled in the matchup simulator.",
+  },
+  [MY_SCHOOL_TAB]: {
+    icon: School,
+    description: "Claim to be your school's coach or administrator, then manage its teams, students and logo.",
   },
   ...Object.fromEntries(
     CARDMIRROR_SETTINGS_TABS.map((tab) => [tab.id, { icon: CARDMIRROR_TAB_ICONS[tab.id] ?? Settings, description: tab.description }]),
@@ -125,7 +134,7 @@ const SIDEBAR_CSS = `
 `
 
 /**
- * The host's own tabs, slotted in after Preferences and My team. Read when the
+ * The host's own tabs, slotted in after Preferences and My team (ahead of My school). Read when the
  * panel renders, since hosts configure themselves before the first render.
  */
 function useCategories() {
@@ -302,6 +311,8 @@ function EditorSettingsPanelContent({ sidebarHeader }: { sidebarHeader?: ReactNo
             <ResearchSettingsTab section={researchSectionOfTab(active)!} />
           ) : active === MY_TEAM_TAB ? (
             <MyRankedTeamsSettings />
+          ) : active === MY_SCHOOL_TAB ? (
+            <MySchoolSettings />
           ) : active === PREFERENCES_TAB ? (
             <>
               <TeamCoachingSection />

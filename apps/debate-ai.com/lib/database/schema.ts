@@ -2659,6 +2659,97 @@ export const profileFollows = sqliteTable(
 
 export type ProfileFollowRow = typeof profileFollows.$inferSelect;
 
+// ── School ownership (claims, profiles, rosters) ─────────────────────────
+// A user claims to coach or run a school's program from Settings → My school;
+// a moderator approves or rejects the claim in /admin, and an approved claim
+// makes that user an owner of the school's page. All three tables are created
+// by packages/debate-videos/migrations/0004_school_claims.sql; the request
+// rules live in packages/debate-webview/src/lib/schools/school-claims.ts and
+// the queries in apps/debate-ai.com/lib/school-claims/queries.ts.
+
+// A school page's own data, beyond what the rankings say: the display name
+// (for a school a user created that no ranking lists yet) and its logo.
+// `slug` is the `/schools/[school]` segment, from `profileSlug(name)`.
+export const schoolProfiles = sqliteTable("school_profiles", {
+  slug: text("slug").primaryKey(),
+  name: text("name").notNull(),
+  /** A `data:image/…;base64,` URL, capped by the API; null when unset. */
+  logo: text("logo"),
+  /** The user whose claim created the school, when it was not on any list. */
+  createdBy: text("created_by").references(() => user.id, { onDelete: "set null" }),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
+  updatedAt: integer("updated_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
+});
+
+export type SchoolProfileRow = typeof schoolProfiles.$inferSelect;
+
+// One user's claim to be a school's coach or administrator. `status` moves
+// `awaiting_email` (a code was sent to `school_email`) → `pending` (waiting on
+// a moderator) → `approved` or `rejected`. An approved claim is what makes the
+// user an owner of the school. `code_hash` is the SHA-256 of the emailed code
+// salted with the claim id, never the code itself.
+export const schoolClaims = sqliteTable(
+  "school_claims",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    schoolSlug: text("school_slug").notNull(),
+    schoolName: text("school_name").notNull(),
+    /** True when the claimant created the school rather than picking it from the list. */
+    isNewSchool: integer("is_new_school", { mode: "boolean" }).notNull().default(false),
+    /** `coach` or `admin`. */
+    role: text("role").notNull(),
+    schoolEmail: text("school_email"),
+    emailVerified: integer("email_verified", { mode: "boolean" }).notNull().default(false),
+    codeHash: text("code_hash"),
+    codeExpiresAt: integer("code_expires_at", { mode: "timestamp" }),
+    codeAttempts: integer("code_attempts").notNull().default(0),
+    explanation: text("explanation"),
+    status: text("status").notNull(),
+    reviewedBy: text("reviewed_by"),
+    reviewNote: text("review_note"),
+    reviewedAt: integer("reviewed_at", { mode: "timestamp" }),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdx: index("idx_school_claims_user").on(table.userId),
+    schoolIdx: index("idx_school_claims_school").on(table.schoolSlug, table.status),
+    statusIdx: index("idx_school_claims_status").on(table.status),
+  }),
+);
+
+export type SchoolClaimRow = typeof schoolClaims.$inferSelect;
+
+// The teams and students a school's owner lists as part of the school.
+// `kind` is `team` or `student`; `email` is an optional contact for a student.
+export const schoolMembers = sqliteTable(
+  "school_members",
+  {
+    id: text("id").primaryKey(),
+    schoolSlug: text("school_slug").notNull(),
+    kind: text("kind").notNull(),
+    name: text("name").notNull(),
+    email: text("email"),
+    addedBy: text("added_by").references(() => user.id, { onDelete: "set null" }),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    schoolIdx: index("idx_school_members_school").on(table.schoolSlug, table.kind),
+  }),
+);
+
+export type SchoolMemberRow = typeof schoolMembers.$inferSelect;
+
 // ── File market (packages/debate-file-market) ─────────────────────────────
 // Selling research files for real-money wallet balance. All four tables are
 // created by packages/debate-file-market/migrations; lib/market/__tests__

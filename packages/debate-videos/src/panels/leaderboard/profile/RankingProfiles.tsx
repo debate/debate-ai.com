@@ -285,11 +285,38 @@ export function TeamProfilePage({ slug }: { slug: string }) {
  * Profile of one school: aggregate stats and every ranked entry, by division.
  *
  * @param props.slug - The `/schools/[school]` segment, from `profileSlug`.
+ * @param props.ownerPanel - Rendered under the school's name: the host's
+ *   owner-managed logo, roster and claim link.
+ * @param props.knownName - The school's name when the host knows the school
+ *   though no ranking lists it (one a coach created when claiming it); the
+ *   page then shows the name and `ownerPanel` instead of "not found".
  */
-export function SchoolProfilePage({ slug }: { slug: string }) {
+export function SchoolProfilePage({
+  slug,
+  ownerPanel,
+  knownName,
+}: {
+  slug: string
+  ownerPanel?: ReactNode
+  knownName?: string | null
+}) {
   const { datasets, loading, error } = useAllRankingDatasets()
   const entries = loading ? [] : findSchoolEntries(datasets, slug)
   const summary = summarizeSchool(entries)
+
+  if (!loading && entries.length === 0 && knownName) {
+    return (
+      <ProfileFrame>
+        <header className="mt-3">
+          <h1 className="text-2xl font-semibold text-foreground">{knownName}</h1>
+          <p className="text-sm text-muted-foreground">No ranked entries yet</p>
+          <FollowButton kind="school" slug={slug} name={knownName} />
+        </header>
+        {ownerPanel}
+        <ProfileVideos search={schoolVideoSearch(knownName, [])} />
+      </ProfileFrame>
+    )
+  }
 
   const divisions = entries.reduce(
     (groups, item) => {
@@ -312,6 +339,7 @@ export function SchoolProfilePage({ slug }: { slug: string }) {
             </p>
             <FollowButton kind="school" slug={profileSlug(summary.school)} name={summary.school} />
           </header>
+          {ownerPanel}
 
           <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
             <Stat label="Ranked entries" value={summary.teams} />
