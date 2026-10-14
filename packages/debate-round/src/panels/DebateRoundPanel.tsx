@@ -7,7 +7,7 @@
  * into a clean, modular architecture using custom hooks and layout components.
  */
 
-import { useEffect, useRef, useState, type ReactNode } from "react"
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { usePathname } from "next/navigation"
 import { EbbFlowEmbed, type EbbFlowToolAction } from "@debate/flow-ebb"
 import { useFlowStore } from "../state/store"
@@ -49,6 +49,7 @@ import { useSpeechDocHeadings } from "../hooks/useSpeechDocHeadings"
 import { useTimerSync } from "../hooks/useTimerSync"
 import { ClarityRequestProvider, useClarityRequests } from "../hooks/useClarityRequests"
 import { getRoundRecordingShareEmails } from "../round/round-recording-share"
+import { roundRecordingFor } from "../round/round-recording-items"
 import { getMyTeamProfile } from "../state/myTeamProfile"
 import { readPinnedDebateIds, togglePinnedDebate } from "../state/pinnedDebates"
 import { readFlowHistory } from "../state/flowHistoryEntries"
@@ -583,6 +584,10 @@ const handleEbbToolAction = (action: EbbFlowToolAction) => {
 
   /** Emails the global topbar's recording menu's "Share with Opponents" notifies. */
   const selectedSpeechShareEmails = getRoundRecordingShareEmails(currentRound)
+  const roundRecording = useMemo(
+    () => roundRecordingFor(currentRound, timerState.debateStyle.timerSpeeches),
+    [currentRound, timerState.debateStyle.timerSpeeches],
+  )
 
   /** Reset the selected speech's timer to its default length. */
   const handleResetSpeechTime = () => {
@@ -816,6 +821,7 @@ const handleEbbToolAction = (action: EbbFlowToolAction) => {
         onDeleteRecording={deleteSelectedSpeechRecording}
         recordingKey={selectedSpeechHasRecording ? `debate-recording-${selectedSpeech}` : undefined}
         participantEmails={selectedSpeechShareEmails}
+        roundRecording={roundRecording}
         showRecordingMenu={state.isMobile || !sidebarRound}
         showViewControls={!viewControlsInSidebar}
         leadingActions={roundActions}
