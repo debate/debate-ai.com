@@ -140,6 +140,12 @@ async function buildAuth() {
         trustedProviders: ["google", "discord", "linkedin"],
       },
     },
+    emailAndPassword: {
+      enabled: true,
+      disableSignUp: true, // Only allow demo user, no public sign-up
+      minPasswordLength: 1, // Allow short password for demo
+      autoSignIn: true,
+    },
     emailVerification: {
       sendOnSignUp: false,
       autoSignInAfterVerification: true,
@@ -179,12 +185,6 @@ async function buildAuth() {
         allowUserToCreateOrganization: (user) => !(user as { isAnonymous?: boolean }).isAnonymous,
         organizationLimit: 25,
       }),
-      emailAndPassword: {
-        enabled: true,
-        disableSignUp: true, // Only allow demo user, no public sign-up
-        minPasswordLength: 1, // Allow short password for demo
-        autoSignIn: true,
-      },
       magicLink({
         sendMagicLink: async ({ email, url }) => {
           const resendKey = getEnv("RESEND_API_KEY") || getEnv("AUTH_RESEND_KEY");
