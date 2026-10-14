@@ -23,7 +23,7 @@ import {
   IconSchoolWestminster,
   IconSchoolBlake,
   IconSchoolHarker,
-} from "@debate/icons/schools";
+} from "@debate/icons/schools/index";
 
 const slugify = (s: string): string =>
   s
