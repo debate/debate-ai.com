@@ -69,6 +69,7 @@ import { WatchStackPlaylist } from "../../components/watch/WatchStackPlaylist"
 import { WatchSpeechTimeline } from "../../components/watch/WatchSpeechTimeline"
 import { WatchTeamStats } from "../../components/watch/WatchTeamStats"
 import { WatchRoundPrediction } from "../../components/watch/WatchRoundPrediction"
+import { WatchRankingsPrediction } from "../../components/watch/WatchRankingsPrediction"
 import type { SpeechFocusRequest } from "../../components/watch/WatchRoundPanel"
 import { useDocumentPictureInPicture } from "../../components/video-player/useDocumentPictureInPicture"
 import {
@@ -1000,6 +1001,9 @@ export function VideoWatchPage({
             {/* The two teams' rankings and radars, when the rankings know
                 either of them; nothing at all otherwise. */}
             <WatchTeamStats video={video} />
+
+            {/* Rankings-based win prediction accounting for side effects. */}
+            <WatchRankingsPrediction video={video} />
 
             {/* Prediction market for who wins this round. */}
             <WatchRoundPrediction video={video} />

@@ -22,6 +22,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./*": "./src/*",
+    "./src/*": "./src/*",
     "./package.json": "./package.json"
   },
   "files": [
