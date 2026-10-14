@@ -302,10 +302,10 @@ export function VideoCardActions({
           </Tooltip>
 
           {/* View count */}
-          <div className="flex items-center gap-1 shrink-0">
+          <span className="inline-flex items-center gap-1 shrink-0 rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium tabular-nums">
             <Eye className="h-3 w-3" />
-            <span>{formatCount(viewCount)}</span>
-          </div>
+            {formatCount(viewCount)}
+          </span>
 
           {/* Judge decision */}
           {judgeDecision && (

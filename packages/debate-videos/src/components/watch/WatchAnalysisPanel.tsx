@@ -19,6 +19,7 @@ import Link from "next/link"
 import { ScrollArea } from "../../ui/primitives/scroll-area"
 import { videoRouteHref } from "../../lib/video-route"
 import { formatVideoDate } from "../video-card/videoCardUtils"
+import { formatCount } from "../category-gallery/format-count"
 import type { VideoType } from "../../types/videos"
 import type { VideoRelationKind } from "../../lib/video-relations"
 
@@ -65,7 +66,7 @@ export function WatchAnalysisPanel({ links }: WatchAnalysisPanelProps) {
                     <p className="text-[10px] text-muted-foreground truncate">
                       {channel}
                       {date ? ` · ${formatVideoDate(date)}` : ""}
-                      {viewCount ? ` · ${viewCount.toLocaleString()} views` : ""}
+                      {viewCount ? ` · ${formatCount(viewCount)}` : ""}
                     </p>
                     {note && <p className="text-[11px] text-muted-foreground">{note}</p>}
                   </div>

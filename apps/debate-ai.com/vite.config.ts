@@ -311,10 +311,10 @@ export default defineConfig({
   },
   environments: {
     ssr: {
-      build: { rolldownOptions: { output: { minify: serverMinify } } },
+      build: { rolldownOptions: { output: { minify: serverMinify, sourcemap: false } } },
     },
     rsc: {
-      build: { rolldownOptions: { output: { minify: serverMinify } } },
+      build: { rolldownOptions: { output: { minify: serverMinify, sourcemap: false } } },
       optimizeDeps: {
         // react-reason-editor → novel → react-tweet, whose `react-server`
         // entry does `import swr from "swr"`; swr's react-server build has no
@@ -322,6 +322,9 @@ export default defineConfig({
         // dies before serving anything. Nothing renders tweets on the server.
         exclude: ["react-tweet"],
       },
+    },
+    client: {
+      build: { rolldownOptions: { output: { sourcemap: false } } },
     },
   },
   ssr: {
