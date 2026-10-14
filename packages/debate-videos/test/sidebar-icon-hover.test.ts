@@ -59,18 +59,18 @@ describe("sidebar icon hover", () => {
 });
 
 describe("sidebar icon animation setting", () => {
-  it("is off by default and follows the Settings switch", async () => {
+  it("is on by default and follows the Settings switch", async () => {
     const { readSidebarIconAnimations, setSidebarIconAnimations, subscribeSidebarIconAnimations } = await import(
       "../src/ui/layout/sidebar-icon-hover"
     );
     localStorage.clear();
-    expect(readSidebarIconAnimations()).toBe(false);
+    expect(readSidebarIconAnimations()).toBe(true);
     let changes = 0;
     const stop = subscribeSidebarIconAnimations(() => changes++);
-    setSidebarIconAnimations(true);
-    expect(readSidebarIconAnimations()).toBe(true);
     setSidebarIconAnimations(false);
     expect(readSidebarIconAnimations()).toBe(false);
+    setSidebarIconAnimations(true);
+    expect(readSidebarIconAnimations()).toBe(true);
     stop();
     expect(changes).toBe(2);
   });

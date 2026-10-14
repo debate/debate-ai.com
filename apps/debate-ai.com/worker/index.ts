@@ -49,6 +49,8 @@ interface Env extends TurnstileEnv {
   DB_BACKUPS?: unknown;
   // `.sql.7z` copies of those backups (lib/admin/db-backup-r2.ts).
   DB_BACKUPS_KV?: unknown;
+  // Joined round recordings (lib/round-recordings/storage.ts), bound in wrangler.jsonc.
+  ROUND_RECORDINGS?: unknown;
   // Webcam-room signalling (lib/webcam/debate-room.ts), bound in wrangler.jsonc.
   DEBATE_ROOMS?: Parameters<typeof handleRoomSocket>[1];
   // See lib/database/d1-session.ts — "auto" (default), "primary",

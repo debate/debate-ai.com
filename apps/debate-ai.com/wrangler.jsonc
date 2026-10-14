@@ -55,10 +55,21 @@
 	// `wrangler r2 bucket create debate-ai-db-backups`. Like `vars`,
 	// `r2_buckets` is not inherited by named environments, so env.production
 	// repeats it.
+	//
+	// ROUND_RECORDINGS holds joined round recordings — every speech of a round
+	// in one MP3, its captions, each debater's webcam clips and a manifest —
+	// saved from the recording menu's "Join round recording" dialog
+	// (lib/round-recordings/storage.ts). Private: files stream back only to
+	// the account that uploaded them, through /api/round-recordings/file.
+	// Create it once with `wrangler r2 bucket create debate-ai-round-recordings`.
 	"r2_buckets": [
 		{
 			"binding": "DB_BACKUPS",
 			"bucket_name": "debate-ai-db-backups"
+		},
+		{
+			"binding": "ROUND_RECORDINGS",
+			"bucket_name": "debate-ai-round-recordings"
 		}
 	],
 	// `.sql.7z` copies of those backups (one KV value each, 25 MiB max).
@@ -108,6 +119,10 @@
 				{
 					"binding": "DB_BACKUPS",
 					"bucket_name": "debate-ai-db-backups"
+				},
+				{
+					"binding": "ROUND_RECORDINGS",
+					"bucket_name": "debate-ai-round-recordings"
 				}
 			],
 			"kv_namespaces": [
