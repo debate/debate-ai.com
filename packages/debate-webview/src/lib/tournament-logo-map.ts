@@ -31,29 +31,38 @@ const slugify = (s: string): string =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 
+/**
+ * An image import's URL. Next types `.png`/`.svg` imports as
+ * `StaticImageData` (`{ src, width, height }`) while other bundlers hand
+ * back the URL string, so the map stores the string either way and callers
+ * never mistake the object for a component.
+ */
+const logoSrc = (img: unknown): string =>
+  typeof img === "object" && img !== null && "src" in img ? String((img as { src: unknown }).src) : (img as string);
+
 export const TOURNAMENT_LOGO_MAP: Record<string, string | FC<SVGProps<SVGSVGElement>>> = {
-  harvard: IconSchoolHarvard,
-  "harvard-national": IconSchoolHarvard,
-  "harvard-westlake": IconSchoolHarvardWestlake,
-  greenhill: IconSchoolGreenhill,
-  emory: IconSchoolEmory,
-  georgetown: IconSchoolGeorgetown,
-  ceda: IconSchoolCeda,
-  glenbrooks: IconSchoolGlenbrookNorth,
-  "glenbrook-north": IconSchoolGlenbrookNorth,
-  "glenbrook-south": IconSchoolGlenbrookNorth,
-  northwestern: IconSchoolNorthwestern,
-  "wake-forest": IconSchoolWakeForest,
-  kentucky: IconSchoolKentucky,
-  "michigan-state": IconSchoolMichiganState,
-  ndt: IconSchoolNdt,
-  "national-debate-tournament": IconSchoolNdt,
-  dartmouth: IconSchoolDartmouth,
-  redlands: IconSchoolRedlands,
-  "st-marks": IconSchoolStMarks,
-  westminster: IconSchoolWestminster,
-  blake: IconSchoolBlake,
-  harker: IconSchoolHarker,
+  harvard: logoSrc(IconSchoolHarvard),
+  "harvard-national": logoSrc(IconSchoolHarvard),
+  "harvard-westlake": logoSrc(IconSchoolHarvardWestlake),
+  greenhill: logoSrc(IconSchoolGreenhill),
+  emory: logoSrc(IconSchoolEmory),
+  georgetown: logoSrc(IconSchoolGeorgetown),
+  ceda: logoSrc(IconSchoolCeda),
+  glenbrooks: logoSrc(IconSchoolGlenbrookNorth),
+  "glenbrook-north": logoSrc(IconSchoolGlenbrookNorth),
+  "glenbrook-south": logoSrc(IconSchoolGlenbrookNorth),
+  northwestern: logoSrc(IconSchoolNorthwestern),
+  "wake-forest": logoSrc(IconSchoolWakeForest),
+  kentucky: logoSrc(IconSchoolKentucky),
+  "michigan-state": logoSrc(IconSchoolMichiganState),
+  ndt: logoSrc(IconSchoolNdt),
+  "national-debate-tournament": logoSrc(IconSchoolNdt),
+  dartmouth: logoSrc(IconSchoolDartmouth),
+  redlands: logoSrc(IconSchoolRedlands),
+  "st-marks": logoSrc(IconSchoolStMarks),
+  westminster: logoSrc(IconSchoolWestminster),
+  blake: logoSrc(IconSchoolBlake),
+  harker: logoSrc(IconSchoolHarker),
 };
 
 export const getTournamentLogo = (
