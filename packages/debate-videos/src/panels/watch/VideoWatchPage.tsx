@@ -85,6 +85,7 @@ import {
   TOURNAMENT_COLORS,
   getRoundBadgeColor,
   formatVideoDate,
+  getTournamentLogo,
 } from "../../components/video-card/videoCardUtils"
 import { cn } from "../../ui/lib/utils"
 import { LecturesSidebarShell } from "../LecturesSidebarShell"
@@ -782,19 +783,55 @@ export function VideoWatchPage({
                     {categoryLabel}
                   </span>
                 )}
-                {tournament && (
-                  <button
-                    onClick={() => handleBadgeClick(tournament.replace(/\d+/g, "").trim())}
-                    className={cn(
-                      "text-sm font-bold backdrop-blur-md border px-2 py-1 rounded [font-variant:small-caps] tracking-wider shadow-lg",
-                      styleNumber && TOURNAMENT_COLORS[styleNumber]
-                        ? TOURNAMENT_COLORS[styleNumber]
-                        : "text-purple-300 bg-purple-900/80 border-purple-400/90",
-                    )}
-                  >
-                    {tournament}
-                  </button>
-                )}
+                {tournament && (() => {
+                  const cleanT = tournament.replace(/\d+/g, "").trim();
+                  const logo = getTournamentLogo(cleanT);
+                  if (logo) {
+                    if (typeof logo === "string") {
+                      return (
+                        <button
+                          onClick={() => handleBadgeClick(cleanT)}
+                          className="text-sm font-bold backdrop-blur-md border px-2 py-1 rounded shadow-lg bg-transparent"
+                        >
+                          <img src={logo} alt={tournament} className="h-5 w-auto" />
+                        </button>
+                      );
+                    }
+                    if (typeof logo === "function") {
+                      const LogoComp = logo;
+                      return (
+                        <button
+                          onClick={() => handleBadgeClick(cleanT)}
+                          className="text-sm font-bold backdrop-blur-md border px-2 py-1 rounded shadow-lg bg-transparent"
+                        >
+                          <img src={typeof logo==="string"?logo:(logo as any)?.src??logo} alt={tournament} className="h-5 w-auto" />
+                        </button>
+                      );
+                    }
+                    // StaticImageData from Next.js
+                    return (
+                      <button
+                        onClick={() => handleBadgeClick(cleanT)}
+                        className="text-sm font-bold backdrop-blur-md border px-2 py-1 rounded shadow-lg bg-transparent"
+                      >
+                        <img src={logo.src} alt={tournament} className="h-5 w-auto" />
+                      </button>
+                    );
+                  }
+                  return (
+                    <button
+                      onClick={() => handleBadgeClick(cleanT)}
+                      className={cn(
+                        "text-sm font-bold backdrop-blur-md border px-2 py-1 rounded [font-variant:small-caps] tracking-wider shadow-lg",
+                        styleNumber && TOURNAMENT_COLORS[styleNumber]
+                          ? TOURNAMENT_COLORS[styleNumber]
+                          : "text-purple-300 bg-purple-900/80 border-purple-400/90",
+                      )}
+                    >
+                      {tournament}
+                    </button>
+                  );
+                })()}
                 {year && (
                   <span className="text-sm font-bold text-orange-300 backdrop-blur-md bg-orange-900/80 border border-orange-400/90 px-2 py-1 rounded shadow-lg">
                     '{String(year).slice(-2)}

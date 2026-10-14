@@ -1,7 +1,7 @@
 {
   "name": "@debate/videos",
   "version": "0.1.0",
-  "description": "Debate video library — grids, search, the persistent YouTube player, lecture pages and rankings leaderboards",
+  "description": "Debate video library \u2014 grids, search, the persistent YouTube player, lecture pages and rankings leaderboards",
   "type": "module",
   "author": "vtempest",
   "license": "rights.institute/prosper",
@@ -70,7 +70,8 @@
     "react-resizable-panels": "^4.14.4",
     "recharts": "3.10.1",
     "tailwind-merge": "^3.7.0",
-    "zustand": "^5.0.15"
+    "zustand": "^5.0.15",
+    "@debate/icons": "workspace:*"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",

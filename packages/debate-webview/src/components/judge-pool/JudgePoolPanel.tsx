@@ -146,7 +146,21 @@ function HireCard({
     <li className="flex flex-col gap-2 rounded-lg border border-border bg-background p-3 text-sm">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <p className="font-medium">{hire.tournamentName}</p>
+          {(() => {
+            const logo = getTournamentLogo(hire.tournamentName);
+            if (logo) {
+              const LogoComp = typeof logo === "string" ? null : logo;
+              const logoSrc = typeof logo === "string" ? logo : null;
+              return LogoComp ? (
+                <LogoComp className="h-5 w-auto mb-1" />
+              ) : logoSrc ? (
+                <img src={logoSrc} alt={hire.tournamentName} className="h-5 w-auto mb-1" />
+              ) : (
+                <p className="font-medium">{hire.tournamentName}</p>
+              );
+            }
+            return <p className="font-medium">{hire.tournamentName}</p>;
+          })()}
           <p className="text-xs text-muted-foreground">
             {weekendLabel(hire.weekend)} · {asJudge ? `from ${hire.organizer.name}` : `judge: ${hire.judge.name}`}
           </p>

@@ -25,6 +25,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import type { RankingEntry } from "@debate/rankings-adapter"
 import { Star, ExternalLink, EyeOff, Eye, ListVideo, Play } from "lucide-react"
+import { getTournamentLogo } from "../video-card/tournamentLogos"
 import { cn } from "../../ui/lib/utils"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
 import { useVideoPlayerStore } from "../../state/videoPlayerStore"
@@ -332,23 +333,68 @@ export function VideoListRow({
                     )}
                     {showFormat && <FormatBadge style={styleNumber} />}
                     <span className="truncate">
-                      {cleanTournament === "TOC" ? (
-                        <span className="flex items-center gap-1.5">
-                          <img
-                            src={TOC_TOURNAMENT_IMAGE}
-                            alt="Tournament of Champions"
-                            className="h-4 w-auto object-contain shrink-0"
-                          />
-                          {channel && (
-                            <>
-                              <span className="text-muted-foreground">·</span>
-                              <span className="truncate">{channel}</span>
-                            </>
-                          )}
-                        </span>
-                      ) : (
-                        [cleanTournament, channel].filter(Boolean).join(" · ") || "—"
-                      )}
+                      {(() => {
+                        const logo = getTournamentLogo(cleanTournament);
+                        if (logo) {
+                          if (typeof logo === "string") {
+                            return (
+                              <span className="flex items-center gap-1.5">
+                                <img src={logo} alt={cleanTournament} className="h-4 w-auto object-contain shrink-0" />
+                                {channel && (
+                                  <>
+                                    <span className="text-muted-foreground">·</span>
+                                    <span className="truncate">{channel}</span>
+                                  </>
+                                )}
+                              </span>
+                            );
+                          }
+                          if (typeof logo === "function") {
+                            const LogoComp = logo;
+                            return (
+                              <span className="flex items-center gap-1.5">
+                                <LogoComp className="h-4 w-auto object-contain shrink-0" />
+                                {channel && (
+                                  <>
+                                    <span className="text-muted-foreground">·</span>
+                                    <span className="truncate">{channel}</span>
+                                  </>
+                                )}
+                              </span>
+                            );
+                          }
+                          // StaticImageData from Next.js
+                          return (
+                            <span className="flex items-center gap-1.5">
+                              <img src={logo.src} alt={cleanTournament} className="h-4 w-auto object-contain shrink-0" />
+                              {channel && (
+                                <>
+                                  <span className="text-muted-foreground">·</span>
+                                  <span className="truncate">{channel}</span>
+                                </>
+                              )}
+                            </span>
+                          );
+                        }
+                        if (cleanTournament === "TOC") {
+                          return (
+                            <span className="flex items-center gap-1.5">
+                              <img
+                                src={TOC_TOURNAMENT_IMAGE}
+                                alt="Tournament of Champions"
+                                className="h-4 w-auto object-contain shrink-0"
+                              />
+                              {channel && (
+                                <>
+                                  <span className="text-muted-foreground">·</span>
+                                  <span className="truncate">{channel}</span>
+                                </>
+                              )}
+                            </span>
+                          );
+                        }
+                        return [cleanTournament, channel].filter(Boolean).join(" · ") || "—";
+                      })()}
                     </span>
                   </>
                 ) : (
