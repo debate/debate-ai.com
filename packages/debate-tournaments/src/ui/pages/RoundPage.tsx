@@ -38,7 +38,7 @@ export const PANOPTICON_RELATED: Quote[] = [
     source: "— Foucault, Discipline and Punish, pp. 207–208.",
   },
   {
-    text: "“He who is subjected to a field of visibility, and who knows it, assumes responsibility for the constraints ”,
+    text: "He who is subjected to a field of visibility, and who knows it, assumes responsibility for the constraints",
     source: "",
   },
 ];
