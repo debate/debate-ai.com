@@ -336,11 +336,37 @@ export function VideoListRow({
                       {(() => {
                         const logo = getTournamentLogo(cleanTournament);
                         if (logo) {
-                          const LogoComp = typeof logo === "string" ? null : logo;
-                          const logoSrc = typeof logo === "string" ? logo : null;
+                          if (typeof logo === "string") {
+                            return (
+                              <span className="flex items-center gap-1.5">
+                                <img src={logo} alt={cleanTournament} className="h-4 w-auto object-contain shrink-0" />
+                                {channel && (
+                                  <>
+                                    <span className="text-muted-foreground">·</span>
+                                    <span className="truncate">{channel}</span>
+                                  </>
+                                )}
+                              </span>
+                            );
+                          }
+                          if (typeof logo === "function") {
+                            const LogoComp = logo;
+                            return (
+                              <span className="flex items-center gap-1.5">
+                                <LogoComp className="h-4 w-auto object-contain shrink-0" />
+                                {channel && (
+                                  <>
+                                    <span className="text-muted-foreground">·</span>
+                                    <span className="truncate">{channel}</span>
+                                  </>
+                                )}
+                              </span>
+                            );
+                          }
+                          // StaticImageData from Next.js
                           return (
                             <span className="flex items-center gap-1.5">
-                              {<img src={typeof logo==="string"?logo:(logo as any)?.src??logo} className="h-4 w-auto object-contain shrink-0" /> : <img src={typeof logo==="string"?logo:(logo as any)?.src??logo} alt={cleanTournament} className="h-4 w-auto object-contain shrink-0" /> : cleanTournament}
+                              <img src={logo.src} alt={cleanTournament} className="h-4 w-auto object-contain shrink-0" />
                               {channel && (
                                 <>
                                   <span className="text-muted-foreground">·</span>

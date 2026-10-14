@@ -159,11 +159,25 @@ export function TopPickBadge({
               {cleanTournament && (() => {
                 const logo = getTournamentLogo(cleanTournament);
                 if (logo) {
-                  const LogoComp = typeof logo === "string" ? null : logo;
-                  const logoSrc = typeof logo === "string" ? logo : null;
+                  if (typeof logo === "string") {
+                    return (
+                      <span className="flex items-center gap-1">
+                        • <img src={logo} alt={cleanTournament} className="h-3 w-auto" />
+                      </span>
+                    );
+                  }
+                  if (typeof logo === "function") {
+                    const LogoComp = logo;
+                    return (
+                      <span className="flex items-center gap-1">
+                        • <LogoComp className="h-3 w-auto" />
+                      </span>
+                    );
+                  }
+                  // StaticImageData from Next.js
                   return (
                     <span className="flex items-center gap-1">
-                      • {<img src={typeof logo==="string"?logo:(logo as any)?.src??logo} className="h-3 w-auto" /> : <img src={typeof logo==="string"?logo:(logo as any)?.src??logo} alt={cleanTournament} className="h-3 w-auto" /> : cleanTournament}
+                      • <img src={logo.src} alt={cleanTournament} className="h-3 w-auto" />
                     </span>
                   );
                 }

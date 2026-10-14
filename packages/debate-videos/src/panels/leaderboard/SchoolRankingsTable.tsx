@@ -64,7 +64,7 @@ const COLUMNS: Column[] = [
             }
             if (typeof logo === "function") {
               const LogoComp = logo;
-              return <img src={typeof logo==="string"?logo:(logo as any)?.src??logo}h-4 w-auto" />;
+              return <img src={typeof logo==="string"?logo:(logo as any)?.src??logo} alt={r.school} className="h-4 w-auto" />;
             }
             // StaticImageData from Next.js
             return <img src={logo.src} alt={r.school} className="h-4 w-auto" />;

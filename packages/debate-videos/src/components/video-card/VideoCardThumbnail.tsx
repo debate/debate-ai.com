@@ -179,17 +179,29 @@ export function VideoCardThumbnail({
                 {cleanTournament ? (() => {
                   const logo = getTournamentLogo(cleanTournament);
                   if (logo) {
-                    const LogoComp = typeof logo === "string" ? null : logo;
-                    const logoSrc = typeof logo === "string" ? logo : null;
-                    return logoIsString ? (
+                    if (typeof logo === "string") {
+                      return (
+                        <img
+                          src={logo}
+                          alt={cleanTournament}
+                          className="h-6 w-auto object-contain drop-shadow-lg [filter:drop-shadow(0_0_2px_rgba(0,0,0,0.7))]"
+                        />
+                      );
+                    }
+                    if (typeof logo === "function") {
+                      const LogoComp = logo;
+                      return (
+                        <LogoComp className="h-6 w-auto object-contain drop-shadow-lg [filter:drop-shadow(0_0_2px_rgba(0,0,0,0.7))]" />
+                      );
+                    }
+                    // StaticImageData from Next.js
+                    return (
                       <img
-                        src={logo as string}
+                        src={logo.src}
                         alt={cleanTournament}
                         className="h-6 w-auto object-contain drop-shadow-lg [filter:drop-shadow(0_0_2px_rgba(0,0,0,0.7))]"
                       />
-                    ) : (LogoComp && typeof LogoComp !== "string") ? (
-                      <img src={typeof logo==="string"?logo:(logo as any)?.src??logo}h-6 w-auto object-contain drop-shadow-lg [filter:drop-shadow(0_0_2px_rgba(0,0,0,0.7))]" />
-                    ) : null;
+                    );
                   }
                   if (isTOCTournament(cleanTournament)) {
                     return (
