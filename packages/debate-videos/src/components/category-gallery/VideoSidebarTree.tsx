@@ -7,6 +7,7 @@
  *   Apps / Coaching / Research / Practice (h1, expandable) -> tool links
  *     — this trailing portion is `ToolNavTree`, shared with the non-video
  *       tool pages those links point to (see `ToolNavTree`'s file comment).
+ *   Docs (h1, starts collapsed) -> every help docs page (`DocsNavTree`)
  *
  * The round-archive links are one flat list. Policy / PF / LD / Greatest of
  * All-Time used to hang inside College Policy, which read as if they were
@@ -38,6 +39,7 @@ import { usePathname } from "next/navigation";
 import { Clapperboard, History } from "lucide-react";
 import { TreeItem } from "./TreeItem";
 import { ToolNavTree } from "./ToolNavTree";
+import { DocsNavTree } from "./DocsNavTree";
 import {
   VIDEO_ALL_LINK,
   VIDEO_COLLEGE_LINK,
@@ -158,6 +160,10 @@ export function VideoSidebarTree({
       </TreeItem>
 
       <ToolNavTree expandedSectionIds={expandedSectionIds} onToggleSection={toggleSection} />
+
+      {/* Every docs page, collapsed until opened; on /docs the docs layout
+          portals its own tree in below the column instead. */}
+      <DocsNavTree />
     </nav>
   );
 }

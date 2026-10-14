@@ -21,6 +21,7 @@
     "./routes/home-layout": "./routes/home-layout.tsx",
     "./routes/welcome-page": "./routes/welcome-page.tsx",
     "./routes/search-route": "./routes/search-route.ts",
+    "./routes/tree-route": "./routes/tree-route.ts",
     "./routes/llms-full-route": "./routes/llms-full-route.ts",
     "./routes/llms-mdx-route": "./routes/llms-mdx-route.ts",
     "./vite": "./vite.mjs",

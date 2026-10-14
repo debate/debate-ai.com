@@ -5,7 +5,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { usePathname } from "next/navigation"
 import { LibrarySidebarTree, ToolSidebarFooter } from "@debate/videos"
 import { playUISoundEffect } from "@debate/timer"
-import { SidebarPinnedLinks } from "./app-sidebar/sidebar-pinned-links"
+import { SidebarSettingsButton } from "./app-sidebar/sidebar-settings-button"
 import { ReasonDocsSidebarPanels } from "../reason-docs/ReasonDocsSidebarPanels"
 import { ChromeErrorBoundary } from "../../lib/ui/layout/chrome-error-boundary"
 import { mobileSidebarKind } from "../../lib/mobile-sidebar"
@@ -66,8 +66,11 @@ export function MobileSidebarDrawer({
                 <ToolSidebarFooter />
               </>
             )}
-            {/* Docs and Settings on every view, as at the desktop column's foot. */}
-            <SidebarPinnedLinks className="mt-2 shrink-0 border-t border-border/60 pt-2" />
+            {/* Settings on every view, as beside the desktop column's hide
+                button. Docs is a section of the tree above. */}
+            <div className="mt-2 flex shrink-0 justify-end border-t border-border/60 pt-2">
+              <SidebarSettingsButton label />
+            </div>
           </ChromeErrorBoundary>
         </DialogPrimitive.Content>
       </DialogPrimitive.Portal>

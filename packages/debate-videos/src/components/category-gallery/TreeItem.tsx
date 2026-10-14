@@ -96,6 +96,11 @@ export interface TreeItemProps {
   onToggleExpand?: () => void;
   /** De-emphasizes leaf items (used for the Glossary/Rankings links). */
   muted?: boolean;
+  /**
+   * Navigates with a full page load (a plain `<a>`) instead of the client
+   * router — for `/docs`, which renders outside the app's own layout.
+   */
+  reloadDocument?: boolean;
   children?: React.ReactNode;
 }
 
@@ -111,6 +116,7 @@ export function TreeItem({
   expanded,
   onToggleExpand,
   muted,
+  reloadDocument,
   children,
 }: TreeItemProps) {
   const pathname = usePathname();
@@ -237,12 +243,17 @@ export function TreeItem({
           )
         ) : (
           <>
-            {/* `prefetch={false}`: the tree renders dozens of links at once,
+            {reloadDocument ? (
+              <a href={href} className={rowClassName}>
+                {rowContents}
+              </a>
+            ) : (
+            /* `prefetch={false}`: the tree renders dozens of links at once,
                 and the router fetched an RSC payload for every one of them
                 the moment the sidebar mounted — a burst of requests
                 competing with the video feed and its thumbnails on exactly
                 the page that felt slowest. Navigation still fetches on
-                click. */}
+                click. */
             <Link
               href={href}
               prefetch={false}
@@ -258,6 +269,7 @@ export function TreeItem({
             >
               {rowContents}
             </Link>
+            )}
             {expandable && (
               <button
                 type="button"

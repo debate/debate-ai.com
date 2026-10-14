@@ -10,7 +10,7 @@ import Link from "next/link";
 import Image, { StaticImageData } from "next/image";
 import { GlowingEffect } from "../../ui/effects/glowing-effect";
 import { cn } from "../../ui/lib/utils";
-import { History, Clapperboard, type LucideIcon } from "lucide-react";
+import { History, Clapperboard, Globe, Mic, Users, type LucideIcon } from "lucide-react";
 import { IconTrophyGoat, IconLeaderboard, IconTrophy, IconLectures } from "../../ui/icons";
 import { isImageIcon } from "./tree-item-icon";
 import { formatCount } from "./format-count";
