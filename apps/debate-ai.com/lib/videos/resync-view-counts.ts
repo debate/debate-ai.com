@@ -393,7 +393,7 @@ const REMOVAL_BATCH = 30;
  * for all of them at once, in batches rather than a few queries per video so a
  * library with hundreds of takedowns stays inside the Worker's query budget:
  * the row leaves `videos` and the resync queue, and an exclusion is recorded
- * so the weekly YouTube sync does not re-ingest it.
+ * so the daily YouTube sync does not re-ingest it.
  *
  * Only rows a resync has actually checked are touched, so a video whose
  * availability was never looked at cannot be swept up.

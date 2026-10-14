@@ -38,9 +38,9 @@ import { getEnv } from "../env";
  * until the next scan re-resolves it.
  *
  * @param triggeredBy - Admin email, or the "cron" sentinel from
- *   `weekly-sync.ts` when the weekly tick started the run.
+ *   `weekly-sync.ts` when the daily scan cron started the run.
  * @param publishedAfterDate - Optional `YYYY-MM-DD` floor. When omitted (the
- *   weekly cron path) the module-level default from `channel-config.ts` is
+ *   daily cron path) the module-level default from `channel-config.ts` is
  *   used; the admin page's date chooser passes its own value so a manual
  *   resync can reach further back or narrow the window without a redeploy.
  */
@@ -59,7 +59,7 @@ export async function resyncYouTubeRounds(
   setYouTubeApiKey(apiKey);
 
   // Fall back to the module-level default floor (`publishedAfter` from
-  // channel-config.ts) when the caller — the weekly cron — did not pass an
+  // channel-config.ts) when the caller — the daily scan cron — did not pass an
   // explicit cutoff. The admin page supplies one from its date chooser so a
   // manual resync can reach further back *or* narrow the window without
   // touching deployed code.

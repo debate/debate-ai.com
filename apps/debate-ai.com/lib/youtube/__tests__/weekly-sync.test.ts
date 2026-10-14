@@ -1,13 +1,10 @@
 /**
- * @fileoverview Pins what the weekly cron tick is obliged to do.
+ * @fileoverview Pins what the scheduled YouTube ticks are obliged to do.
  *
- * The trigger in `wrangler.jsonc` fires once a week, so a pass that silently
- * stops running costs seven days before anyone notices. Two rules matter and
- * neither is visible from reading either pass on its own: the view-count
- * refresh runs on every tick, and it runs *even when the new-video scan
- * throws* — a channel listing that 403s must not also freeze the library's
- * view counts. The scan is ordered first so videos published since the last
- * tick are in the database before the refresh enumerates them.
+ * The new-video scan runs on a daily cron and the view-count refresh on the
+ * weekly one, so a pass that silently stops running costs a day or a week
+ * before anyone notices. Each pass must report a failure instead of
+ * rejecting, and the daily cron string must stay in step with wrangler.jsonc.
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
@@ -26,7 +23,7 @@ vi.mock("../../database/context", () => ({
   getDBFromContext: () => getDBFromContext(),
 }));
 
-const { CRON_TRIGGERED_BY, runWeeklyYouTubeSync } = await import("../weekly-sync");
+const { CRON_TRIGGERED_BY, YOUTUBE_SCAN_CRON, runDailyYouTubeScan, runWeeklyYouTubeSync } = await import("../weekly-sync");
 
 /** A successful scan, shaped like `resyncYouTubeRounds`'s return. */
 const SCAN = { success: true, runId: 1, channelsSynced: 36, videosFetched: 900, videosUpserted: 12 };
@@ -43,50 +40,48 @@ beforeEach(() => {
   resyncVideoViewCounts.mockResolvedValue(REFRESH);
 });
 
-describe("runWeeklyYouTubeSync", () => {
-  it("scans for new videos and refreshes view counts on one tick", async () => {
-    const result = await runWeeklyYouTubeSync();
+describe("runDailyYouTubeScan", () => {
+  it("scans for new videos and nothing else", async () => {
+    const result = await runDailyYouTubeScan();
 
     expect(resyncYouTubeRounds).toHaveBeenCalledOnce();
-    expect(resyncVideoViewCounts).toHaveBeenCalledExactlyOnceWith("db");
-    expect(result).toEqual({
-      rounds: { ok: true, result: SCAN },
-      viewCounts: { ok: true, result: REFRESH },
-    });
-  });
-
-  it("scans before refreshing, so new videos are stored before they are counted", async () => {
-    const order: string[] = [];
-    resyncYouTubeRounds.mockImplementation(async () => {
-      order.push("scan");
-      return SCAN;
-    });
-    resyncVideoViewCounts.mockImplementation(async () => {
-      order.push("refresh");
-      return REFRESH;
-    });
-
-    await runWeeklyYouTubeSync();
-
-    expect(order).toEqual(["scan", "refresh"]);
+    expect(resyncVideoViewCounts).not.toHaveBeenCalled();
+    expect(result).toEqual({ ok: true, result: SCAN });
   });
 
   it("marks the scan as cron-triggered so the run history tells it from an admin's", async () => {
-    await runWeeklyYouTubeSync();
+    await runDailyYouTubeScan();
 
     expect(resyncYouTubeRounds).toHaveBeenCalledWith(CRON_TRIGGERED_BY, undefined);
     // Not an email, so it can never collide with a real admin's address.
     expect(CRON_TRIGGERED_BY).not.toContain("@");
   });
 
-  it("still refreshes view counts when the scan throws", async () => {
+  it("reports a failed scan instead of rejecting", async () => {
     resyncYouTubeRounds.mockRejectedValue(new Error("channel listing failed"));
 
+    const result = await runDailyYouTubeScan();
+
+    expect(result).toEqual({ ok: false, error: expect.stringContaining("channel listing failed") });
+  });
+
+  it("runs every day, on a schedule wrangler.jsonc declares", async () => {
+    const { readFileSync } = await import("node:fs");
+    const { fileURLToPath } = await import("node:url");
+    const wrangler = readFileSync(fileURLToPath(new URL("../../../wrangler.jsonc", import.meta.url)), "utf8");
+
+    expect(YOUTUBE_SCAN_CRON.split(" ").slice(2)).toEqual(["*", "*", "*"]);
+    expect(wrangler).toContain(`"${YOUTUBE_SCAN_CRON}"`);
+  });
+});
+
+describe("runWeeklyYouTubeSync", () => {
+  it("refreshes view counts without rescanning the channels", async () => {
     const result = await runWeeklyYouTubeSync();
 
-    expect(resyncVideoViewCounts).toHaveBeenCalledOnce();
-    expect(result.rounds).toEqual({ ok: false, error: expect.stringContaining("channel listing failed") });
-    expect(result.viewCounts).toEqual({ ok: true, result: REFRESH });
+    expect(resyncVideoViewCounts).toHaveBeenCalledExactlyOnceWith("db");
+    expect(resyncYouTubeRounds).not.toHaveBeenCalled();
+    expect(result).toEqual({ viewCounts: { ok: true, result: REFRESH } });
   });
 
   it("reports a failed refresh instead of rejecting, so the tick is not an unhandled error", async () => {
@@ -94,7 +89,6 @@ describe("runWeeklyYouTubeSync", () => {
 
     const result = await runWeeklyYouTubeSync();
 
-    expect(result.rounds.ok).toBe(true);
     expect(result.viewCounts).toEqual({
       ok: false,
       error: expect.stringContaining("YouTube API key not configured"),
