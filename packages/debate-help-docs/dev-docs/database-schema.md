@@ -799,7 +799,7 @@ _Drizzle export `youtubeChannels`, `schema.ts:1139`._
 
 ### videos
 
-The public video library (`/api/videos`): rounds, lectures and top picks, seeded from `data/videos/*.json` by `db:seed:videos` and kept fresh by the weekly YouTube cron.
+The public video library (`/api/videos`): rounds, lectures and top picks, seeded from `data/videos/*.json` by `db:seed:videos` and kept fresh by the daily YouTube scan and weekly view-count cron.
 
 _Drizzle export `videos`, `schema.ts:1277`._
 
