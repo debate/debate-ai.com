@@ -24,6 +24,7 @@ import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react
 import { Briefcase, ChevronDown, ChevronUp, Inbox, Loader2, MapPin, Pencil, Plane, Scale, Send } from "lucide-react";
 
 import { cn } from "../../lib/ui/lib/utils";
+import { getTournamentLogo } from "../../lib/tournament-logo-map"
 import { PRACTICE_FORMATS, optionLabel, type PracticeFormat } from "../../lib/practice-partners/types";
 import { actOnHireRequest, fetchJudgePool, saveJudgeListing, sendHireRequest } from "../../lib/judge-pool/client";
 import { filterJudgePool } from "../../lib/judge-pool/filter";

@@ -155,6 +155,21 @@ export function VideoSidebarTree({
           isActive={activeId === "history"}
           icon={History}
         />
+
+        {(["wsd", "acc", "speech"] as const).map((id) => {
+          const link = SIDEBAR_VIDEO_LINKS_BY_ID[id];
+          return (
+            <TreeItem
+              key={link.id}
+              level={2}
+              href={link.href}
+              title={link.title}
+              icon={link.glyph}
+              count={counts?.[link.id]}
+              isActive={activeId === link.id}
+            />
+          );
+        })}
       </TreeItem>
 
       <ToolNavTree expandedSectionIds={expandedSectionIds} onToggleSection={toggleSection} />

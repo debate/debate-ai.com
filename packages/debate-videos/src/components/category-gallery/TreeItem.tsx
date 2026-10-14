@@ -105,7 +105,6 @@ export function TreeItem({
   sectionHref,
   title,
   count,
-  exactCount,
   isActive,
   icon,
   expanded,
@@ -179,7 +178,7 @@ export function TreeItem({
         {title}
       </Heading>
       {count != null && count > 0 && (
-        <span className="shrink-0 text-xs font-medium text-muted-foreground">{formatCount(count, { exact: exactCount })}</span>
+        <span className="shrink-0 text-xs font-medium text-muted-foreground">{formatCount(count)}</span>
       )}
     </>
   );
