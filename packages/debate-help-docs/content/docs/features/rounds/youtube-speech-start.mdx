@@ -4,12 +4,15 @@ title: "Select YouTube Start"
 
 # Select YouTube Start
 
-A speech in the round workspace can come from a YouTube video instead of a
-recording. Each speech's ⋮ menu has **Select YouTube Start** right under
-**Upload Speech Audio**. It opens a modal for that speech.
+A speech in the round workspace can come from a recording of the whole
+round instead of its own recording: a YouTube video, or an MP3 of the round
+such as the joined MP3 of every recorded speech. Each speech's ⋮ menu has
+**Select YouTube Start** right under **Upload Speech Audio**. It opens a
+modal for that speech.
 
 - **Where:** live round workspace, speech timer menu
 - **Package:** `debate-round` (`dialogs/YouTubeSpeechDialog.tsx`,
+  `dialogs/SpeechStartLabeler.tsx`,
   `round/youtube-speech-client.ts`), `debate-timer`
   (`recorder/youtube-speech-segments.ts`), `debate-speech-writer`
   (`prompts/youtube-speech-timestamps.ts`)
@@ -19,7 +22,9 @@ recording. Each speech's ⋮ menu has **Select YouTube Start** right under
 - **Upload audio or pick a video.** The "Upload audio" tab saves an audio
   file as the speech's recording, the same as the menu item. The "YouTube
   video" tab takes a pasted YouTube link (a `t=` start is kept) or a search,
-  which looks through the site's own video library.
+  which looks through the site's own video library. The "Round audio (MP3)"
+  tab plays the round's joined MP3, when there is one, or any MP3 link.
+  Both tabs label speeches the same way.
 - **Preview and mark the speech.** The video plays in the modal. Type a start
   and stop time, or press **Set to** to use where the video is now. **Play
   clip** plays just that stretch. **Save** keeps the clip for this speech.
@@ -41,3 +46,7 @@ recording. Each speech's ⋮ menu has **Select YouTube Start** right under
   pauses alone. If the video has no captions, speeches are laid out by their
   lengths from your start point, so set one first.
 - Clips are saved in this browser, beside the speech's recordings.
+- Saving all speeches on a YouTube video also marks their starts on that
+  video's watch page timeline, when the format's speech order there matches.
+- An MP3 has no captions unless the round's recording provides them; without
+  them, speeches are laid out by length from your start point.

@@ -12,8 +12,10 @@
  * Talk between speeches (a prep-time question, the judge asking for a doc) can
  * be skipped at a small cost, which is how prep time is allowed for.
  *
- * Also parses YouTube links and `h:mm:ss` timestamps, and keeps each speech's
- * chosen clip in localStorage beside its recording.
+ * Works the same on a YouTube video's captions and on captions of an audio
+ * file such as the round's joined MP3. Also parses YouTube links and
+ * `h:mm:ss` timestamps, and keeps each speech's chosen clip (from either
+ * source) in localStorage beside its recording.
  */
 
 import type { TimerSpeech } from "../types";
@@ -47,13 +49,28 @@ export interface SpeechSegment {
     expectedSeconds: number
 }
 
-/** A speech's chosen YouTube clip. */
-export interface YouTubeSpeechClip {
-    videoId: string
+/**
+ * What a speech clip plays from: a YouTube video, or an audio file by URL —
+ * e.g. the round's joined MP3 of every recorded speech.
+ */
+export type SpeechMediaSource =
+    | { kind: "youtube"; videoId: string }
+    | { kind: "audio"; url: string }
+
+/** A speech's chosen stretch of a video or audio file. */
+export interface SpeechMediaClip {
+    source: SpeechMediaSource
+    /** The video's title or the file's name, for display. */
     title?: string
     start: number
     end: number
     savedAt: string
+}
+
+/** Whether two sources are the same video or file. */
+export function sameMediaSource(a: SpeechMediaSource | null | undefined, b: SpeechMediaSource | null | undefined): boolean {
+    if (!a || !b || a.kind !== b.kind) return false
+    return a.kind === "youtube" ? a.videoId === (b as typeof a).videoId : a.url === (b as typeof a).url
 }
 
 const VIDEO_ID_RE = /^[A-Za-z0-9_-]{11}$/
@@ -293,24 +310,31 @@ export function suggestSpeechSegments(
 
 const CLIP_STORAGE_PREFIX = "debate-youtube-speech-"
 
-/** The YouTube clip saved for a speech, or `null`. */
-export function loadYouTubeSpeechClip(speechKey: string): YouTubeSpeechClip | null {
+function isSource(value: unknown): value is SpeechMediaSource {
+    if (!value || typeof value !== "object") return false
+    const source = value as Partial<{ kind: string; videoId: string; url: string }>
+    if (source.kind === "youtube") return typeof source.videoId === "string" && VIDEO_ID_RE.test(source.videoId)
+    return source.kind === "audio" && typeof source.url === "string" && source.url.length > 0
+}
+
+/** The clip saved for a speech, or `null`. */
+export function loadSpeechMediaClip(speechKey: string): SpeechMediaClip | null {
     try {
         const raw = localStorage.getItem(CLIP_STORAGE_PREFIX + speechKey)
         if (!raw) return null
-        const clip = JSON.parse(raw) as YouTubeSpeechClip
-        return VIDEO_ID_RE.test(clip.videoId) && Number.isFinite(clip.start) ? clip : null
+        const clip = JSON.parse(raw) as SpeechMediaClip
+        return isSource(clip.source) && Number.isFinite(clip.start) && Number.isFinite(clip.end) ? clip : null
     } catch {
         return null
     }
 }
 
-/** Save (or with `null`, clear) a speech's YouTube clip. */
-export function saveYouTubeSpeechClip(speechKey: string, clip: Omit<YouTubeSpeechClip, "savedAt"> | null): void {
+/** Save (or with `null`, clear) a speech's clip; announces `debate-speech-clip-saved`. */
+export function saveSpeechMediaClip(speechKey: string, clip: Omit<SpeechMediaClip, "savedAt"> | null): void {
     try {
         if (!clip) localStorage.removeItem(CLIP_STORAGE_PREFIX + speechKey)
         else localStorage.setItem(CLIP_STORAGE_PREFIX + speechKey, JSON.stringify({ ...clip, savedAt: new Date().toISOString() }))
-        window.dispatchEvent(new CustomEvent("debate-youtube-speech-saved", { detail: { speechKey } }))
+        window.dispatchEvent(new CustomEvent("debate-speech-clip-saved", { detail: { speechKey } }))
     } catch {
         // Storage full or blocked — the clip simply isn't remembered.
     }

@@ -12,10 +12,10 @@ import { debateStyles } from "../src/formats/debate-format-times";
 import {
   buildSpokenBlocks,
   formatTimestamp,
-  loadYouTubeSpeechClip,
+  loadSpeechMediaClip,
   parseTimestamp,
   parseYouTubeInput,
-  saveYouTubeSpeechClip,
+  saveSpeechMediaClip,
   scheduleSpeechSegments,
   speechSegmentKeys,
   suggestSpeechSegments,
@@ -143,13 +143,15 @@ describe("scheduleSpeechSegments", () => {
   });
 });
 
-describe("YouTube clip storage", () => {
+describe("speech clip storage", () => {
   afterEach(() => localStorage.clear());
 
-  it("saves, loads and clears a speech's clip", () => {
-    saveYouTubeSpeechClip("1AC", { videoId: "dQw4w9WgXcQ", start: 10, end: 490 });
-    expect(loadYouTubeSpeechClip("1AC")).toMatchObject({ videoId: "dQw4w9WgXcQ", start: 10, end: 490 });
-    saveYouTubeSpeechClip("1AC", null);
-    expect(loadYouTubeSpeechClip("1AC")).toBeNull();
+  it("saves, loads and clears a YouTube or audio clip", () => {
+    saveSpeechMediaClip("1AC", { source: { kind: "youtube", videoId: "dQw4w9WgXcQ" }, start: 10, end: 490 });
+    expect(loadSpeechMediaClip("1AC")).toMatchObject({ source: { videoId: "dQw4w9WgXcQ" }, start: 10, end: 490 });
+    saveSpeechMediaClip("1NC", { source: { kind: "audio", url: "https://r2.example/round.mp3" }, start: 500, end: 980 });
+    expect(loadSpeechMediaClip("1NC")?.source).toEqual({ kind: "audio", url: "https://r2.example/round.mp3" });
+    saveSpeechMediaClip("1AC", null);
+    expect(loadSpeechMediaClip("1AC")).toBeNull();
   });
 });

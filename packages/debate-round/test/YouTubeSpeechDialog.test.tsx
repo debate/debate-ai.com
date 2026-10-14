@@ -10,7 +10,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import { YouTubeSpeechDialog } from "../src/dialogs/YouTubeSpeechDialog"
-import { loadYouTubeSpeechClip } from "@debate/timer/src/recorder/youtube-speech-segments"
+import { loadSpeechMediaClip } from "@debate/timer/src/recorder/youtube-speech-segments"
+import { readSpeechStarts } from "@debate/videos/src/state/speechStartMarks"
 import { buttonByText, cleanup, click, flush, mount, typeInto } from "./dom-helpers"
 
 /** Captions for an LD round: each speech is continuous talk, with a minute of quiet between. */
@@ -66,7 +67,7 @@ describe("YouTubeSpeechDialog", () => {
     expect(iframe.src).toContain("start=95")
 
     await click(buttonByText("Save for AC"))
-    expect(loadYouTubeSpeechClip("AC")).toMatchObject({ videoId: "abcdefghijk", start: 95 })
+    expect(loadSpeechMediaClip("AC")).toMatchObject({ source: { kind: "youtube", videoId: "abcdefghijk" }, start: 95 })
   })
 
   it("searches the site's videos and suggests every speech of the video's format", async () => {
@@ -87,6 +88,36 @@ describe("YouTubeSpeechDialog", () => {
     expect(document.body.textContent).toContain("AI unavailable: Sign in to use AI.")
 
     await click(buttonByText("Save all 7"))
-    expect(loadYouTubeSpeechClip("NC")).toMatchObject({ videoId: "abcdefghijk", start: 30 + 360 + 60 + 180 + 60 })
+    expect(loadSpeechMediaClip("NC")).toMatchObject({ source: { videoId: "abcdefghijk" }, start: 30 + 360 + 60 + 180 + 60 })
+    // The watch page's speech marks for the same video now agree.
+    expect(Object.values(readSpeechStarts("abcdefghijk"))).toContain(30)
+  })
+
+  it("labels the round's joined MP3 with its known starts", async () => {
+    const onSaveAll = vi.fn()
+    const segments = [
+      { key: "AC", name: "AC", start: 0, end: 355, expectedSeconds: 360 },
+      { key: "CX after AC", name: "CX", start: 360, end: 540, expectedSeconds: 180 },
+    ]
+    await mount(
+      <YouTubeSpeechDialog
+        open
+        onOpenChange={() => {}}
+        speechName="AC"
+        roundAudio={{ url: "https://files.example/round.mp3", title: "Joined round", segments, onSaveAll }}
+      />,
+    )
+    await click(buttonByText("Round audio (MP3)"))
+    await click(buttonByText("Joined round"))
+
+    expect((document.querySelector("audio") as HTMLAudioElement).src).toBe("https://files.example/round.mp3")
+    expect((document.querySelector('input[aria-label="Speech starts"]') as HTMLInputElement).value).toBe("0:00")
+    await click(buttonByText("Save all 2"))
+    expect(onSaveAll).toHaveBeenCalledWith(segments)
+    expect(loadSpeechMediaClip("CX after AC")).toMatchObject({
+      source: { kind: "audio", url: "https://files.example/round.mp3" },
+      start: 360,
+      end: 540,
+    })
   })
 })

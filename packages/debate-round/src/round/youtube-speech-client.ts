@@ -1,8 +1,9 @@
 /**
- * @fileoverview Network side of the speech menu's "Select YouTube Start":
- * searches the site's own video library, loads a video's captions from
- * `/api/transcript`, and asks `/api/reason-ai` to place the format's speeches
- * on the video. The caption-gap placement it starts from is pure and lives in
+ * @fileoverview Network side of the speech start labeler (the speech menu's
+ * "Select YouTube Start"): searches the site's own video library, loads a
+ * video's captions from `/api/transcript`, and asks `/api/reason-ai` to place
+ * the format's speeches on a recording — a YouTube video or an audio file
+ * such as the round's joined MP3, given its captions. The caption-gap placement it starts from is pure and lives in
  * `debate-timer` (`recorder/youtube-speech-segments.ts`); the prompt lives in
  * `debate-speech-writer` (`prompts/youtube-speech-timestamps.ts`).
  *
@@ -86,6 +87,12 @@ export function styleIndexForVideoStyle(style: number | null): number | null {
   }
 }
 
+/** The library style number (1 Policy, 2 PF, 3 LD, 4 College) for a `debateStyles` index. */
+export function videoStyleForStyleIndex(index: number): number | null {
+  for (const style of [1, 2, 3, 4]) if (styleIndexForVideoStyle(style) === index) return style
+  return null
+}
+
 const MAX_TOKENS = 2048
 
 /**
@@ -95,7 +102,10 @@ const MAX_TOKENS = 2048
  * rule lengths laid end to end from `firstStart` when there are no captions.
  */
 export async function suggestSpeechTimestamps(options: {
-  videoId: string
+  /** The recording's captions — a YouTube video's (see `fetchCaptions`) or an audio file's. */
+  snippets: CaptionSnippet[]
+  /** Why there are no captions, when there are none. */
+  unavailable?: string
   formatName: string
   speeches: TimerSpeech[]
   prepMinutes: number
@@ -105,8 +115,7 @@ export async function suggestSpeechTimestamps(options: {
   captionsOnly?: boolean
   endpoint?: string
 }): Promise<SpeechTimestampSuggestion> {
-  const { videoId, formatName, speeches, prepMinutes, firstStart = null, captionsOnly = false } = options
-  const { snippets, unavailable } = await fetchCaptions(videoId)
+  const { snippets, unavailable, formatName, speeches, prepMinutes, firstStart = null, captionsOnly = false } = options
   // Captions before the marked start belong to no speech.
   const usable = firstStart != null ? snippets.filter((s) => s.start + s.duration >= firstStart - 2) : snippets
   const baseline = usable.length > 0 ? suggestSpeechSegments(usable, speeches) : null
