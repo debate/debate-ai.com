@@ -358,7 +358,8 @@ in `worker/index.ts`:
 
 | Cron (UTC) | Jobs |
 | --- | --- |
-| `0 8 * * MON` | YouTube channel scan and view-count refresh (needs `YOUTUBE_API_KEY`); purge of old `reuse_check_log` rows; finishing the card search FTS and sort indexes; opening automatic prediction markets. |
+| `0 6 * * *` | Daily YouTube channel scan for new videos (needs `YOUTUBE_API_KEY`). |
+| `0 8 * * MON` | YouTube view-count refresh (needs `YOUTUBE_API_KEY`); purge of old `reuse_check_log` rows; finishing the card search FTS and sort indexes; opening automatic prediction markets. |
 | `0 7 * * SUN` | Weekly backup of content tables (videos, cards, history; no user data) to R2 and KV. |
 
 ## Troubleshooting
