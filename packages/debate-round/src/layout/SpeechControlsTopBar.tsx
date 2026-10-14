@@ -65,6 +65,8 @@ export interface SpeechControlsTopBarProps {
   recordingKey?: string
   /** Emails to notify via the recording menu's "Share with Opponents" — see `round/round-recording-share.ts`. */
   participantEmails?: string[]
+  /** The round "Join round recording" joins; see `round/round-recording-items.ts`. */
+  roundRecording?: { roundId: string; items: Array<{ key: string; label: string }> }
   /** Whether to render the recording menu here — false when the round sidebar already shows it under the speech. */
   showRecordingMenu?: boolean
   /** Whether to render the view controls here — false when the round sidebar shows them above its speeches. */
@@ -97,6 +99,7 @@ export function SpeechControlsTopBar({
   onDeleteRecording,
   recordingKey,
   participantEmails,
+  roundRecording,
   showRecordingMenu = true,
   showViewControls = true,
   leadingActions,
@@ -137,6 +140,7 @@ export function SpeechControlsTopBar({
           onDeleteRecording={hasRecording ? onDeleteRecording : undefined}
           recordingKey={recordingKey}
           participantEmails={participantEmails}
+          roundRecording={roundRecording}
           inHeader={true}
         />
       )}

@@ -24,3 +24,13 @@ playback. Entry `src/index.ts`, tests in `test/`.
   not stop the timer — timing is the primary function, recording is secondary.
 - `@ricky0123/vad-web` is pinned via a root `overrides` entry; don't bump it
   casually.
+
+## The joined round recording
+
+- `RoundRecordingDialog` joins the per-speech recordings into one MP3 in the
+  browser; the big blobs (MP3, captions, webcam clips) live in IndexedDB via
+  `recorder/media-store.ts`, never localStorage.
+- Uploading to R2 (`/api/round-recordings`) happens only on the dialog's
+  "Save to cloud" button — keep it that way.
+- `SpeechStartsDialog` is shared with `debate-videos`' watch page; it only
+  takes a playhead, a seek callback and a length, so keep it media-agnostic.

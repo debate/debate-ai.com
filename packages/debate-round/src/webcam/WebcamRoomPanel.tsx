@@ -23,6 +23,7 @@ import { Camera, CameraOff, ChevronDown, ChevronRight, Mic, MicOff, PhoneOff, Sw
 import { cn } from "../ui/lib/utils"
 import { roomIdForRound, type RoomRole } from "./room-protocol"
 import { useWebcamRoom } from "./useWebcamRoom"
+import { useRoomSpeechRecorder } from "./useRoomSpeechRecorder"
 import { ROOM_ROLE_LABELS, roomTileLabel } from "./room-labels"
 import type { Round } from "../types/flow"
 
@@ -128,6 +129,7 @@ export function WebcamRoomPanel({ round, apiBase }: { round: Round; apiBase?: st
   const roomId = roomIdForRound(round)
   const [joinRole, setJoinRole] = useState<RoomRole>("speaker")
   const room = useWebcamRoom(roomId, { apiBase, role: joinRole })
+  useRoomSpeechRecorder(room.participants)
 
   const joined = room.status === "joined" || room.status === "connecting"
   const btn =
