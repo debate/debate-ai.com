@@ -15,7 +15,7 @@ import {
   type LiveRoomInput,
 } from "../src/ui/live/demo-live";
 import { LiveRoundBadge, LiveStatusCell } from "../src/ui/live/LiveRoom";
-import { PAIRINGS_EMBLEM, Schematic } from "../src/ui/pages/RoundPage";
+import { PAIRINGS_EMBLEM, PANOPTICON_QUOTE, PANOPTICON_RELATED, Schematic } from "../src/ui/pages/RoundPage";
 
 const room: LiveRoomInput = { sectionId: 4242, eventAbbr: "VCX", eventType: "debate", entries: ["Alpha AB", "Beta CD"], judgeCount: 3 };
 
@@ -121,5 +121,14 @@ describe("live UI", () => {
 
   it("shows the emblem in the pairings header on every tournament", () => {
     expect(renderToString(<Schematic round={round} />)).toContain(PAIRINGS_EMBLEM);
+  });
+
+  it("gives the emblem the Panopticon quote as a tooltip, with its dialog closed until clicked", () => {
+    const html = renderToString(<Schematic round={round} />);
+    expect(html).toContain("This Panopticon, subtly arranged");
+    expect(html).toContain("p. 207.");
+    expect(PANOPTICON_QUOTE.source).toContain("Michel Foucault");
+    expect(PANOPTICON_RELATED).toHaveLength(4);
+    expect(html).not.toContain('role="dialog"');
   });
 });

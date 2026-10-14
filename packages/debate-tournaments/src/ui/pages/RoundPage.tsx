@@ -1,6 +1,7 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
+import { X } from "lucide-react";
 import type { RoundSchematic } from "../client";
 import { isLiveDemo, type LiveRoomInput } from "../live/demo-live";
 import { LiveRoomPanel, LiveStatusCell, useNow } from "../live/LiveRoom";
@@ -9,6 +10,38 @@ import { BackLink, Empty, Loaded, formatDate, useApi, useTournaments } from "../
 
 /** The emblem in the top-right corner of a round's pairings. */
 export const PAIRINGS_EMBLEM = "https://i.imgur.com/ejU0Qon.png";
+
+/** A quote and its source line. */
+export interface Quote {
+  text: string;
+  source: string;
+}
+
+/** The quote the emblem shows as its tooltip and at the top of its dialog. */
+export const PANOPTICON_QUOTE: Quote = {
+  text: "“This Panopticon, subtly arranged so that an observer may observe, at a glance, so many different individuals, also enables everyone to come and observe any of the observers.”",
+  source: "— Michel Foucault, Discipline and Punish, translated by Alan Sheridan, “Panopticism,” p. 207.",
+};
+
+/** Related passages listed under the main quote in the emblem's dialog. */
+export const PANOPTICON_RELATED: Quote[] = [
+  {
+    text: "“It has become a transparent building in which the exercise of power may be supervised by society as a whole.”",
+    source: "— Foucault, Discipline and Punish, p. 207.",
+  },
+  {
+    text: "“The disciplinary mechanism will be democratically controlled, since it will be constantly accessible ‘to the great tribunal committee of the world’.”",
+    source: "— Foucault, Discipline and Punish, p. 207; the embedded phrase comes from Bentham.",
+  },
+  {
+    text: "“Its aim is to strengthen the social forces—to increase production, to develop the economy, spread education, raise the level of public morality; to increase and multiply.”",
+    source: "— Foucault, Discipline and Punish, pp. 207–208.",
+  },
+  {
+    text: "“He who is subjected to a field of visibility, and who knows it, assumes responsibility for the constraints of power; he makes them play spontaneously upon himself.”",
+    source: "— Foucault, Discipline and Punish, p. 202.",
+  },
+];
 
 /** One round's pairings: rooms, entries (sides or speaker order) and judges. */
 export function RoundPage({ tournId, eventAbbr, roundName }: { tournId: number; eventAbbr: string; roundName: string }) {
@@ -19,6 +52,72 @@ export function RoundPage({ tournId, eventAbbr, roundName }: { tournId: number; 
       <BackLink href={hrefs.rounds(tournId)}>All pairings</BackLink>
       <Loaded state={state}>{(round) => <Schematic round={round} live={isLiveDemo(tournId)} />}</Loaded>
     </div>
+  );
+}
+
+/** The pairings emblem: hovering shows the Foucault quote, clicking opens it in a dialog. */
+export function PairingsEmblem() {
+  const [open, setOpen] = useState(false);
+  const tooltip = `${PANOPTICON_QUOTE.text}\n\n${PANOPTICON_QUOTE.source}`;
+
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [open]);
+
+  return (
+    <>
+      <button
+        type="button"
+        title={tooltip}
+        aria-label="Show the Panopticon quote"
+        aria-haspopup="dialog"
+        onClick={() => setOpen(true)}
+        className="shrink-0 cursor-pointer rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        <img src={PAIRINGS_EMBLEM} alt="" width={80} height={80} className="size-16 rounded-full md:size-20" />
+      </button>
+      {open && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Panopticism"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 p-4 backdrop-blur-sm"
+        >
+          <button type="button" aria-hidden tabIndex={-1} className="absolute inset-0 cursor-default" onClick={() => setOpen(false)} />
+          <div className="relative max-h-[90vh] w-full max-w-lg space-y-5 overflow-y-auto rounded-xl border bg-card p-6 shadow-lg">
+            <button
+              type="button"
+              autoFocus
+              aria-label="Close"
+              onClick={() => setOpen(false)}
+              className="absolute right-3 top-3 rounded-md p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
+            >
+              <X className="size-4" />
+            </button>
+            <img src={PAIRINGS_EMBLEM} alt="" width={80} height={80} className="mx-auto size-20 rounded-full" />
+            <figure className="space-y-2">
+              <blockquote className="text-base italic leading-relaxed">{PANOPTICON_QUOTE.text}</blockquote>
+              <figcaption className="text-sm text-muted-foreground">{PANOPTICON_QUOTE.source}</figcaption>
+            </figure>
+            <ul className="space-y-4 border-t pt-4">
+              {PANOPTICON_RELATED.map((quote) => (
+                <li key={quote.text}>
+                  <figure className="space-y-1">
+                    <blockquote className="text-sm italic leading-relaxed">{quote.text}</blockquote>
+                    <figcaption className="text-xs text-muted-foreground">{quote.source}</figcaption>
+                  </figure>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
@@ -51,7 +150,7 @@ export function Schematic({
             </p>
           )}
         </div>
-        <img src={PAIRINGS_EMBLEM} alt="" width={80} height={80} className="size-16 shrink-0 rounded-full md:size-20" />
+        <PairingsEmblem />
       </div>
       {sections.length === 0 ? (
         <Empty>No sections in this round.</Empty>
