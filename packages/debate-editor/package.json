@@ -57,6 +57,7 @@
     "@debate/data-sync": "workspace:*",
     "fast-xml-parser": "^5.11.2",
     "fflate": "^0.8.3",
+    "kokoro-js": "^1.2.1",
     "loro-crdt": "1.16.4",
     "loro-prosemirror": "0.4.4",
     "lucide-react": "^1.55.0",

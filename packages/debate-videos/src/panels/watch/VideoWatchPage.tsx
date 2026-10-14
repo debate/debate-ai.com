@@ -55,8 +55,9 @@ import type React from "react"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { AlertCircle, ArrowLeft, Calendar, Clock, Eye, ListPlus, Loader2 } from "lucide-react"
+import { AlertCircle, ArrowLeft, Calendar, Clock, Eye, ListOrdered, ListPlus, Loader2 } from "lucide-react"
 import { CommentSection } from "@debate/comments"
+import { SpeechStartsDialog } from "@debate/timer"
 
 import { WatchToolbar } from "../../components/watch/WatchToolbar"
 import { WatchSidePanel, type WatchSideTab } from "../../components/watch/WatchSidePanel"
@@ -109,6 +110,7 @@ import {
   type RoundSpeech,
 } from "../../lib/round-speeches"
 import { resolveRoundSpeeches } from "../../lib/round-formats"
+import { stripArgumentLines } from "../../lib/video-description"
 import type { RoundContext } from "../../lib/speech-outcomes"
 import { readSpeechStarts, writeSpeechStart } from "../../state/speechStartMarks"
 import { readSpeechSegmentation, writeSpeechSegmentation } from "../../state/speechAiCache"
@@ -126,6 +128,34 @@ const NO_VIDEOS: VideoType[] = []
 
 /** How many search results the list under the player shows at once. */
 const RELATED_SEARCH_PAGE_SIZE = 40
+
+/** A team badge with its argument in small type underneath, when recorded. */
+function TeamWithArgument({
+  argument,
+  side,
+  children,
+}: {
+  argument?: string | null
+  side: "aff" | "neg"
+  children: React.ReactNode
+}) {
+  const label = argument?.trim()
+  if (!label) return <>{children}</>
+  return (
+    <span className="inline-flex max-w-[16rem] flex-col items-start gap-0.5">
+      {children}
+      <span
+        title={`${side === "aff" ? "1AC" : "2NR"}: ${label}`}
+        className={cn(
+          "text-xs font-medium leading-tight",
+          side === "aff" ? "text-blue-700 dark:text-blue-300" : "text-red-700 dark:text-red-300",
+        )}
+      >
+        {label}
+      </span>
+    </span>
+  )
+}
 
 /** How long the permalink control shows its "copied" tick. */
 const COPIED_FEEDBACK_MS = 1800
@@ -200,6 +230,13 @@ export function VideoWatchPage({
     arg1AC,
     arg2NR,
   ] = video
+
+  // The arguments already show under the team names, so the description's
+  // own "1AC: …" / "2NR: …" lines would only repeat them.
+  const shownDescription = useMemo(
+    () => (description ? stripArgumentLines(description, affTeam ? arg1AC : null, negTeam ? arg2NR : null) : ""),
+    [description, affTeam, negTeam, arg1AC, arg2NR],
+  )
 
   const styleNumber = typeof style === "number" ? style : undefined
   const categoryLabel = typeof style === "string" ? style : undefined
@@ -341,6 +378,7 @@ export function VideoWatchPage({
     [videoId],
   )
   const markedKeys = useMemo(() => new Set(Object.keys(speechMarks)), [speechMarks])
+  const [startsDialogOpen, setStartsDialogOpen] = useState(false)
   /** The speeches the AI found in the captions, kept in this browser per video. */
   const [segmentation, setSegmentation] = useState<SpeechSegmentation | null>(null)
   const [detecting, setDetecting] = useState(false)
@@ -365,6 +403,13 @@ export function VideoWatchPage({
       ),
     [baseSpeeches, segmentation, speechMarks, sentences],
   )
+  /** The speeches as the shared speech-start modal (@debate/timer) takes them. */
+  const speechStartItems = useMemo(() => speeches.map(({ key, label }) => ({ key, label })), [speeches])
+  const speechStartSeconds = useMemo(() => {
+    const starts: Record<string, number> = {}
+    for (const speech of speeches) if (speech.startSeconds !== null) starts[speech.key] = speech.startSeconds
+    return starts
+  }, [speeches])
   const roundTranscript = useMemo(
     () => (baseSpeeches.length > 0 ? captionText(sentences) : ""),
     [baseSpeeches.length, sentences],
@@ -728,7 +773,7 @@ export function VideoWatchPage({
         <div className="grid grid-cols-1 gap-4 lg:gap-6 lg:grid-cols-[minmax(0,1fr)_380px] items-start">
           <div className="min-w-0 space-y-3 bg-background">
             <div className="flex items-center justify-between gap-3 flex-wrap">
-              <div className="flex items-center gap-1.5 flex-wrap min-w-0">
+              <div className="flex items-start gap-1.5 flex-wrap min-w-0">
                 {categoryLabel && (
                   <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] uppercase tracking-wide bg-muted text-muted-foreground">
                     {categoryLabel}
@@ -770,34 +815,39 @@ export function VideoWatchPage({
                 )}
                 {/* The two teams sit right after the level, in the same row as
                     the round's other badges: aff blue, neg red, the winner
-                    ringed in gold. */}
+                    ringed in gold. Each team's argument (the 1AC for aff, the
+                    2NR for neg) sits in small type right under its name. */}
                 {affTeam && (
-                  <button
-                    onClick={() => handleBadgeClick(affTeam)}
-                    title={`Affirmative: ${affTeam}`}
-                    className={cn(
-                      "text-sm font-bold backdrop-blur-md px-2 py-1 rounded",
-                      affWin === true
-                        ? "border-2 border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)] text-blue-100 bg-blue-900/80"
-                        : "border border-blue-400/90 shadow-lg text-blue-300 bg-blue-900/80",
-                    )}
-                  >
-                    {affTeam}
-                  </button>
+                  <TeamWithArgument argument={arg1AC} side="aff">
+                    <button
+                      onClick={() => handleBadgeClick(affTeam)}
+                      title={`Affirmative: ${affTeam}`}
+                      className={cn(
+                        "text-sm font-bold backdrop-blur-md px-2 py-1 rounded",
+                        affWin === true
+                          ? "border-2 border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)] text-blue-100 bg-blue-900/80"
+                          : "border border-blue-400/90 shadow-lg text-blue-300 bg-blue-900/80",
+                      )}
+                    >
+                      {affTeam}
+                    </button>
+                  </TeamWithArgument>
                 )}
                 {negTeam && (
-                  <button
-                    onClick={() => handleBadgeClick(negTeam)}
-                    title={`Negative: ${negTeam}`}
-                    className={cn(
-                      "text-sm font-bold backdrop-blur-md px-2 py-1 rounded",
-                      affWin === false
-                        ? "border-2 border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)] text-red-100 bg-red-900/80"
-                        : "border border-red-400/90 shadow-lg text-red-300 bg-red-900/80",
-                    )}
-                  >
-                    {negTeam}
-                  </button>
+                  <TeamWithArgument argument={arg2NR} side="neg">
+                    <button
+                      onClick={() => handleBadgeClick(negTeam)}
+                      title={`Negative: ${negTeam}`}
+                      className={cn(
+                        "text-sm font-bold backdrop-blur-md px-2 py-1 rounded",
+                        affWin === false
+                          ? "border-2 border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)] text-red-100 bg-red-900/80"
+                          : "border border-red-400/90 shadow-lg text-red-300 bg-red-900/80",
+                      )}
+                    >
+                      {negTeam}
+                    </button>
+                  </TeamWithArgument>
                 )}
               </div>
 
@@ -876,12 +926,38 @@ export function VideoWatchPage({
             </div>
 
             {speeches.length > 0 && (
-              <WatchSpeechTimeline
-                speeches={speeches}
-                currentTime={currentTime}
-                duration={duration}
-                onSelect={handleSpeechSelect}
-              />
+              <div className="flex items-center gap-2">
+                <div className="min-w-0 flex-1">
+                  <WatchSpeechTimeline
+                    speeches={speeches}
+                    currentTime={currentTime}
+                    duration={duration}
+                    onSelect={handleSpeechSelect}
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setStartsDialogOpen(true)}
+                  className="inline-flex h-7 shrink-0 items-center gap-1 rounded border border-border px-2 text-xs hover:bg-muted"
+                  title="Label where each speech begins"
+                >
+                  <ListOrdered className="h-3.5 w-3.5" />
+                  Speech starts
+                </button>
+                {/* The same modal labels the joined round MP3 (@debate/timer's
+                    RoundRecordingDialog); docked, so the player stays usable. */}
+                <SpeechStartsDialog
+                  open={startsDialogOpen}
+                  onOpenChange={setStartsDialogOpen}
+                  modal={false}
+                  items={speechStartItems}
+                  starts={speechStartSeconds}
+                  durationSeconds={duration}
+                  currentTime={currentTime}
+                  onSeek={seekTo}
+                  onChange={handleMarkStart}
+                />
+              </div>
             )}
 
             <WatchStackPlaylist current={video} stack={stack} />
@@ -913,24 +989,9 @@ export function VideoWatchPage({
                 {judgeDecision && <span>Decision {judgeDecision}</span>}
               </div>
 
-              {(arg1AC || arg2NR) && (
-                <div className="flex flex-wrap items-start gap-2">
-                  {arg1AC && (
-                    <span className="text-xs font-medium text-blue-100 backdrop-blur-md bg-blue-950/90 px-2 py-0.5 rounded border border-blue-800/50 shadow-sm leading-tight">
-                      1AC: {arg1AC}
-                    </span>
-                  )}
-                  {arg2NR && (
-                    <span className="text-xs font-medium text-red-100 backdrop-blur-md bg-red-950/90 px-2 py-0.5 rounded border border-red-800/50 shadow-sm leading-tight">
-                      2NR: {arg2NR}
-                    </span>
-                  )}
-                </div>
-              )}
-
-              {description && (
+              {shownDescription && (
                 <p className="text-sm text-muted-foreground whitespace-pre-line max-w-3xl">
-                  {description}
+                  {shownDescription}
                 </p>
               )}
             </div>
