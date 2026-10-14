@@ -10,7 +10,7 @@ import Link from "next/link";
 import Image, { StaticImageData } from "next/image";
 import { GlowingEffect } from "../../ui/effects/glowing-effect";
 import { cn } from "../../ui/lib/utils";
-import { History, Clapperboard, Globe, type LucideIcon } from "lucide-react";
+import { History, Clapperboard, Globe as GlobeIcon, Users, Mic, type LucideIcon } from "lucide-react";
 import { IconTrophyGoat, IconLeaderboard, IconTrophy, IconLectures } from "../../ui/icons";
 import { isImageIcon } from "./tree-item-icon";
 import { formatCount } from "./format-count";
@@ -84,7 +84,7 @@ const QUICK_LINK_STYLES: Record<string, QuickLinkStyle> = {
     iconBg: "bg-cyan-500/15 ring-1 ring-cyan-500/30",
   },
   wsd: {
-    glyph: Globe,
+    glyph: GlobeIcon,
     gradient: "from-blue-500/20 via-indigo-500/10 to-transparent",
     iconBg: "bg-blue-500/15 ring-1 ring-blue-500/30",
   },
