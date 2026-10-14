@@ -154,7 +154,7 @@ export function LeaderboardPanel({
   const datasetId = datasetIds[Math.min(datasetIndex, datasetIds.length - 1)] ?? null
   /**
    * `debate-rankings` covers the current season only; older years show the
-   * banner alone, plus the scraped college policy table on NDT (2010–2025).
+   * banner alone, plus the scraped college policy table on NDT (2010–2026).
    */
   const { dataset, loading, error, debateHistory, championsLoading } =
     useLeaderboardData(isCurrentYear ? datasetId : null, history)
