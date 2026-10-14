@@ -150,14 +150,6 @@ async function buildAuth() {
       sendOnSignUp: false,
       autoSignInAfterVerification: true,
     },
-    // A top-level option, not a plugin: inside `plugins: [...]` it was a
-    // syntax error that broke every typecheck and build.
-    emailAndPassword: {
-      enabled: true,
-      disableSignUp: true, // Only allow demo user, no public sign-up
-      minPasswordLength: 1, // Allow short password for demo
-      autoSignIn: true,
-    },
     plugins: [
       oneTap(),
       openAPI(),

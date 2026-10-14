@@ -229,13 +229,12 @@ describe("the sidebar's heading structure", () => {
     expect(html).toContain("My Favorites");
   });
 
-  it("prints the College Policy total in full in the tree", () => {
-    // The sidebar row sits next to the title, where an abbreviated count
-    // fits — but the number is the round archive's headline figure, so the
-    // tree abbreviates every total except this one.
+  it("prints all totals in k format in the tree", () => {
+    // All counts now use k format consistently.
     const html = renderSidebar({ counts: { college: 1400, policy: 1346 } });
-    expect(html).toContain(">1400<");
+    expect(html).toContain(">1.4k<");
     expect(html).toContain(">1.3k<");
+    expect(html).not.toContain("1400");
   });
 
   it("keeps the glossary and rankings pair inside the Practice section", () => {
@@ -268,9 +267,7 @@ describe("QuickLinksGrid", () => {
     }
   });
 
-  it("prints the College Policy total in full on every layout", () => {
-    // Rounded to `1.4k`, the round archive's flagship number both lost its
-    // digits and read lower than it is. Every other tile still abbreviates.
+  it("prints all counts in k format on every layout", () => {
     for (const layout of ["grid", "list"] as const) {
       const html = renderToStaticMarkup(
         createElement(QuickLinksGrid, {
@@ -278,9 +275,9 @@ describe("QuickLinksGrid", () => {
           layout,
         }),
       );
-      expect(html).toContain(">1400<");
+      expect(html).toContain(">1.4k<");
       expect(html).toContain(">1.3k<");
-      expect(html).not.toContain("1.4k");
+      expect(html).not.toContain("1400");
     }
   });
 });
