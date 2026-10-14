@@ -1,7 +1,7 @@
 {
   "appName": "Debate AI",
   "productName": "Debate AI",
-  "identifier": "com.debateai.app",
+  "identifier": "com.debate.ai",
   "version": "1.0.0",
   "url": "https://debate-ai.com",
   "sources": [
@@ -42,11 +42,11 @@
     "resizable": true
   },
   "android": {
-    "packageName": "com.debateai.app",
+    "packageName": "com.debate.ai",
     "minSdkVersion": 24
   },
   "ios": {
-    "bundleId": "com.debateai.app",
+    "bundleId": "com.debate.ai",
     "minimumSystemVersion": "14.0"
   }
 }

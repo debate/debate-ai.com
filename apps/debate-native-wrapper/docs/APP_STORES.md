@@ -50,7 +50,7 @@ Distinct from notarized-`.dmg` distribution outside the Store (which uses a Deve
        <!-- Tauri's webview needs JIT; omitting this is a documented cause of
             crash-on-launch after notarization. -->
        <key>com.apple.security.cs.allow-jit</key><true/>
-       <key>com.apple.application-identifier</key><string>$TEAM_ID.com.debateai.app</string>
+       <key>com.apple.application-identifier</key><string>$TEAM_ID.com.debate.ai</string>
        <key>com.apple.developer.team-identifier</key><string>$TEAM_ID</string>
    </dict>
    </plist>
