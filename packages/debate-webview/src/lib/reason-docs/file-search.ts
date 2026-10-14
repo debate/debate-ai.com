@@ -5,10 +5,11 @@
  *
  * The palette's tool catalogue is ranked by fuse.js; files are not, because
  * a fuzzy match over a whole card file's text turns every query into a hit.
- * Here a file matches when every word of the query appears in its name or its
- * text, a name hit outranks a contents hit, and a contents hit carries a
- * snippet of the text around the first matched word so the row shows *why*
- * it matched.
+ * Here a file matches when every word of the query appears in its name, one
+ * of its outline headings, or its text. A name hit outranks an outline hit,
+ * which outranks a contents hit; an outline hit names the heading and a
+ * contents hit carries a snippet of the text around the first matched word,
+ * so the row shows *why* it matched.
  *
  * Pure on purpose: the palette builds {@link FileSearchEntry} rows from the
  * provider (turning `.cmir` rows into text with CardMirror's engine, which is
@@ -27,12 +28,17 @@ export interface FileSearchEntry {
   folder: string
   /** The file's text with markup stripped; `""` while it isn't converted yet. */
   text: string
+  /** The file's outline — its pocket, hat, block and tag headings, in order. */
+  headings?: readonly string[]
 }
 
-/** A ranked hit. `snippet` is set only when the match was in the contents. */
+/** A ranked hit. `heading` is set only for an outline match, `snippet` only
+ *  for a contents match. */
 export interface FileSearchResult {
   entry: FileSearchEntry
   snippet: string | null
+  /** The outline heading every word matched, for an outline match. */
+  heading?: string | null
   /** True when every word matched the name (or folder) alone. */
   nameMatch: boolean
 }
@@ -63,6 +69,20 @@ export function htmlToPlainText(html: string): string {
     .trim()
 }
 
+/**
+ * The text of each `<h1>`–`<h6>` in `html`, in order, without empty ones —
+ * the outline the editor's navigation pane shows for the file.
+ */
+export function htmlHeadings(html: string): string[] {
+  if (!html) return []
+  const out: string[] = []
+  for (const match of html.matchAll(/<h([1-6])\b[^>]*>([\s\S]*?)<\/h\1>/gi)) {
+    const text = htmlToPlainText(match[2]!)
+    if (text) out.push(text)
+  }
+  return out
+}
+
 /** The query split into lowercased words. */
 function termsOf(query: string): string[] {
   return query.toLowerCase().split(/\s+/).filter(Boolean)
@@ -85,14 +105,16 @@ function snippetAround(text: string, index: number, length: number, radius = 60)
 
 /**
  * Ranks `entries` against `query`: name matches first (shorter names first,
- * so an exact name beats one that merely contains it), then contents matches
- * in their original order. An empty query matches nothing — the palette
+ * so an exact name beats one that merely contains it), then outline matches
+ * (a heading holding every word), then contents matches, both in their
+ * original order. An empty query matches nothing — the palette
  * browses tools, not files, until something is typed.
  */
 export function searchFiles(entries: readonly FileSearchEntry[], query: string, limit = 8): FileSearchResult[] {
   const terms = termsOf(query)
   if (terms.length === 0) return []
   const byName: FileSearchResult[] = []
+  const byHeading: FileSearchResult[] = []
   const byText: FileSearchResult[] = []
   for (const entry of entries) {
     const name = `${entry.title} ${entry.folder}`.toLowerCase()
@@ -100,6 +122,14 @@ export function searchFiles(entries: readonly FileSearchEntry[], query: string, 
     const inName = terms.every((term) => name.includes(term))
     if (inName) {
       byName.push({ entry, snippet: null, nameMatch: true })
+      continue
+    }
+    const heading = entry.headings?.find((h) => {
+      const lower = h.toLowerCase()
+      return terms.every((term) => lower.includes(term))
+    })
+    if (heading) {
+      byHeading.push({ entry, snippet: null, heading, nameMatch: false })
       continue
     }
     if (!terms.every((term) => name.includes(term) || text.includes(term))) continue
@@ -110,7 +140,7 @@ export function searchFiles(entries: readonly FileSearchEntry[], query: string, 
     byText.push({ entry, snippet: snippetAround(entry.text, at, bodyTerm.length), nameMatch: false })
   }
   byName.sort((a, b) => a.entry.title.length - b.entry.title.length || a.entry.title.localeCompare(b.entry.title))
-  return [...byName, ...byText].slice(0, limit)
+  return [...byName, ...byHeading, ...byText].slice(0, limit)
 }
 
 /** Items with a name and a parent, enough to build a folder path. */

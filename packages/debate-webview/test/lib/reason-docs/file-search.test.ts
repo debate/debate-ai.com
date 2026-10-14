@@ -4,7 +4,7 @@
  */
 import { describe, expect, it } from "vitest"
 
-import { folderPathOf, htmlToPlainText, searchFiles, type FileSearchEntry } from "../../../src/lib/reason-docs/file-search"
+import { folderPathOf, htmlHeadings, htmlToPlainText, searchFiles, type FileSearchEntry } from "../../../src/lib/reason-docs/file-search"
 
 const entry = (overrides: Partial<FileSearchEntry>): FileSearchEntry => ({
   kind: "document",
@@ -22,6 +22,17 @@ describe("htmlToPlainText", () => {
     )
     expect(htmlToPlainText("")).toBe("")
     expect(htmlToPlainText("a&bogus;b")).toBe("a&bogus;b")
+  })
+})
+
+describe("htmlHeadings", () => {
+  it("lists the file's headings in order, as plain text, skipping empty ones", () => {
+    expect(htmlHeadings('<h1>Pocket</h1><p>x</p><h3 class="hat">Block &amp; <b>Hat</b></h3><h4> </h4><h4>Tag</h4>')).toEqual([
+      "Pocket",
+      "Block & Hat",
+      "Tag",
+    ])
+    expect(htmlHeadings("")).toEqual([])
   })
 })
 
@@ -49,6 +60,18 @@ describe("searchFiles", () => {
     expect(searchFiles(files, "energy notes").map((r) => r.entry.id)).toEqual([4])
     expect(searchFiles(files, "econ recession").map((r) => r.entry.id)).toEqual([2])
     expect(searchFiles(files, "econ tipping")).toEqual([])
+  })
+
+  it("ranks an outline heading match between name and contents matches, naming the heading", () => {
+    const outlined = [
+      entry({ id: 1, title: "Notes", text: "the courts clog when the plan passes" }),
+      entry({ id: 2, title: "Aff", headings: ["Advantage One", "Court Clog Impacts"], text: "court clog impacts" }),
+      entry({ id: 3, title: "Court Clog", text: "" }),
+    ]
+    const results = searchFiles(outlined, "court clog")
+    expect(results.map((r) => r.entry.id)).toEqual([3, 2, 1])
+    expect(results[1]!.heading).toBe("Court Clog Impacts")
+    expect(results[1]!.snippet).toBeNull()
   })
 
   it("trims a long body to the words around the match", () => {

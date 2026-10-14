@@ -23,10 +23,13 @@
  * engine's own palette keeps Ctrl/Cmd-P; this one answers Ctrl/Cmd-K there.
  *
  * It also searches the docs sidebar's files — the reader's own and the public
- * Topic Starters — by name *and* contents (`lib/reason-docs/file-search.ts`),
- * listed under "Files" below the tools; picking one opens it in the editor.
- * The text of a `.cmir` file comes from CardMirror's engine, which is loaded
- * on demand the first time a query needs it.
+ * Topic Starters — by name, outline heading *and* contents
+ * (`lib/reason-docs/file-search.ts`), listed under "Files" below the tools;
+ * picking one opens it in the editor. The text of a `.cmir` file comes from
+ * CardMirror's engine, which is loaded on demand the first time a query needs
+ * it. And it searches the whole video library — rounds and lectures — through
+ * the Videos page's own `/api/videos` feed (`lib/videos/video-palette-search.ts`),
+ * listed under "Videos & Lectures"; picking one opens its watch page.
  *
  * Two views: with an empty query it browses (Favorites, Recent, Go to, then
  * the catalog by group); once something is typed it switches to one flat
@@ -38,7 +41,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { useRouter, usePathname } from "next/navigation"
-import { BookOpen, Clock, CornerDownLeft, FileText, LayoutGrid, Rss, SearchX, Settings as SettingsIcon, Star } from "lucide-react"
+import { BookOpen, Clock, CornerDownLeft, FileText, GraduationCap, LayoutGrid, PlayCircle, Rss, SearchX, Settings as SettingsIcon, Star } from "lucide-react"
 import { playUISoundEffect } from "@debate/timer"
 
 import {
@@ -59,6 +62,7 @@ import type { TopicStarterItem } from "../reason-docs/TopicStarterTree"
 import type { ReasonDocument } from "../reason-docs/types"
 import {
   folderPathOf,
+  htmlHeadings,
   htmlToPlainText,
   searchFiles,
   type FileSearchEntry,
@@ -66,6 +70,7 @@ import {
 import { editorHrefForSelection } from "../../lib/reason-docs/route-selection"
 import { isCmirContent } from "../../lib/cardmirror/content-format"
 import { loadStoredCmir, storedCmirIfLoaded, type StoredCmir } from "../../lib/cardmirror/lazy-stored-cmir"
+import { fetchPaletteVideos, type PaletteVideo } from "../../lib/videos/video-palette-search"
 import {
   createPaletteIndex,
   searchPalette,
@@ -120,19 +125,29 @@ export function isKShortcut(e: Pick<KeyboardEvent, "code" | "key">): boolean {
   return e.code === "KeyK" || e.key.toLowerCase() === "k"
 }
 
-/** The sidebar files as search rows, text included. Each row's text is
- *  cached on the row object, so a keystroke re-ranks without re-converting
- *  every file; a changed row is a new object and is converted again. */
-const fileTextCache = new WeakMap<object, string>()
+/** Text and outline headings of one file. */
+interface FileBody {
+  text: string
+  headings: string[]
+}
 
-function fileText(row: object, toHtml: () => string): string {
-  const cached = fileTextCache.get(row)
+const EMPTY_BODY: FileBody = { text: "", headings: [] }
+
+/** The sidebar files as search rows, text and outline included. Each row's
+ *  body is cached on the row object, so a keystroke re-ranks without
+ *  re-converting every file; a changed row is a new object and is converted
+ *  again. */
+const fileBodyCache = new WeakMap<object, FileBody>()
+
+function fileBody(row: object, toHtml: () => string): FileBody {
+  const cached = fileBodyCache.get(row)
   if (cached !== undefined) return cached
-  const text = htmlToPlainText(toHtml())
+  const html = toHtml()
+  const body = { text: htmlToPlainText(html), headings: htmlHeadings(html) }
   // An empty result while the engine is still loading isn't cached, so the
   // row is converted properly once it arrives.
-  if (text) fileTextCache.set(row, text)
-  return text
+  if (body.text) fileBodyCache.set(row, body)
+  return body
 }
 
 function buildFileEntries(
@@ -149,20 +164,23 @@ function buildFileEntries(
       id: doc.id,
       title: doc.title || "Untitled",
       folder: folderPathOf(documents, doc),
-      text: fileText(doc, () => documentHtml(doc)),
+      ...fileBody(doc, () => documentHtml(doc)),
     })
   }
   for (const item of topics) {
     if (item.isFolder) continue
-    const text = isCmirContent(item)
+    const body = isCmirContent(item)
       ? engine
-        ? fileText(item, () => engine.storedContentToHtml(item))
-        : ""
-      : fileText(item, () => item.content ?? "")
-    entries.push({ kind: "topic", id: item.id, title: item.title, folder: folderPathOf(topics, item), text })
+        ? fileBody(item, () => engine.storedContentToHtml(item))
+        : EMPTY_BODY
+      : fileBody(item, () => item.content ?? "")
+    entries.push({ kind: "topic", id: item.id, title: item.title, folder: folderPathOf(topics, item), ...body })
   }
   return entries
 }
+
+/** How long typing must pause before the palette asks for videos. */
+const VIDEO_SEARCH_DELAY_MS = 200
 
 /** Heading for {@link QUICK_ACTIONS} — both as a browse-view group and as
  *  the group badge on a search result. */
@@ -374,6 +392,27 @@ export function GlobalCommandPalette() {
   )
   const fileResults = useMemo(() => searchFiles(fileEntries, query), [fileEntries, query])
 
+  // Videos come from the server one small page per query, a beat after the
+  // typing stops so a word typed letter by letter is one request, not five.
+  const [videoResults, setVideoResults] = useState<{ query: string; videos: PaletteVideo[] }>({ query: "", videos: [] })
+  useEffect(() => {
+    if (!open || query.length < 2) return
+    const controller = new AbortController()
+    const timer = setTimeout(() => {
+      fetchPaletteVideos(query, controller.signal)
+        .then((videos) => setVideoResults({ query, videos }))
+        .catch(() => {
+          if (!controller.signal.aborted) setVideoResults({ query, videos: [] })
+        })
+    }, VIDEO_SEARCH_DELAY_MS)
+    return () => {
+      clearTimeout(timer)
+      controller.abort()
+    }
+  }, [open, query])
+  // Results for an older query are dropped rather than shown under a new one.
+  const videos = open && videoResults.query === query ? videoResults.videos : []
+
   const openFile = useCallback(
     (entry: FileSearchEntry) => {
       setOpen(false)
@@ -398,9 +437,10 @@ export function GlobalCommandPalette() {
       ? `recent-${recentTools[0].href}`
       : `go-${QUICK_ACTIONS[0].href}`
   const firstFileValue = fileResults[0] ? `file-${fileResults[0].entry.kind}-${fileResults[0].entry.id}` : ""
+  const firstVideoValue = videos[0] ? `video-${videos[0].id}` : ""
   useEffect(() => {
-    setSelected(query ? (results[0]?.entry.href ?? firstFileValue) : firstBrowseValue)
-  }, [query, results, firstFileValue, firstBrowseValue])
+    setSelected(query ? (results[0]?.entry.href ?? (firstFileValue || firstVideoValue)) : firstBrowseValue)
+  }, [query, results, firstFileValue, firstVideoValue, firstBrowseValue])
 
   const browseRow = (tool: Tool, prefix: string, icon: ReactNode) => (
     <PaletteRow
@@ -418,7 +458,7 @@ export function GlobalCommandPalette() {
       open={open}
       onOpenChange={setOpen}
       title="Search"
-      description="Jump to any tool, workspace, settings page, or file"
+      description="Jump to any tool, workspace, settings page, file, or video"
       showCloseButton={false}
       className="top-[12%] translate-y-0 gap-0 rounded-xl border shadow-2xl sm:max-w-2xl"
       commandProps={{ shouldFilter: false, loop: true, value: selected, onValueChange: setSelected }}
@@ -427,7 +467,7 @@ export function GlobalCommandPalette() {
         <CommandInput
           value={search}
           onValueChange={setSearch}
-          placeholder="Search tools, settings, and files…"
+          placeholder="Search tools, files, videos, and lectures…"
           className="h-12 pr-12 text-base"
         />
         <Kbd className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2">Esc</Kbd>
@@ -465,7 +505,7 @@ export function GlobalCommandPalette() {
             )}
             {fileResults.length > 0 && (
               <CommandGroup heading="Files">
-                {fileResults.map(({ entry, snippet }) => {
+                {fileResults.map(({ entry, snippet, heading }) => {
                   const location = [entry.kind === "topic" ? "Topic Starters" : "My files", entry.folder]
                     .filter(Boolean)
                     .join(" / ")
@@ -475,7 +515,7 @@ export function GlobalCommandPalette() {
                       value={`file-${entry.kind}-${entry.id}`}
                       icon={entry.kind === "topic" ? <BookOpen /> : <FileText />}
                       label={entry.title}
-                      description={snippet ?? location}
+                      description={heading ? `§ ${heading}${location ? ` · ${location}` : ""}` : (snippet ?? location)}
                       trailing={
                         <span className="hidden shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-medium text-muted-foreground sm:inline">
                           {entry.kind === "topic" ? "Topic" : "File"}
@@ -485,6 +525,28 @@ export function GlobalCommandPalette() {
                     />
                   )
                 })}
+              </CommandGroup>
+            )}
+            {videos.length > 0 && (
+              <CommandGroup heading="Videos & Lectures">
+                {videos.map((video) => (
+                  <PaletteRow
+                    key={`video-${video.id}`}
+                    value={`video-${video.id}`}
+                    icon={video.kind === "lecture" ? <GraduationCap /> : <PlayCircle />}
+                    label={video.title}
+                    description={video.detail}
+                    trailing={
+                      <span className="hidden shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-medium text-muted-foreground sm:inline">
+                        {video.kind === "lecture" ? "Lecture" : "Round"}
+                      </span>
+                    }
+                    onSelect={() => {
+                      setOpen(false)
+                      router.push(video.href)
+                    }}
+                  />
+                ))}
               </CommandGroup>
             )}
           </>

@@ -28,7 +28,7 @@ import { registerStoredCmir, type StoredCmir } from "../../../src/lib/cardmirror
 
 const DOCUMENTS = [
   { id: 1, title: "Warming Aff", content: "<p>Emissions cause <b>tipping points</b>.</p>", format: "html", parentId: 3, isFolder: false, updatedAt: 0 },
-  { id: 2, title: "Econ DA", content: "<p>A recession follows the plan.</p>", format: "html", parentId: null, isFolder: false, updatedAt: 0 },
+  { id: 2, title: "Econ DA", content: "<h4>Spending Link</h4><p>A recession follows the plan.</p>", format: "html", parentId: null, isFolder: false, updatedAt: 0 },
   { id: 3, title: "Impacts", content: "", format: "html", parentId: null, isFolder: true, updatedAt: 0 },
 ]
 const TOPICS = [
@@ -120,6 +120,45 @@ describe("GlobalCommandPalette file search", () => {
     type("recession")
     expect(fileRows()[0]!.textContent).toContain("Econ DA")
     expect(fileRows()[0]!.textContent).toContain("A recession follows the plan.")
+  })
+
+  it("finds a file by an outline heading, naming the heading", () => {
+    act(() => openGlobalCommandPalette())
+    type("spending link")
+    expect(fileRows()[0]!.textContent).toContain("Econ DA")
+    expect(fileRows()[0]!.textContent).toContain("§ Spending Link")
+  })
+
+  it("lists matching videos and lectures from the library and opens a watch page", async () => {
+    vi.useFakeTimers()
+    const fetchMock = vi.fn(async () =>
+      new Response(
+        JSON.stringify({
+          videos: [["xyz789", "How to Flow", "2024-09-01T00:00:00Z", "Coach Channel", 50, "", "lectures_basics"]],
+        }),
+      ),
+    )
+    vi.stubGlobal("fetch", fetchMock)
+    try {
+      act(() => openGlobalCommandPalette())
+      type("flow")
+      expect(fetchMock).not.toHaveBeenCalled()
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(250)
+      })
+      expect(String((fetchMock.mock.calls[0] as unknown[])[0])).toContain("q=flow")
+      const group = [...document.querySelectorAll("[cmdk-group]")].find(
+        (g) => g.querySelector("[cmdk-group-heading]")?.textContent === "Videos & Lectures",
+      )
+      const [row] = [...(group?.querySelectorAll<HTMLElement>("[cmdk-item]") ?? [])]
+      expect(row!.textContent).toContain("How to Flow")
+      expect(row!.textContent).toContain("Lecture")
+      act(() => row!.click())
+      expect(nav.push).toHaveBeenCalledWith(expect.stringMatching(/^\/videos\//))
+    } finally {
+      vi.useRealTimers()
+      vi.unstubAllGlobals()
+    }
   })
 
   it("reads a .cmir topic starter's text through the engine and opens it", async () => {
