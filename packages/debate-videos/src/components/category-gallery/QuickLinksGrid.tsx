@@ -83,6 +83,21 @@ const QUICK_LINK_STYLES: Record<string, QuickLinkStyle> = {
     gradient: "from-cyan-500/20 via-sky-500/10 to-transparent",
     iconBg: "bg-cyan-500/15 ring-1 ring-cyan-500/30",
   },
+  wsd: {
+    glyph: Globe,
+    gradient: "from-blue-500/20 via-indigo-500/10 to-transparent",
+    iconBg: "bg-blue-500/15 ring-1 ring-blue-500/30",
+  },
+  acc: {
+    glyph: Users,
+    gradient: "from-red-500/20 via-yellow-500/10 to-transparent",
+    iconBg: "bg-red-500/15 ring-1 ring-red-500/30",
+  },
+  speech: {
+    glyph: Mic,
+    gradient: "from-pink-500/20 via-yellow-500/10 to-transparent",
+    iconBg: "bg-pink-500/15 ring-1 ring-pink-500/30",
+  },
 };
 
 /**
@@ -101,6 +116,9 @@ const QUICK_LINK_ORDER = [
   "history",
   "topPicks",
   "favorites",
+  "wsd",
+  "acc",
+  "speech",
 ];
 
 /** The glossary/statistics pair is reached from the tool tree's Practice

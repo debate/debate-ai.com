@@ -87,6 +87,9 @@ export const VIDEO_LIBRARY_LINKS: SidebarVideoLink[] = [
   { id: "favorites", href: "/videos/favorites", title: "My Favorites", glyph: Heart },
   { id: "history", href: "/videos/history", title: "Watch History", glyph: History },
   { id: "lectures", href: "/lectures", title: "Lectures", glyph: Presentation },
+  { id: "wsd", href: "/videos/wsd", title: "WSD", glyph: Globe },
+  { id: "acc", href: "/videos/acc", title: "ACC", glyph: Users },
+  { id: "speech", href: "/videos/speech", title: "Speech", glyph: Mic },
 ];
 
 /** The pair pinned below the tree, under its own divider. Team Rankings lives
