@@ -17,6 +17,7 @@ import { useState } from "react"
 import { CalendarRange, ChevronRight, Medal, Tag, Trophy, Tv } from "lucide-react"
 import { cn } from "../../ui/lib/utils"
 import { formatVideoDate, TOC_TOURNAMENT_IMAGE } from "../video-card/videoCardUtils"
+import { formatCount } from "../category-gallery/format-count"
 import { VideoListRow } from "./VideoListRow"
 import { FormatBadge, videoFormat } from "./FormatBadge"
 import type { VideoTeamRankingLookup } from "../../hooks/useVideoTeamRankings"
@@ -156,7 +157,9 @@ function GroupRows({
           {group.latestDate ? formatVideoDate(group.latestDate, "full", "—") : "—"}
         </td>
         <td className="px-3 py-2 align-middle text-xs text-muted-foreground text-right tabular-nums whitespace-nowrap">
-          {group.viewCount.toLocaleString()}
+          <span className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium tabular-nums">
+            {formatCount(group.viewCount)}
+          </span>
         </td>
         {context.showWatched && <td />}
       </tr>
