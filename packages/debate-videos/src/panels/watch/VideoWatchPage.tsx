@@ -68,6 +68,7 @@ import { WatchSearchBox } from "../../components/watch/WatchSearchBox"
 import { WatchStackPlaylist } from "../../components/watch/WatchStackPlaylist"
 import { WatchSpeechTimeline } from "../../components/watch/WatchSpeechTimeline"
 import { WatchTeamStats } from "../../components/watch/WatchTeamStats"
+import { WatchRoundPrediction } from "../../components/watch/WatchRoundPrediction"
 import type { SpeechFocusRequest } from "../../components/watch/WatchRoundPanel"
 import { useDocumentPictureInPicture } from "../../components/video-player/useDocumentPictureInPicture"
 import {
@@ -999,6 +1000,9 @@ export function VideoWatchPage({
             {/* The two teams' rankings and radars, when the rankings know
                 either of them; nothing at all otherwise. */}
             <WatchTeamStats video={video} />
+
+            {/* Prediction market for who wins this round. */}
+            <WatchRoundPrediction video={video} />
 
             {/* The discussion, under the video's own metadata and above
                 everything else on the page. YouTube puts it here for a reason:
