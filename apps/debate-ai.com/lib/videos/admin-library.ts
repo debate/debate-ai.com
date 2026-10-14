@@ -452,7 +452,7 @@ export async function createLibraryVideo(
  * Removes a published video from the library for good.
  *
  * Deletes it from the public `videos` table and from the resync queue, and
- * records it in `youtube_video_exclusions` so the next weekly YouTube sync
+ * records it in `youtube_video_exclusions` so the next daily YouTube sync
  * does not quietly re-ingest and re-publish the video an admin just removed
  * — the same guarantee the queue's per-row delete gives.
  *

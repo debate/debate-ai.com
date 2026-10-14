@@ -255,7 +255,7 @@ export function VideoLibraryTable() {
         </div>
         <CardDescription>
           Every video already published to the site. Search for one, correct its metadata, or
-          remove it — a removed video is also recorded so the weekly YouTube resync does not
+          remove it — a removed video is also recorded so the daily YouTube resync does not
           bring it back. “Transcripts” opens the long-form content beside the video: the
           speech-by-speech transcript, the AI summary, and the analysis videos linked to it.
           The Transcript column shows which videos have one; paste any YouTube link below to

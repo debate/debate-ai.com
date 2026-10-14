@@ -14,7 +14,7 @@ import handler from "vinext/server/app-router-entry";
 import { getDBFromContext, runWithContext } from "../lib/database/context";
 import { describeError } from "../lib/database/errors";
 import { applyD1Bookmark, runWithD1Session, runWithPrimaryD1Session } from "../lib/database/d1-session";
-import { runWeeklyYouTubeSync } from "../lib/youtube/weekly-sync";
+import { YOUTUBE_SCAN_CRON, runDailyYouTubeScan, runWeeklyYouTubeSync } from "../lib/youtube/weekly-sync";
 import { openAutoMarkets } from "../lib/predictions/auto-markets";
 import { purgeOldReuseCheckLogRows } from "../lib/evidence-reuse-check/purge-reuse-check-log";
 import { maintainCardSearchIndexes } from "../lib/search/card-search-maintenance";
@@ -187,16 +187,16 @@ export default {
     );
   },
 
-  // Weekly YouTube maintenance (see the `triggers.crons` entry in
-  // wrangler.jsonc) — scans the subscribed channels for new videos and
-  // refreshes every stored video's view count, so neither depends on an admin
-  // remembering to press the buttons on /admin. Both passes live in
-  // lib/youtube/weekly-sync.ts. The same weekly tick also purges expired
-  // `reuse_check_log` rows (idea #7's retention/purge policy follow-up) — an
-  // unrelated, independent job piggybacking on the one cron trigger this app
-  // has, rather than a dedicated schedule of its own.
+  // Scheduled maintenance (see the `triggers.crons` entries in wrangler.jsonc).
+  // A daily cron (YOUTUBE_SCAN_CRON) scans the subscribed channels for new
+  // videos; the weekly Monday tick refreshes every stored video's view count,
+  // so neither depends on an admin remembering to press the buttons on /admin.
+  // Both passes live in lib/youtube/weekly-sync.ts. The same weekly tick also
+  // purges expired `reuse_check_log` rows (idea #7's retention/purge policy
+  // follow-up) — an unrelated, independent job piggybacking on the weekly
+  // trigger rather than a dedicated schedule of its own.
   //
-  // A second cron (DB_BACKUP_CRON, Sundays) runs only the weekly content
+  // A third cron (DB_BACKUP_CRON, Sundays) runs only the weekly content
   // backup to R2 — see lib/admin/weekly-db-backup.ts.
   async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
     // The jobs below never render a page, so nothing here needs the canonical
@@ -206,6 +206,17 @@ export default {
     setSiteOriginReader(
       (name) => (env as unknown as Record<string, string | undefined>)[name],
     );
+
+    if (event.cron === YOUTUBE_SCAN_CRON) {
+      ctx.waitUntil(
+        // `runDailyYouTubeScan` reports a failed scan rather than throwing, so
+        // this catch is only for something breaking outside it.
+        runWithPrimaryD1Session(() => runWithContext(env, () => runDailyYouTubeScan())).catch((error) => {
+          console.error("Scheduled YouTube scan failed:", describeError(error), error);
+        }),
+      );
+      return;
+    }
 
     if (event.cron === DB_BACKUP_CRON) {
       ctx.waitUntil(
@@ -220,7 +231,7 @@ export default {
     // each runs in its own session started on the primary.
     ctx.waitUntil(
       // `runWeeklyYouTubeSync` reports a failed pass rather than throwing, so
-      // this catch is only for something breaking outside the two passes.
+      // this catch is only for something breaking outside the pass.
       runWithPrimaryD1Session(() => runWithContext(env, () => runWeeklyYouTubeSync())).catch((error) => {
         console.error("Scheduled YouTube sync failed:", describeError(error), error);
       }),
