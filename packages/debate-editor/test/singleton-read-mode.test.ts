@@ -60,6 +60,20 @@ describe("read mode across speech-doc switches", () => {
     expect(readModeState()?.on).toBe(true);
   }, 30_000);
 
+  it("turns read mode on for a doc claimed with readMode (a .cmir open)", async () => {
+    await ensureBooted();
+    settings.set("readMode", false);
+    await claim({ key: "cmir-doc-a" }, "<p>opened cmir doc</p>", { readMode: true });
+    expect(settings.get("readMode")).toBe(true);
+    expect(readModeState()?.on).toBe(true);
+    expect(readModeState()?.decorations.find().length).toBeGreaterThan(0);
+
+    // Re-claiming the live doc doesn't undo the user turning it off.
+    settings.set("readMode", false);
+    await claim({ key: "cmir-doc-a" }, "<p>opened cmir doc</p>", { readMode: true });
+    expect(readModeState()?.on).toBe(false);
+  }, 30_000);
+
   it("leaves read mode off when it is off", async () => {
     await ensureBooted();
     settings.set("readMode", false);

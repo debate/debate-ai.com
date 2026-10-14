@@ -152,8 +152,27 @@ first-launch and crash-recovery surfaces are switched off in the embed
 
 The outline nav pane still opens beside the document as before.
 
+## `.cmir` files open in read mode
+
+Opening any `.cmir` document turns read mode on, the same state the
+ribbon's Read mode button toggles:
+
+- **REASON editor** — `ReasonEditorScreen` passes `defaultReadMode` for
+  Topic Starters and uploaded documents (stored as `.cmir`); HTML rows
+  written in the editor still open editable.
+- **`importCmir`** on the embed's imperative handle claims with
+  `readMode: true`.
+- **Engine file open** — `loadFileInPlace` sets `readMode` after mounting a
+  `.cmir` (Open, recents, drag-and-drop, command-palette file search).
+
+It's applied once, when a document is mounted (`claim`'s new-key branch),
+so turning read mode off sticks for that document until another one opens.
+
 ## Tests
 
+- `packages/debate-editor/test/singleton-read-mode.test.ts` — read mode
+  carries across doc switches, and a claim with `readMode` (a `.cmir` open)
+  turns it on without re-forcing it on a re-claim of the live doc
 - `packages/debate-editor/test/change-reporter.test.ts` — edit vs. load vs.
   state replacement, including a whole new `EditorView`
 - `packages/debate-editor/test/html-bridge.test.ts` — card/footnote round

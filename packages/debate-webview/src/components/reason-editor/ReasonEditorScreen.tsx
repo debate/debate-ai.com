@@ -33,6 +33,7 @@ import { Loader2 } from "lucide-react"
 import { AnimatedLoader } from "../ui/AnimatedLoader"
 import { EditorWithToolbar } from "@debate/editor"
 import { topicStarterHtml } from "../../lib/topic-starters/content"
+import { STORED_FORMATS } from "../../lib/cardmirror/format"
 import { cn } from "../../lib/ui/lib/utils"
 import { EditorTabStrip } from "./EditorTabStrip"
 import { describeDocSaveStatus } from "../../lib/reason-docs/doc-save-status"
@@ -172,6 +173,7 @@ export function ReasonEditorScreen() {
                 showOutline
                 showToolbar={!topicDocument}
                 defaultNavPaneHidden
+                defaultReadMode={topicDocument !== null || selected?.format === STORED_FORMATS.cmir}
                 onChange={topicDocument ? undefined : (html) => updateContent(selected!.id, html)}
               />
             </div>
