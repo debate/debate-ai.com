@@ -332,23 +332,42 @@ export function VideoListRow({
                     )}
                     {showFormat && <FormatBadge style={styleNumber} />}
                     <span className="truncate">
-                      {cleanTournament === "TOC" ? (
-                        <span className="flex items-center gap-1.5">
-                          <img
-                            src={TOC_TOURNAMENT_IMAGE}
-                            alt="Tournament of Champions"
-                            className="h-4 w-auto object-contain shrink-0"
-                          />
-                          {channel && (
-                            <>
-                              <span className="text-muted-foreground">·</span>
-                              <span className="truncate">{channel}</span>
-                            </>
-                          )}
-                        </span>
-                      ) : (
-                        [cleanTournament, channel].filter(Boolean).join(" · ") || "—"
-                      )}
+                      {(() => {
+                        const logo = getTournamentLogo(cleanTournament);
+                        if (logo) {
+                          const LogoComp = typeof logo === "string" ? null : logo;
+                          const logoSrc = typeof logo === "string" ? logo : null;
+                          return (
+                            <span className="flex items-center gap-1.5">
+                              {LogoComp ? <LogoComp className="h-4 w-auto object-contain shrink-0" /> : logoSrc ? <img src={logoSrc} alt={cleanTournament} className="h-4 w-auto object-contain shrink-0" /> : cleanTournament}
+                              {channel && (
+                                <>
+                                  <span className="text-muted-foreground">·</span>
+                                  <span className="truncate">{channel}</span>
+                                </>
+                              )}
+                            </span>
+                          );
+                        }
+                        if (cleanTournament === "TOC") {
+                          return (
+                            <span className="flex items-center gap-1.5">
+                              <img
+                                src={TOC_TOURNAMENT_IMAGE}
+                                alt="Tournament of Champions"
+                                className="h-4 w-auto object-contain shrink-0"
+                              />
+                              {channel && (
+                                <>
+                                  <span className="text-muted-foreground">·</span>
+                                  <span className="truncate">{channel}</span>
+                                </>
+                              )}
+                            </span>
+                          );
+                        }
+                        return [cleanTournament, channel].filter(Boolean).join(" · ") || "—";
+                      })()}
                     </span>
                   </>
                 ) : (

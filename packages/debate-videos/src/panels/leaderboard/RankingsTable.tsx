@@ -96,8 +96,16 @@ const COLUMNS: Column[] = [
       const schoolRank = schoolRankOf(schoolRanks, e.school)
       return (
         <>
-          <Link href={schoolHref(e.school)} className="hover:text-foreground hover:underline underline-offset-4">
-            {e.school}
+          <Link href={schoolHref(e.school)} className="hover:text-foreground hover:underline underline-offset-4 flex items-center gap-1.5">
+            {(() => {
+              const logo = getSchoolLogo(e.school);
+              if (logo) {
+                const LogoComp = typeof logo === "string" ? null : logo;
+                const logoSrc = typeof logo === "string" ? logo : null;
+                return LogoComp ? <LogoComp className="h-4 w-auto" /> : logoSrc ? <img src={logoSrc} alt={e.school} className="h-4 w-auto" /> : e.school;
+              }
+              return e.school;
+            })()}
           </Link>
           {schoolRank !== undefined && (
             <span className="ml-1.5 text-xs tabular-nums text-muted-foreground/70" title="School rank in the Schools tab for this format">

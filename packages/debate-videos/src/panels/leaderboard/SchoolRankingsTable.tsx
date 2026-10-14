@@ -54,8 +54,16 @@ const COLUMNS: Column[] = [
     label: "School",
     width: 240,
     render: (r) => (
-      <Link href={schoolHref(r.school)} className="font-medium text-foreground hover:underline underline-offset-4">
-        {r.school}
+      <Link href={schoolHref(r.school)} className="font-medium text-foreground hover:underline underline-offset-4 flex items-center gap-1.5">
+        {(() => {
+          const logo = getSchoolLogo(r.school);
+          if (logo) {
+            const LogoComp = typeof logo === "string" ? null : logo;
+            const logoSrc = typeof logo === "string" ? logo : null;
+            return LogoComp ? <LogoComp className="h-4 w-auto" /> : logoSrc ? <img src={logoSrc} alt={r.school} className="h-4 w-auto" /> : r.school;
+          }
+          return r.school;
+        })()}
       </Link>
     ),
   },
