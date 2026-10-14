@@ -7,7 +7,7 @@
 
 import { useEffect, useState, type ReactNode, type RefObject, useRef } from "react"
 import { createPortal } from "react-dom"
-import { Trash2, RefreshCw, MoreVertical, Clock, Upload, Mic, Check, MicOff, Users, Gauge, Captions } from "lucide-react"
+import { Trash2, RefreshCw, MoreVertical, Clock, Upload, Mic, Check, MicOff, Users, Gauge, Captions, Video, Merge } from "lucide-react"
 import {
     AudioPlayerButton,
     AudioPlayerProgress,
@@ -34,6 +34,9 @@ import { getUserMedia } from "./media-devices"
 import { LiveWaveform } from "./live-waveform"
 import { clearSpokenTranscript } from "./spoken-words-store"
 import { SpeechCaptionsTicker } from "./SpeechCaptionsTicker"
+import { RECORD_VIDEO_EVENT, readRecordVideo, writeRecordVideo } from "./media-store"
+import { RoundRecordingDialog } from "./RoundRecordingDialog"
+import type { SpeechStartItem } from "./round-recording"
 
 const CAPTIONS_STORAGE_KEY = "debate-recording-captions"
 
@@ -269,6 +272,12 @@ interface SpeechRecordingMenuProps {
     triggerLabel?: string
     /** Host-supplied items shown first in the menu, above the recording controls. */
     actions?: SpeechMenuAction[]
+    /**
+     * The round this speech belongs to — adds "Join round recording", which
+     * joins every recorded speech of the round into one MP3
+     * (`RoundRecordingDialog`). Omitted outside a round.
+     */
+    roundRecording?: { roundId: string; items: SpeechStartItem[] }
 }
 
 interface SpeechRecordingPlayerProps {
@@ -339,8 +348,17 @@ export function SpeechRecordingMenu({
     participantEmails = [],
     triggerLabel,
     actions = [],
+    roundRecording,
 }: SpeechRecordingMenuProps) {
     const fileInputRef = useRef<HTMLInputElement>(null)
+    const [joinOpen, setJoinOpen] = useState(false)
+    const [recordVideo, setRecordVideo] = useState(false)
+    useEffect(() => {
+        const sync = () => setRecordVideo(readRecordVideo())
+        sync()
+        window.addEventListener(RECORD_VIDEO_EVENT, sync)
+        return () => window.removeEventListener(RECORD_VIDEO_EVENT, sync)
+    }, [])
     const { devices, loading: loadingDevices, loadDevices } = useAudioDevices()
     const [previewStream, setPreviewStream] = useState<MediaStream | null>(null)
     const previewStreamRef = useRef<MediaStream | null>(null)
@@ -534,6 +552,23 @@ export function SpeechRecordingMenu({
                         </DropdownMenuItem>
                     )}
 
+                    {/* Webcam video alongside the audio (a per-browser setting) */}
+                    <DropdownMenuItem
+                        onClick={() => writeRecordVideo(!recordVideo)}
+                        className={cn("cursor-pointer", recordVideo && "bg-accent")}
+                    >
+                        <Video className="h-4 w-4 mr-2" />
+                        <span className="flex-1">Record webcam video</span>
+                        {recordVideo && <Check className="h-4 w-4 ml-2" />}
+                    </DropdownMenuItem>
+
+                    {roundRecording && (
+                        <DropdownMenuItem onClick={() => setJoinOpen(true)}>
+                            <Merge className="h-4 w-4 mr-2" />
+                            Join round recording…
+                        </DropdownMenuItem>
+                    )}
+
                     {/* Timer control actions */}
                     {onResetSpeechTime && (
                         <DropdownMenuItem onClick={onResetSpeechTime}>
@@ -636,6 +671,15 @@ export function SpeechRecordingMenu({
                 onChange={handleFileChange}
                 className="hidden"
             />
+
+            {roundRecording && (
+                <RoundRecordingDialog
+                    open={joinOpen}
+                    onOpenChange={setJoinOpen}
+                    roundId={roundRecording.roundId}
+                    items={roundRecording.items}
+                />
+            )}
         </>
     )
 }

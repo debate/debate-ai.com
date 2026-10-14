@@ -182,7 +182,10 @@ and (moved from
 ## debate-timer
 
 Speech and prep timers for live rounds, with per-format speech times built in. Also
-includes an in-round speech recorder with mic selection, live waveform, and playback.
+includes an in-round speech recorder with mic selection, live waveform, playback and
+optional webcam video, and the joined round recording: every speech in one MP3
+(`@breezystack/lamejs`), optional Kokoro announcements and Moonshine captions
+(`@moonshine-ai/moonshine-js`), and the speech-start modal shared with `debate-videos`.
 
 ## debate-types
 

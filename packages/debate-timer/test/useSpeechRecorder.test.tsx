@@ -203,6 +203,7 @@ describe("useSpeechRecorder timer sync", () => {
     expect(started).toHaveBeenCalledTimes(1);
     expect((started.mock.calls[0][0] as CustomEvent).detail).toEqual({
       speechName: "1AC",
+      video: false,
     });
     window.removeEventListener("debate-recording-started", started);
     await hook.unmount();

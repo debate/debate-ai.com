@@ -55,8 +55,9 @@ import type React from "react"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { AlertCircle, ArrowLeft, Calendar, Clock, Eye, ListPlus, Loader2 } from "lucide-react"
+import { AlertCircle, ArrowLeft, Calendar, Clock, Eye, ListOrdered, ListPlus, Loader2 } from "lucide-react"
 import { CommentSection } from "@debate/comments"
+import { SpeechStartsDialog } from "@debate/timer"
 
 import { WatchToolbar } from "../../components/watch/WatchToolbar"
 import { WatchSidePanel, type WatchSideTab } from "../../components/watch/WatchSidePanel"
@@ -341,6 +342,7 @@ export function VideoWatchPage({
     [videoId],
   )
   const markedKeys = useMemo(() => new Set(Object.keys(speechMarks)), [speechMarks])
+  const [startsDialogOpen, setStartsDialogOpen] = useState(false)
   /** The speeches the AI found in the captions, kept in this browser per video. */
   const [segmentation, setSegmentation] = useState<SpeechSegmentation | null>(null)
   const [detecting, setDetecting] = useState(false)
@@ -365,6 +367,13 @@ export function VideoWatchPage({
       ),
     [baseSpeeches, segmentation, speechMarks, sentences],
   )
+  /** The speeches as the shared speech-start modal (@debate/timer) takes them. */
+  const speechStartItems = useMemo(() => speeches.map(({ key, label }) => ({ key, label })), [speeches])
+  const speechStartSeconds = useMemo(() => {
+    const starts: Record<string, number> = {}
+    for (const speech of speeches) if (speech.startSeconds !== null) starts[speech.key] = speech.startSeconds
+    return starts
+  }, [speeches])
   const roundTranscript = useMemo(
     () => (baseSpeeches.length > 0 ? captionText(sentences) : ""),
     [baseSpeeches.length, sentences],
@@ -876,12 +885,38 @@ export function VideoWatchPage({
             </div>
 
             {speeches.length > 0 && (
-              <WatchSpeechTimeline
-                speeches={speeches}
-                currentTime={currentTime}
-                duration={duration}
-                onSelect={handleSpeechSelect}
-              />
+              <div className="flex items-center gap-2">
+                <div className="min-w-0 flex-1">
+                  <WatchSpeechTimeline
+                    speeches={speeches}
+                    currentTime={currentTime}
+                    duration={duration}
+                    onSelect={handleSpeechSelect}
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setStartsDialogOpen(true)}
+                  className="inline-flex h-7 shrink-0 items-center gap-1 rounded border border-border px-2 text-xs hover:bg-muted"
+                  title="Label where each speech begins"
+                >
+                  <ListOrdered className="h-3.5 w-3.5" />
+                  Speech starts
+                </button>
+                {/* The same modal labels the joined round MP3 (@debate/timer's
+                    RoundRecordingDialog); docked, so the player stays usable. */}
+                <SpeechStartsDialog
+                  open={startsDialogOpen}
+                  onOpenChange={setStartsDialogOpen}
+                  modal={false}
+                  items={speechStartItems}
+                  starts={speechStartSeconds}
+                  durationSeconds={duration}
+                  currentTime={currentTime}
+                  onSeek={seekTo}
+                  onChange={handleMarkStart}
+                />
+              </div>
             )}
 
             <WatchStackPlaylist current={video} stack={stack} />
