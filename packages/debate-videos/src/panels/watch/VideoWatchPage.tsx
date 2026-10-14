@@ -268,6 +268,7 @@ export function VideoWatchPage({
   // for the library's matches — in place, with no navigation, so the video
   // above keeps playing while the reader lines up what to watch next.
   const [relatedQuery, setRelatedQuery] = useState("")
+  const [decisionRevealed, setDecisionRevealed] = useState(false);
   const searchFeed = useVideoFeed({
     source: "all",
     q: relatedQuery,
@@ -988,7 +989,7 @@ export function VideoWatchPage({
                     {formatVideoDuration(storedDuration || duration)}
                   </span>
                 )}
-                {judgeDecision && <span>Decision {judgeDecision}</span>}
+                {judgeDecision && !decisionRevealed ? (<button onClick={() => setDecisionRevealed(true)} className="text-xs text-muted-foreground hover:text-foreground">Reveal decision</button>) : (decisionRevealed ? (<span>Decision {judgeDecision}</span>) : null)}
               </div>
 
               {shownDescription && (
