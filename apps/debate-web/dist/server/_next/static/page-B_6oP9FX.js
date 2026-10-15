@@ -1,0 +1,1 @@
+import{t as e}from"./page-DZB_xj-t.js";var t={title:`Glossary of Terms`,description:`Definitions of debate terms, with the lectures that explain them`};export{e as default,t as metadata};

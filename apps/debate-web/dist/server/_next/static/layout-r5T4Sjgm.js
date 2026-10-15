@@ -1,0 +1,1 @@
+import{t as e}from"./framework~index~page~page~page~page~page~page~page~page~page~layout~layout~page~page~page~p~smt8a5un-DnyErxv7.js";import{r as t}from"./source-DQKf1c1K.js";import{n,r,t as i}from"./layout.config-B7W9aR2I.js";var a=e();function o({children:e}){return(0,a.jsxs)(r,{tree:t.pageTree,...i,children:[(0,a.jsx)(n,{tree:t.pageTree}),e]})}export{o as default};

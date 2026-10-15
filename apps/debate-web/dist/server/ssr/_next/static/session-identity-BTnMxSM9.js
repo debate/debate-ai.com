@@ -1,0 +1,1 @@
+function e(e){if(!e)return``;let t=e.name?.trim();if(t)return t;let n=e.email?.trim();if(n){let e=n.split(`@`)[0]?.trim();if(e)return e}return e.id?.trim()||``}function t(e,t){let n=t?.trim();return n?e.trim().toLowerCase()===n.toLowerCase():!1}function n(e,n){let r=n?.trim();return!r||t(e,r)?``:r}export{n,t as r,e as t};

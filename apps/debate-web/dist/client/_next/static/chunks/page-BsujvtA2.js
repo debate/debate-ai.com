@@ -1,0 +1,1 @@
+import{o as e}from"./rolldown-runtime-BCiCTKAo.js";import{i as t,r as n}from"./framework-D7BYm31f.js";import{t as r}from"./EditorSettingsPanel-eolxxLKv.js";var i=e(t(),1),a=e(n(),1);function o(){return(0,a.jsx)(i.Suspense,{children:(0,a.jsx)(r,{})})}export{o as default};

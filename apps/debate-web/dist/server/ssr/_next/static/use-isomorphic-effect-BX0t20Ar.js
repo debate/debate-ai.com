@@ -1,0 +1,1 @@
+import{o as e}from"./rolldown-runtime-BCiCTKAo.js";import{t}from"./react-8_GKb2bz.js";var n=e(t(),1).useEffect;export{n as t};

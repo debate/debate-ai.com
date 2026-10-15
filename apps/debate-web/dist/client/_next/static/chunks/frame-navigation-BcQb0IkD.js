@@ -1,0 +1,1 @@
+function e(e){return e.metaKey||e.ctrlKey||e.shiftKey||e.altKey||e.button!==0}function t(e){return e===`/docs`||!!e?.startsWith(`/docs/`)}function n(e,n){if(!e.href||e.download||e.target&&e.target!==`_self`)return null;let r;try{r=new URL(e.href,n)}catch{return null}return r.origin!==n||t(r.pathname)?null:r.href}export{t as n,e as r,n as t};

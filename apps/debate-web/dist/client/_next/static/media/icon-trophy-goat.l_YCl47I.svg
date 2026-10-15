@@ -1,0 +1,50 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFD700"/>
+      <stop offset="100%" stop-color="#B89600"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <!-- <rect width="512" height="512" rx="100" fill="#0E0E11"/> -->
+
+  <!-- Trophy Cup -->
+  <g fill="url(#gold)">
+    <!-- Cup Bowl -->
+    <path d="M156 160 Q256 80 356 160 L320 260 Q256 300 192 260 Z"/>
+
+    <!-- Handles -->
+    <path d="M156 180 Q100 200 130 260 Q150 300 192 260" fill="none" stroke="url(#gold)" stroke-width="18"/>
+    <path d="M356 180 Q412 200 382 260 Q362 300 320 260" fill="none" stroke="url(#gold)" stroke-width="18"/>
+
+    <!-- Stem -->
+    <rect x="226" y="270" width="60" height="60" rx="12"/>
+
+    <!-- Base -->
+    <rect x="176" y="330" width="160" height="40" rx="10"/>
+    <rect x="156" y="370" width="200" height="30" rx="8"/>
+  </g>
+
+  <!-- Goat Head (Trophy Topper - simplified) -->
+  <g fill="url(#gold)">
+    <!-- Head -->
+    <ellipse cx="256" cy="120" rx="70" ry="60"/>
+
+    <!-- Horns -->
+    <path d="M210 100 Q180 40 240 70 Q220 100 230 120 Z"/>
+    <path d="M302 100 Q332 40 272 70 Q292 100 282 120 Z"/>
+  </g>
+
+  <!-- Debate Speech Bubble engraving -->
+  <g fill="#1f51dcff">
+    <rect x="210" y="190" width="92" height="40" rx="8"/>
+    <polygon points="240,230 256,250 272,230"/>
+  </g>
+
+  <!-- GOAT Text -->
+  <text x="256" y="395" font-size="52" text-anchor="middle"
+        fill="#db1212ff" font-family="Arial, sans-serif" font-weight="bold">
+    GOAT
+  </text>
+</svg>

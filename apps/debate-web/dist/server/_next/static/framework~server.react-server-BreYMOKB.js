@@ -1,0 +1,1 @@
+throw Error(`react-dom/server is not supported in React Server Components.`);

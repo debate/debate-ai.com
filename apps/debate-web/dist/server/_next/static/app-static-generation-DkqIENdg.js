@@ -1,0 +1,1 @@
+export{t as createStaticGenerationHeadersContext}from"./app-static-generation-2LjycTXd.js";

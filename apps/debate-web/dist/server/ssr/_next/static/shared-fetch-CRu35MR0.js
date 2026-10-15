@@ -1,0 +1,1 @@
+function e(e,t){let n=null,r=(r=!1)=>{let i=Date.now();if(!r&&n&&i-n.at<t)return n.promise;let a=e();return n={at:i,promise:a},a};return r.reset=()=>{n=null},r}export{e as t};

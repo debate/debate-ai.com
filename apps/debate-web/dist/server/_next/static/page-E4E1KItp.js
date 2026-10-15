@@ -1,0 +1,1 @@
+import{i as e}from"./navigation-errors-CoD2OYEQ.js";import"./navigation.react-server-B1reI6jI.js";var t={title:`Collaboration Prep Room`,alternates:{canonical:`/research/team?section=prep-room`}};function n(){e(`/research/team?section=prep-room`)}export{n as default,t as metadata};

@@ -1,0 +1,1 @@
+function e(e,t=100){let n=Math.max(1,t),r=[];for(let t=0;t<e.length;t+=n)r.push(e.slice(t,t+n));return r}export{e as t};

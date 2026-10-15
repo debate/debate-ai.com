@@ -1,0 +1,1 @@
+export{t as CategoryDock}from"./CategoryDock-C-_mhweI.js";

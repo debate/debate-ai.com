@@ -1,0 +1,1 @@
+export{t as default}from"./default-global-error-CvW8Bt1v.js";

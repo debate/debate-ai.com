@@ -1,0 +1,1 @@
+import{b as e}from"./MathUtils-Bqtix1pt.js";function t(e,t,n){n!==void 0&&(e[t]=n)}function n(t,n,r){r!==void 0&&(t[n]=e(r))}function r(e,t,n){n!==void 0&&e[t].load(n)}function i(e,t,n,r){if(n!==void 0){let i=e;i[t]??=r(),i[t].load(n)}}function a(e,t,n,...r){let i=e;i[t]??=new n;let a=i[t];for(let e of r)a.load(e?.[t])}export{n as a,t as i,r as n,a as r,i as t};

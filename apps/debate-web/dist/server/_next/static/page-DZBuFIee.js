@@ -1,0 +1,1 @@
+import{t as e}from"./server-yhxadzBq.js";var t=e(()=>{throw Error(`Unexpectedly client reference export 'default' is called on server`)},`88b9d5c149aa`,`default`),n={title:`Forum Thread`,description:`A community thread and its replies.`};export{t as default,n as metadata};

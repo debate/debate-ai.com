@@ -1,0 +1,1 @@
+import"./app-prefetch-fetch-queue-CEYbqt9q.js";

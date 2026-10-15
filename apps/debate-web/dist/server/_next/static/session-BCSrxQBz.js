@@ -1,0 +1,1 @@
+import{f as e}from"./headers-KhX8xcsM.js";import{t}from"./auth-BOnLaNkU.js";async function n(){try{return await(await t()).api.getSession({headers:await e()})}catch(e){return console.error(`Session retrieval error:`,e),null}}async function r(){return(await n())?.user?.id??null}export{r as n,n as t};

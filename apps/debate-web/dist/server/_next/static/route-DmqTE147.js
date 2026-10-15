@@ -1,0 +1,1 @@
+import{n as e}from"./server-BAqfGQg5.js";import{n as t,t as n}from"./debate-champions-BH5y44wp.js";function r(){let e={};for(let n of t.data){let{year:t,...r}=n;e[String(t)]={...e[String(t)],...r}}for(let t of n.data){let{year:n,...r}=t;e[String(n)]={...e[String(n)],...r}}return e}async function i(){return e.json(r())}export{i as GET};

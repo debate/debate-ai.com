@@ -1,0 +1,1 @@
+function e(){return document.querySelector(`.dec-cardmirror-root`)??document.body}export{e as t};

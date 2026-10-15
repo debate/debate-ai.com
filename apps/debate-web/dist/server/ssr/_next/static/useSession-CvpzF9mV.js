@@ -1,0 +1,1 @@
+import{t as e}from"./client-DsOaOKzB.js";function t(){let{data:t,isPending:n}=e.useSession();return{session:t,user:t?.user??null,isAuthenticated:!!t?.user,isLoading:n}}export{t};

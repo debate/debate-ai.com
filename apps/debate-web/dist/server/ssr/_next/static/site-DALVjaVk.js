@@ -1,0 +1,1 @@
+var e=`Debate AI`,t=`/logo.png`,n=`https://debate-ai.com`,r=process.env.NEXT_PUBLIC_APP_URL||process.env.NEXT_PUBLIC_BASE_URL||``,i=process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID||``,a=`debateai`,o=`debate_ai_ext_token`;export{a,o as i,e as n,r as o,n as r,i as s,t};

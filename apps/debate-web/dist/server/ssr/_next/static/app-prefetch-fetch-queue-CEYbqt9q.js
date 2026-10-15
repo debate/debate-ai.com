@@ -1,0 +1,1 @@
+var e=Symbol.for(`vinext.appPrefetchFetchSlotRelease`),t=[],n=new WeakMap,r=0;function i(t){let n=t[e];n!==void 0&&(t[e]=void 0,n())}function a(e){e!==void 0&&n.get(e)?.cancel()}function o(e){if(e===void 0)return;let i=n.get(e)?.runner;if(i===void 0)return;let a=t.indexOf(i);a!==-1&&(t.splice(a,1),r+=1,i())}export{o as n,i as r,a as t};

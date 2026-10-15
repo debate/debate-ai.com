@@ -1,0 +1,1 @@
+var e={2:`PF`,3:`LD`,1:`Policy`,4:`College`};export{e as t};

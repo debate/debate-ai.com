@@ -1,0 +1,1 @@
+import{t as e}from"./context-Cg43A54y.js";function t(t){let n=e();return n?.env?.[t]?n.env[t]:process.env[t]}export{t};

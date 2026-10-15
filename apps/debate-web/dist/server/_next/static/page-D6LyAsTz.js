@@ -1,0 +1,1 @@
+import{i as e}from"./navigation-errors-CoD2OYEQ.js";import"./navigation.react-server-B1reI6jI.js";var t={title:`Scout-to-Strategy`,alternates:{canonical:`/practice/prep?section=strategy`}};function n(){e(`/practice/prep?section=strategy`)}export{n as default,t as metadata};

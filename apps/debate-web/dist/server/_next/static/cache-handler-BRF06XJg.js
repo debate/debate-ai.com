@@ -1,0 +1,1 @@
+export{r as getDataCacheHandler}from"./cache-handler-D4nD6MSX.js";

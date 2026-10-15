@@ -1,0 +1,1 @@
+export{t as availableRibbonCommandIds,n as isRibbonCommandAvailable}from"./ribbon-availability-C_EPixPR.js";

@@ -1,0 +1,13 @@
+import{t as e}from"./framework~index~page~page~page~page~page~page~page~page~page~layout~layout~page~page~page~p~smt8a5un-DnyErxv7.js";var t=e(),n={title:`Video Library`,description:`Video library, watch pages, topic statistics, and native wrapper`,icon:`Video`},r=`# Video Library [#video-library]
+
+Video library, watch pages, topic statistics, and native app wrapper.
+
+<Cards>
+  <Card title="Native Wrapper" href="/docs/features/video-library/native-wrapper" />
+  <Card title="Video Library" href="/docs/features/video-library/video-library" />
+  <Card title="Video Topic Statistics" href="/docs/features/video-library/video-topic-statistics" />
+  <Card title="Video Watch Page" href="/docs/features/video-library/video-watch-page" />
+</Cards>
+`,i={contents:[{heading:`video-library`,content:`Video library, watch pages, topic statistics, and native app wrapper.`},{heading:`video-library`,content:`<Card title="Native Wrapper" href="/docs/features/video-library/native-wrapper" />`},{heading:`video-library`,content:`<Card title="Video Library" href="/docs/features/video-library/video-library" />`},{heading:`video-library`,content:`<Card title="Video Topic Statistics" href="/docs/features/video-library/video-topic-statistics" />`},{heading:`video-library`,content:`<Card title="Video Watch Page" href="/docs/features/video-library/video-watch-page" />`}],headings:[{id:`video-library`,content:`Video Library`}]},a=[{depth:1,url:`#video-library`,title:(0,t.jsx)(t.Fragment,{children:`Video Library`})}];function o(e){let n={h1:`h1`,p:`p`,...e.components},{Card:r,Cards:i}=n;return r||c(`Card`,!0),i||c(`Cards`,!0),(0,t.jsxs)(t.Fragment,{children:[(0,t.jsx)(n.h1,{id:`video-library`,children:`Video Library`}),`
+`,(0,t.jsx)(n.p,{children:`Video library, watch pages, topic statistics, and native app wrapper.`}),`
+`,(0,t.jsxs)(i,{children:[(0,t.jsx)(r,{title:`Native Wrapper`,href:`/docs/features/video-library/native-wrapper`}),(0,t.jsx)(r,{title:`Video Library`,href:`/docs/features/video-library/video-library`}),(0,t.jsx)(r,{title:`Video Topic Statistics`,href:`/docs/features/video-library/video-topic-statistics`}),(0,t.jsx)(r,{title:`Video Watch Page`,href:`/docs/features/video-library/video-watch-page`})]})]})}function s(e={}){let{wrapper:n}=e.components||{};return n?(0,t.jsx)(n,{...e,children:(0,t.jsx)(o,{...e})}):o(e)}function c(e,t){throw Error(`Expected `+(t?`component`:`object`)+" `"+e+"` to be defined: you likely forgot to import, pass, or provide it.")}export{r as _markdown,s as default,n as frontmatter,i as structuredData,a as toc};

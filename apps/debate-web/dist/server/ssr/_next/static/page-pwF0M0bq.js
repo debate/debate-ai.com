@@ -1,0 +1,1 @@
+import{o as e}from"./rolldown-runtime-BCiCTKAo.js";import{nt as t}from"./navigation-Cztnolr2.js";import{t as n}from"./jsx-runtime-BB9-612F.js";import{n as r}from"./RankingProfiles-BdA6OCx6.js";import{t as i}from"./ToolPageHeader-Bet_9sKt.js";var a=e(n(),1);function o(){let{team:e}=t();return(0,a.jsx)(i,{children:(0,a.jsx)(r,{slug:e??``})})}export{o as default};

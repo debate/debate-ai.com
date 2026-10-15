@@ -1,0 +1,1 @@
+function e(){return!1}async function t(e){return!1}function n(e){return()=>{}}export{n,t as r,e as t};

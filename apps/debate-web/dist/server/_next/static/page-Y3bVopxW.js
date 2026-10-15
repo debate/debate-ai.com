@@ -1,0 +1,1 @@
+import{t as e}from"./page-DZB_xj-t.js";var t={title:`Rankings`,description:`Debater and team rankings by format and season`};export{e as default,t as metadata};

@@ -1,0 +1,1 @@
+import{t as e}from"./schema-AOgkGIZT.js";import{o as t}from"./dist-BAKXHp6u.js";function n(){return e.nodes.doc.createChecked(null,[e.nodes.paragraph.create()])}function r(n){let r=n.doc;if(r.childCount!==1)return!1;let i=r.firstChild;return i.type!==e.nodes.paragraph||i.content.size!==0?!1:t(n)===0}export{n,r as t};

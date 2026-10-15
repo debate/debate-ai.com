@@ -1,0 +1,1 @@
+function e(e,t){return t?e===t||e.startsWith(t+`/`):!1}function t(t,n){return e(t,n)?t.slice(n.length)||`/`:t}function n(t,n){return!n||e(t,n)?t:t===`/`?n:`${n}${t}`}export{e as n,t as r,n as t};

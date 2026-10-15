@@ -1,0 +1,1 @@
+function e(e){return`/docs${e===`/`?``:e}`}export{e as t};

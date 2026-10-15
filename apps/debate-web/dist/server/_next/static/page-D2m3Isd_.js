@@ -1,0 +1,1 @@
+import{i as e}from"./navigation-errors-CoD2OYEQ.js";import"./navigation.react-server-B1reI6jI.js";var t={title:`Practice vs AI`,description:`Pick a difficulty, topic and opponent; the AI preps cards and cases, then debates you in a timed round`,alternates:{canonical:`/practice/versus-ai`}};function n(){e(`/practice/versus-ai`)}export{n as default,t as metadata};

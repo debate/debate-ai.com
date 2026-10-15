@@ -1,0 +1,1 @@
+import{t as e}from"./page-DZB_xj-t.js";var t={title:`Lectures`,description:`Lectures from educators on every debate format, skill and topic`};export{e as default,t as metadata};

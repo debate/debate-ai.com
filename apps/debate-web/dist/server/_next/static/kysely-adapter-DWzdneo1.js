@@ -1,0 +1,1 @@
+var e=()=>null,t=async()=>({databaseType:null}),n=()=>()=>({}),r=async()=>({}),i=async()=>`public`,a=()=>({}),o=()=>({});export{n as a,i,e as n,a as o,r,o as s,t};

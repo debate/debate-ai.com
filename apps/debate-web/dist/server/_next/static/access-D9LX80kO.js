@@ -1,0 +1,1 @@
+import{n as e}from"./context-Cg43A54y.js";import{t}from"./session-BCSrxQBz.js";import{r as n}from"./admin-mHYY3DoM.js";import{a as r}from"./queries-f652HGZQ.js";async function i(i){let a=(await t())?.user?.id??null,{canEditContent:o}=await n();return{userId:a,isStaff:o,canManage:(a?await r(await e(),a,i):!1)||o}}export{i as t};

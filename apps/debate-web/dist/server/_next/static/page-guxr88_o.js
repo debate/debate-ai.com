@@ -1,0 +1,1 @@
+import{i as e}from"./navigation-errors-CoD2OYEQ.js";import"./navigation.react-server-B1reI6jI.js";var t={title:`Team Brainstorm Assist`,alternates:{canonical:`/research/team?section=brainstorm`}};function n(){e(`/research/team?section=brainstorm`)}export{n as default,t as metadata};

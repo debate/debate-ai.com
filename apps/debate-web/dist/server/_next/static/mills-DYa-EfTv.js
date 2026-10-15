@@ -1,0 +1,26 @@
+import{t as e}from"./framework~index~page~page~page~page~page~page~page~page~page~layout~layout~page~page~page~p~smt8a5un-DnyErxv7.js";var t=e(),n={title:`Mills`,description:`Circuit Debater Library entry`},r=`# Mills [#mills]
+
+John Stuart Mills is a 19th century philosopher from England. His most famous work is "On Liberty," which discusses his Harms Principle. 
+
+The Harms Principle has a few core parts: 
+
+1. Action categorization: Actions are either 'self-regarding' or 'other-regarding.' Self regarding actions concern only the individual and should be free from state interference. Think what you choose to believe or do in your free time that affects no one else. Other regarding actions affect others and can or should be interfered with by the state if they cause harm. 
+1. Individuals are sovereign over their own bodies and minds: We must be held liable for our own actions. 
+1. State interference: The only justifiable infringement of the state on someone's personal liberty is to minimize harm to others. "One's right to swing their fist ends where another's nose begins." 
+
+To be clear, Mills argues that "offense" (hurt feelings or disgust, for example) are entirely distinct from harm. Some actions that cause harm according to Mills are  physical injury, property damage, and rights violations. 
+
+The Harms Principle is a [utilitarian](/utilitarianism) principle, because it fundamentally believes in maximizing overall well-being as a final goal. 
+
+Mills also believed in [empiricism](/empiricism) and [liberalism.](/liberalism)
+`,i={contents:[{heading:`mills`,content:`John Stuart Mills is a 19th century philosopher from England. His most famous work is "On Liberty," which discusses his Harms Principle.`},{heading:`mills`,content:`The Harms Principle has a few core parts:`},{heading:`mills`,content:`Action categorization: Actions are either 'self-regarding' or 'other-regarding.' Self regarding actions concern only the individual and should be free from state interference. Think what you choose to believe or do in your free time that affects no one else. Other regarding actions affect others and can or should be interfered with by the state if they cause harm.`},{heading:`mills`,content:`Individuals are sovereign over their own bodies and minds: We must be held liable for our own actions.`},{heading:`mills`,content:`State interference: The only justifiable infringement of the state on someone's personal liberty is to minimize harm to others. "One's right to swing their fist ends where another's nose begins."`},{heading:`mills`,content:`To be clear, Mills argues that "offense" (hurt feelings or disgust, for example) are entirely distinct from harm. Some actions that cause harm according to Mills are  physical injury, property damage, and rights violations.`},{heading:`mills`,content:`The Harms Principle is a utilitarian principle, because it fundamentally believes in maximizing overall well-being as a final goal.`},{heading:`mills`,content:`Mills also believed in empiricism and liberalism.`}],headings:[{id:`mills`,content:`Mills`}]},a=[{depth:1,url:`#mills`,title:(0,t.jsx)(t.Fragment,{children:`Mills`})}];function o(e){let n={a:`a`,h1:`h1`,li:`li`,ol:`ol`,p:`p`,...e.components};return(0,t.jsxs)(t.Fragment,{children:[(0,t.jsx)(n.h1,{id:`mills`,children:`Mills`}),`
+`,(0,t.jsx)(n.p,{children:`John Stuart Mills is a 19th century philosopher from England. His most famous work is "On Liberty," which discusses his Harms Principle.`}),`
+`,(0,t.jsx)(n.p,{children:`The Harms Principle has a few core parts:`}),`
+`,(0,t.jsxs)(n.ol,{children:[`
+`,(0,t.jsx)(n.li,{children:`Action categorization: Actions are either 'self-regarding' or 'other-regarding.' Self regarding actions concern only the individual and should be free from state interference. Think what you choose to believe or do in your free time that affects no one else. Other regarding actions affect others and can or should be interfered with by the state if they cause harm.`}),`
+`,(0,t.jsx)(n.li,{children:`Individuals are sovereign over their own bodies and minds: We must be held liable for our own actions.`}),`
+`,(0,t.jsx)(n.li,{children:`State interference: The only justifiable infringement of the state on someone's personal liberty is to minimize harm to others. "One's right to swing their fist ends where another's nose begins."`}),`
+`]}),`
+`,(0,t.jsx)(n.p,{children:`To be clear, Mills argues that "offense" (hurt feelings or disgust, for example) are entirely distinct from harm. Some actions that cause harm according to Mills are  physical injury, property damage, and rights violations.`}),`
+`,(0,t.jsxs)(n.p,{children:[`The Harms Principle is a `,(0,t.jsx)(n.a,{href:`/utilitarianism`,children:`utilitarian`}),` principle, because it fundamentally believes in maximizing overall well-being as a final goal.`]}),`
+`,(0,t.jsxs)(n.p,{children:[`Mills also believed in `,(0,t.jsx)(n.a,{href:`/empiricism`,children:`empiricism`}),` and `,(0,t.jsx)(n.a,{href:`/liberalism`,children:`liberalism.`})]})]})}function s(e={}){let{wrapper:n}=e.components||{};return n?(0,t.jsx)(n,{...e,children:(0,t.jsx)(o,{...e})}):o(e)}export{r as _markdown,s as default,n as frontmatter,i as structuredData,a as toc};

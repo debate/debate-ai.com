@@ -1,0 +1,1 @@
+export{t as Link,t as default}from"./link-Bg8EXrgP.js";

@@ -1,0 +1,1 @@
+export{i as PracticePartnersPanel}from"./PracticePartnersPanel-BNiM1QSZ.js";

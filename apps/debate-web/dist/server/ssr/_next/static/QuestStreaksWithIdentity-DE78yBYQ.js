@@ -1,0 +1,1 @@
+import{o as e}from"./rolldown-runtime-BCiCTKAo.js";import{t}from"./jsx-runtime-BB9-612F.js";import{t as n}from"./session-identity-BTnMxSM9.js";import{t as r}from"./QuestStreaksPanel-tkkgrdLz.js";import{t as i}from"./useSession-CvpzF9mV.js";var a=e(t(),1);function o(){let{user:e}=i(),t=n(e);return(0,a.jsx)(r,{signedInContributorId:t||void 0})}export{o as QuestStreaksWithIdentity};

@@ -1,0 +1,1 @@
+function e(...e){let t=``;for(let n of e)t.length>0&&(n.startsWith(`/`)&&(n=n.slice(1)),t.endsWith(`/`)||(t+=`/`)),t+=n;return t}function t(e){return e.startsWith(`http://`)||e.startsWith(`https://`)||(e.startsWith(`/`)||(e=`/`+e),e.length>1&&e.endsWith(`/`)&&(e=e.slice(0,-1))),e}export{t as n,e as t};

@@ -1,0 +1,1 @@
+export{n as ensureFetchPatch,l as setCurrentFetchSoftTags}from"./fetch-cache-CMAuRV7G.js";

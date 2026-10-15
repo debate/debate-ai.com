@@ -1,0 +1,1 @@
+export{t as ChromeErrorBoundary}from"./chrome-error-boundary-ZIo1W8bY.js";

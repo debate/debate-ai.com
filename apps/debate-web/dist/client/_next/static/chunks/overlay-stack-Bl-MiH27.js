@@ -1,0 +1,1 @@
+var e=[];function t(){let t=Symbol(`overlay`);return e.push(t),t}function n(t){let n=e.lastIndexOf(t);n>=0&&e.splice(n,1)}function r(t){return e.length>0&&e[e.length-1]===t}function i(){return e.length>0}export{t as i,r as n,n as r,i as t};

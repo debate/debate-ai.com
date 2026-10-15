@@ -1,0 +1,21 @@
+var e=[`local`,`tabroom`],t=1e4,n=200,r=100;function i(e){return(e??``).trim().toLowerCase()}function a(e,t){let n=i(e);return n.includes(`@`)&&n===i(t)}var o=(e,t=n)=>typeof e==`string`?e.trim().slice(0,t):``;function s(n){let a=[],s=n&&typeof n==`object`?n:{},c=Number(s.tournId);(!Number.isInteger(c)||c<=0)&&a.push(`tournId must be a positive whole number.`);let l=o(s.event),u=o(s.round),d=o(s.aff),f=o(s.neg);l||a.push(`event is required.`),u||a.push(`round is required.`),d||a.push(`aff is required.`),f||a.push(`neg is required.`),d&&f&&d.toLowerCase()===f.toLowerCase()&&a.push(`aff and neg must be different entries.`);let p=s.winner;p!==`aff`&&p!==`neg`&&a.push(`winner must be "aff" or "neg".`);let m=s.destination??`local`;e.includes(m)||a.push(`destination must be "local" or "tabroom".`);let h=i(typeof s.tabroomEmail==`string`?s.tabroomEmail:``);/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(h)||a.push(`tabroomEmail must be the email of your Tabroom account.`),typeof s.rfd==`string`&&s.rfd.length>1e4&&a.push(`rfd is limited to ${t} characters.`);let g=[];if(s.speakerPoints!==void 0&&(Array.isArray(s.speakerPoints)?s.speakerPoints.forEach((e,t)=>{let n=e&&typeof e==`object`?e:{},i=o(n.speaker),s=Number(n.points);i||a.push(`speakerPoints[${t}].speaker is required.`),n.side!==`aff`&&n.side!==`neg`&&a.push(`speakerPoints[${t}].side must be "aff" or "neg".`),(!Number.isFinite(s)||s<0||s>r)&&a.push(`speakerPoints[${t}].points must be between 0 and ${r}.`),g.push({speaker:i,side:n.side,points:s})}):a.push(`speakerPoints must be a list.`)),a.length)return{ok:!1,errors:a};let _=o(s.tournamentName),v=o(s.room),y=typeof s.rfd==`string`?s.rfd.trim():``;return{ok:!0,ballot:{tournId:c,..._?{tournamentName:_}:{},event:l,round:u,...v?{room:v}:{},aff:d,neg:f,winner:p,...s.lowPointWin===!0?{lowPointWin:!0}:{},...g.length?{speakerPoints:g}:{},...y?{rfd:y}:{},tabroomEmail:h,destination:m}}}var c={name:`submit_judge_ballot`,description:`Submit a judge's ballot for one debate round. The ballot is stored by Debate AI and, when destination is "tabroom", also sent to Tabroom. The signed-in Debate AI user's email must match tabroomEmail, or the ballot is rejected.`,input_schema:{type:`object`,properties:{tournId:{type:`integer`,description:`Tabroom tournament id.`},tournamentName:{type:`string`},event:{type:`string`,description:`Event abbreviation, e.g. VCX.`},round:{type:`string`,description:`Round name or label, e.g. 3 or Octas.`},room:{type:`string`},aff:{type:`string`,description:`Affirmative (or Pro) entry code.`},neg:{type:`string`,description:`Negative (or Con) entry code.`},winner:{type:`string`,enum:[`aff`,`neg`]},lowPointWin:{type:`boolean`},speakerPoints:{type:`array`,items:{type:`object`,properties:{speaker:{type:`string`},side:{type:`string`,enum:[`aff`,`neg`]},points:{type:`number`,minimum:0,maximum:r}},required:[`speaker`,`side`,`points`]}},rfd:{type:`string`,description:`Reason for decision.`,maxLength:t},tabroomEmail:{type:`string`,description:`Email of the judge's Tabroom account.`},destination:{type:`string`,enum:[`local`,`tabroom`],default:`local`}},required:[`tournId`,`event`,`round`,`aff`,`neg`,`winner`,`tabroomEmail`]}},l=`CREATE TABLE IF NOT EXISTS "judge_ballot" (
+  "id" TEXT PRIMARY KEY NOT NULL,
+  "user_id" TEXT NOT NULL,
+  "judge_email" TEXT NOT NULL,
+  "tabroom_email" TEXT NOT NULL,
+  "tourn_id" INTEGER NOT NULL,
+  "tournament_name" TEXT,
+  "event" TEXT NOT NULL,
+  "round" TEXT NOT NULL,
+  "room" TEXT,
+  "aff" TEXT NOT NULL,
+  "neg" TEXT NOT NULL,
+  "winner" TEXT NOT NULL,
+  "low_point_win" INTEGER NOT NULL DEFAULT 0,
+  "speaker_points" TEXT NOT NULL DEFAULT '[]',
+  "rfd" TEXT,
+  "destination" TEXT NOT NULL,
+  "tabroom_status" TEXT,
+  "tabroom_detail" TEXT,
+  "created_at" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+)`,u=`CREATE INDEX IF NOT EXISTS "judge_ballot__user_tourn" ON "judge_ballot" ("user_id", "tourn_id")`;export{i as a,a as i,l as n,s as o,c as r,u as t};

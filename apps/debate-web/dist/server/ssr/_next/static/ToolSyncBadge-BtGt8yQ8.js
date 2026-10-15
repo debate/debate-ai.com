@@ -1,0 +1,1 @@
+export{t as ToolSyncBadge}from"./ToolSyncBadge-BapdKAg5.js";
