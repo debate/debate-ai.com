@@ -204,23 +204,24 @@ function PlayerRow({
 
                 {/* Menu with Mic Selector, Reset, Cross-X, Upload, Delete, Playback Speed */}
                 {!hideInlineMenu && (
-                    <SpeechRecordingMenu
-                        speechName={speechName}
-                        speechLabel={speechLabel}
-                        micDeviceId={micDeviceId}
-                        onMicDeviceChange={onMicDeviceChange}
-                        recordingEnabled={recordingEnabled}
-                        onRecordingEnabledChange={onRecordingEnabledChange}
-                        onResetSpeechTime={onResetSpeechTime}
-                        onSwitchToCrossX={onSwitchToCrossX}
-                        onResetPrepTimers={onResetPrepTimers}
-                        onDeleteRecording={handleDelete}
-                        recordingKey={rec.key}
-                        inHeader={false}
-                        playbackRate={player.playbackRate}
-                        onPlaybackRateChange={player.setPlaybackRate}
-                        speeds={[0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]}
-                    />
+                     <SpeechRecordingMenu
+                         speechName={speechName}
+                         speechLabel={speechLabel}
+                         micDeviceId={micDeviceId}
+                         onMicDeviceChange={onMicDeviceChange}
+                         recordingEnabled={recordingEnabled}
+                         onRecordingEnabledChange={onRecordingEnabledChange}
+                         onResetSpeechTime={onResetSpeechTime}
+                         onSwitchToCrossX={onSwitchToCrossX}
+                         onResetPrepTimers={onResetPrepTimers}
+                         onDeleteRecording={handleDelete}
+                         recordingKey={rec.key}
+                         inHeader={false}
+                         playbackRate={player.playbackRate}
+                         onPlaybackRateChange={player.setPlaybackRate}
+                         speeds={[0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]}
+                         uploadActions={uploadActions}
+                     />
                 )}
             </div>
             {captionsOn && (
@@ -340,6 +341,8 @@ interface SpeechRecordingPlayerProps {
     recordingEnabled?: boolean
     /** Callback when recording enabled state changes */
     onRecordingEnabledChange?: (enabled: boolean) => void
+    /** Host-supplied items shown right under "Upload Speech Audio" (e.g. "Select YouTube Start"). */
+    uploadActions?: SpeechMenuAction[]
     /** Whether to hide the inline menu button in player rows */
     hideInlineMenu?: boolean
 }

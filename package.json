@@ -8,8 +8,7 @@
     "!packages/debate-editor-cm",
     "!packages/debate-rankings",
     "!packages/debate-tournaments-tabroom",
-    "apps/debate-ai.com",
-    "apps/debate-browser-ext"
+    "apps/*"
   ],
   "scripts": {
     "dev": "turbo dev",

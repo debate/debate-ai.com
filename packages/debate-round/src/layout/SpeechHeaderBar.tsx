@@ -432,29 +432,30 @@ export function SpeechHeaderBar({
       {/* Recording playback on its own full-width row (renders nothing until
           a recording exists, so the row collapses via `empty:hidden`) */}
       <div className="w-full min-w-0 empty:hidden">
-        <SpeechRecordingPlayer
-          speechName={speechName}
-          className="w-full"
-          progressBarPortalRef={progressBarPortalRef}
-          onPlayingChange={handleRecordingPlayingChange}
-          onResetSpeechTime={() => {
-            setTime(resetTime)
-            setTimerState({ name: "paused" })
-          }}
-          onSwitchToCrossX={() => {
-            // Set to 3 minutes (180,000 ms)
-            const crossXTime = 3 * 60 * 1000
-            setTime(crossXTime)
-            setResetTime(crossXTime)
-            setTimerState({ name: "paused" })
-          }}
-          onResetPrepTimers={onResetPrepTimers}
-          micDeviceId={micDeviceId}
-          onMicDeviceChange={setMicDeviceId}
-          recordingEnabled={recordingEnabled}
-          onRecordingEnabledChange={setRecordingEnabled}
-          hideInlineMenu={true}
-        />
+         <SpeechRecordingPlayer
+           speechName={speechName}
+           className="w-full"
+           progressBarPortalRef={progressBarPortalRef}
+           onPlayingChange={handleRecordingPlayingChange}
+           onResetSpeechTime={() => {
+             setTime(resetTime)
+             setTimerState({ name: "paused" })
+           }}
+           onSwitchToCrossX={() => {
+             // Set to 3 minutes (180,000 ms)
+             const crossXTime = 3 * 60 * 1000
+             setTime(crossXTime)
+             setResetTime(crossXTime)
+             setTimerState({ name: "paused" })
+           }}
+           onResetPrepTimers={onResetPrepTimers}
+           micDeviceId={micDeviceId}
+           onMicDeviceChange={setMicDeviceId}
+           recordingEnabled={recordingEnabled}
+           onRecordingEnabledChange={setRecordingEnabled}
+           hideInlineMenu={true}
+           uploadActions={[youtubeSpeech.action]}
+         />
       </div>
 
       {showRecordingMenu && outcomeResponses.dialog}
