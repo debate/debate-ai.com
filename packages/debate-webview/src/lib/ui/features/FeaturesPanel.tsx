@@ -301,7 +301,7 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
                 Downloads
               </h2>
               <div className="flex flex-wrap items-center justify-center gap-3">
-                <DownloadAppButton platform="chrome-extension" appId="noecbaibfhbmpapofcdkgchfifmoinfj" />
+                <DownloadAppButton platform="chrome-extension-white" appId="noecbaibfhbmpapofcdkgchfifmoinfj" />
                 <DownloadAppButton platform="android" appId="com.debate.ai" />
               </div>
             </div>

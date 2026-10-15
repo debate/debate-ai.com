@@ -26,6 +26,7 @@ import { COLUMN_TOOLTIPS, DIVISION_SHORT_LABELS, displayEntryName, schoolRankOf 
 import type { Division, SortKey, SortState } from "./leaderboardTypes"
 import { schoolHref, teamHref } from "./profile/rankingProfileHelpers"
 import { SchoolLogo } from "./SchoolLogo"
+import { getSchoolLogo } from "../../lib/schoolLogos"
 import { LegendaryBadge, ROW_TIER_CLASS, rowTier, type RowTier } from "./rowTier"
 
 /** The fields shown as columns. */
@@ -95,11 +96,15 @@ const COLUMNS: Column[] = [
     label: "School",
     render: (e, _division, _tier, schoolRanks) => {
       const schoolRank = schoolRankOf(schoolRanks, e.school)
+      const logo = getSchoolLogo(e.school)
       return (
         <>
           <Link href={schoolHref(e.school)} className="hover:text-foreground hover:underline underline-offset-4 flex items-center gap-1.5">
-            <SchoolLogo school={e.school} className="h-4 w-auto" />
-            {e.school}
+            {logo ? (
+              <SchoolLogo school={e.school} className="h-4 w-auto" />
+            ) : (
+              e.school
+            )}
           </Link>
           {schoolRank !== undefined && (
             <span className="ml-1.5 text-xs tabular-nums text-muted-foreground/70" title="School rank in the Schools tab for this format">

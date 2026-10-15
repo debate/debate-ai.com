@@ -23,6 +23,10 @@ import IconSchoolStMarks from "../../../debate-icons/schools/st-marks.png";
 import IconSchoolWestminster from "../../../debate-icons/schools/westminster.png";
 import IconSchoolBlake from "../../../debate-icons/schools/blake.png";
 import IconSchoolHarker from "../../../debate-icons/schools/harker.png";
+import IconSchoolKansas from "../../../debate-icons/schools/kansas.png";
+import IconSchoolMichigan from "../../../debate-icons/schools/michigan.png";
+import IconSchoolTexas from "../../../debate-icons/schools/texas.png";
+import IconSchoolUcBerkeley from "../../../debate-icons/schools/uc-berkeley.png";
 
 const slugify = (s: string): string =>
   s
@@ -52,6 +56,10 @@ export const SCHOOL_LOGO_MAP: Record<string, string | FC<SVGProps<SVGSVGElement>
   westminster: (IconSchoolWestminster as any)?.src ?? (IconSchoolWestminster as any),
   blake: (IconSchoolBlake as any)?.src ?? (IconSchoolBlake as any),
   harker: (IconSchoolHarker as any)?.src ?? (IconSchoolHarker as any),
+  kansas: (IconSchoolKansas as any)?.src ?? (IconSchoolKansas as any),
+  michigan: (IconSchoolMichigan as any)?.src ?? (IconSchoolMichigan as any),
+  texas: (IconSchoolTexas as any)?.src ?? (IconSchoolTexas as any),
+  "uc-berkeley": (IconSchoolUcBerkeley as any)?.src ?? (IconSchoolUcBerkeley as any),
 };
 
 export const getSchoolLogo = (
