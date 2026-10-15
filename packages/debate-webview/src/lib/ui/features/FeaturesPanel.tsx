@@ -297,9 +297,6 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
               className="mt-8 flex flex-col items-center gap-3 scroll-mt-20"
               data-testid="downloads"
             >
-              <h2 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
-                Downloads
-              </h2>
               <div className="flex flex-wrap items-center justify-center gap-3">
                 <DownloadAppButton platform="chrome-extension-white" appId="noecbaibfhbmpapofcdkgchfifmoinfj" />
                 <DownloadAppButton platform="android" appId="com.debate.ai" />
@@ -307,24 +304,6 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
             </div>
           </Reveal>
 
-          <Reveal delay={220}>
-            <div className="relative mx-auto mt-8 max-w-xl">
-              {/* Above the input, not just before it: the field's own
-                  `backdrop-blur` paints a layer that would otherwise wash the
-                  glyph out. */}
-              <Search
-                aria-hidden
-                className="pointer-events-none absolute top-1/2 left-3.5 z-10 size-4 -translate-y-1/2 text-muted-foreground"
-              />
-              <Input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search features by name, description, route, or keyword…"
-                aria-label="Search features"
-                className="h-11 rounded-full border-border bg-card/80 pl-10 backdrop-blur-sm"
-              />
-            </div>
-        </Reveal>
 
         <Reveal delay={340}>
             {/* The root README's badge block, row for row. */}
@@ -422,6 +401,27 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
         aria-label="CARDS vision"
         className="mx-auto max-w-6xl scroll-mt-20 px-4 pb-16 sm:px-6 lg:px-8"
       >
+
+
+          <Reveal delay={220}>
+            <div className="relative mx-auto mt-8 max-w-xl">
+              {/* Above the input, not just before it: the field's own
+                  `backdrop-blur` paints a layer that would otherwise wash the
+                  glyph out. */}
+              <Search
+                aria-hidden
+                className="pointer-events-none absolute top-1/2 left-3.5 z-10 size-4 -translate-y-1/2 text-muted-foreground"
+              />
+              <Input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search features by name, description, route, or keyword…"
+                aria-label="Search features"
+                className="h-11 rounded-full border-border bg-card/80 pl-10 backdrop-blur-sm"
+              />
+            </div>
+        </Reveal>
+        
         <Reveal className="mx-auto mb-8 max-w-2xl text-center">
           <span className="da-accent-fill mb-4 inline-flex size-10 items-center justify-center rounded-xl">
             <Sparkles className="size-5" />
