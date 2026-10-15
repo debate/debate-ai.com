@@ -15,6 +15,7 @@ export const CARDS_OVERVIEW =
 /** What the CARDS search does today. */
 export const CARDS_CAPABILITIES = [
   "Search summaries, cites, highlights, and full text across millions of research quotes.",
+  "Use Words Bold & Highlighted to match speech times (~300 w/min) and to read aloud warranted summaries while judge & opponents reads highlighted quotes on-screen, which makes context more understandable and publically persuasive.",
   "Scout top evidence by team and school, sorted by Speeches Read In Count.",
   "Collaborate on topic outlines, share evidence, and download Topic Starter outlines.",
 ];
