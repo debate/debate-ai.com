@@ -1,1 +1,0 @@
-export{r as getArticle}from"./api-client-BcXtfFVZ.js";

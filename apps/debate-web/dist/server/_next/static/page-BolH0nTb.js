@@ -1,0 +1,1 @@
+import{t as e}from"./server-BYjRQwGu.js";var t=e(()=>{throw Error(`Unexpectedly client reference export 'default' is called on server`)},`77b85e35c82c`,`default`),n={title:`File for sale \u2014 File Market`,description:`Read a research file's table of contents for free; buy it to unlock every card`};export{t as default,n as metadata};

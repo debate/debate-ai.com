@@ -1,1 +1,0 @@
-import{a as e}from"./navigation-errors-CoD2OYEQ.js";import"./navigation.react-server-B1reI6jI.js";function t(){e(`/settings?category=preferences`)}var n={title:`Settings`,description:`Redirects to the Preferences tab of Settings`};export{t as default,n as metadata};

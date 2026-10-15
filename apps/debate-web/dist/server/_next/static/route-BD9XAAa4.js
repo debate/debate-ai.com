@@ -1,1 +1,0 @@
-import{n as e}from"./server-BAqfGQg5.js";import{r as t}from"./admin-mHYY3DoM.js";async function n(){let{role:n,isAdmin:r,isModerator:i,canEditContent:a}=await t();return e.json({role:n,isAdmin:r,isModerator:i,canEditContent:a},{headers:{"Cache-Control":`private, no-store`}})}export{n as GET};

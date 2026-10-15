@@ -1,0 +1,1 @@
+import{i as e}from"./navigation-errors-CoD2OYEQ.js";import"./navigation.react-server-Ccj1di2R.js";var t={title:`Task Inbox`,alternates:{canonical:`/research/team?section=inbox`}};function n(){e(`/research/team?section=inbox`)}export{n as default,t as metadata};

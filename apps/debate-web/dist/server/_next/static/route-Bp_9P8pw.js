@@ -1,0 +1,1 @@
+import{n as e}from"./server-CC2JWgrq.js";import{r as t}from"./ballots-DR8Dgvcy.js";function n(){return e.json({tool:t,endpoint:{method:`POST`,path:`/api/judge-ballots`,tabroomTokenHeader:`x-tabroom-token`}})}export{n as GET};

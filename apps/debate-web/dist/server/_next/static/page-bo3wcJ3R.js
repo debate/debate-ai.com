@@ -1,0 +1,1 @@
+import{t as e}from"./server-BYjRQwGu.js";var t=e(()=>{throw Error(`Unexpectedly client reference export 'default' is called on server`)},`6ef5dbc85c5b`,`default`);async function n({params:e}){let{tournament:t,teams:n}=await e,r=t.replace(/-/g,` `),i=n.replace(/-/g,` `);return{title:`${r} - ${i}`,description:`Debate round: ${i} at ${r}`}}export{t as default,n as generateMetadata};

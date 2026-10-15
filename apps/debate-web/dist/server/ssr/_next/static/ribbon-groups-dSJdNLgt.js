@@ -1,1 +1,0 @@
-export{t as RIBBON_GROUPS}from"./ribbon-groups-DgjV09YM.js";

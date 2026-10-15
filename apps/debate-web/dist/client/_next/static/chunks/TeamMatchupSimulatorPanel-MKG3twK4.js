@@ -1,1 +1,0 @@
-import{o as e}from"./rolldown-runtime-BCiCTKAo.js";import{r as t}from"./framework-D7BYm31f.js";import{t as n}from"./MatchupSimulator-D1mzCvRj.js";var r=e(t(),1);function i(){return(0,r.jsx)(n,{title:`Simulate a round between ranked teams`})}export{i as TeamMatchupSimulatorPanel};

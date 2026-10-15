@@ -1,1 +1,0 @@
-var e={root:{h:210,s:75},pro:{h:152,s:62},con:{h:9,s:78}};function t(t,n=1){let{h:r,s:i}=e[t];return t===`root`?`hsl(${r} ${i}% 68%)`:`hsl(${r} ${i}% ${Math.min(36+(n-1)*9,72)}%)`}function n(t){let{h:n,s:r}=e[t];return`hsl(${n} ${r}% ${t===`root`?45:38}%)`}var r={pro:`text-emerald-700 dark:text-emerald-400`,con:`text-red-700 dark:text-red-400`};export{t as n,n as r,r as t};

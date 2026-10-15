@@ -1,0 +1,1 @@
+import{i as e}from"./navigation-errors-CoD2OYEQ.js";import"./navigation.react-server-Ccj1di2R.js";var t={title:`Opponent Team Profiles`,alternates:{canonical:`/practice/prep?section=opponents`}};function n(){e(`/practice/prep?section=opponents`)}export{n as default,t as metadata};

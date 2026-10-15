@@ -1,2 +1,0 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["_next/static/chunks/event-D6iU7675.js","_next/static/chunks/core-CwBWH9_g.js","_next/static/chunks/webviewWindow-ITbLsmXf.js","_next/static/chunks/image-D7Awgb4U.js"])))=>i.map(i=>d[i]);
-import{st as e}from"./vinext-CJoyeZrh.js";async function t(t,n){let[{listen:r},{getCurrentWebviewWindow:i}]=await Promise.all([e(()=>import(`./event-D6iU7675.js`),__vite__mapDeps([0,1])),e(()=>import(`./webviewWindow-ITbLsmXf.js`),__vite__mapDeps([2,1,3,0]))]),a=await r(t,e=>n(e.payload),{target:i().label});return()=>a()}export{t};

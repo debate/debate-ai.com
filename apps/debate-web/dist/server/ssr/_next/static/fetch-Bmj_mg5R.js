@@ -1,1 +1,0 @@
-export{t as fetchClient}from"./fetch-BY8Zip21.js";

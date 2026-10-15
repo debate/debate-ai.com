@@ -1,1 +1,0 @@
-export{t as LegalTermsPrivacyPolicy,t as default}from"./react-DD4lpTLZ.js";

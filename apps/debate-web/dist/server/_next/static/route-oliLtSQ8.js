@@ -1,0 +1,1 @@
+import{n as e}from"./server-CC2JWgrq.js";import{r as t}from"./conditions-vMFYxq3_.js";import{n,t as r}from"./select-BYYxnD-D.js";import{ht as i,n as a}from"./context-Cg43A54y.js";async function o(){let o=await(await a()).select().from(i).where(t(i.published,!0)).orderBy(n(i.isFolder),r(i.title)).limit(100);return e.json({items:o,limit:100})}export{o as GET};

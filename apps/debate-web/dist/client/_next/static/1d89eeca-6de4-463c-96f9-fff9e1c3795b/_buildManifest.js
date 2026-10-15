@@ -1,1 +1,0 @@
-self.__BUILD_MANIFEST = {"__rewrites":{"beforeFiles":[],"afterFiles":[{"source":"/@:handle","destination":"/teams/:handle"},{"source":"/youtube-player.html","destination":"/youtube-player"}],"fallback":[]},"sortedPages":[]};self.__BUILD_MANIFEST_CB && self.__BUILD_MANIFEST_CB()

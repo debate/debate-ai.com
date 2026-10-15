@@ -1,0 +1,50 @@
+import{t as e}from"./framework~index~page~page~page~page~page~page~page~page~page~layout~layout~page~page~page~p~smt8a5un-DUd-kn8W.js";var t=e(),n={title:`Court CPs`,description:`Circuit Debater Library entry`},r=`# Court CPs [#court-cps]
+
+Court Counterplans argue that the affirmative plan should be implemented by the courts/judicial branch rather than the executive branch or Congress. 
+
+A courts counterplan must include all the regular parts of a [counterplan](/counterplans). (Counterplan text, solvency advocate, net benefit) 
+
+There are many net benefits commonly used in courts counterplan debates: 
+
+1. Political Capital - The affirmative plan might require the president or a chamber of congress to spend political capital which could: 
+## reduce their ability to implement policies and change elsewhere (perhaps in more important areas) [#reduce-their-ability-to-implement-policies-and-change-elsewhere-perhaps-in-more-important-areas] 
+## cause severe political gridlock [#cause-severe-political-gridlock] 
+1. Separation of Powers - The affirmative plan might result in a constitutional violation. Even with fiat, sometimes affirmatives might argue for the unconstitutional implementation of a plan, which can spillup into broader political impacts post-aff. Some plans might fit under the power of the courts, constitutionally, rather than any other branch. 
+1. States' Rights - courts rely on specific doctrines like judicial review to ensure that the federal government doesn't trample on states' rights. Congress or the executive branch doesn't have this same duty of judicial review or court precedent. 
+
+Pros of running a courts counterplan: 
+
+1. The counterplan can be applied to almost any affirmative case that engages with the legislative or executive branch and isn't necessarily specific to only particular plans. 
+1. You can argue that it's inherently educational and mimics real-world policymaking to debate over which branch of the government implements a plan, which can be helpful to combat affirmative-ran [theory](counterplan)(/theory). 
+1. The net benefits are pretty solid. 
+
+Cons of running a courts counterplan: 
+
+1. Answering PIC ([Counterplan](Plan-Inclusive)(/plan-inclusive-counterplans-pics)) theory might become more common while using this strategy. 
+1. Affirmative can perm and argue for implementation of the plan + judicial review. 
+1. Solvency deficits are difficult to respond to as the courts lack a lot of the enforcement mechanisms that the other two branches do. In fact, the judicial branch relies entirely on the executive for enforcement measures and entirely on the legislative for funding for their rulings, making this counterplan reliant on institutions that the neg might have been arguing against in the first place.
+`,i={contents:[{heading:`court-cps`,content:`Court Counterplans argue that the affirmative plan should be implemented by the courts/judicial branch rather than the executive branch or Congress.`},{heading:`court-cps`,content:`A courts counterplan must include all the regular parts of a counterplan. (Counterplan text, solvency advocate, net benefit)`},{heading:`court-cps`,content:`There are many net benefits commonly used in courts counterplan debates:`},{heading:`court-cps`,content:`Political Capital - The affirmative plan might require the president or a chamber of congress to spend political capital which could:`},{heading:`cause-severe-political-gridlock`,content:`Separation of Powers - The affirmative plan might result in a constitutional violation. Even with fiat, sometimes affirmatives might argue for the unconstitutional implementation of a plan, which can spillup into broader political impacts post-aff. Some plans might fit under the power of the courts, constitutionally, rather than any other branch.`},{heading:`cause-severe-political-gridlock`,content:`States' Rights - courts rely on specific doctrines like judicial review to ensure that the federal government doesn't trample on states' rights. Congress or the executive branch doesn't have this same duty of judicial review or court precedent.`},{heading:`cause-severe-political-gridlock`,content:`Pros of running a courts counterplan:`},{heading:`cause-severe-political-gridlock`,content:`The counterplan can be applied to almost any affirmative case that engages with the legislative or executive branch and isn't necessarily specific to only particular plans.`},{heading:`cause-severe-political-gridlock`,content:`You can argue that it's inherently educational and mimics real-world policymaking to debate over which branch of the government implements a plan, which can be helpful to combat affirmative-ran theory(/theory).`},{heading:`cause-severe-political-gridlock`,content:`The net benefits are pretty solid.`},{heading:`cause-severe-political-gridlock`,content:`Cons of running a courts counterplan:`},{heading:`cause-severe-political-gridlock`,content:`Answering PIC (Counterplan(/plan-inclusive-counterplans-pics)) theory might become more common while using this strategy.`},{heading:`cause-severe-political-gridlock`,content:`Affirmative can perm and argue for implementation of the plan + judicial review.`},{heading:`cause-severe-political-gridlock`,content:`Solvency deficits are difficult to respond to as the courts lack a lot of the enforcement mechanisms that the other two branches do. In fact, the judicial branch relies entirely on the executive for enforcement measures and entirely on the legislative for funding for their rulings, making this counterplan reliant on institutions that the neg might have been arguing against in the first place.`}],headings:[{id:`court-cps`,content:`Court CPs`},{id:`reduce-their-ability-to-implement-policies-and-change-elsewhere-perhaps-in-more-important-areas`,content:`reduce their ability to implement policies and change elsewhere (perhaps in more important areas)`},{id:`cause-severe-political-gridlock`,content:`cause severe political gridlock`}]},a=[{depth:1,url:`#court-cps`,title:(0,t.jsx)(t.Fragment,{children:`Court CPs`})},{depth:2,url:`#reduce-their-ability-to-implement-policies-and-change-elsewhere-perhaps-in-more-important-areas`,title:(0,t.jsx)(t.Fragment,{children:`reduce their ability to implement policies and change elsewhere (perhaps in more important areas)`})},{depth:2,url:`#cause-severe-political-gridlock`,title:(0,t.jsx)(t.Fragment,{children:`cause severe political gridlock`})}];function o(e){let n={a:`a`,h1:`h1`,h2:`h2`,li:`li`,ol:`ol`,p:`p`,...e.components};return(0,t.jsxs)(t.Fragment,{children:[(0,t.jsx)(n.h1,{id:`court-cps`,children:`Court CPs`}),`
+`,(0,t.jsx)(n.p,{children:`Court Counterplans argue that the affirmative plan should be implemented by the courts/judicial branch rather than the executive branch or Congress.`}),`
+`,(0,t.jsxs)(n.p,{children:[`A courts counterplan must include all the regular parts of a `,(0,t.jsx)(n.a,{href:`/counterplans`,children:`counterplan`}),`. (Counterplan text, solvency advocate, net benefit)`]}),`
+`,(0,t.jsx)(n.p,{children:`There are many net benefits commonly used in courts counterplan debates:`}),`
+`,(0,t.jsxs)(n.ol,{children:[`
+`,(0,t.jsx)(n.li,{children:`Political Capital - The affirmative plan might require the president or a chamber of congress to spend political capital which could:`}),`
+`]}),`
+`,(0,t.jsx)(n.h2,{id:`reduce-their-ability-to-implement-policies-and-change-elsewhere-perhaps-in-more-important-areas`,children:`reduce their ability to implement policies and change elsewhere (perhaps in more important areas)`}),`
+`,(0,t.jsx)(n.h2,{id:`cause-severe-political-gridlock`,children:`cause severe political gridlock`}),`
+`,(0,t.jsxs)(n.ol,{children:[`
+`,(0,t.jsx)(n.li,{children:`Separation of Powers - The affirmative plan might result in a constitutional violation. Even with fiat, sometimes affirmatives might argue for the unconstitutional implementation of a plan, which can spillup into broader political impacts post-aff. Some plans might fit under the power of the courts, constitutionally, rather than any other branch.`}),`
+`,(0,t.jsx)(n.li,{children:`States' Rights - courts rely on specific doctrines like judicial review to ensure that the federal government doesn't trample on states' rights. Congress or the executive branch doesn't have this same duty of judicial review or court precedent.`}),`
+`]}),`
+`,(0,t.jsx)(n.p,{children:`Pros of running a courts counterplan:`}),`
+`,(0,t.jsxs)(n.ol,{children:[`
+`,(0,t.jsx)(n.li,{children:`The counterplan can be applied to almost any affirmative case that engages with the legislative or executive branch and isn't necessarily specific to only particular plans.`}),`
+`,(0,t.jsxs)(n.li,{children:[`You can argue that it's inherently educational and mimics real-world policymaking to debate over which branch of the government implements a plan, which can be helpful to combat affirmative-ran `,(0,t.jsx)(n.a,{href:`counterplan`,children:`theory`}),`(/theory).`]}),`
+`,(0,t.jsx)(n.li,{children:`The net benefits are pretty solid.`}),`
+`]}),`
+`,(0,t.jsx)(n.p,{children:`Cons of running a courts counterplan:`}),`
+`,(0,t.jsxs)(n.ol,{children:[`
+`,(0,t.jsxs)(n.li,{children:[`Answering PIC (`,(0,t.jsx)(n.a,{href:`Plan-Inclusive`,children:`Counterplan`}),`(/plan-inclusive-counterplans-pics)) theory might become more common while using this strategy.`]}),`
+`,(0,t.jsx)(n.li,{children:`Affirmative can perm and argue for implementation of the plan + judicial review.`}),`
+`,(0,t.jsx)(n.li,{children:`Solvency deficits are difficult to respond to as the courts lack a lot of the enforcement mechanisms that the other two branches do. In fact, the judicial branch relies entirely on the executive for enforcement measures and entirely on the legislative for funding for their rulings, making this counterplan reliant on institutions that the neg might have been arguing against in the first place.`}),`
+`]})]})}function s(e={}){let{wrapper:n}=e.components||{};return n?(0,t.jsx)(n,{...e,children:(0,t.jsx)(o,{...e})}):o(e)}export{r as _markdown,s as default,n as frontmatter,i as structuredData,a as toc};

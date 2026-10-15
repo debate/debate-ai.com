@@ -1,1 +1,0 @@
-import{invoke as e}from"./core-CwBWH9_g.js";function t(){return{read:t=>e(`read_sidecar`,{roundId:t}),write:(t,n)=>e(`write_sidecar`,{roundId:t,contents:n})}}export{t as createSidecarFs};

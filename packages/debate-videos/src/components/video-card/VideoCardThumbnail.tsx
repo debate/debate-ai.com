@@ -120,7 +120,7 @@ export function VideoCardThumbnail({
   const watchHref = video ? videoRouteHref(video) : videoWatchHref(title)
 
   return (
-    <div className="relative w-full aspect-video overflow-hidden bg-muted">
+    <div className="relative w-full aspect-[16/9] overflow-hidden bg-muted">
       <a
         href={watchHref}
         className="absolute inset-0 z-10"

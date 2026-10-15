@@ -1,0 +1,1 @@
+import{t as e}from"./server-BYjRQwGu.js";var t=e(()=>{throw Error(`Unexpectedly client reference export 'default' is called on server`)},`7dd2766c5e21`,`default`),n={title:`School Profile`,description:`Debate school ranking stats and videos`};export{t as default,n as metadata};

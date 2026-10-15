@@ -1,1 +1,0 @@
-var e={oneTap:!0,serviceWorker:!0};function t(){return e}export{t};

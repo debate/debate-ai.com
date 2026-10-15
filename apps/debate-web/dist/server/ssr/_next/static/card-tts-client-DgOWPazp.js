@@ -1,1 +1,0 @@
-export{t as DEFAULT_QWKSEARCH_VOICE_URL,n as DEFAULT_READ_VOICE_ID,r as READ_VOICE_OPTIONS,i as fetchModelSpeech,a as readVoiceChoice}from"./card-tts-client-CvirRMT9.js";

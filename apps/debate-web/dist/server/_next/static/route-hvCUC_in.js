@@ -1,0 +1,1 @@
+import{t as e}from"./backend-BtjeKDqt.js";async function t(t){return e(t,(e,t,n)=>e.judgeDebate(t,n))}export{t as POST};

@@ -1,1 +1,0 @@
-export{t as PLUGIN_API_VERSION,n as installPluginRegistry,r as isPluginCommandId,i as pluginCommandIds,a as pluginCommandKeywords,o as pluginCommandLabel,s as pluginDefaultKey,c as pluginSettingsDefs,l as registerPluginDefinition,u as registeredPlugins,d as resetPluginRegistryForTests,f as runPluginCommand,p as unregisterPlugin}from"./plugin-registry-BeO5CbDR.js";

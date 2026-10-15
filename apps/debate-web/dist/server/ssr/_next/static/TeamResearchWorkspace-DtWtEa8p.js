@@ -1,1 +1,0 @@
-export{n as TeamResearchWorkspace,n as default}from"./TeamResearchWorkspace-D6yOKJtC.js";

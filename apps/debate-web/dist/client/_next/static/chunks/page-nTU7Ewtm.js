@@ -1,1 +1,0 @@
-import{o as e}from"./rolldown-runtime-BCiCTKAo.js";import{r as t}from"./framework-D7BYm31f.js";import{rt as n}from"./vinext-CJoyeZrh.js";import{n as r}from"./RankingProfiles-CUrGYOQi.js";import{t as i}from"./ToolPageHeader-t50x6EPd.js";var a=e(t(),1);function o(){let{team:e}=n();return(0,a.jsx)(i,{children:(0,a.jsx)(r,{slug:e??``})})}export{o as default};

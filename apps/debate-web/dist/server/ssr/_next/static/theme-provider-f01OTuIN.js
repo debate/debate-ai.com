@@ -1,1 +1,0 @@
-import{o as e}from"./rolldown-runtime-BCiCTKAo.js";import{t}from"./react-8_GKb2bz.js";import{t as n}from"./jsx-runtime-BB9-612F.js";import{t as r}from"./dist-CJs5wy70.js";t();var i=e(n(),1);function a({children:e,...t}){return(0,i.jsx)(r,{...t,children:e})}export{a as ThemeProvider};

@@ -1,0 +1,1 @@
+import{t as e}from"./server-BYjRQwGu.js";var t=e(()=>{throw Error(`Unexpectedly client reference export 'CategoryDock' is called on server`)},`8841bd74da06`,`CategoryDock`),n=e(()=>{throw Error(`Unexpectedly client reference export 'SidebarAccount' is called on server`)},`f6c38dd77fd4`,`SidebarAccount`);export{t as n,n as t};

@@ -1,1 +1,0 @@
-import{i as e}from"./navigation-errors-CoD2OYEQ.js";import"./navigation.react-server-B1reI6jI.js";var t={title:`Coach Materials`,alternates:{canonical:`/coaching?section=materials`}};function n(){e(`/coaching?section=materials`)}export{n as default,t as metadata};

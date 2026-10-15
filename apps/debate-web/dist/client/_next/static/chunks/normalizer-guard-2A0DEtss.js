@@ -1,1 +1,0 @@
-var e=`normalizerEdit`,t=`normalizerRound`;function n(e){let n=0;for(let r of e){let e=r.getMeta(t);typeof e==`number`&&e>n&&(n=e)}return n}function r(r,i){let a=n(r);return a>=8?(console.warn(`[cardmirror] normalizer round cap reached — dropping a normalization pass to avoid a dispatch loop`),null):(i.setMeta(e,!0),i.setMeta(t,a+1),i)}export{r as n,e as t};

@@ -1,0 +1,1 @@
+import{n as e}from"./server-CC2JWgrq.js";import{t}from"./session-C4trBqgP.js";import{n}from"./store-DUC588Bi.js";async function r(){let r=await t();return r?(await n(r.user.id,null),e.json({connected:!1})):e.json({error:`Unauthorized`},{status:401})}export{r as POST};

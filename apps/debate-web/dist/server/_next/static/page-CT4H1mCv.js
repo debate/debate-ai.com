@@ -1,1 +1,0 @@
-import{t as e}from"./framework~index~page~page~page~page~page~page~page~page~page~layout~layout~page~page~page~p~smt8a5un-DnyErxv7.js";import{t}from"./WorkspaceScreen-BL9HuT7K.js";var n=e();function r(){return(0,n.jsx)(t,{})}var i={title:`Research`,description:`Research Editor for Annotated Summaries in Outline Notation`};export{r as default,i as metadata};

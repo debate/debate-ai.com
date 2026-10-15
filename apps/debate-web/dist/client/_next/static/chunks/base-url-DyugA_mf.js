@@ -1,1 +1,0 @@
-var e=`https://qwksearch.com`,t=`${e}/api/`;window.NEXT_PUBLIC_BASE_URL=e;export{e as n,t};

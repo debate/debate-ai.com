@@ -1,1 +1,0 @@
-import{t as e}from"./createLucideIcon-BILiakiO.js";var t={name:`smartphone`,size:24,node:[[`rect`,{width:`14`,height:`20`,x:`5`,y:`2`,rx:`2`,ry:`2`,key:`1yt0o3`}],[`path`,{d:`M12 18h.01`,key:`mhygvu`}]]};t.node;var n=e(t);export{n as t};

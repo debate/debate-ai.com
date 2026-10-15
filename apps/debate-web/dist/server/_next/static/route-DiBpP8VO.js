@@ -1,1 +1,0 @@
-import{t as e}from"./route-errors-DFJLRN9Y.js";import{i as t,n}from"./team-route-ubpOzd6-.js";var r=e(`GET /api/team/my-assignments`,async()=>n(async(e,n)=>({assignments:await t(e,n.user.email)})));export{r as GET};

@@ -1,1 +1,0 @@
-import{t as e}from"./page-DVB7ZS1z.js";var t={title:`Features`,description:`Every Debate AI tool for PF, LD and Policy \u2014 evidence research and card cutting, flowing, speech and prep timers, judge and opponent scouting, drills and full rounds against an AI \u2014 grouped by category and searchable by name, route or keyword`};export{e as default,t as metadata};

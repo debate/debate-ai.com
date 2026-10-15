@@ -1,1 +1,0 @@
-import{t as e}from"./rolldown-runtime-BCiCTKAo.js";import{t}from"./react-dom-server.edge.production-C0PODL9e.js";var n=e((e=>{var n=t();e.version=n.version,e.prerender=n.prerender,e.resumeAndPrerender=n.resumeAndPrerender}));export default n();

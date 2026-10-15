@@ -1,1 +1,0 @@
-import{t as e}from"./framework~index~page~page~page~page~page~page~page~page~page~layout~layout~page~page~page~p~smt8a5un-DnyErxv7.js";var t=e();function n({children:e}){return(0,t.jsx)(t.Fragment,{children:e})}var r={title:`CARDS Search`,description:`Crowdsourced Annotated Research for Debating Solutions(CARDS)`};export{n as default,r as metadata};

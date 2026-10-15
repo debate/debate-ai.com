@@ -133,8 +133,8 @@ export function VideoCardActions({
 
   return (
     <>
-      <div className="px-2 pb-1.5 pt-0 flex-1 flex flex-col">
-        <div className="flex items-center gap-1.5 sm:gap-2.5 text-xs text-muted-foreground flex-wrap">
+      <div className="px-2 pb-1 pt-0 flex-1 flex flex-col">
+        <div className="flex items-center gap-1 sm:gap-1.5 text-xs text-muted-foreground flex-wrap">
           {/* External YouTube link */}
           <a
             href={youtubeUrl}

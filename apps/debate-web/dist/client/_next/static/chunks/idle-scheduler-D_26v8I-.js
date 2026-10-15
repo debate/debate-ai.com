@@ -1,1 +1,0 @@
-function e(e,t=200){return typeof requestIdleCallback==`function`?{kind:`idle`,id:Number.isFinite(t)?requestIdleCallback(()=>e(),{timeout:t}):requestIdleCallback(()=>e())}:{kind:`timeout`,id:setTimeout(e,Number.isFinite(t)?t:1e3)}}function t(e){e.kind===`idle`?typeof cancelIdleCallback==`function`&&cancelIdleCallback(e.id):clearTimeout(e.id)}export{e as n,t};

@@ -1,0 +1,1 @@
+import{t as e}from"./page-vsC0e3E5.js";var t={title:`Lectures`,description:`Lectures from educators on every debate format, skill and topic`};export{e as default,t as metadata};

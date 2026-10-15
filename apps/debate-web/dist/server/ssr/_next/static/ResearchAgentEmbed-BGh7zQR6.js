@@ -1,1 +1,0 @@
-import{o as e}from"./rolldown-runtime-BCiCTKAo.js";import{t}from"./react-8_GKb2bz.js";import{t as n}from"./jsx-runtime-BB9-612F.js";var r=e(t(),1),i=e(n(),1),a=(0,r.lazy)(async()=>({default:()=>null})),o=()=>()=>{};function s(){return(0,r.useSyncExternalStore)(o,()=>!0,()=>!1)?(0,i.jsx)(a,{}):null}export{s as default};

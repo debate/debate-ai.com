@@ -1,1 +1,0 @@
-import{t as e}from"./backend-CiMMjMU4.js";async function t(t){return e(t,(e,t,n)=>e.createDebate(t,n))}export{t as POST};

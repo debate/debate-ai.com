@@ -1,0 +1,1 @@
+import{i as e}from"./navigation-errors-CoD2OYEQ.js";import"./navigation.react-server-Ccj1di2R.js";var t={title:`Review Queue`,alternates:{canonical:`/research/team?section=reviews`}};function n(){e(`/research/team?section=reviews`)}export{n as default,t as metadata};

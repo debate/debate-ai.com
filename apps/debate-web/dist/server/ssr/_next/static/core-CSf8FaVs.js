@@ -1,1 +1,0 @@
-export{t as Channel,n as PluginListener,r as Resource,i as SERIALIZE_TO_IPC_FN,a as addPluginListener,o as checkPermissions,s as convertFileSrc,c as invoke,l as isTauri,u as requestPermissions,d as transformCallback}from"./core-BL3NQqEA.js";

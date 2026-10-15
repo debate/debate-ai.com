@@ -1,1 +1,0 @@
-import{i as e}from"./navigation-errors-CoD2OYEQ.js";import"./navigation.react-server-B1reI6jI.js";var t={title:`Contributions Feed`,alternates:{canonical:`/research/team?section=contributions`}};function n(){e(`/research/team?section=contributions`)}export{n as default,t as metadata};

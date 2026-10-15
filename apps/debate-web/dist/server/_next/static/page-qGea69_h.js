@@ -1,1 +1,0 @@
-import{i as e}from"./navigation-errors-CoD2OYEQ.js";import"./navigation.react-server-B1reI6jI.js";var t={title:`AI Coach Mode`,alternates:{canonical:`/coaching?section=ai-coach`}};function n(){e(`/coaching?section=ai-coach`)}export{n as default,t as metadata};

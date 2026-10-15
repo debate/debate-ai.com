@@ -1,1 +1,0 @@
-import{t as e}from"./server-yhxadzBq.js";var t=e(()=>{throw Error(`Unexpectedly client reference export 'LecturesPage' is called on server`)},`c3dc775e536c`,`LecturesPage`);export{t};

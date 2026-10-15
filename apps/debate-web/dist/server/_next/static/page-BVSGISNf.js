@@ -1,1 +1,0 @@
-import{i as e}from"./navigation-errors-CoD2OYEQ.js";import"./navigation.react-server-B1reI6jI.js";var t={title:`Judge Profiles`,alternates:{canonical:`/practice/prep?section=judges`}};function n(){e(`/practice/prep?section=judges`)}export{n as default,t as metadata};

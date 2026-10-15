@@ -1,1 +1,0 @@
-function e(){let e=new Map;return{async read(t){return e.get(t)??null},async write(t,n){e.set(t,n)}}}export{e as createSidecarFs};

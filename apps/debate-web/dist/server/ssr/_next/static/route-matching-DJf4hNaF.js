@@ -1,1 +1,0 @@
-function e(){return new WeakMap}export{e as t};
