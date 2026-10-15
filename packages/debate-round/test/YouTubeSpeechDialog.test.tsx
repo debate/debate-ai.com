@@ -51,6 +51,13 @@ afterEach(() => {
 })
 
 const input = () => document.querySelector('input[aria-label="YouTube link or search"]') as HTMLInputElement
+/** The speech editor's rows: each speech's label and typed start. */
+const editorRows = () =>
+  [...document.querySelectorAll('ol[aria-label="Speeches"] > li')].map((li) => ({
+    label: li.querySelector("span")?.textContent,
+    start: (li.querySelector('input[aria-label="Start time"]') as HTMLInputElement).value,
+    stop: (li.querySelector('input[aria-label="Stop time"]') as HTMLInputElement).value,
+  }))
 const submit = async () => {
   await click(input().form?.querySelector('button[type="submit"]'))
   await flush(6)
@@ -80,11 +87,11 @@ describe("YouTubeSpeechDialog", () => {
     await click(buttonByText("Suggest all speeches with AI"))
     await flush(10)
 
-    const rows = [...document.querySelectorAll("tbody tr")].map((tr) => tr.textContent)
+    const rows = editorRows()
     // LD (picked from the video's style): AC, CX, NC, CX, 1AR, NR, 2AR.
     expect(rows).toHaveLength(7)
-    expect(rows[0]).toContain("AC0:30")
-    expect(rows[1]).toContain("CX after AC")
+    expect(rows[0]).toMatchObject({ label: "AC", start: "0:30" })
+    expect(rows[1].label).toBe("CX after AC")
     expect(document.body.textContent).toContain("AI unavailable: Sign in to use AI.")
 
     await click(buttonByText("Save all 7"))
@@ -111,7 +118,10 @@ describe("YouTubeSpeechDialog", () => {
     await click(buttonByText("Joined round"))
 
     expect((document.querySelector("audio") as HTMLAudioElement).src).toBe("https://files.example/round.mp3")
-    expect((document.querySelector('input[aria-label="Speech starts"]') as HTMLInputElement).value).toBe("0:00")
+    expect(editorRows()).toEqual([
+      { label: "AC", start: "0:00", stop: "5:55" },
+      { label: "CX after AC", start: "6:00", stop: "9:00" },
+    ])
     await click(buttonByText("Save all 2"))
     expect(onSaveAll).toHaveBeenCalledWith(segments)
     expect(loadSpeechMediaClip("CX after AC")).toMatchObject({

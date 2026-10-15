@@ -2,10 +2,13 @@
 /**
  * @fileoverview The speech-start modal shared by the joined round MP3 and the
  * YouTube watch page: set a start to the playhead, type one, nudge it, clear it.
+ * The rows are `SpeechStartsEditor`, which the YouTube/MP3 labeler also uses
+ * with stop times.
  */
 
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { SpeechStartsDialog } from "../src/recorder/SpeechStartsDialog"
+import { SpeechStartsEditor } from "../src/recorder/SpeechStartsEditor"
 import { blur, click, mount, type, type Mounted } from "./helpers/mount"
 
 let view: Mounted | undefined
@@ -46,9 +49,9 @@ describe("SpeechStartsDialog", () => {
 
   it("nudges, plays and clears an existing start", async () => {
     const { onChange, onSeek } = await open()
-    await click(byLabel("1AC 5 seconds later"))
+    await click(byLabel("1AC start 5 seconds later"))
     expect(onChange).toHaveBeenLastCalledWith("1AC", 15)
-    await click(byLabel("1AC 5 seconds earlier"))
+    await click(byLabel("1AC start 5 seconds earlier"))
     expect(onChange).toHaveBeenLastCalledWith("1AC", 5)
     await click(byLabel("Play 1AC"))
     expect(onSeek).toHaveBeenCalledWith(10)
@@ -63,5 +66,42 @@ describe("SpeechStartsDialog", () => {
     await type(inputs[1], "8:30")
     await blur(inputs[1])
     expect(onChange).toHaveBeenLastCalledWith("1NC", 510)
+  })
+})
+
+describe("SpeechStartsEditor", () => {
+  it("edits stops when asked to, and warns when a stop is before its start", async () => {
+    const onChange = vi.fn()
+    const onEndChange = vi.fn()
+    view = await mount(
+      <SpeechStartsEditor
+        items={ITEMS}
+        starts={{ "1AC": 10, "1NC": 300 }}
+        onChange={onChange}
+        ends={{ "1NC": 200 }}
+        onEndChange={onEndChange}
+        durationSeconds={600}
+        currentTime={700}
+        onSeek={() => {}}
+        highlightKey="1nc"
+      />,
+    )
+    // The playhead past the end is clamped to the media's length.
+    await click(byLabel("1AC stops at the playhead"))
+    expect(onEndChange).toHaveBeenLastCalledWith("1AC", 600)
+    await click(byLabel("1NC stop 5 seconds later"))
+    expect(onEndChange).toHaveBeenLastCalledWith("1NC", 205)
+    await click(byLabel("Clear 1NC stop"))
+    expect(onEndChange).toHaveBeenLastCalledWith("1NC", null)
+    expect(onChange).not.toHaveBeenCalled()
+    expect(document.body.textContent).toContain("Stops before it starts.")
+  })
+
+  it("has no stop controls without onEndChange", async () => {
+    view = await mount(
+      <SpeechStartsEditor items={ITEMS} starts={{}} onChange={() => {}} durationSeconds={0} currentTime={0} onSeek={() => {}} />,
+    )
+    expect(document.querySelector('input[aria-label="Stop time"]')).toBeNull()
+    expect(document.querySelectorAll('input[aria-label="Start time"]')).toHaveLength(2)
   })
 })

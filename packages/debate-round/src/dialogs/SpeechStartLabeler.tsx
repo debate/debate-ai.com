@@ -5,8 +5,10 @@
  * file, such as the round's joined MP3 of every recorded speech.
  *
  * It renders the player (a YouTube embed or an `<audio>` element) behind one
- * {@link MediaControl}, start/stop fields with "Set to" the current time,
- * "Play clip", and "Suggest all speeches with AI": the recording's captions
+ * {@link MediaControl} and every speech's start and stop in `debate-timer`'s
+ * `SpeechStartsEditor` — the same editor as the joined-MP3 dialog and the
+ * watch page — with "Play clip", "Save for" the current speech, and
+ * "Suggest all speeches with AI", which fills the editor: the recording's captions
  * are split at silences and every speech of the format, cross-ex included, is
  * fitted to them by rule length (`debate-timer`'s `suggestSpeechSegments`),
  * then refined by the AI. Clips are saved per speech with
@@ -21,13 +23,13 @@
 import type React from "react"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Loader2, Pause, Play, Sparkles } from "lucide-react"
+import { SpeechStartsEditor } from "@debate/timer/src/recorder/SpeechStartsEditor"
 import { debateStyleMap, debateStyleNames, debateStyles } from "@debate/timer/src/formats/debate-format-times"
 import {
-  formatTimestamp,
   loadSpeechMediaClip,
-  parseTimestamp,
   sameMediaSource,
   saveSpeechMediaClip,
+  speechSegmentKeys,
   type CaptionSnippet,
   type SpeechMediaSource,
   type SpeechSegment,
@@ -36,8 +38,6 @@ import { buildEmbedUrl, startListening } from "@debate/videos/src/components/vid
 import { standardRoundSpeeches } from "@debate/videos/src/lib/round-formats"
 import { writeSpeechStart } from "@debate/videos/src/state/speechStartMarks"
 import { Button } from "../ui/primitives/button"
-import { Input } from "../ui/primitives/input"
-import { cn } from "../ui/lib/utils"
 import { settings } from "../state/settings"
 import {
   fetchCaptions,
@@ -49,6 +49,8 @@ import {
 /** Playback of whatever the labeler is showing, YouTube or audio. */
 export interface MediaControl {
   currentTime: number
+  /** Length in seconds; 0 until the player reports it. */
+  duration: number
   playing: boolean
   seek: (seconds: number) => void
   play: () => void
@@ -61,6 +63,7 @@ export function useYouTubeEmbedControl(
   videoId: string | null,
 ): MediaControl {
   const [currentTime, setCurrentTime] = useState(0)
+  const [duration, setDuration] = useState(0)
   const [playing, setPlaying] = useState(false)
 
   useEffect(() => {
@@ -71,6 +74,9 @@ export function useYouTubeEmbedControl(
         const data = typeof event.data === "string" ? JSON.parse(event.data) : event.data
         if (data?.event === "infoDelivery" && typeof data.info?.currentTime === "number") {
           setCurrentTime(data.info.currentTime)
+        }
+        if (data?.event === "infoDelivery" && typeof data.info?.duration === "number" && data.info.duration > 0) {
+          setDuration(data.info.duration)
         }
         if (data?.event === "infoDelivery" && typeof data.info?.playerState === "number") {
           setPlaying(data.info.playerState === 1)
@@ -102,6 +108,7 @@ export function useYouTubeEmbedControl(
 
   return {
     currentTime,
+    duration,
     playing,
     seek: (seconds) => {
       command("seekTo", [seconds, true])
@@ -115,19 +122,23 @@ export function useYouTubeEmbedControl(
 /** Drives an `<audio>` element — e.g. the round's joined MP3. */
 export function useAudioElementControl(audioRef: React.RefObject<HTMLAudioElement | null>): MediaControl {
   const [currentTime, setCurrentTime] = useState(0)
+  const [duration, setDuration] = useState(0)
   const [playing, setPlaying] = useState(false)
 
   useEffect(() => {
     const audio = audioRef.current
     if (!audio) return
     const onTime = () => setCurrentTime(audio.currentTime)
+    const onDuration = () => setDuration(Number.isFinite(audio.duration) ? audio.duration : 0)
     const onPlay = () => setPlaying(true)
     const onPause = () => setPlaying(false)
     audio.addEventListener("timeupdate", onTime)
+    audio.addEventListener("durationchange", onDuration)
     audio.addEventListener("play", onPlay)
     audio.addEventListener("pause", onPause)
     return () => {
       audio.removeEventListener("timeupdate", onTime)
+      audio.removeEventListener("durationchange", onDuration)
       audio.removeEventListener("play", onPlay)
       audio.removeEventListener("pause", onPause)
     }
@@ -135,6 +146,7 @@ export function useAudioElementControl(audioRef: React.RefObject<HTMLAudioElemen
 
   return {
     currentTime,
+    duration,
     playing,
     seek: (seconds) => {
       if (audioRef.current) audioRef.current.currentTime = seconds
@@ -145,43 +157,22 @@ export function useAudioElementControl(audioRef: React.RefObject<HTMLAudioElemen
   }
 }
 
-function TimeField({
-  label,
-  value,
-  onChange,
-  onUseCurrent,
-  currentTime,
-}: {
-  label: string
-  value: number | null
-  onChange: (seconds: number | null) => void
-  onUseCurrent: () => void
-  currentTime: number
-}) {
-  const [text, setText] = useState(value != null ? formatTimestamp(value) : "")
-  useEffect(() => setText(value != null ? formatTimestamp(value) : ""), [value])
-  return (
-    <label className="flex flex-col gap-1 text-xs">
-      <span className="text-muted-foreground">{label}</span>
-      <div className="flex gap-1">
-        <Input
-          value={text}
-          placeholder="m:ss"
-          aria-label={label}
-          className="h-8 w-24 font-mono text-sm"
-          onChange={(e) => setText(e.target.value)}
-          onBlur={() => {
-            const parsed = parseTimestamp(text)
-            onChange(parsed)
-            if (parsed == null) setText(value != null && text.trim() ? formatTimestamp(value) : "")
-          }}
-        />
-        <Button type="button" variant="outline" size="sm" className="h-8 text-xs" onClick={onUseCurrent}>
-          Set to {formatTimestamp(currentTime)}
-        </Button>
-      </div>
-    </label>
-  )
+/** A speech the labeler shows a row for. */
+interface SpeechRow {
+  key: string
+  name: string
+  /** The rule length of the speech, in seconds. */
+  expectedSeconds: number
+}
+
+const rowOf = ({ key, name, expectedSeconds }: SpeechSegment): SpeechRow => ({ key, name, expectedSeconds })
+
+/** `{ key: seconds }` with `key` set, or removed for `null`. */
+function withTime(times: Record<string, number>, key: string, seconds: number | null): Record<string, number> {
+  const next = { ...times }
+  if (seconds == null) delete next[key]
+  else next[key] = seconds
+  return next
 }
 
 /**
@@ -236,34 +227,53 @@ export function SpeechStartLabeler({
   const [styleIndex, setStyleIndex] = useState<number>(
     () => styleIndexProp ?? ((settings.data.debateStyle?.value as number) ?? 0),
   )
-  const [start, setStart] = useState<number | null>(null)
-  const [end, setEnd] = useState<number | null>(null)
+  // The rows shown: the known or suggested speeches, else the format's.
+  const [placedRows, setPlacedRows] = useState<SpeechRow[] | null>(() => initialSegments?.map(rowOf) ?? null)
+  const [starts, setStarts] = useState<Record<string, number>>({})
+  const [ends, setEnds] = useState<Record<string, number>>({})
   const [suggesting, setSuggesting] = useState(false)
-  const [suggestion, setSuggestion] = useState<SpeechTimestampSuggestion | null>(
-    initialSegments?.length ? { segments: initialSegments, source: "schedule", notes: "" } : null,
-  )
+  const [suggestionNotes, setSuggestionNotes] = useState<string | null>(null)
   const [note, setNote] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const clipEndRef = useRef<number | null>(null)
   const sourceId = source.kind === "youtube" ? source.videoId : source.url
 
-  const matchesThisSpeech = useCallback(
-    (segment: SpeechSegment) => segment.key.toUpperCase() === speechName.toUpperCase(),
-    [speechName],
-  )
+  const styleKey = debateStyleMap[styleIndex] ?? debateStyleMap[0]
+  const format = debateStyles[styleKey]
+  const speeches = useMemo(() => format?.timerSpeeches ?? [], [format])
+  const rows = useMemo(() => {
+    const keys = speechSegmentKeys(speeches)
+    const base =
+      placedRows ?? speeches.map((speech, i) => ({ key: keys[i], name: speech.name, expectedSeconds: speech.time * 60 }))
+    // The speech being labelled always has a row, even when the format doesn't name it.
+    return base.some((row) => row.key.toUpperCase() === speechName.toUpperCase())
+      ? base
+      : [{ key: speechName, name: speechName, expectedSeconds: 0 }, ...base]
+  }, [placedRows, speeches, speechName])
+  const myKey = rows.find((row) => row.key.toUpperCase() === speechName.toUpperCase())?.key ?? speechName
+  const start = starts[myKey] ?? null
+  const end = ends[myKey] ?? null
 
-  // A new recording: show this speech's saved clip, else a known start, else the link's start.
+  // A new recording: each speech's saved clip on it, else a known start; this speech also takes the link's start.
   useEffect(() => {
-    const saved = loadSpeechMediaClip(speechName)
-    const known = initialSegments?.find(matchesThisSpeech)
-    if (saved && sameMediaSource(saved.source, source)) {
-      setStart(saved.start)
-      setEnd(saved.end)
-    } else {
-      setStart(known?.start ?? initialStart)
-      setEnd(known?.end ?? null)
+    const nextStarts: Record<string, number> = {}
+    const nextEnds: Record<string, number> = {}
+    for (const segment of initialSegments ?? []) {
+      nextStarts[segment.key] = segment.start
+      nextEnds[segment.key] = segment.end
     }
-    setSuggestion(initialSegments?.length ? { segments: initialSegments, source: "schedule", notes: "" } : null)
+    for (const row of rows) {
+      const saved = loadSpeechMediaClip(row.key)
+      if (saved && sameMediaSource(saved.source, source)) {
+        nextStarts[row.key] = saved.start
+        nextEnds[row.key] = saved.end
+      }
+    }
+    if (nextStarts[myKey] == null && initialStart != null) nextStarts[myKey] = initialStart
+    setStarts(nextStarts)
+    setEnds(nextEnds)
+    setPlacedRows(initialSegments?.length ? initialSegments.map(rowOf) : null)
+    setSuggestionNotes(null)
     setNote(null)
     setError(null)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -272,7 +282,7 @@ export function SpeechStartLabeler({
   useEffect(() => {
     if (styleIndexProp != null) {
       setStyleIndex(styleIndexProp)
-      setSuggestion(null)
+      setPlacedRows(null)
     }
   }, [styleIndexProp])
 
@@ -285,9 +295,6 @@ export function SpeechStartLabeler({
     }
   }, [player])
 
-  const styleKey = debateStyleMap[styleIndex] ?? debateStyleMap[0]
-  const format = debateStyles[styleKey]
-  const speeches = format?.timerSpeeches ?? []
   // Fixed per video; seeking goes over postMessage so the player isn't reloaded.
   const embedSrc = useMemo(
     () => {
@@ -303,6 +310,16 @@ export function SpeechStartLabeler({
 
   const clipFor = (s: number, e: number) => ({ source, title, start: Math.round(s), end: Math.round(e) })
 
+  /** Every labelled speech, its stop defaulting to the next start or its rule length. */
+  const labelledSegments = (): SpeechSegment[] =>
+    rows.flatMap((row, i) => {
+      const s = starts[row.key]
+      if (s == null) return []
+      const next = rows.slice(i + 1).find((later) => starts[later.key] != null)
+      const e = ends[row.key] ?? (next ? starts[next.key] : s + (row.expectedSeconds || 60 * 60))
+      return [{ ...row, start: s, end: e }]
+    })
+
   const suggest = async () => {
     setSuggesting(true)
     setError(null)
@@ -312,15 +329,17 @@ export function SpeechStartLabeler({
         : source.kind === "youtube"
           ? await fetchCaptions(source.videoId)
           : { snippets: [], unavailable: "This audio has no captions" }
-      setSuggestion(
-        await suggestSpeechTimestamps({
-          ...captions,
-          formatName: debateStyleNames[styleIndex] ?? styleKey,
-          speeches,
-          prepMinutes: format?.prepTime ?? 0,
-          firstStart: start,
-        }),
-      )
+      const suggestion: SpeechTimestampSuggestion = await suggestSpeechTimestamps({
+        ...captions,
+        formatName: debateStyleNames[styleIndex] ?? styleKey,
+        speeches,
+        prepMinutes: format?.prepTime ?? 0,
+        firstStart: start,
+      })
+      setPlacedRows(suggestion.segments.map(rowOf))
+      setStarts(Object.fromEntries(suggestion.segments.map((segment) => [segment.key, Math.round(segment.start)])))
+      setEnds(Object.fromEntries(suggestion.segments.map((segment) => [segment.key, Math.round(segment.end)])))
+      setSuggestionNotes(suggestion.notes || null)
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e))
     } finally {
@@ -328,29 +347,21 @@ export function SpeechStartLabeler({
     }
   }
 
-  const applySegment = (segment: SpeechSegment) => {
-    setStart(Math.round(segment.start))
-    setEnd(Math.round(segment.end))
-    player.seek(segment.start)
-  }
-
   const save = () => {
     if (start == null) return
-    saveSpeechMediaClip(speechName, clipFor(start, end ?? start + 60 * 60))
+    saveSpeechMediaClip(myKey, clipFor(start, end ?? start + 60 * 60))
     setNote(`Saved for ${speechName}.`)
   }
 
+  const labelledCount = rows.filter((row) => starts[row.key] != null).length
+
   const saveAll = () => {
-    if (!suggestion) return
-    for (const segment of suggestion.segments) saveSpeechMediaClip(segment.key, clipFor(segment.start, segment.end))
-    if (source.kind === "youtube") syncWatchPageMarks(source.videoId, styleIndex, suggestion.segments)
-    onSaveAll?.(suggestion.segments)
-    const mine = suggestion.segments.find(matchesThisSpeech)
-    if (mine) {
-      setStart(Math.round(mine.start))
-      setEnd(Math.round(mine.end))
-    }
-    setNote(`Saved ${suggestion.segments.length} speeches.`)
+    const segments = labelledSegments()
+    if (!segments.length) return
+    for (const segment of segments) saveSpeechMediaClip(segment.key, clipFor(segment.start, segment.end))
+    if (source.kind === "youtube") syncWatchPageMarks(source.videoId, styleIndex, segments)
+    onSaveAll?.(segments)
+    setNote(`Saved ${segments.length} speeches.`)
   }
 
   const playClip = () => {
@@ -382,21 +393,26 @@ export function SpeechStartLabeler({
       {error && <p className="text-sm text-destructive">{error}</p>}
       {note && <p className="text-sm text-emerald-600 dark:text-emerald-400">{note}</p>}
 
-      <div className="flex flex-wrap items-end gap-3">
-        <TimeField
-          label="Speech starts"
-          value={start}
-          onChange={setStart}
-          onUseCurrent={() => setStart(Math.floor(player.currentTime))}
-          currentTime={player.currentTime}
-        />
-        <TimeField
-          label="Speech stops"
-          value={end}
-          onChange={setEnd}
-          onUseCurrent={() => setEnd(Math.floor(player.currentTime))}
-          currentTime={player.currentTime}
-        />
+      <div className="flex flex-wrap items-end gap-2">
+        <label className="flex flex-col gap-1 text-xs">
+          <span className="text-muted-foreground">Format</span>
+          <select
+            className="h-8 rounded-md border bg-background px-2 text-sm"
+            value={styleIndex}
+            onChange={(e) => {
+              setStyleIndex(Number(e.target.value))
+              setPlacedRows(null)
+            }}
+          >
+            {debateStyleMap.map((key, i) =>
+              debateStyles[key]?.timerSpeeches?.length ? (
+                <option key={key} value={i}>
+                  {debateStyleNames[i]} ({debateStyles[key].timerSpeeches.length} speeches)
+                </option>
+              ) : null,
+            )}
+          </select>
+        </label>
         <Button type="button" variant="outline" size="sm" className="h-8" onClick={playClip} disabled={start == null}>
           {player.playing ? <Pause className="h-4 w-4 mr-1" /> : <Play className="h-4 w-4 mr-1" />}
           Play clip
@@ -404,91 +420,41 @@ export function SpeechStartLabeler({
         <Button type="button" size="sm" className="h-8" onClick={save} disabled={start == null}>
           Save for {speechName}
         </Button>
+        <Button type="button" variant="outline" size="sm" className="h-8" onClick={saveAll} disabled={labelledCount === 0}>
+          Save all {labelledCount}
+        </Button>
       </div>
-      {start != null && end != null && end <= start && (
-        <p className="text-xs text-destructive">The stop point is before the start point.</p>
-      )}
 
       <section className="space-y-2 rounded border p-2">
-        <div className="flex flex-wrap items-end gap-2">
-          <label className="flex flex-col gap-1 text-xs">
-            <span className="text-muted-foreground">Format</span>
-            <select
-              className="h-8 rounded-md border bg-background px-2 text-sm"
-              value={styleIndex}
-              onChange={(e) => {
-                setStyleIndex(Number(e.target.value))
-                setSuggestion(null)
-              }}
-            >
-              {debateStyleMap.map((key, i) =>
-                debateStyles[key]?.timerSpeeches?.length ? (
-                  <option key={key} value={i}>
-                    {debateStyleNames[i]} ({debateStyles[key].timerSpeeches.length} speeches)
-                  </option>
-                ) : null,
-              )}
-            </select>
-          </label>
+        <div className="flex flex-wrap items-center gap-2">
           <Button type="button" size="sm" className="h-8" onClick={() => void suggest()} disabled={suggesting}>
             {suggesting ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Sparkles className="h-4 w-4 mr-1" />}
             Suggest all speeches with AI
           </Button>
-          {suggestion && (
-            <Button type="button" variant="outline" size="sm" className="h-8" onClick={saveAll}>
-              Save all {suggestion.segments.length}
-            </Button>
-          )}
+          <p className="min-w-0 flex-1 text-[11px] text-muted-foreground">
+            Reads the captions for where words are spoken and where there's silence, then fits the {speeches.length}{" "}
+            speeches (with cross-ex and prep time) to the format's speech lengths.
+            {start != null ? " Starts from your start point." : ""}
+          </p>
         </div>
-        <p className="text-[11px] text-muted-foreground">
-          Reads the captions for where words are spoken and where there's silence, then fits the {speeches.length}{" "}
-          speeches (with cross-ex and prep time) to the format's speech lengths.
-          {start != null ? " Starts from your start point." : ""}
-        </p>
         {suggesting && (
           <p className="flex items-center gap-2 text-xs text-muted-foreground">
             <Loader2 className="h-3 w-3 animate-spin" /> Reading captions and placing speeches…
           </p>
         )}
-        {suggestion && (
-          <>
-            {suggestion.notes && <p className="text-xs text-muted-foreground">{suggestion.notes}</p>}
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="text-left text-muted-foreground">
-                  <th className="py-0.5 font-medium">Speech</th>
-                  <th className="font-medium">Start</th>
-                  <th className="font-medium">Stop</th>
-                  <th className="font-medium">Length</th>
-                  <th />
-                </tr>
-              </thead>
-              <tbody>
-                {suggestion.segments.map((segment) => (
-                  <tr key={segment.key} className={cn(matchesThisSpeech(segment) && "bg-primary/10 font-medium")}>
-                    <td className="py-0.5">{segment.key}</td>
-                    <td className="font-mono">{formatTimestamp(segment.start)}</td>
-                    <td className="font-mono">{formatTimestamp(segment.end)}</td>
-                    <td className="font-mono text-muted-foreground">
-                      {formatTimestamp(segment.end - segment.start)} / {formatTimestamp(segment.expectedSeconds)}
-                    </td>
-                    <td className="text-right">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="h-6 px-2 text-xs"
-                        onClick={() => applySegment(segment)}
-                      >
-                        Use
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </>
-        )}
+        {suggestionNotes && <p className="text-xs text-muted-foreground">{suggestionNotes}</p>}
+        <SpeechStartsEditor
+          items={rows.map((row) => ({ key: row.key, label: row.key }))}
+          starts={starts}
+          onChange={(key, seconds) => setStarts((prev) => withTime(prev, key, seconds))}
+          ends={ends}
+          onEndChange={(key, seconds) => setEnds((prev) => withTime(prev, key, seconds))}
+          durationSeconds={player.duration}
+          currentTime={player.currentTime}
+          onSeek={player.seek}
+          highlightKey={myKey}
+          className="max-h-80"
+        />
       </section>
     </div>
   )

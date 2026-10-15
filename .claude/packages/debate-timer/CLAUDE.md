@@ -32,5 +32,8 @@ playback. Entry `src/index.ts`, tests in `test/`.
   `recorder/media-store.ts`, never localStorage.
 - Uploading to R2 (`/api/round-recordings`) happens only on the dialog's
   "Save to cloud" button — keep it that way.
-- `SpeechStartsDialog` is shared with `debate-videos`' watch page; it only
-  takes a playhead, a seek callback and a length, so keep it media-agnostic.
+- `SpeechStartsEditor` is the one speech start/stop editor: `SpeechStartsDialog`
+  (joined MP3, `debate-videos`' watch page) and `debate-round`'s
+  `SpeechStartLabeler` (YouTube/MP3 clips, AI suggestions) both render it. It
+  only takes a playhead, a seek callback and a length, so keep it
+  media-agnostic; change rows there, not in the callers.

@@ -204,7 +204,9 @@ describe("the sidebar's heading structure", () => {
         new RegExp(`<a[^>]*aria-expanded="true"[^>]*>(?:(?!</a>)[\\s\\S])*<h1[^>]*>${title}</h1>`),
       );
     }
-    expect(html).not.toContain('aria-expanded="false"');
+    // The one collapsed heading is Docs, which always starts shut (`DocsNavTree`).
+    expect(html.match(/aria-expanded="false"/g)).toHaveLength(1);
+    expect(html).toMatch(/<a[^>]*aria-expanded="false"[^>]*>(?:(?!<\/a>)[\s\S])*<h1[^>]*>Docs<\/h1>/);
   });
 
   it("renders no Apps node restating the app dock", () => {
@@ -223,7 +225,7 @@ describe("the sidebar's heading structure", () => {
     const html = renderSidebar();
     expect(html).toContain("Research Progress");
     expect(html).toContain("Team Research");
-    expect(html).toContain("AI Judge Decision");
+    expect(html).toContain("Practice Drills");
     // ...alongside the Videos node's own links, which were never in doubt.
     expect(html).toContain("Public Forum");
     expect(html).toContain("My Favorites");

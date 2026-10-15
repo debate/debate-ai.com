@@ -59,8 +59,9 @@ The drawer closes on navigation.
 
 On `md+` the column has no brand row at the top — it opens straight onto the
 dock. Its bottom row, pinned under the scrolling tree, is the account menu
-(on every page, the video library's included) with the **hide button** beside
-it — see [Hiding the sidebar](#hiding-the-sidebar). The row shows your avatar
+(on every page, the video library's included) with a **Settings** button and
+the **hide button** beside it — see [Hiding the sidebar](#hiding-the-sidebar).
+Settings opens the tab that fits the page you are on. The row shows your avatar
 and name only, never your email address, with a badge on the avatar counting
 unread notifications. The account menu holds Settings, a **Notifications**
 submenu (every unread notification: pick one to open its link and clear it, X
@@ -257,9 +258,13 @@ showed Fumadocs' own sidebar beside that one. Now:
   drawer is still the docs' navigation. Only the folders on the path to
   the current page start expanded, and the current page is scrolled into
   view when the docs open and after each navigation.
-- **Off `/docs`** the tree is not drawn; the Docs and Settings links
-  pinned above the account row (`SidebarPinnedLinks`) reach it from every
-  page.
+- **Off `/docs`** the tree ends in a **Docs** section (`DocsNavTree`, in
+  `@debate/videos`) listing every docs page. It scrolls with the rest of the
+  column, starts collapsed (its folders too), and fetches the page tree
+  from `/docs/api/docs-tree` (`routes/tree-route.ts`) the first time it is
+  opened. Its rows are full page loads, since `/docs` renders outside the
+  app's layout. Settings is an icon button beside the hide button
+  (`SidebarSettingsButton`); nothing is pinned above the account row.
 - **The mobile drawer** shows the same tree (`MobileSidebarDrawer`).
 
 `/debate` and `/research/docs` keep their own workspace sidebars
@@ -323,8 +328,9 @@ Each tree section (Videos, Research, Practice, Coaching,
 Insights) opens and closes on its own; see
 [The nav tree's headings](#the-nav-trees-headings). The Docs, Github, Support,
 Privacy and Reddit links sit on one compact line after the last section and
-scroll with the list rather than staying pinned. Docs and Settings are pinned at the
-bottom above the account menu, which links to
+scroll with the list rather than staying pinned. The **Docs** section after
+Insights lists every docs page, collapsed until you open it. A **Settings**
+button sits beside the hide button, after the account menu, which links to
 Settings, Notifications and Contacts and signs you out. Signed out, that row
 is a **Sign in** button that opens the sign-in dialog without leaving the
 page.
