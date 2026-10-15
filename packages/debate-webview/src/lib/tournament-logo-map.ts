@@ -11,13 +11,13 @@ import IconSchoolEmory from "../../../debate-icons/schools/emory.png";
 import IconSchoolGeorgetown from "../../../debate-icons/schools/georgetown.png";
 import IconSchoolCeda from "../../../debate-icons/schools/ceda.png";
 import IconSchoolGlenbrookNorth from "../../../debate-icons/schools/glenbrook-north.png";
-import IconSchoolNorthwestern from "../../../debate-icons/schools/northwestern.svg";
-import IconSchoolWakeForest from "../../../debate-icons/schools/wake-forest.svg";
+import IconSchoolNorthwestern from "../../../debate-icons/schools/northwestern.png";
+import IconSchoolWakeForest from "../../../debate-icons/schools/wake-forest.png";
 import IconSchoolKentucky from "../../../debate-icons/schools/kentucky.svg";
 import IconSchoolMichiganState from "../../../debate-icons/schools/michigan-state.png";
 import IconSchoolNdt from "../../../debate-icons/schools/ndt.png";
 import IconSchoolDartmouth from "../../../debate-icons/schools/dartmouth.svg";
-import IconSchoolRedlands from "../../../debate-icons/schools/redlands.svg";
+import IconSchoolRedlands from "../../../debate-icons/schools/redlands.png";
 import IconSchoolStMarks from "../../../debate-icons/schools/st-marks.png";
 import IconSchoolWestminster from "../../../debate-icons/schools/westminster.png";
 import IconSchoolBlake from "../../../debate-icons/schools/blake.png";
@@ -46,6 +46,9 @@ export const TOURNAMENT_LOGO_MAP: Record<string, string | FC<SVGProps<SVGSVGElem
   "harvard-westlake": logoSrc(IconSchoolHarvardWestlake),
   greenhill: logoSrc(IconSchoolGreenhill),
   emory: logoSrc(IconSchoolEmory),
+  "barkley": logoSrc(IconSchoolEmory),
+  "barkley-forum": logoSrc(IconSchoolEmory),
+  "barkley-forum-emory": logoSrc(IconSchoolEmory),
   georgetown: logoSrc(IconSchoolGeorgetown),
   ceda: logoSrc(IconSchoolCeda),
   glenbrooks: logoSrc(IconSchoolGlenbrookNorth),
@@ -77,5 +80,10 @@ export const getTournamentLogo = (
   const key = slugify(base);
   if (TOURNAMENT_LOGO_MAP[key]) return TOURNAMENT_LOGO_MAP[key];
   if (TOURNAMENT_LOGO_MAP[slugify(tournament)]) return TOURNAMENT_LOGO_MAP[slugify(tournament)];
+  // also try matching by containing emory/barkley if it's barkley forum related
+  const lower = tournament.toLowerCase();
+  if (lower.includes("barkley") || lower.includes("emory")) {
+    return TOURNAMENT_LOGO_MAP["emory"] || TOURNAMENT_LOGO_MAP["barkley"] || null;
+  }
   return null;
 };
