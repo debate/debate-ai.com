@@ -16,9 +16,9 @@ import IconSchoolWakeForest from "../../../debate-icons/schools/wake-forest.svg"
 import IconSchoolKentucky from "../../../debate-icons/schools/kentucky.svg";
 import IconSchoolMichiganState from "../../../debate-icons/schools/michigan-state.png";
 import IconSchoolNdt from "../../../debate-icons/schools/ndt.png";
-import IconSchoolDartmouth from "../../../debate-icons/schools/dartmouth.svg";
+import IconSchoolDartmouth from "../../../debate-icons/schools/dartmouth.png";
 import IconSchoolRedlands from "../../../debate-icons/schools/redlands.svg";
-import IconSchoolStMarks from "../../../debate-icons/schools/st-marks.png";
+import IconSchoolStMarks from "../../../debate-icons/schools/st-marks-school-of-texas.png";
 import IconSchoolWestminster from "../../../debate-icons/schools/westminster.png";
 import IconSchoolBlake from "../../../debate-icons/schools/blake.png";
 import IconSchoolHarker from "../../../debate-icons/schools/harker.png";
