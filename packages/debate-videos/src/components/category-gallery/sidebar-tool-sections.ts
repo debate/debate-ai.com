@@ -154,8 +154,10 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       // Pre-Round Briefings, Scout-to-Strategy, Opponent Team Profiles, Judge
       // Profiles and Prep Notes, one tab each.
       { href: "/practice/prep", title: "Prep Workspace", icon: ClipboardList },
+      { href: "/practice/judge-decision", title: "AI Judge Decision", icon: Scale },
       { href: "/practice/partners", title: "Practice Partners", icon: Handshake },
       { href: "/practice/drills", title: "Practice Drills", icon: Repeat },
+      { href: "/reason-editor", title: "Personal Dictionary", icon: BookOpen },
     ],
   },
   {
@@ -177,6 +179,7 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       // among the coaching tools. Forum threads keep their
       // `/practice/forums/<id>` addresses, so that prefix is this row's too.
       { href: "/news", title: "News & Forums", icon: Rss, aliases: ["/practice/forums"] },
+      { href: "/coaching/outcomes", title: "Vulnerability Reports", icon: ChartLine },
     ],
   },
   {
