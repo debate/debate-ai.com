@@ -17,11 +17,30 @@
 
 import type { ReactNode } from "react"
 import { Dialog as DialogPrimitive } from "radix-ui"
-import { X } from "lucide-react"
+import { Loader2, Wand2, X } from "lucide-react"
 import { Button } from "../ui/primitives/button"
 import { cn } from "../ui/lib/utils"
 import type { SpeechStartItem, SpeechStarts } from "./round-recording"
 import { SpeechStartsEditor } from "./SpeechStartsEditor"
+
+/**
+ * The page's "Detect speeches" request, as the dialog shows it. The page owns
+ * it because the result re-times the whole round, timeline included. Defined
+ * here so both `debate-videos` (the watch page) and `debate-timer` (the
+ * round recording dialog) share one shape.
+ */
+export interface SpeechDetectionControl {
+    /** Starts (or re-runs) the detection. */
+    onDetect: () => void
+    /** Forgets the detected speeches; omitted while there are none. */
+    onClear?: () => void
+    running: boolean
+    error?: string | null
+    /** A one-line description of the last result — `Policy · 11 speeches found`. */
+    result?: string | null
+    /** False while the captions it reads are not loaded. */
+    available: boolean
+}
 
 export interface SpeechStartsDialogProps {
     open: boolean
@@ -47,6 +66,8 @@ export interface SpeechStartsDialogProps {
      * labelling. Default true.
      */
     modal?: boolean
+    /** The AI "Detect speeches" control; without it the dialog offers no Detect control. */
+    detection?: SpeechDetectionControl
 }
 
 export function SpeechStartsDialog({
@@ -61,6 +82,7 @@ export function SpeechStartsDialog({
     onChange,
     children,
     modal = true,
+    detection,
 }: SpeechStartsDialogProps) {
     return (
         <DialogPrimitive.Root open={open} onOpenChange={onOpenChange} modal={modal}>
@@ -85,9 +107,50 @@ export function SpeechStartsDialog({
                     </div>
                     <DialogPrimitive.Description className="text-xs text-muted-foreground">
                         Play to where a speech begins and press the crosshair, or type the time.
+                        {detection ? ", or let Detect speeches find them all" : ""} — the timeline, the playing marker and each speech&apos;s captions follow.
                     </DialogPrimitive.Description>
 
                     {children}
+
+                    {detection && (
+                        <div className="flex shrink-0 flex-wrap items-center gap-x-2 gap-y-1 text-[11px]">
+                            <button
+                                type="button"
+                                onClick={detection.onDetect}
+                                disabled={detection.running || !detection.available}
+                                className="inline-flex items-center gap-1 rounded-md border border-border px-1.5 py-0.5 font-medium hover:bg-accent transition-colors disabled:opacity-50 disabled:hover:bg-transparent"
+                                title={
+                                    detection.available
+                                        ? "Read the whole transcript with AI to find the format and where every speech begins and ends"
+                                        : "Waiting for the captions"
+                                }
+                            >
+                                {detection.running ? (
+                                    <Loader2 className="h-3 w-3 animate-spin motion-reduce:animate-none" />
+                                ) : (
+                                    <Wand2 className="h-3 w-3" />
+                                )}
+                                {detection.running ? "Detecting speeches…" : detection.result ? "Detect again" : "Detect speeches"}
+                            </button>
+                            {detection.result && !detection.running && (
+                                <span className="text-muted-foreground">{detection.result}</span>
+                            )}
+                            {detection.onClear && !detection.running && (
+                                <button
+                                    type="button"
+                                    onClick={detection.onClear}
+                                    className="text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+                                >
+                                    Clear
+                                </button>
+                            )}
+                            {detection.error && !detection.running && (
+                                <span role="alert" className="text-destructive">
+                                    {detection.error}
+                                </span>
+                            )}
+                        </div>
+                    )}
 
                     <SpeechStartsEditor
                         items={items}

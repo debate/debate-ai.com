@@ -14,7 +14,7 @@ export * from "./types";
 export * from "./audio/sound-effects";
 export * from "./audio/sound-effect-preferences";
 export { SpeechStartsDialog } from "./recorder/SpeechStartsDialog";
-export type { SpeechStartsDialogProps } from "./recorder/SpeechStartsDialog";
+export type { SpeechStartsDialogProps, SpeechDetectionControl } from "./recorder/SpeechStartsDialog";
 export { SpeechStartsEditor } from "./recorder/SpeechStartsEditor";
 export type { SpeechStartsEditorProps } from "./recorder/SpeechStartsEditor";
 export { RoundRecordingDialog } from "./recorder/RoundRecordingDialog";

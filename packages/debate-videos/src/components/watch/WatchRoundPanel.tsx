@@ -53,6 +53,7 @@ import type { RoundContext } from "../../lib/speech-outcomes"
 import { cachedSpeechKeys } from "../../state/speechOutcomeCache"
 import { readSpeechSummaries, writeSpeechSummary } from "../../state/speechAiCache"
 import { requestSpeechSummary } from "../../lib/speech-ai-client"
+import { SpeechDetectionControl } from "@debate/timer"
 
 /** A document view, the AI alternative-responses view, or the AI outline. */
 type SpeechView = VideoDocumentKind | "outcomes" | "llm"
