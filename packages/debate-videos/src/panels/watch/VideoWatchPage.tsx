@@ -57,7 +57,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { AlertCircle, ArrowLeft, Calendar, Clock, Eye, ListOrdered, ListPlus, Loader2 } from "lucide-react"
 import { CommentSection } from "@debate/comments"
-import { SpeechStartsDialog } from "@debate/timer"
+import { SpeechStartsDialog, type SpeechDetectionControl } from "@debate/timer"
 import { formatCount } from "../../components/category-gallery/format-count"
 
 import { WatchToolbar } from "../../components/watch/WatchToolbar"
@@ -123,7 +123,6 @@ import {
   applySpeechSegmentation,
   type SpeechSegmentation,
 } from "../../lib/speech-segmentation"
-import type { SpeechDetectionControl } from "../../components/watch/WatchRoundPanel"
 import type { VideoType } from "../../types/videos"
 
 /** Shared empty default, so an absent list keeps one identity across renders. */
@@ -996,6 +995,7 @@ export function VideoWatchPage({
                   currentTime={currentTime}
                   onSeek={seekTo}
                   onChange={handleMarkStart}
+                  detection={speechDetection}
                 />
               </div>
             )}
