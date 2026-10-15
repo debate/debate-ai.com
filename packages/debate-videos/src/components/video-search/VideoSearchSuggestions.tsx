@@ -59,17 +59,14 @@ function SuggestionRow({
               type="button"
               onClick={() => onSelect(item.label)}
               aria-pressed={isActive}
-              title={`Search ${item.label} — ${item.count} video${item.count === 1 ? "" : "s"}`}
-              className={cn(
-                "inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-background px-2.5 py-1 text-xs text-foreground transition-colors hover:border-primary/50 hover:bg-primary/10",
-                isActive && "border-primary/60 bg-primary/15",
-              )}
-            >
-              <span className="truncate max-w-[14rem]">{item.label}</span>
-              <span className="text-[10px] tabular-nums text-muted-foreground">
-                {formatCount(item.count)}
-              </span>
-            </button>
+               title={`Search ${item.label}`}
+               className={cn(
+                 "inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-background px-2.5 py-1 text-xs text-foreground transition-colors hover:border-primary/50 hover:bg-primary/10",
+                 isActive && "border-primary/60 bg-primary/15",
+               )}
+             >
+               <span className="truncate max-w-[14rem]">{item.label}</span>
+             </button>
           )
         })}
       </div>
