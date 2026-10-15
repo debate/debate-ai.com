@@ -26,10 +26,10 @@ import { QuickLinksGrid } from "../components/category-gallery/QuickLinksGrid"
 import { VideoSidebarTree } from "../components/category-gallery/VideoSidebarTree"
 import { ToolNavTree } from "../components/category-gallery/ToolNavTree"
 import { GoatSparklesHeading } from "../components/category-gallery/GoatSparklesHeading"
-import { cn } from "../../ui/lib/utils";
+import { cn } from "../ui/lib/utils";
 import { formatCount } from "../components/category-gallery/format-count";
 import { SIDEBAR_VIDEO_LINKS_BY_ID } from "../components/category-gallery/sidebar-video-links";
-import { GlowingEffect } from "../../ui/effects/glowing-effect";
+import { GlowingEffect } from "../ui/effects/glowing-effect";
 import type { DebateStyle } from "../types/videos"
 import type { VideoViewMode } from "../hooks/useVideoState"
 import { useVideoStacks } from "../hooks/useVideoStacks"

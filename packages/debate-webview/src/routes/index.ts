@@ -87,7 +87,6 @@ export const PAGE_ROUTES: AppRoute[] = [
   { pattern: "/news", load: () => import("./news/page") },
   { pattern: "/notifications", load: () => import("./notifications/page") },
   { pattern: "/practice/opponents", load: () => import("./opponents/page") },
-  { pattern: "/coaching/outcomes", load: () => import("./outcomes/page") },
   { pattern: "/outline", load: () => import("./outline/page") },
   { pattern: "/practice/partners", load: () => import("./practice-partners/page") },
   { pattern: "/practice/predictions", load: () => import("./predictions/page") },

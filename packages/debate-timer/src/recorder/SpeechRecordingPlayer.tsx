@@ -135,6 +135,7 @@ function PlayerRow({
     handleDelete,
     progressBarPortalRef,
     hideInlineMenu,
+    uploadActions = [],
 }: {
     track: { id: string; src: string }
     rec: StoredRecording
@@ -149,6 +150,7 @@ function PlayerRow({
     onResetPrepTimers?: () => void
     handleDelete: (key: string) => void
     progressBarPortalRef?: RefObject<HTMLDivElement | null>
+    uploadActions?: SpeechMenuAction[]
     hideInlineMenu?: boolean
 }) {
     const player = useAudioPlayer()
@@ -220,7 +222,7 @@ function PlayerRow({
                          playbackRate={player.playbackRate}
                          onPlaybackRateChange={player.setPlaybackRate}
                          speeds={[0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]}
-                         uploadActions={uploadActions}
+                         uploadActions={uploadActions ?? []}
                      />
                 )}
             </div>
@@ -716,6 +718,7 @@ export function SpeechRecordingPlayer({
     recordingEnabled = true,
     onRecordingEnabledChange,
     hideInlineMenu = false,
+    uploadActions,
 }: SpeechRecordingPlayerProps) {
     const [recordings, setRecordings] = useState<StoredRecording[]>([])
 
@@ -782,6 +785,7 @@ export function SpeechRecordingPlayer({
                             handleDelete={handleDelete}
                             progressBarPortalRef={progressBarPortalRef}
                             hideInlineMenu={hideInlineMenu}
+                            uploadActions={uploadActions ?? []}
                         />
                     </AudioPlayerProvider>
                 )
