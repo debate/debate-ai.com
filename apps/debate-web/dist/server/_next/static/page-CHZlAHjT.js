@@ -1,1 +1,0 @@
-import{a as e}from"./navigation-errors-CoD2OYEQ.js";import"./navigation.react-server-Ccj1di2R.js";import{t}from"./settings-paths-NF18z044.js";async function n({params:n}){let{section:r}=await n;e(t(r))}var r={title:`Research Settings`,description:`Models, search, MCP servers, skills and memory, and voice for the research agent`};export{n as default,r as metadata};

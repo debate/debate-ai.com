@@ -1,1 +1,0 @@
-import{k as e}from"./primary-keys-DguJeRuF.js";function t(t){return e`${t} asc`}function n(t){return e`${t} desc`}export{n,t};

@@ -1,1 +1,0 @@
-delete globalThis.__VINEXT_PREGENERATED_CONCRETE_PATHS;

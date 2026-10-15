@@ -1,1 +1,0 @@
-import{t as e}from"./page-BayJyFXc.js";var t={title:`Rankings`,description:`Debater and team rankings by format and season`};export{e as default,t as metadata};

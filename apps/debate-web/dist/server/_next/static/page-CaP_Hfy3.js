@@ -1,1 +1,0 @@
-import{i as e}from"./navigation-errors-CoD2OYEQ.js";import"./navigation.react-server-Ccj1di2R.js";var t={title:`Prep Notes`,alternates:{canonical:`/practice/prep?section=notes`}};function n(){e(`/practice/prep?section=notes`)}export{n as default,t as metadata};

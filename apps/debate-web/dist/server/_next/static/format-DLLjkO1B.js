@@ -1,1 +1,0 @@
-var e={cmir:`cmir`,html:`html`};function t(t){return t===e.cmir?e.cmir:e.html}export{t as n,e as t};

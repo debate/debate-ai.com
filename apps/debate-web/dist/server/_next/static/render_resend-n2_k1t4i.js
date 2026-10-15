@@ -1,1 +1,0 @@
-var e={};throw Error(`Could not resolve "@react-email/render" imported by "resend". Is it installed?`);export{e as default};

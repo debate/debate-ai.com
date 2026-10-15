@@ -1,1 +1,0 @@
-export{t as createKyselyAdapter,a as kyselyAdapter}from"./kysely-adapter-DWzdneo1.js";

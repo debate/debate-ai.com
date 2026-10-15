@@ -1,1 +1,0 @@
-var e=16777216,t=33554432,n=2e4;export{e as n,n as r,t};

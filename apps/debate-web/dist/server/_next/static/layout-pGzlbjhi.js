@@ -1,1 +1,0 @@
-export{t as default,r as metadata,i as viewport}from"./layout-DooKXUi5.js";

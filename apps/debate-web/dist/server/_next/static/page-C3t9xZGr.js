@@ -1,1 +1,0 @@
-import{a as e}from"./navigation-errors-CoD2OYEQ.js";import"./navigation.react-server-Ccj1di2R.js";import{t}from"./settings-paths-NF18z044.js";function n(){e(t())}var r={title:`Research Settings`,description:`Models, search, MCP servers, skills and memory, and voice for the research agent`};export{n as default,r as metadata};

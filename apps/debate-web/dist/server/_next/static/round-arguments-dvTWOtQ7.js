@@ -1,1 +1,0 @@
-function e(e,t){for(let n of e.split(/\r?\n/))if(n.startsWith(t))return n.slice(t.length).trim()||null;return null}function t(t){return t?{arg1ac:e(t,`Aff 1AC args:`),arg2nr:e(t,`Neg 2NR args:`)}:{arg1ac:null,arg2nr:null}}export{t};

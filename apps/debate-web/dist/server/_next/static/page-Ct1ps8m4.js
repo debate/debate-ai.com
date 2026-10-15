@@ -1,1 +1,0 @@
-import{i as e}from"./navigation-errors-CoD2OYEQ.js";import"./navigation.react-server-Ccj1di2R.js";var t={title:`Pre-Round Briefings`,alternates:{canonical:`/practice/prep?section=briefings`}};function n(){e(`/practice/prep?section=briefings`)}export{n as default,t as metadata};

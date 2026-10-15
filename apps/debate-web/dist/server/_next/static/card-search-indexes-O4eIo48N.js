@@ -1,1 +1,0 @@
-import{k as e}from"./primary-keys-DguJeRuF.js";var t=[`CREATE INDEX IF NOT EXISTS idx_debate_cards_imported_at ON debate_cards(imported_at, id)`,`CREATE INDEX IF NOT EXISTS idx_debate_cards_duplicate_count ON debate_cards(duplicate_count)`];async function n(n){for(let r of t)await n.run(e.raw(r))}export{n as t};

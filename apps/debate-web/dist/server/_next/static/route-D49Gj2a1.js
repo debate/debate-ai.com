@@ -1,1 +1,0 @@
-import{t as e}from"./auth-CEiOc6Zk.js";function t(e){let t=async t=>`handler`in e?e.handler(t):e(t);return{GET:t,POST:t,PATCH:t,PUT:t,DELETE:t}}var n=null;async function r(){return n||=t(await e()),n}async function i(e){let{GET:t}=await r();return t(e)}async function a(e){let{POST:t}=await r();return t(e)}export{i as GET,a as POST};

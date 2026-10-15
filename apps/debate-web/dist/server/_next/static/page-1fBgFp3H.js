@@ -1,1 +1,0 @@
-import{t as e}from"./framework~index~page~page~page~page~page~page~page~page~page~layout~layout~page~page~page~p~smt8a5un-DUd-kn8W.js";import{t}from"./ReasonEditorScreen-oZtp8a8U.js";var n=e();function r(){return(0,n.jsx)(t,{})}export{r as default};

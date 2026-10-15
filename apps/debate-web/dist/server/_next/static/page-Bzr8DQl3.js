@@ -1,1 +1,0 @@
-import{t as e}from"./page-BayJyFXc.js";var t={title:`Glossary of Terms`,description:`Definitions of debate terms, with the lectures that explain them`};export{e as default,t as metadata};

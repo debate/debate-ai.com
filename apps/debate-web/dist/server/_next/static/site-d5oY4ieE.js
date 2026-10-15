@@ -1,1 +1,0 @@
-var e=`Debate AI`,t=`/logo.png`,n=`support@debate-ai.com`,r=`2026-08-26`,i=`https://debate-ai.com`,a=process.env.NEXT_PUBLIC_APP_URL||process.env.NEXT_PUBLIC_BASE_URL||``;process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;var o=`chrome-extension://noecbaibfhbmpapofcdkgchfifmoinfj`;export{o as a,i,t as n,r as o,e as r,a as s,n as t};

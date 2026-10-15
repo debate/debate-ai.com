@@ -1,5 +1,0 @@
-import{k as e}from"./primary-keys-DguJeRuF.js";import{r as t}from"./conditions-vMFYxq3_.js";import{L as n,n as r}from"./context-Cg43A54y.js";import{o as i,p as a}from"./connect-FxeR34Dm.js";var o=`CREATE TABLE IF NOT EXISTS "qwksearch_connection" (
-  "user_id" text PRIMARY KEY NOT NULL REFERENCES "user"("id") ON DELETE cascade,
-  "connection" text NOT NULL,
-  "updated_at" integer NOT NULL
-)`,s=null;async function c(t){return s??=t.run(e.raw(o)).then(()=>void 0),s.catch(()=>{s=null}),s}async function l(e){let a=await r();await c(a);let[o]=await a.select({connection:n.connection}).from(n).where(t(n.userId,e)).limit(1);return i(o?.connection)}async function u(e,i){let o=await r();await c(o);let s=a(i);if(!s){await o.delete(n).where(t(n.userId,e));return}let l=new Date;await o.insert(n).values({userId:e,connection:s,updatedAt:l}).onConflictDoUpdate({target:n.userId,set:{connection:s,updatedAt:l}})}export{u as n,l as t};

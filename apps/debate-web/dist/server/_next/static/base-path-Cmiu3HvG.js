@@ -1,1 +1,0 @@
-function e(e,t){return t?e===t||e.startsWith(t+`/`):!1}function t(t,n){return e(t,n)?t.slice(n.length)||`/`:t}function n(t,n){return!n||e(t,n)?t:t===`/`?n:`${n}${t}`}function r(e){if(e===`/`)return`/`;let t=e.length;for(;t>0&&e.charCodeAt(t-1)===47;)t--;return t===0?`/`:e.slice(0,t)}export{t as i,e as n,r,n as t};

@@ -1,1 +1,0 @@
-import{L as e,k as t,z as n}from"./primary-keys-DguJeRuF.js";function r(e){return t`count(${e||t.raw(`*`)})`.mapWith(Number)}function i(r){return t`max(${r})`.mapWith(n(r,e)?r:String)}export{i as n,r as t};

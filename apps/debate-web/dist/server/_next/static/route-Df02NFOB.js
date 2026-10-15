@@ -1,1 +1,0 @@
-import{n as e}from"./server-CC2JWgrq.js";import{t}from"./common-names-Dt84MazX.js";var n=[...t].map(e=>e.charAt(0).toUpperCase()+e.slice(1)).sort();async function r(){return e.json({names:n})}export{r as GET};

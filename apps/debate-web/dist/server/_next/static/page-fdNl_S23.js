@@ -1,1 +1,0 @@
-import{t as e}from"./server-BYjRQwGu.js";var t=e(()=>{throw Error(`Unexpectedly client reference export 'default' is called on server`)},`ee7c342d3cb8`,`default`),n={title:`Tournaments: Invitations, Pairings & Results`,description:`Upcoming speech and debate tournaments from Tabroom, with their invitations, published pairings and results.`};export{t as default,n as metadata};

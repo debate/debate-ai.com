@@ -1,1 +1,0 @@
-function e(e){return`<!--vinext-client-trace-metadata:${e}:start-->`}function t(e){return`<!--vinext-client-trace-metadata:${e}:end-->`}function n(n,r){if(!r)return n;let i=e(r),a=t(r),o=n.indexOf(i);if(o===-1)return n;let s=n.indexOf(a,o+i.length);return s===-1?n:n.slice(0,o)+n.slice(s+a.length)}export{n as stripClientTraceMetadataBlock};
