@@ -38,7 +38,7 @@ import {
 } from "./rankingProfileHelpers"
 import { ProfileVideos } from "./ProfileVideos"
 import { ProfileCaselistDocuments } from "./ProfileCaselistDocuments"
-import { getSchoolLogo } from "../../../lib/schoolLogos"
+import { SchoolLogo } from "../SchoolLogo"
 import { TeamRadarChart } from "./TeamRadarChart"
 import { MatchupSimulator } from "./MatchupSimulator"
 import { FollowButton } from "./FollowButton"
@@ -150,21 +150,8 @@ function TeamRecordCard({
       <header className="px-4 pb-4 pt-5 sm:px-6">
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{first.name}</h1>
         <Link href={schoolHref(first.school)} className="text-base text-muted-foreground underline-offset-4 hover:underline flex items-center gap-2 mt-1">
-          {(() => {
-            const logo = getSchoolLogo(first.school);
-            if (logo) {
-              if (typeof logo === "string") {
-                return <img src={logo} alt={first.school} className="h-5 w-auto" />;
-              }
-              if (typeof logo === "function") {
-                const LogoComp = logo;
-                return <img src={(typeof logo==="string"?logo:(logo as any)?.src??logo)} className="h-5 w-auto" />;
-              }
-              // StaticImageData from Next.js
-              return <img src={logo.src} alt={first.school} className="h-5 w-auto" />;
-            }
-            return first.school;
-          })()}
+          <SchoolLogo school={first.school} className="h-5 w-auto" />
+          {first.school}
         </Link>
         <div>
           <FollowButton kind="team" slug={teamSlug(first)} name={`${first.school} ${first.name}`} />
@@ -348,21 +335,8 @@ export function SchoolProfilePage({
       {entries.length > 0 && (
         <>
           <header className="mt-3">
-            {(() => {
-              const logo = getSchoolLogo(summary.school);
-              if (logo) {
-                if (typeof logo === "string") {
-                  return <img src={logo} alt={summary.school} className="h-12 w-auto mb-2" />;
-                }
-                if (typeof logo === "function") {
-                  const LogoComp = logo;
-                  return <img src={(typeof logo==="string"?logo:(logo as any)?.src??logo)} />;
-                }
-                // StaticImageData from Next.js
-                return <img src={logo.src} alt={summary.school} className="h-12 w-auto mb-2" />;
-              }
-              return <h1 className="text-2xl font-semibold text-foreground">{summary.school}</h1>;
-            })()}
+            <SchoolLogo school={summary.school} className="mb-2 h-12 w-auto" />
+            <h1 className="text-2xl font-semibold text-foreground">{summary.school}</h1>
             <p className="text-sm text-muted-foreground">
               {summary.divisions.map((d) => d.datasetLabel).join(" · ")}
             </p>

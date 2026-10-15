@@ -179,7 +179,7 @@ function CardBody({ link, count, isActive }: { link: QuickLink; count?: number; 
         </h3>
         {count != null && count > 0 && (
           <span className="absolute top-1 right-1 text-[10px] font-semibold text-foreground/60 leading-none">
-            {formatCount(count, { exact: link.exactCount })}
+            {formatCount(count)}
           </span>
         )}
       </div>
@@ -207,7 +207,7 @@ function ListRow({ link, count, isActive }: { link: QuickLink; count?: number; i
       </div>
       <span className="min-w-0 flex-1 truncate text-sm font-medium text-foreground">{link.title}</span>
       {count != null && count > 0 && (
-        <span className="shrink-0 text-[11px] font-semibold text-muted-foreground">{formatCount(count, { exact: link.exactCount })}</span>
+        <span className="shrink-0 text-[11px] font-semibold text-muted-foreground">{formatCount(count)}</span>
       )}
     </div>
   );

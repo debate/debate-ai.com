@@ -25,7 +25,7 @@ import { useResizableColumns } from "../../components/video-grid/useResizableCol
 import { COLUMN_TOOLTIPS, DIVISION_SHORT_LABELS, displayEntryName, schoolRankOf } from "./leaderboardUtils"
 import type { Division, SortKey, SortState } from "./leaderboardTypes"
 import { schoolHref, teamHref } from "./profile/rankingProfileHelpers"
-import { getSchoolLogo } from "../../lib/schoolLogos"
+import { SchoolLogo } from "./SchoolLogo"
 import { LegendaryBadge, ROW_TIER_CLASS, rowTier, type RowTier } from "./rowTier"
 
 /** The fields shown as columns. */
@@ -98,21 +98,8 @@ const COLUMNS: Column[] = [
       return (
         <>
           <Link href={schoolHref(e.school)} className="hover:text-foreground hover:underline underline-offset-4 flex items-center gap-1.5">
-            {(() => {
-              const logo = getSchoolLogo(e.school);
-              if (logo) {
-                if (typeof logo === "string") {
-                  return <img src={logo} alt={e.school} className="h-4 w-auto" />;
-                }
-                if (typeof logo === "function") {
-                  const LogoComp = logo;
-                  return <img src={typeof logo==="string"?logo:(logo as any)?.src??logo} alt={e.school} className="h-4 w-auto" />;
-                }
-                // StaticImageData from Next.js
-                return <img src={logo.src} alt={e.school} className="h-4 w-auto" />;
-              }
-              return e.school;
-            })()}
+            <SchoolLogo school={e.school} className="h-4 w-auto" />
+            {e.school}
           </Link>
           {schoolRank !== undefined && (
             <span className="ml-1.5 text-xs tabular-nums text-muted-foreground/70" title="School rank in the Schools tab for this format">
