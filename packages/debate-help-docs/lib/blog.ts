@@ -1,6 +1,8 @@
 import { createGetUrl } from 'fumadocs-core/source';
 import { pageSchema } from 'fumadocs-core/source/schema';
 import { z } from 'zod';
+import type { InferPageType } from 'fumadocs-core/source';
+import type { blogSource } from './fumadocs/source';
 
 export const blogPageSchema = pageSchema.extend({
   /** publish date, posts are sorted by it */
@@ -42,11 +44,8 @@ export interface BlogPost {
   authors: BlogAuthor[];
 }
 
-interface BlogPage {
-  url: string;
-  locale?: string;
-  data: z.output<typeof blogPageSchema>;
-}
+/** Page type from the blog source */
+export type BlogPageType = InferPageType<typeof blogSource>;
 
 /**
  * URL of blog routes, like `getBlogUrl(['tags'], locale)` for the tags page.
@@ -65,7 +64,7 @@ export function tagSlug(tag: string): string {
  *
  * @param authors - authors by their keys in frontmatter, unknown keys are shown as names
  */
-export function getPosts(pages: BlogPage[], authors: Record<string, BlogAuthor> = {}): BlogPost[] {
+export function getPosts(pages: BlogPageType[], authors: Record<string, BlogAuthor> = {}): BlogPost[] {
   const posts: BlogPost[] = [];
 
   for (const { url, locale, data } of pages) {

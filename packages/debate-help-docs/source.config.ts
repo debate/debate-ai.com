@@ -3,9 +3,11 @@ import {
   defineDocs,
   frontmatterSchema,
   metaSchema,
+  defineCollections,
 } from 'fumadocs-mdx/config';
 import { remarkMdxFiles } from 'fumadocs-core/mdx-plugins/remark-mdx-files';
 import { fileURLToPath } from 'node:url';
+import { blogPageSchema } from './lib/blog';
 
 export const docs = defineDocs({
   // Absolute, because fumadocs-mdx resolves `dir` against the root of whatever
@@ -27,6 +29,12 @@ export const docs = defineDocs({
   meta: {
     schema: metaSchema,
   },
+});
+
+export const blog = defineCollections({
+  type: 'doc',
+  dir: fileURLToPath(new URL('./content/blog', import.meta.url)),
+  schema: blogPageSchema,
 });
 
 export default defineConfig({

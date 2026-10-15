@@ -424,8 +424,6 @@ export function LecturesVideoGridView({
               selectedCategory={selectedCategory}
             />
           </nav>
-        )}
-
         {/* The Greatest of All-Time collection opens on its own banner. */}
         {currentCategory === "topPicks" && <GoatSparklesHeading />}
 

@@ -48,11 +48,12 @@ export async function calculateYouTubeViewStats() {
   const normalizeElimRound = (roundName: string): string | null => {
     const lower = roundName.toLowerCase();
 
-    if (lower.includes('final') && !lower.includes('semi')) return 'Finals';
-    if (lower.includes('semi')) return 'Semifinals';
-    if (lower.includes('quarter')) return 'Quarterfinals';
-    if (lower.includes('octa') || lower.includes('octo')) return 'Octafinals';
-    if (lower.includes('double')) return 'Double Octafinals';
+    if (lower.includes('final') && !lower.includes('semi')) return 'final';
+    if (lower.includes('semi')) return 'semis';
+    if (lower.includes('quarter')) return 'quarters';
+    if (lower.includes('octa') || lower.includes('octo')) return 'octas';
+    if (lower.includes('double')) return 'doubles';
+    if (lower.includes('triple')) return 'triples';
 
     return null; // Not an elim round
   };
@@ -169,7 +170,7 @@ export async function calculateYouTubeViewStats() {
     }));
 
   // Sort elimination rounds by typical tournament order
-  const elimRoundOrder = ['Finals', 'Semifinals', 'Quarterfinals', 'Octafinals', 'Double Octafinals'];
+  const elimRoundOrder = ['final', 'semis', 'quarters', 'octas', 'doubles', 'triples'];
   const elimRoundsSorted = elimRoundOrder
     .filter(round => statsByElimRound[round])
     .map((round) => ({

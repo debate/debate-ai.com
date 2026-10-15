@@ -90,12 +90,34 @@ describe("SpeechStartsDialog", () => {
         }}
       />,
     )
-    expect(document.body.textContent).toContain("Detect speeches")
-    await click(byLabel("Detect speeches"))
+    expect(document.body.textContent).toContain("Detect again")
+    await click(byLabel("Detect again"))
     expect(onDetect).toHaveBeenCalledTimes(1)
     expect(document.body.textContent).toContain("Clear")
-    await click(byLabel("Clear"))
+    await click(byLabel("Clear detection"))
     expect(onClear).toHaveBeenCalledTimes(1)
+  })
+
+  it("shows Detect speeches before any result", async () => {
+    view = await mount(
+      <SpeechStartsDialog
+        open
+        onOpenChange={() => {}}
+        items={ITEMS}
+        starts={{}}
+        durationSeconds={600}
+        currentTime={0}
+        onSeek={() => {}}
+        onChange={() => {}}
+        detection={{
+          onDetect: vi.fn(),
+          running: false,
+          available: true,
+        }}
+      />,
+    )
+    expect(document.body.textContent).toContain("Detect speeches")
+    expect(document.querySelector('button[aria-label="Detect speeches"]')).not.toBeNull()
   })
 
   it("shows Detect again and the result after a detection", async () => {

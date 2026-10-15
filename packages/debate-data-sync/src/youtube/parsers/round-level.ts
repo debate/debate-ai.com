@@ -341,14 +341,14 @@ export function formatRoundLevel(level: StandardRoundLevel): string {
   }
 
   const labels: Record<Exclude<StandardRoundLevel, `R${number}`>, string> = {
-    TRIPLES: "Triple Octofinals",
-    DOUBLES: "Double Octofinals",
-    OCTOS: "Octofinals",
-    QUARTERS: "Quarterfinals",
-    SEMIS: "Semifinals",
-    FINALS: "Finals",
-    RUNOFFS: "Runoffs",
-    UNKNOWN: "Unknown round",
+    TRIPLES: "triples",
+    DOUBLES: "doubles",
+    OCTOS: "octas",
+    QUARTERS: "quarters",
+    SEMIS: "semis",
+    FINALS: "final",
+    RUNOFFS: "runoffs",
+    UNKNOWN: "unknown round",
   };
 
   return labels[level as Exclude<StandardRoundLevel, `R${number}`>];

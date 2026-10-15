@@ -31,7 +31,7 @@ export const baseOptions: BaseLayoutProps = {
       label: 'Blog',
       icon: <FileText />,
       text: 'Blog',
-      url: withBasePath('/blog'),
+      url: '/blog',
     },
     {
       label: 'Docs',
