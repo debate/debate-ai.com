@@ -9,6 +9,7 @@
 "use client"
 
 import React, { useMemo } from "react"
+import { Globe as GlobeIcon, Mic, Users } from "lucide-react"
 import { useParams, usePathname } from "next/navigation"
 import { librarySlug } from "./lectureRouteConfig"
 import type { CategoryType, TopicType, VideoFacets, VideoSuggestions } from "../types/videos"
