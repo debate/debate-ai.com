@@ -1,7 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 apps/debate-native-wrapper/key
-apps/debate-ai.com/.open-next
-apps/debate-ai.com/.next
+apps/debate-web/.open-next
+apps/debate-web/.next
 # dependencies
 node_modules
 yarn.lock
@@ -13,7 +13,7 @@ yarn.lock
 .turbo/
 .kilo/
 dist/*
-apps/debate-ai.com/dist/*
+apps/debate-web/dist/*
 .vinext/
 .wrangler
 .continue/
@@ -49,21 +49,21 @@ next-env.d.ts
 # Service Worker generated files
 src/sw/app-file-list.ts
 src/sw/version.ts
-apps/debate-ai.com/public/service-worker.js
+apps/debate-web/public/service-worker.js
 pnpm-lock.yaml
 open-when-ready.log
 # Local database the drizzle folder is applied to: drizzle-kit/libSQL's
 # `file:./data/db.sqlite` (drizzle.config.ts, lib/database/libsql.ts). Generated
 # locally by `bun run db:migrate:d1`; D1 is the real database.
-apps/debate-ai.com/data/
-# Database migrations (apps/debate-ai.com/drizzle). NOTE: `db:migrate:d1`, which
+apps/debate-web/data/
+# Database migrations (apps/debate-web/drizzle). NOTE: `db:migrate:d1`, which
 # `npm run deploy` runs before every build, applies `drizzle/*.sql` to
 # production D1 from this folder, and `drizzle/seed/videos-seed.sql` is read by
 # `db:seed:videos:d1`. Ignoring it does not stop those scripts reading local
 # files, but nothing in the repo will carry the migration history that rebuilds
 # a D1 database from scratch. Re-track with:
-#   git add -f apps/debate-ai.com/drizzle
-apps/debate-ai.com/drizzle/
+#   git add -f apps/debate-web/drizzle
+apps/debate-web/drizzle/
 
 # debate-api-client: types generated from debate-openapi.yml (regenerate with `bun run generate`)
 packages/debate-api-client/src/generated/
