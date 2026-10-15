@@ -116,6 +116,7 @@ export function SpeechStartsDialog({
                         <div className="flex shrink-0 flex-wrap items-center gap-x-2 gap-y-1 text-[11px]">
                             <button
                                 type="button"
+                                aria-label={detection.running ? "Detecting speeches…" : detection.result ? "Detect again" : "Detect speeches"}
                                 onClick={detection.onDetect}
                                 disabled={detection.running || !detection.available}
                                 className="inline-flex items-center gap-1 rounded-md border border-border px-1.5 py-0.5 font-medium hover:bg-accent transition-colors disabled:opacity-50 disabled:hover:bg-transparent"
@@ -138,6 +139,7 @@ export function SpeechStartsDialog({
                             {detection.onClear && !detection.running && (
                                 <button
                                     type="button"
+                                    aria-label="Clear detection"
                                     onClick={detection.onClear}
                                     className="text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
                                 >

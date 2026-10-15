@@ -67,6 +67,87 @@ describe("SpeechStartsDialog", () => {
     await blur(inputs[1])
     expect(onChange).toHaveBeenLastCalledWith("1NC", 510)
   })
+
+  it("offers Detect speeches when given a detection control", async () => {
+    const onDetect = vi.fn()
+    const onClear = vi.fn()
+    view = await mount(
+      <SpeechStartsDialog
+        open
+        onOpenChange={() => {}}
+        items={ITEMS}
+        starts={{}}
+        durationSeconds={600}
+        currentTime={0}
+        onSeek={() => {}}
+        onChange={() => {}}
+        detection={{
+          onDetect,
+          onClear,
+          running: false,
+          available: true,
+          result: "Policy · 11 speeches found",
+        }}
+      />,
+    )
+    expect(document.body.textContent).toContain("Detect speeches")
+    await click(byLabel("Detect speeches"))
+    expect(onDetect).toHaveBeenCalledTimes(1)
+    expect(document.body.textContent).toContain("Clear")
+    await click(byLabel("Clear"))
+    expect(onClear).toHaveBeenCalledTimes(1)
+  })
+
+  it("shows Detect again and the result after a detection", async () => {
+    view = await mount(
+      <SpeechStartsDialog
+        open
+        onOpenChange={() => {}}
+        items={ITEMS}
+        starts={{}}
+        durationSeconds={600}
+        currentTime={0}
+        onSeek={() => {}}
+        onChange={() => {}}
+        detection={{
+          onDetect: vi.fn(),
+          running: false,
+          available: true,
+          result: "Lincoln-Douglas · 7 speeches found",
+        }}
+      />,
+    )
+    expect(document.body.textContent).toContain("Detect again")
+    expect(document.body.textContent).toContain("Lincoln-Douglas · 7 speeches found")
+  })
+
+  it("shows Detecting… while running and disables the button", async () => {
+    view = await mount(
+      <SpeechStartsDialog
+        open
+        onOpenChange={() => {}}
+        items={ITEMS}
+        starts={{}}
+        durationSeconds={600}
+        currentTime={0}
+        onSeek={() => {}}
+        onChange={() => {}}
+        detection={{
+          onDetect: vi.fn(),
+          running: true,
+          available: true,
+        }}
+      />,
+    )
+    expect(document.body.textContent).toContain("Detecting speeches…")
+    expect(document.querySelector('button[aria-label="Detect speeches"]')).toBeNull()
+  })
+
+  it("has no Detect control without detection", async () => {
+    await open()
+    expect(document.querySelector('button[aria-label="Detect speeches"]')).toBeNull()
+    expect(document.querySelector('button[aria-label="Detecting speeches…"]')).toBeNull()
+  })
 })
 
 describe("SpeechStartsEditor", () => {
