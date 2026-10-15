@@ -11,17 +11,21 @@ import IconSchoolEmory from "../../../debate-icons/schools/emory.png";
 import IconSchoolGeorgetown from "../../../debate-icons/schools/georgetown.png";
 import IconSchoolCeda from "../../../debate-icons/schools/ceda.png";
 import IconSchoolGlenbrookNorth from "../../../debate-icons/schools/glenbrook-north.png";
-import IconSchoolNorthwestern from "../../../debate-icons/schools/northwestern.svg";
-import IconSchoolWakeForest from "../../../debate-icons/schools/wake-forest.svg";
+import IconSchoolNorthwestern from "../../../debate-icons/schools/northwestern.png";
+import IconSchoolWakeForest from "../../../debate-icons/schools/wake-forest.png";
 import IconSchoolKentucky from "../../../debate-icons/schools/kentucky.svg";
 import IconSchoolMichiganState from "../../../debate-icons/schools/michigan-state.png";
 import IconSchoolNdt from "../../../debate-icons/schools/ndt.png";
 import IconSchoolDartmouth from "../../../debate-icons/schools/dartmouth.svg";
-import IconSchoolRedlands from "../../../debate-icons/schools/redlands.svg";
+import IconSchoolRedlands from "../../../debate-icons/schools/redlands.png";
 import IconSchoolStMarks from "../../../debate-icons/schools/st-marks.png";
 import IconSchoolWestminster from "../../../debate-icons/schools/westminster.png";
 import IconSchoolBlake from "../../../debate-icons/schools/blake.png";
 import IconSchoolHarker from "../../../debate-icons/schools/harker.png";
+import IconSchoolKansas from "../../../debate-icons/schools/kansas.png";
+import IconSchoolMichigan from "../../../debate-icons/schools/michigan.png";
+import IconSchoolTexas from "../../../debate-icons/schools/texas.png";
+import IconSchoolUcBerkeley from "../../../debate-icons/schools/uc-berkeley.png";
 
 const slugify = (s: string): string =>
   s
@@ -51,6 +55,10 @@ export const SCHOOL_LOGO_MAP: Record<string, string | FC<SVGProps<SVGSVGElement>
   westminster: IconSchoolWestminster,
   blake: IconSchoolBlake,
   harker: IconSchoolHarker,
+  kansas: IconSchoolKansas,
+  michigan: IconSchoolMichigan,
+  texas: IconSchoolTexas,
+  "uc-berkeley": IconSchoolUcBerkeley,
 };
 
 export const getSchoolLogo = (

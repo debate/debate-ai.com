@@ -26,6 +26,10 @@ import { QuickLinksGrid } from "../components/category-gallery/QuickLinksGrid"
 import { VideoSidebarTree } from "../components/category-gallery/VideoSidebarTree"
 import { ToolNavTree } from "../components/category-gallery/ToolNavTree"
 import { GoatSparklesHeading } from "../components/category-gallery/GoatSparklesHeading"
+import { cn } from "../../ui/lib/utils";
+import { formatCount } from "../components/category-gallery/format-count";
+import { SIDEBAR_VIDEO_LINKS_BY_ID } from "../components/category-gallery/sidebar-video-links";
+import { GlowingEffect } from "../../ui/effects/glowing-effect";
 import type { DebateStyle } from "../types/videos"
 import type { VideoViewMode } from "../hooks/useVideoState"
 import { useVideoStacks } from "../hooks/useVideoStacks"
@@ -359,9 +363,61 @@ export function LecturesVideoGridView({
 
         <div ref={videosSectionRef} className="scroll-mt-20" />
 
-        {/* Lecture categories, on every breakpoint: clicking a card switches
-            the grid to that category. */}
-        {showLectureGallery && (
+        {/* WSD, ACC, Speech cards - shown on the all videos page */}
+        {browsingAllVideos && (
+          <div className="mb-6">
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(100px,1fr))] gap-2">
+              {[ "wsd", "acc", "speech" ].map((id) => {
+                const link = SIDEBAR_VIDEO_LINKS_BY_ID[id];
+                // Define style properties for each link
+                const styles: Record<string, { gradient: string; iconBg: string; icon: React.ReactNode }> = {
+                  wsd: { gradient: "from-blue-500/20 via-indigo-500/10 to-transparent", iconBg: "bg-blue-500/15 ring-1 ring-blue-500/30", icon: GlobeIcon },
+                  acc: { gradient: "from-red-500/20 via-yellow-500/10 to-transparent", iconBg: "bg-red-500/15 ring-1 ring-red-500/30", icon: Users },
+                  speech: { gradient: "from-pink-500/20 via-yellow-500/10 to-transparent", iconBg: "bg-pink-500/15 ring-1 ring-pink-500/30", icon: Mic },
+                };
+                const linkStyles = styles[id];
+                return (
+                  <div key={link.id} className="list-none">
+                    <a
+                      href={link.href}
+                      className={cn(
+                        "relative h-full w-full block rounded-lg border-[0.75px] border-border p-1 hover-border-primary/60 transition-colors group",
+                        activeQuickLinkId === link.id && "border-primary/60",
+                      )}
+                    >
+                      <GlowingEffect spread={30} glow proximity={48} inactiveZone={0.01} borderWidth={1.5} />
+                      <div
+                        className={cn(
+                          "relative flex h-full flex-col overflow-hidden rounded-md border-[0.75px] bg-background p-2 shadow-sm dark:shadow-[0px_0px_20px_0px_rgba(45,45,45,0.2)] transition-all bg-gradient-to-br",
+                          linkStyles.gradient,
+                          activeQuickLinkId === link.id && "ring-1 ring-primary/50",
+                        )}
+                      >
+                        <div className="flex items-center justify-center h-14 w-full">
+                          <div className={cn("rounded-md p-1.5 flex items-center justify-center transition-transform group-hover:scale-110", linkStyles.iconBg)}>
+                            {link.glyph ? (
+                              <link.glyph className="h-10 w-10 text-foreground/70" />
+                            ) : (
+                              <linkStyles.icon className="h-10 w-10 text-foreground/70" />
+                            )}
+                          </div>
+                        </div>
+                        <h3 className="mt-auto text-xs leading-tight font-semibold font-sans tracking-[-0.01em] text-foreground text-center min-h-[2rem] flex items-center justify-center">
+                          {link.title}
+                        </h3>
+                        {quickLinkCounts?.[link.id] != null && quickLinkCounts?.[link.id] > 0 && (
+                          <span className="absolute top-1 right-1 text-[10px] font-semibold text-foreground/60 leading-none">
+                            {formatCount(quickLinkCounts?.[link.id])}
+                          </span>
+                        )}
+                      </div>
+                    </a>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
           <nav className="mb-6" aria-label="Lecture categories">
             <LectureCategoryGridGallery
               categories={lectureCategories}

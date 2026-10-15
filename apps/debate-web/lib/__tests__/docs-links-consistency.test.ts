@@ -9,12 +9,12 @@
  * by relative path or `/docs/...` absolute path. Nothing checked that those
  * links actually resolve — `packages/debate-help-docs/content/docs/internals`
  * was deleted in a standalone commit that never touched the ~20 `features/*.mdx`
- * links pointing into it (mostly "see [Tool Data Sync](../internals/tool-data-sync.mdx)"),
+ * links pointing into it (mostly "see [Tool Data Sync](../../internals/tool-data-sync.mdx)"),
  * so every one of them 404'd on the published docs site with nothing to
  * catch it. This test walks every `.mdx`/`.md` file under `content/docs` and
- * fails if a relative (`../`, `./`) or `/docs/`-rooted markdown link doesn't
- * resolve to a real file, so a page (or a whole directory) deleted without
- * updating what links into it fails a test instead of shipping a dead link.
+ * fails if a relative markdown link doesn't resolve to a real file, so a page
+ * (or a whole directory) deleted without updating what links into it fails a
+ * test instead of shipping a dead link.
  *
  * Links to non-doc-page targets (external URLs, anchors, mailto, or a
  * relative path with a non-`.md`/`.mdx` extension such as a `.yml` source
@@ -54,11 +54,23 @@ const DOC_PAGE_EXTENSIONS = new Set(["", ".md", ".mdx"])
  * Whether `target` is a link into this docs site's own pages — as opposed to
  * an external URL, an anchor, or a relative link to a non-doc-page file
  * (source code, a workflow file) that this site doesn't serve.
+ *
+ * Links ending in `.md`/`.mdx` are checked regardless of prefix (even a bare
+ * `tool-data-sync.md` with no `./` is a doc-page link). Extension-less links
+ * are only checked when prefixed with `./`, `../`, or `/docs/` — bare
+ * extension-less links (e.g. `Skepticism`) are fumadocs route references, not
+ * verifiable file paths, and are left to the router.
  */
 function isDocPageLink(target: string): boolean {
-  if (!target.startsWith("../") && !target.startsWith("./") && !target.startsWith("/docs/")) return false
+  if (target.startsWith("http://") || target.startsWith("https://") || target.startsWith("mailto:") || target.startsWith("tel:")) return false
   const withoutAnchor = target.split("#")[0]
-  return DOC_PAGE_EXTENSIONS.has(extname(withoutAnchor))
+  if (!withoutAnchor) return false
+  const ext = extname(withoutAnchor)
+  // `.md`/`.mdx` links are always doc-page links, even without a prefix.
+  if (ext === ".md" || ext === ".mdx") return true
+  // Extension-less links: only check those with a doc-site prefix.
+  if (ext === "" && (withoutAnchor.startsWith("/docs/") || target.startsWith("./") || target.startsWith("../"))) return true
+  return false
 }
 
 /** Resolves `target` (already known to satisfy {@link isDocPageLink}) to an absolute path. */
@@ -85,7 +97,7 @@ describe("docs internal link consistency", () => {
     expect(DOC_FILES.length).toBeGreaterThan(50)
   })
 
-  it("resolves every relative/`/docs/`-rooted link to a doc page that actually exists", () => {
+  it("resolves every relative/`/docs/`-rooted link to a doc page that actually exists (including bare relative links)", () => {
     const broken: string[] = []
     for (const file of DOC_FILES) {
       const text = readFileSync(file, "utf-8")

@@ -82,7 +82,7 @@ export default defineConfig({
           // `.tsx` too: the shell's error boundary is only meaningful as a
           // rendered tree, and its regression (a throw failing the *server*
           // render into a 500) is asserted through `react-dom/server`.
-          include: ["apps/debate-ai.com/lib/**/__tests__/**/*.test.ts?(x)"],
+          include: ["apps/debate-web/lib/**/__tests__/**/*.test.ts?(x)"],
         },
       },
     ],
@@ -95,7 +95,7 @@ export default defineConfig({
         // Only the overlay half of the assembled editor (see above).
         ...editorOverlaySources,
         // The web app's routes, server libraries and Worker entry.
-        "apps/debate-ai.com/{app,lib,worker}/**/*.{ts,tsx}",
+        "apps/debate-web/{app,lib,worker}/**/*.{ts,tsx}",
         // The browser extension's source, entrypoints and UI.
         "apps/debate-browser-ext/{src,lib,entrypoints,components}/**/*.{ts,tsx}",
       ],
