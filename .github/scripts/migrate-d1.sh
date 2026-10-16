@@ -21,7 +21,7 @@
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-APP_ROOT="$REPO_ROOT/apps/debate-ai.com"
+APP_ROOT="$REPO_ROOT/apps/debate-web"
 ENV_FILE="$REPO_ROOT/.env.d1.local"
 
 if [ ! -d "$APP_ROOT" ]; then

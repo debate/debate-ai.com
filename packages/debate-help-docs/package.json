@@ -50,20 +50,13 @@
     "typecheck": "fumadocs-mdx && tsc --noEmit"
   },
   "dependencies": {
-<<<<<<< HEAD
-    "@radix-ui/react-collapsible": "^1.1.20",
-    "@radix-ui/react-dialog": "^1.1.23",
-    "@radix-ui/react-slot": "^1.3.3",
-    "@radix-ui/react-tooltip": "^1.2.16",
-    "ask-ai-button": "^0.1.2",
-=======
     "@base-ui/react": "^1.9.0",
     "@fuma-translate/react": "^1.0.2",
     "@radix-ui/react-collapsible": "^1.2.0",
     "@radix-ui/react-dialog": "^1.3.0",
     "@radix-ui/react-slot": "^1.5.0",
     "@radix-ui/react-tooltip": "^1.4.0",
->>>>>>> 0d28d9f05ac1dd05535441c177e1b89fdc285835
+    "ask-ai-button": "^0.1.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cn": "^0.4.0",

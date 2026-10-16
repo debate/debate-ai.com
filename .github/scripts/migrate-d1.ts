@@ -34,7 +34,7 @@ import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSy
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { BENIGN_ALTER_ERROR, planMigration } from "../../apps/debate-ai.com/lib/database/migration-sql";
+import { BENIGN_ALTER_ERROR, planMigration } from "../../apps/debate-web/lib/database/migration-sql";
 
 // This script lives in `.github/scripts`, not in the app whose migrations it
 // applies, so the app root is named explicitly rather than derived from its
