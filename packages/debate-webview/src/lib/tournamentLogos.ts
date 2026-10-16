@@ -11,6 +11,7 @@ import IconSchoolEmory from "../../../debate-icons/schools/emory.png";
 import IconSchoolGeorgetown from "../../../debate-icons/schools/georgetown.png";
 import IconSchoolCeda from "../../../debate-icons/schools/ceda.png";
 import IconSchoolGlenbrookNorth from "../../../debate-icons/schools/glenbrook-north.png";
+import IconSchoolGlenbrookSouth from "../../../debate-icons/schools/glenbrook-south.png";
 import IconSchoolNorthwestern from "../../../debate-icons/schools/northwestern.svg";
 import IconSchoolWakeForest from "../../../debate-icons/schools/wake-forest.svg";
 import IconSchoolKentucky from "../../../debate-icons/schools/kentucky.svg";
@@ -41,7 +42,7 @@ export const TOURNAMENT_LOGO_MAP: Record<string, string | FC<SVGProps<SVGSVGElem
   ceda: IconSchoolCeda,
   glenbrooks: IconSchoolGlenbrookNorth,
   "glenbrook-north": IconSchoolGlenbrookNorth,
-  "glenbrook-south": IconSchoolGlenbrookNorth,
+  "glenbrook-south": IconSchoolGlenbrookSouth,
   northwestern: IconSchoolNorthwestern,
   "wake-forest": IconSchoolWakeForest,
   kentucky: IconSchoolKentucky,
