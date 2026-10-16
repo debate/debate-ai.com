@@ -23,6 +23,7 @@ import type { VideoTeamRankingLookup } from "../../hooks/useVideoTeamRankings"
 import { treeIndentStyle } from "./tree-indent"
 import type { VideoGroupKind, VideoTreeGroup, VideoTreeLeaf, VideoTreeNode } from "./video-tree"
 import type { VideoType } from "../../types/videos"
+import { formatCount } from "../category-gallery/format-count"
 
 /** Icon per group level, so the depth reads without counting indents. */
 const GROUP_ICONS: Record<VideoGroupKind, typeof Trophy> = {
@@ -156,7 +157,7 @@ function GroupRows({
           {group.latestDate ? formatVideoDate(group.latestDate, "full", "—") : "—"}
         </td>
         <td className="px-3 py-2 align-middle text-xs text-muted-foreground text-right tabular-nums whitespace-nowrap">
-          {group.viewCount.toLocaleString()}
+          {formatCount(group.viewCount)}
         </td>
         {context.showWatched && <td />}
       </tr>

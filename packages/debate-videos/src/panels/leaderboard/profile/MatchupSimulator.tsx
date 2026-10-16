@@ -44,6 +44,7 @@ import { useMyRankedTeams } from "../../../lib/my-ranked-teams/useMyRankedTeams"
 import { Button } from "../../../ui/primitives/button"
 import { Input } from "../../../ui/primitives/input"
 import { teamHref, teamSlug } from "./rankingProfileHelpers"
+import { formatCount } from "../../../components/category-gallery/format-count"
 
 const pct = (p: number) => `${(p * 100).toFixed(1)}%`
 const SIM_ROUNDS = 1000
@@ -408,7 +409,7 @@ export function MatchupSimulator({ lockedTeamSlug, initialDatasetId, title = "Ma
           Random opponent
         </Button>
         <Button type="button" size="sm" disabled={!result} onClick={runSimulation}>
-          Simulate {SIM_ROUNDS.toLocaleString()} rounds per side
+          Simulate {formatCount(SIM_ROUNDS)} rounds per side
         </Button>
       </div>
 
@@ -479,7 +480,7 @@ export function MatchupSimulator({ lockedTeamSlug, initialDatasetId, title = "Ma
               {shownSides.map((o) =>
                 rounds[o.side] ? (
                   <li key={o.side}>
-                    {a.name} on {sideName(o.side)}, {rounds[o.side]!.rounds.toLocaleString()} prelims:{" "}
+                    {a.name} on {sideName(o.side)}, {formatCount(rounds[o.side]!.rounds)} prelims:{" "}
                     <strong>{rounds[o.side]!.aWins}</strong> – {rounds[o.side]!.bWins} {b.name}
                   </li>
                 ) : null,

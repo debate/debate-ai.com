@@ -38,6 +38,7 @@ import {
 import { highlightHtml, renderDocumentMarkdown } from "../../lib/document-markdown"
 import { scrollWithin } from "../../lib/scroll-within"
 import { AutoScrollToggle } from "./AutoScrollToggle"
+import { formatCount } from "../category-gallery/format-count"
 
 interface WatchDocumentPanelProps {
   document: VideoDocument
@@ -190,7 +191,7 @@ export function WatchDocumentPanel({
             <AutoScrollToggle checked={autoScroll} onChange={onAutoScrollChange} />
           )}
           <span className="text-[10px] tabular-nums text-muted-foreground">
-            {needle ? `${matchCount} match${matchCount === 1 ? "" : "es"}` : `${totalWords.toLocaleString()} words`}
+            {needle ? `${matchCount} match${matchCount === 1 ? "" : "es"}` : `${formatCount(totalWords)} words`}
           </span>
           {outline.length > 1 && (
             <button
@@ -233,7 +234,7 @@ export function WatchDocumentPanel({
                     <span className="shrink-0 text-[10px] tabular-nums text-muted-foreground">
                       {section.startSeconds !== null
                         ? formatTimecode(section.startSeconds)
-                        : `${section.wordCount.toLocaleString()}w`}
+                        : `${formatCount(section.wordCount)}w`}
                     </span>
                   </button>
                 </li>

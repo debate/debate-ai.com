@@ -25,6 +25,7 @@ import {
 } from "../../ui/primitives/table";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../../ui/charts/chart";
 import type { ChartConfig } from "../../ui/charts/chart";
+import { formatCount } from "../../components/category-gallery/format-count"
 
 interface YouTubeStats {
   summary: {
@@ -123,9 +124,9 @@ export function YouTubeStatsCharts({ stats }: { stats: YouTubeStats }) {
                 <TableRow key={channel.name}>
                   <TableCell className="font-medium">{index + 1}</TableCell>
                   <TableCell>{channel.name}</TableCell>
-                  <TableCell className="text-right">{channel.views.toLocaleString()}</TableCell>
-                  <TableCell className="text-right">{channel.videos.toLocaleString()}</TableCell>
-                  <TableCell className="text-right">{channel.avgViews.toLocaleString()}</TableCell>
+                  <TableCell className="text-right">{formatCount(channel.views)}</TableCell>
+                  <TableCell className="text-right">{formatCount(channel.videos)}</TableCell>
+                  <TableCell className="text-right">{formatCount(channel.avgViews)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

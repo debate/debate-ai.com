@@ -3,6 +3,12 @@ import { Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { CardAnnotation, ReuseMatch } from '@/src/reuse/api';
 
+/** Formats a number with "k" for thousands (e.g., 10000 -> "10k", 1400 -> "1.4k"). */
+function formatCount(n: number): string {
+  if (n >= 1000) return `${(n / 1000).toFixed(n >= 10000 ? 0 : 1)}k`;
+  return String(n);
+}
+
 /** Quotes shown per card before the rest are summarized as a count. */
 const VISIBLE_QUOTES = 3;
 
@@ -55,7 +61,7 @@ export function ReuseMatchCard({ match, state, onAnnotate }: ReuseMatchCardProps
       <div className="text-muted-foreground">{citeLine.filter(Boolean).join(' — ')}</div>
       {card && card.duplicateCount > 1 && (
         <div className="text-[11px] text-muted-foreground">
-          Read {card.duplicateCount.toLocaleString()}× across caselists
+          Read {formatCount(card.duplicateCount)}× across caselists
         </div>
       )}
 

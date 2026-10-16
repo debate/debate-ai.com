@@ -24,6 +24,12 @@ import {
   removeHighlight,
 } from '@/src/reader/highlights';
 
+/** Formats a number with "k" for thousands (e.g., 10000 -> "10k", 1400 -> "1.4k"). */
+function formatCount(n: number): string {
+  if (n >= 1000) return `${(n / 1000).toFixed(n >= 10000 ? 0 : 1)}k`;
+  return String(n);
+}
+
 interface ArticleContentProps {
   article: Article;
   isHighlightMode: boolean;
@@ -89,7 +95,7 @@ const ArticleContent: React.FC<ArticleContentProps> = ({
 
     {typeof article.word_count === 'number' && (
       <p className="mb-3 text-xs text-muted-foreground">
-        <span className="font-semibold">Words:</span> {article.word_count.toLocaleString()}
+        <span className="font-semibold">Words:</span> {formatCount(article.word_count)}
       </p>
     )}
 

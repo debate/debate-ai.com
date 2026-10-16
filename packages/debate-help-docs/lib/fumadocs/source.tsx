@@ -47,7 +47,7 @@ function pageTreeCodeTitles(): LoaderPlugin {
  * Origin-absolute URL of a page's processed Markdown, served by
  * `routes/llms-mdx-route.ts` (mounted at `/docs/llms.mdx/…`).
  *
- * The callers (`LLMCopyButton`, `AskAIDropdown`) `fetch` it and resolve it
+ * The callers (`LLMCopyButton`, `docs-page.tsx`) `fetch` it and resolve it
  * against `window.location.origin`. The docs root has no slug of its own, so
  * it is addressed as `index.mdx`.
  *

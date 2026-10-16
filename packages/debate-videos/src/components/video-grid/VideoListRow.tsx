@@ -44,6 +44,7 @@ import { treeIndentStyle } from "./tree-indent"
 import { FormatBadge } from "./FormatBadge"
 import { teamHref } from "../../panels/leaderboard/profile/rankingProfileHelpers"
 import type { VideoType } from "../../types/videos"
+import { formatCount } from "../category-gallery/format-count"
 
 /**
  * One slot of the row's action strip. Below md the strip runs the full width
@@ -508,7 +509,7 @@ export function VideoListRow({
           {formatVideoDate(date, "full", "—")}
         </td>
         <td className="px-3 py-3 align-top text-sm text-muted-foreground text-right tabular-nums whitespace-nowrap">
-          {viewCount.toLocaleString()}
+          {formatCount(viewCount)}
         </td>
         {showWatched && (
           <td

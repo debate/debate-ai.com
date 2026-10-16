@@ -46,6 +46,7 @@ import {
   type VideoDocument,
 } from "../../lib/video-documents"
 import type { TranscriptSnippet } from "../transcript/transcriptUtils"
+import { formatCount } from "../category-gallery/format-count"
 
 /** A host-supplied tab: its label in the strip and what it shows when open. */
 export interface WatchSideTab {
@@ -140,14 +141,14 @@ export function WatchSidePanel({
       list.push({
         id: "captions",
         label: "Captions",
-        hint: sentences.length > 0 ? `${sentences.length.toLocaleString()} lines` : undefined,
+        hint: sentences.length > 0 ? `${formatCount(sentences.length)} lines` : undefined,
       })
     }
     for (const document of ordered) {
       list.push({
         id: `document:${document.kind}`,
         label: document.title || VIDEO_DOCUMENT_LABELS[document.kind].label,
-        hint: document.wordCount ? `${document.wordCount.toLocaleString()} words` : undefined,
+        hint: document.wordCount ? `${formatCount(document.wordCount)} words` : undefined,
       })
     }
     if (links.length > 0) {

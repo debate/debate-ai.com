@@ -25,6 +25,7 @@ import {
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../../ui/charts/chart"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line } from "recharts"
 import type { ChartConfig } from "../../ui/charts/chart"
+import { formatCount } from "../../components/category-gallery/format-count"
 
 export interface YouTubeStats {
   summary: {
@@ -117,15 +118,15 @@ export default function YouTubeStatsBody({ stats }: { stats: YouTubeStats }) {
           />
           <div className="flex gap-3">
             <div className="rounded-lg border px-3 py-2">
-              <div className="text-lg font-bold">{stats.summary.totalViews.toLocaleString()}</div>
+              <div className="text-lg font-bold">{formatCount(stats.summary.totalViews)}</div>
               <div className="text-xs text-muted-foreground">Total Views</div>
             </div>
             <div className="rounded-lg border px-3 py-2">
-              <div className="text-lg font-bold">{stats.summary.totalVideos.toLocaleString()}</div>
+              <div className="text-lg font-bold">{formatCount(stats.summary.totalVideos)}</div>
               <div className="text-xs text-muted-foreground">Total Videos</div>
             </div>
             <div className="rounded-lg border px-3 py-2">
-              <div className="text-lg font-bold">{stats.summary.totalChannels}</div>
+              <div className="text-lg font-bold">{formatCount(stats.summary.totalChannels)}</div>
               <div className="text-xs text-muted-foreground">Channels</div>
             </div>
           </div>
@@ -155,9 +156,9 @@ export default function YouTubeStatsBody({ stats }: { stats: YouTubeStats }) {
                   <TableRow key={channel.name}>
                     <TableCell className="font-medium">{index + 1}</TableCell>
                     <TableCell>{channel.name}</TableCell>
-                    <TableCell className="text-right">{channel.views.toLocaleString()}</TableCell>
-                    <TableCell className="text-right">{channel.videos.toLocaleString()}</TableCell>
-                    <TableCell className="text-right">{channel.avgViews.toLocaleString()}</TableCell>
+                    <TableCell className="text-right">{formatCount(channel.views)}</TableCell>
+                    <TableCell className="text-right">{formatCount(channel.videos)}</TableCell>
+                    <TableCell className="text-right">{formatCount(channel.avgViews)}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

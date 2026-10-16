@@ -86,6 +86,7 @@ import { cn } from "../../ui/lib/utils"
 import { LecturesSidebarShell } from "../LecturesSidebarShell"
 import { useVideoState } from "../../hooks/useVideoState"
 import { useVideoFeed, useVideoMeta } from "../../hooks/useVideoFeed"
+import { formatCount } from "../../components/category-gallery/format-count"
 import {
   sendYouTubeCommand,
   useVideoPlayerStore,
@@ -894,7 +895,7 @@ export function VideoWatchPage({
                 </span>
                 <span className="inline-flex items-center gap-1">
                   <Eye className="h-3 w-3" />
-                  {viewCount.toLocaleString()}
+                  {formatCount(viewCount)}
                 </span>
                 {judgeDecision && <span>Decision {judgeDecision}</span>}
               </div>
