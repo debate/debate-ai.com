@@ -278,7 +278,7 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
           <Reveal>
             <Pill className="mb-5">
               <LayoutGrid className="size-3.5" />
-              PF, LD and Policy — every tool
+              3500 videos - PF, LD and Policy
             </Pill>
           </Reveal>
 

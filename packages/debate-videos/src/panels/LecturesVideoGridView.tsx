@@ -22,7 +22,7 @@ import { SubmitToLibraryButton } from "../components/video-search/SubmitToLibrar
 import { getSearchPhrases } from "../components/video-search/searchPhrases"
 import { VideoGrid } from "../components/video-grid/VideoGrid"
 import { VideoListRows } from "../components/video-grid/VideoListRows"
-import { LectureCategoryGridGallery } from "../components/category-gallery/LectureCategoryGridGallery"
+import { LectureCategoryGridGallery, GridItem } from "../components/category-gallery/LectureCategoryGridGallery"
 import { QuickLinksGrid } from "../components/category-gallery/QuickLinksGrid"
 import { VideoSidebarTree } from "../components/category-gallery/VideoSidebarTree"
 import { ToolNavTree } from "../components/category-gallery/ToolNavTree"

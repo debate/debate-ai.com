@@ -154,7 +154,7 @@ interface GridItemProps {
   onClick?: () => void;
 }
 
-const GridItem = ({
+export const GridItem = ({
   icon,
   title,
   description,
