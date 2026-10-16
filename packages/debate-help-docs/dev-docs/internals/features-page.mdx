@@ -10,7 +10,7 @@ grouped into seven categories and filtered by a single search box.
 
 - **Route:** `/features`
 - **Nav:** the global dock's Settings menu → **All Features** (the first item)
-- **Panel:** [`apps/debate-ai.com/lib/ui/features/FeaturesPanel.tsx`](https://github.com/debate/debate-ai.com/blob/master/apps/debate-ai.com/lib/ui/features/FeaturesPanel.tsx)
+- **Panel:** [`apps/debate-ai.com/lib/ui/features/FeaturesPanel.tsx`](https://github.com/debate/debate-ai.com/blob/master/apps/debate-web/lib/ui/features/FeaturesPanel.tsx)
 
 ## Why this exists
 
@@ -18,8 +18,8 @@ Nothing in the app listed everything it does:
 
 - The global dock exposes four destinations (Videos, Shared, Debate, Docs)
   plus a Settings menu that is a flat, unexplained list of forty-odd items.
-- [`/research`](https://github.com/debate/debate-ai.com/blob/master/apps/debate-ai.com/components/research/ResearchHub.tsx)
-  and [`/coach`](https://github.com/debate/debate-ai.com/blob/master/apps/debate-ai.com/components/coach/CoachHub.tsx) each
+- [`/research`](https://github.com/debate/debate-ai.com/blob/master/apps/debate-web/components/research/ResearchHub.tsx)
+  and [`/coach`](https://github.com/debate/debate-ai.com/blob/master/apps/debate-web/components/coach/CoachHub.tsx) each
   tab across the panels of one package.
 
 So a debater arriving at the app had no way to learn what it does short of
@@ -62,8 +62,8 @@ it stays a stable "how big is this app" answer while someone types.
   same shape as `debate-data-sync`) that the app and `debate-community`
   both import from directly — see "One shared catalog" below for why this
   needed its own package rather than living in either.
-- [`apps/debate-ai.com/app/features/page.tsx`](https://github.com/debate/debate-ai.com/blob/master/apps/debate-ai.com/app/features/page.tsx)
-  mounts [`apps/debate-ai.com/lib/ui/features/FeaturesPanel.tsx`](https://github.com/debate/debate-ai.com/blob/master/apps/debate-ai.com/lib/ui/features/FeaturesPanel.tsx),
+- [`apps/debate-ai.com/app/features/page.tsx`](https://github.com/debate/debate-ai.com/blob/master/apps/debate-web/app/features/page.tsx)
+  mounts [`apps/debate-ai.com/lib/ui/features/FeaturesPanel.tsx`](https://github.com/debate/debate-ai.com/blob/master/apps/debate-web/lib/ui/features/FeaturesPanel.tsx),
   which renders the catalog (an aurora hero, counted-up totals, a marquee,
   and scroll-reveal spotlight cards) holding only the search string in local
   state. It links each card's doc to the app's own same-origin docs site via

@@ -18,7 +18,7 @@
 # debate-practice-vs-ai
 
 **Practice vs AI** — a full timed debate round against an AI opponent, mounted
-in debate-ai.com at [`/practice/versus-ai`](../../apps/debate-ai.com/app/versus-ai/page.tsx)
+in debate-ai.com at [`/practice/versus-ai`](../../apps/debate-web/app/versus-ai/page.tsx)
 and reachable from the app dock.
 
 This package is the Node/TypeScript port of the Go `arguehub` vs-bot server and
@@ -52,7 +52,7 @@ Nothing in the port calls Go, Mongo or Gin: it is plain TypeScript,
 - **`store.ts`** — replaces the hardcoded Mongo collection with a `DebateStore`
   interface plus an in-memory implementation. debate-ai.com supplies a
   Drizzle/D1-backed one in
-  [`lib/practice-vs-ai/store.ts`](../../apps/debate-ai.com/lib/practice-vs-ai/store.ts).
+  [`lib/practice-vs-ai/store.ts`](../../apps/debate-web/lib/practice-vs-ai/store.ts).
 - **`gamification.ts`** — the Go controller's point values (win 50, draw 25,
   loss 10) and badge thresholds (`FirstWin`, `Novice`, `Streak5`, `FactMaster`)
   as pure functions over a profile snapshot.
