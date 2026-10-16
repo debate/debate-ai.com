@@ -66,6 +66,7 @@ import {
   type FeatureEntry,
 } from "../../feature-catalog";
 import { README_BADGE_ROWS, README_BANNER, README_SHOWCASE, README_VIDEO } from "./readme-media";
+import { LATEST_VIDEOS, POPULAR_CARDS_WEEK } from "./recent-media";
 import {
   CARDS_CAPABILITIES,
   CARDS_DOIS,
@@ -338,6 +339,72 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
                 </div>
               ))}
             </div>
+          </Reveal>
+
+          <Reveal delay={380}>
+            <section className="mt-10 mb-6 w-full" aria-label="Latest videos">
+              <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Latest videos
+              </h2>
+              <Marquee durationSeconds={44}>
+                {LATEST_VIDEOS.map((video) => (
+                  <a
+                    key={video.id}
+                    href={video.watchUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex flex-col gap-1.5 w-[200px] shrink-0 rounded-lg border border-border bg-card p-2 hover:bg-accent transition-colors"
+                  >
+                    <div className="relative aspect-video rounded-md overflow-hidden border border-border bg-muted">
+                      <img
+                        src={video.thumbnail}
+                        alt={video.title}
+                        loading="lazy"
+                        decoding="async"
+                        className="size-full object-cover"
+                      />
+                      <span className="absolute inset-x-0 bottom-1.5 flex justify-end px-2 py-0.5">
+                        <span className="rounded-md bg-black/60 px-1.5 py-0.5 text-[10px] font-medium text-white">
+                          {video.duration}
+                        </span>
+                      </span>
+                    </div>
+                    <span className="line-clamp-1 text-sm font-semibold text-foreground">
+                      {video.title}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {video.channel} &middot; {video.uploaded}
+                    </span>
+                  </a>
+                ))}
+              </Marquee>
+            </section>
+          </Reveal>
+
+          <Reveal delay={420}>
+            <section className="mb-10 w-full" aria-label="Popular cards this week">
+              <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Popular cards this week
+              </h2>
+              <Marquee durationSeconds={44}>
+                {POPULAR_CARDS_WEEK.map((card) => (
+                  <a
+                    key={card.id}
+                    href={card.href}
+                    className="flex flex-col gap-1 w-[170px] shrink-0 rounded-lg border border-border bg-card p-3 hover:bg-accent transition-colors"
+                  >
+                    <span className="da-chip text-[10px]">{card.format}</span>
+                    <span className="line-clamp-1 text-sm font-semibold text-foreground">
+                      {card.title}
+                    </span>
+                    <span className="text-xs text-muted-foreground">{card.topic}</span>
+                    <span className="text-xs font-medium text-muted-foreground">
+                      {card.reads.toLocaleString()} reads this week
+                    </span>
+                  </a>
+                ))}
+              </Marquee>
+            </section>
           </Reveal>
 
         </div>
