@@ -1,0 +1,1 @@
+ALTER TABLE `user_settings` ADD `outline_filter_presets` text;

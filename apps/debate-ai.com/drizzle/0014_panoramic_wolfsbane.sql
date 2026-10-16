@@ -1,0 +1,1 @@
+ALTER TABLE `user_settings` ADD `word_limit_presets` text;
