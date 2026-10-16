@@ -293,7 +293,7 @@ export function LecturesVideoGridView({
   // The lecture categories are not in the sidebar: on the lecture library
   // they are a bar of cards at the top of the page, the one place to switch
   // between categories.
-  const showLectureGallery = browsingLectures && lectureCategories.length > 0
+  const showLectureGallery = browsingLibrary && lectureCategories.length > 0
 
   /** Favorite round videos, for the separate tables on the favorites page. */
   const favoriteRounds = useMemo(
@@ -419,12 +419,14 @@ export function LecturesVideoGridView({
             </div>
           </div>
         )}
+          {showLectureGallery && (
           <nav className="mb-6" aria-label="Lecture categories">
             <LectureCategoryGridGallery
               categories={lectureCategories}
               selectedCategory={selectedCategory}
             />
           </nav>
+        )}
         {/* The Greatest of All-Time collection opens on its own banner. */}
         {currentCategory === "topPicks" && <GoatSparklesHeading />}
 
