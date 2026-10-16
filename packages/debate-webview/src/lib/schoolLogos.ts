@@ -54,6 +54,8 @@ export const SCHOOL_LOGO_MAP: Record<string, string | FC<SVGProps<SVGSVGElement>
   dartmouth: (IconSchoolDartmouth as any)?.src ?? (IconSchoolDartmouth as any),
   redlands: (IconSchoolRedlands as any)?.src ?? (IconSchoolRedlands as any),
   "st-marks": (IconSchoolStMarks as any)?.src ?? (IconSchoolStMarks as any),
+  "st-marks-tx": (IconSchoolStMarks as any)?.src ?? (IconSchoolStMarks as any),
+  "st-marks-school-of-texas": (IconSchoolStMarks as any)?.src ?? (IconSchoolStMarks as any),
   westminster: (IconSchoolWestminster as any)?.src ?? (IconSchoolWestminster as any),
   blake: (IconSchoolBlake as any)?.src ?? (IconSchoolBlake as any),
   harker: (IconSchoolHarker as any)?.src ?? (IconSchoolHarker as any),
@@ -69,6 +71,10 @@ export const getSchoolLogo = (
   if (!school) return null;
   const key = slugify(school);
   if (SCHOOL_LOGO_MAP[key]) return SCHOOL_LOGO_MAP[key];
+  const lower = school.toLowerCase();
+  if (lower.includes("st marks") || lower.includes("st. marks") || lower.includes("st-marks")) {
+    return SCHOOL_LOGO_MAP["st-marks"];
+  }
   return null;
 };
 
