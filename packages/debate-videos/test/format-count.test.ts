@@ -3,10 +3,7 @@
  * display string, now that the sidebar tree, the quick-link tiles and the
  * search chips all share it.
  *
- * The `exact` escape hatch exists for the College Debates total: every other
- * count is shortened to `1.4k` so it cannot crowd out its title, but that
- * collection's number is the round archive's headline figure and reads
- * wrong — and low — rounded to one decimal place.
+ * Now always shows in k format: 300 -> 0.3k, 1300 -> 1.3k, 12000 -> 12k.
  */
 
 import { describe, it, expect } from "vitest";
@@ -14,15 +11,17 @@ import { describe, it, expect } from "vitest";
 import { formatCount } from "../src/components/category-gallery/format-count";
 
 describe("formatCount", () => {
-  it("shortens thousands so a count cannot crowd out its title", () => {
-    expect(formatCount(999)).toBe("999");
+  it("shows all counts in k format with one decimal under 10k", () => {
+    expect(formatCount(300)).toBe("0.3k");
+    expect(formatCount(999)).toBe("1.0k");
     expect(formatCount(1346)).toBe("1.3k");
     expect(formatCount(1400)).toBe("1.4k");
-    expect(formatCount(12345)).toBe("12k");
+    expect(formatCount(9999)).toBe("10.0k");
   });
 
-  it("prints the total in full when asked to", () => {
-    expect(formatCount(1400, { exact: true })).toBe("1400");
-    expect(formatCount(999, { exact: true })).toBe("999");
+  it("shows no decimals for 10k and above", () => {
+    expect(formatCount(10000)).toBe("10k");
+    expect(formatCount(12345)).toBe("12k");
+    expect(formatCount(100000)).toBe("100k");
   });
 });

@@ -37,6 +37,17 @@ does this with a redirect (`apps/debate-ai.com/lib/redirects/video-listing.ts`)
 before the request reaches the app. `/videos/archive/…` maps to the undated
 (`legacy`) season.
 
+## Lecture categories
+
+The sidebar has a single **Lectures** row under **Videos**. Opening it
+(`/lectures`) shows the lecture categories as a bar of cards at the top of the
+page, on every screen size: **All Lectures** first, then each category with
+its icon and video count. A card's background highlights on hover, the open
+category is drawn selected, and clicking a card switches the list to that
+category (`/lectures/<category>`). The categories used to be a second,
+expandable section of the sidebar; they now live only on the page
+(`LectureCategoryGridGallery`, rendered by `LecturesVideoGridView`).
+
 ## Merged lecture categories
 
 Topic analysis and topic lectures share one shelf, **Topic Lectures**. Videos
@@ -47,7 +58,7 @@ links open the merged shelf.
 
 ## Sidebar format badges and the Greatest of All-Time banner
 
-In the sidebar, College Debates, Policy, PF and LD show lettered badges (NDT,
+In the sidebar, College Policy, HS Policy, HS Policy 1v1 (LD) and Public Forum show lettered badges (NDT,
 VP, PF, LD) instead of generic icons. The Greatest of All-Time collection
 (`/videos/topPicks`) opens on an **All Time Greatest Legends** banner — the gold trophy-goat icon
 over the title, which is drawn in dots that grow in and then shimmer (still
@@ -193,6 +204,10 @@ the table is wider than the screen, so swipe it left and right to reach the
 columns beside the round; the first column is capped at three quarters of the
 screen so the next one always peeks in.
 
+A round's title wraps to up to three lines. When a round has no Aff or Neg
+team recorded, its title cell spans the Aff and Neg columns instead of
+leaving two empty dashes (`VideoListRow.tsx`).
+
 ### Team names and ratings
 
 In the Aff and Neg columns, a team from the **current season** that the
@@ -208,6 +223,20 @@ The match is the one the team pages use (`findTeamRanking` in
 the division the round's format is ranked in. The rankings load only when
 a listing holds a current-season round (`useVideoTeamRankings`).
 
+## Guest video limit
+
+Signed out, a visitor can open ten different videos in a browser; opening an
+eleventh new one pauses it behind a sign-in dialog. Videos already opened stay
+watchable, and signing in returns to the same page with the video playing.
+Closing the dialog closes the popout player, or leaves the watch page for the
+library.
+
+The count lives in `localStorage` (`guestVideosWatched`, in
+`debate-webview`'s `lib/videos/guest-video-limit.ts`), and
+`GuestVideoLimitGate` in the app shell watches the player store's
+`activeVideoId` and `theaterVideoId`, so both players are covered without
+either one knowing about it.
+
 ## Suggesting a fix to a video
 
 Every watch page has a pencil button next to the video. Click it to open the
@@ -221,25 +250,87 @@ signed in to suggest a change.
 Admins and moderators get the same pencil button, but for them it saves
 straight to the library.
 
+## Submitting a video or channel
+
+The **+** button beside the library's search bar opens **Add to the library**.
+On the **Video** tab, paste a YouTube link to a round or lecture — to share
+your own, upload it to YouTube first (unlisted works) and paste that link. On
+the **Channel** tab, paste a channel link or type its `@handle` to have the
+library follow it. Add a note for the moderators if it helps, then press
+**Submit for review**. Nothing is published right away: the submission goes to
+the moderators, who are notified and approve or dismiss it from the admin
+panel. You need to be signed in to submit.
+
 ## Fixing a video (admins)
 
 `/admin` has a **Video library** card listing every video already published to
 the site, searchable by title, channel, tournament or YouTube id and filterable
 by format. **Edit** opens the whole record — title, channel, publish date,
-format, tournament, round level, teams, winner, judge decision, description,
-speech-docs link and the top-pick flag — and saving it updates the public
+format, tournament, round level, teams, each side's arguments, winner, judge
+decision, description, speech-docs link and the top-pick flag — and saving it
+updates the public
 library right away, including how the video sorts and what searches find it.
 **Lecture category** is a dropdown prefilled with every lecture shelf the
 library uses (Topic Lectures, Affirmative Strategy, Counterplans & Theory and
 the rest), so a typo can't create a stray shelf; pick **None** for a round.
+**Aff arguments** holds the affirmative's case — the plan or advocacy and its
+advantages — and **Neg arguments** the positions the negative ran (ideally
+what went for the 2NR); they are the 1AC and 2NR lines shown on the video's
+card, and on the watch page they sit in small type under each team's name. **✨ Auto-fill with AI** reads YouTube's title and
+description and fills the format, category, tournament, round, teams, both
+sides' arguments, winner, decision and speech-docs link; anything the model
+can't read leaves your field as it is. If it fails, the message under the form
+says which AI provider refused and why.
 **Remove** takes the video off the site for good: it is also added to the
-resync exclusion list, so the weekly YouTube sync will not quietly bring it
+resync exclusion list, so the daily YouTube sync will not quietly bring it
 back.
 
 Viewers' suggested edits and deletion requests land in the **Reports &
 takedowns** card as **Suggested edit** and **Deletion request**, listing each
 proposed field and the viewer's reason. **Apply** writes exactly those fields;
 **Delete video** removes it as **Remove** does; **Dismiss** rejects it.
+
+Submissions from the **+** button land in the same card as **Submitted video**
+and **Submitted channel**, with the pasted link and the viewer's note. **Add to
+library** publishes the video under the title and channel YouTube reports
+(through the same endpoint as **Add video**); **Subscribe** adds the channel to
+the subscribed list the resync scans, so its videos arrive on the next sync.
+Subscribing is admin-only, like the YouTube channels tab, so a moderator sees
+"Only admins can subscribe to a channel" and leaves it for an admin.
+
+The **Subscribed YouTube channels** card lists those channels as a table, most
+videos first. **Videos** counts each channel's videos in the library and the
+round queue, and **Most recent video** links its newest upload with the date.
+Videos record a channel's display name rather than its handle, so a channel
+added by `@handle` may show 0 until the next resync learns its display name.
+
+The same card's **Unavailable videos** list shows what YouTube no longer
+serves: **Gone from YouTube** (deleted), **Made private**, and **Embedding
+turned off**, each with a count. **Check YouTube now** runs the view-count
+resync right away instead of waiting for the weekly run. Tick the states to
+clear (only **Gone from YouTube** is ticked by default, since private videos
+can come back) and press **Remove N unavailable videos**; after a confirmation
+naming the counts, every flagged video in those states is removed the way
+**Remove** removes one, exclusion included. Each row also has its own
+**Remove**, and **It works now** clears a flag that is out of date. Only an
+admin can bulk-remove (`DELETE /api/admin/videos/availability`).
+
+Engineering note: both kinds ride the `video_issues` queue
+(`apps/debate-ai.com/lib/videos/video-submissions.ts`) rather than a table of
+their own. A `submit-channel` row has no video, so its `videoId` is empty.
+
+### Reclassifying by title
+
+**Reclassify videos by title**, below **Recompute video stacks**, sets the
+format of every library video whose title contains a phrase (and of matching
+rounds still in the queue), and with **Parse round info with AI** ticked
+re-reads each title and description with the same model as the edit form's
+**Auto-fill with AI**, filling tournament, round, teams, both sides'
+arguments, winner, decision and speech-docs link. A field the model can't read keeps its current value. It
+defaults to **Dartmouth RR** → **College**: those rounds are college, but their
+titles name no format, so the YouTube sync used to file them as Policy. The
+`debate-data-sync` migration `0003_dartmouth_rr_college.sql` moves them to
+College on deploy, and the sync now files new ones there itself.
 
 ### Transcripts
 
@@ -273,6 +364,33 @@ publishing anything. Two videos count as the same when their YouTube IDs match
 once case and punctuation are ignored (very short titles such as "Finals"
 never match on title alone). The older copy is always the one kept.
 
+### Speech AI — speeches, summaries and alternatives in bulk
+
+`/admin` opens on the **Round queue**; **Users** is now the last section.
+The **Speech AI** section (admins only) runs the AI over many rounds at once,
+so viewers don't have to press **Detect speeches** themselves. Pick
+**Greatest of All-Time videos** (the top-pick collection) or **Every video**
+and press **Process**. For each video it:
+
+1. fetches the YouTube captions (or uses the ones already cached);
+2. has the AI find the format and where every speech starts and ends, the
+   same way **Detect speeches** does on the watch page;
+3. runs the prompt in the box over the round, speech by speech. The default
+   prompt asks for a summary of each speech and what the speaker could have
+   done instead; edit it to ask for something else. The reply format is added
+   after your prompt automatically.
+
+The result is saved as the video's **Summary** and **Analysis** documents,
+with one `## 1AC (0:42–8:51)` heading per speech. On the watch page those
+become the speech buttons under the player, and each speech's tab in the
+sidebar shows its summary and its alternative. Documents an editor wrote are
+never replaced, and videos already analyzed are skipped unless **Redo videos
+the AI already analyzed** is ticked. To try a prompt first, paste one video's
+link into the box below the prompt and press **Preview**, which shows both
+documents without saving them; **Process and save** does that one video for
+real. Every video costs two AI calls on the site's shared key, so the run goes
+one video per request and **Stop after this video** halts it.
+
 ### Video durations
 
 **Fetch video durations** looks up how long every stored video is — published
@@ -289,13 +407,27 @@ Stacks only exist where a description links the videos, so a round-analysis
 video that names its round in the title alone is not paired with it. Search
 is `LIKE`-based token matching, not fuzzy.
 
-Curated rounds added to the queue from the `test/` records (see
-`.github/scripts/queue-test-videos.ts`) carry their topic and argument tags in
+Curated rounds added to the queue from the `video_metadata*.json` records
+(see `.github/scripts/queue-test-videos.ts`; the 506 rounds in those two files
+are queued by the `debate-data-sync` migration `0002_curated_round_queue.sql`
+on deploy, pending admin approval) carry their topic and argument tags in
 the description, with `Aff 1AC args:` and `Neg 2NR args:` lines that become the
 round's 1AC and 2NR arguments when it is published. The queue has no editor,
-so a wrong split is corrected in the library after publishing. The records
+so a wrong split is corrected in the library after publishing, with the edit
+form's **Aff arguments** and **Neg arguments** boxes. The records
 have no upload date, so these rounds are dated January 1st of their event's
 year.
 
+Submitted videos have to be on YouTube: the library has no file hosting
+behind its player, so the **+** dialog takes a link rather than an upload.
+
+Reclassifying with AI parsing calls the model once per video, a page of 20
+per request; a video whose call fails still gets its new format but keeps its
+old round fields, and the result counts it as failed so it can be run again.
+
 The watch page doesn't display a video's length yet, and a video only shows
 one in the library after **Fetch video durations** has looked it up.
+
+The guest video limit is a nudge, not access control: the count is per
+browser, so a private window or cleared site data starts it over, and the
+embeds are public YouTube videos.

@@ -73,7 +73,8 @@ describe("GlobalCommandPalette", () => {
     expect(headings()).not.toContain("Favorites")
     expect(headings()[0]).toMatch(/results?$/)
     const first = rows()[0]
-    expect(first.textContent).toContain("Research Workspace")
+    // "Research Workspace" and "Team Research" both fuzzy-match the typo.
+    expect(first.textContent).toMatch(/Research Workspace|Team Research/)
     expect(first.querySelector("mark")?.textContent).toBe("Research")
     // The starred tool is listed once, as an ordinary result.
     expect(rows().filter((r) => r.textContent?.includes("Research Workspace"))).toHaveLength(1)
@@ -88,7 +89,8 @@ describe("GlobalCommandPalette", () => {
 
   it("navigates to the chosen result", () => {
     type("reserch")
-    act(() => (rows()[0] as HTMLElement).click())
+    const workspace = rows().find((r) => r.textContent?.includes("Research Workspace")) as HTMLElement
+    act(() => workspace.click())
     expect(push).toHaveBeenCalledWith("/research")
   })
 })

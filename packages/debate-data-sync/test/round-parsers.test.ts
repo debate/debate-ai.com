@@ -13,6 +13,11 @@ describe("parseDebateStyle", () => {
     expect(parseDebateStyle("NDT Doubles")).toBe(4);
   });
 
+  it("files Dartmouth RR rounds as college, whatever else the title says", () => {
+    expect(parseDebateStyle("Dartmouth RR 2024 Round 3: Michigan KS vs Harvard HS")).toBe(4);
+    expect(parseDebateStyle("Dartmouth Round Robin Policy Finals")).toBe(4);
+  });
+
   it("falls back to PF for the DebateDrills channel", () => {
     expect(parseDebateStyle("Smith vs Jones", "DebateDrills")).toBe(2);
   });

@@ -1,6 +1,8 @@
 import { Suspense } from "react"
 import { SearchInterface } from "@debate/research-evidence"
 import { ToolSyncBadge } from "../../components/tools/ToolSyncBadge"
+import { ReasonDocsSidebarPanels } from "../../components/reason-docs/ReasonDocsSidebarPanels"
+import { ChromeErrorBoundary } from "../../lib/ui/layout/chrome-error-boundary"
 
 /**
  * The CARDS search screen.
@@ -21,6 +23,14 @@ import { ToolSyncBadge } from "../../components/tools/ToolSyncBadge"
  * account. The badge renders nothing while signed-out data has nothing to
  * show, and the strip collapses with it.
  *
+ * The Files / Topics / Tabs panels open as a second sidebar *inside* the
+ * page, between the app sidebar and the search (`showsCardsPagePanel`). The
+ * app sidebar used to be trimmed down to these panels on this route, which
+ * swapped out the tree the reader had just clicked Cards in; now it stays
+ * as it is on every other destination, and the panels get the page's full
+ * height to divide between them. Below `md` the column is not drawn — the
+ * mobile drawer shows the panels above the tree instead.
+ *
  * The padding clears the app dock, which is fixed top-left below `lg` and a
  * fixed bar along the bottom on phones.
  *
@@ -34,10 +44,21 @@ export default function SearchPage() {
       <div className="flex shrink-0 items-center justify-end gap-1.5 px-3 py-1" data-testid="cards-sync-strip">
         <ToolSyncBadge href="/research/cards" />
       </div>
-      <div className="min-h-0 flex-1">
-        <Suspense>
-          <SearchInterface />
-        </Suspense>
+      <div className="flex min-h-0 flex-1">
+        <aside
+          aria-label="Card files"
+          className="hidden w-64 shrink-0 flex-col overflow-hidden border-r md:flex"
+          data-testid="cards-docs-panel"
+        >
+          <ChromeErrorBoundary label="ReasonDocsSidebarPanels">
+            <ReasonDocsSidebarPanels className="min-h-0 flex-1" fill />
+          </ChromeErrorBoundary>
+        </aside>
+        <div className="min-w-0 flex-1">
+          <Suspense>
+            <SearchInterface />
+          </Suspense>
+        </div>
       </div>
     </div>
   )

@@ -32,10 +32,19 @@ import { VideoContentDialog, type ContentDialogVideo } from "./VideoContentDialo
  * `issue`; "Apply" writes exactly those fields, and "Delete video" removes the
  * video the same way the library table's Remove does.
  *
+ * "Submitted video" and "Submitted channel" come from the plus button beside
+ * the library's search bar. "Add to library" adds the video through the same
+ * endpoint as the library table's Add video form; "Subscribe" adds the channel
+ * to the subscribed list the resync scans (admins only, like that tab).
+ *
  * "Needs transcript" reports are filed by `/api/transcript` itself, not by a
  * viewer, when YouTube has no captions for a library video. "Add transcript"
  * opens the same content editor the library table uses, and saving there
  * marks the report applied.
+ *
+ * Unavailable videos can be cleared one at a time ("It works now", "Remove")
+ * or removed in bulk by takedown state. "Check YouTube now" runs the same
+ * resync the weekly cron does, so the list can be refreshed before removing.
  */
 
 /** One report, as `/api/video-issues` returns it. */
@@ -74,6 +83,8 @@ const KIND_LABELS: Record<string, string> = {
   transcript: "Needs transcript",
   edit: "Suggested edit",
   delete: "Deletion request",
+  "submit-video": "Submitted video",
+  "submit-channel": "Submitted channel",
   other: "Other",
 };
 
@@ -92,6 +103,8 @@ const FIELD_LABELS: Record<string, string> = {
   affWin: "Winner",
   judgeDecision: "Judge decision",
   speechDocsUrl: "Speech docs URL",
+  arg1ac: "Aff arguments",
+  arg2nr: "Neg arguments",
 };
 
 /** A suggested edit's stored request: the proposed fields and the viewer's reason. */
@@ -112,6 +125,28 @@ function parseChangeRequest(issue: VideoIssue): ChangeRequest | null {
   }
 }
 
+/** A viewer submission's stored details: the pasted link, and their note. */
+interface Submission {
+  url: string;
+  channel: string;
+  note: string;
+}
+
+/** Reads a `submit-video` or `submit-channel` report's `issue` JSON back out. */
+function parseSubmission(issue: VideoIssue): Submission | null {
+  if (issue.kind !== "submit-video" && issue.kind !== "submit-channel") return null;
+  try {
+    const parsed = JSON.parse(issue.issue) as Partial<Submission>;
+    return {
+      url: String(parsed?.url ?? ""),
+      channel: String(parsed?.channel ?? ""),
+      note: String(parsed?.note ?? ""),
+    };
+  } catch {
+    return { url: "", channel: "", note: issue.issue };
+  }
+}
+
 /** How one proposed value reads in the review list. */
 function formatProposedValue(field: string, value: unknown): string {
   if (value === null || value === undefined || value === "") return "(cleared)";
@@ -127,6 +162,15 @@ const AVAILABILITY_LABELS: Record<string, { label: string; variant: "destructive
   private: { label: "Made private", variant: "secondary" },
   not_embeddable: { label: "Embedding turned off", variant: "secondary" },
 };
+
+/** The takedown states, in the order the bulk-removal choices list them. */
+const TAKEDOWN_STATES = ["removed", "private", "not_embeddable"] as const;
+type TakedownState = (typeof TAKEDOWN_STATES)[number];
+
+/** Published rows per takedown state, as `/api/admin/videos/availability` counts them. */
+type TakedownCounts = Record<TakedownState, number>;
+
+const NO_TAKEDOWNS: TakedownCounts = { removed: 0, private: 0, not_embeddable: 0 };
 
 /**
  * Derives the lecture category slug the public feed filters on, matching
@@ -148,6 +192,11 @@ function formatWhen(value: string | number | null): string {
 export function VideoReportsPanel() {
   const [issues, setIssues] = useState<VideoIssue[]>([]);
   const [unavailable, setUnavailable] = useState<UnavailableVideo[]>([]);
+  const [takedownCounts, setTakedownCounts] = useState<TakedownCounts>(NO_TAKEDOWNS);
+  /** Which takedown states the bulk removal covers. Deleted uploads only, by default. */
+  const [removeStates, setRemoveStates] = useState<TakedownState[]>(["removed"]);
+  const [isChecking, setIsChecking] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showResolved, setShowResolved] = useState(false);
   const [busyId, setBusyId] = useState<string | null>(null);
@@ -169,6 +218,7 @@ export function VideoReportsPanel() {
       if (!issuesRes.ok) throw new Error(issuesBody?.error || "Failed to load reports");
       setIssues(issuesBody.issues ?? []);
       setUnavailable(unavailableRes.ok ? (unavailableBody.videos ?? []) : []);
+      setTakedownCounts(unavailableRes.ok ? { ...NO_TAKEDOWNS, ...unavailableBody.counts } : NO_TAKEDOWNS);
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -179,6 +229,8 @@ export function VideoReportsPanel() {
   useEffect(() => {
     load();
   }, [load]);
+
+  const filteredUnavailable = unavailable.filter((video) => video.availability !== "not_embeddable");
 
   const resolve = async (issue: VideoIssue, status: "applied" | "dismissed" | "open") => {
     setBusyId(issue.id);
@@ -288,6 +340,58 @@ export function VideoReportsPanel() {
     }
   };
 
+  /** Approves a submitted video: adds it to the library, then marks it applied. */
+  const approveVideoSubmission = async (issue: VideoIssue, submission: Submission) => {
+    setBusyId(issue.id);
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/videos/library", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          videoId: issue.videoId,
+          title: issue.title || issue.videoId,
+          channel: submission.channel || null,
+        }),
+      });
+      const body = await res.json();
+      // Already in the library is still an answer to the submission.
+      if (!res.ok && res.status !== 409) {
+        throw new Error(body?.details || body?.error || "Failed to add the video");
+      }
+      setNotice(
+        res.status === 409
+          ? `“${issue.title || issue.videoId}” was already in the library.`
+          : `Added “${issue.title || issue.videoId}” to the library.`,
+      );
+      await resolve(issue, "applied");
+    } catch (err) {
+      setError((err as Error).message);
+      setBusyId(null);
+    }
+  };
+
+  /** Approves a submitted channel: subscribes to it, then marks it applied. */
+  const approveChannelSubmission = async (issue: VideoIssue) => {
+    setBusyId(issue.id);
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/youtube/channels", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: issue.title }),
+      });
+      const body = await res.json();
+      if (res.status === 403) throw new Error("Only admins can subscribe to a channel");
+      if (!res.ok) throw new Error(body?.error || "Failed to subscribe to the channel");
+      setNotice(`Subscribed to ${issue.title}; its videos arrive on the next resync.`);
+      await resolve(issue, "applied");
+    } catch (err) {
+      setError((err as Error).message);
+      setBusyId(null);
+    }
+  };
+
   const clearFlag = async (video: UnavailableVideo) => {
     setBusyId(video.videoId);
     setError(null);
@@ -305,6 +409,88 @@ export function VideoReportsPanel() {
     } finally {
       setBusyId(null);
     }
+  };
+
+  /** Removes one unavailable video from the library, like the library table's Remove. */
+  const removeOne = async (video: UnavailableVideo) => {
+    if (!window.confirm(`Remove “${video.title || video.videoId}” from the library? This can't be undone.`)) {
+      return;
+    }
+    setBusyId(video.videoId);
+    setError(null);
+    try {
+      const res = await fetch(`/api/admin/videos/library/${video.videoId}`, { method: "DELETE" });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body?.details || body?.error || "Failed to remove the video");
+      setNotice(`Removed “${video.title || video.videoId}”.`);
+      await load();
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  /** Asks YouTube about every stored video again, then reloads the list. */
+  const checkNow = async () => {
+    setIsChecking(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/videos/view-counts", { method: "POST" });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body?.details || body?.error || "Checking YouTube failed");
+      setNotice(`Checked ${body.videosChecked ?? 0} videos against YouTube.`);
+      await load();
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setIsChecking(false);
+    }
+  };
+
+  const removeCount = removeStates
+    .filter((state) => state !== "not_embeddable")
+    .reduce((sum, state) => sum + takedownCounts[state], 0);
+
+  /** Removes every video in the chosen takedown states, after a confirmation naming the count. */
+  const removeUnavailable = async () => {
+    if (removeCount === 0) return;
+    const breakdown = removeStates
+      .filter((state) => state !== "not_embeddable" && takedownCounts[state] > 0)
+      .map((state) => `${takedownCounts[state]} ${AVAILABILITY_LABELS[state].label.toLowerCase()}`)
+      .join(", ");
+    if (
+      !window.confirm(
+        `Remove ${removeCount} ${removeCount === 1 ? "video" : "videos"} from the library (${breakdown})? ` +
+          "They won't be re-imported by the YouTube sync. This can't be undone.",
+      )
+    ) {
+      return;
+    }
+    setIsRemoving(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/videos/availability", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ states: removeStates }),
+      });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body?.details || body?.error || "Failed to remove videos");
+      setNotice(`Removed ${body.removed} unavailable ${body.removed === 1 ? "video" : "videos"}.`);
+      await load();
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setIsRemoving(false);
+    }
+  };
+
+  const toggleRemoveState = (state: TakedownState, checked: boolean) => {
+    if (state === "not_embeddable") return;
+    setRemoveStates((current) =>
+      checked ? TAKEDOWN_STATES.filter((s) => s === state || current.includes(s)) : current.filter((s) => s !== state),
+    );
   };
 
   return (
@@ -342,14 +528,19 @@ export function VideoReportsPanel() {
           <ul className="divide-y rounded-md border">
             {issues.map((issue) => {
               const request = parseChangeRequest(issue);
+              const submission = parseSubmission(issue);
               return (
                 <li key={issue.id} className="flex flex-wrap items-start gap-3 p-3">
-                  <img
-                    src={`https://img.youtube.com/vi/${issue.videoId}/mqdefault.jpg`}
-                    alt=""
-                    loading="lazy"
-                    className="h-10 w-16 shrink-0 rounded object-cover"
-                  />
+                  {issue.videoId ? (
+                    <img
+                      src={`https://img.youtube.com/vi/${issue.videoId}/mqdefault.jpg`}
+                      alt=""
+                      loading="lazy"
+                      className="h-10 w-16 shrink-0 rounded object-cover"
+                    />
+                  ) : (
+                    <div className="bg-muted h-10 w-16 shrink-0 rounded" aria-hidden />
+                  )}
                   <div className="min-w-0 flex-1">
                     <p className="flex flex-wrap items-center gap-1.5 text-sm">
                       <span className="truncate font-medium">{issue.title || issue.videoId}</span>
@@ -390,13 +581,32 @@ export function VideoReportsPanel() {
                           <p className="text-muted-foreground text-xs">“{request.reason}”</p>
                         )}
                       </>
+                    ) : submission ? (
+                      <>
+                        {submission.url && (
+                          <a
+                            href={submission.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block truncate text-xs hover:underline"
+                          >
+                            {submission.url}
+                          </a>
+                        )}
+                        {submission.channel && (
+                          <p className="text-muted-foreground text-xs">Channel: {submission.channel}</p>
+                        )}
+                        {submission.note && (
+                          <p className="text-muted-foreground text-xs">“{submission.note}”</p>
+                        )}
+                      </>
                     ) : (
                       issue.issue && <p className="text-muted-foreground text-xs">{issue.issue}</p>
                     )}
                     <p className="text-muted-foreground text-xs">
                       {issue.reportedBy ?? (issue.kind === "transcript" ? "automatic" : "anonymous")} ·{" "}
-                      {formatWhen(issue.createdAt)} ·{" "}
-                      {issue.videoId}
+                      {formatWhen(issue.createdAt)}
+                      {issue.videoId ? ` · ${issue.videoId}` : ""}
                     </p>
                   </div>
 
@@ -408,6 +618,24 @@ export function VideoReportsPanel() {
                         onClick={() => applyChangeRequest(issue, request)}
                       >
                         Apply
+                      </Button>
+                    )}
+                    {issue.status === "open" && submission && issue.kind === "submit-video" && (
+                      <Button
+                        size="sm"
+                        disabled={busyId === issue.id}
+                        onClick={() => approveVideoSubmission(issue, submission)}
+                      >
+                        Add to library
+                      </Button>
+                    )}
+                    {issue.status === "open" && issue.kind === "submit-channel" && (
+                      <Button
+                        size="sm"
+                        disabled={busyId === issue.id}
+                        onClick={() => approveChannelSubmission(issue)}
+                      >
+                        Subscribe
                       </Button>
                     )}
                     {issue.status === "open" && issue.kind === "delete" && (
@@ -467,10 +695,35 @@ export function VideoReportsPanel() {
 
         <section className="flex flex-col gap-2">
           <h3 className="text-sm font-medium">
-            Unavailable videos{unavailable.length > 0 ? ` (${unavailable.length})` : ""}
+            Unavailable videos{filteredUnavailable.length > 0 ? ` (${filteredUnavailable.length})` : ""}
           </h3>
+          <div className="flex flex-wrap items-center gap-3 rounded-md border p-3">
+            <Button variant="outline" size="sm" onClick={checkNow} disabled={isChecking || isRemoving}>
+              {isChecking ? "Checking YouTube…" : "Check YouTube now"}
+            </Button>
+            {TAKEDOWN_STATES.filter((state) => state !== "not_embeddable").map((state) => (
+              <label key={state} className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={removeStates.includes(state)}
+                  onChange={(event) => toggleRemoveState(state, event.target.checked)}
+                />
+                {AVAILABILITY_LABELS[state].label} ({takedownCounts[state]})
+              </label>
+            ))}
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={removeUnavailable}
+              disabled={removeCount === 0 || isRemoving || isChecking}
+            >
+              {isRemoving
+                ? "Removing…"
+                : `Remove ${removeCount} unavailable ${removeCount === 1 ? "video" : "videos"}`}
+            </Button>
+          </div>
           <ul className="divide-y rounded-md border">
-            {unavailable.map((video) => {
+            {filteredUnavailable.map((video) => {
               const state = AVAILABILITY_LABELS[video.availability] ?? {
                 label: video.availability,
                 variant: "secondary" as const,
@@ -505,10 +758,18 @@ export function VideoReportsPanel() {
                   >
                     It works now
                   </Button>
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    disabled={busyId === video.videoId}
+                    onClick={() => removeOne(video)}
+                  >
+                    Remove
+                  </Button>
                 </li>
               );
             })}
-            {unavailable.length === 0 && (
+            {filteredUnavailable.length === 0 && (
               <li className="text-muted-foreground p-3 text-center text-sm">
                 {isLoading ? "Loading…" : "Every stored video still plays."}
               </li>

@@ -48,9 +48,8 @@ the view in the centre (`mobileSidebarKind`, `lib/mobile-sidebar.ts`):
 
 | View | Drawer |
 | --- | --- |
-| Video library (`/videos`, `/lectures`, glossary, rankings, statistics) | The sidebar tree (Round Videos, Lectures, tool sections) and footer |
-| `/research/cards` | The document panels alone |
-| `/reason-editor` | Document panels above the sidebar tree |
+| Video library (`/videos`, `/lectures`, glossary, rankings, statistics) | The sidebar tree (Videos, tool sections) and footer |
+| `/research/cards`, `/reason-editor` | Document panels above the sidebar tree |
 | `/debate` | Its own flows/rounds sidebar — the button dispatches `debate:open-sidebar` and the workspace opens its own sheet |
 | Everything else | The sidebar tree and footer |
 
@@ -60,8 +59,9 @@ The drawer closes on navigation.
 
 On `md+` the column has no brand row at the top — it opens straight onto the
 dock. Its bottom row, pinned under the scrolling tree, is the account menu
-(on every page, the video library's included) with the **hide button** beside
-it — see [Hiding the sidebar](#hiding-the-sidebar). The row shows your avatar
+(on every page, the video library's included) with a **Settings** button and
+the **hide button** beside it — see [Hiding the sidebar](#hiding-the-sidebar).
+Settings opens the tab that fits the page you are on. The row shows your avatar
 and name only, never your email address, with a badge on the avatar counting
 unread notifications. The account menu holds Settings, a **Notifications**
 submenu (every unread notification: pick one to open its link and clear it, X
@@ -75,9 +75,13 @@ as the dock's Settings menu, and synced to the account the same way), a
 Privacy, Reddit…) and Sign out. Signed out, the row is a Sign in button with a
 globe button beside it that lists the same site links.
 
-The site links used to be a row of links above the account row; they live in
-the account menu now, so the desktop column has no link row. The phone
-layouts below `md`, which have no account row, keep their footer.
+**Docs** and **Settings** are always on screen just above the account row, on
+every page, signed in or out and whatever is selected, so you never have to
+open a menu to reach them. The phone drawer ends with the same two links.
+
+The other site links used to be a row of links above the account row; they
+live in the account menu now. The phone layouts below `md`, which have no
+account row, keep their footer.
 
 ## Two menus, not one
 
@@ -98,7 +102,8 @@ root — opening one does not affect the other, and either can be open at once:
   only way to reach those links at all.
 
 - **The gear icon opens `SettingsMenu`** — Settings, the light/dark toggle
-  and Theme submenu, one Site Links submenu listing every footer link
+  and Theme submenu, **Hide Dock** (see [Hiding the dock](#hiding-the-dock)),
+  one Site Links submenu listing every footer link
   (site and debate-community links together, from `FOOTER_LINKS`),
   and the account block.
 
@@ -130,6 +135,26 @@ under the quick-link tiles: the tiles are the Videos section only, so
 `ToolNavTree` follows them with `defaultExpanded={false}` (its sections start
 collapsed there — expanded, forty rows would push the video grid off the
 screen).
+
+## Hiding the dock
+
+Choose **Hide Dock** in the gear menu and the row of app icons folds away to a
+small arrow tab where it sat: hanging down from the top-left corner or the top
+of the sidebar, or rising from the bottom of the screen on a phone. Hover the
+tab (or Tab to it from the keyboard, or tap it on a touch screen) and the full
+dock slides back over it; move away and it folds up again. It stays out while
+one of its menus is open, so the same menu's **Show Dock** row puts it back
+for good. The choice holds on every page and is remembered in this browser
+(`app-dock-hidden` in localStorage, broadcast by
+`packages/debate-webview/src/lib/nav/dock-hidden.ts` so every dock instance
+agrees).
+
+`CollapsibleDock` in `CategoryDock.tsx` does the folding. Shown, it renders
+the dock untouched. Hidden, it keeps the dock mounted inside an absolutely
+positioned, transparent panel over the tab, and reveals it with CSS alone:
+`group-hover`, keyboard focus inside (`:focus-visible`, so a mouse click that
+leaves focus on an icon does not pin it open), a tap on the tab, or a dock
+menu trigger with `data-state=open`.
 
 ## Where it renders
 
@@ -212,7 +237,7 @@ search panel. The choice is not remembered between page loads.
 ## One sidebar everywhere
 
 Every view draws the same sidebar: the one the video pages always had — the
-dock, then **Round Videos**, **Lectures** and the Research / Practice /
+dock, then **Videos** and the Research / Practice /
 Coaching / Insights sections, then the footer links. The tool and
 research pages, `/admin`, the legal pages and the help docs used to get a
 different column (shadcn's `sidebar-07`, tool sections only), and `/docs`
@@ -220,9 +245,8 @@ showed Fumadocs' own sidebar beside that one. Now:
 
 - **Off the video pages** `AppSidebarShell` wraps the page in the same
   `ResizableSidebarLayout` the video pages use, and `LibrarySidebarTree`
-  mounts the same `VideoSidebarTree`, reading the library's counts and
-  lecture categories itself (`useVideoMeta`). Its Lectures section starts
-  closed there.
+  mounts the same `VideoSidebarTree`, reading the library's counts itself
+  (`useVideoMeta`).
 - **Page-specific panels are sections of it.** The REASON document panels
   sit above the tree on `/reason-editor` and are the whole column on
   `/research/cards`, as before.
@@ -231,7 +255,16 @@ showed Fumadocs' own sidebar beside that one. Now:
   column leaves for it (`DOCS_SIDEBAR_SLOT_ID`), at the bottom of the column
   below the Insights section, and `styles/docs.css` hides
   Fumadocs' desktop sidebar and closes its grid column. Below `md` Fumadocs'
-  drawer is still the docs' navigation.
+  drawer is still the docs' navigation. Only the folders on the path to
+  the current page start expanded, and the current page is scrolled into
+  view when the docs open and after each navigation.
+- **Off `/docs`** the tree ends in a **Docs** section (`DocsNavTree`, in
+  `@debate/videos`) listing every docs page. It scrolls with the rest of the
+  column, starts collapsed (its folders too), and fetches the page tree
+  from `/docs/api/docs-tree` (`routes/tree-route.ts`) the first time it is
+  opened. Its rows are full page loads, since `/docs` renders outside the
+  app's layout. Settings is an icon button beside the hide button
+  (`SidebarSettingsButton`); nothing is pinned above the account row.
 - **The mobile drawer** shows the same tree (`MobileSidebarDrawer`).
 
 `/debate` and `/research/docs` keep their own workspace sidebars
@@ -275,12 +308,14 @@ sidebar starts hidden and theirs is the only one on screen. It still peeks
 from the left edge, and pinning it keeps it open until you leave the page; it
 doesn't change whether the sidebar is hidden anywhere else.
 
-**Icons that move.** This is off by default. Turn on **Animate sidebar
-icons** in Settings → Preferences, and hovering a row in the sidebar, or
-tabbing to it, makes its icon wiggle, bounce, pulse, spin or shake, a different
-one from the last time, for either half a second or a full second, also picked
-at random on every hover. The research docs' own sidebar does the same. Nothing
-moves if your system asks for reduced motion.
+**Icons that move.** This is on by default; turn off **Animate sidebar
+icons** in Settings → Preferences to stop it. Hovering a row in the sidebar, or
+tabbing to it (the icon or its label), makes its icon wiggle, bounce, pulse,
+spin, shake, flip, jelly or tada, a different one from the last time, for
+either half a second or a full second, and tints it a random color while it
+plays. Each icon plays at most once every three seconds. The research docs' own
+sidebar does the same. If your system asks for reduced motion, the icon only
+changes color.
 
 While the sidebar is hidden the dock it carried floats at the top-left
 instead (`CategoryDock` lifts its suppression while `useSidebarCollapsed()`
@@ -289,11 +324,13 @@ is true), so the five destinations stay one click away.
 While a text editor has the keyboard (CardMirror, the REASON editor, any text
 field), Ctrl/⌘+B stays **bold** and does not toggle the sidebar.
 
-Each tree section (Round Videos, Lectures, Research, Practice, Coaching,
+Each tree section (Videos, Research, Practice, Coaching,
 Insights) opens and closes on its own; see
 [The nav tree's headings](#the-nav-trees-headings). The Docs, Github, Support,
 Privacy and Reddit links sit on one compact line after the last section and
-scroll with the list rather than staying pinned. The account menu at the bottom links to
+scroll with the list rather than staying pinned. The **Docs** section after
+Insights lists every docs page, collapsed until you open it. A **Settings**
+button sits beside the hide button, after the account menu, which links to
 Settings, Notifications and Contacts and signs you out. Signed out, that row
 is a **Sign in** button that opens the sign-in dialog without leaving the
 page.
@@ -337,8 +374,8 @@ It is three levels deep:
 | Level | Element | What it is |
 | --- | --- | --- |
 | 1 | `h1` | A top-level section: Videos, Coaching, Research, Practice |
-| 2 | `h2` | A subgroup inside one — College Debates, Favorites, Lectures |
-| 3 | `span` | A leaf link: a tool, a lecture category, a debate format |
+| 2 | `h2` | A subgroup inside one — College Policy, Favorites, Lectures |
+| 3 | `span` | A leaf link: a tool, a debate format |
 
 Two rules hold for every h1:
 
@@ -378,7 +415,7 @@ Two rules hold for every h1:
 still folds it into the set of paths that get the tool sidebar.
 
 Indentation follows *nesting*, not `level` — each expanded node pads its own
-child list — so a leaf under College Debates sits a step deeper than one
+child list — so a leaf under College Policy sits a step deeper than one
 hanging straight off Coaching, wherever in the tree it is.
 
 ### Every tool has an icon
@@ -397,7 +434,7 @@ full-color artwork sitting among the grey glyphs — and now match the rest.
 ## Tests
 
 - `packages/debate-videos/test/video-sidebar-render.test.tsx` — the heading
-  structure above: College Debates under a Videos `h1`, no `h1` inside an
+  structure above: College Policy under a Videos `h1`, no `h1` inside an
   anchor, every section a toggle button, and only the section holding the
   current route open (with the closed ones rendering none of their links).
 - `packages/debate-videos/test/sidebar-active-section.test.ts` — the
@@ -430,26 +467,30 @@ full-color artwork sitting among the grey glyphs — and now match the rest.
 - `packages/debate-webview/test/lib/layout/frame-navigation.test.ts` — which
   clicks are left to the browser, and which links out of `/docs` become a
   full page load.
+- `packages/debate-webview/test/lib/nav/dock-hidden.test.ts` — that the dock
+  starts shown, the Hide Dock choice is stored, broadcast and cleared, and
+  still applies to the page when storage is blocked.
 - `packages/debate-webview/test/lib/nav/dock-idle-prefetch.test.ts` — which
   destinations are warmed in idle time, and that data saver turns it off.
 
 ## All Videos is the home page
 
-**All Videos** (`/videos`) sits at the top of the sidebar, above Round Videos,
-and lists every round and lecture in the library. It is where `/` lands. The
-lecture library on its own is **Lectures** (`/lectures`), whose **All
-Lectures** row lists lectures only.
+**All Videos** (`/videos`) is the first row under **Videos** and lists every
+round and lecture in the library. It is where `/` lands. The lecture library
+on its own is **Lectures** (`/lectures`), a single row at the end of the same
+section. The lecture categories are not in the sidebar: the lectures page
+shows them as a bar of cards at its top (see
+[Lecture categories](/docs/features/video-library/video-library#lecture-categories)).
 
 ## One collection highlighted at a time
 
-The sidebar's round collections (College Debates, Policy, PF, LD, Greatest of
-All-Time) and its lecture categories are highlighted by two different rules,
-and the second used to fire everywhere: opening **College Debates** lit up
-**All Lectures** with it, as if two collections were open at once. The lecture
-rows now highlight only while the lecture library is actually what is being
-browsed — so a round collection, the glossary and the rankings pages each
-leave them alone. `packages/debate-videos/test/sidebar-single-highlight.test.tsx`
+The sidebar's collections (All Videos, Lectures, College Policy, HS Policy, HS Policy 1v1 (LD),
+Public Forum, Greatest of All-Time, My Favorites, Watch History) are one list, and
+only the open one is highlighted. **Lectures** lights up on every lecture page,
+category pages included (`browsingLectures`), and never alongside a round
+collection. `packages/debate-videos/test/sidebar-single-highlight.test.tsx`
 pins it.
+
 
 **Team Rankings stays highlighted on a team or school page.** `/teams/<team>`
 and `/schools/<school>` are opened from the **Team Rankings** row (`/coaching/rankings`)
@@ -531,6 +572,9 @@ for code that asks for it with `beginLoading`.
   still draw their own full-height workspace sidebars instead of the shared
   one, so they have no resize handle or hide button of their own design and
   their contents are not yet sections of the shared column.
+- A hidden dock's tab does not reveal it on a pen or a touch screen that
+  reports hover; it opens on a tap there too, and a tap elsewhere does not fold
+  it again until the next navigation or a second tap on the tab.
 - On `/docs` the docs' search box sits in Fumadocs' header, not in the shared
   column, and with the sidebar hidden the docs have no dock (the docs don't
   mount the floating one).

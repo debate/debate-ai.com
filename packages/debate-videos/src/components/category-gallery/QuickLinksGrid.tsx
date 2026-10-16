@@ -10,7 +10,7 @@ import Link from "next/link";
 import Image, { StaticImageData } from "next/image";
 import { GlowingEffect } from "../../ui/effects/glowing-effect";
 import { cn } from "../../ui/lib/utils";
-import { History, Clapperboard, type LucideIcon } from "lucide-react";
+import { History, Clapperboard, Globe as GlobeIcon, Users, Mic, type LucideIcon } from "lucide-react";
 import { IconTrophyGoat, IconLeaderboard, IconTrophy, IconLectures } from "../../ui/icons";
 import { isImageIcon } from "./tree-item-icon";
 import { formatCount } from "./format-count";
@@ -83,6 +83,21 @@ const QUICK_LINK_STYLES: Record<string, QuickLinkStyle> = {
     gradient: "from-cyan-500/20 via-sky-500/10 to-transparent",
     iconBg: "bg-cyan-500/15 ring-1 ring-cyan-500/30",
   },
+  wsd: {
+    glyph: GlobeIcon,
+    gradient: "from-blue-500/20 via-indigo-500/10 to-transparent",
+    iconBg: "bg-blue-500/15 ring-1 ring-blue-500/30",
+  },
+  acc: {
+    glyph: Users,
+    gradient: "from-red-500/20 via-yellow-500/10 to-transparent",
+    iconBg: "bg-red-500/15 ring-1 ring-red-500/30",
+  },
+  speech: {
+    glyph: Mic,
+    gradient: "from-pink-500/20 via-yellow-500/10 to-transparent",
+    iconBg: "bg-pink-500/15 ring-1 ring-pink-500/30",
+  },
 };
 
 /**
@@ -101,6 +116,9 @@ const QUICK_LINK_ORDER = [
   "history",
   "topPicks",
   "favorites",
+  "wsd",
+  "acc",
+  "speech",
 ];
 
 /** The glossary/statistics pair is reached from the tool tree's Practice
@@ -125,8 +143,6 @@ const QUICK_LINKS: QuickLink[] = SIDEBAR_VIDEO_LINKS.filter((link) => !REFERENCE
 
 interface QuickLinksGridProps {
   counts?: Record<string, number>;
-  showLectures?: boolean;
-  onToggleLectures?: () => void;
   activeId?: string;
   /**
    * `"grid"` (default) renders the square tile gallery used at the top of the
@@ -136,7 +152,7 @@ interface QuickLinksGridProps {
   layout?: "grid" | "list";
 }
 
-function CardBody({ link, showLectures, count, isActive }: { link: QuickLink; showLectures?: boolean; count?: number; isActive?: boolean }) {
+function CardBody({ link, count, isActive }: { link: QuickLink; count?: number; isActive?: boolean }) {
   return (
     <>
       <GlowingEffect spread={30} glow proximity={48} inactiveZone={0.01} borderWidth={1.5} />
@@ -163,7 +179,7 @@ function CardBody({ link, showLectures, count, isActive }: { link: QuickLink; sh
         </h3>
         {count != null && count > 0 && (
           <span className="absolute top-1 right-1 text-[10px] font-semibold text-foreground/60 leading-none">
-            {formatCount(count, { exact: link.exactCount })}
+            {formatCount(count)}
           </span>
         )}
       </div>
@@ -191,13 +207,13 @@ function ListRow({ link, count, isActive }: { link: QuickLink; count?: number; i
       </div>
       <span className="min-w-0 flex-1 truncate text-sm font-medium text-foreground">{link.title}</span>
       {count != null && count > 0 && (
-        <span className="shrink-0 text-[11px] font-semibold text-muted-foreground">{formatCount(count, { exact: link.exactCount })}</span>
+        <span className="shrink-0 text-[11px] font-semibold text-muted-foreground">{formatCount(count)}</span>
       )}
     </div>
   );
 }
 
-export function QuickLinksGrid({ counts, showLectures = false, onToggleLectures, activeId, layout = "grid" }: QuickLinksGridProps) {
+export function QuickLinksGrid({ counts, activeId, layout = "grid" }: QuickLinksGridProps) {
   if (layout === "list") {
     return (
       <ul className="flex flex-col gap-1">
@@ -229,7 +245,7 @@ export function QuickLinksGrid({ counts, showLectures = false, onToggleLectures,
                 isActive && "border-primary/60",
               )}
             >
-              <CardBody link={link} showLectures={showLectures} count={counts?.[link.id]} isActive={isActive} />
+              <CardBody link={link} count={counts?.[link.id]} isActive={isActive} />
             </Link>
           </li>
         );

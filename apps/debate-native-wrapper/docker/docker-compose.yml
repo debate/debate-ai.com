@@ -6,6 +6,13 @@ services:
     volumes:
       - ../dist-artifacts/linux:/output
 
+  build-windows:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.windows
+    volumes:
+      - ../dist-artifacts/windows:/output
+
   build-android:
     build:
       context: ..

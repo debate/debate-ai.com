@@ -24,6 +24,7 @@ import { OneTap } from "./OneTap"
 import { ToolRecordSyncProvider } from "./ToolRecordSyncProvider"
 import { DebaterActivityListener } from "./DebaterActivityListener"
 import { SignInPromptProvider } from "./SignInPromptProvider"
+import { GuestVideoLimitGate } from "./GuestVideoLimitGate"
 import { FirstLoginWelcomeProvider } from "./FirstLoginWelcomeProvider"
 import { GlobalCommandPalette } from "./GlobalCommandPalette"
 import { PlanLimitDialog } from "../pricing/PlanLimitDialog"
@@ -76,6 +77,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <ChromeErrorBoundary label="SignInPromptProvider">
             <SignInPromptProvider />
           </ChromeErrorBoundary>
+          {/* A framed watch page plays its video in this document. */}
+          <ChromeErrorBoundary label="GuestVideoLimitGate">
+            <GuestVideoLimitGate />
+          </ChromeErrorBoundary>
           {/* The first-sign-in welcome rides along with the session
               this document already holds. */}
           <ChromeErrorBoundary label="FirstLoginWelcomeProvider">
@@ -113,6 +118,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </ChromeErrorBoundary>
           <AppSidebarShell>{children}</AppSidebarShell>
         </div>
+        {/* Inside the docs provider so Ctrl/Cmd-K can search the sidebar's
+            files as well as the tools. */}
+        <ChromeErrorBoundary label="GlobalCommandPalette">
+          <GlobalCommandPalette />
+        </ChromeErrorBoundary>
       </ReasonDocsProvider>
       {/* None of the chrome below is what the reader came for, so each piece
           is bounded on its own: a crash in the player, the sign-in prompt or
@@ -136,13 +146,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <ChromeErrorBoundary label="SignInPromptProvider">
         <SignInPromptProvider />
       </ChromeErrorBoundary>
+      {/* Asks a guest to sign in once they have opened ten videos. */}
+      <ChromeErrorBoundary label="GuestVideoLimitGate">
+        <GuestVideoLimitGate />
+      </ChromeErrorBoundary>
       {/* The first-sign-in welcome: key links for a reader whose
           session just landed on this browser. */}
       <ChromeErrorBoundary label="FirstLoginWelcomeProvider">
         <FirstLoginWelcomeProvider />
-      </ChromeErrorBoundary>
-      <ChromeErrorBoundary label="GlobalCommandPalette">
-        <GlobalCommandPalette />
       </ChromeErrorBoundary>
       {/* The pricing plans, shown only when a daily plan limit is hit. */}
       <ChromeErrorBoundary label="PlanLimitDialog">

@@ -9,7 +9,7 @@ tasks and assignments on a due date, assign them to members of the group,
 watch who has finished, and schedule virtual tournaments that only that
 group enters.
 
-- **Route:** `/coaching/calendar` (sidebar → Coaching → Team Calendar)
+- **Route:** `/coaching?section=calendar` (sidebar → Coaching → Coach Workspace → Team Calendar tab; the old `/coaching/calendar` redirects there)
 - **Package:** `debate-team-collaboration`
 
 ## Using it
@@ -53,7 +53,8 @@ lib/team-calendar.ts        month grid, agenda, deadlines, validation, pairings 
 state/teamCalendar.ts       localStorage: teamCalendarItems (+ tool-record mirror)
 panels/TeamCalendarPanel.tsx
   → @debate/webview routes/team-calendar/page.tsx
-  → apps/debate-ai.com/app/coaching/calendar/page.tsx
+  → @debate/webview components/coach/CoachingWorkspace.tsx ("calendar" tab)
+  → apps/debate-ai.com/app/coaching/page.tsx
 ```
 
 ## Known gaps

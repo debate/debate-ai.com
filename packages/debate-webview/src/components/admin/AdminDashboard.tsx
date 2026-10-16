@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, type ComponentType } from "react";
-import { DatabaseBackup, FileSearch, Film, Globe, ListVideo, RefreshCw, Upload, Users } from "lucide-react";
+import { DatabaseBackup, FileSearch, Film, Globe, ListVideo, RefreshCw, School, Sparkles, Upload, Users } from "lucide-react";
 import { cn } from "../../lib/ui/lib/utils";
 import { Button } from "../../lib/ui/primitives/button";
 import { Badge } from "../../lib/ui/primitives/badge";
@@ -32,16 +32,19 @@ import { CaselistSyncPanel } from "./CaselistSyncPanel";
 import { DbBackupPanel } from "./DbBackupPanel";
 import { DebateCardParquetUpload } from "./DebateCardParquetUpload";
 import { ModeratorsPanel } from "./ModeratorsPanel";
+import { ReclassifyVideosPanel } from "./ReclassifyVideosPanel";
+import { SchoolClaimsPanel } from "./SchoolClaimsPanel";
 import { TopicStarterUpload } from "./TopicStarterUpload";
 import { UsersTable } from "./UsersTable";
 import { VideoLibraryTable } from "./VideoLibraryTable";
 import { VideoReportsPanel } from "./VideoReportsPanel";
 import { YoutubeChannelsPanel } from "./YoutubeChannelsPanel";
 import { TranscriptScraperPanel } from "./TranscriptScraperPanel";
+import { SpeechAnalysisPanel } from "./SpeechAnalysisPanel";
 
 interface YoutubeRoundVideo { id: string; title: string; publishedAt: string; channel: string; views: number; style: number; tournament: string | null; }
 interface SyncRun { id: number; status: "running" | "success" | "error"; triggeredBy?: string | null; channelsSynced: number; videosUpserted: number; error: string | null; }
-// `youtube_sync_runs.triggered_by` for a run the weekly cron started rather
+// `youtube_sync_runs.triggered_by` for a run the daily scan cron started rather
 // than an admin — the sentinel written by lib/youtube/weekly-sync.ts. Repeated
 // here as a literal so this client component does not import that server module.
 const CRON_TRIGGERED_BY = "cron";
@@ -75,7 +78,7 @@ const STYLE_OPTIONS = [{ value: "all", label: "All styles" }, { value: "1", labe
  * moderators see only the content sections — the video library, video
  * reports and the round-video queue.
  */
-type AdminTabKey = "users" | "library" | "queue" | "youtube" | "cards" | "imports" | "url-detection" | "backups";
+type AdminTabKey = "users" | "library" | "queue" | "schools" | "speech-ai" | "youtube" | "cards" | "imports" | "url-detection" | "backups";
 
 interface AdminTab {
   key: AdminTabKey;
@@ -90,14 +93,16 @@ interface AdminTab {
 // sidebar. The active one is mirrored into the URL hash (/admin#cards) so a
 // section can be linked to and survives a reload.
 const ADMIN_TABS: AdminTab[] = [
-  { key: "users", name: "Users", description: "Accounts, usage and the moderators who can edit content", icon: Users, adminOnly: true },
-  { key: "library", name: "Video library", description: "Edit the published video library and review video reports", icon: Film, adminOnly: false },
   { key: "queue", name: "Round queue", description: "Queued debate rounds waiting to be published", icon: ListVideo, adminOnly: false },
+  { key: "library", name: "Video library", description: "Edit the published video library and review video reports", icon: Film, adminOnly: false },
+  { key: "schools", name: "School claims", description: "Coaches and administrators claiming a school's page, waiting on review", icon: School, adminOnly: false },
+  { key: "speech-ai", name: "Speech AI", description: "Split round transcripts into speeches and write a summary and an alternative for each", icon: Sparkles, adminOnly: true },
   { key: "youtube", name: "YouTube sync", description: "Channel scans, view counts, video seeding and stacked playlists", icon: RefreshCw, adminOnly: true },
   { key: "cards", name: "Debate cards", description: "Extract source URLs from card citations, recheck them and the reuse-check log", icon: FileSearch, adminOnly: true },
   { key: "url-detection", name: "URL Detection", description: "View URLs detected by the browser extension from pages users visit", icon: Globe, adminOnly: true },
   { key: "imports", name: "Imports", description: "Topic starters, debate card Parquet shards and the caselist sync", icon: Upload, adminOnly: true },
   { key: "backups", name: "Backups", description: "SQL dumps of videos, debate cards and history — download or store in R2", icon: DatabaseBackup, adminOnly: true },
+  { key: "users", name: "Users", description: "Accounts, usage and the moderators who can edit content", icon: Users, adminOnly: true },
 ];
 
 function isAdminTabKey(value: string): value is AdminTabKey {
@@ -138,7 +143,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
   const [isExtractingUrls, setIsExtractingUrls] = useState(false);
   const [urlExtractionError, setUrlExtractionError] = useState<string | null>(null);
   const [urlExtractionProgress, setUrlExtractionProgress] = useState<{ processed: number; withUrl: number; updated: number; demoUrls: string[]; done: boolean } | null>(null);
-  const [activeTab, setActiveTab] = useState<AdminTabKey>(isAdmin ? "users" : "library");
+  const [activeTab, setActiveTab] = useState<AdminTabKey>("queue");
   const [isRecomputingStacks, setIsRecomputingStacks] = useState(false);
   const [recomputeStacksResult, setRecomputeStacksResult] = useState<string | null>(null);
   const [recomputeStacksError, setRecomputeStacksError] = useState<string | null>(null);
@@ -696,7 +701,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
           <p className="text-muted-foreground text-sm">
             {isAdmin
               ? "Accounts, videos, the debate card library and imports"
-              : "The published video library, video reports and the round queue"}
+              : "The published video library, video reports, the round queue and school claims"}
           </p>
         </div>
         {/* Narrow screens get a dropdown, as the settings sidebar does. */}
@@ -746,6 +751,10 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
             <ModeratorsPanel />
           </>
         )}
+
+        {currentTab.key === "speech-ai" && <SpeechAnalysisPanel />}
+
+        {currentTab.key === "schools" && <SchoolClaimsPanel />}
 
         {currentTab.key === "library" && (
           <>
@@ -1042,6 +1051,8 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
                 {recomputeStacksError && <p className="text-destructive text-sm">{recomputeStacksError}</p>}
               </CardContent>
             </Card>
+
+            <ReclassifyVideosPanel />
           </>
         )}
 

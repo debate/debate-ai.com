@@ -11,15 +11,10 @@
  */
 
 /**
- * Renders a video total, shortening thousands to `1.4k` to keep the count
- * from crowding out the title it sits next to.
- *
- * Pass `exact` for a total that reads better in full. The College Debates
- * total is the case for it: it is the round archive's headline number, the
- * one a visitor checks the site by, and rounding it to `1.4k` both hides the
- * digits and understates a collection that is past fourteen hundred.
+ * Renders a view count in k format (e.g., 0.3k, 1.3k, 12k).
+ * Always shows one decimal place for values under 10k, no decimals for 10k+.
  */
-export function formatCount(n: number, { exact = false }: { exact?: boolean } = {}): string {
-  if (!exact && n >= 1000) return `${(n / 1000).toFixed(n >= 10000 ? 0 : 1)}k`;
-  return String(n);
+export function formatCount(n: number): string {
+  if (n >= 10000) return `${Math.round(n / 1000)}k`;
+  return `${(n / 1000).toFixed(1)}k`;
 }

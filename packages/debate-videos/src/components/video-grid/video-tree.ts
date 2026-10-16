@@ -110,13 +110,26 @@ export function cleanTournamentName(tournament: string | null | undefined): stri
     .replace(/\b(?:round|rd|rounds)\s*(?:\d{1,3}|double|doubles|triple|triples|octos?|octas?|octafinals?|quarters?|quarterfinals?|semis?|semifinals?|finals?|runoffs?|prelims?|eliminations?)\b/gi, "")
     .replace(/\b(?:round|rd|rounds)\b/gi, "")
     .replace(/\b(?:finals?|semis?|semifinals?|quarters?|quarterfinals?|octos?|octas?|octafinals?|runoffs?|doubles?|triples?|prelims?|eliminations?)\b/gi, "")
-    .replace(/\b(?:debate\s+)?(?:tournament|championships?|nationals?|nats|invitational|open)\b/gi, "")
+    .replace(/\b(?:debate\s+)?(?:tournament|championships?|nationals?|nats|invitational|open|forum|high\s+schools?|for|the)\b/gi, "")
     .replace(/\s+debate\b/gi, "")
     .replace(/\s+/g, " ")
     .replace(/^[\s,\-–|]+|[\s,\-–|]+$/g, "")
     .trim();
 
-  return cleaned || undefined;
+  if (!cleaned) return undefined;
+
+  let final = cleaned;
+  const lower = final.toLowerCase();
+  if (lower === "emory" || (lower.includes("barkley") && lower.includes("emory")) || (lower === "barkley" && !lower.includes("forum") === false)) {
+    // check specifically
+  }
+  if (lower === "emory" || (lower.includes("barkley") && lower.includes("emory"))) {
+    final = "Barkley Forum (Emory)";
+  } else if (lower === "barkley" || lower === "barkley forum" || lower === "the barkley forum") {
+    final = "Barkley Forum (Emory)";
+  }
+
+  return final;
 }
 
 /**

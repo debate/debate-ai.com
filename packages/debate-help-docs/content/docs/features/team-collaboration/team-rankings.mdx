@@ -75,13 +75,39 @@ LD has a second tab, **Sep–Oct topic**, rated only from the tournaments on
 the September–October resolution.
 
 The season selector still changes the champion and topic banner. Ratings
-exist for the current season only, so earlier seasons show the banner alone.
+exist for the current season only, so earlier seasons show the banner alone,
+with one exception: on **College NDT**, the 2009-10 through 2025-26 seasons
+also show that season's top 100 teams as
+[debatedata](https://debatedata.weebly.com) rated them. Those tables come from
+a different model (a skill estimate, Mu, with an uncertainty, Sigma, ranked on
+a conservative Rating below Mu), so their numbers are on that site's own scale
+and can't be compared with current-season ratings. Seasons from 2010-11 through
+2012-13 list schools by the short names the source used ("Georgetown",
+"Cal State Fullerton").
+
+Each of those seasons has a **Win probability** calculator above the table.
+Pick an aff and a neg team, or type any Mu and Sigma, and it shows the aff's
+chance of winning one round: each side's performance is drawn around its Mu,
+spread by its Sigma plus a fixed 4.17 points of round-to-round noise, and the
+higher draw wins. 2025-26 also shows debatedata's season stats for all
+divisions, Open, Junior Varsity and Novice (schools, teams, debaters, rounds,
+aff win rate overall and in elims, and speaker points), and lists the 27
+tournaments its ratings come from under the table.
 
 ## Team and school pages
 
 Clicking a team or school opens its profile (`/teams/<team>`,
 `/schools/<school>`): its stats per division, its radar chart, the round
-videos it debated in, and its caselist documents.
+videos it debated in, and its caselist documents. A school page also shows
+its logo and its roster of teams and students when a coach or administrator
+has claimed it — see [Claiming a School Page](/docs/features/team-collaboration/school-pages).
+
+A team page opens with a blue record card: the team name, school and Follow
+button, a pill per division it is ranked in (click one to switch the card and
+radar to that division), and each division's rating. Below that the stats are
+grouped into three bands: **Standing** (rating, rank, field percentile,
+matches), **Win rates** (aff, neg, elim aff and elim neg) and **Rating model**
+(raw rating, deviation, field size, divisions ranked).
 
 Under a team's radar chart, a **Show school average** checkbox (off by default)
 overlays a dashed polygon with the average of every ranked team from the same

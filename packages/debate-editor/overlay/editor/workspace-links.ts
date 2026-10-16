@@ -24,28 +24,24 @@ export interface WorkspaceLink {
 export const WORKSPACE_LINKS: WorkspaceLink[] = [
   // ── Workspaces ──────────────────────────────────────────────────────────
   { href: '/research/docs', label: 'Debate Docs', description: 'Annotated summaries and case outlines', category: 'Workspaces' },
+  { href: '/research/market', label: 'File Market', description: 'Buy research files or sell your own; tables of contents are free previews', category: 'Workspaces' },
   { href: '/research', label: 'Research Workspace', description: 'Topic coverage, evidence library, tasks, quests, review', category: 'Workspaces' },
+  { href: '/research/team', label: 'Team Research', description: 'Topic coverage, prep room, review queue, task inbox, contributions, and brainstorm in one tabbed page', category: 'Workspaces' },
   { href: '/coaching', label: 'Coach Workspace', description: 'Argument tree, flow summary, drills, scouting, briefings', category: 'Workspaces' },
 
   // ── Community & Progress ────────────────────────────────────────────────
   { href: '/coaching/leaderboard', label: 'Leaderboard', description: 'Helpfulness score, tier, badges, and quest streak', category: 'Community & Progress' },
-  { href: '/news', label: 'News Stream', description: 'Product updates and community announcements', category: 'Community & Progress' },
-  { href: '/research/cards/contributions', label: 'Contributions Feed', description: 'Like, save, and endorse community cards', category: 'Community & Progress' },
+  { href: '/news', label: 'News & Forums', description: 'Product updates, community announcements and forum threads', category: 'Community & Progress' },
   { href: '/research/cards/awards', label: 'Contributor Awards', description: 'Category winners for best evidence finder, best explainer, and more', category: 'Community & Progress' },
   { href: '/research/cards/best-card', label: 'Daily Best Card', description: "Today's highest-helpfulness card, plus every past winner", category: 'Community & Progress' },
-  { href: '/research/cards/inbox', label: 'Task Inbox', description: 'Research tasks routed to contributors', category: 'Community & Progress' },
   { href: '/research/cards/progress', label: 'Progress', description: 'Unlock tier, badges, and daily-quest streak per contributor', category: 'Community & Progress' },
   { href: '/research/cards/scoring', label: 'LLM Card Scoring', description: 'Five-dimension quality score, ranking, and duplicate check for a card', category: 'Community & Progress' },
   { href: '/research/cards/revisions', label: 'Revision Incentives', description: 'Reward points for improving weak cards and stale citations', category: 'Community & Progress' },
-  { href: '/research/cards/reviews', label: 'Review Queue', description: 'Move a card through comment, approve, and publish', category: 'Community & Progress' },
   { href: '/research/cards/group-challenges', label: 'Group Challenges', description: 'Squad-scoped challenges with live standings and an MVP badge', category: 'Community & Progress' },
-  { href: '/research/cards/coverage', label: 'Topic Coverage Dashboard', description: 'Missing, thin, and covered arguments per topic', category: 'Community & Progress' },
-  { href: '/research/cards/prep-room', label: 'Collaboration Prep Room', description: "A topic's evidence, draft blocks, and routed tasks", category: 'Community & Progress' },
   { href: '/coaching/progress', label: 'Research Progress', description: 'Contribution history and per-topic task completion', category: 'Community & Progress' },
   { href: '/practice/level', label: 'Debater Level', description: 'Earn XP and level up by completing practice challenges', category: 'Community & Progress' },
   { href: '/research/cards/streaks', label: 'Quest Streaks', description: 'Daily-quest streak and milestone badges per contributor', category: 'Community & Progress' },
   { href: '/research/cards/quests', label: 'Daily Quests', description: 'Team goals tracked against live contribution progress', category: 'Community & Progress' },
-  { href: '/research/cards/brainstorm', label: 'Team Brainstorm Assist', description: 'Submit and upvote ideas for an argument block', category: 'Community & Progress' },
   { href: '/research/cards/collaboration', label: 'Team Collaboration Mode', description: 'Live prep notes on a shared topic sprint', category: 'Community & Progress' },
 
   // ── Prep & Practice ─────────────────────────────────────────────────────
@@ -53,7 +49,7 @@ export const WORKSPACE_LINKS: WorkspaceLink[] = [
   { href: '/contacts', label: 'Contacts', description: "Requests, blocking, who's online, and live cards shared with you", category: 'Prep & Practice' },
   { href: '/notifications', label: 'Notifications', description: 'Assignee notifications for handed-off prep notes', category: 'Prep & Practice' },
   { href: '/practice/drills', label: 'Practice Drills', description: "Overview, frontline, cross-ex, and collapse prompts from a round's flow", category: 'Prep & Practice' },
-  { href: '/coaching/ai-coach', label: 'AI Coach Mode', description: 'Extension, refutation, collapse, and weighing prompts', category: 'Prep & Practice' },
+  { href: '/coaching?section=ai-coach', label: 'AI Coach Mode', description: 'Extension, refutation, collapse, and weighing prompts', category: 'Prep & Practice' },
   { href: '/practice/judge-decision', label: 'AI Judge Decision', description: 'An AI round decision under a saved paradigm and flow', category: 'Prep & Practice' },
   { href: '/summaries', label: 'Speech Transcript Summaries', description: 'Per-argument summaries with cross-exam questions', category: 'Prep & Practice' },
   { href: '/word-count', label: 'Word-Count Speeches', description: 'A live word-count readout instead of a timer', category: 'Prep & Practice' },
@@ -66,8 +62,8 @@ export const WORKSPACE_LINKS: WorkspaceLink[] = [
 
   // ── Coaching & Analytics ────────────────────────────────────────────────
   { href: '/coaching/rankings', label: 'Team Rankings', description: 'Elo-based team leaderboard and rankings', category: 'Coaching & Analytics' },
-  { href: '/coaching/programs', label: 'Coaching Programs', description: "A coach's squad-scoped coaching space and boards", category: 'Coaching & Analytics' },
-  { href: '/coaching/calendar', label: 'Team Calendar', description: 'Tasks, assignments, deadlines and group tournaments on a calendar', category: 'Coaching & Analytics' },
-  { href: '/coaching/materials', label: 'Coach Materials', description: 'Grounding materials for the team coach AI', category: 'Coaching & Analytics' },
+  { href: '/coaching?section=programs', label: 'Coaching Programs', description: "A coach's squad-scoped coaching space and boards", category: 'Coaching & Analytics' },
+  { href: '/coaching?section=calendar', label: 'Team Calendar', description: 'Tasks, assignments, deadlines and group tournaments on a calendar', category: 'Coaching & Analytics' },
+  { href: '/coaching?section=materials', label: 'Coach Materials', description: 'Grounding materials for the team coach AI', category: 'Coaching & Analytics' },
 
 ];

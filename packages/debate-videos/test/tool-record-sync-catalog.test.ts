@@ -38,6 +38,12 @@ const SIDEBAR_HREFS = new Set([
   // The CardMirror editor, likewise: a real route with synced data of its
   // own, reached from the dock rather than from a section row now.
   "/reason-editor",
+  // Response-Outcome Charts, taken out of every menu but still routed: its
+  // saved vulnerability reports open there.
+  "/coaching/outcomes",
+  // AI Judge Decision, likewise: out of the Practice tree but still routed,
+  // and its saved decisions open there.
+  "/practice/judge-decision",
 ]);
 
 describe("synced tool collections", () => {
@@ -67,7 +73,7 @@ describe("synced tool collections", () => {
   it("covers the Coaching section's saved-work tools", () => {
     const synced = new Set(TOOL_RECORD_COLLECTIONS.map((collection) => collection.href));
 
-    for (const href of ["/coaching/ai-coach", "/coaching/programs"]) {
+    for (const href of ["/coaching"]) {
       expect(synced, href).toContain(href);
     }
   });

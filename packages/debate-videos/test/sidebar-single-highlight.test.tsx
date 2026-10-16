@@ -2,12 +2,9 @@
  * @fileoverview Pins that exactly one collection in the videos sidebar reads
  * as selected.
  *
- * Opening College Debates highlighted "All Lectures" as well: the two
- * collections are highlighted by different rules — `activeId` for the round
- * collections, `selectedCategory` for the lecture categories — and the second
- * defaults to `"all"` on every video route, not only inside the lecture
- * library. `browsingLectures` is what separates them, so the assertions below
- * are about which rows carry the active ring, not about how the tree looks.
+ * The Lectures row lights up from `browsingLectures` (any lecture-library
+ * page, category pages included) as well as `activeId`, so the assertions
+ * below pin that it never lights alongside a round collection.
  */
 
 import { describe, it, expect, vi } from "vitest";
@@ -39,13 +36,6 @@ function render(props: { activeId?: string; browsingLectures?: boolean }): strin
   return renderToStaticMarkup(
     createElement(VideoSidebarTree, {
       counts: { college: 1400, lectures: 895 },
-      lectureCategories: [
-        { key: "documentaries_culture", label: "Documentaries & Culture", count: 20, maxViews: 100 },
-        { key: "round_analysis", label: "Round Analysis", count: 17, maxViews: 90 },
-      ],
-      selectedCategory: "all",
-      lecturesExpanded: true,
-      onToggleLectures: () => {},
       ...props,
     }),
   );
@@ -66,15 +56,15 @@ function activeRows(markup: string): string[] {
 }
 
 describe("VideoSidebarTree highlighting", () => {
-  it("highlights only College Debates on a round collection", () => {
+  it("highlights only College Policy on a round collection", () => {
     const rows = activeRows(render({ activeId: "college" }));
 
-    expect(rows).toEqual(["College Debates"]);
-    expect(rows).not.toContain("All Lectures");
+    expect(rows).toEqual(["College Policy"]);
+    expect(rows).not.toContain("Lectures");
   });
 
-  it("highlights All Lectures while the lecture library is what is open", () => {
-    expect(activeRows(render({ browsingLectures: true }))).toEqual(["All Lectures"]);
+  it("highlights Lectures while the lecture library is what is open", () => {
+    expect(activeRows(render({ browsingLectures: true }))).toEqual(["Lectures"]);
   });
 
   it("highlights nothing on the rankings and glossary pages", () => {

@@ -10,7 +10,7 @@
 import { describe, it, expect } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createElement } from "react";
-import { DebateTopicsExplorer, entryMatches, matchesStyleFilter, topicSearchHref } from "../src/components/topic-explorer/DebateTopicsExplorer";
+import { DebateTopicsExplorer, entryMatches, matchesStyleFilter, shortMonth, topicSearchHref } from "../src/components/topic-explorer/DebateTopicsExplorer";
 import type { DebateTopicYear } from "../src/lib/debate-topics";
 
 const TOPICS: DebateTopicYear[] = [
@@ -85,6 +85,19 @@ describe("DebateTopicsExplorer", () => {
     expect(html).toContain("✊");
     expect(html).toContain("Civil Disobedience");
     expect(html.indexOf("Civil Disobedience")).toBeLessThan(html.indexOf("civil disobedience is justified"));
+  });
+
+  it("shows LD/PF start months as short labels beside the resolution, not in its text", () => {
+    const html = render({ defaultYear: 2023 });
+    expect(html).toContain(">Sep/Oct<");
+    expect(html).toContain(">Sep<");
+    expect(html).not.toContain("Sep/Oct: ");
+    expect(html).not.toContain("Sep: ");
+  });
+
+  it("does not render the season year as an oversized heading", () => {
+    const html = render();
+    expect(html).not.toMatch(/text-8xl/);
   });
 
   it("reports a genuinely empty catalog", () => {
@@ -176,5 +189,18 @@ describe("topicSearchHref", () => {
 
   it("renders every resolution as a link into the cards search", () => {
     expect(render()).toContain('href="/research/cards?q=Healthcare&amp;year=2024&amp;event=CX"');
+  });
+});
+
+describe("shortMonth", () => {
+  it("cuts full month names to three letters", () => {
+    expect(shortMonth("September")).toBe("Sep");
+    expect(shortMonth("November")).toBe("Nov");
+    expect(shortMonth("September/October")).toBe("Sep/Oct");
+  });
+
+  it("passes already-short labels through", () => {
+    expect(shortMonth("Sep/Oct")).toBe("Sep/Oct");
+    expect(shortMonth("Dec")).toBe("Dec");
   });
 });

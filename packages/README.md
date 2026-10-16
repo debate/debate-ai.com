@@ -63,6 +63,16 @@ CardMirror's schema, `.docx` import/export and native `.cmir` format, plus
 `importDocx(file)`, `exportDocxBlob(doc)`, `outlineOf(doc)` and `cardsOf(doc)`, all come
 from `@debate/editor/engine`.
 
+## debate-file-market
+
+Selling research files for wallet balance, mounted at `/research/market` and on the Files sidebar's
+"Sell…" menu item. The framework-free core: the free table-of-contents preview read from a file's
+headings (`outline.ts`), prices and the sell request (`pricing.ts`), the $10 / $20 Stripe top-ups and
+the parsing of their webhook events (`topups.ts`), wire types, a browser client
+(`debate-file-market/client`), and the D1 migration for its four tables (`migrations/`, applied by
+`.github/scripts/migrate-d1.ts`). No dependencies; the pages and the Sell dialog are in `debate-webview`
+and the routes and queries in `apps/debate-ai.com`.
+
 ## debate-flow
 
 Package name `debate-flow-ebb`. The `ebb` local-first, keyboard-first flow editor, ported
@@ -77,6 +87,13 @@ starter template. Publishes the product's feature pages (`content/docs/features/
 notes behind them (`content/docs/internals/`) and package READMEs as a searchable docs site. The web
 app mounts its route modules at `app/docs` and compiles its MDX in the app's own Vite build, so it is
 served at [debate-ai.com/docs](https://debate-ai.com/docs) rather than deployed on its own.
+
+## dev-docs
+
+Package name `@debate/dev-docs`, private and never published or deployed. Internal developer
+documentation: a column-by-column reference for every database table (the app's Drizzle schema
+and the Tabroom tables) and a self-hosting guide covering local setup, the Cloudflare D1
+schema, deployment and every environment variable. No code and no dependencies.
 
 ## debate-practice-drills
 
@@ -112,8 +129,9 @@ bun workspace and its `config/` and `output/` files are read by path rather than
 What the web UI imports for rankings: the dataset list and typed CSV loader over `debate-rankings`'
 output, ratings moved onto the site's scale (`rating-offset.ts`), plus the
 site-only team-label lookup (`findTeamRanking("Harker LL")` and friends) that matches a round
-video's team to its rankings row. Site additions live here so the submodule never diverges
-from upstream.
+video's team to its rankings row, and past-season college policy tables (2009-10 to 2025-26)
+scraped from debatedata.weebly.com (`college-history.ts`). Site additions live here so the
+submodule never diverges from upstream.
 
 ## debate-round
 
@@ -164,7 +182,10 @@ and (moved from
 ## debate-timer
 
 Speech and prep timers for live rounds, with per-format speech times built in. Also
-includes an in-round speech recorder with mic selection, live waveform, and playback.
+includes an in-round speech recorder with mic selection, live waveform, playback and
+optional webcam video, and the joined round recording: every speech in one MP3
+(`@breezystack/lamejs`), optional Kokoro announcements and Moonshine captions
+(`@moonshine-ai/moonshine-js`), and the speech-start modal shared with `debate-videos`.
 
 ## debate-types
 
@@ -178,7 +199,7 @@ with `import type { … } from "@debate/types"`. Depended on by `debate-timer`, 
 
 ## debate-tournaments
 
-Upstream [Tabroom](https://github.com/debate/debate-tournament-tabroom) vendored and adapted
+Upstream [Tabroom](https://github.com/debate/debate-tournaments) vendored and adapted
 to Cloudflare Workers + D1: its public API as a fetch handler (`debate-tournaments/server`,
 mounted at `/api/tabroom`), a React port of its invite/pairings/results pages (mounted at
 `/tournaments`), the route table, its `@tabroom/types` Zod schemas and inferred types

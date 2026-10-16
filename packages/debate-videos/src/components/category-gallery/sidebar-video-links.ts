@@ -1,6 +1,6 @@
 /**
  * @fileoverview The Videos portion of the sidebar tree — the destinations
- * under its "Round Videos" and "Lectures" headings plus the glossary/statistics
+ * under its "Videos" heading (Lectures included) plus the glossary/statistics
  * pair pinned below the tree — as plain data.
  *
  * Three surfaces render these links and used to each restate them: the
@@ -21,10 +21,13 @@ import {
   BarChart3,
   BookOpen,
   Clapperboard,
+  Globe,
   Heart,
   History,
+  Mic,
   Presentation,
   Star,
+  Users,
   type LucideIcon,
 } from "lucide-react";
 import { IconFormatLD, IconFormatNDT, IconFormatPF, IconFormatVP } from "./format-badge-icons";
@@ -44,14 +47,14 @@ export interface SidebarVideoLink {
   /**
    * Show this destination's total unabbreviated. Thousands are shortened to
    * `1.4k` elsewhere to keep a count from crowding out its title; the
-   * College Debates total is the round archive's headline number and reads
+   * College Policy total is the round archive's headline number and reads
    * as `1400`, not `1.4k`.
    */
   exactCount?: boolean;
 }
 
 /** The All Videos node — every round and lecture in the library, and the
- *  app's home page (`/` renders it directly). First child under "Round Videos". */
+ *  app's home page (`/` renders it directly). First child under "Videos". */
 export const VIDEO_ALL_LINK: SidebarVideoLink = {
   id: "allVideos",
   href: "/videos",
@@ -60,12 +63,12 @@ export const VIDEO_ALL_LINK: SidebarVideoLink = {
   exactCount: true,
 };
 
-/** The College Debates node — the round archive's flagship link, and the
+/** The College Policy node — the round archive's flagship link, and the
  *  first of the peer collections it heads in the tree. */
 export const VIDEO_COLLEGE_LINK: SidebarVideoLink = {
   id: "college",
   href: "/videos/college",
-  title: "College Debates",
+  title: "College Policy",
   glyph: IconFormatNDT,
   exactCount: true,
 };
@@ -74,19 +77,22 @@ export const VIDEO_COLLEGE_LINK: SidebarVideoLink = {
  *  rather than children of it: they are sibling collections of the same
  *  round archive, not subsets of the college one. */
 export const VIDEO_FORMAT_LINKS: SidebarVideoLink[] = [
-  { id: "policy", href: "/videos/policy", title: "Policy Debates", glyph: IconFormatVP },
-  { id: "pf", href: "/videos/pf", title: "PF Debates", glyph: IconFormatPF },
-  { id: "ld", href: "/videos/ld", title: "LD Debates", glyph: IconFormatLD },
+  { id: "policy", href: "/videos/policy", title: "HS Policy Teams", glyph: IconFormatVP },
+  { id: "ld", href: "/videos/ld", title: "HS Debate 1v1", glyph: IconFormatLD },
+  { id: "pf", href: "/videos/pf", title: "HS Public Forum", glyph: IconFormatPF },
   { id: "topPicks", href: "/videos/goat", title: "Greatest of All-Time", glyph: Star },
 ];
 
-/** The rest of the video library: My Favorites, the last row under "Round
- *  Videos", then the watch history — which hangs under that same heading now,
- *  after My Favorites — then Lectures, a heading of its own. */
+/** The rest of the video library, the last rows under "Videos": My
+ *  Favorites, the watch history, then Lectures — a single row whose
+ *  categories live on the lectures page itself, not in the sidebar. */
 export const VIDEO_LIBRARY_LINKS: SidebarVideoLink[] = [
   { id: "favorites", href: "/videos/favorites", title: "My Favorites", glyph: Heart },
   { id: "history", href: "/videos/history", title: "Watch History", glyph: History },
   { id: "lectures", href: "/lectures", title: "Lectures", glyph: Presentation },
+  { id: "wsd", href: "/videos/wsd", title: "WSD", glyph: Globe },
+  { id: "acc", href: "/videos/acc", title: "ACC", glyph: Users },
+  { id: "speech", href: "/videos/speech", title: "Speech", glyph: Mic },
 ];
 
 /** The pair pinned below the tree, under its own divider. Team Rankings lives

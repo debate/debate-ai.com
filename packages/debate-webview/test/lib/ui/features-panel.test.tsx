@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 
 import { FeaturesPanel } from "../../../src/lib/ui/features/FeaturesPanel";
 import { SpotlightCard, cardHueShift } from "../../../src/lib/ui/features/effects";
-import { APP_FEATURES } from "../../../src/lib/feature-catalog";
+import { APP_FEATURES, buildFeatureSections } from "../../../src/lib/feature-catalog";
 import {
   README_BADGE_ROWS,
   README_BANNER,
@@ -15,23 +15,42 @@ import { CARDS_VISION } from "../../../src/lib/ui/features/cards-vision";
 describe("FeaturesPanel", () => {
   const html = renderToStaticMarkup(<FeaturesPanel />);
 
-  it("renders every catalogued feature with its route", () => {
-    for (const feature of APP_FEATURES) {
+  it("renders only the first category's features on load", () => {
+    const [first, ...rest] = buildFeatureSections(APP_FEATURES);
+    expect(html).toContain(`data-testid="features-tabpanel-${first.category}"`);
+    for (const feature of first.entries) {
       expect(html).toContain(`href="${feature.href}"`);
+    }
+    for (const section of rest) {
+      expect(html).not.toContain(`data-testid="features-tabpanel-${section.category}"`);
     }
   });
 
-  it("renders each category heading", () => {
+  it("renders a tab per category with its count, the first one selected", () => {
+    const sections = buildFeatureSections(APP_FEATURES);
+    expect(html).toContain('role="tablist"');
+    for (const section of sections) {
+      expect(html).toContain(`id="features-tab-${section.category}"`);
+    }
+    expect(html.match(/aria-selected="true"/g)).toHaveLength(1);
+    expect(html).toMatch(
+      new RegExp(`id="features-tab-${sections[0].category}" aria-selected="true"`),
+    );
     expect(html).toContain("Core Workspaces");
     // Server rendering escapes the ampersand.
     expect(html).toContain("Recognition &amp; Progress");
+    expect(html).toContain(`(${sections[0].entries.length})`);
   });
 
   it("links entries that have a long-form doc into the app's own docs site", () => {
     // The panel takes `featureDocUrl`'s default base, so a doc lands on
-    // `/docs/features/…` without the source file's extension.
-    expect(html).toContain("/docs/features/task-inbox");
-    expect(html).not.toContain("task-inbox.md");
+    // `/docs/features/…` without the source file's extension. Team Research
+    // sits on a later tab, so it is rendered on its own here.
+    const single = renderToStaticMarkup(
+      <FeaturesPanel entries={[APP_FEATURES.find((f) => f.id === "team-research")!]} />,
+    );
+    expect(single).toContain("/docs/features/team-research");
+    expect(single).not.toContain("team-research.md");
   });
 
   it("shows the root README's banner, badges and workspace screenshots", () => {
@@ -70,24 +89,20 @@ describe("FeaturesPanel", () => {
     }
   });
 
-  it("renders a jump-to-category nav", () => {
-    expect(html).toContain('href="#practice"');
-    expect(html).toContain('aria-label="Jump to a category"');
-  });
 
   it("renders only the entries it is given", () => {
     const single = renderToStaticMarkup(
-      <FeaturesPanel entries={[APP_FEATURES.find((f) => f.id === "task-inbox")!]} />,
+      <FeaturesPanel entries={[APP_FEATURES.find((f) => f.id === "team-research")!]} />,
     );
-    expect(single).toContain("Task Inbox");
+    expect(single).toContain("Team Research");
     expect(single).not.toContain("Practice Drills");
-    // A single section means no jump-to-category row.
-    expect(single).not.toContain('aria-label="Jump to a category"');
+    // A single section means no tab row.
+    expect(single).not.toContain('role="tablist"');
   });
 
   it("renders the shared EmptyState when no feature matches the search query", () => {
     const single = renderToStaticMarkup(
-      <FeaturesPanel entries={[APP_FEATURES.find((f) => f.id === "task-inbox")!]} />,
+      <FeaturesPanel entries={[APP_FEATURES.find((f) => f.id === "team-research")!]} />,
     );
     expect(single).not.toContain('data-slot="empty-state"');
 
@@ -99,23 +114,23 @@ describe("FeaturesPanel", () => {
   it("gives every card its own hover hue", () => {
     // Unitless, because `globals.css` adds it to the bare `--accent-hue`
     // inside one `calc()`.
-    for (const [index] of APP_FEATURES.entries()) {
-      expect(html).toContain(`--da-card-hue:${cardHueShift(index)}`);
+    // Only the selected (first) tab's cards are on the page.
+    for (const entry of buildFeatureSections(APP_FEATURES)[0].entries) {
+      expect(html).toContain(`--da-card-hue:${cardHueShift(APP_FEATURES.indexOf(entry))}`);
     }
     expect(html).toContain("da-card-tint");
   });
 
   it("colours a card by its catalog position, not its place in the filter", () => {
-    const index = APP_FEATURES.findIndex((f) => f.id === "task-inbox");
+    const index = APP_FEATURES.findIndex((f) => f.id === "team-research");
     expect(index).toBeGreaterThan(0);
 
     // Rendered alone it is the only card on the page, but it keeps the hue its
     // catalog position gives it — so searching does not recolour the grid.
     const single = renderToStaticMarkup(
-      <FeaturesPanel entries={[APP_FEATURES.find((f) => f.id === "task-inbox")!]} />,
+      <FeaturesPanel entries={[APP_FEATURES.find((f) => f.id === "team-research")!]} />,
     );
     expect(single).toContain(`--da-card-hue:${cardHueShift(0)}`);
-    expect(html).toContain(`--da-card-hue:${cardHueShift(index)}`);
   });
 });
 
@@ -194,5 +209,9 @@ describe("FeaturesPanel downloads", () => {
     expect(html).toContain("Downloads");
     expect(html).toContain("noecbaibfhbmpapofcdkgchfifmoinfj");
     expect(html.indexOf('data-testid="downloads"')).toBeLessThan(html.indexOf('data-testid="readme-badges"'));
+  });
+
+  it("links the Android app on Google Play next to the extension", () => {
+    expect(html).toContain("play.google.com/store/apps/details?id=com.debate.ai");
   });
 });

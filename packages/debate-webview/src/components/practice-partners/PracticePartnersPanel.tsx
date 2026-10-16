@@ -24,7 +24,7 @@
  * and one read is cheaper than getting that derivation wrong twice.
  *
  * Mounted in the Coach workspace's Practice tab and at `/practice/partners`.
- * `/practice/partners#judge` (the sidebar's "Judge Practice Rounds") scrolls
+ * `/practice/partners#judge` scrolls
  * to the rounds needing a judge — or, for someone not volunteering yet, to
  * the profile where they turn that on.
  */
@@ -71,7 +71,7 @@ export function judgeLinkTarget(isJudge: boolean): string {
 /** Actions that mean "this is waiting on you". */
 const ANSWER_ACTIONS = new Set<ChallengeAction>(["accept", "decline", "confirm-judge", "decline-judge"]);
 
-function Block({
+export function Block({
   id,
   title,
   icon,
@@ -105,7 +105,7 @@ function Block({
   );
 }
 
-function SubHeading({ children, count }: { children: ReactNode; count: number }) {
+export function SubHeading({ children, count }: { children: ReactNode; count: number }) {
   return (
     <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
       {children}

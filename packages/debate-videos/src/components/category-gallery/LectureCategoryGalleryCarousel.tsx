@@ -40,6 +40,9 @@ const CATEGORY_GRADIENTS: Record<string, string> = {
   "Camp & Coaching Advice": "from-emerald-500 via-green-500 to-teal-500",
   "Novice & Introductory": "from-sky-500 via-blue-500 to-indigo-500",
   "PF & LD Topic Analysis": "from-lime-500 via-green-500 to-emerald-500",
+  "WSD": "from-blue-500 via-indigo-500 to-purple-500",
+  "ACC": "from-red-500 via-yellow-500 to-green-500",
+  "Speech": "from-pink-500 via-yellow-500 to-orange-500",
 };
 
 export function LectureCategoryGallery({ onCategorySelect, selectedCategory, videosData }: LectureCategoryGalleryProps) {

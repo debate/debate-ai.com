@@ -77,9 +77,9 @@ describe("ToolNavTree sectionIds", () => {
     // column would be a single collapsed heading.
     const html = render({ sectionIds: [RESEARCH_SECTION_ID] });
 
-    expect(html).toContain("/research/cards/coverage");
-    // Last row in Research: "Team Brainstorm Assist".
-    expect(html).toContain("/research/cards/brainstorm");
+    expect(html).toContain("/research/team");
+    // Last row in Research: "Leaderboard".
+    expect(html).toContain("/coaching/leaderboard");
   });
 
   it("no longer lists the two dock destinations under Research", () => {

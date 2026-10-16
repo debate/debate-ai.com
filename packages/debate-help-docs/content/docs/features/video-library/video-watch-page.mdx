@@ -102,6 +102,16 @@ Both buttons need you to be signed in, and use the site's AI model — or
 your own OpenRouter or Anthropic key if you've added one in settings.
 They work from auto-generated captions, so check them against the video.
 
+### Rounds the site has already processed
+
+Many rounds — starting with the Greatest of All-Time collection — have
+been run through the site's speech AI ahead of time. Those open with the
+speech buttons under the player already timed, and each speech's tab has a
+**Summary** (what the speaker did) and an **Analysis** (what they could
+have done instead) with no button to press. The **Summary** tab at the top
+shows the whole round's write-up at once. These are AI-written from the
+captions, and are marked as such.
+
 ### Outcomes — what else the speech could have done
 
 Every speech tab also has an **Outcomes** view. Press **Simulate** and
@@ -141,7 +151,33 @@ whole round's captions, so marking starts gives sharper results.
 A round that is also a [featured round](/docs/features/rounds/featured-rounds), like
 the 2015 NDT Finals, gets a **Speech docs** tab first in the column beside the
 player. Pick a speech, or use the arrows, to read the doc that speech was
-given from. **Open in debate view** opens the whole round with its timers.
+given from. Docs open in read mode: each card shows its tag, its cite and only
+the highlighted text that was read aloud. **Open in debate view** opens the whole round with its timers.
+
+## Team rankings
+
+Under the round's details, a round whose aff and neg teams are in the
+[team rankings](/coaching/rankings) gets a **Team rankings** section: one card
+per team with its rank in the division, rating and deviation, matches played,
+and aff, neg and elim win rates, beside its radar chart. The opponent is drawn
+on each radar as a dashed outline, so you can see where one team is stronger.
+Each team name links to that team's profile.
+
+When both teams are ranked, a **Simulated matchup** card above the team cards
+predicts who wins. It uses the sides the teams actually debated (the
+division's aff/neg split and each team's own aff and neg record) and the
+round's stage: a prelim is one judge, an elim a 3-judge panel and finals a
+5-judge panel, so a favorite's edge grows in elims. It shows each side's win
+chance, the predicted winner and a 1,000-round simulation, and, when the
+round's decision is recorded, whether the favorite won or it was an upset.
+The math is the [matchup simulator](/coaching/rankings)'s, with the rating
+mix each team's profile recommends. It is a simulation, not a ballot. When
+the round label isn't recorded, the round is treated as a prelim.
+
+Only rounds from the current season are matched, since the rankings cover
+this season and a team code from an earlier year belongs to other debaters. A
+team the rankings don't know is left out, and when neither team is found the
+section doesn't appear.
 
 ## Controls
 
@@ -179,6 +215,15 @@ Underneath the player: the rest of the same tournament first, then the
 same debate format or lecture category, then the most recent videos in the
 library — enough passes to fill the row for a video with neither. Clicking
 one opens *its* watch page, so the URL always names what is playing.
+
+Each related row shows its video's length under its action buttons, and the
+**Related videos** heading (or **Results for …** during a search) shows the
+combined length of every listed video that has one, e.g. `6h 40m total`. The
+video's own length sits beside its date and view count under the title.
+Lengths come from the stored durations the admin **Fetch video durations**
+card fills; a video it hasn't reached shows none and adds nothing to the
+total, though the page's own video picks up the player's reading once it
+loads.
 
 ### Up next in the popout player
 

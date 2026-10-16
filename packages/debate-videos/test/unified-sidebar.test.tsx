@@ -14,7 +14,7 @@ vi.mock("next/link", () => ({
 }));
 
 vi.mock("next/navigation", () => ({
-  usePathname: () => "/coaching/ai-coach",
+  usePathname: () => "/coaching/progress",
 }));
 
 const { LibrarySidebarTree } = await import("../src/components/category-gallery/LibrarySidebarTree");
@@ -33,7 +33,7 @@ describe("LibrarySidebarTree", () => {
   const html = renderToStaticMarkup(createElement(LibrarySidebarTree));
 
   it("carries the video library's sections on a tool page", () => {
-    expect(html).toContain("Round Videos");
+    expect(html).toMatch(/<h1[^>]*>Videos<\/h1>/);
     expect(html).toContain('href="/videos/college"');
     expect(html).toContain("Lectures");
   });

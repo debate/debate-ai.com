@@ -2,16 +2,16 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { parseYouTubeVideoId } from "@debate/videos";
-import { Button } from "../../lib/ui/primitives/button";
-import { Badge } from "../../lib/ui/primitives/badge";
-import { Input } from "../../lib/ui/primitives/input";
+import { Button } from "@debate/webview/lib/ui/primitives/button";
+import { Badge } from "@debate/webview/lib/ui/primitives/badge";
+import { Input } from "@debate/webview/lib/ui/primitives/input";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../../lib/ui/primitives/card";
+} from "@debate/webview/lib/ui/primitives/card";
 import {
   Dialog,
   DialogContent,
@@ -19,14 +19,14 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "../../lib/ui/primitives/dialog";
+} from "@debate/webview/lib/ui/primitives/dialog";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../lib/ui/primitives/select";
+} from "@debate/webview/lib/ui/primitives/select";
 import { VideoContentDialog, type ContentDialogVideo } from "./VideoContentDialog";
 import { VideoEditDialog, emptyLibraryVideo, type LibraryVideo } from "./VideoEditDialog";
 import { formatCount } from "@debate/videos/components/category-gallery/format-count";

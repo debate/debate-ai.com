@@ -94,11 +94,11 @@ describe("standardizeRoundLevel", () => {
 
   it("formats canonical levels for display", () => {
     expect(formatRoundLevel("R6")).toBe("Round 6");
-    expect(formatRoundLevel("DOUBLES")).toBe("Double Octofinals");
-    expect(formatRoundLevel("OCTOS")).toBe("Octofinals");
-    expect(formatRoundLevel("QUARTERS")).toBe("Quarterfinals");
-    expect(formatRoundLevel("SEMIS")).toBe("Semifinals");
-    expect(formatRoundLevel("FINALS")).toBe("Finals");
+    expect(formatRoundLevel("DOUBLES")).toBe("doubles");
+    expect(formatRoundLevel("OCTOS")).toBe("octas");
+    expect(formatRoundLevel("QUARTERS")).toBe("quarters");
+    expect(formatRoundLevel("SEMIS")).toBe("semis");
+    expect(formatRoundLevel("FINALS")).toBe("final");
   });
 
   it("sorts prelims numerically rather than lexically", () => {

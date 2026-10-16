@@ -13,7 +13,7 @@ const guides = [
     title: "Training tools",
     description:
       "Coach a flowed round: argument trees, AI coaching prompts, drills, coach materials, scouting, and briefings — the Coach Workspace end to end.",
-    routes: ["/coaching", "/coaching/ai-coach", "/practice/drills", "/coaching/programs"],
+    routes: ["/coaching", "/coaching?section=ai-coach", "/practice/drills", "/coaching?section=programs"],
   },
   {
     href: "/docs/features/practice-tools",
@@ -29,7 +29,7 @@ const guides = [
     title: "Research collaboration",
     description:
       "Run a squad's research sprint: topic coverage, the prep room, task routing, brainstorming, peer review, quests, and the leaderboard — the Research Workspace end to end.",
-    routes: ["/research", "/research/cards/prep-room", "/research/cards/inbox"],
+    routes: ["/research", "/research/team"],
   },
 ]
 

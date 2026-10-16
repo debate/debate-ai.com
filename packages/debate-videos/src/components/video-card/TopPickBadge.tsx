@@ -8,6 +8,7 @@
 import * as React from "react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
 import { getTopPickBadgeInfo, type TopPickBadgeInfo } from "../../lib/topPickBadges"
+import { getTournamentLogo } from "./tournamentLogos"
 import { cn } from "../../ui/lib/utils"
 
 export interface TopPickBadgeProps {
@@ -155,9 +156,33 @@ export function TopPickBadge({
               {effectiveYear && (
                 <span className="text-amber-300/90 font-medium">'{String(effectiveYear).slice(-2)}</span>
               )}
-              {cleanTournament && (
-                <span>• {cleanTournament}</span>
-              )}
+              {cleanTournament && (() => {
+                const logo = getTournamentLogo(cleanTournament);
+                if (logo) {
+                  if (typeof logo === "string") {
+                    return (
+                      <span className="flex items-center gap-1">
+                        • <img src={logo} alt={cleanTournament} className="h-3 w-auto" />
+                      </span>
+                    );
+                  }
+                  if (typeof logo === "function") {
+                    const LogoComp = logo;
+                    return (
+                      <span className="flex items-center gap-1">
+                        • <img src={(logo as any)?.src??logo} alt={cleanTournament} className="h-3 w-auto" />
+                      </span>
+                    );
+                  }
+                  // StaticImageData from Next.js
+                  return (
+                    <span className="flex items-center gap-1">
+                      • <img src={logo.src} alt={cleanTournament} className="h-3 w-auto" />
+                    </span>
+                  );
+                }
+                return <span>• {cleanTournament}</span>;
+              })()}
               {effectiveRound && (
                 <span>• {effectiveRound}</span>
               )}

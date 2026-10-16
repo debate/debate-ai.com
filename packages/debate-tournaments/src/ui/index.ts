@@ -4,6 +4,7 @@ export { UpcomingTournamentsPage, HostedTournamentButton } from "./pages/Upcomin
 export { HostTournamentPage } from "./pages/HostTournamentPage";
 export { TournamentAdminPage } from "./pages/TournamentAdminPage";
 export { TabroomTournamentPage } from "./pages/TabroomTournamentPage";
+export { BallotPage } from "./pages/BallotPage";
 export { TournamentInvitePage } from "./pages/TournamentInvitePage";
 export { RoundsPage } from "./pages/RoundsPage";
 export { RoundPage } from "./pages/RoundPage";
@@ -27,3 +28,4 @@ export {
 } from "../host/formats";
 export * from "./client";
 export { DEMO_ADMIN, DEMO_TOURN_ID } from "../host/demo-account";
+export { DebateMajorsCalendar, type DebateMajorsCalendarProps, CHAMPIONSHIP_IDS, DEBATE_MAJORS, type DebateMajor } from "./majors";

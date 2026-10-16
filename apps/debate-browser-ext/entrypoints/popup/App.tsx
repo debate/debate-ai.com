@@ -1,4 +1,4 @@
-import { BookOpen, Settings2, Timer } from 'lucide-react';
+import { BookOpen, Settings2, Smartphone, Timer } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { browser } from 'wxt/browser';
 
@@ -12,9 +12,10 @@ import {
   parseSkipDomains,
   type ReuseMatch,
 } from '@/src/reuse/api';
-import { toggleReaderPanel } from '@/src/reader/panel';
+import { openReaderForTab } from '@/src/reader/panel';
 import { getSettings } from '@/src/settings/settings';
 import { requestTimerWindow } from '@/src/timer/window';
+import { openExtensionSettings } from '@/src/settings/open';
 
 /**
  * Corpus matches annotated automatically when the popup opens on a signed-in
@@ -23,6 +24,9 @@ import { requestTimerWindow } from '@/src/timer/window';
  * rest wait for a click.
  */
 const AUTO_ANNOTATE_LIMIT = 3;
+
+/** The Debate AI Android app on Google Play, linked from the popup's footer. */
+const ANDROID_APP_URL = 'https://play.google.com/store/apps/details?id=com.debate.ai';
 
 type StatusKind = 'idle' | 'loading' | 'safe' | 'cut' | 'skip' | 'error';
 
@@ -157,7 +161,7 @@ export default function App() {
           className="mb-2 w-full"
           onClick={() => {
             if (tabId == null) return;
-            void toggleReaderPanel(tabId)
+            void openReaderForTab({ id: tabId, url: pageUrl })
               .catch((err) => console.warn('Could not show the article panel on this page:', err))
               .finally(() => window.close());
           }}
@@ -171,7 +175,7 @@ export default function App() {
         variant="outline"
         className="mb-2 w-full"
         onClick={() => {
-          void browser.runtime.openOptionsPage();
+          openExtensionSettings();
           window.close();
         }}
       >
@@ -229,6 +233,16 @@ export default function App() {
               : 'Check again'}
         </Button>
       )}
+
+      <a
+        href={ANDROID_APP_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-3 flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+      >
+        <Smartphone className="h-3.5 w-3.5" />
+        Get it on Google Play
+      </a>
     </div>
   );
 }

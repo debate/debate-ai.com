@@ -1,0 +1,59 @@
+# ==============================================================================
+# Windows Cross-Compile Build Container for Debate AI Native Wrapper (Tauri v2)
+# Produces: NSIS installer (.exe) for x86_64-pc-windows-msvc
+# Windows containers are not needed: cargo-xwin downloads the MSVC CRT/SDK and
+# cross-compiles from Linux. MSI (WiX) cannot be built here; NSIS only.
+# ==============================================================================
+
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV RUSTUP_HOME=/usr/local/rustup
+ENV CARGO_HOME=/usr/local/cargo
+ENV PATH="/usr/local/cargo/bin:/root/.bun/bin:/usr/local/bin:${PATH}"
+
+# Install compilation dependencies, LLVM toolchain (clang/lld) and NSIS
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    wget \
+    file \
+    pkg-config \
+    libssl-dev \
+    llvm \
+    clang \
+    lld \
+    nsis \
+    unzip \
+    git \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Rust toolchain with the Windows MSVC target
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable \
+    && rustup target add x86_64-pc-windows-msvc
+
+# Install cargo-xwin (MSVC cross-compilation runner)
+RUN cargo install --locked cargo-xwin
+
+# Install Bun
+RUN curl -fsSL https://bun.sh/install | bash
+
+# Install Node.js 22 LTS
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy application sources
+COPY . .
+
+# Install dependencies and configure active profile
+RUN bun install --ignore-scripts
+RUN node scripts/configure.mjs
+
+# Output volume for generated packages
+VOLUME ["/output"]
+
+CMD ["sh", "-c", "bunx tauri build --runner cargo-xwin --target x86_64-pc-windows-msvc --bundles nsis && mkdir -p /output && cp -r src-tauri/target/x86_64-pc-windows-msvc/release/bundle/* /output/ && echo 'Build complete! Artifacts copied to /output'"]

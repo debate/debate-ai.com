@@ -22,7 +22,17 @@ import { browser } from 'wxt/browser';
 
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
-import { NotReadableError, articleToPlainText, extractArticle } from '@/src/article/extract';
+import {
+  NotReadableError,
+  articleToPlainText,
+  extractArticle,
+  isSearchResultsPage,
+} from '@/src/article/extract';
+import {
+  RemoteExtractError,
+  fetchRemoteArticle,
+  prefersRemoteExtraction,
+} from '@/src/article/remote';
 import type { Article, ChatMessage, PageSnapshot } from '@/src/article/types';
 import {
   AiNotConfiguredError,
@@ -58,6 +68,37 @@ import {
   getSettings,
   type Settings,
 } from '@/src/settings/settings';
+
+/**
+ * The article for a URL from the server (src/article/remote.ts): a YouTube
+ * transcript, or extract-webpage for PDFs and anything else.
+ */
+async function readRemotely(url: string, title?: string): Promise<Article> {
+  const { apiBase } = await getSettings();
+  return fetchRemoteArticle(url, { apiBase, title });
+}
+
+/**
+ * Reading mode from the tab's own DOM, which sees the page as the reader does
+ * (past paywalls, client-rendered). YouTube and PDFs go to the server first,
+ * and a page the local extractor finds nothing in falls back to it.
+ */
+async function articleFromSnapshot(snapshot: PageSnapshot): Promise<Article> {
+  if (prefersRemoteExtraction(snapshot.url, snapshot)) {
+    return readRemotely(snapshot.url, snapshot.title);
+  }
+  try {
+    return extractArticle(snapshot);
+  } catch (error) {
+    if (!(error instanceof NotReadableError)) throw error;
+    if (!/^https?:/i.test(snapshot.url) || isSearchResultsPage(snapshot.url)) throw error;
+    try {
+      return await readRemotely(snapshot.url, snapshot.title);
+    } catch {
+      throw error;
+    }
+  }
+}
 
 const MIN_FONT_SCALE = 0.5;
 const MAX_FONT_SCALE = 1.8;
@@ -247,19 +288,28 @@ export default function App() {
     setExtractError('');
     setPageChanged(false);
     try {
-      const response = (await browser.runtime.sendMessage({
-        type: READER_SNAPSHOT_MESSAGE,
-      })) as { ok: boolean; snapshot?: PageSnapshot; error?: string };
+      // Opened as its own tab for a page the panel can't sit on (a PDF, a
+      // browser page): read that URL from the server.
+      const requestedUrl = new URLSearchParams(window.location.search).get('url');
+      let extracted: Article;
+      let selection = '';
+      if (requestedUrl) {
+        extracted = await readRemotely(requestedUrl);
+      } else {
+        const response = (await browser.runtime.sendMessage({
+          type: READER_SNAPSHOT_MESSAGE,
+        })) as { ok: boolean; snapshot?: PageSnapshot; error?: string };
 
-      if (!response?.ok || !response.snapshot) {
-        setArticle(null);
-        setExtractError(response?.error || 'Could not read this page.');
-        return;
+        if (!response?.ok || !response.snapshot) {
+          setArticle(null);
+          setExtractError(response?.error || 'Could not read this page.');
+          return;
+        }
+        selection = response.snapshot.selectionText.trim();
+        extracted = await articleFromSnapshot(response.snapshot);
       }
-
-      const extracted = extractArticle(response.snapshot);
       setArticle(extracted);
-      setSelectionText(response.snapshot.selectionText.trim());
+      setSelectionText(selection);
       // A fresh page starts a fresh conversation — the old answers were about
       // a different article.
       setChatHistory([]);
@@ -277,7 +327,7 @@ export default function App() {
     } catch (error) {
       setArticle(null);
       setExtractError(
-        error instanceof NotReadableError
+        error instanceof NotReadableError || error instanceof RemoteExtractError
           ? error.message
           : `Could not read this page: ${error instanceof Error ? error.message : String(error)}`,
       );

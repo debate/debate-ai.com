@@ -1,11 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { DatabaseSync } from "node:sqlite";
 import {
+  applySchemaRules,
   booleanColumns,
   mysqlInsertsToSqlite,
   mysqlStringToSqlite,
   parseMysqlTables,
+  seedCleanupStatements,
   tablesToSqlite,
+  unclassifiedColumns,
 } from "../scripts/lib/mysql-to-sqlite.mjs";
 
 const DUMP = `
@@ -60,5 +63,150 @@ describe("mysql-to-sqlite", () => {
 
   it("re-quotes MySQL string escapes", () => {
     expect(mysqlStringToSqlite("'a\\'b\\nc'")).toBe("'a''b\nc'");
+  });
+});
+
+const RULES_DUMP = `
+CREATE TABLE \`tourn\` (
+  \`id\` int(11) NOT NULL AUTO_INCREMENT,
+  \`webname\` varchar(64) DEFAULT NULL,
+  \`hidden\` tinyint(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (\`id\`),
+  KEY \`id\` (\`id\`)
+) ENGINE=InnoDB;
+CREATE TABLE \`person\` (
+  \`id\` int(11) NOT NULL AUTO_INCREMENT,
+  \`email\` varchar(127) NOT NULL DEFAULT '',
+  \`phone\` bigint(20) DEFAULT NULL,
+  \`password\` varchar(128) DEFAULT NULL,
+  PRIMARY KEY (\`id\`),
+  UNIQUE KEY \`person_email\` (\`email\`),
+  KEY \`email\` (\`email\`)
+) ENGINE=InnoDB;
+CREATE TABLE \`ballot\` (
+  \`id\` int(11) NOT NULL AUTO_INCREMENT,
+  \`side\` tinyint(1) NOT NULL DEFAULT 0,
+  \`bye\` tinyint(1) NOT NULL DEFAULT 0,
+  \`panel\` int(11) NOT NULL DEFAULT 0,
+  \`entered_by\` int(11) DEFAULT NULL,
+  PRIMARY KEY (\`id\`),
+  UNIQUE KEY \`ballot_ejp\` (\`panel\`,\`entered_by\`),
+  UNIQUE KEY \`uk_ballots\` (\`entered_by\`,\`panel\`),
+  KEY \`panel\` (\`panel\`)
+) ENGINE=InnoDB;
+CREATE TABLE \`tourn_setting\` (
+  \`id\` int(11) NOT NULL AUTO_INCREMENT,
+  \`tourn\` int(11) NOT NULL DEFAULT 0,
+  \`tag\` varchar(31) NOT NULL DEFAULT '',
+  PRIMARY KEY (\`id\`),
+  UNIQUE KEY \`uk_tourn_setting\` (\`tourn\`,\`tag\`),
+  UNIQUE KEY \`tourn_tag\` (\`tourn\`,\`tag\`),
+  KEY \`tourn\` (\`tourn\`),
+  KEY \`tags\` (\`tag\`,\`tourn\`)
+) ENGINE=InnoDB;
+CREATE TABLE \`panel\` (
+  \`id\` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (\`id\`)
+) ENGINE=InnoDB;
+INSERT INTO \`tourn\` VALUES (1,'open',0);
+INSERT INTO \`person\` VALUES (1,'a@b.c',4155550100,'$2b$hash');
+INSERT INTO \`tourn_setting\` VALUES (1,0,'orphan');
+`;
+
+describe("schema rules", () => {
+  const tables = applySchemaRules(parseMysqlTables(RULES_DUMP));
+  const byName = (name: string) => tables.find((t) => t.name === name)!;
+  const col = (table: string, name: string) => byName(table).columns.find((c) => c.name === name)!;
+  const indexNames = (table: string) => byName(table).indexes.map((i) => i.name);
+
+  it("drops indexes the primary key or another index already covers", () => {
+    expect(indexNames("tourn")).toEqual(["webname"]);
+    expect(indexNames("person")).toEqual(["person_email"]);
+    expect(indexNames("ballot")).toEqual(["ballot_ejp"]);
+    expect(indexNames("tourn_setting")).toEqual(["tourn_tag", "tags"]);
+    expect(byName("tourn_setting").droppedIndexes.sort()).toEqual(["tourn", "uk_tourn_setting"]);
+  });
+
+  it("widens lossy types and checks flag columns", () => {
+    expect(col("person", "phone").type).toBe("TEXT");
+    expect(col("tourn", "hidden").check).toBe("IN (0, 1)");
+    expect(col("ballot", "side").check).toBe("IN (0, 1, 2)");
+  });
+
+  it("takes references from the registry, not from column names", () => {
+    expect(col("person", "email").reference).toBeNull();
+    expect(col("ballot", "panel").reference).toBe("panel");
+    expect(col("ballot", "entered_by").reference).toBe("person");
+    expect(col("tourn_setting", "tag").reference).toBeNull();
+  });
+
+  it("turns a reference's DEFAULT 0 into a nullable column", () => {
+    expect(col("ballot", "panel")).toMatchObject({ sentinel: true, notNull: false, default: "NULL" });
+    const db = new DatabaseSync(":memory:");
+    for (const s of tablesToSqlite(tables)) db.exec(s);
+    db.exec("INSERT INTO ballot (side) VALUES (2)");
+    expect(db.prepare("SELECT panel FROM ballot").get()).toEqual({ panel: null });
+    expect(() => db.exec("INSERT INTO ballot (side) VALUES (3)")).toThrow(/CHECK/);
+    expect(() => db.exec("INSERT INTO tourn (hidden) VALUES (2)")).toThrow(/CHECK/);
+  });
+
+  it("cleans sample rows: sentinels become NULL, credentials and contact details are blanked", () => {
+    const db = new DatabaseSync(":memory:");
+    for (const s of tablesToSqlite(tables)) db.exec(s);
+    for (const s of mysqlInsertsToSqlite(RULES_DUMP)) db.exec(s);
+    for (const s of seedCleanupStatements(tables)) db.exec(s);
+    expect(db.prepare("SELECT tourn FROM tourn_setting").get()).toEqual({ tourn: null });
+    expect(db.prepare("SELECT email, phone, password FROM person").get()).toEqual({ email: "a@b.c", phone: null, password: null });
+  });
+});
+
+describe("relationship registry", () => {
+  const STUDENT_BALLOT = `
+CREATE TABLE \`panel\` (
+  \`id\` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (\`id\`)
+) ENGINE=InnoDB;
+CREATE TABLE \`student_ballot\` (
+  \`id\` int(11) NOT NULL AUTO_INCREMENT,
+  \`panel\` int(11) NOT NULL DEFAULT 0,
+  \`widget\` int(11) DEFAULT NULL,
+  \`panel_copy\` int(11) DEFAULT NULL,
+  PRIMARY KEY (\`id\`),
+  CONSTRAINT \`fk_copy\` FOREIGN KEY (\`panel_copy\`) REFERENCES \`panel\` (\`id\`)
+) ENGINE=InnoDB;
+CREATE TABLE \`widget\` (
+  \`id\` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (\`id\`)
+) ENGINE=InnoDB;
+CREATE TABLE \`coach\` (
+  \`id\` int(11) NOT NULL AUTO_INCREMENT,
+  \`entry\` int(11) NOT NULL DEFAULT 0,
+  \`student\` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (\`id\`),
+  UNIQUE KEY \`uq_entry\` (\`entry\`),
+  UNIQUE KEY \`uq_student\` (\`student\`)
+) ENGINE=InnoDB;
+`;
+  const parsed = parseMysqlTables(STUDENT_BALLOT);
+  const tables = applySchemaRules(parsed);
+  const col = (table: string, name: string) => tables.find((t) => t.name === table)!.columns.find((c) => c.name === name)!;
+
+  it("leaves an unverified reference's 0 alone", () => {
+    expect(col("student_ballot", "panel")).toMatchObject({ reference: "panel", verified: false, sentinel: false, default: "0" });
+  });
+
+  it("flags look-alike columns and undeclared foreign keys for a person to classify", () => {
+    expect(unclassifiedColumns(parsed)).toEqual([
+      "student_ballot.widget",
+      "student_ballot.panel_copy (upstream foreign key to panel)",
+    ]);
+  });
+
+  it("lets coaches credited on a student and on an entry coexist (NULL, not 0, for the other)", () => {
+    const db = new DatabaseSync(":memory:");
+    for (const s of tablesToSqlite(tables)) db.exec(s);
+    db.exec("INSERT INTO coach (student) VALUES (1); INSERT INTO coach (student) VALUES (2)");
+    db.exec("INSERT INTO coach (entry) VALUES (1); INSERT INTO coach (entry) VALUES (2)");
+    expect(db.prepare("SELECT count(*) AS n FROM coach").get()).toEqual({ n: 4 });
   });
 });

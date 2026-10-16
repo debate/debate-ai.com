@@ -1,7 +1,7 @@
 /**
  * @fileoverview The Research / Practice / Coaching / Insights tool sections
  * rendered in
- * the videos sidebar underneath the "Round Videos" and "Lectures" nodes. Mirrors the entries of
+ * the videos sidebar underneath the "Videos" node. Mirrors the entries of
  * the app's `/tools` catalog (`app/tools/tool-groups.ts`), regrouped into the
  * four headings the sidebar shows and trimmed to the label, href and icon
  * the tree needs — the sidebar lives in this package, which cannot import
@@ -11,27 +11,16 @@
  */
 
 import {
-  BadgeCheck,
   BarChart3,
   BookOpen,
-  Bot,
-  CalendarCheck,
-  CalendarDays,
   ChartColumn,
   ChartLine,
-  ChartPie,
   Clapperboard,
-  ClipboardCheck,
   ClipboardList,
-  DoorOpen,
   Dumbbell,
   FileText,
-  FolderOpen,
-  Gavel,
   GraduationCap,
-  Inbox,
   Library,
-  Lightbulb,
   Medal,
   MessageSquare,
   Presentation,
@@ -48,6 +37,7 @@ import {
   Coins,
   TrendingUp,
   Trophy,
+  Users,
   type LucideIcon,
 } from "lucide-react";
 
@@ -63,6 +53,13 @@ export interface SidebarToolLink {
    * baked-in colors next to them; see `TreeItem`'s `TREE_ITEM_ICON_CLASS`.
    */
   icon: LucideIcon;
+  /**
+   * Other routes that belong to this row, each counted with the pages below
+   * it: they light the row up, open its section and keep the sidebar mounted.
+   * Used when one row stands for a page that absorbed another, like News &
+   * Forums, whose single threads still live under `/practice/forums`.
+   */
+  aliases?: readonly string[];
 }
 
 export interface SidebarToolSection {
@@ -135,12 +132,9 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
     tools: [
       { href: "/research", title: "Research Workspace", icon: Search },
       { href: "/research/cards", title: "Card Search", icon: Search },
-      { href: "/research/cards/coverage", title: "Topic Coverage", icon: ChartPie },
-      { href: "/research/cards/prep-room", title: "Collaboration Prep Room", icon: DoorOpen },
-      { href: "/research/cards/reviews", title: "Review Queue", icon: ClipboardCheck },
-      { href: "/research/cards/inbox", title: "Task Inbox", icon: Inbox },
-      { href: "/research/cards/contributions", title: "Contributions Feed", icon: Rss },
-      { href: "/research/cards/brainstorm", title: "Team Brainstorm Assist", icon: Lightbulb },
+      // Topic Coverage, Collaboration Prep Room, Review Queue, Task Inbox,
+      // Contributions Feed and Team Brainstorm Assist, one tab each.
+      { href: "/research/team", title: "Team Research", icon: Users },
       // Lives under /coaching, but it ranks research contributors by
       // helpfulness, so it sits with the research tools.
       { href: "/coaching/leaderboard", title: "Leaderboard", icon: Trophy },
@@ -148,7 +142,7 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
   },
   {
     // Simulate rounds, rehearse individual skills, compete with other users
-    // or AI, and test predictions.
+    // or AI.
     id: "practice",
     title: "Practice",
     // `/practice` (the old Practice Round Simulator) redirects here: the two
@@ -160,13 +154,10 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       // Pre-Round Briefings, Scout-to-Strategy, Opponent Team Profiles, Judge
       // Profiles and Prep Notes, one tab each.
       { href: "/practice/prep", title: "Prep Workspace", icon: ClipboardList },
+      { href: "/practice/judge-decision", title: "AI Judge Decision", icon: Scale },
       { href: "/practice/partners", title: "Practice Partners", icon: Handshake },
-      // Same page, landing on the open judge seats (or the profile, for
-      // someone who has not volunteered to judge yet).
-      { href: "/practice/partners#judge", title: "Judge Practice Rounds", icon: Gavel },
-      { href: "/practice/predictions", title: "Prediction Markets", icon: Coins },
       { href: "/practice/drills", title: "Practice Drills", icon: Repeat },
-      { href: "/practice/judge-decision", title: "AI Judge Decision", icon: BadgeCheck },
+      { href: "/reason-editor", title: "Personal Dictionary", icon: BookOpen },
     ],
   },
   {
@@ -182,14 +173,13 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       // (`/practice/tabroom`) is still routed but deliberately has no sidebar row.
       { href: "/tournaments", title: "Tournaments", icon: Trophy },
       { href: "/coaching", title: "Coach Workspace", icon: Presentation },
-      { href: "/coaching/ai-coach", title: "AI Coach Mode", icon: Bot },
-      { href: "/coaching/programs", title: "Coaching Programs", icon: CalendarCheck },
-      { href: "/coaching/calendar", title: "Team Calendar", icon: CalendarDays },
-      { href: "/coaching/materials", title: "Coach Materials", icon: FolderOpen },
       { href: "/coaching/progress", title: "Research Progress", icon: TrendingUp },
       { href: "/coaching/laptopless", title: "Laptop-less Debating", icon: Smartphone },
-      // The community's news feed, listed last among the coaching tools.
-      { href: "/practice/forums", title: "Latest News", icon: Rss },
+      // The community's news feed and forums, one tabbed page, listed last
+      // among the coaching tools. Forum threads keep their
+      // `/practice/forums/<id>` addresses, so that prefix is this row's too.
+      { href: "/news", title: "News & Forums", icon: Rss, aliases: ["/practice/forums"] },
+      { href: "/coaching/outcomes", title: "Vulnerability Reports", icon: ChartLine },
     ],
   },
   {
@@ -203,6 +193,7 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/coaching/rankings", title: "Team Rankings", icon: Medal },
       { href: "/practice/level", title: "Debater Level", icon: Star },
       { href: "/practice/statistics", title: "Topics & Video Statistics", icon: BarChart3 },
+      { href: "/practice/predictions", title: "Prediction Markets", icon: Coins },
       { href: "/practice/rules", title: "Formats & Rules", icon: Scale },
       { href: "/practice/glossary", title: "Glossary of Terms", icon: BookOpen },
       { href: "/practice/features", title: "All Features", icon: Sparkles },

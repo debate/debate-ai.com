@@ -55,8 +55,10 @@ import type React from "react"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { AlertCircle, ArrowLeft, Calendar, Eye, ListPlus, Loader2 } from "lucide-react"
+import { AlertCircle, ArrowLeft, Calendar, Clock, Eye, ListOrdered, ListPlus, Loader2 } from "lucide-react"
 import { CommentSection } from "@debate/comments"
+import { SpeechStartsDialog, type SpeechDetectionControl } from "@debate/timer"
+import { formatCount } from "../../components/category-gallery/format-count"
 
 import { WatchToolbar } from "../../components/watch/WatchToolbar"
 import { WatchSidePanel, type WatchSideTab } from "../../components/watch/WatchSidePanel"
@@ -66,6 +68,8 @@ import { WatchQueuePanel } from "../../components/watch/WatchQueuePanel"
 import { WatchSearchBox } from "../../components/watch/WatchSearchBox"
 import { WatchStackPlaylist } from "../../components/watch/WatchStackPlaylist"
 import { WatchSpeechTimeline } from "../../components/watch/WatchSpeechTimeline"
+import { WatchTeamStats } from "../../components/watch/WatchTeamStats"
+import { WatchRankingsPrediction } from "../../components/watch/WatchRankingsPrediction"
 import type { SpeechFocusRequest } from "../../components/watch/WatchRoundPanel"
 import { useDocumentPictureInPicture } from "../../components/video-player/useDocumentPictureInPicture"
 import {
@@ -81,6 +85,7 @@ import {
   TOURNAMENT_COLORS,
   getRoundBadgeColor,
   formatVideoDate,
+  getTournamentLogo,
 } from "../../components/video-card/videoCardUtils"
 import { cn } from "../../ui/lib/utils"
 import { LecturesSidebarShell } from "../LecturesSidebarShell"
@@ -94,6 +99,11 @@ import {
 } from "../../state/videoPlayerStore"
 import { savePlayerState } from "../../state/videoPlayerPersistence"
 import { recordWatchProgress } from "../../state/videoWatchHistory"
+import {
+  formatVideoDuration,
+  useVideoDuration,
+  useVideoDurationTotal,
+} from "../../state/videoDurations"
 import { videoWatchHref } from "../../lib/video-slug"
 import { videoRouteHref } from "../../lib/video-route"
 import type { VideoDocument } from "../../lib/video-documents"
@@ -104,6 +114,7 @@ import {
   type RoundSpeech,
 } from "../../lib/round-speeches"
 import { resolveRoundSpeeches } from "../../lib/round-formats"
+import { stripArgumentLines } from "../../lib/video-description"
 import type { RoundContext } from "../../lib/speech-outcomes"
 import { readSpeechStarts, writeSpeechStart } from "../../state/speechStartMarks"
 import { readSpeechSegmentation, writeSpeechSegmentation } from "../../state/speechAiCache"
@@ -113,7 +124,6 @@ import {
   applySpeechSegmentation,
   type SpeechSegmentation,
 } from "../../lib/speech-segmentation"
-import type { SpeechDetectionControl } from "../../components/watch/WatchRoundPanel"
 import type { VideoType } from "../../types/videos"
 
 /** Shared empty default, so an absent list keeps one identity across renders. */
@@ -121,6 +131,34 @@ const NO_VIDEOS: VideoType[] = []
 
 /** How many search results the list under the player shows at once. */
 const RELATED_SEARCH_PAGE_SIZE = 40
+
+/** A team badge with its argument in small type underneath, when recorded. */
+function TeamWithArgument({
+  argument,
+  side,
+  children,
+}: {
+  argument?: string | null
+  side: "aff" | "neg"
+  children: React.ReactNode
+}) {
+  const label = argument?.trim()
+  if (!label) return <>{children}</>
+  return (
+    <span className="inline-flex max-w-[16rem] flex-col items-start gap-0.5">
+      {children}
+      <span
+        title={`${side === "aff" ? "1AC" : "2NR"}: ${label}`}
+        className={cn(
+          "text-xs font-medium leading-tight",
+          side === "aff" ? "text-blue-700 dark:text-blue-300" : "text-red-700 dark:text-red-300",
+        )}
+      >
+        {label}
+      </span>
+    </span>
+  )
+}
 
 /** How long the permalink control shows its "copied" tick. */
 const COPIED_FEEDBACK_MS = 1800
@@ -196,6 +234,13 @@ export function VideoWatchPage({
     arg2NR,
   ] = video
 
+  // The arguments already show under the team names, so the description's
+  // own "1AC: …" / "2NR: …" lines would only repeat them.
+  const shownDescription = useMemo(
+    () => (description ? stripArgumentLines(description, affTeam ? arg1AC : null, negTeam ? arg2NR : null) : ""),
+    [description, affTeam, negTeam, arg1AC, arg2NR],
+  )
+
   const styleNumber = typeof style === "number" ? style : undefined
   const categoryLabel = typeof style === "string" ? style : undefined
   const year = useMemo(() => new Date(date).getFullYear(), [date])
@@ -218,12 +263,13 @@ export function VideoWatchPage({
   const clearActiveVideo = useVideoPlayerStore((state) => state.clearActiveVideo)
 
   const { state: viewState, actions: viewActions } = useVideoState()
-  const { counts, lectureCategories } = useVideoMeta()
+  const { counts } = useVideoMeta()
 
   // The search box above the related videos swaps the list under the player
   // for the library's matches — in place, with no navigation, so the video
   // above keeps playing while the reader lines up what to watch next.
   const [relatedQuery, setRelatedQuery] = useState("")
+  const [decisionRevealed, setDecisionRevealed] = useState(false);
   const searchFeed = useVideoFeed({
     source: "all",
     q: relatedQuery,
@@ -235,6 +281,12 @@ export function VideoWatchPage({
     [searchFeed.videos, videoId],
   )
   const listedVideos = relatedQuery ? searchResults : related
+  // Lengths come from the stored `video_durations` table, so a video the
+  // admin backfill has not reached yet simply shows none (the player's own
+  // reading fills in for the video on screen once it loads).
+  const listedIds = useMemo(() => listedVideos.map((candidate) => candidate[0]), [listedVideos])
+  const listedDurationTotal = useVideoDurationTotal(listedIds)
+  const storedDuration = useVideoDuration(videoId)
   const unqueuedListed = useMemo(() => {
     const queued = new Set(queue.map((item) => item.videoId))
     return listedVideos.filter((candidate) => !queued.has(candidate[0]))
@@ -292,7 +344,6 @@ export function VideoWatchPage({
   const [reloadKey, setReloadKey] = useState(0)
   /** Position a self-inflicted reload (PiP, retry) has to resume from. */
   const [resumeSeconds, setResumeSeconds] = useState<number | null>(null)
-  const [lecturesExpanded, setLecturesExpanded] = useState(true)
   /**
    * Whether this browser exposes a clipboard for the permalink control.
    * Resolved in an effect rather than read during render: `navigator` does
@@ -331,6 +382,7 @@ export function VideoWatchPage({
     [videoId],
   )
   const markedKeys = useMemo(() => new Set(Object.keys(speechMarks)), [speechMarks])
+  const [startsDialogOpen, setStartsDialogOpen] = useState(false)
   /** The speeches the AI found in the captions, kept in this browser per video. */
   const [segmentation, setSegmentation] = useState<SpeechSegmentation | null>(null)
   const [detecting, setDetecting] = useState(false)
@@ -355,6 +407,13 @@ export function VideoWatchPage({
       ),
     [baseSpeeches, segmentation, speechMarks, sentences],
   )
+  /** The speeches as the shared speech-start modal (@debate/timer) takes them. */
+  const speechStartItems = useMemo(() => speeches.map(({ key, label }) => ({ key, label })), [speeches])
+  const speechStartSeconds = useMemo(() => {
+    const starts: Record<string, number> = {}
+    for (const speech of speeches) if (speech.startSeconds !== null) starts[speech.key] = speech.startSeconds
+    return starts
+  }, [speeches])
   const roundTranscript = useMemo(
     () => (baseSpeeches.length > 0 ? captionText(sentences) : ""),
     [baseSpeeches.length, sentences],
@@ -703,9 +762,6 @@ export function VideoWatchPage({
       dockSlot={dockSlot}
       accountSlot={accountSlot}
       counts={quickLinkCounts}
-      lectureCategories={lectureCategories}
-      lecturesExpanded={lecturesExpanded}
-      onToggleLectures={() => setLecturesExpanded((shown) => !shown)}
     >
       <div className="min-h-screen bg-background p-3 sm:p-6 space-y-6">
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -721,25 +777,61 @@ export function VideoWatchPage({
         <div className="grid grid-cols-1 gap-4 lg:gap-6 lg:grid-cols-[minmax(0,1fr)_380px] items-start">
           <div className="min-w-0 space-y-3 bg-background">
             <div className="flex items-center justify-between gap-3 flex-wrap">
-              <div className="flex items-center gap-1.5 flex-wrap min-w-0">
+              <div className="flex items-start gap-1.5 flex-wrap min-w-0">
                 {categoryLabel && (
                   <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] uppercase tracking-wide bg-muted text-muted-foreground">
                     {categoryLabel}
                   </span>
                 )}
-                {tournament && (
-                  <button
-                    onClick={() => handleBadgeClick(tournament.replace(/\d+/g, "").trim())}
-                    className={cn(
-                      "text-sm font-bold backdrop-blur-md border px-2 py-1 rounded [font-variant:small-caps] tracking-wider shadow-lg",
-                      styleNumber && TOURNAMENT_COLORS[styleNumber]
-                        ? TOURNAMENT_COLORS[styleNumber]
-                        : "text-purple-300 bg-purple-900/80 border-purple-400/90",
-                    )}
-                  >
-                    {tournament}
-                  </button>
-                )}
+                {tournament && (() => {
+                  const cleanT = tournament.replace(/\d+/g, "").trim();
+                  const logo = getTournamentLogo(cleanT);
+                  if (logo) {
+                    if (typeof logo === "string") {
+                      return (
+                        <button
+                          onClick={() => handleBadgeClick(cleanT)}
+                          className="text-sm font-bold backdrop-blur-md border px-2 py-1 rounded shadow-lg bg-transparent"
+                        >
+                          <img src={logo} alt={tournament} className="h-5 w-auto" />
+                        </button>
+                      );
+                    }
+                    if (typeof logo === "function") {
+                      const LogoComp = logo;
+                      return (
+                        <button
+                          onClick={() => handleBadgeClick(cleanT)}
+                          className="text-sm font-bold backdrop-blur-md border px-2 py-1 rounded shadow-lg bg-transparent"
+                        >
+                          <LogoComp className="h-5 w-auto" />
+                        </button>
+                      );
+                    }
+                    // StaticImageData from Next.js
+                    return (
+                      <button
+                        onClick={() => handleBadgeClick(cleanT)}
+                        className="text-sm font-bold backdrop-blur-md border px-2 py-1 rounded shadow-lg bg-transparent"
+                      >
+                        <img src={logo.src} alt={tournament} className="h-5 w-auto" />
+                      </button>
+                    );
+                  }
+                  return (
+                    <button
+                      onClick={() => handleBadgeClick(cleanT)}
+                      className={cn(
+                        "text-sm font-bold backdrop-blur-md border px-2 py-1 rounded [font-variant:small-caps] tracking-wider shadow-lg",
+                        styleNumber && TOURNAMENT_COLORS[styleNumber]
+                          ? TOURNAMENT_COLORS[styleNumber]
+                          : "text-purple-300 bg-purple-900/80 border-purple-400/90",
+                      )}
+                    >
+                      {tournament}
+                    </button>
+                  );
+                })()}
                 {year && (
                   <span className="text-sm font-bold text-orange-300 backdrop-blur-md bg-orange-900/80 border border-orange-400/90 px-2 py-1 rounded shadow-lg">
                     '{String(year).slice(-2)}
@@ -763,34 +855,39 @@ export function VideoWatchPage({
                 )}
                 {/* The two teams sit right after the level, in the same row as
                     the round's other badges: aff blue, neg red, the winner
-                    ringed in gold. */}
+                    ringed in gold. Each team's argument (the 1AC for aff, the
+                    2NR for neg) sits in small type right under its name. */}
                 {affTeam && (
-                  <button
-                    onClick={() => handleBadgeClick(affTeam)}
-                    title={`Affirmative: ${affTeam}`}
-                    className={cn(
-                      "text-sm font-bold backdrop-blur-md px-2 py-1 rounded",
-                      affWin === true
-                        ? "border-2 border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)] text-blue-100 bg-blue-900/80"
-                        : "border border-blue-400/90 shadow-lg text-blue-300 bg-blue-900/80",
-                    )}
-                  >
-                    {affTeam}
-                  </button>
+                  <TeamWithArgument argument={arg1AC} side="aff">
+                    <button
+                      onClick={() => handleBadgeClick(affTeam)}
+                      title={`Affirmative: ${affTeam}`}
+                      className={cn(
+                        "text-sm font-bold backdrop-blur-md px-2 py-1 rounded",
+                        affWin === true
+                          ? "border-2 border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)] text-blue-100 bg-blue-900/80"
+                          : "border border-blue-400/90 shadow-lg text-blue-300 bg-blue-900/80",
+                      )}
+                    >
+                      {affTeam}
+                    </button>
+                  </TeamWithArgument>
                 )}
                 {negTeam && (
-                  <button
-                    onClick={() => handleBadgeClick(negTeam)}
-                    title={`Negative: ${negTeam}`}
-                    className={cn(
-                      "text-sm font-bold backdrop-blur-md px-2 py-1 rounded",
-                      affWin === false
-                        ? "border-2 border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)] text-red-100 bg-red-900/80"
-                        : "border border-red-400/90 shadow-lg text-red-300 bg-red-900/80",
-                    )}
-                  >
-                    {negTeam}
-                  </button>
+                  <TeamWithArgument argument={arg2NR} side="neg">
+                    <button
+                      onClick={() => handleBadgeClick(negTeam)}
+                      title={`Negative: ${negTeam}`}
+                      className={cn(
+                        "text-sm font-bold backdrop-blur-md px-2 py-1 rounded",
+                        affWin === false
+                          ? "border-2 border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)] text-red-100 bg-red-900/80"
+                          : "border border-red-400/90 shadow-lg text-red-300 bg-red-900/80",
+                      )}
+                    >
+                      {negTeam}
+                    </button>
+                  </TeamWithArgument>
                 )}
               </div>
 
@@ -869,12 +966,39 @@ export function VideoWatchPage({
             </div>
 
             {speeches.length > 0 && (
-              <WatchSpeechTimeline
-                speeches={speeches}
-                currentTime={currentTime}
-                duration={duration}
-                onSelect={handleSpeechSelect}
-              />
+              <div className="flex items-center gap-2">
+                <div className="min-w-0 flex-1">
+                  <WatchSpeechTimeline
+                    speeches={speeches}
+                    currentTime={currentTime}
+                    duration={duration}
+                    onSelect={handleSpeechSelect}
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setStartsDialogOpen(true)}
+                  className="inline-flex h-7 shrink-0 items-center gap-1 rounded border border-border px-2 text-xs hover:bg-muted"
+                  title="Label where each speech begins"
+                >
+                  <ListOrdered className="h-3.5 w-3.5" />
+                  Speech starts
+                </button>
+                {/* The same modal labels the joined round MP3 (@debate/timer's
+                    RoundRecordingDialog); docked, so the player stays usable. */}
+                <SpeechStartsDialog
+                  open={startsDialogOpen}
+                  onOpenChange={setStartsDialogOpen}
+                  modal={false}
+                  items={speechStartItems}
+                  starts={speechStartSeconds}
+                  durationSeconds={duration}
+                  currentTime={currentTime}
+                  onSeek={seekTo}
+                  onChange={handleMarkStart}
+                  detection={speechDetection}
+                />
+              </div>
             )}
 
             <WatchStackPlaylist current={video} stack={stack} />
@@ -893,34 +1017,32 @@ export function VideoWatchPage({
                   <Calendar className="h-3 w-3" />
                   {formatVideoDate(date, "full")}
                 </span>
-                <span className="inline-flex items-center gap-1">
+                <span className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium tabular-nums">
                   <Eye className="h-3 w-3" />
                   {formatCount(viewCount)}
                 </span>
-                {judgeDecision && <span>Decision {judgeDecision}</span>}
+                {(storedDuration || duration > 0) && (
+                  <span className="inline-flex items-center gap-1 tabular-nums" title="Duration">
+                    <Clock className="h-3 w-3" />
+                    {formatVideoDuration(storedDuration || duration)}
+                  </span>
+                )}
+                {judgeDecision && !decisionRevealed ? (<button onClick={() => setDecisionRevealed(true)} className="text-xs text-muted-foreground hover:text-foreground">Reveal decision</button>) : (decisionRevealed ? (<span>Decision {judgeDecision}</span>) : null)}
               </div>
 
-              {(arg1AC || arg2NR) && (
-                <div className="flex flex-wrap items-start gap-2">
-                  {arg1AC && (
-                    <span className="text-xs font-medium text-blue-100 backdrop-blur-md bg-blue-950/90 px-2 py-0.5 rounded border border-blue-800/50 shadow-sm leading-tight">
-                      1AC: {arg1AC}
-                    </span>
-                  )}
-                  {arg2NR && (
-                    <span className="text-xs font-medium text-red-100 backdrop-blur-md bg-red-950/90 px-2 py-0.5 rounded border border-red-800/50 shadow-sm leading-tight">
-                      2NR: {arg2NR}
-                    </span>
-                  )}
-                </div>
-              )}
-
-              {description && (
+              {shownDescription && (
                 <p className="text-sm text-muted-foreground whitespace-pre-line max-w-3xl">
-                  {description}
+                  {shownDescription}
                 </p>
               )}
             </div>
+
+            {/* The two teams' rankings and radars, when the rankings know
+                either of them; nothing at all otherwise. */}
+            <WatchTeamStats video={video} />
+
+            {/* Rankings-based win prediction accounting for side effects. */}
+            <WatchRankingsPrediction video={video} />
 
             {/* The discussion, under the video's own metadata and above
                 everything else on the page. YouTube puts it here for a reason:
@@ -979,6 +1101,15 @@ export function VideoWatchPage({
               <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                 {relatedQuery ? `Results for “${relatedQuery}”` : "Related videos"}
               </h2>
+              {listedVideos.length > 0 && listedDurationTotal > 0 && (
+                <span
+                  className="inline-flex items-center gap-1 text-xs tabular-nums text-muted-foreground"
+                  title="Combined length of the listed videos with a stored duration"
+                >
+                  <Clock className="h-3 w-3" aria-hidden="true" />
+                  {formatVideoDuration(listedDurationTotal)} total
+                </span>
+              )}
               {relatedQuery && searchFeed.isLoading && (
                 <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" aria-label="Searching" />
               )}

@@ -8,6 +8,7 @@ import {
   buildCardsSearchHref,
   buildAutocompleteUrl,
   fetchSearchSuggestions,
+  inlineCompletionSuffix,
   readCardsSearchParams,
 } from "../src/lib/search-query";
 
@@ -161,5 +162,22 @@ describe("search box autocomplete", () => {
   it("degrades to no suggestions when the request fails", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => new Response("", { status: 500 })));
     expect(await fetchSearchSuggestions("nuclear")).toEqual([]);
+  });
+});
+
+describe("inlineCompletionSuffix", () => {
+  it("returns the rest of a suggestion that continues the query", () => {
+    expect(inlineCompletionSuffix("nuclear deter", "nuclear deterrence")).toBe("rence");
+  });
+
+  it("ignores case in the typed part", () => {
+    expect(inlineCompletionSuffix("Nuclear Deter", "nuclear deterrence")).toBe("rence");
+  });
+
+  it("is empty when the suggestion doesn't continue the query or adds nothing", () => {
+    expect(inlineCompletionSuffix("nuclear", "deterrence")).toBe("");
+    expect(inlineCompletionSuffix("nuclear", "nuclear")).toBe("");
+    expect(inlineCompletionSuffix("", "nuclear")).toBe("");
+    expect(inlineCompletionSuffix("nuclear", undefined)).toBe("");
   });
 });

@@ -21,6 +21,8 @@ import {
 import { cn } from "../../ui/lib/utils"
 import type { SchoolRanking, SchoolSortKey, SchoolSortState } from "./leaderboardTypes"
 import { schoolHref } from "./profile/rankingProfileHelpers"
+import { SchoolLogo } from "./SchoolLogo"
+import { getSchoolLogo } from "../../lib/schoolLogos"
 import { LegendaryBadge, ROW_TIER_CLASS, rowTier, type RowTier } from "./rowTier"
 import { RatingDigits } from "./RatingDigits"
 
@@ -53,11 +55,18 @@ const COLUMNS: Column[] = [
     key: "school",
     label: "School",
     width: 240,
-    render: (r) => (
-      <Link href={schoolHref(r.school)} className="font-medium text-foreground hover:underline underline-offset-4">
-        {r.school}
-      </Link>
-    ),
+    render: (r) => {
+      const logo = getSchoolLogo(r.school)
+      return (
+        <Link href={schoolHref(r.school)} className="font-medium text-foreground hover:underline underline-offset-4 flex items-center gap-1.5">
+          {logo ? (
+            <SchoolLogo school={r.school} className="h-4 w-auto" />
+          ) : (
+            r.school
+          )}
+        </Link>
+      )
+    },
   },
   {
     key: "bestRating",

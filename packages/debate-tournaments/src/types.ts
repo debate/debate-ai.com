@@ -2,7 +2,7 @@
  * @fileoverview Web UI entry point for upstream Tabroom's record types.
  *
  * Re-exports the vendored `@tabroom/types` — the Zod schemas Tabroom's own API
- * validates with (pulled in under `vendor/tabroom` by `scripts/sync-upstream.mjs`,
+ * validates with (pulled in under `vendor/tabroom-build` by `scripts/sync-upstream.mjs`,
  * so this needs no submodule checkout), and the types inferred from them — so a
  * page showing tournaments, entries, judges or results can check the data it
  * gets against the same contract Tabroom does, instead of a hand-copied type.
@@ -16,9 +16,9 @@
  */
 
 import type { z } from "zod";
-import * as upstream from "../vendor/tabroom/types/index";
+import * as upstream from "../vendor/tabroom-build/types/index";
 
-export * from "../vendor/tabroom/types/index";
+export * from "../vendor/tabroom-build/types/index";
 
 /** Any Zod schema upstream exports. */
 type AnySchema = z.ZodType;

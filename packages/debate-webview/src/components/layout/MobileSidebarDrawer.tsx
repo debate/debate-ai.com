@@ -5,6 +5,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { usePathname } from "next/navigation"
 import { LibrarySidebarTree, ToolSidebarFooter } from "@debate/videos"
 import { playUISoundEffect } from "@debate/timer"
+import { SidebarSettingsButton } from "./app-sidebar/sidebar-settings-button"
 import { ReasonDocsSidebarPanels } from "../reason-docs/ReasonDocsSidebarPanels"
 import { ChromeErrorBoundary } from "../../lib/ui/layout/chrome-error-boundary"
 import { mobileSidebarKind } from "../../lib/mobile-sidebar"
@@ -56,20 +57,20 @@ export function MobileSidebarDrawer({
         >
           <DialogPrimitive.Title className="sr-only">Sidebar</DialogPrimitive.Title>
           <ChromeErrorBoundary label="MobileSidebarDrawer">
-            {(kind === "cards" || kind === "editor") && (
-              <ReasonDocsSidebarPanels
-                className={kind === "cards" ? "min-h-0 flex-1" : "shrink-0"}
-                fill={kind === "cards"}
-              />
-            )}
-            {/* The same tree as the desktop column, on every view: Round Videos,
-                Lectures and the tool sections. */}
-            {kind !== "cards" && kind !== "own" && (
+            {kind === "editor" && <ReasonDocsSidebarPanels className="shrink-0" />}
+            {/* The same tree as the desktop column, on every view: Videos
+                (Lectures included) and the tool sections. */}
+            {kind !== "own" && (
               <>
                 <LibrarySidebarTree />
                 <ToolSidebarFooter />
               </>
             )}
+            {/* Settings on every view, as beside the desktop column's hide
+                button. Docs is a section of the tree above. */}
+            <div className="mt-2 flex shrink-0 justify-end border-t border-border/60 pt-2">
+              <SidebarSettingsButton label />
+            </div>
           </ChromeErrorBoundary>
         </DialogPrimitive.Content>
       </DialogPrimitive.Portal>

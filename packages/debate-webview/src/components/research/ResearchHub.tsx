@@ -9,7 +9,10 @@
  * is purely navigation: it groups the panels that describe the same stage of
  * a squad's research cycle and renders one group at a time. The individual
  * `/research/cards/*` routes still mount the same panels one at a time; this is the
- * view for working across them.
+ * view for working across them. Six of those routes (coverage, prep room,
+ * reviews, inbox, contributions, brainstorm) were merged into Team Research
+ * (`/research/team`, `TeamResearchWorkspace.tsx`), so their chips here open
+ * the matching Team Research tab.
  *
  * Navigation chrome (the sticky tab strip, the per-section intro card with
  * a chip per panel and an "open as its own page" link, `?section=` URL
@@ -23,6 +26,11 @@
  * now reads that composition itself from real persisted state
  * (`state/topicSprints.ts`'s `readPersistedTopicSprintInputs`), so this hub
  * only needs to give it a topic.
+ *
+ * The {@link SampleDataBar} on top fills the evidence library, tracked
+ * arguments and contributions stores with sample data built from real corpus
+ * cards (kept out of the account sync); the panels are remounted after a
+ * load or clear so each one re-reads its store.
  */
 
 import { useEffect, useMemo, useState } from "react"
@@ -62,6 +70,7 @@ import { BrainstormBoardWithIdentity } from "./BrainstormBoardWithIdentity"
 import { GroupChallengesWithIdentity } from "./GroupChallengesWithIdentity"
 import { PrepRoomWithIdentity } from "./PrepRoomWithIdentity"
 import { DailyBestCardWithIdentity } from "./DailyBestCardWithIdentity"
+import { teamResearchHref } from "./TeamResearchWorkspace"
 import type { TrackedArgument } from "@debate/research-evidence/src/lib/topic-coverage"
 import type { EvidenceLibraryEntry } from "@debate/research-evidence/src/lib/shared-evidence-library"
 import { listEvidenceLibraryEntries } from "@debate/research-evidence/src/state/evidenceLibraryEntries"
@@ -69,6 +78,7 @@ import { useStoreSnapshot } from "../../lib/ui/panels/use-store-snapshot"
 import { Input } from "../../lib/ui/primitives/input"
 import { LabeledField } from "../../lib/ui/panels/panel-shell"
 import { panel, type HubSection } from "../hubs/hub-sections"
+import { SampleDataBar } from "../hubs/SampleDataBar"
 import {
   HubPanelAnchor,
   HubSectionIntro,
@@ -103,7 +113,7 @@ export const RESEARCH_SECTIONS: readonly HubSection<SectionId>[] = [
     icon: PieChart,
     description: "Start here: which arguments are well-covered, thin, or missing, so the squad knows where to work.",
     guide: "research-collaboration",
-    panels: [panel("Topic Coverage Dashboard", "/research/cards/coverage")],
+    panels: [panel("Topic Coverage Dashboard", teamResearchHref("coverage"))],
   },
   {
     id: "library",
@@ -128,10 +138,10 @@ export const RESEARCH_SECTIONS: readonly HubSection<SectionId>[] = [
     description: "Work a topic together: the prep room, the sprint composition, live prep notes, and the brainstorm board.",
     guide: "research-collaboration",
     panels: [
-      panel("Collaboration Prep Room", "/research/cards/prep-room"),
+      panel("Collaboration Prep Room", teamResearchHref("prep-room")),
       panel("Topic Sprint"),
       panel("Team Collaboration Mode", "/research/cards/collaboration"),
-      panel("Team Brainstorm Assist", "/research/cards/brainstorm"),
+      panel("Team Brainstorm Assist", teamResearchHref("brainstorm")),
     ],
   },
   {
@@ -140,7 +150,7 @@ export const RESEARCH_SECTIONS: readonly HubSection<SectionId>[] = [
     icon: Inbox,
     description: "Research tasks routed to contributors by skill level, grouped by topic, with peer verification.",
     guide: "research-collaboration",
-    panels: [panel("Task Inbox", "/research/cards/inbox")],
+    panels: [panel("Task Inbox", teamResearchHref("inbox"))],
   },
   {
     id: "progress",
@@ -171,7 +181,7 @@ export const RESEARCH_SECTIONS: readonly HubSection<SectionId>[] = [
     panels: [
       panel("Leaderboard", "/coaching/leaderboard"),
       panel("Contributor Awards", "/research/cards/awards"),
-      panel("Contributions Feed", "/research/cards/contributions"),
+      panel("Contributions Feed", teamResearchHref("contributions")),
       panel("Daily Best Card", "/research/cards/best-card"),
       panel("Revision Incentives", "/research/cards/revisions"),
     ],
@@ -182,7 +192,7 @@ export const RESEARCH_SECTIONS: readonly HubSection<SectionId>[] = [
     icon: MessageSquareText,
     description: "Move submitted cards through peer review: comment, request changes, approve, publish.",
     guide: "research-collaboration",
-    panels: [panel("Review Queue", "/research/cards/reviews")],
+    panels: [panel("Review Queue", teamResearchHref("reviews"))],
   },
   {
     id: "scoring",
@@ -209,6 +219,7 @@ export function ResearchHub() {
   const [contributorId, setContributorId] = useState("me")
   const [hasSetContributorId, setHasSetContributorId] = useState(false)
   const [topic, setTopic] = useState("")
+  const [sampleVersion, setSampleVersion] = useState(0)
   const { user } = useSession()
 
   useEffect(() => {
@@ -233,7 +244,7 @@ export function ResearchHub() {
     if (typeof localStorage !== "undefined") localStorage.setItem(CONTRIBUTOR_KEY, value)
   }
 
-  const { data: entries } = useStoreSnapshot<EvidenceLibraryEntry[]>(listEvidenceLibraryEntries, [])
+  const { data: entries, refresh: refreshEntries } = useStoreSnapshot<EvidenceLibraryEntry[]>(listEvidenceLibraryEntries, [])
 
   // Only used to guess a sensible default topic below — the evidence
   // library's own argBlock/caseArea tagging, not a card corpus for scoring.
@@ -252,6 +263,13 @@ export function ResearchHub() {
 
   return (
     <div className="flex flex-col gap-4">
+      <SampleDataBar
+        workspace="research"
+        onChange={() => {
+          setSampleVersion((v) => v + 1)
+          refreshEntries()
+        }}
+      />
       <HubSectionNav sections={RESEARCH_SECTIONS} active={section} onChange={setSection} label="Research sections" />
 
       <section
@@ -283,7 +301,7 @@ export function ResearchHub() {
 
       <HubSectionIntro section={active} />
 
-      <HubSectionPanel id={section}>
+      <HubSectionPanel key={sampleVersion} id={section}>
         {section === "coverage" ? (
           <HubPanelAnchor anchor={ANCHORS["Topic Coverage Dashboard"]}>
             <TopicCoverageDashboardPanel />

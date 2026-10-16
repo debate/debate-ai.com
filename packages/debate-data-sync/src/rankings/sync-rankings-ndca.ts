@@ -1,6 +1,6 @@
 /**
  * NDCA Standings Scraper
- * Fetches the NDCA Baker Standings from Tabroom.com for CX (policy).
+ * Fetches the NDCA Baker Standings from Tournament Admin for CX (policy).
  * Requires a TABROOM_API_KEY cookie for authentication.
  */
 
@@ -82,7 +82,7 @@ function parseRow(tr: Element): LeaderboardEntry | null {
 }
 
 /**
- * Scrapes NDCA standings for CX (policy) from Tabroom.com.
+ * Scrapes NDCA standings for CX (policy) from Tournament Admin.
  */
 export async function scrapeNdca(): Promise<LeaderboardEntry[]> {
   const cookie = getTabroomCookie();

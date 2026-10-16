@@ -9,7 +9,10 @@ icon: Users
 The research collaboration tools organize a squad's evidence work as one cycle: find the gaps, assign the
 work, do it together, review it, and recognize who did it. They all live in the
 **[Research Workspace](https://debate-ai.com/research)** (`/research`), whose ten sections follow that cycle
-in order, and each also has its own page under `/research/cards/*`.
+in order, and each also has its own page under `/research/cards/*`. Six of them (Topic Coverage, the
+Collaboration Prep Room, the Review Queue, the Task Inbox, the Contributions Feed, and Team Brainstorm
+Assist) share one tabbed page instead, **[Team Research](/docs/features/research-evidence/team-research)**
+(`/research/team`), with one tab each.
 
 ## Identity and topic
 
@@ -20,11 +23,24 @@ Two fields at the top of the Research Workspace scope everything below them:
 - **Topic** — scopes the *Sprint* section's composition. Defaults to the first tagged case area in the
   evidence library.
 
+## Sample data
+
+**Load sample data**, at the top of the Research Workspace, fills it with a
+demo built from real cards in the card database: those cards as evidence
+library entries filed under one topic, the arguments they cover as tracked
+arguments, and squad contributions attributed to the schools the cards came
+from. Coverage, Library, Evidence, Sprint and Rewards then all have something
+to show.
+
+The sample stays in this browser and is never saved to your account. It is
+added beside your own records and never replaces one, and **Clear sample
+data** removes only the sample. Editing a sample record keeps it local too.
+
 ## The cycle, section by section
 
 ### 1. Coverage — where does the squad need work?
 
-**[Topic Coverage Dashboard](https://debate-ai.com/cards/coverage)** (`/research/cards/coverage`, [spec](/docs/features/research-evidence/topic-coverage-dashboard))
+**[Topic Coverage Dashboard](https://debate-ai.com/research/team?section=coverage)** (`/research/team?section=coverage`, [spec](/docs/features/research-evidence/topic-coverage-dashboard))
 lists every tracked argument as missing, thin, or covered, by card count and word count, plus an *untracked*
 section for submitted cards nobody added to the checklist. Start here: the gaps it finds become the tasks and
 quests in later sections.
@@ -40,14 +56,14 @@ quests in later sections.
 
 | Tool | Route | What it does |
 | --- | --- | --- |
-| Collaboration Prep Room | [`/research/cards/prep-room`](/docs/features/team-collaboration/collaboration-prep-room) | A topic's shared space: its evidence, draft blocks, and routed tasks, a keyword search scoped to just this topic, an active-now roster, and an activity timeline. |
+| Collaboration Prep Room | [`/research/team?section=prep-room`](/docs/features/team-collaboration/collaboration-prep-room) | A topic's shared space: its evidence, draft blocks, and routed tasks, a keyword search scoped to just this topic, an active-now roster, and an activity timeline. |
 | Topic Sprint | — | The sprint composition for the selected topic — see the [Team collaboration mode](/docs/features/team-collaboration/team-collaboration-mode) spec. |
 | Team Collaboration Mode | [`/research/cards/collaboration`](/docs/features/team-collaboration/team-collaboration-mode) | Live prep notes on the shared sprint, grouped by topic, each cycling open → covered → needs-follow-up, and assignable to a teammate from the board. |
-| Team Brainstorm Assist | [`/research/cards/brainstorm`](/docs/features/research-evidence/brainstorm-board) | Idea boards for new arguments, impact framing, frontlines, and turns, with upvotes, a near-duplicate badge, and AI-generated idea seeding. |
+| Team Brainstorm Assist | [`/research/team?section=brainstorm`](/docs/features/research-evidence/brainstorm-board) | Idea boards for new arguments, impact framing, frontlines, and turns, with upvotes, a near-duplicate badge, and AI-generated idea seeding. |
 
 ### 5. Routing — who does what?
 
-**[Task Inbox](https://debate-ai.com/cards/inbox)** (`/research/cards/inbox`, [spec](/docs/features/team-collaboration/task-inbox)) routes coverage-gap
+**[Task Inbox](https://debate-ai.com/research/team?section=inbox)** (`/research/team?section=inbox`, [spec](/docs/features/team-collaboration/task-inbox)) routes coverage-gap
 tasks to contributors by skill level, grouped by topic. A task marked done is verified by a *different*
 contributor before it counts.
 
@@ -72,13 +88,13 @@ contributor before it counts.
 | --- | --- | --- |
 | Leaderboard | [`/coaching/leaderboard`](/docs/features/team-collaboration/contribution-leaderboard) | Contributors ranked by total helpfulness score, with tier, streak, and milestone badges. |
 | Contributor Awards | [`/research/cards/awards`](/docs/features/team-collaboration/contributor-awards) | Category winners — best evidence finder, best explainer, and so on — with a freeze action to announce a day's standings. |
-| Contributions Feed | [`/research/cards/contributions`](/docs/features/team-collaboration/contributions-feed) | Every contribution kind in one scored feed; likes, saves, and endorsements feed the Leaderboard. |
+| Contributions Feed | [`/research/team?section=contributions`](/docs/features/team-collaboration/contributions-feed) | Every contribution kind in one scored feed; likes, saves, and endorsements feed the Leaderboard. |
 | Daily Best Card | [`/research/cards/best-card`](/docs/features/gamification/daily-best-card) | Today's highest-helpfulness card and every past day's winner. |
 | Revision Incentives | [`/research/cards/revisions`](/docs/features/gamification/revision-incentives) | Points for improving weak cards, strengthening citations, and refreshing stale evidence. |
 
 ### 9. Review — is it ready to publish?
 
-**[Review Queue](https://debate-ai.com/cards/reviews)** (`/research/cards/reviews`, [spec](/docs/features/team-collaboration/review-queue)) moves a card
+**[Review Queue](https://debate-ai.com/research/team?section=reviews)** (`/research/team?section=reviews`, [spec](/docs/features/team-collaboration/review-queue)) moves a card
 through draft → in review → changes requested → approved → published. Blocking comments must be resolved
 before approval.
 

@@ -1,29 +1,30 @@
 /**
  * @fileoverview A random little animation on a sidebar icon whenever its row
- * is hovered or focused: a wiggle, bounce, pulse, spin or shake, never the
- * same one twice in a row, lasting 0.5s or 1s (also picked at random), driven
- * by Motion. Each icon also gets a random
- * color flash — throttled to once per 5 seconds so the sidebar stays calm.
+ * (icon or label) is hovered or focused: a wiggle, bounce, pulse, spin, shake,
+ * flip, jelly or tada, never the same one twice in a row, lasting 0.5s or 1s
+ * (also picked at random), driven by anime.js. The icon also takes a random
+ * color while it plays. Each icon plays at most once every 3 seconds, so
+ * sweeping the pointer down the column doesn't keep it twitching.
  *
  * It is attached once to a sidebar's root rather than wrapped around each
  * icon, so every row any tree puts in the column (links, buttons, tree items,
  * the account menu) gets it without the trees knowing. Hovering or focusing
  * a row animates the first icon in it; moving between the parts of one row
- * does not restart it. Under reduced motion nothing plays.
+ * does not restart it. Under reduced motion the icon only changes color.
  *
- * It is off by default: nothing moves until the reader turns on "Animate
- * sidebar icons" in Settings → Preferences ({@link setSidebarIconAnimations}).
+ * It is on by default: the reader can turn off "Animate sidebar icons" in
+ * Settings → Preferences ({@link setSidebarIconAnimations}).
  *
  * @module ui/layout/sidebar-icon-hover
  */
 
-import { animate, type AnimationPlaybackControls, type DOMKeyframesDefinition } from "motion"
+import { animate, utils, type AnimationParams } from "animejs"
 import { useEffect, type RefObject } from "react"
 
 import { prefersReducedMotion } from "./sidebar-peek-animations"
 
-/** Colors the icon can flash — chosen at random each time. */
-const ICON_HOVER_COLORS = [
+/** Colors the icon can take while it plays — chosen at random each time. */
+export const ICON_HOVER_COLORS = [
   "hsl(142 76% 36%)",   // emerald
   "hsl(217 91% 60%)",   // blue
   "hsl(38 92% 50%)",    // amber
@@ -35,22 +36,38 @@ const ICON_HOVER_COLORS = [
 ] as const
 
 /** Minimum time between two animations on the same icon, in ms. */
-const ICON_HOVER_THROTTLE_MS = 5_000
+export const ICON_HOVER_THROTTLE_MS = 3_000
 
-/** One hover effect: keyframes that start and end with the icon at rest. */
+/** One hover effect: anime.js keyframes that start and end with the icon at rest. */
 export interface IconHoverEffect {
   name: string
-  keyframes: DOMKeyframesDefinition
+  keyframes: AnimationParams
 }
 
 /** The effects a hovered sidebar icon picks from. */
 export const ICON_HOVER_EFFECTS: readonly IconHoverEffect[] = [
   { name: "wiggle", keyframes: { rotate: [0, -15, 15, -10, 10, 0] } },
-  { name: "bounce", keyframes: { y: [0, -6, 0, -3, 0] } },
+  { name: "bounce", keyframes: { translateY: [0, -6, 0, -3, 0] } },
   { name: "pulse", keyframes: { scale: [1, 1.22, 0.95, 1.1, 1] } },
   { name: "spin", keyframes: { rotate: [0, 360] } },
-  { name: "shake", keyframes: { x: [0, -3, 3, -3, 3, 0] } },
+  { name: "shake", keyframes: { translateX: [0, -3, 3, -3, 3, 0] } },
+  { name: "flip", keyframes: { rotateY: [0, 180, 360] } },
+  { name: "jelly", keyframes: { scaleX: [1, 1.25, 0.85, 1.1, 1], scaleY: [1, 0.8, 1.15, 0.95, 1] } },
+  { name: "tada", keyframes: { scale: [1, 0.9, 1.15, 1.15, 1], rotate: [0, -8, 8, -8, 0] } },
 ]
+
+/** Picks one of {@link ICON_HOVER_COLORS} at random. */
+export function pickIconHoverColor(random: () => number = Math.random): string {
+  return ICON_HOVER_COLORS[Math.min(ICON_HOVER_COLORS.length - 1, Math.floor(random() * ICON_HOVER_COLORS.length))]
+}
+
+/**
+ * True when an icon last played at `last` (ms) may play again at `now`:
+ * at most once per {@link ICON_HOVER_THROTTLE_MS}.
+ */
+export function iconHoverReady(last: number | undefined, now: number): boolean {
+  return last === undefined || now - last >= ICON_HOVER_THROTTLE_MS
+}
 
 /** How long one hover animation lasts, in seconds — chosen at random each hover. */
 export const ICON_HOVER_DURATIONS = [0.5, 1] as const
@@ -70,26 +87,25 @@ export function pickIconHoverEffect(
   return pool[Math.min(pool.length - 1, Math.floor(random() * pool.length))]
 }
 
-/** localStorage key for the reader's choice; "1" = animate. Off by default. */
+/** localStorage key for the reader's choice; "0" = don't animate. On by default. */
 export const SIDEBAR_ICON_ANIMATIONS_KEY = "sidebar-icon-animations"
 
 /** Same-document change event; other tabs get the real `storage` event. */
 const ICON_ANIMATIONS_CHANGE_EVENT = "sidebar-icon-animations-change"
 
-/** True when the reader turned the icon hover animation on in Settings. */
+/** False only when the reader turned the icon hover animation off in Settings. */
 export function readSidebarIconAnimations(): boolean {
   try {
-    return localStorage.getItem(SIDEBAR_ICON_ANIMATIONS_KEY) === "1"
+    return localStorage.getItem(SIDEBAR_ICON_ANIMATIONS_KEY) !== "0"
   } catch {
-    return false
+    return true
   }
 }
 
 /** Turns the icon hover animation on or off in this browser, and remembers it. */
 export function setSidebarIconAnimations(on: boolean): void {
   try {
-    if (on) localStorage.setItem(SIDEBAR_ICON_ANIMATIONS_KEY, "1")
-    else localStorage.removeItem(SIDEBAR_ICON_ANIMATIONS_KEY)
+    localStorage.setItem(SIDEBAR_ICON_ANIMATIONS_KEY, on ? "1" : "0")
   } catch {
     // Blocked storage: the choice just isn't kept.
   }
@@ -110,7 +126,7 @@ export function subscribeSidebarIconAnimations(onChange: () => void): () => void
 }
 
 /** Every property an effect moves, at rest. */
-const AT_REST: DOMKeyframesDefinition = { x: 0, y: 0, rotate: 0, scale: 1 }
+const AT_REST = { translateX: 0, translateY: 0, rotate: 0, rotateY: 0, scale: 1, scaleX: 1, scaleY: 1 }
 
 /** What counts as one row of a sidebar. */
 const ROW_SELECTOR = "a, button, [role='treeitem'], [role='button'], [role='menuitem'], summary"
@@ -130,40 +146,38 @@ export function sidebarIconFor(target: EventTarget | null, root: Element): { row
  */
 export function attachSidebarIconHover(root: HTMLElement): () => void {
   let previous: IconHoverEffect | null = null
-  const playing = new WeakMap<SVGElement, AnimationPlaybackControls>()
-  /** Per-icon timestamp of the last animation start, for the 5s throttle. */
-  const lastAnimationAt = new WeakMap<SVGElement, number>()
+  /** Per-icon time the last animation started, for the 3s throttle. */
+  const lastPlayedAt = new WeakMap<SVGElement, number>()
 
   const play = (icon: SVGElement) => {
-    // Off unless the reader turned it on (Settings → Preferences); read on
+    // On unless the reader turned it off (Settings → Preferences); read on
     // every hover so flipping the switch applies without a reload.
-    if (!readSidebarIconAnimations() || prefersReducedMotion()) return
+    if (!readSidebarIconAnimations()) return
 
-    // Throttle: only animate once per ICON_HOVER_THROTTLE_MS per icon.
     const now = Date.now()
-    const last = lastAnimationAt.get(icon) ?? 0
-    if (now - last < ICON_HOVER_THROTTLE_MS) return
-    lastAnimationAt.set(icon, now)
+    if (!iconHoverReady(lastPlayedAt.get(icon), now)) return
+    lastPlayedAt.set(icon, now)
 
-    playing.get(icon)?.stop()
+    const duration = pickIconHoverDuration() * 1000
+    const originalColor = icon.style.color
+    icon.style.color = pickIconHoverColor()
+    const restoreColor = () => {
+      icon.style.color = originalColor
+    }
+
+    // Reduced motion: the color alone, nothing moves.
+    if (prefersReducedMotion()) {
+      window.setTimeout(restoreColor, duration)
+      return
+    }
+
     const effect = pickIconHoverEffect(previous)
     previous = effect
-
-    // Pick a random hover color and apply it.
-    const color = ICON_HOVER_COLORS[Math.floor(Math.random() * ICON_HOVER_COLORS.length)]
-    const originalColor = icon.style.color
-    icon.style.color = color
-
-    // From rest every time, so a stopped spin or bounce never leaves it
-    // askew. Through Motion, which remembers each transform it set.
-    animate(icon, AT_REST, { duration: 0 })
-    const ctrl = animate(icon, effect.keyframes, { duration: pickIconHoverDuration(), ease: "easeInOut" })
-    playing.set(icon, ctrl)
-
-    // Restore the original color when the animation finishes.
-    ctrl.finished.finally(() => {
-      icon.style.color = originalColor
-    })
+    // From rest every time; anime.js remembers each transform it set, so a
+    // flip after a spin starts upright rather than wherever the last one was.
+    utils.set(icon, AT_REST)
+    // The throttle outlasts the longest effect, so nothing is ever cut short.
+    animate(icon, { ...effect.keyframes, duration, ease: "inOutSine", onComplete: restoreColor })
   }
 
   const onEnter = (event: PointerEvent | FocusEvent) => {

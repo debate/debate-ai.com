@@ -18,6 +18,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/
 import { searchSchools, searchTournaments, searchNames } from "../cache/client-cache"
 import { resultCountLabel } from "../lib/card-display"
 import { EMPTY_FILTERS, fetchSearchSuggestions } from "../lib/search-query"
+import type { SetSearchTermOptions } from "../hooks/useSearchState"
 
 const SUGGESTION_LIMIT = 20
 const SEARCH_DROPDOWN_CLASS = "right-auto w-[14rem]"
@@ -41,7 +42,8 @@ export interface SearchFilters {
 
 interface ResearchSearchSidebarProps {
   searchTerm: string
-  setSearchTerm: (term: string) => void
+  /** Sets the term; `{ immediate: true }` searches without waiting out the debounce. */
+  setSearchTerm: (term: string, options?: SetSearchTermOptions) => void
   sortBy: string
   setSortBy: (sort: string) => void
   filters: SearchFilters
@@ -144,7 +146,9 @@ export function ResearchSearchSidebar({
                 placeholder="Search debates, outlines, and quotes..."
                 value={searchTerm}
                 onChange={setSearchTerm}
-                fetchOptions={(q) => fetchSearchSuggestions(q)}
+                onCommit={(term) => setSearchTerm(term, { immediate: true })}
+                fetchOptions={fetchSearchSuggestions}
+                inlineCompletion
                 className="pl-8"
               />
             </div>

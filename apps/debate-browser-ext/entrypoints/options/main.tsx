@@ -2,12 +2,16 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { browser } from 'wxt/browser';
 import { applyStoredAppearance, configureHost } from '@debate/webview';
+import { Puzzle } from 'lucide-react';
 
-import { installApiProxy } from '@/src/app-host/api-proxy';
+import { mirrorAppAiKey } from '@/src/ai/app-key';
+import { installApiProxy, setProxiedApiBase } from '@/src/app-host/api-proxy';
 import { requestSignIn, type StoredSession } from '@/src/auth/session';
 import { getSettings } from '@/src/settings/settings';
 
 import App from './App';
+import { EXTENSION_SETTINGS_CATEGORY, EXTENSION_SETTINGS_ROUTE } from '@/src/settings/open';
+import { SettingsPanel } from './SettingsPanel';
 
 /**
  * Everything the app needs from its host, done before its modules render:
@@ -29,7 +33,21 @@ async function start() {
     // the session back to the background worker.
     signIn: () => void requestSignIn(),
     openOnSite: (path) => void browser.tabs.create({ url: `${apiBase}${path}` }),
+    // The extension's own settings, as one more tab of the app's Settings.
+    settingsSections: [
+      {
+        id: EXTENSION_SETTINGS_CATEGORY,
+        label: 'Browser extension',
+        description:
+          'Reading mode, the backtick search shortcut, the round timer, the toolbar icon and the card reuse check.',
+        icon: Puzzle,
+        component: () => <SettingsPanel onApiBaseSaved={setProxiedApiBase} />,
+      },
+    ],
   });
+
+  // The article panel reuses the AI key saved in the app's Preferences.
+  mirrorAppAiKey();
 
   // better-auth's client caches the session it read at load. Signing in or
   // out (here, or in the popup or panel) changes who the proxy sends
@@ -44,6 +62,10 @@ async function start() {
   });
 
   applyStoredAppearance();
+  // `#/extension` was the extension settings' old page.
+  if (window.location.hash === '#/extension') {
+    window.history.replaceState(null, '', `#${EXTENSION_SETTINGS_ROUTE}`);
+  }
   if (!window.location.hash) window.history.replaceState(null, '', '#/videos');
 
   ReactDOM.createRoot(document.getElementById('root')!).render(

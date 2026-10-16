@@ -33,7 +33,7 @@ describe("FeaturedSpeechDocsPanel", () => {
         return {
           ok: true,
           status: 200,
-          json: async () => ({ item: { content: `<p>doc ${id}</p>`, format: "html" } }),
+          json: async () => ({ item: { content: `<p>doc ${id}</p><p class="pmd-card-body">unread <span class="pmd-highlight">read</span></p>`, format: "html" } }),
         } as Response
       }),
     )
@@ -63,6 +63,9 @@ describe("FeaturedSpeechDocsPanel", () => {
       "1AC", "1NC", "2AC", "2NC", "1NR", "1AR", "2NR", "2AR",
     ])
     expect(speechButton("2AR").disabled).toBe(true)
+    // Read mode: only the highlighted card text shows.
+    expect(container.textContent).toContain("read")
+    expect(container.textContent).not.toContain("unread")
     expect(container.querySelector('a[href="/debate/2015-ndt/northwestern-mv-michigan-ap"]')).not.toBeNull()
 
     act(() => container.querySelector<HTMLButtonElement>('[aria-label="Next speech"]')!.click())

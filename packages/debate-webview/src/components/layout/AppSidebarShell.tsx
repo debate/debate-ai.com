@@ -4,7 +4,6 @@ import type React from "react"
 import { usePathname } from "next/navigation"
 import { ResizableSidebarLayout } from "@debate/videos"
 import { isGenericToolSidebarRoute, ownsItsLayout } from "../../lib/sidebar-routes"
-import { showsCardsOnlySidebar } from "../../lib/reason-docs/sidebar-routes"
 import { AppSidebar } from "./app-sidebar/app-sidebar"
 import { SidebarAccount } from "./app-sidebar/sidebar-account"
 
@@ -14,7 +13,7 @@ import { SidebarAccount } from "./app-sidebar/sidebar-account"
  * (`ResizableSidebarLayout` with the dock and `VideoSidebarTree`), so the
  * sidebar is the same thing everywhere: the same width the reader last
  * dragged it to, the same hide button and Ctrl/Cmd+B, and the same tree of
- * Round Videos, Lectures and the tool sections.
+ * Videos (Lectures is one of its rows) and the tool sections.
  *
  * Without this, following one of the tree's links off `/videos` (into
  * `/coaching`, `/practice`, …) landed on a page with no sidebar at all.
@@ -22,12 +21,11 @@ import { SidebarAccount } from "./app-sidebar/sidebar-account"
  * tree entry (`isGenericToolSidebarRoute`); `/docs` passes `always`.
  *
  * What the column holds beyond the shared tree is merged in as sections of
- * it (`AppSidebar`): the REASON docs panels on `/research/cards` and
- * `/reason-editor`, the help docs' page tree on `/docs`, and the account menu
- * pinned at its foot beside the hide button. `/research/cards` is the docs
- * panels alone (`showsCardsOnlySidebar`): they fill the column, so its
- * scrolling area does not scroll as a whole — each panel scrolls inside its
- * own share.
+ * it (`AppSidebar`): the REASON docs panels on `/reason-editor`, the help
+ * docs' page tree on `/docs`, and the account menu pinned at its foot beside
+ * the hide button. The tree itself never leaves the column: `/research/cards`
+ * opens its docs panels as a second column inside the page
+ * (`showsCardsPagePanel`) rather than swapping this one out.
  *
  * `/debate` and `/research/docs` fill the viewport with a workspace sidebar
  * of their own (`ownsItsLayout`, in @debate/videos' `sidebar-routes`), so
@@ -56,7 +54,6 @@ export function AppSidebarShell({
       appChrome
       autoCollapse={ownLayout}
       className="bg-background"
-      sidebarClassName={showsCardsOnlySidebar(pathname) ? "overflow-hidden" : undefined}
       // `relative` (from the layout) makes the column the containing block for
       // the page's absolutely positioned bits; a column flex box at least a
       // viewport high is what the pages were laid out against before.

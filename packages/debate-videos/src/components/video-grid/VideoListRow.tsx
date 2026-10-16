@@ -25,10 +25,12 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import type { RankingEntry } from "@debate/rankings-adapter"
 import { Star, ExternalLink, EyeOff, Eye, ListVideo, Play } from "lucide-react"
+import { getTournamentLogo } from "../video-card/tournamentLogos"
 import { cn } from "../../ui/lib/utils"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
 import { useVideoPlayerStore } from "../../state/videoPlayerStore"
 import { STYLE_COLORS, getRoundBadgeColor, formatVideoDate } from "../video-card/videoCardUtils"
+import { formatCount } from "../category-gallery/format-count"
 import { TopPickBadge } from "../video-card/TopPickBadge"
 import { WatchProgressBadge } from "../video-card/WatchProgressBadge"
 import { VideoDuration } from "../video-card/VideoDuration"
@@ -260,6 +262,11 @@ export function VideoListRow({
   const hasCoreRoundInfo = Boolean(
     isRoundMode && cleanTournament && roundLevel?.trim() && affTeam?.trim() && negTeam?.trim(),
   )
+  // A round with no Aff or Neg recorded would leave both team cells as bare
+  // dashes, so its first cell spans them instead and the title gets the room.
+  const spansTeamCells = Boolean(
+    isRoundMode && !affTeam?.trim() && !negTeam?.trim() && !arg1AC?.trim() && !arg2NR?.trim(),
+  )
 
   return (
     <>
@@ -281,7 +288,11 @@ export function VideoListRow({
           isHidden && "opacity-50",
         )}
       >
-        <td className="py-2 pr-2 align-top sm:py-3 sm:pr-3" style={treeIndentStyle(depth)}>
+        <td
+          className="py-2 pr-2 align-top sm:py-3 sm:pr-3"
+          style={treeIndentStyle(depth)}
+          colSpan={spansTeamCells ? 3 : undefined}
+        >
           {/* A grid rather than a flex row so that on a phone the actions can
               drop under the thumbnail and use the row's full width, while from
               sm up they stay in the text column beside it. The left padding
@@ -304,7 +315,7 @@ export function VideoListRow({
             )}
           <div className="min-w-0">
             {!hasCoreRoundInfo && (
-                <div className="line-clamp-2 text-sm font-medium leading-snug text-foreground">
+                <div className="line-clamp-3 text-sm font-medium leading-snug text-foreground">
                   {title}
                 </div>
               )}
@@ -323,23 +334,68 @@ export function VideoListRow({
                     )}
                     {showFormat && <FormatBadge style={styleNumber} />}
                     <span className="truncate">
-                      {cleanTournament === "TOC" ? (
-                        <span className="flex items-center gap-1.5">
-                          <img
-                            src={TOC_TOURNAMENT_IMAGE}
-                            alt="Tournament of Champions"
-                            className="h-4 w-auto object-contain shrink-0"
-                          />
-                          {channel && (
-                            <>
-                              <span className="text-muted-foreground">·</span>
-                              <span className="truncate">{channel}</span>
-                            </>
-                          )}
-                        </span>
-                      ) : (
-                        [cleanTournament, channel].filter(Boolean).join(" · ") || "—"
-                      )}
+                      {(() => {
+                        const logo = getTournamentLogo(cleanTournament);
+                        if (logo) {
+                          if (typeof logo === "string") {
+                            return (
+                              <span className="flex items-center gap-1.5">
+                                <img src={logo} alt={cleanTournament} className="h-4 w-auto object-contain shrink-0" />
+                                {channel && (
+                                  <>
+                                    <span className="text-muted-foreground">·</span>
+                                    <span className="truncate">{channel}</span>
+                                  </>
+                                )}
+                              </span>
+                            );
+                          }
+                          if (typeof logo === "function") {
+                            const LogoComp = logo;
+                            return (
+                              <span className="flex items-center gap-1.5">
+                                <LogoComp className="h-4 w-auto object-contain shrink-0" />
+                                {channel && (
+                                  <>
+                                    <span className="text-muted-foreground">·</span>
+                                    <span className="truncate">{channel}</span>
+                                  </>
+                                )}
+                              </span>
+                            );
+                          }
+                          // StaticImageData from Next.js
+                          return (
+                            <span className="flex items-center gap-1.5">
+                              <img src={logo.src} alt={cleanTournament} className="h-4 w-auto object-contain shrink-0" />
+                              {channel && (
+                                <>
+                                  <span className="text-muted-foreground">·</span>
+                                  <span className="truncate">{channel}</span>
+                                </>
+                              )}
+                            </span>
+                          );
+                        }
+                        if (cleanTournament === "TOC") {
+                          return (
+                            <span className="flex items-center gap-1.5">
+                              <img
+                                src={TOC_TOURNAMENT_IMAGE}
+                                alt="Tournament of Champions"
+                                className="h-4 w-auto object-contain shrink-0"
+                              />
+                              {channel && (
+                                <>
+                                  <span className="text-muted-foreground">·</span>
+                                  <span className="truncate">{channel}</span>
+                                </>
+                              )}
+                            </span>
+                          );
+                        }
+                        return [cleanTournament, channel].filter(Boolean).join(" · ") || "—";
+                      })()}
                     </span>
                   </>
                 ) : (
@@ -498,7 +554,7 @@ export function VideoListRow({
           </div>
         </td>
 
-        {isRoundMode && (
+        {isRoundMode && !spansTeamCells && (
           <>
             <TeamCell team={affTeam} argument={arg1AC} ranking={affRanking} onSearch={onSearch} />
             <TeamCell team={negTeam} argument={arg2NR} ranking={negRanking} onSearch={onSearch} />
@@ -509,7 +565,13 @@ export function VideoListRow({
           {formatVideoDate(date, "full", "—")}
         </td>
         <td className="px-3 py-3 align-top text-sm text-muted-foreground text-right tabular-nums whitespace-nowrap">
+<<<<<<< HEAD
           {formatCount(viewCount)}
+=======
+          <span className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium tabular-nums">
+            {formatCount(viewCount)}
+          </span>
+>>>>>>> 0d28d9f05ac1dd05535441c177e1b89fdc285835
         </td>
         {showWatched && (
           <td

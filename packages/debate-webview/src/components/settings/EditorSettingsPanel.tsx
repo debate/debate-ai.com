@@ -1,10 +1,10 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { Suspense, useEffect, useMemo, useState } from "react"
 import type { ComponentType, ReactNode } from "react"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
-import { Brain, BrainCog, HardDrive, Search, Server, Settings, SlidersHorizontal, UserCircle, Users, Volume2, Wand2 } from "lucide-react"
+import { Brain, BrainCog, HardDrive, School, Search, Server, Settings, ShieldCheck, SlidersHorizontal, UserCircle, Users, Volume2, Wand2 } from "lucide-react"
 // Static import so bundling confines this ~15k-line global stylesheet to
 // the settings routes' own chunk — never loaded by the host app's main bundle.
 import "@debate/editor/styles.css"
@@ -14,15 +14,19 @@ import { CARDMIRROR_SETTINGS_TABS } from "@debate/editor/settings-tabs"
 import { UserSettingsPanel } from "@debate/round"
 import { MyRankedTeamsSettings } from "@debate/videos"
 import { TeamCoachingSection } from "./TeamCoachingSection"
+import { MySchoolSettings } from "../schools/MySchoolSettings"
 import { OwnAiKeySection } from "./OwnAiKeySection"
 import { SoundEffectsSection } from "./SoundEffectsSection"
 import { SidebarIconAnimationsSection } from "./SidebarIconAnimationsSection"
+import { PrivacySettingsSection } from "./PrivacySettingsSection"
+import { useSession } from "../../lib/hooks/useSession"
 import { EDITOR_SETTINGS_TABS } from "../../lib/editor-preferences"
 import { useEditorPreferencesSync } from "../../lib/hooks/useEditorPreferencesSync"
 import { CARDMIRROR_TAB_ICONS } from "./cardmirror-tab-icons"
 import { ResearchSettingsTab } from "./ResearchSettingsTab"
 import { researchSectionOfTab, researchSettingsPages } from "../../lib/qwksearch/settings-paths"
 import { SITE_LINKS } from "../../lib/nav/dock-menu-sections"
+import { getHostConfig } from "../../host/config"
 
 // The app's own account-linked preferences (debate style, font size, font
 // family, color theme, light/dark) — rendered by `UserSettingsPanel`, which
@@ -32,9 +36,16 @@ const PREFERENCES_TAB = "preferences"
 // The ranked team the viewer debates on, coaches or assists in each division,
 // which the matchup simulator pre-fills (`@debate/videos`' MyRankedTeamsSettings).
 const MY_TEAM_TAB = "my-team"
+// Claiming to coach or run a school, and the schools the viewer manages
+// (`components/schools/MySchoolSettings`).
+const MY_SCHOOL_TAB = "my-school"
+// The recording release (publish or not, audio only, how the viewer is
+// credited), the privacy policy link and data deletion requests
+// (`PrivacySettingsSection`).
+const PRIVACY_TAB = "privacy"
 /** A research section's tab id: `research-<section key>` (see `researchTabId`). */
 type ResearchTabId = `research-${string}`
-type TabId = SettingsCategory | typeof PREFERENCES_TAB | typeof MY_TEAM_TAB | ResearchTabId
+type TabId = SettingsCategory | typeof PREFERENCES_TAB | typeof MY_TEAM_TAB | typeof MY_SCHOOL_TAB | typeof PRIVACY_TAB | ResearchTabId
 
 // The research agent's settings sections (`research-agent-ui/settings`'s
 // list), listed after the editor's tabs under their own heading. Each renders
@@ -53,6 +64,8 @@ const RESEARCH_TABS: readonly { id: ResearchTabId; label: string }[] = RESEARCH_
 const CATEGORIES: readonly { id: TabId; label: string }[] = [
   { id: PREFERENCES_TAB, label: "Preferences" },
   { id: MY_TEAM_TAB, label: "My team" },
+  { id: MY_SCHOOL_TAB, label: "My school" },
+  { id: PRIVACY_TAB, label: "Privacy" },
   ...EDITOR_SETTINGS_TABS,
   ...RESEARCH_TABS,
 ]
@@ -82,6 +95,15 @@ const CATEGORY_DETAILS: Record<string, { icon: ComponentType<{ size?: number }>;
   [MY_TEAM_TAB]: {
     icon: Users,
     description: "Your role, your partner, and the ranked team you represent in each division — pre-filled in the matchup simulator.",
+  },
+  [MY_SCHOOL_TAB]: {
+    icon: School,
+    description: "Claim to be your school's coach or administrator, then manage its teams, students and logo.",
+  },
+  [PRIVACY_TAB]: {
+    icon: ShieldCheck,
+    description:
+      "Whether your recordings can be published, audio only or with video, how you are credited, the privacy policy, and deleting your data.",
   },
   ...Object.fromEntries(
     CARDMIRROR_SETTINGS_TABS.map((tab) => [tab.id, { icon: CARDMIRROR_TAB_ICONS[tab.id] ?? Settings, description: tab.description }]),
@@ -123,8 +145,21 @@ const SIDEBAR_CSS = `
 }
 `
 
-function isTabId(value: string | null): value is TabId {
-  return CATEGORIES.some((category) => category.id === value)
+/**
+ * The host's own tabs, slotted in after Preferences and My team (ahead of My school). Read when the
+ * panel renders, since hosts configure themselves before the first render.
+ */
+function useCategories() {
+  return useMemo(() => {
+    const sections = getHostConfig().settingsSections ?? []
+    const categories: { id: TabId; label: string }[] = [...CATEGORIES]
+    categories.splice(2, 0, ...sections.map(({ id, label }) => ({ id: id as TabId, label })))
+    const details = { ...CATEGORY_DETAILS }
+    for (const section of sections) {
+      details[section.id] = { icon: section.icon ?? Settings, description: section.description }
+    }
+    return { categories, details, sections }
+  }, [])
 }
 
 /**
@@ -169,7 +204,19 @@ function SettingsSidebarFooter() {
  *   sidebar (the settings page puts its Back link there).
  */
 export function EditorSettingsPanel({ sidebarHeader }: { sidebarHeader?: ReactNode } = {}) {
+  // The panel reads `?category=` with useSearchParams(), which needs a
+  // Suspense boundary or a statically rendered page fails to render.
+  return (
+    <Suspense fallback={null}>
+      <EditorSettingsPanelContent sidebarHeader={sidebarHeader} />
+    </Suspense>
+  )
+}
+
+function EditorSettingsPanelContent({ sidebarHeader }: { sidebarHeader?: ReactNode }) {
   const searchParams = useSearchParams()
+  const { categories, details, sections } = useCategories()
+  const isTabId = (value: string | null): value is TabId => categories.some((category) => category.id === value)
   const requestedCategory = searchParams.get("category")
   const [active, setActive] = useState<TabId>(isTabId(requestedCategory) ? requestedCategory : PREFERENCES_TAB)
   // Follow `?category=` when it changes under a mounted page — the research
@@ -190,16 +237,17 @@ export function EditorSettingsPanel({ sidebarHeader }: { sidebarHeader?: ReactNo
   // Hydrates the editor's store from the account, then mirrors the keys
   // whose rows render back to it (see the hook for why rendered rows decide).
   const { ready, noteRenderedKeys } = useEditorPreferencesSync()
+  const { user } = useSession()
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
-    if (!q) return CATEGORIES
-    return CATEGORIES.filter(
-      ({ id, label }) =>
-        label.toLowerCase().includes(q) || CATEGORY_DETAILS[id]?.description.toLowerCase().includes(q),
+    if (!q) return categories
+    return categories.filter(
+      ({ id, label }) => label.toLowerCase().includes(q) || details[id]?.description.toLowerCase().includes(q),
     )
-  }, [query])
-  const activeCategory = CATEGORIES.find((category) => category.id === active)
+  }, [query, categories, details])
+  const activeCategory = categories.find((category) => category.id === active)
+  const activeHostSection = sections.find((section) => section.id === active)
 
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", height: "100%" }}>
@@ -233,7 +281,7 @@ export function EditorSettingsPanel({ sidebarHeader }: { sidebarHeader?: ReactNo
               </p>
             )}
             {filtered.map(({ id, label }, index) => {
-              const Icon = CATEGORY_DETAILS[id]?.icon ?? Settings
+              const Icon = details[id]?.icon ?? Settings
               const startsResearchGroup =
                 researchSectionOfTab(id) !== null && researchSectionOfTab(filtered[index - 1]?.id) === null
               return (
@@ -268,12 +316,18 @@ export function EditorSettingsPanel({ sidebarHeader }: { sidebarHeader?: ReactNo
             }}
           >
             <h3 style={{ margin: 0, fontSize: 15, fontWeight: 600 }}>{activeCategory?.label}</h3>
-            <p style={{ margin: "2px 0 0", fontSize: 13, opacity: 0.6 }}>{CATEGORY_DETAILS[active]?.description}</p>
+            <p style={{ margin: "2px 0 0", fontSize: 13, opacity: 0.6 }}>{details[active]?.description}</p>
           </div>
-          {researchSectionOfTab(active) !== null ? (
+          {activeHostSection ? (
+            <activeHostSection.component />
+          ) : researchSectionOfTab(active) !== null ? (
             <ResearchSettingsTab section={researchSectionOfTab(active)!} />
           ) : active === MY_TEAM_TAB ? (
             <MyRankedTeamsSettings />
+          ) : active === MY_SCHOOL_TAB ? (
+            <MySchoolSettings />
+          ) : active === PRIVACY_TAB ? (
+            <PrivacySettingsSection accountName={user?.name ?? null} />
           ) : active === PREFERENCES_TAB ? (
             <>
               <TeamCoachingSection />

@@ -1,32 +1,32 @@
 #!/usr/bin/env node
 /**
- * Pulls upstream Tabroom (github.com/debate/debate-tournament-tabroom) into
- * this package, with this package's modifications re-applied on top.
+ * Pulls upstream Tabroom (github.com/debate/debate-tournaments) from the
+ * submodule at `packages/debate-tournaments-tabroom/` into `vendor/tabroom-build/`, with this
+ * package's modifications re-applied on top.
  *
  *   node scripts/sync-upstream.mjs              # re-vendor the pinned commit
  *   node scripts/sync-upstream.mjs --latest     # move the pin to upstream's branch head
  *   node scripts/sync-upstream.mjs --ref <sha>  # move the pin to a specific commit
- *   node scripts/sync-upstream.mjs --source ../debate-tournament-tabroom
+ *   node scripts/sync-upstream.mjs --source ../some-local-clone   
  *                                               # use a local clone instead of GitHub
  *   node scripts/sync-upstream.mjs --save-patch # record edits made in .upstream/ as a patch
  *   node scripts/sync-upstream.mjs --seed       # also write .upstream-seed.sql (sample data)
  *
  * Steps:
- *  1. `git clone` upstream into `.upstream/` (git-ignored; fetched again on
- *     later runs) and check out the pinned commit from `upstream.json`.
+ *  1. Update the submodule at `packages/debate-tournaments-tabroom/` to the pinned commit from `upstream.json`.
  *  2. Apply `patches/*.patch` with `git apply --3way` — small line edits to
  *     upstream files. If upstream changed the same lines, the conflict is left
- *     in `.upstream/` to resolve; then run `--save-patch` and sync again.
- *  3. Layer `overlays/` on top — whole-file replacements for the modules that
- *     cannot run on Workers (MariaDB pool, Sequelize, winston, config.json).
- *  4. Walk the import graph from `entries` and copy exactly the reachable
- *     files into `vendor/tabroom/`, rewriting `express` and `@tabroom/types`
+ *     in the submodule to resolve; then run `--save-patch` and sync again.
+ *  3. Walk the import graph from `entries` and copy exactly the reachable
+ *     files into `vendor/tabroom-build/`, rewriting `express` and `@tabroom/types`
  *     imports to their in-package targets and marking `.ts` files
  *     `// @ts-nocheck` (upstream is type-checked upstream, not here).
+ *  4. Layer `overlays/` on top — whole-file replacements for the modules that
+ *     cannot run on Workers (MariaDB pool, Sequelize, winston, config.json).
  *  5. Regenerate the D1 migration and the boolean/date column lists from
  *     upstream's schema dump (`scripts/lib/mysql-to-sqlite.mjs`).
  *
- * `vendor/` and `migrations/` are generated — edit `patches/` or `overlays/`
+ * `vendor/tabroom-build/` is generated — edit `patches/` or `overlays/`
  * instead, so the change survives the next upstream pull.
  */
 
@@ -34,15 +34,26 @@ import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync, copyFileSync } from "node:fs";
 import { dirname, join, posix, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { booleanColumns, dateColumns, mysqlInsertsToSqlite, parseMysqlTables, tablesToSqlite } from "./lib/mysql-to-sqlite.mjs";
+import {
+  applySchemaRules,
+  booleanColumns,
+  dateColumns,
+  mysqlInsertsToSqlite,
+  parseMysqlTables,
+  seedCleanupStatements,
+  tablesToSqlite,
+} from "./lib/mysql-to-sqlite.mjs";
+import { JUNCTIONS, SENSITIVE } from "./lib/schema-rules.mjs";
+import { renderSchemaDoc } from "./lib/schema-doc.mjs";
+import { upgradeStatements } from "./lib/schema-upgrade.mjs";
 
 const PKG = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const CONFIG_PATH = join(PKG, "upstream.json");
 const config = JSON.parse(readFileSync(CONFIG_PATH, "utf8"));
-const CACHE = join(PKG, ".upstream");
+const UPSTREAM = join(PKG, "../debate-tournaments-tabroom");
+const VENDOR = join(PKG, config.vendorDir);
 const PATCHES = join(PKG, "patches");
 const OVERLAYS = join(PKG, "overlays");
-const VENDOR = join(PKG, config.vendorDir);
 
 const argv = process.argv.slice(2);
 const flag = (name) => argv.includes(name);
@@ -51,21 +62,19 @@ const option = (name) => {
   return i === -1 ? undefined : argv[i + 1];
 };
 
-const gitRaw = (...args) => execFileSync("git", ["-C", CACHE, ...args], { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
+const gitRaw = (...args) => execFileSync("git", ["-C", UPSTREAM, ...args], { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
 const git = (...args) => gitRaw(...args).trim();
 const log = (msg) => console.log(`[sync-upstream] ${msg}`);
 
-// ── 1. clone / fetch ────────────────────────────────────────────────────────
-function ensureClone() {
-  const source = option("--source") ? resolve(option("--source")) : config.repository;
-  if (!existsSync(join(CACHE, ".git"))) {
-    log(`cloning ${source}`);
-    execFileSync("git", ["clone", "--no-checkout", source, CACHE], { stdio: "inherit" });
-  } else {
-    git("remote", "set-url", "origin", source);
-    log(`fetching ${source}`);
-    execFileSync("git", ["-C", CACHE, "fetch", "--quiet", "origin"], { stdio: "inherit" });
+// ── 1. update submodule ────────────────────────────────────────────────────────
+function ensureSubmodule() {
+  if (!existsSync(join(UPSTREAM, ".git"))) {
+    throw new Error(`Submodule not found at ${UPSTREAM}. Run \`git submodule update --init\` first.`);
   }
+  const source = option("--source") ? resolve(option("--source")) : config.repository;
+  git("remote", "set-url", "origin", source);
+  log(`fetching ${source}`);
+  execFileSync("git", ["-C", UPSTREAM, "fetch", "--quiet", "origin"], { stdio: "inherit" });
 }
 
 function resolveCommit() {
@@ -74,7 +83,7 @@ function resolveCommit() {
   return config.commit;
 }
 
-// ── 2. patches ──────────────────────────────────────────────────────────────
+// ── 2. patches ────────────────────────────────────────────────────────────────
 const patchFiles = () =>
   existsSync(PATCHES) ? readdirSync(PATCHES).filter((f) => f.endsWith(".patch")).sort().map((f) => join(PATCHES, f)) : [];
 
@@ -89,7 +98,7 @@ function checkoutAndPatch(commit) {
       console.error(String(err.stderr || err.message));
       console.error(
         `\n[sync-upstream] ${relative(PKG, patch)} no longer applies cleanly to ${commit.slice(0, 12)}.\n` +
-          `Resolve the conflict markers in ${relative(process.cwd(), CACHE)}/, then run:\n` +
+          `Resolve the conflict markers in ${relative(process.cwd(), UPSTREAM)}/, then run:\n` +
           `  node scripts/sync-upstream.mjs --save-patch && node scripts/sync-upstream.mjs\n`,
       );
       process.exit(1);
@@ -98,9 +107,8 @@ function checkoutAndPatch(commit) {
 }
 
 function savePatch() {
-  if (!existsSync(join(CACHE, ".git"))) throw new Error("No .upstream/ clone to save a patch from — run a sync first.");
+  if (!existsSync(join(UPSTREAM, ".git"))) throw new Error("No packages/debate-tournaments-tabroom/ submodule to save a patch from — run a sync first.");
   git("add", "-A");
-  // Untrimmed: a patch's last context line can be a lone space.
   const diff = gitRaw("diff", "--cached", "--binary", config.commit);
   git("reset", "--quiet");
   mkdirSync(PATCHES, { recursive: true });
@@ -114,9 +122,9 @@ function savePatch() {
   }
 }
 
-// ── 3 + 4. overlays, import graph, vendor ───────────────────────────────────
+// ── 3. overlays ───────────────────────────────────────────────────────────────
 const overlayPath = (rel) => join(OVERLAYS, rel);
-const upstreamPath = (rel) => join(CACHE, rel);
+const upstreamPath = (rel) => join(UPSTREAM, rel);
 const sourceOf = (rel) => (existsSync(overlayPath(rel)) ? overlayPath(rel) : upstreamPath(rel));
 const isFile = (p) => existsSync(p) && statSync(p).isFile();
 const exists = (rel) => isFile(overlayPath(rel)) || isFile(upstreamPath(rel));
@@ -149,7 +157,6 @@ function collectGraph() {
         const target = resolveRelative(rel, spec);
         if (target) queue.push(target);
         else {
-          // Overlays import this package's own src/ — outside the vendored tree.
           const fromVendor = resolve(VENDOR, posix.dirname(rel), spec);
           if (!fromVendor.startsWith(VENDOR)) continue;
           missing.push(`${rel} → ${spec}`);
@@ -186,6 +193,12 @@ function writeVendor(files, commit) {
     if (isFile(upstreamPath(rel))) copyFileSync(upstreamPath(rel), join(VENDOR, rel));
   }
   const overlays = listFiles(OVERLAYS).map((p) => relative(OVERLAYS, p).split("\\").join("/"));
+  for (const rel of overlays) {
+    const src = overlayPath(rel);
+    const dest = join(VENDOR, rel);
+    mkdirSync(dirname(dest), { recursive: true });
+    copyFileSync(src, dest);
+  }
   writeFileSync(
     join(VENDOR, "UPSTREAM.json"),
     `${JSON.stringify(
@@ -210,11 +223,14 @@ function listFiles(dir) {
   );
 }
 
-// ── 5. D1 schema ────────────────────────────────────────────────────────────
+// ── 4. D1 schema ──────────────────────────────────────────────────────────────
 function writeSchema(commit) {
   const dump = readFileSync(upstreamPath(config.schemaDump), "utf8");
   const tables = parseMysqlTables(dump);
-  const statements = tablesToSqlite(tables, { skipTables: config.skipTables });
+  const ruled = applySchemaRules(tables);
+  const kept = ruled.filter((t) => !config.skipTables.includes(t.name));
+  const keptNames = new Set(kept.map((t) => t.name));
+  const statements = tablesToSqlite(ruled, { skipTables: config.skipTables });
   const header = [
     `-- Generated by packages/debate-tournaments/scripts/sync-upstream.mjs from`,
     `-- ${config.repository} @ ${commit}`,
@@ -223,11 +239,19 @@ function writeSchema(commit) {
   ].join("\n");
   const migration = join(PKG, config.migration);
   mkdirSync(dirname(migration), { recursive: true });
-  writeFileSync(migration, `${header}\n\n${statements.join("\n--> statement-breakpoint\n")}\n`);
-  log(`wrote ${config.migration} (${tables.length - config.skipTables.length} tables)`);
+  const previous = existsSync(migration) ? readFileSync(migration, "utf8") : null;
+  const next = `${header}\n\n${statements.join("\n--> statement-breakpoint\n")}\n`;
+  writeFileSync(migration, next);
+  log(`wrote ${config.migration} (${kept.length} tables)`);
+  if (previous !== null && previous !== next) writeUpgrade(previous, next, ruled, commit);
+
+  const docPath = join(PKG, config.schemaDoc);
+  writeFileSync(docPath, renderSchemaDoc(kept, readFileSync(docPath, "utf8"), { skipTables: config.skipTables }));
+  log(`wrote ${relative(PKG, docPath)}`);
 
   const columns = join(PKG, config.columnsModule);
   mkdirSync(dirname(columns), { recursive: true });
+  const sensitiveCols = new Set([...SENSITIVE.credential, ...SENSITIVE.pii]);
   writeFileSync(
     columns,
     [
@@ -238,6 +262,45 @@ function writeSchema(commit) {
       "",
       "/** Columns holding DATETIME/TIMESTAMP/DATE values in some upstream table. */",
       `export const DATE_COLUMNS: readonly string[] = ${JSON.stringify(dateColumns(tables), null, 2)};`,
+      "",
+      "/** Reference columns from `scripts/lib/relationships.mjs`: `table` → `column` → target table and evidence. */",
+      `export const REFERENCES: Readonly<Record<string, Readonly<Record<string, { target: string; verified: string | false }>>>> = {\n${kept
+        .map((t) => [t.name, t.columns.filter((c) => c.reference && keptNames.has(c.reference))])
+        .filter(([, refs]) => refs.length)
+        .map(([name, refs]) => `  ${JSON.stringify(name)}: {\n${refs.map((c) => `    ${JSON.stringify(c.name)}: ${JSON.stringify({ target: c.reference, verified: c.verified })},`).join("\n")}\n  },`)
+        .join("\n")}\n};`,
+      "",
+      "/** Public field allowlist per table: every column except credentials and personal contact details. */",
+      `export const PUBLIC_COLUMNS: Readonly<Record<string, readonly string[]>> = {\n${kept
+        .map((t) => `  ${JSON.stringify(t.name)}: ${JSON.stringify(t.columns.filter((c) => !sensitiveCols.has(`${t.name}.${c.name}`)).map((c) => c.name))},`)
+        .join("\n")}\n};`,
+      "",
+      "/** Column names no table allows publicly, stripped from every API response. */",
+      `export const PRIVATE_KEYS: readonly string[] = ${JSON.stringify(
+        [...new Set(kept.flatMap((t) => t.columns.filter((c) => sensitiveCols.has(`${t.name}.${c.name}`)).map((c) => c.name)))]
+          .filter((name) => kept.every((t) => t.columns.every((c) => c.name !== name || sensitiveCols.has(`${t.name}.${c.name}`))))
+          .sort(),
+        null,
+        2,
+      )};`,
+      "",
+      "/** Unique indexes with a nullable column: SQLite treats NULLs as distinct, so they admit duplicates. */",
+      `export const NULLABLE_UNIQUE_INDEXES: readonly { table: string; index: string; columns: readonly string[] }[] = ${JSON.stringify(
+        kept.flatMap((t) =>
+          t.indexes
+            .filter((ix) => ix.unique && ix.columns.some((name) => !t.columns.find((c) => c.name === name)?.notNull))
+            .map((ix) => ({ table: t.name, index: `${t.name}__${ix.name}`, columns: ix.columns })),
+        ),
+        null,
+        2,
+      )};`,
+      "",
+      "/** Set-membership tables whose pair should be unique (`schema-rules.mjs` JUNCTIONS). */",
+      `export const JUNCTIONS: Readonly<Record<string, readonly [string, string]>> = ${JSON.stringify(
+        Object.fromEntries(Object.entries(JUNCTIONS).filter(([t]) => keptNames.has(t))),
+        null,
+        2,
+      )};`,
       "",
       "/** Upstream tables created by the D1 migration. */",
       `export const TABLES: readonly string[] = ${JSON.stringify(
@@ -251,19 +314,37 @@ function writeSchema(commit) {
 
   if (flag("--seed")) {
     const seedPath = join(PKG, ".upstream-seed.sql");
-    const inserts = [...mysqlInsertsToSqlite(dump, { skipTables: config.skipTables })];
+    const inserts = [
+      ...mysqlInsertsToSqlite(dump, { skipTables: config.skipTables }),
+      ...seedCleanupStatements(ruled, { skipTables: config.skipTables }),
+    ];
     writeFileSync(seedPath, `${inserts.join("\n")}\n`);
     log(`wrote ${relative(PKG, seedPath)} (${inserts.length} insert statements, upstream test data)`);
   }
 }
 
-// ── main ────────────────────────────────────────────────────────────────────
+/** Writes `NNNN_tabroom_schema_upgrade.sql`, numbered after the last migration. */
+function writeUpgrade(previous, next, tables, commit) {
+  const dir = dirname(join(PKG, config.migration));
+  const last = Math.max(...readdirSync(dir).map((f) => Number.parseInt(f, 10)).filter(Number.isFinite));
+  const name = `${String(last + 1).padStart(4, "0")}_tabroom_schema_upgrade.sql`;
+  const header = [
+    `-- Generated by packages/debate-tournaments/scripts/sync-upstream.mjs: upgrades a database`,
+    `-- that already ran an earlier ${posix.basename(config.migration)} to the one generated from`,
+    `-- ${config.repository} @ ${commit}.`,
+    `-- Do not edit. It also runs cleanly on a database created from the new schema.`,
+  ].join("\n");
+  writeFileSync(join(dir, name), `${header}\n\n${upgradeStatements(previous, next, tables).join("\n--> statement-breakpoint\n")}\n`);
+  log(`wrote ${relative(PKG, join(dir, name))} (the schema changed)`);
+}
+
+// ── main ──────────────────────────────────────────────────────────────────────
 if (flag("--save-patch")) {
   savePatch();
   process.exit(0);
 }
 
-ensureClone();
+ensureSubmodule();
 const commit = resolveCommit();
 log(`upstream commit ${commit}`);
 checkoutAndPatch(commit);

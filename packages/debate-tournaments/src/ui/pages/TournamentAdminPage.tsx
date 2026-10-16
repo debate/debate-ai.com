@@ -5,14 +5,19 @@
  * hosting API (`GET {apiBase}/host/tourns/:id/admin`) rather than Tabroom's
  * console: the schedule with unpublished rounds, every entry and its status,
  * schools, judges, rooms and result sets, each linked to its public page.
+ * For a real (non-demo) owner it adds the tournament's timeslots and judge
+ * categories from upstream Tabroom's own tournament-admin API (`/tab/tourns`).
  *
  * Owners and admins see their own tournaments. The demo tournament is open to
- * everyone, who browse it as the mock admin `demo.admin`.
+ * everyone, who browse it as the mock admin `demo.admin`, and its admin view
+ * adds an editor for its mock data (see `./DemoMockEditor`).
  */
 
 import { useState, type ReactNode } from "react";
 import { ExternalLink, ShieldCheck, UserRound } from "lucide-react";
 import type { TournamentAdmin } from "../client";
+import { DEMO_TOURN_ID } from "../../host/demo-account";
+import { DemoMockEditor } from "./DemoMockEditor";
 import { Badge, Card, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, buttonVariants, tabsListClass, tabsTriggerClass } from "../primitives";
 import { BackLink, Empty, Loaded, Section, formatDate, useApi, useTournaments } from "../shared";
 
@@ -30,15 +35,18 @@ const TABS: Array<[AdminTab, string]> = [
 export function TournamentAdminPage({ tournId }: { tournId: number }) {
   const { client, hrefs } = useTournaments();
   const state = useApi(`admin:${tournId}`, (signal) => client.admin(tournId, signal));
+  // The view after a demo edit, reloaded in place so the page keeps its tabs.
+  const [latest, setLatest] = useState<TournamentAdmin | null>(null);
+  const refresh = async () => setLatest(await client.admin(tournId));
   return (
     <div className="mx-auto max-w-5xl space-y-4 p-4 md:p-6">
       <BackLink href={hrefs.upcoming()}>All tournaments</BackLink>
-      <Loaded state={state}>{(view) => <AdminView view={view} />}</Loaded>
+      <Loaded state={state}>{(view) => <AdminView view={latest ?? view} onChanged={refresh} />}</Loaded>
     </div>
   );
 }
 
-export function AdminView({ view }: { view: TournamentAdmin }) {
+export function AdminView({ view, onChanged }: { view: TournamentAdmin; onChanged?: () => Promise<void> | void }) {
   const { hrefs, Link } = useTournaments();
   const [tab, setTab] = useState<AdminTab>("schedule");
   const { tourn, viewer } = view;
@@ -193,7 +201,37 @@ export function AdminView({ view }: { view: TournamentAdmin }) {
           ])}
         />
       ) : null}
+
+      {viewer.mock ? null : <TabroomSetup tournId={tourn.id} tz={tourn.tz} />}
+
+      {tourn.id === DEMO_TOURN_ID && onChanged ? <DemoMockEditor view={view} onChanged={onChanged} /> : null}
     </div>
+  );
+}
+
+/** Timeslots and judge categories, read through upstream's tournament-admin API. */
+function TabroomSetup({ tournId, tz }: { tournId: number; tz: string | null }) {
+  const { client } = useTournaments();
+  const state = useApi(`setup:${tournId}`, (signal) => client.setup(tournId, signal));
+  return (
+    <Section title="Tournament setup">
+      <Loaded state={state}>
+        {(setup) => (
+          <div className="grid gap-4 p-4 md:grid-cols-2">
+            <AdminTable
+              empty="No timeslots yet."
+              head={["Timeslot", "Starts", "Ends"]}
+              rows={setup.timeslots.map((t) => [t.name, formatDate(t.start, tz, true) || "—", formatDate(t.end, tz, true) || "—"])}
+            />
+            <AdminTable
+              empty="No judge categories yet."
+              head={["Judge category", "Code"]}
+              rows={setup.categories.map((c) => [c.name, c.abbr])}
+            />
+          </div>
+        )}
+      </Loaded>
+    </Section>
   );
 }
 

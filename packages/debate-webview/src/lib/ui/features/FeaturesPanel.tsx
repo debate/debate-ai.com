@@ -226,7 +226,19 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
     [entries, query],
   );
 
-  const allSections = useMemo(() => buildFeatureSections(entries), [entries]);
+  // One category is shown at a time, picked from the tab row. The first tab
+  // is selected on load; a `#<category>` hash (the old jump-row links) picks
+  // its tab instead. When a search empties the selected tab, the first tab
+  // that still has matches is shown rather than an empty panel.
+  const [activeCategory, setActiveCategory] = useState<FeatureCategory | null>(null);
+  const activeSection =
+    sections.find((section) => section.category === activeCategory) ?? sections[0];
+  const ActiveIcon = activeSection ? CATEGORY_ICONS[activeSection.category] : LayoutGrid;
+
+  useEffect(() => {
+    const hash = window.location.hash.slice(1);
+    if (hash && hash in CATEGORY_ICONS) setActiveCategory(hash as FeatureCategory);
+  }, []);
 
   // A card's hover colour comes from its place in the whole catalog plus the
   // randomized page-load offset, not in the filtered grid, so a feature keeps
@@ -285,31 +297,13 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
               className="mt-8 flex flex-col items-center gap-3 scroll-mt-20"
               data-testid="downloads"
             >
-              <h2 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
-                Downloads
-              </h2>
-              <DownloadAppButton platform="chrome-extension" appId="noecbaibfhbmpapofcdkgchfifmoinfj" />
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <DownloadAppButton platform="chrome-extension-white" appId="noecbaibfhbmpapofcdkgchfifmoinfj" />
+                <DownloadAppButton platform="android" appId="com.debate.ai" />
+              </div>
             </div>
           </Reveal>
 
-          <Reveal delay={220}>
-            <div className="relative mx-auto mt-8 max-w-xl">
-              {/* Above the input, not just before it: the field's own
-                  `backdrop-blur` paints a layer that would otherwise wash the
-                  glyph out. */}
-              <Search
-                aria-hidden
-                className="pointer-events-none absolute top-1/2 left-3.5 z-10 size-4 -translate-y-1/2 text-muted-foreground"
-              />
-              <Input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search features by name, description, route, or keyword…"
-                aria-label="Search features"
-                className="h-11 rounded-full border-border bg-card/80 pl-10 backdrop-blur-sm"
-              />
-            </div>
-        </Reveal>
 
         <Reveal delay={340}>
             {/* The root README's badge block, row for row. */}
@@ -407,6 +401,27 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
         aria-label="CARDS vision"
         className="mx-auto max-w-6xl scroll-mt-20 px-4 pb-16 sm:px-6 lg:px-8"
       >
+
+
+          <Reveal delay={220}>
+            <div className="relative mx-auto mt-8 max-w-xl">
+              {/* Above the input, not just before it: the field's own
+                  `backdrop-blur` paints a layer that would otherwise wash the
+                  glyph out. */}
+              <Search
+                aria-hidden
+                className="pointer-events-none absolute top-1/2 left-3.5 z-10 size-4 -translate-y-1/2 text-muted-foreground"
+              />
+              <Input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search features by name, description, route, or keyword…"
+                aria-label="Search features"
+                className="h-11 rounded-full border-border bg-card/80 pl-10 backdrop-blur-sm"
+              />
+            </div>
+        </Reveal>
+        
         <Reveal className="mx-auto mb-8 max-w-2xl text-center">
           <span className="da-accent-fill mb-4 inline-flex size-10 items-center justify-center rounded-xl">
             <Sparkles className="size-5" />
@@ -467,115 +482,130 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
       <section id="catalog" className="mx-auto max-w-6xl px-4 pb-20 sm:px-6 lg:px-8">
         {sections.length > 1 ? (
           <Reveal>
-            <nav
-              aria-label="Jump to a category"
+            <div
+              role="tablist"
+              aria-label="Feature categories"
               className="mb-10 flex flex-wrap justify-center gap-2"
             >
               {sections.map((section) => {
                 const Icon = CATEGORY_ICONS[section.category];
+                const selected = section.category === activeSection?.category;
                 return (
-                  <a
+                  <button
                     key={section.category}
-                    href={`#${section.category}`}
-                    className="da-chip inline-flex items-center gap-1.5 rounded-full border border-border bg-card/70 px-3 py-1.5 text-xs text-muted-foreground backdrop-blur-sm"
+                    type="button"
+                    role="tab"
+                    id={`features-tab-${section.category}`}
+                    aria-selected={selected}
+                    aria-controls={section.category}
+                    data-state={selected ? "active" : "inactive"}
+                    onClick={() => setActiveCategory(section.category)}
+                    className={cn(
+                      "da-chip inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs backdrop-blur-sm transition-colors",
+                      selected
+                        ? "da-accent-fill border-transparent font-semibold"
+                        : "border-border bg-card/70 text-muted-foreground hover:text-foreground",
+                    )}
                   >
                     <Icon className="size-3.5" />
                     {section.label}
                     <span className="tabular-nums opacity-60">({section.entries.length})</span>
-                  </a>
+                  </button>
                 );
               })}
-            </nav>
+            </div>
           </Reveal>
         ) : null}
 
-        {sections.length === 0 ? (
+        {!activeSection ? (
           <EmptyState title={`No features match "${query}".`} />
         ) : (
-          <div className="flex flex-col gap-16">
-            {sections.map((section) => {
-              const Icon = CATEGORY_ICONS[section.category];
-              return (
-                <section key={section.category} id={section.category} className="scroll-mt-20">
-                  <Reveal className="mx-auto mb-8 max-w-2xl text-center">
-                    <span className="da-accent-fill mb-4 inline-flex size-10 items-center justify-center rounded-xl">
-                      <Icon className="size-5" />
-                    </span>
-                    <h2 className="text-2xl font-semibold tracking-tight text-balance text-foreground">
-                      {section.label}
-                    </h2>
-                    <p className="mt-2 text-sm leading-relaxed text-pretty text-muted-foreground">
-                      {section.description}
-                    </p>
-                  </Reveal>
+          <section
+            key={activeSection.category}
+            id={activeSection.category}
+            role={sections.length > 1 ? "tabpanel" : undefined}
+            aria-labelledby={
+              sections.length > 1 ? `features-tab-${activeSection.category}` : undefined
+            }
+            data-testid={`features-tabpanel-${activeSection.category}`}
+            className="scroll-mt-20"
+          >
+            <Reveal className="mx-auto mb-8 max-w-2xl text-center">
+              <span className="da-accent-fill mb-4 inline-flex size-10 items-center justify-center rounded-xl">
+                <ActiveIcon className="size-5" />
+              </span>
+              <h2 className="text-2xl font-semibold tracking-tight text-balance text-foreground">
+                {activeSection.label}
+              </h2>
+              <p className="mt-2 text-sm leading-relaxed text-pretty text-muted-foreground">
+                {activeSection.description}
+              </p>
+            </Reveal>
 
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {section.entries.map((entry, index) => {
-                      const docUrl = featureDocUrl(entry);
-                      return (
-                        <Reveal
-                          key={entry.id}
-                          // Stagger across the row, then restart — a long
-                          // section shouldn't end up with a two-second delay
-                          // on its last card.
-                          delay={(index % 3) * 70}
-                        >
-                          <SpotlightCard className="h-full" hueShift={hueShifts.get(entry.id)}>
-                            <div className="group/feature flex h-full flex-col p-5">
-                              <div className="mb-2 flex items-center gap-2">
-                                <span className="da-chip text-[10px] font-medium text-muted-foreground">
-                                  {section.label}
-                                </span>
-                                {entry.tags && entry.tags.length > 0 && (
-                                  <div className="flex flex-wrap gap-1">
-                                    {entry.tags.slice(0, 3).map((tag) => (
-                                      <span
-                                        key={tag}
-                                        className="da-chip text-[9px] font-medium text-muted-foreground/70 border-border/50"
-                                      >
-                                        {tag}
-                                      </span>
-                                    ))}
-                                    {entry.tags.length > 3 && (
-                                      <span className="da-chip text-[9px] font-medium text-muted-foreground/70 border-border/50">
-                                        +{entry.tags.length - 3}
-                                      </span>
-                                    )}
-                                  </div>
-                                )}
-                              </div>
-                              <a
-                                href={entry.href}
-                                className="text-sm font-semibold text-foreground transition-colors group-hover/feature:text-[var(--da-card-accent,var(--da-accent))]"
-                              >
-                                <span className="absolute inset-0" aria-hidden />
-                                {entry.title}
-                              </a>
-                              <p className="mt-1.5 flex-1 text-xs leading-relaxed text-muted-foreground">
-                                {entry.description}
-                              </p>
-                              {docUrl ? (
-                                <a
-                                  href={docUrl}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="mt-3 flex items-center gap-1.5 text-[11px] text-muted-foreground transition-colors hover:text-[var(--da-card-accent,var(--da-accent))]"
-                                  aria-label={`Read docs for ${entry.title}`}
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {activeSection.entries.map((entry, index) => {
+                const docUrl = featureDocUrl(entry);
+                return (
+                  <Reveal
+                    key={entry.id}
+                    // Stagger across the row, then restart — a long
+                    // section shouldn't end up with a two-second delay
+                    // on its last card.
+                    delay={(index % 3) * 70}
+                  >
+                    <SpotlightCard className="h-full" hueShift={hueShifts.get(entry.id)}>
+                      <div className="group/feature flex h-full flex-col p-5">
+                        <div className="mb-2 flex items-center gap-2">
+                          <span className="da-chip text-[10px] font-medium text-muted-foreground">
+                            {activeSection.label}
+                          </span>
+                          {entry.tags && entry.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-1">
+                              {entry.tags.slice(0, 3).map((tag) => (
+                                <span
+                                  key={tag}
+                                  className="da-chip text-[9px] font-medium text-muted-foreground/70 border-border/50"
                                 >
-                                  <FileText className="size-3.5" />
-                                  <span>Documentation</span>
-                                </a>
-                              ) : null}
+                                  {tag}
+                                </span>
+                              ))}
+                              {entry.tags.length > 3 && (
+                                <span className="da-chip text-[9px] font-medium text-muted-foreground/70 border-border/50">
+                                  +{entry.tags.length - 3}
+                                </span>
+                              )}
                             </div>
-                          </SpotlightCard>
-                        </Reveal>
-                      );
-                    })}
-                  </div>
-                </section>
-              );
-            })}
-          </div>
+                          )}
+                        </div>
+                        <a
+                          href={entry.href}
+                          className="text-sm font-semibold text-foreground transition-colors group-hover/feature:text-[var(--da-card-accent,var(--da-accent))]"
+                        >
+                          <span className="absolute inset-0" aria-hidden />
+                          {entry.title}
+                        </a>
+                        <p className="mt-1.5 flex-1 text-xs leading-relaxed text-muted-foreground">
+                          {entry.description}
+                        </p>
+                        {docUrl ? (
+                          <a
+                            href={docUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="mt-3 flex items-center gap-1.5 text-[11px] text-muted-foreground transition-colors hover:text-[var(--da-card-accent,var(--da-accent))]"
+                            aria-label={`Read docs for ${entry.title}`}
+                          >
+                            <FileText className="size-3.5" />
+                            <span>Documentation</span>
+                          </a>
+                        ) : null}
+                      </div>
+                    </SpotlightCard>
+                  </Reveal>
+                );
+              })}
+            </div>
+          </section>
         )}
 
         <section id="documents" className="mt-16 scroll-mt-20">

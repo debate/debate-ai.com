@@ -58,7 +58,7 @@ export function useVideoStacks(videos: VideoType[], enabled = true): VideoStackM
     let cancelled = false;
     void (async () => {
       try {
-        const data: VideoStacksResponse = await grab("videos/stacks", { keys: batch.join(",") });
+        const data: VideoStacksResponse = await grab("videos/stacks", { keys: batch.join(","), baseURL: "/api/" });
         if (cancelled || !data?.stacks) return;
         setStacks((previous) => ({ ...previous, ...data.stacks }));
       } catch (error) {

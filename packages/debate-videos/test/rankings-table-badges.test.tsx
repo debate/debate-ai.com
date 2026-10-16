@@ -1,7 +1,7 @@
 /**
  * @fileoverview Pins where the division rankings table puts its labels: the
  * legend badge ("PF Legend") follows the team's name, and the School column shows the
- * school's Schools-tab rank after its name.
+ * school's Schools-tab rank after its link — printing the school name only when it has no logo.
  */
 
 import { describe, it, expect } from "vitest";
@@ -10,6 +10,7 @@ import { createElement } from "react";
 import type { RankingEntry } from "@debate/rankings-adapter";
 import { RankingsTable } from "../src/panels/leaderboard/RankingsTable";
 import { schoolRankingsFor, schoolRankOf, schoolRanksByName } from "../src/panels/leaderboard/leaderboardUtils";
+import { hasSchoolLogo } from "../src/lib/schoolLogos";
 
 function entry(rank: number, school: string, name: string, rating: number): RankingEntry {
   return {
@@ -63,8 +64,22 @@ describe("RankingsTable labels", () => {
     expect(rows[0].indexOf("Le &amp; Luo")).toBeLessThan(rows[0].indexOf("PF Legend</span>"));
   });
 
-  it("shows the school's rank after the school name only when it has one", () => {
-    expect(rows[0]).toMatch(/Harker<\/a><span[^>]*>#1<\/span>/);
+  it("shows the school's rank after the school link, and prints the name only when the school has no logo", () => {
+    // Harker has a logo, so its name is not printed as link text; the rank badge still follows the link.
+    expect(rows[0]).toMatch(/<\/a><span[^>]*>#1<\/span>/);
+    expect(rows[0]).not.toMatch(/>Harker</);
+    // College Prep has no logo, so its name is shown and it has no school-rank badge.
+    expect(rows[1]).toContain("College Prep");
     expect(rows[1]).not.toMatch(/>#\d/);
+  });
+});
+
+describe("school logo coverage", () => {
+  it("maps the recently indexed school logos", () => {
+    for (const school of ["Michigan", "Kansas", "Texas", "UC Berkeley"]) {
+      expect(hasSchoolLogo(school)).toBe(true);
+    }
+    // A school with no logo still renders its name.
+    expect(hasSchoolLogo("College Prep")).toBe(false);
   });
 });

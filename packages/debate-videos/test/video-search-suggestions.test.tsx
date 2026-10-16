@@ -3,9 +3,8 @@
  *
  * The chips are the only part of the page that offers a search the user did
  * not type, so what matters is that a chip carries the exact term it will
- * search for, shows how many videos back it, and that the row disappears
- * rather than rendering an empty heading when the library has nothing to
- * suggest.
+ * search for, that the row disappears rather than rendering an empty heading
+ * when the library has nothing to suggest.
  */
 
 import { describe, it, expect } from "vitest";
@@ -25,7 +24,9 @@ const SUGGESTIONS: VideoSuggestions = {
   ],
 };
 
-function render(props: Partial<Parameters<typeof VideoSearchSuggestions>[0]> = {}): string {
+function render(
+  props: Partial<Parameters<typeof VideoSearchSuggestions>[0]> = {},
+): string {
   return renderToStaticMarkup(
     createElement(VideoSearchSuggestions, {
       suggestions: SUGGESTIONS,
@@ -42,14 +43,14 @@ describe("VideoSearchSuggestions", () => {
     expect(html).toContain("Tournaments");
   });
 
-  it("renders one chip per suggestion, with its match count", () => {
+  it("renders one chip per suggestion without view totals", () => {
     const html = render();
     for (const label of ["Finals", "Critique", "NDT", "TOC"]) {
       expect(html).toContain(`>${label}</span>`);
     }
-    expect(html).toContain(">206<");
-    // Four-digit counts are abbreviated, matching the quick-link cards.
-    expect(html).toContain(">1.3k<");
+    expect(html).not.toContain(">0.2k<");
+    expect(html).not.toContain(">0.0k<");
+    expect(html).not.toContain(">1.3k<");
   });
 
   it("marks the chip matching the active search term", () => {
@@ -63,7 +64,9 @@ describe("VideoSearchSuggestions", () => {
   });
 
   it("hides a row that has no chips instead of leaving an empty heading", () => {
-    const html = render({ suggestions: { keywords: SUGGESTIONS.keywords, tournaments: [] } });
+    const html = render({
+      suggestions: { keywords: SUGGESTIONS.keywords, tournaments: [] },
+    });
     expect(html).toContain("Popular searches");
     expect(html).not.toContain("Tournaments");
   });

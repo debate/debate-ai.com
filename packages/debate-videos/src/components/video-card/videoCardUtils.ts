@@ -101,3 +101,5 @@ export function formatVideoDate(
 }
 
 export { DEBATE_STYLE_LABELS };
+
+export { getTournamentLogo, hasTournamentLogo } from "./tournamentLogos";

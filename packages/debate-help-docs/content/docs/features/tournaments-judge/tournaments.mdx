@@ -42,6 +42,35 @@ up the address the same way.
   page for it in a frame, so you can register or enter ballots there.
 - **Admin**: on a tournament hosted here, the last tab is its admin view
   instead (see below).
+- **Ballot**: judges submit a ballot for a round (see below).
+
+## Submitting a ballot
+
+The **Ballot** tab (`/tournaments/2026/yale-invitational/ballot`) is where a
+judge files a ballot: event, round, room, the two entries, the winner (with a
+low-point-win box), optional speaker points and the reason for decision.
+Open it from the tab strip at the top of any tournament page and enter the
+pairing there.
+
+You must be signed in, and the **Tabroom account email** on the ballot must
+match the email you are signed in to Debate AI with. The form shows whether it
+matches as you type and won't submit until it does; the server checks again
+and turns the ballot away if not.
+
+**Send to** picks where the ballot goes:
+
+- **Debate AI only** stores it here, at `/api/judge-ballots`. Your ballots for
+  the tournament are listed under the form.
+- **Tabroom** also sends it on to Tabroom using your own Tabroom API token,
+  which is passed along and never saved. A copy is kept here either way, marked
+  with whether Tabroom accepted it. This option is greyed out until the site
+  sets `TABROOM_BALLOT_URL` to Tabroom's ballot endpoint; until then, use
+  **Open my Tabroom ballots** to enter it on Tabroom directly.
+
+AI agents can submit the same ballot as a tool call: `GET
+/api/judge-ballots/tool` returns the `submit_judge_ballot` tool definition, and
+calling it means posting those arguments to `/api/judge-ballots` under the
+judge's session, with the same email rule.
 
 ## Hosting your own tournament
 
@@ -102,6 +131,17 @@ and speech has three prelims, semifinals and a final. Its results include
 prelim seeds, final places, speaker awards and the elimination bracket. **Demo admin** on the upcoming page and **Try the demo admin** on the
 host page both open it. The site loads it by itself when it is missing or over,
 so its dates always stay current.
+
+#### Editing the demo's mock data
+
+The demo's admin view ends with **Edit mock data**, where anyone can change
+its entries (code, name, status), judges (name, code, active), rounds (label,
+whether pairings are published and results posted), pairings (each section's
+judges and, in debate, its winner) and result sets (label, published). Each
+row saves on its own with **Save**. Edits only ever change the demo
+tournament, never a hosted tournament or Tabroom's data; they are shared by
+everyone browsing the demo and last until **Reset demo data** reloads the
+original mock data (or the demo reloads itself once it is over).
 
 #### Watching the demo's rounds live
 

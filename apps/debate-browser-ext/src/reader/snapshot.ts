@@ -18,16 +18,25 @@ import { browser } from 'wxt/browser';
 import type { PageSnapshot } from '@/src/article/types';
 
 /**
+ * Message the background worker sends the page-tools content script for the
+ * snapshot when it can't inject into the tab itself — the panel was opened
+ * from the reading-mode button, which is not a user action on the extension
+ * and so grants no `activeTab`.
+ */
+export const PAGE_SNAPSHOT_REQUEST = 'debate-page-snapshot-request';
+
+/**
  * Runs in the page. Deliberately self-contained — it is serialized into the
  * tab, so it can close over nothing, and every value it returns must survive
  * structured cloning.
  */
-function collectPageSnapshot() {
+export function collectPageSnapshot() {
   return {
     url: window.location.href,
     title: document.title || '',
     html: document.documentElement ? document.documentElement.outerHTML : '',
     selectionText: String(window.getSelection() || ''),
+    contentType: document.contentType || '',
   };
 }
 
@@ -48,6 +57,25 @@ export class PageNotReadableError extends Error {}
 export async function capturePageSnapshot(tabId: number): Promise<PageSnapshot> {
   let result: unknown;
   try {
+    result = await injectSnapshot(tabId);
+  } catch (error) {
+    // Without `activeTab` for this tab, the page-tools content script (on
+    // every http(s) page) can still hand the snapshot over.
+    result = await browser.tabs
+      .sendMessage(tabId, { type: PAGE_SNAPSHOT_REQUEST }, { frameId: 0 })
+      .catch(() => undefined);
+    if (!looksLikeSnapshot(result)) throw error;
+  }
+
+  if (!looksLikeSnapshot(result)) {
+    throw new PageNotReadableError('This page returned nothing to read.');
+  }
+  return result;
+}
+
+async function injectSnapshot(tabId: number): Promise<unknown> {
+  let result: unknown;
+  try {
     if (browser.scripting?.executeScript) {
       const frames = await browser.scripting.executeScript({
         target: { tabId },
@@ -65,10 +93,6 @@ export async function capturePageSnapshot(tabId: number): Promise<PageSnapshot> 
         ? 'This page cannot be read by extensions. Try it on an ordinary web page.'
         : `Could not read this page: ${error instanceof Error ? error.message : String(error)}`,
     );
-  }
-
-  if (!looksLikeSnapshot(result)) {
-    throw new PageNotReadableError('This page returned nothing to read.');
   }
   return result;
 }

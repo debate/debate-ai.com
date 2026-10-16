@@ -53,6 +53,7 @@ import type { RoundContext } from "../../lib/speech-outcomes"
 import { cachedSpeechKeys } from "../../state/speechOutcomeCache"
 import { readSpeechSummaries, writeSpeechSummary } from "../../state/speechAiCache"
 import { requestSpeechSummary } from "../../lib/speech-ai-client"
+import { SpeechDetectionControl } from "@debate/timer"
 
 /** A document view, the AI alternative-responses view, or the AI outline. */
 type SpeechView = VideoDocumentKind | "outcomes" | "llm"
@@ -76,19 +77,11 @@ export interface SpeechFocusRequest {
 /**
  * The page's "Detect speeches" request, as the panel shows it. The page owns
  * it because the result re-times the whole round, timeline included.
+ *
+ * @see {@link SpeechDetectionControl} in `@debate/timer` — the shared shape
+ * this re-exports so the dialog and the panel agree.
  */
-export interface SpeechDetectionControl {
-  /** Starts (or re-runs) the detection. */
-  onDetect: () => void
-  /** Forgets the detected speeches; omitted while there are none. */
-  onClear?: () => void
-  running: boolean
-  error?: string | null
-  /** A one-line description of the last result — `Policy · 11 speeches found`. */
-  result?: string | null
-  /** False while the captions it reads are not loaded. */
-  available: boolean
-}
+export type SpeechDetectionControl = import("@debate/timer").SpeechDetectionControl
 
 interface WatchRoundPanelProps {
   speeches: RoundSpeech[]

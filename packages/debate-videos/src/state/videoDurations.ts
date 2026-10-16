@@ -94,6 +94,31 @@ export function useVideoDuration(videoId: string): number | null {
 }
 
 /**
+ * The summed stored length of several videos, fetched on first use. Videos
+ * with no stored length add nothing, so the total grows as lengths arrive.
+ *
+ * @param videoIds - YouTube ids; repeats are counted once.
+ * @returns Seconds, `0` while nothing is known.
+ */
+export function useVideoDurationTotal(videoIds: readonly string[]): number {
+  const key = [...new Set(videoIds)].join(",");
+
+  useEffect(() => {
+    for (const id of key.split(",")) requestVideoDuration(id);
+  }, [key]);
+
+  return useSyncExternalStore(
+    subscribe,
+    () => {
+      let total = 0;
+      for (const id of key.split(",")) total += durations.get(id) ?? 0;
+      return total;
+    },
+    () => 0,
+  );
+}
+
+/**
  * Formats a length the way the cards and rows show it.
  *
  * @param totalSeconds - Whole video length in seconds.

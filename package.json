@@ -2,13 +2,13 @@
   "name": "debate-ai",
   "private": true,
   "version": "2.2.0",
-  "packageManager": "bun@1.4.2",
+  "packageManager": "bun@1.4.3",
   "workspaces": [
     "packages/*",
     "!packages/debate-editor-cm",
     "!packages/debate-rankings",
-    "apps/debate-ai.com",
-    "apps/debate-browser-ext"
+    "!packages/debate-tournaments-tabroom",
+    "apps/*"
   ],
   "scripts": {
     "dev": "turbo dev",
@@ -24,20 +24,20 @@
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^5.0.3",
-    "jsdom": "^30.1.1",
-    "turbo": "^2.11.6",
-    "vinext": "1.0.0",
-    "vite": "^8.3.1",
+    "jsdom": "^30.1.2",
+    "turbo": "^2.11.7",
+    "vinext": "1.1.0",
+    "vite": "^8.3.4",
     "vitest": "^5.0.3"
   },
   "dependencies": {
-    "@cloudflare/vite-plugin": "^1.62.3",
+    "@cloudflare/vite-plugin": "^1.63.1",
     "docx-preview": "^0.4.1",
-    "grab-url": "^3.0.6",
+    "grab-url": "^3.0.7",
     "htmlparser2": "^12.0.0",
     "jszip": "^3.10.2",
     "linkedom": "^0.18.13",
-    "react-reason-editor-sidebar": "^0.1.156"
+    "react-reason-editor-sidebar": "^0.1.214"
   },
   "overrides": {
     "@ricky0123/vad-web": "^0.0.30",
@@ -45,6 +45,8 @@
     "balanced-match": "^4.0.2",
     "mdast-util-to-markdown": "2.1.2",
     "@codemirror/language": "6.12.4",
-    "@posthog/core": "1.57.3"
+    "@posthog/core": "1.57.3",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
   }
 }

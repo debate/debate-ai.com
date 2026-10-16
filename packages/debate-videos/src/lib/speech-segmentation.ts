@@ -213,7 +213,7 @@ export function parseSpeechSegmentationResponse(text: string): SpeechSegmentatio
  * A speech name as `identifySpeech` reads it: `1AX` becomes `CX of the 1AC`,
  * `Crossfire 2` becomes `Crossfire`.
  */
-function headingForName(name: string): string {
+export function segmentedSpeechHeading(name: string): string {
   const crossEx = /^([12])?([AN])X$/i.exec(name);
   if (crossEx) return `CX of the ${crossEx[1] ?? "1"}${crossEx[2].toUpperCase()}C`;
   return name.replace(/^(crossfire)\s+\d+$/i, "$1");
@@ -223,7 +223,7 @@ function headingForName(name: string): string {
 function keyedSpeeches(segmentation: SpeechSegmentation): Array<SegmentedSpeech & { key: string }> {
   const occurrences = new Map<string, number>();
   return segmentation.speeches.map((speech) => {
-    const identity = identifySpeech(headingForName(speech.name));
+    const identity = identifySpeech(segmentedSpeechHeading(speech.name));
     const occurrence = (occurrences.get(identity.base) ?? 0) + 1;
     occurrences.set(identity.base, occurrence);
     return { ...speech, key: `${identity.base}#${occurrence}` };
@@ -250,7 +250,7 @@ export function segmentationSpeeches(segmentation: SpeechSegmentation): RoundSpe
   }
 
   return found.map((speech) => {
-    const identity = identifySpeech(headingForName(speech.name));
+    const identity = identifySpeech(segmentedSpeechHeading(speech.name));
     return {
       key: speech.key,
       label: speech.name,

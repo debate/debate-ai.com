@@ -38,6 +38,7 @@ import {
 } from "./rankingProfileHelpers"
 import { ProfileVideos } from "./ProfileVideos"
 import { ProfileCaselistDocuments } from "./ProfileCaselistDocuments"
+import { SchoolLogo } from "../SchoolLogo"
 import { TeamRadarChart } from "./TeamRadarChart"
 import { MatchupSimulator } from "./MatchupSimulator"
 import { FollowButton } from "./FollowButton"
@@ -96,12 +97,120 @@ function ProfileStatus({
   return null
 }
 
+/** One big number over a small uppercase label, as a cell of a {@link StatBand}. */
+function RecordStat({ label, value }: { label: string; value: ReactNode }) {
+  return (
+    <div className="flex flex-col items-center justify-center px-2 py-4 text-center sm:py-5">
+      <div className="text-2xl font-bold tabular-nums tracking-tight sm:text-3xl">{value}</div>
+      <div className="mt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">{label}</div>
+    </div>
+  )
+}
+
+/** One category of record stats: a caption over a row of cells split by dividers. */
+function StatBand({ title, tone, children }: { title: string; tone: "light" | "dark"; children: ReactNode }) {
+  return (
+    <section
+      aria-label={title}
+      className={`border-t ${tone === "dark" ? "bg-muted/40" : ""}`}
+    >
+      <h3 className="px-4 pt-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">{title}</h3>
+      <div className="grid grid-cols-2 divide-border sm:grid-cols-4 sm:divide-x [&>*]:border-border max-sm:[&>*:nth-child(odd)]:border-r max-sm:[&>*:nth-child(n+3)]:border-t">
+        {children}
+      </div>
+    </section>
+  )
+}
+
+/** The pill style the header's division and rating chips share. */
+const pillClass = (active: boolean) =>
+  `inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm transition-colors ${
+    active ? "bg-primary font-medium text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/70"
+  }`
+
 /**
- * Stats and radar chart for one team in one division. When the team's school
- * has other ranked teams in the division, a checkbox under the radar (off by
+ * The team's record card: a header with the team, its school, the
+ * Follow button, a division picker and each division's rating, over the
+ * picked division's stats grouped into Standing, Win rates and Rating model.
+ */
+function TeamRecordCard({
+  entries,
+  selected,
+  onSelect,
+}: {
+  entries: ProfileEntry[]
+  selected: ProfileEntry
+  onSelect: (datasetId: ProfileEntry["datasetId"]) => void
+}) {
+  const first = entries[0].entry
+  const { entry, fieldSize, datasetLabel } = selected
+  const topPercent = fieldSize > 0 ? (entry.rank / fieldSize) * 100 : null
+  return (
+    <div className="mt-3 overflow-hidden rounded-xl border bg-card text-card-foreground shadow-sm">
+      <header className="px-4 pb-4 pt-5 sm:px-6">
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{first.name}</h1>
+        <Link href={schoolHref(first.school)} className="text-base text-muted-foreground underline-offset-4 hover:underline flex items-center gap-2 mt-1">
+          <SchoolLogo school={first.school} className="h-5 w-auto" />
+          {first.school}
+        </Link>
+        <div>
+          <FollowButton kind="team" slug={teamSlug(first)} name={`${first.school} ${first.name}`} />
+        </div>
+        {entries.length > 1 && (
+          <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label="Division">
+            {entries.map((item) => (
+              <button
+                key={item.datasetId}
+                type="button"
+                aria-pressed={item.datasetId === selected.datasetId}
+                onClick={() => onSelect(item.datasetId)}
+                className={pillClass(item.datasetId === selected.datasetId)}
+              >
+                {item.datasetLabel}
+              </button>
+            ))}
+          </div>
+        )}
+        <div className="mt-2 flex flex-wrap gap-2">
+          {entries.map((item) => (
+            <span key={item.datasetId} className={pillClass(false)}>
+              {item.datasetLabel}
+              <span className="font-semibold tabular-nums text-foreground">{rating(item.entry.adjustedRating)}</span>
+            </span>
+          ))}
+        </div>
+      </header>
+      <h2 className="sr-only">
+        {datasetLabel} · rank {entry.rank} of {fieldSize}
+      </h2>
+      <StatBand title="Standing" tone="light">
+        <RecordStat label={`Rating · ${datasetLabel}`} value={rating(entry.adjustedRating)} />
+        <RecordStat label={`Rank of ${fieldSize}`} value={`#${entry.rank}`} />
+        <RecordStat label="Field percentile" value={topPercent === null ? "—" : `Top ${percent(Math.max(topPercent, 0.1))}`} />
+        <RecordStat label="Matches" value={entry.matches} />
+      </StatBand>
+      <StatBand title="Win rates" tone="dark">
+        <RecordStat label="Aff win %" value={percent(entry.affWinRate)} />
+        <RecordStat label="Neg win %" value={percent(entry.negWinRate)} />
+        <RecordStat label="Elim aff win %" value={percent(entry.affElimWinRate)} />
+        <RecordStat label="Elim neg win %" value={percent(entry.negElimWinRate)} />
+      </StatBand>
+      <StatBand title="Rating model" tone="dark">
+        <RecordStat label="Raw rating" value={rating(entry.rating)} />
+        <RecordStat label="Deviation" value={`±${rating(entry.deviation)}`} />
+        <RecordStat label="Field size" value={fieldSize} />
+        <RecordStat label="Divisions ranked" value={entries.length} />
+      </StatBand>
+    </div>
+  )
+}
+
+/**
+ * Radar chart for one team in one division. When the team's school has
+ * other ranked teams in the division, a checkbox under the radar (off by
  * default) overlays the school's average in that division.
  */
-function TeamDivisionStats({ item, datasets }: { item: ProfileEntry; datasets: RankingDataset[] }) {
+function TeamDivisionRadar({ item, datasets }: { item: ProfileEntry; datasets: RankingDataset[] }) {
   const { entry } = item
   const data = teamRadarData(item)
   const [showSchool, setShowSchool] = useState(false)
@@ -109,50 +218,34 @@ function TeamDivisionStats({ item, datasets }: { item: ProfileEntry; datasets: R
   const hasSchoolPeers = schoolItems.length > 1
   const schoolData = hasSchoolPeers && showSchool ? schoolDivisionRadarData(schoolItems) : null
   return (
-    <div className="mt-4">
-      <h2 className="mb-2 text-sm font-medium text-muted-foreground">
-        {item.datasetLabel} · rank {entry.rank} of {item.fieldSize}
-      </h2>
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-8">
-        <Stat label="Rank" value={entry.rank} />
-        <Stat label="Adj. rating" value={rating(entry.adjustedRating)} />
-        <Stat label="Matches" value={entry.matches} />
-        <Stat label="Aff win" value={percent(entry.affWinRate)} />
-        <Stat label="Neg win" value={percent(entry.negWinRate)} />
-        <Stat
-          label="Elim aff / neg"
-          value={`${percent(entry.affElimWinRate)} / ${percent(entry.negElimWinRate)}`}
-        />
-      </div>
-      <div className="mt-2 max-w-md">
-        <TeamRadarChart
-          data={data}
-          caption={`Profile · ${item.datasetLabel} (edge = best; ranking is a field percentile, matches are relative to the most-played entry)`}
-          ariaLabel={`${entry.name} radar: ${data.map((d) => `${d.metric} ${d.display}`).join(", ")}${
-            schoolData
-              ? `; ${entry.school} average: ${schoolData.map((d) => `${d.metric} ${d.display}`).join(", ")}`
-              : ""
-          }`}
-          comparison={
-            schoolData
-              ? { label: `${entry.school} average (${schoolItems.length} teams)`, data: schoolData }
-              : undefined
-          }
-          footer={
-            hasSchoolPeers && (
-              <label className="mt-1 flex cursor-pointer select-none items-center gap-1.5 px-1 text-xs text-muted-foreground hover:text-foreground">
-                <input
-                  type="checkbox"
-                  checked={showSchool}
-                  onChange={(event) => setShowSchool(event.target.checked)}
-                  className="h-3.5 w-3.5 cursor-pointer accent-primary"
-                />
-                Show {entry.school} average in {item.datasetLabel}
-              </label>
-            )
-          }
-        />
-      </div>
+    <div className="mt-4 max-w-md">
+      <TeamRadarChart
+        data={data}
+        caption={`Profile · ${item.datasetLabel} (edge = best; ranking is a field percentile, matches are relative to the most-played entry)`}
+        ariaLabel={`${entry.name} radar: ${data.map((d) => `${d.metric} ${d.display}`).join(", ")}${
+          schoolData
+            ? `; ${entry.school} average: ${schoolData.map((d) => `${d.metric} ${d.display}`).join(", ")}`
+            : ""
+        }`}
+        comparison={
+          schoolData
+            ? { label: `${entry.school} average (${schoolItems.length} teams)`, data: schoolData }
+            : undefined
+        }
+        footer={
+          hasSchoolPeers && (
+            <label className="mt-1 flex cursor-pointer select-none items-center gap-1.5 px-1 text-xs text-muted-foreground hover:text-foreground">
+              <input
+                type="checkbox"
+                checked={showSchool}
+                onChange={(event) => setShowSchool(event.target.checked)}
+                className="h-3.5 w-3.5 cursor-pointer accent-primary"
+              />
+              Show {entry.school} average in {item.datasetLabel}
+            </label>
+          )
+        }
+      />
     </div>
   )
 }
@@ -168,25 +261,16 @@ export function TeamProfilePage({ slug }: { slug: string }) {
   const { datasets, loading, error } = useAllRankingDatasets()
   const entries = loading ? [] : findTeamEntries(datasets, slug)
   const first = entries[0]?.entry
+  const [selectedId, setSelectedId] = useState<ProfileEntry["datasetId"] | null>(null)
+  const selected = entries.find((item) => item.datasetId === selectedId) ?? entries[0]
 
   return (
     <ProfileFrame>
       <ProfileStatus loading={loading} error={error} found={Boolean(first)} kind="team" />
-      {first && (
+      {first && selected && (
         <>
-          <header className="mt-3">
-            <h1 className="text-2xl font-semibold text-foreground">{first.name}</h1>
-            <Link
-              href={schoolHref(first.school)}
-              className="text-sm text-primary underline-offset-4 hover:underline"
-            >
-              {first.school}
-            </Link>
-            <FollowButton kind="team" slug={teamSlug(first)} name={`${first.school} ${first.name}`} />
-          </header>
-          {entries.map((item) => (
-            <TeamDivisionStats key={item.datasetId} item={item} datasets={datasets} />
-          ))}
+          <TeamRecordCard entries={entries} selected={selected} onSelect={setSelectedId} />
+          <TeamDivisionRadar key={selected.datasetId} item={selected} datasets={datasets} />
           <MatchupSimulator
             lockedTeamSlug={teamSlug(first)}
             title={`Simulate ${first.name} vs. any ranked team`}
@@ -203,11 +287,38 @@ export function TeamProfilePage({ slug }: { slug: string }) {
  * Profile of one school: aggregate stats and every ranked entry, by division.
  *
  * @param props.slug - The `/schools/[school]` segment, from `profileSlug`.
+ * @param props.ownerPanel - Rendered under the school's name: the host's
+ *   owner-managed logo, roster and claim link.
+ * @param props.knownName - The school's name when the host knows the school
+ *   though no ranking lists it (one a coach created when claiming it); the
+ *   page then shows the name and `ownerPanel` instead of "not found".
  */
-export function SchoolProfilePage({ slug }: { slug: string }) {
+export function SchoolProfilePage({
+  slug,
+  ownerPanel,
+  knownName,
+}: {
+  slug: string
+  ownerPanel?: ReactNode
+  knownName?: string | null
+}) {
   const { datasets, loading, error } = useAllRankingDatasets()
   const entries = loading ? [] : findSchoolEntries(datasets, slug)
   const summary = summarizeSchool(entries)
+
+  if (!loading && entries.length === 0 && knownName) {
+    return (
+      <ProfileFrame>
+        <header className="mt-3">
+          <h1 className="text-2xl font-semibold text-foreground">{knownName}</h1>
+          <p className="text-sm text-muted-foreground">No ranked entries yet</p>
+          <FollowButton kind="school" slug={slug} name={knownName} />
+        </header>
+        {ownerPanel}
+        <ProfileVideos search={schoolVideoSearch(knownName, [])} />
+      </ProfileFrame>
+    )
+  }
 
   const divisions = entries.reduce(
     (groups, item) => {
@@ -224,12 +335,14 @@ export function SchoolProfilePage({ slug }: { slug: string }) {
       {entries.length > 0 && (
         <>
           <header className="mt-3">
+            <SchoolLogo school={summary.school} className="mb-2 h-12 w-auto" />
             <h1 className="text-2xl font-semibold text-foreground">{summary.school}</h1>
             <p className="text-sm text-muted-foreground">
               {summary.divisions.map((d) => d.datasetLabel).join(" · ")}
             </p>
             <FollowButton kind="school" slug={profileSlug(summary.school)} name={summary.school} />
           </header>
+          {ownerPanel}
 
           <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
             <Stat label="Ranked entries" value={summary.teams} />

@@ -58,6 +58,24 @@ vi.mock("grab-url", () => ({
         : {},
 }));
 
+// Stored lengths for the page's video and both related rounds. Stubbed for
+// the whole file: the lengths are cached per page load, so the first mount
+// decides what every later test sees.
+const realFetch = globalThis.fetch
+vi.stubGlobal(
+  "fetch",
+  vi.fn((url: RequestInfo | URL, init?: RequestInit) =>
+    String(url).startsWith("/api/videos/durations")
+      ? Promise.resolve(
+          new Response(
+            JSON.stringify({ durations: { OXdffJy8HIs: 5400, "rel-old": 3600, "rel-new": 1800 } }),
+            { status: 200 },
+          ),
+        )
+      : realFetch(url, init),
+  ),
+)
+
 const { VideoWatchPage } = await import("../src/panels/watch/VideoWatchPage")
 const { useVideoPlayerStore } = await import("../src/state/videoPlayerStore")
 import type { VideoType } from "../src/types/videos"
@@ -143,6 +161,22 @@ describe("the related videos under the player", () => {
       ;(dateHeader as HTMLButtonElement).click()
     })
     expect(rowTitles()[0]).toContain("Emory")
+  })
+})
+
+describe("video lengths", () => {
+  it("shows the page video's length and the related videos' total", async () => {
+    mount()
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 10))
+    })
+    const meta = container.querySelector('[title="Duration"]')
+    expect(meta?.textContent).toBe("1h 30m")
+    const heading = [...container.querySelectorAll("h2")].find((h2) =>
+      h2.textContent?.includes("Related videos"),
+    )
+    expect(heading?.parentElement?.textContent).toContain("1h 30m total")
+    expect(rowTitles().find((row) => row.includes("Emory"))).toContain("1h 00m")
   })
 })
 

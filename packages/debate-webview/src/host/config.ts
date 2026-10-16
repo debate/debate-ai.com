@@ -20,6 +20,24 @@
  * evaluated at import time or called from event handlers.
  */
 
+import type { ComponentType } from "react"
+
+/**
+ * One more tab in the app's Settings page, supplied by the host — the browser
+ * extension's own settings (timer, toolbar, reading mode, search shortcut)
+ * live here, beside the app's, rather than on a separate screen.
+ */
+export interface HostSettingsSection {
+  /** Tab id, also its `?category=` value. Must not collide with the app's own. */
+  id: string
+  label: string
+  /** The subtitle under the tab's heading; also matched by the settings search. */
+  description: string
+  icon?: ComponentType<{ size?: number }>
+  /** The tab's content. */
+  component: ComponentType
+}
+
 export interface HostConfig {
   /** Show Google One Tap. Needs Google's script, so web only. */
   oneTap: boolean
@@ -36,6 +54,8 @@ export interface HostConfig {
    * work on the site's own origin.
    */
   openOnSite?: (path: string) => void
+  /** Extra Settings tabs the host owns, listed after the app's Preferences and My team. */
+  settingsSections?: HostSettingsSection[]
 }
 
 const WEB_DEFAULTS: HostConfig = {

@@ -3,6 +3,7 @@
 # Helper script to build native wrapper packages using Docker containers
 # Usage:
 #   ./scripts/build-docker.sh --linux
+#   ./scripts/build-docker.sh --windows
 #   ./scripts/build-docker.sh --android
 #   ./scripts/build-docker.sh --ios-core
 #   ./scripts/build-docker.sh --all
@@ -14,13 +15,20 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WRAPPER_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 OUTPUT_DIR="${WRAPPER_DIR}/dist-artifacts"
 
-mkdir -p "${OUTPUT_DIR}/linux" "${OUTPUT_DIR}/android" "${OUTPUT_DIR}/ios"
+mkdir -p "${OUTPUT_DIR}/linux" "${OUTPUT_DIR}/windows" "${OUTPUT_DIR}/android" "${OUTPUT_DIR}/ios"
 
 build_linux() {
   echo "==> Building Linux packages (.deb, .rpm, .AppImage) in Docker..."
   docker build -f "${WRAPPER_DIR}/docker/Dockerfile.linux" -t debate-native-linux "${WRAPPER_DIR}"
   docker run --rm -v "${OUTPUT_DIR}/linux:/output" debate-native-linux
   echo "==> Linux packages saved to: ${OUTPUT_DIR}/linux"
+}
+
+build_windows() {
+  echo "==> Cross-compiling Windows installer (.exe, NSIS) in Docker..."
+  docker build -f "${WRAPPER_DIR}/docker/Dockerfile.windows" -t debate-native-windows "${WRAPPER_DIR}"
+  docker run --rm -v "${OUTPUT_DIR}/windows:/output" debate-native-windows
+  echo "==> Windows packages saved to: ${OUTPUT_DIR}/windows"
 }
 
 build_android() {
@@ -43,6 +51,9 @@ case "${TARGET}" in
   --linux)
     build_linux
     ;;
+  --windows)
+    build_windows
+    ;;
   --android)
     build_android
     ;;
@@ -51,12 +62,13 @@ case "${TARGET}" in
     ;;
   --all)
     build_linux
+    build_windows
     build_android
     build_ios_core
     ;;
   *)
     echo "Unknown target: ${TARGET}"
-    echo "Usage: $0 [--linux|--android|--ios-core|--all]"
+    echo "Usage: $0 [--linux|--windows|--android|--ios-core|--all]"
     exit 1
     ;;
 esac

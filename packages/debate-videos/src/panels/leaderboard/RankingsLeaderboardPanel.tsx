@@ -15,7 +15,7 @@
 import { useState, useMemo } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { Search } from "lucide-react"
-import { getRankingDatasetInfo } from "@debate/rankings-adapter"
+import { getRankingDatasetInfo, hasCollegeHistory } from "@debate/rankings-adapter"
 import { TooltipProvider } from "../../ui/primitives/tooltip"
 import { Tabs, TabsList, TabsTrigger } from "../../ui/primitives/tabs"
 import { Input } from "../../ui/primitives/input"
@@ -49,6 +49,7 @@ import { RankingsTable } from "./RankingsTable"
 import { legendaryCount } from "./rowTier"
 import { RankingsFieldSummary } from "./RankingsFieldSummary"
 import { LeaderboardFilterBar } from "./LeaderboardFilterBar"
+import { CollegeHistoryTable } from "./CollegeHistoryTable"
 
 
 /**
@@ -151,7 +152,10 @@ export function LeaderboardPanel({
 
   const datasetIds = isSchools ? [] : divisionDatasets(division)
   const datasetId = datasetIds[Math.min(datasetIndex, datasetIds.length - 1)] ?? null
-  /** `debate-rankings` covers the current season only; older years show the banner alone. */
+  /**
+   * `debate-rankings` covers the current season only; older years show the
+   * banner alone, plus the scraped college policy table on NDT (2010–2026).
+   */
   const { dataset, loading, error, debateHistory, championsLoading } =
     useLeaderboardData(isCurrentYear ? datasetId : null, history)
   const schoolData = useSchoolRankingsData(isSchools && isCurrentYear)
@@ -297,6 +301,20 @@ return (
                     )}
                   </>
                 )}
+              </>
+            ) : !isCurrentYear && division === "NDT" && hasCollegeHistory(year) ? (
+              <>
+                <div className="relative mb-3 max-w-sm">
+                  <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Filter by team or school"
+                    aria-label="Filter past-season rankings by team or school"
+                    className="h-9 pl-8"
+                  />
+                </div>
+                <CollegeHistoryTable year={year} query={query} />
               </>
             ) : !isCurrentYear ? (
               <div className="rounded-lg border bg-muted/30 p-4 text-sm text-muted-foreground text-center">

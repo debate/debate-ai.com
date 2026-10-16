@@ -70,6 +70,11 @@ export interface DocumentSection {
   heading: string;
   /** Second the section starts at, when the heading named one. */
   startSeconds: number | null;
+  /**
+   * Second the section ends at, when the heading gave a range
+   * (`## 1AC (0:42–8:51)`, as the admin speech analysis writes them).
+   */
+  endSeconds?: number | null;
   /** The section's own text, headings excluded. */
   body: string;
   wordCount: number;
@@ -115,9 +120,29 @@ export function formatTimecode(seconds: number): string {
  * The timecode a heading carries, and the heading without it.
  *
  * Three shapes are accepted because all three are what people actually type:
- * `1AC [2:15]`, `1AC (2:15)` and `1AC — 2:15`.
+ * `1AC [2:15]`, `1AC (2:15)` and `1AC — 2:15`. A bracketed range,
+ * `1AC (0:42–8:51)`, also gives the moment the speech ends.
  */
-function splitHeadingTimecode(heading: string): { heading: string; startSeconds: number | null } {
+function splitHeadingTimecode(heading: string): {
+  heading: string;
+  startSeconds: number | null;
+  endSeconds?: number | null;
+} {
+  const ranged = heading.match(
+    /^(.*?)[\s]*[[(]\s*(\d{1,2}(?::[0-5]?\d){1,2})\s*[—–-]\s*(\d{1,2}(?::[0-5]?\d){1,2})\s*[\])]\s*$/,
+  );
+  if (ranged) {
+    const start = parseTimecode(ranged[2]);
+    const end = parseTimecode(ranged[3]);
+    if (start !== null) {
+      return {
+        heading: ranged[1].trim(),
+        startSeconds: start,
+        endSeconds: end !== null && end > start ? end : null,
+      };
+    }
+  }
+
   const bracketed = heading.match(/^(.*?)[\s]*[[(]\s*(\d{1,2}(?::[0-5]?\d){1,2})\s*[\])]\s*$/);
   if (bracketed) {
     const seconds = parseTimecode(bracketed[2]);
@@ -155,7 +180,12 @@ export function parseDocumentSections(
   if (!text.trim()) return [];
 
   const sections: DocumentSection[] = [];
-  let current: { heading: string; startSeconds: number | null; lines: string[] } = {
+  let current: {
+    heading: string;
+    startSeconds: number | null;
+    endSeconds?: number | null;
+    lines: string[];
+  } = {
     heading: "",
     startSeconds: null,
     lines: [],
@@ -170,6 +200,7 @@ export function parseDocumentSections(
     sections.push({
       heading: current.heading,
       startSeconds: current.startSeconds,
+      ...(current.endSeconds != null ? { endSeconds: current.endSeconds } : {}),
       body: sectionBody,
       wordCount: countWords(sectionBody),
     });
@@ -180,7 +211,7 @@ export function parseDocumentSections(
     if (heading) {
       push();
       const split = splitHeadingTimecode(heading[1]);
-      current = { heading: split.heading, startSeconds: split.startSeconds, lines: [] };
+      current = { ...split, lines: [] };
       continue;
     }
     current.lines.push(line);

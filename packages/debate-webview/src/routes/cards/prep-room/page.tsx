@@ -1,14 +1,6 @@
-import { Suspense } from "react"
-import { PrepRoomPanel } from "@debate/team-collaboration"
-import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHeader"
+import { TeamResearchPage } from "../../research/team/page"
 
+/** Old `/research/cards/prep-room` address: now Team Research's "prep-room" tab. */
 export default function CardsPrepRoomPage() {
-  return (
-    <ToolPage>
-      <ToolPageHeader href="/research/cards/prep-room" backHref="/research/cards" backLabel="shared cards" guide="research-collaboration" />
-      <Suspense>
-        <PrepRoomPanel />
-      </Suspense>
-    </ToolPage>
-  )
+  return <TeamResearchPage initialSection="prep-room" />
 }

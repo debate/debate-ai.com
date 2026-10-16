@@ -1,1 +1,1 @@
-export { GET, POST } from "./caselist-sync/index"
+export { POST } from "../extract-urls"

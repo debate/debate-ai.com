@@ -20,9 +20,11 @@ import { useSpeechRecordingStatus } from "../hooks/useSpeechRecordingStatus"
 import { useSpeechWordStats } from "../hooks/useSpeechWordStats"
 import { SpeechDocLinkPicker } from "../controls/SpeechDocLinkPicker"
 import { getRoundRecordingShareEmails } from "../round/round-recording-share"
+import { roundRecordingFor } from "../round/round-recording-items"
 import { settings } from "../state/settings"
 import { cn } from "../ui/lib/utils"
 import { useAiOutcomeResponsesAction } from "../dialogs/AiOutcomeResponsesDialog"
+import { useYouTubeSpeechAction } from "../dialogs/YouTubeSpeechDialog"
 import { useClarityRequestAction } from "../hooks/useClarityRequests"
 
 /** Resolve which debater email corresponds to a given speech column name. */
@@ -204,6 +206,7 @@ export function SpeechHeaderBar({
   // document or the flow's own), and words spoken from the recording.
   const wordStats = useSpeechWordStats(currentFlow, speechName, { live: true })
   const participantEmails = getRoundRecordingShareEmails(currentRound)
+  const roundRecording = roundRecordingFor(currentRound, debateStyle?.timerSpeeches)
 
   const speakerEmail = currentRound ? getSpeakerEmail(speechName, currentRound) : ""
   const hasN = speechName.includes("N")
@@ -252,11 +255,13 @@ export function SpeechHeaderBar({
     : 0
 
   const outcomeResponses = useAiOutcomeResponsesAction(speechName)
+  const youtubeSpeech = useYouTubeSpeechAction(speechName)
   const clarityRequest = useClarityRequestAction(speechName)
 
   const recordingMenu = (labeled: boolean) => (
     <SpeechRecordingMenu
       actions={clarityRequest ? [clarityRequest, outcomeResponses.action] : [outcomeResponses.action]}
+      uploadActions={[youtubeSpeech.action]}
       speechName={speechName}
       speechLabel={speechName}
       micDeviceId={micDeviceId}
@@ -277,6 +282,7 @@ export function SpeechHeaderBar({
       onDeleteRecording={hasRecording ? deleteRecording : undefined}
       recordingKey={hasRecording ? `debate-recording-${speechName}` : undefined}
       participantEmails={participantEmails}
+      roundRecording={roundRecording}
       triggerLabel={labeled ? "Mic & recording" : undefined}
       inHeader={true}
     />
@@ -299,8 +305,10 @@ export function SpeechHeaderBar({
           />
         </div>
       )}
-      {/* Single row: name · recording playback · timer & controls */}
-      <div className="flex items-center gap-1 w-full overflow-x-auto min-w-0">
+      {/* Main row: name · word count · timer & controls. The recording player
+          gets its own row below so nothing is squeezed on top of the timer in
+          a narrow sidebar. */}
+      <div className="flex items-center gap-1 w-full min-w-0">
         {/* Mobile sidebar hamburger */}
         {onMobileMenuClick && (
           <Button
@@ -315,7 +323,7 @@ export function SpeechHeaderBar({
         )}
 
         {/* Speech name with navigation */}
-        <div className="flex items-center gap-1 shrink-0">
+        <div className="flex items-center gap-0.5 min-w-0 flex-1">
           {onNavigatePrev && (
             <Button
               variant="ghost"
@@ -349,33 +357,6 @@ export function SpeechHeaderBar({
               <ChevronRight className="h-3.5 w-3.5" />
             </Button>
           )}
-        </div>
-
-        {/* Recording playback — fills middle space on desktop; natural width on mobile */}
-        <div className="min-w-0 sm:flex-1">
-          <SpeechRecordingPlayer
-            speechName={speechName}
-            className="w-full"
-            progressBarPortalRef={progressBarPortalRef}
-            onPlayingChange={handleRecordingPlayingChange}
-            onResetSpeechTime={() => {
-              setTime(resetTime)
-              setTimerState({ name: "paused" })
-            }}
-            onSwitchToCrossX={() => {
-              // Set to 3 minutes (180,000 ms)
-              const crossXTime = 3 * 60 * 1000
-              setTime(crossXTime)
-              setResetTime(crossXTime)
-              setTimerState({ name: "paused" })
-            }}
-            onResetPrepTimers={onResetPrepTimers}
-            micDeviceId={micDeviceId}
-            onMicDeviceChange={setMicDeviceId}
-            recordingEnabled={recordingEnabled}
-            onRecordingEnabledChange={setRecordingEnabled}
-            hideInlineMenu={true}
-          />
         </div>
 
         {/* Words read from the speech doc (and spoken, once recorded) */}
@@ -448,7 +429,37 @@ export function SpeechHeaderBar({
         </div>
       </div>
 
+      {/* Recording playback on its own full-width row (renders nothing until
+          a recording exists, so the row collapses via `empty:hidden`) */}
+      <div className="w-full min-w-0 empty:hidden">
+         <SpeechRecordingPlayer
+           speechName={speechName}
+           className="w-full"
+           progressBarPortalRef={progressBarPortalRef}
+           onPlayingChange={handleRecordingPlayingChange}
+           onResetSpeechTime={() => {
+             setTime(resetTime)
+             setTimerState({ name: "paused" })
+           }}
+           onSwitchToCrossX={() => {
+             // Set to 3 minutes (180,000 ms)
+             const crossXTime = 3 * 60 * 1000
+             setTime(crossXTime)
+             setResetTime(crossXTime)
+             setTimerState({ name: "paused" })
+           }}
+           onResetPrepTimers={onResetPrepTimers}
+           micDeviceId={micDeviceId}
+           onMicDeviceChange={setMicDeviceId}
+           recordingEnabled={recordingEnabled}
+           onRecordingEnabledChange={setRecordingEnabled}
+           hideInlineMenu={true}
+           uploadActions={[youtubeSpeech.action]}
+         />
+      </div>
+
       {showRecordingMenu && outcomeResponses.dialog}
+      {showRecordingMenu && youtubeSpeech.dialog}
 
       {/* Recording menu on its own row under the speech (round sidebar) */}
       {showRecordingMenu && recordingMenuPlacement === "below" && (

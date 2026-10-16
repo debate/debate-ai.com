@@ -11,7 +11,7 @@ import { PageNotReadableError, capturePageSnapshot } from '@/src/reader/snapshot
 import {
   READER_SNAPSHOT_MESSAGE,
   READER_TAB_CHANGED_MESSAGE,
-  toggleReaderPanel,
+  openReaderForTab,
 } from '@/src/reader/panel';
 import { getSettings } from '@/src/settings/settings';
 import { handleBulkStorageMessage, isBulkStorageMessage } from '@/src/storage/bulk-storage-bridge';
@@ -28,14 +28,8 @@ import { OPEN_TIMER_MESSAGE, forgetTimerWindow, openTimerWindow } from '@/src/ti
  */
 const POPUP_PAGE = 'popup.html';
 
-/** Right-click → check this page, so the reuse check stays reachable in either toolbar mode. */
-const CHECK_PAGE_MENU_ID = 'check-page-for-existing-cards';
-
 /** Right-click → read this page, the article panel's other way in. */
 const READ_PAGE_MENU_ID = 'read-page-in-article-panel';
-
-/** Standalone reuse-check window: the same popup, told which URL to check. */
-const CHECK_WINDOW = { width: 380, height: 460 } as const;
 
 /**
  * How often to ping the server with the stored session.
@@ -77,12 +71,6 @@ async function createContextMenus(): Promise<void> {
     contexts: ['page', 'selection'],
     documentUrlPatterns: ['http://*/*', 'https://*/*'],
   });
-  browser.contextMenus.create({
-    id: CHECK_PAGE_MENU_ID,
-    title: 'Check this page for existing cards',
-    contexts: ['page'],
-    documentUrlPatterns: ['http://*/*', 'https://*/*'],
-  });
 }
 
 /** The tab the reader is looking at. */
@@ -92,17 +80,14 @@ async function getActiveTab(): Promise<{ id?: number; url?: string } | undefined
 }
 
 /**
- * Shows or hides the article panel over `tabId`, falling back to the timer
- * window on pages the panel can't be put on (browser-internal pages, the web
- * store), so the click still does something.
+ * Shows or hides the article panel over `tab` — or opens it as its own tab for
+ * a PDF or a page it can't sit on (src/reader/panel.ts) — falling back to the
+ * timer window on pages with no web URL at all (browser-internal pages, the
+ * web store), so the click still does something.
  */
-async function toggleReaderOrFallBack(tabId: number | undefined): Promise<void> {
-  if (tabId == null) {
-    await openTimerWindow();
-    return;
-  }
+async function toggleReaderOrFallBack(tab: { id?: number; url?: string } | undefined): Promise<void> {
   try {
-    await toggleReaderPanel(tabId);
+    await openReaderForTab(tab ?? {});
   } catch (error) {
     console.warn('Could not show the article panel on this page:', error);
     await openTimerWindow();
@@ -175,27 +160,42 @@ export default defineBackground(() => {
   toolbarButton.onClicked.addListener((tab) => {
     void (async () => {
       const { toolbarAction } = await getSettings();
-      if (toolbarAction === 'reader') await toggleReaderOrFallBack(tab?.id);
+      if (toolbarAction === 'reader') await toggleReaderOrFallBack(tab);
       else await openTimerWindow();
     })();
   });
 
-  browser.runtime.onMessage.addListener((message: unknown, sender: { tab?: { id?: number } }) => {
-    const type = (message as { type?: string } | undefined)?.type;
-    switch (type) {
-      case OPEN_TIMER_MESSAGE:
-        void openTimerWindow();
-        return;
-      case READER_SNAPSHOT_MESSAGE:
-        return handleSnapshotRequest(sender.tab?.id);
-      case SIGN_IN_MESSAGE:
-        return runSignInFlow();
-      case SIGN_OUT_MESSAGE:
-        return signOut();
-      default:
-        return;
-    }
-  });
+  browser.runtime.onMessage.addListener(
+    (
+      message: unknown,
+      sender: { tab?: { id?: number } },
+      sendResponse: (response?: unknown) => void,
+    ) => {
+      // WXT's `browser` is Chrome's own API, not webextension-polyfill, and
+      // Chrome does not take a returned promise as the reply: answer through
+      // `sendResponse` and return `true` to keep the channel open.
+      const reply = (work: Promise<unknown>) => {
+        work.then(sendResponse, (error: unknown) =>
+          sendResponse({ ok: false, error: error instanceof Error ? error.message : String(error) }),
+        );
+        return true;
+      };
+      const type = (message as { type?: string } | undefined)?.type;
+      switch (type) {
+        case OPEN_TIMER_MESSAGE:
+          void openTimerWindow();
+          return;
+        case READER_SNAPSHOT_MESSAGE:
+          return reply(handleSnapshotRequest(sender.tab?.id));
+        case SIGN_IN_MESSAGE:
+          return reply(runSignInFlow());
+        case SIGN_OUT_MESSAGE:
+          return reply(signOut());
+        default:
+          return;
+      }
+    },
+  );
 
   // debate-ai.com mirroring its flows, rounds and history into this
   // extension's unlimited storage (src/storage/bulk-storage-bridge.ts). The
@@ -212,18 +212,7 @@ export default defineBackground(() => {
   });
 
   browser.contextMenus.onClicked.addListener((info, tab) => {
-    if (info.menuItemId === READ_PAGE_MENU_ID) {
-      void toggleReaderOrFallBack(tab?.id);
-      return;
-    }
-    if (info.menuItemId !== CHECK_PAGE_MENU_ID || !info.pageUrl) return;
-    // The popup can't read another window's active tab, so the URL to check is
-    // handed to it explicitly.
-    void browser.windows.create({
-      url: browser.runtime.getURL(`/${POPUP_PAGE}?url=${encodeURIComponent(info.pageUrl)}`),
-      type: 'popup',
-      ...CHECK_WINDOW,
-    });
+    if (info.menuItemId === READ_PAGE_MENU_ID) void toggleReaderOrFallBack(tab);
   });
 
   browser.tabs.onUpdated.addListener((tabId, change) => {

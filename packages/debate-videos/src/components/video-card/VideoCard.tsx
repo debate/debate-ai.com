@@ -111,7 +111,7 @@ function VideoCardComponent({
     <TooltipProvider>
       <div className="block h-full relative group/card">
         <Card
-          className={`overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full relative p-0 gap-1.5 ${
+          className={`overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full relative p-0 gap-1 ${
             isPlaying ? "ring-2 ring-primary" : ""
           } ${
             isHidden

@@ -133,8 +133,8 @@ export function VideoCardActions({
 
   return (
     <>
-      <div className="px-2 pb-1.5 pt-0 flex-1 flex flex-col">
-        <div className="flex items-center gap-1.5 sm:gap-2.5 text-xs text-muted-foreground flex-wrap">
+      <div className="px-2 pb-1 pt-0 flex-1 flex flex-col">
+        <div className="flex items-center gap-1 sm:gap-1.5 text-xs text-muted-foreground flex-wrap">
           {/* External YouTube link */}
           <a
             href={youtubeUrl}
@@ -302,10 +302,10 @@ export function VideoCardActions({
           </Tooltip>
 
           {/* View count */}
-          <div className="flex items-center gap-1 shrink-0">
+          <span className="inline-flex items-center gap-1 shrink-0 rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium tabular-nums">
             <Eye className="h-3 w-3" />
-            <span>{formatCount(viewCount)}</span>
-          </div>
+            {formatCount(viewCount)}
+          </span>
 
           {/* Judge decision */}
           {judgeDecision && (

@@ -6,9 +6,6 @@
 |-------|---------|
 | September 2023 | 4 |
 | October 2023 | 12 |
-| July 2024 | 2 |
-| June 2025 | 4 |
-| December 2025 | 5 |
 | February 2026 | 14 |
 | March 2026 | 128 |
 | April 2026 | 9 |
@@ -17,13 +14,77 @@
 | July 2026 | 9 |
 | August 2026 | 363 |
 | September 2026 | 1,024 |
-| **Total** | **1,648** |
+| October 2026 (through the 13th) | 514 |
 
 # AI Debate Era (MVP, 2026+)
 
+## October 2026 (so far) — 514 commits
+
+Prediction markets, a rankings engine, a native Tournaments product, and a big consolidation of the tool sprawl into a handful of workspaces — with account sync finishing its rollout across every tool.
+
+### Prediction markets and the file market
+
+- Launched **play-money prediction markets** on debates, tournaments and team ratings, with preset markets for each division's top five and the season's majors, and rating and tournament markets that **auto-open weekly**. Hid names on the top-forecasters board and dropped partner-name search.
+- Laid groundwork for an **argument market** kind with source and wager validation.
+- Added a **file market**: sell files for wallet balance, with free table-of-contents previews so buyers see what they're paying for.
+
+### Rankings
+
+- Built **Bradley-Terry team rankings** from the new upstream CSVs, plus a **head-to-head matchup simulator** for any two ranked teams (later with per-side sims, school/individual weights and a "my team" shortcut).
+- Rated **side balance separately in prelims and elims** and drew prelim and elim side bias as one two-bar chart.
+- Reworked the scale a few times — rescaled ratings to roughly 0–110, capped at 109, zero-padded with shaded tier digits — and gave 80+ ratings a gold border and a **Legendary** top five, sized per list from its 80+ and 90+ counts, with rows labelled by format ("PF Legend").
+- Added a **balanced school score** that dilutes small schools and is led by each school's top three, with a school-average overlay on the team-profile radar.
+- Added **past-season college policy rankings**, 2009-10 through 2024-25.
+
+### Videos and the watch page
+
+- Regrouped the sidebar into Research, Prep & Scout, Practice, Coaching and Insights, then into Lectures plus College Policy, HS Policy, HS Policy 1v1 (LD) and Public Forum; lettered NDT/VP/PF/LD badges and per-link icons throughout, with an optional anime.js hover animation on sidebar icons (off by default, switch in Settings).
+- Rows now list newest first at every level, load every page so no video goes missing, show two columns when the screen fits them, open the watch page directly, and show each video's duration.
+- The watch page gained **AI speech detection with a per-speech LLM summary**, transcription of caption-less videos from their audio, both teams' ranking stats and radars, a related-videos total, and a pop-out you can line a video up in without navigating. A team page got a record card with categorized stat bands.
+- **Follow teams and schools**, with their updates in the news feed; ask guests to sign in after 10 videos; canonical URLs spelled by season (`26-27`) and `/videos/<season>/<tournament>` listings.
+- Moderation: a category dropdown, viewer **edit requests for moderator approval**, "submit a video or channel" from the library, an admin **Speech AI pipeline** (segmentation, summaries, alternatives), removal of videos YouTube no longer serves, and the 506 curated rounds queued for admin approval on deploy. Dartmouth RR rounds are now filed as college and re-parsed with AI.
+- Featured the **NDT 2015 Finals** on the debate start screen and let you flip through its speech docs beside the video.
+
+### Tournaments
+
+- Made `/tournaments` a native product: a live Tabroom list, every debate format typed to upstream Tabroom events, and tournaments addressed by year and name.
+- Added a full-size **Debate AI Demo Invitational** with brackets, speaker awards, simulated live rounds in its pairings, and an admin view to edit its mock data.
+- Added **judge ballot submission with a Tabroom email check**, an explicit relationship registry, public field allowlists, and a fuller schema audit; Tabroom is now linked as a submodule.
+
+### Account sync, finished
+
+- Synced speech-document links, pinned debates, flow-editor display and keymap settings, flow auto-save mode, and the welcome dialog (shown once per account) to the signed-in account.
+- Added a per-tool **sync badge with Save now** in the tool page header and across the cards, docs, videos, round and Reason Editor workspaces, plus saved-to-account markers on flow tabs and round cards. (Later hid the badge from the header once the rollout was complete.)
+- Flows moved off `localStorage` entirely, with unlimited storage through the browser extension; auto-save of edited flows already on the account got an off / saved / all preference.
+- Added the **bring-your-own-key** path for OpenRouter and Anthropic, and an AI-limit dialog that offers an account upgrade alongside your own key.
+
+### Consolidating the tools
+
+- Merged the **Practice Round Simulator into Practice vs AI**, five prep tools into one **Prep Workspace**, six research tools into one **Team Research** page, five coaching tools into one tabbed **Coaching** page, and News Stream plus forums into **News & Forums**. Deleted the All Tools page and showed feature categories as tabs on `/features`. Added "Load sample data" built from real cards to Coaching and Research.
+- Rebuilt the app shell around **one resizable, hideable sidebar** (shadcn sidebar-07) on every view, with organizations, notifications and site links in the account menu, Docs and Settings pinned at the foot, a hover-to-reveal dock, and a full-page Settings. Published the generic `shadcn-sidebar` package with Storybook demos.
+- Gave Ctrl/Cmd-K a **fuzzy-ranked, highlighted search**.
+
+### Practice and rounds
+
+- Added a **judge pool** (volunteer for circuit weekends, organizers hire), anonymous partner matching with a ranked topic poll, a next-season entry on `/practice/statistics`, and Kialo-style argument-map views on the argument tree.
+- In rounds: tournament-aware school and team suggestions, pick the opposing team from a school's ranked teams, click-to-activate speeches with your own highlighted, AI outcome responses in the speech timer menu, a judge's "be more clear" request, and a speech-recording **captions ticker** and full transcript modal with AI sections.
+
+### CardMirror, search and the extension
+
+- Always create new speech docs as `.cmir`, open `.cmir` in read mode, show featured speech docs in highlighted-only read mode, and added saved/unsaved/failed document status, a tab right-click menu, hover buttons beside cards to **summarize, find flaws, and read aloud** (Kokoro/Deepgram voices), and compact two-line nav tags.
+- Card search moved to **BM25-ranked FTS5** with phrase match and autocomplete, with first-search and time-boxed query performance work and an "embiggen" highlight-only quotes view.
+- The browser extension got a **full-page reading overlay** with AI beside the article, reading mode for YouTube transcripts, PDFs and any URL, backtick search, and app settings and AI key.
+- Schools: coaches and administrators can **claim a school's page**.
+
+### Platform and housekeeping
+
+- Added `@types/debate`, made every package publishable under `@debate/`, added the private `dev-docs` package (table reference and self-hosting guide), upgraded every dependency, and cut startup work (stopped warming the practice stack, deduped app-wide polls).
+- Fixed the Tauri app's webcam and a macOS `.icns` bug, and raised test coverage across flow, webview, round, videos, speech-writer and community.
+- A noisy stretch of parallel PRs produced a run of **bad-merge repair commits** (conflict markers, lost imports, a broken typecheck) — all cleaned up, and the CI allowlists and tests were repaired alongside.
+
 ## September 2026 — 1,024 commits
 
-Practice, collaboration, and a wave of "second draft" polish across research tools, followed by a tool-page UI pass and a working docs site.
+Practice, collaboration, and a wave of "second draft" polish across research tools, followed by a tool-page UI pass, a working docs site, and — in the second half — every tool's saved work syncing to the account, a rankings engine and a faster app shell.
 
 ### Practice and AI opponents
 
@@ -90,6 +151,38 @@ Practice, collaboration, and a wave of "second draft" polish across research too
 - Closed the month by **publishing the help docs at `debate-ai.com/docs`**, which until now existed only as a Fumadocs package nobody had a way to read: the site is statically exported under `basePath: '/docs'` and copied into the web app's `public/docs` on every build, so the Worker serves all ~75 pages — the guides, one page per feature, one per workspace package, the Orama search index, and `llms-full.txt` — as static assets on the app's own origin.
 - Every **Docs** and **Guide** link in the app (the tool page headers, both workspace hubs, and every card on `/features`) now opens the real page instead of falling back to raw Markdown on GitHub, the five feature docs that had never been ported were published, and `/docs/features` and `/docs/packages` got the section index pages their links had been 404ing against.
 - The service worker skips the docs entirely, so first-time visitors don't precache a documentation site to open the app.
+
+### Account sync of every tool (second half of the month)
+
+- Built `debate-data-sync` to **sync every tool's saved work to the account**, with a searchable, sectioned *Tool data* list and sync status on `/settings` and `/tools`, a persistent "don't ask again" guest sign-in prompt, and visible failures from the background watcher.
+- Synced the Flow Edit Log and flow-history undo log, Daily Best Card and award announcements, prep-note notifications, quest teams, completed research tasks, Quick Cards, AI card assessments, the CardMirror personal dictionary and Learn decks (with a create/rename/delete UI, review-log History view and per-deck badges), the pending task verification queue, open chat tabs on `/doc`, group-challenge wins, and more.
+- Replaced whole-list overwrites with **optimistic concurrency** — concurrent edits to presets, libraries, decks, quick cards and streaks now resolve against the account's current value — and rejected cloud saves that would clobber a newer flow or round.
+- Surfaced all of it in **My Saved Items** (flows, rounds, drill sets, judge decisions, outcome charts, pairings, personas, Learn decks, Prep Notes, Evidence Library entries and more) with filtering, deletion, and sample data for new accounts.
+- Added a first look at **Debater Level XP** at `/cards/level`.
+
+### Videos, rankings and the openCaselist
+
+- Gave every video its **own watch page with a side transcript**, canonical URLs, per-user watch history, stacked playlists, a browser-cached library queried locally, a collapsible season → tournament → round tree, related videos as rows, and `←`/`→` between them.
+- Added admin tools to edit, remove, dedupe, recompute stacks, and seed videos, plus an ADMIN_EMAIL allowlist and invitable moderators, and an interactive ZIP downloader and scraper for **openCaselist** bulk archives.
+- Added the first **rankings**: clickable team and school profiles with a July 1 season rollover, a Schools table, a team radar, a side-bias visualization, and Glicko-2 ratings displayed on a friendlier scale.
+- Gave every 2010–2026 debate topic a short title and emoji.
+
+### Cards and evidence
+
+- Searchable **Parquet card corpus** (with the duplicate count as the rounds-read count) and a popup for submitting evidence from card search; read-by-row-group made the admin import survive a real dump.
+- Moved the REASON file tree and open tabs into the app sidebar, addressed documents by name instead of id, and let you download owned documents and topic starters as `.docx`.
+
+### Native, extension and billing
+
+- The Tauri **native wrapper** gained a system tray, autostart, global quick-launch shortcuts, a Linux Docker build, a splash video, and a choice of app source (offline, debate-ai.com or beta), then dropped its updater.
+- The browser extension merged the timer and card-reuse extensions, gained an article panel that reads any page and saves to your account, and now ships no remotely hosted code for Chrome Web Store MV3.
+- Added **Stripe subscriptions** for the Pro VIP and Research Team plans with tiered limits, a team roster with lesson plans and drills, Cloudflare **Turnstile** on first page loads, and Mixpanel analytics.
+
+### Performance and reliability
+
+- Cut the app shell's startup JS from **4.6 MB to 1.0 MB**, dropped 3.5 MB of render-blocking CSS, halved the Worker's startup memory, stopped loading the whole video library on video pages, and replaced hidden-iframe dock pages with regular React routes.
+- Routed D1 through the Sessions API for read replication, migrated D1 on every master push, added weekly **SQL backups to R2** (with a `.7z` copy in KV), and hardened the offline service worker so it stops serving half of one build and half of another.
+- The `drizzle/` migrations and help-docs internals were deleted and restored several times (with a drift/deletion regression test added along the way) until `apps/debate-ai.com/drizzle` was deliberately untracked on the 30th.
 
 ### Platform and packages
 

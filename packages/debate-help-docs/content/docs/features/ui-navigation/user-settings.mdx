@@ -75,6 +75,11 @@ gone:
   presets" section below the word-count form, rather than from here
 - **Ebb Flow preferences** — reachable with `Cmd/Ctrl+,` inside a flow, where
   they apply
+- **Default format for new speech documents** (Files → New documents) — a
+  new speech document is now always created as `.cmir`, CardMirror's native
+  format, so autosave always applies to it (autosave only writes `.cmir`).
+  Save As still exports a `.docx` for teammates on Verbatim. The format is
+  `SPEECH_DOC_FORMAT` in `debate-editor`'s `src/editor/speech-filename.ts`
 
 Their `/api/settings` fields (`debateStyle`, `fontSize`, `wordLimitPresets`, …)
 are all still stored and served; what changed is that nothing writes them from
@@ -96,7 +101,9 @@ The same box appears:
   upgrading, and
 - in an **AI limit reached** dialog when Debate AI's shared key itself has run
   out of credit or hit its spending cap (the route answers `503` with an
-  `x-ai-key-needed` header).
+  `x-ai-key-needed` header). That dialog is an upgrade box: it offers the plan
+  cards to upgrade your account first, with bringing your own key as the other
+  option. If the plans can't be loaded, only the key option shows.
 
 The key is kept in this browser's `localStorage` only — never in your account's
 settings row — and is sent, as the `x-user-ai-key` header, only on same-origin
@@ -216,6 +223,59 @@ next time you open a flow on any device. Anything specific to one device — the
 flows folder, collaboration name and relay toggles, contacts, and panel layout —
 stays in that browser. Signed out, nothing changes: settings stay in
 localStorage.
+
+## The welcome dialog shows once per account
+
+The "Welcome to Debate AI" dialog of key links appears the first time an
+account signs in, and never again on any device. Showing it records
+`user_settings.welcome_dismissed_at` through `GET`/`POST
+/api/settings/welcome` (`FirstLoginWelcomeProvider` in `@debate/webview`,
+helpers in `lib/first-login-welcome.ts`). A `localStorage` copy of the flag
+saves the request on browsers that already know, and a browser that showed
+the dialog before the flag moved to the account records it there once. If the
+account's answer cannot be read (offline, an error), the dialog stays hidden
+rather than risk showing it twice. A second account signing in on a browser
+that already showed it does not see it.
+
+## Privacy
+
+The **Privacy** tab (`/settings?category=privacy`) is where you decide what
+Debate AI may publish of your recordings and how you are named on them.
+
+- **Recording release.** A few paragraphs explain what publishing means. Until
+  you pick **I agree**, nothing you record is published; **Don't publish my
+  recordings** is the default and withdraws an earlier agreement. Agreeing
+  records the date and the version of the wording you agreed to, and if the
+  wording changes you are asked again.
+- **What is published:** **Audio and video**, or **Audio only**, which leaves
+  your camera out.
+- **How you are credited:** **Anonymous contributor** (the default, your name
+  hidden), a **Username** you type in, or your **Real name**, either in full
+  or as first name and last initial ("Ada L."). The tab previews how you will
+  appear.
+- **Privacy policy:** a link to `/legal/privacy`.
+- **Request deletion of your data:** ask for everything (including your
+  account) or only some of it (published recordings, saved speech audio,
+  flows, documents, comments, account settings), with a box for suggested
+  deletions such as links to specific recordings. Requests go to the site's
+  admins as a notification, and your past requests and their status are
+  listed under the form. Nothing is deleted automatically.
+
+Engineering notes: the rules live in `@debate/webview`'s
+`lib/privacy/recording-release.ts` (`mayPublishRecording`, `includeVideo`,
+`publicCreditName`, the validators and the release text). The choices are
+stored as JSON in `user_settings.recording_privacy` through `GET`/`PUT
+/api/settings/privacy`; requests go to `GET`/`POST
+/api/settings/privacy/deletion-requests` and the `data_deletion_requests`
+table, created on first use by `apps/debate-ai.com/lib/privacy/store.ts`,
+which also exports `getRecordingPrivacy(db, userId)` for any server code that
+publishes a recording.
+
+Known gaps: the release text is a plain-language placeholder that has not had
+legal review. No feature publishes user recordings yet, so the settings take
+effect as publishing features read them. There is no admin screen for the
+deletion queue yet; admins see the notification and work the
+`data_deletion_requests` table by hand.
 
 ## Known gaps
 

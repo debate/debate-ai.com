@@ -1,5 +1,9 @@
 /**
- * @fileoverview Grid-based lecture category gallery with icons and video counts
+ * @fileoverview Grid-based lecture category gallery with icons and video
+ * counts — the category bar at the top of the lecture library, and the only
+ * place the categories are listed (the sidebar has a single Lectures row).
+ * Each card highlights its background on hover and links straight to its
+ * category; the open one is drawn selected.
  */
 
 "use client";
@@ -72,6 +76,9 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   "Documentaries & Culture": <Film className="h-4 w-4" />,
   "Camp & Coaching Advice": <Users className="h-4 w-4" />,
   "Novice & Introductory": <GraduationCap className="h-4 w-4" />,
+  "WSD": <Globe className="h-4 w-4" />, // Example icon, adjust as needed
+  "ACC": <Users className="h-4 w-4" />, // Example icon, adjust as needed
+  "Speech": <Mic className="h-4 w-4" />, // Example icon, adjust as needed
 };
 
 
@@ -107,10 +114,9 @@ export function LectureCategoryGridGallery({
     return [allLecturesCard, ...categoryCards];
   }, [categories]);
 
-  const buildHref = (categoryId: string) => {
-    // Clicking the open category again goes back to all lectures.
-    return lectureCategoryHref(selectedCategory === categoryId ? "all" : categoryId);
-  };
+  // A plain link per category: this is the page's category bar, so a click
+  // always lands on that category ("All Lectures" is its own card).
+  const buildHref = (categoryId: string) => lectureCategoryHref(categoryId);
 
   return (
     <div className="w-full">
@@ -129,7 +135,7 @@ export function LectureCategoryGridGallery({
             title={card.title}
             description={card.description}
             videoCount={card.videoCount}
-            isSelected={selectedCategory === card.id}
+            isSelected={(selectedCategory ?? "all") === card.id}
             href={buildHref(card.id)}
           />
         ))}
@@ -166,7 +172,8 @@ const GridItem = ({
         // prefetching every one of them on mount competed with the video feed.
         prefetch={false}
         onClick={onClick}
-        className="relative h-full w-full block rounded-lg border-[0.75px] border-border p-1 hover:border-primary/50 transition-colors"
+        aria-current={isSelected ? "page" : undefined}
+        className="group relative h-full w-full block rounded-lg border-[0.75px] border-border p-1 hover:border-primary/50 transition-colors"
       >
         <GlowingEffect
           spread={30}
@@ -178,8 +185,9 @@ const GridItem = ({
         />
         <div
           className={cn(
-            "relative flex h-full items-center gap-1.5 overflow-hidden rounded-md border-[0.75px] bg-background p-1.5 shadow-sm dark:shadow-[0px_0px_20px_0px_rgba(45,45,45,0.2)] transition-all",
-            isSelected && "border-primary bg-primary/5"
+            "relative flex h-full items-center gap-1.5 overflow-hidden rounded-md border-[0.75px] bg-background p-1.5 shadow-sm dark:shadow-[0px_0px_20px_0px_rgba(45,45,45,0.2)] transition-colors",
+            "group-hover:bg-accent group-focus-visible:bg-accent",
+            isSelected && "border-primary bg-primary/10 group-hover:bg-primary/15"
           )}
         >
           <div className="shrink-0 rounded-md border-[0.75px] border-border bg-muted p-1">

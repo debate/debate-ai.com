@@ -15,11 +15,19 @@
  * - It sits just right of the card when the editor has room there, otherwise
  *   inside the card's top-right corner, and hides a moment after the pointer
  *   leaves both the card and the column (long enough to travel onto it).
- * - Read aloud uses the browser's `speechSynthesis`. It reads the tag,
+ * - Read aloud speaks in a model voice (Kokoro by default, run in the
+ *   browser, or Deepgram) through the injected `fetchVoice`
+ *   (`card-tts-client.ts` in production), playing its clips one after
+ *   another as they arrive, and falls back to the browser's `speechSynthesis` when the
+ *   reader picked "Browser built-in", no voice is injected, or the model
+ *   gives no audio (QwkSearch's guest limit, an error). It reads the tag,
  *   then the author's last name and the year (two digits, nothing more
  *   of the citation line), then the card's highlighted text — what a
  *   debater reads in round — or its underlined text when nothing is
- *   highlighted. Clicking it again (on any card) stops.
+ *   highlighted. In read mode it reads only what read mode shows of the
+ *   card body (the read-aloud text, plus undertags or background-colored
+ *   text when those settings show them). Clicking it again (on any card)
+ *   stops.
  * - The AI calls are injected (`runAi`; `card-ai-client.ts` in production),
  *   so this file has no dependency on the LLM client or settings.
  *
@@ -30,12 +38,25 @@ import { Plugin, PluginKey } from 'prosemirror-state';
 import type { Node as PMNode } from 'prosemirror-model';
 import type { EditorView } from 'prosemirror-view';
 import type { CardAiAction } from './card-ai-client.js';
+import {
+  DEFAULT_READ_VOICE_ID,
+  READ_VOICE_OPTIONS,
+  readVoiceChoice,
+  type ModelVoice,
+  type SpeechAudio,
+} from './card-tts-client.js';
 
 export const cardHoverActionsKey = new PluginKey('cardHoverActions');
 
 export interface CardHoverActionsOptions {
   /** Runs an AI action on a card's text and resolves the answer. */
   runAi: (action: CardAiAction, content: string, tag: string) => Promise<string>;
+  /**
+   * Speech audio for `text` in a model voice, or null to use the browser's
+   * built-in speech instead. Omitted: Read aloud uses the browser's speech
+   * only and the settings show no voice list.
+   */
+  fetchVoice?: (text: string, voice: ModelVoice, signal: AbortSignal) => Promise<SpeechAudio | null>;
 }
 
 /** The parts of a card the actions read, as plain text. */
@@ -130,6 +151,39 @@ export function cardSpeechText(parts: CardParts): string {
   return [parts.tag, citeSpeaker(parts.cite), text].filter(Boolean).join('. ').replace(/\s+/g, ' ').trim();
 }
 
+/** Whether `el` is drawn: `checkVisibility` where the browser has it, else read mode's hide class. */
+function isShown(el: Element): boolean {
+  const check = (el as Element & { checkVisibility?: () => boolean }).checkVisibility;
+  if (typeof check === 'function') return check.call(el);
+  return !el.closest('.pmd-rm-hide');
+}
+
+/**
+ * The text read mode shows of a card's body (`.pmd-card-body`, plus
+ * undertags when they show), as runs joined with spaces. `''` when the card
+ * isn't in a read-mode pane, so the caller reads the highlighted text.
+ */
+export function readModeShownText(cardEl: HTMLElement): string {
+  if (!cardEl.closest('.pmd-read-mode')) return '';
+  const runs: string[] = [];
+  let inRun = false;
+  for (const block of cardEl.querySelectorAll<HTMLElement>(':scope > .pmd-card-body, :scope > .pmd-undertag')) {
+    if (!isShown(block)) continue;
+    const walker = block.ownerDocument.createTreeWalker(block, NodeFilter.SHOW_TEXT);
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      const parent = node.parentElement;
+      const shown = !!parent && isShown(parent);
+      if (shown) {
+        if (inRun) runs[runs.length - 1] += node.textContent ?? '';
+        else runs.push(node.textContent ?? '');
+      }
+      inRun = shown;
+    }
+    inRun = false;
+  }
+  return runs.map((r) => r.trim()).filter(Boolean).join(' ');
+}
+
 /** The `card` node containing `pos`, or null. */
 export function cardAt(doc: PMNode, pos: number): PMNode | null {
   if (pos < 0 || pos > doc.content.size) return null;
@@ -156,6 +210,8 @@ const STYLE_ID = 'pmd-card-hover-actions-style';
 
 /** Where the reader's speech rate is persisted across cards. */
 const SPEED_STORAGE_KEY = 'pmd-card-actions-read-speed';
+/** Where the reader's voice choice (a `READ_VOICE_OPTIONS` id) is persisted. */
+const VOICE_STORAGE_KEY = 'pmd-card-actions-read-voice';
 /** Read-aloud defaults to 2x speed, per the card reader's setting. */
 const DEFAULT_READ_SPEED = 2;
 
@@ -188,6 +244,8 @@ const STYLES = `
 .pmd-read-settings[data-open]{display:flex}
 .pmd-read-settings label{display:block;font-size:11px;font-weight:600;text-foreground/70;letter-spacing:.03em}
 .pmd-read-settings input[type=range]{width:100%;accent-color:var(--pmd-c-accent,#2563eb)}
+.pmd-read-settings select{width:100%;font:inherit;font-size:12px;padding:2px 4px;border:1px solid var(--pmd-c-border,#d4d4d8);
+  border-radius:4px;background:var(--pmd-c-bg,#fff);color:var(--pmd-c-text,#18181b)}
 `;
 
 function ensureStyles(): void {
@@ -215,6 +273,16 @@ function readStoredSpeed(): number {
   return Number.isFinite(parsed) && parsed >= 0.5 && parsed <= 4 ? parsed : DEFAULT_READ_SPEED;
 }
 
+/** Reads the persisted voice id, defaulting to Kokoro. */
+function readStoredVoiceId(): string {
+  try {
+    const raw = typeof localStorage === 'undefined' ? null : localStorage.getItem(VOICE_STORAGE_KEY);
+    return READ_VOICE_OPTIONS.some((o) => o.id === raw) ? (raw as string) : DEFAULT_READ_VOICE_ID;
+  } catch {
+    return DEFAULT_READ_VOICE_ID;
+  }
+}
+
 class CardHoverActionsView {
   private readonly bar: HTMLDivElement;
   private readonly panel: HTMLDivElement;
@@ -225,7 +293,13 @@ class CardHoverActionsView {
   private readonly settingsPanel: HTMLDivElement;
   private readonly speedInput: HTMLInputElement;
   private readonly speedLabel: HTMLLabelElement;
+  private readonly voiceSelect: HTMLSelectElement | null;
   private readSpeed = DEFAULT_READ_SPEED;
+  private voiceId = DEFAULT_READ_VOICE_ID;
+  /** The model-voice playback (or its pending fetch) of the current read. */
+  private audio: HTMLAudioElement | null = null;
+  private audioUrl: string | null = null;
+  private speakAbort: AbortController | null = null;
   private cardEl: HTMLElement | null = null;
   private hideTimer: ReturnType<typeof setTimeout> | null = null;
   private requestId = 0;
@@ -240,11 +314,12 @@ class CardHoverActionsView {
     this.bar.setAttribute('aria-label', 'Card actions');
     this.bar.appendChild(this.button('summary', 'Summarize card (AI)', ICONS.summary, () => this.ask('summary')));
     this.bar.appendChild(this.button('flaws', 'Find flaws in card (AI)', ICONS.flaws, () => this.ask('flaws')));
-    this.speakBtn = speechAvailable()
-      ? this.button('speak', 'Read card aloud', ICONS.speak, () => this.toggleSpeak())
-      : null;
-    this.settingsBtn = this.button('settings', 'Read-aloud speed', ICONS.settings, () => this.toggleSettings());
-    this.settingsBtn.setAttribute('aria-label', 'Read-aloud speed settings');
+    this.speakBtn =
+      speechAvailable() || options.fetchVoice
+        ? this.button('speak', 'Read card aloud', ICONS.speak, () => this.toggleSpeak())
+        : null;
+    this.settingsBtn = this.button('settings', 'Read-aloud settings', ICONS.settings, () => this.toggleSettings());
+    this.settingsBtn.setAttribute('aria-label', 'Read-aloud settings');
     this.settingsBtn.setAttribute('aria-haspopup', 'true');
     this.settingsBtn.setAttribute('aria-expanded', 'false');
     this.readSpeed = readStoredSpeed();
@@ -263,13 +338,36 @@ class CardHoverActionsView {
     this.settingsPanel = document.createElement('div');
     this.settingsPanel.className = 'pmd-read-settings';
     this.settingsPanel.setAttribute('role', 'dialog');
-    this.settingsPanel.setAttribute('aria-label', 'Read-aloud speed settings');
+    this.settingsPanel.setAttribute('aria-label', 'Read-aloud settings');
     this.settingsPanel.append(this.speedLabel, this.speedInput);
+    this.voiceSelect = null;
+    if (options.fetchVoice) {
+      // The voice list: model voices (Kokoro first, the default) or the
+      // browser's own speech, saved across cards like the speed.
+      this.voiceId = readStoredVoiceId();
+      const voiceLabel = document.createElement('label');
+      voiceLabel.setAttribute('for', 'pmd-read-voice');
+      voiceLabel.textContent = 'Voice';
+      const select = document.createElement('select');
+      select.id = 'pmd-read-voice';
+      select.setAttribute('aria-label', 'Read-aloud voice');
+      for (const option of READ_VOICE_OPTIONS) {
+        if (option.choice === 'browser' && !speechAvailable()) continue;
+        const el = document.createElement('option');
+        el.value = option.id;
+        el.textContent = option.label;
+        select.appendChild(el);
+      }
+      select.value = this.voiceId;
+      select.addEventListener('change', () => this.onVoiceChange());
+      this.voiceSelect = select;
+      this.settingsPanel.append(voiceLabel, select);
+    }
     if (this.speakBtn) {
       this.speakBtn.setAttribute('aria-pressed', 'false');
       this.bar.appendChild(this.speakBtn);
       // The settings gear lives under the read-aloud button: it opens a speed
-      // slider that adjusts how fast the card is read, saved across cards.
+      // slider and the voice list, both saved across cards.
       this.bar.appendChild(this.settingsBtn);
       this.settingsBtn.style.marginTop = '4px';
     } else {
@@ -491,9 +589,20 @@ class CardHoverActionsView {
     this.readSpeed = value;
     this.speedLabel.textContent = `Speed: ${value.toFixed(1)}x`;
     if (typeof localStorage !== 'undefined') localStorage.setItem(SPEED_STORAGE_KEY, String(value));
-    // The new rate applies to the next utterance started by toggleSpeak; speechSynthesis
-    // does not expose live rate control per running utterance, so an in-flight read
-    // picks up the new speed once stopped and restarted.
+    // A model voice changes speed live. speechSynthesis has no live rate control
+    // per running utterance, so a browser read picks up the new speed once
+    // stopped and restarted.
+    if (this.audio) this.audio.playbackRate = value;
+  }
+
+  private onVoiceChange(): void {
+    if (!this.voiceSelect) return;
+    this.voiceId = this.voiceSelect.value;
+    try {
+      if (typeof localStorage !== 'undefined') localStorage.setItem(VOICE_STORAGE_KEY, this.voiceId);
+    } catch {
+      // Storage blocked: the choice still holds for this page.
+    }
   }
 
   private toggleSpeak(): void {
@@ -503,8 +612,125 @@ class CardHoverActionsView {
     }
     const card = this.currentCard();
     if (!card) return;
-    const text = cardSpeechText(cardParts(card));
+    const parts = cardParts(card);
+    // In read mode, read exactly what the pane shows of the card body.
+    const shown = this.cardEl ? readModeShownText(this.cardEl) : '';
+    const text = cardSpeechText(shown ? { ...parts, highlighted: shown } : parts);
     if (!text) return;
+    const choice = readVoiceChoice(this.voiceId);
+    this.setSpeaking(true);
+    if (choice === 'browser' || !this.options.fetchVoice) {
+      this.speakWithBrowser(text);
+      return;
+    }
+    // Fetch the model voice; the button already shows Stop, so a click
+    // while it loads cancels the fetch.
+    const abort = new AbortController();
+    this.speakAbort = abort;
+    this.options.fetchVoice(text, choice, abort.signal).then(
+      (audio) => {
+        if (abort.signal.aborted || !this.speaking) return;
+        if (audio && Symbol.asyncIterator in audio) {
+          // Clips stream in; the abort stays live so Stop ends the stream.
+          if (this.canPlayAudio()) {
+            void this.playClips(audio, abort);
+            return;
+          }
+        } else if (audio) {
+          this.speakAbort = null;
+          if (this.playAudio(audio)) return;
+        }
+        this.speakAbort = null;
+        this.speakWithBrowser(text);
+      },
+      () => {
+        if (abort.signal.aborted || !this.speaking) return;
+        this.speakAbort = null;
+        this.speakWithBrowser(text);
+      },
+    );
+  }
+
+  private canPlayAudio(): boolean {
+    return typeof Audio !== 'undefined' && typeof URL !== 'undefined' && !!URL.createObjectURL;
+  }
+
+  /** Plays streamed clips in turn at the chosen speed, until they run out or Stop. */
+  private async playClips(clips: AsyncIterable<Blob>, abort: AbortController): Promise<void> {
+    const live = () => !abort.signal.aborted && this.speaking;
+    try {
+      for await (const clip of clips) {
+        if (!live()) return;
+        const played = await this.playClip(clip);
+        if (!played || !live()) break;
+      }
+    } catch {
+      // A failed clip ends the read like the end of the card.
+    }
+    if (!live()) return;
+    this.speakAbort = null;
+    this.setSpeaking(false);
+  }
+
+  /** One clip, resolving true when it finished playing and false when it couldn't. */
+  private playClip(blob: Blob): Promise<boolean> {
+    return new Promise((resolve) => {
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      audio.playbackRate = this.readSpeed;
+      this.releaseAudio();
+      this.audio = audio;
+      this.audioUrl = url;
+      const finish = (ok: boolean) => () => {
+        if (this.audio === audio) this.releaseAudio();
+        resolve(ok);
+      };
+      audio.onended = finish(true);
+      audio.onerror = finish(false);
+      // Stop pauses the clip without an `ended` event; resolve so the loop exits.
+      audio.onpause = () => {
+        if (!audio.ended && this.audio !== audio) resolve(false);
+      };
+      void audio.play().catch(() => finish(false)());
+    });
+  }
+
+  /** Plays model-voice audio at the chosen speed; false when it can't play. */
+  private playAudio(blob: Blob): boolean {
+    if (!this.canPlayAudio()) return false;
+    const url = URL.createObjectURL(blob);
+    const audio = new Audio(url);
+    audio.playbackRate = this.readSpeed;
+    this.audio = audio;
+    this.audioUrl = url;
+    const done = () => {
+      if (this.audio !== audio) return;
+      this.releaseAudio();
+      if (this.speaking) this.setSpeaking(false);
+    };
+    audio.onended = done;
+    audio.onerror = done;
+    void audio.play().catch(done);
+    return true;
+  }
+
+  private releaseAudio(): void {
+    if (this.audio) {
+      this.audio.onended = null;
+      this.audio.onerror = null;
+      this.audio.pause();
+    }
+    if (this.audioUrl) URL.revokeObjectURL(this.audioUrl);
+    this.audio = null;
+    this.audioUrl = null;
+  }
+
+  /** The browser's built-in speech: the fallback, or the reader's choice. */
+  private speakWithBrowser(text: string): void {
+    if (!speechAvailable()) {
+      this.setSpeaking(false);
+      return;
+    }
     const synth = window.speechSynthesis;
     synth.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
@@ -515,13 +741,15 @@ class CardHoverActionsView {
     };
     utterance.onend = done;
     utterance.onerror = done;
-    this.setSpeaking(true);
     synth.speak(utterance);
   }
 
   private stopSpeaking(): void {
     if (!this.speaking) return;
     this.setSpeaking(false);
+    this.speakAbort?.abort();
+    this.speakAbort = null;
+    this.releaseAudio();
     if (speechAvailable()) window.speechSynthesis.cancel();
   }
 

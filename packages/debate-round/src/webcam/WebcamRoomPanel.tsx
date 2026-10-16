@@ -21,8 +21,9 @@
 import { useEffect, useRef, useState } from "react"
 import { Camera, CameraOff, ChevronDown, ChevronRight, Mic, MicOff, PhoneOff, SwitchCamera, Video } from "lucide-react"
 import { cn } from "../ui/lib/utils"
-import { MAX_ROOM_CAMERAS, roomIdForRound, type RoomRole } from "./room-protocol"
+import { roomIdForRound, type RoomRole } from "./room-protocol"
 import { useWebcamRoom } from "./useWebcamRoom"
+import { useRoomSpeechRecorder } from "./useRoomSpeechRecorder"
 import { ROOM_ROLE_LABELS, roomTileLabel } from "./room-labels"
 import type { Round } from "../types/flow"
 
@@ -128,6 +129,7 @@ export function WebcamRoomPanel({ round, apiBase }: { round: Round; apiBase?: st
   const roomId = roomIdForRound(round)
   const [joinRole, setJoinRole] = useState<RoomRole>("speaker")
   const room = useWebcamRoom(roomId, { apiBase, role: joinRole })
+  useRoomSpeechRecorder(room.participants)
 
   const joined = room.status === "joined" || room.status === "connecting"
   const btn =
@@ -235,14 +237,6 @@ export function WebcamRoomPanel({ round, apiBase }: { round: Round; apiBase?: st
           )}
 
           {room.error && <p className="text-[11px] text-red-600 dark:text-red-400" role="alert">{room.error}</p>}
-          {!joined && (
-            <p className="text-[10px] leading-snug text-muted-foreground">
-              Everyone in this round joins the same room — a judge who can't be there joins as a virtual judge.
-              Your camera and mic stay off until you switch them on above.
-              Video goes directly between browsers; up to{" "}
-              {MAX_ROOM_CAMERAS} cameras per room.
-            </p>
-          )}
         </div>
       )}
     </div>

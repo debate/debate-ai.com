@@ -1,6 +1,5 @@
 import { Settings2 } from 'lucide-react';
 import { useState } from 'react';
-import { browser } from 'wxt/browser';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -21,6 +20,7 @@ import { Timeline } from '@/src/components/Timeline';
 import { TimerFace } from '@/src/components/TimerFace';
 import { DEBATE_TYPES } from '@/src/timer/constants';
 import { useTimer } from '@/src/timer/useTimer';
+import { openExtensionSettings } from '@/src/settings/open';
 
 /** The timer page — rendered in its own browser window, not the action popup. */
 export default function App() {
@@ -61,7 +61,7 @@ export default function App() {
                     size="icon"
                     className="h-8 w-8"
                     aria-label="Extension settings"
-                    onClick={() => browser.runtime.openOptionsPage()}
+                    onClick={() => openExtensionSettings()}
                   >
                     <Settings2 className="h-4 w-4" />
                   </Button>

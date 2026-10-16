@@ -6,13 +6,12 @@
  * and article-followups.ts), kept word for word so answers read the same here
  * as they do in the app this was ported from. What changed is where they run:
  * there a server loaded a model from its own registry, here the request goes
- * either to the reader's debate-ai.com account or straight to whichever
- * provider they pasted a key for — see ./providers.
+ * straight to the provider of the key the reader saved in the Debate AI app's
+ * settings, or, without one, to their debate-ai.com account — see ./providers.
  */
 import { NotSignedInError, authorizedFetch, isSignedIn } from '@/src/auth/session';
-import { getSettings } from '@/src/settings/settings';
 
-import { getApiKey } from './keys';
+import { getAppAiKey } from './app-key';
 import { PROVIDER_ORIGINS, getProvider, type AiProviderId } from './providers';
 
 /** Article text is capped before it is sent; the panel's original cap. */
@@ -76,7 +75,7 @@ async function generateWithAccount(request: GenerateRequest): Promise<string> {
   } catch (error) {
     if (error instanceof NotSignedInError) {
       throw new AiNotConfiguredError(
-        'Sign in to your Debate AI account, or add your own API key in Settings.',
+        'Sign in to your Debate AI account, or add your OpenRouter or Anthropic key in Debate AI Settings → Preferences.',
       );
     }
     throw error;
@@ -102,33 +101,24 @@ async function generateWithAccount(request: GenerateRequest): Promise<string> {
   return '';
 }
 
-/** OpenRouter and OpenAI share the chat-completions request and response shape. */
-async function generateWithOpenAiCompatible(
+/** OpenRouter's chat-completions API, which takes `max_tokens` and translates it per model. */
+async function generateWithOpenRouter(
   request: GenerateRequest,
-  { endpoint, apiKey, model, label, extraHeaders = {}, tokenLimitField = 'max_tokens' }: {
-    endpoint: string;
-    apiKey: string;
-    model: string;
-    label: string;
-    extraHeaders?: Record<string, string>;
-    /**
-     * OpenAI deprecated `max_tokens` for `max_completion_tokens`, and its
-     * reasoning models (o-series, GPT-5) reject the old name with a 400.
-     * OpenRouter still takes `max_tokens` and translates it per model.
-     */
-    tokenLimitField?: 'max_tokens' | 'max_completion_tokens';
-  },
+  { apiKey, model }: { apiKey: string; model: string },
 ): Promise<string> {
-  const response = await fetch(endpoint, {
+  const response = await fetch(`${PROVIDER_ORIGINS.openrouter}/api/v1/chat/completions`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${apiKey}`,
-      ...extraHeaders,
+      // OpenRouter attributes usage to these; they are the extension, not the
+      // page being read, so nothing about the reader's browsing leaks.
+      'HTTP-Referer': 'https://debate-ai.com',
+      'X-Title': 'Debate AI extension',
     },
     body: JSON.stringify({
       model,
-      [tokenLimitField]: request.maxTokens,
+      max_tokens: request.maxTokens,
       messages: [
         { role: 'system', content: request.system },
         { role: 'user', content: request.prompt },
@@ -136,7 +126,7 @@ async function generateWithOpenAiCompatible(
     }),
     signal: request.signal,
   });
-  if (!response.ok) throw await providerError(response, label);
+  if (!response.ok) throw await providerError(response, 'OpenRouter');
   const payload = (await response.json()) as {
     choices?: Array<{ message?: { content?: string | null; refusal?: string | null } }>;
   };
@@ -176,75 +166,14 @@ async function generateWithAnthropic(
     .join('');
 }
 
-async function generateWithGoogle(
-  request: GenerateRequest,
-  { apiKey, model }: { apiKey: string; model: string },
-): Promise<string> {
-  const endpoint = `${PROVIDER_ORIGINS.google}/v1beta/models/${encodeURIComponent(
-    model,
-  )}:generateContent`;
-  const response = await fetch(endpoint, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
-    body: JSON.stringify({
-      systemInstruction: { parts: [{ text: request.system }] },
-      contents: [{ role: 'user', parts: [{ text: request.prompt }] }],
-      generationConfig: { maxOutputTokens: request.maxTokens },
-    }),
-    signal: request.signal,
-  });
-  if (!response.ok) throw await providerError(response, 'Google Gemini');
-  const payload = (await response.json()) as {
-    candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
-  };
-  return (payload.candidates?.[0]?.content?.parts ?? [])
-    .map((part) => part.text ?? '')
-    .join('');
-}
-
-/** Runs one prompt against whichever provider the reader has configured. */
+/** Runs one prompt on the app's saved key, or through the reader's account without one. */
 async function generate(request: GenerateRequest): Promise<string> {
-  const settings = await getSettings();
-  const providerId = settings.aiProvider;
-  const provider = getProvider(providerId);
-
-  if (providerId === 'account') return generateWithAccount(request);
-
-  const apiKey = await getApiKey(providerId);
-  if (!apiKey) {
-    throw new AiNotConfiguredError(
-      `Add your ${provider.label.replace(' (my key)', '')} API key in Settings, or switch to your Debate AI account.`,
-    );
-  }
-  const model = settings.aiModel.trim() || provider.defaultModel;
-
-  switch (providerId) {
-    case 'openrouter':
-      return generateWithOpenAiCompatible(request, {
-        endpoint: `${PROVIDER_ORIGINS.openrouter}/api/v1/chat/completions`,
-        apiKey,
-        model,
-        label: 'OpenRouter',
-        // OpenRouter attributes usage to these; they are the extension, not
-        // the page being read, so nothing about the reader's browsing leaks.
-        extraHeaders: {
-          'HTTP-Referer': 'https://debate-ai.com',
-          'X-Title': 'Debate AI extension',
-        },
-      });
-    case 'openai':
-      return generateWithOpenAiCompatible(request, {
-        endpoint: `${PROVIDER_ORIGINS.openai}/v1/chat/completions`,
-        apiKey,
-        model,
-        label: 'OpenAI',
-        tokenLimitField: 'max_completion_tokens',
-      });
-    case 'anthropic':
-      return generateWithAnthropic(request, { apiKey, model });
-    case 'google':
-      return generateWithGoogle(request, { apiKey, model });
-  }
+  const own = await getAppAiKey();
+  if (!own) return generateWithAccount(request);
+  const model = getProvider(own.provider).defaultModel;
+  return own.provider === 'openrouter'
+    ? generateWithOpenRouter(request, { apiKey: own.key, model })
+    : generateWithAnthropic(request, { apiKey: own.key, model });
 }
 
 /** Which provider the next request will use, for the panel's status line. */
@@ -253,15 +182,12 @@ export async function describeActiveProvider(): Promise<{
   label: string;
   ready: boolean;
 }> {
-  const settings = await getSettings();
-  const provider = getProvider(settings.aiProvider);
-  if (provider.id === 'account') {
-    return { id: provider.id, label: provider.label, ready: await isSignedIn() };
-  }
+  const own = await getAppAiKey();
+  const provider = getProvider(own?.provider ?? 'account');
   return {
     id: provider.id,
     label: provider.label,
-    ready: Boolean(await getApiKey(provider.id)),
+    ready: own ? true : await isSignedIn(),
   };
 }
 

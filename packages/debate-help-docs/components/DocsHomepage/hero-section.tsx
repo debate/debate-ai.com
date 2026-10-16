@@ -6,7 +6,7 @@
 
 import { Button } from "../ui/button"
 import { Badge } from "../ui/badge"
-import { BookOpen, Compass } from "lucide-react"
+import { BookOpen, Compass, FileText } from "lucide-react"
 import { Github } from "./github-icon"
 import { withBasePath } from "../../lib/fumadocs/base-path"
 
@@ -36,6 +36,11 @@ export function HeroSection() {
             <Button onClick={() => window.location.href = withBasePath("/features")} size="lg" className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
               <Compass className="h-4 w-4" />
               Guides
+            </Button>
+
+            <Button onClick={() => window.location.href = withBasePath("/blog")} size="lg" className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
+              <FileText className="h-4 w-4" />
+              Blog
             </Button>
 
             <Button onClick={() => window.location.href = withBasePath("/")} variant="outline" size="lg" className="gap-2 bg-transparent">

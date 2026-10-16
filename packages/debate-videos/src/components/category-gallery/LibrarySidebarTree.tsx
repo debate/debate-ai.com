@@ -2,14 +2,12 @@
  * @fileoverview The video library's sidebar tree, for pages that are not in
  * the video library.
  *
- * The app has one sidebar: the one the video pages draw — Round Videos,
- * Lectures, then the Research / Practice / Coaching / Insights
+ * The app has one sidebar: the one the video pages draw — Videos (with
+ * Lectures as one of its rows), then the Research / Practice / Coaching / Insights
  * tool sections (`VideoSidebarTree`). The library pages feed that tree from
  * their own feed state; every other page (the tool pages, /docs, the mobile
- * drawer) mounts it through this wrapper, which reads the same counts and
- * lecture categories itself (`useVideoMeta`, cached, so it costs one request
- * at most) and keeps the Lectures section's open state locally, starting
- * closed so the tool sections stay in view.
+ * drawer) mounts it through this wrapper, which reads the same counts itself
+ * (`useVideoMeta`, cached, so it costs one request at most).
  *
  * @module components/category-gallery/LibrarySidebarTree
  */
@@ -26,9 +24,8 @@ import { SIDEBAR_VIDEO_LINKS } from "./sidebar-video-links";
 
 export function LibrarySidebarTree() {
   const pathname = usePathname();
-  const { counts, lectureCategories } = useVideoMeta();
+  const { counts } = useVideoMeta();
   const watchHistory = useWatchHistory();
-  const [lecturesExpanded, setLecturesExpanded] = useState(false);
 
   // Read after mount so the server markup and the first client render agree,
   // and again on navigation: favouriting happens on the video pages.
@@ -63,10 +60,8 @@ export function LibrarySidebarTree() {
   return (
     <VideoSidebarTree
       counts={quickLinkCounts}
-      lectureCategories={lectureCategories}
       activeId={activeId}
-      lecturesExpanded={lecturesExpanded}
-      onToggleLectures={() => setLecturesExpanded((open) => !open)}
+      browsingLectures={pathname?.startsWith("/lectures") ?? false}
     />
   );
 }

@@ -55,6 +55,7 @@ import {
   deleteToolRecordFromAccount,
   saveToolRecordsToAccount,
 } from "./tool-records-client";
+import { isSampleToolRecord } from "./sampleRecords";
 
 /**
  * How often the watcher re-reads the stores, in ms.
@@ -107,7 +108,8 @@ function snapshotOf(collection: ToolRecordCollection): Map<string, string> {
   const byId = new Map<string, string>();
   for (const record of readLocalToolRecords(collection)) {
     const id = toolRecordId(collection, record);
-    if (id === null || byId.has(id)) continue;
+    // Sample data (see `sampleRecords.ts`) stays in this browser.
+    if (id === null || byId.has(id) || isSampleToolRecord(collection, record)) continue;
     try {
       byId.set(id, JSON.stringify(record));
     } catch {

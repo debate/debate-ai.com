@@ -1,15 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Button } from "../../lib/ui/primitives/button";
-import { Badge } from "../../lib/ui/primitives/badge";
+import { Button } from "@debate/webview/lib/ui/primitives/button";
+import { Badge } from "@debate/webview/lib/ui/primitives/badge";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../../lib/ui/primitives/card";
+} from "@debate/webview/lib/ui/primitives/card";
 import { VIDEO_DOCUMENT_LABELS } from "@debate/videos";
 import { VideoContentDialog, type ContentDialogVideo } from "./VideoContentDialog";
 
@@ -92,6 +92,8 @@ const FIELD_LABELS: Record<string, string> = {
   affWin: "Winner",
   judgeDecision: "Judge decision",
   speechDocsUrl: "Speech docs URL",
+  arg1ac: "Aff arguments",
+  arg2nr: "Neg arguments",
 };
 
 /** A suggested edit's stored request: the proposed fields and the viewer's reason. */
@@ -179,6 +181,8 @@ export function VideoReportsPanel() {
   useEffect(() => {
     load();
   }, [load]);
+
+  const filteredUnavailable = unavailable.filter((video) => video.availability !== "not_embeddable");
 
   const resolve = async (issue: VideoIssue, status: "applied" | "dismissed" | "open") => {
     setBusyId(issue.id);
@@ -467,10 +471,10 @@ export function VideoReportsPanel() {
 
         <section className="flex flex-col gap-2">
           <h3 className="text-sm font-medium">
-            Unavailable videos{unavailable.length > 0 ? ` (${unavailable.length})` : ""}
+            Unavailable videos{filteredUnavailable.length > 0 ? ` (${filteredUnavailable.length})` : ""}
           </h3>
           <ul className="divide-y rounded-md border">
-            {unavailable.map((video) => {
+            {filteredUnavailable.map((video) => {
               const state = AVAILABILITY_LABELS[video.availability] ?? {
                 label: video.availability,
                 variant: "secondary" as const,
@@ -508,7 +512,7 @@ export function VideoReportsPanel() {
                 </li>
               );
             })}
-            {unavailable.length === 0 && (
+            {filteredUnavailable.length === 0 && (
               <li className="text-muted-foreground p-3 text-center text-sm">
                 {isLoading ? "Loading…" : "Every stored video still plays."}
               </li>

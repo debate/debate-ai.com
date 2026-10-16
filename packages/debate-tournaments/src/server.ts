@@ -21,6 +21,8 @@ export { d1FromLibsql, type LibsqlClientLike } from "./db/libsql-d1";
 export { translateMysqlToSqlite } from "./db/mysql-compat";
 export { configureTabroom, tabroomConfig, type TabroomConfig } from "./config";
 export { TABLES as TABROOM_TABLES } from "./db/generated/columns";
+export { auditStatements, type AuditFinding, type AuditKind } from "./db/audit";
+export { publicRow, stripPrivateFields } from "./api/public-fields";
 export type { D1DatabaseLike, D1PreparedStatementLike, D1Result } from "./db/d1-types";
 export {
   createTournament,
@@ -36,4 +38,5 @@ export {
 export { getHostRouter, hostPathAllowsMethod, isHostPath } from "./host/router";
 export { canAdminTournament, loadTournamentAdmin, type TournamentAdminView } from "./host/admin";
 export { ensureDemoTournament, seedDemo, splitSqlStatements } from "./host/demo";
+export { applyDemoEdit, demoEditSchema, loadDemoSections, type DemoEdit, type DemoSection } from "./host/demo-edit";
 export { DEMO_ADMIN, DEMO_TOURN_ID } from "./host/demo-account";

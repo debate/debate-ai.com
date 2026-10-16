@@ -7,24 +7,23 @@
  * @module components/debate/DebateVideos/components/video-search/VideoSearchSuggestions
  */
 
-"use client"
+"use client";
 
-import React from "react"
-import { Hash, Trophy } from "lucide-react"
-import type { VideoSuggestion, VideoSuggestions } from "../../types/videos"
-import { cn } from "../../ui/lib/utils"
-import { formatCount } from "../category-gallery/format-count"
+import React from "react";
+import { Hash, Trophy } from "lucide-react";
+import type { VideoSuggestion, VideoSuggestions } from "../../types/videos";
+import { cn } from "../../ui/lib/utils";
 
 /** Props for the {@link VideoSearchSuggestions} component. */
 interface VideoSearchSuggestionsProps {
   /** Keyword and tournament chips from `/api/videos/meta`. */
-  suggestions: VideoSuggestions
+  suggestions: VideoSuggestions;
   /** Active search term, so the matching chip can be highlighted. */
-  searchTerm?: string
+  searchTerm?: string;
   /** Runs the chip's label as a search. */
-  onSelect: (term: string) => void
+  onSelect: (term: string) => void;
   /** Extra classes for the wrapper. */
-  className?: string
+  className?: string;
 }
 
 /** One row of chips with its heading; renders nothing when the row is empty. */
@@ -35,15 +34,15 @@ function SuggestionRow({
   searchTerm,
   onSelect,
 }: {
-  title: string
-  icon: React.ReactNode
-  items: VideoSuggestion[]
-  searchTerm?: string
-  onSelect: (term: string) => void
+  title: string;
+  icon: React.ReactNode;
+  items: VideoSuggestion[];
+  searchTerm?: string;
+  onSelect: (term: string) => void;
 }) {
-  if (items.length === 0) return null
+  if (items.length === 0) return null;
 
-  const active = searchTerm?.trim().toLowerCase()
+  const active = searchTerm?.trim().toLowerCase();
 
   return (
     <div className="flex flex-col gap-1.5">
@@ -53,29 +52,26 @@ function SuggestionRow({
       </div>
       <div className="flex flex-wrap gap-1.5">
         {items.map((item) => {
-          const isActive = active === item.label.toLowerCase()
+          const isActive = active === item.label.toLowerCase();
           return (
             <button
               key={`${item.kind}-${item.label}`}
               type="button"
               onClick={() => onSelect(item.label)}
               aria-pressed={isActive}
-              title={`Search ${item.label} — ${item.count} video${item.count === 1 ? "" : "s"}`}
+              title={`Search ${item.label}`}
               className={cn(
                 "inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-background px-2.5 py-1 text-xs text-foreground transition-colors hover:border-primary/50 hover:bg-primary/10",
                 isActive && "border-primary/60 bg-primary/15",
               )}
             >
               <span className="truncate max-w-[14rem]">{item.label}</span>
-              <span className="text-[10px] tabular-nums text-muted-foreground">
-                {formatCount(item.count)}
-              </span>
             </button>
-          )
+          );
         })}
       </div>
     </div>
-  )
+  );
 }
 
 /**
@@ -89,8 +85,8 @@ export function VideoSearchSuggestions({
   onSelect,
   className,
 }: VideoSearchSuggestionsProps) {
-  const { keywords = [], tournaments = [] } = suggestions ?? {}
-  if (keywords.length === 0 && tournaments.length === 0) return null
+  const { keywords = [], tournaments = [] } = suggestions ?? {};
+  if (keywords.length === 0 && tournaments.length === 0) return null;
 
   return (
     <div className={cn("flex flex-col gap-3", className)}>
@@ -109,5 +105,5 @@ export function VideoSearchSuggestions({
         onSelect={onSelect}
       />
     </div>
-  )
+  );
 }

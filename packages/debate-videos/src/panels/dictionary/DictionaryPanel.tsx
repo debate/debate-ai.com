@@ -9,7 +9,7 @@ import { useState, useMemo, useEffect } from "react"
 import grab from "grab-url"
 import { Card } from "../../ui/primitives/card"
 import { Input } from "../../ui/primitives/input"
-import { Search, ArrowRight } from "lucide-react"
+import { Search, ArrowRight, Loader2 } from "lucide-react"
 
 /**
  * DictionaryPanel - Searchable debate terminology glossary
@@ -41,9 +41,21 @@ export function DictionaryPanel({ controlledSearchTerm, onControlledSearchChange
   const searchTerm = controlledSearchTerm !== undefined ? controlledSearchTerm : internalSearchTerm
   const setSearchTerm = onControlledSearchChange ?? setInternalSearchTerm
   const [dictionary, setDictionary] = useState<DictionaryEntry[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    grab("dictionary").then(res => setDictionary(res.data || []))
+    let cancelled = false
+    grab("dictionary", { baseURL: "/api/" })
+      .then(res => {
+        if (!cancelled) setDictionary(res?.data || [])
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   const filteredDebateTerms = useMemo(() => {
@@ -83,8 +95,14 @@ export function DictionaryPanel({ controlledSearchTerm, onControlledSearchChange
 
       {/* Results list */}
       <div className="flex-1 overflow-y-auto px-4 sm:px-6 pb-6">
-        {filteredDebateTerms.length === 0 ? (
-          // Empty state when no matches
+        {loading ? (
+          // Loader until the glossary arrives, so the empty state never flashes
+          <div className="flex flex-col items-center justify-center h-full text-center p-8" role="status" aria-live="polite">
+            <Loader2 className="h-8 w-8 animate-spin text-indigo-500 mb-3" />
+            <p className="text-gray-500 text-sm">Loading debate terms...</p>
+          </div>
+        ) : filteredDebateTerms.length === 0 && searchTerm.trim().length > 0 ? (
+          // Empty state when a search has no matches
           <div className="flex flex-col items-center justify-center h-full text-center p-8">
             <Search className="text-gray-300 mb-4" size={64} />
             <p className="text-gray-500 text-lg">No results found for "{searchTerm}"</p>

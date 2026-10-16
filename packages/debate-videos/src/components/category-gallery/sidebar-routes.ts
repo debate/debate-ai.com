@@ -80,7 +80,7 @@ export const TOOL_SIDEBAR_HREFS: ReadonlySet<string> = new Set<string>([
   ...APP_DOCK_LINKS.map((link) => link.href),
   ...SIDEBAR_TOOL_SECTIONS.flatMap((section) => [
     section.href,
-    ...section.tools.map((tool) => tool.href),
+    ...section.tools.flatMap((tool) => [tool.href, ...(tool.aliases ?? [])]),
   ]),
 ]);
 

@@ -11,6 +11,9 @@
  */
 
 import type { TournamentFormatId } from "../host/formats";
+import type { DemoEdit, DemoSection } from "../host/demo-edit";
+
+export type { DemoEdit, DemoSection };
 import { tournamentSlugOf, type TournamentSlug } from "../routes";
 
 export interface UpcomingTournament {
@@ -257,10 +260,31 @@ export interface TournamentAdmin {
   events: Array<{ id: number; abbr: string; name: string; type: string; level: string | null; fee: number | null; entryCount: number }>;
   schools: Array<{ id: number; name: string; code: string | null; entryCount: number }>;
   entries: Array<{ id: number; code: string | null; name: string | null; eventAbbr: string | null; schoolName: string | null; status: "active" | "dropped" | "waitlist" | "unconfirmed" }>;
-  judges: Array<{ id: number; code: string | null; name: string; schoolName: string | null; active: boolean }>;
+  judges: Array<{ id: number; code: string | null; name: string; first: string | null; last: string | null; schoolName: string | null; active: boolean }>;
   rooms: Array<{ id: number; name: string; building: string | null }>;
   rounds: Array<{ id: number; name: number; label: string | null; type: string | null; eventAbbr: string; published: boolean; resultsPosted: boolean; sectionCount: number; start: string | null }>;
   resultSets: Array<{ id: number; label: string | null; eventAbbr: string | null; published: boolean }>;
+}
+
+/**
+ * A tournament's setup as upstream Tabroom's tournament-admin ("tab") API
+ * returns it: `GET {apiBase}/tab/tourns/:id/{timeslots,categories}`, for the
+ * tournament's signed-in owners and admins only.
+ */
+export interface TabroomTimeslot {
+  id: number;
+  name: string;
+  start: string | null;
+  end: string | null;
+}
+export interface TabroomCategory {
+  id: number;
+  name: string;
+  abbr: string;
+}
+export interface TournamentSetup {
+  timeslots: TabroomTimeslot[];
+  categories: TabroomCategory[];
 }
 
 export interface TournamentsClientOptions {
@@ -493,7 +517,31 @@ export function createTournamentsClient(
     myTournaments: (signal?: AbortSignal) => get<{ tournaments: OwnedTournament[] }>(base, "/host/tourns", signal),
     /** A hosted tournament's admin view: its owner's, or the demo's as the mock admin. */
     admin: (tournId: number, signal?: AbortSignal) => get<TournamentAdmin>(base, `/host/tourns/${tournId}/admin`, signal),
+    /** A hosted tournament's timeslots and judge categories, from upstream's tab API (owners and admins only). */
+    setup: (tournId: number, signal?: AbortSignal): Promise<TournamentSetup> =>
+      Promise.all([
+        get<TabroomTimeslot[]>(base, `/tab/tourns/${tournId}/timeslots`, signal),
+        get<TabroomCategory[]>(base, `/tab/tourns/${tournId}/categories`, signal),
+      ]).then(([timeslots, categories]) => ({ timeslots, categories })),
     ensureDemo,
+    /** Saves one edit to the demo tournament's mock data. */
+    editDemo: (edit: DemoEdit, signal?: AbortSignal) =>
+      request<{ ok: true }>(base, "/host/demo/edit", {
+        method: "POST",
+        signal,
+        headers: { "content-type": "application/json", accept: "application/json" },
+        body: JSON.stringify(edit),
+      }),
+    /** A demo round's sections, for editing its pairings. */
+    demoSections: (roundId: number, signal?: AbortSignal) =>
+      get<{ sections: DemoSection[] }>(base, `/host/demo/rounds/${roundId}/sections`, signal).then((body) => body.sections),
+    /** Reloads the demo tournament's seed, undoing every edit. */
+    resetDemo: (signal?: AbortSignal) =>
+      request<{ tournId: number; seeded: boolean }>(base, "/host/demo/reset", {
+        method: "POST",
+        signal,
+        headers: { accept: "application/json" },
+      }),
   };
 }
 

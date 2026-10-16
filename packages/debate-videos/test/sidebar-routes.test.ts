@@ -168,21 +168,25 @@ describe("the admin dashboard", () => {
   });
 });
 
-describe("Latest News", () => {
-  it("is a sidebar route, so opening a thread from the feed keeps the nav", () => {
+describe("News & Forums", () => {
+  it("is a sidebar route, and so is the old forums address its threads still live under", () => {
+    expect(TOOL_SIDEBAR_HREFS.has("/news")).toBe(true);
     expect(TOOL_SIDEBAR_HREFS.has("/practice/forums")).toBe(true);
-    expect(isGenericToolSidebarRoute("/practice/forums")).toBe(true);
+    expect(isGenericToolSidebarRoute("/news")).toBe(true);
     // A thread page is a detail route under an already-listed parent, matched
     // by prefix — the same way `/doc/<document>` and `/teams/<team>` are.
     expect(isGenericToolSidebarRoute("/practice/forums/3f2504e0-4f89-41d3-9a0c-0305e82c3301")).toBe(true);
-    expect(hasEmbeddedDock("/practice/forums")).toBe(true);
+    expect(hasEmbeddedDock("/news")).toBe(true);
   });
 
-  it("stay in the Coaching section", () => {
+  it("is one row in the Coaching section, with the forums folded into it", () => {
+    const tools = SIDEBAR_TOOL_SECTIONS.flatMap((section) => section.tools);
     const coaching = SIDEBAR_TOOL_SECTIONS.find((section) => section.id === "coaching");
-    const hrefs = coaching?.tools.map((tool) => tool.href) ?? [];
+    const row = coaching?.tools.find((tool) => tool.href === "/news");
 
-    expect(hrefs).toContain("/practice/forums");
+    expect(row?.title).toBe("News & Forums");
+    expect(row?.aliases).toContain("/practice/forums");
+    expect(tools.filter((tool) => tool.href === "/practice/forums")).toHaveLength(0);
   });
 });
 

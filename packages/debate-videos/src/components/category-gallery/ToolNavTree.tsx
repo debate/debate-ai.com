@@ -1,7 +1,7 @@
 /**
  * @fileoverview The Research / Practice / Coaching / Insights
  * portion of the videos
- * sidebar — the h1 sections that follow "Round Videos" and "Lectures" in the
+ * sidebar — the h1 sections that follow "Videos" in the
  * tree — factored out of `VideoSidebarTree` so it can also render on the
  * non-video tool pages those sections link to (`/coaching`, `/research`,
  * `/practice`, etc.) — those pages otherwise render no sidebar at all
@@ -44,6 +44,7 @@ import { usePathname } from "next/navigation";
 import { TreeItem } from "./TreeItem";
 import {
   SIDEBAR_TOOL_SECTIONS,
+  type SidebarToolLink,
   type SidebarToolSection,
 } from "./sidebar-tool-sections";
 import { sidebarSectionForPath } from "./sidebar-active-section";
@@ -68,9 +69,19 @@ import {
 const TEAM_RANKINGS_HREF = "/coaching/rankings";
 const TEAM_RANKINGS_PROFILE_PREFIXES = ["/@", "/teams", "/schools"];
 
-function isToolActive(href: string, pathname: string | null): boolean {
+function isToolActive(tool: SidebarToolLink, pathname: string | null): boolean {
   if (pathname == null) return false;
+  const { href } = tool;
   if (pathname === href) return true;
+  // A row's aliases (see `SidebarToolLink.aliases`) count with every page
+  // below them, e.g. a forum thread under News & Forums.
+  if (
+    tool.aliases?.some(
+      (alias) => pathname === alias || pathname.startsWith(`${alias}/`),
+    )
+  ) {
+    return true;
+  }
   if (href !== TEAM_RANKINGS_HREF) return false;
   return TEAM_RANKINGS_PROFILE_PREFIXES.some(
     (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
@@ -87,8 +98,8 @@ export interface ToolNavTreeProps {
   defaultExpanded?: boolean;
   /**
    * Id of the open section, when a parent owns the accordion. `VideoSidebarTree`
-   * passes this so its own "Round Videos" node takes part: opening a tool
-   * section there closes Round Videos, and vice versa.
+   * passes this so its own "Videos" node takes part: opening a tool
+   * section there closes Videos, and vice versa.
    */
   expandedSectionIds?: readonly string[];
   /** Present together with {@link ToolNavTreeProps.expandedSectionIds}. */
@@ -176,7 +187,7 @@ export function ToolNavTree({
               href={tool.href}
               title={tool.title}
               icon={tool.icon}
-              isActive={isToolActive(tool.href, pathname)}
+              isActive={isToolActive(tool, pathname)}
             />
           ))}
         </TreeItem>

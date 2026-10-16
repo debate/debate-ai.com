@@ -219,7 +219,10 @@ export function buildRoundSpeeches(
 
       const speech = speeches[index];
       if (section.body) speech.parts[document.kind] = section.body;
-      if (speech.startSeconds === null) speech.startSeconds = section.startSeconds;
+      if (speech.startSeconds === null && section.startSeconds !== null) {
+        speech.startSeconds = section.startSeconds;
+        if (section.endSeconds != null) speech.endSeconds = section.endSeconds;
+      }
       if (identity.target && !targets.has(key)) targets.set(key, identity.target);
     });
   }

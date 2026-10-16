@@ -12,6 +12,12 @@
  * docs' navigation scrolls, resizes and hides with the rest of the column.
  * Below `md` the app's column is not drawn and Fumadocs' drawer stays the
  * docs' navigation.
+ *
+ * Only the folders on the path to the current page start expanded (plus any
+ * marked `defaultOpen`), and the current page is scrolled into view in the
+ * sidebar when the docs open and after each navigation. Off /docs the same
+ * pages are a collapsed "Docs" section of the tree (`DocsNavTree` in
+ * @debate/videos, fed by `routes/tree-route.ts`).
  */
 
 import { useEffect, useState, type ReactNode } from 'react';
@@ -36,6 +42,18 @@ export function AppSidebarDocsTree({ tree }: { tree: Root }) {
   useEffect(() => {
     setSlot(document.getElementById(APP_SIDEBAR_DOCS_SLOT_ID));
   }, []);
+
+  // Keep the current page in view: on first open and after each navigation.
+  // Runs a frame later so folders opened for the new page have rendered.
+  const pathname = usePathname();
+  useEffect(() => {
+    if (!slot) return;
+    const frame = requestAnimationFrame(() => {
+      const active = slot.querySelector<HTMLElement>('[aria-current="page"]');
+      if (active) scrollIntoSidebarView(active);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [slot, pathname]);
 
   if (!slot) return null;
 
@@ -83,6 +101,7 @@ function TreeNode({ node }: { node: Node }) {
 
 function FolderNode({ folder, pathname }: { folder: Folder; pathname: string | null }) {
   const containsActive = pathname != null && folderContains(folder, pathname);
+  // Only the path to the current page starts expanded.
   const [open, setOpen] = useState(containsActive || folder.defaultOpen === true);
 
   // Opening a page inside a closed folder opens it; nothing closes for you.
@@ -167,4 +186,22 @@ function folderContains(folder: Folder, pathname: string): boolean {
   return folder.children.some((node) =>
     node.type === 'page' ? node.url === pathname : node.type === 'folder' && folderContains(node, pathname),
   );
+}
+
+/**
+ * Centres `el` in its nearest scrollable ancestor (the sidebar column) without
+ * scrolling the page itself, which `Element.scrollIntoView` would also do.
+ */
+function scrollIntoSidebarView(el: HTMLElement) {
+  let parent = el.parentElement;
+  while (parent) {
+    const { overflowY } = getComputedStyle(parent);
+    if ((overflowY === 'auto' || overflowY === 'scroll') && parent.scrollHeight > parent.clientHeight) break;
+    parent = parent.parentElement;
+  }
+  if (!parent) return;
+  const elRect = el.getBoundingClientRect();
+  const parentRect = parent.getBoundingClientRect();
+  const offset = elRect.top - parentRect.top - (parent.clientHeight - elRect.height) / 2;
+  parent.scrollTo({ top: parent.scrollTop + offset, behavior: 'smooth' });
 }

@@ -10,7 +10,7 @@
  */
 
 import { isVideoLibraryPath, ownsItsLayout } from "@debate/videos"
-import { showsCardsOnlySidebar, showsReasonDocsPanels } from "./reason-docs/sidebar-routes"
+import { showsReasonDocsPanels } from "./reason-docs/sidebar-routes"
 
 /** Window event a view that owns its sidebar (`/debate`) listens for. */
 export const OPEN_OWN_SIDEBAR_EVENT = "debate:open-sidebar"
@@ -18,9 +18,7 @@ export const OPEN_OWN_SIDEBAR_EVENT = "debate:open-sidebar"
 export type MobileSidebarKind =
   /** The view draws its own sidebar; the dock only asks it to open. */
   | "own"
-  /** `/research/cards`: the document panels alone. */
-  | "cards"
-  /** `/reason-editor`: document panels above the tool tree. */
+  /** `/reason-editor` and `/research/cards`: document panels above the tool tree. */
   | "editor"
   /** The video library: video links above the tool tree. */
   | "videos"
@@ -30,7 +28,6 @@ export type MobileSidebarKind =
 export function mobileSidebarKind(pathname: string | null | undefined): MobileSidebarKind {
   if (!pathname) return "tools"
   if (ownsItsLayout(pathname)) return "own"
-  if (showsCardsOnlySidebar(pathname)) return "cards"
   if (showsReasonDocsPanels(pathname)) return "editor"
   if (isVideoLibraryPath(pathname)) return "videos"
   return "tools"

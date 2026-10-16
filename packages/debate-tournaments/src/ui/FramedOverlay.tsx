@@ -21,12 +21,18 @@ export const TABROOM_BETA_URL = "https://beta.tabroom.com";
 export interface FramedOverlayProps {
   open: boolean;
   onClose: () => void;
-  /** Where the frame starts; Tabroom's beta console by default. */
+  /** Where the frame starts; Tabroom's beta console by default. Ignored when `content` is set. */
   url?: string;
   /** The heading, and the dialog's accessible name. */
   title?: string;
   /** A caption under the heading. */
   description?: string;
+  /**
+   * Inline content for the body, rendered in place of the iframe. When set,
+   * the framed page is no longer fetched and no "open in a new tab" control is
+   * offered — used for pages this package now owns as React components.
+   */
+  content?: ReactNode;
   children?: ReactNode;
 }
 
@@ -36,6 +42,7 @@ export function FramedOverlay({
   url = TABROOM_BETA_URL,
   title = "Tabroom",
   description = "Tabroom's own console, framed here so you stay on this page.",
+  content,
   children,
 }: FramedOverlayProps) {
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -72,15 +79,17 @@ export function FramedOverlay({
             {description ? <p className="text-xs text-muted-foreground">{description}</p> : null}
           </div>
           <div className="flex shrink-0 items-center gap-2">
-            <a
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={buttonVariants({ variant: "outline", size: "sm" })}
-            >
-              Open in a new tab
-              <ExternalLink aria-hidden />
-            </a>
+            {content ? null : (
+              <a
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={buttonVariants({ variant: "outline", size: "sm" })}
+              >
+                Open in a new tab
+                <ExternalLink aria-hidden />
+              </a>
+            )}
             <button
               ref={closeRef}
               type="button"
@@ -93,13 +102,17 @@ export function FramedOverlay({
           </div>
         </div>
         {children}
-        <iframe
-          src={url}
-          title={title}
-          loading="lazy"
-          referrerPolicy="origin"
-          className="min-h-0 flex-1 border-0 bg-background"
-        />
+        {content ? (
+          <div className="min-h-0 flex-1 overflow-auto">{content}</div>
+        ) : (
+          <iframe
+            src={url}
+            title={title}
+            loading="lazy"
+            referrerPolicy="origin"
+            className="min-h-0 flex-1 border-0 bg-background"
+          />
+        )}
       </div>
     </div>
   );

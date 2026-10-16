@@ -20,6 +20,8 @@
  */
 import { browser } from 'wxt/browser';
 
+import { isPdf } from '@/src/article/remote';
+
 /** Message asking the background worker for the panel's tab's article snapshot. */
 export const READER_SNAPSHOT_MESSAGE = 'debate-reader-snapshot';
 
@@ -188,6 +190,47 @@ export async function toggleReaderPanel(tabId: number): Promise<boolean> {
     .join(', ')})`;
   const frames = await browser.tabs.executeScript(tabId, { code });
   return Boolean(frames?.[0]);
+}
+
+/**
+ * Opens the article panel as its own tab, reading `url` from the server
+ * (src/article/remote.ts) — for a PDF, whose viewer has no page to frame the
+ * panel into, or any page the overlay can't be put on.
+ */
+export async function openReaderTab(url: string): Promise<void> {
+  await browser.tabs.create({
+    url: browser.runtime.getURL(`/${READER_PAGE}?url=${encodeURIComponent(url)}`),
+  });
+}
+
+/**
+ * Reading mode for a tab: the overlay over the page, or — for a PDF, or a page
+ * the overlay can't be injected into — the panel in its own tab reading the
+ * URL. Rejects only when the tab has no web URL to fall back to.
+ */
+export async function openReaderForTab(tab: { id?: number; url?: string }): Promise<void> {
+  const url = tab.url && /^https?:/i.test(tab.url) ? tab.url : undefined;
+  if (url && isPdf(url)) return openReaderTab(url);
+  try {
+    if (tab.id == null) throw new Error('No tab to read.');
+    await toggleReaderPanel(tab.id);
+  } catch (error) {
+    if (!url) throw error;
+    await openReaderTab(url);
+  }
+}
+
+/**
+ * Shows or hides the panel from a content script already running in the page
+ * (the reading-mode button, src/page-tools). No injection is needed there, so
+ * this works without the `activeTab` grant a toolbar click gives.
+ */
+export function toggleReaderPanelInPage(): boolean {
+  return toggleOverlayInPage(
+    browser.runtime.getURL(`/${READER_PAGE}`),
+    READER_CLOSE_MESSAGE,
+    READER_LAYOUT_MESSAGE,
+  );
 }
 
 /** Asks the page framing this panel to take `layout`. Called from inside the panel. */
