@@ -157,7 +157,6 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/practice/judge-decision", title: "AI Judge Decision", icon: Scale },
       { href: "/practice/partners", title: "Practice Partners", icon: Handshake },
       { href: "/practice/drills", title: "Practice Drills", icon: Repeat },
-      { href: "/reason-editor", title: "Personal Dictionary", icon: BookOpen },
     ],
   },
   {
