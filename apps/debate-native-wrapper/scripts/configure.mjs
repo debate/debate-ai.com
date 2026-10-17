@@ -81,6 +81,10 @@ const tauriConf = {
         fullscreen: win.fullscreen,
         maximized: win.maximized,
         center: true,
+        // Created hidden so a launch at login stays in the tray without
+        // flashing on screen; src-tauri/src/background.rs shows it on any
+        // other launch (and on mobile, which has no tray, it is shown at once).
+        visible: false,
       },
     ],
     security: {
