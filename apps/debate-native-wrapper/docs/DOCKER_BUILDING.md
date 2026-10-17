@@ -96,9 +96,10 @@ docker compose run --rm build-ios-core
 
 The native wrapper is configured to run as a persistent desktop background daemon with the following features:
 
-1. **Autostart on Boot**: Automatically registers as a login item on macOS (LaunchAgent), Windows (Registry), and Linux (XDG Autostart).
-2. **System Tray Integration**: Provides a system tray icon with Show/Hide toggle and Quit action. Closing the main window minimizes to the system tray instead of terminating the app.
-3. **Global Shortcut (`Ctrl+`` / `Cmd+``)**:
+1. **Autostart on Boot**: Registers as a login item on macOS (LaunchAgent), Windows (Registry), and Linux (XDG Autostart) on the first launch, started with `--minimized`. The tray's **Run on Startup** check box turns it off and on; the choice is kept (an `autostart-initialized` marker in the app config directory stops the first-run default from re-enabling it).
+2. **Starts Invisible**: The main window is created hidden (`"visible": false`). A `--minimized` / `--hidden` / `--background` launch leaves it hidden with only the tray icon showing (and, on macOS, no Dock icon: the Accessory activation policy), while the page still loads behind it so opening is instant. Any other launch shows it.
+3. **System Tray Integration**: Left click toggles the window. The context menu has Open Debate AI, Hide to Background, Run on Startup, Settings…, Load From, and Quit. Closing the main window hides it to the tray instead of quitting. Show/hide logic lives in `src-tauri/src/background.rs`.
+4. **Global Shortcut (`Ctrl+`` / `Cmd+``)**:
    - Captures active text selection / clipboard from whichever application currently has focus across the OS.
    - Unminimizes and focuses the Debate AI window.
    - Dispatches `tauri-selected-text` and `quick-launch-text` events with the captured text into the web application.
