@@ -8,7 +8,6 @@ import { findVideoTeamRanking, videoStyleDatasetId } from "../../panels/leaderbo
 import {
   modelMatchup,
   recommendSide,
-  type MatchupModelResult,
   type MatchupWeights,
   type RankingDataset,
   type RankingEntry,
@@ -26,9 +25,9 @@ function formatRating(r: number): string {
 
 function Stat({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="rounded-md border bg-background px-2 py-1.5">
+    <div className="rounded-md border bg-background px-1.5 py-1">
       <div className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</div>
-      <div className="text-sm font-semibold tabular-nums">{value}</div>
+      <div className="text-xs font-semibold tabular-nums">{value}</div>
     </div>
   )
 }
@@ -59,13 +58,15 @@ export function WatchRankingsPrediction({ video }: { video: VideoType }) {
 
   if (loading) {
     return (
-      <section aria-label="Rankings prediction" className="space-y-2">
-        <h2 className="text-sm font-semibold">Rankings prediction</h2>
-        <div className="min-w-0 rounded-lg border bg-card p-3 space-y-3 animate-pulse">
-          <div className="h-4 bg-muted rounded w-1/4" />
-          <div className="grid grid-cols-2 gap-3">
-            <div className="h-20 bg-muted rounded" />
-            <div className="h-20 bg-muted rounded" />
+      <section aria-label="Rankings prediction" className="space-y-1">
+        <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          Rankings prediction
+        </h2>
+        <div className="min-w-0 rounded-lg border bg-card p-2 animate-pulse">
+          <div className="h-3 bg-muted rounded w-1/3" />
+          <div className="mt-2 grid grid-cols-2 gap-2">
+            <div className="h-10 bg-muted rounded" />
+            <div className="h-10 bg-muted rounded" />
           </div>
         </div>
       </section>
@@ -74,9 +75,11 @@ export function WatchRankingsPrediction({ video }: { video: VideoType }) {
 
   if (error) {
     return (
-      <section aria-label="Rankings prediction" className="space-y-2">
-        <h2 className="text-sm font-semibold">Rankings prediction</h2>
-        <div className="rounded-md border border-destructive bg-destructive/10 p-3 text-sm text-destructive">
+      <section aria-label="Rankings prediction" className="space-y-1">
+        <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          Rankings prediction
+        </h2>
+        <div className="rounded-md border border-destructive bg-destructive/10 p-2 text-xs text-destructive">
           Could not load rankings: {error}
         </div>
       </section>
@@ -88,90 +91,64 @@ export function WatchRankingsPrediction({ video }: { video: VideoType }) {
   }
 
   const { matchup, aEntry, bEntry } = result
-  const { a, b, sides, aSideTilt, bSideTilt } = matchup
+  const { sides } = matchup
+  const [aSide, bSide] = sides
+  const recP = recommendSide(matchup, "prelim")
+  const recE = recommendSide(matchup, "elim")
 
   return (
-    <section aria-label="Rankings prediction" className="space-y-2">
-      <h2 className="text-sm font-semibold">Rankings prediction</h2>
-      <div className="min-w-0 rounded-lg border bg-card p-3 space-y-3">
-        <div className="flex items-center justify-between">
-          <h3 className="font-medium">Who wins? (Glicko-2 model)</h3>
-          <span className="text-xs text-muted-foreground">
-            Based on full-season ratings, blended with school & individual performance
-          </span>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <SideCard
+    <section aria-label="Rankings prediction" className="space-y-1">
+      <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        Rankings prediction
+      </h2>
+      <div className="min-w-0 rounded-lg border bg-card p-2 space-y-1.5">
+        <div className="grid grid-cols-2 gap-2">
+          <MiniCard
             teamName={affTeam}
             side="aff"
-            probability={sides[0].prelim}
-            elim3={sides[0].elim3}
-            elim5={sides[0].elim5}
-            rating={a.blended}
+            probability={aSide.prelim}
+            elim3={aSide.elim3}
+            elim5={aSide.elim5}
+            rating={matchup.a.blended}
             deviation={aEntry.deviation}
             matches={aEntry.matches}
-            sideTilt={aSideTilt}
-            opponentName={negTeam}
-            opponentSide="neg"
+            opponent={negTeam}
           />
-          <SideCard
+          <MiniCard
             teamName={negTeam}
             side="neg"
-            probability={sides[1].prelim}
-            elim3={sides[1].elim3}
-            elim5={sides[1].elim5}
-            rating={b.blended}
+            probability={bSide.prelim}
+            elim3={bSide.elim3}
+            elim5={bSide.elim5}
+            rating={matchup.b.blended}
             deviation={bEntry.deviation}
             matches={bEntry.matches}
-            sideTilt={bSideTilt}
-            opponentName={affTeam}
-            opponentSide="aff"
+            opponent={affTeam}
           />
         </div>
 
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <span>Prelim = 1 judge; Elim = 3/5 judge panel (majority)</span>
-        </div>
-
-        <div className="text-xs text-muted-foreground">
-          Side effects: field aff/neg split + each team&apos;s own aff vs. neg tilt, shrunk by round count.
-          Ratings only reflect tournaments in the rankings — treat as estimates, not guarantees.
-        </div>
-
-        <div className="border-t pt-3">
-          <h4 className="text-xs font-medium text-muted-foreground mb-2">Side recommendation</h4>
-          <div className="flex flex-wrap gap-3 text-sm">
-            {recommendSide(matchup, "prelim") ? (
-              <>
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-blue-500/10 text-blue-400">
-                  <strong>Prelims:</strong> {affTeam} should take {sideLabel(recommendSide(matchup, "prelim")!.side)} (+{recommendSide(matchup, "prelim")!.margin.toFixed(1)}%)
-                </span>
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-red-500/10 text-red-400">
-                  <strong>Prelims:</strong> {negTeam} should take {sideLabel(otherSide(recommendSide(matchup, "prelim")!.side))} (+{recommendSide(matchup, "prelim")!.margin.toFixed(1)}%)
-                </span>
-              </>
-            ) : (
-              <span className="px-2 py-0.5 rounded bg-muted">No strong side preference in prelims</span>
+        {recP || recE ? (
+          <div className="col-span-2 flex flex-col gap-1 text-[10px] text-muted-foreground leading-none">
+            {recP && (
+              <div className="flex items-center gap-1">
+                <span className="font-medium text-foreground">Prelims:</span>{" "}
+                {affTeam} should take {sideLabel(recP.side)} (+{recP.margin.toFixed(1)}%)
+              </div>
             )}
-            {recommendSide(matchup, "elim") ? (
-              <>
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-blue-500/10 text-blue-400">
-                  <strong>Elims:</strong> {affTeam} should take {sideLabel(recommendSide(matchup, "elim")!.side)} (+{recommendSide(matchup, "elim")!.margin.toFixed(1)}%)</span>
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-red-500/10 text-red-400">
-                  <strong>Elims:</strong> {negTeam} should take {sideLabel(otherSide(recommendSide(matchup, "elim")!.side))} (+{recommendSide(matchup, "elim")!.margin.toFixed(1)}%)</span>
-              </>
-            ) : (
-              <span className="px-2 py-0.5 rounded bg-muted">No strong side preference in elims</span>
+            {recE && (
+              <div className="flex items-center gap-1">
+                <span className="font-medium text-foreground">Elims:</span>{" "}
+                {affTeam} should take {sideLabel(recE.side)} (+{recE.margin.toFixed(1)}%)
+              </div>
             )}
           </div>
-        </div>
+        ) : null}
       </div>
     </section>
   )
 }
 
-function SideCard({
+function MiniCard({
   teamName,
   side,
   probability,
@@ -180,9 +157,7 @@ function SideCard({
   rating,
   deviation,
   matches,
-  sideTilt,
-  opponentName,
-  opponentSide,
+  opponent,
 }: {
   teamName: string
   side: "aff" | "neg"
@@ -192,20 +167,18 @@ function SideCard({
   rating: number
   deviation: number
   matches: number
-  sideTilt: number
-  opponentName: string
-  opponentSide: "aff" | "neg"
+  opponent: string
 }) {
   const isAff = side === "aff"
 
   return (
     <div
       className={cn(
-        "relative min-w-0 rounded-md border bg-card p-3 space-y-2",
+        "relative min-w-0 rounded-md border bg-card p-2 space-y-1",
         isAff ? "border-blue-200/50 dark:border-blue-800/50" : "border-red-200/50 dark:border-red-800/50",
       )}
     >
-      <div className="flex items-baseline justify-between gap-2">
+      <div className="flex items-baseline justify-between gap-1">
         <span
           className={cn(
             "text-[10px] font-semibold uppercase tracking-wide",
@@ -214,33 +187,21 @@ function SideCard({
         >
           {sideLabel(side)}
         </span>
-        <span className="shrink-0 text-xs text-muted-foreground">{matches} rounds</span>
+        <span className="text-[10px] text-muted-foreground">{matches} rounds</span>
       </div>
-      <div className="truncate font-medium">{teamName}</div>
-      <div className="text-xs text-muted-foreground">vs {opponentName} ({sideLabel(opponentSide)})</div>
+      <div className="truncate font-medium text-sm">{teamName}</div>
+      <div className="text-[10px] text-muted-foreground">vs {opponent}</div>
 
-      <div className="space-y-1">
-        <div className="flex items-center justify-between text-xs">
-          <span className="text-muted-foreground">Prelim (1 judge)</span>
-          <span className="font-semibold tabular-nums">{pct(probability)}</span>
-        </div>
-        <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-          <div
-            className={cn("h-full transition-all duration-300", isAff ? "bg-blue-500" : "bg-red-500")}
-            style={{ width: `${probability * 100}%` }}
-          />
-        </div>
+      <div className="flex items-center justify-between text-[11px]">
+        <span className="text-muted-foreground">Prelim</span>
+        <span className="font-semibold tabular-nums">{pct(probability)}</span>
       </div>
 
-      <div className="grid grid-cols-2 gap-1.5 text-xs">
-        <Stat label="Elim (3)" value={pct(elim3)} />
-        <Stat label="Elim (5)" value={pct(elim5)} />
-        <Stat label="Blended rating" value={formatRating(rating)} />
-        <Stat label="Deviation" value={`±${formatRating(deviation)}`} />
-      </div>
-
-      <div className="text-[10px] text-muted-foreground">
-        Side tilt: {sideTilt >= 0 ? "+" : ""}{sideTilt.toFixed(2)} log-odds
+      <div className="grid grid-cols-4 gap-1">
+        <Stat label="Elim 3" value={pct(elim3)} />
+        <Stat label="Elim 5" value={pct(elim5)} />
+        <Stat label="Rating" value={formatRating(rating)} />
+        <Stat label="±Dev" value={formatRating(deviation)} />
       </div>
     </div>
   )
