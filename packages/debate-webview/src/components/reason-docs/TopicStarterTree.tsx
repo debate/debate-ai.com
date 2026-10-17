@@ -22,6 +22,7 @@ import {
   FileText,
   Folder,
   FolderDown,
+  FolderInput,
   Link2,
   MoreHorizontal,
   Pencil,
@@ -33,8 +34,18 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "../../lib/ui/primitives/dropdown-menu"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../lib/ui/primitives/select"
 import { cn } from "../../lib/ui/lib/utils"
 import { DOCUMENT_DRAG_TYPE, TOPIC_DRAG_TYPE, draggedId } from "../../lib/reason-docs/drag-data"
 
@@ -42,7 +53,7 @@ import { DOCUMENT_DRAG_TYPE, TOPIC_DRAG_TYPE, draggedId } from "../../lib/reason
  *  `.cmir` for anything imported since the library switched to CardMirror's
  *  native format, HTML for rows older than that — and `format` says which,
  *  so a reader never has to guess (see `lib/topic-starters/format.ts`). */
-export interface TopicStarterItem { id: number; title: string; content: string; format?: string; parentId: number | null; isFolder: boolean; tags: string }
+export interface TopicStarterItem { id: number; title: string; content: string; format?: string; parentId: number | null; isFolder: boolean; tags: string; year?: number | null }
 interface Node { item: TopicStarterItem; children: Node[]; tags: string[] }
 
 function parseTags(raw: string): string[] {

@@ -419,6 +419,32 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
     [publishToTopics],
   )
 
+  /** Removes a topic starter from the catalogue — admin-only on the server,
+   *  so a non-admin's attempt is a toast rather than a crash. */
+  const deleteTopic = useCallback(
+    (id: number) => {
+      const item = topicItems.find((t) => t.id === id)
+      void deleteTopicStarter(id).then((result) => {
+        if (result.ok) toast.success(`${item?.title || "Topic starter"} deleted.`)
+        else toast.error(result.error)
+      })
+    },
+    [topicItems, deleteTopicStarter],
+  )
+
+  /** Re-files a topic starter under another catalogue folder — admin-only on
+   *  the server. */
+  const moveTopic = useCallback(
+    (id: number, parentId: number | null) => {
+      const item = topicItems.find((t) => t.id === id)
+      void moveTopicStarter(id, parentId).then((result) => {
+        if (result.ok) toast.success(`${item?.title || "Topic starter"} moved.`)
+        else toast.error(result.error)
+      })
+    },
+    [topicItems, moveTopicStarter],
+  )
+
   /** The topic starter's own editor link, which anyone can open — the
    *  catalogue is public, unlike a reader's own files. */
   const copyTopicLink = useCallback(

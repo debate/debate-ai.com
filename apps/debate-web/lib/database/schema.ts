@@ -191,12 +191,17 @@ export const topicStarterItems = sqliteTable(
     isFolder: integer("is_folder", { mode: "boolean" }).notNull().default(false),
     tags: text("tags").notNull().default("[]"),
     published: integer("published", { mode: "boolean" }).notNull().default(true),
+    /** The competition year a starter belongs to (e.g. 2026), so the library
+     *  can be browsed by season. Null for rows that carry no year — older
+     *  imports and folders used as grouping nodes. */
+    year: integer("year"),
     createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
     updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
   },
   (table) => ({
     parentIdIdx: index("idx_topic_starter_items_parent_id").on(table.parentId),
     publishedIdx: index("idx_topic_starter_items_published").on(table.published),
+    yearIdx: index("idx_topic_starter_items_year").on(table.year),
   }),
 );
 

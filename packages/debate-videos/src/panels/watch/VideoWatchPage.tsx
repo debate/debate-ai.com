@@ -91,7 +91,6 @@ import { cn } from "../../ui/lib/utils"
 import { LecturesSidebarShell } from "../LecturesSidebarShell"
 import { useVideoState } from "../../hooks/useVideoState"
 import { useVideoFeed, useVideoMeta } from "../../hooks/useVideoFeed"
-import { formatCount } from "../../components/category-gallery/format-count"
 import {
   sendYouTubeCommand,
   useVideoPlayerStore,

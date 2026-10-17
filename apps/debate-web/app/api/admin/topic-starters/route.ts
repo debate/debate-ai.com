@@ -59,6 +59,7 @@ export async function POST(request: NextRequest) {
     const rootName =
       form.get("title")?.toString().trim() || upload.name.replace(/\.(docx|zip)$/i, "");
     const published = form.get("published") !== "false";
+    const year = parseYear(form.get("year")?.toString() ?? null);
 
     logImportEvent({
       importId,
@@ -94,6 +95,7 @@ export async function POST(request: NextRequest) {
         isFolder: true,
         tags: JSON.stringify(["topic-starter"]),
         published,
+        year,
       })
       .returning();
     const root = requireRow(rootRow, "root folder");
@@ -124,6 +126,7 @@ export async function POST(request: NextRequest) {
               isFolder: true,
               tags: JSON.stringify(["folder"]),
               published,
+              year,
             })
             .returning();
           const folderId: number = requireRow(folder, "folder").id;
@@ -140,6 +143,7 @@ export async function POST(request: NextRequest) {
           format: TOPIC_STARTER_FORMATS.cmir,
           tags: JSON.stringify(["cmir", published ? "public" : "private"]),
           published,
+          year,
         });
         imported++;
       } catch (error) {
@@ -215,4 +219,21 @@ function requireRow<T>(row: T | undefined, label: string): T {
 function failure(importId: string, code: string, error: string, status: number) {
   logImportEvent({ importId, stage: "rejected", code, reason: error });
   return NextResponse.json({ importId, code, error }, { status });
+}
+
+/**
+ * The competition year a form field names, or `null` when it names none.
+ *
+ * The library groups starters by year, so an import that carries no year
+ * leaves the column null rather than writing 0 — a row filed under no year
+ * is not the same as one filed under the year 0, and the tree shows the
+ * null group as "No year" rather than a bogus season.
+ */
+function parseYear(raw: string | null): number | null {
+  if (raw == null) return null
+  const trimmed = raw.trim()
+  if (!trimmed) return null
+  const year = Number(trimmed)
+  if (!Number.isInteger(year) || year < 1900 || year > 2100) return null
+  return year
 }
