@@ -238,6 +238,7 @@ export {
   VIDEO_COLLEGE_LINK,
   VIDEO_FORMAT_LINKS,
   VIDEO_LIBRARY_LINKS,
+  VIDEO_ALL_VIDEOS_FILTER_LINKS,
   VIDEO_REFERENCE_LINKS,
   type SidebarVideoLink,
 } from "./components/category-gallery/sidebar-video-links";
