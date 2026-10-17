@@ -14,7 +14,7 @@ import IconSchoolGlenbrookNorth from "../../../debate-icons/schools/glenbrook-no
 import IconSchoolGlenbrookSouth from "../../../debate-icons/schools/glenbrook-south.png";
 import IconSchoolNorthwestern from "../../../debate-icons/schools/northwestern.png";
 import IconSchoolWakeForest from "../../../debate-icons/schools/wake-forest.png";
-import IconSchoolKentucky from "../../../debate-icons/schools/kentucky.svg";
+import IconSchoolKentucky from "../../../debate-icons/schools/kentucky.png";
 import IconSchoolMichiganState from "../../../debate-icons/schools/michigan-state.png";
 import IconSchoolMichigan from "../../../debate-icons/schools/michigan.png";
 import IconSchoolNdt from "../../../debate-icons/schools/ndt.png";
@@ -29,12 +29,11 @@ import IconSchoolCsuLongBeach from "../../../debate-icons/schools/csu-long-beach
 import IconSchoolIowa from "../../../debate-icons/schools/iowa.png";
 import IconSchoolKansas from "../../../debate-icons/schools/kansas.png";
 import IconSchoolMarlborough from "../../../debate-icons/schools/marlborough.png";
-import IconSchoolMba from "../../../debate-icons/schools/mba.png";
 import IconSchoolNewTrier from "../../../debate-icons/schools/new-trier.png";
 import IconSchoolStrakeJesuit from "../../../debate-icons/schools/strake-jesuit.png";
 import IconSchoolTexas from "../../../debate-icons/schools/texas.png";
 import IconSchoolUcBerkeley from "../../../debate-icons/schools/uc-berkeley.png";
-import IconSchoolWesternKentucky from "../../../debate-icons/schools/western-kentucky.jpg";
+import IconSchoolWesternKentucky from "../../../debate-icons/schools/western-kentucky.png";
 
 const slugify = (s: string): string =>
   s
@@ -84,8 +83,6 @@ export const TOURNAMENT_LOGO_MAP: Record<string, string | FC<SVGProps<SVGSVGElem
   kansas: logoSrc(IconSchoolKansas),
   "university-of-kansas": logoSrc(IconSchoolKansas),
   marlborough: logoSrc(IconSchoolMarlborough),
-  mba: logoSrc(IconSchoolMba),
-  "montgomery-bell-academy": logoSrc(IconSchoolMba),
   "new-trier": logoSrc(IconSchoolNewTrier),
   "new-trier-high-school": logoSrc(IconSchoolNewTrier),
   "strake-jesuit": logoSrc(IconSchoolStrakeJesuit),
@@ -127,7 +124,7 @@ export const getTournamentLogo = (
   if (lower.includes("new trier")) return TOURNAMENT_LOGO_MAP["new-trier"] || null;
   if (lower.includes("strake")) return TOURNAMENT_LOGO_MAP["strake-jesuit"] || null;
   if (lower.includes("western kentucky")) return TOURNAMENT_LOGO_MAP["western-kentucky"] || null;
-  if (lower.includes("montgomery bell") || lower.includes("mba")) return TOURNAMENT_LOGO_MAP["mba"] || null;
+  if (lower.includes("montgomery bell")) return null;
   if (lower.includes("uc berkeley") || lower.includes("berkeley")) return TOURNAMENT_LOGO_MAP["uc-berkeley"] || null;
   return null;
 };

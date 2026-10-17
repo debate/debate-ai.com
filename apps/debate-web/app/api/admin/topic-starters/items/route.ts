@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
   const { isAdmin } = await getAdminAccess();
   if (!isAdmin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-  let body: { title?: string; content?: string; format?: string; parentId?: number | null };
+  let body: { title?: string; content?: string; format?: string; parentId?: number | null; year?: number | null };
   try {
     body = await request.json();
   } catch {
@@ -44,6 +44,7 @@ export async function POST(request: NextRequest) {
   }
 
   const format = normalizeFormat(body.format);
+  const year = parseTopicStarterYear(body.year);
   const [item] = await db
     .insert(topicStarterItems)
     .values({
@@ -54,8 +55,20 @@ export async function POST(request: NextRequest) {
       isFolder: false,
       tags: JSON.stringify([format, "public"]),
       published: true,
+      year,
     })
     .returning();
   if (!item) return NextResponse.json({ error: "The file could not be saved." }, { status: 500 });
   return NextResponse.json({ item }, { status: 201 });
+}
+
+/**
+ * The competition year a body names, or `null` when it names none. Mirrors
+ * the importer's parser so an item added here is grouped the same way.
+ */
+function parseTopicStarterYear(raw: number | string | null | undefined): number | null {
+  if (raw == null) return null
+  const year = typeof raw === "number" ? raw : Number(String(raw).trim())
+  if (!Number.isInteger(year) || year < 1900 || year > 2100) return null
+  return year
 }

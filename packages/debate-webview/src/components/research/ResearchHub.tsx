@@ -45,6 +45,7 @@ import {
   PieChart,
   Presentation,
   Trophy,
+  TrendingUp,
   UserRound,
 } from "lucide-react"
 import {
@@ -100,8 +101,10 @@ type SectionId =
   | "sprint"
   | "routing"
   | "progress"
+  | "research-progress"
   | "quests"
   | "rewards"
+  | "leaderboard"
   | "review"
   | "scoring"
 
@@ -158,7 +161,15 @@ export const RESEARCH_SECTIONS: readonly HubSection<SectionId>[] = [
     icon: Award,
     description: "Each contributor's history, task completion rate, and unlock tier.",
     guide: "research-collaboration",
-    panels: [panel("Research Progress", "/coaching/progress"), panel("Progress", "/research/cards/progress")],
+    panels: [panel("Progress", "/research/cards/progress")],
+  },
+  {
+    id: "research-progress",
+    label: "Research Progress",
+    icon: TrendingUp,
+    description: "Each contributor's contribution history and per-topic task completion.",
+    guide: "research-collaboration",
+    panels: [panel("Research Progress", "/coaching/progress")],
   },
   {
     id: "quests",
@@ -179,12 +190,19 @@ export const RESEARCH_SECTIONS: readonly HubSection<SectionId>[] = [
     description: "Recognition for the work: the leaderboard, awards, the contributions feed, and revision rewards.",
     guide: "research-collaboration",
     panels: [
-      panel("Leaderboard", "/coaching/leaderboard"),
       panel("Contributor Awards", "/research/cards/awards"),
       panel("Contributions Feed", teamResearchHref("contributions")),
       panel("Daily Best Card", "/research/cards/best-card"),
       panel("Revision Incentives", "/research/cards/revisions"),
     ],
+  },
+  {
+    id: "leaderboard",
+    label: "Leaderboard",
+    icon: Trophy,
+    description: "Rank contributors by helpfulness score, tier, badges, and quest streak.",
+    guide: "research-collaboration",
+    panels: [panel("Leaderboard", "/coaching/leaderboard")],
   },
   {
     id: "review",
@@ -345,13 +363,16 @@ export function ResearchHub() {
 
         {section === "progress" ? (
           <>
-            <HubPanelAnchor anchor={ANCHORS["Research Progress"]}>
-              <ResearchProgressWithIdentity />
-            </HubPanelAnchor>
             <HubPanelAnchor anchor={ANCHORS["Progress"]}>
               <ProgressUnlocksWithIdentity />
             </HubPanelAnchor>
           </>
+        ) : null}
+
+        {section === "research-progress" ? (
+          <HubPanelAnchor anchor={ANCHORS["Research Progress"]}>
+            <ResearchProgressWithIdentity />
+          </HubPanelAnchor>
         ) : null}
 
         {section === "quests" ? (
@@ -370,9 +391,6 @@ export function ResearchHub() {
 
         {section === "rewards" ? (
           <>
-            <HubPanelAnchor anchor={ANCHORS["Leaderboard"]}>
-              <ContributionLeaderboardWithIdentity />
-            </HubPanelAnchor>
             <HubPanelAnchor anchor={ANCHORS["Contributor Awards"]}>
               <ContributorAwardsPanel />
             </HubPanelAnchor>
@@ -386,6 +404,12 @@ export function ResearchHub() {
               <RevisionIncentivesPanel />
             </HubPanelAnchor>
           </>
+        ) : null}
+
+        {section === "leaderboard" ? (
+          <HubPanelAnchor anchor={ANCHORS["Leaderboard"]}>
+            <ContributionLeaderboardWithIdentity />
+          </HubPanelAnchor>
         ) : null}
 
         {section === "review" ? (

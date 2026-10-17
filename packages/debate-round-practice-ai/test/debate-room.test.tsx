@@ -85,8 +85,13 @@ async function render(props: Partial<DebateRoomProps> = {}) {
 }
 
 const textarea = (container: HTMLElement) => container.querySelector("textarea")!;
-const button = (container: HTMLElement, label: string) =>
-  [...container.querySelectorAll("button")].find((node) => node.textContent?.trim() === label);
+  const button = (container: HTMLElement, label: string) =>
+    [...container.querySelectorAll("button")].find((node) => node.textContent?.trim() === label);
+
+  async function revealDecision(container: HTMLElement) {
+    const reveal = [...container.querySelectorAll("button")].find((b) => b.textContent?.includes("Reveal Decision"));
+    if (reveal) await click(reveal);
+  }
 
 async function say(container: HTMLElement, text: string) {
   await type(textarea(container), text);
@@ -130,6 +135,8 @@ describe("DebateRoom turn order", () => {
     const history = client.judgeDebate.mock.calls[0]![0].history as { sender: string }[];
     expect(history.map((message) => message.sender)).toEqual(["User", "Bot", "User", "Bot", "Bot", "User", "User", "Bot"]);
 
+    expect(container.textContent).not.toContain("User Wins!");
+    await revealDecision(container);
     expect(container.textContent).toContain("User Wins!");
     expect(activity).toEqual(["speech_delivered", "speech_delivered", "speech_delivered", "speech_delivered", "practice_round", "practice_win"]);
   });
@@ -193,6 +200,8 @@ describe("DebateRoom judging", () => {
     vi.spyOn(console, "error").mockImplementation(() => {});
     const container = await render({ phaseTimings: [PHASES[0]!] });
     await say(container, "Only speech.");
+    expect(container.textContent).not.toContain("None Wins!");
+    await revealDecision(container);
     expect(container.textContent).toContain("None Wins!");
     expect(container.textContent).toContain("Error occurred during judgment");
   });
@@ -202,6 +211,8 @@ describe("DebateRoom judging", () => {
     vi.spyOn(console, "error").mockImplementation(() => {});
     const container = await render({ phaseTimings: [PHASES[0]!] });
     await say(container, "Only speech.");
+    expect(container.textContent).not.toContain("None Wins!");
+    await revealDecision(container);
     expect(container.textContent).toContain("None Wins!");
     expect(activity).not.toContain("practice_round");
   });

@@ -9,7 +9,7 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { cleanTournamentName } from "../src/components/video-grid/video-tree";
+import { cleanTournamentName, tournamentHasRR } from "../src/components/video-grid/video-tree";
 
 describe("cleanTournamentName", () => {
   it("returns undefined for empty input", () => {
@@ -50,7 +50,30 @@ describe("cleanTournamentName", () => {
   it("leaves a name with no noise to strip untouched", () => {
     expect(cleanTournamentName("TOC")).toBe("TOC");
     expect(cleanTournamentName("Bronx")).toBe("Bronx");
-    expect(cleanTournamentName("Harvard-Westlake RR")).toBe("Harvard-Westlake RR");
+    expect(cleanTournamentName("Harvard-Westlake")).toBe("Harvard-Westlake");
     expect(cleanTournamentName("Glenbrooks (RFD)")).toBe("Glenbrooks (RFD)");
+  });
+
+  /**
+   * A trailing "RR" marks a round-robin tournament — the format rides on the
+   * group as a badge, so the name itself drops it to find the school. The
+   * caller reads `tournamentHasRR` on the raw field to know whether to draw
+   * the badge.
+   */
+  it("drops a trailing RR from the name while keeping the school", () => {
+    expect(cleanTournamentName("Harvard-Westlake RR")).toBe("Harvard-Westlake");
+    expect(cleanTournamentName("Greenhill RR")).toBe("Greenhill");
+    expect(cleanTournamentName("Dartmouth RR 2024")).toBe("Dartmouth");
+  });
+
+  it("reports RR on the raw tournament field", () => {
+    expect(tournamentHasRR("Harvard-Westlake RR")).toBe(true);
+    expect(tournamentHasRR("Greenhill RR")).toBe(true);
+    expect(tournamentHasRR("Dartmouth RR 2024")).toBe(true);
+    expect(tournamentHasRR("Harvard-Westlake")).toBe(false);
+    expect(tournamentHasRR("TOC 2025")).toBe(false);
+    expect(tournamentHasRR(null)).toBe(false);
+    expect(tournamentHasRR(undefined)).toBe(false);
+    expect(tournamentHasRR("")).toBe(false);
   });
 });

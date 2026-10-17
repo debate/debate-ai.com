@@ -121,7 +121,7 @@ describe("tournament names in round rows", () => {
     ["Shirley 2024", "Shirley"],
     ["Harvard 2024", "Harvard"],
     ["Northwestern 2024", "Northwestern"],
-    ["Greenhill RR", "Greenhill RR"],
+    ["Greenhill RR", "Greenhill"],
     ["Shirley 2019 Rd 6", "Shirley"],
     ["Tournament of Champions 2019", "TOC"],
     ["ACC Debate Tournament", "ACC"],

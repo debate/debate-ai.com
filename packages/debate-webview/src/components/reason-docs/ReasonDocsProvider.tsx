@@ -176,13 +176,25 @@ export interface ReasonDocsContextValue {
    * "<title> copy". Never throws.
    */
   duplicateDocument: (id: number, parentId?: number | null) => Promise<CopyOutcome>
-  /**
-   * Publishes one of the reader's own files into the public Topic Starters,
-   * under the catalogue folder `topicParentId` (top level when null). This is
-   * what dropping a file onto Topic Starters does. Admin-only on the server,
-   * so for everyone else it comes back `{ ok: false }` with a reason to show.
-   */
-  publishToTopics: (id: number, topicParentId?: number | null) => Promise<PublishOutcome>
+/**
+    * Publishes one of the reader's own files into the public Topic Starters,
+    * under the catalogue folder `topicParentId` (top level when null). This is
+    * what dropping a file onto Topic Starters does. Admin-only on the server,
+    * so for everyone else it comes back `{ ok: false }` with a reason to show.
+    */
+   publishToTopics: (id: number, topicParentId?: number | null) => Promise<PublishOutcome>
+   /**
+    * Removes one public Topic Starter — a file, or a folder with everything in
+    * it — from the catalogue. Admin-only on the server; for everyone else it
+    * comes back `{ ok: false }` with a reason to show.
+    */
+   deleteTopicStarter: (id: number) => Promise<{ ok: true } | { ok: false; error: string }>
+   /**
+    * Re-files one public Topic Starter under another catalogue folder, or the
+    * top level. A folder moves with its whole subtree. Admin-only on the
+    * server; for everyone else it comes back `{ ok: false }`.
+    */
+   moveTopicStarter: (id: number, parentId: number | null) => Promise<{ ok: true } | { ok: false; error: string }>
   /**
    * Opens a public file by the name a URL carries, for a link whose file this
    * client hasn't loaded — the catalogue is capped, and a signed-out reader
@@ -410,6 +422,85 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
       }
     },
     [documents],
+  )
+
+  const deleteTopicStarter = useCallback(
+    async (id: number): Promise<{ ok: true } | { ok: false; error: string }> => {
+      const item = topicItems.find((row) => row.id === id)
+      if (!item) return { ok: false, error: "That topic starter could not be found." }
+      try {
+        const res = await fetch(`/api/admin/topic-starters/${id}`, { method: "DELETE" })
+        if (res.status === 401 || res.status === 403) {
+          return { ok: false, error: "Only admins can delete topic starters." }
+        }
+        if (!res.ok) throw new Error(`the server refused it (${res.status})`)
+        // Folders cascade: drop the row and every descendant client-side so
+        // the tree stops showing an orphaned subtree.
+        const idsToDelete: number[] = []
+        const collect = (targetId: number) => {
+          idsToDelete.push(targetId)
+          for (const row of topicItems) {
+            if (row.parentId === targetId) collect(row.id)
+          }
+        }
+        collect(id)
+        setTopicItems((prev) => prev.filter((row) => !idsToDelete.includes(row.id)))
+        return { ok: true }
+      } catch (error) {
+        return {
+          ok: false,
+          error: `${item.title || "This starter"} could not be deleted (${error instanceof Error ? error.message : String(error)}).`,
+        }
+      }
+    },
+    [topicItems],
+  )
+
+  const moveTopicStarter = useCallback(
+    async (id: number, parentId: number | null): Promise<{ ok: true } | { ok: false; error: string }> => {
+      const item = topicItems.find((row) => row.id === id)
+      if (!item) return { ok: false, error: "That topic starter could not be found." }
+      if (item.isFolder) {
+        // A folder can't be moved into its own subtree.
+        const descendants = new Set<number>([item.id])
+        const queue: number[] = [item.id]
+        while (queue.length > 0) {
+          const current = queue.shift()!
+          for (const row of topicItems) {
+            if (row.parentId === current && !descendants.has(row.id)) {
+              descendants.add(row.id)
+              queue.push(row.id)
+            }
+          }
+        }
+        if (parentId != null && descendants.has(parentId)) {
+          return { ok: false, error: "A folder cannot be moved into its own subtree." }
+        }
+      }
+      if ((item.parentId ?? null) === parentId) return { ok: true }
+      try {
+        const res = await fetch(`/api/admin/topic-starters/${id}`, {
+          method: "PATCH",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ parentId }),
+        })
+        if (res.status === 401 || res.status === 403) {
+          return { ok: false, error: "Only admins can move topic starters." }
+        }
+        if (!res.ok) {
+          const data = (await res.json().catch(() => ({}))) as { error?: string }
+          return { ok: false, error: data.error || `The server refused it (${res.status}).` }
+        }
+        setTopicItems((prev) => prev.map((row) => (row.id === id ? { ...row, parentId } : row)))
+        return { ok: true }
+      } catch (error) {
+        return {
+          ok: false,
+          error: `${item.title || "This starter"} could not be moved (${error instanceof Error ? error.message : String(error)}).`,
+        }
+      }
+    },
+    [topicItems],
   )
 
   const deleteDocument = useCallback(
@@ -735,6 +826,8 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
       copyTopicToDocuments,
       duplicateDocument,
       publishToTopics,
+      deleteTopicStarter,
+      moveTopicStarter,
     }),
     [
       documents,
@@ -769,6 +862,8 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
       copyTopicToDocuments,
       duplicateDocument,
       publishToTopics,
+      deleteTopicStarter,
+      moveTopicStarter,
     ],
   )
 

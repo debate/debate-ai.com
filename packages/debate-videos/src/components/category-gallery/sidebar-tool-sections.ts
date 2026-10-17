@@ -34,8 +34,6 @@ import {
   Swords,
   Handshake,
   Coins,
-  TrendingUp,
-  Trophy,
   Users,
   type LucideIcon,
 } from "lucide-react";
@@ -134,9 +132,6 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       // Topic Coverage, Collaboration Prep Room, Review Queue, Task Inbox,
       // Contributions Feed and Team Brainstorm Assist, one tab each.
       { href: "/research/team", title: "Team Research", icon: Users },
-      // Lives under /coaching, but it ranks research contributors by
-      // helpfulness, so it sits with the research tools.
-      { href: "/coaching/leaderboard", title: "Leaderboard", icon: Trophy },
     ],
   },
   {
@@ -153,10 +148,8 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       // Pre-Round Briefings, Scout-to-Strategy, Opponent Team Profiles, Judge
       // Profiles and Prep Notes, one tab each.
       { href: "/practice/prep", title: "Prep Workspace", icon: ClipboardList },
-      { href: "/practice/judge-decision", title: "AI Judge Decision", icon: Scale },
       { href: "/practice/partners", title: "Practice Partners", icon: Handshake },
       { href: "/practice/drills", title: "Practice Drills", icon: Repeat },
-      { href: "/reason-editor", title: "Personal Dictionary", icon: BookOpen },
     ],
   },
   {
@@ -167,16 +160,12 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
     href: "/coaching",
     icon: GraduationCap,
     tools: [
-      // Tournaments is this app's own view (live Tabroom plus the tournaments
-      // hosted here), first in Coaching. The framed beta.tabroom.com page
-      // (`/practice/tabroom`) is still routed but deliberately has no sidebar row.
-      { href: "/tournaments", title: "Tournaments", icon: Trophy },
+      // The Coach Workspace keeps its own stage tabs: Flow, Coaching, Prep,
+      // Scouting, Practice — which cover scouting, drills, and AI judging.
       { href: "/coaching", title: "Coach Workspace", icon: Presentation },
-      { href: "/coaching/progress", title: "Research Progress", icon: TrendingUp },
-      { href: "/coaching/laptopless", title: "Laptop-less Debating", icon: Smartphone },
-      // The community's news feed and forums, one tabbed page, listed last
-      // among the coaching tools. Forum threads keep their
-      // `/practice/forums/<id>` addresses, so that prefix is this row's too.
+      // The community's news feed and forums, one tabbed page. Forum threads
+      // keep their `/practice/forums/<id>` addresses, so that prefix is this
+      // row's too.
       { href: "/news", title: "News & Forums", icon: Rss, aliases: ["/practice/forums"] },
     ],
   },

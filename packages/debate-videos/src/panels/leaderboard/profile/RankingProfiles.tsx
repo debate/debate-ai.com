@@ -198,8 +198,12 @@ function TeamRecordCard({
       <StatBand title="Rating model" tone="dark">
         <RecordStat label="Raw rating" value={rating(entry.rating)} />
         <RecordStat label="Deviation" value={`±${rating(entry.deviation)}`} />
-        <RecordStat label="Field size" value={fieldSize} />
-        <RecordStat label="Divisions ranked" value={entries.length} />
+        <RecordStat label="aff vs cp da" value="—" />
+        <RecordStat label="aff vs K" value="—" />
+        <RecordStat label="aff vs T" value="—" />
+        <RecordStat label="neg cp da" value="—" />
+        <RecordStat label="neg K" value="—" />
+        <RecordStat label="neg T" value="—" />
       </StatBand>
     </div>
   )

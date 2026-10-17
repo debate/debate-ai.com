@@ -17,6 +17,8 @@
 
 "use client"
 
+import { useState } from "react"
+import { Sparkles } from "lucide-react"
 import { Button } from "@debate/speech-writer/src/ui/primitives/button"
 import type { GamificationAward } from "../backend/gamification"
 import type { JudgedScore, JudgmentData } from "../backend/types"
@@ -317,6 +319,10 @@ export function JudgmentPopup({
   }
 
   const recommendedSkills = recommendSkills()
+  const [revealed, setRevealed] = useState(false)
+
+  const winnerName = judgment.verdict.winner
+  const isPlayer1Winner = winnerName === player1Name
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
@@ -329,7 +335,13 @@ export function JudgmentPopup({
           ].map((side) => (
             <div
               key={side.name}
-              className="flex w-full items-center space-x-4 rounded-lg bg-muted p-4 shadow-sm sm:w-1/2"
+              className={`flex w-full items-center space-x-4 rounded-lg p-4 shadow-sm sm:w-1/2 ${
+                revealed && isPlayer1Winner && side.name === player1Name
+                  ? "bg-yellow-200 dark:bg-yellow-900/40"
+                  : revealed && !isPlayer1Winner && side.name === player2Name
+                    ? "bg-yellow-200 dark:bg-yellow-900/40"
+                    : "bg-muted"
+              }`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -475,13 +487,15 @@ export function JudgmentPopup({
           </div>
         )}
 
-        {/* Verdict */}
-        <div className="mt-10 rounded-lg bg-primary p-6 text-center text-primary-foreground shadow-md">
-          <h3 className="text-2xl font-bold">Verdict</h3>
-          <p className="mt-4 text-3xl font-bold">{judgment.verdict.winner} Wins!</p>
-          <p className="mt-3 text-lg">{judgment.verdict.congratulations}</p>
-          <p className="mt-2 leading-relaxed">{judgment.verdict.opponent_analysis}</p>
-        </div>
+        {/* Verdict — hidden until the reveal button is clicked */}
+        {revealed && (
+          <div className="mt-10 rounded-lg bg-primary p-6 text-center text-primary-foreground shadow-md">
+            <h3 className="text-2xl font-bold">Verdict</h3>
+            <p className="mt-4 text-3xl font-bold">{judgment.verdict.winner} Wins!</p>
+            <p className="mt-3 text-lg">{judgment.verdict.congratulations}</p>
+            <p className="mt-2 leading-relaxed">{judgment.verdict.opponent_analysis}</p>
+          </div>
+        )}
 
         {/* Follow-up drills */}
         <div className="mt-10 rounded-lg border border-border bg-card p-6 shadow-md">
@@ -511,6 +525,17 @@ export function JudgmentPopup({
         </div>
 
         <div className="mt-8 text-center">
+          {!revealed && (
+            <Button
+              onClick={() => setRevealed(true)}
+              variant="default"
+              size="lg"
+              className="mr-4 rounded-full px-6 py-3 text-lg font-semibold"
+            >
+              <Sparkles className="h-5 w-5" />
+              Reveal Decision
+            </Button>
+          )}
           {onHome && (
             <Button onClick={onHome} className="mr-4 rounded-full px-6 py-3 text-lg font-semibold">
               Back to Home

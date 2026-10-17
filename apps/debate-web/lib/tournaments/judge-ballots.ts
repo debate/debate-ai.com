@@ -45,6 +45,8 @@ export interface BallotUser {
 export interface BallotStore {
   insert(ballot: StoredJudgeBallot, userId: string): Promise<void>
   list(userId: string, tournId?: number): Promise<StoredJudgeBallot[]>
+  /** Update the winner of a ballot the judge owns, within 2 hours of submission. */
+  updateWinner(id: string, userId: string, winner: "aff" | "neg"): Promise<StoredJudgeBallot | null>
   /** A hosted Tabroom person with this email, if the hosted Tabroom tables have one. */
   findTabroomPerson(email: string): Promise<BallotAccountCheck["tabroomPerson"]>
 }
@@ -264,6 +266,17 @@ export function createD1BallotStore(db: Db): BallotStore {
           : sql`SELECT * FROM judge_ballot WHERE user_id = ${userId} ORDER BY created_at DESC LIMIT 200`,
       )) as BallotRow[]
       return rows.map(rowToBallot)
+    },
+    async updateWinner(id, userId, winner) {
+      await ensureTable(db)
+      const rows = (await db.all(sql`SELECT * FROM judge_ballot WHERE id = ${id} AND user_id = ${userId} LIMIT 1`)) as BallotRow[]
+      const row = rows[0]
+      if (!row) return null
+      const created = new Date(row.created_at).getTime()
+      if (Date.now() - created > 2 * 60 * 60 * 1000) return null
+      await db.run(sql`UPDATE judge_ballot SET winner = ${winner} WHERE id = ${id} AND user_id = ${userId}`)
+      const updated = (await db.all(sql`SELECT * FROM judge_ballot WHERE id = ${id} AND user_id = ${userId} LIMIT 1`)) as BallotRow[]
+      return updated[0] ? rowToBallot(updated[0]) : null
     },
     async findTabroomPerson(email) {
       try {
