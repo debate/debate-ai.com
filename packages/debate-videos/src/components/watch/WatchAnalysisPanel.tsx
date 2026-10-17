@@ -22,7 +22,6 @@ import { formatVideoDate } from "../video-card/videoCardUtils"
 import { formatCount } from "../category-gallery/format-count"
 import type { VideoType } from "../../types/videos"
 import type { VideoRelationKind } from "../../lib/video-relations"
-import { formatCount } from "../category-gallery/format-count"
 
 /** One linked video, as the watch page receives it. */
 export interface LinkedVideo {
@@ -67,11 +66,7 @@ export function WatchAnalysisPanel({ links }: WatchAnalysisPanelProps) {
                     <p className="text-[10px] text-muted-foreground truncate">
                       {channel}
                       {date ? ` · ${formatVideoDate(date)}` : ""}
-<<<<<<< HEAD
                       {viewCount ? ` · ${formatCount(viewCount)} views` : ""}
-=======
-                      {viewCount ? ` · ${formatCount(viewCount)}` : ""}
->>>>>>> 0d28d9f05ac1dd05535441c177e1b89fdc285835
                     </p>
                     {note && <p className="text-[11px] text-muted-foreground">{note}</p>}
                   </div>

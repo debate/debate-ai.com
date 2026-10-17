@@ -153,7 +153,6 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       // Pre-Round Briefings, Scout-to-Strategy, Opponent Team Profiles, Judge
       // Profiles and Prep Notes, one tab each.
       { href: "/practice/prep", title: "Prep Workspace", icon: ClipboardList },
-      { href: "/practice/judge-decision", title: "AI Judge Decision", icon: Scale },
       { href: "/practice/partners", title: "Practice Partners", icon: Handshake },
       { href: "/practice/drills", title: "Practice Drills", icon: Repeat },
     ],
@@ -172,7 +171,7 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/tournaments", title: "Tournaments", icon: Trophy },
       { href: "/coaching", title: "Coach Workspace", icon: Presentation },
       { href: "/coaching/progress", title: "Research Progress", icon: TrendingUp },
-      { href: "/coaching/laptopless", title: "Laptop-less Debating", icon: Smartphone },
+      { href: "/coaching/laptopless", title: "Go Laptop-less", icon: Smartphone },
       // The community's news feed and forums, one tabbed page, listed last
       // among the coaching tools. Forum threads keep their
       // `/practice/forums/<id>` addresses, so that prefix is this row's too.
