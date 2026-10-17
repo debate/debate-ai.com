@@ -125,6 +125,16 @@ export {
   topicDisplayLines,
 } from "./lib/debate-topics";
 export { VideoWatchPage, type VideoWatchPageProps } from "./panels/watch/VideoWatchPage";
+export { VideoMiniPlayer, type VideoMiniPlayerProps } from "./panels/watch/VideoMiniPlayer";
+export {
+  MINI_PLAYER_ON_TOP_KEY,
+  isDesktopApp,
+  miniPlayerHref,
+  openMiniPlayerWindow,
+  parseMiniPlayerStart,
+  returnToFullPage,
+  setMiniPlayerOnTop,
+} from "./lib/mini-player-window";
 export {
   parseVideoWatchSlug,
   slugifyVideoTitle,

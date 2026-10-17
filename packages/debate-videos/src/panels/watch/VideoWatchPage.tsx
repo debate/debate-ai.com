@@ -105,6 +105,7 @@ import {
 } from "../../state/videoDurations"
 import { videoWatchHref } from "../../lib/video-slug"
 import { videoRouteHref } from "../../lib/video-route"
+import { miniPlayerHref, openMiniPlayerWindow } from "../../lib/mini-player-window"
 import type { VideoDocument } from "../../lib/video-documents"
 import {
   captionText,
@@ -715,6 +716,23 @@ export function VideoWatchPage({
       .catch(() => undefined)
   }, [])
 
+  // The mini player window takes over playback from here, so this embed
+  // pauses first — two copies of one round talking over each other is the
+  // thing the one-player rule exists to prevent. The window opens at the
+  // second this one had reached.
+  const handleOpenMiniWindow = useCallback(() => {
+    sendYouTubeCommand("pauseVideo")
+    setIsPlaying(false)
+    recordWatchProgress({
+      videoId,
+      positionSeconds: currentTimeRef.current,
+      durationSeconds: durationRef.current,
+      title,
+      flush: true,
+    })
+    void openMiniPlayerWindow(miniPlayerHref(videoId, currentTimeRef.current))
+  }, [setIsPlaying, videoId, title])
+
   // Leaving for the library hands playback to the floating player; the
   // unmount effect above carries the position across.
   const handlePopOut = useCallback(() => router.push("/videos"), [router])
@@ -912,6 +930,7 @@ export function VideoWatchPage({
                 onToggleFavorite={() => viewActions.toggleFavorite(videoId)}
                 onAddToQueue={() => addToQueue(videoId, title, videoMeta)}
                 onCopyLink={handleCopyLink}
+                onOpenMiniWindow={handleOpenMiniWindow}
                 onPopOut={handlePopOut}
                 onClose={handleClose}
               />

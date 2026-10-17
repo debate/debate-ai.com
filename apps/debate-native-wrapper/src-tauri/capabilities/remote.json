@@ -1,9 +1,10 @@
 {
   "$schema": "../gen/schemas/remote-schema.json",
   "identifier": "remote",
-  "description": "Scoped IPC access for the wrapped site itself (profiles/<name>.json's trustedOrigins): opening the system browser for the Google OAuth handoff, and reading the host description its About system panel renders. Nothing else is exposed to remote content.",
+  "description": "Scoped IPC access for the wrapped site itself (profiles/<name>.json's trustedOrigins): opening the system browser for the Google OAuth handoff, reading the host description its About system panel renders, and popping a page out into the always-on-top mini player window (which gets the same scope). Nothing else is exposed to remote content.",
   "windows": [
-    "main"
+    "main",
+    "mini-player"
   ],
   "remote": {
     "urls": [
@@ -16,6 +17,7 @@
     "opener:allow-open-url",
     "allow-system-info",
     "allow-quick-launch",
-    "allow-app-source"
+    "allow-app-source",
+    "allow-mini-player"
   ]
 }
