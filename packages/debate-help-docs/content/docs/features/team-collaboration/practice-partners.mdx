@@ -118,7 +118,7 @@ Links, which can't pay a judge.
 
 **How it works.** The weekends come from `SEASON_MAJORS` in
 `debate-webview/lib/judge-pool/season-calendar.ts`, a copy of the dated
-events in `apps/debate-ai.com/public/debate-majors-a-to-z.html`; a test fails
+events in `packages/debate-tournaments/src/ui/majors/data.ts`; a test fails
 if the two drift. Validation and the hire rules (`applyHireAction`) are in
 `debate-webview/lib/judge-pool/validation.ts`, and the pool filter is
 `filter.ts` next to it. The API is `GET /api/judge-pool`,

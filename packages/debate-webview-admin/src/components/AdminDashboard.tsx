@@ -38,6 +38,7 @@ import { VideoLibraryTable } from "./VideoLibraryTable";
 import { VideoReportsPanel } from "./VideoReportsPanel";
 import { YoutubeChannelsPanel } from "./YoutubeChannelsPanel";
 import { TranscriptScraperPanel } from "./TranscriptScraperPanel";
+import { formatCount } from "@debate/videos/components/category-gallery/format-count";
 
 interface YoutubeRoundVideo { id: string; title: string; publishedAt: string; channel: string; views: number; style: number; tournament: string | null; }
 interface SyncRun { id: number; status: "running" | "success" | "error"; triggeredBy?: string | null; channelsSynced: number; videosUpserted: number; error: string | null; }
@@ -55,15 +56,15 @@ interface DurationStatus {
   totalSeconds: number;
 }
 
-/** Seconds as "1,234h 5m", the unit a library's running time reads in. */
+/** Seconds as "1.2kh 5m", the unit a library's running time reads in. */
 function formatHours(seconds: number): string {
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
-  return `${hours.toLocaleString()}h ${minutes}m`;
+  return `${formatCount(hours)}h ${minutes}m`;
 }
 
 function formatDurationStatus(status: DurationStatus): string {
-  const coverage = `${status.withDuration.toLocaleString()} of ${status.videos.toLocaleString()} videos have a duration`;
+  const coverage = `${formatCount(status.withDuration)} of ${formatCount(status.videos)} videos have a duration`;
   return `${coverage} · ${formatHours(status.totalSeconds)} total (${formatHours(status.publishedSeconds)} published, ${formatHours(status.queuedSeconds)} queued)`;
 }
 interface Overview { stats: { users: number; sessions: number; files: number; publishedVideos: number; stagedVideos: number }; recentUsers: Array<{ id: string; name: string; email: string; image: string | null; createdAt: string; isAnonymous: boolean }>; }
@@ -341,9 +342,9 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
       const { availability = null } = data;
       let summary = "";
       if (data.updated === 0) {
-        summary = `All ${data.videosChecked.toLocaleString()} view counts were already current${missing}.`;
+        summary = `All ${formatCount(data.videosChecked)} view counts were already current${missing}.`;
       } else {
-        summary = `Updated ${data.updated.toLocaleString()} of ${data.videosChecked.toLocaleString()} view counts${missing}.`;
+        summary = `Updated ${formatCount(data.updated)} of ${formatCount(data.videosChecked)} view counts${missing}.`;
       }
       if (availability) {
         const parts: string[] = [];
@@ -390,7 +391,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
         after = data.nextCursor;
         setDurationStatus(data.status);
         setDurationProgress(
-          `${after ? "Fetching… " : ""}Stored ${stored.toLocaleString()} of ${checked.toLocaleString()} checked${missing > 0 ? `, ${missing.toLocaleString()} unavailable on YouTube` : ""}.`,
+          `${after ? "Fetching… " : ""}Stored ${formatCount(stored)} of ${formatCount(checked)} checked${missing > 0 ? `, ${formatCount(missing)} unavailable on YouTube` : ""}.`,
         );
       } while (after);
     } catch (error) {
@@ -509,7 +510,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
       }
 
       setUrlValidationResult(
-        `Checked ${totalChecked.toLocaleString()} cards with URLs: ${totalValid.toLocaleString()} valid, ${totalInvalid.toLocaleString()} invalid, ${totalErrors.toLocaleString()} errors.`,
+        `Checked ${formatCount(totalChecked)} cards with URLs: ${formatCount(totalValid)} valid, ${formatCount(totalInvalid)} invalid, ${formatCount(totalErrors)} errors.`,
       );
     } catch (error) {
       setUrlValidationError((error as Error).message);
@@ -836,7 +837,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
                         <Badge variant="secondary">{STYLE_NAMES[video.style] ?? "Unknown"}</Badge>
                         <span>{video.channel}</span>
                         <span>{video.publishedAt}</span>
-                        <span>{video.views.toLocaleString()} views</span>
+                        <span>{formatCount(video.views)} views</span>
                         {video.tournament && <span>{video.tournament}</span>}
                       </div>
                       {rowError && <p className="text-destructive text-xs">{rowError}</p>}
@@ -940,9 +941,9 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
                     viewCountStatus && (
                       <span className="text-muted-foreground text-sm">
                         Up to{" "}
-                        {(
+                        {formatCount(
                           viewCountStatus.publishedVideos + viewCountStatus.queuedVideos
-                        ).toLocaleString()}{" "}
+                        )}{" "}
                         videos to check
                       </span>
                     )
@@ -1063,14 +1064,14 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
                   <Button onClick={handleExtractUrls} disabled={isExtractingUrls} variant="outline">
                     {isExtractingUrls ? "Extracting…" : "Extract URLs"}
                   </Button>
-               {urlExtractionProgress && (
-                     <span className="text-muted-foreground text-sm">
-                       Parsed {urlExtractionProgress.processed.toLocaleString()} cards —{" "}
-                       {urlExtractionProgress.withUrl.toLocaleString()} with a URL,{" "}
-                       {urlExtractionProgress.updated.toLocaleString()} updated
-                       {urlExtractionProgress.done ? " (done)" : "…"}
-                     </span>
-                   )}
+{urlExtractionProgress && (
+                      <span className="text-muted-foreground text-sm">
+                        Parsed {formatCount(urlExtractionProgress.processed)} cards —{" "}
+                        {formatCount(urlExtractionProgress.withUrl)} with a URL,{" "}
+                        {formatCount(urlExtractionProgress.updated)} updated
+                        {urlExtractionProgress.done ? " (done)" : "…"}
+                      </span>
+                    )}
                    {urlExtractionProgress && urlExtractionProgress.demoUrls.length > 0 && (
                      <div className="mt-2 flex flex-col gap-1">
                        <span className="text-muted-foreground text-xs font-medium">Sample URLs found:</span>
@@ -1112,10 +1113,10 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
                   </Button>
                   {urlValidationProgress && (
                     <span className="text-muted-foreground text-sm">
-                      Checked {urlValidationProgress.checked.toLocaleString()} —{" "}
-                      {urlValidationProgress.valid.toLocaleString()} valid,{" "}
-                      {urlValidationProgress.invalid.toLocaleString()} invalid,{" "}
-                      {urlValidationProgress.errors.toLocaleString()} errors
+                      Checked {formatCount(urlValidationProgress.checked)} —{" "}
+                      {formatCount(urlValidationProgress.valid)} valid,{" "}
+                      {formatCount(urlValidationProgress.invalid)} invalid,{" "}
+                      {formatCount(urlValidationProgress.errors)} errors
                       {urlValidationProgress.done ? " (done)" : "…"}
                     </span>
                   )}
@@ -1179,15 +1180,15 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
                 {urlDetectionStats && (
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                     <div className="rounded-lg border p-4">
-                      <p className="text-3xl font-bold">{urlDetectionStats.totalUrls.toLocaleString()}</p>
+                      <p className="text-3xl font-bold">{formatCount(urlDetectionStats.totalUrls)}</p>
                       <p className="text-muted-foreground text-sm">Unique URLs</p>
                     </div>
                     <div className="rounded-lg border p-4">
-                      <p className="text-3xl font-bold">{urlDetectionStats.uniqueUsers.toLocaleString()}</p>
+                      <p className="text-3xl font-bold">{formatCount(urlDetectionStats.uniqueUsers)}</p>
                       <p className="text-muted-foreground text-sm">Unique Users</p>
                     </div>
                     <div className="rounded-lg border p-4">
-                      <p className="text-3xl font-bold">{urlDetectionStats.totalVisits.toLocaleString()}</p>
+                      <p className="text-3xl font-bold">{formatCount(urlDetectionStats.totalVisits)}</p>
                       <p className="text-muted-foreground text-sm">Total Visits</p>
                     </div>
                     <div className="rounded-lg border p-4">
@@ -1206,7 +1207,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
                             {item.title || item.url}
                           </a>
                           <span className="text-muted-foreground">
-                            {item.visitCount.toLocaleString()} visits • Last: {new Date(item.lastVisitedAt).toLocaleDateString()}
+                            {formatCount(item.visitCount)} visits • Last: {new Date(item.lastVisitedAt).toLocaleDateString()}
                           </span>
                         </li>
                       ))}
@@ -1271,7 +1272,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
                             <td className="px-3 py-2">
                               {item.userName || item.userEmail || item.userId}
                             </td>
-                            <td className="px-3 py-2 text-right">{item.visitCount.toLocaleString()}</td>
+                            <td className="px-3 py-2 text-right">{formatCount(item.visitCount)}</td>
                             <td className="px-3 py-2">{new Date(item.lastVisitedAt).toLocaleString()}</td>
                             <td className="px-3 py-2">{new Date(item.createdAt).toLocaleDateString()}</td>
                           </tr>
@@ -1283,7 +1284,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
                 {urlDetectionTotal > (urlDetectionPage + 1) * 50 && (
                   <div className="flex justify-center">
                     <Button variant="outline" onClick={() => loadUrlDetectionUrls(urlDetectionPage + 1)} disabled={isLoadingUrlDetection}>
-                      Load more ({urlDetectionUrls.length} of {urlDetectionTotal.toLocaleString()})
+                      Load more ({formatCount(urlDetectionUrls.length)} of {formatCount(urlDetectionTotal)})
                     </Button>
                   </div>
                 )}

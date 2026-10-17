@@ -38,6 +38,7 @@ import {
 } from "./rankingProfileHelpers"
 import { ProfileVideos } from "./ProfileVideos"
 import { ProfileCaselistDocuments } from "./ProfileCaselistDocuments"
+import { SchoolLogo } from "../SchoolLogo"
 import { TeamRadarChart } from "./TeamRadarChart"
 import { MatchupSimulator } from "./MatchupSimulator"
 import { FollowButton } from "./FollowButton"
@@ -148,7 +149,8 @@ function TeamRecordCard({
     <div className="mt-3 overflow-hidden rounded-xl border bg-card text-card-foreground shadow-sm">
       <header className="px-4 pb-4 pt-5 sm:px-6">
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{first.name}</h1>
-        <Link href={schoolHref(first.school)} className="text-base text-muted-foreground underline-offset-4 hover:underline">
+        <Link href={schoolHref(first.school)} className="text-base text-muted-foreground underline-offset-4 hover:underline flex items-center gap-2 mt-1">
+          <SchoolLogo school={first.school} className="h-5 w-auto" />
           {first.school}
         </Link>
         <div>
@@ -196,8 +198,12 @@ function TeamRecordCard({
       <StatBand title="Rating model" tone="dark">
         <RecordStat label="Raw rating" value={rating(entry.rating)} />
         <RecordStat label="Deviation" value={`±${rating(entry.deviation)}`} />
-        <RecordStat label="Field size" value={fieldSize} />
-        <RecordStat label="Divisions ranked" value={entries.length} />
+        <RecordStat label="aff vs cp da" value="—" />
+        <RecordStat label="aff vs K" value="—" />
+        <RecordStat label="aff vs T" value="—" />
+        <RecordStat label="neg cp da" value="—" />
+        <RecordStat label="neg K" value="—" />
+        <RecordStat label="neg T" value="—" />
       </StatBand>
     </div>
   )
@@ -333,6 +339,7 @@ export function SchoolProfilePage({
       {entries.length > 0 && (
         <>
           <header className="mt-3">
+            <SchoolLogo school={summary.school} className="mb-2 h-12 w-auto" />
             <h1 className="text-2xl font-semibold text-foreground">{summary.school}</h1>
             <p className="text-sm text-muted-foreground">
               {summary.divisions.map((d) => d.datasetLabel).join(" · ")}

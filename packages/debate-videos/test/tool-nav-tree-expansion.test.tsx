@@ -50,7 +50,7 @@ const { ALL_SIDEBAR_SECTION_IDS, toggleExpandedSection, withSectionExpanded } = 
 const SAMPLE_HREF_BY_SECTION: Record<string, string> = {
   coaching: "/coaching/progress",
   research: "/research/team",
-  practice: "/practice/judge-decision",
+  practice: "/practice/drills",
   insights: "/practice/glossary",
 };
 

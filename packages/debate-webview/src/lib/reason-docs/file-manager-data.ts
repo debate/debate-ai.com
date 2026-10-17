@@ -30,6 +30,8 @@ export interface FileManagerSourceItem {
   isFolder: boolean
   content?: string
   updatedAt?: string | number
+  /** The competition year a topic starter belongs to, when it has one. */
+  year?: number | null
 }
 
 /** Which area a file-manager path points into. */

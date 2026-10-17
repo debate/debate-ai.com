@@ -13,10 +13,18 @@ import {
   type VideoDocument,
   type VideoDocumentKind,
 } from "@debate/videos";
+<<<<<<< HEAD
+import { formatCount } from "@debate/videos/components/category-gallery/format-count";
+import { Button } from "../../lib/ui/primitives/button";
+import { Badge } from "../../lib/ui/primitives/badge";
+import { Input } from "../../lib/ui/primitives/input";
+import { Label } from "../../lib/ui/primitives/label";
+=======
 import { Button } from "@debate/webview/lib/ui/primitives/button";
 import { Badge } from "@debate/webview/lib/ui/primitives/badge";
 import { Input } from "@debate/webview/lib/ui/primitives/input";
 import { Label } from "@debate/webview/lib/ui/primitives/label";
+>>>>>>> 0d28d9f05ac1dd05535441c177e1b89fdc285835
 import {
   Dialog,
   DialogContent,
@@ -273,7 +281,7 @@ export function VideoContentDialog({ video, onOpenChange, onSaved }: VideoConten
       });
       const body = await readJsonResponse<{ document?: VideoDocument }>(res, "Save failed");
       patchDocument(activeDocument.kind, body.document ?? {});
-      const message = `Saved the ${VIDEO_DOCUMENT_LABELS[activeDocument.kind].label.toLowerCase()} (${(body.document?.wordCount ?? 0).toLocaleString()} words).`;
+      const message = `Saved the ${VIDEO_DOCUMENT_LABELS[activeDocument.kind].label.toLowerCase()} (${formatCount(body.document?.wordCount ?? 0)} words).`;
       setNotice(message);
       onSaved?.(message);
     } catch (err) {
@@ -479,7 +487,7 @@ export function VideoContentDialog({ video, onOpenChange, onSaved }: VideoConten
               {entry.label}
               {documents[entry.id]?.wordCount ? (
                 <Badge variant="outline" className="ml-1.5 font-normal">
-                  {documents[entry.id].wordCount?.toLocaleString()}
+                  {formatCount(documents[entry.id].wordCount ?? 0)}
                 </Badge>
               ) : null}
               {entry.id === "related" && relations.length > 0 ? (
@@ -598,7 +606,7 @@ export function VideoContentDialog({ video, onOpenChange, onSaved }: VideoConten
                   </Button>
                 )}
                 <span className="text-muted-foreground text-xs tabular-nums">
-                  {liveWordCount.toLocaleString()} words
+                  {formatCount(liveWordCount)} words
                   {sections.length > 0 && ` · ${sections.filter((s) => s.heading).length} speeches`}
                 </span>
               </div>
@@ -623,7 +631,7 @@ export function VideoContentDialog({ video, onOpenChange, onSaved }: VideoConten
                     <Badge key={index} variant="outline" className="font-normal">
                       {section.heading}
                       <span className="text-muted-foreground ml-1 tabular-nums">
-                        {section.wordCount.toLocaleString()}w
+                        {formatCount(section.wordCount)}w
                       </span>
                     </Badge>
                   ))}

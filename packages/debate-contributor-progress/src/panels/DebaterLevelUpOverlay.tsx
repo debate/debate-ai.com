@@ -40,6 +40,10 @@ import { Sparkles, Star } from "lucide-react"
 import { Button } from "@debate/research-evidence/src/ui/primitives/button"
 import { cn } from "@debate/research-evidence/src/ui/lib/utils"
 import type { DebaterLevelProgress } from "../lib/debater-levels"
+function formatCount(n: number): string {
+  if (n >= 10000) return `${Math.round(n / 1000)}k`;
+  return `${(n / 1000).toFixed(1)}k`;
+}
 
 /** How long the cutscene plays before it dismisses itself. */
 export const LEVEL_UP_AUTO_DISMISS_MS = 5200
@@ -111,7 +115,7 @@ function LevelUpXpBar({ progress }: { progress: DebaterLevelProgress }) {
       <p className="text-muted-foreground mt-1.5 text-xs tabular-nums">
         {progress.isMaxLevel
           ? "Max level reached"
-          : `${progress.xpIntoLevel.toLocaleString()} / ${progress.xpForNextLevel.toLocaleString()} XP toward level ${progress.level + 1}`}
+          : `${formatCount(progress.xpIntoLevel)} / ${formatCount(progress.xpForNextLevel)} XP toward level ${progress.level + 1}`}
       </p>
     </div>
   )

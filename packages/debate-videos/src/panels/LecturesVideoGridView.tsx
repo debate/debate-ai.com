@@ -21,11 +21,13 @@ import { SubmitToLibraryButton } from "../components/video-search/SubmitToLibrar
 import { getSearchPhrases } from "../components/video-search/searchPhrases"
 import { VideoGrid } from "../components/video-grid/VideoGrid"
 import { VideoListRows } from "../components/video-grid/VideoListRows"
-import { LectureCategoryGridGallery } from "../components/category-gallery/LectureCategoryGridGallery"
+import { LectureCategoryGridGallery, GridItem } from "../components/category-gallery/LectureCategoryGridGallery"
 import { QuickLinksGrid } from "../components/category-gallery/QuickLinksGrid"
 import { VideoSidebarTree } from "../components/category-gallery/VideoSidebarTree"
 import { ToolNavTree } from "../components/category-gallery/ToolNavTree"
 import { GoatSparklesHeading } from "../components/category-gallery/GoatSparklesHeading"
+import { cn } from "../ui/lib/utils";
+import { SIDEBAR_VIDEO_LINKS_BY_ID } from "../components/category-gallery/sidebar-video-links";
 import type { DebateStyle } from "../types/videos"
 import type { VideoViewMode } from "../hooks/useVideoState"
 import { useVideoStacks } from "../hooks/useVideoStacks"
@@ -288,7 +290,7 @@ export function LecturesVideoGridView({
   // The lecture categories are not in the sidebar: on the lecture library
   // they are a bar of cards at the top of the page, the one place to switch
   // between categories.
-  const showLectureGallery = browsingLectures && lectureCategories.length > 0
+  const showLectureGallery = browsingLibrary && lectureCategories.length > 0
 
   /** Favorite round videos, for the separate tables on the favorites page. */
   const favoriteRounds = useMemo(
@@ -359,9 +361,39 @@ export function LecturesVideoGridView({
 
         <div ref={videosSectionRef} className="scroll-mt-20" />
 
-        {/* Lecture categories, on every breakpoint: clicking a card switches
-            the grid to that category. */}
-        {showLectureGallery && (
+        {/* WSD, ACC, Speech cards - shown on the all videos page */}
+        {browsingAllVideos && (
+          <div className="mb-6">
+            <ul
+              className={cn(
+                "grid gap-2",
+                "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5",
+              )}
+            >
+              {["wsd", "acc", "speech"].map((id) => {
+                const link = SIDEBAR_VIDEO_LINKS_BY_ID[id]
+                return (
+                  <GridItem
+                    key={link.id}
+                    icon={
+                      <div className="rounded-md border-[0.75px] border-border bg-muted p-1">
+                        {link.glyph ? (
+                          <link.glyph className="h-4 w-4" />
+                        ) : null}
+                      </div>
+                    }
+                    title={link.title}
+                    description="Debate lecture videos"
+                    videoCount={quickLinkCounts?.[link.id] ?? 0}
+                    isSelected={activeQuickLinkId === link.id}
+                    href={link.href}
+                  />
+                )
+              })}
+            </ul>
+          </div>
+        )}
+          {showLectureGallery && (
           <nav className="mb-6" aria-label="Lecture categories">
             <LectureCategoryGridGallery
               categories={lectureCategories}
@@ -369,7 +401,6 @@ export function LecturesVideoGridView({
             />
           </nav>
         )}
-
         {/* The Greatest of All-Time collection opens on its own banner. */}
         {currentCategory === "topPicks" && <GoatSparklesHeading />}
 

@@ -33,8 +33,9 @@ export const DOCS_SIDEBAR_SLOT_ID = "app-sidebar-docs-slot"
  *   row are a submenu of the account menu now (`nav-user.tsx`).
  * - **The help docs' page tree** on `/docs` ({@link DOCS_SIDEBAR_SLOT_ID}),
  *   at the bottom of the column, below the tool sections' Insights
- *   category. Docs and Settings links are pinned at the foot on every
- *   route (`SidebarPinnedLinks`, above the account row).
+ *   category. Off /docs the tree ends in a collapsed "Docs" section listing
+ *   every docs page instead (`DocsNavTree`); Settings is a button beside the
+ *   hide-sidebar button (`SidebarSettingsButton`).
  */
 export function AppSidebar() {
   const pathname = usePathname()

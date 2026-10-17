@@ -204,7 +204,9 @@ describe("the sidebar's heading structure", () => {
         new RegExp(`<a[^>]*aria-expanded="true"[^>]*>(?:(?!</a>)[\\s\\S])*<h1[^>]*>${title}</h1>`),
       );
     }
-    expect(html).not.toContain('aria-expanded="false"');
+    // The one collapsed heading is Docs, which always starts shut (`DocsNavTree`).
+    expect(html.match(/aria-expanded="false"/g)).toHaveLength(1);
+    expect(html).toMatch(/<a[^>]*aria-expanded="false"[^>]*>(?:(?!<\/a>)[\s\S])*<h1[^>]*>Docs<\/h1>/);
   });
 
   it("renders no Apps node restating the app dock", () => {
@@ -223,19 +225,18 @@ describe("the sidebar's heading structure", () => {
     const html = renderSidebar();
     expect(html).toContain("Research Progress");
     expect(html).toContain("Team Research");
-    expect(html).toContain("AI Judge Decision");
+    expect(html).toContain("Practice Drills");
     // ...alongside the Videos node's own links, which were never in doubt.
     expect(html).toContain("Public Forum");
     expect(html).toContain("My Favorites");
   });
 
-  it("prints the College Policy total in full in the tree", () => {
-    // The sidebar row sits next to the title, where an abbreviated count
-    // fits — but the number is the round archive's headline figure, so the
-    // tree abbreviates every total except this one.
+  it("prints all totals in k format in the tree", () => {
+    // All counts now use k format consistently.
     const html = renderSidebar({ counts: { college: 1400, policy: 1346 } });
-    expect(html).toContain(">1400<");
+    expect(html).toContain(">1.4k<");
     expect(html).toContain(">1.3k<");
+    expect(html).not.toContain("1400");
   });
 
   it("keeps the glossary and rankings pair inside the Practice section", () => {
@@ -268,9 +269,7 @@ describe("QuickLinksGrid", () => {
     }
   });
 
-  it("prints the College Policy total in full on every layout", () => {
-    // Rounded to `1.4k`, the round archive's flagship number both lost its
-    // digits and read lower than it is. Every other tile still abbreviates.
+  it("prints all counts in k format on every layout", () => {
     for (const layout of ["grid", "list"] as const) {
       const html = renderToStaticMarkup(
         createElement(QuickLinksGrid, {
@@ -278,9 +277,9 @@ describe("QuickLinksGrid", () => {
           layout,
         }),
       );
-      expect(html).toContain(">1400<");
+      expect(html).toContain(">1.4k<");
       expect(html).toContain(">1.3k<");
-      expect(html).not.toContain("1.4k");
+      expect(html).not.toContain("1400");
     }
   });
 });

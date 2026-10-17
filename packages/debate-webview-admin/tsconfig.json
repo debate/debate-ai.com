@@ -14,7 +14,7 @@
     "jsx": "react-jsx",
     "incremental": true,
     "paths": {
-      "@/*": ["../../apps/debate-ai.com/*"],
+      "@/*": ["../../apps/debate-web/*"],
       "@debate/webview-admin/*": ["./src/*"],
       "@debate/webview/*": ["../debate-webview/src/*"]
     }
@@ -22,7 +22,7 @@
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
-    "../../apps/debate-ai.com/lib/types/cloudflare.d.ts",
+    "../../apps/debate-web/lib/types/cloudflare.d.ts",
     "../debate-webview/src/types/assets.d.ts"
   ],
   "exclude": ["node_modules"]

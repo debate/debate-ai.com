@@ -8,7 +8,7 @@ import { DocsBody, DocsPage } from 'fumadocs-ui/page';
 import { notFound, permanentRedirect } from 'next/navigation';
 import { getMDXComponents } from '../mdx-components';
 import type { Metadata } from 'next';
-import { AskAIDropdown } from '../components/fumadocs/ai/ask-ai-dropdown';
+import { AskAIButton } from 'ask-ai-button';
 import { LLMCopyButton } from '../components/fumadocs/ai/llm-copy-button';
 import { docsConfig } from '../lib/fumadocs/customize-docs';
 import { getGithubLastEdit } from 'fumadocs-core/content/github';
@@ -92,8 +92,9 @@ export default async function Page(props: {
       <DocsBody>
         <div className="flex flex-row gap-2 items-center border-b pt-2 pb-6">
           <LLMCopyButton markdownUrl={markdownUrl} />
-          <AskAIDropdown
+          <AskAIButton
             markdownUrl={markdownUrl}
+            title={data.title}
             githubUrl={docsConfig.githubDocs ? `${docsConfig.githubDocs}/${page.path}` : undefined}
           />
         </div>

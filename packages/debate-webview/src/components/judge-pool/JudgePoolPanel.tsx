@@ -8,6 +8,7 @@
  *
  * 1. **Volunteer as a judge** — the viewer's listing: up to three upcoming
  *    weekends from the circuit calendar, their states, whether they travel,
+import { getTournamentLogo } from "../../lib/tournament-logo-map"
  *    formats and judge philosophy. Collapsed to a summary once saved.
  * 2. **Hire requests** — requests sent to the viewer as a judge (accept or
  *    decline) and the ones they sent as an organizer (cancel).
@@ -24,6 +25,7 @@ import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react
 import { Briefcase, ChevronDown, ChevronUp, Inbox, Loader2, MapPin, Pencil, Plane, Scale, Send } from "lucide-react";
 
 import { cn } from "../../lib/ui/lib/utils";
+import { getTournamentLogo } from "../../lib/tournament-logo-map"
 import { PRACTICE_FORMATS, optionLabel, type PracticeFormat } from "../../lib/practice-partners/types";
 import { actOnHireRequest, fetchJudgePool, saveJudgeListing, sendHireRequest } from "../../lib/judge-pool/client";
 import { filterJudgePool } from "../../lib/judge-pool/filter";
@@ -146,7 +148,21 @@ function HireCard({
     <li className="flex flex-col gap-2 rounded-lg border border-border bg-background p-3 text-sm">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <p className="font-medium">{hire.tournamentName}</p>
+          {(() => {
+            const logo = getTournamentLogo(hire.tournamentName);
+            if (logo) {
+              const LogoComp = typeof logo === "string" ? null : logo;
+              const logoSrc = typeof logo === "string" ? logo : null;
+              return LogoComp ? (
+                <LogoComp className="h-5 w-auto mb-1" />
+              ) : logoSrc ? (
+                <img src={logoSrc} alt={hire.tournamentName} className="h-5 w-auto mb-1" />
+              ) : (
+                <p className="font-medium">{hire.tournamentName}</p>
+              );
+            }
+            return <p className="font-medium">{hire.tournamentName}</p>;
+          })()}
           <p className="text-xs text-muted-foreground">
             {weekendLabel(hire.weekend)} · {asJudge ? `from ${hire.organizer.name}` : `judge: ${hire.judge.name}`}
           </p>

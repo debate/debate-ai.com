@@ -182,6 +182,8 @@ export function VideoReportsPanel() {
     load();
   }, [load]);
 
+  const filteredUnavailable = unavailable.filter((video) => video.availability !== "not_embeddable");
+
   const resolve = async (issue: VideoIssue, status: "applied" | "dismissed" | "open") => {
     setBusyId(issue.id);
     setError(null);
@@ -469,10 +471,10 @@ export function VideoReportsPanel() {
 
         <section className="flex flex-col gap-2">
           <h3 className="text-sm font-medium">
-            Unavailable videos{unavailable.length > 0 ? ` (${unavailable.length})` : ""}
+            Unavailable videos{filteredUnavailable.length > 0 ? ` (${filteredUnavailable.length})` : ""}
           </h3>
           <ul className="divide-y rounded-md border">
-            {unavailable.map((video) => {
+            {filteredUnavailable.map((video) => {
               const state = AVAILABILITY_LABELS[video.availability] ?? {
                 label: video.availability,
                 variant: "secondary" as const,
@@ -510,7 +512,7 @@ export function VideoReportsPanel() {
                 </li>
               );
             })}
-            {unavailable.length === 0 && (
+            {filteredUnavailable.length === 0 && (
               <li className="text-muted-foreground p-3 text-center text-sm">
                 {isLoading ? "Loading…" : "Every stored video still plays."}
               </li>

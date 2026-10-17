@@ -21,10 +21,13 @@ import {
   BarChart3,
   BookOpen,
   Clapperboard,
+  Globe,
   Heart,
   History,
+  Mic,
   Presentation,
   Star,
+  Users,
   type LucideIcon,
 } from "lucide-react";
 import { IconFormatLD, IconFormatNDT, IconFormatPF, IconFormatVP } from "./format-badge-icons";
@@ -65,7 +68,7 @@ export const VIDEO_ALL_LINK: SidebarVideoLink = {
 export const VIDEO_COLLEGE_LINK: SidebarVideoLink = {
   id: "college",
   href: "/videos/college",
-  title: "College Policy",
+  title: "College Team Debates",
   glyph: IconFormatNDT,
   exactCount: true,
 };
@@ -74,9 +77,9 @@ export const VIDEO_COLLEGE_LINK: SidebarVideoLink = {
  *  rather than children of it: they are sibling collections of the same
  *  round archive, not subsets of the college one. */
 export const VIDEO_FORMAT_LINKS: SidebarVideoLink[] = [
-  { id: "policy", href: "/videos/policy", title: "HS Policy Teams", glyph: IconFormatVP },
-  { id: "ld", href: "/videos/ld", title: "HS Debate 1v1", glyph: IconFormatLD },
-  { id: "pf", href: "/videos/pf", title: "HS Public Forum", glyph: IconFormatPF },
+  { id: "policy", href: "/videos/policy", title: "HS Team Debates", glyph: IconFormatVP },
+  { id: "ld", href: "/videos/ld", title: "HS Individual Debates", glyph: IconFormatLD },
+  { id: "pf", href: "/videos/pf", title: "HS Public Forum Debates", glyph: IconFormatPF },
   { id: "topPicks", href: "/videos/goat", title: "Greatest of All-Time", glyph: Star },
 ];
 
@@ -87,6 +90,9 @@ export const VIDEO_LIBRARY_LINKS: SidebarVideoLink[] = [
   { id: "favorites", href: "/videos/favorites", title: "My Favorites", glyph: Heart },
   { id: "history", href: "/videos/history", title: "Watch History", glyph: History },
   { id: "lectures", href: "/lectures", title: "Lectures", glyph: Presentation },
+  { id: "wsd", href: "/videos/wsd", title: "WSD", glyph: Globe },
+  { id: "acc", href: "/videos/acc", title: "ACC", glyph: Users },
+  { id: "speech", href: "/videos/speech", title: "Speech", glyph: Mic },
 ];
 
 /** The pair pinned below the tree, under its own divider. Team Rankings lives

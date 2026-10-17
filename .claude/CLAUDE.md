@@ -116,7 +116,7 @@ one tree rather than beside the source.
 
 | Workspace | Note |
 | --- | --- |
-| `apps/debate-ai.com` | [.claude/apps/debate-ai.com/CLAUDE.md](.claude/apps/debate-ai.com/CLAUDE.md) |
+| `apps/debate-ai.com` | [.claude/apps/debate-web/CLAUDE.md](.claude/apps/debate-web/CLAUDE.md) |
 | `apps/debate-native-wrapper` | [.claude/apps/debate-native-wrapper/CLAUDE.md](.claude/apps/debate-native-wrapper/CLAUDE.md) |
 | `apps/debate-web-ext` | [.claude/apps/debate-web-ext/CLAUDE.md](.claude/apps/debate-web-ext/CLAUDE.md) |
 | `packages/debate-api-client` | [.claude/packages/debate-api-client/CLAUDE.md](.claude/packages/debate-api-client/CLAUDE.md) |

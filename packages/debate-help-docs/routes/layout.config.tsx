@@ -3,7 +3,7 @@
  * @description Configuration for the documentation layout, including navigation and links.
  */
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
-import { BookOpen, Compass, ExternalLink } from 'lucide-react';
+import { BookOpen, Compass, ExternalLink, FileText } from 'lucide-react';
 import { docsConfig } from '../lib/fumadocs/customize-docs';
 import { withBasePath } from '../lib/fumadocs/base-path';
 
@@ -26,6 +26,12 @@ export const baseOptions: BaseLayoutProps = {
       icon: <Compass />,
       text: 'Guides',
       url: withBasePath('/guides'),
+    },
+    {
+      label: 'Blog',
+      icon: <FileText />,
+      text: 'Blog',
+      url: '/blog',
     },
     {
       label: 'Docs',

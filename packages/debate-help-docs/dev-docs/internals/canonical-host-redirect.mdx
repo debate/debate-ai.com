@@ -1,0 +1,75 @@
+---
+title: "Canonical host redirect"
+---
+
+# Canonical host redirect
+
+Debate AI is served from **`d.ebate.app`**. A request that arrives on the
+`ebate.app` apex — or on `www.ebate.app` — is answered with a permanent
+redirect to the same path on `d.ebate.app` and never reaches the app.
+
+The rule lives in `apps/debate-ai.com/lib/redirects/canonical-host.ts` and is
+called from one place, the very top of the Worker's `fetch` in
+`apps/debate-ai.com/worker/index.ts`:
+
+```ts
+const redirect = handleCanonicalHostRedirect(request);
+if (redirect) return redirect;
+```
+
+It sits **above** the Turnstile gate, which is the next call in that function:
+a request that is about to be sent somewhere else should not first be handed a
+"just a moment" check, and the pass cookie it would set belongs to the host the
+visitor actually ends up on.
+
+## What redirects, and what does not
+
+| Host | Result |
+| --- | --- |
+| `ebate.app` | → `https://d.ebate.app` + same path and query |
+| `www.ebate.app` | → `https://d.ebate.app` + same path and query |
+| `d.ebate.app` | served |
+| `debate-ai.com`, `www.debate-ai.com` | served |
+| `*.workers.dev`, `*.vercel.app` previews | served |
+| `localhost:3000` | served |
+
+`debate-ai.com` is deliberately absent from the redirect list. It is a host
+this deployment answers on in its own right — see
+`apps/debate-ai.com/lib/auth/hosts.ts`, where better-auth derives one base URL
+per request so a visitor keeps the domain they arrived on through sign-in — and
+folding it into the short domain would move everyone's session cookie
+mid-flight. The two forms of the *short* domain are different: the apex exists
+only to point at the `d.` subdomain.
+
+A host that merely ends in `ebate.app` (`staging.ebate.app`) does not redirect
+either. The match is on the full host, not a suffix, so adding a subdomain
+never silently sends it away.
+
+## Why 308 and not 301
+
+A 308 is a permanent redirect that **preserves the method and the body**. Under
+a 301 a browser replays a `POST` as a `GET` with the body dropped, so a form or
+an `/api` call that happened to be aimed at the apex would arrive at
+`d.ebate.app` as a bodiless read and fail in a way that is very hard to read
+from the outside.
+
+The scheme is pinned to `https` on the way out, so a plain-HTTP request to the
+apex lands on a secure URL rather than an insecure canonical one. The response
+carries `Cache-Control: public, max-age=3600` — the rule is a property of the
+host, not of the visitor, so it is safe for shared caches.
+
+## Known gaps
+
+- The redirect is a code path in the Worker, not a Cloudflare Bulk Redirect
+  rule, so a request to the apex still costs a Worker invocation. That is the
+  trade for keeping the rule next to the host allowlist it has to agree with.
+- Nothing asserts that `d.ebate.app` is actually routed to this Worker; the
+  custom domains are configured in the Cloudflare dashboard, not in
+  `wrangler.jsonc`.
+
+## Tests
+
+`apps/debate-ai.com/lib/redirects/__tests__/canonical-host.test.ts` covers the
+apex and `www.` hops, path and query preservation, the `http` → `https`
+upgrade, case-insensitive host matching, the 308 on a `POST`, and every host
+that must be left alone.

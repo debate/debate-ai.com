@@ -3,10 +3,9 @@
  * each weekend, and that the copy of the majors matches the calendar page.
  */
 
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
+import { DEBATE_MAJORS } from "@debate/tournaments/majors";
 import {
   SEASON_MAJORS,
   findSeasonWeekend,
@@ -56,15 +55,12 @@ describe("season weekends", () => {
   });
 
   it("carries every dated major on the circuit calendar page", () => {
-    const html = readFileSync(resolve(__dirname, "../../../../../apps/debate-ai.com/public/debate-majors-a-to-z.html"), "utf8");
-    const match = /const data=(\[.*?\]),\$=/s.exec(html);
-    expect(match).not.toBeNull();
-    const data = JSON.parse(match![1]) as { name: string; formats: string; start: string; end: string }[];
-    const page = data
-      .filter((event) => event.start)
-      .map((event) => `${event.name}|${event.formats}|${event.start}|${event.end}`)
+    const dated = DEBATE_MAJORS.filter((event) => event.start)
+      .map((event) => `${event.name}|${event.formats.join(" ")}|${event.start}|${event.end}`)
       .sort();
-    const ours = SEASON_MAJORS.map((event) => `${event.name}|${event.formats.join(" ")}|${event.start}|${event.end}`).sort();
-    expect(ours).toEqual(page);
+    const ours = SEASON_MAJORS.map(
+      (event) => `${event.name}|${event.formats.join(" ")}|${event.start}|${event.end}`,
+    ).sort();
+    expect(ours).toEqual(dated);
   });
 });

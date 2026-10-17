@@ -55,4 +55,7 @@ export const LECTURE_CATEGORY_ICONS: Record<string, LucideIcon> = {
   "Camp & Coaching Advice": Award,
   "Novice & Introductory": GraduationCap,
   "Round Analysis": ClipboardList,
+  "WSD": Globe,
+  "ACC": Users,
+  "Speech": Mic,
 };

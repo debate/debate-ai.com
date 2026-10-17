@@ -1,0 +1,22 @@
+---
+title: "debate-contributor-progress"
+---
+
+# debate-community
+
+Community & Contributor Progress — contribution leaderboard, news stream, contributor
+awards, daily best card, progress unlocks, quest streaks and daily quests.
+
+```tsx
+import { ContributionLeaderboardPanel, NewsStreamPanel, ContributorAwardsPanel, DailyBestCardPanel, ProgressUnlocksPanel, QuestStreaksPanel, DailyQuestsPanel } from "debate-community"
+```
+
+This package split out of `debate-card-search` alongside `debate-research-evidence` and
+`debate-team-collaboration`. It depends on both: on `debate-research-evidence` for
+evidence/contribution data, session identity, and UI primitives, and on
+`debate-team-collaboration` for daily-quest definitions and research-progress/group-challenge
+state that the leaderboard and news stream compose against.
+
+## Package layout
+
+Logic lives under `src/`, grouped by role; tests live under `test/`.

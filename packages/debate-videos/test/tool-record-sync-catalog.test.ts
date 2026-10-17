@@ -41,6 +41,9 @@ const SIDEBAR_HREFS = new Set([
   // Response-Outcome Charts, taken out of every menu but still routed: its
   // saved vulnerability reports open there.
   "/coaching/outcomes",
+  // AI Judge Decision, likewise: out of the Practice tree but still routed,
+  // and its saved decisions open there.
+  "/practice/judge-decision",
 ]);
 
 describe("synced tool collections", () => {

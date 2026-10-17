@@ -56,19 +56,19 @@ const GOAT_DOTS_CSS = `
 export function GoatSparklesHeading() {
   return (
     <div className="mb-6 flex h-56 w-full flex-col items-center justify-center overflow-hidden rounded-md bg-black sm:h-72">
-      <Image
-        src={IconTrophyGoat}
-        alt="Greatest of All-Time trophy"
-        width={64}
-        height={64}
-        className="relative z-20 mb-3 h-12 w-12 object-contain sm:h-16 sm:w-16"
-        unoptimized
-      />
       <style>{GOAT_DOTS_CSS}</style>
       <h1 className="goat-dots-title relative z-20 bg-gradient-to-b from-white via-indigo-200 to-sky-400 bg-clip-text px-4 text-center text-3xl font-extrabold text-transparent md:text-5xl lg:text-6xl">
         {GOAT_HEADING_TITLE}
       </h1>
       <div className="relative h-24 w-full max-w-[40rem] sm:h-32">
+        <Image
+          src={IconTrophyGoat}
+          alt="Greatest of All-Time trophy"
+          width={64}
+          height={64}
+          className="absolute left-1/2 top-1/2 z-20 h-12 w-12 -translate-x-1/2 -translate-y-1/2 object-contain sm:h-16 sm:w-16"
+          unoptimized
+        />
         {/* Gradients */}
         <div className="absolute inset-x-[12.5%] top-0 h-[2px] w-3/4 bg-gradient-to-r from-transparent via-indigo-500 to-transparent blur-sm" />
         <div className="absolute inset-x-[12.5%] top-0 h-px w-3/4 bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />

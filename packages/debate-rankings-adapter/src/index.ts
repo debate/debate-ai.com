@@ -29,10 +29,17 @@ export {
   COLLEGE_HISTORY_FIRST_YEAR,
   COLLEGE_HISTORY_LAST_YEAR,
   COLLEGE_HISTORY_SOURCE_URL,
+  COLLEGE_PERFORMANCE_SIGMA,
+  COLLEGE_SEASON_DETAILS,
+  collegeHistorySourceUrl,
+  collegeSeasonDetails,
+  collegeWinProbability,
   hasCollegeHistory,
   loadCollegeHistory,
   parseCollegeHistory,
   type CollegeHistoryEntry,
+  type CollegeSeasonDetails,
+  type CollegeSeasonStats,
 } from "./college-history";
 export {
   entryInitials,

@@ -4,22 +4,19 @@ import { useMemo, useState } from "react";
 import { CalendarDays, MapPin, Plus, Search, ShieldCheck, Trophy } from "lucide-react";
 import { DEMO_TOURN_ID } from "../../host/demo-account";
 import { FramedOverlay } from "../FramedOverlay";
+import { DebateMajorsCalendar } from "../majors";
 import { Badge, Card, Input, buttonVariants } from "../primitives";
 import { Empty, Loaded, useApi, useTournaments, type LinkLike } from "../shared";
 import type { OwnedTournament } from "../client";
 import type { TournamentHrefs } from "../../routes";
 
 /**
- * The Debate Majors season calendar — the week-by-week grid of the
- * season's major tournaments — a standalone page served from the
- * app's static assets, framed over this list rather than linked to.
- */
-const MAJORS_CALENDAR_HREF = "/debate-majors-a-to-z.html";
-
-/**
  * Upcoming tournaments, as on Tournament Admin's front page (`/pages/invite/upcoming`):
  * the ones hosted on this site (the demo among them) first, then live Tabroom's.
- * Tabroom's own site has its own sidebar row, so it is not framed from here.
+ * The demo tournament is reachable from the Demo admin button beside
+ * "Host Tournament" rather than listed here, so it does not clutter the list
+ * while it is underway. Tabroom's own site has its own sidebar row, so it is not
+ * framed from here.
  */
 export function UpcomingTournamentsPage() {
   const { client, hrefs, Link } = useTournaments();
@@ -73,12 +70,19 @@ export function UpcomingTournamentsPage() {
         </div>
       </div>
       <Loaded state={state}>
-        {(tourns) => <UpcomingList tourns={tourns} query={query} hrefs={hrefs} Link={Link} />}
+        {(tourns) => (
+          <UpcomingList
+            tourns={tourns.filter((t) => t.tournId !== DEMO_TOURN_ID)}
+            query={query}
+            hrefs={hrefs}
+            Link={Link}
+          />
+        )}
       </Loaded>
       <FramedOverlay
         open={majorsOpen}
         onClose={() => setMajorsOpen(false)}
-        url={MAJORS_CALENDAR_HREF}
+        content={<DebateMajorsCalendar />}
         title="Debate Majors"
         description="The whole 2026–27 season at a glance — weeks A–Y plus the Z championships, one placement per tournament."
       />

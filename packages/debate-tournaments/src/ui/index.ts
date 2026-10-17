@@ -28,3 +28,4 @@ export {
 } from "../host/formats";
 export * from "./client";
 export { DEMO_ADMIN, DEMO_TOURN_ID } from "../host/demo-account";
+export { DebateMajorsCalendar, type DebateMajorsCalendarProps, CHAMPIONSHIP_IDS, DEBATE_MAJORS, type DebateMajor } from "./majors";

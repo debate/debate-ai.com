@@ -67,7 +67,7 @@ export {
   WatchProgressBadge,
   WatchProgressBar,
   type WatchProgressBadgeProps,
-} from "./components/video-card/WatchProgressBadge";
+} from "./components/videos/card/WatchProgressBadge";
 export {
   ResizableSidebarLayout,
   SIDEBAR_DEFAULT_WIDTH,
@@ -94,7 +94,7 @@ export {
   pickIconHoverEffect,
   useSidebarIconHover,
 } from "./ui/layout/sidebar-icon-hover";
-export { LibrarySidebarTree } from "./components/category-gallery/LibrarySidebarTree";
+export { LibrarySidebarTree } from "./components/navigation/gallery/LibrarySidebarTree";
 export { LecturesPage } from "./panels/LecturesPage";
 export { DebateVideosPage } from "./panels/DebateVideosPanel";
 export { LeaderboardPanel } from "./panels/leaderboard/RankingsLeaderboardPanel";
@@ -204,7 +204,7 @@ export {
   type SpeechAnalysis,
   type SpeechAnalysisDocuments,
 } from "./lib/speech-analysis";
-export { groupIntoSentences } from "./components/transcript/transcriptUtils";
+export { groupIntoSentences } from "./components/videos/transcript/transcriptUtils";
 export { parseYouTubeVideoId } from "./lib/youtube-video-id";
 export {
   VIDEO_RELATION_KINDS,
@@ -220,6 +220,7 @@ export { WatchSpeechTimeline } from "./components/watch/WatchSpeechTimeline";
 export { PersistentVideoPlayer } from "./components/video-player/PersistentVideoPlayer";
 export { SlowSpreadButton, SLOW_SPREAD_RATE } from "./components/video-player/SlowSpreadButton";
 export { ToolNavTree } from "./components/category-gallery/ToolNavTree";
+export { DocsNavTree, DOCS_TREE_URL, type DocsTreeNode } from "./components/category-gallery/DocsNavTree";
 export { sidebarSectionForPath } from "./components/category-gallery/sidebar-active-section";
 export { QuickLinksGrid } from "./components/category-gallery/QuickLinksGrid";
 export {

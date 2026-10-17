@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from './ui/button'; // Adjust the path as needed
 import { useNavigate } from 'react-router-dom';
+import { Sparkles } from 'lucide-react';
 
 // Define both possible JudgmentData types
 type JudgmentDataUserBot = {
@@ -126,6 +127,7 @@ const JudgmentPopup: React.FC<JudgmentPopupProps> = ({
 }) => {
   const navigate = useNavigate();
   const userName = 'You';
+  const [revealed, setRevealed] = useState(false);
 
   const localAvatar =
     localStorage.getItem('userAvatar') ||
@@ -332,13 +334,17 @@ const player2RatingSummary =
   };
 
   const recommendedSkills = recommendSkills();
+  const winnerName = judgment.verdict.winner;
+  const isPlayer1Winner = winnerName === player1Name;
 
   return (
     <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50 p-4'>
       <div className='bg-gradient-to-br from-white to-gray-100 p-8 rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto border border-orange-200 transform transition-all duration-300 scale-100 hover:scale-102'>
         {/* Top Profile Section */}
         <div className='flex justify-between items-center mb-8'>
-          <div className='flex items-center space-x-4 bg-gray-50 p-4 rounded-lg shadow-sm w-1/2 mr-2'>
+          <div className={`flex items-center space-x-4 p-4 rounded-lg shadow-sm w-1/2 mr-2 ${
+            revealed && isPlayer1Winner ? 'bg-yellow-200' : 'bg-gray-50'
+          }`}>
             <img
               src={player1Avatar}
               alt={player1Name}
@@ -355,7 +361,9 @@ const player2RatingSummary =
               <p className='text-xs text-gray-500'>Debater</p>
             </div>
           </div>
-          <div className='flex items-center space-x-4 bg-gray-50 p-4 rounded-lg shadow-sm w-1/2 ml-2'>
+          <div className={`flex items-center space-x-4 p-4 rounded-lg shadow-sm w-1/2 ml-2 ${
+            revealed && !isPlayer1Winner ? 'bg-yellow-200' : 'bg-gray-50'
+          }`}>
             <img
               src={player2Avatar}
               alt={player2Name}
@@ -686,17 +694,19 @@ const player2RatingSummary =
           </div>
         )}
 
-        {/* Verdict */}
-        <div className='mt-10 bg-gradient-to-r from-orange-500 to-orange-600 p-6 rounded-lg shadow-md text-white text-center'>
-          <h3 className='text-2xl font-bold'>Verdict</h3>
-          <p className='mt-4 text-3xl font-bold'>
-            {judgment.verdict.winner} Wins!
-          </p>
-          <p className='mt-3 text-lg'>{judgment.verdict.congratulations}</p>
-          <p className='mt-2 text-md leading-relaxed'>
-            {judgment.verdict.opponent_analysis}
-          </p>
-        </div>
+        {/* Verdict — hidden until the reveal button is clicked */}
+        {revealed && (
+          <div className='mt-10 bg-gradient-to-r from-orange-500 to-orange-600 p-6 rounded-lg shadow-md text-white text-center'>
+            <h3 className='text-2xl font-bold'>Verdict</h3>
+            <p className='mt-4 text-3xl font-bold'>
+              {judgment.verdict.winner} Wins!
+            </p>
+            <p className='mt-3 text-lg'>{judgment.verdict.congratulations}</p>
+            <p className='mt-2 text-md leading-relaxed'>
+              {judgment.verdict.opponent_analysis}
+            </p>
+          </div>
+        )}
 
         {/* Skills to Improve */}
         <div className='mt-10 bg-white p-6 rounded-lg shadow-md'>
@@ -734,6 +744,15 @@ const player2RatingSummary =
 
         {/* Buttons */}
         <div className='text-center mt-8'>
+          {!revealed && (
+            <Button
+              onClick={() => setRevealed(true)}
+              className='bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-full text-lg font-semibold transition-all duration-200 transform hover:scale-105 mr-4 inline-flex items-center gap-2'
+            >
+              <Sparkles className='w-5 h-5' />
+              Reveal Decision
+            </Button>
+          )}
           <Button
             onClick={handleGoHome}
             className='bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-full text-lg font-semibold transition-all duration-200 transform hover:scale-105 mr-4'

@@ -237,10 +237,18 @@ refused. The widget is loaded only when the dialog first opens.
 
 The app-wide search palette (Ctrl/Cmd-K) lists matching files under
 **Files**, below the tools: your own files and the public Topic Starters,
-matched by name, folder **and contents** (`lib/reason-docs/file-search.ts`).
-Every word you type has to appear somewhere. Name matches rank first, and a
-contents match shows the text around it. Picking a file opens it in the
+matched by name, folder, **outline headings and contents**
+(`lib/reason-docs/file-search.ts`). Every word you type has to appear
+somewhere. Name matches rank first, then outline matches (a pocket, hat,
+block or tag heading holding every word, shown as `§ Heading`), then contents
+matches, which show the text around the match. Picking a file opens it in the
 editor.
+
+Below the files, **Videos & Lectures** lists up to eight matches from the
+whole video library, rounds and lectures alike, most-viewed first. The
+palette asks the Videos page's own feed (`/api/videos?q=…`) once typing
+pauses, so nothing about the library is downloaded until you search. Picking
+one opens its watch page (`lib/videos/video-palette-search.ts`).
 
 A `.cmir` file's text is read with CardMirror's engine, which is loaded the
 first time a query needs it, so the first search over card files can take a
@@ -291,6 +299,10 @@ Ctrl/Cmd-P stays the editor's own palette.
 - Ctrl/Cmd-K's file search converts every `.cmir` file it searches on the
   reader's device. That is fine for the 100-row catalogue and a typical
   library, but a very large library would want a server-side text index.
+- Choosing an outline match opens the file at the top, not at the heading
+  that matched.
+- The video rows show only the first eight matches; there is no "more
+  videos" row that carries the query over to the Videos page.
 
 ## Save status above the editor
 

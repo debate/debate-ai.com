@@ -210,4 +210,8 @@ describe("FeaturesPanel downloads", () => {
     expect(html).toContain("noecbaibfhbmpapofcdkgchfifmoinfj");
     expect(html.indexOf('data-testid="downloads"')).toBeLessThan(html.indexOf('data-testid="readme-badges"'));
   });
+
+  it("links the Android app on Google Play next to the extension", () => {
+    expect(html).toContain("play.google.com/store/apps/details?id=com.debate.ai");
+  });
 });

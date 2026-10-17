@@ -17,6 +17,7 @@ import {
   type FollowKind,
   type FollowState,
 } from "../../../lib/follows/profile-follows"
+import { formatCount } from "../../../components/category-gallery/format-count"
 
 /** Props for {@link FollowButton}. */
 export interface FollowButtonProps {
@@ -29,7 +30,7 @@ export interface FollowButtonProps {
 
 /** "1 follower" / "12 followers" */
 export function followerLabel(count: number): string {
-  return `${count.toLocaleString()} follower${count === 1 ? "" : "s"}`
+  return `${formatCount(count)} follower${count === 1 ? "" : "s"}`
 }
 
 /** Follow / Following toggle with the profile's follower count beside it. */

@@ -78,12 +78,12 @@ const ROUND_LEVELS = [
   "Prelim 6",
   "Prelim 7",
   "Prelim 8",
-  "Triple Octafinals",
-  "Double Octafinals",
-  "Octafinals",
-  "Quarterfinals",
-  "Semifinals",
-  "Finals",
+  "triples",
+  "doubles",
+  "octas",
+  "quarters",
+  "semis",
+  "final",
 ]
 
 /**

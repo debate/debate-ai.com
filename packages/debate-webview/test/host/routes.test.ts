@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest"
 import { resolveRoute } from "../../src/host/AppRouter"
 import { APP_ROUTES } from "../../src/routes"
 
-const APP_DIR = join(import.meta.dirname, "../../../../apps/debate-ai.com/app")
+const APP_DIR = join(import.meta.dirname, "../../../../apps/debate-web/app")
 
 function pagePatterns(dir: string): string[] {
   const out: string[] = []

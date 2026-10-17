@@ -1,6 +1,6 @@
 /**
  * @fileoverview The Research / Practice / Coaching / Insights
- * portion of the videos
+ * portion of the videos 
  * sidebar — the h1 sections that follow "Videos" in the
  * tree — factored out of `VideoSidebarTree` so it can also render on the
  * non-video tool pages those sections link to (`/coaching`, `/research`,

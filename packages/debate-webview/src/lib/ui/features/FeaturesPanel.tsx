@@ -66,6 +66,7 @@ import {
   type FeatureEntry,
 } from "../../feature-catalog";
 import { README_BADGE_ROWS, README_BANNER, README_SHOWCASE, README_VIDEO } from "./readme-media";
+import { LATEST_VIDEOS, POPULAR_CARDS_WEEK } from "./recent-media";
 import {
   CARDS_CAPABILITIES,
   CARDS_DOIS,
@@ -278,7 +279,7 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
           <Reveal>
             <Pill className="mb-5">
               <LayoutGrid className="size-3.5" />
-              PF, LD and Policy — every tool
+              3500 videos - PF, LD and Policy
             </Pill>
           </Reveal>
 
@@ -297,31 +298,13 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
               className="mt-8 flex flex-col items-center gap-3 scroll-mt-20"
               data-testid="downloads"
             >
-              <h2 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
-                Downloads
-              </h2>
-              <DownloadAppButton platform="chrome-extension" appId="noecbaibfhbmpapofcdkgchfifmoinfj" />
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <DownloadAppButton platform="chrome-extension-white" appId="noecbaibfhbmpapofcdkgchfifmoinfj" />
+                <DownloadAppButton platform="android" appId="com.debate.ai" />
+              </div>
             </div>
           </Reveal>
 
-          <Reveal delay={220}>
-            <div className="relative mx-auto mt-8 max-w-xl">
-              {/* Above the input, not just before it: the field's own
-                  `backdrop-blur` paints a layer that would otherwise wash the
-                  glyph out. */}
-              <Search
-                aria-hidden
-                className="pointer-events-none absolute top-1/2 left-3.5 z-10 size-4 -translate-y-1/2 text-muted-foreground"
-              />
-              <Input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search features by name, description, route, or keyword…"
-                aria-label="Search features"
-                className="h-11 rounded-full border-border bg-card/80 pl-10 backdrop-blur-sm"
-              />
-            </div>
-        </Reveal>
 
         <Reveal delay={340}>
             {/* The root README's badge block, row for row. */}
@@ -356,6 +339,72 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
                 </div>
               ))}
             </div>
+          </Reveal>
+
+          <Reveal delay={380}>
+            <section className="mt-10 mb-6 w-full" aria-label="Latest videos">
+              <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Latest videos
+              </h2>
+              <Marquee durationSeconds={44}>
+                {LATEST_VIDEOS.map((video) => (
+                  <a
+                    key={video.id}
+                    href={video.watchUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex flex-col gap-1.5 w-[200px] shrink-0 rounded-lg border border-border bg-card p-2 hover:bg-accent transition-colors"
+                  >
+                    <div className="relative aspect-video rounded-md overflow-hidden border border-border bg-muted">
+                      <img
+                        src={video.thumbnail}
+                        alt={video.title}
+                        loading="lazy"
+                        decoding="async"
+                        className="size-full object-cover"
+                      />
+                      <span className="absolute inset-x-0 bottom-1.5 flex justify-end px-2 py-0.5">
+                        <span className="rounded-md bg-black/60 px-1.5 py-0.5 text-[10px] font-medium text-white">
+                          {video.duration}
+                        </span>
+                      </span>
+                    </div>
+                    <span className="line-clamp-1 text-sm font-semibold text-foreground">
+                      {video.title}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {video.channel} &middot; {video.uploaded}
+                    </span>
+                  </a>
+                ))}
+              </Marquee>
+            </section>
+          </Reveal>
+
+          <Reveal delay={420}>
+            <section className="mb-10 w-full" aria-label="Popular cards this week">
+              <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Popular cards this week
+              </h2>
+              <Marquee durationSeconds={44}>
+                {POPULAR_CARDS_WEEK.map((card) => (
+                  <a
+                    key={card.id}
+                    href={card.href}
+                    className="flex flex-col gap-1 w-[170px] shrink-0 rounded-lg border border-border bg-card p-3 hover:bg-accent transition-colors"
+                  >
+                    <span className="da-chip text-[10px]">{card.format}</span>
+                    <span className="line-clamp-1 text-sm font-semibold text-foreground">
+                      {card.title}
+                    </span>
+                    <span className="text-xs text-muted-foreground">{card.topic}</span>
+                    <span className="text-xs font-medium text-muted-foreground">
+                      {card.reads.toLocaleString()} reads this week
+                    </span>
+                  </a>
+                ))}
+              </Marquee>
+            </section>
           </Reveal>
 
         </div>
@@ -419,6 +468,27 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
         aria-label="CARDS vision"
         className="mx-auto max-w-6xl scroll-mt-20 px-4 pb-16 sm:px-6 lg:px-8"
       >
+
+
+          <Reveal delay={220}>
+            <div className="relative mx-auto mt-8 max-w-xl">
+              {/* Above the input, not just before it: the field's own
+                  `backdrop-blur` paints a layer that would otherwise wash the
+                  glyph out. */}
+              <Search
+                aria-hidden
+                className="pointer-events-none absolute top-1/2 left-3.5 z-10 size-4 -translate-y-1/2 text-muted-foreground"
+              />
+              <Input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search features by name, description, route, or keyword…"
+                aria-label="Search features"
+                className="h-11 rounded-full border-border bg-card/80 pl-10 backdrop-blur-sm"
+              />
+            </div>
+        </Reveal>
+        
         <Reveal className="mx-auto mb-8 max-w-2xl text-center">
           <span className="da-accent-fill mb-4 inline-flex size-10 items-center justify-center rounded-xl">
             <Sparkles className="size-5" />

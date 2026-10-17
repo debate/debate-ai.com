@@ -52,6 +52,10 @@ import {
 import { DebaterLevelUpOverlay } from "./DebaterLevelUpOverlay"
 import { JudgeAwardShowcase } from "./JudgeAwardsSection"
 import { TiltBadge } from "./TiltBadge"
+function formatCount(n: number): string {
+  if (n >= 10000) return `${Math.round(n / 1000)}k`;
+  return `${(n / 1000).toFixed(1)}k`;
+}
 
 const CHALLENGE_BADGES: Record<string, string> = {
   "daily-cut-5-cards": "https://i.imgur.com/VbNI6bB.png",
@@ -152,13 +156,13 @@ export function DebaterLevelPanel() {
             <div className="text-muted-foreground text-xs font-medium uppercase tracking-wide">{progress.title}</div>
             <div className="text-3xl font-bold tabular-nums">Level {progress.level}</div>
           </div>
-          <div className="text-muted-foreground text-sm tabular-nums">{progress.totalXp.toLocaleString()} XP total</div>
+          <div className="text-muted-foreground text-sm tabular-nums">{formatCount(progress.totalXp)} XP total</div>
         </div>
         <MeterBar
           value={progress.xpIntoLevel}
           max={progress.isMaxLevel ? 1 : progress.xpForNextLevel}
           label={progress.isMaxLevel ? "Max level reached" : `Progress to level ${progress.level + 1}`}
-          caption={progress.isMaxLevel ? undefined : `${progress.xpIntoLevel}/${progress.xpForNextLevel} XP`}
+          caption={progress.isMaxLevel ? undefined : `${formatCount(progress.xpIntoLevel)}/${formatCount(progress.xpForNextLevel)} XP`}
           tone="warning"
         />
       </div>
