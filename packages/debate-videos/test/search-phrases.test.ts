@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { ALL_PHRASE_SETS, getSearchPhrases } from "../src/components/video-search/searchPhrases";
+import { ALL_PHRASE_SETS, getSearchPhrases } from "../src/components/videos/video-search/searchPhrases";
 
 describe("getSearchPhrases", () => {
   it("never repeats a phrase across categories", () => {

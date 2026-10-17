@@ -6,7 +6,7 @@ import {
   getTopPickBadgeInfo,
   type TopPickBadgeInfo,
 } from "../src/lib/topPickBadges"
-import { TopPickBadge } from "../src/components/video-card/TopPickBadge"
+import { TopPickBadge } from "../src/components/videos/video-card/TopPickBadge"
 
 describe("topPickBadges", () => {
   it("assigns #001 to the earliest top pick (Iowa LR vs Kansas EM)", () => {

@@ -29,8 +29,8 @@ const { findVideoTeamRanking, videoStyleDatasetId } = await import(
   "../src/panels/leaderboard/profile/rankingProfileHelpers"
 );
 const { isRankedSeasonRound } = await import("../src/hooks/useVideoTeamRankings");
-const { VideoListRow } = await import("../src/components/video-grid/VideoListRow");
-const { WatchSearchBox } = await import("../src/components/watch/WatchSearchBox");
+const { VideoListRow } = await import("../src/components/videos/video-grid/VideoListRow");
+const { WatchSearchBox } = await import("../src/components/videos/watch/WatchSearchBox");
 const { TooltipProvider } = await import("../src/ui/primitives/tooltip");
 
 function entry(rank: number, school: string, name: string): RankingEntry {

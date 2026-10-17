@@ -9,7 +9,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { act } from "react";
-import { WindowedChunk } from "../src/components/video-grid/WindowedChunk";
+import { WindowedChunk } from "../src/components/videos/video-grid/WindowedChunk";
 
 /** The callback of the one observer the chunk created. */
 let fire: (isIntersecting: boolean) => void;

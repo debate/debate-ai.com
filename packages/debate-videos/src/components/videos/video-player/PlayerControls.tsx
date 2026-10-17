@@ -12,9 +12,9 @@
 
 import type { ReactNode } from "react"
 import { X, Minus, Maximize2, SkipForward, Play, Pause, PictureInPicture2, Captions } from "lucide-react"
-import { TooltipProvider } from "../../ui/primitives/tooltip"
+import { TooltipProvider } from "../../../ui/primitives/tooltip"
 import { PlayerIconButton } from "./PlayerIconButton"
-import type { QueueItem } from "../../state/videoPlayerStore"
+import type { QueueItem } from "../../../state/videoPlayerStore"
 
 interface PlayerControlsProps {
   isPlaying: boolean

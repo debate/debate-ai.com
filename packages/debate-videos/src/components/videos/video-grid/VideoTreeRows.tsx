@@ -15,16 +15,16 @@
 
 import { useState } from "react"
 import { CalendarRange, ChevronRight, Medal, Tag, Trophy, Tv } from "lucide-react"
-import { cn } from "../../ui/lib/utils"
+import { cn } from "../../../ui/lib/utils"
 import { formatVideoDate, TOC_TOURNAMENT_IMAGE } from "../video-card/videoCardUtils"
 import { getTournamentLogo } from "../video-card/tournamentLogos"
-import { formatCount } from "../category-gallery/format-count"
+import { formatCount } from "../../category-gallery/format-count"
 import { VideoListRow } from "./VideoListRow"
 import { FormatBadge, videoFormat } from "./FormatBadge"
-import type { VideoTeamRankingLookup } from "../../hooks/useVideoTeamRankings"
+import type { VideoTeamRankingLookup } from "../../../hooks/useVideoTeamRankings"
 import { treeIndentStyle } from "./tree-indent"
 import type { VideoGroupKind, VideoTreeGroup, VideoTreeLeaf, VideoTreeNode } from "./video-tree"
-import type { VideoType } from "../../types/videos"
+import type { VideoType } from "../../../types/videos"
 
 /** Icon per group level, so the depth reads without counting indents. */
 const GROUP_ICONS: Record<VideoGroupKind, typeof Trophy> = {

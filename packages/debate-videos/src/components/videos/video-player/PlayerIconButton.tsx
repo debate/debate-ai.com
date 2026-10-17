@@ -10,15 +10,15 @@
  * There are two of them because a control that navigates must be an anchor:
  * "watch on YouTube" has to survive a middle-click, and a `<button>` that
  * calls `window.open` does not.
- * @module components/video-player/PlayerIconButton
+ * @module components/videos/video-player/PlayerIconButton
  */
 
 "use client"
 
 import { forwardRef, type ComponentPropsWithoutRef, type ReactNode } from "react"
 import type { LucideIcon } from "lucide-react"
-import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
-import { cn } from "../../ui/lib/utils"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../../../ui/primitives/tooltip"
+import { cn } from "../../../ui/lib/utils"
 
 /** Icon and hit-area sizes: `sm` for the popout player, `md` for the watch page. */
 export type PlayerIconButtonSize = "sm" | "md"

@@ -9,8 +9,8 @@
 
 "use client"
 
-import { cn } from "../../ui/lib/utils"
-import type { WatchMatchupPrediction as Prediction } from "../../lib/watch-matchup-prediction"
+import { cn } from "../../../ui/lib/utils"
+import type { WatchMatchupPrediction as Prediction } from "../../../lib/watch-matchup-prediction"
 
 const pct = (p: number) => `${(p * 100).toFixed(1)}%`
 
