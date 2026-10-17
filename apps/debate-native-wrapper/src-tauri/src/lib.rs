@@ -11,11 +11,13 @@
 // 7. A choice of where the app loads from (`app_source`): for debate-ai, the
 //    live site, the beta site, or the offline build bundled in dist/
 // 8. Camera and microphone access for the app's own pages (`media`)
+// 9. A mini player window that can stay on top of other apps (`mini_player`)
 
 mod app_source;
 mod commands;
 mod generated_scheme;
 mod media;
+mod mini_player;
 mod system_info;
 
 use tauri::{Manager, Url};
@@ -65,6 +67,9 @@ pub fn run() {
             commands::get_last_selected_text,
             commands::show_main_window,
             commands::hide_to_tray,
+            mini_player::open_mini_player,
+            mini_player::set_always_on_top,
+            mini_player::restore_from_mini_player,
         ])
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_deep_link::init())

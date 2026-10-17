@@ -1,0 +1,7 @@
+# Grants popping a page of the app's own site out into the mini player window,
+# pinning a window above other apps, and going back to the full page (see
+# src/mini_player.rs). The URL is checked against the main window's site.
+[[permission]]
+identifier = "allow-mini-player"
+description = "Open a same-site page in the small mini player window, keep a window always on top of other windows, and return from the mini player to the main window."
+commands.allow = ["open_mini_player", "set_always_on_top", "restore_from_mini_player"]

@@ -184,6 +184,33 @@ Two of them are about leaving:
 Only one video ever plays: opening a watch page takes playback over from
 the floating player, and leaving hands it back.
 
+### Mini player window
+
+**Pop out mini player** opens the video in a small window of its own: the
+video, a title bar, and the round's speeches as a strip of buttons with
+**‹** / **›** to jump to the previous or next speech (the back button
+restarts the current speech if you are a few seconds into it). The page's
+own player pauses and the window picks up at the same second. The speeches
+are the same ones the page shows, including start times you marked or the
+AI detected in this browser. **Open the full watch page** (the expand icon)
+sends you back to the watch page and closes the window.
+
+In the **desktop app** the window opens in the bottom-right corner and has a
+**pin** button: pinned, it stays on top of every other window, and follows
+you across virtual desktops, so a round keeps playing in the corner while
+you flow it or write in another app. It starts pinned; the app remembers
+whether you last left it pinned. On Linux, some Wayland desktops ignore
+always-on-top requests, so the pin may have no effect there.
+
+In a **browser** it is an ordinary popup window (allow popups for the site
+if nothing opens). Browsers can't keep a popup above other apps, so there is
+no pin; Chrome's **picture-in-picture** button is the browser's always-on-top
+option.
+
+The window's address is `/videos/mini/<videoId>?t=<seconds>`
+(`VideoMiniPlayer`, `lib/mini-player-window.ts` in `@debate/videos`; the
+desktop side is `src-tauri/src/mini_player.rs` in the native wrapper).
+
 ## Search box
 
 Under the round's details, just above the related videos, is a search box

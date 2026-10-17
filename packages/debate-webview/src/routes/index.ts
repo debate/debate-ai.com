@@ -134,6 +134,7 @@ export const CLIENT_ROUTES: AppRoute[] = [
   // The Practice Round Simulator's old address: merged into Practice vs AI.
   { pattern: "/practice", load: () => import("./_client/VersusAiRoute") },
   { pattern: "/videos/watch/[slug]", load: () => import("./_client/VideoWatchRoute") },
+  { pattern: "/videos/mini/[id]", load: () => import("./_client/VideoMiniRoute") },
   { pattern: "/videos/[category]/[event]/[matchup]", load: () => import("./_client/VideoWatchRoute") },
   { pattern: "/videos/[category]/[event]/[matchup]/[teams]", load: () => import("./_client/VideoWatchRoute") },
   { pattern: "/videos/[category]/[event]/[matchup]/[teams]/[variant]", load: () => import("./_client/VideoWatchRoute") },

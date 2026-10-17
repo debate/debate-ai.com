@@ -26,6 +26,7 @@ import {
   Minus,
   Pause,
   PictureInPicture2,
+  PictureInPicture,
   Play,
   SkipForward,
   Star,
@@ -61,6 +62,12 @@ interface WatchToolbarProps {
   onToggleFavorite: () => void
   onAddToQueue: () => void
   onCopyLink: () => void
+  /**
+   * Open the video in the mini player window — a small separate window with
+   * a speech switcher, which the desktop app can keep on top of other apps.
+   * The control is left out when this is not given.
+   */
+  onOpenMiniWindow?: () => void
   /** Leave the page and hand playback back to the floating popout player. */
   onPopOut: () => void
   /** Stop playback and return to the video library. */
@@ -89,6 +96,7 @@ export function WatchToolbar({
   onToggleFavorite,
   onAddToQueue,
   onCopyLink,
+  onOpenMiniWindow,
   onPopOut,
   onClose,
 }: WatchToolbarProps) {
@@ -174,6 +182,23 @@ export function WatchToolbar({
             label={isPipActive ? "Exit picture-in-picture" : "Pop out picture-in-picture"}
             active={isPipActive}
             onClick={onTogglePip}
+          />
+        )}
+
+        {onOpenMiniWindow && (
+          <PlayerIconButton
+            size="md"
+            icon={PictureInPicture}
+            label="Pop out mini player"
+            tooltip={
+              <>
+                Pop out mini player
+                <br />
+                <span className="text-muted-foreground">A small window with the round's speeches</span>
+              </>
+            }
+            tooltipClassName="max-w-48 text-center"
+            onClick={onOpenMiniWindow}
           />
         )}
 
