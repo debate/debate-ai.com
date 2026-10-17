@@ -52,7 +52,10 @@ import {
 import { DebaterLevelUpOverlay } from "./DebaterLevelUpOverlay"
 import { JudgeAwardShowcase } from "./JudgeAwardsSection"
 import { TiltBadge } from "./TiltBadge"
-import { formatCount } from "@debate/videos/components/category-gallery/format-count"
+function formatCount(n: number): string {
+  if (n >= 10000) return `${Math.round(n / 1000)}k`;
+  return `${(n / 1000).toFixed(1)}k`;
+}
 
 const CHALLENGE_BADGES: Record<string, string> = {
   "daily-cut-5-cards": "https://i.imgur.com/VbNI6bB.png",

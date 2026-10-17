@@ -40,7 +40,10 @@ import { Sparkles, Star } from "lucide-react"
 import { Button } from "@debate/research-evidence/src/ui/primitives/button"
 import { cn } from "@debate/research-evidence/src/ui/lib/utils"
 import type { DebaterLevelProgress } from "../lib/debater-levels"
-import { formatCount } from "@debate/videos/components/category-gallery/format-count"
+function formatCount(n: number): string {
+  if (n >= 10000) return `${Math.round(n / 1000)}k`;
+  return `${(n / 1000).toFixed(1)}k`;
+}
 
 /** How long the cutscene plays before it dismisses itself. */
 export const LEVEL_UP_AUTO_DISMISS_MS = 5200

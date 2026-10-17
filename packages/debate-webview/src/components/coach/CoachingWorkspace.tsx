@@ -25,20 +25,22 @@
  */
 
 import { useSearchParams } from "next/navigation"
-import { Bot, CalendarCheck, CalendarDays, FolderOpen, Presentation } from "lucide-react"
+import { Bot, CalendarCheck, CalendarDays, FolderOpen, Presentation, Smartphone, Trophy } from "lucide-react"
 import { CoachingSessionsPanel } from "@debate/practice-rounds"
 import { CoachingProgramsPanel, TeamCalendarPanel } from "@debate/team-collaboration"
 import { CoachMaterialsPanel } from "@debate/speech-writer"
+import { TournamentsApp } from "@debate/tournaments/ui"
 import { panel, type HubSection } from "../hubs/hub-sections"
 import { HubSectionIntro, HubSectionNav, HubSectionPanel, useHubSection } from "../hubs/HubSectionNav"
 import { CoachingProgramRosterAnalyticsWithDrills } from "../../routes/coaching-programs/CoachingProgramRosterAnalyticsWithDrills"
 import { CoachHub, isCoachStageId } from "./CoachHub"
+import MobileSetupPage from "../../routes/coaching/laptopless/page"
 
 /** localStorage key remembering the last open tab. */
 const SECTION_KEY = "coachingSection"
 
 /** One tab per tool. Also the `?section=` values the old routes redirect to. */
-export type CoachingSectionId = "workspace" | "ai-coach" | "programs" | "calendar" | "materials"
+export type CoachingSectionId = "workspace" | "ai-coach" | "programs" | "calendar" | "materials" | "tournaments" | "laptopless"
 
 /** Coaching's tabs, Coach Workspace first. */
 export const COACHING_SECTIONS: readonly HubSection<CoachingSectionId>[] = [
