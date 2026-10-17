@@ -22,6 +22,7 @@ import {
   VIDEO_FORMAT_LINKS,
   VIDEO_LIBRARY_LINKS,
   VIDEO_REFERENCE_LINKS,
+  VIDEO_ALL_VIDEOS_FILTER_LINKS,
 } from "../src/components/category-gallery/sidebar-video-links";
 
 vi.mock("next/image", () => ({
@@ -145,6 +146,25 @@ describe("the surfaces that render them", () => {
     const tiles = hrefsIn(renderToStaticMarkup(createElement(QuickLinksGrid, {})));
     for (const link of VIDEO_REFERENCE_LINKS) {
       expect(insights).toContain(link.href);
+      expect(tiles).not.toContain(link.href);
+    }
+  });
+});
+
+describe("the WSD, ACC and Speech collections", () => {
+  it("are not sidebar destinations", () => {
+    const sidebarHrefs = new Set(SIDEBAR_VIDEO_LINKS.map((link) => link.href));
+    expect(VIDEO_ALL_VIDEOS_FILTER_LINKS.map((link) => link.id)).toEqual(["wsd", "acc", "speech"]);
+    for (const link of VIDEO_ALL_VIDEOS_FILTER_LINKS) {
+      expect(sidebarHrefs).not.toContain(link.href);
+    }
+  });
+
+  it("appear in neither the sidebar tree nor the mobile tiles", () => {
+    const sidebar = hrefsIn(sidebarHtml());
+    const tiles = hrefsIn(renderToStaticMarkup(createElement(QuickLinksGrid, {})));
+    for (const link of VIDEO_ALL_VIDEOS_FILTER_LINKS) {
+      expect(sidebar).not.toContain(link.href);
       expect(tiles).not.toContain(link.href);
     }
   });
