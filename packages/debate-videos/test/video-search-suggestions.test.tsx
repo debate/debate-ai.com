@@ -10,7 +10,7 @@
 import { describe, it, expect } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createElement } from "react";
-import { VideoSearchSuggestions } from "../src/components/video-search/VideoSearchSuggestions";
+import { VideoSearchSuggestions } from "../src/components/videos/video-search/VideoSearchSuggestions";
 import type { VideoSuggestions } from "../src/types/videos";
 
 const SUGGESTIONS: VideoSuggestions = {

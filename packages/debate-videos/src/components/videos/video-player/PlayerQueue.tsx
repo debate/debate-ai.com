@@ -3,7 +3,7 @@
  */
 
 import { ListVideo } from "lucide-react"
-import type { QueueItem } from "../../state/videoPlayerStore"
+import type { QueueItem } from "../../../state/videoPlayerStore"
 
 interface PlayerQueueProps {
   queue: QueueItem[]

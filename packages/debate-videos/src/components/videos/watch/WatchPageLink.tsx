@@ -17,11 +17,11 @@
 
 import Link from "next/link"
 import { Captions } from "lucide-react"
-import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
-import { cn } from "../../ui/lib/utils"
-import { videoWatchHref } from "../../lib/video-slug"
-import { videoRouteHref } from "../../lib/video-route"
-import type { VideoType } from "../../types/videos"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../../../ui/primitives/tooltip"
+import { cn } from "../../../ui/lib/utils"
+import { videoWatchHref } from "../../../lib/video-slug"
+import { videoRouteHref } from "../../../lib/video-route"
+import type { VideoType } from "../../../types/videos"
 
 interface WatchPageLinkProps {
   videoId: string

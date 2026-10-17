@@ -31,9 +31,9 @@ import {
   Star,
   X,
 } from "lucide-react"
-import { TooltipProvider } from "../../ui/primitives/tooltip"
+import { TooltipProvider } from "../../../ui/primitives/tooltip"
 import { PlayerIconButton, PlayerIconLink } from "../video-player/PlayerIconButton"
-import type { QueueItem } from "../../state/videoPlayerStore"
+import type { QueueItem } from "../../../state/videoPlayerStore"
 
 interface WatchToolbarProps {
   isPlaying: boolean

@@ -17,7 +17,7 @@
  * @module components/video-grid/video-stacks
  */
 
-import type { VideoType } from "../../types/videos";
+import type { VideoType } from "../../../types/videos";
 
 /** Tuple index carrying the stack key. */
 export const STACK_KEY_INDEX = 18;

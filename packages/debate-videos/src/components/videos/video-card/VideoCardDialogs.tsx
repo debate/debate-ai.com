@@ -23,17 +23,17 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "../../ui/primitives/dialog"
-import { Button } from "../../ui/primitives/button"
-import { Textarea } from "../../ui/primitives/textarea"
+} from "../../../ui/primitives/dialog"
+import { Button } from "../../../ui/primitives/button"
+import { Textarea } from "../../../ui/primitives/textarea"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../ui/primitives/select"
-import { saveVideoReport } from "../../state/videoLibrary"
+} from "../../../ui/primitives/select"
+import { saveVideoReport } from "../../../state/videoLibrary"
 
 /** What a report can be about. Matches the API's own `kind` values. */
 const REPORT_REASONS = [

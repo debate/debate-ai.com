@@ -2,9 +2,9 @@
  * @fileoverview Utility functions and constants for video card styling and metadata
  */
 
-import { getStyleTopicText } from "../../lib/debate-topics";
-import type { TopicType } from "../../types/videos";
-import { DEBATE_STYLE_LABELS } from "../../types/videos";
+import { getStyleTopicText } from "../../../lib/debate-topics";
+import type { TopicType } from "../../../types/videos";
+import { DEBATE_STYLE_LABELS } from "../../../types/videos";
 
 export const STYLE_COLORS: Record<number, string> = {
   2: "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300",
