@@ -11,8 +11,8 @@
 
 import React from "react";
 import { Hash, Trophy } from "lucide-react";
-import type { VideoSuggestion, VideoSuggestions } from "../../types/videos";
-import { cn } from "../../ui/lib/utils";
+import type { VideoSuggestion, VideoSuggestions } from "../../../types/videos";
+import { cn } from "../../../ui/lib/utils";
 
 /** Props for the {@link VideoSearchSuggestions} component. */
 interface VideoSearchSuggestionsProps {

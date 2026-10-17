@@ -6,9 +6,9 @@
 
 import { lazy, Suspense } from "react"
 import { Info, Loader2 } from "lucide-react"
-import { Button } from "../../ui/primitives/button"
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "../../ui/primitives/dialog"
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "../../ui/primitives/tooltip"
+import { Button } from "../../../ui/primitives/button"
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "../../../ui/primitives/dialog"
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "../../../ui/primitives/tooltip"
 import type { YouTubeStats } from "./YouTubeStatsBody"
 
 /** The charts, with recharts, load the first time the dialog opens. */

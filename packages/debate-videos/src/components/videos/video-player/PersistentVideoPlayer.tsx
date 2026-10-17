@@ -7,9 +7,9 @@
 import React, { useEffect, useMemo, useRef, useState, useCallback, type ReactNode } from "react" // useState kept for PersistentVideoPlayer mounted state
 import { createPortal } from "react-dom"
 import { AlertCircle, PictureInPicture2, X } from "lucide-react"
-import { useVideoPlayerStore, videoPlayerIframeRef, sendYouTubeCommand } from "../../state/videoPlayerStore"
-import { savePlayerState, loadPlayerState, clearSavedPlayerState } from "../../state/videoPlayerPersistence"
-import { recordWatchProgress } from "../../state/videoWatchHistory"
+import { useVideoPlayerStore, videoPlayerIframeRef, sendYouTubeCommand } from "../../../state/videoPlayerStore"
+import { savePlayerState, loadPlayerState, clearSavedPlayerState } from "../../../state/videoPlayerPersistence"
+import { recordWatchProgress } from "../../../state/videoWatchHistory"
 import { useDragResize } from "./useDragResize"
 import { useDocumentPictureInPicture } from "./useDocumentPictureInPicture"
 import { PlayerTitleBar } from "./PlayerTitleBar"

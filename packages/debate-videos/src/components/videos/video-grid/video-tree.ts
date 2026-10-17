@@ -30,7 +30,7 @@ import {
   getRoundSortKey,
   parseRoundLevel,
 } from "@debate/data-sync/src/youtube/parsers/round-level";
-import { DEBATE_STYLE_LABELS, type VideoType } from "../../types/videos";
+import { DEBATE_STYLE_LABELS, type VideoType } from "../../../types/videos";
 import type { VideoSlot } from "./video-stacks";
 
 /** Which hierarchy a set of videos is grouped by. */

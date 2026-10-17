@@ -12,8 +12,8 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "../../ui/primitives/dialog"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/primitives/tabs"
+} from "../../../ui/primitives/dialog"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../ui/primitives/tabs"
 import {
   Table,
   TableBody,
@@ -21,11 +21,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../ui/primitives/table"
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../../ui/charts/chart"
+} from "../../../ui/primitives/table"
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../../../ui/charts/chart"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line } from "recharts"
-import type { ChartConfig } from "../../ui/charts/chart"
-import { formatCount } from "../../components/category-gallery/format-count"
+import type { ChartConfig } from "../../../ui/charts/chart"
+import { formatCount } from "../../category-gallery/format-count"
 
 export interface YouTubeStats {
   summary: {

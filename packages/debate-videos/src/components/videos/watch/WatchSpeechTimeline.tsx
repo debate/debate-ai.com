@@ -15,8 +15,8 @@
 
 "use client"
 
-import { playingSpeechIndex, type RoundSpeech } from "../../lib/round-speeches"
-import { formatTimecode } from "../../lib/video-documents"
+import { playingSpeechIndex, type RoundSpeech } from "../../../lib/round-speeches"
+import { formatTimecode } from "../../../lib/video-documents"
 import { SPEECH_SIDE_STYLES } from "./speech-side-styles"
 
 interface WatchSpeechTimelineProps {

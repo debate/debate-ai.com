@@ -20,11 +20,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "../../ui/primitives/dialog"
-import { Button } from "../../ui/primitives/button"
-import { Input } from "../../ui/primitives/input"
-import { Textarea } from "../../ui/primitives/textarea"
-import { Tabs, TabsList, TabsTrigger } from "../../ui/primitives/tabs"
+} from "../../../ui/primitives/dialog"
+import { Button } from "../../../ui/primitives/button"
+import { Input } from "../../../ui/primitives/input"
+import { Textarea } from "../../../ui/primitives/textarea"
+import { Tabs, TabsList, TabsTrigger } from "../../../ui/primitives/tabs"
 
 /** What is being submitted. Matches the API's `kind` values. */
 type SubmissionKind = "submit-video" | "submit-channel"

@@ -16,12 +16,12 @@
 "use client"
 
 import Link from "next/link"
-import { ScrollArea } from "../../ui/primitives/scroll-area"
-import { videoRouteHref } from "../../lib/video-route"
+import { ScrollArea } from "../../../ui/primitives/scroll-area"
+import { videoRouteHref } from "../../../lib/video-route"
 import { formatVideoDate } from "../video-card/videoCardUtils"
-import { formatCount } from "../category-gallery/format-count"
-import type { VideoType } from "../../types/videos"
-import type { VideoRelationKind } from "../../lib/video-relations"
+import { formatCount } from "../../category-gallery/format-count"
+import type { VideoType } from "../../../types/videos"
+import type { VideoRelationKind } from "../../../lib/video-relations"
 
 /** One linked video, as the watch page receives it. */
 export interface LinkedVideo {

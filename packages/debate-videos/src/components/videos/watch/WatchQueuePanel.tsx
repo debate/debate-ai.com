@@ -17,9 +17,9 @@
 "use client"
 
 import { ListVideo, Play, X } from "lucide-react"
-import { cn } from "../../ui/lib/utils"
-import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
-import { useVideoPlayerStore } from "../../state/videoPlayerStore"
+import { cn } from "../../../ui/lib/utils"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../../../ui/primitives/tooltip"
+import { useVideoPlayerStore } from "../../../state/videoPlayerStore"
 
 export function WatchQueuePanel({ className }: { className?: string }) {
   // Per-field selectors: the panel re-renders on a queue change, not on every

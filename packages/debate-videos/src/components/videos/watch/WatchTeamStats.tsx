@@ -17,19 +17,19 @@
 
 import Link from "next/link"
 import type { ReactNode } from "react"
-import { useAllRankingDatasets } from "../../hooks/useAllRankingDatasets"
-import { isRankedSeasonRound } from "../../hooks/useVideoTeamRankings"
+import { useAllRankingDatasets } from "../../../hooks/useAllRankingDatasets"
+import { isRankedSeasonRound } from "../../../hooks/useVideoTeamRankings"
 import {
   findVideoTeamProfile,
   teamHref,
   teamRadarData,
   type ProfileEntry,
-} from "../../panels/leaderboard/profile/rankingProfileHelpers"
-import { TeamRadarChart } from "../../panels/leaderboard/profile/TeamRadarChart"
-import { cn } from "../../ui/lib/utils"
-import { predictWatchMatchup } from "../../lib/watch-matchup-prediction"
+} from "../../../panels/leaderboard/profile/rankingProfileHelpers"
+import { TeamRadarChart } from "../../../panels/leaderboard/profile/TeamRadarChart"
+import { cn } from "../../../ui/lib/utils"
+import { predictWatchMatchup } from "../../../lib/watch-matchup-prediction"
 import { WatchMatchupPrediction } from "./WatchMatchupPrediction"
-import type { VideoType } from "../../types/videos"
+import type { VideoType } from "../../../types/videos"
 
 const rating = (n: number) => n.toFixed(1)
 const percent = (n: number | null) =>

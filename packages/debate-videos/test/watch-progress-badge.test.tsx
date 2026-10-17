@@ -17,7 +17,7 @@ import { TooltipProvider } from "../src/ui/primitives/tooltip"
 import {
   WatchProgressBadge,
   WatchProgressBar,
-} from "../src/components/video-card/WatchProgressBadge"
+} from "../src/components/videos/video-card/WatchProgressBadge"
 import type { WatchHistoryEntry } from "../src/state/videoWatchHistory"
 
 const entry = (overrides: Partial<WatchHistoryEntry> = {}): WatchHistoryEntry => ({
