@@ -14,7 +14,6 @@ import {
   BarChart3,
   BookOpen,
   ChartColumn,
-  ChartLine,
   Clapperboard,
   ClipboardList,
   Dumbbell,
@@ -179,7 +178,6 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       // among the coaching tools. Forum threads keep their
       // `/practice/forums/<id>` addresses, so that prefix is this row's too.
       { href: "/news", title: "News & Forums", icon: Rss, aliases: ["/practice/forums"] },
-      { href: "/coaching/outcomes", title: "Vulnerability Reports", icon: ChartLine },
     ],
   },
   {
