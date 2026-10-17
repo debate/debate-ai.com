@@ -93,3 +93,14 @@ describe("fetchModelSpeech with Kokoro in the browser", () => {
     expect(browserKokoro).not.toHaveBeenCalled();
   });
 });
+
+describe("preloadModelVoice", () => {
+  it("skips Deepgram voices and browsers that can't run Kokoro", async () => {
+    const { preloadModelVoice } = await import("../src/editor/card-tts-client");
+    const supported = vi.fn(() => false);
+    preloadModelVoice({ provider: "deepgram", voice: "aura-orion-en" }, supported);
+    expect(supported).not.toHaveBeenCalled();
+    preloadModelVoice({ provider: "kokoro", voice: "af_heart" }, supported);
+    expect(supported).toHaveBeenCalledTimes(1);
+  });
+});

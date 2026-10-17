@@ -22,6 +22,23 @@ embedded webview. A deep link (`debateai://auth-callback`) hands a
 one-time token back to the wrapper's window after the browser completes
 sign-in.
 
+## Running in the background (desktop)
+
+On Windows, macOS and Linux the app starts with your computer and waits in
+the background, so opening it is instant: the page has already loaded.
+
+- At login it starts hidden. There is no window, and on macOS no Dock
+  icon. The only sign of it is the Debate AI icon in the menu bar (macOS),
+  the notification area (Windows) or the status area (Linux).
+- Click that icon to open or hide Debate AI. You can also press
+  `Ctrl+`` (`Cmd+`` on a Mac) from any app. It brings Debate AI up with
+  whatever text you had selected.
+- Closing the window hides it. The app keeps running until you pick
+  **Quit Debate AI** from the icon's menu.
+- Right-click the icon for its menu: **Open Debate AI**, **Hide to
+  Background**, **Run on Startup** (a check box: untick it to stop the app
+  starting with your computer), **Settings…**, **Load From** and **Quit**.
+
 ## Camera and microphone
 
 The webcam room and the speech recorder work in the app. The first time a

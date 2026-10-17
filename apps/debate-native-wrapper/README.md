@@ -34,6 +34,7 @@ native-wrapper/
 │   └── generate-icons.mjs # profile's iconSource -> full src-tauri/icons/ set
 ├── src-tauri/
 │   ├── src/lib.rs          # window setup, deep-link OAuth handoff, fullscreen toggle
+│   ├── src/background.rs   # desktop background service: hidden start, show/hide, Run on Startup
 │   ├── src/system_info.rs  # the one command the site can call: what OS/distro this is
 │   ├── src/mini_player.rs  # the always-on-top mini player window the site can pop a page into
 │   ├── capabilities/       # Tauri's permission grants (default.json + a scoped remote.json)
@@ -133,8 +134,8 @@ A profile can list several `sources`, and the user picks one in the wrapper's ow
 | `beta` | `https://d.ebate.app` |
 | `offline` | `dist/offline/`, the whole app (`packages/debate-webview`) built into the bundle |
 
-The settings page opens from the gear on the launch splash, from the tray's **Load From** menu
-on desktop (which also switches directly), and from the "Offline · Change" link in the offline
+The settings page opens from the gear on the launch splash, from the tray's **Settings…** entry
+on desktop (whose **Load From** menu also switches directly), and from the "Offline · Change" link in the offline
 build. The choice is saved to `app-source.json` in the app's config directory
 (`src-tauri/src/app_source.rs`) and used on every launch until changed. The site can offer the
 same choice through the `get_app_source` / `set_app_source` commands.
