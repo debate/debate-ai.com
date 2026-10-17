@@ -20,9 +20,8 @@ import IconSchoolHarvard from "../../../debate-icons/schools/harvard.png";
 import IconSchoolHarvardWestlake from "../../../debate-icons/schools/harvard-westlake.png";
 import IconSchoolIowa from "../../../debate-icons/schools/iowa.png";
 import IconSchoolKansas from "../../../debate-icons/schools/kansas.png";
-import IconSchoolKentucky from "../../../debate-icons/schools/kentucky.svg";
+import IconSchoolKentucky from "../../../debate-icons/schools/kentucky.png";
 import IconSchoolMarlborough from "../../../debate-icons/schools/marlborough.png";
-import IconSchoolMba from "../../../debate-icons/schools/mba.png";
 import IconSchoolMichigan from "../../../debate-icons/schools/michigan.png";
 import IconSchoolMichiganState from "../../../debate-icons/schools/michigan-state.png";
 import IconSchoolNdt from "../../../debate-icons/schools/ndt.png";
@@ -34,7 +33,7 @@ import IconSchoolStrakeJesuit from "../../../debate-icons/schools/strake-jesuit.
 import IconSchoolTexas from "../../../debate-icons/schools/texas.png";
 import IconSchoolUcBerkeley from "../../../debate-icons/schools/uc-berkeley.png";
 import IconSchoolWakeForest from "../../../debate-icons/schools/wake-forest.png";
-import IconSchoolWesternKentucky from "../../../debate-icons/schools/western-kentucky.jpg";
+import IconSchoolWesternKentucky from "../../../debate-icons/schools/western-kentucky.png";
 import IconSchoolWestminster from "../../../debate-icons/schools/westminster.png";
 
 const slugify = (s: string): string =>
@@ -63,7 +62,6 @@ export const SCHOOL_LOGO_MAP: Record<string, string | FC<SVGProps<SVGSVGElement>
   kansas: (IconSchoolKansas as any)?.src ?? (IconSchoolKansas as any),
   kentucky: (IconSchoolKentucky as any)?.src ?? (IconSchoolKentucky as any),
   marlborough: (IconSchoolMarlborough as any)?.src ?? (IconSchoolMarlborough as any),
-  mba: (IconSchoolMba as any)?.src ?? (IconSchoolMba as any),
   michigan: (IconSchoolMichigan as any)?.src ?? (IconSchoolMichigan as any),
   "michigan-state": (IconSchoolMichiganState as any)?.src ?? (IconSchoolMichiganState as any),
   ndt: (IconSchoolNdt as any)?.src ?? (IconSchoolNdt as any),

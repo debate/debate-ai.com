@@ -14,7 +14,7 @@ import IconSchoolGlenbrookNorth from "../../../debate-icons/schools/glenbrook-no
 import IconSchoolGlenbrookSouth from "../../../debate-icons/schools/glenbrook-south.png";
 import IconSchoolNorthwestern from "../../../debate-icons/schools/northwestern.svg";
 import IconSchoolWakeForest from "../../../debate-icons/schools/wake-forest.svg";
-import IconSchoolKentucky from "../../../debate-icons/schools/kentucky.svg";
+import IconSchoolKentucky from "../../../debate-icons/schools/kentucky.png";
 import IconSchoolMichiganState from "../../../debate-icons/schools/michigan-state.png";
 import IconSchoolNdt from "../../../debate-icons/schools/ndt.png";
 import IconSchoolDartmouth from "../../../debate-icons/schools/dartmouth.png";
