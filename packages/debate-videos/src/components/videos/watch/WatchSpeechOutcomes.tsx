@@ -29,8 +29,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react"
 import { AlertTriangle, Check, ChevronDown, Copy, RefreshCw, Sparkles, Trophy } from "lucide-react"
-import { ScrollArea } from "../../ui/primitives/scroll-area"
-import type { RoundSpeech } from "../../lib/round-speeches"
+import { ScrollArea } from "../../../ui/primitives/scroll-area"
+import type { RoundSpeech } from "../../../lib/round-speeches"
 import {
   DEFAULT_ALTERNATIVE_COUNT,
   DEFAULT_JUDGE_LENS,
@@ -49,9 +49,9 @@ import {
   type PredictedBallot,
   type RoundContext,
   type SpeechOutcomeSimulation,
-} from "../../lib/speech-outcomes"
-import { requestSpeechOutcomes } from "../../lib/speech-outcomes-client"
-import { readCachedSpeechOutcome, writeCachedSpeechOutcome } from "../../state/speechOutcomeCache"
+} from "../../../lib/speech-outcomes"
+import { requestSpeechOutcomes } from "../../../lib/speech-outcomes-client"
+import { readCachedSpeechOutcome, writeCachedSpeechOutcome } from "../../../state/speechOutcomeCache"
 import { SPEECH_SIDE_STYLES } from "./speech-side-styles"
 
 /** Where the reader's judge panel is remembered. */

@@ -2,8 +2,8 @@
  * @fileoverview Title bar component displaying video metadata badges and information
  */
 
-import type { VideoMeta } from "../../state/videoPlayerStore"
-import { useVideoPlayerStore } from "../../state/videoPlayerStore"
+import type { VideoMeta } from "../../../state/videoPlayerStore"
+import { useVideoPlayerStore } from "../../../state/videoPlayerStore"
 import { STYLE_COLORS, DEBATE_STYLE_LABELS } from "../video-card/videoCardUtils"
 
 interface PlayerTitleBarProps {

@@ -20,10 +20,10 @@
 
 import { useEffect, useMemo, useRef, useState } from "react"
 import { Loader2, Search, X } from "lucide-react"
-import { ScrollArea } from "../../ui/primitives/scroll-area"
+import { ScrollArea } from "../../../ui/primitives/scroll-area"
 import { TranscriptLine } from "../transcript/TranscriptLine"
 import type { TranscriptSnippet } from "../transcript/transcriptUtils"
-import { scrollWithin } from "../../lib/scroll-within"
+import { scrollWithin } from "../../../lib/scroll-within"
 import { AutoScrollToggle } from "./AutoScrollToggle"
 
 interface WatchTranscriptPanelProps {

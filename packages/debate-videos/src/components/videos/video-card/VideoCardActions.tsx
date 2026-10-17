@@ -20,16 +20,16 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "../../ui/primitives/tooltip"
-import { formatCount } from "../../components/category-gallery/format-count"
+} from "../../../ui/primitives/tooltip"
+import { formatCount } from "../../category-gallery/format-count"
 import { formatVideoDate } from "./videoCardUtils"
-import { topicDisplayLines } from "../../lib/debate-topics"
+import { topicDisplayLines } from "../../../lib/debate-topics"
 import { HideConfirmDialog } from "./VideoCardDialogs"
 import { WatchPageLink } from "../watch/WatchPageLink"
 import { WatchProgressBadge } from "./WatchProgressBadge"
 import { VideoDuration } from "./VideoDuration"
-import { useWatchHistoryEntry } from "../../hooks/useWatchHistory"
-import type { VideoType } from "../../types/videos"
+import { useWatchHistoryEntry } from "../../../hooks/useWatchHistory"
+import type { VideoType } from "../../../types/videos"
 
 /** Shape of the video metadata forwarded to the player store on queue add. */
 interface VideoMeta {

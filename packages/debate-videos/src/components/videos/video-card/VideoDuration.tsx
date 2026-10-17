@@ -8,9 +8,9 @@
 "use client"
 
 import { Clock } from "lucide-react"
-import { cn } from "../../ui/lib/utils"
-import { formatVideoDuration, useVideoDuration } from "../../state/videoDurations"
-import { formatWatchClock } from "../../state/videoWatchHistory"
+import { cn } from "../../../ui/lib/utils"
+import { formatVideoDuration, useVideoDuration } from "../../../state/videoDurations"
+import { formatWatchClock } from "../../../state/videoWatchHistory"
 
 /**
  * The length of one video, with a clock icon.

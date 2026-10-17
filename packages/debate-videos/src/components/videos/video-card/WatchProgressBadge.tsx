@@ -27,8 +27,8 @@
 "use client"
 
 import { CircleCheckBig } from "lucide-react"
-import { cn } from "../../ui/lib/utils"
-import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
+import { cn } from "../../../ui/lib/utils"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../../../ui/primitives/tooltip"
 import {
   describeWatchProgress,
   watchPercent,
@@ -36,7 +36,7 @@ import {
   WATCH_STATUS_LABELS,
   type WatchHistoryEntry,
   type WatchStatus,
-} from "../../state/videoWatchHistory"
+} from "../../../state/videoWatchHistory"
 
 /** Colour per band — amber while in progress, emerald once finished. */
 const STATUS_CLASSES: Record<WatchStatus, string> = {

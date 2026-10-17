@@ -5,10 +5,10 @@
 "use client"
 
 import React from "react"
-import type { VideoType, TopicType } from "../../types/videos"
+import type { VideoType, TopicType } from "../../../types/videos"
 import { VideoCard } from "../video-card/VideoCard"
-import { HoverCardWrapper } from "../../ui/primitives/hover-card-wrapper"
-import { GlowingShadow } from "../../ui/effects/glowing-shadow"
+import { HoverCardWrapper } from "../../../ui/primitives/hover-card-wrapper"
+import { GlowingShadow } from "../../../ui/effects/glowing-shadow"
 
 interface VideoGridProps {
   videos: VideoType[]
