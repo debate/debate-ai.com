@@ -176,6 +176,7 @@ export function VideoLibraryTable() {
         title: video?.title || "Not in the library yet",
         channel: video?.channel ?? "",
         tournament: video?.tournament ?? null,
+        style: video?.style ?? null,
       });
       setAddInput("");
     } catch {
@@ -470,6 +471,7 @@ export function VideoLibraryTable() {
                             title: video.title,
                             channel: video.channel,
                             tournament: video.tournament,
+                            style: video.style,
                           })
                         }
                       >

@@ -195,6 +195,21 @@ export {
   type SpeechAnalysisDocuments,
 } from "./lib/speech-analysis";
 export { groupIntoSentences } from "./components/videos/transcript/transcriptUtils";
+export {
+  AUDIO_SPLIT_FORMATS,
+  AUDIO_SPLIT_TEMPLATES,
+  audioSplitFormatForStyle,
+  audioSplitTranscriptMarkdown,
+  splitSpeechesFromLoudness,
+  type AudioSplitFormat,
+  type AudioSplitTemplate,
+  type SpeechSplit,
+} from "./lib/audio-speech-split";
+export {
+  splitSpeechAudio,
+  type SpeechClip,
+  type SplitSpeechAudioResult,
+} from "./lib/split-speech-audio";
 export { parseYouTubeVideoId } from "./lib/youtube-video-id";
 export {
   VIDEO_RELATION_KINDS,
