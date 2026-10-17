@@ -17,6 +17,7 @@ import { useState } from "react"
 import { CalendarRange, ChevronRight, Medal, Tag, Trophy, Tv } from "lucide-react"
 import { cn } from "../../ui/lib/utils"
 import { formatVideoDate, TOC_TOURNAMENT_IMAGE } from "../video-card/videoCardUtils"
+import { getTournamentLogo } from "../video-card/tournamentLogos"
 import { formatCount } from "../category-gallery/format-count"
 import { VideoListRow } from "./VideoListRow"
 import { FormatBadge, videoFormat } from "./FormatBadge"
@@ -24,7 +25,6 @@ import type { VideoTeamRankingLookup } from "../../hooks/useVideoTeamRankings"
 import { treeIndentStyle } from "./tree-indent"
 import type { VideoGroupKind, VideoTreeGroup, VideoTreeLeaf, VideoTreeNode } from "./video-tree"
 import type { VideoType } from "../../types/videos"
-import { formatCount } from "../category-gallery/format-count"
 
 /** Icon per group level, so the depth reads without counting indents. */
 const GROUP_ICONS: Record<VideoGroupKind, typeof Trophy> = {
@@ -83,6 +83,31 @@ function groupFormats(group: VideoTreeGroup): number[] {
   return [...formats].sort((a, b) => a - b)
 }
 
+/**
+ * The school/tournament logo that rides on a tournament group row — the same
+ * lookup the card grid uses, so a round-robin (e.g. "Greenhill RR") shows
+ * Greenhill's logo beside the school name it found after dropping the "RR".
+ */
+function TournamentLogo({ label }: { label: string }) {
+  const logo = getTournamentLogo(label)
+  if (!logo) return null
+  if (typeof logo === "function") {
+    const Logo = logo
+    return <Logo className="h-4 w-4 shrink-0 object-contain" aria-hidden />
+  }
+  const src = typeof logo === "string" ? logo : logo.src
+  return <img src={src} alt="" aria-hidden className="h-4 w-4 shrink-0 object-contain" />
+}
+
+/** The "RR" badge marking a round-robin tournament's format. */
+function RoundRobinBadge() {
+  return (
+    <span className="shrink-0 rounded bg-muted px-1 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+      RR
+    </span>
+  )
+}
+
 function GroupRows({
   group,
   depth,
@@ -130,6 +155,19 @@ function GroupRows({
                 alt="Tournament of Champions"
                 className="h-4 w-auto object-contain shrink-0"
               />
+            ) : group.kind === "tournament" ? (
+              <span className="flex items-center gap-1.5">
+                <TournamentLogo label={group.label} />
+                <span
+                  className={cn(
+                    "truncate font-semibold",
+                    depth === 0 ? "text-sm text-foreground" : "text-sm text-primary",
+                  )}
+                >
+                  {group.label}
+                </span>
+                {group.roundRobin && <RoundRobinBadge />}
+              </span>
             ) : (
               <span
                 className={cn(
@@ -158,13 +196,9 @@ function GroupRows({
           {group.latestDate ? formatVideoDate(group.latestDate, "full", "—") : "—"}
         </td>
         <td className="px-3 py-2 align-middle text-xs text-muted-foreground text-right tabular-nums whitespace-nowrap">
-<<<<<<< HEAD
-          {formatCount(group.viewCount)}
-=======
           <span className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium tabular-nums">
             {formatCount(group.viewCount)}
           </span>
->>>>>>> 0d28d9f05ac1dd05535441c177e1b89fdc285835
         </td>
         {context.showWatched && <td />}
       </tr>

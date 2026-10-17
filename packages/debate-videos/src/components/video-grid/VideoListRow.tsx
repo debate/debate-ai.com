@@ -46,7 +46,6 @@ import { treeIndentStyle } from "./tree-indent"
 import { FormatBadge } from "./FormatBadge"
 import { teamHref } from "../../panels/leaderboard/profile/rankingProfileHelpers"
 import type { VideoType } from "../../types/videos"
-import { formatCount } from "../category-gallery/format-count"
 
 /**
  * One slot of the row's action strip. Below md the strip runs the full width
@@ -564,14 +563,10 @@ export function VideoListRow({
         <td className="px-3 py-3 align-top text-sm text-muted-foreground whitespace-nowrap">
           {formatVideoDate(date, "full", "—")}
         </td>
-        <td className="px-3 py-3 align-top text-sm text-muted-foreground text-right tabular-nums whitespace-nowrap">
-<<<<<<< HEAD
-          {formatCount(viewCount)}
-=======
+<td className="px-3 py-3 align-top text-sm text-muted-foreground text-right tabular-nums whitespace-nowrap">
           <span className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium tabular-nums">
             {formatCount(viewCount)}
           </span>
->>>>>>> 0d28d9f05ac1dd05535441c177e1b89fdc285835
         </td>
         {showWatched && (
           <td

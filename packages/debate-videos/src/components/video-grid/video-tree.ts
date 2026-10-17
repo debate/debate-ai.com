@@ -76,6 +76,8 @@ export interface VideoTreeGroup {
   sortValue: number | string;
   /** Placeholder groups (`Unsorted`, `Legacy`) sort after their siblings. */
   trailing: boolean;
+  /** True when the tournament is a round-robin (its name ends in "RR"). */
+  roundRobin?: boolean;
 }
 
 export type VideoTreeNode = VideoTreeGroup | VideoTreeLeaf;
@@ -86,6 +88,8 @@ interface GroupStep {
   label: string;
   sortValue: number | string;
   trailing?: boolean;
+  /** True when the tournament is a round-robin (its name ends in "RR"). */
+  roundRobin?: boolean;
 }
 
 /**
@@ -112,6 +116,9 @@ export function cleanTournamentName(tournament: string | null | undefined): stri
     .replace(/\b(?:finals?|semis?|semifinals?|quarters?|quarterfinals?|octos?|octas?|octafinals?|runoffs?|doubles?|triples?|prelims?|eliminations?)\b/gi, "")
     .replace(/\b(?:debate\s+)?(?:tournament|championships?|nationals?|nats|invitational|open|forum|high\s+schools?|for|the)\b/gi, "")
     .replace(/\s+debate\b/gi, "")
+    // A trailing "RR" marks a round-robin tournament — the format rides on the
+    // group as a badge, so the name itself drops it to find the school.
+    .replace(/\s+RR\s*$/gi, "")
     .replace(/\s+/g, " ")
     .replace(/^[\s,\-–|]+|[\s,\-–|]+$/g, "")
     .trim();
@@ -130,6 +137,21 @@ export function cleanTournamentName(tournament: string | null | undefined): stri
   }
 
   return final;
+}
+
+/**
+ * Whether a tournament name is a round-robin — a trailing "RR" marks the
+ * format, which rides on the group as a badge rather than in the name.
+ *
+ * @param tournament - Raw tournament field from the video tuple.
+ * @returns `true` when the name ends with a standalone "RR".
+ */
+export function tournamentHasRR(tournament: string | null | undefined): boolean {
+  if (!tournament) return false;
+  // A trailing "RR" (optionally followed by a year) marks a round-robin
+  // tournament — the format rides on the group as a badge, so the name
+  // itself drops it to find the school.
+  return /\bRR\b\s*(?:\d{4})?\s*$/i.test(tournament.trim());
 }
 
 /**
@@ -190,6 +212,7 @@ export function videoGroupPath(video: VideoType, mode: VideoTreeMode): GroupStep
     kind: "tournament",
     label: tournament ?? UNGROUPED_LABEL,
     sortValue: tournament?.toLowerCase() ?? "",
+    roundRobin: tournamentHasRR(video[7]),
   });
 
   return steps;
@@ -303,6 +326,7 @@ export function buildVideoTree(slots: VideoSlot[], mode: VideoTreeMode): VideoTr
           earliestDate: null,
           sortValue: step.sortValue,
           trailing: step.trailing ?? false,
+          roundRobin: step.roundRobin,
         };
         groups.set(key, group);
         siblings.push(group);
@@ -311,6 +335,7 @@ export function buildVideoTree(slots: VideoSlot[], mode: VideoTreeMode): VideoTr
       group.viewCount += views;
       group.latestDate = laterDate(group.latestDate, video[2]);
       group.earliestDate = earlierDate(group.earliestDate, video[2]);
+      if (step.roundRobin) group.roundRobin = true;
       siblings = group.children;
     }
 

@@ -66,9 +66,13 @@ describe("JudgmentPopup, user-vs-bot rubric", () => {
     expect(headings(container, "h3")).toEqual(
       expect.arrayContaining(["You", "Rookie Rick", "Cross Examination", "Answers to Cross Examination", "Total Scores"]),
     );
-    expect(container.textContent).toContain("User Wins!");
+    expect(container.textContent).not.toContain("User Wins!");
     expect(container.textContent).toContain("36");
     expect(container.textContent).not.toContain("Rating Impact");
+    // Reveal the verdict
+    const revealButton = [...container.querySelectorAll("button")].find((b) => b.textContent?.includes("Reveal Decision"));
+    await click(revealButton!);
+    expect(container.textContent).toContain("User Wins!");
   });
 
   it("falls back to 'Bot' and the default avatars when nothing is supplied", async () => {
