@@ -1,10 +1,10 @@
 "use client"
 
 import { useMemo } from "react"
-import { cn } from "../../ui/lib/utils"
-import { useAllRankingDatasets } from "../../hooks/useAllRankingDatasets"
-import { isRankedSeasonRound } from "../../hooks/useVideoTeamRankings"
-import { findVideoTeamRanking, videoStyleDatasetId } from "../../panels/leaderboard/profile/rankingProfileHelpers"
+import { cn } from "../../../ui/lib/utils"
+import { useAllRankingDatasets } from "../../../hooks/useAllRankingDatasets"
+import { isRankedSeasonRound } from "../../../hooks/useVideoTeamRankings"
+import { findVideoTeamRanking, videoStyleDatasetId } from "../../../panels/leaderboard/profile/rankingProfileHelpers"
 import {
   modelMatchup,
   recommendSide,
@@ -12,7 +12,7 @@ import {
   type RankingDataset,
   type RankingEntry,
 } from "@debate/rankings-adapter"
-import type { VideoType } from "../../types/videos"
+import type { VideoType } from "../../../types/videos"
 
 const DEFAULT_WEIGHTS: MatchupWeights = { school: 0.2, individual: 0.2 }
 const pct = (p: number) => `${(p * 100).toFixed(1)}%`

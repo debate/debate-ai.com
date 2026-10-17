@@ -22,10 +22,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../ui/primitives/table";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../../ui/charts/chart";
-import type { ChartConfig } from "../../ui/charts/chart";
-import { formatCount } from "../../components/category-gallery/format-count"
+} from "../../../ui/primitives/table";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../../../ui/charts/chart";
+import type { ChartConfig } from "../../../ui/charts/chart";
+import { formatCount } from "../../category-gallery/format-count"
 
 interface YouTubeStats {
   summary: {

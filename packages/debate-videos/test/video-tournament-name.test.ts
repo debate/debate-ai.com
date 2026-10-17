@@ -9,7 +9,7 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { cleanTournamentName, tournamentHasRR } from "../src/components/video-grid/video-tree";
+import { cleanTournamentName, tournamentHasRR } from "../src/components/videos/video-grid/video-tree";
 
 describe("cleanTournamentName", () => {
   it("returns undefined for empty input", () => {

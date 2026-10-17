@@ -67,7 +67,7 @@ export {
   WatchProgressBadge,
   WatchProgressBar,
   type WatchProgressBadgeProps,
-} from "./components/videos/card/WatchProgressBadge";
+} from "./components/videos/video-card/WatchProgressBadge";
 export {
   ResizableSidebarLayout,
   SIDEBAR_DEFAULT_WIDTH,
@@ -94,7 +94,7 @@ export {
   pickIconHoverEffect,
   useSidebarIconHover,
 } from "./ui/layout/sidebar-icon-hover";
-export { LibrarySidebarTree } from "./components/navigation/gallery/LibrarySidebarTree";
+export { LibrarySidebarTree } from "./components/category-gallery/LibrarySidebarTree";
 export { LecturesPage } from "./panels/LecturesPage";
 export { DebateVideosPage } from "./panels/DebateVideosPanel";
 export { LeaderboardPanel } from "./panels/leaderboard/RankingsLeaderboardPanel";
@@ -211,14 +211,14 @@ export {
   VIDEO_RELATION_LABELS,
   type VideoRelationKind,
 } from "./lib/video-relations";
-export { WatchAnalysisPanel, type LinkedVideo } from "./components/watch/WatchAnalysisPanel";
-export { WatchStackPlaylist, stackMemberLabel } from "./components/watch/WatchStackPlaylist";
-export { stackKeyOf } from "./components/video-grid/video-stacks";
-export { WatchSidePanel, type WatchSideTab } from "./components/watch/WatchSidePanel";
-export { WatchRoundPanel, type SpeechFocusRequest } from "./components/watch/WatchRoundPanel";
-export { WatchSpeechTimeline } from "./components/watch/WatchSpeechTimeline";
-export { PersistentVideoPlayer } from "./components/video-player/PersistentVideoPlayer";
-export { SlowSpreadButton, SLOW_SPREAD_RATE } from "./components/video-player/SlowSpreadButton";
+export { WatchAnalysisPanel, type LinkedVideo } from "./components/videos/watch/WatchAnalysisPanel";
+export { WatchStackPlaylist, stackMemberLabel } from "./components/videos/watch/WatchStackPlaylist";
+export { stackKeyOf } from "./components/videos/video-grid/video-stacks";
+export { WatchSidePanel, type WatchSideTab } from "./components/videos/watch/WatchSidePanel";
+export { WatchRoundPanel, type SpeechFocusRequest } from "./components/videos/watch/WatchRoundPanel";
+export { WatchSpeechTimeline } from "./components/videos/watch/WatchSpeechTimeline";
+export { PersistentVideoPlayer } from "./components/videos/video-player/PersistentVideoPlayer";
+export { SlowSpreadButton, SLOW_SPREAD_RATE } from "./components/videos/video-player/SlowSpreadButton";
 export { ToolNavTree } from "./components/category-gallery/ToolNavTree";
 export { DocsNavTree, DOCS_TREE_URL, type DocsTreeNode } from "./components/category-gallery/DocsNavTree";
 export { sidebarSectionForPath } from "./components/category-gallery/sidebar-active-section";
@@ -264,7 +264,7 @@ export {
   useCategoryDockState,
 } from "./context/category-dock-context";
 export { useVideoPlayerStore, sendYouTubeCommand, videoPlayerIframeRef } from "./state/videoPlayerStore";
-export { TopPickBadge, type TopPickBadgeProps } from "./components/video-card/TopPickBadge";
+export { TopPickBadge, type TopPickBadgeProps } from "./components/videos/video-card/TopPickBadge";
 export {
   TOP_PICK_BADGES,
   getTopPickBadgeInfo,

@@ -8,9 +8,9 @@
  * @module components/video-grid/FormatBadge
  */
 
-import { cn } from "../../ui/lib/utils"
+import { cn } from "../../../ui/lib/utils"
 import { DEBATE_STYLE_LABELS, STYLE_COLORS } from "../video-card/videoCardUtils"
-import type { VideoType } from "../../types/videos"
+import type { VideoType } from "../../../types/videos"
 
 /** The video's numeric debate format, or `undefined` for a lecture. */
 export function videoFormat(video: VideoType): number | undefined {

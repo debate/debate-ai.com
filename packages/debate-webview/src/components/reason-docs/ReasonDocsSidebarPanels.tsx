@@ -196,6 +196,8 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
     copyTopicToDocuments,
     duplicateDocument,
     publishToTopics,
+    deleteTopicStarter,
+    moveTopicStarter,
   } = useReasonDocs()
 
   const [topicsOpen, setTopicsOpen] = useState(true)

@@ -27,18 +27,18 @@
 
 import { useEffect, useMemo, useRef, useState } from "react"
 import { Bot, ListTree, Search, X } from "lucide-react"
-import { ScrollArea } from "../../ui/primitives/scroll-area"
+import { ScrollArea } from "../../../ui/primitives/scroll-area"
 import {
   formatTimecode,
   parseDocumentSections,
   toParagraphs,
   VIDEO_DOCUMENT_LABELS,
   type VideoDocument,
-} from "../../lib/video-documents"
-import { highlightHtml, renderDocumentMarkdown } from "../../lib/document-markdown"
-import { scrollWithin } from "../../lib/scroll-within"
+} from "../../../lib/video-documents"
+import { highlightHtml, renderDocumentMarkdown } from "../../../lib/document-markdown"
+import { scrollWithin } from "../../../lib/scroll-within"
 import { AutoScrollToggle } from "./AutoScrollToggle"
-import { formatCount } from "../category-gallery/format-count"
+import { formatCount } from "../../category-gallery/format-count"
 
 interface WatchDocumentPanelProps {
   document: VideoDocument

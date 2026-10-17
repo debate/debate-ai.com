@@ -17,8 +17,8 @@
 "use client"
 
 import { ChevronLeft, ChevronRight, Layers } from "lucide-react"
-import { cn } from "../../ui/lib/utils"
-import { DEBATE_STYLE_LABELS, type VideoType } from "../../types/videos"
+import { cn } from "../../../ui/lib/utils"
+import { DEBATE_STYLE_LABELS, type VideoType } from "../../../types/videos"
 
 /** Props for the {@link StackNav} control. */
 export interface StackNavProps {

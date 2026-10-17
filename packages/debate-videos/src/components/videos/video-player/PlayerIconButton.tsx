@@ -17,8 +17,8 @@
 
 import { forwardRef, type ComponentPropsWithoutRef, type ReactNode } from "react"
 import type { LucideIcon } from "lucide-react"
-import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
-import { cn } from "../../ui/lib/utils"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../../../ui/primitives/tooltip"
+import { cn } from "../../../ui/lib/utils"
 
 /** Icon and hit-area sizes: `sm` for the popout player, `md` for the watch page. */
 export type PlayerIconButtonSize = "sm" | "md"

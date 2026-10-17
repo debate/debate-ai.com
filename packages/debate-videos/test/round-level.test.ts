@@ -4,7 +4,7 @@ import {
   getRoundSortKey,
   parseRoundLevel,
   standardizeRoundLevel,
-} from "../src/components/video-card/round-level";
+} from "../src/components/videos/video-card/round-level";
 
 describe("standardizeRoundLevel", () => {
   it.each([

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { buildEmbedUrl, describePlayerError, watchUrl } from "../src/components/video-player/youtubeEmbed";
+import { buildEmbedUrl, describePlayerError, watchUrl } from "../src/components/videos/video-player/youtubeEmbed";
 
 /** Stand in for a browser so `buildEmbedUrl` can read an origin. */
 function withOrigin(origin: string) {

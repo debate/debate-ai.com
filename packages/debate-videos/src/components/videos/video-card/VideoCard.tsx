@@ -6,14 +6,14 @@
 "use client"
 
 import { memo } from "react"
-import { Card } from "../../ui/primitives/card"
-import { GlowingEffect } from "../../ui/effects/glowing-effect"
-import { TooltipProvider } from "../../ui/primitives/tooltip"
-import { useVideoPlayerStore } from "../../state/videoPlayerStore"
+import { Card } from "../../../ui/primitives/card"
+import { GlowingEffect } from "../../../ui/effects/glowing-effect"
+import { TooltipProvider } from "../../../ui/primitives/tooltip"
+import { useVideoPlayerStore } from "../../../state/videoPlayerStore"
 import { getYearTopic } from "./videoCardUtils"
 import { VideoCardThumbnail } from "./VideoCardThumbnail"
 import { VideoCardActions } from "./VideoCardActions"
-import type { TopicType, VideoType } from "../../types/videos"
+import type { TopicType, VideoType } from "../../../types/videos"
 
 /** Props for the {@link VideoCard} component. */
 export interface VideoCardProps {

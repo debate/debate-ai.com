@@ -9,7 +9,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../ui/primitives/select"
+} from "../../../ui/primitives/select"
 import { formatSeasonLabel } from "@debate/data-sync/src/videos/video-rows"
 
 /** Props for the {@link SeasonDropdown} component. */

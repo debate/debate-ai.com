@@ -44,7 +44,7 @@ vi.mock("grab-url", () => ({
 }));
 
 const { VideoWatchPage } = await import("../src/panels/watch/VideoWatchPage")
-const { PersistentVideoPlayer } = await import("../src/components/video-player/PersistentVideoPlayer")
+const { PersistentVideoPlayer } = await import("../src/components/videos/video-player/PersistentVideoPlayer")
 const { useVideoPlayerStore } = await import("../src/state/videoPlayerStore")
 import type { VideoType } from "../src/types/videos"
 

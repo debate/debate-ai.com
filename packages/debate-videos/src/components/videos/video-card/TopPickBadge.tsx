@@ -6,10 +6,10 @@
 "use client"
 
 import * as React from "react"
-import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
-import { getTopPickBadgeInfo, type TopPickBadgeInfo } from "../../lib/topPickBadges"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../../../ui/primitives/tooltip"
+import { getTopPickBadgeInfo, type TopPickBadgeInfo } from "../../../lib/topPickBadges"
 import { getTournamentLogo } from "./tournamentLogos"
-import { cn } from "../../ui/lib/utils"
+import { cn } from "../../../ui/lib/utils"
 
 export interface TopPickBadgeProps {
   /** YouTube video ID used for badge lookup. */

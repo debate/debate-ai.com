@@ -38,15 +38,15 @@ import { WatchTranscriptPanel } from "./WatchTranscriptPanel"
 import { WatchDocumentPanel } from "./WatchDocumentPanel"
 import { WatchAnalysisPanel, type LinkedVideo } from "./WatchAnalysisPanel"
 import { WatchRoundPanel, type SpeechDetectionControl, type SpeechFocusRequest } from "./WatchRoundPanel"
-import { buildRoundSpeeches, type RoundSpeech } from "../../lib/round-speeches"
-import type { RoundContext } from "../../lib/speech-outcomes"
+import { buildRoundSpeeches, type RoundSpeech } from "../../../lib/round-speeches"
+import type { RoundContext } from "../../../lib/speech-outcomes"
 import {
   orderDocuments,
   VIDEO_DOCUMENT_LABELS,
   type VideoDocument,
-} from "../../lib/video-documents"
+} from "../../../lib/video-documents"
 import type { TranscriptSnippet } from "../transcript/transcriptUtils"
-import { formatCount } from "../category-gallery/format-count"
+import { formatCount } from "../../category-gallery/format-count"
 
 /** A host-supplied tab: its label in the strip and what it shows when open. */
 export interface WatchSideTab {
