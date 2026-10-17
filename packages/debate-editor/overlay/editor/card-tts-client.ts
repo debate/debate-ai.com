@@ -16,7 +16,7 @@
  * @module editor/card-tts-client
  */
 
-import { kokoroInBrowserSupported, streamKokoroSpeech } from './kokoro-browser-tts.js';
+import { kokoroInBrowserSupported, loadKokoro, streamKokoroSpeech } from './kokoro-browser-tts.js';
 
 export type ModelVoiceProvider = 'kokoro' | 'deepgram';
 
@@ -100,6 +100,16 @@ async function startStream(stream: AsyncIterable<Blob>, signal?: AbortSignal): P
       }
     },
   };
+}
+
+/**
+ * Starts downloading the in-browser Kokoro model for a Kokoro voice, so the
+ * first Read aloud plays without waiting on the ~90 MB download. A failed
+ * download is only logged; the read itself retries it and falls back.
+ */
+export function preloadModelVoice(voice: ModelVoice, supported: () => boolean = kokoroInBrowserSupported): void {
+  if (voice.provider !== 'kokoro' || !supported()) return;
+  loadKokoro().catch((error: unknown) => console.warn('[read aloud] Kokoro preload failed.', error));
 }
 
 /** Speech audio for `text` in `voice`, or null when no model could give it (see the module doc). */
