@@ -40,6 +40,11 @@ export function isDocsPath(pathname: string | null | undefined): boolean {
   return pathname === "/docs" || !!pathname?.startsWith("/docs/")
 }
 
+/** Whether a path is the mini player window's page, which renders without the app's chrome. */
+export function isMiniPlayerPath(pathname: string | null | undefined): boolean {
+  return !!pathname?.startsWith("/videos/mini/")
+}
+
 export interface AnchorNavigation {
   /** The anchor's resolved `href`, as the DOM reports it (absolute). */
   href: string | null | undefined

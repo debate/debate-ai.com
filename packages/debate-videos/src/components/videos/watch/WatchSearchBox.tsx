@@ -13,8 +13,8 @@
 
 import { useEffect, useState, type FormEvent } from "react"
 import { Search, X } from "lucide-react"
-import { Input } from "../../ui/primitives/input"
-import { cn } from "../../ui/lib/utils"
+import { Input } from "../../../ui/primitives/input"
+import { cn } from "../../../ui/lib/utils"
 
 /** Props for {@link WatchSearchBox}. */
 export interface WatchSearchBoxProps {

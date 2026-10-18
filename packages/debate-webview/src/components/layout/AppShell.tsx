@@ -31,7 +31,7 @@ import { PlanLimitDialog } from "../pricing/PlanLimitDialog"
 import { OwnAiKeyDialog } from "../pricing/OwnAiKeyDialog"
 import { ServiceWorkerRegistrar } from "./ServiceWorkerRegistrar"
 import { useIsFramedDocument } from "../../lib/layout/use-framed-document"
-import { isDocsPath } from "../../lib/layout/frame-navigation"
+import { isDocsPath, isMiniPlayerPath } from "../../lib/layout/frame-navigation"
 import { MixpanelProvider } from "../analytics/MixpanelProvider"
 import { ChromeErrorBoundary } from "../../lib/ui/layout/chrome-error-boundary"
 import { Toaster } from "sonner"
@@ -55,6 +55,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   // stylesheet. They get the app's sidebar beside that (`DocsAppChrome`), but
   // none of the rest of the shell: no player, no floating dock.
   if (isDocsPath(pathname)) return <DocsAppChrome>{children}</DocsAppChrome>
+
+  // The mini player window (`/videos/mini/<id>`, from the watch page's "Pop
+  // out mini player") is a whole window for one small video: no dock, no
+  // sidebar, and above all no floating player — it would be a second embed.
+  if (isMiniPlayerPath(pathname)) return <>{children}</>
 
   if (embedded) {
     return (

@@ -22,3 +22,7 @@ It has its **own CI**: `.github/workflows/native-wrapper-ci.yml` and
   not in the web layer. Looking for it in the JS is the usual wrong turn.
 - Release signing and per-OS packaging differ per platform; a green build on one
   OS says nothing about the others.
+- **A second window exists.** `src-tauri/src/mini_player.rs` opens a
+  `mini-player` window (always-on-top capable). Both capability files list it
+  in `windows`; a new permission the mini window needs goes there too, and any
+  `on_window_event` handler written for `main` does not cover it.

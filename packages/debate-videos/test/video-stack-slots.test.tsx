@@ -15,7 +15,7 @@ import { describe, it, expect, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createElement } from "react";
 import type { VideoType } from "../src/types/videos";
-import { buildVideoSlots, collectStackKeys, stackKeyOf } from "../src/components/video-grid/video-stacks";
+import { buildVideoSlots, collectStackKeys, stackKeyOf } from "../src/components/videos/video-grid/video-stacks";
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: () => {} }),
@@ -23,7 +23,7 @@ vi.mock("next/navigation", () => ({
   usePathname: () => "/videos",
 }));
 
-const { VideoListRows } = await import("../src/components/video-grid/VideoListRows");
+const { VideoListRows } = await import("../src/components/videos/video-grid/VideoListRows");
 
 /** Builds a video tuple carrying a stack key at index 18. */
 function video(id: string, title: string, stackKey?: string, position = 0): VideoType {

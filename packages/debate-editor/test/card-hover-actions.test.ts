@@ -199,12 +199,13 @@ describe("card hover actions plugin", () => {
   function mount(
     runAi = vi.fn(async () => "A short summary."),
     fetchVoice?: Parameters<typeof createCardHoverActionsPlugin>[0]["fetchVoice"],
+    preloadVoice?: Parameters<typeof createCardHoverActionsPlugin>[0]["preloadVoice"],
   ) {
     const doc = schema.node("doc", null, [card()]);
     const place = document.createElement("div");
     document.body.appendChild(place);
     view = new EditorView(place, {
-      state: EditorState.create({ doc, plugins: [createCardHoverActionsPlugin({ runAi, fetchVoice })] }),
+      state: EditorState.create({ doc, plugins: [createCardHoverActionsPlugin({ runAi, fetchVoice, preloadVoice })] }),
     });
     return { view, runAi };
   }
@@ -308,6 +309,16 @@ describe("card hover actions plugin", () => {
     await vi.waitFor(() => expect(speakBtn.getAttribute("aria-pressed")).toBe("false"));
     expect(played).toEqual(["blob:1", "blob:2"]);
     vi.unstubAllGlobals();
+  });
+
+  it("starts downloading the Kokoro voice on the first card hover, once", () => {
+    const preloadVoice = vi.fn();
+    const { view } = mount(undefined, vi.fn(async () => null), preloadVoice);
+    const cardEl = view.dom.querySelector(".pmd-card")!;
+    hover(cardEl);
+    hover(cardEl);
+    expect(preloadVoice).toHaveBeenCalledTimes(1);
+    expect(preloadVoice).toHaveBeenCalledWith({ provider: "kokoro", voice: "af_heart" });
   });
 
   it("removes its elements when the view is destroyed", () => {

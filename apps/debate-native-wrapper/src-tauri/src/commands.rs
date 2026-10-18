@@ -11,16 +11,20 @@ pub fn get_last_selected_text(state: State<AppSelectionState>) -> String {
 
 #[tauri::command]
 pub fn show_main_window(app: tauri::AppHandle) {
+    #[cfg(desktop)]
+    crate::background::show_main(&app);
+    #[cfg(mobile)]
     if let Some(window) = tauri::Manager::get_webview_window(&app, "main") {
         let _ = window.show();
-        #[cfg(desktop)]
-        let _ = window.unminimize();
         let _ = window.set_focus();
     }
 }
 
 #[tauri::command]
 pub fn hide_to_tray(app: tauri::AppHandle) {
+    #[cfg(desktop)]
+    crate::background::hide_main(&app);
+    #[cfg(mobile)]
     if let Some(window) = tauri::Manager::get_webview_window(&app, "main") {
         let _ = window.hide();
     }

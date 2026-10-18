@@ -20,7 +20,9 @@
  *   (`card-tts-client.ts` in production), playing its clips one after
  *   another as they arrive, and falls back to the browser's `speechSynthesis` when the
  *   reader picked "Browser built-in", no voice is injected, or the model
- *   gives no audio (QwkSearch's guest limit, an error). It reads the tag,
+ *   gives no audio (QwkSearch's guest limit, an error). The first card hover
+ *   starts downloading the chosen voice (`preloadVoice`), so Kokoro is
+ *   usually ready by the first click. It reads the tag,
  *   then the author's last name and the year (two digits, nothing more
  *   of the citation line), then the card's highlighted text — what a
  *   debater reads in round — or its underlined text when nothing is
@@ -57,6 +59,8 @@ export interface CardHoverActionsOptions {
    * only and the settings show no voice list.
    */
   fetchVoice?: (text: string, voice: ModelVoice, signal: AbortSignal) => Promise<SpeechAudio | null>;
+  /** Starts downloading what `voice` needs (the in-browser Kokoro model) ahead of the first read. */
+  preloadVoice?: (voice: ModelVoice) => void;
 }
 
 /** The parts of a card the actions read, as plain text. */
@@ -305,6 +309,7 @@ class CardHoverActionsView {
   private requestId = 0;
   private panelText = '';
   private speaking = false;
+  private voicePreloaded = false;
 
   constructor(private view: EditorView, private readonly options: CardHoverActionsOptions) {
     ensureStyles();
@@ -476,6 +481,10 @@ class CardHoverActionsView {
   };
 
   private showBar(card: HTMLElement): void {
+    if (this.speakBtn && !this.voicePreloaded) {
+      this.voicePreloaded = true;
+      this.preloadVoice();
+    }
     this.cardEl = card;
     this.bar.setAttribute('data-open', '');
     this.positionBar();
@@ -603,6 +612,13 @@ class CardHoverActionsView {
     } catch {
       // Storage blocked: the choice still holds for this page.
     }
+    this.preloadVoice();
+  }
+
+  /** Downloads the chosen model voice ahead of the first read. */
+  private preloadVoice(): void {
+    const choice = readVoiceChoice(this.voiceId);
+    if (choice !== 'browser') this.options.preloadVoice?.(choice);
   }
 
   private toggleSpeak(): void {

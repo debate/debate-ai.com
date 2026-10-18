@@ -60,33 +60,33 @@ import { CommentSection } from "@debate/comments"
 import { SpeechStartsDialog, type SpeechDetectionControl } from "@debate/timer"
 import { formatCount } from "../../components/category-gallery/format-count"
 
-import { WatchToolbar } from "../../components/watch/WatchToolbar"
-import { WatchSidePanel, type WatchSideTab } from "../../components/watch/WatchSidePanel"
-import type { LinkedVideo } from "../../components/watch/WatchAnalysisPanel"
-import { VideoListRows } from "../../components/video-grid/VideoListRows"
-import { WatchQueuePanel } from "../../components/watch/WatchQueuePanel"
-import { WatchSearchBox } from "../../components/watch/WatchSearchBox"
-import { WatchStackPlaylist } from "../../components/watch/WatchStackPlaylist"
-import { WatchSpeechTimeline } from "../../components/watch/WatchSpeechTimeline"
-import { WatchTeamStats } from "../../components/watch/WatchTeamStats"
-import { WatchRankingsPrediction } from "../../components/watch/WatchRankingsPrediction"
-import type { SpeechFocusRequest } from "../../components/watch/WatchRoundPanel"
-import { useDocumentPictureInPicture } from "../../components/video-player/useDocumentPictureInPicture"
+import { WatchToolbar } from "../../components/videos/watch/WatchToolbar"
+import { WatchSidePanel, type WatchSideTab } from "../../components/videos/watch/WatchSidePanel"
+import type { LinkedVideo } from "../../components/videos/watch/WatchAnalysisPanel"
+import { VideoListRows } from "../../components/videos/video-grid/VideoListRows"
+import { WatchQueuePanel } from "../../components/videos/watch/WatchQueuePanel"
+import { WatchSearchBox } from "../../components/videos/watch/WatchSearchBox"
+import { WatchStackPlaylist } from "../../components/videos/watch/WatchStackPlaylist"
+import { WatchSpeechTimeline } from "../../components/videos/watch/WatchSpeechTimeline"
+import { WatchTeamStats } from "../../components/videos/watch/WatchTeamStats"
+import { WatchRankingsPrediction } from "../../components/videos/watch/WatchRankingsPrediction"
+import type { SpeechFocusRequest } from "../../components/videos/watch/WatchRoundPanel"
+import { useDocumentPictureInPicture } from "../../components/videos/video-player/useDocumentPictureInPicture"
 import {
   buildEmbedUrl,
   describePlayerError,
   startListening,
   watchUrl,
-} from "../../components/video-player/youtubeEmbed"
-import { useTranscript } from "../../components/transcript/useTranscript"
-import { groupIntoSentences } from "../../components/transcript/transcriptUtils"
+} from "../../components/videos/video-player/youtubeEmbed"
+import { useTranscript } from "../../components/videos/transcript/useTranscript"
+import { groupIntoSentences } from "../../components/videos/transcript/transcriptUtils"
 import {
   DEBATE_STYLE_LABELS,
   TOURNAMENT_COLORS,
   getRoundBadgeColor,
   formatVideoDate,
   getTournamentLogo,
-} from "../../components/video-card/videoCardUtils"
+} from "../../components/videos/video-card/videoCardUtils"
 import { cn } from "../../ui/lib/utils"
 import { LecturesSidebarShell } from "../LecturesSidebarShell"
 import { useVideoState } from "../../hooks/useVideoState"
@@ -105,6 +105,7 @@ import {
 } from "../../state/videoDurations"
 import { videoWatchHref } from "../../lib/video-slug"
 import { videoRouteHref } from "../../lib/video-route"
+import { miniPlayerHref, openMiniPlayerWindow } from "../../lib/mini-player-window"
 import type { VideoDocument } from "../../lib/video-documents"
 import {
   captionText,
@@ -715,6 +716,23 @@ export function VideoWatchPage({
       .catch(() => undefined)
   }, [])
 
+  // The mini player window takes over playback from here, so this embed
+  // pauses first — two copies of one round talking over each other is the
+  // thing the one-player rule exists to prevent. The window opens at the
+  // second this one had reached.
+  const handleOpenMiniWindow = useCallback(() => {
+    sendYouTubeCommand("pauseVideo")
+    setIsPlaying(false)
+    recordWatchProgress({
+      videoId,
+      positionSeconds: currentTimeRef.current,
+      durationSeconds: durationRef.current,
+      title,
+      flush: true,
+    })
+    void openMiniPlayerWindow(miniPlayerHref(videoId, currentTimeRef.current))
+  }, [setIsPlaying, videoId, title])
+
   // Leaving for the library hands playback to the floating player; the
   // unmount effect above carries the position across.
   const handlePopOut = useCallback(() => router.push("/videos"), [router])
@@ -912,6 +930,7 @@ export function VideoWatchPage({
                 onToggleFavorite={() => viewActions.toggleFavorite(videoId)}
                 onAddToQueue={() => addToQueue(videoId, title, videoMeta)}
                 onCopyLink={handleCopyLink}
+                onOpenMiniWindow={handleOpenMiniWindow}
                 onPopOut={handlePopOut}
                 onClose={handleClose}
               />

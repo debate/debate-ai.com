@@ -18,10 +18,10 @@
 "use client"
 
 import { PictureInPicture2 } from "lucide-react"
-import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
-import { cn } from "../../ui/lib/utils"
-import { useVideoPlayerStore, type VideoMeta } from "../../state/videoPlayerStore"
-import type { VideoType } from "../../types/videos"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../../../ui/primitives/tooltip"
+import { cn } from "../../../ui/lib/utils"
+import { useVideoPlayerStore, type VideoMeta } from "../../../state/videoPlayerStore"
+import type { VideoType } from "../../../types/videos"
 
 interface PopoutPlayerButtonProps {
   video: VideoType

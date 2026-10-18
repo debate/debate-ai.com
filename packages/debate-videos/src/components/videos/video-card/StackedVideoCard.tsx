@@ -11,7 +11,7 @@
 "use client"
 
 import { useState } from "react"
-import type { TopicType, VideoType } from "../../types/videos"
+import type { TopicType, VideoType } from "../../../types/videos"
 import { VideoCard } from "./VideoCard"
 import { StackNav, stackMemberLabel } from "./StackNav"
 

@@ -12,7 +12,7 @@ import { useCallback, useState } from "react"
 import { X } from "lucide-react"
 import { useVideoFeed } from "../../../hooks/useVideoFeed"
 import { useVideoState } from "../../../hooks/useVideoState"
-import { VideoGrid } from "../../../components/video-grid/VideoGrid"
+import { VideoGrid } from "../../../components/videos/video-grid/VideoGrid"
 import { Button } from "../../../ui/primitives/button"
 import type { ProfileVideoSearch } from "./rankingProfileHelpers"
 
