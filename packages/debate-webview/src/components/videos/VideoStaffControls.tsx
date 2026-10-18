@@ -74,6 +74,7 @@ export function VideoStaffControls({ videoId }: { videoId: string }) {
         title: video.title,
         channel: video.channel,
         tournament: video.tournament,
+        style: video.style,
       });
     }
   };

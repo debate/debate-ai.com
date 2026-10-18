@@ -62,6 +62,11 @@
 	// (lib/round-recordings/storage.ts). Private: files stream back only to
 	// the account that uploaded them, through /api/round-recordings/file.
 	// Create it once with `wrangler r2 bucket create debate-ai-round-recordings`.
+	//
+	// SPEECH_AUDIO holds each round's per-speech MP3 clips, cut in an editor's
+	// browser by the transcript dialog's "Split speeches from audio" button
+	// (lib/videos/speech-audio-store.ts). No `bucket_name`: wrangler
+	// provisions the bucket on the first deploy.
 	"r2_buckets": [
 		{
 			"binding": "DB_BACKUPS",
@@ -70,6 +75,9 @@
 		{
 			"binding": "ROUND_RECORDINGS",
 			"bucket_name": "debate-ai-round-recordings"
+		},
+		{
+			"binding": "SPEECH_AUDIO"
 		}
 	],
 	// `.sql.7z` copies of those backups (one KV value each, 25 MiB max).
@@ -123,6 +131,9 @@
 				{
 					"binding": "ROUND_RECORDINGS",
 					"bucket_name": "debate-ai-round-recordings"
+				},
+				{
+					"binding": "SPEECH_AUDIO"
 				}
 			],
 			"kv_namespaces": [

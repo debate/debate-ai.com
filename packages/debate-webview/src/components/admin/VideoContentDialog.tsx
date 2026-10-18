@@ -15,6 +15,7 @@ import {
 } from "@debate/videos";
 import { formatCount } from "@debate/videos/components/category-gallery/format-count";
 import { Button } from "../../lib/ui/primitives/button";
+import { SpeechAudioSplitter, type SpeechAudioSplit } from "./SpeechAudioSplitter";
 import { Badge } from "../../lib/ui/primitives/badge";
 import { Input } from "../../lib/ui/primitives/input";
 import { Label } from "../../lib/ui/primitives/label";
@@ -60,6 +61,8 @@ export interface ContentDialogVideo {
   title: string;
   channel: string;
   tournament: string | null;
+  /** `videos.style`, so the speech splitter can preselect the format. */
+  style?: number | null;
 }
 
 interface VideoContentDialogProps {
@@ -256,31 +259,56 @@ export function VideoContentDialog({ video, onOpenChange, onSaved }: VideoConten
   const patchDocument = (kind: string, patch: Partial<VideoDocument>) =>
     setDocuments((current) => ({ ...current, [kind]: { ...current[kind], ...patch } }));
 
+  /** Writes one document and reports it; throws on failure. */
+  const persistDocument = async (document: VideoDocument): Promise<string> => {
+    const res = await fetch(`/api/admin/videos/library/${document.videoId}/documents`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        kind: document.kind,
+        title: document.title ?? "",
+        body: document.body,
+        author: document.author ?? "editor",
+        model: document.model ?? "",
+      }),
+    });
+    const body = await readJsonResponse<{ document?: VideoDocument }>(res, "Save failed");
+    patchDocument(document.kind, body.document ?? {});
+    return `Saved the ${VIDEO_DOCUMENT_LABELS[document.kind].label.toLowerCase()} (${formatCount(body.document?.wordCount ?? 0)} words).`;
+  };
+
   const handleSaveDocument = async () => {
     if (!videoId || !activeDocument) return;
     setIsSaving(true);
     setError(null);
     try {
-      const res = await fetch(`/api/admin/videos/library/${videoId}/documents`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          kind: activeDocument.kind,
-          title: activeDocument.title ?? "",
-          body: activeDocument.body,
-          author: activeDocument.author ?? "editor",
-          model: activeDocument.model ?? "",
-        }),
-      });
-      const body = await readJsonResponse<{ document?: VideoDocument }>(res, "Save failed");
-      patchDocument(activeDocument.kind, body.document ?? {});
-      const message = `Saved the ${VIDEO_DOCUMENT_LABELS[activeDocument.kind].label.toLowerCase()} (${formatCount(body.document?.wordCount ?? 0)} words).`;
+      const message = await persistDocument(activeDocument);
       setNotice(message);
       onSaved?.(message);
     } catch (err) {
       setError((err as Error).message);
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  /**
+   * "Split speeches from audio": the splitter found every speech's start and
+   * end; they replace the transcript box and are saved straight away, so the
+   * watch page's speech tabs and timeline have them.
+   */
+  const handleAudioSplit = async (split: SpeechAudioSplit) => {
+    if (!activeDocument) return;
+    const document = { ...activeDocument, body: split.markdown, author: split.author, model: "" };
+    patchDocument(document.kind, { body: split.markdown, author: split.author, model: "" });
+    setError(null);
+    try {
+      const saved = await persistDocument(document);
+      const message = `${split.summary} ${saved}`;
+      setNotice(message);
+      onSaved?.(message);
+    } catch (err) {
+      setError(`The speeches are in the box but were not saved: ${(err as Error).message}`);
     }
   };
 
@@ -603,6 +631,19 @@ export function VideoContentDialog({ video, onOpenChange, onSaved }: VideoConten
                   {sections.length > 0 && ` · ${sections.filter((s) => s.heading).length} speeches`}
                 </span>
               </div>
+              {activeDocument.kind === "transcript" && videoId && (
+                <SpeechAudioSplitter
+                  videoId={videoId}
+                  style={video?.style}
+                  audioService={!!audioStatus?.audioService}
+                  disabled={isSaving || isImporting || isTranscribing}
+                  confirmReplace={() =>
+                    !activeDocument.body.trim() ||
+                    window.confirm("Replace what's in the box with the speeches found in the audio?")
+                  }
+                  onSplit={handleAudioSplit}
+                />
+              )}
               <textarea
                 id="document-body"
                 value={activeDocument.body}
