@@ -66,7 +66,7 @@ import {
   type FeatureEntry,
 } from "../../feature-catalog";
 import { README_BADGE_ROWS, README_BANNER, README_SHOWCASE, README_VIDEO } from "./readme-media";
-import { LATEST_VIDEOS, POPULAR_CARDS_WEEK } from "./recent-media";
+import { LATEST_VIDEOS, POPULAR_CARDS_WEEK, type RecentVideo, type PopularCard } from "./recent-media";
 import {
   CARDS_CAPABILITIES,
   CARDS_DOIS,
@@ -216,10 +216,34 @@ export interface FeaturesPanelProps {
 export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPanelProps) {
   const [query, setQuery] = useState("");
   const [hueOffset, setHueOffset] = useState(0);
+  const [latestVideos, setLatestVideos] = useState<RecentVideo[]>(LATEST_VIDEOS);
+  const [popularCards, setPopularCards] = useState<PopularCard[]>(POPULAR_CARDS_WEEK);
 
   useEffect(() => {
-    // Randomize card hover colours on each page load so every visit gets a unique, vibrant palette
     setHueOffset(Math.floor(Math.random() * 360));
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    const fetchHomepage = async () => {
+      const [videosRes, cardsRes] = await Promise.allSettled([
+        fetch("/api/homepage/latest-videos?limit=10"),
+        fetch("/api/homepage/popular-cards?limit=10"),
+      ]);
+      if (cancelled) return;
+      if (videosRes.status === "fulfilled") {
+        const data = await videosRes.value.json();
+        if (Array.isArray(data) && data.length > 0) setLatestVideos(data);
+      }
+      if (cardsRes.status === "fulfilled") {
+        const data = await cardsRes.value.json();
+        if (Array.isArray(data) && data.length > 0) setPopularCards(data);
+      }
+    };
+    fetchHomepage();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const sections = useMemo(
@@ -347,7 +371,7 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
                 Latest videos
               </h2>
               <Marquee durationSeconds={44}>
-                {LATEST_VIDEOS.map((video) => (
+                {latestVideos.map((video) => (
                   <a
                     key={video.id}
                     href={video.watchUrl}
@@ -387,7 +411,7 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
                 Popular cards this week
               </h2>
               <Marquee durationSeconds={44}>
-                {POPULAR_CARDS_WEEK.map((card) => (
+                {popularCards.map((card) => (
                   <a
                     key={card.id}
                     href={card.href}
