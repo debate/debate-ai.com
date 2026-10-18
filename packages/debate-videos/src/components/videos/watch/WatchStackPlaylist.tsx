@@ -18,9 +18,9 @@
 
 import Link from "next/link"
 import { ListVideo } from "lucide-react"
-import { cn } from "../../ui/lib/utils"
-import { videoRouteHref, videoRouteParts, videoRouteSegments } from "../../lib/video-route"
-import type { VideoType } from "../../types/videos"
+import { cn } from "../../../ui/lib/utils"
+import { videoRouteHref, videoRouteParts, videoRouteSegments } from "../../../lib/video-route"
+import type { VideoType } from "../../../types/videos"
 
 /**
  * What a stack member is to its round: `"Round"` for the round itself, else

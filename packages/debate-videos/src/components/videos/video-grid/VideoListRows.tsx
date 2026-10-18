@@ -26,10 +26,10 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { ChevronUp, ChevronDown } from "lucide-react"
-import { cn } from "../../ui/lib/utils"
-import { TooltipProvider } from "../../ui/primitives/tooltip"
-import { useWatchHistory } from "../../hooks/useWatchHistory"
-import { useVideoTeamRankings } from "../../hooks/useVideoTeamRankings"
+import { cn } from "../../../ui/lib/utils"
+import { TooltipProvider } from "../../../ui/primitives/tooltip"
+import { useWatchHistory } from "../../../hooks/useWatchHistory"
+import { useVideoTeamRankings } from "../../../hooks/useVideoTeamRankings"
 import { ColumnResizeHandle } from "./ColumnResizeHandle"
 import { useResizableColumns } from "./useResizableColumns"
 import { buildVideoSlots, type VideoSlot, type VideoStackMap } from "./video-stacks"
@@ -44,7 +44,7 @@ import {
 } from "./video-tree"
 import { VideoTreeRows, type VideoTreeRowContext } from "./VideoTreeRows"
 import { WindowedChunk } from "./WindowedChunk"
-import type { VideoType } from "../../types/videos"
+import type { VideoType } from "../../../types/videos"
 
 export { cleanTournamentName } from "./video-tree"
 

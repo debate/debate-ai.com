@@ -3,7 +3,8 @@
   "identifier": "default",
   "description": "Baseline permissions for the wrapper's own (non-remote) window content and Rust side.",
   "windows": [
-    "main"
+    "main",
+    "mini-player"
   ],
   "permissions": [
     "core:default",
@@ -17,6 +18,7 @@
     "deep-link:default",
     "allow-system-info",
     "allow-quick-launch",
-    "allow-app-source"
+    "allow-app-source",
+    "allow-mini-player"
   ]
 }

@@ -18,7 +18,7 @@
 
 import { Gauge } from "lucide-react"
 import { PlayerIconButton, type PlayerIconButtonSize } from "./PlayerIconButton"
-import { useVideoPlayerStore, sendYouTubeCommand } from "../../state/videoPlayerStore"
+import { useVideoPlayerStore, sendYouTubeCommand } from "../../../state/videoPlayerStore"
 
 /** Roughly the slowest rate at which a spread is still intelligible. */
 export const SLOW_SPREAD_RATE = 0.65

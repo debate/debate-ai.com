@@ -5,8 +5,8 @@
  */
 
 import { useMemo } from "react"
-import type { VideoFacets } from "../../types/videos"
-import { currentSeasonYear } from "../../panels/leaderboard/leaderboardUtils"
+import type { VideoFacets } from "../../../types/videos"
+import { currentSeasonYear } from "../../../panels/leaderboard/leaderboardUtils"
 
 /** Parameters accepted by the {@link useVideoSearchCounts} hook. */
 interface UseVideoSearchCountsParams {

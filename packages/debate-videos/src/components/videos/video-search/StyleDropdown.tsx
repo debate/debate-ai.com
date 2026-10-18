@@ -9,9 +9,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../ui/primitives/select"
-import { DEBATE_STYLE_LABELS } from "../../types/videos"
-import type { DebateStyle } from "../../types/videos"
+} from "../../../ui/primitives/select"
+import { DEBATE_STYLE_LABELS } from "../../../types/videos"
+import type { DebateStyle } from "../../../types/videos"
 import { STYLE_COLORS } from "../video-card/videoCardUtils"
 
 /** Props for the {@link StyleDropdown} component. */

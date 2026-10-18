@@ -7,15 +7,15 @@
 
 import { useState, useEffect } from "react"
 import { Play, Volume2 } from "lucide-react"
-import { cn } from "../../ui/lib/utils"
+import { cn } from "../../../ui/lib/utils"
 import { TOURNAMENT_COLORS, getRoundBadgeColor, TOC_TOURNAMENT_IMAGE, isTOCTournament } from "./videoCardUtils"
 import { TopPickBadge } from "./TopPickBadge"
 import { WatchProgressBadge, WatchProgressBar } from "./WatchProgressBadge"
-import { useWatchHistoryEntry } from "../../hooks/useWatchHistory"
-import { videoRouteHref } from "../../lib/video-route"
-import { videoWatchHref } from "../../lib/video-slug"
+import { useWatchHistoryEntry } from "../../../hooks/useWatchHistory"
+import { videoRouteHref } from "../../../lib/video-route"
+import { videoWatchHref } from "../../../lib/video-slug"
 import { getTournamentLogo } from "./tournamentLogos"
-import type { VideoType } from "../../types/videos"
+import type { VideoType } from "../../../types/videos"
 
 /** Shape of the video metadata forwarded to the player store on play. */
 interface VideoMeta {

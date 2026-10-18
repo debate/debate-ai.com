@@ -18,7 +18,7 @@ vi.mock("next/link", () => ({
 }));
 
 const { predictWatchMatchup, PREDICTION_SIM_ROUNDS } = await import("../src/lib/watch-matchup-prediction");
-const { WatchMatchupPrediction } = await import("../src/components/watch/WatchMatchupPrediction");
+const { WatchMatchupPrediction } = await import("../src/components/videos/watch/WatchMatchupPrediction");
 
 function entry(rank: number, school: string, name: string, rating: number, aff = 50, neg = 50): RankingEntry {
   return {
@@ -126,7 +126,7 @@ describe("WatchTeamStats", () => {
     }));
     vi.doMock("../src/hooks/useVideoTeamRankings", () => ({ isRankedSeasonRound: () => true }));
     vi.doMock("../src/panels/leaderboard/profile/TeamRadarChart", () => ({ TeamRadarChart: () => null }));
-    const { WatchTeamStats } = await import("../src/components/watch/WatchTeamStats");
+    const { WatchTeamStats } = await import("../src/components/videos/watch/WatchTeamStats");
 
     const both = renderToStaticMarkup(createElement(WatchTeamStats, { video: round }));
     expect(both).toContain("Team rankings");

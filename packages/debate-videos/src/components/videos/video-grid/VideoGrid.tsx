@@ -16,9 +16,9 @@
 "use client"
 
 import React, { memo } from "react"
-import type { VideoType, TopicType } from "../../types/videos"
+import type { VideoType, TopicType } from "../../../types/videos"
 import { StackedVideoCard } from "../video-card/StackedVideoCard"
-import { HoverCardWrapper } from "../../ui/primitives/hover-card-wrapper"
+import { HoverCardWrapper } from "../../../ui/primitives/hover-card-wrapper"
 import { buildVideoSlots, type VideoStackMap } from "./video-stacks"
 import { WindowedChunk } from "./WindowedChunk"
 

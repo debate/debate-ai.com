@@ -6,7 +6,7 @@
 "use client"
 
 import { forwardRef, useMemo } from "react"
-import { cn } from "../../ui/lib/utils"
+import { cn } from "../../../ui/lib/utils"
 import { splitOnMatch, type TranscriptSnippet } from "./transcriptUtils"
 
 interface TranscriptLineProps {

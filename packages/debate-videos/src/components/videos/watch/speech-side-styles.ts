@@ -7,7 +7,7 @@
  * @module components/watch/speech-side-styles
  */
 
-import type { SpeechSide } from "../../lib/round-speeches"
+import type { SpeechSide } from "../../../lib/round-speeches"
 
 export const SPEECH_SIDE_STYLES: Record<
   SpeechSide,
