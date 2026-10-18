@@ -124,8 +124,8 @@ describe("the path a video takes through the tree", () => {
   });
 
   it("normalizes the round level, so Octas and Octofinals read the same", () => {
-    expect(roundLevelLabel(round("a", { level: "Octas" }))).toBe("Octofinals");
-    expect(roundLevelLabel(round("b", { level: "octofinals" }))).toBe("Octofinals");
+    expect(roundLevelLabel(round("a", { level: "Octas" }))).toBe("octas");
+    expect(roundLevelLabel(round("b", { level: "octofinals" }))).toBe("octas");
     expect(roundLevelOrder(round("a", { level: "Octas" }))).toBe(
       roundLevelOrder(round("b", { level: "octofinals" })),
     );

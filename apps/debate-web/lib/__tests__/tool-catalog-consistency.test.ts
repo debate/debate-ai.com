@@ -185,8 +185,10 @@ const ROUTES_WITHOUT_A_CATALOG_ENTRY = new Set([
   "/lectures",
   "/practice/glossary",
   "/practice/rankings",
-        "/practice/statistics"
-      ])
+  "/practice/statistics",
+  // The blog: a content page, not a tool.
+  "/blog",
+])
 
 describe("tool catalog route coverage", () => {
   it("covers every /tools entry on /features, except the documented exceptions", () => {

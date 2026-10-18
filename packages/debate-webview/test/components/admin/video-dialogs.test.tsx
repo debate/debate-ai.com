@@ -216,8 +216,8 @@ describe("VideoContentDialog", () => {
     expect(text).toContain("1 speeches");
     expect(text).toContain("1AC — Aff");
     expect((document.getElementById("document-body") as HTMLTextAreaElement).value).toContain("Hello world");
-    // Word-count badge on the Speeches tab and link count on Related videos.
-    expect(button(/Speeches/).textContent).toContain("120");
+    // Word-count badge (in k, like every count) on the Speeches tab and link count on Related videos.
+    expect(button(/Speeches/).textContent).toContain("0.1k");
     expect(button(/Related videos/).textContent).toContain("2");
   });
 
@@ -248,7 +248,7 @@ describe("VideoContentDialog", () => {
 
     const put = calls.find((c) => c.method === "PUT")!;
     expect(put.body).toEqual({ kind: "transcript", title: "Speeches heading", body: "## 1NC — Neg (9:30)\n\nNew words here", author: "editor", model: "" });
-    const message = `Saved the speeches (${(1234).toLocaleString()} words).`;
+    const message = "Saved the speeches (1.2k words).";
     expect(onSaved).toHaveBeenCalledWith(message);
     expect(bodyText()).toContain(message);
     // The returned author "ai" reveals the model field.

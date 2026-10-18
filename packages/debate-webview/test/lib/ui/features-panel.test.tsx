@@ -85,7 +85,8 @@ describe("FeaturesPanel", () => {
     expect(html).toContain("Crowdsourced Annotated Research for Debating Solutions (CARDS)");
     expect(html).toContain("war of warrants");
     for (const point of CARDS_VISION) {
-      expect(html).toContain(point.title);
+      // Static markup escapes "&" as "&amp;".
+      expect(html).toContain(point.title.replace(/&/g, "&amp;"));
     }
   });
 
@@ -204,9 +205,10 @@ describe("cardHueShift", () => {
 describe("FeaturesPanel downloads", () => {
   const html = renderToStaticMarkup(<FeaturesPanel />);
 
-  it("has a Downloads section with the Chrome extension button above the badges", () => {
+  it("has a downloads section with the Chrome extension button above the badges", () => {
+    // The section has no visible "Downloads" heading any more; the marker is
+    // the contract.
     expect(html).toContain('data-testid="downloads"');
-    expect(html).toContain("Downloads");
     expect(html).toContain("noecbaibfhbmpapofcdkgchfifmoinfj");
     expect(html.indexOf('data-testid="downloads"')).toBeLessThan(html.indexOf('data-testid="readme-badges"'));
   });

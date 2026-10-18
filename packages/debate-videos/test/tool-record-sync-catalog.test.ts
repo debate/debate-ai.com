@@ -44,6 +44,11 @@ const SIDEBAR_HREFS = new Set([
   // AI Judge Decision, likewise: out of the Practice tree but still routed,
   // and its saved decisions open there.
   "/practice/judge-decision",
+  // Research Progress and the Leaderboard, likewise: out of the sidebar trees
+  // and now tabs of the Research hub, but their own pages are still routed and
+  // open their saved records.
+  "/coaching/progress",
+  "/coaching/leaderboard",
 ]);
 
 describe("synced tool collections", () => {
