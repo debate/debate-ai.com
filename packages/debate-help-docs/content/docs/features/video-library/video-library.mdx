@@ -48,6 +48,21 @@ category (`/lectures/<category>`). The categories used to be a second,
 expandable section of the sidebar; they now live only on the page
 (`LectureCategoryGridGallery`, rendered by `LecturesVideoGridView`).
 
+## WSD, ACC and Speech
+
+World Schools (**WSD**), **ACC** and **Speech** are not sidebar links. They
+show only on the All Videos page (`/videos`), as a row of cards directly above
+the search box, each opening its collection (`/videos/wsd`, `/videos/acc`,
+`/videos/speech`). The sidebar, the phone's quick-link tiles and the dock's
+menu leave them out (`VIDEO_ALL_VIDEOS_FILTER_LINKS` in
+`sidebar-video-links.ts` is kept apart from `SIDEBAR_VIDEO_LINKS`).
+
+A lecture whose title says WSD or World Schools is filed under WSD, and one
+whose title says ACC or American Congressional under ACC. The abbreviations
+match as whole words, so "accent" is not ACC, and rounds keep their own format
+(`classifyLecture` in `debate-data-sync`; existing lectures were moved by the
+`0004_wsd_acc_lectures.sql` data migration).
+
 ## Merged lecture categories
 
 Topic analysis and topic lectures share one shelf, **Topic Lectures**. Videos

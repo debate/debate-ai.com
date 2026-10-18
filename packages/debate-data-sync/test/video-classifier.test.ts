@@ -55,6 +55,19 @@ describe("classifyLecture", () => {
     );
   });
 
+  it("files World Schools and ACC titles under their own collections", () => {
+    expect(classifyLecture("WSD Rebuttals: Weighing Clash", "")).toBe("WSD");
+    expect(classifyLecture("Intro to World Schools Debate", "")).toBe("WSD");
+    expect(classifyLecture("acc lecture | Speaking in the chamber", "")).toBe("ACC");
+    expect(classifyLecture("American Congressional Debate basics", "")).toBe("ACC");
+  });
+
+  it("does not read ACC inside other words or WSD from the description", () => {
+    expect(classifyLecture("Accent and delivery drills", "")).toBe("Speaking & Delivery");
+    expect(classifyLecture("Access to evidence", "")).not.toBe("ACC");
+    expect(classifyLecture("Writing a 1AC", "a WSD coach explains")).toBe("Affirmative Strategy");
+  });
+
   it("always returns a non-empty category", () => {
     expect(classifyLecture("Some unrelated debate video", "").length).toBeGreaterThan(
       0,

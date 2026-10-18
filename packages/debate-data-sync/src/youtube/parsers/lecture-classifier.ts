@@ -47,6 +47,13 @@ export function classifyLecture(title: string, description: string): string {
   const d = (description || "").toLowerCase();
   const both = t + " " + d;
 
+  // Format collections, decided by the title alone and ahead of every skill
+  // shelf: a "WSD Rebuttals" lecture belongs with the World Schools videos,
+  // not under Speaking & Delivery. Matched as whole words so "accent" or
+  // "access" never lands in ACC.
+  if (/\bWSD\b|\bworld\s*schools?\b/i.test(title)) return "WSD";
+  if (/\bACC\b|\bamerican\s+congressional\b/i.test(title)) return "ACC";
+
   // Topic Lectures
   if (
     /topic\s*(analysis|analyses|lecture|breakdown|overview|discussion|webinar)/i.test(

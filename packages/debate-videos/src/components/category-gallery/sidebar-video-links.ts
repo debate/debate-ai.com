@@ -90,6 +90,14 @@ export const VIDEO_LIBRARY_LINKS: SidebarVideoLink[] = [
   { id: "favorites", href: "/videos/favorites", title: "My Favorites", glyph: Heart },
   { id: "history", href: "/videos/history", title: "Watch History", glyph: History },
   { id: "lectures", href: "/lectures", title: "Lectures", glyph: Presentation },
+];
+
+/** The World Schools, Congressional and Speech collections. They are not
+ *  sidebar destinations: they show only as the row of cards above the search
+ *  box on the All Videos page, so they stay out of
+ *  {@link SIDEBAR_VIDEO_LINKS} (and with it the mobile tiles and the dock's
+ *  menu, which both derive from that list). */
+export const VIDEO_ALL_VIDEOS_FILTER_LINKS: SidebarVideoLink[] = [
   { id: "wsd", href: "/videos/wsd", title: "WSD", glyph: Globe },
   { id: "acc", href: "/videos/acc", title: "ACC", glyph: Users },
   { id: "speech", href: "/videos/speech", title: "Speech", glyph: Mic },

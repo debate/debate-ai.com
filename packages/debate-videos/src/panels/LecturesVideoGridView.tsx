@@ -27,7 +27,7 @@ import { VideoSidebarTree } from "../components/category-gallery/VideoSidebarTre
 import { ToolNavTree } from "../components/category-gallery/ToolNavTree"
 import { GoatSparklesHeading } from "../components/category-gallery/GoatSparklesHeading"
 import { cn } from "../ui/lib/utils";
-import { SIDEBAR_VIDEO_LINKS_BY_ID } from "../components/category-gallery/sidebar-video-links";
+import { VIDEO_ALL_VIDEOS_FILTER_LINKS } from "../components/category-gallery/sidebar-video-links";
 import type { DebateStyle } from "../types/videos"
 import type { VideoViewMode } from "../hooks/useVideoState"
 import { useVideoStacks } from "../hooks/useVideoStacks"
@@ -361,7 +361,20 @@ export function LecturesVideoGridView({
 
         <div ref={videosSectionRef} className="scroll-mt-20" />
 
-        {/* WSD, ACC, Speech cards - shown on the all videos page */}
+          {showLectureGallery && (
+          <nav className="mb-6" aria-label="Lecture categories">
+            <LectureCategoryGridGallery
+              categories={lectureCategories}
+              selectedCategory={selectedCategory}
+            />
+          </nav>
+        )}
+        {/* The Greatest of All-Time collection opens on its own banner. */}
+        {currentCategory === "topPicks" && <GoatSparklesHeading />}
+
+        {/* The WSD, ACC and Speech collections, directly above the search box
+            and only on the All Videos page. They are not sidebar links, so
+            neither the sidebar nor the mobile tiles carry them. */}
         {browsingAllVideos && (
           <div className="mb-6">
             <ul
@@ -370,8 +383,7 @@ export function LecturesVideoGridView({
                 "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5",
               )}
             >
-              {["wsd", "acc", "speech"].map((id) => {
-                const link = SIDEBAR_VIDEO_LINKS_BY_ID[id]
+              {VIDEO_ALL_VIDEOS_FILTER_LINKS.map((link) => {
                 return (
                   <GridItem
                     key={link.id}
@@ -393,17 +405,6 @@ export function LecturesVideoGridView({
             </ul>
           </div>
         )}
-          {showLectureGallery && (
-          <nav className="mb-6" aria-label="Lecture categories">
-            <LectureCategoryGridGallery
-              categories={lectureCategories}
-              selectedCategory={selectedCategory}
-            />
-          </nav>
-        )}
-        {/* The Greatest of All-Time collection opens on its own banner. */}
-        {currentCategory === "topPicks" && <GoatSparklesHeading />}
-
         {/* The search and filter controls, always visible on every
             breakpoint, with the one-click searches drawn from the library
             (popular debate terms and the tournaments with the most rounds)
