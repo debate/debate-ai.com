@@ -274,7 +274,7 @@ describe("DebaterLevelPanel level-up wiring", () => {
     // Not a dead end: the level it just reached is still stated, with its
     // total, under the bar.
     expect(mounted.container.textContent).toContain("Level 2");
-    expect(mounted.container.textContent).toContain("150 XP total");
+    expect(mounted.container.textContent).toContain("0.1k XP total");
   }, TIMEOUT);
 
   it("only reads the awarded state — the cutscene persists nothing of its own", async () => {

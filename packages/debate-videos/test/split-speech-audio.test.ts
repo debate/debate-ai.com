@@ -91,6 +91,12 @@ describe("mp3 frames", () => {
   });
 });
 
+/**
+ * Encoding and decoding ~107 s of real MP3 takes ~1.5 s alone, but well past
+ * Vitest's 5 s default under the full suite with coverage on CI.
+ */
+const DECODE_TIMEOUT = 30_000;
+
 describe("splitSpeechAudio", () => {
   it("finds, names and cuts each speech of a real MP3, decoding it in chunks", async () => {
     const mp3 = encodeRound(SCRIPT);
@@ -113,13 +119,13 @@ describe("splitSpeechAudio", () => {
       const seconds = indexMp3Frames(clip.bytes).durationSeconds;
       expect(Math.abs(seconds - (result.speeches[i].end - result.speeches[i].start))).toBeLessThan(0.2);
     });
-  });
+  }, DECODE_TIMEOUT);
 
   it("returns timing alone when asked", async () => {
     const result = await splitSpeechAudio(encodeRound(SCRIPT), { template: MINI, timingOnly: true });
     expect(result.clips).toEqual([]);
     expect(result.segmentation.speeches).toHaveLength(3);
-  });
+  }, DECODE_TIMEOUT);
 
   it("rejects a file with no audio", async () => {
     await expect(splitSpeechAudio(new TextEncoder().encode("not an mp3 at all"), { template: MINI })).rejects.toThrow();

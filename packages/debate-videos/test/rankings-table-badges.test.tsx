@@ -79,7 +79,7 @@ describe("school logo coverage", () => {
     for (const school of ["Michigan", "Kansas", "Texas", "UC Berkeley"]) {
       expect(hasSchoolLogo(school)).toBe(true);
     }
-    // A school with no logo still renders its name.
-    expect(hasSchoolLogo("College Prep")).toBe(false);
+    // A school with no logo still renders its name. (College Prep got one.)
+    expect(hasSchoolLogo("Nowhere High")).toBe(false);
   });
 });

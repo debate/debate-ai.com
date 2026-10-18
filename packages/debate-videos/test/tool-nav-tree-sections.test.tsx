@@ -77,9 +77,10 @@ describe("ToolNavTree sectionIds", () => {
     // column would be a single collapsed heading.
     const html = render({ sectionIds: [RESEARCH_SECTION_ID] });
 
+    // Last row in Research: "Team Research". (The Leaderboard moved into the
+    // Research hub as a tab.)
     expect(html).toContain("/research/team");
-    // Last row in Research: "Leaderboard".
-    expect(html).toContain("/coaching/leaderboard");
+    expect(html).toContain("Card Search");
   });
 
   it("no longer lists the two dock destinations under Research", () => {

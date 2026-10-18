@@ -36,7 +36,7 @@ const TOOLS_WITHOUT_TOOL_PAGE_HEADER = new Set(["/reason-editor", "/research/doc
 
 const PACKAGE_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..")
 const ROUTES_DIR = join(PACKAGE_ROOT, "src", "routes")
-const APP_DIR = join(PACKAGE_ROOT, "..", "..", "apps", "debate-ai.com", "app")
+const APP_DIR = join(PACKAGE_ROOT, "..", "..", "apps", "debate-web", "app")
 
 /**
  * The app's `page.tsx` for `href` — or, when that page only re-exports a

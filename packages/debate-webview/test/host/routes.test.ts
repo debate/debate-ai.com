@@ -14,8 +14,9 @@ function pagePatterns(dir: string): string[] {
     if (statSync(path).isDirectory()) {
       // `docs` is the help site (`debate-help-docs`): rendered only by the web
       // app, outside the app shell, and always entered with a full page load —
-      // so it has no place in the host's client-side route table.
-      if (name === "api" || name === "docs" || name.startsWith("_")) continue
+      // so it has no place in the host's client-side route table. `blog` is
+      // the same: its posts are `debate-help-docs` content, rendered the same way.
+      if (name === "api" || name === "docs" || name === "blog" || name.startsWith("_")) continue
       out.push(...pagePatterns(path))
     } else if (name === "page.tsx") {
       const rel = relative(APP_DIR, dir).split(sep).join("/")

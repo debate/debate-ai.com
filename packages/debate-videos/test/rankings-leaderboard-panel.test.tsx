@@ -176,7 +176,8 @@ describe("LeaderboardPanel", () => {
 
     expect(m.loadRankingDataset.mock.calls.map((c) => c[0]).sort()).toEqual(["cpd", "hscx", "hsld", "hspf"]);
     expect(root.textContent).toContain("5 schools, ranked by a balanced score");
-    expect(root.textContent).toContain("Harker");
+    // Harker has a logo, so its name rides on the cell's title, not its text.
+    expect(root.querySelector('[title="Harker"]')).not.toBeNull();
 
     await click([...root.querySelectorAll("th button")].find((b) => b.textContent?.includes("School"))!);
     expect(root.querySelector("th[aria-sort]")).not.toBeNull();
@@ -185,7 +186,7 @@ describe("LeaderboardPanel", () => {
     expect(root.querySelector('th[aria-sort="ascending"]')?.textContent).toContain("Teams");
 
     await pressTab(root, "PF");
-    expect(root.textContent).toContain("Strake Jesuit");
+    expect(root.querySelector('[title="Strake Jesuit"]')).not.toBeNull();
     expect(root.textContent).not.toContain("School hscx");
 
     const filter = root.querySelector<HTMLInputElement>('[aria-label="Filter school rankings by school or team"]')!;

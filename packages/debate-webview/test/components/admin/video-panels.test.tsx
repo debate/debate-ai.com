@@ -88,13 +88,13 @@ describe("VideoLibraryTable", () => {
     await flush();
     expect(calls[0].url).toBe("/api/admin/videos/library?page=1&limit=25&sort=published&dir=desc");
     const text = bodyText();
-    expect(text).toContain("51 matching");
+    expect(text).toContain("0.1k matching");
     expect(text).toContain("top pick");
     expect(text).toContain("Policy");
     expect(text).toContain("Lecture");
     expect(text).toContain("Unknown");
     expect(text).toContain("Theory");
-    expect(text).toContain(`${(4321).toLocaleString()} words`);
+    expect(text).toContain("4.3k words");
     expect(text).toContain("captions only");
     expect(text).toContain("Page 1 of 3");
   });
