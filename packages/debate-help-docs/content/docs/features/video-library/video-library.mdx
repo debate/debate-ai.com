@@ -318,6 +318,14 @@ videos first. **Videos** counts each channel's videos in the library and the
 round queue, and **Most recent video** links its newest upload with the date.
 Videos record a channel's display name rather than its handle, so a channel
 added by `@handle` may show 0 until the next resync learns its display name.
+Each row's **Check** button scans just that channel for new videos right away.
+
+Channels with no new upload in the last year move to a **Defunct channels**
+table below the main one. The daily scan skips them and only checks them on
+Mondays, and **Check defunct channels for new videos** checks them all on
+demand. A channel moves back up as soon as a check finds a new upload. A
+channel with no videos stored at all is never filed as defunct: it stays on the
+daily scan, and every scan checks those channels first.
 
 The same card's **Unavailable videos** list shows what YouTube no longer
 serves: **Gone from YouTube** (deleted), **Made private**, and **Embedding

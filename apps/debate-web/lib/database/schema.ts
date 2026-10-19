@@ -1218,6 +1218,13 @@ export const youtubeChannels = sqliteTable(
     name: text("name").notNull(),
     title: text("title"),
     enabled: integer("enabled", { mode: "boolean" }).notNull().default(true),
+    // Newest upload date (YYYY-MM-DD) any scan has seen on the channel, round
+    // or not, and when a scan last walked it. Together they decide whether the
+    // channel is "defunct" (no upload in a year), which moves it to its own
+    // section on /admin and onto the weekly scan instead of the daily one.
+    // See lib/youtube/admin-channels.ts.
+    lastUploadAt: text("last_upload_at"),
+    lastCheckedAt: integer("last_checked_at", { mode: "timestamp" }),
     addedBy: text("added_by"),
     createdAt: integer("created_at", { mode: "timestamp" })
       .notNull()
