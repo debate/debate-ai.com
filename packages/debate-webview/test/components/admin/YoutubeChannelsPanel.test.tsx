@@ -122,4 +122,54 @@ describe("YoutubeChannelsPanel", () => {
     // A new channel has no videos yet, so it sorts below Alpha.
     expect(names()).toEqual(["Alpha", "Gamma"])
   })
+
+  it("lists defunct channels in their own section below, with a button that checks them all", async () => {
+    const defunct = { ...row(2, "Sleepy", 9), defunct: true }
+    fetchMock.mockResolvedValueOnce(json({ channels: [row(1, "Alpha", 3), defunct], nextCursor: null }))
+    await act(async () => root.render(<YoutubeChannelsPanel />))
+    await act(async () => {})
+
+    const tables = host.querySelectorAll("table")
+    expect(tables).toHaveLength(2)
+    expect(tables[0].textContent).toContain("Alpha")
+    expect(tables[0].textContent).not.toContain("Sleepy")
+    expect(tables[1].textContent).toContain("Sleepy")
+    expect(host.textContent).toContain("Defunct channels")
+
+    fetchMock.mockResolvedValueOnce(json({ success: true, channelsSynced: 1, videosUpserted: 2 }))
+    fetchMock.mockResolvedValueOnce(
+      json({ channels: [row(1, "Alpha", 3), { ...row(2, "Sleepy", 11), defunct: false }], nextCursor: null }),
+    )
+    await act(async () => {
+      ;[...host.querySelectorAll("button")]
+        .find((b) => b.textContent === "Check defunct channels for new videos")!
+        .click()
+    })
+    await act(async () => {})
+
+    const post = fetchMock.mock.calls.find(([, init]) => (init as RequestInit | undefined)?.method === "POST")!
+    expect(post[0]).toBe("/api/admin/youtube/resync")
+    expect(JSON.parse((post[1] as RequestInit).body as string)).toEqual({ scope: "defunct" })
+    // The reload moved the channel that uploaded again back up.
+    expect(host.querySelectorAll("table")[0].textContent).toContain("Sleepy")
+    expect(host.textContent).toContain("2 new rounds")
+  })
+
+  it("checks a single channel from its row", async () => {
+    fetchMock.mockResolvedValueOnce(json({ channels: [row(1, "Alpha", 3), row(4, "Empty")], nextCursor: null }))
+    await act(async () => root.render(<YoutubeChannelsPanel />))
+    await act(async () => {})
+
+    fetchMock.mockResolvedValueOnce(json({ success: true, channelsSynced: 1, videosUpserted: 0 }))
+    fetchMock.mockResolvedValueOnce(json({ channels: [row(1, "Alpha", 3), row(4, "Empty")], nextCursor: null }))
+    const emptyRow = [...host.querySelectorAll("tbody tr")].find((tr) => tr.textContent?.includes("Empty"))!
+    await act(async () => {
+      ;[...emptyRow.querySelectorAll("button")].find((b) => b.textContent === "Check")!.click()
+    })
+    await act(async () => {})
+
+    const post = fetchMock.mock.calls.find(([, init]) => (init as RequestInit | undefined)?.method === "POST")!
+    expect(JSON.parse((post[1] as RequestInit).body as string)).toEqual({ channelId: 4 })
+    expect(host.textContent).toContain("Checked Empty: 0 new rounds")
+  })
 })

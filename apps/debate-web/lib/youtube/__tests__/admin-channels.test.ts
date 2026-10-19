@@ -8,12 +8,33 @@
 import { describe, expect, it } from "vitest";
 import { freshSchemaDb } from "../../database/__tests__/schema-sql";
 import { videos, youtubeChannels, youtubeRoundVideos } from "../../database/schema";
-import { channelKey, listAdminChannels } from "../admin-channels";
+import { channelKey, isChannelDefunct, listAdminChannels } from "../admin-channels";
 
 describe("channelKey", () => {
   it("ignores case, a leading @ and punctuation", () => {
     expect(channelKey("@TexasDebate")).toBe(channelKey("Texas Debate"));
     expect(channelKey(null)).toBe("");
+  });
+});
+
+describe("isChannelDefunct", () => {
+  const NOW = new Date("2026-10-19T00:00:00Z");
+  const video = (publishedAt: string) => ({ videoId: "v", title: "t", publishedAt });
+
+  it("is defunct once the newest known upload is more than a year old", () => {
+    expect(isChannelDefunct({ lastUploadAt: null, latestVideo: video("2025-10-01"), videoCount: 3 }, NOW)).toBe(true);
+    expect(isChannelDefunct({ lastUploadAt: null, latestVideo: video("2025-11-01"), videoCount: 3 }, NOW)).toBe(false);
+  });
+
+  it("counts any recent upload a scan saw, round or not", () => {
+    expect(
+      isChannelDefunct({ lastUploadAt: "2026-09-01", latestVideo: video("2024-01-01"), videoCount: 3 }, NOW),
+    ).toBe(false);
+  });
+
+  it("never files a channel with no stored videos as defunct, so it keeps being rechecked", () => {
+    expect(isChannelDefunct({ lastUploadAt: "2020-01-01", latestVideo: null, videoCount: 0 }, NOW)).toBe(false);
+    expect(isChannelDefunct({ lastUploadAt: null, latestVideo: null, videoCount: 0 }, NOW)).toBe(false);
   });
 });
 
