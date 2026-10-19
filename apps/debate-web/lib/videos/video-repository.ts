@@ -539,7 +539,9 @@ export async function getVideoMeta(): Promise<VideoMeta> {
               maxViews: sql<number>`max(${videos.viewCount})`,
             })
             .from(videos)
-            .where(isNull(videos.style))
+            // Rounds count too when they carry a category (ACC tournament
+            // rounds), matching what `/videos/<category>` lists.
+            .where(isNotNull(videos.categoryKey))
             .groupBy(videos.categoryKey, videos.category),
           suggestionsFromSql(db),
         ]);

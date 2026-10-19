@@ -27,7 +27,10 @@ import { VideoSidebarTree } from "../components/category-gallery/VideoSidebarTre
 import { ToolNavTree } from "../components/category-gallery/ToolNavTree"
 import { GoatSparklesHeading } from "../components/category-gallery/GoatSparklesHeading"
 import { cn } from "../ui/lib/utils";
-import { VIDEO_ALL_VIDEOS_FILTER_LINKS } from "../components/category-gallery/sidebar-video-links";
+import {
+  VIDEO_ALL_VIDEOS_FILTER_LINKS,
+  VIDEO_COLLEGE_FILTER_LINKS,
+} from "../components/category-gallery/sidebar-video-links";
 import type { DebateStyle } from "../types/videos"
 import type { VideoViewMode } from "../hooks/useVideoState"
 import { useVideoStacks } from "../hooks/useVideoStacks"
@@ -251,6 +254,16 @@ export function LecturesVideoGridView({
   const browsingAllVideos = browsingLibrary && slug === undefined
   const browsingLectures = browsingLibrary && !browsingAllVideos
 
+  // The collection cards above the search box: WSD, ACC and Speech on All
+  // Videos, and ACC (the ACC Debate Tournament's rounds) on College Team
+  // Debates.
+  const browsingCollege = selectedStyle === 4 && !showFavoritesOnly && currentCategory !== "history"
+  const collectionLinks = browsingAllVideos
+    ? VIDEO_ALL_VIDEOS_FILTER_LINKS
+    : browsingCollege
+      ? VIDEO_COLLEGE_FILTER_LINKS
+      : null
+
   /** The watch-history listing, which is neither a category nor a filter. */
   const isHistory = currentCategory === "history"
 
@@ -373,9 +386,10 @@ export function LecturesVideoGridView({
         {currentCategory === "topPicks" && <GoatSparklesHeading />}
 
         {/* The WSD, ACC and Speech collections, directly above the search box
-            and only on the All Videos page. They are not sidebar links, so
-            neither the sidebar nor the mobile tiles carry them. */}
-        {browsingAllVideos && (
+            on the All Videos page (ACC alone on College Team Debates). They
+            are not sidebar links, so neither the sidebar nor the mobile tiles
+            carry them. */}
+        {collectionLinks && (
           <div className="mb-6">
             <ul
               className={cn(
@@ -383,7 +397,7 @@ export function LecturesVideoGridView({
                 "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5",
               )}
             >
-              {VIDEO_ALL_VIDEOS_FILTER_LINKS.map((link) => {
+              {collectionLinks.map((link) => {
                 return (
                   <GridItem
                     key={link.id}
@@ -395,7 +409,7 @@ export function LecturesVideoGridView({
                       </div>
                     }
                     title={link.title}
-                    description="Debate lecture videos"
+                    description={browsingAllVideos ? "Debate lecture videos" : "ACC Debate Tournament rounds"}
                     videoCount={quickLinkCounts?.[link.id] ?? 0}
                     isSelected={activeQuickLinkId === link.id}
                     href={link.href}

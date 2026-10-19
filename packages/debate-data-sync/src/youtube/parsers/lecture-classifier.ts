@@ -42,6 +42,20 @@ export function isLectureCategory(value: unknown): value is LectureCategory {
   return typeof value === "string" && (LECTURE_CATEGORIES as readonly string[]).includes(value);
 }
 
+/**
+ * The collection a debate *round* is filed under on top of its style, or
+ * `null` for none. Rounds otherwise carry no category, but the ACC (Atlantic
+ * Coast Conference) tournament's rounds belong on the `/videos/acc` shelf
+ * beside the ACC lectures, so a title naming "ACC Debate Tournament" files
+ * the round there while it keeps its style.
+ *
+ * @param title - The video's title.
+ * @returns `"ACC"`, or `null` when the round belongs to no collection.
+ */
+export function classifyRoundCollection(title: string): LectureCategory | null {
+  return /\bACC\s+Debate\s+Tournament\b/i.test(title) ? "ACC" : null;
+}
+
 export function classifyLecture(title: string, description: string): string {
   const t = title.toLowerCase();
   const d = (description || "").toLowerCase();

@@ -137,6 +137,14 @@ describe("tupleToVideoRow", () => {
     expect(row.searchText).toContain("lasa debate");
   });
 
+  it("files an ACC Debate Tournament round under ACC and keeps its style", () => {
+    const row = tupleToVideoRow(
+      ["vid-acc", "2024 ACC Debate Tournament - Notre Dame vs Georgia Tech", "2024-03-02", "ACC Debate", 900, "", 4],
+      "round",
+    )!;
+    expect(row).toMatchObject({ style: 4, category: "ACC", categoryKey: "acc" });
+  });
+
   it("maps a lecture tuple's category and leaves the style unset", () => {
     const row = tupleToVideoRow(LECTURE_TUPLE, "lecture")!;
     expect(row.style).toBeNull();

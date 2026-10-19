@@ -103,6 +103,12 @@ export const VIDEO_ALL_VIDEOS_FILTER_LINKS: SidebarVideoLink[] = [
   { id: "speech", href: "/videos/speech", title: "Speech", glyph: Mic },
 ];
 
+/** The collections shown as cards above the search box on College Team
+ *  Debates: the ACC tournament's rounds are college rounds filed under ACC. */
+export const VIDEO_COLLEGE_FILTER_LINKS: SidebarVideoLink[] = VIDEO_ALL_VIDEOS_FILTER_LINKS.filter(
+  (link) => link.id === "acc",
+);
+
 /** The pair pinned below the tree, under its own divider. Team Rankings lives
  *  in the Research tool section instead, so rankings appear only once. */
 export const VIDEO_REFERENCE_LINKS: SidebarVideoLink[] = [
