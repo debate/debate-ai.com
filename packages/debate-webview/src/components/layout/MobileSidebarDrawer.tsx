@@ -58,9 +58,11 @@ export function MobileSidebarDrawer({
           <DialogPrimitive.Title className="sr-only">Sidebar</DialogPrimitive.Title>
           <ChromeErrorBoundary label="MobileSidebarDrawer">
             {kind === "editor" && <ReasonDocsSidebarPanels className="shrink-0" />}
-            {/* The same tree as the desktop column, on every view: Videos
-                (Lectures included) and the tool sections. */}
-            {kind !== "own" && (
+            {/* The same tree as the desktop column: Videos (Lectures
+                included) and the tool sections. Not beside the document
+                panels, which are the whole sidebar there as on desktop;
+                the bottom dock is the way back out. */}
+            {kind !== "own" && kind !== "editor" && (
               <>
                 <LibrarySidebarTree />
                 <ToolSidebarFooter />
