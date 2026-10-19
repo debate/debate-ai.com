@@ -14,7 +14,6 @@ When your Tabroom account is linked as the administrator for a school,
 you will see a set of tabs when you log-in that correspond to the main
 school admin functions:
 
-
 This section of the manual will explain how to use each of these tabs.
 
 ## School Setup
@@ -58,16 +57,10 @@ If your school doesn't exist in Tabroom yet, you'll need to create it.
 After logging in, click the link for "Create a new school/team" in the
 sidebar:
 
-width="300" />
-
 Then, fill out the required information such as School Name, State, etc.
 If you have a National Speech & Debate chapter number, or a variety of
 other school ID numbers, you can put them in here to ensure proper
 tracking. When done, press Save School Info.
-
-title="coaches_-_create_new_school_1.png" width="500" />
-
-title="coaches_-_create_new_school_1.png" width="500" />
 
 If a school already exists in Tabroom with a similar name, you will see
 a warning that says "THAT INSTITUTION ALREADY EXISTS!"
@@ -75,20 +68,14 @@ a warning that says "THAT INSTITUTION ALREADY EXISTS!"
 If you need help getting access to an existing school, email [help@Tournament Admin](mailto:help@Tournament Admin). If you're sure
 you need to create a new school, check the "Confirm duplication" box:
 
-title="user_chapter_create-confirm.png" width="400" />
-
 Once your school is created, you should see a welcome message telling
 you what to do next - each of the suggested steps is covered in this
 manual in detail:
-
-title="user_chapter_chapter-welcome.png" width="500" />
 
 ## School Settings
 
 To make changes to your school name, coach access, etc. you will use the
 Settings tab:
-
-width="600" />
 
 **Name** – This is where you'll enter the official name of the school.
 
@@ -135,8 +122,6 @@ To edit who has access to your school's account in Tabroom, go to the
 be added to the account and click "Grant." Each adviser must have a
 Tournament Admin account to be associated with a school.
 
-width="500" />
-
 Once you add advisors to the account, you will see a list of Tabroom
 accounts with access to your school ("chapter"). You have two options
 for providing any advisor account permissions:
@@ -169,8 +154,6 @@ If your Tabroom account is listed as the administrator for more than one
 school simultaneously, you will see a list under "Institutions" in the
 sidebar on your account dashboard:
 
-width="300" />
-
 Before editing your rosters, entering a tournament, etc. make sure you
 have selected the appropriate school by clicking on it - this will make
 it your "active" school for the rest of the school administration tabs.
@@ -188,16 +171,12 @@ account, or import them from a file.
 
 Click the "Add a new student" link on the sidebar:
 
-title="coaches_-_competitor_roster.png" width="350" />
-
 There are three options to add students to a school roster:
 
 **1. Find a student w/ a Tabroom login** – You can manually enter a
 student Tournament Admin email into this field to add them to your student
 roster. This will require the student to have a Tournament Admin account
 setup prior to adding them.
-
-title="Screen_Shot_2023-03-11_at_3.40.28_PM.png" width="500" />
 
 **2. Create a new student (without a Tournament Admin account)** – If a
 student does not have a Tournament Admin account, you can manually enter
@@ -208,8 +187,6 @@ not show on your entries dropdown menu to register the student for a
 tournament. The NSDA ID and Email fields do not automatically create
 accounts for the student and/or link them to their student records in
 Tournament Admin or speechanddebate.org.
-
-title="Screen_Shot_2023-03-11_at_3.45.13_PM.png" width="350" />
 
 **2a. Competitors requesting online access** – Once you manually add a
 student to your roster, it will allow them to request access later once
@@ -223,8 +200,6 @@ wrong account, select the red X and it will deny them access. We suggest
 always allowing students to link to their competitor records to allow
 them access to the full benefits of Tournament Admin, including access to
 their past, present, and future tournament data and results.
-
-title="Screen_Shot_2023-03-11_at_3.46.53_PM.png" width="350" />
 
 **Competitors requesting online access** – If you have manually added a
 student to Tournament Admin Make sure to give each of your students a 4-digit
@@ -241,8 +216,6 @@ instead.
 
 This will give you a form to choose the file to import:
 
-title="coaches_-_add_new_student_-_imports.png" width="500" />
-
 Your file must be saved as a ".csv" comma-delimited file. You can
 download a sample file to fill out on the upload page. While it is
 possible to create an upload file manually, it is much easier to use
@@ -256,8 +229,6 @@ the file format.
 
 Once you have added students to your roster, you will see them in a list
 on the Students tab:
-
-width="600" />
 
 **Record** – Allows you to see the individual tournament results for the
 competitor. Only tournaments that have posted public results will be
@@ -287,8 +258,6 @@ no longer competing for your school.
 
 #### Graduated Students
 
-title="Screen_Shot_2023-03-15_at_9.19.51_PM.png" width="500" />
-
 You can toggle whether to show or hide "inactive competitors" by
 selecting the red box at the top of your competitors' screen. You can
 use this feature if you know a student should be on your roster. It is
@@ -306,15 +275,12 @@ when you will receive a message saying the graduation dates are too far
 apart. To fix this issue, change the graduation date for the duplicated
 student and run the merge process again.
 
-width="500" />
-
 #### Dietary Preferences
 
 Your student roster is a convenient place to keep track of your
 student's dietary preferences, which also makes it easy for tournaments
 to access that information. You can see all of this information in one
 place with the "Dietary preferences" link in the sidebar:
-
 
 ### Linking Your National Speech & Debate Association Roster
 
@@ -324,8 +290,6 @@ students, and also enables "auto-pointing," where a student's honor
 points can be posted automatically. To take advantage of this, click the
 "Students" tab to view your Student Roster. Then, click the link on the
 right for "Connect to NSDA Auto Pointing:"
-
-width="500" />
 
 First, you'll need to give Tabroom access to your Points Application
 account with the National Speech & Debate Association. Enter the
@@ -390,7 +354,6 @@ The judge roster works very similar to the student roster. You can click
 the "Add a new judge" link in the sidebar, or if your judge roster is
 empty, the form will appear automatically:
 
-
 You can add judges by their Tabroom account email, or manually enter
 their information and click the "Save Judge" button. You can link judges
 on your roster to their Tabroom accounts later if you wish.
@@ -403,7 +366,6 @@ File](#adding-students-from-a-file) above. Make sure you use
 the "Judge" template, instead of the "Student" template.
 
 Once you have added judges to your roster, they will appear in a list:
-
 
 Clicking on a judge's first or last name will let you edit their
 information. You can also toggle a judge between active/inactive to keep
@@ -433,8 +395,6 @@ Tournament Admin account.
 your program, toggle this to a red "Y" and they will be disabled from
 your roster.
 
-width="500" />
-
 To keep track of your judges dietary preferences, you can use the
 "Dietary Restrictions" link on the right - it will take you to the same
 page as for your student roster.
@@ -447,7 +407,6 @@ appropriate "circuit." All tournaments on tabroom must be part of a
 in is a part of, look on the main [Calendar](/public/calendars).
 
 Then, use the "Circuits" tab to join the circuit:
-
 
 First, select the circuit you want to join from the dropdown. Then,
 choose whether to join for "Tournaments Only" or "Full Membership."
@@ -476,10 +435,8 @@ your entire team.
 From your account dashboard, you can use the Results tab to see a list
 of tournaments with available results:
 
-
 Selecting the blue "results" button will give you access to a list of
 reports that were produced by the tournament administrators.
-
 
 **Tournament Stats** – Provides you a general overview of participation
 at the tournament.
@@ -509,7 +466,6 @@ places for all competitors registered for that event.
 
 **Print Ballots/Results** – Displays the same information as above, only
 in a printable PDF format.
-
 
 ### Accessing Invoices/Receipts
 

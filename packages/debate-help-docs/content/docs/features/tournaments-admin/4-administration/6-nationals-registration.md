@@ -30,21 +30,17 @@ same as your NSDA website account.
 Once you log in, you should see the National Tournament already listed
 under the tournaments you are registered for:
 
-title="File:1-FindingTournament.png" />
-
 Click Enter on the right of the tournament.
 
 Then you will be asked how you would like your judge bond refunded to
 you. The options and policies around judge bonds have changed this year
 so please read the disclaimer carefully.
 
-
 Once you select your refund amount you will be asked to provide the
 details of the adult/emergency contact who will be present at Nationals,
 and which hotel you are staying in. There is a new entry fee discount in
 2018 Nationals so the hotel answer is important to calculating your
 final charges.
-
 
 #### Entries
 
@@ -53,7 +49,6 @@ will see a series of tabs along the top of the screen. That'll be where
 you can do the rest of your nationals registration. First, click
 Entires, and you should see your qualified entries to Nationals listed
 out by event:
-
 
 Click ACCEPT to accept an entry to Nationals, or REJECT to Reject that
 entry. When you reject an entry, a confirmation screen will require you
@@ -71,12 +66,9 @@ for, and click Register Supplementals. If you change your mind about
 which Supps and Cons you want the student in, you can change them here
 at any time before the May deadline:
 
-
 Then, in the next section, you can download, fill out and then re-upload
 a scanned copy of the student's mandatory video and release form. You
 can also provide a phonetic pronunciation guide if you wish:
-
-title="File:6-ReleaseAndPronunciation.png" />
 
 Next, for each entry (Mains and Supplementals) you will be asked to
 provide various information. For all events you will need to supply the
@@ -86,13 +78,11 @@ events you will be asked for more information, such as piece titles,
 script uploads, and the like. You can also here drop entries that you
 have already accepted if it's prior to the May deadline.
 
-
 Once you have finished you can click the Entries tab at top, or "Return
 to School Entry" at top right, to return to the student listing. You
 will see any Supplementals/Consolations listed now under the student.
 Once all the required information, forms, etc have been uploaded the red
 X on the far right will turn into a green checkmark:
-
 
 #### Judges
 
@@ -100,7 +90,6 @@ Under the Judges tab , you will first be shown your current judging
 obligations by round and category. If you owe judges in Big Questions or
 are supplying judges in World Schools, you will see those listed
 underneath the Main Tournament judges.
-
 
 Click on Add MAIN judge to add a judge to the main tournament. At first
 you have multiple ways to add a new judge. On the left hand side you can
@@ -111,7 +100,6 @@ of those things are present. Feel free to input a judge who is both on
 your Tabroom roster AND is an NSDA coach AND has a Tabroom account by
 inputting all three; the more information we have the better the
 tournament runs:
-
 
 Save the judge and more information will appear. The first task is to
 designate the judge for a number of rounds (no more than 8) and which
@@ -143,8 +131,6 @@ pooled into a semi or final round because you self identified, failure
 to show up will count as bond forfeiture. So before self-nominating be
 sure you will be at the tournament on Thursday and Friday.
 
-title="File:10-AdditionalJudgeInfo.png" />
-
 Once you save the judges you can click the Judges tab at the top, and/or
 the Return button at top right, to return to your Judging listing. Once
 you have done that, you can see how far along towards meeting your
@@ -153,21 +139,16 @@ many rounds you may wish to hire out for, with the caveat that Policy
 and PF rounds may not be hired ,and at least 6 rounds of judging must be
 supplied by the school.
 
-
 #### Concessions
 
 Use the Concessions tab to order T-Shirts or purchase a School Resource
 Package. You can select the item below, and then click the green Order
 Now button to specify sizes and quantities:
 
-
 Choose each size you want and how many of that size and hit Save:
-
 
 Once you have saved a few orders, you can see and cancel your current
 order status at right:
-
-title="File:13-Concessions-Finished.png" />
 
 #### Fees & Payments
 
@@ -183,8 +164,6 @@ Account" at right. That will create you an invoice in the NSDA
 accounting system and transfer you to the NSDA main website for payment,
 where you can pay via your normal methods that you've used to pay for
 memberships, etc.
-
-title="File:14-ViewFeesAndInvoice.png" />
 
 If you have additional charges later on, such as through added entries
 due to changed supplementals entries or promoted alternates, you can
