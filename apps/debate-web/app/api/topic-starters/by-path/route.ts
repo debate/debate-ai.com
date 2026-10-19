@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server"
 import { asc, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { topicStarterItems } from "@/lib/database/schema"
+import { ensureTopicStarterColumns } from "@/lib/topic-starters/changes"
 import { findItemByRef } from "@debate/webview/lib/reason-docs/doc-path"
 
 /**
@@ -32,6 +33,7 @@ export async function GET(request: NextRequest) {
   }
 
   const db = await getDBFromContext()
+  await ensureTopicStarterColumns(db)
   // Names and shape for the whole published tree, then the one row's content:
   // a path is resolved against ancestry, so the folders above the file have to
   // be in hand, and pulling every row's `.cmir` to find one file would be a

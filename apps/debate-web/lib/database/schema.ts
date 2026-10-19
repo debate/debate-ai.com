@@ -207,6 +207,35 @@ export const topicStarterItems = sqliteTable(
 
 export type TopicStarterItem = typeof topicStarterItems.$inferSelect;
 
+// Edits to the public Topic Starters catalogue waiting on a moderator: a
+// non-staff reader's move, rename, delete, new folder, file submission or
+// AI reorganization from the docs sidebar. `change` is the JSON
+// `TopicStarterChange` (@debate/webview/lib/topic-starters/changes), applied
+// verbatim on approval. lib/topic-starters/changes.ts creates this table on
+// first use (CREATE TABLE IF NOT EXISTS), since the app ships no migrations.
+export const topicStarterChanges = sqliteTable(
+  "topic_starter_changes",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    kind: text("kind").notNull(),
+    change: text("change").notNull(),
+    summary: text("summary").notNull().default(""),
+    // "pending" | "approved" | "rejected"
+    status: text("status").notNull().default("pending"),
+    userId: text("user_id"),
+    userEmail: text("user_email"),
+    reviewedBy: text("reviewed_by"),
+    error: text("error"),
+    createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
+    reviewedAt: integer("reviewed_at", { mode: "timestamp" }),
+  },
+  (table) => ({
+    statusIdx: index("idx_topic_starter_changes_status").on(table.status),
+  }),
+);
+
+export type TopicStarterChangeRecord = typeof topicStarterChanges.$inferSelect;
+
 // Shared, AI-Generated Debate Flow — server-backed live sync transport for
 // `debate-round`'s `FlowEdit` records (see packages/debate-round/src/flow/shared-flow-sync.ts
 // and TODO.md idea #16, follow-up (a)). `boxPath` is a JSON-encoded number

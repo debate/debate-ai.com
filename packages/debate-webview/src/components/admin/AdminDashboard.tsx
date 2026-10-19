@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, type ComponentType } from "react";
-import { DatabaseBackup, FileSearch, Film, Globe, ListVideo, RefreshCw, School, Sparkles, Upload, Users } from "lucide-react";
+import { DatabaseBackup, FileSearch, Film, FolderTree, Globe, ListVideo, RefreshCw, School, Sparkles, Upload, Users } from "lucide-react";
 import { cn } from "../../lib/ui/lib/utils";
 import { Button } from "../../lib/ui/primitives/button";
 import { Badge } from "../../lib/ui/primitives/badge";
@@ -35,6 +35,7 @@ import { ModeratorsPanel } from "./ModeratorsPanel";
 import { ReclassifyVideosPanel } from "./ReclassifyVideosPanel";
 import { SchoolClaimsPanel } from "./SchoolClaimsPanel";
 import { TopicStarterUpload } from "./TopicStarterUpload";
+import { TopicStartersAdminPanel } from "./TopicStartersAdminPanel";
 import { UsersTable } from "./UsersTable";
 import { VideoLibraryTable } from "./VideoLibraryTable";
 import { VideoReportsPanel } from "./VideoReportsPanel";
@@ -76,9 +77,9 @@ const STYLE_OPTIONS = [{ value: "all", label: "All styles" }, { value: "1", labe
 /**
  * The admin page. Admins (ADMIN_EMAIL / ADMIN_EMAILS) see everything;
  * moderators see only the content sections — the video library, video
- * reports and the round-video queue.
+ * reports, the round-video queue, school claims and Topic starters.
  */
-type AdminTabKey = "users" | "library" | "queue" | "schools" | "speech-ai" | "youtube" | "cards" | "imports" | "url-detection" | "backups";
+type AdminTabKey = "users" | "library" | "queue" | "schools" | "topic-starters" | "speech-ai" | "youtube" | "cards" | "imports" | "url-detection" | "backups";
 
 interface AdminTab {
   key: AdminTabKey;
@@ -96,6 +97,7 @@ const ADMIN_TABS: AdminTab[] = [
   { key: "queue", name: "Round queue", description: "Queued debate rounds waiting to be published", icon: ListVideo, adminOnly: false },
   { key: "library", name: "Video library", description: "Edit the published video library and review video reports", icon: Film, adminOnly: false },
   { key: "schools", name: "School claims", description: "Coaches and administrators claiming a school's page, waiting on review", icon: School, adminOnly: false },
+  { key: "topic-starters", name: "Topic starters", description: "The public topic starter files, and readers' edits and submissions waiting on approval", icon: FolderTree, adminOnly: false },
   { key: "speech-ai", name: "Speech AI", description: "Split round transcripts into speeches and write a summary and an alternative for each", icon: Sparkles, adminOnly: true },
   { key: "youtube", name: "YouTube sync", description: "Channel scans, view counts, video seeding and stacked playlists", icon: RefreshCw, adminOnly: true },
   { key: "cards", name: "Debate cards", description: "Extract source URLs from card citations, recheck them and the reuse-check log", icon: FileSearch, adminOnly: true },
@@ -1302,6 +1304,8 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
             </Card>
           </>
         )}
+
+        {currentTab.key === "topic-starters" && <TopicStartersAdminPanel />}
 
         {currentTab.key === "imports" && (
           <>
