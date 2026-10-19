@@ -186,8 +186,10 @@ on a file is one gesture from the file itself:
   the top level), Download as .docx, Add to Topic Starters, Delete. Folders
   get New File / New Folder in place of Open, Edit and Share.
 - **Topic Starters:** Open, Edit a copy, Save to my files, Copy link,
-  Download as .docx. The catalogue is read-only, so a topic starter is edited
-  by editing your own copy of it.
+  Download as .docx, and — when you're signed in — Rename, Move to and
+  Delete (folders also get New folder). A topic starter's *contents* are
+  still edited by editing your own copy of it; the menu rearranges the
+  catalogue (see "Editing Topic Starters" below).
 
 **Share…** opens the file in the editor with the share-with-contacts dialog
 already up (`?shareOpen=1`, read and stripped by `ShareWithContacts`).
@@ -206,12 +208,56 @@ Rows drag both ways between the two trees, and each drop means what it can
 - **Topic Starters → Files:** saves your own copy into the folder you drop
   on. A folder comes with everything in it, and a `.cmir` stays a `.cmir`.
   "Save to my files" in the menu does the same.
-- **Files → Topic Starters:** publishes the file to the public catalogue
-  (`POST /api/admin/topic-starters/items`). Only admins can do this. Anyone
-  else sees a message saying so.
+- **Files → Topic Starters:** submits the file to the public catalogue.
+  Anyone signed in can; a moderator's or admin's file goes in at once, and
+  anyone else's waits for a moderator's approval.
+- **Topic Starters → Topic Starters:** moves the row into the folder you drop
+  on (signed in only, moderated the same way). A folder can't be dropped into
+  itself.
 - **Files → Files:** moves the row, as before. A folder can't be dropped into
   itself.
 - **Desktop → either tree:** an upload, as before.
+
+## Editing Topic Starters
+
+Signed-in readers can rearrange the public catalogue from the sidebar:
+rename, move (menu or drag), delete, add folders (the folder button in the
+section header, or New folder on a folder's menu) and submit their own files
+(drop one from Files, or "Add to Topic Starters"). Moderators and admins
+control the catalogue: their edits apply at once. Everyone else's edit is
+sent to them for approval — the toast says "Sent to the moderators for
+approval" — and nothing changes in the tree until a moderator approves it.
+
+Moderators get a notification for each proposal, and review them on `/admin`
+under **Topic starters**, which also shows every public topic starter as a
+tree they can rename, move, delete and add folders in directly. Approving a
+change applies it; one that no longer fits (its file was deleted meanwhile)
+stays in the queue with the reason, to be rejected.
+
+### Organize by argument (AI)
+
+The sparkle button in the Topic Starters header asks the AI to sort every
+public file by side and argument type: affirmative cases under **Aff/Case**,
+and the negative's positions under **Neg/DA**, **Neg/CP**, **Neg/T** and
+**Neg/K** (answers to an argument keep its type and take the side that reads
+them, so "AT Elections DA" in an aff file lands in **Aff/DA**; anything else
+goes under **Theory** or **Other**). The AI reads only file and folder names,
+never the files. It shows its proposal — how many files go where — before
+anything moves; confirming applies it for moderators and sends it for
+approval for everyone else. Existing `Aff`/`Neg` folders are reused, files
+already in the right folder are left alone, and folders the moves empty are
+removed.
+
+**How it works.** Every edit is a change record
+(`@debate/webview/lib/topic-starters/changes`): `move`, `rename`, `delete`,
+`create-folder`, `submit` or `reorganize`. `POST /api/topic-starters/changes`
+applies it for staff and otherwise stores it in `topic_starter_changes`
+(created on first use) for `GET /api/admin/topic-starters/changes` and
+`POST /api/admin/topic-starters/changes/[id]` (`approve` / `reject`).
+Approval runs the same `applyTopicStarterChange` a staff edit does, so the
+two can't disagree. `POST /api/topic-starters/organize` returns the AI's
+`reorganize` change without applying it; it classifies at most 600 files, in
+batches of 150, with the site's AI key.
 
 ## File manager
 
@@ -230,7 +276,7 @@ in `lib/reason-docs/file-manager-data.ts`):
 
 Topic Starters appear under a read-only "Topic Starters" folder. Copying or
 moving out of it saves your own copy. Copying or moving one of your files
-into it publishes it (admins only). Renaming or deleting inside it is
+into it submits it (straight in for moderators, for approval otherwise). Renaming or deleting inside it is
 refused. The widget is loaded only when the dialog first opens.
 
 ## Searching files from Ctrl/Cmd-K
@@ -294,8 +340,19 @@ Ctrl/Cmd-P stays the editor's own palette.
   the panel mounted (the usual case), and the Topic Starters search matched
   words from a row's raw JSON, so searching "folder" matched everything.~~
   **Fixed:** folders start open, and the search matches names and tags only.
-- Publishing to Topic Starters is admin-only and always publishes at once.
-  There is no draft or review step for a reader's own file.
+- ~~Publishing to Topic Starters is admin-only and always publishes at once.
+  There is no draft or review step for a reader's own file.~~ **Fixed:**
+  anyone signed in can submit a file or rearrange the catalogue; moderators'
+  and admins' edits apply at once and everyone else's wait in the admin
+  panel's Topic starters approval queue.
+- A queued file submission carries the whole file inside its change record,
+  so a submission is capped at about 1.5 MB of stored content (D1's row
+  limit).
+- The AI organizer reads at most 600 files per run and only their names, so
+  a file with an uninformative name ("Untitled", "New doc") lands in
+  **Other**.
+- The File manager dialog still treats Topic Starters as read-only; edits
+  there have to go through the sidebar tree.
 - Ctrl/Cmd-K's file search converts every `.cmir` file it searches on the
   reader's device. That is fine for the 100-row catalogue and a typical
   library, but a very large library would want a server-side text index.

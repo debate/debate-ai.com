@@ -315,4 +315,73 @@ describe("resyncYouTubeRounds", () => {
       expect(queued.map((row) => row.id)).toEqual(["new1"]);
     });
   });
+
+  describe("channel scope and activity", () => {
+    /** One old round on ChannelAlpha, so it has videos and counts as defunct. */
+    async function makeAlphaDefunct() {
+      await db.insert(youtubeRoundVideos).values({
+        id: "old1",
+        title: "Old round",
+        publishedAt: "2020-01-01",
+        channel: "ChannelAlpha",
+        style: 1,
+      });
+    }
+
+    const scannedNames = () => vi.mocked(getVideosForChannel).mock.calls.map((call) => call[1]);
+
+    it("scans only active channels for the active scope, only defunct ones for the defunct scope", async () => {
+      await makeAlphaDefunct();
+
+      await resyncYouTubeRounds("cron", undefined, "active");
+      expect(scannedNames()).toEqual(["ChannelBeta"]);
+
+      vi.mocked(getVideosForChannel).mockClear();
+      await resyncYouTubeRounds("admin@test.com", undefined, "defunct");
+      expect(scannedNames()).toEqual(["ChannelAlpha"]);
+    });
+
+    it("scans channels with no stored videos first", async () => {
+      await makeAlphaDefunct();
+      await db.delete(youtubeChannels);
+      await db.insert(youtubeChannels).values([
+        { name: "ChannelAlpha", enabled: true, channelId: "UC_alpha" },
+        { name: "ChannelBeta", enabled: true, channelId: "UC_beta" },
+      ]);
+
+      await resyncYouTubeRounds("admin@test.com");
+      expect(scannedNames()).toEqual(["ChannelBeta", "ChannelAlpha"]);
+    });
+
+    it("scans just one channel by row id, paused or not", async () => {
+      const [beta] = await db.select().from(youtubeChannels).where(eq(youtubeChannels.name, "ChannelBeta"));
+      await db.update(youtubeChannels).set({ enabled: false }).where(eq(youtubeChannels.id, beta.id));
+
+      const result = await resyncYouTubeRounds("admin@test.com", undefined, { channelId: beta.id });
+      expect(scannedNames()).toEqual(["ChannelBeta"]);
+      expect(result.channelsSynced).toBe(1);
+    });
+
+    it("records the newest upload, which moves a defunct channel back to active", async () => {
+      await makeAlphaDefunct();
+      vi.mocked(getVideosForChannel).mockImplementation(async (_id: string, name: string) =>
+        name === "ChannelAlpha"
+          ? [
+              videoEntry("vlog1", "A vlog", new Date().toISOString().slice(0, 10), "ChannelAlpha", 1, ""),
+              videoEntry("vlog0", "Older vlog", "2021-01-01", "ChannelAlpha", 1, ""),
+            ]
+          : [],
+      );
+
+      await resyncYouTubeRounds("admin@test.com", undefined, "defunct");
+
+      const [alpha] = await db.select().from(youtubeChannels).where(eq(youtubeChannels.name, "ChannelAlpha"));
+      expect(alpha.lastUploadAt).toBe(new Date().toISOString().slice(0, 10));
+      expect(alpha.lastCheckedAt).toBeInstanceOf(Date);
+
+      vi.mocked(getVideosForChannel).mockClear();
+      await resyncYouTubeRounds("cron", undefined, "active");
+      expect(scannedNames()).toContain("ChannelAlpha");
+    });
+  });
 });

@@ -14,7 +14,8 @@ const resyncVideoViewCounts = vi.fn();
 const getDBFromContext = vi.fn();
 
 vi.mock("../resync-rounds", () => ({
-  resyncYouTubeRounds: (triggeredBy: string | null, publishedAfterDate?: string) => resyncYouTubeRounds(triggeredBy, publishedAfterDate),
+  resyncYouTubeRounds: (triggeredBy: string | null, publishedAfterDate?: string, scope?: string) =>
+    resyncYouTubeRounds(triggeredBy, publishedAfterDate, scope),
 }));
 vi.mock("../../videos/resync-view-counts", () => ({
   resyncVideoViewCounts: (db: unknown) => resyncVideoViewCounts(db),
@@ -23,7 +24,12 @@ vi.mock("../../database/context", () => ({
   getDBFromContext: () => getDBFromContext(),
 }));
 
-const { CRON_TRIGGERED_BY, YOUTUBE_SCAN_CRON, runDailyYouTubeScan, runWeeklyYouTubeSync } = await import("../weekly-sync");
+const { CRON_TRIGGERED_BY, YOUTUBE_SCAN_CRON, dailyScanScope, runDailyYouTubeScan, runWeeklyYouTubeSync } =
+  await import("../weekly-sync");
+
+/** A Tuesday and a Monday, at the cron's 06:00 UTC. */
+const TUESDAY = new Date("2026-10-20T06:00:00Z");
+const MONDAY = new Date("2026-10-19T06:00:00Z");
 
 /** A successful scan, shaped like `resyncYouTubeRounds`'s return. */
 const SCAN = { success: true, runId: 1, channelsSynced: 36, videosFetched: 900, videosUpserted: 12 };
@@ -50,11 +56,19 @@ describe("runDailyYouTubeScan", () => {
   });
 
   it("marks the scan as cron-triggered so the run history tells it from an admin's", async () => {
-    await runDailyYouTubeScan();
+    await runDailyYouTubeScan(TUESDAY);
 
-    expect(resyncYouTubeRounds).toHaveBeenCalledWith(CRON_TRIGGERED_BY, undefined);
+    expect(resyncYouTubeRounds).toHaveBeenCalledWith(CRON_TRIGGERED_BY, undefined, "active");
     // Not an email, so it can never collide with a real admin's address.
     expect(CRON_TRIGGERED_BY).not.toContain("@");
+  });
+
+  it("skips defunct channels except on Mondays", async () => {
+    expect(dailyScanScope(TUESDAY)).toBe("active");
+    expect(dailyScanScope(MONDAY)).toBe("all");
+
+    await runDailyYouTubeScan(MONDAY);
+    expect(resyncYouTubeRounds).toHaveBeenCalledWith(CRON_TRIGGERED_BY, undefined, "all");
   });
 
   it("reports a failed scan instead of rejecting", async () => {

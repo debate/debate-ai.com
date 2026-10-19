@@ -10,6 +10,10 @@
  *    queue. It only ever sees videos a channel published, so it is the half
  *    that finds *new* content, and it runs every day so a round lands in the
  *    queue the day after it is uploaded rather than up to a week later.
+ *    Channels with no upload in a year ("defunct", see `isChannelDefunct` in
+ *    admin-channels.ts) are left out except on Mondays
+ *    ({@link DEFUNCT_SCAN_UTC_DAY}), so a dead channel costs one scan a week
+ *    instead of seven; the admin panel can still check them on demand.
  * 2. **Refresh view counts — weekly** (`0 8 * * MON`, Mondays 08:00 UTC).
  *    {@link resyncVideoViewCounts} refetches the watch count of every *already
  *    stored* video — the published `videos` table included, which the scan
@@ -27,13 +31,24 @@
 import { getDBFromContext } from "../database/context";
 import { describeError } from "../database/errors";
 import { resyncVideoViewCounts, type ViewCountResyncResult } from "../videos/resync-view-counts";
-import { resyncYouTubeRounds } from "./resync-rounds";
+import { resyncYouTubeRounds, type ChannelScanScope } from "./resync-rounds";
 
 /**
  * Every day at 06:00 UTC: the new-video scan. Must match the entry in
  * wrangler.jsonc's `triggers.crons`.
  */
 export const YOUTUBE_SCAN_CRON = "0 6 * * *";
+
+/**
+ * The UTC weekday (Monday) whose daily scan also walks the defunct channels.
+ * Same day as the weekly view-count refresh, which runs two hours later.
+ */
+export const DEFUNCT_SCAN_UTC_DAY = 1;
+
+/** Which channels the daily scan on `now`'s UTC day walks. */
+export function dailyScanScope(now: Date = new Date()): ChannelScanScope {
+  return now.getUTCDay() === DEFUNCT_SCAN_UTC_DAY ? "all" : "active";
+}
 
 /**
  * What the scheduled scan records in `youtube_sync_runs.triggered_by`.
@@ -84,14 +99,17 @@ async function runStep<T>(label: string, run: () => Promise<T>): Promise<WeeklyS
 /**
  * Scans the subscribed channels for new videos — the whole of what the daily
  * {@link YOUTUBE_SCAN_CRON} trigger is for. The same work as the admin page's
- * "Resync videos" button.
+ * "Resync videos" button, except that defunct channels are only included on
+ * Mondays (see {@link dailyScanScope}).
  *
  * Never rejects — a failed scan is reported in the returned result and logged.
  *
+ * @param now - The tick's time; decides whether defunct channels are scanned.
  * @returns The scan's outcome. See {@link DailyYouTubeScanResult}.
  */
-export async function runDailyYouTubeScan(): Promise<DailyYouTubeScanResult> {
-  return runStep("YouTube round scan", () => resyncYouTubeRounds(CRON_TRIGGERED_BY));
+export async function runDailyYouTubeScan(now: Date = new Date()): Promise<DailyYouTubeScanResult> {
+  const scope = dailyScanScope(now);
+  return runStep("YouTube round scan", () => resyncYouTubeRounds(CRON_TRIGGERED_BY, undefined, scope));
 }
 
 /**

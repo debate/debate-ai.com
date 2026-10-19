@@ -14,6 +14,8 @@ CREATE TABLE IF NOT EXISTS `youtube_channels` (
 	`name` text NOT NULL,
 	`title` text,
 	`enabled` integer DEFAULT true NOT NULL,
+	`last_upload_at` text,
+	`last_checked_at` integer,
 	`added_by` text,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	`updated_at` integer DEFAULT (unixepoch()) NOT NULL
