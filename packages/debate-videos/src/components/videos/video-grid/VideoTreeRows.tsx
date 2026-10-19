@@ -86,17 +86,28 @@ function groupFormats(group: VideoTreeGroup): number[] {
 /**
  * The school/tournament logo that rides on a tournament group row — the same
  * lookup the card grid uses, so a round-robin (e.g. "Greenhill RR") shows
- * Greenhill's logo beside the school name it found after dropping the "RR".
+ * Greenhill's logo for the school name it found after dropping the "RR".
+ * When a logo exists it stands in for the name: it is drawn at the height of
+ * the row's text, and the name moves to its alt text and tooltip.
  */
-function TournamentLogo({ label }: { label: string }) {
-  const logo = getTournamentLogo(label)
-  if (!logo) return null
+function TournamentLogo({
+  logo,
+  label,
+}: {
+  logo: NonNullable<ReturnType<typeof getTournamentLogo>>
+  label: string
+}) {
+  const className = "h-5 w-auto max-w-[10rem] shrink-0 object-contain"
   if (typeof logo === "function") {
     const Logo = logo
-    return <Logo className="h-4 w-4 shrink-0 object-contain" aria-hidden />
+    return (
+      <span role="img" aria-label={label} title={label} className="inline-flex shrink-0">
+        <Logo className={className} aria-hidden />
+      </span>
+    )
   }
   const src = typeof logo === "string" ? logo : logo.src
-  return <img src={src} alt="" aria-hidden className="h-4 w-4 shrink-0 object-contain" />
+  return <img src={src} alt={label} title={label} className={className} />
 }
 
 /** The "RR" badge marking a round-robin tournament's format. */
@@ -121,6 +132,7 @@ function GroupRows({
 }) {
   const [isOpen, setIsOpen] = useState(depth + 1 < collapseDepth)
   const Icon = GROUP_ICONS[group.kind]
+  const tournamentLogo = group.kind === "tournament" ? getTournamentLogo(group.label) : null
 
   return (
     <>
@@ -157,15 +169,18 @@ function GroupRows({
               />
             ) : group.kind === "tournament" ? (
               <span className="flex items-center gap-1.5">
-                <TournamentLogo label={group.label} />
-                <span
-                  className={cn(
-                    "truncate font-semibold",
-                    depth === 0 ? "text-sm text-foreground" : "text-sm text-primary",
-                  )}
-                >
-                  {group.label}
-                </span>
+                {tournamentLogo ? (
+                  <TournamentLogo logo={tournamentLogo} label={group.label} />
+                ) : (
+                  <span
+                    className={cn(
+                      "truncate font-semibold",
+                      depth === 0 ? "text-sm text-foreground" : "text-sm text-primary",
+                    )}
+                  >
+                    {group.label}
+                  </span>
+                )}
                 {group.roundRobin && <RoundRobinBadge />}
               </span>
             ) : (
