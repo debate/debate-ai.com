@@ -237,10 +237,15 @@ stays in the queue with the reason, to be rejected.
 The importer itself (**Imports → Topic Starter library**) shows the same
 catalogue under its upload form — including files imported with "Share
 publicly" off — and reloads it after each upload, so an admin can tidy up
-what a ZIP produced on the spot: drag a row onto a folder or use its "Move
-to" menu, or Delete a file or a folder with everything in it (after a
-confirm). Those edits go to `PATCH` / `DELETE /api/admin/topic-starters/[id]`
-and change what CardMirror shows everyone (`TopicStarterLibraryTree` in
+what a ZIP produced on the spot. Right-click a row (or use its "…" button)
+to Rename, Copy, Paste, Move to a folder, Delete (a folder goes with
+everything in it, after a confirm) or add a New folder; rows also move by
+dragging one onto a folder. Paste puts a full copy of the copied file or
+folder into the folder you right-clicked, or beside the file you
+right-clicked, with " (copy)" added when it lands next to the original.
+Those edits go to `PATCH` / `DELETE /api/admin/topic-starters/[id]`,
+`POST …/[id]/copy` and `POST …/items`, and change what CardMirror shows
+everyone (`TopicStarterLibraryTree` in
 `packages/debate-webview/src/components/admin`).
 
 ### Organize by argument (AI)

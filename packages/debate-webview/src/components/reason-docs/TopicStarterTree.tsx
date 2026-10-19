@@ -7,8 +7,9 @@
  * into your own Files (also by dragging the row onto Files), copy its link,
  * download it — and, when the host passes the handlers, rearrange the
  * catalogue: rename, move (from the menu or by dragging a row onto a
- * folder), delete and add folders. A row dragged from Files and dropped here
- * is submitted to the catalogue. Every one of those edits is applied at once
+ * folder), delete and add folders, and — in the admin panel only — copy and
+ * paste. A row dragged from Files and dropped here is submitted to the
+ * catalogue. Every one of those edits is applied at once
  * for moderators and admins and queued for a moderator's approval for
  * everyone else (`lib/topic-starters/changes.ts`); the tree itself doesn't
  * know which, the host's toast says.
@@ -21,6 +22,8 @@ import { type DragEvent, type ReactNode, useMemo, useState } from "react"
 import {
   ChevronDown,
   ChevronRight,
+  ClipboardPaste,
+  Copy,
   Download,
   ExternalLink,
   FileText,
@@ -117,6 +120,9 @@ export function TopicStarterTree({
   onRename,
   onDelete,
   onCreateFolder,
+  onCopy,
+  onPaste,
+  clipboardTitle,
 }: {
   items: TopicStarterItem[]
   onSelect: (item: TopicStarterItem) => void
@@ -140,6 +146,12 @@ export function TopicStarterTree({
   onDelete?: (id: number) => void
   /** Adds a folder under `parentId`. */
   onCreateFolder?: (parentId: number | null) => void
+  /** "Copy": remembers the row (a folder with its contents) for a later Paste. */
+  onCopy?: (item: TopicStarterItem) => void
+  /** "Paste": puts a copy of the copied row under `parentId` (top level when null). */
+  onPaste?: (parentId: number | null) => void
+  /** Title of the copied row, or null when nothing is copied — Paste is offered only then. */
+  clipboardTitle?: string | null
 }) {
   const [query, setQuery] = useState("")
   // Collapsed rather than expanded: the catalogue arrives after this mounts,
@@ -205,7 +217,7 @@ export function TopicStarterTree({
     if (topicId != null && onMove && canMove(topicId, parentId)) onMove(topicId, parentId)
   }
 
-  const editable = Boolean(onMove || onRename || onDelete || onCreateFolder)
+  const editable = Boolean(onMove || onRename || onDelete || onCreateFolder || onCopy)
 
   const menu = (item: TopicStarterItem) => (
     <DropdownMenuContent align="start" onClick={(event) => event.stopPropagation()}>
@@ -247,6 +259,19 @@ export function TopicStarterTree({
         <DropdownMenuItem onClick={() => onCreateFolder(item.id)}>
           <FolderPlus className="mr-2 h-4 w-4" />
           New folder
+        </DropdownMenuItem>
+      )}
+      {onCopy && (
+        <DropdownMenuItem onClick={() => onCopy(item)}>
+          <Copy className="mr-2 h-4 w-4" />
+          Copy
+        </DropdownMenuItem>
+      )}
+      {onPaste && clipboardTitle != null && (
+        // Into a folder, or beside a file.
+        <DropdownMenuItem onClick={() => onPaste(item.isFolder ? item.id : item.parentId)}>
+          <ClipboardPaste className="mr-2 h-4 w-4" />
+          <span className="truncate">Paste &ldquo;{clipboardTitle}&rdquo;</span>
         </DropdownMenuItem>
       )}
       {onRename && (

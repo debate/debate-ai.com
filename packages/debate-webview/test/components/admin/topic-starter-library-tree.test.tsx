@@ -3,7 +3,7 @@ import { act } from "react";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
 import { TopicStarterLibraryTree } from "../../../src/components/admin/TopicStarterLibraryTree";
-import { allByText, bodyText, button, cleanup, click, flush, installDomShims, keyDown, mockFetch, mount } from "../../helpers/dom";
+import { allByText, bodyText, button, change, cleanup, click, flush, installDomShims, keyDown, mockFetch, mount } from "../../helpers/dom";
 
 beforeAll(installDomShims);
 afterEach(() => {
@@ -32,6 +32,8 @@ function routes() {
   return mockFetch([
     { method: "PATCH", match: /\/api\/admin\/topic-starters\/\d+$/, respond: { id: 3, parentId: 2 } },
     { method: "DELETE", match: /\/api\/admin\/topic-starters\/\d+$/, respond: { success: true } },
+    { method: "POST", match: /\/api\/admin\/topic-starters\/\d+\/copy$/, respond: { id: 9 }, status: 201 },
+    { method: "POST", match: "/api/admin/topic-starters/items", respond: { item: { id: 10 } }, status: 201 },
     { method: "GET", match: "/api/admin/topic-starters", respond: { items: ITEMS } },
   ]);
 }
@@ -112,5 +114,60 @@ describe("TopicStarterLibraryTree", () => {
     await flush();
     expect(bodyText()).toContain("That Topic Starter item no longer exists.");
     expect(button("Refresh").disabled).toBe(false);
+  });
+
+  it("renames a row from its menu", async () => {
+    const { calls } = routes();
+    mount(<TopicStarterLibraryTree />);
+    await flush();
+    openActions("Solar case");
+    click(menuItem("Rename"));
+    const input = document.querySelector<HTMLInputElement>('[aria-label="Rename Solar case"]')!;
+    change(input, "Solar aff");
+    keyDown(input, "Enter");
+    await flush();
+    const patch = calls.find((c) => c.method === "PATCH")!;
+    expect(patch.url).toBe("/api/admin/topic-starters/3");
+    expect(patch.body).toEqual({ title: "Solar aff" });
+    expect(bodyText()).toContain("Renamed to Solar aff.");
+  });
+
+  it("offers Paste only after Copy, and pastes into a folder or beside a file", async () => {
+    const { calls } = routes();
+    mount(<TopicStarterLibraryTree />);
+    await flush();
+    openActions("Aff");
+    expect(allByText(/^Paste/, "[role=menuitem]")).toHaveLength(0);
+    click(menuItem("Copy"));
+    await flush();
+
+    // Rows re-render with a fresh menu; a copied folder pastes into another folder…
+    openActions("Energy");
+    click(menuItem("Paste “Aff”"));
+    await flush();
+    const posts = () => calls.filter((c) => c.method === "POST" && c.url.endsWith("/copy"));
+    expect(posts()[0].url).toBe("/api/admin/topic-starters/2/copy");
+    expect(posts()[0].body).toEqual({ parentId: 1 });
+    expect(bodyText()).toContain("Pasted a copy of Aff into Energy.");
+
+    // …and a file's Paste lands beside it, here at the top level.
+    openActions("Draft K");
+    click(menuItem("Paste “Aff”"));
+    await flush();
+    expect(posts()[1].body).toEqual({ parentId: null });
+  });
+
+  it("adds a folder from the header button", async () => {
+    const { calls } = routes();
+    mount(<TopicStarterLibraryTree />);
+    await flush();
+    click(button("New folder"));
+    await flush();
+    change(document.querySelector<HTMLInputElement>('[aria-label="Folder name"]')!, "Neg");
+    click(button("Create"));
+    await flush();
+    const post = calls.find((c) => c.url.endsWith("/items"))!;
+    expect(post.body).toEqual({ title: "Neg", parentId: null, isFolder: true });
+    expect(bodyText()).toContain("Folder Neg created.");
   });
 });

@@ -140,6 +140,52 @@ async function deleteIds(db: Database, ids: number[]): Promise<void> {
   }
 }
 
+/** Most rows one copy may create — a guard against pasting the whole library into itself. */
+const MAX_COPY_ROWS = 2000;
+
+/**
+ * Copies a Topic Starter row — a file, or a folder with everything in it —
+ * under `parentId` (the top level when null) and returns the new row's id.
+ * Every copied row keeps its title, content, format, tags, year and published
+ * flag; only the copy's root gets " (copy)" added, and only when it lands
+ * beside the original. A folder can't be pasted into its own subtree.
+ */
+export async function copyTopicStarterItem(db: Database, itemId: number, parentId: number | null): Promise<number> {
+  await ensureTopicStarterColumns(db);
+  const root = await requireItem(db, itemId);
+  await requireFolder(db, parentId);
+  const ids = subtreeIds(await readTree(db), itemId);
+  if (parentId != null && ids.includes(parentId)) {
+    throw new TopicStarterChangeError("A folder cannot be pasted into itself.");
+  }
+  if (ids.length > MAX_COPY_ROWS) {
+    throw new TopicStarterChangeError(`That folder holds more than ${MAX_COPY_ROWS.toLocaleString()} items — too many to copy at once.`);
+  }
+
+  // Parents are copied before their children: `subtreeIds` is breadth-first.
+  const newIds = new Map<number, number>();
+  for (const id of ids) {
+    const row = id === root.id ? root : await requireItem(db, id);
+    const isRoot = id === root.id;
+    const [copy] = await db
+      .insert(topicStarterItems)
+      .values({
+        title: isRoot && (root.parentId ?? null) === parentId ? `${row.title} (copy)` : row.title,
+        content: row.content,
+        format: row.format,
+        parentId: isRoot ? parentId : (newIds.get(row.parentId!) ?? null),
+        isFolder: row.isFolder,
+        tags: row.tags,
+        published: row.published,
+        year: row.year,
+      })
+      .returning({ id: topicStarterItems.id });
+    if (!copy) throw new TopicStarterChangeError("The copy could not be saved.", 500);
+    newIds.set(id, copy.id);
+  }
+  return newIds.get(root.id)!;
+}
+
 async function insertFolder(db: Database, title: string, parentId: number | null): Promise<number> {
   const [folder] = await db
     .insert(topicStarterItems)
