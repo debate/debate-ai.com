@@ -12,6 +12,9 @@
  * failed, why each one failed, and the import id to quote when reading server
  * logs. A bulk DOCX import that silently drops half a camp file is worse than
  * one that refuses outright, so partial runs are shown as partial.
+ *
+ * Below the form, {@link TopicStarterLibraryTree} lists what has been
+ * imported so an admin can move or delete it; it reloads after each upload.
  */
 
 import { useRef, useState } from "react"
@@ -19,6 +22,7 @@ import { AlertTriangle, CheckCircle2, FileWarning, Upload } from "lucide-react"
 import { Button } from "../../lib/ui/primitives/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../lib/ui/primitives/card"
 import { Input } from "../../lib/ui/primitives/input"
+import { TopicStarterLibraryTree } from "./TopicStarterLibraryTree"
 
 /** One file the importer could not read, as returned by the API. */
 interface ImportFailure {
@@ -75,6 +79,7 @@ export function TopicStarterUpload() {
   const [published, setPublished] = useState(true)
   const [outcome, setOutcome] = useState<ImportOutcome | null>(null)
   const [uploading, setUploading] = useState(false)
+  const [libraryVersion, setLibraryVersion] = useState(0)
 
   const upload = async () => {
     if (!file) return
@@ -109,6 +114,7 @@ export function TopicStarterUpload() {
         return
       }
 
+      setLibraryVersion((version) => version + 1)
       if (failures.length > 0) console.warn("Topic Starter import completed with failures", data)
       setOutcome({
         tone: failures.length > 0 ? "partial" : "success",
@@ -186,6 +192,8 @@ export function TopicStarterUpload() {
           )}
         </div>
       )}
+
+      <TopicStarterLibraryTree reloadKey={libraryVersion} />
     </CardContent>
   </Card>
 }
