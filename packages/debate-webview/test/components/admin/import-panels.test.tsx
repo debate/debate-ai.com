@@ -78,7 +78,8 @@ describe("TopicStarterUpload", () => {
     expect(button("Publish files").disabled).toBe(true);
     pickFiles(fileInput(), [new File([], "empty.docx")]);
     await clickAsync(button("Publish files"));
-    expect(calls).toHaveLength(0);
+    // Only the imported-files tree's GET; nothing was posted.
+    expect(calls.filter((c) => c.method === "POST")).toHaveLength(0);
     expect(bodyText()).toContain('"empty.docx" is empty (0 bytes).');
   });
 
@@ -97,7 +98,8 @@ describe("TopicStarterUpload", () => {
     pickFiles(fileInput(), [new File(["docx bytes"], "camp.docx")]);
     await clickAsync(button("Publish files"));
 
-    const form = calls[0].init!.body as FormData;
+    const post = calls.find((c) => c.method === "POST")!;
+    const form = post.init!.body as FormData;
     expect(form.get("title")).toBe("Energy");
     expect(form.get("published")).toBe("false");
     expect((form.get("file") as File).name).toBe("camp.docx");
@@ -106,6 +108,8 @@ describe("TopicStarterUpload", () => {
     expect(text).toContain("Stored as .cmir and published to CardMirror for everyone.");
     expect(text).toContain("imp_1");
     expect(button("Publish files").disabled).toBe(true);
+    // The imported-files tree reloads after the upload.
+    expect(calls.filter((c) => c.method === "GET" && c.url === "/api/admin/topic-starters").length).toBeGreaterThanOrEqual(2);
   });
 
   it("lists the skipped files of a partial import", async () => {

@@ -66,9 +66,11 @@
 	// SPEECH_AUDIO holds each round's per-speech MP3 clips, cut in an editor's
 	// browser by the transcript dialog's "Split speeches from audio" button
 	// (lib/videos/speech-audio-store.ts). The bucket is named explicitly:
-	// without `bucket_name`, wrangler tries to provision it on every deploy
-	// whose Worker lacks the binding, and fails with "bucket already exists"
-	// (code 10004) once it does.
+	// left unnamed, wrangler auto-provisions `<worker>-speech-audio`, and the
+	// d-ebate-app-dev-test Workers Build failed re-creating a bucket that
+	// already existed. Every Worker built from this file uses the production
+	// D1 database, so it shares this bucket too, like the two above; the clip
+	// keys D1 points at only resolve against one bucket.
 	"r2_buckets": [
 		{
 			"binding": "DB_BACKUPS",
@@ -80,7 +82,7 @@
 		},
 		{
 			"binding": "SPEECH_AUDIO",
-			"bucket_name": "d-ebate-app-dev-test-speech-audio"
+			"bucket_name": "debate-ai-com-speech-audio"
 		}
 	],
 	// `.sql.7z` copies of those backups (one KV value each, 25 MiB max).
@@ -137,7 +139,7 @@
 				},
 				{
 					"binding": "SPEECH_AUDIO",
-					"bucket_name": "d-ebate-app-dev-test-speech-audio"
+					"bucket_name": "debate-ai-com-speech-audio"
 				}
 			],
 			"kv_namespaces": [
