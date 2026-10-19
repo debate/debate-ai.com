@@ -11,6 +11,19 @@ export { RoundPage } from "./pages/RoundPage";
 export { ResultsPage } from "./pages/ResultsPage";
 export { ResultSetPage } from "./pages/ResultSetPage";
 export { TournamentsContext, useTournaments, formatDate, type LinkLike } from "./shared";
+export {
+  EntryRating,
+  JudgeName,
+  tabroomParadigmUrl,
+  useJudgeParadigm,
+  useTeamRating,
+  type EventFormatHint,
+  type JudgeParadigmLookup,
+  type PairingJudge,
+  type TeamRating,
+  type TeamRatingLookup,
+  type TeamRatingQuery,
+} from "./enrichment";
 export { FramedOverlay, TABROOM_BETA_URL, type FramedOverlayProps } from "./FramedOverlay";
 export {
   TOURNAMENT_FORMATS,

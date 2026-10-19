@@ -2,7 +2,8 @@
 
 import { Fragment, useEffect, useState } from "react";
 import { X } from "lucide-react";
-import type { RoundSchematic } from "../client";
+import type { FieldEntry, RoundSchematic } from "../client";
+import { EntryRating, JudgeName } from "../enrichment";
 import { isLiveDemo, type LiveRoomInput } from "../live/demo-live";
 import { LiveRoomPanel, LiveStatusCell, useNow } from "../live/LiveRoom";
 import { Badge, Card, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../primitives";
@@ -45,12 +46,19 @@ export const PANOPTICON_RELATED: Quote[] = [
 
 /** One round's pairings: rooms, entries (sides or speaker order) and judges. */
 export function RoundPage({ tournId, eventAbbr, roundName }: { tournId: number; eventAbbr: string; roundName: string }) {
-  const { client, hrefs } = useTournaments();
+  const { client, hrefs, lookupTeamRating } = useTournaments();
   const state = useApi(`round:${tournId}:${eventAbbr}:${roundName}`, (signal) => client.round(tournId, eventAbbr, roundName, signal));
+  // The event's field names each entry's debaters and school, which match a
+  // ranked team far more surely than the code alone. Not every tournament
+  // publishes it, so a failure just leaves the code to go on.
+  const field = useApi(`field:${tournId}:${eventAbbr}:${lookupTeamRating ? 1 : 0}`, (signal) =>
+    lookupTeamRating ? client.field(tournId, eventAbbr, signal).catch(() => null) : Promise.resolve(null),
+  );
+  const fieldEntries = field.status === "ready" ? field.data?.Entries : undefined;
   return (
     <div className="space-y-3">
       <BackLink href={hrefs.rounds(tournId)}>All pairings</BackLink>
-      <Loaded state={state}>{(round) => <Schematic round={round} live={isLiveDemo(tournId)} />}</Loaded>
+      <Loaded state={state}>{(round) => <Schematic round={round} live={isLiveDemo(tournId)} field={fieldEntries} />}</Loaded>
     </div>
   );
 }
@@ -124,14 +132,19 @@ export function PairingsEmblem() {
 /**
  * `live` adds the demo tournament's simulated live status beside each room
  * (`../live/demo-live`), with a stream panel that opens under the room.
+ * `field`, the event's registered entries, gives each entry's debaters and
+ * school to the ranking lookup (see `../enrichment`).
  */
 export function Schematic({
   round,
   live = false,
+  field,
 }: {
   round: RoundSchematic;
   live?: boolean;
+  field?: readonly FieldEntry[];
 }) {
+  const fieldById = new Map((field ?? []).map((entry) => [entry.id, entry]));
   const sections = Object.values(round.Sections ?? {});
   const debate = round.Event.type !== "speech" && round.Event.type !== "congress";
   const now = useNow(live ? 1000 : 60_000);
@@ -198,6 +211,16 @@ export function Schematic({
                             <span key={entry.id}>
                               {entry.code}
                               {entry.record && <span className="ml-1 text-xs text-muted-foreground">({entry.record})</span>}
+                              {debate ? (
+                                <EntryRating
+                                  query={{
+                                    code: entry.code,
+                                    name: fieldById.get(entry.id)?.name,
+                                    school: fieldById.get(entry.id)?.School?.name,
+                                    event: round.Event,
+                                  }}
+                                />
+                              ) : null}
                             </span>
                           ))}
                         </span>
@@ -205,7 +228,7 @@ export function Schematic({
                       <TableCell>
                         {judges.map((j, i) => (
                           <span key={i} className="mr-3 inline-block">
-                            {[j.first, j.last].filter(Boolean).join(" ")}
+                            <JudgeName judge={j} />
                             {j.chair ? (
                               <Badge variant="secondary" className="ml-1">
                                 Chair
