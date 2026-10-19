@@ -34,6 +34,7 @@ import { RoundPage } from "./pages/RoundPage";
 import { ResultsPage } from "./pages/ResultsPage";
 import { ResultSetPage } from "./pages/ResultSetPage";
 import { BallotPage } from "./pages/BallotPage";
+import type { JudgeParadigmLookup, TeamRatingLookup } from "./enrichment";
 
 export interface TournamentsAppProps {
   /** Path segments after `basePath` (a catch-all route's params). */
@@ -59,6 +60,19 @@ export interface TournamentsAppProps {
    * optionally sent on to Tabroom. See `../ballots`.
    */
   ballotApiBase?: string;
+  /**
+   * Looks an entry up in the current season's team rankings for its event's
+   * format. When set, pairings and results show a matched entry's school
+   * logo, debaters' last names and rating; an entry with no confident match
+   * is shown as before. See `./enrichment`.
+   */
+  lookupTeamRating?: TeamRatingLookup;
+  /**
+   * Finds a judge's Tabroom paradigm by first and last name, for judges whose
+   * pairing doesn't already carry one. A judge with a paradigm opens it in an
+   * overlay when clicked.
+   */
+  lookupJudgeParadigm?: JudgeParadigmLookup;
 }
 
 export function TournamentsApp({
@@ -69,11 +83,13 @@ export function TournamentsApp({
   Link = defaultLink,
   replace = defaultReplace,
   ballotApiBase,
+  lookupTeamRating,
+  lookupJudgeParadigm,
 }: TournamentsAppProps) {
   const value = useMemo(() => {
     const client = createTournamentsClient(apiBase, undefined, { liveApiBase });
-    return { client, hrefs: tournamentHrefs(basePath, client.slugOf), Link, ballotApiBase };
-  }, [apiBase, liveApiBase, basePath, Link, ballotApiBase]);
+    return { client, hrefs: tournamentHrefs(basePath, client.slugOf), Link, ballotApiBase, lookupTeamRating, lookupJudgeParadigm };
+  }, [apiBase, liveApiBase, basePath, Link, ballotApiBase, lookupTeamRating, lookupJudgeParadigm]);
   const route = matchTournamentRoute(segments);
   const base = basePath.replace(/\/+$/, "");
   const nearest = nearestTournamentSegments(segments);

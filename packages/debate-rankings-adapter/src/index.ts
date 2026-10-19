@@ -80,3 +80,11 @@ export {
   type RoundStage,
   type SideOutcome,
 } from "./matchup-model";
+export {
+  debaterLastNames,
+  debaterNameKey,
+  matchTournamentEntry,
+  rankingDatasetsForEvent,
+  type TournamentEntryQuery,
+  type TournamentEventFormat,
+} from "./tournament-lookup";

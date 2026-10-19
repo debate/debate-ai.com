@@ -11,6 +11,7 @@ import { createContext, useContext, useEffect, useState, type ComponentType, typ
 import { ChevronLeft, Loader2 } from "lucide-react";
 import type { TournamentHrefs } from "../routes";
 import type { TournamentsClient } from "./client";
+import type { JudgeParadigmLookup, TeamRatingLookup } from "./enrichment";
 import { Card, CardHeader, CardTitle, buttonVariants } from "./primitives";
 
 export type LinkLike = ComponentType<{
@@ -34,6 +35,10 @@ export interface TournamentsContextValue {
   Link: LinkLike;
   /** The host app's judge ballot API (e.g. `/api/judge-ballots`); the Ballot tab shows only when set. */
   ballotApiBase?: string;
+  /** Finds an entry's current-season ranking; pairings and results show it beside the entry when set. */
+  lookupTeamRating?: TeamRatingLookup;
+  /** Finds a judge's Tabroom paradigm by name, for judges whose pairing doesn't carry one. */
+  lookupJudgeParadigm?: JudgeParadigmLookup;
 }
 
 export const TournamentsContext = createContext<TournamentsContextValue | null>(null);
@@ -42,6 +47,11 @@ export function useTournaments(): TournamentsContextValue {
   const ctx = useContext(TournamentsContext);
   if (!ctx) throw new Error("Tournament pages must render inside <TournamentsApp>.");
   return ctx;
+}
+
+/** The tournaments context, or `null` for a view rendered on its own (as tests do). */
+export function useOptionalTournaments(): TournamentsContextValue | null {
+  return useContext(TournamentsContext);
 }
 
 export const defaultLink = PlainLink;

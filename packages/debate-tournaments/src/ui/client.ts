@@ -114,7 +114,8 @@ export interface RoundSchematic {
       bye?: number;
       Room?: { id: number; name: string } | null;
       Entries?: Record<string, { id: number; code: string; side?: number; speakerorder?: number; record?: string }>;
-      Judges?: Record<string, { first: string | null; last: string | null; chair?: number }>;
+      /** `paradigm` is the judge's Tabroom person id, set when they have a paradigm on file. */
+      Judges?: Record<string, { id?: number; first: string | null; last: string | null; chair?: number; code?: string; paradigm?: number }>;
     }
   >;
 }

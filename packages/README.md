@@ -129,7 +129,9 @@ bun workspace and its `config/` and `output/` files are read by path rather than
 What the web UI imports for rankings: the dataset list and typed CSV loader over `debate-rankings`'
 output, ratings moved onto the site's scale (`rating-offset.ts`), plus the
 site-only team-label lookup (`findTeamRanking("Harker LL")` and friends) that matches a round
-video's team to its rankings row, and past-season college policy tables (2009-10 to 2025-26)
+video's team to its rankings row, the tournament-entry lookup (`matchTournamentEntry`,
+`rankingDatasetsForEvent`) that `/tournaments` pairings and results use to show an entry's
+rating in its own format's rankings, and past-season college policy tables (2009-10 to 2025-26)
 scraped from debatedata.weebly.com (`college-history.ts`). Site additions live here so the
 submodule never diverges from upstream.
 
@@ -207,6 +209,10 @@ mounted at `/api/tabroom`), a React port of its invite/pairings/results pages (m
 a non-throwing `parseTabroom(schema, data)`), and the D1 schema. Its own `/host` API creates
 tournaments on this site (never on Tabroom) and serves each one's admin web view, and a demo
 tournament loads itself for anyone to browse as the mock admin `demo.admin`.
+Pairings and results take two optional host lookups (`lookupTeamRating`,
+`lookupJudgeParadigm` on `<TournamentsApp>`, see `src/ui/enrichment.tsx`): the site passes
+rankings matches and a Tabroom paradigm search, so entries show logo, last names and rating
+and judges open their paradigm. The package itself still depends on no other `debate-*` package.
 `scripts/sync-upstream.mjs` re-clones upstream and re-applies this package's patches and
 overlays, so upstream changes keep flowing in.
 
