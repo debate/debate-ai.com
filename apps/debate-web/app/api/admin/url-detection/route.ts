@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { and, desc, eq, gt, sql } from "drizzle-orm";
+import { and, desc, eq, gt, or, sql } from "drizzle-orm";
 import { authorizeCardImport } from "@/lib/admin/debate-card-import";
 import { getDBFromContext } from "@/lib/database/context";
 import { detectedUrls, user } from "@/lib/database/schema";
@@ -24,8 +24,9 @@ export async function GET(request: NextRequest) {
   if (search) {
     whereConditions.push(sql`(${detectedUrls.url} LIKE ${"%" + search + "%"} OR ${detectedUrls.title} LIKE ${"%" + search + "%"})`);
   }
+  // The filter box takes either the account id or the email it signed in with.
   if (userId) {
-    whereConditions.push(eq(detectedUrls.userId, userId));
+    whereConditions.push(or(eq(detectedUrls.userId, userId), eq(sql`lower(${user.email})`, userId.toLowerCase())));
   }
   if (sinceDays) {
     const cutoff = new Date(Date.now() - sinceDays * 24 * 60 * 60 * 1000);
@@ -56,6 +57,7 @@ export async function GET(request: NextRequest) {
     db
       .select({ count: sql<number>`count(*)` })
       .from(detectedUrls)
+      .leftJoin(user, eq(detectedUrls.userId, user.id))
       .where(whereConditions.length > 0 ? and(...whereConditions) : undefined),
   ]);
 
