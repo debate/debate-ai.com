@@ -63,6 +63,14 @@ match as whole words, so "accent" is not ACC, and rounds keep their own format
 (`classifyLecture` in `debate-data-sync`; existing lectures were moved by the
 `0004_wsd_acc_lectures.sql` data migration).
 
+Rounds from the **ACC Debate Tournament** are the one exception: any video
+whose title says "ACC Debate Tournament" also shows under ACC, while keeping
+its format (`classifyRoundCollection`; existing ones were moved by
+`0005_acc_tournament_rounds.sql`). Because those rounds are college rounds,
+**College Team Debates** (`/videos/college`) shows an ACC card above its
+search box too (`VIDEO_COLLEGE_FILTER_LINKS`), and the ACC card's count
+includes them.
+
 ## Merged lecture categories
 
 Topic analysis and topic lectures share one shelf, **Topic Lectures**. Videos

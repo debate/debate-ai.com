@@ -3,7 +3,8 @@ import { eq } from "drizzle-orm";
 import { getStaffAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
 import { videos, youtubeRoundVideos } from "@/lib/database/schema";
-import { publishedMsForDate, seasonYearForDate } from "@debate/data-sync/src/videos/video-rows";
+import { normalizeCategoryKey, publishedMsForDate, seasonYearForDate } from "@debate/data-sync/src/videos/video-rows";
+import { classifyRoundCollection } from "@debate/data-sync/src/youtube/parsers/lecture-classifier";
 import { parseQueuedRoundArgs } from "@debate/data-sync/src/youtube/parsers/round-arguments";
 import { recomputeVideoStacks } from "@/lib/videos/recompute-video-stacks";
 
@@ -18,11 +19,12 @@ export async function POST() {
   const rounds = await db.select().from(youtubeRoundVideos);
   let published = 0;
   for (const round of rounds) {
+    const category = classifyRoundCollection(round.title);
     const values = {
       videoId: round.id, source: "round" as const, title: round.title, publishedAt: round.publishedAt,
       publishedMs: publishedMsForDate(round.publishedAt), channel: round.channel,
       viewCount: round.views, description: round.description, style: round.style,
-      category: null, categoryKey: null, tournament: round.tournament, roundLevel: round.roundLevel,
+      category, categoryKey: category ? normalizeCategoryKey(category) : null, tournament: round.tournament, roundLevel: round.roundLevel,
       affTeam: round.aff, negTeam: round.neg, affWin: round.winner, judgeDecision: round.judgeDecision,
       ...parseQueuedRoundArgs(round.description), isTopPick: false, speechDocsUrl: null,
       seasonYear: seasonYearForDate(round.publishedAt),

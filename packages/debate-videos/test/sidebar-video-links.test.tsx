@@ -23,6 +23,7 @@ import {
   VIDEO_LIBRARY_LINKS,
   VIDEO_REFERENCE_LINKS,
   VIDEO_ALL_VIDEOS_FILTER_LINKS,
+  VIDEO_COLLEGE_FILTER_LINKS,
 } from "../src/components/category-gallery/sidebar-video-links";
 
 vi.mock("next/image", () => ({
@@ -152,6 +153,10 @@ describe("the surfaces that render them", () => {
 });
 
 describe("the WSD, ACC and Speech collections", () => {
+  it("offer ACC alone on College Team Debates", () => {
+    expect(VIDEO_COLLEGE_FILTER_LINKS.map((link) => link.href)).toEqual(["/videos/acc"]);
+  });
+
   it("are not sidebar destinations", () => {
     const sidebarHrefs = new Set(SIDEBAR_VIDEO_LINKS.map((link) => link.href));
     expect(VIDEO_ALL_VIDEOS_FILTER_LINKS.map((link) => link.id)).toEqual(["wsd", "acc", "speech"]);
