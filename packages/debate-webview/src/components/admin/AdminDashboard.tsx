@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, type ComponentType } from "react";
-import { DatabaseBackup, FileSearch, Film, FolderTree, Globe, ListVideo, RefreshCw, School, Sparkles, Upload, Users } from "lucide-react";
+import { BookOpen, DatabaseBackup, FileSearch, Film, FolderTree, Globe, ListVideo, RefreshCw, School, Sparkles, Upload, Users } from "lucide-react";
 import { cn } from "../../lib/ui/lib/utils";
 import { Button } from "../../lib/ui/primitives/button";
 import { Badge } from "../../lib/ui/primitives/badge";
@@ -21,7 +21,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../lib/ui/primitives/select";
-import { REUSE_CHECK_LOG_RETENTION_DAYS } from "@debate/research-evidence";
+import { REUSE_CHECK_LOG_RETENTION_DAYS, SourceArticlePanel } from "@debate/research-evidence";
+import { isLikelyArticleUrl } from "../../lib/url-detection/article-url";
 import { formatRecomputeStacksResult } from "../../lib/videos/format-recompute-stacks-result";
 import {
   formatSeedVideosResult,
@@ -158,7 +159,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
     totalUrls: number;
     uniqueUsers: number;
     totalVisits: number;
-    topUrls: Array<{ url: string; title: string | null; visitCount: number; lastVisitedAt: number }>;
+    topUrls: Array<{ url: string; title: string | null; visitCount: number; lastVisitedAt: number; userEmail?: string | null }>;
     periodDays: number;
   } | null>(null);
   const [urlDetectionUrls, setUrlDetectionUrls] = useState<Array<{
@@ -180,6 +181,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
   const [urlDetectionUserFilter, setUrlDetectionUserFilter] = useState("");
   const [urlDetectionError, setUrlDetectionError] = useState<string | null>(null);
   const [urlDetectionPeriodDays, setUrlDetectionPeriodDays] = useState(30);
+  const [readerUrl, setReaderUrl] = useState<string | null>(null);
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
@@ -1214,13 +1216,21 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
                     <h4 className="font-medium mb-3">Most Visited URLs</h4>
                     <ul className="space-y-2">
                       {urlDetectionStats.topUrls.map((item, index) => (
-                        <li key={index} className="flex flex-col gap-1 text-sm">
-                          <a href={item.url} target="_blank" rel="noopener noreferrer" className="truncate hover:underline">
-                            {item.title || item.url}
-                          </a>
-                          <span className="text-muted-foreground">
-                            {item.visitCount.toLocaleString()} visits • Last: {new Date(item.lastVisitedAt).toLocaleDateString()}
-                          </span>
+                        <li key={index} className="flex items-start gap-2 text-sm">
+                          <div className="flex min-w-0 flex-1 flex-col gap-1">
+                            <a href={item.url} target="_blank" rel="noopener noreferrer" className="truncate hover:underline">
+                              {item.title || item.url}
+                            </a>
+                            <span className="text-muted-foreground">
+                              {item.visitCount.toLocaleString()} visits • Last: {new Date(item.lastVisitedAt).toLocaleDateString()}
+                              {item.userEmail && <> • Checked by {item.userEmail}</>}
+                            </span>
+                          </div>
+                          {isLikelyArticleUrl(item.url) && (
+                            <Button variant="outline" size="sm" onClick={() => setReaderUrl(item.url)} title="Open in reader mode">
+                              <BookOpen /> Reader
+                            </Button>
+                          )}
                         </li>
                       ))}
                     </ul>
@@ -1245,7 +1255,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
                     className="w-[300px]"
                   />
                   <Input
-                    placeholder="Filter by user ID…"
+                    placeholder="Filter by user ID or email…"
                     value={urlDetectionUserFilter}
                     onChange={(e) => setUrlDetectionUserFilter(e.target.value)}
                     className="w-[200px]"
@@ -1267,7 +1277,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
                       <thead className="bg-muted">
                         <tr>
                           <th className="px-3 py-2 text-left">URL</th>
-                          <th className="px-3 py-2 text-left">User</th>
+                          <th className="px-3 py-2 text-left">Checked by</th>
                           <th className="px-3 py-2 text-right">Visits</th>
                           <th className="px-3 py-2 text-left">Last Visited</th>
                           <th className="px-3 py-2 text-left">First Seen</th>
@@ -1277,12 +1287,24 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
                         {urlDetectionUrls.map((item) => (
                           <tr key={item.id} className="border-t hover:bg-accent">
                             <td className="px-3 py-2">
-                              <a href={item.url} target="_blank" rel="noopener noreferrer" className="truncate block max-w-xs hover:underline">
-                                {item.title || item.url}
-                              </a>
+                              <div className="flex items-center gap-2">
+                                <a href={item.url} target="_blank" rel="noopener noreferrer" className="truncate block max-w-xs hover:underline">
+                                  {item.title || item.url}
+                                </a>
+                                {isLikelyArticleUrl(item.url) && (
+                                  <Button variant="ghost" size="icon-sm" onClick={() => setReaderUrl(item.url)} title="Open in reader mode" aria-label="Open in reader mode">
+                                    <BookOpen />
+                                  </Button>
+                                )}
+                              </div>
                             </td>
                             <td className="px-3 py-2">
-                              {item.userName || item.userEmail || item.userId}
+                              <div className="flex flex-col">
+                                <span>{item.userEmail || item.userName || item.userId}</span>
+                                {item.userEmail && item.userName && (
+                                  <span className="text-muted-foreground text-xs">{item.userName}</span>
+                                )}
+                              </div>
                             </td>
                             <td className="px-3 py-2 text-right">{item.visitCount.toLocaleString()}</td>
                             <td className="px-3 py-2">{new Date(item.lastVisitedAt).toLocaleString()}</td>
@@ -1302,6 +1324,12 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
                 )}
               </CardContent>
             </Card>
+
+            {readerUrl && (
+              <aside className="fixed inset-y-0 right-0 z-50 w-full border-l shadow-xl sm:w-[min(42rem,100vw)]">
+                <SourceArticlePanel key={readerUrl} url={readerUrl} onClose={() => setReaderUrl(null)} />
+              </aside>
+            )}
           </>
         )}
 

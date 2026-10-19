@@ -1,6 +1,7 @@
 export { SearchInterface } from "./components/SearchInterface";
 export { SearchResultCard } from "./components/SearchResultCard";
 export { CardContentViewer } from "./components/CardContentViewer";
+export { SourceArticlePanel } from "./components/SourceArticlePanel";
 export { ResearchSearchSidebar } from "./components/ResearchSearchSidebar";
 export { AiAnalysisSidebar } from "./components/AiAnalysisSidebar";
 export * from "./panels";
