@@ -63,7 +63,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     return NextResponse.json({ error: "That Topic Starter item does not exist." }, { status: 404 });
   }
 
-  let body: { parentId?: number | null };
+  let body: { parentId?: number | null; title?: string };
   try {
     body = await request.json();
   } catch {
@@ -74,45 +74,58 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   const [target] = await db.select().from(topicStarterItems).where(eq(topicStarterItems.id, docId)).limit(1);
   if (!target) return NextResponse.json({ error: "That Topic Starter item does not exist." }, { status: 404 });
 
-  const parentId = typeof body.parentId === "number" ? body.parentId : null;
-  if (parentId != null) {
-    // Filed only under a real catalogue folder, so the row can't be orphaned
-    // under a file or a deleted folder and vanish from the tree.
-    const [parent] = await db
-      .select({ id: topicStarterItems.id })
-      .from(topicStarterItems)
-      .where(and(eq(topicStarterItems.id, parentId), eq(topicStarterItems.isFolder, true)))
-      .limit(1);
-    if (!parent) return NextResponse.json({ error: "That Topic Starters folder no longer exists." }, { status: 400 });
-    // A folder can't be moved into its own subtree.
-    if (target.isFolder) {
-      const descendants = new Set<number>([target.id]);
-      let cursor = 0;
-      const queue: number[] = [target.id];
-      while (queue.length > 0) {
-        const current = queue.shift()!;
-        const children = await db.select().from(topicStarterItems).where(eq(topicStarterItems.parentId, current));
-        for (const child of children) {
-          if (descendants.has(child.id)) continue;
-          descendants.add(child.id);
-          queue.push(child.id);
+  const updates: { parentId?: number | null; title?: string; updatedAt?: Date } = {};
+
+  let parentId = (target.parentId ?? null) as number | null;
+  if (body.parentId !== undefined) {
+    parentId = typeof body.parentId === "number" ? body.parentId : null;
+    if (parentId != null) {
+      // Filed only under a real catalogue folder, so the row can't be orphaned
+      // under a file or a deleted folder and vanish from the tree.
+      const [parent] = await db
+        .select({ id: topicStarterItems.id })
+        .from(topicStarterItems)
+        .where(and(eq(topicStarterItems.id, parentId), eq(topicStarterItems.isFolder, true)))
+        .limit(1);
+      if (!parent) return NextResponse.json({ error: "That Topic Starters folder no longer exists." }, { status: 400 });
+      // A folder can't be moved into its own subtree.
+      if (target.isFolder) {
+        const descendants = new Set<number>([target.id]);
+        const queue: number[] = [target.id];
+        while (queue.length > 0) {
+          const current = queue.shift()!;
+          const children = await db.select().from(topicStarterItems).where(eq(topicStarterItems.parentId, current));
+          for (const child of children) {
+            if (descendants.has(child.id)) continue;
+            descendants.add(child.id);
+            queue.push(child.id);
+          }
+        }
+        if (descendants.has(parentId)) {
+          return NextResponse.json({ error: "A folder cannot be moved into its own subtree." }, { status: 400 });
         }
       }
-      if (descendants.has(parentId)) {
-        return NextResponse.json({ error: "A folder cannot be moved into its own subtree." }, { status: 400 });
-      }
     }
+    updates.parentId = parentId;
   }
 
-  if ((target.parentId ?? null) === parentId) {
-    return NextResponse.json({ ...target, parentId });
+  if (body.title !== undefined) {
+    const title = body.title?.trim();
+    if (!title) return NextResponse.json({ error: "A title is required." }, { status: 400 });
+    updates.title = title;
   }
+
+  if (Object.keys(updates).length === 0) {
+    return NextResponse.json(target);
+  }
+
+  updates.updatedAt = new Date();
 
   const [updated] = await db
     .update(topicStarterItems)
-    .set({ parentId, updatedAt: new Date() })
+    .set(updates)
     .where(eq(topicStarterItems.id, docId))
     .returning();
-  if (!updated) return NextResponse.json({ error: "The file could not be moved." }, { status: 500 });
+  if (!updated) return NextResponse.json({ error: "The item could not be updated." }, { status: 500 });
   return NextResponse.json(updated);
 }

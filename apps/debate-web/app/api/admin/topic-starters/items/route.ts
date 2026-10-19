@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
   const { isAdmin } = await getAdminAccess();
   if (!isAdmin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-  let body: { title?: string; content?: string; format?: string; parentId?: number | null; year?: number | null };
+  let body: { title?: string; content?: string; format?: string; parentId?: number | null; year?: number | null; isFolder?: boolean; tags?: string | string[] };
   try {
     body = await request.json();
   } catch {
@@ -43,6 +43,25 @@ export async function POST(request: NextRequest) {
     if (!parent) return NextResponse.json({ error: "That Topic Starters folder no longer exists." }, { status: 400 });
   }
 
+  const isFolder = body.isFolder === true;
+  if (isFolder) {
+    const [item] = await db
+      .insert(topicStarterItems)
+      .values({
+        title,
+        content: "",
+        format: "html",
+        parentId,
+        isFolder: true,
+        tags: Array.isArray(body.tags) ? JSON.stringify(body.tags) : (body.tags && typeof body.tags === "string" ? body.tags : JSON.stringify(["folder"])),
+        published: true,
+        year: null,
+      })
+      .returning();
+    if (!item) return NextResponse.json({ error: "The folder could not be saved." }, { status: 500 });
+    return NextResponse.json({ item }, { status: 201 });
+  }
+
   const format = normalizeFormat(body.format);
   const year = parseTopicStarterYear(body.year);
   const [item] = await db
@@ -53,7 +72,7 @@ export async function POST(request: NextRequest) {
       format,
       parentId,
       isFolder: false,
-      tags: JSON.stringify([format, "public"]),
+      tags: Array.isArray(body.tags) ? JSON.stringify(body.tags) : JSON.stringify([format, "public"]),
       published: true,
       year,
     })
