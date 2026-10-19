@@ -3,11 +3,15 @@
 /**
  * The public Topic Starters catalogue as a tree in the docs sidebar.
  *
- * Read-only for readers, so its actions are about getting a file *out*:
- * open it, edit a copy of it, save a copy into your own Files (also by
- * dragging the row onto Files), copy its link, download it. A row dragged
- * from Files and dropped here is published to the catalogue, which the
- * server only allows for admins (`lib/reason-docs/drag-data.ts`).
+ * Its actions get a file *out* — open it, edit a copy of it, save a copy
+ * into your own Files (also by dragging the row onto Files), copy its link,
+ * download it — and, when the host passes the handlers, rearrange the
+ * catalogue: rename, move (from the menu or by dragging a row onto a
+ * folder), delete and add folders. A row dragged from Files and dropped here
+ * is submitted to the catalogue. Every one of those edits is applied at once
+ * for moderators and admins and queued for a moderator's approval for
+ * everyone else (`lib/topic-starters/changes.ts`); the tree itself doesn't
+ * know which, the host's toast says.
  *
  * Right-click opens the same menu as the row's "…" button. Rows carry no
  * format badge — every file in the library is a CardMirror file.
@@ -23,10 +27,13 @@ import {
   Folder,
   FolderDown,
   FolderInput,
+  FolderPlus,
   Link2,
   MoreHorizontal,
   Pencil,
   Search,
+  TextCursorInput,
+  Trash2,
 } from "lucide-react"
 import { Input } from "../../lib/ui/primitives/input"
 import {
@@ -106,6 +113,10 @@ export function TopicStarterTree({
   onEditCopy,
   onCopyLink,
   onPublish,
+  onMove,
+  onRename,
+  onDelete,
+  onCreateFolder,
 }: {
   items: TopicStarterItem[]
   onSelect: (item: TopicStarterItem) => void
@@ -121,6 +132,14 @@ export function TopicStarterTree({
   /** One of the reader's files dropped on the catalogue, to publish under
    *  `parentId` (top level when null). */
   onPublish?: (documentId: number, parentId: number | null) => void
+  /** Re-files a row under `parentId` (top level when null). */
+  onMove?: (id: number, parentId: number | null) => void
+  /** Renames a row. */
+  onRename?: (id: number, title: string) => void
+  /** Deletes a row — a folder with everything in it. */
+  onDelete?: (id: number) => void
+  /** Adds a folder under `parentId`. */
+  onCreateFolder?: (parentId: number | null) => void
 }) {
   const [query, setQuery] = useState("")
   // Collapsed rather than expanded: the catalogue arrives after this mounts,
@@ -128,16 +147,65 @@ export function TopicStarterTree({
   const [collapsed, setCollapsed] = useState<Set<number>>(() => new Set())
   const [menuId, setMenuId] = useState<number | null>(null)
   const [dragOverId, setDragOverId] = useState<number | null | "root">(null)
+  const [renamingId, setRenamingId] = useState<number | null>(null)
+  const [renameValue, setRenameValue] = useState("")
   const nodes = useMemo(() => tree(items), [items])
   const term = query.trim().toLowerCase()
+  const acceptsDrops = Boolean(onPublish || onMove)
+
+  /** Every folder, with its path, for the "Move to" submenu. */
+  const folders = useMemo(() => {
+    const byId = new Map(items.map((item) => [item.id, item]))
+    const pathOf = (item: TopicStarterItem) => {
+      const parts = [item.title]
+      const seen = new Set<number>([item.id])
+      let parent = item.parentId != null ? byId.get(item.parentId) : undefined
+      while (parent && !seen.has(parent.id)) {
+        seen.add(parent.id)
+        parts.unshift(parent.title)
+        parent = parent.parentId != null ? byId.get(parent.parentId) : undefined
+      }
+      return parts.join(" / ")
+    }
+    return items
+      .filter((item) => item.isFolder)
+      .map((item) => ({ item, label: pathOf(item) }))
+      .sort((a, b) => a.label.localeCompare(b.label))
+  }, [items])
+
+  /** A move the tree allows: not into the row's own subtree, and not to
+   *  where it already is. */
+  const canMove = (id: number, parentId: number | null) => {
+    const row = items.find((item) => item.id === id)
+    if (!row || (row.parentId ?? null) === parentId) return false
+    for (let cursor = parentId, guard = 0; cursor != null && guard < items.length + 1; guard++) {
+      if (cursor === id) return false
+      cursor = items.find((item) => item.id === cursor)?.parentId ?? null
+    }
+    return true
+  }
+
+  const commitRename = (id: number) => {
+    const title = renameValue.trim()
+    const row = items.find((item) => item.id === id)
+    if (title && row && title !== row.title) onRename?.(id, title)
+    setRenamingId(null)
+  }
 
   const handleDrop = (event: DragEvent, parentId: number | null) => {
     event.preventDefault()
     event.stopPropagation()
     setDragOverId(null)
     const documentId = draggedId(event.dataTransfer, DOCUMENT_DRAG_TYPE)
-    if (documentId != null) onPublish?.(documentId, parentId)
+    if (documentId != null) {
+      onPublish?.(documentId, parentId)
+      return
+    }
+    const topicId = draggedId(event.dataTransfer, TOPIC_DRAG_TYPE)
+    if (topicId != null && onMove && canMove(topicId, parentId)) onMove(topicId, parentId)
   }
+
+  const editable = Boolean(onMove || onRename || onDelete || onCreateFolder)
 
   const menu = (item: TopicStarterItem) => (
     <DropdownMenuContent align="start" onClick={(event) => event.stopPropagation()}>
@@ -174,11 +242,53 @@ export function TopicStarterTree({
           Download as .docx
         </DropdownMenuItem>
       )}
+      {editable && <DropdownMenuSeparator />}
+      {item.isFolder && onCreateFolder && (
+        <DropdownMenuItem onClick={() => onCreateFolder(item.id)}>
+          <FolderPlus className="mr-2 h-4 w-4" />
+          New folder
+        </DropdownMenuItem>
+      )}
+      {onRename && (
+        <DropdownMenuItem
+          onClick={() => {
+            setRenamingId(item.id)
+            setRenameValue(item.title)
+          }}
+        >
+          <TextCursorInput className="mr-2 h-4 w-4" />
+          Rename
+        </DropdownMenuItem>
+      )}
+      {onMove && (
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>
+            <FolderInput className="mr-2 h-4 w-4" />
+            Move to
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent className="max-h-72 overflow-auto">
+            <DropdownMenuItem disabled={!canMove(item.id, null)} onClick={() => onMove(item.id, null)}>
+              Top level
+            </DropdownMenuItem>
+            {folders.map(({ item: folder, label }) => (
+              <DropdownMenuItem key={folder.id} disabled={!canMove(item.id, folder.id)} onClick={() => onMove(item.id, folder.id)}>
+                {label}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+      )}
+      {onDelete && (
+        <DropdownMenuItem onClick={() => onDelete(item.id)} className="text-destructive focus:text-destructive">
+          <Trash2 className="mr-2 h-4 w-4" />
+          Delete
+        </DropdownMenuItem>
+      )}
     </DropdownMenuContent>
   )
 
   const hasMenu = (item: TopicStarterItem) =>
-    Boolean(onSaveCopy) || (!item.isFolder && Boolean(onDownload || onEditCopy || onCopyLink))
+    editable || Boolean(onSaveCopy) || (!item.isFolder && Boolean(onDownload || onEditCopy || onCopyLink))
 
   const render = (node: Node, depth: number): ReactNode => {
     if (term && !subtreeMatches(node, term)) return null
@@ -187,13 +297,13 @@ export function TopicStarterTree({
     return <div key={item.id} className="group">
       <div
         className={cn("flex items-center gap-1 rounded pr-1 hover:bg-muted", dragOverId === item.id && "ring-1 ring-primary")}
-        draggable
+        draggable={renamingId !== item.id}
         onDragStart={(event) => {
           event.dataTransfer.setData(TOPIC_DRAG_TYPE, String(item.id))
-          event.dataTransfer.effectAllowed = "copy"
+          event.dataTransfer.effectAllowed = onMove ? "copyMove" : "copy"
         }}
         onDragOver={(event) => {
-          if (!item.isFolder || !onPublish) return
+          if (!item.isFolder || !acceptsDrops) return
           event.preventDefault()
           event.stopPropagation()
           setDragOverId(item.id)
@@ -207,11 +317,29 @@ export function TopicStarterTree({
           setMenuId(item.id)
         }}
       >
-        <button type="button" onClick={() => item.isFolder ? setCollapsed((old) => { const next = new Set(old); next.has(item.id) ? next.delete(item.id) : next.add(item.id); return next }) : onSelect(item)} className="flex min-w-0 flex-1 items-center gap-1 px-2 py-1.5 text-left text-sm" style={{ paddingLeft: 8 + depth * 14 }}>
-          {item.isFolder ? (open ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />) : <span className="w-3.5" />}
-          {item.isFolder ? <Folder className="h-4 w-4 text-amber-500" /> : <FileText className="h-4 w-4 text-muted-foreground" />}
-          <span className="min-w-0 flex-1 truncate">{item.title}</span>
-        </button>
+        {renamingId === item.id ? (
+          <div className="flex min-w-0 flex-1 items-center gap-1 px-2 py-1" style={{ paddingLeft: 8 + depth * 14 }}>
+            {item.isFolder ? <Folder className="ml-[18px] h-4 w-4 text-amber-500" /> : <FileText className="ml-[18px] h-4 w-4 text-muted-foreground" />}
+            <Input
+              autoFocus
+              aria-label={`Rename ${item.title}`}
+              value={renameValue}
+              onChange={(event) => setRenameValue(event.target.value)}
+              onBlur={() => commitRename(item.id)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") commitRename(item.id)
+                if (event.key === "Escape") setRenamingId(null)
+              }}
+              className="h-6 min-w-0 flex-1 px-1 text-sm"
+            />
+          </div>
+        ) : (
+          <button type="button" onClick={() => item.isFolder ? setCollapsed((old) => { const next = new Set(old); next.has(item.id) ? next.delete(item.id) : next.add(item.id); return next }) : onSelect(item)} className="flex min-w-0 flex-1 items-center gap-1 px-2 py-1.5 text-left text-sm" style={{ paddingLeft: 8 + depth * 14 }}>
+            {item.isFolder ? (open ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />) : <span className="w-3.5" />}
+            {item.isFolder ? <Folder className="h-4 w-4 text-amber-500" /> : <FileText className="h-4 w-4 text-muted-foreground" />}
+            <span className="min-w-0 flex-1 truncate">{item.title}</span>
+          </button>
+        )}
         {hasMenu(item) && (
           <DropdownMenu open={menuId === item.id} onOpenChange={(next) => setMenuId(next ? item.id : null)}>
             <DropdownMenuTrigger asChild>
@@ -236,7 +364,7 @@ export function TopicStarterTree({
     <div
       className={cn("min-h-0 flex-1 overflow-auto pb-2", dragOverId === "root" && "ring-1 ring-inset ring-primary")}
       onDragOver={(event) => {
-        if (!onPublish) return
+        if (!acceptsDrops) return
         event.preventDefault()
         setDragOverId("root")
       }}

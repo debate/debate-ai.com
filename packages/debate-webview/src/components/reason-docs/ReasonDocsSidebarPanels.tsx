@@ -37,9 +37,11 @@
  *
  * Files and Topic Starters trade rows by drag and drop (and by the same moves
  * in each row's right-click menu): a topic starter dragged onto Files becomes
- * the reader's own copy, and a file dragged onto Topic Starters is published
- * there (admins only — the server refuses everyone else, and the reason is
- * shown). The File manager button opens the same files in the SVAR file
+ * the reader's own copy, and a file dragged onto Topic Starters is submitted
+ * to the public share. Signed-in readers can also rename, move, delete and add
+ * folders in Topic Starters, and ask the AI to organize it by argument (Aff
+ * cases, Neg DA / CP / T / K); moderators' and admins' edits apply at once,
+ * everyone else's go to the admin panel's approval queue. The File manager button opens the same files in the SVAR file
  * manager quick search uses (`FileManagerDialog`), for organising many files
  * at once; the Sort control orders the tree.
  */
@@ -55,6 +57,7 @@ import {
   FolderKanban,
   FolderPlus,
   Loader2,
+  Sparkles,
   Upload,
 } from "lucide-react"
 import { toast } from "sonner"
@@ -79,6 +82,8 @@ import { useSession } from "../../lib/hooks/useSession"
 import { FileManagerDialog } from "./FileManagerDialog"
 import { FileTree } from "./FileTree"
 import { TopicStarterTree, type TopicStarterItem } from "./TopicStarterTree"
+import { NewTopicFolderDialog, OrganizeTopicsDialog, type OrganizeState } from "./TopicStarterDialogs"
+import type { TopicStarterChange } from "../../lib/topic-starters/changes"
 import { useReasonDocs } from "./ReasonDocsProvider"
 import type { ReasonDocument } from "./types"
 
@@ -198,6 +203,10 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
     publishToTopics,
     deleteTopicStarter,
     moveTopicStarter,
+    renameTopicStarter,
+    createTopicFolder,
+    proposeTopicChange,
+    organizeTopicStarters,
   } = useReasonDocs()
 
   const [topicsOpen, setTopicsOpen] = useState(true)
@@ -218,6 +227,31 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
   /** The file whose "Sell…" dialog is open. */
   const [sellingId, setSellingId] = useState<number | null>(null)
   const { isAuthenticated } = useSession()
+  /** Moderators and admins edit Topic Starters directly; everyone else's
+   *  edits go to them for approval. Only changes wording — the server decides. */
+  const [canEditTopics, setCanEditTopics] = useState(false)
+  /** The folder a "New folder" dialog creates in (`null` = top level); undefined when closed. */
+  const [newFolderParent, setNewFolderParent] = useState<number | null | undefined>(undefined)
+  const [organize, setOrganize] = useState<OrganizeState>({ phase: "closed" })
+  const [organizeChange, setOrganizeChange] = useState<TopicStarterChange | null>(null)
+  const [sendingOrganize, setSendingOrganize] = useState(false)
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setCanEditTopics(false)
+      return
+    }
+    let cancelled = false
+    fetch("/api/admin/me", { credentials: "include" })
+      .then((res) => (res.ok ? (res.json() as Promise<{ canEditContent?: boolean }>) : null))
+      .then((data) => {
+        if (!cancelled) setCanEditTopics(Boolean(data?.canEditContent))
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [isAuthenticated])
 
   // Collapse state and sort are per-device view preferences; read after
   // mount so the SSR markup stays deterministic.
@@ -414,38 +448,83 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
   const publishFile = useCallback(
     (id: number, topicParentId: number | null = null) => {
       void publishToTopics(id, topicParentId).then((result) => {
-        if (result.ok) toast.success(`Added ${result.item.title} to Topic Starters.`)
-        else toast.error(result.error)
+        if (!result.ok) toast.error(result.error)
+        else if (result.pending) toast.success(`Sent ${result.title} to the moderators to add to Topic Starters.`)
+        else toast.success(`Added ${result.title} to Topic Starters.`)
       })
     },
     [publishToTopics],
   )
 
-  /** Removes a topic starter from the catalogue — admin-only on the server,
-   *  so a non-admin's attempt is a toast rather than a crash. */
-  const deleteTopic = useCallback(
-    (id: number) => {
-      const item = topicItems.find((t) => t.id === id)
-      void deleteTopicStarter(id).then((result) => {
-        if (result.ok) toast.success(`${item?.title || "Topic starter"} deleted.`)
-        else toast.error(result.error)
-      })
+  /** The toast for a Topic Starters edit: done (moderators), sent for
+   *  approval (everyone else), or why it failed. */
+  const reportTopicChange = useCallback(
+    (result: { ok: true; pending: boolean } | { ok: false; error: string }, done: string, proposed: string) => {
+      if (!result.ok) toast.error(result.error)
+      else toast.success(result.pending ? `${proposed} Sent to the moderators for approval.` : done)
     },
-    [topicItems, deleteTopicStarter],
+    [],
   )
 
-  /** Re-files a topic starter under another catalogue folder — admin-only on
-   *  the server. */
+  const deleteTopic = useCallback(
+    (id: number) => {
+      const name = topicItems.find((t) => t.id === id)?.title || "Topic starter"
+      void deleteTopicStarter(id).then((result) => reportTopicChange(result, `${name} deleted.`, `Delete ${name}?`))
+    },
+    [topicItems, deleteTopicStarter, reportTopicChange],
+  )
+
   const moveTopic = useCallback(
     (id: number, parentId: number | null) => {
-      const item = topicItems.find((t) => t.id === id)
-      void moveTopicStarter(id, parentId).then((result) => {
-        if (result.ok) toast.success(`${item?.title || "Topic starter"} moved.`)
-        else toast.error(result.error)
-      })
+      const name = topicItems.find((t) => t.id === id)?.title || "Topic starter"
+      void moveTopicStarter(id, parentId).then((result) => reportTopicChange(result, `${name} moved.`, `Move ${name}?`))
     },
-    [topicItems, moveTopicStarter],
+    [topicItems, moveTopicStarter, reportTopicChange],
   )
+
+  const renameTopic = useCallback(
+    (id: number, title: string) => {
+      void renameTopicStarter(id, title).then((result) => reportTopicChange(result, `Renamed to ${title}.`, `Rename to ${title}?`))
+    },
+    [renameTopicStarter, reportTopicChange],
+  )
+
+  const createFolder = useCallback(
+    (title: string, parentId: number | null) => {
+      void createTopicFolder(title, parentId).then((result) =>
+        reportTopicChange(result, `Folder ${title} created.`, `New folder ${title}?`),
+      )
+    },
+    [createTopicFolder, reportTopicChange],
+  )
+
+  /** "Organize by argument": ask the AI, then show its proposal to confirm. */
+  const startOrganize = useCallback(() => {
+    setOrganize({ phase: "loading" })
+    setOrganizeChange(null)
+    void organizeTopicStarters().then((result) => {
+      if (!result.ok) {
+        setOrganize({ phase: "error", error: result.error })
+        return
+      }
+      setOrganizeChange(result.change)
+      setOrganize({ phase: "ready", summary: result.summary, moves: result.moves, hasChange: result.change != null })
+    })
+  }, [organizeTopicStarters])
+
+  const confirmOrganize = useCallback(() => {
+    if (!organizeChange) return
+    setSendingOrganize(true)
+    void proposeTopicChange(organizeChange).then((result) => {
+      setSendingOrganize(false)
+      if (!result.ok) {
+        setOrganize({ phase: "error", error: result.error })
+        return
+      }
+      setOrganize({ phase: "closed" })
+      toast.success(result.pending ? "Reorganization sent to the moderators for approval." : "Topic Starters organized by argument.")
+    })
+  }, [organizeChange, proposeTopicChange])
 
   /** The topic starter's own editor link, which anyone can open — the
    *  catalogue is public, unlike a reader's own files. */
@@ -472,7 +551,36 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
 
   return (
     <div className={cn("flex min-h-0 flex-col gap-1", className)}>
-      <SidebarSection title="Topic Starters" open={topicsOpen} onToggle={toggleTopics} fill={fill}>
+      <SidebarSection
+        title="Topic Starters"
+        open={topicsOpen}
+        onToggle={toggleTopics}
+        fill={fill}
+        actions={
+          isAuthenticated ? (
+            <>
+              <button
+                type="button"
+                onClick={() => setNewFolderParent(null)}
+                title={canEditTopics ? "New folder" : "Suggest a new folder"}
+                className={iconButton}
+              >
+                <FolderPlus className="h-3.5 w-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={startOrganize}
+                disabled={organize.phase === "loading"}
+                title="Organize by argument (AI): Aff cases, Neg DA / CP / T / K"
+                aria-label="Organize by argument"
+                className={iconButton}
+              >
+                {organize.phase === "loading" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+              </button>
+            </>
+          ) : undefined
+        }
+      >
         {loading ? (
           spinner
         ) : (
@@ -485,6 +593,10 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
               onEditCopy={(item) => saveTopicCopy(item, null, true)}
               onCopyLink={copyTopicLink}
               onPublish={publishFile}
+              onMove={isAuthenticated ? moveTopic : undefined}
+              onRename={isAuthenticated ? renameTopic : undefined}
+              onDelete={isAuthenticated ? deleteTopic : undefined}
+              onCreateFolder={isAuthenticated ? setNewFolderParent : undefined}
             />
             {topicDownloadError && (
               <p className="shrink-0 px-3 pb-2 text-xs text-destructive">{topicDownloadError}</p>
@@ -632,6 +744,19 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
         onPublish={publishFile}
       />
       <SellFileDialog documentId={sellingId} onClose={() => setSellingId(null)} />
+      <NewTopicFolderDialog
+        parentId={newFolderParent}
+        canEdit={canEditTopics}
+        onClose={() => setNewFolderParent(undefined)}
+        onCreate={createFolder}
+      />
+      <OrganizeTopicsDialog
+        state={organize}
+        canEdit={canEditTopics}
+        sending={sendingOrganize}
+        onClose={() => setOrganize({ phase: "closed" })}
+        onConfirm={confirmOrganize}
+      />
     </div>
   )
 }
