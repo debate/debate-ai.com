@@ -65,7 +65,7 @@ export function extractHumanName(
   // Calculate cardinality-based author classification schema parameter
   let authorType = 0;
   if (processedAuthors.length === 1) {
-    authorType = processedAuthors[0].isOrg ? 4 : 1;
+    authorType = processedAuthors[0]!.isOrg ? 4 : 1;
   } else if (processedAuthors.length === 2) {
     authorType = 2;
   } else if (processedAuthors.length > 2) {

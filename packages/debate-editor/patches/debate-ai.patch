@@ -163,6 +163,93 @@ index 23d5dcd..3c25924 100644
      onBlocked: (message) => showToast(message),
    });
    registerCollabPluginSource({
+diff --git a/src/editor/convert-cards-to-read-mode.ts b/src/editor/convert-cards-to-read-mode.ts
+index aef0f88..fdfc1de 100644
+--- a/src/editor/convert-cards-to-read-mode.ts
++++ b/src/editor/convert-cards-to-read-mode.ts
+@@ -2,9 +2,11 @@
+  * Destructively reduce cards to the text read mode shows.
+  *
+  * Every rule here is read mode's own: which text is audible comes from
+- * the read-mode plugin (`isReadModeKeptText` — highlights, cites, the
+- * reading-marker color, the whole cite under "Read mode: keep entire
+- * cite" — whatever the settings say), and the paragraph
++ * the read-mode plugin (`isReadModeKeptText` — highlights, or the
++ * underlining of a card with no highlights, cites, the reading-marker
++ * color, the whole cite under "Read mode: keep entire cite" — whatever
++ * the settings say), a cite read mode shows as its parsed author/year
++ * label ("Smith 21", `readModeCiteLabel`) becomes that label, and the paragraph
+  * shape follows the "Read mode: preserve paragraph integrity" setting —
+  * off, a card's body paragraphs flow together into one; on, each source
+  * paragraph with audible text keeps its own line and empty ones collapse.
+@@ -13,7 +15,7 @@
+  */
+ import type { Mark, Node as PMNode } from 'prosemirror-model';
+ import type { Command, EditorState } from 'prosemirror-state';
+-import { isReadModeKeptText } from './read-mode-plugin.js';
++import { isReadModeKeptText, readModeCiteLabel } from './read-mode-plugin.js';
+ import { settings } from './settings.js';
+ 
+ interface CardAt {
+@@ -25,10 +27,16 @@ class AudibleInlineBuilder {
+   readonly nodes: PMNode[] = [];
+   private pendingSpaceMarks: readonly Mark[] | null = null;
+ 
++  private readonly card: PMNode;
++
++  constructor(card: PMNode) {
++    this.card = card;
++  }
++
+   addTextblock(node: PMNode): void {
+     node.forEach((child) => {
+       if (!child.isText || !child.text) return;
+-      if (!isReadModeKeptText(child, node)) {
++      if (!isReadModeKeptText(child, node, this.card)) {
+         this.breakRun();
+         return;
+       }
+@@ -86,10 +94,10 @@ function convertCard(card: PMNode): PMNode {
+   });
+   const tag = sourceTag.type.create(sourceTag.attrs, tagContent, sourceTag.marks);
+   const children: PMNode[] = [tag];
+-  let body = new AudibleInlineBuilder();
++  let body = new AudibleInlineBuilder(card);
+   const flushBody = (): void => {
+     if (body.nodes.length > 0) children.push(schema.nodes['card_body']!.create(null, body.nodes));
+-    body = new AudibleInlineBuilder();
++    body = new AudibleInlineBuilder(card);
+   };
+   // A body-like source paragraph: joined into the running body (read
+   // mode's default flow), or — with paragraph integrity on — its own
+@@ -99,7 +107,7 @@ function convertCard(card: PMNode): PMNode {
+       body.addTextblock(node);
+       return;
+     }
+-    const one = new AudibleInlineBuilder();
++    const one = new AudibleInlineBuilder(card);
+     one.addTextblock(node);
+     if (one.nodes.length === 0) return;
+     flushBody();
+@@ -108,10 +116,16 @@ function convertCard(card: PMNode): PMNode {
+ 
+   card.forEach((child, _offset, index) => {
+     if (index === 0) return;
+-    if (child.type.name === 'cite_paragraph' || child.type.name === 'undertag') {
++    const citeLabel = readModeCiteLabel(child, card);
++    if (citeLabel) {
++      // Read mode shows this cite as its author/year label — keep that.
++      flushBody();
++      const citeMark = schema.marks['cite_mark'];
++      children.push(child.type.create(child.attrs, schema.text(citeLabel, citeMark ? [citeMark.create()] : [])));
++    } else if (child.type.name === 'cite_paragraph' || child.type.name === 'undertag') {
+       // Their own node, audible text only — read mode shows an undertag's
+       // highlighted words just as it shows a cite's.
+-      const kept = new AudibleInlineBuilder();
++      const kept = new AudibleInlineBuilder(card);
+       kept.addTextblock(child);
+       if (kept.nodes.length > 0) {
+         flushBody();
 diff --git a/src/editor/home-screen.ts b/src/editor/home-screen.ts
 index 8e3f0ec..24d16a3 100644
 --- a/src/editor/home-screen.ts
@@ -2218,6 +2305,214 @@ index f2defc3..30dd5c5 100644
    if (!e || typeof e !== 'object') return false;
    const c = e as Record<string, unknown>;
    return (
+diff --git a/src/editor/read-mode-plugin.ts b/src/editor/read-mode-plugin.ts
+index aa6ae13..7869f03 100644
+--- a/src/editor/read-mode-plugin.ts
++++ b/src/editor/read-mode-plugin.ts
+@@ -10,7 +10,15 @@
+  *   - In `cite_paragraph`: keep iff carrying `cite_mark` OR `highlight` —
+  *     or, with "Read mode: keep entire cite" on, every text node of a
+  *     cite that has at least one such run (`keepsWholeParagraph`).
++ *   - In a card's `cite_paragraph`, read mode instead shows one parsed
++ *     label — the author's last name and year ("Smith 21", see
++ *     card-read-info.ts) — in place of the cite's text, whenever the cite
++ *     yields either (keep-entire-cite off). A cite that parses to nothing
++ *     falls back to the cite-mark rule above.
+  *   - In `card_body` / `paragraph` / `undertag`: keep iff carrying `highlight`.
++ *     A card whose body has no highlighting at all shows its underlined
++ *     text instead (`underline_mark` / `emphasis_mark` / `underline_direct`)
++ *     in its body and table paragraphs, so an uncut card still reads.
+  *   - Elsewhere (heading paragraphs etc.): no decoration — block-level
+  *     CSS handles whether they show.
+  *
+@@ -42,6 +50,7 @@ import { changedRange, expandToTopLevel } from './decoration-range.js';
+ import { isSyncOrigin } from './sync-origin.js';
+ import { NORMALIZER_META } from './normalizer-guard.js';
+ import { settings } from './settings.js';
++import { cardHighlightInfo, citeReadLabel } from './card-read-info.js';
+ import {
+   toggleReadingMarker,
+   isReadingMarkerColor,
+@@ -260,28 +269,70 @@ const READ_MODE_HEADING_BLOCKS = new Set(['tag', 'analytic', 'pocket', 'hat', 'b
+  *  longer vanishes in read mode (field find, 2026-08-14). */
+ const CITE_KEPT_MARKS: readonly string[] = ['cite_mark', 'highlight'];
+ const BODY_KEPT_MARKS: readonly string[] = ['highlight'];
++/** What an unhighlighted card's body reads instead: its underlining
++ *  (Verbatim's Emphasis style is underlined too). */
++const BODY_UNDERLINE_MARKS: readonly string[] = ['underline_mark', 'emphasis_mark', 'underline_direct'];
++/** A labelled cite keeps none of its own runs (reading markers aside). */
++const NO_KEPT_MARKS: readonly string[] = [];
+ 
+-/** The read-aloud marks a textblock is filtered by, `'heading'` if its
+- *  text is always shown, or null if it isn't read-mode content. Mirrors
+- *  computeDecorationsInRange's per-node decision. */
+-function readKeptKind(nodeName: string): readonly string[] | 'heading' | null {
+-  if (READ_MODE_HEADING_BLOCKS.has(nodeName)) return 'heading';
+-  if (nodeName === 'cite_paragraph') return CITE_KEPT_MARKS;
+-  if (nodeName === 'card_body' || nodeName === 'paragraph' || nodeName === 'undertag') {
+-    return BODY_KEPT_MARKS;
++/** How read mode treats one textblock: `'heading'` if its text is always
++ *  shown, null if it isn't read-mode content, else the read-aloud marks it
++ *  is filtered by — plus, for a card's cite, the "Smith 21" label shown in
++ *  place of its text. */
++type ReadRule = 'heading' | null | { marks: readonly string[]; citeLabel: string | null };
++
++/** The card a textblock at `pos` sits in (directly, or in a table cell). */
++function enclosingCard(doc: PMNode, pos: number): PMNode | null {
++  const $pos = doc.resolve(pos);
++  for (let depth = $pos.depth; depth > 0; depth--) {
++    const node = $pos.node(depth);
++    if (node.type.name === 'card') return node;
++  }
++  return null;
++}
++
++/** Whether a card counts as highlighted — background color counts too
++ *  when "Read mode: show background color" keeps it visible. */
++function cardIsHighlighted(card: PMNode): boolean {
++  const info = cardHighlightInfo(card);
++  return info.hasHighlight || (info.hasShading && settings.get('readModeShowBackground'));
++}
++
++/** The author/year label read mode shows for a cite paragraph of `card`,
++ *  or null to fall back to the cite's own marked text (outside a card,
++ *  under "Read mode: keep entire cite", or when nothing parsed). Shared
++ *  with Convert Cards to Read Mode, which writes the same label. */
++export function readModeCiteLabel(cite: PMNode, card: PMNode | null): string | null {
++  if (!card || cite.type.name !== 'cite_paragraph' || settings.get('readModeKeepEntireCite')) return null;
++  return citeReadLabel(cite);
++}
++
++/** Mirrors computeDecorationsInRange's per-node decision. */
++function readRule(node: PMNode, card: PMNode | null): ReadRule {
++  const name = node.type.name;
++  if (READ_MODE_HEADING_BLOCKS.has(name)) return 'heading';
++  if (name === 'cite_paragraph') {
++    const citeLabel = readModeCiteLabel(node, card);
++    return { marks: citeLabel ? NO_KEPT_MARKS : CITE_KEPT_MARKS, citeLabel };
++  }
++  if (name === 'card_body' || name === 'paragraph') {
++    const marks = card && !cardIsHighlighted(card) ? BODY_UNDERLINE_MARKS : BODY_KEPT_MARKS;
++    return { marks, citeLabel: null };
+   }
++  if (name === 'undertag') return { marks: BODY_KEPT_MARKS, citeLabel: null };
+   return null;
+ }
+ 
+ /** Whether read mode keeps this inline text node of `parent` visible.
+  *  Shared with destructive conversions so their audible-text rule cannot
+- *  drift from the display-only mode. */
+-export function isReadModeKeptText(child: PMNode, parent: PMNode): boolean {
++ *  drift from the display-only mode; pass the enclosing `card` so its
++ *  highlighted-or-underlined choice and cite label apply. */
++export function isReadModeKeptText(child: PMNode, parent: PMNode, card: PMNode | null = null): boolean {
+   if (!child.isText) return false;
+-  const kind = readKeptKind(parent.type.name);
+-  if (kind === 'heading') return true;
+-  if (kind === null) return false;
+-  return isReadKept(child, kind) || keepsWholeParagraph(parent, kind);
++  const rule = readRule(parent, card);
++  if (rule === 'heading') return true;
++  if (rule === null) return false;
++  return isReadKept(child, rule.marks) || keepsWholeParagraph(parent, rule.marks);
+ }
+ 
+ /**
+@@ -308,9 +359,9 @@ export function nearestReadKeptPos(doc: PMNode, pos: number): number | null {
+     }
+   };
+   doc.nodesBetween(from, to, (node, nodePos) => {
+-    const kind = readKeptKind(node.type.name);
+-    if (kind === null) return true; // a container — descend
+-    if (kind === 'heading') {
++    const rule = readRule(node, enclosingCard(doc, nodePos));
++    if (rule === null) return true; // a container — descend
++    if (rule === 'heading') {
+       if (node.content.size > 0) {
+         const start = nodePos + 1;
+         const end = nodePos + node.nodeSize - 1;
+@@ -318,6 +369,9 @@ export function nearestReadKeptPos(doc: PMNode, pos: number): number | null {
+       }
+       return false;
+     }
++    // A labelled cite shows its label at the paragraph start.
++    if (rule.citeLabel) consider(nodePos + 1);
++    const kind = rule.marks;
+     // Body / cite text: only runs actually carrying the read-aloud mark
+     // (or the whole cite, when the setting keeps it).
+     const whole = keepsWholeParagraph(node, kind);
+@@ -351,12 +405,17 @@ export function firstReadKeptPos(doc: PMNode, from: number, to: number): number
+   let found: number | null = null;
+   doc.nodesBetween(lo, hi, (node, nodePos) => {
+     if (found !== null) return false;
+-    const kind = readKeptKind(node.type.name);
+-    if (kind === null) return true; // container — descend
+-    if (kind === 'heading') {
++    const rule = readRule(node, enclosingCard(doc, nodePos));
++    if (rule === null) return true; // container — descend
++    if (rule === 'heading') {
+       if (node.content.size > 0) found = Math.max(lo, nodePos + 1);
+       return false;
+     }
++    if (rule.citeLabel && nodePos + node.nodeSize > lo) {
++      found = Math.max(lo, nodePos + 1);
++      return false;
++    }
++    const kind = rule.marks;
+     const whole = keepsWholeParagraph(node, kind);
+     node.forEach((child, offset) => {
+       if (found !== null) return;
+@@ -389,9 +448,9 @@ export function firstReadKeptPos(doc: PMNode, from: number, to: number): number
+ function computeDecorationsInRange(doc: PMNode, from: number, to: number): Decoration[] {
+   const decos: Decoration[] = [];
+   doc.nodesBetween(from, to, (node, pos) => {
+-    const kind = readKeptKind(node.type.name);
+-    if (kind !== null && kind !== 'heading') {
+-      decorateParagraph(node, pos, kind, decos);
++    const rule = readRule(node, enclosingCard(doc, pos));
++    if (rule !== null && rule !== 'heading') {
++      decorateParagraph(node, pos, rule.marks, rule.citeLabel, decos);
+       // We've already walked this paragraph's inline children; don't
+       // recurse into them again from the outer nodesBetween.
+       return false;
+@@ -416,15 +475,36 @@ function makeRunSeparator(): HTMLElement {
+   return span;
+ }
+ 
++/** Build the cite-label widget's DOM: the parsed "Smith 21", styled
++ *  like a cite (`pmd-cite`) so it reads as the card's short cite. */
++function makeCiteLabel(label: string): HTMLElement {
++  const span = document.createElement('span');
++  span.className = 'pmd-rm-cite-label pmd-cite';
++  span.textContent = label;
++  span.contentEditable = 'false';
++  return span;
++}
++
+ /** Walk one paragraph's direct text children in order. For each
+  *  kept text node, decide whether it ends a run; if so, emit a
+- *  widget separator at the boundary. */
++ *  widget separator at the boundary. A labelled cite also gets its
++ *  author/year label widget at the paragraph start. */
+ function decorateParagraph(
+   para: PMNode,
+   paraPos: number,
+   markNames: readonly string[],
++  citeLabel: string | null,
+   decos: Decoration[],
+ ): void {
++  if (citeLabel) {
++    decos.push(
++      Decoration.widget(paraPos + 1, () => makeCiteLabel(citeLabel), {
++        side: -1,
++        ignoreSelection: true,
++        key: `pmd-rm-cite-label:${citeLabel}`,
++      }),
++    );
++  }
+   interface Item { pos: number; nodeSize: number; keep: boolean }
+   const items: Item[] = [];
+   const whole = keepsWholeParagraph(para, markNames);
 diff --git a/src/editor/recovery-ui.ts b/src/editor/recovery-ui.ts
 index 3880b24..36c5f58 100644
 --- a/src/editor/recovery-ui.ts
@@ -4321,7 +4616,7 @@ index cbf4cb0..8f733a0 100644
      copyBtn.type = 'button';
      copyBtn.className = 'pmd-settings-btn';
 diff --git a/src/editor/style.css b/src/editor/style.css
-index 19ab630..7b663a3 100644
+index 19ab630..8a39225 100644
 --- a/src/editor/style.css
 +++ b/src/editor/style.css
 @@ -527,15 +527,68 @@
@@ -4940,7 +5235,21 @@ index 19ab630..7b663a3 100644
  
  /* Empty headings still occupy a normal line's worth of height. */
  .pmd-nav-label:empty::before {
-@@ -5881,10 +6106,6 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+@@ -5713,6 +5938,13 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+   display: inline;
+ }
+ 
++/* Cite label widget. In a card, read mode replaces the cite's text with
++   one parsed author/year label ("Smith 21", card-read-info.ts), styled
++   as a cite by its `pmd-cite` class. Only emitted while read mode is on. */
++.pmd-read-mode .pmd-rm-cite-label {
++  display: inline;
++}
++
+ /* Hide hard-break / trailing-break elements inside card body and cite
+    paragraphs in read mode — ProseMirror adds a trailing <br> to empty
+    paragraphs for cursor placement; in read mode we want continuous
+@@ -5881,10 +6113,6 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
    border-radius: 8px;
    box-shadow: 0 8px 32px var(--pmd-c-shadow-deep);
    width: 90%;
@@ -4951,7 +5260,7 @@ index 19ab630..7b663a3 100644
    max-width: 720px;
    max-height: 80vh;
    display: flex;
-@@ -5892,18 +6113,37 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+@@ -5892,18 +6120,37 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
    font-family: var(--pmd-ui-font);
  }
  
@@ -4991,7 +5300,7 @@ index 19ab630..7b663a3 100644
    font-weight: 600;
  }
  
-@@ -5921,105 +6161,97 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+@@ -5921,105 +6168,97 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
    color: var(--pmd-c-text-strong);
  }
  
@@ -5155,7 +5464,7 @@ index 19ab630..7b663a3 100644
  /* Section headers inside a settings tab (SettingMeta.section).
   * Sized to match .pmd-install-info-heading ("About this install").
   * All settings dividers — between rows and between sections — use the
-@@ -6038,7 +6270,10 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+@@ -6038,7 +6277,10 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
    text-transform: uppercase;
    color: var(--pmd-c-text-muted);
  }
@@ -5167,7 +5476,7 @@ index 19ab630..7b663a3 100644
    margin-top: 0.3rem;
    padding-top: 0;
    border-top: none;
-@@ -6948,10 +7183,111 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+@@ -6948,10 +7190,111 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
    cursor: pointer;
  }
  
@@ -5280,7 +5589,7 @@ index 19ab630..7b663a3 100644
  /* Word Count modal */
  .pmd-wc-scope {
    margin: 0 0 0.75rem 0;
-@@ -10430,6 +10766,7 @@ body.pmd-recovery-active.pmd-multi-doc #app {
+@@ -10430,6 +10773,7 @@ body.pmd-recovery-active.pmd-multi-doc #app {
     Diverge by pulling a selector out, not by re-copying. */
  .pmd-qcs-badge-settings,
  .pmd-qcs-badge-file,
@@ -5288,7 +5597,7 @@ index 19ab630..7b663a3 100644
  .pmd-learn-session-remembered:hover,
  .pmd-learn-session-context:hover,
  .pmd-learn-manage-link:hover,
-@@ -10870,6 +11207,8 @@ body.pmd-recovery-active.pmd-multi-doc #app {
+@@ -10870,6 +11214,8 @@ body.pmd-recovery-active.pmd-multi-doc #app {
    display: flex;
    align-items: center;
    justify-content: space-between;
@@ -5297,7 +5606,7 @@ index 19ab630..7b663a3 100644
    padding: 1rem 1.25rem;
    border-bottom: 1px solid var(--pmd-c-divider);
    flex: 0 0 auto;
-@@ -10881,7 +11220,26 @@ body.pmd-recovery-active.pmd-multi-doc #app {
+@@ -10881,7 +11227,26 @@ body.pmd-recovery-active.pmd-multi-doc #app {
    font-weight: 600;
  }
  
@@ -5324,7 +5633,7 @@ index 19ab630..7b663a3 100644
  
  .pmd-reference-close:hover {
    color: var(--pmd-c-text);
-@@ -10956,6 +11314,68 @@ body.pmd-recovery-active.pmd-multi-doc #app {
+@@ -10956,6 +11321,68 @@ body.pmd-recovery-active.pmd-multi-doc #app {
    color: var(--pmd-c-text);
  }
  
@@ -5393,7 +5702,7 @@ index 19ab630..7b663a3 100644
  /* ---------------------------------------------- Tables */
  
  /* columnResizing()'s TableView nodeView replaces our schema toDOM at
-@@ -12393,6 +12813,10 @@ textarea.pmd-text-prompt-input {
+@@ -12393,6 +12820,10 @@ textarea.pmd-text-prompt-input {
    font-size: 0.8rem;
    color: var(--pmd-c-text-muted);
  }
@@ -5404,7 +5713,7 @@ index 19ab630..7b663a3 100644
  .pmd-learn-manage-new {
    margin-left: auto;
    background: transparent;
-@@ -12582,6 +13006,257 @@ textarea.pmd-text-prompt-input {
+@@ -12582,6 +13013,257 @@ textarea.pmd-text-prompt-input {
    border-color: var(--pmd-c-error);
  }
  
@@ -5662,7 +5971,7 @@ index 19ab630..7b663a3 100644
  /* ---- Multi-pane: typography parity ----
   *
   * The single-doc editor scopes typography-flag rules to `#editor.X`.
-@@ -13215,9 +13890,10 @@ body.pmd-timer-popout-page .pmd-timer-display {
+@@ -13215,9 +13897,10 @@ body.pmd-timer-popout-page .pmd-timer-display {
   * skip animation events entirely. Properties listed cover all the
   * motion the editor ships: CSS `transition` / `animation`, plus
   * `scroll-behavior` (so smooth scroll snaps instead of animating). */
@@ -5676,7 +5985,7 @@ index 19ab630..7b663a3 100644
    animation-duration: 0.01ms !important;
    animation-iteration-count: 1 !important;
    transition-duration: 0.01ms !important;
-@@ -13225,9 +13901,10 @@ body.pmd-timer-popout-page .pmd-timer-display {
+@@ -13225,9 +13908,10 @@ body.pmd-timer-popout-page .pmd-timer-display {
  }
  
  @media (prefers-reduced-motion: reduce) {
@@ -5690,7 +5999,7 @@ index 19ab630..7b663a3 100644
      animation-duration: 0.01ms !important;
      animation-iteration-count: 1 !important;
      transition-duration: 0.01ms !important;
-@@ -15275,6 +15952,17 @@ body.pmd-multi-doc .pmd-cardcutter-trim {
+@@ -15275,6 +15959,17 @@ body.pmd-multi-doc .pmd-cardcutter-trim {
    user-select: none;
  }
  
@@ -5708,7 +6017,7 @@ index 19ab630..7b663a3 100644
  /* Small corner chip shown while the benchmark drives the (visible) editor. */
  .pmd-bench-chip {
    position: fixed;
-@@ -16301,3 +16989,72 @@ body.pmd-multi-doc #collab-chip {
+@@ -16301,3 +16996,72 @@ body.pmd-multi-doc #collab-chip {
    pointer-events: none;
    z-index: 4;
  }

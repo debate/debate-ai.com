@@ -70,9 +70,9 @@ export function extractCiteInfo(
     const authorYearMatch = fullCite.match(authorYearPattern);
 
     if (authorYearMatch) {
-      info.author = authorYearMatch[1];
+      info.author = authorYearMatch[1]!;
       authorExtracted = true;
-      const year = authorYearMatch[2];
+      const year = authorYearMatch[2]!;
       if (year.length === 2) {
         const yearNum = Number.parseInt(year, 10);
         info.year = yearNum <= 30 ? 2000 + yearNum : 1900 + yearNum;
@@ -95,7 +95,7 @@ export function extractCiteInfo(
 
       const apostropheYearMatch = boldText.match(/'(\d{2})\b/);
       if (apostropheYearMatch) {
-        const yearNum = Number.parseInt(apostropheYearMatch[1], 10);
+        const yearNum = Number.parseInt(apostropheYearMatch[1]!, 10);
         if (!info.year)
           info.year = yearNum <= 30 ? 2000 + yearNum : 1900 + yearNum;
       }
@@ -106,10 +106,10 @@ export function extractCiteInfo(
           /([A-Za-z][A-Za-z\s,.-]+?)\s*['"]/,
         );
         if (nameBeforeQuote) {
-          const name = nameBeforeQuote[1].trim();
+          const name = nameBeforeQuote[1]!.trim();
           const nameParts = name.split(/\s+/).filter((part) => part.length > 0);
           if (nameParts.length > 0)
-            info.author = cleanPunctuation(nameParts[nameParts.length - 1]);
+            info.author = cleanPunctuation(nameParts[nameParts.length - 1]!);
         }
       } else if (boldText.trim().length <= 2 && /['"]/.test(boldText)) {
         // Short bold fragments are often malformed year markers ('23), so use nearby text.
@@ -123,10 +123,10 @@ export function extractCiteInfo(
         for (const pattern of authorPatterns) {
           const match = fullCite.match(pattern);
           if (!match) continue;
-          const name = match[1].trim();
+          const name = match[1]!.trim();
           const nameParts = name.split(/\s+/).filter((part) => part.length > 0);
           if (nameParts.length === 0) continue;
-          const lastName = cleanPunctuation(nameParts[nameParts.length - 1]);
+          const lastName = cleanPunctuation(nameParts[nameParts.length - 1]!);
           if (lastName && lastName.length > 1) info.author = lastName;
         }
       } else {
@@ -156,7 +156,7 @@ export function extractCiteInfo(
               .filter((part) => part.length > 0);
             if (nameParts.length > 0) {
               const lastName = cleanPunctuation(
-                nameParts[nameParts.length - 1],
+                nameParts[nameParts.length - 1]!,
               );
               if (lastName && lastName.length > 1) info.author = lastName;
             }
@@ -197,10 +197,10 @@ export function extractCiteInfo(
     // Last-resort heuristic: infer year from early numeric tokens in the citation.
     const words = fullCite.split(/\s+/).slice(0, 5);
     for (let i = 0; i < words.length; i++) {
-      const numberMatch = words[i].match(/\b(\d{1,2})\b/);
+      const numberMatch = words[i]!.match(/\b(\d{1,2})\b/);
       if (!numberMatch) continue;
 
-      const num = Number.parseInt(numberMatch[1], 10);
+      const num = Number.parseInt(numberMatch[1]!, 10);
       info.year = num <= 30 ? 2000 + num : 1900 + num;
 
       if (!info.author) {
@@ -221,7 +221,7 @@ export function extractCiteInfo(
                 .split(/\s+/)
                 .filter((part) => part.length > 0);
               if (nameParts.length > 0)
-                info.author = cleanPunctuation(nameParts[nameParts.length - 1]);
+                info.author = cleanPunctuation(nameParts[nameParts.length - 1]!);
             }
           }
         }
@@ -266,11 +266,11 @@ export function recalculateAuthor(
   // Prefer explicit "Last, First" forms when available.
   const lastNameFirstPattern = /([A-Z][a-zA-Z'`-]+),\s*[A-Z][a-zA-Z'`-]+/;
   const lastNameFirstMatch = fullCite.match(lastNameFirstPattern);
-  if (lastNameFirstMatch) return lastNameFirstMatch[1];
+  if (lastNameFirstMatch) return lastNameFirstMatch[1]!;
 
   const firstLastPattern = /^([A-Z][a-zA-Z'`-]+)\s+([A-Z][a-zA-Z'`-]+)/;
   const firstLastMatch = fullCite.match(firstLastPattern);
-  if (firstLastMatch) return firstLastMatch[2];
+  if (firstLastMatch) return firstLastMatch[2]!;
 
   // Then try bracketed author mentions, e.g. "(Jane Smith)".
   const bracketPatterns = [
@@ -281,13 +281,13 @@ export function recalculateAuthor(
   for (const pattern of bracketPatterns) {
     const matches = [...fullCite.matchAll(pattern)];
     for (const match of matches) {
-      const name = match[1].trim();
+      const name = match[1]!.trim();
       const nameParts = name.split(/\s+/);
       if (nameParts.length >= 1 && nameParts.length <= 3) {
         const hasCommonWords = nameParts.some((part) =>
           COMMON_SHORT_WORDS.includes(part.toLowerCase()),
         );
-        if (!hasCommonWords) return nameParts[nameParts.length - 1];
+        if (!hasCommonWords) return nameParts[nameParts.length - 1]!;
       }
     }
   }
@@ -295,8 +295,8 @@ export function recalculateAuthor(
   // Otherwise look for adjacent capitalized tokens that resemble a human name.
   const words = fullCite.split(/\s+/);
   for (let i = 0; i < words.length - 1; i++) {
-    const word1 = cleanPunctuation(words[i]);
-    const word2 = cleanPunctuation(words[i + 1]);
+    const word1 = cleanPunctuation(words[i]!);
+    const word2 = cleanPunctuation(words[i + 1]!);
 
     if (
       word1.length > 1 &&
@@ -317,7 +317,7 @@ export function recalculateAuthor(
     const authorName =
       humanNameResult.author_short || humanNameResult.author_cite;
     const authorWords = authorName.split(/\s+/);
-    if (authorWords.length <= 3) return authorWords[authorWords.length - 1];
+    if (authorWords.length <= 3) return authorWords[authorWords.length - 1]!;
   }
 
   return null;

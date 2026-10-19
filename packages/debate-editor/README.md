@@ -114,7 +114,9 @@ The list below groups the same command set into feature highlights — 50+ in to
 
 ### View & navigation
 
-- **Read mode**, a collapsible **navigation pane**, and a **morph mode** view
+- **Read mode**, a collapsible **navigation pane**, and a **morph mode** view — read mode shows
+  each card's tag, its author's last name and year ("Smith 21", parsed from the cite), then only
+  its highlighting, or only its underlining when the card has no highlighting
 - **Word count for the current selection**, with a read-aloud time estimate
 - **Theme cycling**, an in-app **UI tour**, and a full **keyboard-shortcuts reference** modal
 - **Heading breadcrumb bar** showing the current outline position
