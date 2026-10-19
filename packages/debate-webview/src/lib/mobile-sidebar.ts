@@ -18,7 +18,7 @@ export const OPEN_OWN_SIDEBAR_EVENT = "debate:open-sidebar"
 export type MobileSidebarKind =
   /** The view draws its own sidebar; the dock only asks it to open. */
   | "own"
-  /** `/reason-editor` and `/research/cards`: document panels above the tool tree. */
+  /** `/reason-editor` and `/research/cards`: the document panels alone, no tool tree. */
   | "editor"
   /** The video library: video links above the tool tree. */
   | "videos"
