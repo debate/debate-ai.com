@@ -29,15 +29,11 @@ paneling prelims in Speech, use the "Rounds" menu item. You will then be
 given the option to panel all speech events at once (recommended), or
 one at a time:
 
-width="300" />
-
 If you choose the "Mass Attack" option, you will see a list of events,
 where you can choose the number of sections to create. Tabroom will try
 to evenly distribute entries through the number of sections you choose -
 so the more sections you use, the smaller the average section size will
 be.
-
-title="panel_round_mass-create.png" width="600" />
 
 Make sure the "Do?" column is checked for each event you want to panel,
 and choose whether to let Tabroom auto-assign rooms at the same time,
@@ -47,13 +43,9 @@ You will then see a progress report on the screen as Tabroom panels each
 round. When finished, you will be given the option to run a disaster
 check (explained in more detail below), or proceed to paneling judges:
 
-title="panel_round_panel-master-done.png" width="400" />
-
 If instead of "Mass Attack," you choose to panel a single event, you
 will see a similar screen that lets you choose the number of sections to
 use for each round:
-
-width="500" />
 
 If you need more control over the pairing process, you also have the
 option of paneling only a single round, direct from the schematic. Use
@@ -62,21 +54,15 @@ Section" from the sidebar to automatically panel that round. You will
 then be prompted to create the number of sections you want to use, and
 the auto-paneler will split up students into that number of sections.
 
-title="panel_schemat_show-panelone.png" width="250" />
-
 Your final option for paneling is to manually create the panels
 yourself. In most situations, this is unnecessary and more prone to
 error than using the automatic paneler, but is available if you need it.
 To use, view the round you want to panel in the Schematics menu, then
 choose "Hand Assignment" from the sidebar:
 
-title="panel_manipulate_manual-speech.png" width="300" />
-
 Choose how many panels to create, then click Go. You will then be given
 a list of entries in the event, and will be asked to choose which panel
 each entry should be assigned to:
-
-title="panel_manipulate_manual-speech-assign.png" width="500" />
 
 ### Assign Speech Judges
 
@@ -86,8 +72,6 @@ Then, choose a judge group from the sidebar.
 
 The "Mass Assign" tab lets you assign judges to all events in a judge
 group at once.
-
-width="500" />
 
 It will show you some statistics about the judge group, then let you
 choose whether to erase the existing judge assignments, and how many
@@ -100,13 +84,9 @@ judges, Once it's finished, you'll see a message that judge assignments
 are done, and links to view a disaster check or a chart of judge
 assignments:
 
-title="panel_judge_group-judges.png" width="400" />
-
 Once your judges are assigned, the Judges menu option also has a number
 of helpful tabs. The "Chart" tab shows a list of all judges and their
 assignments for each round:
-
-width="600" />
 
 The "Availability" tab shows you the total number of judges you have
 available in each round, and the "Activate" tab lets you quickly
@@ -119,16 +99,11 @@ Groups](/settings/judging).
 
 ### Assign Speech Rooms
 
-
 If you didn't auto-assign rooms during the paneling step, you can assign
 rooms to a speech event using the "Rooms" menu option, and then choosing
 a timeslot on the sidebar. The "Mass Assign" tab will show you a listing
 of current assignments, and the option to auto-assign the rooms in that
 timeslot:
-
-title="panel_room_index-timeslot.png" width="500" />
-
-width="300" />
 
 The **Paneling - Rooms** menu option is also where you configure Room
 Pools. For more information on setting up Room Pools, see the section of
@@ -138,16 +113,12 @@ Once you've assigned rooms, there are a few other helpful tabs with room
 information. The "Chart" tab will show you which rounds are assigned to
 each room:
 
-width="500" />
-
 The "Report" tab will give you detailed information about each room,
 including which rounds it's being used, and which room pools it's in.
 
 The "Reservations" tab lets you designate a room for a particular judge.
 Note that this will make the room unavailable to any other judge, even
 if the judge it's reserved for isn't judging that round:
-
-width="500" />
 
 ### Paneling Speech Elims
 
@@ -156,25 +127,17 @@ Select the event from the Schematic menu, and then choose the tab for
 your first elim round. First, view the "Settings" link below the round
 label:
 
-title="panel_schemat_show-settings.png" width="400" />
-
 This will let you double check that your round is configured with the
 appropriate number of judges per panel, as well as verify you are using
 the correct room pool, judge pool, and tiebreak set for the elims. Then,
 click "Auto-Advance to Elim Round" from the sidebar:
 
-title="panel_schemat_show-auto-pair-speech.png" width="300" />
-
 This will show you a list of seeds in order, to help you see where the
 break will take place:
-
-title="tabbing_break_index-scores.png" width="500" />
 
 Then, use the sidebar to choose which round to break from (either the
 last prelim or the previous elim round), and how many students to break
 (including how many panels), and click "Break Them:"
-
-title="tabbing_break_index-advance.png" width="300" />
 
 Once you have panels, you can assign judges and rooms the same way you
 would for prelims - either using the **Paneling - Judges** menu (make
@@ -183,16 +146,12 @@ schematic.
 
 ### Publishing And Printing Speech
 
-title="tabs_paneling_reports.png" />
-
 Once you have panels, judges, and rooms, you can publish the round on
 the web and/or print out schematics and ballots.
 
 If you plan to print physical copies of ballots or other printouts, you
 can access most of them from the "Reports" menu option, where you can
 choose the type of printouts you need:
-
-title="panel_report_index-types.png" width="300" />
 
 "Printouts" contains options to print schematics, ballots, and a large
 number of other printouts. If you're looking for a speech-related
@@ -202,12 +161,8 @@ printout, odds are it's there.
 or a list of which entries a judge has already seen. You can even print
 out cards if you wanted to tab the tournament by hand:
 
-width="500" />
-
 "Judge Point Averages" lets you see the average speaker points any judge
 has given throughout the tournament.
-
-title="tabs_paneling_publish.png" />
 
 If you want to make speech schematics or results public on the web, you
 can use the "Publish" menu option. You can then choose whether to select
@@ -217,12 +172,8 @@ Division/Entire Timeslot" on the sidebar.
 If you select a single event, you can choose for each round whether to
 publish the pairing or results:
 
-title="panel_publish_index-event.png" width="500" />
-
 If you choose an entire timeslot, you can publish or unpublish pairings
 or results for all events in the timeslot at once:
-
-title="panel_publish_timeslots.png" width="500" />
 
 Many of the same options in the "Reports" and "Publish" menu options are
 also available directly from the schematic for each round in the "Share
@@ -230,10 +181,7 @@ also available directly from the schematic for each round in the "Share
 schematic/results, email/text blast the round to participants, and print
 out ballots:
 
-title="panel_schemat_show-share-speech.png" width="300" />
-
 ## Pairing Debate Events
-
 
 Pairing debate events is done directly from the schematic, which you can
 access using the "Schemats" menu (listed by event-type). Then, make sure
@@ -242,8 +190,6 @@ you're on the correct tab for the round you want to pair.
 ### Pairing Debate Prelims
 
 First, choose whether to automatically or manually pair the round:
-
-title="panel_schemat_show-change-debate.png" width="300" />
 
 To pair the round automatically, use the "Auto-pair debaters" link on
 the sidebar. The majority of the time, this is all you need to do to
@@ -255,17 +201,11 @@ for dealing with side constraints, and then choose each entry and judge
 manually. When you've finished a round, click "Save Debate" and it will
 move on to the next debate until you have a complete pairing:
 
-title="panel_manipulate_manual-debate.png" width="500" />
-
 If your round is a power-matched debate (i.e. not a preset), you will
 also have the option to use the "Manual Powermatcher:"
 
-title="panel_schemat_show-manualpowermatch.png" width="300" />
-
 First, choose which bracket to pair from the sidebar (or show all
 brackets):
-
-title="panel_manipulate_manual-powermatch-bracket.png" width="300" />
 
 Then, click on an entry to find an opponent - possible opponents with a
 constraint (such as the same school or having previously debated) will
@@ -273,24 +213,15 @@ be shown in red. To choose an opponent, click the "Choose" button next
 to the opponent, and they will be paired against the first entry you
 selected:
 
-title="panel_manipulate_manual-powermatch.png" width="600" />
-
 For each entry, you can also give a bye or pull them down into a lower
 bracket. Proceed in this fashion until every entry has an opponent (or
 bye). Usually, you want to pair the top bracket first, and then the next
 lower bracket on down. As you create each debate, it will be shown at
 the bottom under "Current Pairings:"
 
-title="panel_manipulate_manual-powermatch-current.png" width="500" />
-
 If you make a mistake, you can reset the brackets using the links on the
 sidebar. Or, you can collapse brackets or auto-pair the remaining
 debates:
-
-title="panel_manipulate_manual-powermatch-changes.png" width="300"
-alt="panel_manipulate_manual-powermatch-changes.png" />
-title="panel_manipulate_manual-powermatch-changes2.png" width="300"
-alt="panel_manipulate_manual-powermatch-changes2.png" />
 
 To automatically assign the sides for the debate, click "Assign debate
 sides."
@@ -301,14 +232,8 @@ Pairing debate elims is also done directly from the schematic. First,
 check the "Round Settings" on the sidebar to ensure that you have the
 correct panel size and round type selected:
 
-title="panel_schemat_show-settings2.png" width="600" />
-
 Then, click "Auto-pair break round." You'll be shown a list of seeds in
 order, to help see where the break will be:
-
-title="tabbing_break_index-scores2.png" width="500" />
-
-title="tabbing_break_index-advance2.png" width="300" />
 
 Then, select which round to break from (the last prelim or previous
 elim), verify the time blocks and tiebreak sets are set correctly,
@@ -328,15 +253,11 @@ to advance, then the ballot entry screen for that round will show up as
 a "Coachover," which will let you select which entry advances. By
 default, it will choose the higher seed:
 
-title="tabbing_entry_index-coachover.png" width="300" />
-
 ### Assigning Debate Judges
 
 Once you have a completed pairing, you're ready to assign judges. The
 easiest way to assign judges is to use the "Auto-assign judges" link on
 the sidebar:
-
-title="panel_schemat_show-autojudge.png" width="300" />
 
 Judges will then be assigned according to the rules you have set in the
 Judge Group and Event settings. The automatic judge assigner will also
@@ -346,16 +267,12 @@ If you need to manually place judges, use the "Hand place judges" link
 instead. You will be shown a list of unused judges available for that
 round in the sidebar;
 
-title="panel_round_manual-judges-unused.png" width="300" />
-
 If you drag and drop a judge onto the pairing, you can place them in any
 round you want. Rounds with a conflict for that judge will be shown in
 red, and the prefs for that judge will be shown in the rightmost column
 for each debate. If placing a single judge, put them in the "Chair
 Judge" column. If you are placing a panel, put one judge as the chair,
 and the rest under "Other Judges"
-
-title="panel_round_manual-judges-drag.png" width="500" />
 
 If you are using ordinal prefs for an event, then as an alternative to
 Tabroom's judge placement algorithm, you will also have the option of
@@ -393,17 +310,11 @@ the sidebar. If you have already manually assigned some rooms, it will
 only auto-assign the remaining rooms, unless you first delete all the
 rooms and start from scratch:
 
-title="panel_schemat_show-autoroom.png" width="300" />
-
 To manually assign rooms, use the "Hand place rooms" link on the
 sidebar. You will be shown a list of unused rooms:
 
-title="panel_round_manual-rooms-unused.png" width="300" />
-
 Just drag and drop the room onto the debate you want, and it will be
 assigned:
-
-title="panel_round_manual-rooms.png" width="500" />
 
 ### Judge Placement Diagnostics
 
@@ -415,17 +326,11 @@ differential between the two teams.
 You can see the number of unused judges in each round under the "States
 & Data" section of the sidebar:
 
-title="panel_schemat_show-unused.png" width="300" />
-
 Clicking this link will show you the list of unused judges, with a
 dropdown for each judge of debates that they would fit in. This can be
 useful either as a list of standby judges, who you can then easily swap
 into a debate, or if you know you need to use a judge, to find a round
 where they will fit.
-
-title="panel_manipulate_free-judges.png" width="500" />
-
-title="panel_schemat_show-stats.png" width="400" />
 
 For a more complete list of statistics about judge placement, look on
 the "Stats & Data" section of the sidebar:
@@ -438,17 +343,11 @@ the round.
 
 For even more detail, use the links at the bottom of the sidebar:
 
-title="panel_schemat_show-judgeinfo.png" width="300" />
-
 "Judge Fits" will show you all judges and the number of rounds they fit
 in, along with information about their commitments.
 
-title="panel_schemat_judge-fits.png" width="500" />
-
 "Judge Use" will help you estimate whether you have a sufficient number
 of committed rounds to finish the tournament:
-
-title="panel_schemat_judge-use-status.png" width="500" />
 
 If you have any event with more rounds required than rounds of judging
 available, then you need to find more judges or beg for additional
@@ -456,8 +355,6 @@ rounds, or you won't be able to finish the tournament.
 
 "Pref Diagnostics" will give you a readout of how well judges were able
 to be placed using MPJ:
-
-title="panel_schemat_pref-diagnostics-mjp.png" width="500" />
 
 ### Publishing And Printing Debate
 
@@ -468,34 +365,21 @@ the sidebar. The former has links for publishing the schematic and
 results to the web, or text/email blasting it to everyone. The latter
 section is where you print physical postings and ballots:
 
-title="panel_schemat_show-share.png" width="300"
-alt="panel_schemat_show-share.png" />
-title="panel_schemat_show-display.png" width="300"
-alt="panel_schemat_show-display.png" />
-
 You can also run a "Disaster Check" for debate events with the link on
 the sidebar:
 
-title="panel_schemat_show-disaster.png" width="300" />
-
 This will show you a report of common problems that could cause a
 disaster, and will show you if it detects anything wrong:
-
-title="panel_schemat_debate-disaster-display.png" width="400" />
 
 ### Double Flighting
 
 To double (or triple) flight an event, you just need to make sure you
 set the appropriate number of flights on the schedule for that event:
 
-title="setup_schedule_event-flight.png" width="500" />
-
 Then, pair and assign judges as normal. The auto-pairing functions will
 split the round up into flights for you. If you need to manually move a
 debate between flights, click the room number to view that debate, then
 use the box on the sidebar to switch flights:
-
-title="panel_schemat_panel-view-flight.png" width="300" />
 
 ### Lag Pairing
 
@@ -528,19 +412,13 @@ debates in order to pair.
 If you want more than one "pod," you first have to go to **Entries -
 Events - Event**, and then choose "Round Robin Pods" from the sidebar:
 
-title="register_event_roster-roundrobin.png" width="300" />
-
 Assign each team to a pod, then click "Save Pod Assignments:"
-
-width="500" />
 
 Optionally, you can assign each pod a name and then click "Save Pod
 Labels."
 
 Once you have configured everything, the schematic will have the option
 to "Auto-pair entire Round Robin:"
-
-title="panel_schemat_show-roundrobin.png" width="300" />
 
 This will pair the entire round robin in advance, with as many pods as
 you have configured.
@@ -573,13 +451,9 @@ schematic.
 For IE's, you then need to click "Move" next to the entry you want to
 move:
 
-title="panel_schemat_panel-view-move.png" width="500" />
-
 You will be shown a list of panels - to put the entry in a round, click
 "Add." The entry you're moving is shown in blue. Other entries from the
 same school are shown in red:
-
-title="panel_manipulate_speech-round-edit.png" width="500" />
 
 To move a different entry instead, click their entry code or use the box
 on the sidebar.
@@ -588,21 +462,12 @@ To change the order of speakers in a round, click "Change Speaker Order"
 on the sidebar and then change the number next to each entry as
 necessary:
 
-title="panel_schemat_panel-view-order.png" width="300"
-alt="panel_schemat_panel-view-order.png" />
-title="panel_schemat_speaker-order.png" width="400"
-alt="panel_schemat_speaker-order.png" />
-
 If your panels have become unbalanced (for example, due to drops), you
 will also see an option on the sidebar for "Manually Rebalance."
-
-title="panel_schemat_show-rebalance.png" width="300" />
 
 This will show you a list of entries which can safely be moved to
 smaller panels to rebalance all the rounds - click on their name to move
 them:
-
-title="panel_manipulate_manual-rebalance.png" width="500" />
 
 ### Moving Debate Entries
 
@@ -612,17 +477,11 @@ entry you are moving is shown in blue. Entries they have seen before
 will be shown in orange, and entries/judges from the same school will be
 shown in red.
 
-title="panel_manipulate_debate-round-edit.png" width="300" />
-
 To select a different entry to move instead, use the dropdown box on the
 right:
 
-title="panel_manipulate_debate-round-edit-move.png" width="300" />
-
 If you need to create an additional room, for example to add a new round
 to the pairing, use the "Add More Rooms" box:
-
-title="panel_manipulate_debate-round-edit-add.png" width="300" />
 
 ### Replacing A Judge
 
@@ -632,15 +491,11 @@ either judges who are currently available, or judges who are currently
 judging (you would then need to find a new judge for that round
 instead):
 
-title="panel_schemat_panel-view-judges.png" width="600" />
-
 Note that both menus will only show you "clean" judges with no
 conflicts, strikes, etc. The "rds" column will show you the number of
 rounds that judge has left, the number they've currently judged, and
 their total commitment. If you are using MPJ, you will also be shown the
 prefs for that judge from each entry:
-
-title="panel_schemat_panel-view-judges-available.png" width="600" />
 
 To add a judge to the panel, choose their name from the menu.
 
@@ -651,8 +506,6 @@ judging fees configured).
 If you know you have a judge available who is not listed in the
 dropdown, you can also use the "Add literally any judge" box on the
 sidebar:
-
-title="panel_schemat_panel-view-addjudge.png" width="300" />
 
 Note that using this option will not prevent you from placing a judge
 who has a conflict, is struck, or is marked as unavailable - so be 100%
@@ -687,14 +540,10 @@ the dropdown menu labeled "Room" to switch the room. This menu will only
 show you "available" rooms that are in the appropriate pool and not
 scheduled for another round:
 
-title="panel_schemat_panel-view-room.png" width="300" />
-
 If you need to assign a round to a room which does not appear in the
 normal Room menu (for example because it is normally used for another
 event and is in a different room pool), you can also use the "Change to
 literally any room" box on the sidebar:
-
-title="panel_schemat_panel-view-changeroom.png" width="300" />
 
 Note that using this option will not prevent you from putting a round in
 a room that has another round/event scheduled at the same time, or that
@@ -709,8 +558,6 @@ you need to reassign them. All of those functions can be accomplished by
 expanding the "Create & Destroy" section of the sidebar, and looking for
 the red links:
 
-title="panel_schemat_show-delete.png" width="300" />
-
 **Important Note** - If you delete a round after results have been
 entered, they will be impossible to recover. Once you have results, you
 should almost always choose to make changes to the existing pairing,
@@ -720,8 +567,6 @@ If you have not yet paired the round, you will instead have an option to
 "Delete Round From Schedule" - this will completely remove the round
 from that event's schedule, and it will no longer be an available tab on
 the schematics:
-
-title="panel_schemat_show-deleteschedule.png" width="300" />
 
 If you need to instead delete a single round/panel from the schematic,
 click on the room number and then use the "Delete This Debate" or
@@ -733,8 +578,6 @@ You can also publish win/loss, ranks, points or ballot comment/RFDs just
 for coaches to access, not publicly. Click on the "Setting" blue button
 top center of the schematic you want to publish and check which options
 you want to publish to coaches on the middle left:
-
-width="800" />
 
 Coaches will then be able to see the results you've posted by clicking
 on their tournament entry in Tabroom, choosing "results" and clicking

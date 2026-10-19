@@ -9,11 +9,7 @@ Signing up for a Tabroom account is quick and easy:
 
 Click the "Sign Up" link in the upper right hand corner of the page:
 
-width="600" />
-
 Then, fill out the form and click "Create Account:"
-
-width="500" />
 
 You can use any email address you like to sign up. If you put in your
 cell phone number and choose your provider, you will be able to receive
@@ -26,15 +22,11 @@ after signing up.
 Once you have signed up, you will be given a number of options to get
 started, whether you're a coach, a student, or a tournament director:
 
-alt="user_setup.png" />
-
 After signing up you will have to verify your account by entering a
 confirmation code. If you think that you did not receive a confirmation
 code please be sure to check your spam folder. If the code was never
 sent, please contact help@Tournament Admin. Tabroom support staff can
 manually confirm and verify your account.
-
-title="Screen_Shot_2021-07-01_at_10.54.04_AM.png" />
 
 After [creating your tabroom account](#sign-up), you can edit
 your profile information or link your account to a student or judge.
@@ -46,15 +38,11 @@ to your main account dashboard. By default, this will give you a list of
 options for linking your account to an entry/judge, or creating a new
 school to link to your account.
 
-width="750" />
-
 If you've already done that, your dashboard will instead show you a list
 of upcoming tournaments current ballots, or recent results.
 
 The sidebar will also contain links to administer any institutions,
 tournaments, or circuits for which you are the admin:
-
-title="user_chapter_home-sidebar.png" width="300" />
 
 Since you can be the administrator for more than one
 school/tournament/circuit at a time, you can choose which one is active
@@ -67,8 +55,6 @@ tournament, etc!
 At any time while logged in, you can access your user profile by
 clicking the "Profile" link in the upper right portion of the page:
 
-width="400" />
-
 From there, you can update your contact info or change your password.
 
 ### Live Updates & Text blasts
@@ -80,8 +66,6 @@ you only want email alerts. Note that some tournaments may require you
 have a phone number listed to register as a judge.
 
 ### Adding Pronouns to Your Profile
-
-title="Screen_Shot_2021-05-02_at_1.36.03_PM.png" />
 
 When you add pronouns they will be sent to judges and competitors of a
 section/debate via text message/emails as part of round pairings.
@@ -104,15 +88,12 @@ Follow these steps to add phonetic spellings:
 1\. Select the profile button on the top right corner of the homepage of
 Tournament Admin.
 
-
 2\. Select the edit names button
-
 
 3\. Competitors should now see a text box to enter a phonetic spelling
 next to the student name (e.g. Kev-on Haugh-ton). If a student is
 affiliated with multiple institutions, they should add this to all of
 their contestant records on various rosters (see below).
-
 
 The pronunciation guide will appear whenever the tournament staff prints
 an awards script
@@ -125,19 +106,13 @@ judge and competitor records in Tabroom.
 Click the "Profile" link in the upper part of the page, then use the
 Change Password box on the sidebar:
 
-title="user_login_profile-changepw.png" width="300" />
-
 ## Forgot Your Password
 
 Click the "Login" link in the upper right, and click the "Forget your
 password?" link at the bottom:
 
-width="300" />
-
 You'll be taken to a page where you can input your email and have it
 email you instructions on resetting your password.
-
-width="500" />
 
 If you don't receive the password reset email, check your Spam folder.
 
@@ -158,8 +133,6 @@ Some things to remember:
 
 After you create an account on tabroom it will need to be verified and
 confirmed. Check your inbox for a confirmation email about your account.
-
-title="Screen_Shot_2021-07-01_at_10.54.04_AM.png" width="700" />
 
 ## openCaselist and classrooms.cloud
 
@@ -182,12 +155,8 @@ administration](/administration/school-administration).
 To request linking yourself, from your account dashboard, click "Link
 your account to a student" in the sidebar:
 
-width="300" />
-
 This will automatically search for any unlinked entries and show you a
 list of results, if any:
-
-width="600" />
 
 If you find yourself in the list, click the "Link" button to request
 linking to that entry. Your school coach/administrator will still need
@@ -211,12 +180,8 @@ administration](/administration/school-administration).
 Or, you can request linking your account to a judge by clicking the link
 for "Link your account to a judge" in the sidebar:
 
-width="300" />
-
 This will automatically search for any unlinked judges and show you a
 list of results, if any:
-
-width="600" />
 
 If you find yourself in the list, click the "Claim judge" button to
 request linking to that judge. Your school coach/administrator will
@@ -233,11 +198,8 @@ If one of your judges requests access it will appear like this below in
 your coach's dashboard when you click the judge's button. Remember to
 only permit access if you recognize the judge's account.
 
-title="Screen_Shot_2021-05-03_at_2.13.49_PM.png" />
-
 If one of your competitors requests access it will appear like this
 below in your coach's dashboard when you click the competitor's button
-
 
 ## Unlinking Your Account
 
@@ -258,14 +220,11 @@ directors of tournaments you attend will likely get very angry.
 
 After logging in, find the link for "Standing Conflicts" in the sidebar:
 
-
 You can then search for a person to conflict - note that they must have
 a Tabroom account for standing conflicts to work:
 
-
 If any results are found, just click the "Conflict" button next to their
 name.
-
 
 Once you have added a conflict, they will appear in your "Existing
 Conflicts" list. To remove an existing conflict, click the red "trash

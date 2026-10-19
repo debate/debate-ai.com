@@ -5,16 +5,13 @@ slug: judging
 
 ## Add New Judge Category
 
-
 After you click Add New Judge Category, you will see this screen:
-
 
 In this screen, you need to enter a name for the judge category and
 click "Save Registration Settings" before you can fill out the other
 settings on this page.
 
 ## Register
-
 
 **Category Name** - This is just the name of the judge group. Should
 usually be something like "Policy" or "Individual Events."
@@ -141,16 +138,13 @@ school can count in that alternate category.
 judges to complete particular trainings in order to judge at your
 tournament.
 
-
 **Judge Registration Questions** - This section allows you to ask judges
 particular questions related to following the set rules of your
 tournament, etc. You can craft free response questions, questions that
 only require a yes/no answer or questions that require numerical
 answers.
 
-
 ## Hires
-
 
 **Offer tournament hired judging** - Unlike the Hiring Exchange, which
 lets judges and schools match up judging themselves, this option enables
@@ -205,7 +199,6 @@ your tournament on your public Tabroom site.
 
 ### Pairing Settings
 
-
 **Prevent back to back rounds** - Toggle to not allow judges to judge
 two consecutive rounds.
 
@@ -245,7 +238,6 @@ will begin.
 
 ### Tabulation Settings
 
-
 **Ballot Entry Method** - Choose which method to use for
 confirming/double-checking ballot entry. Your choices are:
 
@@ -274,14 +266,12 @@ progresses.
 
 ### Ballot Options
 
-
 All toggle buttons under this heading allows you to specifically tailor
 ballots for speech and Congress at your tournament.
 
 ## Ratings
 
 ### Strikes, judging ratings, mutually-preferred judging
-
 
 **Judge registration deadline** - Allows you to set a deadline for
 judges to be entered in your tournament if you want that deadline to be
@@ -294,7 +284,6 @@ to complete judge preferences.
 preferences close.
 
 ### Registration Settings
-
 
 **No prefs until judge obligations met** - Toggle if you want to prevent
 schools, that haven't met their judge obligations, from completing
@@ -326,12 +315,10 @@ prefs and strikes will apply to.
 
 ### Conflicts
 
-
 **Enter conflicts separately** - Toggle to allow coaches to enter judge
 conflicts separately from prefs.
 
 ### Strikes
-
 
 **School-wide strikes/scratches** - Allows you to set a maximum number
 of judges who can be rated as strikes by a school.
@@ -340,7 +327,6 @@ of judges who can be rated as strikes by a school.
 judges who can be rated as strikes by an entry.
 
 ### Mutually Preferred Judging
-
 
 **Pref Method**
 
@@ -371,8 +357,6 @@ This section controls the "weights" used to compute mutually preferred
 judging scores. For example, it allows you to control whether the judge
 placement algorithm privileges "mutuality" more than "preference" or how
 important it is to try and "save" committed judges for later rounds.
-
-title="setup_judges_tabbing-mpj.png" width="400" />
 
 These numbers are not "percentages," per se - they don't need to sum up
 to 100. Instead, they are "weighting factors" which are relative to one
@@ -462,7 +446,6 @@ could turn down the "Penalize non-mutual matches" score to 50.
 
 ### Other Ratings
 
-
 **Ask volunteers to rate themselves** - Toggle to allow volunteer judges
 to rate themselves based upon a scale that the tournament sets up.
 
@@ -477,7 +460,6 @@ MPJ method.
 use ratings in the elimination rounds (rarely, if ever, used).
 
 ## Shifts
-
 
 **Name** - This is where you add each day of the tournament for which
 you will allow time shifts.
@@ -496,7 +478,6 @@ if the school is under its judge burden during the requested time shift.
 tournament, when you will allow judges to be unavailable.
 
 ## Pools
-
 
 **Pool Name** - This is where you create labels for specific pools in
 each judge category. For example, you have a Policy judge category. You
@@ -521,7 +502,6 @@ will be used if you have different events at distinct buildings or
 locations.
 
 ## Messages
-
 
 **Judge Post-Registration Email** - This is where you send messages to
 judges once they have registered. Only judges with linked Tabroom

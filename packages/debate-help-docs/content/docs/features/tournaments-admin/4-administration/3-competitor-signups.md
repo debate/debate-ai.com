@@ -24,7 +24,6 @@ easily email all the parents of students going to a particular
 tournament. To do so, go to your school's Competitors tab, when you
 first log in. Click on "Parent Notifications" at right.
 
-
 Then next to each competitor, you can see who is already set to follow a
 student's notifications, click the trash icon to remove them, or to
 enter their email address to set them to follow. Parent notification
@@ -32,7 +31,6 @@ recipients do NOT need to have a Tournament Admin account; just a simple
 email will do. You can also see this information by clicking on a
 competitor on your main roster; this screen just lets you see them all
 at once:
-
 
 Once linked parents will be notified with a short email informing them
 they are linked and what Tournament Admin is and why they're getting emailed
@@ -45,7 +43,6 @@ make it easier on those with large squads. Students must have a
 Tournament Admin account linked to their student record first. When they log
 in, they should find at right a section labeled Competing, and after
 that can click on Parent Notifications at right.
-
 
 Students can add parents or delete them at any time, but parents will be
 notified when they do so. If for some reason you wish to delete a parent
@@ -62,8 +59,6 @@ be available until this deadline, and competitors can also withdraw
 their entries by this deadline. Competitors cannot withdraw entries that
 you have accepted and registered, however.
 
-title="File:create-singup-step1.png" />
-
 Your signup deadline must be before the tournament's own registration
 deadline, naturally, You can also set options on whether to show the
 students entry and registration fees, and whether the info and memo you
@@ -74,31 +69,21 @@ save a tournament deadline, you will get a new switch to enable the
 signup sheet. This switch enables you to turn on the signup sheet; it
 can also be turned off at any time before the deadline as you wish.
 
-title="File:create-singup-step2.png" />
-
 ## Competitor Signups
 
 Competitors logging into Tabroom will now see the tournament available
 to sign up when they first log in now under "Tournament Signups Open."
 
-title="File:student-signup-step1.png" />
-
 They can sign up using the blue Add icon at right, and will be given the
 tournament information and logistics you uploaded, and a selection menu
 for events they can register into.
-
-title="File:student-signup-step2.png" />
 
 Once they select an event, if the event requires more information (a
 partner's name, or tournaments that require information such as piece
 titles or authors in interp), the system will ask them for it.
 
-title="File:student-signup-step3.png" />
-
 Then, once they have registered for a few events, their information and
 status will be available to them on their signup page.
-
-title="File:student-signup-step4.png" />
 
 ## Approval of Signup Entries
 
@@ -107,8 +92,6 @@ page, and click Signups again. Instead of the Settings button you will
 be brought to the Signups button, which will list your competitors who
 have signed up, who signed them up, for which events, and when. Next to
 each competitor you have a couple of options:
-
-title="File:approval-page-step1.png" />
 
 At the top of the page, you have the option to simply accept all
 signups; use this to register all entries into the tournament
@@ -128,8 +111,6 @@ Once you have accepted or rejected entries, they will show up as normal
 under your Entries and Competitors tab, appear on your tournament
 invoice, and trigger judging obligations like usual. They will also show
 their entry status on the approvals page:
-
-title="File:approval-page-step2.png" />
 
 None of the actions you take on this screen will trigger an automatic
 notice to either the parents or students themselves; therefore if you
