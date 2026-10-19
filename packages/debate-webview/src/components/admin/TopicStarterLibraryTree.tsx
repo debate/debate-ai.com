@@ -3,10 +3,12 @@
 /**
  * The imported Topic Starter folders and files as a tree, under the importer
  * on the admin panel's Imports tab, so an admin can tidy up what an upload
- * produced without leaving the page: drag a row onto a folder (or use its
- * "Move to" menu) to re-file it, or delete a file or a whole folder.
+ * produced without leaving the page. Right-click a row (or use its "…"
+ * button) to rename, copy, paste, move or delete it, or add a folder; rows
+ * also move by dragging one onto a folder.
  *
- * Edits go straight to `/api/admin/topic-starters/[id]`, which applies the
+ * Edits go straight to `/api/admin/topic-starters/[id]` (rename, move,
+ * delete), `[id]/copy` (paste) and `items` (new folder), which apply the
  * same change records as every other catalogue edit, so what CardMirror
  * shows everyone changes with them. Unlike the Topic starters tab, this tree
  * also lists rows imported with "Share publicly" off — they came from this
@@ -16,10 +18,11 @@
  */
 
 import { useCallback, useEffect, useState } from "react"
-import { Loader2, RefreshCw } from "lucide-react"
+import { FolderPlus, Loader2, RefreshCw } from "lucide-react"
 import { Button } from "../../lib/ui/primitives/button"
 import { editorHrefForSelection } from "../../lib/reason-docs/route-selection"
 import { TopicStarterTree, type TopicStarterItem } from "../reason-docs/TopicStarterTree"
+import { NewTopicFolderDialog } from "../reason-docs/TopicStarterDialogs"
 
 type LibraryItem = Omit<TopicStarterItem, "content"> & { published?: boolean }
 
@@ -32,6 +35,8 @@ export function TopicStarterLibraryTree({ reloadKey = 0 }: { reloadKey?: number 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
+  const [copied, setCopied] = useState<{ id: number; title: string } | null>(null)
+  const [newFolderParent, setNewFolderParent] = useState<number | null | undefined>(undefined)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -54,11 +59,11 @@ export function TopicStarterLibraryTree({ reloadKey = 0 }: { reloadKey?: number 
 
   const titleOf = (id: number) => items.find((item) => item.id === id)?.title ?? "Item"
 
-  /** Sends one edit to the item endpoint, then reloads the tree. */
-  const edit = async (id: number, init: RequestInit, done: string) => {
+  /** Sends one edit to an admin Topic Starter endpoint, then reloads the tree. */
+  const edit = async (path: string, init: RequestInit, done: string) => {
     setNotice(null)
     setError(null)
-    const res = await fetch(`/api/admin/topic-starters/${id}`, init)
+    const res = await fetch(`/api/admin/topic-starters/${path}`, init)
     const data = (await res.json().catch(() => ({}))) as { error?: string }
     if (!res.ok) {
       setError(data.error || `The server refused it (${res.status}).`)
@@ -68,19 +73,35 @@ export function TopicStarterLibraryTree({ reloadKey = 0 }: { reloadKey?: number 
     await load()
   }
 
+  const send = (method: string, body: unknown): RequestInit => ({
+    method,
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body),
+  })
+  const placeOf = (parentId: number | null) => (parentId == null ? "the top level" : titleOf(parentId))
+
   const move = (id: number, parentId: number | null) => {
-    const target = parentId == null ? "the top level" : titleOf(parentId)
-    void edit(
-      id,
-      { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ parentId }) },
-      `${titleOf(id)} moved to ${target}.`,
-    )
+    void edit(String(id), send("PATCH", { parentId }), `${titleOf(id)} moved to ${placeOf(parentId)}.`)
+  }
+
+  const rename = (id: number, title: string) => {
+    void edit(String(id), send("PATCH", { title }), `Renamed to ${title}.`)
+  }
+
+  const paste = (parentId: number | null) => {
+    if (!copied) return
+    void edit(`${copied.id}/copy`, send("POST", { parentId }), `Pasted a copy of ${copied.title} into ${placeOf(parentId)}.`)
+  }
+
+  const createFolder = (title: string, parentId: number | null) => {
+    void edit("items", send("POST", { title, parentId, isFolder: true }), `Folder ${title} created.`)
   }
 
   const remove = (id: number) => {
     const isFolder = items.find((item) => item.id === id)?.isFolder
     if (!window.confirm(`Delete ${titleOf(id)}${isFolder ? " and everything in it" : ""}? It disappears from CardMirror for everyone.`)) return
-    void edit(id, { method: "DELETE" }, `${titleOf(id)} deleted.`)
+    if (copied?.id === id) setCopied(null)
+    void edit(String(id), { method: "DELETE" }, `${titleOf(id)} deleted.`)
   }
 
   const files = items.filter((item) => !item.isFolder).length
@@ -93,14 +114,20 @@ export function TopicStarterLibraryTree({ reloadKey = 0 }: { reloadKey?: number 
           <p className="font-medium">Imported files</p>
           <p className="text-muted-foreground">
             {files.toLocaleString()} file{files === 1 ? "" : "s"}
-            {unpublished > 0 ? `, ${unpublished.toLocaleString()} not shared publicly` : ""}. Drag a row onto a folder or use its
-            &ldquo;Move to&rdquo; menu to move it; delete a file or a folder with everything in it from the same menu.
+            {unpublished > 0 ? `, ${unpublished.toLocaleString()} not shared publicly` : ""}. Right-click a row to rename, copy,
+            paste, move or delete it; drag a row onto a folder to move it.
           </p>
         </div>
-        <Button variant="outline" size="sm" onClick={() => void load()} disabled={loading}>
-          {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RefreshCw className="mr-2 h-4 w-4" />}
-          Refresh
-        </Button>
+        <div className="flex shrink-0 gap-2">
+          <Button variant="outline" size="sm" onClick={() => setNewFolderParent(null)}>
+            <FolderPlus className="mr-2 h-4 w-4" />
+            New folder
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => void load()} disabled={loading}>
+            {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RefreshCw className="mr-2 h-4 w-4" />}
+            Refresh
+          </Button>
+        </div>
       </div>
       {error && <p className="text-sm text-destructive">{error}</p>}
       {notice && <p className="text-sm text-muted-foreground">{notice}</p>}
@@ -109,9 +136,23 @@ export function TopicStarterLibraryTree({ reloadKey = 0 }: { reloadKey?: number 
           items={items as TopicStarterItem[]}
           onSelect={(item) => window.open(editorHrefForSelection({ kind: "topic", id: item.id }, items), "_blank")}
           onMove={move}
+          onRename={rename}
           onDelete={remove}
+          onCreateFolder={setNewFolderParent}
+          onCopy={(item) => {
+            setCopied({ id: item.id, title: item.title })
+            setNotice(`Copied ${item.title}. Right-click a folder and choose Paste.`)
+          }}
+          onPaste={paste}
+          clipboardTitle={copied?.title ?? null}
         />
       </div>
+      <NewTopicFolderDialog
+        parentId={newFolderParent}
+        canEdit
+        onClose={() => setNewFolderParent(undefined)}
+        onCreate={createFolder}
+      />
     </section>
   )
 }
