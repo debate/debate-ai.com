@@ -161,7 +161,9 @@ describe("alignSpeeches", () => {
       // the editor's review is for.
       expect(correct / ROUNDS, format).toBeGreaterThanOrEqual(0.95);
     }
-  });
+    // 200 simulated rounds take ~3.5s under coverage alone, so the default
+    // 5s timeout fails when CI runs it alongside every other package.
+  }, 30_000);
 
   it("returns nothing for a silent recording", () => {
     expect(alignSpeeches([], AUDIO_SPLIT_TEMPLATES.ld.speeches)).toEqual([]);
