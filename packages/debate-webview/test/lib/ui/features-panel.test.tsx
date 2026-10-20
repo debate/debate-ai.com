@@ -42,6 +42,18 @@ describe("FeaturesPanel", () => {
     expect(html).toContain(`(${sections[0].entries.length})`);
   });
 
+  it("embeds the Drive folder of PDF guides in the Documents tab only", () => {
+    expect(html).not.toContain('data-testid="documents-folder-viewer"');
+    const documents = APP_FEATURES.filter((feature) => feature.category === "documents");
+    const single = renderToStaticMarkup(<FeaturesPanel entries={documents} />);
+    expect(single).toContain('data-testid="features-tabpanel-documents"');
+    expect(single).toContain('data-testid="documents-folder-viewer"');
+    expect(single).toContain("drive.google.com/embeddedfolderview");
+    for (const feature of documents) {
+      expect(single).toContain(`href="${feature.href}"`);
+    }
+  });
+
   it("links entries that have a long-form doc into the app's own docs site", () => {
     // The panel takes `featureDocUrl`'s default base, so a doc lands on
     // `/docs/features/…` without the source file's extension. Team Research
@@ -68,8 +80,8 @@ describe("FeaturesPanel", () => {
     // The whole point of the poster is that nothing is requested from YouTube
     // until a reader asks for it, so the server-rendered page carries the
     // banner — the video's poster frame and the button that starts it — and no
-    // YouTube iframe. (The Drive folder viewer further down is deliberately
-    // mounted up front, so it is the one iframe allowed.)
+    // YouTube iframe. (The Documents tab's Drive folder viewer is mounted as
+    // soon as that tab opens, so it is the one iframe allowed.)
     expect(html).toContain(`src="${README_BANNER}"`);
     expect(html).toContain(`aria-label="Play video: ${README_VIDEO.title}"`);
     expect(html).not.toMatch(/<iframe[^>]*youtube/);
