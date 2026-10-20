@@ -92,6 +92,7 @@ import { TeamCodeLabel } from "../../components/team-label/TeamLabel"
 import { useVideoTeamRankings } from "../../hooks/useVideoTeamRankings"
 import { LecturesSidebarShell } from "../LecturesSidebarShell"
 import { useVideoState } from "../../hooks/useVideoState"
+import { useDecisionReveal } from "../../hooks/useDecisionReveal"
 import { useVideoFeed, useVideoMeta } from "../../hooks/useVideoFeed"
 import {
   sendYouTubeCommand,
@@ -272,13 +273,15 @@ export function VideoWatchPage({
   const clearActiveVideo = useVideoPlayerStore((state) => state.clearActiveVideo)
 
   const { state: viewState, actions: viewActions } = useVideoState()
+  // The decision and the winner's gold border stay hidden until the viewer
+  // clicks "Reveal decision"; the video's card shares the same flag.
+  const [decisionRevealed, revealDecision] = useDecisionReveal(videoId)
   const { counts } = useVideoMeta()
 
   // The search box above the related videos swaps the list under the player
   // for the library's matches — in place, with no navigation, so the video
   // above keeps playing while the reader lines up what to watch next.
   const [relatedQuery, setRelatedQuery] = useState("")
-  const [decisionRevealed, setDecisionRevealed] = useState(false);
   const searchFeed = useVideoFeed({
     source: "all",
     q: relatedQuery,
@@ -889,7 +892,7 @@ export function VideoWatchPage({
                 )}
                 {/* The two teams sit right after the level, in the same row as
                     the round's other badges: aff blue, neg red, the winner
-                    ringed in gold. Each team's argument (the 1AC for aff, the
+                    ringed in gold once the decision is revealed. Each team's argument (the 1AC for aff, the
                     2NR for neg) sits in small type right under its name. */}
                 {affTeam && (
                   <TeamWithArgument argument={arg1AC} side="aff">
@@ -898,7 +901,7 @@ export function VideoWatchPage({
                       title={`Affirmative: ${affTeam}`}
                       className={cn(
                         "text-sm font-bold backdrop-blur-md px-2 py-1 rounded",
-                        affWin === true
+                        decisionRevealed && affWin === true
                           ? "border-2 border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)] text-blue-100 bg-blue-900/80"
                           : "border border-blue-400/90 shadow-lg text-blue-300 bg-blue-900/80",
                       )}
@@ -914,7 +917,7 @@ export function VideoWatchPage({
                       title={`Negative: ${negTeam}`}
                       className={cn(
                         "text-sm font-bold backdrop-blur-md px-2 py-1 rounded",
-                        affWin === false
+                        decisionRevealed && affWin === false
                           ? "border-2 border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)] text-red-100 bg-red-900/80"
                           : "border border-red-400/90 shadow-lg text-red-300 bg-red-900/80",
                       )}
@@ -1062,7 +1065,7 @@ export function VideoWatchPage({
                     {formatVideoDuration(storedDuration || duration)}
                   </span>
                 )}
-                {judgeDecision && !decisionRevealed ? (<button onClick={() => setDecisionRevealed(true)} className="text-xs text-muted-foreground hover:text-foreground">Reveal decision</button>) : (decisionRevealed ? (<span>Decision {judgeDecision}</span>) : null)}
+                {judgeDecision && !decisionRevealed ? (<button onClick={revealDecision} className="text-xs text-muted-foreground hover:text-foreground">Reveal decision</button>) : (decisionRevealed ? (<span>Decision {judgeDecision}</span>) : null)}
               </div>
 
               {shownDescription && (
