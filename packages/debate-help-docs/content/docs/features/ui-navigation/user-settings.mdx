@@ -378,10 +378,17 @@ When two devices both earned XP while apart, the copies are merged field by
 field (`mergeDebaterLevel`): the larger total, the larger lifetime count for
 each activity, the union of completed milestones, today's challenge progress
 when both are from the same UTC day (otherwise the later day), and the union of
-the recent XP log. Known gap: there is no per-event ledger, so the same activity
-done on both devices can't be told from two separate ones; counts take the
-larger side rather than adding, so XP earned in the same window on both devices
-can be under-counted, never double-counted.
+the recent XP log.
+
+Each browser also keeps a per-device ledger (`ledger` on the stored state, keyed
+by a random id kept under `debaterDeviceId`). It holds the XP and activity
+counts that device earned on top of a `base` snapshot of what existed before the
+ledger started. When a ledger is present, the total and lifetime counts are
+rebuilt as the base plus every device's own earnings, so work done on two
+devices in the same window adds instead of taking the larger count. Known gaps:
+today's challenge tally and challenge bonus XP are still merged by the
+larger-side rule (a bonus earned separately on two devices counts twice), and a
+copy written by an older app version without a ledger is treated as base only.
 
 ## Save status on each tool
 

@@ -131,3 +131,41 @@ describe("mergeDebaterLevel", () => {
     expect(toolRecordsMissingRemotely(collection, l, r)).toEqual([merged]);
   });
 });
+
+describe("mergeDebaterLevel with a per-device ledger", () => {
+  const entry = (xp: number, counts: Record<string, number>) => ({ xp, counts });
+  const withLedger = (base: ReturnType<typeof entry>, devices: Record<string, ReturnType<typeof entry>>) => ({
+    ...state(0),
+    ledger: { base, devices },
+    totalXp: base.xp + Object.values(devices).reduce((n, d) => n + d.xp, 0),
+    lifetimeCounts: {},
+  });
+
+  it("adds activity earned on two devices instead of taking the larger", () => {
+    const a = withLedger(entry(100, { card_cut: 10 }), { A: entry(20, { card_cut: 2 }) });
+    const b = withLedger(entry(100, { card_cut: 10 }), { B: entry(15, { card_cut: 3 }) });
+    expect(mergeDebaterLevel(a, b)).toMatchObject({
+      totalXp: 135,
+      lifetimeCounts: { card_cut: 15 },
+      ledger: { base: entry(100, { card_cut: 10 }), devices: { A: entry(20, { card_cut: 2 }), B: entry(15, { card_cut: 3 }) } },
+    });
+  });
+
+  it("does not double-count the same device seen from both copies", () => {
+    const old = withLedger(entry(0, {}), { A: entry(10, { flow: 1 }) });
+    const newer = withLedger(entry(0, {}), { A: entry(30, { flow: 3 }) });
+    expect(mergeDebaterLevel(old, newer)).toMatchObject({ totalXp: 30, lifetimeCounts: { flow: 3 } });
+    expect(mergeDebaterLevel(newer, old)).toMatchObject({ totalXp: 30, lifetimeCounts: { flow: 3 } });
+  });
+
+  it("treats a copy without a ledger as base only", () => {
+    const legacy = { ...state(0), totalXp: 80, lifetimeCounts: { card_cut: 8 } };
+    const ledgered = withLedger(entry(50, { card_cut: 5 }), { A: entry(10, { card_cut: 1 }) });
+    expect(mergeDebaterLevel(ledgered, legacy)).toMatchObject({ totalXp: 90, lifetimeCounts: { card_cut: 9 } });
+  });
+
+  it("ignores malformed ledger entries", () => {
+    const odd = { ...state(5), ledger: { base: { xp: "x" }, devices: { A: { xp: -3, counts: { flow: "y" } }, B: null } } };
+    expect(mergeDebaterLevel(odd, state(1))).toMatchObject({ totalXp: 1, lifetimeCounts: { card_cut: 2 } });
+  });
+});

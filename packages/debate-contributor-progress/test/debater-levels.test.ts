@@ -3,6 +3,7 @@ import {
   applyDebaterActivity,
   computeLevelProgress,
   createDebaterLevelState,
+  DEBATER_CHALLENGES,
   getChallengeProgress,
   MAX_DEBATER_LEVEL,
   parseDebaterLevelState,
@@ -107,5 +108,31 @@ describe("parseDebaterLevelState", () => {
     expect(parseDebaterLevelState(null)).toBeNull();
     expect(parseDebaterLevelState({ totalXp: -1 })).toBeNull();
     expect(parseDebaterLevelState({ ...state, lifetimeCounts: { bogus: 1 } })).toBeNull();
+  });
+});
+
+describe("per-device ledger", () => {
+  it("snapshots existing totals as the base and tracks this device's earnings", () => {
+    const first = applyDebaterActivity(createDebaterLevelState(), "card_cut", DAY1, 1, DEBATER_CHALLENGES, "dev-a");
+    const prior = applyDebaterActivity(createDebaterLevelState(), "card_cut", DAY1).state;
+    const upgraded = applyDebaterActivity(prior, "card_cut", DAY1, 2, DEBATER_CHALLENGES, "dev-a");
+    expect(upgraded.state.ledger?.base).toEqual({ xp: prior.totalXp, counts: { card_cut: 1 } });
+    expect(upgraded.state.ledger?.devices["dev-a"]).toEqual({ xp: upgraded.xpGained, counts: { card_cut: 2 } });
+    expect(upgraded.state.totalXp).toBe(prior.totalXp + upgraded.xpGained);
+    expect(first.state.ledger?.devices["dev-a"]?.counts).toEqual({ card_cut: 1 });
+  });
+
+  it("adds to the same device entry and keeps the ledger without a device id", () => {
+    const one = applyDebaterActivity(createDebaterLevelState(), "drill_practiced", DAY1, 1, DEBATER_CHALLENGES, "d").state;
+    const two = applyDebaterActivity(one, "drill_practiced", DAY1, 1, DEBATER_CHALLENGES, "d").state;
+    expect(two.ledger?.devices.d?.counts).toEqual({ drill_practiced: 2 });
+    expect(applyDebaterActivity(two, "drill_practiced", DAY1).state.ledger).toEqual(two.ledger);
+  });
+
+  it("is omitted without a device id and survives a parse round-trip", () => {
+    expect(applyDebaterActivity(createDebaterLevelState(), "drill_practiced", DAY1).state.ledger).toBeUndefined();
+    const { state } = applyDebaterActivity(createDebaterLevelState(), "drill_practiced", DAY1, 1, DEBATER_CHALLENGES, "d");
+    expect(parseDebaterLevelState(JSON.parse(JSON.stringify(state)))).toEqual(state);
+    expect(parseDebaterLevelState({ ...state, ledger: { base: "no" } })?.ledger).toBeUndefined();
   });
 });
