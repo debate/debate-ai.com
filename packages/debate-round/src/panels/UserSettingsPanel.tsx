@@ -78,6 +78,7 @@ import {
 import {
   DEFAULT_FONT_FAMILY,
   FONT_OPTIONS,
+  isValidFontFamily,
   readLocalFontFamily,
   setLocalFontFamily,
 } from "../state/fontSettings"
@@ -147,9 +148,9 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
   const [remoteAvailable, setRemoteAvailable] = useState(false)
   const [loading, setLoading] = useState(true)
   const [status, setStatus] = useState<SaveStatus>({ kind: "idle" })
-  // Local-only, like the source it was ported from — never synced to `/api/settings`,
-  // so it lives outside `form` and applies as soon as it's picked rather than
-  // waiting on the Save button below.
+  // Applies as soon as it's picked rather than waiting on the Save button below, so
+  // it lives outside `form`; when signed in it is pushed to the account on change
+  // (see handleFontFamilyChange).
   const [fontFamily, setFontFamily] = useState(DEFAULT_FONT_FAMILY)
   const flowAutoSaveEnabled = useSyncExternalStore(subscribeFlowAutoSavePreference, isFlowAutoSaveEnabled, () => true)
   // The last values `form` was loaded/saved from — i.e. what's actually
@@ -186,6 +187,14 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
   const handleFontFamilyChange = (value: string) => {
     setFontFamily(value)
     setLocalFontFamily(value)
+    if (remoteAvailable) {
+      saveUserSettings({ fontFamily: value }).catch((err) =>
+        setStatus({
+          kind: "error",
+          message: err instanceof Error ? err.message : "Failed to save font to your account.",
+        }),
+      )
+    }
   }
 
   useEffect(() => {
@@ -214,6 +223,14 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
           applyThemeLocally(colorTheme, themeMode, setTheme)
           // Adopt the account's auto-save mode; with none chosen yet, seed it from
           // this device's choice so other devices pick it up.
+          // Same for the font: the account's choice wins; with none saved yet, seed it
+          // from this device's so other devices pick it up.
+          if (isValidFontFamily(remote.fontFamily)) {
+            setFontFamily(remote.fontFamily)
+            setLocalFontFamily(remote.fontFamily)
+          } else if (readLocalFontFamily() !== DEFAULT_FONT_FAMILY) {
+            void saveUserSettings({ fontFamily: readLocalFontFamily() }).catch(() => {})
+          }
           if (isFlowAutoSaveMode(remote.flowAutoSave)) {
             setFlowAutoSave(remote.flowAutoSave)
             setFlowAutoSaveMode(remote.flowAutoSave)

@@ -149,9 +149,11 @@ The requirement is a shape, not a preference: a JSON array under one
 `localStorage` key whose elements are objects carrying a stable string id. So
 these stay local on purpose —
 
-- **Single-object settings stores** (`myTeamProfile`, `fontFamily`, the `ebb`
-  keymap and display settings). There is no per-record id to key them by, and
-  they are mostly per-device choices anyway.
+- **Single-object settings stores** (`myTeamProfile`, the `ebb` keymap and
+  display settings). There is no per-record id to key them by, and they are
+  mostly per-device choices anyway. (`fontFamily` used to be on this list; it
+  now syncs as the `user_settings.font_family` column through `/api/settings`,
+  like `flowAutoSave`, rather than as a tool-record collection.)
 - **Presence heartbeats** (`flowPresenceHeartbeats`, `topicPresenceHeartbeats`)
   and **per-device playback state** (`persistent-video-player`,
   `debate-playback-speed`, `video-timestamps`). These describe *this browser*,
