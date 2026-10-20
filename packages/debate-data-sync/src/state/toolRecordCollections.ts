@@ -52,7 +52,7 @@ import {
 } from "./flow-editor-settings-codec";
 import { redactFileSource } from "./redact-file-source";
 import { decodeFlowKeymap, encodeFlowKeymap } from "./flow-keymap-codec";
-import { decodeDebaterLevel, encodeDebaterLevel, preferHigherDebaterXp } from "./debater-level-codec";
+import { decodeDebaterLevel, encodeDebaterLevel, mergeDebaterLevel, preferHigherDebaterXp } from "./debater-level-codec";
 
 /**
  * The groupings `/settings` → Account → **Tool data** renders as section
@@ -133,6 +133,13 @@ export interface ToolRecordCollection {
    * offline is neither overwritten nor left unpushed.
    */
   prefer?: (local: unknown, remote: unknown) => "local" | "remote";
+  /**
+   * Builds one record from both copies when each side holds something the
+   * other lacks (debater XP earned per activity on two devices). Takes
+   * precedence over {@link prefer}; the result is what is stored locally and,
+   * when it differs from the account's copy, pushed.
+   */
+  combine?: (local: unknown, remote: unknown) => unknown;
 }
 
 /**
@@ -206,6 +213,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     section: "Practice",
     codec: { decode: decodeDebaterLevel, encode: encodeDebaterLevel },
     prefer: preferHigherDebaterXp,
+    combine: mergeDebaterLevel,
   },
   {
     key: "practiceRounds",
@@ -920,6 +928,8 @@ export function mergeToolRecords(
     seen.add(id);
     if (!remoteById.has(id)) {
       merged.push(record);
+    } else if (collection.combine) {
+      merged.push(collection.combine(record, remoteById.get(id)));
     } else if (collection.prefer?.(record, remoteById.get(id)) === "local") {
       merged.push(record);
     } else if (collection.redact) {
@@ -963,6 +973,13 @@ export function toolRecordsMissingRemotely(
     if (remoteIds.has(id)) {
       // Both sides hold it: only a record the collection says this browser
       // wins needs pushing, so the account catches up.
+      if (collection.combine) {
+        const combined = collection.combine(record, remoteById.get(id));
+        if (JSON.stringify(combined) === JSON.stringify(remoteById.get(id))) continue;
+        seen.add(id);
+        missing.push(combined);
+        continue;
+      }
       if (collection.prefer?.(record, remoteById.get(id)) !== "local") continue;
     }
     seen.add(id);

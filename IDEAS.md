@@ -59,7 +59,8 @@
 - [x] Tool UI pass finished; no open follow-ups (2026-10-08 tracker review)
 - [x] Debater XP/level syncs via the `debaterLevel` tool-record collection (higher `totalXp` wins; 2026-10-20)
 - [x] Font family preference syncs via `user_settings.font_family` (`PUT /api/settings { fontFamily }`; 2026-10-20)
-- [ ] Follow-up: merge XP per activity across devices instead of whole-record higher-total-wins
+- [x] Debater XP merges per activity across devices (`mergeDebaterLevel`, via the collection `combine` hook; 2026-10-20)
+- [ ] Follow-up: sum XP earned separately on two devices (needs a per-device baseline; today the larger count wins)
 
 ---
 
