@@ -386,7 +386,7 @@ export function LecturesVideoGridView({
         {currentCategory === "topPicks" && <GoatSparklesHeading />}
 
         {/* The WSD, ACC and Speech collections, directly above the search box
-            on the All Videos page (ACC alone on College Team Debates). They
+            on the All Videos page (ACC alone on College Team Debate). They
             are not sidebar links, so neither the sidebar nor the mobile tiles
             carry them. */}
         {collectionLinks && (

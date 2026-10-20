@@ -153,7 +153,7 @@ describe("the surfaces that render them", () => {
 });
 
 describe("the WSD, ACC and Speech collections", () => {
-  it("offer ACC alone on College Team Debates", () => {
+  it("offer ACC alone on College Team Debate", () => {
     expect(VIDEO_COLLEGE_FILTER_LINKS.map((link) => link.href)).toEqual(["/videos/acc"]);
   });
 
