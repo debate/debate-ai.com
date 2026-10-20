@@ -24,15 +24,26 @@ function mount() {
   return { host, root }
 }
 
+function openDialog(host: HTMLElement) {
+  act(() => {
+    host.querySelector("button")!.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+  })
+}
+
 describe("ReadAloudVoiceSection", () => {
   it("starts on Kokoro and follows a Cloudflare voice picked elsewhere", () => {
     const { host, root } = mount()
-    expect(host.querySelector("#settings-read-engine")?.textContent).toContain("Kokoro (on this device)")
-    expect(host.querySelector("#settings-read-voice")?.textContent).toContain("Heart")
+    openDialog(host)
+    expect(document.body.querySelector("#settings-read-engine")?.textContent).toContain(
+      "Kokoro (on this device)",
+    )
+    expect(document.body.querySelector("#settings-read-voice")?.textContent).toContain("Heart")
     act(() => storeVoiceId("deepgram:aura-luna-en"))
-    expect(host.querySelector("#settings-read-engine")?.textContent).toContain("Cloudflare Workers AI")
-    expect(host.querySelector("#settings-read-voice")?.textContent).toContain("Luna")
-    expect(host.textContent).toContain("Deepgram Aura")
+    expect(document.body.querySelector("#settings-read-engine")?.textContent).toContain(
+      "Cloudflare Workers AI",
+    )
+    expect(document.body.querySelector("#settings-read-voice")?.textContent).toContain("Luna")
+    expect(document.body.textContent).toContain("Deepgram Aura")
     act(() => root.unmount())
   })
 })

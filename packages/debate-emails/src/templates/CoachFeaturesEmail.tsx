@@ -25,7 +25,6 @@ export function CoachFeaturesEmail({ name, baseUrl }: CoachFeaturesEmailProps) {
     <EmailLayout
       preview="Manage your research team, run coaching programs and keep your squad's calendar in one place."
       baseUrl={baseUrl}
-      footerNote={`You're getting this because you have a ${APP_NAME} account.`}
     >
       <EmailHeading>{firstName ? `${firstName}, here's what you can do as a coach` : "Everything you get as a coach"}</EmailHeading>
       <EmailText>
