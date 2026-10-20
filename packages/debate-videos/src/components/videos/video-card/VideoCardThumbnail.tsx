@@ -266,7 +266,7 @@ export function VideoCardThumbnail({
                             : "border border-blue-400/90 shadow-lg",
                         )}
                       >
-                        <TeamCodeLabel label={affTeam} ranking={affRanking} side="aff" bare />
+                        <TeamCodeLabel label={affTeam} ranking={affRanking} side="aff" bare showRank />
                       </span>
                       {arg1AC && (
                         <span className="text-xs font-medium text-blue-100 backdrop-blur-md bg-blue-950/90 px-2 py-0.5 rounded border border-blue-800/50 shadow-sm text-center max-w-[120px] leading-tight">
@@ -286,7 +286,7 @@ export function VideoCardThumbnail({
                             : "border border-red-400/90 shadow-lg",
                         )}
                       >
-                        <TeamCodeLabel label={negTeam} ranking={negRanking} side="neg" bare />
+                        <TeamCodeLabel label={negTeam} ranking={negRanking} side="neg" bare showRank />
                       </span>
                       {arg2NR && (
                         <span className="text-xs font-medium text-red-100 backdrop-blur-md bg-red-950/90 px-2 py-0.5 rounded border border-red-800/50 shadow-sm text-center max-w-[120px] leading-tight">

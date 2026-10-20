@@ -115,7 +115,8 @@ function RowThumbnail({
  * An Aff or Neg cell: the team, and under it the argument it ran if known.
  *
  * A team found in the current season's rankings (`ranking`) links to its
- * team page and shows its rank (e.g. "#4"). Otherwise, with `onSearch`, the
+ * team page and shows its rank (e.g. "#4") as a badge inside the label,
+ * whose tooltip lists the team's stats. Otherwise, with `onSearch`, the
  * name is a button that searches the library for that team's videos instead
  * of opening the row. The team is drawn as a {@link TeamCodeLabel}: school
  * logo or name, then last names (from the rankings row) or initials.
@@ -143,12 +144,9 @@ function TeamCell({
             href={teamHref(ranking)}
             onClick={(e) => e.stopPropagation()}
             title={`${ranking.school} ${ranking.name} — team page`}
-            className="min-w-0 truncate text-left hover:text-primary hover:underline flex items-center gap-1.5"
+            className="min-w-0 text-left hover:text-primary hover:underline"
           >
-            <TeamCodeLabel label={team} ranking={ranking} side={side} />
-            <span className="shrink-0 text-[11px] font-medium tabular-nums text-primary">
-              #{ranking.rank}
-            </span>
+            <TeamCodeLabel label={team} ranking={ranking} side={side} showRank />
           </Link>
         ) : onSearch ? (
           <button
@@ -158,7 +156,7 @@ function TeamCell({
               onSearch(team)
             }}
             title={`Search for ${team}`}
-            className="max-w-full truncate text-left hover:text-primary hover:underline"
+            className="max-w-full text-left hover:text-primary hover:underline"
           >
             <TeamCodeLabel label={team} side={side} />
           </button>

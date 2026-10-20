@@ -103,6 +103,8 @@ export {
   TEAM_SIDE_CLASS,
   TEAM_SIDE_SURFACE_CLASS,
   TeamCodeLabel,
+  TeamRankBadge,
+  teamRankStats,
   TeamLabel,
   type TeamCodeLabelProps,
   type TeamLabelProps,

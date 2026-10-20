@@ -70,7 +70,7 @@ describe("RankingsTable labels", () => {
     expect(rows[0]).toMatch(/data-team-label=""[^>]*>.*<img[^>]*harker\.png/);
     expect(rows[0]).toContain('<span class="sr-only">Harker</span>');
     // The school-rank badge follows the pill.
-    expect(rows[0]).toMatch(/<\/a><\/span><span[^>]*>#1<\/span>/);
+    expect(rows[0]).toMatch(/<\/a><\/span><\/span><span[^>]*>#1<\/span>/);
     // College Prep is not in the school ranks, so it has no school-rank badge.
     expect(rows[1]).toContain("College Prep");
     expect(rows[1]).toContain("Falk &amp; Sabnani");

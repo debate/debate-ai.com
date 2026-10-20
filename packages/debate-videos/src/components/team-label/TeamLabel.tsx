@@ -7,15 +7,21 @@
  * is blue for the aff and red for the neg;
  * a team with no side in view (rankings, profiles) uses the aff blue.
  *
+ * Last names wrap rather than truncate, so they always show in full. A
+ * ranked team can carry its rank inside the pill as a small badge
+ * ({@link TeamRankBadge}) whose hover tooltip lists the team's stats.
+ *
  * `teamDisplayParts` in `@debate/rankings-adapter` decides the two parts;
  * this file only draws them.
  * @module components/team-label/TeamLabel
  */
 
+import type { ReactNode } from "react"
 import Link from "next/link"
 import { teamDisplayParts, type RankingEntry } from "@debate/rankings-adapter"
 import { getSchoolLogo } from "../../lib/schoolLogos"
 import { cn } from "../../ui/lib/utils"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
 
 /** The side a team debated, which colors its border. */
 export type TeamSide = "aff" | "neg"
@@ -80,6 +86,8 @@ export interface TeamLabelProps {
    * draws the side's border (the card and watch-page aff/neg badges).
    */
   bare?: boolean
+  /** Drawn inside the pill after the debaters, e.g. a {@link TeamRankBadge}. */
+  badge?: ReactNode
   className?: string
 }
 
@@ -87,7 +95,7 @@ export interface TeamLabelProps {
  * A team as a bordered pill: school logo or name, then debaters. Renders
  * nothing when neither part is known.
  */
-export function TeamLabel({ school, debaters, side, href, schoolHref, title, bare, className }: TeamLabelProps) {
+export function TeamLabel({ school, debaters, side, href, schoolHref, title, bare, badge, className }: TeamLabelProps) {
   if (!school && !debaters) return null
   const schoolPart = school ? <SchoolMark school={school} /> : null
   // A logo stacks over the names; a printed school name runs beside them.
@@ -116,14 +124,19 @@ export function TeamLabel({ school, debaters, side, href, schoolHref, title, bar
           schoolPart
         ))}
       {schoolPart && debaters ? " " : null}
-      {debaters &&
-        (href ? (
-          <Link href={href} className="truncate font-medium hover:underline underline-offset-4">
-            {debaters}
-          </Link>
-        ) : (
-          <span className="truncate font-medium">{debaters}</span>
-        ))}
+      {(debaters || badge) && (
+        <span className={cn("inline-flex min-w-0 items-center gap-1", stacked && "justify-center")}>
+          {debaters &&
+            (href ? (
+              <Link href={href} className="min-w-0 whitespace-normal break-words font-medium hover:underline underline-offset-4">
+                {debaters}
+              </Link>
+            ) : (
+              <span className="min-w-0 whitespace-normal break-words font-medium">{debaters}</span>
+            ))}
+          {badge}
+        </span>
+      )}
     </span>
   )
 }
@@ -132,7 +145,9 @@ export interface TeamCodeLabelProps extends Omit<TeamLabelProps, "school" | "deb
   /** The team as a video or tournament names it, e.g. `"Harker LL"`. */
   label?: string | null
   /** The team's rankings row, when found: supplies the school and last names. */
-  ranking?: Pick<RankingEntry, "school" | "name"> | null
+  ranking?: (Pick<RankingEntry, "school" | "name"> & Partial<RankingEntry>) | null
+  /** Shows the ranking's rank inside the pill as a {@link TeamRankBadge}. */
+  showRank?: boolean
 }
 
 /**
@@ -140,7 +155,79 @@ export interface TeamCodeLabelProps extends Omit<TeamLabelProps, "school" | "deb
  * rankings row's school and last names when there is one, else the code's
  * school and initials.
  */
-export function TeamCodeLabel({ label, ranking, ...rest }: TeamCodeLabelProps) {
+export function TeamCodeLabel({ label, ranking, showRank, ...rest }: TeamCodeLabelProps) {
   const parts = teamDisplayParts({ label, school: ranking?.school, name: ranking?.name })
-  return <TeamLabel {...parts} {...rest} />
+  const badge =
+    showRank && ranking && typeof ranking.rank === "number" ? (
+      <TeamRankBadge ranking={ranking} side={rest.side} />
+    ) : undefined
+  return <TeamLabel {...parts} badge={badge} {...rest} />
+}
+
+/** Fill and text for the rank badge, matching the pill's border color. */
+const RANK_BADGE_CLASS: Record<TeamSide, string> = {
+  aff: "bg-blue-600 text-white dark:bg-blue-500",
+  neg: "bg-red-600 text-white dark:bg-red-500",
+}
+
+/** Win rates arrive as percentages (`54.5`), as on the team profile. */
+const percent = (rate?: number | null) =>
+  typeof rate === "number" ? `${Number.isInteger(rate) ? rate : rate.toFixed(1)}%` : "—"
+
+/** The tooltip's stat lines for a ranked team, also used as its spoken label. */
+export function teamRankStats(ranking: Pick<RankingEntry, "school" | "name"> & Partial<RankingEntry>) {
+  const lines: [string, string][] = [["Rank", `#${ranking.rank}`]]
+  if (typeof ranking.adjustedRating === "number") {
+    const dev = typeof ranking.deviation === "number" ? ` ±${ranking.deviation.toFixed(1)}` : ""
+    lines.push(["Rating", `${ranking.adjustedRating.toFixed(1)}${dev}`])
+  }
+  if (typeof ranking.matches === "number") lines.push(["Rounds", String(ranking.matches)])
+  if (ranking.affWinRate != null || ranking.negWinRate != null)
+    lines.push(["Win % aff / neg", `${percent(ranking.affWinRate)} / ${percent(ranking.negWinRate)}`])
+  if (ranking.affElimWinRate != null || ranking.negElimWinRate != null)
+    lines.push(["Elim win % aff / neg", `${percent(ranking.affElimWinRate)} / ${percent(ranking.negElimWinRate)}`])
+  return lines
+}
+
+/**
+ * A team's rank ("#7") as a small badge in its side's color. Hovering or
+ * focusing it opens a tooltip with the school, debaters, rating, rounds and
+ * aff/neg win rates. Renders as a span so it can sit inside a link.
+ */
+export function TeamRankBadge({
+  ranking,
+  side,
+}: {
+  ranking: Pick<RankingEntry, "school" | "name"> & Partial<RankingEntry>
+  side?: TeamSide | null
+}) {
+  const stats = teamRankStats(ranking)
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span
+          data-team-rank=""
+          aria-label={`${ranking.school} ${ranking.name}: ${stats.map(([k, v]) => `${k} ${v}`).join(", ")}`}
+          className={cn(
+            "inline-flex shrink-0 cursor-help items-center rounded px-1 text-[10px] font-semibold leading-4 tabular-nums",
+            RANK_BADGE_CLASS[side ?? "aff"],
+          )}
+        >
+          #{ranking.rank}
+        </span>
+      </TooltipTrigger>
+      <TooltipContent side="top" className="text-left">
+        <div className="font-semibold">{ranking.school}</div>
+        <div className="mb-1 opacity-80">{ranking.name}</div>
+        <dl className="grid grid-cols-[auto_auto] gap-x-3 gap-y-0.5">
+          {stats.map(([k, v]) => (
+            <div key={k} className="contents">
+              <dt className="opacity-70">{k}</dt>
+              <dd className="text-right tabular-nums">{v}</dd>
+            </div>
+          ))}
+        </dl>
+      </TooltipContent>
+    </Tooltip>
+  )
 }
