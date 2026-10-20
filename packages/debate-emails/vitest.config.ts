@@ -5,6 +5,6 @@ export default defineConfig({
     name: "@debate/emails",
     root: import.meta.dirname,
     environment: "node",
-    include: ["test/**/*.test.{ts,tsx}"],
+    include: ["test/**/*.test.ts"],
   },
 });

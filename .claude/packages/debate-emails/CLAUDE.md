@@ -19,5 +19,5 @@ Email templates, plus `renderEmail(id, props)` → `{ subject, html, text }`.
   repeats the few constants it needs from `@debate/webview`'s site config).
 - Feature copy in `CoachFeaturesEmail` mirrors the coaching and team-research
   help docs; update both together.
-- Tests: `test/render.test.tsx`; run with
+- Tests: `test/render.test.ts`; run with
   `bunx vitest run --project @debate/emails` from `apps/debate-web`.
