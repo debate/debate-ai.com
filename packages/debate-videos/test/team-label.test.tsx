@@ -26,6 +26,9 @@ describe("TeamCodeLabel", () => {
     expect(html).not.toContain(">LL<");
     expect(html).toContain('data-side="neg"');
     expect(html).toContain("border-red-500/80");
+    // With a logo the names go on a second row under it.
+    expect(html).toContain("data-stacked");
+    expect(html).toContain("flex-col");
   });
 
   it("falls back to the school's name and the code's initials", () => {
@@ -34,6 +37,8 @@ describe("TeamCodeLabel", () => {
     expect(html).toContain('<span class="truncate">Nowhere High</span>');
     expect(html).toContain(">AB</span>");
     expect(html).toContain("border-blue-500/80");
+    // No logo: school name and initials share one line.
+    expect(html).not.toContain("data-stacked");
   });
 });
 

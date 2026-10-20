@@ -2,7 +2,9 @@
  * @fileoverview How the site names a team: a bordered pill holding the
  * school (its logo from `debate-icons` when there is one, else its name)
  * followed by the debaters (their last names when known, else the initials
- * of the team's code). The border is blue for the aff and red for the neg;
+ * of the team's code). With a logo, the debaters sit on a second row under
+ * it; without one, the school name and debaters share one line. The border
+ * is blue for the aff and red for the neg;
  * a team with no side in view (rankings, profiles) uses the aff blue.
  *
  * `teamDisplayParts` in `@debate/rankings-adapter` decides the two parts;
@@ -77,13 +79,17 @@ export interface TeamLabelProps {
 export function TeamLabel({ school, debaters, side, href, schoolHref, title, bare, className }: TeamLabelProps) {
   if (!school && !debaters) return null
   const schoolPart = school ? <SchoolMark school={school} /> : null
+  // A logo stacks over the names; a printed school name runs beside them.
+  const stacked = Boolean(debaters && school && getSchoolLogo(school))
   return (
     <span
       data-team-label=""
       data-side={side ?? undefined}
+      data-stacked={stacked ? "" : undefined}
       title={title ?? [school, debaters].filter(Boolean).join(" ")}
       className={cn(
-        "inline-flex max-w-full min-w-0 items-center gap-1.5 align-middle leading-tight",
+        "inline-flex max-w-full min-w-0 align-middle leading-tight",
+        stacked ? "flex-col items-center gap-0.5 text-center" : "items-center gap-1.5",
         !bare && "rounded-md border px-1.5 py-0.5",
         !bare && TEAM_SIDE_CLASS[side ?? "aff"],
         className,

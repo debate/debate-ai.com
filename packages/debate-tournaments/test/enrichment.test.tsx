@@ -77,6 +77,9 @@ describe("pairings enrichment", () => {
     const unranked = labels.find((l) => l.getAttribute("title") === "Nowhere AB")!;
     expect(unranked.textContent).toBe("Nowhere AB");
     expect(unranked.querySelector("img")).toBeNull();
+    // The logo stacks over the names; a printed school name stays on one line.
+    expect(ranked.hasAttribute("data-stacked")).toBe(true);
+    expect(unranked.hasAttribute("data-stacked")).toBe(false);
     // Tabroom's side 1 is the aff (blue border), 2 the neg (red).
     expect(ranked.getAttribute("data-side")).toBe("aff");
     expect(unranked.getAttribute("data-side")).toBe("neg");

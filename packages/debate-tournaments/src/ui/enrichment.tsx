@@ -135,7 +135,8 @@ const SIDE_BORDER: Record<EntrySide, string> = {
  * An entry the way the site names every team: a pill bordered blue (aff) or
  * red (neg) holding the school — its logo when the host has one, else its
  * name — then the debaters' last names, or the code's initials when the
- * names aren't known. A matched entry's rating follows the pill. The code
+ * names aren't known. With a logo the names sit on a second row under it.
+ * A matched entry's rating follows the pill. The code
  * itself stays in the hover text.
  */
 export function EntryLabel({ query, side }: { query: TeamRatingQuery; side?: EntrySide | null }) {
@@ -146,13 +147,17 @@ export function EntryLabel({ query, side }: { query: TeamRatingQuery; side?: Ent
   const printedName = query.name?.trim() && query.name.trim() !== code ? lastNames(query.name.trim()) : null;
   const debaters = team?.names || printedName || parsed?.initials || null;
   if (!school && !debaters) return <>{code}</>;
+  const stacked = Boolean(school && debaters && team?.logoSrc);
   return (
     <>
       <span
         data-entry-label=""
         data-side={side ?? undefined}
+        data-stacked={stacked ? "" : undefined}
         title={code ?? undefined}
-        className={`inline-flex max-w-full items-center gap-1.5 rounded-md border px-1.5 py-0.5 align-middle leading-tight ${SIDE_BORDER[side ?? "aff"]}`}
+        className={`inline-flex max-w-full rounded-md border px-1.5 py-0.5 align-middle leading-tight ${
+          stacked ? "flex-col items-center gap-0.5 text-center" : "items-center gap-1.5"
+        } ${SIDE_BORDER[side ?? "aff"]}`}
       >
         {school ? (
           team?.logoSrc ? (
