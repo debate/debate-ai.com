@@ -17,6 +17,8 @@ export {
   JudgeName,
   entrySide,
   tabroomParadigmUrl,
+  TournamentSeasonContext,
+  tournamentSeasonYear,
   useJudgeParadigm,
   useTeamRating,
   type EntrySide,

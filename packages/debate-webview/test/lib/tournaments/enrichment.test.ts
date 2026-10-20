@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest"
-import type { RankingDataset, RankingDatasetId, RankingEntry } from "@debate/rankings-adapter"
+import type { CollegeHistoryEntry, RankingDataset, RankingDatasetId, RankingEntry } from "@debate/rankings-adapter"
 
 import { createJudgeParadigmLookup, createTeamRatingLookup } from "../../../src/lib/tournaments/enrichment"
 
@@ -35,6 +35,29 @@ describe("createTeamRatingLookup", () => {
     await once({ code: "Harker LL", event: { abbr: "PF" } })
     await once({ code: "Harker LL", event: { abbr: "PF" } })
     expect(counted).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe("createTeamRatingLookup for a past season", () => {
+  const past: CollegeHistoryEntry[] = [{ rank: 3, school: "University of Kansas", name: "Katz & Robinson", rating: 43.11, mu: 46.74, sigma: 1.21 }]
+  const loadHistory = vi.fn(async (season: number) => (season === 2018 ? past : []))
+  const lookup = createTeamRatingLookup(load, loadHistory, () => new Date("2026-10-20T12:00:00Z"))
+  const ndt = { name: "NDT Open Policy", abbr: "NDT" }
+
+  it("matches a college entry to that season's table, not the current rankings", async () => {
+    const team = await lookup({ code: "Kansas KR", event: ndt, season: 2018 })
+    expect(team).toMatchObject({ names: "Katz & Robinson", rank: 3, rating: 43.11, rankingLabel: "2017-18 college policy (debatedata)" })
+    expect(await lookup({ code: "Michigan BS", event: ndt, season: 2018 })).toBeNull()
+  })
+
+  it("shows nothing for a past season the history does not cover, or an event that may be high school", async () => {
+    expect(await lookup({ code: "Harker LL", event: { abbr: "PF" }, season: 2018 })).toBeNull()
+    expect(await lookup({ code: "Kansas KR", event: { name: "Open", abbr: "CX-O" }, season: 2018 })).toBeNull()
+    expect(await lookup({ code: "Kansas KR", event: ndt, season: 2005 })).toBeNull()
+  })
+
+  it("uses the current rankings for a tournament this season", async () => {
+    expect(await lookup({ code: "Michigan BS", event: ndt, season: 2027 })).toMatchObject({ rankingLabel: "College Policy" })
   })
 })
 

@@ -23,7 +23,6 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import type { RankingEntry } from "@debate/rankings-adapter"
 import { Star, ExternalLink, EyeOff, Eye, ListVideo, Play } from "lucide-react"
 import { getTournamentLogo } from "../video-card/tournamentLogos"
 import { cn } from "../../../ui/lib/utils"
@@ -46,6 +45,7 @@ import { TOC_TOURNAMENT_IMAGE } from "../video-card/videoCardUtils"
 import { treeIndentStyle } from "./tree-indent"
 import { FormatBadge } from "./FormatBadge"
 import { teamHref } from "../../../panels/leaderboard/profile/rankingProfileHelpers"
+import { isPastSeasonRanking, type VideoTeamRanking } from "../../../hooks/useVideoTeamRankings"
 import { TeamCodeLabel, type TeamSide } from "../../team-label/TeamLabel"
 import type { VideoType } from "../../../types/videos"
 
@@ -119,7 +119,8 @@ function RowThumbnail({
  * team page and shows its rank (e.g. "#4") as a badge inside the label,
  * whose tooltip lists the team's stats. Otherwise, with `onSearch`, the
  * name is a button that searches the library for that team's videos instead
- * of opening the row. The team is drawn as a {@link TeamCodeLabel}: school
+ * of opening the row; a team found in a past college season's table keeps
+ * that button but still shows its last names and its rank that season. The team is drawn as a {@link TeamCodeLabel}: school
  * logo or name, then last names (from the rankings row) or initials.
  */
 function TeamCell({
@@ -132,15 +133,16 @@ function TeamCell({
   side: TeamSide
   team?: string | null
   argument?: string | null
-  ranking?: RankingEntry | null
+  ranking?: VideoTeamRanking | null
   onSearch?: (text: string) => void
 }) {
+  const pastSeason = isPastSeasonRanking(ranking)
   return (
     <td className="px-3 py-3 align-top text-sm">
       <div className="flex min-w-0 items-center gap-1.5">
         {!team ? (
           <span className="text-muted-foreground">—</span>
-        ) : ranking ? (
+        ) : ranking && !pastSeason ? (
           <Link
             href={teamHref(ranking)}
             onClick={(e) => e.stopPropagation()}
@@ -159,10 +161,10 @@ function TeamCell({
             title={`Search for ${team}`}
             className="max-w-full text-left hover:text-primary hover:underline"
           >
-            <TeamCodeLabel label={team} side={side} />
+            <TeamCodeLabel label={team} ranking={ranking} side={side} showRank />
           </button>
         ) : (
-          <TeamCodeLabel label={team} side={side} />
+          <TeamCodeLabel label={team} ranking={ranking} side={side} showRank />
         )}
       </div>
       {argument && (
@@ -215,10 +217,10 @@ export function VideoListRow({
   onUnhideVideo: (videoId: string) => void
   /** Searches the library for a team when its name is clicked. */
   onSearch?: (text: string) => void
-  /** The aff team's current-season rankings row, when it has one. */
-  affRanking?: RankingEntry | null
-  /** The neg team's current-season rankings row, when it has one. */
-  negRanking?: RankingEntry | null
+  /** The aff team's current-season rankings row, or its past college season's row. */
+  affRanking?: VideoTeamRanking | null
+  /** The neg team's current-season rankings row, or its past college season's row. */
+  negRanking?: VideoTeamRanking | null
   /** Badges the tournament name with the round's debate format. */
   showFormat?: boolean
 }) {
