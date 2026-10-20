@@ -15,8 +15,8 @@
  * - It sits just right of the card when the editor has room there, otherwise
  *   inside the card's top-right corner, and hides a moment after the pointer
  *   leaves both the card and the column (long enough to travel onto it).
- * - Read aloud speaks in a model voice (Kokoro by default, run in the
- *   browser, or Deepgram) through the injected `fetchVoice`
+ * - Read aloud speaks in a model voice (Kokoro by default, run in a Web
+ *   Worker in the browser, or Deepgram) through the injected `fetchVoice`
  *   (`card-tts-client.ts` in production), playing its clips one after
  *   another as they arrive, and falls back to the browser's `speechSynthesis` when the
  *   reader picked "Browser built-in", no voice is injected, or the model
