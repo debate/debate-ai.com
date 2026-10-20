@@ -23,7 +23,6 @@ import {
   Medal,
   MessageSquare,
   Presentation,
-  Repeat,
   Rss,
   Scale,
   Search,
@@ -33,7 +32,6 @@ import {
   Star,
   Swords,
   Trophy,
-  Handshake,
   Coins,
   Users,
   type LucideIcon,
@@ -147,10 +145,15 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
     tools: [
       { href: "/practice/versus-ai", title: "Practice vs AI", icon: Swords },
       // Pre-Round Briefings, Scout-to-Strategy, Opponent Team Profiles, Judge
-      // Profiles and Prep Notes, one tab each.
-      { href: "/practice/prep", title: "Prep Workspace", icon: ClipboardList },
-      { href: "/practice/partners", title: "Practice Partners", icon: Handshake },
-      { href: "/practice/drills", title: "Practice Drills", icon: Repeat },
+      // Profiles, Prep Notes, Practice Partners and Practice Drills, one tab
+      // each. The old `/practice/partners` and `/practice/drills` redirect to
+      // their tabs, so they are this row's too.
+      {
+        href: "/practice/prep",
+        title: "Prep Workspace",
+        icon: ClipboardList,
+        aliases: ["/practice/partners", "/practice/drills"],
+      },
     ],
   },
   {

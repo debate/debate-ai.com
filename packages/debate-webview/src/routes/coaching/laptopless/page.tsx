@@ -190,7 +190,7 @@ const STEPS: { icon: typeof Smartphone; title: string; body: ReactNode }[] = [
           Word-Count Speeches
         </Link>{" "}
         for redos on the bus, the mic Record button in the round workspace for transcribing speeches, and{" "}
-        <Link href="/practice/drills" className="text-foreground underline underline-offset-2">
+        <Link href="/practice/prep?section=drills" className="text-foreground underline underline-offset-2">
           Practice Drills
         </Link>{" "}
         between rounds.

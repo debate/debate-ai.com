@@ -35,7 +35,7 @@ import { judgeHireRequests, judgePoolListings, notifications, user } from "@/lib
 type Db = Awaited<ReturnType<typeof getDBFromContext>>;
 
 /** Where every hire-request notification sends its reader. */
-export const JUDGE_POOL_LINK = "/practice/partners#judge-pool";
+export const JUDGE_POOL_LINK = "/practice/prep?section=partners#judge-pool";
 
 /** The most listings one pool read considers. */
 const POOL_LIMIT = 200;
