@@ -116,6 +116,8 @@ component_management:
         - apps/debate-browser-ext/lib/**
         - apps/debate-browser-ext/entrypoints/**
         - apps/debate-browser-ext/components/**
+    - component_id: debate-native-wrapper
+        - apps/debate-native-wrapper/src/**
 
 # debate-editor's src/ is assembled at install time and git-ignored, so the
 # coverage report's paths there name no tracked file. Only the files its
