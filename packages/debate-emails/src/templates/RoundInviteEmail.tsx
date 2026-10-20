@@ -34,7 +34,6 @@ export function RoundInviteEmail(props: RoundInviteEmailProps) {
     <EmailLayout
       preview={`${inviterName} invited you to ${label} on ${APP_NAME}.`}
       baseUrl={baseUrl}
-      footerNote={`You're getting this because ${inviterName} added your email to a round on ${APP_NAME}.`}
     >
       <EmailHeading>You're invited to a debate</EmailHeading>
       <EmailText>{inviterName} invited you to a debate round:</EmailText>

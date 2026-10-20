@@ -5,6 +5,9 @@
  * editor's **Read aloud** button speaks with — Kokoro on this device,
  * Cloudflare Workers AI (Deepgram Aura), or the browser's own speech.
  *
+ * Rendered as a shadcn Dialog modal (opened from the Preferences tab) with a
+ * standard X close button, instead of an inline section.
+ *
  * The same choice the gear under Read aloud offers (`@debate/editor/read-voice`
  * keeps it in this browser and tells open editors when it changes), so
  * picking here applies to every card at once. If the chosen engine can't
@@ -16,7 +19,15 @@
 
 import { useEffect, useState } from "react"
 import { AudioLines } from "lucide-react"
+import { Button } from "../../lib/ui/primitives/button"
 import { Label } from "../../lib/ui/primitives/label"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "../../lib/ui/primitives/dialog"
 import {
   Select,
   SelectContent,
@@ -40,10 +51,11 @@ function isEngine(value: string): value is ReadVoiceEngine {
   return READ_VOICE_ENGINES.some((engine) => engine.id === value)
 }
 
-/** The read-aloud voice row of Settings → Preferences (local to this browser). */
+/** The read-aloud voice settings, opened as a shadcn Dialog modal from Settings → Preferences. */
 export function ReadAloudVoiceSection() {
   // The default until mounted, so the server and first client render agree.
   const [voiceId, setVoiceId] = useState(DEFAULT_READ_VOICE_ID)
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
     setVoiceId(readStoredVoiceId())
@@ -62,51 +74,52 @@ export function ReadAloudVoiceSection() {
   }
 
   return (
-    <section
-      id="read-aloud-voice"
-      aria-labelledby="read-aloud-voice-heading"
-      className="mb-4 rounded-lg border border-border p-4"
-    >
-      <h4
-        id="read-aloud-voice-heading"
-        className="mb-2 flex items-center gap-2 text-sm font-semibold text-foreground"
-      >
+    <Dialog open={open} onOpenChange={setOpen}>
+      <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
         <AudioLines className="h-4 w-4" aria-hidden="true" />
         Read aloud voice
-      </h4>
-      <div className="grid gap-3 text-sm sm:grid-cols-2">
-        <div className="space-y-1.5">
-          <Label htmlFor="settings-read-engine">Engine</Label>
-          <Select value={engine} onValueChange={(value) => isEngine(value) && choose(firstVoiceOf(value))}>
-            <SelectTrigger id="settings-read-engine" className="w-full">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {READ_VOICE_ENGINES.map((option) => (
-                <SelectItem key={option.id} value={option.id}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+      </Button>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Read aloud voice</DialogTitle>
+          <DialogDescription>
+            Which engine and voice the card editor's Read aloud button speaks with.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-3 text-sm sm:grid-cols-2">
+          <div className="space-y-1.5">
+            <Label htmlFor="settings-read-engine">Engine</Label>
+            <Select value={engine} onValueChange={(value) => isEngine(value) && choose(firstVoiceOf(value))}>
+              <SelectTrigger id="settings-read-engine" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {READ_VOICE_ENGINES.map((option) => (
+                  <SelectItem key={option.id} value={option.id}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="settings-read-voice">Voice</Label>
+            <Select value={voiceId} onValueChange={choose} disabled={voices.length < 2}>
+              <SelectTrigger id="settings-read-voice" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {voices.map((option) => (
+                  <SelectItem key={option.id} value={option.id}>
+                    {option.label.replace(/^[^·]+·\s*/, "")}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
-        <div className="space-y-1.5">
-          <Label htmlFor="settings-read-voice">Voice</Label>
-          <Select value={voiceId} onValueChange={choose} disabled={voices.length < 2}>
-            <SelectTrigger id="settings-read-voice" className="w-full">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {voices.map((option) => (
-                <SelectItem key={option.id} value={option.id}>
-                  {option.label.replace(/^[^·]+·\s*/, "")}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-      <p className="mt-2 text-xs text-muted-foreground">{engineInfo?.description}</p>
-    </section>
+        <p className="mt-2 text-xs text-muted-foreground">{engineInfo?.description}</p>
+      </DialogContent>
+    </Dialog>
   )
 }
