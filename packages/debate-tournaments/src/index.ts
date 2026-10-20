@@ -6,8 +6,10 @@
  *  - `@debate/tournaments/ui`      the React UI alone
  *  - `@debate/tournaments/routes`  the route table alone
  *  - `@debate/tournaments/ballots` judge ballot types, validation and tool definition
+ *  - `@debate/tournaments/sidebar` a tournament's Tabroom sidebar: parser, common links (no DOM, Worker-safe)
  *  - `@debate/tournaments/server`  the API fetch handler on D1 (server only)
  */
 export * from "./routes";
 export * from "./ui";
 export * from "./ballots";
+export * from "./sidebar";
