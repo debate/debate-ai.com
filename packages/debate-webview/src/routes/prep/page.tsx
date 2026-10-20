@@ -3,8 +3,8 @@ import { PrepWorkspace, type PrepWorkspaceSectionId } from "../../components/pra
 import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
 
 /**
- * `/practice/prep` — the Prep Workspace. Outside Next the five old prep
- * routes mount this too, each opening on its own tab (the Next app redirects
+ * `/practice/prep` — the Prep Workspace. Outside Next the seven old routes
+ * it replaced (five prep tools, Practice Partners, Practice Drills) mount this too, each opening on its own tab (the Next app redirects
  * them to `?section=` instead).
  */
 export function PrepWorkspacePage({ initialSection }: { initialSection?: PrepWorkspaceSectionId }) {

@@ -121,7 +121,7 @@ export const COACH_SECTIONS: readonly HubSection<SectionId>[] = [
     panels: [
       panel("AI Coach Mode", "/coaching?section=ai-coach"),
       panel("Coaching Programs", "/coaching?section=programs"),
-      panel("Practice Drills", "/practice/drills"),
+      panel("Practice Drills", "/practice/prep?section=drills"),
       panel("Coach Materials", "/coaching?section=materials"),
     ],
   },
@@ -156,7 +156,7 @@ export const COACH_SECTIONS: readonly HubSection<SectionId>[] = [
     description: "Run practice rounds between tournaments: challenge other debaters or volunteer to judge, simulated rounds, rounds against the AI, and word-count speeches.",
     guide: "practice-tools",
     panels: [
-      panel("Practice Partners", "/practice/partners"),
+      panel("Practice Partners", "/practice/prep?section=partners"),
       panel("Practice Round Simulator", "/practice"),
       panel("Practice vs AI", "/practice/versus-ai"),
       panel("Word-Count Speeches", "/word-count"),

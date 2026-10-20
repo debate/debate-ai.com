@@ -1,16 +1,6 @@
-import { Suspense } from "react"
-import { DrillSetsPanel, RoundToolsCrossLinks } from "@debate/practice-rounds"
-import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
+import { PrepWorkspacePage } from "../prep/page"
 
+/** Old `/practice/drills` address: now the Prep Workspace's "drills" tab. */
 export default function DrillsPage() {
-  return (
-    <ToolPage>
-      <ToolPageHeader href="/practice/drills" backHref="/debate" backLabel="round workspace" guide="training-tools">
-        <RoundToolsCrossLinks currentHref="/practice/drills" />
-      </ToolPageHeader>
-      <Suspense>
-        <DrillSetsPanel />
-      </Suspense>
-    </ToolPage>
-  )
+  return <PrepWorkspacePage initialSection="drills" />
 }

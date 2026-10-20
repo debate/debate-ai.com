@@ -85,7 +85,7 @@ export const DEFAULT_COACH_SKILLS: CoachSkill[] = [
     title: "Pros and Cons Challenge",
     description:
       "Test your critical thinking by crafting up to 5 pros and cons for engaging debate topics.",
-    url: "/practice/drills",
+    url: "/practice/prep?section=drills",
   },
 ]
 

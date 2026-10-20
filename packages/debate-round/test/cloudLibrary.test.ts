@@ -548,7 +548,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.wordCountRound).toBe("/word-count");
     expect(byKind.debate).toBe("/practice/versus-ai");
     expect(byKind.speechOutcome).toBe("/videos");
-    expect(byKind.drillSet).toBe("/practice/drills");
+    expect(byKind.drillSet).toBe("/practice/prep?section=drills");
     expect(byKind.judgeDecision).toBe("/practice/judge-decision");
     expect(byKind.counselPanelAssessment).toBe("/coaching/outcomes");
     expect(byKind.roundPairing).toBe("/practice/prep?section=briefings");

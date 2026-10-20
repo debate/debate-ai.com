@@ -156,9 +156,9 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
     tools: [
       {
         href: "/practice/prep", label: "Prep Workspace", icon: ClipboardList,
-        description: "Get ready for a round on one page: briefings, scout-to-strategy, opponent and judge profiles, and prep notes.",
+        description: "Get ready for a round and practise for it on one page: briefings, scout-to-strategy, opponent and judge profiles, prep notes, practice partners and drills.",
         highlights: [
-          "One tab each for Pre-Round Briefings, Scout-to-Strategy, Opponent Team Profiles, Judge Profiles and Prep Notes",
+          "One tab each for Pre-Round Briefings, Scout-to-Strategy, Opponent Team Profiles, Judge Profiles, Prep Notes, Practice Partners and Practice Drills",
           "Briefings and the case-choice ranking read straight from the saved opponent and judge profiles",
           "Assign a prep note to a teammate and they get a real Notifications entry",
         ],
@@ -174,7 +174,7 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         highlights: ["Fires automatically the moment a Prep Note is assigned to you", "Mark individual notifications read, newest first"],
       },
       {
-        href: "/practice/drills", label: "Practice Drills", icon: Dumbbell,
+        href: "/practice/prep?section=drills", label: "Practice Drills", icon: Dumbbell,
         description: "Run quick practice drills generated from each round's flow.",
         highlights: ["Overview, frontline, cross-ex, and collapse-scenario prompts", "Generated straight from a round's already-flowed arguments"],
       },
@@ -204,7 +204,7 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         highlights: ["Filter by kind, side, speech, argument type, contributor, and evidence status", "\"Unanswered only\" toggle to spot open arguments fast"],
       },
       {
-        href: "/practice/partners", label: "Practice Partners", icon: Handshake,
+        href: "/practice/prep?section=partners", label: "Practice Partners", icon: Handshake,
         description: "Challenge other debaters to a virtual practice round, or volunteer to debate or judge in the styles you're comfortable with.",
         highlights: ["Volunteer as a debater, a judge, or both — with your formats, styles, speed, and level", "Challenges notify the other side; accepted rounds get a shared webcam room code", "Judge volunteers can pick up any accepted round that still needs a judge"],
       },

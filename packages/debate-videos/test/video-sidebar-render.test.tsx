@@ -225,7 +225,7 @@ describe("the sidebar's heading structure", () => {
     const html = renderSidebar();
     expect(html).toContain("Coach Workspace");
     expect(html).toContain("Team Research");
-    expect(html).toContain("Practice Drills");
+    expect(html).toContain("Prep Workspace");
     // ...alongside the Videos node's own links, which were never in doubt.
     expect(html).toContain("Public Forum");
     expect(html).toContain("My Favorites");
