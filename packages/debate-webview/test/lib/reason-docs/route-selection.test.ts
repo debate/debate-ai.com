@@ -60,7 +60,7 @@ describe("editorHrefForSelection", () => {
     expect(editorHrefForSelection({ kind: "document", id: 34 }, DOCUMENTS)).toBe(
       `${REASON_EDITOR_ROUTE}?doc=impacts/warming-1ac`,
     )
-    expect(editorHrefForSelection({ kind: "topic", id: 7 }, TOPICS)).toBe("/docs/vcs27/topic-starter")
+    expect(editorHrefForSelection({ kind: "topic", id: 7 }, TOPICS)).toBe("/docs/vcx27/topic-starter")
   })
 
   it("puts a topic starter under the topic code the reader is browsing", () => {
@@ -71,9 +71,9 @@ describe("editorHrefForSelection", () => {
 
   it("round-trips a topic starter's /docs address", () => {
     const href = editorHrefForSelection({ kind: "topic", id: 9 }, TOPICS)
-    expect(href).toBe("/docs/vcs27/neg/cp/aca-expansion-cp-cndi-2026")
+    expect(href).toBe("/docs/vcx27/neg/cp/aca-expansion-cp-cndi-2026")
     const params = parseSelectionParams(new URLSearchParams(), href)
-    expect(params).toEqual({ doc: null, topic: "neg/cp/aca-expansion-cp-cndi-2026", topicCode: "vcs27" })
+    expect(params).toEqual({ doc: null, topic: "neg/cp/aca-expansion-cp-cndi-2026", topicCode: "vcx27" })
     expect(resolveSelection(input(params))).toEqual({ kind: "topic", id: 9 })
   })
 
@@ -118,12 +118,12 @@ describe("isEditorPathname", () => {
   })
 
   it("covers a topic starter's /docs/<topic code> address but not the help docs", () => {
-    expect(isEditorPathname("/docs/vcs27")).toBe(true)
-    expect(isEditorPathname("/docs/vcs27/neg/cp/aca-expansion-cp-cndi-2026")).toBe(true)
+    expect(isEditorPathname("/docs/vcx27")).toBe(true)
+    expect(isEditorPathname("/docs/vcx27/neg/cp/aca-expansion-cp-cndi-2026")).toBe(true)
     expect(isEditorPathname("/docs/ld27b/aff")).toBe(true)
     expect(isEditorPathname("/docs")).toBe(false)
     expect(isEditorPathname("/docs/features/drill-sets")).toBe(false)
-    expect(isEditorPathname("/docs/vcs2027")).toBe(false)
+    expect(isEditorPathname("/docs/vcx2027")).toBe(false)
   })
 })
 
@@ -267,13 +267,13 @@ describe("canonicalEditorUrl", () => {
   })
 
   it("names a topic selection against the public tree", () => {
-    expect(canonicalEditorUrl({ kind: "topic", id: 7 }, catalog, loc("?topic=7"))).toBe("/docs/vcs27/topic-starter")
+    expect(canonicalEditorUrl({ kind: "topic", id: 7 }, catalog, loc("?topic=7"))).toBe("/docs/vcx27/topic-starter")
   })
 
   it("moves an old ?topic= link onto its /docs address, keeping other parameters", () => {
     expect(
       canonicalEditorUrl({ kind: "topic", id: 9 }, catalog, loc("?topic=neg/cp/aca-expansion-cp-cndi-2026&share=abc")),
-    ).toBe("/docs/vcs27/neg/cp/aca-expansion-cp-cndi-2026?share=abc")
+    ).toBe("/docs/vcx27/neg/cp/aca-expansion-cp-cndi-2026?share=abc")
   })
 
   it("keeps the topic code the address is already under", () => {

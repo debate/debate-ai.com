@@ -2,7 +2,7 @@
 
 /**
  * Format / topic dropdowns, side by side above the Topic Starters tree. Picking one
- * goes to that resolution's address, `/docs/<topic code>` (`vcs27`, `ld27a`;
+ * goes to that resolution's address, `/docs/<topic code>` (`vcx27`, `ld27a`;
  * the scheme is in `lib/reason-docs/topic-doc-paths`), which opens its first
  * starter in CardMirror and keeps the code in every starter link after it.
  *
@@ -31,7 +31,7 @@ export function TopicDocsPicker({ className }: { className?: string }) {
   const router = useRouter()
   const current = topicOrDefault(parseTopicDocsPath(pathname)?.code)
 
-  const format = current?.format ?? "vcs"
+  const format = current?.format ?? "vcx"
   const topicsByYear = useMemo(() => {
     const groups = new Map<number, ReturnType<typeof topicsForFormat>>()
     for (const item of topicsForFormat(format)) {
