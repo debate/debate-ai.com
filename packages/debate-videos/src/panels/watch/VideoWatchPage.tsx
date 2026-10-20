@@ -87,6 +87,8 @@ import {
   formatVideoDate,
   getTournamentLogo,
 } from "../../components/videos/video-card/videoCardUtils"
+import { displayRoundLevel } from "../../components/videos/video-card/round-level"
+import { FormatBadge, videoFormat } from "../../components/videos/video-grid/FormatBadge"
 import { cn } from "../../ui/lib/utils"
 import { TEAM_SIDE_SURFACE_CLASS, TeamCodeLabel } from "../../components/team-label/TeamLabel"
 import { useVideoTeamRankings } from "../../hooks/useVideoTeamRankings"
@@ -253,6 +255,8 @@ export function VideoWatchPage({
 
   const styleNumber = typeof style === "number" ? style : undefined
   const categoryLabel = typeof style === "string" ? style : undefined
+  const roundLabel = displayRoundLevel(roundLevel)
+  const formatStyle = videoFormat(video)
   const year = useMemo(() => new Date(date).getFullYear(), [date])
   const videoMeta = useMemo(
     () => ({ style: styleNumber, tournament, year, affTeam, negTeam }),
@@ -820,77 +824,85 @@ export function VideoWatchPage({
                     {categoryLabel}
                   </span>
                 )}
-                {tournament && (() => {
-                  const cleanT = tournament.replace(/\d+/g, "").trim();
-                  const logo = getTournamentLogo(cleanT);
-                  if (logo) {
-                    if (typeof logo === "string") {
-                      return (
-                        <button
-                          onClick={() => handleBadgeClick(cleanT)}
-                          className="text-sm font-bold backdrop-blur-md border px-2 py-1 rounded shadow-lg bg-transparent"
-                        >
-                          <img src={logo} alt={tournament} className="h-5 w-auto" />
-                        </button>
-                      );
-                    }
-                    if (typeof logo === "function") {
-                      const LogoComp = logo;
-                      return (
-                        <button
-                          onClick={() => handleBadgeClick(cleanT)}
-                          className="text-sm font-bold backdrop-blur-md border px-2 py-1 rounded shadow-lg bg-transparent"
-                        >
-                          <LogoComp className="h-5 w-auto" />
-                        </button>
-                      );
-                    }
-                    // StaticImageData from Next.js
-                    return (
-                      <button
-                        onClick={() => handleBadgeClick(cleanT)}
-                        className="text-sm font-bold backdrop-blur-md border px-2 py-1 rounded shadow-lg bg-transparent"
-                      >
-                        <img src={logo.src} alt={tournament} className="h-5 w-auto" />
-                      </button>
-                    );
-                  }
-                  return (
-                    <button
-                      onClick={() => handleBadgeClick(cleanT)}
-                      className={cn(
-                        "text-sm font-bold backdrop-blur-md border px-2 py-1 rounded [font-variant:small-caps] tracking-wider shadow-lg",
-                        styleNumber && TOURNAMENT_COLORS[styleNumber]
-                          ? TOURNAMENT_COLORS[styleNumber]
-                          : "text-purple-300 bg-purple-900/80 border-purple-400/90",
+                {/* The tournament, with the round level and format stacked
+                    under it, so the teams can follow on the same line. */}
+                {(tournament || year || roundLabel || formatStyle !== undefined) && (
+                  <div className="flex flex-col items-start gap-1">
+                    <div className="flex items-center gap-1.5">
+                      {tournament && (() => {
+                        const cleanT = tournament.replace(/\d+/g, "").trim();
+                        const logo = getTournamentLogo(cleanT);
+                        if (logo) {
+                          if (typeof logo === "string") {
+                            return (
+                              <button
+                                onClick={() => handleBadgeClick(cleanT)}
+                                className="text-sm font-bold backdrop-blur-md border px-2 py-1 rounded shadow-lg bg-transparent"
+                              >
+                                <img src={logo} alt={tournament} className="h-5 w-auto" />
+                              </button>
+                            );
+                          }
+                          if (typeof logo === "function") {
+                            const LogoComp = logo;
+                            return (
+                              <button
+                                onClick={() => handleBadgeClick(cleanT)}
+                                className="text-sm font-bold backdrop-blur-md border px-2 py-1 rounded shadow-lg bg-transparent"
+                              >
+                                <LogoComp className="h-5 w-auto" />
+                              </button>
+                            );
+                          }
+                          // StaticImageData from Next.js
+                          return (
+                            <button
+                              onClick={() => handleBadgeClick(cleanT)}
+                              className="text-sm font-bold backdrop-blur-md border px-2 py-1 rounded shadow-lg bg-transparent"
+                            >
+                              <img src={logo.src} alt={tournament} className="h-5 w-auto" />
+                            </button>
+                          );
+                        }
+                        return (
+                          <button
+                            onClick={() => handleBadgeClick(cleanT)}
+                            className={cn(
+                              "text-sm font-bold backdrop-blur-md border px-2 py-1 rounded [font-variant:small-caps] tracking-wider shadow-lg",
+                              styleNumber && TOURNAMENT_COLORS[styleNumber]
+                                ? TOURNAMENT_COLORS[styleNumber]
+                                : "text-purple-300 bg-purple-900/80 border-purple-400/90",
+                            )}
+                          >
+                            {tournament}
+                          </button>
+                        );
+                      })()}
+                      {year && (
+                        <span className="text-sm font-bold text-orange-300 backdrop-blur-md bg-orange-900/80 border border-orange-400/90 px-2 py-1 rounded shadow-lg">
+                          '{String(year).slice(-2)}
+                        </span>
                       )}
-                    >
-                      {tournament}
-                    </button>
-                  );
-                })()}
-                {year && (
-                  <span className="text-sm font-bold text-orange-300 backdrop-blur-md bg-orange-900/80 border border-orange-400/90 px-2 py-1 rounded shadow-lg">
-                    '{String(year).slice(-2)}
-                  </span>
-                )}
-                {roundLevel && !/\d/.test(roundLevel) && (
-                  <>
-                    {(roundLevel.toLowerCase().trim() === "finals" ||
-                      roundLevel.toLowerCase().trim() === "final") && (
-                      <span className="text-base">🏆</span>
+                    </div>
+                    {(roundLabel || formatStyle !== undefined) && (
+                      <div className="flex items-center gap-1">
+                        {roundLabel === "Final" && <span className="text-sm">🏆</span>}
+                        {roundLabel && (
+                          <span
+                            className={cn(
+                              "text-xs font-semibold px-1.5 py-0.5 rounded border backdrop-blur-md shadow-sm",
+                              getRoundBadgeColor(roundLabel),
+                            )}
+                          >
+                            {roundLabel}
+                          </span>
+                        )}
+                        <FormatBadge style={formatStyle} />
+                      </div>
                     )}
-                    <span
-                      className={cn(
-                        "text-sm font-semibold px-2 py-1 rounded border backdrop-blur-md shadow-lg",
-                        getRoundBadgeColor(roundLevel),
-                      )}
-                    >
-                      {roundLevel}
-                    </span>
-                  </>
+                  </div>
                 )}
-                {/* The two teams sit right after the level, in the same row as
+                {/* The two teams sit right after the tournament, in the same row as
                     the round's other badges: aff blue, neg red, the winner
                     ringed in gold once the decision is revealed. Each team's argument (the 1AC for aff, the
                     2NR for neg) sits in small type right under its name. */}

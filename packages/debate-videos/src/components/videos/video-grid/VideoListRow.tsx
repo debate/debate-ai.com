@@ -41,6 +41,7 @@ import { PopoutPlayerButton } from "../watch/PopoutPlayerButton"
 import { videoRouteHref } from "../../../lib/video-route"
 import { StackNav, stackMemberLabel } from "../video-card/StackNav"
 import { cleanTournamentName, videoCategoryLabel } from "./video-tree"
+import { displayRoundLevel } from "../video-card/round-level"
 import { TOC_TOURNAMENT_IMAGE } from "../video-card/videoCardUtils"
 import { treeIndentStyle } from "./tree-indent"
 import { FormatBadge } from "./FormatBadge"
@@ -255,6 +256,7 @@ export function VideoListRow({
   const categoryLabel = videoCategoryLabel(video)
   const year = new Date(date).getFullYear()
   const cleanTournament = cleanTournamentName(tournament)
+  const roundLabel = displayRoundLevel(roundLevel)
   const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`
   // A round whose tournament, level and both teams are recorded is fully
   // described by its badge, tournament and team cells; the uploader's title
@@ -323,14 +325,14 @@ export function VideoListRow({
               <div className={cn("flex", !hasCoreRoundInfo && "mt-0.5", "items-center gap-1.5 overflow-hidden text-xs text-muted-foreground")}>
                 {isRoundMode ? (
                   <>
-                    {roundLevel && (
+                    {roundLabel && (
                       <span
                         className={cn(
                           "inline-flex shrink-0 items-center rounded border px-1.5 py-0.5 text-[11px] font-medium",
-                          getRoundBadgeColor(roundLevel),
+                          getRoundBadgeColor(roundLabel),
                         )}
                       >
-                        {roundLevel}
+                        {roundLabel}
                       </span>
                     )}
                     {showFormat && <FormatBadge style={styleNumber} />}

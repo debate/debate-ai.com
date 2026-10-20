@@ -313,7 +313,7 @@ export type { VideoSuggestionKind, VideoSuggestion, VideoSuggestions } from "@de
  * searches that return results.
  */
 export const SUGGESTED_KEYWORDS: readonly string[] = [
-  "Finals",
+  "Final",
   "Critique",
   "Topicality",
   "Semis",

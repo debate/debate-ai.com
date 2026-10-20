@@ -201,7 +201,7 @@ function record(wins: number, losses: number): string {
   return wins + losses > 0 ? `${wins}–${losses}` : "";
 }
 
-/** How a run ended, e.g. "won the tournament" or "reached Quarterfinals". */
+/** How a run ended, e.g. "won the tournament" or "reached Quarters". */
 export function runOutcome(run: TournamentRun): string {
   if (run.champion) return "won the tournament";
   if (run.finalist) return "finished runner-up";
@@ -209,7 +209,7 @@ export function runOutcome(run: TournamentRun): string {
   return "";
 }
 
-/** "5–2, reached Semifinals" — whichever parts are known. */
+/** "5–2, reached Semis" — whichever parts are known. */
 function runSummary(run: TournamentRun): string {
   const parts = [record(run.wins, run.losses), runOutcome(run)].filter(Boolean);
   return parts.length > 0 ? parts.join(", ") : `${run.rounds} recorded round${run.rounds === 1 ? "" : "s"}`;
@@ -333,7 +333,7 @@ export function buildFollowNews(input: FollowNewsInput): FollowNewsItem[] {
   const latest = [...input.rounds].sort((a, b) => roundTimestamp(b) - roundTimestamp(a));
   for (const video of latest.slice(0, ROUNDS_PER_FOLLOW)) {
     const round = toFollowedRound(video, phrases);
-    const where = [video[7], round.level === "UNKNOWN" ? null : formatRoundLevel(round.level)]
+    const where = [video[7], formatRoundLevel(round.level)]
       .filter(Boolean)
       .join(" · ");
     const result =

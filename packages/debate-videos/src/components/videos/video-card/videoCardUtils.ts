@@ -44,7 +44,6 @@ export function getRoundBadgeColor(roundLevel: string) {
   if (round.includes("quarter")) {
     return "border-yellow-300 bg-yellow-300 text-yellow-900 dark:border-yellow-400 dark:bg-yellow-400 dark:text-yellow-950 hover:bg-yellow-400 dark:hover:bg-yellow-300";
   }
-  // Round levels arrive as both "octos" and the normalized "Octafinals".
   if (round.includes("octo") || round.includes("octa")) {
     return "border-yellow-200 bg-yellow-200 text-yellow-800 dark:border-yellow-300 dark:bg-yellow-300 dark:text-yellow-900 hover:bg-yellow-300 dark:hover:bg-yellow-200";
   }

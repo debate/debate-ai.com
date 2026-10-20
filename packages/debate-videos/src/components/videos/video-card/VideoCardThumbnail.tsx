@@ -10,6 +10,7 @@ import { Play, Volume2 } from "lucide-react"
 import { cn } from "../../../ui/lib/utils"
 import { TOURNAMENT_COLORS, getRoundBadgeColor, TOC_TOURNAMENT_IMAGE, isTOCTournament } from "./videoCardUtils"
 import { TopPickBadge } from "./TopPickBadge"
+import { displayRoundLevel } from "./round-level"
 import { WatchProgressBadge, WatchProgressBar } from "./WatchProgressBadge"
 import { useWatchHistoryEntry } from "../../../hooks/useWatchHistory"
 import { videoRouteHref } from "../../../lib/video-route"
@@ -106,6 +107,7 @@ export function VideoCardThumbnail({
   video,
 }: VideoCardThumbnailProps) {
   const [thumbnailFailed, setThumbnailFailed] = useState(false)
+  const roundLabel = displayRoundLevel(roundLevel)
   // Subscribed here rather than passed down: the grid's cards are memoised and
   // a progress write every twenty seconds would otherwise re-render all of
   // them. See `hooks/useWatchHistory.ts`.
@@ -234,19 +236,19 @@ export function VideoCardThumbnail({
                     '{String(year).slice(-2)}
                   </span>
                 )}
-                {roundLevel && !/\d/.test(roundLevel) && (
+                {/* Elimination rounds only; a prelim's R1–R8 would crowd the card. */}
+                {roundLabel && !/\d/.test(roundLabel) && (
                   <>
-                    {(roundLevel.toLowerCase().trim() === "finals" ||
-                      roundLevel.toLowerCase().trim() === "final") && (
+                    {roundLabel === "Final" && (
                       <span className="text-base">🏆</span>
                     )}
                     <span
                       className={cn(
                         "text-sm font-semibold px-2 py-1 rounded border backdrop-blur-md shadow-lg",
-                        getRoundBadgeColor(roundLevel),
+                        getRoundBadgeColor(roundLabel),
                       )}
                     >
-                      {roundLevel}
+                      {roundLabel}
                     </span>
                   </>
                 )}

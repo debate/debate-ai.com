@@ -15,7 +15,7 @@ import type { WatchMatchupPrediction as Prediction } from "../../../lib/watch-ma
 
 const pct = (p: number) => `${(p * 100).toFixed(1)}%`
 
-/** How the round was decided, in words: "a 3-judge Quarterfinals panel". */
+/** How the round was decided, in words: "a 3-judge Quarters panel". */
 function stageText(p: Prediction): string {
   if (!p.stageKnown) return "a prelim (round not recorded)"
   if (p.panel === 1) return `${p.roundLabel} (prelim, one judge)`
