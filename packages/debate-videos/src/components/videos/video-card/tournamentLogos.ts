@@ -24,6 +24,20 @@ import IconSchoolStMarks from "../../../../../debate-icons/schools/st-marks-scho
 import IconSchoolWestminster from "../../../../../debate-icons/schools/westminster.png";
 import IconSchoolBlake from "../../../../../debate-icons/schools/blake.png";
 import IconSchoolHarker from "../../../../../debate-icons/schools/harker.png";
+import IconSchoolNdca from "../../../../../debate-icons/schools/ndca.png";
+import IconSchoolUcBerkeley from "../../../../../debate-icons/schools/uc-berkeley.png";
+import IconSchoolCollegePrep from "../../../../../debate-icons/schools/college-prep.png";
+import IconSchoolCsuLongBeach from "../../../../../debate-icons/schools/csu-long-beach.png";
+import IconSchoolIowa from "../../../../../debate-icons/schools/iowa.png";
+import IconSchoolKansas from "../../../../../debate-icons/schools/kansas.png";
+import IconSchoolMarlborough from "../../../../../debate-icons/schools/marlborough.png";
+import IconSchoolMichigan from "../../../../../debate-icons/schools/michigan.png";
+import IconSchoolMontgomeryBell from "../../../../../debate-icons/schools/montgomery-bell.png";
+import IconSchoolNewTrier from "../../../../../debate-icons/schools/new-trier.png";
+import IconSchoolStrakeJesuit from "../../../../../debate-icons/schools/strake-jesuit.png";
+import IconSchoolTexas from "../../../../../debate-icons/schools/texas.png";
+import IconSchoolToc from "../../../../../debate-icons/schools/toc.png";
+import IconSchoolWesternKentucky from "../../../../../debate-icons/schools/western-kentucky.png";
 
 const slugify = (s: string): string =>
   s
@@ -59,6 +73,41 @@ export const TOURNAMENT_LOGO_MAP: Record<string, string | FC<SVGProps<SVGSVGElem
   westminster: (IconSchoolWestminster as any)?.src ?? (IconSchoolWestminster as any),
   blake: (IconSchoolBlake as any)?.src ?? (IconSchoolBlake as any),
   harker: (IconSchoolHarker as any)?.src ?? (IconSchoolHarker as any),
+  "ndca": (IconSchoolNdca as any)?.src ?? (IconSchoolNdca as any),
+  "national-debate-coaches-association": (IconSchoolNdca as any)?.src ?? (IconSchoolNdca as any),
+  "berkeley": (IconSchoolUcBerkeley as any)?.src ?? (IconSchoolUcBerkeley as any),
+  "uc-berkeley": (IconSchoolUcBerkeley as any)?.src ?? (IconSchoolUcBerkeley as any),
+  "cal": (IconSchoolUcBerkeley as any)?.src ?? (IconSchoolUcBerkeley as any),
+  "cal-berkeley": (IconSchoolUcBerkeley as any)?.src ?? (IconSchoolUcBerkeley as any),
+  "berkeley-round-robin": (IconSchoolUcBerkeley as any)?.src ?? (IconSchoolUcBerkeley as any),
+  "cal-round-robin": (IconSchoolUcBerkeley as any)?.src ?? (IconSchoolUcBerkeley as any),
+  "berkeley-forensics": (IconSchoolUcBerkeley as any)?.src ?? (IconSchoolUcBerkeley as any),
+  "college-prep": (IconSchoolCollegePrep as any)?.src ?? (IconSchoolCollegePrep as any),
+  "csu-long-beach": (IconSchoolCsuLongBeach as any)?.src ?? (IconSchoolCsuLongBeach as any),
+  "long-beach": (IconSchoolCsuLongBeach as any)?.src ?? (IconSchoolCsuLongBeach as any),
+  "long-beach-state": (IconSchoolCsuLongBeach as any)?.src ?? (IconSchoolCsuLongBeach as any),
+  "cal-state-long-beach": (IconSchoolCsuLongBeach as any)?.src ?? (IconSchoolCsuLongBeach as any),
+  "iowa": (IconSchoolIowa as any)?.src ?? (IconSchoolIowa as any),
+  "university-of-iowa": (IconSchoolIowa as any)?.src ?? (IconSchoolIowa as any),
+  "kansas": (IconSchoolKansas as any)?.src ?? (IconSchoolKansas as any),
+  "university-of-kansas": (IconSchoolKansas as any)?.src ?? (IconSchoolKansas as any),
+  "ku": (IconSchoolKansas as any)?.src ?? (IconSchoolKansas as any),
+  "marlborough": (IconSchoolMarlborough as any)?.src ?? (IconSchoolMarlborough as any),
+  "michigan": (IconSchoolMichigan as any)?.src ?? (IconSchoolMichigan as any),
+  "university-of-michigan": (IconSchoolMichigan as any)?.src ?? (IconSchoolMichigan as any),
+  "wolverine": (IconSchoolMichigan as any)?.src ?? (IconSchoolMichigan as any),
+  "montgomery-bell": (IconSchoolMontgomeryBell as any)?.src ?? (IconSchoolMontgomeryBell as any),
+  "mba": (IconSchoolMontgomeryBell as any)?.src ?? (IconSchoolMontgomeryBell as any),
+  "new-trier": (IconSchoolNewTrier as any)?.src ?? (IconSchoolNewTrier as any),
+  "strake-jesuit": (IconSchoolStrakeJesuit as any)?.src ?? (IconSchoolStrakeJesuit as any),
+  "strake": (IconSchoolStrakeJesuit as any)?.src ?? (IconSchoolStrakeJesuit as any),
+  "texas": (IconSchoolTexas as any)?.src ?? (IconSchoolTexas as any),
+  "ut-austin": (IconSchoolTexas as any)?.src ?? (IconSchoolTexas as any),
+  "longhorn": (IconSchoolTexas as any)?.src ?? (IconSchoolTexas as any),
+  "toc": (IconSchoolToc as any)?.src ?? (IconSchoolToc as any),
+  "tournament-of-champions": (IconSchoolToc as any)?.src ?? (IconSchoolToc as any),
+  "western-kentucky": (IconSchoolWesternKentucky as any)?.src ?? (IconSchoolWesternKentucky as any),
+  "wku": (IconSchoolWesternKentucky as any)?.src ?? (IconSchoolWesternKentucky as any),
 };
 
 export const getTournamentLogo = (
@@ -78,6 +127,11 @@ export const getTournamentLogo = (
   const lower = tournament.toLowerCase();
   if (lower.includes("barkley") || lower.includes("emory")) {
     return TOURNAMENT_LOGO_MAP["emory"] || TOURNAMENT_LOGO_MAP["barkley"] || null;
+  }
+  // word-boundary fallback so "Berkeley Round Robin" or "Cal Invitational" still resolve
+  const words = new Set(lower.split(/[^a-z0-9]+/));
+  for (const alias of ["ndca", "berkeley", "cal", "ndt", "toc"]) {
+    if (words.has(alias) && TOURNAMENT_LOGO_MAP[alias]) return TOURNAMENT_LOGO_MAP[alias];
   }
   return null;
 };
