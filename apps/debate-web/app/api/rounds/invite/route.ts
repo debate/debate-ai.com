@@ -6,7 +6,7 @@ import { notifications, user } from "@/lib/database/schema"
 import { getSession } from "@/lib/auth/session"
 import { getEnv } from "@/lib/env"
 import { APP_EMAIL, APP_NAME } from "@debate/webview/lib/config/site"
-import { renderEmail } from "@debate/emails"
+import { renderEmail } from "@/lib/emails/render"
 
 /**
  * Dispatches Create New Round invites — a user request: "this should be
@@ -121,14 +121,18 @@ export async function POST(req: NextRequest) {
     } else {
       const resend = new Resend(resendKey)
       // The `round-invite` template in @debate/emails (previewed at /admin#emails).
+      // A render failure skips the emails rather than failing the invites.
       const invite = await renderEmail("round-invite", {
         inviterName: session.user.name,
         tournamentName,
         roundLevel: typeof roundLevel === "string" ? roundLevel : null,
         link,
         baseUrl: req.nextUrl.origin,
+      }).catch((error) => {
+        console.error("Failed to render the round invite email", error)
+        return null
       })
-      const results = await Promise.allSettled(
+      const results = !invite ? emailRecipients.map(() => ({ status: "rejected" as const })) : await Promise.allSettled(
         emailRecipients.map((email) =>
           resend.emails.send({
             from: `${APP_NAME} <${APP_EMAIL}>`,

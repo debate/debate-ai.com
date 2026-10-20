@@ -22,7 +22,15 @@ src/templates/*.tsx           one component per email, each with PreviewProps
       → @react-email/render   `workerd` export condition → its edge build
 ```
 
-Senders call `renderEmail` with the request origin as `baseUrl`, then pass
+Route handlers run in the Worker's **rsc** environment, where React is its
+react-server build and `react-dom/server` throws on import. So the app never
+renders from `@debate/emails` directly: `apps/debate-web/lib/emails/render.ts`
+loads `lib/emails/ssr-entry.ts` into the **ssr** environment with
+`import.meta.viteRsc.import(…, { environment: "ssr" })` and renders there.
+`lib/emails/__tests__/render-boundary.test.ts` fails if a route or server
+library imports a renderer from `@debate/emails` again.
+
+Senders call `renderEmail` (from `@/lib/emails/render`) with the request origin as `baseUrl`, then pass
 `subject`, `html` and `text` to `resend.emails.send`:
 
 - `POST /api/rounds/invite` → `round-invite`, for invitees with no account.

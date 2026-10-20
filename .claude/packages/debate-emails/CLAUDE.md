@@ -15,6 +15,11 @@ Email templates, plus `renderEmail(id, props)` → `{ subject, html, text }`.
   pass the request origin. The logo is `/logo.png` on that origin.
 - **Workers runtime.** Rendering goes through `@react-email/render`, which has
   a `workerd` build. Don't add Node-only imports.
+- **Never render from a route handler directly.** Routes run in the rsc
+  environment, where `react-dom/server` throws. In the app, import
+  `renderEmail` / `renderEmailPreview` from `@/lib/emails/render`, which
+  runs them in the ssr environment (`lib/emails/ssr-entry.ts`). Importing
+  templates, ids and types from `@debate/emails` is fine anywhere.
 - Keep it a leaf: no imports from other `debate-*` packages (`site.ts`
   repeats the few constants it needs from `@debate/webview`'s site config).
 - Feature copy in `CoachFeaturesEmail` mirrors the coaching and team-research

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { and, desc, eq, inArray, isNull } from "drizzle-orm"
 import { Resend } from "resend"
-import { renderEmail } from "@debate/emails"
+import { renderEmail } from "@/lib/emails/render"
 import { APP_EMAIL, APP_NAME } from "@debate/webview/lib/config/site"
 import { getDBFromContext } from "@/lib/database/context"
 import { cardShares, user } from "@/lib/database/schema"
