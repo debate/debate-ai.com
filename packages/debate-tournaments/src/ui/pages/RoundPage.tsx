@@ -3,7 +3,7 @@
 import { Fragment, useEffect, useState } from "react";
 import { X } from "lucide-react";
 import type { FieldEntry, RoundSchematic } from "../client";
-import { EntryRating, JudgeName } from "../enrichment";
+import { EntryLabel, JudgeName, entrySide } from "../enrichment";
 import { isLiveDemo, type LiveRoomInput } from "../live/demo-live";
 import { LiveRoomPanel, LiveStatusCell, useNow } from "../live/LiveRoom";
 import { Badge, Card, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../primitives";
@@ -209,10 +209,9 @@ export function Schematic({
                         <span className="flex flex-wrap gap-x-3 gap-y-1">
                           {entries.map((entry) => (
                             <span key={entry.id}>
-                              {entry.code}
-                              {entry.record && <span className="ml-1 text-xs text-muted-foreground">({entry.record})</span>}
                               {debate ? (
-                                <EntryRating
+                                <EntryLabel
+                                  side={entrySide(entry.side)}
                                   query={{
                                     code: entry.code,
                                     name: fieldById.get(entry.id)?.name,
@@ -220,7 +219,10 @@ export function Schematic({
                                     event: round.Event,
                                   }}
                                 />
-                              ) : null}
+                              ) : (
+                                entry.code
+                              )}
+                              {entry.record && <span className="ml-1 text-xs text-muted-foreground">({entry.record})</span>}
                             </span>
                           ))}
                         </span>

@@ -80,6 +80,7 @@ export {
   type RoundStage,
   type SideOutcome,
 } from "./matchup-model";
+export { teamDisplayParts, type TeamDisplayInput, type TeamDisplayParts } from "./team-display";
 export {
   debaterLastNames,
   debaterNameKey,

@@ -9,6 +9,7 @@
 
 "use client"
 
+import type { ReactNode } from "react"
 import { cn } from "../../../ui/lib/utils"
 import type { WatchMatchupPrediction as Prediction } from "../../../lib/watch-matchup-prediction"
 
@@ -23,8 +24,8 @@ function stageText(p: Prediction): string {
 
 /**
  * @param props.prediction - Output of `predictWatchMatchup`.
- * @param props.affLabel - The aff team as the video names it.
- * @param props.negLabel - The neg team as the video names it.
+ * @param props.affLabel - The aff team: its label pill, or its name as the video gives it.
+ * @param props.negLabel - The neg team: its label pill, or its name as the video gives it.
  * @param props.decision - The recorded ballot count, e.g. `"2-1"`, if any.
  */
 export function WatchMatchupPrediction({
@@ -34,8 +35,8 @@ export function WatchMatchupPrediction({
   decision,
 }: {
   prediction: Prediction
-  affLabel: string
-  negLabel: string
+  affLabel: ReactNode
+  negLabel: ReactNode
   decision?: string | null
 }) {
   const favoriteLabel = p.favorite === "aff" ? affLabel : p.favorite === "neg" ? negLabel : null

@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo } from "react"
+import { useMemo, type ReactNode } from "react"
 import { cn } from "../../../ui/lib/utils"
 import { useAllRankingDatasets } from "../../../hooks/useAllRankingDatasets"
 import { isRankedSeasonRound } from "../../../hooks/useVideoTeamRankings"
@@ -13,6 +13,7 @@ import {
   type RankingEntry,
 } from "@debate/rankings-adapter"
 import type { VideoType } from "../../../types/videos"
+import { TeamCodeLabel } from "../../team-label/TeamLabel"
 
 const DEFAULT_WEIGHTS: MatchupWeights = { school: 0.2, individual: 0.2 }
 const pct = (p: number) => `${(p * 100).toFixed(1)}%`
@@ -104,7 +105,7 @@ export function WatchRankingsPrediction({ video }: { video: VideoType }) {
       <div className="min-w-0 rounded-lg border bg-card p-2 space-y-1.5">
         <div className="grid grid-cols-2 gap-2">
           <MiniCard
-            teamName={affTeam}
+            teamName={<TeamCodeLabel label={affTeam} ranking={aEntry} side="aff" />}
             side="aff"
             probability={aSide.prelim}
             elim3={aSide.elim3}
@@ -115,7 +116,7 @@ export function WatchRankingsPrediction({ video }: { video: VideoType }) {
             opponent={negTeam}
           />
           <MiniCard
-            teamName={negTeam}
+            teamName={<TeamCodeLabel label={negTeam} ranking={bEntry} side="neg" />}
             side="neg"
             probability={bSide.prelim}
             elim3={bSide.elim3}
@@ -159,7 +160,7 @@ function MiniCard({
   matches,
   opponent,
 }: {
-  teamName: string
+  teamName: ReactNode
   side: "aff" | "neg"
   probability: number
   elim3: number
@@ -189,7 +190,7 @@ function MiniCard({
         </span>
         <span className="text-[10px] text-muted-foreground">{matches} rounds</span>
       </div>
-      <div className="truncate font-medium text-sm">{teamName}</div>
+      <div className="min-w-0 font-medium text-sm">{teamName}</div>
       <div className="text-[10px] text-muted-foreground">vs {opponent}</div>
 
       <div className="flex items-center justify-between text-[11px]">

@@ -1,7 +1,8 @@
 /**
  * @fileoverview Pins where the division rankings table puts its labels: the
- * legend badge ("PF Legend") follows the team's name, and the School column shows the
- * school's Schools-tab rank after its link — printing the school name only when it has no logo.
+ * Team column shows each team as a label pill (school logo, or the school's
+ * name when it has none, then the debaters), followed by the school's
+ * Schools-tab rank and then the legend badge ("PF Legend").
  */
 
 import { describe, it, expect } from "vitest";
@@ -64,12 +65,15 @@ describe("RankingsTable labels", () => {
     expect(rows[0].indexOf("Le &amp; Luo")).toBeLessThan(rows[0].indexOf("PF Legend</span>"));
   });
 
-  it("shows the school's rank after the school link, and prints the name only when the school has no logo", () => {
-    // Harker has a logo, so its name is not printed as link text; the rank badge still follows the link.
-    expect(rows[0]).toMatch(/<\/a><span[^>]*>#1<\/span>/);
-    expect(rows[0]).not.toMatch(/>Harker</);
-    // College Prep has no logo, so its name is shown and it has no school-rank badge.
+  it("draws the team as a label pill, with the school's rank after it", () => {
+    // Harker has a logo: the pill shows it, keeping the name only for screen readers.
+    expect(rows[0]).toMatch(/data-team-label=""[^>]*>.*<img[^>]*harker\.png/);
+    expect(rows[0]).toContain('<span class="sr-only">Harker</span>');
+    // The school-rank badge follows the pill.
+    expect(rows[0]).toMatch(/<\/a><\/span><span[^>]*>#1<\/span>/);
+    // College Prep is not in the school ranks, so it has no school-rank badge.
     expect(rows[1]).toContain("College Prep");
+    expect(rows[1]).toContain("Falk &amp; Sabnani");
     expect(rows[1]).not.toMatch(/>#\d/);
   });
 });

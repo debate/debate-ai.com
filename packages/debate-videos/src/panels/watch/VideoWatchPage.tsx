@@ -88,6 +88,8 @@ import {
   getTournamentLogo,
 } from "../../components/videos/video-card/videoCardUtils"
 import { cn } from "../../ui/lib/utils"
+import { TeamCodeLabel } from "../../components/team-label/TeamLabel"
+import { useVideoTeamRankings } from "../../hooks/useVideoTeamRankings"
 import { LecturesSidebarShell } from "../LecturesSidebarShell"
 import { useVideoState } from "../../hooks/useVideoState"
 import { useVideoFeed, useVideoMeta } from "../../hooks/useVideoFeed"
@@ -240,6 +242,13 @@ export function VideoWatchPage({
     () => (description ? stripArgumentLines(description, affTeam ? arg1AC : null, negTeam ? arg2NR : null) : ""),
     [description, affTeam, negTeam, arg1AC, arg2NR],
   )
+
+  // The header badges name each team by its debaters' last names when the
+  // current season's rankings know it, else by its code's initials.
+  const watchedVideos = useMemo(() => [video], [video])
+  const teamRanking = useVideoTeamRankings(watchedVideos)
+  const affRanking = teamRanking(video, affTeam)
+  const negRanking = teamRanking(video, negTeam)
 
   const styleNumber = typeof style === "number" ? style : undefined
   const categoryLabel = typeof style === "string" ? style : undefined
@@ -886,7 +895,7 @@ export function VideoWatchPage({
                           : "border border-blue-400/90 shadow-lg text-blue-300 bg-blue-900/80",
                       )}
                     >
-                      {affTeam}
+                      <TeamCodeLabel label={affTeam} ranking={affRanking} side="aff" bare />
                     </button>
                   </TeamWithArgument>
                 )}
@@ -902,7 +911,7 @@ export function VideoWatchPage({
                           : "border border-red-400/90 shadow-lg text-red-300 bg-red-900/80",
                       )}
                     >
-                      {negTeam}
+                      <TeamCodeLabel label={negTeam} ranking={negRanking} side="neg" bare />
                     </button>
                   </TeamWithArgument>
                 )}

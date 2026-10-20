@@ -79,9 +79,9 @@ function headerButton(root: HTMLElement, label: string): HTMLButtonElement {
   return btn as HTMLButtonElement;
 }
 
-/** Names in the table body, in row order. */
+/** Team labels (school, then debaters) in the table body, in row order. */
 function rowNames(root: HTMLElement): string[] {
-  return [...root.querySelectorAll("tbody tr")].map((tr) => tr.querySelectorAll("td")[2]?.textContent ?? "");
+  return [...root.querySelectorAll("tbody tr")].map((tr) => tr.querySelectorAll("td")[1]?.textContent ?? "");
 }
 
 let view: Mounted | undefined;
@@ -134,11 +134,13 @@ describe("LeaderboardPanel", () => {
     await flush();
     const root = view.container;
 
-    await click(headerButton(root, "Name"));
+    // The Team column sorts by school: Harker first, then Strake Jesuit.
+    await click(headerButton(root, "Team"));
+    expect(rowNames(root)[0]).toContain("Harker");
+    expect(root.querySelector('th[aria-sort="ascending"]')?.textContent).toContain("Team");
+    await click(headerButton(root, "Team"));
     expect(rowNames(root)[0]).toContain("Doe & Roe");
-    expect(root.querySelector('th[aria-sort="ascending"]')?.textContent).toContain("Name");
-    await click(headerButton(root, "Name"));
-    expect(root.querySelector('th[aria-sort="descending"]')?.textContent).toContain("Name");
+    expect(root.querySelector('th[aria-sort="descending"]')?.textContent).toContain("Team");
 
     await click(headerButton(root, "Matches"));
     expect(root.querySelector('th[aria-sort="descending"]')?.textContent).toContain("Matches");
