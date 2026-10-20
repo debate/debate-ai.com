@@ -26,7 +26,8 @@
     "./settings-tabs": "./src/editor/settings-tabs.ts",
     "./settings-section": "./src/react/CardMirrorSettingsSection.tsx",
     "./collab-bridge": "./src/react/collab-bridge.ts",
-    "./kokoro": "./src/editor/kokoro-browser-tts.ts"
+    "./kokoro": "./src/editor/kokoro-browser-tts.ts",
+    "./read-voice": "./src/editor/card-tts-client.ts"
   },
   "files": [
     "overlay",

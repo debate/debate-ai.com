@@ -104,3 +104,37 @@ describe("preloadModelVoice", () => {
     expect(supported).toHaveBeenCalledTimes(1);
   });
 });
+
+describe("voice engines", () => {
+  it("groups every voice under Kokoro, Cloudflare or the browser, with unique ids", async () => {
+    const { READ_VOICE_OPTIONS, READ_VOICE_ENGINES } = await import("../src/editor/card-tts-client");
+    const ids = READ_VOICE_OPTIONS.map((o) => o.id);
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(READ_VOICE_ENGINES.map((e) => e.id)).toEqual(["kokoro", "cloudflare", "browser"]);
+    for (const engine of ["kokoro", "cloudflare"] as const)
+      expect(READ_VOICE_OPTIONS.filter((o) => o.engine === engine).length).toBeGreaterThan(5);
+    // Cloudflare voices go to /api/tts as Deepgram Aura voices, under their old saved ids.
+    expect(READ_VOICE_OPTIONS.find((o) => o.id === "deepgram:aura-asteria-en")?.engine).toBe("cloudflare");
+  });
+
+  it("reads the engine of a voice and the first voice of an engine", async () => {
+    const { readVoiceEngine, firstVoiceOf } = await import("../src/editor/card-tts-client");
+    expect(readVoiceEngine("deepgram:aura-orion-en")).toBe("cloudflare");
+    expect(readVoiceEngine("nope")).toBe("kokoro");
+    expect(readVoiceEngine(firstVoiceOf("cloudflare"))).toBe("cloudflare");
+    expect(firstVoiceOf("browser")).toBe("browser");
+  });
+
+  it("stores a choice and announces it, ignoring unknown ids", async () => {
+    const { storeVoiceId, readStoredVoiceId, READ_VOICE_CHANGE_EVENT } = await import("../src/editor/card-tts-client");
+    const seen: string[] = [];
+    const listener = (e: Event) => seen.push((e as CustomEvent<string>).detail);
+    window.addEventListener(READ_VOICE_CHANGE_EVENT, listener);
+    storeVoiceId("deepgram:aura-luna-en");
+    storeVoiceId("not-a-voice");
+    window.removeEventListener(READ_VOICE_CHANGE_EVENT, listener);
+    expect(seen).toEqual(["deepgram:aura-luna-en"]);
+    expect(readStoredVoiceId()).toBe("deepgram:aura-luna-en");
+    localStorage.clear();
+  });
+});

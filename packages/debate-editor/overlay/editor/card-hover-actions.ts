@@ -42,8 +42,12 @@ import type { EditorView } from 'prosemirror-view';
 import type { CardAiAction } from './card-ai-client.js';
 import {
   DEFAULT_READ_VOICE_ID,
+  READ_VOICE_CHANGE_EVENT,
+  READ_VOICE_ENGINES,
   READ_VOICE_OPTIONS,
+  readStoredVoiceId,
   readVoiceChoice,
+  storeVoiceId,
   type ModelVoice,
   type SpeechAudio,
 } from './card-tts-client.js';
@@ -214,8 +218,6 @@ const STYLE_ID = 'pmd-card-hover-actions-style';
 
 /** Where the reader's speech rate is persisted across cards. */
 const SPEED_STORAGE_KEY = 'pmd-card-actions-read-speed';
-/** Where the reader's voice choice (a `READ_VOICE_OPTIONS` id) is persisted. */
-const VOICE_STORAGE_KEY = 'pmd-card-actions-read-voice';
 /** Read-aloud defaults to 2x speed, per the card reader's setting. */
 const DEFAULT_READ_SPEED = 2;
 
@@ -275,16 +277,6 @@ function readStoredSpeed(): number {
   const raw = localStorage.getItem(SPEED_STORAGE_KEY);
   const parsed = raw == null ? NaN : Number(raw);
   return Number.isFinite(parsed) && parsed >= 0.5 && parsed <= 4 ? parsed : DEFAULT_READ_SPEED;
-}
-
-/** Reads the persisted voice id, defaulting to Kokoro. */
-function readStoredVoiceId(): string {
-  try {
-    const raw = typeof localStorage === 'undefined' ? null : localStorage.getItem(VOICE_STORAGE_KEY);
-    return READ_VOICE_OPTIONS.some((o) => o.id === raw) ? (raw as string) : DEFAULT_READ_VOICE_ID;
-  } catch {
-    return DEFAULT_READ_VOICE_ID;
-  }
 }
 
 class CardHoverActionsView {
@@ -347,8 +339,9 @@ class CardHoverActionsView {
     this.settingsPanel.append(this.speedLabel, this.speedInput);
     this.voiceSelect = null;
     if (options.fetchVoice) {
-      // The voice list: model voices (Kokoro first, the default) or the
-      // browser's own speech, saved across cards like the speed.
+      // The voice list, grouped by engine: Kokoro on this device (the
+      // default), Cloudflare Workers AI, or the browser's own speech. Saved
+      // across cards like the speed, and shared with Settings → Preferences.
       this.voiceId = readStoredVoiceId();
       const voiceLabel = document.createElement('label');
       voiceLabel.setAttribute('for', 'pmd-read-voice');
@@ -356,17 +349,24 @@ class CardHoverActionsView {
       const select = document.createElement('select');
       select.id = 'pmd-read-voice';
       select.setAttribute('aria-label', 'Read-aloud voice');
-      for (const option of READ_VOICE_OPTIONS) {
-        if (option.choice === 'browser' && !speechAvailable()) continue;
-        const el = document.createElement('option');
-        el.value = option.id;
-        el.textContent = option.label;
-        select.appendChild(el);
+      for (const engine of READ_VOICE_ENGINES) {
+        if (engine.id === 'browser' && !speechAvailable()) continue;
+        const group = document.createElement('optgroup');
+        group.label = engine.label;
+        for (const option of READ_VOICE_OPTIONS) {
+          if (option.engine !== engine.id) continue;
+          const el = document.createElement('option');
+          el.value = option.id;
+          el.textContent = option.label;
+          group.appendChild(el);
+        }
+        select.appendChild(group);
       }
       select.value = this.voiceId;
       select.addEventListener('change', () => this.onVoiceChange());
       this.voiceSelect = select;
       this.settingsPanel.append(voiceLabel, select);
+      window.addEventListener(READ_VOICE_CHANGE_EVENT, this.onStoredVoiceChange);
     }
     if (this.speakBtn) {
       this.speakBtn.setAttribute('aria-pressed', 'false');
@@ -423,6 +423,7 @@ class CardHoverActionsView {
   destroy(): void {
     this.requestId++;
     this.stopSpeaking();
+    window.removeEventListener(READ_VOICE_CHANGE_EVENT, this.onStoredVoiceChange);
     this.view.dom.removeEventListener('pointermove', this.onPointerMove);
     this.view.dom.removeEventListener('mouseleave', this.scheduleHide);
     window.removeEventListener('scroll', this.onScroll, true);
@@ -607,13 +608,17 @@ class CardHoverActionsView {
   private onVoiceChange(): void {
     if (!this.voiceSelect) return;
     this.voiceId = this.voiceSelect.value;
-    try {
-      if (typeof localStorage !== 'undefined') localStorage.setItem(VOICE_STORAGE_KEY, this.voiceId);
-    } catch {
-      // Storage blocked: the choice still holds for this page.
-    }
+    storeVoiceId(this.voiceId);
     this.preloadVoice();
   }
+
+  /** The choice changed elsewhere (Settings, another editor): follow it. */
+  private readonly onStoredVoiceChange = (): void => {
+    const id = readStoredVoiceId();
+    if (id === this.voiceId) return;
+    this.voiceId = id;
+    if (this.voiceSelect) this.voiceSelect.value = id;
+  };
 
   /** Downloads the chosen model voice ahead of the first read. */
   private preloadVoice(): void {
