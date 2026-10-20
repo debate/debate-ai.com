@@ -17,6 +17,9 @@ const STYLES = [
   { value: 2, label: "Public Forum" },
   { value: 3, label: "Lincoln-Douglas" },
   { value: 4, label: "College" },
+  { value: 5, label: "World Schools (WSD)" },
+  { value: 6, label: "ACC" },
+  { value: 7, label: "Misc" },
 ];
 
 /** One page of `POST /api/admin/videos/reclassify`. */

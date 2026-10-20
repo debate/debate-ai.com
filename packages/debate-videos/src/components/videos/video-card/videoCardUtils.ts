@@ -11,6 +11,9 @@ export const STYLE_COLORS: Record<number, string> = {
   3: "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300",
   1: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300",
   4: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300",
+  5: "bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300",
+  6: "bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300",
+  7: "bg-slate-100 text-slate-700 dark:bg-slate-800/60 dark:text-slate-300",
 };
 
 export const TOURNAMENT_COLORS: Record<number, string> = {
@@ -18,6 +21,9 @@ export const TOURNAMENT_COLORS: Record<number, string> = {
   3: "bg-purple-900/80 border-purple-400/90 text-purple-300",
   1: "bg-amber-900/80 border-amber-400/90 text-amber-300",
   4: "bg-emerald-900/80 border-emerald-400/90 text-emerald-300",
+  5: "bg-sky-900/80 border-sky-400/90 text-sky-300",
+  6: "bg-orange-900/80 border-orange-400/90 text-orange-300",
+  7: "bg-slate-800/80 border-slate-400/90 text-slate-300",
 };
 
 export const TOC_TOURNAMENT_IMAGE = "https://i.imgur.com/B8IWw0m.png";

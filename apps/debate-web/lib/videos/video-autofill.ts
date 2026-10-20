@@ -88,6 +88,9 @@ const STYLE_BY_LABEL: Record<string, number | null> = {
   pf: 2,
   ld: 3,
   college: 4,
+  wsd: 5,
+  acc: 6,
+  misc: 7,
   lecture: null,
 };
 
@@ -135,7 +138,7 @@ Given a video's title, channel and description, fill in its library metadata. An
 {"style": "", "category": "", "tournament": "", "roundLevel": "", "affTeam": "", "negTeam": "", "winner": "", "judgeDecision": "", "speechDocsUrl": "", "affArguments": "", "negArguments": ""}
 
 Fields:
-- style: "policy", "pf" (Public Forum), "ld" (Lincoln-Douglas), "college" (NDT/CEDA/college policy or parli) when the video is a recorded debate round. "lecture" for anything else — lectures, drills, demo explanations, documentaries, advice.
+- style: "policy", "pf" (Public Forum), "ld" (Lincoln-Douglas), "college" (NDT/CEDA/college policy or parli), "wsd" (World Schools), "acc" (the ACC Debate Tournament), "misc" (any other debate round format) when the video is a recorded debate round. "lecture" for anything else — lectures, drills, demo explanations, documentaries, advice.
 - category: for a lecture, the single best category from the allowed list. For a round, "none".
 - tournament: the tournament name without a leading year (e.g. "Tournament of Champions", "Glenbrooks"). Empty if not a round or not stated.
 - roundLevel: the round as written in debate shorthand, e.g. "Finals", "Semifinals", "Quarterfinals", "Octafinals", "Double Octafinals", "Round 4". Empty if not stated.
