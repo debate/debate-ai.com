@@ -31,7 +31,11 @@ browser's built-in voice are the other choices. Both settings are remembered.
 Kokoro voices run right in your browser: the first time you read a card
 aloud, the Kokoro voice model (about 90 MB) downloads once and is kept by your
 browser, and from then on reading needs no server and has no daily limit. The
-card starts playing as soon as its first sentence is ready.
+card starts playing as soon as its first sentence is ready. The voice is
+generated in the background, so the page keeps scrolling and typing normally
+while a card is read. To get the download out of the way before a round, use
+**Settings → Preferences → On-device speech models**, which shows whether the
+voice is downloaded and how much space it takes, and can remove it.
 
 If your browser can't run Kokoro, or the download fails, the card is read by
 a server instead. Those voices come from QwkSearch (Kokoro or Deepgram), or from Cloudflare's
@@ -55,6 +59,7 @@ summary needs you to be signed in.
   CardMirror embed is mounted)
 - **Package:** `debate-editor` (`overlay/editor/card-hover-actions.ts`,
   `overlay/editor/card-ai-client.ts`, `overlay/editor/card-tts-client.ts`,
-  `overlay/editor/kokoro-browser-tts.ts`,
+  `overlay/editor/kokoro-browser-tts.ts`, `overlay/editor/kokoro-worker.ts`
+  (Kokoro runs in this Web Worker, off the page's main thread),
   registered in `overlay/react/singleton.ts`)
 - **API:** `/api/card-ai-analysis`, `/api/tts` (`apps/debate-ai.com/lib/tts/voice.ts`)

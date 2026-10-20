@@ -19,6 +19,7 @@ export { SpeechStartsEditor } from "./recorder/SpeechStartsEditor";
 export type { SpeechStartsEditorProps } from "./recorder/SpeechStartsEditor";
 export { RoundRecordingDialog } from "./recorder/RoundRecordingDialog";
 export * from "./recorder/round-recording";
+export * from "./recorder/moonshine-model-cache";
 export { RECORDING_STOPPED_EVENT } from "./hooks/useSpeechRecorder";
 export { saveClip, listClips, readRecordVideo, writeRecordVideo, RECORD_VIDEO_EVENT, VIDEO_CLIP_SAVED_EVENT } from "./recorder/media-store";
 export type { StoredClip } from "./recorder/media-store";
