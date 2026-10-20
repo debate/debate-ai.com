@@ -62,7 +62,7 @@ export function isEditorPathname(pathname: string | null | undefined): boolean {
   return parseTopicDocsPath(path) != null
 }
 
-/** The topic code the address is under (`vcs27` on `/docs/vcs27/...`), or
+/** The topic code the address is under (`vcx27` on `/docs/vcx27/...`), or
  *  `null` anywhere else. */
 export function topicCodeFromPathname(pathname: string | null | undefined): string | null {
   return parseTopicDocsPath(pathname)?.code ?? null

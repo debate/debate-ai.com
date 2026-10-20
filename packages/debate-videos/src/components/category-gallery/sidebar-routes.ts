@@ -192,14 +192,14 @@ export function matchesToolSidebarHref(pathname: string): boolean {
 }
 
 /**
- * A Topic Starter's `/docs/<topic code>/...` address (`/docs/vcs27/neg/cp/x`)
+ * A Topic Starter's `/docs/<topic code>/...` address (`/docs/vcx27/neg/cp/x`)
  * — the CardMirror editor, served at the same page as `/reason-editor`, so it
  * gets the same generic sidebar. Only a first segment shaped like a topic code
  * counts; the rest of `/docs` is the help docs. Mirrors `TOPIC_CODE_SOURCE` in
  * `@debate/webview`'s `lib/reason-docs/topic-doc-paths` (which depends on this
  * package, not the other way round); a test there keeps the two agreeing.
  */
-const TOPIC_STARTER_DOCS_PATH = /^\/docs\/(?:(?:vcs|ndt)\d{2}|(?:ld|pf)\d{2}[a-z])(?:\/|$)/;
+const TOPIC_STARTER_DOCS_PATH = /^\/docs\/(?:(?:vcx|ndt)\d{2}|(?:ld|pf)\d{2}[a-z])(?:\/|$)/;
 
 export function isTopicStarterDocsPath(pathname: string): boolean {
   return TOPIC_STARTER_DOCS_PATH.test(pathname);

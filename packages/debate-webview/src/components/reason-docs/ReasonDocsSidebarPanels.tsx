@@ -268,7 +268,7 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
   }, [])
 
   const onEditorRoute = isEditorPathname(pathname)
-  // The topic the reader is browsing (`vcs27` on `/docs/vcs27/...`), which
+  // The topic the reader is browsing (`vcx27` on `/docs/vcx27/...`), which
   // every starter link keeps; `null` off a topic address, for the default.
   const topicCode = topicCodeFromPathname(pathname)
 
