@@ -907,7 +907,7 @@ export function VideoWatchPage({
                           : "border border-blue-400/90 shadow-lg",
                       )}
                     >
-                      <TeamCodeLabel label={affTeam} ranking={affRanking} side="aff" bare />
+                      <TeamCodeLabel label={affTeam} ranking={affRanking} side="aff" bare showRank />
                     </button>
                   </TeamWithArgument>
                 )}
@@ -924,7 +924,7 @@ export function VideoWatchPage({
                           : "border border-red-400/90 shadow-lg",
                       )}
                     >
-                      <TeamCodeLabel label={negTeam} ranking={negRanking} side="neg" bare />
+                      <TeamCodeLabel label={negTeam} ranking={negRanking} side="neg" bare showRank />
                     </button>
                   </TeamWithArgument>
                 )}

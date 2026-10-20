@@ -13,7 +13,7 @@ vi.mock("next/link", () => ({
     createElement("a", { href, ...rest }, children),
 }));
 
-const { TeamCodeLabel, TeamLabel } = await import("../src/components/team-label/TeamLabel");
+const { TeamCodeLabel, TeamLabel, teamRankStats } = await import("../src/components/team-label/TeamLabel");
 
 describe("TeamCodeLabel", () => {
   it("shows the school logo and the ranked debaters' last names", () => {
@@ -57,6 +57,42 @@ describe("TeamLabel", () => {
     // No side (rankings, profiles): no tinted surface.
     expect(html).not.toContain("bg-blue-50/95");
     expect(renderToStaticMarkup(createElement(TeamLabel, {}))).toBe("");
+  });
+});
+
+describe("rank badge", () => {
+  const ranking = {
+    school: "Nowhere High",
+    name: "Vadathavoor & Sridharan",
+    rank: 7,
+    adjustedRating: 81.25,
+    deviation: 3.4,
+    matches: 42,
+    affWinRate: 60,
+    negWinRate: 55.5,
+  } as never;
+
+  it("sits inside the pill and never truncates the last names", () => {
+    const html = renderToStaticMarkup(createElement(TeamCodeLabel, { label: "Nowhere VS", ranking, side: "neg", showRank: true }));
+    const pill = html.indexOf("data-team-label");
+    const badge = html.indexOf("data-team-rank");
+    expect(pill).toBeGreaterThanOrEqual(0);
+    expect(badge).toBeGreaterThan(pill);
+    expect(html).toContain(">#7</span>");
+    expect(html).toContain("bg-red-600");
+    expect(html).toContain("Vadathavoor &amp; Sridharan");
+    expect(html).not.toMatch(/class="[^"]*truncate[^"]*font-medium/);
+    // Without showRank (or a rank), no badge.
+    expect(renderToStaticMarkup(createElement(TeamCodeLabel, { label: "Nowhere VS", ranking }))).not.toContain("data-team-rank");
+  });
+
+  it("lists the team's stats for the tooltip", () => {
+    expect(teamRankStats(ranking)).toEqual([
+      ["Rank", "#7"],
+      ["Rating", "81.3 ±3.4"],
+      ["Rounds", "42"],
+      ["Win % aff / neg", "60% / 55.5%"],
+    ]);
   });
 });
 
