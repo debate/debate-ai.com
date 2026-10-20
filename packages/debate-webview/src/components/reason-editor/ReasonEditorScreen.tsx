@@ -22,10 +22,8 @@
  * an edit made this session in front of the stored copy when you switch tabs
  * and come back).
  *
- * CardMirror is mounted with `defaultNavPaneHidden` so the engine's own
- * outline nav pane doesn't claim a second sidebar's worth of the column — the
- * app sidebar owns the side, and the outline stays one pull-tab / View-menu
- * toggle away.
+ * CardMirror's own outline nav pane opens with every document, beside the
+ * app sidebar; its × or the View menu hides it for the current document.
  */
 
 import { Suspense, useEffect, useMemo } from "react"
@@ -162,9 +160,8 @@ export function ReasonEditorScreen() {
             <div className="flex-1 min-h-0 overflow-hidden">
               {/* No React `key` here on purpose: `contentKey` already gives
                   each document a fresh claim (and undo history) inside the
-                  CardMirror singleton, and a keyed remount would also rerun
-                  the editor's mount effects — re-hiding a nav pane the user
-                  pulled back open — on every document switch. */}
+                  CardMirror singleton, so a keyed remount would only rerun
+                  the editor's mount effects on every document switch. */}
               <EditorWithToolbar
                 content={topicHtml ?? selectedHtml!}
                 contentKey={topicDocument ? `topic-${topicDocument.id}` : String(selected!.id)}
@@ -172,7 +169,6 @@ export function ReasonEditorScreen() {
                 showAiTools={!topicDocument}
                 showOutline
                 showToolbar={!topicDocument}
-                defaultNavPaneHidden
                 defaultReadMode={topicDocument !== null || selected?.format === STORED_FORMATS.cmir}
                 onChange={topicDocument ? undefined : (html) => updateContent(selected!.id, html)}
               />
