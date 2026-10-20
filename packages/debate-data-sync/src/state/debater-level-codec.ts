@@ -6,7 +6,8 @@
  * The shape check is deliberately shallow: this package can't import the
  * tool's own parser (it is a leaf), and the panel already degrades a bad value
  * to a fresh state, so all that is needed here is a safe `totalXp` for
- * {@link preferHigherDebaterXp} and a refusal to write a non-object.
+ * {@link preferHigherDebaterXp}, the field-wise {@link mergeDebaterLevel}, and
+ * a refusal to write a non-object.
  *
  * Pure — no storage or network.
  *
