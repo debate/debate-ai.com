@@ -82,7 +82,7 @@ function adminRoutes(extra: Route[] = []) {
     {
       method: "GET",
       match: "/api/admin/youtube/videos?",
-      respond: { videos: [queueVideo("aaa"), queueVideo("bbb", { style: 7, tournament: null })], nextCursor: "c2" },
+      respond: { videos: [queueVideo("aaa"), queueVideo("bbb", { style: 99, tournament: null })], nextCursor: "c2" },
     },
   ]);
 }

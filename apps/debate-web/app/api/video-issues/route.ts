@@ -65,7 +65,7 @@ const ISSUE_KINDS = [
 export const ROUND_LEVELS = ["college", "high-school", "middle-school"] as const;
 
 /** Numeric debate styles, matching `videos.style`. */
-const STYLES = [1, 2, 3, 4];
+const STYLES = [1, 2, 3, 4, 5, 6, 7];
 
 /** Longest free-text report accepted. */
 const MAX_ISSUE_LENGTH = 2000;

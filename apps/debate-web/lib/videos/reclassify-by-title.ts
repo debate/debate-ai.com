@@ -47,7 +47,7 @@ const ROUND_FIELDS = [
 export interface ReclassifyByTitleOptions {
   /** Case-insensitive substring the title must contain, e.g. `Dartmouth RR`. */
   match: string;
-  /** Numeric debate style to set (1 Policy, 2 PF, 3 LD, 4 College). */
+  /** Numeric debate style to set (1 Policy, 2 PF, 3 LD, 4 College, 5 WSD, 6 ACC, 7 Misc). */
   style: number;
   /** Re-run the model's round-info extraction on each matched video. */
   parseRoundInfo?: boolean;

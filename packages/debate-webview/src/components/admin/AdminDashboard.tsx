@@ -73,8 +73,8 @@ function formatDurationStatus(status: DurationStatus): string {
   return `${coverage} · ${formatHours(status.totalSeconds)} total (${formatHours(status.publishedSeconds)} published, ${formatHours(status.queuedSeconds)} queued)`;
 }
 interface Overview { stats: { users: number; sessions: number; files: number; publishedVideos: number; stagedVideos: number }; recentUsers: Array<{ id: string; name: string; email: string; image: string | null; createdAt: string; isAnonymous: boolean }>; }
-const STYLE_NAMES: Record<number, string> = { 1: "Policy", 2: "PF", 3: "LD", 4: "College" };
-const STYLE_OPTIONS = [{ value: "all", label: "All styles" }, { value: "1", label: "Policy" }, { value: "2", label: "PF" }, { value: "3", label: "LD" }, { value: "4", label: "College" }];
+const STYLE_NAMES: Record<number, string> = { 1: "Policy", 2: "PF", 3: "LD", 4: "College", 5: "WSD", 6: "ACC", 7: "Misc" };
+const STYLE_OPTIONS = [{ value: "all", label: "All styles" }, { value: "1", label: "Policy" }, { value: "2", label: "PF" }, { value: "3", label: "LD" }, { value: "4", label: "College" }, { value: "5", label: "WSD" }, { value: "6", label: "ACC" }, { value: "7", label: "Misc" }];
 
 /**
  * The admin page. Admins (ADMIN_EMAIL / ADMIN_EMAILS) see everything;

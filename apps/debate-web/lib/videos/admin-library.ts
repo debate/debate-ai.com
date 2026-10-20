@@ -36,7 +36,7 @@ const MAX_LIMIT = 100;
 export interface LibraryQuery {
   /** Free-text match over title, channel and tournament. */
   q?: string | null;
-  /** Numeric debate style (1 Policy, 2 PF, 3 LD, 4 College). */
+  /** Numeric debate style (1 Policy, 2 PF, 3 LD, 4 College, 5 WSD, 6 ACC, 7 Misc). */
   style?: number | null;
   /** `round`, `lecture`, or anything else for no source filter. */
   source?: string | null;

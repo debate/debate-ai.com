@@ -42,7 +42,7 @@ export interface VideoRow {
   channel: string;
   viewCount: number;
   description: string;
-  /** Numeric debate style (1 Policy, 2 PF, 3 LD, 4 College); `null` for lectures. */
+  /** Numeric debate style (1 Policy, 2 PF, 3 LD, 4 College, 5 WSD, 6 ACC, 7 Misc); `null` for lectures. */
   style: number | null;
   /**
    * Lecture category label (e.g. `"Demo Debates"`). `null` for rounds, except

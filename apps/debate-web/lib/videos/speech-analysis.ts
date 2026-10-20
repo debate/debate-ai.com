@@ -110,7 +110,7 @@ const ANALYSIS_TITLE = "What each speech could have done instead";
 const ANALYSIS_MAX_TOKENS = 8000;
 const SEGMENTATION_MAX_TOKENS = 2000;
 
-const STYLE_NAMES: Record<number, string> = { 1: "Policy", 2: "PF", 3: "LD", 4: "College" };
+const STYLE_NAMES: Record<number, string> = { 1: "Policy", 2: "PF", 3: "LD", 4: "College", 5: "WSD", 6: "ACC", 7: "Misc" };
 
 function scopeCondition(scope: SpeechAnalysisScope) {
   return scope === "goat" ? eq(videos.isTopPick, true) : undefined;

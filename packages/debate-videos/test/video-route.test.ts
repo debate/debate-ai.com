@@ -282,6 +282,14 @@ describe("eventSegment", () => {
     expect(eventSegment({ videoId: "x", title: "t", style: 3 })).toBe("ld");
   });
 
+  it("has a word for the WSD, ACC and Misc styles", () => {
+    expect(eventSegment({ videoId: "x", title: "t", style: 5 })).toBe("wsd");
+    expect(eventSegment({ videoId: "x", title: "t", style: 6, tournament: "2024 ACC Debate Tournament" })).toBe(
+      "acc-acc-debate-tournament",
+    );
+    expect(eventSegment({ videoId: "x", title: "t", style: 7 })).toBe("misc");
+  });
+
   it("files a lecture under its category", () => {
     expect(eventSegment({ videoId: "x", title: "t", style: "Critique / Critical Theory" })).toBe(
       "critique-critical-theory",
