@@ -374,11 +374,14 @@ as the `debaterLevel` collection (listed in **Tool data** under Practice as
 "Debater Level & XP"), stored under `debaterLevel` as a single `progress`
 record and adapted by `debater-level-codec.ts` in `debate-data-sync`.
 
-XP only grows, so when two devices both earned some while apart, the copy with
-the larger total wins and the account catches up to it. Known gap: the whole
-progression is one record, so the other device's smaller copy (including its
-lifetime counts and today's challenge progress) is replaced rather than
-combined, and XP earned on the losing device in that window is not added in.
+When two devices both earned XP while apart, the copies are merged field by
+field (`mergeDebaterLevel`): the larger total, the larger lifetime count for
+each activity, the union of completed milestones, today's challenge progress
+when both are from the same UTC day (otherwise the later day), and the union of
+the recent XP log. Known gap: there is no per-event ledger, so the same activity
+done on both devices can't be told from two separate ones; counts take the
+larger side rather than adding, so XP earned in the same window on both devices
+can be under-counted, never double-counted.
 
 ## Save status on each tool
 
