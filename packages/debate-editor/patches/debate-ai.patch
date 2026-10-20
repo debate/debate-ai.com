@@ -456,7 +456,7 @@ index 33d941f..ca5bb8f 100644
    return (
      getElectronHost() !== null &&
 diff --git a/src/editor/index.ts b/src/editor/index.ts
-index 927a931..0d7dae0 100644
+index 927a931..6cf9719 100644
 --- a/src/editor/index.ts
 +++ b/src/editor/index.ts
 @@ -23,6 +23,7 @@ import { transformForExport, countMarkedCards } from '../export/transform-for-ex
@@ -585,7 +585,7 @@ index 927a931..0d7dae0 100644
    } catch (err) {
      console.error('Speech-doc serialization failed:', err);
      void alertDialog(
-@@ -1378,6 +1396,24 @@ export function getActiveView(): EditorView | null {
+@@ -1378,6 +1396,40 @@ export function getActiveView(): EditorView | null {
    return view;
  }
  
@@ -607,10 +607,26 @@ index 927a931..0d7dae0 100644
 +  currentDoc = doc;
 +}
 +
++/** Point the outline at a document an embed just swapped in. The embed
++ *  loads a new document with `view.updateState`, which skips
++ *  `dispatchTransaction`, so the nav pane kept showing the previous
++ *  document's outline (or the blank starter's empty one) until the first
++ *  edit. A fresh `attach` also opens the new doc at the default depth,
++ *  scrolled to the top, like `mountView` does. */
++export function refreshEmbeddedOutline(): void {
++  const v = getActiveView();
++  if (!v) return;
++  navPanel.attach(v);
++  navPanel.setCaretHeading(v.state.selection.from, selfRefSelectionPos(v.state));
++  navPanel.scrollToTop();
++  breadcrumbBar?.attach(v);
++  breadcrumbBar?.update(v.state.doc);
++}
++
  /** Benchmark lifecycle (Settings → Benchmark). The mutating editing test runs
   *  on the live doc, but `dispatchTransaction` checks `isBenchmarkActive()` and
   *  skips the autosave / dirty / nav-rebuild side effects, so nothing touches
-@@ -1449,9 +1485,9 @@ function loadCollabUi(): Promise<typeof import('./collab/collab-ui.js')> {
+@@ -1449,9 +1501,9 @@ function loadCollabUi(): Promise<typeof import('./collab/collab-ui.js')> {
  // user-picked slot; single-pane joins in place (or spawns a window).
  // The returned promise reports success so the pill only consumes the
  // invite (and its share code) when the join actually landed.
@@ -622,7 +638,7 @@ index 927a931..0d7dae0 100644
    ),
  );
  setCollabInviter((target) => {
-@@ -1465,9 +1501,7 @@ setCollabInviter((target) => {
+@@ -1465,9 +1517,7 @@ setCollabInviter((target) => {
  // which start never calls — so using them here bound the session to an
  // empty uid with the window-joined title ("A.docx · B.docx") in the
  // confirm, orphaned from every pane footer (field find, 2026-08-12).
@@ -633,7 +649,7 @@ index 927a931..0d7dae0 100644
  // The Receive pill's Join button — same flow (and same deps choice) as
  // the Join Collaboration Session command: multi-pane joins into a
  // user-picked slot; single-pane in place.
-@@ -1811,7 +1845,9 @@ const ribbonContext: RibbonContext = {
+@@ -1811,7 +1861,9 @@ const ribbonContext: RibbonContext = {
    openShortcutsReference: () => openReference(),
    toggleCommentsVisible: () => {
      if (!commentsColumn || !commentsColumnEl) return;
@@ -644,7 +660,7 @@ index 927a931..0d7dae0 100644
      commentsColumn.setVisible(next);
      commentsToggleBtn?.setAttribute('aria-pressed', next ? 'true' : 'false');
      commentsColumn.render();
-@@ -1920,6 +1956,10 @@ const ribbonContext: RibbonContext = {
+@@ -1920,6 +1972,10 @@ const ribbonContext: RibbonContext = {
      if (!view) return;
      runAiCreateCite(view);
    },
@@ -655,7 +671,7 @@ index 927a931..0d7dae0 100644
    reformatAllCites: () => {
      if (!view) return;
      void runReformatAllCites(view);
-@@ -2350,15 +2390,6 @@ const ribbonContext: RibbonContext = {
+@@ -2350,15 +2406,6 @@ const ribbonContext: RibbonContext = {
    selectSpeechDoc: () => {
      void openSelectSpeechDocModal();
    },
@@ -671,7 +687,7 @@ index 927a931..0d7dae0 100644
    openHighlightPicker: () => colorPanel?.openPicker('highlight'),
    openShadingPicker: () => colorPanel?.openPicker('shading'),
    openFontColorPicker: () => colorPanel?.openPicker('fontcolor'),
-@@ -2366,13 +2397,33 @@ const ribbonContext: RibbonContext = {
+@@ -2366,13 +2413,33 @@ const ribbonContext: RibbonContext = {
    openDocToolsMenu: () => docMenuBtn?.click(),
    openCardToolsMenu: () => cardMenuBtn?.click(),
    openTableMenu: () => tableMenuBtn?.click(),
@@ -710,7 +726,7 @@ index 927a931..0d7dae0 100644
  openBtn.addEventListener('mousedown', (e) => e.preventDefault());
  openBtn.addEventListener('click', () => {
    void runOpenFlow();
-@@ -2383,14 +2434,6 @@ if (newBtn) {
+@@ -2383,14 +2450,6 @@ if (newBtn) {
      void onNewDocClicked();
    });
  }
@@ -725,7 +741,7 @@ index 927a931..0d7dae0 100644
  
  
  /**
-@@ -2880,6 +2923,51 @@ if (navPanePullTab) {
+@@ -2880,6 +2939,51 @@ if (navPanePullTab) {
      else settings.set('navPaneVisible', true);
    });
  }
@@ -777,7 +793,7 @@ index 927a931..0d7dae0 100644
  applyNavPaneVisible(settings.get('navPaneVisible'));
  
  /** Apply the `formatNavPaneByType` setting. When off, adds the
-@@ -2972,7 +3060,7 @@ export function notifyCommentsForActiveTransaction(
+@@ -2972,7 +3076,7 @@ export function notifyCommentsForActiveTransaction(
  }
  if (commentsToggleBtn && commentsColumn) {
    commentsToggleBtn.addEventListener('click', () => {
@@ -786,7 +802,7 @@ index 927a931..0d7dae0 100644
      commentsColumn.setVisible(next);
      commentsToggleBtn.setAttribute('aria-pressed', next ? 'true' : 'false');
      commentsColumn.render();
-@@ -3712,8 +3800,8 @@ systemDarkMedia.addEventListener('change', () => {
+@@ -3712,8 +3816,8 @@ systemDarkMedia.addEventListener('change', () => {
  
  /** Apply the `showDocNameChip` setting to `<html>`. The chip's CSS
   *  display is gated on this class — without it, the chip is
@@ -797,7 +813,7 @@ index 927a931..0d7dae0 100644
   *
   *  Deliberately does NOT call `updateWindowTitle`: at boot this
   *  runs before `currentDocFilename`'s module-level declaration
-@@ -4061,6 +4149,7 @@ settings.subscribe((s) => {
+@@ -4061,6 +4165,7 @@ settings.subscribe((s) => {
    }
    applyNavPaneVisible(s.navPaneVisible);
    applyFormatNavPaneByType(s.formatNavPaneByType);
@@ -805,7 +821,7 @@ index 927a931..0d7dae0 100644
    // Body zoom is NOT re-applied on settings change — it's per-editor and
    // transient, and `defaultZoomPct` only governs what NEW editors open at,
    // never re-zooms an already-open one. Chrome scale stays a synced global.
-@@ -4141,145 +4230,79 @@ settings.subscribe((s) => {
+@@ -4141,145 +4246,79 @@ settings.subscribe((s) => {
    notifyEditorLayoutChanged();
  });
  
@@ -827,12 +843,7 @@ index 927a931..0d7dae0 100644
 + *  unbroken row (see `#ribbon` in style.css) that overflows and
 + *  scrolls left ↔ right: every command stays reachable at every
 + *  width, it is just a scroll away.
-  *
-- *  Measured, not media-queried: panels hide only when they
-- *  LITERALLY don't fit, at any chrome scale / OS font size /
-- *  visible-panel-mix combination. */
--function initRibbonResizer(): void {
--  const ribbon = document.getElementById('ribbon');
++ *
 + *  This wires up the two parts CSS can't do alone:
 + *   - `.pmd-ribbon-scrollable` while the strip actually overflows, so
 + *     the scrollbar gutter (and the 6px it costs the button row) only
@@ -840,7 +851,12 @@ index 927a931..0d7dae0 100644
 + *   - vertical mouse wheel → horizontal scroll, the convention for a
 + *     single-row scrolling toolbar. Trackpads and shift-wheel already
 + *     send horizontal deltas and are left to the browser.
-+ *
+  *
+- *  Measured, not media-queried: panels hide only when they
+- *  LITERALLY don't fit, at any chrome scale / OS font size /
+- *  visible-panel-mix combination. */
+-function initRibbonResizer(): void {
+-  const ribbon = document.getElementById('ribbon');
 + *  Keyboard users need nothing extra beyond the `focusin` handler:
 + *  tabbing to a button that is scrolled out of view brings it back
 + *  into view. */
@@ -1015,7 +1031,7 @@ index 927a931..0d7dae0 100644
  
  applyTheme(settings.get('theme'), settings.get('themeAppliesToDocument'));
  applyShowDocNameChip(settings.get('showDocNameChip'));
-@@ -4353,7 +4376,6 @@ if (timerToggleBtn) {
+@@ -4353,7 +4392,6 @@ if (timerToggleBtn) {
    };
    button('open-btn', 'openFile');
    button('new-btn', 'newDocument');
@@ -1023,7 +1039,7 @@ index 927a931..0d7dae0 100644
    button('export-btn', 'save');
    button('settings-btn', 'openSettings');
    button('reference-btn', 'openShortcutsReference');
-@@ -4531,17 +4553,20 @@ const VIEWLESS_RIBBON_COMMANDS = new Set<AnyCommandId>([
+@@ -4531,17 +4569,20 @@ const VIEWLESS_RIBBON_COMMANDS = new Set<AnyCommandId>([
    // Toggling the nav-pane visibility only flips a transient
    // setting + body class; works without an active doc.
    'toggleNavPane',
@@ -1048,7 +1064,7 @@ index 927a931..0d7dae0 100644
    // Multi-pane workspace commands — fire on the shell, not a
    // doc. View-less so they work even when no slot has a doc.
    'focusSlot1',
-@@ -4586,12 +4611,15 @@ function runViewlessRibbon(id: AnyCommandId): void {
+@@ -4586,12 +4627,15 @@ function runViewlessRibbon(id: AnyCommandId): void {
      case 'zoomReset': ribbonContext.zoomReset(); return;
      case 'resetDefaultColors': ribbonContext.resetDefaultColors(); return;
      case 'toggleNavPane': ribbonContext.toggleNavPane(); return;
@@ -1065,7 +1081,7 @@ index 927a931..0d7dae0 100644
      case 'toggleVoice': ribbonContext.toggleVoice(); return;
      case 'calibrateVoice': ribbonContext.calibrateVoice(); return;
      case 'startFlowHost': ribbonContext.startFlowHost(); return;
-@@ -5319,6 +5347,15 @@ export function getNavPanel(): NavigationPanel {
+@@ -5319,6 +5363,15 @@ export function getNavPanel(): NavigationPanel {
    return navPanel;
  }
  
@@ -1081,7 +1097,7 @@ index 927a931..0d7dae0 100644
  function makeStarterDoc(): PMNode {
    const n = schema.nodes;
    const m = schema.marks;
-@@ -5564,6 +5601,7 @@ function isMobileLayout(): boolean {
+@@ -5564,6 +5617,7 @@ function isMobileLayout(): boolean {
      coarsePointer:
        typeof window.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches,
      viewportWidth: window.innerWidth,
@@ -1089,7 +1105,7 @@ index 927a931..0d7dae0 100644
    });
  }
  
-@@ -5874,6 +5912,9 @@ export function buildEditorPlugins(targetUid?: string | null): Plugin[] {
+@@ -5874,6 +5928,9 @@ export function buildEditorPlugins(targetUid?: string | null): Plugin[] {
    // while a session is active binds to the session's shared LoroDoc and gets
    // overwritten with the session doc (multi-pane document fusion).
    plugins.push(...collabPluginsFor(targetUid));
@@ -1099,7 +1115,7 @@ index 927a931..0d7dae0 100644
    return plugins;
  }
  
-@@ -6124,6 +6165,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
+@@ -6124,6 +6181,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
    }
    currentDoc = doc;
    navPanel.attach(view);
@@ -1107,7 +1123,7 @@ index 927a931..0d7dae0 100644
    // Sync visible state with the persisted setting on every mount.
    const startVisible = settings.get('commentsVisible');
    if (commentsColumnEl) commentsColumnEl.hidden = !startVisible;
-@@ -6146,6 +6188,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
+@@ -6146,6 +6204,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
    // Initial paint: do the heavy update synchronously so the user sees
    // the right thing immediately on doc load.
    navPanel.update(doc);
@@ -1115,7 +1131,7 @@ index 927a931..0d7dae0 100644
    refreshWordCount();
    refreshFontSizeDisplay();
    refreshFormattingPanelButtonStates();
-@@ -6168,6 +6211,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
+@@ -6168,6 +6227,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
    // the previous doc was last in.
    navPanel.scrollToTop();
    appEl.scrollTop = 0;
@@ -1123,7 +1139,7 @@ index 927a931..0d7dae0 100644
    // Re-resolve this doc's flashcard highlights once the caller has set
    // the doc identity (adoptDocId runs synchronously right after
    // mountView returns, so defer a frame). No-op when the column is
-@@ -6264,6 +6308,7 @@ function scheduleHeavyUpdate(): void {
+@@ -6264,6 +6324,7 @@ function scheduleHeavyUpdate(): void {
      pendingHeavyUpdate = null;
      if (!view) return;
      navPanel.update(view.state.doc);
@@ -1131,7 +1147,7 @@ index 927a931..0d7dae0 100644
      // Re-apply the caret highlight now that `update()` has rebuilt
      // `liEntries` with fresh positions. The synchronous `setCaretHeading`
      // in `dispatchTransaction` ran against stale positions (it fires
-@@ -7069,6 +7114,10 @@ async function loadFileInPlace(file: {
+@@ -7069,6 +7130,10 @@ async function loadFileInPlace(file: {
    }
    void clearCurrentJournal();
    mountView(docNode, docThreads);
@@ -1142,7 +1158,7 @@ index 927a931..0d7dae0 100644
    currentDocFilename = file.filename;
    setCurrentDocHandle(file.handle);
    currentDocFormat = file.format;
-@@ -7847,8 +7896,7 @@ async function createSpeechDocInPlace(): Promise<boolean> {
+@@ -7847,8 +7912,7 @@ async function createSpeechDocInPlace(): Promise<boolean> {
      okLabel: 'Create',
    });
    if (!speechName) return false;
@@ -1152,7 +1168,7 @@ index 927a931..0d7dae0 100644
    const docNode = settings.get('includeSpeechDocPocket')
      ? makeSpeechBlankDoc(filename.replace(/\.(cmir|docx)$/i, ''))
      : makeNewDocBody();
-@@ -7856,7 +7904,8 @@ async function createSpeechDocInPlace(): Promise<boolean> {
+@@ -7856,7 +7920,8 @@ async function createSpeechDocInPlace(): Promise<boolean> {
    mountView(docNode);
    currentDocFilename = null;
    setCurrentDocHandle(null);
@@ -1162,7 +1178,7 @@ index 927a931..0d7dae0 100644
    currentDocUid = newSessionDocUid();
    currentDocId = null; // new doc → minted on first save
    markCurrentDocClean();
-@@ -9774,15 +9823,24 @@ const BOOT_MOBILE_ENV = {
+@@ -9774,15 +9839,24 @@ const BOOT_MOBILE_ENV = {
      typeof window.matchMedia === 'function' &&
      window.matchMedia('(pointer: coarse)').matches,
    viewportWidth: window.innerWidth,
@@ -1189,7 +1205,7 @@ index 927a931..0d7dae0 100644
  // Set when this window bounced itself as a redundant three-pane duplicate
  // (singleton enforcement). A bounced window that lingers (couldn't self-close)
  // must stop claiming to be a workspace, so it never blocks a future window.
-@@ -10137,7 +10195,14 @@ function positionRightTray(): void {
+@@ -10137,7 +10211,14 @@ function positionRightTray(): void {
  
  // Load the per-user Learn annotation store (flashcards / schedules /
  // anchors) so review counts + the comments column have it available.
@@ -1205,7 +1221,7 @@ index 927a931..0d7dae0 100644
  
  // Drag-and-drop file opening works in both single-doc and multi-pane modes.
  installDragToOpen();
-@@ -10207,7 +10272,13 @@ if (BOOT_MULTI_DOC_WORKSPACE) {
+@@ -10207,7 +10288,13 @@ if (BOOT_MULTI_DOC_WORKSPACE) {
      // and the shell re-shows it when the last doc closes) — an empty
      // workspace would otherwise land on a bare window with no
      // affordances. Any doc entering a slot hides it.
@@ -1220,7 +1236,7 @@ index 927a931..0d7dae0 100644
      // Tell main this window can take OS-opened files into its slot
      // picker (so "Open with…" reuses it instead of spawning a blank
      // window), and wire the forward channel.
-@@ -10242,7 +10313,13 @@ if (BOOT_MULTI_DOC_WORKSPACE) {
+@@ -10242,7 +10329,13 @@ if (BOOT_MULTI_DOC_WORKSPACE) {
    // Home screen is a single-doc-mode feature (multi-pane has its
    // own workspace layout). Mount it before boot so the overlay is
    // ready when initSingleDocBoot decides whether to show it.
@@ -1235,7 +1251,7 @@ index 927a931..0d7dae0 100644
    // Single-pane windows don't take OS-opened files in place — main
    // keeps spawning a fresh window per file. Report the mode so a
    // stale multi-pane registration (from before a mode-toggle reload)
-@@ -10573,8 +10650,9 @@ settings.subscribe((s, meta) => {
+@@ -10573,8 +10666,9 @@ settings.subscribe((s, meta) => {
    if (modeSwitchInFlight) return;
    // The mobile shell forces single-doc rendering without writing the
    // synced `multiDocWorkspace` setting, so the boot constant can
@@ -1247,7 +1263,7 @@ index 927a931..0d7dae0 100644
    // A `multiDocWorkspace` toggle in ANOTHER window reaches us through
    // the cross-window storage-event sync. Only the window the user
    // actually toggled in may drive the switch (close the other windows
-@@ -10786,12 +10864,25 @@ async function runStartupRecovery(): Promise<void> {
+@@ -10786,12 +10880,25 @@ async function runStartupRecovery(): Promise<void> {
  }
  
  async function runStartupRecoveryInner(): Promise<void> {
@@ -1279,7 +1295,7 @@ index 927a931..0d7dae0 100644
      return;
    }
    const host = getHost();
-@@ -10836,6 +10927,13 @@ async function runStartupRecoveryInner(): Promise<void> {
+@@ -10836,6 +10943,13 @@ async function runStartupRecoveryInner(): Promise<void> {
      return;
    }
    if (entries.length === 0) return;
@@ -1770,10 +1786,35 @@ index d5bc357..c1a9c30 100644
        }
        // Selection-only changes refresh just this pane's word-count
 diff --git a/src/editor/nav-panel.ts b/src/editor/nav-panel.ts
-index 9d885e8..3801bdd 100644
+index 9d885e8..3e793a1 100644
 --- a/src/editor/nav-panel.ts
 +++ b/src/editor/nav-panel.ts
-@@ -81,6 +81,11 @@ import { isMobileShellActive } from './mobile-plugin.js';
+@@ -31,6 +31,24 @@ import { isTransclusionNode, zoneIdentity } from './transclusion.js';
+ import { isSelfRef, resolveSelfProjection } from './self-transclusion.js';
+ import { transclusionDivergenceKey } from './transclusion-divergence-plugin.js';
+ 
++/**
++ * Whether `entries[i]` starts collapsed when the outline shows levels 1–N.
++ * A parent at level N or deeper folds. So does a shallower parent with
++ * nothing at level N or shallower beneath it — a hat holding only tags, with
++ * no blocks between — which would otherwise leave every tag showing under
++ * "3", making 3 and 4 look identical.
++ */
++function collapsesAtLevel(entries: HeadingEntry[], i: number, maxLevel: number): boolean {
++  const entry = entries[i]!;
++  const next = entries[i + 1];
++  if (next == null || next.level <= entry.level) return false; // leaf
++  if (entry.level >= maxLevel) return true;
++  for (let j = i + 1; j < entries.length && entries[j]!.level > entry.level; j++) {
++    if (entries[j]!.level <= maxLevel) return false;
++  }
++  return true;
++}
++
+ /** Outline entries including the content projected by intra-doc live windows
+  *  (`self_ref`). A window is an atom with no doc children, so `collectHeadings`
+  *  alone misses it; here each window's source projection is resolved and its
+@@ -81,6 +99,11 @@ import { isMobileShellActive } from './mobile-plugin.js';
  import { createNumberGlyph, numberingDisplaySig } from './numbering-plugin.js';
  import { computeNumbering } from './numbering.js';
  import { isRightClickContextMenu } from './context-menu-gate.js';
@@ -1785,7 +1826,46 @@ index 9d885e8..3801bdd 100644
  
  /** Minimum nav-pane width — must fit the 4 level buttons + the
   *  close (×) button + row padding; anything narrower clips the ×. */
-@@ -934,14 +939,41 @@ export class NavigationPanel {
+@@ -677,7 +700,9 @@ export class NavigationPanel {
+   }
+ 
+   /** Sync the collapsed set to a maxLevel: every parent at level ≥ N
+-   *  is collapsed, every shallower parent is expanded.
++   *  is collapsed, and so is a shallower parent whose children are all
++   *  deeper than N (see `collapsesAtLevel`); every other parent is
++   *  expanded.
+    *
+    *  When called with no argument, uses the current setting. When called
+    *  with an explicit level, uses that — needed by `setMaxLevel`, which
+@@ -692,12 +717,7 @@ export class NavigationPanel {
+     for (let i = 0; i < entries.length; i++) {
+       const entry = entries[i]!;
+       if (entry.id == null) continue;
+-      const next = entries[i + 1];
+-      const hasChildren = next != null && next.level > entry.level;
+-      if (!hasChildren) continue;
+-      if (entry.level >= maxLevel) {
+-        this.collapsed.add(entry.id);
+-      }
++      if (collapsesAtLevel(entries, i, maxLevel)) this.collapsed.add(entry.id);
+     }
+   }
+ 
+@@ -757,12 +777,7 @@ export class NavigationPanel {
+       const entry = entries[i]!;
+       if (entry.id == null) continue;
+       if (this.lastSeenIds.has(entry.id)) continue; // not new
+-      const next = entries[i + 1];
+-      const hasChildren = next != null && next.level > entry.level;
+-      if (!hasChildren) continue;
+-      if (entry.level >= maxLevel) {
+-        this.collapsed.add(entry.id);
+-      }
++      if (collapsesAtLevel(entries, i, maxLevel)) this.collapsed.add(entry.id);
+     }
+     this.render(doc);
+   }
+@@ -934,14 +949,41 @@ export class NavigationPanel {
        // zero width — yielding a squashed row. Normalize to truly empty
        // so the CSS fallback applies.
        label.textContent = entry.text.trim() === '' ? '' : entry.text;
@@ -1835,7 +1915,7 @@ index 9d885e8..3801bdd 100644
        }
  
        if (entry.windowed) {
-@@ -2126,17 +2158,29 @@ export class NavigationPanel {
+@@ -2126,17 +2168,29 @@ export class NavigationPanel {
  
    // ---------------------------------------------- Context menu ----
  
@@ -1867,7 +1947,7 @@ index 9d885e8..3801bdd 100644
        {
          kind: 'item',
          label: `Select ${what} and contents`,
-@@ -2152,6 +2196,7 @@ export class NavigationPanel {
+@@ -2152,6 +2206,7 @@ export class NavigationPanel {
          label: `Copy ${what} and contents`,
          action: () => { void this.copyHeadingAndContents(entry); },
        },
@@ -4616,7 +4696,7 @@ index cbf4cb0..8f733a0 100644
      copyBtn.type = 'button';
      copyBtn.className = 'pmd-settings-btn';
 diff --git a/src/editor/style.css b/src/editor/style.css
-index 19ab630..8a39225 100644
+index 19ab630..7b35ac6 100644
 --- a/src/editor/style.css
 +++ b/src/editor/style.css
 @@ -527,15 +527,68 @@
@@ -5146,7 +5226,28 @@ index 19ab630..8a39225 100644
  .pmd-underline,
  .pmd-emphasis {
    font-variant-ligatures: none;
-@@ -5437,34 +5628,68 @@ body.pmd-nav-resize-active {
+@@ -5113,8 +5304,10 @@ body.pmd-nav-resize-active {
+      boundary, so each scroll surface owns its own pane. */
+   overscroll-behavior: contain;
+   /* Leave room on the right so the scrollbar doesn't run into the handle. */
+-  padding-right: 8px;
++  padding-right: 6px;
+   list-style: none;
++  /* A narrow face fits more of each heading on a line than the UI font. */
++  font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+   margin: 0;
+   padding-top: 0.5rem;
+   padding-bottom: 0.5rem;
+@@ -5134,7 +5327,7 @@ body.pmd-nav-resize-active {
+   display: flex;
+   align-items: baseline;
+   gap: 0.25rem;
+-  padding: 0.2rem 0.75rem;
++  padding: 0.2rem 0.25rem;
+   cursor: pointer;
+   border-left: 3px solid transparent;
+   position: relative;
+@@ -5437,34 +5630,68 @@ body.pmd-nav-resize-active {
    text-overflow: ellipsis;
  }
  
@@ -5160,7 +5261,7 @@ index 19ab630..8a39225 100644
 -  transform: translateY(-50%);
 -  max-width: 65%;
 -  padding: 0 0.5rem 0 1.75rem;
-+/* Tag rows: the tag wraps to a compact two-line clamp (small type, tight
++/* Tag rows: the tag wraps to a compact three-line clamp (small type, tight
 +   leading and padding) with the card's cite — author + year — in bold on
 +   the line after it, so the author is always visible without hovering. */
 +.pmd-nav-item.pmd-nav-item-tag-wrap {
@@ -5181,8 +5282,8 @@ index 19ab630..8a39225 100644
 +  overflow-wrap: anywhere;
 +  display: -webkit-box;
 +  -webkit-box-orient: vertical;
-+  -webkit-line-clamp: 2;
-+  line-clamp: 2;
++  -webkit-line-clamp: 3;
++  line-clamp: 3;
 +}
 +.pmd-nav-cite {
 +  font-size: 0.7rem;
@@ -5235,7 +5336,22 @@ index 19ab630..8a39225 100644
  
  /* Empty headings still occupy a normal line's worth of height. */
  .pmd-nav-label:empty::before {
-@@ -5713,6 +5938,13 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+@@ -5480,10 +5707,10 @@ body.pmd-nav-resize-active {
+ }
+ 
+ /* Indent + emphasis per outline level (Word's nav pane convention). */
+-.pmd-nav-level-1 { padding-left: 0.75rem;  font-weight: 700; font-size: 0.95rem; }
+-.pmd-nav-level-2 { padding-left: 1.5rem;   font-weight: 600; font-size: 0.9rem; }
+-.pmd-nav-level-3 { padding-left: 2.25rem;  font-weight: 500; }
+-.pmd-nav-level-4 { padding-left: 3rem;     font-size: 0.85rem; color: var(--pmd-c-text-muted); }
++.pmd-nav-level-1 { padding-left: 0.25rem;  font-weight: 700; font-size: 0.95rem; }
++.pmd-nav-level-2 { padding-left: 0.75rem;  font-weight: 600; font-size: 0.9rem; }
++.pmd-nav-level-3 { padding-left: 1.25rem;  font-weight: 500; }
++.pmd-nav-level-4 { padding-left: 1.75rem;  font-size: 0.85rem; color: var(--pmd-c-text-muted); }
+ 
+ /* Type-specific color cues — analytic uses the same settings-driven
+    color as in the editor surface so changing it propagates everywhere. */
+@@ -5713,6 +5940,13 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
    display: inline;
  }
  
@@ -5249,7 +5365,7 @@ index 19ab630..8a39225 100644
  /* Hide hard-break / trailing-break elements inside card body and cite
     paragraphs in read mode — ProseMirror adds a trailing <br> to empty
     paragraphs for cursor placement; in read mode we want continuous
-@@ -5881,10 +6113,6 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+@@ -5881,10 +6115,6 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
    border-radius: 8px;
    box-shadow: 0 8px 32px var(--pmd-c-shadow-deep);
    width: 90%;
@@ -5260,7 +5376,7 @@ index 19ab630..8a39225 100644
    max-width: 720px;
    max-height: 80vh;
    display: flex;
-@@ -5892,18 +6120,37 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+@@ -5892,18 +6122,37 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
    font-family: var(--pmd-ui-font);
  }
  
@@ -5300,7 +5416,7 @@ index 19ab630..8a39225 100644
    font-weight: 600;
  }
  
-@@ -5921,105 +6168,97 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+@@ -5921,105 +6170,97 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
    color: var(--pmd-c-text-strong);
  }
  
@@ -5464,7 +5580,7 @@ index 19ab630..8a39225 100644
  /* Section headers inside a settings tab (SettingMeta.section).
   * Sized to match .pmd-install-info-heading ("About this install").
   * All settings dividers — between rows and between sections — use the
-@@ -6038,7 +6277,10 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+@@ -6038,7 +6279,10 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
    text-transform: uppercase;
    color: var(--pmd-c-text-muted);
  }
@@ -5476,7 +5592,7 @@ index 19ab630..8a39225 100644
    margin-top: 0.3rem;
    padding-top: 0;
    border-top: none;
-@@ -6948,10 +7190,111 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+@@ -6948,10 +7192,111 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
    cursor: pointer;
  }
  
@@ -5589,7 +5705,7 @@ index 19ab630..8a39225 100644
  /* Word Count modal */
  .pmd-wc-scope {
    margin: 0 0 0.75rem 0;
-@@ -10430,6 +10773,7 @@ body.pmd-recovery-active.pmd-multi-doc #app {
+@@ -10430,6 +10775,7 @@ body.pmd-recovery-active.pmd-multi-doc #app {
     Diverge by pulling a selector out, not by re-copying. */
  .pmd-qcs-badge-settings,
  .pmd-qcs-badge-file,
@@ -5597,7 +5713,7 @@ index 19ab630..8a39225 100644
  .pmd-learn-session-remembered:hover,
  .pmd-learn-session-context:hover,
  .pmd-learn-manage-link:hover,
-@@ -10870,6 +11214,8 @@ body.pmd-recovery-active.pmd-multi-doc #app {
+@@ -10870,6 +11216,8 @@ body.pmd-recovery-active.pmd-multi-doc #app {
    display: flex;
    align-items: center;
    justify-content: space-between;
@@ -5606,7 +5722,7 @@ index 19ab630..8a39225 100644
    padding: 1rem 1.25rem;
    border-bottom: 1px solid var(--pmd-c-divider);
    flex: 0 0 auto;
-@@ -10881,7 +11227,26 @@ body.pmd-recovery-active.pmd-multi-doc #app {
+@@ -10881,7 +11229,26 @@ body.pmd-recovery-active.pmd-multi-doc #app {
    font-weight: 600;
  }
  
@@ -5633,7 +5749,7 @@ index 19ab630..8a39225 100644
  
  .pmd-reference-close:hover {
    color: var(--pmd-c-text);
-@@ -10956,6 +11321,68 @@ body.pmd-recovery-active.pmd-multi-doc #app {
+@@ -10956,6 +11323,68 @@ body.pmd-recovery-active.pmd-multi-doc #app {
    color: var(--pmd-c-text);
  }
  
@@ -5702,7 +5818,7 @@ index 19ab630..8a39225 100644
  /* ---------------------------------------------- Tables */
  
  /* columnResizing()'s TableView nodeView replaces our schema toDOM at
-@@ -12393,6 +12820,10 @@ textarea.pmd-text-prompt-input {
+@@ -12393,6 +12822,10 @@ textarea.pmd-text-prompt-input {
    font-size: 0.8rem;
    color: var(--pmd-c-text-muted);
  }
@@ -5713,7 +5829,7 @@ index 19ab630..8a39225 100644
  .pmd-learn-manage-new {
    margin-left: auto;
    background: transparent;
-@@ -12582,6 +13013,257 @@ textarea.pmd-text-prompt-input {
+@@ -12582,6 +13015,257 @@ textarea.pmd-text-prompt-input {
    border-color: var(--pmd-c-error);
  }
  
@@ -5971,7 +6087,7 @@ index 19ab630..8a39225 100644
  /* ---- Multi-pane: typography parity ----
   *
   * The single-doc editor scopes typography-flag rules to `#editor.X`.
-@@ -13215,9 +13897,10 @@ body.pmd-timer-popout-page .pmd-timer-display {
+@@ -13215,9 +13899,10 @@ body.pmd-timer-popout-page .pmd-timer-display {
   * skip animation events entirely. Properties listed cover all the
   * motion the editor ships: CSS `transition` / `animation`, plus
   * `scroll-behavior` (so smooth scroll snaps instead of animating). */
@@ -5985,7 +6101,7 @@ index 19ab630..8a39225 100644
    animation-duration: 0.01ms !important;
    animation-iteration-count: 1 !important;
    transition-duration: 0.01ms !important;
-@@ -13225,9 +13908,10 @@ body.pmd-timer-popout-page .pmd-timer-display {
+@@ -13225,9 +13910,10 @@ body.pmd-timer-popout-page .pmd-timer-display {
  }
  
  @media (prefers-reduced-motion: reduce) {
@@ -5999,7 +6115,7 @@ index 19ab630..8a39225 100644
      animation-duration: 0.01ms !important;
      animation-iteration-count: 1 !important;
      transition-duration: 0.01ms !important;
-@@ -15275,6 +15959,17 @@ body.pmd-multi-doc .pmd-cardcutter-trim {
+@@ -15275,6 +15961,17 @@ body.pmd-multi-doc .pmd-cardcutter-trim {
    user-select: none;
  }
  
@@ -6017,7 +6133,7 @@ index 19ab630..8a39225 100644
  /* Small corner chip shown while the benchmark drives the (visible) editor. */
  .pmd-bench-chip {
    position: fixed;
-@@ -16301,3 +16996,72 @@ body.pmd-multi-doc #collab-chip {
+@@ -16301,3 +16998,72 @@ body.pmd-multi-doc #collab-chip {
    pointer-events: none;
    z-index: 4;
  }
