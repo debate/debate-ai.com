@@ -24,7 +24,6 @@ export function WelcomeEmail({ name, baseUrl }: WelcomeEmailProps) {
     <EmailLayout
       preview={`Research, flow and practice in one place. Here's where to start.`}
       baseUrl={baseUrl}
-      footerNote={`You're getting this because you just created a ${APP_NAME} account.`}
     >
       <EmailHeading>{firstName ? `Welcome, ${firstName}!` : `Welcome to ${APP_NAME}!`}</EmailHeading>
       <EmailText>

@@ -30,7 +30,6 @@ export function FileInviteEmail({ inviterName, fileTitle, message, link, baseUrl
     <EmailLayout
       preview={`${inviterName} shared "${fileTitle}" with you on ${APP_NAME}.`}
       baseUrl={baseUrl}
-      footerNote={`You're getting this because ${inviterName} is one of your ${APP_NAME} contacts. Blocking them in Contacts stops their shares.`}
     >
       <EmailHeading>{inviterName} invited you to collaborate</EmailHeading>
       <EmailText>
