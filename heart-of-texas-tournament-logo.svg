@@ -1,0 +1,24 @@
+<svg width="800" height="400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="400" fill="white"/>
+  
+  <!-- Heart of Texas shape -->
+  <g transform="translate(200, 200)">
+    <!-- Texas outline simplified as heart+state shape -->
+    <path d="M 0,-30 
+             C -40,-70 -80,-50 -80,-10 
+             C -80,40 -40,70 0,90 
+             C 40,70 80,40 80,-10 
+             C 80,-50 40,-70 0,-30 Z" 
+          fill="#BF0D3E" stroke="#8B0000" stroke-width="2"/>
+    
+    <!-- Star in center -->
+    <path d="M 0,-15 L 3,-5 L 13,-5 L 5,1 L 8,11 L 0,5 L -8,11 L -5,1 L -13,-5 L -3,-5 Z" 
+          fill="#FFD700"/>
+  </g>
+  
+  <!-- Text -->
+  <text x="320" y="170" font-family="Georgia, 'Times New Roman', serif" font-size="28" font-weight="bold" fill="#BF0D3E">HEART OF TEXAS</text>
+  <text x="320" y="210" font-family="Georgia, 'Times New Roman', serif" font-size="36" font-weight="bold" fill="#002D72">TOURNAMENT</text>
+  <text x="320" y="245" font-family="Georgia, 'Times New Roman', serif" font-size="16" fill="#666">ST. MARK'S SCHOOL OF TEXAS</text>
+</svg>
