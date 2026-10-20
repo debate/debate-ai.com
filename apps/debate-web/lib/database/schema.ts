@@ -375,6 +375,10 @@ export const userSettings = sqliteTable("user_settings", {
   // packages/debate-round/src/state/flowAutoSaveSettings.ts). Null means the
   // client default ("saved").
   flowAutoSave: text("flow_auto_save"),
+  // App-wide font family choice (a `FONT_OPTIONS` value, see
+  // packages/debate-round/src/state/fontSettings.ts). Null means none chosen on
+  // any device yet, so each device keeps its own local font.
+  fontFamily: text("font_family"),
   // JSON-serialized arrays of News Stream item ids the signed-in user has
   // read/liked (see packages/debate-card-search/src/lib/news-stream-sync.ts
   // and TODO.md's Product Feature Idea "Community-Rated Summaries" /

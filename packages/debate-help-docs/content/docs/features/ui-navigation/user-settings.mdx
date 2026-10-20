@@ -52,6 +52,15 @@ renders them and by the API route that validates what they save. `plugins` is
 deliberately not among them — every row in it is Electron-only, so the tab
 would render empty on the web.
 
+## Font family
+
+The **Font family** picker on the Preferences tab applies the moment you pick it
+and, when you are signed in, is also saved to your account
+(`PUT /api/settings { fontFamily }`, stored in `user_settings.font_family`), so
+the same font follows you to another device. Signing in on a device with a
+different local font adopts the account's choice; if the account has none yet,
+this device's font is saved to it. Signed out, it stays on this browser only.
+
 ## What it no longer shows
 
 The page used to be this app's own account form, and that whole section is
