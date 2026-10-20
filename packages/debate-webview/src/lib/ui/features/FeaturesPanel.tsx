@@ -87,12 +87,13 @@ const CATEGORY_ICONS: Record<FeatureCategory, ComponentType<{ className?: string
   intelligence: Radar,
   practice: Dumbbell,
   recognition: Trophy,
+  documents: FileText,
 };
 
 /**
- * Google Drive folder of PDF guides shown at the foot of the page. Drive's
- * `embeddedfolderview` is mounted up front so the folder's items are listed
- * as soon as the reader scrolls to it; `loading="lazy"` keeps the viewer's
+ * Google Drive folder of PDF guides shown under the Documents tab's cards.
+ * Drive's `embeddedfolderview` is mounted as soon as the tab opens so the
+ * folder's items are listed right away; `loading="lazy"` keeps the viewer's
  * script from being fetched until the section nears the viewport, so the
  * hero above isn't slowed by it.
  */
@@ -100,8 +101,8 @@ const DOCUMENTS_DRIVE_FOLDER_ID = "1inxyWjAkPiyJ9BdspbhV20_-xRIc8RJn";
 const DOCUMENTS_DRIVE_FOLDER_URL = `https://drive.google.com/drive/folders/${DOCUMENTS_DRIVE_FOLDER_ID}`;
 
 /**
- * The documents section: Drive's own folder viewer, preloaded in place, with
- * a link out to the folder on Drive.
+ * The Documents tab's folder embed: Drive's own folder viewer, preloaded in
+ * place, with a link out to the folder on Drive.
  */
 function DocumentsFolder() {
   return (
@@ -696,25 +697,14 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
                 );
               })}
             </div>
+
+            {activeSection.category === "documents" ? (
+              <Reveal className="mt-10">
+                <DocumentsFolder />
+              </Reveal>
+            ) : null}
           </section>
         )}
-
-        <section id="documents" className="mt-16 scroll-mt-20">
-          <Reveal className="mx-auto mb-8 max-w-2xl text-center">
-            <span className="da-accent-fill mb-4 inline-flex size-10 items-center justify-center rounded-xl">
-              <FileText className="size-5" />
-            </span>
-            <h2 className="text-2xl font-semibold tracking-tight text-balance text-foreground">
-              Documents
-            </h2>
-            <p className="mt-2 text-sm leading-relaxed text-pretty text-muted-foreground">
-              PDF guides and handouts, straight from the shared Drive folder.
-            </p>
-          </Reveal>
-          <Reveal>
-            <DocumentsFolder />
-          </Reveal>
-        </section>
       </section>
     </div>
   );

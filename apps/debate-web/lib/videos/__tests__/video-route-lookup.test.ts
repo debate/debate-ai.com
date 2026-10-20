@@ -29,7 +29,7 @@ const LECTURES = [
   ["Afl7_hl-H0c", "2022 NDT Finals - Dartmouth SV vs Michigan PR  - Round Analysis Infographic for Classrooms", "2026-08-03", "d3v", 1, "Full Round: https://www.youtube.com/watch?v=qx7Xx_6exzk", "Round Analysis"],
 ] as unknown as VideoTuple[];
 
-vi.mock("../video-json-source", () => ({
+vi.mock("@debate/webview/lib/videos/video-json-source", () => ({
   getVideoRowsFromJson: async () =>
     buildVideoRows({
       rounds: [{ data: COLLEGE_ROUNDS }],

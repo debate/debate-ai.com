@@ -46,7 +46,7 @@ import {
   videoRowToIndexTuple,
   type VideoIndexResponse,
 } from "@debate/data-sync/src/videos/video-index";
-import { getVideoRowsFromJson } from "./video-json-source";
+import { getVideoRowsFromJson } from "@debate/webview/lib/videos/video-json-source";
 import {
   legacyVideoRouteHref,
   parseSeasonSegment,
@@ -265,6 +265,12 @@ function competitorCondition(phrases: string[]): SQL {
 }
 
 /**
+ * Collection slugs that are both a lecture category and a numeric debate
+ * style (5 WSD, 6 ACC), so `/videos/wsd` lists both kinds of video.
+ */
+const STYLE_FOR_CATEGORY_KEY: Readonly<Record<string, number>> = { wsd: 5, acc: 6 };
+
+/**
  * Translates {@link VideoQueryParams} into SQL predicates.
  *
  * @param params - Query parameters.
@@ -284,7 +290,12 @@ function buildConditions(
   if (params.lecturesOnly) conditions.push(isNull(videos.style));
   if (params.topPicksOnly) conditions.push(eq(videos.isTopPick, true));
   // Old merged keys stay in stored rows, so a category matches all of them.
-  if (params.categoryKey) conditions.push(inArray(videos.categoryKey, categoryKeyAliases(params.categoryKey)));
+  // The WSD and ACC collections also take the rounds filed under that style.
+  if (params.categoryKey) {
+    const inCategory = inArray(videos.categoryKey, categoryKeyAliases(params.categoryKey));
+    const style = STYLE_FOR_CATEGORY_KEY[params.categoryKey.toLowerCase()];
+    conditions.push(style === undefined ? inCategory : or(inCategory, eq(videos.style, style))!);
+  }
   if (params.tournament) {
     conditions.push(sql`${videos.tournament} LIKE ${likePattern(params.tournament)} ESCAPE '\\'`);
   }

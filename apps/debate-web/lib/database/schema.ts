@@ -326,7 +326,7 @@ export type FlowPresenceHeartbeatRow = typeof flowPresenceHeartbeats.$inferSelec
 // the same lost-update fix `favoriteTools`' add/remove ops already use,
 // rather than a client-computed whole-list replace.
 // The QwkSearch account a user linked through "Sign in with QwkSearch"
-// (lib/qwksearch/connect.ts): JSON-serialized `QwkSearchConnection` — API key,
+// (packages/debate-webview/src/lib/qwksearch/connect.ts): JSON-serialized `QwkSearchConnection` — API key,
 // profile and plan. The embedded research workspace sends the key with every
 // qwksearch.com API call so chats run as that account. A table of its own
 // rather than a `user_settings` column: Drizzle names every column in an
@@ -1132,7 +1132,7 @@ export const youtubeRoundVideos = sqliteTable(
     channel: text("channel").notNull(),
     views: integer("views").notNull().default(0),
     description: text("description").notNull().default(""),
-    style: integer("style").notNull(), // 1=Policy, 2=PF, 3=LD, 4=College
+    style: integer("style").notNull(), // 1=Policy, 2=PF, 3=LD, 4=College, 5=WSD, 6=ACC, 7=Misc
     tournament: text("tournament"),
     roundLevel: text("round_level"),
     aff: text("aff"),
@@ -1344,7 +1344,7 @@ export type DetectedUrlInsert = typeof detectedUrls.$inferInsert;
 // the whole ~1.1 MB JSON blob on first paint; `.github/scripts/seed-videos.ts` loads
 // the JSON into it (local SQLite and Cloudflare D1 share this schema).
 //
-// `style` is the numeric debate format (1 Policy, 2 PF, 3 LD, 4 College) and is
+// `style` is the numeric debate format (1 Policy, 2 PF, 3 LD, 4 College, 5 WSD, 6 ACC, 7 Misc) and is
 // null for lectures; `category`/`category_key` hold the lecture category label
 // and its URL slug and are null for rounds — together they mirror tuple index 6.
 // `season_year` is the precomputed competition season (June-to-June, 0 = legacy

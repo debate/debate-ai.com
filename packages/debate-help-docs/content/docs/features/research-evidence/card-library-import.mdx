@@ -190,7 +190,7 @@ built from a search request, because building one holds the database.
 ### Time limits
 
 D1 can't cancel a query, so `/api/search` stops waiting instead
-(`lib/search/deadline.ts`). A ranked FTS query gets 2.5 s; past that the
+(`packages/debate-webview/src/lib/search/deadline.ts`). A ranked FTS query gets 2.5 s; past that the
 route runs the same match unranked, which stops at the result limit instead
 of scoring every match, and gives it 2 s. The `LIKE` fallback gets 4 s. A
 search that runs out answers `timedOut: true` with what it has, possibly

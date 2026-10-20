@@ -181,6 +181,7 @@ export function isTeamProfilePath(pathname: string | null | undefined): boolean 
  */
 export function matchesToolSidebarHref(pathname: string): boolean {
   if (TOOL_SIDEBAR_HREFS.has(pathname)) return true;
+  if (isTopicStarterDocsPath(pathname)) return true;
   // Team profiles live at `/@<handle>`, which no tree entry names —
   // the set only carries the old `/teams` root they moved from.
   if (isTeamProfilePath(pathname)) return true;
@@ -188,6 +189,20 @@ export function matchesToolSidebarHref(pathname: string): boolean {
     if (pathname.startsWith(`${href}/`)) return true;
   }
   return false;
+}
+
+/**
+ * A Topic Starter's `/docs/<topic code>/...` address (`/docs/vcs27/neg/cp/x`)
+ * — the CardMirror editor, served at the same page as `/reason-editor`, so it
+ * gets the same generic sidebar. Only a first segment shaped like a topic code
+ * counts; the rest of `/docs` is the help docs. Mirrors `TOPIC_CODE_SOURCE` in
+ * `@debate/webview`'s `lib/reason-docs/topic-doc-paths` (which depends on this
+ * package, not the other way round); a test there keeps the two agreeing.
+ */
+const TOPIC_STARTER_DOCS_PATH = /^\/docs\/(?:(?:vcs|ndt)\d{2}|(?:ld|pf)\d{2}[a-z])(?:\/|$)/;
+
+export function isTopicStarterDocsPath(pathname: string): boolean {
+  return TOPIC_STARTER_DOCS_PATH.test(pathname);
 }
 
 /**

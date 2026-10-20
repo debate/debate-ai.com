@@ -9,6 +9,7 @@ import * as React from "react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../../ui/primitives/tooltip"
 import { getTopPickBadgeInfo, type TopPickBadgeInfo } from "../../../lib/topPickBadges"
 import { getTournamentLogo } from "./tournamentLogos"
+import { displayRoundLevel } from "./round-level"
 import { cn } from "../../../ui/lib/utils"
 import { TeamCodeLabel } from "../../team-label/TeamLabel"
 
@@ -67,7 +68,7 @@ export function TopPickBadge({
   const effectiveNeg = badgeInfo.negTeam || negTeam
   const effectiveTournament = badgeInfo.tournament || tournament
   const effectiveYear = badgeInfo.year || year
-  const effectiveRound = badgeInfo.roundLevel || roundLevel
+  const effectiveRound = displayRoundLevel(badgeInfo.roundLevel || roundLevel)
 
   // Clean tournament year prefix if present
   const cleanTournament = effectiveTournament

@@ -24,14 +24,28 @@ never get in the way on a phone or tablet.
 ## Read aloud voices
 
 The gear under **Read aloud** opens its settings: a speed slider (2x by
-default, and it changes speed while a card is playing) and a **Voice** list.
-Kokoro voices come first and are the default; Deepgram voices and your
-browser's built-in voice are the other choices. Both settings are remembered.
+default, and it changes speed while a card is playing) and a **Voice** list,
+grouped by engine:
+
+- **Kokoro (on this device)**, the default: 13 voices (American and British)
+  that run in your browser.
+- **Cloudflare Workers AI**: 12 Deepgram Aura voices spoken on the site's
+  server, with nothing to download. They need you signed in; signed out, the
+  card is read through QwkSearch's free allowance instead.
+- **Browser built-in**: your browser's own speech voice.
+
+The same choice is in **Settings → Preferences → Read aloud voice** (pick the
+engine, then the voice), and changing it in either place changes it in both.
+Both settings are remembered in this browser.
 
 Kokoro voices run right in your browser: the first time you read a card
 aloud, the Kokoro voice model (about 90 MB) downloads once and is kept by your
 browser, and from then on reading needs no server and has no daily limit. The
-card starts playing as soon as its first sentence is ready.
+card starts playing as soon as its first sentence is ready. The voice is
+generated in the background, so the page keeps scrolling and typing normally
+while a card is read. To get the download out of the way before a round, use
+**Settings → Preferences → On-device speech models**, which shows whether the
+voice is downloaded and how much space it takes, and can remove it.
 
 If your browser can't run Kokoro, or the download fails, the card is read by
 a server instead. Those voices come from QwkSearch (Kokoro or Deepgram), or from Cloudflare's
@@ -55,6 +69,7 @@ summary needs you to be signed in.
   CardMirror embed is mounted)
 - **Package:** `debate-editor` (`overlay/editor/card-hover-actions.ts`,
   `overlay/editor/card-ai-client.ts`, `overlay/editor/card-tts-client.ts`,
-  `overlay/editor/kokoro-browser-tts.ts`,
+  `overlay/editor/kokoro-browser-tts.ts`, `overlay/editor/kokoro-worker.ts`
+  (Kokoro runs in this Web Worker, off the page's main thread),
   registered in `overlay/react/singleton.ts`)
-- **API:** `/api/card-ai-analysis`, `/api/tts` (`apps/debate-ai.com/lib/tts/voice.ts`)
+- **API:** `/api/card-ai-analysis`, `/api/tts` (`packages/debate-webview/src/lib/tts/voice.ts`)

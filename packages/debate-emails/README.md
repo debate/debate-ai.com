@@ -33,7 +33,10 @@ renders a template with them, and the admin panel's **Emails** section
 the signed-in admin.
 
 Rendering uses `@react-email/render`, whose `workerd` export condition picks
-its edge build on Cloudflare Workers.
+its edge build on Cloudflare Workers. It needs `react-dom/server`, so it
+can't run in a React Server Components environment: in the web app, route
+handlers render through `apps/debate-web/lib/emails/render.ts`, which runs
+it in the Worker's ssr environment.
 
 To add a template, write it under `src/templates/`, wrap it in
 `EmailLayout`, give it `PreviewProps`, and register it in `src/registry.tsx`.

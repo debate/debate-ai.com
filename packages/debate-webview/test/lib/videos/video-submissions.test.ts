@@ -10,7 +10,7 @@ import {
   isSubmissionKind,
   parseChannelName,
   parseYouTubeVideoId,
-} from "../video-submissions";
+} from "../../../src/lib/videos/video-submissions";
 
 describe("parseYouTubeVideoId", () => {
   it.each([

@@ -3,7 +3,7 @@ import { getDBFromContext } from "@/lib/database/context";
 import { getUserId } from "@/lib/auth/session";
 import { withRouteErrors } from "@/lib/api/route-errors";
 import { getEnv } from "@/lib/env";
-import { matchTokenSecret, openMatchToken } from "@/lib/practice-partners/match-token";
+import { matchTokenSecret, openMatchToken } from "@debate/webview/lib/practice-partners/match-token";
 import {
   countPendingOutgoing,
   getProfile,

@@ -101,7 +101,10 @@ export { LeaderboardPanel } from "./panels/leaderboard/RankingsLeaderboardPanel"
 export { TeamProfilePage, SchoolProfilePage } from "./panels/leaderboard/profile/RankingProfiles";
 export {
   TEAM_SIDE_CLASS,
+  TEAM_SIDE_SURFACE_CLASS,
   TeamCodeLabel,
+  TeamRankBadge,
+  teamRankStats,
   TeamLabel,
   type TeamCodeLabelProps,
   type TeamLabelProps,
@@ -276,6 +279,7 @@ export {
   OWN_LAYOUT_SIDEBAR_HREFS,
   OWN_SIDEBAR_DOCK_HREFS,
   matchesToolSidebarHref,
+  isTopicStarterDocsPath,
   ownsItsLayout,
   hostsOwnSidebarDock,
   hasEmbeddedDock,

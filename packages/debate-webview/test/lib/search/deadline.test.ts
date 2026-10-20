@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { TIMED_OUT, withinDeadline } from "../deadline";
+import { TIMED_OUT, withinDeadline } from "../../../src/lib/search/deadline";
 
 describe("withinDeadline", () => {
   it("passes a value through when the work finishes first", async () => {

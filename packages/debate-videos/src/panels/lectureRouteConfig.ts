@@ -12,7 +12,7 @@ import type { CategoryType, DebateStyle } from "../types/videos"
  * `/videos/<slug>`.1
  */
 export interface SlugState {
-  /** DebateStyle filter to apply (1=Policy, 2=PF, 3=LD, 4=College). */
+  /** DebateStyle filter to apply (1=Policy, 2=PF, 3=LD, 4=College, 5=WSD, 6=ACC, 7=Misc). */
   style?: DebateStyle
   /** Active category view override. */
   view?: CategoryType

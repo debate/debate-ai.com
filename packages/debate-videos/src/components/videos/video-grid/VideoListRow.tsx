@@ -41,6 +41,7 @@ import { PopoutPlayerButton } from "../watch/PopoutPlayerButton"
 import { videoRouteHref } from "../../../lib/video-route"
 import { StackNav, stackMemberLabel } from "../video-card/StackNav"
 import { cleanTournamentName, videoCategoryLabel } from "./video-tree"
+import { displayRoundLevel } from "../video-card/round-level"
 import { TOC_TOURNAMENT_IMAGE } from "../video-card/videoCardUtils"
 import { treeIndentStyle } from "./tree-indent"
 import { FormatBadge } from "./FormatBadge"
@@ -115,7 +116,8 @@ function RowThumbnail({
  * An Aff or Neg cell: the team, and under it the argument it ran if known.
  *
  * A team found in the current season's rankings (`ranking`) links to its
- * team page and shows its rank (e.g. "#4"). Otherwise, with `onSearch`, the
+ * team page and shows its rank (e.g. "#4") as a badge inside the label,
+ * whose tooltip lists the team's stats. Otherwise, with `onSearch`, the
  * name is a button that searches the library for that team's videos instead
  * of opening the row. The team is drawn as a {@link TeamCodeLabel}: school
  * logo or name, then last names (from the rankings row) or initials.
@@ -143,12 +145,9 @@ function TeamCell({
             href={teamHref(ranking)}
             onClick={(e) => e.stopPropagation()}
             title={`${ranking.school} ${ranking.name} — team page`}
-            className="min-w-0 truncate text-left hover:text-primary hover:underline flex items-center gap-1.5"
+            className="min-w-0 text-left hover:text-primary hover:underline"
           >
-            <TeamCodeLabel label={team} ranking={ranking} side={side} />
-            <span className="shrink-0 text-[11px] font-medium tabular-nums text-primary">
-              #{ranking.rank}
-            </span>
+            <TeamCodeLabel label={team} ranking={ranking} side={side} showRank />
           </Link>
         ) : onSearch ? (
           <button
@@ -158,7 +157,7 @@ function TeamCell({
               onSearch(team)
             }}
             title={`Search for ${team}`}
-            className="max-w-full truncate text-left hover:text-primary hover:underline"
+            className="max-w-full text-left hover:text-primary hover:underline"
           >
             <TeamCodeLabel label={team} side={side} />
           </button>
@@ -257,6 +256,7 @@ export function VideoListRow({
   const categoryLabel = videoCategoryLabel(video)
   const year = new Date(date).getFullYear()
   const cleanTournament = cleanTournamentName(tournament)
+  const roundLabel = displayRoundLevel(roundLevel)
   const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`
   // A round whose tournament, level and both teams are recorded is fully
   // described by its badge, tournament and team cells; the uploader's title
@@ -325,14 +325,14 @@ export function VideoListRow({
               <div className={cn("flex", !hasCoreRoundInfo && "mt-0.5", "items-center gap-1.5 overflow-hidden text-xs text-muted-foreground")}>
                 {isRoundMode ? (
                   <>
-                    {roundLevel && (
+                    {roundLabel && (
                       <span
                         className={cn(
                           "inline-flex shrink-0 items-center rounded border px-1.5 py-0.5 text-[11px] font-medium",
-                          getRoundBadgeColor(roundLevel),
+                          getRoundBadgeColor(roundLabel),
                         )}
                       >
-                        {roundLevel}
+                        {roundLabel}
                       </span>
                     )}
                     {showFormat && <FormatBadge style={styleNumber} />}

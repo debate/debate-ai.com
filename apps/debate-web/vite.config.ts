@@ -215,6 +215,11 @@ export default defineConfig({
   define: {
     __USE_LIBSQL__: false,
   },
+  // Web Workers (the card Read aloud Kokoro worker in @debate/editor) are
+  // built as ES modules: the default iife format drops `import.meta`, which
+  // Transformers.js / ONNX Runtime Web use to find their wasm, and can't
+  // code-split.
+  worker: { format: "es" },
   build: {
     // Never inline assets as `data:` URIs. vinext's next/image shim decides
     // whether to route a source through `/_vinext/image` by checking whether

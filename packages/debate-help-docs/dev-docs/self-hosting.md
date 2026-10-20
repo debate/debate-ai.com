@@ -250,7 +250,7 @@ dashboard variable, a `vars` entry, or a line in `.dev.vars` locally. Never comm
 
 | Variable | Purpose | Where it is used | Required |
 | --- | --- | --- | --- |
-| `BETTER_AUTH_SECRET` | Signs sessions and auth tokens; also signs practice-partner match tokens. Generate with `openssl rand -base64 32`. | `lib/auth/index.ts`, `lib/practice-partners/match-token.ts` | **Yes in production.** Falls back to a public development string. |
+| `BETTER_AUTH_SECRET` | Signs sessions and auth tokens; also signs practice-partner match tokens. Generate with `openssl rand -base64 32`. | `lib/auth/index.ts`, `packages/debate-webview/src/lib/practice-partners/match-token.ts` | **Yes in production.** Falls back to a public development string. |
 | `BETTER_AUTH_URL` | Your public origin, e.g. `https://debate.example.org`. Used as the auth base URL and is always an allowed host. | `lib/auth/index.ts`, `lib/seo/site-url.ts` | **Yes** for a custom domain; the built-in host list only covers the project's own domains and localhost. |
 | `NEXT_PUBLIC_APP_URL` | Fallback for the same origin, also readable by client code. | `lib/auth/index.ts`, `lib/seo/site-url.ts`, `packages/debate-webview/src/lib/config/site.ts` | Optional |
 | `NEXT_PUBLIC_BASE_URL` | Further fallback for the origin. | `lib/auth/index.ts`, `lib/seo/site-url.ts`, `worker/index.ts` | Optional |
@@ -295,8 +295,8 @@ dashboard variable, a `vars` entry, or a line in `.dev.vars` locally. Never comm
 | Variable | Purpose | Where it is used | Required |
 | --- | --- | --- | --- |
 | `CARD_IMPORT_TOKEN` | Bearer token that lets the `debate-cards-upload` CLI post card batches to `/api/admin/debate-cards` without an admin session. Generate with `openssl rand -hex 32`. | `lib/admin/debate-card-import.ts`, `app/api/admin/search-index/route.ts` | Optional; without it imports need a signed-in admin. |
-| `QWKSEARCH_ORIGIN` | QwkSearch deployment for "Sign in with QwkSearch" and the embedded research workspace. Default `https://qwksearch.com`. | `lib/qwksearch/connect.ts`, `app/api/qwksearch/*` | Optional |
-| `STRIPE_WEBHOOK_SECRET` | Verifies Stripe webhook signatures at `/api/stripe/webhook` (writes `stripe_subscriptions`). | `lib/stripe/webhook.ts`, `app/api/stripe/webhook/route.ts` | Required for paid plans. |
+| `QWKSEARCH_ORIGIN` | QwkSearch deployment for "Sign in with QwkSearch" and the embedded research workspace. Default `https://qwksearch.com`. | `packages/debate-webview/src/lib/qwksearch/connect.ts`, `app/api/qwksearch/*` | Optional |
+| `STRIPE_WEBHOOK_SECRET` | Verifies Stripe webhook signatures at `/api/stripe/webhook` (writes `stripe_subscriptions`). | `packages/debate-webview/src/lib/stripe/webhook.ts`, `app/api/stripe/webhook/route.ts` | Required for paid plans. |
 | `STRIPE_SECRET_KEY` | Lets the webhook re-fetch the live subscription from Stripe instead of trusting event order. | `app/api/stripe/webhook/route.ts` | Recommended with Stripe |
 
 ### Webcam rooms

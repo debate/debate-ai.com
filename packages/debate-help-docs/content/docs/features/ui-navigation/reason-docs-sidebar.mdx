@@ -137,6 +137,55 @@ As two React effects they raced: the fallback's closure still saw no
 selection in the commit where the deep link opened its file, and opened the
 first file over the top of it.
 
+## Topic starter addresses: `/docs/<topic code>/<file>`
+
+A public topic starter's link names the resolution it is for and the file's
+path in the library:
+`/docs/vcs27/neg/cp/aca-expansion-cp-cndi-2026`. The topic code is the
+format, the last two digits of the year in `debate-topics.json`, and — for
+the formats that change topic during the season — a letter for which topic
+of that year, in start-month order:
+
+| Format | Code | Example |
+| --- | --- | --- |
+| High-school policy | `vcs<yy>` | `vcs27` (National Health Insurance) |
+| College policy (NDT/CEDA) | `ndt<yy>` | `ndt27` |
+| Lincoln-Douglas | `ld<yy><a-e>` | `ld27a` (September), `ld27b` (November) |
+| Public Forum | `pf<yy><a-g>` | `pf27a` |
+
+Three dropdowns above the Topic Starters tree — **format**, **year** and
+**topic** — go to a topic's address. The topic dropdown lists every topic the
+format has had, grouped by year; the year dropdown jumps to that year's first
+topic. A bare `/docs/<topic code>` opens the first starter, and every starter
+opened after that keeps the code in its link.
+
+These addresses share `/docs` with the help docs, so only a first segment
+shaped like a topic code is the editor's — no help page is named like
+`vcs27` or `ld27a`. `next.config.mjs` rewrites exactly that shape onto the
+`/reason-editor` page (a `beforeFiles` rewrite, ahead of the help docs'
+catch-all), and `isDocsPath` leaves it out so the app shell rather than the
+help-docs chrome renders it. The rules are in
+`packages/debate-webview/src/lib/reason-docs/topic-doc-paths.ts`; the
+resolution list and its codes in `topic-codes.ts`.
+
+Older links keep working: `/reason-editor?topic=neg/cp/aca-expansion-cp-cndi-2026`
+still opens the file, and `ReasonDocsRouteSync` then rewrites the address to
+`/docs/vcs27/neg/cp/aca-expansion-cp-cndi-2026`. A link with no code — that
+one, or a starter opened while on `/reason-editor` — gets the default code,
+the newest high-school policy topic (`DEFAULT_TOPIC_CODE`).
+
+**Known gaps:**
+
+- The library itself is not split by topic yet: every code shows the same
+  Topic Starters tree, and a file opens under whichever code is in the
+  address. The code says which topic the reader is browsing; it does not
+  filter the files.
+- The redirect from `?topic=` is client-side (a `history.replaceState` once
+  the catalogue loads), not an HTTP 308.
+- The browser extension's route table (`routes/index.ts`) has no
+  `/docs/<topic code>` pattern; there the old `?topic=` form is still the
+  working link.
+
 ## Read-only topic starters
 
 A topic starter opens in the same CardMirror embed as an owned document, but
@@ -156,7 +205,7 @@ base64-encoded into the row's `content` column, with `format` set to
 The conversion is CardMirror's own OOXML importer (`docxToCmir` in
 `packages/debate-editor/src/native/convert.ts` — `fromDocxFull` piped into
 `serializeNative`, the same pair the desktop bulk converter runs), wrapped
-for the route by `apps/debate-ai.com/lib/topic-starters/import.ts`. What that
+for the route by `packages/debate-webview/src/lib/topic-starters/import.ts`. What that
 buys over the card HTML the importer used to store is everything HTML has no
 element for: the Verbatim outline (pocket / hat / block / tag / analytic) as
 typed nodes rather than `<h1>`…`<h4>`, comment threads, inline images, and

@@ -273,6 +273,23 @@ describe("card hover actions plugin", () => {
     vi.unstubAllGlobals();
   });
 
+  it("groups voices by engine and follows a choice made in Settings", async () => {
+    const { storeVoiceId } = await import("../src/editor/card-tts-client");
+    const fetchVoice = vi.fn(async () => null);
+    const { view } = mount(undefined, fetchVoice);
+    const select = document.querySelector<HTMLSelectElement>("#pmd-read-voice")!;
+    const groups = [...select.querySelectorAll("optgroup")].map((g) => g.label);
+    expect(groups.slice(0, 2)).toEqual(["Kokoro (on this device)", "Cloudflare Workers AI"]);
+    storeVoiceId("deepgram:aura-luna-en");
+    expect(select.value).toBe("deepgram:aura-luna-en");
+    hover(view.dom.querySelector(".pmd-card")!);
+    bar().querySelector<HTMLButtonElement>('[data-action="speak"]')!.click();
+    expect(fetchVoice).toHaveBeenCalledWith(expect.any(String), { provider: "deepgram", voice: "aura-luna-en" }, expect.any(AbortSignal));
+    localStorage.clear();
+    storeVoiceId("kokoro:af_heart");
+    localStorage.clear();
+  });
+
   it("plays streamed Kokoro clips one after another", async () => {
     const played: string[] = [];
     vi.stubGlobal("URL", Object.assign(URL, { createObjectURL: (b: Blob) => `blob:${b.size}`, revokeObjectURL: () => {} }));

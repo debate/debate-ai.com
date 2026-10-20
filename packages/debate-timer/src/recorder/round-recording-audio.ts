@@ -13,6 +13,7 @@
  * @module recorder/round-recording-audio
  */
 
+import { MOONSHINE_MODEL_PATH, withMoonshineCache } from "./moonshine-model-cache"
 import {
   announcementText,
   layoutJoinedSpeeches,
@@ -186,7 +187,9 @@ function isSilent(samples: Float32Array): boolean {
 
 /**
  * Transcribes a buffer with Moonshine on this device, window by window.
- * The model (tens of MB) downloads from Moonshine's CDN the first time.
+ * The model (about 63 MB) downloads from Moonshine's CDN the first time and
+ * is kept in Cache Storage after that (`moonshine-model-cache.ts`; Settings
+ * can download or remove it).
  */
 export async function transcribeWithMoonshine(
   buffer: AudioBuffer,
@@ -195,8 +198,8 @@ export async function transcribeWithMoonshine(
   const mono16k = await renderMono([{ buffer, at: 0 }], buffer.duration, MOONSHINE_RATE)
   const samples = mono16k.getChannelData(0)
   const { MoonshineModel } = await import("@moonshine-ai/moonshine-js")
-  const model = new MoonshineModel("model/base")
-  await model.loadModel()
+  const model = new MoonshineModel(MOONSHINE_MODEL_PATH)
+  await withMoonshineCache(() => model.loadModel())
   const windows = splitOnQuiet(samples, MOONSHINE_RATE)
   const cues: CaptionCue[] = []
   for (let i = 0; i < windows.length; i++) {

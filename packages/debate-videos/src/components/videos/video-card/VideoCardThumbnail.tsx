@@ -10,12 +10,13 @@ import { Play, Volume2 } from "lucide-react"
 import { cn } from "../../../ui/lib/utils"
 import { TOURNAMENT_COLORS, getRoundBadgeColor, TOC_TOURNAMENT_IMAGE, isTOCTournament } from "./videoCardUtils"
 import { TopPickBadge } from "./TopPickBadge"
+import { displayRoundLevel } from "./round-level"
 import { WatchProgressBadge, WatchProgressBar } from "./WatchProgressBadge"
 import { useWatchHistoryEntry } from "../../../hooks/useWatchHistory"
 import { videoRouteHref } from "../../../lib/video-route"
 import { videoWatchHref } from "../../../lib/video-slug"
 import { getTournamentLogo } from "./tournamentLogos"
-import { TeamCodeLabel } from "../../team-label/TeamLabel"
+import { TEAM_SIDE_SURFACE_CLASS, TeamCodeLabel } from "../../team-label/TeamLabel"
 import { useContextTeamRanking } from "../../../hooks/useVideoTeamRankings"
 import type { VideoType } from "../../../types/videos"
 
@@ -106,6 +107,7 @@ export function VideoCardThumbnail({
   video,
 }: VideoCardThumbnailProps) {
   const [thumbnailFailed, setThumbnailFailed] = useState(false)
+  const roundLabel = displayRoundLevel(roundLevel)
   // Subscribed here rather than passed down: the grid's cards are memoised and
   // a progress write every twenty seconds would otherwise re-render all of
   // them. See `hooks/useWatchHistory.ts`.
@@ -234,19 +236,19 @@ export function VideoCardThumbnail({
                     '{String(year).slice(-2)}
                   </span>
                 )}
-                {roundLevel && !/\d/.test(roundLevel) && (
+                {/* Elimination rounds only; a prelim's R1–R8 would crowd the card. */}
+                {roundLabel && !/\d/.test(roundLabel) && (
                   <>
-                    {(roundLevel.toLowerCase().trim() === "finals" ||
-                      roundLevel.toLowerCase().trim() === "final") && (
+                    {roundLabel === "Final" && (
                       <span className="text-base">🏆</span>
                     )}
                     <span
                       className={cn(
                         "text-sm font-semibold px-2 py-1 rounded border backdrop-blur-md shadow-lg",
-                        getRoundBadgeColor(roundLevel),
+                        getRoundBadgeColor(roundLabel),
                       )}
                     >
-                      {roundLevel}
+                      {roundLabel}
                     </span>
                   </>
                 )}
@@ -259,13 +261,14 @@ export function VideoCardThumbnail({
                     <div className="flex flex-col items-center gap-0.5">
                       <span
                         className={cn(
-                          "text-xs font-bold backdrop-blur-md bg-blue-900/80 px-1.5 py-0.5 rounded",
+                          "text-xs font-bold backdrop-blur-md px-1.5 py-0.5 rounded",
+                          TEAM_SIDE_SURFACE_CLASS.aff,
                           affWin === true
-                            ? "border-[3px] border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)] text-blue-100"
-                            : "border border-blue-400/90 shadow-lg text-blue-300",
+                            ? "border-[3px] border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)]"
+                            : "border border-blue-400/90 shadow-lg",
                         )}
                       >
-                        <TeamCodeLabel label={affTeam} ranking={affRanking} side="aff" bare />
+                        <TeamCodeLabel label={affTeam} ranking={affRanking} side="aff" bare showRank />
                       </span>
                       {arg1AC && (
                         <span className="text-xs font-medium text-blue-100 backdrop-blur-md bg-blue-950/90 px-2 py-0.5 rounded border border-blue-800/50 shadow-sm text-center max-w-[120px] leading-tight">
@@ -278,13 +281,14 @@ export function VideoCardThumbnail({
                     <div className="flex flex-col items-center gap-0.5">
                       <span
                         className={cn(
-                          "text-xs font-bold backdrop-blur-md bg-red-900/80 px-1.5 py-0.5 rounded",
+                          "text-xs font-bold backdrop-blur-md px-1.5 py-0.5 rounded",
+                          TEAM_SIDE_SURFACE_CLASS.neg,
                           affWin === false
-                            ? "border-[3px] border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)] text-red-100"
-                            : "border border-red-400/90 shadow-lg text-red-300",
+                            ? "border-[3px] border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)]"
+                            : "border border-red-400/90 shadow-lg",
                         )}
                       >
-                        <TeamCodeLabel label={negTeam} ranking={negRanking} side="neg" bare />
+                        <TeamCodeLabel label={negTeam} ranking={negRanking} side="neg" bare showRank />
                       </span>
                       {arg2NR && (
                         <span className="text-xs font-medium text-red-100 backdrop-blur-md bg-red-950/90 px-2 py-0.5 rounded border border-red-800/50 shadow-sm text-center max-w-[120px] leading-tight">

@@ -30,8 +30,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "`match` must be at least 3 characters" }, { status: 400 });
   }
   const style = Number(body.style);
-  if (![1, 2, 3, 4].includes(style)) {
-    return NextResponse.json({ error: "`style` must be 1, 2, 3 or 4" }, { status: 400 });
+  if (![1, 2, 3, 4, 5, 6, 7].includes(style)) {
+    return NextResponse.json({ error: "`style` must be 1 to 7" }, { status: 400 });
   }
 
   try {

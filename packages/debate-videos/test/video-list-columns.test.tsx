@@ -176,7 +176,7 @@ describe("the round list's tree", () => {
     expect(html).toContain("Harvard");
     // The level rides on the row's badge rather than heading a group.
     expect(html).not.toContain('aria-label="Collapse round Finals"');
-    expect(html).toContain(">Finals</span>");
+    expect(html).toContain(">Final</span>");
   });
 
   it("leaves the title off a round whose tournament, level and teams are recorded", () => {

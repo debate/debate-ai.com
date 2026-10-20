@@ -37,9 +37,10 @@
  *
  * What *is* required is the shape: a JSON array under one `localStorage` key,
  * each element an object carrying a stable string `idField`. Single-object
- * settings stores (`myTeamProfile`, `fontFamily`), presence heartbeats and
- * per-device playback state are deliberately absent — the first cannot be
- * keyed, and the last two describe this browser rather than this user.
+ * settings stores synced as `user_settings` columns (`myTeamProfile`,
+ * `fontFamily`), presence heartbeats and per-device playback state are
+ * deliberately absent — the first sync through `/api/settings`, and the last
+ * two describe this browser rather than this user.
  *
  * @module state/toolRecordCollections
  */

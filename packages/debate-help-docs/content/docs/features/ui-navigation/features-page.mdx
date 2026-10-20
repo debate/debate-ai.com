@@ -6,7 +6,7 @@ title: "Features Page"
 
 One page that outlines every user-facing surface in the app: each
 feature's name, a one-line description, its route, and a link to its
-long-form doc, grouped into seven categories and filtered by a search box.
+long-form doc, grouped into eight categories and filtered by a search box.
 
 - **Route:** `/practice/features`
 - **Panel:** `apps/debate-ai.com/lib/ui/features/FeaturesPanel.tsx`
@@ -29,13 +29,18 @@ section under the badges (the Chrome extension install button, which used to
 sit on the card search's empty state), a search box (matching title/description/route/hidden
 tags), and a tab bar of the feature categories (Core Workspaces, Evidence &
 Research, Team Collaboration, Flowing & Round Analysis, Pre-Round
-Intelligence, Practice & Coaching, Recognition & Progress), each tab showing
+Intelligence, Practice & Coaching, Recognition & Progress, Documents), each tab showing
 its feature count. One category is shown at a time: the first tab is
 selected on load, clicking a tab shows only that category's feature cards,
 and a `#<category>` link (for example `/features#practice`) opens on that
 tab. Searching narrows every tab's count, and if the selected tab has no
 matches the first tab that does is shown. Each feature card links to its
 route and docs page.
+
+The **Documents** tab (`/practice/features#documents`) groups the document
+surfaces (Reason Docs, the Reason Editor and Speech Documents) and, under
+their cards, embeds the shared Google Drive folder of PDF guides and
+handouts, with an **Open in Google Drive** link.
 
 Pointing at a card lights it up — a gradient that follows the cursor, a
 glowing border and a coloured title — in a shade of its own, so neighbouring

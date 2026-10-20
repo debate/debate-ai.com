@@ -2,6 +2,7 @@ export {
   parseRoundLevel,
   standardizeRoundLevel,
   formatRoundLevel,
+  displayRoundLevel,
   getRoundSortKey,
   type StandardRoundLevel,
   type RoundParseConfidence,

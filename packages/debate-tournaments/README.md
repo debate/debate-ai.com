@@ -48,7 +48,7 @@ The list mixes two sources and each tournament reads from whichever one holds
 it:
 
 - **Live Tabroom**, through `/api/tabroom-beta/*`, a read-only proxy to
-  `https://api.tabroom.com/v1` (`lib/tournaments/tabroom-beta-proxy.ts`).
+  `https://api.tabroom.com/v1` (`packages/debate-webview/src/lib/tournaments/tabroom-beta-proxy.ts`).
 - **Tournaments hosted on this site**, through `/api/tabroom/*`.
 
 For each tournament there are pages for the upcoming list, the invitation,

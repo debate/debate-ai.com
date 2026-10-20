@@ -36,7 +36,7 @@ export interface WatchMatchupPrediction {
   stage: RoundStage
   /** `false` when the round label didn't parse; the round is then treated as a prelim. */
   stageKnown: boolean
-  /** E.g. `"Round 4"`, `"Quarterfinals"`, or `null` when unknown. */
+  /** E.g. `"R4"`, `"Quarters"`, or `null` when unknown. */
   roundLabel: string | null
   /** Judges deciding the round: 1 in prelims, 3 in elims, 5 in finals. */
   panel: 1 | 3 | 5
@@ -92,7 +92,8 @@ export function predictWatchMatchup(
 ): WatchMatchupPrediction {
   const level = standardizeRoundLevel(roundLevel ?? null)
   const stageKnown = level !== "UNKNOWN"
-  const stage: RoundStage = stageKnown && !level.startsWith("R") ? "elim" : "prelim"
+  const stage: RoundStage =
+    stageKnown && (!level.startsWith("R") || level === "RUNOFFS") ? "elim" : "prelim"
   const panel = stage === "prelim" ? 1 : level === "FINALS" ? 5 : 3
 
   // The breakdowns don't depend on the weights, so a first pass at zero gives
@@ -113,7 +114,7 @@ export function predictWatchMatchup(
   return {
     stage,
     stageKnown,
-    roundLabel: stageKnown ? formatRoundLevel(level) : null,
+    roundLabel: formatRoundLevel(level) || null,
     panel,
     affWin,
     negWin,

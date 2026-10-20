@@ -65,12 +65,16 @@ const PUBLIC_FORUM: FormatSlot[] = [
   { code: "Con Final Focus", heading: "Con Final Focus" },
 ];
 
-/** Speech order per numeric `DebateStyle`: 1 Policy, 2 PF, 3 LD, 4 College (policy). */
+/**
+ * Speech order per numeric `DebateStyle`: 1 Policy, 2 PF, 3 LD, 4 College
+ * (policy), 6 ACC (college policy). WSD and Misc have no standard order here.
+ */
 const FORMATS: Record<number, FormatSlot[]> = {
   1: POLICY,
   2: PUBLIC_FORUM,
   3: LINCOLN_DOUGLAS,
   4: POLICY,
+  6: POLICY,
 };
 
 /**

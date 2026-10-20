@@ -72,7 +72,7 @@ interface UnavailableVideo {
   availabilityCheckedAt: string | number | null;
 }
 
-const STYLE_NAMES: Record<number, string> = { 1: "Policy", 2: "PF", 3: "LD", 4: "College" };
+const STYLE_NAMES: Record<number, string> = { 1: "Policy", 2: "PF", 3: "LD", 4: "College", 5: "WSD", 6: "ACC", 7: "Misc" };
 
 /** How each report reason reads in the list. */
 const KIND_LABELS: Record<string, string> = {

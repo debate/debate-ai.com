@@ -131,6 +131,12 @@ const SIDE_BORDER: Record<EntrySide, string> = {
   neg: "border-red-500/80 dark:border-red-400/80",
 };
 
+/** Mostly white with a faint side tint, so logos read cleanly; matches the site's other aff/neg labels. */
+const SIDE_SURFACE: Record<EntrySide, string> = {
+  aff: "bg-blue-50/95 text-blue-950 dark:bg-blue-50/85 dark:text-blue-950",
+  neg: "bg-red-50/95 text-red-950 dark:bg-red-50/85 dark:text-red-950",
+};
+
 /**
  * An entry the way the site names every team: a pill bordered blue (aff) or
  * red (neg) holding the school — its logo when the host has one, else its
@@ -157,7 +163,7 @@ export function EntryLabel({ query, side }: { query: TeamRatingQuery; side?: Ent
         title={code ?? undefined}
         className={`inline-flex max-w-full rounded-md border px-1.5 py-0.5 align-middle leading-tight ${
           stacked ? "flex-col items-center gap-0.5 text-center" : "items-center gap-1.5"
-        } ${SIDE_BORDER[side ?? "aff"]}`}
+        } ${SIDE_BORDER[side ?? "aff"]}${side ? ` ${SIDE_SURFACE[side]}` : ""}`}
       >
         {school ? (
           team?.logoSrc ? (

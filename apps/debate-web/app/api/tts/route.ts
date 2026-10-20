@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { getSession } from "@/lib/auth/session"
 import { getEnv } from "@/lib/env"
 import { getCloudflareContext } from "@/lib/database/context"
-import { qwksearchOrigin } from "@/lib/qwksearch/connect"
+import { qwksearchOrigin } from "@debate/webview/lib/qwksearch/connect"
 import { loadConnection } from "@/lib/qwksearch/store"
 import {
   CLOUDFLARE_TTS_MODEL,
@@ -14,12 +14,12 @@ import {
   qwksearchVoiceBody,
   type TtsBackend,
   type TtsRequest,
-} from "@/lib/tts/voice"
+} from "@debate/webview/lib/tts/voice"
 
 /**
  * POST { text, provider?: "kokoro" | "deepgram", voice?, route?: "auto" |
  * "cloudflare" | "qwksearch" } → the spoken text as audio bytes, for the card
- * editor's Read aloud button. See `lib/tts/voice.ts` for the backends and
+ * editor's Read aloud button. See `packages/debate-webview/src/lib/tts/voice.ts` for the backends and
  * their order.
  *
  * Errors are JSON `{ error, backend? }`: `429` when QwkSearch's guest limit

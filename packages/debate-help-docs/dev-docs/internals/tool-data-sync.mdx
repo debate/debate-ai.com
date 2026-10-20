@@ -149,11 +149,12 @@ The requirement is a shape, not a preference: a JSON array under one
 `localStorage` key whose elements are objects carrying a stable string id. So
 these stay local on purpose —
 
-- **Single-object settings stores** (`myTeamProfile`, the `ebb` keymap and
-  display settings). There is no per-record id to key them by, and they are
-  mostly per-device choices anyway. (`fontFamily` used to be on this list; it
-  now syncs as the `user_settings.font_family` column through `/api/settings`,
-  like `flowAutoSave`, rather than as a tool-record collection.)
+- **Device-specific parts of single-object settings stores.** The `ebb`
+  keymap and display settings now sync through codecs that wrap the object as
+  records (display settings are allowlisted by `redactFlowDisplaySettings`, so
+  `flowsDir`, panel state and collab stay on-device). `myTeamProfile` and
+  `fontFamily` sync as `user_settings` columns through `/api/settings`
+  (`myTeamProfileSync.ts`), like `flowAutoSave`, not as tool-record collections.
 - **Presence heartbeats** (`flowPresenceHeartbeats`, `topicPresenceHeartbeats`)
   and **per-device playback state** (`persistent-video-player`,
   `debate-playback-speed`, `video-timestamps`). These describe *this browser*,

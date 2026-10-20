@@ -235,12 +235,9 @@ export function roundLevelOrder(video: VideoType): number {
   return -getRoundSortKey(level);
 }
 
-/** The round level a row's badge shows, normalized when it parses. */
+/** The round level a row's badge shows (`"Octas"`, `"R3"`), or `""` when it does not parse. */
 export function roundLevelLabel(video: VideoType): string {
-  const rawLevel = video[8]?.trim() ?? "";
-  if (!rawLevel) return "";
-  const level = parseRoundLevel(rawLevel).level;
-  return level === "UNKNOWN" ? rawLevel : formatRoundLevel(level);
+  return formatRoundLevel(parseRoundLevel(video[8]).level);
 }
 
 /** Total views across a slot — a stack counts all of its members. */

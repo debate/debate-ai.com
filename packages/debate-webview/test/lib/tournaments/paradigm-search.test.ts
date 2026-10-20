@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 
-import { clearParadigmCache, handleParadigmSearch, parseNames, parseParadigmSearch } from "../paradigm-search"
+import { clearParadigmCache, handleParadigmSearch, parseNames, parseParadigmSearch } from "../../../src/lib/tournaments/paradigm-search"
 
 // The shape of tabroom.com/index/paradigm.mhtml's result table.
 const row = (id: number, first: string, last: string, school = "Harker") => `

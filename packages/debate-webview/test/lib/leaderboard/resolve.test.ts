@@ -17,7 +17,7 @@ vi.mock("@debate/data-sync/src/rankings/sync-rankings-tocbidlist", () => ({
   scrapeVLD: () => scrapeVLD(),
 }));
 
-const { resolveLeaderboard } = await import("../resolve");
+const { resolveLeaderboard } = await import("../../../src/lib/leaderboard/resolve");
 
 const PF_DATASET = { division: "VPF", url: "https://example.test/pf.csv" };
 const LD_DATASET = { division: "VLD", url: "https://example.test/ld.csv" };
