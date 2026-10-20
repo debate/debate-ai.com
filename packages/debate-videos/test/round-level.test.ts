@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   formatRoundLevel,
+  displayRoundLevel,
   getRoundSortKey,
   parseRoundLevel,
   standardizeRoundLevel,
@@ -92,13 +93,33 @@ describe("standardizeRoundLevel", () => {
     });
   });
 
-  it("formats canonical levels for display", () => {
-    expect(formatRoundLevel("R6")).toBe("Round 6");
-    expect(formatRoundLevel("DOUBLES")).toBe("doubles");
-    expect(formatRoundLevel("OCTOS")).toBe("octas");
-    expect(formatRoundLevel("QUARTERS")).toBe("quarters");
-    expect(formatRoundLevel("SEMIS")).toBe("semis");
-    expect(formatRoundLevel("FINALS")).toBe("final");
+  it("formats canonical levels with the site's only round labels", () => {
+    expect(formatRoundLevel("R6")).toBe("R6");
+    expect(formatRoundLevel("TRIPLES")).toBe("Triples");
+    expect(formatRoundLevel("DOUBLES")).toBe("Doubles");
+    expect(formatRoundLevel("OCTOS")).toBe("Octas");
+    expect(formatRoundLevel("QUARTERS")).toBe("Quarters");
+    expect(formatRoundLevel("SEMIS")).toBe("Semis");
+    expect(formatRoundLevel("FINALS")).toBe("Final");
+    expect(formatRoundLevel("RUNOFFS")).toBe("");
+    expect(formatRoundLevel("UNKNOWN")).toBe("");
+  });
+
+  it("displays raw labels in their standard form", () => {
+    expect(displayRoundLevel("Double Octafinals")).toBe("Doubles");
+    expect(displayRoundLevel("Triple Octos")).toBe("Triples");
+    expect(displayRoundLevel("Octafinals")).toBe("Octas");
+    expect(displayRoundLevel("Octos")).toBe("Octas");
+    expect(displayRoundLevel("Quarterfinals")).toBe("Quarters");
+    expect(displayRoundLevel("Semifinals")).toBe("Semis");
+    expect(displayRoundLevel("Finals")).toBe("Final");
+    expect(displayRoundLevel("Round 3")).toBe("R3");
+    expect(displayRoundLevel("Bid Round")).toBeNull();
+    expect(displayRoundLevel("")).toBeNull();
+  });
+
+  it("sorts runoffs as an elim, not as a numbered prelim", () => {
+    expect(getRoundSortKey("RUNOFFS")).toBe(160);
   });
 
   it("sorts prelims numerically rather than lexically", () => {

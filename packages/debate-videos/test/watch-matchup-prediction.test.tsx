@@ -54,11 +54,11 @@ describe("predictWatchMatchup", () => {
   it("favors the higher-rated team and reads the stage from the round label", () => {
     const prelim = predictWatchMatchup(strong, weak, dataset, datasets, "Round 3", null, "v1");
     expect(prelim).toMatchObject({ stage: "prelim", stageKnown: true, panel: 1, favorite: "aff", actual: null, upset: null });
-    expect(prelim.roundLabel).toBe("Round 3");
+    expect(prelim.roundLabel).toBe("R3");
     expect(prelim.affWin + prelim.negWin).toBeCloseTo(1);
 
     const quarters = predictWatchMatchup(strong, weak, dataset, datasets, "Quarters", null, "v1");
-    expect(quarters).toMatchObject({ stage: "elim", panel: 3, roundLabel: "quarters" });
+    expect(quarters).toMatchObject({ stage: "elim", panel: 3, roundLabel: "Quarters" });
     // A panel majority magnifies the favorite's single-ballot edge.
     expect(quarters.affWin).toBeGreaterThan(prelim.affWin);
 
@@ -107,7 +107,7 @@ describe("WatchMatchupPrediction", () => {
     expect(html).toContain("Simulation");
     expect(html).toContain("Predicted winner:");
     expect(html).toContain("Harker LL (aff)");
-    expect(html).toContain("3-judge quarters panel");
+    expect(html).toContain("3-judge Quarters panel");
     expect(html).toContain("Simulated 1,000 rounds");
     expect(html).toContain("an upset");
   });
@@ -131,7 +131,7 @@ describe("WatchTeamStats", () => {
     const both = renderToStaticMarkup(createElement(WatchTeamStats, { video: round }));
     expect(both).toContain("Team rankings");
     expect(both).toContain("Simulated matchup");
-    expect(both).toContain("3-judge octas panel");
+    expect(both).toContain("3-judge Octas panel");
     expect(both).toContain("the favorite won");
 
     const one = [...round] as VideoType;
