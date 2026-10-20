@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from "next/server"
-import { and, desc, eq, isNull } from "drizzle-orm"
+import { and, desc, eq, inArray, isNull } from "drizzle-orm"
+import { Resend } from "resend"
+import { renderEmail } from "@debate/emails"
+import { APP_EMAIL, APP_NAME } from "@debate/webview/lib/config/site"
 import { getDBFromContext } from "@/lib/database/context"
 import { cardShares, user } from "@/lib/database/schema"
 import { getSession } from "@/lib/auth/session"
+import { getEnv } from "@/lib/env"
 import {
   filterShareableContacts,
   isMissingTableError,
@@ -35,7 +39,9 @@ import {
  *   shareable recipient (accepted contacts, plus the active organization's
  *   members) keyed on `(roomId, recipientId)` (re-sharing the
  *   same room refreshes the code/pass, clears any revoke, and re-notifies),
- *   and returns `{ shared, skipped }` ids.
+ *   and returns `{ shared, skipped }` ids. Each recipient also gets the
+ *   `file-invite` email from @debate/emails when a Resend key is set; a
+ *   failed email never fails the share.
  * PATCH { id, action: "opened" } — recipient marks first open.
  * DELETE ?id= — owner revokes (row kept, `revokedAt` set, so a re-share
  *   upserts cleanly); recipient dismisses (row deleted).
@@ -184,10 +190,56 @@ export async function POST(req: NextRequest) {
       shared.push(recipientId)
     }
 
+    await emailShareRecipients(db, shared, {
+      inviterName: session.user.name,
+      fileTitle: cardTitle,
+      message: note,
+      baseUrl: req.nextUrl.origin,
+    })
+
     return NextResponse.json({ shared, skipped })
   } catch (error) {
     console.error("Failed to share card", error)
     return NextResponse.json({ error: "Failed to share that card." }, { status: 500 })
+  }
+}
+
+/** Sends the `file-invite` email to each new share's recipient. */
+async function emailShareRecipients(
+  db: Awaited<ReturnType<typeof getDBFromContext>>,
+  recipientIds: string[],
+  invite: { inviterName: string; fileTitle: string; message: string | null; baseUrl: string },
+) {
+  if (recipientIds.length === 0) return
+  const resendKey = getEnv("RESEND_API_KEY") || getEnv("AUTH_RESEND_KEY")
+  if (!resendKey) {
+    console.log(`[dev] File invite email for ${recipientIds.length} recipient(s): ${invite.fileTitle}`)
+    return
+  }
+  try {
+    const recipients = await db
+      .select({ email: user.email })
+      .from(user)
+      .where(inArray(user.id, recipientIds))
+    const email = await renderEmail("file-invite", invite)
+    const resend = new Resend(resendKey)
+    const results = await Promise.allSettled(
+      recipients.map(({ email: to }: { email: string }) =>
+        resend.emails.send({
+          from: `${APP_NAME} <${APP_EMAIL}>`,
+          to,
+          subject: email.subject,
+          html: email.html,
+          text: email.text,
+        }),
+      ),
+    )
+    for (const result of results) {
+      const error = result.status === "rejected" ? result.reason : result.value.error
+      if (error) console.error("Failed to email a card share", error)
+    }
+  } catch (error) {
+    console.error("Failed to email card share recipients", error)
   }
 }
 

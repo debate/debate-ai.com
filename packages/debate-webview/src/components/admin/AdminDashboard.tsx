@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, type ComponentType } from "react";
-import { BookOpen, DatabaseBackup, FileSearch, Film, FolderTree, Globe, ListVideo, RefreshCw, School, Sparkles, Upload, Users } from "lucide-react";
+import { BookOpen, DatabaseBackup, Mail, FileSearch, Film, FolderTree, Globe, ListVideo, RefreshCw, School, Sparkles, Upload, Users } from "lucide-react";
 import { cn } from "../../lib/ui/lib/utils";
 import { Button } from "../../lib/ui/primitives/button";
 import { Badge } from "../../lib/ui/primitives/badge";
@@ -31,6 +31,7 @@ import {
 } from "../../lib/videos/format-seed-videos-result";
 import { CaselistSyncPanel } from "./CaselistSyncPanel";
 import { DbBackupPanel } from "./DbBackupPanel";
+import { EmailsPanel } from "./EmailsPanel";
 import { DebateCardParquetUpload } from "./DebateCardParquetUpload";
 import { ModeratorsPanel } from "./ModeratorsPanel";
 import { ReclassifyVideosPanel } from "./ReclassifyVideosPanel";
@@ -80,7 +81,7 @@ const STYLE_OPTIONS = [{ value: "all", label: "All styles" }, { value: "1", labe
  * moderators see only the content sections — the video library, video
  * reports, the round-video queue, school claims and Topic starters.
  */
-type AdminTabKey = "users" | "library" | "queue" | "schools" | "topic-starters" | "speech-ai" | "youtube" | "cards" | "imports" | "url-detection" | "backups";
+type AdminTabKey = "users" | "library" | "queue" | "schools" | "topic-starters" | "speech-ai" | "youtube" | "cards" | "imports" | "url-detection" | "backups" | "emails";
 
 interface AdminTab {
   key: AdminTabKey;
@@ -104,6 +105,7 @@ const ADMIN_TABS: AdminTab[] = [
   { key: "cards", name: "Debate cards", description: "Extract source URLs from card citations, recheck them and the reuse-check log", icon: FileSearch, adminOnly: true },
   { key: "url-detection", name: "URL Detection", description: "View URLs detected by the browser extension from pages users visit", icon: Globe, adminOnly: true },
   { key: "imports", name: "Imports", description: "Topic starters, debate card Parquet shards and the caselist sync", icon: Upload, adminOnly: true },
+  { key: "emails", name: "Emails", description: "Previews of the welcome, invite and coach emails, rendered with sample data", icon: Mail, adminOnly: true },
   { key: "backups", name: "Backups", description: "SQL dumps of videos, debate cards and history — download or store in R2", icon: DatabaseBackup, adminOnly: true },
   { key: "users", name: "Users", description: "Accounts, usage and the moderators who can edit content", icon: Users, adminOnly: true },
 ];
@@ -757,6 +759,8 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
         )}
 
         {currentTab.key === "speech-ai" && <SpeechAnalysisPanel />}
+
+        {currentTab.key === "emails" && <EmailsPanel />}
 
         {currentTab.key === "schools" && <SchoolClaimsPanel />}
 
