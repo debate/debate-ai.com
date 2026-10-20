@@ -15,13 +15,19 @@ Renders a heading nav/outline panel alongside the document, plus a sticky
 
 **Nav panel** — every heading-anchored node in the live document, indented
 by level, with collapse, drag-and-drop reordering, multi-select, a
-per-level filter, and caret-follow highlighting. Defaults to visible on
-every CardMirror host except `/reason-editor`, which renders its own
-file-tree/Open-Tabs sidebar beside the editor and therefore starts the
-nav pane hidden — the left-edge pull-tab or the View-menu toggle re-shows
-it there.
+per-level filter, and caret-follow highlighting. It opens together with
+every document you open, `/reason-editor` and phone-width windows included,
+already listing that document's headings. Its × hides it until the next
+document opens; the left-edge pull-tab or the View-menu toggle re-shows it.
 
-Tag rows wrap to two compact lines of small text, with the card's cite
+The **1 2 3 4** buttons work like Word's "Show Heading N": click N to see
+levels 1 through N (1 pockets, 2 hats, 3 blocks, 4 tags and analytics).
+Everything deeper folds away, including tags sitting directly under a hat
+with no block between them. The chevrons still unfold any single row.
+
+Entries use Arial (falling back to the system sans-serif) with slim side
+padding, so more of each heading fits on a line. Tag rows wrap to up to
+three compact lines of small text, with the card's cite
 (author and year) in bold underneath, so the author is visible without
 hovering. Every pocket, hat and block row has a copy button (shown on
 hover); it and the row's right-click menu offer **Copy all tags** (every

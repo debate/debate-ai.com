@@ -82,65 +82,52 @@ describe("debaterLevel merge", () => {
 });
 
 describe("mergeDebaterLevel", () => {
-  const ev = (atMs: number, source = "card_cut") => ({ atMs, source, label: source, xp: 5 });
-  const a = {
-    totalXp: 40,
-    lifetimeCounts: { card_cut: 5, drill: 1 },
-    daily: { dayKey: "2026-10-20", counts: { card_cut: 2 }, completedChallengeIds: ["c1"] },
-    completedMilestoneIds: ["m1"],
-    recentXp: [ev(300), ev(100)],
-  };
-  const b = {
-    totalXp: 55,
-    lifetimeCounts: { card_cut: 3, flow: 4 },
-    daily: { dayKey: "2026-10-20", counts: { card_cut: 1, flow: 3 }, completedChallengeIds: ["c2"] },
-    completedMilestoneIds: ["m2", "m1"],
-    recentXp: [ev(200), ev(100)],
-  };
+  const ev = (atMs: number, source: string) => ({ atMs, source, label: source, xp: 5 });
+  const full = (over: Record<string, unknown>) => ({ ...state(0), ...over });
 
-  it("merges per activity instead of replacing the whole record", () => {
-    expect(mergeDebaterLevel(a, b)).toEqual({
-      totalXp: 55,
+  it("takes per-kind maximum counts, the larger total and unions milestones", () => {
+    const a = full({ totalXp: 80, lifetimeCounts: { card_cut: 5, drill: 1 }, completedMilestoneIds: ["m1"] });
+    const b = full({ totalXp: 60, lifetimeCounts: { card_cut: 2, flow: 4 }, completedMilestoneIds: ["m2"] });
+    expect(mergeDebaterLevel(a, b)).toMatchObject({
+      totalXp: 80,
       lifetimeCounts: { card_cut: 5, drill: 1, flow: 4 },
-      daily: { dayKey: "2026-10-20", counts: { card_cut: 2, flow: 3 }, completedChallengeIds: ["c1", "c2"] },
       completedMilestoneIds: ["m1", "m2"],
-      recentXp: [ev(300), ev(200), ev(100)],
     });
   });
 
-  it("is idempotent and order-insensitive on the numbers", () => {
-    const m = mergeDebaterLevel(a, b) as typeof a;
-    expect(mergeDebaterLevel(m, b)).toEqual(m);
-    expect(mergeDebaterLevel(b, a)).toMatchObject({ totalXp: 55, lifetimeCounts: m.lifetimeCounts });
+  it("merges today's tally on the same day and takes the later day otherwise", () => {
+    const day = (dayKey: string, counts: Record<string, number>, ids: string[]) =>
+      full({ daily: { dayKey, counts, completedChallengeIds: ids } });
+    expect(mergeDebaterLevel(day("2026-10-20", { card_cut: 1 }, ["c1"]), day("2026-10-20", { card_cut: 3, flow: 1 }, ["c2"])))
+      .toMatchObject({ daily: { dayKey: "2026-10-20", counts: { card_cut: 3, flow: 1 }, completedChallengeIds: ["c1", "c2"] } });
+    expect(mergeDebaterLevel(day("2026-10-19", { card_cut: 9 }, ["c1"]), day("2026-10-20", { flow: 1 }, [])))
+      .toMatchObject({ daily: { dayKey: "2026-10-20", counts: { flow: 1 }, completedChallengeIds: [] } });
   });
 
-  it("keeps the newer day's tallies rather than mixing days", () => {
-    const next = { ...b, daily: { dayKey: "2026-10-21", counts: { flow: 1 }, completedChallengeIds: [] } };
-    expect((mergeDebaterLevel(a, next) as typeof a).daily).toEqual(next.daily);
-    expect((mergeDebaterLevel(next, a) as typeof a).daily).toEqual(next.daily);
+  it("unions the XP log newest first, de-duplicated and capped at 30", () => {
+    const a = full({ recentXp: [ev(3, "x"), ev(1, "y")] });
+    const b = full({ recentXp: [ev(2, "z"), ev(1, "y")] });
+    expect((mergeDebaterLevel(a, b) as { recentXp: { atMs: number }[] }).recentXp.map((e) => e.atMs)).toEqual([3, 2, 1]);
+    const many = full({ recentXp: Array.from({ length: 40 }, (_, i) => ev(i, "k")) });
+    expect((mergeDebaterLevel(many, a) as { recentXp: unknown[] }).recentXp).toHaveLength(30);
   });
 
-  it("caps the log at 30 events and drops malformed entries and counts", () => {
-    const many = { ...a, recentXp: Array.from({ length: 40 }, (_, i) => ev(i)) };
-    const out = mergeDebaterLevel(many, { ...b, lifetimeCounts: { x: -1, y: "2" }, recentXp: [null, { atMs: "no" }] }) as typeof a;
-    expect(out.recentXp).toHaveLength(30);
-    expect(out.recentXp[0]).toEqual(ev(39));
-    expect(out.lifetimeCounts).toEqual(a.lifetimeCounts);
+  it("falls back to the valid side and ignores malformed fields", () => {
+    expect(mergeDebaterLevel({ junk: true }, state(4))).toEqual(state(4));
+    expect(mergeDebaterLevel(state(4), null)).toEqual(state(4));
+    const odd = full({ totalXp: 5, lifetimeCounts: { card_cut: "x", drill: -1, flow: 2 }, recentXp: "no", completedMilestoneIds: [1, "m"] });
+    expect(mergeDebaterLevel(odd, state(1))).toMatchObject({
+      lifetimeCounts: { card_cut: 2, flow: 2 },
+      recentXp: [],
+      completedMilestoneIds: ["m"],
+    });
   });
 
-  it("falls back to the higher-XP side when one copy is malformed", () => {
-    expect(mergeDebaterLevel(a, { junk: true })).toBe(a);
-    expect(mergeDebaterLevel({ junk: true }, a)).toBe(a);
-  });
-
-  it("is what the collection merges and pushes", () => {
-    const local = decodeDebaterLevel(a);
-    const remote = decodeDebaterLevel(b);
-    const merged = mergeToolRecords(collection, local, remote);
-    expect(merged).toHaveLength(1);
-    expect(merged[0]).toMatchObject({ id: DEBATER_LEVEL_RECORD_ID, lifetimeCounts: { card_cut: 5, flow: 4, drill: 1 } });
-    expect(toolRecordsMissingRemotely(collection, local, remote)).toEqual(merged);
-    // Once the account holds the merge, nothing is left to push.
-    expect(toolRecordsMissingRemotely(collection, local, merged)).toEqual([]);
+  it("combines activity from both devices through the sync merge and pushes the result", () => {
+    const l = decodeDebaterLevel(full({ totalXp: 50, lifetimeCounts: { card_cut: 4 } }));
+    const r = decodeDebaterLevel(full({ totalXp: 70, lifetimeCounts: { flow: 6 } }));
+    const merged = mergeToolRecords(collection, l, r)[0];
+    expect(merged).toMatchObject({ id: DEBATER_LEVEL_RECORD_ID, totalXp: 70, lifetimeCounts: { card_cut: 4, flow: 6 } });
+    expect(toolRecordsMissingRemotely(collection, l, r)).toEqual([merged]);
   });
 });

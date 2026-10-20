@@ -35,6 +35,10 @@ tauri-plugin-autostart = "2"
 # restore button on, so an OS-level shortcut is the only reliable way out
 # regardless of what the wrapped page's own JS does.
 tauri-plugin-global-shortcut = "2"
+# Auto-update from the profile's update feed (src/updater.rs). tokio is
+# already tauri's async runtime; `time` is for the updater's wait loops.
+tauri-plugin-updater = "2"
+tokio = { version = "1", features = ["time"] }
 
 # Linux-only: WebKitGTK keeps getUserMedia and WebRTC off until its settings
 # turn them on (see src/media.rs). Same version and feature level wry uses.

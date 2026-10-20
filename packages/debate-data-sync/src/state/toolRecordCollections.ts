@@ -52,7 +52,7 @@ import {
 } from "./flow-editor-settings-codec";
 import { redactFileSource } from "./redact-file-source";
 import { decodeFlowKeymap, encodeFlowKeymap } from "./flow-keymap-codec";
-import { decodeDebaterLevel, encodeDebaterLevel, mergeDebaterLevel, preferHigherDebaterXp } from "./debater-level-codec";
+import { decodeDebaterLevel, encodeDebaterLevel, mergeDebaterLevel } from "./debater-level-codec";
 
 /**
  * The groupings `/settings` → Account → **Tool data** renders as section
@@ -134,12 +134,12 @@ export interface ToolRecordCollection {
    */
   prefer?: (local: unknown, remote: unknown) => "local" | "remote";
   /**
-   * Builds one record from both copies when each side holds something the
-   * other lacks (debater XP earned per activity on two devices). Takes
-   * precedence over {@link prefer}; the result is what is stored locally and,
-   * when it differs from the account's copy, pushed.
+   * Combines both copies of a record into a new one (debater XP), for state
+   * where neither side should win outright. Takes precedence over `prefer`.
+   * The result is written locally and, when it differs from the account's
+   * copy, pushed up.
    */
-  combine?: (local: unknown, remote: unknown) => unknown;
+  merge?: (local: unknown, remote: unknown) => unknown;
 }
 
 /**
@@ -206,14 +206,13 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "debaterLevel",
     idField: "id",
     // The XP/level progression (`@debate/community`'s `debaterLevel` store):
-    // one object, synced as a single `progress` record. The larger `totalXp`
-    // wins a conflict, so XP earned offline survives a sign-in.
+    // one object, synced as a single `progress` record. A conflict merges the
+    // two copies field by field, so XP earned on either device survives.
     label: "Debater Level & XP",
     href: "/practice/level",
     section: "Practice",
     codec: { decode: decodeDebaterLevel, encode: encodeDebaterLevel },
-    prefer: preferHigherDebaterXp,
-    combine: mergeDebaterLevel,
+    merge: mergeDebaterLevel,
   },
   {
     key: "practiceRounds",
@@ -928,8 +927,8 @@ export function mergeToolRecords(
     seen.add(id);
     if (!remoteById.has(id)) {
       merged.push(record);
-    } else if (collection.combine) {
-      merged.push(collection.combine(record, remoteById.get(id)));
+    } else if (collection.merge) {
+      merged.push(collection.merge(record, remoteById.get(id)));
     } else if (collection.prefer?.(record, remoteById.get(id)) === "local") {
       merged.push(record);
     } else if (collection.redact) {
@@ -942,6 +941,15 @@ export function mergeToolRecords(
     if (!seen.has(id)) merged.push(record);
   }
   return merged;
+}
+
+/** JSON with object keys sorted, so equal records compare equal whatever their key order. */
+function stableJson(value: unknown): string {
+  return JSON.stringify(value, (_key, v) =>
+    v && typeof v === "object" && !Array.isArray(v)
+      ? Object.fromEntries(Object.entries(v).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)))
+      : v,
+  );
 }
 
 /**
@@ -970,19 +978,19 @@ export function toolRecordsMissingRemotely(
   for (const record of local) {
     const id = toolRecordId(collection, record);
     if (id === null || seen.has(id)) continue;
+    seen.add(id);
     if (remoteIds.has(id)) {
-      // Both sides hold it: only a record the collection says this browser
-      // wins needs pushing, so the account catches up.
-      if (collection.combine) {
-        const combined = collection.combine(record, remoteById.get(id));
-        if (JSON.stringify(combined) === JSON.stringify(remoteById.get(id))) continue;
-        seen.add(id);
-        missing.push(combined);
+      const remoteRecord = remoteById.get(id);
+      if (collection.merge) {
+        // Push the combined record when it adds something the account lacks.
+        const combined = collection.merge(record, remoteRecord);
+        if (stableJson(combined) !== stableJson(remoteRecord)) missing.push(combined);
         continue;
       }
-      if (collection.prefer?.(record, remoteById.get(id)) !== "local") continue;
+      // Both sides hold it: only a record the collection says this browser
+      // wins needs pushing, so the account catches up.
+      if (collection.prefer?.(record, remoteRecord) !== "local") continue;
     }
-    seen.add(id);
     missing.push(record);
   }
   return missing;

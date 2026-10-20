@@ -32,6 +32,12 @@
     "https://*.debate-ai.com",
     "https://d.ebate.app"
   ],
+  "updater": {
+    "pubkey": "",
+    "endpoints": [
+      "https://github.com/debate/debate-ai.com/releases/download/native-wrapper-updates/latest.json"
+    ]
+  },
   "window": {
     "title": "Debate AI",
     "width": 1360,

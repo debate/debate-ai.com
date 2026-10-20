@@ -26,3 +26,10 @@ It has its **own CI**: `.github/workflows/native-wrapper-ci.yml` and
   `mini-player` window (always-on-top capable). Both capability files list it
   in `windows`; a new permission the mini window needs goes there too, and any
   `on_window_event` handler written for `main` does not cover it.
+- **Auto-update is profile-driven.** `scripts/configure.mjs` writes
+  `plugins.updater` + `bundle.createUpdaterArtifacts` only when the profile's
+  `updater.pubkey` is set; `src-tauri/src/updater.rs` registers the plugin only
+  when that block exists. Once it is set, every bundle build needs
+  `TAURI_SIGNING_PRIVATE_KEY`. Installs wait until no window is visible. The feed
+  is the fixed `native-wrapper-updates` release, moved by
+  `native-wrapper-updates.yml` on publish. See `docs/UPDATES.md`.

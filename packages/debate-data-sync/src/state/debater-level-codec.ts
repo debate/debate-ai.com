@@ -38,7 +38,7 @@ export function encodeDebaterLevel(records: readonly unknown[]): unknown {
 }
 
 /**
- * Conflict rule: XP only ever grows, so when two devices both earned some
+ * Superseded by {@link mergeDebaterLevel}, kept as the whole-record rule: XP only ever grows, so when two devices both earned some
  * while apart the larger total is kept rather than the account's copy
  * blindly replacing this browser's (which would silently drop XP earned
  * offline).
@@ -48,85 +48,97 @@ export function preferHigherDebaterXp(local: unknown, remote: unknown): "local" 
   return "remote";
 }
 
-/**
- * Mirrors `MAX_RECENT_XP_EVENTS` in `debate-contributor-progress`, which this
- * leaf package can't import.
- */
+/** Mirrors `MAX_RECENT_XP_EVENTS` in `debate-contributor-progress` (this package is a leaf). */
 const MAX_RECENT_XP_EVENTS = 30;
 
-const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
+type Counts = Record<string, number>;
 
-const asCounts = (v: unknown): Record<string, number> => {
-  const out: Record<string, number> = {};
-  if (!isRecord(v)) return out;
-  for (const [k, n] of Object.entries(v)) if (typeof n === "number" && Number.isFinite(n) && n >= 0) out[k] = n;
-  return out;
-};
-
-const asStrings = (v: unknown): string[] => (Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : []);
-
-function maxCounts(a: unknown, b: unknown): Record<string, number> {
-  const out = asCounts(a);
-  for (const [k, n] of Object.entries(asCounts(b))) out[k] = Math.max(out[k] ?? 0, n);
+function asCounts(value: unknown): Counts {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) return {};
+  const out: Counts = {};
+  for (const [kind, n] of Object.entries(value)) {
+    if (typeof n === "number" && Number.isFinite(n) && n >= 0) out[kind] = n;
+  }
   return out;
 }
 
-function unionStrings(a: unknown, b: unknown): string[] {
-  return [...new Set([...asStrings(a), ...asStrings(b)])];
+function maxCounts(a: Counts, b: Counts): Counts {
+  const out: Counts = { ...a };
+  for (const [kind, n] of Object.entries(b)) out[kind] = Math.max(out[kind] ?? 0, n);
+  return out;
 }
 
-function mergeDaily(local: unknown, remote: unknown): Record<string, unknown> {
-  const l = isRecord(local) ? local : {};
-  const r = isRecord(remote) ? remote : {};
-  const ld = typeof l.dayKey === "string" ? l.dayKey : "";
-  const rd = typeof r.dayKey === "string" ? r.dayKey : "";
-  // Day keys are ISO "YYYY-MM-DD", so string order is date order. Only the
-  // same day's tallies can be combined; an older day's are already spent.
-  if (ld !== rd) return ld > rd ? { ...l, dayKey: ld } : { ...r, dayKey: rd };
+function asStrings(value: unknown): string[] {
+  return Array.isArray(value) ? value.filter((v): v is string => typeof v === "string") : [];
+}
+
+function union(a: string[], b: string[]): string[] {
+  return [...new Set([...a, ...b])];
+}
+
+function asDaily(value: unknown): { dayKey: string; counts: Counts; completedChallengeIds: string[] } {
+  const d = (typeof value === "object" && value !== null ? value : {}) as Record<string, unknown>;
   return {
-    dayKey: ld,
-    counts: maxCounts(l.counts, r.counts),
-    completedChallengeIds: unionStrings(l.completedChallengeIds, r.completedChallengeIds),
+    dayKey: typeof d.dayKey === "string" ? d.dayKey : "",
+    counts: asCounts(d.counts),
+    completedChallengeIds: asStrings(d.completedChallengeIds),
   };
 }
 
-function mergeRecentXp(a: unknown, b: unknown): unknown[] {
-  const seen = new Set<string>();
-  const events: { atMs: number }[] = [];
-  for (const e of [...(Array.isArray(a) ? a : []), ...(Array.isArray(b) ? b : [])]) {
-    if (!isRecord(e) || typeof e.atMs !== "number" || !Number.isFinite(e.atMs)) continue;
-    const key = `${e.atMs}|${String(e.source)}`;
-    if (seen.has(key)) continue;
-    seen.add(key);
-    events.push(e as { atMs: number });
-  }
-  return events.sort((x, y) => y.atMs - x.atMs).slice(0, MAX_RECENT_XP_EVENTS);
+function asXpEvents(value: unknown): { atMs: number; source: string }[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter(
+    (e): e is { atMs: number; source: string } =>
+      typeof e === "object" && e !== null &&
+      typeof (e as { atMs?: unknown }).atMs === "number" &&
+      typeof (e as { source?: unknown }).source === "string",
+  );
 }
 
 /**
- * Field-wise merge of two copies of the progression, so work done on each
- * device survives instead of one whole record replacing the other. Every
- * field only grows (a lifetime count, a paid-out milestone), so taking the
- * per-activity maximum and the union of ids is commutative and idempotent.
+ * Conflict rule that supersedes {@link preferHigherDebaterXp}: combine the two
+ * copies field by field instead of keeping one whole record, so activity
+ * earned on each device survives. Counts, totals and milestones only ever
+ * grow, so the per-kind maximum / union is safe; today's tally is merged only
+ * when both copies are from the same UTC day, otherwise the later day wins;
+ * the XP log is the newest-first union, de-duplicated by time and source.
  *
- * Without a shared ancestor the two devices' counts can't be told apart from
- * the same activity seen twice, so counts take the maximum rather than a sum:
- * activity both devices earned *separately* is under-counted, never
- * double-counted. `totalXp` likewise keeps the larger value.
- *
- * Falls back to {@link preferHigherDebaterXp} when either side is malformed.
+ * Without a per-event ledger the same activity done on both devices can't be
+ * told from two separate ones, so counts take the larger side (never a sum)
+ * and the result can under-count but never double-count.
  */
 export function mergeDebaterLevel(local: unknown, remote: unknown): unknown {
-  if (!hasValidXp(local) || !hasValidXp(remote)) {
-    return preferHigherDebaterXp(local, remote) === "local" ? local : remote;
-  }
+  if (!hasValidXp(local)) return remote;
+  if (!hasValidXp(remote)) return local;
+  const dl = asDaily(local.daily);
+  const dr = asDaily(remote.daily);
+  const daily =
+    dl.dayKey === dr.dayKey
+      ? {
+          dayKey: dl.dayKey,
+          counts: maxCounts(dl.counts, dr.counts),
+          completedChallengeIds: union(dl.completedChallengeIds, dr.completedChallengeIds),
+        }
+      : dl.dayKey > dr.dayKey
+        ? dl
+        : dr;
+  const seen = new Set<string>();
+  const recentXp = [...asXpEvents(local.recentXp), ...asXpEvents(remote.recentXp)]
+    .filter((e) => {
+      const key = `${e.atMs}|${e.source}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .sort((a, b) => b.atMs - a.atMs)
+    .slice(0, MAX_RECENT_XP_EVENTS);
   return {
     ...remote,
     ...local,
     totalXp: Math.max(local.totalXp, remote.totalXp),
-    lifetimeCounts: maxCounts(local.lifetimeCounts, remote.lifetimeCounts),
-    daily: mergeDaily(local.daily, remote.daily),
-    completedMilestoneIds: unionStrings(local.completedMilestoneIds, remote.completedMilestoneIds),
-    recentXp: mergeRecentXp(local.recentXp, remote.recentXp),
+    lifetimeCounts: maxCounts(asCounts(local.lifetimeCounts), asCounts(remote.lifetimeCounts)),
+    daily,
+    completedMilestoneIds: union(asStrings(local.completedMilestoneIds), asStrings(remote.completedMilestoneIds)),
+    recentXp,
   };
 }
