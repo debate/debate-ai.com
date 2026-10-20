@@ -202,6 +202,7 @@ export {
   type SegmentationCaption,
   type SpeechSegmentation,
 } from "./lib/speech-segmentation";
+export { captionPauseSegmentation } from "./lib/caption-speech-split";
 export {
   DEFAULT_SPEECH_ANALYSIS_INSTRUCTIONS,
   buildSpeechAnalysisPrompt,

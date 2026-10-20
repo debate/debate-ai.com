@@ -33,6 +33,7 @@ import {
   SPEECH_SEGMENTATION_SYSTEM_PROMPT,
   buildSpeechAnalysisPrompt,
   buildSpeechSegmentationPrompt,
+  captionPauseSegmentation,
   groupIntoSentences,
   parseSpeechAnalysisResponse,
   parseSpeechSegmentationResponse,
@@ -178,16 +179,19 @@ async function analyzeVideo(
   const segmentationReply = await callModel(
     providerKey,
     SPEECH_SEGMENTATION_SYSTEM_PROMPT,
+    // The raw cues keep the pauses a sentence of auto-captions can run across.
     buildSpeechSegmentationPrompt({
-      captions,
+      captions: snippets,
       videoTitle: row.title,
       formatHint: row.style !== null ? STYLE_NAMES[row.style] : undefined,
       aff: row.affTeam ?? undefined,
       neg: row.negTeam ?? undefined,
+      pauseGuess: captionPauseSegmentation(snippets, row.style)?.speeches,
     }),
     SEGMENTATION_MAX_TOKENS,
   );
-  const segmentation = parseSpeechSegmentationResponse(segmentationReply);
+  const lastCaption = snippets.reduce((latest, s) => Math.max(latest, s.start + s.duration), 0);
+  const segmentation = parseSpeechSegmentationResponse(segmentationReply, { durationSeconds: lastCaption + 30 });
   if (!segmentation) throw new Error("The AI found no speeches in the captions.");
 
   const analysisReply = await callModel(

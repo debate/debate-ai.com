@@ -79,6 +79,21 @@ when each speech begins and ends — 1AC, 1AX (the cross-ex of the 1AC),
 1NC, 1NX, 2AC, 2AX, 2NC, 2NX, 1NR, 1AR, 2NR, 2AR for Policy, and the
 matching speeches for LD and PF.
 
+How it reads the captions: auto-captions have no speaker names, so the
+quiet stretches between them (prep time, the next speaker setting up)
+are the main clue. Those pauses are marked in what the AI reads, along
+with each speech's usual length and a first guess placed from the pauses
+alone. The AI then moves each start to where the words show the speech
+really begins — "time starts now", a roadmap, the switch to cross-ex
+questions — and skips anything it can't find rather than guessing.
+Times past the end of the video, overlapping speeches and the AI's own
+low-confidence guesses are thrown out.
+
+If the AI can't be reached (you're signed out, or the daily AI limit is
+used up), **Detect speeches** still places the speeches from the caption
+pauses and the format's speech lengths, and says so — check those starts
+before relying on them.
+
 - Each speech's tab is timed, the timeline fills in, and **Transcript**
   shows exactly the captions spoken during that speech — cut off at its
   end, so prep time and the judge's comments stay out.
