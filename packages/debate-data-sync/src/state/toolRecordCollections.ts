@@ -51,6 +51,7 @@ import {
 } from "./flow-editor-settings-codec";
 import { redactFileSource } from "./redact-file-source";
 import { decodeFlowKeymap, encodeFlowKeymap } from "./flow-keymap-codec";
+import { decodeDebaterLevel, encodeDebaterLevel, preferHigherDebaterXp } from "./debater-level-codec";
 
 /**
  * The groupings `/settings` → Account → **Tool data** renders as section
@@ -124,6 +125,13 @@ export interface ToolRecordCollection {
     decode: (stored: unknown) => unknown[];
     encode: (records: readonly unknown[]) => unknown;
   };
+  /**
+   * Which copy of a record both sides hold wins the merge. Absent for every
+   * collection, where the account's copy replaces this browser's; set for a
+   * record that only grows (debater XP), so a device that earned more while
+   * offline is neither overwritten nor left unpushed.
+   */
+  prefer?: (local: unknown, remote: unknown) => "local" | "remote";
 }
 
 /**
@@ -185,6 +193,19 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     codec: { decode: decodeFlowEditorSettings, encode: encodeFlowEditorSettings },
   },
   // — Practice —
+  {
+    key: "debaterLevel",
+    storageKey: "debaterLevel",
+    idField: "id",
+    // The XP/level progression (`@debate/community`'s `debaterLevel` store):
+    // one object, synced as a single `progress` record. The larger `totalXp`
+    // wins a conflict, so XP earned offline survives a sign-in.
+    label: "Debater Level & XP",
+    href: "/practice/level",
+    section: "Practice",
+    codec: { decode: decodeDebaterLevel, encode: encodeDebaterLevel },
+    prefer: preferHigherDebaterXp,
+  },
   {
     key: "practiceRounds",
     storageKey: "practiceRounds",
@@ -898,6 +919,8 @@ export function mergeToolRecords(
     seen.add(id);
     if (!remoteById.has(id)) {
       merged.push(record);
+    } else if (collection.prefer?.(record, remoteById.get(id)) === "local") {
+      merged.push(record);
     } else if (collection.redact) {
       merged.push(restoreRedactedFields(record, remoteById.get(id)));
     } else {
@@ -924,17 +947,23 @@ export function toolRecordsMissingRemotely(
   local: readonly unknown[],
   remote: readonly unknown[],
 ): unknown[] {
-  const remoteIds = new Set<string>();
+  const remoteById = new Map<string, unknown>();
   for (const record of remote) {
     const id = toolRecordId(collection, record);
-    if (id !== null) remoteIds.add(id);
+    if (id !== null) remoteById.set(id, record);
   }
+  const remoteIds = new Set(remoteById.keys());
 
   const missing: unknown[] = [];
   const seen = new Set<string>();
   for (const record of local) {
     const id = toolRecordId(collection, record);
-    if (id === null || remoteIds.has(id) || seen.has(id)) continue;
+    if (id === null || seen.has(id)) continue;
+    if (remoteIds.has(id)) {
+      // Both sides hold it: only a record the collection says this browser
+      // wins needs pushing, so the account catches up.
+      if (collection.prefer?.(record, remoteById.get(id)) !== "local") continue;
+    }
     seen.add(id);
     missing.push(record);
   }
