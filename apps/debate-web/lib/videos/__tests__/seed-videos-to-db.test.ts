@@ -38,7 +38,7 @@ const row = (id: string, extra: Partial<VideoRow> = {}): VideoRow => ({
 
 const fixtureRows: VideoRow[] = [row("a"), row("b"), row("c")];
 
-vi.mock("../video-json-source", () => ({
+vi.mock("@debate/webview/lib/videos/video-json-source", () => ({
   getVideoRowsFromJson: vi.fn(async () => fixtureRows),
 }));
 
@@ -73,7 +73,7 @@ describe("seedVideosIntoDb", () => {
 
     // Re-seed with one fewer row, so "c" is no longer among the upserts and
     // is old enough to be pruned by the trailing `DELETE`.
-    vi.mocked((await import("../video-json-source")).getVideoRowsFromJson).mockResolvedValue([
+    vi.mocked((await import("@debate/webview/lib/videos/video-json-source")).getVideoRowsFromJson).mockResolvedValue([
       row("a"),
       row("b"),
     ]);
@@ -88,7 +88,7 @@ describe("seedVideosIntoDb", () => {
     // The previous test's `.mockResolvedValue` outlives it — `vi.mock`'s
     // auto-mocked `vi.fn()` isn't a spy, so `restoreAllMocks()` in `afterEach`
     // doesn't reset it. Restate the full fixture explicitly.
-    vi.mocked((await import("../video-json-source")).getVideoRowsFromJson).mockResolvedValue(
+    vi.mocked((await import("@debate/webview/lib/videos/video-json-source")).getVideoRowsFromJson).mockResolvedValue(
       fixtureRows,
     );
 
@@ -134,7 +134,7 @@ describe("seedVideosIntoDb", () => {
     const db = await freshDb();
     await seedVideosIntoDb(db);
 
-    const source = vi.mocked((await import("../video-json-source")).getVideoRowsFromJson);
+    const source = vi.mocked((await import("@debate/webview/lib/videos/video-json-source")).getVideoRowsFromJson);
     source.mockResolvedValue([]);
     try {
       await expect(seedVideosIntoDb(db)).rejects.toThrow(/refusing to prune/);

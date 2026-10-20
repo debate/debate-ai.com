@@ -46,7 +46,7 @@ import {
   videoRowToIndexTuple,
   type VideoIndexResponse,
 } from "@debate/data-sync/src/videos/video-index";
-import { getVideoRowsFromJson } from "./video-json-source";
+import { getVideoRowsFromJson } from "@debate/webview/lib/videos/video-json-source";
 import {
   legacyVideoRouteHref,
   parseSeasonSegment,

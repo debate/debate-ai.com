@@ -10,7 +10,7 @@ import {
   qwksearchOrigin,
   sameString,
   withStatus,
-} from "@/lib/qwksearch/connect"
+} from "@debate/webview/lib/qwksearch/connect"
 import { saveConnection } from "@/lib/qwksearch/store"
 
 /**

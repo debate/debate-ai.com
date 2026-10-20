@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest"
 
-import { proxyTabroomBeta, tabroomBetaUpstreamUrl } from "../tabroom-beta-proxy"
+import { proxyTabroomBeta, tabroomBetaUpstreamUrl } from "../../../src/lib/tournaments/tabroom-beta-proxy"
 
 const ORIGIN = "https://d.ebate.app"
 

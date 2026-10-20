@@ -9,7 +9,7 @@ import {
   StripeSignatureError,
   subscriptionUpdateForEvent,
   updateFromSubscription,
-} from "../webhook";
+} from "@debate/webview/lib/stripe/webhook";
 
 const SECRET = "whsec_test_secret";
 const NOW = 1_790_000_000;

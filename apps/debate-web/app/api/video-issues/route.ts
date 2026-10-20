@@ -16,7 +16,7 @@ import {
   parseChannelName,
   parseYouTubeVideoId,
   type SubmissionKind,
-} from "@/lib/videos/video-submissions";
+} from "@debate/webview/lib/videos/video-submissions";
 
 /**
  * Viewer reports about a video — a dead embed, a bad transcript, and above
@@ -40,7 +40,7 @@ import {
  *
  * `submit-video` and `submit-channel` are viewer submissions from the plus
  * button beside the library's search bar (see
- * `lib/videos/video-submissions.ts`): a video to add, or a channel to
+ * `packages/debate-webview/src/lib/videos/video-submissions.ts`): a video to add, or a channel to
  * subscribe to. They also need an account, and also ping every moderator.
  */
 

@@ -18,7 +18,7 @@ import { PRESET_DIVISIONS, planPresetMarkets, type PresetRankings } from "@debat
 import type { getDBFromContext } from "@/lib/database/context";
 import { predictionMarkets } from "@/lib/database/schema";
 import { insertMarket } from "./queries";
-import { rankedTeams } from "./ratings";
+import { rankedTeams } from "@debate/webview/lib/predictions/ratings";
 
 type Db = Awaited<ReturnType<typeof getDBFromContext>>;
 
