@@ -17,6 +17,7 @@
 
 import {
   applyDebaterActivity,
+  attributeActivityToDevice,
   createDebaterLevelState,
   isDebaterActivityKind,
   parseDebaterLevelState,
@@ -33,6 +34,27 @@ export const DEBATER_ACTIVITY_EVENT = "debate-ai:debater-activity";
 
 /** Window event this store dispatches after every recorded activity: `detail: DebaterActivityResult`. */
 export const DEBATER_XP_AWARDED_EVENT = "debate-ai:debater-xp-awarded";
+
+/** localStorage key holding this browser's random device id (ledger attribution). */
+export const DEBATER_DEVICE_ID_KEY = "debaterDeviceId";
+
+/** This browser's stable device id, created on first use; a throwaway id when storage is unavailable. */
+export function getDebaterDeviceId(): string {
+  const fresh = () =>
+    typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+      ? crypto.randomUUID()
+      : Math.random().toString(36).slice(2) + Date.now().toString(36);
+  if (typeof localStorage === "undefined") return fresh();
+  try {
+    const existing = localStorage.getItem(DEBATER_DEVICE_ID_KEY);
+    if (existing) return existing;
+    const id = fresh();
+    localStorage.setItem(DEBATER_DEVICE_ID_KEY, id);
+    return id;
+  } catch {
+    return fresh();
+  }
+}
 
 /** Read the persisted state, or a fresh one. */
 export function loadDebaterLevelState(): DebaterLevelState {
@@ -61,7 +83,9 @@ export function recordDebaterActivity(
   count = 1,
   nowMs: number = Date.now(),
 ): DebaterActivityResult {
-  const result = applyDebaterActivity(loadDebaterLevelState(), kind, nowMs, count);
+  const previous = loadDebaterLevelState();
+  const applied = applyDebaterActivity(previous, kind, nowMs, count);
+  const result = { ...applied, state: attributeActivityToDevice(previous, applied, kind, count, getDebaterDeviceId()) };
   saveDebaterLevelState(result.state);
   if (typeof window !== "undefined" && typeof CustomEvent !== "undefined") {
     window.dispatchEvent(new CustomEvent(DEBATER_XP_AWARDED_EVENT, { detail: result }));

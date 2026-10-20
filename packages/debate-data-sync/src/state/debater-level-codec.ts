@@ -95,6 +95,54 @@ function asXpEvents(value: unknown): { atMs: number; source: string }[] {
   );
 }
 
+type LedgerEntry = { xp: number; counts: Counts };
+type Ledger = { base: LedgerEntry; devices: Record<string, LedgerEntry> };
+
+function asLedgerEntry(value: unknown): LedgerEntry | null {
+  if (typeof value !== "object" || value === null) return null;
+  const { xp, counts } = value as { xp?: unknown; counts?: unknown };
+  if (typeof xp !== "number" || !Number.isFinite(xp) || xp < 0) return null;
+  return { xp, counts: asCounts(counts) };
+}
+
+function asLedger(value: unknown): Ledger | null {
+  if (typeof value !== "object" || value === null) return null;
+  const { base: rawBase, devices: rawDevices } = value as { base?: unknown; devices?: unknown };
+  const base = asLedgerEntry(rawBase);
+  if (!base || typeof rawDevices !== "object" || rawDevices === null || Array.isArray(rawDevices)) return null;
+  const devices: Record<string, LedgerEntry> = {};
+  for (const [id, entry] of Object.entries(rawDevices)) {
+    const parsed = asLedgerEntry(entry);
+    if (parsed) devices[id] = parsed;
+  }
+  return { base, devices };
+}
+
+/** Each device's entry only grows, so per-device max (plus the shared base's max) loses nothing. */
+function mergeLedgers(a: Ledger, b: Ledger): Ledger {
+  const maxEntry = (x: LedgerEntry, y: LedgerEntry): LedgerEntry => ({
+    xp: Math.max(x.xp, y.xp),
+    counts: maxCounts(x.counts, y.counts),
+  });
+  const devices: Record<string, LedgerEntry> = { ...a.devices };
+  for (const [id, entry] of Object.entries(b.devices)) {
+    devices[id] = devices[id] ? maxEntry(devices[id], entry) : entry;
+  }
+  return { base: maxEntry(a.base, b.base), devices };
+}
+
+function ledgerTotals(ledger: Ledger): LedgerEntry {
+  let xp = ledger.base.xp;
+  let counts = ledger.base.counts;
+  for (const entry of Object.values(ledger.devices)) {
+    xp += entry.xp;
+    const summed: Counts = { ...counts };
+    for (const [kind, n] of Object.entries(entry.counts)) summed[kind] = (summed[kind] ?? 0) + n;
+    counts = summed;
+  }
+  return { xp, counts };
+}
+
 /**
  * Conflict rule that supersedes {@link preferHigherDebaterXp}: combine the two
  * copies field by field instead of keeping one whole record, so activity
@@ -103,9 +151,13 @@ function asXpEvents(value: unknown): { atMs: number; source: string }[] {
  * when both copies are from the same UTC day, otherwise the later day wins;
  * the XP log is the newest-first union, de-duplicated by time and source.
  *
- * Without a per-event ledger the same activity done on both devices can't be
- * told from two separate ones, so counts take the larger side (never a sum)
- * and the result can under-count but never double-count.
+ * When both copies carry a per-device ledger, the ledgers merge per device
+ * and the totals are rebuilt as base + the sum over devices, so activity done
+ * on two devices adds. Without a ledger on either side the same activity can't
+ * be told from two separate ones, so counts take the larger side (never a sum)
+ * and the result can under-count but never double-count. (The ledger sums
+ * challenge bonuses too, so a one-time milestone reached on two devices
+ * apart can pay twice.)
  */
 export function mergeDebaterLevel(local: unknown, remote: unknown): unknown {
   if (!hasValidXp(local)) return remote;
@@ -132,11 +184,19 @@ export function mergeDebaterLevel(local: unknown, remote: unknown): unknown {
     })
     .sort((a, b) => b.atMs - a.atMs)
     .slice(0, MAX_RECENT_XP_EVENTS);
+  const localLedger = asLedger(local.ledger);
+  const remoteLedger = asLedger(remote.ledger);
+  const ledger = localLedger && remoteLedger ? mergeLedgers(localLedger, remoteLedger) : (localLedger ?? remoteLedger);
+  const totals = localLedger && remoteLedger && ledger ? ledgerTotals(ledger) : null;
+  const maxTotal = Math.max(local.totalXp, remote.totalXp);
+  const maxLifetime = maxCounts(asCounts(local.lifetimeCounts), asCounts(remote.lifetimeCounts));
   return {
     ...remote,
     ...local,
-    totalXp: Math.max(local.totalXp, remote.totalXp),
-    lifetimeCounts: maxCounts(asCounts(local.lifetimeCounts), asCounts(remote.lifetimeCounts)),
+    ...(ledger ? { ledger } : {}),
+    // Never below the larger copy: a ledger that lags its totals must not lose XP.
+    totalXp: totals ? Math.max(totals.xp, maxTotal) : maxTotal,
+    lifetimeCounts: totals ? maxCounts(totals.counts, maxLifetime) : maxLifetime,
     daily,
     completedMilestoneIds: union(asStrings(local.completedMilestoneIds), asStrings(remote.completedMilestoneIds)),
     recentXp,

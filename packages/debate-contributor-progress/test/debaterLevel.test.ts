@@ -66,3 +66,22 @@ describe("state/debaterLevel", () => {
     expect(loadDebaterLevelState().lifetimeCounts).toEqual({ card_cut: 2 });
   });
 });
+
+describe("device ledger attribution", () => {
+  it("seeds base from pre-ledger state and credits only the recording device", async () => {
+    const { applyDebaterActivity, attributeActivityToDevice, createDebaterLevelState, parseDebaterLevelState } = await import("../src/lib/debater-levels");
+    const prev = { ...createDebaterLevelState("2026-10-20"), totalXp: 50, lifetimeCounts: { card_cut: 5 } };
+    const applied = applyDebaterActivity(prev, "card_cut", Date.UTC(2026, 9, 20), 2);
+    const next = attributeActivityToDevice(prev, applied, "card_cut", 2, "dev-1");
+    expect(next.ledger?.base).toEqual({ xp: 50, counts: { card_cut: 5 } });
+    expect(next.ledger?.devices["dev-1"]).toEqual({ xp: applied.xpGained, counts: { card_cut: 2 } });
+    const again = attributeActivityToDevice(next, applyDebaterActivity(next, "card_cut", Date.UTC(2026, 9, 20), 1), "card_cut", 1, "dev-1");
+    expect(again.ledger?.devices["dev-1"].counts.card_cut).toBe(3);
+    expect(parseDebaterLevelState(JSON.parse(JSON.stringify(again)))?.ledger).toEqual(again.ledger);
+  });
+
+  it("drops a malformed ledger when parsing", async () => {
+    const { createDebaterLevelState, parseDebaterLevelState } = await import("../src/lib/debater-levels");
+    expect(parseDebaterLevelState({ ...createDebaterLevelState(), ledger: { base: 1 } })?.ledger).toBeUndefined();
+  });
+});

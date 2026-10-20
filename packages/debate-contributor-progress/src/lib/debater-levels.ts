@@ -281,6 +281,58 @@ export interface DebaterLevelState {
   completedMilestoneIds: string[];
   /** Newest first. */
   recentXp: DebaterXpEvent[];
+  /**
+   * Per-device attribution of `totalXp` / `lifetimeCounts`, so two devices'
+   * activity adds instead of the larger side winning when copies merge.
+   * Absent on state saved before the ledger existed.
+   */
+  ledger?: DebaterXpLedger;
+}
+
+/** XP and per-kind counts earned. Each device's entry only ever grows. */
+export interface DebaterLedgerEntry {
+  xp: number;
+  counts: Partial<Record<DebaterActivityKind, number>>;
+}
+
+/**
+ * `base` is what the account had before the ledger started; `devices` maps a
+ * device id to what that device has earned since. Totals = base + all devices.
+ */
+export interface DebaterXpLedger {
+  base: DebaterLedgerEntry;
+  devices: Record<string, DebaterLedgerEntry>;
+}
+
+/**
+ * Attribute one recorded activity to `deviceId`. The first call on state
+ * without a ledger seeds `base` from `previous`, so existing XP stays
+ * unattributed rather than being claimed by this device. Never mutates.
+ */
+export function attributeActivityToDevice(
+  previous: DebaterLevelState,
+  result: Pick<DebaterActivityResult, "state" | "xpGained">,
+  kind: DebaterActivityKind,
+  count: number,
+  deviceId: string,
+): DebaterLevelState {
+  const n = Math.max(0, Math.floor(count));
+  if (n === 0 && result.xpGained === 0) return result.state;
+  const ledger: DebaterXpLedger = previous.ledger ?? {
+    base: { xp: previous.totalXp, counts: { ...previous.lifetimeCounts } },
+    devices: {},
+  };
+  const mine = ledger.devices[deviceId] ?? { xp: 0, counts: {} };
+  return {
+    ...result.state,
+    ledger: {
+      base: ledger.base,
+      devices: {
+        ...ledger.devices,
+        [deviceId]: { xp: mine.xp + result.xpGained, counts: { ...mine.counts, [kind]: (mine.counts[kind] ?? 0) + n } },
+      },
+    },
+  };
 }
 
 /** The UTC calendar day, "YYYY-MM-DD", an epoch-ms timestamp falls on. */
@@ -406,6 +458,27 @@ function isCountRecord(value: unknown): value is Partial<Record<DebaterActivityK
   );
 }
 
+function parseLedgerEntry(raw: unknown): DebaterLedgerEntry | null {
+  if (!raw || typeof raw !== "object") return null;
+  const { xp, counts } = raw as Record<string, unknown>;
+  if (typeof xp !== "number" || !Number.isFinite(xp) || xp < 0 || !isCountRecord(counts)) return null;
+  return { xp, counts };
+}
+
+/** A malformed ledger is dropped (state then behaves as pre-ledger state). */
+function parseLedger(raw: unknown): DebaterXpLedger | undefined {
+  if (!raw || typeof raw !== "object") return undefined;
+  const { base: rawBase, devices: rawDevices } = raw as Record<string, unknown>;
+  const base = parseLedgerEntry(rawBase);
+  if (!base || !rawDevices || typeof rawDevices !== "object" || Array.isArray(rawDevices)) return undefined;
+  const devices: Record<string, DebaterLedgerEntry> = {};
+  for (const [id, entry] of Object.entries(rawDevices)) {
+    const parsed = parseLedgerEntry(entry);
+    if (parsed) devices[id] = parsed;
+  }
+  return { base, devices };
+}
+
 /** Parse persisted JSON back into a state, or `null` if it's malformed. */
 export function parseDebaterLevelState(raw: unknown): DebaterLevelState | null {
   if (!raw || typeof raw !== "object") return null;
@@ -433,6 +506,7 @@ export function parseDebaterLevelState(raw: unknown): DebaterLevelState | null {
       completedChallengeIds: daily.completedChallengeIds.filter((id): id is string => typeof id === "string"),
     },
     completedMilestoneIds: value.completedMilestoneIds.filter((id): id is string => typeof id === "string"),
+    ledger: parseLedger(value.ledger),
     recentXp: value.recentXp
       .filter(
         (event): event is DebaterXpEvent =>

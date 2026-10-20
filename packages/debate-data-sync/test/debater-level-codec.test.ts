@@ -131,3 +131,48 @@ describe("mergeDebaterLevel", () => {
     expect(toolRecordsMissingRemotely(collection, l, r)).toEqual([merged]);
   });
 });
+
+describe("mergeDebaterLevel with a per-device ledger", () => {
+  const withLedger = (totalXp: number, kindCount: number, devices: Record<string, { xp: number; kind: number }>) => ({
+    ...state(totalXp),
+    lifetimeCounts: { card_cut: kindCount },
+    ledger: {
+      base: { xp: 10, counts: { card_cut: 1 } },
+      devices: Object.fromEntries(Object.entries(devices).map(([id, d]) => [id, { xp: d.xp, counts: { card_cut: d.kind } }])),
+    },
+  });
+
+  it("adds activity earned on two devices instead of taking the larger", () => {
+    const a = withLedger(30, 3, { a: { xp: 20, kind: 2 } });
+    const b = withLedger(25, 2, { b: { xp: 15, kind: 1 } });
+    const merged = mergeDebaterLevel(a, b) as ReturnType<typeof withLedger>;
+    expect(merged.totalXp).toBe(45);
+    expect(merged.lifetimeCounts).toEqual({ card_cut: 4 });
+  });
+
+  it("does not double-count a device seen on both sides, and is idempotent/commutative", () => {
+    const a = withLedger(30, 3, { a: { xp: 20, kind: 2 } });
+    const aLater = withLedger(40, 4, { a: { xp: 30, kind: 3 } });
+    const merged = mergeDebaterLevel(a, aLater) as ReturnType<typeof withLedger>;
+    expect(merged.totalXp).toBe(40);
+    expect(merged.ledger.devices.a).toEqual({ xp: 30, counts: { card_cut: 3 } });
+    expect(mergeDebaterLevel(aLater, a)).toEqual(merged);
+    expect(mergeDebaterLevel(merged, merged)).toEqual(merged);
+  });
+
+  it("never drops below the larger copy when a ledger lags its totals", () => {
+    const lagging = withLedger(100, 9, { a: { xp: 1, kind: 1 } });
+    const other = withLedger(20, 2, { b: { xp: 2, kind: 1 } });
+    expect((mergeDebaterLevel(lagging, other) as { totalXp: number }).totalXp).toBe(100);
+  });
+
+  it("keeps the max rule when only one side has a ledger", () => {
+    const merged = mergeDebaterLevel(withLedger(30, 3, { a: { xp: 20, kind: 2 } }), state(50)) as { totalXp: number };
+    expect(merged.totalXp).toBe(50);
+  });
+
+  it("ignores a malformed ledger", () => {
+    const bad = { ...state(30), ledger: { base: "x", devices: [] } };
+    expect((mergeDebaterLevel(bad, state(20)) as { totalXp: number }).totalXp).toBe(30);
+  });
+});
