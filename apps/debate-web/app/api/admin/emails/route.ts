@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { Resend } from "resend";
-import { EMAIL_TEMPLATES, isEmailTemplateId, renderEmailPreview } from "@debate/emails";
+import { EMAIL_TEMPLATES, isEmailTemplateId } from "@debate/emails";
+import { renderEmailPreview } from "@/lib/emails/render";
 import { getAdminAccess } from "@/lib/auth/admin";
 import { getEnv } from "@/lib/env";
 import { APP_EMAIL, APP_NAME } from "@debate/webview/lib/config/site";
@@ -29,7 +30,15 @@ export async function GET(req: NextRequest) {
   if (!isEmailTemplateId(id)) {
     return NextResponse.json({ error: `Unknown email template "${id}".` }, { status: 404 });
   }
-  return NextResponse.json(await renderEmailPreview(id, req.nextUrl.origin));
+  try {
+    return NextResponse.json(await renderEmailPreview(id, req.nextUrl.origin));
+  } catch (error) {
+    console.error(`Failed to render the "${id}" email:`, error);
+    return NextResponse.json(
+      { error: `Failed to render the "${id}" email: ${(error as Error)?.message ?? String(error)}` },
+      { status: 500 },
+    );
+  }
 }
 
 export async function POST(req: NextRequest) {
@@ -51,14 +60,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "RESEND_API_KEY is not set, so no email can be sent." }, { status: 503 });
   }
 
-  const rendered = await renderEmailPreview(body.template, req.nextUrl.origin);
-  const { error } = await new Resend(resendKey).emails.send({
-    from: `${APP_NAME} <${APP_EMAIL}>`,
-    to: email,
-    subject: `[Test] ${rendered.subject}`,
-    html: rendered.html,
-    text: rendered.text,
-  });
+  let error: { message?: string } | null;
+  try {
+    const rendered = await renderEmailPreview(body.template, req.nextUrl.origin);
+    ({ error } = await new Resend(resendKey).emails.send({
+      from: `${APP_NAME} <${APP_EMAIL}>`,
+      to: email,
+      subject: `[Test] ${rendered.subject}`,
+      html: rendered.html,
+      text: rendered.text,
+    }));
+  } catch (caught) {
+    error = { message: (caught as Error)?.message ?? String(caught) };
+  }
   if (error) {
     console.error("Failed to send test email:", error);
     return NextResponse.json({ error: error.message || "Resend refused the email." }, { status: 502 });
