@@ -236,7 +236,11 @@ leaving two empty dashes (`VideoListRow.tsx`).
 Each team shows as a [team label](/docs/features/team-collaboration/team-rankings#team-labels):
 its school's logo (or name), then its debaters, in a blue box for the Aff
 and a red one for the Neg. Video cards and the watch page header use the same
-label inside their blue and red team badges.
+label inside their blue and red team badges, as do the mini player's title
+bar and the top-pick tooltip. A code like "Harker LL" is split into the
+school ("Harker", shown as its logo) and the two debaters' initials ("LL"),
+which become their last names whenever the current season's rankings know
+the team.
 
 In the Aff and Neg columns, a team from the **current season** that the
 [team rankings](/docs/features/team-collaboration/team-rankings) know shows its

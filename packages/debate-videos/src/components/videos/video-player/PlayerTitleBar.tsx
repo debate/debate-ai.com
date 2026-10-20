@@ -5,6 +5,7 @@
 import type { VideoMeta } from "../../../state/videoPlayerStore"
 import { useVideoPlayerStore } from "../../../state/videoPlayerStore"
 import { STYLE_COLORS, DEBATE_STYLE_LABELS } from "../video-card/videoCardUtils"
+import { TeamCodeLabel } from "../../team-label/TeamLabel"
 
 interface PlayerTitleBarProps {
   activeVideoMeta: VideoMeta | null
@@ -38,7 +39,7 @@ export function PlayerTitleBar({ activeVideoMeta, activeVideoTitle }: PlayerTitl
           onClick={() => searchHandler?.(activeVideoMeta.affTeam || '')}
           className="text-[10px] font-semibold text-blue-600 dark:text-blue-400 shrink-0 hover:underline cursor-pointer"
         >
-          {activeVideoMeta.affTeam}
+          <TeamCodeLabel label={activeVideoMeta.affTeam} side="aff" bare className="[&_img]:h-3" />
         </button>
       ) : null}
       {activeVideoMeta?.negTeam ? (
@@ -46,7 +47,7 @@ export function PlayerTitleBar({ activeVideoMeta, activeVideoTitle }: PlayerTitl
           onClick={() => searchHandler?.(activeVideoMeta.negTeam || '')}
           className="text-[10px] font-semibold text-red-600 dark:text-red-400 shrink-0 hover:underline cursor-pointer"
         >
-          {activeVideoMeta.negTeam}
+          <TeamCodeLabel label={activeVideoMeta.negTeam} side="neg" bare className="[&_img]:h-3" />
         </button>
       ) : null}
       {!activeVideoMeta?.style && !activeVideoMeta?.tournament && (

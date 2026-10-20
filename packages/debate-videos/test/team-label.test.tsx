@@ -50,3 +50,20 @@ describe("TeamLabel", () => {
     expect(renderToStaticMarkup(createElement(TeamLabel, {}))).toBe("");
   });
 });
+
+describe("VideoTeamRankingContext", () => {
+  it("gives a card's team badge the grid's rankings row, so it prints last names", async () => {
+    const { VideoTeamRankingContext, useContextTeamRanking } = await import("../src/hooks/useVideoTeamRankings");
+    const video = ["vid"] as never;
+    function Badge() {
+      const ranking = useContextTeamRanking(video, "Harker LL");
+      return createElement(TeamCodeLabel, { label: "Harker LL", ranking, side: "aff", bare: true });
+    }
+    const lookup = (_v: unknown, team: string | null | undefined) =>
+      team === "Harker LL" ? ({ school: "Harker", name: "Le & Luo" } as never) : null;
+    const inGrid = renderToStaticMarkup(createElement(VideoTeamRankingContext.Provider, { value: lookup }, createElement(Badge)));
+    expect(inGrid).toContain("Le &amp; Luo");
+    // Outside a grid there is no lookup, so the code's initials show.
+    expect(renderToStaticMarkup(createElement(Badge))).toContain(">LL</span>");
+  });
+});
