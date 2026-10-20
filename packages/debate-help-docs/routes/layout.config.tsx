@@ -4,6 +4,7 @@
  */
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
 import { BookOpen, Compass, ExternalLink, FileText } from 'lucide-react';
+import { DebateAiLogo } from '@debate/icons/brand';
 import { docsConfig } from '../lib/fumadocs/customize-docs';
 import { withBasePath } from '../lib/fumadocs/base-path';
 
@@ -11,10 +12,9 @@ export const baseOptions: BaseLayoutProps = {
   nav: {
     title: (
       <span className="inline-flex items-center gap-2">
-        {/* The app serves the wordmark (packages/debate-icons/brand/logo.png) at /logo.png,
-            and /docs is mounted in that app. */}
+        {/* The wordmark from @debate/icons/brand, bundled like any other asset. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={docsConfig.logo} alt="Debate AI" width={400} height={89} className="h-6 w-auto" />
+        <img src={DebateAiLogo} alt="Debate AI" width={400} height={89} className="h-6 w-auto" />
         <span>Docs</span>
       </span>
     ),

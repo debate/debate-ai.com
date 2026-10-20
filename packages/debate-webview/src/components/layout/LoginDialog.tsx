@@ -20,7 +20,8 @@ import {
 } from "../../lib/ui/primitives/dialog"
 import { Button } from "../../lib/ui/primitives/button"
 import { useSession } from "../../lib/hooks/useSession"
-import { APP_LOGO, APP_LOGO_HEIGHT, APP_LOGO_WIDTH, APP_NAME } from "../../lib/config/site"
+import { DebateAiLogo } from "@debate/icons/brand"
+import { APP_LOGO_HEIGHT, APP_LOGO_WIDTH, APP_NAME } from "../../lib/config/site"
 
 // The dock and the guest sign-in prompt mount this dialog on every page, but
 // the form (auth providers, brand icons) is only needed once it opens.
@@ -71,7 +72,7 @@ export function LoginDialog({
         <DialogHeader>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={APP_LOGO}
+            src={DebateAiLogo}
             alt={APP_NAME}
             width={APP_LOGO_WIDTH}
             height={APP_LOGO_HEIGHT}

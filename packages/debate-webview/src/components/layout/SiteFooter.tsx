@@ -39,7 +39,8 @@ import {
   type FooterLink,
 } from "@debate/videos";
 
-import { APP_LOGO, APP_NAME } from "../../lib/config/site";
+import { DebateAiLogo } from "@debate/icons/brand";
+import { APP_NAME } from "../../lib/config/site";
 
 interface FooterSectionLink {
   /** In-app path, or an absolute URL for an outside site. */
@@ -134,9 +135,9 @@ export function SiteFooter() {
       <div className="mx-auto max-w-6xl px-4 py-12">
         <div className="mb-10">
           {/* The mark, not the wordmark alone: it is the one place the footer
-              repeats the app's own identity, and `APP_LOGO` is what the hero
+              repeats the app's own identity, and `DebateAiLogo` is what the hero
               above it opens with. */}
-          <img src={APP_LOGO} alt={APP_NAME} className="mb-4 h-8 w-auto" />
+          <img src={DebateAiLogo} alt={APP_NAME} className="mb-4 h-8 w-auto" />
           <p className="max-w-xs text-sm leading-relaxed">
             Cut, flow, drill, debate — the whole round, from first card to final
             ballot.

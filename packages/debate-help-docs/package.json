@@ -50,6 +50,7 @@
     "typecheck": "fumadocs-mdx && tsc --noEmit"
   },
   "dependencies": {
+    "@debate/icons": "workspace:*",
     "@base-ui/react": "^1.9.0",
     "@fuma-translate/react": "^1.0.2",
     "@radix-ui/react-collapsible": "^1.2.0",
