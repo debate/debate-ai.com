@@ -26,8 +26,9 @@ import {
 /** Display order: Policy, College (NDT), LD, PF. */
 const EXPLORER_STYLES: DebateStyle[] = [1, 4, 3, 2];
 
-/** Each explorer style's value for the CARDS search's `event` filter. */
-const STYLE_SEARCH_EVENT: Record<DebateStyle, string> = {
+/** Each explorer style's value for the CARDS search's `event` filter; styles
+ *  without topics (WSD, ACC, Misc) have none. */
+const STYLE_SEARCH_EVENT: Partial<Record<DebateStyle, string>> = {
   1: "CX",
   2: "PF",
   3: "LD",

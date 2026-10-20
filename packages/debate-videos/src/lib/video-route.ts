@@ -33,6 +33,9 @@ const STYLE_SLUGS: Record<DebateStyle, string> = {
   2: "pf",
   3: "ld",
   4: "college",
+  5: "wsd",
+  6: "acc",
+  7: "misc",
 };
 
 /** Season segment for a video whose publish date cannot be parsed. */
