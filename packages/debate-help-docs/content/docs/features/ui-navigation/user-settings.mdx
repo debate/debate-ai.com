@@ -358,6 +358,19 @@ on another device applies the next time the editor loads. Display preferences
 (`ebb-display-settings`) are not synced: they include device-local values such
 as the flows folder path.
 
+## Debater level and XP
+
+Your XP, level, daily challenge progress and recent XP log sync to your account
+as the `debaterLevel` collection (listed in **Tool data** under Practice as
+"Debater Level & XP"), stored under `debaterLevel` as a single `progress`
+record and adapted by `debater-level-codec.ts` in `debate-data-sync`.
+
+XP only grows, so when two devices both earned some while apart, the copy with
+the larger total wins and the account catches up to it. Known gap: the whole
+progression is one record, so the other device's smaller copy (including its
+lifetime counts and today's challenge progress) is replaced rather than
+combined, and XP earned on the losing device in that window is not added in.
+
 ## Save status on each tool
 
 A tool page whose data syncs shows a small badge in its header: **Saved to your
