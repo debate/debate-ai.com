@@ -26,6 +26,16 @@ The title half is for readers and for search engines. A video that gets
 retitled gets a new address — old links stop working, which is the
 trade-off for clean URLs without appended ids.
 
+## No spoilers
+
+The round's result stays hidden until you ask for it. The header shows
+both teams in their side colors, aff blue and neg red, with neither marked
+as the winner, and the decision is a **Reveal decision** button under the
+title. Clicking it shows the decision and rings the winning team in gold.
+The reveal is shared with that video's card in the grid, so revealing on
+one shows the winner on the other; it lasts until you reload the page.
+(`hooks/useDecisionReveal.ts`)
+
 ## Transcript
 
 The transcript column is the same synced, clickable transcript the popout

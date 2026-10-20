@@ -12,6 +12,7 @@ import { TooltipProvider } from "../../../ui/primitives/tooltip"
 import { useVideoPlayerStore } from "../../../state/videoPlayerStore"
 import { getYearTopic } from "./videoCardUtils"
 import { VideoCardThumbnail } from "./VideoCardThumbnail"
+import { useDecisionReveal } from "../../../hooks/useDecisionReveal"
 import { VideoCardActions } from "./VideoCardActions"
 import type { TopicType, VideoType } from "../../../types/videos"
 
@@ -95,6 +96,9 @@ function VideoCardComponent({
   )
   const setActiveVideo = useVideoPlayerStore((state) => state.setActiveVideo)
   const addToQueue = useVideoPlayerStore((state) => state.addToQueue)
+  // The winner's gold border and the decision wait for "Reveal decision",
+  // here or on the watch page, which shares this flag.
+  const [decisionRevealed, revealDecision] = useDecisionReveal(videoId)
 
   const year = new Date(date).getFullYear()
   const styleNumber = typeof style === "number" ? style : undefined
@@ -151,7 +155,7 @@ function VideoCardComponent({
             roundLevel={roundLevel}
             affTeam={affTeam}
             negTeam={negTeam}
-            affWin={affWin}
+            affWin={decisionRevealed ? affWin : null}
             arg1AC={arg1AC}
             arg2NR={arg2NR}
             youtubeUrl={youtubeUrl}
@@ -176,6 +180,8 @@ function VideoCardComponent({
             addToQueue={addToQueue}
             videoMeta={videoMeta}
             judgeDecision={judgeDecision}
+            decisionRevealed={decisionRevealed}
+            onRevealDecision={revealDecision}
             isHidden={isHidden}
             onHideVideo={onHideVideo}
             onUnhideVideo={onUnhideVideo}

@@ -75,6 +75,10 @@ interface VideoCardActionsProps {
   videoMeta: VideoMeta
   /** Judge decision string (e.g. `"2-1"`, `"3-0"`). */
   judgeDecision?: string | null
+  /** Whether the viewer has revealed the decision; until then a button stands in for it. */
+  decisionRevealed: boolean
+  /** Reveals the decision (and the winner's gold border). */
+  onRevealDecision: () => void
   /** Whether the video is currently hidden from the grid. */
   isHidden: boolean
   /** Callback invoked with `videoId` to hide the video after confirmation. */
@@ -94,7 +98,8 @@ interface VideoCardActionsProps {
  *
  * Actions (left to right): external YouTube link, favourite toggle, add-to-queue,
  * topic tooltip button (when a year topic is available), hide/unhide toggle,
- * date+channel badge, view count, and judge decision (when present).
+ * date+channel badge, view count, and judge decision (when present, behind
+ * a "Reveal decision" button until revealed).
  *
  * Manages `showHideConfirm` state locally and renders the {@link HideConfirmDialog}
  * inline so the parent card doesn't need to track dialog open state.
@@ -117,6 +122,8 @@ export function VideoCardActions({
   addToQueue,
   videoMeta,
   judgeDecision,
+  decisionRevealed,
+  onRevealDecision,
   isHidden,
   onHideVideo,
   onUnhideVideo,
@@ -308,7 +315,21 @@ export function VideoCardActions({
           </span>
 
           {/* Judge decision */}
-          {judgeDecision && (
+          {judgeDecision && !decisionRevealed && (
+            <button
+              type="button"
+              onClick={(event) => {
+                event.preventDefault()
+                event.stopPropagation()
+                onRevealDecision()
+              }}
+              className="flex items-center gap-1 shrink-0 text-muted-foreground hover:text-foreground"
+            >
+              <Scale className="h-3.5 w-3.5" />
+              <span>Reveal decision</span>
+            </button>
+          )}
+          {judgeDecision && decisionRevealed && (
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="flex items-center gap-1 shrink-0 cursor-help">
