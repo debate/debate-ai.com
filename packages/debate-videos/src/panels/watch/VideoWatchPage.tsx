@@ -118,7 +118,7 @@ import { stripArgumentLines } from "../../lib/video-description"
 import type { RoundContext } from "../../lib/speech-outcomes"
 import { readSpeechStarts, writeSpeechStart } from "../../state/speechStartMarks"
 import { readSpeechSegmentation, writeSpeechSegmentation } from "../../state/speechAiCache"
-import { requestSpeechSegmentation } from "../../lib/speech-ai-client"
+import { detectRoundSpeeches } from "../../lib/speech-ai-client"
 import {
   FORMAT_LABELS,
   applySpeechSegmentation,
@@ -424,24 +424,32 @@ export function VideoWatchPage({
     setDetecting(true)
     setDetectError(null)
     try {
-      const result = await requestSpeechSegmentation({
-        captions: sentences,
-        videoTitle: title,
-        formatHint:
-          styleNumber !== undefined ? DEBATE_STYLE_LABELS[styleNumber as keyof typeof DEBATE_STYLE_LABELS] : undefined,
-        aff: affTeam ?? undefined,
-        neg: negTeam ?? undefined,
-      })
+      // The raw cues, not the sentences: a sentence of unpunctuated auto-captions
+      // can run across the pause between two speeches and hide it.
+      const { segmentation: result, source, aiError } = await detectRoundSpeeches(
+        {
+          captions: cues ?? sentences,
+          videoTitle: title,
+          formatHint:
+            styleNumber !== undefined ? DEBATE_STYLE_LABELS[styleNumber as keyof typeof DEBATE_STYLE_LABELS] : undefined,
+          aff: affTeam ?? undefined,
+          neg: negTeam ?? undefined,
+        },
+        styleNumber,
+      )
       if (detectVideoRef.current !== forVideo) return
       writeSpeechSegmentation(forVideo, result)
       setSegmentation(result)
+      if (source === "pauses") {
+        setDetectError(`${aiError ?? "The AI was unavailable."} Placed speeches from the caption pauses instead — check them.`)
+      }
     } catch (error) {
       if (detectVideoRef.current !== forVideo) return
       setDetectError(error instanceof Error ? error.message : "Speech detection failed.")
     } finally {
       if (detectVideoRef.current === forVideo) setDetecting(false)
     }
-  }, [sentences, videoId, title, styleNumber, affTeam, negTeam])
+  }, [cues, sentences, videoId, title, styleNumber, affTeam, negTeam])
   const handleClearDetected = useCallback(() => {
     writeSpeechSegmentation(videoId, null)
     setSegmentation(null)
