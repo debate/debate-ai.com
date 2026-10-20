@@ -14,6 +14,7 @@
 //    live site, the beta site, or the offline build bundled in dist/
 // 8. Camera and microphone access for the app's own pages (`media`)
 // 9. A mini player window that can stay on top of other apps (`mini_player`)
+// 10. Desktop auto-update from the profile's signed update feed (`updater`)
 
 mod app_source;
 #[cfg(desktop)]
@@ -23,6 +24,8 @@ mod generated_scheme;
 mod media;
 mod mini_player;
 mod system_info;
+#[cfg(desktop)]
+mod updater;
 
 use tauri::{Manager, Url};
 
@@ -101,6 +104,9 @@ pub fn run() {
 
                 // Setup system tray icon and background persistence
                 setup_tray_and_background(app)?;
+
+                // Check the update feed now, and daily while in the tray
+                updater::init(app)?;
             }
 
             Ok(())
@@ -207,7 +213,7 @@ fn setup_tray_and_background(app: &mut tauri::App) -> Result<(), Box<dyn std::er
     // The window is created hidden (tauri.conf.json "visible": false) and its
     // page loads either way; a launch at login leaves it in the tray, any
     // other launch shows it now.
-    if background::launched_in_background() {
+    if background::launched_in_background(app.handle()) {
         background::hide_main(app.handle());
     } else {
         background::show_main(app.handle());

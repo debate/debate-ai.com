@@ -53,16 +53,17 @@ for you.
   gracefully without signing secrets rather than failing the run — `docs/MOBILE.md`'s CI section
   has the table of what each tier actually produces.
 
+- **`.github/workflows/native-wrapper-updates.yml`** — when a `native-wrapper-v*` release is
+  published, copies its `latest.json` to the `native-wrapper-updates` release that installed
+  apps check for updates (`docs/UPDATES.md`).
+
 To cut a release: bump `version` in `profiles/<name>.json`, run `npm run configure`, commit, then
-`git tag native-wrapper-v1.0.0 && git push origin native-wrapper-v1.0.0`.
+`git tag native-wrapper-v1.0.0 && git push origin native-wrapper-v1.0.0`. The release workflow
+fails if the tag and the profile's version differ. Publishing the draft it creates is what ships
+the update to installed apps.
 
-## Auto-update (not yet enabled)
+## Auto-update
 
-`tauri-plugin-updater` is included in `Cargo.toml` and registered in `lib.rs` (desktop only), but
-`tauri.conf.json`'s `plugins.updater.active` is `false` — there's no signing keypair or update
-endpoint configured yet. To turn it on: `npx @tauri-apps/cli@2 signer generate`, store the
-resulting private key as a `TAURI_SIGNING_PRIVATE_KEY` secret (and its password, if set, as
-`TAURI_SIGNING_PRIVATE_KEY_PASSWORD`), set `plugins.updater.active: true` and an `endpoints` entry
-pointing at this GitHub repo's releases (`tauri-action`'s `includeUpdaterJson` input, currently
-`false` in the release workflow, generates the `latest.json` manifest the updater polls once you
-flip both on).
+Desktop builds update themselves from a signed feed on this repo's GitHub Releases, once the
+profile has an updater public key. How it behaves, how a release reaches installed apps
+(`native-wrapper-updates.yml`), and the one-time key setup are in `docs/UPDATES.md`.
