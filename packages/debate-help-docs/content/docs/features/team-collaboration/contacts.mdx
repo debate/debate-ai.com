@@ -91,7 +91,9 @@ CardMirror engine, which that page is what mounts. On Share:
    `POST /api/card-shares` for each picked contact.
 3. Each recipient gets a `card_shared` notification linking to
    `/contacts?tab=shared`, and the card appears there marked **Available**
-   (and **New** until first opened).
+   (and **New** until first opened). They also get an "invited you to
+   collaborate" email with your note and the same link (see
+   [Emails](/docs/features/team-collaboration/emails)).
 
 Shares only ever reach **accepted contacts** with no block in either
 direction; anyone else in the picked list is reported back as skipped.

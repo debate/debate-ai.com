@@ -63,6 +63,16 @@ CardMirror's schema, `.docx` import/export and native `.cmir` format, plus
 `importDocx(file)`, `exportDocxBlob(doc)`, `outlineOf(doc)` and `cardsOf(doc)`, all come
 from `@debate/editor/engine`.
 
+## debate-emails
+
+Package name `@debate/emails`. The site's transactional emails as React Email
+(`@react-email/components`) templates: welcome, file collaboration invite (CardMirror
+card shares), debate round invite and the coach feature tour. `renderEmail(id, props)`
+returns `{ subject, html, text }` and runs on Cloudflare Workers (`@react-email/render`'s
+`workerd` build). Each template carries sample data that the admin Emails section previews.
+Depends on no other `debate-*` package; used by `apps/debate-web` (`/api/rounds/invite`,
+`/api/card-shares`, `/api/admin/emails`).
+
 ## debate-file-market
 
 Selling research files for wallet balance, mounted at `/research/market` and on the Files sidebar's
