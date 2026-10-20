@@ -10,7 +10,7 @@ import {
   listVolunteers,
   loadBlockedIds,
 } from "@/lib/practice-partners/queries";
-import { matchTokenSecret, openMatchToken, sealMatchToken } from "@/lib/practice-partners/match-token";
+import { matchTokenSecret, openMatchToken, sealMatchToken } from "@debate/webview/lib/practice-partners/match-token";
 import { pickPracticeMatch } from "@debate/webview/lib/practice-partners/match";
 import { isPracticeFormat } from "@debate/webview/lib/practice-partners/validation";
 import {
@@ -30,7 +30,7 @@ import {
  *
  * Answers `{ match }`: what the partner is comfortable with and how well it
  * fits, but no name, avatar, id or free-text note — only an opaque token
- * (`lib/practice-partners/match-token.ts`) that `POST ./challenges` accepts as
+ * (`packages/debate-webview/src/lib/practice-partners/match-token.ts`) that `POST ./challenges` accepts as
  * `matchToken`. `{ match: null }` when nobody suitable is open right now.
  */
 

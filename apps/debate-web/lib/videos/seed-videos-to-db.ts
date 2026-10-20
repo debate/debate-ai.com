@@ -12,7 +12,7 @@
 
 import { sql } from "drizzle-orm";
 import { buildVideoSeedStatements } from "@debate/data-sync/src/videos/video-seed-sql";
-import { getVideoRowsFromJson } from "./video-json-source";
+import { getVideoRowsFromJson } from "@debate/webview/lib/videos/video-json-source";
 
 /** Outcome of one seed run. */
 export interface VideoSeedResult {

@@ -8,7 +8,7 @@ import {
   isAudioContentType,
   parseTtsRequest,
   qwksearchVoiceBody,
-} from "../voice"
+} from "../../../src/lib/tts/voice"
 
 describe("parseTtsRequest", () => {
   it("defaults to Kokoro on the auto route and collapses whitespace", () => {

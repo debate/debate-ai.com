@@ -7,6 +7,10 @@ tool in the app — with no Next.js, no router and no session of its own, so it 
 anywhere React runs. It reaches the server only through `debate-api-client`, and ships
 one scoped stylesheet rather than depending on the host's design system.
 `apps/debate-web-ext`'s Options page is its first host.
+It also holds the app's pure server helpers (Stripe webhook verification, the leaderboard
+resolver, Tabroom proxies, the `/api/tts` backends, QwkSearch connect, `.docx` → `.cmir`
+import and the like) that the `/api` routes call; anything touching D1, auth or env stays in
+`apps/debate-web/lib`.
 
 ## debate-api-client
 

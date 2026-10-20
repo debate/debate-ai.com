@@ -205,7 +205,7 @@ base64-encoded into the row's `content` column, with `format` set to
 The conversion is CardMirror's own OOXML importer (`docxToCmir` in
 `packages/debate-editor/src/native/convert.ts` — `fromDocxFull` piped into
 `serializeNative`, the same pair the desktop bulk converter runs), wrapped
-for the route by `apps/debate-ai.com/lib/topic-starters/import.ts`. What that
+for the route by `packages/debate-webview/src/lib/topic-starters/import.ts`. What that
 buys over the card HTML the importer used to store is everything HTML has no
 element for: the Verbatim outline (pocket / hat / block / tag / analytic) as
 typed nodes rather than `<h1>`…`<h4>`, comment threads, inline images, and

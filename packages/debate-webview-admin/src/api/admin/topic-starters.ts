@@ -24,7 +24,7 @@ import {
   type DocxImportFailure,
 } from "@debate/card-parser";
 import { TOPIC_STARTER_FORMATS } from "@debate/webview/lib/topic-starters/format";
-import { docxToStoredCmir } from "@/lib/topic-starters/import";
+import { docxToStoredCmir } from "@debate/webview/lib/topic-starters/import";
 import { getAdminAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
 import { topicStarterItems } from "@/lib/database/schema";

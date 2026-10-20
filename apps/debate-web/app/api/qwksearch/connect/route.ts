@@ -12,10 +12,10 @@ import {
   randomToken,
   safeReturnTo,
   serializePending,
-} from "@/lib/qwksearch/connect"
+} from "@debate/webview/lib/qwksearch/connect"
 
 /**
- * GET — starts "Sign in with QwkSearch" (lib/qwksearch/connect.ts): makes a
+ * GET — starts "Sign in with QwkSearch" (packages/debate-webview/src/lib/qwksearch/connect.ts): makes a
  * PKCE verifier and state, parks them in a short-lived cookie scoped to
  * /api/qwksearch, and sends the visitor to QwkSearch's consent screen.
  *

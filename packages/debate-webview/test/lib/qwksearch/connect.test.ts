@@ -14,7 +14,7 @@ import {
   serializePending,
   toSessionPayload,
   withStatus,
-} from "../connect"
+} from "../../../src/lib/qwksearch/connect"
 
 const TOKEN = {
   token_type: "api_key",

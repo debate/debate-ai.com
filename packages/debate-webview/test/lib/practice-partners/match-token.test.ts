@@ -4,7 +4,7 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { MATCH_TOKEN_TTL_SECONDS, openMatchToken, sealMatchToken } from "@/lib/practice-partners/match-token";
+import { MATCH_TOKEN_TTL_SECONDS, openMatchToken, sealMatchToken } from "../../../src/lib/practice-partners/match-token";
 
 const SECRET = "test-secret";
 const NOW = 1_800_000_000;

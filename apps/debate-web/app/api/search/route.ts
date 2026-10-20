@@ -47,7 +47,7 @@ import {
   readFtsOperator,
   searchCardsRanked,
 } from "@/lib/search/card-fts";
-import { TIMED_OUT, withinDeadline } from "@/lib/search/deadline";
+import { TIMED_OUT, withinDeadline } from "@debate/webview/lib/search/deadline";
 
 /**
  * The search `/research/cards` opens with (no term, no filter) is the same

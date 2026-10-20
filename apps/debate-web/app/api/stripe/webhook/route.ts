@@ -6,7 +6,7 @@ import {
   parseSecrets,
   StripeSignatureError,
   subscriptionUpdateForEvent,
-} from "@/lib/stripe/webhook"
+} from "@debate/webview/lib/stripe/webhook"
 import { fetchSubscription, saveSubscriptionUpdate } from "@/lib/stripe/store"
 import { creditTopUp } from "@/lib/market/queries"
 import { topUpForEvent } from "@debate/file-market"

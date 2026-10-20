@@ -366,7 +366,7 @@ naming the counts, every flagged video in those states is removed the way
 admin can bulk-remove (`DELETE /api/admin/videos/availability`).
 
 Engineering note: both kinds ride the `video_issues` queue
-(`apps/debate-ai.com/lib/videos/video-submissions.ts`) rather than a table of
+(`packages/debate-webview/src/lib/videos/video-submissions.ts`) rather than a table of
 their own. A `submit-channel` row has no video, so its `videoId` is empty.
 
 ### Reclassifying by title
