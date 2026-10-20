@@ -109,3 +109,20 @@ describe("parseDebaterLevelState", () => {
     expect(parseDebaterLevelState({ ...state, lifetimeCounts: { bogus: 1 } })).toBeNull();
   });
 });
+
+describe("per-device ledger", () => {
+  it("books earnings to the device and seeds the base bucket from pre-ledger progress", () => {
+    const start = { ...createDebaterLevelState("2026-10-20"), totalXp: 100, lifetimeCounts: { card_cut: 10 } };
+    const { state, xpGained } = applyDebaterActivity(start, "card_cut", Date.UTC(2026, 9, 20), 2, undefined, "phone");
+    expect(state.ledger?.base).toMatchObject({ xp: 100, counts: { card_cut: 10 } });
+    expect(state.ledger?.phone).toMatchObject({ xp: xpGained, counts: { card_cut: 2 }, dayCounts: { card_cut: 2 } });
+    expect(state.totalXp).toBe(100 + xpGained);
+  });
+
+  it("round-trips through parse and drops malformed entries", () => {
+    const { state } = applyDebaterActivity(createDebaterLevelState(), "drill_practiced", Date.UTC(2026, 9, 20), 1, undefined, "d1");
+    expect(parseDebaterLevelState(JSON.parse(JSON.stringify(state)))?.ledger).toEqual(state.ledger);
+    const bad = { ...JSON.parse(JSON.stringify(state)), ledger: { x: { xp: "no" } } };
+    expect(parseDebaterLevelState(bad)?.ledger).toBeUndefined();
+  });
+});

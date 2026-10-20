@@ -103,9 +103,11 @@ function asXpEvents(value: unknown): { atMs: number; source: string }[] {
  * when both copies are from the same UTC day, otherwise the later day wins;
  * the XP log is the newest-first union, de-duplicated by time and source.
  *
- * Without a per-event ledger the same activity done on both devices can't be
- * told from two separate ones, so counts take the larger side (never a sum)
- * and the result can under-count but never double-count.
+ * States carrying a per-device `ledger` merge through {@link mergeLedgers}
+ * instead, so activity done on two devices in the same window adds. A copy
+ * without one (pre-ledger) can't be told apart from the other device's work,
+ * so it is folded in as the shared `base` bucket and counts take the larger
+ * side — it can under-count but never double-count.
  */
 export function mergeDebaterLevel(local: unknown, remote: unknown): unknown {
   if (!hasValidXp(local)) return remote;
@@ -132,7 +134,7 @@ export function mergeDebaterLevel(local: unknown, remote: unknown): unknown {
     })
     .sort((a, b) => b.atMs - a.atMs)
     .slice(0, MAX_RECENT_XP_EVENTS);
-  return {
+  const merged = {
     ...remote,
     ...local,
     totalXp: Math.max(local.totalXp, remote.totalXp),
@@ -141,4 +143,89 @@ export function mergeDebaterLevel(local: unknown, remote: unknown): unknown {
     completedMilestoneIds: union(asStrings(local.completedMilestoneIds), asStrings(remote.completedMilestoneIds)),
     recentXp,
   };
+  if (!local.ledger && !remote.ledger) return merged;
+  const ledger = mergeLedgers(ledgerOf(local), ledgerOf(remote));
+  const sums = sumLedger(ledger);
+  return {
+    ...merged,
+    ledger,
+    totalXp: Math.max(sums.xp, merged.totalXp),
+    lifetimeCounts: sums.counts,
+    daily: { ...daily, dayKey: sums.day || daily.dayKey, counts: sums.dayCounts },
+  };
+}
+
+interface LedgerEntry {
+  xp: number;
+  counts: Counts;
+  day: string;
+  dayCounts: Counts;
+}
+
+/** Mirrors `LEDGER_BASE_DEVICE` in `debate-contributor-progress`. */
+const LEDGER_BASE_DEVICE = "base";
+
+function asLedgerEntry(value: unknown): LedgerEntry | null {
+  if (typeof value !== "object" || value === null) return null;
+  const e = value as Record<string, unknown>;
+  if (typeof e.xp !== "number" || !Number.isFinite(e.xp) || e.xp < 0 || typeof e.day !== "string") return null;
+  return { xp: e.xp, counts: asCounts(e.counts), day: e.day, dayCounts: asCounts(e.dayCounts) };
+}
+
+/** The state's ledger, or — for a pre-ledger copy — its progress as the shared base bucket. */
+function ledgerOf(state: Record<string, unknown> & { totalXp: number }): Record<string, LedgerEntry> {
+  const out: Record<string, LedgerEntry> = {};
+  if (typeof state.ledger === "object" && state.ledger !== null && !Array.isArray(state.ledger)) {
+    for (const [id, raw] of Object.entries(state.ledger)) {
+      const entry = asLedgerEntry(raw);
+      if (entry) out[id] = entry;
+    }
+    if (Object.keys(out).length > 0) return out;
+  }
+  const daily = asDaily(state.daily);
+  return {
+    [LEDGER_BASE_DEVICE]: { xp: state.totalXp, counts: asCounts(state.lifetimeCounts), day: daily.dayKey, dayCounts: daily.counts },
+  };
+}
+
+/**
+ * Each device's entry only grows, so the two copies of one device's entry
+ * merge by maximum; entries from different devices are kept side by side.
+ */
+function mergeLedgers(a: Record<string, LedgerEntry>, b: Record<string, LedgerEntry>): Record<string, LedgerEntry> {
+  const out: Record<string, LedgerEntry> = { ...a };
+  for (const [id, entry] of Object.entries(b)) {
+    const mine = out[id];
+    if (!mine) {
+      out[id] = entry;
+      continue;
+    }
+    const day = mine.day >= entry.day ? mine.day : entry.day;
+    const sameDay = mine.day === entry.day;
+    out[id] = {
+      xp: Math.max(mine.xp, entry.xp),
+      counts: maxCounts(mine.counts, entry.counts),
+      day,
+      dayCounts: sameDay ? maxCounts(mine.dayCounts, entry.dayCounts) : mine.day > entry.day ? mine.dayCounts : entry.dayCounts,
+    };
+  }
+  return out;
+}
+
+/** Account-wide totals: XP and lifetime counts across devices, and the latest day's counts. */
+function sumLedger(ledger: Record<string, LedgerEntry>): { xp: number; counts: Counts; day: string; dayCounts: Counts } {
+  let xp = 0;
+  let day = "";
+  const counts: Counts = {};
+  for (const entry of Object.values(ledger)) {
+    xp += entry.xp;
+    for (const [kind, n] of Object.entries(entry.counts)) counts[kind] = (counts[kind] ?? 0) + n;
+    if (entry.day > day) day = entry.day;
+  }
+  const dayCounts: Counts = {};
+  for (const entry of Object.values(ledger)) {
+    if (entry.day !== day) continue;
+    for (const [kind, n] of Object.entries(entry.dayCounts)) dayCounts[kind] = (dayCounts[kind] ?? 0) + n;
+  }
+  return { xp, counts, day, dayCounts };
 }

@@ -131,3 +131,66 @@ describe("mergeDebaterLevel", () => {
     expect(toolRecordsMissingRemotely(collection, l, r)).toEqual([merged]);
   });
 });
+
+describe("mergeDebaterLevel with a per-device ledger", () => {
+  const entry = (xp: number, counts: Record<string, number>, day = "2026-10-20", dayCounts: Record<string, number> = counts) => ({
+    xp, counts, day, dayCounts,
+  });
+  const withLedger = (ledger: Record<string, unknown>, over: Record<string, unknown> = {}) => ({
+    ...state(0),
+    totalXp: 0,
+    ledger,
+    ...over,
+  });
+
+  it("adds activity done on two devices instead of taking the larger side", () => {
+    const base = entry(100, { card_cut: 10 }, "2026-10-19", {});
+    const a = withLedger({ base, laptop: entry(25, { card_cut: 5 }) }, { totalXp: 125 });
+    const b = withLedger({ base, phone: entry(15, { card_cut: 3 }) }, { totalXp: 115 });
+    expect(mergeDebaterLevel(a, b)).toMatchObject({
+      totalXp: 140,
+      lifetimeCounts: { card_cut: 18 },
+      daily: { dayKey: "2026-10-20", counts: { card_cut: 8 } },
+    });
+  });
+
+  it("is idempotent and commutative, so re-syncing never double-counts", () => {
+    const a = withLedger({ base: entry(10, { card_cut: 2 }), x: entry(20, { card_cut: 4 }) }, { totalXp: 30 });
+    const b = withLedger({ base: entry(10, { card_cut: 2 }), y: entry(5, { card_cut: 1 }) }, { totalXp: 15 });
+    const ab = mergeDebaterLevel(a, b) as { totalXp: number; ledger: unknown };
+    const ba = mergeDebaterLevel(b, a) as { totalXp: number; ledger: unknown };
+    expect(ab.totalXp).toBe(35);
+    expect(ba.totalXp).toBe(35);
+    expect(ab.ledger).toEqual(ba.ledger);
+    expect((mergeDebaterLevel(ab, a) as { totalXp: number }).totalXp).toBe(35);
+  });
+
+  it("keeps the larger copy of one device's entry", () => {
+    const a = withLedger({ d: entry(10, { card_cut: 2 }) }, { totalXp: 10 });
+    const b = withLedger({ d: entry(30, { card_cut: 6 }) }, { totalXp: 30 });
+    expect(mergeDebaterLevel(a, b)).toMatchObject({ totalXp: 30, lifetimeCounts: { card_cut: 6 } });
+  });
+
+  it("drops an earlier day's tally from the daily counts", () => {
+    const a = withLedger({ d: entry(10, { card_cut: 2 }, "2026-10-19") }, { totalXp: 10 });
+    const b = withLedger({ e: entry(5, { card_cut: 1 }, "2026-10-20") }, { totalXp: 5 });
+    expect(mergeDebaterLevel(a, b)).toMatchObject({
+      lifetimeCounts: { card_cut: 3 },
+      daily: { dayKey: "2026-10-20", counts: { card_cut: 1 } },
+    });
+  });
+
+  it("folds a pre-ledger copy in as the shared base without doubling it", () => {
+    const legacy = { ...state(100), lifetimeCounts: { card_cut: 10 } };
+    const upgraded = withLedger(
+      { base: entry(100, { card_cut: 10 }, "2026-10-20", {}), phone: entry(15, { card_cut: 3 }) },
+      { totalXp: 115 },
+    );
+    expect(mergeDebaterLevel(legacy, upgraded)).toMatchObject({ totalXp: 115, lifetimeCounts: { card_cut: 13 } });
+  });
+
+  it("ignores malformed ledger entries", () => {
+    const a = withLedger({ bad: { xp: -1 }, d: entry(10, { card_cut: 2 }) }, { totalXp: 10 });
+    expect(mergeDebaterLevel(a, state(4))).toMatchObject({ totalXp: 14 }); // 10 from "d" + the pre-ledger 4 as base
+  });
+});
