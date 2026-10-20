@@ -124,27 +124,27 @@ describe("VideoSidebarTree", () => {
 });
 
 describe("the sidebar's heading structure", () => {
-  it("puts College Team Debates and My Favorites under a Videos h1", () => {
+  it("puts College Team Debate and My Favorites under a Videos h1", () => {
     const html = renderSidebar();
     expect(html).toMatch(/<h1[^>]*>Videos<\/h1>/);
-    expect(html).toMatch(/<h2[^>]*>College Team Debates<\/h2>/);
+    expect(html).toMatch(/<h2[^>]*>College Team Debate<\/h2>/);
     expect(html).toMatch(/<h2[^>]*>My Favorites<\/h2>/);
     // The h1 comes first: both are nested inside it, not siblings of it.
-    expect(html.indexOf(">Videos<")).toBeLessThan(html.indexOf(">College Team Debates<"));
-    expect(html.indexOf(">College Team Debates<")).toBeLessThan(html.indexOf(">My Favorites<"));
+    expect(html.indexOf(">Videos<")).toBeLessThan(html.indexOf(">College Team Debate<"));
+    expect(html.indexOf(">College Team Debate<")).toBeLessThan(html.indexOf(">My Favorites<"));
   });
 
   it("keeps every round-archive link on one level under Videos", () => {
     // Policy / PF / LD / Greatest of All-Time used to be h3 leaves inside a
-    // College Team Debates node, one indent deeper than it. They are peers of it:
-    // same heading level, same indent, and no chevron on College Team Debates to
+    // College Team Debate node, one indent deeper than it. They are peers of it:
+    // same heading level, same indent, and no chevron on College Team Debate to
     // collapse them out of view.
     const html = renderSidebar();
     for (const title of [
-      "College Team Debates",
-      "HS Team Debates",
-      "HS Individual Debates",
-      "HS Public Forum Debates",
+      "College Team Debate",
+      "HS Team Debate",
+      "HS Individual Debate",
+      "HS Public Forum",
       "Greatest of All-Time",
       "My Favorites",
     ]) {
@@ -152,19 +152,19 @@ describe("the sidebar's heading structure", () => {
       expect(html).not.toMatch(new RegExp(`<span[^>]*>${title}</span>`));
     }
     // One expand control in the section — the Videos heading itself.
-    expect(html).not.toContain("Collapse College Team Debates");
-    expect(html).not.toContain("Expand College Team Debates");
+    expect(html).not.toContain("Collapse College Team Debate");
+    expect(html).not.toContain("Expand College Team Debate");
   });
 
   it("lists Lectures as a single row under Videos, with no categories", () => {
     // The lecture categories live on the lectures page as a card bar; the
-    // sidebar carries one Lectures link, between All Videos and College Team Debates.
+    // sidebar carries one Lectures link, between All Videos and College Team Debate.
     const html = renderSidebar();
     expect(html).toMatch(/<h2[^>]*>Lectures<\/h2>/);
     expect(html).not.toMatch(/<h1[^>]*>Lectures<\/h1>/);
     expect(html).toMatch(/<a[^>]*href="\/lectures"/);
     expect(html.indexOf(">All Videos<")).toBeLessThan(html.indexOf(">Lectures<"));
-    expect(html.indexOf(">Lectures<")).toBeLessThan(html.indexOf(">College Team Debates<"));
+    expect(html.indexOf(">Lectures<")).toBeLessThan(html.indexOf(">College Team Debate<"));
     expect(html).not.toContain("All Lectures");
   });
 
@@ -261,7 +261,7 @@ describe("QuickLinksGrid", () => {
           layout,
         }),
       );
-      expect(html).toContain("College Team Debates");
+      expect(html).toContain("College Team Debate");
       expect(html).not.toContain('src="undefined"');
       for (const [, src] of html.matchAll(/<img[^>]*\ssrc="([^"]*)"/g)) {
         expect(src.length).toBeGreaterThan(0);
