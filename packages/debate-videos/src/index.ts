@@ -279,6 +279,7 @@ export {
   OWN_LAYOUT_SIDEBAR_HREFS,
   OWN_SIDEBAR_DOCK_HREFS,
   matchesToolSidebarHref,
+  isTopicStarterDocsPath,
   ownsItsLayout,
   hostsOwnSidebarDock,
   hasEmbeddedDock,

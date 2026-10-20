@@ -31,6 +31,9 @@ const DOCUMENTS: PathItem[] = [
 ]
 const TOPICS: PathItem[] = [
   { id: 7, title: "Topic Starter", parentId: null, isFolder: false },
+  { id: 1, title: "Neg", parentId: null, isFolder: true },
+  { id: 2, title: "CP", parentId: 1, isFolder: true },
+  { id: 9, title: "ACA Expansion CP CNDI 2026", parentId: 2, isFolder: false },
 ]
 
 /** Defaults for a cold load with nothing open yet. */
@@ -57,9 +60,21 @@ describe("editorHrefForSelection", () => {
     expect(editorHrefForSelection({ kind: "document", id: 34 }, DOCUMENTS)).toBe(
       `${REASON_EDITOR_ROUTE}?doc=impacts/warming-1ac`,
     )
-    expect(editorHrefForSelection({ kind: "topic", id: 7 }, TOPICS)).toBe(
-      `${REASON_EDITOR_ROUTE}?topic=topic-starter`,
+    expect(editorHrefForSelection({ kind: "topic", id: 7 }, TOPICS)).toBe("/docs/vcs27/topic-starter")
+  })
+
+  it("puts a topic starter under the topic code the reader is browsing", () => {
+    expect(editorHrefForSelection({ kind: "topic", id: 9 }, TOPICS, "ld27a")).toBe(
+      "/docs/ld27a/neg/cp/aca-expansion-cp-cndi-2026",
     )
+  })
+
+  it("round-trips a topic starter's /docs address", () => {
+    const href = editorHrefForSelection({ kind: "topic", id: 9 }, TOPICS)
+    expect(href).toBe("/docs/vcs27/neg/cp/aca-expansion-cp-cndi-2026")
+    const params = parseSelectionParams(new URLSearchParams(), href)
+    expect(params).toEqual({ doc: null, topic: "neg/cp/aca-expansion-cp-cndi-2026", topicCode: "vcs27" })
+    expect(resolveSelection(input(params))).toEqual({ kind: "topic", id: 9 })
   })
 
   it("falls back to the id when the file's tree isn't in hand", () => {
@@ -71,7 +86,7 @@ describe("editorHrefForSelection", () => {
   it("round-trips through the parser the editor route reads with", () => {
     const href = editorHrefForSelection({ kind: "document", id: 34 }, DOCUMENTS)
     const params = parseSelectionParams(new URL(href, "https://debate-ai.com").searchParams)
-    expect(params).toEqual({ doc: "impacts/warming-1ac", topic: null })
+    expect(params).toEqual({ doc: "impacts/warming-1ac", topic: null, topicCode: null })
     expect(resolveSelection(input(params))).toEqual({ kind: "document", id: 34 })
   })
 
@@ -101,22 +116,35 @@ describe("isEditorPathname", () => {
     expect(isEditorPathname("/reason-editor-other")).toBe(false)
     expect(isEditorPathname("/research/cards")).toBe(false)
   })
+
+  it("covers a topic starter's /docs/<topic code> address but not the help docs", () => {
+    expect(isEditorPathname("/docs/vcs27")).toBe(true)
+    expect(isEditorPathname("/docs/vcs27/neg/cp/aca-expansion-cp-cndi-2026")).toBe(true)
+    expect(isEditorPathname("/docs/ld27b/aff")).toBe(true)
+    expect(isEditorPathname("/docs")).toBe(false)
+    expect(isEditorPathname("/docs/features/drill-sets")).toBe(false)
+    expect(isEditorPathname("/docs/vcs2027")).toBe(false)
+  })
 })
 
 describe("parseSelectionParams", () => {
   it("reads a name off either parameter and treats blank as absent", () => {
     const read = (query: string) =>
       parseSelectionParams(new URL(`https://x/?${query}`).searchParams)
-    expect(read("doc=impacts/warming-1ac")).toEqual({ doc: "impacts/warming-1ac", topic: null })
-    expect(read("topic=core")).toEqual({ doc: null, topic: "core" })
-    expect(read("doc=%20%20")).toEqual({ doc: null, topic: null })
-    expect(read("")).toEqual({ doc: null, topic: null })
+    expect(read("doc=impacts/warming-1ac")).toMatchObject({ doc: "impacts/warming-1ac", topic: null })
+    expect(read("topic=core")).toMatchObject({ doc: null, topic: "core" })
+    expect(read("doc=%20%20")).toMatchObject({ doc: null, topic: null })
+    expect(read("")).toEqual({ doc: null, topic: null, topicCode: null })
   })
 })
 
 describe("resolveSelection", () => {
   it("opens the document the URL names", () => {
     expect(resolveSelection(input({ doc: "impacts/warming-1ac" }))).toEqual({ kind: "document", id: 34 })
+  })
+
+  it("opens a topic's first starter on a bare /docs/<topic code>", () => {
+    expect(resolveSelection(input({ topicCode: "ld27a" }))).toEqual({ kind: "topic", id: 7 })
   })
 
   it("opens the topic starter the URL names", () => {
@@ -239,9 +267,22 @@ describe("canonicalEditorUrl", () => {
   })
 
   it("names a topic selection against the public tree", () => {
-    expect(canonicalEditorUrl({ kind: "topic", id: 7 }, catalog, loc("?topic=7"))).toBe(
-      `${REASON_EDITOR_ROUTE}?topic=topic-starter`,
+    expect(canonicalEditorUrl({ kind: "topic", id: 7 }, catalog, loc("?topic=7"))).toBe("/docs/vcs27/topic-starter")
+  })
+
+  it("moves an old ?topic= link onto its /docs address, keeping other parameters", () => {
+    expect(
+      canonicalEditorUrl({ kind: "topic", id: 9 }, catalog, loc("?topic=neg/cp/aca-expansion-cp-cndi-2026&share=abc")),
+    ).toBe("/docs/vcs27/neg/cp/aca-expansion-cp-cndi-2026?share=abc")
+  })
+
+  it("keeps the topic code the address is already under", () => {
+    expect(canonicalEditorUrl({ kind: "topic", id: 9 }, catalog, loc("", "/docs/pf27a"))).toBe(
+      "/docs/pf27a/neg/cp/aca-expansion-cp-cndi-2026",
     )
+    expect(
+      canonicalEditorUrl({ kind: "topic", id: 9 }, catalog, loc("", "/docs/pf27a/neg/cp/aca-expansion-cp-cndi-2026")),
+    ).toBeNull()
   })
 
   it("keeps every other query parameter", () => {

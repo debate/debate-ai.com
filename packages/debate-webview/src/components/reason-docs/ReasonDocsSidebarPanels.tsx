@@ -46,7 +46,7 @@
  * at once; the Sort control orders the tree.
  */
 
-import { Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
+import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import {
   ArrowDownUp,
@@ -74,6 +74,7 @@ import {
   REASON_EDITOR_ROUTE,
   editorHrefForSelection,
   isEditorPathname,
+  topicCodeFromPathname,
   type ReasonDocsSelection,
 } from "../../lib/reason-docs/route-selection"
 import { SHARE_OPEN_PARAM, ShareWithContacts } from "../reason-editor/ShareWithContacts"
@@ -85,6 +86,10 @@ import { TopicStarterTree, type TopicStarterItem } from "./TopicStarterTree"
 import { NewTopicFolderDialog, OrganizeTopicsDialog, type OrganizeState } from "./TopicStarterDialogs"
 import type { TopicStarterChange } from "../../lib/topic-starters/changes"
 import { useReasonDocs } from "./ReasonDocsProvider"
+
+// Lazy: the picker carries every resolution `debate-topics.json` has, which
+// only matters once the Topic Starters section is open.
+const TopicDocsPicker = lazy(() => import("./TopicDocsPicker").then((m) => ({ default: m.TopicDocsPicker })))
 import type { ReasonDocument } from "./types"
 
 /** Each section's collapse choice, per device. Both start open. */
@@ -263,6 +268,9 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
   }, [])
 
   const onEditorRoute = isEditorPathname(pathname)
+  // The topic the reader is browsing (`vcs27` on `/docs/vcs27/...`), which
+  // every starter link keeps; `null` off a topic address, for the default.
+  const topicCode = topicCodeFromPathname(pathname)
 
   /** The open document, which is what the share control shares. */
   const activeDocument = useMemo(
@@ -320,11 +328,12 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
       const href = editorHrefForSelection(
         selection,
         selection.kind === "document" ? [...extraItems, ...documents] : topicItems,
+        topicCode,
       )
       if (onEditorRoute) router.replace(href)
       else router.push(href)
     },
-    [onEditorRoute, router, documents, topicItems],
+    [onEditorRoute, router, documents, topicItems, topicCode],
   )
 
   /**
@@ -530,14 +539,14 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
    *  catalogue is public, unlike a reader's own files. */
   const copyTopicLink = useCallback(
     (item: TopicStarterItem) => {
-      const href = editorHrefForSelection({ kind: "topic", id: item.id }, topicItems)
+      const href = editorHrefForSelection({ kind: "topic", id: item.id }, topicItems, topicCode)
       const url = `${window.location.origin}${href}`
       void navigator.clipboard
         ?.writeText(url)
         .then(() => toast.success("Link copied."))
         .catch(() => toast.error("The link could not be copied."))
     },
-    [topicItems],
+    [topicItems, topicCode],
   )
 
   const spinner = (
@@ -581,6 +590,9 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
           ) : undefined
         }
       >
+        <Suspense fallback={null}>
+          <TopicDocsPicker className="shrink-0" />
+        </Suspense>
         {loading ? (
           spinner
         ) : (

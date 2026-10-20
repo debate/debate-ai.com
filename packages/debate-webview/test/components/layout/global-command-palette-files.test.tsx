@@ -169,7 +169,7 @@ describe("GlobalCommandPalette file search", () => {
     expect(row!.textContent).toContain("Solar Neg")
     act(() => row!.click())
     expect(current.selectTopicDocument).toHaveBeenCalledWith(TOPICS[1])
-    expect(nav.push).toHaveBeenCalledWith("/reason-editor?topic=energy/solar-neg")
+    expect(nav.push).toHaveBeenCalledWith("/docs/vcs27/energy/solar-neg")
   })
 
   it("opens one of the reader's own files", () => {
