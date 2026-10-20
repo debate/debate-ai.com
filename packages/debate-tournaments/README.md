@@ -54,6 +54,16 @@ it:
 For each tournament there are pages for the upcoming list, the invitation,
 pairings, a single round, results and a single result set.
 
+**Info & links.** A dropdown beside each tournament's tabs carries its Tabroom
+sidebar: Pages & Uploads, Circuits, Past Years' Editions, Dates & Deadlines,
+Locations and Contacts, plus the pages every Tabroom tournament has (entries,
+judges, pairings, live updates, results, events, schools, email archive).
+Tabroom's API has no circuits, deadlines or past editions, so the proxy's
+`/api/tabroom-beta/sidebar/:id` scrapes them from the classic invitation page
+(`parseTabroomSidebar` in `src/sidebar.ts`, cached 10 minutes). Hosted
+tournaments, and live ones whose page can't be read, build the menu from their
+invite instead; empty groups are hidden.
+
 **How addresses work.** A tournament's pages live at
 `/tournaments/<year it starts>/<slug of its name>/…`. `client.resolve` turns
 that pair into the Tabroom tourn id by looking, in order, at the tournaments it

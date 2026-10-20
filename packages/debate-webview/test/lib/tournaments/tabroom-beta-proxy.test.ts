@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest"
 
-import { proxyTabroomBeta, tabroomBetaUpstreamUrl } from "../../../src/lib/tournaments/tabroom-beta-proxy"
+import { proxyTabroomBeta, tabroomBetaUpstreamUrl, tabroomSidebarTournId } from "../../../src/lib/tournaments/tabroom-beta-proxy"
 
 const ORIGIN = "https://d.ebate.app"
 
@@ -63,5 +63,44 @@ describe("proxyTabroomBeta", () => {
     const other = await proxyTabroomBeta(new Request(`${ORIGIN}/api/tabroom-beta/user/login`), fetchImpl as unknown as typeof fetch)
     expect(other.status).toBe(404)
     expect(fetchImpl).not.toHaveBeenCalled()
+  })
+})
+
+describe("tabroom sidebar", () => {
+  const page = `<div class="menu"><div class="sidenote"><h6>Circuits</h6><a href="/index/circuit/index.mhtml?circuit_id=6">NatCir &ndash; National Circuit</a>
+    <a href="/index/tourn/past.mhtml?webname=heartoftx">Past Years' Editions</a></div>
+    <div class="sidenote"><h4>Dates &amp; Deadlines</h4><span class="fifth explain">CDT</span>
+    <div class="row flexrow"><span>Registration Closes</span><span>Thu Oct 15 at 3:00 PM</span></div></div></div><div id="footer"></div>`
+
+  it("only matches /sidebar/<numeric id>", () => {
+    expect(tabroomSidebarTournId(`${ORIGIN}/api/tabroom-beta/sidebar/40242`)).toBe(40242)
+    expect(tabroomSidebarTournId(`${ORIGIN}/api/tabroom-beta/sidebar/abc`)).toBeNull()
+    expect(tabroomSidebarTournId(`${ORIGIN}/api/tabroom-beta/sidebar/1/x`)).toBeNull()
+  })
+
+  it("scrapes the classic invite page into cached JSON", async () => {
+    const fetchImpl = vi.fn(async () => new Response(page, { headers: { "content-type": "text/html" } }))
+    const res = await proxyTabroomBeta(
+      new Request(`${ORIGIN}/api/tabroom-beta/sidebar/40242`, { headers: { cookie: "session=secret" } }),
+      fetchImpl as unknown as typeof fetch,
+    )
+    expect(res.status).toBe(200)
+    expect(res.headers.get("cache-control")).toContain("max-age=600")
+    expect(await res.json()).toEqual({
+      groups: [{ title: "Circuits", links: [{ label: "NatCir – National Circuit", href: "https://www.tabroom.com/index/circuit/index.mhtml?circuit_id=6" }] }],
+      pastEditions: "https://www.tabroom.com/index/tourn/past.mhtml?webname=heartoftx",
+      deadlines: [{ label: "Registration Closes", value: "Thu Oct 15 at 3:00 PM" }],
+      tz: "CDT",
+    })
+    const [url, init] = fetchImpl.mock.calls[0] as unknown as [string, RequestInit]
+    expect(url).toBe("https://www.tabroom.com/index/tourn/main.mhtml?tourn_id=40242")
+    expect(new Headers(init.headers).get("cookie")).toBeNull()
+  })
+
+  it("answers 502 uncached when Tabroom fails", async () => {
+    const fetchImpl = vi.fn(async () => new Response("down", { status: 500 }))
+    const res = await proxyTabroomBeta(new Request(`${ORIGIN}/api/tabroom-beta/sidebar/40242`), fetchImpl as unknown as typeof fetch)
+    expect(res.status).toBe(502)
+    expect(res.headers.get("cache-control")).toBe("no-store")
   })
 })
