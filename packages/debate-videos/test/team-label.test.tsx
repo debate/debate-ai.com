@@ -26,6 +26,8 @@ describe("TeamCodeLabel", () => {
     expect(html).not.toContain(">LL<");
     expect(html).toContain('data-side="neg"');
     expect(html).toContain("border-red-500/80");
+    // A side gets a mostly white surface with a faint tint, not a solid color.
+    expect(html).toContain("bg-red-50/95");
     // With a logo the names go on a second row under it.
     expect(html).toContain("data-stacked");
     expect(html).toContain("flex-col");
@@ -52,6 +54,8 @@ describe("TeamLabel", () => {
     expect(html).toContain('href="/schools/nowhere-high"');
     const bare = renderToStaticMarkup(createElement(TeamLabel, { school: "Nowhere High", debaters: "DR", side: "neg", bare: true }));
     expect(bare).not.toContain("border-red-500/80");
+    // No side (rankings, profiles): no tinted surface.
+    expect(html).not.toContain("bg-blue-50/95");
     expect(renderToStaticMarkup(createElement(TeamLabel, {}))).toBe("");
   });
 });

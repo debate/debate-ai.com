@@ -101,6 +101,7 @@ export { LeaderboardPanel } from "./panels/leaderboard/RankingsLeaderboardPanel"
 export { TeamProfilePage, SchoolProfilePage } from "./panels/leaderboard/profile/RankingProfiles";
 export {
   TEAM_SIDE_CLASS,
+  TEAM_SIDE_SURFACE_CLASS,
   TeamCodeLabel,
   TeamLabel,
   type TeamCodeLabelProps,

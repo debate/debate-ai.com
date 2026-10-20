@@ -83,6 +83,8 @@ describe("pairings enrichment", () => {
     // Tabroom's side 1 is the aff (blue border), 2 the neg (red).
     expect(ranked.getAttribute("data-side")).toBe("aff");
     expect(unranked.getAttribute("data-side")).toBe("neg");
+    expect(ranked.className).toContain("bg-blue-50/95");
+    expect(unranked.className).toContain("bg-red-50/95");
     expect(lookupTeamRating).toHaveBeenCalledWith(expect.objectContaining({ code: "Harker LL", event: round.Event }));
   });
 
