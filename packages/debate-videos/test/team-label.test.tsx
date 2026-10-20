@@ -39,8 +39,9 @@ describe("TeamCodeLabel", () => {
     expect(html).toContain('<span class="truncate">Nowhere High</span>');
     expect(html).toContain(">AB</span>");
     expect(html).toContain("border-blue-500/80");
-    // No logo: school name and initials share one line.
-    expect(html).not.toContain("data-stacked");
+    // No logo: school name on first row, initials on second.
+    expect(html).toContain("data-stacked");
+    expect(html).toContain("flex-col");
   });
 });
 

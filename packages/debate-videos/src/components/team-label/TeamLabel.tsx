@@ -98,8 +98,8 @@ export interface TeamLabelProps {
 export function TeamLabel({ school, debaters, side, href, schoolHref, title, bare, badge, className }: TeamLabelProps) {
   if (!school && !debaters) return null
   const schoolPart = school ? <SchoolMark school={school} /> : null
-  // A logo stacks over the names; a printed school name runs beside them.
-  const stacked = Boolean(debaters && school && getSchoolLogo(school))
+  // School name on the first row, debaters on the second row.
+  const stacked = Boolean(debaters && school)
   return (
     <span
       data-team-label=""
