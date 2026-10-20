@@ -9,7 +9,9 @@
  * Messages in: `{ id, type: 'load' }` (download and set up the model) and
  * `{ id, type: 'generate', text, voice }`. Each is answered with
  * `{ id, ok: true, audio? }` (a WAV blob for `generate`) or
- * `{ id, ok: false, error }`. Requests run one at a time, in order.
+ * `{ id, ok: false, error }`. Requests run one at a time, in order. While
+ * the model downloads, `{ progress }` (0 to 1, across all its files) is
+ * posted too, for the Settings download bar.
  *
  * @module editor/kokoro-worker
  */
@@ -20,7 +22,10 @@ export type KokoroWorkerRequest =
   | { id: number; type: 'load' }
   | { id: number; type: 'generate'; text: string; voice?: string };
 
-export type KokoroWorkerResponse = { id: number; ok: true; audio?: Blob } | { id: number; ok: false; error: string };
+export type KokoroWorkerResponse =
+  | { id: number; ok: true; audio?: Blob }
+  | { id: number; ok: false; error: string }
+  | { progress: number };
 
 interface WorkerScope {
   onmessage: ((event: MessageEvent<KokoroWorkerRequest>) => void) | null;
@@ -34,8 +39,27 @@ const scope = self as unknown as WorkerScope;
 
 let model: Promise<KokoroTTS> | null = null;
 
+/** Bytes loaded and expected per model file, from Transformers.js's progress events. */
+const files = new Map<string, { loaded: number; total: number }>();
+
+function onProgress(event: { status?: string; file?: string; loaded?: number; total?: number }): void {
+  if (event.status !== 'progress' || !event.file || !event.total) return;
+  files.set(event.file, { loaded: event.loaded ?? 0, total: event.total });
+  let loaded = 0;
+  let total = 0;
+  for (const file of files.values()) {
+    loaded += file.loaded;
+    total += file.total;
+  }
+  scope.postMessage({ progress: Math.min(1, loaded / total) });
+}
+
 function load(): Promise<KokoroTTS> {
-  model ??= KokoroTTS.from_pretrained(KOKORO_MODEL_ID, { dtype: 'q8', device: 'wasm' }).catch((error: unknown) => {
+  model ??= KokoroTTS.from_pretrained(KOKORO_MODEL_ID, {
+    dtype: 'q8',
+    device: 'wasm',
+    progress_callback: onProgress as never,
+  }).catch((error: unknown) => {
     model = null;
     throw error;
   });

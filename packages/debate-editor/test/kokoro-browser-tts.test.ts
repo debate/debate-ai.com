@@ -1,5 +1,14 @@
-import { describe, expect, it, vi } from "vitest";
-import { kokoroWorkerModel, loadKokoro, speechChunks, streamKokoroSpeech } from "../src/editor/kokoro-browser-tts";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import {
+  KOKORO_MODEL_ID,
+  downloadKokoro,
+  kokoroModelStatus,
+  kokoroWorkerModel,
+  loadKokoro,
+  removeKokoroModel,
+  speechChunks,
+  streamKokoroSpeech,
+} from "../src/editor/kokoro-browser-tts";
 
 describe("speechChunks", () => {
   it("keeps short text whole and packs sentences up to the limit", () => {
@@ -120,5 +129,49 @@ describe("loadKokoro", () => {
     expect(loadKokoro(create)).toBe(first);
     await first;
     expect(create).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe("Settings download / status / remove", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("reports load progress, then the cached files, and removing deletes them and ends the worker", async () => {
+    const base = `https://huggingface.co/${KOKORO_MODEL_ID}/resolve/main`;
+    const store = new Map<string, Response>();
+    vi.stubGlobal("caches", {
+      has: async (name: string) => name === "transformers-cache",
+      open: async () => ({
+        keys: async () => [...store.keys()].map((url) => new Request(url)),
+        match: async (req: Request) => store.get(req.url)?.clone(),
+        delete: async (req: Request) => store.delete(req.url),
+      }),
+    });
+
+    const worker = new FakeWorker((msg) => (msg["type"] === "load" ? { ok: true } : null));
+    const realPost = worker.postMessage.bind(worker);
+    worker.postMessage = (msg) => {
+      if (msg["type"] === "load") worker.onmessage?.({ data: { progress: 0.5 } } as MessageEvent);
+      realPost(msg);
+    };
+    const progress: number[] = [];
+    await removeKokoroModel(); // drop the model an earlier test shared
+    store.set(`${base}/onnx/model_quantized.onnx`, new Response("x".repeat(90), { headers: { "content-length": "90" } }));
+    store.set(`${base}/config.json`, new Response("{}", { headers: { "content-length": "2" } }));
+    store.set("https://huggingface.co/other/model/resolve/main/onnx/model.onnx", new Response("y"));
+    await downloadKokoro((f) => progress.push(f), () => worker as unknown as Worker);
+    expect(progress).toEqual([0.5, 1]);
+
+    expect(await kokoroModelStatus()).toEqual({ downloaded: true, bytes: 92 });
+    await removeKokoroModel();
+    expect(await kokoroModelStatus()).toEqual({ downloaded: false, bytes: 0 });
+    expect(store.size).toBe(1);
+    await vi.waitFor(() => expect(worker.terminated).toBe(true));
+  });
+
+  it("reports nothing when the browser has no cache yet", async () => {
+    vi.stubGlobal("caches", { has: async () => false, open: vi.fn() });
+    expect(await kokoroModelStatus()).toEqual({ downloaded: false, bytes: 0 });
   });
 });

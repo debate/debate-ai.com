@@ -27,6 +27,9 @@ import type { KokoroWorkerRequest, KokoroWorkerResponse } from './kokoro-worker.
 
 type DistributiveOmit<T, K extends keyof T> = T extends unknown ? Omit<T, K> : never;
 
+/** The worker's answer to one request (progress updates aside). */
+type KokoroWorkerReply = Exclude<KokoroWorkerResponse, { progress: number }>;
+
 /** Also written in kokoro-worker.ts, which loads it. */
 export const KOKORO_MODEL_ID = 'onnx-community/Kokoro-82M-v1.0-ONNX';
 
@@ -35,7 +38,15 @@ export const KOKORO_CHUNK_CHARS = 280;
 
 interface KokoroModel {
   generate(text: string, options: { voice?: string; speed?: number }): Promise<{ toBlob(): Blob }>;
+  /** Ends the worker holding the model. */
+  dispose?(): void;
 }
+
+/** Cache Storage bucket Transformers.js keeps downloaded model files in. */
+export const KOKORO_CACHE_NAME = 'transformers-cache';
+
+/** Roughly what the download weighs (the `q8` model plus its config), for Settings before it's cached. */
+export const KOKORO_DOWNLOAD_BYTES = 92_000_000;
 
 /** Starts the worker that runs the model (swapped in tests). */
 export type KokoroWorkerFactory = () => Worker;
@@ -66,7 +77,11 @@ export function kokoroInBrowserSupported(): boolean {
  * worker) when it can't start or load it. A worker that dies later fails
  * every waiting call and is forgotten.
  */
-export function kokoroWorkerModel(create: KokoroWorkerFactory, onDead: () => void = () => {}): Promise<KokoroModel> {
+export function kokoroWorkerModel(
+  create: KokoroWorkerFactory,
+  onDead: () => void = () => {},
+  onProgress: (fraction: number) => void = () => {},
+): Promise<KokoroModel> {
   let worker: Worker;
   try {
     worker = create();
@@ -75,7 +90,7 @@ export function kokoroWorkerModel(create: KokoroWorkerFactory, onDead: () => voi
   }
   let nextId = 0;
   let dead = false;
-  const pending = new Map<number, { resolve: (r: KokoroWorkerResponse) => void; reject: (e: Error) => void }>();
+  const pending = new Map<number, { resolve: (r: KokoroWorkerReply) => void; reject: (e: Error) => void }>();
   const die = (error: Error) => {
     if (dead) return;
     dead = true;
@@ -85,6 +100,10 @@ export function kokoroWorkerModel(create: KokoroWorkerFactory, onDead: () => voi
     onDead();
   };
   worker.onmessage = (event: MessageEvent<KokoroWorkerResponse>) => {
+    if ('progress' in event.data) {
+      onProgress(event.data.progress);
+      return;
+    }
     const waiter = pending.get(event.data.id);
     if (!waiter) return;
     pending.delete(event.data.id);
@@ -94,7 +113,7 @@ export function kokoroWorkerModel(create: KokoroWorkerFactory, onDead: () => voi
     event.preventDefault?.();
     die(new Error(event.message || 'Kokoro worker failed'));
   };
-  const call = (request: DistributiveOmit<KokoroWorkerRequest, 'id'>): Promise<KokoroWorkerResponse> =>
+  const call = (request: DistributiveOmit<KokoroWorkerRequest, 'id'>): Promise<KokoroWorkerReply> =>
     new Promise((resolve, reject) => {
       if (dead) {
         reject(new Error('Kokoro worker stopped'));
@@ -112,6 +131,7 @@ export function kokoroWorkerModel(create: KokoroWorkerFactory, onDead: () => voi
       if (!audio) throw new Error('Kokoro worker sent no audio');
       return { toBlob: () => audio };
     },
+    dispose: () => die(new Error('Kokoro worker stopped')),
   };
   return call({ type: 'load' }).then(
     (res) => {
@@ -127,17 +147,83 @@ export function kokoroWorkerModel(create: KokoroWorkerFactory, onDead: () => voi
   );
 }
 
+const progressListeners = new Set<(fraction: number) => void>();
+
 /** The model, started in its worker on first use and shared by every later read. */
 export function loadKokoro(create: KokoroWorkerFactory = startKokoroWorker): Promise<KokoroModel> {
   if (modelPromise) return modelPromise;
-  const promise = kokoroWorkerModel(create, () => {
-    if (modelPromise === promise) modelPromise = null;
-  });
+  const promise = kokoroWorkerModel(
+    create,
+    () => {
+      if (modelPromise === promise) modelPromise = null;
+    },
+    (fraction) => progressListeners.forEach((listener) => listener(fraction)),
+  );
   modelPromise = promise;
   promise.catch(() => {
     if (modelPromise === promise) modelPromise = null;
   });
   return promise;
+}
+
+/**
+ * Downloads the model ahead of time (Settings' **Download** button), the
+ * same load a first Read aloud does, reporting progress from 0 to 1.
+ * Resolves once it's cached and ready; already-downloaded models resolve
+ * almost at once.
+ */
+export async function downloadKokoro(
+  onProgress?: (fraction: number) => void,
+  create: KokoroWorkerFactory = startKokoroWorker,
+): Promise<void> {
+  if (onProgress) progressListeners.add(onProgress);
+  try {
+    await loadKokoro(create);
+    onProgress?.(1);
+  } finally {
+    if (onProgress) progressListeners.delete(onProgress);
+  }
+}
+
+/** Whether the model's files are in this browser's cache, and how many bytes they take. */
+export interface KokoroModelStatus {
+  downloaded: boolean;
+  bytes: number;
+}
+
+/** The cached requests that belong to the Kokoro model, and the open cache; null when there's no cache yet. */
+async function kokoroCacheEntries(): Promise<{ cache: Cache; keys: Request[] } | null> {
+  if (typeof caches === 'undefined' || !(await caches.has(KOKORO_CACHE_NAME))) return null;
+  const cache = await caches.open(KOKORO_CACHE_NAME);
+  const keys = (await cache.keys()).filter((request) => request.url.includes(`/${KOKORO_MODEL_ID}/`));
+  return { cache, keys };
+}
+
+/** What Settings shows for Kokoro: downloaded once the model weights are cached. */
+export async function kokoroModelStatus(): Promise<KokoroModelStatus> {
+  const entries = await kokoroCacheEntries();
+  if (!entries) return { downloaded: false, bytes: 0 };
+  let bytes = 0;
+  for (const request of entries.keys) {
+    const response = await entries.cache.match(request);
+    const length = Number(response?.headers.get('content-length'));
+    bytes += Number.isFinite(length) && length > 0 ? length : ((await response?.blob())?.size ?? 0);
+  }
+  return { downloaded: entries.keys.some((request) => /\/onnx\/model[^/]*\.onnx$/.test(request.url)), bytes };
+}
+
+/**
+ * Deletes the cached model (Settings' **Remove**) and ends the worker
+ * holding it, so the memory is freed too. The next Kokoro read downloads it
+ * again.
+ */
+export async function removeKokoroModel(): Promise<void> {
+  const loaded = modelPromise;
+  modelPromise = null;
+  if (loaded) void loaded.then((model) => model.dispose?.(), () => {});
+  const entries = await kokoroCacheEntries();
+  if (!entries) return;
+  await Promise.all(entries.keys.map((request) => entries.cache.delete(request)));
 }
 
 /** Splits `text` at `pattern` into pieces of at most `max` characters, packing neighbours together. */

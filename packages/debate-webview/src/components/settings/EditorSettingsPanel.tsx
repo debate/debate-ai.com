@@ -17,6 +17,7 @@ import { TeamCoachingSection } from "./TeamCoachingSection"
 import { MySchoolSettings } from "../schools/MySchoolSettings"
 import { OwnAiKeySection } from "./OwnAiKeySection"
 import { SoundEffectsSection } from "./SoundEffectsSection"
+import { OnDeviceModelsSection } from "./OnDeviceModelsSection"
 import { SidebarIconAnimationsSection } from "./SidebarIconAnimationsSection"
 import { PrivacySettingsSection } from "./PrivacySettingsSection"
 import { useSession } from "../../lib/hooks/useSession"
@@ -333,6 +334,7 @@ function EditorSettingsPanelContent({ sidebarHeader }: { sidebarHeader?: ReactNo
               <TeamCoachingSection />
               <OwnAiKeySection />
               <SoundEffectsSection />
+              <OnDeviceModelsSection />
               <SidebarIconAnimationsSection />
               <UserSettingsPanel embedded />
             </>
