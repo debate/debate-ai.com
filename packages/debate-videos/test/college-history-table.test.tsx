@@ -41,10 +41,12 @@ describe("CollegeHistoryTable", () => {
     expect(el.querySelector('a[href="https://debatedata.weebly.com/"]')).not.toBeNull();
 
     const stats = el.querySelector('section[aria-label="2025-26 season stats"]')!;
-    expect(stats.querySelectorAll("h4")).toHaveLength(4);
-    expect(stats.textContent).toContain("Junior Varsity");
-    expect(stats.textContent).toContain("43.4%");
-    expect(stats.textContent).toContain("28.7\u201329.2");
+    expect(stats.querySelectorAll("h4")).toHaveLength(1);
+    expect(stats.textContent).toContain("All divisions");
+    expect(stats.textContent).toContain("5671");
+    expect(stats.textContent).toContain("40.5%");
+    expect(stats.textContent).not.toContain("Junior Varsity");
+    expect(stats.textContent).not.toContain("Novice");
     expect(el.textContent).toContain("Rated from 27 tournaments: ASU, Bing");
   });
 

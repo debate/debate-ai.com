@@ -1,8 +1,8 @@
 /**
  * @fileoverview Past-season college policy table: the top 100 teams of one
  * season as debatedata.weebly.com rated them, with a win-probability
- * calculator over its teams and, when stored, the season's per-division stats
- * and rated tournaments. Shown on the NDT tab for the seasons
+ * calculator over its teams and, when stored, the season's all-divisions
+ * totals and rated tournaments. Shown on the NDT tab for the seasons
  * `debate-rankings` does not cover.
  * @module components/debate/DebateVideos/panels/CollegeHistoryTable
  */
@@ -90,6 +90,8 @@ export function CollegeHistoryTable({ year, query }: CollegeHistoryTableProps) {
   if (!entries) return <p className="py-8 text-center text-sm text-muted-foreground">Loading rankings...</p>
 
   const details = collegeSeasonDetails(year)
+  // Only the all-divisions totals; the Open / JV / Novice breakdowns stay in the data.
+  const totals = details?.stats.find((s) => s.division === "All divisions")
   const q = query.trim().toLowerCase()
   const visible = q
     ? entries.filter((e) => e.school.toLowerCase().includes(q) || e.name.toLowerCase().includes(q))
@@ -111,11 +113,9 @@ export function CollegeHistoryTable({ year, query }: CollegeHistoryTableProps) {
         that site's own scale, not comparable with current-season ratings.
       </p>
       <div className="mb-4 grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-        {details && (
-          <section aria-label={`${seasonLabel(year)} season stats`} className="grid gap-3 sm:grid-cols-2">
-            {details.stats.map((s) => (
-              <SeasonStatsCard key={s.division} stats={s} />
-            ))}
+        {totals && (
+          <section aria-label={`${seasonLabel(year)} season stats`}>
+            <SeasonStatsCard stats={totals} />
           </section>
         )}
         {entries.length >= 2 && <CollegeWinCalculator key={year} entries={entries} />}
