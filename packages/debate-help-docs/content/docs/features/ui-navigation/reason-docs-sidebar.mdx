@@ -141,14 +141,14 @@ first file over the top of it.
 
 A public topic starter's link names the resolution it is for and the file's
 path in the library:
-`/docs/vcs27/neg/cp/aca-expansion-cp-cndi-2026`. The topic code is the
+`/docs/vcx27/neg/cp/aca-expansion-cp-cndi-2026`. The topic code is the
 format, the last two digits of the year in `debate-topics.json`, and — for
 the formats that change topic during the season — a letter for which topic
 of that year, in start-month order:
 
 | Format | Code | Example |
 | --- | --- | --- |
-| High-school policy | `vcs<yy>` | `vcs27` (National Health Insurance) |
+| High-school policy | `vcx<yy>` | `vcx27` (National Health Insurance) |
 | College policy (NDT/CEDA) | `ndt<yy>` | `ndt27` |
 | Lincoln-Douglas | `ld<yy><a-e>` | `ld27a` (September), `ld27b` (November) |
 | Public Forum | `pf<yy><a-g>` | `pf27a` |
@@ -160,7 +160,7 @@ opened after that keeps the code in its link.
 
 These addresses share `/docs` with the help docs, so only a first segment
 shaped like a topic code is the editor's — no help page is named like
-`vcs27` or `ld27a`. `next.config.mjs` rewrites exactly that shape onto the
+`vcx27` or `ld27a`. `next.config.mjs` rewrites exactly that shape onto the
 `/reason-editor` page (a `beforeFiles` rewrite, ahead of the help docs'
 catch-all), and `isDocsPath` leaves it out so the app shell rather than the
 help-docs chrome renders it. The rules are in
@@ -169,7 +169,7 @@ resolution list and its codes in `topic-codes.ts`.
 
 Older links keep working: `/reason-editor?topic=neg/cp/aca-expansion-cp-cndi-2026`
 still opens the file, and `ReasonDocsRouteSync` then rewrites the address to
-`/docs/vcs27/neg/cp/aca-expansion-cp-cndi-2026`. A link with no code — that
+`/docs/vcx27/neg/cp/aca-expansion-cp-cndi-2026`. A link with no code — that
 one, or a starter opened while on `/reason-editor` — gets the default code,
 the newest high-school policy topic (`DEFAULT_TOPIC_CODE`).
 

@@ -56,17 +56,29 @@ const nextConfig = {
         destination: "/@:handle",
         permanent: true,
       },
+      // High-school policy topic codes were `vcs<yy>` before they became
+      // `vcx<yy>`; old Topic Starter links 308 to the new code.
+      {
+        source: "/docs/vcs:yy(\\d{2})",
+        destination: "/docs/vcx:yy",
+        permanent: true,
+      },
+      {
+        source: "/docs/vcs:yy(\\d{2})/:path*",
+        destination: "/docs/vcx:yy/:path*",
+        permanent: true,
+      },
     ];
   },
   // A public Topic Starter's address is `/docs/<topic code>/<file path>`
-  // (`/docs/vcs27/neg/cp/aca-expansion-cp-cndi-2026`), served by the
+  // (`/docs/vcx27/neg/cp/aca-expansion-cp-cndi-2026`), served by the
   // CardMirror editor page, which reads the code and file back off the
   // address bar. `beforeFiles`, because `/docs/[[...slug]]` (the help docs)
   // would otherwise claim it; only a first segment shaped like a topic code is
   // rewritten, so every help page keeps its URL. The shape is
   // `TOPIC_CODE_SOURCE` in @debate/webview's lib/reason-docs/topic-doc-paths.
   async rewrites() {
-    const topicCode = "(?:vcs|ndt)\\d{2}|(?:ld|pf)\\d{2}[a-z]";
+    const topicCode = "(?:vcx|ndt)\\d{2}|(?:ld|pf)\\d{2}[a-z]";
     return {
       beforeFiles: [
         { source: `/docs/:code(${topicCode})`, destination: "/reason-editor" },

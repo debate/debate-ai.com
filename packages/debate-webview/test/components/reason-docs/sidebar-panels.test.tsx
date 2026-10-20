@@ -612,7 +612,7 @@ describe("ReasonDocsSidebarPanels", () => {
     mount(<ReasonDocsSidebarPanels />);
     click(button("Solar Aff"));
     expect(docs.selectTopicDocument).toHaveBeenCalledWith(TOPICS[1]);
-    expect(nav.push).toHaveBeenCalledWith("/docs/vcs27/energy/solar-aff");
+    expect(nav.push).toHaveBeenCalledWith("/docs/vcx27/energy/solar-aff");
 
     openMenu(button("Solar Aff").parentElement!.querySelectorAll("button")[1]);
     click(menuItem("Download as .docx"));
@@ -748,7 +748,7 @@ describe("ReasonDocsSidebarPanels", () => {
     rightClick(button("Solar Aff").parentElement!);
     click(menuItem("Copy link"));
     await flush();
-    expect(writeText).toHaveBeenCalledWith(`${window.location.origin}/docs/vcs27/energy/solar-aff`);
+    expect(writeText).toHaveBeenCalledWith(`${window.location.origin}/docs/vcx27/energy/solar-aff`);
     expect(toast.success).toHaveBeenCalledWith("Link copied.");
   });
 

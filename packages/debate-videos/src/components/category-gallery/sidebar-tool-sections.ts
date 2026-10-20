@@ -131,18 +131,6 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       // Topic Coverage, Collaboration Prep Room, Review Queue, Task Inbox,
       // Contributions Feed and Team Brainstorm Assist, one tab each.
       { href: "/research/team", title: "Team Research", icon: Users },
-    ],
-  },
-  {
-    // Simulate rounds, rehearse individual skills, compete with other users
-    // or AI.
-    id: "practice",
-    title: "Practice",
-    // `/practice` (the old Practice Round Simulator) redirects here: the two
-    // pages were merged into Practice vs AI.
-    href: "/practice/versus-ai",
-    icon: Dumbbell,
-    tools: [
       { href: "/practice/versus-ai", title: "Practice vs AI", icon: Swords },
       // Pre-Round Briefings, Scout-to-Strategy, Opponent Team Profiles, Judge
       // Profiles, Prep Notes, Practice Partners and Practice Drills, one tab
@@ -168,6 +156,7 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       // hosted here), first in Coaching. The framed beta.tabroom.com page
       // (`/practice/tabroom`) is still routed but deliberately has no sidebar row.
       { href: "/tournaments", title: "Tournaments", icon: Trophy },
+      { href: "/coaching/rankings", title: "Team Rankings", icon: Medal },
       { href: "/coaching", title: "Coach Workspace", icon: Presentation },
       // Companion guide page (not a coaching tool) — round-day setup for
       // debating off just a phone, so it rides with the coaching tools here
@@ -187,7 +176,6 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
     href: "/coaching/rankings",
     icon: ChartColumn,
     tools: [
-      { href: "/coaching/rankings", title: "Team Rankings", icon: Medal },
       { href: "/practice/level", title: "Debater Level", icon: Star },
       { href: "/practice/statistics", title: "Topics & Video Statistics", icon: BarChart3 },
       { href: "/practice/predictions", title: "Prediction Markets", icon: Coins },

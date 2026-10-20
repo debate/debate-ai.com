@@ -36,7 +36,7 @@ describe("topic codes", () => {
         pf_topics: [{ start_month: "September", topic_name: "Data Centers", topic: "Resolved: data." }],
       },
     ])
-    expect([policy, ndt, ld1, ld2, pf1].map((item) => item?.code)).toEqual(["vcs27", "ndt27", "ld27a", "ld27b", "pf27a"])
+    expect([policy, ndt, ld1, ld2, pf1].map((item) => item?.code)).toEqual(["vcx27", "ndt27", "ld27a", "ld27b", "pf27a"])
     expect(ld2).toMatchObject({ format: "ld", year: 2027, month: "November", name: "De-Extinction" })
   })
 
@@ -54,22 +54,22 @@ describe("topic codes", () => {
 
   it("defaults to the newest high-school policy topic", () => {
     // Move DEFAULT_TOPIC_CODE along when debate-topics.json gains a year.
-    expect(DEFAULT_TOPIC_CODE).toBe(topicsForFormat("vcs")[0]?.code)
+    expect(DEFAULT_TOPIC_CODE).toBe(topicsForFormat("vcx")[0]?.code)
     expect(findTopicByCode(DEFAULT_TOPIC_CODE)?.name).toBeTruthy()
   })
 })
 
 describe("parseTopicDocsPath", () => {
   it("reads the code and file path off a topic starter address", () => {
-    expect(parseTopicDocsPath("/docs/vcs27/neg/cp/aca-expansion-cp-cndi-2026")).toEqual({
-      code: "vcs27",
+    expect(parseTopicDocsPath("/docs/vcx27/neg/cp/aca-expansion-cp-cndi-2026")).toEqual({
+      code: "vcx27",
       ref: "neg/cp/aca-expansion-cp-cndi-2026",
     })
     expect(parseTopicDocsPath("/docs/ld27a/")).toEqual({ code: "ld27a", ref: null })
   })
 
   it("leaves the help docs alone", () => {
-    for (const path of ["/docs", "/docs/features/drill-sets", "/docs/learn", "/docs/vcs2027/x", "/reason-editor", null]) {
+    for (const path of ["/docs", "/docs/features/drill-sets", "/docs/learn", "/docs/vcx2027/x", "/reason-editor", null]) {
       expect(parseTopicDocsPath(path)).toBeNull()
     }
   })
@@ -81,7 +81,7 @@ describe("parseTopicDocsPath", () => {
   })
 
   it("agrees with @debate/videos' copy of the code shape", () => {
-    for (const path of ["/docs/vcs27", "/docs/ndt26/x", "/docs/ld27e/a/b", "/docs/pf25c", "/docs", "/docs/features", "/docs/vcs2027"]) {
+    for (const path of ["/docs/vcx27", "/docs/ndt26/x", "/docs/ld27e/a/b", "/docs/pf25c", "/docs", "/docs/features", "/docs/vcx2027"]) {
       expect(isTopicStarterDocsPath(path)).toBe(parseTopicDocsPath(path) != null)
     }
   })
