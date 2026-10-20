@@ -39,6 +39,7 @@ async function freshDb() {
       editor_preferences TEXT,
       flow_editor_settings TEXT,
       flow_auto_save TEXT,
+      font_family TEXT,
       news_read TEXT,
       news_liked TEXT,
       word_limit_presets TEXT,
