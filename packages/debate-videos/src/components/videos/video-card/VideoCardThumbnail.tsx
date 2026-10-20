@@ -15,7 +15,7 @@ import { useWatchHistoryEntry } from "../../../hooks/useWatchHistory"
 import { videoRouteHref } from "../../../lib/video-route"
 import { videoWatchHref } from "../../../lib/video-slug"
 import { getTournamentLogo } from "./tournamentLogos"
-import { TeamCodeLabel } from "../../team-label/TeamLabel"
+import { TEAM_SIDE_SURFACE_CLASS, TeamCodeLabel } from "../../team-label/TeamLabel"
 import { useContextTeamRanking } from "../../../hooks/useVideoTeamRankings"
 import type { VideoType } from "../../../types/videos"
 
@@ -259,10 +259,11 @@ export function VideoCardThumbnail({
                     <div className="flex flex-col items-center gap-0.5">
                       <span
                         className={cn(
-                          "text-xs font-bold backdrop-blur-md bg-blue-900/80 px-1.5 py-0.5 rounded",
+                          "text-xs font-bold backdrop-blur-md px-1.5 py-0.5 rounded",
+                          TEAM_SIDE_SURFACE_CLASS.aff,
                           affWin === true
-                            ? "border-[3px] border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)] text-blue-100"
-                            : "border border-blue-400/90 shadow-lg text-blue-300",
+                            ? "border-[3px] border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)]"
+                            : "border border-blue-400/90 shadow-lg",
                         )}
                       >
                         <TeamCodeLabel label={affTeam} ranking={affRanking} side="aff" bare />
@@ -278,10 +279,11 @@ export function VideoCardThumbnail({
                     <div className="flex flex-col items-center gap-0.5">
                       <span
                         className={cn(
-                          "text-xs font-bold backdrop-blur-md bg-red-900/80 px-1.5 py-0.5 rounded",
+                          "text-xs font-bold backdrop-blur-md px-1.5 py-0.5 rounded",
+                          TEAM_SIDE_SURFACE_CLASS.neg,
                           affWin === false
-                            ? "border-[3px] border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)] text-red-100"
-                            : "border border-red-400/90 shadow-lg text-red-300",
+                            ? "border-[3px] border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)]"
+                            : "border border-red-400/90 shadow-lg",
                         )}
                       >
                         <TeamCodeLabel label={negTeam} ranking={negRanking} side="neg" bare />
