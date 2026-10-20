@@ -151,6 +151,12 @@ YouTube description links to the other ("Full Debate:
 `https://www.youtube.com/watch?v=…`"). Linking two videos is therefore an
 edit to a description on YouTube, not a change to the site.
 
+A round's card never gives away who won until you ask: both teams show in
+their side colors, and where the decision would be there is a **Reveal
+decision** button. Clicking it shows the decision and rings the winning team
+in gold, here and on the video's watch page, which shares the reveal (see
+[Video Watch Page](/docs/features/video-library/video-watch-page#no-spoilers)).
+
 Every card in the grid and every row in the list shows the video's length
 (`1h 05m`, `42m`) on its own line under the action buttons — not as a column —
 and flipping a stack shows the length of the video now on top. Lengths come
@@ -233,9 +239,19 @@ leaving two empty dashes (`VideoListRow.tsx`).
 
 ### Team names and ratings
 
+Each team shows as a [team label](/docs/features/team-collaboration/team-rankings#team-labels):
+its school's logo (or name), then its debaters, in a blue box for the Aff
+and a red one for the Neg. Video cards and the watch page header use the same
+label inside their blue and red team badges, as do the mini player's title
+bar and the top-pick tooltip. A code like "Harker LL" is split into the
+school ("Harker", shown as its logo) and the two debaters' initials ("LL"),
+which become their last names whenever the current season's rankings know
+the team.
+
 In the Aff and Neg columns, a team from the **current season** that the
-[team rankings](/docs/features/team-collaboration/team-rankings) know shows its rating in a
-small badge beside its name, and clicking the name opens that team's page.
+[team rankings](/docs/features/team-collaboration/team-rankings) know shows its
+debaters' last names and its rank beside the label, and clicking it opens that
+team's page; any other team shows the initials from its code.
 Any other team — one from a past season, or one the rankings don't match —
 keeps the old behaviour: clicking its name searches the library for that
 team's videos. The rankings cover the current season only, so an older

@@ -31,6 +31,8 @@ import {
   DEFAULT_WORD_LIMIT_PRESETS,
   normalizeFavoriteToolOpPatch,
   normalizeFlowAutoSavePatch,
+  normalizeFontFamilyPatch,
+  isValidFontFamily,
   parseStoredFlowAutoSave,
   type FlowAutoSaveMode,
   normalizeFavoriteToolsPatch,
@@ -137,7 +139,7 @@ import type { QualificationPointsTable } from "@debate/data-sync/src/rankings/nd
  *
  * GET  — the current user's saved settings, or the matching `DEFAULT_*`
  *   value for any field with no saved row/value yet.
- * PUT  { debateStyle?, fontSize?, colorTheme?, themeMode?, favoriteTools?,
+ * PUT  { debateStyle?, fontSize?, colorTheme?, themeMode?, fontFamily?, favoriteTools?,
  *   addFavoriteTool?, removeFavoriteTool?, removeFavoriteTools?,
  *   recordRecentTool?, wordLimitPresets?, addWordLimitPreset?,
  *   updateWordLimitPreset?, removeWordLimitPreset?, outlineFilterPresets?,
@@ -264,6 +266,7 @@ type SettingsRow = {
   editorPreferences: string | null
   flowEditorSettings: string | null
   flowAutoSave: string | null
+  fontFamily: string | null
   newsRead: string | null
   newsLiked: string | null
   wordLimitPresets: string | null
@@ -286,6 +289,7 @@ type SettingsPayload = UserSettingsPayload & {
   editorPreferences: EditorPreferencesPayload
   flowEditorSettings: FlowEditorAccountSettingsPayload
   flowAutoSave: FlowAutoSaveMode | null
+  fontFamily: string | null
   newsRead: string[]
   newsLiked: string[]
   wordLimitPresets: { name: string; wordLimit: number }[]
@@ -311,6 +315,7 @@ function toPayload(row: SettingsRow | undefined): SettingsPayload {
     editorPreferences: parseEditorPreferences(row?.editorPreferences),
     flowEditorSettings: parseFlowEditorSettings(row?.flowEditorSettings),
     flowAutoSave: parseStoredFlowAutoSave(row?.flowAutoSave),
+    fontFamily: isValidFontFamily(row?.fontFamily) ? row.fontFamily : null,
     newsRead: row?.newsRead ? parseNewsIdList(row.newsRead) : DEFAULT_NEWS_SYNC.newsRead,
     newsLiked: row?.newsLiked ? parseNewsIdList(row.newsLiked) : DEFAULT_NEWS_SYNC.newsLiked,
     wordLimitPresets: row?.wordLimitPresets
@@ -401,7 +406,8 @@ export async function PUT(req: NextRequest) {
     (body as { flowEditorSettings?: unknown } | null)?.flowEditorSettings,
   )
   const flowAutoSaveResult = normalizeFlowAutoSavePatch(body)
-  const valid = { ...userSettingsResult.valid, ...themeSettingsResult.valid }
+  const fontFamilyResult = normalizeFontFamilyPatch(body)
+  const valid = { ...userSettingsResult.valid, ...themeSettingsResult.valid, ...fontFamilyResult.valid }
   const errors = [
     ...userSettingsResult.errors,
     ...themeSettingsResult.errors,
@@ -430,6 +436,7 @@ export async function PUT(req: NextRequest) {
     ...editorPreferencesResult.errors,
     ...flowEditorSettingsResult.errors,
     ...flowAutoSaveResult.errors,
+    ...fontFamilyResult.errors,
   ]
 
   if (errors.length > 0) {
@@ -475,7 +482,7 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json(
       {
         error:
-          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, recordRecentTool, wordLimitPresets, addWordLimitPreset, updateWordLimitPreset, removeWordLimitPreset, outlineFilterPresets, addOutlineFilterPreset, removeOutlineFilterPreset, savedArgumentCollections, addSavedArgumentCollection, removeSavedArgumentCollection, renameSavedArgumentCollection, updateSavedArgumentCollectionTags, researchProgressGoal, brainstormSessionTimer, questStreakSync, recordStreakFreezeDayKey, setLapseReminderEnabled, recordMissionResultDay, qualificationPointsTable, qualificationCutoff, myTeamProfile, myRankedTeams, newsRead, newsLiked, recordNewsRead, addNewsLiked, removeNewsLiked, editorPreferences, flowEditorSettings, or flowAutoSave.",
+          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, fontFamily, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, recordRecentTool, wordLimitPresets, addWordLimitPreset, updateWordLimitPreset, removeWordLimitPreset, outlineFilterPresets, addOutlineFilterPreset, removeOutlineFilterPreset, savedArgumentCollections, addSavedArgumentCollection, removeSavedArgumentCollection, renameSavedArgumentCollection, updateSavedArgumentCollectionTags, researchProgressGoal, brainstormSessionTimer, questStreakSync, recordStreakFreezeDayKey, setLapseReminderEnabled, recordMissionResultDay, qualificationPointsTable, qualificationCutoff, myTeamProfile, myRankedTeams, newsRead, newsLiked, recordNewsRead, addNewsLiked, removeNewsLiked, editorPreferences, flowEditorSettings, or flowAutoSave.",
       },
       { status: 400 },
     )

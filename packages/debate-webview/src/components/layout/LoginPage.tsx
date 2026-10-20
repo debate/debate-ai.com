@@ -13,7 +13,8 @@ import { useSearchParams } from "next/navigation"
 
 import { Card, CardContent, CardHeader } from "../../lib/ui/primitives/card"
 import { LoginForm } from "./LoginForm"
-import { APP_LOGO, APP_LOGO_HEIGHT, APP_LOGO_WIDTH, APP_NAME } from "../../lib/config/site"
+import { DebateAiLogo } from "@debate/icons/brand"
+import { APP_LOGO_HEIGHT, APP_LOGO_WIDTH, APP_NAME } from "../../lib/config/site"
 import { describeSignInError } from "../../lib/auth/sign-in-errors"
 
 export default function LoginPage() {
@@ -36,7 +37,7 @@ export default function LoginPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="flex flex-col items-center gap-4">
           <Image
-            src={APP_LOGO}
+            src={DebateAiLogo}
             alt={APP_NAME}
             width={APP_LOGO_WIDTH}
             height={APP_LOGO_HEIGHT}

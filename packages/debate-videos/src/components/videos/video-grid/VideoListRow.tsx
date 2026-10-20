@@ -45,6 +45,7 @@ import { TOC_TOURNAMENT_IMAGE } from "../video-card/videoCardUtils"
 import { treeIndentStyle } from "./tree-indent"
 import { FormatBadge } from "./FormatBadge"
 import { teamHref } from "../../../panels/leaderboard/profile/rankingProfileHelpers"
+import { TeamCodeLabel, type TeamSide } from "../../team-label/TeamLabel"
 import type { VideoType } from "../../../types/videos"
 
 /**
@@ -116,14 +117,17 @@ function RowThumbnail({
  * A team found in the current season's rankings (`ranking`) links to its
  * team page and shows its rank (e.g. "#4"). Otherwise, with `onSearch`, the
  * name is a button that searches the library for that team's videos instead
- * of opening the row.
+ * of opening the row. The team is drawn as a {@link TeamCodeLabel}: school
+ * logo or name, then last names (from the rankings row) or initials.
  */
 function TeamCell({
+  side,
   team,
   argument,
   ranking,
   onSearch,
 }: {
+  side: TeamSide
   team?: string | null
   argument?: string | null
   ranking?: RankingEntry | null
@@ -131,7 +135,7 @@ function TeamCell({
 }) {
   return (
     <td className="px-3 py-3 align-top text-sm">
-      <div className="flex min-w-0 items-baseline gap-1.5">
+      <div className="flex min-w-0 items-center gap-1.5">
         {!team ? (
           <span className="text-muted-foreground">—</span>
         ) : ranking ? (
@@ -139,9 +143,9 @@ function TeamCell({
             href={teamHref(ranking)}
             onClick={(e) => e.stopPropagation()}
             title={`${ranking.school} ${ranking.name} — team page`}
-            className="min-w-0 truncate text-left hover:text-primary hover:underline flex items-baseline gap-1.5"
+            className="min-w-0 truncate text-left hover:text-primary hover:underline flex items-center gap-1.5"
           >
-            {team}
+            <TeamCodeLabel label={team} ranking={ranking} side={side} />
             <span className="shrink-0 text-[11px] font-medium tabular-nums text-primary">
               #{ranking.rank}
             </span>
@@ -156,10 +160,10 @@ function TeamCell({
             title={`Search for ${team}`}
             className="max-w-full truncate text-left hover:text-primary hover:underline"
           >
-            {team}
+            <TeamCodeLabel label={team} side={side} />
           </button>
         ) : (
-          <span className="truncate">{team}</span>
+          <TeamCodeLabel label={team} side={side} />
         )}
       </div>
       {argument && (
@@ -555,8 +559,8 @@ export function VideoListRow({
 
         {isRoundMode && !spansTeamCells && (
           <>
-            <TeamCell team={affTeam} argument={arg1AC} ranking={affRanking} onSearch={onSearch} />
-            <TeamCell team={negTeam} argument={arg2NR} ranking={negRanking} onSearch={onSearch} />
+            <TeamCell side="aff" team={affTeam} argument={arg1AC} ranking={affRanking} onSearch={onSearch} />
+            <TeamCell side="neg" team={negTeam} argument={arg2NR} ranking={negRanking} onSearch={onSearch} />
           </>
         )}
 

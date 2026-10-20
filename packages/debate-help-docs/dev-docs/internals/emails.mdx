@@ -1,0 +1,49 @@
+---
+title: "Emails"
+---
+
+# Emails
+
+Transactional email templates, written with React Email, rendered on the
+Worker and sent through Resend.
+
+- **Package:** `packages/debate-emails` (`@debate/emails`)
+- **Admin previews:** `/admin#emails` →
+  `packages/debate-webview/src/components/admin/EmailsPanel.tsx` →
+  `GET/POST /api/admin/emails` (admins only)
+- **User-facing page:** [Emails](/docs/features/team-collaboration/emails)
+
+## How it's built
+
+```
+src/templates/*.tsx           one component per email, each with PreviewProps
+  → src/registry.tsx          EMAIL_TEMPLATES: id, name, subject(), sample props, sender
+  → src/render.ts             renderEmail(id, props) → { subject, html, text }
+      → @react-email/render   `workerd` export condition → its edge build
+```
+
+Senders call `renderEmail` with the request origin as `baseUrl`, then pass
+`subject`, `html` and `text` to `resend.emails.send`:
+
+- `POST /api/rounds/invite` → `round-invite`, for invitees with no account.
+- `POST /api/card-shares` → `file-invite`, for every recipient a share
+  reached, after the `card_shared` notification. Email errors are logged and
+  never fail the share.
+
+Without `RESEND_API_KEY` (or `AUTH_RESEND_KEY`) both routes log instead of
+sending, as before. `POST /api/admin/emails` refuses with 503.
+
+Links and the logo are absolute (`siteUrl(baseUrl, path)`). The logo is
+`/logo.png`, which the app serves from `@debate/icons/brand` via
+`ROOT_ASSETS` in `apps/debate-web/vite.config.ts`.
+
+## Known gaps
+
+- The **welcome** email is not sent on sign-up: sending it needs a
+  `databaseHooks.user.create.after` hook in `apps/debate-web/lib/auth`.
+- The **coach features** email has no trigger; there is no "is a coach"
+  account flag. An approved school claim with role Coach is the closest
+  event.
+- Verification, password-reset, school-claim code and moderator-invite emails
+  still use inline HTML strings and could move onto `EmailLayout`.
+- No unsubscribe link or per-user email preferences.

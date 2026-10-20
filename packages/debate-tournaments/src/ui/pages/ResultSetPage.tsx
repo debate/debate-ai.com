@@ -1,7 +1,7 @@
 "use client";
 
 import type { BracketRound, ResultSet } from "../client";
-import { EntryRating } from "../enrichment";
+import { EntryLabel } from "../enrichment";
 import { Card, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../primitives";
 import { BackLink, Empty, Loaded, useApi, useTournaments } from "../shared";
 
@@ -65,16 +65,18 @@ export function ResultSetView({ set }: { set: ResultSet | undefined }) {
                     <TableCell>{[row.Student?.first, row.Student?.last].filter(Boolean).join(" ")}</TableCell>
                   ) : null}
                   <TableCell>
-                    {row.Entry?.code}
-                    {row.Entry?.name && row.Entry.name !== row.Entry.code && (
-                      <span className="ml-1 text-muted-foreground">{row.Entry.name}</span>
-                    )}
                     {row.Entry?.code && set.Event && !speakers ? (
-                      <EntryRating
+                      <EntryLabel
                         query={{ code: row.Entry.code, name: row.Entry.name, school: row.School?.name, event: set.Event }}
-                        names={!row.Entry.name || row.Entry.name === row.Entry.code}
                       />
-                    ) : null}
+                    ) : (
+                      <>
+                        {row.Entry?.code}
+                        {row.Entry?.name && row.Entry.name !== row.Entry.code && (
+                          <span className="ml-1 text-muted-foreground">{row.Entry.name}</span>
+                        )}
+                      </>
+                    )}
                   </TableCell>
                   <TableCell>{row.School?.name}</TableCell>
                   {columns.map(([key]) => (

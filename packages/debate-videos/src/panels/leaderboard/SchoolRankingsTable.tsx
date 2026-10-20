@@ -25,6 +25,8 @@ import { SchoolLogo } from "./SchoolLogo"
 import { getSchoolLogo } from "../../lib/schoolLogos"
 import { LegendaryBadge, ROW_TIER_CLASS, rowTier, type RowTier } from "./rowTier"
 import { RatingDigits } from "./RatingDigits"
+import { TeamLabel } from "../../components/team-label/TeamLabel"
+import { teamDisplayParts } from "@debate/rankings-adapter"
 
 /** One table column: which field it shows and how. */
 interface Column {
@@ -82,7 +84,8 @@ const COLUMNS: Column[] = [
     width: 220,
     render: (r) => (
       <span>
-        {r.bestEntry} <span className="text-xs text-muted-foreground/70">({r.bestEvent})</span>
+        <TeamLabel {...teamDisplayParts({ school: r.school, name: r.bestEntry })} title={`${r.school} · ${r.bestEntry}`} />{" "}
+        <span className="text-xs text-muted-foreground/70">({r.bestEvent})</span>
       </span>
     ),
   },

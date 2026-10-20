@@ -99,6 +99,14 @@ export { LecturesPage } from "./panels/LecturesPage";
 export { DebateVideosPage } from "./panels/DebateVideosPanel";
 export { LeaderboardPanel } from "./panels/leaderboard/RankingsLeaderboardPanel";
 export { TeamProfilePage, SchoolProfilePage } from "./panels/leaderboard/profile/RankingProfiles";
+export {
+  TEAM_SIDE_CLASS,
+  TeamCodeLabel,
+  TeamLabel,
+  type TeamCodeLabelProps,
+  type TeamLabelProps,
+  type TeamSide,
+} from "./components/team-label/TeamLabel";
 export { MatchupSimulator, type MatchupSimulatorProps } from "./panels/leaderboard/profile/MatchupSimulator";
 export { MyRankedTeamsSettings } from "./panels/leaderboard/profile/MyRankedTeamsSettings";
 export {
@@ -194,6 +202,7 @@ export {
   type SegmentationCaption,
   type SpeechSegmentation,
 } from "./lib/speech-segmentation";
+export { captionPauseSegmentation } from "./lib/caption-speech-split";
 export {
   DEFAULT_SPEECH_ANALYSIS_INSTRUCTIONS,
   buildSpeechAnalysisPrompt,

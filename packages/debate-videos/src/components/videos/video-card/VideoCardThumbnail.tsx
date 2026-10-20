@@ -15,6 +15,8 @@ import { useWatchHistoryEntry } from "../../../hooks/useWatchHistory"
 import { videoRouteHref } from "../../../lib/video-route"
 import { videoWatchHref } from "../../../lib/video-slug"
 import { getTournamentLogo } from "./tournamentLogos"
+import { TeamCodeLabel } from "../../team-label/TeamLabel"
+import { useContextTeamRanking } from "../../../hooks/useVideoTeamRankings"
 import type { VideoType } from "../../../types/videos"
 
 /** Shape of the video metadata forwarded to the player store on play. */
@@ -108,6 +110,8 @@ export function VideoCardThumbnail({
   // a progress write every twenty seconds would otherwise re-render all of
   // them. See `hooks/useWatchHistory.ts`.
   const watched = useWatchHistoryEntry(videoId)
+  const affRanking = useContextTeamRanking(video, affTeam)
+  const negRanking = useContextTeamRanking(video, negTeam)
 
   // Grids reuse card instances as the user filters and pages, so a failure
   // recorded for one video must not stick to the next one rendered here.
@@ -261,7 +265,7 @@ export function VideoCardThumbnail({
                             : "border border-blue-400/90 shadow-lg text-blue-300",
                         )}
                       >
-                        {affTeam}
+                        <TeamCodeLabel label={affTeam} ranking={affRanking} side="aff" bare />
                       </span>
                       {arg1AC && (
                         <span className="text-xs font-medium text-blue-100 backdrop-blur-md bg-blue-950/90 px-2 py-0.5 rounded border border-blue-800/50 shadow-sm text-center max-w-[120px] leading-tight">
@@ -280,7 +284,7 @@ export function VideoCardThumbnail({
                             : "border border-red-400/90 shadow-lg text-red-300",
                         )}
                       >
-                        {negTeam}
+                        <TeamCodeLabel label={negTeam} ranking={negRanking} side="neg" bare />
                       </span>
                       {arg2NR && (
                         <span className="text-xs font-medium text-red-100 backdrop-blur-md bg-red-950/90 px-2 py-0.5 rounded border border-red-800/50 shadow-sm text-center max-w-[120px] leading-tight">

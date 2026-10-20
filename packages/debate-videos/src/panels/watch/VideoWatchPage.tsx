@@ -88,8 +88,11 @@ import {
   getTournamentLogo,
 } from "../../components/videos/video-card/videoCardUtils"
 import { cn } from "../../ui/lib/utils"
+import { TeamCodeLabel } from "../../components/team-label/TeamLabel"
+import { useVideoTeamRankings } from "../../hooks/useVideoTeamRankings"
 import { LecturesSidebarShell } from "../LecturesSidebarShell"
 import { useVideoState } from "../../hooks/useVideoState"
+import { useDecisionReveal } from "../../hooks/useDecisionReveal"
 import { useVideoFeed, useVideoMeta } from "../../hooks/useVideoFeed"
 import {
   sendYouTubeCommand,
@@ -118,7 +121,7 @@ import { stripArgumentLines } from "../../lib/video-description"
 import type { RoundContext } from "../../lib/speech-outcomes"
 import { readSpeechStarts, writeSpeechStart } from "../../state/speechStartMarks"
 import { readSpeechSegmentation, writeSpeechSegmentation } from "../../state/speechAiCache"
-import { requestSpeechSegmentation } from "../../lib/speech-ai-client"
+import { detectRoundSpeeches } from "../../lib/speech-ai-client"
 import {
   FORMAT_LABELS,
   applySpeechSegmentation,
@@ -241,6 +244,13 @@ export function VideoWatchPage({
     [description, affTeam, negTeam, arg1AC, arg2NR],
   )
 
+  // The header badges name each team by its debaters' last names when the
+  // current season's rankings know it, else by its code's initials.
+  const watchedVideos = useMemo(() => [video], [video])
+  const teamRanking = useVideoTeamRankings(watchedVideos)
+  const affRanking = teamRanking(video, affTeam)
+  const negRanking = teamRanking(video, negTeam)
+
   const styleNumber = typeof style === "number" ? style : undefined
   const categoryLabel = typeof style === "string" ? style : undefined
   const year = useMemo(() => new Date(date).getFullYear(), [date])
@@ -263,13 +273,15 @@ export function VideoWatchPage({
   const clearActiveVideo = useVideoPlayerStore((state) => state.clearActiveVideo)
 
   const { state: viewState, actions: viewActions } = useVideoState()
+  // The decision and the winner's gold border stay hidden until the viewer
+  // clicks "Reveal decision"; the video's card shares the same flag.
+  const [decisionRevealed, revealDecision] = useDecisionReveal(videoId)
   const { counts } = useVideoMeta()
 
   // The search box above the related videos swaps the list under the player
   // for the library's matches — in place, with no navigation, so the video
   // above keeps playing while the reader lines up what to watch next.
   const [relatedQuery, setRelatedQuery] = useState("")
-  const [decisionRevealed, setDecisionRevealed] = useState(false);
   const searchFeed = useVideoFeed({
     source: "all",
     q: relatedQuery,
@@ -424,24 +436,32 @@ export function VideoWatchPage({
     setDetecting(true)
     setDetectError(null)
     try {
-      const result = await requestSpeechSegmentation({
-        captions: sentences,
-        videoTitle: title,
-        formatHint:
-          styleNumber !== undefined ? DEBATE_STYLE_LABELS[styleNumber as keyof typeof DEBATE_STYLE_LABELS] : undefined,
-        aff: affTeam ?? undefined,
-        neg: negTeam ?? undefined,
-      })
+      // The raw cues, not the sentences: a sentence of unpunctuated auto-captions
+      // can run across the pause between two speeches and hide it.
+      const { segmentation: result, source, aiError } = await detectRoundSpeeches(
+        {
+          captions: cues ?? sentences,
+          videoTitle: title,
+          formatHint:
+            styleNumber !== undefined ? DEBATE_STYLE_LABELS[styleNumber as keyof typeof DEBATE_STYLE_LABELS] : undefined,
+          aff: affTeam ?? undefined,
+          neg: negTeam ?? undefined,
+        },
+        styleNumber,
+      )
       if (detectVideoRef.current !== forVideo) return
       writeSpeechSegmentation(forVideo, result)
       setSegmentation(result)
+      if (source === "pauses") {
+        setDetectError(`${aiError ?? "The AI was unavailable."} Placed speeches from the caption pauses instead — check them.`)
+      }
     } catch (error) {
       if (detectVideoRef.current !== forVideo) return
       setDetectError(error instanceof Error ? error.message : "Speech detection failed.")
     } finally {
       if (detectVideoRef.current === forVideo) setDetecting(false)
     }
-  }, [sentences, videoId, title, styleNumber, affTeam, negTeam])
+  }, [cues, sentences, videoId, title, styleNumber, affTeam, negTeam])
   const handleClearDetected = useCallback(() => {
     writeSpeechSegmentation(videoId, null)
     setSegmentation(null)
@@ -872,7 +892,7 @@ export function VideoWatchPage({
                 )}
                 {/* The two teams sit right after the level, in the same row as
                     the round's other badges: aff blue, neg red, the winner
-                    ringed in gold. Each team's argument (the 1AC for aff, the
+                    ringed in gold once the decision is revealed. Each team's argument (the 1AC for aff, the
                     2NR for neg) sits in small type right under its name. */}
                 {affTeam && (
                   <TeamWithArgument argument={arg1AC} side="aff">
@@ -881,12 +901,12 @@ export function VideoWatchPage({
                       title={`Affirmative: ${affTeam}`}
                       className={cn(
                         "text-sm font-bold backdrop-blur-md px-2 py-1 rounded",
-                        affWin === true
+                        decisionRevealed && affWin === true
                           ? "border-2 border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)] text-blue-100 bg-blue-900/80"
                           : "border border-blue-400/90 shadow-lg text-blue-300 bg-blue-900/80",
                       )}
                     >
-                      {affTeam}
+                      <TeamCodeLabel label={affTeam} ranking={affRanking} side="aff" bare />
                     </button>
                   </TeamWithArgument>
                 )}
@@ -897,12 +917,12 @@ export function VideoWatchPage({
                       title={`Negative: ${negTeam}`}
                       className={cn(
                         "text-sm font-bold backdrop-blur-md px-2 py-1 rounded",
-                        affWin === false
+                        decisionRevealed && affWin === false
                           ? "border-2 border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)] text-red-100 bg-red-900/80"
                           : "border border-red-400/90 shadow-lg text-red-300 bg-red-900/80",
                       )}
                     >
-                      {negTeam}
+                      <TeamCodeLabel label={negTeam} ranking={negRanking} side="neg" bare />
                     </button>
                   </TeamWithArgument>
                 )}
@@ -1045,7 +1065,7 @@ export function VideoWatchPage({
                     {formatVideoDuration(storedDuration || duration)}
                   </span>
                 )}
-                {judgeDecision && !decisionRevealed ? (<button onClick={() => setDecisionRevealed(true)} className="text-xs text-muted-foreground hover:text-foreground">Reveal decision</button>) : (decisionRevealed ? (<span>Decision {judgeDecision}</span>) : null)}
+                {judgeDecision && !decisionRevealed ? (<button onClick={revealDecision} className="text-xs text-muted-foreground hover:text-foreground">Reveal decision</button>) : (decisionRevealed ? (<span>Decision {judgeDecision}</span>) : null)}
               </div>
 
               {shownDescription && (

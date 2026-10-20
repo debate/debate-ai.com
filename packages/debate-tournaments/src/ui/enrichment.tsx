@@ -103,6 +103,88 @@ export function EntryRating({ query, names = true }: { query: TeamRatingQuery; n
   );
 }
 
+/** The side an entry debated: Tabroom's `side` 1 is the aff, 2 the neg. */
+export type EntrySide = "aff" | "neg";
+
+/** Tabroom's numeric side as {@link EntrySide}, or `null` for speaker-order events. */
+export const entrySide = (side: number | null | undefined): EntrySide | null =>
+  side === 1 ? "aff" : side === 2 ? "neg" : null;
+
+/** Splits a code like `"Harker LL"` into school and initials; `null` without trailing initials. */
+function splitEntryCode(code: string | null | undefined): { school: string; initials: string } | null {
+  const match = /^(.+?)\s+([A-Z]{1,4})$/.exec((code ?? "").trim().replace(/\s+/g, " "));
+  return match ? { school: match[1], initials: match[2] } : null;
+}
+
+/** `"Jane Le & Ken Luo"` → `"Le & Luo"`. */
+function lastNames(name: string): string {
+  return name
+    .split(/\s*(?:&|\/| and )\s*/i)
+    .filter(Boolean)
+    .map((part) => part.trim().split(/\s+/).at(-1) ?? part)
+    .join(" & ");
+}
+
+/** Border colors by side, matching the site's aff blue and neg red; no side uses the aff blue. */
+const SIDE_BORDER: Record<EntrySide, string> = {
+  aff: "border-blue-500/80 dark:border-blue-400/80",
+  neg: "border-red-500/80 dark:border-red-400/80",
+};
+
+/**
+ * An entry the way the site names every team: a pill bordered blue (aff) or
+ * red (neg) holding the school — its logo when the host has one, else its
+ * name — then the debaters' last names, or the code's initials when the
+ * names aren't known. With a logo the names sit on a second row under it.
+ * A matched entry's rating follows the pill. The code
+ * itself stays in the hover text.
+ */
+export function EntryLabel({ query, side }: { query: TeamRatingQuery; side?: EntrySide | null }) {
+  const team = useTeamRating(query);
+  const code = query.code?.trim() || null;
+  const parsed = splitEntryCode(code);
+  const school = team?.school || query.school?.trim() || parsed?.school || (parsed ? null : code);
+  const printedName = query.name?.trim() && query.name.trim() !== code ? lastNames(query.name.trim()) : null;
+  const debaters = team?.names || printedName || parsed?.initials || null;
+  if (!school && !debaters) return <>{code}</>;
+  const stacked = Boolean(school && debaters && team?.logoSrc);
+  return (
+    <>
+      <span
+        data-entry-label=""
+        data-side={side ?? undefined}
+        data-stacked={stacked ? "" : undefined}
+        title={code ?? undefined}
+        className={`inline-flex max-w-full rounded-md border px-1.5 py-0.5 align-middle leading-tight ${
+          stacked ? "flex-col items-center gap-0.5 text-center" : "items-center gap-1.5"
+        } ${SIDE_BORDER[side ?? "aff"]}`}
+      >
+        {school ? (
+          team?.logoSrc ? (
+            <>
+              <img src={team.logoSrc} alt="" aria-hidden title={school} height={16} className="h-4 w-auto shrink-0 object-contain" />
+              <span className="sr-only">{school}</span>
+            </>
+          ) : (
+            <span className="truncate">{school}</span>
+          )
+        ) : null}
+        {school && debaters ? " " : null}
+        {debaters ? <span className="truncate font-medium">{debaters}</span> : null}
+      </span>
+      {team ? (
+        <span
+          className="ml-1.5 rounded bg-muted px-1 align-middle text-xs font-medium tabular-nums text-foreground"
+          title={`#${team.rank} in the ${team.rankingLabel} rankings (${team.school})`}
+          data-team-rating=""
+        >
+          {team.rating.toFixed(1)}
+        </span>
+      ) : null}
+    </>
+  );
+}
+
 /** A judge as a round's pairings carry them. */
 export interface PairingJudge {
   first: string | null;

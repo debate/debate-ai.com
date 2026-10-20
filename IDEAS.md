@@ -57,6 +57,9 @@
 - [x] Flow tabs and `/debate` round cards show a saved-to-account marker; flow auto-save mode syncs via `user_settings`
 - [x] Tool pages show the sync badge / Save now (`ToolPageHeader`, `ToolSyncBadge`)
 - [x] Tool UI pass finished; no open follow-ups (2026-10-08 tracker review)
+- [x] Debater XP/level syncs via the `debaterLevel` tool-record collection (higher `totalXp` wins; 2026-10-20)
+- [x] Font family preference syncs via `user_settings.font_family` (`PUT /api/settings { fontFamily }`; 2026-10-20)
+- [ ] Follow-up: merge XP per activity across devices instead of whole-record higher-total-wins
 
 ---
 

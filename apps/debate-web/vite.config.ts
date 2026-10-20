@@ -149,8 +149,9 @@ const serverMinify = { compress: true, mangle: true, codegen: { asciiOnly: true 
  * to `build:sw`. A file of the same name in `public/` still wins.
  *
  * `ROOT_ASSETS` adds files that live in a package rather than in `app/` but
- * must still be served at the site root (`/logo.png` is linked from the
- * webview, the docs and external consumers).
+ * must still be served at the site root (`/logo.png` — the app itself
+ * imports it from `@debate/icons/brand`, but the offline file list and
+ * external consumers link the root URL).
  */
 const APP_SOURCE_EXT = /\.(?:[cm]?[jt]sx?|mdx?|css|scss|sass|less)$/i;
 const CONTENT_TYPES: Record<string, string> = {

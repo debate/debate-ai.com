@@ -15,7 +15,6 @@
 
 "use client"
 
-import Link from "next/link"
 import type { ReactNode } from "react"
 import { useAllRankingDatasets } from "../../../hooks/useAllRankingDatasets"
 import { isRankedSeasonRound } from "../../../hooks/useVideoTeamRankings"
@@ -29,6 +28,7 @@ import { TeamRadarChart } from "../../../panels/leaderboard/profile/TeamRadarCha
 import { cn } from "../../../ui/lib/utils"
 import { predictWatchMatchup } from "../../../lib/watch-matchup-prediction"
 import { WatchMatchupPrediction } from "./WatchMatchupPrediction"
+import { TeamCodeLabel } from "../../team-label/TeamLabel"
 import type { VideoType } from "../../../types/videos"
 
 const rating = (n: number) => n.toFixed(1)
@@ -72,9 +72,7 @@ function TeamCard({
           >
             {side}
           </span>
-          <Link href={teamHref(entry)} className="font-semibold hover:underline underline-offset-4">
-            {label}
-          </Link>
+          <TeamCodeLabel label={label} ranking={entry} side={side} href={teamHref(entry)} className="font-semibold" />
           <div className="truncate text-xs text-muted-foreground">
             {entry.school} · {entry.name}
           </div>
@@ -130,8 +128,8 @@ export function WatchTeamStats({ video }: { video: VideoType }) {
       {prediction && affTeam && negTeam && (
         <WatchMatchupPrediction
           prediction={prediction}
-          affLabel={affTeam}
-          negLabel={negTeam}
+          affLabel={<TeamCodeLabel label={affTeam} ranking={aff?.entry} side="aff" />}
+          negLabel={<TeamCodeLabel label={negTeam} ranking={neg?.entry} side="neg" />}
           decision={typeof video[12] === "string" ? video[12] : null}
         />
       )}

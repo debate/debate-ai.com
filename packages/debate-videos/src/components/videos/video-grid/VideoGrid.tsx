@@ -21,6 +21,7 @@ import { StackedVideoCard } from "../video-card/StackedVideoCard"
 import { HoverCardWrapper } from "../../../ui/primitives/hover-card-wrapper"
 import { buildVideoSlots, type VideoStackMap } from "./video-stacks"
 import { WindowedChunk } from "./WindowedChunk"
+import { VideoTeamRankingContext, useVideoTeamRankings } from "../../../hooks/useVideoTeamRankings"
 
 /**
  * Slots per windowed chunk. 60 divides evenly into every column count the
@@ -74,8 +75,11 @@ function VideoGridComponent({ videos, showThumbnails, topics, videoContainerRef,
     return result
   }, [slots])
   const estimatedHeight = Math.ceil(GRID_CHUNK_SIZE / currentColumnCount()) * ESTIMATED_ROW_HEIGHT
+  // Lets each card's team badges show last names for current-season teams.
+  const teamRanking = useVideoTeamRankings(videos)
 
   return (
+    <VideoTeamRankingContext.Provider value={teamRanking}>
     <div ref={videoContainerRef} className="flex flex-col gap-3 sm:gap-6">
       {chunks.map((chunk, index) => (
         <WindowedChunk
@@ -106,6 +110,7 @@ function VideoGridComponent({ videos, showThumbnails, topics, videoContainerRef,
         </WindowedChunk>
       ))}
     </div>
+    </VideoTeamRankingContext.Provider>
   )
 }
 

@@ -11,7 +11,7 @@
 
 "use client"
 
-import { useCallback, useMemo } from "react"
+import { createContext, useCallback, useContext, useMemo } from "react"
 import type { RankingEntry } from "@debate/rankings-adapter"
 import { useAllRankingDatasets } from "./useAllRankingDatasets"
 import { currentSeasonYear } from "../panels/leaderboard/leaderboardUtils"
@@ -26,6 +26,19 @@ export type VideoTeamRankingLookup = (
   video: VideoType,
   team: string | null | undefined,
 ) => RankingEntry | null
+
+/**
+ * The lookup a video grid shares with its cards, so each card's team badges
+ * can print the debaters' last names without every card loading and
+ * scanning the rankings itself. `null` outside a grid.
+ */
+export const VideoTeamRankingContext = createContext<VideoTeamRankingLookup | null>(null)
+
+/** The rankings row for `team` from the nearest grid's lookup, or `null`. */
+export function useContextTeamRanking(video: VideoType | undefined, team: string | null | undefined): RankingEntry | null {
+  const lookup = useContext(VideoTeamRankingContext)
+  return lookup && video ? lookup(video, team) : null
+}
 
 /**
  * Whether the rankings can say anything about `video`'s teams: a round of a

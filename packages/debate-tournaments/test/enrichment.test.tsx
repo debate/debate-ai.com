@@ -64,14 +64,25 @@ async function render(node: React.ReactNode, value = context()) {
 }
 
 describe("pairings enrichment", () => {
-  it("shows a ranked entry's logo, last names and rating, and leaves the rest alone", async () => {
+  it("labels a ranked entry with its logo and last names, then its rating; others by school and initials", async () => {
     const el = await render(<Schematic round={round} />);
     const ratings = el.querySelectorAll("[data-team-rating]");
     expect(ratings).toHaveLength(1);
-    expect(ratings[0].textContent).toBe("Le & Luo91.3");
-    expect(ratings[0].querySelector("img")?.getAttribute("src")).toBe("/harker.png");
+    expect(ratings[0].textContent).toBe("91.3");
     expect(ratings[0].getAttribute("title")).toContain("#2 in the HS Public Forum rankings");
-    expect(el.textContent).toContain("Nowhere AB");
+    const labels = [...el.querySelectorAll("[data-entry-label]")];
+    const ranked = labels.find((l) => l.getAttribute("title") === "Harker LL")!;
+    expect(ranked.textContent).toBe("Harker Le & Luo");
+    expect(ranked.querySelector("img")?.getAttribute("src")).toBe("/harker.png");
+    const unranked = labels.find((l) => l.getAttribute("title") === "Nowhere AB")!;
+    expect(unranked.textContent).toBe("Nowhere AB");
+    expect(unranked.querySelector("img")).toBeNull();
+    // The logo stacks over the names; a printed school name stays on one line.
+    expect(ranked.hasAttribute("data-stacked")).toBe(true);
+    expect(unranked.hasAttribute("data-stacked")).toBe(false);
+    // Tabroom's side 1 is the aff (blue border), 2 the neg (red).
+    expect(ranked.getAttribute("data-side")).toBe("aff");
+    expect(unranked.getAttribute("data-side")).toBe("neg");
     expect(lookupTeamRating).toHaveBeenCalledWith(expect.objectContaining({ code: "Harker LL", event: round.Event }));
   });
 
@@ -107,7 +118,7 @@ describe("pairings enrichment", () => {
 });
 
 describe("results enrichment", () => {
-  it("adds the rating to a ranked entry without repeating printed names", async () => {
+  it("labels a ranked entry and adds its rating without repeating printed names", async () => {
     const el = await render(
       <ResultSetView
         set={{
@@ -121,6 +132,9 @@ describe("results enrichment", () => {
     );
     const rating = el.querySelector("[data-team-rating]");
     expect(rating?.textContent).toBe("91.3");
+    // The names print once, inside the entry's label.
+    expect(el.querySelector("[data-entry-label]")?.textContent).toBe("Harker Le & Luo");
+    expect(el.textContent?.match(/Le & Luo/g)).toHaveLength(1);
     expect(lookupTeamRating).toHaveBeenCalledWith(expect.objectContaining({ code: "Harker LL", name: "Le & Luo", school: "Harker" }));
   });
 

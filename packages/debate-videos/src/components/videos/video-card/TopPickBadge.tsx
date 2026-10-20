@@ -10,6 +10,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "../../../ui/primitives/
 import { getTopPickBadgeInfo, type TopPickBadgeInfo } from "../../../lib/topPickBadges"
 import { getTournamentLogo } from "./tournamentLogos"
 import { cn } from "../../../ui/lib/utils"
+import { TeamCodeLabel } from "../../team-label/TeamLabel"
 
 export interface TopPickBadgeProps {
   /** YouTube video ID used for badge lookup. */
@@ -125,7 +126,7 @@ export function TopPickBadge({
                 {effectiveAff && (
                   <div className="flex items-center justify-between gap-2 bg-blue-950/70 border border-blue-700/50 rounded px-2 py-1">
                     <span className="font-semibold text-blue-100 truncate">
-                      {effectiveAff}
+                      <TeamCodeLabel label={effectiveAff} side="aff" bare />
                     </span>
                     <span className="text-[10px] font-bold text-blue-300 bg-blue-900/80 px-1.5 py-0.2 rounded shrink-0">
                       AFF
@@ -135,7 +136,7 @@ export function TopPickBadge({
                 {effectiveNeg && (
                   <div className="flex items-center justify-between gap-2 bg-red-950/70 border border-red-700/50 rounded px-2 py-1">
                     <span className="font-semibold text-red-100 truncate">
-                      {effectiveNeg}
+                      <TeamCodeLabel label={effectiveNeg} side="neg" bare />
                     </span>
                     <span className="text-[10px] font-bold text-red-300 bg-red-900/80 px-1.5 py-0.2 rounded shrink-0">
                       NEG

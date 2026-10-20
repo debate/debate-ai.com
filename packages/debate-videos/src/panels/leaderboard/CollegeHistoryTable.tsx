@@ -13,6 +13,7 @@ import { useEffect, useState } from "react"
 import {
   collegeHistorySourceUrl,
   collegeSeasonDetails,
+  teamDisplayParts,
   loadCollegeHistory,
   type CollegeHistoryEntry,
   type CollegeSeasonStats,
@@ -27,6 +28,7 @@ import {
 } from "../../ui/primitives/table"
 import { seasonLabel } from "./leaderboardUtils"
 import { CollegeWinCalculator } from "./CollegeWinCalculator"
+import { TeamLabel } from "../../components/team-label/TeamLabel"
 
 /** One division's season totals as a compact definition list. */
 function SeasonStatsCard({ stats }: { stats: CollegeSeasonStats }) {
@@ -125,7 +127,6 @@ export function CollegeHistoryTable({ year, query }: CollegeHistoryTableProps) {
           <TableHeader>
             <TableRow>
               <TableHead className="w-16 text-right">#</TableHead>
-              <TableHead>School</TableHead>
               <TableHead>Team</TableHead>
               <TableHead className="text-right">Rating</TableHead>
               <TableHead className="text-right">Mu</TableHead>
@@ -136,8 +137,9 @@ export function CollegeHistoryTable({ year, query }: CollegeHistoryTableProps) {
             {visible.map((e) => (
               <TableRow key={`${e.rank}-${e.name}`}>
                 <TableCell className="text-right font-semibold tabular-nums">{e.rank}</TableCell>
-                <TableCell className="font-medium">{e.school}</TableCell>
-                <TableCell>{e.name}</TableCell>
+                <TableCell>
+                  <TeamLabel {...teamDisplayParts({ school: e.school, name: e.name })} title={`${e.school} · ${e.name}`} />
+                </TableCell>
                 <TableCell className="text-right tabular-nums">{e.rating.toFixed(2)}</TableCell>
                 <TableCell className="text-right tabular-nums text-muted-foreground">{e.mu.toFixed(2)}</TableCell>
                 <TableCell className="text-right tabular-nums text-muted-foreground">{e.sigma.toFixed(2)}</TableCell>
