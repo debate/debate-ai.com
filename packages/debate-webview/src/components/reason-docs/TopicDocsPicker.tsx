@@ -1,14 +1,13 @@
 "use client"
 
 /**
- * Format / year / topic dropdowns above the Topic Starters tree. Picking one
+ * Format / topic dropdowns, side by side above the Topic Starters tree. Picking one
  * goes to that resolution's address, `/docs/<topic code>` (`vcs27`, `ld27a`;
  * the scheme is in `lib/reason-docs/topic-doc-paths`), which opens its first
  * starter in CardMirror and keeps the code in every starter link after it.
  *
  * The topic dropdown lists every topic the format has had, grouped by year, so
- * any of them is one pick away; the year dropdown is a shortcut that jumps to
- * that year's first topic.
+ * any of them is one pick away.
  */
 
 import { useMemo } from "react"
@@ -19,7 +18,6 @@ import {
   topicOptionLabel,
   topicOrDefault,
   topicsForFormat,
-  yearsForFormat,
   type TopicFormat,
 } from "../../lib/reason-docs/topic-codes"
 import { parseTopicDocsPath, topicDocsHref } from "../../lib/reason-docs/topic-doc-paths"
@@ -34,7 +32,6 @@ export function TopicDocsPicker({ className }: { className?: string }) {
   const current = topicOrDefault(parseTopicDocsPath(pathname)?.code)
 
   const format = current?.format ?? "vcs"
-  const years = useMemo(() => yearsForFormat(format), [format])
   const topicsByYear = useMemo(() => {
     const groups = new Map<number, ReturnType<typeof topicsForFormat>>()
     for (const item of topicsForFormat(format)) {
@@ -56,40 +53,24 @@ export function TopicDocsPicker({ className }: { className?: string }) {
     go((candidates.find((item) => item.year === current.year) ?? candidates[0])?.code)
   }
 
-  const pickYear = (year: number) => go(topicsForFormat(format).find((item) => item.year === year)?.code)
-
   return (
-    <div className={cn("flex flex-col gap-1 px-2 pb-2", className)}>
-      <div className="flex gap-1">
-        <select
-          aria-label="Format"
-          className={cn(selectClass, "flex-1")}
-          value={format}
-          onChange={(event) => pickFormat(event.target.value as TopicFormat)}
-        >
-          {TOPIC_FORMATS.map((item) => (
-            <option key={item.id} value={item.id}>
-              {item.label}
-            </option>
-          ))}
-        </select>
-        <select
-          aria-label="Year"
-          className={selectClass}
-          value={current.year}
-          onChange={(event) => pickYear(Number(event.target.value))}
-        >
-          {years.map((year) => (
-            <option key={year} value={year}>
-              {year}
-            </option>
-          ))}
-        </select>
-      </div>
+    <div className={cn("flex gap-1 px-2 pb-2", className)}>
+      <select
+        aria-label="Format"
+        className={cn(selectClass, "w-20 shrink-0")}
+        value={format}
+        onChange={(event) => pickFormat(event.target.value as TopicFormat)}
+      >
+        {TOPIC_FORMATS.map((item) => (
+          <option key={item.id} value={item.id}>
+            {item.label}
+          </option>
+        ))}
+      </select>
       <select
         aria-label="Topic"
         title={current.text}
-        className={cn(selectClass, "w-full")}
+        className={cn(selectClass, "flex-1")}
         value={current.code}
         onChange={(event) => go(findTopicByCode(event.target.value)?.code)}
       >

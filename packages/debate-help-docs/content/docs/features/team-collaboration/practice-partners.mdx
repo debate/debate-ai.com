@@ -10,7 +10,9 @@ formats, styles, speed, and level you're comfortable with. Then get matched
 — anonymously — with a compatible debater and send them a request for a
 virtual round.
 
-- **Route:** `/practice/partners`. Also the first panel in the Coach
+- **Route:** `/practice/prep?section=partners`, a tab of the
+  [Prep Workspace](/docs/features/rounds/prep-workspace) (the old
+  `/practice/partners` redirects there). Also the first panel in the Coach
   Workspace's Practice section (`/coaching?stage=practice`).
 - **Package:** `debate-webview` (UI, wire types, action rules) and
   `apps/debate-ai.com` (API, queries).
@@ -64,7 +66,7 @@ was computed from. So if two judges pick up the same round at the same time,
 the second gets a 409 instead of overwriting the first.
 
 Each change creates a `practice_challenge` row in the existing notifications
-feed for everyone else in the round, linking back to `/practice/partners`.
+feed for everyone else in the round, linking back to the Prep Workspace's Practice Partners tab.
 
 **Anonymity.** The match endpoint never sends a name or account id. The
 browser gets an opaque token instead (`packages/debate-webview/src/lib/practice-partners/match-token.ts`):

@@ -103,9 +103,9 @@ export function Loaded<T>({ state, children }: { state: State<T>; children: (dat
   return <>{children(state.data)}</>;
 }
 
-export function Section({ title, children, actions }: { title: string; children: ReactNode; actions?: ReactNode }) {
+export function Section({ title, children, actions, id }: { title: string; children: ReactNode; actions?: ReactNode; id?: string }) {
   return (
-    <Card className="overflow-hidden">
+    <Card id={id} className="overflow-hidden scroll-mt-4">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         {actions}

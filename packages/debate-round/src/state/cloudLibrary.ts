@@ -634,7 +634,7 @@ export function buildRecentCloudItems(
     wordCountRoundHref = "/word-count",
     debateHref = "/practice/versus-ai",
     speechOutcomeHref = "/videos",
-    drillSetHref = "/practice/drills",
+    drillSetHref = "/practice/prep?section=drills",
     judgeDecisionHref = "/practice/judge-decision",
     counselPanelAssessmentHref = "/coaching/outcomes",
     roundPairingHref = "/practice/prep?section=briefings",
@@ -966,7 +966,7 @@ export function getSampleCloudLibraryItems(
     flowHref = "/debate",
     roundHref = "/debate",
     debateHref = "/practice/versus-ai",
-    drillSetHref = "/practice/drills",
+    drillSetHref = "/practice/prep?section=drills",
     judgeDecisionHref = "/practice/judge-decision",
   } = opts;
 

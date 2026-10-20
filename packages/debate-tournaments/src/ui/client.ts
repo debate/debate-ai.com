@@ -15,6 +15,7 @@ import type { DemoEdit, DemoSection } from "../host/demo-edit";
 
 export type { DemoEdit, DemoSection };
 import { tournamentSlugOf, type TournamentSlug } from "../routes";
+import type { TournamentSidebar } from "../sidebar";
 
 export interface UpcomingTournament {
   id: string;
@@ -64,7 +65,8 @@ export interface TournamentInvite {
   reg_start: string | null;
   reg_end: string | null;
   Files: Array<{ id: number; label: string | null; filename: string | null; tag: string | null }>;
-  Webpages: Array<{ id: number; title: string | null; content: string | null; slug?: string | null }>;
+  /** `special: "main"` marks the invitation's front page, the rest are its sidebar pages. */
+  Webpages: Array<{ id: number; title: string | null; content: string | null; slug?: string | null; special?: string | null }>;
   Events: InviteEvent[];
   Contacts: Array<{ id: number; first: string | null; last: string | null; email: string | null }>;
 }
@@ -324,6 +326,8 @@ export function createTournamentsClient(
   /** Each known tournament's year and name slug, and the reverse, for `/<year>/<slug>` URLs. */
   const slugs = new Map<number, TournamentSlug>();
   const ids = new Map<string, number>();
+  /** Each live tournament's scraped sidebar, fetched once per client. */
+  const sidebars = new Map<number, Promise<TournamentSidebar | null>>();
   const slugKey = (year: number, slug: string) => `${year}/${slug.toLowerCase()}`;
   /** Records a tournament's name and start, so links to it use its year and slug. */
   function remember(tournId: number, tourn: { name?: string | null; start?: string | null }) {
@@ -499,6 +503,23 @@ export function createTournamentsClient(
       get<Record<string, ResultsIndexEvent>>(await rootFor(tournId, signal), `/rest/tourns/${tournId}/results`, signal),
     resultSet: async (tournId: number, resultSetId: number, signal?: AbortSignal) =>
       get<ResultSet[]>(await rootFor(tournId, signal), `/rest/tourns/${tournId}/results/${resultSetId}`, signal),
+    /**
+     * A live Tabroom tournament's sidebar (pages, circuits, past editions,
+     * deadlines), scraped by the host's proxy at `{liveApiBase}/sidebar/:id`.
+     * Null for a hosted tournament, without a live proxy, or when the proxy
+     * cannot read it — callers fall back to the invite. Fetched once per tournament.
+     */
+    sidebar: async (tournId: number, signal?: AbortSignal): Promise<TournamentSidebar | null> => {
+      if (!live || (await rootFor(tournId, signal)) !== live) return null;
+      let pending = sidebars.get(tournId);
+      if (!pending) {
+        pending = get<TournamentSidebar>(live, `/sidebar/${tournId}`).catch(() => null);
+        sidebars.set(tournId, pending);
+        // A failed read is retried on the next visit rather than remembered.
+        void pending.then((found) => found || sidebars.delete(tournId));
+      }
+      return pending;
+    },
     /** Where a posted document can be downloaded; Tabroom keeps them on S3. */
     fileUrl: (tournId: number, file: { id: number; filename: string | null }): string | null =>
       file.filename ? `https://s3.amazonaws.com/tabroom-files/tourns/${tournId}/postings/${file.id}/${encodeURIComponent(file.filename)}` : null,

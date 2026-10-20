@@ -9,6 +9,8 @@
 //   so a background launch never flashes on screen.
 // - On macOS a hidden window also drops the Dock icon (Accessory activation
 //   policy), leaving the menu-bar icon as the app's only presence.
+// - A restart after an auto-update (updater.rs) also starts in the tray,
+//   through a one-shot marker file rather than a flag.
 // - "Run on Startup" is turned on once, on the first launch, then left to
 //   the user's choice in the tray menu.
 
@@ -17,9 +19,33 @@ use tauri::{AppHandle, Manager, Runtime};
 /// Command-line flags that mean "start in the background".
 const BACKGROUND_FLAGS: [&str; 3] = ["--minimized", "--hidden", "--background"];
 
-/// Whether this process was launched to run in the background (at login).
-pub fn launched_in_background() -> bool {
-    std::env::args().any(|arg| BACKGROUND_FLAGS.contains(&arg.as_str()))
+/// Marker file (in the app config dir) that makes the next launch start in
+/// the background once, for a restart the user did not ask for.
+const START_HIDDEN_MARKER: &str = "start-hidden-once";
+
+/// Whether this process was launched to run in the background: at login, or
+/// as the restart after an update installed while the app was in the tray.
+pub fn launched_in_background<R: Runtime>(app: &AppHandle<R>) -> bool {
+    let marker = app.path().app_config_dir().map(|dir| dir.join(START_HIDDEN_MARKER));
+    let after_update = marker.is_ok_and(|marker| std::fs::remove_file(marker).is_ok());
+    after_update || std::env::args().any(|arg| BACKGROUND_FLAGS.contains(&arg.as_str()))
+}
+
+/// Makes the next launch start in the tray, whatever its command line says.
+/// Used before the updater restarts the app (see updater.rs).
+pub fn start_hidden_next_launch<R: Runtime>(app: &AppHandle<R>) {
+    let Ok(dir) = app.path().app_config_dir() else {
+        return;
+    };
+    let _ = std::fs::create_dir_all(&dir);
+    let _ = std::fs::write(dir.join(START_HIDDEN_MARKER), b"1");
+}
+
+/// Undoes `start_hidden_next_launch` when the restart is not happening after all.
+pub fn cancel_start_hidden<R: Runtime>(app: &AppHandle<R>) {
+    if let Ok(dir) = app.path().app_config_dir() {
+        let _ = std::fs::remove_file(dir.join(START_HIDDEN_MARKER));
+    }
 }
 
 /// Shows, unminimizes and focuses the main window.

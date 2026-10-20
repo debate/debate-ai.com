@@ -39,6 +39,18 @@ the background, so opening it is instant: the page has already loaded.
   Background**, **Run on Startup** (a check box: untick it to stop the app
   starting with your computer), **Settings…**, **Load From** and **Quit**.
 
+## Updates (desktop)
+
+The desktop app keeps itself up to date. It checks for a new version when it
+starts and once a day after that, and downloads it in the background.
+
+- It installs only while the app is out of sight in the background, so it
+  never closes a window you are using. If the window is open, the update
+  waits until you close or hide it.
+- After installing, Debate AI restarts in the background, as it was. Open it
+  from its icon as usual.
+- Every update is signed by Debate AI, and the app refuses one that isn't.
+
 ## Camera and microphone
 
 The webcam room and the speech recorder work in the app. The first time a
@@ -49,7 +61,8 @@ check the OS privacy settings for Debate AI.
 
 ## Known gaps
 
-No auto-update yet. Android/iOS projects are scaffolded but not generated
+Auto-update covers builds released after it was turned on; an older desktop
+build has to be replaced by hand once. Android/iOS projects are scaffolded but not generated
 or exercised end-to-end. No store submissions have been made. Camera and microphone
 access is not set up for the Android/iOS builds yet (their manifests need the
 camera permissions added after `tauri android init` / `tauri ios init`).
