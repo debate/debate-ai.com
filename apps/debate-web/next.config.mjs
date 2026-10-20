@@ -58,11 +58,25 @@ const nextConfig = {
       },
     ];
   },
+  // A public Topic Starter's address is `/docs/<topic code>/<file path>`
+  // (`/docs/vcs27/neg/cp/aca-expansion-cp-cndi-2026`), served by the
+  // CardMirror editor page, which reads the code and file back off the
+  // address bar. `beforeFiles`, because `/docs/[[...slug]]` (the help docs)
+  // would otherwise claim it; only a first segment shaped like a topic code is
+  // rewritten, so every help page keeps its URL. The shape is
+  // `TOPIC_CODE_SOURCE` in @debate/webview's lib/reason-docs/topic-doc-paths.
   async rewrites() {
-    return [
-      { source: "/@:handle", destination: "/teams/:handle" },
-      { source: "/youtube-player.html", destination: "/youtube-player" },
-    ];
+    const topicCode = "(?:vcs|ndt)\\d{2}|(?:ld|pf)\\d{2}[a-z]";
+    return {
+      beforeFiles: [
+        { source: `/docs/:code(${topicCode})`, destination: "/reason-editor" },
+        { source: `/docs/:code(${topicCode})/:path*`, destination: "/reason-editor" },
+      ],
+      afterFiles: [
+        { source: "/@:handle", destination: "/teams/:handle" },
+        { source: "/youtube-player.html", destination: "/youtube-player" },
+      ],
+    };
   },
 };
 

@@ -67,7 +67,7 @@ import {
   searchFiles,
   type FileSearchEntry,
 } from "../../lib/reason-docs/file-search"
-import { editorHrefForSelection } from "../../lib/reason-docs/route-selection"
+import { editorHrefForSelection, isEditorPathname } from "../../lib/reason-docs/route-selection"
 import { isCmirContent } from "../../lib/cardmirror/content-format"
 import { loadStoredCmir, storedCmirIfLoaded, type StoredCmir } from "../../lib/cardmirror/lazy-stored-cmir"
 import { fetchPaletteVideos, type PaletteVideo } from "../../lib/videos/video-palette-search"
@@ -90,7 +90,7 @@ const QUICK_ACTIONS: Tool[] = [
  *  Ctrl/Cmd-P palette — this one leaves Ctrl/Cmd-P to it there and answers
  *  only Ctrl/Cmd-K, so the two never fight over one chord. */
 function ownedByEditor(pathname: string): boolean {
-  return pathname === "/reason-editor" || pathname.startsWith("/reason-editor/")
+  return isEditorPathname(pathname)
 }
 
 /** Fired to open the palette from somewhere that isn't the keyboard shortcut
