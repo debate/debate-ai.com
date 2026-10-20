@@ -55,13 +55,19 @@ function saveDebaterLevelState(state: DebaterLevelState): void {
   }
 }
 
+/** A ledger id unique across devices, so merging can tell two events from one. */
+function newLedgerEventId(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") return crypto.randomUUID();
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
 /** Record practice work, persist the new state, and announce the award. */
 export function recordDebaterActivity(
   kind: DebaterActivityKind,
   count = 1,
   nowMs: number = Date.now(),
 ): DebaterActivityResult {
-  const result = applyDebaterActivity(loadDebaterLevelState(), kind, nowMs, count);
+  const result = applyDebaterActivity(loadDebaterLevelState(), kind, nowMs, count, undefined, newLedgerEventId());
   saveDebaterLevelState(result.state);
   if (typeof window !== "undefined" && typeof CustomEvent !== "undefined") {
     window.dispatchEvent(new CustomEvent(DEBATER_XP_AWARDED_EVENT, { detail: result }));

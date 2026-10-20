@@ -378,10 +378,18 @@ When two devices both earned XP while apart, the copies are merged field by
 field (`mergeDebaterLevel`): the larger total, the larger lifetime count for
 each activity, the union of completed milestones, today's challenge progress
 when both are from the same UTC day (otherwise the later day), and the union of
-the recent XP log. Known gap: there is no per-event ledger, so the same activity
-done on both devices can't be told from two separate ones; counts take the
-larger side rather than adding, so XP earned in the same window on both devices
-can be under-counted, never double-counted.
+the recent XP log.
+
+Each activity you record also adds an entry (unique id, kind, count, XP and any
+challenge bonus) to a ledger of your latest 200 events. When both copies carry
+a ledger, each device's missing events are added to the other, so XP earned on
+two devices in the same window sums instead of taking the larger count, and a
+challenge bonus both devices paid counts once. Known gaps: progress saved
+before the ledger existed (or a copy without one) still merges by the larger
+count; events older than a full ledger's window are not re-added, so a device
+that was offline for more than 200 events can under-count (never double-count);
+and a milestone that only the combined counts reach isn't paid until the next
+activity.
 
 ## Save status on each tool
 
