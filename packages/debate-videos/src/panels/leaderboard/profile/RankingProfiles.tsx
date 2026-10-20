@@ -11,7 +11,7 @@
 
 import Link from "next/link"
 import { useState, type ReactNode } from "react"
-import type { RankingDataset } from "@debate/rankings-adapter"
+import { teamDisplayParts, type RankingDataset } from "@debate/rankings-adapter"
 import { useAllRankingDatasets } from "../../../hooks/useAllRankingDatasets"
 import {
   Table,
@@ -39,6 +39,7 @@ import {
 import { ProfileVideos } from "./ProfileVideos"
 import { ProfileCaselistDocuments } from "./ProfileCaselistDocuments"
 import { SchoolLogo } from "../SchoolLogo"
+import { TeamLabel } from "../../../components/team-label/TeamLabel"
 import { TeamRadarChart } from "./TeamRadarChart"
 import { MatchupSimulator } from "./MatchupSimulator"
 import { FollowButton } from "./FollowButton"
@@ -148,7 +149,13 @@ function TeamRecordCard({
   return (
     <div className="mt-3 overflow-hidden rounded-xl border bg-card text-card-foreground shadow-sm">
       <header className="px-4 pb-4 pt-5 sm:px-6">
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{first.name}</h1>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+          <TeamLabel
+            {...teamDisplayParts({ school: first.school, name: first.name })}
+            title={`${first.school} · ${first.name}`}
+            className="border-2 px-2.5 py-1 [&_img]:h-7 sm:[&_img]:h-8"
+          />
+        </h1>
         <Link href={schoolHref(first.school)} className="text-base text-muted-foreground underline-offset-4 hover:underline flex items-center gap-2 mt-1">
           <SchoolLogo school={first.school} className="h-5 w-auto" />
           {first.school}
@@ -394,7 +401,7 @@ export function SchoolProfilePage({
                 <TableRow>
                   <TableHead>Division</TableHead>
                   <TableHead className="text-right">Rank</TableHead>
-                  <TableHead>Name</TableHead>
+                  <TableHead>Team</TableHead>
                   <TableHead className="text-right">Adj. Rating</TableHead>
                   <TableHead className="text-right">Matches</TableHead>
                   <TableHead className="text-right">Aff Win</TableHead>
@@ -410,12 +417,11 @@ export function SchoolProfilePage({
                       <span className="text-muted-foreground"> / {fieldSize}</span>
                     </TableCell>
                     <TableCell>
-                      <Link
+                      <TeamLabel
+                        {...teamDisplayParts({ school: entry.school, name: entry.name })}
                         href={teamHref(entry)}
-                        className="font-medium text-foreground underline-offset-4 hover:underline"
-                      >
-                        {entry.name}
-                      </Link>
+                        className="text-foreground"
+                      />
                     </TableCell>
                     <TableCell className="text-right tabular-nums">{rating(entry.adjustedRating)}</TableCell>
                     <TableCell className="text-right tabular-nums">{entry.matches}</TableCell>

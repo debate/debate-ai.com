@@ -141,7 +141,8 @@ describe("VideoListRow team cells", () => {
     const html = renderRow(harker, null);
     expect(html).toContain('title="Search for Gunn AB"');
     expect(renderRow(null, null)).not.toContain("/teams/");
-    expect(renderRow(null, null)).not.toContain("/@");
+    // No team-page link (the school logo's dev-server `/@fs/` URL doesn't count).
+    expect(renderRow(null, null)).not.toMatch(/href="\/@(?!fs\/)/);
   });
 });
 

@@ -12,11 +12,14 @@ export { ResultsPage } from "./pages/ResultsPage";
 export { ResultSetPage } from "./pages/ResultSetPage";
 export { TournamentsContext, useTournaments, formatDate, type LinkLike } from "./shared";
 export {
+  EntryLabel,
   EntryRating,
   JudgeName,
+  entrySide,
   tabroomParadigmUrl,
   useJudgeParadigm,
   useTeamRating,
+  type EntrySide,
   type EventFormatHint,
   type JudgeParadigmLookup,
   type PairingJudge,
