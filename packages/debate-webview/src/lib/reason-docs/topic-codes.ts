@@ -1,6 +1,6 @@
 /**
  * @fileoverview Every resolution in `debate-topics.json`, each with the topic
- * code its Topic Starter address uses (`/docs/vcs27/...`; the scheme is in
+ * code its Topic Starter address uses (`/docs/vcx27/...`; the scheme is in
  * `./topic-doc-paths`). This is what the format / year / topic picker above the
  * Topic Starters tree lists.
  *
@@ -17,7 +17,7 @@ import { DEFAULT_TOPIC_CODE, isTopicCode } from "./topic-doc-paths"
 
 /** The formats a topic code can name, in picker order. */
 export const TOPIC_FORMATS = [
-  { id: "vcs", label: "Policy" },
+  { id: "vcx", label: "Policy" },
   { id: "ndt", label: "College Policy (NDT)" },
   { id: "ld", label: "Lincoln-Douglas" },
   { id: "pf", label: "Public Forum" },
@@ -49,8 +49,8 @@ export function topicCodesForYear(entry: DebateTopicYear): TopicCodeEntry[] {
   const out: TopicCodeEntry[] = []
   if (entry.policy_topic) {
     out.push({
-      code: `vcs${yy}`,
-      format: "vcs",
+      code: `vcx${yy}`,
+      format: "vcx",
       year,
       name: entry.policy_topic_name?.trim() || "Policy topic",
       emoji: entry.policy_topic_emoji,
