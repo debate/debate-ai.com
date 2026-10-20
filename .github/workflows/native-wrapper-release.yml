@@ -37,6 +37,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # The updater (src-tauri/src/updater.rs) only offers a build whose
+      # version is newer than the installed one, and that version comes from
+      # the profile, not the tag. A tag that disagrees with it would publish a
+      # release that installed apps either ignore or keep re-offering.
+      - name: Tag matches the app version
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#native-wrapper-v}"
+          APP_VERSION="$(jq -r .version apps/debate-native-wrapper/src-tauri/tauri.conf.json)"
+          if [ "$TAG_VERSION" != "$APP_VERSION" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME is version $TAG_VERSION but the app is $APP_VERSION — bump \"version\" in apps/debate-native-wrapper/profiles/debate-ai.json, run 'bun run configure', and tag again." >&2
+            exit 1
+          fi
+
       - name: Ensure draft release exists
         id: release
         env:
@@ -138,6 +151,14 @@ jobs:
           # Windows signing story has changed across Tauri versions.
           WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
           WINDOWS_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}
+          # Updater signing: once the profile has an updater pubkey,
+          # tauri.conf.json sets bundle.createUpdaterArtifacts and every
+          # bundle (.app.tar.gz, NSIS -setup.exe, .AppImage) gets a .sig made
+          # with this key; the build fails if the key is missing, rather than
+          # shipping updates no installed app could verify. Unused while the
+          # profile's pubkey is empty. See docs/UPDATES.md.
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
           projectPath: apps/debate-native-wrapper
           tagName: ${{ github.event_name == 'push' && github.ref_name || '' }}
@@ -145,8 +166,16 @@ jobs:
           releaseId: ${{ needs.prepare-release.outputs.release_id }}
           releaseDraft: true
           args: ${{ matrix.args }}
-          # workflow_dispatch test builds skip release upload entirely.
-          includeUpdaterJson: false
+          # Each matrix job merges its platforms into the draft's latest.json
+          # (with the tag in the URLs, so they keep working once the draft is
+          # published). Installed apps read it only after it is copied to the
+          # update feed when the release is published:
+          # native-wrapper-updates.yml. workflow_dispatch test builds have no
+          # release, so nothing is uploaded.
+          includeUpdaterJson: true
+          # Both the NSIS -setup.exe and the .msi are built; the updater uses
+          # NSIS, which is what bundle.windows.nsis installs per user.
+          updaterJsonPreferNsis: true
 
   build-android:
     name: Build Android (.aab, best-effort)
