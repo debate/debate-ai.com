@@ -26,6 +26,17 @@ export const TEAM_SIDE_CLASS: Record<TeamSide, string> = {
   neg: "border-red-500/80 dark:border-red-400/80",
 }
 
+/**
+ * Background and text for a team on a known side: mostly white with a faint
+ * blue (aff) or red (neg) tint, so school logos read cleanly. Dark mode keeps
+ * a softened white rather than a glaring one. Used by the label pill itself
+ * and by the card and watch-page aff/neg badges that hold a bare label.
+ */
+export const TEAM_SIDE_SURFACE_CLASS: Record<TeamSide, string> = {
+  aff: "bg-blue-50/95 text-blue-950 dark:bg-blue-50/85 dark:text-blue-950",
+  neg: "bg-red-50/95 text-red-950 dark:bg-red-50/85 dark:text-red-950",
+}
+
 /** The school part: its logo when `debate-icons` has one, else its name. */
 function SchoolMark({ school }: { school: string }) {
   const logo = getSchoolLogo(school)
@@ -92,6 +103,7 @@ export function TeamLabel({ school, debaters, side, href, schoolHref, title, bar
         stacked ? "flex-col items-center gap-0.5 text-center" : "items-center gap-1.5",
         !bare && "rounded-md border px-1.5 py-0.5",
         !bare && TEAM_SIDE_CLASS[side ?? "aff"],
+        !bare && side && TEAM_SIDE_SURFACE_CLASS[side],
         className,
       )}
     >

@@ -88,7 +88,7 @@ import {
   getTournamentLogo,
 } from "../../components/videos/video-card/videoCardUtils"
 import { cn } from "../../ui/lib/utils"
-import { TeamCodeLabel } from "../../components/team-label/TeamLabel"
+import { TEAM_SIDE_SURFACE_CLASS, TeamCodeLabel } from "../../components/team-label/TeamLabel"
 import { useVideoTeamRankings } from "../../hooks/useVideoTeamRankings"
 import { LecturesSidebarShell } from "../LecturesSidebarShell"
 import { useVideoState } from "../../hooks/useVideoState"
@@ -901,9 +901,10 @@ export function VideoWatchPage({
                       title={`Affirmative: ${affTeam}`}
                       className={cn(
                         "text-sm font-bold backdrop-blur-md px-2 py-1 rounded",
+                        TEAM_SIDE_SURFACE_CLASS.aff,
                         decisionRevealed && affWin === true
-                          ? "border-2 border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)] text-blue-100 bg-blue-900/80"
-                          : "border border-blue-400/90 shadow-lg text-blue-300 bg-blue-900/80",
+                          ? "border-2 border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)]"
+                          : "border border-blue-400/90 shadow-lg",
                       )}
                     >
                       <TeamCodeLabel label={affTeam} ranking={affRanking} side="aff" bare />
@@ -917,9 +918,10 @@ export function VideoWatchPage({
                       title={`Negative: ${negTeam}`}
                       className={cn(
                         "text-sm font-bold backdrop-blur-md px-2 py-1 rounded",
+                        TEAM_SIDE_SURFACE_CLASS.neg,
                         decisionRevealed && affWin === false
-                          ? "border-2 border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)] text-red-100 bg-red-900/80"
-                          : "border border-red-400/90 shadow-lg text-red-300 bg-red-900/80",
+                          ? "border-2 border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)]"
+                          : "border border-red-400/90 shadow-lg",
                       )}
                     >
                       <TeamCodeLabel label={negTeam} ranking={negRanking} side="neg" bare />
