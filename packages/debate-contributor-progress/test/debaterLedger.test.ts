@@ -8,10 +8,13 @@ import {
   applyDebaterActivity,
   createDebaterLevelState,
   parseDebaterLevelState,
+  settleDailyChallenges,
   ACTIVITY_XP,
   utcDayKeyFor,
 } from "../src/lib/debater-levels";
 import {
+  DEBATER_XP_AWARDED_EVENT,
+  settleDebaterChallenges,
   DEBATER_DEVICE_ID_STORAGE_KEY,
   DEBATER_LEVEL_STORAGE_KEY,
   getDebaterDeviceId,
@@ -98,5 +101,81 @@ describe("recordDebaterActivity device id", () => {
     recordDebaterActivity("drill_practiced", 1, NOW);
     expect(loadDebaterLevelState().ledger?.devices[id as string].counts.drill_practiced).toBe(1);
     expect(localStorage.getItem(DEBATER_LEVEL_STORAGE_KEY)).toContain('"ledger"');
+  });
+});
+
+describe("settleDailyChallenges", () => {
+  const merged = (counts: Record<string, number>, extra = {}) => ({
+    ...createDebaterLevelState("2026-10-20"),
+    daily: { dayKey: "2026-10-20", counts, completedChallengeIds: [] as string[] },
+    ...extra,
+  });
+
+  it("pays a daily challenge whose target the merged counts already meet, once", () => {
+    const first = settleDailyChallenges(merged({ card_cut: 5 }), NOW);
+    expect(first.completedChallenges.map((c) => c.id)).toEqual(["daily-cut-5-cards"]);
+    expect(first.xpGained).toBe(100);
+    expect(first.state.totalXp).toBe(100);
+    expect(first.state.daily.completedChallengeIds).toEqual(["daily-cut-5-cards"]);
+    expect(first.state.recentXp[0]?.id).toBe("settle:2026-10-20:daily-cut-5-cards");
+    const again = settleDailyChallenges(first.state, NOW);
+    expect(again.completedChallenges).toEqual([]);
+    expect(again.state.totalXp).toBe(100);
+  });
+
+  it("pays nothing below the target, for done challenges, or for milestones", () => {
+    expect(settleDailyChallenges(merged({ card_cut: 4 }), NOW).xpGained).toBe(0);
+    const done = merged({ card_cut: 9 });
+    done.daily.completedChallengeIds = ["daily-cut-5-cards"];
+    expect(settleDailyChallenges(done, NOW).xpGained).toBe(0);
+    const lifetime = { ...createDebaterLevelState("2026-10-20"), lifetimeCounts: { card_cut: 1000 } };
+    expect(settleDailyChallenges(lifetime, NOW).xpGained).toBe(0);
+  });
+
+  it("ignores yesterday's counts after the day rolls over", () => {
+    expect(settleDailyChallenges(merged({ card_cut: 5 }), NOW + 86_400_000).xpGained).toBe(0);
+  });
+
+  it("credits the ledger base so two devices settling the same state agree (max-merged, so paid once)", () => {
+    const withLedger = merged({ card_cut: 5 }, { totalXp: 50, ledger: { base: { xp: 20, counts: {} }, devices: { A: { xp: 30, counts: {} } } } });
+    const a = settleDailyChallenges(withLedger, NOW).state;
+    const b = settleDailyChallenges(withLedger, NOW + 1000).state;
+    expect(a.ledger?.base.xp).toBe(120);
+    expect(b.ledger?.base.xp).toBe(a.ledger?.base.xp);
+    expect(b.recentXp[0]?.id).toBe(a.recentXp[0]?.id);
+  });
+
+  it("levels up and reports it when the bonus crosses a level", () => {
+    const result = settleDailyChallenges(merged({ card_cut: 5 }, { totalXp: ACTIVITY_XP.card_cut }), NOW, [
+      { id: "big", title: "Big", description: "", activity: "card_cut", target: 5, xpReward: 100_000, repeat: "daily" },
+    ]);
+    expect(result.leveledUp).toBe(true);
+  });
+});
+
+describe("settleDebaterChallenges", () => {
+  beforeEach(() => {
+    (globalThis as unknown as { localStorage?: MemoryStorage }).localStorage = new MemoryStorage();
+    (globalThis as { window?: EventTarget }).window = new EventTarget() as unknown as Window & typeof globalThis;
+  });
+  afterEach(() => {
+    delete (globalThis as unknown as { localStorage?: MemoryStorage }).localStorage;
+    delete (globalThis as { window?: unknown }).window;
+  });
+
+  it("persists and announces a merge-completed challenge, and is silent otherwise", () => {
+    const awards: unknown[] = [];
+    window.addEventListener(DEBATER_XP_AWARDED_EVENT, (e) => awards.push((e as CustomEvent).detail));
+    expect(settleDebaterChallenges(NOW).xpGained).toBe(0);
+    expect(awards).toHaveLength(0);
+    localStorage.setItem(
+      DEBATER_LEVEL_STORAGE_KEY,
+      JSON.stringify({ ...createDebaterLevelState("2026-10-20"), daily: { dayKey: "2026-10-20", counts: { card_cut: 6 }, completedChallengeIds: [] } }),
+    );
+    expect(settleDebaterChallenges(NOW).xpGained).toBe(100);
+    expect(loadDebaterLevelState().totalXp).toBe(100);
+    expect(awards).toHaveLength(1);
+    expect(settleDebaterChallenges(NOW).xpGained).toBe(0);
+    expect(awards).toHaveLength(1);
   });
 });
