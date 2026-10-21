@@ -5,7 +5,13 @@ import { renderToString } from "react-dom/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { RoundSchematic } from "../src/ui/client";
 import { createTournamentsClient } from "../src/ui/client";
-import { tabroomParadigmUrl, type JudgeParadigmLookup, type TeamRatingLookup } from "../src/ui/enrichment";
+import {
+  TournamentSeasonContext,
+  tabroomParadigmUrl,
+  tournamentSeasonYear,
+  type JudgeParadigmLookup,
+  type TeamRatingLookup,
+} from "../src/ui/enrichment";
 import { Schematic } from "../src/ui/pages/RoundPage";
 import { ResultSetView } from "../src/ui/pages/ResultSetPage";
 import { TournamentsContext, defaultLink, type TournamentsContextValue } from "../src/ui/shared";
@@ -138,6 +144,28 @@ describe("results enrichment", () => {
     expect(el.querySelector("[data-entry-label]")?.textContent).toBe("Harker Le & Luo");
     expect(el.textContent?.match(/Le & Luo/g)).toHaveLength(1);
     expect(lookupTeamRating).toHaveBeenCalledWith(expect.objectContaining({ code: "Harker LL", name: "Le & Luo", school: "Harker" }));
+  });
+
+  it("looks entries up for the season the tournament ran in", async () => {
+    const set = {
+      id: 1,
+      tag: "final",
+      label: "Final Places",
+      Event: { id: 9, name: "Varsity Public Forum", abbr: "VPF" },
+      results: [{ place: "1st", Entry: { id: 21, code: "Harker LL", name: null }, School: null }],
+    };
+    await render(
+      <TournamentSeasonContext.Provider value={tournamentSeasonYear("2018-11-02 08:00:00")}>
+        <ResultSetView set={set as never} />
+      </TournamentSeasonContext.Provider>,
+    );
+    expect(lookupTeamRating).toHaveBeenCalledWith(expect.objectContaining({ code: "Harker LL", season: 2019 }));
+  });
+
+  it("dates a tournament's season from July to June", () => {
+    expect(tournamentSeasonYear("2018-11-02 08:00:00")).toBe(2019);
+    expect(tournamentSeasonYear("2019-03-28")).toBe(2019);
+    expect(tournamentSeasonYear(null)).toBeNull();
   });
 
   it("still server-renders outside the app", () => {

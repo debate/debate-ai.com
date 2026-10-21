@@ -21,6 +21,8 @@
 
 /// <reference path="./raw.d.ts" />
 import { parseCsv } from "./parse";
+import { parseTeamLabel } from "./team-lookup";
+import { matchTournamentEntry, type TournamentEntryQuery } from "./tournament-lookup";
 
 /** One team's row in a past season's debatedata.weebly.com table. */
 export interface CollegeHistoryEntry {
@@ -194,4 +196,149 @@ export async function loadCollegeHistory(year: string | number): Promise<College
     throw err;
   });
   return all.get(seasonKey(Number(year))) ?? [];
+}
+
+/**
+ * Season year (the year a season ends in) of a date: a season runs July to
+ * June, so `"2019-11-02"` is in 2020 (2019-20). `null` for an unparseable
+ * date. Only the year and month are read, so a time zone can't move a date
+ * across the line.
+ */
+export function collegeSeasonYearOf(date: string | null | undefined): number | null {
+  const match = /^(\d{4})-(\d{2})/.exec((date ?? "").trim());
+  if (!match) return null;
+  const year = Number(match[1]);
+  return Number(match[2]) >= 7 ? year + 1 : year;
+}
+
+/**
+ * College shorthand videos and tab use for a school, and the short names the
+ * 2010-11 to 2012-13 tables use, each mapped to one key. Keys and values are
+ * {@link collegeSchoolKey}'s cleaned form, before this table is applied.
+ */
+const COLLEGE_SCHOOL_ALIASES: Record<string, string> = {
+  ku: "kansas",
+  ou: "oklahoma",
+  uco: "central oklahoma",
+  nu: "northwestern",
+  msu: "michigan state",
+  gmu: "george mason",
+  jmu: "james madison",
+  gtown: "georgetown",
+  wake: "wake forest",
+  uk: "kentucky",
+  uga: "georgia",
+  gsu: "georgia state",
+  uwg: "west georgia",
+  unt: "north texas",
+  usc: "southern california",
+  pitt: "pittsburgh",
+  minn: "minnesota",
+  bing: "binghamton",
+  binghamton: "binghamton",
+  "state new york binghamton": "binghamton",
+  asu: "arizona state",
+  nyu: "new york",
+  wvu: "west virginia",
+  umw: "mary washington",
+  gw: "george washington",
+  umkc: "missouri kansas city",
+  "mo state": "missouri state",
+  mostate: "missouri state",
+  utd: "texas dallas",
+  "ut dallas": "texas dallas",
+  utsa: "texas san antonio",
+  "ut san antonio": "texas san antonio",
+  unlv: "nevada las vegas",
+  cal: "california berkeley",
+  berkeley: "california berkeley",
+  "uc berkeley": "california berkeley",
+  csulb: "california state long beach",
+  "csu long beach": "california state long beach",
+  "cal state long beach": "california state long beach",
+  "long beach": "california state long beach",
+  csuf: "california state fullerton",
+  "cal state fullerton": "california state fullerton",
+  "california state fullerton": "california state fullerton",
+  kckcc: "kansas city kansas",
+  "kansas city kansas cc": "kansas city kansas",
+  "kansas city kansas community": "kansas city kansas",
+  jccc: "johnson county",
+  jcc: "johnson county",
+  "johnson county community": "johnson county",
+  bc: "boston",
+  vandy: "vanderbilt",
+  "west ga": "west georgia",
+  "san fran state": "san francisco state",
+  sfsu: "san francisco state",
+};
+
+/**
+ * A school name reduced to what tells colleges apart: `"University of Texas
+ * - Dallas"`, `"UT Dallas"` and `"UTD"` all become `"texas dallas"`, and
+ * `"State University of New York - Binghamton"` becomes `"binghamton"`. The
+ * rankings' own school matching drops the part after `" - "` as a city,
+ * which for colleges is the campus, so the tables' names are rewritten here
+ * before matching.
+ */
+export function collegeSchoolKey(school: string): string {
+  const cleaned = school
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/\([^)]*\)/g, " ")
+    .replace(/[^a-z0-9]+/g, " ")
+    .split(" ")
+    .filter((w) => w && !["university", "of", "the", "at", "college"].includes(w))
+    .join(" ")
+    // "Kansas St", "Wichita St".
+    .replace(/ st$/, " state");
+  return COLLEGE_SCHOOL_ALIASES[cleaned] ?? cleaned;
+}
+
+/** Speech and round names a video tacks onto a team, e.g. `"Baylor CM 1AC"`. */
+const LABEL_SUFFIX = /[\s-]+(?:[12](?:ac|nc|ar|nr)|block|cx|disclosure|prelims?|r\d+|round \d+)\s*$/i;
+const LABEL_PREFIX = /^(?:[12](?:ac|nc|ar|nr)\s*-+\s*|round \d+\s+|(?:finals|semis|quarters|octos|octas|doubles)\s+)/i;
+
+/**
+ * A video's team label with what isn't the team cut away: a file extension,
+ * a judge, a round or speech name (`"Emory GN -1AR.MP4"` → `"Emory GN"`,
+ * `"Cal MS - R6"` → `"Cal MS"`, `"Octos Emory GH"` → `"Emory GH"`).
+ */
+export function cleanCollegeTeamLabel(label: string): string {
+  let text = label.split(/\s+-\s+|\s*\(|,|\s+judge:|\.mp4/i)[0].trim();
+  for (let prev = ""; prev !== text; ) {
+    prev = text;
+    text = text.replace(LABEL_SUFFIX, "").replace(LABEL_PREFIX, "").trim();
+  }
+  return text;
+}
+
+/**
+ * The row a team code (`"Kansas LS"`) or tournament entry names in one past
+ * season's table, or `null` when no row or more than one matches — two teams
+ * from the same school with the same initials are left unmatched rather
+ * than guessed. Matching is {@link matchTournamentEntry}'s — debaters' last
+ * names when the query has them, else the school loosely and the initials
+ * exactly, in either order — over {@link collegeSchoolKey}'s school names, on
+ * the label {@link cleanCollegeTeamLabel} leaves.
+ *
+ * @param entries - One season's table, from {@link loadCollegeHistory}.
+ * @param query - A video's team label, or a tournament entry's code, names and school.
+ */
+export function findCollegeHistoryTeam(
+  entries: readonly CollegeHistoryEntry[],
+  query: string | TournamentEntryQuery | null | undefined,
+): CollegeHistoryEntry | null {
+  const q: TournamentEntryQuery = typeof query === "string" ? { code: query } : (query ?? {});
+  const code = q.code ? cleanCollegeTeamLabel(q.code) : "";
+  const label = parseTeamLabel(code);
+  if (!label && !q.name) return null;
+  const keyed = entries.map((entry) => ({ entry, name: entry.name, school: collegeSchoolKey(entry.school) }));
+  const match = matchTournamentEntry(keyed, {
+    code: label ? `${collegeSchoolKey(label.school)} ${label.code}` : null,
+    name: q.name,
+    school: q.school ? collegeSchoolKey(q.school) : null,
+  });
+  return match?.entry ?? null;
 }

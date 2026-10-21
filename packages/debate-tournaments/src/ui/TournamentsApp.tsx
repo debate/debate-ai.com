@@ -34,7 +34,7 @@ import { RoundPage } from "./pages/RoundPage";
 import { ResultsPage } from "./pages/ResultsPage";
 import { ResultSetPage } from "./pages/ResultSetPage";
 import { BallotPage } from "./pages/BallotPage";
-import type { JudgeParadigmLookup, TeamRatingLookup } from "./enrichment";
+import { TournamentSeasonContext, tournamentSeasonYear, type JudgeParadigmLookup, type TeamRatingLookup } from "./enrichment";
 
 export interface TournamentsAppProps {
   /** Path segments after `basePath` (a catch-all route's params). */
@@ -61,10 +61,11 @@ export interface TournamentsAppProps {
    */
   ballotApiBase?: string;
   /**
-   * Looks an entry up in the current season's team rankings for its event's
-   * format. When set, pairings and results show a matched entry's school
-   * logo, debaters' last names and rating; an entry with no confident match
-   * is shown as before. See `./enrichment`.
+   * Looks an entry up in the team rankings for its event's format and the
+   * season the tournament ran in (`query.season`). When set, pairings and
+   * results show a matched entry's school logo, debaters' last names and
+   * rating; an entry with no confident match is shown as before. See
+   * `./enrichment`.
    */
   lookupTeamRating?: TeamRatingLookup;
   /**
@@ -242,7 +243,10 @@ function AdminRoute({ route, tournId }: { route: TournamentPageRoute; tournId: n
   return <TournamentAdminPage tournId={tournId} />;
 }
 
-/** Loads the tournament's invite once, for its name and the invite tab. */
+/**
+ * Loads the tournament's invite once, for its name and the invite tab, and
+ * gives its pages the season it ran in, so rankings match that season.
+ */
 function TournamentShell({
   route,
   tournId,
@@ -261,10 +265,10 @@ function TournamentShell({
     <div className="mx-auto max-w-5xl space-y-4 p-4 md:p-6">
       <Loaded state={state}>
         {(invite) => (
-          <>
+          <TournamentSeasonContext.Provider value={tournamentSeasonYear(invite.start)}>
             <TournamentNav tournId={tournId} active={tab} name={invite.name} source={client.sourceOf(tournId)} invite={invite} />
             {children(invite)}
-          </>
+          </TournamentSeasonContext.Provider>
         )}
       </Loaded>
     </div>
