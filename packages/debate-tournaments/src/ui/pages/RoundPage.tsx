@@ -2,12 +2,14 @@
 
 import { Fragment, useEffect, useState } from "react";
 import { X } from "lucide-react";
+import { entryOrder, isElimRound, roundDisplayLabel } from "../bracket";
 import type { FieldEntry, RoundSchematic, TournamentSource } from "../client";
 import { EntryLabel, JudgeName, entrySide } from "../enrichment";
 import { isLiveDemo, type LiveRoomInput } from "../live/demo-live";
 import { LiveRoomPanel, LiveStatusCell, useNow } from "../live/LiveRoom";
 import { Badge, Card, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../primitives";
 import { BackLink, Empty, Loaded, formatDate, useApi, useTournaments } from "../shared";
+import { ElimBracket } from "./ElimBracket";
 
 /** The emblem in the top-right corner of a round's pairings. */
 export const PAIRINGS_EMBLEM = "https://i.imgur.com/ejU0Qon.png";
@@ -55,9 +57,15 @@ export function RoundPage({ tournId, eventAbbr, roundName }: { tournId: number; 
     lookupTeamRating ? client.field(tournId, eventAbbr, signal).catch(() => null) : Promise.resolve(null),
   );
   const fieldEntries = field.status === "ready" ? field.data?.Entries : undefined;
+  // The published rounds tell an elim round from a prelim; an elim round
+  // shows the event's whole bracket above its own pairings.
+  const rounds = useApi(`rounds:${tournId}`, (signal) => client.rounds(tournId, signal).catch(() => []));
+  const published = rounds.status === "ready" ? rounds.data : [];
+  const elim = published.some((round) => round.Event.abbr === eventAbbr && String(round.name) === roundName && isElimRound(round.type));
   return (
     <div className="space-y-3">
       <BackLink href={hrefs.rounds(tournId)}>All pairings</BackLink>
+      {elim ? <ElimBracket tournId={tournId} eventAbbr={eventAbbr} currentRound={Number(roundName)} rounds={published} /> : null}
       <Loaded state={state}>
         {(round) => <Schematic round={round} live={isLiveDemo(tournId)} field={fieldEntries} source={client.sourceOf(tournId)} />}
       </Loaded>
@@ -160,7 +168,7 @@ export function Schematic({
       <div className="flex items-start gap-4">
         <div className="min-w-0 flex-1">
           <h2 className="text-lg font-semibold">
-            {round.Event.name} — {round.label || `Round ${round.name}`}
+            {round.Event.name} — {roundDisplayLabel(round.label, round.name)}
           </h2>
           {round.startTime && <p className="text-sm text-muted-foreground">Starts {formatDate(round.startTime, round.tz, true)}</p>}
           {live && (
@@ -186,9 +194,7 @@ export function Schematic({
             </TableHeader>
             <TableBody>
               {sections.map((section) => {
-                const entries = Object.values(section.Entries ?? {}).sort(
-                  (a, b) => (a.side ?? a.speakerorder ?? 0) - (b.side ?? b.speakerorder ?? 0),
-                );
+                const entries = Object.values(section.Entries ?? {}).sort((a, b) => entryOrder(a) - entryOrder(b));
                 const judges = Object.values(section.Judges ?? {});
                 const room: LiveRoomInput = {
                   sectionId: section.id,
