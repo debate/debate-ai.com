@@ -13,7 +13,7 @@ import {
   type VideoDocument,
   type VideoDocumentKind,
 } from "@debate/videos";
-import { formatCount } from "@debate/videos/components/category-gallery/format-count";
+import { formatCount } from "@debate/videos/lib/format-count";
 import { Button } from "../../lib/ui/primitives/button";
 import { SpeechAudioSplitter, type SpeechAudioSplit } from "./SpeechAudioSplitter";
 import { Badge } from "../../lib/ui/primitives/badge";

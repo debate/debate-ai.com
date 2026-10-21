@@ -29,7 +29,7 @@ import {
 } from "@debate/webview/lib/ui/primitives/select";
 import { VideoContentDialog, type ContentDialogVideo } from "./VideoContentDialog";
 import { VideoEditDialog, emptyLibraryVideo, type LibraryVideo } from "./VideoEditDialog";
-import { formatCount } from "@debate/videos/components/category-gallery/format-count";
+import { formatCount } from "@debate/videos/lib/format-count";
 
 
 /** A table row: the editable video plus what the listing says about its transcript. */

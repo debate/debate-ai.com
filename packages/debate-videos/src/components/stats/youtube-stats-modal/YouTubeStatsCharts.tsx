@@ -25,7 +25,7 @@ import {
 } from "../../../ui/primitives/table";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../../../ui/charts/chart";
 import type { ChartConfig } from "../../../ui/charts/chart";
-import { formatCount } from "../../category-gallery/format-count"
+import { formatCount } from "../../../lib/format-count"
 
 interface YouTubeStats {
   summary: {

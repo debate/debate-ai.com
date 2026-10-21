@@ -30,7 +30,7 @@ const { findVideoTeamRanking, videoStyleDatasetId } = await import(
 );
 const { isRankedSeasonRound } = await import("../src/hooks/useVideoTeamRankings");
 const { VideoListRow } = await import("../src/components/videos/video-grid/VideoListRow");
-const { WatchSearchBox } = await import("../src/components/videos/watch/WatchSearchBox");
+const { WatchSearchBox } = await import("../src/components/videos/watch/controls/WatchSearchBox");
 const { TooltipProvider } = await import("../src/ui/primitives/tooltip");
 
 function entry(rank: number, school: string, name: string): RankingEntry {

@@ -25,7 +25,7 @@ import {
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../../../ui/charts/chart"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line } from "recharts"
 import type { ChartConfig } from "../../../ui/charts/chart"
-import { formatCount } from "../../category-gallery/format-count"
+import { formatCount } from "../../../lib/format-count"
 
 export interface YouTubeStats {
   summary: {

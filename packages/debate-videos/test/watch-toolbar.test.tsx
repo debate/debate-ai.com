@@ -13,7 +13,7 @@ import { describe, expect, it, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createElement } from "react";
 import { PlayerControls } from "../src/components/videos/video-player/PlayerControls";
-import { WatchToolbar } from "../src/components/videos/watch/WatchToolbar";
+import { WatchToolbar } from "../src/components/videos/watch/controls/WatchToolbar";
 import type { QueueItem } from "../src/state/videoPlayerStore";
 
 const noop = () => {};

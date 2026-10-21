@@ -31,7 +31,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { ChevronLeft, ChevronRight, Maximize2, Pause, Pin, PinOff, Play } from "lucide-react"
 
-import { WatchSpeechTimeline } from "../../components/videos/watch/WatchSpeechTimeline"
+import { WatchSpeechTimeline } from "../../components/videos/watch/prediction/WatchSpeechTimeline"
 import { PlayerIconButton } from "../../components/videos/video-player/PlayerIconButton"
 import { TooltipProvider } from "../../ui/primitives/tooltip"
 import { buildEmbedUrl, startListening } from "../../components/videos/video-player/youtubeEmbed"

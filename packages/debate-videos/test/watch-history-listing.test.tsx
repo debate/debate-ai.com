@@ -20,7 +20,7 @@ import { SLUG_MAP } from "../src/panels/lectureRouteConfig";
 import {
   SIDEBAR_VIDEO_LINKS,
   VIDEO_LIBRARY_LINKS,
-} from "../src/components/category-gallery/sidebar-video-links";
+} from "../src/components/sidebar/sidebar-video-links";
 
 vi.mock("next/image", () => ({
   default: ({ src, alt }: { src: unknown; alt?: string }) =>
@@ -40,7 +40,7 @@ vi.mock("next/navigation", () => ({
 }));
 
 const { VideoSidebarTree } = await import(
-  "../src/components/category-gallery/VideoSidebarTree"
+  "../src/components/sidebar/VideoSidebarTree"
 );
 
 /** The tree, with the lecture categories loaded as the live page has them. */

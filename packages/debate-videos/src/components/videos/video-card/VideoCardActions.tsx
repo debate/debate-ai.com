@@ -21,11 +21,11 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "../../../ui/primitives/tooltip"
-import { formatCount } from "../../category-gallery/format-count"
+import { formatCount } from "../../../lib/format-count"
 import { formatVideoDate } from "./videoCardUtils"
 import { topicDisplayLines } from "../../../lib/debate-topics"
 import { HideConfirmDialog } from "./VideoCardDialogs"
-import { WatchPageLink } from "../watch/WatchPageLink"
+import { WatchPageLink } from "../watch/controls/WatchPageLink"
 import { WatchProgressBadge } from "./WatchProgressBadge"
 import { VideoDuration } from "./VideoDuration"
 import { useWatchHistoryEntry } from "../../../hooks/useWatchHistory"

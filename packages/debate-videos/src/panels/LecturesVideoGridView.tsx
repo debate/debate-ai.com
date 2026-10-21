@@ -21,16 +21,16 @@ import { SubmitToLibraryButton } from "../components/videos/video-search/SubmitT
 import { getSearchPhrases } from "../components/videos/video-search/searchPhrases"
 import { VideoGrid } from "../components/videos/video-grid/VideoGrid"
 import { VideoListRows } from "../components/videos/video-grid/VideoListRows"
-import { LectureCategoryGridGallery, GridItem } from "../components/category-gallery/LectureCategoryGridGallery"
-import { QuickLinksGrid } from "../components/category-gallery/QuickLinksGrid"
-import { VideoSidebarTree } from "../components/category-gallery/VideoSidebarTree"
-import { ToolNavTree } from "../components/category-gallery/ToolNavTree"
-import { GoatSparklesHeading } from "../components/category-gallery/GoatSparklesHeading"
+import { LectureCategoryGridGallery, GridItem } from "../components/gallery/LectureCategoryGridGallery"
+import { QuickLinksGrid } from "../components/gallery/QuickLinksGrid"
+import { VideoSidebarTree } from "../components/sidebar/VideoSidebarTree"
+import { ToolNavTree } from "../components/sidebar/ToolNavTree"
+import { GoatSparklesHeading } from "../components/gallery/GoatSparklesHeading"
 import { cn } from "../ui/lib/utils";
 import {
   VIDEO_ALL_VIDEOS_FILTER_LINKS,
   VIDEO_COLLEGE_FILTER_LINKS,
-} from "../components/category-gallery/sidebar-video-links";
+} from "../components/sidebar/sidebar-video-links";
 import type { DebateStyle } from "../types/videos"
 import type { VideoViewMode } from "../hooks/useVideoState"
 import { useVideoStacks } from "../hooks/useVideoStacks"

@@ -38,7 +38,7 @@ import { VideoLibraryTable } from "./VideoLibraryTable";
 import { VideoReportsPanel } from "./VideoReportsPanel";
 import { YoutubeChannelsPanel } from "./YoutubeChannelsPanel";
 import { TranscriptScraperPanel } from "./TranscriptScraperPanel";
-import { formatCount } from "@debate/videos/components/category-gallery/format-count";
+import { formatCount } from "@debate/videos/lib/format-count";
 
 interface YoutubeRoundVideo { id: string; title: string; publishedAt: string; channel: string; views: number; style: number; tournament: string | null; }
 interface SyncRun { id: number; status: "running" | "success" | "error"; triggeredBy?: string | null; channelsSynced: number; videosUpserted: number; error: string | null; }
