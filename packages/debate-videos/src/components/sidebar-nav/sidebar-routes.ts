@@ -8,11 +8,7 @@
  * here is what makes them testable (`apps/*` is outside the Vitest projects
  * glob, `packages/*` is not).
  *
-<<<<<<<< HEAD:packages/debate-videos/src/components/sidebar/sidebar-routes.ts
- * @module components/sidebar/sidebar-routes
-========
  * @module components/sidebar-nav/sidebar-routes
->>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/sidebar-nav/sidebar-routes.ts
  */
 
 import {
@@ -121,13 +117,13 @@ export const OWN_SIDEBAR_DOCK_HREFS: readonly string[] = ["/doc", "/research/doc
 /**
  * Routes that render the video library page (`LecturesPage`), which draws
  * its own full sidebar, dock included: the round archive under `/videos`,
- * the lecture library under `/lectures`, and the three reference views the
- * Practice category lists — the glossary, the rankings and the statistics.
+ * the lecture library under `/lectures`, and the two reference views the
+ * Insights category lists — the rankings and the statistics. (The glossary
+ * used to be a third; it is a tab of `/practice/rules` now.)
  */
 export const VIDEO_LIBRARY_HREFS: readonly string[] = [
   "/videos",
   "/lectures",
-  "/practice/glossary",
   "/practice/rankings",
   "/practice/statistics",
 ];

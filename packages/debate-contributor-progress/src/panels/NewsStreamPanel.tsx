@@ -1,8 +1,8 @@
 /**
- * @fileoverview News Stream panel — a unified activity feed of product
- * updates and community announcements, built from `state/newsStream.ts`'s
- * `buildNewsFeed` (hand-maintained product updates plus every announced
- * Daily Best Card winner and Contributor Awards standings).
+ * @fileoverview News Stream panel — the activity feed of new rounds, new
+ * files and forum activity, built from `state/newsStream.ts`'s
+ * `buildNewsFeed` (the Argument Library digests plus the caller's
+ * `extraItems`). Filter tabs are shown only for categories the feed has.
  *
  * Reads localStorage on mount only (client-side), so it renders a loading
  * state during SSR/hydration rather than throwing, matching every other
@@ -49,7 +49,7 @@
 "use client"
 
 import { useEffect, useMemo, useRef, useState } from "react"
-import { Bell, Heart, Megaphone, Sparkles, Trophy, UserCheck } from "lucide-react"
+import { Bell, FileText, GraduationCap, Heart, MessagesSquare, Video, UserCheck } from "lucide-react"
 import { Badge } from "@debate/research-evidence/src/ui/primitives/badge"
 import { Button } from "@debate/research-evidence/src/ui/primitives/button"
 import { Card, CardContent } from "@debate/research-evidence/src/ui/primitives/card"
@@ -66,21 +66,15 @@ import { NEWS_CATEGORY_LABELS, type NewsCategory, type NewsItem } from "../lib/n
 import { isNewsStreamLiveUpdateStorageEvent } from "@debate/research-evidence/src/state/live-update"
 
 const CATEGORY_ICON: Record<NewsCategory, typeof Bell> = {
-  product: Sparkles,
-  "daily-best-card": Trophy,
-  awards: Trophy,
-  community: Megaphone,
+  rounds: Video,
+  files: FileText,
+  forums: MessagesSquare,
   following: UserCheck,
+  coaching: GraduationCap,
 }
 
-const FILTERS: { value: NewsCategory | "all"; label: string }[] = [
-  { value: "all", label: "All" },
-  { value: "product", label: NEWS_CATEGORY_LABELS.product },
-  { value: "daily-best-card", label: NEWS_CATEGORY_LABELS["daily-best-card"] },
-  { value: "awards", label: NEWS_CATEGORY_LABELS.awards },
-  { value: "community", label: NEWS_CATEGORY_LABELS.community },
-  { value: "following", label: NEWS_CATEGORY_LABELS.following },
-]
+/** Filter tab order; a category only gets a tab when the feed has an item in it. */
+const CATEGORY_ORDER: NewsCategory[] = ["rounds", "files", "forums", "following", "coaching"]
 
 function relativeTime(timestamp: number): string {
   const diffMs = Date.now() - timestamp
@@ -159,7 +153,7 @@ export interface NewsStreamSyncAdapter {
 }
 
 /**
- * Renders the News Stream: every product update and community announcement,
+ * Renders the News Stream: new rounds, files and forum activity,
  * newest first, filterable by category, with per-viewer read/like state.
  *
  * @param extraItems Caller-supplied `NewsItem`s to fold into the feed
@@ -221,6 +215,17 @@ export function NewsStreamPanel({
     return () => window.removeEventListener("storage", handleStorage)
   }, [])
 
+  const filters = useMemo(() => {
+    const present = new Set((items ?? []).map((item) => item.category))
+    return [
+      { value: "all" as const, label: "All" },
+      ...CATEGORY_ORDER.filter((category) => present.has(category)).map((category) => ({
+        value: category,
+        label: NEWS_CATEGORY_LABELS[category],
+      })),
+    ]
+  }, [items])
+
   const visible = useMemo(
     () => (items ?? []).filter((item) => filter === "all" || item.category === filter),
     [items, filter],
@@ -246,7 +251,7 @@ export function NewsStreamPanel({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap gap-2">
-        {FILTERS.map((f) => (
+        {filters.map((f) => (
           <Button
             key={f.value}
             type="button"

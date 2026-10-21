@@ -10,8 +10,11 @@ export async function GET(request: Request) {
   const caselistSlug = searchParams.get("caselistSlug");
   const limit = Number.parseInt(searchParams.get("limit") ?? "50", 10);
   const offset = Number.parseInt(searchParams.get("offset") ?? "0", 10);
+  // `recent=1` with no school or team lists the newest files site-wide (the
+  // News tab's "New Files"), capped so it can't page through the archive.
+  const recent = searchParams.get("recent") === "1";
 
-  if (!school && !team) {
+  if (!school && !team && !recent) {
     return NextResponse.json(
       { error: "Either 'school' or 'team' query parameter is required" },
       { status: 400 },
@@ -26,7 +29,9 @@ export async function GET(request: Request) {
   if (team) conditions.push(sql`${caselistDocuments.team} = ${team} COLLATE NOCASE`);
   if (caselistSlug) conditions.push(eq(caselistDocuments.caselistSlug, caselistSlug));
 
-  const whereClause = conditions.length === 1 ? conditions[0] : and(...conditions);
+  const whereClause =
+    conditions.length === 0 ? undefined : conditions.length === 1 ? conditions[0] : and(...conditions);
+  const pageSize = recent && conditions.length === 0 ? Math.min(Math.max(1, limit || 1), 20) : limit;
 
   const db = await getDBFromContext();
 
@@ -49,7 +54,7 @@ export async function GET(request: Request) {
     .from(caselistDocuments)
     .where(whereClause)
     .orderBy(desc(caselistDocuments.ingestedAt))
-    .limit(limit)
+    .limit(pageSize)
     .offset(offset);
 
   const totalResult = await db
@@ -60,7 +65,7 @@ export async function GET(request: Request) {
   return NextResponse.json({
     documents,
     total: totalResult[0]?.count ?? 0,
-    limit,
+    limit: pageSize,
     offset,
   });
 }

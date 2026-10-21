@@ -49,14 +49,10 @@ const ImageMock = (await import("next/image")) as unknown as {
   default: FunctionComponent<{ src: unknown; alt?: string; className?: string }>;
 };
 const { VideoSidebarTree } = await import(
-<<<<<<< HEAD
-  "../src/components/sidebar/VideoSidebarTree"
-=======
   "../src/components/sidebar-nav/VideoSidebarTree"
->>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 );
 const { QuickLinksGrid } = await import(
-  "../src/components/gallery/QuickLinksGrid"
+  "../src/components/category-gallery/QuickLinksGrid"
 );
 
 function renderSidebar(overrides: Partial<ComponentProps<typeof VideoSidebarTree>> = {}): string {
@@ -93,10 +89,10 @@ describe("VideoSidebarTree", () => {
 
   it("renders Lucide section headings as inline SVG, never as an image", () => {
     const html = renderSidebar();
-    // The Coaching / Research / Practice headings carry Lucide icons.
+    // The Coaching / Research / Insights headings carry Lucide icons.
     expect(html).toContain("Coaching");
     expect(html).toContain("Research");
-    expect(html).toContain("Practice");
+    expect(html).toContain("Insights");
     expect(html).toContain("lucide");
     expect(html).toContain("<svg");
   });
@@ -172,11 +168,13 @@ describe("the sidebar's heading structure", () => {
     expect(html).not.toContain("All Lectures");
   });
 
-  it("renders Coaching / Research / Practice as h1 sections", () => {
+  it("renders Research / Coaching / Insights as h1 sections, with no Practice section", () => {
     const html = renderSidebar();
-    for (const title of ["Coaching", "Research", "Practice"]) {
+    for (const title of ["Coaching", "Research", "Insights"]) {
       expect(html).toMatch(new RegExp(`<h1[^>]*>${title}<\\/h1>`));
     }
+    // Practice was folded into Research.
+    expect(html).not.toMatch(/<h1[^>]*>Practice<\/h1>/);
   });
 
   it("gives every h1 section a destination a modifier-click can open", () => {
@@ -188,7 +186,7 @@ describe("the sidebar's heading structure", () => {
     // "open in a new tab" silently did nothing on the five rows that happened
     // to be sections.
     const html = renderSidebar();
-    for (const title of ["Videos", "Coaching", "Research", "Practice"]) {
+    for (const title of ["Videos", "Coaching", "Research", "Insights"]) {
       expect(html).toMatch(
         new RegExp(
           `<a[^>]*href="/[^"]*"[^>]*aria-expanded="(?:true|false)"[^>]*>(?:(?!</a>)[\\s\\S])*<h1[^>]*>${title}</h1>`,
@@ -203,7 +201,7 @@ describe("the sidebar's heading structure", () => {
     expect(html).toMatch(
       /<a[^>]*aria-expanded="true"[^>]*>(?:(?!<\/a>)[\s\S])*<h1[^>]*>Videos<\/h1>/,
     );
-    for (const title of ["Coaching", "Research", "Practice"]) {
+    for (const title of ["Coaching", "Research", "Insights"]) {
       expect(html).toMatch(
         new RegExp(`<a[^>]*aria-expanded="true"[^>]*>(?:(?!</a>)[\\s\\S])*<h1[^>]*>${title}</h1>`),
       );
@@ -243,15 +241,15 @@ describe("the sidebar's heading structure", () => {
     expect(html).not.toContain("1400");
   });
 
-  it("keeps the glossary and rankings pair inside the Practice section", () => {
-    // They used to hang below the tree, outside every section. They are now
-    // the tail of Practice, and Practice — like every section — starts
+  it("keeps the glossary and rankings pair inside the Insights section", () => {
+    // They used to hang below the tree, outside every section. They now sit
+    // in Insights, and Insights — like every section — starts
     // expanded, so they render with the tools they sit with rather than
     // below the whole tree.
     // `tool-nav-tree-sections.test.tsx` pins which section they belong to.
     const html = renderSidebar();
-    expect(html).toContain("Glossary of Terms");
-    expect(html).toContain("/practice/glossary");
+    expect(html).toContain("Rules &amp; Glossary");
+    expect(html).toContain("/practice/rules");
   });
 });
 

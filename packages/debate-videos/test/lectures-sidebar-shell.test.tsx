@@ -34,7 +34,7 @@ vi.mock("next/link", () => ({
 }));
 
 vi.mock("next/navigation", () => ({
-  usePathname: () => "/practice/glossary",
+  usePathname: () => "/practice/rankings",
 }));
 
 const { LecturesSidebarShell } = await import("../src/panels/LecturesSidebarShell");
@@ -60,7 +60,7 @@ describe("LecturesSidebarShell", () => {
     // themselves — i.e. the whole tree, not a stub.
     expect(html).toContain('href="/lectures"');
     expect(html).toContain('href="/coaching"');
-    expect(html).toContain('href="/practice/glossary"');
+    expect(html).toContain('href="/practice/rules"');
     expect(html).toContain('href="/practice/statistics"');
   });
 
@@ -91,13 +91,13 @@ describe("the md:hidden block, which is what a phone sees", () => {
   it("carries the video quick links, minus the glossary/statistics tiles", () => {
     const mobile = mobileMarkup();
     expect(mobile).toContain('href="/videos/college"');
-    expect(mobile).not.toContain('href="/practice/glossary"');
+    expect(mobile).not.toContain('href="/practice/rules"');
     expect(mobile).not.toContain('href="/practice/statistics"');
   });
 
   it("carries the tool sections, collapsed so the page stays in view", () => {
     const mobile = mobileMarkup();
-    for (const heading of ["Coaching", "Research", "Practice"]) {
+    for (const heading of ["Coaching", "Research", "Insights"]) {
       expect(mobile).toMatch(new RegExp(`<h1[^>]*>${heading}</h1>`));
       expect(mobile).toMatch(
         new RegExp(`<a[^>]*aria-expanded="false"[^>]*>(?:(?!</a>)[\\s\\S])*<h1[^>]*>${heading}</h1>`),

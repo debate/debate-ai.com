@@ -10,11 +10,7 @@ import { createElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { act } from "react";
 import { highlightHtml, renderDocumentMarkdown } from "../src/lib/document-markdown";
-<<<<<<< HEAD
-import { AUTO_SCROLL_STORAGE_KEY, WatchSidePanel } from "../src/components/videos/watch/panels/WatchSidePanel";
-=======
 import { AUTO_SCROLL_STORAGE_KEY, WatchSidePanel } from "../src/components/watch/WatchSidePanel";
->>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 import type { VideoDocument } from "../src/lib/video-documents";
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;

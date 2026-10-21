@@ -485,7 +485,6 @@ jobs:
         # functionality" question in docs/APP_STORES.md answered — this job
         # only produces the .ipa, it does not upload to App Store Connect.
 
-<<<<<<< HEAD
   # Unsigned .ipa for sideloading (AltStore, Sideloadly, ...), which re-sign it
   # with the installer's own Apple ID, so no Apple Developer membership is
   # needed. `tauri ios init` insists on a development team, so a placeholder
@@ -589,8 +588,6 @@ jobs:
           IPA: ${{ steps.package.outputs.path }}
         run: gh release upload "$TAG" "$IPA" --clobber
 
-=======
->>>>>>> 602be5c99b34c6f056c7a673ac31d2c1525d4500
   # Final stage: once every build job has finished, check that the draft has
   # the installers attached and publish it. Android/iOS are best-effort, so
   # only the desktop matrix has to succeed; a failed mobile job just means
@@ -599,11 +596,7 @@ jobs:
   # its success is what gates this job.
   publish-release:
     name: Publish release
-<<<<<<< HEAD
     needs: [prepare-release, build-desktop, build-android, build-ios, build-ios-unsigned]
-=======
-    needs: [prepare-release, build-desktop, build-android, build-ios]
->>>>>>> 602be5c99b34c6f056c7a673ac31d2c1525d4500
     if: >-
       always() &&
       needs.prepare-release.result == 'success' &&
@@ -617,6 +610,9 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
           TAG: ${{ needs.prepare-release.outputs.tag }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
         run: |
           gh release view "$TAG" --json assets -q '.assets[].name' | tee /tmp/assets.txt
           # One installer per desktop platform.
@@ -634,7 +630,6 @@ jobs:
             echo "::error::Updater signatures are attached but latest.json is missing — refusing to publish." >&2
             missing=1
           fi
-<<<<<<< HEAD
           # The .ipa is attached by build-ios, and only when the Apple team ID,
           # signing certificate and provisioning profile secrets are all set.
           # With them set, a missing .ipa is a failure; without them it is
@@ -648,8 +643,6 @@ jobs:
               echo "::warning::No .ipa on the release: set APPLE_TEAM_ID, APPLE_CERTIFICATE (+ _PASSWORD) and IOS_PROVISIONING_PROFILE_BASE64 to build and attach one." >&2
             fi
           fi
-=======
->>>>>>> 602be5c99b34c6f056c7a673ac31d2c1525d4500
           exit $missing
 
       - name: Publish the release

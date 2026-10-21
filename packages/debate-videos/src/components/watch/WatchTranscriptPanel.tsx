@@ -20,19 +20,11 @@
 
 import { useEffect, useMemo, useRef, useState } from "react"
 import { Loader2, Search, X } from "lucide-react"
-<<<<<<<< HEAD:packages/debate-videos/src/components/videos/watch/panels/WatchTranscriptPanel.tsx
-import { ScrollArea } from "../../../../ui/primitives/scroll-area"
-import { TranscriptLine } from "../../transcript/TranscriptLine"
-import type { TranscriptSnippet } from "../../transcript/transcriptUtils"
-import { scrollWithin } from "../../../../lib/scroll-within"
-import { AutoScrollToggle } from "../controls/AutoScrollToggle"
-========
 import { ScrollArea } from "../../ui/primitives/scroll-area"
 import { TranscriptLine } from "../transcript/TranscriptLine"
 import type { TranscriptSnippet } from "../transcript/transcriptUtils"
 import { scrollWithin } from "../../lib/scroll-within"
 import { AutoScrollToggle } from "./AutoScrollToggle"
->>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/watch/WatchTranscriptPanel.tsx
 
 interface WatchTranscriptPanelProps {
   /** The video's transcript, already regrouped into sentences. */

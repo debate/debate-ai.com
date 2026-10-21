@@ -116,7 +116,25 @@ export interface RoundSchematic {
       bracket?: number;
       bye?: number;
       Room?: { id: number; name: string } | null;
-      Entries?: Record<string, { id: number; code: string; side?: number; speakerorder?: number; record?: string }>;
+      /**
+       * `side` is 1 (aff) / 2 (neg) on this site's API and `"Aff"` / `"Neg"`
+       * (the event's side labels) on live Tabroom's `/results` page, which
+       * also carries `name`, `schoolName` and each judge's ballot, keyed by
+       * the judge's id as in `Judges`.
+       */
+      Entries?: Record<
+        string,
+        {
+          id: number;
+          code: string;
+          side?: number | string;
+          speakerorder?: number;
+          record?: string;
+          name?: string | null;
+          schoolName?: string | null;
+          Ballots?: Record<string, { winloss?: string | null; point?: number | null; rank?: number | null }>;
+        }
+      >;
       /** `paradigm` is the judge's Tabroom person id, set when they have a paradigm on file. */
       Judges?: Record<string, { id?: number; first: string | null; last: string | null; chair?: number; code?: string; paradigm?: number }>;
     }

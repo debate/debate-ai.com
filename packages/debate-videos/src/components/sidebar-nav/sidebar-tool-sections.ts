@@ -1,22 +1,17 @@
 /**
- * @fileoverview The Research / Practice / Coaching / Insights tool sections
- * rendered in
- * the videos sidebar underneath the "Videos" node. Mirrors the entries of
+ * @fileoverview The Research / Coaching / Insights tool sections rendered in
+ * the videos sidebar underneath the "Videos" node. The practice tools (Practice
+ * vs AI, Prep Workspace) sit under Research and keep their `/practice/...` URLs. Mirrors the entries of
  * the app's `/tools` catalog (`app/tools/tool-groups.ts`), regrouped into the
- * four headings the sidebar shows and trimmed to the label, href and icon
+ * three headings the sidebar shows and trimmed to the label, href and icon
  * the tree needs — the sidebar lives in this package, which cannot import
  * app-local modules, so the links are restated here rather than derived.
  *
-<<<<<<<< HEAD:packages/debate-videos/src/components/sidebar/sidebar-tool-sections.ts
- * @module components/sidebar/sidebar-tool-sections
-========
  * @module components/sidebar-nav/sidebar-tool-sections
->>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/sidebar-nav/sidebar-tool-sections.ts
  */
 
 import {
   BarChart3,
-  BookOpen,
   ChartColumn,
   Clapperboard,
   ClipboardList,
@@ -105,12 +100,6 @@ export const APP_DOCK_LINKS: SidebarToolLink[] = [
 ];
 
 /**
- * Id of the Practice section. Named for the same reason as
- * {@link RESEARCH_SECTION_ID} below.
- */
-export const PRACTICE_SECTION_ID = "practice";
-
-/**
  * Id of the Research section — the one section the `/research/cards` sidebar keeps
  * (`AppSidebarShell`), where the column is the document tree plus the research
  * tools and nothing else. Named rather than spelled inline at the call site so
@@ -183,8 +172,10 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/practice/level", title: "Debater Level", icon: Star },
       { href: "/practice/statistics", title: "Topics & Video Statistics", icon: BarChart3 },
       { href: "/practice/predictions", title: "Prediction Markets", icon: Coins },
-      { href: "/practice/rules", title: "Formats & Rules", icon: Scale },
-      { href: "/practice/glossary", title: "Glossary of Terms", icon: BookOpen },
+      // Formats & Rules and the Glossary of Terms, one tabbed page. The old
+      // `/practice/glossary` address redirects to its Glossary tab, so that
+      // prefix is this row's too.
+      { href: "/practice/rules", title: "Rules & Glossary", icon: Scale, aliases: ["/practice/glossary"] },
       { href: "/practice/features", title: "All Features", icon: Sparkles },
     ],
   },
