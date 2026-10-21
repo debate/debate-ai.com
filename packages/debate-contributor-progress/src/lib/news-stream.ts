@@ -1,168 +1,46 @@
 /**
- * @fileoverview Pure data + types for the News Stream — a unified activity
- * feed of product updates and community announcements, reachable from the
- * Tools page, the app dock's "All Features"/"All Tools" menu, the Reason
- * Editor's Workspace menu, and the quick card search palette's `t` prefix.
+ * @fileoverview Pure data + types for the News Stream — the activity feed on
+ * the News tab of `/news`.
  *
- * Product updates are a hand-maintained static list (`PRODUCT_NEWS`) — add
- * one entry per shipped feature/tool worth surfacing. Community
- * announcements are derived from the app's existing per-feature
- * "announcement" stores (`state/dailyBestCardAnnouncements.ts`,
- * `state/contributorAwardAnnouncements.ts`) by `state/newsStream.ts`, which
- * composes this module's types with those stores' already-persisted data
- * rather than introducing a second, competing source of truth for the same
- * events.
+ * The feed is deliberately narrow: new rounds, new files (caselist uploads
+ * and Argument Library cards), forum activity, and the teams and schools the
+ * viewer follows. It used to also post hand-written product updates, a
+ * "Tool spotlight" for every catalog entry, Daily Best Card and Contributor
+ * Awards standings, quest streaks, group challenges, revision incentives and
+ * prep notes — most of which read as UI-change noise, so they were dropped.
  *
- * `buildAutoFeatureNews` closes this doc's former "Product Updates are
- * manually curated — nothing detects a newly added route or
- * `feature-catalog.ts` entry and drafts a post for it" Known gap: rather than
- * requiring a hand-written `PRODUCT_NEWS` entry before a tool can appear in
- * the feed at all, it walks the `APP_FEATURES` catalog it is handed (the same
- * ~50-surface list the `/practice/features` and `/tools` pages render from) and
- * synthesizes a generic "Tool spotlight" post for every entry whose `href`
- * no hand-curated `PRODUCT_NEWS` item already covers — so a debater browsing
- * the feed always finds every tool mentioned somewhere, even ones nobody
- * has gotten around to announcing yet.
+ * Argument Library cards are posted as one digest per day rather than one
+ * item per card, with each card's label cleaned of the path separators and
+ * Verbatim markers (`<<<PARAGRAPH BREAKS END>>>`) imported block names carry
+ * — see {@link cleanArgBlockLabel}.
  *
  * @module lib/news-stream
  */
 
-/**
- * The slice of a feature-catalog entry (`@debate/webview`'s `APP_FEATURES`)
- * that `buildAutoFeatureNews` reads. Declared structurally so this package
- * needn't import the catalog — `@debate/webview` depends on this package, so
- * the catalog's host reaches it through `NewsStreamPanel`'s `extraItems`.
- */
-export interface AutoFeatureSource {
-  id: string;
-  title: string;
-  description: string;
-  href: string;
-}
-
 /** Which of the feed's sources a `NewsItem` came from. */
-export type NewsCategory = "product" | "daily-best-card" | "awards" | "community" | "following";
+export type NewsCategory = "rounds" | "files" | "forums" | "following" | "coaching";
 
-/** Display order and label for each category, in the feed's filter tabs. */
+/** Label for each category, in the feed's filter tabs and item badges. */
 export const NEWS_CATEGORY_LABELS: Record<NewsCategory, string> = {
-  product: "Product Updates",
-  "daily-best-card": "Daily Best Card",
-  awards: "Contributor Awards",
-  community: "Community",
+  rounds: "Rounds",
+  files: "Files",
+  forums: "Forums",
   following: "Following",
+  coaching: "Coaching",
 };
 
 /** One entry in the News Stream feed. */
 export interface NewsItem {
-  /** Stable id, unique across the feed — announcement-derived items key off
-   *  their source announcement's own identity (e.g. its `dayKey`) so the
-   *  same event never posts twice. */
+  /** Stable id, unique across the feed, so the same event never posts twice. */
   id: string;
   category: NewsCategory;
   title: string;
   body: string;
-  /** Epoch milliseconds (UTC), same convention as `daily-best-card.ts`. */
+  /** Epoch milliseconds (UTC). */
   timestamp: number;
   /** In-app route this item is about, if any — rendered as a "View" link. */
   href?: string;
 }
-
-/**
- * Hand-maintained product-update announcements, newest first. There is no
- * build step that auto-generates these from commits or `TODO.md` — a
- * shipped feature worth surfacing to users gets an entry added here by
- * hand, the same way `feature-catalog.ts`'s `APP_FEATURES` is maintained.
- */
-export const PRODUCT_NEWS: NewsItem[] = [
-  {
-    id: "product-follow-teams-and-schools",
-    category: "product",
-    title: "Follow teams and schools",
-    body: "Team and school profiles now have a Follow button and a follower count. Everything you follow shows up here under Following: new rounds, new caselist research, tournament results, and a monthly recap of each team's record, big elim runs and rating change.",
-    timestamp: Date.parse("2026-10-07T00:00:00Z"),
-    href: "/coaching/rankings",
-  },
-  {
-    id: "product-news-stream-daily-quest-completions",
-    category: "product",
-    title: "News Stream now posts completed Daily Quests boards",
-    body: "The Community side of the feed now posts the day a contributor completes every quest on the Daily Quests board at /cards/quests — same as prep notes, streak milestones, challenge completions, Argument Library submissions, and Revision Incentives standings.",
-    timestamp: Date.parse("2026-09-02T00:00:00Z"),
-    href: "/research/cards/quests",
-  },
-  {
-    id: "product-news-stream-volume-cap",
-    category: "product",
-    title: "News Stream caps busy sources to the 20 most recent items",
-    body: "Sprint notes and Argument Library submissions used to post here every single time, with no limit — a very active topic sprint or a busy submission period could flood the whole feed. Each of those two sources is now capped to its 20 most recent items; nothing is deleted from Team Collaboration Mode or the Argument Library itself, only how many of each show up here.",
-    timestamp: Date.parse("2026-08-26T06:00:00Z"),
-    href: "/news",
-  },
-  {
-    id: "product-news-stream-tool-spotlights",
-    category: "product",
-    title: "News Stream now spotlights every tool",
-    body: "Product Updates used to only show a tool once someone hand-wrote a post for it. Now every tool in the catalog gets a generic spotlight the moment it's added, so nothing stays invisible to the feed just because nobody's announced it yet — real announcements always sort above the spotlights.",
-    timestamp: Date.parse("2026-08-26T05:00:00Z"),
-    href: "/news",
-  },
-  {
-    id: "product-news-stream-coaching-sessions",
-    category: "product",
-    title: "News Stream now posts new AI Coach Mode sessions",
-    body: "The Community side of the feed now posts a coaching session the moment it's generated for a round at /coaching — same as prep notes, Argument Library submissions, streak milestones, challenge completions, and Revision Incentives standings, closing the last open Community source.",
-    timestamp: Date.parse("2026-08-26T04:00:00Z"),
-    href: "/news",
-  },
-  {
-    id: "product-news-stream-argument-library",
-    category: "product",
-    title: "News Stream now posts new Argument Library submissions",
-    body: "The Community side of the feed now posts a card or analytic block the moment it's submitted and live in the shared repository at /cards/library — same as prep notes, streak milestones, challenge completions, and Revision Incentives standings.",
-    timestamp: Date.parse("2026-08-26T03:00:00Z"),
-    href: "/news",
-  },
-  {
-    id: "product-news-stream-sprint-notes",
-    category: "product",
-    title: "News Stream now posts Team Collaboration Mode prep notes",
-    body: "The Community side of the feed now posts a note the moment anyone logs it on a topic sprint at /cards/collaboration — no separate announce step, the same way streak milestones, challenge completions, and Revision Incentives standings already work.",
-    timestamp: Date.parse("2026-08-26T02:00:00Z"),
-    href: "/news",
-  },
-  {
-    id: "product-news-stream-community-categories",
-    category: "product",
-    title: "News Stream now covers streaks, challenges, and revisions",
-    body: "The Community side of the feed used to only post Daily Best Card and Contributor Awards announcements. It now also posts a contributor's quest-streak milestone the day they earn it, a group challenge the moment it's completed, and each day's top Revision Incentives earner.",
-    timestamp: Date.parse("2026-08-26T01:00:00Z"),
-    href: "/news",
-  },
-  {
-    id: "product-news-stream-launch",
-    category: "product",
-    title: "News Stream launched",
-    body: "A single feed for product updates and community announcements — Daily Best Card winners and Contributor Award standings now post here automatically as they're announced, alongside hand-picked feature updates.",
-    timestamp: Date.parse("2026-08-26T00:00:00Z"),
-    href: "/news",
-  },
-  {
-    id: "product-editor-workspace-menu",
-    category: "product",
-    title: "Jump to any tool from inside the Reason Editor",
-    body: "The editor's top menu bar has a new Workspace dropdown linking straight to Coach Workspace, Evidence Library, News Stream, and more — no need to leave your document to switch tools.",
-    timestamp: Date.parse("2026-08-26T00:00:00Z"),
-    href: "/reason-editor",
-  },
-  {
-    id: "product-editor-tool-search",
-    category: "product",
-    title: "Search Everything can now find tools too",
-    body: "Ctrl/Cmd-Shift-Space's command palette has a new t prefix — type \"t coach\" or \"t judge\" to jump straight to a workspace tool without opening the Tools page first.",
-    timestamp: Date.parse("2026-08-26T00:00:00Z"),
-    href: "/tools",
-  },
-];
 
 /** Sorts newest-first — the feed's one display order. */
 export function sortNewsFeed(items: NewsItem[]): NewsItem[] {
@@ -170,41 +48,28 @@ export function sortNewsFeed(items: NewsItem[]): NewsItem[] {
 }
 
 /**
- * Synthesizes a generic "Tool spotlight" `NewsItem` for every `features`
- * entry whose `href` no item in `announced` already covers — the feed's
- * fallback so a catalog entry is never invisible to the News Stream just
- * because nobody has hand-written a `PRODUCT_NEWS` post for it yet.
+ * A readable label for an Argument Library block name.
  *
- * Every synthesized item shares one timestamp: one millisecond older than
- * the oldest item in `announced`, so a real, hand-curated post (about this
- * tool or any other) always sorts above the whole backfilled batch, and the
- * batch itself sorts in stable, deterministic `features` order below it —
- * spotlighting every uncovered tool without displacing genuine updates from
- * the top of the feed. The moment a hand-curated post naming that `href`
- * ships, its auto-generated spotlight stops being generated (there is
- * nothing to "clear" — it was never persisted).
+ * Block names imported from Verbatim files are heading paths such as
+ * `1AC---Single-Payer---AW > Crisis Management---1AC > <<<PARAGRAPH BREAKS END>>>`:
+ * `>` separates heading levels, `---` stands in for spaces around a dash,
+ * and `<<<…>>>` are the template's own markers. This drops the markers,
+ * collapses the separators, and drops a heading level that repeats one
+ * already shown (the trailing `1AC`).
  *
- * @param features - Catalog entries to check — the host passes `@debate/webview`'s `APP_FEATURES`.
- * @param announced - Already hand-curated news items; defaults to `PRODUCT_NEWS`.
- * @returns One `"product"`-category `NewsItem` per uncovered entry.
+ * @param argBlock - The entry's raw block name.
+ * @returns The cleaned label, or `"Untitled block"` when nothing is left.
  */
-export function buildAutoFeatureNews(
-  features: AutoFeatureSource[],
-  announced: NewsItem[] = PRODUCT_NEWS,
-): NewsItem[] {
-  const announcedHrefs = new Set(
-    announced.map((item) => item.href).filter((href): href is string => !!href),
-  );
-  const floorTimestamp =
-    announced.length > 0 ? Math.min(...announced.map((item) => item.timestamp)) - 1 : 0;
-  return features
-    .filter((feature) => !announcedHrefs.has(feature.href))
-    .map((feature) => ({
-      id: `auto-feature-${feature.id}`,
-      category: "product" as const,
-      title: `Tool spotlight: ${feature.title}`,
-      body: feature.description,
-      timestamp: floorTimestamp,
-      href: feature.href,
-    }));
+export function cleanArgBlockLabel(argBlock: string): string {
+  const seen = new Set<string>();
+  const parts: string[] = [];
+  for (const level of argBlock.replace(/<<<[^>]*>>>/g, " ").split(/\s*>\s*/)) {
+    const words = level
+      .split(/-{2,}/)
+      .map((word) => word.replace(/\s+/g, " ").trim())
+      .filter((word) => word.length > 0 && !seen.has(word.toLowerCase()));
+    for (const word of words) seen.add(word.toLowerCase());
+    if (words.length > 0) parts.push(words.join(" "));
+  }
+  return parts.join(" › ") || "Untitled block";
 }

@@ -1,272 +1,84 @@
 /**
  * @fileoverview News Stream feed assembly + per-viewer read/like state.
  *
- * `buildNewsFeed` composes `lib/news-stream.ts`'s static `PRODUCT_NEWS` with
- * every already-persisted community announcement, turning each into a
- * `NewsItem`: `dailyBestCardAnnouncements.ts`'s `listAnnouncedDailyBestCards`
- * and `contributorAwardAnnouncements.ts`'s `listAnnouncedContributorAwards`
- * (via `daily-best-card.ts`'s `buildDailyBestCardHighlight` and
- * `contributor-awards.ts`'s `buildAwardsAnnouncementText`), plus three more
- * derived directly from their own already-persisted history rather than a
- * separate "announced" store — `dailyMissionResults.ts`'s
- * `buildQuestStreakMilestoneEvents`, `challengeWinEvents.ts`'s
- * `buildCompletedGroupChallengeEvents`, and `revisionHistory.ts`'s
- * `buildDailyTopReviserAnnouncements`, each replaying the same deterministic
- * history every time so nothing needs to be separately frozen. Every source
- * module remains the source of truth for its own events; this module only
- * re-shapes their already-persisted records into the feed's common type,
- * mirroring `state/contributions.ts`'s "compose the pure/store layer
- * directly" convention rather than duplicating any store's data.
+ * `buildNewsFeed` merges the caller's `extraItems` (new rounds, new caselist
+ * files, forum activity and followed teams — all fetched by the app layer,
+ * which can reach the APIs this package can't) with the one source this
+ * package owns: Argument Library cards, posted as one digest per day.
  *
- * A fourth Community source, `sprintNotes.ts`'s `listSprintNotes`, closes
- * the "a Prep Room note ... [isn't] wired in" Known gap recorded in
- * `packages/debate-help-docs/content/docs/internals/news-stream.mdx` — unlike the streak/challenge/revision
- * sources above, a `SprintNote` is already the atomic event (no derivation
- * over a longer history is needed): every persisted note becomes one
- * `NewsItem`, rendered via `team-collaboration-mode.ts`'s new
- * `buildSprintNoteAnnouncementText`.
- *
- * A fifth Community source, `evidenceLibraryEntries.ts`'s
- * `listEvidenceLibraryEntries`, closes the "a new Argument Library entry
- * ... isn't wired in" half of that same Known gap — like a sprint note, a
- * submitted `EvidenceLibraryEntry` is already the atomic event, so
- * `argumentLibraryNews()` maps every "live" (not held back by an
- * in-progress peer review, via `isEntryLive`) entry that carries the
- * `createdAt` its submitting panel stamps on first save
- * straight to a `NewsItem`, rendered via `shared-evidence-library.ts`'s new
- * `buildEvidenceEntryAnnouncementText`. The gap's other half — a coaching
- * session — closes not by adding a source function here (it lives in
- * `debate-round`, which already depends on this package, so sourcing a news
- * item from it here would need the reverse dependency, a cycle this
- * package can't take on) but via `buildNewsFeed`'s new `extraItems`
- * parameter: `debate-round`'s `state/coachingSessions.ts` produces its own
- * `coachingSessionNews()`, composed in at the app layer instead.
- *
- * Read/like state is local to this feed (not shared with `contributions.ts`'s
- * like counts, which track a card's community helpfulness rather than
- * whether a reader has seen a news item) and stored under its own
- * `newsStreamViewerState` key, mirroring `contributorAvailability.ts`'s
- * per-viewer localStorage convention.
- *
- * `sprintNoteNews()` and `argumentLibraryNews()` close the "no volume
- * control" Known gap recorded in `packages/debate-help-docs/content/docs/internals/news-stream.mdx`: unlike the
- * streak/challenge/revision sources (naturally bounded to at most one event
- * per contributor per milestone, per challenge, or per day), a sprint note
- * or an Argument Library entry is posted every single time one is logged or
- * submitted, so a very active topic sprint or a busy submission period
- * could otherwise flood the feed. Both cap themselves to the
- * `MAX_COMMUNITY_ITEMS_PER_SOURCE` most recent records via `mostRecentBy`
- * — a feed-projection cap, not a store cap: nothing is deleted from
- * `sprintNotes.ts`/`evidenceLibraryEntries.ts`, older records just stop
- * appearing in this feed once newer ones push past the limit.
- *
- * A sixth Community source, `dailyMissionResults.ts`'s
- * `buildDailyQuestCompletionEvents`, closes the "a completion celebration
- * posted to the News Stream feed" follow-up named under the "🎯 Daily
- * Quests and Targets" bullet in TODO.md — `dailyQuestCompletionNews()`
- * posts the day a contributor's Daily Quests board is fully completed,
- * rendered via `gamified-quests.ts`'s new
- * `buildDailyQuestCompletionAnnouncementText`. Like a sprint note or
- * Argument Library entry, a completed day is posted every time it happens
- * rather than only on rare milestones, so it shares the same
- * `MAX_COMMUNITY_ITEMS_PER_SOURCE` volume cap.
+ * Read/like state is stored under its own `newsStreamViewerState` key,
+ * per browser, and merged with the account copy by `mergeRemoteViewerState`.
  *
  * @module state/newsStream
  */
 
-import { PRODUCT_NEWS, sortNewsFeed, type NewsItem } from "../lib/news-stream";
-import { listAnnouncedDailyBestCards } from "./dailyBestCardAnnouncements";
-import { listAnnouncedContributorAwards } from "./contributorAwardAnnouncements";
-import { buildDailyBestCardHighlight } from "@debate/research-evidence/src/lib/daily-best-card";
-import { buildAwardsAnnouncementText } from "@debate/research-evidence/src/lib/contributor-awards";
-import { buildDailyQuestCompletionEvents, buildQuestStreakMilestoneEvents } from "./dailyMissionResults";
-import { buildDailyQuestCompletionAnnouncementText, buildStreakMilestoneAnnouncementText } from "../lib/gamified-quests";
-import { buildCompletedGroupChallengeEvents } from "@debate/team-collaboration/src/state/challengeWinEvents";
-import { buildChallengeCompletionAnnouncementText } from "@debate/team-collaboration/src/lib/group-challenges";
-import { buildDailyTopReviserAnnouncements } from "@debate/research-evidence/src/state/revisionHistory";
-import { buildTopReviserAnnouncementText } from "@debate/research-evidence/src/lib/revision-incentives";
-import { listSprintNotes } from "@debate/team-collaboration/src/state/sprintNotes";
-import { buildSprintNoteAnnouncementText } from "@debate/team-collaboration/src/lib/team-collaboration-mode";
+import { cleanArgBlockLabel, sortNewsFeed, type NewsItem } from "../lib/news-stream";
 import { isEntryLive, listEvidenceLibraryEntries } from "@debate/research-evidence/src/state/evidenceLibraryEntries";
-import { buildEvidenceEntryAnnouncementText, type EvidenceLibraryEntry } from "@debate/research-evidence/src/lib/shared-evidence-library";
+import type { EvidenceLibraryEntry } from "@debate/research-evidence/src/lib/shared-evidence-library";
 
-/** Turns every announced Daily Best Card winner into a `NewsItem`. */
-function dailyBestCardNews(): NewsItem[] {
-  return listAnnouncedDailyBestCards().map((announcement) => ({
-    id: `daily-best-card-${announcement.dayKey}`,
-    category: "daily-best-card" as const,
-    title: `Daily Best Card — ${announcement.dayKey}`,
-    body: buildDailyBestCardHighlight(announcement),
-    timestamp: Date.parse(`${announcement.dayKey}T00:00:00Z`),
-    href: "/research/cards/best-card",
-  }));
+/** Most days of Argument Library digests the feed shows. */
+export const MAX_ARGUMENT_LIBRARY_DAYS = 3;
+
+/** Most card labels one day's digest lists before "and N more". */
+export const MAX_DIGEST_LABELS = 3;
+
+/** Longest card-text preview a single-card digest shows. */
+const PREVIEW_LENGTH = 160;
+
+function preview(text: string): string {
+  const flat = text.replace(/<<<[^>]*>>>/g, " ").replace(/\s+/g, " ").trim();
+  return flat.length > PREVIEW_LENGTH ? `${flat.slice(0, PREVIEW_LENGTH).trimEnd()}…` : flat;
 }
 
-/** Turns every announced day's Contributor Award standings into a `NewsItem`. */
-function contributorAwardsNews(): NewsItem[] {
-  return listAnnouncedContributorAwards().map((announcement) => ({
-    id: `contributor-awards-${announcement.dayKey}`,
-    category: "awards" as const,
-    title: `Contributor Awards — ${announcement.dayKey}`,
-    body: buildAwardsAnnouncementText(announcement.awards),
-    timestamp: Date.parse(`${announcement.dayKey}T00:00:00Z`),
-    href: "/research/cards/awards",
-  }));
-}
-
-/** Turns every contributor's freshly earned streak-milestone crossing into a `NewsItem`. */
-function questStreakMilestoneNews(): NewsItem[] {
-  return buildQuestStreakMilestoneEvents().map((event) => ({
-    id: `quest-streak-milestone-${event.contributorId}-${event.dayKey}`,
-    category: "community" as const,
-    title: `${event.contributorId} earned "${event.badge}"`,
-    body: buildStreakMilestoneAnnouncementText(event.contributorId, event),
-    timestamp: Date.parse(`${event.dayKey}T00:00:00Z`),
-    href: "/research/cards/streaks",
-  }));
-}
-
-/** Turns every completed group challenge into a `NewsItem`. */
-function groupChallengeNews(): NewsItem[] {
-  return buildCompletedGroupChallengeEvents().map((event) => ({
-    id: `group-challenge-complete-${event.challengeId}`,
-    category: "community" as const,
-    title: `"${event.title}" complete!`,
-    body: buildChallengeCompletionAnnouncementText(event),
-    timestamp: event.completedAt,
-    href: "/research/cards/group-challenges",
-  }));
-}
-
-/** Turns each day's top Revision Incentives earner into a `NewsItem`. */
-function revisionIncentiveNews(): NewsItem[] {
-  return buildDailyTopReviserAnnouncements().map((announcement) => ({
-    id: `revision-incentives-${announcement.dayKey}`,
-    category: "community" as const,
-    title: `Revision Incentives — ${announcement.dayKey}`,
-    body: buildTopReviserAnnouncementText(announcement.dayKey, announcement.topContributor),
-    timestamp: Date.parse(`${announcement.dayKey}T00:00:00Z`),
-    href: "/research/cards/revisions",
-  }));
+/** UTC `YYYY-MM-DD` of an epoch-ms timestamp. */
+function dayKeyOf(timestamp: number): string {
+  return new Date(timestamp).toISOString().slice(0, 10);
 }
 
 /**
- * Caps a source's persisted history to this feed's most recent
- * `MAX_COMMUNITY_ITEMS_PER_SOURCE` records before mapping to `NewsItem`s —
- * see the module doc comment above. `sortNewsFeed` re-sorts the whole feed
- * afterward, so which records survive the cap (not their order here) is
- * all that matters.
+ * One item per day new cards or analytic blocks went live in the Argument
+ * Library, for the {@link MAX_ARGUMENT_LIBRARY_DAYS} most recent such days.
+ * A busy import used to post every card on its own, burying everything else.
  */
-const MAX_COMMUNITY_ITEMS_PER_SOURCE = 20;
-
-function mostRecentBy<T>(items: T[], timestampOf: (item: T) => number, limit: number): T[] {
-  return [...items].sort((a, b) => timestampOf(b) - timestampOf(a)).slice(0, limit);
-}
-
-/** Turns the most recent persisted Team Collaboration Mode sprint notes into `NewsItem`s — no derivation needed, a note is already the event. */
-function sprintNoteNews(): NewsItem[] {
-  return mostRecentBy(listSprintNotes(), (note) => note.createdAt, MAX_COMMUNITY_ITEMS_PER_SOURCE).map((note) => ({
-    id: `sprint-note-${note.id}`,
-    category: "community" as const,
-    title: `${note.authorId} added a "${note.topic}" prep note`,
-    body: buildSprintNoteAnnouncementText(note),
-    timestamp: note.createdAt,
-    href: "/research/cards/collaboration",
-  }));
-}
-
-/**
- * Turns the most recent "live" (not held back by an in-progress peer
- * review) persisted Argument Library entries that carry a `createdAt` into
- * `NewsItem`s — no derivation needed, a submitted entry is already the
- * event. An entry persisted before `createdAt` existed has none and is
- * silently skipped rather than backdated to an arbitrary time; the recency
- * cap is applied after that filter, so it always keeps the
- * `MAX_COMMUNITY_ITEMS_PER_SOURCE` most recently *timestamped* entries.
- */
-function argumentLibraryNews(): NewsItem[] {
+export function argumentLibraryNews(): NewsItem[] {
   const live = listEvidenceLibraryEntries().filter(
     (entry): entry is EvidenceLibraryEntry & { createdAt: number } => entry.createdAt !== undefined && isEntryLive(entry.id),
   );
-  return mostRecentBy(live, (entry) => entry.createdAt, MAX_COMMUNITY_ITEMS_PER_SOURCE).map((entry) => ({
-    id: `argument-library-entry-${entry.id}`,
-    category: "community" as const,
-    title:
-      entry.kind === "card"
-        ? `New card added to the Argument Library: "${entry.argBlock}"`
-        : `New analytic block added to the Argument Library: "${entry.argBlock}"`,
-    body: buildEvidenceEntryAnnouncementText(entry),
-    timestamp: entry.createdAt,
-    href: "/research/cards/argument-library",
-  }));
+  const byDay = new Map<string, (EvidenceLibraryEntry & { createdAt: number })[]>();
+  for (const entry of live) {
+    const day = dayKeyOf(entry.createdAt);
+    byDay.set(day, [...(byDay.get(day) ?? []), entry]);
+  }
+  return [...byDay.entries()]
+    .sort(([a], [b]) => b.localeCompare(a))
+    .slice(0, MAX_ARGUMENT_LIBRARY_DAYS)
+    .map(([day, entries]) => {
+      const newest = [...entries].sort((a, b) => b.createdAt - a.createdAt);
+      const labels = [...new Set(newest.map((entry) => cleanArgBlockLabel(entry.argBlock)))];
+      const shown = labels.slice(0, MAX_DIGEST_LABELS);
+      const more = labels.length - shown.length;
+      const count = entries.length;
+      return {
+        id: `argument-library-day-${day}`,
+        category: "files" as const,
+        title:
+          count === 1
+            ? `New in the Argument Library: ${shown[0]}`
+            : `${count} new cards and blocks in the Argument Library`,
+        body: count === 1 ? preview(newest[0].text) : shown.join("\n") + (more > 0 ? `\nand ${more} more` : ""),
+        timestamp: newest[0].createdAt,
+        href: "/research/cards/argument-library",
+      };
+    });
 }
 
 /**
- * Turns every contributor's fully completed Daily Quests day into a
- * `NewsItem` — the "a completion celebration posted to the News Stream
- * feed" follow-up named under the "🎯 Daily Quests and Targets" bullet in
- * TODO.md. Unlike `questStreakMilestoneNews` (bounded to rare milestone
- * crossings), a board can be completed every day, so — like a sprint note
- * or Argument Library entry — this is capped to the most recent
- * `MAX_COMMUNITY_ITEMS_PER_SOURCE` completions rather than posting every
- * single one unbounded.
- */
-function dailyQuestCompletionNews(): NewsItem[] {
-  return mostRecentBy(
-    buildDailyQuestCompletionEvents(),
-    (event) => Date.parse(`${event.dayKey}T00:00:00Z`),
-    MAX_COMMUNITY_ITEMS_PER_SOURCE,
-  ).map((event) => ({
-    id: `daily-quest-complete-${event.contributorId}-${event.dayKey}`,
-    category: "community" as const,
-    title: `${event.contributorId} completed the Daily Quests board for ${event.dayKey}`,
-    body: buildDailyQuestCompletionAnnouncementText(event.contributorId, event.dayKey),
-    timestamp: Date.parse(`${event.dayKey}T00:00:00Z`),
-    href: "/research/cards/quests",
-  }));
-}
-
-/**
- * Builds the full News Stream feed: hand-maintained product updates plus
- * every announced Daily Best Card winner, Contributor Awards standings,
- * quest-streak milestone crossing, completed group challenge, top daily
- * Revision Incentives earner, logged Team Collaboration Mode sprint note,
- * newly submitted Argument Library entry, and any caller-supplied
- * `extraItems` — newest first. Reads several other localStorage stores (via
- * the modules imported above) in addition to this module's own — safe to
- * call server-side or during SSR, since each underlying store already
- * guards its own `localStorage` access and returns an empty list when
- * unavailable.
- *
- * `extraItems` is this feed's composition point for a source that would
- * otherwise need a dependency this package can't take without a cycle —
- * `debate-round`'s coaching sessions are the first such source: that
- * package already depends on this one, so it produces its own `NewsItem[]`
- * (`state/coachingSessions.ts`'s `coachingSessionNews()`) and the app layer
- * (`apps/debate-ai.com/app/news/page.tsx`, which already depends on both
- * packages) passes it in here rather than this module reaching back into
- * `debate-round`.
- *
- * The "Tool spotlight" posts from `lib/news-stream.ts`'s
- * `buildAutoFeatureNews(APP_FEATURES)` — one per catalog entry `PRODUCT_NEWS`
- * doesn't already cover by `href` — arrive the same way: the catalog lives in
- * `@debate/webview`, which depends on this package, so
- * `routes/news/NewsPageContent.tsx` builds them and passes them in
- * `extraItems`.
+ * Builds the News Stream feed: the caller's `extraItems` plus the Argument
+ * Library digests, newest first. Safe during SSR — the library store returns
+ * an empty list without `localStorage`.
  */
 export function buildNewsFeed(extraItems: NewsItem[] = []): NewsItem[] {
-  return sortNewsFeed([
-    ...PRODUCT_NEWS,
-    ...extraItems,
-    ...dailyBestCardNews(),
-    ...contributorAwardsNews(),
-    ...questStreakMilestoneNews(),
-    ...dailyQuestCompletionNews(),
-    ...groupChallengeNews(),
-    ...revisionIncentiveNews(),
-    ...sprintNoteNews(),
-    ...argumentLibraryNews(),
-  ]);
+  return sortNewsFeed([...extraItems, ...argumentLibraryNews()]);
 }
 
 const VIEWER_STATE_KEY = "newsStreamViewerState";

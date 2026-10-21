@@ -55,13 +55,12 @@ export const SLUG_MAP: Record<string, SlugState> = {
 
 /**
  * Routes outside `/videos/[category]` that render the same page, and the slug
- * each one stands for. The lecture library and the three reference views live
+ * each one stands for. The lecture library and the two reference views live
  * under their sidebar category (`/lectures`, `/practice/...`) rather than as
  * `/videos/<slug>`, so there is no `category` param to read the view from.
  */
 export const PATH_SLUGS: Record<string, string> = {
   "/lectures": "lectures",
-  "/practice/glossary": "dictionary",
   "/practice/rankings": "rankings",
   "/practice/statistics": "statistics",
   // The Topics Explorer's old address, kept rendering the statistics view —

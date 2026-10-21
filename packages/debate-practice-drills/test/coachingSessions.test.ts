@@ -347,7 +347,7 @@ describe("coachingSessionNews", () => {
     expect(items).toHaveLength(1);
     expect(items[0]).toMatchObject({
       id: `coaching-session-round-3-A-${record.createdAt}`,
-      category: "community",
+      category: "coaching",
       title: "New coaching session generated for round round-3 (A)",
       timestamp: record.createdAt,
       href: "/coaching?section=ai-coach",
