@@ -35,7 +35,7 @@ export const NEWS_AND_FORUMS_SECTIONS: readonly HubSection<NewsAndForumsSectionI
     id: "news",
     label: "News",
     icon: Rss,
-    description: "Product updates and community announcements: new features, Daily Best Card winners, Contributor Awards, and the teams you follow.",
+    description: "New rounds, new files, forum activity, and the teams you follow.",
     guide: "research-collaboration",
     panels: [panel("News Stream")],
   },

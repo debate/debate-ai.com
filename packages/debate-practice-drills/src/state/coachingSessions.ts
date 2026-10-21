@@ -290,7 +290,7 @@ export function coachingSessionNews(): NewsItem[] {
     .filter((session): session is CoachingSessionRecord & { createdAt: number } => session.createdAt !== undefined)
     .map((session) => ({
       id: `coaching-session-${session.roundId}-${session.sideKey}-${session.createdAt}`,
-      category: "community" as const,
+      category: "coaching" as const,
       title: `New coaching session generated for round ${session.roundId} (${session.sideKey})`,
       body: buildCoachingSessionAnnouncementText(session),
       timestamp: session.createdAt,

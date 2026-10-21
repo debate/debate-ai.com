@@ -10,15 +10,8 @@ import {
   mergeRemoteViewerState,
   toggleNewsItemLiked,
 } from "../src/state/newsStream";
-import { PRODUCT_NEWS, buildAutoFeatureNews, sortNewsFeed } from "../src/lib/news-stream";
-import { saveDailyMissionResult } from "../src/state/dailyMissionResults";
-import { saveGroupChallenge } from "@debate/team-collaboration/src/state/groupChallenges";
-import { recordChallengeWinEvent } from "@debate/team-collaboration/src/state/challengeWinEvents";
-import { saveRevisionRecord, type CardRevisionRecord } from "@debate/research-evidence/src/state/revisionHistory";
-import { saveSprintNote } from "@debate/team-collaboration/src/state/sprintNotes";
+import { cleanArgBlockLabel, type NewsItem } from "../src/lib/news-stream";
 import { saveEvidenceLibraryEntry } from "@debate/research-evidence/src/state/evidenceLibraryEntries";
-import type { GroupChallenge } from "@debate/team-collaboration/src/lib/group-challenges";
-import type { SprintNote } from "@debate/team-collaboration/src/lib/team-collaboration-mode";
 import type { EvidenceLibraryEntry } from "@debate/research-evidence/src/lib/shared-evidence-library";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
@@ -42,272 +35,129 @@ beforeEach(() => {
   (globalThis as unknown as { localStorage: MemoryStorage }).localStorage = new MemoryStorage();
 });
 
-describe("buildAutoFeatureNews", () => {
-  it("skips a feature whose href a hand-curated item already covers", () => {
-    const items = buildAutoFeatureNews(
-      [{ id: "reason-editor", title: "Reason Editor", description: "...", href: "/reason-editor" }],
-      [{ id: "p1", category: "product", title: "Ship", body: "...", timestamp: 1000, href: "/reason-editor" }],
-    );
-    expect(items).toEqual([]);
+const DAY = 24 * 60 * 60 * 1000;
+const BASE = Date.parse("2026-10-20T00:00:00Z");
+
+const SAMPLE: NewsItem[] = [
+  { id: "round-a", category: "rounds", title: "New round: A vs B", body: "", timestamp: 2000 },
+  { id: "file-1", category: "files", title: "New file: x.docx", body: "", timestamp: 1000 },
+];
+
+function libraryEntry(overrides: Partial<EvidenceLibraryEntry> & { id: string }): EvidenceLibraryEntry {
+  return {
+    argBlock: "Warming DA",
+    wordCount: 4,
+    topic: "Energy Policy",
+    caseArea: "DA",
+    tags: [],
+    kind: "card",
+    text: "Rising emissions accelerate catastrophic warming impacts.",
+    cite: "Smith 24",
+    ...overrides,
+  };
+}
+
+describe("cleanArgBlockLabel", () => {
+  it("strips Verbatim markers, dash separators and a repeated heading", () => {
+    expect(
+      cleanArgBlockLabel("1AC---Single-Payer---AW > Crisis Management---1AC > <<<PARAGRAPH BREAKS END>>>"),
+    ).toBe("1AC Single-Payer AW › Crisis Management");
   });
 
-  it("spotlights a feature no hand-curated item covers", () => {
-    const items = buildAutoFeatureNews(
-      [{ id: "drills", title: "Practice Drills", description: "Quick practice drills.", href: "/practice/drills" }],
-      [{ id: "p1", category: "product", title: "Ship", body: "...", timestamp: 1000, href: "/reason-editor" }],
-    );
-    expect(items).toEqual([
-      {
-        id: "auto-feature-drills",
-        category: "product",
-        title: "Tool spotlight: Practice Drills",
-        body: "Quick practice drills.",
-        timestamp: 999,
-        href: "/practice/drills",
-      },
-    ]);
+  it("leaves a plain block name alone", () => {
+    expect(cleanArgBlockLabel("Warming DA")).toBe("Warming DA");
   });
 
-  it("sorts every spotlight below the oldest hand-curated item, regardless of announced order", () => {
-    const announced = [
-      { id: "p1", category: "product" as const, title: "Ship", body: "...", timestamp: 5000, href: "/a" },
-      { id: "p2", category: "product" as const, title: "Ship 2", body: "...", timestamp: 1000, href: "/b" },
-    ];
-    const [spotlight] = buildAutoFeatureNews(
-      [{ id: "drills", title: "Practice Drills", description: "...", href: "/practice/drills" }],
-      announced,
-    );
-    expect(spotlight.timestamp).toBeLessThan(1000);
+  it("falls back when only markers are left", () => {
+    expect(cleanArgBlockLabel("<<<PARAGRAPH BREAKS END>>>")).toBe("Untitled block");
   });
 });
 
 describe("buildNewsFeed", () => {
-  it("returns the hand-maintained product news when nothing else is persisted", () => {
-    expect(buildNewsFeed()).toEqual(sortNewsFeed(PRODUCT_NEWS));
+  it("is empty when nothing is persisted and nothing is passed in", () => {
+    expect(buildNewsFeed()).toEqual([]);
   });
 
-  it("includes a contributor's freshly earned streak milestone as a community item", () => {
-    saveDailyMissionResult({ contributorId: "alice", dayKey: "2026-08-08", isComplete: true });
-    saveDailyMissionResult({ contributorId: "alice", dayKey: "2026-08-09", isComplete: true });
-    saveDailyMissionResult({ contributorId: "alice", dayKey: "2026-08-10", isComplete: true });
-
-    const item = buildNewsFeed().find((entry) => entry.id === "quest-streak-milestone-alice-2026-08-10");
-    expect(item).toMatchObject({
-      category: "community",
-      title: 'alice earned "3-Day Streak"',
-      href: "/research/cards/streaks",
-    });
+  it("posts no product updates or tool spotlights, only what it is given", () => {
+    expect(buildNewsFeed(SAMPLE).map((item) => item.id)).toEqual(["round-a", "file-1"]);
   });
 
-  it("includes a contributor's completed Daily Quests day as a community item", () => {
-    saveDailyMissionResult({ contributorId: "frank", dayKey: "2026-08-11", isComplete: true });
+  it("posts a single new Argument Library card as one files item with a cleaned label", () => {
+    saveEvidenceLibraryEntry(
+      libraryEntry({
+        id: "entry-1",
+        argBlock: "1AC---Single-Payer---AW > Crisis Management---1AC > <<<PARAGRAPH BREAKS END>>>",
+        createdAt: BASE + 700,
+      }),
+    );
 
-    const item = buildNewsFeed().find((entry) => entry.id === "daily-quest-complete-frank-2026-08-11");
-    expect(item).toMatchObject({
-      category: "community",
-      title: "frank completed the Daily Quests board for 2026-08-11",
-      timestamp: Date.parse("2026-08-11T00:00:00Z"),
-      href: "/research/cards/quests",
-    });
-    expect(item?.body).toBe("frank completed every quest on the Daily Quests board for 2026-08-11!");
+    expect(buildNewsFeed()).toEqual([
+      {
+        id: "argument-library-day-2026-10-20",
+        category: "files",
+        title: "New in the Argument Library: 1AC Single-Payer AW › Crisis Management",
+        body: "Rising emissions accelerate catastrophic warming impacts.",
+        timestamp: BASE + 700,
+        href: "/research/cards/argument-library",
+      },
+    ]);
   });
 
-  it("omits an incomplete Daily Quests day", () => {
-    saveDailyMissionResult({ contributorId: "frank", dayKey: "2026-08-11", isComplete: false });
-    expect(buildNewsFeed().find((entry) => entry.id === "daily-quest-complete-frank-2026-08-11")).toBeUndefined();
-  });
-
-  it("caps completed Daily Quests days to the most recent MAX_COMMUNITY_ITEMS_PER_SOURCE, dropping older ones", () => {
+  it("groups a day's cards into one digest listing a few labels", () => {
     for (let i = 0; i < 25; i++) {
-      const day = `2026-08-${String(i + 1).padStart(2, "0")}`;
-      saveDailyMissionResult({ contributorId: "frank", dayKey: day, isComplete: true });
+      saveEvidenceLibraryEntry(libraryEntry({ id: `entry-${i}`, argBlock: `Block ${i}`, createdAt: BASE + i }));
     }
 
     const feed = buildNewsFeed();
-    const completionItems = feed.filter((item) => item.id.startsWith("daily-quest-complete-"));
-    expect(completionItems).toHaveLength(20);
-    expect(feed.find((item) => item.id === "daily-quest-complete-frank-2026-08-25")).toBeDefined();
-    expect(feed.find((item) => item.id === "daily-quest-complete-frank-2026-08-05")).toBeUndefined();
+    expect(feed).toHaveLength(1);
+    expect(feed[0].title).toBe("25 new cards and blocks in the Argument Library");
+    expect(feed[0].body).toBe("Block 24\nBlock 23\nBlock 22\nand 22 more");
+    expect(feed[0].timestamp).toBe(BASE + 24);
   });
 
-  it("includes a completed group challenge as a community item", () => {
-    const challenge: GroupChallenge = {
-      id: "challenge-1",
-      title: "Win 2 rebuttal exercises",
-      goal: { kind: "win_target", targetCount: 2 },
-      memberIds: ["carol"],
-      startsAt: 0,
-      endsAt: 1_000,
-    };
-    saveGroupChallenge(challenge);
-    recordChallengeWinEvent("carol", 100);
-    recordChallengeWinEvent("carol", 200);
+  it("keeps only the three most recent days of digests", () => {
+    for (let d = 0; d < 5; d++) {
+      saveEvidenceLibraryEntry(libraryEntry({ id: `entry-${d}`, createdAt: BASE - d * DAY }));
+    }
 
-    const item = buildNewsFeed().find((entry) => entry.id === "group-challenge-complete-challenge-1");
-    expect(item).toMatchObject({
-      category: "community",
-      title: '"Win 2 rebuttal exercises" complete!',
-      timestamp: 200,
-      href: "/research/cards/group-challenges",
-    });
-  });
-
-  it("includes a day's top Revision Incentives earner as a community item", () => {
-    const revision: CardRevisionRecord = {
-      id: "rev-1",
-      cardId: "card-1",
-      contributorId: "dana",
-      revisedAt: "2026-08-10T00:00:00.000Z",
-      before: { qualitySignals: [0.2, 0.2], citationCompleteness: 0.4, evidenceYear: 2018, wordCount: 200 },
-      after: { qualitySignals: [0.9, 0.9], citationCompleteness: 0.4, evidenceYear: 2018, wordCount: 200 },
-    };
-    saveRevisionRecord(revision);
-
-    const item = buildNewsFeed().find((entry) => entry.id === "revision-incentives-2026-08-10");
-    expect(item).toMatchObject({ category: "community", href: "/research/cards/revisions" });
-    expect(item?.body).toContain("dana led Revision Incentives on 2026-08-10");
-  });
-
-  it("includes a logged Team Collaboration Mode prep note as a community item", () => {
-    const note: SprintNote = {
-      id: "note-1",
-      topic: "Immigration",
-      authorId: "erin",
-      text: "Need a 2026 solvency card for the affirmative",
-      status: "open",
-      createdAt: 500,
-      updatedAt: 500,
-    };
-    saveSprintNote(note);
-
-    const item = buildNewsFeed().find((entry) => entry.id === "sprint-note-note-1");
-    expect(item).toMatchObject({
-      category: "community",
-      title: 'erin added a "Immigration" prep note',
-      timestamp: 500,
-      href: "/research/cards/collaboration",
-    });
-    expect(item?.body).toBe(
-      'erin logged a "Immigration" prep note: Need a 2026 solvency card for the affirmative',
-    );
-  });
-
-  it("includes a newly submitted, live Argument Library entry as a community item", () => {
-    const entry: EvidenceLibraryEntry = {
-      id: "entry-1",
-      argBlock: "Warming DA",
-      wordCount: 8,
-      topic: "Energy Policy",
-      caseArea: "DA",
-      tags: ["warming"],
-      kind: "card",
-      text: "Rising emissions accelerate catastrophic warming impacts.",
-      cite: "Smith 24",
-      createdAt: 700,
-    };
-    saveEvidenceLibraryEntry(entry);
-
-    const item = buildNewsFeed().find((news) => news.id === "argument-library-entry-entry-1");
-    expect(item).toMatchObject({
-      category: "community",
-      title: 'New card added to the Argument Library: "Warming DA"',
-      timestamp: 700,
-      href: "/research/cards/argument-library",
-    });
-    expect(item?.body).toBe(
-      'New card for "Warming DA" citing Smith 24: Rising emissions accelerate catastrophic warming impacts.',
-    );
+    expect(buildNewsFeed().map((item) => item.id)).toEqual([
+      "argument-library-day-2026-10-20",
+      "argument-library-day-2026-10-19",
+      "argument-library-day-2026-10-18",
+    ]);
   });
 
   it("omits an Argument Library entry saved before createdAt existed", () => {
-    const entry: EvidenceLibraryEntry = {
-      id: "entry-legacy",
-      argBlock: "Legacy Block",
-      wordCount: 4,
-      topic: "Energy Policy",
-      caseArea: "Case",
-      tags: [],
-      kind: "block",
-      text: "Pre-existing block with no createdAt.",
-      cite: "",
-    };
-    saveEvidenceLibraryEntry(entry);
-
-    expect(buildNewsFeed().find((news) => news.id === "argument-library-entry-entry-legacy")).toBeUndefined();
+    saveEvidenceLibraryEntry(libraryEntry({ id: "entry-legacy" }));
+    expect(buildNewsFeed()).toEqual([]);
   });
 
-  it("caps sprint notes to the most recent MAX_COMMUNITY_ITEMS_PER_SOURCE, dropping older ones", () => {
-    for (let i = 0; i < 25; i++) {
-      saveSprintNote({
-        id: `note-${i}`,
-        topic: "Immigration",
-        authorId: "erin",
-        text: `Note ${i}`,
-        status: "open",
-        createdAt: i,
-        updatedAt: i,
-      });
-    }
-
-    const feed = buildNewsFeed();
-    const sprintNoteItems = feed.filter((item) => item.id.startsWith("sprint-note-"));
-    expect(sprintNoteItems).toHaveLength(20);
-    // The 20 most recent (highest createdAt) survive; the oldest 5 don't.
-    expect(feed.find((item) => item.id === "sprint-note-note-24")).toBeDefined();
-    expect(feed.find((item) => item.id === "sprint-note-note-4")).toBeUndefined();
-  });
-
-  it("caps Argument Library entries to the most recent MAX_COMMUNITY_ITEMS_PER_SOURCE, dropping older ones", () => {
-    for (let i = 0; i < 25; i++) {
-      saveEvidenceLibraryEntry({
-        id: `entry-${i}`,
-        argBlock: "Warming DA",
-        wordCount: 4,
-        topic: "Energy Policy",
-        caseArea: "DA",
-        tags: [],
-        kind: "block",
-        text: `Entry ${i}`,
-        cite: "",
-        createdAt: i,
-      });
-    }
-
-    const feed = buildNewsFeed();
-    const entryItems = feed.filter((item) => item.id.startsWith("argument-library-entry-"));
-    expect(entryItems).toHaveLength(20);
-    expect(feed.find((item) => item.id === "argument-library-entry-entry-24")).toBeDefined();
-    expect(feed.find((item) => item.id === "argument-library-entry-entry-4")).toBeUndefined();
-  });
-
-  it("sorts every category newest first together", () => {
-    saveDailyMissionResult({ contributorId: "alice", dayKey: "2026-08-08", isComplete: true });
-    saveDailyMissionResult({ contributorId: "alice", dayKey: "2026-08-09", isComplete: true });
-    saveDailyMissionResult({ contributorId: "alice", dayKey: "2026-08-10", isComplete: true });
-
-    const feed = buildNewsFeed();
-    for (let i = 1; i < feed.length; i++) {
-      expect(feed[i - 1].timestamp).toBeGreaterThanOrEqual(feed[i].timestamp);
-    }
+  it("sorts extra items and digests newest first together", () => {
+    saveEvidenceLibraryEntry(libraryEntry({ id: "entry-1", createdAt: 1500 }));
+    expect(buildNewsFeed(SAMPLE).map((item) => item.id)).toEqual([
+      "round-a",
+      "argument-library-day-1970-01-01",
+      "file-1",
+    ]);
   });
 });
 
 describe("read/like viewer state", () => {
   it("starts with every item unread and unliked", () => {
-    const [first] = PRODUCT_NEWS;
+    const [first] = SAMPLE;
     expect(isNewsItemRead(first.id)).toBe(false);
     expect(isNewsItemLiked(first.id)).toBe(false);
   });
 
   it("marks an item read idempotently", () => {
-    const [first] = PRODUCT_NEWS;
+    const [first] = SAMPLE;
     markNewsItemRead(first.id);
     markNewsItemRead(first.id);
     expect(isNewsItemRead(first.id)).toBe(true);
   });
 
   it("toggles like state and returns the new state", () => {
-    const [first] = PRODUCT_NEWS;
+    const [first] = SAMPLE;
     expect(toggleNewsItemLiked(first.id)).toBe(true);
     expect(isNewsItemLiked(first.id)).toBe(true);
     expect(toggleNewsItemLiked(first.id)).toBe(false);
@@ -315,7 +165,7 @@ describe("read/like viewer state", () => {
   });
 
   it("counts only items not yet marked read", () => {
-    const items = PRODUCT_NEWS.slice(0, 2);
+    const items = SAMPLE.slice(0, 2);
     expect(countUnreadNewsItems(items)).toBe(items.length);
     markNewsItemRead(items[0].id);
     expect(countUnreadNewsItems(items)).toBe(items.length - 1);
