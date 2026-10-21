@@ -11,8 +11,10 @@ describe("judge anchor on /practice/partners", () => {
     expect(judgeLinkTarget(false)).toBe(PROFILE_ANCHOR)
   })
 
-  it("is not linked from the sidebar's Practice section", () => {
-    const practice = SIDEBAR_TOOL_SECTIONS.find((section) => section.id === "practice")
-    expect(practice?.tools.map((tool) => tool.href)).not.toContain(`/practice/partners#${JUDGE_ANCHOR}`)
+  it("is not linked from any sidebar section", () => {
+    // Practice tools now sit under Research, so check every section.
+    const hrefs = SIDEBAR_TOOL_SECTIONS.flatMap((section) => section.tools.map((tool) => tool.href))
+    expect(hrefs.length).toBeGreaterThan(0)
+    expect(hrefs).not.toContain(`/practice/partners#${JUDGE_ANCHOR}`)
   })
 })
