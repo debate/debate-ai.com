@@ -46,7 +46,7 @@ for you.
   manually via workflow_dispatch), builds Windows (`.exe`/`.msi`), macOS (universal `.dmg`), and
   Linux (`.AppImage`/`.deb`) via [`tauri-apps/tauri-action`](https://github.com/tauri-apps/tauri-action),
   a best-effort Android `.aab`, and a best-effort iOS `.ipa`, attaching everything to a draft GitHub Release the
-  same two-stage way `debate/cardmirror`'s own `release.yml` avoids a multi-job race on the
+  same two-stage way `debate/debate-editor`'s own `release.yml` avoids a multi-job race on the
   release draft. Desktop code signing (macOS notarization, Windows Authenticode) activates
   automatically once the relevant secrets are set — see the workflow file's comments for exact
   names, and `docs/APP_STORES.md` for where those credentials come from. Both mobile jobs degrade

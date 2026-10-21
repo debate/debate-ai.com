@@ -11,7 +11,7 @@
  * not a reload, a pasted link, or a hard navigation — `/videos` renders its own
  * layout branch, so a click there can land on a freshly booted editor with an
  * empty provider. Reading the selection back off the URL is what makes "click a
- * file, get *that* file in CardMirror" hold from every sidebar rather than only
+ * file, get *that* file in Debate Editor" hold from every sidebar rather than only
  * from the ones that hop client-side.
  *
  * A name this client can't place is asked of the server once

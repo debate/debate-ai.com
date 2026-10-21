@@ -17,13 +17,15 @@
 
 # debate-editor
 
-CardMirror-based debate-card editor embedded in debate-ai.com. The package exposes the
+Debate Editor, the debate-card editor embedded in debate-ai.com. It is built on
+[CardMirror](https://github.com/ant981228/cardmirror) by Anthony Trufanov (see
+[THIRD-PARTY-NOTICES.md](../../THIRD-PARTY-NOTICES.md)). The package exposes the
 ProseMirror engine, Verbatim `.docx` interop helpers, and React editor shell used by the
 site's speech-doc and reason-editor surfaces.
 
-## CardMirror features
+## Debate Editor features
 
-CardMirror packs roughly 500 editing commands into ~30 thematic groups (see
+Debate Editor packs roughly 500 editing commands into ~30 thematic groups (see
 [`src/editor/ribbon-groups.ts`](./src/editor/ribbon-groups.ts), the single source of truth
 shared by the in-app Keyboard Shortcuts reference and the Settings → Keybindings editor).
 The list below groups the same command set into feature highlights — 50+ in total.
@@ -184,7 +186,7 @@ The list below groups the same command set into feature highlights — 50+ in to
   the shortcuts reference
 - **Per-user preferences** (general, appearance, accessibility) synced through the site's account settings
 - **Autosave with journal-based crash recovery**, and a full **undo/redo** stack
-- **CardMirror Lite** — a no-AI, no-network build variant for school environments with strict vendor-audit requirements
+- **Debate Editor Lite** — a no-AI, no-network build variant for school environments with strict vendor-audit requirements
 - **Legacy Verbatim keyboard-shortcut compatibility mode**
 - **Runs identically inside the native desktop/mobile wrapper** ([Tauri](https://tauri.app)) — same editor, no browser chrome
 
@@ -194,7 +196,7 @@ This package holds no copy of the editor; `src/` is generated. Tests live under 
 
 ```
 debate-editor/
-├── upstream.json     # the upstream CardMirror commit the patch applies to
+├── upstream.json     # the upstream Debate Editor commit the patch applies to
 ├── patches/          # debate-ai.patch — every debate-ai.com edit to an upstream file
 ├── overlay/          # files upstream doesn't have (React shell, menu bar, sync clients, …)
 ├── scripts/          # sync-upstream.mjs — assemble src/, record edits, rebase onto the submodule
@@ -202,9 +204,9 @@ debate-editor/
 └── test/             # Vitest suites for editor data-model helpers
 ```
 
-## Upstream CardMirror
+## Upstream Debate Editor
 
-This package is an adapter over upstream CardMirror, the
+This package is an adapter over upstream Debate Editor, the
 [`debate-editor-cm`](../debate-editor-cm) git submodule
 ([debate/debate-editor](https://github.com/debate/debate-editor)). Git tracks only
 debate-ai.com's changes to it, in two forms:
@@ -215,15 +217,15 @@ debate-ai.com's changes to it, in two forms:
   sidebar, the File-menu commands that replaced the Home screen, and the account-sync
   wiring.
 - **Files upstream doesn't have**, in `overlay/`: the React shell (`react/` —
-  `CardMirrorEditor`, the dropdown `MenuBar`, `ribbon-template.ts`,
-  `CardMirrorSettingsSection`), its UI primitives (`ui/`), our engine modules
+  `DebateEditor`, the dropdown `MenuBar`, `ribbon-template.ts`,
+  `DebateEditorSettingsSection`), its UI primitives (`ui/`), our engine modules
   (`editor/chrome-host.ts`, `editor/host-plugins.ts`, `editor/settings-tabs.ts`, the
   learn / quick-card sync clients, …), and `web-docx.ts` — the `importDocx` /
   `exportDocxBlob` / `outlineOf` / `cardsOf` helpers merged in from the former
   `debate-editor-cm-adapter` package and exported from `@debate/editor/engine`.
 
 The toolbar is upstream's: one strip of every panel, not paged into tabs or split into
-sections, with the dropdown `MenuBar` above it. CardMirror's settings categories are
+sections, with the dropdown `MenuBar` above it. Debate Editor's settings categories are
 exported for host pages (`@debate/editor/settings-tabs`, `@debate/editor/settings-section`)
 and listed in the site's Settings sidebars.
 

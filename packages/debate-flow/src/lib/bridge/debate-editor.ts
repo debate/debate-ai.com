@@ -1,7 +1,7 @@
 /**
- * Outbound half of the cardmirror-bridge: ebb calling CardMirror.
+ * Outbound half of the cardmirror-bridge: ebb calling Debate Editor.
  *
- * The Rust host owns the transport. It reads CardMirror's handshake files,
+ * The Rust host owns the transport. It reads Debate Editor's handshake files,
  * attaches the session token, and applies the timeout, so the renderer never
  * sees a token or a socket. Everything here is a thin, typed wrapper over
  * those commands, and every failure is a value rather than a throw.
@@ -9,7 +9,7 @@
 
 import { isDesktop } from "../update/adapter";
 
-/** A transport failure, distinct from CardMirror answering with an error. */
+/** A transport failure, distinct from Debate Editor answering with an error. */
 export type BridgeFailure =
     | "not-registered"
     | "not-running"
@@ -20,19 +20,19 @@ export type BridgeFailure =
 export type BridgeCall<T> = { ok: true; value: T } | { ok: false; error: BridgeFailure };
 
 /**
- * The types CardMirror's insert route accepts: its five outline heading
+ * The types Debate Editor's insert route accepts: its five outline heading
  * levels (pocket, hat, block, tag, analytic) plus plain body text. The type
- * travels with the text and CardMirror decides what to make of it; anything
+ * travels with the text and Debate Editor decides what to make of it; anything
  * it does not know degrades on its side, so ebb only ever sends one of these.
  */
-export type CardMirrorTextType = "pocket" | "hat" | "block" | "tag" | "analytic" | "body";
+export type DebateEditorTextType = "pocket" | "hat" | "block" | "tag" | "analytic" | "body";
 
 const TEXT_TYPES: readonly string[] = ["pocket", "hat", "block", "tag", "analytic", "body"];
 
 /** A text type from storage or a hand-edited config file. */
-export function resolveCardMirrorTextType(value: unknown): CardMirrorTextType {
+export function resolveDebateEditorTextType(value: unknown): DebateEditorTextType {
     return typeof value === "string" && TEXT_TYPES.includes(value)
-        ? (value as CardMirrorTextType)
+        ? (value as DebateEditorTextType)
         : "analytic";
 }
 
@@ -57,8 +57,8 @@ async function call<T>(command: string, args?: Record<string, unknown>): Promise
     }
 }
 
-/** CardMirror's answer to a route, once the transport succeeded. */
-export interface CardMirrorReply {
+/** Debate Editor's answer to a route, once the transport succeeded. */
+export interface DebateEditorReply {
     ok: boolean;
     error?: string;
     /** Present on `doc-not-open`, so the user can be told what to open. */
@@ -66,14 +66,14 @@ export interface CardMirrorReply {
     inserted?: boolean;
     /**
      * `"consent"` means the route is queued behind a consent prompt in
-     * CardMirror and answered `ok: true` with nothing done yet. The user's
+     * Debate Editor and answered `ok: true` with nothing done yet. The user's
      * click on Allow replays the queued action, so this is never a retry
      * signal, and never a success either.
      */
     pending?: string;
 }
 
-function asReply(value: unknown): CardMirrorReply {
+function asReply(value: unknown): DebateEditorReply {
     const o = value && typeof value === "object" ? (value as Record<string, unknown>) : {};
     return {
         ok: o.ok === true,
@@ -87,20 +87,20 @@ function asReply(value: unknown): CardMirrorReply {
 async function post(
     command: string,
     args: Record<string, unknown>,
-): Promise<BridgeCall<CardMirrorReply>> {
+): Promise<BridgeCall<DebateEditorReply>> {
     const res = await call<unknown>(command, args);
     return res.ok ? { ok: true, value: asReply(res.value) } : res;
 }
 
-/** Scroll CardMirror to the document position a cell came from. */
-export function cardmirrorJump(source: string): Promise<BridgeCall<CardMirrorReply>> {
+/** Scroll Debate Editor to the document position a cell came from. */
+export function debateEditorJump(source: string): Promise<BridgeCall<DebateEditorReply>> {
     return post("cardmirror_jump", { source });
 }
 
-/** Insert text at the cursor in CardMirror's focused document. */
-export function cardmirrorInsert(
+/** Insert text at the cursor in Debate Editor's focused document. */
+export function debateEditorInsert(
     text: string,
-    role: CardMirrorTextType,
-): Promise<BridgeCall<CardMirrorReply>> {
+    role: DebateEditorTextType,
+): Promise<BridgeCall<DebateEditorReply>> {
     return post("cardmirror_insert", { text, role, newParagraph: true });
 }

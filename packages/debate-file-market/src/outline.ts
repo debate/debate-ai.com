@@ -1,7 +1,7 @@
 /**
  * @fileoverview The free preview of a file for sale: its table of contents.
  *
- * CardMirror renders the Verbatim outline as headings — pocket `h1`, hat
+ * Debate Editor renders the Verbatim outline as headings — pocket `h1`, hat
  * `h2`, block `h3`, tag `h4` — and everything a buyer pays for (cites, card
  * text, highlighting, analytics) sits outside them. So the preview is the
  * heading text and nothing else.

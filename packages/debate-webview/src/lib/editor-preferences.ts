@@ -1,5 +1,5 @@
 /**
- * Account-linked CardMirror editor settings — `/settings` is the editor's
+ * Account-linked Debate Editor settings — `/settings` is the editor's
  * settings surface in this app (see `app/settings/page.tsx`), so a signed-in
  * user's choices follow them across devices instead of staying in one
  * browser's localStorage.
@@ -30,19 +30,19 @@
  */
 
 import { SECRET_SETTING_KEYS, SETTING_METADATA, type SettingsCategory } from "@debate/editor/settings"
-import { CARDMIRROR_SETTINGS_TABS } from "@debate/editor/settings-tabs"
+import { DEBATE_EDITOR_SETTINGS_TABS } from "@debate/editor/settings-tabs"
 
 /**
  * The settings categories `/settings` hosts, in the order it shows them,
- * with the editor's own labels — CardMirror's exported tab list
- * (`CARDMIRROR_SETTINGS_TABS`, from `@debate/editor/settings-tabs`), which
+ * with the editor's own labels — Debate Editor's exported tab list
+ * (`DEBATE_EDITOR_SETTINGS_TABS`, from `@debate/editor/settings-tabs`), which
  * the research settings sidebar lists too.
  *
  * `plugins` is deliberately absent: plugins are installed by the Electron
  * main process, so every row in that category is desktop-only and the tab
  * would render empty on the web.
  */
-export const EDITOR_SETTINGS_TABS: readonly { id: SettingsCategory; label: string }[] = CARDMIRROR_SETTINGS_TABS.map(
+export const EDITOR_SETTINGS_TABS: readonly { id: SettingsCategory; label: string }[] = DEBATE_EDITOR_SETTINGS_TABS.map(
   ({ id, label }) => ({ id, label }),
 )
 

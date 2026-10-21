@@ -11,7 +11,7 @@
  * Rust owns the TOML syntax and comment preservation, this side owns validation.
  */
 
-import { resolveCardMirrorTextType } from "../bridge/cardmirror";
+import { resolveDebateEditorTextType } from "../bridge/debate-editor";
 import { resolveContacts, type Contacts } from "../collab/contacts";
 import { COMMANDS } from "../commands/registry";
 import { fontLabel, resolveFontName } from "../fonts/registry";
@@ -43,9 +43,9 @@ export interface ConfigFileShape {
     scroll_zoom: boolean;
     align_speeches: boolean;
     tooltips: boolean;
-    /** Master switch for the CardMirror integration. */
+    /** Master switch for the Debate Editor integration. */
     cardmirror_enabled: boolean;
-    /** How CardMirror types text a cell sends it: one of its heading levels
+    /** How Debate Editor types text a cell sends it: one of its heading levels
      *  (pocket, hat, block, tag, analytic) or body. */
     cardmirror_text_type: string;
     /** Master switch for shared editing. Off by default. */
@@ -198,7 +198,7 @@ export function toAppConfig(raw: unknown): AppConfig {
         alignSpeeches: bool(o.align_speeches, false),
         tooltips: bool(o.tooltips, true),
         cardmirrorEnabled: bool(o.cardmirror_enabled, true),
-        cardmirrorTextType: resolveCardMirrorTextType(o.cardmirror_text_type),
+        cardmirrorTextType: resolveDebateEditorTextType(o.cardmirror_text_type),
         collabEnabled: bool(o.collab_enabled, false),
         collabRelayEnabled: bool(o.collab_relay, true),
         collabListenEnabled: bool(o.collab_listen, false),

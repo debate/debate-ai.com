@@ -1,5 +1,5 @@
 /**
- * Inbound half of the cardmirror-bridge: CardMirror writing into ebb.
+ * Inbound half of the cardmirror-bridge: Debate Editor writing into ebb.
  *
  * The Rust host has already authenticated the caller and parsed the JSON, so
  * this layer decides what a route means for the live flow. Every failure is a
@@ -19,7 +19,7 @@ import { attachMetaUndo, snapshotClasses } from "../grid/metaUndo";
 import { STRUCTURED_WRITE } from "../grid/staleSource";
 import { focusedSheetId, useFlowStore } from "../store/useFlowStore";
 
-import { cardmirrorLive } from "./enabled";
+import { debateEditorLive } from "./enabled";
 import { planFlowWrite } from "./flowPlan";
 import type { BridgeReply, FlowRequest, RevealRequest } from "./protocol";
 import { BAD_REQUEST, bridgeError, parseFlowRequest, parseRevealRequest } from "./protocol";
@@ -145,7 +145,7 @@ export function resetRevealCycle(): void {
  * dead app.
  */
 export function handleBridgeRequest(route: string, body: unknown): BridgeReply {
-    if (!cardmirrorLive()) return bridgeError("integration-disabled");
+    if (!debateEditorLive()) return bridgeError("integration-disabled");
     if (route === "flow") {
         const req = parseFlowRequest(body);
         return req ? applyFlow(req) : BAD_REQUEST;

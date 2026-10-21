@@ -1,7 +1,7 @@
 /**
  * The cloud-save queue behind the REASON docs provider.
  *
- * Every edit in CardMirror's embed — title or body, on `/reason-editor` or
+ * Every edit in Debate Editor's embed — title or body, on `/reason-editor` or
  * any sidebar route — reaches D1 through here (`PUT /api/doc/documents/:id`).
  * Which makes "did it actually get there?" this module's whole job, and the
  * reason the debounce isn't just a `setTimeout` in the provider anymore:

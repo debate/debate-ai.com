@@ -1,5 +1,5 @@
 /**
- * @fileoverview Loads `./stored-cmir` — and with it CardMirror's engine —
+ * @fileoverview Loads `./stored-cmir` — and with it Debate Editor's engine —
  * only when a stored file actually has to be converted.
  *
  * `ReasonDocsProvider` wraps every page of the app, but it only needs the
@@ -13,12 +13,12 @@
  * two callers that cannot await (rendering a document for the editor, and
  * the `pagehide` flush) rely on.
  *
- * @module lib/cardmirror/lazy-stored-cmir
+ * @module lib/debate-editor/lazy-stored-cmir
  */
 
 import type * as StoredCmirModule from "./stored-cmir";
 
-/** The conversions `ReasonDocsProvider` runs through CardMirror. */
+/** The conversions `ReasonDocsProvider` runs through Debate Editor. */
 export type StoredCmir = Pick<
   typeof StoredCmirModule,
   "storedContentToHtml" | "htmlToDocxBytes" | "htmlToStoredCmir" | "htmlToStoredCmirSync" | "fileToStoredCmir"

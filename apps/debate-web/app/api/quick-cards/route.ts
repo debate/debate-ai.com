@@ -7,7 +7,7 @@ import { withRouteErrors } from "@/lib/api/route-errors"
 
 /**
  * Account-linked Quick Cards library sync — closes the same standing "docs"
- * gap `/api/speech-send-log` closed for CardMirror's speech-send history:
+ * gap `/api/speech-send-log` closed for Debate Editor's speech-send history:
  * the Quick Cards reusable-snippet library
  * (`packages/debate-editor/src/editor/quick-cards-store.ts`, IndexedDB on
  * web) was device-local only. One `saved_quick_cards` row per (user, card)

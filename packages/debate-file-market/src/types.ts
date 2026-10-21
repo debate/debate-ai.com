@@ -8,7 +8,7 @@
  * @module debate-file-market/types
  */
 
-/** Heading depth in a CardMirror document: 1 pocket, 2 hat, 3 block, 4 tag. */
+/** Heading depth in a Debate Editor document: 1 pocket, 2 hat, 3 block, 4 tag. */
 export type OutlineLevel = 1 | 2 | 3 | 4;
 
 /** One line of a file's table of contents — a heading, never a card body. */

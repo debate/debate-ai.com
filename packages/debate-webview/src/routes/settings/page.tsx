@@ -1,14 +1,14 @@
 import { Suspense } from "react"
-import { CardMirrorSettingsPanel } from "../../components/settings/cardmirror/CardMirrorSettingsPanel"
+import { DebateEditorSettingsPanel } from "../../components/settings/debate-editor/DebateEditorSettingsPanel"
 
 /**
- * The CardMirror editor's settings, and nothing else.
+ * The Debate Editor's settings, and nothing else.
  *
  * This page used to be this app's own account form — debate style, font
  * size, colour theme and light/dark, then favourite tools, tool-data sync
  * and word-limit presets — with the editor's General / Appearance /
  * Accessibility rows behind a second tab. The editor's settings are the page
- * now: its whole tab set, in `CardMirrorSettingsPanel`'s embedded panel
+ * now: its whole tab set, in `DebateEditorSettingsPanel`'s embedded panel
  * (`EDITOR_SETTINGS_TABS`, in `lib/editor-preferences.ts`, is the one list of
  * which categories that is, and the allow-list the account mirror validates
  * against).
@@ -34,7 +34,7 @@ export default function SettingsPage() {
       {/* The panel reads its tab from useSearchParams(), which fails the
           production render with a 500 without a Suspense boundary above it. */}
       <Suspense>
-        <CardMirrorSettingsPanel />
+        <DebateEditorSettingsPanel />
       </Suspense>
     </div>
   )

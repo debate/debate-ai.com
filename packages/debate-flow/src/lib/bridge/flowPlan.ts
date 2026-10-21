@@ -1,5 +1,5 @@
 /**
- * Turns a CardMirror send into the cells it lands in.
+ * Turns a Debate Editor send into the cells it lands in.
  *
  * Column mode writes one row per extracted item, downward from the active
  * cell. A cite never takes a row of its own: it rides as a second line
@@ -13,7 +13,7 @@ import type { CellMeta } from "../model/flow";
 import type { FlowItem } from "./protocol";
 
 /** The origin app id every cell this module plans is stamped with. */
-export const CARDMIRROR_APP = "cardmirror";
+export const DEBATE_EDITOR_APP = "cardmirror";
 
 /** One cell to write, with the decorations and provenance it carries. */
 export interface PlannedCell {
@@ -27,7 +27,7 @@ const HEADING_KINDS: Record<string, true> = { pocket: true, hat: true, block: tr
 function sourceOf(item: FlowItem, docTitle: string): CellMeta["source"] {
     if (!item.token) return undefined;
     return {
-        app: CARDMIRROR_APP,
+        app: DEBATE_EDITOR_APP,
         token: item.token,
         key: item.key,
         ...(docTitle ? { title: docTitle } : {}),

@@ -2,7 +2,7 @@
 
 /**
  * Account-linked live sharing for /reason-editor — the contacts-list front
- * door to the CardMirror engine's real-time collaboration (see
+ * door to the Debate Editor engine's real-time collaboration (see
  * packages/debate-help-docs/content/docs/features/contacts.mdx). Two components, both talking to the engine
  * through `@debate/editor/collab-bridge`:
  *
@@ -121,7 +121,7 @@ async function joinSharedCard(
  *
  * `history.replaceState` rather than the router: `/reason-editor` and
  * `/reason-editor/<slug>` are separate Next routes, so a `router.replace`
- * here would remount CardMirror over the reader mid-join.
+ * here would remount Debate Editor over the reader mid-join.
  */
 function dropQueryParam(param: string): void {
   if (typeof window === "undefined") return

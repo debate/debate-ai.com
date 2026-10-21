@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
- * Assembles `src/` from the upstream CardMirror submodule plus this adapter.
+ * Assembles `src/` from the upstream Debate Editor submodule plus this adapter.
  *
- * This package holds no copy of the editor. Upstream CardMirror is the git
+ * This package holds no copy of the editor. Upstream Debate Editor is the git
  * submodule at `packages/debate-editor-cm` (github.com/debate/debate-editor);
  * what this package tracks is only what debate-ai.com adds to it:
  *

@@ -3,13 +3,13 @@ import { desc, eq, isNull } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { documents } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
-import { normalizeFormat } from "@debate/webview/lib/cardmirror/format"
+import { normalizeFormat } from "@debate/webview/lib/debate-editor/format"
 
 /**
  * REASON editor document collection. GET lists documents for the current
  * user (or anonymous/local documents when signed out). POST creates one —
  * either a blank document (HTML) or an uploaded file the sidebar has already
- * converted to CardMirror's native `.cmir` (`format: "cmir"`).
+ * converted to Debate Editor's native `.cmir` (`format: "cmir"`).
  * Ported from quick search's /api/doc/documents, adapted to debate-ai.com's
  * D1 binding and auth session helpers.
  */

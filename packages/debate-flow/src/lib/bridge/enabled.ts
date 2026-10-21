@@ -1,5 +1,5 @@
 /**
- * The one gate every CardMirror feature passes through.
+ * The one gate every Debate Editor feature passes through.
  *
  * The bridge only exists inside the desktop shell, and the user can switch the
  * integration off in Settings then Editor. What the switch gates is the
@@ -14,6 +14,6 @@
 import { useFlowStore } from "../store/useFlowStore";
 import { isDesktop } from "../update/adapter";
 
-export function cardmirrorLive(): boolean {
+export function debateEditorLive(): boolean {
     return isDesktop() && useFlowStore.getState().cardmirrorEnabled;
 }

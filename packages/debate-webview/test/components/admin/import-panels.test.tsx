@@ -105,7 +105,7 @@ describe("TopicStarterUpload", () => {
     expect((form.get("file") as File).name).toBe("camp.docx");
     const text = bodyText();
     expect(text).toContain("3 files converted to .cmir and added to Topic Starters.");
-    expect(text).toContain("Stored as .cmir and published to CardMirror for everyone.");
+    expect(text).toContain("Stored as .cmir and published to Debate Editor for everyone.");
     expect(text).toContain("imp_1");
     expect(button("Publish files").disabled).toBe(true);
     // The imported-files tree reloads after the upload.

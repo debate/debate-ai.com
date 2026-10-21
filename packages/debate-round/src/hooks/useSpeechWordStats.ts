@@ -6,7 +6,7 @@
  * (`state/speechDocLinks.ts`) when there is one, else the flow's own
  * `speechDocs[speechName]` markdown. Linked documents are fetched from
  * `GET /api/doc/documents/:id`; a `.cmir` row is decoded to HTML with
- * CardMirror's reader, loaded lazily so a flow without links never pulls the
+ * Debate Editor's reader, loaded lazily so a flow without links never pulls the
  * editor engine in.
  *
  * @module hooks/useSpeechWordStats

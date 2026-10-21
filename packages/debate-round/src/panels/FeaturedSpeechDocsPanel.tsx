@@ -47,7 +47,7 @@ function loadDocs(featured: FeaturedRound): Promise<FeaturedSpeechDocsResult> {
 }
 
 /**
- * Card styling for CardMirror's exported HTML (`pmd-*` classes), scoped to
+ * Card styling for Debate Editor's exported HTML (`pmd-*` classes), scoped to
  * this panel. The editor's own stylesheet only applies inside a booted
  * editor, and booting one for a read-only doc isn't worth the engine.
  */
@@ -174,7 +174,7 @@ export function FeaturedSpeechDocsPanel({ featuredKey }: FeaturedSpeechDocsPanel
             Loading speech docs…
           </div>
         ) : html ? (
-          // Library HTML produced by CardMirror's own serializer from a
+          // Library HTML produced by Debate Editor's own serializer from a
           // parsed document, so text is already escaped.
           <div className={DOC_CLASSES} dangerouslySetInnerHTML={{ __html: html }} />
         ) : (

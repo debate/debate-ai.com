@@ -1,6 +1,6 @@
 /**
  * @fileoverview Network calls for collab-card shares (`apps/debate-ai.com`'s
- * `/api/card-shares`) — a CardMirror co-editing session's share code + guest
+ * `/api/card-shares`) — a Debate Editor co-editing session's share code + guest
  * pass handed from one account to a contact, so it shows up as available on
  * the recipient's account instead of only on whichever clipboard the invite
  * link was pasted into. Backs `useCardShares` and `SharedCardsPanel`.

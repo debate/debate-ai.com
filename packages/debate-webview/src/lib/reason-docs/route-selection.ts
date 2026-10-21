@@ -1,6 +1,6 @@
 /**
  * @fileoverview The URL half of "click a file in any sidebar, get that file
- * in CardMirror".
+ * in Debate Editor".
  *
  * A selection made in the docs sidebar (`components/reason-docs`) is carried
  * to `/reason-editor` in the query string rather than only in

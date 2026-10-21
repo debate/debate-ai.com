@@ -13,7 +13,7 @@ name: Native Wrapper Release
 #     (tagged at the commit the run was started from) and published. Untick
 #     "publish" for a build-only test run that uploads nothing.
 #
-# Three-stage shape, same reasoning as debate/cardmirror's own
+# Three-stage shape, same reasoning as debate/debate-editor's own
 # .github/workflows/release.yml: `prepare-release` creates one draft up front
 # so the parallel build jobs all upload into it instead of racing to create
 # their own drafts, and `publish-release` takes it out of draft once the

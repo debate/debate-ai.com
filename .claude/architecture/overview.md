@@ -11,7 +11,7 @@ Tooling for competitive debate (Public Forum, Lincoln-Douglas, Policy), in four
 named surfaces:
 
 - **CARDS** — crowdsourced annotated research: evidence search, card scoring,
-  review queue, topic coverage, and the CardMirror editor with lossless Verbatim
+  review queue, topic coverage, and Debate Editor with lossless Verbatim
   `.docx` round-trip.
 - **FIAT** — the live round workspace: an ag-Grid flow spreadsheet, column
   navigation and split view, round setup, speech docs, export and history.
@@ -42,7 +42,7 @@ Every package here is public and publishable to npm under the `@debate/` scope; 
 | `debate-card-parser` | *(same)* | Verbatim `.docx` and HTML → structured cards with citations and highlighting |
 | `debate-contributor-progress` | `debate-community` | Leaderboard, news stream, awards, daily best card, progress unlocks, quest streaks, daily quests |
 | `debate-data-sync` | *(same)* | Bundled data assets (metadata, videos, schemas) + the sync scripts; shared record types like `OpponentTeamProfile` |
-| `debate-editor` | *(same)* | CardMirror: the ProseMirror engine, Verbatim `.docx` interop (lossless round-trip, encrypted-file decryption, the native `.cmir` format, the `cardmirror-read` headless CLI/MCP server), and the React editor shell |
+| `debate-editor` | *(same)* | Debate Editor: the ProseMirror engine, Verbatim `.docx` interop (lossless round-trip, encrypted-file decryption, the native `.cmir` format, the `cardmirror-read` headless CLI/MCP server), and the React editor shell |
 | `debate-flow` | `debate-flow-ebb` | `ebb`, the local-first keyboard-first flow editor. `EbbFlowEmbed` mounts it as one column of a host page. |
 | `debate-help-docs` | *(same)* | The documentation site. See [documentation.md](documentation.md). |
 | `debate-predictions` | *(same)* | Play-money prediction markets: LMSR pricing, payouts, settlement rules (hosted Tabroom ballots and results, `debate-rankings` ratings), validation, wire types, browser client and the D1 migration for its tables. No dependencies of its own. |

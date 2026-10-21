@@ -255,7 +255,7 @@ export function executeCommand(id: CommandId): void {
             startMove();
             return;
 
-        // --- CardMirror -------------------------------------------------------
+        // --- Debate Editor -------------------------------------------------------
         case "cell.jumpToSource":
             void runJumpToSource();
             return;

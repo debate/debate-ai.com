@@ -6,7 +6,7 @@
  * `WebviewWindow` included - and a listener registered for the default `Any`
  * target matches a narrowed emit regardless, so naming the window on one side
  * alone narrows nothing. Every window here is a fully independent flow editor,
- * so an event with one intended recipient - a menu accelerator, a CardMirror
+ * so an event with one intended recipient - a menu accelerator, a Debate Editor
  * card, a shared-editing session's traffic - has to say which window it is for
  * on both sides. The Rust half is `windows::emit_target`.
  *

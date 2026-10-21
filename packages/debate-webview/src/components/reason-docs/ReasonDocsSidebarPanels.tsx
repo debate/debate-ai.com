@@ -9,7 +9,7 @@
  * this app's document model and primitives.
  *
  * There is no "Open Tabs" list here: the open files are the tab strip above
- * CardMirror (`EditorTabStrip`), whose right-click menu closes and reopens
+ * Debate Editor (`EditorTabStrip`), whose right-click menu closes and reopens
  * them. Each section remembers whether it was collapsed, per device.
  *
  * It is mounted only where the documents are the subject — `/reason-editor`,
@@ -19,14 +19,14 @@
  * rather than the shell, shows the video library and nothing else.
  *
  * Picking a file anywhere routes to `/reason-editor?doc=<file name>` (or
- * `?topic=<file name>` for a public topic starter), which brings CardMirror up
+ * `?topic=<file name>` for a public topic starter), which brings Debate Editor up
  * in the main column with that file loaded — see `ReasonDocsRouteSync` for why
  * the selection travels in the URL and not only in provider state, and
  * `lib/reason-docs/doc-path.ts` for how the file's own name becomes that URL.
  *
  * Files also arrive here: the Upload button and a drop onto the tree import
- * `.docx` (and `.cmir`, and plain text) as CardMirror native files, so a card
- * document dropped in the sidebar is one click from opening in CardMirror with
+ * `.docx` (and `.cmir`, and plain text) as Debate Editor native files, so a card
+ * document dropped in the sidebar is one click from opening in Debate Editor with
  * its cards, highlighting and comments intact.
  *
  * And they leave here: the row above the tree is where the open file is shared
@@ -69,7 +69,7 @@ import {
 } from "../../lib/ui/primitives/dropdown-menu"
 import { FILE_SORTS, FILE_SORT_LABELS, isFileSort, type FileSort } from "../../lib/reason-docs/file-sort"
 import { cn } from "../../lib/ui/lib/utils"
-import { IMPORT_ACCEPT } from "../../lib/cardmirror/import-files"
+import { IMPORT_ACCEPT } from "../../lib/debate-editor/import-files"
 import {
   REASON_EDITOR_ROUTE,
   editorHrefForSelection,
@@ -312,13 +312,13 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
    * The provider state set alongside this makes the switch immediate on a
    * client-side hop; the URL is what makes the same click survive a reload, a
    * shared link, or a hard navigation (`/videos` is a different layout
-   * branch), so CardMirror always comes up with *that* file rather than
+   * branch), so Debate Editor always comes up with *that* file rather than
    * whatever the editor would otherwise fall back to.
    *
    * Already on the route, nothing is routed at all: the provider has the file
    * open, and `ReasonDocsRouteSync` renames the address bar in place. Routing
    * would mean a Next route change between `/reason-editor/<a>` and
-   * `/reason-editor/<b>`, which remounts CardMirror — ten files opened in a
+   * `/reason-editor/<b>`, which remounts Debate Editor — ten files opened in a
    * row would be ten editor remounts, and ten Back presses to leave.
    */
   const goToEditor = useCallback(
@@ -339,10 +339,10 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
   /**
    * Takes files from the Upload button or a drop onto the tree.
    *
-   * Everything becomes a CardMirror native file on the way in — the sidebar
+   * Everything becomes a Debate Editor native file on the way in — the sidebar
    * never stores a `.docx` as-is and never runs it through the card parser, so
    * an imported Verbatim document keeps its cards, highlighting and comments
-   * (`lib/cardmirror/stored-cmir.ts`). The first file imported is opened, which
+   * (`lib/debate-editor/stored-cmir.ts`). The first file imported is opened, which
    * is what makes uploading and clicking one file the same gesture.
    */
   const uploadFiles = useCallback(
@@ -679,7 +679,7 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
                 header strip: it is a thing done to the open file, and this is
                 the row the file's other actions are in. Only on the editor
                 route — sharing starts a live co-editing session through the
-                CardMirror engine, which is mounted by that page, so the
+                Debate Editor engine, which is mounted by that page, so the
                 control would fail anywhere else. `?shareWith=` puts it
                 straight into the dialog, hence the Suspense. */}
             {onEditorRoute && activeDocument && (

@@ -72,7 +72,7 @@ const nextConfig = {
   },
   // A public Topic Starter's address is `/docs/<topic code>/<file path>`
   // (`/docs/vcx27/neg/cp/aca-expansion-cp-cndi-2026`), served by the
-  // CardMirror editor page, which reads the code and file back off the
+  // Debate Editor page, which reads the code and file back off the
   // address bar. `beforeFiles`, because `/docs/[[...slug]]` (the help docs)
   // would otherwise claim it; only a first segment shaped like a topic code is
   // rewritten, so every help page keeps its URL. The shape is

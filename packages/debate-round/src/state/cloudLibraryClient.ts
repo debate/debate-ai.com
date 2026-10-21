@@ -97,7 +97,7 @@
  * bare `SpeechSendLogEntry[]` body rather than importing that package's own
  * `editor/speech-send-log.ts`.
  *
- * CardMirror Learn's custom flashcard decks (`/api/learn-decks`) join next,
+ * Debate Editor Learn's custom flashcard decks (`/api/learn-decks`) join next,
  * for the same reason: `listCloudLearnDecks` below is a local raw `fetch`
  * against that route's bare `CustomDeck[]` body rather than importing
  * `debate-editor`'s own `editor/learn-decks-client.ts`.
@@ -114,7 +114,7 @@
  * `listCloudFlowAnnotations` below is a local raw `fetch` against the
  * generic tool-records route's bare `FlowAnnotation[]` body.
  *
- * CardMirror's Quick Cards (`/api/quick-cards`) join next, for the same
+ * Debate Editor's Quick Cards (`/api/quick-cards`) join next, for the same
  * reason as learn decks: `listCloudQuickCards` below is a local raw `fetch`
  * against that route's bare `QuickCard[]` body rather than importing
  * `debate-editor`'s own `editor/quick-cards-client.ts`.
@@ -357,7 +357,7 @@ async function listCloudSpeechSendLog(
 }
 
 /**
- * Lists the current user's synced CardMirror Learn custom flashcard decks.
+ * Lists the current user's synced Debate Editor Learn custom flashcard decks.
  * Degrades to `null` on a signed-out `401` (matching `GET /api/learn-decks`'s
  * own auth behavior), a non-2xx response, or a network error — same "no
  * items of that kind" convention as the other sources above.
@@ -410,7 +410,7 @@ async function listCloudFlowAnnotations(
 }
 
 /**
- * Lists the current user's synced CardMirror Quick Cards. Degrades to `null`
+ * Lists the current user's synced Debate Editor Quick Cards. Degrades to `null`
  * on a signed-out `401` (matching `GET /api/quick-cards`'s own auth
  * behavior), a non-2xx response, or a network error — same "no items of that
  * kind" convention as the other sources above.

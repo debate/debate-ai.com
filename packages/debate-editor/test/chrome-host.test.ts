@@ -1,5 +1,5 @@
 /**
- * `chromeHost()` is what keeps CardMirror's page-owning chrome (the
+ * `chromeHost()` is what keeps Debate Editor's page-owning chrome (the
  * full-window home hub, the crash-recovery sidebar) inside the host page's
  * column instead of over its sidebar: `embed-containment.css` re-pins that
  * chrome with `.dec-cardmirror-embed <selector>` DESCENDANT rules, so chrome
@@ -19,7 +19,7 @@ describe("chromeHost", () => {
     expect(chromeHost()).toBe(document.body);
   });
 
-  it("returns the engine container when CardMirror is embedded", () => {
+  it("returns the engine container when Debate Editor is embedded", () => {
     const embed = document.createElement("div");
     embed.className = "dec-cardmirror-embed";
     const root = document.createElement("div");
@@ -49,7 +49,7 @@ describe("chromeHost", () => {
   it("hands back the node the singleton re-parents, so chrome travels with it", () => {
     // The React singleton creates `.dec-cardmirror-root` on <body> before it
     // imports the engine, then moves that same node into whichever
-    // <CardMirrorEditor> claims it. Chrome mounted into the container at boot
+    // <DebateEditor> claims it. Chrome mounted into the container at boot
     // therefore lands inside the embed without a second move.
     const root = document.createElement("div");
     root.className = "dec-cardmirror-root";

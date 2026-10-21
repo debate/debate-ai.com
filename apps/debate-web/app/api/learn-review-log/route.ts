@@ -7,7 +7,7 @@ import { withRouteErrors } from "@/lib/api/route-errors"
 
 /**
  * Account-linked Learn review-log sync — closes the "review history never
- * leaves this device" gap for CardMirror's Learn spaced-repetition store,
+ * leaves this device" gap for Debate Editor's Learn spaced-repetition store,
  * the same way `/api/learn-cards` closed it for flashcard content and
  * `/api/learn-decks` for custom decks. One `saved_learn_review_log` row per
  * `ReviewLogEntry` (`packages/debate-editor/src/editor/learn-store.ts`),

@@ -1,6 +1,6 @@
 /**
- * @fileoverview `looksLikeCmirBase64` in `lib/cardmirror/content-format.ts`
- * is a copy of CardMirror's own sniff, kept separate so the docs sidebar does
+ * @fileoverview `looksLikeCmirBase64` in `lib/debate-editor/content-format.ts`
+ * is a copy of Debate Editor's own sniff, kept separate so the docs sidebar does
  * not load the editor engine on every page. These cases hold the copy to the
  * engine's answer, so the two cannot drift apart unnoticed.
  */
@@ -12,7 +12,7 @@ import {
   schema,
   serializeNative,
 } from "@debate/editor/engine"
-import { isCmirContent, looksLikeCmirBase64 } from "../../../src/lib/cardmirror/content-format"
+import { isCmirContent, looksLikeCmirBase64 } from "../../../src/lib/debate-editor/content-format"
 
 /** A real one-paragraph `.cmir`, base64-encoded the way a row stores it. */
 function sampleCmir(text: string): string {
@@ -36,7 +36,7 @@ describe("looksLikeCmirBase64", () => {
     ["not base64 at all", "%%%%"],
   ]
 
-  it.each(cases)("agrees with CardMirror's own sniff for %s", (_label, text) => {
+  it.each(cases)("agrees with Debate Editor's own sniff for %s", (_label, text) => {
     expect(looksLikeCmirBase64(text)).toBe(engineLooksLikeCmirBase64(text))
   })
 

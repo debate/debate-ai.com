@@ -3,7 +3,7 @@
  * (pockets and hats), in document order, without the H3 blocks or the H4
  * tags that hold each card's long sentence summary.
  *
- * Accepts both speech doc shapes: CardMirror HTML (a linked editor document,
+ * Accepts both speech doc shapes: Debate Editor HTML (a linked editor document,
  * `<h1>`/`<h2>` or `.pmd-pocket|hat`) and a flow's own markdown
  * (`#`/`##`). Pure and DOM-free so it runs in the `node` test environment.
  *

@@ -97,7 +97,7 @@ describe("hasEmbeddedDock / isGenericToolSidebarRoute", () => {
     expect(isGenericToolSidebarRoute("/lectures")).toBe(false);
   });
 
-  it("reports a sidebar-hosted dock on the CardMirror editor route", () => {
+  it("reports a sidebar-hosted dock on Debate Editor route", () => {
     for (const route of ["/reason-editor", "/reason-editor/7"]) {
       expect(hasEmbeddedDock(route)).toBe(true);
       expect(isGenericToolSidebarRoute(route)).toBe(true);

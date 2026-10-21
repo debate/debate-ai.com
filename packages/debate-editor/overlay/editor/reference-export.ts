@@ -9,7 +9,7 @@
  * modal's DOM-building/overlay-lifecycle code along with it.
  */
 
-/** One command row: the label CardMirror shows for it plus its
+/** One command row: the label Debate Editor shows for it plus its
  *  current keybinding(s) already formatted for display (e.g.
  *  `"Ctrl+Shift+K"` or `"F8 / Ctrl+Shift+X"`), or `''` when unbound. */
 export interface ShortcutsReferenceRow {

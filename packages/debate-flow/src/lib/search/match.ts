@@ -1,6 +1,6 @@
 /**
  * Order-independent multi-token substring matching with tiered ranking -
- * the palette's one matching engine, ported from cardmirror's file search.
+ * the palette's one matching engine, ported from debate-editor's file search.
  * "Block search style", not edit-distance fuzz: every query token must
  * appear somewhere, in any order.
  */

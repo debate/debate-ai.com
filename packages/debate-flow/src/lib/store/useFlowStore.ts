@@ -10,7 +10,7 @@
 import type { FlowEditorAccountSettingsPayload } from "../config/accountSettings";
 import { create } from "zustand";
 
-import { resolveCardMirrorTextType, type CardMirrorTextType } from "../bridge/cardmirror";
+import { resolveDebateEditorTextType, type DebateEditorTextType } from "../bridge/debate-editor";
 import { resolveContacts, type Contacts } from "../collab/contacts";
 import { forgetJoined } from "../collab/joined";
 import { clearReplica, recordOp, seedReplica } from "../collab/replica";
@@ -122,10 +122,10 @@ export interface FlowState {
     alignSpeeches: boolean;
     /** Hover tips on buttons and controls; off renders the trigger bare. */
     tooltips: boolean;
-    /** Master switch for the CardMirror bridge; off leaves every route dead. */
+    /** Master switch for the Debate Editor bridge; off leaves every route dead. */
     cardmirrorEnabled: boolean;
-    /** How CardMirror types text sent to it from a cell. */
-    cardmirrorTextType: CardMirrorTextType;
+    /** How Debate Editor types text sent to it from a cell. */
+    cardmirrorTextType: DebateEditorTextType;
     /** Master switch for shared editing; off leaves every route dead. */
     collabEnabled: boolean;
     /** Whether a session may fall back to a relay when a direct link fails. */
@@ -228,7 +228,7 @@ export interface FlowActions {
     setAlignSpeeches(on: boolean): void;
     setTooltips(on: boolean): void;
     setCardmirrorEnabled(on: boolean): void;
-    setCardmirrorTextType(type: CardMirrorTextType): void;
+    setCardmirrorTextType(type: DebateEditorTextType): void;
     setCollabEnabled(on: boolean): void;
     setCollabRelayEnabled(on: boolean): void;
     setCollabListenEnabled(on: boolean): void;
@@ -373,7 +373,7 @@ interface DisplaySettings {
     alignSpeeches: boolean;
     tooltips: boolean;
     cardmirrorEnabled: boolean;
-    cardmirrorTextType: CardMirrorTextType;
+    cardmirrorTextType: DebateEditorTextType;
     collabEnabled: boolean;
     collabRelayEnabled: boolean;
     collabListenEnabled: boolean;
@@ -442,7 +442,7 @@ function loadDisplaySettings(): DisplaySettings {
             alignSpeeches: bool(p.alignSpeeches, false),
             tooltips: bool(p.tooltips, true),
             cardmirrorEnabled: bool(p.cardmirrorEnabled, true),
-            cardmirrorTextType: resolveCardMirrorTextType(p.cardmirrorTextType),
+            cardmirrorTextType: resolveDebateEditorTextType(p.cardmirrorTextType),
             theme: resolveThemeMode(p.theme),
             collabEnabled: bool(p.collabEnabled, false),
             collabRelayEnabled: bool(p.collabRelayEnabled, true),

@@ -5,7 +5,7 @@
  * The library used to keep card HTML produced by a regex pass over
  * `word/document.xml`, which flattened Verbatim's outline (pocket / hat /
  * block / tag) into `<h1>`…`<p>` and dropped comments, images and every mark
- * the schema knows but HTML has no element for. CardMirror's own OOXML
+ * the schema knows but HTML has no element for. Debate Editor's own OOXML
  * importer keeps all of it, and `.cmir` — its native format — is the only
  * form that can hold the result losslessly, so that is what is stored.
  *
@@ -42,7 +42,7 @@ export async function docxToStoredCmir(bytes: ArrayBuffer): Promise<string> {
     // as specific as the ones the pre-checks raise.
     throw new DocxImportError(
       "missing-document-xml",
-      `The DOCX could not be converted to a CardMirror file (${
+      `The DOCX could not be converted to a Debate Editor file (${
         error instanceof Error ? error.message : String(error)
       }). Re-save it from Word and upload again.`,
     );

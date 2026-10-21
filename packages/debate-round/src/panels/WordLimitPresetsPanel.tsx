@@ -19,7 +19,7 @@
  * on `apps/debate-ai.com/app/word-count/page.tsx`, below `WordCountRoundsPanel`
  * — the presets it manages are also read by both consumers named above. It
  * used to render on `/settings`, but that page was refactored into the
- * CardMirror editor's settings page (see that app's `app/settings/page.tsx`)
+ * Debate Editor's settings page (see that app's `app/settings/page.tsx`)
  * without leaving this section a replacement home; see
  * `packages/debate-help-docs/content/docs/features/user-settings.mdx`'s
  * "What it no longer shows".

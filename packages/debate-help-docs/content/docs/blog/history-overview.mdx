@@ -73,7 +73,7 @@ Prediction markets, a rankings engine, a native Tournaments product, and a big c
 - Added a **judge pool** (volunteer for circuit weekends, organizers hire), anonymous partner matching with a ranked topic poll, a next-season entry on `/practice/statistics`, and Kialo-style argument-map views on the argument tree.
 - In rounds: tournament-aware school and team suggestions, pick the opposing team from a school's ranked teams, click-to-activate speeches with your own highlighted, AI outcome responses in the speech timer menu, a judge's "be more clear" request, and a speech-recording **captions ticker** and full transcript modal with AI sections.
 
-### CardMirror, search and the extension
+### Debate Editor, search and the extension
 
 - Always create new speech docs as `.cmir`, open `.cmir` in read mode, show featured speech docs in highlighted-only read mode, and added saved/unsaved/failed document status, a tab right-click menu, hover buttons beside cards to **summarize, find flaws, and read aloud** (Kokoro/Deepgram voices), and compact two-line nav tags.
 - Card search moved to **BM25-ranked FTS5** with phrase match and autocomplete, with first-search and time-boxed query performance work and an "embiggen" highlight-only quotes view.
@@ -119,20 +119,20 @@ Practice, collaboration, and a wave of "second draft" polish across research too
 - Threaded replies and a high-priority flag for Strategy Sync Notes.
 - A public topic starter library.
 
-### CardMirror and the editor shell
+### Debate Editor and the editor shell
 
-- Reorganized the **CardMirror** editor shell again — a file tree + open tabs sidebar for the REASON editor, tighter menu-bar categories, Benchmark/About-this-install moved into Settings, and the ebb Flow start page retired into the flow toolbar with speech timers mirrored to the sidebar.
+- Reorganized the **Debate Editor** editor shell again — a file tree + open tabs sidebar for the REASON editor, tighter menu-bar categories, Benchmark/About-this-install moved into Settings, and the ebb Flow start page retired into the flow toolbar with speech timers mirrored to the sidebar.
 - Restored the **Google-Docs-style menu bar** (File / Edit / Insert / Workspace / …) above the ribbon toolbar in every editor host, so the same commands the `Ctrl`/`Cmd`-Shift-Space palette exposes are also one click away as a text-labeled menu strip, not just ribbon icons.
 - Gave `Ctrl`/`Cmd`-Shift-Space an **app-wide command palette**, not just the Reason Editor's own: every feature doc's "reachable from the command palette" line is now true from `/tools`, `/settings`, both workspace hubs, and everywhere else, not only while a document happened to be open. Built from the same `/tools` catalog favorites already key against, so a starred tool, a palette result, and a Workspace-menu link all agree; stands down entirely on `/reason-editor`, where the editor engine's own richer palette (quick cards, commands, files) keeps the shortcut.
-- Moved the **Topic Starter library** onto CardMirror's native format: an uploaded DOCX is converted with the editor's own OOXML importer and stored as a `.cmir` (so the Verbatim outline, comment threads, images and named character styles survive an import that used to flatten them to card HTML), the `/reason-editor` embed parses the stored file in the browser, and rows imported before the switch keep opening as HTML.
-- Fixed the report that a file loaded into **CardMirror sometimes disappears and goes blank**, which was never only a display bug:
+- Moved the **Topic Starter library** onto Debate Editor's native format: an uploaded DOCX is converted with the editor's own OOXML importer and stored as a `.cmir` (so the Verbatim outline, comment threads, images and named character styles survive an import that used to flatten them to card HTML), the `/reason-editor` embed parses the stored file in the browser, and rows imported before the switch keep opening as HTML.
+- Fixed the report that a file loaded into **Debate Editor sometimes disappears and goes blank**, which was never only a display bug:
   - The embed reported *any* document change as a user edit, so a blank mounted by the engine's own machinery (boot, New/Open, crash recovery) — or by stored content that failed to parse — was written straight over the file in D1.
   - The embed now reports only real edits, restores a blank it didn't ask for, refuses to save over a document it couldn't read, and stopped dropping footnotes on every HTML round trip.
   - On the storage side, one debounce per document (with a `keepalive` flush on tab close, retry-with-backoff, and a truthful save-state indicator) replaced a single shared timer that cancelled other documents' pending writes.
 
 ### Accounts and sharing
 
-- Linked the CardMirror editor's **real-time collaboration to better-auth accounts**: a `/contacts` page with a typical friends list (search-and-request, accept/decline, remove, block/unblock, online presence from a poll heartbeat), a **Share with contacts** control in the Reason Editor that starts a co-editing session and hands its share code + guest pass to a contact's account through `/api/card-shares` (no clipboard), and a Shared cards tab where every received card shows as available to open on any device.
+- Linked the Debate Editor's **real-time collaboration to better-auth accounts**: a `/contacts` page with a typical friends list (search-and-request, accept/decline, remove, block/unblock, online presence from a poll heartbeat), a **Share with contacts** control in the Reason Editor that starts a co-editing session and hands its share code + guest pass to a contact's account through `/api/card-shares` (no clipboard), and a Shared cards tab where every received card shows as available to open on any device.
 - Restored that feature's four tables, which had been dropped from `lib/database/schema.ts` by a merge, breaking the production build along with node-canvas — a native `.node` addon pulled in as linkedom's optional peer that the Worker bundle cannot parse and now resolves to a no-op shim.
 - Fixed **Google sign-in dead-ending on `state_mismatch`**: better-auth checks the OAuth `state` against both a database row and a signed cookie when the provider redirects back, and both halves could go missing on their own — the row because `/api/auth/*` reads could be answered by a D1 read replica that had not yet caught up with the sign-in request's write (auth now always opens its session on the primary), and the cookie because its five-minute default expired while the ten-minute state row was still valid (the two now match). Failed callbacks land back on `/login` with the reason in plain words and the sign-in buttons right there, instead of better-auth's built-in "Something went wrong / CODE: state_mismatch" page with nothing but a Go Home button.
 
@@ -159,7 +159,7 @@ Practice, collaboration, and a wave of "second draft" polish across research too
 ### Account sync of every tool (second half of the month)
 
 - Built `debate-data-sync` to **sync every tool's saved work to the account**, with a searchable, sectioned *Tool data* list and sync status on `/settings` and `/tools`, a persistent "don't ask again" guest sign-in prompt, and visible failures from the background watcher.
-- Synced the Flow Edit Log and flow-history undo log, Daily Best Card and award announcements, prep-note notifications, quest teams, completed research tasks, Quick Cards, AI card assessments, the CardMirror personal dictionary and Learn decks (with a create/rename/delete UI, review-log History view and per-deck badges), the pending task verification queue, open chat tabs on `/doc`, group-challenge wins, and more.
+- Synced the Flow Edit Log and flow-history undo log, Daily Best Card and award announcements, prep-note notifications, quest teams, completed research tasks, Quick Cards, AI card assessments, the Debate Editor personal dictionary and Learn decks (with a create/rename/delete UI, review-log History view and per-deck badges), the pending task verification queue, open chat tabs on `/doc`, group-challenge wins, and more.
 - Replaced whole-list overwrites with **optimistic concurrency** — concurrent edits to presets, libraries, decks, quick cards and streaks now resolve against the account's current value — and rejected cloud saves that would clobber a newer flow or round.
 - Surfaced all of it in **My Saved Items** (flows, rounds, drill sets, judge decisions, outcome charts, pairings, personas, Learn decks, Prep Notes, Evidence Library entries and more) with filtering, deletion, and sample data for new accounts.
 - Added a first look at **Debater Level XP** at `/cards/level`.
@@ -216,11 +216,11 @@ Identity, live sync, and a real content feed.
 
 - Built a brand-new **News Stream** feed that auto-aggregates activity across the app — quest-streak milestones, group challenges, revisions, prep notes, Argument Library submissions, AI Coach Mode sessions — plus an auto-generated "Tool spotlight" post for every unannounced entry in the tools catalog, capped for readability.
 
-### CardMirror and the editor shell
+### Debate Editor and the editor shell
 
-- Overhauled the CardMirror editor shell — added a Plugins dropdown and a Workspace menu with full Tools-page search/highlights, confined CardMirror's own chrome to its own column with **ebb** brought in as an embeddable panel, redesigned the settings panels around that layout, retired the old CardMirror start screen, and fixed a menu-bar crash on load.
-- Restored a `debate-editor` re-export shim split out from the CardMirror engine.
-- Added an **Insert Short Cite** CardMirror command.
+- Overhauled Debate Editor shell — added a Plugins dropdown and a Workspace menu with full Tools-page search/highlights, confined Debate Editor's own chrome to its own column with **ebb** brought in as an embeddable panel, redesigned the settings panels around that layout, retired the old Debate Editor start screen, and fixed a menu-bar crash on load.
+- Restored a `debate-editor` re-export shim split out from the Debate Editor engine.
+- Added an **Insert Short Cite** Debate Editor command.
 
 ### Videos
 
@@ -252,16 +252,16 @@ Identity, live sync, and a real content feed.
 ### Docs and tests
 
 - A docs pass fixing a stale "global dock's Settings menu" claim across 34 feature docs, plus a revised README features section.
-- New unit test coverage for CardMirror schema-id helpers, footnote helpers, and timer sound effects.
+- New unit test coverage for Debate Editor schema-id helpers, footnote helpers, and timer sound effects.
 
 ## June 2026 — 18 commits
 
-CardMirror release milestone month.
+Debate Editor release milestone month.
 
 ### Editor
 
-- Integrated the **CardMirror engine** into a new **reason-editor** workspace package built on **TipTap/React**.
-- Ported CardMirror's **AI editing tools** (cite, repair, explain, alt text).
+- Integrated the **Debate Editor engine** into a new **reason-editor** workspace package built on **TipTap/React**.
+- Ported Debate Editor's **AI editing tools** (cite, repair, explain, alt text).
 - Implemented an **HTML-to-card parser** with citation extraction and metadata assembly.
 - Simplified HTML extraction functions across several refactoring passes.
 

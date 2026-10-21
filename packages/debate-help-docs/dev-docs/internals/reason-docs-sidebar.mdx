@@ -1,12 +1,12 @@
 ---
-title: "REASON docs sidebar — files on the document routes, opened in CardMirror"
+title: "REASON docs sidebar — files on the document routes, opened in Debate Editor"
 ---
 
-# REASON docs sidebar — files on the document routes, opened in CardMirror
+# REASON docs sidebar — files on the document routes, opened in Debate Editor
 
 The Files / Topic Starters / Open Tabs panels that sit above the tool nav
 tree, and the URL round trip that turns a click on one of them into "that
-file, loaded in CardMirror, in the main column."
+file, loaded in Debate Editor, in the main column."
 
 - **Routes:** `/cards` (and below it) and `/reason-editor` — the routes the
   documents are the subject of, per
@@ -18,11 +18,11 @@ file, loaded in CardMirror, in the main column."
   over the filename paths in `packages/debate-webview/src/lib/reason-docs/doc-path.ts`
 - **Panel stack and its height split:**
   `packages/debate-webview/src/lib/reason-docs/panel-layout.ts`
-- **Stored file format:** `packages/debate-webview/src/lib/cardmirror/` (`format.ts`,
+- **Stored file format:** `packages/debate-webview/src/lib/debate-editor/` (`format.ts`,
   `content-format.ts`, `stored-cmir.ts`)
 - **Public lookup by name:** `/api/topic-starters/by-path`
 - **Where they show:** `packages/debate-webview/src/lib/reason-docs/sidebar-routes.ts`
-- **Editor:** `/reason-editor` (`debate-editor`'s CardMirror embed)
+- **Editor:** `/reason-editor` (`debate-editor`'s Debate Editor embed)
 
 ## Where the panels mount
 
@@ -128,7 +128,7 @@ does two things:
 Provider state alone covers the hop but not a reload, a pasted link, or a
 hard navigation — `/videos` is its own layout branch and can boot the editor
 with an empty provider. Carrying the file in the query is what makes "click a
-file, get *that* file in CardMirror" hold from every sidebar rather than
+file, get *that* file in Debate Editor" hold from every sidebar rather than
 only from the ones that hop client-side.
 
 The name is the title slugified (`lib/reason-docs/doc-slug.ts`): lowercased,
@@ -141,7 +141,7 @@ No title can forge one: `~` is stripped out of titles by the same slugifier.
 
 Already on the editor route, a pick routes nothing at all. `/reason-editor`
 and `/reason-editor/<slug>` are separate Next routes, so routing between
-them would remount CardMirror — and its undo history — on every tab switch;
+them would remount Debate Editor — and its undo history — on every tab switch;
 the provider already has the file open, and `ReasonDocsRouteSync` renames
 the address bar in place with `history.replaceState`. That same rewrite is
 what upgrades an older `?doc=<id>` / `?topic=<id>` link (still read, and
@@ -226,7 +226,7 @@ with contacts** (`components/reason-editor/ShareWithContacts`, drawn in its
 button in the editor's own header strip; it is an action on the open file, so
 it belongs in the row that file's other actions are in. It is scoped to the
 editor route because sharing starts a live co-editing session through the
-CardMirror engine, and that page is what mounts the engine — on `/cards` the
+Debate Editor engine, and that page is what mounts the engine — on `/cards` the
 control would open a dialog that could only fail.
 
 ## Uploading a file
@@ -235,18 +235,18 @@ The Documents header has an Upload button, and the file tree takes a drop
 from the desktop — onto a folder to import there, anywhere else to import at
 the root. Both go through `importFiles` on the provider.
 
-Every upload is stored as a CardMirror native file, whatever it arrived as
-(`lib/cardmirror/stored-cmir.ts`): a `.docx` through `docxToCmir`, a `.cmir`
+Every upload is stored as a Debate Editor native file, whatever it arrived as
+(`lib/debate-editor/stored-cmir.ts`): a `.docx` through `docxToCmir`, a `.cmir`
 kept byte-for-byte (parsed first, so a mislabelled file is refused now rather
 than on open), and `.html` / `.md` / `.txt` parsed through the schema. The
 card parser is not in this path at all — `.cmir` is the only shape that holds
-what CardMirror's OOXML reader gets out of a Verbatim document, and the HTML
+what Debate Editor's OOXML reader gets out of a Verbatim document, and the HTML
 the app would otherwise keep flattens the outline, comments, images and marks
 away.
 
 The row keeps the name it was uploaded under, extension included, so the
 `.docx` you dropped is the `.docx` you see in the sidebar (with its type on a
-badge); clicking it opens it in CardMirror, decoded from the stored `.cmir`.
+badge); clicking it opens it in Debate Editor, decoded from the stored `.cmir`.
 The first file of an upload is opened and routed to, which makes uploading
 and clicking one file the same gesture. One file that cannot be converted
 doesn't lose the rest of a drop: it comes back as a message under the tree,
@@ -267,7 +267,7 @@ documents written in the editor stay HTML and are untouched by any of this.
 
 ## Read-only topic starters
 
-A topic starter opens in the same CardMirror embed as an owned document, but
+A topic starter opens in the same Debate Editor embed as an owned document, but
 read-only: no toolbar, no AI tools, no `onChange`, a `readOnly` title, and a
 "Public topic starter" label beside it. It gets its own `contentKey`
 namespace (`topic-<id>`) so the engine treats it as a distinct claim from an
@@ -277,11 +277,11 @@ owned document that happens to share the id — the same reason `?doc=7` and
 ## Topic starters are stored as `.cmir`
 
 The admin importer on `/admin` takes a `.docx` (or a `.zip` of them) and
-stores each one as a CardMirror native file — `.cmir`, gzipped JSON,
+stores each one as a Debate Editor native file — `.cmir`, gzipped JSON,
 base64-encoded into the row's `content` column, with `format` set to
 `"cmir"`.
 
-The conversion is CardMirror's own OOXML importer (`docxToCmir` in
+The conversion is Debate Editor's own OOXML importer (`docxToCmir` in
 `packages/debate-editor/src/native/convert.ts` — `fromDocxFull` piped into
 `serializeNative`, the same pair the desktop bulk converter runs), wrapped
 for the route by `packages/debate-webview/src/lib/topic-starters/import.ts`. What that
@@ -292,7 +292,7 @@ the named character styles that distinguish a cite from an emphasis from a
 plain underline.
 
 Reading it back is client-side: `storedContentToHtml`
-(`lib/cardmirror/stored-cmir.ts`, aliased for this table as
+(`lib/debate-editor/stored-cmir.ts`, aliased for this table as
 `topicStarterHtml`) parses the file with `parseNative` and serializes it
 through the schema's own `toDOM` specs for the embed's `content` prop,
 memoized per file on `/reason-editor`. Doing it in the browser keeps the
@@ -300,7 +300,7 @@ catalogue endpoint — which returns up to 100 rows — from converting files
 nobody opens.
 
 The rules are the app's rather than this table's — the reader's own uploads
-are stored the same way — so they live in `lib/cardmirror/` and
+are stored the same way — so they live in `lib/debate-editor/` and
 `lib/topic-starters/format.ts` is the Topic Starter names for them.
 
 Rows imported before this carry HTML and still open: `format` says which a
@@ -333,7 +333,7 @@ naming the failure rather than a blank document.
   for a folder row — there is nothing to convert). `FileTree`'s wires to
   `ReasonDocsProvider.downloadDocument`, which runs the row's HTML (whatever
   shape it is stored in — `documentHtml` already resolves that, live edits
-  included) through `htmlToDocxBytes` (`lib/cardmirror/stored-cmir.ts`,
+  included) through `htmlToDocxBytes` (`lib/debate-editor/stored-cmir.ts`,
   `htmlToDoc` + `debate-editor/engine`'s `toDocx`) and triggers a browser
   download named by `docxDownloadFilename`. `TopicStarterTree`'s wires to the
   new `ReasonDocsProvider.downloadTopicDocument`, the same conversion run
@@ -347,7 +347,7 @@ naming the failure rather than a blank document.
   itself still exposes no export action of its own — opening the sidebar row
   menu is still the only way to export — which is unchanged and not tracked
   as a gap, since it was never a stated goal. Vitest-covered:
-  `packages/debate-webview/test/lib/cardmirror/stored-cmir-render.test.ts`
+  `packages/debate-webview/test/lib/debate-editor/stored-cmir-render.test.ts`
   adds the `storedContentToHtml`/`topicStarterHtml` coverage this download
   path leans on (a legacy HTML row passed through untouched, a `.cmir` row
   parsed and reserialized, format-less sniffing, an absent-content row, and a

@@ -492,11 +492,11 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "reason-editor",
     title: "Reason Editor",
     description:
-      "The rich-text card editor: a Google-Docs-style menu bar (File/Edit/Card/Format/Insert/AI/View/Tools/Workspace), a Ctrl/Cmd-P command palette that also jumps to other tools, Verbatim/Cardmirror-compatible shortcuts, an outline nav panel, and a send-to-speech-document command",
+      "The rich-text card editor: a Google-Docs-style menu bar (File/Edit/Card/Format/Insert/AI/View/Tools/Workspace), a Ctrl/Cmd-P command palette that also jumps to other tools, Verbatim/Debate Editor-compatible shortcuts, an outline nav panel, and a send-to-speech-document command",
     href: "/reason-editor",
     category: "documents",
     doc: "legacy-verbatim-shortcuts.md",
-    tags: ["verbatim", "cardmirror", "tiptap", "editor", "docx", "reason-editor", "menu bar", "command palette", "workspace", "read mode"],
+    tags: ["verbatim", "debate editor", "tiptap", "editor", "docx", "reason-editor", "menu bar", "command palette", "workspace", "read mode"],
   },
   {
     id: "speech-documents",
@@ -505,7 +505,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     href: "/speech-documents",
     category: "documents",
     doc: "speech-document-target.md",
-    tags: ["send to speech", "cardmirror", "prosemirror"],
+    tags: ["send to speech", "debate editor", "prosemirror"],
   },
 ];
 

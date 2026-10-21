@@ -9,10 +9,10 @@
  *
  * The tree is also a drop target for files from the desktop, not just for
  * rows being re-filed: dropping a `.docx` on a folder imports it there (as a
- * CardMirror `.cmir` — see `lib/cardmirror/stored-cmir.ts`), and clicking the
- * row that appears opens it in CardMirror. Rows keep the name they were
+ * Debate Editor `.cmir` — see `lib/debate-editor/stored-cmir.ts`), and clicking the
+ * row that appears opens it in Debate Editor. Rows keep the name they were
  * uploaded under, extension included, so the file you dropped is the file you
- * see. No row carries a format badge: everything stored here is a CardMirror
+ * see. No row carries a format badge: everything stored here is a Debate Editor
  * file whatever it was uploaded as.
  *
  * Rows drag both ways between this tree and Topic Starters
@@ -122,7 +122,7 @@ interface FileTreeProps {
   onMove: (id: number, parentId: number | null) => void
   /** Files dropped from outside the browser, to import into `parentId`. */
   onUpload?: (files: File[], parentId: number | null) => void
-  /** Downloads a file as `.docx`, without opening it in CardMirror first. Not
+  /** Downloads a file as `.docx`, without opening it in Debate Editor first. Not
    *  offered for folders — there is nothing to convert. */
   onDownload?: (id: number) => void
   /** How siblings are ordered. Folders always come first. */
@@ -401,7 +401,7 @@ export function FileTree({
               className="h-6 flex-1 px-1 text-sm"
             />
           ) : (
-            // Every file is a CardMirror file however it arrived, so the row
+            // Every file is a Debate Editor file however it arrived, so the row
             // carries no ".docx"/".cmir" badge — the name is the whole label.
             <span className="flex-1 truncate">{doc.title || "Untitled"}</span>
           )}

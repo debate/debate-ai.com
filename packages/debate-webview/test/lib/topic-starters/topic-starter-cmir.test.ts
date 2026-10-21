@@ -3,7 +3,7 @@
  * back.
  *
  * The library's contract after the `.cmir` switch: an import writes a
- * CardMirror native file (the same bytes the desktop app writes), the rows
+ * Debate Editor native file (the same bytes the desktop app writes), the rows
  * imported before it still read as HTML, and a file that fails to convert
  * fails with a coded reason the admin UI can show rather than a generic
  * error.
@@ -57,7 +57,7 @@ describe("docxToStoredCmir", () => {
     const notWord = new Uint8Array([0x50, 0x4b, 0x03, 0x04, 0, 0, 0, 0, 0, 0]);
     const error = await docxToStoredCmir(notWord.buffer as ArrayBuffer).catch((e) => e);
     expect(error).toBeInstanceOf(DocxImportError);
-    expect(error.message).toMatch(/CardMirror file|Re-save/);
+    expect(error.message).toMatch(/Debate Editor file|Re-save/);
   });
 
   it("refuses a document with no text rather than storing an empty file", async () => {
