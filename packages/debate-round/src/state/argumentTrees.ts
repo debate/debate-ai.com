@@ -14,7 +14,7 @@
  */
 
 import type { Flow } from "../types/flow";
-import { buildArgumentTree, type ArgumentTreeNode } from "../flow/argument-tree";
+import { buildArgumentTree, flattenArgumentTree, type ArgumentTreeNode } from "../flow/argument-tree";
 
 import {
   mirrorToolRecordDelete,
@@ -44,6 +44,16 @@ function readAll(): ArgumentTreeRecord[] {
 function writeAll(records: ArgumentTreeRecord[]): void {
   if (typeof localStorage === "undefined") return;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+}
+
+/**
+ * True when a tree has no row with any text in it — the outline of a flow
+ * that was opened but never flowed. Such a tree renders as an empty
+ * "Round <id>" card with 0 pros / 0 cons, so it is neither auto-saved nor
+ * shown in the outline panel.
+ */
+export function isEmptyArgumentTree(tree: ArgumentTreeNode[]): boolean {
+  return flattenArgumentTree(tree).every((node) => !node.content?.trim());
 }
 
 /** Lists every persisted argument tree, across all rounds. */
@@ -115,7 +125,9 @@ export function buildAndSaveArgumentTree(
  * `panels/ArgumentTreePanel.tsx`.
  */
 export function buildArgumentTreesPanelView(): ArgumentTreeRecord[] {
-  return [...listArgumentTrees()].sort((a, b) => a.roundId.localeCompare(b.roundId));
+  return listArgumentTrees()
+    .filter((record) => !isEmptyArgumentTree(record.tree ?? []))
+    .sort((a, b) => a.roundId.localeCompare(b.roundId));
 }
 
 /**
@@ -143,6 +155,11 @@ export function buildAndSaveArgumentTreeFromCurrentFlow(
  * `useArgumentTreeAutoSync`, which calls this on a debounce tick as a round
  * is flowed — without this check, every tick would rewrite localStorage
  * even when nothing about the flow's derived outline actually changed.
+ *
+ * An empty derived tree is never saved: every flow opened in the round
+ * workspace would otherwise leave a blank "Round <id>" outline behind. If the
+ * flow had a saved outline and has since been emptied, that record is
+ * removed instead.
  */
 export function buildAndSaveArgumentTreeIfChanged(
   flow: Pick<Flow, "children" | "columns">,
@@ -150,6 +167,10 @@ export function buildAndSaveArgumentTreeIfChanged(
 ): ArgumentTreeRecord | undefined {
   const tree = buildArgumentTree(flow);
   const existing = getArgumentTree(roundId);
+  if (isEmptyArgumentTree(tree)) {
+    if (existing) deleteArgumentTree(roundId);
+    return undefined;
+  }
   if (existing && JSON.stringify(existing.tree) === JSON.stringify(tree)) {
     return undefined;
   }
