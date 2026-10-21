@@ -35,7 +35,7 @@ interface SectionHref {
  *
  * The app dock's destinations used to be listed here too, for an "Apps" node
  * the tree no longer renders. Dropping them is what lets `/practice/versus-ai` open the
- * Practice section that actually lists it ("Debate Versus AI") instead of a
+ * Research section that actually lists it ("Practice vs AI") instead of a
  * section with no links left to show. Two more lost their rows with them:
  * `/doc` ("Debate Docs") and `/reason-editor`, which no section lists now, so
  * both land in the no-section case above like `/debate` does.
