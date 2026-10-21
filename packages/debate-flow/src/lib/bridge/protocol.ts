@@ -1,5 +1,5 @@
 /**
- * The wire shapes ebb exchanges with CardMirror over the cardmirror-bridge
+ * The wire shapes ebb exchanges with Debate Editor over the cardmirror-bridge
  * loopback HTTP bridge.
  *
  * The Rust host only carries JSON: it authenticates the caller, hands the
@@ -8,14 +8,14 @@
  * trusted; the parsers below are the only door into the grid.
  */
 
-/** One node CardMirror extracted, as its plugin serializes it. */
+/** One node Debate Editor extracted, as its plugin serializes it. */
 export interface FlowItem {
-    /** CardMirror's node kind. An unknown kind writes as plain text. */
+    /** Debate Editor's node kind. An unknown kind writes as plain text. */
     kind: string;
     text: string;
-    /** CardMirror's opaque provenance token, handed back verbatim to jump. */
+    /** Debate Editor's opaque provenance token, handed back verbatim to jump. */
     token: string;
-    /** Stable equality key CardMirror mints, matched by the reveal route. */
+    /** Stable equality key Debate Editor mints, matched by the reveal route. */
     key: string;
 }
 
@@ -23,7 +23,7 @@ export interface FlowRequest {
     mode: "column" | "cell";
     docTitle: string;
     items: FlowItem[];
-    /** Empty cells to leave below the send, from CardMirror's plugin setting. */
+    /** Empty cells to leave below the send, from Debate Editor's plugin setting. */
     space: number;
 }
 

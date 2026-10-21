@@ -31,7 +31,7 @@
  * `debate-data-sync`'s background watcher without this package knowing the
  * sync exists. Each logged edit's "Logged edits" row carries a "Synced" /
  * "Not yet synced" badge from `getToolRecordSyncStatus`, the same
- * per-record indicator `FlowHistoryList`'s History tab and CardMirror's
+ * per-record indicator `FlowHistoryList`'s History tab and Debate Editor's
  * personal dictionary already show — omitted entirely (not a third state)
  * before this collection has ever been baselined against the account.
  *

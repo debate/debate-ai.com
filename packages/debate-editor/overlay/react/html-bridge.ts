@@ -1,14 +1,14 @@
 /**
- * HTML <-> CardMirror-doc bridge.
+ * HTML <-> Debate Editor-doc bridge.
  *
  * debate-ai.com persists speech-doc content as an HTML string (the
  * contract the prior Lexical/TipTap editors used — see `ReasonEditorProps`
- * in the reason-editor package this replaces). CardMirror itself has no
+ * in the reason-editor package this replaces). Debate Editor itself has no
  * HTML import/export — its own persistence is `.docx` / `.cmir` — but its
  * ProseMirror schema (`../schema/index.js`) carries full `toDOM`/`parseDOM`
  * specs (needed for copy-paste and its own rendering), so the standard
  * ProseMirror `DOMSerializer`/`DOMParser` utilities round-trip through that
- * schema directly, using CardMirror's own semantic markup.
+ * schema directly, using Debate Editor's own semantic markup.
  *
  * Because that string IS the stored document for those hosts, a parse that
  * quietly produces nothing is data loss, not a rendering glitch: the blank
@@ -55,7 +55,7 @@ function withHeadingIds(rule: ParseRule): ParseRule {
 
 const parser = new PMDOMParser(schema, PMDOMParser.fromSchema(schema).rules.map(withHeadingIds));
 
-/** Serialize a CardMirror doc node to an HTML string. */
+/** Serialize a Debate Editor doc node to an HTML string. */
 export function docToHtml(doc: PMNode): string {
   const wrapper = document.createElement('div');
   wrapper.appendChild(serializer.serializeFragment(doc.content));
@@ -94,7 +94,7 @@ export interface ParsedHtml {
   ok: boolean;
 }
 
-/** Parse an HTML string into a CardMirror doc, reporting whether the input
+/** Parse an HTML string into a Debate Editor doc, reporting whether the input
  *  actually survived. Empty input parses to a blank doc with `ok: true` (an
  *  empty document is a legitimate document); input that had content but came
  *  out blank — foreign markup from a previous editor, a malformed or
@@ -121,7 +121,7 @@ export function parseHtml(html: string): ParsedHtml {
   }
 }
 
-/** Parse an HTML string into a CardMirror doc node. Empty/whitespace-only
+/** Parse an HTML string into a Debate Editor doc node. Empty/whitespace-only
  *  input, or HTML the parser can't fit to a valid document (foreign
  *  markup from a previous editor, malformed fragments), falls back to
  *  `makeBlankDoc()` rather than surfacing a load-time crash. Prefer

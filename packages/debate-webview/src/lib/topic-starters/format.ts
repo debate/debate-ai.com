@@ -2,7 +2,7 @@
  * @fileoverview How a Topic Starter row's `content` column is encoded.
  *
  * The rules are the app's, not this table's — the reader's own `documents`
- * store files the same way — so they live in `lib/cardmirror/format.ts` and
+ * store files the same way — so they live in `lib/debate-editor/format.ts` and
  * this module is the Topic Starter names for them, kept so existing callers
  * and their tests keep reading in this table's vocabulary.
  *
@@ -10,8 +10,8 @@
  */
 // Relative rather than through the `@/` alias: this module is pulled into a
 // unit test, and the app's alias does not resolve under the test runner.
-import { STORED_FORMATS, type StoredContent } from "../cardmirror/format";
-import { isCmirContent } from "../cardmirror/content-format";
+import { STORED_FORMATS, type StoredContent } from "../debate-editor/format";
+import { isCmirContent } from "../debate-editor/content-format";
 
 /** Storage formats a row's `content` can be in. */
 export const TOPIC_STARTER_FORMATS = STORED_FORMATS;

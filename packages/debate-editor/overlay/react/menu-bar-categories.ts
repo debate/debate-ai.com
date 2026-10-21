@@ -1,11 +1,11 @@
 /**
  * Menu-bar categories for `MenuBar.tsx` — the dropdown menus (File / Speech /
- * Card / Edit / Format / …) stacked above CardMirror's own toolbar.
+ * Card / Edit / Format / …) stacked above Debate Editor's own toolbar.
  *
  * The toolbar itself is upstream's: one unbroken strip of every panel that
  * scrolls left↔right (`#ribbon-strip`, see `ribbon-template.ts`). It is not
  * paged into tabs or split into sections. This file is the one bucketing of
- * CardMirror's ~30 `RIBBON_GROUPS` into browsable menus, so every ribbon
+ * Debate Editor's ~30 `RIBBON_GROUPS` into browsable menus, so every ribbon
  * command — including the many the strip has no button for — is reachable
  * from a labeled dropdown.
  *

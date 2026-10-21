@@ -1,5 +1,5 @@
 /**
- * The editor's command chrome: upstream CardMirror's toolbar as ONE strip
+ * The editor's command chrome: upstream Debate Editor's toolbar as ONE strip
  * (not paged into tabs, not split into sections), with the dropdown menu
  * bar's categories above it covering every command group.
  *

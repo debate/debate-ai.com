@@ -555,7 +555,7 @@ function CollapsibleDock({
  * its column rather than sized to its own contents: a content-sized dock is
  * wider than the 300px sidebar it sits in, which either forces the sidebar to
  * scroll sideways or reaches over its border onto the page beside it — the
- * CardMirror editor, on `/reason-editor` and `/doc`.
+ * Debate Editor, on `/reason-editor` and `/doc`.
  */
 function DockInstance({
   dockClassName,

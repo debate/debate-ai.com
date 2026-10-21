@@ -1,8 +1,8 @@
 "use client";
 
 /**
- * One CardMirror settings category, rendered live inside a host page — the
- * piece a site Settings sidebar shows when one of `CARDMIRROR_SETTINGS_TABS`
+ * One Debate Editor settings category, rendered live inside a host page — the
+ * piece a site Settings sidebar shows when one of `DEBATE_EDITOR_SETTINGS_TABS`
  * is selected.
  *
  * Wraps `buildEmbeddedSettingsPanel` (`editor/settings-ui.ts`): the rows
@@ -20,7 +20,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { SettingsCategory } from "../editor/settings.js";
 
-export interface CardMirrorSettingsSectionProps {
+export interface DebateEditorSettingsSectionProps {
   category: SettingsCategory;
   /** Called with the setting keys whose rows rendered — what a host that
    *  mirrors settings to an account should limit itself to, since the editor
@@ -29,11 +29,11 @@ export interface CardMirrorSettingsSectionProps {
   className?: string;
 }
 
-export function CardMirrorSettingsSection({
+export function DebateEditorSettingsSection({
   category,
   onRowsRendered,
   className,
-}: CardMirrorSettingsSectionProps): React.JSX.Element {
+}: DebateEditorSettingsSectionProps): React.JSX.Element {
   const hostRef = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
   const onRowsRenderedRef = useRef(onRowsRendered);

@@ -1,5 +1,5 @@
 /**
- * @fileoverview HTML <-> CardMirror-doc bridge.
+ * @fileoverview HTML <-> Debate Editor-doc bridge.
  *
  * For the web hosts (the `/reason-editor` route, Flow's speech-doc panels)
  * this HTML string IS the stored document: it is what `onChange` hands back

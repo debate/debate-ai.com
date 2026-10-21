@@ -6,7 +6,7 @@
  * The Reason Editor already has its own Search Everything palette
  * (`packages/debate-editor`'s `quick-card-search-ui.ts`), whose `t` prefix
  * jumps to any of the app's other tools — but that palette only exists inside
- * the CardMirror engine, so every feature doc's "Nav: … in Ctrl/Cmd-K's
+ * the Debate Editor engine, so every feature doc's "Nav: … in Ctrl/Cmd-K's
  * search palette" line was only true while the Reason Editor happened to be
  * open. Everywhere else in the app — `/tools`, `/settings`, `/practice/judges`, the
  * community and coaching hubs — the same shortcut did nothing.
@@ -19,14 +19,14 @@
  * Workspace menu all resolve to the one list. Mounted once per document by
  * {@link AppShell} (in both its branches, matching
  * {@link ToolRecordSyncProvider}'s reach), so the shortcut works whether or
- * not another site has framed the app. On `/reason-editor` the CardMirror
+ * not another site has framed the app. On `/reason-editor` the Debate Editor
  * engine's own palette keeps Ctrl/Cmd-P; this one answers Ctrl/Cmd-K there.
  *
  * It also searches the docs sidebar's files — the reader's own and the public
  * Topic Starters — by name, outline heading *and* contents
  * (`lib/reason-docs/file-search.ts`), listed under "Files" below the tools;
  * picking one opens it in the editor. The text of a `.cmir` file comes from
- * CardMirror's engine, which is loaded on demand the first time a query needs
+ * Debate Editor's engine, which is loaded on demand the first time a query needs
  * it. And it searches the whole video library — rounds and lectures — through
  * the Videos page's own `/api/videos` feed (`lib/videos/video-palette-search.ts`),
  * listed under "Videos & Lectures"; picking one opens its watch page.
@@ -68,8 +68,8 @@ import {
   type FileSearchEntry,
 } from "../../../lib/reason-docs/file-search"
 import { editorHrefForSelection, isEditorPathname } from "../../../lib/reason-docs/route-selection"
-import { isCmirContent } from "../../../lib/cardmirror/content-format"
-import { loadStoredCmir, storedCmirIfLoaded, type StoredCmir } from "../../../lib/cardmirror/lazy-stored-cmir"
+import { isCmirContent } from "../../../lib/debate-editor/content-format"
+import { loadStoredCmir, storedCmirIfLoaded, type StoredCmir } from "../../../lib/debate-editor/lazy-stored-cmir"
 import { fetchPaletteVideos, type PaletteVideo } from "../../../lib/videos/video-palette-search"
 import {
   createPaletteIndex,
@@ -86,7 +86,7 @@ const QUICK_ACTIONS: Tool[] = [
   { href: "/settings", label: "Settings", description: "Card editor settings — files, editing, appearance, shortcuts, AI", icon: SettingsIcon },
 ]
 
-/** Routes where the CardMirror editor engine mounts its own, richer
+/** Routes where Debate Editor engine mounts its own, richer
  *  Ctrl/Cmd-P palette — this one leaves Ctrl/Cmd-P to it there and answers
  *  only Ctrl/Cmd-K, so the two never fight over one chord. */
 function ownedByEditor(pathname: string): boolean {
@@ -361,7 +361,7 @@ export function GlobalCommandPalette() {
   const documents = docs?.documents
   const topicItems = docs?.topicItems
   const documentHtml = docs?.documentHtml
-  // A `.cmir` file's text needs CardMirror's engine; it is fetched the first
+  // A `.cmir` file's text needs Debate Editor's engine; it is fetched the first
   // time a query could match one, not when the palette opens.
   const needsEngine =
     open &&

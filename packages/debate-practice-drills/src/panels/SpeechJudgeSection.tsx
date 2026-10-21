@@ -123,7 +123,7 @@ export function SpeechJudgeSection() {
   return (
     <PanelSection
       title="Judge pasted speeches"
-      description={`Paste each speech from your CardMirror docs. ${STANDARD_JUDGE_NAME} decides the round, then critiques each speech and suggests alternatives. Add, remove, or rename speeches for any format.`}
+      description={`Paste each speech from your Debate Editor docs. ${STANDARD_JUDGE_NAME} decides the round, then critiques each speech and suggests alternatives. Add, remove, or rename speeches for any format.`}
       actions={
         <Button size="sm" variant="ghost" onClick={resetToPreset}>
           Reset to 8-speech preset

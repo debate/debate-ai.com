@@ -131,8 +131,8 @@ const GROUPS: { label: string; rows: { commandId: CommandId }[] }[] = [
 ];
 
 /** Only reachable from the desktop app with the integration switched on. */
-const CARDMIRROR_GROUP = {
-    label: "CardMirror",
+const DEBATE_EDITOR_GROUP = {
+    label: "Debate Editor",
     rows: [
         { commandId: "cell.jumpToSource" as CommandId },
         { commandId: "cell.sendToDoc" as CommandId },
@@ -143,14 +143,14 @@ export default function KeybindingsCheatsheet() {
     const open = useFlowStore((s) => s.cheatsheetOpen);
     const setCheatsheetOpen = useFlowStore((s) => s.setCheatsheetOpen);
     // isDesktop() gates the bridge itself; the setting gates the user's choice.
-    const cardmirrorOn = useFlowStore((s) => s.cardmirrorEnabled) && isDesktop();
+    const debateEditorOn = useFlowStore((s) => s.cardmirrorEnabled) && isDesktop();
 
     function close() {
         setCheatsheetOpen(false);
     }
 
     const chordFor = buildChordMap();
-    const groups = cardmirrorOn ? [...GROUPS, CARDMIRROR_GROUP] : GROUPS;
+    const groups = debateEditorOn ? [...GROUPS, DEBATE_EDITOR_GROUP] : GROUPS;
 
     return (
         <Dialog

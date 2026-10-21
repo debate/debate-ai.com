@@ -4,11 +4,11 @@
  * import refuses with.
  *
  * Split from `./stored-cmir` so the docs sidebar (mounted on every page) can
- * label its file picker and name a download without pulling CardMirror's
+ * label its file picker and name a download without pulling Debate Editor's
  * engine into the app shell's bundle; `./stored-cmir` re-exports all of it,
  * and is itself loaded on demand through `./lazy-stored-cmir`.
  *
- * @module lib/cardmirror/import-files
+ * @module lib/debate-editor/import-files
  */
 
 /** Extensions the upload path knows how to turn into a `.cmir`. Anything
@@ -26,8 +26,8 @@ export const IMPORTABLE_EXTENSIONS = [
 export const IMPORT_ACCEPT = IMPORTABLE_EXTENSIONS.join(",");
 
 /** A file the app refused to import, with a reason worth showing. */
-export class CardMirrorImportError extends Error {
-  override name = "CardMirrorImportError";
+export class DebateEditorImportError extends Error {
+  override name = "DebateEditorImportError";
 }
 
 /** `"1AC Warming.docx"` → `".docx"`, lowercased; `""` when there is none. */

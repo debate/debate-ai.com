@@ -1,14 +1,14 @@
 /**
  * @fileoverview Telling a stored `.cmir` from stored HTML.
  *
- * The sniff mirrors CardMirror's `looksLikeCmirBase64` (@debate/editor's
+ * The sniff mirrors Debate Editor's `looksLikeCmirBase64` (@debate/editor's
  * `native/convert.ts`) rather than importing it: this module is reached from
  * the docs sidebar on every page, and `@debate/editor/engine` would put the
  * whole editor engine into the app shell's startup bundle for a check that
- * only reads two bytes. `test/lib/cardmirror/content-format.test.ts` keeps
+ * only reads two bytes. `test/lib/debate-editor/content-format.test.ts` keeps
  * the two in step.
  *
- * @module lib/cardmirror/content-format
+ * @module lib/debate-editor/content-format
  */
 import { STORED_FORMATS, type StoredContent } from "./format";
 

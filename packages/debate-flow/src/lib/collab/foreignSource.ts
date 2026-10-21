@@ -2,7 +2,7 @@
  * Whose machine a cell's provenance belongs to.
  *
  * `CellSource.token` is opaque and machine-local: it means something to the
- * CardMirror running beside the peer that made it and nothing at all anywhere
+ * Debate Editor running beside the peer that made it and nothing at all anywhere
  * else. So a partner's sourced cell must not try to jump; it degrades to the
  * same "open X first" path a stale local source already takes.
  *
@@ -14,7 +14,7 @@
  * and nothing signs a register, so a modified client can stamp a meta write
  * with this machine's id and its token then reads as local. The guard is
  * therefore worth exactly what a stale local source is worth - it stops an
- * honest partner's token being handed to the wrong CardMirror, and it is not a
+ * honest partner's token being handed to the wrong Debate Editor, and it is not a
  * boundary. Whatever the bridge does with a token it is given has to be safe on
  * its own account.
  */
@@ -36,7 +36,7 @@ export function sourceOwner(
     return cell.metaStamp.actor || null;
 }
 
-/** Whether that token is worth handing to the local CardMirror. */
+/** Whether that token is worth handing to the local Debate Editor. */
 export function isForeignSource(owner: string | null, myEndpointId: string): boolean {
     return owner !== null && owner !== "" && owner !== myEndpointId;
 }

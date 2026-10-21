@@ -2,7 +2,7 @@
  * @fileoverview Pins what `/settings` hosts and what of it reaches the
  * account.
  *
- * The page is the CardMirror editor's settings surface now — its whole tab
+ * The page is the Debate Editor's settings surface now — its whole tab
  * set, not the three categories that first moved out of the editor's modal —
  * so the allow-list a `PUT /api/settings` patch is checked against has to
  * cover every one of those categories. The credentials among them must not

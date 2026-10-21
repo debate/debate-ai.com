@@ -1,10 +1,10 @@
 /**
  * @fileoverview Admin-only Topic Starter importer.
  *
- * Accepts one `.docx` or a `.zip` of them, converts each with CardMirror to
+ * Accepts one `.docx` or a `.zip` of them, converts each with Debate Editor to
  * its native `.cmir` and files it under a folder tree mirroring the archive.
  * Every file in the library is a `.cmir`: it is the only format that holds
- * what CardMirror's importer reads out of a Verbatim document — the card
+ * what Debate Editor's importer reads out of a Verbatim document — the card
  * outline, comments, images and marks the card HTML this replaces flattened
  * away — and it is what the editor opens the file from.
  *

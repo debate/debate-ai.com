@@ -1,5 +1,5 @@
 /**
- * @fileoverview Foreign clipboard HTML → CardMirror structure.
+ * @fileoverview Foreign clipboard HTML → Debate Editor structure.
  *
  * The contract that matters most is the refusal: the conversion has to EARN
  * ITS KEEP, returning null when it finds no debate structure at all, so a

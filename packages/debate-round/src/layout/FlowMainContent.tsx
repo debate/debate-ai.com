@@ -4,7 +4,7 @@
  */
 
 import type React from "react"
-import { LexicalEditorWrapper } from "./LazyCardMirrorEditor"
+import { LexicalEditorWrapper } from "./LazyDebateEditor"
 import type { Flow } from "../types/flow"
 
 /** Props for the FlowMainContent component. */
@@ -34,7 +34,7 @@ interface FlowMainContentProps {
   /** When true (desktop only), shows a single active speech panel instead of both side-by-side. */
   singlePaneMode?: boolean
   /**
-   * Which split panel currently owns the live, editable CardMirror instance
+   * Which split panel currently owns the live, editable Debate Editor instance
    * — lifted to the page level so the sidebar's "round times" group can show
    * timer/controls for whichever speech is actually selected.
    */
@@ -76,7 +76,7 @@ export function FlowMainContent({
   activeSplitSide = "left",
   onActiveSplitSideChange,
 }: FlowMainContentProps) {
-  // CardMirror (the @debate/editor engine behind LexicalEditorWrapper)
+  // Debate Editor (the @debate/editor engine behind LexicalEditorWrapper)
   // is a page-level singleton — only one instance can be the live, editable
   // ProseMirror view at a time. Split mode still shows both panes, but only
   // the active side gets the real editor; the other renders a read-only

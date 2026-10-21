@@ -1,5 +1,5 @@
 /**
- * CardMirror mount singleton.
+ * Debate Editor mount singleton.
  *
  * `src/editor/index.ts` is not a component — it's ~10k lines of
  * side-effecting module code that assumes it owns the whole page: a
@@ -9,10 +9,10 @@
  * most ONCE per page load — a second `import()` just returns the
  * cached module without re-running its top-level code.
  *
- * So rather than mounting a fresh CardMirror instance per React
+ * So rather than mounting a fresh Debate Editor instance per React
  * component instance (impossible), this module owns ONE persistent
  * container `<div>`, created and booted lazily on first use, and
- * hands it out to whichever `<CardMirrorEditor>` currently wants to
+ * hands it out to whichever `<DebateEditor>` currently wants to
  * be the live one. That component physically re-parents the same
  * container node into itself on claim (plain `appendChild` — moving
  * an attached DOM node, not cloning it, so the live `EditorView`
@@ -20,7 +20,7 @@
  * was already loaded, swaps content in via a real transaction so
  * undo/autosave/etc. see it as a normal edit.
  *
- * Only one `<CardMirrorEditor>` can be "live" at a time; callers that
+ * Only one `<DebateEditor>` can be "live" at a time; callers that
  * lose the claim render `ReadOnlyPreview` instead (see index.tsx).
  *
  * ## Why the change reporter is fussy
@@ -84,7 +84,7 @@ let cardAiModule: CardAiModule | null = null;
 let cardTtsModule: CardTtsModule | null = null;
 
 /** Synchronous access to the engine/bridge modules, once loaded (always
- *  true by the time a `CardMirrorEditor` imperative-handle method could
+ *  true by the time a `DebateEditor` imperative-handle method could
  *  run, since mounting already awaited `claim()`). Avoids every handle
  *  method needing to be async just to re-`import()` an already-loaded
  *  module. */
@@ -98,16 +98,16 @@ export function getBridgeModule(): BridgeModule | null {
 /** Poll for the boot sequence's `mountView` call to land (see the
  *  module doc on `index.ts` in ribbon-template.ts — there's no
  *  exported "ready" hook to await instead). */
-const CARDMIRROR_BOOT_TIMEOUT_MS = 30000;
+const DEBATE_EDITOR_BOOT_TIMEOUT_MS = 30000;
 async function waitForView(getActiveView: () => EditorView | null): Promise<EditorView> {
   const start = Date.now();
   for (;;) {
     const view = getActiveView();
     if (view) return view;
     const elapsed = Date.now() - start;
-    if (elapsed > CARDMIRROR_BOOT_TIMEOUT_MS) {
-      throw new Error(`CardMirror engine did not finish booting within ${Math.round(
-        CARDMIRROR_BOOT_TIMEOUT_MS / 1000,
+    if (elapsed > DEBATE_EDITOR_BOOT_TIMEOUT_MS) {
+      throw new Error(`Debate Editor engine did not finish booting within ${Math.round(
+        DEBATE_EDITOR_BOOT_TIMEOUT_MS / 1000,
       )}s (waited ${Math.round(elapsed / 1000)}s)`);
     }
     await new Promise((resolve) => setTimeout(resolve, 30));
@@ -116,7 +116,7 @@ async function waitForView(getActiveView: () => EditorView | null): Promise<Edit
 
 /** The engine's stylesheets, loaded with the engine rather than with the
  *  React shell. A static `import "../editor/style.css"` in
- *  `CardMirrorEditor.tsx` put the whole ~16k-line sheet on every page whose
+ *  `DebateEditor.tsx` put the whole ~16k-line sheet on every page whose
  *  bundle merely imported `debate-editor` — including pages that only use
  *  the HTML bridge and never mount an editor. Loading it here keeps the sheet
  *  off those pages, and lands it before the engine builds any chrome, so
@@ -173,7 +173,7 @@ export function ensureBooted(): Promise<void> {
 }
 
 export function getContainer(): HTMLDivElement {
-  if (!container) throw new Error('CardMirror container requested before ensureBooted() resolved');
+  if (!container) throw new Error('Debate Editor container requested before ensureBooted() resolved');
   return container;
 }
 
@@ -239,7 +239,7 @@ export async function claim(
   await ensureBooted();
   const engine = engineModule;
   const view = engine?.getActiveView();
-  if (!view) throw new Error('CardMirror view unavailable after boot');
+  if (!view) throw new Error('Debate Editor view unavailable after boot');
   installOnChangePlugin(view);
 
   const isNewKey = currentBinding?.key !== binding.key;
@@ -368,7 +368,7 @@ function markUnreadable(key: string, html: string): void {
     // The server copy is untouched, but nothing in THIS pane will be saved
     // over it — so `html`, the one copy of whatever the pane would have
     // shown, would otherwise just be discarded when the user navigates away.
-    // `key` is `contentKey ?? title ?? "default"` (CardMirrorEditor.tsx) —
+    // `key` is `contentKey ?? title ?? "default"` (DebateEditor.tsx) —
     // free-form text, not a filename-safe id — so it's sanitized rather than
     // interpolated raw.
     download: { filename: `unreadable-${sanitizeForFilename(key)}.html`, content: html },

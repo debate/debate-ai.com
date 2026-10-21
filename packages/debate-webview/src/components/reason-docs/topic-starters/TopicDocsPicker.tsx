@@ -4,7 +4,7 @@
  * Format / topic dropdowns, side by side above the Topic Starters tree. Picking one
  * goes to that resolution's address, `/docs/<topic code>` (`vcx27`, `ld27a`;
  * the scheme is in `lib/reason-docs/topic-doc-paths`), which opens its first
- * starter in CardMirror and keeps the code in every starter link after it.
+ * starter in Debate Editor and keeps the code in every starter link after it.
  *
  * The topic dropdown lists every topic the format has had, grouped by year, so
  * any of them is one pick away.

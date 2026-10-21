@@ -1,6 +1,6 @@
 /**
  * The DOM markup `src/editor/index.ts` expects to already exist when it's
- * imported — ported verbatim from CardMirror's original `index.html` body
+ * imported — ported verbatim from Debate Editor's original `index.html` body
  * (minus `<script>`/`<head>`, which the host page and this package's own
  * dynamic import supply instead).
  *
@@ -16,14 +16,14 @@
  * cards, comments, numbering, collab chip, etc.) works exactly as upstream
  * intends. Two web-edition promo buttons from the original markup
  * (`download-app-btn`, `github-btn` — "download the desktop app" /
- * "CardMirror on GitHub") are dropped: they're optional and don't belong in
+ * "Debate Editor on GitHub") are dropped: they're optional and don't belong in
  * an embedded product surface.
  *
- * This is CardMirror's OWN ribbon/toolbar, kept as upstream ships it: one
+ * This is Debate Editor's OWN ribbon/toolbar, kept as upstream ships it: one
  * unbroken strip, `#ribbon-strip`, holding every panel at once and
  * scrolling left↔right when it outgrows its column. It is deliberately NOT
  * paged into tabs or split into sections. The React shell
- * (`CardMirrorEditor.tsx`) stacks `MenuBar.tsx` above this markup when
+ * (`DebateEditor.tsx`) stacks `MenuBar.tsx` above this markup when
  * `showToolbar` is set — a text-labeled row of dropdown menus over the
  * same commands this strip exposes as icons (plus the ones it has no
  * button for), Google-Docs-style.
@@ -237,9 +237,9 @@ export const RIBBON_HTML = `
     <button id="zoom-in-btn" type="button" aria-label="Zoom in"><span class="pmd-icon pmd-icon-plus" aria-hidden="true"></span></button>
     <button id="zoom-reset-btn" type="button" aria-label="Reset zoom to 100%" title="Reset to 100%"><span class="pmd-icon pmd-icon-reset" aria-hidden="true"></span></button>
   </div>
-  <!-- CardMirror mark: drag handle for the focused document's file
+  <!-- Debate Editor mark: drag handle for the focused document's file
        (file-drag-mark.ts). Hidden until the desktop host wires it, so it
        never shows in the web embed — but the engine binds it at load. -->
-  <button id="file-drag-mark" type="button" hidden aria-label="CardMirror"></button>
+  <button id="file-drag-mark" type="button" hidden aria-label="Debate Editor"></button>
 </div>
 `;

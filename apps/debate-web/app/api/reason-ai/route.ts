@@ -14,7 +14,7 @@ import { consumeDailyUsage, getUserTier, limitMessage, planLimitHeaders } from "
  * can reuse it rather than standing up its own proxy route — e.g.
  * debate-card-search's LLM Card Scoring AI assessment.
  *
- * The CardMirror upstream reason-editor was ported from calls Anthropic
+ * The Debate Editor upstream reason-editor was ported from calls Anthropic
  * directly from the browser with a user-pasted API key. debate-ai.com is a
  * shared multi-tenant app, so instead callers hit this route and the
  * server holds the one Anthropic key (ANTHROPIC_API_KEY).

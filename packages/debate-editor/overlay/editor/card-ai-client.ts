@@ -5,9 +5,9 @@
  *
  * Two routes, picked per call:
  *
- * - **The user's own key.** When CardMirror's own AI settings are switched on
+ * - **The user's own key.** When Debate Editor's own AI settings are switched on
  *   with a key (`aiConfigured()`), the call goes browser-direct through the
- *   engine's `callLlm`, exactly like every other CardMirror AI tool, and is
+ *   engine's `callLlm`, exactly like every other Debate Editor AI tool, and is
  *   billed on that key.
  * - **The site.** Otherwise it goes to debate-ai.com's
  *   `/api/card-ai-analysis` — the same endpoint as the evidence search's "AI
@@ -75,7 +75,7 @@ export async function requestSiteCardAi(
   return payload.result.trim();
 }
 
-/** Runs `action` on a card's text, on the user's own key when CardMirror has
+/** Runs `action` on a card's text, on the user's own key when Debate Editor has
  *  one, else through the site (see the module doc). */
 export async function runCardAi(action: CardAiAction, content: string, tag: string): Promise<string> {
   const llm = await import('./ai/llm.js');

@@ -1,9 +1,9 @@
 /*
- * CardMirror's chrome (#app, #ribbon, .pmd-nav-panel, #status-bar,
+ * Debate Editor's chrome (#app, #ribbon, .pmd-nav-panel, #status-bar,
  * #speech-doc-banner, the home screen, ...) is `position: fixed` against the
  * browser viewport by design — see the comments beside those rules in
  * style.css. That is correct for a page-owning deployment, but every host in
- * this app mounts CardMirror inside one column of a larger page (Flow's
+ * this app mounts Debate Editor inside one column of a larger page (Flow's
  * speech-doc panel, the split-mode editors, the /reason-editor route): fixed
  * chrome paints over the *whole* viewport there instead of staying inside
  * `.dec-cardmirror-embed`, hiding whatever sidebars and other panels the host
@@ -65,7 +65,7 @@ body.pmd-multi-doc .dec-cardmirror-embed #app {
 }
 
 /* Narrow embeds (the FIAT speech-doc panel, a phone-width `/reason-editor`
-   window) never get CardMirror's own page-owning mobile shell — see
+   window) never get Debate Editor's own page-owning mobile shell — see
    `detectEmbedded()`/`resolveMobileLayout` in mobile-layout.ts — so the
    full desktop ribbon stays mounted here instead of being replaced by it.
    It is one unbroken strip of every panel, so in a narrow column most of

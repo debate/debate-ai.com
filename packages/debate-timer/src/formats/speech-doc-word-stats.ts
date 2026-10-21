@@ -6,7 +6,7 @@
  *
  * Accepts either of the two shapes a speech doc takes in this app:
  *
- * - **CardMirror HTML** (a linked editor document): highlights are
+ * - **Debate Editor HTML** (a linked editor document): highlights are
  *   `span.pmd-highlight` (or `<mark>`), underlines are `span.pmd-underline`,
  *   `span.pmd-emphasis` or `<u>`, and tags/analytics/headings are
  *   `.pmd-tag` / `.pmd-analytic` / `.pmd-pocket|hat|block` / `<h1–6>`.
@@ -44,7 +44,7 @@ export const EMPTY_SPEECH_DOC_WORD_STATS: SpeechDocWordStats = {
 }
 
 /**
- * Whether `content` is HTML (a CardMirror document) rather than markdown.
+ * Whether `content` is HTML (a Debate Editor document) rather than markdown.
  * Markdown may carry inline tags (`<u>`, `<mark>`), so only block-level
  * markup marks a document as HTML.
  */

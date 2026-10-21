@@ -11,7 +11,7 @@ export interface ReasonDocument {
   content: string;
   /**
    * How `content` is encoded — `"cmir"` for an uploaded file kept in
-   * CardMirror's native format, `"html"` for one written in the editor.
+   * Debate Editor's native format, `"html"` for one written in the editor.
    * Absent on a row read before the column existed, which reads as HTML.
    */
   format?: string;

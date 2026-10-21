@@ -182,7 +182,7 @@ const dockVariants = cva(
        * It takes the column's width instead of its own content width, and
        * wraps onto a second row rather than growing past the column, so it
        * can never reach across the border into the page content beside it —
-       * a CardMirror editor, in the case of `/reason-editor` and `/doc`.
+       * a Debate Editor, in the case of `/reason-editor` and `/doc`.
        */
       fluid: {
         false: "mx-auto w-max mt-4 sm:mt-8 h-[58px] sm:h-[58px] gap-1.5 sm:gap-2",

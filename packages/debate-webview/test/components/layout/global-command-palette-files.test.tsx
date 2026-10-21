@@ -4,7 +4,7 @@
  *
  * The docs provider is stood in for, so the palette sees a fixed set of the
  * reader's files and topic starters — one of them a `.cmir` whose text only
- * CardMirror's engine (registered here as a fake) can read.
+ * Debate Editor's engine (registered here as a fake) can read.
  */
 import { act } from "react"
 import { createRoot, type Root } from "react-dom/client"
@@ -22,7 +22,7 @@ vi.mock("../../../src/components/reason-docs/ReasonDocsProvider", () => ({
 }))
 
 import { GlobalCommandPalette, isKShortcut, openGlobalCommandPalette } from "../../../src/components/layout/command-palette/GlobalCommandPalette"
-import { registerStoredCmir, type StoredCmir } from "../../../src/lib/cardmirror/lazy-stored-cmir"
+import { registerStoredCmir, type StoredCmir } from "../../../src/lib/debate-editor/lazy-stored-cmir"
 
 ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
 

@@ -18,7 +18,7 @@ Search Everything palette already used, now working everywhere else too.
 
 Every feature doc in this repo has carried a "Nav: … in Ctrl/Cmd-Shift-Space's
 command palette" line for a while, but that was only ever true inside the
-Reason Editor: the shortcut is implemented entirely inside the CardMirror
+Reason Editor: the shortcut is implemented entirely inside the Debate Editor
 editor engine (`packages/debate-editor/src/editor/quick-card-search-ui.ts`),
 which only mounts on `/reason-editor`. Everywhere else in the app — `/tools`,
 `/settings`, `/judges`, both workspace hubs — the same keys did nothing, even
@@ -70,7 +70,7 @@ matching `ToolRecordSyncProvider`'s reach, because a framed page (e.g.
 listener in the parent document would never see its keystrokes.
 
 `/reason-editor` (and `/reason-editor/[slug]`) is the one place this palette
-stands down entirely (`ownedByEditor`): the CardMirror engine's own palette
+stands down entirely (`ownedByEditor`): the Debate Editor engine's own palette
 already owns `Ctrl`/`Cmd`-Shift-Space there and does strictly more (quick
 cards, commands, files), so this component neither binds the shortcut nor
 renders while that route is active, rather than the two racing over one key

@@ -201,7 +201,7 @@ describe("FileTree", () => {
     const h = handlers();
     mount(<FileTree documents={DOCS} activeId={1} {...h} />);
     expect(bodyText()).toContain("Child");
-    // Every file is a CardMirror file however it arrived — no DOCX/CMIR label.
+    // Every file is a Debate Editor file however it arrived — no DOCX/CMIR label.
     expect(bodyText()).not.toContain("DOCX");
     expect(bodyText()).not.toContain("CMIR");
 
