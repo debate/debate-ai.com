@@ -115,6 +115,30 @@ function moonshineOrtWasmBase(): Plugin {
 }
 
 /**
+ * vinext defines `typeof window` as `"object"` for the client environment so
+ * server-only branches drop out of the page bundles. Vite builds Web Workers
+ * with that same client define, but a worker has no `window`: in the card
+ * Read aloud Kokoro worker, Transformers.js's `typeof window !== "undefined"
+ * && window.document !== undefined` browser check folded to a bare
+ * `window.document`, and the worker died with "window is not defined" before
+ * it could load the model (the Settings Download button showed exactly that).
+ *
+ * This worker-only plugin runs after vite:define has merged the defines into
+ * the worker's rolldown options and takes the `typeof window` one back out,
+ * so worker code sees the real `typeof window` (`"undefined"`).
+ */
+function workerKeepsTypeofWindow(): Plugin {
+  return {
+    name: "debate:worker-keeps-typeof-window",
+    enforce: "post",
+    options(options) {
+      const define = options.transform?.define;
+      if (define && "typeof window" in define) delete define["typeof window"];
+    },
+  };
+}
+
+/**
  * Minifier settings for the two server environments (rsc and ssr), which make
  * up the Worker.
  *
@@ -218,8 +242,9 @@ export default defineConfig({
   // Web Workers (the card Read aloud Kokoro worker in @debate/editor) are
   // built as ES modules: the default iife format drops `import.meta`, which
   // Transformers.js / ONNX Runtime Web use to find their wasm, and can't
-  // code-split.
-  worker: { format: "es" },
+  // code-split. `workerKeepsTypeofWindow` undoes vinext's client-only
+  // `typeof window` define, which a worker would otherwise inherit.
+  worker: { format: "es", plugins: () => [workerKeepsTypeofWindow()] },
   build: {
     // Never inline assets as `data:` URIs. vinext's next/image shim decides
     // whether to route a source through `/_vinext/image` by checking whether
