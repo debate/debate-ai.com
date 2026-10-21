@@ -68,6 +68,7 @@ export {
   type DebaterLevelProgress,
   type DebaterLevelState,
 } from "./lib/debater-levels";
+export { buildDebaterMockProfiles, type DebaterMockProfile } from "./lib/debater-mock-profiles";
 export {
   DEBATER_ACTIVITY_EVENT,
   DEBATER_XP_AWARDED_EVENT,
