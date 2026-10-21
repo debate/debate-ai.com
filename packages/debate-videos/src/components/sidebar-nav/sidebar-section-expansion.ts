@@ -9,11 +9,7 @@
  * kept out of `ToolNavTree`/`VideoSidebarTree` so both trees share one
  * definition of them and they can be tested without a DOM.
  *
-<<<<<<<< HEAD:packages/debate-videos/src/components/sidebar/sidebar-section-expansion.ts
- * @module components/sidebar/sidebar-section-expansion
-========
  * @module components/sidebar-nav/sidebar-section-expansion
->>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/sidebar-nav/sidebar-section-expansion.ts
  */
 
 import { VIDEOS_SECTION_ID } from "./sidebar-active-section";

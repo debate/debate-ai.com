@@ -94,11 +94,7 @@ export {
   pickIconHoverEffect,
   useSidebarIconHover,
 } from "./ui/layout/sidebar-icon-hover";
-<<<<<<< HEAD
-export { LibrarySidebarTree } from "./components/sidebar/LibrarySidebarTree";
-=======
 export { LibrarySidebarTree } from "./components/sidebar-nav/LibrarySidebarTree";
->>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 export { LecturesPage } from "./panels/LecturesPage";
 export { DebateVideosPage } from "./panels/DebateVideosPanel";
 export { LeaderboardPanel } from "./panels/leaderboard/RankingsLeaderboardPanel";
@@ -242,20 +238,6 @@ export {
   VIDEO_RELATION_LABELS,
   type VideoRelationKind,
 } from "./lib/video-relations";
-<<<<<<< HEAD
-export { WatchAnalysisPanel, type LinkedVideo } from "./components/videos/watch/panels/WatchAnalysisPanel";
-export { WatchStackPlaylist, stackMemberLabel } from "./components/videos/watch/panels/WatchStackPlaylist";
-export { stackKeyOf } from "./components/videos/video-grid/video-stacks";
-export { WatchSidePanel, type WatchSideTab } from "./components/videos/watch/panels/WatchSidePanel";
-export { WatchRoundPanel, type SpeechFocusRequest } from "./components/videos/watch/panels/WatchRoundPanel";
-export { WatchSpeechTimeline } from "./components/videos/watch/prediction/WatchSpeechTimeline";
-export { PersistentVideoPlayer } from "./components/videos/video-player/PersistentVideoPlayer";
-export { SlowSpreadButton, SLOW_SPREAD_RATE } from "./components/videos/video-player/SlowSpreadButton";
-export { ToolNavTree } from "./components/sidebar/ToolNavTree";
-export { DocsNavTree, DOCS_TREE_URL, type DocsTreeNode } from "./components/sidebar/DocsNavTree";
-export { sidebarSectionForPath } from "./components/sidebar/sidebar-active-section";
-export { QuickLinksGrid } from "./components/gallery/QuickLinksGrid";
-=======
 export { WatchAnalysisPanel, type LinkedVideo } from "./components/watch/WatchAnalysisPanel";
 export { WatchStackPlaylist, stackMemberLabel } from "./components/watch/WatchStackPlaylist";
 export { stackKeyOf } from "./components/video-grid/video-stacks";
@@ -268,7 +250,6 @@ export { ToolNavTree } from "./components/sidebar-nav/ToolNavTree";
 export { DocsNavTree, DOCS_TREE_URL, type DocsTreeNode } from "./components/sidebar-nav/DocsNavTree";
 export { sidebarSectionForPath } from "./components/sidebar-nav/sidebar-active-section";
 export { QuickLinksGrid } from "./components/category-gallery/QuickLinksGrid";
->>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 export {
   SIDEBAR_TOOL_SECTIONS,
   APP_DOCK_LINKS,
@@ -276,11 +257,7 @@ export {
   TOOLS_ROOT_HREF,
   type SidebarToolLink,
   type SidebarToolSection,
-<<<<<<< HEAD
-} from "./components/sidebar/sidebar-tool-sections";
-=======
 } from "./components/sidebar-nav/sidebar-tool-sections";
->>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 export {
   SIDEBAR_VIDEO_LINKS,
   SIDEBAR_VIDEO_LINKS_BY_ID,
@@ -292,11 +269,7 @@ export {
   VIDEO_COLLEGE_FILTER_LINKS,
   VIDEO_REFERENCE_LINKS,
   type SidebarVideoLink,
-<<<<<<< HEAD
-} from "./components/sidebar/sidebar-video-links";
-=======
 } from "./components/sidebar-nav/sidebar-video-links";
->>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 export {
   FOOTER_LINKS,
   type FooterLink,
@@ -313,11 +286,7 @@ export {
   isGenericToolSidebarRoute,
   isVideoLibraryPath,
   VIDEO_LIBRARY_HREFS,
-<<<<<<< HEAD
-} from "./components/sidebar/sidebar-routes";
-=======
 } from "./components/sidebar-nav/sidebar-routes";
->>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 export { Footer as ToolSidebarFooter } from "./ui/layout/footer";
 export {
   CategoryDockProvider,

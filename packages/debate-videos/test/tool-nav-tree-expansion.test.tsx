@@ -35,17 +35,6 @@ vi.mock("next/image", () => ({
     createElement("img", { src: typeof src === "string" ? src : (src as { src: string }).src, alt }),
 }));
 
-<<<<<<< HEAD
-const { ToolNavTree } = await import("../src/components/sidebar/ToolNavTree");
-const { SIDEBAR_TOOL_SECTIONS } = await import(
-  "../src/components/sidebar/sidebar-tool-sections"
-);
-const { VIDEOS_SECTION_ID } = await import(
-  "../src/components/sidebar/sidebar-active-section"
-);
-const { ALL_SIDEBAR_SECTION_IDS, toggleExpandedSection, withSectionExpanded } = await import(
-  "../src/components/sidebar/sidebar-section-expansion"
-=======
 const { ToolNavTree } = await import("../src/components/sidebar-nav/ToolNavTree");
 const { SIDEBAR_TOOL_SECTIONS } = await import(
   "../src/components/sidebar-nav/sidebar-tool-sections"
@@ -55,7 +44,6 @@ const { VIDEOS_SECTION_ID } = await import(
 );
 const { ALL_SIDEBAR_SECTION_IDS, toggleExpandedSection, withSectionExpanded } = await import(
   "../src/components/sidebar-nav/sidebar-section-expansion"
->>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 );
 
 /** One href per section, to assert that section's links are mounted. */

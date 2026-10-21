@@ -38,26 +38,15 @@ import { WatchTranscriptPanel } from "./WatchTranscriptPanel"
 import { WatchDocumentPanel } from "./WatchDocumentPanel"
 import { WatchAnalysisPanel, type LinkedVideo } from "./WatchAnalysisPanel"
 import { WatchRoundPanel, type SpeechDetectionControl, type SpeechFocusRequest } from "./WatchRoundPanel"
-<<<<<<<< HEAD:packages/debate-videos/src/components/videos/watch/panels/WatchSidePanel.tsx
-import { buildRoundSpeeches, type RoundSpeech } from "../../../../lib/round-speeches"
-import type { RoundContext } from "../../../../lib/speech-outcomes"
-========
 import { buildRoundSpeeches, type RoundSpeech } from "../../lib/round-speeches"
 import type { RoundContext } from "../../lib/speech-outcomes"
->>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/watch/WatchSidePanel.tsx
 import {
   orderDocuments,
   VIDEO_DOCUMENT_LABELS,
   type VideoDocument,
-<<<<<<<< HEAD:packages/debate-videos/src/components/videos/watch/panels/WatchSidePanel.tsx
-} from "../../../../lib/video-documents"
-import type { TranscriptSnippet } from "../../transcript/transcriptUtils"
-import { formatCount } from "../../../../lib/format-count"
-========
 } from "../../lib/video-documents"
 import type { TranscriptSnippet } from "../transcript/transcriptUtils"
 import { formatCount } from "../../lib/format-count"
->>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/watch/WatchSidePanel.tsx
 
 /** A host-supplied tab: its label in the strip and what it shows when open. */
 export interface WatchSideTab {

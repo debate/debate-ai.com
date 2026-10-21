@@ -10,13 +10,8 @@
 "use client"
 
 import type { ReactNode } from "react"
-<<<<<<<< HEAD:packages/debate-videos/src/components/videos/watch/prediction/WatchMatchupPrediction.tsx
-import { cn } from "../../../../ui/lib/utils"
-import type { WatchMatchupPrediction as Prediction } from "../../../../lib/watch-matchup-prediction"
-========
 import { cn } from "../../ui/lib/utils"
 import type { WatchMatchupPrediction as Prediction } from "../../lib/watch-matchup-prediction"
->>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/watch/WatchMatchupPrediction.tsx
 
 const pct = (p: number) => `${(p * 100).toFixed(1)}%`
 

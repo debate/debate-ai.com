@@ -7,11 +7,7 @@
  * expands that section again rather than leaving you on a page whose nav is
  * shut. Nothing else collapses.
  *
-<<<<<<<< HEAD:packages/debate-videos/src/components/sidebar/sidebar-active-section.ts
- * @module components/sidebar/sidebar-active-section
-========
  * @module components/sidebar-nav/sidebar-active-section
->>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/sidebar-nav/sidebar-active-section.ts
  */
 
 import { SIDEBAR_TOOL_SECTIONS } from "./sidebar-tool-sections";
