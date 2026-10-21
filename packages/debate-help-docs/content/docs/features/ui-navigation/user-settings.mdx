@@ -400,9 +400,13 @@ today's per-activity counts add across devices the same way.
 The rest of the state is still merged field by field (`mergeDebaterLevel`): the
 union of completed milestones, today's challenge progress when both are from the
 same UTC day (otherwise the later day), and the union of the recent XP log.
-Known gaps: a daily challenge whose target is only reached by the combined
-count is paid on the next activity, not at the moment of the merge; entries
-written before per-day tallies existed, and copies from an older client without
+A daily challenge whose target is only reached by the combined count is paid
+by `settleDailyChallenges` the next time the tab loads or regains focus (not at
+the instant of the merge): the bonus event id is `settle:<day>:<challenge>` and
+the XP goes to the ledger `base` (merged by max), so two devices settling the
+same merged state pay it once.
+Known gaps: two devices settling different challenges before they sync can lose
+one bonus to the max-merge; entries written before per-day tallies existed, and copies from an older client without
 a ledger, fall back to the larger side. That can under-count but never
 double-counts.
 

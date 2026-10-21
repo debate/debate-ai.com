@@ -422,6 +422,55 @@ export function applyDebaterActivity(
   return { state: next, xpGained, completedChallenges, previousLevel, newLevel, leveledUp: newLevel > previousLevel };
 }
 
+/** What {@link settleDailyChallenges} paid. */
+export type DebaterSettleResult = DebaterActivityResult;
+
+/**
+ * Pay every daily challenge whose target today's counts already meet but that
+ * is not yet marked done — which happens when a cross-device merge, not a
+ * local activity, pushed the combined count past the target. The bonus event
+ * id is deterministic (`settle:<day>:<challenge>`) so two devices settling the
+ * same merged state log the same event, and the XP goes to the ledger's
+ * `base` entry (merged by max) rather than a device entry (merged by sum) so
+ * the bonus is not paid twice. Returns the rolled `state` when nothing is owed.
+ */
+export function settleDailyChallenges(
+  state: DebaterLevelState,
+  nowMs: number,
+  challenges: DebaterChallenge[] = DEBATER_CHALLENGES,
+): DebaterSettleResult {
+  const previousLevel = computeLevelProgress(state.totalXp).level;
+  const rolled = rollDebaterDay(state, utcDayKeyFor(nowMs));
+  const done = new Set(rolled.daily.completedChallengeIds);
+  const owed = challenges.filter(
+    (c) => c.repeat === "daily" && !done.has(c.id) && (rolled.daily.counts[c.activity] ?? 0) >= c.target,
+  );
+  if (owed.length === 0) {
+    return { state: rolled, xpGained: 0, completedChallenges: [], previousLevel, newLevel: previousLevel, leveledUp: false };
+  }
+  const dayKey = rolled.daily.dayKey;
+  const events: DebaterXpEvent[] = owed.map((c) => ({
+    id: `settle:${dayKey}:${c.id}`,
+    atMs: nowMs,
+    source: c.id,
+    label: `Challenge: ${c.title}`,
+    xp: c.xpReward,
+  }));
+  const xpGained = events.reduce((sum, e) => sum + e.xp, 0);
+  const totalXp = rolled.totalXp + xpGained;
+  const next: DebaterLevelState = {
+    ...rolled,
+    totalXp,
+    daily: { ...rolled.daily, completedChallengeIds: [...rolled.daily.completedChallengeIds, ...owed.map((c) => c.id)] },
+    recentXp: [...events.reverse(), ...rolled.recentXp].slice(0, MAX_RECENT_XP_EVENTS),
+  };
+  if (rolled.ledger) {
+    next.ledger = { base: { ...rolled.ledger.base, xp: rolled.ledger.base.xp + xpGained }, devices: rolled.ledger.devices };
+  }
+  const newLevel = computeLevelProgress(totalXp).level;
+  return { state: next, xpGained, completedChallenges: owed, previousLevel, newLevel, leveledUp: newLevel > previousLevel };
+}
+
 /** The ledger after `deviceId` earns `xp` and `n` of `kind`; a first entry snapshots the existing totals as `base`. */
 function addToLedger(
   state: DebaterLevelState,
