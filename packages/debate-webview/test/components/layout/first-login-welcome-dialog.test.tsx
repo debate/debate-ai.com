@@ -13,7 +13,7 @@ import { renderToStaticMarkup } from "react-dom/server"
 import {
   WELCOME_LINKS,
   WelcomeLinkList,
-} from "../../../src/components/layout/FirstLoginWelcomeDialog"
+} from "../../../src/components/layout/auth/FirstLoginWelcomeDialog"
 
 describe("WELCOME_LINKS", () => {
   it("outlines the docs, practice debates and videos", () => {

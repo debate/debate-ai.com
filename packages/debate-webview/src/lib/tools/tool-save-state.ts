@@ -1,6 +1,6 @@
 /**
  * @fileoverview Pure helper behind the "Saved to your account" badge in a
- * tool page's header (`components/tools/ToolSyncBadge.tsx`).
+ * tool page's header (`components/tools/sync/ToolSyncBadge.tsx`).
  *
  * `ToolSyncStatusPanel` answers "is everything synced?" once, on `/tools`;
  * this answers the same question for the one tool a person is looking at,

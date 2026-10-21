@@ -1,6 +1,6 @@
 import { Suspense } from "react"
 import { SearchInterface } from "@debate/research-evidence"
-import { ToolSyncBadge } from "../../components/tools/ToolSyncBadge"
+import { ToolSyncBadge } from "../../components/tools/sync/ToolSyncBadge"
 import { ReasonDocsSidebarPanels } from "../../components/reason-docs/ReasonDocsSidebarPanels"
 import { ChromeErrorBoundary } from "../../lib/ui/layout/chrome-error-boundary"
 

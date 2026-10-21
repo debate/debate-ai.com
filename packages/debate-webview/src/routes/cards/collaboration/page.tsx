@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { SprintNotesWithIdentity } from "../../../components/research/SprintNotesWithIdentity"
+import { SprintNotesWithIdentity } from "../../../components/research/identity/SprintNotesWithIdentity"
 import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHeader"
 
 export default function CardsCollaborationPage() {

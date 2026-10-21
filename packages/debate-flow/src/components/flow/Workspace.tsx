@@ -10,8 +10,8 @@ import { useFlowStore } from "../../lib/store/useFlowStore";
 
 import InfoPanel from "./InfoPanel";
 import PrintView from "./PrintView";
-import RoundHeader from "./RoundHeader";
-import SheetTitleBar from "./SheetTitleBar";
+import RoundHeader from "./header/RoundHeader";
+import SheetTitleBar from "./header/SheetTitleBar";
 import Sidebar from "./Sidebar";
 
 // Stands in for a browser-only piece in the server build. The flow grid is

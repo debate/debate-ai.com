@@ -13,7 +13,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { act, createElement, useRef } from "react";
 import { createRoot, type Root } from "react-dom/client";
 
-import { useDocumentPictureInPicture } from "../src/components/videos/video-player/useDocumentPictureInPicture";
+import { useDocumentPictureInPicture } from "../src/components/video-player/useDocumentPictureInPicture";
 
 type Api = ReturnType<typeof useDocumentPictureInPicture>;
 

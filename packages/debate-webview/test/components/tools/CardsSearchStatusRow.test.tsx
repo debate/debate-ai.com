@@ -1,11 +1,11 @@
 import { describe, expect, it, vi } from "vitest"
 import { renderToStaticMarkup } from "react-dom/server"
 
-vi.mock("../../../src/components/tools/ToolSyncBadge", () => ({
+vi.mock("../../../src/components/tools/sync/ToolSyncBadge", () => ({
   ToolSyncBadge: ({ href }: { href: string }) => <span data-testid="sync-badge" data-href={href} />,
 }))
 
-import { CardsSearchStatusRow } from "../../../src/components/tools/CardsSearchStatusRow"
+import { CardsSearchStatusRow } from "../../../src/components/tools/sync/CardsSearchStatusRow"
 
 describe("CardsSearchStatusRow", () => {
   it("mounts the sync badge for the /research/cards collections", () => {

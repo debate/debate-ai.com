@@ -6,7 +6,7 @@ Email templates, plus `renderEmail(id, props)` → `{ subject, html, text }`.
 - **One registry.** Every template is listed in `src/registry.tsx`
   (`EMAIL_TEMPLATES`) with its subject builder, sample props and the route
   that sends it. The admin Emails section (`/admin#emails`,
-  `packages/debate-webview/src/components/admin/EmailsPanel.tsx`) lists
+  `packages/debate-webview/src/components/admin/users/EmailsPanel.tsx`) lists
   whatever the registry holds via `GET /api/admin/emails`, so a registered
   template shows up there with no admin change.
 - **Inline styles only.** Mail clients drop `<style>`; share the shell and

@@ -16,7 +16,7 @@
 import { useEffect, useRef, useState } from "react";
 import grab from "grab-url";
 import type { VideoStacksResponse, VideoType } from "../types/videos";
-import { collectStackKeys, type VideoStackMap } from "../components/videos/video-grid/video-stacks";
+import { collectStackKeys, type VideoStackMap } from "../components/video-grid/video-stacks";
 import { queryVideoIndexStacks } from "../state/videoIndexCache";
 
 /** Stack keys resolved per request; matches the server's own ceiling. */

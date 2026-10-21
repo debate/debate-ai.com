@@ -1,6 +1,6 @@
 import { Suspense } from "react"
 import { FeaturesPanel } from "../../lib/ui/features/FeaturesPanel"
-import { SiteFooter } from "../../components/layout/SiteFooter"
+import { SiteFooter } from "../../components/layout/footer/SiteFooter"
 
 export default function FeaturesPage() {
   return (
