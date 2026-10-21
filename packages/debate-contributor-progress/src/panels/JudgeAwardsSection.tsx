@@ -165,21 +165,37 @@ export function JudgeAwardsSection({ debaterId }: { debaterId: string }) {
   )
 }
 
-/** All five judge awards and what each one recognizes. */
-export function JudgeAwardShowcase() {
+/**
+ * All five judge awards and what each one recognizes. Given `earned` (the
+ * Debater Level page's mock profiles), each award a judge gave shows who gave
+ * it and where, and the rest show as not yet awarded.
+ */
+export function JudgeAwardShowcase({ earned }: { earned?: JudgeAward[] } = {}) {
   return (
     <PanelSection
       title="Judge awards"
       description="Only a judge can give these, once per award per tournament. They appear on your debater page with the judge's name."
     >
       <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {JUDGE_AWARDS.map((award) => (
-          <li key={award.kind} className="flex flex-col items-center gap-1 rounded-lg border p-3 text-center">
-            <TiltBadge src={award.badgeUrl} alt={award.title} />
-            <span className="font-medium">{award.title}</span>
-            <p className="text-muted-foreground text-xs">{award.description}</p>
-          </li>
-        ))}
+        {JUDGE_AWARDS.map((award) => {
+          const given = earned?.filter((entry) => entry.kind === award.kind) ?? []
+          return (
+            <li
+              key={award.kind}
+              className={`flex flex-col items-center gap-1 rounded-lg border p-3 text-center${earned && given.length === 0 ? " opacity-50" : ""}`}
+            >
+              <TiltBadge src={award.badgeUrl} alt={award.title} />
+              <span className="font-medium">{award.title}</span>
+              <p className="text-muted-foreground text-xs">{award.description}</p>
+              {given.map((entry) => (
+                <span key={entry.id} className="text-sm">
+                  Awarded by {entry.judgeName} · {entry.tournament}
+                </span>
+              ))}
+              {earned && given.length === 0 ? <span className="text-muted-foreground text-xs">Not yet awarded</span> : null}
+            </li>
+          )
+        })}
       </ul>
     </PanelSection>
   )
