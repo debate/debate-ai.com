@@ -260,11 +260,28 @@ export function computeLevelProgress(totalXp: number): DebaterLevelProgress {
 
 /** One entry in a debater's recent XP log. */
 export interface DebaterXpEvent {
+  /**
+   * Unique per event, so a cross-device merge can tell activity done on two
+   * devices from the same event seen twice. Absent on events logged before the
+   * ledger existed; those merge by the larger count instead.
+   */
+  id?: string;
   atMs: number;
   /** An activity kind, or a challenge id for a challenge bonus. */
   source: string;
   label: string;
   xp: number;
+  /** Activities this event recorded; absent on challenge bonuses. */
+  count?: number;
+}
+
+/** A fresh random event id (`atMs` keeps ids roughly sortable when debugging). */
+export function newXpEventId(nowMs: number): string {
+  const random =
+    typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+      ? crypto.randomUUID()
+      : Math.random().toString(36).slice(2, 12);
+  return `${nowMs.toString(36)}-${random}`;
 }
 
 /** Maximum log entries kept in `DebaterLevelState.recentXp`. */
@@ -326,6 +343,28 @@ export function rollDebaterDay(state: DebaterLevelState, dayKey: string): Debate
   return { ...state, daily: { dayKey, counts: {}, completedChallengeIds: [] } };
 }
 
+/** The ledger after `deviceId` earns `xp` and `n` of `kind`; a first entry snapshots the existing totals as `base`. */
+function addToLedger(
+  before: DebaterLevelState,
+  deviceId: string,
+  kind: DebaterActivityKind,
+  n: number,
+  xp: number,
+): DebaterLedger {
+  const ledger: DebaterLedger = before.ledger ?? {
+    base: { xp: before.totalXp, counts: { ...before.lifetimeCounts } },
+    devices: {},
+  };
+  const entry = ledger.devices[deviceId] ?? { xp: 0, counts: {} };
+  return {
+    base: ledger.base,
+    devices: {
+      ...ledger.devices,
+      [deviceId]: { xp: entry.xp + xp, counts: { ...entry.counts, [kind]: (entry.counts[kind] ?? 0) + n } },
+    },
+  };
+}
+
 /** What one `applyDebaterActivity` call earned. */
 export interface DebaterActivityResult {
   state: DebaterLevelState;
@@ -362,7 +401,7 @@ export function applyDebaterActivity(
   const today = (rolled.daily.counts[kind] ?? 0) + n;
   const events: DebaterXpEvent[] = [];
   const activityXp = ACTIVITY_XP[kind] * n;
-  events.push({ atMs: nowMs, source: kind, label: n > 1 ? `${DEBATER_ACTIVITY_LABELS[kind]} ×${n}` : DEBATER_ACTIVITY_LABELS[kind], xp: activityXp });
+  events.push({ id: eventId, atMs: nowMs, source: kind, count: n, label: n > 1 ? `${DEBATER_ACTIVITY_LABELS[kind]} ×${n}` : DEBATER_ACTIVITY_LABELS[kind], xp: activityXp });
 
   const dailyDone = new Set(rolled.daily.completedChallengeIds);
   const milestonesDone = new Set(rolled.completedMilestoneIds);
@@ -378,8 +417,7 @@ export function applyDebaterActivity(
       milestonesDone.add(challenge.id);
     }
     completedChallenges.push(challenge);
-    bonuses.push({ id: challenge.id, xp: challenge.xpReward, repeat: challenge.repeat });
-    events.push({ atMs: nowMs, source: challenge.id, label: `Challenge: ${challenge.title}`, xp: challenge.xpReward });
+    events.push({ id: `${eventId}:${challenge.id}`, atMs: nowMs, source: challenge.id, label: `Challenge: ${challenge.title}`, xp: challenge.xpReward });
   }
 
   const xpGained = events.reduce((sum, event) => sum + event.xp, 0);
