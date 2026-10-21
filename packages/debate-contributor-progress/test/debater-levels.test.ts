@@ -109,3 +109,25 @@ describe("parseDebaterLevelState", () => {
     expect(parseDebaterLevelState({ ...state, lifetimeCounts: { bogus: 1 } })).toBeNull();
   });
 });
+
+describe("applyDebaterActivity event ledger", () => {
+  it("stamps the activity event with a unique id and its count", () => {
+    const a = applyDebaterActivity(createDebaterLevelState(), "card_cut", DAY1, 2, undefined, "evt");
+    expect(a.state.recentXp.at(-1)).toMatchObject({ id: "evt", source: "card_cut", count: 2 });
+    const b = applyDebaterActivity(createDebaterLevelState(), "card_cut", DAY1);
+    const c = applyDebaterActivity(createDebaterLevelState(), "card_cut", DAY1);
+    expect(b.state.recentXp[0]?.id).toBeTruthy();
+    expect(b.state.recentXp[0]?.id).not.toBe(c.state.recentXp[0]?.id);
+  });
+
+  it("gives challenge bonuses their own id derived from the event", () => {
+    let state = createDebaterLevelState();
+    let last = applyDebaterActivity(state, "card_cut", DAY1, 1, undefined, "e1");
+    for (let i = 0; i < 6 && last.completedChallenges.length === 0; i += 1) {
+      state = last.state;
+      last = applyDebaterActivity(state, "card_cut", DAY1, 1, undefined, `e${i + 2}`);
+    }
+    const bonus = last.state.recentXp.find((e) => e.source !== "card_cut");
+    if (bonus) expect(bonus.id).toMatch(/^e\d+:/);
+  });
+});

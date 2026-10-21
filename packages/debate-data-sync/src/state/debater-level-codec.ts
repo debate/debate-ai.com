@@ -85,33 +85,99 @@ function asDaily(value: unknown): { dayKey: string; counts: Counts; completedCha
   };
 }
 
-function asXpEvents(value: unknown): { atMs: number; source: string }[] {
+interface XpEvent {
+  id?: string;
+  atMs: number;
+  source: string;
+  xp?: number;
+  count?: number;
+}
+
+function asXpEvents(value: unknown): XpEvent[] {
   if (!Array.isArray(value)) return [];
   return value.filter(
-    (e): e is { atMs: number; source: string } =>
+    (e): e is XpEvent =>
       typeof e === "object" && e !== null &&
       typeof (e as { atMs?: unknown }).atMs === "number" &&
       typeof (e as { source?: unknown }).source === "string",
   );
 }
 
+function utcDay(atMs: number): string {
+  return new Date(atMs).toISOString().slice(0, 10);
+}
+
+interface Side {
+  totalXp: number;
+  lifetimeCounts: Counts;
+  daily: ReturnType<typeof asDaily>;
+  events: XpEvent[];
+  milestones: string[];
+}
+
+function asSide(state: Record<string, unknown> & { totalXp: number }): Side {
+  return {
+    totalXp: state.totalXp,
+    lifetimeCounts: asCounts(state.lifetimeCounts),
+    daily: asDaily(state.daily),
+    events: asXpEvents(state.recentXp),
+    milestones: asStrings(state.completedMilestoneIds),
+  };
+}
+
+/**
+ * `base` plus the ledger events only `other` has seen. An event counts as
+ * unseen by `base` when its id is missing from `base`'s log and it is not older
+ * than `base`'s oldest retained event (a full log has dropped older ones, so
+ * those may well be included in `base`'s totals already). Events without an
+ * id predate the ledger and are never added. A challenge bonus already paid
+ * in `base` is not paid twice.
+ */
+function withUnseenEvents(base: Side, other: Side): Pick<Side, "totalXp" | "lifetimeCounts"> & { dailyCounts: Counts } {
+  const known = new Set(base.events.map((e) => e.id).filter((id): id is string => !!id));
+  const full = base.events.length >= MAX_RECENT_XP_EVENTS;
+  const floorMs = base.events.reduce((min, e) => Math.min(min, e.atMs), Infinity);
+  let totalXp = base.totalXp;
+  const lifetimeCounts = { ...base.lifetimeCounts };
+  const dailyCounts = { ...base.daily.counts };
+  for (const e of other.events) {
+    if (!e.id || known.has(e.id) || (full && e.atMs < floorMs)) continue;
+    const xp = typeof e.xp === "number" && Number.isFinite(e.xp) && e.xp > 0 ? e.xp : 0;
+    const isActivity = typeof e.count === "number" && Number.isFinite(e.count) && e.count > 0;
+    if (isActivity) {
+      lifetimeCounts[e.source] = (lifetimeCounts[e.source] ?? 0) + (e.count as number);
+      if (utcDay(e.atMs) === base.daily.dayKey) dailyCounts[e.source] = (dailyCounts[e.source] ?? 0) + (e.count as number);
+    } else if (base.milestones.includes(e.source) || base.daily.completedChallengeIds.includes(e.source)) {
+      continue;
+    }
+    totalXp += xp;
+  }
+  return { totalXp, lifetimeCounts, dailyCounts };
+}
+
 /**
  * Conflict rule that supersedes {@link preferHigherDebaterXp}: combine the two
  * copies field by field instead of keeping one whole record, so activity
- * earned on each device survives. Counts, totals and milestones only ever
- * grow, so the per-kind maximum / union is safe; today's tally is merged only
- * when both copies are from the same UTC day, otherwise the later day wins;
- * the XP log is the newest-first union, de-duplicated by time and source.
+ * earned on each device survives. Milestones are a union, today's tally is
+ * merged only when both copies are from the same UTC day (otherwise the later
+ * day wins), and the XP log is the newest-first union, de-duplicated by id
+ * (time and source for events logged before ids existed).
  *
- * Without a per-event ledger the same activity done on both devices can't be
- * told from two separate ones, so counts take the larger side (never a sum)
- * and the result can under-count but never double-count.
+ * Totals and counts come from the per-event ledger: each copy gains the
+ * events only the other has seen, and the larger result wins per field. That
+ * adds activity done on two devices in the same window while never counting
+ * one event twice. Copies with no ids (older clients) fall back to the larger
+ * value per field, which can under-count but never double-counts.
  */
 export function mergeDebaterLevel(local: unknown, remote: unknown): unknown {
   if (!hasValidXp(local)) return remote;
   if (!hasValidXp(remote)) return local;
-  const dl = asDaily(local.daily);
-  const dr = asDaily(remote.daily);
+  const l = asSide(local);
+  const r = asSide(remote);
+  const vl = withUnseenEvents(l, r);
+  const vr = withUnseenEvents(r, l);
+  const dl = { ...l.daily, counts: maxCounts(l.daily.counts, vl.dailyCounts) };
+  const dr = { ...r.daily, counts: maxCounts(r.daily.counts, vr.dailyCounts) };
   const daily =
     dl.dayKey === dr.dayKey
       ? {
@@ -123,9 +189,9 @@ export function mergeDebaterLevel(local: unknown, remote: unknown): unknown {
         ? dl
         : dr;
   const seen = new Set<string>();
-  const recentXp = [...asXpEvents(local.recentXp), ...asXpEvents(remote.recentXp)]
+  const recentXp = [...l.events, ...r.events]
     .filter((e) => {
-      const key = `${e.atMs}|${e.source}`;
+      const key = e.id ?? `${e.atMs}|${e.source}`;
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
@@ -135,10 +201,13 @@ export function mergeDebaterLevel(local: unknown, remote: unknown): unknown {
   return {
     ...remote,
     ...local,
-    totalXp: Math.max(local.totalXp, remote.totalXp),
-    lifetimeCounts: maxCounts(asCounts(local.lifetimeCounts), asCounts(remote.lifetimeCounts)),
+    totalXp: Math.max(local.totalXp, remote.totalXp, vl.totalXp, vr.totalXp),
+    lifetimeCounts: maxCounts(
+      maxCounts(l.lifetimeCounts, r.lifetimeCounts),
+      maxCounts(vl.lifetimeCounts, vr.lifetimeCounts),
+    ),
     daily,
-    completedMilestoneIds: union(asStrings(local.completedMilestoneIds), asStrings(remote.completedMilestoneIds)),
+    completedMilestoneIds: union(l.milestones, r.milestones),
     recentXp,
   };
 }

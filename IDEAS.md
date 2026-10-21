@@ -60,7 +60,8 @@
 - [x] Debater XP/level syncs via the `debaterLevel` tool-record collection (higher `totalXp` wins; 2026-10-20)
 - [x] Font family preference syncs via `user_settings.font_family` (`PUT /api/settings { fontFamily }`; 2026-10-20)
 - [x] Debater XP merges field by field across devices (`mergeDebaterLevel`, `merge` hook on tool-record collections; 2026-10-20)
-- [ ] Follow-up: per-event XP ledger so activity done on two devices in the same window adds instead of taking the larger count
+- [x] Per-event XP ledger: log events carry an `id` + `count`, and `mergeDebaterLevel` adds events seen by only one device (2026-10-21)
+- [ ] Follow-up: keep a longer/compact ledger (e.g. per-day totals) so a device offline for more than 30 events loses none on merge
 
 ---
 
