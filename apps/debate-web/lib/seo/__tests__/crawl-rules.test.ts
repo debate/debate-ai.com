@@ -17,7 +17,7 @@ import { buildSitemap } from "../sitemap";
  *
  * Models the real rule rather than a naive prefix scan: when an `Allow` and a
  * `Disallow` both match, the *more specific* one wins. So `/practice` being
- * disallowed does not stop `/practice/glossary` once that exact path is allowed
+ * disallowed does not stop `/practice/statistics` once that exact path is allowed
  * — a test that only checked prefixes would pass a broken rule and fail a
  * correct one.
  */
@@ -65,7 +65,7 @@ describe("DISALLOWED_PATHS", () => {
     // These are public content that a blanket `Disallow: /practice/` would
     // have blocked along with the tools above. (Rankings moved to the
     // Coaching tools as `/coaching/rankings`.)
-    for (const path of ["/practice/glossary", "/practice/statistics"]) {
+    for (const path of ["/practice/rules", "/practice/statistics"]) {
       expect(isDisallowed(path), `expected ${path} to stay crawlable`).toBe(false);
     }
   });

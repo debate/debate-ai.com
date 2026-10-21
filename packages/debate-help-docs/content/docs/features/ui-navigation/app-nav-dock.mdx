@@ -201,12 +201,14 @@ table as the other category moves
 `/research/docs` rather than `/research` because `/research` is the Research
 Workspace hub.
 
-That now includes `/practice/rankings` and `/practice/glossary`. Both are rows
-in the sidebar's own tree, and both used to answer with a bare page — no
+That now includes `/practice/rankings` and `/practice/statistics`. Both are
+rows in the sidebar's own tree, and both used to answer with a bare page — no
 sidebar, and no fixed dock either, since every `/videos` path counts as
 already carrying a sidebar-hosted one. `LecturesSidebarShell` wraps them in
 the same column (dock, nav tree, footer), so clicking either link leaves the
-nav exactly where it was.
+nav exactly where it was. (The glossary used to be one of these too; it is now
+the Glossary tab of **Rules & Glossary** at `/practice/rules`, and
+`/practice/glossary` redirects to `/practice/rules?section=glossary`.)
 
 The sidebar is `md+` only, though, and the same rule that hides the fixed dock
 hides its mobile bottom bar. So on a phone those two pages still answered with
@@ -237,8 +239,8 @@ the results. It stays open while you are typing in it or while a search is
 active, and closes on Escape or a click outside. Whatever you typed is still
 there the next time you open it.
 
-That is also what lets the sidebar stay the same on `/practice/glossary` and
-`/practice/rankings`, which have nothing to search: the column is now the same
+That is also what lets the sidebar stay the same on `/practice/rankings` and
+`/practice/statistics`, which have nothing to search: the column is now the same
 column everywhere in the library.
 
 ## Results open as rows

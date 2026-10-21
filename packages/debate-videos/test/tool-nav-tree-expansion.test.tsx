@@ -63,7 +63,7 @@ const SAMPLE_HREF_BY_SECTION: Record<string, string> = {
   coaching: "/news",
   research: "/research/team",
   practice: "/practice/prep",
-  insights: "/practice/glossary",
+  insights: "/practice/rules",
 };
 
 describe("ToolNavTree expansion", () => {

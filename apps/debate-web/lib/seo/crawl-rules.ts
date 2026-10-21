@@ -12,8 +12,8 @@
  *
  * That distinction is why this file is not a list of top-level prefixes. A
  * blanket `Disallow: /practice/` would look tidier and would be wrong: the
- * library's three reference views — the glossary, the rankings and the
- * statistics — moved under `/practice` when their sidebar category was
+ * reference pages — Rules & Glossary, the rankings and the statistics —
+ * moved under `/practice` when their sidebar category was
  * reorganised, and they are public content that `lib/seo/sitemap.ts` lists.
  * The tool destinations are therefore read off the sidebar's own link data
  * (`SIDEBAR_TOOL_SECTIONS`) rather than restated, so a tool added there is

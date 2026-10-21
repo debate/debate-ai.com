@@ -16,7 +16,6 @@
 
 import {
   BarChart3,
-  BookOpen,
   ChartColumn,
   Clapperboard,
   ClipboardList,
@@ -183,8 +182,10 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/practice/level", title: "Debater Level", icon: Star },
       { href: "/practice/statistics", title: "Topics & Video Statistics", icon: BarChart3 },
       { href: "/practice/predictions", title: "Prediction Markets", icon: Coins },
-      { href: "/practice/rules", title: "Formats & Rules", icon: Scale },
-      { href: "/practice/glossary", title: "Glossary of Terms", icon: BookOpen },
+      // Formats & Rules and the Glossary of Terms, one tabbed page. The old
+      // `/practice/glossary` address redirects to its Glossary tab, so that
+      // prefix is this row's too.
+      { href: "/practice/rules", title: "Rules & Glossary", icon: Scale, aliases: ["/practice/glossary"] },
       { href: "/practice/features", title: "All Features", icon: Sparkles },
     ],
   },

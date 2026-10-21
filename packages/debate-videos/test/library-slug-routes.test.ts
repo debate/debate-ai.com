@@ -20,7 +20,7 @@ describe("librarySlug", () => {
 
   it("falls back to the path for the routes that carry no category param", () => {
     expect(librarySlug(undefined, "/practice/statistics")).toBe("statistics");
-    expect(librarySlug(undefined, "/practice/glossary/")).toBe("dictionary");
+    expect(librarySlug(undefined, "/practice/rankings/")).toBe("rankings");
     expect(librarySlug(undefined, "/lectures")).toBe("lectures");
   });
 

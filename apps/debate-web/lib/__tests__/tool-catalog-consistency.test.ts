@@ -122,8 +122,9 @@ const STATIC_APP_ROUTES = findAppPageRoutes(APP_DIR, "").filter((route) => !rout
  * still live under it.
  *
  * `/practice/rules` is here for that reason: it is a reference
- * page in the sidebar tree (the formats-and-rules guide) — reading material,
- * not a tool.
+ * page in the sidebar tree (Rules & Glossary: the formats-and-rules guide and
+ * the glossary of terms) — reading material, not a tool. `/practice/glossary`
+ * only redirects now, to its Glossary tab.
  *
  * `/research/topics` is the one route that no longer renders a page of its
  * own: the Topics Explorer's research-area explorer is now the first section
@@ -142,8 +143,7 @@ const STATIC_APP_ROUTES = findAppPageRoutes(APP_DIR, "").filter((route) => !rout
  * `/coaching/materials`: merged into Coaching, each redirects to its tab of
  * `/coaching`.
  *
- * `/lectures`, `/practice/glossary`, `/practice/rankings` and
- * `/practice/statistics` are views of the video library page (the same page
+ * `/lectures`, `/practice/rankings` and `/practice/statistics` are views of the video library page (the same page
  * `/videos` renders), given their own routes under their sidebar category.
  * `/videos` is listed through its dock entry; these are its sidebar rows.
  *
