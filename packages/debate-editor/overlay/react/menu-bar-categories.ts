@@ -34,6 +34,10 @@ export interface MenuBarCategory {
    *  `RIBBON_GROUPS` entirely, so this is the only way one reaches the
    *  menu bar. */
   includesPluginCommands?: boolean;
+  /** When true, this category's dropdown opens with a Read aloud section
+   *  holding "Read whole document aloud" (card-hover-actions.ts), which is
+   *  not a ribbon command. */
+  includesReadAloud?: boolean;
 }
 
 /** Ordered left→right along the menu bar. */
@@ -46,7 +50,7 @@ export const MENU_BAR_CATEGORIES: MenuBarCategory[] = [
   { title: 'Color', groupTitles: ['Highlight tools', 'Color pickers & menus'] },
   { title: 'Insert', groupTitles: ['Table'] },
   { title: 'AI', groupTitles: ['AI'] },
-  { title: 'View', groupTitles: ['View', 'Reading'] },
+  { title: 'View', groupTitles: ['View', 'Reading'], includesReadAloud: true },
   { title: 'Panes', groupTitles: ['Multi-pane workspace', 'Zoom & scale'] },
   { title: 'Tools', groupTitles: ['Timer', 'Diagnostics', 'Learn', 'Cleanup', 'Voice'] },
   { title: 'Flow', groupTitles: ['Flow'] },
@@ -59,6 +63,7 @@ export const MENU_BAR_CATEGORIES: MenuBarCategory[] = [
  *  registers a command. */
 export function isMenuBarCategoryPopulated(category: MenuBarCategory): boolean {
   if (category.includesPluginCommands && pluginCommandIds().length > 0) return true;
+  if (category.includesReadAloud) return true;
   return category.groupTitles.some((title) =>
     (RIBBON_GROUPS.find((g) => g.title === title)?.commands ?? []).some((id) => isRibbonCommandAvailable(id)),
   );
