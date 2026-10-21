@@ -14,7 +14,7 @@ vi.mock("@debate/data-sync/src/state/tool-record-auto-sync", () => ({
   getToolRecordCollectionSyncStatus: () => status,
 }))
 
-import { ToolSyncBadge } from "../../../src/components/tools/ToolSyncBadge"
+import { ToolSyncBadge } from "../../../src/components/tools/sync/ToolSyncBadge"
 
 ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
 

@@ -13,7 +13,7 @@
 
 import { describe, it, expect } from "vitest";
 import type { VideoType } from "../src/types/videos";
-import { buildVideoSlots } from "../src/components/videos/video-grid/video-stacks";
+import { buildVideoSlots } from "../src/components/video-grid/video-stacks";
 import {
   buildVideoTree,
   countVideoTreeLeaves,
@@ -24,7 +24,7 @@ import {
   videoTreeDepth,
   type VideoTreeGroup,
   type VideoTreeNode,
-} from "../src/components/videos/video-grid/video-tree";
+} from "../src/components/video-grid/video-tree";
 
 /** Builds a round tuple; only the fields the tree groups by are interesting. */
 function round(

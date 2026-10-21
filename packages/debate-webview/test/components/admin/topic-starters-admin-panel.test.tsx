@@ -1,7 +1,7 @@
 /** @vitest-environment jsdom */
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
-import { TopicStartersAdminPanel } from "../../../src/components/admin/TopicStartersAdminPanel";
+import { TopicStartersAdminPanel } from "../../../src/components/admin/topic-starters/TopicStartersAdminPanel";
 import { bodyText, button, cleanup, clickAsync, flush, installDomShims, mockFetch, mount } from "../../helpers/dom";
 
 beforeAll(installDomShims);

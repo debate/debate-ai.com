@@ -34,11 +34,11 @@ vi.mock("next/image", () => ({
     createElement("img", { src: typeof src === "string" ? src : (src as { src: string }).src, alt }),
 }));
 
-import type { ToolNavTreeProps } from "../src/components/category-gallery/ToolNavTree";
+import type { ToolNavTreeProps } from "../src/components/sidebar-nav/ToolNavTree";
 
-const { ToolNavTree } = await import("../src/components/category-gallery/ToolNavTree");
+const { ToolNavTree } = await import("../src/components/sidebar-nav/ToolNavTree");
 const { INSIGHTS_SECTION_ID, RESEARCH_SECTION_ID } = await import(
-  "../src/components/category-gallery/sidebar-tool-sections"
+  "../src/components/sidebar-nav/sidebar-tool-sections"
 );
 
 function render(props: ToolNavTreeProps): string {
@@ -122,7 +122,7 @@ describe("ToolNavTree sectionIds", () => {
 describe("SIDEBAR_TOOL_SECTIONS", () => {
   it("is the four requested sections, in order", async () => {
     const { SIDEBAR_TOOL_SECTIONS } = await import(
-      "../src/components/category-gallery/sidebar-tool-sections"
+      "../src/components/sidebar-nav/sidebar-tool-sections"
     );
     expect(SIDEBAR_TOOL_SECTIONS.map((section) => section.title)).toEqual([
       "Research",

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { isPaletteShortcut } from "../../../src/components/layout/GlobalCommandPalette"
+import { isPaletteShortcut } from "../../../src/components/layout/command-palette/GlobalCommandPalette"
 
 const key = (init: Partial<Pick<KeyboardEvent, "metaKey" | "ctrlKey" | "shiftKey" | "altKey" | "code" | "key">>) => ({
   metaKey: false,

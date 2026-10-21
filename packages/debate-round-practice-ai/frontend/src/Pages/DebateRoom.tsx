@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { sendDebateMessage, judgeDebate, concedeDebate } from "@/services/vsbot";
-import JudgmentPopup from "@/components/JudgementPopup";
+import JudgmentPopup from "@/components/round/JudgementPopup";
 import { Mic, MicOff } from "lucide-react";
 import { useAtom } from "jotai";
 import { userAtom } from "@/state/userAtom";

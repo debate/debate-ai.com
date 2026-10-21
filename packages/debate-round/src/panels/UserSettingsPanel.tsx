@@ -12,7 +12,7 @@
  * A change always applies immediately to the local `settings` singleton
  * (`applyUserSettingsToLocalStore`) and, for the theme fields, the same
  * `localStorage`/cookie/DOM-class/`next-themes` writes
- * `theme-dropdown.tsx`'s `useThemeState` performs — so this panel behaves
+ * `ThemeDropdown.tsx`'s `useThemeState` performs — so this panel behaves
  * exactly like today's editor/dock for a signed-out user. When signed in,
  * it additionally loads the account's saved values on mount
  * (`fetchUserSettings`, via `/api/settings`) and syncs a save to the
@@ -122,7 +122,7 @@ function applyColorThemeClass(colorTheme: string) {
   document.documentElement.classList.add(`theme-${colorTheme}`)
 }
 
-/** Applies a resolved colorTheme/themeMode to localStorage/cookie/DOM class, mirroring `theme-dropdown.tsx`'s `applyColorTheme`/`handleThemeChange` so this panel's Save button and the dock's picker never disagree about how a theme choice is persisted locally. */
+/** Applies a resolved colorTheme/themeMode to localStorage/cookie/DOM class, mirroring `ThemeDropdown.tsx`'s `applyColorTheme`/`handleThemeChange` so this panel's Save button and the dock's picker never disagree about how a theme choice is persisted locally. */
 function applyThemeLocally(colorTheme: string, themeMode: ThemeMode, setTheme: (mode: string) => void) {
   if (typeof document === "undefined") return
   applyColorThemeClass(colorTheme)
@@ -255,7 +255,7 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
 
   /**
    * Live-updates this form across browser tabs — e.g. another tab's own
-   * `UserSettingsPanel` Save, or `theme-dropdown.tsx`'s dock picker
+   * `UserSettingsPanel` Save, or `ThemeDropdown.tsx`'s dock picker
    * changing `color-theme`/`theme` — but only fields that still match
    * `baselineRef` (untouched since they were last loaded/saved here), so an
    * in-progress, not-yet-saved edit is never overwritten. `fontFamily` is

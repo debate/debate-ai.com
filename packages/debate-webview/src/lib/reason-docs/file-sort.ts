@@ -1,7 +1,7 @@
 /**
  * @fileoverview How the sidebar's Files tree orders siblings — the "Sort"
  * half of organising files (folders and moving are the other half, in
- * `components/reason-docs/FileTree`).
+ * `components/reason-docs/file-manager/FileTree`).
  *
  * Folders always come before files whatever the order, the same as the SVAR
  * file manager and every desktop file browser, so switching the sort never

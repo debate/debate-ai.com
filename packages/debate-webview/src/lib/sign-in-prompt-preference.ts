@@ -1,6 +1,6 @@
 /**
  * @fileoverview Persistent, cross-tab "don't ask me again" opt-out for the
- * guest sign-in prompt (`components/layout/SignInPromptProvider.tsx`).
+ * guest sign-in prompt (`components/layout/auth/SignInPromptProvider.tsx`).
  *
  * The provider already rate-limits a single feature's prompt to once per
  * 30 minutes (`lib/sign-in-prompt-cooldown.ts`), but that cooldown always

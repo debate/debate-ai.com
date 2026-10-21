@@ -28,10 +28,10 @@ vi.mock("@debate/research-evidence", async (importOriginal) => {
   };
 });
 
-import { CaselistSyncPanel } from "../../../src/components/admin/CaselistSyncPanel";
-import { DbBackupPanel } from "../../../src/components/admin/DbBackupPanel";
-import { DebateCardParquetUpload } from "../../../src/components/admin/DebateCardParquetUpload";
-import { TopicStarterUpload } from "../../../src/components/admin/TopicStarterUpload";
+import { CaselistSyncPanel } from "../../../src/components/admin/data/CaselistSyncPanel";
+import { DbBackupPanel } from "../../../src/components/admin/data/DbBackupPanel";
+import { DebateCardParquetUpload } from "../../../src/components/admin/data/DebateCardParquetUpload";
+import { TopicStarterUpload } from "../../../src/components/admin/topic-starters/TopicStarterUpload";
 import {
   bodyText,
   button,

@@ -15,7 +15,7 @@
  *    siblings with the same title get `" (2)"`, `" (3)"`… so neither shadows
  *    the other — SVAR would otherwise silently merge them into one row.
  *
- * Pure on purpose, with unit tests; `components/reason-docs/FileManagerDialog`
+ * Pure on purpose, with unit tests; `components/reason-docs/file-manager/FileManagerDialog`
  * is the thin component over it.
  *
  * @module lib/reason-docs/file-manager-data

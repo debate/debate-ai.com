@@ -2,7 +2,7 @@
  * @fileoverview Command menu primitives (`cmdk` wrapped in the app's Dialog),
  * the shadcn/ui-standard shape. `cmdk` has been a dependency since the
  * project's shadcn scaffold but nothing used it yet — {@link
- * ../../components/layout/GlobalCommandPalette} is the first caller.
+ * ../../components/layout/command-palette/GlobalCommandPalette} is the first caller.
  */
 
 "use client"

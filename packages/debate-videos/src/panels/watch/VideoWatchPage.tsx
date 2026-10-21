@@ -58,37 +58,37 @@ import Link from "next/link"
 import { AlertCircle, ArrowLeft, Calendar, Clock, Eye, ListOrdered, ListPlus, Loader2 } from "lucide-react"
 import { CommentSection } from "@debate/comments"
 import { SpeechStartsDialog, type SpeechDetectionControl } from "@debate/timer"
-import { formatCount } from "../../components/category-gallery/format-count"
+import { formatCount } from "../../lib/format-count"
 
-import { WatchToolbar } from "../../components/videos/watch/WatchToolbar"
-import { WatchSidePanel, type WatchSideTab } from "../../components/videos/watch/WatchSidePanel"
-import type { LinkedVideo } from "../../components/videos/watch/WatchAnalysisPanel"
-import { VideoListRows } from "../../components/videos/video-grid/VideoListRows"
-import { WatchQueuePanel } from "../../components/videos/watch/WatchQueuePanel"
-import { WatchSearchBox } from "../../components/videos/watch/WatchSearchBox"
-import { WatchStackPlaylist } from "../../components/videos/watch/WatchStackPlaylist"
-import { WatchSpeechTimeline } from "../../components/videos/watch/WatchSpeechTimeline"
-import { WatchTeamStats } from "../../components/videos/watch/WatchTeamStats"
-import { WatchRankingsPrediction } from "../../components/videos/watch/WatchRankingsPrediction"
-import type { SpeechFocusRequest } from "../../components/videos/watch/WatchRoundPanel"
-import { useDocumentPictureInPicture } from "../../components/videos/video-player/useDocumentPictureInPicture"
+import { WatchToolbar } from "../../components/watch/WatchToolbar"
+import { WatchSidePanel, type WatchSideTab } from "../../components/watch/WatchSidePanel"
+import type { LinkedVideo } from "../../components/watch/WatchAnalysisPanel"
+import { VideoListRows } from "../../components/video-grid/VideoListRows"
+import { WatchQueuePanel } from "../../components/watch/WatchQueuePanel"
+import { WatchSearchBox } from "../../components/watch/WatchSearchBox"
+import { WatchStackPlaylist } from "../../components/watch/WatchStackPlaylist"
+import { WatchSpeechTimeline } from "../../components/watch/WatchSpeechTimeline"
+import { WatchTeamStats } from "../../components/watch/WatchTeamStats"
+import { WatchRankingsPrediction } from "../../components/watch/WatchRankingsPrediction"
+import type { SpeechFocusRequest } from "../../components/watch/WatchRoundPanel"
+import { useDocumentPictureInPicture } from "../../components/video-player/useDocumentPictureInPicture"
 import {
   buildEmbedUrl,
   describePlayerError,
   startListening,
   watchUrl,
-} from "../../components/videos/video-player/youtubeEmbed"
-import { useTranscript } from "../../components/videos/transcript/useTranscript"
-import { groupIntoSentences } from "../../components/videos/transcript/transcriptUtils"
+} from "../../components/video-player/youtubeEmbed"
+import { useTranscript } from "../../components/transcript/useTranscript"
+import { groupIntoSentences } from "../../components/transcript/transcriptUtils"
 import {
   DEBATE_STYLE_LABELS,
   TOURNAMENT_COLORS,
   getRoundBadgeColor,
   formatVideoDate,
   getTournamentLogo,
-} from "../../components/videos/video-card/videoCardUtils"
-import { displayRoundLevel } from "../../components/videos/video-card/round-level"
-import { FormatBadge, videoFormat } from "../../components/videos/video-grid/FormatBadge"
+} from "../../components/video-card/videoCardUtils"
+import { displayRoundLevel } from "../../components/video-card/round-level"
+import { FormatBadge, videoFormat } from "../../components/video-grid/FormatBadge"
 import { cn } from "../../ui/lib/utils"
 import { TEAM_SIDE_SURFACE_CLASS, TeamCodeLabel } from "../../components/team-label/TeamLabel"
 import { useVideoTeamRankings } from "../../hooks/useVideoTeamRankings"

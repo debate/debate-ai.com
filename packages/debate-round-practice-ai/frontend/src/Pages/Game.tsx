@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useParams } from "react-router-dom";
-import PlayerCard from "../components/PlayerCard";
-import UserCamera from "../components/UserCamera";
-import Chatbox, { ChatMessage, TypingIndicator } from "../components/Chatbox";
+import PlayerCard from "../components/profile/PlayerCard";
+import UserCamera from "../components/round/UserCamera";
+import Chatbox, { ChatMessage, TypingIndicator } from "../components/chat/Chatbox";
 
 const Game: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();

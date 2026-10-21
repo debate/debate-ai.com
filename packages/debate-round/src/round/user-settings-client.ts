@@ -8,8 +8,8 @@
  * Talks to `apps/debate-ai.com`'s `/api/settings` route, which requires an
  * authenticated session — `fetchUserSettings` resolves to `null` (rather
  * than throwing) on a `401`, letting the caller fall back to the local
- * `settings`/theme-dropdown stores for signed-out users instead of showing
- * an error. `debate-round`'s `UserSettingsPanel` and `theme-dropdown.tsx`'s
+ * `settings`/ThemeDropdown stores for signed-out users instead of showing
+ * an error. `debate-round`'s `UserSettingsPanel` and `ThemeDropdown.tsx`'s
  * `useThemeState` (both in `apps/debate-ai.com`) share these two functions
  * rather than each having their own client, since both read/write the same
  * `/api/settings` row.

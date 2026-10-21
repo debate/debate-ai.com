@@ -33,8 +33,8 @@
 import type React from "react"
 
 import { QuickLinksGrid } from "../components/category-gallery/QuickLinksGrid"
-import { ToolNavTree } from "../components/category-gallery/ToolNavTree"
-import { VideoSidebarTree } from "../components/category-gallery/VideoSidebarTree"
+import { ToolNavTree } from "../components/sidebar-nav/ToolNavTree"
+import { VideoSidebarTree } from "../components/sidebar-nav/VideoSidebarTree"
 import { Footer } from "../ui/layout/footer"
 import { ResizableSidebarLayout } from "../ui/layout/ResizableSidebarLayout"
 

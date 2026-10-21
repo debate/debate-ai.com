@@ -1,9 +1,9 @@
-export { SearchInterface } from "./components/SearchInterface";
-export { SearchResultCard } from "./components/SearchResultCard";
-export { CardContentViewer } from "./components/CardContentViewer";
-export { SourceArticlePanel } from "./components/SourceArticlePanel";
-export { ResearchSearchSidebar } from "./components/ResearchSearchSidebar";
-export { AiAnalysisSidebar } from "./components/AiAnalysisSidebar";
+export { SearchInterface } from "./components/search/SearchInterface";
+export { SearchResultCard } from "./components/search/SearchResultCard";
+export { CardContentViewer } from "./components/card-viewer/CardContentViewer";
+export { SourceArticlePanel } from "./components/card-viewer/SourceArticlePanel";
+export { ResearchSearchSidebar } from "./components/search/ResearchSearchSidebar";
+export { AiAnalysisSidebar } from "./components/card-viewer/AiAnalysisSidebar";
 export * from "./panels";
 export * from "./types";
 export {

@@ -121,10 +121,14 @@ const only = <T>(list: readonly T[]): T | null => (list.length === 1 ? list[0] :
  * a video label — the initials exactly, the school loosely — keeping only
  * the strongest school match, which must be unique.
  *
- * @param entries - One dataset's rows.
+ * @param entries - One dataset's rows, or a past season's college table
+ *   (anything with a school and a `Last & Last` name).
  * @param query - The entry's code, debater names and school.
  */
-export function matchTournamentEntry(entries: readonly RankingEntry[], query: TournamentEntryQuery): RankingEntry | null {
+export function matchTournamentEntry<T extends Pick<RankingEntry, "name" | "school">>(
+  entries: readonly T[],
+  query: TournamentEntryQuery,
+): T | null {
   const key = debaterNameKey(query.name);
   if (key && (key.includes("&") || key.includes(" "))) {
     const byName = entries.filter((entry) => debaterNameKey(entry.name) === key);
@@ -138,7 +142,7 @@ export function matchTournamentEntry(entries: readonly RankingEntry[], query: To
   const label = parseTeamLabel(query.code);
   if (!label) return null;
   let bestScore = 0;
-  let best: RankingEntry[] = [];
+  let best: T[] = [];
   for (const entry of entries) {
     if (sortedLetters(entryInitials(entry.name)) !== sortedLetters(label.code)) continue;
     const score = Math.max(schoolMatchScore(label.school, entry.school), query.school ? schoolMatchScore(query.school, entry.school) : 0);

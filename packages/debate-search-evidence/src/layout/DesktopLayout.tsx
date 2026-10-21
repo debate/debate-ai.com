@@ -15,9 +15,9 @@
 "use client"
 
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "../ui/primitives/resizable"
-import { ResearchSearchSidebar, type SearchFilters } from "../components/ResearchSearchSidebar"
-import { CardContentViewer } from "../components/CardContentViewer"
-import { AiAnalysisSidebar } from "../components/AiAnalysisSidebar"
+import { ResearchSearchSidebar, type SearchFilters } from "../components/search/ResearchSearchSidebar"
+import { CardContentViewer } from "../components/card-viewer/CardContentViewer"
+import { AiAnalysisSidebar } from "../components/card-viewer/AiAnalysisSidebar"
 import type { SearchResult } from "../types"
 import type { SetSearchTermOptions } from "../hooks/useSearchState"
 

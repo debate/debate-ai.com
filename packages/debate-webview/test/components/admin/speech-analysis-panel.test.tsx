@@ -1,7 +1,7 @@
 /** @vitest-environment jsdom */
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
-import { SpeechAnalysisPanel } from "../../../src/components/admin/SpeechAnalysisPanel";
+import { SpeechAnalysisPanel } from "../../../src/components/admin/videos/SpeechAnalysisPanel";
 import {
   bodyText,
   button,
