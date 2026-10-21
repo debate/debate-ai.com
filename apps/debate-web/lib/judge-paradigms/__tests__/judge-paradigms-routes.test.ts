@@ -28,7 +28,7 @@ const adminRoute = await import("@/app/api/admin/judge-paradigms/route");
 
 /** Tabroom's paradigm text per person id; the stubbed API serves it. */
 const paradigms = new Map<number, string>([[777, "<p>Tech over truth.</p>"]]);
-const tabroom = vi.fn(async (input: string | URL | Request) => {
+const tabroom = vi.fn(async (input: string | URL | Request, _init?: RequestInit) => {
   const url = new URL(String(input));
   const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status });
   if (url.pathname === "/v1/rest/paradigms") {
@@ -70,7 +70,7 @@ describe("judge paradigms", () => {
     const first = await getProfile("personId=777");
     expect(first.status).toBe(200);
     expect(first.body.profile).toMatchObject({ personId: 777, name: "Sam Lee", paradigmHtml: "<p>Tech over truth.</p>", record: [expect.objectContaining({ vote: "Aff" })] });
-    expect(new Headers((tabroom.mock.calls[0][1] as RequestInit).headers).get("cookie")).toBe("TabroomToken=site-session");
+    expect(new Headers(tabroom.mock.calls[0][1]?.headers).get("cookie")).toBe("TabroomToken=site-session");
 
     const calls = tabroom.mock.calls.length;
     // Found by name from the cache now.
