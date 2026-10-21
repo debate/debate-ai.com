@@ -342,6 +342,28 @@ export function rollDebaterDay(state: DebaterLevelState, dayKey: string): Debate
   return { ...state, daily: { dayKey, counts: {}, completedChallengeIds: [] } };
 }
 
+/** The ledger after `deviceId` earns `xp` and `n` of `kind`; a first entry snapshots the existing totals as `base`. */
+function addToLedger(
+  before: DebaterLevelState,
+  deviceId: string,
+  kind: DebaterActivityKind,
+  n: number,
+  xp: number,
+): DebaterLedger {
+  const ledger: DebaterLedger = before.ledger ?? {
+    base: { xp: before.totalXp, counts: { ...before.lifetimeCounts } },
+    devices: {},
+  };
+  const entry = ledger.devices[deviceId] ?? { xp: 0, counts: {} };
+  return {
+    base: ledger.base,
+    devices: {
+      ...ledger.devices,
+      [deviceId]: { xp: entry.xp + xp, counts: { ...entry.counts, [kind]: (entry.counts[kind] ?? 0) + n } },
+    },
+  };
+}
+
 /** What one `applyDebaterActivity` call earned. */
 export interface DebaterActivityResult {
   state: DebaterLevelState;

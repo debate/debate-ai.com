@@ -65,6 +65,8 @@ export {
   type DebaterActivityKind,
   type DebaterActivityResult,
   type DebaterChallenge,
+  type DebaterLedger,
+  type DebaterLedgerEntry,
   type DebaterLevelProgress,
   type DebaterLevelState,
 } from "./lib/debater-levels";

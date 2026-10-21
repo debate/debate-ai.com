@@ -16,6 +16,7 @@
  */
 
 import {
+  DEBATER_CHALLENGES,
   applyDebaterActivity,
   createDebaterLevelState,
   isDebaterActivityKind,

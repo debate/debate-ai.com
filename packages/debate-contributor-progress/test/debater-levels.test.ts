@@ -3,6 +3,7 @@ import {
   applyDebaterActivity,
   computeLevelProgress,
   createDebaterLevelState,
+  DEBATER_CHALLENGES,
   getChallengeProgress,
   MAX_DEBATER_LEVEL,
   parseDebaterLevelState,
