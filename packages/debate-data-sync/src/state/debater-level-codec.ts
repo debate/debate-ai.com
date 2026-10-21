@@ -85,18 +85,10 @@ function asDaily(value: unknown): { dayKey: string; counts: Counts; completedCha
   };
 }
 
-interface XpEvent {
-  id?: string;
-  atMs: number;
-  source: string;
-  xp?: number;
-  count?: number;
-}
-
-function asXpEvents(value: unknown): XpEvent[] {
+function asXpEvents(value: unknown): { atMs: number; source: string }[] {
   if (!Array.isArray(value)) return [];
   return value.filter(
-    (e): e is XpEvent =>
+    (e): e is { atMs: number; source: string } =>
       typeof e === "object" && e !== null &&
       typeof (e as { atMs?: unknown }).atMs === "number" &&
       typeof (e as { source?: unknown }).source === "string",
@@ -162,10 +154,10 @@ function ledgerCounts(ledger: Ledger): Counts {
 /**
  * Conflict rule that supersedes {@link preferHigherDebaterXp}: combine the two
  * copies field by field instead of keeping one whole record, so activity
- * earned on each device survives. Milestones are a union, today's tally is
- * merged only when both copies are from the same UTC day (otherwise the later
- * day wins), and the XP log is the newest-first union, de-duplicated by id
- * (time and source for events logged before ids existed).
+ * earned on each device survives. Counts, totals and milestones only ever
+ * grow, so the per-kind maximum / union is safe; today's tally is merged only
+ * when both copies are from the same UTC day, otherwise the later day wins;
+ * the XP log is the newest-first union, de-duplicated by time and source.
  *
  * When a copy carries a per-device `ledger` (each device only grows its own
  * entry), the ledgers merge entry by entry and `totalXp` / `lifetimeCounts`
@@ -177,12 +169,8 @@ function ledgerCounts(ledger: Ledger): Counts {
 export function mergeDebaterLevel(local: unknown, remote: unknown): unknown {
   if (!hasValidXp(local)) return remote;
   if (!hasValidXp(remote)) return local;
-  const l = asSide(local);
-  const r = asSide(remote);
-  const vl = withUnseenEvents(l, r);
-  const vr = withUnseenEvents(r, l);
-  const dl = { ...l.daily, counts: maxCounts(l.daily.counts, vl.dailyCounts) };
-  const dr = { ...r.daily, counts: maxCounts(r.daily.counts, vr.dailyCounts) };
+  const dl = asDaily(local.daily);
+  const dr = asDaily(remote.daily);
   const daily =
     dl.dayKey === dr.dayKey
       ? {
@@ -194,9 +182,9 @@ export function mergeDebaterLevel(local: unknown, remote: unknown): unknown {
         ? dl
         : dr;
   const seen = new Set<string>();
-  const recentXp = [...l.events, ...r.events]
+  const recentXp = [...asXpEvents(local.recentXp), ...asXpEvents(remote.recentXp)]
     .filter((e) => {
-      const key = e.id ?? `${e.atMs}|${e.source}`;
+      const key = `${e.atMs}|${e.source}`;
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
@@ -219,7 +207,7 @@ export function mergeDebaterLevel(local: unknown, remote: unknown): unknown {
     totalXp,
     lifetimeCounts,
     daily,
-    completedMilestoneIds: union(l.milestones, r.milestones),
+    completedMilestoneIds: union(asStrings(local.completedMilestoneIds), asStrings(remote.completedMilestoneIds)),
     recentXp,
   };
 }
