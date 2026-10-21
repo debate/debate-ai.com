@@ -301,6 +301,22 @@ effect as publishing features read them. There is no admin screen for the
 deletion queue yet; admins see the notification and work the
 `data_deletion_requests` table by hand.
 
+## Saved to your account
+
+**Settings → General → Saved to your account** shows how many documents, flows,
+rounds, word-count rounds, practice debates against the AI, judge decisions, sent
+speeches and drill sets are stored in the database under your account. Signed out,
+the section tells you to sign in instead.
+
+Engineering note: `SavedDataSection` (`debate-webview`) calls
+`GET /api/settings/saved-data`, which returns `loadOwnSavedData`'s counts
+(`apps/debate-web/lib/saved-data/saved-data.ts`). It reuses the admin usage
+query (`loadUserUsage`) narrowed to the caller's id, so the user and admin
+numbers can't drift apart, and it returns counts only — never content.
+
+Known gaps: counts only — no per-item list, export or delete from this section
+yet, and Tool Data Sync collections (`saved_tool_records`) are not included.
+
 ## Known gaps
 
 No optimistic-concurrency handling in general — two tabs editing the *same*
