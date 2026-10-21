@@ -17,6 +17,11 @@
  *    `## 1AC (0:42–8:51)` headings become the speech buttons under the player
  *    and the per-speech tabs beside it.
  *
+ * Videos run in priority order: the Greatest of All-Time collection first,
+ * then by YouTube view count, most viewed first (ties by id), so the rounds
+ * people watch most get their speeches detected first. See
+ * {@link SPEECH_ANALYSIS_ORDER}.
+ *
  * Two model calls on a two-hour round take a while, so one request handles
  * one page (one video by default) and hands back the cursor; the admin panel
  * loops until `done`, as the transcript scraper does. A document an editor
@@ -28,7 +33,7 @@
  * @module lib/videos/speech-analysis
  */
 
-import { and, asc, count, eq, gt, isNull, or, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, gt, isNull, lt, or, sql } from "drizzle-orm";
 import {
   SPEECH_SEGMENTATION_SYSTEM_PROMPT,
   buildSpeechAnalysisPrompt,
@@ -68,6 +73,8 @@ export interface SpeechAnalysisStats {
 export interface SpeechAnalysisVideoResult {
   videoId: string;
   title: string;
+  /** YouTube views, which set the run order after the GOAT videos. */
+  viewCount?: number;
   status: "saved" | "preview" | "failed";
   format?: string;
   speeches?: number;
@@ -111,6 +118,38 @@ const ANALYSIS_MAX_TOKENS = 8000;
 const SEGMENTATION_MAX_TOKENS = 2000;
 
 const STYLE_NAMES: Record<number, string> = { 1: "Policy", 2: "PF", 3: "LD", 4: "College", 5: "WSD", 6: "ACC", 7: "Misc" };
+
+/**
+ * The order a run walks videos in, shown in the admin panel: GOAT videos
+ * first, then most viewed first, then by id so the cursor is stable.
+ */
+export const SPEECH_ANALYSIS_ORDER = [
+  desc(videos.isTopPick),
+  desc(videos.viewCount),
+  asc(videos.videoId),
+];
+
+/**
+ * Keyset condition for "after `cursor`" in {@link SPEECH_ANALYSIS_ORDER}. A
+ * cursor video that has since left the library falls back to id order.
+ */
+async function afterCursor(db: any, cursorId: string) {
+  const [cursor] = await db
+    .select({ isTopPick: videos.isTopPick, viewCount: videos.viewCount })
+    .from(videos)
+    .where(eq(videos.videoId, cursorId))
+    .limit(1);
+  if (!cursor) return gt(videos.videoId, cursorId);
+  return or(
+    lt(videos.isTopPick, cursor.isTopPick),
+    and(eq(videos.isTopPick, cursor.isTopPick), lt(videos.viewCount, cursor.viewCount)),
+    and(
+      eq(videos.isTopPick, cursor.isTopPick),
+      eq(videos.viewCount, cursor.viewCount),
+      gt(videos.videoId, cursorId),
+    ),
+  );
+}
 
 function scopeCondition(scope: SpeechAnalysisScope) {
   return scope === "goat" ? eq(videos.isTopPick, true) : undefined;
@@ -157,6 +196,7 @@ interface VideoRow {
   affTeam: string | null;
   negTeam: string | null;
   judgeDecision: string | null;
+  viewCount?: number;
 }
 
 /**
@@ -214,6 +254,7 @@ async function analyzeVideo(
   const base = {
     videoId: row.videoId,
     title: row.title,
+    viewCount: row.viewCount,
     format: segmentation.format,
     speeches: documents.speechCount,
   };
@@ -255,7 +296,8 @@ async function analyzeVideo(
 
 /**
  * Processes one page of videos in scope that have no speech analysis yet
- * (or, with `overwrite`, whose analysis the AI wrote), in id order.
+ * (or, with `overwrite`, whose analysis the AI wrote), GOAT videos first and
+ * then most viewed first ({@link SPEECH_ANALYSIS_ORDER}).
  *
  * @param db - Drizzle handle bound to D1.
  * @param providerKey - The site's shared AI key.
@@ -274,6 +316,7 @@ export async function processSpeechAnalysisPage(
     affTeam: videos.affTeam,
     negTeam: videos.negTeam,
     judgeDecision: videos.judgeDecision,
+    viewCount: videos.viewCount,
   };
 
   let rows: VideoRow[];
@@ -288,7 +331,7 @@ export async function processSpeechAnalysisPage(
     ];
     const inScope = scopeCondition(options.scope);
     if (inScope) conditions.push(inScope);
-    if (options.afterId) conditions.push(gt(videos.videoId, options.afterId));
+    if (options.afterId) conditions.push(await afterCursor(db, options.afterId));
     rows = await db
       .select(columns)
       .from(videos)
@@ -297,7 +340,7 @@ export async function processSpeechAnalysisPage(
         and(eq(videoDocuments.videoId, videos.videoId), eq(videoDocuments.kind, "analysis")),
       )
       .where(and(...conditions))
-      .orderBy(asc(videos.videoId))
+      .orderBy(...SPEECH_ANALYSIS_ORDER)
       .limit(options.limit);
   }
 
@@ -312,6 +355,7 @@ export async function processSpeechAnalysisPage(
       results.push({
         videoId: row.videoId,
         title: row.title,
+        viewCount: row.viewCount,
         status: "failed",
         error: error instanceof Error ? error.message : String(error),
       });
