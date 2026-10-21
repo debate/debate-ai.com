@@ -1,15 +1,23 @@
 name: Native Wrapper Release
 
 # Builds apps/debate-native-wrapper for every desktop platform (Windows, macOS
-# universal, Linux) plus a best-effort Android .aab, and attaches the
-# installers to a GitHub Release. Triggered by a `native-wrapper-v*.*.*` tag
-# (a distinct prefix from any web-app release tags this repo uses elsewhere)
-# or manually via workflow_dispatch for a test build.
+# universal, Linux) plus a best-effort Android .aab and iOS .ipa, attaches the
+# installers to a GitHub Release, and publishes it.
 #
-# Two-stage shape, same reasoning as debate/cardmirror's own
-# .github/workflows/release.yml: `prepare-release` creates one draft for the
-# tag up front so the desktop matrix's parallel jobs all upload into it
-# instead of racing to create their own drafts.
+# Two ways to run it:
+#   - Push a `native-wrapper-v*.*.*` tag (a distinct prefix from any web-app
+#     release tags this repo uses elsewhere). The tag must match the app
+#     version in tauri.conf.json.
+#   - Run it manually (workflow_dispatch). The version is read from
+#     tauri.conf.json and the release `native-wrapper-v<version>` is created
+#     (tagged at the commit the run was started from) and published. Untick
+#     "publish" for a build-only test run that uploads nothing.
+#
+# Three-stage shape, same reasoning as debate/cardmirror's own
+# .github/workflows/release.yml: `prepare-release` creates one draft up front
+# so the parallel build jobs all upload into it instead of racing to create
+# their own drafts, and `publish-release` takes it out of draft once the
+# builds are done.
 
 on:
   push:
@@ -17,8 +25,8 @@ on:
       - "native-wrapper-v*.*.*"
   workflow_dispatch:
     inputs:
-      draft:
-        description: "Create a draft GitHub Release (uncheck for a local-only test build with no upload)"
+      publish:
+        description: "Create and publish the native-wrapper-v<version> release (uncheck for a build-only test with no upload)"
         type: boolean
         default: true
 
@@ -28,28 +36,61 @@ concurrency:
 jobs:
   prepare-release:
     name: Create draft release
-    if: startsWith(github.ref, 'refs/tags/native-wrapper-v')
+    if: startsWith(github.ref, 'refs/tags/native-wrapper-v') || (github.event_name == 'workflow_dispatch' && inputs.publish)
     runs-on: ubuntu-latest
     permissions:
       contents: write
     outputs:
       release_id: ${{ steps.release.outputs.id }}
+      tag: ${{ steps.version.outputs.tag }}
+      version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@v4
+
+      # The updater (src-tauri/src/updater.rs) only offers a build whose
+      # version is newer than the installed one, and that version comes from
+      # the profile, not the tag. On a tag push, a tag that disagrees with it
+      # would publish a release that installed apps either ignore or keep
+      # re-offering, so that is an error. On a manual run the tag is derived
+      # from the app version, so the two always agree.
+      - name: Work out the tag and version
+        id: version
+        run: |
+          APP_VERSION="$(jq -r .version apps/debate-native-wrapper/src-tauri/tauri.conf.json)"
+          if [ -z "$APP_VERSION" ] || [ "$APP_VERSION" = "null" ]; then
+            echo "::error::Could not read \"version\" from apps/debate-native-wrapper/src-tauri/tauri.conf.json." >&2
+            exit 1
+          fi
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            TAG="$GITHUB_REF_NAME"
+            TAG_VERSION="${TAG#native-wrapper-v}"
+            if [ "$TAG_VERSION" != "$APP_VERSION" ]; then
+              echo "::error::Tag $TAG is version $TAG_VERSION but the app is $APP_VERSION — bump \"version\" in apps/debate-native-wrapper/profiles/debate-ai.json, run 'bun run configure', and tag again." >&2
+              exit 1
+            fi
+          else
+            TAG="native-wrapper-v${APP_VERSION}"
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$APP_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Ensure draft release exists
         id: release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.version.outputs.tag }}
+          VERSION: ${{ steps.version.outputs.version }}
         run: |
-          TAG="${GITHUB_REF_NAME}"
-          VERSION="${TAG#native-wrapper-v}"
           PRERELEASE_FLAG=""
           if [[ "$VERSION" == *-* ]]; then
             PRERELEASE_FLAG="--prerelease"
           fi
           if ! gh release view "$TAG" --json id -q .id > /tmp/release_id 2>/dev/null; then
-            gh release create "$TAG" --draft --title "Native Wrapper $VERSION" \
+            # --target pins the tag to this commit when the release is
+            # published; it is what lets a manual run (no tag yet) work, and
+            # is ignored when the tag already exists.
+            gh release create "$TAG" --draft --target "$GITHUB_SHA" \
+              --title "Native Wrapper $VERSION" \
               --notes "Desktop + mobile installers for Debate AI's native wrapper, version $VERSION." \
               $PRERELEASE_FLAG
             gh release view "$TAG" --json id -q .id > /tmp/release_id
@@ -118,35 +159,71 @@ jobs:
       # tauri.conf.json and the icon set are already checked in for the
       # active profile (native-wrapper-ci.yml's verify-configuration job
       # guarantees they're in sync) — no configure/icons step needed here.
-      - uses: tauri-apps/tauri-action@v0
+      # macOS signing + notarization and Windows Authenticode signing.
+      # Each secret is exported only when it is set: GitHub passes an unset
+      # secret as an empty string, and the Tauri bundler treats an empty
+      # APPLE_CERTIFICATE as "import this certificate" and fails with
+      # "failed to import the signing certificate as a PKCS#12". With none
+      # set, macOS gets an ad-hoc-signed build (Gatekeeper's "unidentified
+      # developer" warning on first launch) and Windows an unsigned
+      # .exe/.msi (a SmartScreen warning). See docs/APP_STORES.md.
+      - name: Export the platform signing secrets that are set
+        shell: bash
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # macOS signing + notarization — no-ops (ad-hoc-signed build) when
-          # these secrets aren't set, which is fine for a test build but
-          # means the .dmg will show Gatekeeper's "unidentified developer"
-          # warning on first launch. See docs/APP_STORES.md.
           APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
           APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
           APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-          # Windows Authenticode signing — same no-op-when-unset behavior;
-          # an unsigned .exe/.msi triggers a SmartScreen warning instead.
-          # Verify these env var names against the Tauri CLI version this
-          # workflow resolves before relying on this for a real release; the
-          # Windows signing story has changed across Tauri versions.
           WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
           WINDOWS_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}
+        run: |
+          for name in APPLE_CERTIFICATE APPLE_CERTIFICATE_PASSWORD APPLE_SIGNING_IDENTITY \
+                      APPLE_ID APPLE_PASSWORD APPLE_TEAM_ID \
+                      WINDOWS_CERTIFICATE WINDOWS_CERTIFICATE_PASSWORD; do
+            value="${!name}"
+            [ -n "$value" ] || continue
+            # Heredoc form, since a base64 certificate can span lines.
+            delimiter="EOF_$(openssl rand -hex 16)"
+            { echo "$name<<$delimiter"; echo "$value"; echo "$delimiter"; } >> "$GITHUB_ENV"
+          done
+
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Updater signing: once the profile has an updater pubkey,
+          # tauri.conf.json sets bundle.createUpdaterArtifacts and every
+          # bundle (.app.tar.gz, NSIS -setup.exe, .AppImage) gets a .sig made
+          # with this key; the build fails if the key is missing, rather than
+          # shipping updates no installed app could verify. Unused while the
+          # profile's pubkey is empty. See docs/UPDATES.md.
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
           projectPath: apps/debate-native-wrapper
-          tagName: ${{ github.event_name == 'push' && github.ref_name || '' }}
-          releaseName: ${{ github.event_name == 'push' && format('Native Wrapper {0}', github.ref_name) || '' }}
+          # tauri-action otherwise picks npm and runs `npm run tauri build`;
+          # this repo uses bun, and the script is package.json's "tauri".
+          tauriScript: bun run tauri
+          # The tag comes from prepare-release (the pushed tag, or
+          # native-wrapper-v<version> on a manual run). Empty when
+          # prepare-release was skipped (a build-only test run), in which case
+          # nothing is uploaded.
+          tagName: ${{ needs.prepare-release.outputs.tag }}
+          releaseName: ${{ needs.prepare-release.outputs.version != '' && format('Native Wrapper {0}', needs.prepare-release.outputs.version) || '' }}
           releaseId: ${{ needs.prepare-release.outputs.release_id }}
           releaseDraft: true
           args: ${{ matrix.args }}
-          # workflow_dispatch test builds skip release upload entirely.
-          includeUpdaterJson: false
+          # Each matrix job merges its platforms into the draft's latest.json
+          # (with the tag in the URLs, so they keep working once the draft is
+          # published). Installed apps read it only after it is copied to the
+          # update feed when the release is published:
+          # native-wrapper-updates.yml. Build-only test runs have no
+          # release, so nothing is uploaded.
+          includeUpdaterJson: true
+          # Both the NSIS -setup.exe and the .msi are built; the updater uses
+          # NSIS, which is what bundle.windows.nsis installs per user.
+          updaterJsonPreferNsis: true
 
   build-android:
     name: Build Android (.aab, best-effort)
@@ -165,6 +242,11 @@ jobs:
           java-version: "21"
 
       - uses: android-actions/setup-android@v3
+        with:
+          # The action's default list includes the long-retired "tools"
+          # package, which current sdkmanager rejects ("Failed to find
+          # package 'tools'") and fails the job before anything builds.
+          packages: platform-tools
 
       - name: Install Android NDK
         run: sdkmanager --install "ndk;28.0.13004108"
@@ -241,11 +323,12 @@ jobs:
         if: needs.prepare-release.outputs.release_id != '' && steps.keystore.outputs.configured == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.prepare-release.outputs.tag }}
         run: |
           shopt -s globstar nullglob
           files=(apps/debate-native-wrapper/src-tauri/gen/android/app/build/outputs/bundle/**/*.aab)
           if [ ${#files[@]} -gt 0 ]; then
-            gh release upload "${GITHUB_REF_NAME}" "${files[@]}" --clobber
+            gh release upload "$TAG" "${files[@]}" --clobber
           fi
         # Unsigned/debug-signed .aab files aren't installable from Play, so
         # they're uploaded as a workflow artifact (above) for inspection but
@@ -297,11 +380,21 @@ jobs:
           bun install
           cd apps/debate-native-wrapper && bun scripts/build-offline.mjs
 
+      # `ios init` refuses to run without a development team, so with no
+      # APPLE_TEAM_ID secret the job only compiles the Rust core below.
       - name: Generate the gen/apple project
+        id: init
         working-directory: apps/debate-native-wrapper
         env:
           APPLE_DEVELOPMENT_TEAM: ${{ secrets.APPLE_TEAM_ID }}
-        run: npx @tauri-apps/cli@2 ios init
+        run: |
+          if [ -z "$APPLE_DEVELOPMENT_TEAM" ]; then
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::APPLE_TEAM_ID is not set — skipping the Xcode project and the .ipa."
+            exit 0
+          fi
+          npx @tauri-apps/cli@2 ios init
+          echo "configured=true" >> "$GITHUB_OUTPUT"
 
       # Split into two tiers on purpose, because unlike Android there is no
       # such thing as a useful unsigned iOS build: Xcode refuses to archive
@@ -317,6 +410,7 @@ jobs:
 
       - name: Import signing certificate + provisioning profile (skips .ipa if not configured)
         id: signing
+        if: steps.init.outputs.configured == 'true'
         env:
           APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
           APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
@@ -379,13 +473,190 @@ jobs:
         if: needs.prepare-release.outputs.release_id != '' && steps.signing.outputs.configured == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.prepare-release.outputs.tag }}
         run: |
           # `find` rather than a `**` glob: the macOS runners' default bash is
           # 3.2, which has no globstar.
           IPA="$(find apps/debate-native-wrapper/src-tauri/gen/apple -name '*.ipa' | head -n 1)"
           if [ -n "$IPA" ]; then
-            gh release upload "${GITHUB_REF_NAME}" "$IPA" --clobber
+            gh release upload "$TAG" "$IPA" --clobber
           fi
         # An App Store *submission* still needs the Guideline 4.2 "minimum
         # functionality" question in docs/APP_STORES.md answered — this job
         # only produces the .ipa, it does not upload to App Store Connect.
+
+  # Unsigned .ipa for sideloading (AltStore, Sideloadly, ...), which re-sign it
+  # with the installer's own Apple ID, so no Apple Developer membership is
+  # needed. `tauri ios init` insists on a development team, so a placeholder
+  # is passed; signing is then switched off for every xcodebuild call via
+  # XCODE_XCCONFIG_FILE. Tauri's own export step cannot export an unsigned
+  # archive and fails after the archive is made, so that failure is tolerated
+  # and the .ipa is packaged by hand from the .xcarchive. Best-effort: the
+  # whole job is allowed to fail without blocking the release.
+  build-ios-unsigned:
+    name: Build iOS unsigned .ipa (sideload, best-effort)
+    needs: [prepare-release]
+    if: always() && (needs.prepare-release.result == 'success' || needs.prepare-release.result == 'skipped')
+    runs-on: macos-latest
+    timeout-minutes: 60
+    continue-on-error: true
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-ios,aarch64-apple-ios-sim,x86_64-apple-ios
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: apps/debate-native-wrapper/src-tauri
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+
+      - name: Install dependencies
+        working-directory: apps/debate-native-wrapper
+        run: bun install --ignore-scripts
+
+      - name: Build the offline source
+        continue-on-error: true
+        run: |
+          git submodule update --init --depth 1 packages/debate-rankings packages/debate-editor-cm
+          bun install
+          cd apps/debate-native-wrapper && bun scripts/build-offline.mjs
+
+      - name: Generate the gen/apple project (placeholder team)
+        working-directory: apps/debate-native-wrapper
+        env:
+          APPLE_DEVELOPMENT_TEAM: AAAAAAAAAA
+        run: npx @tauri-apps/cli@2 ios init
+
+      - name: Archive with code signing disabled
+        working-directory: apps/debate-native-wrapper
+        env:
+          APPLE_DEVELOPMENT_TEAM: AAAAAAAAAA
+        run: |
+          cat > "$RUNNER_TEMP/no-signing.xcconfig" <<'EOF'
+          CODE_SIGNING_ALLOWED = NO
+          CODE_SIGNING_REQUIRED = NO
+          CODE_SIGN_IDENTITY =
+          DEVELOPMENT_TEAM =
+          PROVISIONING_PROFILE_SPECIFIER =
+          EOF
+          export XCODE_XCCONFIG_FILE="$RUNNER_TEMP/no-signing.xcconfig"
+          # The archive is produced before the export step; exporting an
+          # unsigned archive is expected to fail, so don't stop on it.
+          npx @tauri-apps/cli@2 ios build --export-method debugging || echo "::notice::tauri ios build exited non-zero (expected at the export step); packaging the .xcarchive by hand."
+
+      - name: Package the .ipa from the archive
+        id: package
+        run: |
+          VERSION="$(jq -r .version apps/debate-native-wrapper/src-tauri/tauri.conf.json)"
+          NAME="$(jq -r .productName apps/debate-native-wrapper/src-tauri/tauri.conf.json | tr ' ' '.')"
+          ARCHIVE="$(find apps/debate-native-wrapper/src-tauri/gen/apple -name '*.xcarchive' | head -n 1)"
+          if [ -z "$ARCHIVE" ]; then
+            echo "::error::No .xcarchive was produced, so there is nothing to package." >&2
+            exit 1
+          fi
+          APP="$(find "$ARCHIVE/Products/Applications" -maxdepth 1 -name '*.app' | head -n 1)"
+          if [ -z "$APP" ]; then
+            echo "::error::The archive at $ARCHIVE contains no .app." >&2
+            exit 1
+          fi
+          OUT="$GITHUB_WORKSPACE/${NAME}_${VERSION}_unsigned-sideload.ipa"
+          rm -rf "$RUNNER_TEMP/ipa" && mkdir -p "$RUNNER_TEMP/ipa/Payload"
+          cp -R "$APP" "$RUNNER_TEMP/ipa/Payload/"
+          (cd "$RUNNER_TEMP/ipa" && zip -qry "$OUT" Payload)
+          echo "path=$OUT" >> "$GITHUB_OUTPUT"
+          ls -l "$OUT"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-wrapper-ios-unsigned
+          path: ${{ steps.package.outputs.path }}
+          if-no-files-found: warn
+
+      - name: Attach to release
+        if: needs.prepare-release.outputs.release_id != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.prepare-release.outputs.tag }}
+          IPA: ${{ steps.package.outputs.path }}
+        run: gh release upload "$TAG" "$IPA" --clobber
+
+  # Final stage: once every build job has finished, check that the draft has
+  # the installers attached and publish it. Android/iOS are best-effort, so
+  # only the desktop matrix has to succeed; a failed mobile job just means
+  # that artifact is missing from the release. prepare-release only runs when
+  # a release is wanted (tag push, or a manual run with "publish" ticked), so
+  # its success is what gates this job.
+  publish-release:
+    name: Publish release
+    needs: [prepare-release, build-desktop, build-android, build-ios, build-ios-unsigned]
+    if: >-
+      always() &&
+      needs.prepare-release.result == 'success' &&
+      needs.build-desktop.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Verify the draft has installers
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ needs.prepare-release.outputs.tag }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+        run: |
+          gh release view "$TAG" --json assets -q '.assets[].name' | tee /tmp/assets.txt
+          # One installer per desktop platform.
+          missing=0
+          for pattern in '\.dmg$|\.app\.tar\.gz$' '\.exe$|\.msi$' '\.AppImage$|\.deb$|\.rpm$'; do
+            if ! grep -Eq "$pattern" /tmp/assets.txt; then
+              echo "::error::No release asset matches /$pattern/ — refusing to publish." >&2
+              missing=1
+            fi
+          done
+          # latest.json (and the .sig files) only exist once the profile has an
+          # updater pubkey, so require the manifest only when updater
+          # signatures were produced.
+          if grep -Eq '\.sig$' /tmp/assets.txt && ! grep -Eq '^latest\.json$' /tmp/assets.txt; then
+            echo "::error::Updater signatures are attached but latest.json is missing — refusing to publish." >&2
+            missing=1
+          fi
+          # The .ipa is attached by build-ios, and only when the Apple team ID,
+          # signing certificate and provisioning profile secrets are all set.
+          # With them set, a missing .ipa is a failure; without them it is
+          # reported so the gap is visible instead of silent.
+          # The unsigned sideload .ipa (build-ios-unsigned) doesn't count here.
+          if ! grep -E '\.ipa$' /tmp/assets.txt | grep -Fvq 'unsigned-sideload'; then
+            if [ -n "$APPLE_TEAM_ID" ] && [ -n "$APPLE_CERTIFICATE" ] && [ -n "$IOS_PROVISIONING_PROFILE_BASE64" ]; then
+              echo "::error::iOS signing secrets are set but no .ipa is attached — check the Build iOS job. Refusing to publish." >&2
+              missing=1
+            else
+              echo "::warning::No .ipa on the release: set APPLE_TEAM_ID, APPLE_CERTIFICATE (+ _PASSWORD) and IOS_PROVISIONING_PROFILE_BASE64 to build and attach one." >&2
+            fi
+          fi
+          exit $missing
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ needs.prepare-release.outputs.tag }}
+          VERSION: ${{ needs.prepare-release.outputs.version }}
+        run: |
+          FLAGS=(--draft=false)
+          if [[ "$VERSION" == *-* ]]; then
+            FLAGS+=(--prerelease)
+          else
+            FLAGS+=(--latest=false)
+          fi
+          gh release edit "$TAG" "${FLAGS[@]}"
+          echo "Published $TAG: $(gh release view "$TAG" --json url -q .url)" >> "$GITHUB_STEP_SUMMARY"
