@@ -15,6 +15,9 @@
  * the speech view controls (quote view, view mode, split layout, open speech
  * document) sit above the speech list.
  *
+ * Every speech also carries a signpost button whose tooltip outlines that
+ * speech's H1–H3 headings (its signposting), without the H4 card tags.
+ *
  * Any other speech in the list can be clicked to make it the active one.
  * When the viewer is one of the round's debaters, the speeches they give are
  * highlighted and tagged "You" (see `round/my-speeches.ts`).
@@ -28,6 +31,7 @@ import { PrepTimer } from "@debate/timer/src/timers/PrepTimer"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/primitives/tooltip"
 import { cn } from "../ui/lib/utils"
 import { SpeechHeaderBar } from "./SpeechHeaderBar"
+import { SpeechSignpostButton } from "./SpeechSignpostButton"
 import { SpeechWordStats } from "@debate/timer/src/timers/SpeechWordStats"
 import { useSpeechWordStats } from "../hooks/useSpeechWordStats"
 import { useFlowStore } from "../state/store"
@@ -141,7 +145,7 @@ function SpeechTotalsRow({
   onSelect?: (name: string) => void
 }) {
   const { flows, selected } = useFlowStore()
-  const { stats, spoken } = useSpeechWordStats(flows[selected], name)
+  const { stats, spoken, signposts } = useSpeechWordStats(flows[selected], name)
   const className = cn(
     "flex w-full items-center gap-2 rounded-[var(--border-radius)] px-2 py-1 text-left text-xs font-medium text-muted-foreground",
     secondary ? "text-red-600/70 dark:text-red-400/70" : "text-blue-600/70 dark:text-blue-400/70",
@@ -159,11 +163,12 @@ function SpeechTotalsRow({
     return (
       <div className={className} data-mine={mine || undefined}>
         {content}
+        <SpeechSignpostButton speechName={name} signposts={signposts} />
         {gradeButton}
       </div>
     )
   }
-  // The grade button sits beside the select button — nesting buttons is invalid.
+  // The signpost and grade buttons sit beside the select button — nesting buttons is invalid.
   return (
     <div className="flex items-center gap-0.5">
       <button
@@ -175,9 +180,17 @@ function SpeechTotalsRow({
       >
         {content}
       </button>
+      <SpeechSignpostButton speechName={name} signposts={signposts} />
       {gradeButton}
     </div>
   )
+}
+
+/** Signpost button for the selected speech, whose card has no totals row. */
+function SelectedSpeechSignpost({ speechName }: { speechName: string }) {
+  const { flows, selected } = useFlowStore()
+  const { signposts } = useSpeechWordStats(flows[selected], speechName)
+  return <SpeechSignpostButton speechName={speechName} signposts={signposts} />
 }
 
 /** The round's display title, falling back to the tournament/level pair. */
@@ -342,6 +355,7 @@ export function LiveRoundGroup({
                       </div>
                     )}
                     <div className="flex items-center justify-end border-b border-border/60 px-1">
+                      <SelectedSpeechSignpost speechName={speech.name} />
                       <GradeSpeechButton
                         round={round}
                         speechName={speech.name}
