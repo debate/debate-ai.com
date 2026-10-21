@@ -17,6 +17,8 @@ import { RoundTimerPanel } from "./RoundTimerPanel"
 import { OpenTabsGroup } from "./OpenTabsGroup"
 import { RemoteSpeechDocHeadings } from "./RemoteSpeechDocHeadings"
 import { RemoteTimerDisplay } from "./RemoteTimerDisplay"
+import { SidebarSectionsMenu } from "./SidebarSectionsMenu"
+import { useSidebarSections } from "../hooks/useSidebarSections"
 import { selectSidebarRound } from "../utils/sidebar-round"
 import type { Flow, Round } from "../types/flow"
 import type { SpeechTimerEntry } from "../hooks/useTimerState"
@@ -111,7 +113,8 @@ interface FlowPageSidebarProps {
  * — its prep timers and the timer/controls bar for the speech in view, the
  * app's only round-timer surface now that the dock has no Timer button — the
  * collapsible circular Timer (which pops out), the Cameras room, and a
- * collapsible list of open tabs.
+ * collapsible list of open tabs. The "Sidebar sections" menu in the
+ * quick-action row shows or hides each of those (saved per device).
  *
  * @param props - Component props.
  * @param props.flows - Array of all flows; sorted internally (active first, then archived).
@@ -188,11 +191,12 @@ export function FlowPageSidebar({
   // The round whose timers the sidebar shows: the one the active flow tab
   // belongs to, falling back to the live round — see `selectSidebarRound`.
   const selectedRound = selectSidebarRound(rounds, currentFlow)
+  const { sections, setSection, resetSections } = useSidebarSections()
 
   return (
     <div className="mt-[50px]  bg-[var(--background)] w-full h-full md:h-[var(--main-height)] rounded-[var(--border-radius)] p-[var(--padding)] flex flex-col box-border">
       {/* Quick action buttons */}
-      <div className="h-auto pb-[var(--padding)] grid grid-cols-4 gap-0.5">
+      <div className="h-auto pb-[var(--padding)] grid grid-cols-5 gap-0.5">
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -223,10 +227,11 @@ export function FlowPageSidebar({
 
           <FlowToolsMenu currentFlow={currentFlow} />
           <EbbFlowToolsMenu onAction={onEbbToolAction} />
+          <SidebarSectionsMenu sections={sections} onChange={setSection} onReset={resetSections} />
         </TooltipProvider>
       </div>
 
-      {selectedRound && (
+      {selectedRound && sections.speeches && (
         <LiveRoundGroup
           round={selectedRound}
           isLive={selectedRound.status === "active"}
@@ -256,7 +261,7 @@ export function FlowPageSidebar({
       )}
 
       {/* The circular progress timer, with a pop-out. */}
-      {selectedRound && (
+      {selectedRound && sections.timer && (
         <RoundTimerPanel
           debateStyle={timerState.debateStyle}
           selectedSpeech={selectedSpeech}
@@ -270,10 +275,10 @@ export function FlowPageSidebar({
       )}
 
       {/* Webcams for the round's speeches — a small P2P video room. */}
-      {selectedRound && <WebcamRoomPanel round={selectedRound} />}
+      {selectedRound && sections.cameras && <WebcamRoomPanel round={selectedRound} />}
 
       {/* Remote Speech Document Headings */}
-      {(receivedHeadings.length > 0 || remoteTimers.length > 0) && (
+      {sections.shared && (receivedHeadings.length > 0 || remoteTimers.length > 0) && (
         <div className="border-t border-border pt-3 mt-3 space-y-3">
           {receivedHeadings.length > 0 && (
             <Collapsible className="w-full">
@@ -307,17 +312,19 @@ export function FlowPageSidebar({
         </div>
       )}
 
-      <OpenTabsGroup
-        flows={flows}
-        selected={selected}
-        onSelectFlow={handleSelectFlow}
-        onAddFlow={onAddFlow}
-        onRenameFlow={onRenameFlow}
-        onArchiveFlow={onArchiveFlow}
-        onDeleteFlow={onDeleteFlow}
-        ebbActive={ebbActive}
-        onSelectEbb={handleSelectEbb}
-      />
+      {sections.tabs && (
+        <OpenTabsGroup
+          flows={flows}
+          selected={selected}
+          onSelectFlow={handleSelectFlow}
+          onAddFlow={onAddFlow}
+          onRenameFlow={onRenameFlow}
+          onArchiveFlow={onArchiveFlow}
+          onDeleteFlow={onDeleteFlow}
+          ebbActive={ebbActive}
+          onSelectEbb={handleSelectEbb}
+        />
+      )}
     </div>
   )
 }
