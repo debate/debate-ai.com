@@ -8,13 +8,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { act, createElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
-<<<<<<< HEAD
-import { WatchSidePanel } from "../src/components/videos/watch/panels/WatchSidePanel";
-import type { SpeechFocusRequest } from "../src/components/videos/watch/panels/WatchRoundPanel";
-=======
 import { WatchSidePanel } from "../src/components/watch/WatchSidePanel";
 import type { SpeechFocusRequest } from "../src/components/watch/WatchRoundPanel";
->>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 import type { VideoDocument } from "../src/lib/video-documents";
 import { standardRoundSpeeches } from "../src/lib/round-formats";
 

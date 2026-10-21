@@ -17,19 +17,11 @@ import { describe, it, expect } from "vitest"
 import {
   SIDEBAR_TOOL_SECTIONS,
   TOOLS_ROOT_HREF,
-<<<<<<< HEAD
-} from "@debate/videos/src/components/sidebar/sidebar-tool-sections"
-import {
-  SIDEBAR_VIDEO_LINKS,
-  VIDEO_REFERENCE_LINKS,
-} from "@debate/videos/src/components/sidebar/sidebar-video-links"
-=======
 } from "@debate/videos/src/components/sidebar-nav/sidebar-tool-sections"
 import {
   SIDEBAR_VIDEO_LINKS,
   VIDEO_REFERENCE_LINKS,
 } from "@debate/videos/src/components/sidebar-nav/sidebar-video-links"
->>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 import { FOOTER_LINKS } from "@debate/videos/src/ui/layout/footer-links"
 import {
   DOCK_MENU_HREFS,

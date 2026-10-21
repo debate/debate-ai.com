@@ -21,7 +21,10 @@
  * One category isn't sourced from `RIBBON_GROUPS`: Plugins lists whatever
  * the palette's `command` search source pulls from the runtime plugin
  * registry, so a plugin-registered command reachable via the palette is
- * always reachable here too.
+ * always reachable here too. View also opens with a Read aloud section whose
+ * "Read whole document aloud" item reads every card in turn through the card
+ * hover actions' reader (same voice and speed as a card's Read aloud), and
+ * turns into "Stop reading document" while it runs.
  *
  * The bar's right end also hosts the engine's Send / Receive card-sharing
  * pills, beside the Settings button (`usePairingPillDock`). The engine mounts
@@ -126,6 +129,7 @@ export function MenuBar({ className }: MenuBarProps): React.JSX.Element {
             title={category.title}
             groupTitles={category.groupTitles}
             includesPluginCommands={category.includesPluginCommands}
+            includesReadAloud={category.includesReadAloud}
             onRun={run}
           />
         ))}
@@ -201,11 +205,13 @@ function MenuBarCategoryMenu({
   title,
   groupTitles,
   includesPluginCommands,
+  includesReadAloud,
   onRun,
 }: {
   title: string;
   groupTitles: string[];
   includesPluginCommands?: boolean;
+  includesReadAloud?: boolean;
   onRun: (id: string) => void;
 }): React.JSX.Element {
   return (
@@ -220,9 +226,53 @@ function MenuBarCategoryMenu({
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="min-w-[10rem] max-h-[70vh] overflow-y-auto p-0.5">
+        {includesReadAloud && <ReadAloudSection />}
         <CategoryContent groupTitles={groupTitles} includesPluginCommands={includesPluginCommands} onRun={onRun} />
       </DropdownMenuContent>
     </DropdownMenu>
+  );
+}
+
+/** "Read whole document aloud" / "Stop reading document", following the
+ *  reader's state while the menu is open. The reader module is the one the
+ *  editor boot already loaded, so the dynamic import adds no weight. */
+function ReadAloudSection(): React.JSX.Element {
+  const [reading, setReading] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    let unlisten: (() => void) | undefined;
+    void import("../editor/card-hover-actions.js").then((m) => {
+      if (cancelled) return;
+      setReading(m.isReadingDocumentAloud());
+      const follow = (): void => setReading(m.isReadingDocumentAloud());
+      window.addEventListener(m.READ_DOCUMENT_CHANGE_EVENT, follow);
+      unlisten = () => window.removeEventListener(m.READ_DOCUMENT_CHANGE_EVENT, follow);
+    });
+    return () => {
+      cancelled = true;
+      unlisten?.();
+    };
+  }, []);
+
+  const toggle = useCallback(() => {
+    void import("../editor/card-hover-actions.js").then((m) => m.toggleReadDocumentAloud());
+  }, []);
+
+  return (
+    <div>
+      <DropdownMenuLabel className="px-2 py-0.5 text-[10px] leading-tight uppercase tracking-wide text-muted-foreground">
+        Read aloud
+      </DropdownMenuLabel>
+      <DropdownMenuItem
+        disabled={reading === null}
+        onSelect={toggle}
+        className="px-2 py-0.5 text-xs leading-tight"
+      >
+        {reading ? "Stop reading document" : "Read whole document aloud"}
+      </DropdownMenuItem>
+      <DropdownMenuSeparator className="my-0.5" />
+    </div>
   );
 }
 

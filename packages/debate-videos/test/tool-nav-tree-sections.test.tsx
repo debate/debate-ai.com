@@ -34,19 +34,11 @@ vi.mock("next/image", () => ({
     createElement("img", { src: typeof src === "string" ? src : (src as { src: string }).src, alt }),
 }));
 
-<<<<<<< HEAD
-import type { ToolNavTreeProps } from "../src/components/sidebar/ToolNavTree";
-
-const { ToolNavTree } = await import("../src/components/sidebar/ToolNavTree");
-const { INSIGHTS_SECTION_ID, RESEARCH_SECTION_ID } = await import(
-  "../src/components/sidebar/sidebar-tool-sections"
-=======
 import type { ToolNavTreeProps } from "../src/components/sidebar-nav/ToolNavTree";
 
 const { ToolNavTree } = await import("../src/components/sidebar-nav/ToolNavTree");
 const { INSIGHTS_SECTION_ID, RESEARCH_SECTION_ID } = await import(
   "../src/components/sidebar-nav/sidebar-tool-sections"
->>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 );
 
 function render(props: ToolNavTreeProps): string {
@@ -59,7 +51,18 @@ describe("ToolNavTree sectionIds", () => {
 
     expect(html).toContain("Research");
     expect(html).not.toContain("Coaching");
-    expect(html).not.toContain("Practice");
+    expect(html).not.toContain("Insights");
+    // Practice is no longer a section of its own; its tools are Research's.
+    expect(html).not.toMatch(/<h1[^>]*>Practice<\/h1>/);
+  });
+
+  it("lists the practice tools under Research, keeping their /practice URLs", () => {
+    const html = render({ sectionIds: [RESEARCH_SECTION_ID] });
+
+    expect(html).toContain('href="/practice/versus-ai"');
+    expect(html).toContain("Practice vs AI");
+    expect(html).toContain('href="/practice/prep"');
+    expect(html).toContain("Prep Workspace");
   });
 
   it("leaves out the glossary/rankings pair, which rides with Insights", () => {
@@ -107,7 +110,7 @@ describe("ToolNavTree sectionIds", () => {
 
     expect(html).toContain("Coaching");
     expect(html).toContain("Research");
-    expect(html).toContain("Practice");
+    expect(html).toContain("Insights");
   });
 
   it("lists Insights links without subgroup labels", () => {
@@ -128,17 +131,12 @@ describe("ToolNavTree sectionIds", () => {
 });
 
 describe("SIDEBAR_TOOL_SECTIONS", () => {
-  it("is the four requested sections, in order", async () => {
+  it("is the three requested sections, in order", async () => {
     const { SIDEBAR_TOOL_SECTIONS } = await import(
-<<<<<<< HEAD
-      "../src/components/sidebar/sidebar-tool-sections"
-=======
       "../src/components/sidebar-nav/sidebar-tool-sections"
->>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
     );
     expect(SIDEBAR_TOOL_SECTIONS.map((section) => section.title)).toEqual([
       "Research",
-      "Practice",
       "Coaching",
       "Insights",
     ]);

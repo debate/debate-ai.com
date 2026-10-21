@@ -34,19 +34,11 @@ vi.mock("next/image", () => ({
     createElement("img", { src: typeof src === "string" ? src : (src as { src: string }).src, alt }),
 }));
 
-<<<<<<< HEAD
-const { ToolNavTree } = await import("../src/components/sidebar/ToolNavTree");
-const { TREE_ITEM_ICON_CLASS } = await import("../src/components/sidebar/SidebarTreeItem");
-const { isImageIconSource } = await import("../src/components/sidebar/icon-kind");
-const { APP_DOCK_LINKS, SIDEBAR_TOOL_SECTIONS } = await import(
-  "../src/components/sidebar/sidebar-tool-sections"
-=======
 const { ToolNavTree } = await import("../src/components/sidebar-nav/ToolNavTree");
 const { TREE_ITEM_ICON_CLASS } = await import("../src/components/sidebar-nav/TreeItem");
 const { isImageIconSource } = await import("../src/components/sidebar-nav/icon-kind");
 const { APP_DOCK_LINKS, SIDEBAR_TOOL_SECTIONS } = await import(
   "../src/components/sidebar-nav/sidebar-tool-sections"
->>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 );
 
 const html = renderToStaticMarkup(<ToolNavTree />);

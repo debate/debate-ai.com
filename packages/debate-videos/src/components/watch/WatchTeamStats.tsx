@@ -16,27 +16,13 @@
 "use client"
 
 import type { ReactNode } from "react"
-<<<<<<<< HEAD:packages/debate-videos/src/components/videos/watch/prediction/WatchTeamStats.tsx
-import { useAllRankingDatasets } from "../../../../hooks/useAllRankingDatasets"
-import { isRankedSeasonRound } from "../../../../hooks/useVideoTeamRankings"
-========
 import { useAllRankingDatasets } from "../../hooks/useAllRankingDatasets"
 import { isRankedSeasonRound } from "../../hooks/useVideoTeamRankings"
->>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/watch/WatchTeamStats.tsx
 import {
   findVideoTeamProfile,
   teamHref,
   teamRadarData,
   type ProfileEntry,
-<<<<<<<< HEAD:packages/debate-videos/src/components/videos/watch/prediction/WatchTeamStats.tsx
-} from "../../../../panels/leaderboard/profile/rankingProfileHelpers"
-import { TeamRadarChart } from "../../../../panels/leaderboard/profile/TeamRadarChart"
-import { cn } from "../../../../ui/lib/utils"
-import { predictWatchMatchup } from "../../../../lib/watch-matchup-prediction"
-import { WatchMatchupPrediction } from "./WatchMatchupPrediction"
-import { TeamCodeLabel } from "../../../team-label/TeamLabel"
-import type { VideoType } from "../../../../types/videos"
-========
 } from "../../panels/leaderboard/profile/rankingProfileHelpers"
 import { TeamRadarChart } from "../../panels/leaderboard/profile/TeamRadarChart"
 import { cn } from "../../ui/lib/utils"
@@ -44,7 +30,6 @@ import { predictWatchMatchup } from "../../lib/watch-matchup-prediction"
 import { WatchMatchupPrediction } from "./WatchMatchupPrediction"
 import { TeamCodeLabel } from "../team-label/TeamLabel"
 import type { VideoType } from "../../types/videos"
->>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/watch/WatchTeamStats.tsx
 
 const rating = (n: number) => n.toFixed(1)
 const percent = (n: number | null) =>

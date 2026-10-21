@@ -8,7 +8,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import {
   GOAT_HEADING_TITLE,
   GoatSparklesHeading,
-} from "../src/components/gallery/GoatSparklesHeading";
+} from "../src/components/category-gallery/GoatSparklesHeading";
 
 describe("GoatSparklesHeading", () => {
   it("renders the All Time Greatest Legends title as the page heading", () => {

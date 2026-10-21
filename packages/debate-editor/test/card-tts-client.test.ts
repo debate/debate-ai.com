@@ -138,3 +138,22 @@ describe("voice engines", () => {
     localStorage.clear();
   });
 });
+
+describe("read speed storage", () => {
+  it("defaults to 2x, clamps what it stores and tells listeners", async () => {
+    const { readStoredSpeed, storeReadSpeed, READ_SPEED_CHANGE_EVENT } = await import("../src/editor/card-tts-client");
+    localStorage.clear();
+    expect(readStoredSpeed()).toBe(2);
+    const heard: number[] = [];
+    const listen = (e: Event) => heard.push((e as CustomEvent<number>).detail);
+    window.addEventListener(READ_SPEED_CHANGE_EVENT, listen);
+    storeReadSpeed(1.5);
+    storeReadSpeed(9);
+    window.removeEventListener(READ_SPEED_CHANGE_EVENT, listen);
+    expect(heard).toEqual([1.5, 4]);
+    expect(readStoredSpeed()).toBe(4);
+    localStorage.setItem("pmd-card-actions-read-speed", "nonsense");
+    expect(readStoredSpeed()).toBe(2);
+    localStorage.clear();
+  });
+});

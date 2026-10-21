@@ -20,17 +20,12 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-<<<<<<< HEAD:packages/debate-videos/src/components/videos/video-card/VideoCardActions.tsx
-} from "../../../ui/primitives/tooltip"
-import { formatCount } from "../../../lib/format-count"
-=======
 } from "../../ui/primitives/tooltip"
 import { formatCount } from "../../lib/format-count"
->>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/video-card/VideoCardActions.tsx
 import { formatVideoDate } from "./videoCardUtils"
 import { topicDisplayLines } from "../../lib/debate-topics"
 import { HideConfirmDialog } from "./VideoCardDialogs"
-import { WatchPageLink } from "../watch/controls/WatchPageLink"
+import { WatchPageLink } from "../watch/WatchPageLink"
 import { WatchProgressBadge } from "./WatchProgressBadge"
 import { VideoDuration } from "./VideoDuration"
 import { useWatchHistoryEntry } from "../../hooks/useWatchHistory"
