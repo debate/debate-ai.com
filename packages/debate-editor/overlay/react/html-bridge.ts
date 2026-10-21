@@ -19,12 +19,41 @@
  * whose stored content it could not read.
  */
 
-import { DOMParser as PMDOMParser, DOMSerializer, type Node as PMNode } from 'prosemirror-model';
+import {
+  DOMParser as PMDOMParser,
+  DOMSerializer,
+  type Node as PMNode,
+  type ParseRule,
+  type TagParseRule,
+} from 'prosemirror-model';
 import { schema } from '../schema/index.js';
+import { dedupeHeadingIds, HEADING_TYPE_NAMES, stampMissingHeadingIds } from '../schema/ids.js';
 import { makeBlankDoc } from '../editor/blank-doc.js';
 
 const serializer = DOMSerializer.fromSchema(schema);
-const parser = PMDOMParser.fromSchema(schema);
+
+/** The schema's heading rules read only `indent`, so a parsed heading came
+ *  out with `id: null` — and the outline's collapse chevrons, multi-select,
+ *  context menu and jump targets all key on that id, so every one of them
+ *  was dead in the embed. Read back the `data-id` that `toDOM` writes, so a
+ *  saved document keeps its ids from one load to the next. */
+function withHeadingIds(rule: ParseRule): ParseRule {
+  if (!('tag' in rule)) return rule;
+  const tagRule = rule as TagParseRule;
+  if (!tagRule.node || !HEADING_TYPE_NAMES.has(tagRule.node)) return rule;
+  const base = tagRule.getAttrs;
+  return {
+    ...tagRule,
+    getAttrs: (dom: HTMLElement) => {
+      const attrs = base ? base(dom) : {};
+      if (attrs === false) return false;
+      const id = dom.getAttribute('data-id');
+      return id ? { ...(attrs ?? {}), id } : attrs;
+    },
+  };
+}
+
+const parser = new PMDOMParser(schema, PMDOMParser.fromSchema(schema).rules.map(withHeadingIds));
 
 /** Serialize a CardMirror doc node to an HTML string. */
 export function docToHtml(doc: PMNode): string {
@@ -77,7 +106,9 @@ export function parseHtml(html: string): ParsedHtml {
   try {
     wrapper = document.createElement('div');
     wrapper.innerHTML = html;
-    const doc = parser.parse(wrapper);
+    // Content saved before ids round-tripped carries `data-id=""`: mint ids
+    // for those, and re-mint any duplicate a hand-edited file picked up.
+    const doc = dedupeHeadingIds(stampMissingHeadingIds(parser.parse(wrapper)));
     doc.check();
     if (isBlankDoc(doc) && htmlLooksNonEmpty(wrapper)) {
       console.warn('[debate-editor] parseHtml: content did not survive parsing');
