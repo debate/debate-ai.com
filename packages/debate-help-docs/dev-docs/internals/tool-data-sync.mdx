@@ -535,12 +535,12 @@ each invisible until something renders them again — see **Known gaps**.
   a team beyond "it's your own account's data" — the same gap
   [Judge Profiles](judge-profiles.md) and
   [Opponent Team Profiles](opponent-team-profiles.md) already note.
-- The merge runs once per tab (10-minute TTL), and that is now the only time
-  it runs — **Sync now** was on `/settings`' removed **Tool data** list. There
-  is no push channel either, so a record saved on another device mid-session
-  shows up on the next reload rather than live, and a reload is the only way
-  to ask for it. The synthetic `storage` event covers other tabs of the
-  *same* browser only.
+- The merge runs once per tab (10-minute TTL), again when a signed-in tab
+  returns to the foreground after the TTL has lapsed (`visibilitychange` in
+  `useToolRecordSync`), and on **Sync now** (`/tools`). There is no push
+  channel, so a record saved on another device mid-session shows up the next
+  time the tab is refocused after the TTL, or on reload, rather than live. The
+  synthetic `storage` event covers other tabs of the *same* browser only.
 - **The watcher is a poll, so an uninstrumented store's change reaches the
   account at the next tick** (up to 15 seconds, or immediately when the tab is
   hidden or closed) rather than on the click. A store that also calls
