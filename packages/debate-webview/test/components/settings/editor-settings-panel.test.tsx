@@ -2,7 +2,8 @@
 /**
  * @fileoverview The /settings sidebar: General first (holding My team and My
  * school), Sound & speech and Privacy, then the editor's tabs under an Editor
- * heading, and the old `?category=my-school` link opening General.
+ * heading (its own General rows as "Editor prefs"), and the old
+ * `?category=my-school` and `?category=general` links.
  */
 import { act } from "react"
 import { createRoot } from "react-dom/client"
@@ -59,19 +60,27 @@ describe("EditorSettingsPanel", () => {
   it("lists General, Sound & speech and Privacy ahead of the editor's tabs, with no separate claim tabs", async () => {
     const host = await mount()
     const labels = tabLabels(host)
-    expect(labels.slice(0, 4)).toEqual(["General", "Sound & speech", "Privacy", "Files"])
+    expect(labels.slice(0, 5)).toEqual(["General", "Sound & speech", "Privacy", "Editor prefs", "Files"])
     expect(labels).not.toContain("My team")
     expect(labels).not.toContain("My school")
     expect(labels.filter((label) => label === "General")).toHaveLength(1)
     expect([...host.querySelectorAll(".dai-settings-group")].map((g) => g.textContent)).toContain("Editor")
   })
 
-  it("renders the team and school claims and the editor's General rows inside General", async () => {
+  it("renders the team and school claims inside General, without the editor's General rows", async () => {
     search = "category=my-school"
     const host = await mount()
     expect(host.querySelector('[role="tab"][aria-selected="true"]')?.textContent).toBe("General")
     expect(host.querySelector("#settings-my-team [data-testid='my-team']")).not.toBeNull()
     expect(host.querySelector("#settings-my-school [data-testid='my-school']")).not.toBeNull()
-    expect(host.querySelector("#settings-editor-general [data-editor-category='general']")).not.toBeNull()
+    expect(host.querySelector("[data-editor-category='general']")).toBeNull()
+  })
+
+  it("opens the editor's General rows on their own Editor prefs tab for ?category=general", async () => {
+    search = "category=general"
+    const host = await mount()
+    expect(host.querySelector('[role="tab"][aria-selected="true"]')?.textContent).toBe("Editor prefs")
+    expect(host.querySelector("[data-editor-category='general']")).not.toBeNull()
+    expect(host.querySelector("[data-testid='my-team']")).toBeNull()
   })
 })
