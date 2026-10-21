@@ -32,6 +32,7 @@ interface SpeechAnalysisStats {
 interface VideoResult {
   videoId: string;
   title: string;
+  viewCount?: number;
   status: "saved" | "preview" | "failed";
   format?: string;
   speeches?: number;
@@ -52,6 +53,12 @@ interface PageResult {
 const SCOPE_LABELS: Record<Scope, string> = {
   goat: "Greatest of All-Time videos",
   all: "Every video",
+};
+
+/** The run order, which the server's `SPEECH_ANALYSIS_ORDER` follows. */
+const SCOPE_ORDER: Record<Scope, string> = {
+  goat: "Most viewed first.",
+  all: "Greatest of All-Time videos first, then the rest by most viewed.",
 };
 
 /** The admin's prompt is kept in this browser between visits. */
@@ -187,10 +194,13 @@ export function SpeechAnalysisPanel() {
         saved += page.saved;
         failed.push(...page.results.filter((result) => result.status === "failed"));
         setFailures([...failed]);
-        const lastTitle = page.results[page.results.length - 1]?.title;
+        const last = page.results[page.results.length - 1];
         setProgress(
           `Processed ${processed.toLocaleString()} videos, saved ${saved.toLocaleString()}` +
-            (lastTitle ? ` — last: ${lastTitle}` : "") +
+            (last
+              ? ` — last: ${last.title}` +
+                (last.viewCount != null ? ` (${last.viewCount.toLocaleString()} views)` : "")
+              : "") +
             "…",
         );
         if (page.done || !page.nextAfterId || stopRequested.current) break;
@@ -254,6 +264,7 @@ export function SpeechAnalysisPanel() {
             Redo videos the AI already analyzed
           </label>
         </div>
+        <p className="text-muted-foreground text-sm">Order: {SCOPE_ORDER[scope]}</p>
         {stats && (
           <p className="text-muted-foreground text-sm">
             {stats.totalVideos.toLocaleString()} videos · {stats.withTranscript.toLocaleString()}{" "}
