@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   DEBATER_ACTIVITY_EVENT,
-  DEBATER_DEVICE_ID_KEY,
+  DEBATER_DEVICE_ID_STORAGE_KEY,
   getDebaterDeviceId,
   DEBATER_LEVEL_STORAGE_KEY,
   DEBATER_XP_AWARDED_EVENT,
@@ -60,7 +60,7 @@ describe("state/debaterLevel", () => {
   it("keeps a stable device id and records activity under it in the ledger", () => {
     const id = getDebaterDeviceId();
     expect(id).toBeTruthy();
-    expect(localStorage.getItem(DEBATER_DEVICE_ID_KEY)).toBe(id);
+    expect(localStorage.getItem(DEBATER_DEVICE_ID_STORAGE_KEY)).toBe(id);
     expect(getDebaterDeviceId()).toBe(id);
     recordDebaterActivity("card_cut", 1, DAY1);
     expect(Object.keys(loadDebaterLevelState().ledger?.devices ?? {})).toEqual([id]);
