@@ -50,7 +50,7 @@ const { ALL_SIDEBAR_SECTION_IDS, toggleExpandedSection, withSectionExpanded } = 
 const SAMPLE_HREF_BY_SECTION: Record<string, string> = {
   coaching: "/news",
   research: "/research/team",
-  insights: "/practice/glossary",
+  insights: "/practice/rules",
 };
 
 describe("ToolNavTree expansion", () => {

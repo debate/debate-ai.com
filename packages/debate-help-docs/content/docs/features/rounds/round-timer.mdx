@@ -13,6 +13,7 @@ small window.
 - **Nav:** `/debate`, left sidebar, the **Timer** section under the selected
   round (above **Cameras**)
 - **Package:** `debate-round` (`layout/RoundTimerPanel.tsx`,
+  `layout/SidebarSectionsMenu.tsx`, `utils/sidebar-sections.ts`,
   `hooks/useRoomTimerSync.ts`, `hooks/useTimerSync.ts`,
   `webcam/useWebcamRoom.ts`), `debate-timer`
   (`timers/circular/CircularTimerFace.tsx`), app Worker
@@ -41,6 +42,16 @@ small window.
   visible over other apps. In other browsers the dial floats in the page's
   bottom-right corner. Click the button again, or **Bring it back**, to close
   it.
+- **All timers.** The list button next to the pop-out button opens every
+  speech and both prep clocks with the time used out of the time allowed and a
+  bar for each, so you can check the round's timing between speeches.
+  **Speech order** lists them as the round runs; **Most used** ranks them by
+  time used. Click a prep row to show that clock on the dial.
+- **Turn sidebar sections on and off.** The **Sidebar sections** button (the
+  panel icon in the row of buttons at the top of the sidebar) has a checkbox
+  for each section: Speeches & prep, Circular timer, Cameras, Shared headings
+  & timers, and Open tabs. Unchecking one hides it; **Show all** brings
+  everything back. The choice is saved on this device.
 - **Same dial as the extension.** The browser extension's timer window uses
   this same circular timer face.
 
@@ -54,5 +65,9 @@ small window.
   this device only.
 - The Picture-in-Picture window needs the Document Picture-in-Picture API
   (Chrome and Edge 116+). Firefox and Safari get the in-page floating dial.
+- Sidebar section choices are saved per browser, not to your account, so a
+  second device starts with every section shown.
+- In **All timers**, clicking a speech row doesn't switch to that speech; use
+  the round group's speech list.
 - The dial counts down on its own, but a speech's timer only rings and is
   marked done by the round group's speech bar for the speech in view.
