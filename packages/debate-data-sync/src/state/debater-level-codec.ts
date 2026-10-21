@@ -222,11 +222,10 @@ function ledgerCounts(ledger: Ledger): Counts {
  * When a copy carries a per-device `ledger` (each device only grows its own
  * entry), the ledgers merge entry by entry and `totalXp` / `lifetimeCounts`
  * are rebuilt as base + every device, so work done on two devices adds up.
- * Each copy also gains the log events only the other has seen (by event id),
- * so activity logged on two devices adds even before both carry a ledger;
- * the larger result wins per field, so one event is never counted twice.
- * Copies with neither (older clients) fall back to the larger side, which can
- * under-count but never double-counts.
+ * Each copy also gains the per-event log entries (by id) only the other has
+ * seen, and the larger result wins per field, which adds activity from two
+ * devices even without a ledger. Copies with neither (older clients) fall
+ * back to the larger side, which can under-count but never double-count.
  */
 export function mergeDebaterLevel(local: unknown, remote: unknown): unknown {
   if (!hasValidXp(local)) return remote;
