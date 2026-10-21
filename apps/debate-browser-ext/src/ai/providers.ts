@@ -3,7 +3,7 @@
  *
  * The extension has no API keys of its own. It reuses the OpenRouter or
  * Anthropic key the reader saved in the Debate AI app's own settings
- * (Settings → Preferences → "Your own AI key"; see ./app-key), and without
+ * (Settings → General → "Your own AI key"; see ./app-key), and without
  * one it asks through the reader's debate-ai.com account:
  *
  * - **Your own key, from the app's settings** — OpenRouter or Anthropic,

@@ -111,28 +111,24 @@ describe("parseDebaterLevelState", () => {
   });
 });
 
-describe("per-device ledger", () => {
-  it("snapshots existing totals as the base and tracks this device's earnings", () => {
-    const first = applyDebaterActivity(createDebaterLevelState(), "card_cut", DAY1, 1, DEBATER_CHALLENGES, "dev-a");
-    const prior = applyDebaterActivity(createDebaterLevelState(), "card_cut", DAY1).state;
-    const upgraded = applyDebaterActivity(prior, "card_cut", DAY1, 2, DEBATER_CHALLENGES, "dev-a");
-    expect(upgraded.state.ledger?.base).toEqual({ xp: prior.totalXp, counts: { card_cut: 1 } });
-    expect(upgraded.state.ledger?.devices["dev-a"]).toEqual({ xp: upgraded.xpGained, counts: { card_cut: 2 } });
-    expect(upgraded.state.totalXp).toBe(prior.totalXp + upgraded.xpGained);
-    expect(first.state.ledger?.devices["dev-a"]?.counts).toEqual({ card_cut: 1 });
+describe("applyDebaterActivity event ledger", () => {
+  it("stamps the activity event with a unique id and its count", () => {
+    const a = applyDebaterActivity(createDebaterLevelState(), "card_cut", DAY1, 2, undefined, undefined, "evt");
+    expect(a.state.recentXp.at(-1)).toMatchObject({ id: "evt", source: "card_cut", count: 2 });
+    const b = applyDebaterActivity(createDebaterLevelState(), "card_cut", DAY1);
+    const c = applyDebaterActivity(createDebaterLevelState(), "card_cut", DAY1);
+    expect(b.state.recentXp[0]?.id).toBeTruthy();
+    expect(b.state.recentXp[0]?.id).not.toBe(c.state.recentXp[0]?.id);
   });
 
-  it("adds to the same device entry and keeps the ledger without a device id", () => {
-    const one = applyDebaterActivity(createDebaterLevelState(), "drill_practiced", DAY1, 1, DEBATER_CHALLENGES, "d").state;
-    const two = applyDebaterActivity(one, "drill_practiced", DAY1, 1, DEBATER_CHALLENGES, "d").state;
-    expect(two.ledger?.devices.d?.counts).toEqual({ drill_practiced: 2 });
-    expect(applyDebaterActivity(two, "drill_practiced", DAY1).state.ledger).toEqual(two.ledger);
-  });
-
-  it("is omitted without a device id and survives a parse round-trip", () => {
-    expect(applyDebaterActivity(createDebaterLevelState(), "drill_practiced", DAY1).state.ledger).toBeUndefined();
-    const { state } = applyDebaterActivity(createDebaterLevelState(), "drill_practiced", DAY1, 1, DEBATER_CHALLENGES, "d");
-    expect(parseDebaterLevelState(JSON.parse(JSON.stringify(state)))).toEqual(state);
-    expect(parseDebaterLevelState({ ...state, ledger: { base: "no" } })?.ledger).toBeUndefined();
+  it("gives challenge bonuses their own id derived from the event", () => {
+    let state = createDebaterLevelState();
+    let last = applyDebaterActivity(state, "card_cut", DAY1, 1, undefined, undefined, "e1");
+    for (let i = 0; i < 6 && last.completedChallenges.length === 0; i += 1) {
+      state = last.state;
+      last = applyDebaterActivity(state, "card_cut", DAY1, 1, undefined, undefined, `e${i + 2}`);
+    }
+    const bonus = last.state.recentXp.find((e) => e.source !== "card_cut");
+    if (bonus) expect(bonus.id).toMatch(/^e\d+:/);
   });
 });

@@ -1,7 +1,7 @@
 "use client"
 
 /**
- * @fileoverview Settings → Preferences: the speech models that run on this
+ * @fileoverview Settings → Sound & speech: the speech models that run on this
  * device, each with its size, whether it's downloaded, and Download / Remove.
  *
  * - **Kokoro** (text to speech) reads cards aloud in CardMirror
@@ -171,7 +171,7 @@ function ModelRow({ model }: { model: OnDeviceModel }) {
   )
 }
 
-/** The on-device models row of Settings → Preferences. */
+/** The on-device models row of Settings → Sound & speech. */
 export function OnDeviceModelsSection() {
   return (
     <section

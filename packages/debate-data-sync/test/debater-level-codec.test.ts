@@ -171,40 +171,66 @@ describe("mergeDebaterLevel", () => {
   });
 });
 
-describe("mergeDebaterLevel with a per-device ledger", () => {
-  const entry = (xp: number, counts: Record<string, number>) => ({ xp, counts });
-  const withLedger = (base: ReturnType<typeof entry>, devices: Record<string, ReturnType<typeof entry>>) => ({
-    ...state(0),
-    ledger: { base, devices },
-    totalXp: base.xp + Object.values(devices).reduce((n, d) => n + d.xp, 0),
-    lifetimeCounts: {},
+describe("mergeDebaterLevel per-event ledger", () => {
+  const DAY = Date.UTC(2026, 9, 20, 12);
+  const act = (id: string, source: string, count: number, xp: number, atMs = DAY) => ({
+    id, atMs, source, count, xp, label: source,
   });
+  const device = (totalXp: number, cardCut: number, events: unknown[], daily = cardCut) => ({
+    ...state(0),
+    totalXp,
+    lifetimeCounts: { card_cut: cardCut },
+    daily: { dayKey: "2026-10-20", counts: { card_cut: daily }, completedChallengeIds: [] },
+    recentXp: events,
+  });
+  const shared = act("e0", "card_cut", 2, 10, DAY - 1000);
 
-  it("adds activity earned on two devices instead of taking the larger", () => {
-    const a = withLedger(entry(100, { card_cut: 10 }), { A: entry(20, { card_cut: 2 }) });
-    const b = withLedger(entry(100, { card_cut: 10 }), { B: entry(15, { card_cut: 3 }) });
+  it("adds activity done on both devices instead of taking the larger count", () => {
+    const a = device(20, 3, [act("a1", "card_cut", 1, 10), shared]);
+    const b = device(30, 4, [act("b1", "card_cut", 2, 20), shared]);
     expect(mergeDebaterLevel(a, b)).toMatchObject({
-      totalXp: 135,
-      lifetimeCounts: { card_cut: 15 },
-      ledger: { base: entry(100, { card_cut: 10 }), devices: { A: entry(20, { card_cut: 2 }), B: entry(15, { card_cut: 3 }) } },
+      totalXp: 40,
+      lifetimeCounts: { card_cut: 5 },
+      daily: { counts: { card_cut: 5 } },
     });
   });
 
-  it("does not double-count the same device seen from both copies", () => {
-    const old = withLedger(entry(0, {}), { A: entry(10, { flow: 1 }) });
-    const newer = withLedger(entry(0, {}), { A: entry(30, { flow: 3 }) });
-    expect(mergeDebaterLevel(old, newer)).toMatchObject({ totalXp: 30, lifetimeCounts: { flow: 3 } });
-    expect(mergeDebaterLevel(newer, old)).toMatchObject({ totalXp: 30, lifetimeCounts: { flow: 3 } });
+  it("is commutative and idempotent", () => {
+    const a = device(20, 3, [act("a1", "card_cut", 1, 10), shared]);
+    const b = device(30, 4, [act("b1", "card_cut", 2, 20), shared]);
+    const ab = mergeDebaterLevel(a, b) as ReturnType<typeof device>;
+    const ba = mergeDebaterLevel(b, a) as ReturnType<typeof device>;
+    expect(ab.totalXp).toBe(ba.totalXp);
+    expect(ab.lifetimeCounts).toEqual(ba.lifetimeCounts);
+    expect(mergeDebaterLevel(ab, ba)).toMatchObject({ totalXp: 40, lifetimeCounts: { card_cut: 5 } });
+    expect(mergeDebaterLevel(ab, b)).toMatchObject({ totalXp: 40, lifetimeCounts: { card_cut: 5 } });
   });
 
-  it("treats a copy without a ledger as base only", () => {
-    const legacy = { ...state(0), totalXp: 80, lifetimeCounts: { card_cut: 8 } };
-    const ledgered = withLedger(entry(50, { card_cut: 5 }), { A: entry(10, { card_cut: 1 }) });
-    expect(mergeDebaterLevel(ledgered, legacy)).toMatchObject({ totalXp: 90, lifetimeCounts: { card_cut: 9 } });
+  it("does not count a shared event twice", () => {
+    const a = device(10, 2, [shared]);
+    expect(mergeDebaterLevel(a, structuredClone(a))).toMatchObject({ totalXp: 10, lifetimeCounts: { card_cut: 2 } });
   });
 
-  it("ignores malformed ledger entries", () => {
-    const odd = { ...state(5), ledger: { base: { xp: "x" }, devices: { A: { xp: -3, counts: { flow: "y" } }, B: null } } };
-    expect(mergeDebaterLevel(odd, state(1))).toMatchObject({ totalXp: 1, lifetimeCounts: { card_cut: 2 } });
+  it("ignores events older than a full log, which may already be in its totals", () => {
+    const log = (prefix: string, from: number) =>
+      Array.from({ length: 30 }, (_, i) => act(`${prefix}${i}`, "card_cut", 1, 1, DAY + from + i));
+    const old = device(100, 50, log("o", 0));
+    const recent = device(200, 120, log("r", 100));
+    // Without the guard `recent` would also gain the 30 older events (230 / 150).
+    expect(mergeDebaterLevel(old, recent)).toMatchObject({ totalXp: 200, lifetimeCounts: { card_cut: 120 } });
+    expect(mergeDebaterLevel(recent, old)).toMatchObject({ totalXp: 200, lifetimeCounts: { card_cut: 120 } });
+  });
+
+  it("does not pay a milestone bonus twice", () => {
+    const bonus = (id: string) => ({ id, atMs: DAY, source: "m1", label: "m1", xp: 50 });
+    const a = { ...device(60, 1, [bonus("a1:m1")]), completedMilestoneIds: ["m1"] };
+    const b = { ...device(60, 1, [bonus("b1:m1")]), completedMilestoneIds: ["m1"] };
+    expect(mergeDebaterLevel(a, b)).toMatchObject({ totalXp: 60, completedMilestoneIds: ["m1"] });
+  });
+
+  it("falls back to the larger value when events have no ids", () => {
+    const legacy = (xp: number, n: number) =>
+      device(xp, n, [{ atMs: DAY, source: "card_cut", label: "c", xp: 10, count: 1 }]);
+    expect(mergeDebaterLevel(legacy(20, 3), legacy(30, 4))).toMatchObject({ totalXp: 30, lifetimeCounts: { card_cut: 4 } });
   });
 });

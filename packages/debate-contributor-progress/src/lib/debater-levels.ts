@@ -260,11 +260,28 @@ export function computeLevelProgress(totalXp: number): DebaterLevelProgress {
 
 /** One entry in a debater's recent XP log. */
 export interface DebaterXpEvent {
+  /**
+   * Unique per event, so a cross-device merge can tell activity done on two
+   * devices from the same event seen twice. Absent on events logged before the
+   * ledger existed; those merge by the larger count instead.
+   */
+  id?: string;
   atMs: number;
   /** An activity kind, or a challenge id for a challenge bonus. */
   source: string;
   label: string;
   xp: number;
+  /** Activities this event recorded; absent on challenge bonuses. */
+  count?: number;
+}
+
+/** A fresh random event id (`atMs` keeps ids roughly sortable when debugging). */
+export function newXpEventId(nowMs: number): string {
+  const random =
+    typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+      ? crypto.randomUUID()
+      : Math.random().toString(36).slice(2, 12);
+  return `${nowMs.toString(36)}-${random}`;
 }
 
 /** Maximum log entries kept in `DebaterLevelState.recentXp`. */
@@ -316,6 +333,7 @@ export function createDebaterLevelState(dayKey = ""): DebaterLevelState {
     daily: { dayKey, counts: {}, completedChallengeIds: [] },
     completedMilestoneIds: [],
     recentXp: [],
+    ledger: [],
   };
 }
 
@@ -360,7 +378,8 @@ export interface DebaterActivityResult {
 /**
  * Record `count` of an activity at `nowMs`: add flat activity XP, pay any
  * challenge whose target this pushes it to, and report whether the debater
- * leveled up. Never mutates `state`.
+ * leveled up. `eventId` names the ledger entry (callers pass a unique id;
+ * the fallback is only unique within one device). Never mutates `state`.
  */
 export function applyDebaterActivity(
   state: DebaterLevelState,
@@ -382,11 +401,12 @@ export function applyDebaterActivity(
   const today = (rolled.daily.counts[kind] ?? 0) + n;
   const events: DebaterXpEvent[] = [];
   const activityXp = ACTIVITY_XP[kind] * n;
-  events.push({ atMs: nowMs, source: kind, label: n > 1 ? `${DEBATER_ACTIVITY_LABELS[kind]} ×${n}` : DEBATER_ACTIVITY_LABELS[kind], xp: activityXp });
+  events.push({ id: eventId, atMs: nowMs, source: kind, count: n, label: n > 1 ? `${DEBATER_ACTIVITY_LABELS[kind]} ×${n}` : DEBATER_ACTIVITY_LABELS[kind], xp: activityXp });
 
   const dailyDone = new Set(rolled.daily.completedChallengeIds);
   const milestonesDone = new Set(rolled.completedMilestoneIds);
   const completedChallenges: DebaterChallenge[] = [];
+  const bonuses: DebaterLedgerBonus[] = [];
   for (const challenge of challenges) {
     if (challenge.activity !== kind) continue;
     if (challenge.repeat === "daily") {
@@ -397,7 +417,7 @@ export function applyDebaterActivity(
       milestonesDone.add(challenge.id);
     }
     completedChallenges.push(challenge);
-    events.push({ atMs: nowMs, source: challenge.id, label: `Challenge: ${challenge.title}`, xp: challenge.xpReward });
+    events.push({ id: `${eventId}:${challenge.id}`, atMs: nowMs, source: challenge.id, label: `Challenge: ${challenge.title}`, xp: challenge.xpReward });
   }
 
   const xpGained = events.reduce((sum, event) => sum + event.xp, 0);
@@ -413,6 +433,10 @@ export function applyDebaterActivity(
     },
     completedMilestoneIds: Array.from(milestonesDone),
     recentXp: [...events.reverse(), ...rolled.recentXp].slice(0, MAX_RECENT_XP_EVENTS),
+    ledger: [
+      { id: eventId ?? `${nowMs}:${kind}:${lifetime}`, atMs: nowMs, kind, count: n, xp: activityXp, bonuses },
+      ...(rolled.ledger ?? []),
+    ].slice(0, MAX_LEDGER_ENTRIES),
   };
   if (deviceId) next.ledger = addToLedger(state, deviceId, kind, n, xpGained);
   else if (state.ledger) next.ledger = state.ledger;
@@ -533,7 +557,36 @@ export function parseDebaterLevelState(raw: unknown): DebaterLevelState | null {
           typeof (event as DebaterXpEvent).xp === "number",
       )
       .slice(0, MAX_RECENT_XP_EVENTS),
+    ...(Array.isArray(value.ledger) ? { ledger: parseLedger(value.ledger) } : {}),
   };
+}
+
+function parseLedger(raw: unknown[]): DebaterLedgerEntry[] {
+  const entries: DebaterLedgerEntry[] = [];
+  for (const item of raw) {
+    if (!item || typeof item !== "object") continue;
+    const e = item as Record<string, unknown>;
+    if (
+      typeof e.id !== "string" ||
+      typeof e.atMs !== "number" ||
+      !isDebaterActivityKind(e.kind) ||
+      typeof e.count !== "number" ||
+      typeof e.xp !== "number" ||
+      !Array.isArray(e.bonuses)
+    ) {
+      continue;
+    }
+    const bonuses = e.bonuses.filter(
+      (b): b is DebaterLedgerBonus =>
+        !!b &&
+        typeof b === "object" &&
+        typeof (b as DebaterLedgerBonus).id === "string" &&
+        typeof (b as DebaterLedgerBonus).xp === "number" &&
+        ((b as DebaterLedgerBonus).repeat === "daily" || (b as DebaterLedgerBonus).repeat === "once"),
+    );
+    entries.push({ id: e.id, atMs: e.atMs, kind: e.kind, count: e.count, xp: e.xp, bonuses });
+  }
+  return entries.slice(0, MAX_LEDGER_ENTRIES);
 }
 
 /** Whether a value names a known activity kind. */

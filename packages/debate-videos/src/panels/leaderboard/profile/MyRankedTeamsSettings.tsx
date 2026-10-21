@@ -1,5 +1,5 @@
 /**
- * @fileoverview Settings → My team: the ranked team the viewer debates on,
+ * @fileoverview Settings → General → My team: the ranked team the viewer debates on,
  * coaches or assists in each division, and their partner. The matchup
  * simulator pre-fills side A from here (see `lib/my-ranked-teams`).
  * @module panels/leaderboard/profile/MyRankedTeamsSettings

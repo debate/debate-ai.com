@@ -1,11 +1,11 @@
 "use client"
 
 /**
- * @fileoverview Settings → Preferences: which engine and voice the card
+ * @fileoverview Settings → Sound & speech: which engine and voice the card
  * editor's **Read aloud** button speaks with — Kokoro on this device,
  * Cloudflare Workers AI (Deepgram Aura), or the browser's own speech.
  *
- * Rendered as a shadcn Dialog modal (opened from the Preferences tab) with a
+ * Rendered as a shadcn Dialog modal (opened from the Sound & speech tab) with a
  * standard X close button, instead of an inline section.
  *
  * The same choice the gear under Read aloud offers (`@debate/editor/read-voice`
@@ -51,7 +51,7 @@ function isEngine(value: string): value is ReadVoiceEngine {
   return READ_VOICE_ENGINES.some((engine) => engine.id === value)
 }
 
-/** The read-aloud voice settings, opened as a shadcn Dialog modal from Settings → Preferences. */
+/** The read-aloud voice settings, opened as a shadcn Dialog modal from Settings → Sound & speech. */
 export function ReadAloudVoiceSection() {
   // The default until mounted, so the server and first client render agree.
   const [voiceId, setVoiceId] = useState(DEFAULT_READ_VOICE_ID)
