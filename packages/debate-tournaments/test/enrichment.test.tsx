@@ -125,6 +125,73 @@ describe("pairings enrichment", () => {
   });
 });
 
+describe("judge dialog", () => {
+  const profile = {
+    personId: 777,
+    name: "Sam Lee",
+    paradigmHtml: "<p>Tech over truth.</p>",
+    lastReviewed: "2025-09-01T00:00:00.000Z",
+    record: [
+      { Tourn: { id: 1, name: "Glenbrooks" }, roundDate: "2025-11-15T00:00:00.000Z", roundLabel: "Octas", eventAbbr: "VCX", affTeam: "Harker LL", affLabel: "Aff", negTeam: "Lex AB", negLabel: "Neg", vote: "Aff", panelVote: "Neg", record: "1-2" },
+      { Tourn: { id: 2, name: "Blake" }, roundDate: "2025-10-04T00:00:00.000Z", roundLabel: "R2", eventAbbr: "VCX", affTeam: "Strake CD", affLabel: "Aff", negTeam: "Plano EF", negLabel: "Neg", vote: "Neg", panelVote: "Neg", record: "0-1" },
+    ],
+    certifications: [{ label: "NSDA Accredited" }],
+    source: "tabroom-api" as const,
+    syncedAt: null,
+  };
+
+  const click = async (el: HTMLElement, name: string) => {
+    const target = [...el.querySelectorAll<HTMLElement>("[data-judge]")].find((node) => node.textContent === name)!;
+    await act(async () => {
+      target.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, button: 0 }));
+    });
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+  };
+
+  it("makes every named judge clickable and shows their paradigm and voting record", async () => {
+    const lookupJudgeProfile = vi.fn(async (query: { personId: number | null }) => (query.personId === 777 ? profile : null));
+    const el = await render(<Schematic round={round} />, context({ lookupJudgeProfile, paradigmEditorHref: "/practice/paradigm" }));
+    // Pat Common has no Tabroom id, but can still be looked up by name.
+    expect([...el.querySelectorAll("[data-judge]")].map((node) => node.textContent)).toEqual(["Sam Lee", "Ann Yu", "Pat Common"]);
+
+    await click(el, "Sam Lee");
+    expect(lookupJudgeProfile).toHaveBeenCalledWith({ personId: 777, first: "Sam", last: "Lee" });
+    expect(el.querySelector("iframe")).toBeNull();
+    expect(el.querySelector("[data-paradigm]")?.innerHTML).toContain("Tech over truth.");
+    expect(el.textContent).toContain("NSDA Accredited");
+    expect(el.querySelector('a[href="/practice/paradigm"]')).not.toBeNull();
+
+    const recordTab = [...el.querySelectorAll<HTMLButtonElement>('[role="tab"]')].find((tab) => tab.textContent?.startsWith("Voting record"))!;
+    expect(recordTab.textContent).toBe("Voting record (2)");
+    await act(async () => {
+      recordTab.click();
+    });
+    expect(el.querySelector("[data-judge-summary]")?.textContent).toContain("1 of 1 panels");
+    expect(el.textContent).toContain("Glenbrooks");
+  });
+
+  it("looks a judge without an id up by name and says when nothing is found", async () => {
+    const lookupJudgeProfile = vi.fn(async () => null);
+    const el = await render(<Schematic round={round} />, context({ lookupJudgeProfile }));
+    await click(el, "Pat Common");
+    expect(lookupJudgeProfile).toHaveBeenCalledWith({ personId: null, first: "Pat", last: "Common" });
+    expect(el.textContent).toContain("No Tabroom paradigm or judging record was found for Pat Common.");
+  });
+
+  it("reads a hosted tournament's judges from this site's own API", async () => {
+    const client = createTournamentsClient("/api/tabroom");
+    const hostedJudgeProfile = vi.spyOn(client, "hostedJudgeProfile").mockResolvedValue({ ...profile, paradigmHtml: null, paradigmText: "Plain words.", source: "hosted" });
+    const lookupJudgeProfile = vi.fn(async () => null);
+    const el = await render(<Schematic round={round} source="hosted" />, context({ client, lookupJudgeProfile }));
+    await click(el, "Sam Lee");
+    expect(hostedJudgeProfile).toHaveBeenCalledWith(777);
+    expect(lookupJudgeProfile).not.toHaveBeenCalled();
+    expect(el.querySelector("[data-paradigm]")?.textContent).toBe("Plain words.");
+  });
+});
+
 describe("results enrichment", () => {
   it("labels a ranked entry and adds its rating without repeating printed names", async () => {
     const el = await render(

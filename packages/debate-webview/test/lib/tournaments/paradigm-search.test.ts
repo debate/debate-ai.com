@@ -15,6 +15,14 @@ const page = (...rows: string[]) => `<html><body><table id="paradigms"><thead><t
 afterEach(() => clearParadigmCache())
 
 describe("parseParadigmSearch", () => {
+  it("reads a single match, which Tabroom shows as that judge's own page", () => {
+    const judgePage = `<div class="menu"><a href="/user/tourn/show_past_prefs.mhtml?judge_person_id=4242">Prefs</a></div>
+      <div class="main"><h3>Jane Doe</h3><div class="screens paradigm"><div class="paradigm">Hi</div></div></div>`
+    expect(parseParadigmSearch(judgePage, "Jane", "Doe")).toBe(4242)
+    // A prefix match on someone else's name is not this judge.
+    expect(parseParadigmSearch(judgePage.replace("Jane Doe", "Janet Doe"), "Jane", "Doe")).toBeNull()
+  })
+
   it("returns the one judge with that first and last name", () => {
     expect(parseParadigmSearch(page(row(101, "Scott", "Phillips"), row(102, "Scottie", "Phillips")), "Scott", "Phillips")).toBe(101)
   })

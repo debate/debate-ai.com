@@ -3,13 +3,17 @@
  * judges don't already carry a paradigm id (tournaments hosted here, whose
  * judges have no Tabroom person row).
  *
- * Tabroom's JSON paradigm search (`api.tabroom.com/v1/rest/paradigms`) needs a
- * signed-in Tabroom account, so this searches the public paradigm page on
- * tabroom.com instead — the same search `tabroom.com/index/paradigm.mhtml`
- * offers anyone — and reads each result row's first name, last name and
- * `judge_person_id`. A name answers with an id only when exactly one judge
- * has that first and last name; anything else answers `null`, so a common
- * name is never linked to the wrong person.
+ * This reads the search on Tabroom's classic paradigm page,
+ * `tabroom.com/index/paradigm.mhtml?search_first=&search_last=`, and each
+ * result row's first name, last name and `judge_person_id`. Both it and the
+ * JSON search (`api.tabroom.com/v1/rest/paradigms`) now want a signed-in
+ * Tabroom account, so the app route passes a `fetch` that sends the site's
+ * Tabroom session when one is configured (`lib/judge-paradigms/queries.ts`).
+ * When exactly one judge matches, Tabroom skips the table and shows that
+ * judge's paradigm; the page's heading and its `judge_person_id` links are
+ * read instead. A name answers with an id only when exactly one judge has
+ * that first and last name; anything else answers `null`, so a common name
+ * is never linked to the wrong person.
  *
  * Mounted at `/api/tabroom-paradigms` by `app/api/tabroom-paradigms/route.ts`:
  * `GET ?name=First|Last&name=…` answers `{ "first last": personId | null }`.
@@ -57,6 +61,12 @@ export function parseParadigmSearch(html: string, first: string, last: string): 
     if (!id) continue
     const texts = cells(row)
     if (texts.includes(wantFirst) && texts.includes(wantLast)) ids.add(Number(id))
+  }
+  if (ids.size === 0 && !/id=["']?paradigm_search/i.test(html)) {
+    // One match: Tabroom shows that judge's page, headed with their name.
+    const heading = /<h3\b[^>]*>([\s\S]*?)<\/h3>/i.exec(html)?.[1]
+    const shown = new Set([...html.matchAll(/judge_person_id=(\d+)/g)].map((m) => Number(m[1])))
+    if (heading && normalize(heading.replace(/<[^>]*>/g, " ")) === `${wantFirst} ${wantLast}` && shown.size === 1) return [...shown][0]
   }
   return ids.size === 1 ? [...ids][0] : null
 }

@@ -4,10 +4,12 @@ import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import { TournamentsApp } from "@debate/tournaments/ui"
 import { createJudgeParadigmLookup, createTeamRatingLookup } from "../../../lib/tournaments/enrichment"
+import { PARADIGM_EDITOR_PATH, createJudgeProfileLookup } from "../../../lib/judge-paradigms/client"
 
 // One of each per page load, so their caches outlive navigation between rounds.
 const lookupTeamRating = createTeamRatingLookup()
 const lookupJudgeParadigm = createJudgeParadigmLookup()
+const lookupJudgeProfile = createJudgeProfileLookup()
 
 /**
  * The tournaments UI from `debate-tournaments`, mounted directly rather than
@@ -16,8 +18,10 @@ const lookupJudgeParadigm = createJudgeParadigmLookup()
  * demo anyone can browse as its admin) come from `/api/tabroom`, the vendored
  * Tabroom API on this site's D1, whose `/host` routes create them and serve
  * their admin view. `/practice/tabroom` frames beta.tabroom.com itself.
- * Pairings and results show each entry's current-season ranking and link
- * judges to their Tabroom paradigms (see lib/tournaments/enrichment).
+ * Pairings and results show each entry's current-season ranking (see
+ * lib/tournaments/enrichment), and clicking a judge opens their paradigm and
+ * voting record, from Tabroom through `/api/judge-paradigms` or the judge's
+ * own verified paradigm written at `/practice/paradigm` (lib/judge-paradigms).
  */
 export default function Tournaments() {
   const { slug } = useParams<{ slug?: string[] }>()
@@ -31,6 +35,8 @@ export default function Tournaments() {
       ballotApiBase="/api/judge-ballots"
       lookupTeamRating={lookupTeamRating}
       lookupJudgeParadigm={lookupJudgeParadigm}
+      lookupJudgeProfile={lookupJudgeProfile}
+      paradigmEditorHref={PARADIGM_EDITOR_PATH}
       Link={Link}
       // A page that does not exist goes to the nearest one that does — the
       // tournament for a bad section, `/tournaments` for anything else.

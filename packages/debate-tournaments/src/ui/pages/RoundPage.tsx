@@ -2,7 +2,7 @@
 
 import { Fragment, useEffect, useState } from "react";
 import { X } from "lucide-react";
-import type { FieldEntry, RoundSchematic } from "../client";
+import type { FieldEntry, RoundSchematic, TournamentSource } from "../client";
 import { EntryLabel, JudgeName, entrySide } from "../enrichment";
 import { isLiveDemo, type LiveRoomInput } from "../live/demo-live";
 import { LiveRoomPanel, LiveStatusCell, useNow } from "../live/LiveRoom";
@@ -58,7 +58,9 @@ export function RoundPage({ tournId, eventAbbr, roundName }: { tournId: number; 
   return (
     <div className="space-y-3">
       <BackLink href={hrefs.rounds(tournId)}>All pairings</BackLink>
-      <Loaded state={state}>{(round) => <Schematic round={round} live={isLiveDemo(tournId)} field={fieldEntries} />}</Loaded>
+      <Loaded state={state}>
+        {(round) => <Schematic round={round} live={isLiveDemo(tournId)} field={fieldEntries} source={client.sourceOf(tournId)} />}
+      </Loaded>
     </div>
   );
 }
@@ -133,16 +135,20 @@ export function PairingsEmblem() {
  * `live` adds the demo tournament's simulated live status beside each room
  * (`../live/demo-live`), with a stream panel that opens under the room.
  * `field`, the event's registered entries, gives each entry's debaters and
- * school to the ranking lookup (see `../enrichment`).
+ * school to the ranking lookup (see `../enrichment`). `source`, where the
+ * tournament was read from, decides where a clicked judge's paradigm and
+ * voting record are loaded from.
  */
 export function Schematic({
   round,
   live = false,
   field,
+  source,
 }: {
   round: RoundSchematic;
   live?: boolean;
   field?: readonly FieldEntry[];
+  source?: TournamentSource;
 }) {
   const fieldById = new Map((field ?? []).map((entry) => [entry.id, entry]));
   const sections = Object.values(round.Sections ?? {});
@@ -230,7 +236,7 @@ export function Schematic({
                       <TableCell>
                         {judges.map((j, i) => (
                           <span key={i} className="mr-3 inline-block">
-                            <JudgeName judge={j} />
+                            <JudgeName judge={j} source={source} />
                             {j.chair ? (
                               <Badge variant="secondary" className="ml-1">
                                 Chair

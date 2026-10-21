@@ -14,7 +14,10 @@
  */
 
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import type { JudgeProfile } from "../paradigms";
+import type { TournamentSource } from "./client";
 import { FramedOverlay } from "./FramedOverlay";
+import { JudgeProfileView } from "./JudgeProfileView";
 import { useOptionalTournaments } from "./shared";
 
 /** The event an entry competes in, which decides the rankings it's looked up in. */
@@ -236,41 +239,116 @@ export function useJudgeParadigm(judge: PairingJudge): number | null {
   return judge.paradigm ?? found;
 }
 
+/** Who to look up when a judge's name is clicked. */
+export interface JudgeProfileQuery {
+  /** Tabroom person id, when the pairing or the name search found one. */
+  personId: number | null;
+  first: string;
+  last: string;
+}
+
 /**
- * A judge's name. When their paradigm is known the name is a link to it;
- * clicking opens the paradigm in an overlay over the pairings, with Tabroom's
- * page a click away in a new tab.
+ * Loads a live Tabroom judge's paradigm and voting record, by person id or,
+ * without one, by name. `null` when nothing is found.
  */
-export function JudgeName({ judge }: { judge: PairingJudge }) {
-  const personId = useJudgeParadigm(judge);
+export type JudgeProfileLookup = (query: JudgeProfileQuery) => Promise<JudgeProfile | null>;
+
+/**
+ * Loads the profile the judge dialog shows: a hosted tournament's judge from
+ * this site's own Tabroom API, any other judge through the host's lookup.
+ * `undefined` while loading, `null` when there is nothing.
+ */
+function useJudgeProfile(open: boolean, query: JudgeProfileQuery, source: TournamentSource): JudgeProfile | null | undefined {
+  const ctx = useOptionalTournaments();
+  const hosted = source === "hosted" && query.personId && ctx ? ctx.client : null;
+  const lookup = ctx?.lookupJudgeProfile;
+  const key = open ? JSON.stringify([source, query.personId, query.first, query.last]) : null;
+  const [result, setResult] = useState<{ key: string; value: JudgeProfile | null } | null>(null);
+  useEffect(() => {
+    if (key === null) return;
+    let live = true;
+    const load = hosted ? hosted.hostedJudgeProfile(query.personId!) : lookup ? lookup(query) : Promise.resolve(null);
+    load.then(
+      (value) => live && setResult({ key, value }),
+      () => live && setResult({ key, value: null }),
+    );
+    return () => {
+      live = false;
+    };
+    // `key` identifies the lookup.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
+  return result && result.key === key ? result.value : undefined;
+}
+
+/**
+ * A judge's name. When their paradigm is known — or the host can look judges
+ * up — the name opens an overlay with their paradigm and voting record
+ * ({@link JudgeProfileView}); without a way to load those, it opens Tabroom's
+ * paradigm page in a frame instead. Modified clicks on a judge with a known
+ * Tabroom id open that page in a new tab.
+ *
+ * `source` is where the tournament came from: a hosted tournament's judges
+ * with a person id are read from this site's own API, everyone else through
+ * the host.
+ */
+export function JudgeName({ judge, source }: { judge: PairingJudge; source?: TournamentSource }) {
+  const ctx = useOptionalTournaments();
+  const found = useJudgeParadigm(judge);
   const [open, setOpen] = useState(false);
   const close = useCallback(() => setOpen(false), []);
   const name = [judge.first, judge.last].filter(Boolean).join(" ");
-  if (!personId) return <>{name}</>;
-  const url = tabroomParadigmUrl(personId);
+  const first = judge.first?.trim() ?? "";
+  const last = judge.last?.trim() ?? "";
+  // A hosted tournament's pairing names a person in this site's own
+  // database; any other id (live pairings, the name search) is Tabroom's.
+  const hostedId = source === "hosted" ? (judge.paradigm ?? null) : null;
+  const personId = hostedId ? null : found;
+  const canLoad = Boolean(hostedId) || Boolean(ctx?.lookupJudgeProfile && (personId || (first && last)));
+  const profile = useJudgeProfile(
+    open && canLoad,
+    { personId: hostedId ?? personId, first, last },
+    hostedId ? "hosted" : "tabroom",
+  );
+  if (!personId && !canLoad) return <>{name}</>;
+  const url = personId ? tabroomParadigmUrl(personId) : null;
+  const className = "cursor-pointer underline decoration-dotted underline-offset-2 hover:text-primary";
+  const title = `${name}'s paradigm and voting record`;
   return (
     <>
-      <a
-        href={url}
-        target="_blank"
-        rel="noopener noreferrer"
-        title={`${name}'s paradigm`}
-        className="underline decoration-dotted underline-offset-2 hover:text-primary"
-        onClick={(event) => {
-          // Modified clicks keep their usual meaning (a new tab or window).
-          if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
-          event.preventDefault();
-          setOpen(true);
-        }}
-      >
-        {name}
-      </a>
+      {url ? (
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          title={title}
+          className={className}
+          data-judge=""
+          onClick={(event) => {
+            // Modified clicks keep their usual meaning (a new tab or window).
+            if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
+            event.preventDefault();
+            setOpen(true);
+          }}
+        >
+          {name}
+        </a>
+      ) : (
+        <button type="button" title={title} className={className} data-judge="" onClick={() => setOpen(true)}>
+          {name}
+        </button>
+      )}
       <FramedOverlay
         open={open}
         onClose={close}
-        url={url}
+        url={url ?? undefined}
         title={`${name} — paradigm`}
-        description="Their judging paradigm on Tabroom."
+        description={canLoad ? "Their judging paradigm and voting record." : "Their judging paradigm on Tabroom."}
+        content={
+          canLoad ? (
+            <JudgeProfileView name={name} profile={profile} tabroomUrl={url} editHref={ctx?.paradigmEditorHref} />
+          ) : undefined
+        }
       />
     </>
   );

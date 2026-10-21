@@ -75,6 +75,29 @@ redirect (308) to the new ones (`debate-data-sync`'s
 name they share a slug, so only the first one seen gets the named URL; the
 other keeps its id.
 
+### Judge paradigms and voting records
+
+Every judge in a round's pairings opens a dialog (`src/ui/JudgeProfileView.tsx`)
+with their paradigm and voting record: rounds judged, Aff/Neg split, squirrels
+(lone dissents on a panel) and each round's vote against the panel's.
+
+- A **hosted** tournament's judges come from this package's own
+  `/rest/paradigms/:personId` and `/rest/paradigms/:personId/record`
+  (`client.hostedJudgeProfile`), as the signed-in viewer.
+- A **live Tabroom** judge comes through the host's `lookupJudgeProfile`. On
+  debate-ai.com that is `/api/judge-paradigms`, which caches each judge in D1
+  and reads Tabroom with `fetchTabroomJudge` (`src/paradigms-server.ts`).
+
+Tabroom serves paradigms only to signed-in users: the API's `paradigmsRouter`
+answers 401, and the classic `index/paradigm.mhtml` redirects to its login.
+`fetchTabroomJudge` therefore takes a session token (sent as the `TabroomToken`
+cookie), tries `GET /v1/rest/paradigms/:id` and `/record` first, and falls back
+to parsing the classic page (`parseClassicParadigmPage` in `src/paradigms.ts`,
+written against `paradigm.mas` in speechanddebate/tabroom). Paradigm HTML is
+run through `sanitizeParadigmHtml` before it is stored or shown.
+`searchTabroomParadigms` pages through `GET /v1/rest/paradigms?search=`, which
+the host's admin sync walks to cache every judge.
+
 ### Host your own tournament
 
 Hosting happens entirely on this site and never touches Tabroom. The hosting

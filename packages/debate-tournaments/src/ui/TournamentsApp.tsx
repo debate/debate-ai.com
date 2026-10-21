@@ -34,7 +34,7 @@ import { RoundPage } from "./pages/RoundPage";
 import { ResultsPage } from "./pages/ResultsPage";
 import { ResultSetPage } from "./pages/ResultSetPage";
 import { BallotPage } from "./pages/BallotPage";
-import { TournamentSeasonContext, tournamentSeasonYear, type JudgeParadigmLookup, type TeamRatingLookup } from "./enrichment";
+import { TournamentSeasonContext, tournamentSeasonYear, type JudgeParadigmLookup, type JudgeProfileLookup, type TeamRatingLookup } from "./enrichment";
 
 export interface TournamentsAppProps {
   /** Path segments after `basePath` (a catch-all route's params). */
@@ -74,6 +74,14 @@ export interface TournamentsAppProps {
    * overlay when clicked.
    */
   lookupJudgeParadigm?: JudgeParadigmLookup;
+  /**
+   * Loads a live Tabroom judge's paradigm and voting record, by person id or
+   * name. When set, every judge in pairings opens a dialog with both; a
+   * hosted tournament's judges are read from `apiBase` without it.
+   */
+  lookupJudgeProfile?: JudgeProfileLookup;
+  /** Where a judge edits their own paradigm on the host site, linked from the judge dialog. */
+  paradigmEditorHref?: string;
 }
 
 export function TournamentsApp({
@@ -86,11 +94,22 @@ export function TournamentsApp({
   ballotApiBase,
   lookupTeamRating,
   lookupJudgeParadigm,
+  lookupJudgeProfile,
+  paradigmEditorHref,
 }: TournamentsAppProps) {
   const value = useMemo(() => {
     const client = createTournamentsClient(apiBase, undefined, { liveApiBase });
-    return { client, hrefs: tournamentHrefs(basePath, client.slugOf), Link, ballotApiBase, lookupTeamRating, lookupJudgeParadigm };
-  }, [apiBase, liveApiBase, basePath, Link, ballotApiBase, lookupTeamRating, lookupJudgeParadigm]);
+    return {
+      client,
+      hrefs: tournamentHrefs(basePath, client.slugOf),
+      Link,
+      ballotApiBase,
+      lookupTeamRating,
+      lookupJudgeParadigm,
+      lookupJudgeProfile,
+      paradigmEditorHref,
+    };
+  }, [apiBase, liveApiBase, basePath, Link, ballotApiBase, lookupTeamRating, lookupJudgeParadigm, lookupJudgeProfile, paradigmEditorHref]);
   const route = matchTournamentRoute(segments);
   const base = basePath.replace(/\/+$/, "");
   const nearest = nearestTournamentSegments(segments);

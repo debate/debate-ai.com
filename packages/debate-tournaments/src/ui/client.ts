@@ -14,6 +14,7 @@ import type { TournamentFormatId } from "../host/formats";
 import type { DemoEdit, DemoSection } from "../host/demo-edit";
 
 export type { DemoEdit, DemoSection };
+import { htmlParagraphs, readJudgeRecord, readParadigmDetails, type JudgeProfile } from "../paradigms";
 import { tournamentSlugOf, type TournamentSlug } from "../routes";
 import type { TournamentSidebar } from "../sidebar";
 
@@ -477,6 +478,33 @@ export function createTournamentsClient(
     remember,
     /** Which source a tournament was read from, once its invite or the upcoming list has loaded. */
     sourceOf: (tournId: number): TournamentSource | undefined => (live ? sources.get(tournId) : "hosted"),
+    /**
+     * A judge of a tournament hosted here: their paradigm and judging record
+     * from this site's own Tabroom API (`/rest/paradigms/:id` and `/record`,
+     * which need the viewer signed in). The paradigm comes back as plain
+     * text, since the browser has no sanitizer for Tabroom's HTML. `null`
+     * when neither answers.
+     */
+    hostedJudgeProfile: async (personId: number, signal?: AbortSignal): Promise<JudgeProfile | null> => {
+      const [details, record] = await Promise.all([
+        get<unknown>(base, `/rest/paradigms/${personId}`, signal).catch(() => null),
+        get<unknown>(base, `/rest/paradigms/${personId}/record`, signal).catch(() => null),
+      ]);
+      const paradigm = readParadigmDetails(details);
+      const rows = readJudgeRecord(record);
+      if (!paradigm && !Array.isArray(record)) return null;
+      return {
+        personId,
+        name: paradigm?.name ?? "",
+        paradigmHtml: null,
+        paradigmText: paradigm?.paradigm ? htmlParagraphs(paradigm.paradigm) : null,
+        lastReviewed: paradigm?.lastReviewed ?? null,
+        record: rows,
+        certifications: paradigm?.certifications ?? [],
+        source: "hosted",
+        syncedAt: null,
+      };
+    },
     /** The entries registered in one event, when the tournament publishes its field. */
     field: async (tournId: number, eventAbbr: string, signal?: AbortSignal) =>
       get<EventField>(await rootFor(tournId, signal), `/rest/tourns/${tournId}/events/${encodeURIComponent(eventAbbr)}/field`, signal),
