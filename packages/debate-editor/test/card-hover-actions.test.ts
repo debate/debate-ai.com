@@ -9,7 +9,10 @@ import {
   cardParts,
   cardSpeechText,
   createCardHoverActionsPlugin,
+  DOCUMENT_CARD_PAUSE_MS,
+  isReadingDocumentAloud,
   readModeShownText,
+  toggleReadDocumentAloud,
 } from "../src/editor/card-hover-actions";
 import { requestSiteCardAi, SUMMARIZE_CARD_PROMPT } from "../src/editor/card-ai-client";
 
@@ -269,19 +272,17 @@ describe("card hover actions plugin", () => {
     await Promise.resolve();
     await Promise.resolve();
     expect(speak).toHaveBeenCalledTimes(1);
-    expect(document.querySelector<HTMLSelectElement>("#pmd-read-voice")?.value).toBe("kokoro:af_heart");
+    // No settings popover: speed and voice live in Settings.
+    expect(document.querySelector(".pmd-read-settings")).toBeNull();
+    expect(bar().querySelector('[data-action="settings"]')).toBeNull();
     vi.unstubAllGlobals();
   });
 
-  it("groups voices by engine and follows a choice made in Settings", async () => {
+  it("follows a voice chosen in Settings", async () => {
     const { storeVoiceId } = await import("../src/editor/card-tts-client");
     const fetchVoice = vi.fn(async () => null);
     const { view } = mount(undefined, fetchVoice);
-    const select = document.querySelector<HTMLSelectElement>("#pmd-read-voice")!;
-    const groups = [...select.querySelectorAll("optgroup")].map((g) => g.label);
-    expect(groups.slice(0, 2)).toEqual(["Kokoro (on this device)", "Cloudflare Workers AI"]);
     storeVoiceId("deepgram:aura-luna-en");
-    expect(select.value).toBe("deepgram:aura-luna-en");
     hover(view.dom.querySelector(".pmd-card")!);
     bar().querySelector<HTMLButtonElement>('[data-action="speak"]')!.click();
     expect(fetchVoice).toHaveBeenCalledWith(expect.any(String), { provider: "deepgram", voice: "aura-luna-en" }, expect.any(AbortSignal));
@@ -336,6 +337,54 @@ describe("card hover actions plugin", () => {
     hover(cardEl);
     expect(preloadVoice).toHaveBeenCalledTimes(1);
     expect(preloadVoice).toHaveBeenCalledWith({ provider: "kokoro", voice: "af_heart" });
+  });
+
+  it("reads every card in the document with a pause between them, and stops", () => {
+    vi.useFakeTimers();
+    const spoken: string[] = [];
+    const utterances: { onend: (() => void) | null }[] = [];
+    vi.stubGlobal("speechSynthesis", {
+      speak: (u: { text: string; onend: (() => void) | null }) => {
+        spoken.push(u.text);
+        utterances.push(u);
+      },
+      cancel: vi.fn(),
+    });
+    vi.stubGlobal(
+      "SpeechSynthesisUtterance",
+      class {
+        rate = 1;
+        onend: (() => void) | null = null;
+        onerror: (() => void) | null = null;
+        constructor(public text: string) {}
+      },
+    );
+    const second = card().copy(card().content.replaceChild(0, schema.node("tag", null, schema.text("Second card"))));
+    const doc = schema.node("doc", null, [card(), card(false), second]);
+    const place = document.createElement("div");
+    document.body.appendChild(place);
+    view = new EditorView(place, {
+      state: EditorState.create({ doc, plugins: [createCardHoverActionsPlugin({ runAi: vi.fn() })] }),
+    });
+    expect(toggleReadDocumentAloud()).toBe(true);
+    expect(isReadingDocumentAloud()).toBe(true);
+    expect(spoken).toHaveLength(1);
+    expect(spoken[0]).toContain("Warming causes extinction");
+    expect(view.dom.querySelectorAll(".pmd-card-reading")).toHaveLength(1);
+    utterances[0]!.onend!();
+    // Pauses before the next card.
+    expect(spoken).toHaveLength(1);
+    vi.advanceTimersByTime(DOCUMENT_CARD_PAUSE_MS);
+    // The un-highlighted middle card still reads its tag and cite.
+    expect(spoken).toHaveLength(2);
+    utterances[1]!.onend!();
+    vi.advanceTimersByTime(DOCUMENT_CARD_PAUSE_MS);
+    expect(spoken[2]).toContain("Second card");
+    toggleReadDocumentAloud();
+    expect(isReadingDocumentAloud()).toBe(false);
+    expect(view.dom.querySelector(".pmd-card-reading")).toBeNull();
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
   });
 
   it("removes its elements when the view is destroyed", () => {
