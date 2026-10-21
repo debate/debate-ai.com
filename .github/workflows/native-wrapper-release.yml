@@ -450,3 +450,51 @@ jobs:
         # An App Store *submission* still needs the Guideline 4.2 "minimum
         # functionality" question in docs/APP_STORES.md answered — this job
         # only produces the .ipa, it does not upload to App Store Connect.
+  # Final stage: once every build job has finished, check that the draft has
+  # the installers attached and publish it. Android/iOS are best-effort, so
+  # only the desktop matrix has to succeed; a failed mobile job just means
+  # that artifact is missing from the release.
+  publish-release:
+    name: Publish release
+    needs: [prepare-release, build-desktop, build-android, build-ios]
+    if: >-
+      always() &&
+      startsWith(github.ref, 'refs/tags/native-wrapper-v') &&
+      needs.prepare-release.result == 'success' &&
+      needs.build-desktop.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Verify the draft has installers
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          gh release view "$TAG" --json assets -q '.assets[].name' | tee /tmp/assets.txt
+          # One installer per desktop platform, plus the updater manifest.
+          missing=0
+          for pattern in '\.dmg$|\.app\.tar\.gz$' '\.exe$|\.msi$' '\.AppImage$|\.deb$|\.rpm$' '^latest\.json$'; do
+            if ! grep -Eq "$pattern" /tmp/assets.txt; then
+              echo "::error::No release asset matches /$pattern/ — refusing to publish." >&2
+              missing=1
+            fi
+          done
+          exit $missing
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="${TAG#native-wrapper-v}"
+          FLAGS=(--draft=false)
+          if [[ "$VERSION" == *-* ]]; then
+            FLAGS+=(--prerelease)
+          else
+            FLAGS+=(--latest=false)
+          fi
+          gh release edit "$TAG" "${FLAGS[@]}"
+          echo "Published $TAG: $(gh release view "$TAG" --json url -q .url)" >> "$GITHUB_STEP_SUMMARY"
