@@ -21,6 +21,7 @@ import {
   createDebaterLevelState,
   isDebaterActivityKind,
   parseDebaterLevelState,
+  settleDailyChallenges,
   type DebaterActivityKind,
   type DebaterActivityResult,
   type DebaterLevelState,
@@ -90,6 +91,21 @@ export function recordDebaterActivity(
   return result;
 }
 
+/**
+ * Pay daily challenges that a cross-device merge completed (the account's
+ * tool-record sync writes the merged state straight to storage, so nothing
+ * else notices). Persists and announces only when a bonus was owed.
+ */
+export function settleDebaterChallenges(nowMs: number = Date.now()): DebaterActivityResult {
+  const result = settleDailyChallenges(loadDebaterLevelState(), nowMs);
+  if (result.completedChallenges.length === 0) return result;
+  saveDebaterLevelState(result.state);
+  if (typeof window !== "undefined" && typeof CustomEvent !== "undefined") {
+    window.dispatchEvent(new CustomEvent(DEBATER_XP_AWARDED_EVENT, { detail: result }));
+  }
+  return result;
+}
+
 /** Dispatch an activity event (for callers that would rather not record directly). */
 export function dispatchDebaterActivity(kind: DebaterActivityKind, count = 1): void {
   if (typeof window === "undefined" || typeof CustomEvent === "undefined") return;
@@ -115,6 +131,15 @@ export function installDebaterActivityListener(): () => void {
     const count = typeof detail.count === "number" && Number.isFinite(detail.count) ? detail.count : 1;
     recordDebaterActivity(detail.kind, count);
   };
+  // A merge from another device lands while the tab is hidden or on focus, so settle then too.
+  const settle = () => {
+    settleDebaterChallenges();
+  };
+  settle();
   window.addEventListener(DEBATER_ACTIVITY_EVENT, handle);
-  return () => window.removeEventListener(DEBATER_ACTIVITY_EVENT, handle);
+  window.addEventListener("focus", settle);
+  return () => {
+    window.removeEventListener(DEBATER_ACTIVITY_EVENT, handle);
+    window.removeEventListener("focus", settle);
+  };
 }

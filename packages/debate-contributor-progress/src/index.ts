@@ -56,6 +56,7 @@ export {
 export {
   ACTIVITY_XP,
   applyDebaterActivity,
+  settleDailyChallenges,
   computeLevelProgress,
   DEBATER_ACTIVITY_KINDS,
   DEBATER_ACTIVITY_LABELS,
@@ -77,6 +78,7 @@ export {
   installDebaterActivityListener,
   loadDebaterLevelState,
   recordDebaterActivity,
+  settleDebaterChallenges,
 } from "./state/debaterLevel";
 export {
   isJudgeAwardKind,
