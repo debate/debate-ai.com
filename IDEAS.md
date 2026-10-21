@@ -45,11 +45,13 @@
 ### 10\. **Analytics Dashboard for Debaters**
 
 - Personal stats: win rate, fallacy frequency, argument length, topic expertise, improvement trends
-- **In Progress** (branch `agent/todo-debater-analytics-stats`): `buildDebaterStats` in `packages/debate-round/src/round/debater-stats.ts` computes win rate, side/division/argument splits and recent-form trend from `ownRoundHistory` (account-synced via the `ownRoundHistory` tool-record collection).
-  - [x] Pure stats model + Vitest
-  - [x] `DebaterStatsPanel` mounted in the Prep Workspace ("Debater Stats" tab) and the Coach Hub Prep section, with Vitest
-  - [ ] Follow-up: record fallacy/argument-length data so those stats can be added
-  - [ ] Blocked on base: 39 `.ts/.tsx` files on `master` (mostly `packages/debate-videos`, plus `debate-webview` nav files) contain committed merge-conflict markers, so repo-wide `tsc`/`build` fail; resolve those first, then re-run the build gate and mark this Completed
+- **Completed 2026-10-21 (debater win-rate / form stats slice)**: `buildDebaterStats` in `packages/debate-round/src/round/debater-stats.ts` computes win rate, side/division/argument splits and recent-form trend from `ownRoundHistory` (account-synced via the `ownRoundHistory` tool-record collection). `DebaterStatsPanel` is mounted in the Prep Workspace ("Debater Stats" tab) and the Coach Hub Prep section.
+  - [x] Pure stats model + Vitest (`debater-stats`, `DebaterStatsPanel` tests pass)
+  - [x] Panel mounted in Prep Workspace and Coach Hub
+  - [x] Former blocker resolved: no committed merge-conflict markers remain; `bun run typecheck` (29/29 tasks) and `bun run build` pass
+  - Follow-up (open): record fallacy / argument-length data so those stats can be added
+  - Follow-up (open): 11 pre-existing failing Vitest tests, unrelated to stats. `debate-videos` sidebar tests (`tool-nav-tree-sections`, `sidebar-active-section`, `video-sidebar-render`, `lectures-sidebar-shell`, `tool-nav-tree-expansion`) and `debate-webview` `judge-link.test.ts` expect a four-section tool nav (Research / Practice / Coaching / Insights) as `app-nav-dock.mdx` also documents, but `sidebar-tool-sections.ts` on both parents of merge 38567c8 defines only Research / Coaching / Insights. Needs a product decision: restore the Practice section or update tests and docs to three sections.
+  - Note: account-linked SQL storage for flows, rounds, documents, AI-versus debates and user settings already exists (`saved_flows`, `saved_rounds`, `documents`, `practice_vs_ai_debates`, `user_settings`, `saved_tool_records`) and is surfaced by the cloud library widget; no new work needed there.
 
 1. ability to challenge legends - and speculators bet
 2. random pair webcam debate matching on mutual pref topics
