@@ -15,6 +15,17 @@ playback. Entry `src/index.ts`, tests in `test/`.
   reload. Prep time must survive both.
 - Prep time is *consumed* — it can't be silently restored by a remount.
 
+## The circular timer face
+
+`timers/circular/CircularTimerFace.tsx` is the browser extension's round dial,
+moved here so the round sidebar (`debate-round` `RoundTimerPanel`) and the
+extension (`apps/debate-browser-ext/src/components/TimerFace.tsx`, which wraps
+it) share it. It is presentational only — callers own the timer state. Its
+styles are `dt-ctimer`-scoped and imported by the component; it references its
+own `css-module.d.ts` so every package that type-checks `@debate/timer` accepts
+the CSS import. Import it by path (`@debate/timer/src/timers/circular/…`) from
+the extension so the timer window doesn't bundle the recorder.
+
 ## The recorder
 
 - **It captures a student's voice.** Recording is an explicit, visible action:

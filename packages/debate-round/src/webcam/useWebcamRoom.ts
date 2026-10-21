@@ -33,6 +33,12 @@ export interface WebcamRoomOptions {
   /** Base path of the room endpoints (default `/api/rooms`). */
   apiBase?: string
   role?: RoomRole
+  /**
+   * Join as a data-only socket (`?mode=data`): room events with no camera
+   * mesh. It doesn't count against the room's camera cap, so the timer and
+   * headings sync can sit in every tab without crowding out the webcams.
+   */
+  dataOnly?: boolean
 }
 
 /** Capture size for every camera; the mesh sends it to each peer. */
@@ -81,14 +87,18 @@ async function loadIceServers(apiBase: string): Promise<RTCIceServer[]> {
   }
 }
 
-function socketUrl(apiBase: string, roomId: string, role: RoomRole): string {
+function socketUrl(apiBase: string, roomId: string, role: RoomRole, dataOnly = false): string {
   const url = new URL(`${apiBase}/${encodeURIComponent(roomId)}/ws`, window.location.href)
   url.protocol = url.protocol === "https:" ? "wss:" : "ws:"
   url.searchParams.set("role", role)
+  if (dataOnly) url.searchParams.set("mode", "data")
   return url.toString()
 }
 
-export function useWebcamRoom(roomId: string, { apiBase = "/api/rooms", role = "speaker" }: WebcamRoomOptions = {}) {
+export function useWebcamRoom(
+  roomId: string,
+  { apiBase = "/api/rooms", role = "speaker", dataOnly = false }: WebcamRoomOptions = {},
+) {
   const [status, setStatus] = useState<WebcamRoomStatus>("idle")
   const [error, setError] = useState<string | null>(null)
   const [self, setSelf] = useState<RoomPeer | null>(null)
@@ -169,6 +179,7 @@ export function useWebcamRoom(roomId: string, { apiBase = "/api/rooms", role = "
   }
 
   const shareMediaState = () => {
+    if (dataOnly) return
     const stream = streamRef.current
     send({ type: "room-event", event: "mute-state", payload: { muted: !stream?.getAudioTracks().length } })
     send({ type: "room-event", event: "camera-state", payload: { off: !stream?.getVideoTracks().length } })
@@ -182,13 +193,17 @@ export function useWebcamRoom(roomId: string, { apiBase = "/api/rooms", role = "
     setError(null)
     setStatus("connecting")
     try {
-      const [iceServers, { default: Peer }] = await Promise.all([
-        loadIceServers(apiBase),
-        import("simple-peer/simplepeer.min.js"),
-      ])
+      // A data socket never dials anyone, so it skips ICE and simple-peer.
+      const [iceServers, Peer] = dataOnly
+        ? [DEFAULT_ICE, null]
+        : await Promise.all([
+            loadIceServers(apiBase),
+            import("simple-peer/simplepeer.min.js").then((m) => m.default),
+          ])
       const stream = ensureStream()
 
       const connect = (peerId: string, initiator: boolean) => {
+        if (!Peer) return null
         const existing = peersRef.current.get(peerId)
         if (existing) return existing
         const peer = new Peer({ initiator, trickle: true, stream, config: { iceServers } })
@@ -205,7 +220,7 @@ export function useWebcamRoom(roomId: string, { apiBase = "/api/rooms", role = "
         return peer
       }
 
-      const ws = new WebSocket(socketUrl(apiBase, roomId, role))
+      const ws = new WebSocket(socketUrl(apiBase, roomId, role, dataOnly))
       socketRef.current = ws
       ws.onmessage = (event) => {
         let msg: ServerMessage
@@ -220,7 +235,7 @@ export function useWebcamRoom(roomId: string, { apiBase = "/api/rooms", role = "
             setStatus("joined")
             for (const peer of msg.peers) {
               upsert(peer.id, peer)
-              connect(peer.id, true)
+              if (!peer.data) connect(peer.id, true)
             }
             shareMediaState()
             break
@@ -237,7 +252,7 @@ export function useWebcamRoom(roomId: string, { apiBase = "/api/rooms", role = "
             )
             break
           case "signal":
-            connect(msg.from, false).signal(msg.payload as SimplePeer.SignalData)
+            connect(msg.from, false)?.signal(msg.payload as SimplePeer.SignalData)
             break
           case "room-event":
             if (msg.event === "mute-state") upsert(msg.from, { micOn: !(msg.payload as { muted?: boolean })?.muted })
@@ -276,7 +291,7 @@ export function useWebcamRoom(roomId: string, { apiBase = "/api/rooms", role = "
     }
     // `send`, `ensureStream` and `shareMediaState` only read refs.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiBase, roomId, role, upsert, drop, leave])
+  }, [apiBase, roomId, role, dataOnly, upsert, drop, leave])
 
   /** Opens the camera or microphone and sends it to the preview and every peer. */
   const enableTrack = async (kind: "audio" | "video") => {

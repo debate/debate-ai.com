@@ -13,6 +13,7 @@ import { EbbFlowToolsMenu } from "./EbbFlowToolsMenu"
 import { FlowToolsMenu } from "./FlowToolsMenu"
 import { LiveRoundGroup } from "./LiveRoundGroup"
 import { WebcamRoomPanel } from "../webcam/WebcamRoomPanel"
+import { RoundTimerPanel } from "./RoundTimerPanel"
 import { OpenTabsGroup } from "./OpenTabsGroup"
 import { RemoteSpeechDocHeadings } from "./RemoteSpeechDocHeadings"
 import { RemoteTimerDisplay } from "./RemoteTimerDisplay"
@@ -108,8 +109,9 @@ interface FlowPageSidebarProps {
 /**
  * Sidebar panel containing quick action buttons, the selected round's group
  * — its prep timers and the timer/controls bar for the speech in view, the
- * app's only round-timer surface now that the dock has no Timer button — and
- * a collapsible list of open tabs.
+ * app's only round-timer surface now that the dock has no Timer button — the
+ * collapsible circular Timer (which pops out), the Cameras room, and a
+ * collapsible list of open tabs.
  *
  * @param props - Component props.
  * @param props.flows - Array of all flows; sorted internally (active first, then archived).
@@ -250,6 +252,20 @@ export function FlowPageSidebar({
           viewControls={speechViewControls}
           onSelectSpeech={onSelectSpeech}
           viewerEmails={viewerEmails}
+        />
+      )}
+
+      {/* The circular progress timer, with a pop-out. */}
+      {selectedRound && (
+        <RoundTimerPanel
+          debateStyle={timerState.debateStyle}
+          selectedSpeech={selectedSpeech}
+          getSpeechTimerState={timerState.getSpeechTimerState}
+          setSpeechTimerState={timerState.setSpeechTimerState}
+          prepState={timerState.prepState}
+          setPrepState={timerState.setPrepState}
+          prepSecondaryState={timerState.prepSecondaryState}
+          setPrepSecondaryState={timerState.setPrepSecondaryState}
         />
       )}
 

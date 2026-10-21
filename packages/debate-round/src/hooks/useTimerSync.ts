@@ -17,21 +17,48 @@ export interface TimerSyncState {
   timestamp: number;
 }
 
+function randomEventId(): string {
+  return typeof crypto !== "undefined" && "randomUUID" in crypto
+    ? crypto.randomUUID()
+    : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+}
+
 export interface RemoteTimerState {
   peerId: string;
   peerName: string;
   timerState: TimerSyncState;
 }
 
+export interface TimerSyncOptions {
+  /** Called once per timer update from another device (deduplicated across sockets). */
+  onRemoteTimer?: (timerState: TimerSyncState, from: string) => void
+}
+
+/** How many recent event ids to remember for deduplication. */
+const SEEN_EVENT_LIMIT = 200
+
 /**
  * Hook to sync timer state across all room participants.
- * - Broadcasts local timer changes to the room
- * - Receives and can apply timer state from other participants (e.g., the judge or lead debater)
+ * - Broadcasts local timer changes to the room (callers decide when; see
+ *   `useRoomTimerSync`, which sends only real changes such as play/pause)
+ * - Receives timer state from other participants and hands each update to
+ *   `onRemoteTimer` so it can be applied locally
+ *
+ * It joins as a data-only socket, so it never counts against the room's
+ * camera cap.
  */
-export function useTimerSync(roomId: string, role: "speaker" | "judge" | "observer" = "speaker") {
+export function useTimerSync(
+  roomId: string,
+  role: "speaker" | "judge" | "observer" = "speaker",
+  { onRemoteTimer }: TimerSyncOptions = {},
+) {
   const [remoteTimers, setRemoteTimers] = useState<RemoteTimerState[]>([]);
-  const { join, broadcast, status, participants, self } = useWebcamRoom(roomId, { role });
-  const lastBroadcastRef = useRef<Record<string, number>>({});
+  const { join, broadcast, status, participants, self } = useWebcamRoom(roomId, { role, dataOnly: true });
+  const onRemoteTimerRef = useRef(onRemoteTimer);
+  onRemoteTimerRef.current = onRemoteTimer;
+  // Every socket in this tab on the same room re-dispatches an event as a
+  // window event, so the same update can arrive more than once.
+  const seenRef = useRef<string[]>([]);
 
   // Join the room on mount
   useEffect(() => {
@@ -41,25 +68,18 @@ export function useTimerSync(roomId: string, role: "speaker" | "judge" | "observ
   }, [join, status]);
 
   /**
-   * Broadcast timer state to all room participants.
-   * Throttled to avoid flooding the room.
+   * Broadcast timer state to all room participants. Not throttled: a
+   * dropped pause would leave every other device running.
    */
   const broadcastTimerState = useCallback(
     (speechName: string, timerState: TimerSyncState) => {
-      const now = Date.now();
-      const key = speechName;
-      const lastBroadcast = lastBroadcastRef.current[key] ?? 0;
-
-      // Throttle: only broadcast once per 500ms per speech
-      if (now - lastBroadcast < 500) return;
-      lastBroadcastRef.current[key] = now;
-
       broadcast("timer-sync" as RoomEventName, {
+        id: randomEventId(),
         speechName,
         time: timerState.time,
         resetTime: timerState.resetTime,
         state: timerState.state,
-        timestamp: now,
+        timestamp: Date.now(),
       });
     },
     [broadcast]
@@ -71,22 +91,25 @@ export function useTimerSync(roomId: string, role: "speaker" | "judge" | "observ
       const { from, payload } = event.detail;
       if (from === self?.id) return; // Ignore our own messages
 
+      if (typeof payload?.id === "string") {
+        if (seenRef.current.includes(payload.id)) return;
+        seenRef.current = [...seenRef.current.slice(-(SEEN_EVENT_LIMIT - 1)), payload.id];
+      }
+
       const peer = participants.find((p) => p.id === from);
       if (peer && payload?.speechName) {
+        const timerState: TimerSyncState = {
+          speechName: payload.speechName,
+          time: payload.time,
+          resetTime: payload.resetTime,
+          state: payload.state,
+          timestamp: payload.timestamp,
+        };
         setRemoteTimers((prev) => [
           ...prev.filter((t) => !(t.peerId === from && t.timerState.speechName === payload.speechName)),
-          {
-            peerId: from,
-            peerName: peer.name,
-            timerState: {
-              speechName: payload.speechName,
-              time: payload.time,
-              resetTime: payload.resetTime,
-              state: payload.state,
-              timestamp: payload.timestamp,
-            },
-          },
+          { peerId: from, peerName: peer.name, timerState },
         ]);
+        onRemoteTimerRef.current?.(timerState, from);
       }
     };
 
@@ -115,6 +138,7 @@ export function useTimerSync(roomId: string, role: "speaker" | "judge" | "observ
 
   return {
     remoteTimers,
+    participants,
     broadcastTimerState,
     sendClarityRequest,
     clearTimers: () => setRemoteTimers([]),
