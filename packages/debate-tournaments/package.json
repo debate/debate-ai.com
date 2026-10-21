@@ -56,6 +56,7 @@
     "kysely": "^0.29.6",
     "lucide-react": "^1.55.0",
     "luxon": "^3.7.2",
+    "radix-ui": "^1.8.0",
     "router": "^2.2.0",
     "sanitize-html": "^2.18.0",
     "zod": "^4.6.6"

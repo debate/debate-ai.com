@@ -1,5 +1,6 @@
 "use client";
 
+import { isElimRound, roundDisplayLabel } from "../bracket";
 import type { PublishedRound } from "../client";
 import { buttonVariants } from "../primitives";
 import { isLiveDemo } from "../live/demo-live";
@@ -43,11 +44,22 @@ function RoundsByEvent({ tournId, rounds }: { tournId: number; rounds: Published
                         className: live ? "h-auto min-w-28 flex-col items-start py-1.5" : undefined,
                       })}
                     >
-                      {round.label || `Round ${round.name}`}
+                      {roundDisplayLabel(round.label, round.name)}
                       {live && <LiveRoundBadge roundId={round.id} eventAbbr={event.abbr} eventType={event.type} now={now} />}
                     </Link>
                   </li>
                 ))}
+              {eventRounds.some((round) => isElimRound(round.type)) ? (
+                <li>
+                  <Link
+                    href={hrefs.round(tournId, event.abbr, eventRounds.filter((round) => isElimRound(round.type)).at(-1)!.name)}
+                    title="Every elimination round in one bracket"
+                    className={buttonVariants({ variant: "outline", size: "sm", className: "border-primary/50 text-primary" })}
+                  >
+                    Bracket
+                  </Link>
+                </li>
+              ) : null}
             </ul>
           </Section>
         ))}
