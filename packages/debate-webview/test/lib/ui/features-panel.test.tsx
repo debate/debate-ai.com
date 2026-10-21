@@ -228,4 +228,21 @@ describe("FeaturesPanel downloads", () => {
   it("links the Android app on Google Play next to the extension", () => {
     expect(html).toContain("play.google.com/store/apps/details?id=com.debate.ai");
   });
+
+  it("links every desktop installer from the v1.0.0 release", () => {
+    for (const platform of ["windows", "macos", "linux"]) {
+      expect(html).toContain(`data-testid="desktop-download-${platform}"`);
+    }
+    for (const file of [
+      "Debate.AI_1.0.0_x64-setup.exe",
+      "Debate.AI_1.0.0_x64_en-US.msi",
+      "Debate.AI_1.0.0_universal.dmg",
+      "Debate.AI_universal.app.tar.gz",
+      "Debate.AI_1.0.0_amd64.AppImage",
+      "Debate.AI_1.0.0_amd64.deb",
+      "Debate.AI-1.0.0-1.x86_64.rpm",
+    ]) {
+      expect(html).toContain(`releases/download/native-wrapper-v1.0.0/${file}`);
+    }
+  });
 });
