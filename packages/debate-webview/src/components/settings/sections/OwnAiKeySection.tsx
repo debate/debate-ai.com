@@ -18,7 +18,7 @@ import { Input } from "../../../lib/ui/primitives/input"
  * "Your own AI key": paste an OpenRouter or Anthropic key so AI requests are
  * billed to it, under the spending limit the user sets with their provider,
  * instead of Debate AI's shared key and daily plan limits. The key stays in
- * this browser (`lib/ai/own-ai-key.ts`). Rendered in Settings → Preferences
+ * this browser (`lib/ai/own-ai-key.ts`). Rendered in Settings → General
  * and inside the dialog that opens when the shared key hits its API limit.
  */
 export function OwnAiKeyForm({ onSaved }: { onSaved?: () => void }) {

@@ -75,7 +75,7 @@ async function generateWithAccount(request: GenerateRequest): Promise<string> {
   } catch (error) {
     if (error instanceof NotSignedInError) {
       throw new AiNotConfiguredError(
-        'Sign in to your Debate AI account, or add your OpenRouter or Anthropic key in Debate AI Settings → Preferences.',
+        'Sign in to your Debate AI account, or add your OpenRouter or Anthropic key in Debate AI Settings → General.',
       );
     }
     throw error;

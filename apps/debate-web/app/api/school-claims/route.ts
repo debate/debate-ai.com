@@ -7,7 +7,7 @@ import { notifyModeratorsOfClaim, sendClaimCodeEmail } from "@/lib/school-claims
 import { SchoolClaimError, createClaim, listMyClaims, withdrawClaim } from "@/lib/school-claims/queries"
 
 /**
- * Claiming to coach or run a school (Settings → My school).
+ * Claiming to coach or run a school (Settings → General → My school).
  *
  * GET — the signed-in user's claims, newest first, and the schools their
  * approved claims make them own (empty when signed out).

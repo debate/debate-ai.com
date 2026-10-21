@@ -1,6 +1,6 @@
 /** @vitest-environment jsdom */
 /**
- * @fileoverview Settings → Preferences → Read aloud voice: shows the stored
+ * @fileoverview Settings → Sound & speech → Read aloud voice: shows the stored
  * engine and voice, and follows a choice made in the card editor's gear menu.
  */
 import { act } from "react"
