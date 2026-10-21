@@ -50,7 +50,6 @@ const { ALL_SIDEBAR_SECTION_IDS, toggleExpandedSection, withSectionExpanded } = 
 const SAMPLE_HREF_BY_SECTION: Record<string, string> = {
   coaching: "/news",
   research: "/research/team",
-  practice: "/practice/prep",
   insights: "/practice/glossary",
 };
 
@@ -106,7 +105,7 @@ describe("sidebar section expansion set", () => {
 
     expect(next).not.toContain("coaching");
     expect(next).toContain("research");
-    expect(next).toContain("practice");
+    expect(next).toContain("insights");
     expect(next).toContain(VIDEOS_SECTION_ID);
   });
 
@@ -119,16 +118,16 @@ describe("sidebar section expansion set", () => {
 
   it("leaves the input array untouched", () => {
     const before = [...ALL_SIDEBAR_SECTION_IDS];
-    toggleExpandedSection(ALL_SIDEBAR_SECTION_IDS, "practice");
+    toggleExpandedSection(ALL_SIDEBAR_SECTION_IDS, "insights");
 
     expect([...ALL_SIDEBAR_SECTION_IDS]).toEqual(before);
   });
 
   it("expands the route's section on navigation and collapses nothing", () => {
-    const collapsed = toggleExpandedSection(ALL_SIDEBAR_SECTION_IDS, "practice");
-    const navigated = withSectionExpanded(collapsed, "practice");
+    const collapsed = toggleExpandedSection(ALL_SIDEBAR_SECTION_IDS, "insights");
+    const navigated = withSectionExpanded(collapsed, "insights");
 
-    expect(navigated).toContain("practice");
+    expect(navigated).toContain("insights");
     expect(navigated).toContain("research");
   });
 
