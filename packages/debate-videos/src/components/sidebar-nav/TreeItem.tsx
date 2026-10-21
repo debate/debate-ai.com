@@ -20,7 +20,11 @@
  * given a `sectionHref`, so a ctrl/cmd/shift/middle-click opens that section's
  * flagship page in a new tab; only the plain click is intercepted.
  *
+<<<<<<<< HEAD:packages/debate-videos/src/components/sidebar/SidebarTreeItem.tsx
+ * @module components/sidebar/SidebarTreeItem
+========
  * @module components/sidebar-nav/TreeItem
+>>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/sidebar-nav/TreeItem.tsx
  */
 
 "use client";

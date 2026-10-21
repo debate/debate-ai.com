@@ -17,9 +17,15 @@
 "use client"
 
 import { ListVideo, Play, X } from "lucide-react"
+<<<<<<<< HEAD:packages/debate-videos/src/components/videos/watch/panels/WatchQueuePanel.tsx
+import { cn } from "../../../../ui/lib/utils"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../../../../ui/primitives/tooltip"
+import { useVideoPlayerStore } from "../../../../state/videoPlayerStore"
+========
 import { cn } from "../../ui/lib/utils"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
 import { useVideoPlayerStore } from "../../state/videoPlayerStore"
+>>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/watch/WatchQueuePanel.tsx
 
 export function WatchQueuePanel({ className }: { className?: string }) {
   // Per-field selectors: the panel re-renders on a queue change, not on every

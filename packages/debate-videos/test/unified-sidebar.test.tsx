@@ -17,8 +17,13 @@ vi.mock("next/navigation", () => ({
   usePathname: () => "/coaching/progress",
 }));
 
+<<<<<<< HEAD
+const { LibrarySidebarTree } = await import("../src/components/sidebar/LibrarySidebarTree");
+const { SIDEBAR_TOOL_SECTIONS } = await import("../src/components/sidebar/sidebar-tool-sections");
+=======
 const { LibrarySidebarTree } = await import("../src/components/sidebar-nav/LibrarySidebarTree");
 const { SIDEBAR_TOOL_SECTIONS } = await import("../src/components/sidebar-nav/sidebar-tool-sections");
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 const { ResizableSidebarLayout, SIDEBAR_DEFAULT_WIDTH, SIDEBAR_MAX_WIDTH, SIDEBAR_MIN_WIDTH, isNearSidebarEdge, isSidebarMenuOpen, sidebarPeekWidth } =
   await import("../src/ui/layout/ResizableSidebarLayout");
 const { PEEK_ANIMATIONS, pickPeekAnimation } = await import("../src/ui/layout/sidebar-peek-animations");

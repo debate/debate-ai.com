@@ -9,7 +9,11 @@ the sidebar column that hosts it on every tool route.
 
 - **Component:** `apps/debate-ai.com/components/layout/CategoryDock.tsx`
 - **Sidebar shell:** `apps/debate-ai.com/components/layout/AppSidebarShell.tsx`
+<<<<<<< HEAD
+- **Route predicates:** `packages/debate-videos/src/components/sidebar/sidebar-routes.ts`
+=======
 - **Route predicates:** `packages/debate-videos/src/components/sidebar-nav/sidebar-routes.ts`
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
   (re-exported for app code as `apps/debate-ai.com/lib/sidebar-routes.ts`)
 - **Dock primitive:** `apps/debate-ai.com/lib/ui/layout/dock.tsx`
 
@@ -35,7 +39,11 @@ the sidebar itself renders rather than restated:
 
 | Menu submenu | Comes from |
 | --- | --- |
+<<<<<<< HEAD
+| Videos | `SIDEBAR_VIDEO_LINKS` (`components/sidebar/sidebar-video-links.ts`) |
+=======
 | Videos | `SIDEBAR_VIDEO_LINKS` (`components/sidebar-nav/sidebar-video-links.ts`) |
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 | Coaching / Research / Practice | `SIDEBAR_TOOL_SECTIONS` |
 | Site Links / Debate Links | `FOOTER_LINKS`, split by its `group` field |
 
@@ -78,7 +86,11 @@ drag it — see [Resizing the sidebar](#resizing-the-sidebar)).
 workspace already renders a sidebar — the files tree and the "Open Tabs"
 list — and the generic one stood beside it as a second, taller nav column, so
 that route is skipped by `AppSidebarShell` (`hostsOwnSidebarDock`, in
+<<<<<<< HEAD
+`packages/debate-videos/src/components/sidebar/sidebar-routes.ts`).
+=======
 `packages/debate-videos/src/components/sidebar-nav/sidebar-routes.ts`).
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 The dock moves into the sidebar that remains:
 `apps/debate-ai.com/components/qwksearch/SidebarWithAppDock.tsx` is the
 `SidebarComponent` the workspace injects into `ReasonDocs`, and it puts
@@ -228,7 +240,11 @@ rendered tree in all three cases.
 
 `/features` is not one of the nav tree's own links, but it gets the tree
 anyway: `EXTRA_SIDEBAR_HREFS` in
+<<<<<<< HEAD
+`debate-videos/src/components/sidebar/sidebar-routes.ts` adds it to
+=======
 `debate-videos/src/components/sidebar-nav/sidebar-routes.ts` adds it to
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 `TOOL_SIDEBAR_HREFS`, so `isGenericToolSidebarRoute` is true for it and
 `AppSidebarShell` wraps it — which also suppresses `CategoryDock`'s floating
 instance, since the column now hosts one. The page itself carries no chrome

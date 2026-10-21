@@ -15,7 +15,11 @@ import { GraduationCap, Library, Dumbbell } from "lucide-react";
 import {
   isImageIcon,
   isComponentIcon,
+<<<<<<< HEAD
+} from "../src/components/sidebar/tree-item-icon";
+=======
 } from "../src/components/sidebar-nav/tree-item-icon";
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 
 describe("isImageIcon", () => {
   it("accepts a URL string", () => {

@@ -18,7 +18,11 @@ import { CalendarRange, ChevronRight, Medal, Tag, Trophy, Tv } from "lucide-reac
 import { cn } from "../../ui/lib/utils"
 import { formatVideoDate, TOC_TOURNAMENT_IMAGE } from "../video-card/videoCardUtils"
 import { getTournamentLogo } from "../video-card/tournamentLogos"
+<<<<<<< HEAD:packages/debate-videos/src/components/videos/video-grid/VideoTreeRows.tsx
+import { formatCount } from "../../../lib/format-count"
+=======
 import { formatCount } from "../../lib/format-count"
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/video-grid/VideoTreeRows.tsx
 import { VideoListRow } from "./VideoListRow"
 import { FormatBadge, videoFormat } from "./FormatBadge"
 import type { VideoTeamRankingLookup } from "../../hooks/useVideoTeamRankings"

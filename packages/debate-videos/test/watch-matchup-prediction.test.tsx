@@ -18,7 +18,11 @@ vi.mock("next/link", () => ({
 }));
 
 const { predictWatchMatchup, PREDICTION_SIM_ROUNDS } = await import("../src/lib/watch-matchup-prediction");
+<<<<<<< HEAD
+const { WatchMatchupPrediction } = await import("../src/components/videos/watch/prediction/WatchMatchupPrediction");
+=======
 const { WatchMatchupPrediction } = await import("../src/components/watch/WatchMatchupPrediction");
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 
 function entry(rank: number, school: string, name: string, rating: number, aff = 50, neg = 50): RankingEntry {
   return {
@@ -126,7 +130,11 @@ describe("WatchTeamStats", () => {
     }));
     vi.doMock("../src/hooks/useVideoTeamRankings", () => ({ isRankedSeasonRound: () => true }));
     vi.doMock("../src/panels/leaderboard/profile/TeamRadarChart", () => ({ TeamRadarChart: () => null }));
+<<<<<<< HEAD
+    const { WatchTeamStats } = await import("../src/components/videos/watch/prediction/WatchTeamStats");
+=======
     const { WatchTeamStats } = await import("../src/components/watch/WatchTeamStats");
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 
     const both = renderToStaticMarkup(createElement(WatchTeamStats, { video: round }));
     expect(both).toContain("Team rankings");

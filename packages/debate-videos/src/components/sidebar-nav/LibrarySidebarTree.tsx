@@ -9,7 +9,11 @@
  * drawer) mounts it through this wrapper, which reads the same counts itself
  * (`useVideoMeta`, cached, so it costs one request at most).
  *
+<<<<<<<< HEAD:packages/debate-videos/src/components/sidebar/LibrarySidebarTree.tsx
+ * @module components/sidebar/LibrarySidebarTree
+========
  * @module components/sidebar-nav/LibrarySidebarTree
+>>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/sidebar-nav/LibrarySidebarTree.tsx
  */
 
 "use client";

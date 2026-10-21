@@ -34,11 +34,19 @@ vi.mock("next/image", () => ({
     createElement("img", { src: typeof src === "string" ? src : (src as { src: string }).src, alt }),
 }));
 
+<<<<<<< HEAD
+import type { ToolNavTreeProps } from "../src/components/sidebar/ToolNavTree";
+
+const { ToolNavTree } = await import("../src/components/sidebar/ToolNavTree");
+const { INSIGHTS_SECTION_ID, RESEARCH_SECTION_ID } = await import(
+  "../src/components/sidebar/sidebar-tool-sections"
+=======
 import type { ToolNavTreeProps } from "../src/components/sidebar-nav/ToolNavTree";
 
 const { ToolNavTree } = await import("../src/components/sidebar-nav/ToolNavTree");
 const { INSIGHTS_SECTION_ID, RESEARCH_SECTION_ID } = await import(
   "../src/components/sidebar-nav/sidebar-tool-sections"
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 );
 
 function render(props: ToolNavTreeProps): string {
@@ -122,7 +130,11 @@ describe("ToolNavTree sectionIds", () => {
 describe("SIDEBAR_TOOL_SECTIONS", () => {
   it("is the four requested sections, in order", async () => {
     const { SIDEBAR_TOOL_SECTIONS } = await import(
+<<<<<<< HEAD
+      "../src/components/sidebar/sidebar-tool-sections"
+=======
       "../src/components/sidebar-nav/sidebar-tool-sections"
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
     );
     expect(SIDEBAR_TOOL_SECTIONS.map((section) => section.title)).toEqual([
       "Research",
