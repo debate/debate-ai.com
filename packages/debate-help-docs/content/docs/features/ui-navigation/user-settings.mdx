@@ -155,6 +155,14 @@ contacts. A pull from the account never resets those. Engineering notes:
 `debate-data-sync`'s `state/flow-editor-settings-codec.ts` — a field joins the
 account only by being added to `SYNCED_FLOW_DISPLAY_FIELDS`.
 
+## Where each tool keeps your data
+
+Every tool's header now says where its data lives: a line such as "Saved to
+your account when you're signed in, and kept on this device otherwise" for
+tools that sync, "Saved to your account: contacts and blocks" for tools backed
+by their own database tables, and nothing for read-only views such as team
+rankings. Engineering notes: `lib/tools/tool-storage.ts` in `debate-webview`.
+
 ## Saved-to-account marker on flow tabs
 
 Each flow tab in the sidebar's **Open Tabs** group shows a small cloud icon
