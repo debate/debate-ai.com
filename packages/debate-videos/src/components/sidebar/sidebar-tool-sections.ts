@@ -162,10 +162,6 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/tournaments", title: "Tournaments", icon: Trophy },
       { href: "/coaching/rankings", title: "Team Rankings", icon: Medal },
       { href: "/coaching", title: "Coach Workspace", icon: Presentation },
-      // Companion guide page (not a coaching tool) — round-day setup for
-      // debating off just a phone, so it rides with the coaching tools here
-      // rather than only being reachable from the `/tools` catalog.
-      { href: "/coaching/laptopless", title: "Laptop-less Debating", icon: Smartphone },
       // The community's news feed and forums, one tabbed page. Forum threads
       // keep their `/practice/forums/<id>` addresses, so that prefix is this
       // row's too.
@@ -185,6 +181,10 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/practice/predictions", title: "Prediction Markets", icon: Coins },
       { href: "/practice/rules", title: "Formats & Rules", icon: Scale },
       { href: "/practice/glossary", title: "Glossary of Terms", icon: BookOpen },
+      // Companion guide page (not a tool) — round-day setup for debating off
+      // just a phone. It keeps its `/coaching/laptopless` address; being the
+      // longest match, it still opens Insights rather than Coaching.
+      { href: "/coaching/laptopless", title: "Laptop-less Debating", icon: Smartphone },
       { href: "/practice/features", title: "All Features", icon: Sparkles },
     ],
   },
