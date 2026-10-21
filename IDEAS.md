@@ -50,7 +50,7 @@
   - [x] `DebaterStatsPanel` mounted in the Prep Workspace ("Debater Stats" tab) and the Coach Hub Prep section, with Vitest
   - [x] Base blocker cleared: no merge-conflict markers remain on `master`; `bun run typecheck` (29/29 tasks) and `bun run build:web` pass
   - [ ] Follow-up (deferred): record fallacy/argument-length data so those stats can be added
-  - [ ] Follow-up (pre-existing, unrelated): 11 tests in 6 files (`debate-videos` sidebar tests, `debate-webview` `judge-link.test.ts`) still assert the old four-section sidebar (Research / Practice / Coaching / Insights) but `SIDEBAR_TOOL_SECTIONS` now has three (Practice folded into Research); decide the intended nav, then update the tests or the sections
+  - [x] Follow-up (pre-existing, unrelated): the sidebar tests asserting the old four-section nav were updated to Research / Coaching / Insights in `f09ee1c` and `a394e02` (verified 2026-10-21: `debate-videos` sidebar tests, `debate-webview` `judge-link.test.ts` and `dock-menu-sections.test.ts` pass). Remaining local failures in `debate-videos` / `site-footer` tests only occur when the `packages/debate-rankings` git submodule is not checked out (`git submodule update --init`)
 
 1. ability to challenge legends - and speculators bet
 2. random pair webcam debate matching on mutual pref topics
