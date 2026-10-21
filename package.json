@@ -47,6 +47,7 @@
     "@codemirror/language": "6.12.4",
     "@posthog/core": "1.57.3",
     "react": "19.3.1",
-    "react-dom": "19.3.1"
+    "react-dom": "19.3.1",
+    "@ai-sdk/amazon-bedrock": "5.0.120"
   }
 }
