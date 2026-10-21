@@ -33,20 +33,23 @@ import { getHostConfig } from "../../host/config"
 // The General tab (id kept as `preferences` so old links still land on it):
 // the app's own account-linked preferences (debate style, font size, font
 // family, color theme, light/dark) — rendered by `UserSettingsPanel`, which
-// syncs itself via `/api/settings` — plus the viewer's own AI key, the team
-// and school they claim, and the editor's own General rows. It used to be its
-// own page, `/settings/preferences` (now a redirect here).
+// syncs itself via `/api/settings` — plus the viewer's own AI key and the
+// team and school they claim. It used to be its own page, `/settings/preferences` (now a redirect here).
 const PREFERENCES_TAB = "preferences"
 // UI sound effects, the read-aloud voice and the on-device speech models.
 const SOUND_SPEECH_TAB = "sound-speech"
 // Tabs folded into General, with the block each one now scrolls to:
-// My team (`@debate/videos`' MyRankedTeamsSettings), My school
-// (`components/schools/MySchoolSettings`) and the editor's General category.
+// My team (`@debate/videos`' MyRankedTeamsSettings) and My school
+// (`components/schools/MySchoolSettings`).
 const TAB_ALIASES: Record<string, { tab: TabId; anchor: string }> = {
   "my-team": { tab: PREFERENCES_TAB, anchor: "settings-my-team" },
   "my-school": { tab: PREFERENCES_TAB, anchor: "settings-my-school" },
-  general: { tab: PREFERENCES_TAB, anchor: "settings-editor-general" },
 }
+// The editor's own General category (workspace, word counts, backup, about
+// this install…), listed first under the Editor heading. Its id stays
+// `general`, so `?category=general` links land on it; only the label
+// changes, to keep it apart from the site's General tab.
+const EDITOR_PREFS_LABEL = "Editor prefs"
 // The recording release (publish or not, audio only, how the viewer is
 // credited), the privacy policy link and data deletion requests
 // (`PrivacySettingsSection`).
@@ -72,13 +75,17 @@ const RESEARCH_TABS: readonly Category[] = RESEARCH_PAGES.map((page) => ({
 // editor's tabs under an Editor heading, and the research agent's sections.
 // The editor tabs and their order come from `lib/editor-preferences.ts`, so
 // the set of categories shown here and the set mirrored to the account
-// cannot drift; its General category renders inside the site's General tab
-// rather than as a second "General".
+// cannot drift; its General category is relabelled "Editor prefs" rather
+// than shown as a second "General".
 const CATEGORIES: readonly Category[] = [
   { id: PREFERENCES_TAB, label: "General" },
   { id: SOUND_SPEECH_TAB, label: "Sound & speech" },
   { id: PRIVACY_TAB, label: "Privacy" },
-  ...EDITOR_SETTINGS_TABS.filter((tab) => tab.id !== "general").map((tab) => ({ ...tab, group: "Editor" })),
+  ...EDITOR_SETTINGS_TABS.map((tab) => ({
+    ...tab,
+    label: tab.id === "general" ? EDITOR_PREFS_LABEL : tab.label,
+    group: "Editor",
+  })),
   ...RESEARCH_TABS,
 ]
 
@@ -108,7 +115,7 @@ const CATEGORY_DETAILS: Record<string, { icon: ComponentType<{ size?: number }>;
   preferences: {
     icon: SlidersHorizontal,
     description:
-      "Your plan, debate style, font, theme, tool data sync and own AI key, sidebar animations; your team and school claims; editor startup and language.",
+      "Your plan, debate style, font, theme, tool data sync and own AI key, sidebar animations; your team and school claims.",
   },
   [SOUND_SPEECH_TAB]: {
     icon: Volume2,
@@ -391,13 +398,6 @@ function EditorSettingsPanelContent({ sidebarHeader }: { sidebarHeader?: ReactNo
               </SettingsGroup>
               <SettingsGroup id="settings-my-school" title="My school">
                 <MySchoolSettings />
-              </SettingsGroup>
-              <SettingsGroup id="settings-editor-general" title="Editor startup & language">
-                {ready ? (
-                  <CardMirrorSettingsSection category="general" onRowsRendered={noteRenderedKeys} />
-                ) : (
-                  <p style={{ fontSize: 14, opacity: 0.7 }}>Loading…</p>
-                )}
               </SettingsGroup>
             </>
           ) : (
