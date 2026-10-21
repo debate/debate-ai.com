@@ -289,6 +289,7 @@ describe("DebaterLevelPanel level-up wiring", () => {
     expect(Object.keys(persisted).sort()).toEqual([
       "completedMilestoneIds",
       "daily",
+      "ledger",
       "lifetimeCounts",
       "recentXp",
       "totalXp",

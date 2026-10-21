@@ -95,6 +95,62 @@ function asXpEvents(value: unknown): { atMs: number; source: string }[] {
   );
 }
 
+interface Tally {
+  xp: number;
+  counts: Counts;
+}
+interface Ledger {
+  base: Tally;
+  devices: Record<string, Tally>;
+}
+
+function asTally(value: unknown): Tally | null {
+  if (typeof value !== "object" || value === null) return null;
+  const { xp, counts } = value as { xp?: unknown; counts?: unknown };
+  if (typeof xp !== "number" || !Number.isFinite(xp) || xp < 0) return null;
+  return { xp, counts: asCounts(counts) };
+}
+
+function asLedger(value: unknown): Ledger | null {
+  if (typeof value !== "object" || value === null) return null;
+  const { base, devices } = value as { base?: unknown; devices?: unknown };
+  const parsedBase = asTally(base);
+  if (!parsedBase || typeof devices !== "object" || devices === null || Array.isArray(devices)) return null;
+  const out: Record<string, Tally> = {};
+  for (const [id, tally] of Object.entries(devices)) {
+    const parsed = asTally(tally);
+    if (parsed) out[id] = parsed;
+  }
+  return { base: parsedBase, devices: out };
+}
+
+function maxTally(a: Tally, b: Tally): Tally {
+  return { xp: Math.max(a.xp, b.xp), counts: maxCounts(a.counts, b.counts) };
+}
+
+function mergeLedgers(local: unknown, remote: unknown): Ledger | null {
+  const a = asLedger(local);
+  const b = asLedger(remote);
+  if (!a || !b) return a ?? b;
+  const devices: Record<string, Tally> = { ...a.devices };
+  for (const [id, tally] of Object.entries(b.devices)) {
+    devices[id] = devices[id] ? maxTally(devices[id], tally) : tally;
+  }
+  return { base: maxTally(a.base, b.base), devices };
+}
+
+function ledgerTotal(ledger: Ledger): number {
+  return Object.values(ledger.devices).reduce((sum, d) => sum + d.xp, ledger.base.xp);
+}
+
+function ledgerCounts(ledger: Ledger): Counts {
+  const out: Counts = { ...ledger.base.counts };
+  for (const d of Object.values(ledger.devices)) {
+    for (const [kind, n] of Object.entries(d.counts)) out[kind] = (out[kind] ?? 0) + n;
+  }
+  return out;
+}
+
 /**
  * Conflict rule that supersedes {@link preferHigherDebaterXp}: combine the two
  * copies field by field instead of keeping one whole record, so activity
@@ -103,9 +159,12 @@ function asXpEvents(value: unknown): { atMs: number; source: string }[] {
  * when both copies are from the same UTC day, otherwise the later day wins;
  * the XP log is the newest-first union, de-duplicated by time and source.
  *
- * Without a per-event ledger the same activity done on both devices can't be
- * told from two separate ones, so counts take the larger side (never a sum)
- * and the result can under-count but never double-count.
+ * When a copy carries a per-device `ledger` (each device only grows its own
+ * entry), the ledgers merge entry by entry and `totalXp` / `lifetimeCounts`
+ * are rebuilt as base + every device, so work done on two devices adds up.
+ * Copies without a ledger (older clients) fall back to the larger side, which
+ * can under-count but never double-count. Today's tally still takes the
+ * larger side.
  */
 export function mergeDebaterLevel(local: unknown, remote: unknown): unknown {
   if (!hasValidXp(local)) return remote;
@@ -132,11 +191,21 @@ export function mergeDebaterLevel(local: unknown, remote: unknown): unknown {
     })
     .sort((a, b) => b.atMs - a.atMs)
     .slice(0, MAX_RECENT_XP_EVENTS);
+  const ledger = mergeLedgers(local.ledger, remote.ledger);
+  let totalXp = Math.max(local.totalXp, remote.totalXp);
+  let lifetimeCounts = maxCounts(asCounts(local.lifetimeCounts), asCounts(remote.lifetimeCounts));
+  if (ledger) {
+    totalXp = Math.max(totalXp, ledgerTotal(ledger));
+    lifetimeCounts = maxCounts(lifetimeCounts, ledgerCounts(ledger));
+  }
+  const { ledger: _l, ...localRest } = local;
+  const { ledger: _r, ...remoteRest } = remote;
   return {
-    ...remote,
-    ...local,
-    totalXp: Math.max(local.totalXp, remote.totalXp),
-    lifetimeCounts: maxCounts(asCounts(local.lifetimeCounts), asCounts(remote.lifetimeCounts)),
+    ...remoteRest,
+    ...localRest,
+    ...(ledger ? { ledger } : {}),
+    totalXp,
+    lifetimeCounts,
     daily,
     completedMilestoneIds: union(asStrings(local.completedMilestoneIds), asStrings(remote.completedMilestoneIds)),
     recentXp,
