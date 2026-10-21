@@ -16,7 +16,7 @@
  * document) sit above the speech list.
  *
  * Every speech also carries a signpost button whose tooltip outlines that
- * speech's H1–H3 headings (its signposting), without the H4 card tags.
+ * speech's H1 and H2 headings (its signposting).
  *
  * Any other speech in the list can be clicked to make it the active one.
  * When the viewer is one of the round's debaters, the speeches they give are
