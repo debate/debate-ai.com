@@ -509,14 +509,21 @@ jobs:
           TAG: ${{ needs.prepare-release.outputs.tag }}
         run: |
           gh release view "$TAG" --json assets -q '.assets[].name' | tee /tmp/assets.txt
-          # One installer per desktop platform, plus the updater manifest.
+          # One installer per desktop platform.
           missing=0
-          for pattern in '\.dmg$|\.app\.tar\.gz$' '\.exe$|\.msi$' '\.AppImage$|\.deb$|\.rpm$' '^latest\.json$'; do
+          for pattern in '\.dmg$|\.app\.tar\.gz$' '\.exe$|\.msi$' '\.AppImage$|\.deb$|\.rpm$'; do
             if ! grep -Eq "$pattern" /tmp/assets.txt; then
               echo "::error::No release asset matches /$pattern/ — refusing to publish." >&2
               missing=1
             fi
           done
+          # latest.json (and the .sig files) only exist once the profile has an
+          # updater pubkey, so require the manifest only when updater
+          # signatures were produced.
+          if grep -Eq '\.sig$' /tmp/assets.txt && ! grep -Eq '^latest\.json$' /tmp/assets.txt; then
+            echo "::error::Updater signatures are attached but latest.json is missing — refusing to publish." >&2
+            missing=1
+          fi
           exit $missing
 
       - name: Publish the release
