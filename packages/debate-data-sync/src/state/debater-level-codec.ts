@@ -278,4 +278,20 @@ export function mergeDebaterLevel(local: unknown, remote: unknown): unknown {
     completedMilestoneIds: union(l.milestones, r.milestones),
     recentXp,
   };
+  const ll = asLedger(local.ledger);
+  const rl = asLedger(remote.ledger);
+  if (!ll || !rl) return merged;
+
+  // Each side plus what the other recorded; the max of the two is the same
+  // total from either direction, and never below the plain max rule above.
+  const mergedDay = merged.daily as { dayKey: string; counts: Counts };
+  const a = withMissingEvents(local, ll, rl, mergedDay.dayKey);
+  const b = withMissingEvents(remote, rl, ll, mergedDay.dayKey);
+  merged.totalXp = Math.max(merged.totalXp, a.totalXp, b.totalXp);
+  merged.lifetimeCounts = maxCounts(maxCounts(merged.lifetimeCounts as Counts, a.lifetime), b.lifetime);
+  if (dl.dayKey === dr.dayKey) mergedDay.counts = maxCounts(maxCounts(mergedDay.counts, a.today), b.today);
+  const byId = new Map<string, LedgerEntry>();
+  for (const e of [...ll, ...rl]) if (!byId.has(e.id)) byId.set(e.id, e);
+  merged.ledger = [...byId.values()].sort((x, y) => y.atMs - x.atMs || (x.id < y.id ? -1 : 1)).slice(0, MAX_LEDGER_ENTRIES);
+  return merged;
 }
