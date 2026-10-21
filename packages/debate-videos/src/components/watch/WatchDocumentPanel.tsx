@@ -27,30 +27,18 @@
 
 import { useEffect, useMemo, useRef, useState } from "react"
 import { Bot, ListTree, Search, X } from "lucide-react"
-<<<<<<<< HEAD:packages/debate-videos/src/components/videos/watch/panels/WatchDocumentPanel.tsx
-import { ScrollArea } from "../../../../ui/primitives/scroll-area"
-========
 import { ScrollArea } from "../../ui/primitives/scroll-area"
->>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/watch/WatchDocumentPanel.tsx
 import {
   formatTimecode,
   parseDocumentSections,
   toParagraphs,
   VIDEO_DOCUMENT_LABELS,
   type VideoDocument,
-<<<<<<<< HEAD:packages/debate-videos/src/components/videos/watch/panels/WatchDocumentPanel.tsx
-} from "../../../../lib/video-documents"
-import { highlightHtml, renderDocumentMarkdown } from "../../../../lib/document-markdown"
-import { scrollWithin } from "../../../../lib/scroll-within"
-import { AutoScrollToggle } from "../controls/AutoScrollToggle"
-import { formatCount } from "../../../../lib/format-count"
-========
 } from "../../lib/video-documents"
 import { highlightHtml, renderDocumentMarkdown } from "../../lib/document-markdown"
 import { scrollWithin } from "../../lib/scroll-within"
 import { AutoScrollToggle } from "./AutoScrollToggle"
 import { formatCount } from "../../lib/format-count"
->>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/watch/WatchDocumentPanel.tsx
 
 interface WatchDocumentPanelProps {
   document: VideoDocument

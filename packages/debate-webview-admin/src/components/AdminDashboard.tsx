@@ -28,18 +28,6 @@ import {
   formatSeedVideosStatus,
   type SeedVideosStatus,
 } from "@debate/webview/lib/videos/format-seed-videos-result";
-<<<<<<< HEAD
-import { CaselistSyncPanel } from "./CaselistSyncPanel";
-import { DbBackupPanel } from "./DbBackupPanel";
-import { DebateCardParquetUpload } from "./DebateCardParquetUpload";
-import { ModeratorsPanel } from "./ModeratorsPanel";
-import { TopicStarterUpload } from "./TopicStarterUpload";
-import { UsersTable } from "./UsersTable";
-import { VideoLibraryTable } from "./VideoLibraryTable";
-import { VideoReportsPanel } from "./VideoReportsPanel";
-import { YoutubeChannelsPanel } from "./YoutubeChannelsPanel";
-import { TranscriptScraperPanel } from "./TranscriptScraperPanel";
-=======
 import { CaselistSyncPanel } from "./data/CaselistSyncPanel";
 import { DbBackupPanel } from "./data/DbBackupPanel";
 import { DebateCardParquetUpload } from "./data/DebateCardParquetUpload";
@@ -51,7 +39,6 @@ import { VideoLibraryTable } from "./videos/VideoLibraryTable";
 import { VideoReportsPanel } from "./videos/VideoReportsPanel";
 import { YoutubeChannelsPanel } from "./videos/YoutubeChannelsPanel";
 import { TranscriptScraperPanel } from "./videos/TranscriptScraperPanel";
->>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 import { formatCount } from "@debate/videos/lib/format-count";
 
 interface YoutubeRoundVideo { id: string; title: string; publishedAt: string; channel: string; views: number; style: number; tournament: string | null; }

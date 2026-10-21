@@ -26,11 +26,7 @@ vi.mock("next/image", () => ({
 }));
 
 const { VideoSidebarTree } = await import(
-<<<<<<< HEAD
-  "../src/components/sidebar/VideoSidebarTree"
-=======
   "../src/components/sidebar-nav/VideoSidebarTree"
->>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 );
 
 /** The ring `TreeItem` puts on the selected row. */
