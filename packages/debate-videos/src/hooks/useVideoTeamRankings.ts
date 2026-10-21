@@ -3,16 +3,28 @@
  * for the Aff and Neg cells of the list layout: a team found in the rankings
  * links to its `@<handle>` profile and shows its rating.
  *
- * `debate-rankings` covers the current season only, so only a round from the
- * current season is looked up — a team code from a past season names
- * different people, and its rating would be someone else's.
+ * `debate-rankings` covers the current season only, so a round from the
+ * current season is looked up there — a team code from a past season names
+ * different people, and its rating would be someone else's. A college policy
+ * round from a past season is looked up instead in that season's own
+ * debatedata table (2009-10 onward, see `college-history.ts` in
+ * `@debate/rankings-adapter`), which gives the team's rank that season and
+ * its debaters' last names; such a row carries its `season` and has no
+ * profile to link to.
  * @module hooks/useVideoTeamRankings
  */
 
 "use client"
 
-import { createContext, useCallback, useContext, useMemo } from "react"
-import type { RankingEntry } from "@debate/rankings-adapter"
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react"
+import {
+  collegeSeasonYearOf,
+  findCollegeHistoryTeam,
+  hasCollegeHistory,
+  loadCollegeHistory,
+  type CollegeHistoryEntry,
+  type RankingEntry,
+} from "@debate/rankings-adapter"
 import { useAllRankingDatasets } from "./useAllRankingDatasets"
 import { currentSeasonYear } from "../panels/leaderboard/leaderboardUtils"
 import {
@@ -21,11 +33,25 @@ import {
 } from "../panels/leaderboard/profile/rankingProfileHelpers"
 import type { VideoType } from "../types/videos"
 
+/** A past college season's table row for a team, tagged with that season. */
+export interface PastSeasonTeamRanking extends CollegeHistoryEntry {
+  /** Season year the row is from (the year the season ends in). */
+  season: number
+}
+
+/** A team's current-season rankings row, or its row in a past college season's table. */
+export type VideoTeamRanking = RankingEntry | PastSeasonTeamRanking
+
+/** True for a row from a past season's table, which has no team page. */
+export function isPastSeasonRanking(ranking: VideoTeamRanking | null | undefined): ranking is PastSeasonTeamRanking {
+  return ranking != null && "season" in ranking
+}
+
 /** The rankings row for one of a video's team labels, or `null`. */
 export type VideoTeamRankingLookup = (
   video: VideoType,
   team: string | null | undefined,
-) => RankingEntry | null
+) => VideoTeamRanking | null
 
 /**
  * The lookup a video grid shares with its cards, so each card's team badges
@@ -35,7 +61,7 @@ export type VideoTeamRankingLookup = (
 export const VideoTeamRankingContext = createContext<VideoTeamRankingLookup | null>(null)
 
 /** The rankings row for `team` from the nearest grid's lookup, or `null`. */
-export function useContextTeamRanking(video: VideoType | undefined, team: string | null | undefined): RankingEntry | null {
+export function useContextTeamRanking(video: VideoType | undefined, team: string | null | undefined): VideoTeamRanking | null {
   const lookup = useContext(VideoTeamRankingContext)
   return lookup && video ? lookup(video, team) : null
 }
@@ -52,9 +78,25 @@ export function isRankedSeasonRound(video: VideoType, now: Date = new Date()): b
 }
 
 /**
+ * The past season whose college table `video`'s teams are looked up in: a
+ * college policy round from before the current season, back to 2009-10.
+ * `null` for any other video. The season is the video's `seasonYear`, or
+ * its publish date's season when the tuple has none.
+ *
+ * @param video - Video tuple.
+ * @param now - Date to evaluate the current season at.
+ */
+export function pastCollegeSeason(video: VideoType, now: Date = new Date()): number | null {
+  if (videoStyleDatasetId(video[6]) !== "cpd") return null
+  const season = typeof video[17] === "number" && video[17] > 0 ? video[17] : collegeSeasonYearOf(video[2])
+  return season && season !== currentSeasonYear(now) && hasCollegeHistory(season) ? season : null
+}
+
+/**
  * A lookup from a video's team label to its rankings row. The datasets load
- * only once `videos` holds a current-season round, so a listing of past
- * seasons or lectures never fetches the CSVs.
+ * only once `videos` holds a current-season round, and a past season's
+ * college table only once `videos` holds a college round from that season,
+ * so a listing of lectures never fetches the CSVs.
  *
  * @param videos - The videos the listing shows.
  * @param enabled - `false` (e.g. a lecture listing) skips the lookup entirely.
@@ -69,13 +111,58 @@ export function useVideoTeamRankings(
   )
   const { datasets } = useAllRankingDatasets(needed)
 
+  // Past college seasons the listing has rounds from, as a stable key.
+  const seasonsKey = useMemo(
+    () =>
+      enabled
+        ? [...new Set(videos.map((video) => pastCollegeSeason(video)).filter((y): y is number => y !== null))]
+            .sort()
+            .join(",")
+        : "",
+    [videos, enabled],
+  )
+  const [history, setHistory] = useState<ReadonlyMap<number, CollegeHistoryEntry[]>>(() => new Map())
+  useEffect(() => {
+    if (!seasonsKey) return
+    let cancelled = false
+    for (const season of seasonsKey.split(",").map(Number)) {
+      if (history.has(season)) continue
+      loadCollegeHistory(season)
+        .then((entries) => {
+          if (!cancelled) setHistory((prev) => new Map(prev).set(season, entries))
+        })
+        // A table that fails to load leaves that season's teams as their codes.
+        .catch(() => {})
+    }
+    return () => {
+      cancelled = true
+    }
+    // `history` is read only to skip seasons already loaded.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [seasonsKey])
+
   // A listing asks for the same label once per render of each row; the match
   // scans a whole dataset, so each style + label is resolved once.
   const cache = useMemo(() => new Map<string, RankingEntry | null>(), [datasets])
+  const historyCache = useMemo(() => new Map<string, PastSeasonTeamRanking | null>(), [history])
 
   return useCallback<VideoTeamRankingLookup>(
     (video, team) => {
-      if (!team?.trim() || datasets.length === 0 || !isRankedSeasonRound(video)) return null
+      if (!team?.trim()) return null
+      const season = pastCollegeSeason(video)
+      if (season !== null) {
+        const entries = history.get(season)
+        if (!entries) return null
+        const key = `${season}|${team}`
+        let row = historyCache.get(key)
+        if (row === undefined) {
+          const entry = findCollegeHistoryTeam(entries, team)
+          row = entry ? { ...entry, season } : null
+          historyCache.set(key, row)
+        }
+        return row
+      }
+      if (datasets.length === 0 || !isRankedSeasonRound(video)) return null
       const key = `${video[6]}|${team}`
       let entry = cache.get(key)
       if (entry === undefined) {
@@ -84,6 +171,6 @@ export function useVideoTeamRankings(
       }
       return entry
     },
-    [datasets, cache],
+    [datasets, cache, history, historyCache],
   )
 }

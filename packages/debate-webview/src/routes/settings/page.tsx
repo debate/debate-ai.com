@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { CardMirrorSettingsPanel } from "../../components/settings/CardMirrorSettingsPanel"
+import { CardMirrorSettingsPanel } from "../../components/settings/cardmirror/CardMirrorSettingsPanel"
 
 /**
  * The CardMirror editor's settings, and nothing else.

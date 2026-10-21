@@ -9,7 +9,9 @@
  *
  * Last names wrap rather than truncate, so they always show in full. A
  * ranked team can carry its rank inside the pill as a small badge
- * ({@link TeamRankBadge}) whose hover tooltip lists the team's stats.
+ * ({@link TeamRankBadge}) whose hover tooltip lists the team's stats. A row
+ * from a past college season's table carries its `season`, and its tooltip
+ * names that season and its debatedata rating.
  *
  * `teamDisplayParts` in `@debate/rankings-adapter` decides the two parts;
  * this file only draws them.
@@ -141,11 +143,18 @@ export function TeamLabel({ school, debaters, side, href, schoolHref, title, bar
   )
 }
 
+/**
+ * A team's rankings row as the label reads it: the current season's
+ * `RankingEntry`, or a past college season's row, which has a `season` and
+ * a rating on debatedata's own scale.
+ */
+export type TeamRankingRow = Pick<RankingEntry, "school" | "name"> & Partial<RankingEntry> & { season?: number }
+
 export interface TeamCodeLabelProps extends Omit<TeamLabelProps, "school" | "debaters"> {
   /** The team as a video or tournament names it, e.g. `"Harker LL"`. */
   label?: string | null
   /** The team's rankings row, when found: supplies the school and last names. */
-  ranking?: (Pick<RankingEntry, "school" | "name"> & Partial<RankingEntry>) | null
+  ranking?: TeamRankingRow | null
   /** Shows the ranking's rank inside the pill as a {@link TeamRankBadge}. */
   showRank?: boolean
 }
@@ -175,7 +184,16 @@ const percent = (rate?: number | null) =>
   typeof rate === "number" ? `${Number.isInteger(rate) ? rate : rate.toFixed(1)}%` : "—"
 
 /** The tooltip's stat lines for a ranked team, also used as its spoken label. */
-export function teamRankStats(ranking: Pick<RankingEntry, "school" | "name"> & Partial<RankingEntry>) {
+export function teamRankStats(ranking: TeamRankingRow) {
+  if (typeof ranking.season === "number") {
+    const end = ranking.season
+    const lines: [string, string][] = [
+      ["Season", `${end - 1}-${String(end % 100).padStart(2, "0")}`],
+      ["Rank", `#${ranking.rank}`],
+    ]
+    if (typeof ranking.rating === "number") lines.push(["Rating", ranking.rating.toFixed(2)])
+    return lines
+  }
   const lines: [string, string][] = [["Rank", `#${ranking.rank}`]]
   if (typeof ranking.adjustedRating === "number") {
     const dev = typeof ranking.deviation === "number" ? ` ±${ranking.deviation.toFixed(1)}` : ""
@@ -198,7 +216,7 @@ export function TeamRankBadge({
   ranking,
   side,
 }: {
-  ranking: Pick<RankingEntry, "school" | "name"> & Partial<RankingEntry>
+  ranking: TeamRankingRow
   side?: TeamSide | null
 }) {
   const stats = teamRankStats(ranking)

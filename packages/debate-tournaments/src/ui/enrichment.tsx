@@ -2,15 +2,18 @@
 
 /**
  * What the host app adds to pairings and results beyond Tabroom's own data:
- * each entry's current-season ranking (school logo, debaters' last names,
- * rating) and each judge's Tabroom paradigm. Both lookups are supplied by the
+ * each entry's ranking (school logo, debaters' last names, rating) and each
+ * judge's Tabroom paradigm. Each lookup carries the season the tournament
+ * ran in ({@link TournamentSeasonContext}), so a past tournament's entries
+ * are matched to that season's ratings where the host has them, never to
+ * the current season's. Both lookups are supplied by the
  * host through `<TournamentsApp lookupTeamRating lookupJudgeParadigm>`, since
  * the rankings and the paradigm search live outside this package; without
  * them, and for any entry or judge they can't match with confidence, rows
  * render exactly as Tabroom sends them.
  */
 
-import { useCallback, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { FramedOverlay } from "./FramedOverlay";
 import { useOptionalTournaments } from "./shared";
 
@@ -28,9 +31,28 @@ export interface TeamRatingQuery {
   name?: string | null;
   school?: string | null;
   event: EventFormatHint;
+  /**
+   * Season year the tournament ran in (the year the season ends in: `2020`
+   * for 2019-20), from {@link TournamentSeasonContext}; `null` when unknown.
+   */
+  season?: number | null;
 }
 
-/** A matched entry's row in the current season's rankings. */
+/**
+ * Season year of a tournament starting on `start` (`"2019-11-02 08:00:00"`):
+ * seasons run July to June, so this is `2020`. `null` when `start` isn't a
+ * date. Only the year and month are read, so no time zone can move it.
+ */
+export function tournamentSeasonYear(start: string | null | undefined): number | null {
+  const match = /^(\d{4})-(\d{2})/.exec((start ?? "").trim());
+  if (!match) return null;
+  return Number(match[2]) >= 7 ? Number(match[1]) + 1 : Number(match[1]);
+}
+
+/** The season of the tournament being shown, which every ranking lookup on its pages is for. */
+export const TournamentSeasonContext = createContext<number | null>(null);
+
+/** A matched entry's row in its season's rankings. */
 export interface TeamRating {
   /** Debaters' last names, e.g. `"Le & Luo"` (or `"Daswani"` in LD). */
   names: string;
@@ -78,8 +100,10 @@ function useLookup<T>(key: string | null, load: (() => Promise<T | null>) | null
 /** An entry's ranking via the host's lookup, or `null`. */
 export function useTeamRating(query: TeamRatingQuery): TeamRating | null {
   const lookup = useOptionalTournaments()?.lookupTeamRating;
-  const key = lookup && query.code ? JSON.stringify([query.code, query.name ?? "", query.school ?? "", query.event.name ?? "", query.event.abbr ?? "", query.event.type ?? ""]) : null;
-  return useLookup(key, lookup ? () => lookup(query) : null);
+  const contextSeason = useContext(TournamentSeasonContext);
+  const season = query.season ?? contextSeason;
+  const key = lookup && query.code ? JSON.stringify([query.code, query.name ?? "", query.school ?? "", query.event.name ?? "", query.event.abbr ?? "", query.event.type ?? "", season]) : null;
+  return useLookup(key, lookup ? () => lookup({ ...query, season }) : null);
 }
 
 /**

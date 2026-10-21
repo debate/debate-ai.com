@@ -299,7 +299,7 @@ export type FlowPresenceHeartbeatRow = typeof flowPresenceHeartbeats.$inferSelec
 // semantics as an absent key in the local `Settings` store.
 //
 // `colorTheme`/`themeMode` (idea #17, follow-up (2)) extend the same row
-// with the color-theme/light-dark preference `components/theme-dropdown.tsx`'s
+// with the color-theme/light-dark preference `components/theme/ThemeDropdown.tsx`'s
 // `useThemeState` hook previously kept in `localStorage`/a cookie only — also
 // nullable, with the same "no saved row/value yet" semantics, validated by
 // `debate-round`'s `normalizeThemeSettingsPatch` against its

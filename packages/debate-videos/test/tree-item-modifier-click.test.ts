@@ -10,7 +10,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { opensElsewhere } from "../src/components/category-gallery/TreeItem";
+import { opensElsewhere } from "../src/components/sidebar-nav/TreeItem";
 
 /** A click event with only the fields `opensElsewhere` reads. */
 function click(overrides: Partial<Record<string, boolean | number>> = {}) {

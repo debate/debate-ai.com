@@ -45,7 +45,7 @@ import { useMyRankedTeams } from "../../../lib/my-ranked-teams/useMyRankedTeams"
 import { Button } from "../../../ui/primitives/button"
 import { Input } from "../../../ui/primitives/input"
 import { teamHref, teamSlug } from "./rankingProfileHelpers"
-import { formatCount } from "../../../components/category-gallery/format-count"
+import { formatCount } from "../../../lib/format-count"
 import { TeamLabel } from "../../../components/team-label/TeamLabel"
 
 const pct = (p: number) => `${(p * 100).toFixed(1)}%`

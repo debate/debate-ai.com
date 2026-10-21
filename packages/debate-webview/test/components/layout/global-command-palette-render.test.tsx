@@ -9,7 +9,7 @@ vi.mock("next/navigation", () => ({
   usePathname: () => "/tools",
 }))
 
-import { GlobalCommandPalette, openGlobalCommandPalette } from "../../../src/components/layout/GlobalCommandPalette"
+import { GlobalCommandPalette, openGlobalCommandPalette } from "../../../src/components/layout/command-palette/GlobalCommandPalette"
 
 ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
 

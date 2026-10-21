@@ -1,6 +1,6 @@
 /**
  * @fileoverview The 30-minute per-feature cooldown for the guest sign-in
- * prompt (`components/layout/SignInPromptProvider.tsx`).
+ * prompt (`components/layout/auth/SignInPromptProvider.tsx`).
  *
  * Favouriting is a rapid, repeated action — a debater working through a
  * results page favourites a dozen rounds in a row — so the provider only

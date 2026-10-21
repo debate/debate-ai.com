@@ -11,7 +11,7 @@ import { findToolRecordCollection, TOOL_RECORD_COLLECTIONS } from "@debate/data-
 vi.mock("../../src/routes/doc/ResearchAgentEmbed", () => ({
   default: () => createElement("div", { "data-embed": true }),
 }))
-vi.mock("../../src/components/tools/ToolSyncBadge", () => ({
+vi.mock("../../src/components/tools/sync/ToolSyncBadge", () => ({
   ToolSyncBadge: ({ href }: { href: string }) => createElement("span", { "data-badge-href": href }),
 }))
 

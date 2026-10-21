@@ -25,7 +25,7 @@ import {
   createGamificationWebSocket,
   GamificationEvent,
 } from "@/services/gamificationService";
-import BadgeUnlocked from "@/components/BadgeUnlocked";
+import BadgeUnlocked from "@/components/profile/BadgeUnlocked";
 import { useUser } from "@/hooks/useUser";
 
 interface Debater {
