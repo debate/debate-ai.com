@@ -23,7 +23,6 @@
 
 import {
   BarChart3,
-  BookOpen,
   Clapperboard,
   Globe,
   Heart,
@@ -117,10 +116,11 @@ export const VIDEO_COLLEGE_FILTER_LINKS: SidebarVideoLink[] = VIDEO_ALL_VIDEOS_F
   (link) => link.id === "acc",
 );
 
-/** The pair pinned below the tree, under its own divider. Team Rankings lives
- *  in the Research tool section instead, so rankings appear only once. */
+/** The reference view listed under Insights rather than as a videos row.
+ *  Team Rankings lives in the Research tool section instead, so rankings
+ *  appear only once. The glossary used to be here too; it is a tab of
+ *  `/practice/rules` now, which is not a video library page. */
 export const VIDEO_REFERENCE_LINKS: SidebarVideoLink[] = [
-  { id: "dictionary", href: "/practice/rules", title: "Rules & Glossary", glyph: BookOpen },
   { id: "statistics", href: "/practice/statistics", title: "Topics & Video Statistics", glyph: BarChart3 },
 ];
 

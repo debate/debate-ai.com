@@ -89,7 +89,12 @@ function toolHrefs(): string[] {
  * outranks the section's `Disallow`, which is what {@link ALLOW_OVERRIDES} is
  * for.
  */
-const ALLOW_OVERRIDES: readonly string[] = VIDEO_REFERENCE_LINKS.map((link) => link.href);
+const ALLOW_OVERRIDES: readonly string[] = [
+  ...VIDEO_REFERENCE_LINKS.map((link) => link.href),
+  // Rules & Glossary: reference reading (the formats-and-rules guide and the
+  // glossary of terms), not a tool, though it is a row of the tool tree.
+  "/practice/rules",
+];
 
 /**
  * The `Disallow` list, as `robots.txt` path prefixes.
