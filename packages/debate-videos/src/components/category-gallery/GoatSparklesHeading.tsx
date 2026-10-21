@@ -13,7 +13,7 @@
  * because it sits above the search bar and the grid rather than filling a
  * landing page, and must not overflow a phone screen.
  *
- * @module components/gallery/GoatSparklesHeading
+ * @module components/category-gallery/GoatSparklesHeading
  */
 
 "use client";

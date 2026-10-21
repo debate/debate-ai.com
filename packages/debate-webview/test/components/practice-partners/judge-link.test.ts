@@ -1,10 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { JUDGE_ANCHOR, PROFILE_ANCHOR, judgeLinkTarget } from "../../../src/components/practice-partners/PracticePartnersPanel"
-<<<<<<< HEAD
-import { SIDEBAR_TOOL_SECTIONS } from "@debate/videos/src/components/sidebar/sidebar-tool-sections"
-=======
 import { SIDEBAR_TOOL_SECTIONS } from "@debate/videos/src/components/sidebar-nav/sidebar-tool-sections"
->>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 
 describe("judge anchor on /practice/partners", () => {
   it("lands a volunteer judge on the open judge seats", () => {
@@ -15,8 +11,10 @@ describe("judge anchor on /practice/partners", () => {
     expect(judgeLinkTarget(false)).toBe(PROFILE_ANCHOR)
   })
 
-  it("is not linked from the sidebar's Practice section", () => {
-    const practice = SIDEBAR_TOOL_SECTIONS.find((section) => section.id === "practice")
-    expect(practice?.tools.map((tool) => tool.href)).not.toContain(`/practice/partners#${JUDGE_ANCHOR}`)
+  it("is not linked from any sidebar section", () => {
+    // Practice tools now sit under Research, so check every section.
+    const hrefs = SIDEBAR_TOOL_SECTIONS.flatMap((section) => section.tools.map((tool) => tool.href))
+    expect(hrefs.length).toBeGreaterThan(0)
+    expect(hrefs).not.toContain(`/practice/partners#${JUDGE_ANCHOR}`)
   })
 })

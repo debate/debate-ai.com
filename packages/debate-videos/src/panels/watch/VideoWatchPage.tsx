@@ -60,20 +60,6 @@ import { CommentSection } from "@debate/comments"
 import { SpeechStartsDialog, type SpeechDetectionControl } from "@debate/timer"
 import { formatCount } from "../../lib/format-count"
 
-<<<<<<< HEAD
-import { WatchToolbar } from "../../components/videos/watch/controls/WatchToolbar"
-import { WatchSidePanel, type WatchSideTab } from "../../components/videos/watch/panels/WatchSidePanel"
-import type { LinkedVideo } from "../../components/videos/watch/panels/WatchAnalysisPanel"
-import { VideoListRows } from "../../components/videos/video-grid/VideoListRows"
-import { WatchQueuePanel } from "../../components/videos/watch/panels/WatchQueuePanel"
-import { WatchSearchBox } from "../../components/videos/watch/controls/WatchSearchBox"
-import { WatchStackPlaylist } from "../../components/videos/watch/panels/WatchStackPlaylist"
-import { WatchSpeechTimeline } from "../../components/videos/watch/prediction/WatchSpeechTimeline"
-import { WatchTeamStats } from "../../components/videos/watch/prediction/WatchTeamStats"
-import { WatchRankingsPrediction } from "../../components/videos/watch/prediction/WatchRankingsPrediction"
-import type { SpeechFocusRequest } from "../../components/videos/watch/panels/WatchRoundPanel"
-import { useDocumentPictureInPicture } from "../../components/videos/video-player/useDocumentPictureInPicture"
-=======
 import { WatchToolbar } from "../../components/watch/WatchToolbar"
 import { WatchSidePanel, type WatchSideTab } from "../../components/watch/WatchSidePanel"
 import type { LinkedVideo } from "../../components/watch/WatchAnalysisPanel"
@@ -86,7 +72,6 @@ import { WatchTeamStats } from "../../components/watch/WatchTeamStats"
 import { WatchRankingsPrediction } from "../../components/watch/WatchRankingsPrediction"
 import type { SpeechFocusRequest } from "../../components/watch/WatchRoundPanel"
 import { useDocumentPictureInPicture } from "../../components/video-player/useDocumentPictureInPicture"
->>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 import {
   buildEmbedUrl,
   describePlayerError,

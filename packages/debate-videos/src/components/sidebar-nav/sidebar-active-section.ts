@@ -7,11 +7,7 @@
  * expands that section again rather than leaving you on a page whose nav is
  * shut. Nothing else collapses.
  *
-<<<<<<<< HEAD:packages/debate-videos/src/components/sidebar/sidebar-active-section.ts
- * @module components/sidebar/sidebar-active-section
-========
  * @module components/sidebar-nav/sidebar-active-section
->>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/sidebar-nav/sidebar-active-section.ts
  */
 
 import { SIDEBAR_TOOL_SECTIONS } from "./sidebar-tool-sections";
@@ -39,7 +35,7 @@ interface SectionHref {
  *
  * The app dock's destinations used to be listed here too, for an "Apps" node
  * the tree no longer renders. Dropping them is what lets `/practice/versus-ai` open the
- * Practice section that actually lists it ("Debate Versus AI") instead of a
+ * Research section that actually lists it ("Practice vs AI") instead of a
  * section with no links left to show. Two more lost their rows with them:
  * `/doc` ("Debate Docs") and `/reason-editor`, which no section lists now, so
  * both land in the no-section case above like `/debate` does.

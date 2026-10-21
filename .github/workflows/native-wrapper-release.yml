@@ -485,6 +485,109 @@ jobs:
         # functionality" question in docs/APP_STORES.md answered — this job
         # only produces the .ipa, it does not upload to App Store Connect.
 
+  # Unsigned .ipa for sideloading (AltStore, Sideloadly, ...), which re-sign it
+  # with the installer's own Apple ID, so no Apple Developer membership is
+  # needed. `tauri ios init` insists on a development team, so a placeholder
+  # is passed; signing is then switched off for every xcodebuild call via
+  # XCODE_XCCONFIG_FILE. Tauri's own export step cannot export an unsigned
+  # archive and fails after the archive is made, so that failure is tolerated
+  # and the .ipa is packaged by hand from the .xcarchive. Best-effort: the
+  # whole job is allowed to fail without blocking the release.
+  build-ios-unsigned:
+    name: Build iOS unsigned .ipa (sideload, best-effort)
+    needs: [prepare-release]
+    if: always() && (needs.prepare-release.result == 'success' || needs.prepare-release.result == 'skipped')
+    runs-on: macos-latest
+    timeout-minutes: 60
+    continue-on-error: true
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-ios,aarch64-apple-ios-sim,x86_64-apple-ios
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: apps/debate-native-wrapper/src-tauri
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+
+      - name: Install dependencies
+        working-directory: apps/debate-native-wrapper
+        run: bun install --ignore-scripts
+
+      - name: Build the offline source
+        continue-on-error: true
+        run: |
+          git submodule update --init --depth 1 packages/debate-rankings packages/debate-editor-cm
+          bun install
+          cd apps/debate-native-wrapper && bun scripts/build-offline.mjs
+
+      - name: Generate the gen/apple project (placeholder team)
+        working-directory: apps/debate-native-wrapper
+        env:
+          APPLE_DEVELOPMENT_TEAM: AAAAAAAAAA
+        run: npx @tauri-apps/cli@2 ios init
+
+      - name: Archive with code signing disabled
+        working-directory: apps/debate-native-wrapper
+        env:
+          APPLE_DEVELOPMENT_TEAM: AAAAAAAAAA
+        run: |
+          cat > "$RUNNER_TEMP/no-signing.xcconfig" <<'EOF'
+          CODE_SIGNING_ALLOWED = NO
+          CODE_SIGNING_REQUIRED = NO
+          CODE_SIGN_IDENTITY =
+          DEVELOPMENT_TEAM =
+          PROVISIONING_PROFILE_SPECIFIER =
+          EOF
+          export XCODE_XCCONFIG_FILE="$RUNNER_TEMP/no-signing.xcconfig"
+          # The archive is produced before the export step; exporting an
+          # unsigned archive is expected to fail, so don't stop on it.
+          npx @tauri-apps/cli@2 ios build --export-method debugging || echo "::notice::tauri ios build exited non-zero (expected at the export step); packaging the .xcarchive by hand."
+
+      - name: Package the .ipa from the archive
+        id: package
+        run: |
+          VERSION="$(jq -r .version apps/debate-native-wrapper/src-tauri/tauri.conf.json)"
+          NAME="$(jq -r .productName apps/debate-native-wrapper/src-tauri/tauri.conf.json | tr ' ' '.')"
+          ARCHIVE="$(find apps/debate-native-wrapper/src-tauri/gen/apple -name '*.xcarchive' | head -n 1)"
+          if [ -z "$ARCHIVE" ]; then
+            echo "::error::No .xcarchive was produced, so there is nothing to package." >&2
+            exit 1
+          fi
+          APP="$(find "$ARCHIVE/Products/Applications" -maxdepth 1 -name '*.app' | head -n 1)"
+          if [ -z "$APP" ]; then
+            echo "::error::The archive at $ARCHIVE contains no .app." >&2
+            exit 1
+          fi
+          OUT="$GITHUB_WORKSPACE/${NAME}_${VERSION}_unsigned-sideload.ipa"
+          rm -rf "$RUNNER_TEMP/ipa" && mkdir -p "$RUNNER_TEMP/ipa/Payload"
+          cp -R "$APP" "$RUNNER_TEMP/ipa/Payload/"
+          (cd "$RUNNER_TEMP/ipa" && zip -qry "$OUT" Payload)
+          echo "path=$OUT" >> "$GITHUB_OUTPUT"
+          ls -l "$OUT"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-wrapper-ios-unsigned
+          path: ${{ steps.package.outputs.path }}
+          if-no-files-found: warn
+
+      - name: Attach to release
+        if: needs.prepare-release.outputs.release_id != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.prepare-release.outputs.tag }}
+          IPA: ${{ steps.package.outputs.path }}
+        run: gh release upload "$TAG" "$IPA" --clobber
+
   # Final stage: once every build job has finished, check that the draft has
   # the installers attached and publish it. Android/iOS are best-effort, so
   # only the desktop matrix has to succeed; a failed mobile job just means
@@ -493,7 +596,7 @@ jobs:
   # its success is what gates this job.
   publish-release:
     name: Publish release
-    needs: [prepare-release, build-desktop, build-android, build-ios]
+    needs: [prepare-release, build-desktop, build-android, build-ios, build-ios-unsigned]
     if: >-
       always() &&
       needs.prepare-release.result == 'success' &&
@@ -507,6 +610,9 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
           TAG: ${{ needs.prepare-release.outputs.tag }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
         run: |
           gh release view "$TAG" --json assets -q '.assets[].name' | tee /tmp/assets.txt
           # One installer per desktop platform.
@@ -523,6 +629,19 @@ jobs:
           if grep -Eq '\.sig$' /tmp/assets.txt && ! grep -Eq '^latest\.json$' /tmp/assets.txt; then
             echo "::error::Updater signatures are attached but latest.json is missing — refusing to publish." >&2
             missing=1
+          fi
+          # The .ipa is attached by build-ios, and only when the Apple team ID,
+          # signing certificate and provisioning profile secrets are all set.
+          # With them set, a missing .ipa is a failure; without them it is
+          # reported so the gap is visible instead of silent.
+          # The unsigned sideload .ipa (build-ios-unsigned) doesn't count here.
+          if ! grep -E '\.ipa$' /tmp/assets.txt | grep -Fvq 'unsigned-sideload'; then
+            if [ -n "$APPLE_TEAM_ID" ] && [ -n "$APPLE_CERTIFICATE" ] && [ -n "$IOS_PROVISIONING_PROFILE_BASE64" ]; then
+              echo "::error::iOS signing secrets are set but no .ipa is attached — check the Build iOS job. Refusing to publish." >&2
+              missing=1
+            else
+              echo "::warning::No .ipa on the release: set APPLE_TEAM_ID, APPLE_CERTIFICATE (+ _PASSWORD) and IOS_PROVISIONING_PROFILE_BASE64 to build and attach one." >&2
+            fi
           fi
           exit $missing
 

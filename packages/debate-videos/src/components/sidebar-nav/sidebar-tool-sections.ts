@@ -1,17 +1,13 @@
 /**
- * @fileoverview The Research / Practice / Coaching / Insights tool sections
- * rendered in
- * the videos sidebar underneath the "Videos" node. Mirrors the entries of
+ * @fileoverview The Research / Coaching / Insights tool sections rendered in
+ * the videos sidebar underneath the "Videos" node. The practice tools (Practice
+ * vs AI, Prep Workspace) sit under Research and keep their `/practice/...` URLs. Mirrors the entries of
  * the app's `/tools` catalog (`app/tools/tool-groups.ts`), regrouped into the
- * four headings the sidebar shows and trimmed to the label, href and icon
+ * three headings the sidebar shows and trimmed to the label, href and icon
  * the tree needs — the sidebar lives in this package, which cannot import
  * app-local modules, so the links are restated here rather than derived.
  *
-<<<<<<<< HEAD:packages/debate-videos/src/components/sidebar/sidebar-tool-sections.ts
- * @module components/sidebar/sidebar-tool-sections
-========
  * @module components/sidebar-nav/sidebar-tool-sections
->>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/sidebar-nav/sidebar-tool-sections.ts
  */
 
 import {
@@ -103,12 +99,6 @@ export const APP_DOCK_LINKS: SidebarToolLink[] = [
   { href: "/practice/versus-ai", title: "Practice vs AI", icon: Swords },
   { href: "/research/docs", title: "Research", icon: FileText },
 ];
-
-/**
- * Id of the Practice section. Named for the same reason as
- * {@link RESEARCH_SECTION_ID} below.
- */
-export const PRACTICE_SECTION_ID = "practice";
 
 /**
  * Id of the Research section — the one section the `/research/cards` sidebar keeps

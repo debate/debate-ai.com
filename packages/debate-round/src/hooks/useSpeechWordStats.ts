@@ -54,7 +54,7 @@ const NO_SIGNPOSTS: SpeechDocHeading[] = []
 export interface SpeechWordStatsResult {
   stats: SpeechDocWordStats
   spoken: number
-  /** The doc's H1–H3 headings — the speech's signposting (no H4 card tags). */
+  /** The doc's H1 and H2 headings — the speech's signposting. */
   signposts: SpeechDocHeading[]
   link: SpeechDocLink | null
   /** Human label for where the doc counts came from. */

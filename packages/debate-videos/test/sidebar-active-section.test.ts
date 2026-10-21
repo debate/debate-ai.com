@@ -13,11 +13,7 @@ import { describe, it, expect } from "vitest";
 import {
   VIDEOS_SECTION_ID,
   sidebarSectionForPath,
-<<<<<<< HEAD
-} from "../src/components/sidebar/sidebar-active-section";
-=======
 } from "../src/components/sidebar-nav/sidebar-active-section";
->>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 
 describe("sidebarSectionForPath", () => {
   it("puts every videos route in the Videos section", () => {
@@ -43,17 +39,18 @@ describe("sidebarSectionForPath", () => {
   });
 
   it("resolves a dock destination to the tool section that lists it", () => {
-    // `/practice/versus-ai` is a dock button and Practice's "Practice vs AI"; `/research/cards`
+    // `/practice/versus-ai` is a dock button and Research's "Practice vs AI"; `/research/cards`
     // is the dock's Shared button and Research's "Card Search". With the Apps
     // node gone, the section holding the link wins outright.
-    expect(sidebarSectionForPath("/practice/versus-ai")).toBe("practice");
+    expect(sidebarSectionForPath("/practice/versus-ai")).toBe("research");
     expect(sidebarSectionForPath("/research/cards")).toBe("research");
   });
 
   it("finds the tool section holding a tool route", () => {
     expect(sidebarSectionForPath("/coaching/progress")).toBe("coaching");
     expect(sidebarSectionForPath("/research/cards/library")).toBe("research");
-    expect(sidebarSectionForPath("/practice/drills")).toBe("practice");
+    // Practice tools sit under Research but keep their `/practice/...` URLs.
+    expect(sidebarSectionForPath("/practice/drills")).toBe("research");
     expect(sidebarSectionForPath("/practice/judge-decision")).toBeNull();
     // News & Forums rides with the Coaching section, threads included.
     expect(sidebarSectionForPath("/news")).toBe("coaching");
@@ -61,7 +58,7 @@ describe("sidebarSectionForPath", () => {
   });
 
   it("matches nested paths under a link", () => {
-    expect(sidebarSectionForPath("/practice/partners/setup")).toBe("practice");
+    expect(sidebarSectionForPath("/practice/partners/setup")).toBe("research");
   });
 
   it("returns null for a route the tree does not cover", () => {
