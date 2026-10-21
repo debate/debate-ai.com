@@ -85,6 +85,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   roundContributorFlows: "contributorId",
   contributorAvailability: "contributorId",
   flowKeymap: "id",
+  debaterLevel: "id",
   speechDocLinks: "id",
   flowEditorDisplaySettings: "id",
   completedResearchTasks: "id",

@@ -6,7 +6,11 @@
 import { describe, expect, it } from "vitest";
 import { buildRoundSpeeches, identifySpeech, playingSpeechIndex } from "../src/lib/round-speeches";
 import { parseDocumentSections, type VideoDocument } from "../src/lib/video-documents";
+<<<<<<< HEAD
+import { speechTimelineSegments } from "../src/components/videos/watch/prediction/WatchSpeechTimeline";
+=======
 import { speechTimelineSegments } from "../src/components/watch/WatchSpeechTimeline";
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 
 function doc(kind: VideoDocument["kind"], body: string, author = "ai"): VideoDocument {
   return { videoId: "v", kind, body, author };

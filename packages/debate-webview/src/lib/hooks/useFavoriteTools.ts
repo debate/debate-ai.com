@@ -4,7 +4,7 @@
  * @fileoverview Shared favorite/pinned-tools state — TODO.md idea #17
  * ("User Settings — account-linked debate preferences"), "integrate tools
  * into user settings" follow-up. Local-first (works fully signed out, like
- * `theme-dropdown.tsx`'s `useThemeState`), best-effort synced to the
+ * `ThemeDropdown.tsx`'s `useThemeState`), best-effort synced to the
  * account via the same `/api/settings` `favoriteTools` field
  * `UserSettingsPanel`'s other fields use.
  *

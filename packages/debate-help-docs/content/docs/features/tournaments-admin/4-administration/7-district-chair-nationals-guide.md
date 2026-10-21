@@ -24,8 +24,6 @@ that each event was audited and that coaches were able to access ballots
 & results during the tournament before doing so. The qualifiers should
 be listed in order.
 
-width="800" />
-
 On this screen you can process your single-entry collisions. The
 "Choice" column should show what order of choice this entry is for the
 student. If a student is giving up a slot to Nationals, either because
@@ -53,8 +51,6 @@ from the Qualifiers list you just processed through. Vacated slots will
 still appear on this results sheet; don't worry about that, they'll be
 filtered out later.
 
-width="800" />
-
 If anything is in error here, contact Tabroom support or the National
 office. But if it looks OK, then you can optionally publish this result
 sheet here to Coaches only or on the public web. Whether or not you
@@ -76,15 +72,12 @@ this sheet as marked. Auto-qualifiers cannot be vacated by you, though
 the coach can refuse those entries in the Nationals registration
 process.
 
-width="800" />
-
 Once you have confirmed that all the above information is correct and
 complete, you can then post your final results to Nationals. Please do
 not do this casually, it's going to auto-notify your member coaches that
 everything is set and ready to go when you do it. When you are ready, go
 all the way to the bottom of the page, and click the checkbox to confirm
 you have checked it, and then post:
-
 
 After you have done that, you're all set!
 
@@ -126,13 +119,11 @@ visible under "Tournaments" on the right sidebar. Otherwise, click "See
 Past Tournaments" under Tournaments and find your district series on the
 list that appears.
 
-
 Once you do that, you should be shunted directly to the JOT Districts
 interface. We've grouped everything together in one screen with a
 sequence of steps listed at right. You can return to this screen if you
 end up elsewhere by going to the Results menu at top and selecting JOT
 Results.
-
 
 #### 2. Uploading the JOT Data
 
@@ -141,14 +132,12 @@ with an upload interface where you can upload your .jot tournament data
 file. Click on Choose File, select your .jot file, and then click
 Upload.
 
-
 Once you run the uploader, you will see a large log of data being
 processed. It can't hurt to scan it for errors and the like, but for the
 most part the most common error will be that students' NSDA records
 cannot be found, and there will be a chance later to reconcile that
 easier. Once the process finishes you'll see a navigation menu to the
 right. Click Return to Districts Import to head to the next step.
-
 
 #### 3. Adjusting Congress chambers
 
@@ -162,7 +151,6 @@ Sessions/Finals, that they are marked as "Final" rounds at the far
 right. The correct time blocks don't much matter, as long as the rounds
 are properly numbered. If you change the round number or round type of
 one chamber of a round, all the chambers in that round will be changed.
-
 
 Once you save the chambers, it will bring you to the next step.
 
@@ -182,7 +170,6 @@ linked to their proper NSDA account. If a school is linked a green check
 will appear next to it. If a school is unlinked, you can select the
 school from your district that corresponds to it, and save.
 
-
 Below the school list, any students who do not have an active found NSDA
 membership will also be listed. Select the NSDA member student in the
 pulldown menu next to them to reconcile their membership. In most cases
@@ -190,8 +177,6 @@ it will be a student who has their name listed somewhat differently
 (Mike vs Michael, etc). The system will try to find the closest matching
 student. If the student does not appear, then contact the National
 office.
-
-title="File:student memberships.png" />
 
 #### 5. Generate Results Sheets
 
@@ -203,11 +188,9 @@ necessary).
 Click Generate Results Sheets at the top. You will then get a District
 Qualifiers report listing for all your District events below.
 
-
 You should click each one to verify they are correct. If anything on
 this screen is wrong, please contact help@Tournament Admin or the National
 Office at info@speechanddebate.org with details.
-
 
 Once the sheets are correctly generated, go to the next step.
 
@@ -227,15 +210,12 @@ this sheet as marked. Auto-qualifiers cannot be vacated by you, though
 the coach can refuse those entries in the Nationals registration
 process.
 
-width="800" />
-
 Once you have confirmed that all the above information is correct and
 complete, you can then post your final results to Nationals. Please do
 not do this casually, it's going to auto-notify your member coaches that
 everything is set and ready to go when you do it. When you are ready, go
 all the way to the bottom of the page, and click the check box to
 confirm you have checked it, and then post:
-
 
 After you have done that, you're all set!
 
@@ -269,21 +249,16 @@ places on the screen you reach when you first log in. One is the NSDA
 tab of your member school. The other is your District name underneath
 the Institutions link:
 
-width="500" />
-
 Once you click there, a screen will appear with the National Tournament
 name and logo. Underneath that will be a space to upload Congress
 legislation. You may upload up to two pieces of legislation, and delete
 and re-upload it at any time until the deadline:
-
-width="500" />
 
 ### World Schools District Teams
 
 Go to the same place you found the District Congress legislation upload
 (just above.) Below your Congress legislation, find the section for
 World Schools teams:
-
 
 At marker #1, you can see an icon where you can print out a report of
 your World Schools Invitational registration.
@@ -315,7 +290,6 @@ already under their school record, or if they have an account for online
 balloting, choose them from the select menus at right. Otherwise, enter
 as much information as you can at left and save. Hit "Return to District
 Registration" at far right to return to your District WS Registration.
-
 
 A judge who judges for Worlds cannot count as a judge elsewhere in the
 tournament. One judge is owed per WS entry for all prelim rounds, and

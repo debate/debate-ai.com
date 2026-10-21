@@ -41,7 +41,7 @@ describe("cleanTournamentName", () => {
 
   it("drops round-level and org-type words, keeping the tournament's own name", () => {
     expect(cleanTournamentName("Florida Blue Key 2024")).toBe("Florida Blue Key");
-    expect(cleanTournamentName("Barkley Forum 2025")).toBe("Barkley Forum");
+    expect(cleanTournamentName("Barkley Forum 2025")).toBe("Barkley Forum (Emory)");
     expect(cleanTournamentName("NSDA Nationals")).toBe("NSDA");
     expect(cleanTournamentName("ACC Debate Tournament 2026")).toBe("ACC");
     expect(cleanTournamentName("Glenbrooks 2025 LD")).toBe("Glenbrooks LD");

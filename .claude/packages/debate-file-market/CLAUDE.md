@@ -18,7 +18,7 @@ browser calls at `debate-file-market/client`, tests in `test/`. User doc:
 - **`debate-webview`**: `components/market/` (Sell dialog, wallet card,
   market and listing views), `routes/market/` (`/research/market`,
   `/research/market/[id]`), the "Sell…" item in
-  `components/reason-docs/FileTree.tsx` and the Sell button in
+  `components/reason-docs/file-manager/FileTree.tsx` and the Sell button in
   `components/reason-editor/ShareWithContacts.tsx`.
 
 ## Things that bite

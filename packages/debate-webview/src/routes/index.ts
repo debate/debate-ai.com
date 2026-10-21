@@ -89,6 +89,7 @@ export const PAGE_ROUTES: AppRoute[] = [
   { pattern: "/practice/opponents", load: () => import("./opponents/page") },
   { pattern: "/outline", load: () => import("./outline/page") },
   { pattern: "/practice/partners", load: () => import("./practice-partners/page") },
+  { pattern: "/practice/paradigm", load: () => import("./paradigm/page") },
   { pattern: "/practice/predictions", load: () => import("./predictions/page") },
   // The Prep Workspace; the five old prep routes above and below open its tabs.
   { pattern: "/practice/prep", load: () => import("./prep/page") },
@@ -133,6 +134,7 @@ export const CLIENT_ROUTES: AppRoute[] = [
   // The Practice Round Simulator's old address: merged into Practice vs AI.
   { pattern: "/practice", load: () => import("./_client/VersusAiRoute") },
   { pattern: "/videos/watch/[slug]", load: () => import("./_client/VideoWatchRoute") },
+  { pattern: "/videos/mini/[id]", load: () => import("./_client/VideoMiniRoute") },
   { pattern: "/videos/[category]/[event]/[matchup]", load: () => import("./_client/VideoWatchRoute") },
   { pattern: "/videos/[category]/[event]/[matchup]/[teams]", load: () => import("./_client/VideoWatchRoute") },
   { pattern: "/videos/[category]/[event]/[matchup]/[teams]/[variant]", load: () => import("./_client/VideoWatchRoute") },

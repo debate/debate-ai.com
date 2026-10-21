@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { and, desc, eq, gt, sql } from "drizzle-orm";
 import { authorizeCardImport } from "@/lib/admin/debate-card-import";
 import { getDBFromContext } from "@/lib/database/context";
-import { detectedUrls } from "@/lib/database/schema";
+import { detectedUrls, user } from "@/lib/database/schema";
 
 export async function GET(request: NextRequest) {
   const access = await authorizeCardImport(request);
@@ -35,8 +35,12 @@ export async function GET(request: NextRequest) {
         title: detectedUrls.title,
         visitCount: detectedUrls.visitCount,
         lastVisitedAt: detectedUrls.lastVisitedAt,
+        // Each detected_urls row belongs to one account: the one whose
+        // extension checked the page.
+        userEmail: user.email,
       })
       .from(detectedUrls)
+      .leftJoin(user, eq(detectedUrls.userId, user.id))
       .where(whereCondition)
       .orderBy(desc(detectedUrls.visitCount))
       .limit(10),

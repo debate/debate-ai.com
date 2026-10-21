@@ -37,6 +37,7 @@
  */
 
 import { findItemByRef, itemPath, type PathItem } from "./doc-path"
+import { DEFAULT_TOPIC_CODE, parseTopicDocsPath, topicDocsHref } from "./topic-doc-paths"
 
 export const REASON_EDITOR_ROUTE = "/reason-editor"
 
@@ -51,11 +52,20 @@ export function paramForKind(kind: ReasonDocsSelection["kind"]): "doc" | "topic"
   return kind === "document" ? "doc" : "topic"
 }
 
-/** True on `/reason-editor` and on the named-document paths below it. */
+/** True on `/reason-editor`, on the named-document paths below it, and on a
+ *  topic starter's `/docs/<topic code>/...` address (`./topic-doc-paths`),
+ *  which `next.config.mjs` rewrites onto the same page. */
 export function isEditorPathname(pathname: string | null | undefined): boolean {
   if (!pathname) return false
   const path = (pathname.split("?")[0]?.split("#")[0] ?? "").replace(/\/+$/, "")
-  return path === REASON_EDITOR_ROUTE || path.startsWith(`${REASON_EDITOR_ROUTE}/`)
+  if (path === REASON_EDITOR_ROUTE || path.startsWith(`${REASON_EDITOR_ROUTE}/`)) return true
+  return parseTopicDocsPath(path) != null
+}
+
+/** The topic code the address is under (`vcx27` on `/docs/vcx27/...`), or
+ *  `null` anywhere else. */
+export function topicCodeFromPathname(pathname: string | null | undefined): string | null {
+  return parseTopicDocsPath(pathname)?.code ?? null
 }
 
 /** The `<slug>` in `/reason-editor/<slug>`, or `null` on the bare route (and
@@ -74,13 +84,18 @@ export function editorSlugFromPathname(pathname: string | null | undefined): str
  * `items` is the tree the selection came from, which is what turns a row into
  * a path. Without it (or when the row has no sluggable name) the link falls
  * back to the id — still a working URL, just not a readable one.
+ *
+ * A topic starter links to its `/docs/<topic code>/<path>` address, under
+ * `topicCode` (the code the reader is browsing) or the default topic's.
  */
 export function editorHrefForSelection(
   selection: ReasonDocsSelection,
   items: readonly PathItem[] = [],
+  topicCode?: string | null,
 ): string {
   const path = itemPath(items, selection.id)
   const ref = path && path.length > 0 ? path : String(selection.id)
+  if (selection.kind === "topic") return topicDocsHref(topicCode || DEFAULT_TOPIC_CODE, ref)
   // Segment-wise: the slashes are the path's own structure, and encoding them
   // would turn `a/b` into a single unreadable segment.
   const encoded = ref.split("/").map(encodeURIComponent).join("/")
@@ -92,6 +107,9 @@ export function editorHrefForSelection(
 export interface SelectionParams {
   doc: string | null
   topic: string | null
+  /** The topic code on a `/docs/<code>/...` address. Optional so callers
+   *  built before topic codes still type-check. */
+  topicCode?: string | null
 }
 
 /**
@@ -111,7 +129,14 @@ export function parseSelectionParams(
   pathname?: string | null,
 ): SelectionParams {
   const read = (key: string) => params.get(key)?.trim() || null
-  return { doc: read("doc") ?? editorSlugFromPathname(pathname), topic: read("topic") }
+  // `/docs/<topic code>/<path>` names a public file by its path, the same
+  // statement as `?topic=<path>`; a `?topic=` the reader followed still wins.
+  const topicPath = parseTopicDocsPath(pathname)
+  return {
+    doc: read("doc") ?? editorSlugFromPathname(pathname),
+    topic: read("topic") ?? topicPath?.ref ?? null,
+    topicCode: topicPath?.code ?? null,
+  }
 }
 
 /** What {@link resolveSelection} is deciding over. */
@@ -159,7 +184,7 @@ export type SelectionOutcome =
   | { kind: "lookup"; ref: string }
 
 export function resolveSelection(input: ResolveSelectionInput): SelectionOutcome | null {
-  const { doc, topic, documents, topics, applyParams, hasSelection, allowLookup = true } = input
+  const { doc, topic, topicCode, documents, topics, applyParams, hasSelection, allowLookup = true } = input
 
   if (applyParams) {
     if (topic) {
@@ -181,6 +206,13 @@ export function resolveSelection(input: ResolveSelectionInput): SelectionOutcome
     // shared link has no documents at all. Ask the server before giving up.
     const unresolved = topic ?? doc
     if (allowLookup && unresolved) return { kind: "lookup", ref: unresolved }
+    // A bare `/docs/<topic code>` — what the topic picker navigates to —
+    // asks for that topic's starters, so it opens the first of them rather
+    // than one of the reader's own files.
+    if (topicCode && !topic && !doc) {
+      const firstTopic = topics.find((item) => !item.isFolder)
+      if (firstTopic) return { kind: "topic", id: firstTopic.id }
+    }
   }
 
   if (hasSelection) return null
@@ -193,8 +225,8 @@ export function resolveSelection(input: ResolveSelectionInput): SelectionOutcome
  * applications. Two URLs naming the same file share a key even if their other
  * query parameters differ.
  */
-export function selectionParamsKey({ doc, topic }: SelectionParams): string {
-  return `doc:${doc ?? ""}|topic:${topic ?? ""}`
+export function selectionParamsKey({ doc, topic, topicCode }: SelectionParams): string {
+  return `doc:${doc ?? ""}|topic:${topic ?? ""}|code:${topicCode ?? ""}`
 }
 
 /** The address bar, as much of it as {@link canonicalEditorUrl} reads. */
@@ -244,9 +276,13 @@ export function canonicalEditorUrl(
   const rest = params.toString()
   // Segment-wise, like `editorHrefForSelection` — `URLSearchParams` would
   // percent-encode the path's own slashes into an unreadable `%2F`.
-  const encoded = path.split("/").map(encodeURIComponent).join("/")
-  const query = `${paramForKind(selection.kind)}=${encoded}${rest ? `&${rest}` : ""}`
-  const next = `${REASON_EDITOR_ROUTE}?${query}${location.hash}`
+  // A public file's address is `/docs/<topic code>/<path>`, which is also
+  // what turns an old `?topic=<path>` link into the new form. The code is the
+  // one the reader is already under, else the default topic's.
+  const next =
+    selection.kind === "topic"
+      ? `${topicDocsHref(parseTopicDocsPath(location.pathname)?.code ?? DEFAULT_TOPIC_CODE, path)}${rest ? `?${rest}` : ""}${location.hash}`
+      : `${REASON_EDITOR_ROUTE}?doc=${path.split("/").map(encodeURIComponent).join("/")}${rest ? `&${rest}` : ""}${location.hash}`
   const current = `${location.pathname}${location.search}${location.hash}`
   return next === current ? null : next
 }

@@ -21,7 +21,7 @@ vi.mock("../../../src/components/reason-docs/ReasonDocsProvider", () => ({
   useOptionalReasonDocs: () => docs.value,
 }))
 
-import { GlobalCommandPalette, isKShortcut, openGlobalCommandPalette } from "../../../src/components/layout/GlobalCommandPalette"
+import { GlobalCommandPalette, isKShortcut, openGlobalCommandPalette } from "../../../src/components/layout/command-palette/GlobalCommandPalette"
 import { registerStoredCmir, type StoredCmir } from "../../../src/lib/cardmirror/lazy-stored-cmir"
 
 ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
@@ -169,7 +169,7 @@ describe("GlobalCommandPalette file search", () => {
     expect(row!.textContent).toContain("Solar Neg")
     act(() => row!.click())
     expect(current.selectTopicDocument).toHaveBeenCalledWith(TOPICS[1])
-    expect(nav.push).toHaveBeenCalledWith("/reason-editor?topic=energy/solar-neg")
+    expect(nav.push).toHaveBeenCalledWith("/docs/vcx27/energy/solar-neg")
   })
 
   it("opens one of the reader's own files", () => {

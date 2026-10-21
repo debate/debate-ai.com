@@ -11,6 +11,11 @@
  * The resync resolves each channel's YouTube id from its name on the first
  * successful scan and writes it back, so the admin never has to type an id —
  * and a renamed channel keeps working until the next scan re-resolves it.
+ *
+ * A channel with no upload in the last {@link DEFUNCT_AFTER_DAYS} days is
+ * "defunct" (see {@link isChannelDefunct}): the panel lists it in a separate
+ * section, and the daily scan skips it in favour of a weekly one. A scan that
+ * finds a new upload moves it back to active on its own.
  * @module lib/youtube/admin-channels
  */
 
@@ -39,6 +44,39 @@ export interface YoutubeChannelRow {
   /** Videos from this channel in the library (`videos`) plus the round queue. */
   videoCount: number;
   latestVideo: ChannelLatestVideo | null;
+  /** Newest upload (YYYY-MM-DD) a scan has seen on the channel, round or not. */
+  lastUploadAt: string | null;
+  /** When a scan last walked the channel's uploads. */
+  lastCheckedAt: Date | null;
+  /** No upload in the last {@link DEFUNCT_AFTER_DAYS} days. See {@link isChannelDefunct}. */
+  defunct: boolean;
+}
+
+/** A channel with no upload for this many days counts as defunct. */
+export const DEFUNCT_AFTER_DAYS = 365;
+
+/**
+ * Whether a channel has gone quiet: its newest known upload — the later of
+ * what a scan recorded and the newest video stored from it — is more than
+ * {@link DEFUNCT_AFTER_DAYS} days old.
+ *
+ * A channel with no videos stored at all is never defunct: it most likely
+ * has not been resolved or scanned properly yet, so it stays on the daily
+ * scan and keeps being rechecked until something lands.
+ */
+export function isChannelDefunct(
+  channel: { lastUploadAt: string | null; latestVideo: ChannelLatestVideo | null; videoCount: number },
+  now: Date = new Date(),
+): boolean {
+  if (channel.videoCount === 0) return false;
+  const newest = [channel.lastUploadAt, channel.latestVideo?.publishedAt]
+    .filter((value): value is string => Boolean(value))
+    .sort()
+    .pop();
+  if (!newest) return false;
+  const uploaded = new Date(newest);
+  if (Number.isNaN(uploaded.getTime())) return false;
+  return now.getTime() - uploaded.getTime() > DEFUNCT_AFTER_DAYS * 24 * 60 * 60 * 1000;
 }
 
 /** Every channel in one response. `nextCursor` is always null: the list is
@@ -149,6 +187,10 @@ export async function findAdminChannelById(db: any, id: number): Promise<Youtube
 }
 
 function toRow(row: YoutubeChannel, stats?: ChannelVideoStats): YoutubeChannelRow {
+  const latestVideo = stats?.latest ?? null;
+  const videoCount = stats?.count ?? 0;
+  const lastUploadAt = row.lastUploadAt ?? null;
+  const lastCheckedAt = row.lastCheckedAt ?? null;
   return {
     id: row.id,
     channelId: row.channelId,
@@ -160,7 +202,10 @@ function toRow(row: YoutubeChannel, stats?: ChannelVideoStats): YoutubeChannelRo
     // (YoutubeChannelsPanel) formats directly.
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
-    videoCount: stats?.count ?? 0,
-    latestVideo: stats?.latest ?? null,
+    videoCount,
+    latestVideo,
+    lastUploadAt,
+    lastCheckedAt,
+    defunct: isChannelDefunct({ lastUploadAt, latestVideo, videoCount }),
   };
 }

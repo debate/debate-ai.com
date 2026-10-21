@@ -163,6 +163,93 @@ index 23d5dcd..3c25924 100644
      onBlocked: (message) => showToast(message),
    });
    registerCollabPluginSource({
+diff --git a/src/editor/convert-cards-to-read-mode.ts b/src/editor/convert-cards-to-read-mode.ts
+index aef0f88..fdfc1de 100644
+--- a/src/editor/convert-cards-to-read-mode.ts
++++ b/src/editor/convert-cards-to-read-mode.ts
+@@ -2,9 +2,11 @@
+  * Destructively reduce cards to the text read mode shows.
+  *
+  * Every rule here is read mode's own: which text is audible comes from
+- * the read-mode plugin (`isReadModeKeptText` — highlights, cites, the
+- * reading-marker color, the whole cite under "Read mode: keep entire
+- * cite" — whatever the settings say), and the paragraph
++ * the read-mode plugin (`isReadModeKeptText` — highlights, or the
++ * underlining of a card with no highlights, cites, the reading-marker
++ * color, the whole cite under "Read mode: keep entire cite" — whatever
++ * the settings say), a cite read mode shows as its parsed author/year
++ * label ("Smith 21", `readModeCiteLabel`) becomes that label, and the paragraph
+  * shape follows the "Read mode: preserve paragraph integrity" setting —
+  * off, a card's body paragraphs flow together into one; on, each source
+  * paragraph with audible text keeps its own line and empty ones collapse.
+@@ -13,7 +15,7 @@
+  */
+ import type { Mark, Node as PMNode } from 'prosemirror-model';
+ import type { Command, EditorState } from 'prosemirror-state';
+-import { isReadModeKeptText } from './read-mode-plugin.js';
++import { isReadModeKeptText, readModeCiteLabel } from './read-mode-plugin.js';
+ import { settings } from './settings.js';
+ 
+ interface CardAt {
+@@ -25,10 +27,16 @@ class AudibleInlineBuilder {
+   readonly nodes: PMNode[] = [];
+   private pendingSpaceMarks: readonly Mark[] | null = null;
+ 
++  private readonly card: PMNode;
++
++  constructor(card: PMNode) {
++    this.card = card;
++  }
++
+   addTextblock(node: PMNode): void {
+     node.forEach((child) => {
+       if (!child.isText || !child.text) return;
+-      if (!isReadModeKeptText(child, node)) {
++      if (!isReadModeKeptText(child, node, this.card)) {
+         this.breakRun();
+         return;
+       }
+@@ -86,10 +94,10 @@ function convertCard(card: PMNode): PMNode {
+   });
+   const tag = sourceTag.type.create(sourceTag.attrs, tagContent, sourceTag.marks);
+   const children: PMNode[] = [tag];
+-  let body = new AudibleInlineBuilder();
++  let body = new AudibleInlineBuilder(card);
+   const flushBody = (): void => {
+     if (body.nodes.length > 0) children.push(schema.nodes['card_body']!.create(null, body.nodes));
+-    body = new AudibleInlineBuilder();
++    body = new AudibleInlineBuilder(card);
+   };
+   // A body-like source paragraph: joined into the running body (read
+   // mode's default flow), or — with paragraph integrity on — its own
+@@ -99,7 +107,7 @@ function convertCard(card: PMNode): PMNode {
+       body.addTextblock(node);
+       return;
+     }
+-    const one = new AudibleInlineBuilder();
++    const one = new AudibleInlineBuilder(card);
+     one.addTextblock(node);
+     if (one.nodes.length === 0) return;
+     flushBody();
+@@ -108,10 +116,16 @@ function convertCard(card: PMNode): PMNode {
+ 
+   card.forEach((child, _offset, index) => {
+     if (index === 0) return;
+-    if (child.type.name === 'cite_paragraph' || child.type.name === 'undertag') {
++    const citeLabel = readModeCiteLabel(child, card);
++    if (citeLabel) {
++      // Read mode shows this cite as its author/year label — keep that.
++      flushBody();
++      const citeMark = schema.marks['cite_mark'];
++      children.push(child.type.create(child.attrs, schema.text(citeLabel, citeMark ? [citeMark.create()] : [])));
++    } else if (child.type.name === 'cite_paragraph' || child.type.name === 'undertag') {
+       // Their own node, audible text only — read mode shows an undertag's
+       // highlighted words just as it shows a cite's.
+-      const kept = new AudibleInlineBuilder();
++      const kept = new AudibleInlineBuilder(card);
+       kept.addTextblock(child);
+       if (kept.nodes.length > 0) {
+         flushBody();
 diff --git a/src/editor/home-screen.ts b/src/editor/home-screen.ts
 index 8e3f0ec..24d16a3 100644
 --- a/src/editor/home-screen.ts
@@ -369,7 +456,7 @@ index 33d941f..ca5bb8f 100644
    return (
      getElectronHost() !== null &&
 diff --git a/src/editor/index.ts b/src/editor/index.ts
-index 927a931..0d7dae0 100644
+index 927a931..6cf9719 100644
 --- a/src/editor/index.ts
 +++ b/src/editor/index.ts
 @@ -23,6 +23,7 @@ import { transformForExport, countMarkedCards } from '../export/transform-for-ex
@@ -498,7 +585,7 @@ index 927a931..0d7dae0 100644
    } catch (err) {
      console.error('Speech-doc serialization failed:', err);
      void alertDialog(
-@@ -1378,6 +1396,24 @@ export function getActiveView(): EditorView | null {
+@@ -1378,6 +1396,40 @@ export function getActiveView(): EditorView | null {
    return view;
  }
  
@@ -520,10 +607,26 @@ index 927a931..0d7dae0 100644
 +  currentDoc = doc;
 +}
 +
++/** Point the outline at a document an embed just swapped in. The embed
++ *  loads a new document with `view.updateState`, which skips
++ *  `dispatchTransaction`, so the nav pane kept showing the previous
++ *  document's outline (or the blank starter's empty one) until the first
++ *  edit. A fresh `attach` also opens the new doc at the default depth,
++ *  scrolled to the top, like `mountView` does. */
++export function refreshEmbeddedOutline(): void {
++  const v = getActiveView();
++  if (!v) return;
++  navPanel.attach(v);
++  navPanel.setCaretHeading(v.state.selection.from, selfRefSelectionPos(v.state));
++  navPanel.scrollToTop();
++  breadcrumbBar?.attach(v);
++  breadcrumbBar?.update(v.state.doc);
++}
++
  /** Benchmark lifecycle (Settings → Benchmark). The mutating editing test runs
   *  on the live doc, but `dispatchTransaction` checks `isBenchmarkActive()` and
   *  skips the autosave / dirty / nav-rebuild side effects, so nothing touches
-@@ -1449,9 +1485,9 @@ function loadCollabUi(): Promise<typeof import('./collab/collab-ui.js')> {
+@@ -1449,9 +1501,9 @@ function loadCollabUi(): Promise<typeof import('./collab/collab-ui.js')> {
  // user-picked slot; single-pane joins in place (or spawns a window).
  // The returned promise reports success so the pill only consumes the
  // invite (and its share code) when the join actually landed.
@@ -535,7 +638,7 @@ index 927a931..0d7dae0 100644
    ),
  );
  setCollabInviter((target) => {
-@@ -1465,9 +1501,7 @@ setCollabInviter((target) => {
+@@ -1465,9 +1517,7 @@ setCollabInviter((target) => {
  // which start never calls — so using them here bound the session to an
  // empty uid with the window-joined title ("A.docx · B.docx") in the
  // confirm, orphaned from every pane footer (field find, 2026-08-12).
@@ -546,7 +649,7 @@ index 927a931..0d7dae0 100644
  // The Receive pill's Join button — same flow (and same deps choice) as
  // the Join Collaboration Session command: multi-pane joins into a
  // user-picked slot; single-pane in place.
-@@ -1811,7 +1845,9 @@ const ribbonContext: RibbonContext = {
+@@ -1811,7 +1861,9 @@ const ribbonContext: RibbonContext = {
    openShortcutsReference: () => openReference(),
    toggleCommentsVisible: () => {
      if (!commentsColumn || !commentsColumnEl) return;
@@ -557,7 +660,7 @@ index 927a931..0d7dae0 100644
      commentsColumn.setVisible(next);
      commentsToggleBtn?.setAttribute('aria-pressed', next ? 'true' : 'false');
      commentsColumn.render();
-@@ -1920,6 +1956,10 @@ const ribbonContext: RibbonContext = {
+@@ -1920,6 +1972,10 @@ const ribbonContext: RibbonContext = {
      if (!view) return;
      runAiCreateCite(view);
    },
@@ -568,7 +671,7 @@ index 927a931..0d7dae0 100644
    reformatAllCites: () => {
      if (!view) return;
      void runReformatAllCites(view);
-@@ -2350,15 +2390,6 @@ const ribbonContext: RibbonContext = {
+@@ -2350,15 +2406,6 @@ const ribbonContext: RibbonContext = {
    selectSpeechDoc: () => {
      void openSelectSpeechDocModal();
    },
@@ -584,7 +687,7 @@ index 927a931..0d7dae0 100644
    openHighlightPicker: () => colorPanel?.openPicker('highlight'),
    openShadingPicker: () => colorPanel?.openPicker('shading'),
    openFontColorPicker: () => colorPanel?.openPicker('fontcolor'),
-@@ -2366,13 +2397,33 @@ const ribbonContext: RibbonContext = {
+@@ -2366,13 +2413,33 @@ const ribbonContext: RibbonContext = {
    openDocToolsMenu: () => docMenuBtn?.click(),
    openCardToolsMenu: () => cardMenuBtn?.click(),
    openTableMenu: () => tableMenuBtn?.click(),
@@ -623,7 +726,7 @@ index 927a931..0d7dae0 100644
  openBtn.addEventListener('mousedown', (e) => e.preventDefault());
  openBtn.addEventListener('click', () => {
    void runOpenFlow();
-@@ -2383,14 +2434,6 @@ if (newBtn) {
+@@ -2383,14 +2450,6 @@ if (newBtn) {
      void onNewDocClicked();
    });
  }
@@ -638,7 +741,7 @@ index 927a931..0d7dae0 100644
  
  
  /**
-@@ -2880,6 +2923,51 @@ if (navPanePullTab) {
+@@ -2880,6 +2939,51 @@ if (navPanePullTab) {
      else settings.set('navPaneVisible', true);
    });
  }
@@ -690,7 +793,7 @@ index 927a931..0d7dae0 100644
  applyNavPaneVisible(settings.get('navPaneVisible'));
  
  /** Apply the `formatNavPaneByType` setting. When off, adds the
-@@ -2972,7 +3060,7 @@ export function notifyCommentsForActiveTransaction(
+@@ -2972,7 +3076,7 @@ export function notifyCommentsForActiveTransaction(
  }
  if (commentsToggleBtn && commentsColumn) {
    commentsToggleBtn.addEventListener('click', () => {
@@ -699,7 +802,7 @@ index 927a931..0d7dae0 100644
      commentsColumn.setVisible(next);
      commentsToggleBtn.setAttribute('aria-pressed', next ? 'true' : 'false');
      commentsColumn.render();
-@@ -3712,8 +3800,8 @@ systemDarkMedia.addEventListener('change', () => {
+@@ -3712,8 +3816,8 @@ systemDarkMedia.addEventListener('change', () => {
  
  /** Apply the `showDocNameChip` setting to `<html>`. The chip's CSS
   *  display is gated on this class — without it, the chip is
@@ -710,7 +813,7 @@ index 927a931..0d7dae0 100644
   *
   *  Deliberately does NOT call `updateWindowTitle`: at boot this
   *  runs before `currentDocFilename`'s module-level declaration
-@@ -4061,6 +4149,7 @@ settings.subscribe((s) => {
+@@ -4061,6 +4165,7 @@ settings.subscribe((s) => {
    }
    applyNavPaneVisible(s.navPaneVisible);
    applyFormatNavPaneByType(s.formatNavPaneByType);
@@ -718,7 +821,7 @@ index 927a931..0d7dae0 100644
    // Body zoom is NOT re-applied on settings change — it's per-editor and
    // transient, and `defaultZoomPct` only governs what NEW editors open at,
    // never re-zooms an already-open one. Chrome scale stays a synced global.
-@@ -4141,145 +4230,79 @@ settings.subscribe((s) => {
+@@ -4141,145 +4246,79 @@ settings.subscribe((s) => {
    notifyEditorLayoutChanged();
  });
  
@@ -740,12 +843,7 @@ index 927a931..0d7dae0 100644
 + *  unbroken row (see `#ribbon` in style.css) that overflows and
 + *  scrolls left ↔ right: every command stays reachable at every
 + *  width, it is just a scroll away.
-  *
-- *  Measured, not media-queried: panels hide only when they
-- *  LITERALLY don't fit, at any chrome scale / OS font size /
-- *  visible-panel-mix combination. */
--function initRibbonResizer(): void {
--  const ribbon = document.getElementById('ribbon');
++ *
 + *  This wires up the two parts CSS can't do alone:
 + *   - `.pmd-ribbon-scrollable` while the strip actually overflows, so
 + *     the scrollbar gutter (and the 6px it costs the button row) only
@@ -753,7 +851,12 @@ index 927a931..0d7dae0 100644
 + *   - vertical mouse wheel → horizontal scroll, the convention for a
 + *     single-row scrolling toolbar. Trackpads and shift-wheel already
 + *     send horizontal deltas and are left to the browser.
-+ *
+  *
+- *  Measured, not media-queried: panels hide only when they
+- *  LITERALLY don't fit, at any chrome scale / OS font size /
+- *  visible-panel-mix combination. */
+-function initRibbonResizer(): void {
+-  const ribbon = document.getElementById('ribbon');
 + *  Keyboard users need nothing extra beyond the `focusin` handler:
 + *  tabbing to a button that is scrolled out of view brings it back
 + *  into view. */
@@ -928,7 +1031,7 @@ index 927a931..0d7dae0 100644
  
  applyTheme(settings.get('theme'), settings.get('themeAppliesToDocument'));
  applyShowDocNameChip(settings.get('showDocNameChip'));
-@@ -4353,7 +4376,6 @@ if (timerToggleBtn) {
+@@ -4353,7 +4392,6 @@ if (timerToggleBtn) {
    };
    button('open-btn', 'openFile');
    button('new-btn', 'newDocument');
@@ -936,7 +1039,7 @@ index 927a931..0d7dae0 100644
    button('export-btn', 'save');
    button('settings-btn', 'openSettings');
    button('reference-btn', 'openShortcutsReference');
-@@ -4531,17 +4553,20 @@ const VIEWLESS_RIBBON_COMMANDS = new Set<AnyCommandId>([
+@@ -4531,17 +4569,20 @@ const VIEWLESS_RIBBON_COMMANDS = new Set<AnyCommandId>([
    // Toggling the nav-pane visibility only flips a transient
    // setting + body class; works without an active doc.
    'toggleNavPane',
@@ -961,7 +1064,7 @@ index 927a931..0d7dae0 100644
    // Multi-pane workspace commands — fire on the shell, not a
    // doc. View-less so they work even when no slot has a doc.
    'focusSlot1',
-@@ -4586,12 +4611,15 @@ function runViewlessRibbon(id: AnyCommandId): void {
+@@ -4586,12 +4627,15 @@ function runViewlessRibbon(id: AnyCommandId): void {
      case 'zoomReset': ribbonContext.zoomReset(); return;
      case 'resetDefaultColors': ribbonContext.resetDefaultColors(); return;
      case 'toggleNavPane': ribbonContext.toggleNavPane(); return;
@@ -978,7 +1081,7 @@ index 927a931..0d7dae0 100644
      case 'toggleVoice': ribbonContext.toggleVoice(); return;
      case 'calibrateVoice': ribbonContext.calibrateVoice(); return;
      case 'startFlowHost': ribbonContext.startFlowHost(); return;
-@@ -5319,6 +5347,15 @@ export function getNavPanel(): NavigationPanel {
+@@ -5319,6 +5363,15 @@ export function getNavPanel(): NavigationPanel {
    return navPanel;
  }
  
@@ -994,7 +1097,7 @@ index 927a931..0d7dae0 100644
  function makeStarterDoc(): PMNode {
    const n = schema.nodes;
    const m = schema.marks;
-@@ -5564,6 +5601,7 @@ function isMobileLayout(): boolean {
+@@ -5564,6 +5617,7 @@ function isMobileLayout(): boolean {
      coarsePointer:
        typeof window.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches,
      viewportWidth: window.innerWidth,
@@ -1002,7 +1105,7 @@ index 927a931..0d7dae0 100644
    });
  }
  
-@@ -5874,6 +5912,9 @@ export function buildEditorPlugins(targetUid?: string | null): Plugin[] {
+@@ -5874,6 +5928,9 @@ export function buildEditorPlugins(targetUid?: string | null): Plugin[] {
    // while a session is active binds to the session's shared LoroDoc and gets
    // overwritten with the session doc (multi-pane document fusion).
    plugins.push(...collabPluginsFor(targetUid));
@@ -1012,7 +1115,7 @@ index 927a931..0d7dae0 100644
    return plugins;
  }
  
-@@ -6124,6 +6165,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
+@@ -6124,6 +6181,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
    }
    currentDoc = doc;
    navPanel.attach(view);
@@ -1020,7 +1123,7 @@ index 927a931..0d7dae0 100644
    // Sync visible state with the persisted setting on every mount.
    const startVisible = settings.get('commentsVisible');
    if (commentsColumnEl) commentsColumnEl.hidden = !startVisible;
-@@ -6146,6 +6188,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
+@@ -6146,6 +6204,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
    // Initial paint: do the heavy update synchronously so the user sees
    // the right thing immediately on doc load.
    navPanel.update(doc);
@@ -1028,7 +1131,7 @@ index 927a931..0d7dae0 100644
    refreshWordCount();
    refreshFontSizeDisplay();
    refreshFormattingPanelButtonStates();
-@@ -6168,6 +6211,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
+@@ -6168,6 +6227,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
    // the previous doc was last in.
    navPanel.scrollToTop();
    appEl.scrollTop = 0;
@@ -1036,7 +1139,7 @@ index 927a931..0d7dae0 100644
    // Re-resolve this doc's flashcard highlights once the caller has set
    // the doc identity (adoptDocId runs synchronously right after
    // mountView returns, so defer a frame). No-op when the column is
-@@ -6264,6 +6308,7 @@ function scheduleHeavyUpdate(): void {
+@@ -6264,6 +6324,7 @@ function scheduleHeavyUpdate(): void {
      pendingHeavyUpdate = null;
      if (!view) return;
      navPanel.update(view.state.doc);
@@ -1044,7 +1147,7 @@ index 927a931..0d7dae0 100644
      // Re-apply the caret highlight now that `update()` has rebuilt
      // `liEntries` with fresh positions. The synchronous `setCaretHeading`
      // in `dispatchTransaction` ran against stale positions (it fires
-@@ -7069,6 +7114,10 @@ async function loadFileInPlace(file: {
+@@ -7069,6 +7130,10 @@ async function loadFileInPlace(file: {
    }
    void clearCurrentJournal();
    mountView(docNode, docThreads);
@@ -1055,7 +1158,7 @@ index 927a931..0d7dae0 100644
    currentDocFilename = file.filename;
    setCurrentDocHandle(file.handle);
    currentDocFormat = file.format;
-@@ -7847,8 +7896,7 @@ async function createSpeechDocInPlace(): Promise<boolean> {
+@@ -7847,8 +7912,7 @@ async function createSpeechDocInPlace(): Promise<boolean> {
      okLabel: 'Create',
    });
    if (!speechName) return false;
@@ -1065,7 +1168,7 @@ index 927a931..0d7dae0 100644
    const docNode = settings.get('includeSpeechDocPocket')
      ? makeSpeechBlankDoc(filename.replace(/\.(cmir|docx)$/i, ''))
      : makeNewDocBody();
-@@ -7856,7 +7904,8 @@ async function createSpeechDocInPlace(): Promise<boolean> {
+@@ -7856,7 +7920,8 @@ async function createSpeechDocInPlace(): Promise<boolean> {
    mountView(docNode);
    currentDocFilename = null;
    setCurrentDocHandle(null);
@@ -1075,7 +1178,7 @@ index 927a931..0d7dae0 100644
    currentDocUid = newSessionDocUid();
    currentDocId = null; // new doc → minted on first save
    markCurrentDocClean();
-@@ -9774,15 +9823,24 @@ const BOOT_MOBILE_ENV = {
+@@ -9774,15 +9839,24 @@ const BOOT_MOBILE_ENV = {
      typeof window.matchMedia === 'function' &&
      window.matchMedia('(pointer: coarse)').matches,
    viewportWidth: window.innerWidth,
@@ -1102,7 +1205,7 @@ index 927a931..0d7dae0 100644
  // Set when this window bounced itself as a redundant three-pane duplicate
  // (singleton enforcement). A bounced window that lingers (couldn't self-close)
  // must stop claiming to be a workspace, so it never blocks a future window.
-@@ -10137,7 +10195,14 @@ function positionRightTray(): void {
+@@ -10137,7 +10211,14 @@ function positionRightTray(): void {
  
  // Load the per-user Learn annotation store (flashcards / schedules /
  // anchors) so review counts + the comments column have it available.
@@ -1118,7 +1221,7 @@ index 927a931..0d7dae0 100644
  
  // Drag-and-drop file opening works in both single-doc and multi-pane modes.
  installDragToOpen();
-@@ -10207,7 +10272,13 @@ if (BOOT_MULTI_DOC_WORKSPACE) {
+@@ -10207,7 +10288,13 @@ if (BOOT_MULTI_DOC_WORKSPACE) {
      // and the shell re-shows it when the last doc closes) — an empty
      // workspace would otherwise land on a bare window with no
      // affordances. Any doc entering a slot hides it.
@@ -1133,7 +1236,7 @@ index 927a931..0d7dae0 100644
      // Tell main this window can take OS-opened files into its slot
      // picker (so "Open with…" reuses it instead of spawning a blank
      // window), and wire the forward channel.
-@@ -10242,7 +10313,13 @@ if (BOOT_MULTI_DOC_WORKSPACE) {
+@@ -10242,7 +10329,13 @@ if (BOOT_MULTI_DOC_WORKSPACE) {
    // Home screen is a single-doc-mode feature (multi-pane has its
    // own workspace layout). Mount it before boot so the overlay is
    // ready when initSingleDocBoot decides whether to show it.
@@ -1148,7 +1251,7 @@ index 927a931..0d7dae0 100644
    // Single-pane windows don't take OS-opened files in place — main
    // keeps spawning a fresh window per file. Report the mode so a
    // stale multi-pane registration (from before a mode-toggle reload)
-@@ -10573,8 +10650,9 @@ settings.subscribe((s, meta) => {
+@@ -10573,8 +10666,9 @@ settings.subscribe((s, meta) => {
    if (modeSwitchInFlight) return;
    // The mobile shell forces single-doc rendering without writing the
    // synced `multiDocWorkspace` setting, so the boot constant can
@@ -1160,7 +1263,7 @@ index 927a931..0d7dae0 100644
    // A `multiDocWorkspace` toggle in ANOTHER window reaches us through
    // the cross-window storage-event sync. Only the window the user
    // actually toggled in may drive the switch (close the other windows
-@@ -10786,12 +10864,25 @@ async function runStartupRecovery(): Promise<void> {
+@@ -10786,12 +10880,25 @@ async function runStartupRecovery(): Promise<void> {
  }
  
  async function runStartupRecoveryInner(): Promise<void> {
@@ -1192,7 +1295,7 @@ index 927a931..0d7dae0 100644
      return;
    }
    const host = getHost();
-@@ -10836,6 +10927,13 @@ async function runStartupRecoveryInner(): Promise<void> {
+@@ -10836,6 +10943,13 @@ async function runStartupRecoveryInner(): Promise<void> {
      return;
    }
    if (entries.length === 0) return;
@@ -1683,10 +1786,35 @@ index d5bc357..c1a9c30 100644
        }
        // Selection-only changes refresh just this pane's word-count
 diff --git a/src/editor/nav-panel.ts b/src/editor/nav-panel.ts
-index 9d885e8..3801bdd 100644
+index 9d885e8..3e793a1 100644
 --- a/src/editor/nav-panel.ts
 +++ b/src/editor/nav-panel.ts
-@@ -81,6 +81,11 @@ import { isMobileShellActive } from './mobile-plugin.js';
+@@ -31,6 +31,24 @@ import { isTransclusionNode, zoneIdentity } from './transclusion.js';
+ import { isSelfRef, resolveSelfProjection } from './self-transclusion.js';
+ import { transclusionDivergenceKey } from './transclusion-divergence-plugin.js';
+ 
++/**
++ * Whether `entries[i]` starts collapsed when the outline shows levels 1–N.
++ * A parent at level N or deeper folds. So does a shallower parent with
++ * nothing at level N or shallower beneath it — a hat holding only tags, with
++ * no blocks between — which would otherwise leave every tag showing under
++ * "3", making 3 and 4 look identical.
++ */
++function collapsesAtLevel(entries: HeadingEntry[], i: number, maxLevel: number): boolean {
++  const entry = entries[i]!;
++  const next = entries[i + 1];
++  if (next == null || next.level <= entry.level) return false; // leaf
++  if (entry.level >= maxLevel) return true;
++  for (let j = i + 1; j < entries.length && entries[j]!.level > entry.level; j++) {
++    if (entries[j]!.level <= maxLevel) return false;
++  }
++  return true;
++}
++
+ /** Outline entries including the content projected by intra-doc live windows
+  *  (`self_ref`). A window is an atom with no doc children, so `collectHeadings`
+  *  alone misses it; here each window's source projection is resolved and its
+@@ -81,6 +99,11 @@ import { isMobileShellActive } from './mobile-plugin.js';
  import { createNumberGlyph, numberingDisplaySig } from './numbering-plugin.js';
  import { computeNumbering } from './numbering.js';
  import { isRightClickContextMenu } from './context-menu-gate.js';
@@ -1698,7 +1826,46 @@ index 9d885e8..3801bdd 100644
  
  /** Minimum nav-pane width — must fit the 4 level buttons + the
   *  close (×) button + row padding; anything narrower clips the ×. */
-@@ -934,14 +939,41 @@ export class NavigationPanel {
+@@ -677,7 +700,9 @@ export class NavigationPanel {
+   }
+ 
+   /** Sync the collapsed set to a maxLevel: every parent at level ≥ N
+-   *  is collapsed, every shallower parent is expanded.
++   *  is collapsed, and so is a shallower parent whose children are all
++   *  deeper than N (see `collapsesAtLevel`); every other parent is
++   *  expanded.
+    *
+    *  When called with no argument, uses the current setting. When called
+    *  with an explicit level, uses that — needed by `setMaxLevel`, which
+@@ -692,12 +717,7 @@ export class NavigationPanel {
+     for (let i = 0; i < entries.length; i++) {
+       const entry = entries[i]!;
+       if (entry.id == null) continue;
+-      const next = entries[i + 1];
+-      const hasChildren = next != null && next.level > entry.level;
+-      if (!hasChildren) continue;
+-      if (entry.level >= maxLevel) {
+-        this.collapsed.add(entry.id);
+-      }
++      if (collapsesAtLevel(entries, i, maxLevel)) this.collapsed.add(entry.id);
+     }
+   }
+ 
+@@ -757,12 +777,7 @@ export class NavigationPanel {
+       const entry = entries[i]!;
+       if (entry.id == null) continue;
+       if (this.lastSeenIds.has(entry.id)) continue; // not new
+-      const next = entries[i + 1];
+-      const hasChildren = next != null && next.level > entry.level;
+-      if (!hasChildren) continue;
+-      if (entry.level >= maxLevel) {
+-        this.collapsed.add(entry.id);
+-      }
++      if (collapsesAtLevel(entries, i, maxLevel)) this.collapsed.add(entry.id);
+     }
+     this.render(doc);
+   }
+@@ -934,14 +949,41 @@ export class NavigationPanel {
        // zero width — yielding a squashed row. Normalize to truly empty
        // so the CSS fallback applies.
        label.textContent = entry.text.trim() === '' ? '' : entry.text;
@@ -1748,7 +1915,7 @@ index 9d885e8..3801bdd 100644
        }
  
        if (entry.windowed) {
-@@ -2126,17 +2158,29 @@ export class NavigationPanel {
+@@ -2126,17 +2168,29 @@ export class NavigationPanel {
  
    // ---------------------------------------------- Context menu ----
  
@@ -1780,7 +1947,7 @@ index 9d885e8..3801bdd 100644
        {
          kind: 'item',
          label: `Select ${what} and contents`,
-@@ -2152,6 +2196,7 @@ export class NavigationPanel {
+@@ -2152,6 +2206,7 @@ export class NavigationPanel {
          label: `Copy ${what} and contents`,
          action: () => { void this.copyHeadingAndContents(entry); },
        },
@@ -2218,6 +2385,214 @@ index f2defc3..30dd5c5 100644
    if (!e || typeof e !== 'object') return false;
    const c = e as Record<string, unknown>;
    return (
+diff --git a/src/editor/read-mode-plugin.ts b/src/editor/read-mode-plugin.ts
+index aa6ae13..7869f03 100644
+--- a/src/editor/read-mode-plugin.ts
++++ b/src/editor/read-mode-plugin.ts
+@@ -10,7 +10,15 @@
+  *   - In `cite_paragraph`: keep iff carrying `cite_mark` OR `highlight` —
+  *     or, with "Read mode: keep entire cite" on, every text node of a
+  *     cite that has at least one such run (`keepsWholeParagraph`).
++ *   - In a card's `cite_paragraph`, read mode instead shows one parsed
++ *     label — the author's last name and year ("Smith 21", see
++ *     card-read-info.ts) — in place of the cite's text, whenever the cite
++ *     yields either (keep-entire-cite off). A cite that parses to nothing
++ *     falls back to the cite-mark rule above.
+  *   - In `card_body` / `paragraph` / `undertag`: keep iff carrying `highlight`.
++ *     A card whose body has no highlighting at all shows its underlined
++ *     text instead (`underline_mark` / `emphasis_mark` / `underline_direct`)
++ *     in its body and table paragraphs, so an uncut card still reads.
+  *   - Elsewhere (heading paragraphs etc.): no decoration — block-level
+  *     CSS handles whether they show.
+  *
+@@ -42,6 +50,7 @@ import { changedRange, expandToTopLevel } from './decoration-range.js';
+ import { isSyncOrigin } from './sync-origin.js';
+ import { NORMALIZER_META } from './normalizer-guard.js';
+ import { settings } from './settings.js';
++import { cardHighlightInfo, citeReadLabel } from './card-read-info.js';
+ import {
+   toggleReadingMarker,
+   isReadingMarkerColor,
+@@ -260,28 +269,70 @@ const READ_MODE_HEADING_BLOCKS = new Set(['tag', 'analytic', 'pocket', 'hat', 'b
+  *  longer vanishes in read mode (field find, 2026-08-14). */
+ const CITE_KEPT_MARKS: readonly string[] = ['cite_mark', 'highlight'];
+ const BODY_KEPT_MARKS: readonly string[] = ['highlight'];
++/** What an unhighlighted card's body reads instead: its underlining
++ *  (Verbatim's Emphasis style is underlined too). */
++const BODY_UNDERLINE_MARKS: readonly string[] = ['underline_mark', 'emphasis_mark', 'underline_direct'];
++/** A labelled cite keeps none of its own runs (reading markers aside). */
++const NO_KEPT_MARKS: readonly string[] = [];
+ 
+-/** The read-aloud marks a textblock is filtered by, `'heading'` if its
+- *  text is always shown, or null if it isn't read-mode content. Mirrors
+- *  computeDecorationsInRange's per-node decision. */
+-function readKeptKind(nodeName: string): readonly string[] | 'heading' | null {
+-  if (READ_MODE_HEADING_BLOCKS.has(nodeName)) return 'heading';
+-  if (nodeName === 'cite_paragraph') return CITE_KEPT_MARKS;
+-  if (nodeName === 'card_body' || nodeName === 'paragraph' || nodeName === 'undertag') {
+-    return BODY_KEPT_MARKS;
++/** How read mode treats one textblock: `'heading'` if its text is always
++ *  shown, null if it isn't read-mode content, else the read-aloud marks it
++ *  is filtered by — plus, for a card's cite, the "Smith 21" label shown in
++ *  place of its text. */
++type ReadRule = 'heading' | null | { marks: readonly string[]; citeLabel: string | null };
++
++/** The card a textblock at `pos` sits in (directly, or in a table cell). */
++function enclosingCard(doc: PMNode, pos: number): PMNode | null {
++  const $pos = doc.resolve(pos);
++  for (let depth = $pos.depth; depth > 0; depth--) {
++    const node = $pos.node(depth);
++    if (node.type.name === 'card') return node;
++  }
++  return null;
++}
++
++/** Whether a card counts as highlighted — background color counts too
++ *  when "Read mode: show background color" keeps it visible. */
++function cardIsHighlighted(card: PMNode): boolean {
++  const info = cardHighlightInfo(card);
++  return info.hasHighlight || (info.hasShading && settings.get('readModeShowBackground'));
++}
++
++/** The author/year label read mode shows for a cite paragraph of `card`,
++ *  or null to fall back to the cite's own marked text (outside a card,
++ *  under "Read mode: keep entire cite", or when nothing parsed). Shared
++ *  with Convert Cards to Read Mode, which writes the same label. */
++export function readModeCiteLabel(cite: PMNode, card: PMNode | null): string | null {
++  if (!card || cite.type.name !== 'cite_paragraph' || settings.get('readModeKeepEntireCite')) return null;
++  return citeReadLabel(cite);
++}
++
++/** Mirrors computeDecorationsInRange's per-node decision. */
++function readRule(node: PMNode, card: PMNode | null): ReadRule {
++  const name = node.type.name;
++  if (READ_MODE_HEADING_BLOCKS.has(name)) return 'heading';
++  if (name === 'cite_paragraph') {
++    const citeLabel = readModeCiteLabel(node, card);
++    return { marks: citeLabel ? NO_KEPT_MARKS : CITE_KEPT_MARKS, citeLabel };
++  }
++  if (name === 'card_body' || name === 'paragraph') {
++    const marks = card && !cardIsHighlighted(card) ? BODY_UNDERLINE_MARKS : BODY_KEPT_MARKS;
++    return { marks, citeLabel: null };
+   }
++  if (name === 'undertag') return { marks: BODY_KEPT_MARKS, citeLabel: null };
+   return null;
+ }
+ 
+ /** Whether read mode keeps this inline text node of `parent` visible.
+  *  Shared with destructive conversions so their audible-text rule cannot
+- *  drift from the display-only mode. */
+-export function isReadModeKeptText(child: PMNode, parent: PMNode): boolean {
++ *  drift from the display-only mode; pass the enclosing `card` so its
++ *  highlighted-or-underlined choice and cite label apply. */
++export function isReadModeKeptText(child: PMNode, parent: PMNode, card: PMNode | null = null): boolean {
+   if (!child.isText) return false;
+-  const kind = readKeptKind(parent.type.name);
+-  if (kind === 'heading') return true;
+-  if (kind === null) return false;
+-  return isReadKept(child, kind) || keepsWholeParagraph(parent, kind);
++  const rule = readRule(parent, card);
++  if (rule === 'heading') return true;
++  if (rule === null) return false;
++  return isReadKept(child, rule.marks) || keepsWholeParagraph(parent, rule.marks);
+ }
+ 
+ /**
+@@ -308,9 +359,9 @@ export function nearestReadKeptPos(doc: PMNode, pos: number): number | null {
+     }
+   };
+   doc.nodesBetween(from, to, (node, nodePos) => {
+-    const kind = readKeptKind(node.type.name);
+-    if (kind === null) return true; // a container — descend
+-    if (kind === 'heading') {
++    const rule = readRule(node, enclosingCard(doc, nodePos));
++    if (rule === null) return true; // a container — descend
++    if (rule === 'heading') {
+       if (node.content.size > 0) {
+         const start = nodePos + 1;
+         const end = nodePos + node.nodeSize - 1;
+@@ -318,6 +369,9 @@ export function nearestReadKeptPos(doc: PMNode, pos: number): number | null {
+       }
+       return false;
+     }
++    // A labelled cite shows its label at the paragraph start.
++    if (rule.citeLabel) consider(nodePos + 1);
++    const kind = rule.marks;
+     // Body / cite text: only runs actually carrying the read-aloud mark
+     // (or the whole cite, when the setting keeps it).
+     const whole = keepsWholeParagraph(node, kind);
+@@ -351,12 +405,17 @@ export function firstReadKeptPos(doc: PMNode, from: number, to: number): number
+   let found: number | null = null;
+   doc.nodesBetween(lo, hi, (node, nodePos) => {
+     if (found !== null) return false;
+-    const kind = readKeptKind(node.type.name);
+-    if (kind === null) return true; // container — descend
+-    if (kind === 'heading') {
++    const rule = readRule(node, enclosingCard(doc, nodePos));
++    if (rule === null) return true; // container — descend
++    if (rule === 'heading') {
+       if (node.content.size > 0) found = Math.max(lo, nodePos + 1);
+       return false;
+     }
++    if (rule.citeLabel && nodePos + node.nodeSize > lo) {
++      found = Math.max(lo, nodePos + 1);
++      return false;
++    }
++    const kind = rule.marks;
+     const whole = keepsWholeParagraph(node, kind);
+     node.forEach((child, offset) => {
+       if (found !== null) return;
+@@ -389,9 +448,9 @@ export function firstReadKeptPos(doc: PMNode, from: number, to: number): number
+ function computeDecorationsInRange(doc: PMNode, from: number, to: number): Decoration[] {
+   const decos: Decoration[] = [];
+   doc.nodesBetween(from, to, (node, pos) => {
+-    const kind = readKeptKind(node.type.name);
+-    if (kind !== null && kind !== 'heading') {
+-      decorateParagraph(node, pos, kind, decos);
++    const rule = readRule(node, enclosingCard(doc, pos));
++    if (rule !== null && rule !== 'heading') {
++      decorateParagraph(node, pos, rule.marks, rule.citeLabel, decos);
+       // We've already walked this paragraph's inline children; don't
+       // recurse into them again from the outer nodesBetween.
+       return false;
+@@ -416,15 +475,36 @@ function makeRunSeparator(): HTMLElement {
+   return span;
+ }
+ 
++/** Build the cite-label widget's DOM: the parsed "Smith 21", styled
++ *  like a cite (`pmd-cite`) so it reads as the card's short cite. */
++function makeCiteLabel(label: string): HTMLElement {
++  const span = document.createElement('span');
++  span.className = 'pmd-rm-cite-label pmd-cite';
++  span.textContent = label;
++  span.contentEditable = 'false';
++  return span;
++}
++
+ /** Walk one paragraph's direct text children in order. For each
+  *  kept text node, decide whether it ends a run; if so, emit a
+- *  widget separator at the boundary. */
++ *  widget separator at the boundary. A labelled cite also gets its
++ *  author/year label widget at the paragraph start. */
+ function decorateParagraph(
+   para: PMNode,
+   paraPos: number,
+   markNames: readonly string[],
++  citeLabel: string | null,
+   decos: Decoration[],
+ ): void {
++  if (citeLabel) {
++    decos.push(
++      Decoration.widget(paraPos + 1, () => makeCiteLabel(citeLabel), {
++        side: -1,
++        ignoreSelection: true,
++        key: `pmd-rm-cite-label:${citeLabel}`,
++      }),
++    );
++  }
+   interface Item { pos: number; nodeSize: number; keep: boolean }
+   const items: Item[] = [];
+   const whole = keepsWholeParagraph(para, markNames);
 diff --git a/src/editor/recovery-ui.ts b/src/editor/recovery-ui.ts
 index 3880b24..36c5f58 100644
 --- a/src/editor/recovery-ui.ts
@@ -4321,7 +4696,7 @@ index cbf4cb0..8f733a0 100644
      copyBtn.type = 'button';
      copyBtn.className = 'pmd-settings-btn';
 diff --git a/src/editor/style.css b/src/editor/style.css
-index 19ab630..7b663a3 100644
+index 19ab630..7b35ac6 100644
 --- a/src/editor/style.css
 +++ b/src/editor/style.css
 @@ -527,15 +527,68 @@
@@ -4851,7 +5226,28 @@ index 19ab630..7b663a3 100644
  .pmd-underline,
  .pmd-emphasis {
    font-variant-ligatures: none;
-@@ -5437,34 +5628,68 @@ body.pmd-nav-resize-active {
+@@ -5113,8 +5304,10 @@ body.pmd-nav-resize-active {
+      boundary, so each scroll surface owns its own pane. */
+   overscroll-behavior: contain;
+   /* Leave room on the right so the scrollbar doesn't run into the handle. */
+-  padding-right: 8px;
++  padding-right: 6px;
+   list-style: none;
++  /* A narrow face fits more of each heading on a line than the UI font. */
++  font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+   margin: 0;
+   padding-top: 0.5rem;
+   padding-bottom: 0.5rem;
+@@ -5134,7 +5327,7 @@ body.pmd-nav-resize-active {
+   display: flex;
+   align-items: baseline;
+   gap: 0.25rem;
+-  padding: 0.2rem 0.75rem;
++  padding: 0.2rem 0.25rem;
+   cursor: pointer;
+   border-left: 3px solid transparent;
+   position: relative;
+@@ -5437,34 +5630,68 @@ body.pmd-nav-resize-active {
    text-overflow: ellipsis;
  }
  
@@ -4865,7 +5261,7 @@ index 19ab630..7b663a3 100644
 -  transform: translateY(-50%);
 -  max-width: 65%;
 -  padding: 0 0.5rem 0 1.75rem;
-+/* Tag rows: the tag wraps to a compact two-line clamp (small type, tight
++/* Tag rows: the tag wraps to a compact three-line clamp (small type, tight
 +   leading and padding) with the card's cite — author + year — in bold on
 +   the line after it, so the author is always visible without hovering. */
 +.pmd-nav-item.pmd-nav-item-tag-wrap {
@@ -4886,8 +5282,8 @@ index 19ab630..7b663a3 100644
 +  overflow-wrap: anywhere;
 +  display: -webkit-box;
 +  -webkit-box-orient: vertical;
-+  -webkit-line-clamp: 2;
-+  line-clamp: 2;
++  -webkit-line-clamp: 3;
++  line-clamp: 3;
 +}
 +.pmd-nav-cite {
 +  font-size: 0.7rem;
@@ -4940,7 +5336,36 @@ index 19ab630..7b663a3 100644
  
  /* Empty headings still occupy a normal line's worth of height. */
  .pmd-nav-label:empty::before {
-@@ -5881,10 +6106,6 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+@@ -5480,10 +5707,10 @@ body.pmd-nav-resize-active {
+ }
+ 
+ /* Indent + emphasis per outline level (Word's nav pane convention). */
+-.pmd-nav-level-1 { padding-left: 0.75rem;  font-weight: 700; font-size: 0.95rem; }
+-.pmd-nav-level-2 { padding-left: 1.5rem;   font-weight: 600; font-size: 0.9rem; }
+-.pmd-nav-level-3 { padding-left: 2.25rem;  font-weight: 500; }
+-.pmd-nav-level-4 { padding-left: 3rem;     font-size: 0.85rem; color: var(--pmd-c-text-muted); }
++.pmd-nav-level-1 { padding-left: 0.25rem;  font-weight: 700; font-size: 0.95rem; }
++.pmd-nav-level-2 { padding-left: 0.75rem;  font-weight: 600; font-size: 0.9rem; }
++.pmd-nav-level-3 { padding-left: 1.25rem;  font-weight: 500; }
++.pmd-nav-level-4 { padding-left: 1.75rem;  font-size: 0.85rem; color: var(--pmd-c-text-muted); }
+ 
+ /* Type-specific color cues — analytic uses the same settings-driven
+    color as in the editor surface so changing it propagates everywhere. */
+@@ -5713,6 +5940,13 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+   display: inline;
+ }
+ 
++/* Cite label widget. In a card, read mode replaces the cite's text with
++   one parsed author/year label ("Smith 21", card-read-info.ts), styled
++   as a cite by its `pmd-cite` class. Only emitted while read mode is on. */
++.pmd-read-mode .pmd-rm-cite-label {
++  display: inline;
++}
++
+ /* Hide hard-break / trailing-break elements inside card body and cite
+    paragraphs in read mode — ProseMirror adds a trailing <br> to empty
+    paragraphs for cursor placement; in read mode we want continuous
+@@ -5881,10 +6115,6 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
    border-radius: 8px;
    box-shadow: 0 8px 32px var(--pmd-c-shadow-deep);
    width: 90%;
@@ -4951,7 +5376,7 @@ index 19ab630..7b663a3 100644
    max-width: 720px;
    max-height: 80vh;
    display: flex;
-@@ -5892,18 +6113,37 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+@@ -5892,18 +6122,37 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
    font-family: var(--pmd-ui-font);
  }
  
@@ -4991,7 +5416,7 @@ index 19ab630..7b663a3 100644
    font-weight: 600;
  }
  
-@@ -5921,105 +6161,97 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+@@ -5921,105 +6170,97 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
    color: var(--pmd-c-text-strong);
  }
  
@@ -5155,7 +5580,7 @@ index 19ab630..7b663a3 100644
  /* Section headers inside a settings tab (SettingMeta.section).
   * Sized to match .pmd-install-info-heading ("About this install").
   * All settings dividers — between rows and between sections — use the
-@@ -6038,7 +6270,10 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+@@ -6038,7 +6279,10 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
    text-transform: uppercase;
    color: var(--pmd-c-text-muted);
  }
@@ -5167,7 +5592,7 @@ index 19ab630..7b663a3 100644
    margin-top: 0.3rem;
    padding-top: 0;
    border-top: none;
-@@ -6948,10 +7183,111 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+@@ -6948,10 +7192,111 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
    cursor: pointer;
  }
  
@@ -5280,7 +5705,7 @@ index 19ab630..7b663a3 100644
  /* Word Count modal */
  .pmd-wc-scope {
    margin: 0 0 0.75rem 0;
-@@ -10430,6 +10766,7 @@ body.pmd-recovery-active.pmd-multi-doc #app {
+@@ -10430,6 +10775,7 @@ body.pmd-recovery-active.pmd-multi-doc #app {
     Diverge by pulling a selector out, not by re-copying. */
  .pmd-qcs-badge-settings,
  .pmd-qcs-badge-file,
@@ -5288,7 +5713,7 @@ index 19ab630..7b663a3 100644
  .pmd-learn-session-remembered:hover,
  .pmd-learn-session-context:hover,
  .pmd-learn-manage-link:hover,
-@@ -10870,6 +11207,8 @@ body.pmd-recovery-active.pmd-multi-doc #app {
+@@ -10870,6 +11216,8 @@ body.pmd-recovery-active.pmd-multi-doc #app {
    display: flex;
    align-items: center;
    justify-content: space-between;
@@ -5297,7 +5722,7 @@ index 19ab630..7b663a3 100644
    padding: 1rem 1.25rem;
    border-bottom: 1px solid var(--pmd-c-divider);
    flex: 0 0 auto;
-@@ -10881,7 +11220,26 @@ body.pmd-recovery-active.pmd-multi-doc #app {
+@@ -10881,7 +11229,26 @@ body.pmd-recovery-active.pmd-multi-doc #app {
    font-weight: 600;
  }
  
@@ -5324,7 +5749,7 @@ index 19ab630..7b663a3 100644
  
  .pmd-reference-close:hover {
    color: var(--pmd-c-text);
-@@ -10956,6 +11314,68 @@ body.pmd-recovery-active.pmd-multi-doc #app {
+@@ -10956,6 +11323,68 @@ body.pmd-recovery-active.pmd-multi-doc #app {
    color: var(--pmd-c-text);
  }
  
@@ -5393,7 +5818,7 @@ index 19ab630..7b663a3 100644
  /* ---------------------------------------------- Tables */
  
  /* columnResizing()'s TableView nodeView replaces our schema toDOM at
-@@ -12393,6 +12813,10 @@ textarea.pmd-text-prompt-input {
+@@ -12393,6 +12822,10 @@ textarea.pmd-text-prompt-input {
    font-size: 0.8rem;
    color: var(--pmd-c-text-muted);
  }
@@ -5404,7 +5829,7 @@ index 19ab630..7b663a3 100644
  .pmd-learn-manage-new {
    margin-left: auto;
    background: transparent;
-@@ -12582,6 +13006,257 @@ textarea.pmd-text-prompt-input {
+@@ -12582,6 +13015,257 @@ textarea.pmd-text-prompt-input {
    border-color: var(--pmd-c-error);
  }
  
@@ -5662,7 +6087,7 @@ index 19ab630..7b663a3 100644
  /* ---- Multi-pane: typography parity ----
   *
   * The single-doc editor scopes typography-flag rules to `#editor.X`.
-@@ -13215,9 +13890,10 @@ body.pmd-timer-popout-page .pmd-timer-display {
+@@ -13215,9 +13899,10 @@ body.pmd-timer-popout-page .pmd-timer-display {
   * skip animation events entirely. Properties listed cover all the
   * motion the editor ships: CSS `transition` / `animation`, plus
   * `scroll-behavior` (so smooth scroll snaps instead of animating). */
@@ -5676,7 +6101,7 @@ index 19ab630..7b663a3 100644
    animation-duration: 0.01ms !important;
    animation-iteration-count: 1 !important;
    transition-duration: 0.01ms !important;
-@@ -13225,9 +13901,10 @@ body.pmd-timer-popout-page .pmd-timer-display {
+@@ -13225,9 +13910,10 @@ body.pmd-timer-popout-page .pmd-timer-display {
  }
  
  @media (prefers-reduced-motion: reduce) {
@@ -5690,7 +6115,7 @@ index 19ab630..7b663a3 100644
      animation-duration: 0.01ms !important;
      animation-iteration-count: 1 !important;
      transition-duration: 0.01ms !important;
-@@ -15275,6 +15952,17 @@ body.pmd-multi-doc .pmd-cardcutter-trim {
+@@ -15275,6 +15961,17 @@ body.pmd-multi-doc .pmd-cardcutter-trim {
    user-select: none;
  }
  
@@ -5708,7 +6133,7 @@ index 19ab630..7b663a3 100644
  /* Small corner chip shown while the benchmark drives the (visible) editor. */
  .pmd-bench-chip {
    position: fixed;
-@@ -16301,3 +16989,72 @@ body.pmd-multi-doc #collab-chip {
+@@ -16301,3 +16998,72 @@ body.pmd-multi-doc #collab-chip {
    pointer-events: none;
    z-index: 4;
  }

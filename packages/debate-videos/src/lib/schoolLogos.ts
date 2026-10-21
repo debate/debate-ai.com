@@ -79,12 +79,63 @@ export const SCHOOL_LOGO_MAP: Record<string, string | FC<SVGProps<SVGSVGElement>
   westminster: (IconSchoolWestminster as any)?.src ?? (IconSchoolWestminster as any),
 };
 
+/**
+ * Other spellings of a school, slugged, mapped to its key in
+ * {@link SCHOOL_LOGO_MAP}: nicknames ("Cal", "Wake"), abbreviations
+ * ("CSULB", "WKU") and typos seen in video titles ("Kentcuky"). Full names
+ * like "University of Kansas" or "California State University - Long Beach"
+ * mostly resolve by {@link schoolLogoKeys} trimming "University" and
+ * "College"; this list covers the rest.
+ */
+const SCHOOL_LOGO_ALIASES: Record<string, string> = {
+  berkeley: "uc-berkeley",
+  cal: "uc-berkeley",
+  "cal-berkeley": "uc-berkeley",
+  "california-berkeley": "uc-berkeley",
+  ucb: "uc-berkeley",
+  "cal-state-long-beach": "csu-long-beach",
+  "california-state-long-beach": "csu-long-beach",
+  "csu-lb": "csu-long-beach",
+  csulb: "csu-long-beach",
+  "long-beach": "csu-long-beach",
+  "long-beach-state": "csu-long-beach",
+  kentcuky: "kentucky",
+  msu: "michigan-state",
+  "texas-austin": "texas",
+  "ut-austin": "texas",
+  wake: "wake-forest",
+  wku: "western-kentucky",
+};
+
+/**
+ * The keys a school name could be filed under, most literal first: its slug,
+ * then with a leading "the", "university of" and a trailing "university" or
+ * "college" trimmed. "University of Texas - Dallas" becomes "texas-dallas",
+ * never "texas" — a campus stays its own school.
+ */
+function schoolLogoKeys(school: string): string[] {
+  const slug = slugify(school);
+  const trimmed = slug
+    .replace(/^the-/, "")
+    .replace(/^university-of-/, "")
+    .replace(/-(university|college)$/, "")
+    .replace(/-state-university-/, "-state-");
+  return trimmed === slug ? [slug] : [slug, trimmed];
+}
+
+/**
+ * A school's logo from `debate-icons`, or `null`. Accepts the short names
+ * debaters use ("Kansas", "Cal"), full official names ("University of
+ * Kansas", "University of California - Berkeley") and the aliases above.
+ */
 export const getSchoolLogo = (
   school: string | undefined | null,
 ): string | FC<SVGProps<SVGSVGElement>> | StaticImageData | null => {
   if (!school) return null;
-  const key = slugify(school);
-  if (SCHOOL_LOGO_MAP[key]) return SCHOOL_LOGO_MAP[key];
+  for (const key of schoolLogoKeys(school)) {
+    const found = SCHOOL_LOGO_MAP[key] ?? SCHOOL_LOGO_MAP[SCHOOL_LOGO_ALIASES[key] ?? ""];
+    if (found) return found;
+  }
   return null;
 };
 

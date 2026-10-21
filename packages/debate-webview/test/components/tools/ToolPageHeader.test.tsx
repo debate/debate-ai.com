@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 
-vi.mock("../../../src/components/tools/ToolSyncBadge", () => ({
+vi.mock("../../../src/components/tools/sync/ToolSyncBadge", () => ({
   ToolSyncBadge: ({ href, collectionKeys }: { href: string; collectionKeys?: readonly string[] }) => (
     <span data-testid="sync-badge" data-href={href} data-keys={collectionKeys?.join(",")} />
   ),
@@ -12,18 +12,18 @@ import { ALL_TOOLS } from "../../../src/routes/tools/tool-groups";
 
 describe("ToolPageHeader", () => {
   it("renders a collapsed 'What this tool does' disclosure from the catalog's highlights", () => {
-    const drills = ALL_TOOLS.find((tool) => tool.href === "/practice/drills")!;
-    expect(drills.highlights && drills.highlights.length > 0).toBe(true);
+    const prep = ALL_TOOLS.find((tool) => tool.href === "/practice/prep")!;
+    expect(prep.highlights && prep.highlights.length > 0).toBe(true);
 
     const html = renderToStaticMarkup(
-      <ToolPageHeader href="/practice/drills" backHref="/debate" backLabel="round workspace" />,
+      <ToolPageHeader href="/practice/prep" backHref="/debate" backLabel="round workspace" />,
     );
 
     expect(html).toContain("What this tool does");
     expect(html).toContain("<details");
     // <details> has no `open` attribute by default, so it renders collapsed.
     expect(html).not.toContain("<details open");
-    for (const highlight of drills.highlights!) {
+    for (const highlight of prep.highlights!) {
       // Server rendering escapes an apostrophe as an HTML entity.
       expect(html).toContain(highlight.replace(/'/g, "&#x27;"));
     }

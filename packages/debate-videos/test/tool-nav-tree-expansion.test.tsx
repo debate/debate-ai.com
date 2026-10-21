@@ -35,22 +35,34 @@ vi.mock("next/image", () => ({
     createElement("img", { src: typeof src === "string" ? src : (src as { src: string }).src, alt }),
 }));
 
-const { ToolNavTree } = await import("../src/components/category-gallery/ToolNavTree");
+<<<<<<< HEAD
+const { ToolNavTree } = await import("../src/components/sidebar/ToolNavTree");
 const { SIDEBAR_TOOL_SECTIONS } = await import(
-  "../src/components/category-gallery/sidebar-tool-sections"
+  "../src/components/sidebar/sidebar-tool-sections"
 );
 const { VIDEOS_SECTION_ID } = await import(
-  "../src/components/category-gallery/sidebar-active-section"
+  "../src/components/sidebar/sidebar-active-section"
 );
 const { ALL_SIDEBAR_SECTION_IDS, toggleExpandedSection, withSectionExpanded } = await import(
-  "../src/components/category-gallery/sidebar-section-expansion"
+  "../src/components/sidebar/sidebar-section-expansion"
+=======
+const { ToolNavTree } = await import("../src/components/sidebar-nav/ToolNavTree");
+const { SIDEBAR_TOOL_SECTIONS } = await import(
+  "../src/components/sidebar-nav/sidebar-tool-sections"
+);
+const { VIDEOS_SECTION_ID } = await import(
+  "../src/components/sidebar-nav/sidebar-active-section"
+);
+const { ALL_SIDEBAR_SECTION_IDS, toggleExpandedSection, withSectionExpanded } = await import(
+  "../src/components/sidebar-nav/sidebar-section-expansion"
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 );
 
 /** One href per section, to assert that section's links are mounted. */
 const SAMPLE_HREF_BY_SECTION: Record<string, string> = {
-  coaching: "/coaching/progress",
+  coaching: "/news",
   research: "/research/team",
-  practice: "/practice/drills",
+  practice: "/practice/prep",
   insights: "/practice/glossary",
 };
 
@@ -88,7 +100,7 @@ describe("ToolNavTree expansion", () => {
     );
 
     expect(html).toContain('href="/research/team"');
-    expect(html).not.toContain('href="/coaching/progress"');
+    expect(html).not.toContain('href="/news"');
     expect(html).not.toContain('href="/practice/judge-decision"');
   });
 });

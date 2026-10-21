@@ -138,7 +138,8 @@ describe("TeamProfilePage", () => {
     await flush();
     const root = view.container;
 
-    expect(root.querySelector("h1")?.textContent).toBe("Kim & Lee");
+    // The heading is the team label: Harker's logo (its name kept for screen readers), then the last names.
+    expect(root.querySelector("h1")?.textContent).toBe("Harker Kim & Lee");
     expect(root.querySelector('a[href="/schools/harker"]')?.textContent).toBe("Harker");
     expect(root.textContent).toContain("Label hspf · rank 1 of 3");
     expect(root.textContent).toContain("62.5%");
@@ -154,7 +155,7 @@ describe("TeamProfilePage", () => {
     );
     expect(followMock.mock.calls[0][0]).toMatch(/^\/api\/follows\?/);
     expect(followMock.mock.calls[0][0]).toContain("kind=team");
-    expect(root.textContent).toContain("4 followers");
+    expect(root.textContent).toContain("0.0k followers");
     expect(root.querySelector('a[href="/login"]')?.textContent).toContain("Sign in to follow");
   });
 
@@ -190,11 +191,12 @@ describe("SchoolProfilePage", () => {
     expect(root.textContent).toContain("Label hspf · 2 teams");
     const rows = root.querySelectorAll("tbody tr");
     expect(rows).toHaveLength(3);
-    expect(rows[0].textContent).toContain("Jane Kim");
+    // LD rows name the debater by last name, after the school.
+    expect(rows[0].textContent).toContain("Harker Kim");
     expect(rows[0].textContent).toContain("—");
     const { teamHref } = await import("../src/panels/leaderboard/profile/rankingProfileHelpers");
     expect(root.querySelector(`a[href="${teamHref({ school: "Harker", name: "Jane Kim" })}"]`)?.textContent).toBe(
-      "Jane Kim",
+      "Kim",
     );
     expect(fetchMock.mock.calls[0][0]).toBe("/api/caselist-documents?school=Harker&limit=50");
     expect(root.textContent).toContain("Files from Harker");

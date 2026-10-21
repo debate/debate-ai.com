@@ -15,6 +15,19 @@ import type { CategoryType, TopicType, VideoFacets, VideoSuggestions } from "../
 import type { LectureCategoryFacet, VideoType } from "../types/videos"
 import { Footer } from "../ui/layout/footer"
 import { ResizableSidebarLayout } from "../ui/layout/ResizableSidebarLayout"
+<<<<<<< HEAD
+import { VideoSearchBar } from "../components/videos/video-search/VideoSearchBar"
+import { VideoSearchSuggestions } from "../components/videos/video-search/VideoSearchSuggestions"
+import { SubmitToLibraryButton } from "../components/videos/video-search/SubmitToLibraryButton"
+import { getSearchPhrases } from "../components/videos/video-search/searchPhrases"
+import { VideoGrid } from "../components/videos/video-grid/VideoGrid"
+import { VideoListRows } from "../components/videos/video-grid/VideoListRows"
+import { LectureCategoryGridGallery, GridItem } from "../components/gallery/LectureCategoryGridGallery"
+import { QuickLinksGrid } from "../components/gallery/QuickLinksGrid"
+import { VideoSidebarTree } from "../components/sidebar/VideoSidebarTree"
+import { ToolNavTree } from "../components/sidebar/ToolNavTree"
+import { GoatSparklesHeading } from "../components/gallery/GoatSparklesHeading"
+=======
 import { VideoSearchBar } from "../components/video-search/VideoSearchBar"
 import { VideoSearchSuggestions } from "../components/video-search/VideoSearchSuggestions"
 import { SubmitToLibraryButton } from "../components/video-search/SubmitToLibraryButton"
@@ -23,11 +36,19 @@ import { VideoGrid } from "../components/video-grid/VideoGrid"
 import { VideoListRows } from "../components/video-grid/VideoListRows"
 import { LectureCategoryGridGallery, GridItem } from "../components/category-gallery/LectureCategoryGridGallery"
 import { QuickLinksGrid } from "../components/category-gallery/QuickLinksGrid"
-import { VideoSidebarTree } from "../components/category-gallery/VideoSidebarTree"
-import { ToolNavTree } from "../components/category-gallery/ToolNavTree"
+import { VideoSidebarTree } from "../components/sidebar-nav/VideoSidebarTree"
+import { ToolNavTree } from "../components/sidebar-nav/ToolNavTree"
 import { GoatSparklesHeading } from "../components/category-gallery/GoatSparklesHeading"
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 import { cn } from "../ui/lib/utils";
-import { SIDEBAR_VIDEO_LINKS_BY_ID } from "../components/category-gallery/sidebar-video-links";
+import {
+  VIDEO_ALL_VIDEOS_FILTER_LINKS,
+  VIDEO_COLLEGE_FILTER_LINKS,
+<<<<<<< HEAD
+} from "../components/sidebar/sidebar-video-links";
+=======
+} from "../components/sidebar-nav/sidebar-video-links";
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 import type { DebateStyle } from "../types/videos"
 import type { VideoViewMode } from "../hooks/useVideoState"
 import { useVideoStacks } from "../hooks/useVideoStacks"
@@ -251,6 +272,16 @@ export function LecturesVideoGridView({
   const browsingAllVideos = browsingLibrary && slug === undefined
   const browsingLectures = browsingLibrary && !browsingAllVideos
 
+  // The collection cards above the search box: WSD, ACC and Speech on All
+  // Videos, and ACC (the ACC Debate Tournament's rounds) on College Team
+  // Debates.
+  const browsingCollege = selectedStyle === 4 && !showFavoritesOnly && currentCategory !== "history"
+  const collectionLinks = browsingAllVideos
+    ? VIDEO_ALL_VIDEOS_FILTER_LINKS
+    : browsingCollege
+      ? VIDEO_COLLEGE_FILTER_LINKS
+      : null
+
   /** The watch-history listing, which is neither a category nor a filter. */
   const isHistory = currentCategory === "history"
 
@@ -361,38 +392,6 @@ export function LecturesVideoGridView({
 
         <div ref={videosSectionRef} className="scroll-mt-20" />
 
-        {/* WSD, ACC, Speech cards - shown on the all videos page */}
-        {browsingAllVideos && (
-          <div className="mb-6">
-            <ul
-              className={cn(
-                "grid gap-2",
-                "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5",
-              )}
-            >
-              {["wsd", "acc", "speech"].map((id) => {
-                const link = SIDEBAR_VIDEO_LINKS_BY_ID[id]
-                return (
-                  <GridItem
-                    key={link.id}
-                    icon={
-                      <div className="rounded-md border-[0.75px] border-border bg-muted p-1">
-                        {link.glyph ? (
-                          <link.glyph className="h-4 w-4" />
-                        ) : null}
-                      </div>
-                    }
-                    title={link.title}
-                    description="Debate lecture videos"
-                    videoCount={quickLinkCounts?.[link.id] ?? 0}
-                    isSelected={activeQuickLinkId === link.id}
-                    href={link.href}
-                  />
-                )
-              })}
-            </ul>
-          </div>
-        )}
           {showLectureGallery && (
           <nav className="mb-6" aria-label="Lecture categories">
             <LectureCategoryGridGallery
@@ -404,6 +403,40 @@ export function LecturesVideoGridView({
         {/* The Greatest of All-Time collection opens on its own banner. */}
         {currentCategory === "topPicks" && <GoatSparklesHeading />}
 
+        {/* The WSD, ACC and Speech collections, directly above the search box
+            on the All Videos page (ACC alone on College Team Debate). They
+            are not sidebar links, so neither the sidebar nor the mobile tiles
+            carry them. */}
+        {collectionLinks && (
+          <div className="mb-6">
+            <ul
+              className={cn(
+                "grid gap-2",
+                "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5",
+              )}
+            >
+              {collectionLinks.map((link) => {
+                return (
+                  <GridItem
+                    key={link.id}
+                    icon={
+                      <div className="rounded-md border-[0.75px] border-border bg-muted p-1">
+                        {link.glyph ? (
+                          <link.glyph className="h-4 w-4" />
+                        ) : null}
+                      </div>
+                    }
+                    title={link.title}
+                    description={browsingAllVideos ? "Debate lecture videos" : "ACC Debate Tournament rounds"}
+                    videoCount={quickLinkCounts?.[link.id] ?? 0}
+                    isSelected={activeQuickLinkId === link.id}
+                    href={link.href}
+                  />
+                )
+              })}
+            </ul>
+          </div>
+        )}
         {/* The search and filter controls, always visible on every
             breakpoint, with the one-click searches drawn from the library
             (popular debate terms and the tournaments with the most rounds)

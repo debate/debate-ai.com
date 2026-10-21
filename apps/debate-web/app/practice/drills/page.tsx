@@ -1,8 +1,16 @@
 import type { Metadata } from "next"
+import { permanentRedirect } from "next/navigation"
+
+/**
+ * The old address of Practice Drills, merged into the Prep Workspace at
+ * `/practice/prep`. It permanently redirects to its "drills" tab.
+ */
 
 export const metadata: Metadata = {
   title: "Practice Drills",
-  description: "Quick practice drills generated from each round's flow",
+  alternates: { canonical: "/practice/prep?section=drills" },
 }
 
-export { default } from "@debate/webview/routes/drills/page"
+export default function LegacyPracticeDrillsPage() {
+  permanentRedirect("/practice/prep?section=drills")
+}

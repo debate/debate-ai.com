@@ -3,6 +3,7 @@ import {
   applyDebaterActivity,
   computeLevelProgress,
   createDebaterLevelState,
+  DEBATER_CHALLENGES,
   getChallengeProgress,
   MAX_DEBATER_LEVEL,
   parseDebaterLevelState,
@@ -107,5 +108,53 @@ describe("parseDebaterLevelState", () => {
     expect(parseDebaterLevelState(null)).toBeNull();
     expect(parseDebaterLevelState({ totalXp: -1 })).toBeNull();
     expect(parseDebaterLevelState({ ...state, lifetimeCounts: { bogus: 1 } })).toBeNull();
+  });
+});
+
+describe("applyDebaterActivity event ledger", () => {
+  it("stamps the activity event with a unique id and its count", () => {
+    const a = applyDebaterActivity(createDebaterLevelState(), "card_cut", DAY1, 2, undefined, undefined, "evt");
+    expect(a.state.recentXp.at(-1)).toMatchObject({ id: "evt", source: "card_cut", count: 2 });
+    const b = applyDebaterActivity(createDebaterLevelState(), "card_cut", DAY1);
+    const c = applyDebaterActivity(createDebaterLevelState(), "card_cut", DAY1);
+    expect(b.state.recentXp[0]?.id).toBeTruthy();
+    expect(b.state.recentXp[0]?.id).not.toBe(c.state.recentXp[0]?.id);
+  });
+
+  it("gives challenge bonuses their own id derived from the event", () => {
+    let state = createDebaterLevelState();
+    let last = applyDebaterActivity(state, "card_cut", DAY1, 1, undefined, undefined, "e1");
+    for (let i = 0; i < 6 && last.completedChallenges.length === 0; i += 1) {
+      state = last.state;
+      last = applyDebaterActivity(state, "card_cut", DAY1, 1, undefined, undefined, `e${i + 2}`);
+    }
+    const bonus = last.state.recentXp.find((e) => e.source !== "card_cut");
+    if (bonus) expect(bonus.id).toMatch(/^e\d+:/);
+  });
+});
+
+describe("per-device daily tallies", () => {
+  it("tracks today's counts per device and resets on a new day", () => {
+    const s0 = createDebaterLevelState();
+    const s1 = applyDebaterActivity(s0, "card_cut", DAY1, 2, DEBATER_CHALLENGES, "dev-a").state;
+    expect(s1.ledger?.devices["dev-a"].daily).toEqual({ dayKey: "2026-09-26", counts: { card_cut: 2 } });
+    const s2 = applyDebaterActivity(s1, "card_cut", DAY1, 1, DEBATER_CHALLENGES, "dev-a").state;
+    expect(s2.ledger?.devices["dev-a"].daily?.counts.card_cut).toBe(3);
+    const s3 = applyDebaterActivity(s2, "card_cut", DAY2, 1, DEBATER_CHALLENGES, "dev-a").state;
+    expect(s3.ledger?.devices["dev-a"].daily).toEqual({ dayKey: "2026-09-27", counts: { card_cut: 1 } });
+  });
+
+  it("snapshots today's counts into the base when the ledger starts", () => {
+    const s1 = applyDebaterActivity(createDebaterLevelState(), "card_cut", DAY1).state;
+    const s2 = applyDebaterActivity(s1, "card_cut", DAY1, 1, DEBATER_CHALLENGES, "dev-a").state;
+    expect(s2.ledger?.base.daily).toEqual({ dayKey: "2026-09-26", counts: { card_cut: 1 } });
+  });
+
+  it("round-trips daily tallies and tolerates entries without one", () => {
+    const s = applyDebaterActivity(createDebaterLevelState(), "card_cut", DAY1, 1, DEBATER_CHALLENGES, "dev-a").state;
+    expect(parseDebaterLevelState(JSON.parse(JSON.stringify(s)))?.ledger).toEqual(s.ledger);
+    const legacy = JSON.parse(JSON.stringify(s));
+    delete legacy.ledger.devices["dev-a"].daily;
+    expect(parseDebaterLevelState(legacy)?.ledger?.devices["dev-a"].daily).toBeUndefined();
   });
 });

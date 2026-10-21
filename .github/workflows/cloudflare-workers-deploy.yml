@@ -152,10 +152,18 @@ jobs:
 
       # Workspace deps hoist to the repo root, so the install has to run
       # there rather than in apps/<app>. No lockfile is committed; deps
-      # resolve fresh from package.json.
+      # resolve fresh from package.json. The npm registry sometimes answers
+      # 502 mid-install, which failed the #1322 deploy, so retry a few times
+      # before giving up.
       - name: Install dependencies
         working-directory: .
-        run: bun install
+        run: |
+          for attempt in 1 2 3; do
+            bun install && exit 0
+            echo "::warning::bun install failed (attempt $attempt), retrying"
+            sleep $((attempt * 15))
+          done
+          bun install
 
       # `--if-present` has to precede the script name: after it, bun stops
       # parsing flags and forwards the rest to the script, so the app's build

@@ -25,11 +25,15 @@ export const DOCS_SIDEBAR_SLOT_ID = "app-sidebar-docs-slot"
  *
  * - **The embedded dock** at the top, sticky as the column scrolls.
  * - **The REASON docs panels** on `/reason-editor` (`showsReasonDocsPanels`).
- *   `/research/cards` opens them as a second column inside the page instead
- *   (`showsCardsPagePanel`), so this column stays the same there as on every
- *   other destination.
+ *   There they are the whole column below the dock: Topic Starters and My
+ *   Personal Documents fill its height and the library tree is not drawn, so
+ *   the documents are all the sidebar shows. The dock above stays as the way
+ *   back to every other destination, whose sidebar is the full tree again.
+ *   `/research/cards` opens the panels as a second column inside the page
+ *   instead (`showsCardsPagePanel`), so this column stays the same there as
+ *   on every other destination.
  * - **The library tree** — Videos (Lectures is one of its rows) and the tool
- *   sections — on every route. The site links that used to sit under it as a footer
+ *   sections — on every route but `/reason-editor`. The site links that used to sit under it as a footer
  *   row are a submenu of the account menu now (`nav-user.tsx`).
  * - **The help docs' page tree** on `/docs` ({@link DOCS_SIDEBAR_SLOT_ID}),
  *   at the bottom of the column, below the tool sections' Insights
@@ -48,12 +52,14 @@ export function AppSidebar() {
       </ChromeErrorBoundary>
       {docsPanels && (
         <ChromeErrorBoundary label="ReasonDocsSidebarPanels">
-          <ReasonDocsSidebarPanels className="shrink-0" />
+          <ReasonDocsSidebarPanels className="min-h-0 flex-1" fill />
         </ChromeErrorBoundary>
       )}
-      <ChromeErrorBoundary label="LibrarySidebarTree">
-        <LibrarySidebarTree />
-      </ChromeErrorBoundary>
+      {!docsPanels && (
+        <ChromeErrorBoundary label="LibrarySidebarTree">
+          <LibrarySidebarTree />
+        </ChromeErrorBoundary>
+      )}
       {isDocsPath(pathname) && <div id={DOCS_SIDEBAR_SLOT_ID} className="shrink-0" />}
     </>
   )

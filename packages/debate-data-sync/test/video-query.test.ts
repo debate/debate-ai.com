@@ -343,15 +343,15 @@ describe("rankTournamentSuggestions", () => {
 
 describe("rankKeywordSuggestions", () => {
   it("drops keywords the library has no videos for, keeping the curated order", () => {
-    const ranked = rankKeywordSuggestions({ Finals: 4, Critique: 9, Novice: 0 });
+    const ranked = rankKeywordSuggestions({ Final: 4, Critique: 9, Novice: 0 });
     expect(ranked).toEqual([
-      { label: "Finals", count: 4, kind: "keyword" },
+      { label: "Final", count: 4, kind: "keyword" },
       { label: "Critique", count: 9, kind: "keyword" },
     ]);
   });
 
   it("keeps at most the requested number of chips", () => {
-    expect(rankKeywordSuggestions({ Finals: 1, Critique: 1, Topicality: 1 }, 2)).toHaveLength(2);
+    expect(rankKeywordSuggestions({ Final: 1, Critique: 1, Topicality: 1 }, 2)).toHaveLength(2);
   });
 });
 
@@ -366,7 +366,7 @@ describe("computeVideoSuggestions", () => {
   it("suggests only keywords that match, counted like the search box", () => {
     const { keywords } = computeVideoSuggestions(SUGGESTION_ROWS);
     const byLabel = Object.fromEntries(keywords.map((k) => [k.label, k.count]));
-    expect(byLabel.Finals).toBe(2);
+    expect(byLabel.Final).toBe(2);
     expect(byLabel.Critique).toBe(1);
     expect(byLabel.Semis).toBe(1);
     expect(keywords.every((k) => k.count > 0)).toBe(true);

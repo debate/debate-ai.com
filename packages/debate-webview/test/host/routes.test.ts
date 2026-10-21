@@ -14,8 +14,9 @@ function pagePatterns(dir: string): string[] {
     if (statSync(path).isDirectory()) {
       // `docs` is the help site (`debate-help-docs`): rendered only by the web
       // app, outside the app shell, and always entered with a full page load —
-      // so it has no place in the host's client-side route table.
-      if (name === "api" || name === "docs" || name.startsWith("_")) continue
+      // so it has no place in the host's client-side route table. `blog` is
+      // the same: its posts are `debate-help-docs` content, rendered the same way.
+      if (name === "api" || name === "docs" || name === "blog" || name.startsWith("_")) continue
       out.push(...pagePatterns(path))
     } else if (name === "page.tsx") {
       const rel = relative(APP_DIR, dir).split(sep).join("/")
@@ -35,6 +36,7 @@ describe("route table", () => {
   it("resolves the pages a reader actually visits", () => {
     expect(resolveRoute(APP_ROUTES, "/videos")?.route.pattern).toBe("/videos")
     expect(resolveRoute(APP_ROUTES, "/videos/2022")?.route.pattern).toBe("/videos/[category]")
+    expect(resolveRoute(APP_ROUTES, "/videos/mini/OXdffJy8HIs")?.route.pattern).toBe("/videos/mini/[id]")
     expect(resolveRoute(APP_ROUTES, "/coaching/leaderboard")?.route.pattern).toBe("/coaching/leaderboard")
     expect(resolveRoute(APP_ROUTES, "/tournaments/2026/yale-invitational/rounds")?.params).toEqual({ slug: ["2026", "yale-invitational", "rounds"] })
     expect(resolveRoute(APP_ROUTES, "/practice/tabroom")?.route.pattern).toBe("/practice/tabroom/[[...slug]]")

@@ -42,10 +42,31 @@ export function isLectureCategory(value: unknown): value is LectureCategory {
   return typeof value === "string" && (LECTURE_CATEGORIES as readonly string[]).includes(value);
 }
 
+/**
+ * The collection a debate *round* is filed under on top of its style, or
+ * `null` for none. Rounds otherwise carry no category, but the ACC (Atlantic
+ * Coast Conference) tournament's rounds belong on the `/videos/acc` shelf
+ * beside the ACC lectures, so a title naming "ACC Debate Tournament" files
+ * the round there while it keeps its style.
+ *
+ * @param title - The video's title.
+ * @returns `"ACC"`, or `null` when the round belongs to no collection.
+ */
+export function classifyRoundCollection(title: string): LectureCategory | null {
+  return /\bACC\s+Debate\s+Tournament\b/i.test(title) ? "ACC" : null;
+}
+
 export function classifyLecture(title: string, description: string): string {
   const t = title.toLowerCase();
   const d = (description || "").toLowerCase();
   const both = t + " " + d;
+
+  // Format collections, decided by the title alone and ahead of every skill
+  // shelf: a "WSD Rebuttals" lecture belongs with the World Schools videos,
+  // not under Speaking & Delivery. Matched as whole words so "accent" or
+  // "access" never lands in ACC.
+  if (/\bWSD\b|\bworld\s*schools?\b/i.test(title)) return "WSD";
+  if (/\bACC\b|\bamerican\s+congressional\b/i.test(title)) return "ACC";
 
   // Topic Lectures
   if (

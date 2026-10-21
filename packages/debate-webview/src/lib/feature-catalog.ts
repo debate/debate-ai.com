@@ -53,7 +53,8 @@ export type FeatureCategory =
   | "round"
   | "intelligence"
   | "practice"
-  | "recognition";
+  | "recognition"
+  | "documents";
 
 /** Display order and label for each category, broadest surfaces first. */
 export const FEATURE_CATEGORY_LABELS: Record<FeatureCategory, string> = {
@@ -64,6 +65,7 @@ export const FEATURE_CATEGORY_LABELS: Record<FeatureCategory, string> = {
   intelligence: "Pre-Round Intelligence",
   practice: "Practice & Coaching",
   recognition: "Recognition & Progress",
+  documents: "Documents",
 };
 
 /** One line under each category heading explaining what the group is for. */
@@ -75,6 +77,7 @@ export const FEATURE_CATEGORY_DESCRIPTIONS: Record<FeatureCategory, string> = {
   intelligence: "What you know about the opponent and judge before the round starts.",
   practice: "Practice rounds, drills, and AI coaching between tournaments.",
   recognition: "Quests, streaks, awards, unlocks, and standings that reward contributing research.",
+  documents: "Research documents, the card editor, speech docs, and the shared Google Drive folder of PDF guides.",
 };
 
 /** One user-facing surface in the app. */
@@ -134,24 +137,6 @@ export const APP_FEATURES: FeatureEntry[] = [
     href: "/debate",
     category: "workspaces",
     tags: ["fiat", "flow", "spreadsheet", "timer", "round", "@debate/round"],
-  },
-  {
-    id: "reason-docs",
-    title: "Reason Docs",
-    description: "The nested research-document tree — Research Editor for Annotated Summaries in Outline Notation",
-    href: "/research/docs",
-    category: "workspaces",
-    tags: ["docs", "documents", "notes", "outline"],
-  },
-  {
-    id: "reason-editor",
-    title: "Reason Editor",
-    description:
-      "The rich-text card editor: a Google-Docs-style menu bar (File/Edit/Card/Format/Insert/AI/View/Tools/Workspace), a Ctrl/Cmd-P command palette that also jumps to other tools, Verbatim/Cardmirror-compatible shortcuts, an outline nav panel, and a send-to-speech-document command",
-    href: "/reason-editor",
-    category: "workspaces",
-    doc: "legacy-verbatim-shortcuts.md",
-    tags: ["verbatim", "cardmirror", "tiptap", "editor", "docx", "reason-editor", "menu bar", "command palette", "workspace"],
   },
   {
     id: "research-workspace",
@@ -327,15 +312,6 @@ export const APP_FEATURES: FeatureEntry[] = [
     tags: ["video", "timestamp", "jump to", "flow-in-speech"],
   },
   {
-    id: "speech-documents",
-    title: "Speech Documents",
-    description: "History of evidence sent into the designated speech document from the Reason Editor",
-    href: "/speech-documents",
-    category: "round",
-    doc: "speech-document-target.md",
-    tags: ["send to speech", "cardmirror", "prosemirror"],
-  },
-  {
     id: "word-count-speeches",
     title: "Word-Count Speeches",
     description: "Practice speeches bounded by a maximum word count instead of a time limit",
@@ -350,7 +326,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "prep-workspace",
     title: "Prep Workspace",
     description:
-      "Pre-round briefings, scout-to-strategy case rankings, opponent team profiles, judge profiles and prep notes, one tab each on a single page",
+      "Pre-round briefings, scout-to-strategy case rankings, opponent team profiles, judge profiles, prep notes, practice partners and practice drills, one tab each on a single page",
     href: "/practice/prep",
     category: "intelligence",
     doc: "prep-workspace.md",
@@ -370,7 +346,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "practice-partners",
     title: "Practice Partners",
     description: "Challenge other debaters to a virtual practice round, or volunteer to debate or judge in the styles you're comfortable with",
-    href: "/practice/partners",
+    href: "/practice/prep?section=partners",
     category: "practice",
     doc: "practice-partners.md",
     tags: ["challenge", "volunteer", "judge", "matchmaking"],
@@ -406,7 +382,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "practice-drills",
     title: "Practice Drills",
     description: "Quick practice drills generated from each round's flow",
-    href: "/practice/drills",
+    href: "/practice/prep?section=drills",
     category: "practice",
     doc: "drill-sets.md",
     tags: ["overview", "frontline", "cross-ex", "collapse"],
@@ -502,6 +478,36 @@ export const APP_FEATURES: FeatureEntry[] = [
     category: "recognition",
     doc: "team-rankings.md",
     tags: ["elo", "toc", "bid list", "debatedrills"],
+  },
+
+  // ── Documents ──────────────────────────────────────────────────────────
+  {
+    id: "reason-docs",
+    title: "Reason Docs",
+    description: "The nested research-document tree — Research Editor for Annotated Summaries in Outline Notation",
+    href: "/research/docs",
+    category: "documents",
+    doc: "reason-docs-sidebar.md",
+    tags: ["docs", "documents", "notes", "outline", "topic starters", "my personal documents", "cmir", "file manager"],
+  },
+  {
+    id: "reason-editor",
+    title: "Reason Editor",
+    description:
+      "The rich-text card editor: a Google-Docs-style menu bar (File/Edit/Card/Format/Insert/AI/View/Tools/Workspace), a Ctrl/Cmd-P command palette that also jumps to other tools, Verbatim/Cardmirror-compatible shortcuts, an outline nav panel, and a send-to-speech-document command",
+    href: "/reason-editor",
+    category: "documents",
+    doc: "legacy-verbatim-shortcuts.md",
+    tags: ["verbatim", "cardmirror", "tiptap", "editor", "docx", "reason-editor", "menu bar", "command palette", "workspace", "read mode"],
+  },
+  {
+    id: "speech-documents",
+    title: "Speech Documents",
+    description: "History of evidence sent into the designated speech document from the Reason Editor",
+    href: "/speech-documents",
+    category: "documents",
+    doc: "speech-document-target.md",
+    tags: ["send to speech", "cardmirror", "prosemirror"],
   },
 ];
 

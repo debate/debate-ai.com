@@ -28,6 +28,7 @@ import Link from "next/link"
 import { useMemo, useState } from "react"
 import {
   modelMatchup,
+  teamDisplayParts,
   recommendSide,
   recommendWeights,
   simulateRounds,
@@ -44,7 +45,8 @@ import { useMyRankedTeams } from "../../../lib/my-ranked-teams/useMyRankedTeams"
 import { Button } from "../../../ui/primitives/button"
 import { Input } from "../../../ui/primitives/input"
 import { teamHref, teamSlug } from "./rankingProfileHelpers"
-import { formatCount } from "../../../components/category-gallery/format-count"
+import { formatCount } from "../../../lib/format-count"
+import { TeamLabel } from "../../../components/team-label/TeamLabel"
 
 const pct = (p: number) => `${(p * 100).toFixed(1)}%`
 const SIM_ROUNDS = 1000
@@ -194,9 +196,11 @@ function TeamBreakdown({
 }) {
   return (
     <div className={align === "right" ? "sm:text-right" : ""}>
-      <Link href={teamHref(entry)} className="font-semibold text-foreground underline-offset-4 hover:underline">
-        {entry.name}
-      </Link>
+      <TeamLabel
+        {...teamDisplayParts({ school: entry.school, name: entry.name })}
+        href={teamHref(entry)}
+        className="font-semibold text-foreground"
+      />
       <div className="text-xs text-muted-foreground">
         {entry.school} · #{entry.rank} · {entry.matches} rounds
       </div>

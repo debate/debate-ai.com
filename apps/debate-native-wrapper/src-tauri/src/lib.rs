@@ -2,8 +2,10 @@
 // which then opens `generated_scheme::APP_URL` as the main window's content,
 // and provides:
 // 1. Google OAuth deep-link handoff (`<scheme>://auth-callback?token=...`)
-// 2. Desktop background service with system tray + minimize-to-tray on close
-// 3. Autostart on system boot (LaunchAgent on macOS, Registry on Windows, autostart on Linux)
+// 2. Desktop background service (`background`): starts hidden at login and
+//    lives in the tray; closing the window hides it instead of quitting
+// 3. Autostart on system boot (LaunchAgent on macOS, Registry on Windows, autostart on Linux),
+//    on by default and toggled from the tray's "Run on Startup" entry
 // 4. Global shortcut `Ctrl+`` / `Cmd+`` that captures active selection / clipboard text
 //    and brings the window into focus with the selected text as input
 // 5. Fullscreen toggle shortcut (F11 / CmdOrCtrl+Shift+F)
@@ -11,12 +13,19 @@
 // 7. A choice of where the app loads from (`app_source`): for debate-ai, the
 //    live site, the beta site, or the offline build bundled in dist/
 // 8. Camera and microphone access for the app's own pages (`media`)
+// 9. A mini player window that can stay on top of other apps (`mini_player`)
+// 10. Desktop auto-update from the profile's signed update feed (`updater`)
 
 mod app_source;
+#[cfg(desktop)]
+mod background;
 mod commands;
 mod generated_scheme;
 mod media;
+mod mini_player;
 mod system_info;
+#[cfg(desktop)]
+mod updater;
 
 use tauri::{Manager, Url};
 
@@ -42,11 +51,7 @@ pub fn run() {
             if let Some(url) = argv.iter().find(|arg| arg.starts_with(&scheme_prefix)) {
                 handle_deep_link(app, url);
             }
-            if let Some(window) = app.get_webview_window("main") {
-                let _ = window.show();
-                let _ = window.unminimize();
-                let _ = window.set_focus();
-            }
+            background::show_main(app);
         }));
 
         builder = builder.plugin(tauri_plugin_autostart::init(
@@ -65,6 +70,9 @@ pub fn run() {
             commands::get_last_selected_text,
             commands::show_main_window,
             commands::hide_to_tray,
+            mini_player::open_mini_player,
+            mini_player::set_always_on_top,
+            mini_player::restore_from_mini_player,
         ])
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_deep_link::init())
@@ -72,6 +80,10 @@ pub fn run() {
         .setup(|app| {
             if let Some(window) = app.get_webview_window("main") {
                 media::enable_media(&window);
+                // Created hidden (tauri.conf.json); with no tray to start in,
+                // mobile shows it straight away.
+                #[cfg(mobile)]
+                let _ = window.show();
             }
 
             let saved_source = app_source::load(app.handle());
@@ -88,8 +100,13 @@ pub fn run() {
             {
                 let _ = app.deep_link().register_all();
 
+                register_global_shortcuts(app.handle());
+
                 // Setup system tray icon and background persistence
                 setup_tray_and_background(app)?;
+
+                // Check the update feed now, and daily while in the tray
+                updater::init(app)?;
             }
 
             Ok(())
@@ -99,19 +116,21 @@ pub fn run() {
 }
 
 /// Sets up the system tray and configures the window to hide to background
-/// on close instead of exiting.
+/// on close instead of exiting. See background.rs.
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
 fn setup_tray_and_background(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     use tauri::menu::{CheckMenuItemBuilder, MenuBuilder, MenuItemBuilder, SubmenuBuilder};
     use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
-    use tauri_plugin_autostart::ManagerExt;
 
-    // Enable autostart on system boot by default
-    let _ = app.autolaunch().enable();
+    background::enable_autostart_on_first_run(app.handle());
 
     // Tray context menu
-    let show_item = MenuItemBuilder::with_id("show", "Show Debate AI").build(app)?;
+    let show_item = MenuItemBuilder::with_id("show", "Open Debate AI").build(app)?;
     let hide_item = MenuItemBuilder::with_id("hide", "Hide to Background").build(app)?;
+    let autostart_item = CheckMenuItemBuilder::with_id("autostart", "Run on Startup")
+        .checked(background::autostart_enabled(app.handle()))
+        .build(app)?;
+    let settings_item = MenuItemBuilder::with_id("settings", "Settings…").build(app)?;
     let quit_item = MenuItemBuilder::with_id("quit", "Quit Debate AI").build(app)?;
 
     // "Load From": one checkable entry per profile source; the checked one is
@@ -126,52 +145,45 @@ fn setup_tray_and_background(app: &mut tauri::App) -> Result<(), Box<dyn std::er
         source_menu = source_menu.item(&item);
         source_items.push((id.to_string(), item));
     }
-    let source_menu = source_menu
-        .separator()
-        .item(&MenuItemBuilder::with_id("source-settings", "Settings…").build(app)?)
-        .build()?;
+    let source_menu = source_menu.build()?;
     app.manage(TraySourceItems(std::sync::Mutex::new(source_items)));
 
     let menu = MenuBuilder::new(app)
         .items(&[&show_item, &hide_item])
         .separator()
+        .item(&autostart_item)
+        .item(&settings_item)
         .item(&source_menu)
         .separator()
         .item(&quit_item)
         .build()?;
 
-    let _tray = TrayIconBuilder::new()
+    let _tray = TrayIconBuilder::with_id("main")
         .icon(app.default_window_icon().unwrap().clone())
         .menu(&menu)
-        .tooltip("Debate AI (Ctrl+` to quick launch)")
+        .tooltip("Debate AI (Ctrl+` to open)")
         .show_menu_on_left_click(false)
-        .on_menu_event(|app, event| match event.id.as_ref() {
-            "show" => {
-                if let Some(window) = app.get_webview_window("main") {
-                    let _ = window.show();
-                    let _ = window.unminimize();
-                    let _ = window.set_focus();
-                }
+        .on_menu_event(move |app, event| match event.id.as_ref() {
+            "show" => background::show_main(app),
+            "hide" => background::hide_main(app),
+            "autostart" => {
+                // The check mark has already flipped; make the OS agree, then
+                // show what it actually reports.
+                let wanted = autostart_item.is_checked().unwrap_or(false);
+                let now = background::set_autostart(app, wanted);
+                let _ = autostart_item.set_checked(now);
             }
-            "hide" => {
-                if let Some(window) = app.get_webview_window("main") {
-                    let _ = window.hide();
-                }
-            }
+            "settings" => open_source_settings(app),
             "quit" => {
                 app.exit(0);
             }
-            "source-settings" => open_source_settings(app),
             other => {
                 if let Some(id) = other.strip_prefix(SOURCE_MENU_PREFIX) {
                     if app_source::select(app, id).is_err() {
                         // Unknown id: put the checks back as they were.
                         sync_tray_source_checks(app, &app_source::current(app));
                     }
-                    if let Some(window) = app.get_webview_window("main") {
-                        let _ = window.show();
-                        let _ = window.set_focus();
-                    }
+                    background::show_main(app);
                 }
             }
         })
@@ -182,36 +194,29 @@ fn setup_tray_and_background(app: &mut tauri::App) -> Result<(), Box<dyn std::er
                 ..
             } = event
             {
-                let app = tray.app_handle();
-                if let Some(window) = app.get_webview_window("main") {
-                    let is_visible = window.is_visible().unwrap_or(false);
-                    if is_visible {
-                        let _ = window.hide();
-                    } else {
-                        let _ = window.show();
-                        let _ = window.unminimize();
-                        let _ = window.set_focus();
-                    }
-                }
+                background::toggle_main(tray.app_handle());
             }
         })
         .build(app)?;
 
     // Intercept window close to hide to tray/background instead of quitting
     if let Some(main_window) = app.get_webview_window("main") {
-        let w = main_window.clone();
+        let handle = app.handle().clone();
         main_window.on_window_event(move |event| {
             if let tauri::WindowEvent::CloseRequested { api, .. } = event {
-                let _ = w.hide();
                 api.prevent_close();
+                background::hide_main(&handle);
             }
         });
+    }
 
-        // If launched on boot with --minimized / --hidden / --background, start hidden in tray
-        let args: Vec<String> = std::env::args().collect();
-        if args.iter().any(|arg| arg == "--minimized" || arg == "--hidden" || arg == "--background") {
-            let _ = main_window.hide();
-        }
+    // The window is created hidden (tauri.conf.json "visible": false) and its
+    // page loads either way; a launch at login leaves it in the tray, any
+    // other launch shows it now.
+    if background::launched_in_background(app.handle()) {
+        background::hide_main(app.handle());
+    } else {
+        background::show_main(app.handle());
     }
 
     Ok(())
@@ -247,9 +252,7 @@ fn open_source_settings<R: tauri::Runtime>(app: &tauri::AppHandle<R>) {
     if let Ok(url) = Url::parse(&format!("{}settings.html", app_source::bundled_origin())) {
         let _ = window.navigate(url);
     }
-    let _ = window.show();
-    let _ = window.unminimize();
-    let _ = window.set_focus();
+    background::show_main(app);
 }
 
 /// Global shortcuts:
@@ -261,13 +264,6 @@ fn desktop_shortcuts_plugin<R: tauri::Runtime>() -> tauri::plugin::TauriPlugin<R
     use tauri_plugin_global_shortcut::ShortcutState;
 
     tauri_plugin_global_shortcut::Builder::new()
-        .with_shortcuts([
-            "F11",
-            "CmdOrCtrl+Shift+F",
-            "CmdOrCtrl+`",
-            "Ctrl+`",
-        ])
-        .expect("shortcuts are valid accelerator strings")
         .with_handler(|app, shortcut, event| {
             if event.state() != ShortcutState::Pressed {
                 return;
@@ -290,11 +286,8 @@ fn desktop_shortcuts_plugin<R: tauri::Runtime>() -> tauri::plugin::TauriPlugin<R
                 }
 
                 // 3. Show, unminimize, and focus window
+                background::show_main(app);
                 if let Some(window) = app.get_webview_window("main") {
-                    let _ = window.show();
-                    let _ = window.unminimize();
-                    let _ = window.set_focus();
-
                     // 4. Emit event to frontend listeners
                     let _ = window.emit("quick-launch-text", &selected_text);
                     let _ = window.emit("selected-text-input", &selected_text);
@@ -314,6 +307,29 @@ fn desktop_shortcuts_plugin<R: tauri::Runtime>() -> tauri::plugin::TauriPlugin<R
             }
         })
         .build()
+}
+
+/// The global shortcuts, registered one at a time in setup. `CmdOrCtrl+``
+/// already is `Ctrl+`` off macOS, and registering a key twice (or one another
+/// app holds) fails; a failed registration costs that one shortcut, never the
+/// whole app.
+#[cfg(not(any(target_os = "android", target_os = "ios")))]
+const GLOBAL_SHORTCUTS: &[&str] = &[
+    "F11",
+    "CmdOrCtrl+Shift+F",
+    "CmdOrCtrl+`",
+    #[cfg(target_os = "macos")]
+    "Ctrl+`",
+];
+
+#[cfg(not(any(target_os = "android", target_os = "ios")))]
+fn register_global_shortcuts<R: tauri::Runtime>(app: &tauri::AppHandle<R>) {
+    use tauri_plugin_global_shortcut::GlobalShortcutExt;
+    for shortcut in GLOBAL_SHORTCUTS {
+        if let Err(err) = app.global_shortcut().register(*shortcut) {
+            eprintln!("global shortcut {shortcut} not registered: {err}");
+        }
+    }
 }
 
 /// Captures the currently active selection or clipboard text across platforms.
@@ -440,9 +456,12 @@ fn handle_deep_link(app: &tauri::AppHandle, raw_url: &str) {
     );
     if let Ok(url) = Url::parse(&callback_url) {
         let _ = window.navigate(url);
-        let _ = window.show();
         #[cfg(desktop)]
-        let _ = window.unminimize();
-        let _ = window.set_focus();
+        background::show_main(app);
+        #[cfg(mobile)]
+        {
+            let _ = window.show();
+            let _ = window.set_focus();
+        }
     }
 }

@@ -2,8 +2,8 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAtom } from "jotai";
 import { useDebateWS } from "../hooks/useDebateWS";
-import { ReactionBar } from "../components/ReactionBar";
-import { AnonymousQA } from "../components/AnonymousQA";
+import { ReactionBar } from "../components/chat/ReactionBar";
+import { AnonymousQA } from "../components/chat/AnonymousQA";
 import {
   debateIdAtom,
   pollStateAtom,

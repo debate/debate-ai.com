@@ -11,7 +11,7 @@ import {
 import { CardMirrorImportError } from "../../../src/lib/cardmirror/import-files";
 import { registerStoredCmir, type StoredCmir } from "../../../src/lib/cardmirror/lazy-stored-cmir";
 import type { ReasonDocument } from "../../../src/components/reason-docs/types";
-import type { TopicStarterItem } from "../../../src/components/reason-docs/TopicStarterTree";
+import type { TopicStarterItem } from "../../../src/components/reason-docs/topic-starters/TopicStarterTree";
 import { cleanup, flush, mockFetch, mount, type FetchCall, type Route } from "../../helpers/dom";
 
 const engine = {
@@ -445,33 +445,105 @@ describe("moving files between Files and Topic Starters", () => {
     expect(missing).toEqual({ ok: false, error: "That file could not be found." });
   });
 
-  it("publishes a file to Topic Starters, and explains a refusal", async () => {
+  it("submits a file to Topic Starters: applied for staff, pending for everyone else", async () => {
     const { calls } = await mountLoaded([
+      { method: "POST", match: "/api/topic-starters/changes", once: true, respond: { status: "applied" } },
       {
-        method: "POST",
-        match: "/api/admin/topic-starters/items",
-        once: true,
-        respond: { item: { id: 500, title: "Case", content: "<p>aff</p>", format: "html", parentId: 70, isFolder: false, tags: "[]" } },
+        method: "GET",
+        match: "/api/topic-starters",
+        respond: { items: [{ id: 500, title: "Case", content: "<p>aff</p>", format: "html", parentId: 70, isFolder: false, tags: "[]" }] },
       },
-      { method: "POST", match: "/api/admin/topic-starters/items", respond: { error: "Forbidden" }, status: 403 },
+      { method: "POST", match: "/api/topic-starters/changes", once: true, respond: { status: "pending", id: 9 }, status: 202 },
+      { method: "POST", match: "/api/topic-starters/changes", respond: { error: "Sign in to suggest changes to Topic Starters." }, status: 401 },
     ]);
     let published: Awaited<ReturnType<ReasonDocsContextValue["publishToTopics"]>> | undefined;
     await act(async () => {
       published = await ctx.publishToTopics(1, 70);
     });
-    expect(calls.at(-1)!.body).toEqual({ title: "Case", content: "<p>aff</p>", format: "html", parentId: 70 });
-    expect(published?.ok).toBe(true);
+    expect(calls.find((c) => c.method === "POST")!.body).toEqual({
+      kind: "submit",
+      title: "Case",
+      content: "<p>aff</p>",
+      format: "html",
+      parentId: 70,
+      year: null,
+    });
+    expect(published).toEqual({ ok: true, pending: false, title: "Case" });
+    // Applied: the catalogue is re-read rather than patched locally.
     expect(ctx.topicItems.some((t) => t.id === 500)).toBe(true);
 
     await act(async () => {
       published = await ctx.publishToTopics(1);
     });
-    expect(published).toMatchObject({ ok: false, error: expect.stringContaining("Only admins") });
+    expect(published).toEqual({ ok: true, pending: true, title: "Case" });
+
+    await act(async () => {
+      published = await ctx.publishToTopics(1);
+    });
+    expect(published).toMatchObject({ ok: false, error: expect.stringContaining("Sign in") });
 
     await act(async () => {
       published = await ctx.publishToTopics(2);
     });
     expect(published).toEqual({ ok: false, error: "Only a file can be added to Topic Starters." });
+  });
+
+  it("sends moves, renames, deletes and new folders as change requests", async () => {
+    const { calls } = await mountLoaded([
+      { method: "POST", match: "/api/topic-starters/changes", respond: { status: "pending", id: 1 }, status: 202 },
+      { method: "GET", match: "/api/topic-starters", respond: { items: TOPICS } },
+    ]);
+    let outcome: Awaited<ReturnType<ReasonDocsContextValue["moveTopicStarter"]>> | undefined;
+    await act(async () => {
+      outcome = await ctx.moveTopicStarter(71, null);
+    });
+    expect(outcome).toEqual({ ok: true, pending: true });
+    await act(async () => {
+      await ctx.renameTopicStarter(71, "  Solar 1AC ");
+      await ctx.deleteTopicStarter(70);
+      await ctx.createTopicFolder("Neg", null);
+    });
+    const posts = calls.filter((c) => c.method === "POST").map((c) => c.body);
+    expect(posts).toEqual([
+      { kind: "move", itemId: 71, parentId: null },
+      { kind: "rename", itemId: 71, title: "Solar 1AC" },
+      { kind: "delete", itemId: 70 },
+      { kind: "create-folder", title: "Neg", parentId: null },
+    ]);
+
+    // Refused client-side without a request: a folder into its own subtree,
+    // a no-op move, and an id the catalogue doesn't have.
+    await act(async () => {
+      outcome = await ctx.moveTopicStarter(70, 72);
+    });
+    expect(outcome).toEqual({ ok: false, error: "A folder cannot be moved into its own subtree." });
+    await act(async () => {
+      outcome = await ctx.moveTopicStarter(71, 70);
+    });
+    expect(outcome).toEqual({ ok: true, pending: false });
+    await act(async () => {
+      outcome = await ctx.deleteTopicStarter(999);
+    });
+    expect(outcome).toEqual({ ok: false, error: "That topic starter could not be found." });
+    expect(calls.filter((c) => c.method === "POST")).toHaveLength(4);
+  });
+
+  it("asks the organizer for a proposal without applying it", async () => {
+    const change = { kind: "reorganize", assignments: [{ itemId: 71, side: "aff", type: "case" }] };
+    const { calls } = await mountLoaded([
+      { method: "POST", match: "/api/topic-starters/organize", once: true, respond: { change, summary: "Organize 1 file by argument (Aff/Case 1)", moves: 1 } },
+      { method: "POST", match: "/api/topic-starters/organize", respond: { error: "AI features are not configured on the server." }, status: 503 },
+    ]);
+    let outcome: Awaited<ReturnType<ReasonDocsContextValue["organizeTopicStarters"]>> | undefined;
+    await act(async () => {
+      outcome = await ctx.organizeTopicStarters();
+    });
+    expect(outcome).toEqual({ ok: true, change, summary: "Organize 1 file by argument (Aff/Case 1)", moves: 1 });
+    expect(calls.some((c) => c.url.includes("/changes"))).toBe(false);
+    await act(async () => {
+      outcome = await ctx.organizeTopicStarters();
+    });
+    expect(outcome).toEqual({ ok: false, error: "AI features are not configured on the server." });
   });
 
   it("adds nothing to the tree when the server refuses a new document", async () => {

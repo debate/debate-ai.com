@@ -1,27 +1,29 @@
 /**
- * @fileoverview Admin-only: add one already-converted file to the public
+ * @fileoverview Moderator/admin-only: add one already-converted file to the public
  * Topic Starters catalogue.
  *
  * The sibling importer (`../route.ts`) takes a `.docx` or `.zip` and converts
  * it. This takes a file that is already in the app — one of the admin's own
  * sidebar files, dragged from Files onto Topic Starters — and copies its
  * stored content as-is, so a `.cmir` stays a `.cmir` and nothing is
- * re-converted.
+ * re-converted. Readers who aren't staff submit through
+ * `/api/topic-starters/changes`, where the file waits for a moderator.
  *
  * @module app/api/admin/topic-starters/items/route
  */
 import { NextRequest, NextResponse } from "next/server";
 import { and, eq } from "drizzle-orm";
 import { normalizeFormat } from "@debate/webview/lib/cardmirror/format";
-import { getAdminAccess } from "@/lib/auth/admin";
+import { getStaffAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
 import { topicStarterItems } from "@/lib/database/schema";
+import { ensureTopicStarterColumns } from "@/lib/topic-starters/changes";
 
 export async function POST(request: NextRequest) {
-  const { isAdmin } = await getAdminAccess();
-  if (!isAdmin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const { canEditContent } = await getStaffAccess();
+  if (!canEditContent) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-  let body: { title?: string; content?: string; format?: string; parentId?: number | null; year?: number | null };
+  let body: { title?: string; content?: string; format?: string; parentId?: number | null; year?: number | null; isFolder?: boolean; tags?: string | string[] };
   try {
     body = await request.json();
   } catch {
@@ -31,6 +33,7 @@ export async function POST(request: NextRequest) {
   if (!title) return NextResponse.json({ error: "A title is required." }, { status: 400 });
 
   const db = await getDBFromContext();
+  await ensureTopicStarterColumns(db);
   const parentId = typeof body.parentId === "number" ? body.parentId : null;
   if (parentId != null) {
     // Filed only under a real catalogue folder, so the row can't be orphaned
@@ -43,6 +46,25 @@ export async function POST(request: NextRequest) {
     if (!parent) return NextResponse.json({ error: "That Topic Starters folder no longer exists." }, { status: 400 });
   }
 
+  const isFolder = body.isFolder === true;
+  if (isFolder) {
+    const [item] = await db
+      .insert(topicStarterItems)
+      .values({
+        title,
+        content: "",
+        format: "html",
+        parentId,
+        isFolder: true,
+        tags: Array.isArray(body.tags) ? JSON.stringify(body.tags) : (body.tags && typeof body.tags === "string" ? body.tags : JSON.stringify(["folder"])),
+        published: true,
+        year: null,
+      })
+      .returning();
+    if (!item) return NextResponse.json({ error: "The folder could not be saved." }, { status: 500 });
+    return NextResponse.json({ item }, { status: 201 });
+  }
+
   const format = normalizeFormat(body.format);
   const year = parseTopicStarterYear(body.year);
   const [item] = await db
@@ -53,7 +75,7 @@ export async function POST(request: NextRequest) {
       format,
       parentId,
       isFolder: false,
-      tags: JSON.stringify([format, "public"]),
+      tags: Array.isArray(body.tags) ? JSON.stringify(body.tags) : JSON.stringify([format, "public"]),
       published: true,
       year,
     })

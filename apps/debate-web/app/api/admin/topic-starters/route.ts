@@ -24,18 +24,35 @@ import {
   type DocxImportFailure,
 } from "@debate/card-parser";
 import { TOPIC_STARTER_FORMATS } from "@debate/webview/lib/topic-starters/format";
-import { docxToStoredCmir } from "@/lib/topic-starters/import";
-import { getAdminAccess } from "@/lib/auth/admin";
+import { docxToStoredCmir } from "@debate/webview/lib/topic-starters/import";
+import { getAdminAccess, getStaffAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
 import { topicStarterItems } from "@/lib/database/schema";
+import { ensureTopicStarterColumns } from "@/lib/topic-starters/changes";
 import { logImportEvent, newImportId } from "@/lib/admin/import-log";
 
+/** Every catalogue row, published or not, without content — the admin panel's
+ * Topic starters tree. Moderators too. */
 export async function GET() {
-  const { isAdmin } = await getAdminAccess();
-  if (!isAdmin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const { canEditContent } = await getStaffAccess();
+  if (!canEditContent) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   const db = await getDBFromContext();
+  await ensureTopicStarterColumns(db);
+  // The tree only — every row's `.cmir` would make this a multi-megabyte read.
   return NextResponse.json({
-    items: await db.select().from(topicStarterItems).orderBy(asc(topicStarterItems.title)),
+    items: await db
+      .select({
+        id: topicStarterItems.id,
+        title: topicStarterItems.title,
+        format: topicStarterItems.format,
+        parentId: topicStarterItems.parentId,
+        isFolder: topicStarterItems.isFolder,
+        tags: topicStarterItems.tags,
+        published: topicStarterItems.published,
+        year: topicStarterItems.year,
+      })
+      .from(topicStarterItems)
+      .orderBy(asc(topicStarterItems.title)),
   });
 }
 
@@ -88,6 +105,8 @@ export async function POST(request: NextRequest) {
     }
 
     const db = await getDBFromContext();
+    // A D1 made before `year` existed rejects every insert below without this.
+    await ensureTopicStarterColumns(db);
     const [rootRow] = await db
       .insert(topicStarterItems)
       .values({

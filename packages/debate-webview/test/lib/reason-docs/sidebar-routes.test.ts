@@ -24,6 +24,8 @@ describe("showsReasonDocsPanels", () => {
   })
 
   it("keeps them on the editor, whose desktop file nav is this sidebar", () => {
+    expect(showsReasonDocsPanels("/docs/vcx27/neg/cp/aca-expansion-cp-cndi-2026")).toBe(true)
+    expect(showsReasonDocsPanels("/docs/features/drill-sets")).toBe(false)
     expect(showsReasonDocsPanels("/reason-editor")).toBe(true)
   })
 

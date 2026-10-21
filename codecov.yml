@@ -1,12 +1,14 @@
 # Codecov configuration — https://docs.codecov.com/docs/codecov-yaml
 #
 # Coverage is produced by `bun run coverage` at the repo root, which runs every
-# `packages/*/test` suite plus the apps' suites (`apps/debate-ai.com/lib/**/__tests__`
+# `packages/*/test` suite plus the apps' suites (`apps/debate-web/lib/**/__tests__`
 # and `apps/debate-browser-ext/test`) through Vitest and writes a single merged
 # `coverage/lcov.info` covering both `packages/` and `apps/`.
 
 codecov:
-  require_ci_to_pass: true
+  # The Cloudflare Workers Builds check is red for reasons outside this repo;
+  # waiting on all CI would stop Codecov from ever posting its report.
+  require_ci_to_pass: false
 
 coverage:
   precision: 2
@@ -25,85 +27,11 @@ coverage:
         threshold: 5%
         informational: true
 
-# One flag per workspace package so the Codecov UI can show which library a
-# change actually moved the needle in. Kept in sync with `packages/*` (see
-# `packages/README.md`) — every package with a `src/` directory gets a flag,
-# named after its directory rather than its (sometimes stale) package.json
-# `name`, since that's how contributors navigate the repo and Codecov's UI.
-flag_management:
-  default_rules:
-    carryforward: true
-
-flags:
-  debate-webview:
-    paths:
-      - packages/debate-webview/src
-  debate-api-client:
-    paths:
-      - packages/debate-api-client/src
-  debate-card-parser:
-    paths:
-      - packages/debate-card-parser/src
-  debate-contributor-progress:
-    paths:
-      - packages/debate-contributor-progress/src
-  debate-data-sync:
-    paths:
-      - packages/debate-data-sync/src
-  debate-editor:
-    paths:
-      - packages/debate-editor/overlay
-  debate-flow:
-    paths:
-      - packages/debate-flow/src
-  debate-practice-drills:
-    paths:
-      - packages/debate-practice-drills/src
-  debate-round:
-    paths:
-      - packages/debate-round/src
-  debate-round-practice-ai:
-    paths:
-      - packages/debate-round-practice-ai/src
-  debate-search-evidence:
-    paths:
-      - packages/debate-search-evidence/src
-  debate-speech-writer:
-    paths:
-      - packages/debate-speech-writer/src
-  debate-team-collaboration:
-    paths:
-      - packages/debate-team-collaboration/src
-  debate-timer:
-    paths:
-      - packages/debate-timer/src
-  debate-tournaments:
-    paths:
-      - packages/debate-tournaments/src
-  debate-videos:
-    paths:
-      - packages/debate-videos/src
-  # The two apps with Vitest suites. The native wrapper is Rust (Tauri) and
-  # has no JS/TS coverage to report, so it's ignored below.
-  debate-ai.com:
-    paths:
-      - apps/debate-ai.com/app
-      - apps/debate-ai.com/lib
-      - apps/debate-ai.com/worker
-  debate-browser-ext:
-    paths:
-      - apps/debate-browser-ext/src
-      - apps/debate-browser-ext/lib
-      - apps/debate-browser-ext/entrypoints
-      - apps/debate-browser-ext/components
-  debate-native-wrapper:
-    paths:
-      - apps/debate-native-wrapper/src
-      - apps/debate-native-wrapper/lib
-
-# Components mirror the flags above so the "components" section of the PR
-# comment (below) actually has something to render, and so each package gets
-# its own informational status check independent of the project-wide one.
+# One component per package, matching the per-folder rows Codecov's file tree
+# shows, so each package gets its own coverage number and status. Components
+# slice the single unflagged upload by path (flags would need one upload per
+# package). Named after the directory, which is how contributors navigate the
+# repo. Keep in sync with `packages/*`.
 component_management:
   default_rules:
     statuses:
@@ -112,75 +40,94 @@ component_management:
         threshold: 2%
         informational: true
   individual_components:
-    - component_id: debate-webview
-      paths:
-        - packages/debate-webview/src
     - component_id: debate-api-client
       paths:
-        - packages/debate-api-client/src
+        - packages/debate-api-client/src/**
     - component_id: debate-card-parser
       paths:
-        - packages/debate-card-parser/src
+        - packages/debate-card-parser/src/**
+    - component_id: debate-comments
+      paths:
+        - packages/debate-comments/src/**
     - component_id: debate-contributor-progress
       paths:
-        - packages/debate-contributor-progress/src
+        - packages/debate-contributor-progress/src/**
     - component_id: debate-data-sync
       paths:
-        - packages/debate-data-sync/src
+        - packages/debate-data-sync/src/**
     - component_id: debate-editor
       paths:
-        - packages/debate-editor/overlay
+        - packages/debate-editor/overlay/**
+    - component_id: debate-file-market
+      paths:
+        - packages/debate-file-market/src/**
     - component_id: debate-flow
       paths:
-        - packages/debate-flow/src
+        - packages/debate-flow/src/**
     - component_id: debate-practice-drills
       paths:
-        - packages/debate-practice-drills/src
-    - component_id: debate-round
+        - packages/debate-practice-drills/src/**
+    - component_id: debate-predictions
       paths:
-        - packages/debate-round/src
+        - packages/debate-predictions/src/**
+    - component_id: debate-rankings-adapter
+      paths:
+        - packages/debate-rankings-adapter/src/**
     - component_id: debate-round-practice-ai
       paths:
-        - packages/debate-round-practice-ai/src
+        - packages/debate-round-practice-ai/src/**
+    - component_id: debate-round
+      paths:
+        - packages/debate-round/src/**
     - component_id: debate-search-evidence
       paths:
-        - packages/debate-search-evidence/src
+        - packages/debate-search-evidence/src/**
     - component_id: debate-speech-writer
       paths:
-        - packages/debate-speech-writer/src
+        - packages/debate-speech-writer/src/**
     - component_id: debate-team-collaboration
       paths:
-        - packages/debate-team-collaboration/src
+        - packages/debate-team-collaboration/src/**
     - component_id: debate-timer
       paths:
-        - packages/debate-timer/src
+        - packages/debate-timer/src/**
     - component_id: debate-tournaments
       paths:
-        - packages/debate-tournaments/src
+        - packages/debate-tournaments/src/**
     - component_id: debate-videos
       paths:
-        - packages/debate-videos/src
-    - component_id: debate-ai.com
+        - packages/debate-videos/src/**
+    - component_id: debate-webview-admin
       paths:
-        - apps/debate-ai.com/app
-        - apps/debate-ai.com/lib
-        - apps/debate-ai.com/worker
+        - packages/debate-webview-admin/src/**
+    - component_id: debate-webview
+      paths:
+        - packages/debate-webview/src/**
+    # The two apps with Vitest suites. The native wrapper is Rust (Tauri) and
+    # has no JS/TS coverage to report, so it's ignored below.
+    - component_id: debate-web
+      paths:
+        - apps/debate-web/app/**
+        - apps/debate-web/lib/**
+        - apps/debate-web/worker/**
     - component_id: debate-browser-ext
       paths:
-        - apps/debate-browser-ext/src
-        - apps/debate-browser-ext/lib
-        - apps/debate-browser-ext/entrypoints
-        - apps/debate-browser-ext/components
+        - apps/debate-browser-ext/src/**
+        - apps/debate-browser-ext/lib/**
+        - apps/debate-browser-ext/entrypoints/**
+        - apps/debate-browser-ext/components/**
+    - component_id: debate-native-wrapper
+        - apps/debate-native-wrapper/src/**
 
 # debate-editor's src/ is assembled at install time and git-ignored, so the
 # coverage report's paths there name no tracked file. Only the files its
-# overlay/ supplies are measured (see apps/debate-ai.com/vitest.config.ts), and
+# overlay/ supplies are measured (see apps/debate-web/vitest.config.ts), and
 # this points each of them at the overlay copy the repo actually tracks.
 fixes:
   - "packages/debate-editor/src/::packages/debate-editor/overlay/"
 
 comment:
-  layout: "header, diff, flags, components, files, footer"
+  layout: "header, diff, components, files, footer"
   behavior: default
   require_changes: false
 
@@ -188,7 +135,7 @@ ignore:
   - "**/*.d.ts"
   - "**/test/**"
   - "**/__tests__/**"
-  - "apps/debate-ai.com/lib/stubs/**"
+  - "apps/debate-web/lib/stubs/**"
   - "apps/debate-native-wrapper/**"
   - "packages/debate-data-sync/data/**"
   - "packages/debate-data-sync/schemas/**"

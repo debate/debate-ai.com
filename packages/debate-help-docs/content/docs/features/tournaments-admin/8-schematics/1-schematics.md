@@ -5,18 +5,14 @@ slug: schematics
 
 ## Settings
 
-title="Schematics_-_Settings.png" />
-
 An alternate screen to modify the settings of a given round.
 
 ## Actions
-
 
 This is where you find options to configure online strike cards and
 publish them to relevant participants.
 
 ## Example Schematic
-
 
 The Schematic screen displays the following information:
 
@@ -33,17 +29,13 @@ The Schematic screen displays the following information:
 
 ## Reports
 
-
 Menu of printout options
 
 ## Results
 
-
 Alternate format for displaying results of a given round.
 
 ## Change & Destory
-
-title="Schematics_-_Change_&amp;_Destroy.png" />
 
 This box allows you to auto or manually pair each event along with auto
 or manually assigning judges and rooms. You may also erase judges that
@@ -51,8 +43,6 @@ you've placed in a given round or even delete the entire round if need
 be.
 
 ## Share & Enjoy
-
-title="Schematics_-_Share_&amp;_Enjoy.png" />
 
 This box is where you will run an event or round disaster check, set the
 round start time (if different from the master schedule), publish the
@@ -63,12 +53,9 @@ before releasing an pairing publicly.
 
 ## Display
 
-
 Options for what you want to appear on the schematic screen.
 
 ## Online Rooms
-
-title="Schematics_-_online_rooms.png" />
 
 Links to utility rooms designated for tournament tab staff.
 
@@ -76,8 +63,6 @@ Access to the online dashboard to track who is in the online competition
 rooms of a tournament.
 
 ## Stats & Data
-
-title="Schematics_-_states_&amp;_data.png" />
 
 This box provides round data to the tournament tab staff. That data
 includes how many ballots are out during a round, how many unassigned

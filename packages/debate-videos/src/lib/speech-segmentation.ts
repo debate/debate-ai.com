@@ -8,6 +8,14 @@
  * the reply names the round's format, every speech of it that was given, and
  * when each began and ended.
  *
+ * Auto-generated captions carry no speaker labels and little punctuation, so
+ * the strongest boundary signal is silence: prep time and the next speaker
+ * walking up leave gaps in the caption track. The prompt therefore marks
+ * every long gap (`(pause 1:20)`), gives each format's speech lengths, and —
+ * when the caller has one — a length-only guess from those pauses for the
+ * model to correct from what is said ("time starts now", "cross-ex",
+ * "I'll be taking prep").
+ *
  * The model is asked for timestamps, not for each speech's words: echoing a
  * two-hour round back would blow far past any reply limit and could
  * paraphrase. The words are cut from the captions between those timestamps
@@ -65,6 +73,20 @@ export const FORMAT_SPEECH_NAMES: Record<Exclude<SegmentedFormat, "other">, stri
   ],
 };
 
+/**
+ * Each speech's usual length in minutes, as the prompt states it — high
+ * school times; college policy runs 9-3-6.
+ */
+export const FORMAT_SPEECH_MINUTES: Record<Exclude<SegmentedFormat, "other">, number[]> = {
+  policy: [8, 3, 8, 3, 8, 3, 8, 3, 5, 5, 5, 5],
+  ld: [6, 3, 7, 3, 4, 6, 3],
+  pf: [4, 4, 3, 4, 4, 3, 3, 3, 3, 2, 2],
+};
+
+function speechList(format: Exclude<SegmentedFormat, "other">): string {
+  return FORMAT_SPEECH_NAMES[format].map((name, i) => `${name} (${FORMAT_SPEECH_MINUTES[format][i]})`).join(", ");
+}
+
 /** One speech the model found. */
 export interface SegmentedSpeech {
   /** The name as the prompt spells it — `1AC`, `2NX`, `Pro Summary`. */
@@ -72,6 +94,8 @@ export interface SegmentedSpeech {
   startSeconds: number;
   /** When the speaker stopped, before prep time or the next speech; `null` when not given. */
   endSeconds: number | null;
+  /** How sure the model was of this speech's start, 0–1; absent when it didn't say. */
+  confidence?: number;
 }
 
 export interface SpeechSegmentation {
@@ -79,10 +103,12 @@ export interface SpeechSegmentation {
   speeches: SegmentedSpeech[];
 }
 
-/** A caption line: the shape `groupIntoSentences` produces. */
+/** A caption line: a raw caption cue, or the shape `groupIntoSentences` produces. */
 export interface SegmentationCaption {
   text: string;
   start: number;
+  /** Seconds the line is on screen. Without it no pause can be measured after the line. */
+  duration?: number;
 }
 
 /**
@@ -92,38 +118,102 @@ export interface SegmentationCaption {
  */
 export const MAX_SEGMENTATION_CHARS = 360_000;
 
+/** A quiet stretch at least this long is marked in the transcript as a pause. */
+export const PAUSE_MARK_SECONDS = 6;
+
+/** Cues closer than this, inside one unfinished sentence, are joined into one line. */
+const JOIN_GAP_SECONDS = 1.5;
+const MAX_LINE_CHARS = 220;
+
 export const SPEECH_SEGMENTATION_SYSTEM_PROMPT = `You are an experienced competitive debate judge and tournament tab-room assistant. You are given the timestamped auto-generated captions of a recorded debate round. Your job is to work out the round's format and exactly where each speech begins and ends.
 
-FORMATS AND SPEECH NAMES — use these names exactly:
-- policy (CX / Policy, high school or college): ${FORMAT_SPEECH_NAMES.policy.join(", ")}
-- ld (Lincoln-Douglas): ${FORMAT_SPEECH_NAMES.ld.join(", ")}
-- pf (Public Forum): ${FORMAT_SPEECH_NAMES.pf.join(", ")}
+FORMATS AND SPEECH NAMES — use these names exactly. Usual length in minutes is in brackets; college policy runs 9-3-6 instead of 8-3-5.
+- policy (CX / Policy, high school or college): ${speechList("policy")}
+- ld (Lincoln-Douglas): ${speechList("ld")}
+- pf (Public Forum): ${speechList("pf")}
 - other: anything else (parliamentary, worlds, a lecture or drill). Name its speeches plainly.
 
 A cross-examination is named for the speech it questions: 1AX is the cross-ex of the 1AC, 1NX of the 1NC, 2AX of the 2AC, 2NX of the 2NC. In Public Forum the Con team may speak first; list speeches in the order they were actually given.
 
+READING THE TRANSCRIPT:
+- Each line is "[m:ss] text" or "[h:mm:ss] text". The captions are automatic: no speaker names, little punctuation, misheard words (e.g. "one a c", "the neg", "D A", "counter plan", "K").
+- A line "[m:ss] (pause 1:20)" means nobody was captioned for that long, starting at that time. Long pauses are usually prep time or the next speaker setting up, so a new speech very often starts on the first line after one. Not every pause is a boundary (a speaker reading a card fast can drop captions), and not every boundary has a pause (cross-ex often follows its speech within seconds).
+- The user message may include a length-only guess placed from the pauses and the usual speech lengths. Treat it as a starting point and move each boundary to where the words show it really is.
+
 HOW TO FIND THE BOUNDARIES:
-- Read the whole transcript before deciding. A new speech usually starts after a pause, a "time starts now" / "I'll start" / "okay, ready?" exchange, a change of speaker, or a roadmap ("two off-case", "I'll go DA, CP, then case"). Constructives open with framing or the plan text; cross-ex is rapid question-and-answer; rebuttals extend, group and weigh.
+- Read the whole transcript before deciding. A new speech usually starts after a pause, a "time starts now" / "I'll start" / "okay, ready?" / "go ahead" exchange, a change of speaker, or a roadmap ("two off-case", "I'll go DA, CP, then case", "order is"). Constructives open with framing, the plan text or the first contention; cross-ex is rapid question-and-answer ("so what's your", "can you explain", "yes", "no"); rebuttals extend, group and weigh ("extend", "they dropped", "on the case debate", "voters"). A speech often ends with "thank you", "time", or the timer going off.
 - The start is the timestamp of the first line the speaker actually delivers the speech — not the prep time, timer chatter or "is everyone ready?" before it.
 - The end is the timestamp of the last line of that speech, before prep time, timer chatter or the next speech.
-- Only include speeches that are actually in the recording. A recording may start mid-round or stop early; skip speeches you cannot find rather than guessing a time.
-- Timestamps must come from the transcript's own [m:ss] or [h:mm:ss] markers and increase from speech to speech.
+- Use the usual lengths as a sanity check: a speech rarely runs much past its time and is rarely under half of it. A 30-second "speech" or a 15-minute constructive means a boundary is wrong.
+- Only include speeches that are actually in the recording. A recording may start mid-round, stop early, or end with the judge's decision (RFD) — skip speeches you cannot find rather than guessing a time, and never label the RFD or pre-round chatter as a speech.
+- Timestamps must be copied from the transcript's own line markers and increase from speech to speech; speeches must not overlap.
+- confidence is 0 to 1: how sure you are of that speech's start (1 = clearly announced, 0.5 = inferred from a pause and the length, below 0.3 = a guess).
 
 Reply with ONLY a JSON object, no prose or code fence, in this shape:
-{"format":"policy"|"ld"|"pf"|"other","speeches":[{"name":"1AC","start":"0:42","end":"8:51"}]}`;
+{"format":"policy"|"ld"|"pf"|"other","speeches":[{"name":"1AC","start":"0:42","end":"8:51","confidence":0.9}]}`;
 
-function captionLines(captions: SegmentationCaption[]): { text: string; truncated: boolean } {
+const SENTENCE_END = /[.?!]["')\]]*$/;
+
+/**
+ * The transcript as the model reads it: cues joined into lines (split at a
+ * sentence end, a short gap or a line-length cap), with a `(pause m:ss)` line
+ * wherever the captions go quiet for {@link PAUSE_MARK_SECONDS} or longer.
+ * A pause is only measured after a line that says how long it lasted.
+ */
+export function segmentationTranscript(captions: SegmentationCaption[]): { text: string; truncated: boolean } {
   const lines: string[] = [];
   let size = 0;
-  for (const caption of captions) {
-    const text = caption.text.trim();
-    if (!text) continue;
-    const line = `[${formatTimecode(caption.start)}] ${text}`;
-    if (size + line.length + 1 > MAX_SEGMENTATION_CHARS) return { text: lines.join("\n"), truncated: true };
-    lines.push(line);
-    size += line.length + 1;
+  let line: { start: number; text: string; end: number | null } | null = null;
+  let truncated = false;
+
+  const push = (text: string): boolean => {
+    if (size + text.length + 1 > MAX_SEGMENTATION_CHARS) return false;
+    lines.push(text);
+    size += text.length + 1;
+    return true;
+  };
+  const flush = (): boolean => {
+    if (!line) return true;
+    const ok = push(`[${formatTimecode(line.start)}] ${line.text}`);
+    line = null;
+    return ok;
+  };
+
+  const sorted = captions
+    .filter((caption) => Number.isFinite(caption.start) && caption.text.trim())
+    .slice()
+    .sort((a, b) => a.start - b.start);
+  for (const caption of sorted) {
+    const text = caption.text.trim().replace(/\s+/g, " ");
+    const end = caption.duration !== undefined && caption.duration >= 0 ? caption.start + caption.duration : null;
+    const current = line as { start: number; text: string; end: number | null } | null;
+    const gap = current?.end != null ? caption.start - current.end : null;
+    const joins =
+      current !== null &&
+      gap !== null &&
+      gap < JOIN_GAP_SECONDS &&
+      !SENTENCE_END.test(current.text) &&
+      current.text.length + text.length < MAX_LINE_CHARS;
+    if (joins && current) {
+      current.text += ` ${text}`;
+      current.end = end ?? current.end;
+      continue;
+    }
+    const pauseFrom = current?.end ?? null;
+    if (!flush()) {
+      truncated = true;
+      break;
+    }
+    if (pauseFrom !== null && gap !== null && gap >= PAUSE_MARK_SECONDS) {
+      if (!push(`[${formatTimecode(pauseFrom)}] (pause ${formatTimecode(gap)})`)) {
+        truncated = true;
+        break;
+      }
+    }
+    line = { start: caption.start, text, end };
   }
-  return { text: lines.join("\n"), truncated: false };
+  if (!truncated && !flush()) truncated = true;
+  return { text: lines.join("\n"), truncated };
 }
 
 export interface SpeechSegmentationInput {
@@ -133,20 +223,46 @@ export interface SpeechSegmentationInput {
   formatHint?: string;
   aff?: string;
   neg?: string;
+  /**
+   * A length-only placement from the caption pauses
+   * (`caption-speech-split.ts`) for the model to correct; left out when the
+   * format is unknown or the captions are too sparse.
+   */
+  pauseGuess?: SegmentedSpeech[];
 }
 
 /** The user turn: the video's metadata, then the whole caption track. */
 export function buildSpeechSegmentationPrompt(input: SpeechSegmentationInput): string {
-  const { text, truncated } = captionLines(input.captions);
+  const { text, truncated } = segmentationTranscript(input.captions);
+  const last = input.captions.reduce(
+    (latest, caption) => Math.max(latest, caption.start + (caption.duration ?? 0)),
+    0,
+  );
+  const guess = input.pauseGuess ?? [];
   const context = [
     input.videoTitle ? `Video title: ${input.videoTitle}` : "",
     input.formatHint ? `Listed format (may be wrong): ${input.formatHint}` : "",
     input.aff ? `Affirmative / Pro: ${input.aff}` : "",
     input.neg ? `Negative / Con: ${input.neg}` : "",
+    last > 0 ? `Captions run to: ${formatTimecode(last)}` : "",
   ].filter(Boolean);
+  const guessLines =
+    guess.length > 0
+      ? [
+          "Length-only guess from the caption pauses (often off by a speech or two — correct it from the words):",
+          ...guess.map(
+            (speech) =>
+              `- ${speech.name}: ${formatTimecode(speech.startSeconds)}${
+                speech.endSeconds !== null ? `–${formatTimecode(speech.endSeconds)}` : ""
+              }`,
+          ),
+          "",
+        ]
+      : [];
   return [
     ...context,
     context.length > 0 ? "" : null,
+    ...guessLines,
     `Transcript${truncated ? " (cut off before the end of the recording)" : ""}:`,
     text,
     "",
@@ -181,31 +297,89 @@ function extractJson(text: string): unknown {
   }
 }
 
+export interface ParseSegmentationOptions {
+  /**
+   * How long the recording (or its captions) runs, in seconds. Speeches that
+   * start after it are dropped and ends past it are pulled back to it.
+   */
+  durationSeconds?: number;
+}
+
+/** Speeches the model rates below this are guesses it was told not to make, and are dropped. */
+export const MIN_SEGMENT_CONFIDENCE = 0.2;
+
+/** A start this close to the previous one is the same speech named twice. */
+const DUPLICATE_START_SECONDS = 5;
+
+function parseConfidence(value: unknown): number | undefined {
+  const number = typeof value === "string" ? Number(value) : value;
+  if (typeof number !== "number" || !Number.isFinite(number)) return undefined;
+  // Some replies use a percentage.
+  const unit = number > 1 ? number / 100 : number;
+  return Math.min(1, Math.max(0, unit));
+}
+
 /**
- * Reads the model's reply. Speeches without a usable start are dropped, the
- * rest are put in time order, and an end at or before its start is
- * discarded rather than trusted.
+ * Reads the model's reply and checks it against the recording.
+ *
+ *   - A speech with no name or no readable start is dropped, as is one the
+ *     model gave a confidence under {@link MIN_SEGMENT_CONFIDENCE}.
+ *   - With `durationSeconds`, a start past the end of the recording is
+ *     dropped and an end past it is pulled back to it.
+ *   - The rest are put in time order; of two speeches starting within a few
+ *     seconds of each other only the more confident is kept.
+ *   - An end at or before its start is discarded rather than trusted, and an
+ *     end that runs into the next speech is cut back to that speech's start.
  *
  * @returns The segmentation, or `null` when the reply holds no speech at all.
  */
-export function parseSpeechSegmentationResponse(text: string): SpeechSegmentation | null {
+export function parseSpeechSegmentationResponse(
+  text: string,
+  { durationSeconds }: ParseSegmentationOptions = {},
+): SpeechSegmentation | null {
   const json = extractJson(text) as { format?: unknown; speeches?: unknown } | null;
   if (!json || !Array.isArray(json.speeches)) return null;
   const rawFormat = typeof json.format === "string" ? json.format.toLowerCase().trim() : "";
   const format: SegmentedFormat = rawFormat in FORMAT_STYLES ? (rawFormat as SegmentedFormat) : "other";
+  const limit = durationSeconds !== undefined && durationSeconds > 0 ? Math.ceil(durationSeconds) : null;
 
-  const speeches: SegmentedSpeech[] = [];
+  const candidates: SegmentedSpeech[] = [];
   for (const entry of json.speeches as unknown[]) {
     if (typeof entry !== "object" || entry === null) continue;
-    const record = entry as { name?: unknown; start?: unknown; end?: unknown };
+    const record = entry as { name?: unknown; start?: unknown; end?: unknown; confidence?: unknown };
     const name = typeof record.name === "string" ? record.name.trim() : "";
     const startSeconds = parseTimestamp(record.start);
     if (!name || startSeconds === null) continue;
-    const end = parseTimestamp(record.end);
-    speeches.push({ name: name.slice(0, 60), startSeconds, endSeconds: end !== null && end > startSeconds ? end : null });
+    if (limit !== null && startSeconds >= limit) continue;
+    const confidence = parseConfidence(record.confidence);
+    if (confidence !== undefined && confidence < MIN_SEGMENT_CONFIDENCE) continue;
+    let end = parseTimestamp(record.end);
+    if (end !== null && limit !== null) end = Math.min(end, limit);
+    candidates.push({
+      name: name.slice(0, 60),
+      startSeconds,
+      endSeconds: end !== null && end > startSeconds ? end : null,
+      ...(confidence !== undefined ? { confidence } : {}),
+    });
+  }
+  candidates.sort((a, b) => a.startSeconds - b.startSeconds);
+
+  const speeches: SegmentedSpeech[] = [];
+  for (const speech of candidates) {
+    const previous = speeches[speeches.length - 1];
+    if (previous && speech.startSeconds - previous.startSeconds < DUPLICATE_START_SECONDS) {
+      if ((speech.confidence ?? 0.5) > (previous.confidence ?? 0.5)) speeches[speeches.length - 1] = speech;
+      continue;
+    }
+    speeches.push(speech);
+  }
+  for (let i = 0; i < speeches.length - 1; i++) {
+    const end = speeches[i].endSeconds;
+    if (end !== null && end > speeches[i + 1].startSeconds) {
+      speeches[i] = { ...speeches[i], endSeconds: speeches[i + 1].startSeconds };
+    }
   }
   if (speeches.length === 0) return null;
-  speeches.sort((a, b) => a.startSeconds - b.startSeconds);
   return { format, speeches };
 }
 

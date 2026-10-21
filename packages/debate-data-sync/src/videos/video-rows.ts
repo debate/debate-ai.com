@@ -9,6 +9,7 @@
  * @module videos/video-rows
  */
 
+import { classifyRoundCollection } from "../youtube/parsers/lecture-classifier";
 import { assignVideoStacks } from "./video-stacks";
 
 /**
@@ -41,9 +42,13 @@ export interface VideoRow {
   channel: string;
   viewCount: number;
   description: string;
-  /** Numeric debate style (1 Policy, 2 PF, 3 LD, 4 College); `null` for lectures. */
+  /** Numeric debate style (1 Policy, 2 PF, 3 LD, 4 College, 5 WSD, 6 ACC, 7 Misc); `null` for lectures. */
   style: number | null;
-  /** Lecture category label (e.g. `"Demo Debates"`); `null` for rounds. */
+  /**
+   * Lecture category label (e.g. `"Demo Debates"`). `null` for rounds, except
+   * a round filed under a collection too (ACC tournament rounds, see
+   * `classifyRoundCollection`).
+   */
   category: string | null;
   /** URL-safe form of {@link VideoRow.category}, e.g. `"demo_debates"`. */
   categoryKey: string | null;
@@ -215,8 +220,12 @@ export function tupleToVideoRow(
   const styleOrCategory = tuple[6];
   const style = typeof styleOrCategory === "number" ? styleOrCategory : null;
   const rawCategory = typeof styleOrCategory === "string" ? str(styleOrCategory) : null;
-  const category = rawCategory ? canonicalCategoryLabel(rawCategory) : null;
   const title = typeof tuple[1] === "string" ? tuple[1] : "";
+  const category = rawCategory
+    ? canonicalCategoryLabel(rawCategory)
+    : style !== null
+      ? classifyRoundCollection(title)
+      : null;
   const channel = typeof tuple[3] === "string" ? tuple[3] : "";
   const description = typeof tuple[5] === "string" ? tuple[5] : "";
   const publishedAt = typeof tuple[2] === "string" ? tuple[2] : "";

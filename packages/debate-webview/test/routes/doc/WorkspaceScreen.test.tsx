@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest"
 import { renderToStaticMarkup } from "react-dom/server"
 
-vi.mock("../../../src/components/tools/ToolSyncBadge", () => ({
+vi.mock("../../../src/components/tools/sync/ToolSyncBadge", () => ({
   ToolSyncBadge: ({ href }: { href: string }) => <span data-testid="sync-badge" data-href={href} />,
 }))
 vi.mock("../../../src/routes/doc/ResearchAgentEmbed", () => ({

@@ -19,6 +19,7 @@ import {
   type SpeechSegmentation,
   type SpeechSegmentationInput,
 } from "./speech-segmentation";
+import { captionPauseSegmentation } from "./caption-speech-split";
 import {
   SPEECH_SUMMARY_SYSTEM_PROMPT,
   buildSpeechSummaryPrompt,
@@ -79,9 +80,52 @@ export async function requestSpeechSegmentation(
     },
     options,
   );
-  const segmentation = parseSpeechSegmentationResponse(text);
+  const durationSeconds = input.captions.reduce(
+    (latest, caption) => Math.max(latest, caption.start + (caption.duration ?? 0)),
+    0,
+  );
+  const segmentation = parseSpeechSegmentationResponse(text, {
+    durationSeconds: durationSeconds > 0 ? durationSeconds + 30 : undefined,
+  });
   if (!segmentation) throw new Error("The AI couldn't find any speeches in these captions. Try again, or mark them by hand.");
   return segmentation;
+}
+
+/** What "Detect speeches" found, and how. */
+export interface SpeechDetectionResult {
+  segmentation: SpeechSegmentation;
+  /** `"ai"` when the model placed the speeches, `"pauses"` when only the caption pauses did. */
+  source: "ai" | "pauses";
+  /** Why the model's answer wasn't used, when `source` is `"pauses"`. */
+  aiError?: string;
+}
+
+/**
+ * "Detect speeches": the caption pauses place the format's speeches by
+ * length, the model corrects that guess from what is said, and when the model
+ * can't be asked or answers nothing usable the pause placement stands.
+ *
+ * @param style The video's numeric `DebateStyle`, for the pause guess.
+ * @throws Only when neither the model nor the pauses found any speech; the
+ *   model's message is kept.
+ */
+export async function detectRoundSpeeches(
+  input: Omit<SpeechSegmentationInput, "pauseGuess">,
+  style: number | null | undefined,
+  options: SpeechAiRequestOptions = {},
+): Promise<SpeechDetectionResult> {
+  const pauses = captionPauseSegmentation(input.captions, style);
+  try {
+    const segmentation = await requestSpeechSegmentation({ ...input, pauseGuess: pauses?.speeches }, options);
+    return { segmentation, source: "ai" };
+  } catch (error) {
+    if (options.signal?.aborted || !pauses) throw error;
+    return {
+      segmentation: pauses,
+      source: "pauses",
+      aiError: error instanceof Error ? error.message : String(error),
+    };
+  }
 }
 
 /**

@@ -13,7 +13,7 @@
  *
  * Also prefills the form's "Your name" field from this app's real signed-in
  * session, via `deriveContributorIdFromSessionIdentity` — mirroring
- * `../../components/research/PrepRoomWithIdentity.tsx`'s identical
+ * `../../components/research/identity/PrepRoomWithIdentity.tsx`'s identical
  * `signedInContributorId` convention.
  *
  * @module app/summaries/FlowSummariesPanelWithPrepNotes

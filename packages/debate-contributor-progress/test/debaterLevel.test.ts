@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   DEBATER_ACTIVITY_EVENT,
+  DEBATER_DEVICE_ID_STORAGE_KEY,
+  getDebaterDeviceId,
   DEBATER_LEVEL_STORAGE_KEY,
   DEBATER_XP_AWARDED_EVENT,
   installDebaterActivityListener,
@@ -53,6 +55,15 @@ describe("state/debaterLevel", () => {
     expect(awards).toHaveLength(1);
     expect(resetDebaterLevelState().totalXp).toBe(0);
     expect(loadDebaterLevelState().totalXp).toBe(0);
+  });
+
+  it("keeps a stable device id and records activity under it in the ledger", () => {
+    const id = getDebaterDeviceId();
+    expect(id).toBeTruthy();
+    expect(localStorage.getItem(DEBATER_DEVICE_ID_STORAGE_KEY)).toBe(id);
+    expect(getDebaterDeviceId()).toBe(id);
+    recordDebaterActivity("card_cut", 1, DAY1);
+    expect(Object.keys(loadDebaterLevelState().ledger?.devices ?? {})).toEqual([id]);
   });
 
   it("records valid activity events and ignores malformed ones", () => {

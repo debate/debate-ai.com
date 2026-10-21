@@ -13,7 +13,11 @@ import { describe, it, expect } from "vitest";
 import {
   VIDEOS_SECTION_ID,
   sidebarSectionForPath,
-} from "../src/components/category-gallery/sidebar-active-section";
+<<<<<<< HEAD
+} from "../src/components/sidebar/sidebar-active-section";
+=======
+} from "../src/components/sidebar-nav/sidebar-active-section";
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 
 describe("sidebarSectionForPath", () => {
   it("puts every videos route in the Videos section", () => {

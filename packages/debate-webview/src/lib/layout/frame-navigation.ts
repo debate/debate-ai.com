@@ -13,6 +13,8 @@
  * @module lib/layout/frame-navigation
  */
 
+import { isTopicDocsPath } from "../reason-docs/topic-doc-paths"
+
 /**
  * Whether a click is asking for the link to open somewhere other than this
  * document — a modifier or any button but the primary one. Those belong to
@@ -34,10 +36,20 @@ export function opensElsewhere(event: {
  * Whether `pathname` is the help docs site at /docs, which `AppShell` renders
  * with only the site sidebar around it.
  *
+ * A Topic Starter's `/docs/<topic code>/...` address is not: it is the
+ * CardMirror editor (`lib/reason-docs/topic-doc-paths`), an app page, so it
+ * gets the app shell and a link to it from the help docs is a full page load.
+ *
  * @param pathname - The current path, as `usePathname` reports it.
  */
 export function isDocsPath(pathname: string | null | undefined): boolean {
+  if (isTopicDocsPath(pathname)) return false
   return pathname === "/docs" || !!pathname?.startsWith("/docs/")
+}
+
+/** Whether a path is the mini player window's page, which renders without the app's chrome. */
+export function isMiniPlayerPath(pathname: string | null | undefined): boolean {
+  return !!pathname?.startsWith("/videos/mini/")
 }
 
 export interface AnchorNavigation {

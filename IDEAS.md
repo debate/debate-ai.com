@@ -45,6 +45,11 @@
 ### 10\. **Analytics Dashboard for Debaters**
 
 - Personal stats: win rate, fallacy frequency, argument length, topic expertise, improvement trends
+- **In Progress** (branch `agent/todo-debater-analytics-stats`): `buildDebaterStats` in `packages/debate-round/src/round/debater-stats.ts` computes win rate, side/division/argument splits and recent-form trend from `ownRoundHistory` (account-synced via the `ownRoundHistory` tool-record collection).
+  - [x] Pure stats model + Vitest
+  - [x] `DebaterStatsPanel` mounted in the Prep Workspace ("Debater Stats" tab) and the Coach Hub Prep section, with Vitest
+  - [ ] Follow-up: record fallacy/argument-length data so those stats can be added
+  - [ ] Blocked on base: 39 `.ts/.tsx` files on `master` (mostly `packages/debate-videos`, plus `debate-webview` nav files) contain committed merge-conflict markers, so repo-wide `tsc`/`build` fail; resolve those first, then re-run the build gate and mark this Completed
 
 1. ability to challenge legends - and speculators bet
 2. random pair webcam debate matching on mutual pref topics
@@ -57,6 +62,14 @@
 - [x] Flow tabs and `/debate` round cards show a saved-to-account marker; flow auto-save mode syncs via `user_settings`
 - [x] Tool pages show the sync badge / Save now (`ToolPageHeader`, `ToolSyncBadge`)
 - [x] Tool UI pass finished; no open follow-ups (2026-10-08 tracker review)
+- [x] Debater XP/level syncs via the `debaterLevel` tool-record collection (higher `totalXp` wins; 2026-10-20)
+- [x] Signed-in tabs re-merge the account's tool records on refocus once the 10-minute TTL lapses, so other-device changes appear without a reload (2026-10-21; `useToolRecordSync`)
+- [x] Font family preference syncs via `user_settings.font_family` (`PUT /api/settings { fontFamily }`; 2026-10-20)
+- [x] Debater XP merges field by field across devices (`mergeDebaterLevel`, `merge` hook on tool-record collections; 2026-10-20)
+- [x] Per-device XP ledger so lifetime XP/counts earned on two devices in the same window add (`DebaterXpLedger`, `ledger` in the `debaterLevel` record; 2026-10-20)
+- [x] Repaired the bad merge `3c43976` (undefined `asSide`/`withUnseenEvents`/`eventId` broke typecheck and 36 tests): kept the per-device ledger design and dropped the overlapping per-event-id one (2026-10-21)
+- [x] Today's per-activity counts add across devices via a per-day tally on each ledger entry (`DebaterDeviceTally.daily`; 2026-10-21)
+- [x] A daily challenge that a merge alone pushes past its target is paid on load/focus (`settleDailyChallenges`, `settleDebaterChallenges`; 2026-10-21)
 
 ---
 

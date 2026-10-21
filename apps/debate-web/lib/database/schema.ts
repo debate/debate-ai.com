@@ -207,6 +207,35 @@ export const topicStarterItems = sqliteTable(
 
 export type TopicStarterItem = typeof topicStarterItems.$inferSelect;
 
+// Edits to the public Topic Starters catalogue waiting on a moderator: a
+// non-staff reader's move, rename, delete, new folder, file submission or
+// AI reorganization from the docs sidebar. `change` is the JSON
+// `TopicStarterChange` (@debate/webview/lib/topic-starters/changes), applied
+// verbatim on approval. lib/topic-starters/changes.ts creates this table on
+// first use (CREATE TABLE IF NOT EXISTS), since the app ships no migrations.
+export const topicStarterChanges = sqliteTable(
+  "topic_starter_changes",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    kind: text("kind").notNull(),
+    change: text("change").notNull(),
+    summary: text("summary").notNull().default(""),
+    // "pending" | "approved" | "rejected"
+    status: text("status").notNull().default("pending"),
+    userId: text("user_id"),
+    userEmail: text("user_email"),
+    reviewedBy: text("reviewed_by"),
+    error: text("error"),
+    createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
+    reviewedAt: integer("reviewed_at", { mode: "timestamp" }),
+  },
+  (table) => ({
+    statusIdx: index("idx_topic_starter_changes_status").on(table.status),
+  }),
+);
+
+export type TopicStarterChangeRecord = typeof topicStarterChanges.$inferSelect;
+
 // Shared, AI-Generated Debate Flow — server-backed live sync transport for
 // `debate-round`'s `FlowEdit` records (see packages/debate-round/src/flow/shared-flow-sync.ts
 // and TODO.md idea #16, follow-up (a)). `boxPath` is a JSON-encoded number
@@ -270,7 +299,7 @@ export type FlowPresenceHeartbeatRow = typeof flowPresenceHeartbeats.$inferSelec
 // semantics as an absent key in the local `Settings` store.
 //
 // `colorTheme`/`themeMode` (idea #17, follow-up (2)) extend the same row
-// with the color-theme/light-dark preference `components/theme-dropdown.tsx`'s
+// with the color-theme/light-dark preference `components/theme/ThemeDropdown.tsx`'s
 // `useThemeState` hook previously kept in `localStorage`/a cookie only — also
 // nullable, with the same "no saved row/value yet" semantics, validated by
 // `debate-round`'s `normalizeThemeSettingsPatch` against its
@@ -297,7 +326,7 @@ export type FlowPresenceHeartbeatRow = typeof flowPresenceHeartbeats.$inferSelec
 // the same lost-update fix `favoriteTools`' add/remove ops already use,
 // rather than a client-computed whole-list replace.
 // The QwkSearch account a user linked through "Sign in with QwkSearch"
-// (lib/qwksearch/connect.ts): JSON-serialized `QwkSearchConnection` — API key,
+// (packages/debate-webview/src/lib/qwksearch/connect.ts): JSON-serialized `QwkSearchConnection` — API key,
 // profile and plan. The embedded research workspace sends the key with every
 // qwksearch.com API call so chats run as that account. A table of its own
 // rather than a `user_settings` column: Drizzle names every column in an
@@ -346,6 +375,10 @@ export const userSettings = sqliteTable("user_settings", {
   // packages/debate-round/src/state/flowAutoSaveSettings.ts). Null means the
   // client default ("saved").
   flowAutoSave: text("flow_auto_save"),
+  // App-wide font family choice (a `FONT_OPTIONS` value, see
+  // packages/debate-round/src/state/fontSettings.ts). Null means none chosen on
+  // any device yet, so each device keeps its own local font.
+  fontFamily: text("font_family"),
   // JSON-serialized arrays of News Stream item ids the signed-in user has
   // read/liked (see packages/debate-card-search/src/lib/news-stream-sync.ts
   // and TODO.md's Product Feature Idea "Community-Rated Summaries" /
@@ -450,7 +483,7 @@ export const userSettings = sqliteTable("user_settings", {
   // truth for a signed-out browser.
   myTeamProfile: text("my_team_profile"),
   // JSON-serialized `MyRankedTeams` (`{ role, partner, teams: { <division>:
-  // teamSlug } }`) — Settings → My team, the ranked team the viewer debates
+  // teamSlug } }`) — Settings → General → My team, the ranked team the viewer debates
   // on, coaches or assists per division, which the matchup simulator
   // pre-fills (packages/debate-videos/src/lib/my-ranked-teams). Whole-value
   // replace, like `myTeamProfile` above.
@@ -1099,7 +1132,7 @@ export const youtubeRoundVideos = sqliteTable(
     channel: text("channel").notNull(),
     views: integer("views").notNull().default(0),
     description: text("description").notNull().default(""),
-    style: integer("style").notNull(), // 1=Policy, 2=PF, 3=LD, 4=College
+    style: integer("style").notNull(), // 1=Policy, 2=PF, 3=LD, 4=College, 5=WSD, 6=ACC, 7=Misc
     tournament: text("tournament"),
     roundLevel: text("round_level"),
     aff: text("aff"),
@@ -1189,6 +1222,13 @@ export const youtubeChannels = sqliteTable(
     name: text("name").notNull(),
     title: text("title"),
     enabled: integer("enabled", { mode: "boolean" }).notNull().default(true),
+    // Newest upload date (YYYY-MM-DD) any scan has seen on the channel, round
+    // or not, and when a scan last walked it. Together they decide whether the
+    // channel is "defunct" (no upload in a year), which moves it to its own
+    // section on /admin and onto the weekly scan instead of the daily one.
+    // See lib/youtube/admin-channels.ts.
+    lastUploadAt: text("last_upload_at"),
+    lastCheckedAt: integer("last_checked_at", { mode: "timestamp" }),
     addedBy: text("added_by"),
     createdAt: integer("created_at", { mode: "timestamp" })
       .notNull()
@@ -1304,7 +1344,7 @@ export type DetectedUrlInsert = typeof detectedUrls.$inferInsert;
 // the whole ~1.1 MB JSON blob on first paint; `.github/scripts/seed-videos.ts` loads
 // the JSON into it (local SQLite and Cloudflare D1 share this schema).
 //
-// `style` is the numeric debate format (1 Policy, 2 PF, 3 LD, 4 College) and is
+// `style` is the numeric debate format (1 Policy, 2 PF, 3 LD, 4 College, 5 WSD, 6 ACC, 7 Misc) and is
 // null for lectures; `category`/`category_key` hold the lecture category label
 // and its URL slug and are null for rounds — together they mirror tuple index 6.
 // `season_year` is the precomputed competition season (June-to-June, 0 = legacy
@@ -2693,7 +2733,7 @@ export const profileFollows = sqliteTable(
 export type ProfileFollowRow = typeof profileFollows.$inferSelect;
 
 // ── School ownership (claims, profiles, rosters) ─────────────────────────
-// A user claims to coach or run a school's program from Settings → My school;
+// A user claims to coach or run a school's program from Settings → General → My school;
 // a moderator approves or rejects the claim in /admin, and an approved claim
 // makes that user an owner of the school's page. All three tables are created
 // by packages/debate-videos/migrations/0004_school_claims.sql; the request
@@ -2894,3 +2934,82 @@ export const filePurchases = sqliteTable(
 );
 
 export type FilePurchaseRow = typeof filePurchases.$inferSelect;
+
+// Judge paradigms — the cache of Tabroom judges' paradigms and judging
+// records, and the paradigms judges write here themselves. The wire format
+// and checks live in `@debate/webview/lib/judge-paradigms`; the queries are
+// `lib/judge-paradigms/queries.ts`. Shipped to D1 by
+// `packages/debate-webview/migrations/0002_judge_paradigms.sql`.
+//
+// `judge_paradigms` is keyed by Tabroom person id. `record` and
+// `certifications` are JSON because the dialog reads them whole; `first` and
+// `last` are lower-cased name keys for finding a judge whose pairing carries
+// no id. A row whose fetch failed is kept with `status` set, so the sync
+// doesn't retry it every batch.
+export const judgeParadigms = sqliteTable(
+  "judge_paradigms",
+  {
+    personId: integer("person_id").primaryKey(),
+    name: text("name").notNull().default(""),
+    first: text("first").notNull().default(""),
+    last: text("last").notNull().default(""),
+    paradigmHtml: text("paradigm_html"),
+    lastReviewed: text("last_reviewed"),
+    /** JSON array of `JudgeRecordRow`. */
+    record: text("record").notNull().default("[]"),
+    rounds: integer("rounds").notNull().default(0),
+    /** JSON array of `{ label, description }`. */
+    certifications: text("certifications").notNull().default("[]"),
+    /** `tabroom-api` or `tabroom-page`. */
+    source: text("source").notNull().default("tabroom-api"),
+    /** `ok`, `not-found` or `error`. */
+    status: text("status").notNull().default("ok"),
+    error: text("error"),
+    syncedAt: integer("synced_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    nameIdx: index("idx_judge_paradigms_name").on(table.last, table.first),
+    syncedIdx: index("idx_judge_paradigms_synced").on(table.syncedAt),
+  }),
+);
+
+export type JudgeParadigmRow = typeof judgeParadigms.$inferSelect;
+
+// One row per sync job (`id` "tabroom"): how far the admin sync's walk over
+// Tabroom's paradigm search has got, so batches resume where the last left off.
+export const judgeParadigmSync = sqliteTable("judge_paradigm_sync", {
+  id: text("id").primaryKey(),
+  discoveryOffset: integer("discovery_offset").notNull().default(0),
+  discoveryDone: integer("discovery_done", { mode: "boolean" }).notNull().default(false),
+  lastRunAt: integer("last_run_at", { mode: "timestamp" }),
+  lastError: text("last_error"),
+});
+
+// A judge's own paradigm, one per account, written in the paradigm editor.
+// It replaces their Tabroom paradigm in the judge dialog only once `verified`:
+// the account proved it is `tabroom_person_id` by putting `verify_code` in
+// that Tabroom paradigm, or an admin confirmed it.
+export const judgeOwnParadigms = sqliteTable(
+  "judge_own_paradigms",
+  {
+    userId: text("user_id")
+      .primaryKey()
+      .references(() => user.id, { onDelete: "cascade" }),
+    tabroomPersonId: integer("tabroom_person_id"),
+    verified: integer("verified", { mode: "boolean" }).notNull().default(false),
+    verifyCode: text("verify_code").notNull(),
+    markdown: text("markdown").notNull().default(""),
+    /** The Markdown rendered and sanitized. */
+    html: text("html").notNull().default(""),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    personIdx: index("idx_judge_own_paradigms_person").on(table.tabroomPersonId, table.verified),
+  }),
+);
+
+export type JudgeOwnParadigmRow = typeof judgeOwnParadigms.$inferSelect;

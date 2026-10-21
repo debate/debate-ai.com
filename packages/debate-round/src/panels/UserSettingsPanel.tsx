@@ -12,7 +12,7 @@
  * A change always applies immediately to the local `settings` singleton
  * (`applyUserSettingsToLocalStore`) and, for the theme fields, the same
  * `localStorage`/cookie/DOM-class/`next-themes` writes
- * `theme-dropdown.tsx`'s `useThemeState` performs — so this panel behaves
+ * `ThemeDropdown.tsx`'s `useThemeState` performs — so this panel behaves
  * exactly like today's editor/dock for a signed-out user. When signed in,
  * it additionally loads the account's saved values on mount
  * (`fetchUserSettings`, via `/api/settings`) and syncs a save to the
@@ -78,6 +78,7 @@ import {
 import {
   DEFAULT_FONT_FAMILY,
   FONT_OPTIONS,
+  isValidFontFamily,
   readLocalFontFamily,
   setLocalFontFamily,
 } from "../state/fontSettings"
@@ -121,7 +122,7 @@ function applyColorThemeClass(colorTheme: string) {
   document.documentElement.classList.add(`theme-${colorTheme}`)
 }
 
-/** Applies a resolved colorTheme/themeMode to localStorage/cookie/DOM class, mirroring `theme-dropdown.tsx`'s `applyColorTheme`/`handleThemeChange` so this panel's Save button and the dock's picker never disagree about how a theme choice is persisted locally. */
+/** Applies a resolved colorTheme/themeMode to localStorage/cookie/DOM class, mirroring `ThemeDropdown.tsx`'s `applyColorTheme`/`handleThemeChange` so this panel's Save button and the dock's picker never disagree about how a theme choice is persisted locally. */
 function applyThemeLocally(colorTheme: string, themeMode: ThemeMode, setTheme: (mode: string) => void) {
   if (typeof document === "undefined") return
   applyColorThemeClass(colorTheme)
@@ -147,9 +148,9 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
   const [remoteAvailable, setRemoteAvailable] = useState(false)
   const [loading, setLoading] = useState(true)
   const [status, setStatus] = useState<SaveStatus>({ kind: "idle" })
-  // Local-only, like the source it was ported from — never synced to `/api/settings`,
-  // so it lives outside `form` and applies as soon as it's picked rather than
-  // waiting on the Save button below.
+  // Applies as soon as it's picked rather than waiting on the Save button below, so
+  // it lives outside `form`; when signed in it is pushed to the account on change
+  // (see handleFontFamilyChange).
   const [fontFamily, setFontFamily] = useState(DEFAULT_FONT_FAMILY)
   const flowAutoSaveEnabled = useSyncExternalStore(subscribeFlowAutoSavePreference, isFlowAutoSaveEnabled, () => true)
   // The last values `form` was loaded/saved from — i.e. what's actually
@@ -186,6 +187,14 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
   const handleFontFamilyChange = (value: string) => {
     setFontFamily(value)
     setLocalFontFamily(value)
+    if (remoteAvailable) {
+      saveUserSettings({ fontFamily: value }).catch((err) =>
+        setStatus({
+          kind: "error",
+          message: err instanceof Error ? err.message : "Failed to save font to your account.",
+        }),
+      )
+    }
   }
 
   useEffect(() => {
@@ -214,6 +223,14 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
           applyThemeLocally(colorTheme, themeMode, setTheme)
           // Adopt the account's auto-save mode; with none chosen yet, seed it from
           // this device's choice so other devices pick it up.
+          // Same for the font: the account's choice wins; with none saved yet, seed it
+          // from this device's so other devices pick it up.
+          if (isValidFontFamily(remote.fontFamily)) {
+            setFontFamily(remote.fontFamily)
+            setLocalFontFamily(remote.fontFamily)
+          } else if (readLocalFontFamily() !== DEFAULT_FONT_FAMILY) {
+            void saveUserSettings({ fontFamily: readLocalFontFamily() }).catch(() => {})
+          }
           if (isFlowAutoSaveMode(remote.flowAutoSave)) {
             setFlowAutoSave(remote.flowAutoSave)
             setFlowAutoSaveMode(remote.flowAutoSave)
@@ -238,7 +255,7 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
 
   /**
    * Live-updates this form across browser tabs — e.g. another tab's own
-   * `UserSettingsPanel` Save, or `theme-dropdown.tsx`'s dock picker
+   * `UserSettingsPanel` Save, or `ThemeDropdown.tsx`'s dock picker
    * changing `color-theme`/`theme` — but only fields that still match
    * `baselineRef` (untouched since they were last loaded/saved here), so an
    * in-progress, not-yet-saved edit is never overwritten. `fontFamily` is

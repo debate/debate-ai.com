@@ -36,6 +36,7 @@ import { ArrowUpRight, ClipboardList, Crosshair, GraduationCap, ListTree, PlayCi
 import {
   FlowEditLogPanel,
   OpponentTeamProfilesPanel,
+  DebaterStatsPanel,
   PreRoundBriefingsPanel,
   SharedFlowSyncPanel,
   StrategyPanel,
@@ -56,7 +57,7 @@ import {
 } from "@debate/practice-rounds"
 import { CoachingProgramsPanel } from "@debate/team-collaboration"
 import { CoachMaterialsPanel, JudgeProfilesPanel } from "@debate/speech-writer"
-import { PrepNotesWithIdentity } from "../research/PrepNotesWithIdentity"
+import { PrepNotesWithIdentity } from "../research/identity/PrepNotesWithIdentity"
 import { PracticePartnersPanel } from "../practice-partners/PracticePartnersPanel"
 import { NewsStreamPanel } from "@debate/community"
 import { coachingSessionNews } from "@debate/practice-rounds/src/state/coachingSessions"
@@ -121,7 +122,7 @@ export const COACH_SECTIONS: readonly HubSection<SectionId>[] = [
     panels: [
       panel("AI Coach Mode", "/coaching?section=ai-coach"),
       panel("Coaching Programs", "/coaching?section=programs"),
-      panel("Practice Drills", "/practice/drills"),
+      panel("Practice Drills", "/practice/prep?section=drills"),
       panel("Coach Materials", "/coaching?section=materials"),
     ],
   },
@@ -134,6 +135,7 @@ export const COACH_SECTIONS: readonly HubSection<SectionId>[] = [
     panels: [
       panel("Pre-Round Briefings", "/practice/prep?section=briefings"),
       panel("Prep Notes", "/practice/prep?section=notes"),
+      panel("Debater Stats", "/practice/prep?section=stats"),
       panel("Flow Annotations", "/annotations"),
     ],
   },
@@ -156,7 +158,7 @@ export const COACH_SECTIONS: readonly HubSection<SectionId>[] = [
     description: "Run practice rounds between tournaments: challenge other debaters or volunteer to judge, simulated rounds, rounds against the AI, and word-count speeches.",
     guide: "practice-tools",
     panels: [
-      panel("Practice Partners", "/practice/partners"),
+      panel("Practice Partners", "/practice/prep?section=partners"),
       panel("Practice Round Simulator", "/practice"),
       panel("Practice vs AI", "/practice/versus-ai"),
       panel("Word-Count Speeches", "/word-count"),
@@ -325,6 +327,9 @@ export function CoachHub() {
             </HubPanelAnchor>
             <HubPanelAnchor anchor={ANCHORS["Prep Notes"]}>
               <PrepNotesWithIdentity />
+            </HubPanelAnchor>
+            <HubPanelAnchor anchor={ANCHORS["Debater Stats"]}>
+              <DebaterStatsPanel />
             </HubPanelAnchor>
             <HubPanelAnchor anchor={ANCHORS["Flow Annotations"]}>
               <FlowAnnotationsPanel />

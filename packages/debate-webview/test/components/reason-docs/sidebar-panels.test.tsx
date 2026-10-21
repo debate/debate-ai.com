@@ -62,8 +62,8 @@ const toast = vi.hoisted(() => ({
 vi.mock("sonner", () => ({ toast }));
 
 import { ReasonDocsSidebarPanels } from "../../../src/components/reason-docs/ReasonDocsSidebarPanels";
-import { FileTree } from "../../../src/components/reason-docs/FileTree";
-import { TopicStarterTree, type TopicStarterItem } from "../../../src/components/reason-docs/TopicStarterTree";
+import { FileTree } from "../../../src/components/reason-docs/file-manager/FileTree";
+import { TopicStarterTree, type TopicStarterItem } from "../../../src/components/reason-docs/topic-starters/TopicStarterTree";
 import { SharedCardOpener, ShareWithContacts } from "../../../src/components/reason-editor/ShareWithContacts";
 import type { ReasonDocument } from "../../../src/components/reason-docs/types";
 import {
@@ -136,7 +136,13 @@ function makeDocs(overrides: Record<string, unknown> = {}) {
     downloadTopicDocument: vi.fn(async () => ({ ok: true })),
     copyTopicToDocuments: vi.fn(async () => ({ ok: true, created: [doc({ id: 60, title: "Solar Aff", parentId: null })] })),
     duplicateDocument: vi.fn(async () => ({ ok: true, created: [] })),
-    publishToTopics: vi.fn(async () => ({ ok: true, item: { ...TOPICS[1], id: 61, title: "Case.docx" } })),
+    publishToTopics: vi.fn(async () => ({ ok: true, pending: false, title: "Case.docx" })),
+    moveTopicStarter: vi.fn(async () => ({ ok: true, pending: true })),
+    renameTopicStarter: vi.fn(async () => ({ ok: true, pending: false })),
+    deleteTopicStarter: vi.fn(async () => ({ ok: true, pending: true })),
+    createTopicFolder: vi.fn(async () => ({ ok: true, pending: true })),
+    proposeTopicChange: vi.fn(async () => ({ ok: true, pending: true })),
+    organizeTopicStarters: vi.fn(async () => ({ ok: true, change: { kind: "reorganize", assignments: [{ itemId: 11, side: "aff", type: "case" }] }, summary: "Organize 1 file by argument (Aff/Case 1)", moves: 1 })),
     ...overrides,
   };
 }
@@ -471,6 +477,47 @@ describe("TopicStarterTree", () => {
     expect(h.onPublish).toHaveBeenCalledWith(1, 10);
   });
 
+  it("renames, deletes, adds folders and moves rows by drag when the host allows edits", () => {
+    const items: TopicStarterItem[] = [...TOPICS, { id: 14, title: "Neg", content: "", parentId: null, isFolder: true, tags: "[]" }];
+    const h = { onSelect: vi.fn(), onMove: vi.fn(), onRename: vi.fn(), onDelete: vi.fn(), onCreateFolder: vi.fn() };
+    mount(<TopicStarterTree items={items} {...h} />);
+
+    rightClick(button("Solar Aff").parentElement!);
+    click(menuItem("Rename"));
+    const input = document.querySelector<HTMLInputElement>("input[aria-label='Rename Solar Aff']")!;
+    expect(input.value).toBe("Solar Aff");
+    change(input, "Solar 1AC");
+    keyDown(input, "Enter");
+    expect(h.onRename).toHaveBeenCalledWith(11, "Solar 1AC");
+
+    rightClick(button("Nuclear Neg").parentElement!);
+    click(menuItem("Delete"));
+    expect(h.onDelete).toHaveBeenCalledWith(12);
+
+    rightClick(button("Energy").parentElement!);
+    click(menuItem("New folder"));
+    expect(h.onCreateFolder).toHaveBeenCalledWith(10);
+
+    // A topic row dropped on another folder moves there; onto its own folder
+    // (where it already is) or a folder into itself, nothing happens.
+    act(() => {
+      button("Neg").parentElement!.dispatchEvent(dropEvent("drop", { topicId: 12 }));
+    });
+    expect(h.onMove).toHaveBeenCalledWith(12, 14);
+    act(() => {
+      button("Energy").parentElement!.dispatchEvent(dropEvent("drop", { topicId: 11 }));
+      button("Energy").parentElement!.dispatchEvent(dropEvent("drop", { topicId: 10 }));
+    });
+    expect(h.onMove).toHaveBeenCalledTimes(1);
+  });
+
+  it("offers no edit actions when the host passes none", () => {
+    mount(<TopicStarterTree items={TOPICS} onSelect={() => {}} onSaveCopy={() => {}} />);
+    rightClick(button("Solar Aff").parentElement!);
+    expect(allByText("Rename", "[role=menuitem]")).toHaveLength(0);
+    expect(allByText("Delete", "[role=menuitem]")).toHaveLength(0);
+  });
+
   it("shows the empty catalogue", () => {
     mount(<TopicStarterTree items={[]} onSelect={() => {}} />);
     expect(bodyText()).toContain("No public topic starters yet.");
@@ -565,7 +612,7 @@ describe("ReasonDocsSidebarPanels", () => {
     mount(<ReasonDocsSidebarPanels />);
     click(button("Solar Aff"));
     expect(docs.selectTopicDocument).toHaveBeenCalledWith(TOPICS[1]);
-    expect(nav.push).toHaveBeenCalledWith("/reason-editor?topic=energy/solar-aff");
+    expect(nav.push).toHaveBeenCalledWith("/docs/vcx27/energy/solar-aff");
 
     openMenu(button("Solar Aff").parentElement!.querySelectorAll("button")[1]);
     click(menuItem("Download as .docx"));
@@ -635,6 +682,52 @@ describe("ReasonDocsSidebarPanels", () => {
     expect(toast.error).toHaveBeenLastCalledWith("Energy could not be copied (x).");
   });
 
+  it("sends Topic Starters edits and says when they went to the moderators", async () => {
+    const docs = makeDocs();
+    docsState.value = docs;
+    mount(<ReasonDocsSidebarPanels />);
+    rightClick(button("Nuclear Neg").parentElement!);
+    click(menuItem("Delete"));
+    await flush();
+    expect(docs.deleteTopicStarter).toHaveBeenCalledWith(12);
+    expect(toast.success).toHaveBeenLastCalledWith("Delete Nuclear Neg? Sent to the moderators for approval.");
+
+    rightClick(button("Solar Aff").parentElement!);
+    click(menuItem("Rename"));
+    const input = document.querySelector<HTMLInputElement>("input[aria-label='Rename Solar Aff']")!;
+    change(input, "Solar 1AC");
+    keyDown(input, "Enter");
+    await flush();
+    expect(docs.renameTopicStarter).toHaveBeenCalledWith(11, "Solar 1AC");
+    expect(toast.success).toHaveBeenLastCalledWith("Renamed to Solar 1AC.");
+  });
+
+  it("proposes an AI organization by argument and sends it on confirm", async () => {
+    const docs = makeDocs();
+    docsState.value = docs;
+    mount(<ReasonDocsSidebarPanels />);
+    await act(async () => {
+      document.querySelector<HTMLButtonElement>("button[aria-label='Organize by argument']")!.click();
+    });
+    await flush();
+    expect(docs.organizeTopicStarters).toHaveBeenCalled();
+    expect(bodyText()).toContain("Organize 1 file by argument (Aff/Case 1)");
+    expect(docs.proposeTopicChange).not.toHaveBeenCalled();
+    click(button("Send for approval"));
+    await flush();
+    expect(docs.proposeTopicChange).toHaveBeenCalledWith({ kind: "reorganize", assignments: [{ itemId: 11, side: "aff", type: "case" }] });
+    expect(toast.success).toHaveBeenLastCalledWith("Reorganization sent to the moderators for approval.");
+  });
+
+  it("hides Topic Starters edits from a signed-out reader", () => {
+    session.value = { isAuthenticated: false };
+    docsState.value = makeDocs();
+    mount(<ReasonDocsSidebarPanels />);
+    expect(document.querySelector("button[aria-label='Organize by argument']")).toBeNull();
+    rightClick(button("Solar Aff").parentElement!);
+    expect(allByText("Rename", "[role=menuitem]")).toHaveLength(0);
+  });
+
   it("edits a copy of a topic starter by opening the copy", async () => {
     const docs = makeDocs();
     docsState.value = docs;
@@ -655,7 +748,7 @@ describe("ReasonDocsSidebarPanels", () => {
     rightClick(button("Solar Aff").parentElement!);
     click(menuItem("Copy link"));
     await flush();
-    expect(writeText).toHaveBeenCalledWith(`${window.location.origin}/reason-editor?topic=energy/solar-aff`);
+    expect(writeText).toHaveBeenCalledWith(`${window.location.origin}/docs/vcx27/energy/solar-aff`);
     expect(toast.success).toHaveBeenCalledWith("Link copied.");
   });
 

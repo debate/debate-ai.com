@@ -26,6 +26,16 @@ The title half is for readers and for search engines. A video that gets
 retitled gets a new address — old links stop working, which is the
 trade-off for clean URLs without appended ids.
 
+## No spoilers
+
+The round's result stays hidden until you ask for it. The header shows
+both teams in their side colors, aff blue and neg red, with neither marked
+as the winner, and the decision is a **Reveal decision** button under the
+title. Clicking it shows the decision and rings the winning team in gold.
+The reveal is shared with that video's card in the grid, so revealing on
+one shows the winner on the other; it lasts until you reload the page.
+(`hooks/useDecisionReveal.ts`)
+
 ## Transcript
 
 The transcript column is the same synced, clickable transcript the popout
@@ -78,6 +88,21 @@ works out the format (Policy, LD, Public Forum, or another), and finds
 when each speech begins and ends — 1AC, 1AX (the cross-ex of the 1AC),
 1NC, 1NX, 2AC, 2AX, 2NC, 2NX, 1NR, 1AR, 2NR, 2AR for Policy, and the
 matching speeches for LD and PF.
+
+How it reads the captions: auto-captions have no speaker names, so the
+quiet stretches between them (prep time, the next speaker setting up)
+are the main clue. Those pauses are marked in what the AI reads, along
+with each speech's usual length and a first guess placed from the pauses
+alone. The AI then moves each start to where the words show the speech
+really begins — "time starts now", a roadmap, the switch to cross-ex
+questions — and skips anything it can't find rather than guessing.
+Times past the end of the video, overlapping speeches and the AI's own
+low-confidence guesses are thrown out.
+
+If the AI can't be reached (you're signed out, or the daily AI limit is
+used up), **Detect speeches** still places the speeches from the caption
+pauses and the format's speech lengths, and says so — check those starts
+before relying on them.
 
 - Each speech's tab is timed, the timeline fills in, and **Transcript**
   shows exactly the captions spoken during that speech — cut off at its
@@ -194,6 +219,33 @@ Two of them are about leaving:
 
 Only one video ever plays: opening a watch page takes playback over from
 the floating player, and leaving hands it back.
+
+### Mini player window
+
+**Pop out mini player** opens the video in a small window of its own: the
+video, a title bar, and the round's speeches as a strip of buttons with
+**‹** / **›** to jump to the previous or next speech (the back button
+restarts the current speech if you are a few seconds into it). The page's
+own player pauses and the window picks up at the same second. The speeches
+are the same ones the page shows, including start times you marked or the
+AI detected in this browser. **Open the full watch page** (the expand icon)
+sends you back to the watch page and closes the window.
+
+In the **desktop app** the window opens in the bottom-right corner and has a
+**pin** button: pinned, it stays on top of every other window, and follows
+you across virtual desktops, so a round keeps playing in the corner while
+you flow it or write in another app. It starts pinned; the app remembers
+whether you last left it pinned. On Linux, some Wayland desktops ignore
+always-on-top requests, so the pin may have no effect there.
+
+In a **browser** it is an ordinary popup window (allow popups for the site
+if nothing opens). Browsers can't keep a popup above other apps, so there is
+no pin; Chrome's **picture-in-picture** button is the browser's always-on-top
+option.
+
+The window's address is `/videos/mini/<videoId>?t=<seconds>`
+(`VideoMiniPlayer`, `lib/mini-player-window.ts` in `@debate/videos`; the
+desktop side is `src-tauri/src/mini_player.rs` in the native wrapper).
 
 ## Search box
 

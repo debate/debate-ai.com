@@ -9,7 +9,7 @@
  * starts the flow, QwkSearch asks the user to allow Debate AI, and
  * `/api/qwksearch/callback` stores the user's QwkSearch API key on their
  * debate-ai account (the `qwksearch_connection` table; see
- * apps/debate-ai.com/lib/qwksearch/connect.ts).
+ * packages/debate-webview/src/lib/qwksearch/connect.ts).
  *
  * This client reads that link back from `/api/qwksearch/session` and attaches
  * the key as `X-API-Key` to every request the embed makes to qwksearch.com's

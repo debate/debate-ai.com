@@ -1,7 +1,7 @@
 /** @vitest-environment jsdom */
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
-import { SpeechAnalysisPanel } from "../../../src/components/admin/SpeechAnalysisPanel";
+import { SpeechAnalysisPanel } from "../../../src/components/admin/videos/SpeechAnalysisPanel";
 import {
   bodyText,
   button,
@@ -32,6 +32,7 @@ describe("SpeechAnalysisPanel", () => {
     await flush();
     expect(calls[0].url).toContain("scope=goat");
     expect(bodyText()).toContain("40 videos · 30 with cached transcripts · 10 analyzed · 30 to go");
+    expect(bodyText()).toContain("Order: Most viewed first.");
     const prompt = document.querySelector<HTMLTextAreaElement>("#speech-analysis-prompt")!;
     expect(prompt.value).toContain("alternative");
   });
@@ -43,7 +44,7 @@ describe("SpeechAnalysisPanel", () => {
         method: "POST",
         match: "/api/admin/videos/speech-analysis",
         once: true,
-        respond: { processed: 1, saved: 1, results: [{ videoId: "a", title: "Round A", status: "saved" }], nextAfterId: "a", done: false },
+        respond: { processed: 1, saved: 1, results: [{ videoId: "a", title: "Round A", viewCount: 12345, status: "saved" }], nextAfterId: "a", done: false },
       },
       {
         method: "POST",

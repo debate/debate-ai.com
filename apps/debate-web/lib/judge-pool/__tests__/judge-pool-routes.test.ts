@@ -124,7 +124,7 @@ describe("/api/judge-pool", () => {
       ["judge", "judge_hire"],
       ["organizer", "judge_hire"],
     ]);
-    expect(notes[0].link).toBe("/practice/partners#judge-pool");
+    expect(notes[0].link).toBe("/practice/prep?section=partners#judge-pool");
   });
 
   it("refuses a weekend the judge didn't offer, a duplicate, and self-hire", async () => {

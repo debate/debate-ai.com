@@ -1,6 +1,6 @@
 /**
  * @fileoverview The end-of-round scorecard — the port of the upstream
- * `frontend/src/components/JudgementPopup.tsx`.
+ * `frontend/src/components/round/JudgementPopup.tsx`.
  *
  * Both judgment shapes upstream handled are kept: the user-vs-bot rubric
  * this package's backend emits, and the for/against rubric the upstream Go
@@ -85,7 +85,7 @@ export const DEFAULT_COACH_SKILLS: CoachSkill[] = [
     title: "Pros and Cons Challenge",
     description:
       "Test your critical thinking by crafting up to 5 pros and cons for engaging debate topics.",
-    url: "/practice/drills",
+    url: "/practice/prep?section=drills",
   },
 ]
 

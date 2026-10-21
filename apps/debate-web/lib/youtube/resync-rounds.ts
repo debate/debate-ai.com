@@ -21,6 +21,27 @@ import { findPublishedVideoIds } from "../videos/publish-round-video";
 import { ensureTableColumns } from "../database/ensure-columns";
 import { youtubeChannels, youtubeRoundVideos, youtubeSyncRuns, youtubeVideoExclusions } from "../database/schema";
 import { getEnv } from "../env";
+import { listAdminChannels } from "./admin-channels";
+
+/**
+ * Which subscribed channels a scan walks. The daily cron scans `"active"`
+ * ones (and `"all"` on Mondays), the channels tab's "Check defunct channels"
+ * button scans `"defunct"` ones (see `isChannelDefunct` in
+ * admin-channels.ts), the admin page's "Resync videos" button scans `"all"`,
+ * and a row's "Check" button scans just that channel by row id — paused or
+ * not, since an admin asked for it by name.
+ */
+export type ChannelScanScope = "all" | "active" | "defunct" | { channelId: number };
+
+/** Newest `YYYY-MM-DD` upload date among a channel's fetched video tuples. */
+function newestUploadDate(videos: any[]): string | null {
+  let newest: string | null = null;
+  for (const video of videos) {
+    const date = video?.[2];
+    if (typeof date === "string" && date && (!newest || date > newest)) newest = date;
+  }
+  return newest;
+}
 
 /**
  * Refetches every subscribed YouTube channel (see `youtube_channels` in
@@ -43,10 +64,12 @@ import { getEnv } from "../env";
  *   daily cron path) the module-level default from `channel-config.ts` is
  *   used; the admin page's date chooser passes its own value so a manual
  *   resync can reach further back or narrow the window without a redeploy.
+ * @param scope - Which channels to walk. See {@link ChannelScanScope}.
  */
 export async function resyncYouTubeRounds(
   triggeredBy: string | null,
   publishedAfterDate?: string,
+  scope: ChannelScanScope = "all",
 ) {
   const apiKey = getEnv("YOUTUBE_API_KEY");
   if (!apiKey) {
@@ -94,10 +117,29 @@ export async function resyncYouTubeRounds(
     // name and writing it back so the next scan skips the lookup. A channel
     // the API does not know about is skipped rather than failing the run —
     // the channels tab is where a typo gets noticed.
-    const subscribed = await db
+    let subscribed = await db
       .select()
       .from(youtubeChannels)
-      .where(eq(youtubeChannels.enabled, true));
+      .where(
+        typeof scope === "object"
+          ? eq(youtubeChannels.id, scope.channelId)
+          : eq(youtubeChannels.enabled, true),
+      );
+    if (typeof scope !== "object") {
+      const listed = new Map((await listAdminChannels(db)).channels.map((channel) => [channel.id, channel]));
+      if (scope !== "all") {
+        const wantDefunct = scope === "defunct";
+        subscribed = subscribed.filter(
+          (channelRow: { id: number }) => listed.get(channelRow.id)?.defunct === wantDefunct,
+        );
+      }
+      // Channels with no videos stored yet go first, so a run that dies part
+      // way (a timeout, a spent API quota) has still tried the ones that most
+      // need it. The sort is stable, so the rest keep their order.
+      const hasVideos = (channelRow: { id: number }) => ((listed.get(channelRow.id)?.videoCount ?? 0) > 0 ? 1 : 0);
+      subscribed = [...subscribed].sort((a: { id: number }, b: { id: number }) => hasVideos(a) - hasVideos(b));
+    }
+
 
     for (const channelRow of subscribed) {
       const channelId = await getChannelId(channelRow.name);
@@ -115,6 +157,16 @@ export async function resyncYouTubeRounds(
       if (typeof title === "string" && title && title !== channelRow.title) {
         await db.update(youtubeChannels).set({ title }).where(eq(youtubeChannels.id, channelRow.id));
       }
+      // Record the newest upload, round or not, so the channels tab can tell
+      // an active channel from a defunct one — and a defunct channel that
+      // uploads again moves back to active on this very scan.
+      const newestUpload = newestUploadDate(videos);
+      const activity: Record<string, unknown> = {};
+      if (newestUpload && (!channelRow.lastUploadAt || newestUpload > channelRow.lastUploadAt)) {
+        activity.lastUploadAt = newestUpload;
+      }
+      activity.lastCheckedAt = new Date();
+      await db.update(youtubeChannels).set(activity).where(eq(youtubeChannels.id, channelRow.id));
       allVideos.push(...videos);
       channelsSynced++;
     }

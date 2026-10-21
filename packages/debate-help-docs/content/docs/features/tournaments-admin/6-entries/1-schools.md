@@ -5,13 +5,11 @@ slug: schools
 
 ## Search Bar
 
-
 To access a school's page, you select it from the dropdown menu.
 
 ## School Page
 
 ### General
-
 
 **General** - This tab lists contact info for the coach of the school,
 school data and all individuals that currently has access to the
@@ -40,8 +38,6 @@ that are waitlisted for the particular tournament.
 
 #### Money Information
 
-title="Entries_-_School_-_Team_page_-_money_info.png" />
-
 **Record a Payment** - Allows you to enter information for new payments
 that have been made for a tournament.
 
@@ -50,15 +46,11 @@ balance for a tournament.
 
 #### School Data
 
-title="Entries_-_schools_-_team_page_-_school_data.png" />
-
 Information on a school's entry related to what NSDA chapter they are
 in, who registered them, when the school was registered them and who
 signed any relevant disclaimers related to the tournament.
 
 #### Status
-
-title="Entries_-_Schools_-_Team_Page_-_Status.png" />
 
 **Confirmed Onsite** - Toggle to mark a school as onsite/confirmed
 registered for a tournament.
@@ -68,28 +60,20 @@ before a school can register themselves online.
 
 #### Printouts
 
-title="Entries_-_Schools_-_Team_Page_-_Printouts.png" />
-
 Options for printing out specific elements of a school's entry. Each
 button takes you to a different PDF.
 
 #### Required School Forms
-
-title="entries_-_schools_-_team_page_-_required_school_forms.png" />
 
 Tracks whether a school has uploaded required forms and allows you to
 upload the forms manually
 
 #### Damage
 
-title="Entries_-_Schools_-_Team_Page_-_Damage.png" />
-
 Option to delete an entire school's entry (in all events) from a
 tournament.
 
 ### Entries
-
-title="entries_-_schools_-_team_page_-_entries.png" />
 
 **Add to** - Selects what event to add new entries to.
 
@@ -109,10 +93,6 @@ student names.
 
 #### Judge Categories
 
-title="Entries_-_Schools_-_Team_Page_-_Judges_-_Judge_Categories.png" />
-
-title="Entries_-_Schools_-_Team_Page_-_Judges_-_Category_Screen.png" />
-
 **Judge Categories** - Toggle between events to see what judges a school
 has entered in those events.
 
@@ -126,65 +106,43 @@ school. Can be previously on the school's roster or not.
 
 #### Burden Adjustment
 
-<img
-title="Entries_-_Schools_-_Team_Page_-_Judges_-_Burden_Adjustment.png" />
-
 Multiples a school's judge obligations by the selected percentage.
 
 #### Add Judge
 
-title="Entries_-_Schools_-_Team_Page_-_Judges_-_Add_Judge.png" />
-
 Allows entering a judge on a school's roster to a given event.
-
-<img
-title="Entries_-_Schools_-_Team_Page_-_Judges_-_Add_Judge_Not_on_Roster.png" />
 
 Information inputs to enter a judge not previously entered on a school's
 Tabroom roster.
 
 ### Money
 
-title="Entries_-_Schools_-_Team_Page_-_Money.png" />
-
 Displays charges and payments that will appear on a school's invoice.
 
 #### Record Payments
-
-title="Entries_-_Schools_-_Team_Page_-_Money_-_Record_Payments.png" />
 
 Allows entering new payments, their reason and their amount to a
 school's invoice.
 
 #### Invoices
 
-title="Entries_-_Schools_-_Team_Page_-_Money_-_Invoices.png" />
-
 Options to modify a school's invoice and produce a new copy.
 
 #### Discounts
-
-title="Entries_-_Schools_-_Team_Page_-_Money_-_Discounts.png" />
 
 Allows adjustment to certain fees for a school by the selected discount
 amount.
 
 #### Add Charge
 
-title="Entries_-_Schools_-_Team_Page_-_Money_-_Add_Charges.png" />
-
 Allows entering new charges, their reason and their amount to a school's
 invoice.
 
 ### Followers
 
-title="Entries_-_Schools_-_Team_Page_-_Contacts.png" />
-
 Option to add emails so that they receive updates about pairings and
 judge assignments for a given school.
 
 ### Notes
-
-title="Entries_-_Schools_-_Team_Page_-_Notes.png" />
 
 Allows you to save notes about a school's entry for future reference.

@@ -11,7 +11,11 @@
  */
 
 import { describe, it, expect, vi } from "vitest";
-import { isVideoLibraryPath } from "../src/components/category-gallery/sidebar-routes";
+<<<<<<< HEAD
+import { isVideoLibraryPath } from "../src/components/sidebar/sidebar-routes";
+=======
+import { isVideoLibraryPath } from "../src/components/sidebar-nav/sidebar-routes";
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 import { renderToStaticMarkup } from "react-dom/server";
 import { createElement } from "react";
 import {
@@ -22,7 +26,13 @@ import {
   VIDEO_FORMAT_LINKS,
   VIDEO_LIBRARY_LINKS,
   VIDEO_REFERENCE_LINKS,
-} from "../src/components/category-gallery/sidebar-video-links";
+  VIDEO_ALL_VIDEOS_FILTER_LINKS,
+  VIDEO_COLLEGE_FILTER_LINKS,
+<<<<<<< HEAD
+} from "../src/components/sidebar/sidebar-video-links";
+=======
+} from "../src/components/sidebar-nav/sidebar-video-links";
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 
 vi.mock("next/image", () => ({
   default: ({ src, alt, className }: { src: unknown; alt?: string; className?: string }) =>
@@ -42,11 +52,19 @@ vi.mock("next/navigation", () => ({
   usePathname: () => "/videos",
 }));
 
-const { VideoSidebarTree } = await import("../src/components/category-gallery/VideoSidebarTree");
-const { QuickLinksGrid } = await import("../src/components/category-gallery/QuickLinksGrid");
-const { ToolNavTree } = await import("../src/components/category-gallery/ToolNavTree");
+<<<<<<< HEAD
+const { VideoSidebarTree } = await import("../src/components/sidebar/VideoSidebarTree");
+const { QuickLinksGrid } = await import("../src/components/gallery/QuickLinksGrid");
+const { ToolNavTree } = await import("../src/components/sidebar/ToolNavTree");
 const { INSIGHTS_SECTION_ID } = await import(
-  "../src/components/category-gallery/sidebar-tool-sections"
+  "../src/components/sidebar/sidebar-tool-sections"
+=======
+const { VideoSidebarTree } = await import("../src/components/sidebar-nav/VideoSidebarTree");
+const { QuickLinksGrid } = await import("../src/components/category-gallery/QuickLinksGrid");
+const { ToolNavTree } = await import("../src/components/sidebar-nav/ToolNavTree");
+const { INSIGHTS_SECTION_ID } = await import(
+  "../src/components/sidebar-nav/sidebar-tool-sections"
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 );
 
 function sidebarHtml(): string {
@@ -145,6 +163,29 @@ describe("the surfaces that render them", () => {
     const tiles = hrefsIn(renderToStaticMarkup(createElement(QuickLinksGrid, {})));
     for (const link of VIDEO_REFERENCE_LINKS) {
       expect(insights).toContain(link.href);
+      expect(tiles).not.toContain(link.href);
+    }
+  });
+});
+
+describe("the WSD, ACC and Speech collections", () => {
+  it("offer ACC alone on College Team Debate", () => {
+    expect(VIDEO_COLLEGE_FILTER_LINKS.map((link) => link.href)).toEqual(["/videos/acc"]);
+  });
+
+  it("are not sidebar destinations", () => {
+    const sidebarHrefs = new Set(SIDEBAR_VIDEO_LINKS.map((link) => link.href));
+    expect(VIDEO_ALL_VIDEOS_FILTER_LINKS.map((link) => link.id)).toEqual(["wsd", "acc", "speech"]);
+    for (const link of VIDEO_ALL_VIDEOS_FILTER_LINKS) {
+      expect(sidebarHrefs).not.toContain(link.href);
+    }
+  });
+
+  it("appear in neither the sidebar tree nor the mobile tiles", () => {
+    const sidebar = hrefsIn(sidebarHtml());
+    const tiles = hrefsIn(renderToStaticMarkup(createElement(QuickLinksGrid, {})));
+    for (const link of VIDEO_ALL_VIDEOS_FILTER_LINKS) {
+      expect(sidebar).not.toContain(link.href);
       expect(tiles).not.toContain(link.href);
     }
   });

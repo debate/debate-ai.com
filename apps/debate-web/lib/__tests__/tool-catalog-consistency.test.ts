@@ -131,8 +131,9 @@ const STATIC_APP_ROUTES = findAppPageRoutes(APP_DIR, "").filter((route) => !rout
  * `/practice` is the same: the Practice Round Simulator was merged into
  * Practice vs AI, so it only redirects to `/practice/versus-ai`. So are
  * `/practice/briefings`, `/practice/strategy`, `/practice/opponents`,
- * `/practice/judges` and `/practice/prep-notes`: those five were merged into
- * the Prep Workspace, and each redirects to its tab of `/practice/prep`.
+ * `/practice/judges`, `/practice/prep-notes`, `/practice/partners` and
+ * `/practice/drills`: those seven were merged into the Prep Workspace, and
+ * each redirects to its tab of `/practice/prep`.
  * Likewise `/research/cards/coverage`, `/research/cards/prep-room`,
  * `/research/cards/reviews`, `/research/cards/inbox`,
  * `/research/cards/contributions` and `/research/cards/brainstorm`: merged
@@ -172,6 +173,10 @@ const ROUTES_WITHOUT_A_CATALOG_ENTRY = new Set([
   "/practice/opponents",
   "/practice/judges",
   "/practice/prep-notes",
+  "/practice/partners",
+  // A judge's own paradigm editor, reached from the judge dialog in pairings.
+  "/practice/paradigm",
+  "/practice/drills",
   "/research/cards/coverage",
   "/research/cards/prep-room",
   "/research/cards/reviews",
@@ -185,8 +190,10 @@ const ROUTES_WITHOUT_A_CATALOG_ENTRY = new Set([
   "/lectures",
   "/practice/glossary",
   "/practice/rankings",
-        "/practice/statistics"
-      ])
+  "/practice/statistics",
+  // The blog: a content page, not a tool.
+  "/blog",
+])
 
 describe("tool catalog route coverage", () => {
   it("covers every /tools entry on /features, except the documented exceptions", () => {

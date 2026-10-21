@@ -58,8 +58,22 @@ import Link from "next/link"
 import { AlertCircle, ArrowLeft, Calendar, Clock, Eye, ListOrdered, ListPlus, Loader2 } from "lucide-react"
 import { CommentSection } from "@debate/comments"
 import { SpeechStartsDialog, type SpeechDetectionControl } from "@debate/timer"
-import { formatCount } from "../../components/category-gallery/format-count"
+import { formatCount } from "../../lib/format-count"
 
+<<<<<<< HEAD
+import { WatchToolbar } from "../../components/videos/watch/controls/WatchToolbar"
+import { WatchSidePanel, type WatchSideTab } from "../../components/videos/watch/panels/WatchSidePanel"
+import type { LinkedVideo } from "../../components/videos/watch/panels/WatchAnalysisPanel"
+import { VideoListRows } from "../../components/videos/video-grid/VideoListRows"
+import { WatchQueuePanel } from "../../components/videos/watch/panels/WatchQueuePanel"
+import { WatchSearchBox } from "../../components/videos/watch/controls/WatchSearchBox"
+import { WatchStackPlaylist } from "../../components/videos/watch/panels/WatchStackPlaylist"
+import { WatchSpeechTimeline } from "../../components/videos/watch/prediction/WatchSpeechTimeline"
+import { WatchTeamStats } from "../../components/videos/watch/prediction/WatchTeamStats"
+import { WatchRankingsPrediction } from "../../components/videos/watch/prediction/WatchRankingsPrediction"
+import type { SpeechFocusRequest } from "../../components/videos/watch/panels/WatchRoundPanel"
+import { useDocumentPictureInPicture } from "../../components/videos/video-player/useDocumentPictureInPicture"
+=======
 import { WatchToolbar } from "../../components/watch/WatchToolbar"
 import { WatchSidePanel, type WatchSideTab } from "../../components/watch/WatchSidePanel"
 import type { LinkedVideo } from "../../components/watch/WatchAnalysisPanel"
@@ -72,6 +86,7 @@ import { WatchTeamStats } from "../../components/watch/WatchTeamStats"
 import { WatchRankingsPrediction } from "../../components/watch/WatchRankingsPrediction"
 import type { SpeechFocusRequest } from "../../components/watch/WatchRoundPanel"
 import { useDocumentPictureInPicture } from "../../components/video-player/useDocumentPictureInPicture"
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 import {
   buildEmbedUrl,
   describePlayerError,
@@ -87,9 +102,14 @@ import {
   formatVideoDate,
   getTournamentLogo,
 } from "../../components/video-card/videoCardUtils"
+import { displayRoundLevel } from "../../components/video-card/round-level"
+import { FormatBadge, videoFormat } from "../../components/video-grid/FormatBadge"
 import { cn } from "../../ui/lib/utils"
+import { TEAM_SIDE_SURFACE_CLASS, TeamCodeLabel } from "../../components/team-label/TeamLabel"
+import { useVideoTeamRankings } from "../../hooks/useVideoTeamRankings"
 import { LecturesSidebarShell } from "../LecturesSidebarShell"
 import { useVideoState } from "../../hooks/useVideoState"
+import { useDecisionReveal } from "../../hooks/useDecisionReveal"
 import { useVideoFeed, useVideoMeta } from "../../hooks/useVideoFeed"
 import {
   sendYouTubeCommand,
@@ -105,6 +125,7 @@ import {
 } from "../../state/videoDurations"
 import { videoWatchHref } from "../../lib/video-slug"
 import { videoRouteHref } from "../../lib/video-route"
+import { miniPlayerHref, openMiniPlayerWindow } from "../../lib/mini-player-window"
 import type { VideoDocument } from "../../lib/video-documents"
 import {
   captionText,
@@ -117,7 +138,7 @@ import { stripArgumentLines } from "../../lib/video-description"
 import type { RoundContext } from "../../lib/speech-outcomes"
 import { readSpeechStarts, writeSpeechStart } from "../../state/speechStartMarks"
 import { readSpeechSegmentation, writeSpeechSegmentation } from "../../state/speechAiCache"
-import { requestSpeechSegmentation } from "../../lib/speech-ai-client"
+import { detectRoundSpeeches } from "../../lib/speech-ai-client"
 import {
   FORMAT_LABELS,
   applySpeechSegmentation,
@@ -240,8 +261,17 @@ export function VideoWatchPage({
     [description, affTeam, negTeam, arg1AC, arg2NR],
   )
 
+  // The header badges name each team by its debaters' last names when the
+  // current season's rankings know it, else by its code's initials.
+  const watchedVideos = useMemo(() => [video], [video])
+  const teamRanking = useVideoTeamRankings(watchedVideos)
+  const affRanking = teamRanking(video, affTeam)
+  const negRanking = teamRanking(video, negTeam)
+
   const styleNumber = typeof style === "number" ? style : undefined
   const categoryLabel = typeof style === "string" ? style : undefined
+  const roundLabel = displayRoundLevel(roundLevel)
+  const formatStyle = videoFormat(video)
   const year = useMemo(() => new Date(date).getFullYear(), [date])
   const videoMeta = useMemo(
     () => ({ style: styleNumber, tournament, year, affTeam, negTeam }),
@@ -262,13 +292,15 @@ export function VideoWatchPage({
   const clearActiveVideo = useVideoPlayerStore((state) => state.clearActiveVideo)
 
   const { state: viewState, actions: viewActions } = useVideoState()
+  // The decision and the winner's gold border stay hidden until the viewer
+  // clicks "Reveal decision"; the video's card shares the same flag.
+  const [decisionRevealed, revealDecision] = useDecisionReveal(videoId)
   const { counts } = useVideoMeta()
 
   // The search box above the related videos swaps the list under the player
   // for the library's matches — in place, with no navigation, so the video
   // above keeps playing while the reader lines up what to watch next.
   const [relatedQuery, setRelatedQuery] = useState("")
-  const [decisionRevealed, setDecisionRevealed] = useState(false);
   const searchFeed = useVideoFeed({
     source: "all",
     q: relatedQuery,
@@ -423,24 +455,32 @@ export function VideoWatchPage({
     setDetecting(true)
     setDetectError(null)
     try {
-      const result = await requestSpeechSegmentation({
-        captions: sentences,
-        videoTitle: title,
-        formatHint:
-          styleNumber !== undefined ? DEBATE_STYLE_LABELS[styleNumber as keyof typeof DEBATE_STYLE_LABELS] : undefined,
-        aff: affTeam ?? undefined,
-        neg: negTeam ?? undefined,
-      })
+      // The raw cues, not the sentences: a sentence of unpunctuated auto-captions
+      // can run across the pause between two speeches and hide it.
+      const { segmentation: result, source, aiError } = await detectRoundSpeeches(
+        {
+          captions: cues ?? sentences,
+          videoTitle: title,
+          formatHint:
+            styleNumber !== undefined ? DEBATE_STYLE_LABELS[styleNumber as keyof typeof DEBATE_STYLE_LABELS] : undefined,
+          aff: affTeam ?? undefined,
+          neg: negTeam ?? undefined,
+        },
+        styleNumber,
+      )
       if (detectVideoRef.current !== forVideo) return
       writeSpeechSegmentation(forVideo, result)
       setSegmentation(result)
+      if (source === "pauses") {
+        setDetectError(`${aiError ?? "The AI was unavailable."} Placed speeches from the caption pauses instead — check them.`)
+      }
     } catch (error) {
       if (detectVideoRef.current !== forVideo) return
       setDetectError(error instanceof Error ? error.message : "Speech detection failed.")
     } finally {
       if (detectVideoRef.current === forVideo) setDetecting(false)
     }
-  }, [sentences, videoId, title, styleNumber, affTeam, negTeam])
+  }, [cues, sentences, videoId, title, styleNumber, affTeam, negTeam])
   const handleClearDetected = useCallback(() => {
     writeSpeechSegmentation(videoId, null)
     setSegmentation(null)
@@ -715,6 +755,23 @@ export function VideoWatchPage({
       .catch(() => undefined)
   }, [])
 
+  // The mini player window takes over playback from here, so this embed
+  // pauses first — two copies of one round talking over each other is the
+  // thing the one-player rule exists to prevent. The window opens at the
+  // second this one had reached.
+  const handleOpenMiniWindow = useCallback(() => {
+    sendYouTubeCommand("pauseVideo")
+    setIsPlaying(false)
+    recordWatchProgress({
+      videoId,
+      positionSeconds: currentTimeRef.current,
+      durationSeconds: durationRef.current,
+      title,
+      flush: true,
+    })
+    void openMiniPlayerWindow(miniPlayerHref(videoId, currentTimeRef.current))
+  }, [setIsPlaying, videoId, title])
+
   // Leaving for the library hands playback to the floating player; the
   // unmount effect above carries the position across.
   const handlePopOut = useCallback(() => router.push("/videos"), [router])
@@ -782,79 +839,87 @@ export function VideoWatchPage({
                     {categoryLabel}
                   </span>
                 )}
-                {tournament && (() => {
-                  const cleanT = tournament.replace(/\d+/g, "").trim();
-                  const logo = getTournamentLogo(cleanT);
-                  if (logo) {
-                    if (typeof logo === "string") {
-                      return (
-                        <button
-                          onClick={() => handleBadgeClick(cleanT)}
-                          className="text-sm font-bold backdrop-blur-md border px-2 py-1 rounded shadow-lg bg-transparent"
-                        >
-                          <img src={logo} alt={tournament} className="h-5 w-auto" />
-                        </button>
-                      );
-                    }
-                    if (typeof logo === "function") {
-                      const LogoComp = logo;
-                      return (
-                        <button
-                          onClick={() => handleBadgeClick(cleanT)}
-                          className="text-sm font-bold backdrop-blur-md border px-2 py-1 rounded shadow-lg bg-transparent"
-                        >
-                          <LogoComp className="h-5 w-auto" />
-                        </button>
-                      );
-                    }
-                    // StaticImageData from Next.js
-                    return (
-                      <button
-                        onClick={() => handleBadgeClick(cleanT)}
-                        className="text-sm font-bold backdrop-blur-md border px-2 py-1 rounded shadow-lg bg-transparent"
-                      >
-                        <img src={logo.src} alt={tournament} className="h-5 w-auto" />
-                      </button>
-                    );
-                  }
-                  return (
-                    <button
-                      onClick={() => handleBadgeClick(cleanT)}
-                      className={cn(
-                        "text-sm font-bold backdrop-blur-md border px-2 py-1 rounded [font-variant:small-caps] tracking-wider shadow-lg",
-                        styleNumber && TOURNAMENT_COLORS[styleNumber]
-                          ? TOURNAMENT_COLORS[styleNumber]
-                          : "text-purple-300 bg-purple-900/80 border-purple-400/90",
+                {/* The tournament, with the round level and format stacked
+                    under it, so the teams can follow on the same line. */}
+                {(tournament || year || roundLabel || formatStyle !== undefined) && (
+                  <div className="flex flex-col items-start gap-1">
+                    <div className="flex items-center gap-1.5">
+                      {tournament && (() => {
+                        const cleanT = tournament.replace(/\d+/g, "").trim();
+                        const logo = getTournamentLogo(cleanT);
+                        if (logo) {
+                          if (typeof logo === "string") {
+                            return (
+                              <button
+                                onClick={() => handleBadgeClick(cleanT)}
+                                className="text-sm font-bold backdrop-blur-md border px-2 py-1 rounded shadow-lg bg-transparent"
+                              >
+                                <img src={logo} alt={tournament} className="h-5 w-auto" />
+                              </button>
+                            );
+                          }
+                          if (typeof logo === "function") {
+                            const LogoComp = logo;
+                            return (
+                              <button
+                                onClick={() => handleBadgeClick(cleanT)}
+                                className="text-sm font-bold backdrop-blur-md border px-2 py-1 rounded shadow-lg bg-transparent"
+                              >
+                                <LogoComp className="h-5 w-auto" />
+                              </button>
+                            );
+                          }
+                          // StaticImageData from Next.js
+                          return (
+                            <button
+                              onClick={() => handleBadgeClick(cleanT)}
+                              className="text-sm font-bold backdrop-blur-md border px-2 py-1 rounded shadow-lg bg-transparent"
+                            >
+                              <img src={logo.src} alt={tournament} className="h-5 w-auto" />
+                            </button>
+                          );
+                        }
+                        return (
+                          <button
+                            onClick={() => handleBadgeClick(cleanT)}
+                            className={cn(
+                              "text-sm font-bold backdrop-blur-md border px-2 py-1 rounded [font-variant:small-caps] tracking-wider shadow-lg",
+                              styleNumber && TOURNAMENT_COLORS[styleNumber]
+                                ? TOURNAMENT_COLORS[styleNumber]
+                                : "text-purple-300 bg-purple-900/80 border-purple-400/90",
+                            )}
+                          >
+                            {tournament}
+                          </button>
+                        );
+                      })()}
+                      {year && (
+                        <span className="text-sm font-bold text-orange-300 backdrop-blur-md bg-orange-900/80 border border-orange-400/90 px-2 py-1 rounded shadow-lg">
+                          '{String(year).slice(-2)}
+                        </span>
                       )}
-                    >
-                      {tournament}
-                    </button>
-                  );
-                })()}
-                {year && (
-                  <span className="text-sm font-bold text-orange-300 backdrop-blur-md bg-orange-900/80 border border-orange-400/90 px-2 py-1 rounded shadow-lg">
-                    '{String(year).slice(-2)}
-                  </span>
-                )}
-                {roundLevel && !/\d/.test(roundLevel) && (
-                  <>
-                    {(roundLevel.toLowerCase().trim() === "finals" ||
-                      roundLevel.toLowerCase().trim() === "final") && (
-                      <span className="text-base">🏆</span>
+                    </div>
+                    {(roundLabel || formatStyle !== undefined) && (
+                      <div className="flex items-center gap-1">
+                        {roundLabel === "Final" && <span className="text-sm">🏆</span>}
+                        {roundLabel && (
+                          <span
+                            className={cn(
+                              "text-xs font-semibold px-1.5 py-0.5 rounded border backdrop-blur-md shadow-sm",
+                              getRoundBadgeColor(roundLabel),
+                            )}
+                          >
+                            {roundLabel}
+                          </span>
+                        )}
+                        <FormatBadge style={formatStyle} />
+                      </div>
                     )}
-                    <span
-                      className={cn(
-                        "text-sm font-semibold px-2 py-1 rounded border backdrop-blur-md shadow-lg",
-                        getRoundBadgeColor(roundLevel),
-                      )}
-                    >
-                      {roundLevel}
-                    </span>
-                  </>
+                  </div>
                 )}
-                {/* The two teams sit right after the level, in the same row as
+                {/* The two teams sit right after the tournament, in the same row as
                     the round's other badges: aff blue, neg red, the winner
-                    ringed in gold. Each team's argument (the 1AC for aff, the
+                    ringed in gold once the decision is revealed. Each team's argument (the 1AC for aff, the
                     2NR for neg) sits in small type right under its name. */}
                 {affTeam && (
                   <TeamWithArgument argument={arg1AC} side="aff">
@@ -863,12 +928,13 @@ export function VideoWatchPage({
                       title={`Affirmative: ${affTeam}`}
                       className={cn(
                         "text-sm font-bold backdrop-blur-md px-2 py-1 rounded",
-                        affWin === true
-                          ? "border-2 border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)] text-blue-100 bg-blue-900/80"
-                          : "border border-blue-400/90 shadow-lg text-blue-300 bg-blue-900/80",
+                        TEAM_SIDE_SURFACE_CLASS.aff,
+                        decisionRevealed && affWin === true
+                          ? "border-2 border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)]"
+                          : "border border-blue-400/90 shadow-lg",
                       )}
                     >
-                      {affTeam}
+                      <TeamCodeLabel label={affTeam} ranking={affRanking} side="aff" bare showRank />
                     </button>
                   </TeamWithArgument>
                 )}
@@ -879,12 +945,13 @@ export function VideoWatchPage({
                       title={`Negative: ${negTeam}`}
                       className={cn(
                         "text-sm font-bold backdrop-blur-md px-2 py-1 rounded",
-                        affWin === false
-                          ? "border-2 border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)] text-red-100 bg-red-900/80"
-                          : "border border-red-400/90 shadow-lg text-red-300 bg-red-900/80",
+                        TEAM_SIDE_SURFACE_CLASS.neg,
+                        decisionRevealed && affWin === false
+                          ? "border-2 border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)]"
+                          : "border border-red-400/90 shadow-lg",
                       )}
                     >
-                      {negTeam}
+                      <TeamCodeLabel label={negTeam} ranking={negRanking} side="neg" bare showRank />
                     </button>
                   </TeamWithArgument>
                 )}
@@ -912,6 +979,7 @@ export function VideoWatchPage({
                 onToggleFavorite={() => viewActions.toggleFavorite(videoId)}
                 onAddToQueue={() => addToQueue(videoId, title, videoMeta)}
                 onCopyLink={handleCopyLink}
+                onOpenMiniWindow={handleOpenMiniWindow}
                 onPopOut={handlePopOut}
                 onClose={handleClose}
               />
@@ -1026,7 +1094,7 @@ export function VideoWatchPage({
                     {formatVideoDuration(storedDuration || duration)}
                   </span>
                 )}
-                {judgeDecision && !decisionRevealed ? (<button onClick={() => setDecisionRevealed(true)} className="text-xs text-muted-foreground hover:text-foreground">Reveal decision</button>) : (decisionRevealed ? (<span>Decision {judgeDecision}</span>) : null)}
+                {judgeDecision && !decisionRevealed ? (<button onClick={revealDecision} className="text-xs text-muted-foreground hover:text-foreground">Reveal decision</button>) : (decisionRevealed ? (<span>Decision {judgeDecision}</span>) : null)}
               </div>
 
               {shownDescription && (

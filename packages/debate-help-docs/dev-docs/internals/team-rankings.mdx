@@ -58,7 +58,7 @@ year only, since the datasets carry no season.
 Data from `/api/leaderboard?division=<VPF|VLD|VCX>&year=<YYYY>`, served by
 [`debate-data-sync`](https://github.com/debate/debate-ai.com/blob/master/packages/debate-data-sync/README.md)
 (the scrapers and the merge) and `apps/debate-ai.com`
-(`app/api/leaderboard/route.ts`, `lib/leaderboard/resolve.ts`).
+(`app/api/leaderboard/route.ts`, `packages/debate-webview/src/lib/leaderboard/resolve.ts`).
 
 ### The two sources
 
@@ -96,7 +96,7 @@ partial or empty Elo dataset costs you the Elo column, not the leaderboard.
 
 ### Degrading when a source is down
 
-`resolveLeaderboard` (`apps/debate-ai.com/lib/leaderboard/resolve.ts`) owns
+`resolveLeaderboard` (`packages/debate-webview/src/lib/leaderboard/resolve.ts`) owns
 this; the route is the HTTP shell around it. Both upstreams are requested
 concurrently and what to serve is decided afterwards:
 

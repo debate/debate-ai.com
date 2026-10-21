@@ -15,19 +15,27 @@
  * - It sits just right of the card when the editor has room there, otherwise
  *   inside the card's top-right corner, and hides a moment after the pointer
  *   leaves both the card and the column (long enough to travel onto it).
- * - Read aloud speaks in a model voice (Kokoro by default, run in the
- *   browser, or Deepgram) through the injected `fetchVoice`
+ * - Read aloud speaks in a model voice (Kokoro by default, run in a Web
+ *   Worker in the browser, or Deepgram) through the injected `fetchVoice`
  *   (`card-tts-client.ts` in production), playing its clips one after
  *   another as they arrive, and falls back to the browser's `speechSynthesis` when the
  *   reader picked "Browser built-in", no voice is injected, or the model
- *   gives no audio (QwkSearch's guest limit, an error). It reads the tag,
+ *   gives no audio (QwkSearch's guest limit, an error). The first card hover
+ *   starts downloading the chosen voice (`preloadVoice`), so Kokoro is
+ *   usually ready by the first click. It reads the tag,
  *   then the author's last name and the year (two digits, nothing more
  *   of the citation line), then the card's highlighted text — what a
  *   debater reads in round — or its underlined text when nothing is
  *   highlighted. In read mode it reads only what read mode shows of the
  *   card body (the read-aloud text, plus undertags or background-colored
  *   text when those settings show them). Clicking it again (on any card)
- *   stops.
+ *   stops. Its speed and voice live in Settings → Sound & speech
+ *   (`card-tts-client.ts` stores them), and a change there reaches a card
+ *   that is already playing.
+ * - Read whole document aloud (`toggleReadDocumentAloud`, from the menu bar's
+ *   View menu) reads every card in the document the same way, top to bottom,
+ *   with a short pause between cards; the card being read scrolls into view
+ *   and is outlined. Running it again, Escape, or the hover Stop button ends it.
  * - The AI calls are injected (`runAi`; `card-ai-client.ts` in production),
  *   so this file has no dependency on the LLM client or settings.
  *
@@ -39,8 +47,12 @@ import type { Node as PMNode } from 'prosemirror-model';
 import type { EditorView } from 'prosemirror-view';
 import type { CardAiAction } from './card-ai-client.js';
 import {
+  DEFAULT_READ_SPEED,
   DEFAULT_READ_VOICE_ID,
-  READ_VOICE_OPTIONS,
+  READ_SPEED_CHANGE_EVENT,
+  READ_VOICE_CHANGE_EVENT,
+  readStoredSpeed,
+  readStoredVoiceId,
   readVoiceChoice,
   type ModelVoice,
   type SpeechAudio,
@@ -48,15 +60,23 @@ import {
 
 export const cardHoverActionsKey = new PluginKey('cardHoverActions');
 
+/** Fired on `window` when reading the whole document starts or stops (`detail`: reading). */
+export const READ_DOCUMENT_CHANGE_EVENT = 'pmd-read-document-change';
+
+/** Silence between cards while reading the whole document. */
+export const DOCUMENT_CARD_PAUSE_MS = 900;
+
 export interface CardHoverActionsOptions {
   /** Runs an AI action on a card's text and resolves the answer. */
   runAi: (action: CardAiAction, content: string, tag: string) => Promise<string>;
   /**
    * Speech audio for `text` in a model voice, or null to use the browser's
    * built-in speech instead. Omitted: Read aloud uses the browser's speech
-   * only and the settings show no voice list.
+   * only, whatever voice Settings has.
    */
   fetchVoice?: (text: string, voice: ModelVoice, signal: AbortSignal) => Promise<SpeechAudio | null>;
+  /** Starts downloading what `voice` needs (the in-browser Kokoro model) ahead of the first read. */
+  preloadVoice?: (voice: ModelVoice) => void;
 }
 
 /** The parts of a card the actions read, as plain text. */
@@ -202,18 +222,9 @@ const ICONS = {
    speak:
      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>',
    stop: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>',
-   settings:
-     '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 1v4.55a5.05 5.05 0 0 0 0 8.9V23"/><line x1="12" y1="7.5" x2="12" y2="7.5"/><path d="M19.95 12a5.05 5.05 0 0 0-1.41-3.4l3.22-3.22"/><path d="M16.54 6.54L14 9.07"/></svg>',
 } as const;
 
 const STYLE_ID = 'pmd-card-hover-actions-style';
-
-/** Where the reader's speech rate is persisted across cards. */
-const SPEED_STORAGE_KEY = 'pmd-card-actions-read-speed';
-/** Where the reader's voice choice (a `READ_VOICE_OPTIONS` id) is persisted. */
-const VOICE_STORAGE_KEY = 'pmd-card-actions-read-voice';
-/** Read-aloud defaults to 2x speed, per the card reader's setting. */
-const DEFAULT_READ_SPEED = 2;
 
 const STYLES = `
 .pmd-card-actions{position:fixed;z-index:60;display:none;flex-direction:column;gap:2px;padding:2px;
@@ -238,14 +249,7 @@ const STYLES = `
 .pmd-card-ai-panel .pmd-card-ai-body{padding:10px;overflow:auto;white-space:pre-wrap;word-break:break-word}
 .pmd-card-ai-panel[data-state="loading"] .pmd-card-ai-body{color:var(--pmd-c-text-muted,#52525b);font-style:italic}
 .pmd-card-ai-panel[data-state="error"] .pmd-card-ai-body{color:var(--pmd-c-error,#b91c1c)}
-.pmd-read-settings{position:fixed;z-index:60;display:none;flex-direction:column;gap:6px;background:var(--pmd-c-bg,#fff);
-  border:1px solid var(--pmd-c-border,#d4d4d8);border-radius:8px;padding:8px;box-shadow:0 2px 8px var(--pmd-c-shadow-deep,rgba(0,0,0,.15));
-  font:13px/1.5 system-ui,sans-serif;min-width:140px}
-.pmd-read-settings[data-open]{display:flex}
-.pmd-read-settings label{display:block;font-size:11px;font-weight:600;text-foreground/70;letter-spacing:.03em}
-.pmd-read-settings input[type=range]{width:100%;accent-color:var(--pmd-c-accent,#2563eb)}
-.pmd-read-settings select{width:100%;font:inherit;font-size:12px;padding:2px 4px;border:1px solid var(--pmd-c-border,#d4d4d8);
-  border-radius:4px;background:var(--pmd-c-bg,#fff);color:var(--pmd-c-text,#18181b)}
+.pmd-card.pmd-card-reading{outline:2px solid var(--pmd-c-accent,#2563eb);outline-offset:3px;border-radius:4px}
 `;
 
 function ensureStyles(): void {
@@ -265,35 +269,12 @@ function speechAvailable(): boolean {
   return typeof window !== 'undefined' && 'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined';
 }
 
-/** Reads the persisted read speed, defaulting to 2x. */
-function readStoredSpeed(): number {
-  if (typeof localStorage === 'undefined') return DEFAULT_READ_SPEED;
-  const raw = localStorage.getItem(SPEED_STORAGE_KEY);
-  const parsed = raw == null ? NaN : Number(raw);
-  return Number.isFinite(parsed) && parsed >= 0.5 && parsed <= 4 ? parsed : DEFAULT_READ_SPEED;
-}
-
-/** Reads the persisted voice id, defaulting to Kokoro. */
-function readStoredVoiceId(): string {
-  try {
-    const raw = typeof localStorage === 'undefined' ? null : localStorage.getItem(VOICE_STORAGE_KEY);
-    return READ_VOICE_OPTIONS.some((o) => o.id === raw) ? (raw as string) : DEFAULT_READ_VOICE_ID;
-  } catch {
-    return DEFAULT_READ_VOICE_ID;
-  }
-}
-
 class CardHoverActionsView {
   private readonly bar: HTMLDivElement;
   private readonly panel: HTMLDivElement;
   private readonly panelTitle: HTMLElement;
   private readonly panelBody: HTMLDivElement;
   private readonly speakBtn: HTMLButtonElement | null;
-  private readonly settingsBtn: HTMLButtonElement;
-  private readonly settingsPanel: HTMLDivElement;
-  private readonly speedInput: HTMLInputElement;
-  private readonly speedLabel: HTMLLabelElement;
-  private readonly voiceSelect: HTMLSelectElement | null;
   private readSpeed = DEFAULT_READ_SPEED;
   private voiceId = DEFAULT_READ_VOICE_ID;
   /** The model-voice playback (or its pending fetch) of the current read. */
@@ -305,6 +286,12 @@ class CardHoverActionsView {
   private requestId = 0;
   private panelText = '';
   private speaking = false;
+  private voicePreloaded = false;
+  /** Reading the whole document: the index (among the doc's cards) being read. */
+  private docIndex = -1;
+  private docReading = false;
+  private docPauseTimer: ReturnType<typeof setTimeout> | null = null;
+  private docCardEl: HTMLElement | null = null;
 
   constructor(private view: EditorView, private readonly options: CardHoverActionsOptions) {
     ensureStyles();
@@ -318,64 +305,19 @@ class CardHoverActionsView {
       speechAvailable() || options.fetchVoice
         ? this.button('speak', 'Read card aloud', ICONS.speak, () => this.toggleSpeak())
         : null;
-    this.settingsBtn = this.button('settings', 'Read-aloud settings', ICONS.settings, () => this.toggleSettings());
-    this.settingsBtn.setAttribute('aria-label', 'Read-aloud settings');
-    this.settingsBtn.setAttribute('aria-haspopup', 'true');
-    this.settingsBtn.setAttribute('aria-expanded', 'false');
+    // Speed and voice are chosen in Settings → Sound & speech; follow them
+    // live, so a change there applies to the card that is playing.
     this.readSpeed = readStoredSpeed();
-    this.speedLabel = document.createElement('label');
-    this.speedLabel.setAttribute('for', 'pmd-read-speed');
-    this.speedLabel.textContent = `Speed: ${this.readSpeed.toFixed(1)}x`;
-    this.speedInput = document.createElement('input');
-    this.speedInput.id = 'pmd-read-speed';
-    this.speedInput.type = 'range';
-    this.speedInput.min = String(0.5);
-    this.speedInput.max = String(4);
-    this.speedInput.step = '0.1';
-    this.speedInput.value = String(this.readSpeed);
-    this.speedInput.setAttribute('aria-label', 'Read-aloud speed multiplier');
-    this.speedInput.addEventListener('input', () => this.onSpeedInput());
-    this.settingsPanel = document.createElement('div');
-    this.settingsPanel.className = 'pmd-read-settings';
-    this.settingsPanel.setAttribute('role', 'dialog');
-    this.settingsPanel.setAttribute('aria-label', 'Read-aloud settings');
-    this.settingsPanel.append(this.speedLabel, this.speedInput);
-    this.voiceSelect = null;
-    if (options.fetchVoice) {
-      // The voice list: model voices (Kokoro first, the default) or the
-      // browser's own speech, saved across cards like the speed.
-      this.voiceId = readStoredVoiceId();
-      const voiceLabel = document.createElement('label');
-      voiceLabel.setAttribute('for', 'pmd-read-voice');
-      voiceLabel.textContent = 'Voice';
-      const select = document.createElement('select');
-      select.id = 'pmd-read-voice';
-      select.setAttribute('aria-label', 'Read-aloud voice');
-      for (const option of READ_VOICE_OPTIONS) {
-        if (option.choice === 'browser' && !speechAvailable()) continue;
-        const el = document.createElement('option');
-        el.value = option.id;
-        el.textContent = option.label;
-        select.appendChild(el);
-      }
-      select.value = this.voiceId;
-      select.addEventListener('change', () => this.onVoiceChange());
-      this.voiceSelect = select;
-      this.settingsPanel.append(voiceLabel, select);
-    }
+    this.voiceId = readStoredVoiceId();
+    window.addEventListener(READ_SPEED_CHANGE_EVENT, this.onStoredSpeedChange);
+    window.addEventListener(READ_VOICE_CHANGE_EVENT, this.onStoredVoiceChange);
     if (this.speakBtn) {
       this.speakBtn.setAttribute('aria-pressed', 'false');
       this.bar.appendChild(this.speakBtn);
-      // The settings gear lives under the read-aloud button: it opens a speed
-      // slider and the voice list, both saved across cards.
-      this.bar.appendChild(this.settingsBtn);
-      this.settingsBtn.style.marginTop = '4px';
-    } else {
-      // No speech support: keep the settings control out of the tab order and
-      // the document, since there is nothing to read.
-      this.settingsBtn.setAttribute('aria-hidden', 'true');
-      this.settingsPanel.setAttribute('aria-hidden', 'true');
     }
+    readers.add(this);
+    activeReader = this;
+    view.dom.addEventListener('focusin', this.onFocusIn);
     this.bar.addEventListener('mouseenter', this.cancelHide);
     this.bar.addEventListener('mouseleave', this.scheduleHide);
     // Keep the editor's selection where it is when a button is pressed.
@@ -402,7 +344,7 @@ class CardHoverActionsView {
     this.panelBody.className = 'pmd-card-ai-body';
     this.panel.append(header, this.panelBody);
 
-    document.body.append(this.bar, this.panel, this.settingsPanel);
+    document.body.append(this.bar, this.panel);
     view.dom.addEventListener('pointermove', this.onPointerMove);
     view.dom.addEventListener('mouseleave', this.scheduleHide);
     window.addEventListener('scroll', this.onScroll, true);
@@ -418,6 +360,11 @@ class CardHoverActionsView {
   destroy(): void {
     this.requestId++;
     this.stopSpeaking();
+    readers.delete(this);
+    if (activeReader === this) activeReader = [...readers].pop() ?? null;
+    this.view.dom.removeEventListener('focusin', this.onFocusIn);
+    window.removeEventListener(READ_SPEED_CHANGE_EVENT, this.onStoredSpeedChange);
+    window.removeEventListener(READ_VOICE_CHANGE_EVENT, this.onStoredVoiceChange);
     this.view.dom.removeEventListener('pointermove', this.onPointerMove);
     this.view.dom.removeEventListener('mouseleave', this.scheduleHide);
     window.removeEventListener('scroll', this.onScroll, true);
@@ -425,7 +372,6 @@ class CardHoverActionsView {
     if (this.hideTimer) clearTimeout(this.hideTimer);
     this.bar.remove();
     this.panel.remove();
-    this.settingsPanel.remove();
   }
 
   private button(name: string, label: string, icon: string, run: () => void): HTMLButtonElement {
@@ -456,10 +402,14 @@ class CardHoverActionsView {
   };
 
   private readonly onKeyDown = (e: KeyboardEvent): void => {
-    if (e.key === 'Escape') {
-      if (this.panel.hasAttribute('data-open')) this.closePanel();
-      if (this.settingsPanel.hasAttribute('data-open')) this.setSettingsOpen(false);
-    }
+    if (e.key !== 'Escape') return;
+    if (this.panel.hasAttribute('data-open')) this.closePanel();
+    if (this.docReading) this.stopSpeaking();
+  };
+
+  /** The editor the user last worked in is the one the menu bar reads. */
+  private readonly onFocusIn = (): void => {
+    activeReader = this;
   };
 
   private readonly cancelHide = (): void => {
@@ -476,6 +426,10 @@ class CardHoverActionsView {
   };
 
   private showBar(card: HTMLElement): void {
+    if (this.speakBtn && !this.voicePreloaded) {
+      this.voicePreloaded = true;
+      this.preloadVoice();
+    }
     this.cardEl = card;
     this.bar.setAttribute('data-open', '');
     this.positionBar();
@@ -484,7 +438,6 @@ class CardHoverActionsView {
   private hideBar(): void {
     this.bar.removeAttribute('data-open');
     this.cardEl = null;
-    this.setSettingsOpen(false);
   }
 
   /** Right of the card when the editor has room there, else inside its top-right corner. */
@@ -558,51 +511,27 @@ class CardHoverActionsView {
     this.panel.removeAttribute('data-open');
   }
 
-  private toggleSettings(): void {
-    const open = this.settingsPanel.hasAttribute('data-open');
-    this.setSettingsOpen(!open);
-  }
+  /** The speed changed in Settings: a model voice speeds up live. speechSynthesis
+   * has no live rate control per running utterance, so a browser read picks up
+   * the new speed once stopped and restarted. */
+  private readonly onStoredSpeedChange = (): void => {
+    this.readSpeed = readStoredSpeed();
+    if (this.audio) this.audio.playbackRate = this.readSpeed;
+  };
 
-  private setSettingsOpen(open: boolean): void {
-    this.settingsPanel.toggleAttribute('data-open', open);
-    this.settingsBtn.setAttribute('aria-expanded', String(open));
-    if (open) this.positionSettings();
-  }
+  /** The choice changed elsewhere (Settings, another editor): follow it. */
+  private readonly onStoredVoiceChange = (): void => {
+    const id = readStoredVoiceId();
+    if (id === this.voiceId) return;
+    this.voiceId = id;
+    // Once a card has been hovered, fetch the new voice ahead of the next read.
+    if (this.voicePreloaded) this.preloadVoice();
+  };
 
-  private positionSettings(): void {
-    if (!this.bar) return;
-    const rect = this.bar.getBoundingClientRect();
-    const w = this.settingsPanel.offsetWidth || 150;
-    const h = this.settingsPanel.offsetHeight || 60;
-    // The settings icon is the last button in the bar, stacked under the read
-    // button; pop the slider out to the right of the bar.
-    let left = rect.right + GAP;
-    if (left + w > window.innerWidth - GAP) left = Math.max(GAP, rect.right - w - GAP);
-    let top = rect.bottom + GAP;
-    if (top + h > window.innerHeight - GAP) top = Math.max(GAP, rect.top - h - GAP);
-    this.settingsPanel.style.left = `${Math.round(left)}px`;
-    this.settingsPanel.style.top = `${Math.round(top)}px`;
-  }
-
-  private onSpeedInput(): void {
-    const value = Math.min(4, Math.max(0.5, Number(this.speedInput.value)));
-    this.readSpeed = value;
-    this.speedLabel.textContent = `Speed: ${value.toFixed(1)}x`;
-    if (typeof localStorage !== 'undefined') localStorage.setItem(SPEED_STORAGE_KEY, String(value));
-    // A model voice changes speed live. speechSynthesis has no live rate control
-    // per running utterance, so a browser read picks up the new speed once
-    // stopped and restarted.
-    if (this.audio) this.audio.playbackRate = value;
-  }
-
-  private onVoiceChange(): void {
-    if (!this.voiceSelect) return;
-    this.voiceId = this.voiceSelect.value;
-    try {
-      if (typeof localStorage !== 'undefined') localStorage.setItem(VOICE_STORAGE_KEY, this.voiceId);
-    } catch {
-      // Storage blocked: the choice still holds for this page.
-    }
+  /** Downloads the chosen model voice ahead of the first read. */
+  private preloadVoice(): void {
+    const choice = readVoiceChoice(this.voiceId);
+    if (choice !== 'browser') this.options.preloadVoice?.(choice);
   }
 
   private toggleSpeak(): void {
@@ -617,6 +546,75 @@ class CardHoverActionsView {
     const shown = this.cardEl ? readModeShownText(this.cardEl) : '';
     const text = cardSpeechText(shown ? { ...parts, highlighted: shown } : parts);
     if (!text) return;
+    this.speakText(text);
+  }
+
+  /** Whether the whole document is being read aloud. */
+  isReadingDocument(): boolean {
+    return this.docReading;
+  }
+
+  /** Starts reading every card in the document aloud, or stops a read in progress. */
+  toggleReadDocument(): void {
+    if (this.docReading) {
+      this.stopSpeaking();
+      return;
+    }
+    this.stopSpeaking();
+    this.docReading = true;
+    this.docIndex = -1;
+    announceDocumentReading(true);
+    this.readNextDocumentCard();
+  }
+
+  /** Reads the card after `docIndex` that has something to say, or ends the read. */
+  private readNextDocumentCard(): void {
+    this.docPauseTimer = null;
+    if (!this.docReading) return;
+    const cards: number[] = [];
+    this.view.state.doc.descendants((node, pos) => {
+      if (node.type.name !== 'card') return true;
+      cards.push(pos);
+      return false;
+    });
+    for (let i = this.docIndex + 1; i < cards.length; i++) {
+      const pos = cards[i]!;
+      const card = this.view.state.doc.nodeAt(pos);
+      if (!card) continue;
+      const dom = this.view.nodeDOM(pos);
+      const cardEl = dom instanceof HTMLElement ? dom : null;
+      const parts = cardParts(card);
+      const shown = cardEl ? readModeShownText(cardEl) : '';
+      const text = cardSpeechText(shown ? { ...parts, highlighted: shown } : parts);
+      if (!text) continue;
+      this.docIndex = i;
+      this.markDocumentCard(cardEl);
+      this.speakText(text);
+      return;
+    }
+    this.stopSpeaking();
+  }
+
+  private markDocumentCard(cardEl: HTMLElement | null): void {
+    this.docCardEl?.classList.remove('pmd-card-reading');
+    this.docCardEl = cardEl;
+    if (!cardEl) return;
+    cardEl.classList.add('pmd-card-reading');
+    cardEl.scrollIntoView?.({ block: 'nearest', behavior: 'smooth' });
+  }
+
+  /** A card finished (or failed) playing: the next card after a pause, or done. */
+  private readEnded(): void {
+    if (!this.speaking) return;
+    if (this.docReading) {
+      this.docPauseTimer = setTimeout(() => this.readNextDocumentCard(), DOCUMENT_CARD_PAUSE_MS);
+      return;
+    }
+    this.setSpeaking(false);
+  }
+
+  /** Speaks `text` in the chosen voice, falling back to the browser's speech. */
+  private speakText(text: string): void {
     const choice = readVoiceChoice(this.voiceId);
     this.setSpeaking(true);
     if (choice === 'browser' || !this.options.fetchVoice) {
@@ -669,7 +667,7 @@ class CardHoverActionsView {
     }
     if (!live()) return;
     this.speakAbort = null;
-    this.setSpeaking(false);
+    this.readEnded();
   }
 
   /** One clip, resolving true when it finished playing and false when it couldn't. */
@@ -706,7 +704,7 @@ class CardHoverActionsView {
     const done = () => {
       if (this.audio !== audio) return;
       this.releaseAudio();
-      if (this.speaking) this.setSpeaking(false);
+      this.readEnded();
     };
     audio.onended = done;
     audio.onerror = done;
@@ -728,23 +726,28 @@ class CardHoverActionsView {
   /** The browser's built-in speech: the fallback, or the reader's choice. */
   private speakWithBrowser(text: string): void {
     if (!speechAvailable()) {
-      this.setSpeaking(false);
+      this.readEnded();
       return;
     }
     const synth = window.speechSynthesis;
     synth.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
-    // Read at the speed chosen in the settings popover; 2x by default.
+    // Read at the speed chosen in Settings → Sound & speech; 2x by default.
     utterance.rate = this.readSpeed;
-    const done = () => {
-      if (this.speaking) this.setSpeaking(false);
-    };
+    const done = () => this.readEnded();
     utterance.onend = done;
     utterance.onerror = done;
     synth.speak(utterance);
   }
 
   private stopSpeaking(): void {
+    if (this.docPauseTimer) clearTimeout(this.docPauseTimer);
+    this.docPauseTimer = null;
+    if (this.docReading) {
+      this.docReading = false;
+      this.markDocumentCard(null);
+      announceDocumentReading(false);
+    }
     if (!this.speaking) return;
     this.setSpeaking(false);
     this.speakAbort?.abort();
@@ -762,6 +765,34 @@ class CardHoverActionsView {
     this.speakBtn.setAttribute('aria-label', label);
     this.speakBtn.innerHTML = on ? ICONS.stop : ICONS.speak;
   }
+}
+
+/** Every mounted editor's actions, and the one the user last worked in. */
+const readers = new Set<CardHoverActionsView>();
+let activeReader: CardHoverActionsView | null = null;
+
+function announceDocumentReading(reading: boolean): void {
+  if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent(READ_DOCUMENT_CHANGE_EVENT, { detail: reading }));
+}
+
+/** Whether a document is being read aloud right now. */
+export function isReadingDocumentAloud(): boolean {
+  return [...readers].some((r) => r.isReadingDocument());
+}
+
+/**
+ * Reads the whole document (of the editor last worked in) aloud, card by
+ * card, or stops a document read in progress. False when no editor is mounted.
+ */
+export function toggleReadDocumentAloud(): boolean {
+  const reading = [...readers].find((r) => r.isReadingDocument());
+  if (reading) {
+    reading.toggleReadDocument();
+    return true;
+  }
+  if (!activeReader) return false;
+  activeReader.toggleReadDocument();
+  return true;
 }
 
 /** The card hover actions plugin (see the module doc). */

@@ -51,7 +51,7 @@ export const FOOTER_LINKS: FooterLink[] = [
   // entries here.
   { url: "/docs", text: "Docs", icon: CircleHelp, hardNavigate: true },
   // `/docs/blog` is the team blog, one section of the help site.
-  { url: "/docs/blog", text: "Blog", icon: FileText, hardNavigate: true },
+  // { url: "/docs/blog", text: "Blog", icon: FileText, hardNavigate: true },
   // `/practice/features` is the whole catalog. It is listed here because the app
   // dock's Settings menu no longer carries an "Apps" submenu spelling that
   // catalog out, so this row is how the menu reaches it. An ordinary in-app

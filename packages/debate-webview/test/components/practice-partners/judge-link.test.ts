@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest"
 import { JUDGE_ANCHOR, PROFILE_ANCHOR, judgeLinkTarget } from "../../../src/components/practice-partners/PracticePartnersPanel"
-import { SIDEBAR_TOOL_SECTIONS } from "@debate/videos/src/components/category-gallery/sidebar-tool-sections"
+<<<<<<< HEAD
+import { SIDEBAR_TOOL_SECTIONS } from "@debate/videos/src/components/sidebar/sidebar-tool-sections"
+=======
+import { SIDEBAR_TOOL_SECTIONS } from "@debate/videos/src/components/sidebar-nav/sidebar-tool-sections"
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 
 describe("judge anchor on /practice/partners", () => {
   it("lands a volunteer judge on the open judge seats", () => {

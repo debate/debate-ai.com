@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
+  cleanCollegeTeamLabel,
   collegeHistorySourceUrl,
+  collegeSchoolKey,
+  collegeSeasonYearOf,
+  findCollegeHistoryTeam,
   collegeSeasonDetails,
   collegeWinProbability,
   hasCollegeHistory,
@@ -85,5 +89,52 @@ describe("collegeWinProbability", () => {
     // Phi(1.41 / sqrt(2 * 1.26^2 + 2 * (25/6)^2)) for the 2025-26 #1 vs #2.
     expect(collegeWinProbability({ mu: 47.17, sigma: 1.26 }, { mu: 45.76, sigma: 1.26 })).toBeCloseTo(0.5906, 3);
     expect(collegeWinProbability({ mu: 23.21, sigma: 1.47 }, { mu: 47.17, sigma: 1.26 })).toBeLessThan(0.0001);
+  });
+});
+
+describe("matching a team code to a past college season", () => {
+  it("dates a season from July to June", () => {
+    expect(collegeSeasonYearOf("2019-11-02 08:00:00")).toBe(2020);
+    expect(collegeSeasonYearOf("2020-03-28")).toBe(2020);
+    expect(collegeSeasonYearOf("2020-07-01")).toBe(2021);
+    expect(collegeSeasonYearOf("")).toBeNull();
+  });
+
+  it("reduces a college to one key however it is written", () => {
+    expect(collegeSchoolKey("University of Texas - Dallas")).toBe("texas dallas");
+    expect(collegeSchoolKey("UTD")).toBe("texas dallas");
+    expect(collegeSchoolKey("UT Dallas")).toBe("texas dallas");
+    expect(collegeSchoolKey("State University of New York - Binghamton")).toBe("binghamton");
+    expect(collegeSchoolKey("Cal")).toBe("california berkeley");
+    expect(collegeSchoolKey('University of California, Berkeley')).toBe("california berkeley");
+    expect(collegeSchoolKey("Kansas St")).toBe("kansas state");
+    expect(collegeSchoolKey("KU")).toBe("kansas");
+  });
+
+  it("cuts speech names, rounds and files off a video's team label", () => {
+    expect(cleanCollegeTeamLabel("Baylor CM 1AC")).toBe("Baylor CM");
+    expect(cleanCollegeTeamLabel("Emory GN -1AR.MP4")).toBe("Emory GN");
+    expect(cleanCollegeTeamLabel("Cal MS - R6")).toBe("Cal MS");
+    expect(cleanCollegeTeamLabel("Octos Emory GH")).toBe("Emory GH");
+    expect(cleanCollegeTeamLabel("Kansas LS")).toBe("Kansas LS");
+  });
+
+  it("finds a team in its own season's table, by short school name and initials in either order", async () => {
+    const season = await loadCollegeHistory(2018);
+    expect(findCollegeHistoryTeam(season, "Kansas KR")).toMatchObject({ rank: 1, name: "Katz & Robinson" });
+    expect(findCollegeHistoryTeam(season, "KU RK")).toMatchObject({ rank: 1 });
+    expect(findCollegeHistoryTeam(season, "UNLV GH")).toMatchObject({ school: "University of Nevada - Las Vegas", name: "Gomez & Horn" });
+    // The same code a season later names nobody in the top 100.
+    expect(findCollegeHistoryTeam(await loadCollegeHistory(2019), "Kansas KR")).toBeNull();
+  });
+
+  it("leaves a code that two teams share unmatched", () => {
+    const entries = [
+      { rank: 3, school: "Emory University", name: "Smith & Jones", rating: 40, mu: 44, sigma: 1 },
+      { rank: 8, school: "Emory University", name: "Jacobs & Stone", rating: 35, mu: 39, sigma: 1 },
+    ];
+    expect(findCollegeHistoryTeam(entries, "Emory SJ")).toBeNull();
+    // Full names settle it.
+    expect(findCollegeHistoryTeam(entries, { code: "Emory SJ", name: "Ann Jacobs & Bo Stone" })).toBe(entries[1]);
   });
 });

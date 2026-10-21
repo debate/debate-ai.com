@@ -10,7 +10,8 @@
  */
 
 import { eq, inArray } from "drizzle-orm";
-import { publishedMsForDate, seasonYearForDate } from "@debate/data-sync/src/videos/video-rows";
+import { normalizeCategoryKey, publishedMsForDate, seasonYearForDate } from "@debate/data-sync/src/videos/video-rows";
+import { classifyRoundCollection } from "@debate/data-sync/src/youtube/parsers/lecture-classifier";
 import { parseQueuedRoundArgs } from "@debate/data-sync/src/youtube/parsers/round-arguments";
 import { chunkBoundParams } from "@/lib/database/bound-params";
 import { chunkStatements } from "@/lib/database/query-budget";
@@ -29,6 +30,7 @@ import { recomputeVideoStacks } from "./recompute-video-stacks";
  */
 export function roundVideoToVideoRow(row: YoutubeRoundVideo): VideoTableInsert {
   const { arg1ac, arg2nr } = parseQueuedRoundArgs(row.description);
+  const category = classifyRoundCollection(row.title);
   return {
     videoId: row.id,
     source: "round",
@@ -39,8 +41,8 @@ export function roundVideoToVideoRow(row: YoutubeRoundVideo): VideoTableInsert {
     viewCount: row.views,
     description: row.description,
     style: row.style,
-    category: null,
-    categoryKey: null,
+    category,
+    categoryKey: category ? normalizeCategoryKey(category) : null,
     tournament: row.tournament,
     roundLevel: row.roundLevel,
     affTeam: row.aff,

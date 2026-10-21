@@ -19,6 +19,7 @@
  */
 
 import { REASON_EDITOR_ROUTE } from "./route-selection"
+import { isTopicDocsPath } from "./topic-doc-paths"
 
 /** The dock's "Shared" destination — the cards subtree. */
 export const CARDS_ROUTE = "/research/cards"
@@ -46,7 +47,8 @@ function isUnder(normalized: string, root: string): boolean {
 export function showsReasonDocsPanels(pathname: string | null | undefined): boolean {
   if (!pathname) return false
   const normalized = normalize(pathname)
-  return REASON_DOCS_SIDEBAR_ROOTS.some((root) => isUnder(normalized, root))
+  // A topic starter's `/docs/<topic code>/...` address is the editor too.
+  return REASON_DOCS_SIDEBAR_ROOTS.some((root) => isUnder(normalized, root)) || isTopicDocsPath(normalized)
 }
 
 /**

@@ -26,7 +26,11 @@ vi.mock("next/image", () => ({
 }));
 
 const { VideoSidebarTree } = await import(
-  "../src/components/category-gallery/VideoSidebarTree"
+<<<<<<< HEAD
+  "../src/components/sidebar/VideoSidebarTree"
+=======
+  "../src/components/sidebar-nav/VideoSidebarTree"
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 );
 
 /** The ring `TreeItem` puts on the selected row. */
@@ -56,10 +60,10 @@ function activeRows(markup: string): string[] {
 }
 
 describe("VideoSidebarTree highlighting", () => {
-  it("highlights only College Policy on a round collection", () => {
+  it("highlights only College Team Debate on a round collection", () => {
     const rows = activeRows(render({ activeId: "college" }));
 
-    expect(rows).toEqual(["College Policy"]);
+    expect(rows).toEqual(["College Team Debate"]);
     expect(rows).not.toContain("Lectures");
   });
 

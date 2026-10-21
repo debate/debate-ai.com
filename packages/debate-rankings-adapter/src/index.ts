@@ -32,8 +32,12 @@ export {
   COLLEGE_PERFORMANCE_SIGMA,
   COLLEGE_SEASON_DETAILS,
   collegeHistorySourceUrl,
+  collegeSchoolKey,
+  collegeSeasonYearOf,
+  cleanCollegeTeamLabel,
   collegeSeasonDetails,
   collegeWinProbability,
+  findCollegeHistoryTeam,
   hasCollegeHistory,
   loadCollegeHistory,
   parseCollegeHistory,
@@ -80,3 +84,12 @@ export {
   type RoundStage,
   type SideOutcome,
 } from "./matchup-model";
+export { teamDisplayParts, type TeamDisplayInput, type TeamDisplayParts } from "./team-display";
+export {
+  debaterLastNames,
+  debaterNameKey,
+  matchTournamentEntry,
+  rankingDatasetsForEvent,
+  type TournamentEntryQuery,
+  type TournamentEventFormat,
+} from "./tournament-lookup";

@@ -7,8 +7,6 @@ slug: students
 
 ### Current
 
-title="Screen_Shot_2023-03-06_at_8.31.33_AM.png" width="500" />
-
 This tab will show competitor information for the tournament currently
 happening in real time. Information won’t appear on this screen until
 the starting time for the event.
@@ -51,8 +49,6 @@ tournament enables those options.
 
 ### Future
 
-title="Students_-_Future_Entries.png" />
-
 This tab will show competitors the tournaments they are signed up to
 attend at future dates. Information won’t appear on this screen until
 you register for an event via the tournament signups function on
@@ -78,7 +74,6 @@ has denied your registration for the tournament.
 
 ### Signups
 
-
 This tab will show competitors any tournament their advisor has made
 available for signup. This tab won’t appear if your advisor has not
 enabled student signups using Tournament Admin.
@@ -102,8 +97,6 @@ wants to attend the tournament. More information will be found in our
 
 ### Results
 
-width="500" />
-
 This tab shows you the results of all the tournaments a competitor has
 attended and their results. Results will only appear here once the
 tournament has enabled the results to be viewed publicly.
@@ -124,8 +117,6 @@ the tournament.
 document you will see those results.
 
 ### Results Screen
-
-title="Results_screen_screenshot.png" />
 
 This screen indicates the result(s) of individual rounds a competitor
 competed in at a tournament.
@@ -148,8 +139,6 @@ competitors to review after the round.
 
 ### NSDA
 
-title="Screen_Shot_2023-03-11_at_2.09.54_PM.png" />
-
 This tab shows you the competitors NSDA credentials. On the right side
 the competitors name, \# of merit points, and eligibility for districts
 will appear. The recycle icon allows you to update the page with the
@@ -162,7 +151,6 @@ date the competitor received the degree, and the program in which the
 degree was issued.
 
 ## Standing Conflicts
-
 
 This page allows competitors to enter “standing conflicts” against
 individuals they believe would be biased or unfairly able to judge them
@@ -181,7 +169,6 @@ select the specific judge you intended and select “conflict.”
 standing conflicts against.
 
 ## Parent Notifications
-
 
 Parent notifications allow competitors to enter their parents email
 address to receive memos and messages when they sign up for a tournament

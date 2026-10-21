@@ -17,6 +17,18 @@ import {
   type Route,
 } from "../../helpers/dom";
 
+// The real reader fetches the article from qwksearch; the dashboard only has
+// to open it on the right URL and close it again.
+vi.mock("@debate/research-evidence", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@debate/research-evidence")>()),
+  SourceArticlePanel: ({ url, onClose }: { url: string; onClose: () => void }) => (
+    <div data-testid="reader-panel">
+      Reader for {url}
+      <button onClick={onClose}>Close reader</button>
+    </div>
+  ),
+}));
+
 let observers: Array<{ callback: IntersectionObserverCallback; observed: Element[] }> = [];
 
 beforeAll(() => {
@@ -70,7 +82,7 @@ function adminRoutes(extra: Route[] = []) {
     {
       method: "GET",
       match: "/api/admin/youtube/videos?",
-      respond: { videos: [queueVideo("aaa"), queueVideo("bbb", { style: 7, tournament: null })], nextCursor: "c2" },
+      respond: { videos: [queueVideo("aaa"), queueVideo("bbb", { style: 99, tournament: null })], nextCursor: "c2" },
     },
   ]);
 }
@@ -113,7 +125,7 @@ describe("AdminDashboard", () => {
     await flush();
     expect(bodyText()).toContain("Moderation");
     const names = [...nav().querySelectorAll("button")].map((b) => b.textContent);
-    expect(names).toEqual(["Round queue", "Video library", "School claims"]);
+    expect(names).toEqual(["Round queue", "Video library", "School claims", "Topic starters"]);
     expect(calls.some((c) => c.url.includes("/resync"))).toBe(false);
     expect(bodyText()).toContain("Queued rounds waiting to be published");
 
@@ -376,13 +388,16 @@ describe("AdminDashboard", () => {
       lastVisitedAt: 1_700_000_000_000,
       createdAt: 1_690_000_000_000,
       userName: i === 0 ? "Ada" : null,
-      userEmail: null,
+      userEmail: i === 0 ? "ada@example.com" : null,
     }));
     const { calls } = adminRoutes([
       {
         method: "GET",
         match: "/api/admin/url-detection/stats",
-        respond: { totalUrls: 1500, uniqueUsers: 12, totalVisits: 9000, periodDays: 30, topUrls: [{ url: "https://top.example", title: null, visitCount: 77, lastVisitedAt: 1_700_000_000_000 }] },
+        respond: { totalUrls: 1500, uniqueUsers: 12, totalVisits: 9000, periodDays: 30, topUrls: [
+          { url: "https://top.example", title: null, visitCount: 77, lastVisitedAt: 1_700_000_000_000, userEmail: "bo@example.com" },
+          { url: "https://news.example/2026/story", title: "A story", visitCount: 5, lastVisitedAt: 1_700_000_000_000, userEmail: null },
+        ] },
       },
       { method: "GET", match: "offset=50", respond: { urls: urls.slice(1), total: 120 } },
       { method: "GET", match: "/api/admin/url-detection?", respond: { urls, total: 120 } },
@@ -398,15 +413,25 @@ describe("AdminDashboard", () => {
     expect(text).toContain("https://top.example");
     expect(text).toContain("77 visits");
     expect(text).toContain("First page");
+    expect(text).toContain("ada@example.com");
     expect(text).toContain("Ada");
     expect(text).toContain("user-1");
+    expect(text).toContain("Checked by bo@example.com");
+
+    // Article rows open in reader mode; a bare homepage gets no reader button.
+    const readerButtons = Array.from(document.querySelectorAll<HTMLButtonElement>("button[title='Open in reader mode']"));
+    expect(readerButtons).toHaveLength(3);
+    await clickAsync(readerButtons[0]);
+    expect(document.querySelector("[data-testid='reader-panel']")?.textContent).toContain("https://news.example/2026/story");
+    await clickAsync(button("Close reader"));
+    expect(document.querySelector("[data-testid='reader-panel']")).toBeNull();
     expect(text).toContain("Load more (2 of 120)");
 
     await clickAsync(button(/Load more/));
     expect(calls.some((c) => c.url.includes("offset=50"))).toBe(true);
 
     change(document.querySelector("input[placeholder='Search URL or title…']")!, "site");
-    change(document.querySelector("input[placeholder='Filter by user ID…']")!, "user-0");
+    change(document.querySelector("input[placeholder='Filter by user ID or email…']")!, "user-0");
     await flush();
     await clickAsync(button("Search"));
     expect(calls.some((c) => c.url.includes("search=site") && c.url.includes("userId=user-0"))).toBe(true);

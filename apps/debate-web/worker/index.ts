@@ -51,6 +51,8 @@ interface Env extends TurnstileEnv {
   DB_BACKUPS_KV?: unknown;
   // Joined round recordings (lib/round-recordings/storage.ts), bound in wrangler.jsonc.
   ROUND_RECORDINGS?: unknown;
+  // Per-speech MP3 clips of rounds (lib/videos/speech-audio-store.ts).
+  SPEECH_AUDIO?: unknown;
   // Webcam-room signalling (lib/webcam/debate-room.ts), bound in wrangler.jsonc.
   DEBATE_ROOMS?: Parameters<typeof handleRoomSocket>[1];
   // See lib/database/d1-session.ts — "auto" (default), "primary",

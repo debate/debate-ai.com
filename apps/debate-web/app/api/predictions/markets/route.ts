@@ -12,7 +12,7 @@ import {
   insertMarket,
   listEventEntries,
 } from "@/lib/predictions/queries";
-import { findRatedTeam } from "@/lib/predictions/ratings";
+import { findRatedTeam } from "@debate/webview/lib/predictions/ratings";
 import {
   MAX_OPEN_MARKETS_PER_CREATOR,
   MAX_OUTCOMES,

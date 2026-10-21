@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { asc, desc, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { topicStarterItems } from "@/lib/database/schema"
+import { ensureTopicStarterColumns } from "@/lib/topic-starters/changes"
 
 /** Public catalogue for the CardMirror Topic Starter sidebar. The hard cap
  * keeps the initial editor load bounded while fulfilling the public 100-file
@@ -12,6 +13,7 @@ import { topicStarterItems } from "@/lib/database/schema"
  * pointing at a parent the client never received. */
 export async function GET() {
   const db = await getDBFromContext()
+  await ensureTopicStarterColumns(db)
   const items = await db
     .select()
     .from(topicStarterItems)

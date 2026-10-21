@@ -109,7 +109,7 @@ export function TournamentInvitePage({ invite }: { invite: TournamentInvite }) {
       </div>
 
       {invite.Webpages.map((page) => (
-        <Section key={page.id} title={page.title || "Information"}>
+        <Section key={page.id} id={`page-${page.id}`} title={page.title || "Information"}>
           {/* Tournament-authored HTML is shown as text, never injected as markup. */}
           <p className="whitespace-pre-line p-4 text-sm">{htmlToText(page.content)}</p>
         </Section>

@@ -7,6 +7,10 @@ tool in the app — with no Next.js, no router and no session of its own, so it 
 anywhere React runs. It reaches the server only through `debate-api-client`, and ships
 one scoped stylesheet rather than depending on the host's design system.
 `apps/debate-web-ext`'s Options page is its first host.
+It also holds the app's pure server helpers (Stripe webhook verification, the leaderboard
+resolver, Tabroom proxies, the `/api/tts` backends, QwkSearch connect, `.docx` → `.cmir`
+import and the like) that the `/api` routes call; anything touching D1, auth or env stays in
+`apps/debate-web/lib`.
 
 ## debate-api-client
 
@@ -62,6 +66,16 @@ its only adapter: the former `debate-editor-cm-adapter` package was merged into 
 CardMirror's schema, `.docx` import/export and native `.cmir` format, plus
 `importDocx(file)`, `exportDocxBlob(doc)`, `outlineOf(doc)` and `cardsOf(doc)`, all come
 from `@debate/editor/engine`.
+
+## debate-emails
+
+Package name `@debate/emails`. The site's transactional emails as React Email
+(`@react-email/components`) templates: welcome, file collaboration invite (CardMirror
+card shares), debate round invite and the coach feature tour. `renderEmail(id, props)`
+returns `{ subject, html, text }` and runs on Cloudflare Workers (`@react-email/render`'s
+`workerd` build). Each template carries sample data that the admin Emails section previews.
+Depends on no other `debate-*` package; used by `apps/debate-web` (`/api/rounds/invite`,
+`/api/card-shares`, `/api/admin/emails`).
 
 ## debate-file-market
 
@@ -129,7 +143,9 @@ bun workspace and its `config/` and `output/` files are read by path rather than
 What the web UI imports for rankings: the dataset list and typed CSV loader over `debate-rankings`'
 output, ratings moved onto the site's scale (`rating-offset.ts`), plus the
 site-only team-label lookup (`findTeamRanking("Harker LL")` and friends) that matches a round
-video's team to its rankings row, and past-season college policy tables (2009-10 to 2025-26)
+video's team to its rankings row, the tournament-entry lookup (`matchTournamentEntry`,
+`rankingDatasetsForEvent`) that `/tournaments` pairings and results use to show an entry's
+rating in its own format's rankings, and past-season college policy tables (2009-10 to 2025-26)
 scraped from debatedata.weebly.com (`college-history.ts`). Site additions live here so the
 submodule never diverges from upstream.
 
@@ -186,6 +202,8 @@ includes an in-round speech recorder with mic selection, live waveform, playback
 optional webcam video, and the joined round recording: every speech in one MP3
 (`@breezystack/lamejs`), optional Kokoro announcements and Moonshine captions
 (`@moonshine-ai/moonshine-js`), and the speech-start modal shared with `debate-videos`.
+Also owns the circular progress timer face (`CircularTimerFace`), shared by the round
+sidebar's Timer section and the browser extension's timer window.
 
 ## debate-types
 
@@ -207,6 +225,13 @@ mounted at `/api/tabroom`), a React port of its invite/pairings/results pages (m
 a non-throwing `parseTabroom(schema, data)`), and the D1 schema. Its own `/host` API creates
 tournaments on this site (never on Tabroom) and serves each one's admin web view, and a demo
 tournament loads itself for anyone to browse as the mock admin `demo.admin`.
+Pairings and results take optional host lookups (`lookupTeamRating`,
+`lookupJudgeParadigm` and `lookupJudgeProfile` on `<TournamentsApp>`, see
+`src/ui/enrichment.tsx`): the site passes rankings matches, a Tabroom paradigm search and its
+judge paradigm cache, so entries show logo, last names and rating and every judge opens a
+dialog with their paradigm and voting record. `@debate/tournaments/paradigms` parses Tabroom's
+paradigm and judging-record answers, and `fetchTabroomJudge` (in `/server`) reads them from
+Tabroom's API with a signed-in session. The package itself still depends on no other `debate-*` package.
 `scripts/sync-upstream.mjs` re-clones upstream and re-applies this package's patches and
 overlays, so upstream changes keep flowing in.
 

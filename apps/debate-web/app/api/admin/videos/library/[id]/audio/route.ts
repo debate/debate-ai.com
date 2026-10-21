@@ -17,7 +17,9 @@ import { writeCachedTranscript } from "@/lib/youtube/transcript-cache";
  * - `GET ?status=1` — which halves are configured, so the dialog can say why
  *   a button is off.
  * - `GET ?format=mp3|m4a|webm` — the audio file itself, streamed through, for
- *   an editor to transcribe by hand or run elsewhere.
+ *   an editor to transcribe by hand or run elsewhere. An MP3 may also ask for
+ *   `bitrate` (kbps), `mono=1` and `rate` (Hz) — the speech splitter asks for
+ *   small mono files, since it only measures loudness.
  * - `POST { language? }` — downloads and transcribes it, answering the same
  *   `{ snippets }` shape as `/api/transcript` so the dialog's caption import
  *   can fill the transcript box from it. The snippets are also stored as the
@@ -58,8 +60,17 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     return NextResponse.json({ error: `format must be one of ${AUDIO_FORMATS.join(", ")}` }, { status: 400 });
   }
 
+  const bitrate = Number(searchParams.get("bitrate"));
+  const rate = Number(searchParams.get("rate"));
+  const request = {
+    format,
+    bitrate: format === "mp3" && Number.isInteger(bitrate) && bitrate >= 8 && bitrate <= 320 ? bitrate : undefined,
+    mono: format === "mp3" && searchParams.get("mono") === "1" ? true : undefined,
+    rate: format === "mp3" && Number.isInteger(rate) && rate >= 8000 && rate <= 48000 ? rate : undefined,
+  };
+
   try {
-    const upstream = await fetchVideoAudio(id, { format });
+    const upstream = await fetchVideoAudio(id, request);
     const headers = new Headers({
       "Content-Type": upstream.headers.get("content-type") ?? "application/octet-stream",
       "Content-Disposition":

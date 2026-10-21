@@ -27,6 +27,8 @@
     "./routes": "./src/routes/index.ts",
     "./types": "./src/types.ts",
     "./ballots": "./src/ballots.ts",
+    "./sidebar": "./src/sidebar.ts",
+    "./paradigms": "./src/paradigms.ts",
     "./majors": "./src/ui/majors/index.ts",
     "./migrations/*": "./migrations/*"
   },

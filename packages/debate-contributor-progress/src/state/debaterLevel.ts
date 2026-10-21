@@ -16,10 +16,12 @@
  */
 
 import {
+  DEBATER_CHALLENGES,
   applyDebaterActivity,
   createDebaterLevelState,
   isDebaterActivityKind,
   parseDebaterLevelState,
+  settleDailyChallenges,
   type DebaterActivityKind,
   type DebaterActivityResult,
   type DebaterLevelState,
@@ -33,6 +35,26 @@ export const DEBATER_ACTIVITY_EVENT = "debate-ai:debater-activity";
 
 /** Window event this store dispatches after every recorded activity: `detail: DebaterActivityResult`. */
 export const DEBATER_XP_AWARDED_EVENT = "debate-ai:debater-xp-awarded";
+
+/** localStorage key for this browser's ledger id; deliberately not synced to the account. */
+export const DEBATER_DEVICE_ID_STORAGE_KEY = "debaterDeviceId";
+
+/** This browser's stable id for the XP ledger, created on first use; `undefined` without storage. */
+export function getDebaterDeviceId(): string | undefined {
+  if (typeof localStorage === "undefined") return undefined;
+  try {
+    const existing = localStorage.getItem(DEBATER_DEVICE_ID_STORAGE_KEY);
+    if (existing) return existing;
+    const id =
+      typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+        ? crypto.randomUUID()
+        : `d${Date.now().toString(36)}${Math.random().toString(36).slice(2, 10)}`;
+    localStorage.setItem(DEBATER_DEVICE_ID_STORAGE_KEY, id);
+    return id;
+  } catch {
+    return undefined;
+  }
+}
 
 /** Read the persisted state, or a fresh one. */
 export function loadDebaterLevelState(): DebaterLevelState {
@@ -61,7 +83,22 @@ export function recordDebaterActivity(
   count = 1,
   nowMs: number = Date.now(),
 ): DebaterActivityResult {
-  const result = applyDebaterActivity(loadDebaterLevelState(), kind, nowMs, count);
+  const result = applyDebaterActivity(loadDebaterLevelState(), kind, nowMs, count, undefined, getDebaterDeviceId());
+  saveDebaterLevelState(result.state);
+  if (typeof window !== "undefined" && typeof CustomEvent !== "undefined") {
+    window.dispatchEvent(new CustomEvent(DEBATER_XP_AWARDED_EVENT, { detail: result }));
+  }
+  return result;
+}
+
+/**
+ * Pay daily challenges that a cross-device merge completed (the account's
+ * tool-record sync writes the merged state straight to storage, so nothing
+ * else notices). Persists and announces only when a bonus was owed.
+ */
+export function settleDebaterChallenges(nowMs: number = Date.now()): DebaterActivityResult {
+  const result = settleDailyChallenges(loadDebaterLevelState(), nowMs);
+  if (result.completedChallenges.length === 0) return result;
   saveDebaterLevelState(result.state);
   if (typeof window !== "undefined" && typeof CustomEvent !== "undefined") {
     window.dispatchEvent(new CustomEvent(DEBATER_XP_AWARDED_EVENT, { detail: result }));
@@ -94,6 +131,15 @@ export function installDebaterActivityListener(): () => void {
     const count = typeof detail.count === "number" && Number.isFinite(detail.count) ? detail.count : 1;
     recordDebaterActivity(detail.kind, count);
   };
+  // A merge from another device lands while the tab is hidden or on focus, so settle then too.
+  const settle = () => {
+    settleDebaterChallenges();
+  };
+  settle();
   window.addEventListener(DEBATER_ACTIVITY_EVENT, handle);
-  return () => window.removeEventListener(DEBATER_ACTIVITY_EVENT, handle);
+  window.addEventListener("focus", settle);
+  return () => {
+    window.removeEventListener(DEBATER_ACTIVITY_EVENT, handle);
+    window.removeEventListener("focus", settle);
+  };
 }

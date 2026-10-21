@@ -51,7 +51,8 @@ import { isCmirContent } from "../../lib/cardmirror/content-format"
 import { CardMirrorImportError, docxDownloadFilename } from "../../lib/cardmirror/import-files"
 import { loadStoredCmir, storedCmirIfLoaded, type StoredCmir } from "../../lib/cardmirror/lazy-stored-cmir"
 import type { ReasonDocument } from "./types"
-import type { TopicStarterItem } from "./TopicStarterTree"
+import type { TopicStarterChange } from "../../lib/topic-starters/changes"
+import type { TopicStarterItem } from "./topic-starters/TopicStarterTree"
 
 /** How long an edit to a `.cmir` file waits before it is re-encoded. The write
  *  is queued once the encode resolves, so this sits in front of the save
@@ -95,8 +96,18 @@ export type DownloadOutcome = { ok: true } | { ok: false; error: string }
  *  made, or why nothing was. */
 export type CopyOutcome = { ok: true; created: ReasonDocument[] } | { ok: false; error: string }
 
-/** The result of {@link ReasonDocsContextValue.publishToTopics}. */
-export type PublishOutcome = { ok: true; item: TopicStarterItem } | { ok: false; error: string }
+/** The result of {@link ReasonDocsContextValue.publishToTopics}: `pending`
+ *  when the file went to the moderators rather than straight into the catalogue. */
+export type PublishOutcome = { ok: true; pending: boolean; title: string } | { ok: false; error: string }
+
+/** The result of an edit to Topic Starters: applied at once for moderators
+ *  and admins, `pending` (waiting on a moderator) for everyone else. */
+export type TopicChangeOutcome = { ok: true; pending: boolean } | { ok: false; error: string }
+
+/** The AI's proposed reorganization — `change` is null when nothing would move. */
+export type OrganizeOutcome =
+  | { ok: true; change: TopicStarterChange | null; summary: string; moves: number }
+  | { ok: false; error: string }
 
 export interface ReasonDocsContextValue {
   documents: ReasonDocument[]
@@ -176,25 +187,28 @@ export interface ReasonDocsContextValue {
    * "<title> copy". Never throws.
    */
   duplicateDocument: (id: number, parentId?: number | null) => Promise<CopyOutcome>
-/**
-    * Publishes one of the reader's own files into the public Topic Starters,
-    * under the catalogue folder `topicParentId` (top level when null). This is
-    * what dropping a file onto Topic Starters does. Admin-only on the server,
-    * so for everyone else it comes back `{ ok: false }` with a reason to show.
-    */
-   publishToTopics: (id: number, topicParentId?: number | null) => Promise<PublishOutcome>
-   /**
-    * Removes one public Topic Starter — a file, or a folder with everything in
-    * it — from the catalogue. Admin-only on the server; for everyone else it
-    * comes back `{ ok: false }` with a reason to show.
-    */
-   deleteTopicStarter: (id: number) => Promise<{ ok: true } | { ok: false; error: string }>
-   /**
-    * Re-files one public Topic Starter under another catalogue folder, or the
-    * top level. A folder moves with its whole subtree. Admin-only on the
-    * server; for everyone else it comes back `{ ok: false }`.
-    */
-   moveTopicStarter: (id: number, parentId: number | null) => Promise<{ ok: true } | { ok: false; error: string }>
+  /**
+   * Submits one of the reader's own files to the public Topic Starters, under
+   * the catalogue folder `topicParentId` (top level when null). This is what
+   * dropping a file onto Topic Starters does. Applied at once for moderators
+   * and admins; anyone else's submission waits for a moderator (`pending`).
+   */
+  publishToTopics: (id: number, topicParentId?: number | null) => Promise<PublishOutcome>
+  /** Removes a Topic Starter (a folder with everything in it) — or, for a
+   *  reader who isn't staff, asks the moderators to. */
+  deleteTopicStarter: (id: number) => Promise<TopicChangeOutcome>
+  /** Re-files a Topic Starter under another folder, or the top level. A
+   *  folder moves with its subtree. Moderated like every catalogue edit. */
+  moveTopicStarter: (id: number, parentId: number | null) => Promise<TopicChangeOutcome>
+  /** Renames a Topic Starter. Moderated like every catalogue edit. */
+  renameTopicStarter: (id: number, title: string) => Promise<TopicChangeOutcome>
+  /** Adds a folder to Topic Starters. Moderated like every catalogue edit. */
+  createTopicFolder: (title: string, parentId: number | null) => Promise<TopicChangeOutcome>
+  /** Sends any catalogue edit — what the AI organizer's proposal is applied with. */
+  proposeTopicChange: (change: TopicStarterChange) => Promise<TopicChangeOutcome>
+  /** Asks the AI to sort every public file into Aff/Neg argument folders.
+   *  Only proposes: apply the result with {@link proposeTopicChange}. */
+  organizeTopicStarters: () => Promise<OrganizeOutcome>
   /**
    * Opens a public file by the name a URL carries, for a link whose file this
    * client hasn't loaded — the catalogue is capped, and a signed-out reader
@@ -397,111 +411,110 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
     [documents, copyRows],
   )
 
+  /** Re-reads the public catalogue — after an edit a moderator applied, whose
+   *  effect (a cascade delete, a whole reorganization) is the server's to say. */
+  const refreshTopics = useCallback(async () => {
+    try {
+      const res = await fetch("/api/topic-starters")
+      if (!res.ok) return
+      const data = (await res.json()) as { items?: TopicStarterItem[] }
+      setTopicItems(data.items ?? [])
+    } catch {
+      // The tree keeps what it had; the next load corrects it.
+    }
+  }, [])
+
+  const proposeTopicChange = useCallback(
+    async (change: TopicStarterChange): Promise<TopicChangeOutcome> => {
+      try {
+        const res = await fetch("/api/topic-starters/changes", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(change),
+        })
+        const data = (await res.json().catch(() => ({}))) as { status?: string; error?: string }
+        if (res.status === 401) return { ok: false, error: data.error || "Sign in to suggest changes to Topic Starters." }
+        if (!res.ok) return { ok: false, error: data.error || `The server refused it (${res.status}).` }
+        if (data.status === "pending") return { ok: true, pending: true }
+        await refreshTopics()
+        return { ok: true, pending: false }
+      } catch (error) {
+        return { ok: false, error: `The change could not be sent (${error instanceof Error ? error.message : String(error)}).` }
+      }
+    },
+    [refreshTopics],
+  )
+
   const publishToTopics = useCallback(
     async (id: number, topicParentId: number | null = null): Promise<PublishOutcome> => {
       const doc = documents.find((d) => d.id === id)
       if (!doc || doc.isFolder) return { ok: false, error: "Only a file can be added to Topic Starters." }
-      try {
-        const res = await fetch("/api/admin/topic-starters/items", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ title: doc.title, content: doc.content ?? "", format: doc.format, parentId: topicParentId }),
-        })
-        if (res.status === 401 || res.status === 403) {
-          return { ok: false, error: "Only admins can add files to Topic Starters. Drag a topic starter into Files to keep your own copy." }
-        }
-        if (!res.ok) throw new Error(`the server refused it (${res.status})`)
-        const { item } = (await res.json()) as { item: TopicStarterItem }
-        setTopicItems((prev) => [...prev, item])
-        return { ok: true, item }
-      } catch (error) {
-        return {
-          ok: false,
-          error: `${doc.title || "This file"} could not be published (${error instanceof Error ? error.message : String(error)}).`,
-        }
-      }
+      const result = await proposeTopicChange({
+        kind: "submit",
+        title: doc.title,
+        content: doc.content ?? "",
+        format: doc.format ?? "html",
+        parentId: topicParentId,
+        year: null,
+      })
+      if (!result.ok) return { ok: false, error: `${doc.title || "This file"} could not be submitted: ${result.error}` }
+      return { ok: true, pending: result.pending, title: doc.title }
     },
-    [documents],
+    [documents, proposeTopicChange],
   )
 
   const deleteTopicStarter = useCallback(
-    async (id: number): Promise<{ ok: true } | { ok: false; error: string }> => {
-      const item = topicItems.find((row) => row.id === id)
-      if (!item) return { ok: false, error: "That topic starter could not be found." }
-      try {
-        const res = await fetch(`/api/admin/topic-starters/${id}`, { method: "DELETE" })
-        if (res.status === 401 || res.status === 403) {
-          return { ok: false, error: "Only admins can delete topic starters." }
-        }
-        if (!res.ok) throw new Error(`the server refused it (${res.status})`)
-        // Folders cascade: drop the row and every descendant client-side so
-        // the tree stops showing an orphaned subtree.
-        const idsToDelete: number[] = []
-        const collect = (targetId: number) => {
-          idsToDelete.push(targetId)
-          for (const row of topicItems) {
-            if (row.parentId === targetId) collect(row.id)
-          }
-        }
-        collect(id)
-        setTopicItems((prev) => prev.filter((row) => !idsToDelete.includes(row.id)))
-        return { ok: true }
-      } catch (error) {
-        return {
-          ok: false,
-          error: `${item.title || "This starter"} could not be deleted (${error instanceof Error ? error.message : String(error)}).`,
-        }
-      }
+    async (id: number): Promise<TopicChangeOutcome> => {
+      if (!topicItems.some((row) => row.id === id)) return { ok: false, error: "That topic starter could not be found." }
+      return proposeTopicChange({ kind: "delete", itemId: id })
     },
-    [topicItems],
+    [topicItems, proposeTopicChange],
   )
 
   const moveTopicStarter = useCallback(
-    async (id: number, parentId: number | null): Promise<{ ok: true } | { ok: false; error: string }> => {
+    async (id: number, parentId: number | null): Promise<TopicChangeOutcome> => {
       const item = topicItems.find((row) => row.id === id)
       if (!item) return { ok: false, error: "That topic starter could not be found." }
-      if (item.isFolder) {
-        // A folder can't be moved into its own subtree.
-        const descendants = new Set<number>([item.id])
-        const queue: number[] = [item.id]
-        while (queue.length > 0) {
-          const current = queue.shift()!
-          for (const row of topicItems) {
-            if (row.parentId === current && !descendants.has(row.id)) {
-              descendants.add(row.id)
-              queue.push(row.id)
-            }
-          }
-        }
-        if (parentId != null && descendants.has(parentId)) {
-          return { ok: false, error: "A folder cannot be moved into its own subtree." }
-        }
+      if (item.isFolder && parentId != null && subtreeOf(topicItems, item).some((row) => row.id === parentId)) {
+        return { ok: false, error: "A folder cannot be moved into its own subtree." }
       }
-      if ((item.parentId ?? null) === parentId) return { ok: true }
-      try {
-        const res = await fetch(`/api/admin/topic-starters/${id}`, {
-          method: "PATCH",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ parentId }),
-        })
-        if (res.status === 401 || res.status === 403) {
-          return { ok: false, error: "Only admins can move topic starters." }
-        }
-        if (!res.ok) {
-          const data = (await res.json().catch(() => ({}))) as { error?: string }
-          return { ok: false, error: data.error || `The server refused it (${res.status}).` }
-        }
-        setTopicItems((prev) => prev.map((row) => (row.id === id ? { ...row, parentId } : row)))
-        return { ok: true }
-      } catch (error) {
-        return {
-          ok: false,
-          error: `${item.title || "This starter"} could not be moved (${error instanceof Error ? error.message : String(error)}).`,
-        }
-      }
+      if ((item.parentId ?? null) === parentId) return { ok: true, pending: false }
+      return proposeTopicChange({ kind: "move", itemId: id, parentId })
     },
-    [topicItems],
+    [topicItems, proposeTopicChange],
   )
+
+  const renameTopicStarter = useCallback(
+    async (id: number, title: string): Promise<TopicChangeOutcome> => {
+      const item = topicItems.find((row) => row.id === id)
+      if (!item) return { ok: false, error: "That topic starter could not be found." }
+      if (!title.trim() || title.trim() === item.title) return { ok: true, pending: false }
+      return proposeTopicChange({ kind: "rename", itemId: id, title: title.trim() })
+    },
+    [topicItems, proposeTopicChange],
+  )
+
+  const createTopicFolder = useCallback(
+    (title: string, parentId: number | null): Promise<TopicChangeOutcome> =>
+      proposeTopicChange({ kind: "create-folder", title, parentId }),
+    [proposeTopicChange],
+  )
+
+  const organizeTopicStarters = useCallback(async (): Promise<OrganizeOutcome> => {
+    try {
+      const res = await fetch("/api/topic-starters/organize", { method: "POST" })
+      const data = (await res.json().catch(() => ({}))) as {
+        change?: TopicStarterChange | null
+        summary?: string
+        moves?: number
+        error?: string
+      }
+      if (!res.ok) return { ok: false, error: data.error || `The organizer failed (${res.status}).` }
+      return { ok: true, change: data.change ?? null, summary: data.summary ?? "", moves: data.moves ?? 0 }
+    } catch (error) {
+      return { ok: false, error: `The organizer could not be reached (${error instanceof Error ? error.message : String(error)}).` }
+    }
+  }, [])
 
   const deleteDocument = useCallback(
     async (id: number) => {
@@ -828,6 +841,10 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
       publishToTopics,
       deleteTopicStarter,
       moveTopicStarter,
+      renameTopicStarter,
+      createTopicFolder,
+      proposeTopicChange,
+      organizeTopicStarters,
     }),
     [
       documents,
@@ -864,6 +881,10 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
       publishToTopics,
       deleteTopicStarter,
       moveTopicStarter,
+      renameTopicStarter,
+      createTopicFolder,
+      proposeTopicChange,
+      organizeTopicStarters,
     ],
   )
 

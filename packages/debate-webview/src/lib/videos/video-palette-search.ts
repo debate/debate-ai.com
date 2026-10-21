@@ -1,6 +1,6 @@
 /**
  * @fileoverview The video library's rows for the app-wide Ctrl/Cmd-K palette
- * (`components/layout/GlobalCommandPalette`).
+ * (`components/layout/command-palette/GlobalCommandPalette`).
  *
  * The library is a few thousand rounds and lectures in the `videos` table, far
  * too many to ship to every page just in case someone opens the palette. So

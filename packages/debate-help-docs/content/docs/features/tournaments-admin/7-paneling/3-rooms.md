@@ -5,8 +5,6 @@ slug: rooms
 
 ## Mass Assign
 
-title="Paneling_-_Rooms_-_Mass_Assign.png" />
-
 If you didn't auto-assign rooms during the paneling step, you can assign
 rooms to a speech event using the "Rooms" menu option, and then choosing
 a timeslot on the sidebar. The "Mass Assign" tab will show you a listing
@@ -14,8 +12,6 @@ of current assignments, and the option to auto-assign the rooms in that
 timeslot
 
 ## Pools
-
-title="Paneling_-_Rooms_-_Pools.png" />
 
 To create a room pool, click the "Create New Room Pool" link on the
 sidebar and then give it a name.
@@ -26,13 +22,9 @@ event.
 
 ## Pool Rooms
 
-title="Paneling_-_Rooms_-_Pool_Rooms.png" />
-
 Clicking a room on the right adds the room to the selected room pool.
 
 ### Side Menu
-
-title="Paneling_-_Rooms_-_Pool_Rooms_-_Options.png" />
 
 **Clone another pool** - This copies all rooms from one pool to another.
 
@@ -51,14 +43,10 @@ spreadsheet.
 
 ## Chart
 
-title="Paneling_-_Rooms_-_Pool_Rooms_-_Chart.png" />
-
 The "Chart" tab shows you a list of all rooms for the Timeslot and Site
 you choose.
 
 ## Reports
-
-title="Paneling_-_Rooms_-_Pool_Rooms_-_Reports.png" />
 
 The "Report" tab shows you information about individual rooms, including
 which rounds are scheduled in that room and which room pools the room is
@@ -66,16 +54,12 @@ in.
 
 ## Reservations
 
-title="Paneling_-_Rooms_-_Pool_Rooms_-_Reservations.png" />
-
 Under Paneling - Rooms, the "Reservations" tab lets you assign a room to
 a particular judge, for example if a judge has a mobility issue and
 needs to stay in the same room all day. Choose a judge category from the
 sidebar, and then select a room to assign the judge.
 
 ## Utility
-
-title="Paneling_-_Rooms_-_Pool_Rooms_-_Utility.png" />
 
 For online tournaments, allows you to create rooms that are availble to
 specific sub-sections of the tournament.

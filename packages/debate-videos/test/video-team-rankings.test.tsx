@@ -28,9 +28,16 @@ vi.mock("next/link", () => ({
 const { findVideoTeamRanking, videoStyleDatasetId } = await import(
   "../src/panels/leaderboard/profile/rankingProfileHelpers"
 );
+<<<<<<< HEAD
 const { isRankedSeasonRound } = await import("../src/hooks/useVideoTeamRankings");
+const { VideoListRow } = await import("../src/components/videos/video-grid/VideoListRow");
+const { WatchSearchBox } = await import("../src/components/videos/watch/controls/WatchSearchBox");
+=======
+const { isRankedSeasonRound, pastCollegeSeason } = await import("../src/hooks/useVideoTeamRankings");
+const { teamRankStats } = await import("../src/components/team-label/TeamLabel");
 const { VideoListRow } = await import("../src/components/video-grid/VideoListRow");
 const { WatchSearchBox } = await import("../src/components/watch/WatchSearchBox");
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 const { TooltipProvider } = await import("../src/ui/primitives/tooltip");
 
 function entry(rank: number, school: string, name: string): RankingEntry {
@@ -93,7 +100,48 @@ describe("isRankedSeasonRound", () => {
   });
 });
 
-function renderRow(affRanking: RankingEntry | null, negRanking: RankingEntry | null): string {
+describe("pastCollegeSeason", () => {
+  const october2026 = new Date("2026-10-06T12:00:00Z");
+  const college = (season: number | undefined, date = "2018-03-30"): VideoType => {
+    const video = [
+      "vid-2", "NDT 2018 - Finals - Kansas KR vs Harvard MS", date, "Channel", 10, "",
+      4, "NDT", "Finals", "Kansas KR", "Harvard MS", true, "3-2", null, null, false, null,
+    ] as VideoType;
+    if (season !== undefined) video[17] = season;
+    return video;
+  };
+
+  it("names the season of a college round from before this one", () => {
+    expect(pastCollegeSeason(college(2018), october2026)).toBe(2018);
+    // Without a season year, the publish date decides.
+    expect(pastCollegeSeason(college(undefined, "2017-11-02"), october2026)).toBe(2018);
+  });
+
+  it("is null this season, before the history starts, and outside college policy", () => {
+    expect(pastCollegeSeason(college(2027), october2026)).toBeNull();
+    expect(pastCollegeSeason(college(2005), october2026)).toBeNull();
+    const hsPolicy = college(2018);
+    hsPolicy[6] = 1;
+    expect(pastCollegeSeason(hsPolicy, october2026)).toBeNull();
+  });
+});
+
+const pastKansas = { rank: 1, school: "University of Kansas", name: "Katz & Robinson", rating: 43.11, mu: 46.74, sigma: 1.21, season: 2018 };
+
+describe("teamRankStats for a past season", () => {
+  it("names the season and debatedata's rating", () => {
+    expect(teamRankStats(pastKansas)).toEqual([
+      ["Season", "2017-18"],
+      ["Rank", "#1"],
+      ["Rating", "43.11"],
+    ]);
+  });
+});
+
+function renderRow(
+  affRanking: RankingEntry | typeof pastKansas | null,
+  negRanking: RankingEntry | null,
+): string {
   const noop = () => {};
   return renderToStaticMarkup(
     createElement(
@@ -141,7 +189,18 @@ describe("VideoListRow team cells", () => {
     const html = renderRow(harker, null);
     expect(html).toContain('title="Search for Gunn AB"');
     expect(renderRow(null, null)).not.toContain("/teams/");
-    expect(renderRow(null, null)).not.toContain("/@");
+    // No team-page link (the school logo's dev-server `/@fs/` URL doesn't count).
+    expect(renderRow(null, null)).not.toMatch(/href="\/@(?!fs\/)/);
+  });
+});
+
+describe("VideoListRow past-season team cells", () => {
+  it("shows the season's last names and rank without linking a team page", () => {
+    const html = renderRow(pastKansas, null);
+    expect(html).toContain("Katz &amp; Robinson");
+    expect(html).toContain("#1");
+    expect(html).not.toMatch(/href="\/@(?!fs\/)/);
+    expect(html).toContain('title="Search for Harker LL"');
   });
 });
 

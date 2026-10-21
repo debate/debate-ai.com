@@ -27,4 +27,7 @@ export const DEBATE_STYLE_LABELS: Record<DebateStyle, string> = {
   3: "LD",
   1: "Policy",
   4: "College",
+  5: "WSD",
+  6: "ACC",
+  7: "Misc",
 };

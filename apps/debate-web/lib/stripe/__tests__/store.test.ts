@@ -11,7 +11,7 @@ import * as schema from "../../database/schema"
 import { applySchema } from "../../database/__tests__/schema-sql"
 import { PLANS } from "@debate/webview/lib/stripe/plans"
 import { getActiveSubscription, saveSubscriptionUpdate } from "../store"
-import { subscriptionUpdateForEvent } from "../webhook"
+import { subscriptionUpdateForEvent } from "@debate/webview/lib/stripe/webhook"
 
 const TEAM = PLANS.find((p) => p.id === "research-team")!
 

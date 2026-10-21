@@ -281,7 +281,10 @@ export function computeLectureCategories(rows: VideoRow[]): LectureCategoryFacet
   const byLabel = new Map<string, LectureCategoryFacet>();
 
   for (const row of rows) {
-    if (row.style !== null || !row.category || !row.categoryKey) continue;
+    // A round normally has no category; one filed under a collection too (an
+    // ACC tournament round) counts toward that collection's card, matching
+    // what `/videos/<category>` lists.
+    if (!row.category || !row.categoryKey) continue;
     if (HIDDEN_LECTURE_CATEGORIES.has(row.category)) continue;
     const existing = byLabel.get(row.category);
     if (existing) {
@@ -310,7 +313,7 @@ export type { VideoSuggestionKind, VideoSuggestion, VideoSuggestions } from "@de
  * searches that return results.
  */
 export const SUGGESTED_KEYWORDS: readonly string[] = [
-  "Finals",
+  "Final",
   "Critique",
   "Topicality",
   "Semis",

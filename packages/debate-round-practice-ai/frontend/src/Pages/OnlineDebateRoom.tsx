@@ -8,8 +8,8 @@ import React, {
 import { useParams } from "react-router-dom";
 import { Button } from "../components/ui/button";
 
-import JudgmentPopup from "@/components/JudgementPopup";
-import SpeechTranscripts from "@/components/SpeechTranscripts";
+import JudgmentPopup from "@/components/round/JudgementPopup";
+import SpeechTranscripts from "@/components/round/SpeechTranscripts";
 import { useUser } from "@/hooks/useUser";
 import { getAuthToken } from "@/utils/auth";
 import ReconnectingWebSocket from "reconnecting-websocket";

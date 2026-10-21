@@ -136,3 +136,37 @@ describe("isBlankDoc", () => {
     expect(isBlankDoc(doc(textBlock("paragraph", "   ")))).toBe(true);
   });
 });
+
+describe("heading ids", () => {
+  /** Every heading's id in document order. */
+  function headingIds(node: PMNode): unknown[] {
+    const ids: unknown[] = [];
+    node.descendants((n) => {
+      if (["pocket", "hat", "block", "tag", "analytic"].includes(n.type.name)) ids.push(n.attrs["id"]);
+    });
+    return ids;
+  }
+
+  it("gives every parsed heading an id, so the outline can collapse it", () => {
+    // Stored HTML from before ids round-tripped: `data-id=""` on every heading.
+    // The outline's chevrons key collapse state on the id; with null ids
+    // clicking them did nothing.
+    const ids = headingIds(htmlToDoc(docToHtml(cardDoc())));
+    expect(ids).toHaveLength(3);
+    for (const id of ids) expect(typeof id === "string" && id.length > 0).toBe(true);
+    expect(new Set(ids).size).toBe(3);
+  });
+
+  it("keeps a saved heading's id across a round trip", () => {
+    const first = htmlToDoc(docToHtml(cardDoc()));
+    const again = htmlToDoc(docToHtml(first));
+    expect(headingIds(again)).toEqual(headingIds(first));
+  });
+
+  it("re-mints a duplicated id instead of keeping both", () => {
+    const html = '<h1 class="pmd-pocket" data-id="same">A</h1><h1 class="pmd-pocket" data-id="same">B</h1>';
+    const ids = headingIds(htmlToDoc(html));
+    expect(ids[0]).toBe("same");
+    expect(ids[1]).not.toBe("same");
+  });
+});

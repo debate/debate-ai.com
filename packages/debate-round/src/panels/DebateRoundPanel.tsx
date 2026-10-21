@@ -46,7 +46,7 @@ import { useRoundFromSlug } from "../hooks/useRoundFromSlug"
 import { useSyncUrlWithRound } from "../hooks/useSyncUrlWithRound"
 import { useJumpToPrepNoteBox } from "../hooks/useJumpToPrepNoteBox"
 import { useSpeechDocHeadings } from "../hooks/useSpeechDocHeadings"
-import { useTimerSync } from "../hooks/useTimerSync"
+import { useRoomTimerSync } from "../hooks/useRoomTimerSync"
 import { ClarityRequestProvider, useClarityRequests } from "../hooks/useClarityRequests"
 import { getRoundRecordingShareEmails } from "../round/round-recording-share"
 import { roundRecordingFor } from "../round/round-recording-items"
@@ -326,41 +326,8 @@ const handleEbbToolAction = (action: EbbFlowToolAction) => {
   const currentFlowForRoom = flows[selected] || null
   const roomId = currentFlowForRoom?.roundId ? `round-${currentFlowForRoom.roundId}` : null
   const { receivedHeadings, broadcastSpeechDocHeadings } = useSpeechDocHeadings(roomId ?? "", "speaker")
-  const { remoteTimers, broadcastTimerState, sendClarityRequest } = useTimerSync(roomId ?? "", "speaker")
-
-  // Broadcast timer state changes to the room
-  useEffect(() => {
-    if (!roomId) return
-    // Broadcast speech timer state
-    for (const [speechName, entry] of Object.entries(timerState.perSpeechTimerStates)) {
-      broadcastTimerState(speechName, {
-        speechName,
-        time: entry.time,
-        resetTime: entry.resetTime,
-        state: entry.state,
-        timestamp: Date.now(),
-      })
-    }
-    // Broadcast prep timers
-    if (timerState.prepState) {
-      broadcastTimerState("Prep (Aff)", {
-        speechName: "Prep (Aff)",
-        time: timerState.prepState.time,
-        resetTime: timerState.prepState.resetTime,
-        state: timerState.prepState.state,
-        timestamp: Date.now(),
-      })
-    }
-    if (timerState.prepSecondaryState) {
-      broadcastTimerState("Prep (Neg)", {
-        speechName: "Prep (Neg)",
-        time: timerState.prepSecondaryState.time,
-        resetTime: timerState.prepSecondaryState.resetTime,
-        state: timerState.prepSecondaryState.state,
-        timestamp: Date.now(),
-      })
-    }
-  }, [timerState.perSpeechTimerStates, timerState.prepState, timerState.prepSecondaryState, roomId, broadcastTimerState])
+  // Play/pause/reset on any device reaches everyone in the round's room.
+  const { remoteTimers, sendClarityRequest } = useRoomTimerSync(roomId, timerState)
 
   const speechHandlers = useSpeechHandlers(flows, selected, state.selectedSpeech, updateFlow, rounds)
 

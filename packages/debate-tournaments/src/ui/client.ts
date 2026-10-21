@@ -14,7 +14,9 @@ import type { TournamentFormatId } from "../host/formats";
 import type { DemoEdit, DemoSection } from "../host/demo-edit";
 
 export type { DemoEdit, DemoSection };
+import { htmlParagraphs, readJudgeRecord, readParadigmDetails, type JudgeProfile } from "../paradigms";
 import { tournamentSlugOf, type TournamentSlug } from "../routes";
+import type { TournamentSidebar } from "../sidebar";
 
 export interface UpcomingTournament {
   id: string;
@@ -64,7 +66,8 @@ export interface TournamentInvite {
   reg_start: string | null;
   reg_end: string | null;
   Files: Array<{ id: number; label: string | null; filename: string | null; tag: string | null }>;
-  Webpages: Array<{ id: number; title: string | null; content: string | null; slug?: string | null }>;
+  /** `special: "main"` marks the invitation's front page, the rest are its sidebar pages. */
+  Webpages: Array<{ id: number; title: string | null; content: string | null; slug?: string | null; special?: string | null }>;
   Events: InviteEvent[];
   Contacts: Array<{ id: number; first: string | null; last: string | null; email: string | null }>;
 }
@@ -114,7 +117,8 @@ export interface RoundSchematic {
       bye?: number;
       Room?: { id: number; name: string } | null;
       Entries?: Record<string, { id: number; code: string; side?: number; speakerorder?: number; record?: string }>;
-      Judges?: Record<string, { first: string | null; last: string | null; chair?: number }>;
+      /** `paradigm` is the judge's Tabroom person id, set when they have a paradigm on file. */
+      Judges?: Record<string, { id?: number; first: string | null; last: string | null; chair?: number; code?: string; paradigm?: number }>;
     }
   >;
 }
@@ -323,6 +327,8 @@ export function createTournamentsClient(
   /** Each known tournament's year and name slug, and the reverse, for `/<year>/<slug>` URLs. */
   const slugs = new Map<number, TournamentSlug>();
   const ids = new Map<string, number>();
+  /** Each live tournament's scraped sidebar, fetched once per client. */
+  const sidebars = new Map<number, Promise<TournamentSidebar | null>>();
   const slugKey = (year: number, slug: string) => `${year}/${slug.toLowerCase()}`;
   /** Records a tournament's name and start, so links to it use its year and slug. */
   function remember(tournId: number, tourn: { name?: string | null; start?: string | null }) {
@@ -472,6 +478,33 @@ export function createTournamentsClient(
     remember,
     /** Which source a tournament was read from, once its invite or the upcoming list has loaded. */
     sourceOf: (tournId: number): TournamentSource | undefined => (live ? sources.get(tournId) : "hosted"),
+    /**
+     * A judge of a tournament hosted here: their paradigm and judging record
+     * from this site's own Tabroom API (`/rest/paradigms/:id` and `/record`,
+     * which need the viewer signed in). The paradigm comes back as plain
+     * text, since the browser has no sanitizer for Tabroom's HTML. `null`
+     * when neither answers.
+     */
+    hostedJudgeProfile: async (personId: number, signal?: AbortSignal): Promise<JudgeProfile | null> => {
+      const [details, record] = await Promise.all([
+        get<unknown>(base, `/rest/paradigms/${personId}`, signal).catch(() => null),
+        get<unknown>(base, `/rest/paradigms/${personId}/record`, signal).catch(() => null),
+      ]);
+      const paradigm = readParadigmDetails(details);
+      const rows = readJudgeRecord(record);
+      if (!paradigm && !Array.isArray(record)) return null;
+      return {
+        personId,
+        name: paradigm?.name ?? "",
+        paradigmHtml: null,
+        paradigmText: paradigm?.paradigm ? htmlParagraphs(paradigm.paradigm) : null,
+        lastReviewed: paradigm?.lastReviewed ?? null,
+        record: rows,
+        certifications: paradigm?.certifications ?? [],
+        source: "hosted",
+        syncedAt: null,
+      };
+    },
     /** The entries registered in one event, when the tournament publishes its field. */
     field: async (tournId: number, eventAbbr: string, signal?: AbortSignal) =>
       get<EventField>(await rootFor(tournId, signal), `/rest/tourns/${tournId}/events/${encodeURIComponent(eventAbbr)}/field`, signal),
@@ -498,6 +531,23 @@ export function createTournamentsClient(
       get<Record<string, ResultsIndexEvent>>(await rootFor(tournId, signal), `/rest/tourns/${tournId}/results`, signal),
     resultSet: async (tournId: number, resultSetId: number, signal?: AbortSignal) =>
       get<ResultSet[]>(await rootFor(tournId, signal), `/rest/tourns/${tournId}/results/${resultSetId}`, signal),
+    /**
+     * A live Tabroom tournament's sidebar (pages, circuits, past editions,
+     * deadlines), scraped by the host's proxy at `{liveApiBase}/sidebar/:id`.
+     * Null for a hosted tournament, without a live proxy, or when the proxy
+     * cannot read it — callers fall back to the invite. Fetched once per tournament.
+     */
+    sidebar: async (tournId: number, signal?: AbortSignal): Promise<TournamentSidebar | null> => {
+      if (!live || (await rootFor(tournId, signal)) !== live) return null;
+      let pending = sidebars.get(tournId);
+      if (!pending) {
+        pending = get<TournamentSidebar>(live, `/sidebar/${tournId}`).catch(() => null);
+        sidebars.set(tournId, pending);
+        // A failed read is retried on the next visit rather than remembered.
+        void pending.then((found) => found || sidebars.delete(tournId));
+      }
+      return pending;
+    },
     /** Where a posted document can be downloaded; Tabroom keeps them on S3. */
     fileUrl: (tournId: number, file: { id: number; filename: string | null }): string | null =>
       file.filename ? `https://s3.amazonaws.com/tabroom-files/tourns/${tournId}/postings/${file.id}/${encodeURIComponent(file.filename)}` : null,

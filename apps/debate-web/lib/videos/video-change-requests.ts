@@ -44,7 +44,7 @@ export const MAX_CHANGE_REQUEST_LENGTH = 12000;
 const MAX_FIELD_LENGTH = 5000;
 
 /** Numeric debate styles, matching `videos.style`. */
-const STYLES = [1, 2, 3, 4];
+const STYLES = [1, 2, 3, 4, 5, 6, 7];
 
 /**
  * Keeps only the fields a viewer may change, coerced to the shapes the

@@ -57,7 +57,7 @@ three are just as strong.
 In every division table and on the Schools tab, a small group at the top is
 **Legendary**: a thicker gold border, a soft glow and a small crowned
 label naming the format, such as "PF Legend", "LD Legend" or "NDT Legend"
-(after the team's name in division tables, beside the rank on the Schools
+(after the team's label in division tables, beside the rank on the Schools
 tab, where it reads just "Legend" with all events shown). Each list sets its own cutoff: it counts the
 rows rated 90 or more and the rows rated 80 or more, and uses whichever count
 is closer to five (on a list with no 80s it keeps going down by tens). So LD,
@@ -68,8 +68,28 @@ legendary. Any other row whose rating reads 80 or more (a bold leading **8**
 or **9**) gets a thin gold border. The division tables use the adjusted
 rating; the Schools tab uses the Balanced score.
 
-In the division tables, the School column also shows each school's rank on the
-Schools tab for that division as a small **#N** after the school's name.
+### Team labels
+
+Everywhere the site names a team (the rankings, the Schools tab's Top Entry,
+the College NDT history tables, team and school pages, the matchup simulator, video cards and rows, the watch page and tournament
+pairings and results), it draws the same **team label**: a small bordered
+box holding the school, then the debaters. The school shows as its logo when
+the site has one and by name otherwise. The debaters show as their last names
+("Le & Luo", or just "Daswani" in LD) when the rankings or the tournament
+know them, and otherwise as the initials from the team's code ("LL"). When
+the school has a logo, the debaters sit on a second row under it; a school
+shown by name keeps the names beside it on one line. The
+border is blue for the affirmative and red for the negative, around a mostly
+white background with just a faint blue or red tint so logos stay readable; where no side
+applies, as in the rankings, it is blue. Last names always show in full,
+wrapping onto another line when space is tight. In the video library and on
+the watch page a ranked team also carries its rank as a **#N** badge inside
+the box; hovering it shows the team's rating, rounds and aff/neg win rates.
+
+In the division tables the **Team** column holds that label (the logo links
+to the school's page, the names to the team's page) and sorts by school. It
+also shows each school's rank on the Schools tab for that division as a
+small **#N** after the label.
 
 LD has a second tab, **Sep–Oct topic**, rated only from the tournaments on
 the September–October resolution.
@@ -89,9 +109,9 @@ Each of those seasons has a **Win probability** calculator above the table.
 Pick an aff and a neg team, or type any Mu and Sigma, and it shows the aff's
 chance of winning one round: each side's performance is drawn around its Mu,
 spread by its Sigma plus a fixed 4.17 points of round-to-round noise, and the
-higher draw wins. 2025-26 also shows debatedata's season stats for all
-divisions, Open, Junior Varsity and Novice (schools, teams, debaters, rounds,
-aff win rate overall and in elims, and speaker points), and lists the 27
+higher draw wins. 2025-26 also shows debatedata's season totals across all
+divisions (schools, teams, debaters, rounds, and aff win rate overall and in
+elims), and lists the 27
 tournaments its ratings come from under the table.
 
 ## Team and school pages
@@ -213,7 +233,7 @@ log-odds. Panel odds assume each ballot is independent at that probability.
 
 ### Your team, pre-filled
 
-**Settings → My team** sets your role (debater, coach, or assistant/judge),
+**Settings → General → My team** sets your role (debater, coach, or assistant/judge),
 your partner, and the ranked team you represent in each division. It's saved
 in this browser and, when you're signed in, to your account
 (`/api/settings`' `myRankedTeams`). The simulator starts from it.

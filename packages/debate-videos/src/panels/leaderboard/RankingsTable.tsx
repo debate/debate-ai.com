@@ -6,7 +6,7 @@
 
 "use client"
 
-import type { RankingEntry } from "@debate/rankings-adapter"
+import { teamDisplayParts, type RankingEntry } from "@debate/rankings-adapter"
 import { RatingDigits } from "./RatingDigits"
 import Link from "next/link"
 import { ChevronDown, ChevronUp, Info } from "lucide-react"
@@ -22,11 +22,10 @@ import {
 import { cn } from "../../ui/lib/utils"
 import { ColumnResizeHandle } from "../../components/video-grid/ColumnResizeHandle"
 import { useResizableColumns } from "../../components/video-grid/useResizableColumns"
-import { COLUMN_TOOLTIPS, DIVISION_SHORT_LABELS, displayEntryName, schoolRankOf } from "./leaderboardUtils"
+import { COLUMN_TOOLTIPS, DIVISION_SHORT_LABELS, schoolRankOf } from "./leaderboardUtils"
 import type { Division, SortKey, SortState } from "./leaderboardTypes"
 import { schoolHref, teamHref } from "./profile/rankingProfileHelpers"
-import { SchoolLogo } from "./SchoolLogo"
-import { getSchoolLogo } from "../../lib/schoolLogos"
+import { TeamLabel } from "../../components/team-label/TeamLabel"
 import { LegendaryBadge, ROW_TIER_CLASS, rowTier, type RowTier } from "./rowTier"
 
 /** The fields shown as columns. */
@@ -34,7 +33,6 @@ type ColumnKey = Extract<
   SortKey,
   | "rank"
   | "school"
-  | "name"
   | "adjustedRating"
   | "matches"
   | "affWinRate"
@@ -93,43 +91,31 @@ const COLUMNS: Column[] = [
   },
   {
     key: "school",
-    label: "School",
-    render: (e, _division, _tier, schoolRanks) => {
+    label: "Team",
+    render: (e, division, tier, schoolRanks) => {
       const schoolRank = schoolRankOf(schoolRanks, e.school)
-      const logo = getSchoolLogo(e.school)
       return (
         <>
-          <Link href={schoolHref(e.school)} className="hover:text-foreground hover:underline underline-offset-4 flex items-center gap-1.5">
-            {logo ? (
-              <SchoolLogo school={e.school} className="h-4 w-auto" />
-            ) : (
-              e.school
-            )}
-          </Link>
+          <TeamLabel
+            {...teamDisplayParts({ school: e.school, name: e.name })}
+            schoolHref={schoolHref(e.school)}
+            href={teamHref(e)}
+            title={`${e.school} · ${e.name}`}
+            className="text-foreground"
+          />
           {schoolRank !== undefined && (
             <span className="ml-1.5 text-xs tabular-nums text-muted-foreground/70" title="School rank in the Schools tab for this format">
               #{schoolRank}
             </span>
           )}
+          {tier === "legendary" && (
+            <span className="ml-1.5">
+              <LegendaryBadge format={DIVISION_SHORT_LABELS[division]} />
+            </span>
+          )}
         </>
       )
     },
-  },
-  {
-    key: "name",
-    label: "Name",
-    render: (e, division, tier) => (
-      <>
-        <Link href={teamHref(e)} className="font-medium text-foreground hover:underline underline-offset-4">
-          {displayEntryName(e.name, division)}
-        </Link>
-        {tier === "legendary" && (
-          <span className="ml-1.5">
-            <LegendaryBadge format={DIVISION_SHORT_LABELS[division]} />
-          </span>
-        )}
-      </>
-    ),
   },
   {
     key: "adjustedRating",
@@ -147,8 +133,7 @@ const COLUMNS: Column[] = [
 /** Starting pixel width of each column; every column can be dragged wider or narrower. */
 const DEFAULT_COLUMN_WIDTHS: Record<ColumnKey, number> = {
   rank: 60,
-  school: 220,
-  name: 260,
+  school: 360,
   adjustedRating: 90,
   matches: 90,
   affWinRate: 100,
@@ -250,7 +235,7 @@ export function RankingsTable({ entries, legendary, schoolRanks, division, sort,
                     "truncate whitespace-nowrap text-muted-foreground px-2 py-1",
                     col.numeric && "text-right tabular-nums",
                   )}
-                  title={col.key === "school" ? entry.school : col.key === "name" ? entry.name : undefined}
+                  title={col.key === "school" ? `${entry.school} · ${entry.name}` : undefined}
                 >
                   {col.render(entry, division, tier, schoolRanks)}
                 </TableCell>

@@ -44,6 +44,8 @@ describe("isDocsPath", () => {
 
   it("does not match a path that only starts with the same letters", () => {
     expect(isDocsPath("/docsearch")).toBe(false)
+    expect(isDocsPath("/docs/vcx27/neg/cp/aca-expansion-cp-cndi-2026")).toBe(false)
+    expect(isDocsPath("/docs/ld27a")).toBe(false)
     expect(isDocsPath("/videos")).toBe(false)
     expect(isDocsPath(null)).toBe(false)
   })

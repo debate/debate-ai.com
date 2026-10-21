@@ -81,6 +81,10 @@ const tauriConf = {
         fullscreen: win.fullscreen,
         maximized: win.maximized,
         center: true,
+        // Created hidden so a launch at login stays in the tray without
+        // flashing on screen; src-tauri/src/background.rs shows it on any
+        // other launch (and on mobile, which has no tray, it is shown at once).
+        visible: false,
       },
     ],
     security: {
@@ -136,6 +140,33 @@ const tauriConf = {
     },
   },
 };
+
+// Desktop auto-update (src-tauri/src/updater.rs). Only a profile with an
+// updater public key gets it: `createUpdaterArtifacts` makes every bundle
+// build demand TAURI_SIGNING_PRIVATE_KEY, and without the key there is
+// nothing an installed app could verify an update against. An empty
+// `pubkey` therefore means "no updater yet", not a misconfiguration.
+const updater = profile.updater;
+if (updater?.pubkey) {
+  if (!Array.isArray(updater.endpoints) || updater.endpoints.length === 0) {
+    throw new Error(`profiles/${profileName}.json: "updater" needs at least one entry in "endpoints"`);
+  }
+  for (const endpoint of updater.endpoints) {
+    if (!endpoint.startsWith("https://")) {
+      throw new Error(`profiles/${profileName}.json: updater endpoint "${endpoint}" must be https://`);
+    }
+  }
+  tauriConf.bundle.createUpdaterArtifacts = true;
+  tauriConf.plugins.updater = {
+    pubkey: updater.pubkey,
+    endpoints: updater.endpoints,
+    // NSIS (the currentUser installer above) runs passively: a progress bar,
+    // no questions, then the app starts again.
+    windows: { installMode: "passive" },
+  };
+} else if (updater) {
+  console.warn(`[native-wrapper] profiles/${profileName}.json has no updater "pubkey" yet; auto-update is off`);
+}
 
 if (profile.android) {
   tauriConf.bundle.android = {

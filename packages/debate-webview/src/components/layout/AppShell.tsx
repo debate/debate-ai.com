@@ -20,18 +20,18 @@ import { CategoryDock } from "./CategoryDock"
 import { AppSidebarShell } from "./AppSidebarShell"
 import { DocsAppChrome } from "./DocsAppChrome"
 import { ReasonDocsProvider } from "../reason-docs/ReasonDocsProvider"
-import { OneTap } from "./OneTap"
-import { ToolRecordSyncProvider } from "./ToolRecordSyncProvider"
-import { DebaterActivityListener } from "./DebaterActivityListener"
-import { SignInPromptProvider } from "./SignInPromptProvider"
-import { GuestVideoLimitGate } from "./GuestVideoLimitGate"
-import { FirstLoginWelcomeProvider } from "./FirstLoginWelcomeProvider"
-import { GlobalCommandPalette } from "./GlobalCommandPalette"
+import { OneTap } from "./auth/OneTap"
+import { ToolRecordSyncProvider } from "./providers/ToolRecordSyncProvider"
+import { DebaterActivityListener } from "./providers/DebaterActivityListener"
+import { SignInPromptProvider } from "./auth/SignInPromptProvider"
+import { GuestVideoLimitGate } from "./auth/GuestVideoLimitGate"
+import { FirstLoginWelcomeProvider } from "./auth/FirstLoginWelcomeProvider"
+import { GlobalCommandPalette } from "./command-palette/GlobalCommandPalette"
 import { PlanLimitDialog } from "../pricing/PlanLimitDialog"
 import { OwnAiKeyDialog } from "../pricing/OwnAiKeyDialog"
-import { ServiceWorkerRegistrar } from "./ServiceWorkerRegistrar"
+import { ServiceWorkerRegistrar } from "./providers/ServiceWorkerRegistrar"
 import { useIsFramedDocument } from "../../lib/layout/use-framed-document"
-import { isDocsPath } from "../../lib/layout/frame-navigation"
+import { isDocsPath, isMiniPlayerPath } from "../../lib/layout/frame-navigation"
 import { MixpanelProvider } from "../analytics/MixpanelProvider"
 import { ChromeErrorBoundary } from "../../lib/ui/layout/chrome-error-boundary"
 import { Toaster } from "sonner"
@@ -55,6 +55,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   // stylesheet. They get the app's sidebar beside that (`DocsAppChrome`), but
   // none of the rest of the shell: no player, no floating dock.
   if (isDocsPath(pathname)) return <DocsAppChrome>{children}</DocsAppChrome>
+
+  // The mini player window (`/videos/mini/<id>`, from the watch page's "Pop
+  // out mini player") is a whole window for one small video: no dock, no
+  // sidebar, and above all no floating player — it would be a second embed.
+  if (isMiniPlayerPath(pathname)) return <>{children}</>
 
   if (embedded) {
     return (

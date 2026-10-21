@@ -48,11 +48,21 @@ The list mixes two sources and each tournament reads from whichever one holds
 it:
 
 - **Live Tabroom**, through `/api/tabroom-beta/*`, a read-only proxy to
-  `https://api.tabroom.com/v1` (`lib/tournaments/tabroom-beta-proxy.ts`).
+  `https://api.tabroom.com/v1` (`packages/debate-webview/src/lib/tournaments/tabroom-beta-proxy.ts`).
 - **Tournaments hosted on this site**, through `/api/tabroom/*`.
 
 For each tournament there are pages for the upcoming list, the invitation,
 pairings, a single round, results and a single result set.
+
+**Info & links.** A dropdown beside each tournament's tabs carries its Tabroom
+sidebar: Pages & Uploads, Circuits, Past Years' Editions, Dates & Deadlines,
+Locations and Contacts, plus the pages every Tabroom tournament has (entries,
+judges, pairings, live updates, results, events, schools, email archive).
+Tabroom's API has no circuits, deadlines or past editions, so the proxy's
+`/api/tabroom-beta/sidebar/:id` scrapes them from the classic invitation page
+(`parseTabroomSidebar` in `src/sidebar.ts`, cached 10 minutes). Hosted
+tournaments, and live ones whose page can't be read, build the menu from their
+invite instead; empty groups are hidden.
 
 **How addresses work.** A tournament's pages live at
 `/tournaments/<year it starts>/<slug of its name>/…`. `client.resolve` turns
@@ -64,6 +74,29 @@ redirect (308) to the new ones (`debate-data-sync`'s
 `routes/category-paths.ts`). If two tournaments in the same year have the same
 name they share a slug, so only the first one seen gets the named URL; the
 other keeps its id.
+
+### Judge paradigms and voting records
+
+Every judge in a round's pairings opens a dialog (`src/ui/JudgeProfileView.tsx`)
+with their paradigm and voting record: rounds judged, Aff/Neg split, squirrels
+(lone dissents on a panel) and each round's vote against the panel's.
+
+- A **hosted** tournament's judges come from this package's own
+  `/rest/paradigms/:personId` and `/rest/paradigms/:personId/record`
+  (`client.hostedJudgeProfile`), as the signed-in viewer.
+- A **live Tabroom** judge comes through the host's `lookupJudgeProfile`. On
+  debate-ai.com that is `/api/judge-paradigms`, which caches each judge in D1
+  and reads Tabroom with `fetchTabroomJudge` (`src/paradigms-server.ts`).
+
+Tabroom serves paradigms only to signed-in users: the API's `paradigmsRouter`
+answers 401, and the classic `index/paradigm.mhtml` redirects to its login.
+`fetchTabroomJudge` therefore takes a session token (sent as the `TabroomToken`
+cookie), tries `GET /v1/rest/paradigms/:id` and `/record` first, and falls back
+to parsing the classic page (`parseClassicParadigmPage` in `src/paradigms.ts`,
+written against `paradigm.mas` in speechanddebate/tabroom). Paradigm HTML is
+run through `sanitizeParadigmHtml` before it is stored or shown.
+`searchTabroomParadigms` pages through `GET /v1/rest/paradigms?search=`, which
+the host's admin sync walks to cache every judge.
 
 ### Host your own tournament
 

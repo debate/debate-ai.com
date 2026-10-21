@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FileText, Pencil } from "lucide-react";
 import { Button } from "../../lib/ui/primitives/button";
-import { VideoContentDialog, type ContentDialogVideo } from "../admin/VideoContentDialog";
-import { VideoEditDialog, type LibraryVideo } from "../admin/VideoEditDialog";
+import { VideoContentDialog, type ContentDialogVideo } from "../admin/videos/VideoContentDialog";
+import { VideoEditDialog, type LibraryVideo } from "../admin/videos/VideoEditDialog";
 
 interface StaffRoleResponse {
   canEditContent?: boolean;
@@ -74,6 +74,7 @@ export function VideoStaffControls({ videoId }: { videoId: string }) {
         title: video.title,
         channel: video.channel,
         tournament: video.tournament,
+        style: video.style,
       });
     }
   };

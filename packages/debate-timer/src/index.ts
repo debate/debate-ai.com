@@ -1,6 +1,8 @@
 export { SpeechTimer } from "./timers/SpeechTimer";
 export { PrepTimer } from "./timers/PrepTimer";
 export { TimerProgressRing } from "./timers/TimerProgressRing";
+export { CircularTimerFace, formatCircularTimerCount } from "./timers/circular/CircularTimerFace";
+export type { CircularTimerFaceProps, CircularTimerButton, CircularTimerAccent } from "./timers/circular/CircularTimerFace";
 export { SpeechWordCounter } from "./timers/SpeechWordCounter";
 export { SpeechWordStats } from "./timers/SpeechWordStats";
 export { SpeechRecordingPlayer } from "./recorder/SpeechRecordingPlayer";
@@ -19,6 +21,7 @@ export { SpeechStartsEditor } from "./recorder/SpeechStartsEditor";
 export type { SpeechStartsEditorProps } from "./recorder/SpeechStartsEditor";
 export { RoundRecordingDialog } from "./recorder/RoundRecordingDialog";
 export * from "./recorder/round-recording";
+export * from "./recorder/moonshine-model-cache";
 export { RECORDING_STOPPED_EVENT } from "./hooks/useSpeechRecorder";
 export { saveClip, listClips, readRecordVideo, writeRecordVideo, RECORD_VIDEO_EVENT, VIDEO_CLIP_SAVED_EVENT } from "./recorder/media-store";
 export type { StoredClip } from "./recorder/media-store";

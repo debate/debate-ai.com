@@ -15,7 +15,11 @@ import { TOOL_RECORD_COLLECTIONS } from "@debate/data-sync/src/state/toolRecordC
 import {
   APP_DOCK_LINKS,
   SIDEBAR_TOOL_SECTIONS,
-} from "../src/components/category-gallery/sidebar-tool-sections";
+<<<<<<< HEAD
+} from "../src/components/sidebar/sidebar-tool-sections";
+=======
+} from "../src/components/sidebar-nav/sidebar-tool-sections";
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 
 /**
  * Every destination this sidebar links to: the Tools tree's sections, plus the
@@ -44,6 +48,11 @@ const SIDEBAR_HREFS = new Set([
   // AI Judge Decision, likewise: out of the Practice tree but still routed,
   // and its saved decisions open there.
   "/practice/judge-decision",
+  // Research Progress and the Leaderboard, likewise: out of the sidebar trees
+  // and now tabs of the Research hub, but their own pages are still routed and
+  // open their saved records.
+  "/coaching/progress",
+  "/coaching/leaderboard",
 ]);
 
 describe("synced tool collections", () => {

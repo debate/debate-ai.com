@@ -335,27 +335,40 @@ export function standardizeRoundLevel(
   return parseRoundLevel(value).level;
 }
 
+/**
+ * The one label a round level is shown with across the site: `R1`–`R8` for
+ * prelims, then `Triples`, `Doubles`, `Octas`, `Quarters`, `Semis`, `Final`.
+ * Runoffs and unrecognized levels have no label and format as `""`.
+ */
 export function formatRoundLevel(level: StandardRoundLevel): string {
-  if (level.startsWith("R")) {
-    return `Round ${level.slice(1)}`;
+  if (level.startsWith("R") && level !== "RUNOFFS") {
+    return level;
   }
 
   const labels: Record<Exclude<StandardRoundLevel, `R${number}`>, string> = {
-    TRIPLES: "triples",
-    DOUBLES: "doubles",
-    OCTOS: "octas",
-    QUARTERS: "quarters",
-    SEMIS: "semis",
-    FINALS: "final",
-    RUNOFFS: "runoffs",
-    UNKNOWN: "unknown round",
+    TRIPLES: "Triples",
+    DOUBLES: "Doubles",
+    OCTOS: "Octas",
+    QUARTERS: "Quarters",
+    SEMIS: "Semis",
+    FINALS: "Final",
+    RUNOFFS: "",
+    UNKNOWN: "",
   };
 
   return labels[level as Exclude<StandardRoundLevel, `R${number}`>];
 }
 
+/**
+ * A raw round label (`"Double Octafinals"`, `"Round 3"`) in its standard
+ * display form, or `null` when it does not read as one of the standard levels.
+ */
+export function displayRoundLevel(value: string | null | undefined): string | null {
+  return formatRoundLevel(standardizeRoundLevel(value)) || null;
+}
+
 export function getRoundSortKey(level: StandardRoundLevel): number {
-  if (level.startsWith("R")) {
+  if (level.startsWith("R") && level !== "RUNOFFS") {
     return Number(level.slice(1));
   }
 

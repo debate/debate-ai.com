@@ -58,12 +58,9 @@ refunds or credits available for unused rooms.
 [Once an event has been created](/settings/events) an online tab will
 appear.
 
-
 Use the Online Event toggle to set the event to green (online)
 
-
 Select NSDA Campus by clicking on the circle to the right of the text.
-
 
 Make the appropriate selections under Identify Users in Online Rooms.
 This gives you the option to set how each user's name is displayed in
@@ -71,11 +68,9 @@ the video room. For example, Tab - George Brown, Judge - Alana Green, or
 Code - Student Name. Select the option that works best for your
 tournament.
 
-
 The section titled Online Support Options gives tabulation staff the
 ability to list email(s) and instructions that will appear on online
 room landing pages.
-
 
 ## Setting up Competition Rooms
 
@@ -84,19 +79,15 @@ each day of the tournament. All settings are accessed by hovering over
 the Settings tab, clicking on Sites & Rooms, then selecting NSDA Campus
 in the upper right corner.
 
-
 ## Setting up Utility Rooms (e.g., Judge Pooling, Tab Rooms, etc.)
 
 After purchasing NSDA Campus rooms, hover over the Paneling tab and
 click on Rooms.
 
-
 Select Utility and add a room name.
-
 
 Determine if this room is for Entries, Judges, Coaches, or Tab, and
 whether it's for a specific event, and click Save.
-
 
 Remember—we suggest that rooms host no more than 15 people at a time. If
 you need a room that can easily manage more than 15 people, you may want
@@ -138,14 +129,10 @@ event settings. For the best estimate, make sure your entry numbers are
 final and your settings are complete! Make sure you double check the
 estimates with your own calculations.
 
-width="500" />
-
 When you are ready to purchase your NSDA Campus rooms, enter the number
 of rooms you wish to purchase and follow the payment instructions
 described above. Once payment is complete, don't forget to allocate your
 purchased rooms to days at Settings \> Tournament \> Payment.
-
-width="500" />
 
 ### New: NSDA Campus with Observers
 
@@ -172,8 +159,6 @@ Tournament Admin accounts with Coach/Administrator access to your school in
 Tournament Admin (which can be designated on the Access tab) may be
 designated as observers.
 
-width="500" />
-
 Coaches may designate observers on their school tournament dashboard on
 a per-entry basis. Those observers can then enter rooms from the
 tournament dashboard. Coaches can change observers at any time during a
@@ -181,8 +166,6 @@ tournament. However, once one observer in speech or two in debate enters
 a room, no other coaches can enter that room for your entry, even if
 observer permissions are changed on the dashboard or if they leave the
 room.
-
-width="500" />
 
 ## Linking Student Performance Videos
 
@@ -203,8 +186,6 @@ Tournament Admin](https://docs.google.com/document/d/1r3jAI7mXjww2MAMMkdRV7GZsh-
 ## Holding Asynchronous Prelims and Synchronous Elims
 
 For prelims, hover over Settings, then click on Events.
-title="Screen_Shot_2021-07-28_at_12.27.34_PM.png" width="200"
-alt="Screen_Shot_2021-07-28_at_12.27.34_PM.png" />
 
 Select the event you wish to edit.
 
@@ -233,8 +214,6 @@ First access the tournament and click settings. Then events, the
 specific event, and finally the online tab.
 
 You should then see the button for enabling livestreams.
-title="Screen_Shot_2021-07-28_at_1.21.31_PM.png" width="550"
-alt="Screen_Shot_2021-07-28_at_1.21.31_PM.png" />
 
 - You can also livestream by using the free Open Broadcaster Software
   (OBS):
@@ -255,7 +234,6 @@ an NSDA Campus room) directly to YouTube or other streaming services.
   server that has the ability to livestream to YouTube enabled directly
   from NSDA Campus. However, this comes with significant downsides and
   is entirely at your own risk:
-
 
 \* Security – While issues are unlikely, these public rooms are much
 less secure and susceptible to unauthorized access.

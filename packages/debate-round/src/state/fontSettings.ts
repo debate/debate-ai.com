@@ -2,14 +2,16 @@
  * @fileoverview Font-family preference — ported from qwksearch-research-agent's
  * `apps/qwksearch-web` (`components/Settings/Sections/Account.tsx`'s
  * `fontOptions` list plus `app/layout.tsx`'s bootstrap script), which applies a
- * chosen font family app-wide the same way `theme-dropdown.tsx`/`themeSettings.ts`
+ * chosen font family app-wide the same way `ThemeDropdown.tsx`/`themeSettings.ts`
  * apply a colour theme: persisted to `localStorage` and applied directly as an
  * inline style on `<html>`/`<body>`, picked up immediately by any open tab via a
  * `client-config-changed` custom event (and the cross-tab `storage` event).
  *
- * Unlike colour theme, this preference is local-only (no `/api/settings` sync) —
- * matching the source implementation, which never persists `fontFamily` to an
- * account either.
+ * The choice is local-first (applied at once, no Save button) and, for a
+ * signed-in user, mirrored to the `user_settings.font_family` column through
+ * `/api/settings` so it follows the account to another device —
+ * `normalizeFontFamilyPatch` is the validator both the route and the tests use.
+ * The source implementation never persisted `fontFamily` to an account.
  *
  * @module state/fontSettings
  */
@@ -81,4 +83,26 @@ export function setLocalFontFamily(value: string): void {
   localStorage.setItem(STORAGE_KEY, value);
   applyFontFamily(value);
   window.dispatchEvent(new Event(CHANGE_EVENT));
+}
+
+export type FontFamilyPatchResult = {
+  /** Present only when `input.fontFamily` was a known option. */
+  valid: { fontFamily?: string };
+  /** One message when `fontFamily` was present but not a known option. */
+  errors: string[];
+};
+
+/**
+ * Validates the `fontFamily` field of an untrusted (e.g. parsed request-body
+ * JSON) `/api/settings` patch against `FONT_OPTIONS`. A field that is absent is
+ * simply not part of the patch; one that is present but unknown lands in
+ * `errors` rather than being clamped, matching `normalizeThemeSettingsPatch`.
+ */
+export function normalizeFontFamilyPatch(input: unknown): FontFamilyPatchResult {
+  if (typeof input !== "object" || input === null || Array.isArray(input) || !("fontFamily" in input)) {
+    return { valid: {}, errors: [] };
+  }
+  const { fontFamily } = input as { fontFamily: unknown };
+  if (isValidFontFamily(fontFamily)) return { valid: { fontFamily }, errors: [] };
+  return { valid: {}, errors: ['"fontFamily" must be one of the font options offered in User Settings.'] };
 }

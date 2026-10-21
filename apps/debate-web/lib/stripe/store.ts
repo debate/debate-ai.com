@@ -1,7 +1,7 @@
 import { and, desc, eq, inArray } from "drizzle-orm";
 import { stripeSubscriptions, user } from "@/lib/database/schema";
 import { ACTIVE_STATUSES } from "@debate/webview/lib/stripe/plans";
-import { updateFromSubscription, type SubscriptionUpdate } from "./webhook";
+import { updateFromSubscription, type SubscriptionUpdate } from "@debate/webview/lib/stripe/webhook";
 
 const STRIPE_API = "https://api.stripe.com/v1";
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, type ComponentType } from "react";
-import { DatabaseBackup, FileSearch, Film, Globe, ListVideo, RefreshCw, School, Sparkles, Upload, Users } from "lucide-react";
+import { BookOpen, DatabaseBackup, Mail, FileSearch, Film, FolderTree, Globe, ListVideo, RefreshCw, School, Sparkles, Upload, Users } from "lucide-react";
 import { cn } from "../../lib/ui/lib/utils";
 import { Button } from "../../lib/ui/primitives/button";
 import { Badge } from "../../lib/ui/primitives/badge";
@@ -21,26 +21,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../lib/ui/primitives/select";
-import { REUSE_CHECK_LOG_RETENTION_DAYS } from "@debate/research-evidence";
+import { REUSE_CHECK_LOG_RETENTION_DAYS, SourceArticlePanel } from "@debate/research-evidence";
+import { isLikelyArticleUrl } from "../../lib/url-detection/article-url";
 import { formatRecomputeStacksResult } from "../../lib/videos/format-recompute-stacks-result";
 import {
   formatSeedVideosResult,
   formatSeedVideosStatus,
   type SeedVideosStatus,
 } from "../../lib/videos/format-seed-videos-result";
-import { CaselistSyncPanel } from "./CaselistSyncPanel";
-import { DbBackupPanel } from "./DbBackupPanel";
-import { DebateCardParquetUpload } from "./DebateCardParquetUpload";
-import { ModeratorsPanel } from "./ModeratorsPanel";
-import { ReclassifyVideosPanel } from "./ReclassifyVideosPanel";
-import { SchoolClaimsPanel } from "./SchoolClaimsPanel";
-import { TopicStarterUpload } from "./TopicStarterUpload";
-import { UsersTable } from "./UsersTable";
-import { VideoLibraryTable } from "./VideoLibraryTable";
-import { VideoReportsPanel } from "./VideoReportsPanel";
-import { YoutubeChannelsPanel } from "./YoutubeChannelsPanel";
-import { TranscriptScraperPanel } from "./TranscriptScraperPanel";
-import { SpeechAnalysisPanel } from "./SpeechAnalysisPanel";
+import { CaselistSyncPanel } from "./data/CaselistSyncPanel";
+import { DbBackupPanel } from "./data/DbBackupPanel";
+import { EmailsPanel } from "./users/EmailsPanel";
+import { DebateCardParquetUpload } from "./data/DebateCardParquetUpload";
+import { ModeratorsPanel } from "./users/ModeratorsPanel";
+import { ReclassifyVideosPanel } from "./videos/ReclassifyVideosPanel";
+import { SchoolClaimsPanel } from "./users/SchoolClaimsPanel";
+import { TopicStarterUpload } from "./topic-starters/TopicStarterUpload";
+import { TopicStartersAdminPanel } from "./topic-starters/TopicStartersAdminPanel";
+import { UsersTable } from "./users/UsersTable";
+import { VideoLibraryTable } from "./videos/VideoLibraryTable";
+import { VideoReportsPanel } from "./videos/VideoReportsPanel";
+import { YoutubeChannelsPanel } from "./videos/YoutubeChannelsPanel";
+import { TranscriptScraperPanel } from "./videos/TranscriptScraperPanel";
+import { SpeechAnalysisPanel } from "./videos/SpeechAnalysisPanel";
 
 interface YoutubeRoundVideo { id: string; title: string; publishedAt: string; channel: string; views: number; style: number; tournament: string | null; }
 interface SyncRun { id: number; status: "running" | "success" | "error"; triggeredBy?: string | null; channelsSynced: number; videosUpserted: number; error: string | null; }
@@ -70,15 +73,15 @@ function formatDurationStatus(status: DurationStatus): string {
   return `${coverage} · ${formatHours(status.totalSeconds)} total (${formatHours(status.publishedSeconds)} published, ${formatHours(status.queuedSeconds)} queued)`;
 }
 interface Overview { stats: { users: number; sessions: number; files: number; publishedVideos: number; stagedVideos: number }; recentUsers: Array<{ id: string; name: string; email: string; image: string | null; createdAt: string; isAnonymous: boolean }>; }
-const STYLE_NAMES: Record<number, string> = { 1: "Policy", 2: "PF", 3: "LD", 4: "College" };
-const STYLE_OPTIONS = [{ value: "all", label: "All styles" }, { value: "1", label: "Policy" }, { value: "2", label: "PF" }, { value: "3", label: "LD" }, { value: "4", label: "College" }];
+const STYLE_NAMES: Record<number, string> = { 1: "Policy", 2: "PF", 3: "LD", 4: "College", 5: "WSD", 6: "ACC", 7: "Misc" };
+const STYLE_OPTIONS = [{ value: "all", label: "All styles" }, { value: "1", label: "Policy" }, { value: "2", label: "PF" }, { value: "3", label: "LD" }, { value: "4", label: "College" }, { value: "5", label: "WSD" }, { value: "6", label: "ACC" }, { value: "7", label: "Misc" }];
 
 /**
  * The admin page. Admins (ADMIN_EMAIL / ADMIN_EMAILS) see everything;
  * moderators see only the content sections — the video library, video
- * reports and the round-video queue.
+ * reports, the round-video queue, school claims and Topic starters.
  */
-type AdminTabKey = "users" | "library" | "queue" | "schools" | "speech-ai" | "youtube" | "cards" | "imports" | "url-detection" | "backups";
+type AdminTabKey = "users" | "library" | "queue" | "schools" | "topic-starters" | "speech-ai" | "youtube" | "cards" | "imports" | "url-detection" | "backups" | "emails";
 
 interface AdminTab {
   key: AdminTabKey;
@@ -96,11 +99,13 @@ const ADMIN_TABS: AdminTab[] = [
   { key: "queue", name: "Round queue", description: "Queued debate rounds waiting to be published", icon: ListVideo, adminOnly: false },
   { key: "library", name: "Video library", description: "Edit the published video library and review video reports", icon: Film, adminOnly: false },
   { key: "schools", name: "School claims", description: "Coaches and administrators claiming a school's page, waiting on review", icon: School, adminOnly: false },
+  { key: "topic-starters", name: "Topic starters", description: "The public topic starter files, and readers' edits and submissions waiting on approval", icon: FolderTree, adminOnly: false },
   { key: "speech-ai", name: "Speech AI", description: "Split round transcripts into speeches and write a summary and an alternative for each", icon: Sparkles, adminOnly: true },
   { key: "youtube", name: "YouTube sync", description: "Channel scans, view counts, video seeding and stacked playlists", icon: RefreshCw, adminOnly: true },
   { key: "cards", name: "Debate cards", description: "Extract source URLs from card citations, recheck them and the reuse-check log", icon: FileSearch, adminOnly: true },
   { key: "url-detection", name: "URL Detection", description: "View URLs detected by the browser extension from pages users visit", icon: Globe, adminOnly: true },
   { key: "imports", name: "Imports", description: "Topic starters, debate card Parquet shards and the caselist sync", icon: Upload, adminOnly: true },
+  { key: "emails", name: "Emails", description: "Previews of the welcome, invite and coach emails, rendered with sample data", icon: Mail, adminOnly: true },
   { key: "backups", name: "Backups", description: "SQL dumps of videos, debate cards and history — download or store in R2", icon: DatabaseBackup, adminOnly: true },
   { key: "users", name: "Users", description: "Accounts, usage and the moderators who can edit content", icon: Users, adminOnly: true },
 ];
@@ -156,7 +161,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
     totalUrls: number;
     uniqueUsers: number;
     totalVisits: number;
-    topUrls: Array<{ url: string; title: string | null; visitCount: number; lastVisitedAt: number }>;
+    topUrls: Array<{ url: string; title: string | null; visitCount: number; lastVisitedAt: number; userEmail?: string | null }>;
     periodDays: number;
   } | null>(null);
   const [urlDetectionUrls, setUrlDetectionUrls] = useState<Array<{
@@ -178,6 +183,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
   const [urlDetectionUserFilter, setUrlDetectionUserFilter] = useState("");
   const [urlDetectionError, setUrlDetectionError] = useState<string | null>(null);
   const [urlDetectionPeriodDays, setUrlDetectionPeriodDays] = useState(30);
+  const [readerUrl, setReaderUrl] = useState<string | null>(null);
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
@@ -754,6 +760,8 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
 
         {currentTab.key === "speech-ai" && <SpeechAnalysisPanel />}
 
+        {currentTab.key === "emails" && <EmailsPanel />}
+
         {currentTab.key === "schools" && <SchoolClaimsPanel />}
 
         {currentTab.key === "library" && (
@@ -1212,13 +1220,21 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
                     <h4 className="font-medium mb-3">Most Visited URLs</h4>
                     <ul className="space-y-2">
                       {urlDetectionStats.topUrls.map((item, index) => (
-                        <li key={index} className="flex flex-col gap-1 text-sm">
-                          <a href={item.url} target="_blank" rel="noopener noreferrer" className="truncate hover:underline">
-                            {item.title || item.url}
-                          </a>
-                          <span className="text-muted-foreground">
-                            {item.visitCount.toLocaleString()} visits • Last: {new Date(item.lastVisitedAt).toLocaleDateString()}
-                          </span>
+                        <li key={index} className="flex items-start gap-2 text-sm">
+                          <div className="flex min-w-0 flex-1 flex-col gap-1">
+                            <a href={item.url} target="_blank" rel="noopener noreferrer" className="truncate hover:underline">
+                              {item.title || item.url}
+                            </a>
+                            <span className="text-muted-foreground">
+                              {item.visitCount.toLocaleString()} visits • Last: {new Date(item.lastVisitedAt).toLocaleDateString()}
+                              {item.userEmail && <> • Checked by {item.userEmail}</>}
+                            </span>
+                          </div>
+                          {isLikelyArticleUrl(item.url) && (
+                            <Button variant="outline" size="sm" onClick={() => setReaderUrl(item.url)} title="Open in reader mode">
+                              <BookOpen /> Reader
+                            </Button>
+                          )}
                         </li>
                       ))}
                     </ul>
@@ -1243,7 +1259,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
                     className="w-[300px]"
                   />
                   <Input
-                    placeholder="Filter by user ID…"
+                    placeholder="Filter by user ID or email…"
                     value={urlDetectionUserFilter}
                     onChange={(e) => setUrlDetectionUserFilter(e.target.value)}
                     className="w-[200px]"
@@ -1265,7 +1281,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
                       <thead className="bg-muted">
                         <tr>
                           <th className="px-3 py-2 text-left">URL</th>
-                          <th className="px-3 py-2 text-left">User</th>
+                          <th className="px-3 py-2 text-left">Checked by</th>
                           <th className="px-3 py-2 text-right">Visits</th>
                           <th className="px-3 py-2 text-left">Last Visited</th>
                           <th className="px-3 py-2 text-left">First Seen</th>
@@ -1275,12 +1291,24 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
                         {urlDetectionUrls.map((item) => (
                           <tr key={item.id} className="border-t hover:bg-accent">
                             <td className="px-3 py-2">
-                              <a href={item.url} target="_blank" rel="noopener noreferrer" className="truncate block max-w-xs hover:underline">
-                                {item.title || item.url}
-                              </a>
+                              <div className="flex items-center gap-2">
+                                <a href={item.url} target="_blank" rel="noopener noreferrer" className="truncate block max-w-xs hover:underline">
+                                  {item.title || item.url}
+                                </a>
+                                {isLikelyArticleUrl(item.url) && (
+                                  <Button variant="ghost" size="icon-sm" onClick={() => setReaderUrl(item.url)} title="Open in reader mode" aria-label="Open in reader mode">
+                                    <BookOpen />
+                                  </Button>
+                                )}
+                              </div>
                             </td>
                             <td className="px-3 py-2">
-                              {item.userName || item.userEmail || item.userId}
+                              <div className="flex flex-col">
+                                <span>{item.userEmail || item.userName || item.userId}</span>
+                                {item.userEmail && item.userName && (
+                                  <span className="text-muted-foreground text-xs">{item.userName}</span>
+                                )}
+                              </div>
                             </td>
                             <td className="px-3 py-2 text-right">{item.visitCount.toLocaleString()}</td>
                             <td className="px-3 py-2">{new Date(item.lastVisitedAt).toLocaleString()}</td>
@@ -1300,8 +1328,16 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
                 )}
               </CardContent>
             </Card>
+
+            {readerUrl && (
+              <aside className="fixed inset-y-0 right-0 z-50 w-full border-l shadow-xl sm:w-[min(42rem,100vw)]">
+                <SourceArticlePanel key={readerUrl} url={readerUrl} onClose={() => setReaderUrl(null)} />
+              </aside>
+            )}
           </>
         )}
+
+        {currentTab.key === "topic-starters" && <TopicStartersAdminPanel />}
 
         {currentTab.key === "imports" && (
           <>

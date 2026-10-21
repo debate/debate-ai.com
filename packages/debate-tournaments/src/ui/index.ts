@@ -11,6 +11,35 @@ export { RoundPage } from "./pages/RoundPage";
 export { ResultsPage } from "./pages/ResultsPage";
 export { ResultSetPage } from "./pages/ResultSetPage";
 export { TournamentsContext, useTournaments, formatDate, type LinkLike } from "./shared";
+export {
+  EntryLabel,
+  EntryRating,
+  JudgeName,
+  entrySide,
+  tabroomParadigmUrl,
+  TournamentSeasonContext,
+  tournamentSeasonYear,
+  useJudgeParadigm,
+  useTeamRating,
+  type EntrySide,
+  type EventFormatHint,
+  type JudgeParadigmLookup,
+  type JudgeProfileLookup,
+  type JudgeProfileQuery,
+  type PairingJudge,
+  type TeamRating,
+  type TeamRatingLookup,
+  type TeamRatingQuery,
+} from "./enrichment";
+export { JudgeProfileView, type JudgeProfileViewProps } from "./JudgeProfileView";
+export {
+  summarizeJudgeRecord,
+  type JudgeCertification,
+  type JudgeProfile,
+  type JudgeProfileSource,
+  type JudgeRecordRow,
+  type JudgeRecordSummary,
+} from "../paradigms";
 export { FramedOverlay, TABROOM_BETA_URL, type FramedOverlayProps } from "./FramedOverlay";
 export {
   TOURNAMENT_FORMATS,

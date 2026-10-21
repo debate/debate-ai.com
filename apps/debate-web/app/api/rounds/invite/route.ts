@@ -6,6 +6,7 @@ import { notifications, user } from "@/lib/database/schema"
 import { getSession } from "@/lib/auth/session"
 import { getEnv } from "@/lib/env"
 import { APP_EMAIL, APP_NAME } from "@debate/webview/lib/config/site"
+import { renderEmail } from "@/lib/emails/render"
 
 /**
  * Dispatches Create New Round invites — a user request: "this should be
@@ -119,14 +120,28 @@ export async function POST(req: NextRequest) {
       skipped.push(...emailRecipients)
     } else {
       const resend = new Resend(resendKey)
-      const url = link ? new URL(link, req.nextUrl.origin).toString() : req.nextUrl.origin
-      const results = await Promise.allSettled(
+      // The `round-invite` template in @debate/emails (previewed at /admin#emails).
+      // A render failure skips the emails rather than failing the invites.
+      const invite = await renderEmail("round-invite", {
+        inviterName: session.user.name,
+        tournamentName,
+        roundLevel: typeof roundLevel === "string" ? roundLevel : null,
+        link,
+        baseUrl: req.nextUrl.origin,
+      }).catch((error) => {
+        console.error("Failed to render the round invite email", error)
+        return null
+      })
+      const results = !invite ? emailRecipients.map(() => ({ status: "rejected" as const })) : await Promise.allSettled(
         emailRecipients.map((email) =>
           resend.emails.send({
             from: `${APP_NAME} <${APP_EMAIL}>`,
             to: email,
-            subject: `${session.user.name} invited you to a debate round`,
-            html: `<p>${session.user.name} invited you to a debate round on ${APP_NAME}:</p><p><strong>${roundLabel}</strong></p><p><a href="${url}">Open the round</a></p>`,
+            subject: invite.subject,
+            html: invite.html,
+            text: invite.text,
+          }).then(({ error }) => {
+            if (error) throw error
           }),
         ),
       )

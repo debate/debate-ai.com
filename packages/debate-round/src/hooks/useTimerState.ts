@@ -112,13 +112,9 @@ export function useTimerState() {
     return unsubscribe;
   }, [debateStyleIndex]);
 
-  /**
-   * Get timer state for a specific speech by name.
-   * Initializes to the speech's default time if not yet set.
-   */
-  const getSpeechTimerState = useCallback(
+  /** A speech's untouched timer: its full time, paused. */
+  const defaultSpeechTimerState = useCallback(
     (speechName: string): SpeechTimerEntry => {
-      if (perSpeechTimerStates[speechName]) return perSpeechTimerStates[speechName];
       const idx = debateStyle.timerSpeeches.findIndex(
         (s) => s.name.toUpperCase() === speechName.toUpperCase()
       );
@@ -126,20 +122,32 @@ export function useTimerState() {
       const defaultTime = (debateStyle.timerSpeeches[safeIdx]?.time ?? 0) * 60 * 1000;
       return { time: defaultTime, resetTime: defaultTime, state: { name: "paused" } };
     },
-    [perSpeechTimerStates, debateStyle]
+    [debateStyle]
   );
 
   /**
-   * Update timer state for a specific speech by name.
+   * Get timer state for a specific speech by name.
+   * Initializes to the speech's default time if not yet set.
+   */
+  const getSpeechTimerState = useCallback(
+    (speechName: string): SpeechTimerEntry =>
+      perSpeechTimerStates[speechName] ?? defaultSpeechTimerState(speechName),
+    [perSpeechTimerStates, defaultSpeechTimerState]
+  );
+
+  /**
+   * Update timer state for a specific speech by name. Merges onto the latest
+   * state, not the one from the last render, so a running timer's tick can't
+   * undo a pause that arrived from another device in between.
    */
   const setSpeechTimerState = useCallback(
     (speechName: string, updates: Partial<SpeechTimerEntry>) => {
       setPerSpeechTimerStates((prev) => ({
         ...prev,
-        [speechName]: { ...getSpeechTimerState(speechName), ...updates },
+        [speechName]: { ...(prev[speechName] ?? defaultSpeechTimerState(speechName)), ...updates },
       }));
     },
-    [getSpeechTimerState]
+    [defaultSpeechTimerState]
   );
 
   // Compute which timer is currently running (for header display)

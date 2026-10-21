@@ -3,7 +3,7 @@
  * publish of their recorded speeches and webcam video, and how they are
  * credited on it.
  *
- * Settings → Privacy (`components/settings/PrivacySettingsSection.tsx`)
+ * Settings → Privacy (`components/settings/sections/PrivacySettingsSection.tsx`)
  * edits it, `/api/settings/privacy` stores it as JSON in
  * `user_settings.recording_privacy`, and anything that publishes a
  * recording reads it back and asks this module what it may do:

@@ -125,6 +125,15 @@ export const CardMirrorEditor = forwardRef<LexicalEditorHandle, ReasonEditorProp
             if (cancelled) return;
             if (hostRef.current) singleton.attachTo(hostRef.current);
             setClaimed(true);
+            // Every newly opened document opens with its outline beside it,
+            // even where the pane was closed for the previous one or by the
+            // narrow-chrome boot default. Hosts with their own sidebar opt
+            // out with `defaultNavPaneHidden`.
+            if (!defaultNavPaneHidden) {
+              void import("../editor/settings.js").then(({ settings }) => {
+                if (!cancelled && !settings.get("navPaneVisible")) settings.set("navPaneVisible", true);
+              });
+            }
           },
           // A failed boot used to leave "Loading editor…" up forever with
           // nothing but an unhandled rejection in the console. Say so instead.

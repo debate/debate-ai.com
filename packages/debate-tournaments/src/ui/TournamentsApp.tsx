@@ -34,6 +34,7 @@ import { RoundPage } from "./pages/RoundPage";
 import { ResultsPage } from "./pages/ResultsPage";
 import { ResultSetPage } from "./pages/ResultSetPage";
 import { BallotPage } from "./pages/BallotPage";
+import { TournamentSeasonContext, tournamentSeasonYear, type JudgeParadigmLookup, type JudgeProfileLookup, type TeamRatingLookup } from "./enrichment";
 
 export interface TournamentsAppProps {
   /** Path segments after `basePath` (a catch-all route's params). */
@@ -59,6 +60,28 @@ export interface TournamentsAppProps {
    * optionally sent on to Tabroom. See `../ballots`.
    */
   ballotApiBase?: string;
+  /**
+   * Looks an entry up in the team rankings for its event's format and the
+   * season the tournament ran in (`query.season`). When set, pairings and
+   * results show a matched entry's school logo, debaters' last names and
+   * rating; an entry with no confident match is shown as before. See
+   * `./enrichment`.
+   */
+  lookupTeamRating?: TeamRatingLookup;
+  /**
+   * Finds a judge's Tabroom paradigm by first and last name, for judges whose
+   * pairing doesn't already carry one. A judge with a paradigm opens it in an
+   * overlay when clicked.
+   */
+  lookupJudgeParadigm?: JudgeParadigmLookup;
+  /**
+   * Loads a live Tabroom judge's paradigm and voting record, by person id or
+   * name. When set, every judge in pairings opens a dialog with both; a
+   * hosted tournament's judges are read from `apiBase` without it.
+   */
+  lookupJudgeProfile?: JudgeProfileLookup;
+  /** Where a judge edits their own paradigm on the host site, linked from the judge dialog. */
+  paradigmEditorHref?: string;
 }
 
 export function TournamentsApp({
@@ -69,11 +92,24 @@ export function TournamentsApp({
   Link = defaultLink,
   replace = defaultReplace,
   ballotApiBase,
+  lookupTeamRating,
+  lookupJudgeParadigm,
+  lookupJudgeProfile,
+  paradigmEditorHref,
 }: TournamentsAppProps) {
   const value = useMemo(() => {
     const client = createTournamentsClient(apiBase, undefined, { liveApiBase });
-    return { client, hrefs: tournamentHrefs(basePath, client.slugOf), Link, ballotApiBase };
-  }, [apiBase, liveApiBase, basePath, Link, ballotApiBase]);
+    return {
+      client,
+      hrefs: tournamentHrefs(basePath, client.slugOf),
+      Link,
+      ballotApiBase,
+      lookupTeamRating,
+      lookupJudgeParadigm,
+      lookupJudgeProfile,
+      paradigmEditorHref,
+    };
+  }, [apiBase, liveApiBase, basePath, Link, ballotApiBase, lookupTeamRating, lookupJudgeParadigm, lookupJudgeProfile, paradigmEditorHref]);
   const route = matchTournamentRoute(segments);
   const base = basePath.replace(/\/+$/, "");
   const nearest = nearestTournamentSegments(segments);
@@ -226,7 +262,10 @@ function AdminRoute({ route, tournId }: { route: TournamentPageRoute; tournId: n
   return <TournamentAdminPage tournId={tournId} />;
 }
 
-/** Loads the tournament's invite once, for its name and the invite tab. */
+/**
+ * Loads the tournament's invite once, for its name and the invite tab, and
+ * gives its pages the season it ran in, so rankings match that season.
+ */
 function TournamentShell({
   route,
   tournId,
@@ -245,10 +284,10 @@ function TournamentShell({
     <div className="mx-auto max-w-5xl space-y-4 p-4 md:p-6">
       <Loaded state={state}>
         {(invite) => (
-          <>
-            <TournamentNav tournId={tournId} active={tab} name={invite.name} source={client.sourceOf(tournId)} />
+          <TournamentSeasonContext.Provider value={tournamentSeasonYear(invite.start)}>
+            <TournamentNav tournId={tournId} active={tab} name={invite.name} source={client.sourceOf(tournId)} invite={invite} />
             {children(invite)}
-          </>
+          </TournamentSeasonContext.Provider>
         )}
       </Loaded>
     </div>

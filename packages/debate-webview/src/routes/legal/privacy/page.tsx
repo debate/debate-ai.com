@@ -1,7 +1,7 @@
 import { LegalTermsPrivacyPolicy } from "legal-terms-privacy-policy/react"
+import { DebateAiLogo } from "@debate/icons/brand"
 import {
     APP_EMAIL,
-    APP_LOGO,
     APP_LOGO_HEIGHT,
     APP_LOGO_WIDTH,
     APP_NAME,
@@ -24,7 +24,7 @@ export default function PrivacyPage() {
                 <a href="/" aria-label={`${APP_NAME} home`}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                        src={APP_LOGO}
+                        src={DebateAiLogo}
                         alt={APP_NAME}
                         width={APP_LOGO_WIDTH}
                         height={APP_LOGO_HEIGHT}

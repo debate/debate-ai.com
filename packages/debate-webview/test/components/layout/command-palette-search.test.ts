@@ -6,7 +6,7 @@ import {
   searchPalette,
   splitByRanges,
   type PaletteEntry,
-} from "../../../src/components/layout/command-palette-search"
+} from "../../../src/components/layout/command-palette/command-palette-search"
 
 const entry = (href: string, label: string, description: string, group = "Tools", highlights?: string[]): PaletteEntry<null> => ({
   href,

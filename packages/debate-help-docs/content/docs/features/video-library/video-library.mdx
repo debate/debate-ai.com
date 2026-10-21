@@ -48,6 +48,29 @@ category (`/lectures/<category>`). The categories used to be a second,
 expandable section of the sidebar; they now live only on the page
 (`LectureCategoryGridGallery`, rendered by `LecturesVideoGridView`).
 
+## WSD, ACC and Speech
+
+World Schools (**WSD**), **ACC** and **Speech** are not sidebar links. They
+show only on the All Videos page (`/videos`), as a row of cards directly above
+the search box, each opening its collection (`/videos/wsd`, `/videos/acc`,
+`/videos/speech`). The sidebar, the phone's quick-link tiles and the dock's
+menu leave them out (`VIDEO_ALL_VIDEOS_FILTER_LINKS` in
+`sidebar-video-links.ts` is kept apart from `SIDEBAR_VIDEO_LINKS`).
+
+A lecture whose title says WSD or World Schools is filed under WSD, and one
+whose title says ACC or American Congressional under ACC. The abbreviations
+match as whole words, so "accent" is not ACC, and rounds keep their own format
+(`classifyLecture` in `debate-data-sync`; existing lectures were moved by the
+`0004_wsd_acc_lectures.sql` data migration).
+
+Rounds from the **ACC Debate Tournament** are the one exception: any video
+whose title says "ACC Debate Tournament" also shows under ACC, while keeping
+its format (`classifyRoundCollection`; existing ones were moved by
+`0005_acc_tournament_rounds.sql`). Because those rounds are college rounds,
+**College Team Debate** (`/videos/college`) shows an ACC card above its
+search box too (`VIDEO_COLLEGE_FILTER_LINKS`), and the ACC card's count
+includes them.
+
 ## Merged lecture categories
 
 Topic analysis and topic lectures share one shelf, **Topic Lectures**. Videos
@@ -127,6 +150,12 @@ Nothing about this is hand-curated: a stack exists because one video's
 YouTube description links to the other ("Full Debate:
 `https://www.youtube.com/watch?v=…`"). Linking two videos is therefore an
 edit to a description on YouTube, not a change to the site.
+
+A round's card never gives away who won until you ask: both teams show in
+their side colors, and where the decision would be there is a **Reveal
+decision** button. Clicking it shows the decision and rings the winning team
+in gold, here and on the video's watch page, which shares the reveal (see
+[Video Watch Page](/docs/features/video-library/video-watch-page#no-spoilers)).
 
 Every card in the grid and every row in the list shows the video's length
 (`1h 05m`, `42m`) on its own line under the action buttons — not as a column —
@@ -210,18 +239,48 @@ leaving two empty dashes (`VideoListRow.tsx`).
 
 ### Team names and ratings
 
-In the Aff and Neg columns, a team from the **current season** that the
-[team rankings](/docs/features/team-collaboration/team-rankings) know shows its rating in a
-small badge beside its name, and clicking the name opens that team's page.
-Any other team — one from a past season, or one the rankings don't match —
-keeps the old behaviour: clicking its name searches the library for that
-team's videos. The rankings cover the current season only, so an older
-round's team code is never matched (it would name different debaters).
+Each team shows as a [team label](/docs/features/team-collaboration/team-rankings#team-labels):
+its school's logo (or name), then its debaters, in a blue box for the Aff
+and a red one for the Neg. Video cards and the watch page header use the same
+label inside their blue and red team badges, as do the mini player's title
+bar and the top-pick tooltip. A code like "Harker LL" is split into the
+school ("Harker", shown as its logo) and the two debaters' initials ("LL"),
+which become their last names whenever the current season's rankings know
+the team. A school's full name finds the same logo as its short one:
+"University of Kansas" shows the Kansas logo, "California State University -
+Long Beach" the Long Beach one, and nicknames such as "Cal" and "Wake" work
+too. Another campus of a system keeps its own name rather than borrowing the
+flagship's logo, so "University of Texas - Dallas" stays as text.
 
-The match is the one the team pages use (`findTeamRanking` in
+In the Aff and Neg columns, a team from the **current season** that the
+[team rankings](/docs/features/team-collaboration/team-rankings) know shows its
+debaters' last names in full (long names wrap rather than being cut off) and
+its rank as a small **#N** badge inside the label, and clicking it opens that
+team's page. Hover the badge for the team's rating, rounds and aff/neg win
+rates. Video cards and the watch page show the same badge. Any other team
+shows the initials from its code.
+Any other team keeps the old behaviour: clicking its name searches the
+library for that team's videos. The rankings cover the current season only,
+so an older round's team code is never matched against them (it would name
+different debaters).
+
+**College rounds from past seasons** are matched against that season's own
+ratings instead: [debatedata](https://debatedata.weebly.com)'s top-100 table
+for the season the video is from, 2009-10 onward. A team found there shows
+its debaters' last names and its **#N** rank that season; hovering the badge
+shows the season and debatedata's rating. There is no team page for a past
+season, so its name still searches the library. Shorthand like "KU", "OU",
+"UTD" or "Cal" and speech names tacked onto the label ("Baylor CM 1AC") are
+understood, and a code two teams in that season's table share (same school,
+same initials) is left unmatched rather than guessed. Teams outside that
+season's top 100 show their initials.
+
+The current-season match is the one the team pages use (`findTeamRanking` in
 `@debate/rankings-adapter`): the school loosely, the initials exactly, in
-the division the round's format is ranked in. The rankings load only when
-a listing holds a current-season round (`useVideoTeamRankings`).
+the division the round's format is ranked in. A past season's match is
+`findCollegeHistoryTeam`. The rankings load only when a listing holds a
+current-season round, and a past season's table only when it holds a
+college round from that season (`useVideoTeamRankings`).
 
 ## Guest video limit
 
@@ -303,6 +362,14 @@ videos first. **Videos** counts each channel's videos in the library and the
 round queue, and **Most recent video** links its newest upload with the date.
 Videos record a channel's display name rather than its handle, so a channel
 added by `@handle` may show 0 until the next resync learns its display name.
+Each row's **Check** button scans just that channel for new videos right away.
+
+Channels with no new upload in the last year move to a **Defunct channels**
+table below the main one. The daily scan skips them and only checks them on
+Mondays, and **Check defunct channels for new videos** checks them all on
+demand. A channel moves back up as soon as a check finds a new upload. A
+channel with no videos stored at all is never filed as defunct: it stays on the
+daily scan, and every scan checks those channels first.
 
 The same card's **Unavailable videos** list shows what YouTube no longer
 serves: **Gone from YouTube** (deleted), **Made private**, and **Embedding
@@ -316,7 +383,7 @@ naming the counts, every flagged video in those states is removed the way
 admin can bulk-remove (`DELETE /api/admin/videos/availability`).
 
 Engineering note: both kinds ride the `video_issues` queue
-(`apps/debate-ai.com/lib/videos/video-submissions.ts`) rather than a table of
+(`packages/debate-webview/src/lib/videos/video-submissions.ts`) rather than a table of
 their own. A `submit-channel` row has no video, so its `videoId` is empty.
 
 ### Reclassifying by title
