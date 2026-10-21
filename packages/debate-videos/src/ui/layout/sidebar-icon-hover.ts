@@ -13,7 +13,7 @@
  * does not restart it. Under reduced motion the icon only changes color.
  *
  * It is on by default: the reader can turn off "Animate sidebar icons" in
- * Settings → Preferences ({@link setSidebarIconAnimations}).
+ * Settings → General ({@link setSidebarIconAnimations}).
  *
  * @module ui/layout/sidebar-icon-hover
  */
@@ -150,7 +150,7 @@ export function attachSidebarIconHover(root: HTMLElement): () => void {
   const lastPlayedAt = new WeakMap<SVGElement, number>()
 
   const play = (icon: SVGElement) => {
-    // On unless the reader turned it off (Settings → Preferences); read on
+    // On unless the reader turned it off (Settings → General); read on
     // every hover so flipping the switch applies without a reload.
     if (!readSidebarIconAnimations()) return
 

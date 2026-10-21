@@ -1,7 +1,7 @@
 "use client"
 
 /**
- * @fileoverview Settings → Preferences: whether sidebar icons animate on
+ * @fileoverview Settings → General: whether sidebar icons animate on
  * hover.
  *
  * Hovering or focusing a sidebar row can wiggle, bounce, pulse, spin, flip (and more)
@@ -24,7 +24,7 @@ import { Label } from "../../../lib/ui/primitives/label"
 import { Switch } from "../../qwksearch/ui/switch"
 
 /**
- * The sidebar-animation row of Settings → Preferences. Loaded after mount so
+ * The sidebar-animation row of Settings → General. Loaded after mount so
  * the server render and the first client render both show it on, then the
  * stored choice takes over.
  */

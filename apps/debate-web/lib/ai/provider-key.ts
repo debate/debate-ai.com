@@ -45,12 +45,12 @@ export function keyExhaustedResponse(key: ProviderKey, status: number, detail: s
   const provider = key.provider === "openrouter" ? "OpenRouter" : "Anthropic"
   if (key.own) {
     return NextResponse.json(
-      { error: `Your ${provider} key has hit its spending limit or is out of credit. Raise its limit with ${provider}, or remove it in Settings → Preferences to use Debate AI's shared key.` },
+      { error: `Your ${provider} key has hit its spending limit or is out of credit. Raise its limit with ${provider}, or remove it in Settings → General to use Debate AI's shared key.` },
       { status: 402 },
     )
   }
   return NextResponse.json(
-    { error: "Debate AI's shared AI key has hit its API limit. Add your own OpenRouter or Anthropic key in Settings → Preferences, with whatever spending limit you choose, to keep going." },
+    { error: "Debate AI's shared AI key has hit its API limit. Add your own OpenRouter or Anthropic key in Settings → General, with whatever spending limit you choose, to keep going." },
     { status: 503, headers: { [AI_KEY_NEEDED_HEADER]: "shared-limit" } },
   )
 }
