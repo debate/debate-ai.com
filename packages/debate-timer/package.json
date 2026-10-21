@@ -36,15 +36,15 @@
     "@breezystack/lamejs": "^1.2.7",
     "@debate/types": "workspace:*",
     "@moonshine-ai/moonshine-js": "^0.1.29",
-    "@radix-ui/react-dropdown-menu": "2.2.0",
-    "@radix-ui/react-slider": "1.6.0",
+    "@radix-ui/react-dropdown-menu": "2.2.1",
+    "@radix-ui/react-slider": "1.6.1",
     "@radix-ui/react-slot": "1.5.0",
-    "@radix-ui/react-tooltip": "^1.4.0",
+    "@radix-ui/react-tooltip": "^1.4.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "grab-url": "^3.0.7",
-    "lucide-react": "^1.55.0",
-    "radix-ui": "^1.8.0",
+    "lucide-react": "^1.61.0",
+    "radix-ui": "^1.8.1",
     "tailwind-merge": "^3.7.0"
   },
   "peerDependencies": {
@@ -55,8 +55,8 @@
     "@types/node": "^26.6.5",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "@vitest/coverage-v8": "^5.0.3",
+    "@vitest/coverage-v8": "^5.0.5",
     "typescript": "^7.0.2",
-    "vitest": "^5.0.3"
+    "vitest": "^5.0.5"
   }
 }

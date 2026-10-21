@@ -250,7 +250,7 @@ const DebateRoom: React.FC = () => {
   const [judgmentData, setJudgmentData] = useState<JudgmentData | null>(null);
   const [isRecognizing, setIsRecognizing] = useState(false);
   const [nextTurnPending, setNextTurnPending] = useState(false);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const botTurnRef = useRef(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);

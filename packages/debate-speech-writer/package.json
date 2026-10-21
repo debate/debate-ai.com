@@ -34,18 +34,18 @@
   },
   "dependencies": {
     "@radix-ui/react-label": "2.1.17",
-    "@radix-ui/react-radio-group": "1.5.0",
-    "@radix-ui/react-select": "^2.4.0",
+    "@radix-ui/react-radio-group": "1.5.1",
+    "@radix-ui/react-select": "^2.4.1",
     "@radix-ui/react-slot": "1.5.0",
-    "@radix-ui/react-switch": "1.4.0",
+    "@radix-ui/react-switch": "1.4.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "@debate/card-parser": "workspace:*",
     "@debate/data-sync": "workspace:*",
     "@debate/research-evidence": "workspace:*",
     "grab-url": "^3.0.7",
-    "lucide-react": "^1.55.0",
-    "qwksearch-api-client": "^1.0.167",
+    "lucide-react": "^1.61.0",
+    "qwksearch-api-client": "^1.0.205",
     "tailwind-merge": "^3.7.0"
   },
   "peerDependencies": {
@@ -56,8 +56,8 @@
     "@types/node": "^26.6.5",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "@vitest/coverage-v8": "^5.0.3",
+    "@vitest/coverage-v8": "^5.0.5",
     "typescript": "^7.0.2",
-    "vitest": "^5.0.3"
+    "vitest": "^5.0.5"
   }
 }
