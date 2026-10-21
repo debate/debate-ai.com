@@ -12,7 +12,11 @@
  * On `/docs` the docs layout portals its own, richer tree into the same spot
  * (`app-sidebar-docs-tree.tsx`), so this renders nothing there.
  *
+<<<<<<<< HEAD:packages/debate-videos/src/components/sidebar/DocsNavTree.tsx
+ * @module components/sidebar/DocsNavTree
+========
  * @module components/sidebar-nav/DocsNavTree
+>>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/sidebar-nav/DocsNavTree.tsx
  */
 
 "use client";
@@ -20,7 +24,7 @@
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { BookOpen } from "lucide-react";
-import { TreeItem } from "./TreeItem";
+import { TreeItem } from "./SidebarTreeItem";
 
 /** Where the app serves the docs' page tree (`app/docs/api/docs-tree`). */
 export const DOCS_TREE_URL = "/docs/api/docs-tree";

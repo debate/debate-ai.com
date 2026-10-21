@@ -29,6 +29,8 @@ import {
   type SpeechDocLink,
 } from "../state/speechDocLinks"
 import { storedDocumentHtml, type StoredDocument } from "../round/stored-document-html"
+import { extractSpeechSignposts } from "../utils/speech-signposts"
+import type { SpeechDocHeading } from "../utils/speech-doc-headings"
 
 /** How often the selected speech re-reads a linked document while it's being edited elsewhere. */
 const LINKED_DOC_REFRESH_MS = 30_000
@@ -40,14 +42,20 @@ export async function fetchLinkedDocumentHtml(docId: number): Promise<{ html: st
   return { html: await storedDocumentHtml(doc), title: doc.title }
 }
 
-async function fetchLinkedStats(docId: number): Promise<{ stats: SpeechDocWordStats; title?: string }> {
+async function fetchLinkedStats(
+  docId: number,
+): Promise<{ stats: SpeechDocWordStats; signposts: SpeechDocHeading[]; title?: string }> {
   const { html, title } = await fetchLinkedDocumentHtml(docId)
-  return { stats: computeSpeechDocWordStats(html), title }
+  return { stats: computeSpeechDocWordStats(html), signposts: extractSpeechSignposts(html), title }
 }
+
+const NO_SIGNPOSTS: SpeechDocHeading[] = []
 
 export interface SpeechWordStatsResult {
   stats: SpeechDocWordStats
   spoken: number
+  /** The doc's H1–H3 headings — the speech's signposting (no H4 card tags). */
+  signposts: SpeechDocHeading[]
   link: SpeechDocLink | null
   /** Human label for where the doc counts came from. */
   sourceLabel: string
@@ -69,7 +77,12 @@ export function useSpeechWordStats(
     typeof window === "undefined" ? null : getSpeechDocLink(scope, speechName),
   )
   const [spoken, setSpoken] = useState(() => (typeof window === "undefined" ? 0 : loadSpokenWordCount(speechName)))
-  const [linked, setLinked] = useState<{ docId: number; stats: SpeechDocWordStats; title?: string } | null>(null)
+  const [linked, setLinked] = useState<{
+    docId: number
+    stats: SpeechDocWordStats
+    signposts: SpeechDocHeading[]
+    title?: string
+  } | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -122,11 +135,13 @@ export function useSpeechWordStats(
 
   const flowDoc = flow?.speechDocs?.[speechName] ?? ""
   const flowStats = useMemo(() => computeSpeechDocWordStats(flowDoc), [flowDoc])
+  const flowSignposts = useMemo(() => extractSpeechSignposts(flowDoc), [flowDoc])
 
   const useLinked = link != null && linked?.docId === link.docId
   return {
     stats: useLinked ? linked!.stats : link ? computeSpeechDocWordStats("") : flowStats,
     spoken,
+    signposts: useLinked ? linked!.signposts : link ? NO_SIGNPOSTS : flowSignposts,
     link,
     sourceLabel: link ? (linked?.title ?? link.title) : "Flow speech doc",
     error,

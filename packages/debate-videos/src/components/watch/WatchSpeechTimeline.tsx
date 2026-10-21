@@ -15,9 +15,15 @@
 
 "use client"
 
+<<<<<<<< HEAD:packages/debate-videos/src/components/videos/watch/prediction/WatchSpeechTimeline.tsx
+import { playingSpeechIndex, type RoundSpeech } from "../../../../lib/round-speeches"
+import { formatTimecode } from "../../../../lib/video-documents"
+import { SPEECH_SIDE_STYLES } from "../speech-side-styles"
+========
 import { playingSpeechIndex, type RoundSpeech } from "../../lib/round-speeches"
 import { formatTimecode } from "../../lib/video-documents"
 import { SPEECH_SIDE_STYLES } from "./speech-side-styles"
+>>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/watch/WatchSpeechTimeline.tsx
 
 interface WatchSpeechTimelineProps {
   speeches: RoundSpeech[]

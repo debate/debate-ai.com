@@ -20,7 +20,11 @@
  * does not depend on how React happens to represent a component type.
  * `React.memo`, `forwardRef` and lazy components are all objects too.
  *
+<<<<<<<< HEAD:packages/debate-videos/src/components/sidebar/tree-item-icon.ts
+ * @module components/sidebar/tree-item-icon
+========
  * @module components/sidebar-nav/tree-item-icon
+>>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/sidebar-nav/tree-item-icon.ts
  */
 
 import type { StaticImageData } from "next/image";

@@ -12,7 +12,11 @@
  * the width is forced to `auto`: squeezed into the rows' 16×16 box the
  * letters would shrink to an unreadable ~6px.
  *
+<<<<<<<< HEAD:packages/debate-videos/src/components/gallery/FormatBadgeIcons.tsx
+ * @module components/gallery/FormatBadgeIcons
+========
  * @module components/sidebar-nav/FormatBadgeIcons
+>>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/sidebar-nav/FormatBadgeIcons.tsx
  */
 
 import React, { forwardRef } from "react";

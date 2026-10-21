@@ -28,10 +28,16 @@ vi.mock("next/link", () => ({
 const { findVideoTeamRanking, videoStyleDatasetId } = await import(
   "../src/panels/leaderboard/profile/rankingProfileHelpers"
 );
+<<<<<<< HEAD
+const { isRankedSeasonRound } = await import("../src/hooks/useVideoTeamRankings");
+const { VideoListRow } = await import("../src/components/videos/video-grid/VideoListRow");
+const { WatchSearchBox } = await import("../src/components/videos/watch/controls/WatchSearchBox");
+=======
 const { isRankedSeasonRound, pastCollegeSeason } = await import("../src/hooks/useVideoTeamRankings");
 const { teamRankStats } = await import("../src/components/team-label/TeamLabel");
 const { VideoListRow } = await import("../src/components/video-grid/VideoListRow");
 const { WatchSearchBox } = await import("../src/components/watch/WatchSearchBox");
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 const { TooltipProvider } = await import("../src/ui/primitives/tooltip");
 
 function entry(rank: number, school: string, name: string): RankingEntry {

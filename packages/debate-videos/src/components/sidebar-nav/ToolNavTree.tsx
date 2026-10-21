@@ -34,14 +34,18 @@
  * the document panels plus the Research tools, so it asks for that one
  * section rather than the whole nav (see the app's `AppSidebarShell`).
  *
+<<<<<<<< HEAD:packages/debate-videos/src/components/sidebar/ToolNavTree.tsx
+ * @module components/sidebar/ToolNavTree
+========
  * @module components/sidebar-nav/ToolNavTree
+>>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/sidebar-nav/ToolNavTree.tsx
  */
 
 "use client";
 
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { TreeItem } from "./TreeItem";
+import { TreeItem } from "./SidebarTreeItem";
 import {
   SIDEBAR_TOOL_SECTIONS,
   type SidebarToolLink,

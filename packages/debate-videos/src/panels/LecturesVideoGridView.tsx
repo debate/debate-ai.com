@@ -15,6 +15,19 @@ import type { CategoryType, TopicType, VideoFacets, VideoSuggestions } from "../
 import type { LectureCategoryFacet, VideoType } from "../types/videos"
 import { Footer } from "../ui/layout/footer"
 import { ResizableSidebarLayout } from "../ui/layout/ResizableSidebarLayout"
+<<<<<<< HEAD
+import { VideoSearchBar } from "../components/videos/video-search/VideoSearchBar"
+import { VideoSearchSuggestions } from "../components/videos/video-search/VideoSearchSuggestions"
+import { SubmitToLibraryButton } from "../components/videos/video-search/SubmitToLibraryButton"
+import { getSearchPhrases } from "../components/videos/video-search/searchPhrases"
+import { VideoGrid } from "../components/videos/video-grid/VideoGrid"
+import { VideoListRows } from "../components/videos/video-grid/VideoListRows"
+import { LectureCategoryGridGallery, GridItem } from "../components/gallery/LectureCategoryGridGallery"
+import { QuickLinksGrid } from "../components/gallery/QuickLinksGrid"
+import { VideoSidebarTree } from "../components/sidebar/VideoSidebarTree"
+import { ToolNavTree } from "../components/sidebar/ToolNavTree"
+import { GoatSparklesHeading } from "../components/gallery/GoatSparklesHeading"
+=======
 import { VideoSearchBar } from "../components/video-search/VideoSearchBar"
 import { VideoSearchSuggestions } from "../components/video-search/VideoSearchSuggestions"
 import { SubmitToLibraryButton } from "../components/video-search/SubmitToLibraryButton"
@@ -26,11 +39,16 @@ import { QuickLinksGrid } from "../components/category-gallery/QuickLinksGrid"
 import { VideoSidebarTree } from "../components/sidebar-nav/VideoSidebarTree"
 import { ToolNavTree } from "../components/sidebar-nav/ToolNavTree"
 import { GoatSparklesHeading } from "../components/category-gallery/GoatSparklesHeading"
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 import { cn } from "../ui/lib/utils";
 import {
   VIDEO_ALL_VIDEOS_FILTER_LINKS,
   VIDEO_COLLEGE_FILTER_LINKS,
+<<<<<<< HEAD
+} from "../components/sidebar/sidebar-video-links";
+=======
 } from "../components/sidebar-nav/sidebar-video-links";
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 import type { DebateStyle } from "../types/videos"
 import type { VideoViewMode } from "../hooks/useVideoState"
 import { useVideoStacks } from "../hooks/useVideoStacks"

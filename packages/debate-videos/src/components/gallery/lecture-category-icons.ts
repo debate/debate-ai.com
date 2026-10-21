@@ -5,7 +5,7 @@
  *
  * In the sidebar they draw in the tree's gray like every other row's icon.
  *
- * @module components/category-gallery/lecture-category-icons
+ * @module components/gallery/lecture-category-icons
  */
 
 import type { LucideIcon } from "lucide-react";

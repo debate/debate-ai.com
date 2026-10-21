@@ -13,8 +13,13 @@
 
 import { useEffect, useState, type FormEvent } from "react"
 import { Search, X } from "lucide-react"
+<<<<<<<< HEAD:packages/debate-videos/src/components/videos/watch/controls/WatchSearchBox.tsx
+import { Input } from "../../../../ui/primitives/input"
+import { cn } from "../../../../ui/lib/utils"
+========
 import { Input } from "../../ui/primitives/input"
 import { cn } from "../../ui/lib/utils"
+>>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/watch/WatchSearchBox.tsx
 
 /** Props for {@link WatchSearchBox}. */
 export interface WatchSearchBoxProps {

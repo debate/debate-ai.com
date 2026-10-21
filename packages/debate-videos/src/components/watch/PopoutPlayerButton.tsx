@@ -18,10 +18,17 @@
 "use client"
 
 import { PictureInPicture2 } from "lucide-react"
+<<<<<<<< HEAD:packages/debate-videos/src/components/videos/watch/controls/PopoutPlayerButton.tsx
+import { Tooltip, TooltipContent, TooltipTrigger } from "../../../../ui/primitives/tooltip"
+import { cn } from "../../../../ui/lib/utils"
+import { useVideoPlayerStore, type VideoMeta } from "../../../../state/videoPlayerStore"
+import type { VideoType } from "../../../../types/videos"
+========
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
 import { cn } from "../../ui/lib/utils"
 import { useVideoPlayerStore, type VideoMeta } from "../../state/videoPlayerStore"
 import type { VideoType } from "../../types/videos"
+>>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/watch/PopoutPlayerButton.tsx
 
 interface PopoutPlayerButtonProps {
   video: VideoType

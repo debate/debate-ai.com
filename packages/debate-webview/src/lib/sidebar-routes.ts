@@ -3,7 +3,11 @@
  * sidebar?" predicates.
  *
  * The predicates themselves live in `debate-videos`, next to the link data
+<<<<<<< HEAD
+ * they are derived from (`components/sidebar/sidebar-routes.ts`) —
+=======
  * they are derived from (`components/sidebar-nav/sidebar-routes.ts`) —
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
  * see that module for how matching works and why it is prefix-based. This
  * file exists so app code keeps importing them from one app-local path.
  *

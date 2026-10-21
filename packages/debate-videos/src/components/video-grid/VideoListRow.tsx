@@ -29,15 +29,24 @@ import { cn } from "../../ui/lib/utils"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
 import { useVideoPlayerStore } from "../../state/videoPlayerStore"
 import { STYLE_COLORS, getRoundBadgeColor, formatVideoDate } from "../video-card/videoCardUtils"
+<<<<<<< HEAD:packages/debate-videos/src/components/videos/video-grid/VideoListRow.tsx
+import { formatCount } from "../../../lib/format-count"
+=======
 import { formatCount } from "../../lib/format-count"
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/video-grid/VideoListRow.tsx
 import { TopPickBadge } from "../video-card/TopPickBadge"
 import { WatchProgressBadge } from "../video-card/WatchProgressBadge"
 import { VideoDuration } from "../video-card/VideoDuration"
 import { useWatchHistoryEntry } from "../../hooks/useWatchHistory"
 import { formatWatchedAgo } from "../../state/videoWatchHistory"
 import { HideConfirmDialog } from "../video-card/VideoCardDialogs"
+<<<<<<< HEAD:packages/debate-videos/src/components/videos/video-grid/VideoListRow.tsx
+import { PopoutPlayerButton } from "../watch/controls/PopoutPlayerButton"
+import { videoRouteHref } from "../../../lib/video-route"
+=======
 import { PopoutPlayerButton } from "../watch/PopoutPlayerButton"
 import { videoRouteHref } from "../../lib/video-route"
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/video-grid/VideoListRow.tsx
 import { StackNav, stackMemberLabel } from "../video-card/StackNav"
 import { cleanTournamentName, videoCategoryLabel } from "./video-tree"
 import { displayRoundLevel } from "../video-card/round-level"

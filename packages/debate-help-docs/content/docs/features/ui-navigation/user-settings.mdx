@@ -31,15 +31,17 @@ A searchable sidebar in three blocks:
   `UserSettingsPanel`: plan, debate style, font, colour theme, light/dark,
   tool data sync), your own AI key and sidebar icon animations; then **My
   team** (the ranked team you represent in each division, plus your coaching
-  roster), **My school** (claim to coach or run a school, and the schools you
-  manage) and **Editor startup & language** (the editor's own General rows,
-  including the personal dictionary, the performance benchmark and this
-  install's version info). The old `?category=my-team`, `?category=my-school`
-  and `?category=general` links open this tab scrolled to that block.
+  roster) and **My school** (claim to coach or run a school, and the schools
+  you manage). The old `?category=my-team` and `?category=my-school` links
+  open this tab scrolled to that block.
 - **Sound & speech** — UI sound effects, the read-aloud voice and the
   on-device speech models.
 - **Privacy** — see below.
-- Under an **Editor** heading: **Files**, **Appearance**, **Accessibility**,
+- Under an **Editor** heading: **Editor prefs** (the editor's own General
+  rows: workspace and Arrange Windows, navigation, layout on this device,
+  editor behavior, the personal dictionary, word counts, backup, the
+  performance benchmark and this install's version info;
+  `?category=general` opens it), **Files**, **Appearance**, **Accessibility**,
   **Editing**, **Keyboard**, **Comments & AI** and **Collaboration** — from
   `debate-editor`'s exported tab list (`CARDMIRROR_SETTINGS_TABS`,
   `@debate/editor/settings-tabs`) and rendered by its
@@ -392,14 +394,17 @@ per-browser id kept under `debaterDeviceId`, which is not synced). A device only
 ever grows its own entry, so when two devices both earned XP while apart the
 ledgers merge entry by entry and your total and lifetime counts are rebuilt as
 the pre-ledger base plus every device — XP earned on both devices adds up.
+Each entry also carries a per-day tally (`daily`: a UTC `dayKey` plus counts), so
+today's per-activity counts add across devices the same way.
 
 The rest of the state is still merged field by field (`mergeDebaterLevel`): the
 union of completed milestones, today's challenge progress when both are from the
 same UTC day (otherwise the later day), and the union of the recent XP log.
-Known gaps: today's per-activity counts still take the larger side rather than
-adding, so a daily challenge can lag when you work on two devices the same day;
-and a copy from an older client without a ledger falls back to the larger total.
-It can under-count but never double-counts.
+Known gaps: a daily challenge whose target is only reached by the combined
+count is paid on the next activity, not at the moment of the merge; entries
+written before per-day tallies existed, and copies from an older client without
+a ledger, fall back to the larger side. That can under-count but never
+double-counts.
 
 The Debater Level page's **Mock data** button previews the page with sample
 debaters (a novice, a JV and a varsity debater from

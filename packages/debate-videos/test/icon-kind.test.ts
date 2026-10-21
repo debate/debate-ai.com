@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { Dumbbell, GraduationCap, Library } from "lucide-react";
+<<<<<<< HEAD
+import { isImageIconSource } from "../src/components/sidebar/icon-kind";
+import { SIDEBAR_TOOL_SECTIONS } from "../src/components/sidebar/sidebar-tool-sections";
+=======
 import { isImageIconSource } from "../src/components/sidebar-nav/icon-kind";
 import { SIDEBAR_TOOL_SECTIONS } from "../src/components/sidebar-nav/sidebar-tool-sections";
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 
 describe("isImageIconSource", () => {
   it("accepts bundler-resolved image URLs", () => {

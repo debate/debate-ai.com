@@ -1,6 +1,8 @@
 export { SpeechTimer } from "./timers/SpeechTimer";
 export { PrepTimer } from "./timers/PrepTimer";
 export { TimerProgressRing } from "./timers/TimerProgressRing";
+export { CircularTimerFace, formatCircularTimerCount } from "./timers/circular/CircularTimerFace";
+export type { CircularTimerFaceProps, CircularTimerButton, CircularTimerAccent } from "./timers/circular/CircularTimerFace";
 export { SpeechWordCounter } from "./timers/SpeechWordCounter";
 export { SpeechWordStats } from "./timers/SpeechWordStats";
 export { SpeechRecordingPlayer } from "./recorder/SpeechRecordingPlayer";

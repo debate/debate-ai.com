@@ -13,8 +13,13 @@ the sidebar column that hosts it on every tool route.
   (hide/show state in `sidebar-collapse.ts` beside it), filled by
   `packages/debate-webview/src/components/layout/app-sidebar/` off the video pages
 - **The tree in it:** `VideoSidebarTree`, mounted off the video pages through
+<<<<<<< HEAD
+  `LibrarySidebarTree` (`packages/debate-videos/src/components/sidebar/`)
+- **Route predicates:** `packages/debate-videos/src/components/sidebar/sidebar-routes.ts`
+=======
   `LibrarySidebarTree` (`packages/debate-videos/src/components/category-gallery/`)
 - **Route predicates:** `packages/debate-videos/src/components/sidebar-nav/sidebar-routes.ts`
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
   (re-exported for app code as `apps/debate-ai.com/lib/sidebar-routes.ts`)
 - **Dock primitive:** `apps/debate-ai.com/lib/ui/layout/dock.tsx`
 
@@ -95,7 +100,11 @@ root — opening one does not affect the other, and either can be open at once:
 
   | Menu submenu | Comes from |
   | --- | --- |
+<<<<<<< HEAD
+  | Videos | `SIDEBAR_VIDEO_LINKS` (`components/sidebar/sidebar-video-links.ts`), minus the glossary and topic & video statistics, which are listed under Insights instead |
+=======
   | Videos | `SIDEBAR_VIDEO_LINKS` (`components/sidebar-nav/sidebar-video-links.ts`), minus the glossary and topic & video statistics, which are listed under Insights instead |
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
   | Research / Practice / Coaching / Insights | `SIDEBAR_TOOL_SECTIONS` |
 
   On a phone, where the sidebar column below is `md+` only, this menu is the
@@ -171,7 +180,11 @@ drag it — see [Resizing the sidebar](#resizing-the-sidebar)).
 its own full-height workspace. Its sidebar — the files tree and the "Open Tabs"
 list — is the research agent's own, not the generic tool sidebar, and the dock
 sits at the top of that column (`OWN_SIDEBAR_DOCK_HREFS`, in
+<<<<<<< HEAD
+`packages/debate-videos/src/components/sidebar/sidebar-routes.ts`).
+=======
 `packages/debate-videos/src/components/sidebar-nav/sidebar-routes.ts`).
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 The research agent's own app dock is never mounted here (it is the host's to
 draw), and on a phone the dock's **Sidebar** button opens the agent's sidebar
 (the `OPEN_OWN_SIDEBAR_EVENT` window event, the same one `/debate` listens for).

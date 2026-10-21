@@ -22,10 +22,17 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+<<<<<<< HEAD:packages/debate-videos/src/components/stats/youtube-stats-modal/YouTubeStatsCharts.tsx
+} from "../../../ui/primitives/table";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../../../ui/charts/chart";
+import type { ChartConfig } from "../../../ui/charts/chart";
+import { formatCount } from "../../../lib/format-count"
+=======
 } from "../../ui/primitives/table";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../../ui/charts/chart";
 import type { ChartConfig } from "../../ui/charts/chart";
 import { formatCount } from "../../lib/format-count"
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/youtube-stats/YouTubeStatsCharts.tsx
 
 interface YouTubeStats {
   summary: {
