@@ -133,9 +133,20 @@ export function EntryRating({ query, names = true }: { query: TeamRatingQuery; n
 /** The side an entry debated: Tabroom's `side` 1 is the aff, 2 the neg. */
 export type EntrySide = "aff" | "neg";
 
-/** Tabroom's numeric side as {@link EntrySide}, or `null` for speaker-order events. */
-export const entrySide = (side: number | null | undefined): EntrySide | null =>
-  side === 1 ? "aff" : side === 2 ? "neg" : null;
+/**
+ * Tabroom's side as {@link EntrySide}: `1`/`2`, or the side label live
+ * Tabroom prints instead ("Aff", "Pro", "Gov", "Prop" / "Neg", "Con", "Opp").
+ * `null` for speaker-order events.
+ */
+export const entrySide = (side: number | string | null | undefined): EntrySide | null => {
+  if (side === 1) return "aff";
+  if (side === 2) return "neg";
+  if (typeof side !== "string") return null;
+  const label = side.trim().toLowerCase();
+  if (label === "1" || /^(aff|pro|gov|prop)/.test(label)) return "aff";
+  if (label === "2" || /^(neg|con|opp)/.test(label)) return "neg";
+  return null;
+};
 
 /** Splits a code like `"Harker LL"` into school and initials; `null` without trailing initials. */
 function splitEntryCode(code: string | null | undefined): { school: string; initials: string } | null {
