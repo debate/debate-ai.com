@@ -12,6 +12,7 @@
  */
 
 import { useEffect, useRef, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { ExternalLink, X } from "lucide-react";
 import { buttonVariants } from "./primitives";
 
@@ -64,7 +65,10 @@ export function FramedOverlay({
 
   if (!open) return null;
 
-  return (
+  // Portalled to the body so an overlay opened from inside a popover (a judge
+  // in a bracket hover card) still covers the page: a transformed ancestor
+  // would otherwise trap its `position: fixed`.
+  const overlay = (
     <div
       role="dialog"
       aria-modal="true"
@@ -116,4 +120,5 @@ export function FramedOverlay({
       </div>
     </div>
   );
+  return typeof document === "undefined" ? overlay : createPortal(overlay, document.body);
 }

@@ -8,6 +8,8 @@ export { BallotPage } from "./pages/BallotPage";
 export { TournamentInvitePage } from "./pages/TournamentInvitePage";
 export { RoundsPage } from "./pages/RoundsPage";
 export { RoundPage } from "./pages/RoundPage";
+export { ElimBracket, BracketCard } from "./pages/ElimBracket";
+export { buildBracket, roundDisplayLabel, isElimRound, type BracketColumn, type BracketMatchup } from "./bracket";
 export { ResultsPage } from "./pages/ResultsPage";
 export { ResultSetPage } from "./pages/ResultSetPage";
 export { TournamentsContext, useTournaments, formatDate, type LinkLike } from "./shared";
