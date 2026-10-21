@@ -29,7 +29,7 @@ export const DEFAULT_NEWS_SYNC: NewsSyncPayload = {
   newsLiked: [],
 };
 
-/** Generous but bounded, so a buggy or malicious client can't grow the row without limit — comfortably above the feed's real size (PRODUCT_NEWS + per-source community caps, see `state/newsStream.ts`'s `MAX_COMMUNITY_ITEMS_PER_SOURCE`). */
+/** Generous but bounded, so a buggy or malicious client can't grow the row without limit — comfortably above the feed's real size (a few dozen fetched items plus the Argument Library digests). */
 export const MAX_NEWS_SYNC_ITEMS = 500;
 
 export function isValidNewsItemId(value: unknown): value is string {

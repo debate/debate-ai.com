@@ -4,9 +4,8 @@ title: "News Stream"
 
 # News Stream
 
-A single feed for product updates and community announcements, so a debater
-doesn't have to separately check the Daily Best Card page, the Contributor
-Awards page, and the Tools page's fine print to find out what's new.
+The News tab of `/news`: new rounds, new files and forum activity, plus the
+teams and schools the reader follows.
 
 - **Route:** `/news`
 - **Nav:** the Tools page's Community & Progress group; the Reason Editor's
@@ -15,139 +14,42 @@ Awards page, and the Tools page's fine print to find out what's new.
 
 ## What it shows
 
-Every item, newest first, filterable by category:
+As of 2026-10-21 the feed is limited to new rounds, new files and forum
+comments. Product updates (`PRODUCT_NEWS`), "Tool spotlight" posts
+(`buildAutoFeatureNews`), Daily Best Card, Contributor Awards, quest
+streaks and completions, group challenges, revision incentives, sprint
+notes and coaching sessions were removed from the feed because they read as
+UI-update noise. Their own pages are unchanged.
 
-- **Product Updates** — hand-maintained posts about shipped features and
-  tools (`lib/news-stream.ts`'s `PRODUCT_NEWS`). There's no build step that
-  generates these from commits; a feature worth surfacing gets an entry
-  added by hand, the same way `feature-catalog.ts`'s `APP_FEATURES` is
-  maintained. Every `APP_FEATURES` entry whose route no hand-written
-  `PRODUCT_NEWS` item names yet — most of the catalog, since a hand post
-  gets written per noteworthy change rather than per tool — additionally
-  gets a generic "Tool spotlight: …" post synthesized by
-  `lib/news-stream.ts`'s `buildAutoFeatureNews()`, so the feed always
-  mentions every tool somewhere even before someone writes a real
-  announcement for it. These spotlights all share one timestamp (older than
-  every hand-written post) and so always sort below real updates.
-- **Daily Best Card** — one item per day announced through
-  [`/cards/best-card`](daily-best-card.md), rendered with
-  `lib/daily-best-card.ts`'s existing `buildDailyBestCardHighlight`.
-- **Contributor Awards** — one item per day announced through
-  [`/cards/awards`](contributor-awards.md), rendered with
-  `lib/contributor-awards.ts`'s existing `buildAwardsAnnouncementText`.
-- **Community** — five categories, none needing a separate "announce" step
-  since each is derived straight from its own feature's already-persisted
-  history:
-  - A [Quest Streaks](quest-streaks.md) milestone, the exact day a
-    contributor's streak first reaches it (`dailyMissionResults.ts`'s
-    `buildQuestStreakMilestoneEvents`).
-  - A [Group Challenge](group-challenges.md) the moment its goal is reached
-    (`challengeWinEvents.ts`'s `buildCompletedGroupChallengeEvents`, timed to
-    the `targetCount`-th matching contribution or win event).
-  - Each UTC day's top [Revision Incentives](revision-incentives.md) earner,
-    when at least one revision that day earned a nonzero reward
-    (`revisionHistory.ts`'s `buildDailyTopReviserAnnouncements`).
-  - A [Team Collaboration Mode](team-collaboration-mode.md) prep note, the
-    moment it's logged on a topic sprint at `/cards/collaboration`
-    (`sprintNotes.ts`'s `listSprintNotes`, rendered via
-    `team-collaboration-mode.ts`'s `buildSprintNoteAnnouncementText`) — the
-    first Community source that needs no derivation at all, since a
-    `SprintNote` is already the atomic event; capped to the 20 most recent
-    notes (see Known gaps).
-  - A new [Argument Library](evidence-library.md) submission — a card or
-    analytic block — the moment it's saved and live (not held back by an
-    in-progress peer review) at `/cards/library`
-    (`evidenceLibraryEntries.ts`'s `listEvidenceLibraryEntries`, rendered via
-    `shared-evidence-library.ts`'s `buildEvidenceEntryAnnouncementText`) —
-    like a prep note, needs no derivation either, since a saved entry is
-    already the atomic event, and is likewise capped to the 20 most recent
-    entries; only entries saved after this shipped carry
-    the `createdAt` timestamp it's sourced from.
-  - A new [AI Coach Mode](coaching-sessions.md) session, the moment one is
-    generated for a round at `/coaching` — like a prep note or Argument
-    Library entry, needs no derivation, since a generated session is
-    already the atomic event. Unlike the other five sources, this one isn't
-    produced by this package: `debate-round`'s `state/coachingSessions.ts`
-    exports its own `coachingSessionNews()` (this package can't depend back
-    on `debate-round`, which already depends on this package — see "Data
-    flow" below), composed into the feed via `buildNewsFeed`'s `extraItems`
-    parameter at the app layer. Only sessions generated after this shipped
-    carry the `createdAt` timestamp it's sourced from.
-  - A contributor's fully completed [Daily Quests](daily-quests.md) board,
-    the day they complete it at `/cards/quests`
-    (`dailyMissionResults.ts`'s `buildDailyQuestCompletionEvents`, rendered
-    via `gamified-quests.ts`'s `buildDailyQuestCompletionAnnouncementText`)
-    — no separate announce step, since "Record today's mission" already
-    persists the day's result. Unlike the Quest Streaks milestone source
-    above (bounded to rare milestone crossings), a board can be completed
-    every day, so this shares the sprint-note/Argument-Library sources'
-    `MAX_COMMUNITY_ITEMS_PER_SOURCE` volume cap instead of posting every
-    completion unbounded.
+- **Rounds** — `useSiteNews()` (`@debate/webview`, `lib/hooks/useSiteNews.ts`)
+  fetches `/api/videos?source=round&sort=Recency&limit=8`.
+- **Files** — the same hook fetches `/api/caselist-documents?recent=1&limit=8`
+  (`recent=1` lists the newest files site-wide, capped at 20). The panel's
+  own source, `argumentLibraryNews()` in `state/newsStream.ts`, posts one
+  digest per UTC day of live Argument Library entries, for the three most
+  recent days, listing up to three labels cleaned by `cleanArgBlockLabel()`
+  (drops `<<<…>>>` markers, `---` separators and repeated heading levels).
+  It used to post every entry, capped at 20, which flooded the feed after
+  an import.
+- **Forums** — the hook reads `/api/forums?limit=8`; each thread becomes one
+  item whose id carries `lastActivityAt`, so a new reply is a new unread item.
+- **Following** — `useFollowingNews()` from `@debate/videos`. A round or file
+  already posted under Following is dropped from Rounds/Files.
 
-Each item can be liked and is marked read on hover; unread items get a
-highlighted left border and a "New" badge. Read/like state is a viewer-local
-`newsStreamViewerState` localStorage key — it does not feed back into either
-source announcement's own data, or into a card's community like count in the
-Contributions Feed. For a signed-in user, that local state is additionally
-synced to the account's `user_settings` row (`newsRead`/`newsLiked` columns)
-via `/api/settings`, so it follows them to another device instead of
-resetting to "everything unread" there — see "Account sync" below.
+`NewsStreamPanel` shows a filter tab only for categories present in the
+feed. `CoachHub` still renders the panel with `coachingSessionNews()`
+(category `coaching`).
 
 ## Data flow
 
 ```
-lib/news-stream.ts              — NewsItem type, NEWS_CATEGORY_LABELS, PRODUCT_NEWS (hand-maintained),
-                                    buildAutoFeatureNews() (reads debate-feature-catalog's APP_FEATURES)
-state/dailyBestCardAnnouncements.ts    — existing store, read via listAnnouncedDailyBestCards()
-state/contributorAwardAnnouncements.ts — existing store, read via listAnnouncedContributorAwards()
-state/dailyMissionResults.ts    — existing store, read via buildQuestStreakMilestoneEvents()
-                                    and buildDailyQuestCompletionEvents()
-state/challengeWinEvents.ts     — existing store, read via buildCompletedGroupChallengeEvents()
-state/revisionHistory.ts        — existing store, read via buildDailyTopReviserAnnouncements()
-state/sprintNotes.ts            — existing store, read via listSprintNotes()
-state/evidenceLibraryEntries.ts — existing store, read via listEvidenceLibraryEntries()
-  → state/newsStream.ts         — buildNewsFeed(extraItems?) merges PRODUCT_NEWS,
-                                    buildAutoFeatureNews()'s synthesized spotlights, and all
-                                    eight in-package stores (mapped to NewsItem via each
-                                    store's own highlight/announcement-text helper —
-                                    sprintNotes.ts's via team-collaboration-mode.ts's
-                                    buildSprintNoteAnnouncementText, evidenceLibraryEntries.ts's
-                                    via shared-evidence-library.ts's buildEvidenceEntryAnnouncementText,
-                                    dailyMissionResults.ts's completion events via
-                                    gamified-quests.ts's buildDailyQuestCompletionAnnouncementText)
-                                    plus any caller-supplied extraItems, sorted newest first
-                                  — isNewsItemRead/markNewsItemRead/isNewsItemLiked/
-                                    toggleNewsItemLiked (localStorage, "newsStreamViewerState")
-  → panels/NewsStreamPanel.tsx  — category filter tabs, per-item read/like UI,
-                                    cross-tab live update; threads an optional extraItems
-                                    prop straight into buildNewsFeed(), and an optional
-                                    syncRemote adapter (hydrate/pushRead/pushLiked) around
-                                    mergeRemoteViewerState()/listReadIds()/listLikedIds()
-
-(a package boundary this diagram can't show in one straight line:)
-debate-round's state/coachingSessions.ts — its own store, read via coachingSessionNews()
-                                            (debate-round already depends on debate-research-evidence,
-                                            so it can't be a source *inside* newsStream.ts above
-                                            without a cycle — it produces NewsItems itself instead)
-  → apps/debate-ai.com/app/news/NewsPageContent.tsx — the one place that depends on both
-                                    packages; calls coachingSessionNews() and passes the
-                                    result as NewsStreamPanel's extraItems prop, plus
-                                    useNewsStreamSync() as its syncRemote prop
-
-lib/news-stream-sync.ts         — NewsSyncPayload type, normalizeNewsSyncPatch/
-                                    serializeNewsIdList/parseNewsIdList (same
-                                    package-boundary split as state/favoriteTools.ts:
-                                    validation here, localStorage read/write in
-                                    state/newsStream.ts)
-  → apps/debate-ai.com/app/api/settings/route.ts — GET/PUT the user_settings row's
-                                    news_read/news_liked columns alongside every other
-                                    account-linked preference field
-  → apps/debate-ai.com/lib/hooks/useNewsStreamSync.ts — fetchUserSettings()/
-                                    saveUserSettings() (debate-round's client, shared
-                                    with UserSettingsPanel/useFavoriteTools) wrapped as
-                                    a NewsStreamSyncAdapter
-  → apps/debate-ai.com/app/news/NewsPageContent.tsx — wires the hook into
-                                    NewsStreamPanel's syncRemote prop
+lib/news-stream.ts        — NewsItem, NEWS_CATEGORY_LABELS, sortNewsFeed, cleanArgBlockLabel
+state/newsStream.ts       — argumentLibraryNews() (daily digests), buildNewsFeed(extraItems),
+                            read/like viewer state ("newsStreamViewerState")
+@debate/webview lib/news/site-news.ts — buildRoundNews / buildFileNews / buildForumNews
+@debate/webview lib/hooks/useSiteNews.ts — fetches their inputs
+routes/news/NewsPageContent.tsx — passes site + following items as extraItems
+panels/NewsStreamPanel.tsx — filter tabs, read/like UI
 ```
 
 ## Cross-tab live update
@@ -230,6 +132,9 @@ is a best-effort layer on top rather than a replacement for it.
   against a buggy or malicious client growing the row without limit.
 
 ## Known gaps
+
+Entries below that mention `PRODUCT_NEWS`, tool spotlights or the removed
+community sources are historical (see "What it shows").
 
 - The auto-generated "Tool spotlight" post is a generic, one-line
   restatement of `feature-catalog.ts`'s own description — it can't tell a
