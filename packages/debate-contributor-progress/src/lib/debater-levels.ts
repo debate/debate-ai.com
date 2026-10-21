@@ -425,6 +425,7 @@ export function applyDebaterActivity(
 /** The ledger after `deviceId` earns `xp` and `n` of `kind`; a first entry snapshots the existing totals as `base`. */
 function addToLedger(
   state: DebaterLevelState,
+  rolled: DebaterLevelState,
   deviceId: string,
   kind: DebaterActivityKind,
   n: number,
@@ -490,7 +491,7 @@ function isCountRecord(value: unknown): value is Partial<Record<DebaterActivityK
 
 function parseTally(raw: unknown): DebaterDeviceTally | null {
   if (!raw || typeof raw !== "object") return null;
-  const { xp, counts } = raw as { xp?: unknown; counts?: unknown };
+  const { xp, counts, daily } = raw as { xp?: unknown; counts?: unknown; daily?: unknown };
   if (typeof xp !== "number" || !Number.isFinite(xp) || xp < 0 || !isCountRecord(counts)) return null;
   const daily = (raw as { daily?: unknown }).daily as { dayKey?: unknown; counts?: unknown } | undefined;
   if (daily && typeof daily.dayKey === "string" && isCountRecord(daily.counts)) {

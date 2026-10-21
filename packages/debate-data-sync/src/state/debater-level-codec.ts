@@ -167,7 +167,7 @@ interface Ledger {
 
 function asTally(value: unknown): Tally | null {
   if (typeof value !== "object" || value === null) return null;
-  const { xp, counts } = value as { xp?: unknown; counts?: unknown };
+  const { xp, counts, daily } = value as { xp?: unknown; counts?: unknown; daily?: unknown };
   if (typeof xp !== "number" || !Number.isFinite(xp) || xp < 0) return null;
   const daily = (value as { daily?: unknown }).daily as { dayKey?: unknown; counts?: unknown } | undefined;
   if (daily && typeof daily.dayKey === "string") {
@@ -261,7 +261,7 @@ export function mergeDebaterLevel(local: unknown, remote: unknown): unknown {
   const vr = withUnseenEvents(r, l);
   const dl = { ...l.daily, counts: maxCounts(l.daily.counts, vl.dailyCounts) };
   const dr = { ...r.daily, counts: maxCounts(r.daily.counts, vr.dailyCounts) };
-  const daily =
+  const daily: ReturnType<typeof asDaily> =
     dl.dayKey === dr.dayKey
       ? {
           dayKey: dl.dayKey,
@@ -292,6 +292,7 @@ export function mergeDebaterLevel(local: unknown, remote: unknown): unknown {
     totalXp = Math.max(totalXp, ledgerTotal(ledger));
     lifetimeCounts = maxCounts(lifetimeCounts, ledgerCounts(ledger));
   }
+  if (ledger) daily.counts = maxCounts(daily.counts, ledgerDailyCounts(ledger, daily.dayKey));
   const { ledger: _l, ...localRest } = local;
   const { ledger: _r, ...remoteRest } = remote;
   return {
