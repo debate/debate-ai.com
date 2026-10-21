@@ -303,3 +303,16 @@ own tests.
   entered by hand via the "Log a round" form. Pairings/room assignments now
   have a dedicated manual-entry form (see above) as the practical stand-in
   for the still-blocked live Tabroom data.
+
+## Debater statistics (first slice)
+
+`round/debater-stats.ts#buildDebaterStats` reduces the same `ownRoundHistory`
+records (which sync to the account as the `ownRoundHistory` tool-record
+collection) into overall, per-side, per-division and per-argument-tag win/loss
+tallies, plus a recent-form window (`RECENT_FORM_WINDOW` = 5 rounds) and a
+`trend` that needs at least ten logged rounds and a 0.10 gap from the all-time
+rate. It is pure and covered by `test/debater-stats.test.ts`.
+
+Known gaps: no panel mounts it yet, and fallacy frequency, argument length and
+topic expertise from the "Analytics Dashboard for Debaters" idea are absent
+because no store records them.

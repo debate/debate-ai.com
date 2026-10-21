@@ -45,6 +45,10 @@
 ### 10\. **Analytics Dashboard for Debaters**
 
 - Personal stats: win rate, fallacy frequency, argument length, topic expertise, improvement trends
+- **In Progress** (branch `agent/todo-debater-analytics-stats`): `buildDebaterStats` in `packages/debate-round/src/round/debater-stats.ts` computes win rate, side/division/argument splits and recent-form trend from `ownRoundHistory`.
+  - [x] Pure stats model + Vitest
+  - [ ] Follow-up: mount a Stats panel in the tools sidebar and `/tools`
+  - [ ] Follow-up: record fallacy/argument-length data so those stats can be added
 
 1. ability to challenge legends - and speculators bet
 2. random pair webcam debate matching on mutual pref topics
