@@ -41,10 +41,20 @@ describe("applyDebaterActivity ledger", () => {
     const { state, xpGained } = applyDebaterActivity(legacy, "card_cut", NOW, 2, [], "A");
     expect(state.ledger).toEqual({
       base: { xp: 200, counts: { card_cut: 7 } },
-      devices: { A: { xp: xpGained, counts: { card_cut: 2 } } },
+      devices: { A: { xp: xpGained, counts: { card_cut: 2 }, daily: { dayKey: "2026-10-20", counts: { card_cut: 2 } } } },
     });
     expect(xpGained).toBe(ACTIVITY_XP.card_cut * 2);
     expect(state.totalXp).toBe(200 + xpGained);
+  });
+
+  it("tallies today per device, snapshots pre-ledger daily counts, and restarts on a new day", () => {
+    const earlier = applyDebaterActivity(createDebaterLevelState(), "card_cut", NOW, 3, []).state;
+    const first = applyDebaterActivity(earlier, "card_cut", NOW, 1, [], "A").state;
+    expect(first.ledger?.base.daily).toEqual({ dayKey: "2026-10-20", counts: { card_cut: 3 } });
+    const again = applyDebaterActivity(first, "card_cut", NOW, 2, [], "A").state;
+    expect(again.ledger?.devices.A.daily).toEqual({ dayKey: "2026-10-20", counts: { card_cut: 3 } });
+    const nextDay = applyDebaterActivity(again, "speech_delivered", NOW + 86_400_000, 1, [], "A").state;
+    expect(nextDay.ledger?.devices.A.daily).toEqual({ dayKey: "2026-10-21", counts: { speech_delivered: 1 } });
   });
 
   it("accumulates per device and keeps the ledger when a later call has no device id", () => {
@@ -64,6 +74,8 @@ describe("parseDebaterLevelState ledger", () => {
     expect(parseDebaterLevelState({ ...state, ledger: { base: 1, devices: {} } })?.ledger).toBeUndefined();
     const dirty = { ...state, ledger: { ...state.ledger, devices: { A: { xp: -1, counts: {} }, B: { xp: 3, counts: { speech_delivered: 1 } } } } };
     expect(Object.keys(parseDebaterLevelState(dirty)?.ledger?.devices ?? {})).toEqual(["B"]);
+    const withDaily = applyDebaterActivity(createDebaterLevelState(), "speech_delivered", NOW, 1, [], "A").state;
+    expect(parseDebaterLevelState(JSON.parse(JSON.stringify(withDaily)))?.ledger?.devices.A.daily).toEqual({ dayKey: "2026-10-20", counts: { speech_delivered: 1 } });
   });
 });
 
