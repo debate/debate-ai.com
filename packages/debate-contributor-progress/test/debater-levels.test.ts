@@ -125,7 +125,7 @@ describe("applyDebaterActivity event ledger", () => {
     let last = applyDebaterActivity(state, "card_cut", DAY1, 1, undefined, undefined, "e1");
     for (let i = 0; i < 6 && last.completedChallenges.length === 0; i += 1) {
       state = last.state;
-      last = applyDebaterActivity(state, "card_cut", DAY1, 1, undefined, `e${i + 2}`);
+      last = applyDebaterActivity(state, "card_cut", DAY1, 1, undefined, undefined, `e${i + 2}`);
     }
     const bonus = last.state.recentXp.find((e) => e.source !== "card_cut");
     if (bonus) expect(bonus.id).toMatch(/^e\d+:/);
