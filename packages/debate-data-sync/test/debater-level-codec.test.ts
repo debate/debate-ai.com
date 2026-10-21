@@ -129,6 +129,43 @@ describe("mergeDebaterLevel", () => {
       });
     });
 
+    describe("today's counts", () => {
+      const dayTally = (xp: number, dayKey: string, counts: Record<string, number>) => ({ xp, counts: {}, daily: { dayKey, counts } });
+      const onDay = (dayKey: string, dailyCounts: Record<string, number>, devices: Record<string, unknown>, base: unknown = tally(0)) =>
+        full({ daily: { dayKey, counts: dailyCounts, completedChallengeIds: [] }, ledger: { base, devices } });
+
+      it("adds today's per-device counts instead of keeping the larger side", () => {
+        const a = onDay("2026-10-20", { card_cut: 2 }, { A: dayTally(0, "2026-10-20", { card_cut: 2 }) });
+        const b = onDay("2026-10-20", { card_cut: 3, flow: 1 }, { B: dayTally(0, "2026-10-20", { card_cut: 3, flow: 1 }) });
+        const merged = mergeDebaterLevel(a, b);
+        expect(merged).toMatchObject({ daily: { counts: { card_cut: 5, flow: 1 } } });
+        expect(mergeDebaterLevel(merged, b)).toMatchObject({ daily: { counts: { card_cut: 5, flow: 1 } } });
+        expect(mergeDebaterLevel(b, merged)).toMatchObject({ daily: { counts: { card_cut: 5, flow: 1 } } });
+      });
+
+      it("counts the pre-ledger snapshot once and ignores entries from another day", () => {
+        const base = { xp: 0, counts: {}, daily: { dayKey: "2026-10-20", counts: { card_cut: 4 } } };
+        const a = onDay("2026-10-20", { card_cut: 5 }, { A: dayTally(0, "2026-10-20", { card_cut: 1 }) }, base);
+        const b = onDay("2026-10-20", { card_cut: 6 }, { B: dayTally(0, "2026-10-20", { card_cut: 2 }), C: dayTally(0, "2026-10-19", { card_cut: 9 }) }, base);
+        expect(mergeDebaterLevel(a, b)).toMatchObject({ daily: { counts: { card_cut: 7 } } });
+      });
+
+      it("keeps the later day's entry when the same device is seen on two days", () => {
+        const old = onDay("2026-10-20", { flow: 1 }, { A: dayTally(0, "2026-10-20", { flow: 1 }) });
+        const next = onDay("2026-10-21", { flow: 1 }, { A: dayTally(0, "2026-10-21", { flow: 1 }) });
+        expect(mergeDebaterLevel(old, next)).toMatchObject({
+          daily: { dayKey: "2026-10-21", counts: { flow: 1 } },
+          ledger: { devices: { A: { daily: { dayKey: "2026-10-21" } } } },
+        });
+      });
+
+      it("falls back to the larger side when entries carry no per-day tally", () => {
+        const a = onDay("2026-10-20", { card_cut: 2 }, { A: tally(0) });
+        const b = onDay("2026-10-20", { card_cut: 3 }, { B: tally(0) });
+        expect(mergeDebaterLevel(a, b)).toMatchObject({ daily: { counts: { card_cut: 3 } } });
+      });
+    });
+
     it("is idempotent: merging a copy with its own earlier state never double-counts", () => {
       const old = withLedger({ A: tally(10, { card_cut: 2 }) });
       const grown = withLedger({ A: tally(25, { card_cut: 5 }), B: tally(5) });
