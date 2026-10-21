@@ -1,6 +1,6 @@
 /**
  * @fileoverview Pure helpers for the `/tools` account-sync status panel
- * (`components/tools/ToolSyncStatusPanel.tsx`).
+ * (`components/tools/sync/ToolSyncStatusPanel.tsx`).
  *
  * `useToolRecordSync`'s `results` are keyed by the collection's raw string
  * key, with no label or link a person would recognize. This turns them into

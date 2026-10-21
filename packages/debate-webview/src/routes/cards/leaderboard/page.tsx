@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { ContributionLeaderboardWithIdentity } from "../../../components/research/ContributionLeaderboardWithIdentity"
+import { ContributionLeaderboardWithIdentity } from "../../../components/research/identity/ContributionLeaderboardWithIdentity"
 import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHeader"
 
 export default function CardsLeaderboardPage() {

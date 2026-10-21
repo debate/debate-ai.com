@@ -8,7 +8,7 @@
 
 import { describe, it, expect } from "vitest";
 
-import { formatCount } from "../src/components/category-gallery/format-count";
+import { formatCount } from "../src/lib/format-count";
 
 describe("formatCount", () => {
   it("shows all counts in k format with one decimal under 10k", () => {

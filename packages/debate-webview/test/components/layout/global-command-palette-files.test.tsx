@@ -21,7 +21,7 @@ vi.mock("../../../src/components/reason-docs/ReasonDocsProvider", () => ({
   useOptionalReasonDocs: () => docs.value,
 }))
 
-import { GlobalCommandPalette, isKShortcut, openGlobalCommandPalette } from "../../../src/components/layout/GlobalCommandPalette"
+import { GlobalCommandPalette, isKShortcut, openGlobalCommandPalette } from "../../../src/components/layout/command-palette/GlobalCommandPalette"
 import { registerStoredCmir, type StoredCmir } from "../../../src/lib/cardmirror/lazy-stored-cmir"
 
 ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true

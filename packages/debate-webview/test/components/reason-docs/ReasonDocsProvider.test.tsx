@@ -11,7 +11,7 @@ import {
 import { CardMirrorImportError } from "../../../src/lib/cardmirror/import-files";
 import { registerStoredCmir, type StoredCmir } from "../../../src/lib/cardmirror/lazy-stored-cmir";
 import type { ReasonDocument } from "../../../src/components/reason-docs/types";
-import type { TopicStarterItem } from "../../../src/components/reason-docs/TopicStarterTree";
+import type { TopicStarterItem } from "../../../src/components/reason-docs/topic-starters/TopicStarterTree";
 import { cleanup, flush, mockFetch, mount, type FetchCall, type Route } from "../../helpers/dom";
 
 const engine = {

@@ -62,8 +62,8 @@ const toast = vi.hoisted(() => ({
 vi.mock("sonner", () => ({ toast }));
 
 import { ReasonDocsSidebarPanels } from "../../../src/components/reason-docs/ReasonDocsSidebarPanels";
-import { FileTree } from "../../../src/components/reason-docs/FileTree";
-import { TopicStarterTree, type TopicStarterItem } from "../../../src/components/reason-docs/TopicStarterTree";
+import { FileTree } from "../../../src/components/reason-docs/file-manager/FileTree";
+import { TopicStarterTree, type TopicStarterItem } from "../../../src/components/reason-docs/topic-starters/TopicStarterTree";
 import { SharedCardOpener, ShareWithContacts } from "../../../src/components/reason-editor/ShareWithContacts";
 import type { ReasonDocument } from "../../../src/components/reason-docs/types";
 import {

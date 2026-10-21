@@ -6,7 +6,7 @@ import { FaHandshakeSimpleSlash } from "react-icons/fa6";
 import DebateCover from "../assets/DebateCover4.svg";
 import { Button } from "../components/ui/button";
 import { AuthContext } from "../context/authContext";
-import DebatePopup from "@/components/DebatePopup";
+import DebatePopup from "@/components/round/DebatePopup";
 import AOSSIELogo from "@/assets/aossie.png";
 
 const StartDebate = () => {

@@ -1,8 +1,8 @@
 /** @vitest-environment jsdom */
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
-import { VideoContentDialog } from "../../../src/components/admin/VideoContentDialog";
-import { VideoEditDialog, emptyLibraryVideo, type LibraryVideo } from "../../../src/components/admin/VideoEditDialog";
+import { VideoContentDialog } from "../../../src/components/admin/videos/VideoContentDialog";
+import { VideoEditDialog, emptyLibraryVideo, type LibraryVideo } from "../../../src/components/admin/videos/VideoEditDialog";
 import {
   bodyText,
   button,

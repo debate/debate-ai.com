@@ -1,9 +1,9 @@
 /** @vitest-environment jsdom */
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
-import { VideoLibraryTable } from "../../../src/components/admin/VideoLibraryTable";
-import { VideoReportsPanel } from "../../../src/components/admin/VideoReportsPanel";
-import { YoutubeChannelsPanel } from "../../../src/components/admin/YoutubeChannelsPanel";
+import { VideoLibraryTable } from "../../../src/components/admin/videos/VideoLibraryTable";
+import { VideoReportsPanel } from "../../../src/components/admin/videos/VideoReportsPanel";
+import { YoutubeChannelsPanel } from "../../../src/components/admin/videos/YoutubeChannelsPanel";
 import {
   allByText,
   bodyText,
