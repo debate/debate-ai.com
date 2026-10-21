@@ -53,7 +53,7 @@ jobs:
       - name: Ensure draft release exists
         id: release
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GIT_TOKEN }}
         run: |
           TAG="${GITHUB_REF_NAME}"
           VERSION="${TAG#native-wrapper-v}"
@@ -163,7 +163,7 @@ jobs:
 
       - uses: tauri-apps/tauri-action@v0
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
           # Updater signing: once the profile has an updater pubkey,
           # tauri.conf.json sets bundle.createUpdaterArtifacts and every
           # bundle (.app.tar.gz, NSIS -setup.exe, .AppImage) gets a .sig made
@@ -290,7 +290,7 @@ jobs:
       - name: Attach to release
         if: needs.prepare-release.outputs.release_id != '' && steps.keystore.outputs.configured == 'true'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GIT_TOKEN }}
         run: |
           shopt -s globstar nullglob
           files=(apps/debate-native-wrapper/src-tauri/gen/android/app/build/outputs/bundle/**/*.aab)
@@ -439,7 +439,7 @@ jobs:
       - name: Attach to release
         if: needs.prepare-release.outputs.release_id != '' && steps.signing.outputs.configured == 'true'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GIT_TOKEN }}
         run: |
           # `find` rather than a `**` glob: the macOS runners' default bash is
           # 3.2, which has no globstar.
@@ -468,7 +468,7 @@ jobs:
     steps:
       - name: Verify the draft has installers
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GIT_TOKEN }}
           GH_REPO: ${{ github.repository }}
         run: |
           TAG="${GITHUB_REF_NAME}"
@@ -485,7 +485,7 @@ jobs:
 
       - name: Publish the release
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GIT_TOKEN }}
           GH_REPO: ${{ github.repository }}
         run: |
           TAG="${GITHUB_REF_NAME}"
