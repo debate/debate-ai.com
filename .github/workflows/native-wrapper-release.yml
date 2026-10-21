@@ -131,26 +131,39 @@ jobs:
       # tauri.conf.json and the icon set are already checked in for the
       # active profile (native-wrapper-ci.yml's verify-configuration job
       # guarantees they're in sync) — no configure/icons step needed here.
-      - uses: tauri-apps/tauri-action@v0
+      # macOS signing + notarization and Windows Authenticode signing.
+      # Each secret is exported only when it is set: GitHub passes an unset
+      # secret as an empty string, and the Tauri bundler treats an empty
+      # APPLE_CERTIFICATE as "import this certificate" and fails with
+      # "failed to import the signing certificate as a PKCS#12". With none
+      # set, macOS gets an ad-hoc-signed build (Gatekeeper's "unidentified
+      # developer" warning on first launch) and Windows an unsigned
+      # .exe/.msi (a SmartScreen warning). See docs/APP_STORES.md.
+      - name: Export the platform signing secrets that are set
+        shell: bash
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # macOS signing + notarization — no-ops (ad-hoc-signed build) when
-          # these secrets aren't set, which is fine for a test build but
-          # means the .dmg will show Gatekeeper's "unidentified developer"
-          # warning on first launch. See docs/APP_STORES.md.
           APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
           APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
           APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-          # Windows Authenticode signing — same no-op-when-unset behavior;
-          # an unsigned .exe/.msi triggers a SmartScreen warning instead.
-          # Verify these env var names against the Tauri CLI version this
-          # workflow resolves before relying on this for a real release; the
-          # Windows signing story has changed across Tauri versions.
           WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
           WINDOWS_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}
+        run: |
+          for name in APPLE_CERTIFICATE APPLE_CERTIFICATE_PASSWORD APPLE_SIGNING_IDENTITY \
+                      APPLE_ID APPLE_PASSWORD APPLE_TEAM_ID \
+                      WINDOWS_CERTIFICATE WINDOWS_CERTIFICATE_PASSWORD; do
+            value="${!name}"
+            [ -n "$value" ] || continue
+            # Heredoc form, since a base64 certificate can span lines.
+            delimiter="EOF_$(openssl rand -hex 16)"
+            { echo "$name<<$delimiter"; echo "$value"; echo "$delimiter"; } >> "$GITHUB_ENV"
+          done
+
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Updater signing: once the profile has an updater pubkey,
           # tauri.conf.json sets bundle.createUpdaterArtifacts and every
           # bundle (.app.tar.gz, NSIS -setup.exe, .AppImage) gets a .sig made
@@ -334,11 +347,21 @@ jobs:
           bun install
           cd apps/debate-native-wrapper && bun scripts/build-offline.mjs
 
+      # `ios init` refuses to run without a development team, so with no
+      # APPLE_TEAM_ID secret the job only compiles the Rust core below.
       - name: Generate the gen/apple project
+        id: init
         working-directory: apps/debate-native-wrapper
         env:
           APPLE_DEVELOPMENT_TEAM: ${{ secrets.APPLE_TEAM_ID }}
-        run: npx @tauri-apps/cli@2 ios init
+        run: |
+          if [ -z "$APPLE_DEVELOPMENT_TEAM" ]; then
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::APPLE_TEAM_ID is not set — skipping the Xcode project and the .ipa."
+            exit 0
+          fi
+          npx @tauri-apps/cli@2 ios init
+          echo "configured=true" >> "$GITHUB_OUTPUT"
 
       # Split into two tiers on purpose, because unlike Android there is no
       # such thing as a useful unsigned iOS build: Xcode refuses to archive
@@ -354,6 +377,7 @@ jobs:
 
       - name: Import signing certificate + provisioning profile (skips .ipa if not configured)
         id: signing
+        if: steps.init.outputs.configured == 'true'
         env:
           APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
           APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
