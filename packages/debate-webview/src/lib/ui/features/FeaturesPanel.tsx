@@ -30,6 +30,7 @@
 
 import { useEffect, useMemo, useState, type ComponentType } from "react";
 import {
+  Download,
   Dumbbell,
   ExternalLink,
   FileText,
@@ -66,6 +67,7 @@ import {
   type FeatureEntry,
 } from "../../feature-catalog";
 import { README_BADGE_ROWS, README_BANNER, README_SHOWCASE, README_VIDEO } from "./readme-media";
+import { DESKTOP_DOWNLOADS, DESKTOP_RELEASE_URL, DESKTOP_VERSION } from "./desktop-downloads";
 import { LATEST_VIDEOS, POPULAR_CARDS_WEEK, type RecentVideo, type PopularCard } from "./recent-media";
 import {
   CARDS_CAPABILITIES,
@@ -327,6 +329,41 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
                 <DownloadAppButton platform="chrome-extension-white" appId="noecbaibfhbmpapofcdkgchfifmoinfj" />
                 <DownloadAppButton platform="android" appId="com.debate.ai" />
               </div>
+              {/* Direct installers rather than the button library's desktop
+                  badges, which name the Mac App Store and Microsoft Store. */}
+              <div className="flex flex-wrap items-start justify-center gap-3" data-testid="desktop-downloads">
+                {DESKTOP_DOWNLOADS.map((platform) => {
+                  const [primary, ...others] = platform.installers;
+                  return (
+                    <div key={platform.id} className="flex flex-col items-center gap-1">
+                      <a
+                        href={primary.href}
+                        data-testid={`desktop-download-${platform.id}`}
+                        className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-accent"
+                      >
+                        <Download className="size-4" />
+                        {platform.name}
+                        <span className="text-xs font-normal text-muted-foreground">{primary.label}</span>
+                      </a>
+                      <span className="flex gap-2 text-xs text-muted-foreground">
+                        {others.map((installer) => (
+                          <a key={installer.label} href={installer.href} className="hover:text-foreground hover:underline">
+                            {installer.label}
+                          </a>
+                        ))}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+              <a
+                href={DESKTOP_RELEASE_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="text-xs text-muted-foreground hover:text-foreground hover:underline"
+              >
+                Desktop app v{DESKTOP_VERSION} release notes
+              </a>
             </div>
           </Reveal>
 
