@@ -172,6 +172,10 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       // `/practice/glossary` address redirects to its Glossary tab, so that
       // prefix is this row's too.
       { href: "/practice/rules", title: "Rules & Glossary", icon: Scale, aliases: ["/practice/glossary"] },
+      // Companion guide page (not a tool) — round-day setup for debating off
+      // just a phone. It keeps its `/coaching/laptopless` address; being the
+      // longest match, it still opens Insights rather than Coaching.
+      { href: "/coaching/laptopless", title: "Laptop-less Debating", icon: Smartphone },
       { href: "/practice/features", title: "All Features", icon: Sparkles },
     ],
   },
