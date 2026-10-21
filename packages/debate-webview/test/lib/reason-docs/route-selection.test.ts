@@ -1,6 +1,6 @@
 /**
  * @fileoverview Pins the URL round trip behind "click a file in any sidebar,
- * get that file in CardMirror": the href the docs sidebar routes to, the
+ * get that file in Debate Editor": the href the docs sidebar routes to, the
  * selection the editor route resolves back out of it, and the rewrite that
  * keeps the address bar naming whatever is open.
  *

@@ -43,12 +43,12 @@ defines shared record types such as `OpponentTeamProfile`. Depends on
 
 ## debate-editor
 
-The CardMirror-based debate-card editor embedded across debate-ai.com. Exposes the
+Debate Editor, the debate-card editor embedded across debate-ai.com. Exposes the
 ProseMirror engine, Verbatim `.docx` interop (lossless round-trip, encrypted-file
 decryption, the native `.cmir` format, the `cardmirror-read` headless CLI/MCP server), and
 a React editor shell sized for the site's speech-doc and `/reason-editor` surfaces.
 
-Its engine is upstream CardMirror from the `debate-editor-cm` submodule; this package is an
+Its engine is upstream Debate Editor from the `debate-editor-cm` submodule; this package is an
 adapter that holds no copy of it. `upstream.json` pins the upstream commit,
 `patches/debate-ai.patch` records every edit to an upstream file (the single scrolling
 toolbar strip, the embed hooks, the settings sidebar, account sync), and `overlay/` holds
@@ -59,18 +59,18 @@ install and before build/typecheck/test; `bun run sync-upstream:save` records ed
 
 ## debate-editor-cm (git submodule)
 
-`debate-editor-cm` is a git submodule of upstream CardMirror,
+`debate-editor-cm` is a git submodule of upstream Debate Editor,
 [debate/debate-editor](https://github.com/debate/debate-editor), kept as upstream ships it
 and outside the bun workspace (it is a Vite app with its own toolchain). `debate-editor` is
 its only adapter: the former `debate-editor-cm-adapter` package was merged into it, so
-CardMirror's schema, `.docx` import/export and native `.cmir` format, plus
+Debate Editor's schema, `.docx` import/export and native `.cmir` format, plus
 `importDocx(file)`, `exportDocxBlob(doc)`, `outlineOf(doc)` and `cardsOf(doc)`, all come
 from `@debate/editor/engine`.
 
 ## debate-emails
 
 Package name `@debate/emails`. The site's transactional emails as React Email
-(`@react-email/components`) templates: welcome, file collaboration invite (CardMirror
+(`@react-email/components`) templates: welcome, file collaboration invite (Debate Editor
 card shares), debate round invite and the coach feature tour. `renderEmail(id, props)`
 returns `{ subject, html, text }` and runs on Cloudflare Workers (`@react-email/render`'s
 `workerd` build). Each template carries sample data that the admin Emails section previews.

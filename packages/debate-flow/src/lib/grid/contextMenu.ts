@@ -11,7 +11,7 @@
  */
 
 import { jumpToSource } from "../bridge/commands";
-import { cardmirrorLive } from "../bridge/enabled";
+import { debateEditorLive } from "../bridge/enabled";
 import type { CellSource } from "../model/flow";
 
 /** The slice of Handsontable a menu item reads. Bound as `this` on both hooks. */
@@ -37,7 +37,7 @@ export const JUMP_TO_SOURCE_ITEM = {
     key: "jump_to_source",
     name: "Jump to source",
     hidden(this: MenuGrid): boolean {
-        return !cardmirrorLive() || !menuSource(this);
+        return !debateEditorLive() || !menuSource(this);
     },
     callback(this: MenuGrid): void {
         void jumpToSource(menuSource(this));

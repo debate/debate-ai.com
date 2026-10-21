@@ -334,7 +334,7 @@
 }
 
 /* Linked marker: a cell another app sent in over the bridge wears a teal rail
-   down its left edge, the same rail a linked copy wears in CardMirror, so a run
+   down its left edge, the same rail a linked copy wears in Debate Editor, so a run
    of sent cells reads as borrowed. Painted from the cell's stored source by
    afterRenderer, so it is never a saved decoration. Fixed teal rather than a
    token: the flow sheet is light-locked paper. */

@@ -38,7 +38,7 @@ export interface DocxToCmirOptions {
 /**
  * Convert `.docx` bytes to a `.cmir` file.
  *
- * The import is CardMirror's own OOXML reader, so Verbatim's card structure
+ * The import is Debate Editor's own OOXML reader, so Verbatim's card structure
  * (pocket / hat / block / tag / analytic), highlighting, comments and inline
  * images survive into the native document rather than being flattened to
  * markup. Throws whatever `fromDocxFull` throws for bytes that are not a

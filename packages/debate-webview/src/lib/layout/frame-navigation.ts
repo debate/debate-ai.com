@@ -37,7 +37,7 @@ export function opensElsewhere(event: {
  * with only the site sidebar around it.
  *
  * A Topic Starter's `/docs/<topic code>/...` address is not: it is the
- * CardMirror editor (`lib/reason-docs/topic-doc-paths`), an app page, so it
+ * Debate Editor (`lib/reason-docs/topic-doc-paths`), an app page, so it
  * gets the app shell and a link to it from the help docs is a full page load.
  *
  * @param pathname - The current path, as `usePathname` reports it.

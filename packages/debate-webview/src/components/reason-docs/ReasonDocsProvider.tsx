@@ -19,11 +19,11 @@
  * Tool pages that never expand it pay for no fetch.
  *
  * Two things here are about the file *format* rather than the file list, and
- * both exist so an uploaded `.docx` stays a CardMirror file:
+ * both exist so an uploaded `.docx` stays a Debate Editor file:
  *
  *  - {@link ReasonDocsContextValue.importFiles} converts an upload with
- *    CardMirror's own importer and stores the `.cmir` it produces, never card
- *    HTML — see `lib/cardmirror/stored-cmir.ts` for why that is the only shape
+ *    Debate Editor's own importer and stores the `.cmir` it produces, never card
+ *    HTML — see `lib/debate-editor/stored-cmir.ts` for why that is the only shape
  *    that keeps a Verbatim document intact.
  *  - Editing such a file re-encodes it back to `.cmir` before the write, so
  *    the first keystroke doesn't silently downgrade the document to markup.
@@ -43,13 +43,13 @@ import {
   reopenClosedTab as reopenClosed,
   type TabState,
 } from "../../lib/reason-docs/tab-actions"
-import { STORED_FORMATS } from "../../lib/cardmirror/format"
-import { isCmirContent } from "../../lib/cardmirror/content-format"
-// CardMirror's engine is loaded on demand (`lazy-stored-cmir`), not imported:
+import { STORED_FORMATS } from "../../lib/debate-editor/format"
+import { isCmirContent } from "../../lib/debate-editor/content-format"
+// Debate Editor's engine is loaded on demand (`lazy-stored-cmir`), not imported:
 // this provider wraps every page, and only opening, saving, importing or
 // downloading a `.cmir` needs it.
-import { CardMirrorImportError, docxDownloadFilename } from "../../lib/cardmirror/import-files"
-import { loadStoredCmir, storedCmirIfLoaded, type StoredCmir } from "../../lib/cardmirror/lazy-stored-cmir"
+import { DebateEditorImportError, docxDownloadFilename } from "../../lib/debate-editor/import-files"
+import { loadStoredCmir, storedCmirIfLoaded, type StoredCmir } from "../../lib/debate-editor/lazy-stored-cmir"
 import type { ReasonDocument } from "./types"
 import type { TopicStarterChange } from "../../lib/topic-starters/changes"
 import type { TopicStarterItem } from "./topic-starters/TopicStarterTree"
@@ -150,7 +150,7 @@ export interface ReasonDocsContextValue {
   updateContent: (id: number, content: string) => void
   selectTopicDocument: (item: TopicStarterItem) => void
   /**
-   * Imports uploaded files as CardMirror `.cmir` documents under `parentId`,
+   * Imports uploaded files as Debate Editor `.cmir` documents under `parentId`,
    * opening the first one. Never throws: a file that cannot be converted comes
    * back in `failures` so one bad file in a drop doesn't lose the rest.
    */
@@ -159,7 +159,7 @@ export interface ReasonDocsContextValue {
   documentHtml: (doc: ReasonDocument) => string
   /**
    * Converts an owned document to `.docx` and triggers a browser download,
-   * so the sidebar can offer a file without opening it in CardMirror first.
+   * so the sidebar can offer a file without opening it in Debate Editor first.
    * Includes any edit made this session, the same as `documentHtml`. Never
    * throws — a missing/folder id or a conversion failure comes back as
    * `{ ok: false }` for the caller to show.
@@ -580,7 +580,7 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
         // edit, so the engine is loaded by now; if it somehow is not, the
         // stored file is left alone, as for a failed encode.
         const engine = storedCmirIfLoaded()
-        if (!engine) throw new Error("CardMirror is not loaded")
+        if (!engine) throw new Error("Debate Editor is not loaded")
         saveQueue.queue(id, { content: engine.htmlToStoredCmirSync(html) })
       } catch (error) {
         console.error("[reason-docs] could not re-encode document as .cmir", error)
@@ -763,7 +763,7 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
             created.push({ ...row, format: STORED_FORMATS.cmir })
           } catch (error) {
             failures.push(
-              error instanceof CardMirrorImportError
+              error instanceof DebateEditorImportError
                 ? error.message
                 : `${file.name} could not be uploaded (${
                     error instanceof Error ? error.message : String(error)

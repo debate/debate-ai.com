@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * CardMirrorEditor — the React shell around the CardMirror ProseMirror
+ * DebateEditor — the React shell around the Debate Editor ProseMirror
  * engine (`../editor/index.js`), replacing the prior TipTap-based
  * ReasonEditor. Speaks the same `content`/`onChange`/`contentKey`/`title`
  * HTML contract the host app's call sites already use (see
@@ -11,7 +11,7 @@
  *
  * Command chrome: a Google-Docs-style dropdown `MenuBar` (File / Edit /
  * Insert / Workspace / …, see `menu-bar-categories.ts`) stacked above the
- * engine's own toolbar — upstream CardMirror's single strip of every panel,
+ * engine's own toolbar — upstream Debate Editor's single strip of every panel,
  * which scrolls left↔right rather than being paged into tabs or split into
  * sections (`ribbon-template.ts`). The two aren't duplicate surfaces for the
  * same job: the strip is the always-visible, icon-driven toolbar; the menu
@@ -19,7 +19,7 @@
  * `WORKSPACE_LINKS` navigation), the way Docs/Sheets keep a menu bar above
  * their own toolbar.
  *
- * CardMirror's engine is a page-level singleton (see singleton.ts) — it
+ * Debate Editor's engine is a page-level singleton (see singleton.ts) — it
  * cannot run two live instances at once. `live` (default true) controls
  * whether THIS instance claims the singleton and renders the real editor,
  * or renders `ReadOnlyPreview` instead. Hosts that show two docs side by
@@ -34,7 +34,7 @@ import * as singleton from "./singleton.js";
 // No stylesheet imports here on purpose: the engine's CSS is loaded by
 // `singleton.ensureBooted()` together with the engine itself, so importing
 // this module (or anything re-exported from the package root) never puts
-// CardMirror's stylesheet on a page that doesn't actually mount the editor.
+// Debate Editor's stylesheet on a page that doesn't actually mount the editor.
 
 export interface LexicalEditorHandle {
   getHTML(): string;
@@ -66,13 +66,13 @@ export interface ReasonEditorProps {
   autoFocus?: boolean;
   showOutline?: boolean;
   documentId?: string;
-  /** Whether THIS instance should claim the page-singleton CardMirror
+  /** Whether THIS instance should claim the page-singleton Debate Editor
    *  engine and render live, vs. a read-only preview. Default true —
    *  every existing call site renders exactly one editor at a time, so
    *  this only needs setting explicitly by hosts showing two docs at
    *  once (Flow split mode). */
   live?: boolean;
-  /** Start with CardMirror's own outline nav pane hidden — for hosts
+  /** Start with Debate Editor's own outline nav pane hidden — for hosts
    *  that render their own document sidebar beside the embed (the
    *  /reason-editor page's file tree + open tabs), where the engine's
    *  default-visible nav pane would claim a second sidebar's worth of
@@ -90,8 +90,8 @@ export interface ReasonEditorProps {
   onActivate?: () => void;
 }
 
-export const CardMirrorEditor = forwardRef<LexicalEditorHandle, ReasonEditorProps>(
-  function CardMirrorEditor(
+export const DebateEditor = forwardRef<LexicalEditorHandle, ReasonEditorProps>(
+  function DebateEditor(
     {
       content = "",
       contentKey,
@@ -139,7 +139,7 @@ export const CardMirrorEditor = forwardRef<LexicalEditorHandle, ReasonEditorProp
           // nothing but an unhandled rejection in the console. Say so instead.
           (err: unknown) => {
             if (cancelled) return;
-            console.error("[debate-editor] CardMirror failed to load:", err);
+            console.error("[debate-editor] Debate Editor failed to load:", err);
             setBootError(err instanceof Error ? err.message : String(err));
           },
         );

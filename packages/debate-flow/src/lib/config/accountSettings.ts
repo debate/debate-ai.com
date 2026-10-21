@@ -21,7 +21,7 @@ import { resolveThemeMode } from "../theme/mode";
 export const ACCOUNT_ZOOM_MIN = 0.5;
 export const ACCOUNT_ZOOM_MAX = 3;
 
-const CARDMIRROR_TEXT_TYPES = ["pocket", "hat", "block", "tag", "analytic", "body"] as const;
+const DEBATE_EDITOR_TEXT_TYPES = ["pocket", "hat", "block", "tag", "analytic", "body"] as const;
 const MAX_KEYMAP_OVERRIDES = 500;
 const MAX_CHORD_LENGTH = 64;
 const MAX_COMMAND_ID_LENGTH = 128;
@@ -36,7 +36,7 @@ export interface FlowEditorAccountSettings {
     alignSpeeches: boolean;
     tooltips: boolean;
     cardmirrorEnabled: boolean;
-    cardmirrorTextType: (typeof CARDMIRROR_TEXT_TYPES)[number];
+    cardmirrorTextType: (typeof DEBATE_EDITOR_TEXT_TYPES)[number];
     theme: "light" | "dark" | "system";
     affColor: string | null;
     negColor: string | null;
@@ -125,7 +125,7 @@ export function normalizeFlowEditorSettingsPatch(input: unknown): {
                 value >= ACCOUNT_ZOOM_MIN &&
                 value <= ACCOUNT_ZOOM_MAX;
         } else if (key === "cardmirrorTextType") {
-            ok = (CARDMIRROR_TEXT_TYPES as readonly unknown[]).includes(value);
+            ok = (DEBATE_EDITOR_TEXT_TYPES as readonly unknown[]).includes(value);
         } else if (key === "theme") {
             ok = typeof value === "string" && resolveThemeMode(value) === value;
         } else if (key === "affColor" || key === "negColor") {

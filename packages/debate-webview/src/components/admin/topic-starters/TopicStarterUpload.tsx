@@ -3,7 +3,7 @@
 /**
  * @fileoverview Admin-only Topic Starter importer UI.
  *
- * Uploads are DOCX; what the library keeps is CardMirror's native `.cmir`,
+ * Uploads are DOCX; what the library keeps is Debate Editor's native `.cmir`,
  * converted server-side (see `app/api/admin/topic-starters/route.ts`), which
  * the copy below says plainly — an operator who uploads a Verbatim file
  * should know which format their teammates will open.
@@ -124,7 +124,7 @@ export function TopicStarterUpload() {
         detail:
           failures.length > 0
             ? `${data.found} file${data.found === 1 ? "" : "s"} found in the upload — the ones below were skipped and can be fixed and re-uploaded on their own.`
-            : "Stored as .cmir and published to CardMirror for everyone.",
+            : "Stored as .cmir and published to Debate Editor for everyone.",
         failures,
         importId: data.importId,
       })
@@ -150,7 +150,7 @@ export function TopicStarterUpload() {
   return <Card>
     <CardHeader>
       <CardTitle>Topic Starter library</CardTitle>
-      <CardDescription>Upload one DOCX or a ZIP of them — there is no cap on how many files an archive holds or how large they are. Each file is converted to CardMirror&rsquo;s native <span className="font-mono">.cmir</span> format and stored that way, so the card outline, highlighting and comments survive the import. Every imported folder and file is published to CardMirror for everyone. Files that fail to convert are listed below with the reason, and the rest of the batch still imports.</CardDescription>
+      <CardDescription>Upload one DOCX or a ZIP of them — there is no cap on how many files an archive holds or how large they are. Each file is converted to Debate Editor&rsquo;s native <span className="font-mono">.cmir</span> format and stored that way, so the card outline, highlighting and comments survive the import. Every imported folder and file is published to Debate Editor for everyone. Files that fail to convert are listed below with the reason, and the rest of the batch still imports.</CardDescription>
     </CardHeader>
     <CardContent className="flex flex-col gap-3">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end">

@@ -48,7 +48,7 @@ import {
  * today). Same reasoning: a page reachable from the footer on every other
  * route otherwise loses the nav the moment you open it.
  *
- * `/reason-editor` is the CardMirror editor. It used to reach this set as a
+ * `/reason-editor` is Debate Editor. It used to reach this set as a
  * Research row ("Reason Editor"), but the editor is a top-level workspace
  * reached from the app itself, not a research tool, and the row in the column
  * duplicated the dock above it. It is listed here instead so the route keeps
@@ -175,7 +175,7 @@ export function isTeamProfilePath(pathname: string | null | undefined): boolean 
  * under `/research/cards`, a document route under `/doc`) is the same destination one
  * level down, and matching exact paths only left those pages with the app
  * dock's fixed top-left instance floating over their content instead of a
- * dock inside a sidebar — over a CardMirror editor, in the `/doc` and
+ * dock inside a sidebar — over a Debate Editor, in the `/doc` and
  * `/reason-editor` subtrees. The trailing `/` in the comparison keeps `/docs`
  * from matching `/doc`.
  */
@@ -193,7 +193,7 @@ export function matchesToolSidebarHref(pathname: string): boolean {
 
 /**
  * A Topic Starter's `/docs/<topic code>/...` address (`/docs/vcx27/neg/cp/x`)
- * — the CardMirror editor, served at the same page as `/reason-editor`, so it
+ * — Debate Editor, served at the same page as `/reason-editor`, so it
  * gets the same generic sidebar. Only a first segment shaped like a topic code
  * counts; the rest of `/docs` is the help docs. Mirrors `TOPIC_CODE_SOURCE` in
  * `@debate/webview`'s `lib/reason-docs/topic-doc-paths` (which depends on this

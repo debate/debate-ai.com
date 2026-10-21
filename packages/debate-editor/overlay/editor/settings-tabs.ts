@@ -1,12 +1,12 @@
 /**
- * CardMirror's settings as tabs a host page's own Settings sidebar can list.
+ * Debate Editor's settings as tabs a host page's own Settings sidebar can list.
  *
  * The editor's gear-icon modal keeps its own sidebar (`CATEGORY_TABS`, in
  * `settings-categories.ts`), but on debate-ai.com most of those categories
  * live on the site's Settings pages instead — Appearance and Accessibility
  * only there. This is the one exported list of them: the category id
  * `buildEmbeddedSettingsPanel` (in `settings-ui.ts`, or the React
- * `CardMirrorSettingsSection`) renders, the label the sidebar shows, and a
+ * `DebateEditorSettingsSection`) renders, the label the sidebar shows, and a
  * one-line description for the section header.
  *
  * Plain data with no imports, so a server route can read it too (the
@@ -15,7 +15,7 @@
 
 import type { SettingsCategory } from './settings.js';
 
-export interface CardMirrorSettingsTab {
+export interface DebateEditorSettingsTab {
   /** The settings category the tab renders. */
   id: SettingsCategory;
   /** Sidebar label. */
@@ -26,7 +26,7 @@ export interface CardMirrorSettingsTab {
 
 /** In the order a sidebar lists them. Plugins is left out: it is desktop-only
  *  (installed by the Electron main process) and would render empty on web. */
-export const CARDMIRROR_SETTINGS_TABS: readonly CardMirrorSettingsTab[] = [
+export const DEBATE_EDITOR_SETTINGS_TABS: readonly DebateEditorSettingsTab[] = [
   { id: 'general', label: 'General', description: 'Startup, language and general editor behavior.' },
   { id: 'files', label: 'Files', description: 'Opening, saving, autosave and file handling.' },
   { id: 'appearance', label: 'Appearance', description: 'Colors, fonts, sizing and layout.' },

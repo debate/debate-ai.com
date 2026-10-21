@@ -1,5 +1,5 @@
 /**
- * @fileoverview Reduces CardMirror's exported HTML to what a debater reads
+ * @fileoverview Reduces Debate Editor's exported HTML to what a debater reads
  * aloud — the same rule the editor's read mode applies, for docs shown as
  * static HTML without booting the editor.
  *

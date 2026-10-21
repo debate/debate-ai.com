@@ -10,7 +10,7 @@
  * request state machine below decides what a "send request" does given that
  * state, so the route and the tests agree on every transition.
  *
- * Share codes are the CardMirror editor's `cmshare1.<roomId>.<key>` (or
+ * Share codes are the Debate Editor's `cmshare1.<roomId>.<key>` (or
  * `cmshare2.<roomId>.<key>.<minVersion>`) format from
  * `packages/debate-editor/src/editor/collab/collab-crypto.ts`; the parser
  * here is format-only (it never touches the key) so the server can pull the

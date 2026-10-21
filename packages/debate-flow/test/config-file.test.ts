@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { configFromState, toAppConfig } from "../src/lib/config/configFile";
-import { resolveCardMirrorTextType } from "../src/lib/bridge/cardmirror";
+import { resolveDebateEditorTextType } from "../src/lib/bridge/debate-editor";
 import { COMMANDS } from "../src/lib/commands/registry";
 import { DEFAULT_FONT_ID, fontLabel, resolveFontName } from "../src/lib/fonts/registry";
 import { getPresetKeymap, RETIRED_DEFAULTS } from "../src/lib/keymap/presets";
@@ -221,11 +221,11 @@ describe("the settings resolvers", () => {
         expect(resolveFontName(7)).toBe(DEFAULT_FONT_ID);
     });
 
-    it("resolves the CardMirror text type against the levels it accepts", () => {
-        expect(resolveCardMirrorTextType("tag")).toBe("tag");
-        expect(resolveCardMirrorTextType("body")).toBe("body");
-        expect(resolveCardMirrorTextType("heading")).toBe("analytic");
-        expect(resolveCardMirrorTextType(null)).toBe("analytic");
+    it("resolves the Debate Editor text type against the levels it accepts", () => {
+        expect(resolveDebateEditorTextType("tag")).toBe("tag");
+        expect(resolveDebateEditorTextType("body")).toBe("body");
+        expect(resolveDebateEditorTextType("heading")).toBe("analytic");
+        expect(resolveDebateEditorTextType(null)).toBe("analytic");
     });
 
     it("resolves the theme mode against the system preference", () => {

@@ -80,12 +80,12 @@
  * one device stayed invisible from the tools page on another.
  *
  * A thirteenth kind, Speech Documents' send-log entries (`/speech-documents`,
- * CardMirror's "send to speech doc" history), joined next: `saved_speech_send_log`
+ * Debate Editor's "send to speech doc" history), joined next: `saved_speech_send_log`
  * (`debate-editor`) already synced a signed-in user's `SpeechSendLogEntry`s via
  * `GET /api/speech-send-log`, but the same "sync wired, discoverability not"
  * gap applied here too.
  *
- * A fourteenth kind, CardMirror Learn's custom flashcard decks
+ * A fourteenth kind, Debate Editor Learn's custom flashcard decks
  * (`/reason-editor`), joined next: `saved_learn_decks` (`debate-editor`)
  * already synced a signed-in user's `CustomDeck`s via `GET /api/learn-decks`
  * (see `packages/debate-help-docs/content/docs/features/learn-decks-cloud-sync.mdx`),
@@ -115,7 +115,7 @@
  * discoverability not" gap applied here too — an annotation dropped on one
  * device stayed invisible from this widget on another.
  *
- * A seventeenth kind, CardMirror's Quick Cards reusable-snippet library
+ * A seventeenth kind, Debate Editor's Quick Cards reusable-snippet library
  * (`/reason-editor`, same editor-internal home as documents and learn
  * decks), joined last: `QuickCard`s (`debate-editor`'s own
  * `editor/quick-cards-store.ts`) already synced a signed-in user's cards via

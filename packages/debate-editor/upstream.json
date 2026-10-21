@@ -1,5 +1,5 @@
 {
-  "$comment": "Upstream CardMirror for scripts/sync-upstream.mjs, which assembles the git-ignored src/ from the submodule at `commit` + `patch` + `overlayDir`. Move the submodule, then run the script with --rebase to take it.",
+  "$comment": "Upstream Debate Editor for scripts/sync-upstream.mjs, which assembles the git-ignored src/ from the submodule at `commit` + `patch` + `overlayDir`. Move the submodule, then run the script with --rebase to take it.",
   "repository": "https://github.com/debate/debate-editor.git",
   "submodule": "../debate-editor-cm",
   "upstreamSrcDir": "src",

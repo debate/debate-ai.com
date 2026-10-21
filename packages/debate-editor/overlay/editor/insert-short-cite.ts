@@ -1,6 +1,6 @@
 /**
  * "Insert short cite" — Mod-Shift-k. The one Verbatim shortcut with no
- * direct CardMirror equivalent (see the `legacy-verbatim-shortcuts` feature
+ * direct Debate Editor equivalent (see the `legacy-verbatim-shortcuts` feature
  * doc's Known gaps): a pure "format `Smith 24` and insert it at
  * the cursor" command, distinct from the three tools that solve an
  * adjacent need — F8 (`applyCite`, styles already-typed text), Alt-F8

@@ -1,9 +1,9 @@
 "use client"
 
 /**
- * @fileoverview Account sync for the CardMirror editor's settings wherever a
+ * @fileoverview Account sync for the Debate Editor's settings wherever a
  * Settings page renders them — `/settings` (`EditorSettingsPanel`), which
- * lists `CARDMIRROR_SETTINGS_TABS`.
+ * lists `DEBATE_EDITOR_SETTINGS_TABS`.
  *
  * On mount it hydrates the editor's local settings store from the signed-in
  * account (`GET /api/settings`'s `editorPreferences`; a `401` just means
@@ -11,7 +11,7 @@
  * keys back, debounced, whenever the store changes.
  *
  * Only keys whose rows have actually rendered are pushed (reported through
- * `noteRenderedKeys`, which `CardMirrorSettingsSection`'s `onRowsRendered`
+ * `noteRenderedKeys`, which `DebateEditorSettingsSection`'s `onRowsRendered`
  * feeds). A row the editor hides on this host — a desktop-only setting, one
  * revealed by another — would otherwise be pushed at its default and
  * overwrite what the account holds. `EDITOR_PREFERENCE_KEYS` then drops the

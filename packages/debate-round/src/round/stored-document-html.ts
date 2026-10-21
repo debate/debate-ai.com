@@ -4,8 +4,8 @@
  *
  * Rows from `documents` (`GET /api/doc/documents/:id`) and the public Topic
  * Starter library (`topic_starter_items`) both carry `content` plus a
- * `format`: `.cmir` rows are base64 CardMirror files, older rows are plain
- * HTML. The CardMirror engine is imported lazily so a page that never decodes
+ * `format`: `.cmir` rows are base64 Debate Editor files, older rows are plain
+ * HTML. The Debate Editor engine is imported lazily so a page that never decodes
  * a `.cmir` never pulls it in.
  *
  * @module round/stored-document-html

@@ -108,7 +108,7 @@ export function DebateFlowPage({ startScreenActions, roundActions, viewerEmail }
   // cleared so it doesn't re-run on the next render.
   const [ebbPendingAction, setEbbPendingAction] = useState<EbbFlowToolAction | null>(null)
 
-  // CardMirror only ever has one live, editable speech at a time — in split
+  // Debate Editor only ever has one live, editable speech at a time — in split
   // mode that's whichever panel the user last clicked into. Lifted to page
   // level (rather than owned inside FlowMainContent) so the sidebar's "round
   // times" group knows which speech's timer/controls bar to show.

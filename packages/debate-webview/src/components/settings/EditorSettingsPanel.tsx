@@ -8,9 +8,9 @@ import { Brain, BrainCog, HardDrive, Search, Server, Settings, ShieldCheck, Slid
 // Static import so bundling confines this ~15k-line global stylesheet to
 // the settings routes' own chunk — never loaded by the host app's main bundle.
 import "@debate/editor/styles.css"
-import { CardMirrorSettingsSection } from "@debate/editor/settings-section"
+import { DebateEditorSettingsSection } from "@debate/editor/settings-section"
 import type { SettingsCategory } from "@debate/editor/settings"
-import { CARDMIRROR_SETTINGS_TABS } from "@debate/editor/settings-tabs"
+import { DEBATE_EDITOR_SETTINGS_TABS } from "@debate/editor/settings-tabs"
 import { UserSettingsPanel } from "@debate/round"
 import { MyRankedTeamsSettings } from "@debate/videos"
 import { TeamCoachingSection } from "./sections/TeamCoachingSection"
@@ -24,7 +24,7 @@ import { PrivacySettingsSection } from "./sections/PrivacySettingsSection"
 import { useSession } from "../../lib/hooks/useSession"
 import { EDITOR_SETTINGS_TABS } from "../../lib/editor-preferences"
 import { useEditorPreferencesSync } from "../../lib/hooks/useEditorPreferencesSync"
-import { CARDMIRROR_TAB_ICONS } from "./cardmirror/cardmirror-tab-icons"
+import { DEBATE_EDITOR_TAB_ICONS } from "./debate-editor/debate-editor-tab-icons"
 import { ResearchSettingsTab } from "./ResearchSettingsTab"
 import { researchSectionOfTab, researchSettingsPages } from "../../lib/qwksearch/settings-paths"
 import { SITE_LINKS } from "../../lib/nav/dock-menu-sections"
@@ -110,7 +110,7 @@ const RESEARCH_ICONS: Record<string, ComponentType<{ size?: number }>> = {
 
 // Sidebar icon and header subtitle per category, in the style of the
 // research workspace's settings (components/qwksearch/Settings). The editor
-// categories' descriptions come with CardMirror's exported tab list.
+// categories' descriptions come with Debate Editor's exported tab list.
 const CATEGORY_DETAILS: Record<string, { icon: ComponentType<{ size?: number }>; description: string }> = {
   preferences: {
     icon: SlidersHorizontal,
@@ -127,7 +127,7 @@ const CATEGORY_DETAILS: Record<string, { icon: ComponentType<{ size?: number }>;
       "Whether your recordings can be published, audio only or with video, how you are credited, the privacy policy, and deleting your data.",
   },
   ...Object.fromEntries(
-    CARDMIRROR_SETTINGS_TABS.map((tab) => [tab.id, { icon: CARDMIRROR_TAB_ICONS[tab.id] ?? Settings, description: tab.description }]),
+    DEBATE_EDITOR_SETTINGS_TABS.map((tab) => [tab.id, { icon: DEBATE_EDITOR_TAB_ICONS[tab.id] ?? Settings, description: tab.description }]),
   ),
   ...Object.fromEntries(
     RESEARCH_PAGES.map((page) => [page.tabId, { icon: RESEARCH_ICONS[page.key] ?? Search, description: page.description }]),
@@ -405,7 +405,7 @@ function EditorSettingsPanelContent({ sidebarHeader }: { sidebarHeader?: ReactNo
             // subscription to the panel built last, so switching tabs
             // rebuilds from the store rather than revealing a stale render.
             ready ? (
-              <CardMirrorSettingsSection category={active as SettingsCategory} onRowsRendered={noteRenderedKeys} />
+              <DebateEditorSettingsSection category={active as SettingsCategory} onRowsRendered={noteRenderedKeys} />
             ) : (
               <p style={{ fontSize: 14, opacity: 0.7 }}>Loading…</p>
             )

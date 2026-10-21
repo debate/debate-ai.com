@@ -8,7 +8,7 @@
  * removed in favour of timing a round from the round it belongs to.
  * Other speeches in the round are listed by name with their word totals
  * (read from the speech doc · orally spoken) — the bar (and its timer) only
- * ever tracks the one speech in view, matching CardMirror, which only ever
+ * ever tracks the one speech in view, matching Debate Editor, which only ever
  * has one live editable speech at a time. The selected speech's recording
  * menu (mic selector with live waveform, resets, upload/share/delete) sits
  * on its own row under the speech here, rather than in the page topbar, and

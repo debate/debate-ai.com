@@ -1,7 +1,7 @@
 "use client"
 
 /**
- * The native REASON editor screen — the @debate/editor (TipTap/CardMirror) shell
+ * The native REASON editor screen — the @debate/editor (TipTap/Debate Editor) shell
  * wired to per-user document persistence (/api/doc/documents). Reachable
  * from the Settings menu alongside the existing /doc iframe.
  *
@@ -17,12 +17,12 @@
  * collapsible strip below `md`.
  *
  * A document's stored shape is not always the HTML the editor's `content`
- * prop takes: an uploaded file is kept as CardMirror's native `.cmir`, and
+ * prop takes: an uploaded file is kept as Debate Editor's native `.cmir`, and
  * `documentHtml` is what renders either shape for the editor (and what keeps
  * an edit made this session in front of the stored copy when you switch tabs
  * and come back).
  *
- * CardMirror's own outline nav pane opens with every document, beside the
+ * Debate Editor's own outline nav pane opens with every document, beside the
  * app sidebar; its × or the View menu hides it for the current document.
  */
 
@@ -31,7 +31,7 @@ import { Loader2 } from "lucide-react"
 import { AnimatedLoader } from "../ui/AnimatedLoader"
 import { EditorWithToolbar } from "@debate/editor"
 import { topicStarterHtml } from "../../lib/topic-starters/content"
-import { STORED_FORMATS } from "../../lib/cardmirror/format"
+import { STORED_FORMATS } from "../../lib/debate-editor/format"
 import { cn } from "../../lib/ui/lib/utils"
 import { EditorTabStrip } from "./EditorTabStrip"
 import { describeDocSaveStatus } from "../../lib/reason-docs/doc-save-status"
@@ -160,7 +160,7 @@ export function ReasonEditorScreen() {
             <div className="flex-1 min-h-0 overflow-hidden">
               {/* No React `key` here on purpose: `contentKey` already gives
                   each document a fresh claim (and undo history) inside the
-                  CardMirror singleton, so a keyed remount would only rerun
+                  Debate Editor singleton, so a keyed remount would only rerun
                   the editor's mount effects on every document switch. */}
               <EditorWithToolbar
                 content={topicHtml ?? selectedHtml!}

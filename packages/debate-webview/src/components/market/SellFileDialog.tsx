@@ -11,7 +11,7 @@
  * it and refreshes the copy buyers get.
  *
  * The outline is worked out here because an uploaded `.cmir` file can only be
- * read with the CardMirror engine, which lives in the browser.
+ * read with the Debate Editor engine, which lives in the browser.
  *
  * @module components/market/SellFileDialog
  */
@@ -40,8 +40,8 @@ import {
   DialogTitle,
 } from "../../lib/ui/primitives/dialog"
 import { useSession } from "../../lib/hooks/useSession"
-import { loadStoredCmir } from "../../lib/cardmirror/lazy-stored-cmir"
-import { isCmirContent } from "../../lib/cardmirror/content-format"
+import { loadStoredCmir } from "../../lib/debate-editor/lazy-stored-cmir"
+import { isCmirContent } from "../../lib/debate-editor/content-format"
 import { useReasonDocs } from "../reason-docs/ReasonDocsProvider"
 import { OutlinePreview } from "./OutlinePreview"
 

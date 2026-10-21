@@ -22,7 +22,7 @@ import {
 } from "@debate/team-collaboration"
 
 /**
- * Collab-card shares — a CardMirror co-editing session's share code (and
+ * Collab-card shares — a Debate Editor co-editing session's share code (and
  * relay guest pass) handed from one account to a contact, so the card shows
  * up as available on the recipient's account instead of only on the
  * clipboard the invite link was pasted into (`card_shares` in

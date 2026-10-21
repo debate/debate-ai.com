@@ -3,14 +3,14 @@
 /**
  * @fileoverview Renders a stored Topic Starter file for the editor.
  *
- * A thin alias over `lib/cardmirror/stored-cmir.ts`, which does this for every
+ * A thin alias over `lib/debate-editor/stored-cmir.ts`, which does this for every
  * stored file the app opens — the reader's own uploads included — so the
  * public library and the private sidebar cannot disagree about what a `.cmir`
  * row renders as.
  *
  * @module lib/topic-starters/content
  */
-import { storedContentToHtml } from "../cardmirror/stored-cmir";
+import { storedContentToHtml } from "../debate-editor/stored-cmir";
 import type { StoredTopicStarterContent } from "./format";
 
 /**

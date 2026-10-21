@@ -2,7 +2,7 @@
  * @fileoverview The style vocabulary the importer and exporter meet over.
  *
  * The two maps have to stay each other's inverse where they overlap, or a
- * file round-tripped through CardMirror comes back typed differently than it
+ * file round-tripped through Debate Editor comes back typed differently than it
  * went in. The legacy rStyle aliases are the other half of that: a 2013-era
  * 1AC carries `StyleBoldUnderline` on every underlined run, and a map that
  * knew only the modern id would drop all 1,760 of them silently on import.

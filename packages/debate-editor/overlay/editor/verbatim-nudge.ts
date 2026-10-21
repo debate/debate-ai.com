@@ -4,7 +4,7 @@
  * the UI tour's own "reference" step (`ui-tour.ts`): an established
  * profile the tour auto-skips outright, or someone who started the
  * tour and left (Esc / closed the tab) before reaching that step.
- * CardMirror's F8/F9/F10/F3 hotkey family is a direct port of
+ * Debate Editor's F8/F9/F10/F3 hotkey family is a direct port of
  * Verbatim's own, so this is the one thing worth surfacing to a
  * Verbatim-trained user who'd otherwise never discover the reference.
  *
@@ -40,7 +40,7 @@ export function shouldShowVerbatimNudge(state: VerbatimNudgeState): boolean {
 }
 
 const NUDGE_MESSAGE =
-  'Coming from Verbatim? CardMirror keeps the same F8 / F9 / F10 / F3 hotkey family — ' +
+  'Coming from Verbatim? Debate Editor keeps the same F8 / F9 / F10 / F3 hotkey family — ' +
   'the full reference is one click away.';
 
 const POLL_MS = 2000;

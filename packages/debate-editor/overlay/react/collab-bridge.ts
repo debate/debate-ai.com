@@ -19,7 +19,7 @@
  * Only the always-loaded seams are imported here; the heavy collab
  * module still loads lazily, on first use, exactly as it does for the
  * ribbon. Every function is a no-op (null/false) until the singleton
- * engine has booted, which `CardMirrorEditor` guarantees before any
+ * engine has booted, which `DebateEditor` guarantees before any
  * user-driven call can happen.
  */
 

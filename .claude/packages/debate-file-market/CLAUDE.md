@@ -40,5 +40,5 @@ browser calls at `debate-file-market/client`, tests in `test/`. User doc:
   "Sell…". Editing the original doesn't change what buyers get until the
   seller sells it again.
 - **The outline of a `.cmir` upload is worked out in the browser** (only the
-  CardMirror engine can read it) and sent with the sell request; the server
+  Debate Editor engine can read it) and sent with the sell request; the server
   sanitizes it. HTML documents are read server-side when no outline is sent.

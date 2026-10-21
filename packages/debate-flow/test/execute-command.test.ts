@@ -146,7 +146,7 @@ describe("grid commands", () => {
         revertMove();
     });
 
-    it("routes CardMirror commands", () => {
+    it("routes Debate Editor commands", () => {
         executeCommand("cell.jumpToSource");
         executeCommand("cell.sendToDoc");
         expect(m.bridge.runJumpToSource).toHaveBeenCalled();

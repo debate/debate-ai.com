@@ -307,8 +307,8 @@ export default defineConfig({
       // @debate/editor's card-cutter-port.ts dynamically imports
       // `@cardcutter/browser` — the separately-versioned, NOT-shipped
       // card-cutter engine, present only when checked out as a sibling of
-      // the CardMirror repo it was ported from. It never is here, so this
-      // always resolves to CardMirror's own in-repo no-op stub (mirrors
+      // the Debate Editor repo it was ported from. It never is here, so this
+      // always resolves to Debate Editor's own in-repo no-op stub (mirrors
       // that repo's own vite.config.ts production alias), leaving the
       // (experimental, console-gated) feature inert rather than a bundler
       // resolution error.
@@ -323,7 +323,7 @@ export default defineConfig({
       "react/jsx-runtime",
       "react-server-dom-webpack",
       // Keep a single ProseMirror instance across the app: debate-editor
-      // (the CardMirror engine) is the only consumer today, but a duplicate
+      // (the Debate Editor engine) is the only consumer today, but a duplicate
       // ProseMirror module breaks its schema/plugin identity checks the
       // moment anything else in the tree also depends on prosemirror-*.
       "prosemirror-model",

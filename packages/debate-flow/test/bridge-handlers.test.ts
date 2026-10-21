@@ -11,9 +11,9 @@ vi.mock("sonner", () => ({ toast: m.toast }));
 vi.mock("@tauri-apps/api/core", () => ({ invoke: m.invoke }));
 vi.mock("../src/lib/update/adapter", () => ({ isDesktop: () => m.desktop.value }));
 
-import { cardmirrorInsert, cardmirrorJump, resolveCardMirrorTextType } from "../src/lib/bridge/cardmirror";
+import { debateEditorInsert, debateEditorJump, resolveDebateEditorTextType } from "../src/lib/bridge/debate-editor";
 import { jumpToSource, runJumpToSource, runSendToDoc } from "../src/lib/bridge/commands";
-import { CARDMIRROR_APP, planFlowWrite } from "../src/lib/bridge/flowPlan";
+import { DEBATE_EDITOR_APP, planFlowWrite } from "../src/lib/bridge/flowPlan";
 import { handleBridgeRequest, resetRevealCycle } from "../src/lib/bridge/inbound";
 import { findCellsBySourceKey } from "../src/lib/bridge/sourceSearch";
 import { setActiveHot } from "../src/lib/grid/hotInstance";
@@ -44,7 +44,7 @@ describe("planFlowWrite", () => {
     it("plans one cell per item, folding cites into the card above", () => {
         const cells = planFlowWrite(items, "column", "Doc", 2);
         expect(cells.map((c) => c.text)).toEqual(["Block", "Tag\nCite", "Analytic", "", ""]);
-        expect(cells[0].meta).toEqual({ bold: true, source: { app: CARDMIRROR_APP, token: "t1", key: "k1", title: "Doc" } });
+        expect(cells[0].meta).toEqual({ bold: true, source: { app: DEBATE_EDITOR_APP, token: "t1", key: "k1", title: "Doc" } });
         expect(cells[1].meta.card).toBe(true);
         expect(cells[2].meta).toEqual({});
     });
@@ -53,7 +53,7 @@ describe("planFlowWrite", () => {
         const cells = planFlowWrite(items, "cell", "", 1);
         expect(cells).toHaveLength(2);
         expect(cells[0].text).toBe("Block\nTag\nCite\nAnalytic");
-        expect(cells[0].meta).toEqual({ source: { app: CARDMIRROR_APP, token: "t1", key: "k1" } });
+        expect(cells[0].meta).toEqual({ source: { app: DEBATE_EDITOR_APP, token: "t1", key: "k1" } });
         expect(planFlowWrite([{ kind: "x", text: "a", token: "", key: "" }], "cell", "")[0].meta).toEqual({});
         expect(planFlowWrite([], "column", "")).toEqual([]);
     });
@@ -155,28 +155,28 @@ describe("handleBridgeRequest", () => {
     });
 });
 
-describe("cardmirror transport", () => {
+describe("Debate Editor transport", () => {
     it("resolves text types", () => {
-        expect(resolveCardMirrorTextType("tag")).toBe("tag");
-        expect(resolveCardMirrorTextType("nope")).toBe("analytic");
+        expect(resolveDebateEditorTextType("tag")).toBe("tag");
+        expect(resolveDebateEditorTextType("nope")).toBe("analytic");
     });
 
     it("is unsupported off desktop and maps failures", async () => {
         m.desktop.value = false;
-        expect(await cardmirrorJump("t")).toEqual({ ok: false, error: "unsupported" });
+        expect(await debateEditorJump("t")).toEqual({ ok: false, error: "unsupported" });
         m.desktop.value = true;
         m.invoke.mockRejectedValueOnce("not-running");
-        expect(await cardmirrorJump("t")).toEqual({ ok: false, error: "not-running" });
+        expect(await debateEditorJump("t")).toEqual({ ok: false, error: "not-running" });
         m.invoke.mockRejectedValueOnce(new Error("weird"));
-        expect(await cardmirrorJump("t")).toEqual({ ok: false, error: "bad-response" });
+        expect(await debateEditorJump("t")).toEqual({ ok: false, error: "bad-response" });
         m.invoke.mockResolvedValueOnce({ ok: true, docTitle: "D", inserted: true, error: 3 });
-        expect(await cardmirrorInsert("x", "tag")).toEqual({
+        expect(await debateEditorInsert("x", "tag")).toEqual({
             ok: true,
             value: { ok: true, docTitle: "D", inserted: true, error: undefined, pending: undefined },
         });
         expect(m.invoke).toHaveBeenLastCalledWith("cardmirror_insert", { text: "x", role: "tag", newParagraph: true });
         m.invoke.mockResolvedValueOnce(null);
-        expect(await cardmirrorJump("t")).toEqual({ ok: true, value: expect.objectContaining({ ok: false }) });
+        expect(await debateEditorJump("t")).toEqual({ ok: true, value: expect.objectContaining({ ok: false }) });
     });
 });
 
@@ -185,11 +185,11 @@ describe("bridge commands", () => {
 
     it("jumpToSource explains every outcome", async () => {
         await jumpToSource(null);
-        expect(m.toast).toHaveBeenLastCalledWith("This cell did not come from CardMirror.");
+        expect(m.toast).toHaveBeenLastCalledWith("This cell did not come from Debate Editor.");
         await jumpToSource(source, true);
-        expect(m.toast).toHaveBeenLastCalledWith('Open "Doc" in CardMirror first.');
+        expect(m.toast).toHaveBeenLastCalledWith('Open "Doc" in Debate Editor first.');
         await jumpToSource({ ...source, title: undefined }, true);
-        expect(m.toast).toHaveBeenLastCalledWith("That cell came from a partner's CardMirror.");
+        expect(m.toast).toHaveBeenLastCalledWith("That cell came from a partner's Debate Editor.");
 
         m.toast.mockClear();
         m.invoke.mockResolvedValueOnce({ ok: true });
@@ -197,12 +197,12 @@ describe("bridge commands", () => {
         expect(m.toast).not.toHaveBeenCalled();
 
         const cases: [unknown, string][] = [
-            [{ ok: false, pending: "x" }, "Waiting for approval in CardMirror. No need to try again."],
-            [{ ok: false, error: "doc-not-open", docTitle: "D" }, 'Open "D" in CardMirror first.'],
-            [{ ok: false, error: "doc-not-open" }, "Open the document in CardMirror."],
+            [{ ok: false, pending: "x" }, "Waiting for approval in Debate Editor. No need to try again."],
+            [{ ok: false, error: "doc-not-open", docTitle: "D" }, 'Open "D" in Debate Editor first.'],
+            [{ ok: false, error: "doc-not-open" }, "Open the document in Debate Editor."],
             [{ ok: false, error: "not-found" }, "That card is no longer in the document."],
             [{ ok: false, error: "not-allowed" }, expect.stringMatching(/blocking ebb/) as never],
-            [{ ok: false, error: "zzz" }, "CardMirror could not open this cell's source."],
+            [{ ok: false, error: "zzz" }, "Debate Editor could not open this cell's source."],
         ];
         for (const [reply, msg] of cases) {
             m.invoke.mockResolvedValueOnce(reply);
@@ -211,7 +211,7 @@ describe("bridge commands", () => {
         }
         m.invoke.mockRejectedValueOnce("timeout");
         await jumpToSource(source);
-        expect(m.toast).toHaveBeenLastCalledWith("CardMirror did not answer.");
+        expect(m.toast).toHaveBeenLastCalledWith("Debate Editor did not answer.");
 
         useFlowStore.setState({ cardmirrorEnabled: false });
         m.toast.mockClear();
@@ -221,7 +221,7 @@ describe("bridge commands", () => {
 
     it("runJumpToSource reads the selected cell's source", async () => {
         await runJumpToSource();
-        expect(m.toast).toHaveBeenLastCalledWith("This cell did not come from CardMirror.");
+        expect(m.toast).toHaveBeenLastCalledWith("This cell did not come from Debate Editor.");
         const round = makeFlowRound();
         useFlowStore.getState().loadRound(round);
         const hot = new FakeHot(2, 2);
@@ -245,10 +245,10 @@ describe("bridge commands", () => {
         expect(m.toast).toHaveBeenLastCalledWith('Sent to "Speech".');
         m.invoke.mockResolvedValueOnce({ ok: true });
         await runSendToDoc();
-        expect(m.toast).toHaveBeenLastCalledWith("Sent to CardMirror.");
+        expect(m.toast).toHaveBeenLastCalledWith("Sent to Debate Editor.");
         m.invoke.mockResolvedValueOnce({ ok: false, error: "doc-readonly" });
         await runSendToDoc();
-        expect(m.toast).toHaveBeenLastCalledWith("That CardMirror document is in read mode.");
+        expect(m.toast).toHaveBeenLastCalledWith("That Debate Editor document is in read mode.");
         m.desktop.value = false;
         m.toast.mockClear();
         await runSendToDoc();

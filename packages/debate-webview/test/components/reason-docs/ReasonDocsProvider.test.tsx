@@ -8,8 +8,8 @@ import {
   useReasonDocs,
   type ReasonDocsContextValue,
 } from "../../../src/components/reason-docs/ReasonDocsProvider";
-import { CardMirrorImportError } from "../../../src/lib/cardmirror/import-files";
-import { registerStoredCmir, type StoredCmir } from "../../../src/lib/cardmirror/lazy-stored-cmir";
+import { DebateEditorImportError } from "../../../src/lib/debate-editor/import-files";
+import { registerStoredCmir, type StoredCmir } from "../../../src/lib/debate-editor/lazy-stored-cmir";
 import type { ReasonDocument } from "../../../src/components/reason-docs/types";
 import type { TopicStarterItem } from "../../../src/components/reason-docs/topic-starters/TopicStarterTree";
 import { cleanup, flush, mockFetch, mount, type FetchCall, type Route } from "../../helpers/dom";
@@ -310,7 +310,7 @@ describe("ReasonDocsProvider", () => {
     ]);
     engine.fileToStoredCmir.mockImplementationOnce(async (file: File) => ({ title: file.name, content: "cmir-a", format: "cmir" }));
     engine.fileToStoredCmir.mockImplementationOnce(async () => {
-      throw new CardMirrorImportError("b.pdf is not a supported file type.");
+      throw new DebateEditorImportError("b.pdf is not a supported file type.");
     });
 
     let outcome: Awaited<ReturnType<ReasonDocsContextValue["importFiles"]>> | undefined;

@@ -1,7 +1,7 @@
 "use client"
 
 /**
- * @fileoverview The CardMirror editor's settings — the whole of `/settings`.
+ * @fileoverview The Debate Editor's settings — the whole of `/settings`.
  *
  * The page used to be this app's own account form (debate style, font size,
  * theme, favourite tools, tool-data sync, word-limit presets) with the
@@ -23,7 +23,7 @@
  * `/settings/research` pages. A `?category=` on `/settings` opens any tab
  * directly (`research-<section>` for a research one).
  *
- * @module components/settings/cardmirror/CardMirrorSettingsPanel
+ * @module components/settings/debate-editor/DebateEditorSettingsPanel
  */
 
 import Link from "next/link"
@@ -35,7 +35,7 @@ import { EditorSettingsPanel } from "../EditorSettingsPanel"
  * the full height on the left, with the Back link and the "Settings" title at
  * its top and the site's footer links (Docs, Privacy, …) at its bottom.
  */
-export function CardMirrorSettingsPanel() {
+export function DebateEditorSettingsPanel() {
   return (
     <div className="h-full bg-background">
       <EditorSettingsPanel

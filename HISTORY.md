@@ -29,7 +29,7 @@ Prediction markets, a rankings engine, a native Tournaments product, and account
 - Synced speech-doc links, pinned debates, flow-editor settings, auto-save mode, and the welcome dialog to signed-in accounts; added per-tool sync badges; moved flows off `localStorage`; added bring-your-own-key for OpenRouter and Anthropic.
 - Consolidated tools: Practice Round Simulator into Practice vs AI, five prep tools into one Prep Workspace, six research tools into Team Research, five coaching tools into one tabbed Coaching page, News Stream plus forums into News & Forums; deleted the All Tools page; rebuilt the shell around one resizable, hideable sidebar; added fuzzy-ranked Ctrl/Cmd-K search.
 - Added a judge pool, anonymous partner matching, tournament-aware team suggestions, click-to-activate speeches, AI outcome responses, and a speech-recording captions ticker.
-- CardMirror: always create `.cmir` docs, read-only mode, saved/unsaved/failed status, card hover buttons (summarize, find flaws, read aloud), BM25-ranked FTS5 card search, and a full-page reading overlay in the browser extension.
+- Debate Editor: always create `.cmir` docs, read-only mode, saved/unsaved/failed status, card hover buttons (summarize, find flaws, read aloud), BM25-ranked FTS5 card search, and a full-page reading overlay in the browser extension.
 - Schools: coaches and administrators can claim a school's page.
 - Added `@types/debate`, made every package publishable under `@debate/`, upgraded dependencies, raised test coverage, added Stripe subscriptions (Pro VIP and Research Team), Turnstile, and Mixpanel.
 
@@ -41,8 +41,8 @@ Practice, collaboration, second-draft polish across research tools, a tool-page 
 - Reworked the videos experience with a collapsible sidebar nav tree, transcript modal with synced YouTube playback, resizable columns, and admin YouTube management.
 - Added live presence and conflict-diff to Shared Flow Sync, team capacity and reassign controls in Task Inbox, a shared checklist and timeline in the Collaboration Prep Room, and coaching program reviewer/approval workflows.
 - Added side-by-side case comparison, bulk CSV import and printable scouting reports, cross-device goal-setting, a winner-history calendar, multi-judge comparison for Judge Profiles, threaded replies, and a public topic starter library.
-- Reorganized the CardMirror editor shell with a file tree and tabs sidebar, restored the Google-Docs-style menu bar, gave Ctrl/Cmd-Shift-Space an app-wide command palette, and moved the Topic Starter library onto CardMirror's native `.cmir` format.
-- Linked CardMirror real-time collaboration to better-auth accounts with a contacts page, Share with contacts, and a Shared cards tab.
+- Reorganized Debate Editor shell with a file tree and tabs sidebar, restored the Google-Docs-style menu bar, gave Ctrl/Cmd-Shift-Space an app-wide command palette, and moved the Topic Starter library onto Debate Editor's native `.cmir` format.
+- Linked Debate Editor real-time collaboration to better-auth accounts with a contacts page, Share with contacts, and a Shared cards tab.
 - Added a card library importer for the Parquet card dump (`debate-cards-upload` CLI, admin ingest endpoint, browser import panel) and a `debate_cards` upsert table.
 - Gave 27 tool routes one shared tool page header; redesigned the Coach and Research Workspace hubs with sticky section tabs, per-section intro cards, current-round bar, and `?section=` URL sync.
 - Finished the debate-ai-docs Fumadocs site and published it at `debate-ai.com/docs`; added Guides; closed route 404s for `/docs/features` and `/docs/packages`.
@@ -63,17 +63,17 @@ Identity, live sync, and a real content feed.
 - Wired signed-in Google/better-auth identity into research and round panels, replacing free-typed contributor IDs.
 - Added cross-tab live updates to Daily Best Card, Leaderboard, Task Inbox, Progress Unlocks, Research Progress, Quest Streaks, and News Stream; persisted D1-backed cloud save for settings, flows and rounds; added "Save all rounds" bulk action.
 - Built the News Stream feed auto-aggregating quest streaks, group challenges, revisions, prep notes, Argument Library submissions, AI Coach Mode sessions, plus Tool spotlight posts.
-- Overhauled the CardMirror editor shell with Plugins dropdown, Workspace menu, and ebb as an embeddable panel; restored the `debate-editor` re-export shim; added Insert Short Cite command.
+- Overhauled Debate Editor shell with Plugins dropdown, Workspace menu, and ebb as an embeddable panel; restored the `debate-editor` re-export shim; added Insert Short Cite command.
 - Migrated the video library from static JSON to a SQL-backed paginated feed seeded inside the Worker.
 - Wired orphaned tool routes into nav entries; added "Tools for this round" menu; surfaced saved flows in the `/tools` widget; added Site Links/Debate Links submenus and `/legal/privacy`.
 - Removed the CX NDCA Standings tool; replaced the card-reuse checker with debate-web-ext; stopped the service worker from intercepting unsafe requests.
-- Added unit tests for CardMirror schema-id, footnote, and timer sound helpers.
+- Added unit tests for Debate Editor schema-id, footnote, and timer sound helpers.
 
 ## June 2026 — 18 commits
 
-CardMirror release milestone month.
+Debate Editor release milestone month.
 
-- Integrated the CardMirror engine into a new reason-editor workspace package on TipTap/React; ported AI editing tools (cite, repair, explain, alt text); implemented HTML-to-card parsing with citation extraction.
+- Integrated the Debate Editor engine into a new reason-editor workspace package on TipTap/React; ported AI editing tools (cite, repair, explain, alt text); implemented HTML-to-card parsing with citation extraction.
 - Added server configuration and session management hooks; fixed Vercel builds to run as Vite; rebuilt the PWA service worker precache; declared missing workspace dependencies.
 
 ## May 2026 — 57 commits

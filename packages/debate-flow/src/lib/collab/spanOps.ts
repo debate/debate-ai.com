@@ -48,7 +48,7 @@ export function replaceSpanOps(
  * Every insert names the same index, because each one pushes the previous
  * down, so the run opens from the top.
  *
- * This is what an insert-mode paste and a CardMirror send are: both used to
+ * This is what an insert-mode paste and a Debate Editor send are: both used to
  * re-derive the sheet afterwards instead, which re-keys every cell from its
  * row position and leaves a peer holding keys that no longer name anything.
  */

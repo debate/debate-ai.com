@@ -1,12 +1,12 @@
 ---
-title: "REASON docs sidebar — files on the document routes, opened in CardMirror"
+title: "REASON docs sidebar — files on the document routes, opened in Debate Editor"
 ---
 
-# REASON docs sidebar — files on the document routes, opened in CardMirror
+# REASON docs sidebar — files on the document routes, opened in Debate Editor
 
 The two collapsible sections, **Topic Starters** and **My Personal
 Documents**, that are the whole sidebar on `/reason-editor`, and the URL round trip that turns a click on one of them into "that
-file, loaded in CardMirror, in the main column."
+file, loaded in Debate Editor, in the main column."
 
 - **Routes:** `/research/cards` (and below it) and `/reason-editor` — the routes the
   documents are the subject of, per
@@ -17,7 +17,7 @@ file, loaded in CardMirror, in the main column."
   root layout
 - **URL rules:** `apps/debate-ai.com/lib/reason-docs/route-selection.ts`
 - **Where they show:** `apps/debate-ai.com/lib/reason-docs/sidebar-routes.ts`
-- **Editor:** `/reason-editor` (`debate-editor`'s CardMirror embed), with
+- **Editor:** `/reason-editor` (`debate-editor`'s Debate Editor embed), with
   its tab strip in `components/reason-editor/EditorTabStrip.tsx` and the tab
   rules in `lib/reason-docs/tab-actions.ts`
 
@@ -58,7 +58,7 @@ request at all.
 ## Tabs above the editor
 
 Every file opened on `/reason-editor` gets a tab in the strip above
-CardMirror. Click a tab to switch to it, or its × to close it. Right-click a
+Debate Editor. Click a tab to switch to it, or its × to close it. Right-click a
 tab for:
 
 - **Close** that tab.
@@ -85,7 +85,7 @@ things:
 Provider state alone covers the hop but not a reload, a pasted link, or a
 hard navigation — `/videos` is its own layout branch and can boot the editor
 with an empty provider. Carrying the file in the URL is what makes "click a
-file, get *that* file in CardMirror" hold from every sidebar rather than
+file, get *that* file in Debate Editor" hold from every sidebar rather than
 only from the ones that hop client-side.
 
 The name is the title slugified (`lib/reason-docs/doc-slug.ts`): lowercased,
@@ -98,7 +98,7 @@ No title can forge one: `~` is stripped out of titles by the same slugifier.
 
 Already on the editor route, a pick routes nothing at all. `/reason-editor`
 and `/reason-editor/<slug>` are separate Next routes, so routing between
-them would remount CardMirror — and its undo history — on every tab switch;
+them would remount Debate Editor — and its undo history — on every tab switch;
 the provider already has the file open, and `ReasonDocsRouteSync` renames
 the address bar in place with `history.replaceState`. That same rewrite is
 what upgrades an older `?doc=<id>` / `?topic=<id>` link (still read, and
@@ -187,7 +187,7 @@ the newest high-school policy topic (`DEFAULT_TOPIC_CODE`).
 
 ## Read-only topic starters
 
-A topic starter opens in the same CardMirror embed as an owned document, but
+A topic starter opens in the same Debate Editor embed as an owned document, but
 read-only: no toolbar, no AI tools, no `onChange`, a `readOnly` title, and a
 "Public topic starter" label beside it. It gets its own `contentKey`
 namespace (`topic-<id>`) so the engine treats it as a distinct claim from an
@@ -197,11 +197,11 @@ owned document that happens to share the id — the same reason `?doc=7` and
 ## Topic starters are stored as `.cmir`
 
 The admin importer on `/admin` takes a `.docx` (or a `.zip` of them) and
-stores each one as a CardMirror native file — `.cmir`, gzipped JSON,
+stores each one as a Debate Editor native file — `.cmir`, gzipped JSON,
 base64-encoded into the row's `content` column, with `format` set to
 `"cmir"`.
 
-The conversion is CardMirror's own OOXML importer (`docxToCmir` in
+The conversion is Debate Editor's own OOXML importer (`docxToCmir` in
 `packages/debate-editor/src/native/convert.ts` — `fromDocxFull` piped into
 `serializeNative`, the same pair the desktop bulk converter runs), wrapped
 for the route by `packages/debate-webview/src/lib/topic-starters/import.ts`. What that
@@ -226,7 +226,7 @@ document.
 
 ## Organising files
 
-Every file is a CardMirror file whatever it was uploaded as, so no row in
+Every file is a Debate Editor file whatever it was uploaded as, so no row in
 either tree carries a `DOCX` or `CMIR` badge; the name is the whole label.
 
 Right-clicking a row opens the same menu as its "…" button, so every action
@@ -294,7 +294,7 @@ dragging one onto a folder. Paste puts a full copy of the copied file or
 folder into the folder you right-clicked, or beside the file you
 right-clicked, with " (copy)" added when it lands next to the original.
 Those edits go to `PATCH` / `DELETE /api/admin/topic-starters/[id]`,
-`POST …/[id]/copy` and `POST …/items`, and change what CardMirror shows
+`POST …/[id]/copy` and `POST …/items`, and change what Debate Editor shows
 everyone (`TopicStarterLibraryTree` in
 `packages/debate-webview/src/components/admin`).
 
@@ -360,7 +360,7 @@ palette asks the Videos page's own feed (`/api/videos?q=…`) once typing
 pauses, so nothing about the library is downloaded until you search. Picking
 one opens its watch page (`lib/videos/video-palette-search.ts`).
 
-A `.cmir` file's text is read with CardMirror's engine, which is loaded the
+A `.cmir` file's text is read with Debate Editor's engine, which is loaded the
 first time a query needs it, so the first search over card files can take a
 moment longer. On `/reason-editor` the palette answers Ctrl/Cmd-K, while
 Ctrl/Cmd-P stays the editor's own palette.

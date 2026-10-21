@@ -1,6 +1,6 @@
-# CLAUDE.md — `debate-editor` (CardMirror)
+# CLAUDE.md — `debate-editor` (Debate Editor)
 
-Public (`@debate/` scope). The CardMirror debate-card editor embedded across debate-ai.com.
+Public (`@debate/` scope). The Debate Editor debate-card editor embedded across debate-ai.com.
 Entry: `src/react/index.tsx` — consumed as source, no build step. Tests in
 `test/`.
 
@@ -11,7 +11,7 @@ Entry: `src/react/index.tsx` — consumed as source, no build step. Tests in
 | `debate-editor` | The React editor shell |
 | `debate-editor/engine` | The ProseMirror engine, plus the web `.docx` helpers (`importDocx`, `exportDocxBlob`, `outlineOf`, `cardsOf`) merged in from the former `debate-editor-cm-adapter` |
 | `debate-editor/settings`, `/settings-ui`, `/settings-categories` | Settings model and UI |
-| `debate-editor/settings-tabs`, `/settings-section` | CardMirror's settings tabs and the React section that renders one, for host Settings sidebars |
+| `debate-editor/settings-tabs`, `/settings-section` | Debate Editor's settings tabs and the React section that renders one, for host Settings sidebars |
 | `debate-editor/collab-bridge` | Collaborative editing bridge |
 | `debate-editor/styles.css` | Styles |
 
@@ -20,10 +20,10 @@ Never reach past these into `src/`.
 ## It is an adapter — `src/` is generated
 
 `src/` is git-ignored and assembled by `scripts/sync-upstream.mjs` from
-upstream CardMirror (the `packages/debate-editor-cm` submodule, at the commit
+upstream Debate Editor (the `packages/debate-editor-cm` submodule, at the commit
 in `upstream.json`) + `patches/debate-ai.patch` + `overlay/` (files upstream
 doesn't have: the React shell, menu bar, sync clients). See the README's
-"Upstream CardMirror" section.
+"Upstream Debate Editor" section.
 
 - **Edited anything in `src/`?** Run `bun run sync-upstream:save` in this
   package — upstream files go into the patch, ours into `overlay/`. Otherwise
@@ -69,7 +69,7 @@ Document input arrives from `debate-card-parser`; treat it as untrusted.
 `overlay/editor/card-hover-actions.ts` (Summarize / Find flaws / Read aloud
 beside a hovered card) is a host plugin registered in `react/singleton.ts`.
 Its AI goes through `overlay/editor/card-ai-client.ts`: the user's own
-CardMirror key when set, else the app's `/api/card-ai-analysis`. Read aloud's
+Debate Editor key when set, else the app's `/api/card-ai-analysis`. Read aloud's
 model voices go through `overlay/editor/card-tts-client.ts`: Kokoro voices
 run in the browser first (`overlay/editor/kokoro-browser-tts.ts`, a lazy
 `kokoro-js` import that downloads the q8 ONNX model from Hugging Face once and

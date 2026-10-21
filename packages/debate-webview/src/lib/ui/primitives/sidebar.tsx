@@ -111,7 +111,7 @@ function SidebarProvider({
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       // Ctrl/Cmd+B is Bold in every editor this sidebar sits beside
-      // (CardMirror, the REASON editor). Leave it to them: skip a key an
+      // (Debate Editor, the REASON editor). Leave it to them: skip a key an
       // editor already handled, and any key typed into an editable field.
       if (event.defaultPrevented || isEditableTarget(event.target)) return
       if (

@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  *
  * @fileoverview Downloading a document as `.docx` without opening it in
- * CardMirror first (the "Download as .docx" row in `FileTree`'s menu).
+ * Debate Editor first (the "Download as .docx" row in `FileTree`'s menu).
  *
  * `htmlToDocxBytes` goes through `htmlToDoc`, which needs a real `document`
  * to parse HTML into a ProseMirror doc — everything else in this file's
@@ -12,7 +12,7 @@
 
 import { describe, expect, it } from "vitest"
 import { looksLikeNative } from "@debate/editor/engine"
-import { docxDownloadFilename, htmlToDocxBytes } from "../../../src/lib/cardmirror/stored-cmir"
+import { docxDownloadFilename, htmlToDocxBytes } from "../../../src/lib/debate-editor/stored-cmir"
 
 describe("htmlToDocxBytes", () => {
   it("converts a document's HTML into a real .docx zip", async () => {

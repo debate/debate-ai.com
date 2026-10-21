@@ -14,9 +14,9 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 const INDEX = readFileSync(join(import.meta.dirname, "..", "src", "editor", "index.ts"), "utf8");
-const SHELL = readFileSync(join(import.meta.dirname, "..", "src", "react", "CardMirrorEditor.tsx"), "utf8");
+const SHELL = readFileSync(join(import.meta.dirname, "..", "src", "react", "DebateEditor.tsx"), "utf8");
 
-describe("embedded CardMirror boots single-doc", () => {
+describe("embedded Debate Editor boots single-doc", () => {
   it("never boots the three-pane shell inside the React embed", () => {
     expect(INDEX).toMatch(/const BOOT_EMBEDDED = BOOT_MOBILE_ENV\.embedded;/);
     expect(INDEX).toMatch(
@@ -37,7 +37,7 @@ describe("embedded CardMirror boots single-doc", () => {
 const SINGLETON = readFileSync(join(import.meta.dirname, "..", "src", "react", "singleton.ts"), "utf8");
 const CONTAINMENT = readFileSync(join(import.meta.dirname, "..", "src", "editor", "embed-containment.css"), "utf8");
 
-describe("CardMirror stays inside its own component", () => {
+describe("Debate Editor stays inside its own component", () => {
   it("loads the engine stylesheets with the engine, not with the React shell", () => {
     // A static stylesheet import in the shell put the whole engine sheet on
     // every page whose bundle merely imported the package.
