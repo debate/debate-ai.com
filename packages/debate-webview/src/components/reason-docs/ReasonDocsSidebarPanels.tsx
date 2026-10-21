@@ -80,16 +80,16 @@ import {
 import { SHARE_OPEN_PARAM, ShareWithContacts } from "../reason-editor/ShareWithContacts"
 import { SellFileDialog } from "../market/SellFileDialog"
 import { useSession } from "../../lib/hooks/useSession"
-import { FileManagerDialog } from "./FileManagerDialog"
-import { FileTree } from "./FileTree"
-import { TopicStarterTree, type TopicStarterItem } from "./TopicStarterTree"
-import { NewTopicFolderDialog, OrganizeTopicsDialog, type OrganizeState } from "./TopicStarterDialogs"
+import { FileManagerDialog } from "./file-manager/FileManagerDialog"
+import { FileTree } from "./file-manager/FileTree"
+import { TopicStarterTree, type TopicStarterItem } from "./topic-starters/TopicStarterTree"
+import { NewTopicFolderDialog, OrganizeTopicsDialog, type OrganizeState } from "./topic-starters/TopicStarterDialogs"
 import type { TopicStarterChange } from "../../lib/topic-starters/changes"
 import { useReasonDocs } from "./ReasonDocsProvider"
 
 // Lazy: the picker carries every resolution `debate-topics.json` has, which
 // only matters once the Topic Starters section is open.
-const TopicDocsPicker = lazy(() => import("./TopicDocsPicker").then((m) => ({ default: m.TopicDocsPicker })))
+const TopicDocsPicker = lazy(() => import("./topic-starters/TopicDocsPicker").then((m) => ({ default: m.TopicDocsPicker })))
 import type { ReasonDocument } from "./types"
 
 /** Each section's collapse choice, per device. Both start open. */

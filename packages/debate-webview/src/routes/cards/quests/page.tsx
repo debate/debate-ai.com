@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { DailyQuestsWithIdentity } from "../../../components/research/DailyQuestsWithIdentity"
+import { DailyQuestsWithIdentity } from "../../../components/research/identity/DailyQuestsWithIdentity"
 import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHeader"
 
 export default function CardsQuestsPage() {

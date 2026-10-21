@@ -49,7 +49,7 @@ const ImageMock = (await import("next/image")) as unknown as {
   default: FunctionComponent<{ src: unknown; alt?: string; className?: string }>;
 };
 const { VideoSidebarTree } = await import(
-  "../src/components/category-gallery/VideoSidebarTree"
+  "../src/components/sidebar-nav/VideoSidebarTree"
 );
 const { QuickLinksGrid } = await import(
   "../src/components/category-gallery/QuickLinksGrid"

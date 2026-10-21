@@ -17,7 +17,7 @@ import {
   type FollowKind,
   type FollowState,
 } from "../../../lib/follows/profile-follows"
-import { formatCount } from "../../../components/category-gallery/format-count"
+import { formatCount } from "../../../lib/format-count"
 
 /** Props for {@link FollowButton}. */
 export interface FollowButtonProps {

@@ -4,7 +4,7 @@ import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
 import { notFound, useParams } from "next/navigation"
-import { ContributorProfileWithIdentity } from "../../../../components/research/ContributorProfileWithIdentity"
+import { ContributorProfileWithIdentity } from "../../../../components/research/identity/ContributorProfileWithIdentity"
 
 /**
  * The router has already percent-decoded the route segment, so a second decode is

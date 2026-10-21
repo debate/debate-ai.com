@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { DailyBestCardWithIdentity } from "../../../components/research/DailyBestCardWithIdentity"
+import { DailyBestCardWithIdentity } from "../../../components/research/identity/DailyBestCardWithIdentity"
 import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHeader"
 
 export default function CardsBestCardPage() {

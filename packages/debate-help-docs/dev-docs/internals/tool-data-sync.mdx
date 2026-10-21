@@ -45,8 +45,8 @@ the pattern [flows](flow-cloud-save.md), [rounds](round-cloud-save.md),
   (`/api/tool-records/[collection]`, the `saved_tool_records` D1 table,
   `lib/hooks/useToolRecordSync.ts`, `lib/sign-in-prompt-preference.ts`,
   `lib/sign-in-prompt-cooldown.ts`,
-  `components/layout/ToolRecordSyncProvider.tsx`,
-  `components/layout/SignInPromptProvider.tsx`). Some tool packages
+  `components/layout/providers/ToolRecordSyncProvider.tsx`,
+  `components/layout/auth/SignInPromptProvider.tsx`). Some tool packages
   (`debate-round`, `debate-practice-rounds`, `debate-speech-writer`,
   `debate-team-collaboration`, `debate-videos`) additionally call the mirror
   from their own stores; most do not need to — see
@@ -290,9 +290,9 @@ apps/debate-ai.com
                                        for a signed-in session; reconciles
                                        every collection once per tab; then
                                        starts the watcher
-  → components/layout/ToolRecordSyncProvider.tsx
+  → components/layout/providers/ToolRecordSyncProvider.tsx
                                        mounts that hook, renders nothing
-  → components/layout/SignInPromptProvider.tsx
+  → components/layout/auth/SignInPromptProvider.tsx
                                        opens LoginDialog for a raised prompt
   → app/api/tool-records/route.ts                     GET (every collection)
   → app/api/tool-records/[collection]/route.ts        GET / PUT (bulk) / DELETE
@@ -382,7 +382,7 @@ So a store can now raise a prompt at the click. `state/sign-in-prompt.ts` is a
 plain subscribe/publish pair — no React, no `next/*`, no `fetch` — because the
 sign-in UI lives in the app and `debate-data-sync` is a leaf package that
 cannot import it. A tool publishes an intent naming the feature and one
-sentence about what signing in keeps; `components/layout/SignInPromptProvider.tsx`
+sentence about what signing in keeps; `components/layout/auth/SignInPromptProvider.tsx`
 subscribes and opens `LoginDialog` with that text, returning the user to the
 page they were on. It reads the same signed-in flag the mirror does, so the two
 can never disagree about whether there is an account to save to.
@@ -571,7 +571,7 @@ each invisible until something renders them again — see **Known gaps**.
   `db.batch()` in `chunkStatements` runs (`lib/database/query-budget.ts`), a
   few queries for even a full 500-record push.
 - ~~Nothing surfaces the sync any more, and two things can only be reached
-  through it.~~ **Fixed:** `components/tools/ToolSyncStatusPanel.tsx`, mounted
+  through it.~~ **Fixed:** `components/tools/sync/ToolSyncStatusPanel.tsx`, mounted
   on `/tools`, renders `useToolRecordSync`'s `results` as a list of any
   collection whose merge or flush failed (name, link to the tool, the error),
   next to a **Sync now** button wired to `resync()`; and when a guest has

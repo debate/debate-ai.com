@@ -40,7 +40,7 @@
  *
  * `promptOptions.maxAttempts: 0` turns off the plugin's internal retry loop.
  * It is not "never retry": it is "the component decides", and
- * `components/layout/OneTap.tsx` already re-prompts on a later navigation when
+ * `components/layout/auth/OneTap.tsx` already re-prompts on a later navigation when
  * the outcome was not final. Leaving the plugin's loop on stacks a second
  * FedCM request onto a live one, which is the `InvalidStateError` above.
  *

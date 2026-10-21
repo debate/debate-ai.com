@@ -38,8 +38,8 @@ import {
   FaCopy,
   FaSignOutAlt,
 } from "react-icons/fa";
-import TeamMatchmaking from "@/components/TeamMatchmaking";
-import MatchmakingPool from "@/components/MatchmakingPool";
+import TeamMatchmaking from "@/components/matchmaking/TeamMatchmaking";
+import MatchmakingPool from "@/components/matchmaking/MatchmakingPool";
 
 interface TeamMember {
   userId: string;

@@ -28,17 +28,17 @@ import {
   formatSeedVideosStatus,
   type SeedVideosStatus,
 } from "@debate/webview/lib/videos/format-seed-videos-result";
-import { CaselistSyncPanel } from "./CaselistSyncPanel";
-import { DbBackupPanel } from "./DbBackupPanel";
-import { DebateCardParquetUpload } from "./DebateCardParquetUpload";
-import { ModeratorsPanel } from "./ModeratorsPanel";
-import { TopicStarterUpload } from "./TopicStarterUpload";
-import { UsersTable } from "./UsersTable";
-import { VideoLibraryTable } from "./VideoLibraryTable";
-import { VideoReportsPanel } from "./VideoReportsPanel";
-import { YoutubeChannelsPanel } from "./YoutubeChannelsPanel";
-import { TranscriptScraperPanel } from "./TranscriptScraperPanel";
-import { formatCount } from "@debate/videos/components/category-gallery/format-count";
+import { CaselistSyncPanel } from "./data/CaselistSyncPanel";
+import { DbBackupPanel } from "./data/DbBackupPanel";
+import { DebateCardParquetUpload } from "./data/DebateCardParquetUpload";
+import { ModeratorsPanel } from "./users/ModeratorsPanel";
+import { TopicStarterUpload } from "./topic-starters/TopicStarterUpload";
+import { UsersTable } from "./users/UsersTable";
+import { VideoLibraryTable } from "./videos/VideoLibraryTable";
+import { VideoReportsPanel } from "./videos/VideoReportsPanel";
+import { YoutubeChannelsPanel } from "./videos/YoutubeChannelsPanel";
+import { TranscriptScraperPanel } from "./videos/TranscriptScraperPanel";
+import { formatCount } from "@debate/videos/lib/format-count";
 
 interface YoutubeRoundVideo { id: string; title: string; publishedAt: string; channel: string; views: number; style: number; tournament: string | null; }
 interface SyncRun { id: number; status: "running" | "success" | "error"; triggeredBy?: string | null; channelsSynced: number; videosUpserted: number; error: string | null; }

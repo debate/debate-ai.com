@@ -120,7 +120,7 @@ requests to the two AI routes. The server uses it for that one request and
 never stores or logs it. Remove it to go back to the shared key.
 
 - **Packages:** `debate-webview` (`lib/ai/own-ai-key.ts`,
-  `components/settings/OwnAiKeySection.tsx`,
+  `components/settings/sections/OwnAiKeySection.tsx`,
   `components/pricing/OwnAiKeyDialog.tsx`), `apps/debate-ai.com`
   (`lib/ai/provider-key.ts`)
 
@@ -198,7 +198,7 @@ debate-editor/settings-ui.ts (buildEmbeddedSettingsPanel)
 app/settings/editor-panel/page.tsx (iframe document: category sidebar, hydrate, debounced push)
   → GET/PUT /api/settings { editorPreferences }
 lib/editor-preferences.ts (EDITOR_SETTINGS_TABS, EDITOR_PREFERENCE_KEYS, validation)
-components/settings/CardMirrorSettingsPanel.tsx (the iframe wrapper, self-sizing)
+components/settings/cardmirror/CardMirrorSettingsPanel.tsx (the iframe wrapper, self-sizing)
 ```
 
 The local store stays authoritative: the page hydrates from the account on

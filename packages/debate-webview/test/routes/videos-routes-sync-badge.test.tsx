@@ -8,7 +8,7 @@ import { isValidElement, type ReactElement, type ReactNode } from "react"
 
 const lecturesPage = vi.fn((_props: Record<string, unknown>) => null)
 vi.mock("@debate/videos", () => ({ LecturesPage: (props: Record<string, unknown>) => lecturesPage(props) }))
-vi.mock("../../src/components/tools/ToolSyncBadge", () => ({ ToolSyncBadge: () => null }))
+vi.mock("../../src/components/tools/sync/ToolSyncBadge", () => ({ ToolSyncBadge: () => null }))
 vi.mock("../../src/components/layout/CategoryDock", () => ({ CategoryDock: () => null }))
 
 const { default: VideosHome } = await import("../../src/routes/videos/page")

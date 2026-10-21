@@ -52,7 +52,7 @@ import { CardMirrorImportError, docxDownloadFilename } from "../../lib/cardmirro
 import { loadStoredCmir, storedCmirIfLoaded, type StoredCmir } from "../../lib/cardmirror/lazy-stored-cmir"
 import type { ReasonDocument } from "./types"
 import type { TopicStarterChange } from "../../lib/topic-starters/changes"
-import type { TopicStarterItem } from "./TopicStarterTree"
+import type { TopicStarterItem } from "./topic-starters/TopicStarterTree"
 
 /** How long an edit to a `.cmir` file waits before it is re-encoded. The write
  *  is queued once the encode resolves, so this sits in front of the save
