@@ -45,11 +45,12 @@
 ### 10\. **Analytics Dashboard for Debaters**
 
 - Personal stats: win rate, fallacy frequency, argument length, topic expertise, improvement trends
-- **In Progress** (branch `agent/todo-debater-analytics-stats`): `buildDebaterStats` in `packages/debate-round/src/round/debater-stats.ts` computes win rate, side/division/argument splits and recent-form trend from `ownRoundHistory` (account-synced via the `ownRoundHistory` tool-record collection).
+- **Completed 2026-10-21** (branch `agent/todo-debater-analytics-stats-gate`): `buildDebaterStats` in `packages/debate-round/src/round/debater-stats.ts` computes win rate, side/division/argument splits and recent-form trend from `ownRoundHistory` (account-synced via the `ownRoundHistory` tool-record collection).
   - [x] Pure stats model + Vitest
   - [x] `DebaterStatsPanel` mounted in the Prep Workspace ("Debater Stats" tab) and the Coach Hub Prep section, with Vitest
-  - [ ] Follow-up: record fallacy/argument-length data so those stats can be added
-  - [ ] Blocked on base: 39 `.ts/.tsx` files on `master` (mostly `packages/debate-videos`, plus `debate-webview` nav files) contain committed merge-conflict markers, so repo-wide `tsc`/`build` fail; resolve those first, then re-run the build gate and mark this Completed
+  - [x] Base blocker cleared: no merge-conflict markers remain on `master`; `bun run typecheck` (29/29 tasks) and `bun run build:web` pass
+  - [ ] Follow-up (deferred): record fallacy/argument-length data so those stats can be added
+  - [ ] Follow-up (pre-existing, unrelated): 11 tests in 6 files (`debate-videos` sidebar tests, `debate-webview` `judge-link.test.ts`) still assert the old four-section sidebar (Research / Practice / Coaching / Insights) but `SIDEBAR_TOOL_SECTIONS` now has three (Practice folded into Research); decide the intended nav, then update the tests or the sections
 
 1. ability to challenge legends - and speculators bet
 2. random pair webcam debate matching on mutual pref topics
