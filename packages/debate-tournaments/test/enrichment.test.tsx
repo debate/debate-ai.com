@@ -50,7 +50,11 @@ function context(extra: Partial<TournamentsContextValue> = {}): TournamentsConte
 }
 
 let container: HTMLDivElement | null = null;
+let mounted: ReturnType<typeof createRoot> | null = null;
 afterEach(() => {
+  // Unmounting also removes the judge overlays, which portal to the body.
+  act(() => mounted?.unmount());
+  mounted = null;
   container?.remove();
   container = null;
 });
@@ -59,6 +63,7 @@ async function render(node: React.ReactNode, value = context()) {
   container = document.createElement("div");
   document.body.append(container);
   const root = createRoot(container);
+  mounted = root;
   await act(async () => {
     root.render(<TournamentsContext.Provider value={value}>{node}</TournamentsContext.Provider>);
   });
@@ -113,9 +118,9 @@ describe("pairings enrichment", () => {
     await act(async () => {
       link.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, button: 0 }));
     });
-    const frame = el.querySelector("iframe");
+    const frame = document.body.querySelector("iframe");
     expect(frame?.getAttribute("src")).toBe(tabroomParadigmUrl(888));
-    expect(el.querySelector('[role="dialog"]')?.getAttribute("aria-label")).toBe("Ann Yu — paradigm");
+    expect(document.body.querySelector('[role="dialog"]')?.getAttribute("aria-label")).toBe("Ann Yu — paradigm");
   });
 
   it("renders plain names and codes without host lookups", async () => {
@@ -158,18 +163,18 @@ describe("judge dialog", () => {
 
     await click(el, "Sam Lee");
     expect(lookupJudgeProfile).toHaveBeenCalledWith({ personId: 777, first: "Sam", last: "Lee" });
-    expect(el.querySelector("iframe")).toBeNull();
-    expect(el.querySelector("[data-paradigm]")?.innerHTML).toContain("Tech over truth.");
-    expect(el.textContent).toContain("NSDA Accredited");
-    expect(el.querySelector('a[href="/practice/paradigm"]')).not.toBeNull();
+    expect(document.body.querySelector("iframe")).toBeNull();
+    expect(document.body.querySelector("[data-paradigm]")?.innerHTML).toContain("Tech over truth.");
+    expect(document.body.textContent).toContain("NSDA Accredited");
+    expect(document.body.querySelector('a[href="/practice/paradigm"]')).not.toBeNull();
 
-    const recordTab = [...el.querySelectorAll<HTMLButtonElement>('[role="tab"]')].find((tab) => tab.textContent?.startsWith("Voting record"))!;
+    const recordTab = [...document.body.querySelectorAll<HTMLButtonElement>('[role="tab"]')].find((tab) => tab.textContent?.startsWith("Voting record"))!;
     expect(recordTab.textContent).toBe("Voting record (2)");
     await act(async () => {
       recordTab.click();
     });
-    expect(el.querySelector("[data-judge-summary]")?.textContent).toContain("1 of 1 panels");
-    expect(el.textContent).toContain("Glenbrooks");
+    expect(document.body.querySelector("[data-judge-summary]")?.textContent).toContain("1 of 1 panels");
+    expect(document.body.textContent).toContain("Glenbrooks");
   });
 
   it("looks a judge without an id up by name and says when nothing is found", async () => {
@@ -177,7 +182,7 @@ describe("judge dialog", () => {
     const el = await render(<Schematic round={round} />, context({ lookupJudgeProfile }));
     await click(el, "Pat Common");
     expect(lookupJudgeProfile).toHaveBeenCalledWith({ personId: null, first: "Pat", last: "Common" });
-    expect(el.textContent).toContain("No Tabroom paradigm or judging record was found for Pat Common.");
+    expect(document.body.textContent).toContain("No Tabroom paradigm or judging record was found for Pat Common.");
   });
 
   it("reads a hosted tournament's judges from this site's own API", async () => {
@@ -188,7 +193,7 @@ describe("judge dialog", () => {
     await click(el, "Sam Lee");
     expect(hostedJudgeProfile).toHaveBeenCalledWith(777);
     expect(lookupJudgeProfile).not.toHaveBeenCalled();
-    expect(el.querySelector("[data-paradigm]")?.textContent).toBe("Plain words.");
+    expect(document.body.querySelector("[data-paradigm]")?.textContent).toBe("Plain words.");
   });
 });
 
