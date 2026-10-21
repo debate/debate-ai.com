@@ -36,7 +36,7 @@
     <a id="settings" href="settings.html" title="Choose where the app loads from" aria-label="Settings">&#9881;</a>
     <script>
       (function () {
-        var fallbackUrl = window.__WRAPPER_APP_URL__ || "https://debate-ai.com";
+        var fallbackUrl = window.__WRAPPER_APP_URL__ || "settings.html";
         var sources = window.__WRAPPER_SOURCES__ || [];
         var invoke = window.__TAURI__ && window.__TAURI__.core && window.__TAURI__.core.invoke;
         // Coming back from settings.html or the tray's "Load From" menu:

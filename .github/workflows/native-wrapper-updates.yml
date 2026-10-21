@@ -14,6 +14,10 @@ name: Native Wrapper Update Feed
 # tag of the (published) release installed apps should get. Installed apps
 # only ever move to a newer version, so rolling back means shipping a fix
 # with a higher version, not re-pointing at an older tag.
+#
+# The feed tag and the release tag prefix come from the profile's `release`
+# block. The `if:` below can't read a file, so its 'native-wrapper-v' is kept
+# in step with `release.tagPrefix` by hand; scripts/configure.mjs checks it.
 
 on:
   release:
@@ -28,7 +32,8 @@ concurrency:
   group: native-wrapper-update-feed
 
 env:
-  FEED_TAG: native-wrapper-updates
+  # The app's one config file; see apps/debate-native-wrapper/profiles/README.md.
+  PROFILE: apps/debate-native-wrapper/profiles/debate-ai.json
 
 jobs:
   publish-feed:
@@ -40,14 +45,24 @@ jobs:
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: apps/debate-native-wrapper/profiles
+
+      - name: Read the release naming from the profile
+        run: |
+          echo "FEED_TAG=$(jq -r '.release.updateFeedTag // "native-wrapper-updates"' "$PROFILE")" >> "$GITHUB_ENV"
+          echo "TAG_PREFIX=$(jq -r '.release.tagPrefix // "native-wrapper-v"' "$PROFILE")" >> "$GITHUB_ENV"
+          echo "APP_NAME=$(jq -r '.appName' "$PROFILE")" >> "$GITHUB_ENV"
+
       - name: Download latest.json from the release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.event.release.tag_name }}
         run: |
           case "$TAG" in
-            native-wrapper-v*) ;;
-            *) echo "::error::$TAG is not a native-wrapper-v* release" >&2; exit 1 ;;
+            "$TAG_PREFIX"*) ;;
+            *) echo "::error::$TAG is not a $TAG_PREFIX* release" >&2; exit 1 ;;
           esac
           if ! gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern latest.json --dir feed; then
             echo "::notice::$TAG has no latest.json (the profile has no updater pubkey yet, so the build made no update files). Nothing to publish."
@@ -62,7 +77,7 @@ jobs:
           jq '{version, platforms: (.platforms | keys)}' feed/latest.json
           echo "TAG=$TAG" >> "$GITHUB_ENV"
 
-      - name: Publish to the native-wrapper-updates release
+      - name: Publish to the update feed release
         if: hashFiles('feed/latest.json') != ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -70,8 +85,8 @@ jobs:
           if ! gh release view "$FEED_TAG" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
             # A pre-release, so it never becomes this repo's "latest" release.
             gh release create "$FEED_TAG" --repo "$GITHUB_REPOSITORY" --prerelease --latest=false \
-              --title "Native Wrapper update feed" \
-              --notes "Not a release. Holds latest.json, which installed Debate AI desktop apps check for updates. Updated automatically by .github/workflows/native-wrapper-updates.yml when a native-wrapper-v* release is published."
+              --title "$APP_NAME update feed" \
+              --notes "Not a release. Holds latest.json, which installed $APP_NAME desktop apps check for updates. Updated automatically by .github/workflows/native-wrapper-updates.yml when a $TAG_PREFIX* release is published."
           fi
           gh release upload "$FEED_TAG" feed/latest.json --repo "$GITHUB_REPOSITORY" --clobber
           echo "::notice::Installed apps are now offered $TAG"

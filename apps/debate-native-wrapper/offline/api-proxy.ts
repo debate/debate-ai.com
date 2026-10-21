@@ -9,7 +9,10 @@
  */
 
 /** The site behind the offline build: where `/api` and sign-in go. */
-export const SITE = "https://debate-ai.com"
+export const SITE: string = __WRAPPER_SITE__
+
+// Replaced at build time with the profile's `offline.site` (scripts/build-offline.mjs).
+declare const __WRAPPER_SITE__: string
 
 export function installApiProxy(): void {
   const nativeFetch = window.fetch.bind(window)

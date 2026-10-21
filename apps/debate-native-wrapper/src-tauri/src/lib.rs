@@ -125,13 +125,13 @@ fn setup_tray_and_background(app: &mut tauri::App) -> Result<(), Box<dyn std::er
     background::enable_autostart_on_first_run(app.handle());
 
     // Tray context menu
-    let show_item = MenuItemBuilder::with_id("show", "Open Debate AI").build(app)?;
+    let show_item = MenuItemBuilder::with_id("show", format!("Open {}", generated_scheme::APP_NAME)).build(app)?;
     let hide_item = MenuItemBuilder::with_id("hide", "Hide to Background").build(app)?;
     let autostart_item = CheckMenuItemBuilder::with_id("autostart", "Run on Startup")
         .checked(background::autostart_enabled(app.handle()))
         .build(app)?;
     let settings_item = MenuItemBuilder::with_id("settings", "Settings…").build(app)?;
-    let quit_item = MenuItemBuilder::with_id("quit", "Quit Debate AI").build(app)?;
+    let quit_item = MenuItemBuilder::with_id("quit", format!("Quit {}", generated_scheme::APP_NAME)).build(app)?;
 
     // "Load From": one checkable entry per profile source; the checked one is
     // where the window loads the app from (see app_source.rs).
@@ -161,7 +161,7 @@ fn setup_tray_and_background(app: &mut tauri::App) -> Result<(), Box<dyn std::er
     let _tray = TrayIconBuilder::with_id("main")
         .icon(app.default_window_icon().unwrap().clone())
         .menu(&menu)
-        .tooltip("Debate AI (Ctrl+` to open)")
+        .tooltip(format!("{} (Ctrl+` to open)", generated_scheme::APP_NAME))
         .show_menu_on_left_click(false)
         .on_menu_event(move |app, event| match event.id.as_ref() {
             "show" => background::show_main(app),
