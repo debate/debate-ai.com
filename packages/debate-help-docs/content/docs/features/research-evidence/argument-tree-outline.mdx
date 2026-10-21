@@ -13,7 +13,11 @@ Renders a filterable, heading-grouped outline of a round's flow.
 
 ## What it shows
 
-Every persisted `ArgumentTreeRecord` (one card per round). Each card has
+Every persisted `ArgumentTreeRecord` that has at least one row with text
+(one card per round). A flow that was opened but never flowed has no
+outline: the auto-sync skips saving an empty tree (and removes a saved one
+once its flow is emptied), and the panel hides any blank outline an older
+build already saved. Each card has
 seven filter controls — **Kind**, **Side**, **Speech**, **Argument type**,
 **Contributor**, **Evidence status**, and an **Unanswered only** toggle.
 Changing a control re-filters the tree in place and saves the chosen

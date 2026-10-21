@@ -247,6 +247,21 @@ describe("buildAndSaveArgumentTreeIfChanged", () => {
     expect(result?.tree[0]).toMatchObject({ content: "Disad link, extended" });
     expect(getArgumentTree("round-6")).toEqual(result);
   });
+
+  it("doesn't save an outline for a flow with no text in it", () => {
+    const flow = { columns: COLUMNS, children: [rowFromContents([""])] };
+
+    expect(buildAndSaveArgumentTreeIfChanged(flow, "round-7")).toBeUndefined();
+    expect(buildAndSaveArgumentTreeIfChanged({ columns: COLUMNS, children: [] }, "round-7")).toBeUndefined();
+    expect(getArgumentTree("round-7")).toBeUndefined();
+  });
+
+  it("removes a saved outline once its flow has been emptied", () => {
+    buildAndSaveArgumentTreeIfChanged({ columns: COLUMNS, children: [rowFromContents(["Disad link"])] }, "round-8");
+
+    expect(buildAndSaveArgumentTreeIfChanged({ columns: COLUMNS, children: [] }, "round-8")).toBeUndefined();
+    expect(getArgumentTree("round-8")).toBeUndefined();
+  });
 });
 
 describe("clearArgumentTrees", () => {
@@ -266,10 +281,18 @@ describe("clearArgumentTrees", () => {
 
 describe("buildArgumentTreesPanelView", () => {
   it("sorts every persisted tree by roundId without mutating storage order", () => {
-    saveArgumentTree(ROUND_2);
+    saveArgumentTree({ ...ROUND_1, roundId: "round-2" });
     saveArgumentTree(ROUND_1);
 
     expect(buildArgumentTreesPanelView().map((r) => r.roundId)).toEqual(["round-1", "round-2"]);
     expect(listArgumentTrees().map((r) => r.roundId)).toEqual(["round-2", "round-1"]);
+  });
+
+  it("hides rounds whose tree has no text, so never-flowed rounds don't show as blank cards", () => {
+    saveArgumentTree(ROUND_1);
+    saveArgumentTree(ROUND_2);
+    saveArgumentTree({ roundId: "round-3", tree: [{ ...ROUND_1.tree[0], content: "  " }] });
+
+    expect(buildArgumentTreesPanelView().map((r) => r.roundId)).toEqual(["round-1"]);
   });
 });
