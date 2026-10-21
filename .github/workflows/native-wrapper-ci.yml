@@ -48,8 +48,8 @@ jobs:
         working-directory: apps/debate-native-wrapper
         run: |
           node scripts/configure.mjs
-          git diff --exit-code -- src-tauri/tauri.conf.json src-tauri/src/generated_scheme.rs src-tauri/Info.plist dist/splash-config.js || {
-            echo "::error::src-tauri/tauri.conf.json or generated_scheme.rs is out of date with profiles/debate-ai.json — run 'npm run configure' in apps/debate-native-wrapper and commit the result." >&2
+          git diff --exit-code -- src-tauri/tauri.conf.json src-tauri/src/generated_scheme.rs src-tauri/Info.plist src-tauri/capabilities/remote.json dist/splash-config.js || {
+            echo "::error::A file generated from the profile (tauri.conf.json, generated_scheme.rs, Info.plist, capabilities/remote.json, splash-config.js) is out of date with profiles/debate-ai.json — run 'npm run configure' in apps/debate-native-wrapper and commit the result." >&2
             exit 1
           }
 

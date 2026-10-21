@@ -35,7 +35,7 @@ const SIDEBAR_HREFS = new Set([
   "/summaries",
   "/outline",
   "/annotations",
-  // The CardMirror editor, likewise: a real route with synced data of its
+  // The Debate Editor, likewise: a real route with synced data of its
   // own, reached from the dock rather than from a section row now.
   "/reason-editor",
   // Response-Outcome Charts, taken out of every menu but still routed: its

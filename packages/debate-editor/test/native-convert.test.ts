@@ -119,14 +119,14 @@ describe("base64 storage", () => {
     const legacy = JSON.stringify({
       format: "cardmirror-doc",
       formatVersion: 1,
-      createdBy: "CardMirror",
+      createdBy: "Debate Editor",
       createdAt: new Date().toISOString(),
       doc: {},
     });
     expect(looksLikeCmirBase64(cmirToBase64(new TextEncoder().encode(legacy)))).toBe(true);
   });
 
-  it("rejects base64 of something that is not a CardMirror file", () => {
+  it("rejects base64 of something that is not a Debate Editor file", () => {
     expect(looksLikeCmirBase64(cmirToBase64(new TextEncoder().encode("plain text")))).toBe(false);
   });
 });

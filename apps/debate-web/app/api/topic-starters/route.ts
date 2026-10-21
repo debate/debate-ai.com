@@ -4,7 +4,7 @@ import { getDBFromContext } from "@/lib/database/context"
 import { topicStarterItems } from "@/lib/database/schema"
 import { ensureTopicStarterColumns } from "@/lib/topic-starters/changes"
 
-/** Public catalogue for the CardMirror Topic Starter sidebar. The hard cap
+/** Public catalogue for the Debate Editor Topic Starter sidebar. The hard cap
  * keeps the initial editor load bounded while fulfilling the public 100-file
  * browsing requirement.
  *

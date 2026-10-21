@@ -14,6 +14,14 @@ It has its **own CI**: `.github/workflows/native-wrapper-ci.yml` and
 
 ## Things that bite
 
+- **One config file.** Every app-specific value (name, identifier, URLs,
+  window, deep link, trusted origins, updater, release tag names) lives in
+  `profiles/debate-ai.json`. `scripts/configure.mjs` generates `tauri.conf.json`,
+  `src/generated_scheme.rs`, `capabilities/remote.json`, `Info.plist` and
+  `dist/splash-config.js` from it; CI fails if they drift. Add a new
+  app-specific value to the profile and `profiles/README.md`, never as a
+  literal. The tag prefix in the two release workflows' `on:`/`if:` is the
+  one unavoidable copy, and `configure` checks it.
 - **Rust toolchain required.** A machine that builds the rest of this repo
   cannot necessarily build this.
 - **It is generic on purpose.** Keep debate-specific behaviour out of it —

@@ -4,20 +4,20 @@
  * @fileoverview Turning files and editor content into the `.cmir` the app
  * stores, and back into the HTML the editor mounts.
  *
- * Every upload lands as CardMirror's own native file. It is the only format
- * that holds what CardMirror's OOXML reader gets out of a Verbatim document —
+ * Every upload lands as Debate Editor's own native file. It is the only format
+ * that holds what Debate Editor's OOXML reader gets out of a Verbatim document —
  * the card outline (pocket / hat / block / tag / analytic), highlighting,
  * comments and inline images — and the HTML the app used to keep instead
  * flattened all of it away. So nothing here converts an upload to card HTML,
  * and nothing here goes through the regex/mammoth card parser: the bytes go
- * `.docx` → CardMirror importer → `.cmir`, and the stored file stays `.cmir`
+ * `.docx` → Debate Editor importer → `.cmir`, and the stored file stays `.cmir`
  * for the rest of its life, including after the reader edits it.
  *
  * `.cmir` is binary (gzipped JSON) and the columns holding it are SQLite text,
  * so the bytes travel base64-encoded — see `./format` for how a row says which
  * of the two shapes it is in.
  *
- * @module lib/cardmirror/stored-cmir
+ * @module lib/debate-editor/stored-cmir
  */
 // The narrow bridge entry, not the package root: the root re-exports the
 // React editor shell, and pulling it in here would ship the editor into every
@@ -35,15 +35,15 @@ import {
 } from "@debate/editor/engine";
 import { STORED_FORMATS, type StoredContent } from "./format";
 import { isCmirContent } from "./content-format";
-import { CardMirrorImportError, fileExtension, IMPORTABLE_EXTENSIONS } from "./import-files";
+import { DebateEditorImportError, fileExtension, IMPORTABLE_EXTENSIONS } from "./import-files";
 import { registerStoredCmir } from "./lazy-stored-cmir";
 
 /** Written into each file's `createdBy` field, so a `.cmir` downloaded from
  *  the app says where it came from. */
-const APP_VERSION = "debate-ai.com CardMirror import";
+const APP_VERSION = "debate-ai.com Debate Editor import";
 
 export {
-  CardMirrorImportError,
+  DebateEditorImportError,
   docxDownloadFilename,
   fileExtension,
   IMPORT_ACCEPT,
@@ -59,7 +59,7 @@ function escapeHtml(value: string): string {
  * Renders a stored row for the editor, whose `content` prop takes HTML.
  *
  * Legacy HTML rows pass through untouched. A `.cmir` is parsed with
- * CardMirror's native reader and serialized through its own schema, in the
+ * Debate Editor's native reader and serialized through its own schema, in the
  * browser where the editor bundle already lives, rather than making every
  * catalogue response pay for a conversion the reader may never open. One that
  * will not parse returns a notice rather than an empty document — a blank page
@@ -72,7 +72,7 @@ export function storedContentToHtml(item: StoredContent): string {
   try {
     return docToHtml(parseNative(base64ToCmir(content)).doc);
   } catch (error) {
-    console.error("[cardmirror] could not open stored .cmir", error);
+    console.error("[debate-editor] could not open stored .cmir", error);
     return `<p>This file could not be opened (${escapeHtml(
       error instanceof Error ? error.message : String(error),
     )}).</p>`;
@@ -83,7 +83,7 @@ export function storedContentToHtml(item: StoredContent): string {
  * Converts a document's HTML — the same shape {@link storedContentToHtml}
  * (and the provider's `documentHtml`) hand the editor — into `.docx` bytes,
  * so the sidebar can offer a file to download without first opening it in
- * CardMirror. Goes through the schema (`htmlToDoc`) rather than re-emitting a
+ * Debate Editor. Goes through the schema (`htmlToDoc`) rather than re-emitting a
  * stored `.cmir` directly, so a document written in the editor (`format:
  * "html"`, never uploaded) downloads too, not just an imported one.
  *
@@ -96,7 +96,7 @@ export async function htmlToDocxBytes(html: string): Promise<Uint8Array> {
 
 /**
  * Re-encodes what the editor reports back into the `.cmir` its row holds, so
- * editing an imported file keeps it in CardMirror's format instead of
+ * editing an imported file keeps it in Debate Editor's format instead of
  * silently downgrading it to HTML on the first keystroke.
  *
  * The gzip runs off the main thread (`serializeNativeAsync`), which is why
@@ -141,20 +141,20 @@ function textToHtml(text: string): string {
 /**
  * Converts one uploaded file to the `.cmir` a row stores.
  *
- * @throws {CardMirrorImportError} For a name this path does not import, an
+ * @throws {DebateEditorImportError} For a name this path does not import, an
  * empty file, or bytes that are not what their extension claims — each with
  * the remedy, so the sidebar can say what to do rather than "import failed".
  */
 export async function fileToStoredCmir(file: File): Promise<ImportedFile> {
   const extension = fileExtension(file.name);
   if (!(IMPORTABLE_EXTENSIONS as readonly string[]).includes(extension)) {
-    throw new CardMirrorImportError(
-      `${file.name} isn’t a file CardMirror can open. Upload ${IMPORTABLE_EXTENSIONS.join(", ")}.`,
+    throw new DebateEditorImportError(
+      `${file.name} isn’t a file Debate Editor can open. Upload ${IMPORTABLE_EXTENSIONS.join(", ")}.`,
     );
   }
   const bytes = new Uint8Array(await file.arrayBuffer());
   if (bytes.byteLength === 0) {
-    throw new CardMirrorImportError(
+    throw new DebateEditorImportError(
       `${file.name} is empty. If it lives in Dropbox or iCloud Drive it may not have downloaded yet.`,
     );
   }
@@ -166,14 +166,14 @@ export async function fileToStoredCmir(file: File): Promise<ImportedFile> {
     // comments, the doc id and everything else in the envelope survive. Parse
     // first so a mislabelled file is refused now instead of on open.
     if (!looksLikeNative(bytes)) {
-      throw new CardMirrorImportError(
-        `${file.name} is named .cmir but isn’t a CardMirror file.`,
+      throw new DebateEditorImportError(
+        `${file.name} is named .cmir but isn’t a Debate Editor file.`,
       );
     }
     try {
       parseNative(bytes);
     } catch (error) {
-      throw new CardMirrorImportError(
+      throw new DebateEditorImportError(
         `${file.name} could not be opened (${error instanceof Error ? error.message : String(error)}).`,
       );
     }
@@ -185,14 +185,14 @@ export async function fileToStoredCmir(file: File): Promise<ImportedFile> {
     try {
       result = await docxToCmir(bytes, { appVersion: APP_VERSION });
     } catch (error) {
-      throw new CardMirrorImportError(
-        `${file.name} could not be converted to a CardMirror file (${
+      throw new DebateEditorImportError(
+        `${file.name} could not be converted to a Debate Editor file (${
           error instanceof Error ? error.message : String(error)
         }). Open it in Word and use Save As → Word Document (.docx), then upload it again.`,
       );
     }
     if (!result.doc.textContent.trim()) {
-      throw new CardMirrorImportError(
+      throw new DebateEditorImportError(
         `${file.name} opened but contains no text. Check that its content is not stored only in text boxes, images or a linked file.`,
       );
     }

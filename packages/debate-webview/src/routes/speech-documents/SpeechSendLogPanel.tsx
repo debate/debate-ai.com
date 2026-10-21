@@ -3,13 +3,13 @@
 /**
  * @fileoverview Client component backing `/speech-documents` — a live
  * history of everything the Reason Editor has actually sent into the
- * designated speech document via CardMirror's send-to-speech commands
+ * designated speech document via Debate Editor's send-to-speech commands
  * (mark a pane as the speech doc, then the backtick / Alt-backtick
  * shortcuts, or the ribbon's "Send to Speech" buttons).
  *
  * This replaces the prior panel here, which read the OLD `reason-editor`
  * (TipTap) package's `Mod-Shift-S` / "→Speech"-button flow — a command
- * that no longer exists in the live CardMirror-based `/reason-editor`
+ * that no longer exists in the live Debate Editor `/reason-editor`
  * route, so that panel could never show anything a user actually did.
  * `speechSendLogStore` (from `debate-editor`'s headless
  * `/engine` entry point — no ProseMirror or React pulled in here) is

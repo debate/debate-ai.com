@@ -1,10 +1,10 @@
 ---
-title: "CardMirror embed persistence — why a loaded file can't go blank"
+title: "Debate Editor embed persistence — why a loaded file can't go blank"
 ---
 
-# CardMirror embed persistence — why a loaded file can't go blank
+# Debate Editor embed persistence — why a loaded file can't go blank
 
-The rules that decide when an edit in the CardMirror embed becomes a write to
+The rules that decide when an edit in the Debate Editor embed becomes a write to
 the cloud, and what happens when a document can't be loaded. This is the fix
 for "after a file is loaded it sometimes disappears and goes blank" — which
 was never only a display bug: the blank was reported as the document's new
@@ -19,7 +19,7 @@ content and saved over the file.
 
 ## The shape of the problem
 
-CardMirror's engine (`packages/debate-editor/src/editor/index.ts`) is a
+Debate Editor's engine (`packages/debate-editor/src/editor/index.ts`) is a
 page-level singleton that assumes it owns the window: one `EditorView`, one
 current document, its own file/recovery machinery. The React embed hands the
 host app's document to that same view and treats what comes back out as the
@@ -29,7 +29,7 @@ Everything below follows from those two facts meeting: the engine replaces
 its editor state on its own initiative, and whatever is in the view when it
 does gets saved as the user's file.
 
-The engine itself is upstream CardMirror (the `packages/debate-editor-cm`
+The engine itself is upstream Debate Editor (the `packages/debate-editor-cm`
 submodule), assembled with debate-ai.com's patch into `packages/debate-editor/src/` at install time. The two seams the
 embed leans on — `adoptEmbeddedDoc` (tells the engine which document the host
 mounted) and the `hostPlugins()` slot in `buildEditorPlugins` (keeps the
@@ -137,7 +137,7 @@ inside the debounce dropped the edits to the one you left.
 
 ## What the embed doesn't pop up on open
 
-The site mounts CardMirror on nearly every visit, so the engine's
+The site mounts Debate Editor on nearly every visit, so the engine's
 first-launch and crash-recovery surfaces are switched off in the embed
 (debate-ai.com edits to upstream, in `patches/debate-ai.patch`):
 

@@ -19,7 +19,7 @@ const repoRoot = path.resolve(import.meta.dirname, "../..");
 
 /**
  * `packages/debate-editor/src/` is assembled at install time from the upstream
- * CardMirror submodule plus this repo's patch and `overlay/` (see that
+ * Debate Editor submodule plus this repo's patch and `overlay/` (see that
  * package's `scripts/sync-upstream.mjs`). Only the overlay is code this repo
  * owns outright, so only the overlay's files are measured there — the ~50k
  * lines of vendored upstream would otherwise swamp the number, and since
@@ -34,7 +34,7 @@ const editorOverlaySources = readdirSync(editorOverlay, { recursive: true, encod
 
 /**
  * Every package's `src/`, except the two that hold vendored upstream code: the
- * editor (measured through its overlay, above) and the CardMirror submodule it
+ * editor (measured through its overlay, above) and the Debate Editor submodule it
  * is assembled from, which no suite here tests.
  */
 const VENDORED_PACKAGES = new Set(["debate-editor", "debate-editor-cm", "debate-tournaments-tabroom"]);
@@ -53,8 +53,8 @@ export default defineConfig({
       "packages/*",
       "!packages/README.md",
       "!packages/debate-help-docs",
-      // Git submodules of upstream CardMirror and Tabroom. Each is its own
-      // app with its own toolchain and test setup; CardMirror is rebased into
+      // Git submodules of upstream Debate Editor and Tabroom. Each is its own
+      // app with its own toolchain and test setup; Debate Editor is rebased into
       // @debate/editor, Tabroom is
       // vendored into debate-tournaments, and those test the parts the app uses.
       "!packages/debate-editor-cm",

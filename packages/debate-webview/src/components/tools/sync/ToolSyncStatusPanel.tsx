@@ -9,7 +9,7 @@
  * Closes the "nothing surfaces the sync any more" Known gap in
  * `packages/debate-help-docs/content/docs/internals/tool-data-sync.mdx`: the
  * status list this rendered on used to live at `/settings`, which is now
- * CardMirror-editor settings only (see that page's own doc comment). Both
+ * Debate Editor-editor settings only (see that page's own doc comment). Both
  * the sync results and the retry function this renders already existed on
  * `useToolRecordSync` — this is that state finally getting somewhere to
  * render again.

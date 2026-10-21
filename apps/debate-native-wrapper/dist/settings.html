@@ -41,7 +41,7 @@
     -->
     <main>
       <h1>Load the app from</h1>
-      <p>Where this window gets Debate AI from. Your choice is remembered.</p>
+      <p>Where this window gets <span id="app-name">the app</span> from. Your choice is remembered.</p>
       <form id="sources"></form>
       <div class="actions">
         <button type="button" id="back">Back</button>
@@ -54,6 +54,7 @@
         var invoke = window.__TAURI__ && window.__TAURI__.core && window.__TAURI__.core.invoke;
         var form = document.getElementById("sources");
         var error = document.getElementById("error");
+        if (window.__WRAPPER_APP_NAME__) document.getElementById("app-name").textContent = window.__WRAPPER_APP_NAME__;
 
         function describe(option) {
           if (option.bundled) return "Built into the app. Works without internet; signing in and online features still need it.";

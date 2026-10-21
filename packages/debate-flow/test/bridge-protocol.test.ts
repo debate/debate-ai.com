@@ -16,7 +16,7 @@ import {
     parseFlowRequest,
     parseRevealRequest,
 } from "../src/lib/bridge/protocol";
-import { CARDMIRROR_COMMANDS, COMMANDS, type CommandId } from "../src/lib/commands/registry";
+import { DEBATE_EDITOR_COMMANDS, COMMANDS, type CommandId } from "../src/lib/commands/registry";
 
 const item = (over: Record<string, unknown> = {}) => ({
     kind: "card",
@@ -174,9 +174,9 @@ describe("the command registry", () => {
         for (let i = 1; i <= 9; i++) expect(COMMANDS[`sheet.jump${i}` as CommandId]).toBeDefined();
     });
 
-    it("names the CardMirror commands, and only commands the registry holds", () => {
-        expect(CARDMIRROR_COMMANDS.length).toBeGreaterThan(0);
-        for (const id of CARDMIRROR_COMMANDS) expect(COMMANDS[id]).toBeDefined();
+    it("names the Debate Editor commands, and only commands the registry holds", () => {
+        expect(DEBATE_EDITOR_COMMANDS.length).toBeGreaterThan(0);
+        for (const id of DEBATE_EDITOR_COMMANDS) expect(COMMANDS[id]).toBeDefined();
     });
 
     it("holds every command the collaboration surface fires", () => {

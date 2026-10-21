@@ -124,7 +124,7 @@ Distinct from notarized-`.dmg` distribution outside the Store (which uses a Deve
 ## GitHub Releases (no store at all)
 
 The default in `native-wrapper-release.yml`: desktop installers attach directly to a GitHub
-Release, same distribution model as debate/cardmirror's own Electron app. No review process, no
+Release, same distribution model as debate/debate-editor's own Electron app. No review process, no
 developer-account fees, works today — the tradeoff is no store discoverability and users see an
 "unidentified developer" / SmartScreen warning on first launch unless the signing secrets above
 are configured.

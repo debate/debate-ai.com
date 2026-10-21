@@ -9,7 +9,7 @@
  *
  * Edits go straight to `/api/admin/topic-starters/[id]` (rename, move,
  * delete), `[id]/copy` (paste) and `items` (new folder), which apply the
- * same change records as every other catalogue edit, so what CardMirror
+ * same change records as every other catalogue edit, so what Debate Editor
  * shows everyone changes with them. Unlike the Topic starters tab, this tree
  * also lists rows imported with "Share publicly" off — they came from this
  * importer and need cleaning up too.
@@ -99,7 +99,7 @@ export function TopicStarterLibraryTree({ reloadKey = 0 }: { reloadKey?: number 
 
   const remove = (id: number) => {
     const isFolder = items.find((item) => item.id === id)?.isFolder
-    if (!window.confirm(`Delete ${titleOf(id)}${isFolder ? " and everything in it" : ""}? It disappears from CardMirror for everyone.`)) return
+    if (!window.confirm(`Delete ${titleOf(id)}${isFolder ? " and everything in it" : ""}? It disappears from Debate Editor for everyone.`)) return
     if (copied?.id === id) setCopied(null)
     void edit(String(id), { method: "DELETE" }, `${titleOf(id)} deleted.`)
   }

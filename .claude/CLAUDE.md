@@ -52,7 +52,7 @@ extension and a native wrapper.
 | You want to change… | Go to |
 | --- | --- |
 | Evidence search, card scoring, review queue | `packages/debate-search-evidence` |
-| The card editor (CardMirror / ProseMirror, `.docx` interop) | `packages/debate-editor` |
+| The card editor (Debate Editor / ProseMirror, `.docx` interop) | `packages/debate-editor` |
 | Parsing Verbatim `.docx` / HTML into cards | `packages/debate-card-parser` |
 | The live round workspace (FIAT), flow grid, round setup | `packages/debate-round` |
 | The `ebb` flow editor embedded in a round | `packages/debate-flow` |

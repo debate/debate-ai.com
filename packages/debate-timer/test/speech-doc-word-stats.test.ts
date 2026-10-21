@@ -20,7 +20,7 @@ describe("computeSpeechDocWordStats", () => {
     })
   })
 
-  it("counts a CardMirror card: tag words plus highlighted body words are read", () => {
+  it("counts a Debate Editor card: tag words plus highlighted body words are read", () => {
     const html = [
       '<div class="pmd-card">',
       '<p class="pmd-tag">Warming causes extinction</p>',

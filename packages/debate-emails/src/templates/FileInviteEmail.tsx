@@ -21,7 +21,7 @@ export function fileInviteSubject({ inviterName, fileTitle }: FileInviteEmailPro
 }
 
 /**
- * Sent when someone shares a CardMirror document with a contact
+ * Sent when someone shares a Debate Editor document with a contact
  * (POST /api/card-shares) so they can co-edit it live.
  */
 export function FileInviteEmail({ inviterName, fileTitle, message, link, baseUrl }: FileInviteEmailProps) {

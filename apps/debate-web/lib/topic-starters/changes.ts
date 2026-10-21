@@ -27,7 +27,7 @@ import {
   type TopicStarterChangeStatus,
   type TopicTreeRow,
 } from "@debate/webview/lib/topic-starters/changes";
-import { normalizeFormat } from "@debate/webview/lib/cardmirror/format";
+import { normalizeFormat } from "@debate/webview/lib/debate-editor/format";
 import type { getDBFromContext } from "@/lib/database/context";
 import { ensureTableColumns } from "@/lib/database/ensure-columns";
 import { notifications, staffRoles, topicStarterChanges, topicStarterItems, user } from "@/lib/database/schema";

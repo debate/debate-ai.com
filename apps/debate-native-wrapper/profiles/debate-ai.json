@@ -27,6 +27,10 @@
   "copyright": "Debate AI",
   "category": "Education",
   "shortDescription": "CARDS evidence search, FIAT round flowing, REASON writing, and LEARN video library, in one native app.",
+  "mediaUsage": {
+    "camera": "Debate AI uses the camera for video in live rounds.",
+    "microphone": "Debate AI uses the microphone for live rounds and speech recording."
+  },
   "trustedOrigins": [
     "https://debate-ai.com",
     "https://*.debate-ai.com",
@@ -37,6 +41,12 @@
     "endpoints": [
       "https://github.com/debate/debate-ai.com/releases/download/native-wrapper-updates/latest.json"
     ]
+  },
+  "release": {
+    "tagPrefix": "native-wrapper-v",
+    "name": "Native Wrapper",
+    "notes": "Desktop + mobile installers for Debate AI's native wrapper.",
+    "updateFeedTag": "native-wrapper-updates"
   },
   "window": {
     "title": "Debate AI",
@@ -49,11 +59,15 @@
     "resizable": true
   },
   "android": {
-    "packageName": "com.debate.ai",
     "minSdkVersion": 24
   },
+  "macos": {
+    "minimumSystemVersion": "10.15"
+  },
   "ios": {
-    "bundleId": "com.debate.ai",
     "minimumSystemVersion": "14.0"
+  },
+  "offline": {
+    "site": "https://debate-ai.com"
   }
 }

@@ -15,7 +15,7 @@
 
 import { describe, expect, it } from "vitest"
 import { schema, serializeNative, cmirToBase64 } from "@debate/editor/engine"
-import { storedContentToHtml } from "../../../src/lib/cardmirror/stored-cmir"
+import { storedContentToHtml } from "../../../src/lib/debate-editor/stored-cmir"
 import { topicStarterHtml } from "../../../src/lib/topic-starters/content"
 
 /** A real one-paragraph `.cmir`, base64-encoded the way a row stores it. */

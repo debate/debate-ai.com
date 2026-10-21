@@ -32,7 +32,7 @@
     "docker:build:all": "bash scripts/build-docker.sh --all"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^2.12.3"
+    "@tauri-apps/cli": "^2.12.4"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.12.4",

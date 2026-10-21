@@ -12,7 +12,7 @@
  * so the row shows *why* it matched.
  *
  * Pure on purpose: the palette builds {@link FileSearchEntry} rows from the
- * provider (turning `.cmir` rows into text with CardMirror's engine, which is
+ * provider (turning `.cmir` rows into text with Debate Editor's engine, which is
  * loaded on demand) and this module only ranks them.
  *
  * @module lib/reason-docs/file-search

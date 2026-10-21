@@ -13,11 +13,16 @@ name: Native Wrapper Release
 #     (tagged at the commit the run was started from) and published. Untick
 #     "publish" for a build-only test run that uploads nothing.
 #
-# Three-stage shape, same reasoning as debate/cardmirror's own
+# Three-stage shape, same reasoning as debate/debate-editor's own
 # .github/workflows/release.yml: `prepare-release` creates one draft up front
 # so the parallel build jobs all upload into it instead of racing to create
 # their own drafts, and `publish-release` takes it out of draft once the
 # builds are done.
+#
+# Release naming (tag prefix, title, notes) comes from the profile's
+# `release` block. GitHub reads `on:` before any file, so the tag pattern
+# below is the one copy of `release.tagPrefix` that has to be kept in step by
+# hand; scripts/configure.mjs fails if they disagree.
 
 on:
   push:
@@ -33,6 +38,10 @@ on:
 concurrency:
   group: native-wrapper-release-${{ github.ref }}
 
+env:
+  # The app's one config file; see apps/debate-native-wrapper/profiles/README.md.
+  PROFILE: apps/debate-native-wrapper/profiles/debate-ai.json
+
 jobs:
   prepare-release:
     name: Create draft release
@@ -44,6 +53,7 @@ jobs:
       release_id: ${{ steps.release.outputs.id }}
       tag: ${{ steps.version.outputs.tag }}
       version: ${{ steps.version.outputs.version }}
+      release_name: ${{ steps.version.outputs.release_name }}
     steps:
       - uses: actions/checkout@v4
 
@@ -61,17 +71,20 @@ jobs:
             echo "::error::Could not read \"version\" from apps/debate-native-wrapper/src-tauri/tauri.conf.json." >&2
             exit 1
           fi
+          TAG_PREFIX="$(jq -r '.release.tagPrefix // "native-wrapper-v"' "$PROFILE")"
+          RELEASE_NAME="$(jq -r '.release.name // "\(.appName) Native"' "$PROFILE")"
           if [ "$GITHUB_REF_TYPE" = "tag" ]; then
             TAG="$GITHUB_REF_NAME"
-            TAG_VERSION="${TAG#native-wrapper-v}"
+            TAG_VERSION="${TAG#"$TAG_PREFIX"}"
             if [ "$TAG_VERSION" != "$APP_VERSION" ]; then
-              echo "::error::Tag $TAG is version $TAG_VERSION but the app is $APP_VERSION — bump \"version\" in apps/debate-native-wrapper/profiles/debate-ai.json, run 'bun run configure', and tag again." >&2
+              echo "::error::Tag $TAG is version $TAG_VERSION but the app is $APP_VERSION — bump \"version\" in $PROFILE, run 'bun run configure', and tag again." >&2
               exit 1
             fi
           else
-            TAG="native-wrapper-v${APP_VERSION}"
+            TAG="${TAG_PREFIX}${APP_VERSION}"
           fi
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "release_name=$RELEASE_NAME" >> "$GITHUB_OUTPUT"
           echo "version=$APP_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Ensure draft release exists
@@ -80,7 +93,9 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ steps.version.outputs.tag }}
           VERSION: ${{ steps.version.outputs.version }}
+          RELEASE_NAME: ${{ steps.version.outputs.release_name }}
         run: |
+          NOTES="$(jq -r '.release.notes // "Desktop + mobile installers for \(.appName)."' "$PROFILE")"
           PRERELEASE_FLAG=""
           if [[ "$VERSION" == *-* ]]; then
             PRERELEASE_FLAG="--prerelease"
@@ -90,8 +105,8 @@ jobs:
             # published; it is what lets a manual run (no tag yet) work, and
             # is ignored when the tag already exists.
             gh release create "$TAG" --draft --target "$GITHUB_SHA" \
-              --title "Native Wrapper $VERSION" \
-              --notes "Desktop + mobile installers for Debate AI's native wrapper, version $VERSION." \
+              --title "$RELEASE_NAME $VERSION" \
+              --notes "$NOTES Version $VERSION." \
               $PRERELEASE_FLAG
             gh release view "$TAG" --json id -q .id > /tmp/release_id
           fi
@@ -210,7 +225,7 @@ jobs:
           # prepare-release was skipped (a build-only test run), in which case
           # nothing is uploaded.
           tagName: ${{ needs.prepare-release.outputs.tag }}
-          releaseName: ${{ needs.prepare-release.outputs.version != '' && format('Native Wrapper {0}', needs.prepare-release.outputs.version) || '' }}
+          releaseName: ${{ needs.prepare-release.outputs.version != '' && format('{0} {1}', needs.prepare-release.outputs.release_name, needs.prepare-release.outputs.version) || '' }}
           releaseId: ${{ needs.prepare-release.outputs.release_id }}
           releaseDraft: true
           args: ${{ matrix.args }}

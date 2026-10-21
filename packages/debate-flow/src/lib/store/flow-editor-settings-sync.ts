@@ -14,7 +14,7 @@
  * @module lib/store/flow-editor-settings-sync
  */
 
-import { resolveCardMirrorTextType } from "../bridge/cardmirror";
+import { resolveDebateEditorTextType } from "../bridge/debate-editor";
 import { resolveFontId } from "../fonts/registry";
 import { resolveThemeMode } from "../theme/mode";
 
@@ -90,7 +90,7 @@ function isValidDisplayValue(key: string, value: unknown): boolean {
         case "defaultGridZoom":
             return typeof value === "number" && Number.isFinite(value) && value >= ZOOM_MIN && value <= ZOOM_MAX;
         case "cardmirrorTextType":
-            return typeof value === "string" && resolveCardMirrorTextType(value) === value;
+            return typeof value === "string" && resolveDebateEditorTextType(value) === value;
         case "theme":
             return typeof value === "string" && resolveThemeMode(value) === value;
         case "collabName":

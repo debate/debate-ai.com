@@ -39,9 +39,9 @@ import {
 } from "../ui/select";
 import { Switch } from "../ui/switch";
 import { Tip } from "../ui/tooltip";
-import type { CardMirrorTextType } from "../../lib/bridge/cardmirror";
+import type { DebateEditorTextType } from "../../lib/bridge/debate-editor";
 import {
-    CARDMIRROR_COMMANDS,
+    DEBATE_EDITOR_COMMANDS,
     COLLAB_COMMANDS,
     COMMANDS,
     type CommandId,
@@ -70,9 +70,9 @@ const THEME_OPTIONS: { id: ThemeMode; label: string }[] = [
     { id: "system", label: "System" },
 ];
 
-/** CardMirror's insert types, in the words its own document editor uses:
+/** Debate Editor's insert types, in the words its own document editor uses:
  *  its outline heading levels, deepest first, then plain body text. */
-const CARDMIRROR_TEXT_TYPES: { value: CardMirrorTextType; label: string }[] = [
+const DEBATE_EDITOR_TEXT_TYPES: { value: DebateEditorTextType; label: string }[] = [
     { value: "analytic", label: "Analytic" },
     { value: "tag", label: "Tag" },
     { value: "block", label: "Block" },
@@ -200,7 +200,7 @@ export default function SettingsPanelBody() {
     const chordByCommand = buildChordMap();
 
     // isDesktop() gates the bridge itself; the setting gates the user's choice.
-    const cardmirrorOn = cardmirrorEnabled && isDesktop();
+    const debateEditorOn = cardmirrorEnabled && isDesktop();
 
     // Rebinding a command a switched-off feature owns is pointless. The
     // collaboration commands are palette-only by design, so they never appear
@@ -209,12 +209,12 @@ export default function SettingsPanelBody() {
         const list = COMMAND_LIST.filter(
             (c) =>
                 !COLLAB_COMMANDS.includes(c.id) &&
-                (cardmirrorOn || !CARDMIRROR_COMMANDS.includes(c.id)),
+                (debateEditorOn || !DEBATE_EDITOR_COMMANDS.includes(c.id)),
         );
         const q = query.trim().toLowerCase();
         if (!q) return list;
         return list.filter((c) => c.label.toLowerCase().includes(q));
-    }, [query, cardmirrorOn]);
+    }, [query, debateEditorOn]);
 
     function onPanelKeyDown(e: React.KeyboardEvent) {
         if (!recording) return;
@@ -567,48 +567,48 @@ export default function SettingsPanelBody() {
                             </SettingsSection>
                             {isDesktop() && (
                                 <SettingsSection
-                                    title="CardMirror integration"
+                                    title="Debate Editor integration"
                                     className="mt-4"
-                                    data-testid="cardmirror-section"
+                                    data-testid="debate-editor-section"
                                 >
                                     <SettingRow
-                                        title="Enable CardMirror integration"
+                                        title="Enable Debate Editor integration"
                                         control={
                                             <Switch
                                                 checked={cardmirrorEnabled}
                                                 onCheckedChange={setCardmirrorEnabled}
-                                                data-testid="cardmirror-enabled-toggle"
-                                                aria-label="Enable CardMirror integration"
+                                                data-testid="debate-editor-enabled-toggle"
+                                                aria-label="Enable Debate Editor integration"
                                             />
                                         }
                                     />
                                     {cardmirrorEnabled && (
                                         <SettingRow
-                                            title="Send to CardMirror as"
-                                            description="What style ebb should apply to text sent to CardMirror."
+                                            title="Send to Debate Editor as"
+                                            description="What style ebb should apply to text sent to Debate Editor."
                                             control={
                                                 <Select
                                                     value={cardmirrorTextType}
-                                                    items={CARDMIRROR_TEXT_TYPES}
+                                                    items={DEBATE_EDITOR_TEXT_TYPES}
                                                     onValueChange={(value) =>
                                                         setCardmirrorTextType(
-                                                            value as CardMirrorTextType,
+                                                            value as DebateEditorTextType,
                                                         )
                                                     }
                                                 >
                                                     <SelectTrigger
-                                                        aria-label="Send to CardMirror as"
-                                                        data-testid="cardmirror-text-type-select"
+                                                        aria-label="Send to Debate Editor as"
+                                                        data-testid="debate-editor-text-type-select"
                                                         className="w-44"
                                                     >
                                                         <SelectValue />
                                                     </SelectTrigger>
                                                     <SelectContent>
-                                                        {CARDMIRROR_TEXT_TYPES.map((t) => (
+                                                        {DEBATE_EDITOR_TEXT_TYPES.map((t) => (
                                                             <SelectItem
                                                                 key={t.value}
                                                                 value={t.value}
-                                                                data-testid={`cardmirror-text-type-${t.value}`}
+                                                                data-testid={`debate-editor-text-type-${t.value}`}
                                                             >
                                                                 {t.label}
                                                             </SelectItem>

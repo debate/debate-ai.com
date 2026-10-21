@@ -4,7 +4,7 @@
  * — the page that wires the flow store, the timer state and every handler
  * into its layout children.
  *
- * The heavy layout children (sidebar, CardMirror split view, ebb, dialogs,
+ * The heavy layout children (sidebar, Debate Editor split view, ebb, dialogs,
  * resizable panels) are replaced by stubs that record the props they were
  * given, so each test drives a real handler through a child's callback prop
  * and asserts what reached the real `useFlowStore` / the next render's props.

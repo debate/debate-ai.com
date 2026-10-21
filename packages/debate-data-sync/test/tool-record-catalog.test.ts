@@ -238,7 +238,7 @@ describe("the synced collection catalog", () => {
     });
   });
 
-  it("syncs the CardMirror editor's personal spellcheck dictionary now that its records carry a stable id", () => {
+  it("syncs the Debate Editor's personal spellcheck dictionary now that its records carry a stable id", () => {
     // `editor/user-dictionary.ts`'s `pmd-user-dictionary` store used to be a
     // bare `string[]` of words, the same shape problem `coachingSessions`
     // still has — `loadUserDictionary` now migrates it to `{ id, word }[]`

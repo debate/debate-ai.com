@@ -1,5 +1,5 @@
 /**
- * The embed's change reporter — how `<CardMirrorEditor>` decides that the
+ * The embed's change reporter — how `<DebateEditor>` decides that the
  * host's document actually changed.
  *
  * The host app treats `onChange` as "the user edited this document" and

@@ -12,7 +12,7 @@
  *   } from "@debate/editor";
  *   import type { LexicalEditorHandle } from "@debate/editor";
  *
- * Under the hood every one of these is the same `CardMirrorEditor`,
+ * Under the hood every one of these is the same `DebateEditor`,
  * varying only in whether the dropdown menu bar is shown above the toolbar. The
  * headless engine (schema + .docx/.cmir codecs) is available at
  * `@debate/editor/engine`.
@@ -21,17 +21,17 @@
 import { forwardRef } from "react";
 import type { RefAttributes } from "react";
 
-import { CardMirrorEditor } from "./CardMirrorEditor.js";
-import type { LexicalEditorHandle, ReasonEditorProps } from "./CardMirrorEditor.js";
+import { DebateEditor } from "./DebateEditor.js";
+import type { LexicalEditorHandle, ReasonEditorProps } from "./DebateEditor.js";
 
-export { CardMirrorEditor } from "./CardMirrorEditor.js";
-export type { LexicalEditorHandle, ReasonEditorProps } from "./CardMirrorEditor.js";
+export { DebateEditor } from "./DebateEditor.js";
+export type { LexicalEditorHandle, ReasonEditorProps } from "./DebateEditor.js";
 export { MenuBar } from "./MenuBar.js";
 export { ReadOnlyPreview } from "./ReadOnlyPreview.js";
-export { CardMirrorSettingsSection } from "./CardMirrorSettingsSection.js";
-export type { CardMirrorSettingsSectionProps } from "./CardMirrorSettingsSection.js";
-export { CARDMIRROR_SETTINGS_TABS } from "../editor/settings-tabs.js";
-export type { CardMirrorSettingsTab } from "../editor/settings-tabs.js";
+export { DebateEditorSettingsSection } from "./DebateEditorSettingsSection.js";
+export type { DebateEditorSettingsSectionProps } from "./DebateEditorSettingsSection.js";
+export { DEBATE_EDITOR_SETTINGS_TABS } from "../editor/settings-tabs.js";
+export type { DebateEditorSettingsTab } from "../editor/settings-tabs.js";
 export { docToHtml, htmlToDoc } from "./html-bridge.js";
 
 export type EditorProps = ReasonEditorProps;
@@ -40,20 +40,20 @@ type EditorComponent = React.ForwardRefExoticComponent<
   ReasonEditorProps & RefAttributes<LexicalEditorHandle>
 >;
 
-/** Full editor with the dropdown menu bar above CardMirror's toolbar. */
+/** Full editor with the dropdown menu bar above Debate Editor's toolbar. */
 export const EditorWithToolbar: EditorComponent = forwardRef<LexicalEditorHandle, ReasonEditorProps>(
   function EditorWithToolbar(props, ref) {
-    return <CardMirrorEditor ref={ref} showToolbar {...props} />;
+    return <DebateEditor ref={ref} showToolbar {...props} />;
   },
 );
 
 /** Editor without the dropdown menu bar — for embeds that supply their
- *  own command menus. CardMirror's toolbar strip stays: its buttons back
+ *  own command menus. Debate Editor's toolbar strip stays: its buttons back
  *  real functionality (undo/redo, save state, zoom, word count) beyond
  *  formatting. */
 export const EditorContent: EditorComponent = forwardRef<LexicalEditorHandle, ReasonEditorProps>(
   function EditorContent(props, ref) {
-    return <CardMirrorEditor ref={ref} showToolbar={false} {...props} />;
+    return <DebateEditor ref={ref} showToolbar={false} {...props} />;
   },
 );
 
@@ -62,7 +62,7 @@ export const EditorContent: EditorComponent = forwardRef<LexicalEditorHandle, Re
  *  `contentKey`/`title`/`live` contract. */
 export const LexicalEditorWrapper: EditorComponent = forwardRef<LexicalEditorHandle, ReasonEditorProps>(
   function LexicalEditorWrapper(props, ref) {
-    return <CardMirrorEditor ref={ref} showToolbar {...props} />;
+    return <DebateEditor ref={ref} showToolbar {...props} />;
   },
 );
 

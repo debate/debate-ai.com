@@ -5,7 +5,7 @@
  * A content-sized dock (`w-max`) is wider than the 300px app sidebar it sits
  * in at the `md` breakpoint, which either forces the sidebar to scroll
  * sideways or reaches over its border onto the page beside it — the
- * CardMirror editor, on `/reason-editor` and `/doc`. `fluid` swaps that for a
+ * Debate Editor, on `/reason-editor` and `/doc`. `fluid` swaps that for a
  * column-width, wrapping row, and lets the host shrink the icons so the whole
  * set fits without wrapping in the first place.
  */

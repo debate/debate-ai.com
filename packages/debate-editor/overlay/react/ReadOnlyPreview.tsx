@@ -1,11 +1,11 @@
 "use client";
 
 /**
- * Passive rendering of a CardMirror document — used for the non-live side
- * of a split view (see CardMirrorEditor.tsx / the `live` prop). Not a
- * ProseMirror EditorView: CardMirror's engine is a page singleton (see
+ * Passive rendering of a Debate Editor document — used for the non-live side
+ * of a split view (see DebateEditor.tsx / the `live` prop). Not a
+ * ProseMirror EditorView: Debate Editor's engine is a page singleton (see
  * singleton.ts), so only one side can be a live editable instance at a
- * time. This renders the SAME HTML the live side would produce (CardMirror's
+ * time. This renders the SAME HTML the live side would produce (Debate Editor's
  * own `toDOM` markup, via the html-bridge), read-only, styled with the
  * engine's own stylesheet so pocket/hat/cite/etc. still look right.
  */

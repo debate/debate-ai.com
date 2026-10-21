@@ -1,5 +1,5 @@
 /**
- * @fileoverview Web-page helpers over CardMirror's headless core: loading a
+ * @fileoverview Web-page helpers over Debate Editor's headless core: loading a
  * `.docx` straight from a `File`, saving one back as a downloadable `Blob`,
  * and reading a document's outline and cards without mounting an editor.
  *
@@ -28,7 +28,7 @@ export interface OutlineItem {
   /** 1 for a pocket through 4 for a card tag. */
   level: 1 | 2 | 3 | 4;
   text: string;
-  /** Stable heading id CardMirror keeps across round trips, or "". */
+  /** Stable heading id Debate Editor keeps across round trips, or "". */
   id: string;
 }
 
@@ -41,8 +41,8 @@ export interface CardText {
 }
 
 /**
- * Reads a `.docx` into a CardMirror document, with its comment threads and
- * the doc id CardMirror stamps into files it saves.
+ * Reads a `.docx` into a Debate Editor document, with its comment threads and
+ * the doc id Debate Editor stamps into files it saves.
  *
  * @param input - A `File`/`Blob` from a picker or drop, or the raw bytes.
  */
@@ -52,7 +52,7 @@ export async function importDocx(input: Blob | ArrayBuffer | Uint8Array) {
 }
 
 /**
- * Writes a CardMirror document out as a `.docx` `Blob`, ready for a
+ * Writes a Debate Editor document out as a `.docx` `Blob`, ready for a
  * download link or an upload.
  */
 export async function exportDocxBlob(doc: PMNode, options?: ExportOptions): Promise<Blob> {
@@ -80,7 +80,7 @@ export function outlineOf(doc: PMNode): OutlineItem[] {
 /**
  * Every card in the document, as tag, cite and body text.
  *
- * `cite` is only filled from `cite_paragraph` nodes, which CardMirror creates
+ * `cite` is only filled from `cite_paragraph` nodes, which Debate Editor creates
  * while editing. A `.docx` has no such paragraph style — Verbatim marks a cite
  * with character styles inside an ordinary paragraph — so after
  * {@link importDocx} the cite line is the first line of `body`.

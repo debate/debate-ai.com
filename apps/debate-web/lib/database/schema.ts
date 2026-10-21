@@ -135,8 +135,8 @@ export const invitation = sqliteTable(
 // and `isFolder` back the file-tree sidebar (also ported from quick search's
 // REASON editor — see reason-editor-sidebar's FileTree) so documents can be
 // organized into folders instead of one flat list. An uploaded `.docx`
-// lands here too, converted to CardMirror's native `.cmir` on the way in
-// (`lib/cardmirror/stored-cmir.ts`); `format` says which shape a row holds.
+// lands here too, converted to Debate Editor's native `.cmir` on the way in
+// (`lib/debate-editor/stored-cmir.ts`); `format` says which shape a row holds.
 export const documents = sqliteTable(
   "documents",
   {
@@ -144,9 +144,9 @@ export const documents = sqliteTable(
     title: text("title").notNull().default("Untitled"),
     content: text("content").notNull().default(""),
     // How `content` is encoded: `"cmir"` for an uploaded file, which is kept
-    // in CardMirror's native format for its whole life, or `"html"` for a
+    // in Debate Editor's native format for its whole life, or `"html"` for a
     // document written in the editor. Same two values as
-    // `topic_starter_items.format` — see `lib/cardmirror/format.ts`.
+    // `topic_starter_items.format` — see `lib/debate-editor/format.ts`.
     format: text("format").notNull().default("html"),
     userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
     parentId: integer("parent_id"),
@@ -177,7 +177,7 @@ export type ReasonDocument = typeof documents.$inferSelect;
 // imported file; `parentId` preserves the directory structure in an uploaded
 // zip. Content is stored inline rather than in a storage bucket so selecting
 // a public file can open it directly in the editor without a signed-in
-// account: an uploaded DOCX is converted to CardMirror's native `.cmir`
+// account: an uploaded DOCX is converted to Debate Editor's native `.cmir`
 // (gzipped JSON, base64-encoded to fit this text column), which `format`
 // records. Rows imported before that carry card HTML and say so.
 export const topicStarterItems = sqliteTable(
@@ -352,7 +352,7 @@ export const userSettings = sqliteTable("user_settings", {
   themeMode: text("theme_mode"),
   favoriteTools: text("favorite_tools"),
   recentTools: text("recent_tools"),
-  // JSON-serialized map of CardMirror editor-setting keys (e.g.
+  // JSON-serialized map of Debate Editor-setting keys (e.g.
   // `displayColors`, `bodyFont`, `reduceMotion`, `smartQuotes`) to their
   // current values, for every category /settings hosts — that page is the
   // editor's settings surface (see lib/editor-preferences.ts's
@@ -728,7 +728,7 @@ export const savedJudgeDecisions = sqliteTable(
 export type SavedJudgeDecisionRow = typeof savedJudgeDecisions.$inferSelect;
 
 // Account-linked Speech Documents send-log sync — closes the standing "docs"
-// gap in the flow-tools-menu and user-settings feature docs: CardMirror's
+// gap in the flow-tools-menu and user-settings feature docs: Debate Editor's
 // speech-send history (`packages/debate-editor/src/editor/
 // speech-send-log.ts`, rendered by `/speech-documents`) was IndexedDB-only,
 // unlike flows/rounds/word-count-rounds/judge-decisions above, which all
@@ -763,7 +763,7 @@ export type SavedSpeechSendLogRow = typeof savedSpeechSendLog.$inferSelect;
 // Account-linked Quick Cards library sync — closes the same standing "docs"
 // gap as `savedSpeechSendLog` above: the Quick Cards reusable-snippet library
 // (`packages/debate-editor/src/editor/quick-cards-store.ts`, IndexedDB on
-// web) was device-local only, unlike CardMirror's own documents
+// web) was device-local only, unlike Debate Editor's own documents
 // (`documents` above), which are already per-user D1 rows. Same
 // one-row-per-card, upsert-by-caller-id shape as `savedSpeechSendLog` — a
 // `QuickCard` is looked up/edited by its own `id` (not appended to a growing
@@ -794,7 +794,7 @@ export const savedQuickCards = sqliteTable(
 export type SavedQuickCardRow = typeof savedQuickCards.$inferSelect;
 
 // Account-linked Learn flashcard sync — the standing follow-up TODO.md has
-// flagged across several runs: CardMirror's "Learn" spaced-repetition store
+// flagged across several runs: Debate Editor's "Learn" spaced-repetition store
 // (`packages/debate-editor/src/editor/learn-store.ts`) was entirely
 // device-local. That store keeps 8 sub-collections (cards, schedules,
 // anchors, AI threads, notes, review log, decks, doc registry) merged in
@@ -1784,10 +1784,10 @@ export type SavedSprintSessionRow = typeof savedSprintSessions.$inferSelect;
 
 // ── Contacts, blocks, and shared collab cards ───────────────────────────
 //
-// The account-linked half of the CardMirror editor's real-time collaboration
+// The account-linked half of the Debate Editor's real-time collaboration
 // (`packages/debate-editor/src/editor/collab/*`): a session's share code +
 // guest pass used to reach a partner only over the clipboard (or, on desktop,
-// the cardmirror pairing mailbox, which binds to a per-browser key rather
+// the Debate Editor pairing mailbox, which binds to a per-browser key rather
 // than to a person). These tables key everything to better-auth `user.id`s
 // instead, so a signed-in user has a contacts list they can share a live
 // card with directly, and a shared card shows up as available on the
@@ -1852,7 +1852,7 @@ export const userBlocks = sqliteTable(
 
 export type UserBlockRow = typeof userBlocks.$inferSelect;
 
-// A live collab card (a CardMirror co-editing session) shared from one
+// A live collab card (a Debate Editor co-editing session) shared from one
 // account to one contact. `shareCode` is the editor's `cmshare1.<roomId>.
 // <key>` code and `guestPass` the relay's account-less join credential —
 // together exactly what a pasted invite link carries. Storing them here is a

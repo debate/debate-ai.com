@@ -3,7 +3,7 @@
  *
  * The AI Judge Decision page's round-ID flow needs a saved flow summary and
  * paradigm; this is the lighter path beside it: the user pastes each speech
- * (e.g. copied out of their CardMirror docs) into an editable list, and the
+ * (e.g. copied out of their Debate Editor docs) into an editable list, and the
  * Standard Judge (`standard-judge-prompt.ts`) returns a written decision
  * plus a critique of each speech with alternative choices the debater
  * could have made. The reply is Markdown prose, shown as-is, not JSON.

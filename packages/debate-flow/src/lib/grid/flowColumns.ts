@@ -131,7 +131,7 @@ export function spacerColumns(round: FlowRound, sheet: FlowSheet): SpeechCol[] {
  *
  * One derivation for both readers of it. The pane renders the spacers and the
  * bridge converts against them, and a bridge that counted differently would
- * land a CardMirror send one column off on padded sheets alone, which is the
+ * land a Debate Editor send one column off on padded sheets alone, which is the
  * hardest kind of wrong to see.
  */
 export function spacerCount(

@@ -1,6 +1,6 @@
 /**
  * @fileoverview What closing and reopening editor tabs does to the tab strip
- * above CardMirror: which tabs stay, which one becomes active, and what
+ * above Debate Editor: which tabs stay, which one becomes active, and what
  * "Undo close" brings back.
  *
  * Pure so the tab strip's right-click menu (Close, Close others, Close to the

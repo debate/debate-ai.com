@@ -2,7 +2,7 @@
  * Speech-send log — a listable HISTORY of what has actually landed in the
  * designated speech doc via `sendToSpeech` (see `speech-doc-send.ts`).
  *
- * CardMirror's speech-doc feature is a *pane-designation* model, not a
+ * Debate Editor's speech-doc feature is a *pane-designation* model, not a
  * named-document registry: `speech-doc-registry.ts` marks one open editor
  * pane as "the speech doc," and `insertSpeechSlice` drops a live ProseMirror
  * slice straight into that pane's document. That model has no natural

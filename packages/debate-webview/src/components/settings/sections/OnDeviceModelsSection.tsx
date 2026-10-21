@@ -4,7 +4,7 @@
  * @fileoverview Settings → Sound & speech: the speech models that run on this
  * device, each with its size, whether it's downloaded, and Download / Remove.
  *
- * - **Kokoro** (text to speech) reads cards aloud in CardMirror
+ * - **Kokoro** (text to speech) reads cards aloud in Debate Editor
  *   (`@debate/editor/kokoro`; it runs in a Web Worker and Transformers.js
  *   keeps it in Cache Storage).
  * - **Moonshine** (speech to text) transcribes round recordings' captions

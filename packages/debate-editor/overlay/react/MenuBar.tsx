@@ -4,9 +4,9 @@
  * A compact dropdown menu bar — File / Speech / Card / Edit / Format /
  * Color / Insert / AI / View / Panes / Tools / Flow / Plugins —
  * exposing every ribbon command via `runRibbon(id)`, grouped into labeled
- * sections that mirror CardMirror's own `RIBBON_GROUPS` taxonomy.
+ * sections that mirror Debate Editor's own `RIBBON_GROUPS` taxonomy.
  *
- * `CardMirrorEditor` stacks this above CardMirror's own toolbar
+ * `DebateEditor` stacks this above Debate Editor's own toolbar
  * (Google-Docs-style: a text-labeled menu strip above an icon toolbar),
  * gated by its `showToolbar` prop. The two aren't duplicate surfaces for one
  * job — the toolbar is upstream's single left↔right scrolling icon strip,

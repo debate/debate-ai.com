@@ -132,9 +132,9 @@
 
 ### 📝 REASON: Research Editor for Annotated Summaries in Outline Notation
 
-- **[CardMirror](https://github.com/debate/cardmirror)** ProseMirror engine, packing
+- **[Debate Editor](https://github.com/debate/debate-editor)** ProseMirror engine, packing
 roughly 500 editing commands into ~30 thematic groups. Highlights (full 50+ feature list in the
-[package README](./packages/debate-editor/README.md#cardmirror-features)):
+[package README](./packages/debate-editor/README.md#debate-editor-features)):
 - **Structured outline**: pockets, hats, blocks, tags, cards, analytics, and undertags as first-class node types, with footnotes, tables, and live/transcluded zones
 - **Lossless `.docx` and `.cmir` round-trip**: Verbatim Word interop plus a native gzip save format, including encrypted-`.docx` decryption and damaged-file salvage
 - **Bulk conversion & compression**, automatic style cleanup on import, and a headless `cardmirror-read` CLI/MCP tool for AI-assistant access to files outside the app

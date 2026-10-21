@@ -1,9 +1,9 @@
 /**
- * @fileoverview How a stored CardMirror file's `content` column is encoded.
+ * @fileoverview How a stored Debate Editor file's `content` column is encoded.
  *
  * Two tables hold files the editor opens — the reader's own `documents` and
  * the public `topic_starter_items` — and both keep the same two shapes in a
- * SQLite text column: CardMirror's native `.cmir` (gzipped JSON, base64) for
+ * SQLite text column: Debate Editor's native `.cmir` (gzipped JSON, base64) for
  * anything imported since the app switched to it, and HTML for rows written
  * before that. The `format` column says which, so a reader never has to guess.
  *
@@ -13,7 +13,7 @@
  * editor engine into its bundle — the content sniff that does need it lives
  * next door in `./content-format`.
  *
- * @module lib/cardmirror/format
+ * @module lib/debate-editor/format
  */
 
 /** Storage formats a row's `content` can be in. */

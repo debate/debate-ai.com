@@ -4,12 +4,12 @@
  *
  * Without this the claim outlives the text. The blank cell keeps wearing the
  * linked rail, collectMeta writes the source back into the stored sheet so
- * CardMirror's "Reveal in Flow" selects a blank cell, and text typed into that
+ * Debate Editor's "Reveal in Flow" selects a blank cell, and text typed into that
  * cell later inherits provenance it never had.
  *
  * Editing a sent cell is not emptying it. A debater shortens a tag constantly,
  * and the cell still came from that card, so only an empty cell breaks its
- * link. This matches CardMirror, where an edited linked copy stays linked.
+ * link. This matches Debate Editor, where an edited linked copy stays linked.
  */
 
 import type { CellGrid } from "./cellShift";

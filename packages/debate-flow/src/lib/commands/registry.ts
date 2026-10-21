@@ -113,9 +113,9 @@ export const COMMANDS: Record<CommandId, CommandDef> = {
     "cell.move": { id: "cell.move", label: "Move cells" },
     "cell.jumpToSource": {
         id: "cell.jumpToSource",
-        label: "Jump to source in CardMirror",
+        label: "Jump to source in Debate Editor",
     },
-    "cell.sendToDoc": { id: "cell.sendToDoc", label: "Send to CardMirror" },
+    "cell.sendToDoc": { id: "cell.sendToDoc", label: "Send to Debate Editor" },
     "sheet.next": { id: "sheet.next", label: "Next sheet" },
     "sheet.prev": { id: "sheet.prev", label: "Previous sheet" },
     "sheet.moveUp": { id: "sheet.moveUp", label: "Move sheet up" },
@@ -169,8 +169,8 @@ export const COMMANDS: Record<CommandId, CommandDef> = {
     "collab.end": { id: "collab.end", label: "End shared session" },
 };
 
-/** The commands the CardMirror integration owns; dead when it is switched off. */
-export const CARDMIRROR_COMMANDS: readonly CommandId[] = ["cell.jumpToSource", "cell.sendToDoc"];
+/** The commands the Debate Editor integration owns; dead when it is switched off. */
+export const DEBATE_EDITOR_COMMANDS: readonly CommandId[] = ["cell.jumpToSource", "cell.sendToDoc"];
 
 /** The commands shared editing owns; dead while the master switch is off. */
 export const COLLAB_COMMANDS: readonly CommandId[] = [

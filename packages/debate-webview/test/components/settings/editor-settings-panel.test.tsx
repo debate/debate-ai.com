@@ -13,7 +13,7 @@ let search = ""
 vi.mock("next/navigation", () => ({ useSearchParams: () => new URLSearchParams(search) }))
 vi.mock("@debate/editor/styles.css", () => ({}))
 vi.mock("@debate/editor/settings-section", () => ({
-  CardMirrorSettingsSection: ({ category }: { category: string }) => <div data-editor-category={category} />,
+  DebateEditorSettingsSection: ({ category }: { category: string }) => <div data-editor-category={category} />,
 }))
 vi.mock("@debate/round", () => ({ UserSettingsPanel: () => <div data-testid="account" /> }))
 vi.mock("@debate/videos", () => ({ MyRankedTeamsSettings: () => <div data-testid="my-team" /> }))

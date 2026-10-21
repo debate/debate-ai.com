@@ -4,7 +4,7 @@
  * style/font size/font family/colour theme/light-dark form that
  * `packages/debate-help-docs/content/docs/features/user-settings.mdx`'s
  * "What it no longer shows" flagged as having lost its only surface when
- * `/settings` became the CardMirror editor's settings page. The panel
+ * `/settings` became the Debate Editor's settings page. The panel
  * itself was never touched by that migration — it just stopped being
  * mounted anywhere — so this pins that it still renders every field and
  * still applies a signed-in account's saved `debateStyle`/`fontSize` back

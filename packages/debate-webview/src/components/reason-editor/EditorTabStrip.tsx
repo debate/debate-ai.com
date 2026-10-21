@@ -1,7 +1,7 @@
 "use client"
 
 /**
- * The tab strip above CardMirror on `/reason-editor`: one tab per open file,
+ * The tab strip above Debate Editor on `/reason-editor`: one tab per open file,
  * with a × to close it and a right-click menu — Close, Close others, Close to
  * the right, Close all, Undo close — like a browser's or code editor's tab
  * bar. What each of those does to the open tabs is

@@ -41,7 +41,7 @@ const welcome: EmailTemplate<"welcome"> = {
 const fileInvite: EmailTemplate<"file-invite"> = {
   id: "file-invite",
   name: "File collaboration invite",
-  description: "Someone shared a CardMirror document with a contact to co-edit it.",
+  description: "Someone shared a Debate Editor document with a contact to co-edit it.",
   sentFrom: "POST /api/card-shares",
   subject: fileInviteSubject,
   element: (props) => <FileInviteEmail {...props} />,

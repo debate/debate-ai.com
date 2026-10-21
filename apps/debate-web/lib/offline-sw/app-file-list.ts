@@ -10,7 +10,7 @@ export const APP_FILE_LIST = [
   '/_next/static/chunks/ArgumentTreePanel-j4Qtt5TH.js',
   '/_next/static/chunks/BinaryModule-Aj1vLnwf-BbqLJTIl.js',
   '/_next/static/chunks/BlendPluginInstance-su4e4vqz.js',
-  '/_next/static/chunks/CardMirrorSettingsPanel-2kp9lWvQ.js',
+  '/_next/static/chunks/DebateEditorSettingsPanel-2kp9lWvQ.js',
   '/_next/static/chunks/CardScoringPanel-eChBH0aE.js',
   '/_next/static/chunks/CategoryDock-ErzLiN-1.js',
   '/_next/static/chunks/CoachingWorkspace-DibHAlTr.js',

@@ -20,7 +20,7 @@ describe("extractSpeechSignposts", () => {
     ])
   })
 
-  it("reads CardMirror HTML headings and pocket/hat classes, skipping blocks", () => {
+  it("reads Debate Editor HTML headings and pocket/hat classes, skipping blocks", () => {
     const html = [
       '<h1 data-id="a">Off &amp; On</h1>',
       "<h2><span>Framework</span></h2>",

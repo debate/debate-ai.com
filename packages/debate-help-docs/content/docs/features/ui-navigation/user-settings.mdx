@@ -4,7 +4,7 @@ title: "User Settings"
 
 # User Settings
 
-`/settings` is the CardMirror editor's settings page, and a signed-in user's
+`/settings` is the Debate Editor's settings page, and a signed-in user's
 choices there follow them across devices instead of staying in one browser's
 localStorage.
 
@@ -43,9 +43,9 @@ A searchable sidebar in three blocks:
   performance benchmark and this install's version info;
   `?category=general` opens it), **Files**, **Appearance**, **Accessibility**,
   **Editing**, **Keyboard**, **Comments & AI** and **Collaboration** — from
-  `debate-editor`'s exported tab list (`CARDMIRROR_SETTINGS_TABS`,
+  `debate-editor`'s exported tab list (`DEBATE_EDITOR_SETTINGS_TABS`,
   `@debate/editor/settings-tabs`) and rendered by its
-  `CardMirrorSettingsSection` (`@debate/editor/settings-section`), which wraps
+  `DebateEditorSettingsSection` (`@debate/editor/settings-section`), which wraps
   `buildEmbeddedSettingsPanel`, so each tab is the same rows the editor's
   gear-icon modal renders under it, minus the dialog chrome.
 - Under a **Research agent** heading: the research agent's sections.
@@ -100,7 +100,7 @@ gone:
 - **Ebb Flow preferences** — reachable with `Cmd/Ctrl+,` inside a flow, where
   they apply
 - **Default format for new speech documents** (Files → New documents) — a
-  new speech document is now always created as `.cmir`, CardMirror's native
+  new speech document is now always created as `.cmir`, Debate Editor's native
   format, so autosave always applies to it (autosave only writes `.cmir`).
   Save As still exports a `.docx` for teammates on Verbatim. The format is
   `SPEECH_DOC_FORMAT` in `debate-editor`'s `src/editor/speech-filename.ts`
@@ -146,7 +146,7 @@ overrides sync to your account when you are signed in, through the same tool
 data sync as the other tools (`flowEditorDisplaySettings` and
 `flowKeymap` in `debate-data-sync`'s catalog). What follows you:
 flow font, default grid zoom, the editing toggles (insert-paste, append-edit,
-scroll-zoom, align speeches, tooltips, Vim in the RFD pane), CardMirror
+scroll-zoom, align speeches, tooltips, Vim in the RFD pane), Debate Editor
 options, light/dark theme, side colours, and every keymap override.
 
 What stays on the device it was set on: the flows folder, whether the sidebar
@@ -213,7 +213,7 @@ debate-editor/settings-ui.ts (buildEmbeddedSettingsPanel)
 app/settings/editor-panel/page.tsx (iframe document: category sidebar, hydrate, debounced push)
   → GET/PUT /api/settings { editorPreferences }
 lib/editor-preferences.ts (EDITOR_SETTINGS_TABS, EDITOR_PREFERENCE_KEYS, validation)
-components/settings/cardmirror/CardMirrorSettingsPanel.tsx (the iframe wrapper, self-sizing)
+components/settings/debate-editor/DebateEditorSettingsPanel.tsx (the iframe wrapper, self-sizing)
 ```
 
 The local store stays authoritative: the page hydrates from the account on
@@ -241,7 +241,7 @@ for it.
 
 Signed in, the Ebb flow editor's look-and-behaviour preferences (font, default
 grid zoom, theme, Aff/Neg colours, the Vim/insert-paste/append-edit/scroll-zoom/
-align-speeches/tooltip toggles, the CardMirror options and your custom
+align-speeches/tooltip toggles, the Debate Editor options and your custom
 keybindings) are saved to your account as `flowEditorSettings` and applied the
 next time you open a flow on any device. Anything specific to one device — the
 flows folder, collaboration name and relay toggles, contacts, and panel layout —

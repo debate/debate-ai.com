@@ -176,7 +176,7 @@ _Drizzle export `staffRoles`, `schema.ts:2029`._
 
 ### documents
 
-The user's own editor documents and folders (the CardMirror / REASON editor file tree). Uploaded `.docx` files are stored converted to `.cmir`.
+The user's own editor documents and folders (the Debate Editor / REASON editor file tree). Uploaded `.docx` files are stored converted to `.cmir`.
 
 _Drizzle export `documents`, `schema.ts:140`._
 
@@ -185,7 +185,7 @@ _Drizzle export `documents`, `schema.ts:140`._
 | `id` | integer | no | _(SQL expr)_ | Primary key. _(PK)_ |
 | `title` | text | no | `Untitled` | File or folder name. |
 | `content` | text | no | `` | Document body, encoded as `format` says. |
-| `format` | text | no | `html` | How `content` is encoded: `"cmir"` for an uploaded file, which is kept in CardMirror's native format for its whole life, or `"html"` for a document written in the editor. Same two values as `topic_starter_items.format` — see `lib/cardmirror/format.ts`. |
+| `format` | text | no | `html` | How `content` is encoded: `"cmir"` for an uploaded file, which is kept in Debate Editor's native format for its whole life, or `"html"` for a document written in the editor. Same two values as `topic_starter_items.format` — see `lib/debate-editor/format.ts`. |
 | `user_id` | text | yes |  | Owning account (`user.id`). _(→ `user.id` (on delete cascade))_ |
 | `parent_id` | integer | yes |  | Containing folder (`documents.id`), null at the root. |
 | `is_folder` | integer | no | `false` | True for a folder row. |
@@ -341,7 +341,7 @@ _Drizzle export `savedJudgeDecisions`, `schema.ts:631`._
 
 ### saved_speech_send_log
 
-Account sync for CardMirror's speech-document send history (`/speech-documents`).
+Account sync for Debate Editor's speech-document send history (`/speech-documents`).
 
 _Drizzle export `savedSpeechSendLog`, `schema.ts:666`._
 
@@ -420,7 +420,7 @@ _Drizzle export `userSettings`, `schema.ts:311`._
 | `theme_mode` | text | yes |  | Light/dark mode preference. |
 | `favorite_tools` | text | yes |  | Starred `/tools` entries, JSON array of route paths. |
 | `recent_tools` | text | yes |  | Recently opened tools, JSON array, most recent first. |
-| `editor_preferences` | text | yes |  | JSON-serialized map of CardMirror editor-setting keys (e.g. `displayColors`, `bodyFont`, `reduceMotion`, `smartQuotes`) to their current values, for every category /settings hosts — that page is the editor's settings surface (see lib/editor-preferences.ts's EDITOR_PREFERENCE_KEYS, which is both the allow-list and the r… |
+| `editor_preferences` | text | yes |  | JSON-serialized map of Debate Editor-setting keys (e.g. `displayColors`, `bodyFont`, `reduceMotion`, `smartQuotes`) to their current values, for every category /settings hosts — that page is the editor's settings surface (see lib/editor-preferences.ts's EDITOR_PREFERENCE_KEYS, which is both the allow-list and the r… |
 | `flow_editor_settings` | text | yes |  | JSON-serialized subset of the ebb flow editor's display and keymap settings (see packages/debate-flow/src/lib/config/accountSettings.ts, which is both the validator and the read-back filter). Device-specific values (flowsDir, collab identity, contacts, panel layout) never sync. |
 | `font_family` | text | yes |  | App-wide font family: a `FONT_OPTIONS` value (see packages/debate-round/src/state/fontSettings.ts). Null means none chosen on any device yet. |
 | `flow_auto_save` | text | yes |  | Flow auto-save mode: "off" \| "saved" \| "all" (see packages/debate-round/src/state/flowAutoSaveSettings.ts). Null means the client default ("saved"). |
@@ -1187,7 +1187,7 @@ _Drizzle export `userBlocks`, `schema.ts:1747`._
 
 ### card_shares
 
-Live CardMirror co-editing sessions shared from one account to a contact. Holds the room's join credentials, so treat rows as sensitive.
+Live Debate Editor co-editing sessions shared from one account to a contact. Holds the room's join credentials, so treat rows as sensitive.
 
 _Drizzle export `cardShares`, `schema.ts:1781`._
 

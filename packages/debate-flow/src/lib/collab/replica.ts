@@ -115,7 +115,7 @@ export function recordOp(op: CollabOp): void {
  *
  * A block move no longer comes through here: it emits ops a peer can apply.
  *
- * ponytail: an insert-paste and a CardMirror send still re-seed, because both
+ * ponytail: an insert-paste and a Debate Editor send still re-seed, because both
  * rearrange a column from outside the op path and neither happens while a
  * partner is typing into the same sheet. Re-seeding re-keys every cell from
  * its row position, so a peer holding the old keys disagrees; express these

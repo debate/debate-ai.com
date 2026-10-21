@@ -35,7 +35,7 @@ describe("web .docx helpers (merged from the CM adapter)", () => {
     ]);
   });
 
-  it("round-trips a document through .docx with upstream CardMirror", async () => {
+  it("round-trips a document through .docx with upstream Debate Editor", async () => {
     const blob = await exportDocxBlob(sampleDoc());
     expect(blob.type).toContain("wordprocessingml");
     const { doc } = await importDocx(blob);

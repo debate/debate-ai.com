@@ -146,7 +146,7 @@ const WS_BASE_URL = BASE_URL.replace(
 );
 
 
-const OnlineDebateRoom = (): JSX.Element => {
+const OnlineDebateRoom = (): React.JSX.Element => {
   const { roomId } = useParams<{ roomId: string }>();
   const { user: currentUser } = useUser();
   const currentUserId = currentUser?.id ?? null;
@@ -198,8 +198,8 @@ const OnlineDebateRoom = (): JSX.Element => {
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const animationRef = useRef<number | null>(null);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const judgePollRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const judgePollRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const submissionStartedRef = useRef(false);
 
   useEffect(() => {

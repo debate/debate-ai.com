@@ -1,4 +1,4 @@
-/** @fileoverview Pure logic behind Verbatim/Cardmirror-style card-editing shortcuts:
+/** @fileoverview Pure logic behind Verbatim/Debate Editor-style card-editing shortcuts:
  *  condensing a card to its read (underlined) text, formatting a short cite
  *  tag, reordering outline nodes (headings/cards), and toggling `<mark>`
  *  text emphasis over a selection range. */
@@ -113,7 +113,7 @@ const MARK_OPEN = "<mark>";
 const MARK_CLOSE = "</mark>";
 
 /**
- * Toggles Verbatim/Cardmirror-style `<mark>` text emphasis over `[start,
+ * Toggles Verbatim/Debate Editor-style `<mark>` text emphasis over `[start,
  * end)` of `html`'s *visible* (tag-stripped) text, mirroring the editor's
  * "emphasize selection" shortcut. Offsets are visible-character positions,
  * not raw HTML string indices, so a selection lands correctly around
