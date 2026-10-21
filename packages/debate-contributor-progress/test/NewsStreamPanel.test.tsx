@@ -10,10 +10,8 @@ import { createElement, type FC } from "react";
 
 import { NewsStreamPanel, type NewsStreamSyncAdapter } from "../src/panels/NewsStreamPanel";
 import { isNewsItemLiked, isNewsItemRead, markNewsItemRead } from "../src/state/newsStream";
-import { NEWS_CATEGORY_LABELS, PRODUCT_NEWS, type NewsItem } from "../src/lib/news-stream";
-import { saveContribution } from "@debate/research-evidence/src/state/contributions";
-import type { AttributedContribution } from "@debate/research-evidence/src/lib/contribution-leaderboard";
-import { announceDailyBestCard } from "../src/state/dailyBestCardAnnouncements";
+import { NEWS_CATEGORY_LABELS, type NewsItem } from "../src/lib/news-stream";
+import { saveEvidenceLibraryEntry } from "@debate/research-evidence/src/state/evidenceLibraryEntries";
 import { buttonByText, click, flush, mount } from "./helpers/mount";
 import type { Mounted } from "./helpers/mount";
 
@@ -26,11 +24,11 @@ const NOW = new Date("2030-06-15T12:00:00Z").getTime();
 const DAY = 24 * 60 * 60 * 1000;
 
 const EXTRA: NewsItem[] = [
-  { id: "x-today", category: "community", title: "Today item", body: "Body today", timestamp: NOW, href: "/community" },
-  { id: "x-yesterday", category: "community", title: "Yesterday item", body: "Body", timestamp: NOW - DAY },
-  { id: "x-days", category: "community", title: "Days item", body: "Body", timestamp: NOW - 5 * DAY },
-  { id: "x-month", category: "community", title: "Month item", body: "Body", timestamp: NOW - 31 * DAY },
-  { id: "x-months", category: "community", title: "Months item", body: "Body", timestamp: NOW - 75 * DAY },
+  { id: "x-today", category: "rounds", title: "Today item", body: "Body today", timestamp: NOW, href: "/community" },
+  { id: "x-yesterday", category: "rounds", title: "Yesterday item", body: "Body", timestamp: NOW - DAY },
+  { id: "x-days", category: "forums", title: "Days item", body: "Body", timestamp: NOW - 5 * DAY },
+  { id: "x-month", category: "forums", title: "Month item", body: "Body", timestamp: NOW - 31 * DAY },
+  { id: "x-months", category: "forums", title: "Months item", body: "Body", timestamp: NOW - 75 * DAY },
 ];
 
 let view: Mounted;
@@ -57,10 +55,8 @@ afterEach(async () => {
 });
 
 describe("NewsStreamPanel", () => {
-  it("renders product news and extra items newest first with relative times", async () => {
+  it("renders extra items newest first with relative times", async () => {
     view = await mount(createElement(Panel, { extraItems: EXTRA }));
-    expect(PRODUCT_NEWS.length).toBeGreaterThan(0);
-    expect(text()).toContain(PRODUCT_NEWS[0].title);
 
     const titles = EXTRA.map((item) => item.title);
     const positions = titles.map((title) => text().indexOf(title));
@@ -76,18 +72,20 @@ describe("NewsStreamPanel", () => {
     expect(cardFor("Yesterday item").querySelector("a")).toBeNull();
   });
 
-  it("filters by category and shows an empty-category message", async () => {
+  it("shows a filter only for categories the feed has, and filters by it", async () => {
     view = await mount(createElement(Panel, { extraItems: EXTRA }));
 
-    await click(buttonByText(view.container, NEWS_CATEGORY_LABELS.community));
+    const labels = Array.from(view.container.querySelectorAll("button")).map((el) => el.textContent);
+    expect(labels).toContain(NEWS_CATEGORY_LABELS.rounds);
+    expect(labels).toContain(NEWS_CATEGORY_LABELS.forums);
+    expect(labels).not.toContain(NEWS_CATEGORY_LABELS.files);
+
+    await click(buttonByText(view.container, NEWS_CATEGORY_LABELS.rounds));
     expect(text()).toContain("Today item");
-    expect(text()).not.toContain(PRODUCT_NEWS[0].title);
+    expect(text()).not.toContain("Days item");
 
-    await click(buttonByText(view.container, NEWS_CATEGORY_LABELS.awards));
-    expect(text()).toContain("Nothing in this category yet.");
-
-    await click(buttonByText(view.container, NEWS_CATEGORY_LABELS.product));
-    expect(text()).toContain(PRODUCT_NEWS[0].title);
+    await click(buttonByText(view.container, NEWS_CATEGORY_LABELS.forums));
+    expect(text()).toContain("Days item");
     expect(text()).not.toContain("Today item");
 
     await click(buttonByText(view.container, "All"));
@@ -143,32 +141,33 @@ describe("NewsStreamPanel", () => {
     expect(cardFor("Today item").querySelector("button[aria-pressed]")?.textContent).toBe("Liked");
   });
 
-  it("rebuilds the feed when another tab announces a winner or changes viewer state", async () => {
+  it("rebuilds the feed when another tab adds a library card or changes viewer state", async () => {
     view = await mount(createElement(Panel, { extraItems: [EXTRA[0]] }));
     expect(cardFor("Today item").textContent).toContain("New");
 
-    saveContribution({
-      id: "winning-card",
-      contributorId: "alice",
+    saveEvidenceLibraryEntry({
+      id: "fresh-card",
+      argBlock: "Winning DA",
+      wordCount: 3,
+      topic: "Energy",
+      caseArea: "DA",
+      tags: [],
       kind: "card",
-      likes: 3,
-      saves: 0,
-      qualitySignals: [1],
-      reviewerEndorsements: [],
-      submittedAt: NOW,
-    } as AttributedContribution & { submittedAt: number });
-    announceDailyBestCard(NOW);
+      text: "Fresh evidence.",
+      cite: "Lee 30",
+      createdAt: NOW,
+    });
     markNewsItemRead("x-today");
 
     await flush(() => {
       window.dispatchEvent(new StorageEvent("storage", { key: "unrelated" }));
     });
-    expect(text()).not.toContain("winning-card");
+    expect(text()).not.toContain("Winning DA");
 
     await flush(() => {
       window.dispatchEvent(new StorageEvent("storage", { key: null }));
     });
-    expect(text()).toContain("winning-card");
+    expect(text()).toContain("Winning DA");
     expect(cardFor("Today item").textContent).not.toContain("New");
   });
 });

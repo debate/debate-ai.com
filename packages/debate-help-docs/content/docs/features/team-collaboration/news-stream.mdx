@@ -5,9 +5,9 @@ title: "News & Forums"
 # News & Forums
 
 One page for what's new in the community, so a debater doesn't have to
-separately check several pages. It has two tabs: **News**, the feed of
-product updates and community announcements, and **Forums**, the
-discussion threads. It is the "News & Forums" row in the sidebar's
+separately check several pages. It has two tabs: **News**, the feed of new
+rounds, new files and forum activity, and **Forums**, the discussion
+threads. It is the "News & Forums" row in the sidebar's
 Coaching section.
 
 - **Route:** `/news` (News tab), `/news?section=forums` (Forums tab)
@@ -25,13 +25,21 @@ replies; its back link returns to the Forums tab.
 
 ## What the News tab shows
 
-Every item, newest first, filterable by category: **Product Updates**
-(hand-maintained, plus auto-generated "Tool spotlight" posts for every
-cataloged feature), **Daily Best Card**, **Contributor Awards**, and five
-**Community** sources — Quest Streak milestones, Group Challenge
-completions, Revision Incentives' daily top reviser, Team Collaboration
-Mode prep notes, new Argument Library submissions, and new AI Coach Mode
-sessions. Each item can be liked and is marked read on hover.
+Only new rounds, new files and forum activity, newest first. A filter tab
+appears for each category the feed has something in:
+
+- **Rounds** — the newest round videos on the site.
+- **Files** — the newest caselist files, plus one digest per day of new
+  Argument Library cards (the last three days). A digest lists a few card
+  names, cleaned of Verbatim heading separators and markers such as
+  `<<<PARAGRAPH BREAKS END>>>`, then "and N more".
+- **Forums** — each forum thread's latest activity: "New thread" or "New
+  reply in …". A new reply shows up as a new, unread item.
+
+Product updates, tool spotlights, Daily Best Card, Contributor Awards,
+quest streaks, group challenges, revision incentives, prep notes and
+coaching sessions are no longer posted here; those features keep their own
+pages. Each item can be liked and is marked read on hover.
 
 **Following** shows updates from the teams and schools the reader follows
 from their profile pages: new rounds, new caselist research, tournament
@@ -44,8 +52,9 @@ changes.
 ## Data flow
 
 ```
-lib/news-stream.ts        — NewsItem type, PRODUCT_NEWS, buildAutoFeatureNews()
-state/newsStream.ts        — buildNewsFeed(extraItems?) merges every source
+lib/news-stream.ts        — NewsItem type, categories, cleanArgBlockLabel()
+state/newsStream.ts        — buildNewsFeed(extraItems?) adds the daily Argument Library digests
+@debate/webview useSiteNews() — newest rounds, caselist files and forum threads, as extraItems
 @debate/videos useFollowingNews() — "following" items, passed in as extraItems
 panels/NewsStreamPanel.tsx — category filter tabs, read/like UI
 ```
