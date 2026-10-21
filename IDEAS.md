@@ -63,7 +63,7 @@
 - [x] Debater XP merges field by field across devices (`mergeDebaterLevel`, `merge` hook on tool-record collections; 2026-10-20)
 - [x] Per-device XP ledger so lifetime XP/counts earned on two devices in the same window add (`DebaterXpLedger`, `ledger` in the `debaterLevel` record; 2026-10-20)
 - [x] Repaired the bad merge `3c43976` (undefined `asSide`/`withUnseenEvents`/`eventId` broke typecheck and 36 tests): kept the per-device ledger design and dropped the overlapping per-event-id one (2026-10-21)
-- [ ] Follow-up: also add today's per-activity counts across devices (daily challenges still take the larger side)
+- [x] Today's per-activity counts add across devices: ledger entries carry a per-day `daily` tally and the merge sums entries for the current UTC day (2026-10-21)
 
 ---
 

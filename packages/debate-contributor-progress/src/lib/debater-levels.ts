@@ -291,6 +291,8 @@ export const MAX_RECENT_XP_EVENTS = 30;
 export interface DebaterDeviceTally {
   xp: number;
   counts: Partial<Record<DebaterActivityKind, number>>;
+  /** This entry's counts for one UTC day, so a merge can add today's activity across devices; absent on older entries. */
+  daily?: { dayKey: string; counts: Partial<Record<DebaterActivityKind, number>> };
 }
 
 /**
@@ -410,7 +412,7 @@ export function applyDebaterActivity(
     completedMilestoneIds: Array.from(milestonesDone),
     recentXp: [...events.reverse(), ...rolled.recentXp].slice(0, MAX_RECENT_XP_EVENTS),
   };
-  if (deviceId) next.ledger = addToLedger(state, deviceId, kind, n, xpGained);
+  if (deviceId) next.ledger = addToLedger(state, rolled, deviceId, kind, n, xpGained);
   else if (state.ledger) next.ledger = state.ledger;
   return { state: next, xpGained, completedChallenges, previousLevel, newLevel, leveledUp: newLevel > previousLevel };
 }
@@ -418,21 +420,32 @@ export function applyDebaterActivity(
 /** The ledger after `deviceId` earns `xp` and `n` of `kind`; a first entry snapshots the existing totals as `base`. */
 function addToLedger(
   state: DebaterLevelState,
+  rolled: DebaterLevelState,
   deviceId: string,
   kind: DebaterActivityKind,
   n: number,
   xp: number,
 ): DebaterXpLedger {
   const ledger: DebaterXpLedger = state.ledger ?? {
-    base: { xp: state.totalXp, counts: { ...state.lifetimeCounts } },
+    base: {
+      xp: state.totalXp,
+      counts: { ...state.lifetimeCounts },
+      daily: { dayKey: state.daily.dayKey, counts: { ...state.daily.counts } },
+    },
     devices: {},
   };
   const mine = ledger.devices[deviceId] ?? { xp: 0, counts: {} };
+  const dayKey = rolled.daily.dayKey;
+  const todayBefore = mine.daily?.dayKey === dayKey ? mine.daily.counts : {};
   return {
     base: ledger.base,
     devices: {
       ...ledger.devices,
-      [deviceId]: { xp: mine.xp + xp, counts: { ...mine.counts, [kind]: (mine.counts[kind] ?? 0) + n } },
+      [deviceId]: {
+        xp: mine.xp + xp,
+        counts: { ...mine.counts, [kind]: (mine.counts[kind] ?? 0) + n },
+        daily: { dayKey, counts: { ...todayBefore, [kind]: (todayBefore[kind] ?? 0) + n } },
+      },
     },
   };
 }
@@ -472,8 +485,12 @@ function isCountRecord(value: unknown): value is Partial<Record<DebaterActivityK
 
 function parseTally(raw: unknown): DebaterDeviceTally | null {
   if (!raw || typeof raw !== "object") return null;
-  const { xp, counts } = raw as { xp?: unknown; counts?: unknown };
+  const { xp, counts, daily } = raw as { xp?: unknown; counts?: unknown; daily?: unknown };
   if (typeof xp !== "number" || !Number.isFinite(xp) || xp < 0 || !isCountRecord(counts)) return null;
+  const d = daily as { dayKey?: unknown; counts?: unknown } | null | undefined;
+  if (d && typeof d === "object" && typeof d.dayKey === "string" && isCountRecord(d.counts)) {
+    return { xp, counts, daily: { dayKey: d.dayKey, counts: d.counts } };
+  }
   return { xp, counts };
 }
 

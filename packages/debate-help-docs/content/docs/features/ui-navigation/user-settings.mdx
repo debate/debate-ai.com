@@ -396,10 +396,13 @@ the pre-ledger base plus every device — XP earned on both devices adds up.
 The rest of the state is still merged field by field (`mergeDebaterLevel`): the
 union of completed milestones, today's challenge progress when both are from the
 same UTC day (otherwise the later day), and the union of the recent XP log.
-Known gaps: today's per-activity counts still take the larger side rather than
-adding, so a daily challenge can lag when you work on two devices the same day;
-and a copy from an older client without a ledger falls back to the larger total.
-It can under-count but never double-counts.
+Each ledger entry also carries a `daily` tally (its counts for one UTC day), and
+the merge sums the entries for the current day, so today's per-activity counts
+from two devices add up too.
+Known gaps: a daily challenge's completion bonus is still decided per copy, so
+it is not re-evaluated against the combined count; and a copy from an older
+client without a ledger falls back to the larger total. It can under-count but
+never double-counts.
 
 The Debater Level page's **Mock data** button previews the page with sample
 debaters (a novice, a JV and a varsity debater from

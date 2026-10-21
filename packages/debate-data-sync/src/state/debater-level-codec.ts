@@ -158,6 +158,7 @@ function withUnseenEvents(base: Side, other: Side): Pick<Side, "totalXp" | "life
 interface Tally {
   xp: number;
   counts: Counts;
+  daily?: { dayKey: string; counts: Counts };
 }
 interface Ledger {
   base: Tally;
@@ -166,8 +167,12 @@ interface Ledger {
 
 function asTally(value: unknown): Tally | null {
   if (typeof value !== "object" || value === null) return null;
-  const { xp, counts } = value as { xp?: unknown; counts?: unknown };
+  const { xp, counts, daily } = value as { xp?: unknown; counts?: unknown; daily?: unknown };
   if (typeof xp !== "number" || !Number.isFinite(xp) || xp < 0) return null;
+  const d = daily as { dayKey?: unknown; counts?: unknown } | null | undefined;
+  if (d && typeof d === "object" && typeof d.dayKey === "string") {
+    return { xp, counts: asCounts(counts), daily: { dayKey: d.dayKey, counts: asCounts(d.counts) } };
+  }
   return { xp, counts: asCounts(counts) };
 }
 
@@ -184,8 +189,15 @@ function asLedger(value: unknown): Ledger | null {
   return { base: parsedBase, devices: out };
 }
 
+function maxDaily(a: Tally["daily"], b: Tally["daily"]): Tally["daily"] {
+  if (!a || !b) return a ?? b;
+  if (a.dayKey === b.dayKey) return { dayKey: a.dayKey, counts: maxCounts(a.counts, b.counts) };
+  return a.dayKey > b.dayKey ? a : b;
+}
+
 function maxTally(a: Tally, b: Tally): Tally {
-  return { xp: Math.max(a.xp, b.xp), counts: maxCounts(a.counts, b.counts) };
+  const daily = maxDaily(a.daily, b.daily);
+  return { xp: Math.max(a.xp, b.xp), counts: maxCounts(a.counts, b.counts), ...(daily ? { daily } : {}) };
 }
 
 function mergeLedgers(local: unknown, remote: unknown): Ledger | null {
@@ -207,6 +219,16 @@ function ledgerCounts(ledger: Ledger): Counts {
   const out: Counts = { ...ledger.base.counts };
   for (const d of Object.values(ledger.devices)) {
     for (const [kind, n] of Object.entries(d.counts)) out[kind] = (out[kind] ?? 0) + n;
+  }
+  return out;
+}
+
+/** Today's counts summed over every ledger entry that has a tally for `dayKey`. */
+function ledgerDailyCounts(ledger: Ledger, dayKey: string): Counts {
+  const out: Counts = {};
+  for (const t of [ledger.base, ...Object.values(ledger.devices)]) {
+    if (t.daily?.dayKey !== dayKey) continue;
+    for (const [kind, n] of Object.entries(t.daily.counts)) out[kind] = (out[kind] ?? 0) + n;
   }
   return out;
 }
@@ -236,7 +258,7 @@ export function mergeDebaterLevel(local: unknown, remote: unknown): unknown {
   const vr = withUnseenEvents(r, l);
   const dl = { ...l.daily, counts: maxCounts(l.daily.counts, vl.dailyCounts) };
   const dr = { ...r.daily, counts: maxCounts(r.daily.counts, vr.dailyCounts) };
-  const daily =
+  const daily: ReturnType<typeof asDaily> =
     dl.dayKey === dr.dayKey
       ? {
           dayKey: dl.dayKey,
@@ -266,6 +288,7 @@ export function mergeDebaterLevel(local: unknown, remote: unknown): unknown {
     totalXp = Math.max(totalXp, ledgerTotal(ledger));
     lifetimeCounts = maxCounts(lifetimeCounts, ledgerCounts(ledger));
   }
+  if (ledger) daily.counts = maxCounts(daily.counts, ledgerDailyCounts(ledger, daily.dayKey));
   const { ledger: _l, ...localRest } = local;
   const { ledger: _r, ...remoteRest } = remote;
   return {

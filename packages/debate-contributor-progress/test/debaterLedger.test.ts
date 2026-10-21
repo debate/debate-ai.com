@@ -9,6 +9,7 @@ import {
   createDebaterLevelState,
   parseDebaterLevelState,
   ACTIVITY_XP,
+  utcDayKeyFor,
 } from "../src/lib/debater-levels";
 import {
   DEBATER_DEVICE_ID_STORAGE_KEY,
@@ -40,8 +41,8 @@ describe("applyDebaterActivity ledger", () => {
     const legacy = { ...createDebaterLevelState(), totalXp: 200, lifetimeCounts: { card_cut: 7 } };
     const { state, xpGained } = applyDebaterActivity(legacy, "card_cut", NOW, 2, [], "A");
     expect(state.ledger).toEqual({
-      base: { xp: 200, counts: { card_cut: 7 } },
-      devices: { A: { xp: xpGained, counts: { card_cut: 2 } } },
+      base: { xp: 200, counts: { card_cut: 7 }, daily: { dayKey: "", counts: {} } },
+      devices: { A: { xp: xpGained, counts: { card_cut: 2 }, daily: { dayKey: utcDayKeyFor(NOW), counts: { card_cut: 2 } } } },
     });
     expect(xpGained).toBe(ACTIVITY_XP.card_cut * 2);
     expect(state.totalXp).toBe(200 + xpGained);

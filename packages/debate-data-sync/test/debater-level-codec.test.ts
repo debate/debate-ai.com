@@ -233,4 +233,41 @@ describe("mergeDebaterLevel per-event ledger", () => {
       device(xp, n, [{ atMs: DAY, source: "card_cut", label: "c", xp: 10, count: 1 }]);
     expect(mergeDebaterLevel(legacy(20, 3), legacy(30, 4))).toMatchObject({ totalXp: 30, lifetimeCounts: { card_cut: 4 } });
   });
+
+  describe("per-device daily counts in the ledger", () => {
+    const tally = (xp: number, n: number, dayKey = "2026-10-20") => ({
+      xp,
+      counts: { card_cut: n },
+      daily: { dayKey, counts: { card_cut: n } },
+    });
+    const withLedger = (devices: Record<string, unknown>, daily: number) => ({
+      ...device(10, daily, []),
+      ledger: { base: { xp: 0, counts: {}, daily: { dayKey: "2026-10-20", counts: {} } }, devices },
+    });
+
+    it("adds today's counts earned on two devices", () => {
+      const a = withLedger({ a: tally(10, 2) }, 2);
+      const b = withLedger({ b: tally(10, 3) }, 3);
+      expect(mergeDebaterLevel(a, b)).toMatchObject({ daily: { dayKey: "2026-10-20", counts: { card_cut: 5 } } });
+      expect(mergeDebaterLevel(b, a)).toMatchObject({ daily: { dayKey: "2026-10-20", counts: { card_cut: 5 } } });
+    });
+
+    it("does not add a device's counts from an earlier day", () => {
+      const a = withLedger({ a: tally(10, 2, "2026-10-19") }, 0);
+      const b = withLedger({ b: tally(10, 3) }, 3);
+      expect(mergeDebaterLevel(a, b)).toMatchObject({ daily: { counts: { card_cut: 3 } } });
+    });
+
+    it("is idempotent when both sides hold the same ledger", () => {
+      const a = withLedger({ a: tally(10, 2) }, 2);
+      expect(mergeDebaterLevel(a, structuredClone(a))).toMatchObject({ daily: { counts: { card_cut: 2 } } });
+    });
+
+    it("keeps working with ledger entries that predate daily tallies", () => {
+      const old = withLedger({ a: { xp: 10, counts: { card_cut: 2 } } }, 2);
+      expect(mergeDebaterLevel(old, withLedger({ b: tally(10, 3) }, 3))).toMatchObject({
+        daily: { counts: { card_cut: 3 } },
+      });
+    });
+  });
 });
