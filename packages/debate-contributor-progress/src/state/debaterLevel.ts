@@ -76,12 +76,6 @@ function saveDebaterLevelState(state: DebaterLevelState): void {
   }
 }
 
-/** A ledger id unique across devices, so merging can tell two events from one. */
-function newLedgerEventId(): string {
-  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") return crypto.randomUUID();
-  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
-}
-
 /** Record practice work, persist the new state, and announce the award. */
 export function recordDebaterActivity(
   kind: DebaterActivityKind,
