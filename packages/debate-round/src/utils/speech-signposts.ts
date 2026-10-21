@@ -1,11 +1,11 @@
 /**
- * @fileoverview The signposting of a speech — its H1–H3 heading names
- * (pockets, hats and blocks), in document order, without the H4 tags that
- * hold each card's long sentence summary.
+ * @fileoverview The signposting of a speech — its H1 and H2 heading names
+ * (pockets and hats), in document order, without the H3 blocks or the H4
+ * tags that hold each card's long sentence summary.
  *
  * Accepts both speech doc shapes: CardMirror HTML (a linked editor document,
- * `<h1>`–`<h3>` or `.pmd-pocket|hat|block`) and a flow's own markdown
- * (`#`–`###`). Pure and DOM-free so it runs in the `node` test environment.
+ * `<h1>`/`<h2>` or `.pmd-pocket|hat`) and a flow's own markdown
+ * (`#`/`##`). Pure and DOM-free so it runs in the `node` test environment.
  *
  * @module utils/speech-signposts
  */
@@ -13,8 +13,8 @@
 import { looksLikeHtml } from "@debate/timer/src/formats/speech-doc-word-stats"
 import { extractSpeechDocHeadings, type SpeechDocHeading } from "./speech-doc-headings"
 
-/** Deepest heading level shown — H4 tags are card summaries, not signposts. */
-export const SIGNPOST_MAX_LEVEL = 3
+/** Deepest heading level shown — H3 blocks and H4 card tags are too fine for a signpost. */
+export const SIGNPOST_MAX_LEVEL = 2
 
 const CLASS_LEVELS: Record<string, number> = { "pmd-pocket": 1, "pmd-hat": 2, "pmd-block": 3 }
 
@@ -53,7 +53,7 @@ function htmlSignposts(html: string): SpeechDocHeading[] {
   return headings
 }
 
-/** The H1–H3 headings of a speech doc, in order. Empty when it has none. */
+/** The H1 and H2 headings of a speech doc, in order. Empty when it has none. */
 export function extractSpeechSignposts(content: string | null | undefined): SpeechDocHeading[] {
   if (!content || !content.trim()) return []
   if (looksLikeHtml(content)) return htmlSignposts(content)
