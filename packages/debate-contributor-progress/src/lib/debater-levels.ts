@@ -364,6 +364,7 @@ export function applyDebaterActivity(
   count = 1,
   challenges: DebaterChallenge[] = DEBATER_CHALLENGES,
   deviceId?: string,
+  eventId: string = newXpEventId(nowMs),
 ): DebaterActivityResult {
   const previousLevel = computeLevelProgress(state.totalXp).level;
   const n = Math.max(0, Math.floor(count));
