@@ -1,4 +1,4 @@
-import { Star, Heart, Code, Bug, ChevronRight, Github } from 'lucide-react';
+import { Star, Heart, Code, Bug, ChevronRight, GitFork } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -137,7 +137,7 @@ const SupportOpenSource = () => {
         {/* Footer / Transparency */}
         <div className="flex flex-col items-center justify-center p-8 rounded-3xl border border-dashed border-border bg-muted/20 text-center gap-4 contrast:border-yellow-400">
           <div className="flex items-center gap-6 opacity-60 contrast:opacity-100">
-            <Github className="w-8 h-8 contrast:text-yellow-400" />
+            <GitFork className="w-8 h-8 contrast:text-yellow-400" />
             <div className="h-8 w-px bg-border contrast:bg-yellow-400"></div>
             <a href="https://aossie.org" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
               <p className="text-sm font-bold tracking-widest uppercase contrast:text-yellow-400">AOSSIE Open Source</p>

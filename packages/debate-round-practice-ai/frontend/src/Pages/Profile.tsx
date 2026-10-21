@@ -38,12 +38,12 @@ import {
   XCircle,
   MinusCircle,
   Medal,
-  Twitter,
+  AtSign,
   Users,
   TrendingUp,
   Award,
   Instagram,
-  Linkedin,
+  Briefcase,
   Pen,
   X,
   Image as ImageIcon,
@@ -809,9 +809,9 @@ const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
         <div className="space-y-2 mb-4">
           <h3 className="text-xs sm:text-sm font-semibold text-foreground">Socials</h3>
-          {renderEditableSocialField("twitter", "X / Twitter", Twitter, "Your Twitter handle (without @)")}
+          {renderEditableSocialField("twitter", "X / Twitter", AtSign, "Your Twitter handle (without @)")}
           {renderEditableSocialField("instagram", "Instagram", Instagram, "Your Instagram handle (without @)")}
-          {renderEditableSocialField("linkedin", "LinkedIn", Linkedin, "Your LinkedIn profile (username or ID)")}
+          {renderEditableSocialField("linkedin", "LinkedIn", Briefcase, "Your LinkedIn profile (username or ID)")}
         </div>
 
         <Separator className="my-2" />
