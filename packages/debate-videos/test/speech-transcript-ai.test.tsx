@@ -30,7 +30,11 @@ import {
   writeSpeechSegmentation,
   writeSpeechSummary,
 } from "../src/state/speechAiCache";
+<<<<<<< HEAD
 import { WatchRoundPanel } from "../src/components/videos/watch/panels/WatchRoundPanel";
+=======
+import { WatchRoundPanel } from "../src/components/watch/WatchRoundPanel";
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 

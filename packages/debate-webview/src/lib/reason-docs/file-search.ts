@@ -1,7 +1,7 @@
 /**
  * @fileoverview Search over the docs sidebar's files — the reader's own
  * documents and the public Topic Starters — by file name *and* contents, for
- * the app-wide Ctrl/Cmd-K palette (`components/layout/GlobalCommandPalette`).
+ * the app-wide Ctrl/Cmd-K palette (`components/layout/command-palette/GlobalCommandPalette`).
  *
  * The palette's tool catalogue is ranked by fuse.js; files are not, because
  * a fuzzy match over a whole card file's text turns every query into a hit.

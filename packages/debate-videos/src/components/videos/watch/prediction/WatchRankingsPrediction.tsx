@@ -1,10 +1,17 @@
 "use client"
 
 import { useMemo, type ReactNode } from "react"
+<<<<<<<< HEAD:packages/debate-videos/src/components/videos/watch/prediction/WatchRankingsPrediction.tsx
 import { cn } from "../../../../ui/lib/utils"
 import { useAllRankingDatasets } from "../../../../hooks/useAllRankingDatasets"
 import { isRankedSeasonRound } from "../../../../hooks/useVideoTeamRankings"
 import { findVideoTeamRanking, videoStyleDatasetId } from "../../../../panels/leaderboard/profile/rankingProfileHelpers"
+========
+import { cn } from "../../ui/lib/utils"
+import { useAllRankingDatasets } from "../../hooks/useAllRankingDatasets"
+import { isRankedSeasonRound } from "../../hooks/useVideoTeamRankings"
+import { findVideoTeamRanking, videoStyleDatasetId } from "../../panels/leaderboard/profile/rankingProfileHelpers"
+>>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/watch/WatchRankingsPrediction.tsx
 import {
   modelMatchup,
   recommendSide,
@@ -12,8 +19,13 @@ import {
   type RankingDataset,
   type RankingEntry,
 } from "@debate/rankings-adapter"
+<<<<<<<< HEAD:packages/debate-videos/src/components/videos/watch/prediction/WatchRankingsPrediction.tsx
 import type { VideoType } from "../../../../types/videos"
 import { TeamCodeLabel } from "../../../team-label/TeamLabel"
+========
+import type { VideoType } from "../../types/videos"
+import { TeamCodeLabel } from "../team-label/TeamLabel"
+>>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/watch/WatchRankingsPrediction.tsx
 
 const DEFAULT_WEIGHTS: MatchupWeights = { school: 0.2, individual: 0.2 }
 const pct = (p: number) => `${(p * 100).toFixed(1)}%`

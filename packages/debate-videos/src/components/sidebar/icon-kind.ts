@@ -13,7 +13,11 @@
  * its icons with `forwardRef`, so they are objects, not functions. Test for
  * the image shapes instead — those are the ones with a fixed contract.
  *
+<<<<<<<< HEAD:packages/debate-videos/src/components/sidebar/icon-kind.ts
  * @module components/sidebar/icon-kind
+========
+ * @module components/sidebar-nav/icon-kind
+>>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/sidebar-nav/icon-kind.ts
  */
 
 import type { StaticImageData } from "next/image";

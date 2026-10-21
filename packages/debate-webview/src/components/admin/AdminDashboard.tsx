@@ -29,21 +29,21 @@ import {
   formatSeedVideosStatus,
   type SeedVideosStatus,
 } from "../../lib/videos/format-seed-videos-result";
-import { CaselistSyncPanel } from "./CaselistSyncPanel";
-import { DbBackupPanel } from "./DbBackupPanel";
-import { EmailsPanel } from "./EmailsPanel";
-import { DebateCardParquetUpload } from "./DebateCardParquetUpload";
-import { ModeratorsPanel } from "./ModeratorsPanel";
-import { ReclassifyVideosPanel } from "./ReclassifyVideosPanel";
-import { SchoolClaimsPanel } from "./SchoolClaimsPanel";
-import { TopicStarterUpload } from "./TopicStarterUpload";
-import { TopicStartersAdminPanel } from "./TopicStartersAdminPanel";
-import { UsersTable } from "./UsersTable";
-import { VideoLibraryTable } from "./VideoLibraryTable";
-import { VideoReportsPanel } from "./VideoReportsPanel";
-import { YoutubeChannelsPanel } from "./YoutubeChannelsPanel";
-import { TranscriptScraperPanel } from "./TranscriptScraperPanel";
-import { SpeechAnalysisPanel } from "./SpeechAnalysisPanel";
+import { CaselistSyncPanel } from "./data/CaselistSyncPanel";
+import { DbBackupPanel } from "./data/DbBackupPanel";
+import { EmailsPanel } from "./users/EmailsPanel";
+import { DebateCardParquetUpload } from "./data/DebateCardParquetUpload";
+import { ModeratorsPanel } from "./users/ModeratorsPanel";
+import { ReclassifyVideosPanel } from "./videos/ReclassifyVideosPanel";
+import { SchoolClaimsPanel } from "./users/SchoolClaimsPanel";
+import { TopicStarterUpload } from "./topic-starters/TopicStarterUpload";
+import { TopicStartersAdminPanel } from "./topic-starters/TopicStartersAdminPanel";
+import { UsersTable } from "./users/UsersTable";
+import { VideoLibraryTable } from "./videos/VideoLibraryTable";
+import { VideoReportsPanel } from "./videos/VideoReportsPanel";
+import { YoutubeChannelsPanel } from "./videos/YoutubeChannelsPanel";
+import { TranscriptScraperPanel } from "./videos/TranscriptScraperPanel";
+import { SpeechAnalysisPanel } from "./videos/SpeechAnalysisPanel";
 
 interface YoutubeRoundVideo { id: string; title: string; publishedAt: string; channel: string; views: number; style: number; tournament: string | null; }
 interface SyncRun { id: number; status: "running" | "success" | "error"; triggeredBy?: string | null; channelsSynced: number; videosUpserted: number; error: string | null; }

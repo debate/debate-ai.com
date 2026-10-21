@@ -44,8 +44,8 @@ import {
   type DocsGuide,
 } from "../../lib/docs-links"
 import { cn } from "../../lib/ui/lib/utils"
-import { FavoriteToolButton } from "./FavoriteToolButton"
-import { ToolSyncBadge } from "./ToolSyncBadge"
+import { FavoriteToolButton } from "./favorites/FavoriteToolButton"
+import { ToolSyncBadge } from "./sync/ToolSyncBadge"
 
 /** Props for {@link ToolPage}. */
 export interface ToolPageProps {

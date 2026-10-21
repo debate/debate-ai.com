@@ -7,6 +7,7 @@
   "author": "vtempest",
   "license": "rights.institute/prosper",
   "scripts": {
+    "tauri": "tauri",
     "configure": "node scripts/configure.mjs",
     "icons": "node scripts/generate-icons.mjs",
     "build:offline": "bun scripts/build-offline.mjs",

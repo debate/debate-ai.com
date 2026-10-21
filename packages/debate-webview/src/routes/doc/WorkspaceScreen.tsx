@@ -1,4 +1,4 @@
-import { ToolSyncBadge } from "../../components/tools/ToolSyncBadge"
+import { ToolSyncBadge } from "../../components/tools/sync/ToolSyncBadge"
 import ResearchAgentEmbed from "./ResearchAgentEmbed"
 
 /** The route the workspace's account-synced collections (chat tabs, file sources) are filed under. */

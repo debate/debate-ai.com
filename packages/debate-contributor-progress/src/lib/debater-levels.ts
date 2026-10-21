@@ -260,15 +260,57 @@ export function computeLevelProgress(totalXp: number): DebaterLevelProgress {
 
 /** One entry in a debater's recent XP log. */
 export interface DebaterXpEvent {
+  /**
+   * Unique per event, so a cross-device merge can tell activity done on two
+   * devices from the same event seen twice. Absent on events logged before the
+   * ledger existed; those merge by the larger count instead.
+   */
+  id?: string;
   atMs: number;
   /** An activity kind, or a challenge id for a challenge bonus. */
   source: string;
   label: string;
   xp: number;
+  /** Activities this event recorded; absent on challenge bonuses. */
+  count?: number;
+}
+
+/** A fresh random event id (`atMs` keeps ids roughly sortable when debugging). */
+export function newXpEventId(nowMs: number): string {
+  const random =
+    typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+      ? crypto.randomUUID()
+      : Math.random().toString(36).slice(2, 12);
+  return `${nowMs.toString(36)}-${random}`;
 }
 
 /** Maximum log entries kept in `DebaterLevelState.recentXp`. */
 export const MAX_RECENT_XP_EVENTS = 30;
+
+/** XP and activity counts a single device has earned. */
+export interface DebaterDeviceTally {
+  xp: number;
+  counts: Partial<Record<DebaterActivityKind, number>>;
+  /**
+   * What this device (or, for `base`, the pre-ledger state) counted on UTC day
+   * `dayKey`, so a merge can add today's counts across devices. Absent on
+   * entries written before per-day tallies existed; those fall back to the
+   * larger side.
+   */
+  daily?: { dayKey: string; counts: Partial<Record<DebaterActivityKind, number>> };
+}
+
+/**
+ * Per-device earnings. Each device only ever grows its own entry, so copies
+ * synced from different devices merge entry by entry (max) and the account
+ * total is `base` plus every device's entry — activity done on two devices in
+ * the same window adds instead of one overwriting the other. `base` holds the
+ * totals from before the ledger existed.
+ */
+export interface DebaterXpLedger {
+  base: DebaterDeviceTally;
+  devices: Record<string, DebaterDeviceTally>;
+}
 
 /** A debater's persisted progression. */
 export interface DebaterLevelState {
@@ -281,6 +323,8 @@ export interface DebaterLevelState {
   completedMilestoneIds: string[];
   /** Newest first. */
   recentXp: DebaterXpEvent[];
+  /** Per-device earnings; absent until a device records activity with a `deviceId`. */
+  ledger?: DebaterXpLedger;
 }
 
 /** The UTC calendar day, "YYYY-MM-DD", an epoch-ms timestamp falls on. */
@@ -318,7 +362,8 @@ export interface DebaterActivityResult {
 /**
  * Record `count` of an activity at `nowMs`: add flat activity XP, pay any
  * challenge whose target this pushes it to, and report whether the debater
- * leveled up. Never mutates `state`.
+ * leveled up. `eventId` names the ledger entry (callers pass a unique id;
+ * the fallback is only unique within one device). Never mutates `state`.
  */
 export function applyDebaterActivity(
   state: DebaterLevelState,
@@ -326,6 +371,8 @@ export function applyDebaterActivity(
   nowMs: number,
   count = 1,
   challenges: DebaterChallenge[] = DEBATER_CHALLENGES,
+  deviceId?: string,
+  eventId: string = newXpEventId(nowMs),
 ): DebaterActivityResult {
   const previousLevel = computeLevelProgress(state.totalXp).level;
   const n = Math.max(0, Math.floor(count));
@@ -338,7 +385,7 @@ export function applyDebaterActivity(
   const today = (rolled.daily.counts[kind] ?? 0) + n;
   const events: DebaterXpEvent[] = [];
   const activityXp = ACTIVITY_XP[kind] * n;
-  events.push({ atMs: nowMs, source: kind, label: n > 1 ? `${DEBATER_ACTIVITY_LABELS[kind]} ×${n}` : DEBATER_ACTIVITY_LABELS[kind], xp: activityXp });
+  events.push({ id: eventId, atMs: nowMs, source: kind, count: n, label: n > 1 ? `${DEBATER_ACTIVITY_LABELS[kind]} ×${n}` : DEBATER_ACTIVITY_LABELS[kind], xp: activityXp });
 
   const dailyDone = new Set(rolled.daily.completedChallengeIds);
   const milestonesDone = new Set(rolled.completedMilestoneIds);
@@ -353,7 +400,7 @@ export function applyDebaterActivity(
       milestonesDone.add(challenge.id);
     }
     completedChallenges.push(challenge);
-    events.push({ atMs: nowMs, source: challenge.id, label: `Challenge: ${challenge.title}`, xp: challenge.xpReward });
+    events.push({ id: `${eventId}:${challenge.id}`, atMs: nowMs, source: challenge.id, label: `Challenge: ${challenge.title}`, xp: challenge.xpReward });
   }
 
   const xpGained = events.reduce((sum, event) => sum + event.xp, 0);
@@ -370,7 +417,43 @@ export function applyDebaterActivity(
     completedMilestoneIds: Array.from(milestonesDone),
     recentXp: [...events.reverse(), ...rolled.recentXp].slice(0, MAX_RECENT_XP_EVENTS),
   };
+  if (deviceId) next.ledger = addToLedger(state, deviceId, kind, n, xpGained, rolled.daily.dayKey);
+  else if (state.ledger) next.ledger = state.ledger;
   return { state: next, xpGained, completedChallenges, previousLevel, newLevel, leveledUp: newLevel > previousLevel };
+}
+
+/** The ledger after `deviceId` earns `xp` and `n` of `kind`; a first entry snapshots the existing totals as `base`. */
+function addToLedger(
+  state: DebaterLevelState,
+  rolled: DebaterLevelState,
+  deviceId: string,
+  kind: DebaterActivityKind,
+  n: number,
+  xp: number,
+  dayKey: string,
+): DebaterXpLedger {
+  const hasDaily = Object.keys(state.daily.counts).length > 0;
+  const ledger: DebaterXpLedger = state.ledger ?? {
+    base: {
+      xp: state.totalXp,
+      counts: { ...state.lifetimeCounts },
+      ...(hasDaily ? { daily: { dayKey: state.daily.dayKey, counts: { ...state.daily.counts } } } : {}),
+    },
+    devices: {},
+  };
+  const mine = ledger.devices[deviceId] ?? { xp: 0, counts: {} };
+  const todayBefore = mine.daily?.dayKey === dayKey ? mine.daily.counts : {};
+  return {
+    base: ledger.base,
+    devices: {
+      ...ledger.devices,
+      [deviceId]: {
+        xp: mine.xp + xp,
+        counts: { ...mine.counts, [kind]: (mine.counts[kind] ?? 0) + n },
+        daily: { dayKey, counts: { ...todayBefore, [kind]: (todayBefore[kind] ?? 0) + n } },
+      },
+    },
+  };
 }
 
 /** A challenge with the debater's current progress toward it. */
@@ -406,6 +489,30 @@ function isCountRecord(value: unknown): value is Partial<Record<DebaterActivityK
   );
 }
 
+function parseTally(raw: unknown): DebaterDeviceTally | null {
+  if (!raw || typeof raw !== "object") return null;
+  const { xp, counts, daily } = raw as { xp?: unknown; counts?: unknown; daily?: unknown };
+  if (typeof xp !== "number" || !Number.isFinite(xp) || xp < 0 || !isCountRecord(counts)) return null;
+  const daily = (raw as { daily?: unknown }).daily as { dayKey?: unknown; counts?: unknown } | undefined;
+  if (daily && typeof daily.dayKey === "string" && isCountRecord(daily.counts)) {
+    return { xp, counts, daily: { dayKey: daily.dayKey, counts: daily.counts } };
+  }
+  return { xp, counts };
+}
+
+function parseLedger(raw: unknown): DebaterXpLedger | undefined {
+  if (!raw || typeof raw !== "object") return undefined;
+  const { base: rawBase, devices: rawDevices } = raw as { base?: unknown; devices?: unknown };
+  const base = parseTally(rawBase);
+  if (!base || !rawDevices || typeof rawDevices !== "object" || Array.isArray(rawDevices)) return undefined;
+  const devices: Record<string, DebaterDeviceTally> = {};
+  for (const [id, tally] of Object.entries(rawDevices)) {
+    const parsed = parseTally(tally);
+    if (parsed) devices[id] = parsed;
+  }
+  return { base, devices };
+}
+
 /** Parse persisted JSON back into a state, or `null` if it's malformed. */
 export function parseDebaterLevelState(raw: unknown): DebaterLevelState | null {
   if (!raw || typeof raw !== "object") return null;
@@ -424,7 +531,9 @@ export function parseDebaterLevelState(raw: unknown): DebaterLevelState | null {
   ) {
     return null;
   }
+  const ledger = parseLedger(value.ledger);
   return {
+    ...(ledger ? { ledger } : {}),
     totalXp: value.totalXp,
     lifetimeCounts: value.lifetimeCounts,
     daily: {

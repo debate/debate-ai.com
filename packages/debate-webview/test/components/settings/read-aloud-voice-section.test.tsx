@@ -1,13 +1,13 @@
 /** @vitest-environment jsdom */
 /**
- * @fileoverview Settings → Preferences → Read aloud voice: shows the stored
+ * @fileoverview Settings → Sound & speech → Read aloud voice: shows the stored
  * engine and voice, and follows a choice made in the card editor's gear menu.
  */
 import { act } from "react"
 import { createRoot } from "react-dom/client"
 import { afterEach, describe, expect, it } from "vitest"
 import { storeVoiceId } from "@debate/editor/read-voice"
-import { ReadAloudVoiceSection } from "../../../src/components/settings/ReadAloudVoiceSection"
+import { ReadAloudVoiceSection } from "../../../src/components/settings/sections/ReadAloudVoiceSection"
 
 ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
 

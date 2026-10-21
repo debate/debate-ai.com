@@ -246,7 +246,11 @@ label inside their blue and red team badges, as do the mini player's title
 bar and the top-pick tooltip. A code like "Harker LL" is split into the
 school ("Harker", shown as its logo) and the two debaters' initials ("LL"),
 which become their last names whenever the current season's rankings know
-the team.
+the team. A school's full name finds the same logo as its short one:
+"University of Kansas" shows the Kansas logo, "California State University -
+Long Beach" the Long Beach one, and nicknames such as "Cal" and "Wake" work
+too. Another campus of a system keeps its own name rather than borrowing the
+flagship's logo, so "University of Texas - Dallas" stays as text.
 
 In the Aff and Neg columns, a team from the **current season** that the
 [team rankings](/docs/features/team-collaboration/team-rankings) know shows its
@@ -255,15 +259,28 @@ its rank as a small **#N** badge inside the label, and clicking it opens that
 team's page. Hover the badge for the team's rating, rounds and aff/neg win
 rates. Video cards and the watch page show the same badge. Any other team
 shows the initials from its code.
-Any other team — one from a past season, or one the rankings don't match —
-keeps the old behaviour: clicking its name searches the library for that
-team's videos. The rankings cover the current season only, so an older
-round's team code is never matched (it would name different debaters).
+Any other team keeps the old behaviour: clicking its name searches the
+library for that team's videos. The rankings cover the current season only,
+so an older round's team code is never matched against them (it would name
+different debaters).
 
-The match is the one the team pages use (`findTeamRanking` in
+**College rounds from past seasons** are matched against that season's own
+ratings instead: [debatedata](https://debatedata.weebly.com)'s top-100 table
+for the season the video is from, 2009-10 onward. A team found there shows
+its debaters' last names and its **#N** rank that season; hovering the badge
+shows the season and debatedata's rating. There is no team page for a past
+season, so its name still searches the library. Shorthand like "KU", "OU",
+"UTD" or "Cal" and speech names tacked onto the label ("Baylor CM 1AC") are
+understood, and a code two teams in that season's table share (same school,
+same initials) is left unmatched rather than guessed. Teams outside that
+season's top 100 show their initials.
+
+The current-season match is the one the team pages use (`findTeamRanking` in
 `@debate/rankings-adapter`): the school loosely, the initials exactly, in
-the division the round's format is ranked in. The rankings load only when
-a listing holds a current-season round (`useVideoTeamRankings`).
+the division the round's format is ranked in. A past season's match is
+`findCollegeHistoryTeam`. The rankings load only when a listing holds a
+current-season round, and a past season's table only when it holds a
+college round from that season (`useVideoTeamRankings`).
 
 ## Guest video limit
 

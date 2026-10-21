@@ -12,9 +12,15 @@ import { GlowingEffect } from "../../ui/effects/glowing-effect";
 import { cn } from "../../ui/lib/utils";
 import { History, Clapperboard, type LucideIcon } from "lucide-react";
 import { IconTrophyGoat, IconLeaderboard, IconTrophy, IconLectures } from "../../ui/icons";
+<<<<<<< HEAD:packages/debate-videos/src/components/gallery/QuickLinksGrid.tsx
 import { isImageIcon } from "../sidebar/tree-item-icon";
 import { formatCount } from "../../lib/format-count";
 import { SIDEBAR_VIDEO_LINKS, VIDEO_REFERENCE_LINKS, type SidebarVideoLink } from "../sidebar/sidebar-video-links";
+=======
+import { isImageIcon } from "../sidebar-nav/tree-item-icon";
+import { formatCount } from "../../lib/format-count";
+import { SIDEBAR_VIDEO_LINKS, VIDEO_REFERENCE_LINKS, type SidebarVideoLink } from "../sidebar-nav/sidebar-video-links";
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/category-gallery/QuickLinksGrid.tsx
 
 interface QuickLinkStyle {
   icon?: React.ReactNode;

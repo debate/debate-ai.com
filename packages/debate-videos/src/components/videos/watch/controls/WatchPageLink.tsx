@@ -17,11 +17,19 @@
 
 import Link from "next/link"
 import { Captions } from "lucide-react"
+<<<<<<<< HEAD:packages/debate-videos/src/components/videos/watch/controls/WatchPageLink.tsx
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../../../ui/primitives/tooltip"
 import { cn } from "../../../../ui/lib/utils"
 import { videoWatchHref } from "../../../../lib/video-slug"
 import { videoRouteHref } from "../../../../lib/video-route"
 import type { VideoType } from "../../../../types/videos"
+========
+import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
+import { cn } from "../../ui/lib/utils"
+import { videoWatchHref } from "../../lib/video-slug"
+import { videoRouteHref } from "../../lib/video-route"
+import type { VideoType } from "../../types/videos"
+>>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/watch/WatchPageLink.tsx
 
 interface WatchPageLinkProps {
   videoId: string

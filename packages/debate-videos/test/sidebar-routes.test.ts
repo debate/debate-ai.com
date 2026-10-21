@@ -9,7 +9,11 @@ import {
   APP_DOCK_LINKS,
   SIDEBAR_TOOL_SECTIONS,
   TOOLS_ROOT_HREF,
+<<<<<<< HEAD
 } from "../src/components/sidebar/sidebar-tool-sections";
+=======
+} from "../src/components/sidebar-nav/sidebar-tool-sections";
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 import {
   TOOL_SIDEBAR_HREFS,
   matchesToolSidebarHref,
@@ -17,7 +21,11 @@ import {
   hostsOwnSidebarDock,
   hasEmbeddedDock,
   isGenericToolSidebarRoute,
+<<<<<<< HEAD
 } from "../src/components/sidebar/sidebar-routes";
+=======
+} from "../src/components/sidebar-nav/sidebar-routes";
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 
 describe("APP_DOCK_LINKS", () => {
   it("no longer carries the tools catalog", () => {

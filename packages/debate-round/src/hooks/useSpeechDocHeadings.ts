@@ -25,7 +25,7 @@ export interface RemoteSpeechDocHeadings {
  */
 export function useSpeechDocHeadings(roomId: string, role: "speaker" | "judge" | "observer" = "speaker") {
   const [receivedHeadings, setReceivedHeadings] = useState<RemoteSpeechDocHeadings[]>([]);
-  const { join, broadcast, status, participants, self } = useWebcamRoom(roomId, { role });
+  const { join, broadcast, status, participants, self } = useWebcamRoom(roomId, { role, dataOnly: true });
 
   // Join the room on mount
   useEffect(() => {
@@ -100,7 +100,7 @@ export function useSpeechDocHeadings(roomId: string, role: "speaker" | "judge" |
  * Integrates with the speech doc editor's share flow.
  */
 export function useBroadcastSpeechDocHeadings(roomId: string) {
-  const { broadcast, status } = useWebcamRoom(roomId);
+  const { broadcast, status } = useWebcamRoom(roomId, { dataOnly: true });
 
   const broadcastHeadings = useCallback(
     (speechName: string, markdownContent: string) => {

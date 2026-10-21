@@ -8,7 +8,7 @@
 import { act } from "react";
 import { afterEach, describe, expect, it } from "vitest";
 import { mount, type Mounted } from "./helpers/mount";
-import { VideoCard } from "../src/components/videos/video-card/VideoCard";
+import { VideoCard } from "../src/components/video-card/VideoCard";
 import { resetRevealedDecisions, revealDecision } from "../src/hooks/useDecisionReveal";
 import type { VideoType } from "../src/types/videos";
 

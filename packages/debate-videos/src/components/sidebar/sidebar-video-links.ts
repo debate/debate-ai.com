@@ -14,7 +14,11 @@
  * per-category counts from `/api/videos/meta`, so it doubles as the join key
  * for `QuickLinksGrid`'s per-tile styling.
  *
+<<<<<<<< HEAD:packages/debate-videos/src/components/sidebar/sidebar-video-links.ts
  * @module components/sidebar/sidebar-video-links
+========
+ * @module components/sidebar-nav/sidebar-video-links
+>>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/sidebar-nav/sidebar-video-links.ts
  */
 
 import {
@@ -30,7 +34,11 @@ import {
   Users,
   type LucideIcon,
 } from "lucide-react";
+<<<<<<<< HEAD:packages/debate-videos/src/components/sidebar/sidebar-video-links.ts
 import { IconFormatLD, IconFormatNDT, IconFormatPF, IconFormatVP } from "../gallery/FormatBadgeIcons";
+========
+import { IconFormatLD, IconFormatNDT, IconFormatPF, IconFormatVP } from "./FormatBadgeIcons";
+>>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/sidebar-nav/sidebar-video-links.ts
 
 export interface SidebarVideoLink {
   /** Quick-link id — the `activeId` / counts key for this destination. */

@@ -16,12 +16,21 @@
 "use client"
 
 import Link from "next/link"
+<<<<<<<< HEAD:packages/debate-videos/src/components/videos/watch/panels/WatchAnalysisPanel.tsx
 import { ScrollArea } from "../../../../ui/primitives/scroll-area"
 import { videoRouteHref } from "../../../../lib/video-route"
 import { formatVideoDate } from "../../video-card/videoCardUtils"
 import { formatCount } from "../../../../lib/format-count"
 import type { VideoType } from "../../../../types/videos"
 import type { VideoRelationKind } from "../../../../lib/video-relations"
+========
+import { ScrollArea } from "../../ui/primitives/scroll-area"
+import { videoRouteHref } from "../../lib/video-route"
+import { formatVideoDate } from "../video-card/videoCardUtils"
+import { formatCount } from "../../lib/format-count"
+import type { VideoType } from "../../types/videos"
+import type { VideoRelationKind } from "../../lib/video-relations"
+>>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/watch/WatchAnalysisPanel.tsx
 
 /** One linked video, as the watch page receives it. */
 export interface LinkedVideo {

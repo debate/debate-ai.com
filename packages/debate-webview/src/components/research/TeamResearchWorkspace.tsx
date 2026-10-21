@@ -25,11 +25,11 @@ import { Inbox, Lightbulb, MessageSquareText, PieChart, Presentation, ThumbsUp }
 import { TopicCoverageDashboardPanel } from "@debate/research-evidence"
 import { panel, type HubSection } from "../hubs/hub-sections"
 import { HubSectionIntro, HubSectionNav, HubSectionPanel, useHubSection } from "../hubs/HubSectionNav"
-import { BrainstormBoardWithIdentity } from "./BrainstormBoardWithIdentity"
-import { ContributionsFeedWithIdentity } from "./ContributionsFeedWithIdentity"
-import { PrepRoomWithIdentity } from "./PrepRoomWithIdentity"
-import { ReviewQueueWithIdentity } from "./ReviewQueueWithIdentity"
-import { TaskInboxWithIdentity } from "./TaskInboxWithIdentity"
+import { BrainstormBoardWithIdentity } from "./identity/BrainstormBoardWithIdentity"
+import { ContributionsFeedWithIdentity } from "./identity/ContributionsFeedWithIdentity"
+import { PrepRoomWithIdentity } from "./identity/PrepRoomWithIdentity"
+import { ReviewQueueWithIdentity } from "./identity/ReviewQueueWithIdentity"
+import { TaskInboxWithIdentity } from "./identity/TaskInboxWithIdentity"
 
 /** localStorage key remembering the last open tab. */
 const SECTION_KEY = "teamResearchSection"

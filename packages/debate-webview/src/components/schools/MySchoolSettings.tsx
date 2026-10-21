@@ -1,7 +1,7 @@
 "use client"
 
 /**
- * @fileoverview Settings → My school: claim to be a school's coach or
+ * @fileoverview Settings → General → My school: claim to be a school's coach or
  * administrator, back the claim with a school email (confirmed by a code) or
  * a written explanation, and follow it through moderator review. Schools the
  * user already owns link to their page, where the roster and logo are managed.

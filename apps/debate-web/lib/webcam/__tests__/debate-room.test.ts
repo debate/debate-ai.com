@@ -45,8 +45,10 @@ const RealResponse = globalThis.Response
   }
 }
 
-const upgrade = (role = "speaker", name = "Alex") =>
-  new Request(`https://x/api/rooms/r1/ws?role=${role}`, { headers: { upgrade: "websocket", "x-room-name": name } })
+const upgrade = (role = "speaker", name = "Alex", mode?: "data") =>
+  new Request(`https://x/api/rooms/r1/ws?role=${role}${mode ? `&mode=${mode}` : ""}`, {
+    headers: { upgrade: "websocket", "x-room-name": name },
+  })
 
 describe("DebateRoomSignal", () => {
   let state: FakeState
@@ -57,8 +59,8 @@ describe("DebateRoomSignal", () => {
     room = new DebateRoomSignal(state as any, {})
   })
 
-  async function join(name: string, role = "speaker") {
-    await room.fetch(upgrade(role, name))
+  async function join(name: string, role = "speaker", mode?: "data") {
+    await room.fetch(upgrade(role, name, mode))
     return lastServer
   }
 
@@ -103,6 +105,30 @@ describe("DebateRoomSignal", () => {
     expect(extra.sent[0]).toMatchObject({ type: "error", code: "room-full" })
     expect(extra.closed?.code).toBe(4009)
     expect(state.sockets).toHaveLength(MAX_ROOM_CAMERAS)
+  })
+
+  it("keeps data-only sockets out of the camera cap and hidden from camera sockets", async () => {
+    const cams = []
+    for (let i = 0; i < MAX_ROOM_CAMERAS; i++) cams.push(await join(`P${i}`))
+    const d1 = await join("Timer A", "speaker", "data")
+    const d2 = await join("Timer B", "judge", "data")
+    expect(d1.sent[0]).toMatchObject({ type: "welcome", self: { name: "Timer A", data: true } })
+    // The data socket learns every peer's name; cameras hear nothing about it.
+    expect(d2.sent[0].peers).toHaveLength(MAX_ROOM_CAMERAS + 1)
+    expect(cams[0].sent.some((m) => m.type === "peer-joined" && m.peer.data)).toBe(false)
+    expect(d1.sent.at(-1)).toMatchObject({ type: "peer-joined", peer: { name: "Timer B" } })
+
+    // Room events still reach everyone.
+    await room.webSocketMessage(d1 as any, JSON.stringify({ type: "room-event", event: "timer-sync", payload: { speechName: "1AC" } }))
+    expect(cams[0].sent.at(-1)).toMatchObject({ type: "room-event", event: "timer-sync" })
+    expect(d2.sent.at(-1)).toMatchObject({ type: "room-event", event: "timer-sync" })
+
+    // Departures follow the same visibility.
+    const before = cams[0].sent.length
+    const d1Id = (d1.attachment as any).id
+    await room.webSocketClose(d1 as any, 1000, "bye")
+    expect(cams[0].sent).toHaveLength(before)
+    expect(d2.sent.at(-1)).toEqual({ type: "peer-left", id: d1Id })
   })
 })
 

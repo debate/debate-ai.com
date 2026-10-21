@@ -8,7 +8,11 @@
  * here is what makes them testable (`apps/*` is outside the Vitest projects
  * glob, `packages/*` is not).
  *
+<<<<<<<< HEAD:packages/debate-videos/src/components/sidebar/sidebar-routes.ts
  * @module components/sidebar/sidebar-routes
+========
+ * @module components/sidebar-nav/sidebar-routes
+>>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/sidebar-nav/sidebar-routes.ts
  */
 
 import {

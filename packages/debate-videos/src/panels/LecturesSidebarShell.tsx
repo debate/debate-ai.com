@@ -32,9 +32,15 @@
 
 import type React from "react"
 
+<<<<<<< HEAD
 import { QuickLinksGrid } from "../components/gallery/QuickLinksGrid"
 import { ToolNavTree } from "../components/sidebar/ToolNavTree"
 import { VideoSidebarTree } from "../components/sidebar/VideoSidebarTree"
+=======
+import { QuickLinksGrid } from "../components/category-gallery/QuickLinksGrid"
+import { ToolNavTree } from "../components/sidebar-nav/ToolNavTree"
+import { VideoSidebarTree } from "../components/sidebar-nav/VideoSidebarTree"
+>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b
 import { Footer } from "../ui/layout/footer"
 import { ResizableSidebarLayout } from "../ui/layout/ResizableSidebarLayout"
 

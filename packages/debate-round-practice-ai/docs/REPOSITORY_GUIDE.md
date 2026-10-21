@@ -345,7 +345,7 @@ Compose supplies the backend with `DATABASE_URI=mongodb://mongo:27017/debateai`,
 | Change rating behavior | `backend/services/rating_service.go` and `backend/rating/glicko2.go`. |
 | Change teams | `backend/models/team.go`, team controllers/routes/services/WebSockets, and `frontend/src/services/teamService.ts` or `teamDebateService.ts`. |
 | Change admin permissions | `backend/middlewares/rbac.go`, `backend/rbac_model.conf`, admin routes/controllers, and admin frontend pages/services. |
-| Change global styling/layout | `frontend/src/components/Layout.tsx`, `frontend/src/App.css`, and `frontend/src/index.css`. |
+| Change global styling/layout | `frontend/src/components/layout/Layout.tsx`, `frontend/src/App.css`, and `frontend/src/index.css`. |
 
 ## 9. Operational caveats
 

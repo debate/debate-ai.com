@@ -7,7 +7,11 @@
  * the tree needs — the sidebar lives in this package, which cannot import
  * app-local modules, so the links are restated here rather than derived.
  *
+<<<<<<<< HEAD:packages/debate-videos/src/components/sidebar/sidebar-tool-sections.ts
  * @module components/sidebar/sidebar-tool-sections
+========
+ * @module components/sidebar-nav/sidebar-tool-sections
+>>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/sidebar-nav/sidebar-tool-sections.ts
  */
 
 import {

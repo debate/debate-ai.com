@@ -13,7 +13,7 @@ import {
   SIDEBAR_TOOL_SECTIONS,
 } from "@debate/videos";
 
-import { SiteFooter } from "../../../src/components/layout/SiteFooter";
+import { SiteFooter } from "../../../src/components/layout/footer/SiteFooter";
 
 /** Static markup escapes `&`, as in a title that carries one. */
 const escaped = (text: string) => text.replaceAll("&", "&amp;");

@@ -56,7 +56,7 @@ import {
 } from "@debate/practice-rounds"
 import { CoachingProgramsPanel } from "@debate/team-collaboration"
 import { CoachMaterialsPanel, JudgeProfilesPanel } from "@debate/speech-writer"
-import { PrepNotesWithIdentity } from "../research/PrepNotesWithIdentity"
+import { PrepNotesWithIdentity } from "../research/identity/PrepNotesWithIdentity"
 import { PracticePartnersPanel } from "../practice-partners/PracticePartnersPanel"
 import { NewsStreamPanel } from "@debate/community"
 import { coachingSessionNews } from "@debate/practice-rounds/src/state/coachingSessions"
