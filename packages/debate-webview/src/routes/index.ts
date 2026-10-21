@@ -89,6 +89,7 @@ export const PAGE_ROUTES: AppRoute[] = [
   { pattern: "/practice/opponents", load: () => import("./opponents/page") },
   { pattern: "/outline", load: () => import("./outline/page") },
   { pattern: "/practice/partners", load: () => import("./practice-partners/page") },
+  { pattern: "/practice/paradigm", load: () => import("./paradigm/page") },
   { pattern: "/practice/predictions", load: () => import("./predictions/page") },
   // The Prep Workspace; the five old prep routes above and below open its tabs.
   { pattern: "/practice/prep", load: () => import("./prep/page") },

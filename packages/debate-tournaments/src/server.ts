@@ -40,3 +40,14 @@ export { canAdminTournament, loadTournamentAdmin, type TournamentAdminView } fro
 export { ensureDemoTournament, seedDemo, splitSqlStatements } from "./host/demo";
 export { applyDemoEdit, demoEditSchema, loadDemoSections, type DemoEdit, type DemoSection } from "./host/demo-edit";
 export { DEMO_ADMIN, DEMO_TOURN_ID } from "./host/demo-account";
+export {
+  DEFAULT_TABROOM_COOKIE,
+  TABROOM_API_V1,
+  fetchTabroomJudge,
+  sanitizeParadigmHtml,
+  searchTabroomParadigms,
+  type TabroomCredentials,
+  type TabroomFetchOptions,
+  type TabroomJudgeResult,
+  type TabroomParadigmHit,
+} from "./paradigms-server";

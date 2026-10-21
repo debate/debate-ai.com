@@ -223,10 +223,13 @@ mounted at `/api/tabroom`), a React port of its invite/pairings/results pages (m
 a non-throwing `parseTabroom(schema, data)`), and the D1 schema. Its own `/host` API creates
 tournaments on this site (never on Tabroom) and serves each one's admin web view, and a demo
 tournament loads itself for anyone to browse as the mock admin `demo.admin`.
-Pairings and results take two optional host lookups (`lookupTeamRating`,
-`lookupJudgeParadigm` on `<TournamentsApp>`, see `src/ui/enrichment.tsx`): the site passes
-rankings matches and a Tabroom paradigm search, so entries show logo, last names and rating
-and judges open their paradigm. The package itself still depends on no other `debate-*` package.
+Pairings and results take optional host lookups (`lookupTeamRating`,
+`lookupJudgeParadigm` and `lookupJudgeProfile` on `<TournamentsApp>`, see
+`src/ui/enrichment.tsx`): the site passes rankings matches, a Tabroom paradigm search and its
+judge paradigm cache, so entries show logo, last names and rating and every judge opens a
+dialog with their paradigm and voting record. `@debate/tournaments/paradigms` parses Tabroom's
+paradigm and judging-record answers, and `fetchTabroomJudge` (in `/server`) reads them from
+Tabroom's API with a signed-in session. The package itself still depends on no other `debate-*` package.
 `scripts/sync-upstream.mjs` re-clones upstream and re-applies this package's patches and
 overlays, so upstream changes keep flowing in.
 

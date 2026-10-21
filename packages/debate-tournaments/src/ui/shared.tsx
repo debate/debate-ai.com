@@ -11,7 +11,7 @@ import { createContext, useContext, useEffect, useState, type ComponentType, typ
 import { ChevronLeft, Loader2 } from "lucide-react";
 import type { TournamentHrefs } from "../routes";
 import type { TournamentsClient } from "./client";
-import type { JudgeParadigmLookup, TeamRatingLookup } from "./enrichment";
+import type { JudgeParadigmLookup, JudgeProfileLookup, TeamRatingLookup } from "./enrichment";
 import { Card, CardHeader, CardTitle, buttonVariants } from "./primitives";
 
 export type LinkLike = ComponentType<{
@@ -39,6 +39,10 @@ export interface TournamentsContextValue {
   lookupTeamRating?: TeamRatingLookup;
   /** Finds a judge's Tabroom paradigm by name, for judges whose pairing doesn't carry one. */
   lookupJudgeParadigm?: JudgeParadigmLookup;
+  /** Loads a live Tabroom judge's paradigm and voting record for the judge dialog. */
+  lookupJudgeProfile?: JudgeProfileLookup;
+  /** Where a judge edits their own paradigm on the host site; the judge dialog links to it. */
+  paradigmEditorHref?: string;
 }
 
 export const TournamentsContext = createContext<TournamentsContextValue | null>(null);

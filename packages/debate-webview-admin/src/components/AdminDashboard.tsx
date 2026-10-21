@@ -31,6 +31,7 @@ import {
 import { CaselistSyncPanel } from "./data/CaselistSyncPanel";
 import { DbBackupPanel } from "./data/DbBackupPanel";
 import { DebateCardParquetUpload } from "./data/DebateCardParquetUpload";
+import { JudgeParadigmSyncPanel } from "./data/JudgeParadigmSyncPanel";
 import { ModeratorsPanel } from "./users/ModeratorsPanel";
 import { TopicStarterUpload } from "./topic-starters/TopicStarterUpload";
 import { UsersTable } from "./users/UsersTable";
@@ -1300,6 +1301,8 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
             <DebateCardParquetUpload />
 
             <CaselistSyncPanel />
+
+            <JudgeParadigmSyncPanel />
           </>
         )}
 

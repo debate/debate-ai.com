@@ -24,11 +24,22 @@ export {
   type EntrySide,
   type EventFormatHint,
   type JudgeParadigmLookup,
+  type JudgeProfileLookup,
+  type JudgeProfileQuery,
   type PairingJudge,
   type TeamRating,
   type TeamRatingLookup,
   type TeamRatingQuery,
 } from "./enrichment";
+export { JudgeProfileView, type JudgeProfileViewProps } from "./JudgeProfileView";
+export {
+  summarizeJudgeRecord,
+  type JudgeCertification,
+  type JudgeProfile,
+  type JudgeProfileSource,
+  type JudgeRecordRow,
+  type JudgeRecordSummary,
+} from "../paradigms";
 export { FramedOverlay, TABROOM_BETA_URL, type FramedOverlayProps } from "./FramedOverlay";
 export {
   TOURNAMENT_FORMATS,

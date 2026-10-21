@@ -2934,3 +2934,82 @@ export const filePurchases = sqliteTable(
 );
 
 export type FilePurchaseRow = typeof filePurchases.$inferSelect;
+
+// Judge paradigms — the cache of Tabroom judges' paradigms and judging
+// records, and the paradigms judges write here themselves. The wire format
+// and checks live in `@debate/webview/lib/judge-paradigms`; the queries are
+// `lib/judge-paradigms/queries.ts`. Shipped to D1 by
+// `packages/debate-webview/migrations/0002_judge_paradigms.sql`.
+//
+// `judge_paradigms` is keyed by Tabroom person id. `record` and
+// `certifications` are JSON because the dialog reads them whole; `first` and
+// `last` are lower-cased name keys for finding a judge whose pairing carries
+// no id. A row whose fetch failed is kept with `status` set, so the sync
+// doesn't retry it every batch.
+export const judgeParadigms = sqliteTable(
+  "judge_paradigms",
+  {
+    personId: integer("person_id").primaryKey(),
+    name: text("name").notNull().default(""),
+    first: text("first").notNull().default(""),
+    last: text("last").notNull().default(""),
+    paradigmHtml: text("paradigm_html"),
+    lastReviewed: text("last_reviewed"),
+    /** JSON array of `JudgeRecordRow`. */
+    record: text("record").notNull().default("[]"),
+    rounds: integer("rounds").notNull().default(0),
+    /** JSON array of `{ label, description }`. */
+    certifications: text("certifications").notNull().default("[]"),
+    /** `tabroom-api` or `tabroom-page`. */
+    source: text("source").notNull().default("tabroom-api"),
+    /** `ok`, `not-found` or `error`. */
+    status: text("status").notNull().default("ok"),
+    error: text("error"),
+    syncedAt: integer("synced_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    nameIdx: index("idx_judge_paradigms_name").on(table.last, table.first),
+    syncedIdx: index("idx_judge_paradigms_synced").on(table.syncedAt),
+  }),
+);
+
+export type JudgeParadigmRow = typeof judgeParadigms.$inferSelect;
+
+// One row per sync job (`id` "tabroom"): how far the admin sync's walk over
+// Tabroom's paradigm search has got, so batches resume where the last left off.
+export const judgeParadigmSync = sqliteTable("judge_paradigm_sync", {
+  id: text("id").primaryKey(),
+  discoveryOffset: integer("discovery_offset").notNull().default(0),
+  discoveryDone: integer("discovery_done", { mode: "boolean" }).notNull().default(false),
+  lastRunAt: integer("last_run_at", { mode: "timestamp" }),
+  lastError: text("last_error"),
+});
+
+// A judge's own paradigm, one per account, written in the paradigm editor.
+// It replaces their Tabroom paradigm in the judge dialog only once `verified`:
+// the account proved it is `tabroom_person_id` by putting `verify_code` in
+// that Tabroom paradigm, or an admin confirmed it.
+export const judgeOwnParadigms = sqliteTable(
+  "judge_own_paradigms",
+  {
+    userId: text("user_id")
+      .primaryKey()
+      .references(() => user.id, { onDelete: "cascade" }),
+    tabroomPersonId: integer("tabroom_person_id"),
+    verified: integer("verified", { mode: "boolean" }).notNull().default(false),
+    verifyCode: text("verify_code").notNull(),
+    markdown: text("markdown").notNull().default(""),
+    /** The Markdown rendered and sanitized. */
+    html: text("html").notNull().default(""),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    personIdx: index("idx_judge_own_paradigms_person").on(table.tabroomPersonId, table.verified),
+  }),
+);
+
+export type JudgeOwnParadigmRow = typeof judgeOwnParadigms.$inferSelect;

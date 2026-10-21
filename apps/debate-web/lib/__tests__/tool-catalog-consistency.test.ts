@@ -174,6 +174,8 @@ const ROUTES_WITHOUT_A_CATALOG_ENTRY = new Set([
   "/practice/judges",
   "/practice/prep-notes",
   "/practice/partners",
+  // A judge's own paradigm editor, reached from the judge dialog in pairings.
+  "/practice/paradigm",
   "/practice/drills",
   "/research/cards/coverage",
   "/research/cards/prep-room",
