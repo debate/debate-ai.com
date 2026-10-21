@@ -112,7 +112,7 @@ describe("parseDebaterLevelState", () => {
 
 describe("applyDebaterActivity event ledger", () => {
   it("stamps the activity event with a unique id and its count", () => {
-    const a = applyDebaterActivity(createDebaterLevelState(), "card_cut", DAY1, 2, undefined, "evt");
+    const a = applyDebaterActivity(createDebaterLevelState(), "card_cut", DAY1, 2, undefined, undefined, "evt");
     expect(a.state.recentXp.at(-1)).toMatchObject({ id: "evt", source: "card_cut", count: 2 });
     const b = applyDebaterActivity(createDebaterLevelState(), "card_cut", DAY1);
     const c = applyDebaterActivity(createDebaterLevelState(), "card_cut", DAY1);
@@ -122,7 +122,7 @@ describe("applyDebaterActivity event ledger", () => {
 
   it("gives challenge bonuses their own id derived from the event", () => {
     let state = createDebaterLevelState();
-    let last = applyDebaterActivity(state, "card_cut", DAY1, 1, undefined, "e1");
+    let last = applyDebaterActivity(state, "card_cut", DAY1, 1, undefined, undefined, "e1");
     for (let i = 0; i < 6 && last.completedChallenges.length === 0; i += 1) {
       state = last.state;
       last = applyDebaterActivity(state, "card_cut", DAY1, 1, undefined, `e${i + 2}`);
