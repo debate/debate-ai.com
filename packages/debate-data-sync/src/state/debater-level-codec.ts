@@ -167,7 +167,7 @@ interface Ledger {
 
 function asTally(value: unknown): Tally | null {
   if (typeof value !== "object" || value === null) return null;
-  const { xp, counts, daily } = value as { xp?: unknown; counts?: unknown; daily?: unknown };
+  const { xp, counts } = value as { xp?: unknown; counts?: unknown };
   if (typeof xp !== "number" || !Number.isFinite(xp) || xp < 0) return null;
   const daily = (value as { daily?: unknown }).daily as { dayKey?: unknown; counts?: unknown } | undefined;
   if (daily && typeof daily.dayKey === "string") {
