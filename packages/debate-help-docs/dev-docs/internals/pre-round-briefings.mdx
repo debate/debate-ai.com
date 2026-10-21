@@ -313,6 +313,13 @@ tallies, plus a recent-form window (`RECENT_FORM_WINDOW` = 5 rounds) and a
 `trend` that needs at least ten logged rounds and a 0.10 gap from the all-time
 rate. It is pure and covered by `test/debater-stats.test.ts`.
 
-Known gaps: no panel mounts it yet, and fallacy frequency, argument length and
-topic expertise from the "Analytics Dashboard for Debaters" idea are absent
-because no store records them.
+`panels/DebaterStatsPanel.tsx` renders it (win-rate/Aff/Neg/recent-form tiles,
+a trend pill, and by-division and by-argument meters) and re-reads on a
+`storage` event for `ownRoundHistory`. It is mounted as the "Debater Stats" tab
+of the Prep Workspace (`/practice/prep?section=stats`) and in the Coach Hub's
+Prep section. Covered by `test/DebaterStatsPanel.test.tsx`.
+
+Known gaps: fallacy frequency, argument length and topic expertise from the
+"Analytics Dashboard for Debaters" idea are absent because no store records
+them, and the panel is read-only — rounds are still logged from the Pre-Round
+Briefings "Log a round" form.

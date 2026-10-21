@@ -6,6 +6,7 @@
  */
 
 export { DebateFlowPage, type DebateFlowPageProps } from "./DebateRoundPanel";
+export { DebaterStatsPanel, formatWinRate } from "./DebaterStatsPanel";
 export { DebateStartPanel, MAX_RECENT_DEBATES } from "./DebateStartPanel";
 export { FlowEditLogPanel } from "./FlowEditLogPanel";
 export { OpponentTeamProfilesPanel } from "./OpponentTeamProfilesPanel";

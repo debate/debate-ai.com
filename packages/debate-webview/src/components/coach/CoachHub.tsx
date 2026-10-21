@@ -36,6 +36,7 @@ import { ArrowUpRight, ClipboardList, Crosshair, GraduationCap, ListTree, PlayCi
 import {
   FlowEditLogPanel,
   OpponentTeamProfilesPanel,
+  DebaterStatsPanel,
   PreRoundBriefingsPanel,
   SharedFlowSyncPanel,
   StrategyPanel,
@@ -134,6 +135,7 @@ export const COACH_SECTIONS: readonly HubSection<SectionId>[] = [
     panels: [
       panel("Pre-Round Briefings", "/practice/prep?section=briefings"),
       panel("Prep Notes", "/practice/prep?section=notes"),
+      panel("Debater Stats", "/practice/prep?section=stats"),
       panel("Flow Annotations", "/annotations"),
     ],
   },
@@ -325,6 +327,9 @@ export function CoachHub() {
             </HubPanelAnchor>
             <HubPanelAnchor anchor={ANCHORS["Prep Notes"]}>
               <PrepNotesWithIdentity />
+            </HubPanelAnchor>
+            <HubPanelAnchor anchor={ANCHORS["Debater Stats"]}>
+              <DebaterStatsPanel />
             </HubPanelAnchor>
             <HubPanelAnchor anchor={ANCHORS["Flow Annotations"]}>
               <FlowAnnotationsPanel />

@@ -45,10 +45,11 @@
 ### 10\. **Analytics Dashboard for Debaters**
 
 - Personal stats: win rate, fallacy frequency, argument length, topic expertise, improvement trends
-- **In Progress** (branch `agent/todo-debater-analytics-stats`): `buildDebaterStats` in `packages/debate-round/src/round/debater-stats.ts` computes win rate, side/division/argument splits and recent-form trend from `ownRoundHistory`.
+- **In Progress** (branch `agent/todo-debater-analytics-stats`): `buildDebaterStats` in `packages/debate-round/src/round/debater-stats.ts` computes win rate, side/division/argument splits and recent-form trend from `ownRoundHistory` (account-synced via the `ownRoundHistory` tool-record collection).
   - [x] Pure stats model + Vitest
-  - [ ] Follow-up: mount a Stats panel in the tools sidebar and `/tools`
+  - [x] `DebaterStatsPanel` mounted in the Prep Workspace ("Debater Stats" tab) and the Coach Hub Prep section, with Vitest
   - [ ] Follow-up: record fallacy/argument-length data so those stats can be added
+  - [ ] Blocked on base: 39 `.ts/.tsx` files on `master` (mostly `packages/debate-videos`, plus `debate-webview` nav files) contain committed merge-conflict markers, so repo-wide `tsc`/`build` fail; resolve those first, then re-run the build gate and mark this Completed
 
 1. ability to challenge legends - and speculators bet
 2. random pair webcam debate matching on mutual pref topics
