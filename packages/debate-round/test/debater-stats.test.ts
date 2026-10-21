@@ -91,4 +91,18 @@ describe("buildDebaterStats", () => {
     ];
     expect(buildDebaterStats(records).recent.winRate).toBe(1);
   });
+
+  it("groups rounds by case name", () => {
+    const stats = buildDebaterStats([
+      round({ caseName: "Space Aff" }),
+      round({ caseName: " Space Aff ", won: false }),
+      round({ caseName: "Politics DA" }),
+      round(),
+      round({ caseName: "" }),
+    ]);
+    expect(stats.byCase).toEqual([
+      { label: "Space Aff", rounds: 2, wins: 1, losses: 1, winRate: 0.5 },
+      { label: "Politics DA", rounds: 1, wins: 1, losses: 0, winRate: 1 },
+    ]);
+  });
 });

@@ -41,6 +41,8 @@ export interface DebaterStats {
   byDivision: LabeledWinLossRecord[];
   /** Per argument tag the team ran, most rounds first. */
   byArgumentTag: LabeledWinLossRecord[];
+  /** Per case or plan name the team ran (`caseName`), most rounds first. */
+  byCase: LabeledWinLossRecord[];
   /** The latest {@link RECENT_FORM_WINDOW} rounds by date. */
   recent: WinLossRecord;
   trend: FormTrend;
@@ -107,6 +109,7 @@ export function buildDebaterStats(records: readonly OpponentRoundRecord[]): Deba
     neg: tally(records.filter((record) => record.side === "neg")),
     byDivision: groupBy(records, (record) => [record.division]),
     byArgumentTag: groupBy(records, (record) => record.argumentTags ?? []),
+    byCase: groupBy(records, (record) => (record.caseName ? [record.caseName] : [])),
     recent,
     trend,
   };

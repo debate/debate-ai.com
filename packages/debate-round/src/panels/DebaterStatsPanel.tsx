@@ -132,6 +132,7 @@ export function DebaterStatsPanel() {
           </p>
           <Breakdown title="By division" rows={stats.byDivision} />
           <Breakdown title="By argument" rows={stats.byArgumentTag} />
+          <Breakdown title="By case" rows={stats.byCase} />
         </>
       )}
     </PanelShell>
