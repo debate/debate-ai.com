@@ -457,27 +457,39 @@ describe("useWebcamRoom", () => {
 })
 
 describe("useTimerSync", () => {
-  it("auto-joins, throttles broadcasts per speech, collects peers' timers and clears them when a peer leaves", async () => {
+  it("auto-joins as a data socket, sends every update, collects peers' timers and clears them when a peer leaves", async () => {
     const now = vi.spyOn(Date, "now").mockReturnValue(10_000)
-    const hook = await renderHook(() => useTimerSync("round-7", "judge"))
+    const onRemoteTimer = vi.fn()
+    const hook = await renderHook(() => useTimerSync("round-7", "judge", { onRemoteTimer }))
     await flush()
     const ws = FakeWebSocket.instances[0]
     expect(new URL(ws.url).searchParams.get("role")).toBe("judge")
+    expect(new URL(ws.url).searchParams.get("mode")).toBe("data")
     await run(() => ws.receive({ type: "welcome", self: { id: "me", name: "Me", role: "judge" }, peers: [{ id: "p1", name: "1A Alice", role: "speaker" }] }))
+    // A data socket never dials peers.
+    expect(peers.FakePeer.instances).toHaveLength(0)
     ws.sent = []
 
     const timer = { speechName: "1AC", time: 1000, resetTime: 2000, state: { name: "paused" as const }, timestamp: 1 }
     await run(() => hook.result.current.broadcastTimerState("1AC", timer))
+    now.mockReturnValue(10_100)
+    // Not throttled: a pause right after a start must still go out.
     await run(() => hook.result.current.broadcastTimerState("1AC", timer))
-    expect(ws.sent).toHaveLength(1)
+    expect(ws.sent).toHaveLength(2)
     expect(ws.sent[0]).toEqual({
       type: "room-event",
       event: "timer-sync",
-      payload: { speechName: "1AC", time: 1000, resetTime: 2000, state: { name: "paused" }, timestamp: 10_000 },
+      payload: { id: expect.any(String), speechName: "1AC", time: 1000, resetTime: 2000, state: { name: "paused" }, timestamp: 10_000 },
     })
-    now.mockReturnValue(10_600)
-    await run(() => hook.result.current.broadcastTimerState("1AC", timer))
-    expect(ws.sent).toHaveLength(2)
+    expect((ws.sent[1].payload as { timestamp: number }).timestamp).toBe(10_100)
+
+    // The same event arriving twice (two sockets in this tab) is applied once.
+    await run(() => ws.receive({ type: "room-event", from: "p1", event: "timer-sync", payload: { ...timer, id: "e1" } }))
+    await run(() => ws.receive({ type: "room-event", from: "p1", event: "timer-sync", payload: { ...timer, id: "e1" } }))
+    expect(onRemoteTimer).toHaveBeenCalledTimes(1)
+    expect(onRemoteTimer).toHaveBeenCalledWith(timer, "p1")
+    await run(() => hook.result.current.clearTimers())
+    onRemoteTimer.mockClear()
 
     // Own echo and unknown peers are ignored; a known peer's timer is kept (latest per speech).
     await run(() => ws.receive({ type: "room-event", from: "me", event: "timer-sync", payload: timer }))
@@ -487,6 +499,7 @@ describe("useTimerSync", () => {
     await run(() => ws.receive({ type: "room-event", from: "p1", event: "timer-sync", payload: { ...timer, time: 500 } }))
     expect(hook.result.current.remoteTimers).toHaveLength(1)
     expect(hook.result.current.remoteTimers[0]).toMatchObject({ peerId: "p1", peerName: "1A Alice", timerState: { time: 500 } })
+    expect(onRemoteTimer).toHaveBeenCalledTimes(2)
 
     await run(() => ws.receive({ type: "peer-left", id: "p1" }))
     expect(hook.result.current.remoteTimers).toEqual([])

@@ -202,6 +202,8 @@ includes an in-round speech recorder with mic selection, live waveform, playback
 optional webcam video, and the joined round recording: every speech in one MP3
 (`@breezystack/lamejs`), optional Kokoro announcements and Moonshine captions
 (`@moonshine-ai/moonshine-js`), and the speech-start modal shared with `debate-videos`.
+Also owns the circular progress timer face (`CircularTimerFace`), shared by the round
+sidebar's Timer section and the browser extension's timer window.
 
 ## debate-types
 
