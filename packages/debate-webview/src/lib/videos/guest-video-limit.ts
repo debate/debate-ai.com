@@ -1,6 +1,6 @@
 /**
  * @fileoverview How many videos a signed-out visitor may open before the app
- * asks them to sign in (`components/layout/GuestVideoLimitGate.tsx`).
+ * asks them to sign in (`components/layout/auth/GuestVideoLimitGate.tsx`).
  *
  * The count is of distinct videos, kept in this browser's `localStorage`:
  * re-opening a video the guest already watched never counts twice and is

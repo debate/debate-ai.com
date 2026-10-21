@@ -33,7 +33,7 @@ Nothing in the port calls Go, Mongo or Gin: it is plain TypeScript,
 | --- | --- | --- |
 | `./backend` | `backend/controllers/debatevsbot_controller.go`, `backend/services/*.go`, `backend/models/debatevsbot.go`, `backend/routes/debatevsbot.go` | The vs-bot server: 13 bot personalities, prompt construction, AI judging, gamification rules, and the four `/vsbot/*` handlers |
 | `./client` | `frontend/src/services/vsbot.ts` | The browser client for those endpoints |
-| `./ui` | `frontend/src/Pages/BotSelection.tsx`, `frontend/src/Pages/DebateRoom.tsx`, `frontend/src/components/JudgementPopup.tsx` | The round screens |
+| `./ui` | `frontend/src/Pages/BotSelection.tsx`, `frontend/src/Pages/DebateRoom.tsx`, `frontend/src/components/round/JudgementPopup.tsx` | The round screens |
 
 ### Backend
 

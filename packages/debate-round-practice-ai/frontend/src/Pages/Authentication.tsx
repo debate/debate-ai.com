@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { LoginForm, SignUpForm, OTPVerificationForm, ForgotPasswordForm, ResetPasswordForm } from './Authentication/forms.tsx';
 import { Link, useLocation } from 'react-router-dom';
 import DebateCover from '../assets/DebateCover4.svg';
-import { ThemeToggle } from '@/components/ThemeToggle';
+import { ThemeToggle } from '@/components/layout/ThemeToggle';
 
 const LeftSection = () => (
   <div className="hidden md:flex w-full h-full flex-col justify-between bg-muted p-10 text-black dark:text-white">

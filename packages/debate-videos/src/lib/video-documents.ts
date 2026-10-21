@@ -18,7 +18,7 @@
  * @module lib/video-documents
  */
 
-import { groupIntoSentences } from "../components/videos/transcript/transcriptUtils";
+import { groupIntoSentences } from "../components/transcript/transcriptUtils";
 
 /** Which kinds of document a video can carry, in the order the tabs show them. */
 export const VIDEO_DOCUMENT_KINDS = ["transcript", "summary", "analysis"] as const;

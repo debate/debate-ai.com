@@ -1,6 +1,6 @@
 /**
  * @fileoverview The "already shown" flag for the first-sign-in welcome
- * notification (`components/layout/FirstLoginWelcomeProvider.tsx`).
+ * notification (`components/layout/auth/FirstLoginWelcomeProvider.tsx`).
  *
  * The welcome shows once per account: the source of truth is
  * `user_settings.welcome_dismissed_at`, read and written through

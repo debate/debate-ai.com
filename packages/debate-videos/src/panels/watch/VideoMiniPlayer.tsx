@@ -31,10 +31,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { ChevronLeft, ChevronRight, Maximize2, Pause, Pin, PinOff, Play } from "lucide-react"
 
-import { WatchSpeechTimeline } from "../../components/videos/watch/WatchSpeechTimeline"
-import { PlayerIconButton } from "../../components/videos/video-player/PlayerIconButton"
+import { WatchSpeechTimeline } from "../../components/watch/WatchSpeechTimeline"
+import { PlayerIconButton } from "../../components/video-player/PlayerIconButton"
 import { TooltipProvider } from "../../ui/primitives/tooltip"
-import { buildEmbedUrl, startListening } from "../../components/videos/video-player/youtubeEmbed"
+import { buildEmbedUrl, startListening } from "../../components/video-player/youtubeEmbed"
 import { sendYouTubeCommand, videoPlayerIframeRef } from "../../state/videoPlayerStore"
 import { recordWatchProgress } from "../../state/videoWatchHistory"
 import { readSpeechStarts } from "../../state/speechStartMarks"

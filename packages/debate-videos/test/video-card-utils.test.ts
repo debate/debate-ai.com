@@ -5,7 +5,7 @@ import {
   formatVideoDate,
   getRoundBadgeColor,
   getYearTopic,
-} from "../src/components/videos/video-card/videoCardUtils";
+} from "../src/components/video-card/videoCardUtils";
 import type { TopicType } from "../src/types/videos";
 
 const topics = [

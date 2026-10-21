@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 
-import { FileTree } from "../../../src/components/reason-docs/FileTree";
+import { FileTree } from "../../../src/components/reason-docs/file-manager/FileTree";
 import type { ReasonDocument } from "../../../src/components/reason-docs/types";
 
 const noop = () => {};

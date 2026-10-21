@@ -25,9 +25,9 @@ import {
 } from "@phosphor-icons/react";
 import { useEffect, useMemo, useState } from "react";
 
-import ContactList from "../collab/ContactList";
-import DisplayNameRow from "../collab/DisplayNameRow";
-import MyEndpointId from "../collab/MyEndpointId";
+import ContactList from "../collab/contacts/ContactList";
+import DisplayNameRow from "../collab/contacts/DisplayNameRow";
+import MyEndpointId from "../collab/contacts/MyEndpointId";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import {

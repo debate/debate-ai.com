@@ -34,7 +34,7 @@ import {
   type SpeechMediaSource,
   type SpeechSegment,
 } from "@debate/timer/src/recorder/youtube-speech-segments"
-import { buildEmbedUrl, startListening } from "@debate/videos/src/components/videos/video-player/youtubeEmbed"
+import { buildEmbedUrl, startListening } from "@debate/videos/src/components/video-player/youtubeEmbed"
 import { standardRoundSpeeches } from "@debate/videos/src/lib/round-formats"
 import { writeSpeechStart } from "@debate/videos/src/state/speechStartMarks"
 import { Button } from "../ui/primitives/button"

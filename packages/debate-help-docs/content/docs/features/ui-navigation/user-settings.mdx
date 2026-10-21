@@ -120,7 +120,7 @@ requests to the two AI routes. The server uses it for that one request and
 never stores or logs it. Remove it to go back to the shared key.
 
 - **Packages:** `debate-webview` (`lib/ai/own-ai-key.ts`,
-  `components/settings/OwnAiKeySection.tsx`,
+  `components/settings/sections/OwnAiKeySection.tsx`,
   `components/pricing/OwnAiKeyDialog.tsx`), `apps/debate-ai.com`
   (`lib/ai/provider-key.ts`)
 
@@ -198,7 +198,7 @@ debate-editor/settings-ui.ts (buildEmbeddedSettingsPanel)
 app/settings/editor-panel/page.tsx (iframe document: category sidebar, hydrate, debounced push)
   → GET/PUT /api/settings { editorPreferences }
 lib/editor-preferences.ts (EDITOR_SETTINGS_TABS, EDITOR_PREFERENCE_KEYS, validation)
-components/settings/CardMirrorSettingsPanel.tsx (the iframe wrapper, self-sizing)
+components/settings/cardmirror/CardMirrorSettingsPanel.tsx (the iframe wrapper, self-sizing)
 ```
 
 The local store stays authoritative: the page hydrates from the account on
@@ -374,19 +374,19 @@ as the `debaterLevel` collection (listed in **Tool data** under Practice as
 "Debater Level & XP"), stored under `debaterLevel` as a single `progress`
 record and adapted by `debater-level-codec.ts` in `debate-data-sync`.
 
-Each browser books what it earns to its own entry in a per-device `ledger`
-(keyed by a `debaterDeviceId` kept only in that browser). When two devices both
-earned XP while apart, `mergeDebaterLevel` keeps the larger copy of each
-device's entry and then adds the devices together, so total XP, each activity's
-lifetime count and today's count (when both are from the same UTC day) include
-work from every device. Completed milestones and the recent XP log are unions.
+Each browser keeps its own XP ledger (`ledger` on the stored state, keyed by a
+per-browser id kept under `debaterDeviceId`, which is not synced). A device only
+ever grows its own entry, so when two devices both earned XP while apart the
+ledgers merge entry by entry and your total and lifetime counts are rebuilt as
+the pre-ledger base plus every device — XP earned on both devices adds up.
 
-Progress from before the ledger existed is carried as a shared `base` entry, so
-it is never counted twice. Known gaps: a challenge bonus finished separately on
-two devices is paid on each; and activity split across devices that only reaches
-a challenge's target once merged is paid on the next activity rather than at the
-merge. Resetting progress on one device is not propagated, because merging
-never lowers a total.
+The rest of the state is still merged field by field (`mergeDebaterLevel`): the
+union of completed milestones, today's challenge progress when both are from the
+same UTC day (otherwise the later day), and the union of the recent XP log.
+Known gaps: today's per-activity counts still take the larger side rather than
+adding, so a daily challenge can lag when you work on two devices the same day;
+and a copy from an older client without a ledger falls back to the larger total.
+It can under-count but never double-counts.
 
 ## Save status on each tool
 

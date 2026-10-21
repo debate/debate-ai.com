@@ -34,20 +34,23 @@ export const DEBATER_ACTIVITY_EVENT = "debate-ai:debater-activity";
 /** Window event this store dispatches after every recorded activity: `detail: DebaterActivityResult`. */
 export const DEBATER_XP_AWARDED_EVENT = "debate-ai:debater-xp-awarded";
 
-/** localStorage key for this browser's ledger id; deliberately not synced, so each device keeps its own. */
+/** localStorage key for this browser's ledger id; deliberately not synced to the account. */
 export const DEBATER_DEVICE_ID_STORAGE_KEY = "debaterDeviceId";
 
-/** This browser's stable ledger id, created on first use ("local" when storage is unavailable). */
-export function getDebaterDeviceId(): string {
-  if (typeof localStorage === "undefined") return "local";
+/** This browser's stable id for the XP ledger, created on first use; `undefined` without storage. */
+export function getDebaterDeviceId(): string | undefined {
+  if (typeof localStorage === "undefined") return undefined;
   try {
     const existing = localStorage.getItem(DEBATER_DEVICE_ID_STORAGE_KEY);
     if (existing) return existing;
-    const id = `d-${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
+    const id =
+      typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+        ? crypto.randomUUID()
+        : `d${Date.now().toString(36)}${Math.random().toString(36).slice(2, 10)}`;
     localStorage.setItem(DEBATER_DEVICE_ID_STORAGE_KEY, id);
     return id;
   } catch {
-    return "local";
+    return undefined;
   }
 }
 

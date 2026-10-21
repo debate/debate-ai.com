@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { ProgressUnlocksWithIdentity } from "../../../components/research/ProgressUnlocksWithIdentity"
+import { ProgressUnlocksWithIdentity } from "../../../components/research/identity/ProgressUnlocksWithIdentity"
 import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHeader"
 
 export default function CardsProgressPage() {

@@ -207,7 +207,7 @@ export function isOpponentTeamProfilesPanelLiveUpdateStorageEvent(event: { key: 
  * `state/settings.ts`'s own `"settings"` store (the `debateStyle`/
  * `fontSize` fields, re-read via `state/userSettings.ts`'s
  * `refreshLocalUserSettingsFromStorage`), `"color-theme"` (the `colorTheme`
- * field, shared with `components/theme-dropdown.tsx`'s dock picker),
+ * field, shared with `components/theme/ThemeDropdown.tsx`'s dock picker),
  * `"theme"` (next-themes' own default storage key, backing the
  * `themeMode` field), and `state/fontSettings.ts`'s `"fontFamily"` (the
  * separate, always-immediate font-family picker, not part of the

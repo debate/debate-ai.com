@@ -11,7 +11,7 @@
 import { useState } from "react"
 import { collegeWinProbability, type CollegeHistoryEntry } from "@debate/rankings-adapter"
 import { Input } from "../../ui/primitives/input"
-import { SPEECH_SIDE_STYLES } from "../../components/videos/watch/speech-side-styles"
+import { SPEECH_SIDE_STYLES } from "../../components/watch/speech-side-styles"
 
 /** Props for {@link CollegeWinCalculator}. */
 interface CollegeWinCalculatorProps {

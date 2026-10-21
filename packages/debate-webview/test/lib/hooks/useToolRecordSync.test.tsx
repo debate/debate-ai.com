@@ -127,6 +127,46 @@ describe("useToolRecordSync", () => {
     expect(result.current.reconciled).toBe(true)
   })
 
+  describe("when the tab returns to the foreground", () => {
+    function setVisibility(state: "visible" | "hidden") {
+      Object.defineProperty(document, "visibilityState", { configurable: true, get: () => state })
+      document.dispatchEvent(new Event("visibilitychange"))
+    }
+
+    afterEach(() => setVisibility("visible"))
+
+    it("re-merges once the tab's reconcile has gone stale", async () => {
+      session.current = { isAuthenticated: true, isLoading: false }
+      await render()
+      expect(mirror.hydrateToolRecords).toHaveBeenCalledTimes(2)
+      sessionStorage.setItem("toolRecordSyncHydratedAt", String(Date.now() - 11 * 60 * 1000))
+      await flush(() => setVisibility("visible"))
+      await flush()
+      expect(mirror.hydrateToolRecords).toHaveBeenCalledTimes(4)
+    })
+
+    it("does not re-merge while the reconcile is still fresh", async () => {
+      session.current = { isAuthenticated: true, isLoading: false }
+      await render()
+      await flush(() => setVisibility("visible"))
+      expect(mirror.hydrateToolRecords).toHaveBeenCalledTimes(2)
+    })
+
+    it("does not re-merge when the tab is hidden", async () => {
+      session.current = { isAuthenticated: true, isLoading: false }
+      await render()
+      sessionStorage.setItem("toolRecordSyncHydratedAt", String(Date.now() - 11 * 60 * 1000))
+      await flush(() => setVisibility("hidden"))
+      expect(mirror.hydrateToolRecords).toHaveBeenCalledTimes(2)
+    })
+
+    it("does nothing while signed out", async () => {
+      await render()
+      await flush(() => setVisibility("visible"))
+      expect(mirror.hydrateToolRecords).not.toHaveBeenCalled()
+    })
+  })
+
   it("folds the watcher's flushes into the results, error or not", async () => {
     session.current = { isAuthenticated: true, isLoading: false }
     const { result } = await render()

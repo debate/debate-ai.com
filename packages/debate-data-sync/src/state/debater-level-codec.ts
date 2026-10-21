@@ -95,6 +95,114 @@ function asXpEvents(value: unknown): { atMs: number; source: string }[] {
   );
 }
 
+function utcDay(atMs: number): string {
+  return new Date(atMs).toISOString().slice(0, 10);
+}
+
+interface Side {
+  totalXp: number;
+  lifetimeCounts: Counts;
+  daily: ReturnType<typeof asDaily>;
+  events: XpEvent[];
+  milestones: string[];
+}
+
+function asSide(state: Record<string, unknown> & { totalXp: number }): Side {
+  return {
+    totalXp: state.totalXp,
+    lifetimeCounts: asCounts(state.lifetimeCounts),
+    daily: asDaily(state.daily),
+    events: asXpEvents(state.recentXp),
+    milestones: asStrings(state.completedMilestoneIds),
+  };
+}
+
+/**
+ * `base` plus the ledger events only `other` has seen. An event counts as
+ * unseen by `base` when its id is missing from `base`'s log and it is not older
+ * than `base`'s oldest retained event (a full log has dropped older ones, so
+ * those may well be included in `base`'s totals already). Events without an
+ * id predate the ledger and are never added. A challenge bonus already paid
+ * in `base` is not paid twice.
+ */
+function withUnseenEvents(base: Side, other: Side): Pick<Side, "totalXp" | "lifetimeCounts"> & { dailyCounts: Counts } {
+  const known = new Set(base.events.map((e) => e.id).filter((id): id is string => !!id));
+  const full = base.events.length >= MAX_RECENT_XP_EVENTS;
+  const floorMs = base.events.reduce((min, e) => Math.min(min, e.atMs), Infinity);
+  let totalXp = base.totalXp;
+  const lifetimeCounts = { ...base.lifetimeCounts };
+  const dailyCounts = { ...base.daily.counts };
+  for (const e of other.events) {
+    if (!e.id || known.has(e.id) || (full && e.atMs < floorMs)) continue;
+    const xp = typeof e.xp === "number" && Number.isFinite(e.xp) && e.xp > 0 ? e.xp : 0;
+    const isActivity = typeof e.count === "number" && Number.isFinite(e.count) && e.count > 0;
+    if (isActivity) {
+      lifetimeCounts[e.source] = (lifetimeCounts[e.source] ?? 0) + (e.count as number);
+      if (utcDay(e.atMs) === base.daily.dayKey) dailyCounts[e.source] = (dailyCounts[e.source] ?? 0) + (e.count as number);
+    } else if (base.milestones.includes(e.source) || base.daily.completedChallengeIds.includes(e.source)) {
+      continue;
+    }
+    totalXp += xp;
+  }
+  return { totalXp, lifetimeCounts, dailyCounts };
+}
+
+interface Tally {
+  xp: number;
+  counts: Counts;
+}
+interface Ledger {
+  base: Tally;
+  devices: Record<string, Tally>;
+}
+
+function asTally(value: unknown): Tally | null {
+  if (typeof value !== "object" || value === null) return null;
+  const { xp, counts } = value as { xp?: unknown; counts?: unknown };
+  if (typeof xp !== "number" || !Number.isFinite(xp) || xp < 0) return null;
+  return { xp, counts: asCounts(counts) };
+}
+
+function asLedger(value: unknown): Ledger | null {
+  if (typeof value !== "object" || value === null) return null;
+  const { base, devices } = value as { base?: unknown; devices?: unknown };
+  const parsedBase = asTally(base);
+  if (!parsedBase || typeof devices !== "object" || devices === null || Array.isArray(devices)) return null;
+  const out: Record<string, Tally> = {};
+  for (const [id, tally] of Object.entries(devices)) {
+    const parsed = asTally(tally);
+    if (parsed) out[id] = parsed;
+  }
+  return { base: parsedBase, devices: out };
+}
+
+function maxTally(a: Tally, b: Tally): Tally {
+  return { xp: Math.max(a.xp, b.xp), counts: maxCounts(a.counts, b.counts) };
+}
+
+function mergeLedgers(local: unknown, remote: unknown): Ledger | null {
+  const a = asLedger(local);
+  const b = asLedger(remote);
+  if (!a || !b) return a ?? b;
+  const devices: Record<string, Tally> = { ...a.devices };
+  for (const [id, tally] of Object.entries(b.devices)) {
+    devices[id] = devices[id] ? maxTally(devices[id], tally) : tally;
+  }
+  return { base: maxTally(a.base, b.base), devices };
+}
+
+function ledgerTotal(ledger: Ledger): number {
+  return Object.values(ledger.devices).reduce((sum, d) => sum + d.xp, ledger.base.xp);
+}
+
+function ledgerCounts(ledger: Ledger): Counts {
+  const out: Counts = { ...ledger.base.counts };
+  for (const d of Object.values(ledger.devices)) {
+    for (const [kind, n] of Object.entries(d.counts)) out[kind] = (out[kind] ?? 0) + n;
+  }
+  return out;
+}
+
 /**
  * Conflict rule that supersedes {@link preferHigherDebaterXp}: combine the two
  * copies field by field instead of keeping one whole record, so activity
@@ -103,11 +211,14 @@ function asXpEvents(value: unknown): { atMs: number; source: string }[] {
  * when both copies are from the same UTC day, otherwise the later day wins;
  * the XP log is the newest-first union, de-duplicated by time and source.
  *
- * States carrying a per-device `ledger` merge through {@link mergeLedgers}
- * instead, so activity done on two devices in the same window adds. A copy
- * without one (pre-ledger) can't be told apart from the other device's work,
- * so it is folded in as the shared `base` bucket and counts take the larger
- * side — it can under-count but never double-count.
+ * When a copy carries a per-device `ledger` (each device only grows its own
+ * entry), the ledgers merge entry by entry and `totalXp` / `lifetimeCounts`
+ * are rebuilt as base + every device, so work done on two devices adds up.
+ * Each copy also gains the log events only the other has seen (by event id),
+ * so activity logged on two devices adds even before both carry a ledger;
+ * the larger result wins per field, so one event is never counted twice.
+ * Copies with neither (older clients) fall back to the larger side, which can
+ * under-count but never double-counts.
  */
 export function mergeDebaterLevel(local: unknown, remote: unknown): unknown {
   if (!hasValidXp(local)) return remote;
@@ -134,11 +245,24 @@ export function mergeDebaterLevel(local: unknown, remote: unknown): unknown {
     })
     .sort((a, b) => b.atMs - a.atMs)
     .slice(0, MAX_RECENT_XP_EVENTS);
-  const merged = {
-    ...remote,
-    ...local,
-    totalXp: Math.max(local.totalXp, remote.totalXp),
-    lifetimeCounts: maxCounts(asCounts(local.lifetimeCounts), asCounts(remote.lifetimeCounts)),
+  const ledger = mergeLedgers(local.ledger, remote.ledger);
+  let totalXp = Math.max(local.totalXp, remote.totalXp, vl.totalXp, vr.totalXp);
+  let lifetimeCounts = maxCounts(
+    maxCounts(l.lifetimeCounts, r.lifetimeCounts),
+    maxCounts(vl.lifetimeCounts, vr.lifetimeCounts),
+  );
+  if (ledger) {
+    totalXp = Math.max(totalXp, ledgerTotal(ledger));
+    lifetimeCounts = maxCounts(lifetimeCounts, ledgerCounts(ledger));
+  }
+  const { ledger: _l, ...localRest } = local;
+  const { ledger: _r, ...remoteRest } = remote;
+  return {
+    ...remoteRest,
+    ...localRest,
+    ...(ledger ? { ledger } : {}),
+    totalXp,
+    lifetimeCounts,
     daily,
     completedMilestoneIds: union(asStrings(local.completedMilestoneIds), asStrings(remote.completedMilestoneIds)),
     recentXp,

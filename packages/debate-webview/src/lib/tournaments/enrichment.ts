@@ -3,6 +3,12 @@
  * pairings and results show each entry's current-season ranking and link each
  * judge to their Tabroom paradigm (see `@debate/tournaments`' `ui/enrichment`).
  *
+ * A tournament from a past season is matched against that season instead:
+ * a college policy event against debatedata's table for the season (2009-10
+ * onward, see `college-history.ts` in `@debate/rankings-adapter`), and any
+ * other event not at all, since the current rankings would name whoever
+ * holds that code now.
+ *
  * Both are cached per page load: every rankings dataset is fetched once and
  * matched locally, and judge names are queued for a tick and sent to
  * `/api/tabroom-paradigms` together, so a pairings page makes one request for
@@ -10,11 +16,16 @@
  */
 
 import {
+  collegeSeasonYearOf,
   debaterLastNames,
+  findCollegeHistoryTeam,
   getRankingDatasetInfo,
+  hasCollegeHistory,
+  loadCollegeHistory,
   loadRankingDataset,
   matchTournamentEntry,
   rankingDatasetsForEvent,
+  type CollegeHistoryEntry,
   type RankingDataset,
   type RankingDatasetId,
   type RankingEntry,
@@ -48,12 +59,47 @@ export function toTeamRating(entry: RankingEntry, datasetId: RankingDatasetId): 
   };
 }
 
+/** Season year `2020` as `"2019-20"`. */
+const seasonLabel = (year: number) => `${year - 1}-${String(year % 100).padStart(2, "0")}`;
+
+/** The ranking a past college season's row gives an entry. */
+export function toPastSeasonTeamRating(entry: CollegeHistoryEntry, season: number): TeamRating {
+  return {
+    names: debaterLastNames(entry.name),
+    rating: entry.rating,
+    rank: entry.rank,
+    school: entry.school,
+    rankingLabel: `${seasonLabel(season)} college policy (debatedata)`,
+    logoSrc: logoSrc(entry.school),
+  };
+}
+
 /**
  * A team lookup over `load`'s datasets. The entry is looked up only in the
  * rankings of its event's format; when an event could be either high school
- * or college policy and both datasets match, it's left unmatched.
+ * or college policy and both datasets match, it's left unmatched. An entry
+ * at a tournament from before the current season is looked up only in that
+ * season's college table, and only for an event that is plainly college
+ * policy, since there is no high school history to rule a match out against.
+ *
+ * @param load - Loads a current-season dataset.
+ * @param loadHistory - Loads a past season's college table.
+ * @param now - When "the current season" is.
  */
-export function createTeamRatingLookup(load: (id: RankingDatasetId) => Promise<RankingDataset> = loadRankingDataset): TeamRatingLookup {
+export function createTeamRatingLookup(
+  load: (id: RankingDatasetId) => Promise<RankingDataset> = loadRankingDataset,
+  loadHistory: (season: number) => Promise<CollegeHistoryEntry[]> = loadCollegeHistory,
+  now: () => Date = () => new Date(),
+): TeamRatingLookup {
+  const history = new Map<number, Promise<CollegeHistoryEntry[]>>();
+  const seasonTable = (season: number) => {
+    let pending = history.get(season);
+    if (!pending) {
+      pending = loadHistory(season).catch(() => []);
+      history.set(season, pending);
+    }
+    return pending;
+  };
   const datasets = new Map<RankingDatasetId, Promise<RankingDataset | null>>();
   const dataset = (id: RankingDatasetId) => {
     let pending = datasets.get(id);
@@ -66,6 +112,12 @@ export function createTeamRatingLookup(load: (id: RankingDatasetId) => Promise<R
   return async (query: TeamRatingQuery) => {
     const ids = rankingDatasetsForEvent(query.event);
     if (ids.length === 0) return null;
+    const current = collegeSeasonYearOf(now().toISOString());
+    if (query.season && current && query.season < current) {
+      if (ids.length !== 1 || ids[0] !== "cpd" || !hasCollegeHistory(query.season)) return null;
+      const entry = findCollegeHistoryTeam(await seasonTable(query.season), query);
+      return entry ? toPastSeasonTeamRating(entry, query.season) : null;
+    }
     const matches: TeamRating[] = [];
     for (const id of ids) {
       const loaded = await dataset(id);
