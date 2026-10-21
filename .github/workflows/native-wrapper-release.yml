@@ -1,15 +1,23 @@
 name: Native Wrapper Release
 
 # Builds apps/debate-native-wrapper for every desktop platform (Windows, macOS
-# universal, Linux) plus a best-effort Android .aab, and attaches the
-# installers to a GitHub Release. Triggered by a `native-wrapper-v*.*.*` tag
-# (a distinct prefix from any web-app release tags this repo uses elsewhere)
-# or manually via workflow_dispatch for a test build.
+# universal, Linux) plus a best-effort Android .aab and iOS .ipa, attaches the
+# installers to a GitHub Release, and publishes it.
 #
-# Two-stage shape, same reasoning as debate/cardmirror's own
-# .github/workflows/release.yml: `prepare-release` creates one draft for the
-# tag up front so the desktop matrix's parallel jobs all upload into it
-# instead of racing to create their own drafts.
+# Two ways to run it:
+#   - Push a `native-wrapper-v*.*.*` tag (a distinct prefix from any web-app
+#     release tags this repo uses elsewhere). The tag must match the app
+#     version in tauri.conf.json.
+#   - Run it manually (workflow_dispatch). The version is read from
+#     tauri.conf.json and the release `native-wrapper-v<version>` is created
+#     (tagged at the commit the run was started from) and published. Untick
+#     "publish" for a build-only test run that uploads nothing.
+#
+# Three-stage shape, same reasoning as debate/cardmirror's own
+# .github/workflows/release.yml: `prepare-release` creates one draft up front
+# so the parallel build jobs all upload into it instead of racing to create
+# their own drafts, and `publish-release` takes it out of draft once the
+# builds are done.
 
 on:
   push:
@@ -17,8 +25,8 @@ on:
       - "native-wrapper-v*.*.*"
   workflow_dispatch:
     inputs:
-      draft:
-        description: "Create a draft GitHub Release (uncheck for a local-only test build with no upload)"
+      publish:
+        description: "Create and publish the native-wrapper-v<version> release (uncheck for a build-only test with no upload)"
         type: boolean
         default: true
 
@@ -28,41 +36,61 @@ concurrency:
 jobs:
   prepare-release:
     name: Create draft release
-    if: startsWith(github.ref, 'refs/tags/native-wrapper-v')
+    if: startsWith(github.ref, 'refs/tags/native-wrapper-v') || (github.event_name == 'workflow_dispatch' && inputs.publish)
     runs-on: ubuntu-latest
     permissions:
       contents: write
     outputs:
       release_id: ${{ steps.release.outputs.id }}
+      tag: ${{ steps.version.outputs.tag }}
+      version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@v4
 
       # The updater (src-tauri/src/updater.rs) only offers a build whose
       # version is newer than the installed one, and that version comes from
-      # the profile, not the tag. A tag that disagrees with it would publish a
-      # release that installed apps either ignore or keep re-offering.
-      - name: Tag matches the app version
+      # the profile, not the tag. On a tag push, a tag that disagrees with it
+      # would publish a release that installed apps either ignore or keep
+      # re-offering, so that is an error. On a manual run the tag is derived
+      # from the app version, so the two always agree.
+      - name: Work out the tag and version
+        id: version
         run: |
-          TAG_VERSION="${GITHUB_REF_NAME#native-wrapper-v}"
           APP_VERSION="$(jq -r .version apps/debate-native-wrapper/src-tauri/tauri.conf.json)"
-          if [ "$TAG_VERSION" != "$APP_VERSION" ]; then
-            echo "::error::Tag $GITHUB_REF_NAME is version $TAG_VERSION but the app is $APP_VERSION — bump \"version\" in apps/debate-native-wrapper/profiles/debate-ai.json, run 'bun run configure', and tag again." >&2
+          if [ -z "$APP_VERSION" ] || [ "$APP_VERSION" = "null" ]; then
+            echo "::error::Could not read \"version\" from apps/debate-native-wrapper/src-tauri/tauri.conf.json." >&2
             exit 1
           fi
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            TAG="$GITHUB_REF_NAME"
+            TAG_VERSION="${TAG#native-wrapper-v}"
+            if [ "$TAG_VERSION" != "$APP_VERSION" ]; then
+              echo "::error::Tag $TAG is version $TAG_VERSION but the app is $APP_VERSION — bump \"version\" in apps/debate-native-wrapper/profiles/debate-ai.json, run 'bun run configure', and tag again." >&2
+              exit 1
+            fi
+          else
+            TAG="native-wrapper-v${APP_VERSION}"
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$APP_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Ensure draft release exists
         id: release
         env:
-          GH_TOKEN: ${{ secrets.GIT_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.version.outputs.tag }}
+          VERSION: ${{ steps.version.outputs.version }}
         run: |
-          TAG="${GITHUB_REF_NAME}"
-          VERSION="${TAG#native-wrapper-v}"
           PRERELEASE_FLAG=""
           if [[ "$VERSION" == *-* ]]; then
             PRERELEASE_FLAG="--prerelease"
           fi
           if ! gh release view "$TAG" --json id -q .id > /tmp/release_id 2>/dev/null; then
-            gh release create "$TAG" --draft --title "Native Wrapper $VERSION" \
+            # --target pins the tag to this commit when the release is
+            # published; it is what lets a manual run (no tag yet) work, and
+            # is ignored when the tag already exists.
+            gh release create "$TAG" --draft --target "$GITHUB_SHA" \
+              --title "Native Wrapper $VERSION" \
               --notes "Desktop + mobile installers for Debate AI's native wrapper, version $VERSION." \
               $PRERELEASE_FLAG
             gh release view "$TAG" --json id -q .id > /tmp/release_id
@@ -163,7 +191,7 @@ jobs:
 
       - uses: tauri-apps/tauri-action@v0
         env:
-          GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Updater signing: once the profile has an updater pubkey,
           # tauri.conf.json sets bundle.createUpdaterArtifacts and every
           # bundle (.app.tar.gz, NSIS -setup.exe, .AppImage) gets a .sig made
@@ -177,8 +205,12 @@ jobs:
           # tauri-action otherwise picks npm and runs `npm run tauri build`;
           # this repo uses bun, and the script is package.json's "tauri".
           tauriScript: bun run tauri
-          tagName: ${{ github.event_name == 'push' && github.ref_name || '' }}
-          releaseName: ${{ github.event_name == 'push' && format('Native Wrapper {0}', github.ref_name) || '' }}
+          # The tag comes from prepare-release (the pushed tag, or
+          # native-wrapper-v<version> on a manual run). Empty when
+          # prepare-release was skipped (a build-only test run), in which case
+          # nothing is uploaded.
+          tagName: ${{ needs.prepare-release.outputs.tag }}
+          releaseName: ${{ needs.prepare-release.outputs.version != '' && format('Native Wrapper {0}', needs.prepare-release.outputs.version) || '' }}
           releaseId: ${{ needs.prepare-release.outputs.release_id }}
           releaseDraft: true
           args: ${{ matrix.args }}
@@ -186,7 +218,7 @@ jobs:
           # (with the tag in the URLs, so they keep working once the draft is
           # published). Installed apps read it only after it is copied to the
           # update feed when the release is published:
-          # native-wrapper-updates.yml. workflow_dispatch test builds have no
+          # native-wrapper-updates.yml. Build-only test runs have no
           # release, so nothing is uploaded.
           includeUpdaterJson: true
           # Both the NSIS -setup.exe and the .msi are built; the updater uses
@@ -290,12 +322,13 @@ jobs:
       - name: Attach to release
         if: needs.prepare-release.outputs.release_id != '' && steps.keystore.outputs.configured == 'true'
         env:
-          GH_TOKEN: ${{ secrets.GIT_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.prepare-release.outputs.tag }}
         run: |
           shopt -s globstar nullglob
           files=(apps/debate-native-wrapper/src-tauri/gen/android/app/build/outputs/bundle/**/*.aab)
           if [ ${#files[@]} -gt 0 ]; then
-            gh release upload "${GITHUB_REF_NAME}" "${files[@]}" --clobber
+            gh release upload "$TAG" "${files[@]}" --clobber
           fi
         # Unsigned/debug-signed .aab files aren't installable from Play, so
         # they're uploaded as a workflow artifact (above) for inspection but
@@ -439,27 +472,30 @@ jobs:
       - name: Attach to release
         if: needs.prepare-release.outputs.release_id != '' && steps.signing.outputs.configured == 'true'
         env:
-          GH_TOKEN: ${{ secrets.GIT_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.prepare-release.outputs.tag }}
         run: |
           # `find` rather than a `**` glob: the macOS runners' default bash is
           # 3.2, which has no globstar.
           IPA="$(find apps/debate-native-wrapper/src-tauri/gen/apple -name '*.ipa' | head -n 1)"
           if [ -n "$IPA" ]; then
-            gh release upload "${GITHUB_REF_NAME}" "$IPA" --clobber
+            gh release upload "$TAG" "$IPA" --clobber
           fi
         # An App Store *submission* still needs the Guideline 4.2 "minimum
         # functionality" question in docs/APP_STORES.md answered — this job
         # only produces the .ipa, it does not upload to App Store Connect.
+
   # Final stage: once every build job has finished, check that the draft has
   # the installers attached and publish it. Android/iOS are best-effort, so
   # only the desktop matrix has to succeed; a failed mobile job just means
-  # that artifact is missing from the release.
+  # that artifact is missing from the release. prepare-release only runs when
+  # a release is wanted (tag push, or a manual run with "publish" ticked), so
+  # its success is what gates this job.
   publish-release:
     name: Publish release
     needs: [prepare-release, build-desktop, build-android, build-ios]
     if: >-
       always() &&
-      startsWith(github.ref, 'refs/tags/native-wrapper-v') &&
       needs.prepare-release.result == 'success' &&
       needs.build-desktop.result == 'success'
     runs-on: ubuntu-latest
@@ -468,10 +504,10 @@ jobs:
     steps:
       - name: Verify the draft has installers
         env:
-          GH_TOKEN: ${{ secrets.GIT_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
+          TAG: ${{ needs.prepare-release.outputs.tag }}
         run: |
-          TAG="${GITHUB_REF_NAME}"
           gh release view "$TAG" --json assets -q '.assets[].name' | tee /tmp/assets.txt
           # One installer per desktop platform, plus the updater manifest.
           missing=0
@@ -485,11 +521,11 @@ jobs:
 
       - name: Publish the release
         env:
-          GH_TOKEN: ${{ secrets.GIT_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
+          TAG: ${{ needs.prepare-release.outputs.tag }}
+          VERSION: ${{ needs.prepare-release.outputs.version }}
         run: |
-          TAG="${GITHUB_REF_NAME}"
-          VERSION="${TAG#native-wrapper-v}"
           FLAGS=(--draft=false)
           if [[ "$VERSION" == *-* ]]; then
             FLAGS+=(--prerelease)
