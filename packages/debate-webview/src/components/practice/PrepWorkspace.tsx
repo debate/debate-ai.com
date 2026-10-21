@@ -24,9 +24,9 @@
  * @module components/practice/PrepWorkspace
  */
 
-import { ClipboardList, Crosshair, Gavel, Handshake, NotebookPen, Repeat, Users } from "lucide-react"
+import { BarChart3, ClipboardList, Crosshair, Gavel, Handshake, NotebookPen, Repeat, Users } from "lucide-react"
 import { DrillSetsPanel, RoundToolsCrossLinks } from "@debate/practice-rounds"
-import { OpponentTeamProfilesPanel, PreRoundBriefingsPanel, StrategyPanel } from "@debate/round"
+import { DebaterStatsPanel, OpponentTeamProfilesPanel, PreRoundBriefingsPanel, StrategyPanel } from "@debate/round"
 import { JudgeProfilesPanel } from "@debate/speech-writer"
 import { JudgePoolPanel } from "../judge-pool/JudgePoolPanel"
 import { PracticePartnersPanel } from "../practice-partners/PracticePartnersPanel"
@@ -38,7 +38,7 @@ import { HubSectionIntro, HubSectionNav, HubSectionPanel, useHubSection } from "
 const SECTION_KEY = "prepWorkspaceSection"
 
 /** One tab per tool. Also the `?section=` values the old routes redirect to. */
-export type PrepWorkspaceSectionId = "briefings" | "strategy" | "opponents" | "judges" | "notes" | "partners" | "drills"
+export type PrepWorkspaceSectionId = "briefings" | "strategy" | "opponents" | "judges" | "notes" | "stats" | "partners" | "drills"
 
 /**
  * The Prep Workspace's tabs, in the order a team works through them before a
@@ -84,6 +84,14 @@ export const PREP_WORKSPACE_SECTIONS: readonly HubSection<PrepWorkspaceSectionId
     description: "Live prep notes across every flow, needs-follow-up first, with handoff to a teammate.",
     guide: "training-tools",
     panels: [panel("Prep Notes")],
+  },
+  {
+    id: "stats",
+    label: "Debater Stats",
+    icon: BarChart3,
+    description: "Win rate, Aff/Neg split, division and argument breakdowns and recent form from the rounds you've logged.",
+    guide: "training-tools",
+    panels: [panel("Debater Stats")],
   },
   {
     id: "partners",
@@ -144,6 +152,7 @@ export function PrepWorkspace({ initialSection }: PrepWorkspaceProps) {
         {section === "opponents" ? <OpponentTeamProfilesPanel /> : null}
         {section === "judges" ? <JudgeProfilesPanel /> : null}
         {section === "notes" ? <PrepNotesWithIdentity /> : null}
+        {section === "stats" ? <DebaterStatsPanel /> : null}
         {section === "partners" ? (
           <>
             <PracticePartnersPanel />

@@ -7,7 +7,7 @@
  *
  * It computes only what the logged records carry. Fallacy frequency, argument
  * length and topic expertise from the idea need data no store records yet and
- * are deliberately absent. No panel mounts this yet.
+ * are deliberately absent. Rendered by `panels/DebaterStatsPanel.tsx`.
  *
  * @module round/debater-stats
  */
