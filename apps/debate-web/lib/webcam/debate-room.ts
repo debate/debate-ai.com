@@ -12,10 +12,15 @@
  * costs nothing while its participants stay connected; each socket's
  * participant record rides in its attachment, and its id is its tag, so a
  * relay is one `getWebSockets(id)` lookup even after the object wakes.
+ *
+ * `?mode=data` sockets (timer sync, shared headings) get room events only:
+ * they skip the camera cap, and camera sockets are never told about them, so
+ * the mesh doesn't try to dial a socket that has no media.
  */
 
 import {
   MAX_ROOM_CAMERAS,
+  MAX_ROOM_DATA_SOCKETS,
   normalizeRole,
   parseClientMessage,
   type RoomPeer,
@@ -45,6 +50,9 @@ const send = (ws: WebSocket, message: ServerMessage) => {
 
 const peerOf = (ws: HibernatableWebSocket) => ws.deserializeAttachment() as RoomPeer | null
 
+/** Whether `ws` is told about `peer` joining or leaving: camera sockets skip data sockets. */
+const seesPeer = (ws: HibernatableWebSocket, peer: RoomPeer) => !peer.data || Boolean(peerOf(ws)?.data)
+
 export class DebateRoomSignal {
   constructor(private readonly ctx: DurableObjectStateLike, _env: unknown) {}
 
@@ -57,14 +65,19 @@ export class DebateRoomSignal {
     const client = pair[0]
     const server = pair[1]
     const present = this.ctx.getWebSockets().filter((ws) => peerOf(ws))
+    const data = url.searchParams.get("mode") === "data"
+    const sameKind = present.filter((ws) => Boolean(peerOf(ws)?.data) === data)
+    const cap = data ? MAX_ROOM_DATA_SOCKETS : MAX_ROOM_CAMERAS
 
-    if (present.length >= MAX_ROOM_CAMERAS) {
+    if (sameKind.length >= cap) {
       // Not hibernated: only lives long enough to say why it is refused.
       server.accept()
       send(server, {
         type: "error",
         code: "room-full",
-        message: `This room already has ${MAX_ROOM_CAMERAS} cameras — the most a peer-to-peer room supports.`,
+        message: data
+          ? "This room is full."
+          : `This room already has ${MAX_ROOM_CAMERAS} cameras — the most a peer-to-peer room supports.`,
       })
       server.close(4009, "Room is full")
       return new Response(null, { status: 101, webSocket: client } as ResponseInit)
@@ -74,13 +87,18 @@ export class DebateRoomSignal {
       id: crypto.randomUUID(),
       name: (request.headers.get("x-room-name") || "Guest").slice(0, 80),
       role: normalizeRole(url.searchParams.get("role")),
+      ...(data ? { data: true } : {}),
     }
     this.ctx.acceptWebSocket(server, [self.id])
     server.serializeAttachment(self)
 
-    const peers = present.map(peerOf).filter((p): p is RoomPeer => Boolean(p))
+    // A data socket sees everyone (it needs names for timer sync); a camera
+    // socket sees only cameras.
+    const peers = present
+      .map(peerOf)
+      .filter((p): p is RoomPeer => Boolean(p) && (data || !p!.data))
     send(server, { type: "welcome", self, peers })
-    for (const ws of present) send(ws, { type: "peer-joined", peer: self })
+    for (const ws of present) if (seesPeer(ws, self)) send(ws, { type: "peer-joined", peer: self })
 
     return new Response(null, { status: 101, webSocket: client } as ResponseInit)
   }
@@ -125,7 +143,7 @@ export class DebateRoomSignal {
     if (!me) return
     ws.serializeAttachment(null)
     for (const other of this.ctx.getWebSockets()) {
-      if (other !== ws) send(other, { type: "peer-left", id: me.id })
+      if (other !== ws && seesPeer(other, me)) send(other, { type: "peer-left", id: me.id })
     }
   }
 }

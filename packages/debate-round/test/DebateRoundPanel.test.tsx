@@ -482,17 +482,21 @@ describe("DebateFlowPage — flow view", () => {
     expect(document.title).toBe("2:00 Prep")
   })
 
-  it("broadcasts speech and prep timers to the round's room", async () => {
+  it("broadcasts speech and prep timer changes (not untouched timers) to the round's room", async () => {
     seed([makeFlow(1, { roundId: 9 })], [makeRound(9, { flowIds: [1] })])
     let now = NOW
     vi.spyOn(Date, "now").mockImplementation(() => (now += 1000))
     await renderPage()
+    const sent = () => room.broadcast.mock.calls.filter((c) => c[0] === "timer-sync").map((c) => c[1].speechName)
+    // Opening the round never pushes its default timers onto everyone else.
+    expect(sent()).toEqual([])
     await run(() => P().FlowPageSidebar.timerState.setSpeechTimerState("1AC", { time: 1234 }))
-    const events = room.broadcast.mock.calls.filter((c) => c[0] === "timer-sync").map((c) => c[1].speechName)
-    expect(events).toContain("1AC")
+    expect(sent()).toEqual(["1AC"])
     if (P().FlowPageSidebar.timerState.prepState) {
-      expect(events).toContain("Prep (Aff)")
-      expect(events).toContain("Prep (Neg)")
+      await run(() =>
+        P().FlowPageSidebar.timerState.setPrepState({ time: 1, resetTime: 120_000, state: { name: "running", startTime: NOW } }),
+      )
+      expect(sent()).toEqual(["1AC", "Prep (Aff)"])
     }
   })
 

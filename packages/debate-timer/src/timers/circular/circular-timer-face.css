@@ -1,0 +1,222 @@
+/* The circular progress timer face (CircularTimerFace.tsx), moved from the
+ * browser extension's timer window (its old css/timer-style.css,
+ * css/progress.css and css/ripple.css). Every class is `dt-ctimer` scoped so
+ * the face can sit inside the web app without touching its styles.
+ *
+ * The dial is sized by `--dt-ctimer-size` (default 340px, the extension's
+ * size) and never grows past its container; everything inside scales with it
+ * through container units, so the same face works in the 340px extension
+ * window, the round sidebar and the pop-out. */
+
+@font-face {
+  font-family: "dt-timer-digits";
+  src: url("./font-timer-digits.woff") format("woff");
+  font-display: swap;
+}
+
+.dt-ctimer {
+  position: relative;
+  width: var(--dt-ctimer-size, 340px);
+  max-width: 100%;
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+  box-sizing: border-box;
+  container-type: inline-size;
+  border-radius: 50%;
+  background: var(--dt-ctimer-face, #ffffff);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: "dt-timer-digits", "Courier New", monospace;
+  font-style: normal;
+  overflow: hidden;
+  user-select: none;
+  cursor: pointer;
+  transition: background 1s;
+}
+
+.dt-ctimer__ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg) scale(1.05);
+  transform-origin: center;
+  z-index: 1;
+  /* Purely decorative — never swallow clicks meant for the face. */
+  pointer-events: none;
+}
+
+.dt-ctimer__progress {
+  fill: #1f3751;
+  stroke: #41a9f0;
+  stroke-width: 10px;
+  stroke-linecap: round;
+  opacity: 0.3;
+  transition: stroke-dashoffset 1s linear, opacity 0.4s;
+}
+
+.dt-ctimer--playing .dt-ctimer__progress {
+  opacity: 1;
+}
+
+.dt-ctimer__title,
+.dt-ctimer__speeches,
+.dt-ctimer__count,
+.dt-ctimer__preps {
+  position: relative;
+  z-index: 2;
+}
+
+.dt-ctimer__title {
+  min-height: 5.9cqw;
+  max-width: 70%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 5.9cqw;
+  line-height: 1.1;
+  color: #1f3751;
+  text-shadow: 0 0 3px #fff, 0 0 3px #fff;
+}
+
+.dt-ctimer--playing .dt-ctimer__title {
+  color: #cfe6f7;
+  text-shadow: 0 0 3px #14324e;
+}
+
+.dt-ctimer__speeches {
+  display: flex;
+  gap: 5.9cqw;
+  font-size: 11.2cqw;
+  letter-spacing: 0.9cqw;
+  margin-top: 0.6cqw;
+}
+
+.dt-ctimer__count {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  text-align: center;
+  font-family: "dt-timer-digits", "Courier New", monospace;
+  font-weight: bold;
+  font-size: 22.9cqw;
+  letter-spacing: 0.9cqw;
+  line-height: 1;
+  color: #1f3751;
+  opacity: 0.3;
+  cursor: pointer;
+}
+
+.dt-ctimer--playing .dt-ctimer__count {
+  opacity: 1;
+  color: #eaf5ff;
+}
+
+.dt-ctimer__preps {
+  display: flex;
+  gap: 10.6cqw;
+  font-size: 6.5cqw;
+  letter-spacing: 0.9cqw;
+  margin-top: 1.8cqw;
+}
+
+.dt-ctimer__btn {
+  font: inherit;
+  letter-spacing: inherit;
+  background: none;
+  border: 0;
+  margin: 0;
+  padding: 0 1.2cqw;
+  cursor: pointer;
+  color: #1f3751;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3), 0 0 3px #fff;
+  transition: color 0.2s, transform 0.1s;
+}
+
+.dt-ctimer__btn:hover {
+  transform: scale(1.1);
+}
+
+.dt-ctimer__btn--active {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.dt-ctimer__btn--constructive:hover {
+  color: #41a9f0;
+}
+.dt-ctimer__btn--rebuttal:hover {
+  color: #118c4e;
+}
+.dt-ctimer__btn--crossx:hover {
+  color: purple;
+}
+.dt-ctimer__btn--prep.dt-ctimer__btn--aff {
+  color: #0044c0;
+}
+.dt-ctimer__btn--prep.dt-ctimer__btn--neg {
+  color: #c00000;
+}
+
+.dt-ctimer--playing .dt-ctimer__btn {
+  color: #cfe6f7;
+  text-shadow: 0 0 3px #14324e;
+}
+
+/* per-timer accent colors */
+.dt-ctimer--constructive .dt-ctimer__progress {
+  stroke: #41a9f0;
+}
+.dt-ctimer--rebuttal .dt-ctimer__progress {
+  stroke: #118c4e;
+}
+.dt-ctimer--crossx .dt-ctimer__progress {
+  stroke: purple;
+}
+.dt-ctimer--aff .dt-ctimer__progress {
+  stroke: #2f6bff;
+}
+.dt-ctimer--neg .dt-ctimer__progress {
+  stroke: #ff3b3b;
+}
+
+.dt-ctimer:not(.dt-ctimer--playing).dt-ctimer--rebuttal .dt-ctimer__count {
+  color: #118c4e;
+}
+.dt-ctimer:not(.dt-ctimer--playing).dt-ctimer--crossx .dt-ctimer__count {
+  color: purple;
+}
+.dt-ctimer:not(.dt-ctimer--playing).dt-ctimer--aff .dt-ctimer__count {
+  color: #0044c0;
+}
+.dt-ctimer:not(.dt-ctimer--playing).dt-ctimer--neg .dt-ctimer__count {
+  color: #c00000;
+}
+
+/* click ripple */
+.dt-ctimer__ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgb(170, 207, 231);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 3;
+  width: 0;
+  height: 0;
+  opacity: 0.6;
+  animation: dt-ctimer-ripple 1.1s ease-out forwards;
+}
+
+@keyframes dt-ctimer-ripple {
+  to {
+    width: 135cqw;
+    height: 135cqw;
+    opacity: 0;
+  }
+}

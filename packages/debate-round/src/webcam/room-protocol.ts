@@ -21,6 +21,13 @@
 /** Mesh cap: each browser uploads (n - 1) streams, so keep n small. */
 export const MAX_ROOM_CAMERAS = 4;
 
+/**
+ * Data-only sockets (timer sync, shared speech-doc headings) carry room
+ * events but no media, so they don't count against {@link MAX_ROOM_CAMERAS}
+ * and camera sockets never see them. They have their own, roomier cap.
+ */
+export const MAX_ROOM_DATA_SOCKETS = 32;
+
 /** Largest message the room relays (SDP offers are a few KB). */
 export const MAX_MESSAGE_BYTES = 64 * 1024;
 
@@ -30,6 +37,8 @@ export interface RoomPeer {
   id: string;
   name: string;
   role: RoomRole;
+  /** A data-only socket: room events, no camera, never part of the mesh. */
+  data?: boolean;
 }
 
 /** Browser → room. */
