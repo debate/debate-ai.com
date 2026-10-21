@@ -128,7 +128,7 @@ import type { QualificationPointsTable } from "@debate/data-sync/src/rankings/nd
  * `colorTheme`/`themeMode` fields), plus the "integrate tools into user
  * settings" follow-up (`favoriteTools`). One `user_settings` row per
  * signed-in user, mirroring `debate-round`'s local-only `settings`
- * singleton, `components/theme-dropdown.tsx`'s local-storage/cookie theme
+ * singleton, `components/theme/ThemeDropdown.tsx`'s local-storage/cookie theme
  * state, and `lib/hooks/useFavoriteTools.ts`'s local-storage favorites list
  * so a user's preferences follow them across devices. Unlike
  * `app/api/doc/documents/route.ts`, there is no anonymous/signed-out mode

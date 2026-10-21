@@ -2,7 +2,7 @@
  * @fileoverview Font-family preference — ported from qwksearch-research-agent's
  * `apps/qwksearch-web` (`components/Settings/Sections/Account.tsx`'s
  * `fontOptions` list plus `app/layout.tsx`'s bootstrap script), which applies a
- * chosen font family app-wide the same way `theme-dropdown.tsx`/`themeSettings.ts`
+ * chosen font family app-wide the same way `ThemeDropdown.tsx`/`themeSettings.ts`
  * apply a colour theme: persisted to `localStorage` and applied directly as an
  * inline style on `<html>`/`<body>`, picked up immediately by any open tab via a
  * `client-config-changed` custom event (and the cross-tab `storage` event).

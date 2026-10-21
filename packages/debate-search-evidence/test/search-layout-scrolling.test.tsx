@@ -18,8 +18,8 @@ import React from "react"
 import { renderToStaticMarkup } from "react-dom/server"
 import { describe, expect, it } from "vitest"
 
-import { ResearchSearchSidebar } from "../src/components/ResearchSearchSidebar"
-import { CardContentViewer } from "../src/components/CardContentViewer"
+import { ResearchSearchSidebar } from "../src/components/search/ResearchSearchSidebar"
+import { CardContentViewer } from "../src/components/card-viewer/CardContentViewer"
 import { EMPTY_FILTERS } from "../src/lib/search-query"
 
 /** The classes on the element carrying `attr`, e.g. `role="listbox"`. */

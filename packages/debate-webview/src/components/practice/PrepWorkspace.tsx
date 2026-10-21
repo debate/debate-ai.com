@@ -30,7 +30,7 @@ import { OpponentTeamProfilesPanel, PreRoundBriefingsPanel, StrategyPanel } from
 import { JudgeProfilesPanel } from "@debate/speech-writer"
 import { JudgePoolPanel } from "../judge-pool/JudgePoolPanel"
 import { PracticePartnersPanel } from "../practice-partners/PracticePartnersPanel"
-import { PrepNotesWithIdentity } from "../research/PrepNotesWithIdentity"
+import { PrepNotesWithIdentity } from "../research/identity/PrepNotesWithIdentity"
 import { panel, type HubSection } from "../hubs/hub-sections"
 import { HubSectionIntro, HubSectionNav, HubSectionPanel, useHubSection } from "../hubs/HubSectionNav"
 

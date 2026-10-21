@@ -5,7 +5,7 @@
  */
 
 import type { RankingDataset } from "@debate/rankings-adapter";
-import { SPEECH_SIDE_STYLES } from "../../components/videos/watch/speech-side-styles";
+import { SPEECH_SIDE_STYLES } from "../../components/watch/speech-side-styles";
 
 /** Turns a tournament folder slug (`greenhill-rr`) into a label (`Greenhill RR`). */
 function tournamentLabel(slug: string): string {

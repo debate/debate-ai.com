@@ -1,10 +1,10 @@
 import type React from "react"
 import type { Metadata, Viewport } from "next"
 import "@debate/webview/styles/app.css"
-import { ThemeProvider } from "@debate/webview/components/theme-provider"
+import { ThemeProvider } from "@debate/webview/components/theme/ThemeProvider"
 import { AppShell } from "@debate/webview/components/layout/AppShell"
 import { Amplitude } from "@/app/amplitude"
-import { LoadingProvider } from "@debate/webview/components/layout/LoadingProvider"
+import { LoadingProvider } from "@debate/webview/components/layout/providers/LoadingProvider"
 import { webFontsBootstrapScript } from "@debate/webview/styles/web-fonts"
 import { siteOrigin } from "@/lib/seo/site-url"
 

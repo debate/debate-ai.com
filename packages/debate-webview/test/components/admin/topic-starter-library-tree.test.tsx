@@ -2,7 +2,7 @@
 import { act } from "react";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
-import { TopicStarterLibraryTree } from "../../../src/components/admin/TopicStarterLibraryTree";
+import { TopicStarterLibraryTree } from "../../../src/components/admin/topic-starters/TopicStarterLibraryTree";
 import { allByText, bodyText, button, change, cleanup, click, flush, installDomShims, keyDown, mockFetch, mount } from "../../helpers/dom";
 
 beforeAll(installDomShims);

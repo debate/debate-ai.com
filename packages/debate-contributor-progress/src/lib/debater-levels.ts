@@ -270,21 +270,22 @@ export interface DebaterXpEvent {
 /** Maximum log entries kept in `DebaterLevelState.recentXp`. */
 export const MAX_RECENT_XP_EVENTS = 30;
 
-/** XP and per-activity counts earned on one device. */
-export interface DebaterLedgerEntry {
+/** XP and activity counts a single device has earned. */
+export interface DebaterDeviceTally {
   xp: number;
   counts: Partial<Record<DebaterActivityKind, number>>;
 }
 
 /**
- * Per-device earnings that let the account sync add activity done on two
- * devices instead of taking the larger count. `base` is what was earned before
- * the ledger started; `devices` holds each device's own earnings (a device only
- * ever grows its own entry, so entries merge by per-field maximum).
+ * Per-device earnings. Each device only ever grows its own entry, so copies
+ * synced from different devices merge entry by entry (max) and the account
+ * total is `base` plus every device's entry — activity done on two devices in
+ * the same window adds instead of one overwriting the other. `base` holds the
+ * totals from before the ledger existed.
  */
-export interface DebaterLedger {
-  base: DebaterLedgerEntry;
-  devices: Record<string, DebaterLedgerEntry>;
+export interface DebaterXpLedger {
+  base: DebaterDeviceTally;
+  devices: Record<string, DebaterDeviceTally>;
 }
 
 /** A debater's persisted progression. */
@@ -298,8 +299,8 @@ export interface DebaterLevelState {
   completedMilestoneIds: string[];
   /** Newest first. */
   recentXp: DebaterXpEvent[];
-  /** Per-device earnings, present once a device has recorded activity with a device id. */
-  ledger?: DebaterLedger;
+  /** Per-device earnings; absent until a device records activity with a `deviceId`. */
+  ledger?: DebaterXpLedger;
 }
 
 /** The UTC calendar day, "YYYY-MM-DD", an epoch-ms timestamp falls on. */
@@ -368,6 +369,7 @@ export function applyDebaterActivity(
   count = 1,
   challenges: DebaterChallenge[] = DEBATER_CHALLENGES,
   deviceId?: string,
+  eventId: string = newXpEventId(nowMs),
 ): DebaterActivityResult {
   const previousLevel = computeLevelProgress(state.totalXp).level;
   const n = Math.max(0, Math.floor(count));
@@ -412,9 +414,30 @@ export function applyDebaterActivity(
     completedMilestoneIds: Array.from(milestonesDone),
     recentXp: [...events.reverse(), ...rolled.recentXp].slice(0, MAX_RECENT_XP_EVENTS),
   };
-  if (deviceId) next.ledger = addToLedger(rolled, deviceId, kind, n, xpGained);
-  else if (rolled.ledger) next.ledger = rolled.ledger;
+  if (deviceId) next.ledger = addToLedger(state, deviceId, kind, n, xpGained);
+  else if (state.ledger) next.ledger = state.ledger;
   return { state: next, xpGained, completedChallenges, previousLevel, newLevel, leveledUp: newLevel > previousLevel };
+}
+
+function addToLedger(
+  state: DebaterLevelState,
+  deviceId: string,
+  kind: DebaterActivityKind,
+  n: number,
+  xp: number,
+): DebaterXpLedger {
+  const ledger: DebaterXpLedger = state.ledger ?? {
+    base: { xp: state.totalXp, counts: { ...state.lifetimeCounts } },
+    devices: {},
+  };
+  const mine = ledger.devices[deviceId] ?? { xp: 0, counts: {} };
+  return {
+    base: ledger.base,
+    devices: {
+      ...ledger.devices,
+      [deviceId]: { xp: mine.xp + xp, counts: { ...mine.counts, [kind]: (mine.counts[kind] ?? 0) + n } },
+    },
+  };
 }
 
 /** A challenge with the debater's current progress toward it. */
@@ -450,21 +473,21 @@ function isCountRecord(value: unknown): value is Partial<Record<DebaterActivityK
   );
 }
 
-function parseLedgerEntry(raw: unknown): DebaterLedgerEntry | null {
+function parseTally(raw: unknown): DebaterDeviceTally | null {
   if (!raw || typeof raw !== "object") return null;
-  const { xp, counts } = raw as Record<string, unknown>;
+  const { xp, counts } = raw as { xp?: unknown; counts?: unknown };
   if (typeof xp !== "number" || !Number.isFinite(xp) || xp < 0 || !isCountRecord(counts)) return null;
   return { xp, counts };
 }
 
-function parseLedger(raw: unknown): DebaterLedger | null {
-  if (!raw || typeof raw !== "object") return null;
-  const { base: rawBase, devices: rawDevices } = raw as Record<string, unknown>;
-  const base = parseLedgerEntry(rawBase);
-  if (!base || !rawDevices || typeof rawDevices !== "object" || Array.isArray(rawDevices)) return null;
-  const devices: Record<string, DebaterLedgerEntry> = {};
-  for (const [id, entry] of Object.entries(rawDevices)) {
-    const parsed = parseLedgerEntry(entry);
+function parseLedger(raw: unknown): DebaterXpLedger | undefined {
+  if (!raw || typeof raw !== "object") return undefined;
+  const { base: rawBase, devices: rawDevices } = raw as { base?: unknown; devices?: unknown };
+  const base = parseTally(rawBase);
+  if (!base || !rawDevices || typeof rawDevices !== "object" || Array.isArray(rawDevices)) return undefined;
+  const devices: Record<string, DebaterDeviceTally> = {};
+  for (const [id, tally] of Object.entries(rawDevices)) {
+    const parsed = parseTally(tally);
     if (parsed) devices[id] = parsed;
   }
   return { base, devices };

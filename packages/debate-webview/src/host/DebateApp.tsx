@@ -17,7 +17,7 @@
 
 import { useMemo } from "react"
 
-import { ThemeProvider } from "../components/theme-provider"
+import { ThemeProvider } from "../components/theme/ThemeProvider"
 import { AppShell } from "../components/layout/AppShell"
 import { APP_ROUTES, type AppRoute } from "../routes"
 import { AppRouter } from "./AppRouter"

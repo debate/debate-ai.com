@@ -11,7 +11,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import type { SearchFilters } from "../components/ResearchSearchSidebar";
+import type { SearchFilters } from "../components/search/ResearchSearchSidebar";
 import type { SearchResult } from "../types";
 import {
   DEFAULT_SEARCH_FILTERS,

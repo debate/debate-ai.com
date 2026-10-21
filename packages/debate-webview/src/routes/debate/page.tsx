@@ -1,6 +1,6 @@
 import { Suspense } from "react"
 import { ViewerDebateFlowPage } from "../../components/round/ViewerDebateFlowPage"
-import { ToolSyncBadge } from "../../components/tools/ToolSyncBadge"
+import { ToolSyncBadge } from "../../components/tools/sync/ToolSyncBadge"
 
 export default function Home() {
   return (

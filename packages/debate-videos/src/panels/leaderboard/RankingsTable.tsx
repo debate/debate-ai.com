@@ -20,8 +20,8 @@ import {
   TableRow,
 } from "../../ui/primitives/table"
 import { cn } from "../../ui/lib/utils"
-import { ColumnResizeHandle } from "../../components/videos/video-grid/ColumnResizeHandle"
-import { useResizableColumns } from "../../components/videos/video-grid/useResizableColumns"
+import { ColumnResizeHandle } from "../../components/video-grid/ColumnResizeHandle"
+import { useResizableColumns } from "../../components/video-grid/useResizableColumns"
 import { COLUMN_TOOLTIPS, DIVISION_SHORT_LABELS, schoolRankOf } from "./leaderboardUtils"
 import type { Division, SortKey, SortState } from "./leaderboardTypes"
 import { schoolHref, teamHref } from "./profile/rankingProfileHelpers"

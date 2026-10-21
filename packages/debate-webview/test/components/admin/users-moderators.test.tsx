@@ -1,8 +1,8 @@
 /** @vitest-environment jsdom */
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
-import { ModeratorsPanel } from "../../../src/components/admin/ModeratorsPanel";
-import { UsersTable } from "../../../src/components/admin/UsersTable";
+import { ModeratorsPanel } from "../../../src/components/admin/users/ModeratorsPanel";
+import { UsersTable } from "../../../src/components/admin/users/UsersTable";
 import {
   bodyText,
   button,

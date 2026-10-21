@@ -1,6 +1,6 @@
 import { Suspense } from "react"
 import { LecturesPage } from "@debate/videos"
-import { ToolSyncBadge } from "../../components/tools/ToolSyncBadge"
+import { ToolSyncBadge } from "../../components/tools/sync/ToolSyncBadge"
 import { CategoryDock } from "../../components/layout/CategoryDock"
 import { SidebarAccount } from "../../components/layout/app-sidebar/sidebar-account"
 

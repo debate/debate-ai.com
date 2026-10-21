@@ -11,7 +11,7 @@ Search Everything palette already used, now working everywhere else too.
 - **Route:** none of its own — an overlay, opened from any page.
 - **Nav:** the shortcut itself, or the dock's gear-icon Settings menu →
   **Command Palette**.
-- **Package:** `apps/debate-ai.com` only (`components/layout/GlobalCommandPalette.tsx`,
+- **Package:** `apps/debate-ai.com` only (`components/layout/command-palette/GlobalCommandPalette.tsx`,
   `lib/ui/primitives/command.tsx`).
 
 ## Why this exists
@@ -91,7 +91,7 @@ lib/hooks/useRecentTools.ts     — localStorage-first, cross-instance-synced,
 lib/ui/primitives/command.tsx   — cmdk wrapped in the app's Dialog primitive
                                     (the shadcn/ui-standard shape; cmdk had
                                     been a dependency with no caller yet)
-  → components/layout/GlobalCommandPalette.tsx
+  → components/layout/command-palette/GlobalCommandPalette.tsx
                                  — the keydown listener, the editor stand-down
                                     check, the favorites/quick-actions/
                                     per-heading groups, and openGlobalCommandPalette()
@@ -100,11 +100,11 @@ lib/ui/primitives/command.tsx   — cmdk wrapped in the app's Dialog primitive
                                     drilling)
   → components/layout/AppShell.tsx        — mounted in both branches
   → components/layout/CategoryDock.tsx    — Settings menu's "Command Palette" row
-  → components/tools/RecordVisitLink.tsx  — a next/link that also calls
+  → components/tools/favorites/RecordVisitLink.tsx  — a next/link that also calls
                                     recordVisit(), used by /tools' grid cards
                                     and favorites chips so opening a tool
                                     from there counts as "Recent" too
-  → components/tools/RecentlyOpenedTools.tsx
+  → components/tools/favorites/RecentlyOpenedTools.tsx
                                  — /tools' own "Recently opened" strip,
                                     reading the same store
 ```

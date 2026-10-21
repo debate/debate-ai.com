@@ -7,7 +7,7 @@
  * @module lib/search-query
  */
 
-import type { SearchFilters } from "../components/ResearchSearchSidebar";
+import type { SearchFilters } from "../components/search/ResearchSearchSidebar";
 
 /** Default empty filter state with all toggles off and text fields blank. */
 export const EMPTY_FILTERS: SearchFilters = {

@@ -7,7 +7,7 @@
  * @module components/research/CardsSearchSyncBar
  */
 
-import { ToolSyncBadge } from "../tools/ToolSyncBadge"
+import { ToolSyncBadge } from "../tools/sync/ToolSyncBadge"
 
 export function CardsSearchSyncBar() {
   return (

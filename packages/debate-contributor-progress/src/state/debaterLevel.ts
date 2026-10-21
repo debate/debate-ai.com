@@ -35,20 +35,20 @@ export const DEBATER_ACTIVITY_EVENT = "debate-ai:debater-activity";
 /** Window event this store dispatches after every recorded activity: `detail: DebaterActivityResult`. */
 export const DEBATER_XP_AWARDED_EVENT = "debate-ai:debater-xp-awarded";
 
-/** localStorage key holding this browser's id in the per-device XP ledger. */
-export const DEBATER_DEVICE_ID_KEY = "debaterDeviceId";
+/** localStorage key for this browser's ledger id; deliberately not synced to the account. */
+export const DEBATER_DEVICE_ID_STORAGE_KEY = "debaterDeviceId";
 
-/** This browser's ledger id, created on first use; `undefined` when storage is unavailable. */
+/** This browser's stable id for the XP ledger, created on first use; `undefined` without storage. */
 export function getDebaterDeviceId(): string | undefined {
   if (typeof localStorage === "undefined") return undefined;
   try {
-    const existing = localStorage.getItem(DEBATER_DEVICE_ID_KEY);
+    const existing = localStorage.getItem(DEBATER_DEVICE_ID_STORAGE_KEY);
     if (existing) return existing;
     const id =
       typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
         ? crypto.randomUUID()
         : `d${Date.now().toString(36)}${Math.random().toString(36).slice(2, 10)}`;
-    localStorage.setItem(DEBATER_DEVICE_ID_KEY, id);
+    localStorage.setItem(DEBATER_DEVICE_ID_STORAGE_KEY, id);
     return id;
   } catch {
     return undefined;
@@ -82,7 +82,7 @@ export function recordDebaterActivity(
   count = 1,
   nowMs: number = Date.now(),
 ): DebaterActivityResult {
-  const result = applyDebaterActivity(loadDebaterLevelState(), kind, nowMs, count, DEBATER_CHALLENGES, getDebaterDeviceId());
+  const result = applyDebaterActivity(loadDebaterLevelState(), kind, nowMs, count, undefined, getDebaterDeviceId());
   saveDebaterLevelState(result.state);
   if (typeof window !== "undefined" && typeof CustomEvent !== "undefined") {
     window.dispatchEvent(new CustomEvent(DEBATER_XP_AWARDED_EVENT, { detail: result }));
