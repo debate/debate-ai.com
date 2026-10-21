@@ -483,7 +483,7 @@ export const userSettings = sqliteTable("user_settings", {
   // truth for a signed-out browser.
   myTeamProfile: text("my_team_profile"),
   // JSON-serialized `MyRankedTeams` (`{ role, partner, teams: { <division>:
-  // teamSlug } }`) — Settings → My team, the ranked team the viewer debates
+  // teamSlug } }`) — Settings → General → My team, the ranked team the viewer debates
   // on, coaches or assists per division, which the matchup simulator
   // pre-fills (packages/debate-videos/src/lib/my-ranked-teams). Whole-value
   // replace, like `myTeamProfile` above.
@@ -2733,7 +2733,7 @@ export const profileFollows = sqliteTable(
 export type ProfileFollowRow = typeof profileFollows.$inferSelect;
 
 // ── School ownership (claims, profiles, rosters) ─────────────────────────
-// A user claims to coach or run a school's program from Settings → My school;
+// A user claims to coach or run a school's program from Settings → General → My school;
 // a moderator approves or rejects the claim in /admin, and an approved claim
 // makes that user an owner of the school's page. All three tables are created
 // by packages/debate-videos/migrations/0004_school_claims.sql; the request

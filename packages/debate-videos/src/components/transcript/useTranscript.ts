@@ -38,7 +38,12 @@ function loadTranscript(videoId: string): Promise<TranscriptSnippet[]> {
   const cached = cache.get(videoId)
   if (cached) return cached
 
-  const request = grab<TranscriptResponse, { videoId: string }>("transcript", { videoId })
+  // grab-url 3 has no default base, so without `baseURL` this went to
+  // `/transcript` (a 404) and the captions never loaded.
+  const request = grab<TranscriptResponse, { videoId: string; baseURL: string }>("transcript", {
+    videoId,
+    baseURL: "/api/",
+  })
     .then((data) => {
       // grab resolves with an `error` field rather than throwing on a
       // non-2xx response, so a failure has to be checked for here.

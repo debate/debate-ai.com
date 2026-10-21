@@ -1,7 +1,7 @@
 "use client"
 
 /**
- * @fileoverview Settings → Preferences: the UI sound-effect level.
+ * @fileoverview Settings → Sound & speech: the UI sound-effect level.
  *
  * The sound effects (`@debate/timer`'s `sound-effects.ts`) play from
  * the timers, the sidebar, the mobile drawer and the command palette.
@@ -65,7 +65,7 @@ function isLevel(value: string): value is SoundEffectLevel {
 }
 
 /**
- * The sound-effects row of Settings → Preferences. Local-only: it
+ * The sound-effects row of Settings → Sound & speech. Local-only: it
  * applies immediately through `setSoundEffectLevel` and is never part
  * of the account-synced form (`UserSettingsPanel`). Loaded after
  * mount so the server render and the first client render both show

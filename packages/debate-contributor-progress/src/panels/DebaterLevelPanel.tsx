@@ -13,6 +13,12 @@
  * vs AI, marking a drill practiced). Practice that happens off-app — like
  * redoing a rebuttal out loud — is logged with the "Log practice" buttons.
  *
+ * The **Mock data** button swaps in sample debater profiles
+ * (`lib/debater-mock-profiles.ts`) — a novice, a JV and a varsity debater with
+ * some badges earned and others partway there — to preview the page with
+ * realistic progress. A mock profile is display-only: it is never saved, and
+ * logging practice or resetting is disabled until you exit mock data.
+ *
  * An award that crosses a level boundary opens {@link DebaterLevelUpOverlay}
  * — the animated level-up cutscene — over the panel until it plays out or is
  * dismissed.
@@ -21,7 +27,7 @@
  * other tabs (the `storage` event).
  */
 
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { Button } from "@debate/research-evidence/src/ui/primitives/button"
 import {
   MeterBar,
@@ -42,6 +48,7 @@ import {
   type DebaterChallengeProgress,
   type DebaterLevelState,
 } from "../lib/debater-levels"
+import { buildDebaterMockProfiles } from "../lib/debater-mock-profiles"
 import {
   DEBATER_LEVEL_STORAGE_KEY,
   DEBATER_XP_AWARDED_EVENT,
@@ -94,6 +101,9 @@ function ChallengeRow({ progress }: { progress: DebaterChallengeProgress }) {
 export function DebaterLevelPanel() {
   const [state, setState] = useState<DebaterLevelState | null>(null)
   const [levelUp, setLevelUp] = useState<DebaterActivityResult | null>(null)
+  const [mockId, setMockId] = useState<string | null>(null)
+  const mockProfiles = useMemo(() => buildDebaterMockProfiles(), [])
+  const mock = mockProfiles.find((profile) => profile.id === mockId) ?? null
 
   useEffect(() => {
     setState(loadDebaterLevelState())
@@ -117,8 +127,9 @@ export function DebaterLevelPanel() {
     return <div className="p-6 text-sm text-muted-foreground">Loading your level…</div>
   }
 
-  const progress = computeLevelProgress(state.totalXp)
-  const challenges = getChallengeProgress(state, utcDayKeyFor(Date.now()))
+  const shown = mock?.state ?? state
+  const progress = computeLevelProgress(shown.totalXp)
+  const challenges = getChallengeProgress(shown, utcDayKeyFor(Date.now()))
   const daily = challenges.filter((entry) => entry.challenge.repeat === "daily")
   const milestones = challenges.filter((entry) => entry.challenge.repeat === "once")
   const dailyDone = daily.filter((entry) => entry.isComplete).length
@@ -129,17 +140,47 @@ export function DebaterLevelPanel() {
       title="Debater Level"
       description="Earn XP for every card you cut, rebuttal you redo, and round you practice — and level up."
       actions={
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => {
-            if (window.confirm("Reset your level and XP to zero?")) setState(resetDebaterLevelState())
-          }}
-        >
-          Reset progress
-        </Button>
+        <>
+          <Button
+            variant={mock ? "secondary" : "outline"}
+            size="sm"
+            onClick={() => setMockId(mock ? null : "mock-jv")}
+          >
+            {mock ? "Exit mock data" : "Mock data"}
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            disabled={mock !== null}
+            onClick={() => {
+              if (window.confirm("Reset your level and XP to zero?")) setState(resetDebaterLevelState())
+            }}
+          >
+            Reset progress
+          </Button>
+        </>
       }
     >
+      {mock ? (
+        <div className="flex flex-col gap-2 rounded-lg border border-dashed p-3">
+          <p className="text-sm">
+            Previewing <span className="font-medium">{mock.name}</span> — {mock.summary}. Sample data only; your own progress is unchanged.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {mockProfiles.map((profile) => (
+              <Button
+                key={profile.id}
+                variant={profile.id === mock.id ? "default" : "outline"}
+                size="sm"
+                onClick={() => setMockId(profile.id)}
+              >
+                {profile.name}
+              </Button>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
       {levelUp ? (
         <DebaterLevelUpOverlay
           open
@@ -168,8 +209,8 @@ export function DebaterLevelPanel() {
       </div>
 
       <StatGrid columns={4}>
-        <StatTile label="Cards cut" value={state.lifetimeCounts.card_cut ?? 0} />
-        <StatTile label="Rebuttals redone" value={state.lifetimeCounts.rebuttal_redo ?? 0} />
+        <StatTile label="Cards cut" value={shown.lifetimeCounts.card_cut ?? 0} />
+        <StatTile label="Rebuttals redone" value={shown.lifetimeCounts.rebuttal_redo ?? 0} />
         <StatTile label="Daily challenges" value={`${dailyDone}/${daily.length}`} hint="completed today" tone={dailyDone === daily.length ? "positive" : "neutral"} />
         <StatTile label="Milestones" value={`${milestonesDone}/${milestones.length}`} />
       </StatGrid>
@@ -177,7 +218,7 @@ export function DebaterLevelPanel() {
       <PanelSection title="Log practice" description="Practiced off-app? Log it to earn the XP.">
         <div className="flex flex-wrap gap-2">
           {DEBATER_ACTIVITY_KINDS.map((kind) => (
-            <Button key={kind} variant="outline" size="sm" onClick={() => recordDebaterActivity(kind)}>
+            <Button key={kind} variant="outline" size="sm" disabled={mock !== null} onClick={() => recordDebaterActivity(kind)}>
               {DEBATER_ACTIVITY_LABELS[kind]} (+{ACTIVITY_XP[kind]})
             </Button>
           ))}
@@ -200,14 +241,14 @@ export function DebaterLevelPanel() {
         </ul>
       </PanelSection>
 
-      <JudgeAwardShowcase />
+      <JudgeAwardShowcase earned={mock?.judgeAwards} />
 
       <PanelSection title="Recent XP">
-        {state.recentXp.length === 0 ? (
+        {shown.recentXp.length === 0 ? (
           <p className="text-muted-foreground text-sm">No XP yet — cut a card or log some practice to get started.</p>
         ) : (
           <ul className="flex flex-col divide-y text-sm">
-            {state.recentXp.map((event, index) => (
+            {shown.recentXp.map((event, index) => (
               <li key={`${event.atMs}-${event.source}-${index}`} className="flex items-center justify-between gap-2 py-1.5">
                 <span>{event.label}</span>
                 <span className="text-muted-foreground flex items-center gap-3 tabular-nums">

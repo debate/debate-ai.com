@@ -25,15 +25,28 @@ localStorage.
 
 ## What it shows
 
-The editor's whole category set, listed in a searchable sidebar — **General**, **Files**, **Appearance**,
-**Accessibility**, **Editing**, **Keyboard**, **Comments & AI**,
-**Collaboration** — from `debate-editor`'s exported tab list
-(`CARDMIRROR_SETTINGS_TABS`, `@debate/editor/settings-tabs`) and rendered by its
-`CardMirrorSettingsSection` (`@debate/editor/settings-section`), which wraps
-`buildEmbeddedSettingsPanel`, so each tab is the same rows the editor's
-gear-icon modal renders under it, minus the dialog chrome. General also
-carries the personal dictionary, the performance benchmark and this install's
-version info.
+A searchable sidebar in three blocks:
+
+- **General** — your account and display preferences (`debate-round`'s
+  `UserSettingsPanel`: plan, debate style, font, colour theme, light/dark,
+  tool data sync), your own AI key and sidebar icon animations; then **My
+  team** (the ranked team you represent in each division, plus your coaching
+  roster), **My school** (claim to coach or run a school, and the schools you
+  manage) and **Editor startup & language** (the editor's own General rows,
+  including the personal dictionary, the performance benchmark and this
+  install's version info). The old `?category=my-team`, `?category=my-school`
+  and `?category=general` links open this tab scrolled to that block.
+- **Sound & speech** — UI sound effects, the read-aloud voice and the
+  on-device speech models.
+- **Privacy** — see below.
+- Under an **Editor** heading: **Files**, **Appearance**, **Accessibility**,
+  **Editing**, **Keyboard**, **Comments & AI** and **Collaboration** — from
+  `debate-editor`'s exported tab list (`CARDMIRROR_SETTINGS_TABS`,
+  `@debate/editor/settings-tabs`) and rendered by its
+  `CardMirrorSettingsSection` (`@debate/editor/settings-section`), which wraps
+  `buildEmbeddedSettingsPanel`, so each tab is the same rows the editor's
+  gear-icon modal renders under it, minus the dialog chrome.
+- Under a **Research agent** heading: the research agent's sections.
 
 The page fills the whole window with no padding around it. The sidebar runs
 its full height: the **Settings** title and a **Back** link sit at its top, and
@@ -54,7 +67,7 @@ would render empty on the web.
 
 ## Font family
 
-The **Font family** picker on the Preferences tab applies the moment you pick it
+The **Font family** picker on the General tab applies the moment you pick it
 and, when you are signed in, is also saved to your account
 (`PUT /api/settings { fontFamily }`, stored in `user_settings.font_family`), so
 the same font follows you to another device. Signing in on a device with a
@@ -69,7 +82,7 @@ gone:
 - the Debate style / Font size / Font family / Colour theme / Light-dark
   pickers (`debate-round`'s `UserSettingsPanel`) — the dock's gear-icon menu
   still carries the colour theme and light/dark rows. The whole form is
-  back as the first tab of `/settings`, **Preferences** (still
+  back as the first block of `/settings`' **General** tab (still
   `UserSettingsPanel`), ahead of the editor's own tabs;
   `/settings/preferences` now redirects to it
 - **Favorite tools** — a tool is starred from its own page or the command palette (the `/tools` page was removed), which is also
@@ -96,7 +109,7 @@ here any more.
 
 ## Your own AI key
 
-The **Preferences** tab has a **Your own AI key** box. Paste an
+The **General** tab has a **Your own AI key** box. Paste an
 [OpenRouter key](https://openrouter.ai/settings/keys) (`sk-or-…`) or an
 Anthropic key (`sk-ant-…`) and the AI features — card AI analysis, AI coach and
 judge, citation and OCR fixes, every caller of `/api/reason-ai` and
@@ -168,13 +181,13 @@ automatically, and archived flows are skipped. Auto-save never overwrites: if
 the account holds a newer copy (saved from another device) the flow stays
 amber and you resolve it from Flow History. A failed save is retried only after
 the flow changes again. Turn it off with **Auto-save flows to my account** on the
-**Preferences** tab; it is on by default, applies immediately, and is stored in
+**General** tab; it is on by default, applies immediately, and is stored in
 this browser only (not synced to other devices). Turning it off discards any
 save still waiting on the timer. Engineering notes: `debate-round`'s
 `state/flowAutoSave.ts`, mounted by `useFlowAutoSave` in `OpenTabsGroup`; the
 preference lives in `state/flowAutoSavePreference.ts`.
 
-Choose how far auto-save goes under **Flow auto-save** in Settings → Preferences:
+Choose how far auto-save goes under **Flow auto-save** in Settings → General:
 
 - **Flows already on my account** (default) — the behavior above.
 - **All flows** — also uploads flows you have never saved. If your account
@@ -309,7 +322,7 @@ has the same last-write-wins property: the editor's settings open in two
 tabs, changed in both, end at whichever debounce landed second. Every other
 field (`debateStyle`, `colorTheme`, etc.) is a plain whole-value replace with
 no such protection — `debateStyle`/`fontSize`/`colorTheme`/`themeMode` are
-written from `/settings`' Preferences tab and the dock's Theme submenu, both of
+written from `/settings`' General tab and the dock's Theme submenu, both of
 which apply and (when signed in) sync a single field at a time rather than a
 whole form Save, so this mostly shows up as "two tabs pick a different
 Debate style within the same second."
@@ -387,6 +400,13 @@ Known gaps: today's per-activity counts still take the larger side rather than
 adding, so a daily challenge can lag when you work on two devices the same day;
 and a copy from an older client without a ledger falls back to the larger total.
 It can under-count but never double-counts.
+
+The Debater Level page's **Mock data** button previews the page with sample
+debaters (a novice, a JV and a varsity debater from
+`lib/debater-mock-profiles.ts` in `debate-contributor-progress`), each with some
+challenges, milestones and judge awards earned and others partway there. Mock
+profiles are display-only: they are never saved or synced, and logging practice
+and resetting are disabled until you choose **Exit mock data**.
 
 ## Save status on each tool
 

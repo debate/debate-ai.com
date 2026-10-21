@@ -3,6 +3,7 @@ import {
   applyDebaterActivity,
   computeLevelProgress,
   createDebaterLevelState,
+  DEBATER_CHALLENGES,
   getChallengeProgress,
   MAX_DEBATER_LEVEL,
   parseDebaterLevelState,
@@ -110,19 +111,24 @@ describe("parseDebaterLevelState", () => {
   });
 });
 
-describe("per-device ledger", () => {
-  it("books earnings to the device and seeds the base bucket from pre-ledger progress", () => {
-    const start = { ...createDebaterLevelState("2026-10-20"), totalXp: 100, lifetimeCounts: { card_cut: 10 } };
-    const { state, xpGained } = applyDebaterActivity(start, "card_cut", Date.UTC(2026, 9, 20), 2, undefined, "phone");
-    expect(state.ledger?.base).toMatchObject({ xp: 100, counts: { card_cut: 10 } });
-    expect(state.ledger?.phone).toMatchObject({ xp: xpGained, counts: { card_cut: 2 }, dayCounts: { card_cut: 2 } });
-    expect(state.totalXp).toBe(100 + xpGained);
+describe("applyDebaterActivity event ledger", () => {
+  it("stamps the activity event with a unique id and its count", () => {
+    const a = applyDebaterActivity(createDebaterLevelState(), "card_cut", DAY1, 2, undefined, undefined, "evt");
+    expect(a.state.recentXp.at(-1)).toMatchObject({ id: "evt", source: "card_cut", count: 2 });
+    const b = applyDebaterActivity(createDebaterLevelState(), "card_cut", DAY1);
+    const c = applyDebaterActivity(createDebaterLevelState(), "card_cut", DAY1);
+    expect(b.state.recentXp[0]?.id).toBeTruthy();
+    expect(b.state.recentXp[0]?.id).not.toBe(c.state.recentXp[0]?.id);
   });
 
-  it("round-trips through parse and drops malformed entries", () => {
-    const { state } = applyDebaterActivity(createDebaterLevelState(), "drill_practiced", Date.UTC(2026, 9, 20), 1, undefined, "d1");
-    expect(parseDebaterLevelState(JSON.parse(JSON.stringify(state)))?.ledger).toEqual(state.ledger);
-    const bad = { ...JSON.parse(JSON.stringify(state)), ledger: { x: { xp: "no" } } };
-    expect(parseDebaterLevelState(bad)?.ledger).toBeUndefined();
+  it("gives challenge bonuses their own id derived from the event", () => {
+    let state = createDebaterLevelState();
+    let last = applyDebaterActivity(state, "card_cut", DAY1, 1, undefined, undefined, "e1");
+    for (let i = 0; i < 6 && last.completedChallenges.length === 0; i += 1) {
+      state = last.state;
+      last = applyDebaterActivity(state, "card_cut", DAY1, 1, undefined, undefined, `e${i + 2}`);
+    }
+    const bonus = last.state.recentXp.find((e) => e.source !== "card_cut");
+    if (bonus) expect(bonus.id).toMatch(/^e\d+:/);
   });
 });

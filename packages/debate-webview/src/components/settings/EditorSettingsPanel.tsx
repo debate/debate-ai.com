@@ -4,7 +4,7 @@ import { Suspense, useEffect, useMemo, useState } from "react"
 import type { ComponentType, ReactNode } from "react"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
-import { Brain, BrainCog, HardDrive, School, Search, Server, Settings, ShieldCheck, SlidersHorizontal, UserCircle, Users, Volume2, Wand2 } from "lucide-react"
+import { Brain, BrainCog, HardDrive, Search, Server, Settings, ShieldCheck, SlidersHorizontal, UserCircle, Volume2, Wand2 } from "lucide-react"
 // Static import so bundling confines this ~15k-line global stylesheet to
 // the settings routes' own chunk — never loaded by the host app's main bundle.
 import "@debate/editor/styles.css"
@@ -30,47 +30,63 @@ import { researchSectionOfTab, researchSettingsPages } from "../../lib/qwksearch
 import { SITE_LINKS } from "../../lib/nav/dock-menu-sections"
 import { getHostConfig } from "../../host/config"
 
-// The app's own account-linked preferences (debate style, font size, font
+// The General tab (id kept as `preferences` so old links still land on it):
+// the app's own account-linked preferences (debate style, font size, font
 // family, color theme, light/dark) — rendered by `UserSettingsPanel`, which
-// syncs itself via `/api/settings`, rather than by the editor's settings UI.
-// It used to be its own page, `/settings/preferences` (now a redirect here).
+// syncs itself via `/api/settings` — plus the viewer's own AI key, the team
+// and school they claim, and the editor's own General rows. It used to be its
+// own page, `/settings/preferences` (now a redirect here).
 const PREFERENCES_TAB = "preferences"
-// The ranked team the viewer debates on, coaches or assists in each division,
-// which the matchup simulator pre-fills (`@debate/videos`' MyRankedTeamsSettings).
-const MY_TEAM_TAB = "my-team"
-// Claiming to coach or run a school, and the schools the viewer manages
-// (`components/schools/MySchoolSettings`).
-const MY_SCHOOL_TAB = "my-school"
+// UI sound effects, the read-aloud voice and the on-device speech models.
+const SOUND_SPEECH_TAB = "sound-speech"
+// Tabs folded into General, with the block each one now scrolls to:
+// My team (`@debate/videos`' MyRankedTeamsSettings), My school
+// (`components/schools/MySchoolSettings`) and the editor's General category.
+const TAB_ALIASES: Record<string, { tab: TabId; anchor: string }> = {
+  "my-team": { tab: PREFERENCES_TAB, anchor: "settings-my-team" },
+  "my-school": { tab: PREFERENCES_TAB, anchor: "settings-my-school" },
+  general: { tab: PREFERENCES_TAB, anchor: "settings-editor-general" },
+}
 // The recording release (publish or not, audio only, how the viewer is
 // credited), the privacy policy link and data deletion requests
 // (`PrivacySettingsSection`).
 const PRIVACY_TAB = "privacy"
 /** A research section's tab id: `research-<section key>` (see `researchTabId`). */
 type ResearchTabId = `research-${string}`
-type TabId = SettingsCategory | typeof PREFERENCES_TAB | typeof MY_TEAM_TAB | typeof MY_SCHOOL_TAB | typeof PRIVACY_TAB | ResearchTabId
+type TabId = SettingsCategory | typeof PREFERENCES_TAB | typeof SOUND_SPEECH_TAB | typeof PRIVACY_TAB | ResearchTabId
+/** A sidebar entry; `group` is the heading it sits under (none for the top block). */
+type Category = { id: TabId; label: string; group?: string }
 
 // The research agent's settings sections (`research-agent-ui/settings`'s
 // list), listed after the editor's tabs under their own heading. Each renders
 // that section's pane in place (`ResearchSettingsTab`); they used to be a
 // separate page, `/settings/research/<section>` (now a redirect here).
 const RESEARCH_PAGES = researchSettingsPages()
-const RESEARCH_TABS: readonly { id: ResearchTabId; label: string }[] = RESEARCH_PAGES.map((page) => ({
+const RESEARCH_TABS: readonly Category[] = RESEARCH_PAGES.map((page) => ({
   id: page.tabId as ResearchTabId,
   label: page.name,
+  group: "Research agent",
 }))
 
+// Three blocks: the site-wide tabs (General, Sound & speech, Privacy), the
+// editor's tabs under an Editor heading, and the research agent's sections.
 // The editor tabs and their order come from `lib/editor-preferences.ts`, so
 // the set of categories shown here and the set mirrored to the account
-// cannot drift. Preferences is listed first, ahead of them, and the research
-// agent's sections after.
-const CATEGORIES: readonly { id: TabId; label: string }[] = [
-  { id: PREFERENCES_TAB, label: "Preferences" },
-  { id: MY_TEAM_TAB, label: "My team" },
-  { id: MY_SCHOOL_TAB, label: "My school" },
+// cannot drift; its General category renders inside the site's General tab
+// rather than as a second "General".
+const CATEGORIES: readonly Category[] = [
+  { id: PREFERENCES_TAB, label: "General" },
+  { id: SOUND_SPEECH_TAB, label: "Sound & speech" },
   { id: PRIVACY_TAB, label: "Privacy" },
-  ...EDITOR_SETTINGS_TABS,
+  ...EDITOR_SETTINGS_TABS.filter((tab) => tab.id !== "general").map((tab) => ({ ...tab, group: "Editor" })),
   ...RESEARCH_TABS,
 ]
+
+/** A `?category=` value as the tab to open and, for a folded-in tab, the block to scroll to. */
+function resolveCategory(value: string | null): { tab: string | null; anchor: string | null } {
+  const alias = value ? TAB_ALIASES[value] : undefined
+  return alias ? alias : { tab: value, anchor: null }
+}
 
 // research-agent-ui names each section's icon; the lucide components live here.
 const RESEARCH_ICONS: Record<string, ComponentType<{ size?: number }>> = {
@@ -92,15 +108,11 @@ const CATEGORY_DETAILS: Record<string, { icon: ComponentType<{ size?: number }>;
   preferences: {
     icon: SlidersHorizontal,
     description:
-      "Your plan, your own AI key, debate style, font, color theme, light/dark mode, sound effects and tool data sync.",
+      "Your plan, debate style, font, theme, tool data sync and own AI key, sidebar animations; your team and school claims; editor startup and language.",
   },
-  [MY_TEAM_TAB]: {
-    icon: Users,
-    description: "Your role, your partner, and the ranked team you represent in each division — pre-filled in the matchup simulator.",
-  },
-  [MY_SCHOOL_TAB]: {
-    icon: School,
-    description: "Claim to be your school's coach or administrator, then manage its teams, students and logo.",
+  [SOUND_SPEECH_TAB]: {
+    icon: Volume2,
+    description: "UI sound effects, the read-aloud voice, and the speech models that run on this device.",
   },
   [PRIVACY_TAB]: {
     icon: ShieldCheck,
@@ -148,14 +160,14 @@ const SIDEBAR_CSS = `
 `
 
 /**
- * The host's own tabs, slotted in after Preferences and My team (ahead of My school). Read when the
+ * The host's own tabs, slotted in right after General. Read when the
  * panel renders, since hosts configure themselves before the first render.
  */
 function useCategories() {
   return useMemo(() => {
     const sections = getHostConfig().settingsSections ?? []
-    const categories: { id: TabId; label: string }[] = [...CATEGORIES]
-    categories.splice(2, 0, ...sections.map(({ id, label }) => ({ id: id as TabId, label })))
+    const categories: Category[] = [...CATEGORIES]
+    categories.splice(1, 0, ...sections.map(({ id, label }) => ({ id: id as TabId, label })))
     const details = { ...CATEGORY_DETAILS }
     for (const section of sections) {
       details[section.id] = { icon: section.icon ?? Settings, description: section.description }
@@ -201,6 +213,27 @@ function SettingsSidebarFooter() {
   )
 }
 
+/** A titled block inside a tab, with an id `?category=` aliases scroll to. */
+function SettingsGroup({ id, title, children }: { id?: string; title: string; children: ReactNode }) {
+  return (
+    <section id={id} aria-label={title} style={{ marginBottom: 24, scrollMarginTop: 12 }}>
+      <h3
+        style={{
+          margin: "0 0 10px",
+          fontSize: 11,
+          fontWeight: 600,
+          textTransform: "uppercase",
+          letterSpacing: "0.04em",
+          opacity: 0.55,
+        }}
+      >
+        {title}
+      </h3>
+      {children}
+    </section>
+  )
+}
+
 /**
  * @param sidebarHeader Rendered above the search box at the top of the
  *   sidebar (the settings page puts its Back link there).
@@ -220,11 +253,24 @@ function EditorSettingsPanelContent({ sidebarHeader }: { sidebarHeader?: ReactNo
   const { categories, details, sections } = useCategories()
   const isTabId = (value: string | null): value is TabId => categories.some((category) => category.id === value)
   const requestedCategory = searchParams.get("category")
-  const [active, setActive] = useState<TabId>(isTabId(requestedCategory) ? requestedCategory : PREFERENCES_TAB)
+  const requested = resolveCategory(requestedCategory)
+  const [active, setActive] = useState<TabId>(isTabId(requested.tab) ? requested.tab : PREFERENCES_TAB)
   // Follow `?category=` when it changes under a mounted page — the research
   // agent's "open settings" pushes `/settings?category=research-…`.
   useEffect(() => {
-    if (isTabId(requestedCategory)) setActive(requestedCategory)
+    if (isTabId(requested.tab)) setActive(requested.tab)
+  }, [requestedCategory])
+  // A folded-in tab (`?category=my-school`, …) opens General scrolled to its
+  // block. Retried briefly, since some blocks render only once data loads.
+  useEffect(() => {
+    if (!requested.anchor) return
+    let tries = 0
+    const timer = window.setInterval(() => {
+      const el = document.getElementById(requested.anchor!)
+      if (el || ++tries > 20) window.clearInterval(timer)
+      el?.scrollIntoView({ block: "start" })
+    }, 100)
+    return () => window.clearInterval(timer)
   }, [requestedCategory])
   const selectTab = (id: TabId) => {
     setActive(id)
@@ -284,13 +330,13 @@ function EditorSettingsPanelContent({ sidebarHeader }: { sidebarHeader?: ReactNo
             )}
             {filtered.map(({ id, label }, index) => {
               const Icon = details[id]?.icon ?? Settings
-              const startsResearchGroup =
-                researchSectionOfTab(id) !== null && researchSectionOfTab(filtered[index - 1]?.id) === null
+              const group = filtered[index].group
+              const startsGroup = group !== undefined && group !== filtered[index - 1]?.group
               return (
                 <div key={id} style={{ display: "contents" }}>
-                  {startsResearchGroup && (
+                  {startsGroup && (
                     <p className="dai-settings-group" role="presentation">
-                      Research agent
+                      {group}
                     </p>
                   )}
                   <button
@@ -324,21 +370,35 @@ function EditorSettingsPanelContent({ sidebarHeader }: { sidebarHeader?: ReactNo
             <activeHostSection.component />
           ) : researchSectionOfTab(active) !== null ? (
             <ResearchSettingsTab section={researchSectionOfTab(active)!} />
-          ) : active === MY_TEAM_TAB ? (
-            <MyRankedTeamsSettings />
-          ) : active === MY_SCHOOL_TAB ? (
-            <MySchoolSettings />
           ) : active === PRIVACY_TAB ? (
             <PrivacySettingsSection accountName={user?.name ?? null} />
-          ) : active === PREFERENCES_TAB ? (
+          ) : active === SOUND_SPEECH_TAB ? (
             <>
-              <TeamCoachingSection />
-              <OwnAiKeySection />
               <SoundEffectsSection />
               <ReadAloudVoiceSection />
               <OnDeviceModelsSection />
-              <SidebarIconAnimationsSection />
-              <UserSettingsPanel embedded />
+            </>
+          ) : active === PREFERENCES_TAB ? (
+            <>
+              <SettingsGroup title="Account & display">
+                <UserSettingsPanel embedded />
+                <OwnAiKeySection />
+                <SidebarIconAnimationsSection />
+              </SettingsGroup>
+              <SettingsGroup id="settings-my-team" title="My team">
+                <MyRankedTeamsSettings />
+                <TeamCoachingSection />
+              </SettingsGroup>
+              <SettingsGroup id="settings-my-school" title="My school">
+                <MySchoolSettings />
+              </SettingsGroup>
+              <SettingsGroup id="settings-editor-general" title="Editor startup & language">
+                {ready ? (
+                  <CardMirrorSettingsSection category="general" onRowsRendered={noteRenderedKeys} />
+                ) : (
+                  <p style={{ fontSize: 14, opacity: 0.7 }}>Loading…</p>
+                )}
+              </SettingsGroup>
             </>
           ) : (
             // One category at a time: the editor ties each row's store
