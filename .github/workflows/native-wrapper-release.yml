@@ -161,6 +161,9 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
           projectPath: apps/debate-native-wrapper
+          # tauri-action otherwise picks npm and runs `npm run tauri build`;
+          # this repo uses bun, and the script is package.json's "tauri".
+          tauriScript: bun run tauri
           tagName: ${{ github.event_name == 'push' && github.ref_name || '' }}
           releaseName: ${{ github.event_name == 'push' && format('Native Wrapper {0}', github.ref_name) || '' }}
           releaseId: ${{ needs.prepare-release.outputs.release_id }}
@@ -194,6 +197,11 @@ jobs:
           java-version: "21"
 
       - uses: android-actions/setup-android@v3
+        with:
+          # The action's default list includes the long-retired "tools"
+          # package, which current sdkmanager rejects ("Failed to find
+          # package 'tools'") and fails the job before anything builds.
+          packages: platform-tools
 
       - name: Install Android NDK
         run: sdkmanager --install "ndk;28.0.13004108"
