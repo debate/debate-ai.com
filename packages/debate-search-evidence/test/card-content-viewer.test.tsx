@@ -2,7 +2,7 @@ import React from "react"
 import { renderToStaticMarkup } from "react-dom/server"
 import { describe, expect, it } from "vitest"
 
-import { CardContentViewer } from "../src/components/CardContentViewer"
+import { CardContentViewer } from "../src/components/card-viewer/CardContentViewer"
 
 /** A result shaped like the search API's mapping of a stored card. */
 function result(overrides: Record<string, unknown> = {}) {

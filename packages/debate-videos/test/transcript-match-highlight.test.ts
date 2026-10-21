@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect } from "vitest"
-import { splitOnMatch } from "../src/components/videos/transcript/transcriptUtils"
+import { splitOnMatch } from "../src/components/transcript/transcriptUtils"
 
 describe("splitOnMatch", () => {
   it("returns the whole text unmatched when there is no needle", () => {

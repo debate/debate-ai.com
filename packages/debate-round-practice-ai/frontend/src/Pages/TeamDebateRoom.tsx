@@ -5,8 +5,8 @@ import { userAtom } from "@/state/userAtom";
 import { useUser } from "@/hooks/useUser";
 import { getTeamDebate } from "@/services/teamDebateService";
 import { Button } from "@/components/ui/button";
-import JudgmentPopup from "@/components/JudgementPopup";
-import SpeechTranscripts from "@/components/SpeechTranscripts";
+import JudgmentPopup from "@/components/round/JudgementPopup";
+import SpeechTranscripts from "@/components/round/SpeechTranscripts";
 import { getAuthToken } from "@/utils/auth";
 
 // Define debate phases as an enum (same as OnlineDebateRoom)

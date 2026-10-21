@@ -2,12 +2,12 @@
  * @fileoverview Account-linked color-theme/light-dark preference — TODO.md
  * idea #17 ("User Settings — account-linked debate preferences"), follow-up
  * (2). Pure validation/merge helpers shared by the `/api/settings` D1-backed
- * route (`apps/debate-ai.com`) and `components/theme-dropdown.tsx`'s
+ * route (`apps/debate-ai.com`) and `components/theme/ThemeDropdown.tsx`'s
  * `useThemeState` hook, mirroring `state/userSettings.ts`'s split so both
  * sides validate a patch identically.
  *
  * `THEME_NAMES` is the single source of truth for which color-theme values
- * are valid — `theme-dropdown.tsx` re-exports it instead of keeping its own
+ * are valid — `ThemeDropdown.tsx` re-exports it instead of keeping its own
  * copy, so the picker UI and the account-sync validator can never drift.
  *
  * @module state/themeSettings
@@ -51,7 +51,7 @@ export type ThemeSettingsPayload = {
   themeMode: ThemeMode;
 };
 
-/** Mirrors `app/layout.tsx`'s `<ThemeProvider defaultTheme="light">` and `theme-dropdown.tsx`'s local-storage fallback. */
+/** Mirrors `app/layout.tsx`'s `<ThemeProvider defaultTheme="light">` and `ThemeDropdown.tsx`'s local-storage fallback. */
 export const DEFAULT_THEME_SETTINGS: ThemeSettingsPayload = {
   colorTheme: "modern-minimal",
   themeMode: "light",

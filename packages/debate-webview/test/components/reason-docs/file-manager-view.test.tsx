@@ -40,10 +40,10 @@ vi.mock("@svar-ui/react-filemanager", () => ({
 const toast = vi.hoisted(() => ({ error: vi.fn(), success: vi.fn() }))
 vi.mock("sonner", () => ({ toast }))
 
-import FileManagerView, { type FileManagerViewProps } from "../../../src/components/reason-docs/FileManagerView"
-import { FileManagerDialog } from "../../../src/components/reason-docs/FileManagerDialog"
+import FileManagerView, { type FileManagerViewProps } from "../../../src/components/reason-docs/file-manager/FileManagerView"
+import { FileManagerDialog } from "../../../src/components/reason-docs/file-manager/FileManagerDialog"
 import type { ReasonDocument } from "../../../src/components/reason-docs/types"
-import type { TopicStarterItem } from "../../../src/components/reason-docs/TopicStarterTree"
+import type { TopicStarterItem } from "../../../src/components/reason-docs/topic-starters/TopicStarterTree"
 import { cleanup, flush, installDomShims, mount } from "../../helpers/dom"
 
 beforeAll(installDomShims)

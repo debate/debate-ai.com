@@ -5,10 +5,10 @@ import { LazyMotion, Reorder } from "motion/react";
 import { useRef, useState, useEffect } from "react";
 import { toast } from "sonner";
 
-import InviteChip from "../collab/InviteChip";
-import SessionChip from "../collab/SessionChip";
-import ShareButton from "../collab/ShareButton";
-import { loadFeatures } from "../MotionRoot";
+import InviteChip from "../collab/share/InviteChip";
+import SessionChip from "../collab/share/SessionChip";
+import ShareButton from "../collab/share/ShareButton";
+import { loadFeatures } from "../providers/MotionRoot";
 import { Button } from "../ui/button";
 import { Tip } from "../ui/tooltip";
 import { sideLabels } from "../../lib/format/events";

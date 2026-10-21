@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useUser } from "../hooks/useUser";
-import CommentTree from "../components/CommentTree";
-import ProfileHover from "../components/ProfileHover";
+import CommentTree from "../components/chat/CommentTree";
+import ProfileHover from "../components/profile/ProfileHover";
 import { Button } from "../components/ui/button";
 import {
   Card,

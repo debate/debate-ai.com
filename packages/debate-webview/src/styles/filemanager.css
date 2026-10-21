@@ -1,6 +1,6 @@
 /**
  * Layout fixes for the SVAR file manager in the docs sidebar's file manager
- * dialog (`components/reason-docs/FileManagerView.tsx`), ported from quick
+ * dialog (`components/reason-docs/file-manager/FileManagerView.tsx`), ported from quick
  * search's `filemanager.css`.
  *
  * `<Willow>` wraps its children in a bare `<div class="wx-theme …">` with no

@@ -18,9 +18,9 @@ import SpeechTest from './Pages/SpeechTest';
 import PrivacyPolicy from './Pages/PrivacyPolicy';
 import TermsOfService from './Pages/TermsOfService';
 // Layout
-import Layout from './components/Layout';
+import Layout from './components/layout/Layout';
 import CoachPage from './Pages/CoachPage';
-import ChatRoom from './components/ChatRoom';
+import ChatRoom from './components/chat/ChatRoom';
 import TournamentHub from './Pages/TournamentHub';
 import TournamentDetails from './Pages/TournamentDetails';
 import ProsConsChallenge from './Pages/ProsConsChallenge';

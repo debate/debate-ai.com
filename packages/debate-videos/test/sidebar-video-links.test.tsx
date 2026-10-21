@@ -11,7 +11,7 @@
  */
 
 import { describe, it, expect, vi } from "vitest";
-import { isVideoLibraryPath } from "../src/components/category-gallery/sidebar-routes";
+import { isVideoLibraryPath } from "../src/components/sidebar-nav/sidebar-routes";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createElement } from "react";
 import {
@@ -24,7 +24,7 @@ import {
   VIDEO_REFERENCE_LINKS,
   VIDEO_ALL_VIDEOS_FILTER_LINKS,
   VIDEO_COLLEGE_FILTER_LINKS,
-} from "../src/components/category-gallery/sidebar-video-links";
+} from "../src/components/sidebar-nav/sidebar-video-links";
 
 vi.mock("next/image", () => ({
   default: ({ src, alt, className }: { src: unknown; alt?: string; className?: string }) =>
@@ -44,11 +44,11 @@ vi.mock("next/navigation", () => ({
   usePathname: () => "/videos",
 }));
 
-const { VideoSidebarTree } = await import("../src/components/category-gallery/VideoSidebarTree");
+const { VideoSidebarTree } = await import("../src/components/sidebar-nav/VideoSidebarTree");
 const { QuickLinksGrid } = await import("../src/components/category-gallery/QuickLinksGrid");
-const { ToolNavTree } = await import("../src/components/category-gallery/ToolNavTree");
+const { ToolNavTree } = await import("../src/components/sidebar-nav/ToolNavTree");
 const { INSIGHTS_SECTION_ID } = await import(
-  "../src/components/category-gallery/sidebar-tool-sections"
+  "../src/components/sidebar-nav/sidebar-tool-sections"
 );
 
 function sidebarHtml(): string {

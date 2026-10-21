@@ -6,7 +6,7 @@
  * @module components/reason-editor/ReasonEditorStatusLine
  */
 
-import { ToolSyncBadge } from "../tools/ToolSyncBadge"
+import { ToolSyncBadge } from "../tools/sync/ToolSyncBadge"
 
 export interface ReasonEditorStatusLineProps {
   /** A public topic starter is open (read-only, never saved). */

@@ -11,7 +11,7 @@
  * @module components/cards/CardsSearchStatusLine
  */
 
-import { ToolSyncBadge } from "../tools/ToolSyncBadge"
+import { ToolSyncBadge } from "../tools/sync/ToolSyncBadge"
 
 export function CardsSearchStatusLine() {
   return (

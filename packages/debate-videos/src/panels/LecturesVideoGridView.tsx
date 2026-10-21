@@ -15,22 +15,22 @@ import type { CategoryType, TopicType, VideoFacets, VideoSuggestions } from "../
 import type { LectureCategoryFacet, VideoType } from "../types/videos"
 import { Footer } from "../ui/layout/footer"
 import { ResizableSidebarLayout } from "../ui/layout/ResizableSidebarLayout"
-import { VideoSearchBar } from "../components/videos/video-search/VideoSearchBar"
-import { VideoSearchSuggestions } from "../components/videos/video-search/VideoSearchSuggestions"
-import { SubmitToLibraryButton } from "../components/videos/video-search/SubmitToLibraryButton"
-import { getSearchPhrases } from "../components/videos/video-search/searchPhrases"
-import { VideoGrid } from "../components/videos/video-grid/VideoGrid"
-import { VideoListRows } from "../components/videos/video-grid/VideoListRows"
+import { VideoSearchBar } from "../components/video-search/VideoSearchBar"
+import { VideoSearchSuggestions } from "../components/video-search/VideoSearchSuggestions"
+import { SubmitToLibraryButton } from "../components/video-search/SubmitToLibraryButton"
+import { getSearchPhrases } from "../components/video-search/searchPhrases"
+import { VideoGrid } from "../components/video-grid/VideoGrid"
+import { VideoListRows } from "../components/video-grid/VideoListRows"
 import { LectureCategoryGridGallery, GridItem } from "../components/category-gallery/LectureCategoryGridGallery"
 import { QuickLinksGrid } from "../components/category-gallery/QuickLinksGrid"
-import { VideoSidebarTree } from "../components/category-gallery/VideoSidebarTree"
-import { ToolNavTree } from "../components/category-gallery/ToolNavTree"
+import { VideoSidebarTree } from "../components/sidebar-nav/VideoSidebarTree"
+import { ToolNavTree } from "../components/sidebar-nav/ToolNavTree"
 import { GoatSparklesHeading } from "../components/category-gallery/GoatSparklesHeading"
 import { cn } from "../ui/lib/utils";
 import {
   VIDEO_ALL_VIDEOS_FILTER_LINKS,
   VIDEO_COLLEGE_FILTER_LINKS,
-} from "../components/category-gallery/sidebar-video-links";
+} from "../components/sidebar-nav/sidebar-video-links";
 import type { DebateStyle } from "../types/videos"
 import type { VideoViewMode } from "../hooks/useVideoState"
 import { useVideoStacks } from "../hooks/useVideoStacks"

@@ -2,8 +2,8 @@ import React from "react"
 import { renderToStaticMarkup } from "react-dom/server"
 import { describe, expect, it } from "vitest"
 
-import { MobileCardView } from "../src/components/MobileCardView"
-import { CardContentViewer } from "../src/components/CardContentViewer"
+import { MobileCardView } from "../src/components/card-viewer/MobileCardView"
+import { CardContentViewer } from "../src/components/card-viewer/CardContentViewer"
 
 const card = {
   id: 1,

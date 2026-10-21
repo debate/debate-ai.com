@@ -78,9 +78,9 @@ import {
 } from "@/services/profileService";
 import { getAuthToken } from "@/utils/auth";
 import { DateRange } from "react-day-picker";
-import AvatarModal from "../components/AvatarModal";
-import SavedTranscripts from "../components/SavedTranscripts";
-import ProfileHover from "../components/ProfileHover";
+import AvatarModal from "../components/profile/AvatarModal";
+import SavedTranscripts from "../components/round/SavedTranscripts";
+import ProfileHover from "../components/profile/ProfileHover";
 import { useUser } from "../hooks/useUser";
 import {
   transcriptService,

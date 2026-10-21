@@ -1,6 +1,6 @@
 /**
  * @fileoverview A small, fixed set of sample REASON editor documents
- * `components/reason-docs/FileTree.tsx` shows in place of the bare "No
+ * `components/reason-docs/file-manager/FileTree.tsx` shows in place of the bare "No
  * documents yet." empty state when a signed-in user has no persisted
  * documents — the "REASON editor's file tree" follow-up TODO.md named as the
  * last open gap in its "sample mock data for empty states" ask, after

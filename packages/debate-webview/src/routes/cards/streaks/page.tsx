@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { QuestStreaksWithIdentity } from "../../../components/research/QuestStreaksWithIdentity"
+import { QuestStreaksWithIdentity } from "../../../components/research/identity/QuestStreaksWithIdentity"
 import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHeader"
 
 export default function CardsStreaksPage() {
