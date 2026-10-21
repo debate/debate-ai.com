@@ -28,7 +28,7 @@ vi.mock("next/navigation", () => ({
   usePathname: () => "/videos",
 }));
 
-const { VideoListRows, cleanTournamentName } = await import("../src/components/video-grid/VideoListRows");
+const { VideoListRows, cleanTournamentName } = await import("../src/components/videos/grid/VideoListRows");
 
 /** A round with a tournament and both teams — the full-column layout. */
 const identifiableRound: VideoType = [

@@ -49,10 +49,10 @@ const ImageMock = (await import("next/image")) as unknown as {
   default: FunctionComponent<{ src: unknown; alt?: string; className?: string }>;
 };
 const { VideoSidebarTree } = await import(
-  "../src/components/sidebar-nav/VideoSidebarTree"
+  "../src/components/navigation/sidebar-nav/VideoSidebarTree"
 );
 const { QuickLinksGrid } = await import(
-  "../src/components/category-gallery/QuickLinksGrid"
+  "../src/components/navigation/category-gallery/QuickLinksGrid"
 );
 
 function renderSidebar(overrides: Partial<ComponentProps<typeof VideoSidebarTree>> = {}): string {

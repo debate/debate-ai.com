@@ -20,12 +20,12 @@ import {
   TableRow,
 } from "../../ui/primitives/table"
 import { cn } from "../../ui/lib/utils"
-import { ColumnResizeHandle } from "../../components/video-grid/ColumnResizeHandle"
-import { useResizableColumns } from "../../components/video-grid/useResizableColumns"
+import { ColumnResizeHandle } from "../../components/videos/grid/ColumnResizeHandle"
+import { useResizableColumns } from "../../components/videos/grid/useResizableColumns"
 import { COLUMN_TOOLTIPS, DIVISION_SHORT_LABELS, schoolRankOf } from "./leaderboardUtils"
 import type { Division, SortKey, SortState } from "./leaderboardTypes"
 import { schoolHref, teamHref } from "./profile/rankingProfileHelpers"
-import { TeamLabel } from "../../components/team-label/TeamLabel"
+import { TeamLabel } from "../../components/navigation/team-label/TeamLabel"
 import { LegendaryBadge, ROW_TIER_CLASS, rowTier, type RowTier } from "./rowTier"
 
 /** The fields shown as columns. */

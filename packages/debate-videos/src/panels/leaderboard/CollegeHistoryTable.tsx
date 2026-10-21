@@ -28,7 +28,7 @@ import {
 } from "../../ui/primitives/table"
 import { seasonLabel } from "./leaderboardUtils"
 import { CollegeWinCalculator } from "./CollegeWinCalculator"
-import { TeamLabel } from "../../components/team-label/TeamLabel"
+import { TeamLabel } from "../../components/navigation/team-label/TeamLabel"
 
 /** One division's season totals as a compact definition list. */
 function SeasonStatsCard({ stats }: { stats: CollegeSeasonStats }) {

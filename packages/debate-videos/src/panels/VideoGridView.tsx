@@ -11,9 +11,9 @@ import React from "react"
 import type { VideoType } from "../types/videos"
 import { Footer } from "../ui/layout/footer"
 import { StickyHeader } from "../components/layout/StickyHeader"
-import { VideoSearchBar } from "../components/video-search/VideoSearchBar"
-import { VideoGrid } from "../components/video-grid/VideoGrid"
-import { YouTubeStatsModal } from "../components/youtube-stats/YouTubeStatsModal"
+import { VideoSearchBar } from "../components/videos/search/VideoSearchBar"
+import { VideoGrid } from "../components/videos/grid/VideoGrid"
+import { YouTubeStatsModal } from "../components/videos/youtube-stats/YouTubeStatsModal"
 import type { DebateStyle, CategoryType, TopicType, VideoFacets } from "../types/videos"
 // import { ico } from  "grab-url/icons";
 

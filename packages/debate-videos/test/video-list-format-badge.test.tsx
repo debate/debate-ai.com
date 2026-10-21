@@ -15,7 +15,7 @@ vi.mock("next/navigation", () => ({
   usePathname: () => "/videos/goat",
 }));
 
-const { VideoListRows } = await import("../src/components/video-grid/VideoListRows");
+const { VideoListRows } = await import("../src/components/videos/grid/VideoListRows");
 
 function round(id: string, style: DebateStyle): VideoType {
   return [id, `Round ${id}`, "2025-04-20", "Channel", 10, "", style, "Tournament of Champions",

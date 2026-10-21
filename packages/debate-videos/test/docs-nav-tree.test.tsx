@@ -21,7 +21,7 @@ vi.mock("next/link", () => ({
     createElement("a", { href, className, "data-client-link": "" }, children),
 }));
 
-const { DocsNavTree, DOCS_TREE_URL } = await import("../src/components/sidebar-nav/DocsNavTree");
+const { DocsNavTree, DOCS_TREE_URL } = await import("../src/components/navigation/sidebar-nav/DocsNavTree");
 
 const TREE = [
   { type: "page", name: "Introduction", url: "/docs" },

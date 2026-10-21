@@ -9,7 +9,7 @@ import {
   splitVideoTreeColumns,
   type VideoTreeGroup,
   type VideoTreeNode,
-} from "../src/components/video-grid/video-tree";
+} from "../src/components/videos/grid/video-tree";
 
 const leaf = (key: string): VideoTreeNode => ({ type: "video", key, slot: { key } as never });
 

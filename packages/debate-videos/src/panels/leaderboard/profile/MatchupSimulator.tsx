@@ -46,7 +46,7 @@ import { Button } from "../../../ui/primitives/button"
 import { Input } from "../../../ui/primitives/input"
 import { teamHref, teamSlug } from "./rankingProfileHelpers"
 import { formatCount } from "../../../lib/format-count"
-import { TeamLabel } from "../../../components/team-label/TeamLabel"
+import { TeamLabel } from "../../../components/navigation/team-label/TeamLabel"
 
 const pct = (p: number) => `${(p * 100).toFixed(1)}%`
 const SIM_ROUNDS = 1000

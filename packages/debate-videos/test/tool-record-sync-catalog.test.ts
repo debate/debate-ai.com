@@ -15,7 +15,7 @@ import { TOOL_RECORD_COLLECTIONS } from "@debate/data-sync/src/state/toolRecordC
 import {
   APP_DOCK_LINKS,
   SIDEBAR_TOOL_SECTIONS,
-} from "../src/components/sidebar-nav/sidebar-tool-sections";
+} from "../src/components/navigation/sidebar-nav/sidebar-tool-sections";
 
 /**
  * Every destination this sidebar links to: the Tools tree's sections, plus the

@@ -6,7 +6,7 @@
  */
 
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { SubmitToLibraryButton } from "../src/components/video-search/SubmitToLibraryButton";
+import { SubmitToLibraryButton } from "../src/components/videos/search/SubmitToLibraryButton";
 import { click, flush, mount, type, type Mounted } from "./helpers/mount";
 
 let mounted: Mounted | null = null;

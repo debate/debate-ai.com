@@ -14,7 +14,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { act, createElement, useRef } from "react";
 import { createRoot, type Root } from "react-dom/client";
 
-import { useDragResize, type ResizeEdge } from "../src/components/video-player/useDragResize";
+import { useDragResize, type ResizeEdge } from "../src/components/videos/player/useDragResize";
 
 const MIN_WIDTH = 256;
 const MAX_WIDTH = 800;

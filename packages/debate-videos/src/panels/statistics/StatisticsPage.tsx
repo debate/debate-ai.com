@@ -12,7 +12,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { YouTubeStatsCharts } from "../../components/youtube-stats/YouTubeStatsCharts";
+import { YouTubeStatsCharts } from "../../components/videos/youtube-stats/YouTubeStatsCharts";
 import { DebateTopicsExplorer, type YearVideoStats } from "../../components/topic-explorer/DebateTopicsExplorer";
 import { TopicAreasExplorer } from "../../components/topic-explorer/TopicAreasExplorer";
 import type { DebateTopicYear } from "../../lib/debate-topics";

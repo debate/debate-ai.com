@@ -15,22 +15,22 @@ import type { CategoryType, TopicType, VideoFacets, VideoSuggestions } from "../
 import type { LectureCategoryFacet, VideoType } from "../types/videos"
 import { Footer } from "../ui/layout/footer"
 import { ResizableSidebarLayout } from "../ui/layout/ResizableSidebarLayout"
-import { VideoSearchBar } from "../components/video-search/VideoSearchBar"
-import { VideoSearchSuggestions } from "../components/video-search/VideoSearchSuggestions"
-import { SubmitToLibraryButton } from "../components/video-search/SubmitToLibraryButton"
-import { getSearchPhrases } from "../components/video-search/searchPhrases"
-import { VideoGrid } from "../components/video-grid/VideoGrid"
-import { VideoListRows } from "../components/video-grid/VideoListRows"
-import { LectureCategoryGridGallery, GridItem } from "../components/category-gallery/LectureCategoryGridGallery"
-import { QuickLinksGrid } from "../components/category-gallery/QuickLinksGrid"
-import { VideoSidebarTree } from "../components/sidebar-nav/VideoSidebarTree"
-import { ToolNavTree } from "../components/sidebar-nav/ToolNavTree"
-import { GoatSparklesHeading } from "../components/category-gallery/GoatSparklesHeading"
+import { VideoSearchBar } from "../components/videos/search/VideoSearchBar"
+import { VideoSearchSuggestions } from "../components/videos/search/VideoSearchSuggestions"
+import { SubmitToLibraryButton } from "../components/videos/search/SubmitToLibraryButton"
+import { getSearchPhrases } from "../components/videos/search/searchPhrases"
+import { VideoGrid } from "../components/videos/grid/VideoGrid"
+import { VideoListRows } from "../components/videos/grid/VideoListRows"
+import { LectureCategoryGridGallery, GridItem } from "../components/navigation/category-gallery/LectureCategoryGridGallery"
+import { QuickLinksGrid } from "../components/navigation/category-gallery/QuickLinksGrid"
+import { VideoSidebarTree } from "../components/navigation/sidebar-nav/VideoSidebarTree"
+import { ToolNavTree } from "../components/navigation/sidebar-nav/ToolNavTree"
+import { GoatSparklesHeading } from "../components/navigation/category-gallery/GoatSparklesHeading"
 import { cn } from "../ui/lib/utils";
 import {
   VIDEO_ALL_VIDEOS_FILTER_LINKS,
   VIDEO_COLLEGE_FILTER_LINKS,
-} from "../components/sidebar-nav/sidebar-video-links";
+} from "../components/navigation/sidebar-nav/sidebar-video-links";
 import type { DebateStyle } from "../types/videos"
 import type { VideoViewMode } from "../hooks/useVideoState"
 import { useVideoStacks } from "../hooks/useVideoStacks"
