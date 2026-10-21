@@ -14,11 +14,7 @@ import {
   type VideoDocumentKind,
 } from "@debate/videos";
 import { formatCount } from "@debate/videos/lib/format-count";
-<<<<<<< HEAD:packages/debate-webview/src/components/admin/VideoContentDialog.tsx
-import { Button } from "../../lib/ui/primitives/button";
-=======
 import { Button } from "../../../lib/ui/primitives/button";
->>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-webview/src/components/admin/videos/VideoContentDialog.tsx
 import { SpeechAudioSplitter, type SpeechAudioSplit } from "./SpeechAudioSplitter";
 import { Badge } from "../../../lib/ui/primitives/badge";
 import { Input } from "../../../lib/ui/primitives/input";

@@ -18,15 +18,9 @@
 
 import Link from "next/link"
 import { ListVideo } from "lucide-react"
-<<<<<<<< HEAD:packages/debate-videos/src/components/videos/watch/panels/WatchStackPlaylist.tsx
-import { cn } from "../../../../ui/lib/utils"
-import { videoRouteHref, videoRouteParts, videoRouteSegments } from "../../../../lib/video-route"
-import type { VideoType } from "../../../../types/videos"
-========
 import { cn } from "../../ui/lib/utils"
 import { videoRouteHref, videoRouteParts, videoRouteSegments } from "../../lib/video-route"
 import type { VideoType } from "../../types/videos"
->>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/watch/WatchStackPlaylist.tsx
 
 /**
  * What a stack member is to its round: `"Round"` for the round itself, else

@@ -29,13 +29,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react"
 import { AlertTriangle, Check, ChevronDown, Copy, RefreshCw, Sparkles, Trophy } from "lucide-react"
-<<<<<<<< HEAD:packages/debate-videos/src/components/videos/watch/prediction/WatchSpeechOutcomes.tsx
-import { ScrollArea } from "../../../../ui/primitives/scroll-area"
-import type { RoundSpeech } from "../../../../lib/round-speeches"
-========
 import { ScrollArea } from "../../ui/primitives/scroll-area"
 import type { RoundSpeech } from "../../lib/round-speeches"
->>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/watch/WatchSpeechOutcomes.tsx
 import {
   DEFAULT_ALTERNATIVE_COUNT,
   DEFAULT_JUDGE_LENS,
@@ -54,17 +49,10 @@ import {
   type PredictedBallot,
   type RoundContext,
   type SpeechOutcomeSimulation,
-<<<<<<<< HEAD:packages/debate-videos/src/components/videos/watch/prediction/WatchSpeechOutcomes.tsx
-} from "../../../../lib/speech-outcomes"
-import { requestSpeechOutcomes } from "../../../../lib/speech-outcomes-client"
-import { readCachedSpeechOutcome, writeCachedSpeechOutcome } from "../../../../state/speechOutcomeCache"
-import { SPEECH_SIDE_STYLES } from "../speech-side-styles"
-========
 } from "../../lib/speech-outcomes"
 import { requestSpeechOutcomes } from "../../lib/speech-outcomes-client"
 import { readCachedSpeechOutcome, writeCachedSpeechOutcome } from "../../state/speechOutcomeCache"
 import { SPEECH_SIDE_STYLES } from "./speech-side-styles"
->>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/watch/WatchSpeechOutcomes.tsx
 
 /** Where the reader's judge panel is remembered. */
 export const OUTCOME_PANEL_STORAGE_KEY = "debate-videos:outcome-panel"

@@ -37,7 +37,7 @@
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Clapperboard, History } from "lucide-react";
-import { TreeItem } from "./SidebarTreeItem";
+import { TreeItem } from "./TreeItem";
 import { ToolNavTree } from "./ToolNavTree";
 import { DocsNavTree } from "./DocsNavTree";
 import {

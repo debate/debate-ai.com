@@ -32,15 +32,9 @@ import {
   Star,
   X,
 } from "lucide-react"
-<<<<<<<< HEAD:packages/debate-videos/src/components/videos/watch/controls/WatchToolbar.tsx
-import { TooltipProvider } from "../../../../ui/primitives/tooltip"
-import { PlayerIconButton, PlayerIconLink } from "../../video-player/PlayerIconButton"
-import type { QueueItem } from "../../../../state/videoPlayerStore"
-========
 import { TooltipProvider } from "../../ui/primitives/tooltip"
 import { PlayerIconButton, PlayerIconLink } from "../video-player/PlayerIconButton"
 import type { QueueItem } from "../../state/videoPlayerStore"
->>>>>>>> 9e36540009483d62c42dc7b18bee1e75cc57114b:packages/debate-videos/src/components/watch/WatchToolbar.tsx
 
 interface WatchToolbarProps {
   isPlaying: boolean

@@ -164,6 +164,40 @@ export function storeVoiceId(id: string): void {
   if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent(READ_VOICE_CHANGE_EVENT, { detail: id }));
 }
 
+/** Where the read-aloud speed multiplier is kept, in this browser only. */
+export const READ_SPEED_STORAGE_KEY = 'pmd-card-actions-read-speed';
+
+/** Fired on `window` when the read speed changes, so a card that is playing speeds up live. */
+export const READ_SPEED_CHANGE_EVENT = 'pmd-read-speed-change';
+
+/** Read-aloud defaults to 2x speed. */
+export const DEFAULT_READ_SPEED = 2;
+export const MIN_READ_SPEED = 0.5;
+export const MAX_READ_SPEED = 4;
+
+/** The stored read speed, or the 2x default when none (or an out-of-range one) is stored. */
+export function readStoredSpeed(): number {
+  try {
+    const raw = typeof localStorage === 'undefined' ? null : localStorage.getItem(READ_SPEED_STORAGE_KEY);
+    const parsed = raw == null ? NaN : Number(raw);
+    return Number.isFinite(parsed) && parsed >= MIN_READ_SPEED && parsed <= MAX_READ_SPEED ? parsed : DEFAULT_READ_SPEED;
+  } catch {
+    return DEFAULT_READ_SPEED;
+  }
+}
+
+/** Saves the read speed (clamped to 0.5x–4x) and tells every listener. */
+export function storeReadSpeed(speed: number): void {
+  if (!Number.isFinite(speed)) return;
+  const value = Math.min(MAX_READ_SPEED, Math.max(MIN_READ_SPEED, speed));
+  try {
+    if (typeof localStorage !== 'undefined') localStorage.setItem(READ_SPEED_STORAGE_KEY, String(value));
+  } catch {
+    // Storage blocked: the speed still holds for this page.
+  }
+  if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent(READ_SPEED_CHANGE_EVENT, { detail: value }));
+}
+
 export const DEFAULT_QWKSEARCH_VOICE_URL = 'https://qwksearch.com/api/agent/voice';
 
 /** Model speech: one clip, or clips to play one after another. */
