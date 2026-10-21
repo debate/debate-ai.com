@@ -374,20 +374,19 @@ as the `debaterLevel` collection (listed in **Tool data** under Practice as
 "Debater Level & XP"), stored under `debaterLevel` as a single `progress`
 record and adapted by `debater-level-codec.ts` in `debate-data-sync`.
 
-When two devices both earned XP while apart, the copies are merged field by
-field (`mergeDebaterLevel`): the union of completed milestones, today's
-challenge progress when both are from the same UTC day (otherwise the later
-day), and the union of the recent XP log. Every logged XP event carries a unique
-`id` and its activity `count`, so XP and lifetime counts are the larger of each
-copy plus the events only the other copy has seen: activity done on two devices
-in the same window adds up, and one event is never counted twice. An event
-older than a full 30-entry log is skipped, and a milestone bonus already paid on
-one copy isn't paid again.
+Each browser keeps its own XP ledger (`ledger` on the stored state, keyed by a
+per-browser id kept under `debaterDeviceId`, which is not synced). A device only
+ever grows its own entry, so when two devices both earned XP while apart the
+ledgers merge entry by entry and your total and lifetime counts are rebuilt as
+the pre-ledger base plus every device — XP earned on both devices adds up.
 
-Known gap: the log keeps only 30 events, so a device that stays offline long
-enough to log more than that before syncing can lose the oldest of them from the
-sum, and events recorded before ids existed fall back to the larger value per
-field (under-counted, never double-counted).
+The rest of the state is still merged field by field (`mergeDebaterLevel`): the
+union of completed milestones, today's challenge progress when both are from the
+same UTC day (otherwise the later day), and the union of the recent XP log.
+Known gaps: today's per-activity counts still take the larger side rather than
+adding, so a daily challenge can lag when you work on two devices the same day;
+and a copy from an older client without a ledger falls back to the larger total.
+It can under-count but never double-counts.
 
 ## Save status on each tool
 

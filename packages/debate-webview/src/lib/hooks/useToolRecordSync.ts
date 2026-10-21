@@ -239,6 +239,21 @@ export function useToolRecordSync(): ToolRecordSyncState {
     setResyncNonce((nonce) => nonce + 1)
   }, [])
 
+  // Pull in what other devices saved: a tab left open past the TTL re-runs the
+  // merge when it comes back to the foreground, rather than waiting for a
+  // reload. Hiding flushes the watcher first, so local edits are already on
+  // the account by the time the merge adopts its copies.
+  useEffect(() => {
+    if (!isAuthenticated || !reconciled || typeof document === "undefined") return
+    const onVisible = () => {
+      if (document.visibilityState !== "visible") return
+      if (hydratedRecently(Date.now())) return
+      resync()
+    }
+    document.addEventListener("visibilitychange", onVisible)
+    return () => document.removeEventListener("visibilitychange", onVisible)
+  }, [isAuthenticated, reconciled, resync])
+
   // Mirror the state into the shared store so each tool page's badge can read
   // it without calling this hook (whose cleanups stop the global watcher).
   useEffect(() => {

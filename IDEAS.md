@@ -58,10 +58,11 @@
 - [x] Tool pages show the sync badge / Save now (`ToolPageHeader`, `ToolSyncBadge`)
 - [x] Tool UI pass finished; no open follow-ups (2026-10-08 tracker review)
 - [x] Debater XP/level syncs via the `debaterLevel` tool-record collection (higher `totalXp` wins; 2026-10-20)
+- [x] Signed-in tabs re-merge the account's tool records on refocus once the 10-minute TTL lapses, so other-device changes appear without a reload (2026-10-21; `useToolRecordSync`)
 - [x] Font family preference syncs via `user_settings.font_family` (`PUT /api/settings { fontFamily }`; 2026-10-20)
 - [x] Debater XP merges field by field across devices (`mergeDebaterLevel`, `merge` hook on tool-record collections; 2026-10-20)
-- [x] Per-event XP ledger: log events carry an `id` + `count`, and `mergeDebaterLevel` adds events seen by only one device (2026-10-21)
-- [ ] Follow-up: keep a longer/compact ledger (e.g. per-day totals) so a device offline for more than 30 events loses none on merge
+- [x] Per-device XP ledger so lifetime XP/counts earned on two devices in the same window add (`DebaterXpLedger`, `ledger` in the `debaterLevel` record; 2026-10-20)
+- [ ] Follow-up: also add today's per-activity counts across devices (daily challenges still take the larger side)
 
 ---
 

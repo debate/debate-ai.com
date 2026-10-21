@@ -112,6 +112,45 @@ describe("mergeDebaterLevel", () => {
     expect((mergeDebaterLevel(many, a) as { recentXp: unknown[] }).recentXp).toHaveLength(30);
   });
 
+  describe("per-device ledger", () => {
+    const tally = (xp: number, counts: Record<string, number> = {}) => ({ xp, counts });
+    const withLedger = (devices: Record<string, ReturnType<typeof tally>>, base = tally(100, { card_cut: 10 })) => {
+      const xp = base.xp + Object.values(devices).reduce((n, d) => n + d.xp, 0);
+      return full({ totalXp: xp, lifetimeCounts: { card_cut: 10 }, ledger: { base, devices } });
+    };
+
+    it("adds work done on two devices instead of keeping the larger total", () => {
+      const a = withLedger({ A: tally(10, { card_cut: 2 }) });
+      const b = withLedger({ B: tally(5, { card_cut: 1, flow: 3 }) });
+      expect(mergeDebaterLevel(a, b)).toMatchObject({
+        totalXp: 115,
+        lifetimeCounts: { card_cut: 13, flow: 3 },
+        ledger: { devices: { A: tally(10, { card_cut: 2 }), B: tally(5, { card_cut: 1, flow: 3 }) } },
+      });
+    });
+
+    it("is idempotent: merging a copy with its own earlier state never double-counts", () => {
+      const old = withLedger({ A: tally(10, { card_cut: 2 }) });
+      const grown = withLedger({ A: tally(25, { card_cut: 5 }), B: tally(5) });
+      const merged = mergeDebaterLevel(old, grown) as { totalXp: number };
+      expect(merged.totalXp).toBe(130);
+      expect(mergeDebaterLevel(merged, grown)).toMatchObject({ totalXp: 130 });
+      expect(mergeDebaterLevel(grown, merged)).toMatchObject({ totalXp: 130 });
+    });
+
+    it("never goes below the larger legacy total when only one side has a ledger", () => {
+      const legacy = state(500);
+      expect(mergeDebaterLevel(withLedger({ A: tally(10) }), legacy)).toMatchObject({ totalXp: 500 });
+      expect(mergeDebaterLevel(legacy, withLedger({ A: tally(10) }))).toMatchObject({ totalXp: 500, ledger: { base: tally(100, { card_cut: 10 }) } });
+    });
+
+    it("ignores a malformed ledger", () => {
+      const bad = full({ totalXp: 40, ledger: { base: "x", devices: [] } });
+      expect(mergeDebaterLevel(bad, state(10))).toMatchObject({ totalXp: 40 });
+      expect(mergeDebaterLevel(bad, state(10))).not.toHaveProperty("ledger");
+    });
+  });
+
   it("falls back to the valid side and ignores malformed fields", () => {
     expect(mergeDebaterLevel({ junk: true }, state(4))).toEqual(state(4));
     expect(mergeDebaterLevel(state(4), null)).toEqual(state(4));
