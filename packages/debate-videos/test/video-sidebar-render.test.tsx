@@ -248,8 +248,8 @@ describe("the sidebar's heading structure", () => {
     // below the whole tree.
     // `tool-nav-tree-sections.test.tsx` pins which section they belong to.
     const html = renderSidebar();
-    expect(html).toContain("Glossary of Terms");
-    expect(html).toContain("/practice/glossary");
+    expect(html).toContain("Rules &amp; Glossary");
+    expect(html).toContain("/practice/rules");
   });
 });
 

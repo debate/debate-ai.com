@@ -12,8 +12,8 @@
  *
  * That distinction is why this file is not a list of top-level prefixes. A
  * blanket `Disallow: /practice/` would look tidier and would be wrong: the
- * library's three reference views — the glossary, the rankings and the
- * statistics — moved under `/practice` when their sidebar category was
+ * reference pages — Rules & Glossary, the rankings and the statistics —
+ * moved under `/practice` when their sidebar category was
  * reorganised, and they are public content that `lib/seo/sitemap.ts` lists.
  * The tool destinations are therefore read off the sidebar's own link data
  * (`SIDEBAR_TOOL_SECTIONS`) rather than restated, so a tool added there is
@@ -89,7 +89,12 @@ function toolHrefs(): string[] {
  * outranks the section's `Disallow`, which is what {@link ALLOW_OVERRIDES} is
  * for.
  */
-const ALLOW_OVERRIDES: readonly string[] = VIDEO_REFERENCE_LINKS.map((link) => link.href);
+const ALLOW_OVERRIDES: readonly string[] = [
+  ...VIDEO_REFERENCE_LINKS.map((link) => link.href),
+  // Rules & Glossary: reference reading (the formats-and-rules guide and the
+  // glossary of terms), not a tool, though it is a row of the tool tree.
+  "/practice/rules",
+];
 
 /**
  * The `Disallow` list, as `robots.txt` path prefixes.

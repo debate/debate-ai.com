@@ -119,7 +119,7 @@ describe("ToolNavTree sectionIds", () => {
     expect(html).not.toContain(">Performance<");
     expect(html).not.toContain(">Data &amp; Reference<");
     expect(html).toContain("/practice/level");
-    expect(html).toContain("/practice/glossary");
+    expect(html).toContain("/practice/rules");
   });
 
   it("ignores an id no section carries rather than throwing", () => {

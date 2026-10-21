@@ -1,8 +1,16 @@
 import type { Metadata } from "next"
+import { permanentRedirect } from "next/navigation"
+
+/**
+ * The old address of the glossary, merged into Formats, Rules & Glossary at
+ * `/practice/rules`. It permanently redirects to its "glossary" tab.
+ */
 
 export const metadata: Metadata = {
   title: "Glossary of Terms",
-  description: "Definitions of debate terms, with the lectures that explain them",
+  alternates: { canonical: "/practice/rules?section=glossary" },
 }
 
-export { default } from "@debate/webview/routes/videos/page"
+export default function LegacyGlossaryPage() {
+  permanentRedirect("/practice/rules?section=glossary")
+}
