@@ -61,6 +61,19 @@ describe("ToolPageHeader", () => {
     expect(html).not.toContain("What this tool does");
   });
 
+  it("states where the tool's data is saved, and stays quiet for derived tools", () => {
+    const sql = renderToStaticMarkup(
+      <ToolPageHeader href="/contacts" backHref="/tools" backLabel="tools" />,
+    );
+    expect(sql).toContain("data-tool-storage-note");
+    expect(sql).toContain("Saved to your account: contacts and blocks.");
+
+    const derived = renderToStaticMarkup(
+      <ToolPageHeader href="/coaching/rankings" backHref="/tools" backLabel="tools" />,
+    );
+    expect(derived).not.toContain("data-tool-storage-note");
+  });
+
   it("renders the sync badge exactly once, for the page's own route", () => {
     const html = renderToStaticMarkup(
       <ToolPageHeader href="/practice/drills" backHref="/debate" backLabel="round workspace" />,

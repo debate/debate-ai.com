@@ -49,6 +49,13 @@
 1. ability to challenge legends - and speculators bet
 2. random pair webcam debate matching on mutual pref topics
 
+## Tool storage map + header note (Completed 2026-10-21, branch `claude/gifted-babbage-l06qxh`)
+
+- [x] `resolveToolStorage` maps every `/tools` entry to synced collections, its own SQL table, or derived/none; guarded by `tool-storage.test.ts`
+- [x] `ToolPageHeader` shows where the tool's data is saved (Vitest)
+- [ ] Follow-up: per-tool "Save to account" actions for the SQL-backed tools that still only expose it in menus
+- [ ] Follow-up (pre-existing): `apps/debate-web/lib/__tests__/tool-catalog-consistency.test.ts` imports a missing `packages/debate-editor/src/editor/workspace-links`; `bun run typecheck` in `debate-webview` reports unresolved `@debate/editor/*` modules
+
 ## Account sync of tools (Completed)
 
 - [x] Speech-doc links (editor document <-> round/flow speech) sync via the `speechDocLinks` tool-record collection
