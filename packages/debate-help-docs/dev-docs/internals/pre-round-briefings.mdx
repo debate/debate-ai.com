@@ -308,13 +308,13 @@ own tests.
 
 `round/debater-stats.ts#buildDebaterStats` reduces the same `ownRoundHistory`
 records (which sync to the account as the `ownRoundHistory` tool-record
-collection) into overall, per-side, per-division and per-argument-tag win/loss
-tallies, plus a recent-form window (`RECENT_FORM_WINDOW` = 5 rounds) and a
+collection) into overall, per-side, per-division, per-argument-tag and per-`caseName` win/loss
+tallies, the current win/loss `streak`, plus a recent-form window (`RECENT_FORM_WINDOW` = 5 rounds) and a
 `trend` that needs at least ten logged rounds and a 0.10 gap from the all-time
 rate. It is pure and covered by `test/debater-stats.test.ts`.
 
 `panels/DebaterStatsPanel.tsx` renders it (win-rate/Aff/Neg/recent-form tiles,
-a trend pill, and by-division and by-argument meters) and re-reads on a
+a trend pill, and by-division, by-argument and by-case meters, and a streak note) and re-reads on a
 `storage` event for `ownRoundHistory`. It is mounted as the "Debater Stats" tab
 of the Prep Workspace (`/practice/prep?section=stats`) and in the Coach Hub's
 Prep section. Covered by `test/DebaterStatsPanel.test.tsx`.

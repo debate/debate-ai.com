@@ -134,6 +134,11 @@ export function DebaterStatsPanel() {
           </StatGrid>
           <p className="text-sm" data-testid="debater-stats-trend">
             Trend: <Pill tone={TREND_TONE[stats.trend]}>{TREND_LABEL[stats.trend]}</Pill>
+            {stats.streak.kind ? (
+              <span data-testid="debater-stats-streak">
+                {" "}· {stats.streak.length}-round {stats.streak.kind} streak
+              </span>
+            ) : null}
           </p>
           {stats.speechLength.rounds > 0 ? (
             <PanelSection title="Speech length">
@@ -150,6 +155,7 @@ export function DebaterStatsPanel() {
           ) : null}
           <Breakdown title="By division" rows={stats.byDivision} />
           <Breakdown title="By argument" rows={stats.byArgumentTag} />
+          <Breakdown title="By case" rows={stats.byCase} />
         </>
       )}
     </PanelShell>

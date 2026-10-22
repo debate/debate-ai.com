@@ -50,6 +50,10 @@ export interface DebaterStats {
   byDivision: LabeledWinLossRecord[];
   /** Per argument tag the team ran, most rounds first. */
   byArgumentTag: LabeledWinLossRecord[];
+  /** Per case/plan name the team ran, most rounds first. */
+  byCase: LabeledWinLossRecord[];
+  /** Consecutive wins or losses ending at the most recent round. */
+  streak: Streak;
   /** The latest {@link RECENT_FORM_WINDOW} rounds by date. */
   recent: WinLossRecord;
   trend: FormTrend;
@@ -121,10 +125,19 @@ function byDateDescending(records: readonly OpponentRoundRecord[]): OpponentRoun
   return [...records].sort((a, b) => time(b) - time(a));
 }
 
+function currentStreak(newestFirst: readonly OpponentRoundRecord[]): Streak {
+  if (newestFirst.length === 0) return { kind: null, length: 0 };
+  const latest = newestFirst[0].won;
+  let length = 0;
+  while (length < newestFirst.length && newestFirst[length].won === latest) length++;
+  return { kind: latest ? "win" : "loss", length };
+}
+
 /** Reduces logged rounds to the statistics a debater wants at a glance. */
 export function buildDebaterStats(records: readonly OpponentRoundRecord[]): DebaterStats {
   const overall = tally(records);
-  const recent = tally(byDateDescending(records).slice(0, RECENT_FORM_WINDOW));
+  const newestFirst = byDateDescending(records);
+  const recent = tally(newestFirst.slice(0, RECENT_FORM_WINDOW));
 
   let trend: FormTrend = "insufficient-data";
   if (records.length >= MIN_ROUNDS_FOR_TREND && overall.winRate !== null && recent.winRate !== null) {
@@ -138,6 +151,8 @@ export function buildDebaterStats(records: readonly OpponentRoundRecord[]): Deba
     neg: tally(records.filter((record) => record.side === "neg")),
     byDivision: groupBy(records, (record) => [record.division]),
     byArgumentTag: groupBy(records, (record) => record.argumentTags ?? []),
+    byCase: groupBy(records, (record) => (record.caseName ? [record.caseName] : [])),
+    streak: currentStreak(newestFirst),
     recent,
     trend,
     speechLength: buildSpeechLength(records),
