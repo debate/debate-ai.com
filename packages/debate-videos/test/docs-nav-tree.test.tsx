@@ -1,9 +1,9 @@
 // @vitest-environment jsdom
 /**
- * @fileoverview The sidebar's "Docs" section: collapsed on arrival with no
- * request made, every docs page listed once opened (folders collapsed too, as
- * full page loads), and nothing on /docs, where the docs layout portals its
- * own tree in.
+ * @fileoverview The sidebar's "Docs" section: collapsed on arrival but the
+ * tree already requested, every docs page listed once opened (folders
+ * collapsed too, as full page loads), a failed preload retried on open, and
+ * nothing on /docs, where the docs layout portals its own tree in.
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -21,7 +21,10 @@ vi.mock("next/link", () => ({
     createElement("a", { href, className, "data-client-link": "" }, children),
 }));
 
-const { DocsNavTree, DOCS_TREE_URL } = await import("../src/components/navigation/sidebar-nav/DocsNavTree");
+type DocsNavTreeModule = typeof import("../src/components/navigation/sidebar-nav/DocsNavTree");
+const DOCS_TREE_URL = "/docs/api/docs-tree";
+// Re-imported per test: the module keeps one tree request per page load.
+let DocsNavTree: DocsNavTreeModule["DocsNavTree"];
 
 const TREE = [
   { type: "page", name: "Introduction", url: "/docs" },
@@ -36,10 +39,12 @@ const TREE = [
 let view: Mounted | null = null;
 let fetchMock: ReturnType<typeof vi.fn>;
 
-beforeEach(() => {
+beforeEach(async () => {
   nav.pathname = "/practice";
   fetchMock = vi.fn(async () => new Response(JSON.stringify(TREE), { status: 200 }));
   vi.stubGlobal("fetch", fetchMock);
+  vi.resetModules();
+  ({ DocsNavTree } = await import("../src/components/navigation/sidebar-nav/DocsNavTree"));
 });
 
 afterEach(async () => {
@@ -55,12 +60,33 @@ function headingToggle(container: HTMLElement): HTMLElement {
 }
 
 describe("DocsNavTree", () => {
-  it("starts collapsed and fetches nothing", async () => {
+  it("starts collapsed but preloads the tree", async () => {
     view = await mount(<DocsNavTree />);
     expect(view.container.textContent).toContain("Docs");
     expect(headingToggle(view.container).getAttribute("aria-expanded")).toBe("false");
     expect(view.container.textContent).not.toContain("Introduction");
-    expect(fetchMock).not.toHaveBeenCalled();
+    expect(fetchMock).toHaveBeenCalledWith(DOCS_TREE_URL);
+  });
+
+  it("shows the preloaded pages as soon as it is opened", async () => {
+    view = await mount(<DocsNavTree />);
+    await flush(() => new Promise((r) => setTimeout(r, 5)));
+    await flush(() => headingToggle(view!.container).click());
+    expect(view.container.textContent).toContain("Introduction");
+    expect(view.container.textContent).not.toContain("Loading");
+  });
+
+  it("retries a failed preload when opened", async () => {
+    fetchMock.mockImplementationOnce(async () => new Response("", { status: 404 }));
+    view = await mount(<DocsNavTree />);
+    await flush(() => new Promise((r) => setTimeout(r, 5)));
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    await flush(() => headingToggle(view!.container).click());
+    for (let i = 0; i < 20 && !view.container.textContent?.includes("Introduction"); i++) {
+      await flush(() => new Promise((r) => setTimeout(r, 5)));
+    }
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(view.container.textContent).toContain("Introduction");
   });
 
   it("lists every docs page once opened, folders collapsed, as page loads", async () => {
@@ -82,9 +108,10 @@ describe("DocsNavTree", () => {
     expect(view.container.querySelector('a[href="/docs/features/timers"]')).not.toBeNull();
   });
 
-  it("renders nothing on /docs", async () => {
+  it("renders and fetches nothing on /docs", async () => {
     nav.pathname = "/docs/features";
     view = await mount(<DocsNavTree />);
     expect(view.container.innerHTML).toBe("");
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });
