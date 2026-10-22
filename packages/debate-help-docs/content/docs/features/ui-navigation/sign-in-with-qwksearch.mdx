@@ -24,6 +24,24 @@ instead of as a guest.
 
 Cancelling on qwksearch.com brings you back unchanged.
 
+## In the browser extension
+
+The extension's app page (its Options page) has the same **Sign in with
+QwkSearch** button. Pressing it signs you in to Debate AI first if the
+extension isn't signed in yet, then opens qwksearch.com in a new tab. Sign in
+or create your QwkSearch account there and press **Allow**; the tab closes
+itself and the page reloads with your QwkSearch chats and models. Closing the
+tab or pressing **Cancel** leaves things as they were.
+
+The link is stored on your Debate AI account, so signing in with QwkSearch in
+the extension or on the website links both.
+
+Under the hood the extension runs the PKCE half of the flow itself (its pages
+can't receive QwkSearch's redirect): QwkSearch sends the tab to
+`/auth/qwksearch-extension-complete` on Debate AI, the extension reads the code
+off that tab and posts it with its verifier to `/api/qwksearch/token`
+(`apps/debate-browser-ext/src/auth/qwksearch-connect.ts`).
+
 ## Your plan and upgrading
 
 The Account tab shows your QwkSearch plan. On the free plan, **Upgrade

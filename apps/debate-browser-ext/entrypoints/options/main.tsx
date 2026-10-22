@@ -6,6 +6,7 @@ import { Puzzle } from 'lucide-react';
 
 import { mirrorAppAiKey } from '@/src/ai/app-key';
 import { installApiProxy, setProxiedApiBase } from '@/src/app-host/api-proxy';
+import { requestQwkSearchConnect } from '@/src/auth/qwksearch-connect';
 import { requestSignIn, type StoredSession } from '@/src/auth/session';
 import { getSettings } from '@/src/settings/settings';
 
@@ -33,6 +34,10 @@ async function start() {
     // the session back to the background worker.
     signIn: () => void requestSignIn(),
     openOnSite: (path) => void browser.tabs.create({ url: `${apiBase}${path}` }),
+    // "Sign in with QwkSearch" in the research settings: the page has no
+    // `/api/qwksearch/connect` to navigate to, so the background worker runs
+    // the consent tab and links the account (src/auth/qwksearch-connect.ts).
+    connectQwkSearch: requestQwkSearchConnect,
     // The extension's own settings, as one more tab of the app's Settings.
     settingsSections: [
       {

@@ -7,6 +7,7 @@ import {
   signOut,
 } from '@/src/auth/session';
 import { runSignInFlow } from '@/src/auth/sign-in-flow';
+import { QWKSEARCH_CONNECT_MESSAGE, runQwkSearchConnectFlow } from '@/src/auth/qwksearch-connect';
 import { PageNotReadableError, capturePageSnapshot } from '@/src/reader/snapshot';
 import {
   READER_SNAPSHOT_MESSAGE,
@@ -191,6 +192,8 @@ export default defineBackground(() => {
           return reply(runSignInFlow());
         case SIGN_OUT_MESSAGE:
           return reply(signOut());
+        case QWKSEARCH_CONNECT_MESSAGE:
+          return reply(runQwkSearchConnectFlow());
         default:
           return;
       }

@@ -29,6 +29,16 @@ export const CONNECT_COOKIE_PATH = "/api/qwksearch"
 /** Where QwkSearch sends the visitor back, relative to this app's origin. */
 export const CALLBACK_PATH = "/api/qwksearch/callback"
 
+/**
+ * Where QwkSearch sends the visitor back when the browser extension started
+ * the flow. The extension holds the PKCE verifier itself (its pages live on
+ * `chrome-extension://`, which QwkSearch won't redirect to), watches the tab
+ * land here, reads `code` off the URL, closes the tab and hands the code to
+ * `/api/qwksearch/token` along with the verifier. The page itself only says
+ * "you can close this tab".
+ */
+export const EXTENSION_CALLBACK_PATH = "/auth/qwksearch-extension-complete"
+
 /** The linked account, as stored in the `qwksearch_connection` table. */
 export interface QwkSearchConnection {
   apiKey: string
@@ -197,4 +207,33 @@ export function toSessionPayload(connection: QwkSearchConnection | null): QwkSea
     plan: connection.plan,
     upgradeUrl: connection.upgradeUrl,
   }
+}
+
+/** How a flow started by the extension came back, read off the return tab's URL. */
+export type ExtensionCallbackResult = { code: string } | { error: string }
+
+/**
+ * Reads QwkSearch's answer off a tab URL, or returns null while the tab is
+ * still anywhere but `<origin>/auth/qwksearch-extension-complete`. A URL whose
+ * `state` isn't the one the flow sent counts as an error, never as a code.
+ */
+export function readExtensionCallback(
+  rawUrl: string | undefined,
+  origin: string,
+  state: string,
+): ExtensionCallbackResult | null {
+  if (!rawUrl) return null
+  let url: URL
+  try {
+    url = new URL(rawUrl)
+  } catch {
+    return null
+  }
+  if (url.origin !== new URL(origin).origin || url.pathname !== EXTENSION_CALLBACK_PATH) return null
+  const params = url.searchParams
+  if (!sameString(params.get("state") ?? "", state)) return { error: "state_mismatch" }
+  const error = params.get("error")
+  if (error) return { error }
+  const code = params.get("code")
+  return code ? { code } : { error: "missing_code" }
 }
