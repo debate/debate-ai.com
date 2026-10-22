@@ -18,6 +18,20 @@ describe("videoListingPath", () => {
     expect(videoListingPath("/videos/24-26")).toBeNull();
   });
 
+  it("opens a season's format as a style filter", () => {
+    expect(videoListingPath("/videos/26-27/ld")).toBe("/videos?year=2027&style=3");
+    expect(videoListingPath("/videos/26-27/cpd")).toBe("/videos?year=2027&style=4");
+    expect(videoListingPath("/videos/26-27/vcx")).toBe("/videos?year=2027&style=1");
+  });
+
+  it("opens a format's tournament only when the watch route found no video there", () => {
+    expect(videoListingPath("/videos/26-27/ld/trevian")).toBeNull();
+    expect(videoListingPath("/videos/26-27/ld/trevian", "", { allowFormatTournament: true })).toBe(
+      "/videos?year=2027&style=3&q=trevian",
+    );
+    expect(videoListingPath("/videos/26-27/ld/trevian/finals", "", { allowFormatTournament: true })).toBeNull();
+  });
+
   it("maps the archive season to the legacy filter", () => {
     expect(videoListingPath("/videos/archive/ndt")).toBe("/videos?year=legacy&q=ndt");
   });

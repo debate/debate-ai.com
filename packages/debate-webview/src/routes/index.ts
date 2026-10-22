@@ -140,6 +140,7 @@ export const CLIENT_ROUTES: AppRoute[] = [
   { pattern: "/videos/[category]/[event]/[matchup]", load: () => import("./_client/VideoWatchRoute") },
   { pattern: "/videos/[category]/[event]/[matchup]/[teams]", load: () => import("./_client/VideoWatchRoute") },
   { pattern: "/videos/[category]/[event]/[matchup]/[teams]/[variant]", load: () => import("./_client/VideoWatchRoute") },
+  { pattern: "/videos/[category]/[event]/[matchup]/[teams]/[variant]/[...rest]", load: () => import("./_client/VideoWatchRoute") },
 ]
 
 export const APP_ROUTES: AppRoute[] = [...PAGE_ROUTES, ...CLIENT_ROUTES]

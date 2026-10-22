@@ -22,20 +22,26 @@ JSON assets in memory with identical semantics.
 
 ## Season and tournament addresses
 
-A video's address starts with its season and tournament
-(`/videos/21-22/ndt/finals/…`). The season is written as the two years it
+A video's address starts with its season, format and tournament
+(`/videos/21-22/cpd/ndt/finals/…`). The format is the division's short name:
+`vcx` (high school policy), `cpd` (college policy), `pf`, `ld`, `wsd`, `acc`
+and `misc`; lectures have none. Links from before the format was added
+(`/videos/21-22/ndt/finals/…`) still work and forward to the new address. The season is written as the two years it
 spans, because a season runs from summer to summer: `21-22` is the season that
 ends in 2022. A publish date from July onward counts toward the next season.
 Older links spelled the season as the year it ended (`/videos/2022/…`); they
 still work and forward to the new address.
 
 An address can be trimmed: `/videos/24-25` opens the library filtered to that
-season, and `/videos/24-25/ndt` filtered to that season with the tournament's
+season, `/videos/24-25/ld` filtered to that season and format
+(`/videos?year=2025&style=3`), and `/videos/24-25/ndt` filtered to that season with the tournament's
 name as the search (`/videos?year=2025&q=ndt`). The bare-year forms
 (`/videos/2025`) still work too. The Worker
 does this with a redirect (`apps/debate-ai.com/lib/redirects/video-listing.ts`)
 before the request reaches the app. `/videos/archive/…` maps to the undated
-(`legacy`) season.
+(`legacy`) season. `/videos/24-25/ld/<tournament>` has the shape of a video's
+address, so the watch route sends it to the filtered library only when no
+video has it.
 
 ## Lecture categories
 
@@ -173,14 +179,14 @@ player — the round, its analysis, each part — with the one you are watching
 marked, so the analysis of a round is one click away.
 
 A video made from a round lives one level below the round's address: the
-2022 NDT final is at `/videos/21-22/ndt/finals/dartmouth-sv-michigan-pr`, and
-its analysis at `/videos/21-22/ndt/finals/dartmouth-sv-michigan-pr/analysis`.
+2024-25 Shirley final is at `/videos/24-25/cpd/shirley/finals/emory-gs-kansas-ls`,
+and a second part of it at `/videos/24-25/cpd/shirley/finals/emory-gs-kansas-ls/part-2`.
 Links shared under the older addresses (`…/dartmouth-sv-vs-michigan-pr-round-analysis`)
 still work and forward to the new one.
 
 A video tagged with a round but no team would have an address that names no
-one video (`/videos/26-27/policy/finals`), so its title is added after the
-round: `/videos/26-27/policy/finals-<title>`, or just the title when it already
+one video (`/videos/26-27/vcx/finals`), so its title is added after the
+round: `/videos/26-27/vcx/finals-<title>`, or just the title when it already
 says the round. The short address still works and forwards to the video it
 always opened.
 

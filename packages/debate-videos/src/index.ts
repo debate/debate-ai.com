@@ -154,8 +154,11 @@ export {
 } from "./lib/video-slug";
 export {
   ARCHIVE_SEASON_SEGMENT,
+  FORMAT_SEGMENTS,
   UNSORTED_EVENT_SEGMENT,
   eventSegment,
+  formatSegment,
+  parseFormatSegment,
   isCanonicalVideoRoute,
   legacyVideoRouteHref,
   previousVideoRouteHref,
@@ -174,6 +177,14 @@ export {
   type VideoRouteSegments,
   type TitleRound,
 } from "./lib/video-route";
+export {
+  DEFAULT_SPEECH_VIEW,
+  SPEECH_PARAM,
+  SPEECH_VIEW_PARAM,
+  SPEECH_VIEW_WORDS,
+  parseSpeechRouteSuffix,
+  speechRouteSuffix,
+} from "./lib/speech-url";
 export { videoPageTitle, type VideoPageTitleRanks } from "./lib/video-page-title";
 export { isRankedSeasonRound, loadVideoTeamRanks, pastCollegeSeason } from "./lib/video-team-ranks";
 export {

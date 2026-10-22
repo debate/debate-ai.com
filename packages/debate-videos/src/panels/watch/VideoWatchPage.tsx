@@ -1185,6 +1185,7 @@ export function VideoWatchPage({
                 markedKeys={markedKeys}
                 speechDetection={speechDetection}
                 extraTabs={sideTabs}
+                routeHref={videoRouteHref(video)}
               />
             </div>
           )}

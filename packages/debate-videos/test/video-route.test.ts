@@ -14,6 +14,7 @@
 import { describe, expect, it } from "vitest";
 import {
   eventSegment,
+  parseFormatSegment,
   isCanonicalVideoRoute,
   legacyVideoRouteHref,
   previousVideoRouteHref,
@@ -53,9 +54,10 @@ const ndtFinal: VideoType = [
 ];
 
 describe("videoRouteSegments", () => {
-  it("files a round under its season, tournament, round and teams", () => {
+  it("files a round under its season, format, tournament, round and teams", () => {
     expect(videoRouteSegments(videoRouteParts(ndtFinal))).toEqual({
       season: "05-06",
+      format: "cpd",
       event: "ndt",
       matchup: "finals",
       teams: "northwestern-gw-michigan-state-bp",
@@ -63,11 +65,27 @@ describe("videoRouteSegments", () => {
   });
 
   it("builds the whole path from a tuple", () => {
-    expect(videoRouteHref(ndtFinal)).toBe("/videos/05-06/ndt/finals/northwestern-gw-michigan-state-bp");
+    expect(videoRouteHref(ndtFinal)).toBe("/videos/05-06/cpd/ndt/finals/northwestern-gw-michigan-state-bp");
   });
 
   it("rebuilds the path with the bare-year season links used before", () => {
-    expect(videoRouteHref(ndtFinal, "year")).toBe("/videos/2006/ndt/finals/northwestern-gw-michigan-state-bp");
+    expect(videoRouteHref(ndtFinal, "year", false)).toBe(
+      "/videos/2006/ndt/finals/northwestern-gw-michigan-state-bp",
+    );
+  });
+
+  it("rebuilds the path from before the format segment", () => {
+    expect(videoRouteHref(ndtFinal, "season", false)).toBe(
+      "/videos/05-06/ndt/finals/northwestern-gw-michigan-state-bp",
+    );
+  });
+
+  it("spells each format the way debaters name the division", () => {
+    const formatOf = (style: 1 | 2 | 3 | 4 | 5 | 6 | 7) =>
+      videoRouteHref({ videoId: "x", title: "t", seasonYear: 2027, style, tournament: "Trevian", roundLevel: "Octafinals", affTeam: "New Trier MY" }).split("/")[3];
+    expect(([1, 2, 3, 4, 5, 6, 7] as const).map(formatOf)).toEqual(["vcx", "pf", "ld", "cpd", "wsd", "acc", "misc"]);
+    expect(parseFormatSegment("CPD")).toBe(4);
+    expect(parseFormatSegment("ndt")).toBeNull();
   });
 
   it("falls back to the format for a round with no tournament", () => {
@@ -80,7 +98,7 @@ describe("videoRouteSegments", () => {
         roundLevel: "Semifinals",
         affTeam: "Dartmouth SV",
       }),
-    ).toBe("/videos/21-22/college/semifinals/dartmouth-sv");
+    ).toBe("/videos/21-22/cpd/semifinals/dartmouth-sv");
   });
 
   it("keeps three segments for a video with no round or no teams", () => {
@@ -102,7 +120,7 @@ describe("videoRouteSegments", () => {
         affTeam: "Dartmouth SV",
         negTeam: "Michigan PR",
       }),
-    ).toBe("/videos/21-22/college-ndt/dartmouth-sv-vs-michigan-pr");
+    ).toBe("/videos/21-22/cpd/ndt/dartmouth-sv-vs-michigan-pr");
   });
 });
 
@@ -169,8 +187,8 @@ describe("videoRouteHref for untagged videos", () => {
         affTeam: "Emory GS",
         negTeam: "Kansas LS",
       });
-    expect(part(1)).toBe("/videos/24-25/shirley/finals/emory-gs-kansas-ls/part-1");
-    expect(part(2)).toBe("/videos/24-25/shirley/finals/emory-gs-kansas-ls/part-2");
+    expect(part(1)).toBe("/videos/24-25/cpd/shirley/finals/emory-gs-kansas-ls/part-1");
+    expect(part(2)).toBe("/videos/24-25/cpd/shirley/finals/emory-gs-kansas-ls/part-2");
   });
 
   it("drops a year trailing the tournament name", () => {
@@ -185,7 +203,7 @@ describe("videoRouteHref for untagged videos", () => {
         affTeam: "Michigan State GL",
         negTeam: "Dartmouth CG",
       }),
-    ).toBe("/videos/25-26/ndt/octafinals/michigan-state-gl-dartmouth-cg");
+    ).toBe("/videos/25-26/cpd/ndt/octafinals/michigan-state-gl-dartmouth-cg");
   });
 });
 
@@ -356,7 +374,7 @@ describe("a video whose tags name no team", () => {
   } as const;
 
   it("adds the title after the round, so the address names one video", () => {
-    expect(videoRouteHref(untaggedFinal)).toBe("/videos/26-27/policy/finals-greenhill-vs-westminster");
+    expect(videoRouteHref(untaggedFinal)).toBe("/videos/26-27/vcx/finals-greenhill-vs-westminster");
   });
 
   it("uses the title alone when it already says the round", () => {
