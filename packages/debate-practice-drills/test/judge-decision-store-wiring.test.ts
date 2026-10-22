@@ -45,7 +45,7 @@ describe("buildJudgeDecisionInputFromStores", () => {
   });
 
   it("reports only the flow summary missing", () => {
-    saveJudgeParadigmSelection({ roundId: "round-1", paradigm: judgeParadigms.flow });
+    saveJudgeParadigmSelection({ roundId: "round-1", paradigm: judgeParadigms.policymaker });
     const result = buildJudgeDecisionInputFromStores("round-1", SIDE_NAMES);
     expect(result).toEqual({ ok: false, missing: ["flowSummary"] });
   });
@@ -58,7 +58,7 @@ describe("buildJudgeDecisionInputFromStores", () => {
 
   it("treats an empty saved summary list as missing", () => {
     saveFlowSummary({ roundId: "round-1", summaries: [] });
-    saveJudgeParadigmSelection({ roundId: "round-1", paradigm: judgeParadigms.flow });
+    saveJudgeParadigmSelection({ roundId: "round-1", paradigm: judgeParadigms.policymaker });
     const result = buildJudgeDecisionInputFromStores("round-1", SIDE_NAMES);
     expect(result).toEqual({ ok: false, missing: ["flowSummary"] });
   });
@@ -78,7 +78,7 @@ describe("buildJudgeDecisionInputFromStores", () => {
 
   it("scopes lookups to the given roundId", () => {
     saveFlowSummary({ roundId: "round-1", summaries: [ROW] });
-    saveJudgeParadigmSelection({ roundId: "round-2", paradigm: judgeParadigms.flow });
+    saveJudgeParadigmSelection({ roundId: "round-2", paradigm: judgeParadigms.policymaker });
 
     const result = buildJudgeDecisionInputFromStores("round-1", SIDE_NAMES);
     expect(result).toEqual({ ok: false, missing: ["judgeParadigm"] });

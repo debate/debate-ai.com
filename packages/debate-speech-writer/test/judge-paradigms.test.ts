@@ -8,6 +8,8 @@ import {
   judgeParadigmIds,
   judgeParadigms,
   listJudgeParadigms,
+  normalizeJudgeParadigmId,
+  SPEAKER_POINTS_POLICY,
 } from "../src/judge/judge-paradigms";
 
 describe("judgeParadigms registry", () => {
@@ -29,10 +31,13 @@ describe("judgeParadigms registry", () => {
     expect(names.size).toBe(Object.keys(judgeParadigms).length);
   });
 
-  it("includes the paradigms named in idea #5", () => {
-    const ids = new Set(judgeParadigmIds);
-    for (const id of ["flow", "lay", "policymaker", "critic", "educator", "truth-tester"]) {
-      expect(ids.has(id as (typeof judgeParadigmIds)[number])).toBe(true);
+  it("offers exactly three judges: tech-over-truth policymaker, critique, then middle-ground flow", () => {
+    expect(judgeParadigmIds).toEqual(["policymaker", "critic", "common-sense"]);
+  });
+
+  it("never promises points through auto-30 arguments, in every paradigm", () => {
+    for (const paradigm of listJudgeParadigms()) {
+      expect(paradigm.instructions).toContain(SPEAKER_POINTS_POLICY);
     }
   });
 
@@ -43,8 +48,18 @@ describe("judgeParadigms registry", () => {
 
 describe("isBuiltinJudgeParadigmId / getJudgeParadigm", () => {
   it("accepts known built-in ids", () => {
-    expect(isBuiltinJudgeParadigmId("flow")).toBe(true);
-    expect(getJudgeParadigm("flow")).toBe(judgeParadigms.flow);
+    expect(isBuiltinJudgeParadigmId("policymaker")).toBe(true);
+    expect(getJudgeParadigm("policymaker")).toBe(judgeParadigms.policymaker);
+  });
+
+  it("maps retired ids to the nearest remaining paradigm", () => {
+    expect(isBuiltinJudgeParadigmId("flow")).toBe(false);
+    expect(normalizeJudgeParadigmId("flow")).toBe("policymaker");
+    expect(getJudgeParadigm("flow")).toBe(judgeParadigms.policymaker);
+    for (const id of ["lay", "educator", "truth-tester"]) {
+      expect(getJudgeParadigm(id)).toBe(judgeParadigms["common-sense"]);
+    }
+    expect(normalizeJudgeParadigmId("made-up")).toBeNull();
   });
 
   it("rejects unknown ids without throwing", () => {
@@ -60,8 +75,13 @@ describe("isBuiltinJudgeParadigmId / getJudgeParadigm", () => {
 
 describe("getJudgeParadigmByName", () => {
   it("resolves a built-in paradigm by its exact display name", () => {
-    expect(getJudgeParadigmByName("Flow / Tech Judge")).toBe(judgeParadigms.flow);
-    expect(getJudgeParadigmByName("Policymaker")).toBe(judgeParadigms.policymaker);
+    expect(getJudgeParadigmByName("Tech Over Truth Policymaker")).toBe(judgeParadigms.policymaker);
+    expect(getJudgeParadigmByName("Critique (K) Judge")).toBe(judgeParadigms.critic);
+  });
+
+  it("resolves a retired paradigm's name to its replacement", () => {
+    expect(getJudgeParadigmByName("Flow / Tech Judge")).toBe(judgeParadigms.policymaker);
+    expect(getJudgeParadigmByName("Lay / Community Judge")).toBe(judgeParadigms["common-sense"]);
   });
 
   it("returns null for an unknown name, including a custom paradigm's label", () => {
@@ -120,12 +140,12 @@ describe("buildCustomJudgeParadigm", () => {
 
 describe("buildJudgeParadigmPrompt", () => {
   it("includes the paradigm name, priorities, tolerances, and instructions", () => {
-    const prompt = buildJudgeParadigmPrompt(judgeParadigms.flow);
+    const prompt = buildJudgeParadigmPrompt(judgeParadigms.policymaker);
 
-    expect(prompt).toContain("Judge Paradigm: Flow / Tech Judge");
+    expect(prompt).toContain("Judge Paradigm: Tech Over Truth Policymaker");
     expect(prompt).toContain("1. Dropped or conceded arguments");
     expect(prompt).toContain("Speed tolerance: high. Jargon tolerance: high.");
-    expect(prompt).toContain(judgeParadigms.flow.instructions);
+    expect(prompt).toContain(judgeParadigms.policymaker.instructions);
   });
 
   it("omits the voting-priorities section for a custom paradigm with none", () => {

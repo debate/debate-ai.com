@@ -137,7 +137,7 @@ export function buildResearchSampleData(cards: readonly SampleCard[], now: numbe
 
 /** Tournaments the scouting sample's rounds are dated at. */
 const SAMPLE_TOURNAMENTS = ["Greenhill", "Glenbrooks", "Harvard", "Berkeley", "Emory", "TOC Qualifier"]
-const SAMPLE_PARADIGMS: BuiltinJudgeParadigmId[] = ["flow", "policymaker", "critic", "lay"]
+const SAMPLE_PARADIGMS: BuiltinJudgeParadigmId[] = ["policymaker", "critic", "common-sense", "policymaker"]
 
 function isoDay(epoch: number): string {
   return new Date(epoch).toISOString().slice(0, 10)

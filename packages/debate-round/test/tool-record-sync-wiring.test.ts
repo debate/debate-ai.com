@@ -61,7 +61,7 @@ afterEach(() => {
 });
 
 describe("practice rounds", () => {
-  const setup = buildPracticeRoundSetup({ styleKey: "lincolnDouglas", judgeParadigm: "lay" });
+  const setup = buildPracticeRoundSetup({ styleKey: "lincolnDouglas", judgeParadigm: "common-sense" });
 
   it("mirrors a save and a delete under the round id", async () => {
     savePracticeRound({ roundId: "round-1", setup });

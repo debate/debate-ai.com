@@ -40,7 +40,7 @@ describe("speech outcome responses prompt", () => {
         { speech: "CX", side: null, text: "   " },
       ],
       flowText: "- 1AC: Warming | 1NC: No impact",
-      judge: { name: "Judge Lee", paradigm: judgeParadigms.lay, tendencySummary: "Judge Lee: 4 rounds" },
+      judge: { name: "Judge Lee", paradigm: judgeParadigms["common-sense"], tendencySummary: "Judge Lee: 4 rounds" },
       focus: "Go for the turn",
     });
     expect(prompt).toContain("Speech to prepare: 2AC (Aff)");
@@ -50,7 +50,7 @@ describe("speech outcome responses prompt", () => {
     expect(prompt).not.toContain("--- CX");
     expect(prompt).toContain("1NC: No impact");
     expect(prompt).toContain("Judge Lee");
-    expect(prompt).toContain(judgeParadigms.lay.name);
+    expect(prompt).toContain(judgeParadigms["common-sense"].name);
     expect(prompt).toContain("Go for the turn");
   });
 
