@@ -207,9 +207,11 @@ Optional: `paceWpm`, `theoryArgumentRaised`/`theoryArgumentWon`
 (true/false, or yes/no, 1/0 — a blank cell defaults to `false`, and
 "won" is forced false whenever "raised" is false, mirroring the log
 form's own rule that a theory argument can't be won without being raised),
-and `paradigmId` (one of the built-in paradigm ids — `flow`, `lay`,
-`policymaker`, `critic`, `educator`, `truth-tester` — matched
-case-insensitively, or left blank for "not tagged").
+and `paradigmId` (one of the built-in paradigm ids — `policymaker`, `critic`,
+`common-sense` — matched case-insensitively, or left blank for "not tagged";
+a retired id such as `flow` or `lay` is mapped to its replacement via
+`normalizeJudgeParadigmId`, which `buildJudgeProfile` also applies to
+records stored before the set was narrowed).
 
 A row that fails to parse — a missing required field, an unrecognized
 `winningSide`/boolean/`paradigmId`, or a non-numeric points/pace value — is

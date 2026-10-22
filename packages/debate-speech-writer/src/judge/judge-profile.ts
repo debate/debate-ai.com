@@ -11,7 +11,7 @@
  * `JudgeRoundRecord`s, e.g. reconstructed from tab-service ballots.
  */
 
-import { type BuiltinJudgeParadigmId } from "./judge-paradigms";
+import { normalizeJudgeParadigmId, type BuiltinJudgeParadigmId } from "./judge-paradigms";
 
 export type DebateSide = "aff" | "neg";
 
@@ -164,8 +164,10 @@ export function buildJudgeProfile(
 
   const paradigmCounts = new Map<BuiltinJudgeParadigmId, number>();
   for (const record of records) {
-    if (!record.paradigmId) continue;
-    paradigmCounts.set(record.paradigmId, (paradigmCounts.get(record.paradigmId) ?? 0) + 1);
+    // Records saved before the paradigm set was narrowed may carry a retired id.
+    const paradigmId = record.paradigmId ? normalizeJudgeParadigmId(record.paradigmId) : null;
+    if (!paradigmId) continue;
+    paradigmCounts.set(paradigmId, (paradigmCounts.get(paradigmId) ?? 0) + 1);
   }
   let mostCommonParadigm: BuiltinJudgeParadigmId | null = null;
   let bestCount = 0;

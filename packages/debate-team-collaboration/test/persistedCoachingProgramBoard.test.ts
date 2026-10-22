@@ -182,7 +182,7 @@ describe("buildPersistedCoachingProgramBoard", () => {
       sideKey: "A",
       flow: { columns: ["1AC", "1NC"], children: [] },
     });
-    const setup = buildPracticeRoundSetup({ styleKey: "lincolnDouglas", judgeParadigm: "lay" });
+    const setup = buildPracticeRoundSetup({ styleKey: "lincolnDouglas", judgeParadigm: "common-sense" });
     savePracticeRound({ roundId: "round-1", setup });
 
     const board = buildPersistedCoachingProgramBoard("varsity", "solvency", NOW);
@@ -213,7 +213,7 @@ describe("buildPersistedCoachingProgramBoard", () => {
     });
     savePracticeRound({
       roundId: "round-1",
-      setup: buildPracticeRoundSetup({ styleKey: "lincolnDouglas", judgeParadigm: "lay" }),
+      setup: buildPracticeRoundSetup({ styleKey: "lincolnDouglas", judgeParadigm: "common-sense" }),
     });
 
     const override: CoachingProgramMemberPracticeRound[] = [];
