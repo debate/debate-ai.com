@@ -44,6 +44,7 @@ describe("WatchSidePanel by speech", () => {
   afterEach(() => {
     act(() => root.unmount());
     container.remove();
+    window.history.replaceState({}, "", "/");
   });
 
   function render(
@@ -106,6 +107,30 @@ describe("WatchSidePanel by speech", () => {
     expect(selectedSpeech()).toBe("1AC(playing)");
     render([summary, transcript], { currentTime: 6 * 60 + 5 });
     expect(selectedSpeech()).toBe("1AX(playing)");
+  });
+
+  it("opens the speech and view a link names", () => {
+    window.history.replaceState({}, "", "/videos/x?speech=1nc&tab=transcript");
+    render([summary, transcript]);
+    expect(selectedSpeech()).toBe("1NC");
+    expect(panelText()).toContain("Five off.");
+    expect(container.querySelector('[aria-label="1NC views"] [aria-selected="true"]')?.textContent).toBe("Transcript");
+  });
+
+  it("writes the open speech and view into the URL", () => {
+    window.history.replaceState({}, "", "/videos/x?t=5");
+    render([summary, transcript]);
+    // Landing on the first speech leaves the address alone.
+    expect(window.location.search).toBe("?t=5");
+    act(() => speechTabs()[1].click());
+    expect(new URLSearchParams(window.location.search).get("speech")).toBe("1ax");
+    const transcriptView = Array.from(container.querySelectorAll('[role="tab"]')).find(
+      (tab) => tab.textContent === "Transcript",
+    ) as HTMLButtonElement;
+    act(() => transcriptView.click());
+    const params = new URLSearchParams(window.location.search);
+    expect(params.get("tab")).toBe("transcript");
+    expect(params.get("t")).toBe("5");
   });
 
   it("opens a speech the timeline asks for", () => {

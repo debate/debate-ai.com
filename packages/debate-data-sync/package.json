@@ -48,7 +48,7 @@
   "dependencies": {
     "@libsql/client": "^0.18.0",
     "@debate/card-parser": "workspace:*",
-    "extract-youtube": "^1.0.477",
+    "extract-youtube": "^1.0.521",
     "grab-url": "^3.0.7",
     "jszip": "^3.10.2",
     "linkedom": "^0.18.13",
@@ -56,8 +56,8 @@
   },
   "devDependencies": {
     "@types/node": "^26.6.5",
-    "@vitest/coverage-v8": "^5.0.3",
+    "@vitest/coverage-v8": "^5.0.5",
     "typescript": "^7.0.2",
-    "vitest": "^5.0.3"
+    "vitest": "^5.0.5"
   }
 }

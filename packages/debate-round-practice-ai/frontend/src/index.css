@@ -1,6 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@import "tailwind-scrollbar-hide/v4";
+@config "../tailwind.config.js";
 @layer base {
   
   :root {

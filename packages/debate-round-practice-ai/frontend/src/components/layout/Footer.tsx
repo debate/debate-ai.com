@@ -1,7 +1,7 @@
 // src/components/layout/Footer.tsx
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Github, MessageCircle, Heart } from 'lucide-react';
+import { GitFork, MessageCircle, Heart } from 'lucide-react';
 import debateAiLogo from '@/assets/aossie.png';
 
 function Footer() {
@@ -75,7 +75,7 @@ function Footer() {
             rel="noopener noreferrer"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
           >
-            <Github className="h-4 w-4" /> GitHub
+            <GitFork className="h-4 w-4" /> GitHub
           </a>
         </div>
       </div>

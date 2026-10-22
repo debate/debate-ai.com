@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Builds the debate-ai profile's "offline" source into dist/offline/: the
+// Builds the active profile's "offline" source into dist/offline/: the
 // whole debate-ai.com app (packages/debate-webview) as a bundled page, which
 // the window loads instead of a site when the user picks "Offline" in the
 // wrapper's settings. Host code is offline/main.tsx.
@@ -11,7 +11,7 @@
 // Tailwind rather than adding either to this package. Without dist/offline/
 // the app still builds, and the splash opens the site instead.
 
-import { existsSync, mkdirSync, rmSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { createRequire } from "node:module";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -23,6 +23,14 @@ const repoRoot = path.resolve(rootDir, "../..");
 const webviewDir = path.join(repoRoot, "packages/debate-webview");
 const extDir = path.join(repoRoot, "apps/debate-browser-ext");
 const outDir = path.join(rootDir, "dist/offline");
+
+// The site the offline build sends `/api` and sign-in to, and its page title,
+// come from the same profile scripts/configure.mjs reads.
+const profileName = process.argv.includes("--profile")
+  ? process.argv[process.argv.indexOf("--profile") + 1]
+  : (process.env.WRAPPER_PROFILE ?? "debate-ai");
+const profile = JSON.parse(readFileSync(path.join(rootDir, "profiles", `${profileName}.json`), "utf8"));
+const site = profile.offline?.site ?? profile.url;
 
 if (!existsSync(path.join(webviewDir, "node_modules"))) {
   console.error("[native-wrapper] packages/debate-webview is not installed; run `bun install` at the repo root first.");
@@ -57,10 +65,15 @@ await build({
   // Rolldown's notes about "use client" directives and chunking are noise for
   // a page loaded from disk; real errors still fail the build.
   logLevel: "error",
-  plugins: [stubNodeBuiltins(), noRemoteCode(createPackageFileResolver(repoRoot, workspaceDirs))],
+  plugins: [
+    stubNodeBuiltins(),
+    noRemoteCode(createPackageFileResolver(repoRoot, workspaceDirs)),
+    { name: "wrapper-app-name", transformIndexHtml: (html) => html.replaceAll("%WRAPPER_APP_NAME%", profile.appName) },
+  ],
   define: {
-    "process.env.NEXT_PUBLIC_APP_URL": JSON.stringify("https://debate-ai.com"),
-    "process.env.NEXT_PUBLIC_BASE_URL": JSON.stringify("https://debate-ai.com"),
+    __WRAPPER_SITE__: JSON.stringify(site),
+    "process.env.NEXT_PUBLIC_APP_URL": JSON.stringify(site),
+    "process.env.NEXT_PUBLIC_BASE_URL": JSON.stringify(site),
     "process.env": "{}",
   },
   resolve: {
