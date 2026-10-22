@@ -7,7 +7,8 @@ import { defineConfig } from "vitest/config";
  * the repo root so the root stays free of tool configs.
  *
  * Every workspace package under `packages/*` is registered as a project, and
- * so are the two apps with tests (this web app and the browser extension), so
+ * so are the three apps with tests (this web app, the browser extension and
+ * the native wrapper), so
  * a single `bun run test` (at the root or in this folder) runs every suite,
  * and a single `bun run coverage` produces one merged `coverage/lcov.info`
  * covering both `packages/` and `apps/` for Codecov to ingest.
@@ -64,6 +65,11 @@ export default defineConfig({
       // The browser extension carries its own config (jsdom, its own `@`
       // alias), so it's registered by path and runs under that config.
       "apps/debate-browser-ext",
+      // The native wrapper is outside the workspace too: its profile ->
+      // generated files mapping and offline host page run under its own config
+      // (jsdom, the offline build's site constant). Its Rust tests report
+      // coverage separately, from native-wrapper-ci.yml.
+      "apps/debate-native-wrapper",
       // The web app has no test/ folder for the glob above to find, but parts
       // of apps/debate-ai.com/lib are plain Node libraries worth unit testing
       // (the D1 read-replication session wrapper, for one). Registered inline
@@ -98,6 +104,10 @@ export default defineConfig({
         "apps/debate-web/{app,lib,worker}/**/*.{ts,tsx}",
         // The browser extension's source, entrypoints and UI.
         "apps/debate-browser-ext/{src,lib,entrypoints,components}/**/*.{ts,tsx}",
+        // The native wrapper's JavaScript: the profile mapping configure.mjs
+        // writes out, and the offline build's host page.
+        "apps/debate-native-wrapper/scripts/wrapper-config.mjs",
+        "apps/debate-native-wrapper/offline/**/*.{ts,tsx}",
       ],
       exclude: [
         "**/*.d.ts",

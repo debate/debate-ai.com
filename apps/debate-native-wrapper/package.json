@@ -9,6 +9,8 @@
   "scripts": {
     "tauri": "tauri",
     "configure": "node scripts/configure.mjs",
+    "test": "vitest run",
+    "coverage": "vitest run --coverage",
     "icons": "node scripts/generate-icons.mjs",
     "build:offline": "bun scripts/build-offline.mjs",
     "predev": "node scripts/configure.mjs",
@@ -32,7 +34,12 @@
     "docker:build:all": "bash scripts/build-docker.sh --all"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^2.12.4"
+    "@tauri-apps/cli": "^2.12.4",
+    "@vitest/coverage-v8": "^5.0.5",
+    "jsdom": "^30.1.3",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "vitest": "^5.0.5"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.12.4",
