@@ -484,7 +484,7 @@ export function VideoWatchPage({
         styleNumber,
       )
       if (detectVideoRef.current !== forVideo) return
-      writeSpeechSegmentation(forVideo, result)
+      writeSpeechSegmentation(forVideo, result, source === "pauses" ? "pauses" : "ai")
       setSegmentation(result)
       // Only the AI's answer is worth sharing; the pause fallback is free to rerun.
       if (source !== "pauses") {

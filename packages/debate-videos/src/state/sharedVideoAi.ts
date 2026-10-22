@@ -8,6 +8,11 @@
  * server keeps the first good result and ignores later ones unless an admin
  * asked to replace it, so a share never overwrites what others already see.
  *
+ * Sharing is the default, with nothing kept private: once the shared copy
+ * has loaded, `backfillSharedVideoAi` offers up every result this browser
+ * ran for the video that the shared store is still missing — including runs
+ * made before sharing existed.
+ *
  * Kept in memory, not `localStorage`: the per-browser caches
  * (`speechAiCache.ts`, `speechOutcomeCache.ts`) hold what *this* reader ran
  * and are capped and account-synced, and filling them with every video's
@@ -17,6 +22,8 @@
  */
 
 import { useEffect, useState } from "react";
+import { readSpeechSegmentation, readSpeechSegmentationSource, readSpeechSummaries } from "./speechAiCache";
+import { cachedSpeechOutcomes } from "./speechOutcomeCache";
 import {
   EMPTY_SHARED_VIDEO_AI,
   isSharedVideoId,
@@ -65,6 +72,7 @@ export function loadSharedVideoAi(videoId: string): Promise<SharedVideoAi> {
       const merged = local ? mergeShared(shared, local) : shared;
       loaded.set(videoId, merged);
       emit(videoId);
+      void backfillSharedVideoAi(videoId, merged);
       return merged;
     })
     .catch(() => EMPTY_SHARED_VIDEO_AI)
@@ -98,6 +106,8 @@ function withItem(shared: SharedVideoAi, item: SharedVideoAiItem): SharedVideoAi
  * in the reader's own browser. When the server already held a result it
  * answers with it, and that stored copy becomes this page's shared one.
  *
+ * @returns The response status, or `0` when the request never completed.
+ *
  * @param replace - Ask to overwrite an existing result; the server honours
  *   it for admins only (their "Run again" regenerates the shared copy).
  */
@@ -105,21 +115,52 @@ export async function shareVideoAiResult(
   videoId: string,
   item: SharedVideoAiItem,
   { replace = false }: { replace?: boolean } = {},
-): Promise<void> {
-  if (!isSharedVideoId(videoId) || typeof fetch === "undefined") return;
+): Promise<number> {
+  if (!isSharedVideoId(videoId) || typeof fetch === "undefined") return 0;
   try {
     const res = await fetch(SHARED_VIDEO_AI_ENDPOINT, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ videoId, ...item, replace }),
     });
-    if (!res.ok) return;
+    if (!res.ok) return res.status;
     const json = (await res.json()) as { item?: SharedVideoAiItem };
     const stored = json.item ?? item;
     loaded.set(videoId, withItem(peekSharedVideoAi(videoId), stored));
     emit(videoId);
+    return res.status;
   } catch {
     // Offline or blocked — the run is still in this browser.
+    return 0;
+  }
+}
+
+const backfilled = new Set<string>();
+
+/**
+ * Shares what this browser already ran for a video and the shared store
+ * lacks: its AI speech detection (not one placed from caption pauses), its
+ * speech outlines and its Outcomes runs. Once per video per page load;
+ * each write is first-come, so this never displaces another viewer's result.
+ */
+export async function backfillSharedVideoAi(videoId: string, shared: SharedVideoAi): Promise<void> {
+  if (backfilled.has(videoId)) return;
+  backfilled.add(videoId);
+  const items: SharedVideoAiItem[] = [];
+  const segmentation = readSpeechSegmentation(videoId);
+  if (segmentation && !shared.segmentation && readSpeechSegmentationSource(videoId) !== "pauses") {
+    items.push({ kind: "segmentation", key: "", data: segmentation });
+  }
+  for (const [key, outline] of Object.entries(readSpeechSummaries(videoId))) {
+    if (!(key in shared.summaries)) items.push({ kind: "summary", key, data: outline });
+  }
+  for (const run of cachedSpeechOutcomes(videoId)) {
+    const key = outcomeKey(run.speechKey, run.lens);
+    if (!(key in shared.outcomes)) items.push({ kind: "outcome", key, data: run.simulation });
+  }
+  for (const item of items) {
+    // Signed out: every other write would be refused the same way.
+    if ((await shareVideoAiResult(videoId, item)) === 401) break;
   }
 }
 
@@ -137,6 +178,7 @@ export function sharedOutcomeSpeechKeys(shared: SharedVideoAi): string[] {
 export function resetSharedVideoAi(): void {
   loaded.clear();
   pending.clear();
+  backfilled.clear();
 }
 
 /**

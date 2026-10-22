@@ -87,6 +87,11 @@ export function writeCachedSpeechOutcome(run: Omit<CachedSpeechOutcome, "id">): 
   writeLocalRecords(SPEECH_OUTCOME_CACHE_KEY, [{ ...run, id }, ...rest].slice(0, MAX_CACHED_RUNS));
 }
 
+/** Every cached run of one video. */
+export function cachedSpeechOutcomes(videoId: string): CachedSpeechOutcome[] {
+  return readAll().filter((run) => run.videoId === videoId);
+}
+
 /** The speech keys of one video that have a run under any panel — marks them on the tab strip. */
 export function cachedSpeechKeys(videoId: string): Set<string> {
   return new Set(readAll().filter((run) => run.videoId === videoId).map((run) => run.speechKey));

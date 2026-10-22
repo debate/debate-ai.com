@@ -264,7 +264,13 @@ falls back to the shared copy: `VideoWatchPage` and `VideoMiniPlayer` for
 the segmentation, `WatchRoundPanel` for outlines and the sparkle marks,
 `WatchSpeechOutcomes` for runs. After a fresh AI run each panel calls
 `shareVideoAiResult` fire-and-forget; the caption-pause fallback for
-speech detection is not shared.
+speech detection is not shared. Sharing is the default and nothing stays
+private: once a video's shared copy loads, `backfillSharedVideoAi` offers
+every result this browser already has that the store lacks — runs made
+before sharing shipped included — once per video per page load, stopping
+at the first 401 (signed out). `speechAiCache` now records a
+segmentation's `source` so a pause-placed one is not backfilled; records
+saved before that field are treated as AI detections.
 
 The app side is `app/api/video-ai-results/route.ts` over
 `lib/video-ai-results/queries.ts` and the `video_ai_results` table
