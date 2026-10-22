@@ -1,4 +1,4 @@
-import { BookOpen, Settings2, Smartphone, Timer } from 'lucide-react';
+import { BookOpen, FileText, Smartphone, Timer } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { browser } from 'wxt/browser';
 
@@ -15,7 +15,7 @@ import {
 import { openReaderForTab } from '@/src/reader/panel';
 import { getSettings } from '@/src/settings/settings';
 import { requestTimerWindow } from '@/src/timer/window';
-import { openExtensionSettings } from '@/src/settings/open';
+import { openLocalApp } from '@/src/settings/open';
 
 /**
  * Corpus matches annotated automatically when the popup opens on a signed-in
@@ -175,12 +175,12 @@ export default function App() {
         variant="outline"
         className="mb-2 w-full"
         onClick={() => {
-          openExtensionSettings();
+          openLocalApp();
           window.close();
         }}
       >
-        <Settings2 className="mr-2 h-4 w-4" />
-        Extension options
+        <FileText className="mr-2 h-4 w-4" />
+        Open Debate AI (local)
       </Button>
 
       <Button
