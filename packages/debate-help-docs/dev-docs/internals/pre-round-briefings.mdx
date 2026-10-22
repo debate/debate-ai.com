@@ -319,7 +319,17 @@ a trend pill, and by-division and by-argument meters) and re-reads on a
 of the Prep Workspace (`/practice/prep?section=stats`) and in the Coach Hub's
 Prep section. Covered by `test/DebaterStatsPanel.test.tsx`.
 
-Known gaps: fallacy frequency, argument length and topic expertise from the
-"Analytics Dashboard for Debaters" idea are absent because no store records
-them, and the panel is read-only — rounds are still logged from the Pre-Round
-Briefings "Log a round" form.
+Speech length: `OpponentRoundRecord.speechWordCount` is an optional field the
+"Log a round" form fills from its "Words spoken" input (blank = not logged;
+anything but a positive whole number is rejected). `buildDebaterStats` returns
+`speechLength` — the average over rounds that logged a count, split into wins
+and losses (`null` where none did; zero, negative and non-finite counts are
+ignored). The panel shows a "Speech length" section only when at least one
+round has a count. Records sync as opaque JSON, so no schema change was needed.
+
+Known gaps: fallacy frequency and topic expertise from the "Analytics Dashboard
+for Debaters" idea are absent because no store records them; the word count is
+typed by hand rather than derived from the round's flow; the log form has no
+argument-tag input, so the by-argument breakdown only fills from other
+sources; and the panel is read-only — rounds are still logged from the
+Pre-Round Briefings "Log a round" form.

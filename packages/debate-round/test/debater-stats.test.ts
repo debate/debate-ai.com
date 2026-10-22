@@ -91,4 +91,45 @@ describe("buildDebaterStats", () => {
     ];
     expect(buildDebaterStats(records).recent.winRate).toBe(1);
   });
+
+  describe("speech length", () => {
+    it("reports nulls when no round logged a word count", () => {
+      expect(buildDebaterStats([round(), round({ won: false })]).speechLength).toEqual({
+        rounds: 0,
+        averageWords: null,
+        averageWordsInWins: null,
+        averageWordsInLosses: null,
+      });
+    });
+
+    it("averages word counts overall and across wins and losses", () => {
+      const { speechLength } = buildDebaterStats([
+        round({ speechWordCount: 4000, won: true }),
+        round({ speechWordCount: 5000, won: true }),
+        round({ speechWordCount: 3000, won: false }),
+        round({ won: false }),
+      ]);
+      expect(speechLength).toEqual({
+        rounds: 3,
+        averageWords: 4000,
+        averageWordsInWins: 4500,
+        averageWordsInLosses: 3000,
+      });
+    });
+
+    it("ignores zero, negative and non-finite counts", () => {
+      const { speechLength } = buildDebaterStats([
+        round({ speechWordCount: 0 }),
+        round({ speechWordCount: -5 }),
+        round({ speechWordCount: Number.NaN }),
+        round({ speechWordCount: 1000 }),
+      ]);
+      expect(speechLength).toMatchObject({ rounds: 1, averageWords: 1000 });
+    });
+
+    it("leaves a side null when only the other side has counts", () => {
+      const { speechLength } = buildDebaterStats([round({ speechWordCount: 2500, won: true })]);
+      expect(speechLength.averageWordsInLosses).toBeNull();
+    });
+  });
 });

@@ -28,6 +28,8 @@ export interface OpponentRoundRecord {
   caseName?: string;
   /** The opposing team's id for this round, if tracked — enables head-to-head lookups. */
   opponentTeamId?: string;
+  /** Words this team spoke across its speeches that round, if tracked — feeds the debater stats' speech-length breakdown. */
+  speechWordCount?: number;
 }
 
 /** Minimum rounds recorded before `hasNotableSidePreference` can be flagged. */
