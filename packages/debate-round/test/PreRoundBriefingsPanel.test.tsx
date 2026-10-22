@@ -22,6 +22,7 @@ vi.mock("../src/round/round-pairings-client", () => ({
 
 import { PreRoundBriefingsPanel } from "../src/panels/PreRoundBriefingsPanel"
 import { recordOpponentRound } from "@debate/data-sync/src/state/opponentRoundRecords"
+import { listOwnRoundHistory } from "../src/state/ownRoundHistory"
 import { savePreRoundBriefing, buildPreRoundBriefingRecordFromDraft } from "../src/state/preRoundBriefings"
 import {
   cleanup,
@@ -207,6 +208,32 @@ describe("PreRoundBriefingsPanel", () => {
     const remove = buttons().find((b) => b.textContent === "Remove")
     await click(remove)
     expect(bodyText()).not.toContain("vs. Westlake AB: L")
+  })
+
+  it("stores an optional words-spoken count on a logged round and rejects an invalid one", async () => {
+    seedOpponent()
+    await renderPanel()
+    await typeInto($("#round-log-tournament"), "Blake")
+    await typeInto($("#round-log-date"), "2026-02-01")
+    await typeInto($("#round-log-division"), "LD")
+    await flush()
+    await choose(select("round-log-opponent"), "Westlake AB")
+
+    await typeInto($("#round-log-words"), "1.5")
+    await click(buttonByText("Log round"))
+    expect(bodyText()).toContain("Words spoken must be a whole number above zero")
+    expect(listOwnRoundHistory()).toHaveLength(0)
+
+    await typeInto($("#round-log-words"), "4200")
+    await click(buttonByText("Log round"))
+    expect(listOwnRoundHistory()).toMatchObject([{ speechWordCount: 4200 }])
+    expect($("#round-log-words")!.value).toBe("")
+
+    // Blank leaves the field off the record entirely.
+    await typeInto($("#round-log-date"), "2026-02-02")
+    await choose(select("round-log-opponent"), "Westlake AB")
+    await click(buttonByText("Log round"))
+    expect(listOwnRoundHistory()[1]).not.toHaveProperty("speechWordCount")
   })
 
   it("re-reads briefings and own-round history when another tab writes them", async () => {
