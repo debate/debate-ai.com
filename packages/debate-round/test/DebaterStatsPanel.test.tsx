@@ -59,6 +59,18 @@ describe("DebaterStatsPanel", () => {
     expect(text).toContain("Not enough rounds yet")
   })
 
+  it("shows the current streak and a by-case breakdown", async () => {
+    logRound("r1", { date: "2026-01-01", won: false, caseName: "Space Aff" })
+    logRound("r2", { date: "2026-01-02", won: true, caseName: "Space Aff" })
+    logRound("r3", { date: "2026-01-03", won: true })
+    await mount(createElement(DebaterStatsPanel))
+    await flush()
+    const text = bodyText()
+    expect(text).toContain("2-round win streak")
+    expect(text).toContain("By case")
+    expect(text).toContain("Space Aff")
+  })
+
   it("re-reads when another tab changes the round history", async () => {
     await mount(createElement(DebaterStatsPanel))
     await flush()

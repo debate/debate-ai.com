@@ -49,6 +49,7 @@
   - [x] Pure stats model + Vitest
   - [x] `DebaterStatsPanel` mounted in the Prep Workspace ("Debater Stats" tab) and the Coach Hub Prep section, with Vitest
   - [x] Base blocker cleared: no merge-conflict markers remain on `master`; `bun run typecheck` (29/29 tasks) and `bun run build:web` pass
+  - [x] Per-case breakdown (`byCase`, from the logged `caseName`) and current win/loss streak added to the stats model and panel (2026-10-22; branch `claude/gifted-babbage-4vvf7j`)
   - [ ] Follow-up (deferred): record fallacy/argument-length data so those stats can be added
   - [x] Follow-up (pre-existing, unrelated): the sidebar tests asserting the old four-section nav were updated to Research / Coaching / Insights in `f09ee1c` and `a394e02` (verified 2026-10-21: `debate-videos` sidebar tests, `debate-webview` `judge-link.test.ts` and `dock-menu-sections.test.ts` pass). Remaining local failures in `debate-videos` / `site-footer` tests only occur when the `packages/debate-rankings` git submodule is not checked out (`git submodule update --init`)
 

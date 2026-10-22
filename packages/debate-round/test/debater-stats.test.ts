@@ -91,4 +91,25 @@ describe("buildDebaterStats", () => {
     ];
     expect(buildDebaterStats(records).recent.winRate).toBe(1);
   });
+
+  it("groups by case name, skipping rounds without one", () => {
+    const stats = buildDebaterStats([
+      round({ caseName: "Space Aff", won: true }),
+      round({ caseName: "Space Aff", won: false }),
+      round({ caseName: "  " }),
+      round({}),
+    ]);
+    expect(stats.byCase).toEqual([{ label: "Space Aff", rounds: 2, wins: 1, losses: 1, winRate: 0.5 }]);
+  });
+
+  it("measures the streak ending at the most recent round", () => {
+    expect(buildDebaterStats([]).streak).toEqual({ kind: null, length: 0 });
+    const stats = buildDebaterStats([
+      round({ date: "2026-01-01", won: false }),
+      round({ date: "2026-01-02", won: true }),
+      round({ date: "2026-01-03", won: true }),
+    ]);
+    expect(stats.streak).toEqual({ kind: "win", length: 2 });
+    expect(buildDebaterStats([round({ won: false })]).streak).toEqual({ kind: "loss", length: 1 });
+  });
 });
