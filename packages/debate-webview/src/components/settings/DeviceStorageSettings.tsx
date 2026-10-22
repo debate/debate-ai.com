@@ -8,9 +8,7 @@ import {
   subscribeBulkStorage,
   type BulkStorageStatus,
 } from "@debate/data-sync/src/state/bulk-storage"
-import { EXTENSION_ID } from "../../lib/config/site"
-
-const EXTENSION_STORE_URL = `https://chromewebstore.google.com/detail/${EXTENSION_ID}`
+import { EXTENSION_STORE_URL } from "../../lib/config/site"
 
 function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`
