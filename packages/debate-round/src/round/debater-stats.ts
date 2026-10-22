@@ -6,9 +6,8 @@
  * breakdowns, and a recent-form trend.
  *
  * It computes only what the logged records carry (including the optional
- * `caseName` and the current win/loss streak). Fallacy frequency and argument
- * length from the idea need data no store records yet and are deliberately
- * absent. Rendered by `panels/DebaterStatsPanel.tsx`.
+ * `speechWordCount`). Fallacy frequency and topic expertise from the idea need
+ * data no store records yet and are deliberately absent. Rendered by `panels/DebaterStatsPanel.tsx`.
  *
  * @module round/debater-stats
  */
@@ -34,10 +33,13 @@ export interface LabeledWinLossRecord extends WinLossRecord {
 /** Whether recent form is above, below or level with the all-time rate. */
 export type FormTrend = "improving" | "declining" | "steady" | "insufficient-data";
 
-/** The run of identical results ending at the latest round. */
-export interface Streak {
-  kind: "win" | "loss" | null;
-  length: number;
+/** Average spoken words per round, and how that splits across wins and losses. `null` where no round carries a count. */
+export interface SpeechLengthStats {
+  /** Rounds that logged a word count. */
+  rounds: number;
+  averageWords: number | null;
+  averageWordsInWins: number | null;
+  averageWordsInLosses: number | null;
 }
 
 export interface DebaterStats {
@@ -55,6 +57,7 @@ export interface DebaterStats {
   /** The latest {@link RECENT_FORM_WINDOW} rounds by date. */
   recent: WinLossRecord;
   trend: FormTrend;
+  speechLength: SpeechLengthStats;
 }
 
 /** A trend needs this many rounds before the recent window means anything. */
@@ -90,6 +93,27 @@ function groupBy(
   return [...groups.entries()]
     .map(([label, group]) => ({ label, ...tally(group) }))
     .sort((a, b) => b.rounds - a.rounds || a.label.localeCompare(b.label));
+}
+
+function average(values: readonly number[]): number | null {
+  return values.length === 0 ? null : Math.round(values.reduce((sum, value) => sum + value, 0) / values.length);
+}
+
+/** Only a finite, positive count is a usable measurement; anything else is treated as not logged. */
+function wordCounts(records: readonly OpponentRoundRecord[]): number[] {
+  return records
+    .map((record) => record.speechWordCount)
+    .filter((count): count is number => typeof count === "number" && Number.isFinite(count) && count > 0);
+}
+
+function buildSpeechLength(records: readonly OpponentRoundRecord[]): SpeechLengthStats {
+  const all = wordCounts(records);
+  return {
+    rounds: all.length,
+    averageWords: average(all),
+    averageWordsInWins: average(wordCounts(records.filter((record) => record.won))),
+    averageWordsInLosses: average(wordCounts(records.filter((record) => !record.won))),
+  };
 }
 
 /** Newest first; an unparseable date sorts as oldest rather than throwing. */
@@ -131,5 +155,6 @@ export function buildDebaterStats(records: readonly OpponentRoundRecord[]): Deba
     streak: currentStreak(newestFirst),
     recent,
     trend,
+    speechLength: buildSpeechLength(records),
   };
 }

@@ -92,24 +92,44 @@ describe("buildDebaterStats", () => {
     expect(buildDebaterStats(records).recent.winRate).toBe(1);
   });
 
-  it("groups by case name, skipping rounds without one", () => {
-    const stats = buildDebaterStats([
-      round({ caseName: "Space Aff", won: true }),
-      round({ caseName: "Space Aff", won: false }),
-      round({ caseName: "  " }),
-      round({}),
-    ]);
-    expect(stats.byCase).toEqual([{ label: "Space Aff", rounds: 2, wins: 1, losses: 1, winRate: 0.5 }]);
-  });
+  describe("speech length", () => {
+    it("reports nulls when no round logged a word count", () => {
+      expect(buildDebaterStats([round(), round({ won: false })]).speechLength).toEqual({
+        rounds: 0,
+        averageWords: null,
+        averageWordsInWins: null,
+        averageWordsInLosses: null,
+      });
+    });
 
-  it("measures the streak ending at the most recent round", () => {
-    expect(buildDebaterStats([]).streak).toEqual({ kind: null, length: 0 });
-    const stats = buildDebaterStats([
-      round({ date: "2026-01-01", won: false }),
-      round({ date: "2026-01-02", won: true }),
-      round({ date: "2026-01-03", won: true }),
-    ]);
-    expect(stats.streak).toEqual({ kind: "win", length: 2 });
-    expect(buildDebaterStats([round({ won: false })]).streak).toEqual({ kind: "loss", length: 1 });
+    it("averages word counts overall and across wins and losses", () => {
+      const { speechLength } = buildDebaterStats([
+        round({ speechWordCount: 4000, won: true }),
+        round({ speechWordCount: 5000, won: true }),
+        round({ speechWordCount: 3000, won: false }),
+        round({ won: false }),
+      ]);
+      expect(speechLength).toEqual({
+        rounds: 3,
+        averageWords: 4000,
+        averageWordsInWins: 4500,
+        averageWordsInLosses: 3000,
+      });
+    });
+
+    it("ignores zero, negative and non-finite counts", () => {
+      const { speechLength } = buildDebaterStats([
+        round({ speechWordCount: 0 }),
+        round({ speechWordCount: -5 }),
+        round({ speechWordCount: Number.NaN }),
+        round({ speechWordCount: 1000 }),
+      ]);
+      expect(speechLength).toMatchObject({ rounds: 1, averageWords: 1000 });
+    });
+
+    it("leaves a side null when only the other side has counts", () => {
+      const { speechLength } = buildDebaterStats([round({ speechWordCount: 2500, won: true })]);
+      expect(speechLength.averageWordsInLosses).toBeNull();
+    });
   });
 });

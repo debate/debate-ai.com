@@ -169,6 +169,8 @@ type RoundLogDraft = {
   side: DebateSide
   opponentTeamId: string
   won: "won" | "lost"
+  /** Raw input; blank means not logged. */
+  speechWordCount: string
 }
 
 const EMPTY_ROUND_LOG_DRAFT: RoundLogDraft = {
@@ -178,6 +180,7 @@ const EMPTY_ROUND_LOG_DRAFT: RoundLogDraft = {
   side: "aff",
   opponentTeamId: NONE_VALUE,
   won: "won",
+  speechWordCount: "",
 }
 
 /**
@@ -313,6 +316,12 @@ export function PreRoundBriefingsPanel() {
       setRoundLogError("Tournament, date, division, and opponent are all required.")
       return
     }
+    const rawWords = roundLogDraft.speechWordCount.trim()
+    const speechWordCount = rawWords === "" ? undefined : Number(rawWords)
+    if (speechWordCount !== undefined && !(Number.isInteger(speechWordCount) && speechWordCount > 0)) {
+      setRoundLogError("Words spoken must be a whole number above zero, or left blank.")
+      return
+    }
 
     saveOwnRoundHistoryRecord({
       id: `round-log-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
@@ -323,6 +332,7 @@ export function PreRoundBriefingsPanel() {
       side: roundLogDraft.side,
       won: roundLogDraft.won === "won",
       opponentTeamId,
+      ...(speechWordCount === undefined ? {} : { speechWordCount }),
     })
     setRoundLogError(null)
     setRoundLogDraft({ ...EMPTY_ROUND_LOG_DRAFT, tournamentName, division })
@@ -690,6 +700,20 @@ export function PreRoundBriefingsPanel() {
                 <SelectItem value="lost">Lost</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="round-log-words">Words spoken (optional)</Label>
+            <Input
+              id="round-log-words"
+              type="number"
+              min={1}
+              inputMode="numeric"
+              value={roundLogDraft.speechWordCount}
+              onChange={(e) =>
+                setRoundLogDraft((prev) => ({ ...prev, speechWordCount: e.target.value }))
+              }
+              placeholder="4200"
+            />
           </div>
         </div>
         {roundLogError && <p className="text-sm text-destructive">{roundLogError}</p>}
