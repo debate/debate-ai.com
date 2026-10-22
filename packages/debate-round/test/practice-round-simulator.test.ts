@@ -19,10 +19,10 @@ import {
 const STYLE_KEY = "lincolnDouglas";
 
 describe("buildPracticeRoundSetup", () => {
-  it("defaults to the primary side, the flow judge paradigm, no opponent persona, and intermediate difficulty", () => {
+  it("defaults to the primary side, the tech-over-truth policymaker paradigm, no opponent persona, and intermediate difficulty", () => {
     const setup = buildPracticeRoundSetup({ styleKey: STYLE_KEY });
     expect(setup.speechOrder[0].speaker).toBe("user");
-    expect(setup.judgeParadigm.id).toBe("flow");
+    expect(setup.judgeParadigm.id).toBe("policymaker");
     expect(setup.opponentPersona).toBeNull();
     expect(setup.opponentDifficulty).toBe("intermediate");
     expect(setup.sections.map((s) => s.title)).toEqual([
@@ -39,9 +39,9 @@ describe("buildPracticeRoundSetup", () => {
   });
 
   it("resolves a built-in judge paradigm id", () => {
-    const setup = buildPracticeRoundSetup({ styleKey: STYLE_KEY, judgeParadigm: "lay" });
-    expect(setup.judgeParadigm.id).toBe("lay");
-    expect(setup.sections[1].body).toContain("Lay / Community Judge");
+    const setup = buildPracticeRoundSetup({ styleKey: STYLE_KEY, judgeParadigm: "common-sense" });
+    expect(setup.judgeParadigm.id).toBe("common-sense");
+    expect(setup.sections[1].body).toContain("Middle-Ground Flow Judge");
   });
 
   it("accepts a pre-built (e.g. custom) judge paradigm object directly", () => {
@@ -174,15 +174,15 @@ const FLOW = {
 describe("buildPracticeRoundFeedback", () => {
   it("frames feedback around the judge paradigm's voting priorities when present", () => {
     const feedback = buildPracticeRoundFeedback(FLOW, "A", {
-      id: "flow",
-      name: "Flow / Tech Judge",
+      id: "policymaker",
+      name: "Tech Over Truth Policymaker",
       description: "desc",
       votingPriorities: ["Dropped arguments", "Impact calculus"],
       speedTolerance: "high",
       jargonTolerance: "high",
       instructions: "instructions",
     });
-    expect(feedback.sections[0].title).toBe("Judged under: Flow / Tech Judge");
+    expect(feedback.sections[0].title).toBe("Judged under: Tech Over Truth Policymaker");
     expect(feedback.sections[0].body).toBe(
       "Voting priorities: Dropped arguments; Impact calculus.",
     );

@@ -4,8 +4,9 @@ title: "Judge Paradigm Picker"
 
 # Judge Paradigm Picker
 
-Lets a user pick a round's AI judge paradigm — one of the six built-in
-paradigms (Flow, Lay, Policymaker, Kritikal, Educator, Truth Over Tech) or a
+Lets a user pick a round's AI judge paradigm — one of the three built-in
+paradigms (Tech Over Truth Policymaker, Critique (K) Judge, Middle-Ground Flow
+Judge) or a
 custom paradigm built from a real judge's own publicly stated preferences —
 and lists every round with a saved selection, with a "Clear" action per
 round.
@@ -17,7 +18,7 @@ round.
 
 ## What it shows
 
-A form to save a round's paradigm: a round ID, a radio choice among the six
+A form to save a round's paradigm: a round ID, a radio choice among the three
 built-in paradigms (each showing its name and description) or "Custom judge
 paradigm," which reveals a judge-name and preferences-notes field. Below the
 form, every round with a saved `JudgeParadigmSelection` is listed — round ID,
@@ -277,7 +278,12 @@ not a `JudgeParadigmId`) back to the full `JudgeParadigm` object
 an exact-match lookup against `listJudgeParadigms()`. This only ever
 resolves a built-in paradigm — a custom paradigm's `"Custom: <judge name>"`
 label never matches — which is fine here since the multi-judge panel's
-checkboxes only ever offer the six built-ins.
+checkboxes only ever offer the three built-ins. Names of the retired paradigms
+(Flow / Tech Judge, Lay, Educator, Truth Over Tech, the old "Policymaker" and
+"Critical Judge") still resolve to their replacement, and `readAll` swaps a
+stored built-in paradigm for its current definition via `getJudgeParadigm`,
+which maps retired ids through `LEGACY_JUDGE_PARADIGM_IDS` (`flow` →
+`policymaker`; `lay`, `educator`, `truth-tester` → `common-sense`).
 
 `state/judgeDecisions.ts`'s `buildJudgeDecisionHistoryItems` now resolves
 every batch member's paradigm by name and, when 2 or more resolve, attaches

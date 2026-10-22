@@ -115,19 +115,19 @@ describe("buildJudgePanelComparison", () => {
   });
 
   it("flags conflicting paradigms across the panel", () => {
-    const flow = buildJudgeProfile("flow-judge", [record({ paradigmId: "flow" })]);
-    const lay = buildJudgeProfile("lay-judge", [record({ paradigmId: "lay" })]);
+    const flow = buildJudgeProfile("flow-judge", [record({ paradigmId: "policymaker" })]);
+    const lay = buildJudgeProfile("lay-judge", [record({ paradigmId: "common-sense" })]);
     const comparison = buildJudgePanelComparison([flow, lay]);
     expect(comparison.hasConflictingParadigms).toBe(true);
     expect(comparison.paradigms).toEqual([
-      { judgeId: "flow-judge", paradigmId: "flow" },
-      { judgeId: "lay-judge", paradigmId: "lay" },
+      { judgeId: "flow-judge", paradigmId: "policymaker" },
+      { judgeId: "lay-judge", paradigmId: "common-sense" },
     ]);
   });
 
   it("does not flag a conflict when tagged judges agree, or when only one is tagged", () => {
-    const flowA = buildJudgeProfile("flow-a", [record({ paradigmId: "flow" })]);
-    const flowB = buildJudgeProfile("flow-b", [record({ paradigmId: "flow" })]);
+    const flowA = buildJudgeProfile("flow-a", [record({ paradigmId: "policymaker" })]);
+    const flowB = buildJudgeProfile("flow-b", [record({ paradigmId: "policymaker" })]);
     expect(buildJudgePanelComparison([flowA, flowB]).hasConflictingParadigms).toBe(false);
 
     const untagged = buildJudgeProfile("untagged", [record()]);
@@ -146,11 +146,11 @@ describe("buildJudgePanelComparison", () => {
 describe("buildJudgePanelComparisonSummary", () => {
   it("renders every section of a fully-known panel", () => {
     const skewed = buildJudgeProfile("skewed", [
-      ...Array.from({ length: 5 }, () => record({ winningSide: "aff", paceWpm: 180, paradigmId: "flow" })),
+      ...Array.from({ length: 5 }, () => record({ winningSide: "aff", paceWpm: 180, paradigmId: "policymaker" })),
       record({ winningSide: "neg" }),
     ]);
     const receptive = buildJudgeProfile("receptive", [
-      record({ paceWpm: 320, theoryArgumentRaised: true, theoryArgumentWon: true, paradigmId: "lay" }),
+      record({ paceWpm: 320, theoryArgumentRaised: true, theoryArgumentWon: true, paradigmId: "common-sense" }),
     ]);
     const summary = buildJudgePanelComparisonSummary(
       buildJudgePanelComparison([skewed, receptive]),
@@ -160,7 +160,7 @@ describe("buildJudgePanelComparisonSummary", () => {
     expect(summary).toContain("Side leans: skewed → aff");
     expect(summary).toContain("Recommended pace: 180 wpm (set by skewed");
     expect(summary).toContain("Theory: safe to run");
-    expect(summary).toContain("Paradigms: conflicting across the panel (skewed: flow, receptive: lay)");
+    expect(summary).toContain("Paradigms: conflicting across the panel (skewed: policymaker, receptive: common-sense)");
   });
 
   it("renders unknown/no-conflict placeholders when a panel has no signal", () => {

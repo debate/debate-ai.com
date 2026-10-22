@@ -37,7 +37,7 @@ class MemoryStorage {
 
 const INPUT_A: Omit<JudgeDecisionRecord, "id"> = {
   roundId: "round-1",
-  paradigmName: "Flow / Tech Judge",
+  paradigmName: "Tech Over Truth Policymaker",
   sideNames: { primary: "Affirmative", secondary: "Negative" },
   result: {
     winner: "primary",
@@ -49,7 +49,7 @@ const INPUT_A: Omit<JudgeDecisionRecord, "id"> = {
 
 const INPUT_B: Omit<JudgeDecisionRecord, "id"> = {
   roundId: "round-2",
-  paradigmName: "Policymaker",
+  paradigmName: "Critique (K) Judge",
   sideNames: { primary: "Aff", secondary: "Neg" },
   result: {
     winner: "secondary",
@@ -233,13 +233,13 @@ describe("buildJudgeDecisionHistoryItems — rubric agreement", () => {
   it("computes a rubric agreement breakdown when every batch member resolves to a known built-in paradigm", () => {
     const flow = append({
       ...INPUT_A,
-      paradigmName: "Flow / Tech Judge",
+      paradigmName: "Tech Over Truth Policymaker",
       batchId: "panel-1",
       result: { winner: "primary", keyVotingIssues: ["Dropped disadvantage"], rationale: "Clean drop." },
     });
     const policymaker = append({
       ...INPUT_A,
-      paradigmName: "Policymaker",
+      paradigmName: "Critique (K) Judge",
       batchId: "panel-1",
       result: { winner: "primary", keyVotingIssues: ["Net benefits favor the plan"], rationale: "Solvency held." },
     });
@@ -250,7 +250,7 @@ describe("buildJudgeDecisionHistoryItems — rubric agreement", () => {
 
     expect(item.rubricAgreement).not.toBeNull();
     const names = item.rubricAgreement!.perParadigm.map((p) => p.paradigmName).sort();
-    expect(names).toEqual(["Flow / Tech Judge", "Policymaker"]);
+    expect(names).toEqual(["Critique (K) Judge", "Tech Over Truth Policymaker"]);
     expect(item.rubricAgreement!.totalCriteria).toBe(8); // 4 voting priorities per built-in paradigm
     expect(item.rubricAgreement!.totalAddressed).toBeGreaterThanOrEqual(0);
     expect(item.rubricAgreement!.totalAddressed).toBeLessThanOrEqual(item.rubricAgreement!.totalCriteria);
@@ -260,7 +260,7 @@ describe("buildJudgeDecisionHistoryItems — rubric agreement", () => {
   });
 
   it("is null when fewer than 2 batch members resolve to a known paradigm by name", () => {
-    const flow = append({ ...INPUT_A, paradigmName: "Flow / Tech Judge", batchId: "panel-2" });
+    const flow = append({ ...INPUT_A, paradigmName: "Tech Over Truth Policymaker", batchId: "panel-2" });
     const unknown = append({ ...INPUT_A, paradigmName: "Some renamed paradigm", batchId: "panel-2" });
 
     const [item] = buildJudgeDecisionHistoryItems([flow, unknown]);
@@ -270,7 +270,7 @@ describe("buildJudgeDecisionHistoryItems — rubric agreement", () => {
   });
 
   it("leaves a lone single decision's rubricAgreement absent (not a panel item at all)", () => {
-    const lone = append({ ...INPUT_A, paradigmName: "Flow / Tech Judge" });
+    const lone = append({ ...INPUT_A, paradigmName: "Tech Over Truth Policymaker" });
     const [item] = buildJudgeDecisionHistoryItems([lone]);
     expect(item!.kind).toBe("single");
   });
