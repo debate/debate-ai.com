@@ -28,6 +28,7 @@
 import { useEffect, useSyncExternalStore } from "react"
 import { toast } from "sonner"
 import type { ResearchAgentAuthClient } from "research-agent-ui"
+import { getHostConfig, type HostConnectResult } from "../../host/config"
 import { QWKSEARCH_ORIGIN } from "./base-url"
 
 export const QWKSEARCH_SESSION_URL = "/api/qwksearch/session"
@@ -137,9 +138,34 @@ export function useQwkSearchSession(): { session: QwkSearchSession; isPending: b
   return { session, isPending: !isLoaded }
 }
 
-/** Sends the visitor through "Sign in with QwkSearch", back to `returnTo` (default: here). */
+/**
+ * Sends the visitor through "Sign in with QwkSearch", back to `returnTo`
+ * (default: here). A host that runs the flow itself (the browser extension,
+ * whose page has no `/api` of its own to navigate to) gets it handed over,
+ * and the session is re-read once it finishes.
+ */
 export function connectQwkSearch(returnTo?: string): void {
   if (typeof window === "undefined") return
+  const hostConnect = getHostConfig().connectQwkSearch
+  if (hostConnect) {
+    void hostConnect()
+      .catch((error: unknown): HostConnectResult => ({ ok: false, error: error instanceof Error ? error.message : undefined }))
+      .then(async (result) => {
+        if (result.ok) {
+          const session = await loadQwkSearchSession(true)
+          if (session.connected) {
+            // Start the page over, as the web flow's redirect does: the embed
+            // read its model list and chat history as a guest when it mounted.
+            const url = new URL(window.location.href)
+            url.searchParams.set("qwksearch", "connected")
+            return window.location.replace(url.toString())
+          }
+        }
+        if (result.cancelled) return toastOutcome("denied")
+        toast.error(result.error || OUTCOME_MESSAGES.error[1])
+      })
+    return
+  }
   const back = returnTo ?? `${window.location.pathname}${window.location.search}`
   window.location.assign(`${QWKSEARCH_CONNECT_URL}?returnTo=${encodeURIComponent(back)}`)
 }
@@ -159,6 +185,11 @@ const OUTCOME_MESSAGES: Record<string, [kind: "success" | "info" | "error", mess
   error: ["error", "QwkSearch sign-in failed. Please try again."],
 }
 
+function toastOutcome(outcome: string): void {
+  const entry = OUTCOME_MESSAGES[outcome]
+  if (entry) toast[entry[0]](entry[1])
+}
+
 /**
  * Announces how "Sign in with QwkSearch" ended — `/api/qwksearch/callback`
  * returns to the starting page with `?qwksearch=<outcome>` — then drops the
@@ -169,8 +200,7 @@ export function useQwkSearchConnectOutcome(): void {
     const url = new URL(window.location.href)
     const outcome = url.searchParams.get("qwksearch")
     if (!outcome) return
-    const entry = OUTCOME_MESSAGES[outcome]
-    if (entry) toast[entry[0]](entry[1])
+    toastOutcome(outcome)
     url.searchParams.delete("qwksearch")
     window.history.replaceState(window.history.state, "", `${url.pathname}${url.search}${url.hash}`)
   }, [])
