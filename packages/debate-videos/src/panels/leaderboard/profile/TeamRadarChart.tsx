@@ -3,7 +3,8 @@
  * chart takes the six spokes of data directly, so the team profile page passes
  * one team's {@link teamRadarData}, and the school profile page passes the
  * averaged {@link schoolDivisionRadarData} for each division. A team can also
- * overlay its school's average as a second, dashed polygon.
+ * overlay one or two comparisons under its polygon, such as its school's
+ * average (dashed) and, on the watch page, its opponent.
  * @module panels/leaderboard/profile/TeamRadarChart
  */
 
@@ -17,10 +18,21 @@ import { type TeamRadarPoint } from "./rankingProfileHelpers"
 const chartConfig = {
   score: { label: "Score", color: "var(--primary)" },
   compareScore: { label: "Comparison", color: "var(--muted-foreground)" },
+  compareScore2: { label: "Second comparison", color: "#d97706" },
 } satisfies ChartConfig
 
-/** One spoke, with the comparison series' value when one is overlaid. */
-type ChartPoint = TeamRadarPoint & { compareScore?: number; compareDisplay?: string }
+/** Series key, stroke dash and legend swatch of each overlay, in order. */
+const OVERLAYS = [
+  { key: "compareScore", dash: "4 3", swatch: "border-muted-foreground border-dashed" },
+  { key: "compareScore2", dash: "1 3", swatch: "border-[#d97706] border-dotted" },
+] as const
+
+/** One spoke, with each overlaid series' score and real value. */
+type ChartPoint = TeamRadarPoint & {
+  compareScore?: number
+  compareScore2?: number
+  compareDisplays?: (string | undefined)[]
+}
 
 /** A second polygon drawn under the main one, such as the school average. */
 export interface RadarComparison {
@@ -34,11 +46,11 @@ export interface RadarComparison {
 function RadarTooltip({
   active,
   payload,
-  compareLabel,
+  compareLabels,
 }: {
   active?: boolean
   payload?: { payload: ChartPoint }[]
-  compareLabel?: string
+  compareLabels: string[]
 }) {
   const point = active ? payload?.[0]?.payload : undefined
   if (!point) return null
@@ -46,10 +58,12 @@ function RadarTooltip({
     <div className="rounded-lg border bg-background px-2.5 py-1.5 text-xs shadow-xl">
       <div className="font-medium text-foreground">{point.metric}</div>
       <div className="tabular-nums text-muted-foreground">{point.display}</div>
-      {compareLabel && point.compareDisplay !== undefined && (
-        <div className="tabular-nums text-muted-foreground">
-          {compareLabel}: {point.compareDisplay}
-        </div>
+      {compareLabels.map((label, i) =>
+        point.compareDisplays?.[i] === undefined ? null : (
+          <div key={label} className="tabular-nums text-muted-foreground">
+            {label}: {point.compareDisplays[i]}
+          </div>
+        ),
       )}
     </div>
   )
@@ -63,7 +77,8 @@ function RadarTooltip({
  * @param props.data - The six spokes to render.
  * @param props.caption - Sub-caption under the chart.
  * @param props.ariaLabel - Accessible description of the polygon's shape.
- * @param props.comparison - Optional second polygon, e.g. the school average.
+ * @param props.comparison - Optional polygon(s) drawn under the main one, e.g.
+ *   the school average; at most two are drawn.
  * @param props.footer - Optional controls rendered under the chart.
  */
 export function TeamRadarChart({
@@ -76,16 +91,20 @@ export function TeamRadarChart({
   data: TeamRadarPoint[]
   caption: string
   ariaLabel: string
-  comparison?: RadarComparison
+  comparison?: RadarComparison | RadarComparison[]
   footer?: ReactNode
 }) {
-  const points: ChartPoint[] = comparison
-    ? data.map((point, i) => ({
-        ...point,
-        compareScore: comparison.data[i]?.score,
-        compareDisplay: comparison.data[i]?.display,
-      }))
-    : data
+  const comparisons = (Array.isArray(comparison) ? comparison : comparison ? [comparison] : []).slice(
+    0,
+    OVERLAYS.length,
+  )
+  const points: ChartPoint[] = data.map((point, i) => {
+    const out: ChartPoint = { ...point, compareDisplays: comparisons.map((c) => c.data[i]?.display) }
+    comparisons.forEach((c, j) => {
+      out[OVERLAYS[j].key] = c.data[i]?.score
+    })
+    return out
+  })
   return (
     <figure className="rounded-lg border bg-card p-2">
       <figcaption className="px-1 text-xs text-muted-foreground">{caption}</figcaption>
@@ -99,18 +118,19 @@ export function TeamRadarChart({
           <PolarGrid />
           <PolarRadiusAxis domain={[0, 100]} tick={false} axisLine={false} />
           <PolarAngleAxis dataKey="metric" tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} />
-          <ChartTooltip cursor={false} content={<RadarTooltip compareLabel={comparison?.label} />} />
-          {comparison && (
+          <ChartTooltip cursor={false} content={<RadarTooltip compareLabels={comparisons.map((c) => c.label)} />} />
+          {comparisons.map((c, j) => (
             <Radar
-              dataKey="compareScore"
-              stroke="var(--color-compareScore)"
+              key={OVERLAYS[j].key}
+              dataKey={OVERLAYS[j].key}
+              stroke={`var(--color-${OVERLAYS[j].key})`}
               strokeWidth={1.5}
-              strokeDasharray="4 3"
-              fill="var(--color-compareScore)"
+              strokeDasharray={OVERLAYS[j].dash}
+              fill={`var(--color-${OVERLAYS[j].key})`}
               fillOpacity={0.08}
               isAnimationActive={false}
             />
-          )}
+          ))}
           <Radar
             dataKey="score"
             stroke="var(--color-score)"
@@ -123,16 +143,18 @@ export function TeamRadarChart({
           />
         </RadarChart>
       </ChartContainer>
-      {comparison && (
+      {comparisons.length > 0 && (
         <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 px-1 text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-1.5">
             <span className="h-0.5 w-4 bg-primary" aria-hidden />
             This team
           </span>
-          <span className="inline-flex items-center gap-1.5">
-            <span className="w-4 border-t-2 border-dashed border-muted-foreground" aria-hidden />
-            {comparison.label}
-          </span>
+          {comparisons.map((c, j) => (
+            <span key={c.label} className="inline-flex items-center gap-1.5">
+              <span className={`w-4 border-t-2 ${OVERLAYS[j].swatch}`} aria-hidden />
+              {c.label}
+            </span>
+          ))}
         </div>
       )}
       {footer}

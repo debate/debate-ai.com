@@ -340,6 +340,10 @@ const radarPercent = (n: number | null) =>
  * a field percentile (1st is 100, last is 0), and matches relative to the
  * busiest entry in the same division.
  *
+ * Spokes run clockwise from the top: Ranking on top, the neg spokes on the
+ * right, Matches at the bottom and the aff spokes on the left, so each side's
+ * record reads on its own half of the chart.
+ *
  * @param item - One of the team's rows, from {@link findTeamEntries}.
  */
 export function teamRadarData(item: ProfileEntry): TeamRadarPoint[] {
@@ -347,7 +351,7 @@ export function teamRadarData(item: ProfileEntry): TeamRadarPoint[] {
   const clamp = (n: number) => Math.min(100, Math.max(0, n));
   const rankScore = fieldSize <= 1 ? 100 : ((fieldSize - entry.rank) / (fieldSize - 1)) * 100;
   return [
-    { metric: "Aff win", score: clamp(entry.affWinRate ?? 0), display: radarPercent(entry.affWinRate) },
+    { metric: "Ranking", score: clamp(rankScore), display: `#${entry.rank} of ${fieldSize}` },
     { metric: "Neg win", score: clamp(entry.negWinRate ?? 0), display: radarPercent(entry.negWinRate) },
     {
       metric: "Elim neg",
@@ -355,16 +359,16 @@ export function teamRadarData(item: ProfileEntry): TeamRadarPoint[] {
       display: radarPercent(entry.negElimWinRate),
     },
     {
-      metric: "Elim aff",
-      score: clamp(entry.affElimWinRate ?? 0),
-      display: radarPercent(entry.affElimWinRate),
-    },
-    { metric: "Ranking", score: clamp(rankScore), display: `#${entry.rank} of ${fieldSize}` },
-    {
       metric: "Matches",
       score: clamp(maxMatches > 0 ? (entry.matches / maxMatches) * 100 : 0),
       display: `${entry.matches} of ${maxMatches} max`,
     },
+    {
+      metric: "Elim aff",
+      score: clamp(entry.affElimWinRate ?? 0),
+      display: radarPercent(entry.affElimWinRate),
+    },
+    { metric: "Aff win", score: clamp(entry.affWinRate ?? 0), display: radarPercent(entry.affWinRate) },
   ];
 }
 
@@ -440,15 +444,15 @@ export function schoolDivisionRadarData(items: ProfileEntry[]): TeamRadarPoint[]
   const clamp = (x: number) => Math.min(100, Math.max(0, x));
 
   return [
-    { metric: "Aff win", score: aff.score, display: aff.display },
+    { metric: "Ranking", score: clamp(averagedRankScore(items, fieldSize)), display: `#${bestRank} of ${fieldSize}` },
     { metric: "Neg win", score: neg.score, display: neg.display },
     { metric: "Elim neg", score: elimNeg.score, display: elimNeg.display },
-    { metric: "Elim aff", score: elimAff.score, display: elimAff.display },
-    { metric: "Ranking", score: clamp(averagedRankScore(items, fieldSize)), display: `#${bestRank} of ${fieldSize}` },
     {
       metric: "Matches",
       score: clamp(averagedMatchesScore(items, maxMatches)),
       display: `${Number.isInteger(avgMatches) ? avgMatches : avgMatches.toFixed(1)} of ${maxMatches} max`,
     },
+    { metric: "Elim aff", score: elimAff.score, display: elimAff.display },
+    { metric: "Aff win", score: aff.score, display: aff.display },
   ];
 }

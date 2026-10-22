@@ -218,13 +218,13 @@ function TeamRecordCard({
 
 /**
  * Radar chart for one team in one division. When the team's school has
- * other ranked teams in the division, a checkbox under the radar (off by
+ * other ranked teams in the division, a checkbox under the radar (on by
  * default) overlays the school's average in that division.
  */
 function TeamDivisionRadar({ item, datasets }: { item: ProfileEntry; datasets: RankingDataset[] }) {
   const { entry } = item
   const data = teamRadarData(item)
-  const [showSchool, setShowSchool] = useState(false)
+  const [showSchool, setShowSchool] = useState(true)
   const schoolItems = findSchoolDivisionEntries(datasets, item)
   const hasSchoolPeers = schoolItems.length > 1
   const schoolData = hasSchoolPeers && showSchool ? schoolDivisionRadarData(schoolItems) : null
