@@ -5,7 +5,7 @@ import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHead
 export default function CardsRevisionsPage() {
   return (
     <ToolPage>
-      <ToolPageHeader href="/research/cards/revisions" backHref="/research/cards" backLabel="shared cards" guide="research-collaboration" syncCollections={["revisionHistory"]} />
+      <ToolPageHeader href="/research/cards/revisions" backHref="/research/cards" backLabel="shared cards" guide="research-collaboration" />
       <Suspense>
         <RevisionIncentivesPanel />
       </Suspense>

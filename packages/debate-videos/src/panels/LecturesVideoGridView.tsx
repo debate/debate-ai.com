@@ -150,7 +150,7 @@ interface LecturesVideoGridViewProps {
    * links, so the column drops its own footer row when this is given.
    */
   accountSlot?: React.ReactNode
-  /** Host-owned controls (e.g. the account-sync badge) rendered beside the search bar. */
+  /** Host-owned controls rendered beside the search bar. */
   headerActionsSlot?: React.ReactNode
 }
 
