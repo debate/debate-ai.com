@@ -30,7 +30,6 @@
 
 import { useEffect, useMemo, useState, type ComponentType } from "react";
 import {
-  Download,
   Dumbbell,
   ExternalLink,
   FileText,
@@ -329,24 +328,26 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
                 <DownloadAppButton platform="chrome-extension-white" appId="noecbaibfhbmpapofcdkgchfifmoinfj" />
                 <DownloadAppButton platform="android" appId="com.debate.ai" />
               </div>
-              {/* Direct installers rather than the button library's desktop
-                  badges, which name the Mac App Store and Microsoft Store. */}
+              {/* Desktop badges from the same library as the store badges above,
+                  pointed at the direct installers rather than the stores the
+                  macOS and Windows artwork names. */}
               <div className="flex flex-wrap items-start justify-center gap-3" data-testid="desktop-downloads">
                 {DESKTOP_DOWNLOADS.map((platform) => {
-                  const [primary, ...others] = platform.installers;
+                  const [primary] = platform.installers;
                   return (
-                    <div key={platform.id} className="flex flex-col items-center gap-1">
-                      <a
+                    <div
+                      key={platform.id}
+                      className="flex flex-col items-center gap-1"
+                      data-testid={`desktop-download-${platform.id}`}
+                    >
+                      <DownloadAppButton
+                        platform={platform.id}
                         href={primary.href}
-                        data-testid={`desktop-download-${platform.id}`}
-                        className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-accent"
-                      >
-                        <Download className="size-4" />
-                        {platform.name}
-                        <span className="text-xs font-normal text-muted-foreground">{primary.label}</span>
-                      </a>
+                        newTab={false}
+                        alt={`Download for ${platform.name} (${primary.label})`}
+                      />
                       <span className="flex gap-2 text-xs text-muted-foreground">
-                        {others.map((installer) => (
+                        {platform.installers.map((installer) => (
                           <a key={installer.label} href={installer.href} className="hover:text-foreground hover:underline">
                             {installer.label}
                           </a>
