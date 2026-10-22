@@ -102,7 +102,7 @@ function judgeRecords(): JudgeRoundRecord[] {
       paceWpm: 320,
       theoryArgumentRaised: true,
       theoryArgumentWon: false,
-      paradigmId: "flow",
+      paradigmId: "policymaker",
     },
     {
       judgeId: "J. Smith",
@@ -115,7 +115,7 @@ function judgeRecords(): JudgeRoundRecord[] {
       paceWpm: 330,
       theoryArgumentRaised: true,
       theoryArgumentWon: false,
-      paradigmId: "flow",
+      paradigmId: "policymaker",
     },
     {
       judgeId: "J. Smith",
@@ -128,7 +128,7 @@ function judgeRecords(): JudgeRoundRecord[] {
       paceWpm: 325,
       theoryArgumentRaised: true,
       theoryArgumentWon: false,
-      paradigmId: "flow",
+      paradigmId: "policymaker",
     },
     {
       judgeId: "J. Smith",
@@ -141,7 +141,7 @@ function judgeRecords(): JudgeRoundRecord[] {
       paceWpm: 330,
       theoryArgumentRaised: true,
       theoryArgumentWon: true,
-      paradigmId: "flow",
+      paradigmId: "policymaker",
     },
     {
       judgeId: "J. Smith",
@@ -154,7 +154,7 @@ function judgeRecords(): JudgeRoundRecord[] {
       paceWpm: 330,
       theoryArgumentRaised: false,
       theoryArgumentWon: false,
-      paradigmId: "flow",
+      paradigmId: "policymaker",
     },
   ];
 }
@@ -397,7 +397,7 @@ describe("buildJudgeAdaptationNotes", () => {
     const notes = buildJudgeAdaptationNotes(judgeProfile);
     expect(notes).toContain("Full speed is fine — this judge tracks high-pace delivery well.");
     expect(notes).toContain("This judge has historically favored the aff side.");
-    expect(notes).toContain("Most-tagged paradigm: flow (100% confidence) — frame weighing accordingly.");
+    expect(notes).toContain("Most-tagged paradigm: policymaker (100% confidence) — frame weighing accordingly.");
   });
 
   it("notes a neg-favoring side bias", () => {

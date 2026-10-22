@@ -16,7 +16,7 @@
  */
 
 import type { DebateSide, JudgeRoundRecord } from "./judge-profile";
-import { judgeParadigmIds, type BuiltinJudgeParadigmId } from "./judge-paradigms";
+import { judgeParadigmIds, normalizeJudgeParadigmId, type BuiltinJudgeParadigmId } from "./judge-paradigms";
 
 /** Header names this importer understands, matched case-insensitively and in any column order. */
 const JUDGE_ROUND_CSV_HEADERS = [
@@ -110,7 +110,7 @@ function parseParadigm(raw: string): { ok: true; value: BuiltinJudgeParadigmId |
   const trimmed = raw.trim();
   if (trimmed === "") return { ok: true, value: undefined };
   const normalized = trimmed.toLowerCase();
-  const match = judgeParadigmIds.find((id) => id.toLowerCase() === normalized);
+  const match = normalizeJudgeParadigmId(normalized);
   return match ? { ok: true, value: match } : { ok: false };
 }
 

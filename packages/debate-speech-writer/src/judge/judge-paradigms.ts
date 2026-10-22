@@ -7,13 +7,7 @@
  * judge's publicly stated preferences (a paradigm card).
  */
 
-export type BuiltinJudgeParadigmId =
-  | "flow"
-  | "lay"
-  | "policymaker"
-  | "critic"
-  | "educator"
-  | "truth-tester";
+export type BuiltinJudgeParadigmId = "policymaker" | "critic" | "common-sense";
 
 export type JudgeParadigmId = BuiltinJudgeParadigmId | "custom";
 
@@ -224,6 +218,7 @@ const JudgeParadigm = `
   - Winning and speaking well overlap, but they are not identical; low-point wins are possible.
   - This proposed scale uses 28.5 as the baseline for a competent, solid performance.
   - Tournament instructions control if they require a different scale or restrict decimal scoring.
+  - I do not promise points through “auto-30” arguments. Speaker points remain an assessment of the actual performance.
 
 - B. Proposed 30-point rubric
   - 30.0 — Exceptional
@@ -255,60 +250,36 @@ const JudgeParadigm = `
   - I do not penalize disability-related speech differences, requested accommodations, or genuine technical failures.
   `
 
+/**
+ * Speaker-point line shared by every built-in paradigm: points are never
+ * promised through "auto-30" arguments.
+ */
+export const SPEAKER_POINTS_POLICY =
+  "I do not promise points through “auto-30” arguments. Speaker points remain an assessment of the actual performance.";
+
 export const judgeParadigms: Record<BuiltinJudgeParadigmId, JudgeParadigm> = {
-  flow: {
-    id: "flow",
-    name: "Flow / Tech Judge",
+  policymaker: {
+    id: "policymaker",
+    name: "Tech Over Truth Policymaker",
     description:
-      "Judges strictly off the flow: evaluates only what was said and extended in the round, weighing dropped arguments as conceded rather than importing outside opinion.",
+      "A policymaker who judges strictly off the flow: compares the plan, counterplans, and status quo on net benefits, and treats dropped arguments as true for the round rather than importing outside opinion.",
     votingPriorities: [
-      "Dropped or conceded arguments",
-      "Argument interaction and clash",
-      "Impact calculus (magnitude, probability, timeframe)",
-      "Framework/weighing mechanism established in-round",
+      "Dropped or conceded arguments, as extended on the flow",
+      "Net benefits of plan vs. counterplan vs. status quo",
+      "Impact calculus (magnitude, probability, timeframe) and solvency",
+      "Topicality/theory, when a team wins it controls the ballot",
     ],
     speedTolerance: "high",
     jargonTolerance: "high",
     instructions:
-      "Vote strictly off the flow. Do not import outside knowledge or personal opinion. Treat any argument the opposing team failed to answer as true for the round, and resolve clash using the weighing mechanisms the debaters themselves established.",
-  },
-  lay: {
-    id: "lay",
-    name: "Lay / Community Judge",
-    description:
-      "A parent or community judge without formal debate background. Rewards clear, persuasive, jargon-free communication over technical argumentation.",
-    votingPriorities: [
-      "Overall persuasiveness and clarity",
-      "Real-world impact and common sense",
-      "Speaking style, confidence, and organization",
-      "Unclear or overly aggressive delivery counts against a team",
-    ],
-    speedTolerance: "low",
-    jargonTolerance: "low",
-    instructions:
-      "Ignore debate jargon and technical theory arguments unless they are explained in plain language. Prioritize the team that is easiest to follow and most persuasive to an educated non-debater. Penalize speed or unclear delivery.",
-  },
-  policymaker: {
-    id: "policymaker",
-    name: "Policymaker",
-    description:
-      "Weighs the round like a policy analyst: compares the desirability of the plan and counterplans against the status quo using cost-benefit and risk analysis.",
-    votingPriorities: [
-      "Net benefits of plan vs. counterplan vs. status quo",
-      "Solvency and feasibility",
-      "Magnitude and probability of advantages/disadvantages",
-      "Topicality/theory, only when it affects fair, predictable ground",
-    ],
-    speedTolerance: "medium",
-    jargonTolerance: "medium",
-    instructions:
-      "Compare competing policy options on net benefits: whichever advocacy produces the best real-world outcome after solvency and risk are weighed wins the round. Give theory and topicality lower priority unless a team wins it controls the ballot.",
+      "Vote tech over truth: evaluate only what was said and extended on the flow, and treat any argument the opposing team failed to answer as true for the round. Then compare the competing policy options on net benefits: whichever advocacy produces the best outcome after solvency and risk are weighed wins. Do not import outside knowledge or personal opinion. " +
+      SPEAKER_POINTS_POLICY,
   },
   critic: {
     id: "critic",
-    name: "Critical Judge",
+    name: "Critique (K) Judge",
     description:
-      "Evaluates the round through a critical lens, prioritizing the framework and representations debaters establish over traditional policy impact calculus.",
+      "Evaluates the round through a critical lens, prioritizing the framework, representations, and methodology debaters establish over traditional policy impact calculus.",
     votingPriorities: [
       "Which framework for evaluating the round wins",
       "Representations, discourse, and methodology",
@@ -318,40 +289,48 @@ export const judgeParadigms: Record<BuiltinJudgeParadigmId, JudgeParadigm> = {
     speedTolerance: "medium",
     jargonTolerance: "high",
     instructions:
-      "Resolve the framework debate first: whichever team wins how the round should be evaluated determines which impacts and links matter. Do not default to policy impact calculus unless no framework argument is won clearly.",
+      "Resolve the framework debate first: whichever team wins how the round should be evaluated determines which impacts and links matter. A kritik needs a specific link, an impact, and an explained alternative or ballot implication; terminology is not a substitute for explanation. Do not default to policy impact calculus unless no framework argument is won clearly. " +
+      SPEAKER_POINTS_POLICY,
   },
-  educator: {
-    id: "educator",
-    name: "Educational / Developmental Judge",
+  "common-sense": {
+    id: "common-sense",
+    name: "Middle-Ground Flow Judge",
     description:
-      "A coach or teacher prioritizing debater growth: rewards sound argumentation and skill development over technical tricks, with an eye toward detailed post-round feedback.",
+      "Flows the round and gives conceded arguments real weight, but applies common sense: a dropped argument only wins as far as it is warranted and credible, and clear explanation beats speed or tricks.",
     votingPriorities: [
-      "Argument quality and evidence use over speed or tricks",
-      "Clash and direct engagement with the opponent's strongest arguments",
-      "Constructive, skill-building delivery choices",
-      "Sportsmanship and round conduct",
+      "Clear, warranted arguments extended on the flow",
+      "Comparative weighing that is explained, not just asserted",
+      "Credibility of the argument; dropped claims count only as far as they are warranted",
+      "Clarity and direct engagement over speed or technical tricks",
     ],
     speedTolerance: "medium",
     jargonTolerance: "medium",
     instructions:
-      "Reward debaters for engaging directly with their opponents' best arguments rather than for technical tricks or unanswerable speed. Provide substantive reasoning a debater could use to improve, and treat the decision as a teaching moment.",
+      "Judge off the flow, but with common sense. Give conceded arguments substantial weight only to the extent they were warranted and explained; do not let an implausible or unwarranted dropped claim win the round on its own. Reward teams that engage their opponents' strongest arguments and explain why their comparison resolves the round. " +
+      SPEAKER_POINTS_POLICY,
   },
-  "truth-tester": {
-    id: "truth-tester",
-    name: "Truth Over Tech",
-    description:
-      "Weighs argument truth over technical drops: an unanswered argument that is not actually true or logically sound does not win the round just because it went unanswered.",
-    votingPriorities: [
-      "Logical soundness and truth of an argument",
-      "Evidence quality and warrant strength",
-      "Argument interaction, but only among arguments judged plausible",
-      "Technical drops are discounted if the dropped argument is not credible",
-    ],
-    speedTolerance: "medium",
-    jargonTolerance: "medium",
-    instructions:
-      "Do not treat an unanswered argument as automatically true. Independently assess whether each argument is logically sound and well-warranted before letting it factor into the decision, even if the opponent failed to respond to it.",
-  },
+};
+
+/**
+ * Ids of judge paradigms that were retired when the built-in set was narrowed
+ * to three, mapped to the nearest remaining paradigm so saved selections,
+ * judge-profile tags, and CSV imports that still use them keep working.
+ */
+export const LEGACY_JUDGE_PARADIGM_IDS: Record<string, BuiltinJudgeParadigmId> = {
+  flow: "policymaker",
+  "truth-tester": "common-sense",
+  lay: "common-sense",
+  educator: "common-sense",
+};
+
+/** Display names of retired paradigms, mapped like `LEGACY_JUDGE_PARADIGM_IDS`. */
+const LEGACY_JUDGE_PARADIGM_NAMES: Record<string, BuiltinJudgeParadigmId> = {
+  "Flow / Tech Judge": "policymaker",
+  Policymaker: "policymaker",
+  "Critical Judge": "critic",
+  "Truth Over Tech": "common-sense",
+  "Lay / Community Judge": "common-sense",
+  "Educational / Developmental Judge": "common-sense",
 };
 
 export const judgeParadigmIds = Object.keys(judgeParadigms) as BuiltinJudgeParadigmId[];
@@ -360,9 +339,24 @@ export function isBuiltinJudgeParadigmId(id: string): id is BuiltinJudgeParadigm
   return Object.prototype.hasOwnProperty.call(judgeParadigms, id);
 }
 
-/** Looks up a built-in paradigm by id, or `null` if `id` isn't a known built-in. */
+/**
+ * Resolves a current or retired built-in paradigm id to a current one, or
+ * `null` if `id` is neither.
+ */
+export function normalizeJudgeParadigmId(id: string): BuiltinJudgeParadigmId | null {
+  if (isBuiltinJudgeParadigmId(id)) return id;
+  return Object.prototype.hasOwnProperty.call(LEGACY_JUDGE_PARADIGM_IDS, id)
+    ? LEGACY_JUDGE_PARADIGM_IDS[id]
+    : null;
+}
+
+/**
+ * Looks up a built-in paradigm by id (a retired id resolves to its
+ * replacement), or `null` if `id` isn't a known built-in.
+ */
 export function getJudgeParadigm(id: string): JudgeParadigm | null {
-  return isBuiltinJudgeParadigmId(id) ? judgeParadigms[id] : null;
+  const resolved = normalizeJudgeParadigmId(id);
+  return resolved ? judgeParadigms[resolved] : null;
 }
 
 /** All built-in paradigms, in a stable order — for a paradigm-picker UI. */
@@ -374,10 +368,15 @@ export function listJudgeParadigms(): JudgeParadigm[] {
  * Looks up a built-in paradigm by its exact display `name` (e.g. a
  * `JudgeDecisionRecord.paradigmName`), or `null` if no built-in paradigm has
  * that name — including a custom paradigm's `"Custom: <judge name>"` label,
- * which never matches a built-in.
+ * which never matches a built-in. A retired paradigm's name resolves to its
+ * replacement.
  */
 export function getJudgeParadigmByName(name: string): JudgeParadigm | null {
-  return listJudgeParadigms().find((paradigm) => paradigm.name === name) ?? null;
+  const current = listJudgeParadigms().find((paradigm) => paradigm.name === name);
+  if (current) return current;
+  return Object.prototype.hasOwnProperty.call(LEGACY_JUDGE_PARADIGM_NAMES, name)
+    ? judgeParadigms[LEGACY_JUDGE_PARADIGM_NAMES[name]]
+    : null;
 }
 
 const MAX_CUSTOM_NAME_LENGTH = 80;

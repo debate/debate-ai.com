@@ -101,7 +101,7 @@ const memberFlows: CoachingProgramMemberFlow[] = [
   { contributorId: "jordan", flow: ALEX_FLOW, sideKey: "1AC" }, // not on the roster
 ];
 
-const PRACTICE_ROUND_SETUP = buildPracticeRoundSetup({ styleKey: "lincolnDouglas", judgeParadigm: "lay" });
+const PRACTICE_ROUND_SETUP = buildPracticeRoundSetup({ styleKey: "lincolnDouglas", judgeParadigm: "common-sense" });
 
 const memberPracticeRounds: CoachingProgramMemberPracticeRound[] = [
   { contributorId: "alex", setup: PRACTICE_ROUND_SETUP },

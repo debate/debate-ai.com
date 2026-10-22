@@ -39,13 +39,13 @@ beforeEach(() => {
 
 describe("buildPracticeRoundJudgeDecisionInput", () => {
   it("reports the flow summary missing when none is saved", () => {
-    const result = buildPracticeRoundJudgeDecisionInput("round-1", judgeParadigms.flow, SIDE_NAMES);
+    const result = buildPracticeRoundJudgeDecisionInput("round-1", judgeParadigms.policymaker, SIDE_NAMES);
     expect(result).toEqual({ ok: false, missing: "flowSummary" });
   });
 
   it("treats an empty saved summary list as missing", () => {
     saveFlowSummary({ roundId: "round-1", summaries: [] });
-    const result = buildPracticeRoundJudgeDecisionInput("round-1", judgeParadigms.flow, SIDE_NAMES);
+    const result = buildPracticeRoundJudgeDecisionInput("round-1", judgeParadigms.policymaker, SIDE_NAMES);
     expect(result).toEqual({ ok: false, missing: "flowSummary" });
   });
 
@@ -63,7 +63,7 @@ describe("buildPracticeRoundJudgeDecisionInput", () => {
 
   it("scopes the flow-summary lookup to the given roundId", () => {
     saveFlowSummary({ roundId: "round-2", summaries: [ROW] });
-    const result = buildPracticeRoundJudgeDecisionInput("round-1", judgeParadigms.flow, SIDE_NAMES);
+    const result = buildPracticeRoundJudgeDecisionInput("round-1", judgeParadigms.policymaker, SIDE_NAMES);
     expect(result).toEqual({ ok: false, missing: "flowSummary" });
   });
 

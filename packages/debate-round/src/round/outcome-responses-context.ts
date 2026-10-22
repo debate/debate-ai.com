@@ -100,7 +100,7 @@ export function buildOutcomeRoundLabel(round: Round | undefined): string | undef
 }
 
 /** Paradigm used when nothing on record says how the judge votes. */
-export const DEFAULT_OUTCOME_PARADIGM_ID = "flow" as const;
+export const DEFAULT_OUTCOME_PARADIGM_ID = "policymaker" as const;
 
 function normalizeName(name: string): string {
   return name.trim().toLowerCase();

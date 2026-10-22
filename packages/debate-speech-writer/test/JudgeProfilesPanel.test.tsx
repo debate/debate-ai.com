@@ -143,7 +143,7 @@ describe("JudgeProfilesPanel logging rounds", () => {
       paceWpm: 250,
       theoryArgumentRaised: false,
       theoryArgumentWon: false,
-      paradigmId: "flow",
+      paradigmId: "policymaker",
     });
     view = await mount(createElement(JudgeProfilesPanel));
 
@@ -160,7 +160,7 @@ describe("JudgeProfilesPanel logging rounds", () => {
     await type(input("judge-round-pace"), "");
     await click(buttonByText(view.container, "Save changes"));
     expect(listJudgeRoundRecords()).toEqual([
-      expect.objectContaining({ id: "r1", tournamentName: "Glenbrooks", paradigmId: "flow" }),
+      expect.objectContaining({ id: "r1", tournamentName: "Glenbrooks", paradigmId: "policymaker" }),
     ]);
     // Clearing the pace drops it from the stored record.
     expect(listJudgeRoundRecords()[0].paceWpm).toBeUndefined();
@@ -238,7 +238,7 @@ describe("JudgeProfilesPanel comparison and filter", () => {
     expect(smith[2]).toBe("5");
     expect(smith[3]).toContain("Aff 5-0 Neg");
     expect(smith[3]).toContain("notable bias");
-    expect(smith[7]).toContain("flow");
+    expect(smith[7]).toContain("policymaker");
     expect(smith[7]).toContain("100% confidence");
     const lee = roster().find((row) => row[1] === "lee")!;
     expect(lee[5]).toBe("unknown");
@@ -256,7 +256,7 @@ describe("JudgeProfilesPanel comparison and filter", () => {
     expect(text()).toContain("200 wpm (set by jones");
     expect(text()).toContain("averse: jones");
     expect(text()).toContain("conflicting");
-    expect(text()).toContain("smith: flow");
+    expect(text()).toContain("smith: policymaker");
 
     // Unchecking a judge removes it again.
     await click(query(view.container, "input[aria-label='Add jones to panel comparison']"));

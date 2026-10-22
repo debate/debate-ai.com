@@ -95,7 +95,7 @@ import {
   type JudgeRoundRecordEntry,
 } from "../state/judgeRoundRecords"
 import type { DebateSide, JudgeProfile } from "../judge/judge-profile"
-import { judgeParadigms, judgeParadigmIds } from "../judge/judge-paradigms"
+import { judgeParadigms, judgeParadigmIds, normalizeJudgeParadigmId } from "../judge/judge-paradigms"
 import type { BuiltinJudgeParadigmId } from "../judge/judge-paradigms"
 import { buildJudgePanelComparison } from "../judge/judge-panel-comparison"
 import { JUDGE_ROUND_CSV_TEMPLATE } from "../judge/judge-round-record-csv-import"
@@ -145,7 +145,7 @@ function draftFromRecord(record: JudgeRoundRecordEntry): RoundDraft {
     paceWpm: record.paceWpm === undefined ? "" : String(record.paceWpm),
     theoryArgumentRaised: record.theoryArgumentRaised,
     theoryArgumentWon: record.theoryArgumentWon,
-    paradigmId: record.paradigmId ?? NO_PARADIGM,
+    paradigmId: (record.paradigmId && normalizeJudgeParadigmId(record.paradigmId)) || NO_PARADIGM,
   }
 }
 

@@ -144,7 +144,7 @@ describe("buildCoachingProgramMemberFlows", () => {
 });
 
 describe("buildCoachingProgramMemberPracticeRounds", () => {
-  const SETUP = buildPracticeRoundSetup({ styleKey: "lincolnDouglas", judgeParadigm: "lay" });
+  const SETUP = buildPracticeRoundSetup({ styleKey: "lincolnDouglas", judgeParadigm: "common-sense" });
 
   it("joins a roster member's recorded roundId to its persisted PracticeRoundRecord", () => {
     saveRoundContributorFlow(ALICE);
