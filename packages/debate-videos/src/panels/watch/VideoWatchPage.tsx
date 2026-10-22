@@ -84,6 +84,7 @@ import {
   DEBATE_STYLE_LABELS,
   TOURNAMENT_COLORS,
   getRoundBadgeColor,
+  formatElimBadgeLabel,
   formatVideoDate,
   getTournamentLogo,
 } from "../../components/videos/card/videoCardUtils"
@@ -914,7 +915,7 @@ export function VideoWatchPage({
                               getRoundBadgeColor(roundLabel),
                             )}
                           >
-                            {roundLabel}
+                            {formatElimBadgeLabel(roundLabel)}
                           </span>
                         )}
                         <FormatBadge style={formatStyle} />

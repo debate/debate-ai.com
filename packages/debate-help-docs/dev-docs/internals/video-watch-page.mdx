@@ -90,6 +90,21 @@ from the video rather than from a client fetch a crawler never waits for.
   same tournament (searched by its year-stripped name), then the same
   style or lecture category, then recency; each pass tops the list up.
 
+## Page title
+
+`videoPageTitle(video, ranks)` (`lib/video-page-title.ts`) builds the
+`<title>`, the Open Graph title and the `<h1>`: season-derived tournament
+year, tournament name without its year, the format's level (`STYLE_LEVELS`),
+the round via `displayRoundLevel`, then each team with `(#rank, argument)`.
+An untagged video falls back to `parseRoundTitle`, and anything else to its
+own title. The ranks come from `loadVideoTeamRanks` (`lib/video-team-ranks.ts`),
+the server-side twin of `useVideoTeamRankings`: the current season's dataset
+for the round's style, or a past college season's debatedata table. The
+route passes them to `VideoWatchPage` as `titleRanks` so the server-rendered
+heading matches the `<title>` before the client's rankings load.
+`isRankedSeasonRound` and `pastCollegeSeason` moved there from the hook so
+the server can call them; the hook re-exports them.
+
 ## Transcript search highlighting
 
 `WatchTranscriptPanel`'s search still filters to lines whose text contains
@@ -161,6 +176,20 @@ embed's reported `duration` into state for the timeline's proportions;
 The follow behaviour reuses the side panel's remembered auto-scroll
 choice rather than adding a second toggle. Tested in
 `test/round-speeches.test.ts` and `test/watch-round-panel.test.tsx`.
+
+The open speech and its view live in the query string as
+`?speech=2ar&tab=outcomes` (`lib/speech-url.ts`). The speech word is the
+tab label in lower case with dashes, counted when the label repeats
+(`cx`, `cx-2`); `tab` is the view kind (`summary`, `analysis`,
+`transcript`, `llm`, `outcomes`). `WatchRoundPanel` reads both once per
+video and holds a speech the round doesn't have yet until a re-timed
+list does. Following playback leaves a linked speech alone until a
+different speech starts. Changes go through `setStateInURL` with
+`replaceState`, so stepping through speeches doesn't fill the back
+button. The first speech on its default view is not written unless the
+link asked for it. `WatchSidePanel` opens on By speech when either
+parameter is present. Tested in `test/speech-url.test.ts` and
+`test/watch-round-panel.test.tsx`.
 
 ### Outcomes: alternative responses and predicted ballots
 

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   STYLE_COLORS,
   TOURNAMENT_COLORS,
+  formatElimBadgeLabel,
   formatVideoDate,
   getRoundBadgeColor,
   getYearTopic,
@@ -105,5 +106,23 @@ describe("formatVideoDate", () => {
     // as missing rather than as the literal "Invalid Date".
     expect(formatVideoDate("not a date")).toBe("");
     expect(formatVideoDate("", "full", "—")).toBe("—");
+  });
+});
+
+describe("formatElimBadgeLabel", () => {
+  it.each([
+    ["Semis", "Top 4 Semis"],
+    ["Quarters", "Top 8 Quarters"],
+    ["Octas", "Top 16 Octos"],
+    ["Doubles", "Top 32 Doubles"],
+    ["Triples", "Top 64 Triples"],
+    ["Final", "Final"],
+    ["R3", "R3"],
+  ])("%s -> %s", (input, expected) => {
+    expect(formatElimBadgeLabel(input)).toBe(expected);
+  });
+
+  it("keeps the badge colour of the underlying round", () => {
+    expect(getRoundBadgeColor(formatElimBadgeLabel("Doubles"))).toBe(getRoundBadgeColor("Doubles"));
   });
 });
