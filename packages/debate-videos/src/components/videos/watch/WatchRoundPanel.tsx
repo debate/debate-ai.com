@@ -54,8 +54,7 @@ import { cachedSpeechKeys } from "../../../state/speechOutcomeCache"
 import { readSpeechSummaries, writeSpeechSummary } from "../../../state/speechAiCache"
 import { requestSpeechSummary } from "../../../lib/speech-ai-client"
 import { shareVideoAiResult, sharedOutcomeSpeechKeys, useSharedVideoAi } from "../../../state/sharedVideoAi"
-import { findSpeechBySlug, SPEECH_PARAM, SPEECH_VIEW_PARAM, speechSlug } from "../../../lib/speech-url"
-import { setStateInURL } from "../../../ui/lib/utils"
+import { findSpeechBySlug, readSpeechRoute, speechSlug, writeSpeechRoute } from "../../../lib/speech-url"
 
 /** A document view, the AI alternative-responses view, or the AI outline. */
 type SpeechView = VideoDocumentKind | "outcomes" | "llm"
@@ -114,6 +113,12 @@ interface WatchRoundPanelProps {
   markedKeys?: ReadonlySet<string>
   /** The AI speech detection; without it the panel offers no Detect control. */
   detection?: SpeechDetectionControl
+  /**
+   * The video's own address, which the open speech and view are written
+   * after (`<routeHref>/2ar/outcomes`). Without it, or on a page at another
+   * address, they go in the query string.
+   */
+  routeHref?: string
 }
 
 const NO_KEYS: ReadonlySet<string> = new Set()
@@ -133,6 +138,7 @@ export function WatchRoundPanel({
   onMarkStart,
   markedKeys = NO_KEYS,
   detection,
+  routeHref,
 }: WatchRoundPanelProps) {
   const [activeKey, setActiveKey] = useState(speeches[0]?.key ?? "")
   const [view, setView] = useState<SpeechView>("summary")
@@ -165,7 +171,7 @@ export function WatchRoundPanel({
   const playingIndex = useMemo(() => playingSpeechIndex(speeches, currentTime), [speeches, currentTime])
   const isTimed = useMemo(() => speeches.some((speech) => speech.startSeconds !== null), [speeches])
 
-  // The URL's `?speech=…&tab=…`, read once per video. The speech waits here
+  // The URL's speech and view (`…/2ar/outcomes`), read once per video. The speech waits here
   // until a round that has it arrives (detection can re-time it later), and
   // `pinnedAt` holds the playing speech at that moment so following playback
   // doesn't snap straight back off the linked speech.
@@ -173,11 +179,11 @@ export function WatchRoundPanel({
   const pinnedAt = useRef<number | null>(null)
   const synced = useRef<{ speech: string; tab: SpeechView } | null>(null)
   useEffect(() => {
-    const params = setStateInURL() ?? {}
-    urlSpeech.current = params[SPEECH_PARAM] ?? null
+    const { speech, tab } = readSpeechRoute(routeHref)
+    urlSpeech.current = speech
     synced.current = null
-    const tab = params[SPEECH_VIEW_PARAM]
     if (isSpeechView(tab)) setView(tab)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [videoId])
 
   // A different video brings a different round.
@@ -240,8 +246,8 @@ export function WatchRoundPanel({
     const last = synced.current
     synced.current = next
     if (!last || (last.speech === next.speech && last.tab === next.tab)) return
-    setStateInURL({ [SPEECH_PARAM]: next.speech, [SPEECH_VIEW_PARAM]: next.tab })
-  }, [activeKey, view, speeches])
+    writeSpeechRoute(routeHref, next.speech, next.tab)
+  }, [activeKey, view, speeches, routeHref])
 
   const activeIndex = Math.max(
     0,

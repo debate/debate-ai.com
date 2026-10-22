@@ -38,7 +38,7 @@ vi.mock("@debate/webview/lib/videos/video-json-source", () => ({
     }),
 }));
 
-const { getVideoBySlug, getVideoByRouteSegments, getVideoPage } = await import(
+const { getVideoBySlug, getVideoByRouteSegments, getVideoPage, resolveVideoRoute } = await import(
   "../video-repository"
 );
 
@@ -73,7 +73,7 @@ describe("getVideoByRouteSegments", () => {
     const page = await getVideoPage({ source: "all", limit: 200, offset: 0 });
     const round = page.videos.find((v) => {
       const href = videoRouteHref(v as unknown as VideoType);
-      return href.split("/").length === 6;
+      return href.split("/").length === 7;
     }) as unknown as VideoType | undefined;
     expect(round).toBeDefined();
 
@@ -90,7 +90,7 @@ describe("getVideoByRouteSegments", () => {
     const video = await getVideoByRouteSegments(["2022", "ndt", "finals", "dartmouth-sv-michigan-pr"]);
     expect(video).not.toBeNull();
     expect(videoRouteHref(video as unknown as VideoType)).toBe(
-      "/videos/21-22/ndt/finals/dartmouth-sv-michigan-pr",
+      "/videos/21-22/cpd/ndt/finals/dartmouth-sv-michigan-pr",
     );
     expect(
       (await getVideoByRouteSegments(["21-22", "ndt", "finals", "dartmouth-sv-michigan-pr"]))?.[0],
@@ -126,12 +126,37 @@ describe("getVideoByRouteSegments", () => {
     ]);
     expect(current?.[0]).toBe("pQ2p9xUntag");
     expect(videoRouteHref(current as unknown as VideoType)).toBe(
-      "/videos/26-27/policy/finals-kentucky-round-robin-greenhill-vs-westminster",
+      "/videos/26-27/vcx/finals-kentucky-round-robin-greenhill-vs-westminster",
     );
 
     const partial = await getVideoByRouteSegments(["2027", "policy", "finals"]);
     expect(partial?.[0]).toBe("pQ2p9xUntag");
     expect((await getVideoByRouteSegments(["26-27", "policy", "finals"]))?.[0]).toBe("pQ2p9xUntag");
+  });
+
+  it("resolves a round at its address with the format segment", async () => {
+    expect(
+      (await getVideoByRouteSegments(["21-22", "cpd", "ndt", "finals", "dartmouth-sv-michigan-pr"]))?.[0],
+    ).toBe("qx7Xx_6exzk");
+  });
+
+  it("reads a speech and view after the address", async () => {
+    const base = ["21-22", "cpd", "ndt", "finals", "dartmouth-sv-michigan-pr"];
+    const both = await resolveVideoRoute([...base, "2ar", "outcomes"]);
+    expect(both?.video[0]).toBe("qx7Xx_6exzk");
+    expect(both?.suffix).toEqual(["2ar", "outcomes"]);
+    const viewOnly = await resolveVideoRoute([...base, "transcript"]);
+    expect(viewOnly?.video[0]).toBe("qx7Xx_6exzk");
+    expect(viewOnly?.suffix).toEqual(["transcript"]);
+    expect((await resolveVideoRoute(base))?.suffix).toEqual([]);
+  });
+
+  it("keeps an address that is some video's own over a speech reading of it", async () => {
+    // The analysis lecture's address is the old round path plus `/analysis`,
+    // which is also a view word.
+    const match = await resolveVideoRoute(["2022", "ndt", "finals", "dartmouth-sv-michigan-pr", "analysis"]);
+    expect(match?.video[0]).toBe("Afl7_hl-H0c");
+    expect(match?.suffix).toEqual([]);
   });
 
   it("returns null for a path naming nothing", async () => {

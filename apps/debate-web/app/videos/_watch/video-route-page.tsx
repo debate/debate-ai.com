@@ -1,10 +1,14 @@
 import type { Metadata } from "next"
 import { Suspense } from "react"
-import { notFound, permanentRedirect } from "next/navigation"
+import { notFound, permanentRedirect, redirect } from "next/navigation"
 import {
+  SPEECH_PARAM,
+  SPEECH_VIEW_PARAM,
   SlowSpreadButton,
   VideoWatchPage,
   loadVideoTeamRanks,
+  parseSpeechRouteSuffix,
+  speechRouteSuffix,
   stackKeyOf,
   videoPageTitle,
   videoRouteHref,
@@ -18,21 +22,29 @@ import {
   getRelatedVideos,
   getVideoByRouteSegments,
   getVideoStacks,
+  resolveVideoRoute,
 } from "@/lib/videos/video-repository"
 import { getVideoSidePanelContent } from "@/lib/videos/video-content"
+import { videoListingPath } from "@/lib/redirects/video-listing"
 
 /**
- * One video at its canonical address, shared by the three route shapes:
+ * One video at its canonical address, shared by every route shape:
  *
- * - `/videos/<season>/<tournament>/<round>/<teams>` for a tagged round, e.g.
- *   `/videos/21-22/ndt/finals/dartmouth-sv-michigan-pr`
- *   (`app/videos/[category]/[event]/[matchup]/[teams]/page.tsx`);
+ * - `/videos/<season>/<format>/<tournament>/<round>/<teams>` for a tagged
+ *   round, e.g. `/videos/21-22/cpd/ndt/finals/dartmouth-sv-michigan-pr`;
  * - `.../<teams>/<variant>` for a video made from that round — its analysis,
- *   one part of a split upload — e.g. `.../dartmouth-sv-michigan-pr/analysis`
- *   (`app/videos/[category]/[event]/[matchup]/[teams]/[variant]/page.tsx`);
- * - `/videos/<season>/<event>/<matchup>` for everything else, and for round
- *   links shared before rounds got their own shape
- *   (`app/videos/[category]/[event]/[matchup]/page.tsx`).
+ *   one part of a split upload — e.g. `.../dartmouth-sv-michigan-pr/part-2`;
+ * - `/videos/<season>/<event>/<matchup>` for everything else (the event is
+ *   `<format>/<tournament>` when the video has a format), and for round links
+ *   shared before rounds got their own shape;
+ * - any of those followed by the open speech and its view, e.g.
+ *   `.../dartmouth-sv-michigan-pr/2ar/outcomes` (see `lib/speech-url` in
+ *   `@debate/videos`). Links that carried them as `?speech=2ar&tab=outcomes`
+ *   redirect to that form.
+ *
+ * The router has a page for each depth from three segments
+ * (`app/videos/[category]/[event]/[matchup]/page.tsx`) to five, and a
+ * catch-all below that for the deeper ones; all of them land here.
  *
  * The path is re-derived on every request, so a stale one — the older
  * three-segment round path, a corrected team name, a re-tagged tournament —
@@ -83,17 +95,51 @@ export async function videoRouteMetadata(segments: string[]): Promise<Metadata> 
   }
 }
 
+/** A page's query string, as Next.js hands it over. */
+export type VideoRouteSearchParams = Promise<Record<string, string | string[] | undefined>>
+
+/** The first value of a query parameter. */
+function firstParam(value: string | string[] | undefined): string | null {
+  return (Array.isArray(value) ? value[0] : value) ?? null
+}
+
 /** Renders the watch page for these path segments, or redirects to the canonical ones. */
-export async function VideoRoutePage({ segments }: { segments: string[] }) {
-  const video = await videoForSegments(segments)
-  if (!video) notFound()
+export async function VideoRoutePage({
+  segments,
+  searchParams,
+}: {
+  segments: string[]
+  searchParams?: VideoRouteSearchParams
+}) {
+  const query = (await searchParams) ?? {}
+  const match = await resolveVideoRoute(segments)
+  if (!match) {
+    // `/videos/24-25/ld/<tournament>` reads as a video's address until no
+    // video has it; then it was a trimmed one, asking for that listing.
+    const listing = videoListingPath(`/videos/${segments.join("/")}`, "", { allowFormatTournament: true })
+    if (listing) redirect(listing)
+    notFound()
+  }
+  const video = match.video as unknown as VideoType
 
   // One address per video: a link built before a retitle, a tournament fix or
-  // a team-name correction still resolves, and is sent on to the current one.
-  const canonical = videoRouteHref(video)
+  // a team-name correction still resolves, and is sent on to the current one,
+  // carrying the speech and view it opened (from the path, or the query
+  // string older links used) along.
+  const fromPath = parseSpeechRouteSuffix(match.suffix)
+  const speech = firstParam(query[SPEECH_PARAM]) ?? fromPath?.speech
+  const tab = firstParam(query[SPEECH_VIEW_PARAM]) ?? fromPath?.tab
+  const canonical = `${videoRouteHref(video)}${speechRouteSuffix(speech, tab)}`
   const requested = `/videos/${segments.join("/")}`
-  if (requested !== canonical) {
-    permanentRedirect(canonical)
+  const hasLegacyQuery = SPEECH_PARAM in query || SPEECH_VIEW_PARAM in query
+  if (requested !== canonical || hasLegacyQuery) {
+    const rest = new URLSearchParams()
+    for (const [key, value] of Object.entries(query)) {
+      if (key === SPEECH_PARAM || key === SPEECH_VIEW_PARAM || value === undefined) continue
+      for (const item of Array.isArray(value) ? value : [value]) rest.append(key, item)
+    }
+    const search = rest.toString()
+    permanentRedirect(search ? `${canonical}?${search}` : canonical)
   }
 
   const stackKey = stackKeyOf(video)

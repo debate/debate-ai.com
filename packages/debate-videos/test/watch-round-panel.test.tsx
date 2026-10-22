@@ -49,11 +49,17 @@ describe("WatchSidePanel by speech", () => {
 
   function render(
     documents: VideoDocument[],
-    { currentTime = 0, onSeek = () => {}, focusSpeech = null as SpeechFocusRequest | null } = {},
+    {
+      currentTime = 0,
+      onSeek = () => {},
+      focusSpeech = null as SpeechFocusRequest | null,
+      routeHref = undefined as string | undefined,
+    } = {},
   ) {
     act(() => {
       root.render(
         createElement(WatchSidePanel, {
+          routeHref,
           sentences: [],
           captionsLoading: false,
           documents,
@@ -131,6 +137,27 @@ describe("WatchSidePanel by speech", () => {
     const params = new URLSearchParams(window.location.search);
     expect(params.get("tab")).toBe("transcript");
     expect(params.get("t")).toBe("5");
+  });
+
+  it("opens the speech and view the path names after the video's address", () => {
+    window.history.replaceState({}, "", "/videos/26-27/cpd/ndt/finals/a-b/1nc/transcript");
+    render([summary, transcript], { routeHref: "/videos/26-27/cpd/ndt/finals/a-b" });
+    expect(selectedSpeech()).toBe("1NC");
+    expect(container.querySelector('[aria-label="1NC views"] [aria-selected="true"]')?.textContent).toBe("Transcript");
+  });
+
+  it("writes the open speech and view as path segments", () => {
+    window.history.replaceState({}, "", "/videos/26-27/cpd/ndt/finals/a-b?t=5");
+    render([summary, transcript], { routeHref: "/videos/26-27/cpd/ndt/finals/a-b" });
+    expect(window.location.pathname).toBe("/videos/26-27/cpd/ndt/finals/a-b");
+    act(() => speechTabs()[1].click());
+    expect(window.location.pathname).toBe("/videos/26-27/cpd/ndt/finals/a-b/1ax/summary");
+    const transcriptView = Array.from(container.querySelectorAll('[role="tab"]')).find(
+      (tab) => tab.textContent === "Transcript",
+    ) as HTMLButtonElement;
+    act(() => transcriptView.click());
+    expect(window.location.pathname).toBe("/videos/26-27/cpd/ndt/finals/a-b/1ax/transcript");
+    expect(window.location.search).toBe("?t=5");
   });
 
   it("opens a speech the timeline asks for", () => {

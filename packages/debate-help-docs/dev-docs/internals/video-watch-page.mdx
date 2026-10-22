@@ -177,18 +177,28 @@ The follow behaviour reuses the side panel's remembered auto-scroll
 choice rather than adding a second toggle. Tested in
 `test/round-speeches.test.ts` and `test/watch-round-panel.test.tsx`.
 
-The open speech and its view live in the query string as
-`?speech=2ar&tab=outcomes` (`lib/speech-url.ts`). The speech word is the
-tab label in lower case with dashes, counted when the label repeats
-(`cx`, `cx-2`); `tab` is the view kind (`summary`, `analysis`,
-`transcript`, `llm`, `outcomes`). `WatchRoundPanel` reads both once per
-video and holds a speech the round doesn't have yet until a re-timed
-list does. Following playback leaves a linked speech alone until a
-different speech starts. Changes go through `setStateInURL` with
-`replaceState`, so stepping through speeches doesn't fill the back
-button. The first speech on its default view is not written unless the
-link asked for it. `WatchSidePanel` opens on By speech when either
-parameter is present. Tested in `test/speech-url.test.ts` and
+The open speech and its view live in the path after the video's own
+address, as `…/<teams>/2ar/outcomes` (`lib/speech-url.ts`). The speech word
+is the tab label in lower case with dashes, counted when the label repeats
+(`cx`, `cx-2`); the view is the view kind (`summary`, `analysis`,
+`transcript`, `llm`, `outcomes`). A speech is always followed by its view
+(`speechRouteSuffix` fills in `summary`), so a lone segment is a view and
+never needs telling apart from a speech. On the server, `resolveVideoRoute`
+in `apps/debate-web/lib/videos/video-repository.ts` tries the whole path as
+a video's address first, then with one or two trailing segments read as a
+suffix (only against the current address, never the older ones, so a round's
+pre-format path plus `/analysis` still names the analysis lecture).
+`VideoRoutePage` 308s links that carry `?speech=&tab=` to the path form;
+the catch-all `[teams]/[variant]/[...rest]` route takes the deeper paths.
+`WatchRoundPanel` reads both once per video (`readSpeechRoute`, given the
+video's address as `routeHref`) and holds a speech the round doesn't have
+yet until a re-timed list does. Following playback leaves a linked speech
+alone until a different speech starts. Changes go through
+`writeSpeechRoute` with `replaceState`, so stepping through speeches doesn't
+fill the back button; a page at another address (the mini player) keeps the
+query parameters. The first speech on its default view is not written unless
+the link asked for it. `WatchSidePanel` opens on By speech when either is
+present. Tested in `test/speech-url.test.ts`,
 `test/watch-round-panel.test.tsx`.
 
 ### Outcomes: alternative responses and predicted ballots

@@ -180,7 +180,7 @@ them under the player in stack order, current one marked, each labelled
 members are dropped from the "Related videos" rows so they are not listed twice.
 
 **Addresses.** `lib/video-route.ts` files a round at
-`/videos/<season>/<tournament>/<round>/<aff>-<neg>` — no `vs` — and a video
+`/videos/<season>/<format>/<tournament>/<round>/<aff>-<neg>` — no `vs` — and a video
 made from it (a lecture whose title reads as that round, or one part of a
 split upload) one segment below, at `…/<teams>/<variant>`: `analysis` (the
 category, less a leading `round-`), `part-2`, or both joined. The fifth
@@ -189,6 +189,21 @@ segment is served by `app/videos/[category]/[event]/[matchup]/[teams]/[variant]/
 (`…/dartmouth-sv-vs-michigan-pr-round-analysis`, rebuilt by
 `previousVideoRouteHref`) and the older three-segment one, and the page
 redirects both to the canonical path.
+
+**Format segment.** A video with a numeric debate style carries
+`FORMAT_SEGMENTS[style]` after the season: `vcx` (HS policy), `pf`, `ld`,
+`cpd` (college policy), `wsd`, `acc`, `misc`. A round with no tournament
+keeps just the format (`/videos/21-22/cpd/semifinals/…`), and a non-round
+video spells its event as `<format>/<tournament>` or the format alone.
+Lectures (a category in the style slot) and rounds read from a lecture's
+title get none. Every builder takes `withFormat` (default `true`);
+`getVideoByRouteSegments` also matches `videoRouteHref(v, spelling, false)`,
+so links from before the segment redirect. `previousVideoRouteHref`,
+`legacyVideoRouteHref` and `untitledVideoRouteHref` always build the
+format-less forms they had. The sixth segment and the speech suffix after a
+video (see the watch page note) are served by the catch-all
+`[teams]/[variant]/[...rest]/page.tsx`. `/videos/<season>/<format>` redirects
+to the library filtered by `style` (`lib/redirects/video-listing.ts`).
 
 ## What a big grid costs
 
