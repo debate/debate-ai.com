@@ -598,6 +598,12 @@ each invisible until something renders them again — see **Known gaps**.
   opt-out it sits next to — which already worked this way. (A guest who picks
   "don't ask me again" instead still gets that separate, non-expiring
   opt-out described above.)
+- ~~Nothing stopped a new `STORAGE_KEY` store from silently staying
+  browser-only.~~ **Fixed:** `debate-data-sync/test/storage-key-coverage.test.ts`
+  scans every package's `STORAGE_KEY = "…"` constant and fails unless the store
+  is in `TOOL_RECORD_COLLECTIONS`, listed as synced through its own route /
+  `user_settings` column, or declared device-local (2026-10-22 audit: all
+  stores classified).
 - **Audited, stays separate:** `TOOL_RECORD_COLLECTIONS` does not derive from
   `app/tools/tool-groups.ts`'s `ALL_TOOLS`, unlike `/tools`, the favorites
   system, and the command palette. This is deliberate, not an oversight: it
