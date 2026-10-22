@@ -34,6 +34,7 @@ export interface AppRoute {
 }
 
 export const PAGE_ROUTES: AppRoute[] = [
+  { pattern: "/about", load: () => import("./about/page") },
   { pattern: "/annotations", load: () => import("./annotations/page") },
   { pattern: "/auth/extension-complete", load: () => import("./auth/extension-complete/page") },
   { pattern: "/auth/native-callback", load: () => import("./auth/native-callback/page") },

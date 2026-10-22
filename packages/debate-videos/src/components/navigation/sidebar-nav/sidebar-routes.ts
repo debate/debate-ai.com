@@ -45,7 +45,7 @@ import {
  * see {@link isTeamProfilePath}.
  *
  * `/legal` is the Terms of Service and Privacy Policy page (`/legal/privacy`
- * today). Same reasoning: a page reachable from the footer on every other
+ * today), and `/about` the About page. Same reasoning: a page reachable from the footer on every other
  * route otherwise loses the nav the moment you open it.
  *
  * `/reason-editor` is Debate Editor. It used to reach this set as a
@@ -69,6 +69,7 @@ export const EXTRA_SIDEBAR_HREFS: readonly string[] = [
   "/teams",
   "/schools",
   "/legal",
+  "/about",
   "/reason-editor",
   "/admin",
 ];
