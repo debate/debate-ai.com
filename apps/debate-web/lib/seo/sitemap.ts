@@ -56,6 +56,7 @@ const STATIC_PAGES: ReadonlyArray<{ path: string; priority: number; changeFreque
   { path: "/videos", priority: 1.0, changeFrequency: "daily" },
   { path: "/lectures", priority: 0.9, changeFrequency: "weekly" },
   { path: "/docs", priority: 0.8, changeFrequency: "weekly" },
+  { path: "/about", priority: 0.3, changeFrequency: "yearly" },
   { path: "/legal/privacy", priority: 0.3, changeFrequency: "yearly" },
 ];
 
