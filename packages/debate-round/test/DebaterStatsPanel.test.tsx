@@ -67,7 +67,7 @@ describe("DebaterStatsPanel", () => {
   it("shows win rate, side split and breakdowns for logged rounds", async () => {
     logRound("r1")
     logRound("r2", { side: "neg", won: false, division: "PF", argumentTags: ["topicality"] })
-    logRound("r3", { won: true })
+    logRound("r3", { won: true, caseName: "Climate Aff" })
     await mount(createElement(DebaterStatsPanel))
     await flush()
     const text = bodyText()
@@ -76,6 +76,8 @@ describe("DebaterStatsPanel", () => {
     expect(text).toContain("By division")
     expect(text).toContain("PF")
     expect(text).toContain("topicality")
+    expect(text).toContain("By case")
+    expect(text).toContain("Climate Aff")
     expect(text).toContain("Not enough rounds yet")
   })
 
