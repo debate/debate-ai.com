@@ -2,10 +2,11 @@ name: Native Wrapper CI
 
 # Fast correctness check for apps/debate-native-wrapper on every push/PR that
 # touches it (or the auth code its OAuth handoff depends on) — a Rust
-# `cargo check` plus a debug build, no bundling/signing/release. The full
-# 5-platform release build lives in native-wrapper-release.yml and only runs
-# on a version tag; running that on every push would cost ~15 CPU-minutes of
-# Rust compilation per commit for no benefit.
+# `cargo check`, clippy, and `cargo test` with coverage (uploaded to Codecov),
+# no bundling/signing/release. The full 5-platform release build lives in
+# native-wrapper-release.yml and only runs on a version tag; running that on
+# every push would cost ~15 CPU-minutes of Rust compilation per commit for no
+# benefit.
 
 on:
   push:
@@ -78,3 +79,43 @@ jobs:
       - name: cargo clippy
         working-directory: apps/debate-native-wrapper/src-tauri
         run: cargo clippy --all-targets -- -D warnings
+
+  rust-coverage:
+    name: cargo test + coverage (ubuntu)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Linux webview/build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: llvm-tools-preview
+
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-llvm-cov
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: apps/debate-native-wrapper/src-tauri
+
+      # Runs the unit tests in src-tauri/src and writes their line coverage.
+      # The JavaScript half of the wrapper reports from test.yml with the rest
+      # of the repo; this upload is flagged and carried forward (codecov.yml)
+      # because it only runs when the wrapper changes.
+      - name: cargo llvm-cov
+        working-directory: apps/debate-native-wrapper/src-tauri
+        run: cargo llvm-cov --lcov --output-path lcov.info
+
+      - name: Upload Rust coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: apps/debate-native-wrapper/src-tauri/lcov.info
+          flags: native-wrapper-rust
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
