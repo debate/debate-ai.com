@@ -17,9 +17,7 @@
 
 # debate-editor
 
-Debate Editor, the debate-card editor embedded in debate-ai.com. It is built on
-[CardMirror](https://github.com/ant981228/cardmirror) by Anthony Trufanov (see
-[THIRD-PARTY-NOTICES.md](../../THIRD-PARTY-NOTICES.md)). The package exposes the
+Debate Editor, the debate-card editor embedded in debate-ai.com. The package exposes the
 ProseMirror engine, Verbatim `.docx` interop helpers, and React editor shell used by the
 site's speech-doc and reason-editor surfaces.
 
