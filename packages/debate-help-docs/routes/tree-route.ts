@@ -3,7 +3,7 @@
  * @description The docs' page tree as plain JSON, mounted by the web app at
  * `app/docs/api/docs-tree/route.ts`. Off `/docs` the app sidebar lists every
  * docs page in a collapsed "Docs" section (`DocsNavTree` in @debate/videos),
- * which fetches this the first time it is opened. Names are reduced to text
+ * which preloads this as soon as the sidebar mounts. Names are reduced to text
  * and icons dropped, since React nodes don't survive JSON.
  */
 import { isValidElement, type ReactNode } from 'react';

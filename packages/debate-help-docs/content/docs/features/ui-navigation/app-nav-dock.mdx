@@ -262,9 +262,11 @@ showed Fumadocs' own sidebar beside that one. Now:
   view when the docs open and after each navigation.
 - **Off `/docs`** the tree ends in a **Docs** section (`DocsNavTree`, in
   `@debate/videos`) listing every docs page. It scrolls with the rest of the
-  column, starts collapsed (its folders too), and fetches the page tree
-  from `/docs/api/docs-tree` (`routes/tree-route.ts`) the first time it is
-  opened. Its rows are full page loads, since `/docs` renders outside the
+  column and starts collapsed (its folders too), but fetches the page tree
+  from `/docs/api/docs-tree` (`routes/tree-route.ts`, mounted at
+  `app/docs/api/docs-tree/route.ts`) as soon as the sidebar loads, so the
+  pages are already there when it is opened; a failed request is retried on
+  open. Its rows are full page loads, since `/docs` renders outside the
   app's layout. Settings is an icon button beside the hide button
   (`SidebarSettingsButton`); nothing is pinned above the account row.
 - **The mobile drawer** shows the same tree (`MobileSidebarDrawer`).
