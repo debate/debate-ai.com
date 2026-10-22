@@ -296,7 +296,7 @@ export function WatchSpeechOutcomes({
       <ScrollArea className="flex-1 min-h-0">
         <div className="space-y-3 p-3" aria-live="polite" aria-busy={loading}>
           {status.state === "error" && (
-            <p role="alert" className="flex items-start gap-1.5 rounded-md border border-destructive/40 bg-destructive/10 p-2 text-xs text-destructive">
+            <p role="alert" className="flex items-start gap-1.5 rounded-md border border-destructive/40 bg-destructive/10 p-2 text-sm text-destructive">
               <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
               {status.message}
             </p>
@@ -305,13 +305,13 @@ export function WatchSpeechOutcomes({
           {loading && !simulation && <OutcomeSkeleton rows={count} />}
 
           {!simulation && !loading && status.state !== "error" && (
-            <div className="space-y-1.5 text-xs text-muted-foreground">
+            <div className="space-y-1.5 text-sm text-muted-foreground">
               <p>
                 What else could the <span className="font-medium text-foreground">{speech.label}</span> have done?
                 Claude drafts {count} alternative {speech.side === "cx" ? "lines of questioning" : "responses"} and
                 predicts how {panelPhrase} would vote after each, next to the speech as it was given.
               </p>
-              <ul className="space-y-0.5 text-[11px]">
+              <ul className="space-y-0.5 text-xs">
                 {panel.map((id) => (
                   <li key={id}>
                     <span className="font-medium text-foreground">{judgeLabel(id)}:</span>{" "}
@@ -325,7 +325,7 @@ export function WatchSpeechOutcomes({
           {simulation && (
             <div className={`space-y-3 ${loading ? "opacity-50" : ""}`}>
               <section aria-label="Predicted win probability" className="space-y-1.5">
-                <div className="flex items-center justify-between text-[10px] uppercase tracking-wide text-muted-foreground">
+                <div className="flex items-center justify-between text-[11px] uppercase tracking-wide text-muted-foreground">
                   <span>Aff win chance</span>
                   <span>Swing for {swingFor}</span>
                 </div>
@@ -344,11 +344,11 @@ export function WatchSpeechOutcomes({
 
               <section className="rounded-md border border-border bg-muted/30 p-2.5 space-y-1">
                 <div className="flex items-center justify-between gap-2">
-                  <h4 className="text-xs font-semibold">As given</h4>
+                  <h4 className="text-sm font-semibold">As given</h4>
                   <WinnerChip ballot={simulation.actual.ballot} />
                 </div>
-                <p className="text-xs">{simulation.actual.assessment}</p>
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-sm">{simulation.actual.assessment}</p>
+                <p className="text-xs text-muted-foreground">
                   <span className="font-medium">RFD:</span> {simulation.actual.ballot.rfd}
                 </p>
                 <JudgeBallots ballot={simulation.actual.ballot} />
@@ -367,20 +367,20 @@ export function WatchSpeechOutcomes({
                         onClick={() => setOpen(isOpen ? null : i)}
                         className="flex w-full items-start gap-2 p-2 text-left hover:bg-accent/40 transition-colors"
                       >
-                        <span className="mt-px text-[11px] font-semibold tabular-nums text-muted-foreground">{i + 1}</span>
+                        <span className="mt-px text-xs font-semibold tabular-nums text-muted-foreground">{i + 1}</span>
                         <span className="min-w-0 flex-1 space-y-0.5">
-                          <span className="block text-xs font-medium leading-snug">{alternative.title}</span>
+                          <span className="block text-sm font-medium leading-snug">{alternative.title}</span>
                           <span className="flex flex-wrap items-center gap-1">
-                            <span className="rounded bg-muted px-1 py-px text-[10px] text-muted-foreground">
+                            <span className="rounded bg-muted px-1 py-px text-[11px] text-muted-foreground">
                               {alternative.approach}
                             </span>
                             {i === best && (
-                              <span className="inline-flex items-center gap-0.5 rounded bg-primary/10 px-1 py-px text-[10px] text-primary">
+                              <span className="inline-flex items-center gap-0.5 rounded bg-primary/10 px-1 py-px text-[11px] text-primary">
                                 <Trophy className="h-2.5 w-2.5" /> Strongest
                               </span>
                             )}
                             {flips && (
-                              <span className="rounded bg-amber-500/15 px-1 py-px text-[10px] text-amber-700 dark:text-amber-300">
+                              <span className="rounded bg-amber-500/15 px-1 py-px text-[11px] text-amber-700 dark:text-amber-300">
                                 Ballot flips
                               </span>
                             )}
@@ -394,20 +394,20 @@ export function WatchSpeechOutcomes({
                       {isOpen && (
                         <div className="space-y-2 border-t border-border px-2.5 py-2">
                           {alternative.outline.length > 0 && (
-                            <ul className="list-disc space-y-0.5 pl-4 text-xs">
+                            <ul className="list-disc space-y-0.5 pl-4 text-sm">
                               {alternative.outline.map((line, j) => (
                                 <li key={j}>{line}</li>
                               ))}
                             </ul>
                           )}
                           {alternative.tradeoff && (
-                            <p className="text-[11px] text-muted-foreground">
+                            <p className="text-xs text-muted-foreground">
                               <span className="font-medium">Trade-off:</span> {alternative.tradeoff}
                             </p>
                           )}
                           <div className="flex items-start gap-2 rounded bg-muted/40 p-1.5">
                             <WinnerChip ballot={alternative.ballot} />
-                            <p className="text-[11px] text-muted-foreground">{alternative.ballot.rfd}</p>
+                            <p className="text-xs text-muted-foreground">{alternative.ballot.rfd}</p>
                           </div>
                           <JudgeBallots ballot={alternative.ballot} />
                         </div>
@@ -419,10 +419,10 @@ export function WatchSpeechOutcomes({
 
               {simulation.keyClash.length > 0 && (
                 <section className="space-y-1">
-                  <h4 className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Key clash</h4>
+                  <h4 className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Key clash</h4>
                   <ul className="flex flex-wrap gap-1">
                     {simulation.keyClash.map((item, i) => (
-                      <li key={i} className="rounded-full border border-border px-2 py-0.5 text-[11px]">
+                      <li key={i} className="rounded-full border border-border px-2 py-0.5 text-xs">
                         {item}
                       </li>
                     ))}
@@ -462,7 +462,7 @@ function WinnerChip({ ballot }: { ballot: PredictedBallot }) {
       : `${chance}%`
   return (
     <span
-      className={`shrink-0 rounded px-1.5 py-px text-[10px] font-semibold tabular-nums ${SPEECH_SIDE_STYLES[ballot.winner].solid}`}
+      className={`shrink-0 rounded px-1.5 py-px text-[11px] font-semibold tabular-nums ${SPEECH_SIDE_STYLES[ballot.winner].solid}`}
       title={judges.length > 1 ? `Chance ${ballot.winner.toUpperCase()} takes the panel: ${chance}%` : undefined}
     >
       {ballot.winner.toUpperCase()} {detail}
@@ -481,9 +481,9 @@ function JudgeBallots({ ballot }: { ballot: PredictedBallot }) {
         return (
           <li key={judge.judge} className="space-y-1 rounded border border-border bg-background p-1.5">
             <div className="flex items-center justify-between gap-1">
-              <span className="truncate text-[11px] font-medium">{judgeLabel(judge.judge)}</span>
+              <span className="truncate text-xs font-medium">{judgeLabel(judge.judge)}</span>
               <span
-                className={`shrink-0 rounded px-1 py-px text-[10px] font-semibold ${SPEECH_SIDE_STYLES[judge.winner].solid}`}
+                className={`shrink-0 rounded px-1 py-px text-[11px] font-semibold ${SPEECH_SIDE_STYLES[judge.winner].solid}`}
               >
                 {judge.winner.toUpperCase()}
               </span>
@@ -491,9 +491,9 @@ function JudgeBallots({ ballot }: { ballot: PredictedBallot }) {
             <div className="h-1 overflow-hidden rounded-full bg-muted" title={`Confidence ${confidence}%`} aria-hidden>
               <div className={`h-full ${SPEECH_SIDE_STYLES[judge.winner].dot}`} style={{ width: `${confidence}%` }} />
             </div>
-            <p className="text-[11px] text-muted-foreground">{judge.rfd}</p>
+            <p className="text-xs text-muted-foreground">{judge.rfd}</p>
             {judge.decisive && (
-              <p className="text-[10px] text-muted-foreground">
+              <p className="text-[11px] text-muted-foreground">
                 <span className="font-medium">Decided on:</span> {judge.decisive}
               </p>
             )}
@@ -512,7 +512,7 @@ function SwingBadge({ swing, side }: { swing: number; side: string }) {
         ? "text-rose-700 bg-rose-500/10 dark:text-rose-300"
         : "text-muted-foreground bg-muted"
   return (
-    <span className={`shrink-0 rounded px-1 py-px text-[10px] font-semibold tabular-nums ${tone}`} title={`Change in ${side}'s win chance versus the speech as given`}>
+    <span className={`shrink-0 rounded px-1 py-px text-[11px] font-semibold tabular-nums ${tone}`} title={`Change in ${side}'s win chance versus the speech as given`}>
       {swing > 0 ? "+" : swing < 0 ? "−" : "±"}
       {Math.abs(swing)}
     </span>
@@ -538,7 +538,7 @@ function BallotBar({ label, ballot, swing, emphasis, best, onClick }: BallotBarP
       className={`grid w-full grid-cols-[minmax(0,7rem)_1fr_auto] items-center gap-2 text-left ${onClick ? "rounded hover:bg-accent/40" : ""}`}
       aria-label={`${label}: affirmative ${aff}%, negative ${100 - aff}%${swing !== undefined ? `, swing ${swing}` : ""}`}
     >
-      <span className={`truncate text-[11px] ${emphasis ? "font-semibold" : ""} ${best ? "text-primary" : ""}`} title={label}>
+      <span className={`truncate text-xs ${emphasis ? "font-semibold" : ""} ${best ? "text-primary" : ""}`} title={label}>
         {label}
       </span>
       <span className="relative flex h-3 overflow-hidden rounded-sm bg-muted" aria-hidden>
@@ -546,7 +546,7 @@ function BallotBar({ label, ballot, swing, emphasis, best, onClick }: BallotBarP
         <span className={`${SPEECH_SIDE_STYLES.neg.dot} flex-1 opacity-80`} />
         <span className="absolute inset-y-0 left-1/2 w-px bg-background" />
       </span>
-      <span className="w-9 text-right text-[10px] tabular-nums text-muted-foreground" aria-hidden>
+      <span className="w-9 text-right text-[11px] tabular-nums text-muted-foreground" aria-hidden>
         {swing === undefined ? `${aff}%` : `${swing > 0 ? "+" : swing < 0 ? "−" : "±"}${Math.abs(swing)}`}
       </span>
     </Row>
