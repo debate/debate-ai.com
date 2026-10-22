@@ -42,6 +42,9 @@ export const NATIVE_DEEP_LINK_SCHEME = "debateai";
 // i.e. every extension the visitor has installed. Keep the two in sync.
 export const EXTENSION_ID = "noecbaibfhbmpapofcdkgchfifmoinfj";
 
+/** The extension's Chrome Web Store listing, where visitors install it. */
+export const EXTENSION_STORE_URL = `https://chromewebstore.google.com/detail/${EXTENSION_ID}`;
+
 /** The extension's own origin, as the browser sends it on its requests. */
 export const EXTENSION_ORIGIN = `chrome-extension://${EXTENSION_ID}`;
 
