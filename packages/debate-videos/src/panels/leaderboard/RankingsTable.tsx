@@ -27,6 +27,10 @@ import type { Division, SortKey, SortState } from "./leaderboardTypes"
 import { schoolHref, teamHref } from "./profile/rankingProfileHelpers"
 import { TeamLabel } from "../../components/navigation/team-label/TeamLabel"
 import { LegendaryBadge, ROW_TIER_CLASS, rowTier, type RowTier } from "./rowTier"
+import { rankedTeamKey, type TocBidTeam } from "@debate/data-sync/src/rankings/sync-toc-bids-sheet"
+
+/** TOC bids per entry, keyed by `rankedTeamKey` (see `matchTocBids`). */
+export type EntryBids = ReadonlyMap<string, TocBidTeam>
 
 /** The fields shown as columns. */
 type ColumnKey = Extract<
@@ -34,6 +38,7 @@ type ColumnKey = Extract<
   | "rank"
   | "school"
   | "adjustedRating"
+  | "bids"
   | "matches"
   | "affWinRate"
   | "negWinRate"
@@ -47,7 +52,45 @@ interface Column {
   label: string
   /** Right-align and use tabular figures. */
   numeric?: boolean
-  render: (entry: RankingEntry, division: Division, tier: RowTier, schoolRanks: ReadonlyMap<string, number>) => React.ReactNode
+  render: (
+    entry: RankingEntry,
+    division: Division,
+    tier: RowTier,
+    schoolRanks: ReadonlyMap<string, number>,
+    bids: EntryBids | undefined,
+  ) => React.ReactNode
+}
+
+/** A team's bid count; hovering it lists the tournaments the bids came from. */
+function BidCount({ team }: { team: TocBidTeam | undefined }) {
+  if (!team) return <span className="text-muted-foreground/60">—</span>
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span
+          tabIndex={0}
+          className="cursor-help font-semibold text-foreground underline decoration-dotted underline-offset-2"
+          aria-label={`${team.bids} TOC ${team.bids === 1 ? "bid" : "bids"}: ${team.tournaments.join(", ")}`}
+        >
+          {team.bids}
+        </span>
+      </TooltipTrigger>
+      <TooltipContent className="max-w-xs text-xs font-normal">
+        <p className="mb-1 font-medium">
+          {team.bids} TOC {team.bids === 1 ? "bid" : "bids"}
+        </p>
+        {team.tournaments.length > 0 ? (
+          <ul className="list-disc pl-4">
+            {team.tournaments.map((t) => (
+              <li key={t}>{t}</li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-muted-foreground">Tournaments not listed on the bids sheet.</p>
+        )}
+      </TooltipContent>
+    </Tooltip>
+  )
 }
 
 /** A win-rate bar with its whole-number percentage overlaid, or a dash when no rounds were debated on that side. */
@@ -123,6 +166,12 @@ const COLUMNS: Column[] = [
     numeric: true,
     render: (e) => <RatingDigits value={e.adjustedRating} />,
   },
+  {
+    key: "bids",
+    label: "Bids",
+    numeric: true,
+    render: (e, _division, _tier, _schoolRanks, bids) => <BidCount team={bids?.get(rankedTeamKey(e))} />,
+  },
   { key: "matches", label: "Matches", numeric: true, render: (e) => e.matches },
   { key: "affWinRate", label: "Aff Win", numeric: true, render: (e) => <WinRate value={e.affWinRate} /> },
   { key: "negWinRate", label: "Neg Win", numeric: true, render: (e) => <WinRate value={e.negWinRate} /> },
@@ -135,6 +184,7 @@ const DEFAULT_COLUMN_WIDTHS: Record<ColumnKey, number> = {
   rank: 60,
   school: 360,
   adjustedRating: 90,
+  bids: 70,
   matches: 90,
   affWinRate: 100,
   negWinRate: 100,
@@ -156,6 +206,8 @@ interface RankingsTableProps {
   sort: SortState
   /** Called when the user clicks a column header. */
   onToggleSort: (key: SortKey) => void
+  /** TOC bids per entry; the Bids column shows only when this is given (policy). */
+  bids?: EntryBids
 }
 
 /**
@@ -167,17 +219,18 @@ interface RankingsTableProps {
  *
  * @param props - See {@link RankingsTableProps}.
  */
-export function RankingsTable({ entries, legendary, schoolRanks, division, sort, onToggleSort }: RankingsTableProps) {
+export function RankingsTable({ entries, legendary, schoolRanks, division, sort, onToggleSort, bids }: RankingsTableProps) {
   const { widths, startResize } = useResizableColumns(DEFAULT_COLUMN_WIDTHS)
+  const columns = bids ? COLUMNS : COLUMNS.filter((col) => col.key !== "bids")
   return (
     <div className="rounded-lg border bg-card shadow-sm">
       <Table
         className="table-fixed text-sm"
-        style={{ width: COLUMNS.reduce((total, col) => total + widths[col.key], 0) }}
+        style={{ width: columns.reduce((total, col) => total + widths[col.key], 0) }}
       >
         <TableHeader className="bg-muted/50">
           <TableRow>
-            {COLUMNS.map((col) => {
+            {columns.map((col) => {
               const tip = COLUMN_TOOLTIPS[col.key]
               const active = sort?.key === col.key
               return (
@@ -228,7 +281,7 @@ export function RankingsTable({ entries, legendary, schoolRanks, division, sort,
               data-tier={tier ?? undefined}
               className={tier ? ROW_TIER_CLASS[tier] : undefined}
             >
-              {COLUMNS.map((col) => (
+              {columns.map((col) => (
                 <TableCell
                   key={col.key}
                   className={cn(
@@ -237,7 +290,7 @@ export function RankingsTable({ entries, legendary, schoolRanks, division, sort,
                   )}
                   title={col.key === "school" ? `${entry.school} · ${entry.name}` : undefined}
                 >
-                  {col.render(entry, division, tier, schoolRanks)}
+                  {col.render(entry, division, tier, schoolRanks, bids)}
                 </TableCell>
               ))}
             </TableRow>

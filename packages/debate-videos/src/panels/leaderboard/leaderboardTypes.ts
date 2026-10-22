@@ -20,8 +20,11 @@ export const VALID_LEADERBOARD_TABS = new Set<string>([...VALID_DIVISIONS, "SCHO
 
 import type { RankingEntry } from "@debate/rankings-adapter";
 
-/** Column keys available for sorting the rankings grid — every CSV field. */
-export type SortKey = keyof RankingEntry;
+/**
+ * Column keys available for sorting the rankings grid — every CSV field, plus
+ * `"bids"`: the TOC bid count the policy table joins on from the bids sheet.
+ */
+export type SortKey = keyof RankingEntry | "bids";
 
 /** One school in the Schools table, aggregated over its ranked entries. */
 export interface SchoolRanking {

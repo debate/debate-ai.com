@@ -195,6 +195,7 @@ export const COLUMN_TOOLTIPS: Partial<Record<SortKey, string>> = {
   negWinRate: "Share of rounds won on the negative (Con in PF).",
   affElimWinRate: "Share of elimination rounds won on the affirmative.",
   negElimWinRate: "Share of elimination rounds won on the negative.",
+  bids: "Tournament of Champions bids earned this season, from the community bids sheet. Hover a count to see the tournaments.",
 };
 
 /**
@@ -229,18 +230,21 @@ export function getNumericValue(value: unknown): number {
  *
  * @param entries - Rankings rows to sort.
  * @param sort - Active sort state, or `null` to return entries unsorted.
+ * @param bidCount - An entry's TOC bids, for the `"bids"` key; entries without bids count 0.
  */
 export function sortEntries(
   entries: RankingEntry[],
   sort: SortState,
+  bidCount: (entry: RankingEntry) => number = () => 0,
 ): RankingEntry[] {
   if (!sort) return entries;
   const { key, dir } = sort;
   const mul = dir === "asc" ? 1 : -1;
+  const value = (e: RankingEntry) => (key === "bids" ? bidCount(e) : e[key]);
 
   return [...entries].sort((a, b) => {
-    const av = a[key];
-    const bv = b[key];
+    const av = value(a);
+    const bv = value(b);
     if (av === null && bv === null) return 0;
     if (av === null) return 1;
     if (bv === null) return -1;

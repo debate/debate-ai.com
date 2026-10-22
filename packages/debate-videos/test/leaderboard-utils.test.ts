@@ -198,6 +198,16 @@ describe("sortEntries", () => {
     ]);
   });
 
+  it("sorts by TOC bids through the bid lookup, missing bids counting 0", () => {
+    const bids = new Map([["Alpha", 1], ["Charlie", 3]]);
+    const count = (e: { name: string }) => bids.get(e.name) ?? 0;
+    expect(sortEntries([a, b, c], { key: "bids", dir: "desc" }, count).map((e) => e.name)).toEqual([
+      "Charlie",
+      "Alpha",
+      "Bravo",
+    ]);
+  });
+
   it("does not mutate the input", () => {
     const list = [b, a];
     sortEntries(list, { key: "adjustedRating", dir: "asc" });
