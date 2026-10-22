@@ -63,8 +63,8 @@ interface DebateStartPanelProps {
   /** Opens the full round/history dialog. */
   onOpenHistory: () => void
   /**
-   * Extra header controls rendered before the action buttons — the host app
-   * passes its account-sync badge here, since this package can't import it.
+   * Extra header controls rendered before the action buttons, supplied by the
+   * host app.
    */
   headerActions?: ReactNode
 }

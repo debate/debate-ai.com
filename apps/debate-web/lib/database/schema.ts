@@ -2253,6 +2253,37 @@ export const cardAiAnalyses = sqliteTable(
 
 export type CardAiAnalysisRow = typeof cardAiAnalyses.$inferSelect;
 
+// The watch page's AI results, shared by everyone who opens the video: the
+// detected speech starts, each speech's LLM outline and each Outcomes run.
+// The answer depends on the video, not the viewer, so the first good one is
+// kept and served to all (`/api/video-ai-results`); only an admin replaces
+// it. `kind`/`itemKey` follow `@debate/videos/src/lib/shared-video-ai`, and
+// `data` is the result as JSON. `id` is `${videoId}::${kind}::${itemKey}`.
+export const videoAiResults = sqliteTable(
+  "video_ai_results",
+  {
+    id: text("id").primaryKey(),
+    videoId: text("video_id").notNull(),
+    /** `segmentation`, `summary` or `outcome`. */
+    kind: text("kind").notNull(),
+    /** Empty for a segmentation, the speech key for a summary, `speechKey::panel` for an outcome. */
+    itemKey: text("item_key").notNull().default(""),
+    data: text("data").notNull(),
+    createdBy: text("created_by").references(() => user.id, { onDelete: "set null" }),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    videoIdx: index("idx_video_ai_results_video").on(table.videoId),
+  }),
+);
+
+export type VideoAiResultRow = typeof videoAiResults.$inferSelect;
+
 // Threaded comments, one table for every kind of thing that can be discussed —
 // a video, an uploaded file, a lecture, a card contribution. `resourceType` +
 // `resourceId` name the thing (see `lib/comments/queries.ts`), so a second

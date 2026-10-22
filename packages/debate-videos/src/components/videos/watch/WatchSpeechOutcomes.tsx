@@ -52,6 +52,8 @@ import {
 } from "../../../lib/speech-outcomes"
 import { requestSpeechOutcomes } from "../../../lib/speech-outcomes-client"
 import { readCachedSpeechOutcome, writeCachedSpeechOutcome } from "../../../state/speechOutcomeCache"
+import { shareVideoAiResult, sharedOutcome, useSharedVideoAi } from "../../../state/sharedVideoAi"
+import { outcomeKey } from "../../../lib/shared-video-ai"
 import { SPEECH_SIDE_STYLES } from "./speech-side-styles"
 
 /** Where the reader's judge panel is remembered. */
@@ -130,6 +132,9 @@ export function WatchSpeechOutcomes({
   }, [])
 
   const lens = panelKey(panel)
+  const shared = useSharedVideoAi(videoId)
+  /** Another viewer's run for this speech and panel, shown when this browser has none of its own. */
+  const sharedRun = speech ? sharedOutcome(shared, speech.key, lens) : null
 
   // A different speech or panel shows its own last run, and abandons any run
   // still in flight for the one being left.
@@ -142,6 +147,12 @@ export function WatchSpeechOutcomes({
     setStatus({ state: "idle" })
     setOpen(null)
   }, [videoId, speech, lens])
+
+  // The shared run arrives after the first paint; it fills an empty view only.
+  useEffect(() => {
+    if (!sharedRun) return
+    setSimulation((current) => current ?? sharedRun)
+  }, [sharedRun])
 
   useEffect(() => () => abortRef.current?.abort(), [])
 
@@ -159,6 +170,11 @@ export function WatchSpeechOutcomes({
       if (controller.signal.aborted) return
       const now = Date.now()
       writeCachedSpeechOutcome({ videoId, speechKey: speech.key, lens, simulation: result, savedAt: now })
+      void shareVideoAiResult(
+        videoId,
+        { kind: "outcome", key: outcomeKey(speech.key, lens), data: result },
+        { replace: true },
+      )
       setSimulation(result)
       setSavedAt(now)
       setStatus({ state: "idle" })
@@ -422,7 +438,13 @@ export function WatchSpeechOutcomes({
         <Sparkles className="mt-px h-3 w-3 shrink-0" />
         <span>
           Simulated responses and ballots are Claude's predictions from a rough transcript, not real results. Each run
-          is a new AI request{savedAt ? `; this one was saved in this browser ${new Date(savedAt).toLocaleString()}` : ""}.
+          is a new AI request
+          {savedAt
+            ? `; this one was saved in this browser ${new Date(savedAt).toLocaleString()}`
+            : simulation && simulation === sharedRun
+              ? "; this one was run by another viewer and is shared with everyone"
+              : ""}
+          .
         </span>
       </p>
     </div>

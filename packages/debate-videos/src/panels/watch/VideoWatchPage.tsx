@@ -84,6 +84,7 @@ import {
   DEBATE_STYLE_LABELS,
   TOURNAMENT_COLORS,
   getRoundBadgeColor,
+  formatElimBadgeLabel,
   formatVideoDate,
   getTournamentLogo,
 } from "../../components/videos/card/videoCardUtils"
@@ -123,6 +124,7 @@ import { stripArgumentLines } from "../../lib/video-description"
 import type { RoundContext } from "../../lib/speech-outcomes"
 import { readSpeechStarts, writeSpeechStart } from "../../state/speechStartMarks"
 import { readSpeechSegmentation, writeSpeechSegmentation } from "../../state/speechAiCache"
+import { shareVideoAiResult, useSharedVideoAi } from "../../state/sharedVideoAi"
 import { detectRoundSpeeches } from "../../lib/speech-ai-client"
 import {
   FORMAT_LABELS,
@@ -130,6 +132,7 @@ import {
   type SpeechSegmentation,
 } from "../../lib/speech-segmentation"
 import type { VideoType } from "../../types/videos"
+import { videoPageTitle, type VideoPageTitleRanks } from "../../lib/video-page-title"
 
 /** Shared empty default, so an absent list keeps one identity across renders. */
 const NO_VIDEOS: VideoType[] = []
@@ -198,6 +201,12 @@ export interface VideoWatchPageProps {
    * featured round's speech docs. See {@link WatchSideTab}.
    */
   sideTabs?: WatchSideTab[]
+  /**
+   * Each team's rank as the server found it for the page's `<title>`, so the
+   * heading matches it before the client's rankings load; see
+   * `loadVideoTeamRanks`.
+   */
+  titleRanks?: VideoPageTitleRanks
 }
 
 export function VideoWatchPage({
@@ -210,6 +219,7 @@ export function VideoWatchPage({
   accountSlot,
   extraControls,
   sideTabs,
+  titleRanks,
 }: VideoWatchPageProps) {
   const router = useRouter()
 
@@ -252,6 +262,18 @@ export function VideoWatchPage({
   const teamRanking = useVideoTeamRankings(watchedVideos)
   const affRanking = teamRanking(video, affTeam)
   const negRanking = teamRanking(video, negTeam)
+
+  // The heading names the round — year, tournament, level, the teams with
+  // their ranks and arguments — rather than repeating the upload's title,
+  // which is kept under it when it says something the heading does not.
+  const pageTitle = useMemo(
+    () =>
+      videoPageTitle(video, {
+        aff: affRanking?.rank ?? titleRanks?.aff,
+        neg: negRanking?.rank ?? titleRanks?.neg,
+      }),
+    [video, affRanking, negRanking, titleRanks],
+  )
 
   const styleNumber = typeof style === "number" ? style : undefined
   const categoryLabel = typeof style === "string" ? style : undefined
@@ -400,7 +422,15 @@ export function VideoWatchPage({
   const markedKeys = useMemo(() => new Set(Object.keys(speechMarks)), [speechMarks])
   const [startsDialogOpen, setStartsDialogOpen] = useState(false)
   /** The speeches the AI found in the captions, kept in this browser per video. */
-  const [segmentation, setSegmentation] = useState<SpeechSegmentation | null>(null)
+  const [localSegmentation, setSegmentation] = useState<SpeechSegmentation | null>(null)
+  /**
+   * What any viewer already ran for this video (`state/sharedVideoAi.ts`).
+   * This browser's own detection wins; without one, the shared detection
+   * places the speeches, so a round is detected once for everyone.
+   */
+  const shared = useSharedVideoAi(videoId)
+  const segmentation = localSegmentation ?? shared.segmentation
+  const segmentationIsShared = !localSegmentation && !!shared.segmentation
   const [detecting, setDetecting] = useState(false)
   const [detectError, setDetectError] = useState<string | null>(null)
   const detectVideoRef = useRef(videoId)
@@ -454,8 +484,12 @@ export function VideoWatchPage({
         styleNumber,
       )
       if (detectVideoRef.current !== forVideo) return
-      writeSpeechSegmentation(forVideo, result)
+      writeSpeechSegmentation(forVideo, result, source === "pauses" ? "pauses" : "ai")
       setSegmentation(result)
+      // Only the AI's answer is worth sharing; the pause fallback is free to rerun.
+      if (source !== "pauses") {
+        void shareVideoAiResult(forVideo, { kind: "segmentation", key: "", data: result }, { replace: true })
+      }
       if (source === "pauses") {
         setDetectError(`${aiError ?? "The AI was unavailable."} Placed speeches from the caption pauses instead — check them.`)
       }
@@ -475,16 +509,26 @@ export function VideoWatchPage({
       baseSpeeches.length > 0 || segmentation
         ? {
             onDetect: () => void handleDetectSpeeches(),
-            onClear: segmentation ? handleClearDetected : undefined,
+            onClear: localSegmentation ? handleClearDetected : undefined,
             running: detecting,
             error: detectError,
             result: segmentation
-              ? `${FORMAT_LABELS[segmentation.format]} · ${segmentation.speeches.length} speech${segmentation.speeches.length === 1 ? "" : "es"} found`
+              ? `${FORMAT_LABELS[segmentation.format]} · ${segmentation.speeches.length} speech${segmentation.speeches.length === 1 ? "" : "es"} found${segmentationIsShared ? " · shared" : ""}`
               : null,
             available: sentences.length > 0,
           }
         : undefined,
-    [baseSpeeches.length, segmentation, handleDetectSpeeches, handleClearDetected, detecting, detectError, sentences.length],
+    [
+      baseSpeeches.length,
+      segmentation,
+      localSegmentation,
+      segmentationIsShared,
+      handleDetectSpeeches,
+      handleClearDetected,
+      detecting,
+      detectError,
+      sentences.length,
+    ],
   )
   const roundContext = useMemo<RoundContext>(
     () => ({
@@ -894,7 +938,7 @@ export function VideoWatchPage({
                               getRoundBadgeColor(roundLabel),
                             )}
                           >
-                            {roundLabel}
+                            {formatElimBadgeLabel(roundLabel)}
                           </span>
                         )}
                         <FormatBadge style={formatStyle} />
@@ -1056,7 +1100,10 @@ export function VideoWatchPage({
             <WatchStackPlaylist current={video} stack={stack} />
 
             <div className="space-y-2">
-              <h1 className="text-lg sm:text-xl font-semibold leading-snug">{title}</h1>
+              <h1 className="text-lg sm:text-xl font-semibold leading-snug">{pageTitle}</h1>
+              {pageTitle !== title && (
+                <p className="text-sm text-muted-foreground leading-snug">{title}</p>
+              )}
 
               <div className="flex items-center gap-3 flex-wrap text-xs text-muted-foreground">
                 <button

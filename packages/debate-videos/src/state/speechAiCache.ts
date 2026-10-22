@@ -25,6 +25,12 @@ interface CachedSegmentation {
   videoId: string;
   segmentation: SpeechSegmentation;
   savedAt: number;
+  /**
+   * Where it came from — `"pauses"` when the AI was unavailable and the
+   * caption pauses placed the speeches. Absent on records saved before this
+   * was tracked. Only AI detections are offered to the shared store.
+   */
+  source?: "ai" | "pauses";
 }
 
 interface CachedSummary {
@@ -52,19 +58,33 @@ function isSummary(value: unknown): value is CachedSummary {
   return typeof record.videoId === "string" && typeof record.speechKey === "string" && typeof record.outline === "string";
 }
 
-export function readSpeechSegmentation(videoId: string): SpeechSegmentation | null {
-  const found = readLocalRecords(SPEECH_SEGMENTATION_CACHE_KEY)
+function findSegmentation(videoId: string): CachedSegmentation | undefined {
+  return readLocalRecords(SPEECH_SEGMENTATION_CACHE_KEY)
     .filter(isSegmentation)
     .find((record) => record.videoId === videoId);
-  return found?.segmentation ?? null;
+}
+
+export function readSpeechSegmentation(videoId: string): SpeechSegmentation | null {
+  return findSegmentation(videoId)?.segmentation ?? null;
+}
+
+/** How a video's saved detection was made; `undefined` for one saved before this was tracked. */
+export function readSpeechSegmentationSource(videoId: string): "ai" | "pauses" | undefined {
+  return findSegmentation(videoId)?.source;
 }
 
 /** Saves (or, with `null`, forgets) a video's detected speeches. */
-export function writeSpeechSegmentation(videoId: string, segmentation: SpeechSegmentation | null): void {
+export function writeSpeechSegmentation(
+  videoId: string,
+  segmentation: SpeechSegmentation | null,
+  source?: "ai" | "pauses",
+): void {
   const rest = readLocalRecords(SPEECH_SEGMENTATION_CACHE_KEY)
     .filter(isSegmentation)
     .filter((record) => record.videoId !== videoId);
-  const next = segmentation ? [{ videoId, segmentation, savedAt: Date.now() }, ...rest] : rest;
+  const next = segmentation
+    ? [{ videoId, segmentation, savedAt: Date.now(), ...(source ? { source } : {}) }, ...rest]
+    : rest;
   writeLocalRecords(SPEECH_SEGMENTATION_CACHE_KEY, next.slice(0, MAX_SEGMENTATIONS));
 }
 

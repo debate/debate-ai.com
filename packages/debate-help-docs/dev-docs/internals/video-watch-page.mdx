@@ -90,6 +90,21 @@ from the video rather than from a client fetch a crawler never waits for.
   same tournament (searched by its year-stripped name), then the same
   style or lecture category, then recency; each pass tops the list up.
 
+## Page title
+
+`videoPageTitle(video, ranks)` (`lib/video-page-title.ts`) builds the
+`<title>`, the Open Graph title and the `<h1>`: season-derived tournament
+year, tournament name without its year, the format's level (`STYLE_LEVELS`),
+the round via `displayRoundLevel`, then each team with `(#rank, argument)`.
+An untagged video falls back to `parseRoundTitle`, and anything else to its
+own title. The ranks come from `loadVideoTeamRanks` (`lib/video-team-ranks.ts`),
+the server-side twin of `useVideoTeamRankings`: the current season's dataset
+for the round's style, or a past college season's debatedata table. The
+route passes them to `VideoWatchPage` as `titleRanks` so the server-rendered
+heading matches the `<title>` before the client's rankings load.
+`isRankedSeasonRound` and `pastCollegeSeason` moved there from the hook so
+the server can call them; the hook re-exports them.
+
 ## Transcript search highlighting
 
 `WatchTranscriptPanel`'s search still filters to lines whose text contains
@@ -162,6 +177,20 @@ The follow behaviour reuses the side panel's remembered auto-scroll
 choice rather than adding a second toggle. Tested in
 `test/round-speeches.test.ts` and `test/watch-round-panel.test.tsx`.
 
+The open speech and its view live in the query string as
+`?speech=2ar&tab=outcomes` (`lib/speech-url.ts`). The speech word is the
+tab label in lower case with dashes, counted when the label repeats
+(`cx`, `cx-2`); `tab` is the view kind (`summary`, `analysis`,
+`transcript`, `llm`, `outcomes`). `WatchRoundPanel` reads both once per
+video and holds a speech the round doesn't have yet until a re-timed
+list does. Following playback leaves a linked speech alone until a
+different speech starts. Changes go through `setStateInURL` with
+`replaceState`, so stepping through speeches doesn't fill the back
+button. The first speech on its default view is not written unless the
+link asked for it. `WatchSidePanel` opens on By speech when either
+parameter is present. Tested in `test/speech-url.test.ts` and
+`test/watch-round-panel.test.tsx`.
+
 ### Outcomes: alternative responses and predicted ballots
 
 `WatchRoundPanel` offers a fourth view, **Outcomes**
@@ -213,6 +242,50 @@ Moving it there would give `debate-videos` a new dependency edge for one
 prompt. Tested in `test/speech-outcomes.test.ts`,
 `test/round-formats.test.ts` and `test/watch-round-panel.test.tsx`.
 
+### Shared AI results
+
+Detected speeches, speech summaries and Outcomes runs are the same answer
+for every viewer of a video, so the first good one is saved server-side
+and served to all. `lib/shared-video-ai.ts` is the pure half: the
+`segmentation` / `summary` / `outcome` kinds, their keys (empty, the
+speech key, and `speechKey::panelKey`), and `parseSharedVideoAiWrite`,
+which re-runs a write's `data` through `parseSpeechSegmentationResponse`
+or `parseSpeechOutcomeResponse` so a client can only store what the
+model's reply parser would have accepted (the panel is read back from the
+key with `lensPanel`, which accepts only keys `panelKey` makes). Writes
+are capped at 64 KB, summaries at 20,000 characters.
+
+`state/sharedVideoAi.ts` is the client half. `useSharedVideoAi(videoId)`
+loads `GET /api/video-ai-results?videoId=` once per video per page load
+(an in-memory map shared by every panel; deliberately not
+`localStorage`, so other people's runs never evict the reader's own
+capped, account-synced caches). Every panel reads its own cache first and
+falls back to the shared copy: `VideoWatchPage` and `VideoMiniPlayer` for
+the segmentation, `WatchRoundPanel` for outlines and the sparkle marks,
+`WatchSpeechOutcomes` for runs. After a fresh AI run each panel calls
+`shareVideoAiResult` fire-and-forget; the caption-pause fallback for
+speech detection is not shared. Sharing is the default and nothing stays
+private: once a video's shared copy loads, `backfillSharedVideoAi` offers
+every result this browser already has that the store lacks — runs made
+before sharing shipped included — once per video per page load, stopping
+at the first 401 (signed out). `speechAiCache` now records a
+segmentation's `source` so a pause-placed one is not backfilled; records
+saved before that field are treated as AI detections.
+
+The app side is `app/api/video-ai-results/route.ts` over
+`lib/video-ai-results/queries.ts` and the `video_ai_results` table
+(`packages/debate-videos/migrations/0005_video_ai_results.sql`), one row
+per `${videoId}::${kind}::${key}`. GET is public with a 60-second
+`cache-control`. POST needs a session (the `/api/reason-ai` proxy that
+produced the result already does) and is first-write-wins: a later write
+is answered `{ stored: false, item }` with the stored copy, and a video
+holds at most 300 rows. `replace: true` overwrites only for admins and
+moderators (`getStaffAccess().canEditContent`), which is how a bad shared
+result is regenerated; DELETE (staff only) clears one result or a whole
+video. Tested in `test/shared-video-ai.test.ts` and
+`apps/debate-web/lib/video-ai-results/__tests__/video-ai-results-route.test.ts`.
+
+## Known gaps
 ## Known gaps
 
 - Related videos are query passes, not a relevance model.
@@ -242,9 +315,17 @@ prompt. Tested in `test/speech-outcomes.test.ts`,
   registered in `debate-data-sync`'s `TOOL_RECORD_COLLECTIONS` as
   `speechOutcomeRuns` (see [Tool Data Sync](tool-data-sync.md)), so a
   signed-in user's cached runs follow them to another device instead of
-  re-running — and re-paying for — the same simulation there. Sharing a run
-  with someone else, rather than just this account's other browsers, still
-  only works by copying it as Markdown — there is no share-by-link.
+  re-running — and re-paying for — the same simulation there. **Fixed**
+  for other viewers too: the first run per speech and panel is now shared
+  with everyone who opens the video ([Shared AI results](#shared-ai-results)).
+  There is still no link to one specific run.
+- Shared AI results are first-come: a signed-in viewer can save a poor (but
+  well-formed) result, and it stays until staff replace or delete it. There
+  is no admin screen for them yet — staff regenerate from the watch page
+  with **Run again**, or call `DELETE /api/video-ai-results`.
+- A shared run was made from the sharer's view of the round — their own
+  speech marks can shift a speech's transcript — so it may not match the
+  transcript another viewer sees for that speech.
 - ~~The tournament pass was a `LIKE` search across title/channel/description
   (the same free-text search the search box uses), so a tournament whose
   name appeared in an unrelated video's description pulled that video in

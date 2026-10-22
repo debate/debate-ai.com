@@ -53,6 +53,9 @@ import type { RoundContext } from "../../../lib/speech-outcomes"
 import { cachedSpeechKeys } from "../../../state/speechOutcomeCache"
 import { readSpeechSummaries, writeSpeechSummary } from "../../../state/speechAiCache"
 import { requestSpeechSummary } from "../../../lib/speech-ai-client"
+import { shareVideoAiResult, sharedOutcomeSpeechKeys, useSharedVideoAi } from "../../../state/sharedVideoAi"
+import { findSpeechBySlug, SPEECH_PARAM, SPEECH_VIEW_PARAM, speechSlug } from "../../../lib/speech-url"
+import { setStateInURL } from "../../../ui/lib/utils"
 
 /** A document view, the AI alternative-responses view, or the AI outline. */
 type SpeechView = VideoDocumentKind | "outcomes" | "llm"
@@ -65,6 +68,10 @@ const VIEWS: Array<{ kind: SpeechView; label: string }> = [
   { kind: "llm", label: "LLM summary" },
   { kind: "outcomes", label: "Outcomes" },
 ]
+
+function isSpeechView(value: string | null | undefined): value is SpeechView {
+  return VIEWS.some(({ kind }) => kind === value)
+}
 
 /** A request from outside the panel — the timeline — to show a speech. */
 export interface SpeechFocusRequest {
@@ -129,12 +136,19 @@ export function WatchRoundPanel({
 }: WatchRoundPanelProps) {
   const [activeKey, setActiveKey] = useState(speeches[0]?.key ?? "")
   const [view, setView] = useState<SpeechView>("summary")
-  const [simulated, setSimulated] = useState<Set<string>>(() => new Set())
+  /** Runs and outlines any viewer already saved for this video (`state/sharedVideoAi.ts`). */
+  const shared = useSharedVideoAi(videoId)
+  const [ownSimulated, setSimulated] = useState<Set<string>>(() => new Set())
   useEffect(() => {
     setSimulated(videoId ? cachedSpeechKeys(videoId) : new Set())
   }, [videoId])
-  /** LLM outlines by speech key, for this video. */
-  const [outlines, setOutlines] = useState<Record<string, string>>({})
+  const simulated = useMemo(
+    () => new Set([...ownSimulated, ...sharedOutcomeSpeechKeys(shared)]),
+    [ownSimulated, shared],
+  )
+  /** LLM outlines by speech key, for this video — this browser's own over the shared ones. */
+  const [ownOutlines, setOutlines] = useState<Record<string, string>>({})
+  const outlines = useMemo(() => ({ ...shared.summaries, ...ownOutlines }), [shared.summaries, ownOutlines])
   /** The speech whose outline is being written, and the last failure. */
   const [summarizing, setSummarizing] = useState<string | null>(null)
   const [summaryError, setSummaryError] = useState<{ key: string; message: string } | null>(null)
@@ -151,8 +165,30 @@ export function WatchRoundPanel({
   const playingIndex = useMemo(() => playingSpeechIndex(speeches, currentTime), [speeches, currentTime])
   const isTimed = useMemo(() => speeches.some((speech) => speech.startSeconds !== null), [speeches])
 
+  // The URL's `?speech=…&tab=…`, read once per video. The speech waits here
+  // until a round that has it arrives (detection can re-time it later), and
+  // `pinnedAt` holds the playing speech at that moment so following playback
+  // doesn't snap straight back off the linked speech.
+  const urlSpeech = useRef<string | null>(null)
+  const pinnedAt = useRef<number | null>(null)
+  const synced = useRef<{ speech: string; tab: SpeechView } | null>(null)
+  useEffect(() => {
+    const params = setStateInURL() ?? {}
+    urlSpeech.current = params[SPEECH_PARAM] ?? null
+    synced.current = null
+    const tab = params[SPEECH_VIEW_PARAM]
+    if (isSpeechView(tab)) setView(tab)
+  }, [videoId])
+
   // A different video brings a different round.
   useEffect(() => {
+    const linked = findSpeechBySlug(speeches, urlSpeech.current)
+    if (linked) {
+      urlSpeech.current = null
+      pinnedAt.current = playingIndex
+      setActiveKey(linked.key)
+      return
+    }
     setActiveKey((current) =>
       speeches.some((speech) => speech.key === current) ? current : (speeches[0]?.key ?? ""),
     )
@@ -160,11 +196,17 @@ export function WatchRoundPanel({
 
   useEffect(() => {
     if (!autoScroll || playingIndex < 0) return
+    if (pinnedAt.current !== null) {
+      if (pinnedAt.current === playingIndex) return
+      pinnedAt.current = null
+    }
     setActiveKey(speeches[playingIndex].key)
   }, [autoScroll, playingIndex, speeches])
 
   useEffect(() => {
     if (focusRequest && speeches.some((speech) => speech.key === focusRequest.key)) {
+      urlSpeech.current = null
+      pinnedAt.current = null
       setActiveKey(focusRequest.key)
     }
   }, [focusRequest, speeches])
@@ -180,6 +222,26 @@ export function WatchRoundPanel({
     if (left < strip.scrollLeft) strip.scrollLeft = left - 8
     else if (right > strip.scrollLeft + strip.clientWidth) strip.scrollLeft = right - strip.clientWidth + 8
   }, [activeKey])
+
+  // Mirror the open speech and view into the URL, so a reload or a shared
+  // link lands on them. Replaces rather than pushes: stepping through
+  // speeches shouldn't fill the back button. The first state is left out of
+  // the URL unless the URL asked for it.
+  useEffect(() => {
+    if (!activeKey) return
+    // A linked speech this round doesn't have (yet): keep the link as it is,
+    // but write whatever the reader picks next.
+    if (urlSpeech.current) {
+      synced.current = { speech: "", tab: view }
+      return
+    }
+    const next = { speech: speechSlug(speeches, activeKey), tab: view }
+    if (!next.speech) return
+    const last = synced.current
+    synced.current = next
+    if (!last || (last.speech === next.speech && last.tab === next.tab)) return
+    setStateInURL({ [SPEECH_PARAM]: next.speech, [SPEECH_VIEW_PARAM]: next.tab })
+  }, [activeKey, view, speeches])
 
   const activeIndex = Math.max(
     0,
@@ -208,6 +270,8 @@ export function WatchRoundPanel({
 
   const selectSpeech = (index: number, seek: boolean) => {
     const speech = speeches[index]
+    urlSpeech.current = null
+    pinnedAt.current = null
     setActiveKey(speech.key)
     if (seek && onSeek && speech.startSeconds !== null) onSeek(speech.startSeconds)
   }
@@ -243,6 +307,7 @@ export function WatchRoundPanel({
       })
       if (summaryVideo.current !== forVideo) return
       writeSpeechSummary(forVideo, speech.key, outline)
+      void shareVideoAiResult(forVideo, { kind: "summary", key: speech.key, data: outline }, { replace: true })
       setOutlines((current) => ({ ...current, [speech.key]: outline }))
     } catch (error) {
       if (summaryVideo.current !== forVideo) return

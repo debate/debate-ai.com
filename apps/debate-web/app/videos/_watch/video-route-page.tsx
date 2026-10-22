@@ -4,7 +4,9 @@ import { notFound, permanentRedirect } from "next/navigation"
 import {
   SlowSpreadButton,
   VideoWatchPage,
+  loadVideoTeamRanks,
   stackKeyOf,
+  videoPageTitle,
   videoRouteHref,
   type VideoType,
 } from "@debate/videos"
@@ -64,13 +66,16 @@ export async function videoRouteMetadata(segments: string[]): Promise<Metadata> 
   const summary =
     description?.split("\n").filter(Boolean).slice(0, 2).join(" ").slice(0, 300) ||
     `Watch "${title}" from ${channel} with a synced transcript.`
+  // A round is named by its year, tournament, level and teams (see
+  // `videoPageTitle`); anything else keeps its own title.
+  const pageTitle = videoPageTitle(video, await loadVideoTeamRanks(video))
 
   return {
-    title: `${title} — Watch with transcript`,
+    title: pageTitle === title ? `${title} — Watch with transcript` : pageTitle,
     description: summary,
     alternates: { canonical: videoRouteHref(video) },
     openGraph: {
-      title,
+      title: pageTitle,
       description: summary,
       type: "video.other",
       images: [`https://i.ytimg.com/vi/${id}/hqdefault.jpg`],
@@ -92,10 +97,11 @@ export async function VideoRoutePage({ segments }: { segments: string[] }) {
   }
 
   const stackKey = stackKeyOf(video)
-  const [related, sidePanel, stacks] = await Promise.all([
+  const [related, sidePanel, stacks, titleRanks] = await Promise.all([
     getRelatedVideos(video, RELATED_VIDEO_COUNT) as Promise<VideoType[]>,
     getVideoSidePanelContent(video[0] as string),
     stackKey ? getVideoStacks([stackKey]) : null,
+    loadVideoTeamRanks(video),
   ])
   const stack = stackKey ? ((stacks?.stacks[stackKey] ?? []) as VideoType[]) : []
 
@@ -103,6 +109,7 @@ export async function VideoRoutePage({ segments }: { segments: string[] }) {
     <Suspense>
       <VideoWatchPage
         video={video}
+        titleRanks={titleRanks}
         related={related}
         stack={stack}
         documents={sidePanel.documents}

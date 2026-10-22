@@ -67,10 +67,7 @@ interface LecturesPageProps {
    */
   accountSlot?: React.ReactNode
   /**
-   * Host-owned controls rendered beside the search bar on the video grid —
-   * the app passes its "Saved to your account" badge / Save now here, since
-   * the account-sync state lives in `debate-webview`, which this package
-   * must not import from.
+   * Host-owned controls rendered beside the search bar on the video grid.
    */
   headerActionsSlot?: React.ReactNode
   /**

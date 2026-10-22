@@ -89,11 +89,9 @@ gone:
   `/settings/preferences` now redirects to it
 - **Favorite tools** — a tool is starred from its own page or the command palette (the `/tools` page was removed), which is also
   where a renamed or removed tool now gets pruned from the saved list
-- **Tool data** — each tool page's header now carries a small badge
-  (*Saved to account* / *Syncing…* / *Not synced · Retry* / *Saved on this
-  browser* when signed out) for tools whose data syncs; see
-  Tool Data Sync's Known gaps for what went
-  with it (the sync itself is untouched and still runs app-wide)
+- **Tool data** — syncs in the background with no per-tool badge (see
+  "Save status on each tool" below); the sync itself is untouched and still
+  runs app-wide
 - **Word limit presets** (`debate-round`'s `WordLimitPresetsPanel`) — now
   editable directly on `/word-count`, in a collapsible "Manage word limit
   presets" section below the word-count form, rather than from here
@@ -155,6 +153,13 @@ contacts. A pull from the account never resets those. Engineering notes:
 `debate-data-sync`'s `state/flow-editor-settings-codec.ts` — a field joins the
 account only by being added to `SYNCED_FLOW_DISPLAY_FIELDS`.
 
+## Where each tool keeps your data
+
+Tools that sync save to your account in the background when you're signed in,
+and keep data on this device otherwise. Tool headers no longer print a line
+about it. Engineering notes: `lib/tools/tool-storage.ts` in `debate-webview`
+still describes each tool's storage, but nothing renders it.
+
 ## Saved-to-account marker on flow tabs
 
 Each flow tab in the sidebar's **Open Tabs** group shows a small cloud icon
@@ -194,7 +199,7 @@ Choose how far auto-save goes under **Flow auto-save** in Settings → General:
 - **Flows already on my account** (default) — the behavior above.
 - **All flows** — also uploads flows you have never saved. If your account
   already holds a flow with that id, it is treated as a conflict and left alone.
-- **Off** — nothing is saved automatically; use Save now or Flow History.
+- **Off** — nothing is saved automatically; save from Flow History.
 
 The choice applies immediately in this browser. When you are signed in it is
 also saved to your account (`PUT /api/settings { flowAutoSave }`, the
@@ -300,6 +305,33 @@ legal review. No feature publishes user recordings yet, so the settings take
 effect as publishing features read them. There is no admin screen for the
 deletion queue yet; admins see the notification and work the
 `data_deletion_requests` table by hand.
+
+## Saved to your account
+
+**Settings → General → Saved to your account** shows how many documents, flows,
+rounds, word-count rounds, practice debates against the AI, judge decisions, sent
+speeches and drill sets are stored in the database under your account. Below
+them, a **Tool data** list shows how many records each tool that syncs to your
+account holds (for example Flow Editor Shortcuts). Signed out, the section tells
+you to sign in instead.
+
+Engineering note: `SavedDataSection` (`debate-webview`) calls
+`GET /api/settings/saved-data`, which returns `loadOwnSavedData`'s counts
+(`apps/debate-web/lib/saved-data/saved-data.ts`). It reuses the admin usage
+query (`loadUserUsage`) narrowed to the caller's id, so the user and admin
+numbers can't drift apart, and it returns counts only — never content. The
+response's `tools` array groups the caller's `saved_tool_records` rows by
+collection, labelled from `TOOL_RECORD_COLLECTIONS`; keys no longer in that
+allowlist and the video watch history are left out, and `total` includes them.
+
+For documents, flows, rounds and practice debates, a **Manage** button next to
+the count lists those items newest first (title only, up to 100) with a **Delete**
+action behind a confirmation. Documents also link to the editor. This is backed by
+`GET` / `DELETE /api/settings/saved-data/[kind]` (`saved-data-items.ts`), which
+only ever touches rows owned by the signed-in user.
+
+Known gaps: no export from this section yet; only the newest 100 items of a kind
+are listed; flows, rounds and practice debates have no stable open link.
 
 ## Known gaps
 
@@ -419,40 +451,16 @@ and resetting are disabled until you choose **Exit mock data**.
 
 ## Save status on each tool
 
-A tool page whose data syncs shows a small badge in its header: **Saved to your
-account** once everything the tool stores has reached your account, **Saving to
-your account…** while recent changes are on their way, **Syncing…** during the
-first merge after you sign in, and **Saved on this device** when you're signed
-out. It is read from the same auto-sync that powers **Tool data** (see
-`getToolRecordCollectionSyncStatus` in `debate-data-sync`), so it never starts a
-second sync, and it refreshes every few seconds rather than instantly.
+Tool data saves to your account automatically, with no badge or **Save now**
+button. The per-tool "Saving to your account…" badge and its **Save now**
+button were removed from every tool header, the `/debate` start screen and
+speech controls bar, the video library, the `/research/cards` search
+workspace and the `/research/docs` workspace. The REASON editor's status line
+now appears only when a save fails ("Couldn't save — retrying") or a read-only
+public topic starter is open. The auto-sync itself is unchanged; **Tool data**
+on `/tools` still shows sync failures and a retry. Starring a tool as a
+favorite uses the star at the end of the header row.
 
-While changes are waiting to be saved, a **Save now** button appears next to the
-badge and pushes that tool's data to your account immediately instead of waiting
-for the next automatic save. If the save fails the button turns into **Retry
-save** and its tooltip says why. Starring a tool as a favorite uses the star at
-the end of the same header row.
-
-The `/debate` start screen has its own header, so it shows the same badge (and
-**Save now**) beside its **New flow** button; `DebateFlowPage` takes it as a
-`startScreenActions` prop because `debate-round` can't import the webview's
-component. Once a round or flow is open, the same badge sits at the start of the
-speech controls bar above the workspace (`roundActions`, handed to
-`SpeechControlsTopBar` as `leadingActions`).
-
-The shared-cards sub-pages (Evidence Library, Argument Library and Card Revision
-History) keep their data under the `/research/cards` hub rather than under their
-own route, so their headers name the collections explicitly
-(`ToolPageHeader`'s `syncCollections` prop, resolved by `resolveToolSyncKeys`)
-and show the badge too.
-
-The video library at `/videos` (and each `/videos/<category>` view of it) shows the badge (and **Save now**) beside its
-search bar; `LecturesPage` takes it as a `headerActionsSlot` prop because
-`debate-videos` can't import the webview's component.
-
-The `/research/cards` search workspace has no `ToolPageHeader`, so its route
-renders a slim strip above the workspace holding the badge (and **Save now**) for
-the Evidence Library collections.
-
-Known gap: the open-flow tabs and the `/doc` header are custom too and don't
-show the badge yet.
+The `startScreenActions` / `roundActions` props on `DebateFlowPage` and
+`headerActionsSlot` on `LecturesPage` stay as generic host slots; nothing
+passes them now.

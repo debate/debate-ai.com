@@ -23,12 +23,11 @@
  * - a single "Docs" link into the Fumadocs site (`lib/docs-links.ts`) — the
  *   tool's feature page, falling back to its task guide's page when the tool
  *   has no feature doc of its own,
- * - a "Saved to your account" badge for tools whose data syncs (`ToolSyncBadge`),
  * - the same favorite-star toggle as the `/tools` grid, and
  * - an optional row of related-tool links (`RoundToolsCrossLinks`).
  *
  * Both components are server-renderable; the only client pieces are
- * `FavoriteToolButton` and `ToolSyncBadge`, which already mark themselves `"use client"`.
+ * `FavoriteToolButton`, which already marks itself `"use client"`.
  *
  * @module components/tools/ToolPageHeader
  */
@@ -45,7 +44,6 @@ import {
 } from "../../lib/docs-links"
 import { cn } from "../../lib/ui/lib/utils"
 import { FavoriteToolButton } from "./favorites/FavoriteToolButton"
-import { ToolSyncBadge } from "./sync/ToolSyncBadge"
 
 /** Props for {@link ToolPage}. */
 export interface ToolPageProps {
@@ -87,8 +85,6 @@ export interface ToolPageHeaderProps {
   highlights?: string[]
   /** Which task guide this tool belongs to; adds the eyebrow, and its guide page is the "Docs" link when the tool has no feature doc. */
   guide?: DocsGuide
-  /** Collection keys the "Saved to your account" badge should watch, for a page whose synced data is registered under another route (e.g. a sub-page of the shared-cards hub). Defaults to the collections registered under `href`. */
-  syncCollections?: readonly string[]
   /** Extra controls rendered next to the docs links (right side of the top row). */
   actions?: ReactNode
   /** Rendered under the title block — typically a related-tools link row. */
@@ -109,7 +105,6 @@ export function ToolPageHeader({
   icon,
   highlights,
   guide,
-  syncCollections,
   actions,
   children,
 }: ToolPageHeaderProps) {
@@ -134,7 +129,6 @@ export function ToolPageHeader({
         </Link>
 
         <div className="flex flex-wrap items-center gap-1.5">
-          <ToolSyncBadge href={href} collectionKeys={syncCollections} />
           {actions}
           {docsUrl ? (
             <HeaderLink href={docsUrl} icon={BookOpen} label="Docs" title={`Read the ${resolvedTitle} documentation`} />

@@ -67,9 +67,9 @@ import {
 
 /** Props for {@link DebateFlowPage}. */
 export interface DebateFlowPageProps {
-  /** Extra controls for the start screen's header (the host app's account-sync badge). */
+  /** Extra controls for the start screen's header. */
   startScreenActions?: ReactNode
-  /** Extra controls for the open round/flow workspace's top bar (the host app's account-sync badge). */
+  /** Extra controls for the open round/flow workspace's top bar. */
   roundActions?: ReactNode
   /** The signed-in viewer's email, so the round sidebar can highlight the
    *  speeches they give. The "My Team" profile emails are checked too. */

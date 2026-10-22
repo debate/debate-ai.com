@@ -43,6 +43,8 @@ import {
 } from "./leaderboardUtils"
 import { useLeaderboardData } from "../../hooks/useLeaderboardData"
 import { useSchoolRankingsData } from "../../hooks/useSchoolRankingsData"
+import { useTocBids } from "../../hooks/useTocBids"
+import { matchTocBids, rankedTeamKey } from "@debate/data-sync/src/rankings/sync-toc-bids-sheet"
 import { SchoolRankingsTable } from "./SchoolRankingsTable"
 import { LeaderboardChampionBanner } from "./LeaderboardChampionBanner"
 import { RankingsTable } from "./RankingsTable"
@@ -159,6 +161,9 @@ export function LeaderboardPanel({
   const { dataset, loading, error, debateHistory, championsLoading } =
     useLeaderboardData(isCurrentYear ? datasetId : null, history)
   const schoolData = useSchoolRankingsData(isSchools && isCurrentYear)
+  /** This season's TOC bids sheet covers high school policy only. */
+  const showBids = !isSchools && isCurrentYear && division === "VCX"
+  const tocBids = useTocBids(showBids)
 
   // ---------------------------------------------------------------------------
   // Derived display values
@@ -167,7 +172,16 @@ export function LeaderboardPanel({
   const isControlled = controlledDivision !== undefined
   const showInternalFilters = !isControlled
 
-  const visibleEntries = sortEntries(filterEntries(dataset?.entries ?? [], query), sort)
+  /** Bids per policy entry, matched by debaters and school; `undefined` hides the column. */
+  const entryBids = useMemo(
+    () => (showBids && tocBids && dataset ? matchTocBids(dataset.entries, tocBids) : undefined),
+    [showBids, tocBids, dataset],
+  )
+  const visibleEntries = sortEntries(
+    filterEntries(dataset?.entries ?? [], query),
+    sort,
+    (e) => entryBids?.get(rankedTeamKey(e))?.bids ?? 0,
+  )
   const schoolRows = useMemo(
     () => (isSchools ? schoolRankingsFor(schoolData.datasets, schoolScope) : []),
     [isSchools, schoolData.datasets, schoolScope],
@@ -353,7 +367,7 @@ return (
                   />
                 </div>
                 {visibleEntries.length > 0 ? (
-                  <RankingsTable entries={visibleEntries} legendary={entryLegendary} schoolRanks={divisionSchoolRanks} division={division} sort={sort} onToggleSort={toggleSort} />
+                  <RankingsTable entries={visibleEntries} legendary={entryLegendary} schoolRanks={divisionSchoolRanks} division={division} sort={sort} onToggleSort={toggleSort} bids={entryBids} />
                 ) : (
                   <p className="py-8 text-center text-sm text-muted-foreground">
                     No entries match "{query}".

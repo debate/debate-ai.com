@@ -5,7 +5,7 @@
  * `useToolRecordSync` must run exactly once (`ToolRecordSyncProvider`): its
  * effect cleanups stop the global auto-sync watcher, so calling it again from
  * a tool's header would tear the watcher down on navigation. The provider
- * publishes its state here instead, and `ToolSyncBadge` subscribes through
+ * publishes its state here instead, and readers subscribe through
  * `useSyncExternalStore`.
  *
  * @module lib/tools/tool-sync-store

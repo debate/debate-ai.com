@@ -71,7 +71,7 @@ export interface SpeechControlsTopBarProps {
   showRecordingMenu?: boolean
   /** Whether to render the view controls here — false when the round sidebar shows them above its speeches. */
   showViewControls?: boolean
-  /** Host-supplied controls rendered first in the bar (the app's account-sync badge). */
+  /** Host-supplied controls rendered first in the bar. */
   leadingActions?: ReactNode
 }
 

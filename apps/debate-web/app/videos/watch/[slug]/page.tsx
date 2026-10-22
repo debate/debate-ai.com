@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { notFound, permanentRedirect } from "next/navigation"
-import { videoRouteHref, type VideoType } from "@debate/videos"
+import { videoPageTitle, videoRouteHref, type VideoType } from "@debate/videos"
 import { getVideoBySlug } from "@/lib/videos/video-repository"
 
 /**
@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   // does not follow it. Point it at the canonical address either way.
   if (!video) return { title: "Video not found", robots: { index: false, follow: false } }
   return {
-    title: `${video[1]} — Watch with transcript`,
+    title: videoPageTitle(video),
     alternates: { canonical: videoRouteHref(video) },
   }
 }

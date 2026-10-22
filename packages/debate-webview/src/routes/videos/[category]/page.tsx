@@ -1,6 +1,5 @@
 import { Suspense } from "react"
 import { LecturesPage } from "@debate/videos"
-import { ToolSyncBadge } from "../../../components/tools/sync/ToolSyncBadge"
 import { CategoryDock } from "../../../components/layout/CategoryDock"
 import { SidebarAccount } from "../../../components/layout/app-sidebar/sidebar-account"
 
@@ -13,7 +12,7 @@ export default function VideosCategory() {
           `lib/reason-docs/sidebar-routes.ts`. */}
       {/* Same badge as `/videos`: a category is just another view of the one
           library, and its sync status is the library's. */}
-      <LecturesPage dockSlot={<CategoryDock embedded />} accountSlot={<SidebarAccount />} headerActionsSlot={<ToolSyncBadge href="/videos" />} />
+      <LecturesPage dockSlot={<CategoryDock embedded />} accountSlot={<SidebarAccount />} />
     </Suspense>
   )
 }

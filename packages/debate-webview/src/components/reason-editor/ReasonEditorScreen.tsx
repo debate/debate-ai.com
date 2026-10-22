@@ -38,7 +38,6 @@ import { describeDocSaveStatus } from "../../lib/reason-docs/doc-save-status"
 import { ReasonDocsSidebarPanels } from "../reason-docs/ReasonDocsSidebarPanels"
 import { useReasonDocs } from "../reason-docs/ReasonDocsProvider"
 import { ReasonDocsRouteSync } from "../reason-docs/ReasonDocsRouteSync"
-import { ReasonEditorStatusLine } from "./ReasonEditorStatusLine"
 import { SharedCardOpener } from "./ShareWithContacts"
 
 export function ReasonEditorScreen() {
@@ -144,9 +143,9 @@ export function ReasonEditorScreen() {
                 (`ReasonDocsSidebarPanels` → `onRename`, `ShareWithContacts`)
                 next to New file / New folder / Upload. This row is just the
                 status line (`describeDocSaveStatus`). */}
-            {/* Hidden once the document is saved; only unsaved, saving and
-                failed states need the user's attention. */}
-            {saveStatus.state === "saved" ? null : (
+            {/* Only a failed save or a read-only topic starter shows a line:
+                saving happens in the background without a notice. */}
+            {saveStatus.state !== "failed" && saveStatus.state !== "public" ? null : (
               <div className="flex items-center gap-2 px-4 py-2 border-b">
                 <span
                   className={cn("text-xs", saveStatus.state === "failed" ? "text-destructive" : "text-muted-foreground")}

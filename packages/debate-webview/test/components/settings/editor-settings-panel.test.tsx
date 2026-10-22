@@ -25,6 +25,7 @@ for (const name of [
   "TeamCoachingSection",
   "OwnAiKeySection",
   "SoundEffectsSection",
+  "SavedDataSection",
   "OnDeviceModelsSection",
   "ReadAloudVoiceSection",
   "SidebarIconAnimationsSection",

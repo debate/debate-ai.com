@@ -49,11 +49,27 @@
 1. ability to challenge legends - and speculators bet
 2. random pair webcam debate matching on mutual pref topics
 
+## Tool storage map + header note (Completed 2026-10-21, branch `claude/gifted-babbage-l06qxh`)
+
+- [x] `resolveToolStorage` maps every `/tools` entry to synced collections, its own SQL table, or derived/none; guarded by `tool-storage.test.ts`
+- [x] `ToolPageHeader` shows where the tool's data is saved (Vitest)
+- [ ] Follow-up: per-tool "Save to account" actions for the SQL-backed tools that still only expose it in menus
+- [ ] Follow-up (pre-existing): `apps/debate-web/lib/__tests__/tool-catalog-consistency.test.ts` imports a missing `packages/debate-editor/src/editor/workspace-links`; `bun run typecheck` in `debate-webview` reports unresolved `@debate/editor/*` modules
+
 ## Account sync of tools (Completed)
 
 - [x] Speech-doc links (editor document <-> round/flow speech) sync via the `speechDocLinks` tool-record collection
 - [x] Pinned debates - synced via the `pinnedDebates` tool-record collection
 - [x] Surface the Tool data sync status where each tool is used (tool page header badge)
+
+- **In Progress 2026-10-21** (branch `claude/gifted-babbage-2agbmy`) — "Saved to your account" summary: `GET /api/settings/saved-data` + `SavedDataSection` in Settings → General (counts of docs, flows, rounds, debates saved in SQL per user), with Vitest.
+  - [x] `loadOwnSavedData` + route, Vitest against in-memory SQLite
+  - [x] `SavedDataSection` mounted in Settings → General, with Vitest
+  - [x] Documented in `user-settings.mdx`
+  - [x] List / open (docs) / delete individual saved docs, flows, rounds and practice debates from this section (2026-10-22, branch `claude/gifted-babbage-uf5f12`): `saved-data-items.ts`, `/api/settings/saved-data/[kind]`, **Manage** in `SavedDataSection`, with Vitest
+  - [ ] Follow-up: export an individual saved item; stable open links for flows / rounds / practice debates
+  - [x] Tool Data Sync collections (`saved_tool_records`) included in the summary (branch `agent/todo-saved-data-tool-records`, Vitest in `saved-data.test.ts` + `saved-data-section.test.tsx`)
+  - [ ] Follow-up: add the sync badge to open-flow tabs and the `/doc` header (existing known gap)
 
 ---
 

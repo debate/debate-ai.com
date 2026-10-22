@@ -2,7 +2,8 @@
  * @fileoverview The two teams of a round on its watch page: each team's
  * rankings row (rank, rating, matches, side win rates) and its radar chart,
  * with the opponent overlaid as a dashed polygon so the matchup reads at a
- * glance. When both teams are found, a simulated matchup above the cards
+ * glance, and the team's school average in that division as a dotted one (on
+ * by default, toggled under the radar). When both teams are found, a simulated matchup above the cards
  * predicts the winner for the sides they debated and the round's stage (see
  * `WatchMatchupPrediction`). Renders nothing unless at least one team is
  * found in the rankings.
@@ -15,16 +16,19 @@
 
 "use client"
 
-import type { ReactNode } from "react"
+import { useState, type ReactNode } from "react"
+import type { RankingDataset } from "@debate/rankings-adapter"
 import { useAllRankingDatasets } from "../../../hooks/useAllRankingDatasets"
 import { isRankedSeasonRound } from "../../../hooks/useVideoTeamRankings"
 import {
+  findSchoolDivisionEntries,
   findVideoTeamProfile,
+  schoolDivisionRadarData,
   teamHref,
   teamRadarData,
   type ProfileEntry,
 } from "../../../panels/leaderboard/profile/rankingProfileHelpers"
-import { TeamRadarChart } from "../../../panels/leaderboard/profile/TeamRadarChart"
+import { TeamRadarChart, type RadarComparison } from "../../../panels/leaderboard/profile/TeamRadarChart"
 import { cn } from "../../../ui/lib/utils"
 import { predictWatchMatchup } from "../../../lib/watch-matchup-prediction"
 import { WatchMatchupPrediction } from "./WatchMatchupPrediction"
@@ -51,15 +55,27 @@ function TeamCard({
   label,
   item,
   opponent,
+  datasets,
 }: {
   side: "aff" | "neg"
   label: string
   item: ProfileEntry
   opponent: { label: string; item: ProfileEntry } | null
+  datasets: RankingDataset[]
 }) {
   const { entry, fieldSize, datasetLabel } = item
   const data = teamRadarData(item)
-  const opponentData = opponent ? teamRadarData(opponent.item) : null
+  const [showSchool, setShowSchool] = useState(true)
+  const schoolItems = findSchoolDivisionEntries(datasets, item)
+  const hasSchoolPeers = schoolItems.length > 1
+  const comparisons: RadarComparison[] = []
+  if (opponent) comparisons.push({ label: opponent.label, data: teamRadarData(opponent.item) })
+  if (hasSchoolPeers && showSchool) {
+    comparisons.push({
+      label: `${entry.school} average (${schoolItems.length} teams)`,
+      data: schoolDivisionRadarData(schoolItems),
+    })
+  }
   return (
     <div className="min-w-0 rounded-lg border bg-card p-3 space-y-3">
       <header className="flex items-baseline justify-between gap-2">
@@ -93,7 +109,20 @@ function TeamCard({
         data={data}
         caption={opponent ? `${label} vs ${opponent.label} (edge = best)` : `${label} (edge = best)`}
         ariaLabel={`${label} radar: ${data.map((d) => `${d.metric} ${d.display}`).join(", ")}`}
-        comparison={opponentData && opponent ? { label: opponent.label, data: opponentData } : undefined}
+        comparison={comparisons}
+        footer={
+          hasSchoolPeers && (
+            <label className="mt-1 flex cursor-pointer select-none items-center gap-1.5 px-1 text-xs text-muted-foreground hover:text-foreground">
+              <input
+                type="checkbox"
+                checked={showSchool}
+                onChange={(event) => setShowSchool(event.target.checked)}
+                className="h-3.5 w-3.5 cursor-pointer accent-primary"
+              />
+              Show {entry.school} average
+            </label>
+          )
+        }
       />
     </div>
   )
@@ -135,10 +164,22 @@ export function WatchTeamStats({ video }: { video: VideoType }) {
       )}
       <div className={cn("grid grid-cols-1 gap-3", aff && neg && "xl:grid-cols-2")}>
         {aff && affTeam && (
-          <TeamCard side="aff" label={affTeam} item={aff} opponent={neg && negTeam ? { label: negTeam, item: neg } : null} />
+          <TeamCard
+            side="aff"
+            label={affTeam}
+            item={aff}
+            opponent={neg && negTeam ? { label: negTeam, item: neg } : null}
+            datasets={datasets}
+          />
         )}
         {neg && negTeam && (
-          <TeamCard side="neg" label={negTeam} item={neg} opponent={aff && affTeam ? { label: affTeam, item: aff } : null} />
+          <TeamCard
+            side="neg"
+            label={negTeam}
+            item={neg}
+            opponent={aff && affTeam ? { label: affTeam, item: aff } : null}
+            datasets={datasets}
+          />
         )}
       </div>
     </section>

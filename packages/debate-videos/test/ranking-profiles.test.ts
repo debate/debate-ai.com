@@ -135,6 +135,12 @@ describe("teamRadarData", () => {
     expect(data.find((d) => d.metric === "Matches")?.display).toBe("30 of 40 max");
   });
 
+  it("orders spokes clockwise: Ranking on top, neg on the right, Matches at the bottom, aff on the left", () => {
+    const order = ["Ranking", "Neg win", "Elim neg", "Matches", "Elim aff", "Aff win"];
+    expect(teamRadarData(item({})).map((d) => d.metric)).toEqual(order);
+    expect(schoolDivisionRadarData([item({}), item({ rank: 2 })]).map((d) => d.metric)).toEqual(order);
+  });
+
   it("puts a lone entry at the edge and survives an empty field", () => {
     const data = teamRadarData(item({ rank: 1, matches: 0 }, 1, 0));
     expect(data.find((d) => d.metric === "Ranking")?.score).toBe(100);

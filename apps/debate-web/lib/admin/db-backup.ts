@@ -62,6 +62,7 @@ export const BACKUP_TABLES: readonly BackupTable[] = [
   { name: "video_documents", group: "videos", pageSize: 50, scrub: { updated_by: null } },
   { name: "video_relations", group: "videos", scrub: { created_by: null } },
   { name: "video_issues", group: "videos", scrub: { reported_by: null, resolved_by: null } },
+  { name: "video_ai_results", group: "videos", pageSize: 100, scrub: { created_by: null } },
   { name: "youtube_round_videos", group: "videos" },
   { name: "youtube_channels", group: "videos", scrub: { added_by: null } },
   { name: "youtube_video_exclusions", group: "videos", scrub: { deleted_by: null } },

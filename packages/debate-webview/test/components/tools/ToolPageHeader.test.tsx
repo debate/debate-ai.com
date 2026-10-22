@@ -1,11 +1,5 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
-
-vi.mock("../../../src/components/tools/sync/ToolSyncBadge", () => ({
-  ToolSyncBadge: ({ href, collectionKeys }: { href: string; collectionKeys?: readonly string[] }) => (
-    <span data-testid="sync-badge" data-href={href} data-keys={collectionKeys?.join(",")} />
-  ),
-}));
 
 import { ToolPageHeader } from "../../../src/components/tools/ToolPageHeader";
 import { ALL_TOOLS } from "../../../src/routes/tools/tool-groups";
@@ -61,25 +55,12 @@ describe("ToolPageHeader", () => {
     expect(html).not.toContain("What this tool does");
   });
 
-  it("renders the sync badge exactly once, for the page's own route", () => {
+  it("shows no account-save notice, badge or Save now button", () => {
     const html = renderToStaticMarkup(
-      <ToolPageHeader href="/practice/drills" backHref="/debate" backLabel="round workspace" />,
+      <ToolPageHeader href="/contacts" backHref="/tools" backLabel="tools" />,
     );
-
-    expect(html.match(/data-testid="sync-badge"/g)).toHaveLength(1);
-    expect(html).toContain('data-href="/practice/drills"');
-  });
-
-  it("passes explicit sync collections to the badge for a sub-page of a hub", () => {
-    const html = renderToStaticMarkup(
-      <ToolPageHeader
-        href="/research/cards/library"
-        backHref="/research/cards"
-        backLabel="shared cards"
-        syncCollections={["evidenceLibraryEntries", "reuseCheckHistory"]}
-      />,
-    );
-
-    expect(html).toContain('data-keys="evidenceLibraryEntries,reuseCheckHistory"');
+    expect(html).not.toContain("data-tool-storage-note");
+    expect(html).not.toContain("to your account");
+    expect(html).not.toContain("Save now");
   });
 });
