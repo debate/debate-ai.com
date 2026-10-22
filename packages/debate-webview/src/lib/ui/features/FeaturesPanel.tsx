@@ -36,6 +36,7 @@ import {
   LayoutGrid,
   Library,
   Play,
+  Puzzle,
   Radar,
   Search,
   Sparkles,
@@ -66,7 +67,12 @@ import {
   type FeatureEntry,
 } from "../../feature-catalog";
 import { README_BADGE_ROWS, README_BANNER, README_SHOWCASE, README_VIDEO } from "./readme-media";
-import { DESKTOP_DOWNLOADS, DESKTOP_RELEASE_URL, DESKTOP_VERSION } from "./desktop-downloads";
+import {
+  DESKTOP_DOWNLOADS,
+  DESKTOP_RELEASE_URL,
+  DESKTOP_VERSION,
+  EXTENSION_DOWNLOAD_FEATURES,
+} from "./desktop-downloads";
 import { LATEST_VIDEOS, POPULAR_CARDS_WEEK, type RecentVideo, type PopularCard } from "./recent-media";
 import {
   CARDS_CAPABILITIES,
@@ -324,8 +330,24 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
               className="mt-8 flex flex-col items-center gap-3 scroll-mt-20"
               data-testid="downloads"
             >
-              <div className="flex flex-wrap items-center justify-center gap-3">
+              {/* The Chrome extension first, in its own box with what only it does. */}
+              <div
+                className="flex w-full max-w-xl flex-col items-center gap-3 rounded-xl border border-border bg-card/60 p-4 text-left"
+                data-testid="extension-download"
+              >
                 <DownloadAppButton platform="chrome-extension-white" appId="noecbaibfhbmpapofcdkgchfifmoinfj" />
+                <ul className="flex flex-col gap-1.5 text-sm text-muted-foreground" data-testid="extension-features">
+                  {EXTENSION_DOWNLOAD_FEATURES.map((feature) => (
+                    <li key={feature.title} className="flex gap-2">
+                      <Puzzle className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
+                      <span>
+                        <span className="font-medium text-foreground">{feature.title}.</span> {feature.detail}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="flex flex-wrap items-center justify-center gap-3" data-testid="app-downloads">
                 <DownloadAppButton platform="android" appId="com.debate.ai" />
               </div>
               {/* Desktop badges from the same library as the store badges above,
