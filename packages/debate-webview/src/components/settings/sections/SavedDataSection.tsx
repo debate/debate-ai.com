@@ -19,8 +19,16 @@ interface SavedDataItem {
   count: number
 }
 
+interface SavedToolCollection {
+  collection: string
+  label: string
+  count: number
+}
+
 interface SavedDataSummary {
   items: SavedDataItem[]
+  /** Absent from servers that predate tool-record counts. */
+  tools?: SavedToolCollection[]
   total: number
 }
 
@@ -77,6 +85,21 @@ export function SavedDataSection() {
             </div>
           ))}
         </dl>
+      )}
+      {state.status === "ready" && signedIn && (state.summary.tools?.length ?? 0) > 0 && (
+        <>
+          <h5 className="mb-1 mt-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Tool data
+          </h5>
+          <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+            {state.summary.tools?.map((tool) => (
+              <div key={tool.collection} className="flex justify-between gap-2">
+                <dt className="text-muted-foreground">{tool.label}</dt>
+                <dd className="font-medium tabular-nums">{tool.count}</dd>
+              </div>
+            ))}
+          </dl>
+        </>
       )}
     </section>
   )

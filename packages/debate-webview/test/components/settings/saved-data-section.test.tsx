@@ -43,6 +43,32 @@ describe("SavedDataSection", () => {
     expect(host.textContent).toContain("Flows")
   })
 
+  it("lists synced tool collections under a Tool data heading when present", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          total: 2,
+          items: [{ key: "docs", label: "Documents", count: 0 }],
+          tools: [{ collection: "flowKeymap", label: "Flow Editor Shortcuts", count: 2 }],
+        }),
+      }),
+    )
+    const host = await mount()
+    expect(host.textContent).toContain("Tool data")
+    expect(host.textContent).toContain("Flow Editor Shortcuts")
+  })
+
+  it("omits the Tool data heading when there are no tool records", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({ ok: true, json: async () => ({ total: 0, items: [], tools: [] }) }),
+    )
+    const host = await mount()
+    expect(host.textContent).not.toContain("Tool data")
+  })
+
   it("shows a sign-in hint without calling the API when signed out", async () => {
     user = null
     const fetchMock = vi.fn()

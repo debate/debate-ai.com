@@ -67,7 +67,7 @@
   - [x] `SavedDataSection` mounted in Settings → General, with Vitest
   - [x] Documented in `user-settings.mdx`
   - [ ] Follow-up: open / export / delete individual saved flows, documents and debates from this section
-  - [ ] Follow-up: include `saved_tool_records` collections in the summary
+  - [x] Tool Data Sync collections (`saved_tool_records`) included in the summary (branch `agent/todo-saved-data-tool-records`, Vitest in `saved-data.test.ts` + `saved-data-section.test.tsx`)
   - [ ] Follow-up: add the sync badge to open-flow tabs and the `/doc` header (existing known gap)
 
 ---
