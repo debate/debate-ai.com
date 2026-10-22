@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { VideoRoutePage, videoRouteMetadata } from "../../../_watch/video-route-page"
+import { VideoRoutePage, videoRouteMetadata, type VideoRouteSearchParams } from "../../../_watch/video-route-page"
 
 /**
  * A video at `/videos/<season>/<event>/<matchup>`, e.g.
@@ -13,6 +13,7 @@ import { VideoRoutePage, videoRouteMetadata } from "../../../_watch/video-route-
 
 interface PageProps {
   params: Promise<{ category: string; event: string; matchup: string }>
+  searchParams: VideoRouteSearchParams
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -20,7 +21,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return videoRouteMetadata([category, event, matchup])
 }
 
-export default async function WatchVideoPage({ params }: PageProps) {
+export default async function WatchVideoPage({ params, searchParams }: PageProps) {
   const { category: season, event, matchup } = await params
-  return <VideoRoutePage segments={[season, event, matchup]} />
+  return <VideoRoutePage segments={[season, event, matchup]} searchParams={searchParams} />
 }

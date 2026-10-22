@@ -6,6 +6,7 @@ import {
   SlowSpreadButton,
   VideoWatchPage,
   getVideoIndexRows,
+  parseSpeechRouteSuffix,
   queryVideoIndexStacks,
   refreshVideoIndex,
   stackKeyOf,
@@ -29,6 +30,12 @@ import { VideoStaffControls } from "../../components/videos/VideoStaffControls"
  * way: a video's canonical `videoRouteHref`. The related-videos row and the
  * side panel's documents are server lookups and are left out here.
  */
+/** Whether `pathname` is `href` followed by a speech and view (`…/2ar/outcomes`). */
+function isUnderVideoPath(pathname: string, href: string): boolean {
+  if (!pathname.startsWith(`${href}/`)) return false
+  return parseSpeechRouteSuffix(pathname.slice(href.length + 1).split("/")) !== null
+}
+
 export default function VideoWatchRoute() {
   const pathname = usePathname()
   const params = useParams<{ slug?: string }>()
@@ -45,13 +52,21 @@ export default function VideoWatchRoute() {
 
   const video = useMemo<VideoType | null>(() => {
     if (!rows) return null
+    // A video whose address this is wins over one it reads as a speech under.
+    let underAddress: VideoType | null = null
     for (const row of rows) {
       const tuple = videoRowToTuple(row) as VideoType
-      if (videoRouteHref(tuple) === pathname) return tuple
+      const href = videoRouteHref(tuple)
+      // The same address from before the format segment.
+      const unformatted = videoRouteHref(tuple, "season", false)
+      if (pathname === href || pathname === unformatted) return tuple
+      if (!underAddress && (isUnderVideoPath(pathname, href) || isUnderVideoPath(pathname, unformatted))) {
+        underAddress = tuple
+      }
       // The legacy `/videos/watch/<slug>-<id>` address ends in the id.
       if (params.slug && params.slug.endsWith(String(tuple[0]))) return tuple
     }
-    return null
+    return underAddress
   }, [rows, pathname, params.slug])
   const videoId = video ? (video[0] as string) : null
   const sideTabs = useMemo(() => featuredSpeechDocsTabs(videoId), [videoId])
