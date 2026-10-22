@@ -39,6 +39,7 @@ import { sendYouTubeCommand, videoPlayerIframeRef } from "../../state/videoPlaye
 import { recordWatchProgress } from "../../state/videoWatchHistory"
 import { readSpeechStarts } from "../../state/speechStartMarks"
 import { readSpeechSegmentation } from "../../state/speechAiCache"
+import { useSharedVideoAi } from "../../state/sharedVideoAi"
 import { applySpeechSegmentation } from "../../lib/speech-segmentation"
 import { playingSpeechIndex, withSpeechStarts, type RoundSpeech } from "../../lib/round-speeches"
 import { resolveRoundSpeeches } from "../../lib/round-formats"
@@ -110,11 +111,13 @@ export function VideoMiniPlayer({ video, documents = NO_DOCUMENTS, startSeconds 
   // detected timing, then the reader's own marks on top.
   const baseSpeeches = useMemo(() => resolveRoundSpeeches(documents, style), [documents, style])
   const [speechMarks, setSpeechMarks] = useState<Record<string, number>>({})
-  const [segmentation, setSegmentation] = useState<ReturnType<typeof readSpeechSegmentation>>(null)
+  const [localSegmentation, setSegmentation] = useState<ReturnType<typeof readSpeechSegmentation>>(null)
   useEffect(() => {
     setSpeechMarks(readSpeechStarts(videoId))
     setSegmentation(readSpeechSegmentation(videoId))
   }, [videoId])
+  const sharedSegmentation = useSharedVideoAi(videoId).segmentation
+  const segmentation = localSegmentation ?? sharedSegmentation
   const speeches = useMemo(
     () => withSpeechStarts(applySpeechSegmentation(baseSpeeches, segmentation), speechMarks),
     [baseSpeeches, segmentation, speechMarks],

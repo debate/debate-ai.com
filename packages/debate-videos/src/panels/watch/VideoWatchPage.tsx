@@ -124,6 +124,7 @@ import { stripArgumentLines } from "../../lib/video-description"
 import type { RoundContext } from "../../lib/speech-outcomes"
 import { readSpeechStarts, writeSpeechStart } from "../../state/speechStartMarks"
 import { readSpeechSegmentation, writeSpeechSegmentation } from "../../state/speechAiCache"
+import { shareVideoAiResult, useSharedVideoAi } from "../../state/sharedVideoAi"
 import { detectRoundSpeeches } from "../../lib/speech-ai-client"
 import {
   FORMAT_LABELS,
@@ -421,7 +422,15 @@ export function VideoWatchPage({
   const markedKeys = useMemo(() => new Set(Object.keys(speechMarks)), [speechMarks])
   const [startsDialogOpen, setStartsDialogOpen] = useState(false)
   /** The speeches the AI found in the captions, kept in this browser per video. */
-  const [segmentation, setSegmentation] = useState<SpeechSegmentation | null>(null)
+  const [localSegmentation, setSegmentation] = useState<SpeechSegmentation | null>(null)
+  /**
+   * What any viewer already ran for this video (`state/sharedVideoAi.ts`).
+   * This browser's own detection wins; without one, the shared detection
+   * places the speeches, so a round is detected once for everyone.
+   */
+  const shared = useSharedVideoAi(videoId)
+  const segmentation = localSegmentation ?? shared.segmentation
+  const segmentationIsShared = !localSegmentation && !!shared.segmentation
   const [detecting, setDetecting] = useState(false)
   const [detectError, setDetectError] = useState<string | null>(null)
   const detectVideoRef = useRef(videoId)
@@ -477,6 +486,10 @@ export function VideoWatchPage({
       if (detectVideoRef.current !== forVideo) return
       writeSpeechSegmentation(forVideo, result)
       setSegmentation(result)
+      // Only the AI's answer is worth sharing; the pause fallback is free to rerun.
+      if (source !== "pauses") {
+        void shareVideoAiResult(forVideo, { kind: "segmentation", key: "", data: result }, { replace: true })
+      }
       if (source === "pauses") {
         setDetectError(`${aiError ?? "The AI was unavailable."} Placed speeches from the caption pauses instead — check them.`)
       }
@@ -496,16 +509,26 @@ export function VideoWatchPage({
       baseSpeeches.length > 0 || segmentation
         ? {
             onDetect: () => void handleDetectSpeeches(),
-            onClear: segmentation ? handleClearDetected : undefined,
+            onClear: localSegmentation ? handleClearDetected : undefined,
             running: detecting,
             error: detectError,
             result: segmentation
-              ? `${FORMAT_LABELS[segmentation.format]} · ${segmentation.speeches.length} speech${segmentation.speeches.length === 1 ? "" : "es"} found`
+              ? `${FORMAT_LABELS[segmentation.format]} · ${segmentation.speeches.length} speech${segmentation.speeches.length === 1 ? "" : "es"} found${segmentationIsShared ? " · shared" : ""}`
               : null,
             available: sentences.length > 0,
           }
         : undefined,
-    [baseSpeeches.length, segmentation, handleDetectSpeeches, handleClearDetected, detecting, detectError, sentences.length],
+    [
+      baseSpeeches.length,
+      segmentation,
+      localSegmentation,
+      segmentationIsShared,
+      handleDetectSpeeches,
+      handleClearDetected,
+      detecting,
+      detectError,
+      sentences.length,
+    ],
   )
   const roundContext = useMemo<RoundContext>(
     () => ({

@@ -28,7 +28,7 @@ get created.
 - **User settings and sync:** [`qwksearch_connection`](#qwksearch_connection), [`user_settings`](#user_settings), [`saved_tool_records`](#saved_tool_records)
 - **Learn and cards:** [`saved_quick_cards`](#saved_quick_cards), [`saved_learn_cards`](#saved_learn_cards), [`saved_learn_decks`](#saved_learn_decks), [`saved_learn_review_log`](#saved_learn_review_log), [`saved_daily_best_card_comments`](#saved_daily_best_card_comments)
 - **Practice:** [`saved_coach_materials`](#saved_coach_materials), [`saved_coach_material_versions`](#saved_coach_material_versions), [`saved_strategy_recommendations`](#saved_strategy_recommendations), [`saved_drill_sets`](#saved_drill_sets), [`saved_custom_opponent_personas`](#saved_custom_opponent_personas), [`practice_vs_ai_debates`](#practice_vs_ai_debates), [`saved_sprint_sessions`](#saved_sprint_sessions), [`practice_profiles`](#practice_profiles), [`practice_challenges`](#practice_challenges)
-- **Video library:** [`youtube_round_videos`](#youtube_round_videos), [`youtube_video_exclusions`](#youtube_video_exclusions), [`youtube_sync_runs`](#youtube_sync_runs), [`youtube_channels`](#youtube_channels), [`videos`](#videos), [`video_durations`](#video_durations), [`video_transcripts`](#video_transcripts), [`video_documents`](#video_documents), [`video_relations`](#video_relations), [`video_issues`](#video_issues), [`topic_area_votes`](#topic_area_votes), [`topic_area_rankings`](#topic_area_rankings), [`profile_follows`](#profile_follows)
+- **Video library:** [`youtube_round_videos`](#youtube_round_videos), [`youtube_video_exclusions`](#youtube_video_exclusions), [`youtube_sync_runs`](#youtube_sync_runs), [`youtube_channels`](#youtube_channels), [`videos`](#videos), [`video_durations`](#video_durations), [`video_transcripts`](#video_transcripts), [`video_documents`](#video_documents), [`video_relations`](#video_relations), [`video_issues`](#video_issues), [`video_ai_results`](#video_ai_results), [`topic_area_votes`](#topic_area_votes), [`topic_area_rankings`](#topic_area_rankings), [`profile_follows`](#profile_follows)
 - **Evidence search:** [`evidence_reuse_index`](#evidence_reuse_index), [`reuse_check_log`](#reuse_check_log), [`detected_urls`](#detected_urls), [`debate_cards`](#debate_cards), [`caselist_documents`](#caselist_documents), [`debate_card_imports`](#debate_card_imports), [`card_ai_analyses`](#card_ai_analyses)
 - **Social:** [`notifications`](#notifications), [`contacts`](#contacts), [`user_blocks`](#user_blocks), [`card_shares`](#card_shares), [`user_presence`](#user_presence), [`comments`](#comments), [`comment_likes`](#comment_likes), [`forum_threads`](#forum_threads)
 - **Billing and teams:** [`stripe_subscriptions`](#stripe_subscriptions), [`usage_counters`](#usage_counters), [`team_students`](#team_students), [`team_assignments`](#team_assignments)
@@ -930,6 +930,25 @@ _Drizzle export `videoIssues`, `schema.ts:1481`._
 | `created_at` | integer | no | _(SQL expr)_ | When the row was created. |
 
 - Indexes: `idx_video_issues_video` on (video_id); `idx_video_issues_status` on (status)
+
+### video_ai_results
+
+The watch page's AI results — detected speech starts, speech summaries and Outcomes runs — saved once per video and served to every viewer by `/api/video-ai-results`. First write wins; staff can replace or delete.
+
+_Drizzle export `videoAiResults`, `schema.ts:2262`._
+
+| Column | Type | Null | Default | Purpose |
+| --- | --- | --- | --- | --- |
+| `id` | text | no |  | `${videoId}::${kind}::${itemKey}`. _(PK)_ |
+| `video_id` | text | no |  | YouTube video id. |
+| `kind` | text | no |  | `segmentation`, `summary` or `outcome`. |
+| `item_key` | text | no | `''` | Empty for a segmentation, the speech key for a summary, `speechKey::panel` for an outcome. |
+| `data` | text | no |  | The result as JSON. |
+| `created_by` | text | yes |  | Who saved (or last replaced) it. FK → `user.id` (ON DELETE set null) |
+| `created_at` | integer | no | _(SQL expr)_ | When the row was created. |
+| `updated_at` | integer | no | _(SQL expr)_ | When it was last replaced. |
+
+- Indexes: `idx_video_ai_results_video` on (video_id)
 
 ### topic_area_votes
 

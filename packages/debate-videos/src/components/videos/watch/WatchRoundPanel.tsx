@@ -53,6 +53,7 @@ import type { RoundContext } from "../../../lib/speech-outcomes"
 import { cachedSpeechKeys } from "../../../state/speechOutcomeCache"
 import { readSpeechSummaries, writeSpeechSummary } from "../../../state/speechAiCache"
 import { requestSpeechSummary } from "../../../lib/speech-ai-client"
+import { shareVideoAiResult, sharedOutcomeSpeechKeys, useSharedVideoAi } from "../../../state/sharedVideoAi"
 import { findSpeechBySlug, SPEECH_PARAM, SPEECH_VIEW_PARAM, speechSlug } from "../../../lib/speech-url"
 import { setStateInURL } from "../../../ui/lib/utils"
 
@@ -135,12 +136,19 @@ export function WatchRoundPanel({
 }: WatchRoundPanelProps) {
   const [activeKey, setActiveKey] = useState(speeches[0]?.key ?? "")
   const [view, setView] = useState<SpeechView>("summary")
-  const [simulated, setSimulated] = useState<Set<string>>(() => new Set())
+  /** Runs and outlines any viewer already saved for this video (`state/sharedVideoAi.ts`). */
+  const shared = useSharedVideoAi(videoId)
+  const [ownSimulated, setSimulated] = useState<Set<string>>(() => new Set())
   useEffect(() => {
     setSimulated(videoId ? cachedSpeechKeys(videoId) : new Set())
   }, [videoId])
-  /** LLM outlines by speech key, for this video. */
-  const [outlines, setOutlines] = useState<Record<string, string>>({})
+  const simulated = useMemo(
+    () => new Set([...ownSimulated, ...sharedOutcomeSpeechKeys(shared)]),
+    [ownSimulated, shared],
+  )
+  /** LLM outlines by speech key, for this video — this browser's own over the shared ones. */
+  const [ownOutlines, setOutlines] = useState<Record<string, string>>({})
+  const outlines = useMemo(() => ({ ...shared.summaries, ...ownOutlines }), [shared.summaries, ownOutlines])
   /** The speech whose outline is being written, and the last failure. */
   const [summarizing, setSummarizing] = useState<string | null>(null)
   const [summaryError, setSummaryError] = useState<{ key: string; message: string } | null>(null)
@@ -299,6 +307,7 @@ export function WatchRoundPanel({
       })
       if (summaryVideo.current !== forVideo) return
       writeSpeechSummary(forVideo, speech.key, outline)
+      void shareVideoAiResult(forVideo, { kind: "summary", key: speech.key, data: outline }, { replace: true })
       setOutlines((current) => ({ ...current, [speech.key]: outline }))
     } catch (error) {
       if (summaryVideo.current !== forVideo) return

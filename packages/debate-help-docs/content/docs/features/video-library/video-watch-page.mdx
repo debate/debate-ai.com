@@ -146,8 +146,9 @@ before relying on them.
 - A round with a written summary keeps its own speeches and only gains
   the times it was missing. A **Mark start** you set yourself always
   wins over a detected one.
-- The result is kept in this browser. **Detect again** re-runs it and
-  **Clear** forgets it.
+- The result is kept in this browser and shared with everyone who opens
+  the video (see [Shared with everyone](#shared-with-everyone)).
+  **Detect again** re-runs it and **Clear** forgets your own copy.
 
 ### LLM summary — a speech's key points and warrants
 
@@ -155,13 +156,28 @@ Every speech with a transcript has an **LLM summary** button. It outlines
 the speech the way you'd flow it: each key point as a short bold tag, the
 warrants behind it as nested bullet phrases, in the order the speaker
 made them, ending with the speech's bottom line. The outline opens in its
-own **LLM summary** view, is kept in this browser, and **Run again** asks
-for a fresh one. On a round nobody typed up, the button turns on once the
+own **LLM summary** view, is kept in this browser and shared with every
+viewer, and **Run again** asks for a fresh one. On a round nobody typed up, the button turns on once the
 speech has a start — marked or detected.
 
 Both buttons need you to be signed in, and use the site's AI model — or
 your own OpenRouter or Anthropic key if you've added one in settings.
 They work from auto-generated captions, so check them against the video.
+
+### Shared with everyone
+
+Detected speeches, LLM summaries and Outcomes runs depend only on the
+video, not on who asked, so the first one anyone runs is saved for the
+video and shown to everyone who opens it afterwards — signed out
+included. A round only has to be analyzed once: open it and the speeches
+are already timed, the summaries and simulations already there.
+
+- A shared detection says **shared** next to its result. Your own run
+  always wins on your screen, but it doesn't replace the shared one;
+  the first good result stays.
+- A shared Outcomes run says it was run by another viewer.
+- If a shared result is wrong, an admin or moderator can **Run again**
+  to replace it for everyone.
 
 ### Rounds the site has already processed
 
@@ -197,8 +213,9 @@ was actually given.
   in speaking order, what it gives up, and every judge's ballot.
 - **Copy** puts the whole run on your clipboard as Markdown, ready for a
   doc or your team chat.
-- The last run for each speech and panel is kept in this browser, and its
-  tab gets a small sparkle. **Run again** asks for a fresh set.
+- The last run for each speech and panel is kept in this browser and
+  shared with every viewer, and its tab gets a small sparkle. **Run again**
+  asks for a fresh set.
 
 Simulating needs you to be signed in. The alternatives and ballots are
 Claude's predictions from a rough transcript and summary, not real
