@@ -19,7 +19,7 @@ import { PlayerResizeHandles } from "./PlayerResizeHandles"
 import { PlayerSubtitles } from "./PlayerSubtitles"
 import { useTranscript } from "../transcript/useTranscript"
 import { groupIntoSentences } from "../transcript/transcriptUtils"
-import { buildEmbedUrl, describePlayerError, startListening, watchUrl, embedOrigin } from "./youtubeEmbed"
+import { buildEmbedUrl, describePlayerError, startListening, watchUrl, embedOrigin, isPlayerMessage, pipEmbedUrl } from "./youtubeEmbed"
 
 interface VideoPlayerProps {
   /**
@@ -58,7 +58,7 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
   // Track whether the current video load still needs the playback rate applied
   const pendingPlaybackRate = useRef(false)
 
-  const { isSupported: isPipSupported, isActive: isPipActive, toggle: togglePip, exit: exitPip } = useDocumentPictureInPicture(videoWrapperRef)
+  const { isSupported: isPipSupported, isActive: isPipActive, pipWindow, toggle: togglePip, exit: exitPip } = useDocumentPictureInPicture(videoWrapperRef)
 
   const [showSubtitles, setShowSubtitles] = useState(false)
   const [subtitleTime, setSubtitleTime] = useState(0)
@@ -191,7 +191,7 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
   // Listen for YouTube IFrame API state change events
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      if (event.origin !== "https://www.youtube.com") return
+      if (!isPlayerMessage(event, iframeRef.current)) return
       try {
         const data = JSON.parse(event.data)
         if (data.event === "onError") {
@@ -271,9 +271,11 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
         // ignore non-JSON messages
       }
     }
-    window.addEventListener("message", handleMessage)
-    return () => window.removeEventListener("message", handleMessage)
-  }, [setIsPlaying, persistState, showSubtitles, playbackRate, getCurrentTime])
+    // Inside PiP the wrapper page posts to the PiP window, not this one
+    const targets = pipWindow ? [window, pipWindow] : [window]
+    targets.forEach((target) => target.addEventListener("message", handleMessage))
+    return () => targets.forEach((target) => target.removeEventListener("message", handleMessage))
+  }, [setIsPlaying, persistState, showSubtitles, playbackRate, getCurrentTime, pipWindow])
 
   // Re-send the "listening" handshake for a few seconds after every embed load.
   // `onLoad` alone is not enough: React's delegated events stop reaching the
@@ -415,7 +417,11 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
   if (!activeVideoId || theaterVideoId) return null
 
   const startSeconds = resumeSeconds ?? startTime
-  let iframeSrc = buildEmbedUrl(activeVideoId, { autoplay: true, controls: true, startSeconds, origin: isPipActive ? pipOrigin ?? undefined : undefined })
+  // In PiP the embed sits in an about:blank document that sends no referrer,
+  // so YouTube answers error 153; the same-origin wrapper page supplies one.
+  let iframeSrc = isPipActive
+    ? pipEmbedUrl(activeVideoId, { autoplay: true, startSeconds, origin: pipOrigin ?? undefined })
+    : buildEmbedUrl(activeVideoId, { autoplay: true, controls: true, startSeconds })
   if (typeof window !== "undefined") {
     const loc = window.location
     if (loc.origin.startsWith("chrome-extension://")) {
