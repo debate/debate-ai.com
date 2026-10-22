@@ -162,6 +162,20 @@ The follow behaviour reuses the side panel's remembered auto-scroll
 choice rather than adding a second toggle. Tested in
 `test/round-speeches.test.ts` and `test/watch-round-panel.test.tsx`.
 
+The open speech and its view live in the query string as
+`?speech=2ar&tab=outcomes` (`lib/speech-url.ts`). The speech word is the
+tab label in lower case with dashes, counted when the label repeats
+(`cx`, `cx-2`); `tab` is the view kind (`summary`, `analysis`,
+`transcript`, `llm`, `outcomes`). `WatchRoundPanel` reads both once per
+video and holds a speech the round doesn't have yet until a re-timed
+list does. Following playback leaves a linked speech alone until a
+different speech starts. Changes go through `setStateInURL` with
+`replaceState`, so stepping through speeches doesn't fill the back
+button. The first speech on its default view is not written unless the
+link asked for it. `WatchSidePanel` opens on By speech when either
+parameter is present. Tested in `test/speech-url.test.ts` and
+`test/watch-round-panel.test.tsx`.
+
 ### Outcomes: alternative responses and predicted ballots
 
 `WatchRoundPanel` offers a fourth view, **Outcomes**
