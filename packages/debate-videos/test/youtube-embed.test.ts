@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { buildEmbedUrl, describePlayerError, watchUrl } from "../src/components/videos/player/youtubeEmbed";
+import { buildEmbedUrl, describePlayerError, isPlayerMessage, pipEmbedUrl, playerOrigin, watchUrl } from "../src/components/videos/player/youtubeEmbed";
 
 /** Stand in for a browser so `buildEmbedUrl` can read an origin. */
 function withOrigin(origin: string) {
@@ -57,5 +57,41 @@ describe("watchUrl", () => {
   it("links to the current position when playback has started", () => {
     expect(watchUrl("OXdffJy8HIs", 42.9)).toBe("https://www.youtube.com/watch?v=OXdffJy8HIs&t=42");
     expect(watchUrl("OXdffJy8HIs")).toBe("https://www.youtube.com/watch?v=OXdffJy8HIs");
+  });
+});
+
+describe("pipEmbedUrl", () => {
+  it("loads the same-origin wrapper so the embed has a referrer inside PiP", () => {
+    withOrigin("https://d.ebate.app");
+    const url = new URL(pipEmbedUrl("OXdffJy8HIs", { autoplay: true, startSeconds: 61.7 }));
+
+    expect(url.origin).toBe("https://d.ebate.app");
+    expect(url.pathname).toBe("/youtube-player.html");
+    expect(url.searchParams.get("vid")).toBe("OXdffJy8HIs");
+    expect(url.searchParams.get("autoplay")).toBe("1");
+    expect(url.searchParams.get("start")).toBe("61");
+    expect(url.searchParams.get("origin")).toBe("https://d.ebate.app");
+  });
+});
+
+describe("player messages", () => {
+  const youtube = { src: "https://www.youtube.com/embed/OXdffJy8HIs", contentWindow: {} } as HTMLIFrameElement;
+  const wrapper = { src: "https://d.ebate.app/youtube-player.html?vid=x", contentWindow: {} } as HTMLIFrameElement;
+
+  it("addresses commands to whichever page the iframe loaded", () => {
+    expect(playerOrigin(youtube)).toBe("https://www.youtube.com");
+    expect(playerOrigin(wrapper)).toBe("https://d.ebate.app");
+    expect(playerOrigin(null)).toBe("https://www.youtube.com");
+  });
+
+  it("accepts YouTube, and the wrapper only from its own frame", () => {
+    expect(isPlayerMessage({ origin: "https://www.youtube.com", source: null } as MessageEvent, null)).toBe(true);
+    expect(
+      isPlayerMessage({ origin: "https://d.ebate.app", source: wrapper.contentWindow } as MessageEvent, wrapper),
+    ).toBe(true);
+    expect(isPlayerMessage({ origin: "https://d.ebate.app", source: {} } as MessageEvent, wrapper)).toBe(false);
+    expect(
+      isPlayerMessage({ origin: "https://evil.example", source: wrapper.contentWindow } as MessageEvent, wrapper),
+    ).toBe(false);
   });
 });
