@@ -73,6 +73,7 @@
 - [x] Repaired the bad merge `3c43976` (undefined `asSide`/`withUnseenEvents`/`eventId` broke typecheck and 36 tests): kept the per-device ledger design and dropped the overlapping per-event-id one (2026-10-21)
 - [x] Today's per-activity counts add across devices via a per-day tally on each ledger entry (`DebaterDeviceTally.daily`; 2026-10-21)
 - [x] A daily challenge that a merge alone pushes past its target is paid on load/focus (`settleDailyChallenges`, `settleDebaterChallenges`; 2026-10-21)
+- [x] Coverage guard: `storage-key-coverage.test.ts` fails when a `STORAGE_KEY` store is neither synced (catalog or own route/`user_settings`) nor declared device-local (2026-10-22; branch `claude/gifted-babbage-rk9pwl`)
 
 ---
 

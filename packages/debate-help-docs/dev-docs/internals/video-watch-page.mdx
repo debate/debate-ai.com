@@ -90,6 +90,21 @@ from the video rather than from a client fetch a crawler never waits for.
   same tournament (searched by its year-stripped name), then the same
   style or lecture category, then recency; each pass tops the list up.
 
+## Page title
+
+`videoPageTitle(video, ranks)` (`lib/video-page-title.ts`) builds the
+`<title>`, the Open Graph title and the `<h1>`: season-derived tournament
+year, tournament name without its year, the format's level (`STYLE_LEVELS`),
+the round via `displayRoundLevel`, then each team with `(#rank, argument)`.
+An untagged video falls back to `parseRoundTitle`, and anything else to its
+own title. The ranks come from `loadVideoTeamRanks` (`lib/video-team-ranks.ts`),
+the server-side twin of `useVideoTeamRankings`: the current season's dataset
+for the round's style, or a past college season's debatedata table. The
+route passes them to `VideoWatchPage` as `titleRanks` so the server-rendered
+heading matches the `<title>` before the client's rankings load.
+`isRankedSeasonRound` and `pastCollegeSeason` moved there from the hook so
+the server can call them; the hook re-exports them.
+
 ## Transcript search highlighting
 
 `WatchTranscriptPanel`'s search still filters to lines whose text contains

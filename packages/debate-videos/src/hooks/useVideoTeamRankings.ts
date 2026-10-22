@@ -18,20 +18,18 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react"
 import {
-  collegeSeasonYearOf,
   findCollegeHistoryTeam,
-  hasCollegeHistory,
   loadCollegeHistory,
   type CollegeHistoryEntry,
   type RankingEntry,
 } from "@debate/rankings-adapter"
 import { useAllRankingDatasets } from "./useAllRankingDatasets"
-import { currentSeasonYear } from "../panels/leaderboard/leaderboardUtils"
-import {
-  findVideoTeamRanking,
-  videoStyleDatasetId,
-} from "../panels/leaderboard/profile/rankingProfileHelpers"
+import { findVideoTeamRanking } from "../panels/leaderboard/profile/rankingProfileHelpers"
+import { isRankedSeasonRound, pastCollegeSeason } from "../lib/video-team-ranks"
 import type { VideoType } from "../types/videos"
+
+// Kept importable from here, where they lived before the server needed them.
+export { isRankedSeasonRound, pastCollegeSeason }
 
 /** A past college season's table row for a team, tagged with that season. */
 export interface PastSeasonTeamRanking extends CollegeHistoryEntry {
@@ -64,32 +62,6 @@ export const VideoTeamRankingContext = createContext<VideoTeamRankingLookup | nu
 export function useContextTeamRanking(video: VideoType | undefined, team: string | null | undefined): VideoTeamRanking | null {
   const lookup = useContext(VideoTeamRankingContext)
   return lookup && video ? lookup(video, team) : null
-}
-
-/**
- * Whether the rankings can say anything about `video`'s teams: a round of a
- * ranked style from the season `debate-rankings` covers.
- *
- * @param video - Video tuple.
- * @param now - Date to evaluate the current season at.
- */
-export function isRankedSeasonRound(video: VideoType, now: Date = new Date()): boolean {
-  return video[17] === currentSeasonYear(now) && videoStyleDatasetId(video[6]) !== null
-}
-
-/**
- * The past season whose college table `video`'s teams are looked up in: a
- * college policy round from before the current season, back to 2009-10.
- * `null` for any other video. The season is the video's `seasonYear`, or
- * its publish date's season when the tuple has none.
- *
- * @param video - Video tuple.
- * @param now - Date to evaluate the current season at.
- */
-export function pastCollegeSeason(video: VideoType, now: Date = new Date()): number | null {
-  if (videoStyleDatasetId(video[6]) !== "cpd") return null
-  const season = typeof video[17] === "number" && video[17] > 0 ? video[17] : collegeSeasonYearOf(video[2])
-  return season && season !== currentSeasonYear(now) && hasCollegeHistory(season) ? season : null
 }
 
 /**

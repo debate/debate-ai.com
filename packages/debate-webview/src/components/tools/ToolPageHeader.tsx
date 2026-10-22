@@ -46,6 +46,7 @@ import {
 import { cn } from "../../lib/ui/lib/utils"
 import { FavoriteToolButton } from "./favorites/FavoriteToolButton"
 import { ToolSyncBadge } from "./sync/ToolSyncBadge"
+import { describeToolStorage, resolveToolStorage } from "../../lib/tools/tool-storage"
 
 /** Props for {@link ToolPage}. */
 export interface ToolPageProps {
@@ -118,6 +119,7 @@ export function ToolPageHeader({
   const resolvedTitle = title ?? tool?.label ?? href
   const resolvedDescription = description ?? tool?.description
   const resolvedHighlights = highlights ?? tool?.highlights
+  const storageNote = describeToolStorage(resolveToolStorage(href))
   const docsUrl = featureDocsUrlForRoute(href) ?? (guide ? guideDocsUrl(guide) : undefined)
 
   return (
@@ -167,6 +169,11 @@ export function ToolPageHeader({
           <h1 className="text-xl font-semibold leading-tight text-foreground sm:text-2xl">{resolvedTitle}</h1>
           {resolvedDescription ? (
             <p className="mt-1 max-w-3xl text-sm text-muted-foreground">{resolvedDescription}</p>
+          ) : null}
+          {storageNote ? (
+            <p className="mt-1 max-w-3xl text-xs text-muted-foreground" data-tool-storage-note>
+              {storageNote}
+            </p>
           ) : null}
           {resolvedHighlights && resolvedHighlights.length > 0 ? (
             <details className="mt-2 max-w-3xl text-xs text-muted-foreground">
