@@ -311,7 +311,8 @@ since it is about the tab you're looking at.
 ## Options
 
 Open them from the gear in either page, or `chrome://extensions` → Details →
-Extension options.
+Extension options. The popup's **Open Debate AI (local)** button opens the same
+bundled app on the Research tab's editor (`#/research/docs`) instead.
 
 The page opens on the app's UI — Videos, Cards, Reuse check, Rankings, All
 tools — pointed at whatever **API base URL** is set below; saving a different

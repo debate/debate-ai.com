@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 import {
   DEFAULT_QWKSEARCH_ORIGIN,
+  EXTENSION_CALLBACK_PATH,
   buildAuthorizeUrl,
   connectionFromToken,
   parseConnection,
@@ -8,6 +9,7 @@ import {
   pkceChallenge,
   qwksearchOrigin,
   randomToken,
+  readExtensionCallback,
   safeReturnTo,
   sameString,
   serializeConnection,
@@ -129,5 +131,28 @@ describe("connections", () => {
       plan: "free",
       upgradeUrl: TOKEN.upgrade_url,
     })
+  })
+})
+
+describe("readExtensionCallback", () => {
+  const base = "https://debate-ai.com"
+  const at = (query: string) => `${base}${EXTENSION_CALLBACK_PATH}?${query}`
+
+  it("waits while the tab is anywhere but the completion page", () => {
+    expect(readExtensionCallback(undefined, base, "s1")).toBeNull()
+    expect(readExtensionCallback("https://qwksearch.com/connect?state=s1&code=c", base, "s1")).toBeNull()
+    expect(readExtensionCallback(`${base}/login?state=s1&code=c`, base, "s1")).toBeNull()
+    expect(readExtensionCallback(`https://evil.com${EXTENSION_CALLBACK_PATH}?state=s1&code=c`, base, "s1")).toBeNull()
+    expect(readExtensionCallback("not a url", base, "s1")).toBeNull()
+  })
+
+  it("returns the code when state matches", () => {
+    expect(readExtensionCallback(at("code=abc&state=s1"), `${base}/`, "s1")).toEqual({ code: "abc" })
+  })
+
+  it("treats a foreign state, a denial or a missing code as errors", () => {
+    expect(readExtensionCallback(at("code=abc&state=other"), base, "s1")).toEqual({ error: "state_mismatch" })
+    expect(readExtensionCallback(at("error=access_denied&state=s1"), base, "s1")).toEqual({ error: "access_denied" })
+    expect(readExtensionCallback(at("state=s1"), base, "s1")).toEqual({ error: "missing_code" })
   })
 })

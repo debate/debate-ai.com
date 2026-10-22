@@ -38,6 +38,14 @@ export interface HostSettingsSection {
   component: ComponentType
 }
 
+/** How a host-run "Sign in with QwkSearch" ended. */
+export interface HostConnectResult {
+  ok: boolean
+  /** The reader closed the tab or chose Cancel on QwkSearch. */
+  cancelled?: boolean
+  error?: string
+}
+
 export interface HostConfig {
   /** Show Google One Tap. Needs Google's script, so web only. */
   oneTap: boolean
@@ -54,6 +62,14 @@ export interface HostConfig {
    * work on the site's own origin.
    */
   openOnSite?: (path: string) => void
+  /**
+   * Runs "Sign in with QwkSearch" outside the page. The web flow navigates
+   * this page to `/api/qwksearch/connect`, which only exists on the site's
+   * own origin and needs its cookie; a host elsewhere (the extension) runs
+   * the consent tab itself and resolves once the QwkSearch account is linked
+   * to the signed-in debate-ai account, or with why it isn't.
+   */
+  connectQwkSearch?: () => Promise<HostConnectResult>
   /** Extra Settings tabs the host owns, listed after the app's Preferences and My team. */
   settingsSections?: HostSettingsSection[]
 }

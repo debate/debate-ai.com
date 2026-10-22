@@ -16,3 +16,15 @@ export function openExtensionSettings(category: string = EXTENSION_SETTINGS_CATE
     url: browser.runtime.getURL(`/options.html#/settings?category=${encodeURIComponent(category)}`),
   });
 }
+
+/**
+ * Where "Open Debate AI (local)" lands: the Research tab's document editor
+ * (`QWKSEARCH_DOCS_ROUTE` in debate-webview's `lib/qwksearch/doc-paths.ts`),
+ * served by the extension's own bundled copy of the app.
+ */
+export const LOCAL_APP_ROUTE = '/research/docs';
+
+/** Opens the app bundled in the extension (the Options page) on `route`. */
+export function openLocalApp(route: string = LOCAL_APP_ROUTE): void {
+  void browser.tabs.create({ url: browser.runtime.getURL(`/options.html#${route}`) });
+}
