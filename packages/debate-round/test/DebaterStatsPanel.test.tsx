@@ -8,7 +8,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
 import { createElement } from "react"
 
-import { DebaterStatsPanel, formatWinRate } from "../src/panels/DebaterStatsPanel"
+import { DebaterStatsPanel, formatWinRate, formatWords } from "../src/panels/DebaterStatsPanel"
 import { saveOwnRoundHistoryRecord, type OwnRoundHistoryRecord } from "../src/state/ownRoundHistory"
 import { cleanup, mount, flush, run, bodyText } from "./dom-helpers"
 
@@ -37,7 +37,27 @@ describe("formatWinRate", () => {
   })
 })
 
+describe("formatWords", () => {
+  it("groups thousands and dashes a missing count", () => {
+    expect(formatWords(4200)).toBe("4,200")
+    expect(formatWords(null)).toBe("—")
+  })
+})
+
 describe("DebaterStatsPanel", () => {
+  it("shows speech length only when a round logged a word count", async () => {
+    logRound("r1")
+    await mount(createElement(DebaterStatsPanel))
+    await flush()
+    expect(bodyText()).not.toContain("Speech length")
+    cleanup()
+    logRound("r2", { speechWordCount: 4200 })
+    await mount(createElement(DebaterStatsPanel))
+    await flush()
+    expect(bodyText()).toContain("Speech length")
+    expect(bodyText()).toContain("4,200")
+  })
+
   it("explains how to log rounds when none exist", async () => {
     await mount(createElement(DebaterStatsPanel))
     await flush()

@@ -50,6 +50,11 @@ export function formatWinRate(rate: number | null): string {
   return rate === null ? "—" : `${Math.round(rate * 100)}%`
 }
 
+/** A word count, or an em dash when no such round logged one. */
+export function formatWords(words: number | null): string {
+  return words === null ? "—" : words.toLocaleString("en-US")
+}
+
 function recordHint(record: WinLossRecord): string {
   return `${record.wins}–${record.losses} in ${record.rounds} ${record.rounds === 1 ? "round" : "rounds"}`
 }
@@ -107,7 +112,7 @@ export function DebaterStatsPanel() {
       {records.length === 0 ? (
         <EmptyState
           title="No rounds logged yet"
-          message="Log a round in Pre-Round Briefings and your win rate, side split and form show up here."
+          message="Log a round in Pre-Round Briefings and your win rate, side split, form and speech length show up here."
         />
       ) : (
         <>
@@ -135,6 +140,19 @@ export function DebaterStatsPanel() {
               </span>
             ) : null}
           </p>
+          {stats.speechLength.rounds > 0 ? (
+            <PanelSection title="Speech length">
+              <StatGrid columns={3}>
+                <StatTile
+                  label="Avg words"
+                  value={formatWords(stats.speechLength.averageWords)}
+                  hint={`over ${stats.speechLength.rounds} ${stats.speechLength.rounds === 1 ? "round" : "rounds"}`}
+                />
+                <StatTile label="In wins" value={formatWords(stats.speechLength.averageWordsInWins)} />
+                <StatTile label="In losses" value={formatWords(stats.speechLength.averageWordsInLosses)} />
+              </StatGrid>
+            </PanelSection>
+          ) : null}
           <Breakdown title="By division" rows={stats.byDivision} />
           <Breakdown title="By argument" rows={stats.byArgumentTag} />
           <Breakdown title="By case" rows={stats.byCase} />
