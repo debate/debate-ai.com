@@ -11,6 +11,8 @@
     "apps/*"
   ],
   "scripts": {
+    "up": "git submodule update --remote --recursive",
+    "merge": "bash .github/scripts/merge.sh",
     "dev": "turbo dev",
     "build": "turbo build --filter='!@debate/help-docs' --filter='!@debate/flow-ebb'",
     "dev:web": "turbo dev --filter=@debate/ai-web",
@@ -36,7 +38,7 @@
     "grab-url": "^3.0.7",
     "htmlparser2": "^12.0.0",
     "jszip": "^3.10.2",
-    "linkedom": "0.18.13",
+    "linkedom": "^0.18.13",
     "react-reason-editor-sidebar": "^0.1.252"
   },
   "overrides": {
