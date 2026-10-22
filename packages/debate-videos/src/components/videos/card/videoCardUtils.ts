@@ -34,6 +34,24 @@ export function isTOCTournament(tournament: string | undefined): boolean {
   return base === "TOC";
 }
 
+/** Elim round labels as shown under the tournament on the watch page header. */
+const ELIM_BADGE_LABELS: Record<string, string> = {
+  semis: "Top 4 Semis",
+  quarters: "Top 8 Quarters",
+  octas: "Top 16 Octos",
+  octos: "Top 16 Octos",
+  doubles: "Top 32 Doubles",
+  triples: "Top 64 Triples",
+};
+
+/**
+ * A standard round label (`displayRoundLevel` output) with its bracket size,
+ * e.g. `"Doubles"` → `"Top 32 Doubles"`. Prelims and finals pass through.
+ */
+export function formatElimBadgeLabel(roundLabel: string): string {
+  return ELIM_BADGE_LABELS[roundLabel.toLowerCase().trim()] ?? roundLabel;
+}
+
 export function getRoundBadgeColor(roundLevel: string) {
   const round = roundLevel.toLowerCase().trim();
   if (
