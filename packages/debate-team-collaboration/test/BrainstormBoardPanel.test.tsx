@@ -69,7 +69,7 @@ describe("BrainstormBoardPanel", () => {
   });
 
   it("upvotes ideas so the board re-ranks", async () => {
-    view = await mount(createElement(BrainstormBoardPanel, { signedInContributorId: "alice" }));
+    view = await mount(<BrainstormBoardPanel signedInContributorId="alice" />);
     expect(field("#brainstorm-contributor-id").value).toBe("alice");
     await submit("impacts", "", "Extinction outweighs");
     await submit("impacts", "", "Structural violence first");

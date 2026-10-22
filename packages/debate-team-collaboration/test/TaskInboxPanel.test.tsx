@@ -128,7 +128,7 @@ describe("TaskInboxPanel", () => {
 
   it("scopes to the signed-in contributor and locks their verifier id", async () => {
     seedTopic();
-    view = await mount(createElement(TaskInboxPanel, { signedInContributorId: "alice" }));
+    view = await mount(<TaskInboxPanel signedInContributorId="alice" />);
     expect(field("#task-inbox-my-id").value).toBe("alice");
     expect(text()).toContain("Prefilled from your signed-in account");
 
@@ -141,7 +141,7 @@ describe("TaskInboxPanel", () => {
     expect(text()).toContain('No tasks routed to "nobody" right now.');
 
     await view.unmount();
-    view = await mount(createElement(TaskInboxPanel, { signedInContributorId: "zed" }));
+    view = await mount(<TaskInboxPanel signedInContributorId="zed" />);
     expect(text()).toContain("Verifying as your signed-in id.");
     expect(field('input[placeholder="Verifier id"]').value).toBe("zed");
     await click(button(view.container, "Verify"));

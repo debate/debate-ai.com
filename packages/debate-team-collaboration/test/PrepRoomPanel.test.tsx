@@ -88,7 +88,7 @@ describe("PrepRoomPanel", () => {
   });
 
   it("adds, completes and removes shared checklist tasks", async () => {
-    view = await mount(createElement(PrepRoomPanel, { signedInContributorId: "alice" }));
+    view = await mount(<PrepRoomPanel signedInContributorId="alice" />);
     await type(input("#prep-room-topic"), "Trade");
     const task = () => input('input[placeholder="Add a task…"]');
     expect(button(view.container, "Add task").disabled).toBe(true);

@@ -28,12 +28,12 @@ const input = (placeholder: string) => document.querySelector(`[placeholder^="${
 const radio = (label: string) =>
   Array.from(document.querySelectorAll("label")).find((el) => el.textContent?.includes(label))!.querySelector("input")!;
 
-let onCreated: ReturnType<typeof vi.fn>;
-let onCancel: ReturnType<typeof vi.fn>;
+let onCreated: ReturnType<typeof vi.fn<() => void>>;
+let onCancel: ReturnType<typeof vi.fn<() => void>>;
 
 beforeEach(() => {
-  onCreated = vi.fn();
-  onCancel = vi.fn();
+  onCreated = vi.fn<() => void>();
+  onCancel = vi.fn<() => void>();
   api.createMarket.mockReset().mockResolvedValue({});
   api.fetchSources.mockReset().mockImplementation(async (eventId: number | null) =>
     eventId ? { events: EVENTS, panels: [PANEL], entries: PANEL.entries } : { events: EVENTS },

@@ -83,7 +83,7 @@ describe("SprintNotesPanel", () => {
   });
 
   it("prefills your ids when signed in and marks you active on a topic", async () => {
-    view = await mount(createElement(SprintNotesPanel, { signedInContributorId: "alice" }));
+    view = await mount(<SprintNotesPanel signedInContributorId="alice" />);
     expect(field("#sprint-note-author").value).toBe("alice");
     expect(field("#sprint-presence-id").value).toBe("alice");
 

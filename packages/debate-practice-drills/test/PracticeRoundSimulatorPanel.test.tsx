@@ -11,6 +11,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { PracticeRoundSimulatorPanel } from "../src/panels/PracticeRoundSimulatorPanel";
 import { getAiVersusRound, saveAiVersusRound } from "@debate/round/src/state/aiVersusRounds";
 import { getPracticeRound, listPracticeRounds } from "@debate/round/src/state/practiceRounds";
+import { debateStyleMap } from "@debate/timer/src/formats/debate-format-times";
 import { saveFlowSummary } from "../src/state/flowSummaries";
 import { listCustomOpponentPersonaLibrary } from "../src/state/customOpponentPersonaLibrary";
 import { button, buttons, captureDownloads } from "./helpers/dom";
@@ -50,8 +51,9 @@ function seedUntilAiTurn(roundId: string) {
   const firstAi = setup.speechOrder.findIndex((slot) => slot.speaker === "ai");
   saveAiVersusRound({
     roundId,
-    styleKey: setup.styleKey,
-    userSide: setup.userSide,
+    // The form's defaults: its first format, on the primary side.
+    styleKey: debateStyleMap[0],
+    userSide: "primary",
     submittedSpeeches: setup.speechOrder
       .slice(0, firstAi)
       .map((slot) => ({ name: slot.name, speaker: slot.speaker, text: `My ${slot.name}.` })),
@@ -179,8 +181,8 @@ describe("PracticeRoundSimulatorPanel", () => {
     const [first, second] = record.setup.speechOrder;
     saveAiVersusRound({
       roundId: "round-6",
-      styleKey: record.setup.styleKey,
-      userSide: record.setup.userSide,
+      styleKey: debateStyleMap[0],
+      userSide: "primary",
       submittedSpeeches: [
         { name: first.name, speaker: "user", text: "Opening speech." },
         { name: second.name, speaker: "ai", text: "AI answer." },

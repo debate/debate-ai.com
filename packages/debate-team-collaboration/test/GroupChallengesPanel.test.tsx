@@ -29,7 +29,7 @@ async function fillDates(startDays: number, endDays: number) {
 
 async function remount(props: Parameters<typeof GroupChallengesPanel>[0] = {}) {
   await view.unmount();
-  view = await mount(createElement(GroupChallengesPanel, props));
+  view = await mount(<GroupChallengesPanel {...props} />);
 }
 
 beforeEach(async () => {

@@ -68,7 +68,7 @@ describe("ResearchProgressPanel", () => {
 
   it("lists contributors, the topic comparison, and downloads a report", async () => {
     seedProgress();
-    view = await mount(createElement(ResearchProgressPanel, { signedInContributorId: "alice" }));
+    view = await mount(<ResearchProgressPanel signedInContributorId="alice" />);
 
     expect(text()).toContain("aliceYou");
     expect(text()).toContain("1/2 (50%)");
@@ -98,7 +98,7 @@ describe("ResearchProgressPanel", () => {
   it("sets, updates and clears a personal goal", async () => {
     seedProgress();
     sync.fetch.mockResolvedValue({ goal: null });
-    view = await mount(createElement(ResearchProgressPanel, { signedInContributorId: "alice" }));
+    view = await mount(<ResearchProgressPanel signedInContributorId="alice" />);
 
     await click(button(view.container, "Set a goal"));
     await type(field("#research-goal-target"), "0");
