@@ -532,6 +532,7 @@ export function LecturesVideoGridView({
                       <VideoListRows
                         videos={favoriteRounds}
                         layout="round"
+                        topics={topics}
                         videoContainerRef={videoContainerRef}
                         favorites={favorites}
                         onToggleFavorite={onToggleFavorite}
@@ -577,6 +578,7 @@ export function LecturesVideoGridView({
                 showWatched={isHistory}
                 // Top Picks mixes every format, so each tournament says which.
                 showFormat={currentCategory === "topPicks"}
+                topics={topics}
                 defaultSort={isHistory ? { column: "watched", direction: "desc" } : undefined}
                 videoContainerRef={videoContainerRef}
                 favorites={favorites}

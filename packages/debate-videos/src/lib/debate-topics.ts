@@ -85,3 +85,34 @@ export function getStyleTopicItems(
   if (style === 4) return named(entry.ndt_topic_name, entry.ndt_topic_emoji, entry.ndt_topic);
   return [];
 }
+
+/** Longest a fallback short name runs before it is cut at a word. */
+const SHORT_TOPIC_LENGTH = 28;
+
+/**
+ * A topic's short name: its curated title, or else the start of the
+ * resolution (minus a leading "Resolved:") cut at a word boundary.
+ */
+export function shortTopicName(item: TopicItem, maxLength = SHORT_TOPIC_LENGTH): string {
+  if (item.title) return item.title;
+  const text = item.text.replace(/^\s*resolved\s*[:,]?\s*/i, "").replace(/\s+/g, " ").trim();
+  if (text.length <= maxLength) return text;
+  const cut = text.slice(0, maxLength + 1);
+  const space = cut.lastIndexOf(" ");
+  return `${(space > maxLength / 2 ? cut.slice(0, space) : cut.slice(0, maxLength)).replace(/[\s,;:.]+$/, "")}…`;
+}
+
+/**
+ * The topics of the competition season ending in `seasonYear` for one
+ * format. `debate-topics.json` keys a season by the year it starts, so the
+ * "23-24" season (`seasonYear` 2024) reads the 2023 entry.
+ */
+export function getSeasonTopicItems(
+  topics: DebateTopicYear[] | undefined,
+  seasonYear: number | undefined,
+  style: number | undefined,
+): TopicItem[] {
+  if (!topics || !seasonYear) return [];
+  const entry = topics.find((t) => Number(t.year) === seasonYear - 1);
+  return getStyleTopicItems(entry, style);
+}

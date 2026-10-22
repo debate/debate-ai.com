@@ -215,6 +215,14 @@ the same day read Finals down to the prelims). Rounds with no tournament go
 into an **Unsorted** tournament group, which is placed by its own newest video
 like any other tournament (`buildVideoTree` in `video-tree.ts`).
 
+Each season row names that season's topic beside its `23-24` label, such as
+**Legal Personhood** for college rounds in 23-24. It is the topic's short name
+from `debate-topics.json` (or the start of the resolution when there is none),
+and hovering it shows the full resolution. LD and PF seasons list every topic
+name in order, and the tooltip gives each with its starting month. A season
+that mixes formats, as Top Picks does, names no topic (`SeasonTopic` in
+`VideoTreeRows.tsx`; the topics file keys a season by the year it starts).
+
 Top Picks mixes every format, so there each tournament row carries a format
 badge (PF, LD, Policy, College) beside its name — one per format among its
 rounds — and so does the tournament name on every round row under it
