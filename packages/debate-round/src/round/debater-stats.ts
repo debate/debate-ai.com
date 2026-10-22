@@ -33,6 +33,12 @@ export interface LabeledWinLossRecord extends WinLossRecord {
 /** Whether recent form is above, below or level with the all-time rate. */
 export type FormTrend = "improving" | "declining" | "steady" | "insufficient-data";
 
+/** The run of identical results ending at the latest round. */
+export interface Streak {
+  kind: "win" | "loss" | null;
+  length: number;
+}
+
 /** Average spoken words per round, and how that splits across wins and losses. `null` where no round carries a count. */
 export interface SpeechLengthStats {
   /** Rounds that logged a word count. */
