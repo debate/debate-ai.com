@@ -75,6 +75,8 @@ import { useDocumentPictureInPicture } from "../../components/videos/player/useD
 import {
   buildEmbedUrl,
   describePlayerError,
+  isPlayerMessage,
+  pipEmbedUrl,
   startListening,
   watchUrl,
 } from "../../components/videos/player/youtubeEmbed"
@@ -393,6 +395,7 @@ export function VideoWatchPage({
   const {
     isSupported: isPipSupported,
     isActive: isPipActive,
+    pipWindow,
     toggle: togglePip,
     exit: exitPip,
   } = useDocumentPictureInPicture(videoWrapperRef)
@@ -639,7 +642,7 @@ export function VideoWatchPage({
   // transcript, play state for the toolbar, errors for the overlay.
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      if (event.origin !== "https://www.youtube.com") return
+      if (!isPlayerMessage(event, iframeRef.current)) return
       try {
         const data = JSON.parse(event.data)
         if (data.event === "onError") {
@@ -698,9 +701,11 @@ export function VideoWatchPage({
         // ignore non-JSON messages
       }
     }
-    window.addEventListener("message", handleMessage)
-    return () => window.removeEventListener("message", handleMessage)
-  }, [playbackRate, setIsPlaying, videoId, title])
+    // Inside PiP the wrapper page posts to the PiP window, not this one
+    const targets = pipWindow ? [window, pipWindow] : [window]
+    targets.forEach((target) => target.addEventListener("message", handleMessage))
+    return () => targets.forEach((target) => target.removeEventListener("message", handleMessage))
+  }, [playbackRate, setIsPlaying, videoId, title, pipWindow])
 
   // Re-send the handshake for a few seconds after every load: YouTube ignores
   // commands and posts no events until it lands, and moving the iframe into a
@@ -825,7 +830,10 @@ export function VideoWatchPage({
   const iframeSrc =
     embedStart === null
       ? null
-      : buildEmbedUrl(videoId, { autoplay: true, controls: true, startSeconds: embedStart })
+      : isPipActive
+        ? // about:blank PiP documents send no referrer (YouTube error 153); the wrapper does
+          pipEmbedUrl(videoId, { autoplay: true, startSeconds: embedStart })
+        : buildEmbedUrl(videoId, { autoplay: true, controls: true, startSeconds: embedStart })
 
   const quickLinkCounts = useMemo(
     () =>

@@ -3,7 +3,9 @@
  * window via the Document Picture-in-Picture API. The node is physically
  * moved (not cloned). Browsers reload an iframe when it changes document, so
  * callers that host a YouTube embed record the playback time before toggling
- * and resume from it (see `buildEmbedUrl`'s `startSeconds`).
+ * and resume from it (see `buildEmbedUrl`'s `startSeconds`). Inside the
+ * window they load `pipEmbedUrl` instead and listen on `pipWindow`, where the
+ * wrapper page posts the player's messages.
  */
 
 import { useCallback, useEffect, useRef, useState } from "react"
@@ -42,6 +44,7 @@ function copyStyles(pipWindow: Window) {
 export function useDocumentPictureInPicture(nodeRef: React.RefObject<HTMLElement | null>) {
   const [isSupported, setIsSupported] = useState(false)
   const [isActive, setIsActive] = useState(false)
+  const [pipWindow, setPipWindow] = useState<Window | null>(null)
   // Comment node left behind in the original spot so the moved node can return to the right place
   const anchorRef = useRef<Comment | null>(null)
 
@@ -58,6 +61,7 @@ export function useDocumentPictureInPicture(nodeRef: React.RefObject<HTMLElement
     }
     anchorRef.current = null
     setIsActive(false)
+    setPipWindow(null)
   }, [nodeRef])
 
   const exit = useCallback(() => {
@@ -97,6 +101,7 @@ export function useDocumentPictureInPicture(nodeRef: React.RefObject<HTMLElement
     pipWindow.document.body.style.overflow = "hidden"
     pipWindow.document.body.appendChild(node)
     setIsActive(true)
+    setPipWindow(pipWindow)
 
     pipWindow.addEventListener("pagehide", restoreNode, { once: true })
   }, [nodeRef, exit, restoreNode])
@@ -104,5 +109,5 @@ export function useDocumentPictureInPicture(nodeRef: React.RefObject<HTMLElement
   // Restore the node if the component unmounts while still popped out
   useEffect(() => () => exit(), [exit])
 
-  return { isSupported, isActive, toggle, exit }
+  return { isSupported, isActive, pipWindow, toggle, exit }
 }
