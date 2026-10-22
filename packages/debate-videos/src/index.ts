@@ -174,6 +174,8 @@ export {
   type VideoRouteSegments,
   type TitleRound,
 } from "./lib/video-route";
+export { videoPageTitle, type VideoPageTitleRanks } from "./lib/video-page-title";
+export { isRankedSeasonRound, loadVideoTeamRanks, pastCollegeSeason } from "./lib/video-team-ranks";
 export {
   VIDEO_DOCUMENT_KINDS,
   VIDEO_DOCUMENT_LABELS,

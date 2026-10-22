@@ -26,6 +26,30 @@ The title half is for readers and for search engines. A video that gets
 retitled gets a new address — old links stop working, which is the
 trade-off for clean URLs without appended ids.
 
+## The title
+
+A round's page is titled after the round, not after whatever the uploader
+called it — in the browser tab, in search results and in the heading over
+the video:
+
+```
+2026 NDT College Octas: Kansas OW (#14, K) vs CSULB MO (#7, Policy)
+```
+
+That is the tournament's year and name, the level (College, HS Policy, LD,
+PF) and the round, then the aff and the neg. Each team's rank and argument
+(the 1AC for the aff, the 2NR for the neg) follow it in parentheses when
+they are known; the rank is the one the team's badge shows, from the current
+season's rankings or, for a past college round, that season's table. The
+year is the one in the tournament's name or the video's title, or else the
+season's: its autumn for a video uploaded in the autumn, its spring
+otherwise. The upload's own title stays in smaller type under the heading.
+
+A video with no teams recorded whose title still reads as a round
+(`2022 NDT Finals - Dartmouth SV vs Michigan PR`) is titled from its title
+the same way, without ranks or arguments. A lecture keeps its own title.
+(`lib/video-page-title.ts`, ranks from `lib/video-team-ranks.ts`)
+
 ## No spoilers
 
 The round's result stays hidden until you ask for it. The header shows
