@@ -503,11 +503,11 @@ jobs:
   # Unsigned .ipa for sideloading (AltStore, Sideloadly, ...), which re-sign it
   # with the installer's own Apple ID, so no Apple Developer membership is
   # needed. `tauri ios init` insists on a development team, so a placeholder
-  # is passed; signing is then switched off for every xcodebuild call via
-  # XCODE_XCCONFIG_FILE. Tauri's own export step cannot export an unsigned
-  # archive and fails after the archive is made, so that failure is tolerated
-  # and the .ipa is packaged by hand from the .xcarchive. Best-effort: the
-  # whole job is allowed to fail without blocking the release.
+  # is passed. `tauri ios build --no-sign` then archives with
+  # CODE_SIGNING_ALLOWED=NO and zips the .app into an .ipa itself. (Signing
+  # can't be switched off through XCODE_XCCONFIG_FILE: the Tauri CLI runs
+  # xcodebuild with its own environment, so the variable never reaches it.)
+  # Best-effort: the whole job is allowed to fail without blocking the release.
   build-ios-unsigned:
     name: Build iOS unsigned .ipa (sideload, best-effort)
     needs: [prepare-release]
@@ -549,42 +549,24 @@ jobs:
           APPLE_DEVELOPMENT_TEAM: AAAAAAAAAA
         run: npx @tauri-apps/cli@2 ios init
 
-      - name: Archive with code signing disabled
+      - name: Archive and package without code signing
         working-directory: apps/debate-native-wrapper
         env:
           APPLE_DEVELOPMENT_TEAM: AAAAAAAAAA
-        run: |
-          cat > "$RUNNER_TEMP/no-signing.xcconfig" <<'EOF'
-          CODE_SIGNING_ALLOWED = NO
-          CODE_SIGNING_REQUIRED = NO
-          CODE_SIGN_IDENTITY =
-          DEVELOPMENT_TEAM =
-          PROVISIONING_PROFILE_SPECIFIER =
-          EOF
-          export XCODE_XCCONFIG_FILE="$RUNNER_TEMP/no-signing.xcconfig"
-          # The archive is produced before the export step; exporting an
-          # unsigned archive is expected to fail, so don't stop on it.
-          npx @tauri-apps/cli@2 ios build --export-method debugging || echo "::notice::tauri ios build exited non-zero (expected at the export step); packaging the .xcarchive by hand."
+        run: npx @tauri-apps/cli@2 ios build --no-sign
 
-      - name: Package the .ipa from the archive
+      - name: Name the .ipa
         id: package
         run: |
           VERSION="$(jq -r .version apps/debate-native-wrapper/src-tauri/tauri.conf.json)"
           NAME="$(jq -r .productName apps/debate-native-wrapper/src-tauri/tauri.conf.json | tr ' ' '.')"
-          ARCHIVE="$(find apps/debate-native-wrapper/src-tauri/gen/apple -name '*.xcarchive' | head -n 1)"
-          if [ -z "$ARCHIVE" ]; then
-            echo "::error::No .xcarchive was produced, so there is nothing to package." >&2
-            exit 1
-          fi
-          APP="$(find "$ARCHIVE/Products/Applications" -maxdepth 1 -name '*.app' | head -n 1)"
-          if [ -z "$APP" ]; then
-            echo "::error::The archive at $ARCHIVE contains no .app." >&2
+          IPA="$(find apps/debate-native-wrapper/src-tauri/gen/apple/build -name '*.ipa' | head -n 1)"
+          if [ -z "$IPA" ]; then
+            echo "::error::tauri ios build --no-sign finished without producing an .ipa." >&2
             exit 1
           fi
           OUT="$GITHUB_WORKSPACE/${NAME}_${VERSION}_unsigned-sideload.ipa"
-          rm -rf "$RUNNER_TEMP/ipa" && mkdir -p "$RUNNER_TEMP/ipa/Payload"
-          cp -R "$APP" "$RUNNER_TEMP/ipa/Payload/"
-          (cd "$RUNNER_TEMP/ipa" && zip -qry "$OUT" Payload)
+          cp "$IPA" "$OUT"
           echo "path=$OUT" >> "$GITHUB_OUTPUT"
           ls -l "$OUT"
 
