@@ -46,7 +46,7 @@ import { playingSpeechIndex, type RoundSpeech } from "../../../lib/round-speeche
 import { formatTimecode, type VideoDocument, type VideoDocumentKind } from "../../../lib/video-documents"
 import { renderDocumentMarkdown } from "../../../lib/document-markdown"
 import { AutoScrollToggle } from "./AutoScrollToggle"
-import { MARKDOWN_CLASSES } from "./WatchDocumentPanel"
+import { LARGE_MARKDOWN_CLASSES, MARKDOWN_CLASSES } from "./WatchDocumentPanel"
 import { SPEECH_SIDE_STYLES } from "./speech-side-styles"
 import { WatchSpeechOutcomes } from "./WatchSpeechOutcomes"
 import type { RoundContext } from "../../../lib/speech-outcomes"
@@ -530,17 +530,17 @@ export function WatchRoundPanel({
         <ScrollArea className="flex-1 min-h-0">
           <div className="p-3">
             {shownView === "llm" && summarizing === active.key ? (
-              <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
                 <Loader2 className="h-3 w-3 animate-spin motion-reduce:animate-none" />
                 Outlining {active.label}&apos;s key points and warrants…
               </p>
             ) : shownView === "llm" && summaryError?.key === active.key && !html ? (
-              <p role="alert" className="text-xs text-destructive">
+              <p role="alert" className="text-sm text-destructive">
                 {summaryError.message}
               </p>
             ) : html ? (
               <div
-                className={MARKDOWN_CLASSES}
+                className={shownView === "llm" ? LARGE_MARKDOWN_CLASSES : MARKDOWN_CLASSES}
                 // Sanitized by renderDocumentMarkdown: raw HTML is escaped
                 // and only http(s)/mailto URLs survive.
                 dangerouslySetInnerHTML={{ __html: html }}

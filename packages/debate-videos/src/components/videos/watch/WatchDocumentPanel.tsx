@@ -72,6 +72,15 @@ export const MARKDOWN_CLASSES = [
   "[&_mark]:rounded [&_mark]:bg-yellow-200 [&_mark]:px-0.5 [&_mark]:text-foreground dark:[&_mark]:bg-yellow-500/30",
 ].join(" ")
 
+/**
+ * The same typography a step larger, for the AI outline, whose bullets read
+ * as small body copy beside the panel's headers.
+ */
+export const LARGE_MARKDOWN_CLASSES = MARKDOWN_CLASSES.replace("text-sm leading-relaxed", "text-base leading-relaxed")
+  .replace("[&_h1]:text-sm [&_h2]:text-sm [&_h3]:text-sm [&_h4]:text-sm [&_h5]:text-xs [&_h6]:text-xs", "[&_h1]:text-base [&_h2]:text-base [&_h3]:text-base [&_h4]:text-base [&_h5]:text-sm [&_h6]:text-sm")
+  .replace("[&_code]:text-xs", "[&_code]:text-sm")
+  .replace("[&_table]:text-xs", "[&_table]:text-sm")
+
 /** Splits a heading on a search term so the matches can be marked. */
 function highlightParts(text: string, needle: string): Array<{ text: string; match: boolean }> {
   if (!needle) return [{ text, match: false }]
