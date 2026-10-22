@@ -37,6 +37,8 @@ import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react
 import { WatchTranscriptPanel } from "./WatchTranscriptPanel"
 import { WatchDocumentPanel } from "./WatchDocumentPanel"
 import { WatchAnalysisPanel, type LinkedVideo } from "./WatchAnalysisPanel"
+import { SPEECH_PARAM, SPEECH_VIEW_PARAM } from "../../../lib/speech-url"
+import { setStateInURL } from "../../../ui/lib/utils"
 import { WatchRoundPanel, type SpeechDetectionControl, type SpeechFocusRequest } from "./WatchRoundPanel"
 import { buildRoundSpeeches, type RoundSpeech } from "../../../lib/round-speeches"
 import type { RoundContext } from "../../../lib/speech-outcomes"
@@ -179,6 +181,9 @@ export function WatchSidePanel({
   useEffect(() => {
     setActiveId((current) => {
       if (current && tabs.some((tab) => tab.id === current)) return current
+      // A link to a speech (`?speech=2ar`) opens on "By speech".
+      const params = setStateInURL() ?? {}
+      if ((params[SPEECH_PARAM] || params[SPEECH_VIEW_PARAM]) && tabs.some((tab) => tab.id === "round")) return "round"
       return tabs[0]?.id ?? null
     })
   }, [tabs])
