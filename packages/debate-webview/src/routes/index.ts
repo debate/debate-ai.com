@@ -38,6 +38,7 @@ export const PAGE_ROUTES: AppRoute[] = [
   { pattern: "/auth/extension-complete", load: () => import("./auth/extension-complete/page") },
   { pattern: "/auth/native-callback", load: () => import("./auth/native-callback/page") },
   { pattern: "/auth/native-complete", load: () => import("./auth/native-complete/page") },
+  { pattern: "/auth/qwksearch-extension-complete", load: () => import("./auth/qwksearch-extension-complete/page") },
   { pattern: "/practice/briefings", load: () => import("./briefings/page") },
   { pattern: "/research/cards", load: () => import("./cards/page"), layout: () => import("./cards/layout") },
   { pattern: "/research/cards/argument-library", load: () => import("./cards/argument-library/page"), layout: () => import("./cards/layout") },
