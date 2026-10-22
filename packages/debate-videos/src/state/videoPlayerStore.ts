@@ -2,6 +2,7 @@
 
 import { create } from "zustand"
 import { savePlayerState, loadVideoTimestamp } from "./videoPlayerPersistence"
+import { playerOrigin } from "../components/videos/player/youtubeEmbed"
 
 export interface VideoMeta {
   style?: number
@@ -167,6 +168,6 @@ export function sendYouTubeCommand(func: "playVideo" | "pauseVideo" | "setPlayba
   if (!iframe?.contentWindow) return
   iframe.contentWindow.postMessage(
     JSON.stringify({ event: "command", func, args }),
-    "https://www.youtube.com",
+    playerOrigin(iframe),
   )
 }

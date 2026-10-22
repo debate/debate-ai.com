@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="Content-Security-Policy" content="frame-ancestors chrome-extension://*;">
+  <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'self' chrome-extension://*;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>YouTube Player</title>
   <style>
@@ -59,10 +59,15 @@
       player.allowFullscreen = true;
       document.body.append(player);
 
-      // Forward YouTube postMessage events to parent if same origin window context allows
+      // Relay the IFrame API both ways: YouTube's events up to the page that
+      // framed this wrapper (the app's PiP window, or the extension), and that
+      // page's handshake and commands down to YouTube.
       window.addEventListener("message", (event) => {
+        if (event.source === window.parent && event.source !== window) {
+          player.contentWindow?.postMessage(event.data, "https://www.youtube.com");
+          return;
+        }
         if (event.origin !== "https://www.youtube.com") return;
-        // Forward to parent
         try {
           if (window.parent && window.parent !== window) {
             window.parent.postMessage(event.data, "*");

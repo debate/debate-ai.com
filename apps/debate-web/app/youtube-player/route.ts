@@ -4,7 +4,7 @@ const HTML = `<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="Content-Security-Policy" content="frame-ancestors chrome-extension://*;">
+  <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'self' chrome-extension://*;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>YouTube Player</title>
   <style>
@@ -62,6 +62,10 @@ const HTML = `<!doctype html>
       document.body.append(player);
 
       window.addEventListener("message", (event) => {
+        if (event.source === window.parent && event.source !== window) {
+          player.contentWindow?.postMessage(event.data, "https://www.youtube.com");
+          return;
+        }
         if (event.origin !== "https://www.youtube.com") return;
         try {
           if (window.parent && window.parent !== window) {
@@ -84,7 +88,7 @@ export async function GET() {
   return new NextResponse(HTML, {
     headers: {
       "Content-Type": "text/html; charset=utf-8",
-      "Content-Security-Policy": "frame-ancestors chrome-extension://*;",
+      "Content-Security-Policy": "frame-ancestors 'self' chrome-extension://*;",
       "Cache-Control": "public, max-age=3600, immutable",
     },
   });
