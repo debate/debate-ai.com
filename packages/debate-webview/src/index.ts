@@ -16,7 +16,7 @@
 
 export { DebateApp, applyStoredAppearance, type DebateAppProps } from "./host/DebateApp"
 export { AppRouter, resolveRoute } from "./host/AppRouter"
-export { configureHost, getHostConfig, type HostConfig, type HostSettingsSection } from "./host/config"
+export { configureHost, getHostConfig, type HostConfig, type HostConnectResult, type HostSettingsSection } from "./host/config"
 export { currentHref, navigate } from "./host/history"
 export { matchRoute } from "./host/match"
 export { APP_ROUTES, CLIENT_ROUTES, PAGE_ROUTES, type AppRoute } from "./routes"

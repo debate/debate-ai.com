@@ -154,6 +154,7 @@ const ROUTES_WITHOUT_A_CATALOG_ENTRY = new Set([
   "/",
   "/admin",
   "/auth/extension-complete",
+  "/auth/qwksearch-extension-complete",
   "/auth/native-callback",
   "/auth/native-complete",
   "/docs/welcome",
