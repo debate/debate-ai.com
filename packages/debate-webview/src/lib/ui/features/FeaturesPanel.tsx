@@ -357,14 +357,7 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
                   );
                 })}
               </div>
-              <a
-                href={DESKTOP_RELEASE_URL}
-                target="_blank"
-                rel="noreferrer"
-                className="text-xs text-muted-foreground hover:text-foreground hover:underline"
-              >
-                Desktop app v{DESKTOP_VERSION} release notes
-              </a>
+             
             </div>
           </Reveal>
 

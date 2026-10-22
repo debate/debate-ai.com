@@ -121,57 +121,43 @@ roughly 500 editing commands into ~30 thematic groups. Highlights (full 50+ feat
 - **Runtime plugin registry**, a 12-category menu bar, customizable keybindings, and per-user preferences synced to account settings
 - **Native desktop/mobile wrapper**  running the identical editor with no browser chrome
 
-## Crowdsourced Research 
+## Features
 
-- [Evidence Library](https://debate-ai.com/cards/library) — Search shared cut cards and reusable analytics by keyword, citation, argument, topic, or tag.
-- [Argument Library](https://debate-ai.com/cards/argument-library) — Browse shared research through topic folders, case areas, and tag-based collections.
-- [Contributions Feed](https://debate-ai.com/research/team?section=contributions) — Submit, like, save, and endorse community cards, summaries, highlights, and annotations.
-- [LLM Card Scoring](https://debate-ai.com/cards/scoring) — Score cards for relevance, clarity, uniqueness, evidence quality, and usability.
-- [Revision Incentives](https://debate-ai.com/cards/revisions) — Reward and rank improvements to weak cards, citations, and stale evidence.
-- [Review Queue](https://debate-ai.com/research/team?section=reviews) — Move cards through draft, review, requested changes, approval, and publication.
-- [Topic Coverage Dashboard](https://debate-ai.com/research/team?section=coverage) — Identify missing, thin, covered, and untracked arguments by card and word count.
-- [Task Inbox](https://debate-ai.com/research/team?section=inbox) — Review research tasks routed to contributors and organized by topic.
-- [Collaboration Prep Room](https://debate-ai.com/research/team?section=prep-room) — Share a topic-specific prep space for evidence, draft blocks, tasks, and active teammates.
-- [Team Collaboration Mode](https://debate-ai.com/cards/collaboration) — Leave, assign, and track live prep notes during shared topic sprints.
-- [Prep Notes](https://debate-ai.com/prep-notes) — Maintain live prep notes grouped into needs-follow-up, open, and covered status.
-- [Contacts](https://debate-ai.com/contacts) — Keep an account-linked contacts list (requests, blocking, who's online) and share the document you're editing as a live co-editing card straight to a contact's account.
-- [Notifications](https://debate-ai.com/notifications) — See and mark read notifications for prep-note assignments and activity.
-- [Team Brainstorm Assist](https://debate-ai.com/research/team?section=brainstorm) — Submit, seed, organize, and upvote ideas for arguments, impacts, frontlines, and turns.
-- [Group Challenges](https://debate-ai.com/cards/group-challenges) — Create squad challenges based on contributions or recorded rebuttal wins.
-- [Research Progress](https://debate-ai.com/cards/progress-tracking) — Review contribution history, task-completion rates, and per-topic work progress.
+Every tool below is live — the [features page](https://debate-ai.com/practice/features) lists the same set, one entry per tool.
 
-## Community & Contributor Progress
+### Research & Evidence
 
-- [Leaderboard](https://debate-ai.com/cards/leaderboard) — Rank contributors by helpfulness score, tier, badges, and quest streak.
-- [News Stream](https://debate-ai.com/news) — View product updates, community announcements, Daily Best Card winners, and Contributor Award standings.
-- [Contributor Awards](https://debate-ai.com/cards/awards) — See helpfulness-ranked category winners, such as best evidence finder and best explainer.
-- [Daily Best Card](https://debate-ai.com/cards/best-card) — View the current highest-helpfulness card and prior daily winners.
-- [Progress](https://debate-ai.com/cards/progress) — Track contributor tiers, badges, unlocked task levels, and daily-quest streaks.
-- [Quest Streaks](https://debate-ai.com/cards/streaks) — View current and longest daily-quest streaks plus milestone badges.
-- [Daily Quests](https://debate-ai.com/cards/quests) — Track team goals, such as finding solvency cards, against live same-day contributions.
+- **[Evidence Library](https://debate-ai.com/research/cards/library)** — search shared, tagged evidence cards; **[Argument Library](https://debate-ai.com/research/cards/argument-library)** browses the same corpus by topic and case area.
+- **[Team Research](https://debate-ai.com/research/team)** — topic coverage, prep room, review queue, task inbox, contributions feed and brainstorm board on one page.
+- **[Research Workspace](https://debate-ai.com/research)** — the squad hub tying coverage, the library, quests, leaderboards and peer review together.
+- **[Reason Editor](https://debate-ai.com/reason-editor)** and **[Debate Docs](https://debate-ai.com/research/docs)** — outline-notation drafting with pockets, hats, blocks, tags and cards.
+- **[File Market](https://debate-ai.com/research/market)** — sell research files and buy others'; the table of contents is free, the cards unlock on purchase.
 
-## Practice & AI Rounds
+### Community & Progress
 
-- [Practice Drills](https://debate-ai.com/drills) — Run flow-derived overview, frontline, cross-examination, and collapse drills.
-- [AI Coach Mode](https://debate-ai.com/coaching?section=ai-coach) — Generate extension, refutation, collapse, and weighing prompts from a round’s flow.
-- [AI Judge Decision](https://debate-ai.com/judge-decision) — Generate an AI decision grounded in the selected judge paradigm and flow summary.
-- [Word-Count Speeches](https://debate-ai.com/word-count) — Practice speeches under a maximum word count instead of a time limit.
-- [Online Debate Versus AI](https://debate-ai.com/versus-ai) — Debate an AI opponent in real turn order using a chosen format and side.
-- [Practice Round Simulator](https://debate-ai.com/practice-round) — Simulate a tournament round with a timer, AI judge paradigm, and AI opponent persona.
-- [Speech Transcript Summaries](https://debate-ai.com/summaries) — Create per-argument flow summaries with cross-examination questions and extension ideas.
-- [Argument Tree Outline](https://debate-ai.com/outline) — Browse and filter a structured outline of every argument in a round’s flow.
-- [Flow Annotations](https://debate-ai.com/annotations) — Add timestamped annotations to individual flowed arguments while reviewing recordings.
-- [AI Response-Outcome Charts](https://debate-ai.com/outcomes) — Analyze side exposure, vulnerable arguments, and hypothetical response paths in a flow.
+- **[Leaderboard](https://debate-ai.com/coaching/leaderboard)**, **[Contributor Awards](https://debate-ai.com/research/cards/awards)**, **[Daily Best Card](https://debate-ai.com/research/cards/best-card)** and **[Progress](https://debate-ai.com/research/cards/progress)** — helpfulness score, tiers, badges and quest streaks.
+- **[Daily Quests](https://debate-ai.com/research/cards/quests)**, **[Group Challenges](https://debate-ai.com/research/cards/group-challenges)** and **[Debater Level](https://debate-ai.com/practice/level)** — team goals and XP.
+- **[LLM Card Scoring](https://debate-ai.com/research/cards/scoring)** and **[Revision Incentives](https://debate-ai.com/research/cards/revisions)** — score cards for quality, then earn reward for fixing them.
+- **[Team Collaboration Mode](https://debate-ai.com/research/cards/collaboration)** — live prep notes grouped by topic, assignable to a teammate.
+- **[Contacts](https://debate-ai.com/contacts)** and **[Notifications](https://debate-ai.com/notifications)** — share a live card with a teammate, and get pinged when a prep note is assigned to you.
+- **[News & Forums](https://debate-ai.com/news)** — product updates, announcements and community threads.
 
-## Scouting & Round Strategy
+### Prep & Practice
 
-- [Judge Profiles](https://debate-ai.com/judges) — Review saved judges’ side-vote bias, speaker points, speed tolerance, and theory receptiveness.
-- [Opponent Team Profiles](https://debate-ai.com/opponents) — Scout teams using records, side tendencies, common cases, and frequently used arguments.
-- [Pre-Round Briefings](https://debate-ai.com/briefings) — Combine judge and opponent scouting, head-to-head records, and team prep notes for an upcoming round.
-- [Scout-to-Strategy](https://debate-ai.com/strategy) — Convert scouting and judge tendencies into ranked case options and matchup-risk assessments.
-- [Team Rankings](https://debate-ai.com/rank) — Browse debate-team rankings, leaderboards, and Elo ratings.
-- [Coaching Programs](https://debate-ai.com/coaching?section=programs) — Run roster-scoped group coaching spaces with topic sprints, challenges, and drills.
-- [Coach Materials](https://debate-ai.com/coaching?section=materials) — Upload or dictate grounding material for the team coach AI and preview relevant sources.
+- **[Prep Workspace](https://debate-ai.com/practice/prep)** — pre-round briefings, scout-to-strategy, opponent and judge profiles, prep notes, debater stats, practice partners and drills.
+- **[Practice vs AI](https://debate-ai.com/practice/versus-ai)** — debate an AI opponent in real turn order; the round simulator lives on the same page.
+- **[AI Judge Decision](https://debate-ai.com/practice/judge-decision)** — a decision grounded in the round's saved judge paradigm and flow summary.
+- **[Speech Transcript Summaries](https://debate-ai.com/summaries)**, **[Argument Tree Outline](https://debate-ai.com/outline)** and **[Flow Annotations](https://debate-ai.com/annotations)** — turn a round's flow into summaries, a filterable outline and timestamped notes.
+- **[Word-Count Speeches](https://debate-ai.com/word-count)** — practise against a word budget instead of a clock.
+- **[Prediction Markets](https://debate-ai.com/practice/predictions)** — play-money bets on rounds, tournaments and team ratings.
+- **[Speech Documents](https://debate-ai.com/speech-documents)** — every piece of evidence sent into your speech doc.
+
+### Coaching & Analytics
+
+- **[Coach Workspace](https://debate-ai.com/coaching)** — [AI Coach Mode](https://debate-ai.com/coaching?section=ai-coach), [Coaching Programs](https://debate-ai.com/coaching?section=programs), [Team Calendar](https://debate-ai.com/coaching?section=calendar) and [Coach Materials](https://debate-ai.com/coaching?section=materials) as tabs.
+- **[Team Rankings](https://debate-ai.com/coaching/rankings)** — TOC bid list alongside Elo ratings.
+- **[Laptop-less Debating](https://debate-ai.com/coaching/laptopless)** — prep, flow and speak from a phone.
+
 
 
 ## Contributing
