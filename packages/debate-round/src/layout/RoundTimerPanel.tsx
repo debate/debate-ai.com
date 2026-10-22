@@ -11,10 +11,6 @@
  * The pop-out uses the Document Picture-in-Picture API where the browser has
  * it (Chrome, Edge): a small always-on-top window that stays visible over
  * other apps. Elsewhere the dial floats in the page's corner instead.
- *
- * The list button beside the pop-out opens "All timers": every speech and
- * prep clock with its time used and left, in speech order or ranked by most
- * time used, so the round's timing can be checked between speeches.
  */
 
 "use client"
@@ -22,7 +18,7 @@
 import type React from "react"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
-import { ChevronDown, ChevronRight, ListOrdered, PictureInPicture2, Timer, X } from "lucide-react"
+import { ChevronDown, ChevronRight, PictureInPicture2, Timer, X } from "lucide-react"
 import {
   CircularTimerFace,
   formatCircularTimerCount,
@@ -66,51 +62,6 @@ export function toggledEntry(entry: SpeechTimerEntry, now: number): SpeechTimerE
   if (entry.state.name === "running") return { ...entry, time: remainingMs(entry, now), state: { name: "paused" } }
   if (entry.state.name === "done" || entry.time <= 0) return { ...entry, time: entry.resetTime, state: { name: "paused" } }
   return { ...entry, state: { name: "running", startTime: now - (entry.resetTime - entry.time) } }
-}
-
-/** One row of the "All timers" list. */
-export interface TimerRow {
-  key: string
-  label: string
-  kind: "speech" | "aff" | "neg"
-  usedMs: number
-  leftMs: number
-  totalMs: number
-  running: boolean
-}
-
-/** Every speech timer and prep clock, with time used and left at `now`. */
-export function buildTimerRows(
-  debateStyle: Pick<DebateStyle, "timerSpeeches">,
-  getSpeechTimerState: (speechName: string) => SpeechTimerEntry,
-  prepState: TimerState | null,
-  prepSecondaryState: TimerState | null,
-  now: number,
-): TimerRow[] {
-  const row = (key: string, label: string, kind: TimerRow["kind"], entry: SpeechTimerEntry): TimerRow => {
-    const leftMs = remainingMs(entry, now)
-    return {
-      key,
-      label,
-      kind,
-      leftMs,
-      totalMs: entry.resetTime,
-      usedMs: Math.max(0, entry.resetTime - leftMs),
-      running: entry.state.name === "running",
-    }
-  }
-  const rows = debateStyle.timerSpeeches.map((s) => row(`speech:${s.name}`, s.name, "speech", getSpeechTimerState(s.name)))
-  if (prepState) rows.push(row("prep:aff", "Aff prep", "aff", prepState))
-  if (prepSecondaryState) rows.push(row("prep:neg", "Neg prep", "neg", prepSecondaryState))
-  return rows
-}
-
-/** Rows ranked by most time used; ties keep speech order. */
-export function rankTimerRows(rows: readonly TimerRow[]): TimerRow[] {
-  return rows
-    .map((row, index) => ({ row, index }))
-    .sort((a, b) => b.row.usedMs - a.row.usedMs || a.index - b.index)
-    .map(({ row }) => row)
 }
 
 /** Re-renders every quarter second while a timer is running. */
@@ -167,8 +118,6 @@ export function RoundTimerPanel({
   const [popout, setPopout] = useState<Popout>(null)
   /** Which clock the dial shows; null follows a running prep clock, else the speech. */
   const [pickedFocus, setPickedFocus] = useState<Focus | null>(null)
-  const [listOpen, setListOpen] = useState(false)
-  const [ranked, setRanked] = useState(false)
 
   const speech = debateStyle.timerSpeeches.find((s) => s.name.toUpperCase() === selectedSpeech.toUpperCase())
   const speechEntry = getSpeechTimerState(selectedSpeech)
@@ -180,9 +129,7 @@ export function RoundTimerPanel({
 
   const shown: SpeechTimerEntry =
     focus === "aff" && prepState ? prepState : focus === "neg" && prepSecondaryState ? prepSecondaryState : speechEntry
-  const anyRunning =
-    [speechEntry, prepState, prepSecondaryState].some((t) => t?.state.name === "running") ||
-    (listOpen && debateStyle.timerSpeeches.some((s) => getSpeechTimerState(s.name).state.name === "running"))
+  const anyRunning = [speechEntry, prepState, prepSecondaryState].some((t) => t?.state.name === "running")
   const now = useNow(anyRunning)
 
   const left = remainingMs(shown, now)
@@ -231,21 +178,25 @@ export function RoundTimerPanel({
       style={{ "--dt-ctimer-size": size } as React.CSSProperties}
       progress={progress}
       countText={formatCircularTimerCount(left)}
-      title={label}
+      // The speech name stays off the face; only a prep clock is labelled.
+      title={focus === "speech" ? undefined : label}
       ticking={ticking}
       accent={focus === "speech" ? accentForSpeech(speech) : focus}
       onToggle={toggle}
       countLabel={`${label} time remaining`}
-      speechButtons={[
-        {
-          key: "speech",
-          label: selectedSpeech,
-          accent: accentForSpeech(speech),
-          active: focus === "speech",
-          title: "Show the speech timer",
-          onClick: () => setPickedFocus("speech"),
-        },
-      ]}
+      speechButtons={
+        focus === "speech"
+          ? []
+          : [
+              {
+                key: "speech",
+                label: "Speech",
+                accent: accentForSpeech(speech),
+                title: "Show the speech timer",
+                onClick: () => setPickedFocus("speech"),
+              },
+            ]
+      }
       prepButtons={[prepButton("aff", prepState), prepButton("neg", prepSecondaryState)].filter(
         (b): b is NonNullable<typeof b> => Boolean(b),
       )}
@@ -313,20 +264,6 @@ export function RoundTimerPanel({
         </button>
         <button
           type="button"
-          onClick={() => setListOpen((v) => !v)}
-          className={cn(
-            "inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-[var(--border-radius)] hover:bg-[var(--background-indent)]",
-            listOpen && "bg-[var(--background-active)]",
-          )}
-          aria-pressed={listOpen}
-          aria-expanded={listOpen}
-          title={listOpen ? "Hide all timers" : "Show all timers"}
-        >
-          <ListOrdered className="h-3.5 w-3.5" />
-          <span className="sr-only">{listOpen ? "Hide all timers" : "Show all timers"}</span>
-        </button>
-        <button
-          type="button"
           onClick={() => void openPopout()}
           className={cn(
             "inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-[var(--border-radius)] hover:bg-[var(--background-indent)]",
@@ -350,21 +287,6 @@ export function RoundTimerPanel({
         </p>
       )}
 
-      {listOpen && (
-        <TimerList
-          rows={(() => {
-            const rows = buildTimerRows(debateStyle, getSpeechTimerState, prepState, prepSecondaryState, now)
-            return ranked ? rankTimerRows(rows) : rows
-          })()}
-          ranked={ranked}
-          onRankedChange={setRanked}
-          currentKey={focus === "speech" ? `speech:${speech?.name ?? selectedSpeech}` : `prep:${focus}`}
-          onPick={(row) => {
-            if (row.kind !== "speech") setPickedFocus(row.kind)
-          }}
-        />
-      )}
-
       {popout?.kind === "pip" && createPortal(face("min(92vw, 92vh)"), popout.win.document.body)}
       {popout?.kind === "float" &&
         createPortal(
@@ -386,82 +308,6 @@ export function RoundTimerPanel({
           </div>,
           document.body,
         )}
-    </div>
-  )
-}
-
-interface TimerListProps {
-  rows: TimerRow[]
-  ranked: boolean
-  onRankedChange: (ranked: boolean) => void
-  currentKey: string
-  onPick: (row: TimerRow) => void
-}
-
-/** The "All timers" list: each clock's time used, left and a progress bar. */
-function TimerList({ rows, ranked, onRankedChange, currentKey, onPick }: TimerListProps) {
-  return (
-    <div className="px-2 pt-2" aria-label="All timers">
-      <div className="mb-1 flex items-center gap-1 text-[11px]">
-        <span className="flex-1 font-semibold">All timers</span>
-        {(["order", "used"] as const).map((mode) => {
-          const active = (mode === "used") === ranked
-          return (
-            <button
-              key={mode}
-              type="button"
-              onClick={() => onRankedChange(mode === "used")}
-              aria-pressed={active}
-              className={cn(
-                "rounded px-1.5 py-0.5",
-                active ? "bg-[var(--background-active)] font-semibold" : "text-muted-foreground hover:bg-[var(--background-indent)]",
-              )}
-            >
-              {mode === "order" ? "Speech order" : "Most used"}
-            </button>
-          )
-        })}
-      </div>
-      <ol className="space-y-1">
-        {rows.map((row, index) => {
-          const share = row.totalMs > 0 ? Math.min(1, row.usedMs / row.totalMs) : 0
-          const current = row.key === currentKey
-          return (
-            <li key={row.key}>
-              <button
-                type="button"
-                onClick={() => onPick(row)}
-                disabled={row.kind === "speech"}
-                className={cn(
-                  "w-full rounded px-1.5 py-1 text-left text-xs disabled:cursor-default",
-                  current ? "bg-[var(--background-active)]" : row.kind !== "speech" && "hover:bg-[var(--background-indent)]",
-                )}
-                title={`${row.label}: ${formatCircularTimerCount(row.usedMs)} used, ${formatCircularTimerCount(row.leftMs)} left`}
-              >
-                <span className="flex items-center gap-1.5">
-                  {ranked && <span className="w-4 text-right font-mono text-[10px] text-muted-foreground">{index + 1}</span>}
-                  <span className={cn("flex-1 truncate", current && "font-semibold")}>
-                    {row.label}
-                    {row.running && <span className="ml-1 text-green-600">●</span>}
-                  </span>
-                  <span className="font-mono text-[10px] text-muted-foreground">
-                    {formatCircularTimerCount(row.usedMs)} / {formatCircularTimerCount(row.totalMs)}
-                  </span>
-                </span>
-                <span className="mt-0.5 block h-1 overflow-hidden rounded bg-muted">
-                  <span
-                    className={cn(
-                      "block h-full",
-                      row.kind === "aff" ? "bg-blue-500" : row.kind === "neg" ? "bg-red-500" : "bg-green-600",
-                    )}
-                    style={{ width: `${Math.round(share * 100)}%` }}
-                  />
-                </span>
-              </button>
-            </li>
-          )
-        })}
-      </ol>
     </div>
   )
 }

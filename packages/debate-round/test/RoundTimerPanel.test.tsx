@@ -7,11 +7,9 @@
 import { useState } from "react"
 import { afterEach, describe, expect, it, vi } from "vitest"
 
-import { buttonByText, cleanup, mount, run } from "./dom-helpers"
+import { cleanup, mount, run } from "./dom-helpers"
 import {
   accentForSpeech,
-  buildTimerRows,
-  rankTimerRows,
   remainingMs,
   RoundTimerPanel,
   toggledEntry,
@@ -108,44 +106,5 @@ describe("RoundTimerPanel", () => {
 
     await run(() => (document.querySelector('[role="dialog"] button[title="Close the pop-out timer"]') as HTMLElement).click())
     expect(document.querySelector('[role="dialog"]')).toBeNull()
-  })
-
-  it("lists every timer and ranks them by time used", async () => {
-    await mount(<Harness />)
-    await run(() => (document.querySelector('button[title="Show all timers"]') as HTMLElement).click())
-    const list = () => Array.from(document.querySelectorAll('[aria-label="All timers"] li')).map((li) => li.textContent)
-    expect(list()).toHaveLength(4)
-    expect(list()[0]).toContain("1AC")
-    expect(list()[2]).toContain("Aff prep")
-
-    const neg = Array.from(document.querySelectorAll('[aria-label="All timers"] li button')).find((b) =>
-      b.textContent?.includes("Neg prep"),
-    )!
-    await run(() => (neg as HTMLElement).click())
-    expect(document.querySelector('.dt-ctimer [aria-label="Neg prep time remaining"]')).not.toBeNull()
-
-    await run(() => buttonByText("Most used")!.click())
-    expect(buttonByText("Most used")!.getAttribute("aria-pressed")).toBe("true")
-
-    await run(() => (document.querySelector('button[title="Hide all timers"]') as HTMLElement).click())
-    expect(document.querySelector('[aria-label="All timers"]')).toBeNull()
-  })
-})
-
-describe("timer rows", () => {
-  it("reports time used and left, and ranks by most used", () => {
-    const entries: Record<string, SpeechTimerEntry> = {
-      "1AC": { time: 60_000, resetTime: 480_000, state: { name: "paused" } },
-      CX: { time: 0, resetTime: 180_000, state: { name: "done" } },
-    }
-    const prep: TimerState = { time: 300_000, resetTime: 480_000, state: { name: "paused" } }
-    const rows = buildTimerRows(style, (n) => entries[n], prep, null, 0)
-    expect(rows.map((r) => [r.label, r.usedMs, r.leftMs])).toEqual([
-      ["1AC", 420_000, 60_000],
-      ["CX", 180_000, 0],
-      ["Aff prep", 180_000, 300_000],
-    ])
-    expect(rankTimerRows(rows).map((r) => r.label)).toEqual(["1AC", "CX", "Aff prep"])
-    expect(rankTimerRows([rows[2], rows[0]]).map((r) => r.label)).toEqual(["1AC", "Aff prep"])
   })
 })
