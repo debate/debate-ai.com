@@ -32,6 +32,64 @@ interface SavedDataSummary {
   total: number
 }
 
+/** Kinds the server lets a user list and delete one by one (`saved-data-items.ts`). */
+const MANAGEABLE_KINDS = new Set(["docs", "flows", "rounds", "practiceRounds"])
+
+interface ManagedItem {
+  id: number
+  title: string
+  updatedAt: string
+  href: string | null
+}
+
+/** Expandable per-item list for one kind, with open links and a confirmed delete. */
+function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; onDeleted: () => void }) {
+  const [items, setItems] = useState<ManagedItem[] | null>(null)
+  const [error, setError] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    fetch(`/api/settings/saved-data/${kind}`)
+      .then((res) => (res.ok ? (res.json() as Promise<{ items: ManagedItem[] }>) : Promise.reject(new Error(String(res.status)))))
+      .then((body) => !cancelled && setItems(body.items))
+      .catch(() => !cancelled && setError(true))
+    return () => {
+      cancelled = true
+    }
+  }, [kind])
+
+  async function remove(item: ManagedItem) {
+    if (typeof window !== "undefined" && !window.confirm(`Delete "${item.title}" from your account? This can't be undone.`)) return
+    try {
+      const res = await fetch(`/api/settings/saved-data/${kind}?id=${item.id}`, { method: "DELETE" })
+      if (!res.ok) throw new Error(String(res.status))
+      setItems((current) => current?.filter((i) => i.id !== item.id) ?? null)
+      onDeleted()
+    } catch {
+      setError(true)
+    }
+  }
+
+  if (error) return <p className="mt-1 text-xs text-muted-foreground">Couldn't update {label.toLowerCase()}. Try again later.</p>
+  if (!items) return <p className="mt-1 text-xs text-muted-foreground">Loading…</p>
+  return (
+    <ul className="mt-1 space-y-1" aria-label={`Saved ${label.toLowerCase()}`}>
+      {items.map((item) => (
+        <li key={item.id} className="flex items-center justify-between gap-2 text-xs">
+          {item.href ? (
+            <a href={item.href} className="truncate underline">{item.title}</a>
+          ) : (
+            <span className="truncate">{item.title}</span>
+          )}
+          <button type="button" className="shrink-0 text-destructive hover:underline" onClick={() => void remove(item)}>
+            Delete
+          </button>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
 type LoadState =
   | { status: "loading" }
   | { status: "error" }
@@ -41,6 +99,7 @@ export function SavedDataSection() {
   const { user, isLoading } = useSession()
   const signedIn = Boolean(user)
   const [state, setState] = useState<LoadState>({ status: "loading" })
+  const [managing, setManaging] = useState<string | null>(null)
 
   useEffect(() => {
     if (!signedIn) return
@@ -79,9 +138,43 @@ export function SavedDataSection() {
       ) : (
         <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
           {state.summary.items.map((item) => (
-            <div key={item.key} className="flex justify-between gap-2">
-              <dt className="text-muted-foreground">{item.label}</dt>
-              <dd className="font-medium tabular-nums">{item.count}</dd>
+            <div key={item.key} className="col-span-2 sm:col-span-1">
+              <div className="flex justify-between gap-2">
+                <dt className="text-muted-foreground">{item.label}</dt>
+                <dd className="font-medium tabular-nums">
+                  {MANAGEABLE_KINDS.has(item.key) && item.count > 0 && (
+                    <button
+                      type="button"
+                      className="mr-2 text-xs font-normal underline"
+                      aria-expanded={managing === item.key}
+                      onClick={() => setManaging(managing === item.key ? null : item.key)}
+                    >
+                      {managing === item.key ? "Hide" : "Manage"}
+                    </button>
+                  )}
+                  {item.count}
+                </dd>
+              </div>
+              {managing === item.key && (
+                <ManageKind
+                  kind={item.key}
+                  label={item.label}
+                  onDeleted={() =>
+                    setState((s) =>
+                      s.status === "ready"
+                        ? {
+                            status: "ready",
+                            summary: {
+                              ...s.summary,
+                              total: Math.max(0, s.summary.total - 1),
+                              items: s.summary.items.map((i) => (i.key === item.key ? { ...i, count: Math.max(0, i.count - 1) } : i)),
+                            },
+                          }
+                        : s,
+                    )
+                  }
+                />
+              )}
             </div>
           ))}
         </dl>
