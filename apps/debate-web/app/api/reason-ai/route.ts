@@ -86,14 +86,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Sign in to use AI features." }, { status: 401 })
   }
 
-  const providerKey = resolveProviderKey(request)
-  if (!providerKey) {
-    return NextResponse.json(
-      { error: "AI features are not configured on the server." },
-      { status: 503 },
-    )
-  }
-
   let body: ReasonAiRequestBody
   try {
     body = await request.json()
@@ -101,7 +93,25 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 })
   }
 
-  if (!Array.isArray(body.messages) || body.messages.length === 0) {
+  // For free model requests (e.g. video speech segmentation), always use
+  // the shared key's free OpenRouter models, ignoring any user-provided key.
+  const providerKey = body.free
+    ? (() => {
+        const openrouter = getEnv("OPENROUTER_API_KEY")
+        if (openrouter) return { provider: "openrouter" as const, key: openrouter, own: false }
+        const anthropic = getEnv("ANTHROPIC_API_KEY")
+        if (anthropic) return { provider: "anthropic" as const, key: anthropic, own: false }
+        return null
+      })()
+    : resolveProviderKey(request)
+  if (!providerKey) {
+    return NextResponse.json(
+      { error: "AI features are not configured on the server." },
+      { status: 503 },
+    )
+  }
+
+  if (!providerKey) {
     return NextResponse.json({ error: "`messages` must be a non-empty array." }, { status: 400 })
   }
   if (requestSize(body.messages, body.system) > MAX_REQUEST_CHARS) {
@@ -146,7 +156,7 @@ export async function POST(request: Request) {
       messages: body.messages,
     }
     if (useOpenRouter) {
-      bodyJson.model = body.free ? "meta-llama/llama-3.3-70b-instruct:free" : "anthropic/claude-sonnet-4.6"
+       bodyJson.model = body.free ? "openrouter/free" : "anthropic/claude-sonnet-4.6"
       // Chat Completions has no top-level `system` (OpenRouter silently drops
       // it, so every caller's instructions were lost): it goes in as the
       // first message, and Anthropic content blocks become OpenAI parts.

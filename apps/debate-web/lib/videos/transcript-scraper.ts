@@ -117,7 +117,7 @@ export async function callModel(
   }
   const bodyJson: Record<string, unknown> = { max_tokens: maxTokens };
   if (useOpenRouter) {
-    bodyJson.model = "anthropic/claude-sonnet-4.6";
+    bodyJson.model = "openrouter/free";
     bodyJson.messages = [
       ...(system ? [{ role: "system", content: system }] : []),
       { role: "user", content: prompt },

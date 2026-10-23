@@ -57,8 +57,7 @@ export async function generateBotResponse(
   try {
     response = await client.generateText(prompt)
   } catch (error) {
-    console.error("[practice-vs-ai] model error in generateBotResponse:", error)
-    return personalityErrorResponse(botName, "A glitch in my logic, there is.")
+    console.error("[practice-vs-ai] model error in generateBotResponse:", error instanceof Error ? `${error.message}\n${error.stack ?? ""}` : error)    return personalityErrorResponse(botName, "A glitch in my logic, there is.")
   }
 
   if (!response) {
@@ -96,7 +95,7 @@ export async function judgeDebate(
     const text = await client.generateText(prompt)
     return text || "Unable to judge."
   } catch (error) {
-    console.error("[practice-vs-ai] model error in judgeDebate:", error)
+    console.error("[practice-vs-ai] model error in judgeDebate:", error instanceof Error ? `${error.message}\n${error.stack ?? ""}` : error)
     return "Unable to judge."
   }
 }
