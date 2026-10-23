@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { getAuth } from "@/lib/auth"
 import { keyExhaustedResponse, resolveProviderKey } from "@/lib/ai/provider-key"
 import { getDBFromContext } from "@/lib/database/context"
+import { getEnv } from "@/lib/env"
 import { limitsFor } from "@debate/webview/lib/stripe/limits"
 import { consumeDailyUsage, getUserTier, limitMessage, planLimitHeaders } from "@/lib/stripe/usage"
 
@@ -111,10 +112,11 @@ export async function POST(request: Request) {
     )
   }
 
-  if (!providerKey) {
+  if (!body.messages || !Array.isArray(body.messages) || body.messages.length === 0) {
     return NextResponse.json({ error: "`messages` must be a non-empty array." }, { status: 400 })
   }
-  if (requestSize(body.messages, body.system) > MAX_REQUEST_CHARS) {
+  const messages = body.messages as AnthropicMessage[]
+  if (requestSize(messages, body.system) > MAX_REQUEST_CHARS) {
     return NextResponse.json({ error: "Request is too large." }, { status: 413 })
   }
 
@@ -153,7 +155,7 @@ export async function POST(request: Request) {
   try {
     const bodyJson: Record<string, unknown> = {
       max_tokens: maxTokens,
-      messages: body.messages,
+      messages,
     }
     if (useOpenRouter) {
        bodyJson.model = body.free ? "openrouter/free" : "anthropic/claude-sonnet-4.6"
@@ -162,7 +164,7 @@ export async function POST(request: Request) {
       // first message, and Anthropic content blocks become OpenAI parts.
       bodyJson.messages = [
         ...(body.system ? [{ role: "system", content: body.system }] : []),
-        ...body.messages.map(toChatCompletionsMessage),
+        ...messages.map(toChatCompletionsMessage),
       ]
       if (body.temperature != null) bodyJson.temperature = body.temperature
     } else {
