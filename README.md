@@ -31,8 +31,8 @@
     <a href="https://github.com/debate/debate-ai.com/graphs/contributors"><img src="https://img.shields.io/github/commit-activity/m/debate/debate-ai.com" alt="Commit activity" /></a>
     <a href="https://github.com/debate/debate-ai.com/commits/master/"><img src="https://img.shields.io/github/last-commit/debate/debate-ai.com.svg" alt="GitHub last commit" /></a>
     <a href="https://github.com/debate/debate-ai.com/commits/master/"><img src="https://img.shields.io/github/commit-activity/t/debate/debate-ai.com/master?label=commits" alt="GitHub commits" /></a>
-    <a href="https://discord.gg/dh8UKEaYA5"><img src="https://img.shields.io/discord/1110227955554209923.svg?label=Chat&logo=Discord&colorB=7289da&style=flat" alt="Join Discord" /></a>
-        <a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request"><img src="https://img.shields.io/badge/PRs--welcome-brightgreen" alt="PRs Welcome" /></a>
+    <a href="https://discord.gg/dh8UKEaYA5"><img src="https://img.shields.io/discord/1110227955554209923.svg?label=Chat&logo=Discord&colorB=7289da&style=flat" alt="Join Discord" /></a>       
+    <a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" /></a>
     <br />
        <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/debate/debate-ai.com"><img height="24px" src="https://deploy.workers.cloudflare.com/button" alt="Deploy to Cloudflare Workers" /></a>
      <a href="https://stackblitz.com/github/debate/debate-ai.com/tree/master/packages/debate-card-parser"><img height="20px" src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" /></a>
