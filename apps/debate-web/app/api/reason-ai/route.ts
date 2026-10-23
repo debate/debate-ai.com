@@ -46,6 +46,7 @@ interface ReasonAiRequestBody {
   messages?: AnthropicMessage[]
   maxTokens?: number
   temperature?: number
+  free?: boolean
 }
 
 function requestSize(messages: AnthropicMessage[], system?: string): number {
@@ -145,7 +146,7 @@ export async function POST(request: Request) {
       messages: body.messages,
     }
     if (useOpenRouter) {
-      bodyJson.model = "anthropic/claude-sonnet-4.6"
+      bodyJson.model = body.free ? "openrouter/free" : "anthropic/claude-sonnet-4.6"
       // Chat Completions has no top-level `system` (OpenRouter silently drops
       // it, so every caller's instructions were lost): it goes in as the
       // first message, and Anthropic content blocks become OpenAI parts.

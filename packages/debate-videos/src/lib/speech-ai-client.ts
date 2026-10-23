@@ -44,6 +44,7 @@ async function askReasonAi(
       messages: [{ role: "user", content: body.prompt }],
       maxTokens: body.maxTokens,
       temperature: body.temperature,
+      free: true,
     }),
     signal,
   });
