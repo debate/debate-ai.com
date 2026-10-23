@@ -146,7 +146,7 @@ export async function POST(request: Request) {
       messages: body.messages,
     }
     if (useOpenRouter) {
-      bodyJson.model = body.free ? "openrouter/free" : "anthropic/claude-sonnet-4.6"
+      bodyJson.model = body.free ? "meta-llama/llama-3.3-70b-instruct:free" : "anthropic/claude-sonnet-4.6"
       // Chat Completions has no top-level `system` (OpenRouter silently drops
       // it, so every caller's instructions were lost): it goes in as the
       // first message, and Anthropic content blocks become OpenAI parts.
