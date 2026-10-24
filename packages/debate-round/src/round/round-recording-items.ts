@@ -1,6 +1,6 @@
 /**
  * @fileoverview Which round the recording menu's "Join round recording"
- * joins, and its speeches in order (`@debate/timer`'s
+ * joins, and its speeches in order (`@debate-ai/timer`'s
  * `RoundRecordingDialog`). Recordings are saved per speech name
  * (`debate-recording-1AC`), so the items are the format's speech names with
  * cross-ex left out — cross-ex has no recording of its own; it is timed

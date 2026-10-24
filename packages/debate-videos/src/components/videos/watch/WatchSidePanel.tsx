@@ -37,8 +37,7 @@ import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react
 import { WatchTranscriptPanel } from "./WatchTranscriptPanel"
 import { WatchDocumentPanel } from "./WatchDocumentPanel"
 import { WatchAnalysisPanel, type LinkedVideo } from "./WatchAnalysisPanel"
-import { SPEECH_PARAM, SPEECH_VIEW_PARAM } from "../../../lib/speech-url"
-import { setStateInURL } from "../../../ui/lib/utils"
+import { readSpeechRoute } from "../../../lib/speech-url"
 import { WatchRoundPanel, type SpeechDetectionControl, type SpeechFocusRequest } from "./WatchRoundPanel"
 import { buildRoundSpeeches, type RoundSpeech } from "../../../lib/round-speeches"
 import type { RoundContext } from "../../../lib/speech-outcomes"
@@ -88,6 +87,8 @@ interface WatchSidePanelProps {
   speechDetection?: SpeechDetectionControl
   /** Host tabs, shown first. See {@link WatchSideTab}. */
   extraTabs?: WatchSideTab[]
+  /** The video's own address, which a linked speech and view follow. See {@link WatchRoundPanel}. */
+  routeHref?: string
 }
 
 /** Where the reader's auto-scroll choice is remembered. */
@@ -128,6 +129,7 @@ export function WatchSidePanel({
   markedKeys,
   speechDetection,
   extraTabs = NO_EXTRA_TABS,
+  routeHref,
 }: WatchSidePanelProps) {
   const ordered = useMemo(() => orderDocuments(documents), [documents])
   const documentSpeeches = useMemo(() => buildRoundSpeeches(documents), [documents])
@@ -181,12 +183,12 @@ export function WatchSidePanel({
   useEffect(() => {
     setActiveId((current) => {
       if (current && tabs.some((tab) => tab.id === current)) return current
-      // A link to a speech (`?speech=2ar`) opens on "By speech".
-      const params = setStateInURL() ?? {}
-      if ((params[SPEECH_PARAM] || params[SPEECH_VIEW_PARAM]) && tabs.some((tab) => tab.id === "round")) return "round"
+      // A link to a speech (`…/2ar/outcomes`) opens on "By speech".
+      const linked = readSpeechRoute(routeHref)
+      if ((linked.speech || linked.tab) && tabs.some((tab) => tab.id === "round")) return "round"
       return tabs[0]?.id ?? null
     })
-  }, [tabs])
+  }, [tabs, routeHref])
 
   useEffect(() => {
     if (focusSpeech) setActiveId("round")
@@ -251,6 +253,7 @@ export function WatchSidePanel({
           onMarkStart={onMarkStart}
           markedKeys={markedKeys}
           detection={speechDetection}
+          routeHref={routeHref}
         />
       )}
 

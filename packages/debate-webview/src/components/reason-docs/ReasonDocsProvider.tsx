@@ -53,6 +53,13 @@ import { loadStoredCmir, storedCmirIfLoaded, type StoredCmir } from "../../lib/d
 import type { ReasonDocument } from "./types"
 import type { TopicStarterChange } from "../../lib/topic-starters/changes"
 import type { TopicStarterItem } from "./topic-starters/TopicStarterTree"
+import {
+  downloadFullTopicStarterLibrary,
+  getCachedItems,
+  isExtensionInstalled,
+  resolveCachedTopic,
+  upsertCachedItem,
+} from "../../lib/topic-starters/local-cache"
 
 /** How long an edit to a `.cmir` file waits before it is re-encoded. The write
  *  is queued once the encode resolves, so this sits in front of the save
@@ -259,24 +266,45 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
   // because this is the set that would be *lost* if the page went away now.
   const pendingCmirRef = useRef(new Map<number, string>())
 
-  const ensureLoaded = useCallback(() => {
+  const ensureLoaded = useCallback(async () => {
     if (loadStartedRef.current) return
     loadStartedRef.current = true
     setLoading(true)
 
-    void fetch("/api/doc/documents")
-      .then((res) => (res.ok ? (res.json() as Promise<ReasonDocument[]>) : []))
-      .then((rows) => setDocuments(Array.isArray(rows) ? rows : []))
-      .catch(() => setDocuments([]))
-      .finally(() => {
-        setLoading(false)
-        setLoaded(true)
-      })
+    // Paint the cached catalogue instantly; the network copy refreshes it.
+    const cached = await getCachedItems()
+    if (cached) setTopicItems(cached.map(({ cachedAt, ...rest }) => rest))
 
-    void fetch("/api/topic-starters")
-      .then((res) => (res.ok ? res.json() : { items: [] }))
-      .then((data) => setTopicItems(data.items ?? []))
-      .catch(() => setTopicItems([]))
+    await Promise.all([
+      fetch("/api/doc/documents")
+        .then((res) => (res.ok ? (res.json() as Promise<ReasonDocument[]>) : []))
+        .then((rows) => setDocuments(Array.isArray(rows) ? rows : []))
+        .catch(() => setDocuments([])),
+      fetch("/api/topic-starters")
+        .then(async (res) => {
+          if (!res.ok) return
+          const data = (await res.json()) as { items?: TopicStarterItem[] }
+          setTopicItems(data.items ?? [])
+          for (const item of data.items ?? []) void upsertCachedItem(item)
+        })
+        .catch(() => {}),
+    ])
+
+    setLoading(false)
+    setLoaded(true)
+
+    // When the browser extension is installed, pull the whole published
+    // library (~60 MB) into this device's IndexedDB copy in the background,
+    // so every topic starter opens instantly — even offline.
+    void (async () => {
+      if (await isExtensionInstalled()) {
+        try {
+          await downloadFullTopicStarterLibrary()
+        } catch (error) {
+          console.error("[topic-starters] could not prime the local library", error)
+        }
+      }
+    })()
   }, [])
 
   const openDocument = useCallback((id: number) => {
@@ -419,6 +447,7 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
       if (!res.ok) return
       const data = (await res.json()) as { items?: TopicStarterItem[] }
       setTopicItems(data.items ?? [])
+      for (const item of data.items ?? []) void upsertCachedItem(item)
     } catch {
       // The tree keeps what it had; the next load corrects it.
     }
@@ -786,13 +815,20 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
 
   const openPublicByRef = useCallback(
     async (ref: string): Promise<boolean> => {
+      // A shared link to a file this client already has — cached or fully
+      // mirrored when the extension is installed — opens without the network.
+      const cached = await resolveCachedTopic(ref)
+      if (cached) {
+        setTopicItems((prev) => (prev.some((t) => t.id === cached.id) ? prev : [...prev, cached]))
+        selectTopicDocument(cached)
+        return true
+      }
       try {
         const res = await fetch(`/api/topic-starters/by-path?path=${encodeURIComponent(ref)}`)
         if (!res.ok) return false
         const data = (await res.json()) as { item?: TopicStarterItem }
         if (!data.item) return false
-        // Folded into the catalogue as well, so the sidebar can show and
-        // re-address the file the link opened.
+        void upsertCachedItem(data.item)
         setTopicItems((prev) => (prev.some((t) => t.id === data.item!.id) ? prev : [...prev, data.item!]))
         selectTopicDocument(data.item)
         return true

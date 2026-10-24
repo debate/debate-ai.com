@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
-import { TournamentsApp } from "@debate/tournaments/ui"
+import { TournamentsApp } from "@debate-ai/tournaments/ui"
 import { createJudgeParadigmLookup, createTeamRatingLookup } from "../../../lib/tournaments/enrichment"
 import { PARADIGM_EDITOR_PATH, createJudgeProfileLookup } from "../../../lib/judge-paradigms/client"
 

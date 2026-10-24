@@ -7,7 +7,7 @@
  * top handful of teams in each event around 100 and the weakest near 0. The
  * shift and scale preserve order; the clamp only ties the few teams past
  * either end (and simulations treat a clamped team as sitting at the bound).
- * @module @debate/rankings-adapter/rating-offset
+ * @module @debate-ai/rankings-adapter/rating-offset
  */
 
 import { loadRankingDataset as loadUpstreamDataset } from "./upstream";

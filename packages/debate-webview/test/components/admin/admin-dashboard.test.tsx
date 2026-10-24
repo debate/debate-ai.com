@@ -19,8 +19,8 @@ import {
 
 // The real reader fetches the article from qwksearch; the dashboard only has
 // to open it on the right URL and close it again.
-vi.mock("@debate/research-evidence", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("@debate/research-evidence")>()),
+vi.mock("@debate-ai/research-evidence", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@debate-ai/research-evidence")>()),
   SourceArticlePanel: ({ url, onClose }: { url: string; onClose: () => void }) => (
     <div data-testid="reader-panel">
       Reader for {url}

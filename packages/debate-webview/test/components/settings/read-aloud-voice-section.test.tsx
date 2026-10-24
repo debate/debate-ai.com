@@ -6,7 +6,7 @@
 import { act } from "react"
 import { createRoot } from "react-dom/client"
 import { afterEach, describe, expect, it } from "vitest"
-import { storeReadSpeed, storeVoiceId } from "@debate/editor/read-voice"
+import { storeReadSpeed, storeVoiceId } from "@debate-ai/editor/read-voice"
 import { ReadAloudVoiceSection } from "../../../src/components/settings/sections/ReadAloudVoiceSection"
 
 ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true

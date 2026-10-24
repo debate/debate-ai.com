@@ -46,7 +46,7 @@ import { playingSpeechIndex, type RoundSpeech } from "../../../lib/round-speeche
 import { formatTimecode, type VideoDocument, type VideoDocumentKind } from "../../../lib/video-documents"
 import { renderDocumentMarkdown } from "../../../lib/document-markdown"
 import { AutoScrollToggle } from "./AutoScrollToggle"
-import { MARKDOWN_CLASSES } from "./WatchDocumentPanel"
+import { LARGE_MARKDOWN_CLASSES, MARKDOWN_CLASSES } from "./WatchDocumentPanel"
 import { SPEECH_SIDE_STYLES } from "./speech-side-styles"
 import { WatchSpeechOutcomes } from "./WatchSpeechOutcomes"
 import type { RoundContext } from "../../../lib/speech-outcomes"
@@ -54,8 +54,7 @@ import { cachedSpeechKeys } from "../../../state/speechOutcomeCache"
 import { readSpeechSummaries, writeSpeechSummary } from "../../../state/speechAiCache"
 import { requestSpeechSummary } from "../../../lib/speech-ai-client"
 import { shareVideoAiResult, sharedOutcomeSpeechKeys, useSharedVideoAi } from "../../../state/sharedVideoAi"
-import { findSpeechBySlug, SPEECH_PARAM, SPEECH_VIEW_PARAM, speechSlug } from "../../../lib/speech-url"
-import { setStateInURL } from "../../../ui/lib/utils"
+import { findSpeechBySlug, readSpeechRoute, speechSlug, writeSpeechRoute } from "../../../lib/speech-url"
 
 /** A document view, the AI alternative-responses view, or the AI outline. */
 type SpeechView = VideoDocumentKind | "outcomes" | "llm"
@@ -84,10 +83,10 @@ export interface SpeechFocusRequest {
  * The page's "Detect speeches" request, as the panel shows it. The page owns
  * it because the result re-times the whole round, timeline included.
  *
- * @see {@link SpeechDetectionControl} in `@debate/timer` — the shared shape
+ * @see {@link SpeechDetectionControl} in `@debate-ai/timer` — the shared shape
  * this re-exports so the dialog and the panel agree.
  */
-export type SpeechDetectionControl = import("@debate/timer").SpeechDetectionControl
+export type SpeechDetectionControl = import("@debate-ai/timer").SpeechDetectionControl
 
 interface WatchRoundPanelProps {
   speeches: RoundSpeech[]
@@ -114,6 +113,12 @@ interface WatchRoundPanelProps {
   markedKeys?: ReadonlySet<string>
   /** The AI speech detection; without it the panel offers no Detect control. */
   detection?: SpeechDetectionControl
+  /**
+   * The video's own address, which the open speech and view are written
+   * after (`<routeHref>/2ar/outcomes`). Without it, or on a page at another
+   * address, they go in the query string.
+   */
+  routeHref?: string
 }
 
 const NO_KEYS: ReadonlySet<string> = new Set()
@@ -133,6 +138,7 @@ export function WatchRoundPanel({
   onMarkStart,
   markedKeys = NO_KEYS,
   detection,
+  routeHref,
 }: WatchRoundPanelProps) {
   const [activeKey, setActiveKey] = useState(speeches[0]?.key ?? "")
   const [view, setView] = useState<SpeechView>("summary")
@@ -165,7 +171,7 @@ export function WatchRoundPanel({
   const playingIndex = useMemo(() => playingSpeechIndex(speeches, currentTime), [speeches, currentTime])
   const isTimed = useMemo(() => speeches.some((speech) => speech.startSeconds !== null), [speeches])
 
-  // The URL's `?speech=…&tab=…`, read once per video. The speech waits here
+  // The URL's speech and view (`…/2ar/outcomes`), read once per video. The speech waits here
   // until a round that has it arrives (detection can re-time it later), and
   // `pinnedAt` holds the playing speech at that moment so following playback
   // doesn't snap straight back off the linked speech.
@@ -173,11 +179,11 @@ export function WatchRoundPanel({
   const pinnedAt = useRef<number | null>(null)
   const synced = useRef<{ speech: string; tab: SpeechView } | null>(null)
   useEffect(() => {
-    const params = setStateInURL() ?? {}
-    urlSpeech.current = params[SPEECH_PARAM] ?? null
+    const { speech, tab } = readSpeechRoute(routeHref)
+    urlSpeech.current = speech
     synced.current = null
-    const tab = params[SPEECH_VIEW_PARAM]
     if (isSpeechView(tab)) setView(tab)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [videoId])
 
   // A different video brings a different round.
@@ -240,8 +246,8 @@ export function WatchRoundPanel({
     const last = synced.current
     synced.current = next
     if (!last || (last.speech === next.speech && last.tab === next.tab)) return
-    setStateInURL({ [SPEECH_PARAM]: next.speech, [SPEECH_VIEW_PARAM]: next.tab })
-  }, [activeKey, view, speeches])
+    writeSpeechRoute(routeHref, next.speech, next.tab)
+  }, [activeKey, view, speeches, routeHref])
 
   const activeIndex = Math.max(
     0,
@@ -524,17 +530,17 @@ export function WatchRoundPanel({
         <ScrollArea className="flex-1 min-h-0">
           <div className="p-3">
             {shownView === "llm" && summarizing === active.key ? (
-              <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
                 <Loader2 className="h-3 w-3 animate-spin motion-reduce:animate-none" />
                 Outlining {active.label}&apos;s key points and warrants…
               </p>
             ) : shownView === "llm" && summaryError?.key === active.key && !html ? (
-              <p role="alert" className="text-xs text-destructive">
+              <p role="alert" className="text-sm text-destructive">
                 {summaryError.message}
               </p>
             ) : html ? (
               <div
-                className={MARKDOWN_CLASSES}
+                className={shownView === "llm" ? LARGE_MARKDOWN_CLASSES : MARKDOWN_CLASSES}
                 // Sanitized by renderDocumentMarkdown: raw HTML is escaped
                 // and only http(s)/mailto URLs survive.
                 dangerouslySetInnerHTML={{ __html: html }}

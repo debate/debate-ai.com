@@ -16,13 +16,13 @@ import {
   suggestSpeechSegments,
   type CaptionSnippet,
   type SpeechSegment,
-} from "@debate/timer/src/recorder/youtube-speech-segments"
+} from "@debate-ai/timer/src/recorder/youtube-speech-segments"
 import {
   YOUTUBE_SPEECH_TIMESTAMPS_SYSTEM_PROMPT,
   buildYouTubeSpeechTimestampsUserPrompt,
   parseYouTubeSpeechTimestampsResponse,
-} from "@debate/speech-writer/src/prompts/youtube-speech-timestamps"
-import type { TimerSpeech } from "@debate/types"
+} from "@debate-ai/speech-writer/src/prompts/youtube-speech-timestamps"
+import type { TimerSpeech } from "@debate-ai/types"
 
 /** A video from the site's library, as the picker lists it. */
 export type SiteVideo = {

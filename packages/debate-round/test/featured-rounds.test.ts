@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest"
-import { debateStyles } from "@debate/timer/src/formats/debate-format-times"
+import { debateStyles } from "@debate-ai/timer/src/formats/debate-format-times"
 import {
   FEATURED_ROUNDS,
   buildFeaturedRound,

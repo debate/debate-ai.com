@@ -8,8 +8,8 @@ import {
   parseMiniPlayerStart,
   refreshVideoIndex,
   type VideoType,
-} from "@debate/videos"
-import { videoRowToTuple } from "@debate/data-sync/src/videos/video-rows"
+} from "@debate-ai/videos"
+import { videoRowToTuple } from "@debate-ai/data-sync/src/videos/video-rows"
 
 /**
  * The mini player window's page (`/videos/mini/<videoId>`) outside Next.

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import type { FieldEntry, InviteEvent, UpcomingTournament } from "@debate/tournaments/client"
+import type { FieldEntry, InviteEvent, UpcomingTournament } from "@debate-ai/tournaments/client"
 import {
   currentTournaments,
   eventsForStyle,

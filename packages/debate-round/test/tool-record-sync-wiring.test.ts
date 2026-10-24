@@ -7,7 +7,7 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { setToolRecordSyncEnabled } from "@debate/data-sync/src/state/tool-record-mirror";
+import { setToolRecordSyncEnabled } from "@debate-ai/data-sync/src/state/tool-record-mirror";
 import { deletePracticeRound, savePracticeRound } from "../src/state/practiceRounds";
 import { deletePreRoundBriefing, savePreRoundBriefing } from "../src/state/preRoundBriefings";
 import { clearArgumentTrees, deleteArgumentTree, saveArgumentTree } from "../src/state/argumentTrees";
@@ -61,7 +61,7 @@ afterEach(() => {
 });
 
 describe("practice rounds", () => {
-  const setup = buildPracticeRoundSetup({ styleKey: "lincolnDouglas", judgeParadigm: "lay" });
+  const setup = buildPracticeRoundSetup({ styleKey: "lincolnDouglas", judgeParadigm: "common-sense" });
 
   it("mirrors a save and a delete under the round id", async () => {
     savePracticeRound({ roundId: "round-1", setup });

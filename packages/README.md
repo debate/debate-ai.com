@@ -65,11 +65,11 @@ and outside the bun workspace (it is a Vite app with its own toolchain). `debate
 its only adapter: the former `debate-editor-cm-adapter` package was merged into it, so
 Debate Editor's schema, `.docx` import/export and native `.cmir` format, plus
 `importDocx(file)`, `exportDocxBlob(doc)`, `outlineOf(doc)` and `cardsOf(doc)`, all come
-from `@debate/editor/engine`.
+from `@debate-ai/editor/engine`.
 
 ## debate-emails
 
-Package name `@debate/emails`. The site's transactional emails as React Email
+Package name `@debate-ai/emails`. The site's transactional emails as React Email
 (`@react-email/components`) templates: welcome, file collaboration invite (Debate Editor
 card shares), debate round invite and the coach feature tour. `renderEmail(id, props)`
 returns `{ subject, html, text }` and runs on Cloudflare Workers (`@react-email/render`'s
@@ -104,7 +104,7 @@ served at [debate-ai.com/docs](https://debate-ai.com/docs) rather than deployed 
 
 ## dev-docs
 
-Package name `@debate/dev-docs`, private and never published or deployed. Internal developer
+Package name `@debate-ai/dev-docs`, private and never published or deployed. Internal developer
 documentation: a column-by-column reference for every database table (the app's Drizzle schema
 and the Tabroom tables) and a self-hosting guide covering local setup, the Cloudflare D1
 schema, deployment and every environment variable. No code and no dependencies.
@@ -158,7 +158,7 @@ exports the roster panels (prep notes, opponent team profiles, drill sets, pre-r
 briefings, coaching sessions, flow summaries) that render persisted records from the
 practice tools.
 The Create New Round dialog reads current tournaments and their fields through
-`debate-tournaments`' API client (`@debate/tournaments/client`).
+`debate-tournaments`' API client (`@debate-ai/tournaments/client`).
 
 ## debate-round-practice-ai
 
@@ -207,11 +207,11 @@ sidebar's Timer section and the browser extension's timer window.
 
 ## debate-types
 
-Package name `@debate/types`. Every shared type — rounds and flows, scouting and
+Package name `@debate-ai/types`. Every shared type — rounds and flows, scouting and
 collaboration state, parsed cards, the video feed, prediction markets, the Practice vs AI
 wire types — declared once, with a description on each object and field so editors show it
 on hover. Declarations only; the packages that owned these types re-export them. Import
-with `import type { … } from "@debate/types"`. Depended on by `debate-timer`, `debate-card-parser`,
+with `import type { … } from "@debate-ai/types"`. Depended on by `debate-timer`, `debate-card-parser`,
 `debate-round`, `debate-flow`, `debate-tournaments`, `debate-webview`,
 `debate-round-practice-ai`, `debate-videos`, `debate-data-sync` and `debate-predictions`.
 
@@ -229,7 +229,7 @@ Pairings and results take optional host lookups (`lookupTeamRating`,
 `lookupJudgeParadigm` and `lookupJudgeProfile` on `<TournamentsApp>`, see
 `src/ui/enrichment.tsx`): the site passes rankings matches, a Tabroom paradigm search and its
 judge paradigm cache, so entries show logo, last names and rating and every judge opens a
-dialog with their paradigm and voting record. `@debate/tournaments/paradigms` parses Tabroom's
+dialog with their paradigm and voting record. `@debate-ai/tournaments/paradigms` parses Tabroom's
 paradigm and judging-record answers, and `fetchTabroomJudge` (in `/server`) reads them from
 Tabroom's API with a signed-in session. The package itself still depends on no other `debate-*` package.
 `scripts/sync-upstream.mjs` re-clones upstream and re-applies this package's patches and

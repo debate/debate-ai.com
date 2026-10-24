@@ -22,7 +22,7 @@
  */
 
 import { Inbox, Lightbulb, MessageSquareText, PieChart, Presentation, ThumbsUp } from "lucide-react"
-import { TopicCoverageDashboardPanel } from "@debate/research-evidence"
+import { TopicCoverageDashboardPanel } from "@debate-ai/research-evidence"
 import { panel, type HubSection } from "../hubs/hub-sections"
 import { HubSectionIntro, HubSectionNav, HubSectionPanel, useHubSection } from "../hubs/HubSectionNav"
 import { BrainstormBoardWithIdentity } from "./identity/BrainstormBoardWithIdentity"

@@ -6,7 +6,7 @@
  */
 
 import { describe, expect, it } from "vitest";
-import type { RankingDataset, RankingEntry } from "@debate/rankings-adapter";
+import type { RankingDataset, RankingEntry } from "@debate-ai/rankings-adapter";
 import {
   DIVISION_CONFIG,
   LEADERBOARD_TABS,

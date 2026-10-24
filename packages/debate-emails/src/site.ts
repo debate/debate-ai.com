@@ -1,6 +1,6 @@
 /**
  * Site constants the templates need. Repeated here rather than imported from
- * `@debate/webview/lib/config/site` so this package stays a leaf with no
+ * `@debate-ai/webview/lib/config/site` so this package stays a leaf with no
  * dependency on the app's frontend; keep the values in sync with that file.
  */
 export const APP_NAME = "Debate AI";
@@ -14,7 +14,7 @@ export const SUPPORT_EMAIL = "support@debate-ai.com";
 export const DEFAULT_BASE_URL = "https://d.ebate.app";
 
 /**
- * The wordmark is `logo.png` in `@debate/icons/brand`, which the app also
+ * The wordmark is `logo.png` in `@debate-ai/icons/brand`, which the app also
  * serves at `/logo.png` (`ROOT_ASSETS` in apps/debate-web/vite.config.ts).
  * Emails need an absolute URL, so they link to that copy.
  */

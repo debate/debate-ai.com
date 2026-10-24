@@ -3,7 +3,7 @@ import { getDBFromContext } from "@/lib/database/context";
 import { getUserId } from "@/lib/auth/session";
 import { withRouteErrors } from "@/lib/api/route-errors";
 import { copyListingToDocuments, getListingRow, ownsListing } from "@/lib/market/queries";
-import type { CopyResult } from "@debate/file-market";
+import type { CopyResult } from "@debate-ai/file-market";
 
 /**
  * POST — saves another copy of a file the viewer bought (or sells) to their

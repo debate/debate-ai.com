@@ -43,8 +43,8 @@ import { dirname, join, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 import { describe, expect, it } from "vitest"
 
-import { ALL_TOOLS } from "@debate/webview/routes/tools/tool-groups"
-import { APP_FEATURES } from "@debate/webview/lib/feature-catalog"
+import { ALL_TOOLS } from "@debate-ai/webview/routes/tools/tool-groups"
+import { APP_FEATURES } from "@debate-ai/webview/lib/feature-catalog"
 import { WORKSPACE_LINKS } from "../../../../packages/debate-editor/src/editor/workspace-links"
 
 /**
@@ -152,8 +152,10 @@ const STATIC_APP_ROUTES = findAppPageRoutes(APP_DIR, "").filter((route) => !rout
  */
 const ROUTES_WITHOUT_A_CATALOG_ENTRY = new Set([
   "/",
+  "/about",
   "/admin",
   "/auth/extension-complete",
+  "/auth/qwksearch-extension-complete",
   "/auth/native-callback",
   "/auth/native-complete",
   "/docs/welcome",

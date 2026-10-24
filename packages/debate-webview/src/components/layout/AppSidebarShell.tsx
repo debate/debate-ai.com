@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { usePathname } from "next/navigation"
-import { ResizableSidebarLayout } from "@debate/videos"
+import { ResizableSidebarLayout } from "@debate-ai/videos"
 import { isGenericToolSidebarRoute, ownsItsLayout } from "../../lib/sidebar-routes"
 import { AppSidebar } from "./app-sidebar/app-sidebar"
 import { SidebarAccount } from "./app-sidebar/sidebar-account"
@@ -28,7 +28,7 @@ import { SidebarAccount } from "./app-sidebar/sidebar-account"
  * (`showsCardsPagePanel`) rather than swapping this one out.
  *
  * `/debate` and `/research/docs` fill the viewport with a workspace sidebar
- * of their own (`ownsItsLayout`, in @debate/videos' `sidebar-routes`), so
+ * of their own (`ownsItsLayout`, in @debate-ai/videos' `sidebar-routes`), so
  * there the column starts collapsed (`autoCollapse`): the page's own sidebar
  * is the only one on screen, and the app's still peeks out from the left
  * edge. That leaves the app-wide hidden/shown choice alone. Below `md` the column is

@@ -1,17 +1,17 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Button } from "@debate/webview/lib/ui/primitives/button";
-import { Badge } from "@debate/webview/lib/ui/primitives/badge";
-import { Input } from "@debate/webview/lib/ui/primitives/input";
-import { Label } from "@debate/webview/lib/ui/primitives/label";
+import { Button } from "@debate-ai/webview/lib/ui/primitives/button";
+import { Badge } from "@debate-ai/webview/lib/ui/primitives/badge";
+import { Input } from "@debate-ai/webview/lib/ui/primitives/input";
+import { Label } from "@debate-ai/webview/lib/ui/primitives/label";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@debate/webview/lib/ui/primitives/card";
+} from "@debate-ai/webview/lib/ui/primitives/card";
 import {
   Dialog,
   DialogContent,
@@ -19,7 +19,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@debate/webview/lib/ui/primitives/dialog";
+} from "@debate-ai/webview/lib/ui/primitives/dialog";
 
 /** A channel's newest known video. */
 interface LatestVideo {

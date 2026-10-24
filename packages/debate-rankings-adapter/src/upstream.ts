@@ -13,7 +13,7 @@
  * The CSVs are imported with Vite's `?raw` suffix through dynamic `import()`,
  * so each dataset is its own chunk and nothing is copied or regenerated —
  * bumping the submodule is all it takes to refresh the site.
- * @module @debate/rankings-adapter/upstream
+ * @module @debate-ai/rankings-adapter/upstream
  */
 
 /// <reference path="./raw.d.ts" />

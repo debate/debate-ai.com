@@ -16,9 +16,9 @@ import {
 } from "../src/state/dailyMissionResults";
 import { listStreakFreezeDayKeysForContributor } from "../src/state/streakFreezes";
 import { isStreakLapseReminderEnabled } from "../src/state/streakLapseReminders";
-import { saveQuestTemplate } from "@debate/team-collaboration/src/state/dailyQuests";
-import { saveContribution } from "@debate/research-evidence/src/state/contributions";
-import type { AttributedContribution } from "@debate/research-evidence/src/lib/contribution-leaderboard";
+import { saveQuestTemplate } from "@debate-ai/team-collaboration/src/state/dailyQuests";
+import { saveContribution } from "@debate-ai/research-evidence/src/state/contributions";
+import type { AttributedContribution } from "@debate-ai/research-evidence/src/lib/contribution-leaderboard";
 import { buttonByText, buttonsByText, click, flush, mount, query, type } from "./helpers/mount";
 import type { Mounted } from "./helpers/mount";
 

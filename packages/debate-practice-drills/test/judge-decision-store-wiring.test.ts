@@ -2,8 +2,8 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { buildJudgeDecisionInputFromStores } from "../src/round/judge-decision-store-wiring";
 import { saveFlowSummary } from "../src/state/flowSummaries";
 import { saveJudgeParadigmSelection } from "../src/state/judgeParadigmSelections";
-import { judgeParadigms } from "@debate/speech-writer/src/judge/judge-paradigms";
-import type { FlowRowSummary } from "@debate/round/src/flow/flow-transcript-summary";
+import { judgeParadigms } from "@debate-ai/speech-writer/src/judge/judge-paradigms";
+import type { FlowRowSummary } from "@debate-ai/round/src/flow/flow-transcript-summary";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment has no DOM by default here. */
 class MemoryStorage {
@@ -45,7 +45,7 @@ describe("buildJudgeDecisionInputFromStores", () => {
   });
 
   it("reports only the flow summary missing", () => {
-    saveJudgeParadigmSelection({ roundId: "round-1", paradigm: judgeParadigms.flow });
+    saveJudgeParadigmSelection({ roundId: "round-1", paradigm: judgeParadigms.policymaker });
     const result = buildJudgeDecisionInputFromStores("round-1", SIDE_NAMES);
     expect(result).toEqual({ ok: false, missing: ["flowSummary"] });
   });
@@ -58,7 +58,7 @@ describe("buildJudgeDecisionInputFromStores", () => {
 
   it("treats an empty saved summary list as missing", () => {
     saveFlowSummary({ roundId: "round-1", summaries: [] });
-    saveJudgeParadigmSelection({ roundId: "round-1", paradigm: judgeParadigms.flow });
+    saveJudgeParadigmSelection({ roundId: "round-1", paradigm: judgeParadigms.policymaker });
     const result = buildJudgeDecisionInputFromStores("round-1", SIDE_NAMES);
     expect(result).toEqual({ ok: false, missing: ["flowSummary"] });
   });
@@ -78,7 +78,7 @@ describe("buildJudgeDecisionInputFromStores", () => {
 
   it("scopes lookups to the given roundId", () => {
     saveFlowSummary({ roundId: "round-1", summaries: [ROW] });
-    saveJudgeParadigmSelection({ roundId: "round-2", paradigm: judgeParadigms.flow });
+    saveJudgeParadigmSelection({ roundId: "round-2", paradigm: judgeParadigms.policymaker });
 
     const result = buildJudgeDecisionInputFromStores("round-1", SIDE_NAMES);
     expect(result).toEqual({ ok: false, missing: ["judgeParadigm"] });

@@ -1,4 +1,4 @@
-name: Publish a @debate/* package to npm
+name: Publish a @debate-ai/* package to npm
 
 # Publishes one workspace package from packages/. debate-api-client keeps its
 # own workflow (npm-release.yml) because it generates and builds before packing.
@@ -56,8 +56,8 @@ jobs:
           fi
           name="$(node -p "require('./packages/$dir/package.json').name")"
           case "$name" in
-            @debate/*) ;;
-            *) echo "::error::$name is not under the @debate/ scope"; exit 1 ;;
+            @debate-ai/*) ;;
+            *) echo "::error::$name is not under the @debate-ai/ scope"; exit 1 ;;
           esac
           echo "dir=$dir" >> "$GITHUB_OUTPUT"
           echo "name=$name" >> "$GITHUB_OUTPUT"

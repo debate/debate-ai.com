@@ -12,7 +12,7 @@ import {
   type AudioSplitFormat,
   type CaptionCue,
   type SpeechClip,
-} from "@debate/videos";
+} from "@debate-ai/videos";
 import { Button } from "../../../lib/ui/primitives/button";
 import { Label } from "../../../lib/ui/primitives/label";
 import {
@@ -35,7 +35,7 @@ import {
  * 2. **Split, here in the browser.** `splitSpeechAudio` decodes it with the
  *    `mpg123-decoder` WASM build, finds the pauses, and lines the sound up
  *    with the format's speech times to name every speech and time its start
- *    and end. `@debate/videos`' `split-speech-audio.ts` explains why this
+ *    and end. `@debate-ai/videos`' `split-speech-audio.ts` explains why this
  *    can't run in the Worker.
  * 3. **Save.** Each speech's MP3 clip goes to R2, and the timing goes into
  *    the transcript document as `## 1AC (0:42–8:51)` headings — with the

@@ -6,11 +6,11 @@
  * @module lib/news/site-news
  */
 
-import type { NewsItem } from "@debate/community/src/lib/news-stream"
-import type { VideoType } from "@debate/types"
-import { formatRoundLevel, standardizeRoundLevel } from "@debate/data-sync/src/youtube/parsers/round-level"
-import { videoRouteHref } from "@debate/videos/src/lib/video-route"
-import { schoolHref } from "@debate/videos/src/panels/leaderboard/profile/rankingProfileHelpers"
+import type { NewsItem } from "@debate-ai/community/src/lib/news-stream"
+import type { VideoType } from "@debate-ai/types"
+import { formatRoundLevel, standardizeRoundLevel } from "@debate-ai/data-sync/src/youtube/parsers/round-level"
+import { videoRouteHref } from "@debate-ai/videos/src/lib/video-route"
+import { schoolHref } from "@debate-ai/videos/src/panels/leaderboard/profile/rankingProfileHelpers"
 import type { ForumThreadSummary } from "../forums/types"
 
 /** A caselist document as `/api/caselist-documents` returns it (the fields read here). */

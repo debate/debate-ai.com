@@ -12,7 +12,7 @@ import {
   CardTitle,
 } from "../../../lib/ui/primitives/card";
 
-/** One `@debate/emails` template, as GET /api/admin/emails lists it. */
+/** One `@debate-ai/emails` template, as GET /api/admin/emails lists it. */
 interface EmailTemplateSummary {
   id: string;
   name: string;
@@ -29,7 +29,7 @@ interface RenderedEmail {
 type View = "html" | "text";
 
 /**
- * The admin Emails section: every React Email template in `@debate/emails`,
+ * The admin Emails section: every React Email template in `@debate-ai/emails`,
  * rendered on the server with its sample data (GET /api/admin/emails), shown
  * as the HTML an inbox gets — sandboxed in an iframe — or its plain-text
  * part, with a button that sends the sample to the admin's own address.

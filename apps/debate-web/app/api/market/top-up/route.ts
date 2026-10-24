@@ -4,7 +4,7 @@ import { getUserId } from "@/lib/auth/session";
 import { getEnv } from "@/lib/env";
 import { withRouteErrors } from "@/lib/api/route-errors";
 import { getMarketViewer } from "@/lib/market/queries";
-import { topUpById, topUpCheckoutParams, type TopUpCheckout } from "@debate/file-market";
+import { topUpById, topUpCheckoutParams, type TopUpCheckout } from "@debate-ai/file-market";
 
 const STRIPE_CHECKOUT_SESSIONS = "https://api.stripe.com/v1/checkout/sessions";
 

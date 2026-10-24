@@ -1,6 +1,6 @@
 # CLAUDE.md — `debate-card-parser`
 
-Public (`@debate/` scope). Turns Verbatim `.docx` files and HTML into structured evidence cards
+Public (`@debate-ai/` scope). Turns Verbatim `.docx` files and HTML into structured evidence cards
 with citations and highlighting. Entry: `src/index.ts` (consumed as source —
 no build step). Tests in `test/`.
 

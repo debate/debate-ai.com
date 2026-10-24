@@ -1,5 +1,5 @@
 {
-  "name": "@debate/dev-docs",
+  "name": "@debate-ai/dev-docs",
   "description": "Internal developer docs for Debate AI: database table reference and self-hosting guide. Never published or deployed.",
   "version": "0.0.0",
   "private": true,

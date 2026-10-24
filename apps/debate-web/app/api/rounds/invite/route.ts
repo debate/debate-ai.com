@@ -5,7 +5,7 @@ import { getDBFromContext } from "@/lib/database/context"
 import { notifications, user } from "@/lib/database/schema"
 import { getSession } from "@/lib/auth/session"
 import { getEnv } from "@/lib/env"
-import { APP_EMAIL, APP_NAME } from "@debate/webview/lib/config/site"
+import { APP_EMAIL, APP_NAME } from "@debate-ai/webview/lib/config/site"
 import { renderEmail } from "@/lib/emails/render"
 
 /**
@@ -120,7 +120,7 @@ export async function POST(req: NextRequest) {
       skipped.push(...emailRecipients)
     } else {
       const resend = new Resend(resendKey)
-      // The `round-invite` template in @debate/emails (previewed at /admin#emails).
+      // The `round-invite` template in @debate-ai/emails (previewed at /admin#emails).
       // A render failure skips the emails rather than failing the invites.
       const invite = await renderEmail("round-invite", {
         inviterName: session.user.name,

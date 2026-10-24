@@ -3,7 +3,7 @@
  * package. The repo has no @testing-library dependency, so this wraps
  * `createRoot` and React 19's `act` directly: enough to mount a component
  * into jsdom, run its effects, fire real DOM events, and read the result
- * back. Mirrors `@debate/practice-rounds/test/helpers/mount.tsx`.
+ * back. Mirrors `@debate-ai/practice-rounds/test/helpers/mount.tsx`.
  */
 
 import { act, type ReactElement } from "react";

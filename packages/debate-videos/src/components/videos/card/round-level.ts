@@ -7,4 +7,4 @@ export {
   type StandardRoundLevel,
   type RoundParseConfidence,
   type ParsedRoundLevel,
-} from "@debate/data-sync/src/youtube/parsers/round-level";
+} from "@debate-ai/data-sync/src/youtube/parsers/round-level";

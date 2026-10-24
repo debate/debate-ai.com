@@ -13,14 +13,14 @@
  * from a past college season's table carries its `season`, and its tooltip
  * names that season and its debatedata rating.
  *
- * `teamDisplayParts` in `@debate/rankings-adapter` decides the two parts;
+ * `teamDisplayParts` in `@debate-ai/rankings-adapter` decides the two parts;
  * this file only draws them.
  * @module components/team-label/TeamLabel
  */
 
 import type { ReactNode } from "react"
 import Link from "next/link"
-import { teamDisplayParts, type RankingEntry } from "@debate/rankings-adapter"
+import { teamDisplayParts, type RankingEntry } from "@debate-ai/rankings-adapter"
 import { getSchoolLogo } from "../../../lib/schoolLogos"
 import { cn } from "../../../ui/lib/utils"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../../ui/primitives/tooltip"

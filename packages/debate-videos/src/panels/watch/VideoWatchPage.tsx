@@ -56,8 +56,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { AlertCircle, ArrowLeft, Calendar, Clock, Eye, ListOrdered, ListPlus, Loader2 } from "lucide-react"
-import { CommentSection } from "@debate/comments"
-import { SpeechStartsDialog, type SpeechDetectionControl } from "@debate/timer"
+import { CommentSection } from "@debate-ai/comments"
+import { SpeechStartsDialog, type SpeechDetectionControl } from "@debate-ai/timer"
 import { formatCount } from "../../lib/format-count"
 
 import { WatchToolbar } from "../../components/videos/watch/WatchToolbar"
@@ -75,6 +75,8 @@ import { useDocumentPictureInPicture } from "../../components/videos/player/useD
 import {
   buildEmbedUrl,
   describePlayerError,
+  isPlayerMessage,
+  pipEmbedUrl,
   startListening,
   watchUrl,
 } from "../../components/videos/player/youtubeEmbed"
@@ -271,6 +273,8 @@ export function VideoWatchPage({
       videoPageTitle(video, {
         aff: affRanking?.rank ?? titleRanks?.aff,
         neg: negRanking?.rank ?? titleRanks?.neg,
+        affNames: affRanking?.names ?? null,
+        negNames: negRanking?.names ?? null,
       }),
     [video, affRanking, negRanking, titleRanks],
   )
@@ -393,6 +397,7 @@ export function VideoWatchPage({
   const {
     isSupported: isPipSupported,
     isActive: isPipActive,
+    pipWindow,
     toggle: togglePip,
     exit: exitPip,
   } = useDocumentPictureInPicture(videoWrapperRef)
@@ -453,7 +458,7 @@ export function VideoWatchPage({
       ),
     [baseSpeeches, segmentation, speechMarks, sentences],
   )
-  /** The speeches as the shared speech-start modal (@debate/timer) takes them. */
+  /** The speeches as the shared speech-start modal (@debate-ai/timer) takes them. */
   const speechStartItems = useMemo(() => speeches.map(({ key, label }) => ({ key, label })), [speeches])
   const speechStartSeconds = useMemo(() => {
     const starts: Record<string, number> = {}
@@ -639,7 +644,7 @@ export function VideoWatchPage({
   // transcript, play state for the toolbar, errors for the overlay.
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      if (event.origin !== "https://www.youtube.com") return
+      if (!isPlayerMessage(event, iframeRef.current)) return
       try {
         const data = JSON.parse(event.data)
         if (data.event === "onError") {
@@ -698,9 +703,11 @@ export function VideoWatchPage({
         // ignore non-JSON messages
       }
     }
-    window.addEventListener("message", handleMessage)
-    return () => window.removeEventListener("message", handleMessage)
-  }, [playbackRate, setIsPlaying, videoId, title])
+    // Inside PiP the wrapper page posts to the PiP window, not this one
+    const targets = pipWindow ? [window, pipWindow] : [window]
+    targets.forEach((target) => target.addEventListener("message", handleMessage))
+    return () => targets.forEach((target) => target.removeEventListener("message", handleMessage))
+  }, [playbackRate, setIsPlaying, videoId, title, pipWindow])
 
   // Re-send the handshake for a few seconds after every load: YouTube ignores
   // commands and posts no events until it lands, and moving the iframe into a
@@ -825,7 +832,10 @@ export function VideoWatchPage({
   const iframeSrc =
     embedStart === null
       ? null
-      : buildEmbedUrl(videoId, { autoplay: true, controls: true, startSeconds: embedStart })
+      : isPipActive
+        ? // about:blank PiP documents send no referrer (YouTube error 153); the wrapper does
+          pipEmbedUrl(videoId, { autoplay: true, startSeconds: embedStart })
+        : buildEmbedUrl(videoId, { autoplay: true, controls: true, startSeconds: embedStart })
 
   const quickLinkCounts = useMemo(
     () =>
@@ -1080,7 +1090,7 @@ export function VideoWatchPage({
                   <ListOrdered className="h-3.5 w-3.5" />
                   Speech starts
                 </button>
-                {/* The same modal labels the joined round MP3 (@debate/timer's
+                {/* The same modal labels the joined round MP3 (@debate-ai/timer's
                     RoundRecordingDialog); docked, so the player stays usable. */}
                 <SpeechStartsDialog
                   open={startsDialogOpen}
@@ -1177,6 +1187,7 @@ export function VideoWatchPage({
                 markedKeys={markedKeys}
                 speechDetection={speechDetection}
                 extraTabs={sideTabs}
+                routeHref={videoRouteHref(video)}
               />
             </div>
           )}

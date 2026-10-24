@@ -32,7 +32,7 @@ import {
   htmlToCards,
   isImportableDocxEntry,
   normalizeImportPath,
-} from "@debate/card-parser";
+} from "@debate-ai/card-parser";
 import {
   type ReadEntriesOptions,
   RemoteZipEntryError,

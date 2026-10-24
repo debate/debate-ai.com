@@ -57,7 +57,7 @@ const MIXED_FLOW = {
   children: [rowFromContents(["Case advantage", "Turn"]), rowFromContents(["", "Disad link"])],
 };
 
-const SETUP_A = buildPracticeRoundSetup({ styleKey: "lincolnDouglas", judgeParadigm: "lay" });
+const SETUP_A = buildPracticeRoundSetup({ styleKey: "lincolnDouglas", judgeParadigm: "common-sense" });
 const SETUP_B = buildPracticeRoundSetup({ styleKey: "policy", opponentPersona: "critique" });
 
 const ROUND_A: PracticeRoundRecord = { roundId: "round-1", setup: SETUP_A };
@@ -106,7 +106,7 @@ describe("savePracticeRound", () => {
     const feedback = {
       judgeParadigm: SETUP_A.judgeParadigm,
       coachingPrompts: [],
-      sections: [{ title: "Judged under: Lay / Community Judge", body: "..." }],
+      sections: [{ title: "Judged under: Middle-Ground Flow Judge", body: "..." }],
     };
     const updated: PracticeRoundRecord = { ...ROUND_A, feedback };
     savePracticeRound(updated);
@@ -253,7 +253,7 @@ describe("buildAndSavePracticeRoundFeedback", () => {
 const SETUP_SECONDARY = buildPracticeRoundSetup({
   styleKey: "lincolnDouglas",
   userSide: "secondary",
-  judgeParadigm: "lay",
+  judgeParadigm: "common-sense",
 });
 
 const JUDGE_DECISION_PRIMARY_WINS = {

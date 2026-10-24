@@ -1,5 +1,5 @@
 import { LegalTermsPrivacyPolicy } from "legal-terms-privacy-policy/react"
-import { DebateAiLogo } from "@debate/icons/brand"
+import { DebateAiLogo } from "@debate-ai/icons/brand"
 import {
     APP_EMAIL,
     APP_LOGO_HEIGHT,

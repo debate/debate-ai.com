@@ -21,7 +21,7 @@ vi.mock("../src/round/round-pairings-client", () => ({
 }))
 
 import { PreRoundBriefingsPanel } from "../src/panels/PreRoundBriefingsPanel"
-import { recordOpponentRound } from "@debate/data-sync/src/state/opponentRoundRecords"
+import { recordOpponentRound } from "@debate-ai/data-sync/src/state/opponentRoundRecords"
 import { listOwnRoundHistory } from "../src/state/ownRoundHistory"
 import { savePreRoundBriefing, buildPreRoundBriefingRecordFromDraft } from "../src/state/preRoundBriefings"
 import {

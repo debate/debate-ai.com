@@ -21,7 +21,7 @@ streaks and completions, group challenges, revision incentives, sprint
 notes and coaching sessions were removed from the feed because they read as
 UI-update noise. Their own pages are unchanged.
 
-- **Rounds** — `useSiteNews()` (`@debate/webview`, `lib/hooks/useSiteNews.ts`)
+- **Rounds** — `useSiteNews()` (`@debate-ai/webview`, `lib/hooks/useSiteNews.ts`)
   fetches `/api/videos?source=round&sort=Recency&limit=8`.
 - **Files** — the same hook fetches `/api/caselist-documents?recent=1&limit=8`
   (`recent=1` lists the newest files site-wide, capped at 20). The panel's
@@ -33,7 +33,7 @@ UI-update noise. Their own pages are unchanged.
   an import.
 - **Forums** — the hook reads `/api/forums?limit=8`; each thread becomes one
   item whose id carries `lastActivityAt`, so a new reply is a new unread item.
-- **Following** — `useFollowingNews()` from `@debate/videos`. A round or file
+- **Following** — `useFollowingNews()` from `@debate-ai/videos`. A round or file
   already posted under Following is dropped from Rounds/Files.
 
 `NewsStreamPanel` shows a filter tab only for categories present in the
@@ -46,8 +46,8 @@ feed. `CoachHub` still renders the panel with `coachingSessionNews()`
 lib/news-stream.ts        — NewsItem, NEWS_CATEGORY_LABELS, sortNewsFeed, cleanArgBlockLabel
 state/newsStream.ts       — argumentLibraryNews() (daily digests), buildNewsFeed(extraItems),
                             read/like viewer state ("newsStreamViewerState")
-@debate/webview lib/news/site-news.ts — buildRoundNews / buildFileNews / buildForumNews
-@debate/webview lib/hooks/useSiteNews.ts — fetches their inputs
+@debate-ai/webview lib/news/site-news.ts — buildRoundNews / buildFileNews / buildForumNews
+@debate-ai/webview lib/hooks/useSiteNews.ts — fetches their inputs
 routes/news/NewsPageContent.tsx — passes site + following items as extraItems
 panels/NewsStreamPanel.tsx — filter tabs, read/like UI
 ```

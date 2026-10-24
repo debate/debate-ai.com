@@ -53,25 +53,25 @@ import type { Flow } from "../types/flow";
 import type {
   BuiltinJudgeParadigmId,
   JudgeParadigm,
-} from "@debate/speech-writer/src/judge/judge-paradigms";
+} from "@debate-ai/speech-writer/src/judge/judge-paradigms";
 import {
   buildJudgeParadigmPrompt,
   getJudgeParadigm,
   judgeParadigms,
-} from "@debate/speech-writer/src/judge/judge-paradigms";
+} from "@debate-ai/speech-writer/src/judge/judge-paradigms";
 import type {
   BuiltinOpponentPersonaId,
   OpponentDifficulty,
   OpponentPersona,
-} from "@debate/speech-writer/src/opponent/opponent-personas";
+} from "@debate-ai/speech-writer/src/opponent/opponent-personas";
 import {
   buildCustomOpponentPersona,
   buildOpponentPersonaFeedbackTips,
   buildOpponentPersonaPrompt,
   DEFAULT_OPPONENT_DIFFICULTY,
   getOpponentPersona,
-} from "@debate/speech-writer/src/opponent/opponent-personas";
-import type { DebateStyleKey } from "@debate/timer/src/formats/debate-format-times";
+} from "@debate-ai/speech-writer/src/opponent/opponent-personas";
+import type { DebateStyleKey } from "@debate-ai/timer/src/formats/debate-format-times";
 import type { CoachingPrompt } from "../flow/coach-mode";
 import { buildCoachingSession, buildCoachingSummaryText } from "../flow/coach-mode";
 import type {
@@ -88,7 +88,7 @@ export type PracticeRoundSection = { title: string; body: string };
 function resolveJudgeParadigm(
   judgeParadigm?: JudgeParadigm | BuiltinJudgeParadigmId,
 ): JudgeParadigm {
-  if (!judgeParadigm) return judgeParadigms.flow;
+  if (!judgeParadigm) return judgeParadigms.policymaker;
   if (typeof judgeParadigm !== "string") return judgeParadigm;
 
   const resolved = getJudgeParadigm(judgeParadigm);

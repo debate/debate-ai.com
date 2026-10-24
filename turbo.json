@@ -21,7 +21,7 @@
         "src/generated/**"
       ]
     },
-    "@debate/api-client#build": {
+    "@debate-ai/api-client#build": {
       "dependsOn": [
         "^build",
         "generate"
@@ -30,7 +30,7 @@
         "dist/**"
       ]
     },
-    "@debate/editor#build": {
+    "@debate-ai/editor#build": {
       "dependsOn": [
         "^build"
       ],
@@ -46,14 +46,14 @@
         "^build"
       ]
     },
-    "@debate/api-client#typecheck": {
+    "@debate-ai/api-client#typecheck": {
       "dependsOn": [
         "^typecheck",
         "^build",
         "generate"
       ]
     },
-    "@debate/editor#typecheck": {
+    "@debate-ai/editor#typecheck": {
       "dependsOn": [
         "^typecheck",
         "^build",

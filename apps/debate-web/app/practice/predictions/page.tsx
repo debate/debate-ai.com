@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Bet play-money points on who wins a debate, who wins a tournament, and whose team rating goes up",
 }
 
-export { default } from "@debate/webview/routes/predictions/page"
+export { default } from "@debate-ai/webview/routes/predictions/page"

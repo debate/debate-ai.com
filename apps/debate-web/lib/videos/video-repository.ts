@@ -20,7 +20,7 @@ import {
   videoRowToTuple,
   type VideoRow,
   type VideoTuple,
-} from "@debate/data-sync/src/videos/video-rows";
+} from "@debate-ai/data-sync/src/videos/video-rows";
 import {
   clampPageSize,
   COMPETITOR_BREAK_CHARS,
@@ -40,23 +40,25 @@ import {
   type VideoFacets,
   type VideoQueryParams,
   type VideoSuggestions,
-} from "@debate/data-sync/src/videos/video-query";
+} from "@debate-ai/data-sync/src/videos/video-query";
 import {
   VIDEO_INDEX_FORMAT_VERSION,
   videoRowToIndexTuple,
   type VideoIndexResponse,
-} from "@debate/data-sync/src/videos/video-index";
-import { getVideoRowsFromJson } from "@debate/webview/lib/videos/video-json-source";
+} from "@debate-ai/data-sync/src/videos/video-index";
+import { getVideoRowsFromJson } from "@debate-ai/webview/lib/videos/video-json-source";
 import {
   legacyVideoRouteHref,
+  parseFormatSegment,
   parseSeasonSegment,
+  parseSpeechRouteSuffix,
   previousVideoRouteHref,
   untitledVideoRouteHref,
   slugifyVideoTitle,
   videoRouteHref,
   type VideoRouteParts,
   type VideoType,
-} from "@debate/videos";
+} from "@debate-ai/videos";
 
 /** Which backend answered a request — surfaced for debugging. */
 export type VideoBackend = "sql" | "json";
@@ -826,43 +828,92 @@ export async function getVideoBySlug(slug: string): Promise<VideoTuple | null> {
 /** Most pages of one season a route lookup reads before giving up. */
 const MAX_ROUTE_LOOKUP_PAGES = 50;
 
+/** Most segments a video's own path has: season, format, tournament, round, teams, variant. */
+const MAX_VIDEO_SEGMENTS = 6;
+
+/** Most segments a route has: a video's path, then a speech and its view. */
+const MAX_ROUTE_SEGMENTS = MAX_VIDEO_SEGMENTS + 2;
+
 /**
  * Fetches a single video by the segments of its path under `/videos`.
  *
- * Accepts the canonical path — `<season>/<tournament>/<round>/<teams>` for a
- * round, with a fifth `<variant>` segment for its analysis or a part,
- * `<season>/<event>/<matchup>` otherwise — and both older round paths (the
- * three-segment one, and the four-segment one whose teams carried `vs` and
- * the variant) and the untitled three-segment path of a video with no team
- * (`26-27/policy/finals`), and any of those with the season spelled as a bare
- * year (`2027/…`), so the caller can redirect a stale one. The segments are slugs,
- * which the library's search text does not hold, so candidates are read by
- * season and each one's path is rebuilt and compared; failing that, by the
- * words of the last segment (a round whose path came from its title), and
- * last by the whole library.
+ * Accepts the canonical path — `<season>/<format>/<tournament>/<round>/<teams>`
+ * for a round, with a `<variant>` segment for its analysis or a part,
+ * `<season>/<event>/<matchup>` otherwise — the same paths from before the
+ * format segment, both older round paths (the three-segment one, and the
+ * four-segment one whose teams carried `vs` and the variant) and the untitled
+ * three-segment path of a video with no team (`26-27/policy/finals`), and any
+ * of those with the season spelled as a bare year (`2027/…`), so the caller
+ * can redirect a stale one. The segments are slugs, which the library's
+ * search text does not hold, so candidates are read by season and each one's
+ * path is rebuilt and compared; failing that, by the words of the last
+ * segment (a round whose path came from its title), and last by the whole
+ * library.
  *
  * @param segments - The path segments after `/videos`, in order.
  * @returns The video in UI tuple form, or `null` when no video's current or
  *   legacy path matches.
  */
 export async function getVideoByRouteSegments(segments: string[]): Promise<VideoTuple | null> {
+  return (await resolveVideoRoute(segments))?.video ?? null;
+}
+
+/** A video found by its path, and the segments after its address. */
+export interface VideoRouteMatch {
+  video: VideoTuple;
+  /**
+   * The segments after the video's own path — the open speech and its view
+   * (`["2ar", "outcomes"]`), or `[]`. See `parseSpeechRouteSuffix`.
+   */
+  suffix: string[];
+}
+
+/**
+ * Like {@link getVideoByRouteSegments}, but also accepts a speech and view
+ * after the video's path (`…/<teams>/2ar/outcomes`, `…/<teams>/outcomes`) and
+ * returns them apart.
+ *
+ * The longest reading wins: a path that is itself some video's address is
+ * that video, never another one's with a speech after it. Only the segments
+ * `parseSpeechRouteSuffix` accepts are tried as a suffix.
+ */
+export async function resolveVideoRoute(segments: string[]): Promise<VideoRouteMatch | null> {
   const clean = segments.map((segment) => decodeSegment(segment).toLowerCase()).filter(Boolean);
-  if (clean.length < 3 || clean.length > 5) return null;
-  const target = `/videos/${clean.join("/")}`;
+  if (clean.length < 3 || clean.length > MAX_ROUTE_SEGMENTS) return null;
+  // Every way to split the path into a video's address and a speech suffix,
+  // the whole path first.
+  const readings = [0, 1, 2]
+    .filter((count) => clean.length - count >= 3 && clean.length - count <= MAX_VIDEO_SEGMENTS)
+    .filter((count) => count === 0 || parseSpeechRouteSuffix(clean.slice(-count)) !== null)
+    .map((count) => ({ target: `/videos/${clean.slice(0, clean.length - count).join("/")}`, count }));
+  if (readings.length === 0) return null;
   const [season] = clean;
   // Paths from before seasons read `26-27` spelled them as a bare `2027`, so
   // such a path is compared against every path rebuilt with that spelling.
   const spelling = /^\d{4}$/.test(season) ? "year" : "season";
-  const hrefOf = (v: VideoTuple, build: typeof previousVideoRouteHref) =>
-    build(v as unknown as VideoType, spelling);
-  // A video whose current path this is wins over one whose old path it was.
-  const matches = (videos: VideoTuple[]) =>
-    videos.find((v) => hrefOf(v, videoRouteHref) === target) ??
-    videos.find((v) => hrefOf(v, previousVideoRouteHref) === target) ??
-    videos.find((v) => hrefOf(v, legacyVideoRouteHref) === target) ??
+  const builders: Array<(v: VideoType) => string | null> = [
+    (v) => videoRouteHref(v, spelling),
+    // From before the format segment.
+    (v) => videoRouteHref(v, spelling, false),
+    (v) => previousVideoRouteHref(v, spelling),
+    (v) => legacyVideoRouteHref(v, spelling),
     // A partial path from before titles were added, which several videos may
     // share: the first one found keeps the video the link always opened.
-    videos.find((v) => hrefOf(v, untitledVideoRouteHref) === target);
+    (v) => untitledVideoRouteHref(v, spelling),
+  ];
+  // The longest reading first; within one, a video whose current path this is
+  // wins over one whose old path it was. A speech suffix only ever followed a
+  // current path, so only that is tried under one — an old round path plus
+  // `/analysis` would otherwise take the analysis lecture's own address.
+  const matches = (videos: VideoTuple[]): VideoRouteMatch | null => {
+    for (const { target, count } of readings) {
+      for (const build of count ? builders.slice(0, 1) : builders) {
+        const video = videos.find((v) => build(v as unknown as VideoType) === target);
+        if (video) return { video, suffix: count ? clean.slice(-count) : [] };
+      }
+    }
+    return null;
+  };
 
   // A season segment names the year its season ends, or is `archive` for a
   // video with no usable date, which a season filter cannot express.
@@ -894,9 +945,13 @@ export async function getVideoByRouteSegments(segments: string[]): Promise<Video
   // which need not be the season it is stored under. Its team names are in
   // the title, though, and so in the search text; the whole library is the
   // last resort, for a suffix word the title does not hold.
-  // The teams and any variant after them are the words that name the video.
-  const words = clean
-    .slice(clean.length > 3 ? 3 : -1)
+  // The teams and any variant after them are the words that name the video:
+  // read from the shortest reading (no speech words), less any format.
+  const shortest = readings[readings.length - 1];
+  const named = clean.slice(0, clean.length - shortest.count);
+  const unformatted = parseFormatSegment(named[1]) !== null ? [named[0], ...named.slice(2)] : named;
+  const words = unformatted
+    .slice(unformatted.length > 3 ? 3 : -1)
     .join("-")
     .split("-")
     .filter((word) => word && word !== "vs");

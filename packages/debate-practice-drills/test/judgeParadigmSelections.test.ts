@@ -7,7 +7,7 @@ import {
   listJudgeParadigmSelections,
   saveJudgeParadigmSelection,
 } from "../src/state/judgeParadigmSelections";
-import { buildCustomJudgeParadigm, judgeParadigms } from "@debate/speech-writer/src/judge/judge-paradigms";
+import { buildCustomJudgeParadigm, judgeParadigms } from "@debate-ai/speech-writer/src/judge/judge-paradigms";
 import type { JudgeParadigmSelection } from "../src/state/judgeParadigmSelections";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
@@ -29,7 +29,7 @@ class MemoryStorage {
 
 const ROUND_1_BUILTIN: JudgeParadigmSelection = {
   roundId: "round-1",
-  paradigm: judgeParadigms.flow,
+  paradigm: judgeParadigms.policymaker,
 };
 
 const ROUND_2_CUSTOM: JudgeParadigmSelection = {
@@ -52,6 +52,12 @@ describe("listJudgeParadigmSelections", () => {
   it("returns an empty list when the stored value is corrupt JSON", () => {
     localStorage.setItem("judgeParadigmSelections", "{not json");
     expect(listJudgeParadigmSelections()).toEqual([]);
+  });
+
+  it("resolves a selection saved under a retired paradigm id to its replacement", () => {
+    const retired = { ...judgeParadigms.policymaker, id: "lay", name: "Lay / Community Judge" };
+    localStorage.setItem("judgeParadigmSelections", JSON.stringify([{ roundId: "round-1", paradigm: retired }]));
+    expect(getJudgeParadigmSelection("round-1")?.paradigm).toEqual(judgeParadigms["common-sense"]);
   });
 
   it("returns an empty list when the stored value isn't an array", () => {

@@ -84,3 +84,25 @@ describe("SavedDataSection", () => {
     expect(host.textContent).toContain("Couldn't load your saved data")
   })
 })
+
+describe("SavedDataSection manage", () => {
+  it("lists a kind's items and deletes one after confirmation", async () => {
+    const fetchMock = vi.fn(async (url: string, init?: { method?: string }) => {
+      if (init?.method === "DELETE") return { ok: true, json: async () => ({ ok: true }) }
+      if (url === "/api/settings/saved-data/flows") {
+        return { ok: true, json: async () => ({ items: [{ id: 7, title: "NC case", updatedAt: "2024-01-01T00:00:00.000Z", href: null }] }) }
+      }
+      return { ok: true, json: async () => ({ total: 1, items: [{ key: "flows", label: "Flows", count: 1 }] }) }
+    })
+    vi.stubGlobal("fetch", fetchMock)
+    vi.stubGlobal("confirm", () => true)
+    const host = await mount()
+    const manage = [...host.querySelectorAll("button")].find((b) => b.textContent === "Manage")!
+    await act(async () => manage.click())
+    expect(host.textContent).toContain("NC case")
+    const del = [...host.querySelectorAll("button")].find((b) => b.textContent === "Delete")!
+    await act(async () => del.click())
+    expect(fetchMock).toHaveBeenCalledWith("/api/settings/saved-data/flows?id=7", { method: "DELETE" })
+    expect(host.textContent).not.toContain("NC case")
+  })
+})

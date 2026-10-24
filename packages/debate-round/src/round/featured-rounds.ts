@@ -19,7 +19,7 @@
  * @module round/featured-rounds
  */
 
-import { debateStyleMap, type DebateStyleKey } from "@debate/timer/src/formats/debate-format-times"
+import { debateStyleMap, type DebateStyleKey } from "@debate-ai/timer/src/formats/debate-format-times"
 import { newFlow } from "../utils/flow-utils"
 import type { Flow, Round } from "../types/flow"
 import { storedDocumentHtml, type StoredDocument } from "./stored-document-html"

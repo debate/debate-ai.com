@@ -8,7 +8,7 @@
 import { describe, it, expect } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createElement } from "react";
-import type { RankingEntry } from "@debate/rankings-adapter";
+import type { RankingEntry } from "@debate-ai/rankings-adapter";
 import { RankingsTable } from "../src/panels/leaderboard/RankingsTable";
 import { schoolRankingsFor, schoolRankOf, schoolRanksByName } from "../src/panels/leaderboard/leaderboardUtils";
 import { hasSchoolLogo } from "../src/lib/schoolLogos";

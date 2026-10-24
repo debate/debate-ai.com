@@ -7,7 +7,7 @@ title: "Emails"
 Transactional email templates, written with React Email, rendered on the
 Worker and sent through Resend.
 
-- **Package:** `packages/debate-emails` (`@debate/emails`)
+- **Package:** `packages/debate-emails` (`@debate-ai/emails`)
 - **Admin previews:** `/admin#emails` →
   `packages/debate-webview/src/components/admin/users/EmailsPanel.tsx` →
   `GET/POST /api/admin/emails` (admins only)
@@ -24,11 +24,11 @@ src/templates/*.tsx           one component per email, each with PreviewProps
 
 Route handlers run in the Worker's **rsc** environment, where React is its
 react-server build and `react-dom/server` throws on import. So the app never
-renders from `@debate/emails` directly: `apps/debate-web/lib/emails/render.ts`
+renders from `@debate-ai/emails` directly: `apps/debate-web/lib/emails/render.ts`
 loads `lib/emails/ssr-entry.ts` into the **ssr** environment with
 `import.meta.viteRsc.import(…, { environment: "ssr" })` and renders there.
 `lib/emails/__tests__/render-boundary.test.ts` fails if a route or server
-library imports a renderer from `@debate/emails` again.
+library imports a renderer from `@debate-ai/emails` again.
 
 Senders call `renderEmail` (from `@/lib/emails/render`) with the request origin as `baseUrl`, then pass
 `subject`, `html` and `text` to `resend.emails.send`:
@@ -42,7 +42,7 @@ Without `RESEND_API_KEY` (or `AUTH_RESEND_KEY`) both routes log instead of
 sending, as before. `POST /api/admin/emails` refuses with 503.
 
 Links and the logo are absolute (`siteUrl(baseUrl, path)`). The logo is
-`/logo.png`, which the app serves from `@debate/icons/brand` via
+`/logo.png`, which the app serves from `@debate-ai/icons/brand` via
 `ROOT_ASSETS` in `apps/debate-web/vite.config.ts`.
 
 ## Known gaps

@@ -12,12 +12,12 @@ import {
   type CaptionCue,
   type VideoDocument,
   type VideoDocumentKind,
-} from "@debate/videos";
-import { formatCount } from "@debate/videos/lib/format-count";
-import { Button } from "@debate/webview/lib/ui/primitives/button";
-import { Badge } from "@debate/webview/lib/ui/primitives/badge";
-import { Input } from "@debate/webview/lib/ui/primitives/input";
-import { Label } from "@debate/webview/lib/ui/primitives/label";
+} from "@debate-ai/videos";
+import { formatCount } from "@debate-ai/videos/lib/format-count";
+import { Button } from "@debate-ai/webview/lib/ui/primitives/button";
+import { Badge } from "@debate-ai/webview/lib/ui/primitives/badge";
+import { Input } from "@debate-ai/webview/lib/ui/primitives/input";
+import { Label } from "@debate-ai/webview/lib/ui/primitives/label";
 import {
   Dialog,
   DialogContent,
@@ -25,14 +25,14 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@debate/webview/lib/ui/primitives/dialog";
+} from "@debate-ai/webview/lib/ui/primitives/dialog";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@debate/webview/lib/ui/primitives/select";
+} from "@debate-ai/webview/lib/ui/primitives/select";
 
 /**
  * The editor for everything that sits *beside* a video: its long-form

@@ -9,14 +9,14 @@ import {
   parseMyRankedTeams,
   serializeMyRankedTeams,
   type MyRankedTeams,
-} from "@debate/videos/src/lib/my-ranked-teams/my-ranked-teams"
+} from "@debate-ai/videos/src/lib/my-ranked-teams/my-ranked-teams"
 import {
   mergeFlowEditorSettings,
   normalizeFlowEditorSettingsPatch,
   parseFlowEditorSettings,
   serializeFlowEditorSettings,
   type FlowEditorAccountSettingsPayload,
-} from "@debate/flow-ebb/account-settings"
+} from "@debate-ai/flow-ebb/account-settings"
 import {
   applyFavoriteToolOp,
   applyOutlineFilterPresetOp,
@@ -55,7 +55,7 @@ import {
   type OutlineFilterPreset,
   type ThemeMode,
   type UserSettingsPayload,
-} from "@debate/round"
+} from "@debate-ai/round"
 import {
   applyNewsLikedOp,
   applyNewsReadOp,
@@ -76,7 +76,7 @@ import {
   serializeNewsIdList,
   serializeQuestStreakSync,
   type QuestStreakSyncPayload,
-} from "@debate/community"
+} from "@debate-ai/community"
 import {
   DEFAULT_BRAINSTORM_SESSION_TIMER_SYNC,
   DEFAULT_RESEARCH_PROGRESS_GOAL_SYNC,
@@ -88,7 +88,7 @@ import {
   serializeResearchProgressGoal,
   type BrainstormSessionTimerSyncPayload,
   type ResearchProgressGoalSyncPayload,
-} from "@debate/team-collaboration"
+} from "@debate-ai/team-collaboration"
 import {
   applySavedArgumentCollectionOp,
   buildSavedArgumentCollectionFailureMessage,
@@ -98,29 +98,29 @@ import {
   parseSavedArgumentCollections,
   serializeSavedArgumentCollections,
   type SavedArgumentCollection,
-} from "@debate/research-evidence"
+} from "@debate-ai/research-evidence"
 import {
   mergeEditorPreferences,
   normalizeEditorPreferencesPatch,
   parseEditorPreferences,
   serializeEditorPreferences,
   type EditorPreferencesPayload,
-} from "@debate/webview/lib/editor-preferences"
-import { applyRecentToolOp, normalizeRecentToolOpPatch, parseRecentTools, serializeRecentTools } from "@debate/webview/lib/recentTools"
+} from "@debate-ai/webview/lib/editor-preferences"
+import { applyRecentToolOp, normalizeRecentToolOpPatch, parseRecentTools, serializeRecentTools } from "@debate-ai/webview/lib/recentTools"
 import {
   DEFAULT_QUALIFICATION_POINTS_TABLE_SYNC,
   normalizeQualificationPointsTablePatch,
   parseQualificationPointsTable,
   serializeQualificationPointsTable,
-} from "@debate/data-sync/src/state/qualificationPointsTable"
+} from "@debate-ai/data-sync/src/state/qualificationPointsTable"
 import {
   DEFAULT_QUALIFICATION_CUTOFF_SYNC,
   normalizeQualificationCutoffPatch,
   parseQualificationCutoff,
   serializeQualificationCutoff,
   type QualificationCutoffSettings,
-} from "@debate/data-sync/src/state/qualificationCutoff"
-import type { QualificationPointsTable } from "@debate/data-sync/src/rankings/ndca-standings"
+} from "@debate-ai/data-sync/src/state/qualificationCutoff"
+import type { QualificationPointsTable } from "@debate-ai/data-sync/src/rankings/ndca-standings"
 
 /**
  * Account-linked app preferences — TODO.md idea #17 ("User Settings —

@@ -1,6 +1,6 @@
 /**
  * Which detected URLs the admin URL Detection tab offers to open in reader
- * mode (`SourceArticlePanel` from `@debate/research-evidence`).
+ * mode (`SourceArticlePanel` from `@debate-ai/research-evidence`).
  *
  * `detected_urls` does not record whether a page was an article, so this goes
  * by the URL alone: a web page with a path, minus the kinds of page that never

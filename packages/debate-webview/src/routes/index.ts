@@ -34,10 +34,12 @@ export interface AppRoute {
 }
 
 export const PAGE_ROUTES: AppRoute[] = [
+  { pattern: "/about", load: () => import("./about/page") },
   { pattern: "/annotations", load: () => import("./annotations/page") },
   { pattern: "/auth/extension-complete", load: () => import("./auth/extension-complete/page") },
   { pattern: "/auth/native-callback", load: () => import("./auth/native-callback/page") },
   { pattern: "/auth/native-complete", load: () => import("./auth/native-complete/page") },
+  { pattern: "/auth/qwksearch-extension-complete", load: () => import("./auth/qwksearch-extension-complete/page") },
   { pattern: "/practice/briefings", load: () => import("./briefings/page") },
   { pattern: "/research/cards", load: () => import("./cards/page"), layout: () => import("./cards/layout") },
   { pattern: "/research/cards/argument-library", load: () => import("./cards/argument-library/page"), layout: () => import("./cards/layout") },
@@ -138,6 +140,7 @@ export const CLIENT_ROUTES: AppRoute[] = [
   { pattern: "/videos/[category]/[event]/[matchup]", load: () => import("./_client/VideoWatchRoute") },
   { pattern: "/videos/[category]/[event]/[matchup]/[teams]", load: () => import("./_client/VideoWatchRoute") },
   { pattern: "/videos/[category]/[event]/[matchup]/[teams]/[variant]", load: () => import("./_client/VideoWatchRoute") },
+  { pattern: "/videos/[category]/[event]/[matchup]/[teams]/[variant]/[...rest]", load: () => import("./_client/VideoWatchRoute") },
 ]
 
 export const APP_ROUTES: AppRoute[] = [...PAGE_ROUTES, ...CLIENT_ROUTES]

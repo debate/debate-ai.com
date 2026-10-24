@@ -6,4 +6,4 @@ export const metadata: Metadata = {
     "Pre-round briefings, scout-to-strategy, opponent team profiles, judge profiles, prep notes, practice partners and practice drills on one page",
 }
 
-export { default } from "@debate/webview/routes/prep/page"
+export { default } from "@debate-ai/webview/routes/prep/page"

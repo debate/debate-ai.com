@@ -18,8 +18,8 @@
  */
 
 import { Suspense } from "react"
-import { DebatePracticeVsAi } from "@debate/practice-vs-ai"
-import { PracticeRoundSimulatorPanel, TeamMatchupSimulatorPanel } from "@debate/practice-rounds"
+import { DebatePracticeVsAi } from "@debate-ai/practice-vs-ai"
+import { PracticeRoundSimulatorPanel, TeamMatchupSimulatorPanel } from "@debate-ai/practice-rounds"
 
 export interface PracticeVsAiSectionsProps {
   userId?: string

@@ -22,7 +22,7 @@ function entry(overrides: Partial<RankingEntry>): RankingEntry {
   return { rank: 1, school: "", name: "", ...overrides } as RankingEntry;
 }
 
-describe("@debate/rankings-adapter", () => {
+describe("@debate-ai/rankings-adapter", () => {
   it("lists the submodule's datasets", () => {
     expect(RANKING_DATASETS.map((dataset) => dataset.id)).toContain("hspf");
     expect(getRankingDatasetInfo("cpd")?.label).toBe("College Policy");

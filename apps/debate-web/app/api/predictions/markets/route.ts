@@ -12,7 +12,7 @@ import {
   insertMarket,
   listEventEntries,
 } from "@/lib/predictions/queries";
-import { findRatedTeam } from "@debate/webview/lib/predictions/ratings";
+import { findRatedTeam } from "@debate-ai/webview/lib/predictions/ratings";
 import {
   MAX_OPEN_MARKETS_PER_CREATOR,
   MAX_OUTCOMES,
@@ -21,7 +21,7 @@ import {
   parseNewMarket,
   type MarketOutcome,
   type MarketSource,
-} from "@debate/predictions";
+} from "@debate-ai/predictions";
 
 /**
  * Opens a prediction market.

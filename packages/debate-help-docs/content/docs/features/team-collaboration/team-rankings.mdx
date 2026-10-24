@@ -206,7 +206,7 @@ one of them, its schools in the round's format are listed first in the
 the tournament instead of its ranked teams. Badges stay hidden for formats
 without rankings and for schools with no teams. The lookups live in
 `debate-round`'s `round/school-teams.ts` and `round/tournament-field.ts`; the
-tournament data is read through `@debate/tournaments/client` from the app's
+tournament data is read through `@debate-ai/tournaments/client` from the app's
 `/api/tabroom-beta` proxy.
 
 ## Matchup simulator
@@ -270,7 +270,7 @@ It appears in two places:
   the profile's team. On your own profile, or with no team set, the profile's
   team is locked in as side A and any other ranked team can be its opponent.
 
-The math lives in `@debate/rankings-adapter`: `match-simulation.ts` (Glicko-2)
+The math lives in `@debate-ai/rankings-adapter`: `match-simulation.ts` (Glicko-2)
 and `matchup-model.ts` (blending, side terms, recommendations). The UI is
 `debate-videos`' `MatchupSimulator`, composed on the practice page by
 `debate-practice-rounds`' `TeamMatchupSimulatorPanel`. The setting is

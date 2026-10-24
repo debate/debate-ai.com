@@ -23,10 +23,10 @@ import {
   sanitizeParadigmHtml,
   searchTabroomParadigms,
   type TabroomCredentials,
-} from "@debate/tournaments/server";
-import type { JudgeProfile, JudgeRecordRow } from "@debate/tournaments/ui";
-import { searchParadigm } from "@debate/webview/lib/tournaments/paradigm-search";
-import { renderParadigmMarkdown } from "@debate/webview/lib/judge-paradigms/markdown";
+} from "@debate-ai/tournaments/server";
+import type { JudgeProfile, JudgeRecordRow } from "@debate-ai/tournaments/ui";
+import { searchParadigm } from "@debate-ai/webview/lib/tournaments/paradigm-search";
+import { renderParadigmMarkdown } from "@debate-ai/webview/lib/judge-paradigms/markdown";
 import {
   PARADIGM_REFRESH_MS,
   nameKey,
@@ -36,7 +36,7 @@ import {
   type ParadigmClaim,
   type ParadigmSyncBatch,
   type ParadigmSyncStatus,
-} from "@debate/webview/lib/judge-paradigms/types";
+} from "@debate-ai/webview/lib/judge-paradigms/types";
 import { tabroomCredentials, tabroomFetch } from "./tabroom";
 import type { getDBFromContext } from "@/lib/database/context";
 import { judgeOwnParadigms, judgeParadigmSync, judgeParadigms, user, type JudgeParadigmRow } from "@/lib/database/schema";

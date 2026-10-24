@@ -24,7 +24,7 @@ vi.mock("../src/round/drill-sets-client", () => ({
   listSavedDrillSets: () => (listOverride.current ? listOverride.current() : client.listSavedDrillSets()),
 }));
 const community = vi.hoisted(() => ({ recordDebaterActivity: vi.fn() }));
-vi.mock("@debate/community", () => community);
+vi.mock("@debate-ai/community", () => community);
 
 const DRILLS: DrillSetRecord["drills"] = [
   { kind: "overview", rowIndex: null, prompt: "Write an overview.", difficulty: "medium" },

@@ -7,7 +7,7 @@
  * entry's event — Public Forum entries are only looked up in the PF
  * rankings, and so on — and returns a row only when exactly one entry is a
  * confident match, so a tournament page never shows the wrong team's rating.
- * @module @debate/rankings-adapter/tournament-lookup
+ * @module @debate-ai/rankings-adapter/tournament-lookup
  */
 
 import { entryInitials, parseTeamLabel, schoolMatchScore } from "./team-lookup";

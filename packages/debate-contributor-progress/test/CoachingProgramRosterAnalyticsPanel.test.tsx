@@ -11,11 +11,11 @@ import { createElement, type FC } from "react";
 
 import { CoachingProgramRosterAnalyticsPanel } from "../src/panels/CoachingProgramRosterAnalyticsPanel";
 import { saveDailyMissionResult } from "../src/state/dailyMissionResults";
-import { saveCoachingProgram } from "@debate/team-collaboration/src/state/coachingPrograms";
-import { saveGroupChallenge } from "@debate/team-collaboration/src/state/groupChallenges";
-import { recordChallengeWinEvent } from "@debate/team-collaboration/src/state/challengeWinEvents";
-import { saveSprintNote } from "@debate/team-collaboration/src/state/sprintNotes";
-import type { GroupChallenge } from "@debate/team-collaboration/src/lib/group-challenges";
+import { saveCoachingProgram } from "@debate-ai/team-collaboration/src/state/coachingPrograms";
+import { saveGroupChallenge } from "@debate-ai/team-collaboration/src/state/groupChallenges";
+import { recordChallengeWinEvent } from "@debate-ai/team-collaboration/src/state/challengeWinEvents";
+import { saveSprintNote } from "@debate-ai/team-collaboration/src/state/sprintNotes";
+import type { GroupChallenge } from "@debate-ai/team-collaboration/src/lib/group-challenges";
 import { flush, mount, query, type } from "./helpers/mount";
 import type { Mounted } from "./helpers/mount";
 

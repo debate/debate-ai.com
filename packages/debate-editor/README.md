@@ -17,9 +17,7 @@
 
 # debate-editor
 
-Debate Editor, the debate-card editor embedded in debate-ai.com. It is built on
-[CardMirror](https://github.com/ant981228/cardmirror) by Anthony Trufanov (see
-[THIRD-PARTY-NOTICES.md](../../THIRD-PARTY-NOTICES.md)). The package exposes the
+Debate Editor, the debate-card editor embedded in debate-ai.com. The package exposes the
 ProseMirror engine, Verbatim `.docx` interop helpers, and React editor shell used by the
 site's speech-doc and reason-editor surfaces.
 
@@ -222,11 +220,11 @@ debate-ai.com's changes to it, in two forms:
   (`editor/chrome-host.ts`, `editor/host-plugins.ts`, `editor/settings-tabs.ts`, the
   learn / quick-card sync clients, …), and `web-docx.ts` — the `importDocx` /
   `exportDocxBlob` / `outlineOf` / `cardsOf` helpers merged in from the former
-  `debate-editor-cm-adapter` package and exported from `@debate/editor/engine`.
+  `debate-editor-cm-adapter` package and exported from `@debate-ai/editor/engine`.
 
 The toolbar is upstream's: one strip of every panel, not paged into tabs or split into
 sections, with the dropdown `MenuBar` above it. Debate Editor's settings categories are
-exported for host pages (`@debate/editor/settings-tabs`, `@debate/editor/settings-section`)
+exported for host pages (`@debate-ai/editor/settings-tabs`, `@debate-ai/editor/settings-section`)
 and listed in the site's Settings sidebars.
 
 `scripts/sync-upstream.mjs` assembles upstream's `src/` at the commit in `upstream.json`,

@@ -14,8 +14,8 @@ const m = vi.hoisted(() => ({
   grab: vi.fn(),
 }));
 
-vi.mock("@debate/rankings-adapter", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("@debate/rankings-adapter")>()),
+vi.mock("@debate-ai/rankings-adapter", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@debate-ai/rankings-adapter")>()),
   loadRankingDataset: m.loadRankingDataset,
 }));
 vi.mock("grab-url", () => ({ default: m.grab }));

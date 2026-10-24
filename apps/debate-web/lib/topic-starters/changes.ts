@@ -6,7 +6,7 @@
  * stored in `topic_starter_changes` and applied — by the same
  * {@link applyTopicStarterChange} — only when a moderator approves it from the
  * admin panel. The change shapes and their validation live in
- * `@debate/webview/lib/topic-starters/changes`, shared with the client.
+ * `@debate-ai/webview/lib/topic-starters/changes`, shared with the client.
  *
  * `topic_starter_changes` is created here on first use: the app has no
  * tracked migrations (see `lib/database/ensure-columns.ts`), so
@@ -26,8 +26,8 @@ import {
   type TopicStarterChangeRow,
   type TopicStarterChangeStatus,
   type TopicTreeRow,
-} from "@debate/webview/lib/topic-starters/changes";
-import { normalizeFormat } from "@debate/webview/lib/debate-editor/format";
+} from "@debate-ai/webview/lib/topic-starters/changes";
+import { normalizeFormat } from "@debate-ai/webview/lib/debate-editor/format";
 import type { getDBFromContext } from "@/lib/database/context";
 import { ensureTableColumns } from "@/lib/database/ensure-columns";
 import { notifications, staffRoles, topicStarterChanges, topicStarterItems, user } from "@/lib/database/schema";

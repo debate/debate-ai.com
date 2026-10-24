@@ -1,6 +1,6 @@
 # debate-types
 
-Every shared Debate AI type in one place, published to npm as **`@debate/types`**.
+Every shared Debate AI type in one place, published to npm as **`@debate-ai/types`**.
 Each object and each field has a doc comment, so hovering one in your editor shows
 what it means — no jumping to the owning package to find out.
 
@@ -10,15 +10,15 @@ types from here, so existing imports keep working.
 
 ## Using it
 
-Add it as a workspace dependency (or `bun add @debate/types` outside this repo), then import from it:
+Add it as a workspace dependency (or `bun add @debate-ai/types` outside this repo), then import from it:
 
 ```jsonc
 // package.json
-"dependencies": { "@debate/types": "workspace:*" }
+"dependencies": { "@debate-ai/types": "workspace:*" }
 ```
 
 ```ts
-import type { Round, Card, PredictionMarket } from "@debate/types"
+import type { Round, Card, PredictionMarket } from "@debate-ai/types"
 ```
 
 Use `import type` / `export type` so nothing is emitted — there is no runtime
@@ -50,9 +50,9 @@ functions (`generateRoundTitle`, `isRole`, `cellKey`, …) stay in their owning 
    `src/index.d.ts`). Keep the file declarations-only.
 2. Give the type and **every field** a `/** … */` comment. `bun run test` fails if an
    exported type or interface field has none (`test/docs.test.ts`).
-3. In the owning package, `export type { … } from "@debate/types"` instead of declaring it, so
+3. In the owning package, `export type { … } from "@debate-ai/types"` instead of declaring it, so
    existing imports of that package keep resolving.
-4. Add `"@debate/types": "workspace:*"` to that package's dependencies.
+4. Add `"@debate-ai/types": "workspace:*"` to that package's dependencies.
 
 Names must be unique across the whole package (the barrel is flat). `videos.d.ts` calls
 its style union `VideoDebateStyle` for that reason — `debate-videos` re-exports it under

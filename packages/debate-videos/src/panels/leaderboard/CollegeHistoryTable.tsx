@@ -17,7 +17,7 @@ import {
   loadCollegeHistory,
   type CollegeHistoryEntry,
   type CollegeSeasonStats,
-} from "@debate/rankings-adapter"
+} from "@debate-ai/rankings-adapter"
 import {
   Table,
   TableBody,

@@ -2,12 +2,16 @@
  * @fileoverview The canonical address of a video.
  *
  * A tagged debate round lives at
- * `/videos/<season>/<tournament>/<round>/<aff>-<neg>`, e.g.
- * `/videos/21-22/ndt/finals/dartmouth-sv-michigan-pr`, and a video made from
- * that round — its analysis, one part of a split upload — one segment below
- * it: `/videos/21-22/ndt/finals/dartmouth-sv-michigan-pr/analysis`. Everything
- * else — a lecture, or a round nobody has tagged with a round and a team yet —
- * lives at `/videos/<season>/<event>/<matchup>`.
+ * `/videos/<season>/<format>/<tournament>/<round>/<aff>-<neg>`, e.g.
+ * `/videos/21-22/cpd/ndt/finals/dartmouth-sv-michigan-pr`, and a video made
+ * from that round — its analysis, one part of a split upload — one segment
+ * below it. Everything else — a lecture, or a round nobody has tagged with a
+ * round and a team yet — lives at `/videos/<season>/<event>/<matchup>`, where
+ * a video with a debate format spells the event as `<format>/<tournament>`
+ * (or the format alone). See {@link formatSegment} for the format words.
+ *
+ * Paths from before the format segment are rebuilt with `withFormat: false`
+ * on every builder, so links shared then still resolve and redirect.
  *
  * The season is spelled as the two years it spans, `21-22`, because a season
  * runs from summer to summer and a bare `2022` could mean either half. Paths
@@ -23,11 +27,11 @@
  * @module lib/video-route
  */
 
-import { formatSeasonLabel } from "@debate/data-sync/src/videos/video-rows";
+import { formatSeasonLabel } from "@debate-ai/data-sync/src/videos/video-rows";
 import { slugifyVideoTitle } from "./video-slug";
 import type { DebateStyle, VideoType } from "../types/videos";
 
-/** URL word for each numeric debate style. */
+/** URL word for each numeric debate style, as paths before the format segment spelled it. */
 const STYLE_SLUGS: Record<DebateStyle, string> = {
   1: "policy",
   2: "pf",
@@ -37,6 +41,37 @@ const STYLE_SLUGS: Record<DebateStyle, string> = {
   6: "acc",
   7: "misc",
 };
+
+/**
+ * The format segment's word for each numeric debate style: the division names
+ * debaters use (`vcx` for high school policy, as the `vcs` topic codes have
+ * it; `cpd` for college policy).
+ */
+export const FORMAT_SEGMENTS: Record<DebateStyle, string> = {
+  1: "vcx",
+  2: "pf",
+  3: "ld",
+  4: "cpd",
+  5: "wsd",
+  6: "acc",
+  7: "misc",
+};
+
+/** The debate style a format segment names, or `null` when it names none. */
+export function parseFormatSegment(segment: string | null | undefined): DebateStyle | null {
+  const word = (segment ?? "").trim().toLowerCase();
+  const entry = Object.entries(FORMAT_SEGMENTS).find(([, value]) => value === word);
+  return entry ? (Number(entry[0]) as DebateStyle) : null;
+}
+
+/**
+ * The format segment, e.g. `"ld"`, for a video filed under a numeric debate
+ * style; `null` for a lecture (whose style slot holds a category) or a video
+ * with no style.
+ */
+export function formatSegment(parts: VideoRouteParts): string | null {
+  return typeof parts.style === "number" ? (FORMAT_SEGMENTS[parts.style as DebateStyle] ?? null) : null;
+}
 
 /** Season segment for a video whose publish date cannot be parsed. */
 export const ARCHIVE_SEASON_SEGMENT = "archive";
@@ -112,9 +147,12 @@ export interface VideoRouteParts {
 export interface VideoRouteSegments {
   /** Season, e.g. `"05-06"`, or {@link ARCHIVE_SEASON_SEGMENT}. */
   season: string;
+  /** The debate format (`"cpd"`, `"ld"`), when the video has one. See {@link formatSegment}. */
+  format?: string;
   /**
-   * The tournament for a round (`"ndt"`), else format and tournament or a
-   * lecture category (`"college-ndt"`, `"critique-critical-theory"`).
+   * The tournament (`"ndt"`); without a format, format and tournament or a
+   * lecture category (`"college-ndt"`, `"critique-critical-theory"`). Empty
+   * when the format alone files the video.
    */
   event: string;
   /**
@@ -392,6 +430,7 @@ function categoryVariant(style: VideoRouteParts["style"]): string | null {
 /** The pieces a round's segments are built from, before they are spelled. */
 interface RoundRoute {
   season: string;
+  format: string | null;
   event: string;
   round: string;
   parts: VideoRouteParts;
@@ -401,7 +440,11 @@ interface RoundRoute {
 }
 
 /** Reads a video as a round, from its tags or failing that its title. */
-function roundRoute(parts: VideoRouteParts, spelling: SeasonSpelling = "season"): RoundRoute | null {
+function roundRoute(
+  parts: VideoRouteParts,
+  spelling: SeasonSpelling = "season",
+  withFormat = true,
+): RoundRoute | null {
   const round = slugifyVideoTitle(parts.roundLevel ?? "");
   const part = titlePart(parts.title);
 
@@ -409,9 +452,11 @@ function roundRoute(parts: VideoRouteParts, spelling: SeasonSpelling = "season")
     const tournament = parts.tournament
       ? slugifyVideoTitle(withoutAnyTournamentYear(parts.tournament))
       : "";
+    const format = withFormat ? formatSegment(parts) : null;
     return {
       season: seasonSegment(parts, spelling),
-      event: tournament || eventSegment(parts),
+      format,
+      event: format ? tournament : tournament || eventSegment(parts),
       round,
       parts,
       category: null,
@@ -425,6 +470,7 @@ function roundRoute(parts: VideoRouteParts, spelling: SeasonSpelling = "season")
     season: spelling === "year" ? fromTitle.season : formatSeasonLabel(Number(fromTitle.season)),
     event: slugifyVideoTitle(fromTitle.tournament),
     round: slugifyVideoTitle(fromTitle.round),
+    format: withFormat ? formatSegment(parts) : null,
     parts: { ...parts, affTeam: fromTitle.affTeam, negTeam: fromTitle.negTeam },
     category: categoryVariant(parts.style),
     part,
@@ -443,13 +489,29 @@ function roundRoute(parts: VideoRouteParts, spelling: SeasonSpelling = "season")
  * A video that is not the round itself gets a fifth, `variant` segment so it
  * does not take the round's address: a lecture read as a round carries its
  * category (`analysis`), a round uploaded in pieces its part (`part-2`).
+ *
+ * A video with a numeric debate style gets its {@link formatSegment} after
+ * the season, and its tournament (if any) in the event segment.
+ *
+ * @param withFormat - `false` rebuilds the path as it was before the format
+ *   segment, so links from then still resolve.
  */
 export function videoRouteSegments(
   parts: VideoRouteParts,
   spelling: SeasonSpelling = "season",
+  withFormat = true,
 ): VideoRouteSegments {
-  const round = roundRoute(parts, spelling);
+  const round = roundRoute(parts, spelling, withFormat);
   if (!round) {
+    const format = withFormat ? formatSegment(parts) : null;
+    if (format) {
+      return {
+        season: seasonSegment(parts, spelling),
+        format,
+        event: parts.tournament ? slugifyVideoTitle(withoutTournamentYear(parts.tournament)) : "",
+        matchup: matchupSegment(parts),
+      };
+    }
     return {
       season: seasonSegment(parts, spelling),
       event: eventSegment(parts),
@@ -460,6 +522,7 @@ export function videoRouteSegments(
   const variant = joinSlugs(round.category, round.part && `part ${round.part}`);
   return {
     season: round.season,
+    ...(round.format ? { format: round.format } : {}),
     event: round.event,
     matchup: round.round,
     teams: teamsSegment(round.parts),
@@ -468,23 +531,26 @@ export function videoRouteSegments(
 }
 
 /** Joins route segments into a `/videos/...` path. */
-function hrefFromSegments({ season, event, matchup, teams, variant }: VideoRouteSegments): string {
-  return ["/videos", season, event, matchup, teams, variant].filter(Boolean).join("/");
+function hrefFromSegments({ season, format, event, matchup, teams, variant }: VideoRouteSegments): string {
+  return ["/videos", season, format, event, matchup, teams, variant].filter(Boolean).join("/");
 }
 
 /**
  * Builds a video's canonical path.
  *
  * @param video - The video, as a tuple or as named parts.
- * @returns e.g. `/videos/21-22/ndt/finals/dartmouth-sv-michigan-pr`, or
+ * @param withFormat - `false` builds the path as it was before the format
+ *   segment; see {@link videoRouteSegments}.
+ * @returns e.g. `/videos/21-22/cpd/ndt/finals/dartmouth-sv-michigan-pr`, or
  *   `/videos/19-20/critique-critical-theory/how-to-give-a-2nr` for a lecture.
  */
 export function videoRouteHref(
   video: VideoType | VideoRouteParts,
   spelling: SeasonSpelling = "season",
+  withFormat = true,
 ): string {
   const parts = Array.isArray(video) ? videoRouteParts(video) : video;
-  return hrefFromSegments(videoRouteSegments(parts, spelling));
+  return hrefFromSegments(videoRouteSegments(parts, spelling, withFormat));
 }
 
 /**
@@ -538,7 +604,7 @@ export function previousVideoRouteHref(
   spelling: SeasonSpelling = "season",
 ): string | null {
   const parts = Array.isArray(video) ? videoRouteParts(video) : video;
-  const round = roundRoute(parts, spelling);
+  const round = roundRoute(parts, spelling, false);
   if (!round) return null;
   const teams = [
     teamsSegmentWithVs(round.parts),
@@ -580,6 +646,7 @@ export function isCanonicalVideoRoute(
   const same = (a: string | undefined, b: string) => (a ?? "").toLowerCase() === b.toLowerCase();
   return (
     same(requested.season, canonical.season) &&
+    same(requested.format, canonical.format ?? "") &&
     same(requested.event, canonical.event) &&
     same(requested.matchup, canonical.matchup) &&
     same(requested.teams, canonical.teams ?? "") &&

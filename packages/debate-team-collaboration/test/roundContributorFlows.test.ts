@@ -9,8 +9,8 @@ import {
   saveRoundContributorFlow,
 } from "../src/state/roundContributorFlows";
 import type { RoundContributorFlowRecord } from "../src/state/roundContributorFlows";
-import { savePracticeRound, type PracticeRoundRecord } from "@debate/round/src/state/practiceRounds";
-import { buildPracticeRoundSetup } from "@debate/round/src/round/practice-round-simulator";
+import { savePracticeRound, type PracticeRoundRecord } from "@debate-ai/round/src/state/practiceRounds";
+import { buildPracticeRoundSetup } from "@debate-ai/round/src/round/practice-round-simulator";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {
@@ -144,7 +144,7 @@ describe("buildCoachingProgramMemberFlows", () => {
 });
 
 describe("buildCoachingProgramMemberPracticeRounds", () => {
-  const SETUP = buildPracticeRoundSetup({ styleKey: "lincolnDouglas", judgeParadigm: "lay" });
+  const SETUP = buildPracticeRoundSetup({ styleKey: "lincolnDouglas", judgeParadigm: "common-sense" });
 
   it("joins a roster member's recorded roundId to its persisted PracticeRoundRecord", () => {
     saveRoundContributorFlow(ALICE);

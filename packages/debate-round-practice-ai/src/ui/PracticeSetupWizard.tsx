@@ -19,8 +19,8 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { Button } from "@debate/speech-writer/src/ui/primitives/button"
-import { Input } from "@debate/speech-writer/src/ui/primitives/input"
+import { Button } from "@debate-ai/speech-writer/src/ui/primitives/button"
+import { Input } from "@debate-ai/speech-writer/src/ui/primitives/input"
 import type { CaseBrief, PrepCard, PrepCaseDocument } from "../backend/case-prep"
 import { createDebate, findPrepEvidence, prepareCase } from "../client"
 import type { StartedDebate } from "./BotSelection"

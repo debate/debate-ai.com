@@ -3,7 +3,7 @@
  * settings, reused by the article panel so the extension never asks for a key
  * of its own.
  *
- * The app keeps that key in `localStorage` (`@debate/webview`'s
+ * The app keeps that key in `localStorage` (`@debate-ai/webview`'s
  * `lib/ai/own-ai-key.ts`). The Options page *is* the app, so a key saved there
  * lands in the extension origin's `localStorage` — but the panel is framed
  * into other sites, where that storage can be partitioned away from it. So the
@@ -18,7 +18,7 @@ import {
   parseOwnAiKey,
   subscribeOwnAiKey,
   type OwnAiKey,
-} from '@debate/webview/lib/ai/own-ai-key';
+} from '@debate-ai/webview/lib/ai/own-ai-key';
 
 const STORAGE_KEY = 'appOwnAiKey';
 

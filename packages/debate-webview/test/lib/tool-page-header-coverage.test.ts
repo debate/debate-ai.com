@@ -29,7 +29,7 @@ import { ALL_TOOLS } from "../../src/routes/tools/tool-groups"
  *   their own bespoke chrome, not a standalone-tool page in
  *   `ToolPageHeader`'s sense.
  * - `/coaching/laptopless` is a companion guide page bundled under the
- *   Mobile Setup group (see `tool-catalog-consistency.test.ts`'s
+ *   Community group (see `tool-catalog-consistency.test.ts`'s
  *   `FEATURES_EXCLUDE_FROM_TOOLS`), not a tool with its own workspace.
  */
 const TOOLS_WITHOUT_TOOL_PAGE_HEADER = new Set(["/reason-editor", "/research/docs", "/coaching/laptopless"])
@@ -40,7 +40,7 @@ const APP_DIR = join(PACKAGE_ROOT, "..", "..", "apps", "debate-web", "app")
 
 /**
  * The app's `page.tsx` for `href` — or, when that page only re-exports a
- * `@debate/webview/routes/…` module, as most do, that module's source. A route
+ * `@debate-ai/webview/routes/…` module, as most do, that module's source. A route
  * with no `app/` page (served from the `routes/index.ts` registry instead)
  * reads its `routes/<href>/page.tsx` directly. A `?section=` query (a tab of
  * a tabbed page) is ignored: the page is the path's.

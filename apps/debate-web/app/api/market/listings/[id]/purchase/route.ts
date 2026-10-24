@@ -10,7 +10,7 @@ import {
   PurchaseRefused,
   purchaseListing,
 } from "@/lib/market/queries";
-import type { PurchaseResult } from "@debate/file-market";
+import type { PurchaseResult } from "@debate-ai/file-market";
 
 /**
  * Buys a file.

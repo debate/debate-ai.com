@@ -42,7 +42,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import { BookOpen, Clock, CornerDownLeft, FileText, GraduationCap, LayoutGrid, PlayCircle, Rss, SearchX, Settings as SettingsIcon, Star } from "lucide-react"
-import { playUISoundEffect } from "@debate/timer"
+import { playUISoundEffect } from "@debate-ai/timer"
 
 import {
   CommandDialog,

@@ -44,8 +44,8 @@ A searchable sidebar in three blocks:
   `?category=general` opens it), **Files**, **Appearance**, **Accessibility**,
   **Editing**, **Keyboard**, **Comments & AI** and **Collaboration** — from
   `debate-editor`'s exported tab list (`DEBATE_EDITOR_SETTINGS_TABS`,
-  `@debate/editor/settings-tabs`) and rendered by its
-  `DebateEditorSettingsSection` (`@debate/editor/settings-section`), which wraps
+  `@debate-ai/editor/settings-tabs`) and rendered by its
+  `DebateEditorSettingsSection` (`@debate-ai/editor/settings-section`), which wraps
   `buildEmbeddedSettingsPanel`, so each tab is the same rows the editor's
   gear-icon modal renders under it, minus the dialog chrome.
 - Under a **Research agent** heading: the research agent's sections.
@@ -258,7 +258,7 @@ localStorage.
 The "Welcome to Debate AI" dialog of key links appears the first time an
 account signs in, and never again on any device. Showing it records
 `user_settings.welcome_dismissed_at` through `GET`/`POST
-/api/settings/welcome` (`FirstLoginWelcomeProvider` in `@debate/webview`,
+/api/settings/welcome` (`FirstLoginWelcomeProvider` in `@debate-ai/webview`,
 helpers in `lib/first-login-welcome.ts`). A `localStorage` copy of the flag
 saves the request on browsers that already know, and a browser that showed
 the dialog before the flag moved to the account records it there once. If the
@@ -290,7 +290,7 @@ Debate AI may publish of your recordings and how you are named on them.
   admins as a notification, and your past requests and their status are
   listed under the form. Nothing is deleted automatically.
 
-Engineering notes: the rules live in `@debate/webview`'s
+Engineering notes: the rules live in `@debate-ai/webview`'s
 `lib/privacy/recording-release.ts` (`mayPublishRecording`, `includeVideo`,
 `publicCreditName`, the validators and the release text). The choices are
 stored as JSON in `user_settings.recording_privacy` through `GET`/`PUT
@@ -324,8 +324,14 @@ response's `tools` array groups the caller's `saved_tool_records` rows by
 collection, labelled from `TOOL_RECORD_COLLECTIONS`; keys no longer in that
 allowlist and the video watch history are left out, and `total` includes them.
 
-Known gaps: counts only — no per-item list, export or delete from this section
-yet.
+For documents, flows, rounds and practice debates, a **Manage** button next to
+the count lists those items newest first (title only, up to 100) with a **Delete**
+action behind a confirmation. Documents also link to the editor. This is backed by
+`GET` / `DELETE /api/settings/saved-data/[kind]` (`saved-data-items.ts`), which
+only ever touches rows owned by the signed-in user.
+
+Known gaps: no export from this section yet; only the newest 100 items of a kind
+are listed; flows, rounds and practice debates have no stable open link.
 
 ## Known gaps
 

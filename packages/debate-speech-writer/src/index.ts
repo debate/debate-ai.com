@@ -22,15 +22,22 @@ export {
   judgeParadigmIds,
   isBuiltinJudgeParadigmId,
   getJudgeParadigm,
+  normalizeJudgeParadigmId,
+  LEGACY_JUDGE_PARADIGM_IDS,
+  SPEAKER_POINTS_POLICY,
   listJudgeParadigms,
   buildCustomJudgeParadigm,
   buildJudgeParadigmPrompt,
+  DEFAULT_JUDGE_WEIGHTS,
+  DEFAULT_JUDGE_WEIGHT_PRESETS,
 } from "./judge/judge-paradigms";
 export type {
   BuiltinJudgeParadigmId,
   JudgeParadigmId,
   JudgeParadigm,
   CustomJudgeParadigmInput,
+  JudgeWeights,
+  JudgeWeightKey,
 } from "./judge/judge-paradigms";
 
 export {

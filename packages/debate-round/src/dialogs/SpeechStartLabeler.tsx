@@ -23,8 +23,8 @@
 import type React from "react"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Loader2, Pause, Play, Sparkles } from "lucide-react"
-import { SpeechStartsEditor } from "@debate/timer/src/recorder/SpeechStartsEditor"
-import { debateStyleMap, debateStyleNames, debateStyles } from "@debate/timer/src/formats/debate-format-times"
+import { SpeechStartsEditor } from "@debate-ai/timer/src/recorder/SpeechStartsEditor"
+import { debateStyleMap, debateStyleNames, debateStyles } from "@debate-ai/timer/src/formats/debate-format-times"
 import {
   loadSpeechMediaClip,
   sameMediaSource,
@@ -33,10 +33,10 @@ import {
   type CaptionSnippet,
   type SpeechMediaSource,
   type SpeechSegment,
-} from "@debate/timer/src/recorder/youtube-speech-segments"
-import { buildEmbedUrl, startListening } from "@debate/videos/src/components/videos/player/youtubeEmbed"
-import { standardRoundSpeeches } from "@debate/videos/src/lib/round-formats"
-import { writeSpeechStart } from "@debate/videos/src/state/speechStartMarks"
+} from "@debate-ai/timer/src/recorder/youtube-speech-segments"
+import { buildEmbedUrl, startListening } from "@debate-ai/videos/src/components/videos/player/youtubeEmbed"
+import { standardRoundSpeeches } from "@debate-ai/videos/src/lib/round-formats"
+import { writeSpeechStart } from "@debate-ai/videos/src/state/speechStartMarks"
 import { Button } from "../ui/primitives/button"
 import { settings } from "../state/settings"
 import {

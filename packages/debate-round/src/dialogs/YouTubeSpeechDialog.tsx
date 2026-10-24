@@ -15,15 +15,15 @@
 import type React from "react"
 import { useEffect, useRef, useState } from "react"
 import { FileAudio, Loader2, MonitorPlay, Search, Upload } from "lucide-react"
-import type { SpeechMenuAction } from "@debate/timer/src/recorder/SpeechRecordingPlayer"
-import { saveSpeechAudioFile } from "@debate/timer/src/recorder/SpeechRecordingPlayer"
+import type { SpeechMenuAction } from "@debate-ai/timer/src/recorder/SpeechRecordingPlayer"
+import { saveSpeechAudioFile } from "@debate-ai/timer/src/recorder/SpeechRecordingPlayer"
 import {
   loadSpeechMediaClip,
   parseYouTubeInput,
   type CaptionSnippet,
   type SpeechMediaSource,
   type SpeechSegment,
-} from "@debate/timer/src/recorder/youtube-speech-segments"
+} from "@debate-ai/timer/src/recorder/youtube-speech-segments"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/primitives/dialog"
 import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"

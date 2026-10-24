@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Buy research files from other debaters, or sell your own — every file's table of contents is free to read",
 }
 
-export { default } from "@debate/webview/routes/market/page"
+export { default } from "@debate-ai/webview/routes/market/page"

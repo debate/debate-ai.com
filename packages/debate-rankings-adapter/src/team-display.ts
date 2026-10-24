@@ -4,7 +4,7 @@
  * has one (the UI decides that) and otherwise by name; the debaters are their
  * last names when a rankings row or tournament field names them, and
  * otherwise the initials of the team's code (`"Harker LL"` → `"LL"`).
- * @module @debate/rankings-adapter/team-display
+ * @module @debate-ai/rankings-adapter/team-display
  */
 
 import { parseTeamLabel } from "./team-lookup";

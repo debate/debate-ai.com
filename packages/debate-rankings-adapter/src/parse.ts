@@ -1,7 +1,7 @@
 /**
  * @fileoverview Parses the CSVs written by `debate-rankings`' `src/main.py`
  * into typed rows.
- * @module @debate/rankings-adapter/parse
+ * @module @debate-ai/rankings-adapter/parse
  */
 
 import type { FieldStatistics, RankingEntry, SideWeights, SideWinRates } from "./types";

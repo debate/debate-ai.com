@@ -68,7 +68,7 @@ describe("balancedSchoolScore", () => {
 
 describe("balanced scores on the bundled rankings", () => {
   it("puts a few dozen schools in the 70s–90s and none past 109", async () => {
-    const { loadRankingDataset } = await import("@debate/rankings-adapter");
+    const { loadRankingDataset } = await import("@debate-ai/rankings-adapter");
     const { schoolRankingsFor } = await import("../src/panels/leaderboard/leaderboardUtils");
     const datasets = {
       VPF: await loadRankingDataset("hspf"),

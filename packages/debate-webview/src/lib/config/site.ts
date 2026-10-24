@@ -2,7 +2,7 @@ export const APP_NAME = "Debate AI";
 
 /**
  * Size of the official Debate AI wordmark. The image itself is `DebateAiLogo`
- * from `@debate/icons/brand`; import it there. Favicons and app icons stay separate.
+ * from `@debate-ai/icons/brand`; import it there. Favicons and app icons stay separate.
  */
 export const APP_LOGO_WIDTH = 400;
 export const APP_LOGO_HEIGHT = 89;
@@ -29,7 +29,7 @@ export const NEXT_PUBLIC_BASE_URL =
 export const NEXT_PUBLIC_GOOGLE_CLIENT_ID =
   process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "";
 
-// Custom URL scheme the @debate/native-wrapper desktop/mobile shell registers with the
+// Custom URL scheme the @debate-ai/native-wrapper desktop/mobile shell registers with the
 // OS (packages/native-wrapper/profiles/debate-ai.json's `deepLinkScheme`) so
 // /auth/native-complete can hand a browser-established session back to the
 // wrapper's webview. Keep these two values in sync.
@@ -41,6 +41,9 @@ export const NATIVE_DEEP_LINK_SCHEME = "debateai";
 // the origin be allowlisted here rather than trusting `chrome-extension://*`,
 // i.e. every extension the visitor has installed. Keep the two in sync.
 export const EXTENSION_ID = "noecbaibfhbmpapofcdkgchfifmoinfj";
+
+/** The extension's Chrome Web Store listing, where visitors install it. */
+export const EXTENSION_STORE_URL = `https://chromewebstore.google.com/detail/${EXTENSION_ID}`;
 
 /** The extension's own origin, as the browser sends it on its requests. */
 export const EXTENSION_ORIGIN = `chrome-extension://${EXTENSION_ID}`;

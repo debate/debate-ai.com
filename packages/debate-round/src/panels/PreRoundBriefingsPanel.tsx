@@ -75,9 +75,9 @@ import {
 } from "../ui/primitives/select"
 import { Textarea } from "../ui/primitives/textarea"
 import { EmptyState, PanelSection, PanelShell } from "../ui/panels/panel-shell"
-import { listOpponentTeamProfiles } from "@debate/data-sync/src/state/opponentTeamProfiles"
-import { listJudgeProfiles } from "@debate/speech-writer/src/state/judgeProfiles"
-import type { DebateSide } from "@debate/data-sync/src/rankings/opponent-team-profile"
+import { listOpponentTeamProfiles } from "@debate-ai/data-sync/src/state/opponentTeamProfiles"
+import { listJudgeProfiles } from "@debate-ai/speech-writer/src/state/judgeProfiles"
+import type { DebateSide } from "@debate-ai/data-sync/src/rankings/opponent-team-profile"
 import {
   buildPreRoundBriefingRecordFromDraft,
   buildPreRoundBriefingsPanelView,

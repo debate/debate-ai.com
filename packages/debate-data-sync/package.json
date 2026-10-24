@@ -1,5 +1,5 @@
 {
-  "name": "@debate/data-sync",
+  "name": "@debate-ai/data-sync",
   "version": "0.1.0",
   "description": "Debate data assets (metadata, videos, schemas) plus sync scripts for YouTube videos, debate rankings and openCaselist bulk downloads",
   "author": "vtempest",
@@ -47,12 +47,12 @@
   },
   "dependencies": {
     "@libsql/client": "^0.18.0",
-    "@debate/card-parser": "workspace:*",
+    "@debate-ai/card-parser": "workspace:*",
     "extract-youtube": "^1.0.521",
     "grab-url": "^3.0.7",
     "jszip": "^3.10.2",
     "linkedom": "^0.18.13",
-    "@debate/types": "workspace:*"
+    "@debate-ai/types": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^26.6.5",

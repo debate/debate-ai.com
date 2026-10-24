@@ -15,8 +15,8 @@
  * @module lib/videos/video-palette-search
  */
 
-import type { VideoType } from "@debate/types"
-import { videoRouteHref } from "@debate/videos/src/lib/video-route"
+import type { VideoType } from "@debate-ai/types"
+import { videoRouteHref } from "@debate-ai/videos/src/lib/video-route"
 
 /** How many videos one palette query asks for. */
 export const PALETTE_VIDEO_LIMIT = 8

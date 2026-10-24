@@ -10,8 +10,8 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "../../apps/debate-web"),
-      "@debate/webview-admin": path.resolve(__dirname, "./src"),
-      "@debate/webview": path.resolve(__dirname, "../debate-webview/src"),
+      "@debate-ai/webview-admin": path.resolve(__dirname, "./src"),
+      "@debate-ai/webview": path.resolve(__dirname, "../debate-webview/src"),
     },
   },
 })

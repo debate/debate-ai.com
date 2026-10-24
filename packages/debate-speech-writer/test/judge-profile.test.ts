@@ -165,16 +165,16 @@ describe("buildJudgeProfile", () => {
 
   it("reports the most frequently tagged paradigm, tie-broken alphabetically", () => {
     const profile = buildJudgeProfile("smith", [
-      record({ paradigmId: "flow" }),
-      record({ paradigmId: "flow" }),
-      record({ paradigmId: "lay" }),
+      record({ paradigmId: "policymaker" }),
+      record({ paradigmId: "policymaker" }),
+      record({ paradigmId: "common-sense" }),
     ]);
-    expect(profile.mostCommonParadigm).toBe("flow");
+    expect(profile.mostCommonParadigm).toBe("policymaker");
   });
 
   it("breaks a paradigm tie alphabetically for a deterministic result", () => {
     const profile = buildJudgeProfile("smith", [
-      record({ paradigmId: "lay" }),
+      record({ paradigmId: "policymaker" }),
       record({ paradigmId: "critic" }),
     ]);
     expect(profile.mostCommonParadigm).toBe("critic");
@@ -182,30 +182,30 @@ describe("buildJudgeProfile", () => {
 
   it("reports the most-common paradigm's confidence as its share of tagged rounds", () => {
     const profile = buildJudgeProfile("smith", [
-      record({ paradigmId: "flow" }),
-      record({ paradigmId: "flow" }),
-      record({ paradigmId: "lay" }),
+      record({ paradigmId: "policymaker" }),
+      record({ paradigmId: "policymaker" }),
+      record({ paradigmId: "common-sense" }),
     ]);
     expect(profile.mostCommonParadigmConfidence).toBeCloseTo(2 / 3);
   });
 
   it("reports full confidence when every tagged round agrees", () => {
     const profile = buildJudgeProfile("smith", [
-      record({ paradigmId: "flow" }),
-      record({ paradigmId: "flow" }),
+      record({ paradigmId: "policymaker" }),
+      record({ paradigmId: "policymaker" }),
     ]);
     expect(profile.mostCommonParadigmConfidence).toBe(1);
   });
 
   it("ignores untagged rounds when computing confidence", () => {
     const profile = buildJudgeProfile("smith", [
-      record({ paradigmId: "flow" }),
-      record({ paradigmId: "flow" }),
+      record({ paradigmId: "policymaker" }),
+      record({ paradigmId: "policymaker" }),
       record(),
       record(),
       record(),
     ]);
-    expect(profile.mostCommonParadigm).toBe("flow");
+    expect(profile.mostCommonParadigm).toBe("policymaker");
     expect(profile.mostCommonParadigmConfidence).toBe(1);
   });
 
@@ -261,9 +261,9 @@ describe("buildJudgeTendencySummary", () => {
 
   it("includes the most-tagged paradigm line only when one is known", () => {
     const withParadigm = buildJudgeTendencySummary(
-      buildJudgeProfile("smith", [record({ paradigmId: "flow" })]),
+      buildJudgeProfile("smith", [record({ paradigmId: "policymaker" })]),
     );
-    expect(withParadigm).toContain("Most-tagged paradigm: flow (100% confidence)");
+    expect(withParadigm).toContain("Most-tagged paradigm: policymaker (100% confidence)");
 
     const withoutParadigm = buildJudgeTendencySummary(buildJudgeProfile("smith", [record()]));
     expect(withoutParadigm).not.toContain("Most-tagged paradigm");

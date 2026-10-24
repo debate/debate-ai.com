@@ -4,7 +4,7 @@
  *
  * The sample goes into the same `localStorage` stores the workspace panels
  * already read, so each panel shows it exactly as it would show real work. It
- * is display-only: `@debate/data-sync`'s `sampleRecords.ts` remembers every
+ * is display-only: `@debate-ai/data-sync`'s `sampleRecords.ts` remembers every
  * seeded id and keeps those records out of the account sync, seeding skips any
  * id the user already has, and clearing removes only what was seeded.
  *
@@ -16,14 +16,14 @@
  * @module lib/sample-data/workspace-sample-data
  */
 
-import type { Box, Flow } from "@debate/round/src/types/flow"
+import type { Box, Flow } from "@debate-ai/round/src/types/flow"
 import {
   buildOpponentTeamProfile,
   type OpponentRoundRecord,
-} from "@debate/data-sync/src/rankings/opponent-team-profile"
-import { clearSampleRecords, hasSampleRecords, seedSampleRecords } from "@debate/data-sync/src/state/sampleRecords"
-import { buildJudgeProfile, type JudgeRoundRecord } from "@debate/speech-writer/src/judge/judge-profile"
-import type { BuiltinJudgeParadigmId } from "@debate/speech-writer/src/judge/judge-paradigms"
+} from "@debate-ai/data-sync/src/rankings/opponent-team-profile"
+import { clearSampleRecords, hasSampleRecords, seedSampleRecords } from "@debate-ai/data-sync/src/state/sampleRecords"
+import { buildJudgeProfile, type JudgeRoundRecord } from "@debate-ai/speech-writer/src/judge/judge-profile"
+import type { BuiltinJudgeParadigmId } from "@debate-ai/speech-writer/src/judge/judge-paradigms"
 import type { SampleCard } from "./sample-cards"
 
 /** A workspace that has a "Load sample data" button. */
@@ -137,7 +137,7 @@ export function buildResearchSampleData(cards: readonly SampleCard[], now: numbe
 
 /** Tournaments the scouting sample's rounds are dated at. */
 const SAMPLE_TOURNAMENTS = ["Greenhill", "Glenbrooks", "Harvard", "Berkeley", "Emory", "TOC Qualifier"]
-const SAMPLE_PARADIGMS: BuiltinJudgeParadigmId[] = ["flow", "policymaker", "critic", "lay"]
+const SAMPLE_PARADIGMS: BuiltinJudgeParadigmId[] = ["policymaker", "critic", "common-sense", "policymaker"]
 
 function isoDay(epoch: number): string {
   return new Date(epoch).toISOString().slice(0, 10)

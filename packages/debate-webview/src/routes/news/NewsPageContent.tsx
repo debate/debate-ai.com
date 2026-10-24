@@ -5,7 +5,7 @@
  *
  * The News tab shows only new rounds, new files and forum activity:
  * `useSiteNews()` fetches the site-wide newest of each, `useFollowingNews()`
- * from `@debate/videos` adds the rounds, research, results and recaps of
+ * from `@debate-ai/videos` adds the rounds, research, results and recaps of
  * every team and school the viewer follows, and the panel itself adds the
  * daily Argument Library digests. A round or file a follow already posted
  * is not posted twice. `useNewsStreamSync` keeps a signed-in user's
@@ -17,9 +17,9 @@
 "use client"
 
 import { useMemo } from "react"
-import { NewsStreamPanel } from "@debate/community"
-import { useFollowingNews } from "@debate/videos"
-import { followHref } from "@debate/videos/src/lib/follows/profile-follows"
+import { NewsStreamPanel } from "@debate-ai/community"
+import { useFollowingNews } from "@debate-ai/videos"
+import { followHref } from "@debate-ai/videos/src/lib/follows/profile-follows"
 import { useNewsStreamSync } from "../../lib/hooks/useNewsStreamSync"
 import { useSiteNews } from "../../lib/hooks/useSiteNews"
 

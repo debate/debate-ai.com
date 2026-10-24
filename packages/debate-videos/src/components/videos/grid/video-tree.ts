@@ -24,12 +24,12 @@
  * @module components/video-grid/video-tree
  */
 
-import { formatSeasonLabel } from "@debate/data-sync/src/videos/video-rows";
+import { formatSeasonLabel } from "@debate-ai/data-sync/src/videos/video-rows";
 import {
   formatRoundLevel,
   getRoundSortKey,
   parseRoundLevel,
-} from "@debate/data-sync/src/youtube/parsers/round-level";
+} from "@debate-ai/data-sync/src/youtube/parsers/round-level";
 import { DEBATE_STYLE_LABELS, type VideoType } from "../../../types/videos";
 import type { VideoSlot } from "./video-stacks";
 
@@ -78,6 +78,8 @@ export interface VideoTreeGroup {
   trailing: boolean;
   /** True when the tournament is a round-robin (its name ends in "RR"). */
   roundRobin?: boolean;
+  /** The season's end year (`2015` for "14-15"), on season groups only. */
+  seasonYear?: number;
 }
 
 export type VideoTreeNode = VideoTreeGroup | VideoTreeLeaf;
@@ -90,6 +92,8 @@ interface GroupStep {
   trailing?: boolean;
   /** True when the tournament is a round-robin (its name ends in "RR"). */
   roundRobin?: boolean;
+  /** The season's end year, on the season step. */
+  seasonYear?: number;
 }
 
 /**
@@ -184,6 +188,7 @@ export function videoGroupPath(video: VideoType, mode: VideoTreeMode): GroupStep
       // Negated: the newest season heads the list.
       sortValue: -seasonYear,
       trailing: seasonYear === 0,
+      ...(seasonYear ? { seasonYear } : {}),
     },
   ];
 
@@ -324,6 +329,7 @@ export function buildVideoTree(slots: VideoSlot[], mode: VideoTreeMode): VideoTr
           sortValue: step.sortValue,
           trailing: step.trailing ?? false,
           roundRobin: step.roundRobin,
+          ...(step.seasonYear ? { seasonYear: step.seasonYear } : {}),
         };
         groups.set(key, group);
         siblings.push(group);

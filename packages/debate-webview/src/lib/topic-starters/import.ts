@@ -16,8 +16,8 @@
  *
  * @module lib/topic-starters/import
  */
-import { DocxImportError, assertReadableDocxBytes } from "@debate/card-parser";
-import { cmirToBase64, docxToCmir } from "@debate/editor/engine";
+import { DocxImportError, assertReadableDocxBytes } from "@debate-ai/card-parser";
+import { cmirToBase64, docxToCmir } from "@debate-ai/editor/engine";
 
 /** Written into each file's `createdBy` field, so a `.cmir` downloaded from
  *  the library says where it came from. */

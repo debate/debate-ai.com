@@ -24,7 +24,9 @@ import { FormatBadge, videoFormat } from "./FormatBadge"
 import type { VideoTeamRankingLookup } from "../../../hooks/useVideoTeamRankings"
 import { treeIndentStyle } from "./tree-indent"
 import type { VideoGroupKind, VideoTreeGroup, VideoTreeLeaf, VideoTreeNode } from "./video-tree"
-import type { VideoType } from "../../../types/videos"
+import type { TopicType, VideoType } from "../../../types/videos"
+import { getSeasonTopicItems, shortTopicName } from "../../../lib/debate-topics"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../../../ui/primitives/tooltip"
 
 /** Icon per group level, so the depth reads without counting indents. */
 const GROUP_ICONS: Record<VideoGroupKind, typeof Trophy> = {
@@ -66,6 +68,8 @@ export interface VideoTreeRowContext {
   showFormat?: boolean
   /** The rankings row behind a team label, for the team-page link and rating. */
   teamRanking?: VideoTeamRankingLookup
+  /** Debate topics by year, for the topic name beside each season. */
+  topics?: TopicType[]
 }
 
 /** The distinct formats of every video below a group, in label order. */
@@ -108,6 +112,44 @@ function TournamentLogo({
   }
   const src = typeof logo === "string" ? logo : logo.src
   return <img src={src} alt={label} title={label} className={className} />
+}
+
+/**
+ * The short name of a season's topic beside its "14-15" label, with every
+ * resolution in full on hover. Shown only when the season holds one format,
+ * since a mixed listing (Top Picks) has no single topic. LD and PF seasons
+ * list each of their topics' names in order.
+ */
+function SeasonTopic({ group, topics }: { group: VideoTreeGroup; topics?: TopicType[] }) {
+  const formats = groupFormats(group)
+  if (formats.length !== 1) return null
+  const items = getSeasonTopicItems(topics, group.seasonYear, formats[0])
+  if (items.length === 0) return null
+  const label = items.map((item) => shortTopicName(item)).join(" · ")
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span className="min-w-0 max-w-[18rem] truncate text-xs font-normal text-muted-foreground">
+          {label}
+        </span>
+      </TooltipTrigger>
+      <TooltipContent side="bottom" align="start" className="max-w-sm">
+        <ul className="space-y-1.5">
+          {items.map((item, index) => (
+            <li key={index}>
+              {(item.title || item.month) && (
+                <div className="font-semibold">
+                  {[item.month, item.title].filter(Boolean).join(": ")}
+                </div>
+              )}
+              <div className="whitespace-pre-line">{item.text}</div>
+            </li>
+          ))}
+        </ul>
+      </TooltipContent>
+    </Tooltip>
+  )
 }
 
 /** The "RR" badge marking a round-robin tournament's format. */
@@ -193,6 +235,7 @@ function GroupRows({
                 {group.label}
               </span>
             )}
+            {group.kind === "season" && <SeasonTopic group={group} topics={context.topics} />}
             {context.showFormat &&
               group.kind === "tournament" &&
               groupFormats(group).map((format) => <FormatBadge key={format} style={format} />)}

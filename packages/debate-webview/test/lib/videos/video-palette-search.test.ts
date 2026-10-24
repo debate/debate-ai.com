@@ -3,7 +3,7 @@
  * palette, and the one small `/api/videos` page each query asks for.
  */
 import { afterEach, describe, expect, it, vi } from "vitest"
-import type { VideoType } from "@debate/types"
+import type { VideoType } from "@debate-ai/types"
 
 import { PALETTE_VIDEO_LIMIT, fetchPaletteVideos, toPaletteVideo } from "../../../src/lib/videos/video-palette-search"
 

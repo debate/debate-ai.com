@@ -9,13 +9,13 @@
  *
  * Times on the wire are Unix seconds.
  *
- * The type definitions (and their field docs) live in `@debate/types`; the
+ * The type definitions (and their field docs) live in `@debate-ai/types`; the
  * constants that go with them stay here.
  *
  * @module debate-predictions/types
  */
 
-import type { MarketKind, MarketOutcome } from "@debate/types";
+import type { MarketKind, MarketOutcome } from "@debate-ai/types";
 
 export type {
   MarketKind,
@@ -39,7 +39,7 @@ export type {
   TabroomPanelOption,
   TabroomEventOption,
   PredictionSourcesResponse,
-} from "@debate/types";
+} from "@debate-ai/types";
 
 /** Points granted to every account, once, on its first visit. */
 export const STARTING_BALANCE = 1000;

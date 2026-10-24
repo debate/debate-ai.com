@@ -4,7 +4,7 @@ import { useEffect, useState, type FormEvent } from "react"
 import { useRouter } from "next/navigation"
 import { Building2, Check, Loader2, Plus, User, UserPlus } from "lucide-react"
 
-import { ORGANIZATION_CHANGED_EVENT } from "@debate/team-collaboration"
+import { ORGANIZATION_CHANGED_EVENT } from "@debate-ai/team-collaboration"
 import { authClient } from "../../../lib/auth/client"
 import { Button } from "../../../lib/ui/primitives/button"
 import {

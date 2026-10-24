@@ -1,7 +1,7 @@
 /**
  * @fileoverview A modal for labelling where each speech of a round begins in
  * one long piece of media — the joined round MP3 (`RoundRecordingDialog`)
- * or a YouTube video of a round (`@debate/videos`' watch page). The media
+ * or a YouTube video of a round (`@debate-ai/videos`' watch page). The media
  * stays with the caller: the dialog only needs the playhead, a way to seek,
  * and the length, so the same modal works for an `<audio>` element and a
  * YouTube iframe alike.

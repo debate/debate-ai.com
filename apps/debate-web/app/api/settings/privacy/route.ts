@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { validateRecordingPrivacyPatch } from "@debate/webview/lib/privacy/recording-release"
+import { validateRecordingPrivacyPatch } from "@debate-ai/webview/lib/privacy/recording-release"
 import { getDBFromContext } from "@/lib/database/context"
 import { getRecordingPrivacy, saveRecordingPrivacy } from "@/lib/privacy/store"
 import { getUserId } from "@/lib/auth/session"

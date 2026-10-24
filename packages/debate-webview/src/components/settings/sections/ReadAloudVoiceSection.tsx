@@ -9,7 +9,7 @@
  * standard X close button, instead of an inline section.
  *
  * This is the only place to set them: the card's Read aloud button just reads.
- * `@debate/editor/read-voice` keeps both in this browser and tells open
+ * `@debate-ai/editor/read-voice` keeps both in this browser and tells open
  * editors when they change, so picking here applies to every card at once,
  * and a new speed reaches a card that is already playing. If the chosen engine can't
  * answer, Read aloud still falls back: Kokoro to the site's voices, the site's
@@ -52,7 +52,7 @@ import {
   storeReadSpeed,
   storeVoiceId,
   type ReadVoiceEngine,
-} from "@debate/editor/read-voice"
+} from "@debate-ai/editor/read-voice"
 
 function isEngine(value: string): value is ReadVoiceEngine {
   return READ_VOICE_ENGINES.some((engine) => engine.id === value)

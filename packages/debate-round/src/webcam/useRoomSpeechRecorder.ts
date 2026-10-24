@@ -2,7 +2,7 @@
  * @fileoverview Records every other debater's camera in the webcam room, one
  * clip per person per speech, while the speech timer records with "Record
  * webcam video" on. The clips are spliced into the joined round recording
- * under the speech they belong to (`@debate/timer`'s `RoundRecordingDialog`),
+ * under the speech they belong to (`@debate-ai/timer`'s `RoundRecordingDialog`),
  * each debater's video kept separate.
  *
  * Follows the recorder's own start/stop events, so nothing is captured that
@@ -15,7 +15,7 @@
 "use client"
 
 import { useEffect, useRef } from "react"
-import { RECORDING_STOPPED_EVENT, saveClip } from "@debate/timer"
+import { RECORDING_STOPPED_EVENT, saveClip } from "@debate-ai/timer"
 import type { RemoteParticipant } from "./useWebcamRoom"
 
 const VIDEO_BITS_PER_SECOND = 500_000

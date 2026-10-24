@@ -7,7 +7,7 @@
  */
 
 import { describe, expect, it } from "vitest"
-import { schema, serializeNative, cmirToBase64 } from "@debate/editor/engine"
+import { schema, serializeNative, cmirToBase64 } from "@debate-ai/editor/engine"
 import { STORED_FORMATS, normalizeFormat } from "../../../src/lib/debate-editor/format"
 import { isCmirContent } from "../../../src/lib/debate-editor/content-format"
 

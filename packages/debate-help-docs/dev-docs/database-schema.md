@@ -426,7 +426,7 @@ _Drizzle export `userSettings`, `schema.ts:311`._
 | `flow_auto_save` | text | yes |  | Flow auto-save mode: "off" \| "saved" \| "all" (see packages/debate-round/src/state/flowAutoSaveSettings.ts). Null means the client default ("saved"). |
 | `news_read` | text | yes |  | JSON-serialized arrays of News Stream item ids the signed-in user has read/liked (see packages/debate-card-search/src/lib/news-stream-sync.ts and TODO.md's Product Feature Idea "Community-Rated Summaries" / packages/debate-help-docs/content/docs/internals/news-stream.mdx's "Read/like state is per-browser" Known gap). |
 | `news_liked` | text | yes |  | News Stream item ids the user liked, JSON array. |
-| `word_limit_presets` | text | yes |  | JSON-serialized array of `{ name, wordLimit }` custom word-limit presets (see packages/debate-round/src/state/wordLimitPresets.ts and TODO.md idea #2's "a per-style word-limit preset manager (add/edit/ remove custom limits instead of only the built-in registry)" follow-up), checked ahead of @debate/timer's hardcoded `w… |
+| `word_limit_presets` | text | yes |  | JSON-serialized array of `{ name, wordLimit }` custom word-limit presets (see packages/debate-round/src/state/wordLimitPresets.ts and TODO.md idea #2's "a per-style word-limit preset manager (add/edit/ remove custom limits instead of only the built-in registry)" follow-up), checked ahead of @debate-ai/timer's hardcoded `w… |
 | `outline_filter_presets` | text | yes |  | JSON-serialized array of `{ name, filter }` named Outline filter presets (see packages/debate-round/src/state/outlineFilterPresets.ts and TODO.md idea #10's "Save and reuse named filter presets instead of re-picking filters each visit" follow-up). |
 | `saved_argument_collections` | text | yes |  | JSON-serialized array of `{ name, tags }` named Argument Library collections (see packages/debate-card-search/src/lib/argument-library-collections.ts and TODO.md's "📚 Common Argument Library" bullet's "saved custom collections per user" follow-up). |
 | `research_progress_goal` | text | yes |  | JSON-serialized `{ targetCompletedTaskCount, topic?, targetDate? }` personal research-progress goal (see packages/debate-card-search/src/lib/research-progress-goal-sync.ts and TODO.md's "📈 Research Progress Tracking" bullet's "account-syncing the goal across devices" follow-up). |
@@ -1247,7 +1247,7 @@ _Drizzle export `comments`, `schema.ts:2189`._
 | Column | Type | Null | Default | Purpose |
 | --- | --- | --- | --- | --- |
 | `id` | text | no |  | A UUID minted by the API, not an autoincrement rowid. An id that counts up tells a reader how much discussion exists on a resource before they have read any of it, and it makes a comment's URL guessable by anyone who has seen one. _(PK)_ |
-| `resource_type` | text | no |  | One of `debate-comments`' `COMMENT_RESOURCE_TYPES`; see `@debate/webview/src/lib/comments/validation.ts`. |
+| `resource_type` | text | no |  | One of `debate-comments`' `COMMENT_RESOURCE_TYPES`; see `@debate-ai/webview/src/lib/comments/validation.ts`. |
 | `resource_id` | text | no |  | The resource's own id — a YouTube video id here, a `debate_cards` id there. |
 | `parent_id` | text | yes |  | Null for a top-level comment; otherwise the comment this one answers. _(→ `comments.id` (on delete cascade))_ |
 | `author_id` | text | no |  | Comment author. _(→ `user.id` (on delete cascade))_ |
@@ -1307,7 +1307,7 @@ _Drizzle export `stripeSubscriptions`, `schema.ts:2047`._
 | `customer_id` | text | yes |  | Stripe customer id. |
 | `email` | text | yes |  | Customer email. |
 | `price_id` | text | yes |  | Stripe price id. |
-| `plan` | text | yes |  | A `PlanId` from `@debate/webview/src/lib/stripe/plans.ts`, or `unknown` for an unlisted price. |
+| `plan` | text | yes |  | A `PlanId` from `@debate-ai/webview/src/lib/stripe/plans.ts`, or `unknown` for an unlisted price. |
 | `status` | text | yes |  | Stripe's subscription status — `active`, `trialing`, `past_due`, `canceled`, … |
 | `current_period_end` | integer | yes |  | End of the paid period. |
 | `cancel_at_period_end` | integer | no | `false` | Whether it cancels at period end. |

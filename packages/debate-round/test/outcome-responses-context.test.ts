@@ -8,7 +8,7 @@ import {
   pickLikelyOutcomeJudge,
   speechDocToText,
 } from "../src/round/outcome-responses-context";
-import type { JudgeProfile } from "@debate/speech-writer/src/judge/judge-profile";
+import type { JudgeProfile } from "@debate-ai/speech-writer/src/judge/judge-profile";
 import type { Flow } from "../src/types/flow";
 
 function profile(judgeId: string, roundsJudged: number, mostCommonParadigm: JudgeProfile["mostCommonParadigm"]): JudgeProfile {
@@ -93,16 +93,16 @@ describe("outcome responses context", () => {
   });
 
   it("predicts the round judge with the most ballots on record", () => {
-    const judge = pickLikelyOutcomeJudge(["Lee", " Park "], [profile("lee", 2, "lay"), profile("Park", 9, "critic")]);
+    const judge = pickLikelyOutcomeJudge(["Lee", " Park "], [profile("lee", 2, "common-sense"), profile("Park", 9, "critic")]);
     expect(judge.name).toBe("Park");
     expect(judge.paradigm.id).toBe("critic");
     expect(judge.tendencySummary).toContain("Park");
   });
 
   it("falls back to the paradigm most common across saved profiles", () => {
-    const judge = pickLikelyOutcomeJudge(["Unknown"], [profile("a", 1, "lay"), profile("b", 1, "lay"), profile("c", 1, "flow")]);
+    const judge = pickLikelyOutcomeJudge(["Unknown"], [profile("a", 1, "common-sense"), profile("b", 1, "common-sense"), profile("c", 1, "critic")]);
     expect(judge.name).toBe("Unknown");
-    expect(judge.paradigm.id).toBe("lay");
-    expect(pickLikelyOutcomeJudge([], []).paradigm.id).toBe("flow");
+    expect(judge.paradigm.id).toBe("common-sense");
+    expect(pickLikelyOutcomeJudge([], []).paradigm.id).toBe("policymaker");
   });
 });

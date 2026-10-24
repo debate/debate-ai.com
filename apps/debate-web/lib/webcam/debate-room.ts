@@ -25,7 +25,7 @@ import {
   parseClientMessage,
   type RoomPeer,
   type ServerMessage,
-} from "@debate/round/src/webcam/room-protocol"
+} from "@debate-ai/round/src/webcam/room-protocol"
 
 interface HibernatableWebSocket extends WebSocket {
   accept(): void

@@ -4,7 +4,7 @@
  * is saved beside the MP3 (this browser, and R2 when uploaded).
  *
  * The start-time shape — speech key → seconds — is the same one the video
- * watch page keeps for a YouTube round (`@debate/videos`'
+ * watch page keeps for a YouTube round (`@debate-ai/videos`'
  * `state/speechStartMarks.ts`), so {@link SpeechStartsDialog} labels either
  * source. Pure functions only; the audio work is in `round-recording-audio.ts`.
  *

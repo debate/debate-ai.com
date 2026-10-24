@@ -1,6 +1,6 @@
 /**
  * A small slice of the imported card corpus for the Coaching and Research
- * workspaces' "Load sample data" button (`@debate/webview/lib/sample-data`).
+ * workspaces' "Load sample data" button (`@debate-ai/webview/lib/sample-data`).
  *
  * Reads a run of `debate_cards` rows by primary key from a random point in the
  * table (a PK range read, never a sort of the whole corpus), keeps the ones
@@ -17,7 +17,7 @@ import {
   pickSampleCards,
   toSampleCard,
   type SampleCard,
-} from "@debate/webview/lib/sample-data/sample-cards";
+} from "@debate-ai/webview/lib/sample-data/sample-cards";
 
 const CACHE_TTL_MS = 10 * 60 * 1000;
 /** Rows read per attempt; most have a tag and body, and both sides are wanted. */

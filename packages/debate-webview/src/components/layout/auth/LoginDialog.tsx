@@ -20,7 +20,7 @@ import {
 } from "../../../lib/ui/primitives/dialog"
 import { Button } from "../../../lib/ui/primitives/button"
 import { useSession } from "../../../lib/hooks/useSession"
-import { DebateAiLogo } from "@debate/icons/brand"
+import { DebateAiLogo } from "@debate-ai/icons/brand"
 import { APP_LOGO_HEIGHT, APP_LOGO_WIDTH, APP_NAME } from "../../../lib/config/site"
 
 // The dock and the guest sign-in prompt mount this dialog on every page, but

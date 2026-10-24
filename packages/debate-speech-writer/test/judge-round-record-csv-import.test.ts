@@ -28,7 +28,7 @@ describe("parseJudgeRoundRecordsCsv", () => {
         paceWpm: 320,
         theoryArgumentRaised: true,
         theoryArgumentWon: false,
-        paradigmId: "flow",
+        paradigmId: "policymaker",
       },
       {
         judgeId: "smith",
@@ -141,7 +141,7 @@ describe("parseJudgeRoundRecordsCsv", () => {
     expect(result.errors[0]).toMatch(/Row 2.*paradigmId/);
   });
 
-  it("matches paradigmId case-insensitively", () => {
+  it("maps a retired paradigmId to its replacement, case-insensitively", () => {
     const csv = [
       "judgeId,tournamentName,date,division,winningSide,affSpeakerPoints,negSpeakerPoints,paradigmId",
       "smith,Berkeley,2026-01-10,PF,aff,28,28,FLOW",
@@ -150,7 +150,7 @@ describe("parseJudgeRoundRecordsCsv", () => {
     const result = parseJudgeRoundRecordsCsv(csv);
 
     expect(result.errors).toEqual([]);
-    expect(result.entries[0]?.paradigmId).toBe("flow");
+    expect(result.entries[0]?.paradigmId).toBe("policymaker");
   });
 
   it("reports one error and no entries when the header is missing a required column", () => {

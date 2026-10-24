@@ -64,8 +64,8 @@ export function GoatSparklesHeading() {
         <Image
           src={IconTrophyGoat}
           alt="Greatest of All-Time trophy"
-          width={64}
-          height={64}
+          width={128}
+          height={128}
           className="absolute left-1/2 top-1/2 z-20 h-12 w-12 -translate-x-1/2 -translate-y-1/2 object-contain sm:h-16 sm:w-16"
           unoptimized
         />

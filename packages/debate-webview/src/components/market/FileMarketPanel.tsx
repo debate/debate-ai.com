@@ -17,8 +17,8 @@
 import { useCallback, useEffect, useState } from "react"
 import { FileText, Loader2, ShoppingBag } from "lucide-react"
 import { toast } from "sonner"
-import { formatCents, type MarketBoardResponse } from "@debate/file-market"
-import { fetchMarketBoard } from "@debate/file-market/client"
+import { formatCents, type MarketBoardResponse } from "@debate-ai/file-market"
+import { fetchMarketBoard } from "@debate-ai/file-market/client"
 import { listingHref } from "./SellFileDialog"
 import { WalletCard, topUpReturnMessage } from "./WalletCard"
 

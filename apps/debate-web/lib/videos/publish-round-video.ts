@@ -10,9 +10,9 @@
  */
 
 import { eq, inArray } from "drizzle-orm";
-import { normalizeCategoryKey, publishedMsForDate, seasonYearForDate } from "@debate/data-sync/src/videos/video-rows";
-import { classifyRoundCollection } from "@debate/data-sync/src/youtube/parsers/lecture-classifier";
-import { parseQueuedRoundArgs } from "@debate/data-sync/src/youtube/parsers/round-arguments";
+import { normalizeCategoryKey, publishedMsForDate, seasonYearForDate } from "@debate-ai/data-sync/src/videos/video-rows";
+import { classifyRoundCollection } from "@debate-ai/data-sync/src/youtube/parsers/lecture-classifier";
+import { parseQueuedRoundArgs } from "@debate-ai/data-sync/src/youtube/parsers/round-arguments";
 import { chunkBoundParams } from "@/lib/database/bound-params";
 import { chunkStatements } from "@/lib/database/query-budget";
 import {

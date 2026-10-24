@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { parseYouTubeVideoId } from "@debate/videos";
+import { parseYouTubeVideoId } from "@debate-ai/videos";
 import { Button } from "../../../lib/ui/primitives/button";
 import { Badge } from "../../../lib/ui/primitives/badge";
 import { Input } from "../../../lib/ui/primitives/input";
@@ -29,7 +29,7 @@ import {
 } from "../../../lib/ui/primitives/select";
 import { VideoContentDialog, type ContentDialogVideo } from "./VideoContentDialog";
 import { VideoEditDialog, emptyLibraryVideo, type LibraryVideo } from "./VideoEditDialog";
-import { formatCount } from "@debate/videos/lib/format-count";
+import { formatCount } from "@debate-ai/videos/lib/format-count";
 
 
 /** A table row: the editable video plus what the listing says about its transcript. */

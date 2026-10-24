@@ -11,7 +11,7 @@ import type {
   FollowKind,
   FollowState,
   ProfileFollow,
-} from "@debate/videos/src/lib/follows/profile-follows";
+} from "@debate-ai/videos/src/lib/follows/profile-follows";
 
 import type { getDBFromContext } from "@/lib/database/context";
 import { profileFollows } from "@/lib/database/schema";

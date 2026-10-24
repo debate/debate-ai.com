@@ -3,11 +3,12 @@
  * docs page, as an ordinary section that scrolls with the rest of the column.
  * It starts collapsed, and its folders do too.
  *
- * The page tree belongs to the help docs (`@debate/help-docs`), which this
+ * The page tree belongs to the help docs (`@debate-ai/help-docs`), which this
  * package does not import: the app serves it as JSON at
- * {@link DOCS_TREE_URL}, and the section fetches it the first time it is
- * opened, so a column nobody opens costs nothing. Rows are full page loads,
- * since `/docs` renders outside the app's own layout.
+ * {@link DOCS_TREE_URL}, and the section fetches it as soon as the sidebar
+ * mounts, so the pages are already listed the first time it is opened. If
+ * that request fails, opening the section tries again. Rows are full page
+ * loads, since `/docs` renders outside the app's own layout.
  *
  * On `/docs` the docs layout portals its own, richer tree into the same spot
  * (`app-sidebar-docs-tree.tsx`), so this renders nothing there.
@@ -59,9 +60,11 @@ export function DocsNavTree() {
   const [expanded, setExpanded] = useState(false);
   const [tree, setTree] = useState<DocsTreeNode[] | null>(null);
   const [failed, setFailed] = useState(false);
+  const onDocs = isDocsRoute(pathname);
 
+  // Preload while collapsed; a failed preload is retried when the section opens.
   useEffect(() => {
-    if (!expanded || tree) return;
+    if (onDocs || tree || (failed && !expanded)) return;
     let cancelled = false;
     setFailed(false);
     loadDocsTree().then(
@@ -71,9 +74,11 @@ export function DocsNavTree() {
     return () => {
       cancelled = true;
     };
-  }, [expanded, tree]);
+    // `failed` is left out on purpose: clearing it must not start another request.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onDocs, expanded, tree]);
 
-  if (isDocsRoute(pathname)) return null;
+  if (onDocs) return null;
 
   return (
     <TreeItem

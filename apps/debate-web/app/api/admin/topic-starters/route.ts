@@ -22,9 +22,9 @@ import {
   describeDocxImportError,
   summarizeImportOutcome,
   type DocxImportFailure,
-} from "@debate/card-parser";
-import { TOPIC_STARTER_FORMATS } from "@debate/webview/lib/topic-starters/format";
-import { docxToStoredCmir } from "@debate/webview/lib/topic-starters/import";
+} from "@debate-ai/card-parser";
+import { TOPIC_STARTER_FORMATS } from "@debate-ai/webview/lib/topic-starters/format";
+import { docxToStoredCmir } from "@debate-ai/webview/lib/topic-starters/import";
 import { getAdminAccess, getStaffAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
 import { topicStarterItems } from "@/lib/database/schema";

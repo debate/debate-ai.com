@@ -225,6 +225,16 @@ describe("FeaturesPanel downloads", () => {
     expect(html.indexOf('data-testid="downloads"')).toBeLessThan(html.indexOf('data-testid="readme-badges"'));
   });
 
+  it("puts the Chrome extension first, in its own box with its features, above the app downloads", () => {
+    const box = html.indexOf('data-testid="extension-download"');
+    expect(box).toBeGreaterThan(-1);
+    expect(box).toBeLessThan(html.indexOf("play.google.com"));
+    expect(box).toBeLessThan(html.indexOf('data-testid="desktop-downloads"'));
+    expect(html.indexOf("noecbaibfhbmpapofcdkgchfifmoinfj")).toBeLessThan(html.indexOf('data-testid="app-downloads"'));
+    expect(html).toContain("Read cards on the page");
+    expect(html).toContain("Offline local app");
+  });
+
   it("links the Android app on Google Play next to the extension", () => {
     expect(html).toContain("play.google.com/store/apps/details?id=com.debate.ai");
   });

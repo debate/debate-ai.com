@@ -9,7 +9,7 @@
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { usePathname } from "next/navigation"
-import { EbbFlowEmbed, type EbbFlowToolAction } from "@debate/flow-ebb"
+import { EbbFlowEmbed, type EbbFlowToolAction } from "@debate-ai/flow-ebb"
 import { useFlowStore } from "../state/store"
 import { newFlow } from "../utils/flow-utils"
 import { settings } from "../state/settings"
@@ -53,7 +53,7 @@ import { roundRecordingFor } from "../round/round-recording-items"
 import { getMyTeamProfile } from "../state/myTeamProfile"
 import { readPinnedDebateIds, togglePinnedDebate } from "../state/pinnedDebates"
 import { readFlowHistory } from "../state/flowHistoryEntries"
-import { hydrateBulkStorage } from "@debate/data-sync/src/state/bulk-storage"
+import { hydrateBulkStorage } from "@debate-ai/data-sync/src/state/bulk-storage"
 import { selectSidebarRound } from "../utils/sidebar-round"
 import {
   buildFeaturedRound,

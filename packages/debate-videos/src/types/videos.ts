@@ -13,10 +13,10 @@ export type {
   VideoFacets,
   VideoSuggestion,
   VideoSuggestions,
-} from "@debate/types";
+} from "@debate-ai/types";
 
-// The definitions (and their field docs) live in `@debate/types`.
-import type { VideoDebateStyle } from "@debate/types";
+// The definitions (and their field docs) live in `@debate-ai/types`.
+import type { VideoDebateStyle } from "@debate-ai/types";
 
 /** Debate style/format category */
 export type DebateStyle = VideoDebateStyle;

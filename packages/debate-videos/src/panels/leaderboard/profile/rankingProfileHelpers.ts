@@ -18,7 +18,7 @@ import {
   type RankingDataset,
   type RankingDatasetId,
   type RankingEntry,
-} from "@debate/rankings-adapter";
+} from "@debate-ai/rankings-adapter";
 import type { DebateStyle } from "../../../types/videos";
 
 /**

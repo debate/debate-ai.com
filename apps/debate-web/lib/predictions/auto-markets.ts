@@ -19,8 +19,8 @@
  */
 
 import { and, eq, isNull, like } from "drizzle-orm";
-import { RATING_OUTCOMES, manualOutcomes, type MarketOutcome, type MarketSource } from "@debate/predictions";
-import { getRankingDatasetInfo, loadRankingDataset, type RankingEntry } from "@debate/rankings-adapter";
+import { RATING_OUTCOMES, manualOutcomes, type MarketOutcome, type MarketSource } from "@debate-ai/predictions";
+import { getRankingDatasetInfo, loadRankingDataset, type RankingEntry } from "@debate-ai/rankings-adapter";
 
 import type { getDBFromContext } from "@/lib/database/context";
 import { predictionMarkets } from "@/lib/database/schema";

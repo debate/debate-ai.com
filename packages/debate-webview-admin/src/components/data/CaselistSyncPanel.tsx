@@ -34,30 +34,30 @@ import {
   StopCircle,
   Trash2,
 } from "lucide-react";
-import type { Caselist } from "@debate/data-sync/src/caselist/caselist-config";
-import type { CaselistArchive } from "@debate/data-sync/src/caselist/downloads-page-parser";
+import type { Caselist } from "@debate-ai/data-sync/src/caselist/caselist-config";
+import type { CaselistArchive } from "@debate-ai/data-sync/src/caselist/downloads-page-parser";
 import {
   loadCaselistArchive,
   loadRemoteCaselistArchive,
   type CaselistArchiveLoad,
   type LoadArchiveOptions,
-} from "@debate/data-sync/src/caselist/caselist-archive";
-import { caselistDocumentToCardRows } from "@debate/data-sync/src/caselist/caselist-cards";
+} from "@debate-ai/data-sync/src/caselist/caselist-archive";
+import { caselistDocumentToCardRows } from "@debate-ai/data-sync/src/caselist/caselist-cards";
 import {
   CARD_UPLOAD_BATCH_ROWS,
   createCardBatchSender,
   dedupeCardsById,
   normalizeDebateCardRows,
   type DebateCardRecord,
-} from "@debate/research-evidence";
-import { Button } from "@debate/webview/lib/ui/primitives/button";
+} from "@debate-ai/research-evidence";
+import { Button } from "@debate-ai/webview/lib/ui/primitives/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@debate/webview/lib/ui/primitives/card";
+} from "@debate-ai/webview/lib/ui/primitives/card";
 
 const DISCOVERY_ENDPOINT = "/api/admin/caselist-sync";
 const CARDS_ENDPOINT = "/api/admin/debate-cards";

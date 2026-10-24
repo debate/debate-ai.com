@@ -5,7 +5,7 @@
  * this month's rating markets on the division's top five teams, then a
  * winner market for each major tournament still ahead, in date order.
  *
- * The presets are planned in `@debate/predictions` (`presets.ts`) and opened
+ * The presets are planned in `@debate-ai/predictions` (`presets.ts`) and opened
  * by the board read; this only groups what the board returns.
  */
 
@@ -17,7 +17,7 @@ import {
   PRESET_TOP_TEAMS,
   type PredictionMarket,
   type PredictionWallet,
-} from "@debate/predictions";
+} from "@debate-ai/predictions";
 
 import { cn } from "../../lib/ui/lib/utils";
 import { MarketCard } from "./MarketCard";

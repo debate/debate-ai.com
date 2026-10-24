@@ -185,3 +185,120 @@ response.
   (`python src/main.py`) as tournaments are added.
 - `/api/leaderboard` and its scrapers are still deployed but no longer used by
   `/rank`.
+
+
+
+
+## Short answer up front
+
+All three answer the same question — "given who beat whom, how strong is each side?" — and they're not really rivals so much as **the same model at three levels of sophistication**:
+
+- **Bradley–Terry (BT)** = the statistical model (batch fit, maximum likelihood / Bayesian)
+- **Elo** = BT solved online, one game at a time, with a fixed learning rate `K`
+- **Glicko(-2)** = Elo plus an explicit uncertainty term (and volatility), updated in rating periods
+
+So the real question for debate is: *do you want a streaming number, a number with error bars, or a fitted model you can add covariates to?*
+
+---
+
+## 1. Elo
+
+`E_A = 1 / (1 + 10^((R_B − R_A)/400))`, then `R_A' = R_A + K(S_A − E_A)`
+
+**Unique advantages**
+- Dead simple, explainable to a 14-year-old debater, implementable in a spreadsheet
+- Updates instantly after each round; no fitting, no matrix algebra
+- Zero infrastructure — good for a club ladder or a tab that must never break
+
+**Weaknesses**
+- **Order-dependent**: same results in a different sequence → different ratings
+- `K` is a fudge factor that conflates "how fast to learn" with "how noisy is this game"
+- No uncertainty: a 1500 after 2 rounds looks identical to a 1500 after 60
+- Can't express side bias (gov/opp), judge leniency, or topic difficulty without hacks
+- Prone to inflation/deflation as the population churns; provisional ratings are crude
+
+---
+
+## 2. Glicko / Glicko-2
+
+Each player carries `(r, RD)` — rating and rating deviation. Glicko-2 adds volatility `σ`, updated per rating period.
+
+**Unique advantages**
+- **Uncertainty is first-class.** New and inactive players get wide RDs, so they move fast and settle quickly; veterans move slowly. This is exactly what a debate season needs (a team with 4 rounds shouldn't be ranked as confidently as one with 20)
+- `g(RD)` down-weights wins over opponents you don't know much about → better strength-of-schedule behaviour than Elo
+- Rating periods make batch updates natural; RD decay handles inactivity honestly
+- Output includes confidence intervals → defensible seeding and break predictions
+
+**Weaknesses**
+- Still no covariates (no side, judge, or motion effects)
+- More complex to explain; the volatility iteration is opaque
+- Needs well-chosen rating periods; period boundaries can still create mild order effects
+- Assumes one latent strength per team — doesn't know about teams, only individuals
+
+---
+
+## 3. Bradley–Terry
+
+`P(i beats j) = p_i / (p_i + p_j)`, with `p_i = exp(θ_i)` — i.e. a logistic model on strength difference. Fit by MLE (convex, unique up to a shift when the comparison graph is connected) or Bayesian/ridge.
+
+**Unique advantages**
+- **Statistically the correct backbone.** Elo is literally online gradient ascent on the BT likelihood — BT is what Elo is approximating
+- **Handles unbalanced schedules properly**, which is the norm in debate (teams play different opponents, different sides, different motions)
+- **Covariates**: side bias (gov/opp), judge effects, motion/category difficulty, school, experience — all as terms in one model
+- **Error bars and hypothesis tests** fall out for free: standard errors, likelihood-ratio tests, CIs
+- **Extensible to the formats debate actually uses**:
+  - Davidson model → ties / "no result"
+  - Plackett–Luce → **British Parliamentary 4-team rankings** (1st–4th), which Elo and Glicko simply cannot represent
+  - Thurstone–Mosteller / ordered logit → ordinal placements
+  - Hierarchical/random effects → separate true team skill from judge noise
+- Regularization/Bayesian priors stop undefeated teams from getting infinite ratings — a real problem in small fields
+
+**Weaknesses**
+- Batch, not streaming (though refitting a few hundred teams takes seconds — this is less of a limitation than people think)
+- Assumes static strengths unless you add a time-varying/state-space layer
+- Needs a connected comparison graph; isolated teams are unidentified
+- Least transparent to outsiders — "your rating came from a maximum-likelihood fit" is a harder sell than "you gained 12 points"
+
+---
+
+## Head-to-head
+
+| | Elo | Glicko-2 | Bradley–Terry |
+|---|---|---|---|
+| Update model | per game | per period | batch fit |
+| Uncertainty | ✗ (ad hoc) | ✓✓ core feature | ✓✓ (SE / posterior) |
+| Order dependence | high | low | none |
+| Strength of schedule | partial | good | correct |
+| Side / judge / motion covariates | ✗ | ✗ | ✓✓ |
+| 4-team BP rankings | ✗ | ✗ | ✓ (Plackett–Luce) |
+| Ties | hack | hack | ✓ (Davidson) |
+| Live tab usability | ✓✓ | ✓ | ✓ (refit between rounds) |
+| Transparency to debaters | ✓✓ | ✓ | ✗ |
+| Implementation effort | trivial | moderate | high |
+
+**Unique advantages in one line each**
+- **Elo**: the only one you can explain in a sentence and run in a spreadsheet.
+- **Glicko-2**: the only one that treats "we don't know this team yet" as a real, quantified thing while staying incremental.
+- **BT**: the only one that can model *why* a result happened (side, judge, motion) and the only one that fits BP's four-way rankings.
+
+---
+
+## Best for debate
+
+**If you want one answer: Bradley–Terry, displayed on an Elo scale.** Convert with `R ≈ 173.7·θ + 1000`, so coaches see familiar-looking numbers while the engine stays statistically honest.
+
+Why BT wins for debate specifically:
+1. **Small samples.** A team debates 5–20 rounds a season. You need shrinkage and error bars, not a point estimate — BT with a ridge/Bayesian prior gives exactly that.
+2. **Unbalanced schedules.** Teams don't play everyone. BT is built for this; Elo silently misranks.
+3. **Side bias is real.** Gov/opp win rates differ by format and by motion set. A single covariate fixes what Elo can only patch.
+4. **Judge variance dominates.** Hierarchical BT can attribute noise to judges/pannels instead of dumping it into team ratings — this is the single biggest accuracy gain available in debate tabbing.
+5. **BP needs it.** If you run British Parliamentary, you need Plackett–Luce; Elo and Glicko have no representation for a 4-way ranking.
+
+**When to pick something else**
+- **Casual club ladder, one person maintains it, no stats background** → **Elo**. A working Elo beats an abandoned BT.
+- **Online debate platform with continuous play, players joining/leaving constantly, and you want live numbers with error bars** → **Glicko-2**. It's the best streaming option, and its RD mechanic is genuinely well-suited to sporadic participation.
+- **You need break/seeding probabilities next round and nothing else** → Glicko-2 or BT both fine; Glicko-2 is less work.
+
+**A practical hybrid many circuits use:** run BT (regularized, with side + judge + motion terms) after each round or each day, publish ratings on the Elo 400-point scale, and show the CI as a ± next to each number. You get Elo's legibility and BT's correctness.
+
+**Pitfalls regardless of choice:** keep the comparison graph connected, cap or regularize undefeated teams, don't publish rankings before ~5 rounds, and remember that any rating system can be gamed by schedule selection — BT with covariates just makes the gaming visible.

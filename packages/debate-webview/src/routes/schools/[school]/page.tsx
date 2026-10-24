@@ -1,7 +1,7 @@
 "use client"
 
 import { useParams } from "next/navigation"
-import { SchoolProfilePage } from "@debate/videos"
+import { SchoolProfilePage } from "@debate-ai/videos"
 import { ToolPage } from "../../../components/tools/ToolPageHeader"
 import { SchoolOwnerPanel, useSchoolPageData } from "../../../components/schools/SchoolOwnerPanel"
 

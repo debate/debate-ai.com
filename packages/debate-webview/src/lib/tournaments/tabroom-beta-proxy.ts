@@ -13,10 +13,10 @@
  * One path is not on that API: `/api/tabroom-beta/sidebar/:tournId` reads the
  * tournament's classic Tabroom invitation page and answers with its sidebar
  * (pages, circuits, past editions, dates and deadlines) as JSON, parsed by
- * `parseTabroomSidebar` from `@debate/tournaments/sidebar`.
+ * `parseTabroomSidebar` from `@debate-ai/tournaments/sidebar`.
  */
 
-import { parseTabroomSidebar, tabroomInviteUrl } from "@debate/tournaments/sidebar"
+import { parseTabroomSidebar, tabroomInviteUrl } from "@debate-ai/tournaments/sidebar"
 
 export const TABROOM_BETA_API = "https://api.tabroom.com/v1"
 export const TABROOM_BETA_PROXY_BASE = "/api/tabroom-beta"

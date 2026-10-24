@@ -1,5 +1,5 @@
 {
-  "name": "@debate/rankings-adapter",
+  "name": "@debate-ai/rankings-adapter",
   "version": "0.1.0",
   "description": "Adapter over the debate-rankings git submodule (github.com/debate/debate-rankings) for the web UI: the typed dataset list and CSV loader over its Bradley-Terry ranking CSVs, the site's rating scale, and the team-label lookup",
   "type": "module",

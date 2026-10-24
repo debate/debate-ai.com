@@ -1,7 +1,7 @@
 {
-  "name": "@debate/flow-ebb",
+  "name": "@debate-ai/flow-ebb",
   "version": "0.1.0",
-  "description": "ebb, the local-first keyboard-first flow editor, ported in as a workspace package. EbbFlowEmbed mounts it as one column of a host page (@debate/round's live round editor) rather than the page-owning app it is standalone.",
+  "description": "ebb, the local-first keyboard-first flow editor, ported in as a workspace package. EbbFlowEmbed mounts it as one column of a host page (@debate-ai/round's live round editor) rather than the page-owning app it is standalone.",
   "type": "module",
   "license": "MPL-2.0",
   "homepage": "https://github.com/debate/debate-ai.com/tree/master/packages/debate-flow#readme",
@@ -53,7 +53,7 @@
     "sonner": "^2.0.8",
     "tailwind-merge": "^3.7.0",
     "zustand": "^5.0.15",
-    "@debate/types": "workspace:*"
+    "@debate-ai/types": "workspace:*"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",

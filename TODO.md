@@ -54,7 +54,7 @@
 - [x] `resolveToolStorage` maps every `/tools` entry to synced collections, its own SQL table, or derived/none; guarded by `tool-storage.test.ts`
 - [x] `ToolPageHeader` shows where the tool's data is saved (Vitest)
 - [ ] Follow-up: per-tool "Save to account" actions for the SQL-backed tools that still only expose it in menus
-- [ ] Follow-up (pre-existing): `apps/debate-web/lib/__tests__/tool-catalog-consistency.test.ts` imports a missing `packages/debate-editor/src/editor/workspace-links`; `bun run typecheck` in `debate-webview` reports unresolved `@debate/editor/*` modules
+- [ ] Follow-up (pre-existing): `apps/debate-web/lib/__tests__/tool-catalog-consistency.test.ts` imports a missing `packages/debate-editor/src/editor/workspace-links`; `bun run typecheck` in `debate-webview` reports unresolved `@debate-ai/editor/*` modules
 
 ## Account sync of tools (Completed)
 
@@ -66,7 +66,8 @@
   - [x] `loadOwnSavedData` + route, Vitest against in-memory SQLite
   - [x] `SavedDataSection` mounted in Settings → General, with Vitest
   - [x] Documented in `user-settings.mdx`
-  - [ ] Follow-up: open / export / delete individual saved flows, documents and debates from this section
+  - [x] List / open (docs) / delete individual saved docs, flows, rounds and practice debates from this section (2026-10-22, branch `claude/gifted-babbage-uf5f12`): `saved-data-items.ts`, `/api/settings/saved-data/[kind]`, **Manage** in `SavedDataSection`, with Vitest
+  - [ ] Follow-up: export an individual saved item; stable open links for flows / rounds / practice debates
   - [x] Tool Data Sync collections (`saved_tool_records`) included in the summary (branch `agent/todo-saved-data-tool-records`, Vitest in `saved-data.test.ts` + `saved-data-section.test.tsx`)
   - [ ] Follow-up: add the sync badge to open-flow tabs and the `/doc` header (existing known gap)
 
@@ -165,55 +166,12 @@ roughly 500 editing commands into ~30 thematic groups. Highlights (full 50+ feat
 - **Runtime plugin registry**, a 12-category menu bar, customizable keybindings, and per-user preferences synced to account settings
 - **Native desktop/mobile wrapper**  running the identical editor with no browser chrome
 
-## Crowdsourced Research 
+## Crowdsourced Research, Community & Practice features
 
-- [Evidence Library](https://debate-ai.com/cards/library) — Search shared cut cards and reusable analytics by keyword, citation, argument, topic, or tag.
-- [Argument Library](https://debate-ai.com/cards/argument-library) — Browse shared research through topic folders, case areas, and tag-based collections.
-- [Contributions Feed](https://debate-ai.com/cards/contributions) — Submit, like, save, and endorse community cards, summaries, highlights, and annotations.
-- [LLM Card Scoring](https://debate-ai.com/cards/scoring) — Score cards for relevance, clarity, uniqueness, evidence quality, and usability.
-- [Revision Incentives](https://debate-ai.com/cards/revisions) — Reward and rank improvements to weak cards, citations, and stale evidence.
-- [Review Queue](https://debate-ai.com/cards/reviews) — Move cards through draft, review, requested changes, approval, and publication.
-- [Topic Coverage Dashboard](https://debate-ai.com/cards/coverage) — Identify missing, thin, covered, and untracked arguments by card and word count.
-- [Task Inbox](https://debate-ai.com/cards/inbox) — Review research tasks routed to contributors and organized by topic.
-- [Collaboration Prep Room](https://debate-ai.com/cards/prep-room) — Share a topic-specific prep space for evidence, draft blocks, tasks, and active teammates.
-- [Team Collaboration Mode](https://debate-ai.com/cards/collaboration) — Leave, assign, and track live prep notes during shared topic sprints.
-- [Prep Notes](https://debate-ai.com/prep-notes) — Maintain live prep notes grouped into needs-follow-up, open, and covered status.
-- [Contacts](https://debate-ai.com/contacts) — Keep an account-linked contacts list (requests, blocking, who's online) and share the document you're editing as a live co-editing card straight to a contact's account.
-- [Notifications](https://debate-ai.com/notifications) — See and mark read notifications for prep-note assignments and activity.
-- [Team Brainstorm Assist](https://debate-ai.com/cards/brainstorm) — Submit, seed, organize, and upvote ideas for arguments, impacts, frontlines, and turns.
-- [Group Challenges](https://debate-ai.com/cards/group-challenges) — Create squad challenges based on contributions or recorded rebuttal wins.
-- [Research Progress](https://debate-ai.com/cards/progress-tracking) — Review contribution history, task-completion rates, and per-topic work progress.
+The live feature list lives in [`README.md`](./README.md#features) — one entry per tool, every link checked against the running app. Keep it in sync with the catalogs that decide what the app actually ships:
 
-## Community & Contributor Progress
+- `packages/debate-webview/src/routes/tools/tool-groups.ts` — `ALL_TOOLS` (the `/tools` catalog, the command palette and favorites)
+- `packages/debate-webview/src/lib/feature-catalog.ts` — `APP_FEATURES` (the `/practice/features` page)
+- `packages/debate-webview/src/routes/index.ts` — `PAGE_ROUTES` / `CLIENT_ROUTES` (the route table both catalogs point at)
 
-- [Leaderboard](https://debate-ai.com/cards/leaderboard) — Rank contributors by helpfulness score, tier, badges, and quest streak.
-- [News Stream](https://debate-ai.com/news) — View product updates, community announcements, Daily Best Card winners, and Contributor Award standings.
-- [Contributor Awards](https://debate-ai.com/cards/awards) — See helpfulness-ranked category winners, such as best evidence finder and best explainer.
-- [Daily Best Card](https://debate-ai.com/cards/best-card) — View the current highest-helpfulness card and prior daily winners.
-- [Progress](https://debate-ai.com/cards/progress) — Track contributor tiers, badges, unlocked task levels, and daily-quest streaks.
-- [Quest Streaks](https://debate-ai.com/cards/streaks) — View current and longest daily-quest streaks plus milestone badges.
-- [Daily Quests](https://debate-ai.com/cards/quests) — Track team goals, such as finding solvency cards, against live same-day contributions.
-
-## Practice & AI Rounds
-
-- [Practice Drills](https://debate-ai.com/drills) — Run flow-derived overview, frontline, cross-examination, and collapse drills.
-- [AI Coach Mode](https://debate-ai.com/coaching) — Generate extension, refutation, collapse, and weighing prompts from a round’s flow.
-- [AI Judge Decision](https://debate-ai.com/judge-decision) — Generate an AI decision grounded in the selected judge paradigm and flow summary.
-- [Word-Count Speeches](https://debate-ai.com/word-count) — Practice speeches under a maximum word count instead of a time limit.
-- [Online Debate Versus AI](https://debate-ai.com/versus-ai) — Debate an AI opponent in real turn order using a chosen format and side.
-- [Practice Round Simulator](https://debate-ai.com/practice-round) — Simulate a tournament round with a timer, AI judge paradigm, and AI opponent persona.
-- [Speech Transcript Summaries](https://debate-ai.com/summaries) — Create per-argument flow summaries with cross-examination questions and extension ideas.
-- [Argument Tree Outline](https://debate-ai.com/outline) — Browse and filter a structured outline of every argument in a round’s flow.
-- [Flow Annotations](https://debate-ai.com/annotations) — Add timestamped annotations to individual flowed arguments while reviewing recordings.
-- [AI Response-Outcome Charts](https://debate-ai.com/outcomes) — Analyze side exposure, vulnerable arguments, and hypothetical response paths in a flow.
-
-## Scouting & Round Strategy
-
-- [Judge Profiles](https://debate-ai.com/judges) — Review saved judges’ side-vote bias, speaker points, speed tolerance, and theory receptiveness.
-- [Opponent Team Profiles](https://debate-ai.com/opponents) — Scout teams using records, side tendencies, common cases, and frequently used arguments.
-- [Pre-Round Briefings](https://debate-ai.com/briefings) — Combine judge and opponent scouting, head-to-head records, and team prep notes for an upcoming round.
-- [Scout-to-Strategy](https://debate-ai.com/strategy) — Convert scouting and judge tendencies into ranked case options and matchup-risk assessments.
-- [Team Rankings](https://debate-ai.com/rank) — Browse debate-team rankings, leaderboards, and Elo ratings.
-- [Coaching Programs](https://debate-ai.com/coaching-programs) — Run roster-scoped group coaching spaces with topic sprints, challenges, and drills.
-- [Coach Materials](https://debate-ai.com/coach-materials) — Upload or dictate grounding material for the team coach AI and preview relevant sources.
 

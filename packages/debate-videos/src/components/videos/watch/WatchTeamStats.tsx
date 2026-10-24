@@ -17,7 +17,7 @@
 "use client"
 
 import { useState, type ReactNode } from "react"
-import type { RankingDataset } from "@debate/rankings-adapter"
+import type { RankingDataset } from "@debate-ai/rankings-adapter"
 import { useAllRankingDatasets } from "../../../hooks/useAllRankingDatasets"
 import { isRankedSeasonRound } from "../../../hooks/useVideoTeamRankings"
 import {

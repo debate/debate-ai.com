@@ -12,20 +12,20 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createElement, type FC } from "react";
 
 import { DailyQuestsPanel } from "../src/panels/DailyQuestsPanel";
-import { saveContribution } from "@debate/research-evidence/src/state/contributions";
-import { saveTrackedArgument } from "@debate/research-evidence/src/state/trackedArguments";
+import { saveContribution } from "@debate-ai/research-evidence/src/state/contributions";
+import { saveTrackedArgument } from "@debate-ai/research-evidence/src/state/trackedArguments";
 import {
   listQuestTeams,
   listQuestTemplates,
   saveQuestTemplate,
-} from "@debate/team-collaboration/src/state/dailyQuests";
+} from "@debate-ai/team-collaboration/src/state/dailyQuests";
 import {
   buildPersistedContributorQuestStreak,
   listDailyMissionResultsForContributor,
   saveDailyMissionResult,
 } from "../src/state/dailyMissionResults";
 import { buildStreakRewardText } from "../src/lib/gamified-quests";
-import type { AttributedContribution } from "@debate/research-evidence/src/lib/contribution-leaderboard";
+import type { AttributedContribution } from "@debate-ai/research-evidence/src/lib/contribution-leaderboard";
 import { buttonByText, buttonsByText, click, flush, mount, query, type } from "./helpers/mount";
 import type { Mounted } from "./helpers/mount";
 

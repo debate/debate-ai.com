@@ -1,5 +1,5 @@
 import type { Setting, RadioSetting } from "../types/settings";
-import { debateStyleNames } from "@debate/timer/src/formats/debate-format-times";
+import { debateStyleNames } from "@debate-ai/timer/src/formats/debate-format-times";
 
 export class Settings {
   data: { [key: string]: Setting };

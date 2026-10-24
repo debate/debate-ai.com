@@ -1,5 +1,5 @@
 {
-  "name": "@debate/types",
+  "name": "@debate-ai/types",
   "version": "0.1.0",
   "description": "Every shared Debate AI type in one place, with a description on every object and field so editors show it on hover",
   "type": "module",

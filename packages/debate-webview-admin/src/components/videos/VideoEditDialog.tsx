@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { parseYouTubeVideoId } from "@debate/videos";
-import { LECTURE_CATEGORIES } from "@debate/data-sync/src/youtube/parsers/lecture-classifier";
-import { canonicalCategoryLabel } from "@debate/data-sync/src/videos/video-rows";
-import { Button } from "@debate/webview/lib/ui/primitives/button";
-import { Input } from "@debate/webview/lib/ui/primitives/input";
-import { Label } from "@debate/webview/lib/ui/primitives/label";
+import { parseYouTubeVideoId } from "@debate-ai/videos";
+import { LECTURE_CATEGORIES } from "@debate-ai/data-sync/src/youtube/parsers/lecture-classifier";
+import { canonicalCategoryLabel } from "@debate-ai/data-sync/src/videos/video-rows";
+import { Button } from "@debate-ai/webview/lib/ui/primitives/button";
+import { Input } from "@debate-ai/webview/lib/ui/primitives/input";
+import { Label } from "@debate-ai/webview/lib/ui/primitives/label";
 import {
   Dialog,
   DialogContent,
@@ -14,14 +14,14 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@debate/webview/lib/ui/primitives/dialog";
+} from "@debate-ai/webview/lib/ui/primitives/dialog";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@debate/webview/lib/ui/primitives/select";
+} from "@debate-ai/webview/lib/ui/primitives/select";
 
 /** One row of the published `videos` table, as the admin API returns it. */
 export interface LibraryVideo {

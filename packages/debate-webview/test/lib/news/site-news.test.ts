@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import type { VideoType } from "@debate/types"
+import type { VideoType } from "@debate-ai/types"
 import { buildFileNews, buildForumNews, buildRoundNews } from "../../../src/lib/news/site-news"
 import type { ForumThreadSummary } from "../../../src/lib/forums/types"
 

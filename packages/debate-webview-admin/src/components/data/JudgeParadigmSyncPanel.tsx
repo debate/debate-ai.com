@@ -2,10 +2,10 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { BadgeCheck, Loader2, RefreshCw, Search, Square } from "lucide-react";
-import { Button } from "@debate/webview/lib/ui/primitives/button";
-import { Badge } from "@debate/webview/lib/ui/primitives/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@debate/webview/lib/ui/primitives/card";
-import type { ParadigmSyncBatch, ParadigmSyncStatus } from "@debate/webview/lib/judge-paradigms/types";
+import { Button } from "@debate-ai/webview/lib/ui/primitives/button";
+import { Badge } from "@debate-ai/webview/lib/ui/primitives/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@debate-ai/webview/lib/ui/primitives/card";
+import type { ParadigmSyncBatch, ParadigmSyncStatus } from "@debate-ai/webview/lib/judge-paradigms/types";
 
 const API = "/api/admin/judge-paradigms";
 

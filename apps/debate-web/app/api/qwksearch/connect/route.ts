@@ -12,7 +12,7 @@ import {
   randomToken,
   safeReturnTo,
   serializePending,
-} from "@debate/webview/lib/qwksearch/connect"
+} from "@debate-ai/webview/lib/qwksearch/connect"
 
 /**
  * GET — starts "Sign in with QwkSearch" (packages/debate-webview/src/lib/qwksearch/connect.ts): makes a

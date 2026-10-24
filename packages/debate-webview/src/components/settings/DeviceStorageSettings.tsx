@@ -7,10 +7,8 @@ import {
   hydrateBulkStorage,
   subscribeBulkStorage,
   type BulkStorageStatus,
-} from "@debate/data-sync/src/state/bulk-storage"
-import { EXTENSION_ID } from "../../lib/config/site"
-
-const EXTENSION_STORE_URL = `https://chromewebstore.google.com/detail/${EXTENSION_ID}`
+} from "@debate-ai/data-sync/src/state/bulk-storage"
+import { EXTENSION_STORE_URL } from "../../lib/config/site"
 
 function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`
@@ -32,7 +30,7 @@ function formatBytes(bytes: number): string {
  * copy, in IndexedDB rather than the ~5 MB `localStorage` (which holds small
  * preferences only). With the browser extension installed, that copy is also
  * mirrored into the extension's storage, which its `unlimitedStorage`
- * permission frees from any quota — see `@debate/data-sync`'s
+ * permission frees from any quota — see `@debate-ai/data-sync`'s
  * `state/bulk-storage.ts` and the extension's `src/storage/bulk-storage-bridge.ts`.
  */
 export function DeviceStorageSettings() {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { JUDGE_ANCHOR, PROFILE_ANCHOR, judgeLinkTarget } from "../../../src/components/practice-partners/PracticePartnersPanel"
-import { SIDEBAR_TOOL_SECTIONS } from "@debate/videos/src/components/navigation/sidebar-nav/sidebar-tool-sections"
+import { SIDEBAR_TOOL_SECTIONS } from "@debate-ai/videos/src/components/navigation/sidebar-nav/sidebar-tool-sections"
 
 describe("judge anchor on /practice/partners", () => {
   it("lands a volunteer judge on the open judge seats", () => {

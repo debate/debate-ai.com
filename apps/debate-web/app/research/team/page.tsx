@@ -6,4 +6,4 @@ export const metadata: Metadata = {
     "Topic coverage, the collaboration prep room, review queue, task inbox, contributions feed and brainstorm board on one page",
 }
 
-export { default } from "@debate/webview/routes/research/team/page"
+export { default } from "@debate-ai/webview/routes/research/team/page"

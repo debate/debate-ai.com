@@ -29,16 +29,16 @@ import {
   type CardImportProgress,
   type DebateCardRowFailure,
   type ParquetSource,
-} from "@debate/research-evidence";
-import { Button } from "@debate/webview/lib/ui/primitives/button";
+} from "@debate-ai/research-evidence";
+import { Button } from "@debate-ai/webview/lib/ui/primitives/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@debate/webview/lib/ui/primitives/card";
-import { Input } from "@debate/webview/lib/ui/primitives/input";
+} from "@debate-ai/webview/lib/ui/primitives/card";
+import { Input } from "@debate-ai/webview/lib/ui/primitives/input";
 
 /** One shard's row in the queue, and what has happened to it so far. */
 interface QueuedShard {

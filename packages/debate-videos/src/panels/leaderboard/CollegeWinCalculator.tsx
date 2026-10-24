@@ -9,7 +9,7 @@
 "use client"
 
 import { useState } from "react"
-import { collegeWinProbability, type CollegeHistoryEntry } from "@debate/rankings-adapter"
+import { collegeWinProbability, type CollegeHistoryEntry } from "@debate-ai/rankings-adapter"
 import { Input } from "../../ui/primitives/input"
 import { SPEECH_SIDE_STYLES } from "../../components/videos/watch/speech-side-styles"
 

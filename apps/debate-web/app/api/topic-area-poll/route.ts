@@ -3,7 +3,7 @@ import { getDBFromContext } from "@/lib/database/context"
 import { getUserId } from "@/lib/auth/session"
 import { withRouteErrors } from "@/lib/api/route-errors"
 import { castTopicAreaVote, getTopicAreaPoll } from "@/lib/topic-area-poll/queries"
-import { nextPollSeason, parseVoteBody } from "@debate/videos/src/lib/topic-areas/topic-area-poll"
+import { nextPollSeason, parseVoteBody } from "@debate-ai/videos/src/lib/topic-areas/topic-area-poll"
 
 /**
  * The next-season topic-area poll on /practice/statistics.

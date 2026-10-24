@@ -16,8 +16,8 @@ import { sendRoundInvites, computeAddedInviteEmails } from "../../round/round-in
 import {
   debateStyles,
   debateStyleMap,
-} from "@debate/timer/src/formats/debate-format-times";
-import { setBulkItem } from "@debate/data-sync/src/state/bulk-storage";
+} from "@debate-ai/timer/src/formats/debate-format-times";
+import { setBulkItem } from "@debate-ai/data-sync/src/state/bulk-storage";
 
 /** Return type of the {@link useRoundEditorForm} hook. */
 export interface RoundEditorFormState {

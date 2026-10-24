@@ -2,7 +2,7 @@
  * @fileoverview Opens the site's own markets — each division's top five on a
  * monthly rating market, and a winner market for every major tournament still
  * ahead — whichever of them aren't open yet. The plan itself is
- * `planPresetMarkets` in `@debate/predictions`; this reads the rankings and
+ * `planPresetMarkets` in `@debate-ai/predictions`; this reads the rankings and
  * writes the missing rows.
  *
  * Runs on board reads. A plan only changes when the month turns, a
@@ -13,12 +13,12 @@
  */
 
 import { inArray } from "drizzle-orm";
-import { PRESET_DIVISIONS, planPresetMarkets, type PresetRankings } from "@debate/predictions";
+import { PRESET_DIVISIONS, planPresetMarkets, type PresetRankings } from "@debate-ai/predictions";
 
 import type { getDBFromContext } from "@/lib/database/context";
 import { predictionMarkets } from "@/lib/database/schema";
 import { insertMarket } from "./queries";
-import { rankedTeams } from "@debate/webview/lib/predictions/ratings";
+import { rankedTeams } from "@debate-ai/webview/lib/predictions/ratings";
 
 type Db = Awaited<ReturnType<typeof getDBFromContext>>;
 

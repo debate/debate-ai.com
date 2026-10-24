@@ -1,5 +1,5 @@
-import { getPosts } from '@debate/help-docs/lib/blog';
-import { blogSource } from '@debate/help-docs/lib/fumadocs/source';
+import { getPosts } from '@debate-ai/help-docs/lib/blog';
+import { blogSource } from '@debate-ai/help-docs/lib/fumadocs/source';
 import Link from 'next/link';
 
 export default function BlogPage() {

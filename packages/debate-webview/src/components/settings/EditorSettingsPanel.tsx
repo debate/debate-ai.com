@@ -7,12 +7,12 @@ import { useSearchParams } from "next/navigation"
 import { Brain, BrainCog, HardDrive, Search, Server, Settings, ShieldCheck, SlidersHorizontal, UserCircle, Volume2, Wand2 } from "lucide-react"
 // Static import so bundling confines this ~15k-line global stylesheet to
 // the settings routes' own chunk — never loaded by the host app's main bundle.
-import "@debate/editor/styles.css"
-import { DebateEditorSettingsSection } from "@debate/editor/settings-section"
-import type { SettingsCategory } from "@debate/editor/settings"
-import { DEBATE_EDITOR_SETTINGS_TABS } from "@debate/editor/settings-tabs"
-import { UserSettingsPanel } from "@debate/round"
-import { MyRankedTeamsSettings } from "@debate/videos"
+import "@debate-ai/editor/styles.css"
+import { DebateEditorSettingsSection } from "@debate-ai/editor/settings-section"
+import type { SettingsCategory } from "@debate-ai/editor/settings"
+import { DEBATE_EDITOR_SETTINGS_TABS } from "@debate-ai/editor/settings-tabs"
+import { UserSettingsPanel } from "@debate-ai/round"
+import { MyRankedTeamsSettings } from "@debate-ai/videos"
 import { TeamCoachingSection } from "./sections/TeamCoachingSection"
 import { MySchoolSettings } from "../schools/MySchoolSettings"
 import { OwnAiKeySection } from "./sections/OwnAiKeySection"
@@ -40,7 +40,7 @@ const PREFERENCES_TAB = "preferences"
 // UI sound effects, the read-aloud voice and the on-device speech models.
 const SOUND_SPEECH_TAB = "sound-speech"
 // Tabs folded into General, with the block each one now scrolls to:
-// My team (`@debate/videos`' MyRankedTeamsSettings) and My school
+// My team (`@debate-ai/videos`' MyRankedTeamsSettings) and My school
 // (`components/schools/MySchoolSettings`).
 const TAB_ALIASES: Record<string, { tab: TabId; anchor: string }> = {
   "my-team": { tab: PREFERENCES_TAB, anchor: "settings-my-team" },
@@ -185,7 +185,7 @@ function useCategories() {
 }
 
 /**
- * The site's footer links (`FOOTER_LINKS` from `@debate/videos`, the same
+ * The site's footer links (`FOOTER_LINKS` from `@debate-ai/videos`, the same
  * list the app sidebar's footer and the dock's Site Links menu read), pinned
  * to the bottom of the settings sidebar. App routes go through `Link`; the
  * help docs and outside sites get a real page load (see `hardNavigate`).

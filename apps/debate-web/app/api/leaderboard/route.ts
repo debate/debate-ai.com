@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import {
   CURRENT_YEAR,
   resolveLeaderboard,
-} from "@debate/webview/lib/leaderboard/resolve";
+} from "@debate-ai/webview/lib/leaderboard/resolve";
 
 /**
  * Leaderboard rows for a division+year.

@@ -2,18 +2,18 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { buildPersistedCoachingProgramBoard } from "../src/state/persistedCoachingProgramBoard";
 import { saveCoachingProgram } from "../src/state/coachingPrograms";
 import { saveRoundContributorFlow } from "../src/state/roundContributorFlows";
-import { savePracticeRound } from "@debate/round/src/state/practiceRounds";
-import { buildPracticeRoundSetup } from "@debate/round/src/round/practice-round-simulator";
+import { savePracticeRound } from "@debate-ai/round/src/state/practiceRounds";
+import { buildPracticeRoundSetup } from "@debate-ai/round/src/round/practice-round-simulator";
 import type {
   CoachingProgramConfig,
   CoachingProgramMemberFlow,
   CoachingProgramMemberPracticeRound,
 } from "../src/round/coaching-program";
 import { saveGroupChallenge } from "../src/state/groupChallenges";
-import { saveContribution } from "@debate/research-evidence/src/state/contributions";
+import { saveContribution } from "@debate-ai/research-evidence/src/state/contributions";
 import { recordChallengeWinEvent } from "../src/state/challengeWinEvents";
 import type { GroupChallenge } from "../src/lib/group-challenges";
-import type { AttributedContribution } from "@debate/research-evidence/src/lib/contribution-leaderboard";
+import type { AttributedContribution } from "@debate-ai/research-evidence/src/lib/contribution-leaderboard";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {
@@ -182,7 +182,7 @@ describe("buildPersistedCoachingProgramBoard", () => {
       sideKey: "A",
       flow: { columns: ["1AC", "1NC"], children: [] },
     });
-    const setup = buildPracticeRoundSetup({ styleKey: "lincolnDouglas", judgeParadigm: "lay" });
+    const setup = buildPracticeRoundSetup({ styleKey: "lincolnDouglas", judgeParadigm: "common-sense" });
     savePracticeRound({ roundId: "round-1", setup });
 
     const board = buildPersistedCoachingProgramBoard("varsity", "solvency", NOW);
@@ -213,7 +213,7 @@ describe("buildPersistedCoachingProgramBoard", () => {
     });
     savePracticeRound({
       roundId: "round-1",
-      setup: buildPracticeRoundSetup({ styleKey: "lincolnDouglas", judgeParadigm: "lay" }),
+      setup: buildPracticeRoundSetup({ styleKey: "lincolnDouglas", judgeParadigm: "common-sense" }),
     });
 
     const override: CoachingProgramMemberPracticeRound[] = [];

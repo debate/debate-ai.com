@@ -44,7 +44,7 @@ import {
 } from "./video-tree"
 import { VideoTreeRows, type VideoTreeRowContext } from "./VideoTreeRows"
 import { WindowedChunk } from "./WindowedChunk"
-import type { VideoType } from "../../../types/videos"
+import type { TopicType, VideoType } from "../../../types/videos"
 
 export { cleanTournamentName } from "./video-tree"
 
@@ -100,6 +100,8 @@ interface VideoListRowsProps {
    * with the debate format, for a listing that mixes formats (Top Picks).
    */
   showFormat?: boolean
+  /** Debate topics by year; a season row names its topic when given them. */
+  topics?: TopicType[]
 }
 
 type ColumnKey = "tree" | "aff" | "neg" | "date" | "views" | "watched"
@@ -234,6 +236,7 @@ export function VideoListRows({
   onSearch,
   showWatched = false,
   showFormat = false,
+  topics,
 }: VideoListRowsProps) {
   const watchHistory = useWatchHistory()
   // Without an explicit `layout`, round (debate) videos carry tournament/aff/
@@ -347,6 +350,7 @@ export function VideoListRows({
     onSearch,
     showFormat,
     teamRanking,
+    topics,
   }
 
   // A screen with room for the table twice over shows it in two columns, the

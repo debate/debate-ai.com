@@ -13,14 +13,14 @@ import { useSearchParams } from "next/navigation"
 
 import { Card, CardContent, CardHeader } from "../../../lib/ui/primitives/card"
 import { LoginForm } from "./LoginForm"
-import { DebateAiLogo } from "@debate/icons/brand"
+import { DebateAiLogo } from "@debate-ai/icons/brand"
 import { APP_LOGO_HEIGHT, APP_LOGO_WIDTH, APP_NAME } from "../../../lib/config/site"
 import { describeSignInError } from "../../../lib/auth/sign-in-errors"
 
 export default function LoginPage() {
   const searchParams = useSearchParams()
 
-  // Set by @debate/native-wrapper's LoginForm when it opens this page in the system
+  // Set by @debate-ai/native-wrapper's LoginForm when it opens this page in the system
   // browser (see LoginForm.tsx) — carries the sign-in through to
   // /auth/native-complete instead of the default "/". Any other caller of
   // /login can use the same param to land somewhere specific after sign-in.

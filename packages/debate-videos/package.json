@@ -1,5 +1,5 @@
 {
-  "name": "@debate/videos",
+  "name": "@debate-ai/videos",
   "version": "0.1.0",
   "description": "Debate video library — grids, search, the persistent YouTube player, lecture pages and rankings leaderboards",
   "type": "module",
@@ -74,13 +74,13 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@debate/comments": "workspace:*",
-    "@debate/data-sync": "workspace:*",
-    "@debate/predictions": "workspace:*",
-    "@debate/rankings-adapter": "workspace:*",
-    "@debate/research-evidence": "workspace:*",
-    "@debate/timer": "workspace:*",
-    "@debate/types": "workspace:*",
+    "@debate-ai/comments": "workspace:*",
+    "@debate-ai/data-sync": "workspace:*",
+    "@debate-ai/predictions": "workspace:*",
+    "@debate-ai/rankings-adapter": "workspace:*",
+    "@debate-ai/research-evidence": "workspace:*",
+    "@debate-ai/timer": "workspace:*",
+    "@debate-ai/types": "workspace:*",
     "@icons-pack/react-simple-icons": "^13.15.1",
     "@radix-ui/react-dialog": "1.3.1",
     "@radix-ui/react-scroll-area": "1.4.0",
@@ -106,7 +106,7 @@
     "recharts": "3.10.1",
     "tailwind-merge": "^3.7.0",
     "zustand": "^5.0.15",
-    "@debate/icons": "workspace:*"
+    "@debate-ai/icons": "workspace:*"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",

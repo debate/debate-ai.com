@@ -4,7 +4,7 @@ import { getUserId } from "@/lib/auth/session";
 import { getEnv } from "@/lib/env";
 import { withRouteErrors } from "@/lib/api/route-errors";
 import { ensureWallet, getMarketViewer, listListings } from "@/lib/market/queries";
-import { TOP_UPS, type MarketBoardResponse } from "@debate/file-market";
+import { TOP_UPS, type MarketBoardResponse } from "@debate-ai/file-market";
 
 /**
  * The file market — research files for sale, and the viewer's wallet.

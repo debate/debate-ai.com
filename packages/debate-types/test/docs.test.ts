@@ -13,7 +13,7 @@ function hasDocAbove(lines: string[], index: number): boolean {
   return i >= 0 && lines[i].trim().endsWith("*/");
 }
 
-describe("@debate/types documentation", () => {
+describe("@debate-ai/types documentation", () => {
   it("has declaration files to check", () => {
     expect(files.length).toBeGreaterThan(0);
   });

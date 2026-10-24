@@ -8,7 +8,7 @@
  */
 
 import { and, asc, eq } from "drizzle-orm";
-import { pointsForRank, type TopicAreaPollResponse } from "@debate/videos/src/lib/topic-areas/topic-area-poll";
+import { pointsForRank, type TopicAreaPollResponse } from "@debate-ai/videos/src/lib/topic-areas/topic-area-poll";
 
 import type { getDBFromContext } from "@/lib/database/context";
 import { topicAreaRankings } from "@/lib/database/schema";

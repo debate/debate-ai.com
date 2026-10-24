@@ -79,6 +79,14 @@ export interface VideoRow {
   stackPosition: number;
   /** Lowercased `title + channel + description`, used for `LIKE` search. */
   searchText: string;
+  /**
+   * The aff team's debaters' last names, lowercased and hyphen-joined
+   * (e.g. `"gallow-stern"`), saved alongside the short code for SQL lookups.
+   * `null` when the long version isn't known.
+   */
+  affTeamLong: string | null;
+  /** The neg team's equivalent long version. */
+  negTeamLong: string | null;
 }
 
 /** Season boundary: everything published before this date is "legacy". */
@@ -179,6 +187,19 @@ function str(value: unknown): string | null {
 }
 
 /**
+ * Converts debaters' last names to the SQL long version: lowercased,
+ * hyphen-joined. `"Gallow & Stern"` → `"gallow-stern"`. `"Daswani"` → `"daswani"`.
+ */
+export function teamLongName(names: string | null | undefined): string | null {
+  if (!names) return null;
+  return names
+    .split(/\s*(?:&|\/| and )\s*/i)
+    .map((part) => part.trim().toLowerCase().replace(/[^a-z0-9'-]/g, ""))
+    .filter(Boolean)
+    .join("-") || null;
+}
+
+/**
  * Strips a leading tournament year (e.g. `"2019 Loyola"` -> `"Loyola"`). The
  * source JSON prefixes most round tournament names with the calendar year of
  * the event; that year is redundant now that {@link seasonYearForDate} backs
@@ -258,6 +279,11 @@ export function tupleToVideoRow(
     // every row exists.
     stackKey: null,
     stackPosition: 0,
+    // The long team-name versions (lowercased, hyphen-joined last names) are
+    // not carried by the JSON tuples; they are populated separately when the
+    // rankings lookup has resolved them. `null` here means "not yet known".
+    affTeamLong: null,
+    negTeamLong: null,
     searchText: `${title} ${channel} ${description}`.toLowerCase(),
   };
 }

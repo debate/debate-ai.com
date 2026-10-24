@@ -59,7 +59,7 @@ body {
 
 
 /* The clock face itself (ring, digits, buttons, ripple) is
- * CircularTimerFace from @debate/timer, which brings its own styles. */
+ * CircularTimerFace from @debate-ai/timer, which brings its own styles. */
 
 /* ------------------------------------------------------------------ *
  *  Timeline — rebuilt (old css/timeline-style.css)

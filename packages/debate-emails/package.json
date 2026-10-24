@@ -1,5 +1,5 @@
 {
-  "name": "@debate/emails",
+  "name": "@debate-ai/emails",
   "version": "0.1.0",
   "description": "Debate AI's transactional emails as React Email templates — welcome, file collaboration and round invites, and the coach feature tour — with sample data for previews and a Workers-safe renderer",
   "type": "module",

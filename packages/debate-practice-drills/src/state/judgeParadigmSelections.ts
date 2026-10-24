@@ -12,12 +12,12 @@
  * @module state/judgeParadigmSelections
  */
 
-import type { JudgeParadigm } from "@debate/speech-writer/src/judge/judge-paradigms";
+import { getJudgeParadigm, type JudgeParadigm } from "@debate-ai/speech-writer/src/judge/judge-paradigms";
 
 import {
   mirrorToolRecordDelete,
   mirrorToolRecordSave,
-} from "@debate/data-sync/src/state/tool-record-mirror";
+} from "@debate-ai/data-sync/src/state/tool-record-mirror";
 
 export type JudgeParadigmSelection = {
   roundId: string;
@@ -26,13 +26,25 @@ export type JudgeParadigmSelection = {
 
 const STORAGE_KEY = "judgeParadigmSelections";
 
+/**
+ * Swaps a stored built-in paradigm for its current definition, so selections
+ * saved under a retired paradigm id resolve to its replacement. Custom
+ * paradigms are kept as stored.
+ */
+function withCurrentParadigm(selection: JudgeParadigmSelection): JudgeParadigmSelection {
+  const id = selection?.paradigm?.id;
+  if (!id || id === "custom") return selection;
+  const current = getJudgeParadigm(id);
+  return current ? { ...selection, paradigm: current } : selection;
+}
+
 function readAll(): JudgeParadigmSelection[] {
   if (typeof localStorage === "undefined") return [];
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? (parsed as JudgeParadigmSelection[]) : [];
+    return Array.isArray(parsed) ? (parsed as JudgeParadigmSelection[]).map(withCurrentParadigm) : [];
   } catch {
     return [];
   }

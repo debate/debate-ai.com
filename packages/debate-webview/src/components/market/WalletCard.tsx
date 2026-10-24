@@ -12,8 +12,8 @@
 import { useState } from "react"
 import { Loader2, Wallet as WalletIcon } from "lucide-react"
 import { toast } from "sonner"
-import { formatCents, type TopUpId, type TopUpOption, type Wallet } from "@debate/file-market"
-import { startTopUp } from "@debate/file-market/client"
+import { formatCents, type TopUpId, type TopUpOption, type Wallet } from "@debate-ai/file-market"
+import { startTopUp } from "@debate-ai/file-market/client"
 import { Button } from "../../lib/ui/primitives/button"
 
 export interface WalletCardProps {

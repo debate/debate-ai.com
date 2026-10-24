@@ -19,7 +19,7 @@ import {
   toggleDrillCompletion,
   type DrillSetRecord,
 } from "../src/state/drillSets";
-import type { Box } from "@debate/round/src/types/flow";
+import type { Box } from "@debate-ai/round/src/types/flow";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment has no DOM by default here. */
 class MemoryStorage {

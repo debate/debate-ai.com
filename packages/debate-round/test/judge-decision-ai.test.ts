@@ -6,19 +6,30 @@ import {
   type JudgeDecisionAiInput,
   type JudgeDecisionAiResult,
 } from "../src/round/judge-decision-ai";
-import { judgeParadigms } from "@debate/speech-writer/src/judge/judge-paradigms";
+import { judgeParadigms } from "@debate-ai/speech-writer/src/judge/judge-paradigms";
 
 const INPUT: JudgeDecisionAiInput = {
-  paradigm: judgeParadigms.flow,
+  paradigm: judgeParadigms.policymaker,
   flowSummaryText: "1AC: Solvency deficit — the plan can't overcome bureaucratic inertia.",
   sideNames: { primary: "Affirmative", secondary: "Negative" },
+};
+
+/** A paradigm with fixed voting priorities, so the rubric-matching tests don't track built-in wording. */
+const RUBRIC_PARADIGM = {
+  ...judgeParadigms.policymaker,
+  votingPriorities: [
+    "Dropped or conceded arguments",
+    "Argument interaction and clash",
+    "Impact calculus (magnitude, probability, timeframe)",
+    "Framework/weighing mechanism established in-round",
+  ],
 };
 
 describe("buildJudgeDecisionAiUserPrompt", () => {
   it("includes the paradigm's prompt section, side labels, and flow summary", () => {
     const prompt = buildJudgeDecisionAiUserPrompt(INPUT);
 
-    expect(prompt).toContain("Judge Paradigm: Flow / Tech Judge");
+    expect(prompt).toContain("Judge Paradigm: Tech Over Truth Policymaker");
     expect(prompt).toContain('"primary" = Affirmative');
     expect(prompt).toContain('"secondary" = Negative');
     expect(prompt).toContain("Solvency deficit");
@@ -117,13 +128,13 @@ describe("buildJudgeDecisionRubric", () => {
   };
 
   it("returns one row per voting priority, in the paradigm's own order", () => {
-    const rubric = buildJudgeDecisionRubric(judgeParadigms.flow, DECISION);
+    const rubric = buildJudgeDecisionRubric(judgeParadigms.policymaker, DECISION);
 
-    expect(rubric.map((row) => row.criterion)).toEqual(judgeParadigms.flow.votingPriorities);
+    expect(rubric.map((row) => row.criterion)).toEqual(judgeParadigms.policymaker.votingPriorities);
   });
 
   it("marks a criterion addressed and names the matching issue when a keyVotingIssue mentions it", () => {
-    const rubric = buildJudgeDecisionRubric(judgeParadigms.flow, DECISION);
+    const rubric = buildJudgeDecisionRubric(RUBRIC_PARADIGM, DECISION);
 
     const dropped = rubric.find((row) => row.criterion === "Dropped or conceded arguments");
     expect(dropped).toEqual({
@@ -140,7 +151,7 @@ describe("buildJudgeDecisionRubric", () => {
   });
 
   it("marks a criterion addressed via the rationale even with no matching keyVotingIssue", () => {
-    const rubric = buildJudgeDecisionRubric(judgeParadigms.flow, DECISION);
+    const rubric = buildJudgeDecisionRubric(RUBRIC_PARADIGM, DECISION);
 
     const framework = rubric.find((row) => row.criterion.startsWith("Framework/weighing"));
     expect(framework?.addressed).toBe(true);
@@ -148,7 +159,7 @@ describe("buildJudgeDecisionRubric", () => {
   });
 
   it("marks a criterion unaddressed when neither the issues nor the rationale mention it", () => {
-    const rubric = buildJudgeDecisionRubric(judgeParadigms.flow, DECISION);
+    const rubric = buildJudgeDecisionRubric(RUBRIC_PARADIGM, DECISION);
 
     const clash = rubric.find((row) => row.criterion === "Argument interaction and clash");
     expect(clash).toEqual({
@@ -160,7 +171,7 @@ describe("buildJudgeDecisionRubric", () => {
 
   it("returns an empty rubric for a paradigm with no voting priorities", () => {
     const customParadigm = {
-      ...judgeParadigms.flow,
+      ...judgeParadigms.policymaker,
       id: "custom" as const,
       votingPriorities: [],
     };

@@ -1,5 +1,5 @@
 {
-  "name": "@debate/help-docs",
+  "name": "@debate-ai/help-docs",
   "description": "Debate AI documentation (Fumadocs), mounted by the web app at /docs",
   "version": "0.1.0",
   "type": "module",
@@ -50,7 +50,7 @@
     "typecheck": "fumadocs-mdx && tsc --noEmit"
   },
   "dependencies": {
-    "@debate/icons": "workspace:*",
+    "@debate-ai/icons": "workspace:*",
     "@base-ui/react": "^1.9.0",
     "@fuma-translate/react": "^1.0.2",
     "@radix-ui/react-collapsible": "^1.2.1",

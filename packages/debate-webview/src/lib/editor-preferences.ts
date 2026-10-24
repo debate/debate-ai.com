@@ -29,13 +29,13 @@
  * `settings.replaceAll()` already takes for its Import Settings action.
  */
 
-import { SECRET_SETTING_KEYS, SETTING_METADATA, type SettingsCategory } from "@debate/editor/settings"
-import { DEBATE_EDITOR_SETTINGS_TABS } from "@debate/editor/settings-tabs"
+import { SECRET_SETTING_KEYS, SETTING_METADATA, type SettingsCategory } from "@debate-ai/editor/settings"
+import { DEBATE_EDITOR_SETTINGS_TABS } from "@debate-ai/editor/settings-tabs"
 
 /**
  * The settings categories `/settings` hosts, in the order it shows them,
  * with the editor's own labels — Debate Editor's exported tab list
- * (`DEBATE_EDITOR_SETTINGS_TABS`, from `@debate/editor/settings-tabs`), which
+ * (`DEBATE_EDITOR_SETTINGS_TABS`, from `@debate-ai/editor/settings-tabs`), which
  * the research settings sidebar lists too.
  *
  * `plugins` is deliberately absent: plugins are installed by the Electron

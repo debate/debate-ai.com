@@ -10,9 +10,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createElement } from "react";
 
 import { ContributorAwardsPanel } from "../src/panels/ContributorAwardsPanel";
-import { saveContribution } from "@debate/research-evidence/src/state/contributions";
-import { DEFAULT_AWARD_CATEGORY_LABELS } from "@debate/research-evidence/src/lib/contributor-awards";
-import type { AttributedContribution } from "@debate/research-evidence/src/lib/contribution-leaderboard";
+import { saveContribution } from "@debate-ai/research-evidence/src/state/contributions";
+import { DEFAULT_AWARD_CATEGORY_LABELS } from "@debate-ai/research-evidence/src/lib/contributor-awards";
+import type { AttributedContribution } from "@debate-ai/research-evidence/src/lib/contribution-leaderboard";
 import {
   announceContributorAwards,
   getAnnouncedContributorAwards,

@@ -27,7 +27,7 @@ import { settingsHrefForPath } from "../../../lib/qwksearch/settings-paths"
 import { cn } from "../../../lib/ui/lib/utils"
 import { formatThemeName, themeColors, themeNames, useThemeState } from "../../theme/ThemeDropdown"
 import { SITE_LINKS } from "../../../lib/nav/dock-menu-sections"
-import { useAccountNotifications, type UseAccountNotificationsResult } from "@debate/team-collaboration"
+import { useAccountNotifications, type UseAccountNotificationsResult } from "@debate-ai/team-collaboration"
 import { AddMembersDialog, CreateOrganizationDialog, OrganizationSubmenu } from "./organization-menu"
 
 /**

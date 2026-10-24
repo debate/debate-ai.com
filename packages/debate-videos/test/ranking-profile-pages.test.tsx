@@ -7,7 +7,7 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { RankingEntry } from "@debate/rankings-adapter";
+import type { RankingEntry } from "@debate-ai/rankings-adapter";
 import { click, flush, mount, type Mounted } from "./helpers/mount";
 
 const m = vi.hoisted(() => ({
@@ -15,8 +15,8 @@ const m = vi.hoisted(() => ({
   grab: vi.fn(),
 }));
 
-vi.mock("@debate/rankings-adapter", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("@debate/rankings-adapter")>()),
+vi.mock("@debate-ai/rankings-adapter", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@debate-ai/rankings-adapter")>()),
   loadRankingDataset: m.loadRankingDataset,
 }));
 vi.mock("grab-url", () => ({ default: m.grab }));

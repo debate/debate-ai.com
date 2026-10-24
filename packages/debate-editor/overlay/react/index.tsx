@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * @debate/editor — public React API.
+ * @debate-ai/editor — public React API.
  *
  * Exposes the same names the prior (TipTap/reason-editor) editor exposed,
  * so every call site (Flow's speech-doc panels, the /reason-editor route)
@@ -9,13 +9,13 @@
  *
  *   import Editor, {
  *     EditorWithToolbar, EditorContent, LexicalEditorWrapper,
- *   } from "@debate/editor";
- *   import type { LexicalEditorHandle } from "@debate/editor";
+ *   } from "@debate-ai/editor";
+ *   import type { LexicalEditorHandle } from "@debate-ai/editor";
  *
  * Under the hood every one of these is the same `DebateEditor`,
  * varying only in whether the dropdown menu bar is shown above the toolbar. The
  * headless engine (schema + .docx/.cmir codecs) is available at
- * `@debate/editor/engine`.
+ * `@debate-ai/editor/engine`.
  */
 
 import { forwardRef } from "react";

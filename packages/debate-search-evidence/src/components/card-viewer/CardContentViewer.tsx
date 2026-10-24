@@ -7,7 +7,7 @@
 
 
 import { useState } from "react"
-import { playUISoundEffect } from "@debate/timer"
+import { playUISoundEffect } from "@debate-ai/timer"
 import { Card, CardContent } from "../../ui/primitives/card"
 import { Button } from "../../ui/primitives/button"
 import { Eye, ExternalLink, FileText } from "lucide-react"

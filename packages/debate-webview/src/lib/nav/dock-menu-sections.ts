@@ -29,15 +29,15 @@ import { Clapperboard, type LucideIcon } from "lucide-react"
 // Deep imports rather than the package root: these three modules are plain
 // data (no React, no image assets), which is what lets the Vitest project for
 // `lib/` load them in a Node environment.
-import { SIDEBAR_TOOL_SECTIONS } from "@debate/videos/src/components/navigation/sidebar-nav/sidebar-tool-sections"
+import { SIDEBAR_TOOL_SECTIONS } from "@debate-ai/videos/src/components/navigation/sidebar-nav/sidebar-tool-sections"
 import {
   SIDEBAR_VIDEO_LINKS,
   VIDEO_REFERENCE_LINKS,
-} from "@debate/videos/src/components/navigation/sidebar-nav/sidebar-video-links"
+} from "@debate-ai/videos/src/components/navigation/sidebar-nav/sidebar-video-links"
 import {
   FOOTER_LINKS,
   type FooterLink,
-} from "@debate/videos/src/ui/layout/footer-links"
+} from "@debate-ai/videos/src/ui/layout/footer-links"
 
 export interface DockMenuLink {
   href: string

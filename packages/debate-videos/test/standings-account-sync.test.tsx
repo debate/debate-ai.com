@@ -35,30 +35,30 @@ const m = vi.hoisted(() => ({
   saveCutoffRemote: vi.fn(),
 }));
 
-vi.mock("@debate/data-sync/src/state/tournamentResults", () => ({
+vi.mock("@debate-ai/data-sync/src/state/tournamentResults", () => ({
   listTournamentResults: m.listTournamentResults,
   saveTournamentResult: m.saveTournamentResultLocal,
   deleteTournamentResult: m.deleteTournamentResultLocal,
   bulkImportTournamentResults: m.bulkImportLocal,
 }));
-vi.mock("@debate/data-sync/src/state/tournament-results-client", () => ({
+vi.mock("@debate-ai/data-sync/src/state/tournament-results-client", () => ({
   listSavedTournamentResults: m.listSaved,
   saveTournamentResultToAccount: m.saveToAccount,
   deleteSavedTournamentResultFromAccount: m.deleteFromAccount,
 }));
-vi.mock("@debate/data-sync/src/state/qualificationPointsTable", () => ({
+vi.mock("@debate-ai/data-sync/src/state/qualificationPointsTable", () => ({
   getPersistedQualificationPointsTable: m.getTable,
   savePersistedQualificationPointsTable: m.saveTable,
   resetPersistedQualificationPointsTable: m.resetTable,
   getEffectiveQualificationPointsTable: m.effectiveTable,
 }));
-vi.mock("@debate/data-sync/src/state/qualificationCutoff", () => ({
+vi.mock("@debate-ai/data-sync/src/state/qualificationCutoff", () => ({
   getPersistedQualificationCutoff: m.getCutoff,
   savePersistedQualificationCutoff: m.saveCutoff,
   resetPersistedQualificationCutoff: m.resetCutoff,
   getEffectiveQualificationCutoff: m.effectiveCutoff,
 }));
-vi.mock("@debate/data-sync/src/state/qualification-settings-sync-client", () => ({
+vi.mock("@debate-ai/data-sync/src/state/qualification-settings-sync-client", () => ({
   fetchQualificationPointsTable: m.fetchTable,
   saveQualificationPointsTable: m.saveTableRemote,
   fetchQualificationCutoff: m.fetchCutoff,

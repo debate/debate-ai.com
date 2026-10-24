@@ -3,7 +3,7 @@
  * `SPEECH_AUDIO` R2 bucket, one folder per video.
  *
  * The clips are cut in the editor's browser by the "Split speeches from
- * audio" button (`@debate/videos`' `split-speech-audio.ts` says why the
+ * audio" button (`@debate-ai/videos`' `split-speech-audio.ts` says why the
  * Worker doesn't do it) and uploaded one by one through
  * `/api/admin/videos/library/[id]/speech-audio`. Keys are
  * `speech-audio/<videoId>/<nn>-<speech>.mp3`, numbered so a listing comes

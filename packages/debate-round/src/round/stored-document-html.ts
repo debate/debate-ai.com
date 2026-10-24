@@ -18,9 +18,9 @@ export type StoredDocument = { title?: string; content?: string | null; format?:
 export async function storedDocumentHtml(doc: StoredDocument): Promise<string> {
   const content = doc.content ?? ""
   if (!content) return ""
-  const engine = await import("@debate/editor/engine")
+  const engine = await import("@debate-ai/editor/engine")
   const isCmir = doc.format === "cmir" || (doc.format !== "html" && engine.looksLikeCmirBase64(content))
   if (!isCmir) return content
-  const { docToHtml } = await import("@debate/editor")
+  const { docToHtml } = await import("@debate-ai/editor")
   return docToHtml(engine.parseNative(engine.base64ToCmir(content)).doc)
 }

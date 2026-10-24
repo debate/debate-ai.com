@@ -1,7 +1,7 @@
 "use client"
 
 /**
- * The native REASON editor screen — the @debate/editor (TipTap/Debate Editor) shell
+ * The native REASON editor screen — the @debate-ai/editor (TipTap/Debate Editor) shell
  * wired to per-user document persistence (/api/doc/documents). Reachable
  * from the Settings menu alongside the existing /doc iframe.
  *
@@ -29,7 +29,7 @@
 import { Suspense, useEffect, useMemo } from "react"
 import { Loader2 } from "lucide-react"
 import { AnimatedLoader } from "../ui/AnimatedLoader"
-import { EditorWithToolbar } from "@debate/editor"
+import { EditorWithToolbar } from "@debate-ai/editor"
 import { topicStarterHtml } from "../../lib/topic-starters/content"
 import { STORED_FORMATS } from "../../lib/debate-editor/format"
 import { cn } from "../../lib/ui/lib/utils"

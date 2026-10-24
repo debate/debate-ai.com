@@ -6,7 +6,7 @@
  * `debate-rankings` covers the current season only, so a round from the
  * current season is looked up there; a college policy round from a past
  * season is looked up in that season's debatedata table instead (2009-10
- * onward, see `college-history.ts` in `@debate/rankings-adapter`). Any other
+ * onward, see `college-history.ts` in `@debate-ai/rankings-adapter`). Any other
  * round's team codes name people the rankings do not know.
  *
  * Kept free of React so a server component can import it; the client lookup
@@ -20,7 +20,7 @@ import {
   hasCollegeHistory,
   loadCollegeHistory,
   loadRankingDataset,
-} from "@debate/rankings-adapter"
+} from "@debate-ai/rankings-adapter"
 import { currentSeasonYear } from "../panels/leaderboard/leaderboardUtils"
 import {
   findVideoTeamRanking,

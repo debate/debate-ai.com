@@ -1,4 +1,4 @@
-import { handleParadigmSearch } from "@debate/webview/lib/tournaments/paradigm-search"
+import { handleParadigmSearch } from "@debate-ai/webview/lib/tournaments/paradigm-search"
 import { tabroomFetch } from "@/lib/judge-paradigms/tabroom"
 
 /**

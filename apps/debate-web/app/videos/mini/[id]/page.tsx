@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
-import { VideoMiniPlayer, parseMiniPlayerStart, type VideoType } from "@debate/videos"
+import { VideoMiniPlayer, parseMiniPlayerStart, type VideoType } from "@debate-ai/videos"
 import { getVideoById } from "@/lib/videos/video-repository"
 import { getVideoDocuments } from "@/lib/videos/video-content"
 
@@ -8,7 +8,7 @@ import { getVideoDocuments } from "@/lib/videos/video-content"
  * `/videos/mini/<videoId>?t=<seconds>` — the page the mini player window
  * loads: one video and its speech switcher, sized for a small window the
  * desktop app can keep on top of other apps. The watch page's "Pop out mini
- * player" control opens it; see `@debate/videos`' `lib/mini-player-window.ts`.
+ * player" control opens it; see `@debate-ai/videos`' `lib/mini-player-window.ts`.
  *
  * The app shell draws no chrome around this route (see `AppShell`), and it is
  * never indexed: the canonical watch page is the video's real address.

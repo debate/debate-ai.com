@@ -20,8 +20,8 @@
 
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { Coins, History, Loader2, Plus, TrendingUp, Trophy } from "lucide-react";
-import { KIND_LABELS, PRESET_DIVISIONS, formatPoints, type MarketKind, type PredictionBoardResponse } from "@debate/predictions";
-import { fetchPredictionBoard } from "@debate/predictions/client";
+import { KIND_LABELS, PRESET_DIVISIONS, formatPoints, type MarketKind, type PredictionBoardResponse } from "@debate-ai/predictions";
+import { fetchPredictionBoard } from "@debate-ai/predictions/client";
 
 import { cn } from "../../lib/ui/lib/utils";
 import { FeaturedMarkets } from "./FeaturedMarkets";

@@ -6,7 +6,7 @@
  * The rankings the site shows are shifted and scaled (see `rating-offset.ts`),
  * so every function here undoes that first: Glicko-2's expected score only
  * means anything on its own 1500-baseline scale.
- * @module @debate/rankings-adapter/match-simulation
+ * @module @debate-ai/rankings-adapter/match-simulation
  */
 
 import { RATING_DIVISOR, RATING_OFFSET } from "./rating-offset";

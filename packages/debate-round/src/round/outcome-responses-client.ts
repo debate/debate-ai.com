@@ -16,8 +16,8 @@ import {
   type OutcomePriorSpeech,
   type SpeechOutcomeResponsesInput,
   type SpeechOutcomeResponsesResult,
-} from "@debate/speech-writer/src/prompts/speech-outcome-responses";
-import { buildSearchUrl, EMPTY_FILTERS } from "@debate/research-evidence/src/lib/search-query";
+} from "@debate-ai/speech-writer/src/prompts/speech-outcome-responses";
+import { buildSearchUrl, EMPTY_FILTERS } from "@debate-ai/research-evidence/src/lib/search-query";
 import type { Flow } from "../types/flow";
 import { getSpeechDocLink, speechDocLinkScope } from "../state/speechDocLinks";
 import { fetchLinkedDocumentHtml } from "../hooks/useSpeechWordStats";

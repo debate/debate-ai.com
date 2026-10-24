@@ -29,7 +29,7 @@ const team = vi.hoisted(() => ({
   fetchCardShares: vi.fn(),
   markCardShareOpened: vi.fn(),
 }));
-vi.mock("@debate/team-collaboration", () => ({
+vi.mock("@debate-ai/team-collaboration", () => ({
   ContactAvatar: ({ user }: { user: { name: string } }) => <span data-avatar>{user.name.charAt(0)}</span>,
   fetchCardShares: team.fetchCardShares,
   markCardShareOpened: team.markCardShareOpened,
@@ -50,7 +50,7 @@ const bridge = vi.hoisted(() => ({
   joinCollabShare: vi.fn(async () => true),
   seedCollabDisplayName: vi.fn(),
 }));
-vi.mock("@debate/editor/collab-bridge", () => bridge);
+vi.mock("@debate-ai/editor/collab-bridge", () => bridge);
 
 const toast = vi.hoisted(() => ({
   loading: vi.fn(() => "toast-id"),

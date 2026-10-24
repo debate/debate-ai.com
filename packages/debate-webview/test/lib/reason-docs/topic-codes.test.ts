@@ -2,11 +2,11 @@
  * @fileoverview Pins the `/docs/<topic code>/<file path>` address of a Topic
  * Starter: the code scheme read off `debate-topics.json`, the paths that are
  * the editor rather than the help docs, and the copy of the code's shape that
- * `@debate/videos` keeps for its sidebar check.
+ * `@debate-ai/videos` keeps for its sidebar check.
  */
 
 import { describe, it, expect } from "vitest"
-import { isTopicStarterDocsPath } from "@debate/videos"
+import { isTopicStarterDocsPath } from "@debate-ai/videos"
 import {
   TOPIC_CATALOG,
   buildTopicCatalog,
@@ -80,7 +80,7 @@ describe("parseTopicDocsPath", () => {
     expect(parseTopicDocsPath(href)).toEqual({ code: "pf27b", ref: "aff/case one" })
   })
 
-  it("agrees with @debate/videos' copy of the code shape", () => {
+  it("agrees with @debate-ai/videos' copy of the code shape", () => {
     for (const path of ["/docs/vcx27", "/docs/ndt26/x", "/docs/ld27e/a/b", "/docs/pf25c", "/docs", "/docs/features", "/docs/vcx2027"]) {
       expect(isTopicStarterDocsPath(path)).toBe(parseTopicDocsPath(path) != null)
     }

@@ -2,7 +2,8 @@ import { NextResponse } from "next/server"
 import { getAuth } from "@/lib/auth"
 import { keyExhaustedResponse, resolveProviderKey } from "@/lib/ai/provider-key"
 import { getDBFromContext } from "@/lib/database/context"
-import { limitsFor } from "@debate/webview/lib/stripe/limits"
+import { getEnv } from "@/lib/env"
+import { limitsFor } from "@debate-ai/webview/lib/stripe/limits"
 import { consumeDailyUsage, getUserTier, limitMessage, planLimitHeaders } from "@/lib/stripe/usage"
 
 /**
@@ -19,7 +20,7 @@ import { consumeDailyUsage, getUserTier, limitMessage, planLimitHeaders } from "
  * shared multi-tenant app, so instead callers hit this route and the
  * server holds the one Anthropic key (ANTHROPIC_API_KEY).
  *
- * Metered by plan tier (`@debate/webview/src/lib/stripe/limits.ts`): each request counts toward
+ * Metered by plan tier (`@debate-ai/webview/src/lib/stripe/limits.ts`): each request counts toward
  * the caller's `llmRequestsPerDay`, and `maxTokens` is capped at the tier's
  * `llmMaxTokens`. A caller who sends their own OpenRouter or Anthropic key
  * (`x-user-ai-key`, `lib/ai/provider-key.ts`) is billed on it instead, under
@@ -46,6 +47,7 @@ interface ReasonAiRequestBody {
   messages?: AnthropicMessage[]
   maxTokens?: number
   temperature?: number
+  free?: boolean
 }
 
 function requestSize(messages: AnthropicMessage[], system?: string): number {
@@ -85,14 +87,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Sign in to use AI features." }, { status: 401 })
   }
 
-  const providerKey = resolveProviderKey(request)
-  if (!providerKey) {
-    return NextResponse.json(
-      { error: "AI features are not configured on the server." },
-      { status: 503 },
-    )
-  }
-
   let body: ReasonAiRequestBody
   try {
     body = await request.json()
@@ -100,10 +94,29 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 })
   }
 
-  if (!Array.isArray(body.messages) || body.messages.length === 0) {
+  // For free model requests (e.g. video speech segmentation), always use
+  // the shared key's free OpenRouter models, ignoring any user-provided key.
+  const providerKey = body.free
+    ? (() => {
+        const openrouter = getEnv("OPENROUTER_API_KEY")
+        if (openrouter) return { provider: "openrouter" as const, key: openrouter, own: false }
+        const anthropic = getEnv("ANTHROPIC_API_KEY")
+        if (anthropic) return { provider: "anthropic" as const, key: anthropic, own: false }
+        return null
+      })()
+    : resolveProviderKey(request)
+  if (!providerKey) {
+    return NextResponse.json(
+      { error: "AI features are not configured on the server." },
+      { status: 503 },
+    )
+  }
+
+  if (!body.messages || !Array.isArray(body.messages) || body.messages.length === 0) {
     return NextResponse.json({ error: "`messages` must be a non-empty array." }, { status: 400 })
   }
-  if (requestSize(body.messages, body.system) > MAX_REQUEST_CHARS) {
+  const messages = body.messages as AnthropicMessage[]
+  if (requestSize(messages, body.system) > MAX_REQUEST_CHARS) {
     return NextResponse.json({ error: "Request is too large." }, { status: 413 })
   }
 
@@ -142,16 +155,16 @@ export async function POST(request: Request) {
   try {
     const bodyJson: Record<string, unknown> = {
       max_tokens: maxTokens,
-      messages: body.messages,
+      messages,
     }
     if (useOpenRouter) {
-      bodyJson.model = "anthropic/claude-sonnet-4.6"
+       bodyJson.model = body.free ? "openrouter/free" : "anthropic/claude-sonnet-4.6"
       // Chat Completions has no top-level `system` (OpenRouter silently drops
       // it, so every caller's instructions were lost): it goes in as the
       // first message, and Anthropic content blocks become OpenAI parts.
       bodyJson.messages = [
         ...(body.system ? [{ role: "system", content: body.system }] : []),
-        ...body.messages.map(toChatCompletionsMessage),
+        ...messages.map(toChatCompletionsMessage),
       ]
       if (body.temperature != null) bodyJson.temperature = body.temperature
     } else {

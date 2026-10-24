@@ -42,8 +42,8 @@ import {
   StrategyPanel,
   useFlowStore,
   type Flow,
-} from "@debate/round"
-import { clearFlowEditsForFlow, listFlowEdits } from "@debate/round/src/state/flowEdits"
+} from "@debate-ai/round"
+import { clearFlowEditsForFlow, listFlowEdits } from "@debate-ai/round/src/state/flowEdits"
 import {
   AiVersusRoundPanel,
   ArgumentTreePanel,
@@ -54,15 +54,15 @@ import {
   JudgeDecisionPanel,
   PracticeRoundSimulatorPanel,
   WordCountRoundsPanel,
-} from "@debate/practice-rounds"
-import { CoachingProgramsPanel } from "@debate/team-collaboration"
-import { CoachMaterialsPanel, JudgeProfilesPanel } from "@debate/speech-writer"
+} from "@debate-ai/practice-rounds"
+import { CoachingProgramsPanel } from "@debate-ai/team-collaboration"
+import { CoachMaterialsPanel, JudgeProfilesPanel } from "@debate-ai/speech-writer"
 import { PrepNotesWithIdentity } from "../research/identity/PrepNotesWithIdentity"
 import { PracticePartnersPanel } from "../practice-partners/PracticePartnersPanel"
-import { NewsStreamPanel } from "@debate/community"
-import { coachingSessionNews } from "@debate/practice-rounds/src/state/coachingSessions"
+import { NewsStreamPanel } from "@debate-ai/community"
+import { coachingSessionNews } from "@debate-ai/practice-rounds/src/state/coachingSessions"
 import { useStoreSnapshot } from "../../lib/ui/panels/use-store-snapshot"
-import type { FlowEdit } from "@debate/round/src/flow/shared-flow-sync"
+import type { FlowEdit } from "@debate-ai/round/src/flow/shared-flow-sync"
 import { panel, type HubSection } from "../hubs/hub-sections"
 import {
   HubPanelAnchor,

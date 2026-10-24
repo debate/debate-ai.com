@@ -18,8 +18,8 @@ import { useEffect, useMemo, useState } from "react"
 import {
   computeSpeechDocWordStats,
   type SpeechDocWordStats,
-} from "@debate/timer/src/formats/speech-doc-word-stats"
-import { loadSpokenWordCount, SPOKEN_WORDS_EVENT } from "@debate/timer/src/recorder/spoken-words-store"
+} from "@debate-ai/timer/src/formats/speech-doc-word-stats"
+import { loadSpokenWordCount, SPOKEN_WORDS_EVENT } from "@debate-ai/timer/src/recorder/spoken-words-store"
 import type { Flow } from "../types/flow"
 import {
   getSpeechDocLink,

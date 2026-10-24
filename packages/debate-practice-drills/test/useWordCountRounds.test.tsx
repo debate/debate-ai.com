@@ -7,7 +7,7 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { WordCountRoundRecord } from "@debate/round/src/state/wordCountRounds";
+import type { WordCountRoundRecord } from "@debate-ai/round/src/state/wordCountRounds";
 import { flush } from "./helpers/mount";
 import { renderHook, type RenderedHook } from "./helpers/render-hook";
 
@@ -35,7 +35,7 @@ function round(overrides: Partial<WordCountRoundRecord> = {}): WordCountRoundRec
 }
 
 type Hook = typeof import("../src/hooks/useWordCountRounds");
-type State = typeof import("@debate/round/src/state/wordCountRounds");
+type State = typeof import("@debate-ai/round/src/state/wordCountRounds");
 
 let hookModule: Hook;
 let state: State;
@@ -50,7 +50,7 @@ beforeEach(async () => {
   client.deleteAllSavedWordCountRoundsFromAccount.mockResolvedValue(undefined);
   vi.resetModules();
   hookModule = await import("../src/hooks/useWordCountRounds");
-  state = await import("@debate/round/src/state/wordCountRounds");
+  state = await import("@debate-ai/round/src/state/wordCountRounds");
 });
 
 afterEach(async () => {

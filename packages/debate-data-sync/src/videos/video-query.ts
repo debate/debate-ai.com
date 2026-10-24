@@ -14,17 +14,17 @@ import type {
   VideoSuggestion,
   VideoSuggestionKind,
   VideoSuggestions,
-} from "@debate/types";
+} from "@debate-ai/types";
 import type { VideoRow } from "./video-rows";
 import { LEGACY_SEASON, normalizeCategoryKey } from "./video-rows";
 
-// The definitions (and their field docs) live in `@debate/types`.
+// The definitions (and their field docs) live in `@debate-ai/types`.
 export type {
   VideoSortOrder,
   VideoQueryParams,
   VideoFacets,
   LectureCategoryFacet,
-} from "@debate/types";
+} from "@debate-ai/types";
 
 /** Maximum page size a client may request. */
 export const MAX_VIDEO_PAGE_SIZE = 200;
@@ -303,7 +303,7 @@ export function computeLectureCategories(rows: VideoRow[]): LectureCategoryFacet
   return [...byLabel.values()].sort((a, b) => b.maxViews - a.maxViews);
 }
 
-export type { VideoSuggestionKind, VideoSuggestion, VideoSuggestions } from "@debate/types";
+export type { VideoSuggestionKind, VideoSuggestion, VideoSuggestions } from "@debate-ai/types";
 
 /**
  * Search terms offered as keyword chips, in the order they are shown. The list

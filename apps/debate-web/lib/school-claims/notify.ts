@@ -8,8 +8,8 @@
 
 import { inArray } from "drizzle-orm";
 import { Resend } from "resend";
-import { APP_EMAIL, APP_NAME } from "@debate/webview/lib/config/site";
-import { CODE_TTL_MINUTES, type SchoolClaim } from "@debate/webview/lib/schools/school-claims";
+import { APP_EMAIL, APP_NAME } from "@debate-ai/webview/lib/config/site";
+import { CODE_TTL_MINUTES, type SchoolClaim } from "@debate-ai/webview/lib/schools/school-claims";
 
 import { getAdminEmails } from "@/lib/auth/admin";
 import type { getDBFromContext } from "@/lib/database/context";

@@ -313,7 +313,7 @@ already in the right folder are left alone, and folders the moves empty are
 removed.
 
 **How it works.** Every edit is a change record
-(`@debate/webview/lib/topic-starters/changes`): `move`, `rename`, `delete`,
+(`@debate-ai/webview/lib/topic-starters/changes`): `move`, `rename`, `delete`,
 `create-folder`, `submit` or `reorganize`. `POST /api/topic-starters/changes`
 applies it for staff and otherwise stores it in `topic_starter_changes`
 (created on first use) for `GET /api/admin/topic-starters/changes` and

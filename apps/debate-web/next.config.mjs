@@ -18,17 +18,17 @@ const nextConfig = {
     "legal-terms-privacy-policy",
     // Workspace packages are published as TypeScript source.
     "reason-editor",
-    "@debate/card-parser",
+    "@debate-ai/card-parser",
     "debate-card-search",
     "debate-core",
-    "@debate/data-sync",
-    "@debate/editor",
-    "@debate/flow-ebb",
+    "@debate-ai/data-sync",
+    "@debate-ai/editor",
+    "@debate-ai/flow-ebb",
     "debate-rankings",
-    "@debate/rankings-adapter",
-    "@debate/round",
-    "@debate/timer",
-    "@debate/videos",
+    "@debate-ai/rankings-adapter",
+    "@debate-ai/round",
+    "@debate-ai/timer",
+    "@debate-ai/videos",
   ],
   serverExternalPackages: [
     "better-auth",
@@ -76,7 +76,7 @@ const nextConfig = {
   // address bar. `beforeFiles`, because `/docs/[[...slug]]` (the help docs)
   // would otherwise claim it; only a first segment shaped like a topic code is
   // rewritten, so every help page keeps its URL. The shape is
-  // `TOPIC_CODE_SOURCE` in @debate/webview's lib/reason-docs/topic-doc-paths.
+  // `TOPIC_CODE_SOURCE` in @debate-ai/webview's lib/reason-docs/topic-doc-paths.
   async rewrites() {
     const topicCode = "(?:vcx|ndt)\\d{2}|(?:ld|pf)\\d{2}[a-z]";
     return {

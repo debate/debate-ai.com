@@ -10,8 +10,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createElement, type FC } from "react";
 
 import { DailyBestCardPanel } from "../src/panels/DailyBestCardPanel";
-import { saveContribution } from "@debate/research-evidence/src/state/contributions";
-import type { AttributedContribution } from "@debate/research-evidence/src/lib/contribution-leaderboard";
+import { saveContribution } from "@debate-ai/research-evidence/src/state/contributions";
+import type { AttributedContribution } from "@debate-ai/research-evidence/src/lib/contribution-leaderboard";
 import {
   announceDailyBestCard,
   getAnnouncedDailyBestCard,

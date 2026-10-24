@@ -11,7 +11,7 @@
  * @module lib/judge-paradigms/tabroom
  */
 
-import { DEFAULT_TABROOM_COOKIE, type TabroomCredentials } from "@debate/tournaments/server";
+import { DEFAULT_TABROOM_COOKIE, type TabroomCredentials } from "@debate-ai/tournaments/server";
 import { getEnv } from "@/lib/env";
 
 /** The Tabroom session the site reads paradigms as, from `TABROOM_SESSION_TOKEN`; `null` when unset. */

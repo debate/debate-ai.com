@@ -12,7 +12,7 @@
 import { createContext, useCallback, useContext, useEffect, useRef } from "react"
 import { MessageSquareWarning } from "lucide-react"
 import { toast } from "sonner"
-import type { SpeechMenuAction } from "@debate/timer/src/recorder/SpeechRecordingPlayer"
+import type { SpeechMenuAction } from "@debate-ai/timer/src/recorder/SpeechRecordingPlayer"
 import type { Round } from "../types/flow"
 import type { SpeakerSpeech } from "../round/my-speeches"
 import {

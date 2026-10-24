@@ -1,5 +1,5 @@
 {
-  "name": "@debate/file-market",
+  "name": "@debate-ai/file-market",
   "version": "0.1.0",
   "description": "Selling research files for wallet balance — the table-of-contents preview, price and top-up rules, Stripe top-up event parsing, wire types, browser client and the D1 migration",
   "type": "module",

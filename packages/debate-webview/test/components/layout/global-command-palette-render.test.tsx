@@ -22,7 +22,7 @@ beforeAll(() => {
   } as unknown as typeof ResizeObserver
   Element.prototype.scrollIntoView ??= () => {}
   // Opening and closing the palette plays a UI sound effect
-  // (`@debate/timer`); jsdom's audio element cannot play, so
+  // (`@debate-ai/timer`); jsdom's audio element cannot play, so
   // stand in for it to keep this run's output quiet.
   globalThis.Audio = class {
     play() {
