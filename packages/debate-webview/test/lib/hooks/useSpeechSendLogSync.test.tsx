@@ -45,7 +45,7 @@ const store = vi.hoisted(() => {
     },
   }
 })
-vi.mock("@debate/editor/engine", () => ({ speechSendLogStore: store.speechSendLogStore }))
+vi.mock("@debate-ai/editor/engine", () => ({ speechSendLogStore: store.speechSendLogStore }))
 
 const client = vi.hoisted(() => ({
   listSavedSpeechSendLog: vi.fn<() => Promise<Entry[] | null>>(),

@@ -8,8 +8,8 @@
  */
 
 import { describe, expect, it, vi } from "vitest";
-import { buildVideoRows, type VideoTuple } from "@debate/data-sync/src/videos/video-rows";
-import { legacyVideoRouteHref, videoRouteHref, type VideoType } from "@debate/videos";
+import { buildVideoRows, type VideoTuple } from "@debate-ai/data-sync/src/videos/video-rows";
+import { legacyVideoRouteHref, videoRouteHref, type VideoType } from "@debate-ai/videos";
 
 vi.mock("@/lib/database/context", () => ({
   getDBFromContext: () => {
@@ -29,7 +29,7 @@ const LECTURES = [
   ["Afl7_hl-H0c", "2022 NDT Finals - Dartmouth SV vs Michigan PR  - Round Analysis Infographic for Classrooms", "2026-08-03", "d3v", 1, "Full Round: https://www.youtube.com/watch?v=qx7Xx_6exzk", "Round Analysis"],
 ] as unknown as VideoTuple[];
 
-vi.mock("@debate/webview/lib/videos/video-json-source", () => ({
+vi.mock("@debate-ai/webview/lib/videos/video-json-source", () => ({
   getVideoRowsFromJson: async () =>
     buildVideoRows({
       rounds: [{ data: COLLEGE_ROUNDS }],
@@ -56,7 +56,7 @@ describe("getVideoBySlug", () => {
   it("resolves a bare title slug", async () => {
     const page = await getVideoPage({ source: "all", limit: 1, offset: 0 });
     const [first] = page.videos;
-    const { slugifyVideoTitle } = await import("@debate/videos");
+    const { slugifyVideoTitle } = await import("@debate-ai/videos");
     const video = await getVideoBySlug(slugifyVideoTitle(first[1] as string));
     expect(video && slugifyVideoTitle(video[1] as string)).toBe(
       slugifyVideoTitle(first[1] as string),

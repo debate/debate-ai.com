@@ -1,6 +1,6 @@
 # CLAUDE.md — `debate-round` (FIAT)
 
-Public (`@debate/` scope). The live debate round workspace. Entry `src/index.ts`, tests in
+Public (`@debate-ai/` scope). The live debate round workspace. Entry `src/index.ts`, tests in
 `test/`. One of the two load-bearing packages in the repo.
 
 Owns: the **ag-Grid flow spreadsheet**, column navigation and split view, round

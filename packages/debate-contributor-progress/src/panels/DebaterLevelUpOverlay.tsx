@@ -37,8 +37,8 @@
 import { Fragment, useEffect, useRef } from "react"
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
 import { Sparkles, Star } from "lucide-react"
-import { Button } from "@debate/research-evidence/src/ui/primitives/button"
-import { cn } from "@debate/research-evidence/src/ui/lib/utils"
+import { Button } from "@debate-ai/research-evidence/src/ui/primitives/button"
+import { cn } from "@debate-ai/research-evidence/src/ui/lib/utils"
 import type { DebaterLevelProgress } from "../lib/debater-levels"
 function formatCount(n: number): string {
   if (n >= 10000) return `${Math.round(n / 1000)}k`;

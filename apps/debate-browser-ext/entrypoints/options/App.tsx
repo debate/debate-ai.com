@@ -1,4 +1,4 @@
-import { DebateApp } from '@debate/webview';
+import { DebateApp } from '@debate-ai/webview';
 
 /**
  * The Options page: the whole debate-ai.com app — the same dock, sidebar,

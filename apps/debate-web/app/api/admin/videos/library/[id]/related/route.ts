@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { VIDEO_RELATION_KINDS } from "@debate/videos";
+import { VIDEO_RELATION_KINDS } from "@debate-ai/videos";
 import { getStaffAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
 import { describeError } from "@/lib/database/errors";

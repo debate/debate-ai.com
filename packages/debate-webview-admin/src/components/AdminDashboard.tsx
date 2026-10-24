@@ -2,32 +2,32 @@
 
 import { useCallback, useEffect, useRef, useState, type ComponentType } from "react";
 import { DatabaseBackup, FileSearch, Film, Globe, ListVideo, RefreshCw, Upload, Users } from "lucide-react";
-import { cn } from "@debate/webview/lib/ui/lib/utils";
-import { Button } from "@debate/webview/lib/ui/primitives/button";
-import { Badge } from "@debate/webview/lib/ui/primitives/badge";
-import { Input } from "@debate/webview/lib/ui/primitives/input";
-import { Label } from "@debate/webview/lib/ui/primitives/label";
+import { cn } from "@debate-ai/webview/lib/ui/lib/utils";
+import { Button } from "@debate-ai/webview/lib/ui/primitives/button";
+import { Badge } from "@debate-ai/webview/lib/ui/primitives/badge";
+import { Input } from "@debate-ai/webview/lib/ui/primitives/input";
+import { Label } from "@debate-ai/webview/lib/ui/primitives/label";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@debate/webview/lib/ui/primitives/card";
+} from "@debate-ai/webview/lib/ui/primitives/card";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@debate/webview/lib/ui/primitives/select";
-import { REUSE_CHECK_LOG_RETENTION_DAYS } from "@debate/research-evidence";
-import { formatRecomputeStacksResult } from "@debate/webview/lib/videos/format-recompute-stacks-result";
+} from "@debate-ai/webview/lib/ui/primitives/select";
+import { REUSE_CHECK_LOG_RETENTION_DAYS } from "@debate-ai/research-evidence";
+import { formatRecomputeStacksResult } from "@debate-ai/webview/lib/videos/format-recompute-stacks-result";
 import {
   formatSeedVideosResult,
   formatSeedVideosStatus,
   type SeedVideosStatus,
-} from "@debate/webview/lib/videos/format-seed-videos-result";
+} from "@debate-ai/webview/lib/videos/format-seed-videos-result";
 import { CaselistSyncPanel } from "./data/CaselistSyncPanel";
 import { DbBackupPanel } from "./data/DbBackupPanel";
 import { DebateCardParquetUpload } from "./data/DebateCardParquetUpload";
@@ -39,7 +39,7 @@ import { VideoLibraryTable } from "./videos/VideoLibraryTable";
 import { VideoReportsPanel } from "./videos/VideoReportsPanel";
 import { YoutubeChannelsPanel } from "./videos/YoutubeChannelsPanel";
 import { TranscriptScraperPanel } from "./videos/TranscriptScraperPanel";
-import { formatCount } from "@debate/videos/lib/format-count";
+import { formatCount } from "@debate-ai/videos/lib/format-count";
 
 interface YoutubeRoundVideo { id: string; title: string; publishedAt: string; channel: string; views: number; style: number; tournament: string | null; }
 interface SyncRun { id: number; status: "running" | "success" | "error"; triggeredBy?: string | null; channelsSynced: number; videosUpserted: number; error: string | null; }

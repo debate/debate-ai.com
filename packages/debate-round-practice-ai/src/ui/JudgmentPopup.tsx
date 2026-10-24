@@ -19,7 +19,7 @@
 
 import { useState } from "react"
 import { Sparkles } from "lucide-react"
-import { Button } from "@debate/speech-writer/src/ui/primitives/button"
+import { Button } from "@debate-ai/speech-writer/src/ui/primitives/button"
 import type { GamificationAward } from "../backend/gamification"
 import type { JudgedScore, JudgmentData } from "../backend/types"
 

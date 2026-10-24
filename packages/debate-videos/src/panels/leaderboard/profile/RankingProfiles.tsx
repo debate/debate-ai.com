@@ -11,7 +11,7 @@
 
 import Link from "next/link"
 import { useState, type ReactNode } from "react"
-import { teamDisplayParts, type RankingDataset } from "@debate/rankings-adapter"
+import { teamDisplayParts, type RankingDataset } from "@debate-ai/rankings-adapter"
 import { useAllRankingDatasets } from "../../../hooks/useAllRankingDatasets"
 import {
   Table,

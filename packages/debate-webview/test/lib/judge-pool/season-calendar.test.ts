@@ -5,7 +5,7 @@
 
 import { describe, expect, it } from "vitest";
 
-import { DEBATE_MAJORS } from "@debate/tournaments/majors";
+import { DEBATE_MAJORS } from "@debate-ai/tournaments/majors";
 import {
   SEASON_MAJORS,
   findSeasonWeekend,

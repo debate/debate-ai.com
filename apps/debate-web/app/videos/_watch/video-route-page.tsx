@@ -13,11 +13,11 @@ import {
   videoPageTitle,
   videoRouteHref,
   type VideoType,
-} from "@debate/videos"
-import { CategoryDock } from "@debate/webview/components/layout/CategoryDock"
-import { SidebarAccount } from "@debate/webview/components/layout/app-sidebar/sidebar-account"
-import { VideoStaffControls } from "@debate/webview/components/videos/VideoStaffControls"
-import { featuredSpeechDocsTabs } from "@debate/round/src/panels/featuredSpeechDocsTabs"
+} from "@debate-ai/videos"
+import { CategoryDock } from "@debate-ai/webview/components/layout/CategoryDock"
+import { SidebarAccount } from "@debate-ai/webview/components/layout/app-sidebar/sidebar-account"
+import { VideoStaffControls } from "@debate-ai/webview/components/videos/VideoStaffControls"
+import { featuredSpeechDocsTabs } from "@debate-ai/round/src/panels/featuredSpeechDocsTabs"
 import {
   getRelatedVideos,
   getVideoByRouteSegments,
@@ -39,7 +39,7 @@ import { videoListingPath } from "@/lib/redirects/video-listing"
  *   shared before rounds got their own shape;
  * - any of those followed by the open speech and its view, e.g.
  *   `.../dartmouth-sv-michigan-pr/2ar/outcomes` (see `lib/speech-url` in
- *   `@debate/videos`). Links that carried them as `?speech=2ar&tab=outcomes`
+ *   `@debate-ai/videos`). Links that carried them as `?speech=2ar&tab=outcomes`
  *   redirect to that form.
  *
  * The router has a page for each depth from three segments

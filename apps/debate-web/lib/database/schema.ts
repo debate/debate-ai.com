@@ -210,7 +210,7 @@ export type TopicStarterItem = typeof topicStarterItems.$inferSelect;
 // Edits to the public Topic Starters catalogue waiting on a moderator: a
 // non-staff reader's move, rename, delete, new folder, file submission or
 // AI reorganization from the docs sidebar. `change` is the JSON
-// `TopicStarterChange` (@debate/webview/lib/topic-starters/changes), applied
+// `TopicStarterChange` (@debate-ai/webview/lib/topic-starters/changes), applied
 // verbatim on approval. lib/topic-starters/changes.ts creates this table on
 // first use (CREATE TABLE IF NOT EXISTS), since the app ships no migrations.
 export const topicStarterChanges = sqliteTable(
@@ -393,7 +393,7 @@ export const userSettings = sqliteTable("user_settings", {
   // presets (see packages/debate-round/src/state/wordLimitPresets.ts and
   // TODO.md idea #2's "a per-style word-limit preset manager (add/edit/
   // remove custom limits instead of only the built-in registry)"
-  // follow-up), checked ahead of @debate/timer's hardcoded `wordCountStyles`
+  // follow-up), checked ahead of @debate-ai/timer's hardcoded `wordCountStyles`
   // registry by `resolveSpeechWordLimit`. Null/absent means "no custom
   // presets saved yet", same semantics as every other nullable column here.
   wordLimitPresets: text("word_limit_presets"),
@@ -488,7 +488,7 @@ export const userSettings = sqliteTable("user_settings", {
   // pre-fills (packages/debate-videos/src/lib/my-ranked-teams). Whole-value
   // replace, like `myTeamProfile` above.
   myRankedTeams: text("my_ranked_teams"),
-  // When the first-sign-in welcome dialog (`@debate/webview`'s
+  // When the first-sign-in welcome dialog (`@debate-ai/webview`'s
   // `FirstLoginWelcomeProvider`) was shown and dismissed, or null when the
   // account has never seen it. Read and written only by
   // `/api/settings/welcome`, so the dialog shows once per account rather
@@ -499,7 +499,7 @@ export const userSettings = sqliteTable("user_settings", {
   // release: whether published recordings are allowed at all, audio only or
   // audio and video, and how the user is credited (anonymous, a username, or
   // the real name in full or as first name plus initial). Validated and read
-  // back by `@debate/webview/lib/privacy/recording-release`, through
+  // back by `@debate-ai/webview/lib/privacy/recording-release`, through
   // `/api/settings/privacy`. Null means the defaults: nothing published.
   recordingPrivacy: text("recording_privacy"),
   createdAt: integer("created_at", { mode: "timestamp" })
@@ -1388,7 +1388,7 @@ export const videos = sqliteTable(
     // Stacked playlists: `stack_key` is the id of the group's primary video
     // (a round, say) and is shared by every member, `stack_position` orders
     // them within it. Both are derived from the links the descriptions carry
-    // — see `@debate/data-sync/src/videos/video-stacks.ts` — and are kept
+    // — see `@debate-ai/data-sync/src/videos/video-stacks.ts` — and are kept
     // current by `lib/videos/recompute-video-stacks.ts`, which the JSON seed
     // and every round-publish path (both run over the whole table, since a
     // round and its analysis can be added weeks apart by different
@@ -2138,7 +2138,7 @@ export const stripeSubscriptions = sqliteTable(
     customerId: text("customer_id"),
     email: text("email"),
     priceId: text("price_id"),
-    /** A `PlanId` from `@debate/webview/src/lib/stripe/plans.ts`, or `unknown` for an unlisted price. */
+    /** A `PlanId` from `@debate-ai/webview/src/lib/stripe/plans.ts`, or `unknown` for an unlisted price. */
     plan: text("plan"),
     /** Stripe's subscription status — `active`, `trialing`, `past_due`, `canceled`, … */
     status: text("status"),
@@ -2159,7 +2159,7 @@ export const stripeSubscriptions = sqliteTable(
 
 export type StripeSubscriptionRow = typeof stripeSubscriptions.$inferSelect;
 
-// Per-day usage counts behind the plan tiers in `@debate/webview/src/lib/stripe/limits.ts` (see
+// Per-day usage counts behind the plan tiers in `@debate-ai/webview/src/lib/stripe/limits.ts` (see
 // `lib/stripe/usage.ts`). `subject` is a user id, or `ip:<address>` for a
 // signed-out caller, so it has no foreign key. `day` is the UTC date
 // (`YYYY-MM-DD`) the count is for.
@@ -2177,7 +2177,7 @@ export const usageCounters = sqliteTable(
 );
 
 // A Research Team coach's roster: up to `teamStudents` students (see
-// `@debate/webview/src/lib/stripe/limits.ts`), matched to their accounts by lowercased email so a
+// `@debate-ai/webview/src/lib/stripe/limits.ts`), matched to their accounts by lowercased email so a
 // coach can add a student before the student signs up.
 export const teamStudents = sqliteTable(
   "team_students",
@@ -2257,7 +2257,7 @@ export type CardAiAnalysisRow = typeof cardAiAnalyses.$inferSelect;
 // detected speech starts, each speech's LLM outline and each Outcomes run.
 // The answer depends on the video, not the viewer, so the first good one is
 // kept and served to all (`/api/video-ai-results`); only an admin replaces
-// it. `kind`/`itemKey` follow `@debate/videos/src/lib/shared-video-ai`, and
+// it. `kind`/`itemKey` follow `@debate-ai/videos/src/lib/shared-video-ai`, and
 // `data` is the result as JSON. `id` is `${videoId}::${kind}::${itemKey}`.
 export const videoAiResults = sqliteTable(
   "video_ai_results",
@@ -2313,7 +2313,7 @@ export const comments = sqliteTable(
      * who has seen one.
      */
     id: text("id").primaryKey(),
-    /** One of `debate-comments`' `COMMENT_RESOURCE_TYPES`; see `@debate/webview/src/lib/comments/validation.ts`. */
+    /** One of `debate-comments`' `COMMENT_RESOURCE_TYPES`; see `@debate-ai/webview/src/lib/comments/validation.ts`. */
     resourceType: text("resource_type").notNull(),
     /** The resource's own id — a YouTube video id here, a `debate_cards` id there. */
     resourceId: text("resource_id").notNull(),
@@ -2434,7 +2434,7 @@ export type ForumThreadRow = typeof forumThreads.$inferSelect;
 
 // Practice Partners — debaters volunteering to be challenged to a virtual
 // practice round, or to judge one, and the challenges between them. The wire
-// format and the option lists live in `@debate/webview/lib/practice-partners`;
+// format and the option lists live in `@debate-ai/webview/lib/practice-partners`;
 // the queries are `lib/practice-partners/queries.ts`.
 //
 // One profile per account, keyed on the user. The two roles are real columns
@@ -2510,7 +2510,7 @@ export type PracticeChallengeRow = typeof practiceChallenges.$inferSelect;
 
 // Judge Pool — judges offering to be hired for tournament weekends, and the
 // hire requests organizers send them. The wire format, the option lists and
-// the season weekends live in `@debate/webview/lib/judge-pool`; the queries
+// the season weekends live in `@debate-ai/webview/lib/judge-pool`; the queries
 // are `lib/judge-pool/queries.ts`. Shipped to D1 by
 // `packages/debate-webview/migrations/0001_judge_pool.sql`.
 //
@@ -2682,7 +2682,7 @@ export type PredictionBetRow = typeof predictionBets.$inferSelect;
 // One signed-in user's pick in the next-season topic-area poll on
 // /practice/statistics. Keyed on (season, user), so a user holds one vote per
 // season and voting again overwrites it rather than adding a second row. `area`
-// is a topic-area name from @debate/videos' resolutions.json, checked by the
+// is a topic-area name from @debate-ai/videos' resolutions.json, checked by the
 // API before it is written. Created by packages/debate-videos/migrations.
 // Superseded by `topicAreaRankings` (ranked ballots), which copied these rows
 // in as first choices; nothing reads or writes this table any more.
@@ -2968,7 +2968,7 @@ export type FilePurchaseRow = typeof filePurchases.$inferSelect;
 
 // Judge paradigms — the cache of Tabroom judges' paradigms and judging
 // records, and the paradigms judges write here themselves. The wire format
-// and checks live in `@debate/webview/lib/judge-paradigms`; the queries are
+// and checks live in `@debate-ai/webview/lib/judge-paradigms`; the queries are
 // `lib/judge-paradigms/queries.ts`. Shipped to D1 by
 // `packages/debate-webview/migrations/0002_judge_paradigms.sql`.
 //

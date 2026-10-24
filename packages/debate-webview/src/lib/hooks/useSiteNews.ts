@@ -11,8 +11,8 @@
  */
 
 import { useEffect, useState } from "react"
-import type { NewsItem } from "@debate/community/src/lib/news-stream"
-import type { VideoType } from "@debate/types"
+import type { NewsItem } from "@debate-ai/community/src/lib/news-stream"
+import type { VideoType } from "@debate-ai/types"
 import { fetchForumThreads } from "../forums/client"
 import { buildFileNews, buildForumNews, buildRoundNews, type SiteNewsFile } from "../news/site-news"
 

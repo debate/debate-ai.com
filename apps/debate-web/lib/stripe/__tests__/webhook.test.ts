@@ -1,6 +1,6 @@
 import { createHmac } from "node:crypto";
 import { describe, expect, it, vi } from "vitest";
-import { checkoutUrl, planForPrice, PLANS } from "@debate/webview/lib/stripe/plans";
+import { checkoutUrl, planForPrice, PLANS } from "@debate-ai/webview/lib/stripe/plans";
 import { fetchSubscription } from "../store";
 import {
   constructEvent,
@@ -9,7 +9,7 @@ import {
   StripeSignatureError,
   subscriptionUpdateForEvent,
   updateFromSubscription,
-} from "@debate/webview/lib/stripe/webhook";
+} from "@debate-ai/webview/lib/stripe/webhook";
 
 const SECRET = "whsec_test_secret";
 const NOW = 1_790_000_000;

@@ -17,7 +17,7 @@
  * Side term, in log-odds: the field's aff advantage for the stage, plus each
  * team's own aff-vs-neg tilt beyond the field's, shrunk toward zero for teams
  * with few rounds (elim rates shrink harder — there are few elim rounds).
- * @module @debate/rankings-adapter/matchup-model
+ * @module @debate-ai/rankings-adapter/matchup-model
  */
 
 import { majorityProbability, winProbability } from "./match-simulation";

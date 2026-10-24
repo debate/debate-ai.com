@@ -10,13 +10,13 @@
  * key).
  *
  * The pure rules — prices, the outline preview, the top-up options — live in
- * `@debate/file-market`.
+ * `@debate-ai/file-market`.
  *
  * @module lib/market/queries
  */
 
 import { and, desc, eq, inArray, sql } from "drizzle-orm";
-import type { ListingDetail, ListingSummary, OutlineEntry, TopUpCredit, Wallet } from "@debate/file-market";
+import type { ListingDetail, ListingSummary, OutlineEntry, TopUpCredit, Wallet } from "@debate-ai/file-market";
 import type { getDBFromContext } from "@/lib/database/context";
 import {
   documents,

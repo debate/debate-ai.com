@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { validateDeletionRequest } from "@debate/webview/lib/privacy/recording-release"
+import { validateDeletionRequest } from "@debate-ai/webview/lib/privacy/recording-release"
 import { getAdminEmails } from "@/lib/auth/admin"
 import { getUserId } from "@/lib/auth/session"
 import { getDBFromContext } from "@/lib/database/context"

@@ -6,10 +6,10 @@ import {
   parseSecrets,
   StripeSignatureError,
   subscriptionUpdateForEvent,
-} from "@debate/webview/lib/stripe/webhook"
+} from "@debate-ai/webview/lib/stripe/webhook"
 import { fetchSubscription, saveSubscriptionUpdate } from "@/lib/stripe/store"
 import { creditTopUp } from "@/lib/market/queries"
-import { topUpForEvent } from "@debate/file-market"
+import { topUpForEvent } from "@debate-ai/file-market"
 
 /**
  * Stripe webhook endpoint — register `https://debate-ai.com/api/stripe/webhook`

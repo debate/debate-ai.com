@@ -1,6 +1,6 @@
 # CLAUDE.md — `debate-editor` (Debate Editor)
 
-Public (`@debate/` scope). The Debate Editor debate-card editor embedded across debate-ai.com.
+Public (`@debate-ai/` scope). The Debate Editor debate-card editor embedded across debate-ai.com.
 Entry: `src/react/index.tsx` — consumed as source, no build step. Tests in
 `test/`.
 

@@ -57,7 +57,7 @@ import type React from "react"
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react"
 import { Group, Panel, Separator, usePanelRef, type PanelSize } from "react-resizable-panels"
-import { playUISoundEffect } from "@debate/timer"
+import { playUISoundEffect } from "@debate-ai/timer"
 
 import { cn } from "../lib/utils"
 import { setSidebarCollapsed, toggleSidebarCollapsed, useSidebarCollapsed } from "./sidebar-collapse"

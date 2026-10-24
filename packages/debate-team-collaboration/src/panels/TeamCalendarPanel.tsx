@@ -24,11 +24,11 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { BookOpen, CalendarDays, ChevronLeft, ChevronRight, ClipboardList, Trophy } from "lucide-react"
-import { Badge } from "@debate/round/src/ui/primitives/badge"
-import { Button } from "@debate/round/src/ui/primitives/button"
-import { Input } from "@debate/round/src/ui/primitives/input"
-import { Label } from "@debate/round/src/ui/primitives/label"
-import { EmptyState, PanelSection, PanelShell } from "@debate/round/src/ui/panels/panel-shell"
+import { Badge } from "@debate-ai/round/src/ui/primitives/badge"
+import { Button } from "@debate-ai/round/src/ui/primitives/button"
+import { Input } from "@debate-ai/round/src/ui/primitives/input"
+import { Label } from "@debate-ai/round/src/ui/primitives/label"
+import { EmptyState, PanelSection, PanelShell } from "@debate-ai/round/src/ui/panels/panel-shell"
 import type { CoachingProgramConfig } from "../round/coaching-program"
 import { buildCoachingProgramsPanelView, saveCoachingProgram } from "../state/coachingPrograms"
 import {

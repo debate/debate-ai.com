@@ -17,7 +17,7 @@
  * marked `defaultOpen`), and the current page is scrolled into view in the
  * sidebar when the docs open and after each navigation. Off /docs the same
  * pages are a collapsed "Docs" section of the tree (`DocsNavTree` in
- * @debate/videos, fed by `routes/tree-route.ts`).
+ * @debate-ai/videos, fed by `routes/tree-route.ts`).
  */
 
 import { useEffect, useState, type ReactNode } from 'react';

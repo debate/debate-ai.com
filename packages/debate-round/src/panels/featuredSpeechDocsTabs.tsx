@@ -6,7 +6,7 @@
  * @module panels/featuredSpeechDocsTabs
  */
 
-import type { WatchSideTab } from "@debate/videos"
+import type { WatchSideTab } from "@debate-ai/videos"
 import { featuredRoundForVideo } from "../round/featured-rounds"
 import { FeaturedSpeechDocsPanel } from "./FeaturedSpeechDocsPanel"
 

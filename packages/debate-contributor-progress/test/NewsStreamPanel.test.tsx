@@ -11,7 +11,7 @@ import { createElement, type FC } from "react";
 import { NewsStreamPanel, type NewsStreamSyncAdapter } from "../src/panels/NewsStreamPanel";
 import { isNewsItemLiked, isNewsItemRead, markNewsItemRead } from "../src/state/newsStream";
 import { NEWS_CATEGORY_LABELS, type NewsItem } from "../src/lib/news-stream";
-import { saveEvidenceLibraryEntry } from "@debate/research-evidence/src/state/evidenceLibraryEntries";
+import { saveEvidenceLibraryEntry } from "@debate-ai/research-evidence/src/state/evidenceLibraryEntries";
 import { buttonByText, click, flush, mount } from "./helpers/mount";
 import type { Mounted } from "./helpers/mount";
 

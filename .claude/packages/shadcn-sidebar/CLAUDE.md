@@ -9,7 +9,7 @@ data behind `src/demo` (`shadcn-sidebar/demo`), stories in `stories/`, tests in 
 
 ## Boundaries
 
-- **No `@debate/*` imports, ever.** The point of the package is that it carries no debate
+- **No `@debate-ai/*` imports, ever.** The point of the package is that it carries no debate
   code; it may not depend on any workspace package. Debate-specific behaviour goes in the
   host, configured through props and data.
 - **No router, no session, no theme library.** Links go through the provider's

@@ -83,7 +83,7 @@ await build({
       { find: /^react\/(.*)$/, replacement: `${pkgDir("react")}/$1` },
       { find: /^react-dom$/, replacement: pkgDir("react-dom") },
       { find: /^react-dom\/(.*)$/, replacement: `${pkgDir("react-dom")}/$1` },
-      // This package does not depend on @debate/webview, and bun's isolated
+      // This package does not depend on @debate-ai/webview, and bun's isolated
       // install links a workspace package only into its dependents'
       // node_modules, so the bare import has to be pointed at the source.
       { find: /^@debate\/webview$/, replacement: webui("src/index.ts") },

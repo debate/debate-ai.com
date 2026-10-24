@@ -14,8 +14,8 @@
  * a WeakMap: an edit replaces the card node and the next lookup re-parses.
  */
 import type { Node as PMNode } from 'prosemirror-model';
-import type { CardYear } from '@debate/card-parser/src/types/types';
-import { extractCiteInfo } from '@debate/card-parser/src/extractors/citation-extractor';
+import type { CardYear } from '@debate-ai/card-parser/src/types/types';
+import { extractCiteInfo } from '@debate-ai/card-parser/src/extractors/citation-extractor';
 
 /** Body-text facts about a card. `hasShading` is reported separately so
  *  "Read mode: show background color" can count it as highlighting at

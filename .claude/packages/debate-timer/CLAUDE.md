@@ -1,6 +1,6 @@
 # CLAUDE.md — `debate-timer`
 
-Public (`@debate/` scope). Speech and prep timers for live rounds, with per-format speech times
+Public (`@debate-ai/` scope). Speech and prep timers for live rounds, with per-format speech times
 built in. Also the **in-round speech recorder**: mic selection, live waveform,
 playback. Entry `src/index.ts`, tests in `test/`.
 
@@ -22,8 +22,8 @@ moved here so the round sidebar (`debate-round` `RoundTimerPanel`) and the
 extension (`apps/debate-browser-ext/src/components/TimerFace.tsx`, which wraps
 it) share it. It is presentational only — callers own the timer state. Its
 styles are `dt-ctimer`-scoped and imported by the component; it references its
-own `css-module.d.ts` so every package that type-checks `@debate/timer` accepts
-the CSS import. Import it by path (`@debate/timer/src/timers/circular/…`) from
+own `css-module.d.ts` so every package that type-checks `@debate-ai/timer` accepts
+the CSS import. Import it by path (`@debate-ai/timer/src/timers/circular/…`) from
 the extension so the timer window doesn't bundle the recorder.
 
 ## The recorder

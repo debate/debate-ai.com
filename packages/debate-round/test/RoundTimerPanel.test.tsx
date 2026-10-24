@@ -17,7 +17,7 @@ import {
   toggledEntry,
 } from "../src/layout/RoundTimerPanel"
 import type { SpeechTimerEntry } from "../src/hooks/useTimerState"
-import type { DebateStyle, TimerState } from "@debate/timer/src/types"
+import type { DebateStyle, TimerState } from "@debate-ai/timer/src/types"
 
 afterEach(() => {
   cleanup()

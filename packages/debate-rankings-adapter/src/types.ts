@@ -6,7 +6,7 @@
  * `output/<prefix>field_statistics.csv`. Ratings come from a ballot-level
  * Bradley-Terry model, reported on the Elo scale (1500 = field average,
  * 400 points = 10:1 odds).
- * @module @debate/rankings-adapter/types
+ * @module @debate-ai/rankings-adapter/types
  */
 
 /** Identifier of one generated rankings dataset (the CSV filename prefix). */

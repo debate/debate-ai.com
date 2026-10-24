@@ -36,7 +36,7 @@ import {
   randomToken,
   readExtensionCallback,
   type ExtensionCallbackResult,
-} from '@debate/webview/lib/qwksearch/connect';
+} from '@debate-ai/webview/lib/qwksearch/connect';
 
 import { getSettings } from '@/src/settings/settings';
 import { authorizedFetch, isSignedIn } from './session';

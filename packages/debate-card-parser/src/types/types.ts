@@ -1,5 +1,5 @@
 /** @fileoverview Shared type definitions used across card parsing helpers. */
-// The definitions (and their field docs) live in `@debate/types`.
+// The definitions (and their field docs) live in `@debate-ai/types`.
 export type {
   AuthorType,
   CardYear,
@@ -15,4 +15,4 @@ export type {
   FileNameParts,
   HumanNameOptions,
   HumanNameResult,
-} from "@debate/types"
+} from "@debate-ai/types"

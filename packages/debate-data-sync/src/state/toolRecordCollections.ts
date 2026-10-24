@@ -165,7 +165,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     key: "flowKeymap",
     storageKey: "ebb-keymap-settings",
     idField: "id",
-    // The flow editor's rebound shortcuts (`@debate/flow`'s `useFlowStore`),
+    // The flow editor's rebound shortcuts (`@debate-ai/flow`'s `useFlowStore`),
     // stored as `{ keymapOverrides }`; one record per rebound action id. The
     // flow editor reads it at startup, so a rebinding from another device
     // applies on the next load.
@@ -179,7 +179,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "speechDocLinks",
     idField: "id",
     // Which editor document each speech of a round/flow reads its word counts
-    // from (`@debate/round/src/state/speechDocLinks.ts`). `id` is
+    // from (`@debate-ai/round/src/state/speechDocLinks.ts`). `id` is
     // `scope:SPEECH`, and `docId` is a server `documents.id`, so a link
     // resolves on any device once the round and document themselves sync.
     label: "Speech Document Links",
@@ -205,7 +205,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     key: "debaterLevel",
     storageKey: "debaterLevel",
     idField: "id",
-    // The XP/level progression (`@debate/community`'s `debaterLevel` store):
+    // The XP/level progression (`@debate-ai/community`'s `debaterLevel` store):
     // one object, synced as a single `progress` record. A conflict merges the
     // two copies field by field, so XP earned on either device survives.
     label: "Debater Level & XP",
@@ -323,7 +323,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "pinnedDebates",
     idField: "roundId",
     // The rounds starred into the debate page's "Featured" section
-    // (`@debate/round/src/state/pinnedDebates.ts`): `{ roundId, pinnedAt }`. The round id is
+    // (`@debate-ai/round/src/state/pinnedDebates.ts`): `{ roundId, pinnedAt }`. The round id is
     // also the round's `saved_rounds.client_id`, so a pin resolves to the same
     // round on another device.
     label: "Pinned Debates",
@@ -335,7 +335,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "ebbSyncedSettings",
     idField: "id",
     // The flow editor's display and keymap preferences
-    // (`@debate/flow-ebb/src/lib/store/syncedSettings.ts`): two records,
+    // (`@debate-ai/flow-ebb/src/lib/store/syncedSettings.ts`): two records,
     // `display` and `keymap`. Device-only values (flows folder, panel layout,
     // live-collab toggles) are deliberately not in them.
     label: "Flow Editor Settings",
@@ -349,7 +349,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     // Distinct from `saved_flows` (the explicit, user-triggered cloud save on
     // each flow chip): this is the auto-saved undo/version log the same
     // dialog's "History" tab reads, kept in its own `flow-history` key by
-    // `@debate/round/src/state/store.ts`'s `saveToHistory`/`getFlowHistory`.
+    // `@debate-ai/round/src/state/store.ts`'s `saveToHistory`/`getFlowHistory`.
     label: "Flow History",
     href: "/debate",
     section: "Flowing and writing",
@@ -770,7 +770,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "debate-videos:speech-outcomes",
     idField: "id",
     // The watch page's cached AI outcome-simulation runs
-    // (`@debate/videos/src/state/speechOutcomeCache.ts`), keyed by a derived
+    // (`@debate-ai/videos/src/state/speechOutcomeCache.ts`), keyed by a derived
     // `${videoId}::${speechKey}::${lens}` id — see that module's own header
     // comment for why it needed one before it could join this catalog.
     label: "Speech Outcome Runs",

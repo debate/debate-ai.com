@@ -8,7 +8,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import type { RankingDatasetId } from "@debate/rankings-adapter"
+import type { RankingDatasetId } from "@debate-ai/rankings-adapter"
 import { useAllRankingDatasets } from "../../../hooks/useAllRankingDatasets"
 import { MY_TEAM_ROLES, type MyRankedTeams, type MyTeamRole } from "../../../lib/my-ranked-teams/my-ranked-teams"
 import { useMyRankedTeams } from "../../../lib/my-ranked-teams/useMyRankedTeams"

@@ -186,19 +186,19 @@ endpoint against this seed, and `test/demo-admin.test.ts` checks the admin view.
 
 ## Using it in an app
 
-The package is `@debate/tournaments`. Its entry points:
+The package is `@debate-ai/tournaments`. Its entry points:
 
 | Import | What you get |
 |---|---|
-| `@debate/tournaments/server` | `createTournamentsHandler()`: upstream's public `/rest` and `/pages` API, plus `/host`, as a fetch handler on D1 |
-| `@debate/tournaments` / `@debate/tournaments/ui` | `TournamentsApp` and the individual React pages (upcoming, invite, pairings, round, results, result set) |
-| `@debate/tournaments/routes` | `matchTournamentRoute()` / `tournamentHrefs()`: the UI's route table |
-| `@debate/tournaments/migrations/*` | The D1 schema (108 upstream tables) |
+| `@debate-ai/tournaments/server` | `createTournamentsHandler()`: upstream's public `/rest` and `/pages` API, plus `/host`, as a fetch handler on D1 |
+| `@debate-ai/tournaments` / `@debate-ai/tournaments/ui` | `TournamentsApp` and the individual React pages (upcoming, invite, pairings, round, results, result set) |
+| `@debate-ai/tournaments/routes` | `matchTournamentRoute()` / `tournamentHrefs()`: the UI's route table |
+| `@debate-ai/tournaments/migrations/*` | The D1 schema (108 upstream tables) |
 
 The API server:
 
 ```ts
-import { createTournamentsHandler } from "@debate/tournaments/server"
+import { createTournamentsHandler } from "@debate-ai/tournaments/server"
 
 const handler = createTournamentsHandler({
   basePath: "/api/tabroom",
@@ -210,7 +210,7 @@ const handler = createTournamentsHandler({
 The pages:
 
 ```tsx
-import { TournamentsApp } from "@debate/tournaments"
+import { TournamentsApp } from "@debate-ai/tournaments"
 
 <TournamentsApp segments={slug} basePath="/tournaments" apiBase="/api/tabroom" Link={Link} />
 ```

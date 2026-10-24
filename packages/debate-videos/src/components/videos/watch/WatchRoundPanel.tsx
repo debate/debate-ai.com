@@ -83,10 +83,10 @@ export interface SpeechFocusRequest {
  * The page's "Detect speeches" request, as the panel shows it. The page owns
  * it because the result re-times the whole round, timeline included.
  *
- * @see {@link SpeechDetectionControl} in `@debate/timer` — the shared shape
+ * @see {@link SpeechDetectionControl} in `@debate-ai/timer` — the shared shape
  * this re-exports so the dialog and the panel agree.
  */
-export type SpeechDetectionControl = import("@debate/timer").SpeechDetectionControl
+export type SpeechDetectionControl = import("@debate-ai/timer").SpeechDetectionControl
 
 interface WatchRoundPanelProps {
   speeches: RoundSpeech[]

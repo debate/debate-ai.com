@@ -12,12 +12,12 @@ import { click, flush, mount, type, type Mounted } from "./helpers/mount";
 
 const account = vi.hoisted(() => ({ signedIn: false }));
 
-vi.mock("@debate/data-sync/src/state/tournament-results-client", () => ({
+vi.mock("@debate-ai/data-sync/src/state/tournament-results-client", () => ({
   listSavedTournamentResults: async () => (account.signedIn ? [] : null),
   saveTournamentResultToAccount: async () => undefined,
   deleteSavedTournamentResultFromAccount: async () => undefined,
 }));
-vi.mock("@debate/data-sync/src/state/qualification-settings-sync-client", () => ({
+vi.mock("@debate-ai/data-sync/src/state/qualification-settings-sync-client", () => ({
   fetchQualificationPointsTable: async () => null,
   saveQualificationPointsTable: async () => undefined,
   fetchQualificationCutoff: async () => null,

@@ -1,7 +1,7 @@
 /**
  * @fileoverview Reads and writes `video_ai_results`, the watch page's AI
  * results shared by every viewer of a video (see
- * `@debate/videos/src/lib/shared-video-ai` for the rules and shapes).
+ * `@debate-ai/videos/src/lib/shared-video-ai` for the rules and shapes).
  *
  * A write is first-come: the first good result for a video, kind and key is
  * kept, and a later one is answered with the stored copy instead. Only staff
@@ -19,7 +19,7 @@ import {
   type SharedVideoAiItem,
   type SharedVideoAiKind,
   type SharedVideoAiWrite,
-} from "@debate/videos/src/lib/shared-video-ai";
+} from "@debate-ai/videos/src/lib/shared-video-ai";
 
 import type { getDBFromContext } from "@/lib/database/context";
 import { videoAiResults } from "@/lib/database/schema";

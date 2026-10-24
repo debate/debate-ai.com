@@ -26,7 +26,7 @@ import { getSchoolLogo } from "../../lib/schoolLogos"
 import { LegendaryBadge, ROW_TIER_CLASS, rowTier, type RowTier } from "./rowTier"
 import { RatingDigits } from "./RatingDigits"
 import { TeamLabel } from "../../components/navigation/team-label/TeamLabel"
-import { teamDisplayParts } from "@debate/rankings-adapter"
+import { teamDisplayParts } from "@debate-ai/rankings-adapter"
 
 /** One table column: which field it shows and how. */
 interface Column {

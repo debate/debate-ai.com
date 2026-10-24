@@ -24,7 +24,7 @@ import {
   createCardBatchSender,
   uploadDebateCardShard,
   type ParquetSource,
-} from "@debate/research-evidence";
+} from "@debate-ai/research-evidence";
 import { buildCardShard } from "../../../../debate-search-evidence/test/parquet-card-fixture";
 import { debateCardImports, debateCards } from "@/lib/database/schema";
 import {

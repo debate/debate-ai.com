@@ -3,8 +3,8 @@
  * round workspace's selected flow — what every "Generate … for current
  * round" form in this package reads.
  */
-import { useFlowStore } from "@debate/round/src/state/store";
-import type { Box, Flow } from "@debate/round/src/types/flow";
+import { useFlowStore } from "@debate-ai/round/src/state/store";
+import type { Box, Flow } from "@debate-ai/round/src/types/flow";
 
 /** Builds a row's box chain from per-column content; "" leaves a column unflowed. */
 export function row(contents: string[], overrides: Partial<Box> = {}): Box {

@@ -10,7 +10,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ResearchProgressPanel } from "../src/panels/ResearchProgressPanel";
 import { completeAndRecordResearchTask, listCompletedTaskHistory } from "../src/state/researchProgress";
 import { saveRoutedTaskQueue } from "../src/state/routedTaskQueues";
-import { saveContribution } from "@debate/research-evidence/src/state/contributions";
+import { saveContribution } from "@debate-ai/research-evidence/src/state/contributions";
 import { button, captureDownloads } from "./helpers/dom";
 import { click, mount, type, type Mounted } from "./helpers/mount";
 

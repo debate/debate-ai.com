@@ -1,6 +1,6 @@
 "use client"
 
-import { DebateFlowPage, type DebateFlowPageProps } from "@debate/round"
+import { DebateFlowPage, type DebateFlowPageProps } from "@debate-ai/round"
 import { useSession } from "../../lib/hooks/useSession"
 
 /**

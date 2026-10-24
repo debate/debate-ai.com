@@ -12,9 +12,9 @@ import {
   stackKeyOf,
   videoRouteHref,
   type VideoType,
-} from "@debate/videos"
-import { videoRowToTuple } from "@debate/data-sync/src/videos/video-rows"
-import { featuredSpeechDocsTabs } from "@debate/round/src/panels/featuredSpeechDocsTabs"
+} from "@debate-ai/videos"
+import { videoRowToTuple } from "@debate-ai/data-sync/src/videos/video-rows"
+import { featuredSpeechDocsTabs } from "@debate-ai/round/src/panels/featuredSpeechDocsTabs"
 
 import { CategoryDock } from "../../components/layout/CategoryDock"
 import { SidebarAccount } from "../../components/layout/app-sidebar/sidebar-account"

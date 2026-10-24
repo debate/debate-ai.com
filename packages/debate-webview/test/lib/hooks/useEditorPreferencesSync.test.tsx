@@ -28,7 +28,7 @@ const store = vi.hoisted(() => {
     },
   }
 })
-vi.mock("@debate/editor/settings", () => ({ settings: store.settings }))
+vi.mock("@debate-ai/editor/settings", () => ({ settings: store.settings }))
 vi.mock("../../../src/lib/editor-preferences", () => ({
   EDITOR_PREFERENCE_KEYS: new Set(["fontSize", "autocorrect"]),
 }))

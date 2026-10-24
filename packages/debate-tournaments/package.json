@@ -1,5 +1,5 @@
 {
-  "name": "@debate/tournaments",
+  "name": "@debate-ai/tournaments",
   "version": "0.1.0",
   "description": "Tournament tabulation, invites, pairings, results and judge paradigms — upstream Tabroom (debate/debate-tournament-tabroom) vendored and adapted to Cloudflare Workers + D1, exporting its API handler, React UI and route table",
   "type": "module",
@@ -51,7 +51,7 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@debate/types": "workspace:*",
+    "@debate-ai/types": "workspace:*",
     "html-to-text": "^10.0.1",
     "kysely": "^0.29.7",
     "lucide-react": "^1.61.0",

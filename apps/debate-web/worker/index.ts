@@ -29,7 +29,7 @@ import {
 import { setSiteOriginReader } from "../lib/seo/site-url";
 import { youtubeWatchRedirect } from "../lib/youtube/video-redirect";
 import { getAuth } from "../lib/auth";
-import { normalizeRoomId } from "@debate/round/src/webcam/room-protocol";
+import { normalizeRoomId } from "@debate-ai/round/src/webcam/room-protocol";
 import { handleRoomSocket } from "../lib/webcam/debate-room";
 
 // Durable Object classes must be exported from the Worker's main module.

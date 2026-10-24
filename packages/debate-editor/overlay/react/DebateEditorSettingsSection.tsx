@@ -12,7 +12,7 @@
  * panel and flushes the previous one when a new panel is built — so mount
  * one of these per page and change `category` rather than mounting several.
  *
- * The host loads the stylesheet (`@debate/editor/styles.css`); this
+ * The host loads the stylesheet (`@debate-ai/editor/styles.css`); this
  * component only lazy-loads the settings modules, so importing it from the
  * package root costs nothing until it renders.
  */

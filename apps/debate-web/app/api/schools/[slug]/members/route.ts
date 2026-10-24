@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
-import { parseMemberBody } from "@debate/webview/lib/schools/school-claims"
-import { isProfileSlug } from "@debate/videos/src/lib/follows/profile-follows"
+import { parseMemberBody } from "@debate-ai/webview/lib/schools/school-claims"
+import { isProfileSlug } from "@debate-ai/videos/src/lib/follows/profile-follows"
 import { withRouteErrors } from "@/lib/api/route-errors"
 import { getDBFromContext } from "@/lib/database/context"
 import { SchoolClaimError, addSchoolMember, getSchoolPage, removeSchoolMember } from "@/lib/school-claims/queries"

@@ -33,7 +33,7 @@ const stubs = vi.hoisted(() => ({
   createR2Backup: vi.fn(),
   deleteBackups: vi.fn(),
 }));
-vi.mock("@debate/webview/lib/topic-starters/import", () => ({ docxToStoredCmir: stubs.docxToStoredCmir }));
+vi.mock("@debate-ai/webview/lib/topic-starters/import", () => ({ docxToStoredCmir: stubs.docxToStoredCmir }));
 vi.mock("@/lib/videos/transcript-scraper", () => ({
   getTranscriptScraperStats: stubs.getTranscriptScraperStats,
   scrapeTranscriptsPage: stubs.scrapeTranscriptsPage,

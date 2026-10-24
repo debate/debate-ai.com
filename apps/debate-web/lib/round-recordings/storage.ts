@@ -1,7 +1,7 @@
 /**
  * @fileoverview Where joined round recordings live in R2: the MP3 of every
  * speech joined, its captions, each debater's webcam clips, and the manifest
- * tying them together (built in the browser by `@debate/timer`'s
+ * tying them together (built in the browser by `@debate-ai/timer`'s
  * `RoundRecordingDialog`).
  *
  * Bound as `ROUND_RECORDINGS` in wrangler.jsonc. Keys are

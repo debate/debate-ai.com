@@ -18,7 +18,7 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { ChevronLeft, ChevronRight, ExternalLink, Loader2 } from "lucide-react"
-import { debateStyles } from "@debate/timer/src/formats/debate-format-times"
+import { debateStyles } from "@debate-ai/timer/src/formats/debate-format-times"
 import {
   FEATURED_ROUNDS,
   loadFeaturedSpeechDocs,

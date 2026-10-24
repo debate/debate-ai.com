@@ -20,7 +20,7 @@ vi.mock("../src/round/drill-sets-client", () => ({
   saveDrillSetToAccount: async () => {},
   deleteSavedDrillSetFromAccount: async () => {},
 }));
-vi.mock("@debate/community", () => ({ recordDebaterActivity: vi.fn() }));
+vi.mock("@debate-ai/community", () => ({ recordDebaterActivity: vi.fn() }));
 
 let view: Mounted;
 const text = () => view.container.textContent ?? "";

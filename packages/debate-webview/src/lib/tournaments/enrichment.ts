@@ -1,11 +1,11 @@
 /**
  * @fileoverview The lookups `/tournaments` hands to `<TournamentsApp>` so
  * pairings and results show each entry's current-season ranking and link each
- * judge to their Tabroom paradigm (see `@debate/tournaments`' `ui/enrichment`).
+ * judge to their Tabroom paradigm (see `@debate-ai/tournaments`' `ui/enrichment`).
  *
  * A tournament from a past season is matched against that season instead:
  * a college policy event against debatedata's table for the season (2009-10
- * onward, see `college-history.ts` in `@debate/rankings-adapter`), and any
+ * onward, see `college-history.ts` in `@debate-ai/rankings-adapter`), and any
  * other event not at all, since the current rankings would name whoever
  * holds that code now.
  *
@@ -29,8 +29,8 @@ import {
   type RankingDataset,
   type RankingDatasetId,
   type RankingEntry,
-} from "@debate/rankings-adapter";
-import type { JudgeParadigmLookup, TeamRating, TeamRatingLookup, TeamRatingQuery } from "@debate/tournaments/ui";
+} from "@debate-ai/rankings-adapter";
+import type { JudgeParadigmLookup, TeamRating, TeamRatingLookup, TeamRatingQuery } from "@debate-ai/tournaments/ui";
 import { getSchoolLogo } from "../schoolLogos";
 
 /** The site's paradigm search over Tabroom (`app/api/tabroom-paradigms`). */

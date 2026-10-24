@@ -17,7 +17,7 @@ const tourn = {
   timestamp: "2026-07-01T00:00:00Z",
 };
 
-describe("@debate/tournaments/types", () => {
+describe("@debate-ai/tournaments/types", () => {
   it("validates a tournament with upstream Tabroom's own schema", () => {
     const result = parseTabroom(TournSchema, tourn);
     expect(result.ok).toBe(true);

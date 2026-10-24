@@ -11,8 +11,8 @@
  * @module lib/reason-docs/topic-codes
  */
 
-import topicsData from "@debate/data-sync/data/debate-topics.json"
-import type { DebateTopicYear } from "@debate/types"
+import topicsData from "@debate-ai/data-sync/data/debate-topics.json"
+import type { DebateTopicYear } from "@debate-ai/types"
 import { DEFAULT_TOPIC_CODE, isTopicCode } from "./topic-doc-paths"
 
 /** The formats a topic code can name, in picker order. */

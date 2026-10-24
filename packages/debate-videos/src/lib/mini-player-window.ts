@@ -10,7 +10,7 @@
  * the pin control only appears in the desktop app.
  *
  * The wrapper is detected by duck-typing `window.__TAURI__` rather than
- * importing `@debate/webview`'s native helpers — this package sits below the
+ * importing `@debate-ai/webview`'s native helpers — this package sits below the
  * webview package, and the global's full type is declared there.
  * @module lib/mini-player-window
  */

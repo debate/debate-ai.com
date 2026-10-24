@@ -43,12 +43,12 @@ import {
   type CommentResourceType,
   type CommentThreadResponse,
   type CommentViewer,
-} from "@debate/comments";
+} from "@debate-ai/comments";
 
 import type { getDBFromContext } from "@/lib/database/context";
 import { commentLikes, comments, user } from "@/lib/database/schema";
 import { touchThreadActivity } from "@/lib/forums/queries";
-import { isCommentId, type Parsed } from "@debate/webview/lib/comments/validation";
+import { isCommentId, type Parsed } from "@debate-ai/webview/lib/comments/validation";
 
 type Db = Awaited<ReturnType<typeof getDBFromContext>>;
 

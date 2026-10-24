@@ -2,7 +2,7 @@ export const APP_NAME = "Debate AI";
 
 /**
  * Size of the official Debate AI wordmark. The image itself is `DebateAiLogo`
- * from `@debate/icons/brand`; import it there. Favicons and app icons stay separate.
+ * from `@debate-ai/icons/brand`; import it there. Favicons and app icons stay separate.
  */
 export const APP_LOGO_WIDTH = 400;
 export const APP_LOGO_HEIGHT = 89;
@@ -29,7 +29,7 @@ export const NEXT_PUBLIC_BASE_URL =
 export const NEXT_PUBLIC_GOOGLE_CLIENT_ID =
   process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "";
 
-// Custom URL scheme the @debate/native-wrapper desktop/mobile shell registers with the
+// Custom URL scheme the @debate-ai/native-wrapper desktop/mobile shell registers with the
 // OS (packages/native-wrapper/profiles/debate-ai.json's `deepLinkScheme`) so
 // /auth/native-complete can hand a browser-established session back to the
 // wrapper's webview. Keep these two values in sync.

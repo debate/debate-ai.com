@@ -11,7 +11,7 @@
  * @module lib/my-ranked-teams/my-ranked-teams
  */
 
-import { RANKING_DATASETS, type RankingDatasetId } from "@debate/rankings-adapter"
+import { RANKING_DATASETS, type RankingDatasetId } from "@debate-ai/rankings-adapter"
 
 /** How the viewer relates to the team they picked. */
 export type MyTeamRole = "debater" | "coach" | "assistant"

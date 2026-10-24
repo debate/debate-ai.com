@@ -6,14 +6,14 @@ import { usePathname, useRouter } from "next/navigation"
 import { ChevronDown, ChevronUp, Globe, LogIn, PanelLeft, PanelTopClose, PanelTopOpen, LogOut, Monitor, Moon, Palette, Pause, Play, Search, Settings as SettingsIcon, ShieldCheck, Sun, UserCircle2 } from "lucide-react"
 import { cn } from "../../lib/ui/lib/utils"
 import { Dock, DockIcon, DockItem } from "../../lib/ui/layout/dock"
-import { useAccountNotifications, useContacts } from "@debate/team-collaboration"
+import { useAccountNotifications, useContacts } from "@debate-ai/team-collaboration"
 import {
   useVideoPlayerStore,
   sendYouTubeCommand,
   useCategoryDockState,
   useSidebarCollapsed,
   type CategoryType,
-} from "@debate/videos"
+} from "@debate-ai/videos"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -44,7 +44,7 @@ import { toggleDockHidden, useDockHidden } from "../../lib/nav/dock-hidden"
 import { IconSettings } from "../../lib/ui/icons"
 
 // No Timer button here on purpose: the round timers live in the rounds
-// sidebar, on the selected round (`LiveRoundGroup`, in @debate/round's
+// sidebar, on the selected round (`LiveRoundGroup`, in @debate-ai/round's
 // `FlowPageSidebar`), where the speech they are timing is in view. A dock
 // shortcut to a standalone timer page duplicated that surface without the
 // round context, so it was removed.

@@ -100,7 +100,7 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/primitives/table"
-import { buildOpponentTeamProfilesRoster } from "@debate/data-sync/src/state/opponentTeamProfiles"
+import { buildOpponentTeamProfilesRoster } from "@debate-ai/data-sync/src/state/opponentTeamProfiles"
 import {
   bulkImportOpponentRoundRecords,
   deleteOpponentRoundRecord,
@@ -114,9 +114,9 @@ import {
   undoLastOpponentRoundRecordEdit,
   updateOpponentRoundRecord,
   type OpponentRoundRecordEntry,
-} from "@debate/data-sync/src/state/opponentRoundRecords"
-import { parseTeamLabel } from "@debate/rankings-adapter"
-import { OPPONENT_ROUND_CSV_TEMPLATE } from "@debate/data-sync/src/rankings/opponent-round-csv-import"
+} from "@debate-ai/data-sync/src/state/opponentRoundRecords"
+import { parseTeamLabel } from "@debate-ai/rankings-adapter"
+import { OPPONENT_ROUND_CSV_TEMPLATE } from "@debate-ai/data-sync/src/rankings/opponent-round-csv-import"
 import {
   buildOpponentScoutingReportText,
   buildOpponentTeamComparison,
@@ -127,7 +127,7 @@ import {
   type DebateSide,
   type OpponentTeamComparison,
   type OpponentTeamProfile,
-} from "@debate/data-sync/src/rankings/opponent-team-profile"
+} from "@debate-ai/data-sync/src/rankings/opponent-team-profile"
 import { listOwnRoundHistory } from "../state/ownRoundHistory"
 
 function formatFrequencyList(entries: { value: string; count: number }[]): string {

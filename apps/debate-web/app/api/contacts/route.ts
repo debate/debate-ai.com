@@ -14,7 +14,7 @@ import {
   userSummaryColumns,
 } from "@/lib/contacts/server"
 import { loadActiveOrganization } from "@/lib/organizations/server"
-import { isPresenceOnline, resolveContactRequest } from "@debate/team-collaboration"
+import { isPresenceOnline, resolveContactRequest } from "@debate-ai/team-collaboration"
 
 /**
  * Account-linked contacts list — the friends-list half of the Debate Editor

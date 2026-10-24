@@ -11,7 +11,7 @@ import {
   refreshLocalUserSettingsFromStorage,
 } from "../src/state/userSettings";
 import { settings } from "../src/state/settings";
-import { debateStyleMap, debateStyleNames } from "@debate/timer/src/formats/debate-format-times";
+import { debateStyleMap, debateStyleNames } from "@debate-ai/timer/src/formats/debate-format-times";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment has no DOM by default here. */
 class MemoryStorage {

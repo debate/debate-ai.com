@@ -3,9 +3,9 @@
  * month-stamped LD/PF lists.
  */
 
-import type { DebateTopicYear, SeasonalTopic } from "@debate/types";
+import type { DebateTopicYear, SeasonalTopic } from "@debate-ai/types";
 
-// The definitions (and their field docs) live in `@debate/types`.
+// The definitions (and their field docs) live in `@debate-ai/types`.
 export type { DebateTopicYear, SeasonalTopic };
 
 /** Joins monthly topics for tooltips and banners that still want one string. */

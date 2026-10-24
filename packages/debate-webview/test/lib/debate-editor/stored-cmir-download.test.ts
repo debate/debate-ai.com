@@ -11,7 +11,7 @@
  */
 
 import { describe, expect, it } from "vitest"
-import { looksLikeNative } from "@debate/editor/engine"
+import { looksLikeNative } from "@debate-ai/editor/engine"
 import { docxDownloadFilename, htmlToDocxBytes } from "../../../src/lib/debate-editor/stored-cmir"
 
 describe("htmlToDocxBytes", () => {

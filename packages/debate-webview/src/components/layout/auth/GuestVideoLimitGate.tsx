@@ -17,7 +17,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { sendYouTubeCommand, useVideoPlayerStore } from "@debate/videos"
+import { sendYouTubeCommand, useVideoPlayerStore } from "@debate-ai/videos"
 
 import { LoginDialog } from "./LoginDialog"
 import { useSession } from "../../../lib/hooks/useSession"

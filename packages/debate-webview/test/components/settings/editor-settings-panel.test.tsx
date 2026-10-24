@@ -11,12 +11,12 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 
 let search = ""
 vi.mock("next/navigation", () => ({ useSearchParams: () => new URLSearchParams(search) }))
-vi.mock("@debate/editor/styles.css", () => ({}))
-vi.mock("@debate/editor/settings-section", () => ({
+vi.mock("@debate-ai/editor/styles.css", () => ({}))
+vi.mock("@debate-ai/editor/settings-section", () => ({
   DebateEditorSettingsSection: ({ category }: { category: string }) => <div data-editor-category={category} />,
 }))
-vi.mock("@debate/round", () => ({ UserSettingsPanel: () => <div data-testid="account" /> }))
-vi.mock("@debate/videos", () => ({ MyRankedTeamsSettings: () => <div data-testid="my-team" /> }))
+vi.mock("@debate-ai/round", () => ({ UserSettingsPanel: () => <div data-testid="account" /> }))
+vi.mock("@debate-ai/videos", () => ({ MyRankedTeamsSettings: () => <div data-testid="my-team" /> }))
 vi.mock("../../../src/components/schools/MySchoolSettings", () => ({
   MySchoolSettings: () => <div data-testid="my-school" />,
 }))

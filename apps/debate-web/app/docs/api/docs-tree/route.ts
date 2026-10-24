@@ -1,3 +1,3 @@
 export const revalidate = false
 
-export { GET } from "@debate/help-docs/routes/tree-route"
+export { GET } from "@debate-ai/help-docs/routes/tree-route"

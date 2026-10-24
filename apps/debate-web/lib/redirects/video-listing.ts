@@ -32,7 +32,7 @@ const SEASON = /^(\d{2}-\d{2}|\d{4}|archive)$/;
 
 /**
  * The style filter's value for each format segment, as `FORMAT_SEGMENTS` in
- * `@debate/videos` spells them (kept apart so the Worker needn't load it).
+ * `@debate-ai/videos` spells them (kept apart so the Worker needn't load it).
  */
 const FORMAT_STYLES: Record<string, string> = {
   vcx: "1",

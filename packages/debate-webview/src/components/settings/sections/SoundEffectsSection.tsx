@@ -3,7 +3,7 @@
 /**
  * @fileoverview Settings → Sound & speech: the UI sound-effect level.
  *
- * The sound effects (`@debate/timer`'s `sound-effects.ts`) play from
+ * The sound effects (`@debate-ai/timer`'s `sound-effects.ts`) play from
  * the timers, the sidebar, the mobile drawer and the command palette.
  * This is the one place to choose how many of them play: all of them
  * (the default), only the ones that confirm a change or alert the
@@ -31,7 +31,7 @@ import {
   setSoundEffectLevel,
   subscribeSoundEffectLevel,
   type SoundEffectLevel,
-} from "@debate/timer"
+} from "@debate-ai/timer"
 
 /** The three levels, in the order they're listed, with the help text
  *  shown under the picker for the one currently selected. */

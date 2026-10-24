@@ -7,7 +7,7 @@
  * @module components/market/OutlinePreview
  */
 
-import type { OutlineEntry } from "@debate/file-market"
+import type { OutlineEntry } from "@debate-ai/file-market"
 import { cn } from "../../lib/ui/lib/utils"
 
 const LEVEL_STYLES: Record<OutlineEntry["level"], string> = {

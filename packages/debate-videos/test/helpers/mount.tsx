@@ -2,7 +2,7 @@
  * @fileoverview Minimal React mounting harness for hook and component tests
  * in this package. The repo has no @testing-library dependency, so this wraps
  * `createRoot` and React 19's `act` directly. Mirrors
- * `@debate/practice-rounds/test/helpers/mount.tsx`, plus a small `renderHook`.
+ * `@debate-ai/practice-rounds/test/helpers/mount.tsx`, plus a small `renderHook`.
  */
 
 import { act, type ReactElement } from "react";

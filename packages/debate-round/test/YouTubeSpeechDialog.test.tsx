@@ -10,8 +10,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import { YouTubeSpeechDialog } from "../src/dialogs/YouTubeSpeechDialog"
-import { loadSpeechMediaClip } from "@debate/timer/src/recorder/youtube-speech-segments"
-import { readSpeechStarts } from "@debate/videos/src/state/speechStartMarks"
+import { loadSpeechMediaClip } from "@debate-ai/timer/src/recorder/youtube-speech-segments"
+import { readSpeechStarts } from "@debate-ai/videos/src/state/speechStartMarks"
 import { buttonByText, cleanup, click, flush, mount, typeInto } from "./dom-helpers"
 
 /** Captions for an LD round: each speech is continuous talk, with a minute of quiet between. */

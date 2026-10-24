@@ -12,7 +12,7 @@ import {
   parseRecordingPrivacy,
   type DeletionRequestInput,
   type RecordingPrivacy,
-} from "@debate/webview/lib/privacy/recording-release";
+} from "@debate-ai/webview/lib/privacy/recording-release";
 import type { getDBFromContext } from "@/lib/database/context";
 import { ensureTableColumns } from "@/lib/database/ensure-columns";
 import { dataDeletionRequests, notifications, user, userSettings } from "@/lib/database/schema";

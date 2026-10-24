@@ -10,13 +10,13 @@ import {
   listVolunteers,
   loadBlockedIds,
 } from "@/lib/practice-partners/queries";
-import { matchTokenSecret, openMatchToken, sealMatchToken } from "@debate/webview/lib/practice-partners/match-token";
-import { pickPracticeMatch } from "@debate/webview/lib/practice-partners/match";
-import { isPracticeFormat } from "@debate/webview/lib/practice-partners/validation";
+import { matchTokenSecret, openMatchToken, sealMatchToken } from "@debate-ai/webview/lib/practice-partners/match-token";
+import { pickPracticeMatch } from "@debate-ai/webview/lib/practice-partners/match";
+import { isPracticeFormat } from "@debate-ai/webview/lib/practice-partners/validation";
 import {
   MAX_MATCH_EXCLUDES,
   type FindMatchResponse,
-} from "@debate/webview/lib/practice-partners/types";
+} from "@debate-ai/webview/lib/practice-partners/types";
 
 /**
  * Finds one practice partner for the viewer — anonymously.

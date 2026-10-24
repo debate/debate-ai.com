@@ -14,15 +14,15 @@
 
 import type React from "react"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import type { SpeechMenuAction } from "@debate/timer/src/recorder/SpeechRecordingPlayer"
+import type { SpeechMenuAction } from "@debate-ai/timer/src/recorder/SpeechRecordingPlayer"
 import { Copy, ExternalLink, Loader2, Search, Sparkles, Trophy } from "lucide-react"
 import type {
   SpeechOutcomeCandidate,
   SpeechOutcomeResponsesResult,
-} from "@debate/speech-writer/src/prompts/speech-outcome-responses"
-import { listJudgeProfiles } from "@debate/speech-writer/src/state/judgeProfiles"
-import { getJudgeParadigm, listJudgeParadigms } from "@debate/speech-writer/src/judge/judge-paradigms"
-import { buildCardsSearchHref } from "@debate/research-evidence/src/lib/search-query"
+} from "@debate-ai/speech-writer/src/prompts/speech-outcome-responses"
+import { listJudgeProfiles } from "@debate-ai/speech-writer/src/state/judgeProfiles"
+import { getJudgeParadigm, listJudgeParadigms } from "@debate-ai/speech-writer/src/judge/judge-paradigms"
+import { buildCardsSearchHref } from "@debate-ai/research-evidence/src/lib/search-query"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/primitives/dialog"
 import { Button } from "../ui/primitives/button"
 import { Textarea } from "../ui/primitives/textarea"

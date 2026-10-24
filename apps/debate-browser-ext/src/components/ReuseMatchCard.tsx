@@ -41,7 +41,7 @@ interface ReuseMatchCardProps {
 /**
  * One already-cut card for the page: its tag and cite, and — for a card from
  * the Parquet corpus — the author, year and highlighted quotes
- * @debate/card-parser recovered, plus the LLM's flaws and author-quality read.
+ * @debate-ai/card-parser recovered, plus the LLM's flaws and author-quality read.
  */
 export function ReuseMatchCard({ match, state, onAnnotate }: ReuseMatchCardProps) {
   const card = match.card;

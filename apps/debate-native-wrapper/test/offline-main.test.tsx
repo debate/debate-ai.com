@@ -7,7 +7,7 @@ const webview = vi.hoisted(() => ({
   configureHost: vi.fn(),
   applyStoredAppearance: vi.fn(),
 }));
-vi.mock('@debate/webview', () => ({
+vi.mock('@debate-ai/webview', () => ({
   ...webview,
   DebateApp: () => <main id="debate-app">app</main>,
 }));

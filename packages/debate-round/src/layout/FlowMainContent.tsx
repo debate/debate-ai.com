@@ -76,7 +76,7 @@ export function FlowMainContent({
   activeSplitSide = "left",
   onActiveSplitSideChange,
 }: FlowMainContentProps) {
-  // Debate Editor (the @debate/editor engine behind LexicalEditorWrapper)
+  // Debate Editor (the @debate-ai/editor engine behind LexicalEditorWrapper)
   // is a page-level singleton — only one instance can be the live, editable
   // ProseMirror view at a time. Split mode still shows both panes, but only
   // the active side gets the real editor; the other renders a read-only

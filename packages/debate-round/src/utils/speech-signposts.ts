@@ -10,7 +10,7 @@
  * @module utils/speech-signposts
  */
 
-import { looksLikeHtml } from "@debate/timer/src/formats/speech-doc-word-stats"
+import { looksLikeHtml } from "@debate-ai/timer/src/formats/speech-doc-word-stats"
 import { extractSpeechDocHeadings, type SpeechDocHeading } from "./speech-doc-headings"
 
 /** Deepest heading level shown — H3 blocks and H4 card tags are too fine for a signpost. */

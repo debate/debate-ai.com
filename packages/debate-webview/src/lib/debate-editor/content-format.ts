@@ -1,9 +1,9 @@
 /**
  * @fileoverview Telling a stored `.cmir` from stored HTML.
  *
- * The sniff mirrors Debate Editor's `looksLikeCmirBase64` (@debate/editor's
+ * The sniff mirrors Debate Editor's `looksLikeCmirBase64` (@debate-ai/editor's
  * `native/convert.ts`) rather than importing it: this module is reached from
- * the docs sidebar on every page, and `@debate/editor/engine` would put the
+ * the docs sidebar on every page, and `@debate-ai/editor/engine` would put the
  * whole editor engine into the app shell's startup bundle for a check that
  * only reads two bytes. `test/lib/debate-editor/content-format.test.ts` keeps
  * the two in step.

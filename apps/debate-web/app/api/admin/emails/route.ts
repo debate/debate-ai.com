@@ -1,15 +1,15 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { Resend } from "resend";
-import { EMAIL_TEMPLATES, isEmailTemplateId } from "@debate/emails";
+import { EMAIL_TEMPLATES, isEmailTemplateId } from "@debate-ai/emails";
 import { renderEmailPreview } from "@/lib/emails/render";
 import { getAdminAccess } from "@/lib/auth/admin";
 import { getEnv } from "@/lib/env";
-import { APP_EMAIL, APP_NAME } from "@debate/webview/lib/config/site";
+import { APP_EMAIL, APP_NAME } from "@debate-ai/webview/lib/config/site";
 
 /**
  * Email template previews for the admin Emails section — admins only.
  *
- * GET lists every `@debate/emails` template. GET ?template=<id> renders that
+ * GET lists every `@debate-ai/emails` template. GET ?template=<id> renders that
  * template with its sample data, linked to this deployment's origin, and
  * returns `{ subject, html, text }`. Rendering here rather than in the browser
  * previews exactly what the Worker sends.

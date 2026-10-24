@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Models, search, MCP servers, skills and memory, and voice for the research agent",
 }
 
-export { default } from "@debate/webview/routes/settings/research/page"
+export { default } from "@debate-ai/webview/routes/settings/research/page"

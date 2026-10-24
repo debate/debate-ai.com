@@ -9,9 +9,9 @@ import { drizzle } from "drizzle-orm/libsql"
 import { beforeEach, describe, expect, it } from "vitest"
 import * as schema from "../../database/schema"
 import { applySchema } from "../../database/__tests__/schema-sql"
-import { PLANS } from "@debate/webview/lib/stripe/plans"
+import { PLANS } from "@debate-ai/webview/lib/stripe/plans"
 import { getActiveSubscription, saveSubscriptionUpdate } from "../store"
-import { subscriptionUpdateForEvent } from "@debate/webview/lib/stripe/webhook"
+import { subscriptionUpdateForEvent } from "@debate-ai/webview/lib/stripe/webhook"
 
 const TEAM = PLANS.find((p) => p.id === "research-team")!
 

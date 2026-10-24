@@ -5,7 +5,7 @@
  * stored credential. Tabroom itself is mocked; nothing here reaches the network.
  */
 import { describe, expect, it, vi } from "vitest"
-import type { StoredJudgeBallot } from "@debate/tournaments/ballots"
+import type { StoredJudgeBallot } from "@debate-ai/tournaments/ballots"
 import { createTabroomForward, submitJudgeBallot, type TabroomForward } from "../judge-ballots"
 
 const user = { id: "u1", email: "Judge@Example.com" }

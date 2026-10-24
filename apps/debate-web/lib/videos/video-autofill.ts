@@ -30,8 +30,8 @@
 import {
   getVideosByIds,
   setYouTubeApiKey,
-} from "@debate/data-sync/src/youtube/youtube-api";
-import { LECTURE_CATEGORIES } from "@debate/data-sync/src/youtube/parsers/lecture-classifier";
+} from "@debate-ai/data-sync/src/youtube/youtube-api";
+import { LECTURE_CATEGORIES } from "@debate-ai/data-sync/src/youtube/parsers/lecture-classifier";
 import { getEnv } from "@/lib/env";
 
 // The models the site's other AI routes (`card-ai-analysis`, `reason-ai`,

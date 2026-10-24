@@ -20,7 +20,7 @@ describe("email rendering boundary", () => {
   // is the react-server stub that throws, so rendering there 500'd every
   // admin preview. Rendering has to go through lib/emails/render.ts, which
   // loads ssr-entry.ts into the ssr environment.
-  it("never renders @debate/emails directly from routes or server libraries", () => {
+  it("never renders @debate-ai/emails directly from routes or server libraries", () => {
     const offenders = [...sourceFiles(path.join(appDir, "app")), ...sourceFiles(path.join(appDir, "lib"))]
       .filter((file) => file !== SSR_ENTRY)
       .filter((file) => RENDER_IMPORT.test(readFileSync(file, "utf8")))

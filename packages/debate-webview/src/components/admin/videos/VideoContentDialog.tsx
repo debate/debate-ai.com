@@ -12,8 +12,8 @@ import {
   type CaptionCue,
   type VideoDocument,
   type VideoDocumentKind,
-} from "@debate/videos";
-import { formatCount } from "@debate/videos/lib/format-count";
+} from "@debate-ai/videos";
+import { formatCount } from "@debate-ai/videos/lib/format-count";
 import { Button } from "../../../lib/ui/primitives/button";
 import { SpeechAudioSplitter, type SpeechAudioSplit } from "./SpeechAudioSplitter";
 import { Badge } from "../../../lib/ui/primitives/badge";

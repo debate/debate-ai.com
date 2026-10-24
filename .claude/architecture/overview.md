@@ -33,7 +33,7 @@ named surfaces:
 
 ## Packages
 
-Every package here is public and publishable to npm under the `@debate/` scope; the apps stay private.
+Every package here is public and publishable to npm under the `@debate-ai/` scope; the apps stay private.
 
 | Directory | Package name | Owns |
 | --- | --- | --- |
@@ -53,7 +53,7 @@ Every package here is public and publishable to npm under the `@debate/` scope; 
 | `debate-speech-writer` | *(same)* | The AI prompt library: flow extraction, judge decisions, flaw finding, research outlines, batch quote analysis |
 | `debate-team-collaboration` | *(same)* | Task inbox, prep room, topic sprints, brainstorm assist, group challenges, research-progress tracking, sprint notes, prep notes and notifications |
 | `debate-timer` | *(same)* | Speech and prep timers with per-format speech times; in-round recorder with mic selection, live waveform, playback |
-| `debate-types` | `@debate/types` | Shared type declarations (`.d.ts` only) with a doc comment on every object and field. Owning packages re-export from it. |
+| `debate-types` | `@debate-ai/types` | Shared type declarations (`.d.ts` only) with a doc comment on every object and field. Owning packages re-export from it. |
 | `debate-videos` | *(same)* | LEARN: video search and filtering, grids and cards, the persistent YouTube player with PiP, lecture pages, rankings |
 
 ## The dependency edges
@@ -75,7 +75,7 @@ debate-practice-drills ──► debate-round, debate-speech-writer, debate-time
 debate-flow ─────────────► embedded by debate-round (EbbFlowEmbed)
 
 debate-round ────────────► debate-tournaments (only its API client,
-                           `@debate/tournaments/client`, for Create New Round)
+                           `@debate-ai/tournaments/client`, for Create New Round)
 
 debate-timer, debate-card-parser, debate-round, debate-flow, debate-tournaments,
 debate-webview, debate-round-practice-ai, debate-videos, debate-data-sync,

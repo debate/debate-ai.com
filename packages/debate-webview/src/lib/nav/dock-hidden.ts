@@ -6,7 +6,7 @@
  * dock collapses to a small arrow tab that reveals the full dock on hover, and
  * the same menu row ("Show dock") puts it back. The choice is kept in
  * localStorage under {@link DOCK_HIDDEN_KEY} and broadcast like
- * `sidebar-collapse` in @debate/videos, so the desktop, mobile and
+ * `sidebar-collapse` in @debate-ai/videos, so the desktop, mobile and
  * sidebar-hosted docks agree and the choice survives navigation and reloads.
  *
  * @module lib/nav/dock-hidden

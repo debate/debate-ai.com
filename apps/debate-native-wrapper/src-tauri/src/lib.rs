@@ -112,7 +112,7 @@ pub fn run() {
             Ok(())
         })
         .run(tauri::generate_context!())
-        .expect("error while running @debate/native-wrapper");
+        .expect("error while running @debate-ai/native-wrapper");
 }
 
 /// Sets up the system tray and configures the window to hide to background

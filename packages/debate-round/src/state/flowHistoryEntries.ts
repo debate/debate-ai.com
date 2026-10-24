@@ -1,6 +1,6 @@
 /**
  * @fileoverview Pure bookkeeping for the auto-saved flow history
- * (`flow-history` in the on-device bulk store — `@debate/data-sync`'s
+ * (`flow-history` in the on-device bulk store — `@debate-ai/data-sync`'s
  * `state/bulk-storage`, IndexedDB-backed — written by
  * `useFlowStore().saveToHistory`). It used to live in localStorage, whose
  * ~5 MB quota it kept filling.
@@ -21,7 +21,7 @@
  * @module state/flowHistoryEntries
  */
 
-import { bulkStorage } from "@debate/data-sync/src/state/bulk-storage"
+import { bulkStorage } from "@debate-ai/data-sync/src/state/bulk-storage"
 import type { Flow } from "../types/flow"
 
 export const FLOW_HISTORY_KEY = "flow-history"

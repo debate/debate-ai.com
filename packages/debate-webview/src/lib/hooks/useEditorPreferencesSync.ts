@@ -33,13 +33,13 @@ export function useEditorPreferencesSync(): {
 } {
   const [ready, setReady] = useState(false)
   const [signedIn, setSignedIn] = useState(false)
-  const settingsRef = useRef<typeof import("@debate/editor/settings") | null>(null)
+  const settingsRef = useRef<typeof import("@debate-ai/editor/settings") | null>(null)
   const mirroredKeysRef = useRef<Set<string>>(new Set())
 
   useEffect(() => {
     let cancelled = false
     void (async () => {
-      const settingsModule = await import("@debate/editor/settings")
+      const settingsModule = await import("@debate-ai/editor/settings")
       if (cancelled) return
       settingsRef.current = settingsModule
       try {

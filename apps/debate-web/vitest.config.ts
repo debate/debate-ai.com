@@ -56,11 +56,11 @@ export default defineConfig({
       "!packages/debate-help-docs",
       // Git submodules of upstream Debate Editor and Tabroom. Each is its own
       // app with its own toolchain and test setup; Debate Editor is rebased into
-      // @debate/editor, Tabroom is
+      // @debate-ai/editor, Tabroom is
       // vendored into debate-tournaments, and those test the parts the app uses.
       "!packages/debate-editor-cm",
       // Upstream Tabroom (github.com/debate/debate-tournaments): its tests need
-      // its own toolchain and MariaDB; @debate/tournaments tests what it vendors.
+      // its own toolchain and MariaDB; @debate-ai/tournaments tests what it vendors.
       "!packages/debate-tournaments-tabroom",
       // The browser extension carries its own config (jsdom, its own `@`
       // alias), so it's registered by path and runs under that config.
@@ -83,7 +83,7 @@ export default defineConfig({
           },
         },
         test: {
-          name: "@debate/ai-web",
+          name: "@debate-ai/ai-web",
           environment: "node",
           // `.tsx` too: the shell's error boundary is only meaningful as a
           // rendered tree, and its regression (a throw failing the *server*

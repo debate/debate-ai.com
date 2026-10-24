@@ -14,7 +14,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { schoolSearchNames, type RankingDataset } from "@debate/rankings-adapter"
+import { schoolSearchNames, type RankingDataset } from "@debate-ai/rankings-adapter"
 import { useAllRankingDatasets } from "./useAllRankingDatasets"
 import {
   findSchoolEntries,

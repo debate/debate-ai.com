@@ -13,8 +13,8 @@
  */
 
 import { cleanArgBlockLabel, sortNewsFeed, type NewsItem } from "../lib/news-stream";
-import { isEntryLive, listEvidenceLibraryEntries } from "@debate/research-evidence/src/state/evidenceLibraryEntries";
-import type { EvidenceLibraryEntry } from "@debate/research-evidence/src/lib/shared-evidence-library";
+import { isEntryLive, listEvidenceLibraryEntries } from "@debate-ai/research-evidence/src/state/evidenceLibraryEntries";
+import type { EvidenceLibraryEntry } from "@debate-ai/research-evidence/src/lib/shared-evidence-library";
 
 /** Most days of Argument Library digests the feed shows. */
 export const MAX_ARGUMENT_LIBRARY_DAYS = 3;

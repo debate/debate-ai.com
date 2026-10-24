@@ -27,19 +27,19 @@
 
 import { useMemo, useState, type ReactNode } from "react"
 import { ChevronDown, ChevronRight, ClipboardCheck, Radio, Timer } from "lucide-react"
-import { PrepTimer } from "@debate/timer/src/timers/PrepTimer"
+import { PrepTimer } from "@debate-ai/timer/src/timers/PrepTimer"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/primitives/tooltip"
 import { cn } from "../ui/lib/utils"
 import { SpeechHeaderBar } from "./SpeechHeaderBar"
 import { SpeechSignpostButton } from "./SpeechSignpostButton"
-import { SpeechWordStats } from "@debate/timer/src/timers/SpeechWordStats"
+import { SpeechWordStats } from "@debate-ai/timer/src/timers/SpeechWordStats"
 import { useSpeechWordStats } from "../hooks/useSpeechWordStats"
 import { useFlowStore } from "../state/store"
 import type { Round } from "../types/flow"
 import { findViewerSeat, isViewerSpeech, speechSpeakerEmail } from "../round/my-speeches"
 import { SpeechGradeDialog } from "../dialogs/SpeechGradeDialog"
 import { totalScore, MAX_TOTAL, normalizeScores } from "../round/speech-rubric"
-import type { DebateStyle, SpeechTimerState, TimerState } from "@debate/timer/src/types"
+import type { DebateStyle, SpeechTimerState, TimerState } from "@debate-ai/timer/src/types"
 import type { SpeechTimerEntry } from "../hooks/useTimerState"
 
 interface LiveRoundGroupProps {

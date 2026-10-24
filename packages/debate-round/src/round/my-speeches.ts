@@ -5,7 +5,7 @@
  *
  * A round's `debaters.aff` / `debaters.neg` pairs hold *emails* (see
  * `round/round-participants.ts`), in speaker order. Each timer speech names
- * its speaker with a short code from `@debate/timer`'s format table — "1A" /
+ * its speaker with a short code from `@debate-ai/timer`'s format table — "1A" /
  * "2N" in Policy, "A1" / "N2" in PF, plain "A" / "N" in LD — so the side
  * comes from the A/N letter and the debater from the 1/2 digit. A code with
  * no digit (LD's one-person sides) belongs to whoever is on that side.

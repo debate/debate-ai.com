@@ -1,6 +1,6 @@
 /**
  * @fileoverview Live tournament data for the Create New Round dialog, read
- * through `@debate/tournaments`' API client: the tournaments running now or
+ * through `@debate-ai/tournaments`' API client: the tournaments running now or
  * coming up (the tournament field's suggestions), and the field of a picked
  * tournament in the round's format (its schools lead the school dropdown,
  * its entries become the team badges).
@@ -16,8 +16,8 @@ import {
   type FieldEntry,
   type InviteEvent,
   type UpcomingTournament,
-} from "@debate/tournaments/client"
-import { schoolMatchScore } from "@debate/rankings-adapter"
+} from "@debate-ai/tournaments/client"
+import { schoolMatchScore } from "@debate-ai/rankings-adapter"
 import { MIN_SCHOOL_QUERY_LENGTH, stripSchoolState } from "./school-teams"
 
 /** Where the app mounts its live Tabroom proxy. */

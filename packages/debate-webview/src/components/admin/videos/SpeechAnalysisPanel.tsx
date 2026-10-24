@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { DEFAULT_SPEECH_ANALYSIS_INSTRUCTIONS } from "@debate/videos";
+import { DEFAULT_SPEECH_ANALYSIS_INSTRUCTIONS } from "@debate-ai/videos";
 import { Button } from "../../../lib/ui/primitives/button";
 import {
   Card,

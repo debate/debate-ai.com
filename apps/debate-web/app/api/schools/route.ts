@@ -5,7 +5,7 @@ import {
   teamsNFA,
   teamsVPF,
   teamsVCX,
-} from "@debate/data-sync/data/debate-school-names";
+} from "@debate-ai/data-sync/data/debate-school-names";
 import { getDBFromContext } from "@/lib/database/context";
 import { listProfileSchoolNames } from "@/lib/school-claims/queries";
 

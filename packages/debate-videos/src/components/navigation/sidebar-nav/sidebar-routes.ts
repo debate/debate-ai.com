@@ -197,7 +197,7 @@ export function matchesToolSidebarHref(pathname: string): boolean {
  * — Debate Editor, served at the same page as `/reason-editor`, so it
  * gets the same generic sidebar. Only a first segment shaped like a topic code
  * counts; the rest of `/docs` is the help docs. Mirrors `TOPIC_CODE_SOURCE` in
- * `@debate/webview`'s `lib/reason-docs/topic-doc-paths` (which depends on this
+ * `@debate-ai/webview`'s `lib/reason-docs/topic-doc-paths` (which depends on this
  * package, not the other way round); a test there keeps the two agreeing.
  */
 const TOPIC_STARTER_DOCS_PATH = /^\/docs\/(?:(?:vcx|ndt)\d{2}|(?:ld|pf)\d{2}[a-z])(?:\/|$)/;

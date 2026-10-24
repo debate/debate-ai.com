@@ -5,13 +5,13 @@ import {
   isKeyExhaustedError,
   parseOwnAiKey,
   type AiKeyProvider,
-} from "@debate/webview/lib/ai/own-ai-key"
+} from "@debate-ai/webview/lib/ai/own-ai-key"
 import { getEnv } from "@/lib/env"
 
 /**
  * Which key an AI route calls the model with: the caller's own OpenRouter or
  * Anthropic key when the request carries one (`x-user-ai-key`, see
- * `@debate/webview/src/lib/ai/own-ai-key.ts`), otherwise the site's shared
+ * `@debate-ai/webview/src/lib/ai/own-ai-key.ts`), otherwise the site's shared
  * `OPENROUTER_API_KEY` (preferred) or `ANTHROPIC_API_KEY`.
  *
  * `own: true` means the caller pays, under their own provider-side spending

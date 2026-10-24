@@ -9,13 +9,13 @@
  * @module round/outcome-responses-context
  */
 
-import type { JudgeProfile } from "@debate/speech-writer/src/judge/judge-profile";
-import { buildJudgeTendencySummary } from "@debate/speech-writer/src/judge/judge-profile";
-import { getJudgeParadigm, judgeParadigms } from "@debate/speech-writer/src/judge/judge-paradigms";
+import type { JudgeProfile } from "@debate-ai/speech-writer/src/judge/judge-profile";
+import { buildJudgeTendencySummary } from "@debate-ai/speech-writer/src/judge/judge-profile";
+import { getJudgeParadigm, judgeParadigms } from "@debate-ai/speech-writer/src/judge/judge-paradigms";
 import type {
   OutcomeJudge,
   OutcomeSide,
-} from "@debate/speech-writer/src/prompts/speech-outcome-responses";
+} from "@debate-ai/speech-writer/src/prompts/speech-outcome-responses";
 import type { Flow, Round } from "../types/flow";
 import { getFlowRowSummaries } from "../flow/flow-transcript-summary";
 import { getSpeechSideKey } from "../flow/argument-tree";

@@ -1,17 +1,17 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { parseYouTubeVideoId } from "@debate/videos";
-import { Button } from "@debate/webview/lib/ui/primitives/button";
-import { Badge } from "@debate/webview/lib/ui/primitives/badge";
-import { Input } from "@debate/webview/lib/ui/primitives/input";
+import { parseYouTubeVideoId } from "@debate-ai/videos";
+import { Button } from "@debate-ai/webview/lib/ui/primitives/button";
+import { Badge } from "@debate-ai/webview/lib/ui/primitives/badge";
+import { Input } from "@debate-ai/webview/lib/ui/primitives/input";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@debate/webview/lib/ui/primitives/card";
+} from "@debate-ai/webview/lib/ui/primitives/card";
 import {
   Dialog,
   DialogContent,
@@ -19,17 +19,17 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@debate/webview/lib/ui/primitives/dialog";
+} from "@debate-ai/webview/lib/ui/primitives/dialog";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@debate/webview/lib/ui/primitives/select";
+} from "@debate-ai/webview/lib/ui/primitives/select";
 import { VideoContentDialog, type ContentDialogVideo } from "./VideoContentDialog";
 import { VideoEditDialog, emptyLibraryVideo, type LibraryVideo } from "./VideoEditDialog";
-import { formatCount } from "@debate/videos/lib/format-count";
+import { formatCount } from "@debate-ai/videos/lib/format-count";
 
 
 /** A table row: the editable video plus what the listing says about its transcript. */

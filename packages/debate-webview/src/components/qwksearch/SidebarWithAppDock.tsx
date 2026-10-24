@@ -2,7 +2,7 @@
 
 import { useRef } from "react"
 import { Sidebar, type SidebarProps } from "react-reason-editor-sidebar"
-import { useSidebarIconHover } from "@debate/videos"
+import { useSidebarIconHover } from "@debate-ai/videos"
 
 import { CategoryDock } from "../layout/CategoryDock"
 import { ChromeErrorBoundary } from "../../lib/ui/layout/chrome-error-boundary"

@@ -11,7 +11,7 @@ import {
   APP_DOCK_LINKS,
   FOOTER_LINKS,
   SIDEBAR_TOOL_SECTIONS,
-} from "@debate/videos";
+} from "@debate-ai/videos";
 
 import { SiteFooter } from "../../../src/components/layout/footer/SiteFooter";
 

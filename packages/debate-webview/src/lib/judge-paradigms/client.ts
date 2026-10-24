@@ -9,7 +9,7 @@
  * @module lib/judge-paradigms/client
  */
 
-import type { JudgeProfile, JudgeProfileLookup, JudgeProfileQuery } from "@debate/tournaments/ui";
+import type { JudgeProfile, JudgeProfileLookup, JudgeProfileQuery } from "@debate-ai/tournaments/ui";
 import type { OwnParadigm, OwnParadigmInput } from "./types";
 
 export const JUDGE_PARADIGMS_API = "/api/judge-paradigms";

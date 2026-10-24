@@ -28,7 +28,7 @@
  */
 
 import { useEffect, useMemo, useState } from "react"
-import { Button } from "@debate/research-evidence/src/ui/primitives/button"
+import { Button } from "@debate-ai/research-evidence/src/ui/primitives/button"
 import {
   MeterBar,
   PanelSection,
@@ -36,7 +36,7 @@ import {
   Pill,
   StatGrid,
   StatTile,
-} from "@debate/research-evidence/src/ui/panels/panel-shell"
+} from "@debate-ai/research-evidence/src/ui/panels/panel-shell"
 import {
   ACTIVITY_XP,
   computeLevelProgress,

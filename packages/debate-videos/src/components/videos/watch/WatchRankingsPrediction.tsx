@@ -11,7 +11,7 @@ import {
   type MatchupWeights,
   type RankingDataset,
   type RankingEntry,
-} from "@debate/rankings-adapter"
+} from "@debate-ai/rankings-adapter"
 import type { VideoType } from "../../../types/videos"
 import { TeamCodeLabel } from "../../navigation/team-label/TeamLabel"
 

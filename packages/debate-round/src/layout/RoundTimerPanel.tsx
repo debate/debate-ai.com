@@ -1,6 +1,6 @@
 /**
  * @fileoverview "Timer" section of the round sidebar: the circular progress
- * timer (`CircularTimerFace` from @debate/timer) for the speech in view or a
+ * timer (`CircularTimerFace` from @debate-ai/timer) for the speech in view or a
  * prep clock, collapsible like the Cameras section, with a button that pops
  * the dial out.
  *
@@ -27,8 +27,8 @@ import {
   CircularTimerFace,
   formatCircularTimerCount,
   type CircularTimerAccent,
-} from "@debate/timer/src/timers/circular/CircularTimerFace"
-import type { DebateStyle, TimerSpeech, TimerState } from "@debate/timer/src/types"
+} from "@debate-ai/timer/src/timers/circular/CircularTimerFace"
+import type { DebateStyle, TimerSpeech, TimerState } from "@debate-ai/timer/src/types"
 import { cn } from "../ui/lib/utils"
 import type { SpeechTimerEntry } from "../hooks/useTimerState"
 

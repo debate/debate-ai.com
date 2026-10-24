@@ -16,7 +16,7 @@
 
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import type React from "react";
-import type { TimerState } from "@debate/timer/src/types";
+import type { TimerState } from "@debate-ai/timer/src/types";
 import type { SpeechTimerEntry } from "./useTimerState";
 import { useTimerSync, type TimerSyncState } from "./useTimerSync";
 

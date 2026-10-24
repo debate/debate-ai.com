@@ -1,7 +1,7 @@
 # CLAUDE.md — `debate-practice-vs-ai` (`packages/debate-round-practice-ai`)
 
 **Package name:** `debate-practice-vs-ai` — filter on that, not the directory.
-Public (`@debate/` scope). Mounted at `/practice/versus-ai` (which `/practice`, the
+Public (`@debate-ai/` scope). Mounted at `/practice/versus-ai` (which `/practice`, the
 old Practice Round Simulator page, redirects to). Tests in `test/`.
 
 The page's setup is `ui/PracticeSetupWizard` (difficulty → topic → opponent →

@@ -63,7 +63,7 @@ import {
   type TabroomEntryOption,
   type TabroomEventOption,
   type TabroomPanelOption,
-} from "@debate/predictions";
+} from "@debate-ai/predictions";
 
 import type { getDBFromContext } from "@/lib/database/context";
 import {

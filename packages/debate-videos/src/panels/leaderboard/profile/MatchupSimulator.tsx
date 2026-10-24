@@ -4,7 +4,7 @@
  * neg, in prelims (one judge) and elims (3- and 5-judge panels), plus a Monte
  * Carlo run per side so the variance a percentage hides is visible.
  *
- * The math is `@debate/rankings-adapter`'s `modelMatchup`: Glicko-2's win
+ * The math is `@debate-ai/rankings-adapter`'s `modelMatchup`: Glicko-2's win
  * probability from a rating blended from the team's own rating, the debaters'
  * individual ratings from their other entries, and their school's mean —
  * mixed by the two sliders here — then shifted for the field's side bias and
@@ -39,7 +39,7 @@ import {
   type RankingEntry,
   type RatingBreakdown,
   type SimulatedRounds,
-} from "@debate/rankings-adapter"
+} from "@debate-ai/rankings-adapter"
 import { useAllRankingDatasets } from "../../../hooks/useAllRankingDatasets"
 import { useMyRankedTeams } from "../../../lib/my-ranked-teams/useMyRankedTeams"
 import { Button } from "../../../ui/primitives/button"

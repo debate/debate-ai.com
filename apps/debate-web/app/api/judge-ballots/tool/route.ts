@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { SUBMIT_JUDGE_BALLOT_TOOL } from "@debate/tournaments/ballots"
+import { SUBMIT_JUDGE_BALLOT_TOOL } from "@debate-ai/tournaments/ballots"
 
 /**
  * GET — the `submit_judge_ballot` tool definition (JSON schema), for an agent

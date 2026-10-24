@@ -4,7 +4,7 @@ import { defineConfig, type Plugin, type Rolldown } from "vite";
 import fs from "fs";
 import path from "path";
 import { createRequire } from "module";
-import { helpDocsMdx } from "@debate/help-docs/vite";
+import { helpDocsMdx } from "@debate-ai/help-docs/vite";
 
 const appDir = path.resolve(import.meta.dirname);
 const require = createRequire(import.meta.url);
@@ -174,7 +174,7 @@ const serverMinify = { compress: true, mangle: true, codegen: { asciiOnly: true 
  *
  * `ROOT_ASSETS` adds files that live in a package rather than in `app/` but
  * must still be served at the site root (`/logo.png` — the app itself
- * imports it from `@debate/icons/brand`, but the offline file list and
+ * imports it from `@debate-ai/icons/brand`, but the offline file list and
  * external consumers link the root URL).
  */
 const APP_SOURCE_EXT = /\.(?:[cm]?[jt]sx?|mdx?|css|scss|sass|less)$/i;
@@ -239,7 +239,7 @@ export default defineConfig({
   define: {
     __USE_LIBSQL__: false,
   },
-  // Web Workers (the card Read aloud Kokoro worker in @debate/editor) are
+  // Web Workers (the card Read aloud Kokoro worker in @debate-ai/editor) are
   // built as ES modules: the default iife format drops `import.meta`, which
   // Transformers.js / ONNX Runtime Web use to find their wasm, and can't
   // code-split. `workerKeepsTypeofWindow` undoes vinext's client-only
@@ -304,7 +304,7 @@ export default defineConfig({
       // outright trying to parse the binary, so always resolve it to our own
       // copy of that shim.
       canvas: path.resolve(appDir, "lib/stubs/canvas.ts"),
-      // @debate/editor's card-cutter-port.ts dynamically imports
+      // @debate-ai/editor's card-cutter-port.ts dynamically imports
       // `@cardcutter/browser` — the separately-versioned, NOT-shipped
       // card-cutter engine, present only when checked out as a sibling of
       // the Debate Editor repo it was ported from. It never is here, so this
@@ -332,7 +332,7 @@ export default defineConfig({
       "prosemirror-transform",
       "prosemirror-keymap",
       // The /docs routes run Fumadocs inside this app's root layout, whose
-      // ThemeProvider comes from @debate/webview's copy of next-themes. One
+      // ThemeProvider comes from @debate-ai/webview's copy of next-themes. One
       // copy means Fumadocs' theme toggle reads and writes that same context.
       "next-themes",
     ],
@@ -367,18 +367,18 @@ export default defineConfig({
       // Workspace packages ship TypeScript sources, so they always have to be
       // bundled rather than externalized to the Cloudflare runtime.
       "reason-editor",
-      "@debate/webview",
-      "@debate/card-parser",
+      "@debate-ai/webview",
+      "@debate-ai/card-parser",
       "debate-card-search",
-      "@debate/data-sync",
-      "@debate/editor",
-      "@debate/flow-ebb",
-      "@debate/round",
-      "@debate/timer",
-      "@debate/tournaments",
-      "@debate/rankings-adapter",
-      "@debate/videos",
-      "@debate/help-docs",
+      "@debate-ai/data-sync",
+      "@debate-ai/editor",
+      "@debate-ai/flow-ebb",
+      "@debate-ai/round",
+      "@debate-ai/timer",
+      "@debate-ai/tournaments",
+      "@debate-ai/rankings-adapter",
+      "@debate-ai/videos",
+      "@debate-ai/help-docs",
     ],
   },
 });

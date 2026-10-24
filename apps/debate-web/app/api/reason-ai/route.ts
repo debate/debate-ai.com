@@ -3,7 +3,7 @@ import { getAuth } from "@/lib/auth"
 import { keyExhaustedResponse, resolveProviderKey } from "@/lib/ai/provider-key"
 import { getDBFromContext } from "@/lib/database/context"
 import { getEnv } from "@/lib/env"
-import { limitsFor } from "@debate/webview/lib/stripe/limits"
+import { limitsFor } from "@debate-ai/webview/lib/stripe/limits"
 import { consumeDailyUsage, getUserTier, limitMessage, planLimitHeaders } from "@/lib/stripe/usage"
 
 /**
@@ -20,7 +20,7 @@ import { consumeDailyUsage, getUserTier, limitMessage, planLimitHeaders } from "
  * shared multi-tenant app, so instead callers hit this route and the
  * server holds the one Anthropic key (ANTHROPIC_API_KEY).
  *
- * Metered by plan tier (`@debate/webview/src/lib/stripe/limits.ts`): each request counts toward
+ * Metered by plan tier (`@debate-ai/webview/src/lib/stripe/limits.ts`): each request counts toward
  * the caller's `llmRequestsPerDay`, and `maxTokens` is capped at the tier's
  * `llmMaxTokens`. A caller who sends their own OpenRouter or Anthropic key
  * (`x-user-ai-key`, `lib/ai/provider-key.ts`) is billed on it instead, under

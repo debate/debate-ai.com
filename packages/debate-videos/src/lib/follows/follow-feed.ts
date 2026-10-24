@@ -20,19 +20,19 @@ import {
   RATING_DIVISOR,
   winProbability,
   type RankingDataset,
-} from "@debate/rankings-adapter";
-import { phraseInText, competitorPhrases } from "@debate/data-sync/src/videos/video-query";
+} from "@debate-ai/rankings-adapter";
+import { phraseInText, competitorPhrases } from "@debate-ai/data-sync/src/videos/video-query";
 import {
   formatRoundLevel,
   standardizeRoundLevel,
   type StandardRoundLevel,
-} from "@debate/data-sync/src/youtube/parsers/round-level";
+} from "@debate-ai/data-sync/src/youtube/parsers/round-level";
 import type { VideoType } from "../../types/videos";
 import { videoRouteHref } from "../video-route";
 import { findVideoTeamRanking } from "../../panels/leaderboard/profile/rankingProfileHelpers";
 import { followHref, type ProfileFollow } from "./profile-follows";
 
-/** A news-feed item about a followed profile; the shape of `@debate/community`'s `NewsItem`. */
+/** A news-feed item about a followed profile; the shape of `@debate-ai/community`'s `NewsItem`. */
 export interface FollowNewsItem {
   id: string;
   category: "following";

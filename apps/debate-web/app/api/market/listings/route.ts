@@ -5,7 +5,7 @@ import { withRouteErrors } from "@/lib/api/route-errors";
 import { getListing, getMarketViewer, listingsForDocuments, PurchaseRefused, upsertListing } from "@/lib/market/queries";
 import { documents } from "@/lib/database/schema";
 import { and, eq } from "drizzle-orm";
-import { outlineFromHtml, parseSellRequest, type SellResult } from "@debate/file-market";
+import { outlineFromHtml, parseSellRequest, type SellResult } from "@debate-ai/file-market";
 
 /**
  * Selling a file.

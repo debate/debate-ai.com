@@ -6,7 +6,7 @@
  */
 import { createElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { useVideoPlayerStore } from "@debate/videos";
+import { useVideoPlayerStore } from "@debate-ai/videos";
 import { FlowAnnotationsPanel } from "../src/panels/FlowAnnotationsPanel";
 import { button } from "./helpers/dom";
 import { click, flush, mount, type, type Mounted } from "./helpers/mount";

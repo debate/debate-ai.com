@@ -8,7 +8,7 @@
 import { createElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AiVersusRoundPanel } from "../src/panels/AiVersusRoundPanel";
-import { listAiVersusRounds } from "@debate/round/src/state/aiVersusRounds";
+import { listAiVersusRounds } from "@debate-ai/round/src/state/aiVersusRounds";
 import { button, buttons, captureDownloads } from "./helpers/dom";
 import { click, flush, mount, type, type Mounted } from "./helpers/mount";
 import { FakeRecognition, installSpeechRecognition } from "./helpers/speech-recognition";

@@ -1,4 +1,4 @@
-import { DebateAiLogo } from "@debate/icons/brand"
+import { DebateAiLogo } from "@debate-ai/icons/brand"
 import {
     APP_LOGO_HEIGHT,
     APP_LOGO_WIDTH,

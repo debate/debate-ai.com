@@ -13,7 +13,7 @@ import type { Client } from "@libsql/client";
 import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { channels } from "@debate/data-sync/src/youtube/channel-config";
+import { channels } from "@debate-ai/data-sync/src/youtube/channel-config";
 import { freshSchemaClient, schemaStatements } from "@/lib/database/__tests__/schema-sql";
 import { makeIdempotent, splitStatements } from "@/lib/database/migration-sql";
 

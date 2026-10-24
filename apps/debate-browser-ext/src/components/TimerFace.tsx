@@ -1,4 +1,4 @@
-import { CircularTimerFace, type CircularTimerButton } from '@debate/timer/src/timers/circular/CircularTimerFace';
+import { CircularTimerFace, type CircularTimerButton } from '@debate-ai/timer/src/timers/circular/CircularTimerFace';
 
 import type { ButtonName } from '@/src/timer/constants';
 import type { useTimer } from '@/src/timer/useTimer';
@@ -7,7 +7,7 @@ type TimerApi = ReturnType<typeof useTimer>;
 
 /**
  * The timer window's clock face: the shared circular progress timer from
- * @debate/timer, driven by this extension's `useTimer`.
+ * @debate-ai/timer, driven by this extension's `useTimer`.
  */
 export function TimerFace({ timer }: { timer: TimerApi }) {
   const {

@@ -11,8 +11,8 @@ import {
   toggleNewsItemLiked,
 } from "../src/state/newsStream";
 import { cleanArgBlockLabel, type NewsItem } from "../src/lib/news-stream";
-import { saveEvidenceLibraryEntry } from "@debate/research-evidence/src/state/evidenceLibraryEntries";
-import type { EvidenceLibraryEntry } from "@debate/research-evidence/src/lib/shared-evidence-library";
+import { saveEvidenceLibraryEntry } from "@debate-ai/research-evidence/src/state/evidenceLibraryEntries";
+import type { EvidenceLibraryEntry } from "@debate-ai/research-evidence/src/lib/shared-evidence-library";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {

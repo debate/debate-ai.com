@@ -7,7 +7,7 @@
  */
 import { createElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { getJudgeParadigm } from "@debate/speech-writer/src/judge/judge-paradigms";
+import { getJudgeParadigm } from "@debate-ai/speech-writer/src/judge/judge-paradigms";
 import { JudgeDecisionPanel } from "../src/panels/JudgeDecisionPanel";
 import { saveFlowSummary } from "../src/state/flowSummaries";
 import { saveJudgeParadigmSelection } from "../src/state/judgeParadigmSelections";

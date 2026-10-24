@@ -55,9 +55,9 @@ import {
   RevisionIncentivesPanel,
   TopicCoverageDashboardPanel,
   deriveContributorIdFromSessionIdentity,
-} from "@debate/research-evidence"
-import { ContributorAwardsPanel, QuestStreaksPanel } from "@debate/community"
-import { TopicSprintPanel } from "@debate/team-collaboration"
+} from "@debate-ai/research-evidence"
+import { ContributorAwardsPanel, QuestStreaksPanel } from "@debate-ai/community"
+import { TopicSprintPanel } from "@debate-ai/team-collaboration"
 import { useSession } from "../../lib/hooks/useSession"
 import { TaskInboxWithIdentity } from "./identity/TaskInboxWithIdentity"
 import { ContributionLeaderboardWithIdentity } from "./identity/ContributionLeaderboardWithIdentity"
@@ -72,9 +72,9 @@ import { GroupChallengesWithIdentity } from "./identity/GroupChallengesWithIdent
 import { PrepRoomWithIdentity } from "./identity/PrepRoomWithIdentity"
 import { DailyBestCardWithIdentity } from "./identity/DailyBestCardWithIdentity"
 import { teamResearchHref } from "./TeamResearchWorkspace"
-import type { TrackedArgument } from "@debate/research-evidence/src/lib/topic-coverage"
-import type { EvidenceLibraryEntry } from "@debate/research-evidence/src/lib/shared-evidence-library"
-import { listEvidenceLibraryEntries } from "@debate/research-evidence/src/state/evidenceLibraryEntries"
+import type { TrackedArgument } from "@debate-ai/research-evidence/src/lib/topic-coverage"
+import type { EvidenceLibraryEntry } from "@debate-ai/research-evidence/src/lib/shared-evidence-library"
+import { listEvidenceLibraryEntries } from "@debate-ai/research-evidence/src/state/evidenceLibraryEntries"
 import { useStoreSnapshot } from "../../lib/ui/panels/use-store-snapshot"
 import { Input } from "../../lib/ui/primitives/input"
 import { LabeledField } from "../../lib/ui/panels/panel-shell"

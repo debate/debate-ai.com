@@ -18,7 +18,7 @@
  */
 
 import { BookOpen, Scale } from "lucide-react"
-import { DictionaryPanel } from "@debate/videos/panels/dictionary/DictionaryPanel"
+import { DictionaryPanel } from "@debate-ai/videos/panels/dictionary/DictionaryPanel"
 import { FormatsRulesGuide } from "./FormatsRulesGuide"
 import { panel, type HubSection } from "../hubs/hub-sections"
 import { HubSectionIntro, HubSectionNav, HubSectionPanel, useHubSection } from "../hubs/HubSectionNav"

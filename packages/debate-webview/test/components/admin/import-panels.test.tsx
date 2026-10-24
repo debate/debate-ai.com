@@ -10,15 +10,15 @@ const archive = vi.hoisted(() => ({
   uploadShard: vi.fn(),
 }));
 
-vi.mock("@debate/data-sync/src/caselist/caselist-archive", () => ({
+vi.mock("@debate-ai/data-sync/src/caselist/caselist-archive", () => ({
   loadCaselistArchive: archive.loadCaselistArchive,
   loadRemoteCaselistArchive: archive.loadRemoteCaselistArchive,
 }));
-vi.mock("@debate/data-sync/src/caselist/caselist-cards", () => ({
+vi.mock("@debate-ai/data-sync/src/caselist/caselist-cards", () => ({
   caselistDocumentToCardRows: archive.toRows,
 }));
-vi.mock("@debate/research-evidence", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@debate/research-evidence")>();
+vi.mock("@debate-ai/research-evidence", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@debate-ai/research-evidence")>();
   return {
     ...actual,
     createCardBatchSender: vi.fn(() => archive.send),

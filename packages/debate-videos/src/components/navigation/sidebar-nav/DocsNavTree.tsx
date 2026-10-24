@@ -3,7 +3,7 @@
  * docs page, as an ordinary section that scrolls with the rest of the column.
  * It starts collapsed, and its folders do too.
  *
- * The page tree belongs to the help docs (`@debate/help-docs`), which this
+ * The page tree belongs to the help docs (`@debate-ai/help-docs`), which this
  * package does not import: the app serves it as JSON at
  * {@link DOCS_TREE_URL}, and the section fetches it as soon as the sidebar
  * mounts, so the pages are already listed the first time it is opened. If

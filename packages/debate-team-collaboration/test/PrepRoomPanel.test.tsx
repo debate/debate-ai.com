@@ -7,9 +7,9 @@
 import { createElement } from "react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { PrepRoomPanel } from "../src/panels/PrepRoomPanel";
-import { saveEvidenceLibraryEntry } from "@debate/research-evidence/src/state/evidenceLibraryEntries";
-import { saveTrackedArgument } from "@debate/research-evidence/src/state/trackedArguments";
-import type { EvidenceLibraryEntry } from "@debate/research-evidence/src/lib/shared-evidence-library";
+import { saveEvidenceLibraryEntry } from "@debate-ai/research-evidence/src/state/evidenceLibraryEntries";
+import { saveTrackedArgument } from "@debate-ai/research-evidence/src/state/trackedArguments";
+import type { EvidenceLibraryEntry } from "@debate-ai/research-evidence/src/lib/shared-evidence-library";
 import { saveContributorAvailability } from "../src/state/contributorAvailability";
 import { listPersistedChecklistItems } from "../src/state/prepRoomChecklist";
 import { button } from "./helpers/dom";

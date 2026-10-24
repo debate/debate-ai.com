@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { and, desc, eq, inArray, isNull } from "drizzle-orm"
 import { Resend } from "resend"
 import { renderEmail } from "@/lib/emails/render"
-import { APP_EMAIL, APP_NAME } from "@debate/webview/lib/config/site"
+import { APP_EMAIL, APP_NAME } from "@debate-ai/webview/lib/config/site"
 import { getDBFromContext } from "@/lib/database/context"
 import { cardShares, user } from "@/lib/database/schema"
 import { getSession } from "@/lib/auth/session"
@@ -19,7 +19,7 @@ import {
   normalizeCardShareMessage,
   normalizeCardShareTitle,
   parseShareCode,
-} from "@debate/team-collaboration"
+} from "@debate-ai/team-collaboration"
 
 /**
  * Collab-card shares — a Debate Editor co-editing session's share code (and
@@ -40,7 +40,7 @@ import {
  *   members) keyed on `(roomId, recipientId)` (re-sharing the
  *   same room refreshes the code/pass, clears any revoke, and re-notifies),
  *   and returns `{ shared, skipped }` ids. Each recipient also gets the
- *   `file-invite` email from @debate/emails when a Resend key is set; a
+ *   `file-invite` email from @debate-ai/emails when a Resend key is set; a
  *   failed email never fails the share.
  * PATCH { id, action: "opened" } — recipient marks first open.
  * DELETE ?id= — owner revokes (row kept, `revokedAt` set, so a re-share

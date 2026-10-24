@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { parseYouTubeVideoId } from "@debate/videos";
-import { LECTURE_CATEGORIES } from "@debate/data-sync/src/youtube/parsers/lecture-classifier";
-import { canonicalCategoryLabel } from "@debate/data-sync/src/videos/video-rows";
+import { parseYouTubeVideoId } from "@debate-ai/videos";
+import { LECTURE_CATEGORIES } from "@debate-ai/data-sync/src/youtube/parsers/lecture-classifier";
+import { canonicalCategoryLabel } from "@debate-ai/data-sync/src/videos/video-rows";
 import { Button } from "../../../lib/ui/primitives/button";
 import { Input } from "../../../lib/ui/primitives/input";
 import { Label } from "../../../lib/ui/primitives/label";

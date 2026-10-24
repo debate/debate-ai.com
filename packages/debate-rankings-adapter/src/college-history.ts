@@ -16,7 +16,7 @@
  * `Season,Rank,School,Team,Rating,Mu,Sigma`. School names follow the source
  * page, which used short names ("Georgetown", "Cal State Fullerton") from
  * 2010-11 through 2012-13 and full names otherwise.
- * @module @debate/rankings-adapter/college-history
+ * @module @debate-ai/rankings-adapter/college-history
  */
 
 /// <reference path="./raw.d.ts" />

@@ -56,8 +56,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { AlertCircle, ArrowLeft, Calendar, Clock, Eye, ListOrdered, ListPlus, Loader2 } from "lucide-react"
-import { CommentSection } from "@debate/comments"
-import { SpeechStartsDialog, type SpeechDetectionControl } from "@debate/timer"
+import { CommentSection } from "@debate-ai/comments"
+import { SpeechStartsDialog, type SpeechDetectionControl } from "@debate-ai/timer"
 import { formatCount } from "../../lib/format-count"
 
 import { WatchToolbar } from "../../components/videos/watch/WatchToolbar"
@@ -456,7 +456,7 @@ export function VideoWatchPage({
       ),
     [baseSpeeches, segmentation, speechMarks, sentences],
   )
-  /** The speeches as the shared speech-start modal (@debate/timer) takes them. */
+  /** The speeches as the shared speech-start modal (@debate-ai/timer) takes them. */
   const speechStartItems = useMemo(() => speeches.map(({ key, label }) => ({ key, label })), [speeches])
   const speechStartSeconds = useMemo(() => {
     const starts: Record<string, number> = {}
@@ -1088,7 +1088,7 @@ export function VideoWatchPage({
                   <ListOrdered className="h-3.5 w-3.5" />
                   Speech starts
                 </button>
-                {/* The same modal labels the joined round MP3 (@debate/timer's
+                {/* The same modal labels the joined round MP3 (@debate-ai/timer's
                     RoundRecordingDialog); docked, so the player stays usable. */}
                 <SpeechStartsDialog
                   open={startsDialogOpen}

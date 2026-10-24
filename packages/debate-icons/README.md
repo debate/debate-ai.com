@@ -23,7 +23,7 @@ import { IconDebateCite, IconDebateS1nc } from "debate-icons/editor";
 | Folder | Contents |
 | --- | --- |
 | [`app-icons/`](app-icons/) | 17 SVG and PNG icons for app navigation and feature tiles: flow, rounds, lectures, leaderboard, trophies, settings, theme, and the aff/neg speech bubbles. |
-| [`brand/`](brand/) | The Debate AI wordmark, `logo.png` (400 × 89). Import it as `DebateAiLogo` from `@debate/icons/brand` (the login page and dialog, the footer, the privacy page and the docs header all do). The app also keeps serving it at `/logo.png` (see `ROOT_ASSETS` in `apps/debate-web/vite.config.ts`) for links from outside the bundle, such as the offline file list. |
+| [`brand/`](brand/) | The Debate AI wordmark, `logo.png` (400 × 89). Import it as `DebateAiLogo` from `@debate-ai/icons/brand` (the login page and dialog, the footer, the privacy page and the docs header all do). The app also keeps serving it at `/logo.png` (see `ROOT_ASSETS` in `apps/debate-web/vite.config.ts`) for links from outside the bundle, such as the offline file list. |
 | [`editor/`](editor/) | 37 PNG toolbar icons for the card editor, all prefixed `icon-debate-`. |
 
 ## Naming

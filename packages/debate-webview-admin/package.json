@@ -1,5 +1,5 @@
 {
-  "name": "@debate/webview-admin",
+  "name": "@debate-ai/webview-admin",
   "version": "0.1.0",
   "description": "Admin features and API for debate-ai.com: admin UI components, API route handlers, and admin utilities",
   "type": "module",
@@ -38,12 +38,12 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@debate/card-parser": "workspace:*",
-    "@debate/data-sync": "workspace:*",
-    "@debate/research-evidence": "workspace:*",
-    "@debate/types": "workspace:*",
-    "@debate/videos": "workspace:*",
-    "@debate/webview": "workspace:*",
+    "@debate-ai/card-parser": "workspace:*",
+    "@debate-ai/data-sync": "workspace:*",
+    "@debate-ai/research-evidence": "workspace:*",
+    "@debate-ai/types": "workspace:*",
+    "@debate-ai/videos": "workspace:*",
+    "@debate-ai/webview": "workspace:*",
     "@radix-ui/react-select": "^2.4.1",
     "@radix-ui/react-slot": "1.5.0",
     "class-variance-authority": "^0.7.1",

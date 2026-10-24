@@ -7,19 +7,19 @@
  */
 import { createElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { useFlowStore } from "@debate/round/src/state/store";
+import { useFlowStore } from "@debate-ai/round/src/state/store";
 import { ArgumentTreePanel } from "../src/panels/ArgumentTreePanel";
 import { button, buttons, captureDownloads } from "./helpers/dom";
 import { sampleFlow, selectFlow } from "./helpers/flow";
 import { click, mount, type, type Mounted } from "./helpers/mount";
 
 // Signed out: no account presets to merge, and saves go nowhere.
-vi.mock("@debate/round/src/round/user-settings-client", async (importOriginal) => ({
+vi.mock("@debate-ai/round/src/round/user-settings-client", async (importOriginal) => ({
   ...(await importOriginal<object>()),
   fetchUserSettings: async () => null,
   saveOutlineFilterPresetOp: async () => {},
 }));
-vi.mock("@debate/data-sync/src/state/bulk-storage", async (importOriginal) => ({
+vi.mock("@debate-ai/data-sync/src/state/bulk-storage", async (importOriginal) => ({
   ...(await importOriginal<object>()),
   setBulkItem: vi.fn(),
 }));

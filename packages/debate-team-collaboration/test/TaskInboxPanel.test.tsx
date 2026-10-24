@@ -9,7 +9,7 @@
 import { createElement } from "react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { TaskInboxPanel } from "../src/panels/TaskInboxPanel";
-import { saveTrackedArgument } from "@debate/research-evidence/src/state/trackedArguments";
+import { saveTrackedArgument } from "@debate-ai/research-evidence/src/state/trackedArguments";
 import { listContributorAvailability, saveContributorAvailability } from "../src/state/contributorAvailability";
 import { listPendingTaskVerifications } from "../src/state/pendingTaskVerifications";
 import { listCompletedTaskHistory } from "../src/state/researchProgress";

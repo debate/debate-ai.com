@@ -14,11 +14,11 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@debate/webview': webviewDir,
+      '@debate-ai/webview': webviewDir,
     },
   },
   test: {
-    name: '@debate/native-wrapper',
+    name: '@debate-ai/native-wrapper',
     root: import.meta.dirname,
     environment: 'jsdom',
     include: ['test/**/*.test.ts?(x)'],

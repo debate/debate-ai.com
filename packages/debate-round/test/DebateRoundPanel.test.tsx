@@ -30,7 +30,7 @@ function stub(name: string, renderChildren = false) {
   }
 }
 
-vi.mock("@debate/flow-ebb", () => ({ EbbFlowEmbed: stub("EbbFlowEmbed") }))
+vi.mock("@debate-ai/flow-ebb", () => ({ EbbFlowEmbed: stub("EbbFlowEmbed") }))
 vi.mock("../src/layout/FlowPageSidebar", () => ({ FlowPageSidebar: stub("FlowPageSidebar") }))
 vi.mock("../src/layout/FlowMainContent", () => ({ FlowMainContent: stub("FlowMainContent") }))
 vi.mock("../src/layout/SpeechDocPanel", () => ({ SpeechDocPanel: stub("SpeechDocPanel") }))
@@ -69,7 +69,7 @@ import { useFlowStore } from "../src/state/store"
 import { settings } from "../src/state/settings"
 import { FEATURED_ROUNDS } from "../src/round/featured-rounds"
 import type { Flow, Round } from "../src/types/flow"
-import { resetBulkStorageForTests } from "@debate/data-sync/src/state/bulk-storage"
+import { resetBulkStorageForTests } from "@debate-ai/data-sync/src/state/bulk-storage"
 import { cleanup, mount, run, flush } from "./dom-helpers"
 
 const NOW = 1_760_000_000_000

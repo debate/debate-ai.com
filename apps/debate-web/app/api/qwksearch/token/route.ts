@@ -6,7 +6,7 @@ import {
   connectionFromToken,
   qwksearchOrigin,
   toSessionPayload,
-} from "@debate/webview/lib/qwksearch/connect"
+} from "@debate-ai/webview/lib/qwksearch/connect"
 import { saveConnection } from "@/lib/qwksearch/store"
 
 const noStore = { "Cache-Control": "no-store" }

@@ -6375,7 +6375,7 @@ index e7bc777..1c4827e 100644
 +
 +// Web-page helpers — `.docx` from a `File`, a `.docx` `Blob` for download,
 +// and a document's outline and cards without an editor. Merged in from the
-+// former `@debate/editor-cm-adapter` package (see `web-docx.ts`).
++// former `@debate-ai/editor-cm-adapter` package (see `web-docx.ts`).
 +export { DOCX_MIME_TYPE, importDocx, exportDocxBlob, outlineOf, cardsOf } from './web-docx.js';
 +export type { OutlineKind, OutlineItem, CardText } from './web-docx.js';
 diff --git a/src/schema/nodes.ts b/src/schema/nodes.ts

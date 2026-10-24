@@ -1,4 +1,4 @@
-import { proxyTabroomBeta } from "@debate/webview/lib/tournaments/tabroom-beta-proxy"
+import { proxyTabroomBeta } from "@debate-ai/webview/lib/tournaments/tabroom-beta-proxy"
 
 /**
  * Live Tabroom, proxied: `/api/tabroom-beta/<path>` answers with

@@ -9,7 +9,7 @@ import { createElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { BrainstormBoardPanel } from "../src/panels/BrainstormBoardPanel";
 import { listBrainstormIdeas } from "../src/state/brainstormIdeas";
-import { saveTrackedArgument } from "@debate/research-evidence/src/state/trackedArguments";
+import { saveTrackedArgument } from "@debate-ai/research-evidence/src/state/trackedArguments";
 import { button } from "./helpers/dom";
 import { click, mount, type, type Mounted } from "./helpers/mount";
 

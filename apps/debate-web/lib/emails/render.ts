@@ -1,8 +1,8 @@
 /// <reference types="@vitejs/plugin-rsc/types" />
-import type { EmailTemplateId, EmailTemplateProps, RenderedEmail } from "@debate/emails";
+import type { EmailTemplateId, EmailTemplateProps, RenderedEmail } from "@debate-ai/emails";
 
 /**
- * Renders `@debate/emails` templates from a route handler.
+ * Renders `@debate-ai/emails` templates from a route handler.
  *
  * Route handlers run in the Worker's rsc environment, where `react-dom/server`
  * (which React Email's renderer uses) is the react-server stub that throws, so
@@ -10,7 +10,7 @@ import type { EmailTemplateId, EmailTemplateProps, RenderedEmail } from "@debate
  * (`./ssr-entry.ts`) and is loaded with `import.meta.viteRsc.import`, which
  * @vitejs/plugin-rsc rewrites into an import of that module's ssr build.
  *
- * Templates and their types are still imported from `@debate/emails` directly
+ * Templates and their types are still imported from `@debate-ai/emails` directly
  * everywhere else; only rendering has to cross over.
  */
 type EmailRenderer = typeof import("./ssr-entry");

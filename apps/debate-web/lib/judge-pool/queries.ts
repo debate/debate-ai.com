@@ -16,7 +16,7 @@
  */
 
 import { and, desc, eq, inArray, ne, or } from "drizzle-orm";
-import type { PracticePerson } from "@debate/webview/lib/practice-partners/types";
+import type { PracticePerson } from "@debate-ai/webview/lib/practice-partners/types";
 import {
   US_STATES,
   type HireStatus,
@@ -25,9 +25,9 @@ import {
   type JudgePoolEntry,
   type NewHireRequest,
   type UsState,
-} from "@debate/webview/lib/judge-pool/types";
-import { isUpcomingWeekend, isSeasonWeekend, weekendLabel } from "@debate/webview/lib/judge-pool/season-calendar";
-import { isPracticeFormatId, isUsState, readStoredList, type HireState } from "@debate/webview/lib/judge-pool/validation";
+} from "@debate-ai/webview/lib/judge-pool/types";
+import { isUpcomingWeekend, isSeasonWeekend, weekendLabel } from "@debate-ai/webview/lib/judge-pool/season-calendar";
+import { isPracticeFormatId, isUsState, readStoredList, type HireState } from "@debate-ai/webview/lib/judge-pool/validation";
 
 import type { getDBFromContext } from "@/lib/database/context";
 import { judgeHireRequests, judgePoolListings, notifications, user } from "@/lib/database/schema";

@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Read a research file's table of contents for free; buy it to unlock every card",
 }
 
-export { default } from "@debate/webview/routes/market/[id]/page"
+export { default } from "@debate-ai/webview/routes/market/[id]/page"

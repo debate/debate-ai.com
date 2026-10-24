@@ -1,16 +1,16 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Button } from "@debate/webview/lib/ui/primitives/button";
-import { Badge } from "@debate/webview/lib/ui/primitives/badge";
+import { Button } from "@debate-ai/webview/lib/ui/primitives/button";
+import { Badge } from "@debate-ai/webview/lib/ui/primitives/badge";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@debate/webview/lib/ui/primitives/card";
-import { VIDEO_DOCUMENT_LABELS } from "@debate/videos";
+} from "@debate-ai/webview/lib/ui/primitives/card";
+import { VIDEO_DOCUMENT_LABELS } from "@debate-ai/videos";
 import { VideoContentDialog, type ContentDialogVideo } from "./VideoContentDialog";
 
 /**

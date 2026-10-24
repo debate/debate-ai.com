@@ -37,9 +37,9 @@ import {
   FOOTER_LINKS,
   SIDEBAR_TOOL_SECTIONS,
   type FooterLink,
-} from "@debate/videos";
+} from "@debate-ai/videos";
 
-import { DebateAiLogo } from "@debate/icons/brand";
+import { DebateAiLogo } from "@debate-ai/icons/brand";
 import { APP_NAME } from "../../../lib/config/site";
 
 interface FooterSectionLink {

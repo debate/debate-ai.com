@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { browser } from 'wxt/browser';
-import { applyStoredAppearance, configureHost } from '@debate/webview';
+import { applyStoredAppearance, configureHost } from '@debate-ai/webview';
 import { Puzzle } from 'lucide-react';
 
 import { mirrorAppAiKey } from '@/src/ai/app-key';

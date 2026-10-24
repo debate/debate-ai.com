@@ -1,7 +1,7 @@
 "use client"
 
 import { usePathname } from "next/navigation"
-import { LibrarySidebarTree } from "@debate/videos"
+import { LibrarySidebarTree } from "@debate-ai/videos"
 
 import { ChromeErrorBoundary } from "../../../lib/ui/layout/chrome-error-boundary"
 import { showsCardsPagePanel, showsReasonDocsPanels } from "../../../lib/reason-docs/sidebar-routes"

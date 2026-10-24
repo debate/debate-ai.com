@@ -8,7 +8,7 @@ import {
   pickLikelyOutcomeJudge,
   speechDocToText,
 } from "../src/round/outcome-responses-context";
-import type { JudgeProfile } from "@debate/speech-writer/src/judge/judge-profile";
+import type { JudgeProfile } from "@debate-ai/speech-writer/src/judge/judge-profile";
 import type { Flow } from "../src/types/flow";
 
 function profile(judgeId: string, roundsJudged: number, mostCommonParadigm: JudgeProfile["mostCommonParadigm"]): JudgeProfile {

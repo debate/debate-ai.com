@@ -14,7 +14,7 @@ import { cn } from "../../../lib/ui/lib/utils"
  * the current page (`settingsHrefForPath`). With `label` it spells the word
  * out, for the phone drawer, which has no foot row. Docs is not pinned beside
  * it: every docs page is a collapsed "Docs" section at the end of the tree
- * (`DocsNavTree` in @debate/videos).
+ * (`DocsNavTree` in @debate-ai/videos).
  */
 export function SidebarSettingsButton({ label = false, className }: { label?: boolean; className?: string }) {
   const pathname = usePathname()

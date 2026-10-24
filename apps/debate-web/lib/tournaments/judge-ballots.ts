@@ -9,7 +9,7 @@
  * on the server, where it counts.
  *
  * Every accepted ballot is stored in `judge_ballot` (see
- * `@debate/tournaments/ballots`). With destination `tabroom` it is also
+ * `@debate-ai/tournaments/ballots`). With destination `tabroom` it is also
  * forwarded to Tabroom, at the endpoint named by the `TABROOM_BALLOT_URL`
  * environment variable, authorized with the judge's own Tabroom token from the
  * `x-tabroom-token` request header. That token is passed through and never
@@ -28,7 +28,7 @@ import {
   type BallotSpeakerPoints,
   type JudgeBallotInput,
   type StoredJudgeBallot,
-} from "@debate/tournaments/ballots"
+} from "@debate-ai/tournaments/ballots"
 import { getCloudflareContext, getDBFromContext } from "@/lib/database/context"
 
 export const TABROOM_TOKEN_HEADER = "x-tabroom-token"

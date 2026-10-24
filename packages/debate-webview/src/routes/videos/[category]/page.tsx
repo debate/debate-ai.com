@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { LecturesPage } from "@debate/videos"
+import { LecturesPage } from "@debate-ai/videos"
 import { CategoryDock } from "../../../components/layout/CategoryDock"
 import { SidebarAccount } from "../../../components/layout/app-sidebar/sidebar-account"
 

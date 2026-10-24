@@ -9,9 +9,9 @@
 import { createElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { PracticeRoundSimulatorPanel } from "../src/panels/PracticeRoundSimulatorPanel";
-import { getAiVersusRound, saveAiVersusRound } from "@debate/round/src/state/aiVersusRounds";
-import { getPracticeRound, listPracticeRounds } from "@debate/round/src/state/practiceRounds";
-import { debateStyleMap } from "@debate/timer/src/formats/debate-format-times";
+import { getAiVersusRound, saveAiVersusRound } from "@debate-ai/round/src/state/aiVersusRounds";
+import { getPracticeRound, listPracticeRounds } from "@debate-ai/round/src/state/practiceRounds";
+import { debateStyleMap } from "@debate-ai/timer/src/formats/debate-format-times";
 import { saveFlowSummary } from "../src/state/flowSummaries";
 import { listCustomOpponentPersonaLibrary } from "../src/state/customOpponentPersonaLibrary";
 import { button, buttons, captureDownloads } from "./helpers/dom";

@@ -1,6 +1,6 @@
 # CLAUDE.md — `debate-emails`
 
-Published as **`@debate/emails`**: the site's transactional emails as React
+Published as **`@debate-ai/emails`**: the site's transactional emails as React
 Email templates, plus `renderEmail(id, props)` → `{ subject, html, text }`.
 
 - **One registry.** Every template is listed in `src/registry.tsx`
@@ -19,10 +19,10 @@ Email templates, plus `renderEmail(id, props)` → `{ subject, html, text }`.
   environment, where `react-dom/server` throws. In the app, import
   `renderEmail` / `renderEmailPreview` from `@/lib/emails/render`, which
   runs them in the ssr environment (`lib/emails/ssr-entry.ts`). Importing
-  templates, ids and types from `@debate/emails` is fine anywhere.
+  templates, ids and types from `@debate-ai/emails` is fine anywhere.
 - Keep it a leaf: no imports from other `debate-*` packages (`site.ts`
-  repeats the few constants it needs from `@debate/webview`'s site config).
+  repeats the few constants it needs from `@debate-ai/webview`'s site config).
 - Feature copy in `CoachFeaturesEmail` mirrors the coaching and team-research
   help docs; update both together.
 - Tests: `test/render.test.ts`; run with
-  `bunx vitest run --project @debate/emails` from `apps/debate-web`.
+  `bunx vitest run --project @debate-ai/emails` from `apps/debate-web`.

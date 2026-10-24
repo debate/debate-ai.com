@@ -1,4 +1,4 @@
-# @debate/emails
+# @debate-ai/emails
 
 Debate AI's transactional emails, written with [React Email](https://react.email).
 
@@ -10,7 +10,7 @@ Debate AI's transactional emails, written with [React Email](https://react.email
 | `coach-features` | What coaches get: managing a research team, coaching programs and more | nothing yet |
 
 ```ts
-import { renderEmail } from "@debate/emails";
+import { renderEmail } from "@debate-ai/emails";
 
 const { subject, html, text } = await renderEmail("round-invite", {
   inviterName: "Alex Chen",
@@ -24,7 +24,7 @@ await resend.emails.send({ from, to, subject, html, text });
 
 Pass `baseUrl` (the request's origin) so links and the logo point at the
 deployment that sent the email; it falls back to `https://d.ebate.app`. The
-logo is the app's `/logo.png`, the root copy of `@debate/icons/brand`'s
+logo is the app's `/logo.png`, the root copy of `@debate-ai/icons/brand`'s
 wordmark, because mail clients need an absolute image URL.
 
 Every template exports sample `PreviewProps`. `renderEmailPreview(id)`

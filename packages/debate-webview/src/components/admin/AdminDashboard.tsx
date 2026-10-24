@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../lib/ui/primitives/select";
-import { REUSE_CHECK_LOG_RETENTION_DAYS, SourceArticlePanel } from "@debate/research-evidence";
+import { REUSE_CHECK_LOG_RETENTION_DAYS, SourceArticlePanel } from "@debate-ai/research-evidence";
 import { isLikelyArticleUrl } from "../../lib/url-detection/article-url";
 import { formatRecomputeStacksResult } from "../../lib/videos/format-recompute-stacks-result";
 import {

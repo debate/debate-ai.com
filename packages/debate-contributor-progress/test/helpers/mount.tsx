@@ -3,8 +3,8 @@
  * package. The repo has no @testing-library dependency, so this wraps
  * `createRoot` and React 19's `act` directly: enough to mount a component
  * into jsdom, run its effects, fire real DOM events, and read the result
- * back. Mirrors `@debate/team-collaboration/test/helpers/mount.tsx`,
- * `@debate/timer/test/helpers/mount.tsx` and
+ * back. Mirrors `@debate-ai/team-collaboration/test/helpers/mount.tsx`,
+ * `@debate-ai/timer/test/helpers/mount.tsx` and
  * `debate-search-evidence/test/helpers/mount.tsx` exactly.
  */
 
@@ -64,7 +64,7 @@ export async function click(target: Element): Promise<void> {
 /**
  * Types `value` into a controlled input the way React expects: the native
  * value setter has to be used so React's own value tracker sees the change.
- * Mirrors `@debate/team-collaboration/test/helpers/mount.tsx`'s `type`.
+ * Mirrors `@debate-ai/team-collaboration/test/helpers/mount.tsx`'s `type`.
  */
 export async function type(
   input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement,

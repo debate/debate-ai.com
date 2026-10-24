@@ -6,7 +6,7 @@
  */
 import { createElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { listWordCountRounds } from "@debate/round/src/state/wordCountRounds";
+import { listWordCountRounds } from "@debate-ai/round/src/state/wordCountRounds";
 import { WordCountRoundsPanel } from "../src/panels/WordCountRoundsPanel";
 import { button, buttons } from "./helpers/dom";
 import { click, flush, mount, type, type Mounted } from "./helpers/mount";

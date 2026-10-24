@@ -9,11 +9,11 @@ import { NewMarketForm } from "../../../src/components/predictions/NewMarketForm
 import { bodyText, button, change, cleanup, click, flush, mount, submit } from "../../helpers/dom";
 
 const api = vi.hoisted(() => ({ createMarket: vi.fn(), fetchSources: vi.fn(), loadDataset: vi.fn() }));
-vi.mock("@debate/predictions/client", () => ({
+vi.mock("@debate-ai/predictions/client", () => ({
   createMarket: api.createMarket,
   fetchPredictionSources: api.fetchSources,
 }));
-vi.mock("@debate/rankings-adapter", async (importOriginal) => ({
+vi.mock("@debate-ai/rankings-adapter", async (importOriginal) => ({
   ...(await importOriginal<object>()),
   loadRankingDataset: api.loadDataset,
 }));

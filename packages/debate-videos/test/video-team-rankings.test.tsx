@@ -11,7 +11,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createElement } from "react";
-import type { RankingDataset, RankingEntry } from "@debate/rankings-adapter";
+import type { RankingDataset, RankingEntry } from "@debate-ai/rankings-adapter";
 import type { VideoType } from "../src/types/videos";
 
 vi.mock("next/navigation", () => ({

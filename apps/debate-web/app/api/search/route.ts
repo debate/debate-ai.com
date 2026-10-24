@@ -17,7 +17,7 @@
  * the corpus — or for an underlined-text search, which it cannot express —
  * the route falls back to the `LIKE` search.
  *
- * Metered by plan tier (`@debate/webview/src/lib/stripe/limits.ts`): each search counts toward
+ * Metered by plan tier (`@debate-ai/webview/src/lib/stripe/limits.ts`): each search counts toward
  * the caller's `cardSearchesPerDay` (per IP when signed out) and returns at
  * most the tier's `cardSearchResults` cards.
  */
@@ -26,7 +26,7 @@ import { getDBFromContext } from "@/lib/database/context";
 import { caselistDocuments, debateCards, youtubeRoundVideos, type DebateCardRow } from "@/lib/database/schema";
 import { desc, or } from "drizzle-orm";
 import { getUserId } from "@/lib/auth/session";
-import { limitsFor } from "@debate/webview/lib/stripe/limits";
+import { limitsFor } from "@debate-ai/webview/lib/stripe/limits";
 import { consumeDailyUsage, getUserTier, limitMessage, planLimitHeaders, usageSubject } from "@/lib/stripe/usage";
 import {
   buildCardSearchOrderBy,
@@ -47,7 +47,7 @@ import {
   readFtsOperator,
   searchCardsRanked,
 } from "@/lib/search/card-fts";
-import { TIMED_OUT, withinDeadline } from "@debate/webview/lib/search/deadline";
+import { TIMED_OUT, withinDeadline } from "@debate-ai/webview/lib/search/deadline";
 
 /**
  * The search `/research/cards` opens with (no term, no filter) is the same

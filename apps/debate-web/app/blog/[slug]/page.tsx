@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
-import { getPosts } from '@debate/help-docs/lib/blog';
-import { blogSource } from '@debate/help-docs/lib/fumadocs/source';
+import { getPosts } from '@debate-ai/help-docs/lib/blog';
+import { blogSource } from '@debate-ai/help-docs/lib/fumadocs/source';
 
 export function generateStaticParams() {
   return getPosts(blogSource.getPages()).map((post) => ({

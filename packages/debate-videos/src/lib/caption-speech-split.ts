@@ -5,7 +5,7 @@
  * The caption track shows where people talked and where nobody did. The
  * speech timer's "Select YouTube Start" already lines a format's speeches up
  * against those spoken stretches by rule length (`suggestSpeechSegments` in
- * `@debate/timer`); this turns that placement into a
+ * `@debate-ai/timer`); this turns that placement into a
  * {@link SpeechSegmentation} the watch page reads like the model's.
  *
  * It does two jobs for "Detect speeches":
@@ -20,7 +20,7 @@
 
 // The pure segment maths, not the package entry: that pulls in the recorder UI,
 // and the admin Speech AI job runs this on the server.
-import { suggestSpeechSegments, type CaptionSnippet } from "@debate/timer/src/recorder/youtube-speech-segments";
+import { suggestSpeechSegments, type CaptionSnippet } from "@debate-ai/timer/src/recorder/youtube-speech-segments";
 import { AUDIO_SPLIT_TEMPLATES, audioSplitFormatForStyle } from "./audio-speech-split";
 import type { SegmentationCaption, SpeechSegmentation } from "./speech-segmentation";
 

@@ -8,7 +8,7 @@
  * different people, and its rating would be someone else's. A college policy
  * round from a past season is looked up instead in that season's own
  * debatedata table (2009-10 onward, see `college-history.ts` in
- * `@debate/rankings-adapter`), which gives the team's rank that season and
+ * `@debate-ai/rankings-adapter`), which gives the team's rank that season and
  * its debaters' last names; such a row carries its `season` and has no
  * profile to link to.
  * @module hooks/useVideoTeamRankings
@@ -22,7 +22,7 @@ import {
   loadCollegeHistory,
   type CollegeHistoryEntry,
   type RankingEntry,
-} from "@debate/rankings-adapter"
+} from "@debate-ai/rankings-adapter"
 import { useAllRankingDatasets } from "./useAllRankingDatasets"
 import { findVideoTeamRanking } from "../panels/leaderboard/profile/rankingProfileHelpers"
 import { isRankedSeasonRound, pastCollegeSeason } from "../lib/video-team-ranks"

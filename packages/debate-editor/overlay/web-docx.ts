@@ -3,9 +3,9 @@
  * `.docx` straight from a `File`, saving one back as a downloadable `Blob`,
  * and reading a document's outline and cards without mounting an editor.
  *
- * Merged in from the former `@debate/editor-cm-adapter` package, which
+ * Merged in from the former `@debate-ai/editor-cm-adapter` package, which
  * re-exported the submodule's core API and added these on top. This package
- * already exposes that core (`@debate/editor/engine`), so the helpers now
+ * already exposes that core (`@debate-ai/editor/engine`), so the helpers now
  * live here and are re-exported from the same entry point.
  * @module debate-editor/web-docx
  */

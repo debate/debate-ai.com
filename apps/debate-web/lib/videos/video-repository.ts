@@ -20,7 +20,7 @@ import {
   videoRowToTuple,
   type VideoRow,
   type VideoTuple,
-} from "@debate/data-sync/src/videos/video-rows";
+} from "@debate-ai/data-sync/src/videos/video-rows";
 import {
   clampPageSize,
   COMPETITOR_BREAK_CHARS,
@@ -40,13 +40,13 @@ import {
   type VideoFacets,
   type VideoQueryParams,
   type VideoSuggestions,
-} from "@debate/data-sync/src/videos/video-query";
+} from "@debate-ai/data-sync/src/videos/video-query";
 import {
   VIDEO_INDEX_FORMAT_VERSION,
   videoRowToIndexTuple,
   type VideoIndexResponse,
-} from "@debate/data-sync/src/videos/video-index";
-import { getVideoRowsFromJson } from "@debate/webview/lib/videos/video-json-source";
+} from "@debate-ai/data-sync/src/videos/video-index";
+import { getVideoRowsFromJson } from "@debate-ai/webview/lib/videos/video-json-source";
 import {
   legacyVideoRouteHref,
   parseFormatSegment,
@@ -58,7 +58,7 @@ import {
   videoRouteHref,
   type VideoRouteParts,
   type VideoType,
-} from "@debate/videos";
+} from "@debate-ai/videos";
 
 /** Which backend answered a request — surfaced for debugging. */
 export type VideoBackend = "sql" | "json";

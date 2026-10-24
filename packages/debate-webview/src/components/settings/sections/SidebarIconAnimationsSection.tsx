@@ -5,7 +5,7 @@
  * hover.
  *
  * Hovering or focusing a sidebar row can wiggle, bounce, pulse, spin, flip (and more)
- * its icon (`@debate/videos`' `sidebar-icon-hover.ts`). That is on by
+ * its icon (`@debate-ai/videos`' `sidebar-icon-hover.ts`). That is on by
  * default; this switch turns it off. Like the sound-effect level, the choice is
  * local to this browser, applies the moment it's made and is never synced to
  * the account.
@@ -19,7 +19,7 @@ import {
   readSidebarIconAnimations,
   setSidebarIconAnimations,
   subscribeSidebarIconAnimations,
-} from "@debate/videos"
+} from "@debate-ai/videos"
 import { Label } from "../../../lib/ui/primitives/label"
 import { Switch } from "../../qwksearch/ui/switch"
 

@@ -9,8 +9,8 @@
  * error.
  */
 import { describe, expect, it } from "vitest";
-import { DocxImportError } from "@debate/card-parser";
-import { base64ToCmir, parseNative, schema, toDocx } from "@debate/editor/engine";
+import { DocxImportError } from "@debate-ai/card-parser";
+import { base64ToCmir, parseNative, schema, toDocx } from "@debate-ai/editor/engine";
 
 import { TOPIC_STARTER_FORMATS, isCmirContent } from "../../../src/lib/topic-starters/format";
 import { docxToStoredCmir } from "../../../src/lib/topic-starters/import";

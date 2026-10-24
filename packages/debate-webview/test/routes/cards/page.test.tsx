@@ -4,7 +4,7 @@ import { renderToStaticMarkup } from "react-dom/server"
 vi.mock("../../../src/components/reason-docs/ReasonDocsSidebarPanels", () => ({
   ReasonDocsSidebarPanels: () => <div data-testid="docs-panels" />,
 }))
-vi.mock("@debate/research-evidence", () => ({
+vi.mock("@debate-ai/research-evidence", () => ({
   SearchInterface: () => <div data-testid="search-interface" />,
 }))
 

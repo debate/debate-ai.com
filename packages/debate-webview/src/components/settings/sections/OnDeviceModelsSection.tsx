@@ -5,10 +5,10 @@
  * device, each with its size, whether it's downloaded, and Download / Remove.
  *
  * - **Kokoro** (text to speech) reads cards aloud in Debate Editor
- *   (`@debate/editor/kokoro`; it runs in a Web Worker and Transformers.js
+ *   (`@debate-ai/editor/kokoro`; it runs in a Web Worker and Transformers.js
  *   keeps it in Cache Storage).
  * - **Moonshine** (speech to text) transcribes round recordings' captions
- *   (`@debate/timer`'s `moonshine-model-cache.ts`).
+ *   (`@debate-ai/timer`'s `moonshine-model-cache.ts`).
  *
  * Either downloads by itself the first time it's used; downloading here just
  * gets it out of the way ahead of a round. Remove frees the space, and the
@@ -26,13 +26,13 @@ import {
   kokoroInBrowserSupported,
   kokoroModelStatus,
   removeKokoroModel,
-} from "@debate/editor/kokoro"
+} from "@debate-ai/editor/kokoro"
 import {
   MOONSHINE_DOWNLOAD_BYTES,
   downloadMoonshineModel,
   moonshineModelStatus,
   removeMoonshineModel,
-} from "@debate/timer"
+} from "@debate-ai/timer"
 
 interface ModelStatus {
   downloaded: boolean

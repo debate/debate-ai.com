@@ -11,8 +11,8 @@
  */
 
 import { sql } from "drizzle-orm";
-import { buildVideoSeedStatements } from "@debate/data-sync/src/videos/video-seed-sql";
-import { getVideoRowsFromJson } from "@debate/webview/lib/videos/video-json-source";
+import { buildVideoSeedStatements } from "@debate-ai/data-sync/src/videos/video-seed-sql";
+import { getVideoRowsFromJson } from "@debate-ai/webview/lib/videos/video-json-source";
 
 /** Outcome of one seed run. */
 export interface VideoSeedResult {

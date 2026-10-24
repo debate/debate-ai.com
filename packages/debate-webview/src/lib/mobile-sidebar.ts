@@ -9,7 +9,7 @@
  * @module lib/mobile-sidebar
  */
 
-import { isVideoLibraryPath, ownsItsLayout } from "@debate/videos"
+import { isVideoLibraryPath, ownsItsLayout } from "@debate-ai/videos"
 import { showsReasonDocsPanels } from "./reason-docs/sidebar-routes"
 
 /** Window event a view that owns its sidebar (`/debate`) listens for. */

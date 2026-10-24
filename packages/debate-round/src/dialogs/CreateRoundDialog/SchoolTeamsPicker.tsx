@@ -7,7 +7,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import type { FieldEntry } from "@debate/tournaments/client"
+import type { FieldEntry } from "@debate-ai/tournaments/client"
 import { lookupSchoolTeams, splitEntryDebaters } from "../../round/school-teams"
 import { findFieldTeams } from "../../round/tournament-field"
 

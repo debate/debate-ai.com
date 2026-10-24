@@ -6,4 +6,4 @@ export const metadata: Metadata = {
     "Coach workspace, AI coach mode, coaching programs, team calendar and coach materials on one page",
 }
 
-export { default } from "@debate/webview/routes/coach/page"
+export { default } from "@debate-ai/webview/routes/coach/page"

@@ -11,7 +11,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import * as schema from "@/lib/database/schema";
 import { freshSchemaClient } from "@/lib/database/__tests__/schema-sql";
-import { RECORDING_RELEASE_VERSION } from "@debate/webview/lib/privacy/recording-release";
+import { RECORDING_RELEASE_VERSION } from "@debate-ai/webview/lib/privacy/recording-release";
 
 let db: ReturnType<typeof drizzle<typeof schema>>;
 let signedInAs: string | null = "user-1";

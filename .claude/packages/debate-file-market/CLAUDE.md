@@ -1,6 +1,6 @@
 # CLAUDE.md — `debate-file-market`
 
-Public (`@debate/` scope). Selling research files for real-money wallet
+Public (`@debate-ai/` scope). Selling research files for real-money wallet
 balance. Entry `src/index.ts` (outline preview, prices, top-ups, types),
 browser calls at `debate-file-market/client`, tests in `test/`. User doc:
 `packages/debate-help-docs/content/docs/features/research-evidence/file-market.mdx`.

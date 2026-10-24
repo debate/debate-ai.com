@@ -5,7 +5,7 @@ import {
   isSharedVideoId,
   parseSharedVideoAiWrite,
   type SharedVideoAiKind,
-} from "@debate/videos/src/lib/shared-video-ai"
+} from "@debate-ai/videos/src/lib/shared-video-ai"
 import { withRouteErrors } from "@/lib/api/route-errors"
 import { getStaffAccess } from "@/lib/auth/admin"
 import { getUserId } from "@/lib/auth/session"

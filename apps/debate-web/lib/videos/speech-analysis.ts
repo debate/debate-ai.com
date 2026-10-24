@@ -28,7 +28,7 @@
  * wrote is never replaced — only a missing one, or one the AI wrote earlier.
  * A dry run returns the documents without saving, for trying out a prompt.
  *
- * Pure prompt building and parsing live in `@debate/videos`
+ * Pure prompt building and parsing live in `@debate-ai/videos`
  * (`lib/speech-analysis.ts`); this file does the I/O.
  * @module lib/videos/speech-analysis
  */
@@ -45,7 +45,7 @@ import {
   speechAnalysisDocuments,
   speechAnalysisSystemPrompt,
   speechTranscripts,
-} from "@debate/videos";
+} from "@debate-ai/videos";
 import { fetchYouTubeTranscript, type TranscriptSnippet } from "@/lib/youtube/transcript";
 import { readCachedTranscript, writeCachedTranscript } from "@/lib/youtube/transcript-cache";
 import { saveVideoDocument } from "@/lib/videos/video-content";

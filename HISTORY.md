@@ -31,7 +31,7 @@ Prediction markets, a rankings engine, a native Tournaments product, and account
 - Added a judge pool, anonymous partner matching, tournament-aware team suggestions, click-to-activate speeches, AI outcome responses, and a speech-recording captions ticker.
 - Debate Editor: always create `.cmir` docs, read-only mode, saved/unsaved/failed status, card hover buttons (summarize, find flaws, read aloud), BM25-ranked FTS5 card search, and a full-page reading overlay in the browser extension.
 - Schools: coaches and administrators can claim a school's page.
-- Added `@types/debate`, made every package publishable under `@debate/`, upgraded dependencies, raised test coverage, added Stripe subscriptions (Pro VIP and Research Team), Turnstile, and Mixpanel.
+- Added `@types/debate`, made every package publishable under `@debate-ai/`, upgraded dependencies, raised test coverage, added Stripe subscriptions (Pro VIP and Research Team), Turnstile, and Mixpanel.
 
 ## September 2026 — 1,024 commits
 

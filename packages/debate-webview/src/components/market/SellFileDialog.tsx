@@ -27,8 +27,8 @@ import {
   outlineFromHtml,
   validatePriceCents,
   type OutlineEntry,
-} from "@debate/file-market"
-import { sellFile, stopSelling } from "@debate/file-market/client"
+} from "@debate-ai/file-market"
+import { sellFile, stopSelling } from "@debate-ai/file-market/client"
 import { Button } from "../../lib/ui/primitives/button"
 import { Input } from "../../lib/ui/primitives/input"
 import {
