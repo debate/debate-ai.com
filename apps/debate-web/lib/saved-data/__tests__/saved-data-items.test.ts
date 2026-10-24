@@ -33,7 +33,7 @@ describe("saved item management", () => {
   it("falls back to a placeholder title for unlabeled flows", async () => {
     const db = await freshDb();
     await db.insert(savedFlows).values({ userId: "a", clientId: 7, data: "{}" });
-    expect(await listOwnSavedItems(db, "a", "flows")).toMatchObject([{ id: 7, title: "Untitled flow", href: null }]);
+    expect(await listOwnSavedItems(db, "a", "flows")).toMatchObject([{ id: 7, title: "Untitled flow", href: "/debate?flowId=7" }]);
   });
 
   it("deletes own rows and refuses another user's or a missing row", async () => {

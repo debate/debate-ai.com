@@ -14,14 +14,17 @@
 import { useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { useFlowStore } from "../state/store";
-import { parsePrepNoteJumpParams } from "../flow/strategy-sync-notes";
+import { parseFlowOpenParam, parsePrepNoteJumpParams } from "../flow/strategy-sync-notes";
 
 export function useJumpToPrepNoteBox() {
   const searchParams = useSearchParams();
   const { flows, selected, setSelected } = useFlowStore();
   const processedKeyRef = useRef<string | null>(null);
 
-  const target = parsePrepNoteJumpParams(searchParams);
+  const jump = parsePrepNoteJumpParams(searchParams);
+  // A bare `?flowId=` link (Settings → Saved data) opens the flow without a box.
+  const openFlowId = jump ? null : parseFlowOpenParam(searchParams);
+  const target = jump ?? (openFlowId === null ? null : { flowId: openFlowId, boxPath: [] as number[] });
   const targetKey = target ? `${target.flowId}:${target.boxPath.join(",")}` : null;
 
   // Select the note's flow tab once, the first time this deep link's target changes.
