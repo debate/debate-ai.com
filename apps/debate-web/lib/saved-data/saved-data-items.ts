@@ -13,6 +13,12 @@ export const isItemKind = (value: string): value is ItemKind => (ITEM_KINDS as r
 /** Rows returned per kind; the list is a management view, not a browser. */
 export const MAX_ITEMS = 100;
 
+/** Rows per kind the bulk export will include; far above the management list so real accounts export in full. */
+export const MAX_EXPORT_ITEMS = 1000;
+
+/** Rows exported concurrently, so a large account doesn't fire hundreds of queries at once. */
+const EXPORT_BATCH = 25;
+
 export interface SavedItem {
   /** Row key to pass back to delete: `id` for docs/practice, `clientId` for flows/rounds. */
   id: number;
@@ -25,7 +31,7 @@ export interface SavedItem {
 const iso = (value: Date | null | undefined) => (value ? value.toISOString() : new Date(0).toISOString());
 
 /** Newest-first list of one kind of the caller's saved work (titles only, never content). */
-export async function listOwnSavedItems(db: AccountDB, userId: string, kind: ItemKind): Promise<SavedItem[]> {
+export async function listOwnSavedItems(db: AccountDB, userId: string, kind: ItemKind, limit = MAX_ITEMS): Promise<SavedItem[]> {
   switch (kind) {
     case "docs": {
       const rows: Array<{ id: number; title: string; updatedAt: Date | null }> = await db
@@ -33,7 +39,7 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
         .from(documents)
         .where(and(eq(documents.userId, userId), eq(documents.isFolder, false)))
         .orderBy(desc(documents.updatedAt), desc(documents.id))
-        .limit(MAX_ITEMS);
+        .limit(limit);
       return rows.map((r) => ({ id: r.id, title: r.title || "Untitled", updatedAt: iso(r.updatedAt), href: `/reason-editor?doc=${r.id}` }));
     }
     case "flows": {
@@ -42,7 +48,7 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
         .from(savedFlows)
         .where(eq(savedFlows.userId, userId))
         .orderBy(desc(savedFlows.updatedAt), desc(savedFlows.id))
-        .limit(MAX_ITEMS);
+        .limit(limit);
       return rows.map((r) => ({ id: r.id, title: r.label || "Untitled flow", updatedAt: iso(r.updatedAt), href: `/debate?flowId=${r.id}` /* mirrors buildFlowOpenHref in @debate-ai/round */ }));
     }
     case "rounds": {
@@ -51,7 +57,7 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
         .from(savedRounds)
         .where(eq(savedRounds.userId, userId))
         .orderBy(desc(savedRounds.updatedAt), desc(savedRounds.id))
-        .limit(MAX_ITEMS);
+        .limit(limit);
       return rows.map((r) => ({ id: r.id, title: r.label || "Untitled round", updatedAt: iso(r.updatedAt), href: null }));
     }
     case "practiceRounds": {
@@ -60,7 +66,7 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
         .from(practiceVsAiDebates)
         .where(eq(practiceVsAiDebates.userId, userId))
         .orderBy(desc(practiceVsAiDebates.updatedAt), desc(practiceVsAiDebates.id))
-        .limit(MAX_ITEMS);
+        .limit(limit);
       return rows.map((r) => ({
         id: r.id,
         title: r.topic || (r.botName ? `Debate vs ${r.botName}` : "Practice debate"),
@@ -141,17 +147,24 @@ export async function exportOwnSavedItem(db: AccountDB, userId: string, kind: It
 
 export interface SavedDataArchive {
   filename: string;
-  /** JSON document: `{ exportedAt, limitPerKind, docs: [...], flows: [...], rounds: [...], practiceRounds: [...] }`. */
+  /** JSON document: `{ exportedAt, limitPerKind, truncated: [kind…], docs: [...], flows: [...], rounds: [...], practiceRounds: [...] }`. */
   body: string;
 }
 
-/** Every kind's newest `MAX_ITEMS` rows of the caller's work, with full content, as one downloadable JSON archive. */
+/** Every kind's newest `MAX_EXPORT_ITEMS` rows of the caller's work, with full content, as one downloadable JSON archive. */
 export async function exportAllOwnSavedData(db: AccountDB, userId: string, now = new Date()): Promise<SavedDataArchive> {
-  const archive: Record<string, unknown> = { exportedAt: now.toISOString(), limitPerKind: MAX_ITEMS };
+  const archive: Record<string, unknown> = { exportedAt: now.toISOString(), limitPerKind: MAX_EXPORT_ITEMS, truncated: [] as ItemKind[] };
   for (const kind of ITEM_KINDS) {
-    const items = await listOwnSavedItems(db, userId, kind);
-    const files = await Promise.all(items.map((item) => exportOwnSavedItem(db, userId, kind, item.id)));
-    archive[kind] = files.flatMap((file) => (file ? [JSON.parse(file.body) as unknown] : []));
+    // One extra row tells us whether the account holds more than the ceiling.
+    const listed = await listOwnSavedItems(db, userId, kind, MAX_EXPORT_ITEMS + 1);
+    if (listed.length > MAX_EXPORT_ITEMS) (archive.truncated as ItemKind[]).push(kind);
+    const items = listed.slice(0, MAX_EXPORT_ITEMS);
+    const out: unknown[] = [];
+    for (let i = 0; i < items.length; i += EXPORT_BATCH) {
+      const files = await Promise.all(items.slice(i, i + EXPORT_BATCH).map((item) => exportOwnSavedItem(db, userId, kind, item.id)));
+      for (const file of files) if (file) out.push(JSON.parse(file.body) as unknown);
+    }
+    archive[kind] = out;
   }
   return { filename: `debate-ai-saved-data-${now.toISOString().slice(0, 10)}.json`, body: JSON.stringify(archive, null, 2) };
 }
