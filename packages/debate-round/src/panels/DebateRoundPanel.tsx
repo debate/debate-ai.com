@@ -74,6 +74,8 @@ export interface DebateFlowPageProps {
   /** The signed-in viewer's email, so the round sidebar can highlight the
    *  speeches they give. The "My Team" profile emails are checked too. */
   viewerEmail?: string | null
+  /** The signed-in viewer's display name, matched against non-email entries on the round invite. */
+  viewerName?: string | null
 }
 
 /**
@@ -84,7 +86,7 @@ export interface DebateFlowPageProps {
  *
  * @returns The full-screen debate flow page
  */
-export function DebateFlowPage({ startScreenActions, roundActions, viewerEmail }: DebateFlowPageProps = {}) {
+export function DebateFlowPage({ startScreenActions, roundActions, viewerEmail, viewerName }: DebateFlowPageProps = {}) {
   // ============================================================================
   // Global State (Zustand)
   // ============================================================================
@@ -830,6 +832,7 @@ const handleEbbToolAction = (action: EbbFlowToolAction) => {
                 speechViewControls={speechViewControls}
                 onSelectSpeech={handleSelectSpeech}
                 viewerEmails={viewerEmails}
+                viewerName={viewerName}
               />
             </ResizablePanel>
             <ResizableHandle withHandle />
@@ -874,6 +877,7 @@ const handleEbbToolAction = (action: EbbFlowToolAction) => {
                   remoteTimers={remoteTimers}
                   onSelectSpeech={handleSelectSpeech}
                   viewerEmails={viewerEmails}
+                  viewerName={viewerName}
                 />
               </SheetContent>
             </Sheet>

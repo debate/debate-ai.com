@@ -22,6 +22,7 @@ import {
   MAX_ROOM_CAMERAS,
   MAX_ROOM_DATA_SOCKETS,
   normalizeRole,
+  normalizeSeat,
   parseClientMessage,
   type RoomPeer,
   type ServerMessage,
@@ -83,10 +84,12 @@ export class DebateRoomSignal {
       return new Response(null, { status: 101, webSocket: client } as ResponseInit)
     }
 
+    const seat = normalizeSeat(url.searchParams.get("seat"))
     const self: RoomPeer = {
       id: crypto.randomUUID(),
       name: (request.headers.get("x-room-name") || "Guest").slice(0, 80),
       role: normalizeRole(url.searchParams.get("role")),
+      ...(seat ? { seat } : {}),
       ...(data ? { data: true } : {}),
     }
     this.ctx.acceptWebSocket(server, [self.id])

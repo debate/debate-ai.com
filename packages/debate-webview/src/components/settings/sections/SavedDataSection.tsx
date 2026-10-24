@@ -81,6 +81,9 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
           ) : (
             <span className="truncate">{item.title}</span>
           )}
+          <a href={`/api/settings/saved-data/${kind}?id=${item.id}`} download className="shrink-0 underline">
+            Export
+          </a>
           <button type="button" className="shrink-0 text-destructive hover:underline" onClick={() => void remove(item)}>
             Delete
           </button>
