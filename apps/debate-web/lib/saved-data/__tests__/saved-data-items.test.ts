@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
 import { documents, savedFlows, user } from "../../database/schema";
-import { deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems } from "../saved-data-items";
+import { EXPORT_MAX_ITEMS, MAX_ITEMS, deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems } from "../saved-data-items";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -103,5 +103,16 @@ describe("bulk export", () => {
   it("returns empty lists for a user with nothing saved", async () => {
     const body = JSON.parse((await exportAllOwnSavedData(await freshDb(), "a")).body);
     expect([body.docs, body.flows, body.rounds, body.practiceRounds]).toEqual([[], [], [], []]);
+  });
+
+  it("exports more than the 100-row management-list cap", async () => {
+    const db = await freshDb();
+    const total = MAX_ITEMS + 5;
+    await db.insert(savedFlows).values(Array.from({ length: total }, (_, i) => ({ userId: "a", clientId: i + 1, data: "{}" })));
+    expect(await listOwnSavedItems(db, "a", "flows")).toHaveLength(MAX_ITEMS);
+    const body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
+    expect(body.flows).toHaveLength(total);
+    expect(body.limitPerKind).toBe(EXPORT_MAX_ITEMS);
+    expect(body.truncated).toEqual([]);
   });
 });
