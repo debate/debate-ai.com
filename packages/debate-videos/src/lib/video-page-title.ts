@@ -14,6 +14,7 @@
 
 import { displayRoundLevel } from "../components/videos/card/round-level";
 import { parseRoundTitle, videoRouteParts } from "./video-route";
+import { parseTeamLabel } from "@debate-ai/rankings-adapter";
 import type { DebateStyle, VideoType } from "../types/videos";
 
 /** A team's rank, as the title prints it after the team's name. */
@@ -22,6 +23,10 @@ export interface VideoPageTitleRanks {
   aff?: number | null;
   /** The neg team's rank. */
   neg?: number | null;
+  /** The aff team's debaters' last names, e.g. `"Gallow & Stern"`, to print in place of the code. */
+  affNames?: string | null;
+  /** The neg team's debaters' last names, e.g. `"Gallow & Stern"`, to print in place of the code. */
+  negNames?: string | null;
 }
 
 /**
@@ -78,17 +83,25 @@ function roundName(roundLevel: string | null | undefined): string | null {
   return /^R\d+$/.test(label) ? `Round ${label.slice(1)}` : label;
 }
 
-/** `"Kansas OW (#14, K)"`: the team, then its rank and argument when known. */
+/** `"Kansas OW (#14, K)"`: the team, then its rank and argument when known.
+ * When `names` are provided, the trailing code is replaced by the debaters'
+ * last names (`"Emory GS"` → `"Emory Gallow & Stern"`). */
 function teamWithDetails(
   team: string,
+  names: string | null | undefined,
   rank: number | null | undefined,
   argument: string | null | undefined,
 ): string {
+  let displayTeam = team;
+  if (names) {
+    const parsed = parseTeamLabel(team);
+    if (parsed) displayTeam = `${parsed.school} ${names}`;
+  }
   const details = [
     typeof rank === "number" && rank > 0 ? `#${rank}` : null,
     argument?.trim() || null,
   ].filter(Boolean);
-  return details.length > 0 ? `${team} (${details.join(", ")})` : team;
+  return details.length > 0 ? `${displayTeam} (${details.join(", ")})` : displayTeam;
 }
 
 /**
@@ -111,12 +124,12 @@ export function videoPageTitle(video: VideoType, ranks: VideoPageTitleRanks = {}
   const aff = affTeam
     ? fromTitle
       ? affTeam
-      : teamWithDetails(affTeam, ranks.aff, parts.arg1ac)
+      : teamWithDetails(affTeam, ranks.affNames, ranks.aff, parts.arg1ac)
     : null;
   const neg = negTeam
     ? fromTitle
       ? negTeam
-      : teamWithDetails(negTeam, ranks.neg, parts.arg2nr)
+      : teamWithDetails(negTeam, ranks.negNames, ranks.neg, parts.arg2nr)
     : null;
 
   const tournament = withoutYear(fromTitle?.tournament ?? parts.tournament ?? "");

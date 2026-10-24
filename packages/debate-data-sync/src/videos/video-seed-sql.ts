@@ -39,6 +39,8 @@ export const VIDEO_SEED_COLUMNS = [
   "stack_key",
   "stack_position",
   "search_text",
+  "aff_team_long",
+  "neg_team_long",
 ] as const;
 
 /**
@@ -113,6 +115,8 @@ export function videoSeedValues(row: VideoRow): (string | number | boolean | nul
     row.stackKey,
     row.stackPosition,
     row.searchText,
+    row.affTeamLong,
+    row.negTeamLong,
   ];
 }
 

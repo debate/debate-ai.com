@@ -85,44 +85,6 @@ bun run dev:editor   # just the reason-editor package
 
 
 
-## Debate Extensions
-
-Debate extensions are structured argument additions that follow a consistent format. When contributing an extension, use this template:
-
-```md
-## Extension Title
-
-**Type:** [Extension / Rebuttal / Evidence / Impact]
-
-**Debate:** [Debate topic or ID]
-
-**Position:** [Affirmative / Negative]
-
-### Argument
-
-[The core claim and reasoning]
-
-### Evidence
-
-- Source 1
-- Source 2
-
-### Impact
-
-[Why this argument matters in the debate]
-
-### Extensions to Consider
-
-- [Related extension or argument]
-```
-
-### Guidelines
-
-- Keep arguments focused and well-sourced.
-- Cite evidence with links or references where possible.
-- Label the type of contribution clearly (extension, rebuttal, evidence, impact).
-- Include the debate context so the extension can be placed correctly.
-
 ## Testing
 
 ```bash

@@ -84,4 +84,108 @@ describe("videoPageTitle", () => {
     const lecture: VideoType = ["ghi789", "How to give a 2NR", "2020-01-01", "Coach", 10, "", "Critique"];
     expect(videoPageTitle(lecture)).toBe("How to give a 2NR");
   });
+
+  it("substitutes each team's code with its debaters' last names when names are known", () => {
+    const dartmouthRR: VideoType = [
+      "abc123",
+      "Emory vs Michigan State - Dartmouth RR Round 3",
+      "2026-10-24",
+      "Debate Archive",
+      1_200,
+      "",
+      4,
+      "Dartmouth RR",
+      "Round 3",
+      "Emory GS",
+      "Michigan State GL",
+      null,
+      null,
+      null,
+      null,
+      false,
+      null,
+      2026,
+    ];
+    expect(
+      videoPageTitle(dartmouthRR, { aff: 1, neg: 10, affNames: "Gallow & Stern", negNames: "Lee & Kim" }),
+    ).toBe("2026 Dartmouth RR College Round 3: Emory Gallow & Stern (#1) vs Michigan State Lee & Kim (#10)");
+  });
+
+  it("leaves the code as-is when no names are provided", () => {
+    const dartmouthRR: VideoType = [
+      "abc123",
+      "Emory vs Michigan State - Dartmouth RR Round 3",
+      "2026-10-24",
+      "Debate Archive",
+      1_200,
+      "",
+      4,
+      "Dartmouth RR",
+      "Round 3",
+      "Emory GS",
+      "Michigan State GL",
+      null,
+      null,
+      null,
+      null,
+      false,
+      null,
+      2026,
+    ];
+    expect(videoPageTitle(dartmouthRR, { aff: 1, neg: 10 })).toBe(
+      "2026 Dartmouth RR College Round 3: Emory GS (#1) vs Michigan State GL (#10)",
+    );
+  });
+
+  it("substitutes only the aff name when only aff names are known", () => {
+    const dartmouthRR: VideoType = [
+      "abc123",
+      "Emory vs Michigan State - Dartmouth RR Round 3",
+      "2026-10-24",
+      "Debate Archive",
+      1_200,
+      "",
+      4,
+      "Dartmouth RR",
+      "Round 3",
+      "Emory GS",
+      "Michigan State GL",
+      null,
+      null,
+      null,
+      null,
+      false,
+      null,
+      2026,
+    ];
+    expect(
+      videoPageTitle(dartmouthRR, { aff: 1, neg: 10, affNames: "Gallow & Stern" }),
+    ).toBe("2026 Dartmouth RR College Round 3: Emory Gallow & Stern (#1) vs Michigan State GL (#10)");
+  });
+
+  it("keeps a team without trailing initials unchanged when names are given", () => {
+    const unnamed: VideoType = [
+      "abc123",
+      "Boston College vs Emory GS",
+      "2026-10-24",
+      "Debate Archive",
+      1_200,
+      "",
+      4,
+      "Dartmouth RR",
+      "Round 3",
+      "Boston College",
+      "Emory GS",
+      null,
+      null,
+      null,
+      null,
+      false,
+      null,
+      2026,
+    ];
+    expect(
+      videoPageTitle(unnamed, { neg: 10, negNames: "Gallow & Stern" }),
+    ).toBe("2026 Dartmouth RR College Round 3: Boston College vs Emory Gallow & Stern (#10)");
+  });
 });

@@ -273,6 +273,8 @@ export function VideoWatchPage({
       videoPageTitle(video, {
         aff: affRanking?.rank ?? titleRanks?.aff,
         neg: negRanking?.rank ?? titleRanks?.neg,
+        affNames: affRanking?.names ?? null,
+        negNames: negRanking?.names ?? null,
       }),
     [video, affRanking, negRanking, titleRanks],
   )
