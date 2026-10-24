@@ -50,7 +50,7 @@ export const DEFAULT_JUDGE_WEIGHT_PRESETS: Record<string, JudgeWeights> = {
 
 export const DEFAULT_JUDGE_WEIGHTS: JudgeWeights = { ...DEFAULT_JUDGE_WEIGHT_PRESETS.balanced };
 
-const JudgeParadigm = `
+const MAIN_JUDGE_PARADIGM = `
 ## I. Overall Philosophy
 
 - A. My approach
