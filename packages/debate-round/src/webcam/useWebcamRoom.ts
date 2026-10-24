@@ -19,7 +19,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react"
 import type SimplePeer from "simple-peer"
-import type { RoomEventName, RoomPeer, RoomRole, ServerMessage } from "./room-protocol"
+import type { RoomEventName, RoomPeer, RoomRole, RoomSeat, ServerMessage } from "./room-protocol"
 
 export type WebcamRoomStatus = "idle" | "connecting" | "joined" | "error"
 
@@ -33,6 +33,8 @@ export interface WebcamRoomOptions {
   /** Base path of the room endpoints (default `/api/rooms`). */
   apiBase?: string
   role?: RoomRole
+  /** Seat code from the round invite ("1A", "2J"…), shown on this participant's tile. */
+  seat?: RoomSeat | null
   /**
    * Join as a data-only socket (`?mode=data`): room events with no camera
    * mesh. It doesn't count against the room's camera cap, so the timer and
@@ -87,17 +89,18 @@ async function loadIceServers(apiBase: string): Promise<RTCIceServer[]> {
   }
 }
 
-function socketUrl(apiBase: string, roomId: string, role: RoomRole, dataOnly = false): string {
+function socketUrl(apiBase: string, roomId: string, role: RoomRole, dataOnly = false, seat?: RoomSeat | null): string {
   const url = new URL(`${apiBase}/${encodeURIComponent(roomId)}/ws`, window.location.href)
   url.protocol = url.protocol === "https:" ? "wss:" : "ws:"
   url.searchParams.set("role", role)
+  if (seat) url.searchParams.set("seat", seat)
   if (dataOnly) url.searchParams.set("mode", "data")
   return url.toString()
 }
 
 export function useWebcamRoom(
   roomId: string,
-  { apiBase = "/api/rooms", role = "speaker", dataOnly = false }: WebcamRoomOptions = {},
+  { apiBase = "/api/rooms", role = "speaker", dataOnly = false, seat = null }: WebcamRoomOptions = {},
 ) {
   const [status, setStatus] = useState<WebcamRoomStatus>("idle")
   const [error, setError] = useState<string | null>(null)
@@ -220,7 +223,7 @@ export function useWebcamRoom(
         return peer
       }
 
-      const ws = new WebSocket(socketUrl(apiBase, roomId, role, dataOnly))
+      const ws = new WebSocket(socketUrl(apiBase, roomId, role, dataOnly, seat))
       socketRef.current = ws
       ws.onmessage = (event) => {
         let msg: ServerMessage
@@ -291,7 +294,7 @@ export function useWebcamRoom(
     }
     // `send`, `ensureStream` and `shareMediaState` only read refs.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiBase, roomId, role, dataOnly, upsert, drop, leave])
+  }, [apiBase, roomId, role, dataOnly, seat, upsert, drop, leave])
 
   /** Opens the camera or microphone and sends it to the preview and every peer. */
   const enableTrack = async (kind: "audio" | "video") => {

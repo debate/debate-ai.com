@@ -72,6 +72,13 @@ describe("DebateRoomSignal", () => {
     expect(a.sent[1]).toMatchObject({ type: "peer-joined", peer: { name: "Blair" } })
   })
 
+  it("carries a valid seat from the socket URL and drops an invalid one", async () => {
+    await room.fetch(new Request("https://x/api/rooms/r1/ws?role=speaker&seat=2n", { headers: { upgrade: "websocket", "x-room-name": "Sam" } }))
+    expect(lastServer.sent[0]).toMatchObject({ type: "welcome", self: { name: "Sam", seat: "2N" } })
+    await room.fetch(new Request("https://x/api/rooms/r1/ws?role=speaker&seat=nope", { headers: { upgrade: "websocket", "x-room-name": "Kit" } }))
+    expect(lastServer.sent[0].self.seat).toBeUndefined()
+  })
+
   it("relays a signal only to its addressee, stamped with the sender", async () => {
     const a = await join("Alex")
     const b = await join("Blair")

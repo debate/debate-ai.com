@@ -106,6 +106,8 @@ interface FlowPageSidebarProps {
   onSelectSpeech?: (speechName: string) => void
   /** The viewer's email(s), so the round group can highlight their speeches. */
   viewerEmails?: readonly (string | null | undefined)[]
+  /** The viewer's display name, so the Cameras room can find their seat on the invite. */
+  viewerName?: string | null
 }
 
 /**
@@ -165,6 +167,7 @@ export function FlowPageSidebar({
   speechViewControls,
   onSelectSpeech,
   viewerEmails,
+  viewerName,
 }: FlowPageSidebarProps) {
   /**
    * Select a flow tab and close the mobile menu when applicable.
@@ -275,7 +278,7 @@ export function FlowPageSidebar({
       )}
 
       {/* Webcams for the round's speeches — a small P2P video room. */}
-      {selectedRound && sections.cameras && <WebcamRoomPanel round={selectedRound} />}
+      {selectedRound && sections.cameras && <WebcamRoomPanel round={selectedRound} viewerEmails={viewerEmails} viewerName={viewerName} />}
 
       {/* Remote Speech Document Headings */}
       {sections.shared && (receivedHeadings.length > 0 || remoteTimers.length > 0) && (

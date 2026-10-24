@@ -11,20 +11,24 @@
  * The camera and microphone stay off — not even opened — until their toggle
  * buttons next to the camera picker are switched on.
  *
- * Everyone picks how they join — debater, judge or observer — so a judge can
- * sit in the round virtually. Each tile is labeled with its participant's
- * role, and remote participants are marked "Virtual".
+ * Nobody picks how they join: the viewer's seat is inferred from the round's
+ * invite list by matching their signed-in email (or name) — 1A / 2A / 1N / 2N
+ * for the debaters, 1J / 2J… for the judges (see room-seat.ts). Anyone not on
+ * the invite joins as an unlabeled spectator. Each tile is labeled with its
+ * participant's seat, and remote participants are marked "Virtual", so a
+ * judge can sit in the round virtually.
  */
 
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { Camera, CameraOff, ChevronDown, ChevronRight, Mic, MicOff, PhoneOff, SwitchCamera, Video } from "lucide-react"
 import { cn } from "../ui/lib/utils"
-import { roomIdForRound, type RoomRole } from "./room-protocol"
+import { roomIdForRound, type RoomRole, type RoomSeat } from "./room-protocol"
 import { useWebcamRoom } from "./useWebcamRoom"
 import { useRoomSpeechRecorder } from "./useRoomSpeechRecorder"
-import { ROOM_ROLE_LABELS, roomTileLabel } from "./room-labels"
+import { roomBadgeLabel, roomTileLabel } from "./room-labels"
+import { inferRoomSeat } from "./room-seat"
 import type { Round } from "../types/flow"
 
 const ROLE_BADGE_CLASS: Record<RoomRole, string> = {
@@ -38,6 +42,7 @@ function VideoTile({
   name,
   label,
   role,
+  seat,
   virtual = false,
   muted = false,
   micOff,
@@ -50,6 +55,8 @@ function VideoTile({
   /** Full name · role · virtual description, for the tooltip and screen readers. */
   label: string
   role: RoomRole
+  /** Seat code from the round invite ("1A", "2J"…); none for a spectator. */
+  seat?: RoomSeat | null
   virtual?: boolean
   muted?: boolean
   micOff?: boolean
@@ -61,6 +68,7 @@ function VideoTile({
   useEffect(() => {
     if (ref.current && ref.current.srcObject !== (stream ?? null)) ref.current.srcObject = stream ?? null
   }, [stream])
+  const badge = roomBadgeLabel({ role, seat })
   return (
     <figure className="relative aspect-video overflow-hidden rounded-[var(--border-radius)] bg-black" aria-label={label}>
       {stream && !camOff ? (
@@ -71,9 +79,11 @@ function VideoTile({
         </div>
       )}
       <div className="absolute left-1 top-1 flex gap-0.5">
-        <span className={cn("rounded px-1 text-[9px] font-semibold uppercase tracking-wide text-white", ROLE_BADGE_CLASS[role])}>
-          {ROOM_ROLE_LABELS[role]}
-        </span>
+        {badge && (
+          <span className={cn("rounded px-1 text-[9px] font-semibold uppercase tracking-wide text-white", ROLE_BADGE_CLASS[role])}>
+            {badge}
+          </span>
+        )}
         {virtual && (
           <span className="rounded bg-purple-600/90 px-1 text-[9px] font-semibold uppercase tracking-wide text-white">
             Virtual
@@ -124,11 +134,28 @@ function CameraPicker({
   )
 }
 
-export function WebcamRoomPanel({ round, apiBase }: { round: Round; apiBase?: string }) {
+export function WebcamRoomPanel({
+  round,
+  apiBase,
+  viewerEmails = [],
+  viewerName,
+}: {
+  round: Round
+  apiBase?: string
+  /** The viewer's email(s), matched against the round invite to find their seat. */
+  viewerEmails?: readonly (string | null | undefined)[]
+  /** The viewer's display name, matched against invite entries that aren't emails. */
+  viewerName?: string | null
+}) {
   const [open, setOpen] = useState(true)
   const roomId = roomIdForRound(round)
-  const [joinRole, setJoinRole] = useState<RoomRole>("speaker")
-  const room = useWebcamRoom(roomId, { apiBase, role: joinRole })
+  const emailsKey = viewerEmails.join("\n")
+  const { role: joinRole, seat: joinSeat } = useMemo(
+    () => inferRoomSeat(round, viewerEmails, viewerName),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- emailsKey stands in for the array
+    [round, emailsKey, viewerName],
+  )
+  const room = useWebcamRoom(roomId, { apiBase, role: joinRole, seat: joinSeat })
   useRoomSpeechRecorder(room.participants)
 
   const joined = room.status === "joined" || room.status === "connecting"
@@ -140,8 +167,9 @@ export function WebcamRoomPanel({ round, apiBase }: { round: Round; apiBase?: st
     <VideoTile
       stream={room.localStream}
       name={`${room.self?.name ?? "You"} (you)`}
-      label={roomTileLabel(room.self?.name ?? "You", room.self?.role ?? joinRole, { self: true })}
+      label={roomTileLabel(room.self?.name ?? "You", room.self?.role ?? joinRole, { self: true, seat: room.self?.seat ?? joinSeat })}
       role={room.self?.role ?? joinRole}
+      seat={room.self?.seat ?? joinSeat}
       muted
       micOff={!room.micOn}
       camOff={!room.camOn}
@@ -199,8 +227,9 @@ export function WebcamRoomPanel({ round, apiBase }: { round: Round; apiBase?: st
                     key={p.id}
                     stream={p.stream}
                     name={p.name}
-                    label={roomTileLabel(p.name, p.role)}
+                    label={roomTileLabel(p.name, p.role, { seat: p.seat })}
                     role={p.role}
+                    seat={p.seat}
                     virtual
                     micOff={p.micOn !== true}
                     camOff={p.camOn !== true || !p.stream}
@@ -215,24 +244,14 @@ export function WebcamRoomPanel({ round, apiBase }: { round: Round; apiBase?: st
           ) : (
             <>
               {room.localStream && <div className="grid grid-cols-2 gap-1">{selfTile}</div>}
-              <div className="flex items-center gap-1" role="radiogroup" aria-label="Join as">
-                <span className="text-[10px] text-muted-foreground">Join as</span>
-                {(Object.keys(ROOM_ROLE_LABELS) as RoomRole[]).map((role) => (
-                  <button
-                    key={role}
-                    type="button"
-                    role="radio"
-                    aria-checked={joinRole === role}
-                    onClick={() => setJoinRole(role)}
-                    className={cn(btn, "h-6 flex-1 px-1 text-[10px]", joinRole === role && "bg-[var(--background-active)] font-semibold")}
-                  >
-                    {role === "judge" ? "Virtual judge" : ROOM_ROLE_LABELS[role]}
-                  </button>
-                ))}
-              </div>
               <button type="button" className={cn(btn, "w-full")} onClick={() => void room.join()}>
-                <Video className="h-3 w-3" /> Join as {ROOM_ROLE_LABELS[joinRole].toLowerCase()}
+                <Video className="h-3 w-3" /> Join as {joinSeat ?? "spectator"}
               </button>
+              {!joinSeat && (
+                <p className="text-[10px] text-muted-foreground">
+                  Your email isn&apos;t on this round&apos;s invite, so you&apos;ll join unlabeled.
+                </p>
+              )}
             </>
           )}
 

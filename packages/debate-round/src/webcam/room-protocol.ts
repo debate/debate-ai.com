@@ -33,10 +33,19 @@ export const MAX_MESSAGE_BYTES = 64 * 1024;
 
 export type RoomRole = "speaker" | "judge" | "observer";
 
+/**
+ * Where a participant sits in the round, inferred from the invite list (see
+ * `room-seat.ts`): "1A" / "2A" / "1N" / "2N" for debaters, "1J", "2J"… for
+ * judges. Spectators have none.
+ */
+export type RoomSeat = string;
+
 export interface RoomPeer {
   id: string;
   name: string;
   role: RoomRole;
+  /** Seat code shown on the participant's tile; absent for spectators. */
+  seat?: RoomSeat;
   /** A data-only socket: room events, no camera, never part of the mesh. */
   data?: boolean;
 }
@@ -68,6 +77,14 @@ export function normalizeRoomId(raw: string): string | null {
 
 export function normalizeRole(raw: string | null | undefined): RoomRole {
   return ROLES.includes(raw as RoomRole) ? (raw as RoomRole) : "speaker";
+}
+
+const SEAT_PATTERN = /^(?:[12][AN]|[1-9]\d?J)$/;
+
+/** Validates a seat code from the socket URL; undefined for anything else. */
+export function normalizeSeat(raw: string | null | undefined): RoomSeat | undefined {
+  const seat = (raw ?? "").trim().toUpperCase();
+  return SEAT_PATTERN.test(seat) ? seat : undefined;
 }
 
 /** Parses and validates a browser message; null for anything malformed. */

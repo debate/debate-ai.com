@@ -45,6 +45,11 @@ site's cloud storage.
   **Cameras** room are each recorded separately from what your browser
   receives. In playback, every debater's clip for the current speech plays in
   step with the MP3.
+- **Seats on camera tiles.** You don't pick how you join the **Cameras**
+  room. Your signed-in email (or name) is matched against the round's invite
+  list, and your tile is labeled with your seat: **1A**, **2A**, **1N**,
+  **2N** for the debaters in speaker order, **1J**, **2J** and so on for the
+  judges. If you aren't on the invite, you join as a spectator with no label.
 - **Save to cloud.** Uploads the MP3, captions, webcam clips and a manifest to
   a private R2 bucket under your account. Only you can stream them back.
   Nothing uploads until you press the button.
@@ -55,3 +60,6 @@ site's cloud storage.
 - Cloud copies are per account; other debaters see the round only from their
   own uploads.
 - Files over 95 MB (about 25 minutes of webcam video) are refused.
+- A camera seat is declared by the joining browser, not checked by the
+  server, and there is no manual override for someone missing from the
+  invite.
