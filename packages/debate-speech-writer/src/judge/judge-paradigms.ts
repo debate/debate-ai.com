@@ -23,6 +23,33 @@ export type JudgeParadigm = {
   instructions: string;
 };
 
+export type JudgeWeightKey = "k" | "traditional" | "natcircuit" | "theoryHeavy";
+
+export type JudgeWeights = Record<JudgeWeightKey, number>;
+
+export const DEFAULT_JUDGE_WEIGHT_PRESETS: Record<string, JudgeWeights> = {
+  balanced: {
+    k: 5,
+    traditional: 5,
+    natcircuit: 5,
+    theoryHeavy: 5,
+  },
+  tech: {
+    k: 3,
+    traditional: 8,
+    natcircuit: 6,
+    theoryHeavy: 4,
+  },
+  kritik: {
+    k: 9,
+    traditional: 3,
+    natcircuit: 4,
+    theoryHeavy: 8,
+  },
+};
+
+export const DEFAULT_JUDGE_WEIGHTS: JudgeWeights = { ...DEFAULT_JUDGE_WEIGHT_PRESETS.balanced };
+
 const JudgeParadigm = `
 ## I. Overall Philosophy
 
@@ -262,7 +289,7 @@ export const judgeParadigms: Record<BuiltinJudgeParadigmId, JudgeParadigm> = {
     id: "policymaker",
     name: "Tech Over Truth Policymaker",
     description:
-      "A policymaker who judges strictly off the flow: compares the plan, counterplans, and status quo on net benefits, and treats dropped arguments as true for the round rather than importing outside opinion.",
+      "Uses the full main judge paradigm as the base with a policy/tech-focused lens.",
     votingPriorities: [
       "Dropped or conceded arguments, as extended on the flow",
       "Net benefits of plan vs. counterplan vs. status quo",
@@ -272,14 +299,14 @@ export const judgeParadigms: Record<BuiltinJudgeParadigmId, JudgeParadigm> = {
     speedTolerance: "high",
     jargonTolerance: "high",
     instructions:
-      "Vote tech over truth: evaluate only what was said and extended on the flow, and treat any argument the opposing team failed to answer as true for the round. Then compare the competing policy options on net benefits: whichever advocacy produces the best outcome after solvency and risk are weighed wins. Do not import outside knowledge or personal opinion. " +
+      MAIN_JUDGE_PARADIGM +
+      "\n\nAdditional emphasis: Vote tech over truth: evaluate only what was said and extended on the flow, and treat any argument the opposing team failed to answer as true for the round. Then compare the competing policy options on net benefits. " +
       SPEAKER_POINTS_POLICY,
   },
   critic: {
     id: "critic",
     name: "Critique (K) Judge",
-    description:
-      "Evaluates the round through a critical lens, prioritizing the framework, representations, and methodology debaters establish over traditional policy impact calculus.",
+    description: "Uses the full main judge paradigm as the base with a kritik/theory-forward lens.",
     votingPriorities: [
       "Which framework for evaluating the round wins",
       "Representations, discourse, and methodology",
@@ -289,14 +316,14 @@ export const judgeParadigms: Record<BuiltinJudgeParadigmId, JudgeParadigm> = {
     speedTolerance: "medium",
     jargonTolerance: "high",
     instructions:
-      "Resolve the framework debate first: whichever team wins how the round should be evaluated determines which impacts and links matter. A kritik needs a specific link, an impact, and an explained alternative or ballot implication; terminology is not a substitute for explanation. Do not default to policy impact calculus unless no framework argument is won clearly. " +
+      MAIN_JUDGE_PARADIGM +
+      "\n\nAdditional emphasis: Resolve the framework debate first; whichever team wins how the round should be evaluated determines which impacts and links matter. A kritik needs a specific link, an impact, and an explained alternative or ballot implication; terminology is not a substitute for explanation. " +
       SPEAKER_POINTS_POLICY,
   },
   "common-sense": {
     id: "common-sense",
     name: "Middle-Ground Flow Judge",
-    description:
-      "Flows the round and gives conceded arguments real weight, but applies common sense: a dropped argument only wins as far as it is warranted and credible, and clear explanation beats speed or tricks.",
+    description: "Uses the full main judge paradigm as the base with a middle-ground flow approach.",
     votingPriorities: [
       "Clear, warranted arguments extended on the flow",
       "Comparative weighing that is explained, not just asserted",
@@ -306,7 +333,8 @@ export const judgeParadigms: Record<BuiltinJudgeParadigmId, JudgeParadigm> = {
     speedTolerance: "medium",
     jargonTolerance: "medium",
     instructions:
-      "Judge off the flow, but with common sense. Give conceded arguments substantial weight only to the extent they were warranted and explained; do not let an implausible or unwarranted dropped claim win the round on its own. Reward teams that engage their opponents' strongest arguments and explain why their comparison resolves the round. " +
+      MAIN_JUDGE_PARADIGM +
+      "\n\nAdditional emphasis: Judge off the flow with common sense - give conceded arguments weight only as far as warranted and explained; reward teams that engage opponents' strongest arguments and explain why their comparison resolves the round. " +
       SPEAKER_POINTS_POLICY,
   },
 };
@@ -386,7 +414,9 @@ export type CustomJudgeParadigmInput = {
   /** Judge's name or how they'd like the paradigm labeled, e.g. "Judge Smith". */
   name: string;
   /** The judge's own publicly stated preferences/paradigm card text. */
-  notes: string;
+  notes?: string;
+  /** Weights for panel sliders (1-10). */
+  weights?: Partial<JudgeWeights>;
 };
 
 /** Strips ASCII control characters (keeping tab/newline/carriage-return),
@@ -405,28 +435,42 @@ function sanitizeText(raw: string, maxLength: number): string {
 
 /**
  * Builds a "custom" judge paradigm from a real judge's publicly provided
- * preferences (e.g. text copied from a paradigm card). Unlike the built-in
- * paradigms, voting priorities aren't structured — the judge's notes are
- * carried verbatim (sanitized) into `instructions` for the AI prompt to use.
- *
- * Throws if `name` or `notes` is empty after sanitization, since a custom
- * paradigm with no actual preferences isn't meaningful.
+ * preferences (e.g. text copied from a paradigm card). Uses the main long
+ * judge paradigm as the base and applies weight sliders for K vs traditional
+ * vs natcircuit vs theory heavy on a panel.
  */
 export function buildCustomJudgeParadigm(input: CustomJudgeParadigmInput): JudgeParadigm {
   const name = sanitizeText(input.name, MAX_CUSTOM_NAME_LENGTH);
-  const notes = sanitizeText(input.notes, MAX_CUSTOM_NOTES_LENGTH);
+  const notes = input.notes !== undefined ? sanitizeText(input.notes, MAX_CUSTOM_NOTES_LENGTH) : "";
 
   if (!name) throw new Error("buildCustomJudgeParadigm: name is required");
-  if (!notes) throw new Error("buildCustomJudgeParadigm: notes are required");
+
+  const weights: JudgeWeights = {
+    k: input.weights?.k ?? DEFAULT_JUDGE_WEIGHTS.k,
+    traditional: input.weights?.traditional ?? DEFAULT_JUDGE_WEIGHTS.traditional,
+    natcircuit: input.weights?.natcircuit ?? DEFAULT_JUDGE_WEIGHTS.natcircuit,
+    theoryHeavy: input.weights?.theoryHeavy ?? DEFAULT_JUDGE_WEIGHTS.theoryHeavy,
+  };
+
+  const weightNote = `\n\nPanel weights (1-10): Kritik (K)=${weights.k}, Traditional=${weights.traditional}, NatCircuit=${weights.natcircuit}, Theory Heavy=${weights.theoryHeavy}. Prioritize evaluation accordingly based on these weights.`;
+
+  const instructions = notes
+    ? MAIN_JUDGE_PARADIGM + "\n\nCustom judge preferences:\n" + notes + weightNote + "\n\n" + SPEAKER_POINTS_POLICY
+    : MAIN_JUDGE_PARADIGM + weightNote + "\n\n" + SPEAKER_POINTS_POLICY;
 
   return {
     id: "custom",
     name: `Custom: ${name}`,
-    description: `A custom paradigm built from ${name}'s own publicly stated judging preferences.`,
-    votingPriorities: [],
+    description: `A custom panel judge built from ${name}'s preferences with adjustable weights.`,
+    votingPriorities: [
+      "Arguments weighted by judge's panel sliders (K / Traditional / NatCircuit / Theory Heavy)",
+      "Dropped or conceded arguments as extended",
+      "Comparative weighing and impacts",
+      "Framework/theory when it controls the ballot",
+    ],
     speedTolerance: "medium",
     jargonTolerance: "medium",
-    instructions: notes,
+    instructions,
   };
 }
 
