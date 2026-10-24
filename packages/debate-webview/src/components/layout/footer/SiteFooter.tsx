@@ -137,11 +137,11 @@ export function SiteFooter() {
           {/* The mark, not the wordmark alone: it is the one place the footer
               repeats the app's own identity, and `DebateAiLogo` is what the hero
               above it opens with. */}
-          <img src={DebateAiLogo} alt={APP_NAME} className="mb-4 h-8 w-auto" />
-          <p className="max-w-xs text-sm leading-relaxed">
+          {/* <img src={DebateAiLogo} alt={APP_NAME} className="mb-4 h-8 w-auto" /> */}
+          {/* <p className="max-w-xs text-sm leading-relaxed">
             Cut, flow, drill, debate — the whole round, from first card to final
             ballot.
-          </p>
+          </p> */}
         </div>
 
         <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-7">
