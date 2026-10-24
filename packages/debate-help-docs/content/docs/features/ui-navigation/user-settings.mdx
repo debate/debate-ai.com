@@ -326,14 +326,12 @@ allowlist and the video watch history are left out, and `total` includes them.
 
 For documents, flows, rounds and practice debates, a **Manage** button next to
 the count lists those items newest first (title only, up to 100) with an **Export**
-download and a **Delete** action behind a confirmation. Documents also link to the
-editor. **Export** saves one item as a JSON file
-(`{ kind, id, title, createdAt, updatedAt, data }`); `GET
-/api/settings/saved-data/[kind]?id=<n>` returns it as an attachment, `404` when the
-row isn't the caller's. The routes live in `saved-data-items.ts` and only ever touch
-rows owned by the signed-in user.
+link (downloads that one item's full content as a JSON file) and a **Delete**
+action behind a confirmation. Documents also link to the editor. This is backed by
+`GET` (`?id=<n>` exports one row via `exportOwnSavedItem`) / `DELETE`
+`/api/settings/saved-data/[kind]` (`saved-data-items.ts`), which only ever touches rows owned by the signed-in user.
 
-Known gaps: export is JSON only (no `.docx` for documents); only the newest 100 items of a kind
+Known gaps: export is per item (no bulk export); only the newest 100 items of a kind
 are listed; flows, rounds and practice debates have no stable open link.
 
 ## Known gaps

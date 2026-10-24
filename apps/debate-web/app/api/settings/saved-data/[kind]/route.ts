@@ -6,8 +6,7 @@ import { deleteOwnSavedItem, exportOwnSavedItem, isItemKind, listOwnSavedItems }
 /**
  * GET    — titles of the signed-in user's saved docs / flows / rounds /
  *          practiceRounds, newest first (no content).
- * GET ?id=<n> — one of the caller's own rows with its full content, as a JSON
- *          download; 404 if it isn't theirs.
+ *        ?id=<n> — instead downloads that one row's full content as JSON; 404 if it isn't theirs.
  * DELETE ?id=<n> — removes one of the caller's own rows; 404 if it isn't theirs.
  */
 export async function GET(req: NextRequest, { params }: { params: Promise<{ kind: string }> }) {
@@ -20,14 +19,10 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ kind
   if (rawId !== null) {
     const id = Number(rawId)
     if (!Number.isInteger(id)) return NextResponse.json({ error: "Invalid id." }, { status: 400 })
-    const exported = await exportOwnSavedItem(db, userId, kind, id)
-    if (!exported) return NextResponse.json({ error: "Saved item not found." }, { status: 404 })
-    return new NextResponse(exported.body, {
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-        "Content-Disposition": `attachment; filename="${exported.filename}"`,
-        "Cache-Control": "private, no-store",
-      },
+    const file = await exportOwnSavedItem(db, userId, kind, id)
+    if (!file) return NextResponse.json({ error: "Saved item not found." }, { status: 404 })
+    return new NextResponse(file.body, {
+      headers: { "Content-Type": "application/json", "Content-Disposition": `attachment; filename="${file.filename}"` },
     })
   }
   return NextResponse.json({ items: await listOwnSavedItems(db, userId, kind) })
