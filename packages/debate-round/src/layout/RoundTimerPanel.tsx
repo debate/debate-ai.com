@@ -28,7 +28,7 @@ import type { DebateStyle, TimerSpeech, TimerState } from "@debate-ai/timer/src/
 import { cn } from "../ui/lib/utils"
 import type { SpeechTimerEntry } from "../hooks/useTimerState"
 
-type Focus = "speech" | "aff" | "neg"
+type Focus = "speech" | "cx" | "aff" | "neg"
 
 export interface RoundTimerPanelProps {
   debateStyle: DebateStyle
@@ -48,6 +48,11 @@ export function accentForSpeech(speech: Pick<TimerSpeech, "name" | "secondary"> 
   if (speech.secondary || /cx|cross/i.test(speech.name)) return "crossx"
   if (/R$|rebuttal|summary|focus/i.test(speech.name)) return "rebuttal"
   return "constructive"
+}
+
+/** The format's cross-ex timer (every CX shares one name, so one clock), if it has one. */
+export function crossExSpeech(debateStyle: Pick<DebateStyle, "timerSpeeches">): TimerSpeech | undefined {
+  return debateStyle.timerSpeeches.find((s) => s.cxRoles || /^cx$|cross/i.test(s.name))
 }
 
 /** Time left on a timer right now, counting a running one down from when it started. */
@@ -121,21 +126,33 @@ export function RoundTimerPanel({
 
   const speech = debateStyle.timerSpeeches.find((s) => s.name.toUpperCase() === selectedSpeech.toUpperCase())
   const speechEntry = getSpeechTimerState(selectedSpeech)
+  // A cross-ex clock beside the speech, unless the speech in view is the cross-ex.
+  const cx = crossExSpeech(debateStyle)
+  const cxName = cx && cx.name.toUpperCase() !== selectedSpeech.toUpperCase() ? cx.name : null
+  const cxEntry = cxName ? getSpeechTimerState(cxName) : null
 
   const autoFocus: Focus =
     prepState?.state.name === "running" ? "aff" : prepSecondaryState?.state.name === "running" ? "neg" : "speech"
   let focus: Focus = pickedFocus ?? autoFocus
-  if ((focus === "aff" && !prepState) || (focus === "neg" && !prepSecondaryState)) focus = "speech"
+  if ((focus === "aff" && !prepState) || (focus === "neg" && !prepSecondaryState) || (focus === "cx" && !cxEntry))
+    focus = "speech"
 
   const shown: SpeechTimerEntry =
-    focus === "aff" && prepState ? prepState : focus === "neg" && prepSecondaryState ? prepSecondaryState : speechEntry
-  const anyRunning = [speechEntry, prepState, prepSecondaryState].some((t) => t?.state.name === "running")
+    focus === "aff" && prepState
+      ? prepState
+      : focus === "neg" && prepSecondaryState
+        ? prepSecondaryState
+        : focus === "cx" && cxEntry
+          ? cxEntry
+          : speechEntry
+  const anyRunning = [speechEntry, cxEntry, prepState, prepSecondaryState].some((t) => t?.state.name === "running")
   const now = useNow(anyRunning)
 
   const left = remainingMs(shown, now)
   const progress = shown.resetTime > 0 ? 1 - left / shown.resetTime : 0
   const ticking = shown.state.name === "running"
-  const label = focus === "aff" ? "Aff prep" : focus === "neg" ? "Neg prep" : selectedSpeech
+  const label =
+    focus === "aff" ? "Aff prep" : focus === "neg" ? "Neg prep" : focus === "cx" && cxName ? cxName : selectedSpeech
 
   const pauseIfRunning = (entry: TimerState | null) =>
     entry && entry.state.name === "running" ? toggledEntry(entry, Date.now()) : entry
@@ -144,12 +161,15 @@ export function RoundTimerPanel({
     const at = Date.now()
     const next = toggledEntry(shown, at)
     const starting = next.state.name === "running"
-    if (focus === "speech") {
-      setSpeechTimerState(selectedSpeech, next)
-      // A speech starting ends any prep that was running.
+    if (focus === "speech" || focus === "cx") {
+      const name = focus === "cx" && cxName ? cxName : selectedSpeech
+      setSpeechTimerState(name, next)
+      // A speech or cross-ex starting ends any prep that was running, and the other of the two.
       if (starting) {
         setPrepState(pauseIfRunning)
         setPrepSecondaryState(pauseIfRunning)
+        const other = focus === "cx" ? { name: selectedSpeech, entry: speechEntry } : cxName && cxEntry && { name: cxName, entry: cxEntry }
+        if (other && other.entry.state.name === "running") setSpeechTimerState(other.name, toggledEntry(other.entry, at))
       }
       return
     }
@@ -159,9 +179,10 @@ export function RoundTimerPanel({
     if (starting) {
       setOther(pauseIfRunning)
       if (speechEntry.state.name === "running") setSpeechTimerState(selectedSpeech, toggledEntry(speechEntry, at))
+      if (cxName && cxEntry?.state.name === "running") setSpeechTimerState(cxName, toggledEntry(cxEntry, at))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shown, focus, selectedSpeech, speechEntry, setSpeechTimerState, setPrepState, setPrepSecondaryState])
+  }, [shown, focus, selectedSpeech, speechEntry, cxName, cxEntry, setSpeechTimerState, setPrepState, setPrepSecondaryState])
 
   const prepButton = (which: "aff" | "neg", entry: TimerState | null) =>
     entry && {
@@ -181,11 +202,11 @@ export function RoundTimerPanel({
       // The speech name stays off the face; only a prep clock is labelled.
       title={focus === "speech" ? undefined : label}
       ticking={ticking}
-      accent={focus === "speech" ? accentForSpeech(speech) : focus}
+      accent={focus === "speech" ? accentForSpeech(speech) : focus === "cx" ? "crossx" : focus}
       onToggle={toggle}
       countLabel={`${label} time remaining`}
-      speechButtons={
-        focus === "speech"
+      speechButtons={[
+        ...(focus === "speech"
           ? []
           : [
               {
@@ -195,8 +216,20 @@ export function RoundTimerPanel({
                 title: "Show the speech timer",
                 onClick: () => setPickedFocus("speech"),
               },
+            ]),
+        ...(cxEntry
+          ? [
+              {
+                key: "cx",
+                label: formatCircularTimerCount(remainingMs(cxEntry, now)),
+                accent: "crossx" as const,
+                active: focus === "cx",
+                title: "Cross-ex",
+                onClick: () => setPickedFocus("cx"),
+              },
             ]
-      }
+          : []),
+      ]}
       prepButtons={[prepButton("aff", prepState), prepButton("neg", prepSecondaryState)].filter(
         (b): b is NonNullable<typeof b> => Boolean(b),
       )}

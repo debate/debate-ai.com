@@ -10,6 +10,7 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 import { cleanup, mount, run } from "./dom-helpers"
 import {
   accentForSpeech,
+  crossExSpeech,
   remainingMs,
   RoundTimerPanel,
   toggledEntry,
@@ -42,6 +43,11 @@ describe("timer maths", () => {
     expect(accentForSpeech({ name: "1AR", secondary: false })).toBe("rebuttal")
     expect(accentForSpeech({ name: "1AC", secondary: false })).toBe("constructive")
   })
+
+  it("finds the format's cross-ex timer", () => {
+    expect(crossExSpeech({ timerSpeeches: [{ name: "1AC", time: 8, secondary: false }, { name: "CX", time: 3, secondary: false }] })?.name).toBe("CX")
+    expect(crossExSpeech({ timerSpeeches: [{ name: "Speech", time: 4, secondary: false }] })).toBeUndefined()
+  })
 })
 
 const style = {
@@ -59,7 +65,9 @@ function Harness() {
   const get = (name: string) => speeches[name] ?? { time: 480_000, resetTime: 480_000, state: { name: "paused" as const } }
   return (
     <>
-      <output data-testid="state">{JSON.stringify({ speech: get("1AC").state.name, prep: prep?.state.name })}</output>
+      <output data-testid="state">
+        {JSON.stringify({ speech: get("1AC").state.name, cx: get("CX").state.name, prep: prep?.state.name })}
+      </output>
       <RoundTimerPanel
         debateStyle={style}
         selectedSpeech="1AC"
@@ -83,13 +91,29 @@ describe("RoundTimerPanel", () => {
     expect((document.querySelector(".dt-ctimer input") as HTMLInputElement).value).toBe("8:00")
 
     await run(() => (document.querySelector(".dt-ctimer") as HTMLElement).click())
-    expect(state()).toEqual({ speech: "running", prep: "paused" })
+    expect(state()).toEqual({ speech: "running", cx: "paused", prep: "paused" })
 
     // Switch the dial to aff prep and start it.
     const affButton = Array.from(document.querySelectorAll(".dt-ctimer button")).find((b) => b.getAttribute("title") === "Aff prep")!
     await run(() => (affButton as HTMLElement).click())
     await run(() => (document.querySelector(".dt-ctimer") as HTMLElement).click())
-    expect(state()).toEqual({ speech: "paused", prep: "running" })
+    expect(state()).toEqual({ speech: "paused", cx: "paused", prep: "running" })
+  })
+
+  it("shows the cross-ex clock on the dial, without the speech name", async () => {
+    await mount(<Harness />)
+    expect(document.querySelector(".dt-ctimer__title")!.textContent).toBe("")
+    const cxButton = document.querySelector('.dt-ctimer button[title="Cross-ex"]') as HTMLButtonElement
+    expect(cxButton.textContent).toBe("8:00")
+
+    await run(() => (document.querySelector(".dt-ctimer") as HTMLElement).click())
+    await run(() => cxButton.click())
+    expect(document.querySelector('.dt-ctimer [aria-label="CX time remaining"]')).not.toBeNull()
+    await run(() => (document.querySelector(".dt-ctimer") as HTMLElement).click())
+    expect(state()).toEqual({ speech: "paused", cx: "running", prep: "paused" })
+
+    await run(() => (document.querySelector('.dt-ctimer button[title="Show the speech timer"]') as HTMLElement).click())
+    expect(document.querySelector('.dt-ctimer [aria-label="1AC time remaining"]')).not.toBeNull()
   })
 
   it("collapses, and pops out to a floating dial without Picture-in-Picture", async () => {
