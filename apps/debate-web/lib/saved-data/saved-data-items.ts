@@ -138,3 +138,20 @@ export async function exportOwnSavedItem(db: AccountDB, userId: string, kind: It
     }
   }
 }
+
+export interface SavedDataArchive {
+  filename: string;
+  /** JSON document: `{ exportedAt, limitPerKind, docs: [...], flows: [...], rounds: [...], practiceRounds: [...] }`. */
+  body: string;
+}
+
+/** Every kind's newest `MAX_ITEMS` rows of the caller's work, with full content, as one downloadable JSON archive. */
+export async function exportAllOwnSavedData(db: AccountDB, userId: string, now = new Date()): Promise<SavedDataArchive> {
+  const archive: Record<string, unknown> = { exportedAt: now.toISOString(), limitPerKind: MAX_ITEMS };
+  for (const kind of ITEM_KINDS) {
+    const items = await listOwnSavedItems(db, userId, kind);
+    const files = await Promise.all(items.map((item) => exportOwnSavedItem(db, userId, kind, item.id)));
+    archive[kind] = files.flatMap((file) => (file ? [JSON.parse(file.body) as unknown] : []));
+  }
+  return { filename: `debate-ai-saved-data-${now.toISOString().slice(0, 10)}.json`, body: JSON.stringify(archive, null, 2) };
+}

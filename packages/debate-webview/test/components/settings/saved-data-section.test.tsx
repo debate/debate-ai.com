@@ -43,6 +43,14 @@ describe("SavedDataSection", () => {
     expect(host.textContent).toContain("Flows")
   })
 
+  it("links to the bulk export only when something is saved", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true, json: async () => ({ total: 1, items: [{ key: "docs", label: "Documents", count: 1 }] }) }))
+    expect((await mount()).querySelector('a[href="/api/settings/saved-data?export=all"]')).not.toBeNull()
+    document.body.innerHTML = ""
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true, json: async () => ({ total: 0, items: [{ key: "docs", label: "Documents", count: 0 }] }) }))
+    expect((await mount()).querySelector('a[href*="export=all"]')).toBeNull()
+  })
+
   it("lists synced tool collections under a Tool data heading when present", async () => {
     vi.stubGlobal(
       "fetch",

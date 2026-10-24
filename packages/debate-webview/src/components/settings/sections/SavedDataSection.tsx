@@ -182,6 +182,11 @@ export function SavedDataSection() {
           ))}
         </dl>
       )}
+      {state.status === "ready" && signedIn && state.summary.total > 0 && (
+        <a href="/api/settings/saved-data?export=all" download className="mt-3 inline-block text-xs underline">
+          Export all as JSON
+        </a>
+      )}
       {state.status === "ready" && signedIn && (state.summary.tools?.length ?? 0) > 0 && (
         <>
           <h5 className="mb-1 mt-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
