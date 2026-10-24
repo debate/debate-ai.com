@@ -332,12 +332,13 @@ collection, labelled from `TOOL_RECORD_COLLECTIONS`; keys no longer in that
 allowlist and the video watch history are left out, and `total` includes them.
 
 For documents, flows, rounds and practice debates, a **Manage** button next to
-the count lists those items newest first (title only, up to 100) with a **Delete**
+the count lists those items newest first (title only, up to 100) with an **Export**
+link (downloads that one item's full content as a JSON file) and a **Delete**
 action behind a confirmation. Documents also link to the editor. This is backed by
-`GET` / `DELETE /api/settings/saved-data/[kind]` (`saved-data-items.ts`), which
-only ever touches rows owned by the signed-in user.
+`GET` (`?id=<n>` exports one row via `exportOwnSavedItem`) / `DELETE`
+`/api/settings/saved-data/[kind]` (`saved-data-items.ts`), which only ever touches rows owned by the signed-in user.
 
-Known gaps: no export from this section yet; only the newest 100 items of a kind
+Known gaps: export is per item (no bulk export); only the newest 100 items of a kind
 are listed; flows, rounds and practice debates have no stable open link.
 
 ## Known gaps

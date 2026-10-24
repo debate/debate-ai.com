@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
 import { documents, savedFlows, user } from "../../database/schema";
-import { deleteOwnSavedItem, isItemKind, listOwnSavedItems } from "../saved-data-items";
+import { deleteOwnSavedItem, exportOwnSavedItem, isItemKind, listOwnSavedItems } from "../saved-data-items";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -47,8 +47,65 @@ describe("saved item management", () => {
     expect(await listOwnSavedItems(db, "b", "flows")).toHaveLength(1);
   });
 
+  it("exports a flow's full content and refuses another user's or a missing row", async () => {
+    const db = await freshDb();
+    await db.insert(savedFlows).values([
+      { userId: "a", clientId: 3, label: "NSDA Finals: Aff!", data: '{"cells":[1]}' },
+      { userId: "b", clientId: 4, data: "{}" },
+    ]);
+    const out = await exportOwnSavedItem(db, "a", "flows", 3);
+    expect(out?.filename).toBe("nsda-finals-aff-3.json");
+    expect(JSON.parse(out!.body)).toMatchObject({ kind: "flows", id: 3, title: "NSDA Finals: Aff!", data: { cells: [1] } });
+    expect(await exportOwnSavedItem(db, "a", "flows", 4)).toBeNull();
+    expect(await exportOwnSavedItem(db, "a", "flows", 99)).toBeNull();
+  });
+
+  it("exports a doc with its format and skips folders; keeps non-JSON data as text", async () => {
+    const db = await freshDb();
+    const [doc, folder] = await db
+      .insert(documents)
+      .values([{ title: "", content: "<p>hi</p>", userId: "a" }, { title: "F", userId: "a", isFolder: true }])
+      .returning({ id: documents.id });
+    expect(JSON.parse((await exportOwnSavedItem(db, "a", "docs", doc.id))!.body).data).toEqual({ format: "html", content: "<p>hi</p>" });
+    expect(await exportOwnSavedItem(db, "a", "docs", folder.id)).toBeNull();
+    await db.insert(savedFlows).values({ userId: "a", clientId: 1, data: "not json" });
+    expect(JSON.parse((await exportOwnSavedItem(db, "a", "flows", 1))!.body).data).toBe("not json");
+  });
+
   it("validates kinds", () => {
     expect(isItemKind("docs")).toBe(true);
     expect(isItemKind("drills")).toBe(false);
+  });
+});
+
+describe("saved item export", () => {
+  it("exports a doc's content as JSON with a safe filename", async () => {
+    const db = await freshDb();
+    await db.insert(documents).values({ title: "NC Case / v2!", content: "<p>hi</p>", userId: "a" });
+    const [{ id }] = await listOwnSavedItems(db, "a", "docs");
+    const file = await exportOwnSavedItem(db, "a", "docs", id);
+    expect(file?.filename).toBe(`docs-${id}-nc-case-v2.json`);
+    expect(JSON.parse(file!.body)).toMatchObject({ kind: "docs", title: "NC Case / v2!", format: "html", content: "<p>hi</p>" });
+  });
+
+  it("parses stored flow JSON, and keeps non-JSON data as a string", async () => {
+    const db = await freshDb();
+    await db.insert(savedFlows).values([
+      { userId: "a", clientId: 1, label: "Aff", data: '{"cells":[1]}' },
+      { userId: "a", clientId: 2, data: "not json" },
+    ]);
+    expect(JSON.parse((await exportOwnSavedItem(db, "a", "flows", 1))!.body).data).toEqual({ cells: [1] });
+    const raw = JSON.parse((await exportOwnSavedItem(db, "a", "flows", 2))!.body);
+    expect(raw).toMatchObject({ title: "Untitled flow", data: "not json" });
+  });
+
+  it("returns null for another user's, a missing, or a folder row", async () => {
+    const db = await freshDb();
+    await db.insert(savedFlows).values({ userId: "b", clientId: 1, data: "{}" });
+    await db.insert(documents).values({ title: "Folder", userId: "a", isFolder: true });
+    const [folder] = await db.select().from(documents);
+    expect(await exportOwnSavedItem(db, "a", "flows", 1)).toBeNull();
+    expect(await exportOwnSavedItem(db, "a", "flows", 99)).toBeNull();
+    expect(await exportOwnSavedItem(db, "a", "docs", folder.id)).toBeNull();
   });
 });

@@ -84,3 +84,57 @@ export async function deleteOwnSavedItem(db: AccountDB, userId: string, kind: It
       return (await db.delete(practiceVsAiDebates).where(and(eq(practiceVsAiDebates.id, id), eq(practiceVsAiDebates.userId, userId))).returning({ id: practiceVsAiDebates.id })).length > 0;
   }
 }
+
+export interface SavedItemExport {
+  /** Suggested download name, already safe for a `Content-Disposition` header. */
+  filename: string;
+  /** JSON document: `{ kind, id, title, createdAt, updatedAt, ... }` plus the stored content. */
+  body: string;
+}
+
+const slug = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60) || "item";
+
+/** Stored `data` columns are JSON text; hand back the parsed value, or the raw string if it isn't JSON. */
+const parseData = (raw: string): unknown => {
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return raw;
+  }
+};
+
+/** Full content of one of the caller's own rows as a downloadable JSON file; null if it doesn't exist or isn't theirs. */
+export async function exportOwnSavedItem(db: AccountDB, userId: string, kind: ItemKind, id: number): Promise<SavedItemExport | null> {
+  const build = (title: string, createdAt: Date | null, updatedAt: Date | null, extra: Record<string, unknown>): SavedItemExport => ({
+    filename: `${kind}-${id}-${slug(title)}.json`,
+    body: JSON.stringify({ kind, id, title, createdAt: iso(createdAt), updatedAt: iso(updatedAt), ...extra }, null, 2),
+  });
+  switch (kind) {
+    case "docs": {
+      const [row] = await db
+        .select()
+        .from(documents)
+        .where(and(eq(documents.id, id), eq(documents.userId, userId), eq(documents.isFolder, false)))
+        .limit(1);
+      return row ? build(row.title || "Untitled", row.createdAt, row.updatedAt, { format: row.format, content: row.content }) : null;
+    }
+    case "flows": {
+      const [row] = await db.select().from(savedFlows).where(and(eq(savedFlows.clientId, id), eq(savedFlows.userId, userId))).limit(1);
+      return row ? build(row.label || "Untitled flow", row.createdAt, row.updatedAt, { data: parseData(row.data) }) : null;
+    }
+    case "rounds": {
+      const [row] = await db.select().from(savedRounds).where(and(eq(savedRounds.clientId, id), eq(savedRounds.userId, userId))).limit(1);
+      return row ? build(row.label || "Untitled round", row.createdAt, row.updatedAt, { data: parseData(row.data) }) : null;
+    }
+    case "practiceRounds": {
+      const [row] = await db
+        .select()
+        .from(practiceVsAiDebates)
+        .where(and(eq(practiceVsAiDebates.id, id), eq(practiceVsAiDebates.userId, userId)))
+        .limit(1);
+      return row
+        ? build(row.topic || "Practice debate", row.createdAt, row.updatedAt, { botName: row.botName, result: row.result, outcome: row.outcome, data: parseData(row.data) })
+        : null;
+    }
+  }
+}
