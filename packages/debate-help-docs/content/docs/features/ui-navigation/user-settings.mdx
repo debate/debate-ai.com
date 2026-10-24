@@ -342,8 +342,12 @@ An **Export all as JSON** link under the counts downloads every kind at once
 (`GET /api/settings/saved-data?export=all` → `exportAllOwnSavedData`): one file with
 `docs`, `flows`, `rounds` and `practiceRounds` arrays holding each item's full content.
 
-Known gaps: bulk export, like the list, covers only the newest 100 items of a kind
-(`limitPerKind` in the file says so); flows, rounds and practice debates have no stable open link.
+Bulk export pages past the 100-row Manage list: it reads up to `MAX_EXPORT_ITEMS` (1000)
+newest items per kind (`limitPerKind` in the file). A kind with more than that is cut off
+and named in the file's `truncated` array.
+
+Known gaps: the Manage list itself still shows only the newest 100 items; accounts beyond
+1000 items of one kind need that kind exported per item; rounds and practice debates have no stable open link.
 
 ## Known gaps
 
