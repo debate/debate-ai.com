@@ -331,8 +331,12 @@ action behind a confirmation. Documents also link to the editor. This is backed 
 `GET` (`?id=<n>` exports one row via `exportOwnSavedItem`) / `DELETE`
 `/api/settings/saved-data/[kind]` (`saved-data-items.ts`), which only ever touches rows owned by the signed-in user.
 
-Known gaps: export is per item (no bulk export); only the newest 100 items of a kind
-are listed; flows, rounds and practice debates have no stable open link.
+An **Export all as JSON** link under the counts downloads every kind at once
+(`GET /api/settings/saved-data?export=all` → `exportAllOwnSavedData`): one file with
+`docs`, `flows`, `rounds` and `practiceRounds` arrays holding each item's full content.
+
+Known gaps: bulk export, like the list, covers only the newest 100 items of a kind
+(`limitPerKind` in the file says so); flows, rounds and practice debates have no stable open link.
 
 ## Known gaps
 
