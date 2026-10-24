@@ -100,6 +100,9 @@ describe("SavedDataSection manage", () => {
     const manage = [...host.querySelectorAll("button")].find((b) => b.textContent === "Manage")!
     await act(async () => manage.click())
     expect(host.textContent).toContain("NC case")
+    const exportLink = [...host.querySelectorAll("a")].find((a) => a.textContent === "Export")!
+    expect(exportLink.getAttribute("href")).toBe("/api/settings/saved-data/flows?id=7")
+    expect(exportLink.hasAttribute("download")).toBe(true)
     const del = [...host.querySelectorAll("button")].find((b) => b.textContent === "Delete")!
     await act(async () => del.click())
     expect(fetchMock).toHaveBeenCalledWith("/api/settings/saved-data/flows?id=7", { method: "DELETE" })

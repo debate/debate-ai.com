@@ -84,3 +84,78 @@ export async function deleteOwnSavedItem(db: AccountDB, userId: string, kind: It
       return (await db.delete(practiceVsAiDebates).where(and(eq(practiceVsAiDebates.id, id), eq(practiceVsAiDebates.userId, userId))).returning({ id: practiceVsAiDebates.id })).length > 0;
   }
 }
+
+export interface SavedItemExport {
+  /** Suggested download name, without path characters. */
+  filename: string;
+  /** Pretty-printed JSON envelope: `{ kind, id, title, createdAt, updatedAt, data }`. */
+  body: string;
+}
+
+const safeFilename = (title: string, kind: ItemKind, id: number) => {
+  const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60);
+  return `${slug || kind}-${id}.json`;
+};
+
+/** Stored `data` columns are JSON text; fall back to the raw string if one isn't. */
+const parseData = (raw: string): unknown => {
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return raw;
+  }
+};
+
+/** One of the caller's own rows with its full content, or null when it doesn't exist or isn't theirs. */
+export async function exportOwnSavedItem(db: AccountDB, userId: string, kind: ItemKind, id: number): Promise<SavedItemExport | null> {
+  let title: string;
+  let createdAt: Date | null;
+  let updatedAt: Date | null;
+  let data: unknown;
+  switch (kind) {
+    case "docs": {
+      const [row] = await db
+        .select()
+        .from(documents)
+        .where(and(eq(documents.id, id), eq(documents.userId, userId), eq(documents.isFolder, false)))
+        .limit(1);
+      if (!row) return null;
+      title = row.title || "Untitled";
+      ({ createdAt, updatedAt } = row);
+      data = { format: row.format, content: row.content };
+      break;
+    }
+    case "flows": {
+      const [row] = await db.select().from(savedFlows).where(and(eq(savedFlows.clientId, id), eq(savedFlows.userId, userId))).limit(1);
+      if (!row) return null;
+      title = row.label || "Untitled flow";
+      ({ createdAt, updatedAt } = row);
+      data = parseData(row.data);
+      break;
+    }
+    case "rounds": {
+      const [row] = await db.select().from(savedRounds).where(and(eq(savedRounds.clientId, id), eq(savedRounds.userId, userId))).limit(1);
+      if (!row) return null;
+      title = row.label || "Untitled round";
+      ({ createdAt, updatedAt } = row);
+      data = parseData(row.data);
+      break;
+    }
+    case "practiceRounds": {
+      const [row] = await db
+        .select()
+        .from(practiceVsAiDebates)
+        .where(and(eq(practiceVsAiDebates.id, id), eq(practiceVsAiDebates.userId, userId)))
+        .limit(1);
+      if (!row) return null;
+      title = row.topic || (row.botName ? `Debate vs ${row.botName}` : "Practice debate");
+      ({ createdAt, updatedAt } = row);
+      data = parseData(row.data);
+      break;
+    }
+  }
+  return {
+    filename: safeFilename(title, kind, id),
+    body: JSON.stringify({ kind, id, title, createdAt: iso(createdAt), updatedAt: iso(updatedAt), data }, null, 2),
+  };
+}
