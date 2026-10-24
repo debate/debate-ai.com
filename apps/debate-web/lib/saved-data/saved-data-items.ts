@@ -43,7 +43,7 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
         .where(eq(savedFlows.userId, userId))
         .orderBy(desc(savedFlows.updatedAt), desc(savedFlows.id))
         .limit(MAX_ITEMS);
-      return rows.map((r) => ({ id: r.id, title: r.label || "Untitled flow", updatedAt: iso(r.updatedAt), href: null }));
+      return rows.map((r) => ({ id: r.id, title: r.label || "Untitled flow", updatedAt: iso(r.updatedAt), href: `/debate?flowId=${r.id}` /* mirrors buildFlowOpenHref in @debate-ai/round */ }));
     }
     case "rounds": {
       const rows: Array<{ id: number; label: string; updatedAt: Date | null }> = await db

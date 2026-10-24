@@ -288,6 +288,27 @@ export function parsePrepNoteJumpParams(params: { get(name: string): string | nu
 }
 
 /**
+ * Builds a stable "open this flow" link — `/debate?flowId=N`, the
+ * `boxPath`-less form of `buildPrepNoteJumpHref`, used by Settings → Saved
+ * data to open a flow saved to the account.
+ */
+export function buildFlowOpenHref(flowId: number): string {
+  return `/debate?flowId=${flowId}`;
+}
+
+/**
+ * Parses the `flowId` query param alone (see `buildFlowOpenHref`) into a flow
+ * id. Returns `null` if it is missing or not an integer rather than throwing,
+ * since this reads caller-supplied URL state.
+ */
+export function parseFlowOpenParam(params: { get(name: string): string | null }): number | null {
+  const raw = params.get("flowId");
+  if (!raw) return null;
+  const flowId = Number(raw);
+  return Number.isInteger(flowId) ? flowId : null;
+}
+
+/**
  * Renders a short, human-readable summary of a flow's prep notes — status
  * counts plus one line per note still needing follow-up — for a prep-notes
  * panel or sync-status banner.
