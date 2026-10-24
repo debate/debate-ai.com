@@ -67,7 +67,8 @@
   - [x] `SavedDataSection` mounted in Settings → General, with Vitest
   - [x] Documented in `user-settings.mdx`
   - [x] List / open (docs) / delete individual saved docs, flows, rounds and practice debates from this section (2026-10-22, branch `claude/gifted-babbage-uf5f12`): `saved-data-items.ts`, `/api/settings/saved-data/[kind]`, **Manage** in `SavedDataSection`, with Vitest
-  - [ ] Follow-up: export an individual saved item; stable open links for flows / rounds / practice debates
+  - [x] Export an individual saved item as JSON (2026-10-24, branch `agent/todo-saved-item-export`): `exportOwnSavedItem`, `GET /api/settings/saved-data/[kind]?id=`, **Export** link in `SavedDataSection`, with Vitest
+  - [ ] Follow-up: stable open links for flows / rounds / practice debates; bulk export
   - [x] Tool Data Sync collections (`saved_tool_records`) included in the summary (branch `agent/todo-saved-data-tool-records`, Vitest in `saved-data.test.ts` + `saved-data-section.test.tsx`)
   - [ ] Follow-up: add the sync badge to open-flow tabs and the `/doc` header (existing known gap)
 
