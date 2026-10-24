@@ -236,7 +236,7 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
     ],
   },
   {
-    heading: "Mobile Setup",
+    heading: "Community",
     tools: [
       {
         href: "/coaching/laptopless", label: "Laptop-less Debating", icon: Smartphone,
@@ -247,11 +247,6 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
           "Speaking-off-your-phone checklist for round day",
         ],
       },
-    ],
-  },
-  {
-    heading: "Coaching & Analytics",
-    tools: [
       {
         href: "/coaching/rankings", label: "Team Rankings", icon: Crown,
         description: "Debate team rankings, leaderboard, and Elo ratings.",

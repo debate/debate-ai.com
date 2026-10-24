@@ -7,6 +7,10 @@ info:
 servers:
   - url: /api
     description: Next.js API routes
+  - url: https://mcp.api2mcp.com/v1/server
+    description: MCP server via API2MCP
+    variables: {}
+
 
 tags:
   - name: Cards
@@ -43,6 +47,9 @@ tags:
     description: Daily Best Card comment threads.
   - name: Leaderboard
     description: Contributor rankings.
+  - name: MCP
+    description: Model Context Protocol server endpoint for AI tools.
+
 
 paths:
   /analyze:
@@ -305,7 +312,71 @@ paths:
                   total:
                     type: integer
 
-  /sync-videos:
+  /mcp:
+    post:
+      operationId: mcpServer
+      summary: MCP server endpoint (JSON-RPC)
+      description: Model Context Protocol server endpoint for AI tools. Compatible with API2MCP.
+      tags: [MCP]
+      servers:
+        - url: https://mcp.api2mcp.com/v1/server
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - jsonrpc
+                - method
+              properties:
+                jsonrpc:
+                  type: string
+                  enum: ["2.0"]
+                method:
+                  type: string
+                params:
+                  type: object
+                  additionalProperties: true
+                id:
+                  oneOf:
+                    - type: string
+                    - type: number
+                    - type: "null"
+              additionalProperties: true
+      responses:
+        "200":
+          description: JSON-RPC response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - jsonrpc
+                properties:
+                  jsonrpc:
+                    type: string
+                    enum: ["2.0"]
+                  result:
+                    type: object
+                    additionalProperties: true
+                  error:
+                    type: object
+                    additionalProperties: true
+                  id:
+                    oneOf:
+                      - type: string
+                      - type: number
+                      - type: "null"
+                additionalProperties: true
+        default:
+          description: JSON-RPC response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+
     get:
       operationId: syncVideos
       summary: Sync debate videos from YouTube
