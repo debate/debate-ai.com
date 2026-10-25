@@ -100,6 +100,19 @@ describe("bulk export", () => {
     expect(body.practiceRounds).toEqual([]);
   });
 
+  it("flags a kind as truncated only when rows exceed the limit", async () => {
+    const db = await freshDb();
+    await db.insert(documents).values([1, 2, 3].map((n) => ({ title: `D${n}`, userId: "a", updatedAt: new Date(`2024-0${n}-01`) })));
+    await db.insert(savedFlows).values([{ userId: "a", clientId: 1, label: "F", data: "{}" }]);
+    const body = JSON.parse((await exportAllOwnSavedData(db, "a", new Date(), 2)).body);
+    expect(body.limitPerKind).toBe(2);
+    expect(body.truncated).toEqual({ docs: true, flows: false, rounds: false, practiceRounds: false });
+    expect(body.docs.map((d: { title: string }) => d.title)).toEqual(["D3", "D2"]);
+    const exact = JSON.parse((await exportAllOwnSavedData(db, "a", new Date(), 3)).body);
+    expect(exact.truncated.docs).toBe(false);
+    expect(exact.docs).toHaveLength(3);
+  });
+
   it("returns empty lists for a user with nothing saved", async () => {
     const body = JSON.parse((await exportAllOwnSavedData(await freshDb(), "a")).body);
     expect([body.docs, body.flows, body.rounds, body.practiceRounds]).toEqual([[], [], [], []]);
