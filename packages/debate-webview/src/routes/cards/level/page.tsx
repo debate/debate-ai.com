@@ -1,11 +1,6 @@
-import { DebaterLevelPanel } from "@debate-ai/community"
-import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHeader"
+import { TeamResearchPage } from "../../research/team/page"
 
+/** Old `/practice/level` address: now Team Research's "level" tab. */
 export default function CardsLevelPage() {
-  return (
-    <ToolPage>
-      <ToolPageHeader href="/practice/level" backHref="/research/cards" backLabel="shared cards" guide="research-collaboration" />
-      <DebaterLevelPanel />
-    </ToolPage>
-  )
+  return <TeamResearchPage initialSection="level" />
 }

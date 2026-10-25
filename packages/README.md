@@ -18,7 +18,9 @@ Typed SDK for the [Debate AI API](https://debate-ai.com/api), generated from
 `packages/debate-api-client/debate-openapi.yml` with Hey API. Calls run through `grab-url`
 instead of fetch/axios, so every operation gets caching, retries, rate limiting, and
 request dedupe. Each `operationId` has a matching function that resolves to
-`{ data?, error? }` and never throws on an HTTP error.
+`{ data?, error? }` and never throws on an HTTP error. It also ships `mcp-tools.json`, the
+hosted MCP server's tool list, which [api2ai](https://www.npmjs.com/package/api2ai)
+generates from the same spec (`bun run generate:mcp`); the web app serves it at `/api/mcp`.
 
 ## debate-card-parser
 
