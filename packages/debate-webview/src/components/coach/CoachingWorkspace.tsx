@@ -4,10 +4,11 @@
  * @fileoverview Coaching — the coach's tools on one tabbed page at
  * `/coaching`.
  *
- * The Coach Workspace, AI Coach Mode, Coaching Programs, the Team Calendar
- * and Coach Materials used to be five separate pages and five sidebar
- * entries (`/coaching`, `/coaching/ai-coach`, `/coaching/programs`,
- * `/coaching/calendar`, `/coaching/materials`). They now sit side by side as
+ * The Coach Workspace, AI Coach Mode, Coaching Programs, the Team Calendar,
+ * Coach Materials and the Laptop-less Debating guide used to be six separate
+ * pages and sidebar entries (`/coaching`, `/coaching/ai-coach`,
+ * `/coaching/programs`, `/coaching/calendar`, `/coaching/materials`,
+ * `/coaching/laptopless`). They now sit side by side as
  * one tab each; the old addresses redirect here with `?section=` set to the
  * matching tab.
  *
@@ -84,6 +85,14 @@ export const COACHING_SECTIONS: readonly HubSection<CoachingSectionId>[] = [
     guide: "training-tools",
     panels: [panel("Coach Materials")],
   },
+  {
+    id: "laptopless",
+    label: "Laptop-less Debating",
+    icon: Smartphone,
+    description: "Round-day setup for debating off just a phone: the recommended gear and a step-by-step prep, flow, and speaking guide.",
+    guide: "training-tools",
+    panels: [panel("Laptop-less Debating")],
+  },
 ]
 
 /**
@@ -102,7 +111,7 @@ export interface CoachingWorkspaceProps {
 }
 
 /**
- * Tabbed page over the five coaching tools.
+ * Tabbed page over the coaching tools.
  *
  * @param props - See {@link CoachingWorkspaceProps}.
  */
@@ -141,6 +150,7 @@ export function CoachingWorkspace({ initialSection }: CoachingWorkspaceProps) {
         ) : null}
         {section === "calendar" ? <TeamCalendarPanel /> : null}
         {section === "materials" ? <CoachMaterialsPanel /> : null}
+        {section === "laptopless" ? <MobileSetupPage embedded /> : null}
       </HubSectionPanel>
     </div>
   )

@@ -35,7 +35,6 @@ export const TOOL_STORAGE_OVERRIDES: Readonly<Record<string, ToolStorage>> = {
   "/word-count": { kind: "sql", what: "word-count rounds" },
   "/practice/predictions": { kind: "sql", what: "prediction wallets and bets" },
   "/speech-documents": { kind: "sql", what: "speech documents" },
-  "/coaching/laptopless": { kind: "derived", reason: "A setup guide with no data of its own." },
   "/coaching/rankings": { kind: "derived", reason: "Public team rankings." },
 }
 

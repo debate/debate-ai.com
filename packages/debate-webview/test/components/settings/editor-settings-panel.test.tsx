@@ -1,7 +1,7 @@
 /** @vitest-environment jsdom */
 /**
  * @fileoverview The /settings sidebar: General first (holding My team and My
- * school), Sound & speech and Privacy, then the editor's tabs under an Editor
+ * school), Sound & speech, Privacy and MCP server & API, then the editor's tabs under an Editor
  * heading (its own General rows as "Editor prefs"), and the old
  * `?category=my-school` and `?category=general` links.
  */
@@ -30,6 +30,7 @@ for (const name of [
   "ReadAloudVoiceSection",
   "SidebarIconAnimationsSection",
   "PrivacySettingsSection",
+  "McpServerSection",
 ]) {
   vi.doMock(`../../../src/components/settings/sections/${name}`, () => ({ [name]: () => <div data-testid={name} /> }))
 }
@@ -58,14 +59,20 @@ async function mount() {
 const tabLabels = (host: HTMLElement) => [...host.querySelectorAll('[role="tab"]')].map((tab) => tab.textContent)
 
 describe("EditorSettingsPanel", () => {
-  it("lists General, Sound & speech and Privacy ahead of the editor's tabs, with no separate claim tabs", async () => {
+  it("lists General, Sound & speech, Privacy and MCP ahead of the editor's tabs, with no separate claim tabs", async () => {
     const host = await mount()
     const labels = tabLabels(host)
-    expect(labels.slice(0, 5)).toEqual(["General", "Sound & speech", "Privacy", "Editor prefs", "Files"])
+    expect(labels.slice(0, 6)).toEqual(["General", "Sound & speech", "Privacy", "MCP server & API", "Editor prefs", "Files"])
     expect(labels).not.toContain("My team")
     expect(labels).not.toContain("My school")
     expect(labels.filter((label) => label === "General")).toHaveLength(1)
     expect([...host.querySelectorAll(".dai-settings-group")].map((g) => g.textContent)).toContain("Editor")
+  })
+
+  it("opens the MCP server & API tab for ?category=mcp", async () => {
+    search = "category=mcp"
+    const host = await mount()
+    expect(host.querySelector('[data-testid="McpServerSection"]')).not.toBeNull()
   })
 
   it("renders the team and school claims inside General, without the editor's General rows", async () => {
