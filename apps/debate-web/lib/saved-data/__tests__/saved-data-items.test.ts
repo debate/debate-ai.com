@@ -100,6 +100,14 @@ describe("bulk export", () => {
     expect(body.practiceRounds).toEqual([]);
   });
 
+  it("exports every row, not just the first page, with no duplicates", async () => {
+    const db = await freshDb();
+    await db.insert(savedFlows).values(Array.from({ length: 7 }, (_, i) => ({ userId: "a", clientId: i + 1, label: `F${i + 1}`, data: "{}", updatedAt: new Date(2024, 0, i + 1) })));
+    const body = JSON.parse((await exportAllOwnSavedData(db, "a", new Date(), 3)).body);
+    expect(body.flows.map((f: { id: number }) => f.id)).toEqual([7, 6, 5, 4, 3, 2, 1]);
+    expect(body).not.toHaveProperty("limitPerKind");
+  });
+
   it("returns empty lists for a user with nothing saved", async () => {
     const body = JSON.parse((await exportAllOwnSavedData(await freshDb(), "a")).body);
     expect([body.docs, body.flows, body.rounds, body.practiceRounds]).toEqual([[], [], [], []]);
