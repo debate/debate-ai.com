@@ -118,7 +118,7 @@ describe("ToolNavTree sectionIds", () => {
 
     expect(html).not.toContain(">Performance<");
     expect(html).not.toContain(">Data &amp; Reference<");
-    expect(html).toContain("/practice/level");
+    expect(html).toContain("/practice/statistics");
     expect(html).toContain("/practice/rules");
   });
 

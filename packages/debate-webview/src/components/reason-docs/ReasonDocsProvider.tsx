@@ -266,11 +266,16 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
   // because this is the set that would be *lost* if the page went away now.
   const pendingCmirRef = useRef(new Map<number, string>())
 
-  const ensureLoaded = useCallback(async () => {
+  // Returns nothing (not the load's promise): callers fire and forget, and a
+  // returned promise turns a caller's `act(() => ensureLoaded())` async.
+  const ensureLoaded = useCallback(() => {
     if (loadStartedRef.current) return
     loadStartedRef.current = true
     setLoading(true)
+    void loadAll()
+  }, [])
 
+  const loadAll = async () => {
     // Paint the cached catalogue instantly; the network copy refreshes it.
     const cached = await getCachedItems()
     if (cached) setTopicItems(cached.map(({ cachedAt, ...rest }) => rest))
@@ -305,7 +310,7 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
         }
       }
     })()
-  }, [])
+  }
 
   const openDocument = useCallback((id: number) => {
     setTopicDocument(null)
