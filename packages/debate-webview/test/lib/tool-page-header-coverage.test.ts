@@ -28,11 +28,8 @@ import { ALL_TOOLS } from "../../src/routes/tools/tool-groups"
  * - `/reason-editor` and `/research/docs` are large, native editor workspaces with
  *   their own bespoke chrome, not a standalone-tool page in
  *   `ToolPageHeader`'s sense.
- * - `/coaching/laptopless` is a companion guide page bundled under the
- *   Community group (see `tool-catalog-consistency.test.ts`'s
- *   `FEATURES_EXCLUDE_FROM_TOOLS`), not a tool with its own workspace.
  */
-const TOOLS_WITHOUT_TOOL_PAGE_HEADER = new Set(["/reason-editor", "/research/docs", "/coaching/laptopless"])
+const TOOLS_WITHOUT_TOOL_PAGE_HEADER = new Set(["/reason-editor", "/research/docs"])
 
 const PACKAGE_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..")
 const ROUTES_DIR = join(PACKAGE_ROOT, "src", "routes")
