@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
 import { documents, savedFlows, user } from "../../database/schema";
-import { deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems } from "../saved-data-items";
+import { deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems, MAX_ITEMS } from "../saved-data-items";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -98,6 +98,19 @@ describe("bulk export", () => {
     expect(body.flows).toMatchObject([{ id: 2, data: { c: 1 } }]);
     expect(body.rounds).toEqual([]);
     expect(body.practiceRounds).toEqual([]);
+  });
+
+  it("is not capped at the list limit and keeps newest-first order", async () => {
+    const db = await freshDb();
+    const total = MAX_ITEMS + 5;
+    await db.insert(savedFlows).values(
+      Array.from({ length: total }, (_, i) => ({ userId: "a", clientId: i + 1, label: `F${i + 1}`, data: "{}", updatedAt: new Date(Date.UTC(2026, 0, 1, 0, 0, i)) })),
+    );
+    const body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
+    expect(body.flows).toHaveLength(total);
+    expect(body.flows[0].id).toBe(total);
+    expect(body).not.toHaveProperty("limitPerKind");
+    expect(await listOwnSavedItems(db, "a", "flows")).toHaveLength(MAX_ITEMS);
   });
 
   it("returns empty lists for a user with nothing saved", async () => {

@@ -53,7 +53,7 @@
 
 - [x] `resolveToolStorage` maps every `/tools` entry to synced collections, its own SQL table, or derived/none; guarded by `tool-storage.test.ts`
 - [x] `ToolPageHeader` shows where the tool's data is saved (Vitest)
-- [ ] Follow-up: per-tool "Save to account" actions for the SQL-backed tools that still only expose it in menus
+- [x] Follow-up withdrawn: per-tool "Save to account" buttons contradict `7428594` (Save now buttons removed on purpose); auto-sync is the model
 - [ ] Follow-up (pre-existing): `apps/debate-web/lib/__tests__/tool-catalog-consistency.test.ts` imports a missing `packages/debate-editor/src/editor/workspace-links`; `bun run typecheck` in `debate-webview` reports unresolved `@debate-ai/editor/*` modules
 
 ## Account sync of tools (Completed)
@@ -69,7 +69,9 @@
   - [x] List / open (docs) / delete individual saved docs, flows, rounds and practice debates from this section (2026-10-22, branch `claude/gifted-babbage-uf5f12`): `saved-data-items.ts`, `/api/settings/saved-data/[kind]`, **Manage** in `SavedDataSection`, with Vitest
   - [x] Export an individual saved item as JSON (2026-10-24, branch `agent/todo-saved-item-export`): `exportOwnSavedItem`, `GET /api/settings/saved-data/[kind]?id=`, **Export** link in `SavedDataSection`, with Vitest
   - [x] Bulk export (2026-10-24, branch `agent/todo-saved-data-bulk-export`): `exportAllOwnSavedData`, `GET /api/settings/saved-data?export=all`, **Export all as JSON** link in `SavedDataSection`, with Vitest; removed two stale duplicate export tests that failed on `master`
-  - [ ] Follow-up: stable open links for flows / rounds / practice debates; lift the 100-per-kind cap in bulk export
+  - [x] Lift the 100-per-kind cap in bulk export (2026-10-25, branch `claude/gifted-babbage-lhvweu`): `exportAllOwnSavedData` reads each kind in one uncapped query (no `limitPerKind`), single-item and bulk export share `toExportRow`, with Vitest; `user-settings.mdx` updated
+  - [ ] Follow-up: stable open links for flows / rounds / practice debates; paginate the **Manage** list past 100 per kind
+  - [x] Dropped the stale "per-tool Save to account" follow-up: the Save now buttons were removed on purpose in `7428594`; background auto-sync stays the model
   - [x] Tool Data Sync collections (`saved_tool_records`) included in the summary (branch `agent/todo-saved-data-tool-records`, Vitest in `saved-data.test.ts` + `saved-data-section.test.tsx`)
   - [ ] Follow-up: add the sync badge to open-flow tabs and the `/doc` header (existing known gap)
 
