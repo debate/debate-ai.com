@@ -186,6 +186,10 @@ open link of the form `/debate?flowId=<id>`. It opens the debate page on that
 flow's tab. If the flow isn't loaded in this browser yet, the page stays on
 the current tab (the link is a no-op rather than an error).
 
+Saved rounds get the same kind of link, `/debate/<tournament>/<teams>`, when the
+round was saved with a URL slug. Rounds without a slug show no open link, and
+practice debates have no open link yet.
+
 ### Auto-save for flows already on your account
 
 Once a flow has been saved to your account, further edits to it are saved

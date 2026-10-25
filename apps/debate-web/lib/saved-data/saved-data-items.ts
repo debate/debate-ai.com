@@ -24,6 +24,16 @@ export interface SavedItem {
 
 const iso = (value: Date | null | undefined) => (value ? value.toISOString() : new Date(0).toISOString());
 
+/** Round slugs look like `2025-glenbrooks/lynbrook-bz-monta-ey` (see `useRoundFromSlug`); anything else gets no link. */
+const ROUND_SLUG = /^[a-z0-9][a-z0-9-]*\/[a-z0-9][a-z0-9-]*$/;
+
+/** `/debate/<slug>` for a stored round that carries a well-formed slug, else null. */
+export function roundOpenHref(rawData: string): string | null {
+  const data = parseData(rawData);
+  const slug = typeof data === "object" && data !== null ? (data as { slug?: unknown }).slug : undefined;
+  return typeof slug === "string" && ROUND_SLUG.test(slug) ? `/debate/${slug}` : null;
+}
+
 /** Newest-first list of one kind of the caller's saved work (titles only, never content). */
 export async function listOwnSavedItems(db: AccountDB, userId: string, kind: ItemKind): Promise<SavedItem[]> {
   switch (kind) {
@@ -46,13 +56,13 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
       return rows.map((r) => ({ id: r.id, title: r.label || "Untitled flow", updatedAt: iso(r.updatedAt), href: `/debate?flowId=${r.id}` /* mirrors buildFlowOpenHref in @debate-ai/round */ }));
     }
     case "rounds": {
-      const rows: Array<{ id: number; label: string; updatedAt: Date | null }> = await db
-        .select({ id: savedRounds.clientId, label: savedRounds.label, updatedAt: savedRounds.updatedAt })
+      const rows: Array<{ id: number; label: string; data: string; updatedAt: Date | null }> = await db
+        .select({ id: savedRounds.clientId, label: savedRounds.label, data: savedRounds.data, updatedAt: savedRounds.updatedAt })
         .from(savedRounds)
         .where(eq(savedRounds.userId, userId))
         .orderBy(desc(savedRounds.updatedAt), desc(savedRounds.id))
         .limit(MAX_ITEMS);
-      return rows.map((r) => ({ id: r.id, title: r.label || "Untitled round", updatedAt: iso(r.updatedAt), href: null }));
+      return rows.map((r) => ({ id: r.id, title: r.label || "Untitled round", updatedAt: iso(r.updatedAt), href: roundOpenHref(r.data) }));
     }
     case "practiceRounds": {
       const rows: Array<{ id: number; topic: string; botName: string; updatedAt: Date | null }> = await db
