@@ -209,7 +209,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     // one object, synced as a single `progress` record. A conflict merges the
     // two copies field by field, so XP earned on either device survives.
     label: "Debater Level & XP",
-    href: "/practice/level",
+    href: "/research/team",
     section: "Practice",
     codec: { decode: decodeDebaterLevel, encode: encodeDebaterLevel },
     merge: mergeDebaterLevel,

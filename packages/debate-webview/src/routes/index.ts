@@ -118,7 +118,7 @@ export const PAGE_ROUTES: AppRoute[] = [
   // from `app/teams/[team]`), plus the old `/teams/[team]` spelling.
   { pattern: "/@[team]", load: () => import("./teams/[team]/page") },
   { pattern: "/teams/[team]", load: () => import("./teams/[team]/page") },
-  { pattern: "/coaching/laptopless", load: () => import("./coaching/laptopless/page") },
+  { pattern: "/coaching/laptopless", load: () => import("./coach-laptopless/page") },
   // `/research/topics` was the standalone Topics Explorer. Its research-area
   // explorer is now the first section of `/practice/statistics`, so this old
   // address loads the same merged page rather than a second copy of it.
