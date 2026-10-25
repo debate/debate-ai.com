@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
 import { documents, savedFlows, user } from "../../database/schema";
-import { deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems } from "../saved-data-items";
+import { EXPORT_MAX_PER_KIND, deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems } from "../saved-data-items";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -98,6 +98,23 @@ describe("bulk export", () => {
     expect(body.flows).toMatchObject([{ id: 2, data: { c: 1 } }]);
     expect(body.rounds).toEqual([]);
     expect(body.practiceRounds).toEqual([]);
+  });
+
+  it("exports past the 100-row list page and reports no truncation", async () => {
+    const db = await freshDb();
+    await db.insert(savedFlows).values(Array.from({ length: 230 }, (_, i) => ({ userId: "a", clientId: i + 1, data: "{}", updatedAt: new Date(2024, 0, 1, 0, 0, i) })));
+    const body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
+    expect(body.flows).toHaveLength(230);
+    expect(new Set(body.flows.map((f: { id: number }) => f.id)).size).toBe(230);
+    expect(body.truncated).toEqual([]);
+    expect(body.limitPerKind).toBe(EXPORT_MAX_PER_KIND);
+  });
+
+  it("pages the list view with an offset", async () => {
+    const db = await freshDb();
+    await db.insert(savedFlows).values(Array.from({ length: 101 }, (_, i) => ({ userId: "a", clientId: i + 1, data: "{}", updatedAt: new Date(2024, 0, 1, 0, 0, i) })));
+    expect(await listOwnSavedItems(db, "a", "flows")).toHaveLength(100);
+    expect(await listOwnSavedItems(db, "a", "flows", 100)).toMatchObject([{ id: 1 }]);
   });
 
   it("returns empty lists for a user with nothing saved", async () => {
