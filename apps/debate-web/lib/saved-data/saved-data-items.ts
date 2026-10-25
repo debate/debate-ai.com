@@ -103,12 +103,29 @@ const parseData = (raw: string): unknown => {
   }
 };
 
+type ExportBuilder = (title: string, createdAt: Date | null, updatedAt: Date | null, extra: Record<string, unknown>) => SavedItemExport;
+
+const exportBuilder = (kind: ItemKind, id: number): ExportBuilder => (title, createdAt, updatedAt, extra) => ({
+  filename: `${kind}-${id}-${slug(title)}.json`,
+  body: JSON.stringify({ kind, id, title, createdAt: iso(createdAt), updatedAt: iso(updatedAt), ...extra }, null, 2),
+});
+
+const fromDoc = (row: typeof documents.$inferSelect) =>
+  exportBuilder("docs", row.id)(row.title || "Untitled", row.createdAt, row.updatedAt, { format: row.format, content: row.content });
+const fromFlow = (row: typeof savedFlows.$inferSelect) =>
+  exportBuilder("flows", row.clientId)(row.label || "Untitled flow", row.createdAt, row.updatedAt, { data: parseData(row.data) });
+const fromRound = (row: typeof savedRounds.$inferSelect) =>
+  exportBuilder("rounds", row.clientId)(row.label || "Untitled round", row.createdAt, row.updatedAt, { data: parseData(row.data) });
+const fromPractice = (row: typeof practiceVsAiDebates.$inferSelect) =>
+  exportBuilder("practiceRounds", row.id)(row.topic || "Practice debate", row.createdAt, row.updatedAt, {
+    botName: row.botName,
+    result: row.result,
+    outcome: row.outcome,
+    data: parseData(row.data),
+  });
+
 /** Full content of one of the caller's own rows as a downloadable JSON file; null if it doesn't exist or isn't theirs. */
 export async function exportOwnSavedItem(db: AccountDB, userId: string, kind: ItemKind, id: number): Promise<SavedItemExport | null> {
-  const build = (title: string, createdAt: Date | null, updatedAt: Date | null, extra: Record<string, unknown>): SavedItemExport => ({
-    filename: `${kind}-${id}-${slug(title)}.json`,
-    body: JSON.stringify({ kind, id, title, createdAt: iso(createdAt), updatedAt: iso(updatedAt), ...extra }, null, 2),
-  });
   switch (kind) {
     case "docs": {
       const [row] = await db
@@ -116,15 +133,15 @@ export async function exportOwnSavedItem(db: AccountDB, userId: string, kind: It
         .from(documents)
         .where(and(eq(documents.id, id), eq(documents.userId, userId), eq(documents.isFolder, false)))
         .limit(1);
-      return row ? build(row.title || "Untitled", row.createdAt, row.updatedAt, { format: row.format, content: row.content }) : null;
+      return row ? fromDoc(row) : null;
     }
     case "flows": {
       const [row] = await db.select().from(savedFlows).where(and(eq(savedFlows.clientId, id), eq(savedFlows.userId, userId))).limit(1);
-      return row ? build(row.label || "Untitled flow", row.createdAt, row.updatedAt, { data: parseData(row.data) }) : null;
+      return row ? fromFlow(row) : null;
     }
     case "rounds": {
       const [row] = await db.select().from(savedRounds).where(and(eq(savedRounds.clientId, id), eq(savedRounds.userId, userId))).limit(1);
-      return row ? build(row.label || "Untitled round", row.createdAt, row.updatedAt, { data: parseData(row.data) }) : null;
+      return row ? fromRound(row) : null;
     }
     case "practiceRounds": {
       const [row] = await db
@@ -132,26 +149,45 @@ export async function exportOwnSavedItem(db: AccountDB, userId: string, kind: It
         .from(practiceVsAiDebates)
         .where(and(eq(practiceVsAiDebates.id, id), eq(practiceVsAiDebates.userId, userId)))
         .limit(1);
-      return row
-        ? build(row.topic || "Practice debate", row.createdAt, row.updatedAt, { botName: row.botName, result: row.result, outcome: row.outcome, data: parseData(row.data) })
-        : null;
+      return row ? fromPractice(row) : null;
     }
   }
 }
 
+/** One page (newest first) of every row of a kind the caller owns, with full content. */
+async function exportPage(db: AccountDB, userId: string, kind: ItemKind, limit: number, offset: number): Promise<SavedItemExport[]> {
+  switch (kind) {
+    case "docs":
+      return (await db.select().from(documents).where(and(eq(documents.userId, userId), eq(documents.isFolder, false))).orderBy(desc(documents.updatedAt), desc(documents.id)).limit(limit).offset(offset)).map(fromDoc);
+    case "flows":
+      return (await db.select().from(savedFlows).where(eq(savedFlows.userId, userId)).orderBy(desc(savedFlows.updatedAt), desc(savedFlows.id)).limit(limit).offset(offset)).map(fromFlow);
+    case "rounds":
+      return (await db.select().from(savedRounds).where(eq(savedRounds.userId, userId)).orderBy(desc(savedRounds.updatedAt), desc(savedRounds.id)).limit(limit).offset(offset)).map(fromRound);
+    case "practiceRounds":
+      return (await db.select().from(practiceVsAiDebates).where(eq(practiceVsAiDebates.userId, userId)).orderBy(desc(practiceVsAiDebates.updatedAt), desc(practiceVsAiDebates.id)).limit(limit).offset(offset)).map(fromPractice);
+  }
+}
+
+/** Rows read per query while building the archive; keeps each D1 response small. */
+export const EXPORT_PAGE_SIZE = 50;
+
 export interface SavedDataArchive {
   filename: string;
-  /** JSON document: `{ exportedAt, limitPerKind, docs: [...], flows: [...], rounds: [...], practiceRounds: [...] }`. */
+  /** JSON document: `{ exportedAt, docs: [...], flows: [...], rounds: [...], practiceRounds: [...] }`. */
   body: string;
 }
 
-/** Every kind's newest `MAX_ITEMS` rows of the caller's work, with full content, as one downloadable JSON archive. */
+/** Every row of every kind the caller owns, with full content, as one downloadable JSON archive (read in pages, no per-kind cap). */
 export async function exportAllOwnSavedData(db: AccountDB, userId: string, now = new Date()): Promise<SavedDataArchive> {
-  const archive: Record<string, unknown> = { exportedAt: now.toISOString(), limitPerKind: MAX_ITEMS };
+  const archive: Record<string, unknown> = { exportedAt: now.toISOString() };
   for (const kind of ITEM_KINDS) {
-    const items = await listOwnSavedItems(db, userId, kind);
-    const files = await Promise.all(items.map((item) => exportOwnSavedItem(db, userId, kind, item.id)));
-    archive[kind] = files.flatMap((file) => (file ? [JSON.parse(file.body) as unknown] : []));
+    const items: unknown[] = [];
+    for (let offset = 0; ; offset += EXPORT_PAGE_SIZE) {
+      const page = await exportPage(db, userId, kind, EXPORT_PAGE_SIZE, offset);
+      items.push(...page.map((file) => JSON.parse(file.body) as unknown));
+      if (page.length < EXPORT_PAGE_SIZE) break;
+    }
+    archive[kind] = items;
   }
   return { filename: `debate-ai-saved-data-${now.toISOString().slice(0, 10)}.json`, body: JSON.stringify(archive, null, 2) };
 }
