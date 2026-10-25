@@ -25,6 +25,8 @@ export interface DebateHistoryProps {
   apiBaseUrl?: string
   /** Called when the user asks to return to the bot picker. */
   onBack: () => void
+  /** A round to show expanded on arrival, e.g. when opened from Settings → Saved data. */
+  initialExpandedId?: string
 }
 
 /** A short, colored label for a round's outcome. Empty outcome means "still in progress". */
@@ -51,10 +53,10 @@ function formatDate(createdAt: number): string {
   })
 }
 
-export function DebateHistory({ apiBaseUrl, onBack }: DebateHistoryProps) {
+export function DebateHistory({ apiBaseUrl, onBack, initialExpandedId }: DebateHistoryProps) {
   const [debates, setDebates] = useState<DebateVsBotRecord[] | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [expandedId, setExpandedId] = useState<string | null>(initialExpandedId ?? null)
 
   useEffect(() => {
     let cancelled = false

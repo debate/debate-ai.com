@@ -11,6 +11,7 @@ import { useSession } from "../../lib/hooks/useSession"
  */
 export default function VersusAiRoute() {
   const { user } = useSession()
+  const historyDebateId = typeof window === "undefined" ? undefined : (new URLSearchParams(window.location.search).get("debate") ?? undefined)
   return (
     <ToolPage>
       <ToolPageHeader href="/practice/versus-ai" backHref="/debate" backLabel="round workspace" guide="practice-tools" />
@@ -18,6 +19,7 @@ export default function VersusAiRoute() {
         userId={user?.id ?? undefined}
         userDisplayName={user?.name ?? undefined}
         userAvatar={user?.image ?? undefined}
+        historyDebateId={historyDebateId}
       />
     </ToolPage>
   )

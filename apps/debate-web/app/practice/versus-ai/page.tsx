@@ -31,7 +31,8 @@ const BANNER_ALT =
  * round's resume key is per-account and the scorecard shows the right name
  * and avatar.
  */
-export default async function VersusAiPage() {
+export default async function VersusAiPage({ searchParams }: { searchParams: Promise<{ debate?: string | string[] }> }) {
+  const { debate } = await searchParams
   const session = await getSession()
 
   return (
@@ -49,6 +50,7 @@ export default async function VersusAiPage() {
         userId={session?.user?.id}
         userDisplayName={session?.user?.name ?? undefined}
         userAvatar={session?.user?.image ?? undefined}
+        historyDebateId={typeof debate === "string" && debate ? debate : undefined}
       />
     </ToolPage>
   )

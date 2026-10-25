@@ -41,6 +41,8 @@ export interface DebatePracticeVsAiProps {
   searchUrl?: string
   /** Recommendation cards shown on the scorecard. */
   coachSkills?: CoachSkill[]
+  /** Open the debate history with this saved round expanded (the `?debate=` deep link). */
+  historyDebateId?: string
   /** Called when a debate round is initiated. */
   onStartDebate?: (debate: StartedDebate) => void
 }
@@ -54,10 +56,11 @@ export function DebatePracticeVsAi({
   apiBaseUrl,
   searchUrl,
   coachSkills,
+  historyDebateId,
   onStartDebate,
 }: DebatePracticeVsAiProps = {}) {
   const [debate, setDebate] = useState<StartedDebate | null>(() => readActiveRound(userId))
-  const [showHistory, setShowHistory] = useState(false)
+  const [showHistory, setShowHistory] = useState(Boolean(historyDebateId))
 
   const handleStart = (started: StartedDebate) => {
     writeActiveRound(userId, started)
@@ -72,7 +75,7 @@ export function DebatePracticeVsAi({
 
   if (!debate) {
     if (showHistory) {
-      return <DebateHistory apiBaseUrl={apiBaseUrl} onBack={() => setShowHistory(false)} />
+      return <DebateHistory apiBaseUrl={apiBaseUrl} initialExpandedId={historyDebateId} onBack={() => setShowHistory(false)} />
     }
     return (
       <PracticeSetupWizard
