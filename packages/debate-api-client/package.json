@@ -31,11 +31,13 @@
       "default": "./dist/index.js"
     },
     "./debate-openapi.yml": "./debate-openapi.yml",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./mcp-tools.json": "./mcp-tools.json"
   },
   "files": [
     "dist",
     "debate-openapi.yml",
+    "mcp-tools.json",
     "README.md",
     "LICENSE.md"
   ],
@@ -44,6 +46,7 @@
   },
   "scripts": {
     "generate": "openapi-ts",
+    "generate:mcp": "bun scripts/generate-mcp-tools.ts",
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
@@ -57,7 +60,9 @@
     "@hey-api/openapi-ts": "^0.99.0",
     "@types/node": "^26.6.5",
     "@vitest/coverage-v8": "^5.0.5",
+    "api2ai": "1.0.6",
     "typescript": "^6.0.3",
-    "vitest": "^5.0.5"
+    "vitest": "^5.0.5",
+    "yaml": "^2.9.1"
   }
 }
