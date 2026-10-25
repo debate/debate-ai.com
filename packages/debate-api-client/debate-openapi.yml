@@ -7,9 +7,6 @@ info:
 servers:
   - url: /api
     description: Next.js API routes
-  - url: https://mcp.api2mcp.com/v1/server
-    description: MCP server via API2MCP
-    variables: {}
 
 
 tags:
@@ -315,11 +312,18 @@ paths:
   /mcp:
     post:
       operationId: mcpServer
-      summary: MCP server endpoint (JSON-RPC)
-      description: Model Context Protocol server endpoint for AI tools. Compatible with API2MCP.
+      summary: MCP server endpoint (JSON-RPC over Streamable HTTP)
+      description: |
+        Model Context Protocol server for AI tools (Claude, ChatGPT, Cursor, VS Code).
+        Every other operation in this spec is exposed as an MCP tool; the tool list is
+        generated from this file with api2ai (packages/debate-api-client/scripts/generate-mcp-tools.ts).
+        Stateless: each POST carries one JSON-RPC message (or a batch) and is answered with JSON.
+        Send `Authorization: Bearer <API key>` (create one at /settings?category=mcp) to call
+        tools that read or write your account's data.
       tags: [MCP]
-      servers:
-        - url: https://mcp.api2mcp.com/v1/server
+      security:
+        - {}
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -369,20 +373,98 @@ paths:
                       - type: number
                       - type: "null"
                 additionalProperties: true
-        default:
-          description: JSON-RPC response
+        "202":
+          description: Accepted (the request was a JSON-RPC notification, which has no response).
+        "401":
+          description: The Authorization header carried an API key that is unknown, revoked or expired.
+    get:
+      operationId: mcpServerInfo
+      summary: Describe the MCP server
+      description: Returns the server name, protocol version, transport and tool count as JSON. The server does not open an SSE stream.
+      tags: [MCP]
+      responses:
+        "200":
+          description: Server description.
           content:
             application/json:
               schema:
                 type: object
                 additionalProperties: true
 
+  /mcp/keys:
+    get:
+      operationId: listMcpApiKeys
+      summary: List your API keys
+      description: The signed-in account's API keys (for the MCP server and the REST API), newest first. The secret itself is only returned once, when a key is created.
+      tags: [MCP]
+      responses:
+        "200":
+          description: The account's keys.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  keys:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ApiKeySummary"
+        "401":
+          description: Not signed in.
+    post:
+      operationId: createMcpApiKey
+      summary: Create an API key
+      description: Mints a new API key for the signed-in account. The response is the only time the full key is shown.
+      tags: [MCP]
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: A label for the key, e.g. "Claude Desktop".
+      responses:
+        "200":
+          description: The new key.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  key:
+                    type: string
+                    description: "The secret. Send it as `Authorization: Bearer <key>`."
+                  summary:
+                    $ref: "#/components/schemas/ApiKeySummary"
+        "401":
+          description: Not signed in.
+    delete:
+      operationId: revokeMcpApiKey
+      summary: Revoke an API key
+      tags: [MCP]
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Revoked.
+        "401":
+          description: Not signed in.
+
+  /sync-videos:
     get:
       operationId: syncVideos
       summary: Sync debate videos from YouTube
       description: |
         Triggers a synchronization of debate round videos from YouTube channels.
         Scrapes and imports new videos into the local dataset.
+      tags: [Admin]
       responses:
         "200":
           description: Sync result with counts of new/updated videos.
@@ -2294,7 +2376,29 @@ paths:
                 $ref: "#/components/schemas/Error"
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: An API key from Settings → MCP server & API (/settings?category=mcp), or a session token.
   schemas:
+    ApiKeySummary:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        hint:
+          type: string
+          description: The last four characters of the key.
+        createdAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+      required: [id, name, hint, createdAt, expiresAt]
     Error:
       type: object
       properties:

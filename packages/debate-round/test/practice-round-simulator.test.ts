@@ -188,10 +188,16 @@ describe("buildPracticeRoundFeedback", () => {
     );
   });
 
-  it("falls back to the paradigm's description when it has no voting priorities (e.g. custom)", () => {
-    const custom = buildCustomJudgeParadigm({ name: "Judge Smith", notes: "Votes on framing." });
+  it("falls back to the paradigm's description when it has no voting priorities", () => {
+    const custom = { ...buildCustomJudgeParadigm({ name: "Judge Smith", notes: "Votes on framing." }), votingPriorities: [] };
     const feedback = buildPracticeRoundFeedback(FLOW, "A", custom);
     expect(feedback.sections[0].body).toBe(custom.description);
+  });
+
+  it("lists a custom paradigm's panel-weight voting priorities", () => {
+    const custom = buildCustomJudgeParadigm({ name: "Judge Smith", notes: "Votes on framing." });
+    const feedback = buildPracticeRoundFeedback(FLOW, "A", custom);
+    expect(feedback.sections[0].body).toBe(`Voting priorities: ${custom.votingPriorities.join("; ")}.`);
   });
 
   it("includes the AI Coach Mode coaching session for the given side", () => {
