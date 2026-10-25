@@ -137,6 +137,17 @@ never stores or logs it. Remove it to go back to the shared key.
   `components/pricing/OwnAiKeyDialog.tsx`), `apps/debate-ai.com`
   (`lib/ai/provider-key.ts`)
 
+## MCP server & API keys
+
+The **MCP server & API** tab (`/settings?category=mcp`) shows the address of
+Debate AI's hosted MCP server, links its [setup guide](/docs/features/ui-navigation/mcp-server),
+and lets you create, copy and revoke the API keys an AI tool uses to act as
+you. A new key is shown once, with a ready-to-paste client config. See
+[MCP server](/docs/features/ui-navigation/mcp-server) for every client's setup.
+
+- **Packages:** `debate-webview` (`components/settings/sections/McpServerSection.tsx`),
+  `apps/debate-web` (`lib/mcp/`, `app/api/mcp/keys/route.ts`)
+
 ## Flow editor preferences follow your account
 
 The Ebb flow editor's display preferences (`Cmd/Ctrl+,`) and keybinding
