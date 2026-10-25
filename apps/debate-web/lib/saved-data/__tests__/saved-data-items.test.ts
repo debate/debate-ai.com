@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
 import { documents, savedFlows, user } from "../../database/schema";
-import { deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems } from "../saved-data-items";
+import { deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems, MAX_EXPORT_ITEMS } from "../saved-data-items";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -99,6 +99,30 @@ describe("bulk export", () => {
     expect(body.rounds).toEqual([]);
     expect(body.practiceRounds).toEqual([]);
   });
+
+  it("exports past the 100-row list cap and reports nothing truncated", async () => {
+    const db = await freshDb();
+    await db.insert(savedFlows).values(Array.from({ length: 250 }, (_, i) => ({ userId: "a", clientId: i + 1, data: "{}", updatedAt: new Date(2024, 0, 1, 0, 0, i) })));
+    const body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
+    expect(body.flows).toHaveLength(250);
+    expect(body.flows[0].id).toBe(250);
+    expect(new Set(body.flows.map((f: { id: number }) => f.id)).size).toBe(250);
+    expect(body.truncated).toEqual({ docs: false, flows: false, rounds: false, practiceRounds: false });
+  });
+
+  it("flags a kind as truncated only when rows exceed the export ceiling", async () => {
+    const db = await freshDb();
+    const rows = (n: number) => Array.from({ length: n }, (_, i) => ({ userId: "a", clientId: i + 1, data: "{}", updatedAt: new Date(2024, 0, 1, 0, 0, i) }));
+    await db.insert(savedFlows).values(rows(MAX_EXPORT_ITEMS));
+    let body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
+    expect(body.flows).toHaveLength(MAX_EXPORT_ITEMS);
+    expect(body.truncated.flows).toBe(false);
+    await db.insert(savedFlows).values({ userId: "a", clientId: MAX_EXPORT_ITEMS + 1, data: "{}", updatedAt: new Date(2000, 0, 1) });
+    body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
+    expect(body.flows).toHaveLength(MAX_EXPORT_ITEMS);
+    expect(body.truncated.flows).toBe(true);
+    expect(body.flows.some((f: { id: number }) => f.id === MAX_EXPORT_ITEMS + 1)).toBe(false);
+  }, 30000);
 
   it("returns empty lists for a user with nothing saved", async () => {
     const body = JSON.parse((await exportAllOwnSavedData(await freshDb(), "a")).body);

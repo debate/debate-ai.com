@@ -341,9 +341,11 @@ action behind a confirmation. Documents also link to the editor. This is backed 
 An **Export all as JSON** link under the counts downloads every kind at once
 (`GET /api/settings/saved-data?export=all` → `exportAllOwnSavedData`): one file with
 `docs`, `flows`, `rounds` and `practiceRounds` arrays holding each item's full content.
+It pages through the rows 100 at a time, newest first, up to `MAX_EXPORT_ITEMS` (1000) per kind;
+`limitPerKind` records that ceiling and `truncated` says, per kind, whether older rows were left out.
 
-Known gaps: bulk export, like the list, covers only the newest 100 items of a kind
-(`limitPerKind` in the file says so); flows, rounds and practice debates have no stable open link.
+Known gaps: the in-app list still shows only the newest 100 items of a kind, and the bulk
+export stops at 1000 per kind (see `truncated`); flows, rounds and practice debates have no stable open link.
 
 ## Known gaps
 
