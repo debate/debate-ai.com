@@ -173,14 +173,19 @@ export const README_BADGE_ROWS: ReadmeBadge[][] = [
       alt: "GitHub Discussions",
     },
     {
+      href: "https://github.com/debate/debate-ai.com/commits/master/",
+      src: "https://img.shields.io/github/last-commit/debate/debate-ai.com.svg",
+      alt: "GitHub last commit",
+    },
+    {
       href: "https://github.com/debate/debate-ai.com/graphs/contributors",
       src: "https://img.shields.io/github/commit-activity/m/debate/debate-ai.com",
       alt: "Commit activity",
     },
     {
       href: "https://github.com/debate/debate-ai.com/commits/master/",
-      src: "https://img.shields.io/github/last-commit/debate/debate-ai.com.svg",
-      alt: "GitHub last commit",
+      src: "https://img.shields.io/github/commit-activity/t/debate/debate-ai.com/master?label=commits",
+      alt: "GitHub commits",
     },
     {
       href: "https://discord.gg/dh8UKEaYA5",
@@ -189,7 +194,7 @@ export const README_BADGE_ROWS: ReadmeBadge[][] = [
     },
     {
       href: "https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request",
-      src: "https://img.shields.io/badge/PRs--welcome-brightgreen",
+      src: "https://img.shields.io/badge/PRs-welcome-brightgreen.svg",
       alt: "PRs Welcome",
     },
   ],
