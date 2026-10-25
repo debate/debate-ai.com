@@ -100,6 +100,32 @@ describe("bulk export", () => {
     expect(body.practiceRounds).toEqual([]);
   });
 
+  it("exports past the 100-row list cap and reports no truncation", async () => {
+    const db = await freshDb();
+    await db.insert(savedFlows).values(Array.from({ length: 230 }, (_, i) => ({ userId: "a", clientId: i + 1, label: `F${i}`, data: "{}" })));
+    const body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
+    expect(body.flows).toHaveLength(230);
+    expect(new Set(body.flows.map((f: { id: number }) => f.id)).size).toBe(230);
+    expect(body.truncated).toBe(false);
+  });
+
+  it("flags truncated when rows remain beyond the ceiling", async () => {
+    const db = await freshDb();
+    await db.insert(savedFlows).values(Array.from({ length: 5 }, (_, i) => ({ userId: "a", clientId: i + 1, data: "{}" })));
+    const body = JSON.parse((await exportAllOwnSavedData(db, "a", new Date(), 3)).body);
+    expect(body.flows).toHaveLength(3);
+    expect(body.truncated).toBe(true);
+    const exact = JSON.parse((await exportAllOwnSavedData(db, "a", new Date(), 5)).body);
+    expect(exact.flows).toHaveLength(5);
+    expect(exact.truncated).toBe(false);
+  });
+
+  it("lists with limit and offset", async () => {
+    const db = await freshDb();
+    await db.insert(savedFlows).values([1, 2, 3].map((n) => ({ userId: "a", clientId: n, data: "{}", updatedAt: new Date(2026, 0, n) })));
+    expect((await listOwnSavedItems(db, "a", "flows", { limit: 1, offset: 1 })).map((i) => i.id)).toEqual([2]);
+  });
+
   it("returns empty lists for a user with nothing saved", async () => {
     const body = JSON.parse((await exportAllOwnSavedData(await freshDb(), "a")).body);
     expect([body.docs, body.flows, body.rounds, body.practiceRounds]).toEqual([[], [], [], []]);
