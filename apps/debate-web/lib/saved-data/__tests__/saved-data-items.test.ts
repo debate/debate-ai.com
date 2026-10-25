@@ -100,6 +100,22 @@ describe("bulk export", () => {
     expect(body.practiceRounds).toEqual([]);
   });
 
+  it("exports every row past the 100-per-list cap", async () => {
+    const db = await freshDb();
+    await db.insert(savedFlows).values(Array.from({ length: 230 }, (_, i) => ({ userId: "a", clientId: i + 1, label: `F${i + 1}`, data: "{}", updatedAt: new Date(2024, 0, 1, 0, 0, i) })));
+    const body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
+    expect(body.flows).toHaveLength(230);
+    expect(new Set(body.flows.map((f: { id: number }) => f.id)).size).toBe(230);
+    expect(body.truncated).toEqual([]);
+  });
+
+  it("pages the list with limit and offset", async () => {
+    const db = await freshDb();
+    await db.insert(savedFlows).values([1, 2, 3].map((n) => ({ userId: "a", clientId: n, data: "{}", updatedAt: new Date(2024, 0, n) })));
+    const page = await listOwnSavedItems(db, "a", "flows", { limit: 1, offset: 1 });
+    expect(page.map((i) => i.id)).toEqual([2]);
+  });
+
   it("returns empty lists for a user with nothing saved", async () => {
     const body = JSON.parse((await exportAllOwnSavedData(await freshDb(), "a")).body);
     expect([body.docs, body.flows, body.rounds, body.practiceRounds]).toEqual([[], [], [], []]);
