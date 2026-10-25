@@ -4,8 +4,8 @@ import { drizzle } from "drizzle-orm/libsql";
 import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
-import { documents, savedFlows, user } from "../../database/schema";
-import { deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems } from "../saved-data-items";
+import { documents, savedFlows, savedRounds, user } from "../../database/schema";
+import { deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems, MAX_EXPORT_ITEMS, MAX_ITEMS } from "../saved-data-items";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -103,5 +103,24 @@ describe("bulk export", () => {
   it("returns empty lists for a user with nothing saved", async () => {
     const body = JSON.parse((await exportAllOwnSavedData(await freshDb(), "a")).body);
     expect([body.docs, body.flows, body.rounds, body.practiceRounds]).toEqual([[], [], [], []]);
+  });
+
+  it("exports past the 100-row list cap and reports nothing truncated", async () => {
+    const db = await freshDb();
+    const total = MAX_ITEMS + 25;
+    await db.insert(savedFlows).values(Array.from({ length: total }, (_, i) => ({ userId: "a", clientId: i + 1, label: `F${i}`, data: "{}" })));
+    const body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
+    expect(body.flows).toHaveLength(total);
+    expect(body.limitPerKind).toBe(MAX_EXPORT_ITEMS);
+    expect(body.truncated).toEqual([]);
+  });
+
+  it("flags a kind as truncated when it exceeds the export cap", async () => {
+    const db = await freshDb();
+    const total = MAX_EXPORT_ITEMS + 1;
+    await db.insert(savedRounds).values(Array.from({ length: total }, (_, i) => ({ userId: "a", clientId: i + 1, label: `R${i}`, data: "{}" })));
+    const body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
+    expect(body.rounds).toHaveLength(MAX_EXPORT_ITEMS);
+    expect(body.truncated).toEqual(["rounds"]);
   });
 });
