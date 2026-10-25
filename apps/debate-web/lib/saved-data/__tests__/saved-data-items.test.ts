@@ -100,6 +100,24 @@ describe("bulk export", () => {
     expect(body.practiceRounds).toEqual([]);
   });
 
+  it("pages past the list cap and flags kinds truncated at the export limit", async () => {
+    const db = await freshDb();
+    await db.insert(documents).values(Array.from({ length: 250 }, (_, i) => ({ title: `D${i}`, userId: "a", updatedAt: new Date(2024, 0, 1, 0, 0, i) })));
+    await db.insert(savedFlows).values(Array.from({ length: 3 }, (_, i) => ({ userId: "a", clientId: i + 1, data: "{}" })));
+    const all = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
+    expect(all.docs).toHaveLength(250);
+    expect(new Set(all.docs.map((d: { id: number }) => d.id)).size).toBe(250);
+    expect(all.truncated).toEqual([]);
+    const capped = JSON.parse((await exportAllOwnSavedData(db, "a", new Date(), 120)).body);
+    expect(capped.limitPerKind).toBe(120);
+    expect(capped.docs).toHaveLength(120);
+    expect(capped.docs[0].title).toBe("D249");
+    expect(capped.flows).toHaveLength(3);
+    expect(capped.truncated).toEqual(["docs"]);
+    const exact = JSON.parse((await exportAllOwnSavedData(db, "a", new Date(), 250)).body);
+    expect(exact.truncated).toEqual([]);
+  });
+
   it("returns empty lists for a user with nothing saved", async () => {
     const body = JSON.parse((await exportAllOwnSavedData(await freshDb(), "a")).body);
     expect([body.docs, body.flows, body.rounds, body.practiceRounds]).toEqual([[], [], [], []]);
