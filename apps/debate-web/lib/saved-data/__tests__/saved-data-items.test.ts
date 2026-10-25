@@ -100,6 +100,17 @@ describe("bulk export", () => {
     expect(body.practiceRounds).toEqual([]);
   });
 
+  it("exports past the 100-row list cap", async () => {
+    const db = await freshDb();
+    const rows = Array.from({ length: 205 }, (_, i) => ({ userId: "a", clientId: i + 1, label: `F${i + 1}`, data: "{}" }));
+    for (let i = 0; i < rows.length; i += 50) await db.insert(savedFlows).values(rows.slice(i, i + 50));
+    const body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
+    expect(body.flows).toHaveLength(205);
+    expect(new Set(body.flows.map((f: { id: number }) => f.id)).size).toBe(205);
+    expect(body.limitPerKind).toBeUndefined();
+    expect(await listOwnSavedItems(db, "a", "flows")).toHaveLength(100);
+  });
+
   it("returns empty lists for a user with nothing saved", async () => {
     const body = JSON.parse((await exportAllOwnSavedData(await freshDb(), "a")).body);
     expect([body.docs, body.flows, body.rounds, body.practiceRounds]).toEqual([[], [], [], []]);
