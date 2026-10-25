@@ -44,6 +44,7 @@ import { useFlowHandlers } from "../src/hooks/useFlowHandlers"
 import { useRoundFromSlug } from "../src/hooks/useRoundFromSlug"
 import { useSyncUrlWithRound } from "../src/hooks/useSyncUrlWithRound"
 import { useJumpToPrepNoteBox } from "../src/hooks/useJumpToPrepNoteBox"
+import { useOpenRoundFromLink } from "../src/hooks/useOpenRoundFromLink"
 import { useMobileDetection } from "../src/hooks/useMobileDetection"
 import { useSpeechRecordingStatus } from "../src/hooks/useSpeechRecordingStatus"
 import { useDebateFlowState } from "../src/hooks/useDebateFlowState"
@@ -653,6 +654,33 @@ describe("useJumpToPrepNoteBox", () => {
     nav.search = new URLSearchParams("")
     await renderHook(() => useJumpToPrepNoteBox())
     expect(useFlowStore.getState().selected).toBe(0)
+  })
+})
+
+describe("useOpenRoundFromLink", () => {
+  it("brings the linked round's flows to the front and selects the first, once", async () => {
+    useFlowStore.setState({
+      flows: [makeFlow(1), makeFlow(2), makeFlow(3)],
+      rounds: [makeRound(9, { flowIds: [2, 3] })],
+      selected: 0,
+    })
+    nav.search = new URLSearchParams("roundId=9")
+    await renderHook(() => useOpenRoundFromLink())
+    const state = useFlowStore.getState()
+    expect(state.selected).toBe(1)
+    expect(state.flows.map((f) => f.archived)).toEqual([true, false, false])
+  })
+
+  it("ignores missing params, malformed ids, unknown rounds and rounds without flows", async () => {
+    useFlowStore.setState({ flows: [makeFlow(1)], rounds: [makeRound(9, { flowIds: [77] })], selected: 0 })
+    for (const query of ["", "roundId=abc", "roundId=1.5", "roundId=404", "roundId=9"]) {
+      nav.search = new URLSearchParams(query)
+      await renderHook(() => useOpenRoundFromLink())
+      cleanup()
+    }
+    const state = useFlowStore.getState()
+    expect(state.selected).toBe(0)
+    expect(state.flows[0].archived).not.toBe(true)
   })
 })
 
