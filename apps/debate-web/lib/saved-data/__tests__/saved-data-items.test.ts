@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
 import { documents, savedFlows, user } from "../../database/schema";
-import { deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems } from "../saved-data-items";
+import { deleteOwnSavedItem, EXPORT_MAX_ITEMS, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems } from "../saved-data-items";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -98,6 +98,23 @@ describe("bulk export", () => {
     expect(body.flows).toMatchObject([{ id: 2, data: { c: 1 } }]);
     expect(body.rounds).toEqual([]);
     expect(body.practiceRounds).toEqual([]);
+  });
+
+  it("exports past the 100-row list cap and flags nothing as truncated", async () => {
+    const db = await freshDb();
+    await db.insert(savedFlows).values(Array.from({ length: 120 }, (_, i) => ({ userId: "a", clientId: i + 1, data: "{}" })));
+    const body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
+    expect(body.flows).toHaveLength(120);
+    expect(body.limitPerKind).toBe(EXPORT_MAX_ITEMS);
+    expect(body.truncated).toEqual([]);
+  });
+
+  it("reports which kinds were cut at the export limit", async () => {
+    const db = await freshDb();
+    await db.insert(savedFlows).values(Array.from({ length: EXPORT_MAX_ITEMS + 1 }, (_, i) => ({ userId: "a", clientId: i + 1, data: "{}" })));
+    const body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
+    expect(body.flows).toHaveLength(EXPORT_MAX_ITEMS);
+    expect(body.truncated).toEqual(["flows"]);
   });
 
   it("returns empty lists for a user with nothing saved", async () => {
