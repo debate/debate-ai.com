@@ -12,7 +12,8 @@
  * the day-to-day loop of a squad's research sprint — find the gaps, work the
  * topic, route the tasks, review and recognize the cards — so they now sit
  * side by side as one tab each. Those old addresses redirect here with
- * `?section=` set to the matching tab.
+ * `?section=` set to the matching tab. Debater Level (once `/practice/level`
+ * under Insights) is the last tab, so a squad sees its XP beside its work.
  *
  * Each panel still owns its store; this file is only navigation, built on
  * the same tab strip and `?section=` URL sync as the Research, Coach and Prep
@@ -21,7 +22,8 @@
  * @module components/research/TeamResearchWorkspace
  */
 
-import { Inbox, Lightbulb, MessageSquareText, PieChart, Presentation, ThumbsUp } from "lucide-react"
+import { Inbox, Lightbulb, MessageSquareText, PieChart, Presentation, Star, ThumbsUp } from "lucide-react"
+import { DebaterLevelPanel } from "@debate-ai/community"
 import { TopicCoverageDashboardPanel } from "@debate-ai/research-evidence"
 import { panel, type HubSection } from "../hubs/hub-sections"
 import { HubSectionIntro, HubSectionNav, HubSectionPanel, useHubSection } from "../hubs/HubSectionNav"
@@ -35,7 +37,7 @@ import { TaskInboxWithIdentity } from "./identity/TaskInboxWithIdentity"
 const SECTION_KEY = "teamResearchSection"
 
 /** One tab per tool. Also the `?section=` values the old routes redirect to. */
-export type TeamResearchSectionId = "coverage" | "prep-room" | "reviews" | "inbox" | "contributions" | "brainstorm"
+export type TeamResearchSectionId = "coverage" | "prep-room" | "reviews" | "inbox" | "contributions" | "brainstorm" | "level"
 
 /** Team Research's tabs, in the order a squad works a topic. */
 export const TEAM_RESEARCH_SECTIONS: readonly HubSection<TeamResearchSectionId>[] = [
@@ -87,6 +89,14 @@ export const TEAM_RESEARCH_SECTIONS: readonly HubSection<TeamResearchSectionId>[
     guide: "research-collaboration",
     panels: [panel("Team Brainstorm Assist")],
   },
+  {
+    id: "level",
+    label: "Debater Level",
+    icon: Star,
+    description: "Level up like a video game: earn XP for cutting cards, redoing rebuttals, and practice rounds.",
+    guide: "research-collaboration",
+    panels: [panel("Debater Level")],
+  },
 ]
 
 /**
@@ -106,7 +116,7 @@ export interface TeamResearchWorkspaceProps {
 }
 
 /**
- * Tabbed page over the six squad research tools.
+ * Tabbed page over the squad research tools.
  *
  * @param props - See {@link TeamResearchWorkspaceProps}.
  */
@@ -131,6 +141,7 @@ export function TeamResearchWorkspace({ initialSection }: TeamResearchWorkspaceP
         {section === "inbox" ? <TaskInboxWithIdentity /> : null}
         {section === "contributions" ? <ContributionsFeedWithIdentity /> : null}
         {section === "brainstorm" ? <BrainstormBoardWithIdentity /> : null}
+        {section === "level" ? <DebaterLevelPanel /> : null}
       </HubSectionPanel>
     </div>
   )

@@ -199,19 +199,31 @@ const STEPS: { icon: typeof Smartphone; title: string; body: ReactNode }[] = [
   },
 ]
 
-export default function MobileSetupPage() {
+/** Props for {@link MobileSetupPage}. */
+export interface MobileSetupPageProps {
+  /**
+   * Rendered as the Laptop-less Debating tab of `/coaching`: drops the
+   * full-screen padding and the Back link, since the tab strip is the page's
+   * navigation there.
+   */
+  embedded?: boolean
+}
+
+export default function MobileSetupPage({ embedded = false }: MobileSetupPageProps = {}) {
   return (
-    <div className="min-h-screen bg-background p-3 sm:p-6 pb-24">
-      <div className="mx-auto max-w-4xl">
-        <div className="mb-4">
-          <Link
-            href="/debate"
-            className="inline-flex items-center gap-1.5 h-9 px-3 rounded-md border border-border bg-background hover:bg-accent text-sm font-medium text-foreground transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back
-          </Link>
-        </div>
+    <div className={embedded ? "" : "min-h-screen bg-background p-3 sm:p-6 pb-24"}>
+      <div className={embedded ? "" : "mx-auto max-w-4xl"}>
+        {embedded ? null : (
+          <div className="mb-4">
+            <Link
+              href="/debate"
+              className="inline-flex items-center gap-1.5 h-9 px-3 rounded-md border border-border bg-background hover:bg-accent text-sm font-medium text-foreground transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back
+            </Link>
+          </div>
+        )}
 
         <div className="mb-8">
           <div className="flex items-center gap-2">
