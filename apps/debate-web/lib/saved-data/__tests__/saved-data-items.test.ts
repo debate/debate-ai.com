@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
 import { documents, savedFlows, user } from "../../database/schema";
-import { deleteOwnSavedItem, exportOwnSavedItem, isItemKind, listOwnSavedItems } from "../saved-data-items";
+import { deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems } from "../saved-data-items";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -33,7 +33,7 @@ describe("saved item management", () => {
   it("falls back to a placeholder title for unlabeled flows", async () => {
     const db = await freshDb();
     await db.insert(savedFlows).values({ userId: "a", clientId: 7, data: "{}" });
-    expect(await listOwnSavedItems(db, "a", "flows")).toMatchObject([{ id: 7, title: "Untitled flow", href: null }]);
+    expect(await listOwnSavedItems(db, "a", "flows")).toMatchObject([{ id: 7, title: "Untitled flow", href: "/debate?flowId=7" }]);
   });
 
   it("deletes own rows and refuses another user's or a missing row", async () => {
@@ -82,5 +82,26 @@ describe("saved item export", () => {
     expect(await exportOwnSavedItem(db, "a", "flows", 1)).toBeNull();
     expect(await exportOwnSavedItem(db, "a", "flows", 99)).toBeNull();
     expect(await exportOwnSavedItem(db, "a", "docs", folder.id)).toBeNull();
+  });
+});
+
+describe("bulk export", () => {
+  it("bundles only the caller's rows from every kind with their content", async () => {
+    const db = await freshDb();
+    await db.insert(documents).values([{ title: "Mine", userId: "a", content: "<p>x</p>" }, { title: "Theirs", userId: "b" }]);
+    await db.insert(savedFlows).values([{ userId: "a", clientId: 2, label: "F", data: '{"c":1}' }, { userId: "b", clientId: 3, data: "{}" }]);
+    const file = await exportAllOwnSavedData(db, "a", new Date("2026-10-24T12:00:00Z"));
+    expect(file.filename).toBe("debate-ai-saved-data-2026-10-24.json");
+    const body = JSON.parse(file.body);
+    expect(body.docs).toHaveLength(1);
+    expect(body.docs[0]).toMatchObject({ title: "Mine", content: "<p>x</p>" });
+    expect(body.flows).toMatchObject([{ id: 2, data: { c: 1 } }]);
+    expect(body.rounds).toEqual([]);
+    expect(body.practiceRounds).toEqual([]);
+  });
+
+  it("returns empty lists for a user with nothing saved", async () => {
+    const body = JSON.parse((await exportAllOwnSavedData(await freshDb(), "a")).body);
+    expect([body.docs, body.flows, body.rounds, body.practiceRounds]).toEqual([[], [], [], []]);
   });
 });
