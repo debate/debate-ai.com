@@ -94,7 +94,11 @@ export function DebateHistory({ apiBaseUrl, onBack, initialExpandedId = null }: 
           const badge = resultBadge(debate.outcome)
           const isExpanded = expandedId === debate.id
           return (
-            <div key={debate.id} className="rounded-md border border-border bg-card p-3 shadow-sm">
+            <div
+              key={debate.id}
+              ref={debate.id === initialExpandedId ? (node) => node?.scrollIntoView?.({ block: "center" }) : undefined}
+              className="rounded-md border border-border bg-card p-3 shadow-sm"
+            >
               <button
                 type="button"
                 className="flex w-full items-start justify-between gap-3 text-left"

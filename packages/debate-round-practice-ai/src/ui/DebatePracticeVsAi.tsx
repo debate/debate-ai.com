@@ -44,6 +44,8 @@ export interface DebatePracticeVsAiProps {
   coachSkills?: CoachSkill[]
   /** Called when a debate round is initiated. */
   onStartDebate?: (debate: StartedDebate) => void
+  /** Open Debate History with this saved round expanded (a `?debate=<id>` link) instead of the setup wizard. */
+  historyDebateId?: string
 }
 
 export function DebatePracticeVsAi({
@@ -56,6 +58,7 @@ export function DebatePracticeVsAi({
   searchUrl,
   coachSkills,
   onStartDebate,
+  historyDebateId,
 }: DebatePracticeVsAiProps = {}) {
   const [debate, setDebate] = useState<StartedDebate | null>(() => readActiveRound(userId))
   // A `?debate=<id>` link (Settings → Saved data) opens the history with that round expanded.
