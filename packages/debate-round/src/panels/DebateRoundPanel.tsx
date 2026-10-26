@@ -45,6 +45,7 @@ import { useSpeechRecordingStatus } from "../hooks/useSpeechRecordingStatus"
 import { useRoundFromSlug } from "../hooks/useRoundFromSlug"
 import { useSyncUrlWithRound } from "../hooks/useSyncUrlWithRound"
 import { useJumpToPrepNoteBox } from "../hooks/useJumpToPrepNoteBox"
+import { useOpenRoundFromLink } from "../hooks/useOpenRoundFromLink"
 import { useSpeechDocHeadings } from "../hooks/useSpeechDocHeadings"
 import { useRoomTimerSync } from "../hooks/useRoomTimerSync"
 import { ClarityRequestProvider, useClarityRequests } from "../hooks/useClarityRequests"
@@ -267,6 +268,7 @@ const handleEbbToolAction = (action: EbbFlowToolAction) => {
   useRoundFromSlug()
   useSyncUrlWithRound()
   useJumpToPrepNoteBox()
+  useOpenRoundFromLink()
 
   // A shared `/debate/<featured slug>` link builds the round for a reader who
   // has never opened it; `useRoundFromSlug` handles every later visit. Waits

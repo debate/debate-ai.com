@@ -4,7 +4,7 @@ import { Suspense, useEffect, useMemo, useState } from "react"
 import type { ComponentType, ReactNode } from "react"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
-import { Brain, BrainCog, HardDrive, Search, Server, Settings, ShieldCheck, SlidersHorizontal, UserCircle, Volume2, Wand2 } from "lucide-react"
+import { Brain, BrainCog, HardDrive, Plug, Search, Server, Settings, ShieldCheck, SlidersHorizontal, UserCircle, Volume2, Wand2 } from "lucide-react"
 // Static import so bundling confines this ~15k-line global stylesheet to
 // the settings routes' own chunk — never loaded by the host app's main bundle.
 import "@debate-ai/editor/styles.css"
@@ -22,6 +22,7 @@ import { OnDeviceModelsSection } from "./sections/OnDeviceModelsSection"
 import { ReadAloudVoiceSection } from "./sections/ReadAloudVoiceSection"
 import { SidebarIconAnimationsSection } from "./sections/SidebarIconAnimationsSection"
 import { PrivacySettingsSection } from "./sections/PrivacySettingsSection"
+import { McpServerSection } from "./sections/McpServerSection"
 import { useSession } from "../../lib/hooks/useSession"
 import { EDITOR_SETTINGS_TABS } from "../../lib/editor-preferences"
 import { useEditorPreferencesSync } from "../../lib/hooks/useEditorPreferencesSync"
@@ -55,9 +56,12 @@ const EDITOR_PREFS_LABEL = "Editor prefs"
 // credited), the privacy policy link and data deletion requests
 // (`PrivacySettingsSection`).
 const PRIVACY_TAB = "privacy"
+// The hosted MCP server's URL, its setup guide and the account's API keys
+// (`McpServerSection`).
+const MCP_TAB = "mcp"
 /** A research section's tab id: `research-<section key>` (see `researchTabId`). */
 type ResearchTabId = `research-${string}`
-type TabId = SettingsCategory | typeof PREFERENCES_TAB | typeof SOUND_SPEECH_TAB | typeof PRIVACY_TAB | ResearchTabId
+type TabId = SettingsCategory | typeof PREFERENCES_TAB | typeof SOUND_SPEECH_TAB | typeof PRIVACY_TAB | typeof MCP_TAB | ResearchTabId
 /** A sidebar entry; `group` is the heading it sits under (none for the top block). */
 type Category = { id: TabId; label: string; group?: string }
 
@@ -72,7 +76,7 @@ const RESEARCH_TABS: readonly Category[] = RESEARCH_PAGES.map((page) => ({
   group: "Research agent",
 }))
 
-// Three blocks: the site-wide tabs (General, Sound & speech, Privacy), the
+// Three blocks: the site-wide tabs (General, Sound & speech, Privacy, MCP), the
 // editor's tabs under an Editor heading, and the research agent's sections.
 // The editor tabs and their order come from `lib/editor-preferences.ts`, so
 // the set of categories shown here and the set mirrored to the account
@@ -82,6 +86,7 @@ const CATEGORIES: readonly Category[] = [
   { id: PREFERENCES_TAB, label: "General" },
   { id: SOUND_SPEECH_TAB, label: "Sound & speech" },
   { id: PRIVACY_TAB, label: "Privacy" },
+  { id: MCP_TAB, label: "MCP server & API" },
   ...EDITOR_SETTINGS_TABS.map((tab) => ({
     ...tab,
     label: tab.id === "general" ? EDITOR_PREFS_LABEL : tab.label,
@@ -126,6 +131,10 @@ const CATEGORY_DETAILS: Record<string, { icon: ComponentType<{ size?: number }>;
     icon: ShieldCheck,
     description:
       "Whether your recordings can be published, audio only or with video, how you are credited, the privacy policy, and deleting your data.",
+  },
+  [MCP_TAB]: {
+    icon: Plug,
+    description: "Connect Claude, ChatGPT, Cursor or another AI tool to Debate AI, and create the API key it signs in with.",
   },
   ...Object.fromEntries(
     DEBATE_EDITOR_SETTINGS_TABS.map((tab) => [tab.id, { icon: DEBATE_EDITOR_TAB_ICONS[tab.id] ?? Settings, description: tab.description }]),
@@ -378,6 +387,8 @@ function EditorSettingsPanelContent({ sidebarHeader }: { sidebarHeader?: ReactNo
             <activeHostSection.component />
           ) : researchSectionOfTab(active) !== null ? (
             <ResearchSettingsTab section={researchSectionOfTab(active)!} />
+          ) : active === MCP_TAB ? (
+            <McpServerSection signedIn={Boolean(user)} />
           ) : active === PRIVACY_TAB ? (
             <PrivacySettingsSection accountName={user?.name ?? null} />
           ) : active === SOUND_SPEECH_TAB ? (
