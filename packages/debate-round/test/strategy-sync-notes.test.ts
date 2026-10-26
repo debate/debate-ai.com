@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   assignNote,
   buildFlowOpenHref,
+  buildRoundOpenHref,
   buildPrepNoteJumpHref,
   buildPrepNoteSummaryText,
   createPrepNote,
@@ -15,6 +16,7 @@ import {
   isBoxAnchoredPrepNote,
   isRoundAnchoredPrepNote,
   parseFlowOpenParam,
+  parseRoundOpenParam,
   parsePrepNoteJumpParams,
   resolvePrepNoteBox,
   setNotePriority,
@@ -491,5 +493,20 @@ describe("buildFlowOpenHref / parseFlowOpenParam", () => {
     expect(parseFlowOpenParam(params({}))).toBeNull();
     expect(parseFlowOpenParam(params({ flowId: "abc" }))).toBeNull();
     expect(parseFlowOpenParam(params({ flowId: "1.5" }))).toBeNull();
+  });
+});
+
+describe("buildRoundOpenHref / parseRoundOpenParam", () => {
+  const params = (values: Record<string, string>) => ({ get: (name: string) => values[name] ?? null });
+
+  it("round-trips a round id", () => {
+    expect(buildRoundOpenHref(9)).toBe("/debate?roundId=9");
+    expect(parseRoundOpenParam(params({ roundId: "9" }))).toBe(9);
+  });
+
+  it("returns null for a missing or malformed roundId", () => {
+    expect(parseRoundOpenParam(params({}))).toBeNull();
+    expect(parseRoundOpenParam(params({ roundId: "abc" }))).toBeNull();
+    expect(parseRoundOpenParam(params({ roundId: "1.5" }))).toBeNull();
   });
 });
