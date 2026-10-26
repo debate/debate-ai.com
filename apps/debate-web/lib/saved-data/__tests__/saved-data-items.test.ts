@@ -4,7 +4,7 @@ import { drizzle } from "drizzle-orm/libsql";
 import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
-import { documents, practiceVsAiDebates, savedFlows, user } from "../../database/schema";
+import { documents, practiceVsAiDebates, savedFlows, savedRounds, user } from "../../database/schema";
 import { EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems, listOwnSavedItemsPage } from "../saved-data-items";
 
 async function freshDb() {
@@ -34,6 +34,19 @@ describe("saved item management", () => {
     const db = await freshDb();
     await db.insert(savedFlows).values({ userId: "a", clientId: 7, data: "{}" });
     expect(await listOwnSavedItems(db, "a", "flows")).toMatchObject([{ id: 7, title: "Untitled flow", href: "/debate?flowId=7" }]);
+  });
+
+  it("links rounds to the ?roundId= deep link", async () => {
+    const db = await freshDb();
+    await db.insert(savedRounds).values([
+      { userId: "a", clientId: 9, label: "Finals", data: "{}" },
+      { userId: "a", clientId: 11, data: "{}", updatedAt: new Date(2020, 0, 1) },
+      { userId: "b", clientId: 10, data: "{}" },
+    ]);
+    expect(await listOwnSavedItems(db, "a", "rounds")).toMatchObject([
+      { id: 9, title: "Finals", href: "/debate?roundId=9" },
+      { id: 11, title: "Untitled round", href: "/debate?roundId=11" },
+    ]);
   });
 
   it("links practice debates to the Debate History deep link", async () => {
