@@ -65,7 +65,7 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
         id: r.id,
         title: r.topic || (r.botName ? `Debate vs ${r.botName}` : "Practice debate"),
         updatedAt: iso(r.updatedAt),
-        href: null,
+        href: `/practice/versus-ai?debate=${r.id}`,
       }));
     }
   }

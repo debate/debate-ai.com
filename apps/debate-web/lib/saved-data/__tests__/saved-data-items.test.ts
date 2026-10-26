@@ -4,7 +4,7 @@ import { drizzle } from "drizzle-orm/libsql";
 import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
-import { documents, savedFlows, user } from "../../database/schema";
+import { documents, practiceVsAiDebates, savedFlows, user } from "../../database/schema";
 import { deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems } from "../saved-data-items";
 
 async function freshDb() {
@@ -34,6 +34,13 @@ describe("saved item management", () => {
     const db = await freshDb();
     await db.insert(savedFlows).values({ userId: "a", clientId: 7, data: "{}" });
     expect(await listOwnSavedItems(db, "a", "flows")).toMatchObject([{ id: 7, title: "Untitled flow", href: "/debate?flowId=7" }]);
+  });
+
+  it("links practice debates to Debate History by row id", async () => {
+    const db = await freshDb();
+    await db.insert(practiceVsAiDebates).values({ userId: "a", topic: "UBI", data: "{}" });
+    const [item] = await listOwnSavedItems(db, "a", "practiceRounds");
+    expect(item.href).toBe(`/practice/versus-ai?debate=${item.id}`);
   });
 
   it("deletes own rows and refuses another user's or a missing row", async () => {

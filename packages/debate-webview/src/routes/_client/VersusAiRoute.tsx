@@ -1,5 +1,6 @@
 "use client"
 
+import { useSearchParams } from "next/navigation"
 import { PracticeVsAiSections } from "../../components/practice/PracticeVsAiSections"
 import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
 import { useSession } from "../../lib/hooks/useSession"
@@ -11,6 +12,7 @@ import { useSession } from "../../lib/hooks/useSession"
  */
 export default function VersusAiRoute() {
   const { user } = useSession()
+  const debate = useSearchParams()?.get("debate") ?? undefined
   return (
     <ToolPage>
       <ToolPageHeader href="/practice/versus-ai" backHref="/debate" backLabel="round workspace" guide="practice-tools" />
@@ -18,6 +20,7 @@ export default function VersusAiRoute() {
         userId={user?.id ?? undefined}
         userDisplayName={user?.name ?? undefined}
         userAvatar={user?.image ?? undefined}
+        historyDebateId={debate && /^\d+$/.test(debate) ? debate : undefined}
       />
     </ToolPage>
   )

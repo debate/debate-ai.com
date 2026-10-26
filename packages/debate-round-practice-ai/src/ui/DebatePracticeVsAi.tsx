@@ -43,6 +43,8 @@ export interface DebatePracticeVsAiProps {
   coachSkills?: CoachSkill[]
   /** Called when a debate round is initiated. */
   onStartDebate?: (debate: StartedDebate) => void
+  /** Open Debate History with this saved round expanded (a `?debate=<id>` link) instead of the setup wizard. */
+  historyDebateId?: string
 }
 
 export function DebatePracticeVsAi({
@@ -55,9 +57,11 @@ export function DebatePracticeVsAi({
   searchUrl,
   coachSkills,
   onStartDebate,
+  historyDebateId,
 }: DebatePracticeVsAiProps = {}) {
-  const [debate, setDebate] = useState<StartedDebate | null>(() => readActiveRound(userId))
-  const [showHistory, setShowHistory] = useState(false)
+  // A history link wins over resuming; "Back to picker" restores the active round.
+  const [debate, setDebate] = useState<StartedDebate | null>(() => (historyDebateId ? null : readActiveRound(userId)))
+  const [showHistory, setShowHistory] = useState(Boolean(historyDebateId))
 
   const handleStart = (started: StartedDebate) => {
     writeActiveRound(userId, started)
@@ -72,7 +76,16 @@ export function DebatePracticeVsAi({
 
   if (!debate) {
     if (showHistory) {
-      return <DebateHistory apiBaseUrl={apiBaseUrl} onBack={() => setShowHistory(false)} />
+      return (
+        <DebateHistory
+          apiBaseUrl={apiBaseUrl}
+          initialExpandedId={historyDebateId}
+          onBack={() => {
+            setShowHistory(false)
+            setDebate(readActiveRound(userId))
+          }}
+        />
+      )
     }
     return (
       <PracticeSetupWizard
