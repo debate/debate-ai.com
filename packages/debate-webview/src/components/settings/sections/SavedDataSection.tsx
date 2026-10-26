@@ -45,18 +45,44 @@ interface ManagedItem {
 /** Expandable per-item list for one kind, with open links and a confirmed delete. */
 function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; onDeleted: () => void }) {
   const [items, setItems] = useState<ManagedItem[] | null>(null)
+  const [hasMore, setHasMore] = useState(false)
+  const [loadingMore, setLoadingMore] = useState(false)
   const [error, setError] = useState(false)
 
   useEffect(() => {
     let cancelled = false
     fetch(`/api/settings/saved-data/${kind}`)
-      .then((res) => (res.ok ? (res.json() as Promise<{ items: ManagedItem[] }>) : Promise.reject(new Error(String(res.status)))))
-      .then((body) => !cancelled && setItems(body.items))
+      .then((res) => (res.ok ? (res.json() as Promise<{ items: ManagedItem[]; hasMore?: boolean }>) : Promise.reject(new Error(String(res.status)))))
+      .then((body) => {
+        if (cancelled) return
+        setItems(body.items)
+        setHasMore(Boolean(body.hasMore))
+      })
       .catch(() => !cancelled && setError(true))
     return () => {
       cancelled = true
     }
   }, [kind])
+
+  async function loadMore() {
+    if (!items) return
+    setLoadingMore(true)
+    try {
+      // Deleted rows are gone server-side too, so the rows still shown are exactly the offset; the id filter below guards any other drift.
+      const res = await fetch(`/api/settings/saved-data/${kind}?offset=${items.length}`)
+      if (!res.ok) throw new Error(String(res.status))
+      const body = (await res.json()) as { items: ManagedItem[]; hasMore?: boolean }
+      setItems((current) => {
+        const seen = new Set((current ?? []).map((i) => i.id))
+        return [...(current ?? []), ...body.items.filter((i) => !seen.has(i.id))]
+      })
+      setHasMore(Boolean(body.hasMore))
+    } catch {
+      setError(true)
+    } finally {
+      setLoadingMore(false)
+    }
+  }
 
   async function remove(item: ManagedItem) {
     if (typeof window !== "undefined" && !window.confirm(`Delete "${item.title}" from your account? This can't be undone.`)) return
@@ -73,6 +99,7 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
   if (error) return <p className="mt-1 text-xs text-muted-foreground">Couldn't update {label.toLowerCase()}. Try again later.</p>
   if (!items) return <p className="mt-1 text-xs text-muted-foreground">Loading…</p>
   return (
+    <>
     <ul className="mt-1 space-y-1" aria-label={`Saved ${label.toLowerCase()}`}>
       {items.map((item) => (
         <li key={item.id} className="flex items-center justify-between gap-2 text-xs">
@@ -90,6 +117,12 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
         </li>
       ))}
     </ul>
+    {hasMore && (
+      <button type="button" className="mt-1 text-xs underline" disabled={loadingMore} onClick={() => void loadMore()}>
+        {loadingMore ? "Loading…" : "Load more"}
+      </button>
+    )}
+    </>
   )
 }
 

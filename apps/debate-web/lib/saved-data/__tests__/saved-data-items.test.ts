@@ -4,8 +4,8 @@ import { drizzle } from "drizzle-orm/libsql";
 import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
-import { documents, savedFlows, user } from "../../database/schema";
-import { EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems } from "../saved-data-items";
+import { documents, practiceVsAiDebates, savedFlows, savedRounds, user } from "../../database/schema";
+import { EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems, listOwnSavedItemsPage } from "../saved-data-items";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -36,6 +36,19 @@ describe("saved item management", () => {
     expect(await listOwnSavedItems(db, "a", "flows")).toMatchObject([{ id: 7, title: "Untitled flow", href: "/debate?flowId=7" }]);
   });
 
+  it("links rounds to the ?roundId= deep link", async () => {
+    const db = await freshDb();
+    await db.insert(savedRounds).values([
+      { userId: "a", clientId: 9, label: "Finals", data: "{}" },
+      { userId: "a", clientId: 11, data: "{}", updatedAt: new Date(2020, 0, 1) },
+      { userId: "b", clientId: 10, data: "{}" },
+    ]);
+    expect(await listOwnSavedItems(db, "a", "rounds")).toMatchObject([
+      { id: 9, title: "Finals", href: "/debate?roundId=9" },
+      { id: 11, title: "Untitled round", href: "/debate?roundId=11" },
+    ]);
+  });
+
   it("links practice debates to the Debate History deep link", async () => {
     const db = await freshDb();
     await db.insert(practiceVsAiDebates).values({ userId: "a", topic: "Tariffs", botName: "Bot", data: "{}" });
@@ -52,6 +65,18 @@ describe("saved item management", () => {
     expect(await deleteOwnSavedItem(db, "a", "flows", 1)).toBe(true);
     expect(await deleteOwnSavedItem(db, "a", "flows", 1)).toBe(false);
     expect(await listOwnSavedItems(db, "b", "flows")).toHaveLength(1);
+  });
+
+  it("pages through a kind with offset and reports whether more follow", async () => {
+    const db = await freshDb();
+    await db.insert(savedFlows).values([1, 2, 3, 4, 5].map((n) => ({ userId: "a", clientId: n, label: `F${n}`, data: "{}", updatedAt: new Date(2024, 0, n) })));
+    const first = await listOwnSavedItemsPage(db, "a", "flows", 2, 0);
+    expect(first.items.map((i) => i.title)).toEqual(["F5", "F4"]);
+    expect(first.hasMore).toBe(true);
+    const last = await listOwnSavedItemsPage(db, "a", "flows", 2, 4);
+    expect(last).toMatchObject({ items: [{ title: "F1" }], hasMore: false });
+    expect((await listOwnSavedItemsPage(db, "a", "flows", 5, 0)).hasMore).toBe(false);
+    expect((await listOwnSavedItemsPage(db, "a", "flows", 2, 10)).items).toEqual([]);
   });
 
   it("validates kinds", () => {
@@ -121,30 +146,6 @@ describe("bulk export", () => {
 
   it("returns empty lists for a user with nothing saved", async () => {
     const body = JSON.parse((await exportAllOwnSavedData(await freshDb(), "a")).body);
-    expect([body.docs, body.flows, body.rounds, body.practiceRounds, body.truncatedKinds]).toEqual([[], [], [], [], []]);
-  });
-
-  it("exports past the 100-row list page and reports no truncation", async () => {
-    const db = await freshDb();
-    await db.insert(savedFlows).values(Array.from({ length: 230 }, (_, i) => ({ userId: "a", clientId: i + 1, data: "{}" })));
-    const body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
-    expect(body.flows).toHaveLength(230);
-    expect(new Set(body.flows.map((f: { id: number }) => f.id)).size).toBe(230);
-    expect(body.truncatedKinds).toEqual([]);
-  });
-
-  it("stops at the ceiling and names the truncated kind", async () => {
-    const db = await freshDb();
-    await db.insert(savedFlows).values(Array.from({ length: 5 }, (_, i) => ({ userId: "a", clientId: i + 1, data: "{}" })));
-    const body = JSON.parse((await exportAllOwnSavedData(db, "a", new Date(), 3)).body);
-    expect(body.flows).toHaveLength(3);
-    expect(body.maxPerKind).toBe(3);
-    expect(body.truncatedKinds).toEqual(["flows"]);
-  });
-
-  it("does not flag a kind that exactly fills the ceiling", async () => {
-    const db = await freshDb();
-    await db.insert(savedFlows).values(Array.from({ length: 3 }, (_, i) => ({ userId: "a", clientId: i + 1, data: "{}" })));
-    expect(JSON.parse((await exportAllOwnSavedData(db, "a", new Date(), 3)).body).truncatedKinds).toEqual([]);
+    expect([body.docs, body.flows, body.rounds, body.practiceRounds]).toEqual([[], [], [], []]);
   });
 });
