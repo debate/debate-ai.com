@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
 import { documents, savedFlows, user } from "../../database/schema";
-import { deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems } from "../saved-data-items";
+import { EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems } from "../saved-data-items";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -34,6 +34,13 @@ describe("saved item management", () => {
     const db = await freshDb();
     await db.insert(savedFlows).values({ userId: "a", clientId: 7, data: "{}" });
     expect(await listOwnSavedItems(db, "a", "flows")).toMatchObject([{ id: 7, title: "Untitled flow", href: "/debate?flowId=7" }]);
+  });
+
+  it("links practice debates to the Debate History deep link", async () => {
+    const db = await freshDb();
+    await db.insert(practiceVsAiDebates).values({ userId: "a", topic: "Tariffs", botName: "Bot", data: "{}" });
+    const [item] = await listOwnSavedItems(db, "a", "practiceRounds");
+    expect(item.href).toBe(`/practice/versus-ai?debate=${item.id}`);
   });
 
   it("deletes own rows and refuses another user's or a missing row", async () => {
@@ -98,6 +105,18 @@ describe("bulk export", () => {
     expect(body.flows).toMatchObject([{ id: 2, data: { c: 1 } }]);
     expect(body.rounds).toEqual([]);
     expect(body.practiceRounds).toEqual([]);
+  });
+
+  it("exports every row, past the per-kind list cap and across page boundaries", async () => {
+    const db = await freshDb();
+    const total = EXPORT_PAGE_SIZE * 2 + 5;
+    await db.insert(savedFlows).values(Array.from({ length: total }, (_, i) => ({ userId: "a", clientId: i + 1, data: "{}", updatedAt: new Date(2024, 0, 1, 0, 0, i) })));
+    const body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
+    expect(total).toBeGreaterThan(MAX_ITEMS);
+    expect(body.flows).toHaveLength(total);
+    expect(new Set(body.flows.map((f: { id: number }) => f.id)).size).toBe(total);
+    expect(body.flows[0].id).toBe(total);
+    expect(body.limitPerKind).toBeUndefined();
   });
 
   it("returns empty lists for a user with nothing saved", async () => {
