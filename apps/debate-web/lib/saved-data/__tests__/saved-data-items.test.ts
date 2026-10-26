@@ -36,6 +36,13 @@ describe("saved item management", () => {
     expect(await listOwnSavedItems(db, "a", "flows")).toMatchObject([{ id: 7, title: "Untitled flow", href: "/debate?flowId=7" }]);
   });
 
+  it("links practice debates to the Debate History deep link", async () => {
+    const db = await freshDb();
+    await db.insert(practiceVsAiDebates).values({ userId: "a", topic: "Tariffs", botName: "Bot", data: "{}" });
+    const [item] = await listOwnSavedItems(db, "a", "practiceRounds");
+    expect(item.href).toBe(`/practice/versus-ai?debate=${item.id}`);
+  });
+
   it("deletes own rows and refuses another user's or a missing row", async () => {
     const db = await freshDb();
     await db.insert(savedFlows).values([
