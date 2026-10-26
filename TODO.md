@@ -69,8 +69,8 @@
   - [x] List / open (docs) / delete individual saved docs, flows, rounds and practice debates from this section (2026-10-22, branch `claude/gifted-babbage-uf5f12`): `saved-data-items.ts`, `/api/settings/saved-data/[kind]`, **Manage** in `SavedDataSection`, with Vitest
   - [x] Export an individual saved item as JSON (2026-10-24, branch `agent/todo-saved-item-export`): `exportOwnSavedItem`, `GET /api/settings/saved-data/[kind]?id=`, **Export** link in `SavedDataSection`, with Vitest
   - [x] Bulk export (2026-10-24, branch `agent/todo-saved-data-bulk-export`): `exportAllOwnSavedData`, `GET /api/settings/saved-data?export=all`, **Export all as JSON** link in `SavedDataSection`, with Vitest; removed two stale duplicate export tests that failed on `master`
-  - [x] Stable open link for practice debates (2026-10-25, branch `claude/gifted-babbage-t2d2tq`): `/practice/versus-ai?debate=<id>` opens Debate History with that round expanded (`history-link.ts`, `DebateHistory` `initialExpandedId`, `listOwnSavedItems` href), with Vitest
-  - [ ] Follow-up: stable open links for saved rounds (needs a loader for `saved_rounds` by id); lift the 100-per-kind cap in bulk export (open PRs #1450–#1452)
+  - [x] Bulk export no longer capped at 100 per kind (2026-10-25, branch `claude/gifted-babbage-frrxt0`): pages through every row, `EXPORT_PAGE_SIZE`, with Vitest across page boundaries
+  - [ ] Follow-up: stable open links for rounds / practice debates (flows already open via `/debate?flowId=N`); paginate the **Manage** list
   - [x] Tool Data Sync collections (`saved_tool_records`) included in the summary (branch `agent/todo-saved-data-tool-records`, Vitest in `saved-data.test.ts` + `saved-data-section.test.tsx`)
   - [ ] Follow-up: add the sync badge to open-flow tabs and the `/doc` header (existing known gap)
 
