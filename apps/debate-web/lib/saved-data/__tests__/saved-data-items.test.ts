@@ -40,9 +40,13 @@ describe("saved item management", () => {
     const db = await freshDb();
     await db.insert(savedRounds).values([
       { userId: "a", clientId: 9, label: "Finals", data: "{}" },
+      { userId: "a", clientId: 11, data: "{}", updatedAt: new Date(2020, 0, 1) },
       { userId: "b", clientId: 10, data: "{}" },
     ]);
-    expect(await listOwnSavedItems(db, "a", "rounds")).toMatchObject([{ id: 9, title: "Finals", href: "/debate?roundId=9" }]);
+    expect(await listOwnSavedItems(db, "a", "rounds")).toMatchObject([
+      { id: 9, title: "Finals", href: "/debate?roundId=9" },
+      { id: 11, title: "Untitled round", href: "/debate?roundId=11" },
+    ]);
   });
 
   it("links practice debates to the Debate History deep link", async () => {
