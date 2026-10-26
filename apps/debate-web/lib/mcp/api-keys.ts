@@ -8,7 +8,9 @@
  * accepts a key with no change. Key sessions are told apart from browser
  * sessions by their `user_agent`, which starts with {@link API_KEY_USER_AGENT}
  * and carries the key's label. Revoking a key deletes its session row; signing
- * out of all other sessions revokes keys too.
+ * out of all other sessions revokes keys too. The token is the session row's
+ * own `token` column, so Settings can show a key again (`revealApiKey`), and
+ * resetting one swaps that token for a fresh one (`resetApiKey`).
  */
 import { and, desc, eq, like } from "drizzle-orm";
 import type { BaseSQLiteDatabase } from "drizzle-orm/sqlite-core";
@@ -84,7 +86,7 @@ export class TooManyApiKeysError extends Error {
   }
 }
 
-/** Mints a key. The returned `key` is the only copy the caller will ever see. */
+/** Mints a key; Settings can show it again later with `revealApiKey`. */
 export async function createApiKey(
   db: Db,
   userId: string,
@@ -115,4 +117,42 @@ export async function revokeApiKey(db: Db, userId: string, id: string): Promise<
     .where(and(eq(session.id, id), eq(session.userId, userId), like(session.userAgent, `${API_KEY_USER_AGENT}%`)))
     .returning({ id: session.id });
   return deleted.length > 0;
+}
+
+function ownedKey(userId: string, id: string) {
+  return and(eq(session.id, id), eq(session.userId, userId), like(session.userAgent, `${API_KEY_USER_AGENT}%`));
+}
+
+/** One of `userId`'s keys in full, or null when no such key exists. */
+export async function revealApiKey(db: Db, userId: string, id: string): Promise<string | null> {
+  const rows: Pick<SessionRow, "token">[] = await db
+    .select({ token: session.token })
+    .from(session)
+    .where(ownedKey(userId, id))
+    .limit(1);
+  return rows[0]?.token ?? null;
+}
+
+/**
+ * Gives one of `userId`'s keys a fresh token and a fresh year, keeping its id
+ * and label. The old token stops working at once. Null when no such key exists.
+ */
+export async function resetApiKey(
+  db: Db,
+  userId: string,
+  id: string,
+  now = new Date(),
+): Promise<{ key: string; summary: ApiKeySummary } | null> {
+  const token = generateApiKeyToken();
+  const rows: SessionRow[] = await db
+    .update(session)
+    .set({
+      token,
+      createdAt: now,
+      updatedAt: now,
+      expiresAt: new Date(now.getTime() + API_KEY_LIFETIME_DAYS * 86_400_000),
+    })
+    .where(ownedKey(userId, id))
+    .returning();
+  return rows[0] ? { key: token, summary: toSummary(rows[0]) } : null;
 }
