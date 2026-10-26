@@ -352,20 +352,19 @@ collection, labelled from `TOOL_RECORD_COLLECTIONS`; keys no longer in that
 allowlist and the video watch history are left out, and `total` includes them.
 
 For documents, flows, rounds and practice debates, a **Manage** button next to
-the count lists those items newest first (title only, up to 100) with an **Export**
+the count lists those items newest first (title only, 100 at a time, with a **Load more** button when there are further items) with an **Export**
 link (downloads that one item's full content as a JSON file) and a **Delete**
 action behind a confirmation. Documents, flows and rounds also link to where they open. This is backed by
-`GET` (`?id=<n>` exports one row via `exportOwnSavedItem`) / `DELETE`
+`GET` (`?offset=<n>&limit=<n>` pages the list via `listOwnSavedItemsPage`, returning `hasMore`; `?id=<n>` exports one row via `exportOwnSavedItem`) / `DELETE`
 `/api/settings/saved-data/[kind]` (`saved-data-items.ts`), which only ever touches rows owned by the signed-in user.
 
 An **Export all as JSON** link under the counts downloads every kind at once
 (`GET /api/settings/saved-data?export=all` → `exportAllOwnSavedData`): one file with
 `docs`, `flows`, `rounds` and `practiceRounds` arrays holding each item's full content.
 The export reads every row (a page of 100 per query), so it is not limited to the
-100 items shown in **Manage**.
+100 items shown per **Manage** page.
 
-Known gaps: the **Manage** list shows only the newest 100 items of a kind; rounds and
-practice debates have no stable open link.
+Known gaps: rounds have no stable open link.
 
 ## Known gaps
 

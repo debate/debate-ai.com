@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
 import { documents, practiceVsAiDebates, savedFlows, user } from "../../database/schema";
-import { EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems } from "../saved-data-items";
+import { EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems, listOwnSavedItemsPage } from "../saved-data-items";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -52,6 +52,18 @@ describe("saved item management", () => {
     expect(await deleteOwnSavedItem(db, "a", "flows", 1)).toBe(true);
     expect(await deleteOwnSavedItem(db, "a", "flows", 1)).toBe(false);
     expect(await listOwnSavedItems(db, "b", "flows")).toHaveLength(1);
+  });
+
+  it("pages through a kind with offset and reports whether more follow", async () => {
+    const db = await freshDb();
+    await db.insert(savedFlows).values([1, 2, 3, 4, 5].map((n) => ({ userId: "a", clientId: n, label: `F${n}`, data: "{}", updatedAt: new Date(2024, 0, n) })));
+    const first = await listOwnSavedItemsPage(db, "a", "flows", 2, 0);
+    expect(first.items.map((i) => i.title)).toEqual(["F5", "F4"]);
+    expect(first.hasMore).toBe(true);
+    const last = await listOwnSavedItemsPage(db, "a", "flows", 2, 4);
+    expect(last).toMatchObject({ items: [{ title: "F1" }], hasMore: false });
+    expect((await listOwnSavedItemsPage(db, "a", "flows", 5, 0)).hasMore).toBe(false);
+    expect((await listOwnSavedItemsPage(db, "a", "flows", 2, 10)).items).toEqual([]);
   });
 
   it("validates kinds", () => {
