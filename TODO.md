@@ -73,7 +73,7 @@
   - [x] Paginate the **Manage** list (2026-10-26, branch `claude/gifted-babbage-c0kevh`): `listOwnSavedItemsPage`, `?offset=&limit=` + `hasMore` on `/api/settings/saved-data/[kind]`, **Load more** in `SavedDataSection`, with Vitest
   - [x] Stable open link for rounds (2026-10-26, branch `agent/todo-saved-round-open-link`): list items link to `/debate?roundId=N` (handled by `useOpenRoundFromLink`), with Vitest. Earlier note: (flows and practice debates already open via `/debate?flowId=N` and `/practice/versus-ai?debate=N`)
   - [x] Tool Data Sync collections (`saved_tool_records`) included in the summary (branch `agent/todo-saved-data-tool-records`, Vitest in `saved-data.test.ts` + `saved-data-section.test.tsx`)
-  - [ ] Follow-up: add the sync badge to open-flow tabs and the `/doc` header (existing known gap)
+  - [x] Follow-up withdrawn (2026-10-26, branch `claude/gifted-babbage-b188c5`): open-flow tabs already show the saved-to-account marker (see `IDEAS.md`), and `/doc` is an iframe of qwksearch.com (`WorkspaceScreen`), whose documents are not in this app's SQL, so a sync badge there would be misleading. Owned documents are on `/reason-editor`, which already has a save-status line (`describeDocSaveStatus`)
 
 ---
 
