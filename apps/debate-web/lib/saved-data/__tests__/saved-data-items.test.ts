@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
 import { documents, practiceVsAiDebates, savedFlows, user } from "../../database/schema";
-import { EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems } from "../saved-data-items";
+import { EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems, listOwnSavedItemsPage } from "../saved-data-items";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -52,6 +52,27 @@ describe("saved item management", () => {
     expect(await deleteOwnSavedItem(db, "a", "flows", 1)).toBe(true);
     expect(await deleteOwnSavedItem(db, "a", "flows", 1)).toBe(false);
     expect(await listOwnSavedItems(db, "b", "flows")).toHaveLength(1);
+  });
+
+  it("pages through a kind without gaps or repeats and reports hasMore", async () => {
+    const db = await freshDb();
+    await db.insert(savedFlows).values(Array.from({ length: 5 }, (_, i) => ({ userId: "a", clientId: i + 1, data: "{}", updatedAt: new Date(2024, 0, 1, 0, 0, i) })));
+    const first = await listOwnSavedItemsPage(db, "a", "flows", { limit: 2 });
+    const second = await listOwnSavedItemsPage(db, "a", "flows", { limit: 2, offset: 2 });
+    const last = await listOwnSavedItemsPage(db, "a", "flows", { limit: 2, offset: 4 });
+    expect([first, second, last].map((p) => p.items.map((i) => i.id))).toEqual([[5, 4], [3, 2], [1]]);
+    expect([first.hasMore, second.hasMore, last.hasMore]).toEqual([true, true, false]);
+  });
+
+  it("clamps bad page sizes and offsets and never leaks another user's rows", async () => {
+    const db = await freshDb();
+    await db.insert(savedFlows).values([
+      { userId: "a", clientId: 1, data: "{}" },
+      { userId: "b", clientId: 2, data: "{}" },
+    ]);
+    const page = await listOwnSavedItemsPage(db, "a", "flows", { limit: -3, offset: -9 });
+    expect(page).toMatchObject({ items: [{ id: 1 }], hasMore: false });
+    expect((await listOwnSavedItemsPage(db, "a", "flows", { offset: 5 })).items).toEqual([]);
   });
 
   it("validates kinds", () => {

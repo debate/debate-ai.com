@@ -45,18 +45,47 @@ interface ManagedItem {
 /** Expandable per-item list for one kind, with open links and a confirmed delete. */
 function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; onDeleted: () => void }) {
   const [items, setItems] = useState<ManagedItem[] | null>(null)
+  const [hasMore, setHasMore] = useState(false)
+  const [loadingMore, setLoadingMore] = useState(false)
   const [error, setError] = useState(false)
+
+  /** Fetches one page after `offset` rows; `hasMore` is absent from servers that predate paging. */
+  async function fetchPage(offset: number) {
+    const res = await fetch(`/api/settings/saved-data/${kind}${offset > 0 ? `?offset=${offset}` : ""}`)
+    if (!res.ok) throw new Error(String(res.status))
+    return (await res.json()) as { items: ManagedItem[]; hasMore?: boolean }
+  }
 
   useEffect(() => {
     let cancelled = false
-    fetch(`/api/settings/saved-data/${kind}`)
-      .then((res) => (res.ok ? (res.json() as Promise<{ items: ManagedItem[] }>) : Promise.reject(new Error(String(res.status)))))
-      .then((body) => !cancelled && setItems(body.items))
+    fetchPage(0)
+      .then((body) => {
+        if (cancelled) return
+        setItems(body.items)
+        setHasMore(Boolean(body.hasMore))
+      })
       .catch(() => !cancelled && setError(true))
     return () => {
       cancelled = true
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchPage only closes over `kind`
   }, [kind])
+
+  async function loadMore() {
+    setLoadingMore(true)
+    try {
+      const body = await fetchPage(items?.length ?? 0)
+      setItems((current) => {
+        const seen = new Set((current ?? []).map((i) => i.id))
+        return [...(current ?? []), ...body.items.filter((i) => !seen.has(i.id))]
+      })
+      setHasMore(Boolean(body.hasMore))
+    } catch {
+      setError(true)
+    } finally {
+      setLoadingMore(false)
+    }
+  }
 
   async function remove(item: ManagedItem) {
     if (typeof window !== "undefined" && !window.confirm(`Delete "${item.title}" from your account? This can't be undone.`)) return
@@ -73,6 +102,7 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
   if (error) return <p className="mt-1 text-xs text-muted-foreground">Couldn't update {label.toLowerCase()}. Try again later.</p>
   if (!items) return <p className="mt-1 text-xs text-muted-foreground">Loading…</p>
   return (
+    <>
     <ul className="mt-1 space-y-1" aria-label={`Saved ${label.toLowerCase()}`}>
       {items.map((item) => (
         <li key={item.id} className="flex items-center justify-between gap-2 text-xs">
@@ -90,6 +120,12 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
         </li>
       ))}
     </ul>
+    {hasMore && (
+      <button type="button" className="mt-1 text-xs underline" disabled={loadingMore} onClick={() => void loadMore()}>
+        {loadingMore ? "Loading…" : "Load more"}
+      </button>
+    )}
+    </>
   )
 }
 

@@ -13,6 +13,9 @@ export const isItemKind = (value: string): value is ItemKind => (ITEM_KINDS as r
 /** Rows returned per kind; the list is a management view, not a browser. */
 export const MAX_ITEMS = 100;
 
+/** Default rows per page in the Manage list. */
+export const PAGE_SIZE = 25;
+
 /** Rows per kind in the bulk export archive; the archive is a backup, so it reaches much further than the list. */
 export const EXPORT_MAX_ITEMS = 1000;
 
@@ -27,8 +30,8 @@ export interface SavedItem {
 
 const iso = (value: Date | null | undefined) => (value ? value.toISOString() : new Date(0).toISOString());
 
-/** Newest-first list of one kind of the caller's saved work (titles only, never content), at most `limit` rows. */
-export async function listOwnSavedItems(db: AccountDB, userId: string, kind: ItemKind, limit = MAX_ITEMS): Promise<SavedItem[]> {
+/** Newest-first list of one kind of the caller's saved work (titles only, never content), at most `limit` rows after skipping `offset`. */
+export async function listOwnSavedItems(db: AccountDB, userId: string, kind: ItemKind, limit = MAX_ITEMS, offset = 0): Promise<SavedItem[]> {
   switch (kind) {
     case "docs": {
       const rows: Array<{ id: number; title: string; updatedAt: Date | null }> = await db
@@ -36,7 +39,8 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
         .from(documents)
         .where(and(eq(documents.userId, userId), eq(documents.isFolder, false)))
         .orderBy(desc(documents.updatedAt), desc(documents.id))
-        .limit(limit);
+        .limit(limit)
+        .offset(offset);
       return rows.map((r) => ({ id: r.id, title: r.title || "Untitled", updatedAt: iso(r.updatedAt), href: `/reason-editor?doc=${r.id}` }));
     }
     case "flows": {
@@ -45,7 +49,8 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
         .from(savedFlows)
         .where(eq(savedFlows.userId, userId))
         .orderBy(desc(savedFlows.updatedAt), desc(savedFlows.id))
-        .limit(limit);
+        .limit(limit)
+        .offset(offset);
       return rows.map((r) => ({ id: r.id, title: r.label || "Untitled flow", updatedAt: iso(r.updatedAt), href: `/debate?flowId=${r.id}` /* mirrors buildFlowOpenHref in @debate-ai/round */ }));
     }
     case "rounds": {
@@ -54,7 +59,8 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
         .from(savedRounds)
         .where(eq(savedRounds.userId, userId))
         .orderBy(desc(savedRounds.updatedAt), desc(savedRounds.id))
-        .limit(limit);
+        .limit(limit)
+        .offset(offset);
       return rows.map((r) => ({ id: r.id, title: r.label || "Untitled round", updatedAt: iso(r.updatedAt), href: null }));
     }
     case "practiceRounds": {
@@ -63,7 +69,8 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
         .from(practiceVsAiDebates)
         .where(eq(practiceVsAiDebates.userId, userId))
         .orderBy(desc(practiceVsAiDebates.updatedAt), desc(practiceVsAiDebates.id))
-        .limit(limit);
+        .limit(limit)
+        .offset(offset);
       return rows.map((r) => ({
         id: r.id,
         title: r.topic || (r.botName ? `Debate vs ${r.botName}` : "Practice debate"),
@@ -72,6 +79,19 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
       }));
     }
   }
+}
+
+export interface SavedItemsPage {
+  items: SavedItem[];
+  /** True when more rows exist past this page; request again with `offset + items.length`. */
+  hasMore: boolean;
+}
+
+/** One page of `listOwnSavedItems`; `limit` is clamped to 1..MAX_ITEMS and `offset` to >= 0. */
+export async function listOwnSavedItemsPage(db: AccountDB, userId: string, kind: ItemKind, { limit = PAGE_SIZE, offset = 0 }: { limit?: number; offset?: number } = {}): Promise<SavedItemsPage> {
+  const size = Math.min(Math.max(Math.trunc(limit) || PAGE_SIZE, 1), MAX_ITEMS);
+  const rows = await listOwnSavedItems(db, userId, kind, size + 1, Math.max(Math.trunc(offset) || 0, 0));
+  return { items: rows.slice(0, size), hasMore: rows.length > size };
 }
 
 /** Deletes one of the caller's own rows; returns false when it doesn't exist or isn't theirs. */
