@@ -73,7 +73,7 @@
   - [x] Paginate the **Manage** list (2026-10-26, branch `claude/gifted-babbage-c0kevh`): `listOwnSavedItemsPage`, `?offset=&limit=` + `hasMore` on `/api/settings/saved-data/[kind]`, **Load more** in `SavedDataSection`, with Vitest
   - [x] Stable open link for rounds (2026-10-26, branch `agent/todo-saved-round-open-link`): list items link to `/debate?roundId=N` (handled by `useOpenRoundFromLink`), with Vitest. Earlier note: (flows and practice debates already open via `/debate?flowId=N` and `/practice/versus-ai?debate=N`)
   - [x] Tool Data Sync collections (`saved_tool_records`) included in the summary (branch `agent/todo-saved-data-tool-records`, Vitest in `saved-data.test.ts` + `saved-data-section.test.tsx`)
-  - [ ] Follow-up: add the sync badge to open-flow tabs and the `/doc` header (existing known gap)
+  - [x] Follow-up resolved as already shipped / by design (2026-10-26, branch `claude/gifted-babbage-52acr1`): open-flow tabs already show a Cloud / CloudOff "Saved to your account" marker (`debate-round/src/navigation/FlowTab.tsx`); the `/doc` editor intentionally surfaces only failed saves and read-only topic starters (`ReasonEditorScreen.tsx`, `describeDocSaveStatus`), matching the decision to hide the always-on badge. No code change; stale known-gap text corrected in `user-settings.mdx`
 
 ---
 
