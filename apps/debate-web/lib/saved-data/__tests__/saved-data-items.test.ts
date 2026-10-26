@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
 import { documents, savedFlows, user } from "../../database/schema";
-import { deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems } from "../saved-data-items";
+import { MAX_EXPORT_ITEMS, deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems } from "../saved-data-items";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -100,8 +100,25 @@ describe("bulk export", () => {
     expect(body.practiceRounds).toEqual([]);
   });
 
+  it("exports past the 100-row list cap and reports nothing truncated", async () => {
+    const db = await freshDb();
+    await db.insert(savedFlows).values(Array.from({ length: 205 }, (_, i) => ({ userId: "a", clientId: i + 1, data: "{}" })));
+    const body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
+    expect(body.flows).toHaveLength(205);
+    expect(new Set(body.flows.map((f: { id: number }) => f.id)).size).toBe(205);
+    expect(body.truncatedKinds).toEqual([]);
+    expect(body.limitPerKind).toBe(MAX_EXPORT_ITEMS);
+    expect(await listOwnSavedItems(db, "a", "flows")).toHaveLength(100);
+  });
+
+  it("pages the list with limit and offset", async () => {
+    const db = await freshDb();
+    await db.insert(savedFlows).values(Array.from({ length: 5 }, (_, i) => ({ userId: "a", clientId: i + 1, data: "{}", updatedAt: new Date(2024, 0, i + 1) })));
+    expect((await listOwnSavedItems(db, "a", "flows", { limit: 2, offset: 2 })).map((i) => i.id)).toEqual([3, 2]);
+  });
+
   it("returns empty lists for a user with nothing saved", async () => {
     const body = JSON.parse((await exportAllOwnSavedData(await freshDb(), "a")).body);
-    expect([body.docs, body.flows, body.rounds, body.practiceRounds]).toEqual([[], [], [], []]);
+    expect([body.docs, body.flows, body.rounds, body.practiceRounds, body.truncatedKinds]).toEqual([[], [], [], [], []]);
   });
 });

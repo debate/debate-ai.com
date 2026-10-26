@@ -69,7 +69,8 @@
   - [x] List / open (docs) / delete individual saved docs, flows, rounds and practice debates from this section (2026-10-22, branch `claude/gifted-babbage-uf5f12`): `saved-data-items.ts`, `/api/settings/saved-data/[kind]`, **Manage** in `SavedDataSection`, with Vitest
   - [x] Export an individual saved item as JSON (2026-10-24, branch `agent/todo-saved-item-export`): `exportOwnSavedItem`, `GET /api/settings/saved-data/[kind]?id=`, **Export** link in `SavedDataSection`, with Vitest
   - [x] Bulk export (2026-10-24, branch `agent/todo-saved-data-bulk-export`): `exportAllOwnSavedData`, `GET /api/settings/saved-data?export=all`, **Export all as JSON** link in `SavedDataSection`, with Vitest; removed two stale duplicate export tests that failed on `master`
-  - [ ] Follow-up: stable open links for flows / rounds / practice debates; lift the 100-per-kind cap in bulk export
+  - [x] Bulk export lifts the 100-per-kind cap (2026-10-26, branch `claude/gifted-babbage-4m0d2m`): pages the list up to `MAX_EXPORT_ITEMS` (2,000) per kind, `truncatedKinds` reports overflow, with Vitest
+  - [ ] Follow-up: stable open links for flows / rounds / practice debates; fetch bulk-export rows in one query per page instead of one per item
   - [x] Tool Data Sync collections (`saved_tool_records`) included in the summary (branch `agent/todo-saved-data-tool-records`, Vitest in `saved-data.test.ts` + `saved-data-section.test.tsx`)
   - [ ] Follow-up: add the sync badge to open-flow tabs and the `/doc` header (existing known gap)
 
