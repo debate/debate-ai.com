@@ -1,7 +1,8 @@
 /** @vitest-environment jsdom */
 /**
  * @fileoverview Settings → MCP server & API: the endpoint, the setup-guide
- * link, and creating / listing / revoking API keys through /api/mcp/keys.
+ * link, and creating / listing / showing / resetting / revoking API keys
+ * through /api/mcp/keys.
  */
 import { act } from "react"
 import { createRoot } from "react-dom/client"
@@ -35,7 +36,7 @@ describe("McpServerSection", () => {
     expect(fetch).not.toHaveBeenCalled()
   })
 
-  it("creates a key, shows it once with a ready config, and lists it", async () => {
+  it("creates a key, shows it with a ready config, and lists it", async () => {
     let keys: (typeof KEY)[] = []
     const fetchMock = vi.fn(async (_url: string, init?: RequestInit) => {
       if (init?.method === "POST") {
@@ -75,5 +76,42 @@ describe("McpServerSection", () => {
     await act(async () => revoke.click())
     await act(async () => {})
     expect(host.textContent).toContain("No API keys yet.")
+  })
+
+  it("shows a listed key again and copies it", async () => {
+    const fetchMock = vi.fn(async (url: string) =>
+      url === "/api/mcp/keys?id=k1" ? Response.json({ key: "dai_fullkey0001" }) : Response.json({ keys: [KEY] }),
+    )
+    const writeText = vi.fn(async () => {})
+    vi.stubGlobal("fetch", fetchMock)
+    Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true })
+    const host = await mount(true)
+    expect(host.textContent).not.toContain("dai_fullkey0001")
+    await act(async () => (host.querySelector('button[aria-label="Show Claude Desktop"]') as HTMLButtonElement).click())
+    expect(host.textContent).toContain("dai_fullkey0001")
+    await act(async () => (host.querySelector('button[aria-label="Copy Claude Desktop"]') as HTMLButtonElement).click())
+    expect(writeText).toHaveBeenCalledWith("dai_fullkey0001")
+    await act(async () => (host.querySelector('button[aria-label="Hide Claude Desktop"]') as HTMLButtonElement).click())
+    expect(host.textContent).not.toContain("dai_fullkey0001")
+  })
+
+  it("resets a key only after confirming, then shows the new one", async () => {
+    const fetchMock = vi.fn(async (url: string, init?: RequestInit) => {
+      if (init?.method === "PATCH") {
+        expect(url).toBe("/api/mcp/keys?id=k1")
+        return Response.json({ key: "dai_newkey9999", summary: { ...KEY, hint: "9999" } })
+      }
+      return Response.json({ keys: [KEY] })
+    })
+    vi.stubGlobal("fetch", fetchMock)
+    const host = await mount(true)
+    await act(async () => (host.querySelector('button[aria-label="Reset Claude Desktop"]') as HTMLButtonElement).click())
+    expect(fetchMock.mock.calls.some(([, init]) => init?.method === "PATCH")).toBe(false)
+    expect(host.textContent).toContain("old key stops working")
+    const confirm = [...host.querySelectorAll("button")].find((b) => b.textContent === "Reset key") as HTMLButtonElement
+    await act(async () => confirm.click())
+    await act(async () => {})
+    expect(host.textContent).toContain("dai_newkey9999")
+    expect(host.textContent).not.toContain("old key stops working")
   })
 })

@@ -28,11 +28,13 @@ coach materials) needs one.
 2. Open **Settings → MCP server & API**.
 3. Type a name for the key (for example "Claude Desktop") and press
    **Create API key**.
-4. **Copy the key now.** It starts with `dai_` and is shown only once. If you
-   lose it, revoke it and create another.
+4. **Copy the key.** It starts with `dai_`. Your keys stay listed on the same
+   page: **Show** reveals a key again with a **Copy** button, **Reset** gives
+   it a new secret (after you confirm; the old one stops working at once, so
+   paste the new one into your client), and **Revoke** deletes it.
 
 A key acts as you, so treat it like a password. It lasts a year (longer while
-you keep using it), and you can revoke it at any time from the same page.
+you keep using it; a reset starts a fresh year).
 Signing out of all your other sessions revokes your keys too.
 
 Every client below sends the key the same way, as an HTTP header:
@@ -179,8 +181,10 @@ route listed at [/api](/api).
   `Debate AI API key: ` followed by the key's name) and returns its token. The
   existing `bearer()` auth plugin already turns `Authorization: Bearer <token>`
   into a session, so every route accepts a key without changes. Revoking
-  deletes the row. `/api/mcp/keys` lists, creates and revokes keys, and only
-  for a browser session, so a leaked key can't mint new ones.
+  deletes the row; resetting writes a new token into it (same id and name).
+  `/api/mcp/keys` lists, shows (`GET ?id=`), creates, resets (`PATCH ?id=`)
+  and revokes keys, and only for a browser session, so a leaked key can't
+  read or mint keys.
 - **Only the key is forwarded.** The server checks the `Authorization` header
   once (an unknown or revoked key gets a 401 before any tool runs) and passes
   only that header to the tool's route, never cookies. The endpoint allows

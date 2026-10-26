@@ -394,12 +394,19 @@ paths:
   /mcp/keys:
     get:
       operationId: listMcpApiKeys
-      summary: List your API keys
-      description: The signed-in account's API keys (for the MCP server and the REST API), newest first. The secret itself is only returned once, when a key is created.
+      summary: List your API keys, or show one
+      description: The signed-in account's API keys (for the MCP server and the REST API), newest first. With `id`, that one key in full instead, as `{ key }`. Browser sessions only.
       tags: [MCP]
+      parameters:
+        - name: id
+          in: query
+          required: false
+          description: A key's id, to return that key in full.
+          schema:
+            type: string
       responses:
         "200":
-          description: The account's keys.
+          description: The account's keys, or `{ key }` for the one asked for.
           content:
             application/json:
               schema:
@@ -409,12 +416,17 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/ApiKeySummary"
+                  key:
+                    type: string
+                    description: The full key, when `id` was given.
         "401":
           description: Not signed in.
+        "404":
+          description: No such key.
     post:
       operationId: createMcpApiKey
       summary: Create an API key
-      description: Mints a new API key for the signed-in account. The response is the only time the full key is shown.
+      description: Mints a new API key for the signed-in account. It can be shown again later with `GET /mcp/keys?id=`.
       tags: [MCP]
       requestBody:
         required: false
@@ -441,6 +453,33 @@ paths:
                     $ref: "#/components/schemas/ApiKeySummary"
         "401":
           description: Not signed in.
+    patch:
+      operationId: resetMcpApiKey
+      summary: Reset an API key
+      description: Gives the key a new secret and a fresh year, keeping its id and name. The old secret stops working at once.
+      tags: [MCP]
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: The key's new secret.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  key:
+                    type: string
+                  summary:
+                    $ref: "#/components/schemas/ApiKeySummary"
+        "401":
+          description: Not signed in.
+        "404":
+          description: No such key.
     delete:
       operationId: revokeMcpApiKey
       summary: Revoke an API key

@@ -9,6 +9,8 @@ import {
   generateApiKeyToken,
   listApiKeys,
   normalizeKeyLabel,
+  resetApiKey,
+  revealApiKey,
   revokeApiKey,
 } from "../api-keys";
 
@@ -70,5 +72,34 @@ describe("api keys", () => {
 
   it("marks key sessions by user agent", () => {
     expect(API_KEY_USER_AGENT.startsWith("Debate AI API key")).toBe(true);
+  });
+});
+
+describe("showing and resetting a key", () => {
+  it("shows only the owner's key again, never a browser session", async () => {
+    const db = await freshDb();
+    const { key, summary } = await createApiKey(db, "u1", "Claude");
+    expect(await revealApiKey(db, "u1", summary.id)).toBe(key);
+    expect(await revealApiKey(db, "u2", summary.id)).toBeNull();
+    expect(await revealApiKey(db, "u1", "browser")).toBeNull();
+  });
+
+  it("resets a key to a new token, keeping its id and name, with a fresh year", async () => {
+    const db = await freshDb();
+    const { key: oldKey, summary } = await createApiKey(db, "u1", "Cursor", new Date("2026-01-01T00:00:00Z"));
+    const reset = await resetApiKey(db, "u1", summary.id, new Date("2026-10-25T00:00:00Z"));
+    expect(reset?.key).not.toBe(oldKey);
+    expect(reset?.key).toMatch(/^dai_/);
+    expect(reset?.summary).toMatchObject({ id: summary.id, name: "Cursor", hint: reset!.key.slice(-4) });
+    expect(reset?.summary.expiresAt).toBe("2027-10-25T00:00:00.000Z");
+    expect(await revealApiKey(db, "u1", summary.id)).toBe(reset?.key);
+  });
+
+  it("won't reset someone else's key or a browser session", async () => {
+    const db = await freshDb();
+    const { key, summary } = await createApiKey(db, "u1", "Claude");
+    expect(await resetApiKey(db, "u2", summary.id)).toBeNull();
+    expect(await resetApiKey(db, "u1", "browser")).toBeNull();
+    expect(await revealApiKey(db, "u1", summary.id)).toBe(key);
   });
 });

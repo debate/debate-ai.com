@@ -6,12 +6,19 @@ import {
   TooManyApiKeysError,
   createApiKey,
   listApiKeys,
+  resetApiKey,
+  revealApiKey,
   revokeApiKey,
 } from "@/lib/mcp/api-keys"
 
 /**
  * The signed-in account's API keys for the MCP server (/api/mcp) and the REST
  * API — Settings → MCP server & API. See lib/mcp/api-keys.ts.
+ *
+ * GET           — the keys' summaries; with `?id=`, that key in full (`{ key }`).
+ * POST          — `{ name }`: creates a key, answers `{ key, summary }`.
+ * PATCH `?id=`  — resets that key to a new token, answers `{ key, summary }`.
+ * DELETE `?id=` — revokes that key.
  *
  * Only a browser session can manage keys: a request authenticated *with* a key
  * is refused, so a leaked key can't mint itself replacements before it is
@@ -29,11 +36,28 @@ async function requireBrowserUser(): Promise<string | NextResponse> {
   return session.user.id
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const userId = await requireBrowserUser()
   if (userId instanceof NextResponse) return userId
   const db = await getDBFromContext()
+  const id = req.nextUrl.searchParams.get("id")
+  if (id) {
+    const key = await revealApiKey(db, userId, id)
+    if (!key) return NextResponse.json({ error: "No such key." }, { status: 404 })
+    return NextResponse.json({ key }, { headers: { "Cache-Control": "no-store" } })
+  }
   return NextResponse.json({ keys: await listApiKeys(db, userId) })
+}
+
+export async function PATCH(req: NextRequest) {
+  const userId = await requireBrowserUser()
+  if (userId instanceof NextResponse) return userId
+  const id = req.nextUrl.searchParams.get("id")
+  if (!id) return NextResponse.json({ error: "Missing key id." }, { status: 400 })
+  const db = await getDBFromContext()
+  const reset = await resetApiKey(db, userId, id)
+  if (!reset) return NextResponse.json({ error: "No such key." }, { status: 404 })
+  return NextResponse.json(reset, { headers: { "Cache-Control": "no-store" } })
 }
 
 export async function POST(req: NextRequest) {
