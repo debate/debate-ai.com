@@ -352,9 +352,11 @@ action behind a confirmation. Documents also link to the editor. This is backed 
 An **Export all as JSON** link under the counts downloads every kind at once
 (`GET /api/settings/saved-data?export=all` → `exportAllOwnSavedData`): one file with
 `docs`, `flows`, `rounds` and `practiceRounds` arrays holding each item's full content.
+The export reads every row (a page of 100 per query), so it is not limited to the
+100 items shown in **Manage**.
 
-Known gaps: bulk export, like the list, covers only the newest 100 items of a kind
-(`limitPerKind` in the file says so); flows, rounds and practice debates have no stable open link.
+Known gaps: the **Manage** list shows only the newest 100 items of a kind; rounds and
+practice debates have no stable open link.
 
 ## Known gaps
 
