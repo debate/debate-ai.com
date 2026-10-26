@@ -197,6 +197,13 @@ open link of the form `/debate?flowId=<id>`. It opens the debate page on that
 flow's tab. If the flow isn't loaded in this browser yet, the page stays on
 the current tab (the link is a no-op rather than an error).
 
+### Opening a saved practice debate by link
+
+Each saved practice debate has an open link of the form
+`/practice/versus-ai?debate=<id>`. It opens **Debate History** on Practice vs AI
+with that round already expanded to its transcript. An id that isn't one of
+your rounds just shows the normal history list.
+
 ### Auto-save for flows already on your account
 
 Once a flow has been saved to your account, further edits to it are saved
@@ -345,16 +352,18 @@ allowlist and the video watch history are left out, and `total` includes them.
 For documents, flows, rounds and practice debates, a **Manage** button next to
 the count lists those items newest first (title only, up to 100) with an **Export**
 link (downloads that one item's full content as a JSON file) and a **Delete**
-action behind a confirmation. Documents also link to the editor. This is backed by
+action behind a confirmation. Documents, flows and rounds also link to where they open. This is backed by
 `GET` (`?id=<n>` exports one row via `exportOwnSavedItem`) / `DELETE`
 `/api/settings/saved-data/[kind]` (`saved-data-items.ts`), which only ever touches rows owned by the signed-in user.
 
 An **Export all as JSON** link under the counts downloads every kind at once
 (`GET /api/settings/saved-data?export=all` → `exportAllOwnSavedData`): one file with
 `docs`, `flows`, `rounds` and `practiceRounds` arrays holding each item's full content.
+The export reads every row (a page of 100 per query), so it is not limited to the
+100 items shown in **Manage**.
 
-The list view shows the newest 100 items of a kind; bulk export is not capped and
-reads every row, 100 at a time. Known gaps: rounds and practice debates have no stable open link.
+Known gaps: the **Manage** list shows only the newest 100 items of a kind; rounds and
+practice debates have no stable open link.
 
 ## Known gaps
 
