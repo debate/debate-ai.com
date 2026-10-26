@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
 import { documents, savedFlows, user } from "../../database/schema";
-import { MAX_EXPORT_ITEMS, deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems } from "../saved-data-items";
+import { EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems } from "../saved-data-items";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -34,6 +34,13 @@ describe("saved item management", () => {
     const db = await freshDb();
     await db.insert(savedFlows).values({ userId: "a", clientId: 7, data: "{}" });
     expect(await listOwnSavedItems(db, "a", "flows")).toMatchObject([{ id: 7, title: "Untitled flow", href: "/debate?flowId=7" }]);
+  });
+
+  it("links practice debates to the Debate History deep link", async () => {
+    const db = await freshDb();
+    await db.insert(practiceVsAiDebates).values({ userId: "a", topic: "Tariffs", botName: "Bot", data: "{}" });
+    const [item] = await listOwnSavedItems(db, "a", "practiceRounds");
+    expect(item.href).toBe(`/practice/versus-ai?debate=${item.id}`);
   });
 
   it("deletes own rows and refuses another user's or a missing row", async () => {
@@ -100,25 +107,44 @@ describe("bulk export", () => {
     expect(body.practiceRounds).toEqual([]);
   });
 
-  it("exports past the 100-row list cap and reports nothing truncated", async () => {
+  it("exports every row, past the per-kind list cap and across page boundaries", async () => {
     const db = await freshDb();
-    await db.insert(savedFlows).values(Array.from({ length: 205 }, (_, i) => ({ userId: "a", clientId: i + 1, data: "{}" })));
+    const total = EXPORT_PAGE_SIZE * 2 + 5;
+    await db.insert(savedFlows).values(Array.from({ length: total }, (_, i) => ({ userId: "a", clientId: i + 1, data: "{}", updatedAt: new Date(2024, 0, 1, 0, 0, i) })));
     const body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
-    expect(body.flows).toHaveLength(205);
-    expect(new Set(body.flows.map((f: { id: number }) => f.id)).size).toBe(205);
-    expect(body.truncatedKinds).toEqual([]);
-    expect(body.limitPerKind).toBe(MAX_EXPORT_ITEMS);
-    expect(await listOwnSavedItems(db, "a", "flows")).toHaveLength(100);
-  });
-
-  it("pages the list with limit and offset", async () => {
-    const db = await freshDb();
-    await db.insert(savedFlows).values(Array.from({ length: 5 }, (_, i) => ({ userId: "a", clientId: i + 1, data: "{}", updatedAt: new Date(2024, 0, i + 1) })));
-    expect((await listOwnSavedItems(db, "a", "flows", { limit: 2, offset: 2 })).map((i) => i.id)).toEqual([3, 2]);
+    expect(total).toBeGreaterThan(MAX_ITEMS);
+    expect(body.flows).toHaveLength(total);
+    expect(new Set(body.flows.map((f: { id: number }) => f.id)).size).toBe(total);
+    expect(body.flows[0].id).toBe(total);
+    expect(body.limitPerKind).toBeUndefined();
   });
 
   it("returns empty lists for a user with nothing saved", async () => {
     const body = JSON.parse((await exportAllOwnSavedData(await freshDb(), "a")).body);
     expect([body.docs, body.flows, body.rounds, body.practiceRounds, body.truncatedKinds]).toEqual([[], [], [], [], []]);
+  });
+
+  it("exports past the 100-row list page and reports no truncation", async () => {
+    const db = await freshDb();
+    await db.insert(savedFlows).values(Array.from({ length: 230 }, (_, i) => ({ userId: "a", clientId: i + 1, data: "{}" })));
+    const body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
+    expect(body.flows).toHaveLength(230);
+    expect(new Set(body.flows.map((f: { id: number }) => f.id)).size).toBe(230);
+    expect(body.truncatedKinds).toEqual([]);
+  });
+
+  it("stops at the ceiling and names the truncated kind", async () => {
+    const db = await freshDb();
+    await db.insert(savedFlows).values(Array.from({ length: 5 }, (_, i) => ({ userId: "a", clientId: i + 1, data: "{}" })));
+    const body = JSON.parse((await exportAllOwnSavedData(db, "a", new Date(), 3)).body);
+    expect(body.flows).toHaveLength(3);
+    expect(body.maxPerKind).toBe(3);
+    expect(body.truncatedKinds).toEqual(["flows"]);
+  });
+
+  it("does not flag a kind that exactly fills the ceiling", async () => {
+    const db = await freshDb();
+    await db.insert(savedFlows).values(Array.from({ length: 3 }, (_, i) => ({ userId: "a", clientId: i + 1, data: "{}" })));
+    expect(JSON.parse((await exportAllOwnSavedData(db, "a", new Date(), 3)).body).truncatedKinds).toEqual([]);
   });
 });
