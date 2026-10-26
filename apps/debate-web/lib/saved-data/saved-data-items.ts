@@ -10,7 +10,7 @@ export type ItemKind = (typeof ITEM_KINDS)[number];
 
 export const isItemKind = (value: string): value is ItemKind => (ITEM_KINDS as readonly string[]).includes(value);
 
-/** Rows returned per kind; the list is a management view, not a browser. */
+/** Rows returned per kind by default; the list is a management view, not a browser. */
 export const MAX_ITEMS = 100;
 
 /** Rows per kind in the bulk export archive; the archive is a backup, so it reaches much further than the list. */
@@ -216,5 +216,6 @@ export async function exportAllOwnSavedData(db: AccountDB, userId: string, now =
     }
     archive[kind] = docs;
   }
+  archive.truncatedKinds = truncatedKinds;
   return { filename: `debate-ai-saved-data-${now.toISOString().slice(0, 10)}.json`, body: JSON.stringify(archive, null, 2) };
 }
