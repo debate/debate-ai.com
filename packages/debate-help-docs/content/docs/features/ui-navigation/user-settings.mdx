@@ -197,10 +197,12 @@ open link of the form `/debate?flowId=<id>`. It opens the debate page on that
 flow's tab. If the flow isn't loaded in this browser yet, the page stays on
 the current tab (the link is a no-op rather than an error).
 
-Saved rounds link the same way, as `/debate?roundId=<id>`: the page brings that
-round's flows to the front, archives the others and selects the round's first
-flow. As with flows, a round that isn't loaded in this browser is a no-op.
-Saved practice debates have no open link yet.
+### Opening a saved practice debate by link
+
+Each saved practice debate has an open link of the form
+`/practice/versus-ai?debate=<id>`. It opens **Debate History** on Practice vs AI
+with that round already expanded to its transcript. An id that isn't one of
+your rounds just shows the normal history list.
 
 ### Auto-save for flows already on your account
 
@@ -357,9 +359,11 @@ action behind a confirmation. Documents, flows and rounds also link to where the
 An **Export all as JSON** link under the counts downloads every kind at once
 (`GET /api/settings/saved-data?export=all` → `exportAllOwnSavedData`): one file with
 `docs`, `flows`, `rounds` and `practiceRounds` arrays holding each item's full content.
+The export reads every row (a page of 100 per query), so it is not limited to the
+100 items shown in **Manage**.
 
-Known gaps: bulk export, like the list, covers only the newest 100 items of a kind
-(`limitPerKind` in the file says so); flows, rounds and practice debates have no stable open link.
+Known gaps: the **Manage** list shows only the newest 100 items of a kind; rounds and
+practice debates have no stable open link.
 
 ## Known gaps
 
