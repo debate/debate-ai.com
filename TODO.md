@@ -73,7 +73,8 @@
   - [x] Paginate the **Manage** list (2026-10-26, branch `claude/gifted-babbage-c0kevh`): `listOwnSavedItemsPage`, `?offset=&limit=` + `hasMore` on `/api/settings/saved-data/[kind]`, **Load more** in `SavedDataSection`, with Vitest
   - [x] Stable open link for rounds (2026-10-26, branch `agent/todo-saved-round-open-link`): list items link to `/debate?roundId=N` (handled by `useOpenRoundFromLink`), with Vitest. Earlier note: (flows and practice debates already open via `/debate?flowId=N` and `/practice/versus-ai?debate=N`)
   - [x] Tool Data Sync collections (`saved_tool_records`) included in the summary (branch `agent/todo-saved-data-tool-records`, Vitest in `saved-data.test.ts` + `saved-data-section.test.tsx`)
-  - [ ] Follow-up: add the sync badge to open-flow tabs and the `/doc` header (existing known gap)
+  - [x] Open-flow tabs already show the account-save marker (`packages/debate-round/src/navigation/FlowTab.tsx`, `flowAccountStatus.ts`, covered by `FlowTab.test.tsx`) — the flow-tab half of this follow-up was stale (verified 2026-10-26)
+  - [ ] Follow-up (blocked): `/doc` header sync badge. `routes/doc/WorkspaceScreen.tsx` only mounts the editor workspace; its header and doc account-save state live in `packages/debate-editor` (upstream + `overlay/`, source not vendored in this checkout), so the badge must land there. Needs the editor package checked out (see the pre-existing `workspace-links` typecheck gap above) before it can be built and tested
 
 ---
 
