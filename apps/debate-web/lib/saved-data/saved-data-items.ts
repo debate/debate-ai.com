@@ -198,6 +198,24 @@ export async function exportOwnSavedItem(db: AccountDB, userId: string, kind: It
   return found ? { filename: `${kind}-${id}-${slug(found.title)}.json`, body: JSON.stringify(found.doc, null, 2) } : null;
 }
 
+/** Newest-first full rows of one kind, `limit` at a time starting at `offset`, exported as JSON files. */
+async function exportPage(db: AccountDB, userId: string, kind: ItemKind, limit: number, offset: number): Promise<SavedItemExport[]> {
+  switch (kind) {
+    case "docs":
+      return (await db.select().from(documents).where(and(eq(documents.userId, userId), eq(documents.isFolder, false))).orderBy(desc(documents.updatedAt), desc(documents.id)).limit(limit).offset(offset)).map(exportDoc);
+    case "flows":
+      return (await db.select().from(savedFlows).where(eq(savedFlows.userId, userId)).orderBy(desc(savedFlows.updatedAt), desc(savedFlows.id)).limit(limit).offset(offset)).map(exportFlow);
+    case "rounds":
+      return (await db.select().from(savedRounds).where(eq(savedRounds.userId, userId)).orderBy(desc(savedRounds.updatedAt), desc(savedRounds.id)).limit(limit).offset(offset)).map(exportRound);
+    case "practiceRounds":
+      return (await db.select().from(practiceVsAiDebates).where(eq(practiceVsAiDebates.userId, userId)).orderBy(desc(practiceVsAiDebates.updatedAt), desc(practiceVsAiDebates.id)).limit(limit).offset(offset)).map(exportPractice);
+  }
+}
+
+/** Bulk export ceiling per kind; keeps the archive within a Worker's memory. Past it, `truncated` says so. */
+export const MAX_EXPORT_ITEMS = 1000;
+const EXPORT_PAGE_SIZE = 100;
+
 export interface SavedDataArchive {
   filename: string;
   /** JSON document: `{ exportedAt, docs: [...], flows: [...], rounds: [...], practiceRounds: [...] }`. */
