@@ -49,8 +49,8 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
       return rows.map((r) => ({ id: r.id, title: r.label || "Untitled flow", updatedAt: iso(r.updatedAt), href: `/debate?flowId=${r.id}` /* mirrors buildFlowOpenHref in @debate-ai/round */ }));
     }
     case "rounds": {
-      const rows: Array<{ id: number; label: string; updatedAt: Date | null }> = await db
-        .select({ id: savedRounds.clientId, label: savedRounds.label, updatedAt: savedRounds.updatedAt })
+      const rows: Array<{ id: number; label: string; data: string; updatedAt: Date | null }> = await db
+        .select({ id: savedRounds.clientId, label: savedRounds.label, data: savedRounds.data, updatedAt: savedRounds.updatedAt })
         .from(savedRounds)
         .where(eq(savedRounds.userId, userId))
         .orderBy(desc(savedRounds.updatedAt), desc(savedRounds.id))
