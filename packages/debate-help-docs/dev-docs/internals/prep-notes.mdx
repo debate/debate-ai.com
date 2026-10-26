@@ -275,6 +275,11 @@ flow/strategy-sync-notes.ts
                                              boxPath (returns null rather
                                              than throwing)
 
+buildRoundOpenHref / parseRoundOpenParam  — /debate?roundId=<id> (Settings → Saved
+                                             data); hooks/useOpenRoundFromLink.ts
+                                             archives the other flows and selects
+                                             the round's first flow, once
+
 hooks/useJumpToPrepNoteBox.ts (mounted by DebateFlowPage)
   reads the URL's flowId/boxPath via parsePrepNoteJumpParams
     → selects the matching flow tab by id (flows.findIndex, not the

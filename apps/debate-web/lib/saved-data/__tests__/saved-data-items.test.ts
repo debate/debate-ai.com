@@ -121,6 +121,30 @@ describe("bulk export", () => {
 
   it("returns empty lists for a user with nothing saved", async () => {
     const body = JSON.parse((await exportAllOwnSavedData(await freshDb(), "a")).body);
-    expect([body.docs, body.flows, body.rounds, body.practiceRounds]).toEqual([[], [], [], []]);
+    expect([body.docs, body.flows, body.rounds, body.practiceRounds, body.truncatedKinds]).toEqual([[], [], [], [], []]);
+  });
+
+  it("exports past the 100-row list page and reports no truncation", async () => {
+    const db = await freshDb();
+    await db.insert(savedFlows).values(Array.from({ length: 230 }, (_, i) => ({ userId: "a", clientId: i + 1, data: "{}" })));
+    const body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
+    expect(body.flows).toHaveLength(230);
+    expect(new Set(body.flows.map((f: { id: number }) => f.id)).size).toBe(230);
+    expect(body.truncatedKinds).toEqual([]);
+  });
+
+  it("stops at the ceiling and names the truncated kind", async () => {
+    const db = await freshDb();
+    await db.insert(savedFlows).values(Array.from({ length: 5 }, (_, i) => ({ userId: "a", clientId: i + 1, data: "{}" })));
+    const body = JSON.parse((await exportAllOwnSavedData(db, "a", new Date(), 3)).body);
+    expect(body.flows).toHaveLength(3);
+    expect(body.maxPerKind).toBe(3);
+    expect(body.truncatedKinds).toEqual(["flows"]);
+  });
+
+  it("does not flag a kind that exactly fills the ceiling", async () => {
+    const db = await freshDb();
+    await db.insert(savedFlows).values(Array.from({ length: 3 }, (_, i) => ({ userId: "a", clientId: i + 1, data: "{}" })));
+    expect(JSON.parse((await exportAllOwnSavedData(db, "a", new Date(), 3)).body).truncatedKinds).toEqual([]);
   });
 });

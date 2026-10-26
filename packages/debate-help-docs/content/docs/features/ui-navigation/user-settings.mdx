@@ -352,10 +352,7 @@ allowlist and the video watch history are left out, and `total` includes them.
 For documents, flows, rounds and practice debates, a **Manage** button next to
 the count lists those items newest first (title only, up to 100) with an **Export**
 link (downloads that one item's full content as a JSON file) and a **Delete**
-action behind a confirmation. Documents and flows link to where they open; practice
-debates open Debate History at `/practice/versus-ai?debate=<id>` with that round
-expanded (`DebatePracticeVsAi`'s `historyDebateId`; **Back to picker** resumes any
-active round). This is backed by
+action behind a confirmation. Documents, flows and rounds also link to where they open. This is backed by
 `GET` (`?id=<n>` exports one row via `exportOwnSavedItem`) / `DELETE`
 `/api/settings/saved-data/[kind]` (`saved-data-items.ts`), which only ever touches rows owned by the signed-in user.
 
