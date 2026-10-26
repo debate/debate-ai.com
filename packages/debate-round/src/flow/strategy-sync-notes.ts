@@ -309,6 +309,26 @@ export function parseFlowOpenParam(params: { get(name: string): string | null })
 }
 
 /**
+ * Builds a stable "open this round" link — `/debate?roundId=N`, used by
+ * Settings → Saved data to open a round saved to the account.
+ */
+export function buildRoundOpenHref(roundId: number): string {
+  return `/debate?roundId=${roundId}`;
+}
+
+/**
+ * Parses the `roundId` query param (see `buildRoundOpenHref`) into a round id.
+ * Returns `null` if it is missing or not an integer rather than throwing,
+ * since this reads caller-supplied URL state.
+ */
+export function parseRoundOpenParam(params: { get(name: string): string | null }): number | null {
+  const raw = params.get("roundId");
+  if (!raw) return null;
+  const roundId = Number(raw);
+  return Number.isInteger(roundId) ? roundId : null;
+}
+
+/**
  * Renders a short, human-readable summary of a flow's prep notes — status
  * counts plus one line per note still needing follow-up — for a prep-notes
  * panel or sync-status banner.
