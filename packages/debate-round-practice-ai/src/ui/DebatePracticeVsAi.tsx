@@ -24,6 +24,7 @@ import { useState } from "react"
 import { clearActiveRound, readActiveRound, writeActiveRound } from "./active-round"
 import type { StartedDebate } from "./BotSelection"
 import { DebateHistory } from "./DebateHistory"
+import { parseDebateHistoryParam } from "./history-link"
 import { DebateRoom } from "./DebateRoom"
 import type { CoachSkill } from "./JudgmentPopup"
 import { CaseBriefView, PracticeSetupWizard } from "./PracticeSetupWizard"
@@ -45,6 +46,8 @@ export interface DebatePracticeVsAiProps {
   historyDebateId?: string
   /** Called when a debate round is initiated. */
   onStartDebate?: (debate: StartedDebate) => void
+  /** Open Debate History with this saved round expanded (a `?debate=<id>` link) instead of the setup wizard. */
+  historyDebateId?: string
 }
 
 export function DebatePracticeVsAi({
@@ -58,9 +61,12 @@ export function DebatePracticeVsAi({
   coachSkills,
   historyDebateId,
   onStartDebate,
+  historyDebateId,
 }: DebatePracticeVsAiProps = {}) {
   const [debate, setDebate] = useState<StartedDebate | null>(() => readActiveRound(userId))
-  const [showHistory, setShowHistory] = useState(Boolean(historyDebateId))
+  // A `?debate=<id>` link (Settings → Saved data) opens the history with that round expanded.
+  const [linkedDebateId] = useState(() => (typeof window === "undefined" ? null : parseDebateHistoryParam(window.location.search)))
+  const [showHistory, setShowHistory] = useState(linkedDebateId !== null)
 
   const handleStart = (started: StartedDebate) => {
     writeActiveRound(userId, started)
@@ -75,7 +81,7 @@ export function DebatePracticeVsAi({
 
   if (!debate) {
     if (showHistory) {
-      return <DebateHistory apiBaseUrl={apiBaseUrl} initialExpandedId={historyDebateId} onBack={() => setShowHistory(false)} />
+      return <DebateHistory apiBaseUrl={apiBaseUrl} initialExpandedId={linkedDebateId} onBack={() => setShowHistory(false)} />
     }
     return (
       <PracticeSetupWizard

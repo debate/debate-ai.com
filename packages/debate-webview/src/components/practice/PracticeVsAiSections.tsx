@@ -25,7 +25,7 @@ export interface PracticeVsAiSectionsProps {
   userId?: string
   userDisplayName?: string
   userAvatar?: string
-  /** Saved practice debate to open in the history view (`/practice/versus-ai?debate=<id>`). */
+  /** `?debate=<id>`: open that saved round in Debate History. */
   historyDebateId?: string
 }
 
