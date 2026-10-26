@@ -10,7 +10,7 @@ export type ItemKind = (typeof ITEM_KINDS)[number];
 
 export const isItemKind = (value: string): value is ItemKind => (ITEM_KINDS as readonly string[]).includes(value);
 
-/** Rows returned per kind by default; the list is a management view, not a browser. */
+/** Rows returned per kind; the list is a management view, not a browser. */
 export const MAX_ITEMS = 100;
 
 /** Rows per kind in the bulk export archive; the archive is a backup, so it reaches much further than the list. */
@@ -49,8 +49,8 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
       return rows.map((r) => ({ id: r.id, title: r.label || "Untitled flow", updatedAt: iso(r.updatedAt), href: `/debate?flowId=${r.id}` /* mirrors buildFlowOpenHref in @debate-ai/round */ }));
     }
     case "rounds": {
-      const rows: Array<{ id: number; label: string; data: string; updatedAt: Date | null }> = await db
-        .select({ id: savedRounds.clientId, label: savedRounds.label, data: savedRounds.data, updatedAt: savedRounds.updatedAt })
+      const rows: Array<{ id: number; label: string; updatedAt: Date | null }> = await db
+        .select({ id: savedRounds.clientId, label: savedRounds.label, updatedAt: savedRounds.updatedAt })
         .from(savedRounds)
         .where(eq(savedRounds.userId, userId))
         .orderBy(desc(savedRounds.updatedAt), desc(savedRounds.id))
@@ -167,29 +167,6 @@ async function selectExportDocs(db: AccountDB, userId: string, kind: ItemKind, {
       );
     }
   }
-  if (rows.length === 0) return null;
-  const item = toExportRow(kind, rows[0]);
-  return { filename: `${kind}-${id}-${slug(item.title)}.json`, body: JSON.stringify(exportDocument(kind, item), null, 2) };
-}
-
-/** Every row of one kind (newest first, no cap), with content, in a single query. */
-async function exportAllOfKind(db: AccountDB, userId: string, kind: ItemKind): Promise<Array<Record<string, unknown>>> {
-  let rows: Array<Record<string, any>>;
-  switch (kind) {
-    case "docs":
-      rows = await db.select().from(documents).where(and(eq(documents.userId, userId), eq(documents.isFolder, false))).orderBy(desc(documents.updatedAt), desc(documents.id));
-      break;
-    case "flows":
-      rows = await db.select().from(savedFlows).where(eq(savedFlows.userId, userId)).orderBy(desc(savedFlows.updatedAt), desc(savedFlows.id));
-      break;
-    case "rounds":
-      rows = await db.select().from(savedRounds).where(eq(savedRounds.userId, userId)).orderBy(desc(savedRounds.updatedAt), desc(savedRounds.id));
-      break;
-    case "practiceRounds":
-      rows = await db.select().from(practiceVsAiDebates).where(eq(practiceVsAiDebates.userId, userId)).orderBy(desc(practiceVsAiDebates.updatedAt), desc(practiceVsAiDebates.id));
-      break;
-  }
-  return rows.map((row) => exportDocument(kind, toExportRow(kind, row)));
 }
 
 /** Full content of one of the caller's own rows as a downloadable JSON file; null if it doesn't exist or isn't theirs. */
@@ -197,24 +174,6 @@ export async function exportOwnSavedItem(db: AccountDB, userId: string, kind: It
   const [found] = await selectExportDocs(db, userId, kind, { id, limit: 1 });
   return found ? { filename: `${kind}-${id}-${slug(found.title)}.json`, body: JSON.stringify(found.doc, null, 2) } : null;
 }
-
-/** Newest-first full rows of one kind, `limit` at a time starting at `offset`, exported as JSON files. */
-async function exportPage(db: AccountDB, userId: string, kind: ItemKind, limit: number, offset: number): Promise<SavedItemExport[]> {
-  switch (kind) {
-    case "docs":
-      return (await db.select().from(documents).where(and(eq(documents.userId, userId), eq(documents.isFolder, false))).orderBy(desc(documents.updatedAt), desc(documents.id)).limit(limit).offset(offset)).map(exportDoc);
-    case "flows":
-      return (await db.select().from(savedFlows).where(eq(savedFlows.userId, userId)).orderBy(desc(savedFlows.updatedAt), desc(savedFlows.id)).limit(limit).offset(offset)).map(exportFlow);
-    case "rounds":
-      return (await db.select().from(savedRounds).where(eq(savedRounds.userId, userId)).orderBy(desc(savedRounds.updatedAt), desc(savedRounds.id)).limit(limit).offset(offset)).map(exportRound);
-    case "practiceRounds":
-      return (await db.select().from(practiceVsAiDebates).where(eq(practiceVsAiDebates.userId, userId)).orderBy(desc(practiceVsAiDebates.updatedAt), desc(practiceVsAiDebates.id)).limit(limit).offset(offset)).map(exportPractice);
-  }
-}
-
-/** Bulk export ceiling per kind; keeps the archive within a Worker's memory. Past it, `truncated` says so. */
-export const MAX_EXPORT_ITEMS = 1000;
-const EXPORT_PAGE_SIZE = 100;
 
 export interface SavedDataArchive {
   filename: string;
@@ -234,6 +193,5 @@ export async function exportAllOwnSavedData(db: AccountDB, userId: string, now =
     }
     archive[kind] = docs;
   }
-  archive.truncatedKinds = truncatedKinds;
   return { filename: `debate-ai-saved-data-${now.toISOString().slice(0, 10)}.json`, body: JSON.stringify(archive, null, 2) };
 }
