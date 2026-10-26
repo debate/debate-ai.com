@@ -167,6 +167,29 @@ async function selectExportDocs(db: AccountDB, userId: string, kind: ItemKind, {
       );
     }
   }
+  if (rows.length === 0) return null;
+  const item = toExportRow(kind, rows[0]);
+  return { filename: `${kind}-${id}-${slug(item.title)}.json`, body: JSON.stringify(exportDocument(kind, item), null, 2) };
+}
+
+/** Every row of one kind (newest first, no cap), with content, in a single query. */
+async function exportAllOfKind(db: AccountDB, userId: string, kind: ItemKind): Promise<Array<Record<string, unknown>>> {
+  let rows: Array<Record<string, any>>;
+  switch (kind) {
+    case "docs":
+      rows = await db.select().from(documents).where(and(eq(documents.userId, userId), eq(documents.isFolder, false))).orderBy(desc(documents.updatedAt), desc(documents.id));
+      break;
+    case "flows":
+      rows = await db.select().from(savedFlows).where(eq(savedFlows.userId, userId)).orderBy(desc(savedFlows.updatedAt), desc(savedFlows.id));
+      break;
+    case "rounds":
+      rows = await db.select().from(savedRounds).where(eq(savedRounds.userId, userId)).orderBy(desc(savedRounds.updatedAt), desc(savedRounds.id));
+      break;
+    case "practiceRounds":
+      rows = await db.select().from(practiceVsAiDebates).where(eq(practiceVsAiDebates.userId, userId)).orderBy(desc(practiceVsAiDebates.updatedAt), desc(practiceVsAiDebates.id));
+      break;
+  }
+  return rows.map((row) => exportDocument(kind, toExportRow(kind, row)));
 }
 
 /** Full content of one of the caller's own rows as a downloadable JSON file; null if it doesn't exist or isn't theirs. */
