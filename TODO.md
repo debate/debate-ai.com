@@ -53,7 +53,7 @@
 
 - [x] `resolveToolStorage` maps every `/tools` entry to synced collections, its own SQL table, or derived/none; guarded by `tool-storage.test.ts`
 - [x] `ToolPageHeader` shows where the tool's data is saved (Vitest)
-- [ ] Follow-up: per-tool "Save to account" actions for the SQL-backed tools that still only expose it in menus
+- [x] Follow-up withdrawn: per-tool "Save to account" buttons contradict `7428594` (Save now buttons removed on purpose); auto-sync is the model
 - [ ] Follow-up (pre-existing): `apps/debate-web/lib/__tests__/tool-catalog-consistency.test.ts` imports a missing `packages/debate-editor/src/editor/workspace-links`; `bun run typecheck` in `debate-webview` reports unresolved `@debate-ai/editor/*` modules
 
 ## Account sync of tools (Completed)
@@ -69,9 +69,8 @@
   - [x] List / open (docs) / delete individual saved docs, flows, rounds and practice debates from this section (2026-10-22, branch `claude/gifted-babbage-uf5f12`): `saved-data-items.ts`, `/api/settings/saved-data/[kind]`, **Manage** in `SavedDataSection`, with Vitest
   - [x] Export an individual saved item as JSON (2026-10-24, branch `agent/todo-saved-item-export`): `exportOwnSavedItem`, `GET /api/settings/saved-data/[kind]?id=`, **Export** link in `SavedDataSection`, with Vitest
   - [x] Bulk export (2026-10-24, branch `agent/todo-saved-data-bulk-export`): `exportAllOwnSavedData`, `GET /api/settings/saved-data?export=all`, **Export all as JSON** link in `SavedDataSection`, with Vitest; removed two stale duplicate export tests that failed on `master`
-  - [x] Flows open from Settings via `/debate?flowId=N` (`buildFlowOpenHref`)
-  - [x] Bulk export pages past the 100-item list cap (2026-10-25, branch `claude/gifted-babbage-f3m7yn`): up to 1,000 items per kind, newest first, `truncated` map in the file, with Vitest
-  - [ ] Follow-up: stable open links for rounds / practice debates; stream or chunk the export beyond 1,000 items per kind
+  - [x] Bulk export no longer capped at 100 per kind (2026-10-25, branch `claude/gifted-babbage-frrxt0`): pages through every row, `EXPORT_PAGE_SIZE`, with Vitest across page boundaries
+  - [ ] Follow-up: stable open links for rounds / practice debates (flows already open via `/debate?flowId=N`); paginate the **Manage** list
   - [x] Tool Data Sync collections (`saved_tool_records`) included in the summary (branch `agent/todo-saved-data-tool-records`, Vitest in `saved-data.test.ts` + `saved-data-section.test.tsx`)
   - [ ] Follow-up: add the sync badge to open-flow tabs and the `/doc` header (existing known gap)
 
