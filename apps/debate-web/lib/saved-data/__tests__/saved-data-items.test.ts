@@ -4,7 +4,7 @@ import { drizzle } from "drizzle-orm/libsql";
 import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
-import { documents, practiceVsAiDebates, savedFlows, user } from "../../database/schema";
+import { documents, practiceVsAiDebates, savedFlows, savedRounds, user } from "../../database/schema";
 import { EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems, listOwnSavedItemsPage } from "../saved-data-items";
 
 async function freshDb() {
@@ -41,6 +41,12 @@ describe("saved item management", () => {
     await db.insert(practiceVsAiDebates).values({ userId: "a", topic: "Tariffs", botName: "Bot", data: "{}" });
     const [item] = await listOwnSavedItems(db, "a", "practiceRounds");
     expect(item.href).toBe(`/practice/versus-ai?debate=${item.id}`);
+  });
+
+  it("links saved rounds to the debate page by their local id", async () => {
+    const db = await freshDb();
+    await db.insert(savedRounds).values({ userId: "a", clientId: 9, data: "{}" });
+    expect(await listOwnSavedItems(db, "a", "rounds")).toMatchObject([{ id: 9, title: "Untitled round", href: "/debate?roundId=9" }]);
   });
 
   it("deletes own rows and refuses another user's or a missing row", async () => {
