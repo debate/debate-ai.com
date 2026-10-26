@@ -73,7 +73,7 @@
   - [x] Paginate the **Manage** list (2026-10-26, branch `claude/gifted-babbage-c0kevh`): `listOwnSavedItemsPage`, `?offset=&limit=` + `hasMore` on `/api/settings/saved-data/[kind]`, **Load more** in `SavedDataSection`, with Vitest
   - [x] Stable open link for rounds (2026-10-26, branch `agent/todo-saved-round-open-link`): list items link to `/debate?roundId=N` (handled by `useOpenRoundFromLink`), with Vitest. Earlier note: (flows and practice debates already open via `/debate?flowId=N` and `/practice/versus-ai?debate=N`)
   - [x] Tool Data Sync collections (`saved_tool_records`) included in the summary (branch `agent/todo-saved-data-tool-records`, Vitest in `saved-data.test.ts` + `saved-data-section.test.tsx`)
-  - [ ] Follow-up: add the sync badge to open-flow tabs and the `/doc` header (existing known gap)
+  - [x] Follow-up withdrawn (2026-10-26, branch `claude/gifted-babbage-8952rx`): the sync badge was removed from every tool header on purpose in `7428594` (auto-sync is the model; failures still surface in the `/tools` sync panel), so re-adding it to flow tabs and the `/doc` header would contradict that. The user-settings docs' Known gaps line is updated to match.
 
 ---
 
