@@ -121,7 +121,7 @@ describe("bulk export", () => {
 
   it("returns empty lists for a user with nothing saved", async () => {
     const body = JSON.parse((await exportAllOwnSavedData(await freshDb(), "a")).body);
-    expect([body.docs, body.flows, body.rounds, body.practiceRounds]).toEqual([[], [], [], []]);
+    expect([body.docs, body.flows, body.rounds, body.practiceRounds, body.truncatedKinds]).toEqual([[], [], [], [], []]);
   });
 
   it("exports past the 100-row list page and reports no truncation", async () => {
