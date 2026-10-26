@@ -4,8 +4,8 @@ import { drizzle } from "drizzle-orm/libsql";
 import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
-import { documents, savedFlows, user } from "../../database/schema";
-import { deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems } from "../saved-data-items";
+import { documents, savedFlows, savedRounds, user } from "../../database/schema";
+import { deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems, roundOpenHref } from "../saved-data-items";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -34,6 +34,23 @@ describe("saved item management", () => {
     const db = await freshDb();
     await db.insert(savedFlows).values({ userId: "a", clientId: 7, data: "{}" });
     expect(await listOwnSavedItems(db, "a", "flows")).toMatchObject([{ id: 7, title: "Untitled flow", href: "/debate?flowId=7" }]);
+  });
+
+  it("links saved rounds to their slug route only when the slug is well formed", async () => {
+    const db = await freshDb();
+    await db.insert(savedRounds).values([
+      { userId: "a", clientId: 1, label: "Good", data: JSON.stringify({ slug: "2025-glenbrooks/lynbrook-bz-monta-ey" }), updatedAt: new Date("2024-03-01") },
+      { userId: "a", clientId: 2, label: "No slug", data: "{}", updatedAt: new Date("2024-02-01") },
+      { userId: "a", clientId: 3, label: "Bad", data: JSON.stringify({ slug: "../evil?x=1" }), updatedAt: new Date("2024-01-01") },
+    ]);
+    const items = await listOwnSavedItems(db, "a", "rounds");
+    expect(items.map((i) => i.href)).toEqual(["/debate/2025-glenbrooks/lynbrook-bz-monta-ey", null, null]);
+  });
+
+  it("roundOpenHref tolerates non-JSON and non-object data", () => {
+    expect(roundOpenHref("not json")).toBeNull();
+    expect(roundOpenHref("null")).toBeNull();
+    expect(roundOpenHref('{"slug":5}')).toBeNull();
   });
 
   it("deletes own rows and refuses another user's or a missing row", async () => {

@@ -345,7 +345,9 @@ allowlist and the video watch history are left out, and `total` includes them.
 For documents, flows, rounds and practice debates, a **Manage** button next to
 the count lists those items newest first (title only, up to 100) with an **Export**
 link (downloads that one item's full content as a JSON file) and a **Delete**
-action behind a confirmation. Documents also link to the editor. This is backed by
+action behind a confirmation. Documents link to the editor, flows to `/debate?flowId=<id>`,
+and rounds to their `/debate/<tournament>/<teams>` slug page (`roundOpenHref`; a round saved
+without a well-formed slug is listed without a link). This is backed by
 `GET` (`?id=<n>` exports one row via `exportOwnSavedItem`) / `DELETE`
 `/api/settings/saved-data/[kind]` (`saved-data-items.ts`), which only ever touches rows owned by the signed-in user.
 
@@ -354,7 +356,8 @@ An **Export all as JSON** link under the counts downloads every kind at once
 `docs`, `flows`, `rounds` and `practiceRounds` arrays holding each item's full content.
 
 Known gaps: bulk export, like the list, covers only the newest 100 items of a kind
-(`limitPerKind` in the file says so); flows, rounds and practice debates have no stable open link.
+(`limitPerKind` in the file says so); practice debates have no stable open link, and neither do
+rounds saved without a slug.
 
 ## Known gaps
 

@@ -24,6 +24,25 @@ export interface SavedItem {
 
 const iso = (value: Date | null | undefined) => (value ? value.toISOString() : new Date(0).toISOString());
 
+/** Stored `data` columns are JSON text; hand back the parsed value, or the raw string if it isn't JSON. */
+const parseData = (raw: string): unknown => {
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return raw;
+  }
+};
+
+/**
+ * `/debate/<tournament>/<teams>` for a saved round whose stored JSON carries a
+ * well-formed slug (the route `useRoundFromSlug` resolves); null otherwise, so
+ * a malformed or missing slug never becomes a link.
+ */
+export function roundOpenHref(data: string): string | null {
+  const slug = (parseData(data) as { slug?: unknown } | null)?.slug;
+  return typeof slug === "string" && /^[a-z0-9][a-z0-9-]*\/[a-z0-9][a-z0-9-]*$/i.test(slug) ? `/debate/${slug}` : null;
+}
+
 /** Newest-first list of one kind of the caller's saved work (titles only, never content). */
 export async function listOwnSavedItems(db: AccountDB, userId: string, kind: ItemKind): Promise<SavedItem[]> {
   switch (kind) {
@@ -46,13 +65,13 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
       return rows.map((r) => ({ id: r.id, title: r.label || "Untitled flow", updatedAt: iso(r.updatedAt), href: `/debate?flowId=${r.id}` /* mirrors buildFlowOpenHref in @debate-ai/round */ }));
     }
     case "rounds": {
-      const rows: Array<{ id: number; label: string; updatedAt: Date | null }> = await db
-        .select({ id: savedRounds.clientId, label: savedRounds.label, updatedAt: savedRounds.updatedAt })
+      const rows: Array<{ id: number; label: string; data: string; updatedAt: Date | null }> = await db
+        .select({ id: savedRounds.clientId, label: savedRounds.label, data: savedRounds.data, updatedAt: savedRounds.updatedAt })
         .from(savedRounds)
         .where(eq(savedRounds.userId, userId))
         .orderBy(desc(savedRounds.updatedAt), desc(savedRounds.id))
         .limit(MAX_ITEMS);
-      return rows.map((r) => ({ id: r.id, title: r.label || "Untitled round", updatedAt: iso(r.updatedAt), href: null }));
+      return rows.map((r) => ({ id: r.id, title: r.label || "Untitled round", updatedAt: iso(r.updatedAt), href: roundOpenHref(r.data) }));
     }
     case "practiceRounds": {
       const rows: Array<{ id: number; topic: string; botName: string; updatedAt: Date | null }> = await db
@@ -93,15 +112,6 @@ export interface SavedItemExport {
 }
 
 const slug = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60) || "item";
-
-/** Stored `data` columns are JSON text; hand back the parsed value, or the raw string if it isn't JSON. */
-const parseData = (raw: string): unknown => {
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return raw;
-  }
-};
 
 /** Full content of one of the caller's own rows as a downloadable JSON file; null if it doesn't exist or isn't theirs. */
 export async function exportOwnSavedItem(db: AccountDB, userId: string, kind: ItemKind, id: number): Promise<SavedItemExport | null> {
