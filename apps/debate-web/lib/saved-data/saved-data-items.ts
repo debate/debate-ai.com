@@ -58,7 +58,7 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
         .orderBy(desc(savedRounds.updatedAt), desc(savedRounds.id))
         .limit(limit)
         .offset(offset);
-      return rows.map((r) => ({ id: r.id, title: r.label || "Untitled round", updatedAt: iso(r.updatedAt), href: null }));
+      return rows.map((r) => ({ id: r.id, title: r.label || "Untitled round", updatedAt: iso(r.updatedAt), href: `/debate?roundId=${r.id}` /* mirrors buildRoundOpenHref in @debate-ai/round */ }));
     }
     case "practiceRounds": {
       const rows: Array<{ id: number; topic: string; botName: string; updatedAt: Date | null }> = await db
