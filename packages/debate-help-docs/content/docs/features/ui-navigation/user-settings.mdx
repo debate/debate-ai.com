@@ -141,8 +141,10 @@ never stores or logs it. Remove it to go back to the shared key.
 
 The **MCP server & API** tab (`/settings?category=mcp`) shows the address of
 Debate AI's hosted MCP server, links its [setup guide](/docs/features/ui-navigation/mcp-server),
-and lets you create, copy and revoke the API keys an AI tool uses to act as
-you. A new key is shown once, with a ready-to-paste client config. See
+and lets you create, show, copy, reset and revoke the API keys an AI tool uses
+to act as you. A new key comes with a ready-to-paste client config; **Show**
+reveals any listed key again, and **Reset** (after a confirmation) swaps in a
+new secret. See
 [MCP server](/docs/features/ui-navigation/mcp-server) for every client's setup.
 
 - **Packages:** `debate-webview` (`components/settings/sections/McpServerSection.tsx`),
@@ -196,6 +198,13 @@ In **Settings → General → Saved to your account**, each saved flow has an
 open link of the form `/debate?flowId=<id>`. It opens the debate page on that
 flow's tab. If the flow isn't loaded in this browser yet, the page stays on
 the current tab (the link is a no-op rather than an error).
+
+### Opening a saved practice debate by link
+
+Each saved practice debate has an open link of the form
+`/practice/versus-ai?debate=<id>`. It opens **Debate History** on Practice vs AI
+with that round already expanded to its transcript. An id that isn't one of
+your rounds just shows the normal history list.
 
 ### Auto-save for flows already on your account
 
@@ -345,17 +354,18 @@ allowlist and the video watch history are left out, and `total` includes them.
 For documents, flows, rounds and practice debates, a **Manage** button next to
 the count lists those items newest first (title only, up to 100) with an **Export**
 link (downloads that one item's full content as a JSON file) and a **Delete**
-action behind a confirmation. Documents also link to the editor. This is backed by
+action behind a confirmation. Documents, flows and rounds also link to where they open. This is backed by
 `GET` (`?id=<n>` exports one row via `exportOwnSavedItem`) / `DELETE`
 `/api/settings/saved-data/[kind]` (`saved-data-items.ts`), which only ever touches rows owned by the signed-in user.
 
 An **Export all as JSON** link under the counts downloads every kind at once
 (`GET /api/settings/saved-data?export=all` → `exportAllOwnSavedData`): one file with
 `docs`, `flows`, `rounds` and `practiceRounds` arrays holding each item's full content.
+The export reads every row (a page of 100 per query), so it is not limited to the
+100 items shown in **Manage**.
 
-Known gaps: the Manage list shows only the newest 100 items of a kind; bulk export pages
-through every row up to 5,000 per kind (`limitPerKind`, with any kind that hit it named in
-`truncated`); flows, rounds and practice debates have no stable open link.
+Known gaps: the **Manage** list shows only the newest 100 items of a kind; rounds and
+practice debates have no stable open link.
 
 ## Known gaps
 

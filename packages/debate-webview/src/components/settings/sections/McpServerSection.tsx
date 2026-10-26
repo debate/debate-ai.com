@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
-import { BookOpen, Check, Copy, KeyRound, Plug, Trash2 } from "lucide-react"
+import { BookOpen, Check, Copy, Eye, EyeOff, KeyRound, Plug, RefreshCw, Trash2 } from "lucide-react"
 import { Button } from "../../../lib/ui/primitives/button"
 import { Input } from "../../../lib/ui/primitives/input"
 
@@ -38,7 +38,7 @@ function CopyButton({ value, label }: { value: string; label: string }) {
 
 /**
  * Settings → MCP server & API: the hosted MCP server's URL, a link to the
- * setup guide, and the account's API keys (create, copy once, revoke) — the
+ * setup guide, and the account's API keys (create, show and copy, reset, revoke) — the
  * keys an MCP client sends as `Authorization: Bearer <key>`. Talks to
  * `/api/mcp/keys` (apps/debate-web/app/api/mcp/keys/route.ts).
  */
@@ -49,6 +49,10 @@ export function McpServerSection({ signedIn }: { signedIn: boolean }) {
   const [created, setCreated] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  // Keys shown in full, by id (fetched on Show, or returned by a reset).
+  const [revealed, setRevealed] = useState<Record<string, string>>({})
+  // The key waiting on "Reset? The old key stops working" confirmation.
+  const [confirmingReset, setConfirmingReset] = useState<string | null>(null)
 
   useEffect(() => {
     setEndpoint(`${window.location.origin}/api/mcp`)
@@ -85,6 +89,40 @@ export function McpServerSection({ signedIn }: { signedIn: boolean }) {
       }
       setCreated(body.key)
       setLabel("")
+      await load()
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const toggleShow = async (id: string) => {
+    setError(null)
+    if (revealed[id]) {
+      setRevealed(({ [id]: _hidden, ...rest }) => rest)
+      return
+    }
+    const res = await fetch(`/api/mcp/keys?id=${encodeURIComponent(id)}`, { credentials: "same-origin" })
+    const body = await res.json().catch(() => ({}))
+    if (!res.ok || typeof body.key !== "string") {
+      setError(body.error ?? `Could not show the key (HTTP ${res.status}).`)
+      return
+    }
+    setRevealed((current) => ({ ...current, [id]: body.key }))
+  }
+
+  const reset = async (id: string) => {
+    setError(null)
+    setBusy(true)
+    try {
+      const res = await fetch(`/api/mcp/keys?id=${encodeURIComponent(id)}`, { method: "PATCH", credentials: "same-origin" })
+      const body = await res.json().catch(() => ({}))
+      if (!res.ok || typeof body.key !== "string") {
+        setError(body.error ?? `Could not reset the key (HTTP ${res.status}).`)
+        return
+      }
+      setRevealed((current) => ({ ...current, [id]: body.key }))
+      setConfirmingReset(null)
+      if (created) setCreated(null)
       await load()
     } finally {
       setBusy(false)
@@ -145,8 +183,8 @@ export function McpServerSection({ signedIn }: { signedIn: boolean }) {
         <p className="text-muted-foreground">
           Search and the video library work without a key. Tools that touch your account (saved rounds, flows,
           documents, settings) need one: create a key here and send it as{" "}
-          <code>Authorization: Bearer &lt;key&gt;</code>. A key acts as you, so keep it private, and revoke it if it
-          leaks. Keys also work with the REST API at <a href="/api" className="underline">/api</a>.
+          <code>Authorization: Bearer &lt;key&gt;</code>. A key acts as you, so keep it private, and reset or revoke it
+          if it leaks. Keys also work with the REST API at <a href="/api" className="underline">/api</a>.
         </p>
 
         {!signedIn ? (
@@ -180,7 +218,7 @@ export function McpServerSection({ signedIn }: { signedIn: boolean }) {
 
             {created && (
               <div role="status" className="rounded-md border border-border bg-muted/50 p-3 space-y-2">
-                <p className="font-medium text-foreground">Copy your new key now. It won&apos;t be shown again.</p>
+                <p className="font-medium text-foreground">Your new key. You can show and copy it again from the list below.</p>
                 <div className="flex items-center gap-2">
                   <code className="flex-1 break-all rounded-md bg-background px-2 py-1.5">{created}</code>
                   <CopyButton value={created} label="Copy API key" />
@@ -199,24 +237,66 @@ export function McpServerSection({ signedIn }: { signedIn: boolean }) {
             {keys && keys.length > 0 && (
               <ul className="divide-y divide-border rounded-md border border-border">
                 {keys.map((key) => (
-                  <li key={key.id} className="flex items-center justify-between gap-2 px-3 py-2">
-                    <div className="min-w-0">
-                      <div className="truncate font-medium text-foreground">{key.name}</div>
-                      <div className="text-xs text-muted-foreground">
-                        …{key.hint} · created {new Date(key.createdAt).toLocaleDateString()} · expires{" "}
-                        {new Date(key.expiresAt).toLocaleDateString()}
+                  <li key={key.id} className="space-y-2 px-3 py-2">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="min-w-0">
+                        <div className="truncate font-medium text-foreground">{key.name}</div>
+                        <div className="text-xs text-muted-foreground">
+                          …{key.hint} · created {new Date(key.createdAt).toLocaleDateString()} · expires{" "}
+                          {new Date(key.expiresAt).toLocaleDateString()}
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => void toggleShow(key.id)}
+                          aria-label={`${revealed[key.id] ? "Hide" : "Show"} ${key.name}`}
+                          aria-pressed={Boolean(revealed[key.id])}
+                        >
+                          {revealed[key.id] ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                          {revealed[key.id] ? "Hide" : "Show"}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setConfirmingReset(key.id)}
+                          aria-label={`Reset ${key.name}`}
+                        >
+                          <RefreshCw className="h-3.5 w-3.5" />
+                          Reset
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => void revoke(key.id)}
+                          aria-label={`Revoke ${key.name}`}
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                          Revoke
+                        </Button>
                       </div>
                     </div>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => void revoke(key.id)}
-                      aria-label={`Revoke ${key.name}`}
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                      Revoke
-                    </Button>
+                    {revealed[key.id] && (
+                      <div className="flex items-center gap-2">
+                        <code className="flex-1 break-all rounded-md bg-muted px-2 py-1.5 text-xs">{revealed[key.id]}</code>
+                        <CopyButton value={revealed[key.id]} label={`Copy ${key.name}`} />
+                      </div>
+                    )}
+                    {confirmingReset === key.id && (
+                      <div role="alertdialog" className="flex flex-wrap items-center gap-2 rounded-md border border-destructive/40 p-2">
+                        <span className="flex-1">Reset this key? The old key stops working right away.</span>
+                        <Button type="button" variant="destructive" size="sm" disabled={busy} onClick={() => void reset(key.id)}>
+                          Reset key
+                        </Button>
+                        <Button type="button" variant="ghost" size="sm" disabled={busy} onClick={() => setConfirmingReset(null)}>
+                          Cancel
+                        </Button>
+                      </div>
+                    )}
                   </li>
                 ))}
               </ul>
