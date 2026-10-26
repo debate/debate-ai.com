@@ -42,6 +42,8 @@ export interface DebatePracticeVsAiProps {
   searchUrl?: string
   /** Recommendation cards shown on the scorecard. */
   coachSkills?: CoachSkill[]
+  /** Open the debate history with this saved round expanded (the `?debate=` deep link). */
+  historyDebateId?: string
   /** Called when a debate round is initiated. */
   onStartDebate?: (debate: StartedDebate) => void
   /** Open Debate History with this saved round expanded (a `?debate=<id>` link) instead of the setup wizard. */
@@ -57,6 +59,7 @@ export function DebatePracticeVsAi({
   apiBaseUrl,
   searchUrl,
   coachSkills,
+  historyDebateId,
   onStartDebate,
   historyDebateId,
 }: DebatePracticeVsAiProps = {}) {
