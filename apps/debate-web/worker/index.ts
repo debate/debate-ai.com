@@ -31,6 +31,8 @@ import { youtubeWatchRedirect } from "../lib/youtube/video-redirect";
 import { getAuth } from "../lib/auth";
 import { normalizeRoomId } from "@debate-ai/round/src/webcam/room-protocol";
 import { handleRoomSocket } from "../lib/webcam/debate-room";
+import { handleMcpRequest } from "../lib/mcp/server";
+import { verifySessionAuthorization } from "../lib/mcp/verify";
 
 // Durable Object classes must be exported from the Worker's main module.
 export { DebateRoomSignal } from "../lib/webcam/debate-room";
@@ -179,6 +181,18 @@ export default {
               return result.response();
             },
           }, allowedWidths);
+        }
+
+        // The hosted MCP server (lib/mcp/server.ts). Answered here rather than
+        // by app/api/mcp/route.ts so each tool call — a request to another
+        // `/api` route — is dispatched in-process through the app handler
+        // instead of as a subrequest back to this Worker's own hostname.
+        if (url.pathname === "/api/mcp") {
+          const mcpResponse = await handleMcpRequest(request, {
+            dispatch: (sub) => handler.fetch(sub, env, ctx),
+            verifyAuthorization: verifySessionAuthorization,
+          });
+          return applyD1Bookmark(mcpResponse, { debug: Boolean(env.D1_SESSION_DEBUG) });
         }
 
         const rendered = await handler.fetch(request, env, ctx);

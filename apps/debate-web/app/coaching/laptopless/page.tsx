@@ -1,9 +1,16 @@
 import type { Metadata } from "next"
+import { permanentRedirect } from "next/navigation"
+
+/**
+ * The old address of the Laptop-less Debating guide, moved into Coaching at
+ * `/coaching`. It permanently redirects to its "laptopless" tab.
+ */
 
 export const metadata: Metadata = {
-  title: "Mobile Tools Setup — Laptop-less Debating",
-  description:
-    "Debate from just your phone: recommended gear plus a step-by-step guide to prepping, flowing, and speaking off a mobile phone with no laptop.",
+  title: "Laptop-less Debating",
+  alternates: { canonical: "/coaching?section=laptopless" },
 }
 
-export { default } from "@debate-ai/webview/routes/coaching/laptopless/page"
+export default function LegacyLaptoplessPage() {
+  permanentRedirect("/coaching?section=laptopless")
+}
