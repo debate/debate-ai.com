@@ -73,7 +73,7 @@
   - [x] Paginate the **Manage** list (2026-10-26, branch `claude/gifted-babbage-c0kevh`): `listOwnSavedItemsPage`, `?offset=&limit=` + `hasMore` on `/api/settings/saved-data/[kind]`, **Load more** in `SavedDataSection`, with Vitest
   - [x] Stable open link for rounds (2026-10-26, branch `agent/todo-saved-round-open-link`): list items link to `/debate?roundId=N` (handled by `useOpenRoundFromLink`), with Vitest. Earlier note: (flows and practice debates already open via `/debate?flowId=N` and `/practice/versus-ai?debate=N`)
   - [x] Tool Data Sync collections (`saved_tool_records`) included in the summary (branch `agent/todo-saved-data-tool-records`, Vitest in `saved-data.test.ts` + `saved-data-section.test.tsx`)
-  - [x] Follow-up withdrawn (2026-10-26): a sync badge on open-flow tabs and the `/doc` header contradicts `7428594`, which removed the "Saving to your account" badge on purpose (auto-sync is the model; same reasoning as the withdrawn per-tool Save buttons). `toolSyncBadgeState` stays as a pure helper with no UI. Reopen only if product wants the badge back.
+  - [x] Sync/save markers on open-flow tabs and the `/doc` header (2026-10-27, tracker review; already shipped): `FlowTab` shows a "Saved to your account" marker via `flowAccountStatus` (`packages/debate-round/test/FlowTab.test.tsx`, `flowAccountStatus.test.ts`), and `ReasonEditorScreen` shows `describeDocSaveStatus` (`doc-save-status.test.ts`). No open follow-ups remain for this section.
 
 ---
 
