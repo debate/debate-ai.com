@@ -52,7 +52,7 @@
 ## Tool storage map + header note (Completed 2026-10-21, branch `claude/gifted-babbage-l06qxh`)
 
 - [x] `resolveToolStorage` maps every `/tools` entry to synced collections, its own SQL table, or derived/none; guarded by `tool-storage.test.ts`
-- [x] `ToolPageHeader` shows where the tool's data is saved (Vitest)
+- [x] `ToolPageHeader` shows where the tool's data is saved (Vitest) — **stale**: removed again by `7428594`
 - [x] Follow-up withdrawn: per-tool "Save to account" buttons contradict `7428594` (Save now buttons removed on purpose); auto-sync is the model
 - [ ] Follow-up (pre-existing): `apps/debate-web/lib/__tests__/tool-catalog-consistency.test.ts` imports a missing `packages/debate-editor/src/editor/workspace-links`; `bun run typecheck` in `debate-webview` reports unresolved `@debate-ai/editor/*` modules
 
@@ -73,8 +73,7 @@
   - [x] Paginate the **Manage** list (2026-10-26, branch `claude/gifted-babbage-c0kevh`): `listOwnSavedItemsPage`, `?offset=&limit=` + `hasMore` on `/api/settings/saved-data/[kind]`, **Load more** in `SavedDataSection`, with Vitest
   - [x] Stable open link for rounds (2026-10-26, branch `agent/todo-saved-round-open-link`): list items link to `/debate?roundId=N` (handled by `useOpenRoundFromLink`), with Vitest. Earlier note: (flows and practice debates already open via `/debate?flowId=N` and `/practice/versus-ai?debate=N`)
   - [x] Tool Data Sync collections (`saved_tool_records`) included in the summary (branch `agent/todo-saved-data-tool-records`, Vitest in `saved-data.test.ts` + `saved-data-section.test.tsx`)
-  - [x] Open-flow tabs already show the account-save marker (`packages/debate-round/src/navigation/FlowTab.tsx`, `flowAccountStatus.ts`, covered by `FlowTab.test.tsx`) — the flow-tab half of this follow-up was stale (verified 2026-10-26)
-  - [ ] Follow-up (blocked): `/doc` header sync badge. `routes/doc/WorkspaceScreen.tsx` only mounts the editor workspace; its header and doc account-save state live in `packages/debate-editor` (upstream + `overlay/`, source not vendored in this checkout), so the badge must land there. Needs the editor package checked out (see the pre-existing `workspace-links` typecheck gap above) before it can be built and tested
+  - [x] Sync/save markers on open-flow tabs and the `/doc` header (2026-10-27, tracker review; already shipped): `FlowTab` shows a "Saved to your account" marker via `flowAccountStatus` (`packages/debate-round/test/FlowTab.test.tsx`, `flowAccountStatus.test.ts`), and `ReasonEditorScreen` shows `describeDocSaveStatus` (`doc-save-status.test.ts`). No open follow-ups remain for this section.
 
 ---
 
