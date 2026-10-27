@@ -49,6 +49,13 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
   const [loadingMore, setLoadingMore] = useState(false)
   const [error, setError] = useState(false)
 
+  /** Fetches one page after `offset` rows; `hasMore` is absent from servers that predate paging. */
+  async function fetchPage(offset: number) {
+    const res = await fetch(`/api/settings/saved-data/${kind}${offset > 0 ? `?offset=${offset}` : ""}`)
+    if (!res.ok) throw new Error(String(res.status))
+    return (await res.json()) as { items: ManagedItem[]; hasMore?: boolean }
+  }
+
   useEffect(() => {
     let cancelled = false
     fetch(`/api/settings/saved-data/${kind}`)
@@ -62,6 +69,7 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
     return () => {
       cancelled = true
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchPage only closes over `kind`
   }, [kind])
 
   async function loadMore() {

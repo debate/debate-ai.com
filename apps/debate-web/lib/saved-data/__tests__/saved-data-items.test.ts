@@ -56,6 +56,12 @@ describe("saved item management", () => {
     expect(item.href).toBe(`/practice/versus-ai?debate=${item.id}`);
   });
 
+  it("links saved rounds to the debate page by their local id", async () => {
+    const db = await freshDb();
+    await db.insert(savedRounds).values({ userId: "a", clientId: 9, data: "{}" });
+    expect(await listOwnSavedItems(db, "a", "rounds")).toMatchObject([{ id: 9, title: "Untitled round", href: "/debate?roundId=9" }]);
+  });
+
   it("deletes own rows and refuses another user's or a missing row", async () => {
     const db = await freshDb();
     await db.insert(savedFlows).values([
