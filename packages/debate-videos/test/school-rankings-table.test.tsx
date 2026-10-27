@@ -37,7 +37,7 @@ describe("SchoolRankingsTable", () => {
   });
 
   it("shows the school's ratings, top entry and events", () => {
-    expect(html).toContain('href="/schools/strake-jesuit"');
+    expect(html).toContain('href="/@strake-jesuit"');
     expect(html).toContain('aria-label="1312"');
     expect(html).toContain('aria-label="1102"');
     expect(html).toContain('aria-label="1236"');

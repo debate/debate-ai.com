@@ -48,11 +48,20 @@ const nextConfig = {
   // the old `/teams/<slug>` address 308s to the handle so bookmarks
   // and search indexes follow the move. Both spellings still resolve
   // on the page itself (see `findTeamEntries`), so a link carrying
-  // the pre-move school-plus-name slug lands correctly too.
+  // the pre-move school-plus-name slug lands correctly too. School
+  // profiles share the handle space (`/@michigan`): the same page
+  // shows the school when the handle names a ranked school (see
+  // `profileHandleKind` in @debate-ai/videos), and the old
+  // `/schools/<slug>` address 308s to it.
   async redirects() {
     return [
       {
         source: "/teams/:handle",
+        destination: "/@:handle",
+        permanent: true,
+      },
+      {
+        source: "/schools/:handle",
         destination: "/@:handle",
         permanent: true,
       },

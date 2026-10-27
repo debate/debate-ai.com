@@ -87,7 +87,7 @@ export async function notifyClaimant(db: Db, userId: string, claim: SchoolClaim)
         ? `You now manage ${claim.schoolName}'s page`
         : `Your claim on ${claim.schoolName} wasn't approved`,
       body: claim.reviewNote ?? (approved ? "Add your teams and students, and set the school logo." : null),
-      link: approved ? `/schools/${claim.schoolSlug}` : "/settings?category=my-school",
+      link: approved ? `/@${claim.schoolSlug}` : "/settings?category=my-school",
       createdAt: new Date(),
     });
   } catch (error) {

@@ -50,4 +50,18 @@ describe("parseNdtSchoolHistory", () => {
     expect(findNdtSchoolHistory(schools, "Michigan State")?.school).toBe("Michigan State University (MI)");
     expect(findNdtSchoolHistory(schools, "Yale")).toBeNull();
   });
+
+  it("prefers the university over a same-named college unless the name says College", () => {
+    const named = [
+      { school: "Boston College (MA)" },
+      { school: "Boston University (MA)" },
+      { school: "Georgetown College (KY)" },
+      { school: "Georgetown University (DC)" },
+    ];
+    expect(findNdtSchoolHistory(named, "Georgetown")?.school).toBe("Georgetown University (DC)");
+    expect(findNdtSchoolHistory(named, "Georgetown University")?.school).toBe("Georgetown University (DC)");
+    expect(findNdtSchoolHistory(named, "Georgetown College")?.school).toBe("Georgetown College (KY)");
+    expect(findNdtSchoolHistory(named, "Boston College")?.school).toBe("Boston College (MA)");
+    expect(findNdtSchoolHistory(named, "Boston University")?.school).toBe("Boston University (MA)");
+  });
 });

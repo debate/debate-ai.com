@@ -25,13 +25,31 @@ export interface ProviderKey {
 }
 
 export function resolveProviderKey(request: Request): ProviderKey | null {
-  const own = parseOwnAiKey(request.headers.get(OWN_AI_KEY_HEADER))
-  if (own) return { ...own, own: true }
-  const openrouter = getEnv("OPENROUTER_API_KEY")
-  if (openrouter) return { provider: "openrouter", key: openrouter, own: false }
-  const anthropic = getEnv("ANTHROPIC_API_KEY")
-  if (anthropic) return { provider: "anthropic", key: anthropic, own: false }
-  return null
+  return parseOwnKeyHeader(request) ?? sharedProviderKeys()[0] ?? null
+}
+
+/**
+ * A secret as pasted into the dashboard can carry a trailing newline, wrapping
+ * quotes or a `Bearer ` prefix; OpenRouter answers any of those with
+ * 401 "User not found", the same as for a revoked key.
+ */
+export function cleanApiKey(raw: string | undefined): string | undefined {
+  const key = (raw ?? "")
+    .trim()
+    .replace(/^(["'`])(.*)\1$/s, "$2")
+    .replace(/^Bearer\s+/i, "")
+    .trim()
+  return key || undefined
+}
+
+/** The site's shared keys, OpenRouter first, each cleaned. */
+export function sharedProviderKeys(): ProviderKey[] {
+  const keys: ProviderKey[] = []
+  const openrouter = cleanApiKey(getEnv("OPENROUTER_API_KEY"))
+  if (openrouter) keys.push({ provider: "openrouter", key: openrouter, own: false })
+  const anthropic = cleanApiKey(getEnv("ANTHROPIC_API_KEY"))
+  if (anthropic) keys.push({ provider: "anthropic", key: anthropic, own: false })
+  return keys
 }
 
 /**
@@ -53,4 +71,10 @@ export function keyExhaustedResponse(key: ProviderKey, status: number, detail: s
     { error: "Debate AI's shared AI key has hit its API limit. Add your own OpenRouter or Anthropic key in Settings → General, with whatever spending limit you choose, to keep going." },
     { status: 503, headers: { [AI_KEY_NEEDED_HEADER]: "shared-limit" } },
   )
+}
+
+/** The caller's own key from `x-user-ai-key`, or `null`. */
+export function parseOwnKeyHeader(request: Request): ProviderKey | null {
+  const own = parseOwnAiKey(request.headers.get(OWN_AI_KEY_HEADER))
+  return own ? { ...own, own: true } : null
 }

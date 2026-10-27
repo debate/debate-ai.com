@@ -2,10 +2,16 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getDBFromContext } from "@/lib/database/context";
 import { videos } from "@/lib/database/schema";
 import { desc, eq, and } from "drizzle-orm";
+import {
+  loadVideoTeamRanks,
+  videoPageTitle,
+  videoRouteHref,
+  type VideoType,
+} from "@debate-ai/videos";
+import { videoRowToTuple, type VideoRow } from "@debate-ai/data-sync/src/videos/video-rows";
 
 export const dynamic = "force-dynamic";
 
-const YOUTUBE_WATCH = "https://www.youtube.com/watch?v=";
 const YOUTUBE_THUMB = "https://i.ytimg.com/vi/";
 
 /** Turn a stored publish date into a human "N days ago" string. */
@@ -35,33 +41,36 @@ export async function GET(request: NextRequest) {
   const limitParam = Number.parseInt(searchParams.get("limit") ?? "", 10);
   const limit = Number.isFinite(limitParam) && limitParam > 0 ? Math.min(limitParam, 50) : 10;
 
-  let rows: Array<{ videoId: string; title: string; channel: string; publishedAt: string }> = [];
+  let rows: VideoRow[] = [];
   try {
-    rows = await db
-      .select({
-        videoId: videos.videoId,
-        title: videos.title,
-        channel: videos.channel,
-        publishedAt: videos.publishedAt,
-      })
+    rows = (await db
+      .select()
       .from(videos)
       .where(and(eq(videos.availability, "available")))
       .orderBy(desc(videos.publishedMs))
-      .limit(limit);
+      .limit(limit)) as VideoRow[];
   } catch (error) {
     console.error("homepage: latest videos query failed", error);
     return NextResponse.json([]);
   }
 
-  return NextResponse.json(
-    rows.map((row) => ({
-      id: row.videoId,
-      title: row.title,
-      channel: row.channel,
-      thumbnail: `${YOUTUBE_THUMB}${row.videoId}/maxresdefault.jpg`,
-      uploaded: relativeTime(row.publishedAt),
-      watchUrl: `${YOUTUBE_WATCH}${row.videoId}`,
-      duration: "",
-    }))
+  // Each video links to its own watch page on the site and is named the way
+  // that page is: a round by its year, tournament, round and teams (with
+  // ranks and arguments when known), a lecture by its own title.
+  const items = await Promise.all(
+    rows.map(async (row) => {
+      const video = videoRowToTuple(row) as unknown as VideoType;
+      return {
+        id: row.videoId,
+        title: videoPageTitle(video, await loadVideoTeamRanks(video)),
+        channel: row.channel,
+        thumbnail: `${YOUTUBE_THUMB}${row.videoId}/maxresdefault.jpg`,
+        uploaded: relativeTime(row.publishedAt),
+        watchUrl: videoRouteHref(video),
+        duration: "",
+      };
+    })
   );
+
+  return NextResponse.json(items);
 }

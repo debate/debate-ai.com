@@ -4,6 +4,7 @@ import {
   findSchoolDivisionEntries,
   findSchoolEntries,
   findTeamEntries,
+  profileHandleKind,
   findVideoTeamProfile,
   profileSlug,
   schoolDivisionRadarData,
@@ -49,10 +50,22 @@ const datasets = [
   dataset("hsld", "HS Lincoln-Douglas", [entry(3, "College Prep", "Jane Doe")]),
 ];
 
+describe("profileHandleKind", () => {
+  it("resolves a school's bare name to the school and a team's handle to the team", () => {
+    expect(profileHandleKind(datasets, "college-prep")).toBe("school");
+    expect(profileHandleKind(datasets, "college-prep-fs")).toBe("team");
+    expect(profileHandleKind(datasets, "college-prep-falk-sabnani")).toBe("team");
+  });
+
+  it("falls back to the school page for a handle no ranking lists", () => {
+    expect(profileHandleKind(datasets, "unranked-academy")).toBe("school");
+  });
+});
+
 describe("ranking profile links", () => {
   it("slugifies schools and teams", () => {
     expect(profileSlug("St. Mark's School")).toBe("st-mark-s-school");
-    expect(schoolHref("College Prep")).toBe("/schools/college-prep");
+    expect(schoolHref("College Prep")).toBe("/@college-prep");
     expect(teamSlug({ school: "College Prep", name: "Falk & Sabnani" })).toBe(
       "college-prep-falk-sabnani",
     );

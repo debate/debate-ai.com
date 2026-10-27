@@ -496,8 +496,8 @@ collection. `packages/debate-videos/test/sidebar-single-highlight.test.tsx`
 pins it.
 
 
-**Team Rankings stays highlighted on a team or school page.** `/teams/<team>`
-and `/schools/<school>` are opened from the **Team Rankings** row (`/coaching/rankings`)
+**Team Rankings stays highlighted on a team or school page.** Profiles at
+`/@<team>` and `/@<school>` (and the older `/teams/` and `/schools/` links) are opened from the **Team Rankings** row (`/coaching/rankings`)
 rather than nested under it, so a plain path match never lit that row while
 reading a profile — `ToolNavTree`'s `isToolActive` treats both prefixes as
 still-on-Team-Rankings, the same relationship `EXTRA_SIDEBAR_HREFS` already

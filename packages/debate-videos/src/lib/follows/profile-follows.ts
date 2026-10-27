@@ -111,9 +111,9 @@ export async function fetchMyFollows(fetchImpl: typeof fetch = fetch): Promise<F
   return readJson(response, "Couldn't load your follows.")
 }
 
-/** Path of a followed profile's page. A team's is its `@handle`
- *  address — the stored slug may be the older school-plus-name
- *  form, which the profile page still resolves. */
+/** Path of a followed profile's page: its `@handle` address, for
+ *  teams and schools alike. A team's stored slug may be the older
+ *  school-plus-name form, which the profile page still resolves. */
 export function followHref(follow: Pick<ProfileFollow, "kind" | "slug">): string {
-  return follow.kind === "team" ? `/@${follow.slug}` : `/schools/${follow.slug}`;
+  return `/@${follow.slug}`;
 }

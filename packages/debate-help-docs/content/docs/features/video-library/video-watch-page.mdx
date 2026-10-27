@@ -142,6 +142,12 @@ used up), **Detect speeches** still places the speeches from the caption
 pauses and the format's speech lengths, and says so — check those starts
 before relying on them.
 
+Detect speeches and LLM summaries run on OpenRouter's free models. If
+you've added your own OpenRouter or Anthropic key in **Settings →
+General**, they use that key; otherwise they use Debate AI's shared key,
+and if OpenRouter rejects the shared key they try the shared Anthropic
+key before falling back to the caption pauses.
+
 - Each speech's tab is timed, the timeline fills in, and **Transcript**
   shows exactly the captions spoken during that speech — cut off at its
   end, so prep time and the judge's comments stay out.

@@ -42,6 +42,14 @@ surfaces (Reason Docs, the Reason Editor and Speech Documents) and, under
 their cards, embeds the shared Google Drive folder of PDF guides and
 handouts, with an **Open in Google Drive** link.
 
+Under the badges, **Latest videos** scrolls the ten newest videos in the
+library. Each one opens that video's page in the site's video library (not
+YouTube), and a round is named the way its page is titled — year,
+tournament, level and round, then the teams with their ranks and arguments
+when known (`2026 NDT College Octas: Kansas OW (#14, K) vs CSULB MO (#7,
+Policy)`) — rather than by its YouTube upload title. A lecture keeps its own
+title. **Popular cards this week** follows.
+
 Pointing at a card lights it up — a gradient that follows the cursor, a
 glowing border and a coloured title — in a shade of its own, so neighbouring
 cards never come up the same colour.
@@ -54,6 +62,12 @@ renders it. Titles/descriptions are copied from each route's own metadata.
 The README's banner, badges and imgur screenshots are mirrored in
 `features/readme-media.ts`; a test compares it against `README.md` and fails
 when the two drift, so edit the README first and then the mirror.
+
+The video strip reads `/api/homepage/latest-videos`, which builds each
+title with `videoPageTitle` and each link with `videoRouteHref` from
+`@debate/videos` — the same helpers the watch page uses — so the strip and
+the page it opens always agree. Until the API answers, the placeholder list
+in `features/recent-media.ts` links to `/videos`.
 
 ## Known gaps
 

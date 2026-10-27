@@ -12,15 +12,21 @@
 
 export interface RecentVideo {
   id: string;
+  /** The round's generated name (year, tournament, round, teams), or a
+   * lecture's own title — never the raw YouTube upload title for a round. */
   title: string;
   channel: string;
   thumbnail: string;
   uploaded: string;
+  /** The video's page in the site's library, never YouTube. */
   watchUrl: string;
   duration: string;
 }
 
-/** The ten most recently uploaded videos, newest first. */
+/**
+ * Placeholder shown until `/api/homepage/latest-videos` answers: the ten most
+ * recently uploaded videos, newest first. They link to the video library.
+ */
 export const LATEST_VIDEOS: RecentVideo[] = [
   {
     id: "XB0tzpBUEKQ",
@@ -28,7 +34,7 @@ export const LATEST_VIDEOS: RecentVideo[] = [
     channel: "Debate AI",
     thumbnail: "https://i.imgur.com/mVdcP7Y.png",
     uploaded: "3 days ago",
-    watchUrl: "https://www.youtube.com/watch?v=XB0tzpBUEKQ",
+    watchUrl: "/videos",
     duration: "4:12",
   },
   {
@@ -37,7 +43,7 @@ export const LATEST_VIDEOS: RecentVideo[] = [
     channel: "Debate AI",
     thumbnail: "https://i.imgur.com/1NBeQij.png",
     uploaded: "5 days ago",
-    watchUrl: "https://www.youtube.com/watch?v=9bZkp7q19f0",
+    watchUrl: "/videos",
     duration: "6:40",
   },
   {
@@ -46,7 +52,7 @@ export const LATEST_VIDEOS: RecentVideo[] = [
     channel: "Debate AI",
     thumbnail: "https://i.imgur.com/eIQB4Sp.png",
     uploaded: "1 week ago",
-    watchUrl: "https://www.youtube.com/watch?v=kffacxfA7G4",
+    watchUrl: "/videos",
     duration: "8:15",
   },
   {
@@ -55,7 +61,7 @@ export const LATEST_VIDEOS: RecentVideo[] = [
     channel: "Debate AI",
     thumbnail: "https://i.imgur.com/LJ5hBjh.png",
     uploaded: "1 week ago",
-    watchUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    watchUrl: "/videos",
     duration: "7:03",
   },
   {
@@ -64,7 +70,7 @@ export const LATEST_VIDEOS: RecentVideo[] = [
     channel: "Debate AI",
     thumbnail: "https://i.imgur.com/VbJF0Bx.png",
     uploaded: "2 weeks ago",
-    watchUrl: "https://www.youtube.com/watch?v=oHg5SJYRHA0",
+    watchUrl: "/videos",
     duration: "5:50",
   },
   {
@@ -73,7 +79,7 @@ export const LATEST_VIDEOS: RecentVideo[] = [
     channel: "Debate AI",
     thumbnail: "https://i.imgur.com/pDvMC1Q.png",
     uploaded: "2 weeks ago",
-    watchUrl: "https://www.youtube.com/watch?v=jNQXAC9IVRw",
+    watchUrl: "/videos",
     duration: "9:22",
   },
   {
@@ -82,7 +88,7 @@ export const LATEST_VIDEOS: RecentVideo[] = [
     channel: "Debate AI",
     thumbnail: "https://i.imgur.com/eIQB4Sp.png",
     uploaded: "3 weeks ago",
-    watchUrl: "https://www.youtube.com/watch?v=YQHsXM4C9vI",
+    watchUrl: "/videos",
     duration: "7:48",
   },
   {
@@ -91,7 +97,7 @@ export const LATEST_VIDEOS: RecentVideo[] = [
     channel: "Debate AI",
     thumbnail: "https://i.imgur.com/1NBeQij.png",
     uploaded: "3 weeks ago",
-    watchUrl: "https://www.youtube.com/watch?v=kJQP7kiw5Fk",
+    watchUrl: "/videos",
     duration: "10:05",
   },
   {
@@ -100,7 +106,7 @@ export const LATEST_VIDEOS: RecentVideo[] = [
     channel: "Debate AI",
     thumbnail: "https://i.imgur.com/LJ5hBjh.png",
     uploaded: "1 month ago",
-    watchUrl: "https://www.youtube.com/watch?v=V32k1Xg2yXk",
+    watchUrl: "/videos",
     duration: "4:56",
   },
   {
@@ -109,7 +115,7 @@ export const LATEST_VIDEOS: RecentVideo[] = [
     channel: "Debate AI",
     thumbnail: "https://i.imgur.com/mVdcP7Y.png",
     uploaded: "1 month ago",
-    watchUrl: "https://www.youtube.com/watch?v=mzM0eY2v7Rs",
+    watchUrl: "/videos",
     duration: "12:30",
   },
 ];

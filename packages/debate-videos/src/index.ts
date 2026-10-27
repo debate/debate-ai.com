@@ -98,7 +98,7 @@ export { LibrarySidebarTree } from "./components/navigation/sidebar-nav/LibraryS
 export { LecturesPage } from "./panels/LecturesPage";
 export { DebateVideosPage } from "./panels/DebateVideosPanel";
 export { LeaderboardPanel } from "./panels/leaderboard/RankingsLeaderboardPanel";
-export { TeamProfilePage, SchoolProfilePage } from "./panels/leaderboard/profile/RankingProfiles";
+export { TeamProfilePage, SchoolProfilePage, ProfileHandlePage } from "./panels/leaderboard/profile/RankingProfiles";
 export {
   TEAM_SIDE_CLASS,
   TEAM_SIDE_SURFACE_CLASS,

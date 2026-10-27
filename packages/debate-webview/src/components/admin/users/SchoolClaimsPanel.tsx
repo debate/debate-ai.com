@@ -66,7 +66,7 @@ export function SchoolClaimsPanel() {
           <div key={claim.id} className="space-y-2 rounded-lg border p-3">
             <div className="flex flex-wrap items-center gap-2">
               <a
-                href={`/schools/${claim.schoolSlug}`}
+                href={`/@${claim.schoolSlug}`}
                 target="_blank"
                 rel="noreferrer"
                 className="font-medium underline-offset-4 hover:underline"

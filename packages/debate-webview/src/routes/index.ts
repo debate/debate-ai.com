@@ -14,7 +14,9 @@
  * handles (`/@harker-ll`) via a rewrite of `app/teams/[team]`, and a
  * segment like `@[team]` matches here directly (see `host/match`).
  * The plain `/teams/[team]` pattern stays for links written before
- * the move.
+ * the move. School profiles share the `@` handles (`/@michigan`): the
+ * same page renders the school when the handle names one, and
+ * `/schools/[school]` stays for older links.
  *
  * `test/routes/route-table.test.ts` fails when a page is added to `app/`
  * and not here.
@@ -114,7 +116,7 @@ export const PAGE_ROUTES: AppRoute[] = [
   { pattern: "/practice/strategy", load: () => import("./strategy/page") },
   { pattern: "/summaries", load: () => import("./summaries/page") },
   { pattern: "/practice/tabroom/[[...slug]]", load: () => import("./tabroom/[[...slug]]/page") },
-  // Team profiles: `/@<team>` handles in the web app (rewritten
+  // Team and school profiles: `/@<handle>` in the web app (rewritten
   // from `app/teams/[team]`), plus the old `/teams/[team]` spelling.
   { pattern: "/@[team]", load: () => import("./teams/[team]/page") },
   { pattern: "/teams/[team]", load: () => import("./teams/[team]/page") },

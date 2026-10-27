@@ -1,12 +1,14 @@
 /**
- * @fileoverview Pure helpers behind the `/@[team]` and
- * `/schools/[school]` profile pages: the URL slugs a rankings
- * row links to, the lookups that turn a slug back into rows
- * across every `debate-rankings` dataset, the stats a school
+ * @fileoverview Pure helpers behind the `@<handle>` profile pages
+ * (teams and schools share the address space): the URL slugs a
+ * rankings row links to, the lookups that turn a slug back into
+ * rows across every `debate-rankings` dataset, the stats a school
  * profile aggregates, and the video-search query each profile
  * runs. Team pages moved from `/teams/<slug>` to `@<handle>`
- * (school plus initials); both shapes still resolve, so links
- * written before the move keep working.
+ * (school plus initials) and school pages from `/schools/<slug>`
+ * to `@<school>`; the old shapes redirect, and a team slug of
+ * either shape still resolves, so links written before the move
+ * keep working.
  * @module panels/leaderboard/profile/rankingProfileHelpers
  */
 
@@ -59,9 +61,9 @@ export function teamHref(entry: Pick<RankingEntry, "school" | "name">): string {
   return `/@${teamHandle(entry)}`;
 }
 
-/** Path of the school profile page for a school name. */
+/** Path of the school profile page for a school name: its `@school` handle. */
 export function schoolHref(school: string): string {
-  return `/schools/${profileSlug(school)}`;
+  return `/@${profileSlug(school)}`;
 }
 
 /** One rankings row together with the dataset it was ranked in. */
@@ -122,6 +124,19 @@ export function findSchoolEntries(datasets: RankingDataset[], slug: string): Pro
   return collect(datasets, (entry) => profileSlug(entry.school) === target).sort(
     (a, b) => a.datasetId.localeCompare(b.datasetId) || a.entry.rank - b.entry.rank,
   );
+}
+
+/**
+ * Which profile an `@handle` names. A ranked school wins over a team: a
+ * school's handle is its bare name while a team's always adds initials, so
+ * the two only collide when a team's handle reduces to its school's name, and
+ * the school page lists that team anyway. A handle matching neither is
+ * `"school"` too, so a school a coach created when claiming it (no ranked
+ * entries yet) still gets its page.
+ */
+export function profileHandleKind(datasets: RankingDataset[], slug: string): "team" | "school" {
+  if (findSchoolEntries(datasets, slug).length > 0) return "school";
+  return findTeamEntries(datasets, slug).length > 0 ? "team" : "school";
 }
 
 /**
@@ -472,7 +487,11 @@ function ndtCoreName(name: string): string {
  * school never attended. The NDT prints full names with a state tag
  * (`"Harvard University (MA)"`) where the rankings print `"Harvard"`, so the
  * best-scoring name wins; a weak (subset-word) match counts only when it is
- * the one candidate, so "Michigan" never lands on "Michigan State".
+ * the one candidate, so "Michigan" never lands on "Michigan State". The
+ * matcher ignores "College", so a tie between a college and a university of
+ * the same name ("Georgetown College (KY)" and "Georgetown University (DC)")
+ * goes to the one whose "College" agrees with the rankings name: plain
+ * "Georgetown" is the university, "Boston College" the college.
  *
  * @param schools - Parsed `ndt-school-history.json`.
  * @param school - School name as the rankings spell it.
@@ -484,11 +503,20 @@ export function findNdtSchoolHistory<T extends { school: string }>(schools: T[],
     const score = Math.max(
       schoolMatchScore(ndtCoreName(candidate.school), school),
       schoolMatchScore(candidate.school, school),
+      // A full name ("Georgetown University") trimmed the same way.
+      schoolMatchScore(ndtCoreName(candidate.school), ndtCoreName(school)),
     );
     if (score === 0 || score < best) continue;
     if (score > best) candidates = [];
     best = score;
     candidates.push(candidate);
   }
-  return best >= 2 || candidates.length === 1 ? (candidates[0] ?? null) : null;
+  const wantsCollege = isCollegeName(school);
+  const pick = candidates.find((candidate) => isCollegeName(candidate.school) === wantsCollege) ?? candidates[0];
+  return best >= 2 || candidates.length === 1 ? (pick ?? null) : null;
+}
+
+/** The name says "College" (`"Boston College"`), which the matcher drops as filler. */
+function isCollegeName(name: string): boolean {
+  return /\bcollege\b/i.test(name);
 }
