@@ -429,8 +429,7 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
                   <a
                     key={video.id}
                     href={video.watchUrl}
-                    target="_blank"
-                    rel="noreferrer"
+                    title={video.title}
                     className="flex flex-col gap-1.5 w-[200px] shrink-0 rounded-lg border border-border bg-card p-2 hover:bg-accent transition-colors"
                   >
                     <div className="relative aspect-video rounded-md overflow-hidden border border-border bg-muted">
