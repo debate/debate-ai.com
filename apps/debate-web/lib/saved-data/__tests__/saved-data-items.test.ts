@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
 import { documents, practiceVsAiDebates, savedFlows, savedRounds, user } from "../../database/schema";
-import { EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems, listOwnSavedItemsPage } from "../saved-data-items";
+import { EXPORT_MAX_ITEMS, EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems, listOwnSavedItemsPage } from "../saved-data-items";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -147,7 +147,7 @@ describe("bulk export", () => {
     expect(body.flows).toHaveLength(total);
     expect(new Set(body.flows.map((f: { id: number }) => f.id)).size).toBe(total);
     expect(body.flows[0].id).toBe(total);
-    expect(body.limitPerKind).toBeUndefined();
+    expect(body.limitPerKind).toBe(EXPORT_MAX_ITEMS);
   });
 
   it("returns empty lists for a user with nothing saved", async () => {

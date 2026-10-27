@@ -143,14 +143,48 @@ async function selectExportDocs(db: AccountDB, userId: string, kind: ItemKind, {
     doc: { kind, id: rowId, title, createdAt: iso(createdAt), updatedAt: iso(updatedAt), ...extra },
   });
   switch (kind) {
-    case "docs":
-      return build(row.id, row.title || "Untitled", row.createdAt, row.updatedAt, { format: row.format, content: row.content });
-    case "flows":
-      return build(row.clientId, row.label || "Untitled flow", row.createdAt, row.updatedAt, { data: parseData(row.data) });
-    case "rounds":
-      return build(row.clientId, row.label || "Untitled round", row.createdAt, row.updatedAt, { data: parseData(row.data) });
-    case "practiceRounds":
-      return build(row.id, row.topic || "Practice debate", row.createdAt, row.updatedAt, { botName: row.botName, result: row.result, outcome: row.outcome, data: parseData(row.data) });
+    case "docs": {
+      const rows = await db
+        .select()
+        .from(documents)
+        .where(and(eq(documents.userId, userId), eq(documents.isFolder, false), id === undefined ? undefined : eq(documents.id, id)))
+        .orderBy(desc(documents.updatedAt), desc(documents.id))
+        .limit(limit)
+        .offset(offset);
+      return rows.map((r: typeof documents.$inferSelect) => base(r.id, r.title || "Untitled", r.createdAt, r.updatedAt, { format: r.format, content: r.content }));
+    }
+    case "flows": {
+      const rows = await db
+        .select()
+        .from(savedFlows)
+        .where(and(eq(savedFlows.userId, userId), id === undefined ? undefined : eq(savedFlows.clientId, id)))
+        .orderBy(desc(savedFlows.updatedAt), desc(savedFlows.id))
+        .limit(limit)
+        .offset(offset);
+      return rows.map((r: typeof savedFlows.$inferSelect) => base(r.clientId, r.label || "Untitled flow", r.createdAt, r.updatedAt, { data: parseData(r.data) }));
+    }
+    case "rounds": {
+      const rows = await db
+        .select()
+        .from(savedRounds)
+        .where(and(eq(savedRounds.userId, userId), id === undefined ? undefined : eq(savedRounds.clientId, id)))
+        .orderBy(desc(savedRounds.updatedAt), desc(savedRounds.id))
+        .limit(limit)
+        .offset(offset);
+      return rows.map((r: typeof savedRounds.$inferSelect) => base(r.clientId, r.label || "Untitled round", r.createdAt, r.updatedAt, { data: parseData(r.data) }));
+    }
+    case "practiceRounds": {
+      const rows = await db
+        .select()
+        .from(practiceVsAiDebates)
+        .where(and(eq(practiceVsAiDebates.userId, userId), id === undefined ? undefined : eq(practiceVsAiDebates.id, id)))
+        .orderBy(desc(practiceVsAiDebates.updatedAt), desc(practiceVsAiDebates.id))
+        .limit(limit)
+        .offset(offset);
+      return rows.map((r: typeof practiceVsAiDebates.$inferSelect) =>
+        base(r.id, r.topic || "Practice debate", r.createdAt, r.updatedAt, { botName: r.botName, result: r.result, outcome: r.outcome, data: parseData(r.data) }),
+      );
+    }
   }
 }
 
@@ -166,18 +200,22 @@ export interface SavedDataArchive {
   body: string;
 }
 
-/** Every row of every kind of the caller's work, with full content, as one downloadable JSON archive (read a page at a time). */
-export async function exportAllOwnSavedData(db: AccountDB, userId: string, now = new Date()): Promise<SavedDataArchive> {
+/** Every row of every kind of the caller's work, with full content, as one downloadable JSON archive (read a page at a time, up to `maxPerKind` rows per kind). */
+export async function exportAllOwnSavedData(db: AccountDB, userId: string, now = new Date(), maxPerKind = EXPORT_MAX_ITEMS): Promise<SavedDataArchive> {
   const archive: Record<string, unknown> = { exportedAt: now.toISOString() };
+  const truncated: ItemKind[] = [];
   for (const kind of ITEM_KINDS) {
     const docs: unknown[] = [];
-    for (let offset = 0; ; offset += EXPORT_PAGE_SIZE) {
-      const page = await selectExportDocs(db, userId, kind, { limit: EXPORT_PAGE_SIZE, offset });
+    for (let offset = 0; offset < maxPerKind; offset += EXPORT_PAGE_SIZE) {
+      const limit = Math.min(EXPORT_PAGE_SIZE, maxPerKind - offset);
+      const page = await selectExportDocs(db, userId, kind, { limit, offset });
       docs.push(...page.map((p) => p.doc));
-      if (page.length < EXPORT_PAGE_SIZE) break;
+      if (page.length < limit) break;
     }
+    if (docs.length >= maxPerKind && (await selectExportDocs(db, userId, kind, { limit: 1, offset: maxPerKind })).length > 0) truncated.push(kind);
     archive[kind] = docs;
   }
   archive.truncated = truncated;
+  archive.limitPerKind = maxPerKind;
   return { filename: `debate-ai-saved-data-${now.toISOString().slice(0, 10)}.json`, body: JSON.stringify(archive, null, 2) };
 }
