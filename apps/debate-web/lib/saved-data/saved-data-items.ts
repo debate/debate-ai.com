@@ -13,6 +13,9 @@ export const isItemKind = (value: string): value is ItemKind => (ITEM_KINDS as r
 /** Rows per page of the Manage list; further pages are fetched with `offset`. */
 export const MAX_ITEMS = 100;
 
+/** Default rows per page in the Manage list. */
+export const PAGE_SIZE = 25;
+
 /** Rows per kind in the bulk export archive; the archive is a backup, so it reaches much further than the list. */
 export const EXPORT_MAX_ITEMS = 1000;
 
@@ -51,8 +54,8 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
       return rows.map((r) => ({ id: r.id, title: r.label || "Untitled flow", updatedAt: iso(r.updatedAt), href: `/debate?flowId=${r.id}` /* mirrors buildFlowOpenHref in @debate-ai/round */ }));
     }
     case "rounds": {
-      const rows: Array<{ id: number; label: string; updatedAt: Date | null }> = await db
-        .select({ id: savedRounds.clientId, label: savedRounds.label, updatedAt: savedRounds.updatedAt })
+      const rows: Array<{ id: number; label: string; data: string; updatedAt: Date | null }> = await db
+        .select({ id: savedRounds.clientId, label: savedRounds.label, data: savedRounds.data, updatedAt: savedRounds.updatedAt })
         .from(savedRounds)
         .where(eq(savedRounds.userId, userId))
         .orderBy(desc(savedRounds.updatedAt), desc(savedRounds.id))
@@ -140,6 +143,20 @@ async function selectExportDocs(db: AccountDB, userId: string, kind: ItemKind, {
     doc: { kind, id: rowId, title, createdAt: iso(createdAt), updatedAt: iso(updatedAt), ...extra },
   });
   switch (kind) {
+    case "docs":
+      return build(row.id, row.title || "Untitled", row.createdAt, row.updatedAt, { format: row.format, content: row.content });
+    case "flows":
+      return build(row.clientId, row.label || "Untitled flow", row.createdAt, row.updatedAt, { data: parseData(row.data) });
+    case "rounds":
+      return build(row.clientId, row.label || "Untitled round", row.createdAt, row.updatedAt, { data: parseData(row.data) });
+    case "practiceRounds":
+      return build(row.id, row.topic || "Practice debate", row.createdAt, row.updatedAt, { botName: row.botName, result: row.result, outcome: row.outcome, data: parseData(row.data) });
+  }
+}
+
+/** Full content of one of the caller's own rows as a downloadable JSON file; null if it doesn't exist or isn't theirs. */
+export async function exportOwnSavedItem(db: AccountDB, userId: string, kind: ItemKind, id: number): Promise<SavedItemExport | null> {
+  switch (kind) {
     case "docs": {
       const rows = await db
         .select()
@@ -209,5 +226,6 @@ export async function exportAllOwnSavedData(db: AccountDB, userId: string, now =
     }
     archive[kind] = docs;
   }
+  archive.truncated = truncated;
   return { filename: `debate-ai-saved-data-${now.toISOString().slice(0, 10)}.json`, body: JSON.stringify(archive, null, 2) };
 }
