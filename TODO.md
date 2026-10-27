@@ -52,7 +52,7 @@
 ## Tool storage map + header note (Completed 2026-10-21, branch `claude/gifted-babbage-l06qxh`)
 
 - [x] `resolveToolStorage` maps every `/tools` entry to synced collections, its own SQL table, or derived/none; guarded by `tool-storage.test.ts`
-- [x] `ToolPageHeader` shows where the tool's data is saved (Vitest)
+- [x] `ToolPageHeader` shows where the tool's data is saved (Vitest) — **stale**: removed again by `7428594`
 - [x] Follow-up withdrawn: per-tool "Save to account" buttons contradict `7428594` (Save now buttons removed on purpose); auto-sync is the model
 - [ ] Follow-up (pre-existing): `apps/debate-web/lib/__tests__/tool-catalog-consistency.test.ts` imports a missing `packages/debate-editor/src/editor/workspace-links`; `bun run typecheck` in `debate-webview` reports unresolved `@debate-ai/editor/*` modules
 
