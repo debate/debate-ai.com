@@ -65,6 +65,38 @@ describe("parseNdtSchoolHistory", () => {
     expect(findNdtSchoolHistory(named, "Boston College")?.school).toBe("Boston College (MA)");
     expect(findNdtSchoolHistory(named, "Boston University")?.school).toBe("Boston University (MA)");
   });
+
+  it("matches state-system campuses by their short forms, and the bare system name to the main campus", () => {
+    const named = [
+      { school: "University of California - Berkeley" },
+      { school: "University of California - Davis" },
+      { school: "University of California - Los Angeles" },
+      { school: "University of Southern California" },
+      { school: "University of Texas - Arlington" },
+      { school: "University of Texas - Austin" },
+      { school: "University of Texas - Dallas" },
+      { school: "Texas Tech University" },
+      { school: "University of Wisconsin - Eau Claire" },
+      { school: "University of Missouri" },
+      { school: "University of Missouri - Kansas City" },
+    ];
+    const find = (name: string) => findNdtSchoolHistory(named, name)?.school ?? null;
+    for (const name of ["UC Berkeley", "uc-berkeley", "Cal", "Berkeley", "California", "University of California, Berkeley"]) {
+      expect(find(name)).toBe("University of California - Berkeley");
+    }
+    expect(find("UC Davis")).toBe("University of California - Davis");
+    expect(find("UCLA")).toBe("University of California - Los Angeles");
+    expect(find("USC")).toBe("University of Southern California");
+    for (const name of ["Texas", "University of Texas", "UT Austin", "University of Texas - Austin"]) {
+      expect(find(name)).toBe("University of Texas - Austin");
+    }
+    expect(find("UT Dallas")).toBe("University of Texas - Dallas");
+    expect(find("Texas Tech")).toBe("Texas Tech University");
+    expect(find("Wisconsin")).toBeNull();
+    expect(find("Missouri")).toBe("University of Missouri");
+    expect(find("UMKC")).toBe("University of Missouri - Kansas City");
+    expect(find("University of Missouri - Kansas City")).toBe("University of Missouri - Kansas City");
+  });
 });
 
 describe("averageNdtElim", () => {
