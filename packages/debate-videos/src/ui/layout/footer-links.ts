@@ -14,26 +14,16 @@
  */
 
 import {
-  Book,
-  BookOpen,
-  BookMarked,
   CircleHelp,
-  Calendar,
-  FileText,
-  Info,
-  LayoutGrid,
   LockKeyhole,
-  Scale,
   type LucideIcon,
 } from "lucide-react";
 import { SiDiscord, SiGithub, SiReddit, type IconType } from "@icons-pack/react-simple-icons";
-import { FaDiscord } from "react-icons/fa";
-import type { IconType as ReactIconType } from "react-icons";
 
 export interface FooterLink {
   url: string;
   text: string;
-  icon: LucideIcon | IconType | ReactIconType;
+  icon: LucideIcon | IconType ;
   /**
    * Forces a full page load for an in-app-looking URL.
    *
@@ -61,8 +51,7 @@ export const FOOTER_LINKS: FooterLink[] = [
   // reloading into a bare page.
   // { url: "/practice/features", text: "Features", icon: LayoutGrid },
   { url: "https://github.com/debate", text: "Github", icon: SiGithub },
-  { url: "https://discord.gg/wMxeKZ3c9e", text: "Support", icon: FaDiscord },
-  { url: "/about", text: "About", icon: Info },
+  { url: "https://discord.gg/wMxeKZ3c9e", text: "Support", icon: SiDiscord },
   { url: "/legal/privacy", text: "Privacy", icon: LockKeyhole },
   { url: "https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/", text: "Reddit", icon: SiReddit },
   // { url: "https://www.tabroom.com/index/index.mhtml", text: "Tournaments", icon: Calendar },
