@@ -41,6 +41,7 @@ import { ProfileVideos } from "./ProfileVideos"
 import { ProfileCaselistDocuments } from "./ProfileCaselistDocuments"
 import { ProfileNdtHistory } from "./ProfileNdtHistory"
 import { ProfileCedaHistory } from "./ProfileCedaHistory"
+import { ProfileTocHistory } from "./ProfileTocHistory"
 import { SchoolLogo } from "../SchoolLogo"
 import { TeamLabel } from "../../../components/navigation/team-label/TeamLabel"
 import { TeamRadarChart } from "./TeamRadarChart"
@@ -362,6 +363,7 @@ export function SchoolProfilePage({
         {ownerPanel}
         <ProfileNdtHistory school={knownName} />
         <ProfileCedaHistory school={knownName} />
+        <ProfileTocHistory school={knownName} />
         <ProfileVideos search={schoolVideoSearch(knownName, [])} />
       </ProfileFrame>
     )
@@ -471,6 +473,7 @@ export function SchoolProfilePage({
 
           <ProfileNdtHistory school={summary.school} />
           <ProfileCedaHistory school={summary.school} />
+          <ProfileTocHistory school={summary.school} />
           <ProfileVideos search={schoolVideoSearch(summary.school, entries)} />
           <ProfileCaselistDocuments school={summary.school} />
         </>
