@@ -242,6 +242,25 @@ describe("PreRoundBriefingsPanel", () => {
     expect(listOwnRoundHistory()[1]).not.toHaveProperty("speechWordCount")
   })
 
+  it("stores comma-separated argument tags on a logged round and omits them when blank", async () => {
+    seedOpponent()
+    await renderPanel()
+    await typeInto($("#round-log-tournament"), "Blake")
+    await typeInto($("#round-log-date"), "2026-02-01")
+    await typeInto($("#round-log-division"), "LD")
+    await flush()
+    await choose(select("round-log-opponent"), "Westlake AB")
+    await typeInto($("#round-log-tags"), " Capitalism K, ,Topicality ")
+    await click(buttonByText("Log round"))
+    expect(listOwnRoundHistory()).toMatchObject([{ argumentTags: ["Capitalism K", "Topicality"] }])
+    expect($("#round-log-tags")!.value).toBe("")
+
+    await typeInto($("#round-log-date"), "2026-02-02")
+    await choose(select("round-log-opponent"), "Westlake AB")
+    await click(buttonByText("Log round"))
+    expect(listOwnRoundHistory()[1]).not.toHaveProperty("argumentTags")
+  })
+
   it("fills words spoken from a saved flow for the selected side", async () => {
     savedFlowMocks.listSavedFlows.mockResolvedValueOnce([
       { clientId: 7, label: "Semis vs Westlake", updatedAt: "2026-02-01T00:00:00Z" },
