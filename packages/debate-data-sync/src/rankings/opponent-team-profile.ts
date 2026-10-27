@@ -30,6 +30,8 @@ export interface OpponentRoundRecord {
   opponentTeamId?: string;
   /** Words this team spoke across its speeches that round, if tracked — feeds the debater stats' speech-length breakdown. */
   speechWordCount?: number;
+  /** Client id of the saved flow this round was logged from, if any — opens at `/debate?flowId=N`. */
+  flowClientId?: number;
 }
 
 /** Minimum rounds recorded before `hasNotableSidePreference` can be flagged. */

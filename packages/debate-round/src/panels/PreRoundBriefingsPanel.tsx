@@ -102,6 +102,7 @@ import type { OwnRoundHistoryRecord } from "../state/ownRoundHistory"
 import { buildRoundPairingRecordFromDraft } from "../state/roundPairings"
 import type { RoundPairingRecord } from "../state/roundPairings"
 import { useRoundPairings } from "../hooks/useRoundPairings"
+import { buildFlowOpenHref } from "../flow/strategy-sync-notes"
 import { countFlowWordsForSide } from "../flow/flow-word-count"
 import { fetchSavedFlow, listSavedFlows } from "../round/saved-flows-client"
 import type { SavedFlowSummary } from "../state/savedFlows"
@@ -174,6 +175,8 @@ type RoundLogDraft = {
   won: "won" | "lost"
   /** Raw input; blank means not logged. */
   speechWordCount: string
+  /** Saved flow the word count was taken from; linked on the logged round. */
+  flowClientId?: number
 }
 
 const EMPTY_ROUND_LOG_DRAFT: RoundLogDraft = {
@@ -341,6 +344,7 @@ export function PreRoundBriefingsPanel() {
       won: roundLogDraft.won === "won",
       opponentTeamId,
       ...(speechWordCount === undefined ? {} : { speechWordCount }),
+      ...(roundLogDraft.flowClientId === undefined ? {} : { flowClientId: roundLogDraft.flowClientId }),
     })
     setRoundLogError(null)
     setRoundLogDraft({ ...EMPTY_ROUND_LOG_DRAFT, tournamentName, division })
@@ -357,7 +361,11 @@ export function PreRoundBriefingsPanel() {
         return
       }
       setRoundLogError(null)
-      setRoundLogDraft((prev) => ({ ...prev, speechWordCount: String(words) }))
+      setRoundLogDraft((prev) => ({
+        ...prev,
+        speechWordCount: String(words),
+        flowClientId: Number(clientId),
+      }))
     } catch {
       setRoundLogError("Could not load that flow. Enter the word count manually.")
     }
@@ -769,9 +777,20 @@ export function PreRoundBriefingsPanel() {
                   {record.date} — {record.tournamentName}, {record.division} ({record.side}) vs.{" "}
                   {record.opponentTeamId}: {record.won ? "W" : "L"}
                 </span>
-                <Button size="sm" variant="ghost" onClick={() => handleDeleteRoundLog(record.id)}>
-                  Remove
-                </Button>
+                <span className="flex items-center gap-1">
+                  {record.flowClientId !== undefined && (
+                    <a
+                      className="text-sm underline"
+                      href={buildFlowOpenHref(record.flowClientId)}
+                      aria-label={`Open flow for ${record.tournamentName} round`}
+                    >
+                      Open flow
+                    </a>
+                  )}
+                  <Button size="sm" variant="ghost" onClick={() => handleDeleteRoundLog(record.id)}>
+                    Remove
+                  </Button>
+                </span>
               </li>
             ))}
           </ul>
