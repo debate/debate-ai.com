@@ -13,6 +13,7 @@
 import {
   entryInitials,
   findTeamRanking,
+  schoolMatchScore,
   schoolSearchNames,
   teamSearchNames,
   type RankingDataset,
@@ -455,4 +456,39 @@ export function schoolDivisionRadarData(items: ProfileEntry[]): TeamRadarPoint[]
     { metric: "Elim aff", score: elimAff.score, display: elimAff.display },
     { metric: "Aff win", score: aff.score, display: aff.display },
   ];
+}
+
+/** `"University of Michigan (MI)"` → `"Michigan"`: the NDT's state tag and "University" dropped. */
+function ndtCoreName(name: string): string {
+  return name
+    .replace(/\([^)]*\)/g, " ")
+    .replace(/\buniversity\b|\bof\b|\bthe\b/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/**
+ * The NDT school-history record for a ranked school, or `null` when the
+ * school never attended. The NDT prints full names with a state tag
+ * (`"Harvard University (MA)"`) where the rankings print `"Harvard"`, so the
+ * best-scoring name wins; a weak (subset-word) match counts only when it is
+ * the one candidate, so "Michigan" never lands on "Michigan State".
+ *
+ * @param schools - Parsed `ndt-school-history.json`.
+ * @param school - School name as the rankings spell it.
+ */
+export function findNdtSchoolHistory<T extends { school: string }>(schools: T[], school: string): T | null {
+  let best = 0;
+  let candidates: T[] = [];
+  for (const candidate of schools) {
+    const score = Math.max(
+      schoolMatchScore(ndtCoreName(candidate.school), school),
+      schoolMatchScore(candidate.school, school),
+    );
+    if (score === 0 || score < best) continue;
+    if (score > best) candidates = [];
+    best = score;
+    candidates.push(candidate);
+  }
+  return best >= 2 || candidates.length === 1 ? (candidates[0] ?? null) : null;
 }

@@ -9,7 +9,7 @@
  */
 
 import { useEffect, useState } from "react"
-import { Mail, Key } from "lucide-react"
+import { Mail } from "lucide-react"
 import { SiGoogle, SiDiscord } from "@icons-pack/react-simple-icons"
 import { FaLinkedin } from "react-icons/fa"
 import { toast } from "sonner"
@@ -80,40 +80,6 @@ function SocialSignIn({
     >
       <ProviderIcon provider={provider} />
       Continue with {PROVIDER_LABELS[provider]}
-    </Button>
-  )
-}
-
-/** Demo credentials sign-in. */
-function DemoSignIn({ callbackURL }: { callbackURL: string }) {
-  const [isLoading, setIsLoading] = useState(false)
-
-  const handleSignIn = async () => {
-    setIsLoading(true)
-    try {
-      trackSignUpCompleted({ sign_up_method: "demo" })
-      const { error } = await authClient.signIn.email({
-        email: "demo@debate-ai.com",
-        password: "demo",
-        callbackURL,
-      })
-      if (error) throw new Error(error.message || error.statusText)
-    } catch (error) {
-      console.error("[auth] demo sign-in failed:", error)
-      toast.error("Could not sign in with demo credentials")
-      setIsLoading(false)
-    }
-  }
-
-  return (
-    <Button
-      variant="outline"
-      className="w-full flex items-center justify-center gap-2 border-dashed"
-      onClick={handleSignIn}
-      disabled={isLoading}
-    >
-      <Key className="w-4 h-4" />
-      Continue with Demo Account
     </Button>
   )
 }
@@ -274,8 +240,6 @@ export function LoginForm({ callbackURL = "/" }: LoginFormProps) {
               <SocialSignIn key={provider} provider={provider} callbackURL={callbackURL} />
             ),
           )}
-
-          <DemoSignIn callbackURL={callbackURL} />
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">

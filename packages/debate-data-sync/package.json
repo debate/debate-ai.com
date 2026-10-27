@@ -34,6 +34,7 @@
   },
   "scripts": {
     "coverage": "vitest run --coverage",
+    "build-ndt-history": "bun run src/rankings/ndt-school-history-cli.ts",
     "download-caselist": "bun run src/caselist/caselist-download-cli.ts",
     "extract-transcripts": "bun run src/youtube/extract-transcripts.ts",
     "grab-caselist": "bun run src/caselist/caselist-grab-cli.ts",

@@ -1,0 +1,81 @@
+#wpfd-box-player {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 99999999999;
+    background: transparent url(../images/boxbg.png) top left repeat;
+    color: #FFF;
+}
+
+#wpfd-box-player .dropblock {
+    min-height: 114px;
+    display: inline-block;
+    /*margin: 20px 20px 0 20px;*/
+    position: relative;
+    text-align: center;
+}
+
+#wpfd-box-player .dropblock {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    background: none;
+    color: #FFF;
+}
+
+#wpfd-box-loading {
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 999999999999;
+    background: transparent url(../images/boxbg.png) top left repeat;
+    color: #FFF;
+}
+
+#wpfd-box-loading .loading {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 120px;
+    height: 120px;
+    color: #FFF;
+    background: url(../images/theme/loadingfile.svg) no-repeat center center;
+}
+
+#wpfd-box-loading .wpfd-loading-status {
+    text-align: center;
+    position: absolute;
+    top: 60%;
+    transform: translateY(-60%);
+    left: 0;
+    right: 0;
+}
+#wpfd-box-loading .wpfd-loading-status .wpfd-loading-close {
+    font-weight: bold;
+    cursor: pointer;
+}
+#wpfd-box-player img {
+    max-width: 100%;
+    height: auto;
+    max-height: 100%;
+}
+
+#wpfd-box-player .dropblock iframe {
+    width: 100%;
+    height: 100%;
+}
+
+.wpfdlaunch .dashicons-download {
+    font-family: dashicons;
+}
