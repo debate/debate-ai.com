@@ -102,6 +102,9 @@ import type { OwnRoundHistoryRecord } from "../state/ownRoundHistory"
 import { buildRoundPairingRecordFromDraft } from "../state/roundPairings"
 import type { RoundPairingRecord } from "../state/roundPairings"
 import { useRoundPairings } from "../hooks/useRoundPairings"
+import { countFlowWordsForSide } from "../flow/flow-word-count"
+import { fetchSavedFlow, listSavedFlows } from "../round/saved-flows-client"
+import type { SavedFlowSummary } from "../state/savedFlows"
 import { isPreRoundBriefingsPanelLiveUpdateStorageEvent } from "../flow/live-update"
 
 const NONE_VALUE = "__none__"
@@ -200,6 +203,7 @@ export function PreRoundBriefingsPanel() {
   const [ownRoundHistory, setOwnRoundHistory] = useState<OwnRoundHistoryRecord[]>([])
   const [roundLogDraft, setRoundLogDraft] = useState<RoundLogDraft>(EMPTY_ROUND_LOG_DRAFT)
   const [roundLogError, setRoundLogError] = useState<string | null>(null)
+  const [savedFlows, setSavedFlows] = useState<SavedFlowSummary[]>([])
   const { pairings, synced: pairingsSynced, savePairing, deletePairing } = useRoundPairings()
   const [pairingDraft, setPairingDraft] = useState<PairingDraft>(EMPTY_PAIRING_DRAFT)
   const [pairingError, setPairingError] = useState<string | null>(null)
@@ -209,6 +213,10 @@ export function PreRoundBriefingsPanel() {
     setOpponentProfiles(listOpponentTeamProfiles())
     setJudgeProfiles(listJudgeProfiles())
     setOwnRoundHistory(listOwnRoundHistory())
+    // Signed-out (null) or offline: the picker just stays empty and manual entry still works.
+    listSavedFlows()
+      .then((flows) => setSavedFlows(flows ?? []))
+      .catch(() => setSavedFlows([]))
   }, [])
 
   /**
@@ -338,6 +346,21 @@ export function PreRoundBriefingsPanel() {
     setRoundLogDraft({ ...EMPTY_ROUND_LOG_DRAFT, tournamentName, division })
     refreshOwnRoundHistory()
     refresh()
+  }
+
+  const handleFillWordsFromFlow = async (clientId: string) => {
+    try {
+      const flow = await fetchSavedFlow(Number(clientId))
+      const words = flow ? countFlowWordsForSide(flow, roundLogDraft.side) : null
+      if (!words) {
+        setRoundLogError("That flow has no words flowed for the selected side.")
+        return
+      }
+      setRoundLogError(null)
+      setRoundLogDraft((prev) => ({ ...prev, speechWordCount: String(words) }))
+    } catch {
+      setRoundLogError("Could not load that flow. Enter the word count manually.")
+    }
   }
 
   const handleDeleteRoundLog = (id: string) => {
@@ -714,6 +737,20 @@ export function PreRoundBriefingsPanel() {
               }
               placeholder="4200"
             />
+            {savedFlows.length > 0 && (
+              <Select value="" onValueChange={handleFillWordsFromFlow}>
+                <SelectTrigger id="round-log-words-flow" className="w-full" aria-label="Count words from a saved flow">
+                  <SelectValue placeholder="Count from a saved flow…" />
+                </SelectTrigger>
+                <SelectContent>
+                  {savedFlows.map((f) => (
+                    <SelectItem key={f.clientId} value={String(f.clientId)}>
+                      {f.label || `Flow ${f.clientId}`}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
           </div>
         </div>
         {roundLogError && <p className="text-sm text-destructive">{roundLogError}</p>}

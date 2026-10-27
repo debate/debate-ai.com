@@ -326,10 +326,18 @@ anything but a positive whole number is rejected). `buildDebaterStats` returns
 and losses (`null` where none did; zero, negative and non-finite counts are
 ignored). The panel shows a "Speech length" section only when at least one
 round has a count. Records sync as opaque JSON, so no schema change was needed.
+The form can also fill the box from a saved flow: a "Count from a saved flow…"
+picker (shown when `listSavedFlows` returns flows; signed-out or offline leaves
+it hidden) fetches the flow and runs `countFlowWordsForSide` from
+`flow/flow-word-count.ts`, which totals the words in the columns of the logged
+side (aff = first side key in column order, neg = second; `null` if the flow has
+no such side). The result lands in the editable "Words spoken" box. Covered by
+`test/flow-word-count.test.ts` and `test/PreRoundBriefingsPanel.test.tsx`.
 
 Known gaps: fallacy frequency and topic expertise from the "Analytics Dashboard
 for Debaters" idea are absent because no store records them; the word count is
-typed by hand rather than derived from the round's flow; the log form has no
+derived only from a flow the user picks (rounds are not yet linked to a flow
+automatically); the log form has no
 argument-tag input, so the by-argument breakdown only fills from other
 sources; and the panel is read-only — rounds are still logged from the
 Pre-Round Briefings "Log a round" form.
