@@ -80,7 +80,8 @@
   - [x] "Count from a saved flow…" picker in the Log-a-round form (`PreRoundBriefingsPanel`), with Vitest
   - [x] Documented in `pre-round-briefings.mdx` (features + internals)
   - [x] Logged round links to the saved flow its word count came from (2026-10-27, branch `claude/gifted-babbage-o678dn`): optional `flowClientId` on the record, **Open flow** link in `PreRoundBriefingsPanel`, with Vitest; documented in `pre-round-briefings.mdx`
-  - [ ] Follow-up (deferred): link logged rounds to a flow without picking one (e.g. match by round id); argument-tag input; fallacy data
+  - [x] Argument-tag input (2026-10-27, branch `claude/gifted-babbage-w3n13q`): comma-separated "Arguments you ran" box in the Log-a-round form stores `argumentTags` (`parseArgumentTags`), feeding the existing per-argument stats, with Vitest; documented in `pre-round-briefings.mdx` (features + internals)
+  - [ ] Follow-up (deferred): link logged rounds to a flow without picking one (e.g. match by round id); fallacy data
   - [ ] Follow-up (pre-existing): `packages/debate-round` typecheck and 7 test files fail locally until the generated `@debate-ai/editor` `src/` is synced and the `debate-rankings` submodule is checked out; CLAUDE.md's Vitest path (`apps/debate-ai.com`) is stale — config is `apps/debate-web/vitest.config.ts`
 
 ---
