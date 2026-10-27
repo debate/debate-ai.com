@@ -199,9 +199,12 @@ open link of the form `/debate?flowId=<id>`. It opens the debate page on that
 flow's tab. If the flow isn't loaded in this browser yet, the page stays on
 the current tab (the link is a no-op rather than an error).
 
-Saved rounds link the same way, as `/debate?roundId=<id>`: the page brings that
-round's flows to the front, archives the others and selects the round's first
-flow. As with flows, a round that isn't loaded in this browser is a no-op.
+### Opening a saved round by link
+
+Each saved round has an open link of the form `/debate?roundId=<id>`. It opens
+the debate page with that round's flows in front (every other flow is
+archived) and selects the round's first flow. If the round isn't loaded in this
+browser yet, the link is a no-op.
 
 ### Opening a saved practice debate by link
 
@@ -368,7 +371,7 @@ An **Export all as JSON** link under the counts downloads every kind at once
 The export reads every row (a page of 100 per query), so it is not limited to the
 100 items shown per **Manage** page.
 
-Known gaps: none for opening — documents, flows, rounds and practice debates all have open links.
+Known gaps: none open for open links; the sync badge is still missing on open-flow tabs and the `/doc` header.
 
 ## Known gaps
 
